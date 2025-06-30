@@ -28,6 +28,10 @@ namespace MFC {
 BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 	DeleteObject();
 	_palette = new Impl(lpLogPalette);
+
+	// This is where it becomes permanent
+	AfxHookObject();
+
 	return true;
 }
 
@@ -70,6 +74,12 @@ UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	}
 
 	return nNumEntries;
+}
+
+UINT CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
+	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
+	*impl = pal;
+	return pal.size();
 }
 
 BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,

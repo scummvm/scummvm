@@ -58,6 +58,7 @@ CWinApp::~CWinApp() {
 	_defaultFont.DeleteObject();
 	_defaultPen.DeleteObject();
 	_defaultBrush.DeleteObject();
+	_palette.DeleteObject();
 
 	// Release the handle maps
 	delete m_pmapHDC;
@@ -74,6 +75,14 @@ BOOL CWinApp::InitApplication() {
 	_defaultFont.CreateFont(8, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, OUT_RASTER_PRECIS, 0, PROOF_QUALITY, FF_ROMAN, "MS Sans Serif");
 	_defaultPen.CreatePen(PS_SOLID, 1, 0);
 	_defaultBrush.CreateSolidBrush(RGB(255, 255, 255));
+
+	// Set up palette. It's empty by default, but
+	// we need to at least get it registered.
+	// Then it will be filled out via setPalette later
+	LOGPALETTE lp;
+	lp.palVersion = 0x300;
+	lp.palNumEntries = 0;
+	_palette.CreatePalette(&lp);
 
 	return true;
 }
@@ -211,15 +220,15 @@ void CWinApp::setDirectory(const char *folder) {
 }
 
 void CWinApp::setPalette(const Graphics::Palette &pal) {
-	_palette = pal;
-	g_system->getPaletteManager()->setPalette(_palette);
+	_palette.SetPaletteEntries(pal);
+	g_system->getPaletteManager()->setPalette(*_palette._palette);
 }
 
 byte CWinApp::getColor(COLORREF color) const {
-	if (_palette.empty())
+	if (_palette.isEmpty())
 		return 0;
 
-	return _palette.findBestColor(
+	return _palette._palette->findBestColor(
 		GetRValue(color),
 		GetGValue(color),
 		GetBValue(color)

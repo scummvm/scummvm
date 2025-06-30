@@ -643,9 +643,13 @@ public:
 	                       LPPALETTEENTRY lpPaletteColors) const;
 	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors);
+	UINT SetPaletteEntries(const Graphics::Palette &pal);
 	BOOL AnimatePalette(UINT nStartIndex, UINT nNumEntries,
 	                    const PALETTEENTRY *lpPaletteColors);
 	UINT GetNearestPaletteIndex(COLORREF crColor);
+	bool isEmpty() const {
+		return !_palette || _palette->empty();
+	}
 };
 
 class CRgn : public CGdiObject {
@@ -1727,7 +1731,7 @@ public:
 	int m_nCmdShow = SW_SHOWNORMAL;
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
-	Graphics::Palette _palette;
+	CPalette _palette;
 	CFont _defaultFont;
 	CPen _defaultPen;
 	CBrush _defaultBrush;
@@ -1838,6 +1842,10 @@ public:
 	HBRUSH getDefaultBrush() {
 		assert(_defaultBrush.m_hObject);
 		return (HBRUSH)_defaultBrush.m_hObject;
+	}
+	HPALETTE getSystemPalette() {
+		assert(_palette._palette);
+		return _palette._palette;
 	}
 
 	LPCSTR AfxRegisterWndClass(UINT nClassStyle,

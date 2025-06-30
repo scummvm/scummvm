@@ -558,6 +558,7 @@ CDC::Impl::Impl() {
 	_font = app->getDefaultFont();
 	_pen = app->getDefaultPen();
 	_brush = app->getDefaultBrush();
+	_palette = app->getSystemPalette();
 }
 
 CDC::Impl::Impl(HDC srcDc) {
