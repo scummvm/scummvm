@@ -268,6 +268,8 @@ void CWnd::DestroyWindow() {
 	if (m_pParentWnd) {
 		m_pParentWnd->_ownedControls.remove(this);
 		m_pParentWnd->_children.erase(_controlId);
+		m_pParentWnd->SendMessage(WM_PARENTNOTIFY,
+			WM_DESTROY, (LPARAM)m_hWnd);
 	}
 
 	SendMessage(WM_DESTROY);
