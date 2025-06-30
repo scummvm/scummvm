@@ -31,7 +31,7 @@ ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 void CFrameWnd::OnClose() {
-	if (this == AfxGetApp()->m_pMainWnd) {
+	if (this == AfxGetApp()->GetActiveWindow()) {
 		AfxGetApp()->PopActiveWindow();
 	}
 }

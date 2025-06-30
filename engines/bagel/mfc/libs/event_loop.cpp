@@ -34,7 +34,7 @@ void EventLoop::runEventLoop() {
 	MSG msg;
 
 	while (!g_engine->shouldQuit() && !_activeWindows.empty()) {
-		CWnd *activeWin = _activeWindows.top();
+		CWnd *activeWin = GetActiveWindow();
 		if (activeWin->m_nModalResult != -1)
 			break;
 
@@ -45,13 +45,12 @@ void EventLoop::runEventLoop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-	}
 
-	// If there's a remaining window, post a new
-	//  message to refresh it
-	CWnd *wnd = GetActiveWindow();
-	if (wnd)
-		wnd->Invalidate();
+		CWnd *activeWin2 = GetActiveWindow();
+		if (activeWin2 != nullptr && activeWin2 != activeWin)
+			// New top window, so signal to redraw it
+			activeWin2->Invalidate();
+	}
 }
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
