@@ -126,18 +126,16 @@ SaveStateDescriptor AGSMetaEngine::querySaveMetaInfos(const char *target, int sl
 				Image::BitmapDecoder decoder;
 				if (decoder.loadStream(thumbStream)) {
 					const Graphics::Surface *src = decoder.getSurface();
+					const Graphics::Palette &pal = decoder.getPalette();
 					Graphics::Surface *dest;
 
 					if (src->w == 160 && src->h == 100) {
-						dest = new Graphics::Surface();
-						dest->copyFrom(*src);
+						dest = src->convertTo(g_system->getOverlayFormat(), pal.data(), pal.size());
 					} else {
-						Graphics::ManagedSurface temp(160, 100, src->format);
-						temp.blitFrom(*src, Common::Rect(0, 0, src->w, src->h),
-							Common::Rect(0, 0, 160, 100));
-
-						dest = new Graphics::Surface();
-						dest->copyFrom(temp);
+						Graphics::Surface *temp = src->convertTo(g_system->getOverlayFormat(), pal.data(), pal.size());
+						dest = temp->scale(160, 100);
+						temp->free();
+						delete temp;
 					}
 
 					desc.setThumbnail(dest);
