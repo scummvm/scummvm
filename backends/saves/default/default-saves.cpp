@@ -115,12 +115,14 @@ Common::InSaveFile *DefaultSaveFileManager::openForLoading(const Common::String 
 
 	for (const auto &lockedFile : _lockedFiles) {
 		if (filename == lockedFile) {
+			setError(Common::kReadingFailed, Common::String::format("Savefile '%s' is locked and cannot be loaded", filename.c_str()));
 			return nullptr; // file is locked, no loading available
 		}
 	}
 
 	SaveFileCache::const_iterator file = _saveFileCache.find(filename);
 	if (file == _saveFileCache.end()) {
+		setError(Common::kPathDoesNotExist, Common::String::format("Savefile '%s' does not exist", filename.c_str()));
 		return nullptr;
 	} else {
 		// Open the file for loading.
