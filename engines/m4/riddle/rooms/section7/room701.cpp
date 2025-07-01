@@ -147,7 +147,9 @@ void Room701::parser() {
 		case 21:
 			sendWSMessage_120000(_G(my_walker), -1);
 			sendWSMessage_10000(1, _agentPoshExpressMach, _agentTalkLoopTjSeries, 11, 14, -1, _agentTalkLoopTjSeries, 11, 13, 1);
-
+			sendWSMessage_1a0000(_agentPoshExpressMach, 11);
+			digi_play("701X09", 1, 255, 22, -1);
+			
 			break;
 
 		case 22:
