@@ -619,7 +619,7 @@ void Room204::parser() {
 		goto done;
 	}
 
-	if (lookFl && player_said("SILVER BUTTERFLY") && inv_player_has("SILVER BUTTERFLY")) {
+	if (lookFl && player_said("SILVER BUTTERFLY") && inv_object_is_here("SILVER BUTTERFLY")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 		case 666:
