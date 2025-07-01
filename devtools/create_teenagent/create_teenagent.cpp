@@ -26,7 +26,119 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "util.h"
+#include "create_teenagent.h"
 #include "static_tables.h"
+
+void writeCredits(FILE *fd) {
+	Common::Array<const char *> &credits = englishCredits;
+
+	for (auto &creditStr : credits) {
+		for (uint j = 0; j < strlen(creditStr); j++) {
+			if (creditStr[j] == '\n') {
+				writeByte(fd, '\0');
+			} else {
+				writeByte(fd, creditStr[j]);
+			}
+		}
+	}
+}
+
+void writeDialogs(FILE *fd) {
+	// Write out dialog string block
+	static const char nulls[6] = "\0\0\0\0\0";
+	for (uint i = 0; i < (sizeof(englishDialogs)/sizeof(char**)); i++) {
+		//printf("Writing Dialog #%d\n", i);
+		bool dialogEnd = false;
+		uint j = 0;
+		while (!dialogEnd) {
+			uint nullCount = 0;
+			if (strcmp(englishDialogs[i][j], NEW_LINE) == 0) {
+				nullCount = 1;
+			} else if (strcmp(englishDialogs[i][j], DISPLAY_MESSAGE) == 0) {
+				nullCount = 2;
+			} else if (strcmp(englishDialogs[i][j], CHANGE_CHARACTER) == 0) {
+				nullCount = 3;
+			} else if (strcmp(englishDialogs[i][j], END_DIALOG) == 0) {
+				nullCount = 4;
+				dialogEnd = true;
+			} else { // Deals with normal dialogue and ANIM_WAIT cases
+				if (fwrite(englishDialogs[i][j], 1, strlen(englishDialogs[i][j]), fd) != strlen(englishDialogs[i][j])) {
+					perror("Writing dialog string");
+					exit(1);
+				}
+			}
+
+			if (nullCount != 0 && nullCount < 5) {
+				if (fwrite(nulls, 1, nullCount, fd) != nullCount) {
+					perror("Writing dialog string nulls");
+					exit(1);
+				}
+			}
+
+			j++;
+		}
+	}
+}
+
+void writeItems(FILE *fd) {
+	const char ***items = englishItems;
+	const uint kNumInventoryItems = 92;
+
+	for (uint i = 0; i < kNumInventoryItems; i++) {
+		// Write item id
+		writeByte(fd, i + 1);
+		// Write animated flag
+		if (i == 6 || i == 13 || i == 47 || i == 49 || i == 67 || i == 91)
+			writeByte(fd, 0x01);
+		else
+			writeByte(fd, 0x00);
+
+		// Write name and description (if exists) of an item
+		uint j = 0;
+		bool endItem = false;
+		while (!endItem) {
+			if (strcmp(items[i][j], "\n") == 0) { // Separator between name and description
+				writeByte(fd, '\0');
+			} else if (strcmp(items[i][j], "\n\n") == 0) {
+				writeByte(fd, '\0');
+				writeByte(fd, '\0');
+				endItem = true;
+			} else {
+				if (fwrite(items[i][j], 1, strlen(items[i][j]), fd) != strlen(items[i][j])) {
+					perror("Writing item string");
+					exit(1);
+				}
+			}
+
+			j++;
+		}
+	}
+}
+
+void writeResource(FILE *fd, ResourceType resType) {
+	uint currentFilePos = ftell(fd);
+	uint prevFilePos = currentFilePos;
+	uint32 resourceSize = 0;
+	writeUint32LE(fd, resourceSize);
+
+	switch (resType) {
+	case kResCredits:
+		writeCredits(fd);
+		break;
+	case kResDialogs:
+		writeDialogs(fd);
+		break;
+	case kResItems:
+		writeItems(fd);
+		break;
+	};
+
+	currentFilePos = ftell(fd);
+	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
+	fseek(fd, prevFilePos, SEEK_SET);
+	writeUint32LE(fd, resourceSize);
+	fseek(fd, currentFilePos, SEEK_SET);
+}
 
 int main(int argc, char *argv[]) {
 	const char *dat_name = "teenagent.dat";
@@ -94,118 +206,9 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	uint currentFilePos = ftell(fout);
-	uint prevFilePos = currentFilePos;
-	uint32 resourceSize = 0;
-	writeUint32LE(fout, resourceSize);
-
-	// Write out dialog string block
-	static const char nulls[6] = "\0\0\0\0\0";
-	for (uint i = 0; i < (sizeof(englishDialogs)/sizeof(char**)); i++) {
-		//printf("Writing Dialog #%d\n", i);
-		bool dialogEnd = false;
-		uint j = 0;
-		while (!dialogEnd) {
-			uint nullCount = 0;
-			if (strcmp(englishDialogs[i][j], NEW_LINE) == 0) {
-				nullCount = 1;
-			} else if (strcmp(englishDialogs[i][j], DISPLAY_MESSAGE) == 0) {
-				nullCount = 2;
-			} else if (strcmp(englishDialogs[i][j], CHANGE_CHARACTER) == 0) {
-				nullCount = 3;
-			} else if (strcmp(englishDialogs[i][j], END_DIALOG) == 0) {
-				nullCount = 4;
-				dialogEnd = true;
-			} else { // Deals with normal dialogue and ANIM_WAIT cases
-				if (fwrite(englishDialogs[i][j], 1, strlen(englishDialogs[i][j]), fout) != strlen(englishDialogs[i][j])) {
-					perror("Writing dialog string");
-					exit(1);
-				}
-			}
-
-			if (nullCount != 0 && nullCount < 5) {
-				if (fwrite(nulls, 1, nullCount, fout) != nullCount) {
-					perror("Writing dialog string nulls");
-					exit(1);
-				}
-			}
-
-			j++;
-		}
+	for (uint i = 0; i < NUM_RESOURCES; i++) {
+		writeResource(fout, ResourceType(i));
 	}
-
-	currentFilePos = ftell(fout);
-	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
-	fseek(fout, prevFilePos, SEEK_SET);
-	writeUint32LE(fout, resourceSize);
-	fseek(fout, currentFilePos, SEEK_SET);
-
-	// Write out Items data
-	currentFilePos = ftell(fout);
-	prevFilePos = currentFilePos;
-	writeUint32LE(fout, resourceSize);
-
-	const char ***items = englishItems;
-	const uint kNumInventoryItems = 92;
-
-	for (uint i = 0; i < kNumInventoryItems; i++) {
-		// Write item id
-		writeByte(fout, i + 1);
-		// Write animated flag
-		if (i == 6 || i == 13 || i == 47 || i == 49 || i == 67 || i == 91)
-			writeByte(fout, 0x01);
-		else
-			writeByte(fout, 0x00);
-
-		// Write name and description (if exists) of an item
-		uint j = 0;
-		bool endItem = false;
-		while (!endItem) {
-			if (strcmp(items[i][j], "\n") == 0) { // Separator between name and description
-				writeByte(fout, '\0');
-			} else if (strcmp(items[i][j], "\n\n") == 0) {
-				writeByte(fout, '\0');
-				writeByte(fout, '\0');
-				endItem = true;
-			} else {
-				if (fwrite(items[i][j], 1, strlen(items[i][j]), fout) != strlen(items[i][j])) {
-					perror("Writing item string");
-					exit(1);
-				}
-			}
-
-			j++;
-		}
-	}
-
-	currentFilePos = ftell(fout);
-	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
-	fseek(fout, prevFilePos, SEEK_SET);
-	writeUint32LE(fout, resourceSize);
-	fseek(fout, currentFilePos, SEEK_SET);
-
-	// Write out Credits data
-	currentFilePos = ftell(fout);
-	prevFilePos = currentFilePos;
-	writeUint32LE(fout, resourceSize);
-
-	Common::Array<const char *> &credits = englishCredits;
-
-	for (auto &creditStr : credits) {
-		for (uint j = 0; j < strlen(creditStr); j++) {
-			if (creditStr[j] == '\n') {
-				writeByte(fout, '\0');
-			} else {
-				writeByte(fout, creditStr[j]);
-			}
-		}
-	}
-
-	currentFilePos = ftell(fout);
-	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
-	fseek(fout, prevFilePos, SEEK_SET);
-	writeUint32LE(fout, resourceSize);
-	fseek(fout, currentFilePos, SEEK_SET);
 
 	fclose(fout);
 
