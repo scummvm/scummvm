@@ -30,9 +30,10 @@ class PaletteCastMember : public CastMember {
 public:
 	PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMember &source);
+	PaletteCastMember(Cast *cast, uint16 castId, byte *paletteData, PaletteV4 *palette);
 	~PaletteCastMember();
 
-	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new PaletteCastMember(cast, castId, *this)); }
+	CastMember *duplicate(Cast *cast, uint16 castId) override;
 
 	CastMemberID getPaletteId();
 	void activatePalette();
