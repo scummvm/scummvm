@@ -92,7 +92,7 @@ void Room701::init() {
 	}
 
 	digi_preload("701_s01", -1);
-	digi_play_loop("701_s01", 2, 45, -1, -1);
+	digi_play_loop("701_s01", 3, 45, -1, -1);
 }
 
 void Room701::pre_parser() {
