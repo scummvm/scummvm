@@ -41,6 +41,21 @@ PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, PaletteCastMembe
 	_palette = source._palette ? new PaletteV4(*source._palette) : nullptr;
 }
 
+PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, byte *paletteData, PaletteV4 *pal) 
+	: CastMember(cast, castId) {
+	_type = kCastPalette;
+	_palette = new PaletteV4(pal->id, paletteData, pal->length);
+	_loaded = true;
+}
+ 
+// Need to make a deep copy
+CastMember *PaletteCastMember::duplicate(Cast *cast, uint16 castId) {
+	byte *buf = (byte *)malloc(_palette->length);
+	memcpy(buf, _palette, _palette->length);
+
+	return (CastMember *)(new PaletteCastMember(cast, castId, buf, _palette));
+}
+
 PaletteCastMember::~PaletteCastMember() {
 	if (_palette) {
 		delete[] _palette->palette;
