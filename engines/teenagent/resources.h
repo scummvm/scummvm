@@ -1192,7 +1192,8 @@ public:
 
 	// Artificial segments added to support multiple languages
 	Segment eseg;
-	Segment creditsSeg, itemsSeg;
+	Segment creditsSeg, itemsSeg, sceneObjectsSeg;
+
 private:
 	void precomputeDialogOffsets();
 	void precomputeCreditsOffsets();

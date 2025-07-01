@@ -28,8 +28,9 @@ enum ResourceType {
 	kResDialogs = 0,
 	kResItems,
 	kResCredits,
+	kResSceneObjects,
 };
 
-#define NUM_RESOURCES 3
+#define NUM_RESOURCES 4
 
 #endif
