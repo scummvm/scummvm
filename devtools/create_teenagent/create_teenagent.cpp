@@ -115,6 +115,82 @@ void writeItems(FILE *fd) {
 	}
 }
 
+void writeSceneObjects(FILE* fd) {
+	uint sceneObjTableAddrsPos = ftell(fd);
+	uint16 sceneObjTableAddrs[42]{};
+	uint16 curOffset = 0;
+	for (uint i = 0; i < sceneObjects.size(); i++)
+		writeUint16LE(fd, 0);
+
+	curOffset += 84; // 2 bytes * 42 scenes
+
+	for (uint i = 0; i < sceneObjects.size(); i++) {
+		if (sceneObjects[i].size() > 0)
+			sceneObjTableAddrs[i] = curOffset;
+
+		uint firstObjsAddrFilePos = ftell(fd);
+		Common::Array<uint16> sceneObjAddrs(sceneObjects[i].size(), 0);
+		for (uint16 addr : sceneObjAddrs)
+			writeUint16LE(fd, addr);
+
+		curOffset += sizeof(uint16) * sceneObjAddrs.size();
+
+		for (uint j = 0; j < sceneObjects[i].size(); j++) {
+			sceneObjAddrs[j] = curOffset;
+
+			// Write the object data
+			sceneObjects[i][j].write(fd);
+			curOffset += 19;
+
+			// Name
+			const char *name = englishSceneObjectNamesDescs[i][j].name;
+			for (uint k = 0; k < strlen(name); k++) {
+				if (name[k] == '\n')
+					writeByte(fd, '\0');
+				else
+					writeByte(fd, name[k]);
+			}
+			writeByte(fd, '\0');
+			curOffset += strlen(name) + 1;
+
+			// Description (if exists)
+			const char *description = englishSceneObjectNamesDescs[i][j].description;
+			if (strlen(description) == 0) {
+				writeByte(fd, '\0');
+				curOffset++;
+			} else if (strcmp(description, "\001") == 0) {
+				writeByte(fd, '\001');
+				writeByte(fd, '\0');
+				curOffset += 2;
+			} else {
+				for (uint k = 0; k < strlen(description); k++) {
+					if (description[k] == '\n')
+						writeByte(fd, '\0');
+					else
+						writeByte(fd, description[k]);
+				}
+				writeByte(fd, '\0');
+				curOffset += strlen(description) + 1;
+			}
+		}
+
+		// Add zero addr to indicate the end of objects
+		sceneObjAddrs.push_back(0);
+
+		uint pos = ftell(fd);
+		fseek(fd, firstObjsAddrFilePos, SEEK_SET);
+		fwrite(sceneObjAddrs.data(), sizeof(uint16), sceneObjAddrs.size(), fd);
+		fseek(fd, pos, SEEK_SET);
+	}
+
+	uint pos = ftell(fd);
+	fseek(fd, sceneObjTableAddrsPos, SEEK_SET);
+	for (uint i = 0; i < sceneObjects.size(); i++) {
+		writeUint16LE(fd, sceneObjTableAddrs[i]);
+	}
+	fseek(fd, pos, SEEK_SET);
+}
+
 void writeResource(FILE *fd, ResourceType resType) {
 	uint currentFilePos = ftell(fd);
 	uint prevFilePos = currentFilePos;
@@ -130,6 +206,9 @@ void writeResource(FILE *fd, ResourceType resType) {
 		break;
 	case kResItems:
 		writeItems(fd);
+		break;
+	case kResSceneObjects:
+		writeSceneObjects(fd);
 		break;
 	};
 

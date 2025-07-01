@@ -171,6 +171,10 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	resourceSize = dat->readUint32LE();
 	creditsSeg.read(dat, resourceSize);
+
+	resourceSize = dat->readUint32LE();
+	sceneObjectsSeg.read(dat, resourceSize);
+
 	delete dat;
 
 	precomputeDialogOffsets();
