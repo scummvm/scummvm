@@ -62,8 +62,8 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	_objects.push_back(ioBlank);
 	for (byte i = 0; i < kNumInventoryItems; ++i) {
 		InventoryObject io;
-		uint16 objAddr = vm->res->dseg.get_word(dsAddr_inventoryItemDataPtrTable + i * 2);
-		io.load(vm->res->dseg.ptr(objAddr));
+		uint16 objAddr = vm->res->getItemAddr(i);
+		io.load(vm->res->itemsSeg.ptr(objAddr));
 		_objects.push_back(io);
 	}
 

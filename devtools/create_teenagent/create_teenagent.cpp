@@ -94,6 +94,11 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
+	uint currentFilePos = ftell(fout);
+	uint prevFilePos = currentFilePos;
+	uint32 resourceSize = 0;
+	writeUint32LE(fout, resourceSize);
+
 	// Write out dialog string block
 	static const char nulls[6] = "\0\0\0\0\0";
 	for (uint i = 0; i < (sizeof(dialogs)/sizeof(char**)); i++) {
@@ -128,6 +133,79 @@ int main(int argc, char *argv[]) {
 			j++;
 		}
 	}
+
+	currentFilePos = ftell(fout);
+	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
+	fseek(fout, prevFilePos, SEEK_SET);
+	writeUint32LE(fout, resourceSize);
+	fseek(fout, currentFilePos, SEEK_SET);
+
+	// Write out Items data
+	currentFilePos = ftell(fout);
+	prevFilePos = currentFilePos;
+	writeUint32LE(fout, resourceSize);
+
+	const char ***items = englishItems;
+	const uint kNumInventoryItems = 92;
+
+	for (uint i = 0; i < kNumInventoryItems; i++) {
+		// Write item id
+		writeByte(fout, i + 1);
+		// Write animated flag
+		if (i == 6 || i == 13 || i == 47 || i == 49 || i == 67 || i == 91)
+			writeByte(fout, 0x01);
+		else
+			writeByte(fout, 0x00);
+
+		// Write name and description (if exists) of an item
+		uint j = 0;
+		bool endItem = false;
+		while (!endItem) {
+			if (strcmp(items[i][j], "\n") == 0) { // Separator between name and description
+				writeByte(fout, '\0');
+			} else if (strcmp(items[i][j], "\n\n") == 0) {
+				writeByte(fout, '\0');
+				writeByte(fout, '\0');
+				endItem = true;
+			} else {
+				if (fwrite(items[i][j], 1, strlen(items[i][j]), fout) != strlen(items[i][j])) {
+					perror("Writing item string");
+					exit(1);
+				}
+			}
+
+			j++;
+		}
+	}
+
+	currentFilePos = ftell(fout);
+	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
+	fseek(fout, prevFilePos, SEEK_SET);
+	writeUint32LE(fout, resourceSize);
+	fseek(fout, currentFilePos, SEEK_SET);
+
+	// Write out Credits data
+	currentFilePos = ftell(fout);
+	prevFilePos = currentFilePos;
+	writeUint32LE(fout, resourceSize);
+
+	Common::Array<const char *> &credits = englishCredits;
+
+	for (auto &creditStr : credits) {
+		for (uint j = 0; j < strlen(creditStr); j++) {
+			if (creditStr[j] == '\n') {
+				writeByte(fout, '\0');
+			} else {
+				writeByte(fout, creditStr[j]);
+			}
+		}
+	}
+
+	currentFilePos = ftell(fout);
+	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
+	fseek(fout, prevFilePos, SEEK_SET);
+	writeUint32LE(fout, resourceSize);
+	fseek(fout, currentFilePos, SEEK_SET);
 
 	fclose(fout);
 

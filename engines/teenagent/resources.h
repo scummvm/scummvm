@@ -1187,12 +1187,19 @@ public:
 
 	//const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
 	uint16 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
+	uint16 getCreditAddr(uint16 creditNum) { return creditsOffsets[creditNum]; }
+	uint16 getItemAddr(uint16 itemNum) { return itemOffsets[itemNum]; }
 
+	// Artificial segments added to support multiple languages
 	Segment eseg;
+	Segment creditsSeg, itemsSeg;
 private:
 	void precomputeDialogOffsets();
+	void precomputeCreditsOffsets();
+	void precomputeItemOffsets();
 
 	Common::Array<uint16> dialogOffsets;
+	Common::Array<uint16> creditsOffsets, itemOffsets;
 };
 
 } // End of namespace TeenAgent

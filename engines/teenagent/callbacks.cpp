@@ -47,7 +47,7 @@ void TeenAgentEngine::fnIntro() {
 	setOns(1, 109);
 	setLan(2, 1);
 	dialog->show(192, scene, 914, 915, kGoldDriver, kBankGuard, 2, 1);
-	displayCredits(dsAddr_introCredits1);
+	displayCredits(res->getCreditAddr(0));
 
 	loadScene(42, 139, 156, 3);
 	playSound(15, 20);
@@ -60,7 +60,7 @@ void TeenAgentEngine::fnIntro() {
 	playAnimation(918, 0, true);
 	playAnimation(917, 1, true);
 	waitAnimation();
-	displayCredits(dsAddr_introCredits2);
+	displayCredits(res->getCreditAddr(1));
 
 	loadScene(40, 139, 156, 3);
 	playMusic(3);
@@ -70,7 +70,7 @@ void TeenAgentEngine::fnIntro() {
 	playAnimation(926, 1, true);
 	waitAnimation();
 	dialog->show(194, scene, 927, 920, kFortuneTeller, kRGBBoss, 2, 1);
-	displayCredits(dsAddr_introCredits3);
+	displayCredits(res->getCreditAddr(2));
 
 	loadScene(39, 139, 156, 3);
 	playMusic(11);
@@ -95,7 +95,7 @@ void TeenAgentEngine::fnIntro() {
 	playSound(24, 11);
 	playActorAnimation(931);
 
-	displayCredits(dsAddr_introCredits4);
+	displayCredits(res->getCreditAddr(3));
 
 	playMusic(3);
 	loadScene(40, 50, 186, 1);
@@ -1109,7 +1109,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		dialog->show(202, scene, 0, 920, kMark, kRGBBoss, 0, 1);
 		inventory->clear();
 		inventory->add(kInvItemSuperGlue);
-		displayCredits(dsAddr_credits5);
+		displayCredits(res->getCreditAddr(4));
 		loadScene(1, 198, 186);
 		hideActor();
 		playActorAnimation(956);
@@ -4753,7 +4753,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(954, 0);
 		dialog->showMono(211, scene, 955, kMarkEnd, 1);
 		playMusic(2);
-		displayCredits(dsAddr_finalCredits6, 4500); // 3 minutes (infinite until key pressed in original)
+		displayCredits(res->getCreditAddr(5), 4500); // 3 minutes (infinite until key pressed in original)
 		scene->push(SceneEvent(SceneEvent::kQuit));
 		break;
 

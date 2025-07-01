@@ -22,6 +22,8 @@
 #ifndef STATIC_TABLES_H
 #define STATIC_TABLES_H
 
+#include "common/array.h"
+
 // Static data tables for Teenagent engine
 
 // Unpacked Executable MD5sum - 51b6d64721f7c4b498bfc0f323013e36
@@ -16311,6 +16313,960 @@ const static char** dialogs[] = {
 	dialog_210,
 	dialog_211,
 	dialog_212
+};
+
+const static char *englishItem0[] = {
+	"feather",
+	"\n",
+	"It\'s kicking ass!",
+	"\n\n",
+};
+
+const static char *englishItem1[] = {
+	"shotgun",
+	"\n",
+	"Looks impressive...",
+	"\n\n",
+};
+
+const static char *englishItem2[] = {
+	"toolbox",
+	"\n",
+	"Doesn\'t seem to be locked!...",
+	"\n\n",
+};
+
+const static char *englishItem3[] = {
+	"toolbox",
+	"\n",
+	// No description
+	"\n\n",
+};
+
+const static char *englishItem4[] = {
+	"spanner",
+	"\n",
+	"These things always come in handy.",
+	"\n\n",
+};
+
+const static char *englishItem5[] = {
+	"comb",
+	"\n",
+	"I\'ve heard that some people use these.",
+	"\n\n",
+};
+
+const static char *englishItem6[] = {
+	"fan",
+	"\n",
+	"Refreshing.",
+	"\n\n",
+};
+
+const static char *englishItem7[] = {
+	"broken paddle",
+	"\n",
+	"Too short to use.",
+	"\n\n",
+};
+
+const static char *englishItem8[] = {
+	"paddle",
+	"\n",
+	"The glue keeps the branch",
+	"\n",
+	"really hard.",
+	"\n\n",
+};
+
+const static char *englishItem9[] = {
+	"flower",
+	"\n",
+	"It really smells",
+	"\n",
+	"very nice.",
+	"\n\n",
+};
+
+const static char *englishItem10[] = {
+	"flower",
+	"\n",
+	"It\'s really beautiful.",
+	"\n\n",
+};
+
+const static char *englishItem11[] = {
+	"feather duster",
+	"\n",
+	"I can play janitor with this.",
+	"\n\n",
+};
+
+const static char *englishItem12[] = {
+	"chainsaw",
+	"\n",
+	"It\'s in good condition, but it has no fuel.",
+	"\n\n",
+};
+
+const static char *englishItem13[] = {
+	"drunken chainsaw",
+	"\n",
+	"A bit unsteady, but will work.",
+	"\n\n",
+};
+
+const static char *englishItem14[] = {
+	"branch",
+	"\n",
+	"The wood is very hard.",
+	"\n\n",
+};
+
+const static char *englishItem15[] = {
+	"whisky",
+	"\n",
+	"The label says this whisky is",
+	"\n",
+	"very strong.",
+	"\n\n",
+};
+
+const static char *englishItem16[] = {
+	"needle",
+	"\n",
+	"It\'s quite big for a needle...",
+	"\n\n",
+};
+
+const static char *englishItem17[] = {
+	"wrapper",
+	"\n",
+	"Nice design. Especially that \'LOVE CANDY\' label.",
+	"\n",
+	"And there\'s a heart painted on it.",
+	"\n",
+	"How SWEET...",
+	"\n\n",
+};
+
+const static char *englishItem18[] = {
+	"chocolate candy",
+	"\n",
+	"It\'s round chocolate candy.",
+	"\n",
+	"A great present.",
+	"\n\n",
+};
+
+const static char *englishItem19[] = {
+	"wild potatoe",
+	"\n",
+	"Wow! It\'s shaped like a grenade!..",
+	"\n\n",
+};
+
+const static char *englishItem20[] = {
+	"rake",
+	"\n",
+	"The space between the teeth is too large",
+	"\n",
+	"to make this rake an useful.",
+	"\n\n",
+};
+
+const static char *englishItem21[] = {
+	"heart-shaped candy",
+	"\n",
+	"I don\'t think this one improvement is enough.",
+	"\n\n",
+};
+
+const static char *englishItem22[] = {
+	"wrapped candy",
+	"\n",
+	"Brand new candy. At least it looks like it.",
+	"\n\n",
+};
+
+const static char *englishItem23[] = {
+	"ribbon",
+	"\n",
+	"It will remind me of that beatiful chick,",
+	"\n",
+	"I mean, female human being.",
+	"\n\n",
+};
+
+const static char *englishItem24[] = {
+	"rake",
+	"\n",
+	"Ready to work.",
+	"\n\n",
+};
+
+const static char *englishItem25[] = {
+	"nut",
+	"\n",
+	"A really big one.",
+	"\n\n",
+};
+
+const static char *englishItem26[] = {
+	"plastic apple",
+	"\n",
+	"It looks so real that I could",
+	"\n",
+	"even see the pips inside.",
+	"\n\n",
+};
+
+const static char *englishItem27[] = {
+	"cone",
+	"\n",
+	"It looks like one of those Havana goodies every",
+	"\n",
+	"self-respecting businessman is supposed to have",
+	"\n",
+	"glued to his smile.",
+	"\n\n",
+};
+
+const static char *englishItem28[] = {
+	"super glue",
+	"\n",
+	"It\'s turbo mega giga super ultra",
+	"\n",
+	"fast drying glue plus.",
+	"\n\n",
+};
+
+const static char *englishItem29[] = {
+	"cone & needle",
+	"\n",
+	"Something is still missing here...",
+	"\n\n",
+};
+
+const static char *englishItem30[] = {
+	"cone & feather",
+	"\n",
+	"Something is still missing here...",
+	"\n\n",
+};
+
+const static char *englishItem31[] = {
+	"dart",
+	"\n",
+	"Now all I need is a target!",
+	"\n\n",
+};
+
+const static char *englishItem32[] = {
+	"dirty feather duster",
+	"\n",
+	"It\'s clammy and soiled by soot.",
+	"\n\n",
+};
+
+const static char *englishItem33[] = {
+	"painted potatoe",
+	"\n",
+	"The only difference between this and a grenade",
+	"\n",
+	"is that potatoees usually don\'t blow up.",
+	"\n\n",
+};
+
+const static char *englishItem34[] = {
+	"car jack",
+	"\n",
+	"Looks reliable.",
+	"\n\n",
+};
+
+const static char *englishItem35[] = {
+	"dino bone",
+	"\n",
+	"It\'s big and well preserved. It must have been",
+	"\n",
+	"a really big, er..., animal, I think...",
+	"\n\n",
+};
+
+const static char *englishItem36[] = {
+	"shovel",
+	"\n",
+	"I can PLAY DIGGER with it. So to speak.",
+	"\n\n",
+};
+
+const static char *englishItem37[] = {
+	"rope",
+	"\n",
+	"Looks strong.",
+	"\n\n",
+};
+
+const static char *englishItem38[] = {
+	"mask",
+	"\n",
+	"It will help me see better underwater.",
+	"\n\n",
+};
+
+const static char *englishItem39[] = {
+	"fins",
+	"\n",
+	"They will help me feel more like my",
+	"\n",
+	"underwater brothers.",
+	"\n\n",
+};
+
+const static char *englishItem40[] = {
+	"diving equipment",
+	"\n",
+	"Watch out, water! Here I come!",
+	"\n\n",
+};
+
+const static char *englishItem41[] = {
+	"anchor",
+	"\n",
+	"Not big, but heavy enough to sink the boat.",
+	"\n\n",
+};
+
+const static char *englishItem42[] = {
+	"grappling hook",
+	"\n",
+	"Watch out, mountains, here I come!",
+	"\n\n",
+};
+
+const static char *englishItem43[] = {
+	"sickle",
+	"\n",
+	"It\'s so blunt, that I couldn\'t even cut",
+	"\n",
+	"butter with it.",
+	"\n\n",
+};
+
+const static char *englishItem44[] = {
+	"somewhat rotten cheese",
+	"\n",
+	"Reminds me of my room.",
+	"\n\n",
+};
+
+const static char *englishItem45[] = {
+	"sharpened sickle",
+	"\n",
+	"Lambs, be silent. Here comes the pain...",
+	"\n\n",
+};
+
+const static char *englishItem46[] = {
+	"handkerchief",
+	"\n",
+	"The owner must have such big nose that he needs",
+	"\n",
+	"to use a whole bar of soap just to wash it.",
+	"\n\n",
+};
+
+const static char *englishItem47[] = {
+	"mouse",
+	"\n",
+	"It\'s very active.",
+	"\n\n",
+};
+
+const static char *englishItem48[] = {
+	"rock",
+	"\n",
+	"It\'s very regular, just like the snowball.",
+	"\n\n",
+};
+
+const static char *englishItem49[] = {
+	"nugget",
+	"\n",
+	"Symbol: Au, atomic no: 79, atomic wt.: 196.97.",
+	"\n",
+	"In other words: GOLD!!! Yes! Yes!",
+	"\n\n",
+};
+
+const static char *englishItem50[] = {
+	"banknote",
+	"\n",
+	// No description
+	"\n\n",
+};
+
+const static char *englishItem51[] = {
+	"dictaphone",
+	"\n",
+	"There are no batteries inside.",
+	"\n\n",
+};
+
+const static char *englishItem52[] = {
+	"polaroid",
+	"\n",
+	"It\'s ready to take a picture.",
+	"\n\n",
+};
+
+const static char *englishItem53[] = {
+	"video tape",
+	"\n",
+	"It has no label.",
+	"\n\n",
+};
+
+const static char *englishItem54[] = {
+	"sheet of paper",
+	"\n",
+	"There\'s nothing important about it.",
+	"\n\n",
+};
+
+const static char *englishItem55[] = {
+	"cognac",
+	"\n",
+	"Fancy name just for an excuse for drinking.",
+	"\n\n",
+};
+
+const static char *englishItem56[] = {
+	"remote control",
+	"\n",
+	"It has user-friendly interface.",
+	"\n",
+	"One can play and stop.",
+	"\n\n",
+};
+
+const static char *englishItem57[] = {
+	"ice tongs",
+	"\n",
+	"Very handy tool.",
+	"\n\n",
+};
+
+const static char *englishItem58[] = {
+	"cork",
+	"\n",
+	"It\'s a stopper kind of cork.",
+	"\n\n",
+};
+
+const static char *englishItem59[] = {
+	"wrapped cork",
+	"\n",
+	"Now it\'s more appropiate.",
+	"\n\n",
+};
+
+const static char *englishItem60[] = {
+	"photo",
+	"\n",
+	"It\'s a photo of John Noty. I caught him",
+	"\n",
+	"when he was singing the high C. Yuck!",
+	"\n\n",
+};
+
+const static char *englishItem61[] = {
+	"chilli",
+	"\n",
+	"The label on the bottle says it\'s",
+	"\n",
+	"\'ORIGINAL MEXICAN CHILLI\'. Sure.",
+	"\n\n",
+};
+
+const static char *englishItem62[] = {
+	"pastry roller",
+	"\n",
+	"It\'s made of very hard wood.",
+	"\n\n",
+};
+
+const static char *englishItem63[] = {
+	"fake chilli",
+	"\n",
+	"Now that\'s what I call strong seasoning.",
+	"\n\n",
+};
+
+const static char *englishItem64[] = {
+	"label",
+	"\n",
+	"\'ORIGINAL MEXICAN CHILLI\'.",
+	"\n\n",
+};
+
+const static char *englishItem65[] = {
+	"batteries",
+	"\n",
+	"It\'s a pair of new batteries.",
+	"\n\n",
+};
+
+const static char *englishItem66[] = {
+	"dictaphone",
+	"\n",
+	"\'One-two-one-two, it\'s me the one",
+	"\n",
+	"and only Mark MC....\'",
+	"\n",
+	"It works.",
+	"\n\n",
+};
+
+const static char *englishItem67[] = {
+	"burning paper",
+	"\n",
+	"Amazing, isn\'t it?",
+	"\n",
+	"(Not to mention: unbelievable).",
+	"\n\n",
+};
+
+const static char *englishItem68[] = {
+	"meat",
+	"\n",
+	"There\'s veal in the plastic bag.",
+	"\n\n",
+};
+
+const static char *englishItem69[] = {
+	"plastic bag",
+	"\n",
+	"Gee, I hope it\'s recyclable. I couldn\'t",
+	"\n",
+	"sleep otherwise.",
+	"\n\n",
+};
+
+const static char *englishItem70[] = {
+	"socks",
+	"\n",
+	"These socks suck.",
+	"\n\n",
+};
+
+const static char *englishItem71[] = {
+	"pills",
+	"\n",
+	"There are about twenty pills in this jar.",
+	"\n\n",
+};
+
+const static char *englishItem72[] = {
+	"handle",
+	"\n",
+	"It looks like a standard door handle...",
+	"\n\n",
+};
+
+const static char *englishItem73[] = {
+	"chilli",
+	"\n",
+	"Nice bottle. I like the shape.",
+	"\n\n",
+};
+
+const static char *englishItem74[] = {
+	"pass",
+	"\n",
+	"\"Let this guy in. RGB Chief.\"",
+	"\n\n",
+};
+
+const static char *englishItem75[] = {
+	"bulb",
+	"\n",
+	"It\'s completely useless.",
+	"\n\n",
+};
+
+const static char *englishItem76[] = {
+	"jail key",
+	"\n",
+	"Surprisingly, it\'s the key to the jail.",
+	"\n\n",
+};
+
+const static char *englishItem77[] = {
+	"delicate plant",
+	"\n",
+	"Whoa, it tickles!",
+	"\n\n",
+};
+
+const static char *englishItem78[] = {
+	"Swiss Army knife",
+	"\n",
+	"I wonder if it\'s got a TV on these too.",
+	"\n\n",
+};
+
+const static char *englishItem79[] = {
+	"spring",
+	"\n",
+	"I could launch a rocket with it!",
+	"\n\n",
+};
+
+const static char *englishItem80[] = {
+	"shovel",
+	"\n",
+	"Nice, handy tool.",
+	"\n\n",
+};
+
+const static char *englishItem81[] = {
+	"kaleidoscope",
+	"\n",
+	"I could spend my whole life looking through",
+	"\n",
+	"this. Well, let\'s say five minutes.",
+	"\n",
+	"Oh, all right, it\'s boring.",
+	"\n\n",
+};
+
+const static char *englishItem82[] = {
+	"\"Soldier News\"",
+	"\n",
+	"It\'s just the same as women\'s magazines,",
+	"\n",
+	"but there are guns instead of perfumes.",
+	"\n",
+	"It\'s cool anyway.",
+	"\n\n",
+};
+
+const static char *englishItem83[] = {
+	"grenade",
+	"\n",
+	"I must be crazy to put in my pocket.",
+	"\n",
+	"Something horrible might happen...",
+	"\n\n",
+};
+
+const static char *englishItem84[] = {
+	"mug",
+	"\n",
+	"It\'s empty.",
+	"\n\n",
+};
+
+const static char *englishItem85[] = {
+	"mug full of mud",
+	"\n",
+	"Why did I fill the mug with mud?",
+	"\n",
+	"\n",
+	"That makes no sense!",
+	"\n\n",
+};
+
+const static char *englishItem86[] = {
+	"crumbs",
+	"\n",
+	"These are some remains of bread.",
+	"\n\n",
+};
+
+const static char *englishItem87[] = {
+	"rope",
+	"\n",
+	"It\'s thin and long.",
+	"\n\n",
+};
+
+const static char *englishItem88[] = {
+	"rope tied to grenade",
+	"\n",
+	"My patent for a bombastic yoyo.",
+	"\n\n",
+};
+
+const static char *englishItem89[] = {
+	"medicine",
+	"\n",
+	"They look like sleeping pills.",
+	"\n",
+	"Although I don\'t have any idea why.",
+	"\n\n",
+};
+
+const static char *englishItem90[] = {
+	"drugged food",
+	"\n",
+	"Smells like Teen Spirit.",
+	"\n\n",
+};
+
+const static char *englishItem91[] = {
+	"bird",
+	"\n",
+	"It would make a great dinn... I mean",
+	"\n",
+	"friend, of course.",
+	"\n\n",
+};
+
+const static char **englishItems[] = {
+	englishItem0, englishItem1, englishItem2, englishItem3, englishItem4,
+	englishItem5, englishItem6, englishItem7, englishItem8, englishItem9,
+	englishItem10, englishItem11, englishItem12, englishItem13, englishItem14,
+	englishItem15, englishItem16, englishItem17, englishItem18, englishItem19,
+	englishItem20, englishItem21, englishItem22, englishItem23, englishItem24,
+	englishItem25, englishItem26, englishItem27, englishItem28, englishItem29,
+	englishItem30, englishItem31, englishItem32, englishItem33, englishItem34,
+	englishItem35, englishItem36, englishItem37, englishItem38, englishItem39,
+	englishItem40, englishItem41, englishItem42, englishItem43, englishItem44,
+	englishItem45, englishItem46, englishItem47, englishItem48, englishItem49,
+	englishItem50, englishItem51, englishItem52, englishItem53, englishItem54,
+	englishItem55, englishItem56, englishItem57, englishItem58, englishItem59,
+	englishItem60, englishItem61, englishItem62, englishItem63, englishItem64,
+	englishItem65, englishItem66, englishItem67, englishItem68, englishItem69,
+	englishItem70, englishItem71, englishItem72, englishItem73, englishItem74,
+	englishItem75, englishItem76, englishItem77, englishItem78, englishItem79,
+	englishItem80, englishItem81, englishItem82, englishItem83, englishItem84,
+	englishItem85, englishItem86, englishItem87, englishItem88, englishItem89,
+	englishItem90, englishItem91,
+};
+
+Common::Array<const char *> englishCredits = {
+	"\xdd\xec", // 0
+	"Pbackgrounds",
+	"\n",
+	"iANDRZEJ DOBRZY;SKI",
+	"\n\n"
+	"\xe3\xd2", // 1
+	"Pmusic",
+	"\n",
+	"iRADEK SZAMREJ",
+	"\n\n"
+	"\xd7\xe6", // 2
+	"Panimation and graphics",
+	"\n",
+	"iGRZEGORZ MIECHOWSKI",
+	"\n\n"
+	"\xd9\xe8", // 3
+	"Pprogramming and script",
+	"\n",
+	"iADRIAN CHMIELARZ",
+	"\n\n"
+	"\xdd\xec", // 4
+	"\\after the tiring journey...",
+	"\n\n"
+	"\xdd\xec", // 5
+	"\\THE END",
+	"\n\n"
+	"programming", // 6
+	"\n",
+	"ADRIAN CHMIELARZ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"animation",
+	"\n",
+	"GRZEGORZ MIECHOWSKI",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"additional animations",
+	"\n",
+	"TOMASZ PILIK",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"backgrounds",
+	"\n",
+	"ANDRZEJ DOBRZYNSKI",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"music",
+	"\n",
+	"RADEK SZAMREJ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"cover art",
+	"\n",
+	"DARIUSZ ANACKI",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"translation help",
+	"\n",
+	"PETER WELLS",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"betatesters",
+	"\n",
+	"TOMASZ FURMANIUK",
+	"\n",
+	"PATRYK SAWICKI",
+	"\n",
+	"PAWEL MIECHOWSKI",
+	"\n",
+	"MAREK CHMIELARZ",
+	"\n",
+	"JEDREK WICHA",
+	"\n",
+	"MR. JOHN DOE",
+	"\n",
+	"MARCIN DREWS",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"ideas",
+	"\n",
+	"ADRIAN CHMIELARZ",
+	"\n",
+	"GRZEGORZ MIECHOWSKI",
+	"\n",
+	"ANDRZEJ SAWICKI",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"print",
+	"\n",
+	"JAROS]AW WEISS",
+	"\n",
+	"AGENCJA STYL",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"thanks",
+	"\n",
+	"HENRY KUTTNER",
+	"\n",
+	"U-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW",
+	"\n",
+	"EPIC MEGAGAMES",
+	"\n",
+	"XLAND SOFTWARE PUBLISHING",
+	"\n",
+	"KATARZYNA MIECHOWSKA",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"special thanks",
+	"\n",
+	"ANDRZEJ MICHALAK",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"production",
+	"\n",
+	"METROPOLIS SOFTWARE HOUSE",
+	"\n",
+	"(c) 1994-1995",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	"All allusions and puns",
+	"\n",
+	"are intentional",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n",
+	" ",
+	"\n\n"
 };
 
 #endif

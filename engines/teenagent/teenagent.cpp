@@ -796,7 +796,7 @@ void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 f
 void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
-	const byte *src = res->dseg.ptr(addr);
+	const byte *src = res->creditsSeg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
 	event.lan = 8;
@@ -820,7 +820,7 @@ void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
 
 void TeenAgentEngine::displayCredits() {
 	SceneEvent event(SceneEvent::kCredits);
-	event.message = parseMessage(dsAddr_finalCredits7);
+	event.message = parseMessage(res->getCreditAddr(6));
 	event.dst.y = kScreenHeight;
 
 	int lines = 1;
