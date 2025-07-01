@@ -798,7 +798,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 	// Create new item
 	GizmoItem *item = (GizmoItem *)mem_alloc(sizeof(GizmoItem), "*gui gizmo item");
 	if (!item)
-		error("gizmo_add_item - Not enough emory to create item (%d bytes)", sizeof(GizmoItem));
+		error("gizmo_add_item - Not enough emory to create item (%zu bytes)", sizeof(GizmoItem));
 
 	// Put the new item at the head of the list
 	item->_next = gizmo->_items;
@@ -825,7 +825,7 @@ static GizmoItem *gizmo_add_item(Gizmo *gizmo, int id,
 
 	GizmoButton *btn = (GizmoButton *)mem_alloc(sizeof(GizmoButton), "*gizmo button");
 	if (!btn)
-		error("gizmo_add_item - Not enough emory to create btn (%d bytes)", sizeof(GizmoButton));
+		error("gizmo_add_item - Not enough emory to create btn (%zu bytes)", sizeof(GizmoButton));
 
 	btn->_state = selected ? SELECTED : NOTHING;
 	btn->_index = btnIndex;
