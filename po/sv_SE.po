@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-01 05:54+0000\n"
-"PO-Revision-Date: 2025-06-30 23:36+0000\n"
+"PO-Revision-Date: 2025-07-02 00:36+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -6930,17 +6930,15 @@ msgstr "Läs in ändå"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "Aktivera skärmar för titel och kopieringsskydd (om det finns)"
 
 #: engines/awe/metaengine.cpp:36
-#, fuzzy
-#| msgid ""
-#| "Enable any copy protection that would otherwise be bypassed by default."
 msgid ""
 "Displays title and copy protection screens that would otherwise be bypassed "
 "by default."
 msgstr ""
-"Aktivera kopieringsskydd som annars skulle ha överhoppats som standard."
+"Aktivera skärmar för titel och kopieringsskydd som annars skulle ha hoppats "
+"över som standard."
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
@@ -7446,7 +7444,7 @@ msgstr "Spelinformation"
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
 msgid "Quit prompt"
-msgstr "Avsluta"
+msgstr "Avslutningsfråga"
 
 #. I18N: Here ALTered Item refers to the dice that has been altered/changed.
 #. In order to escape the dice game loop press Right/Left Alt
