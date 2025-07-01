@@ -262,11 +262,11 @@ void RichTextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 
 		_pf32.colorToRGB(_bgColor, r, g, b);
 		writeStream->writeByte(r);
-		writeStream->writeByte(0); 
+		writeStream->writeByte(0);
 		writeStream->writeByte(g);
-		writeStream->writeByte(0); 
+		writeStream->writeByte(0);
 		writeStream->writeByte(b);
-		writeStream->writeByte(0); 
+		writeStream->writeByte(0);
 	} else {
 		warning("RichTextCastMember()::writeCastData(): >D5 isn't handled");
 	}

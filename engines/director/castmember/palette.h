@@ -43,11 +43,9 @@ public:
 	void load() override;
 	void unload() override;
 
-	void writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset);
-
+	uint32 writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset);
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
 	void writeCastData(Common::MemoryWriteStream *writeStream) override;
-	uint32 getPaletteDataSize();
 
 	PaletteV4 *_palette;
 };
@@ -55,4 +53,3 @@ public:
 } // End of namespace Director
 
 #endif
- 

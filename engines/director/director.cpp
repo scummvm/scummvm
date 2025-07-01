@@ -385,6 +385,7 @@ Common::Error DirectorEngine::run() {
 	if (debugChannelSet(-1, kDebugSaving)) {
 		Common::Path writePath("./dumps/writtenMovie.dir");
 		_mainArchive->writeToFile(writePath);
+		getCurrentMovie()->getCast()->saveCast();
 	}
 
 	return Common::kNoError;

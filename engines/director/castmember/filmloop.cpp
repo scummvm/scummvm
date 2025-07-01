@@ -47,6 +47,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_crop = false;
 	_center = false;
 
+	// We are ignoring some of the bits in the flags
 	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
 		_initialRect = Movie::readRect(stream);
 		uint32 flags = stream.readUint32BE();
@@ -715,12 +716,12 @@ Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int1
 
 uint32 FilmLoopCastMember::getCastDataSize() {
 	// We're only reading the _initialRect and _vflags from the Cast Data
-	// _initialRect : 8 bytes + _vflags : 4 bytes + (castType (see Cast::loadCastData() for Director 4 only) 1 byte
+	// _initialRect : 8 bytes + flags : 4 bytes + 2 bytes unk1 + (castType (see Cast::loadCastData() for Director 4 only) 1 byte
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		// It has been observed that the DigitalVideoCastMember has 
-		return 8 + 4 + 1;			// No flags (so instead of 2 extra bytes, we have 1) for FilmLoopCastMember 
+		// It has been observed that the DigitalVideoCastMember has
+		return 8 + 4 + 2 + 1;			// No flags1 (differnt from flags read in the constructor) (so instead of 2 extra bytes, we have 1) for FilmLoopCastMember
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		return 8 + 4;
+		return 8 + 4 + 2;
 	}
 
 	warning("FilmLoopCastMember::getCastDataSize(): unhandled or invalid cast version: %d", _cast->_version);

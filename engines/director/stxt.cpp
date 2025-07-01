@@ -153,18 +153,18 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 }
 
 void FontStyle::write(Common::MemoryWriteStream *writeStream) {
-	writeStream->writeUint32LE(formatStartOffset);
-	writeStream->writeUint16LE(height);
-	writeStream->writeUint16LE(ascent);
-	writeStream->writeUint16LE(fontId);
+	writeStream->writeUint32BE(formatStartOffset);
+	writeStream->writeUint16BE(height);
+	writeStream->writeUint16BE(ascent);
+	writeStream->writeUint16BE(fontId);
 
 	writeStream->writeByte(textSlant);
-	writeStream->seek(1, SEEK_CUR);	// padding
-	writeStream->writeUint16LE(fontSize);
+	writeStream->writeByte(0);	// padding
+	writeStream->writeUint16BE(fontSize);
 
-	writeStream->writeUint16LE(r);
-	writeStream->writeUint16LE(g);
-	writeStream->writeUint16LE(b);
+	writeStream->writeUint16BE(r);
+	writeStream->writeUint16BE(g);
+	writeStream->writeUint16BE(b);
 }
 
 } // End of namespace Director

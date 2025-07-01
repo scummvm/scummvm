@@ -333,20 +333,20 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 
 void Movie::saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info) {
 	// The writing functionality was intrioduced in Director 4
-	writeStream->writeUint32BE(20);				// offset: d4 and up movies is always 20 
+	writeStream->writeUint32BE(20);				// offset: d4 and up movies is always 20
 	writeStream->writeUint32BE(info.unk1);
 	writeStream->writeUint32BE(info.unk2);
-	writeStream->writeUint32BE(info.flags);	
+	writeStream->writeUint32BE(info.flags);
 	writeStream->writeUint32BE(info.scriptId);
 	writeStream->writeUint16BE(info.strings.size());		// count of strings in the info
-	
+
 	uint32 length = 0;
-	writeStream->writeUint32LE(length);
+	writeStream->writeUint32BE(length);
 	for (uint16 i = 0; i < info.strings.size(); i++) {
-		length += info.strings[i].len; 
-		writeStream->writeUint32LE(length);
+		length += info.strings[i].len;
+		writeStream->writeUint32BE(length);
 	}
-	
+
 	for (uint16 i = 0; i < info.strings.size(); i++) {
 		writeStream->write(info.strings[i].data, info.strings[i].len);
 	}
