@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-01 05:54+0000\n"
-"PO-Revision-Date: 2025-07-01 13:22+0000\n"
-"Last-Translator: Rodrigo Vegas Sánchez-Ferrero <rodrigo.vegas@gmail.com>\n"
+"PO-Revision-Date: 2025-07-01 13:23+0000\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -7034,13 +7034,15 @@ msgstr "Cargar de todas maneras"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr "Activa, si existen, las pantallas de título y de protección de copia"
+msgstr "Activar pantallas de título y de protección anticopia (si existen)"
 
 #: engines/awe/metaengine.cpp:36
 msgid ""
 "Displays title and copy protection screens that would otherwise be bypassed "
 "by default."
-msgstr "Activa el sistema de protección de copia que, por defecto, se omite."
+msgstr ""
+"Activa las pantallas de título y de protección anticopia que se omiten por "
+"defecto."
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
