@@ -72,7 +72,7 @@ void Room917::daemon() {
 		break;
 
 	case 3:
-		_G(flags)[V291] = true;
+		_G(flags)[V291] = 1;
 		adv_kill_digi_between_rooms(false);
 		digi_play_loop("950_s47", 3, 70, -1, 950);
 		digi_stop(1);
