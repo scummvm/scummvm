@@ -44,7 +44,7 @@ void Room493::init() {
 	_panning = 255;
 
 	if (_G(game).previous_room != 494) {
-		digi_preload("lostcity");
+		digi_preload("lostcity", 917);
 
 		if (_G(game).previous_room != 917) {
 			digi_preload("riptheme", 917);
@@ -79,7 +79,7 @@ void Room493::daemon() {
 		break;
 
 	case 90:
-		series_stream_break_on_frame(_credits, FRAMES[5] - 2, 100);
+		series_stream_break_on_frame(_credits, FRAMES[5] - 2, 110);
 		setTrigger(100);
 		break;
 
