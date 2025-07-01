@@ -32,6 +32,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
+	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 	ON_WM_DRAWITEM()
 	ON_WM_SETFONT()
@@ -238,6 +239,10 @@ CWnd *CWnd::GetFocus() const {
 	return AfxGetApp()->GetFocus();
 }
 
+void CWnd::OnClose() {
+	DestroyWindow();
+}
+
 void CWnd::DestroyWindow() {
 	// Lose focus if it currently has it
 	auto *app = AfxGetApp();
@@ -254,6 +259,9 @@ void CWnd::DestroyWindow() {
 	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
 	}
 
+	// Mark as not needed any repainting
+	Validate();
+
 	// Detach any child controls
 	for (auto &node : _children)
 		node._value->m_pParentWnd = nullptr;
@@ -263,6 +271,11 @@ void CWnd::DestroyWindow() {
 	for (CWnd *ctl : _ownedControls)
 		delete ctl;
 	_ownedControls.clear();
+
+	// If it's the active window, pop it
+	if (this == AfxGetApp()->GetActiveWindow()) {
+		AfxGetApp()->PopActiveWindow();
+	}
 
 	// If still attached to parent, remove from it
 	if (m_pParentWnd) {
@@ -620,6 +633,10 @@ LReturnTrue:
 	if (pResult != nullptr)
 		*pResult = lResult;
 	return TRUE;
+}
+
+BOOL CWnd::Validate() {
+	return ValidateRect(nullptr);
 }
 
 BOOL CWnd::ValidateRect(LPCRECT lpRect) {

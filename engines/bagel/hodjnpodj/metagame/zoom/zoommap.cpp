@@ -33,7 +33,6 @@ namespace Zoom {
 #define IDC_LEAVE   999
 
 extern HCURSOR          hGameCursor;
-extern CMainZoomWindow  *pMainGameWnd;
 
 CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 

@@ -1093,7 +1093,7 @@ protected:
 	}
 	afx_msg void OnCancelMode() {}
 	afx_msg void OnChildActivate() {}
-	afx_msg void OnClose() {}
+	afx_msg void OnClose();
 	afx_msg void OnContextMenu(CWnd *pWnd, CPoint pos) {}
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct) {
 		return 0;
@@ -1360,6 +1360,7 @@ public:
 	static void SendMessageToDescendants(HWND hWnd, UINT message,
 		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm);
 
+	BOOL Validate();
 	BOOL ValidateRect(LPCRECT lpRect = nullptr);
 	BOOL InvalidateRect(LPCRECT lpRect, BOOL bErase = TRUE);
 	void GetWindowRect(LPRECT lpRect) const;
@@ -1432,8 +1433,6 @@ protected:
 	    LPCRECT lpRectClient = nullptr,
 	    BOOL bStretch = TRUE
 	);
-
-	void OnClose();
 
 	DECLARE_MESSAGE_MAP()
 

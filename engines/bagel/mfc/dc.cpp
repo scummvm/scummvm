@@ -569,17 +569,18 @@ CDC::Impl::Impl(HDC srcDc) {
 	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
 	_bitmap = _defaultBitmap._bitmap;
 
-	// Defaults
-	CWinApp *app = AfxGetApp();
-
 	if (src) {
 		_font = src->_font;
 		_pen = src->_pen;
 		_brush = src->_brush;
+		_palette = src->_palette;
 	} else {
+		// Defaults
+		CWinApp *app = AfxGetApp();
 		_font = app->getDefaultFont();
 		_pen = app->getDefaultPen();
 		_brush = app->getDefaultBrush();
+		_palette = app->getSystemPalette();
 	}
 }
 
@@ -650,17 +651,14 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
 	HPALETTE oldPal = _palette;
-	_palette = pal;
-
-	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
 
 	if (pal) {
+		_palette = pal;
+		CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+
 		auto *newPal = static_cast<CPalette::Impl *>(pal);
 		if (bitmap)
 			bitmap->setPalette(newPal->data(), 0, newPal->size());
-	} else {
-		if (bitmap)
-			bitmap->clearPalette();
 	}
 
 	return oldPal;
@@ -676,6 +674,7 @@ CPalette *CDC::Impl::selectPalette(CPalette *pal) {
 
 UINT CDC::Impl::realizePalette() {
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	assert(pal);
 	AfxGetApp()->setPalette(*pal);
 	return 256;
 }
