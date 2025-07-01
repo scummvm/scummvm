@@ -3,6 +3,7 @@ MODULE := devtools/create_teenagent
 
 MODULE_OBJS := \
 	create_teenagent.o \
+	array.o \
 	util.o
 
 # Set the name of the executable

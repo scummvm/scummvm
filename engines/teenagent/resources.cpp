@@ -88,6 +88,60 @@ void Resources::precomputeDialogOffsets() {
 		debug(1, "\tDialog #%d: Offset 0x%04x", i, dialogOffsets[i]);
 }
 
+void Resources::precomputeCreditsOffsets() {
+	creditsOffsets.push_back(0);
+	int n = 0; // number of consecute newline characters
+	byte current, last = 0xff;
+
+	for (uint i = 0; i < creditsSeg.size(); i++) {
+		current = creditsSeg.get_byte(i);
+
+		if (n == 2) {
+			creditsOffsets.push_back(i);
+			n = 0;
+		}
+
+		if (current != 0x00 && last == 0x00)
+			n = 0;
+
+		if (current == 0x00)
+			n++;
+
+		last = current;
+	}
+
+	debug(1, "Resources::precomputeCreditsOffsets() - Found %d credits", creditsOffsets.size());
+	for (uint i = 0; i < creditsOffsets.size(); i++)
+		debug(1, "\tCredit #%d: Offset 0x%04x", i, creditsOffsets[i]);
+}
+
+void Resources::precomputeItemOffsets() {
+	itemOffsets.push_back(0);
+	int n = 0;
+	byte current, last = 0xff;
+
+	for (uint i = 0; i < itemsSeg.size(); i++) {
+		current = itemsSeg.get_byte(i);
+
+		if (n == 2) {
+			itemOffsets.push_back(i);
+			n = 0;
+		}
+
+		if (current != 0x00 && last == 0x00)
+			n = 0;
+
+		if (current == 0x00)
+			n++;
+
+		last = current;
+	}
+
+	debug(1, "Resources::precomputeItemOffsets() - Found %d items", itemOffsets.size());
+	for (uint i = 0; i < itemOffsets.size(); i++)
+		debug(1, "\tItem #%d: Offset 0x%04x", i, itemOffsets[i]);
+}
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	Common::String filename = "teenagent.dat";
@@ -108,10 +162,20 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	dat->skip(CSEG_SIZE);
 	dseg.read(dat, DSEG_SIZE);
-	eseg.read(dat, ESEG_SIZE);
+
+	uint resourceSize = dat->readUint32LE();
+	eseg.read(dat, resourceSize);
+
+	resourceSize = dat->readUint32LE();
+	itemsSeg.read(dat, resourceSize);
+
+	resourceSize = dat->readUint32LE();
+	creditsSeg.read(dat, resourceSize);
 	delete dat;
 
 	precomputeDialogOffsets();
+	precomputeItemOffsets();
+	precomputeCreditsOffsets();
 
 	FilePack varia;
 	varia.open("varia.res");
