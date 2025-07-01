@@ -268,7 +268,7 @@ protected:
 LibRetroPipeline::LibRetroPipeline()
 	: _inputPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _outputPipeline(ShaderMan.query(ShaderManager::kDefault)),
-	  _needsScaling(false), _shaderPreset(nullptr), _linearFiltering(false),
+	  _needsScaling(false), _shaderPreset(nullptr), _linearFiltering(false), _rotation(Common::kRotationNormal),
 	  _currentTarget(uint(-1)), _inputWidth(0), _inputHeight(0),
 	  _isAnimated(false), _frameCount(0) {
 }
