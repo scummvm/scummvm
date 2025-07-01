@@ -201,7 +201,7 @@ void Room918::daemon() {
 		break;
 
 	case 320:
-		disable_player_commands_and_fade_init(true);
+		disable_player_commands_and_fade_init(-1);
 		break;
 
 	case 325:

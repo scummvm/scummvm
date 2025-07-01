@@ -36,7 +36,7 @@ void Room917::preload() {
 void Room917::init() {
 	player_set_commands_allowed(false);
 	adv_kill_digi_between_rooms(false);
-	if (_G(flags)[V291]) {
+	if (_G(flags)[V291] != 1) {
 		digi_preload("950_s47", 950);
 		digi_preload("907r02", 950);
 		_roomStates_tt = series_stream("917zep01", 12, 256, -1);
