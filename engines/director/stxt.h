@@ -24,7 +24,7 @@
 
 namespace Common {
 class ReadStreamEndian;
-class MemoryWriteStream; 
+class MemoryWriteStream;
 }
 
 namespace Director {

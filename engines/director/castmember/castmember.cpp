@@ -311,17 +311,17 @@ void CastMember::unload() {
 // Default implementation to write the 'CASt' resources as they are
 // Cast members have two types of "information", one is _data_ and the other is _info_
 // _data_ is the actual "data" (e.g. the pixel image data of a bitmap, sound data of a sound cast member)
-// Whereas _info_ is metadata (size, name, flags, etc.)  
+// Whereas _info_ is metadata (size, name, flags, etc.)
 // Some castmembers have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
-// Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource) 
+// Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource)
 uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset, uint32 castIndex) {
-	// We'll need the original resource stream if there is no change in the castmember 
+	// We'll need the original resource stream if there is no change in the castmember
 	Common::SeekableReadStreamEndian *stream = _cast->getResource(MKTAG('C', 'A', 'S', 't'), castIndex);
 	uint32 size = stream->size();
-	
+
 	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
 	writeStream->writeUint32LE(size);
-	
+
 	writeStream->writeStream(stream);
 	return size + 8;
 }
@@ -340,7 +340,7 @@ uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uin
 		writeStream->writeUint32BE(castInfoToWrite);
 		writeStream->writeByte((uint8)_type);
 		castDataToWrite -= 1;
-		
+
 		if (_flags1 != 0xFF) {					// In case of TextCastMember, this should be true
 			writeStream->writeByte(_flags1);
 			castDataToWrite -= 1;
@@ -374,7 +374,7 @@ uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uin
 // This is the data that is inside the 'CASt' resource
 // These functions (getCastDataSize() and writeCastData() default implementations, are not supposed to be called
 // If the data is modified in the castmember, we implement a custom getCastDataSize() and writeCastData() for that member
-// If it is not modified, then we write it as it is from the original source in the overridden 
+// If it is not modified, then we write it as it is from the original source in the overridden
 // writeCAStResource(Common::MemoryWriteStream, uint32, uint32) function which doesn't call these default functions
 uint32 CastMember::getCastDataSize() {
 	debug("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data size");
@@ -405,12 +405,14 @@ uint32 CastMember::getCastResourceSize() {
 	uint32 headerSize = 0;
 
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		headerSize = 9;
+		// Header size for director version 4
+		headerSize = 7;			// see Cast::loadCastData() for director version 4
 		if (_flags1 != 0xFF) {
 			headerSize += 1;
 		}
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		headerSize = 12;
+		// Header size for director version 5
+		headerSize = 12;		// See Cast::loadCastData() for director version 5
 	}
 
 	return headerSize + getCastInfoSize() + getCastDataSize();

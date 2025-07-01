@@ -143,10 +143,10 @@ Common::String ScriptCastMember::formatInfo() {
 
 uint32 ScriptCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		// 2 bytes for type and unk1 + 1 byte for castType (see Cast::loadCastData() for Director 4 only 
+		// 2 bytes for type and unk1 + 1 byte for castType (see Cast::loadCastData() for Director 4 only
 		return 2 + 1;
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
-		// type and unk1: 2 bytes 
+		// type and unk1: 2 bytes
 		return 2;
 	} else {
 		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);

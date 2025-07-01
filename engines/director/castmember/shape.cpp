@@ -224,7 +224,7 @@ uint32 ShapeCastMember::getCastDataSize() {
 	// _fillType : 1 byte
 	// _lineThickness : 1 byte
 	// _lineDirection : 1 byte
-	// Total : 17 bytes 
+	// Total : 17 bytes
 	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		return 17 + 1;
@@ -239,7 +239,7 @@ uint32 ShapeCastMember::getCastDataSize() {
 void ShapeCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(0);
 	writeStream->writeByte(1);
-	
+
 	Movie::writeRect(writeStream, _initialRect);
 	writeStream->writeUint16LE(_pattern);
 

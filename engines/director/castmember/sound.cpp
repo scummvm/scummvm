@@ -200,7 +200,7 @@ bool SoundCastMember::setField(int field, const Datum &d) {
 }
 
 // Similar to PaletteCastMember, SoundCastMember has no data in the 'CASt' resource or is ignored
-// This is the data in 'CASt' resource 
+// This is the data in 'CASt' resource
 uint32 SoundCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		return 0;

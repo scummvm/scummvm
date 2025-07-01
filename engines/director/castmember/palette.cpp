@@ -122,55 +122,17 @@ void PaletteCastMember::unload() {
 	// No unload necessary.
 }
 
-void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	uint32 castSize = getPaletteDataSize() + 8;
-	
-	/**/
-	byte *dumpData = nullptr;
-	dumpData = (byte *)calloc(castSize, sizeof(byte));
-	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
-	/**/
-
-	// writeStream->seek(offset);
-	writeStream->writeUint32LE(MKTAG('C', 'L', 'U', 'T'));
-	writeStream->writeUint32LE(getPaletteDataSize());
-
-	const byte *pal = _palette->palette;
-
-	for (int i = 0; i < _palette->length; i++) {
-		writeStream->writeByte(pal[3 * i]);
-		writeStream->writeByte(pal[3 * i]);
-
-		writeStream->writeByte(pal[3 * i + 1]);
-		writeStream->writeByte(pal[3 * i + 1]);
-
-		writeStream->writeByte(pal[3 * i + 2]);
-		writeStream->writeByte(pal[3 * i + 2]);
-	}
-
-	dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
-	delete writeStream;
-}
-
 // PaletteCastMember has no data in the 'CASt' resource or is ignored
-// This is the data in 'CASt' resource 
+// This is the data in 'CASt' resource
 uint32 PaletteCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		// It has been observed as well that the Data size in PaletteCastMember's CASt resource is 0 for d5
 		return 0;
 	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		// (castType (see Cast::loadCastData() for Director 4 only) 1 byte
-		return 1;			// Since SoundCastMember doesn't have any flags	
+		return 1;			// Since SoundCastMember doesn't have any flags
 	}
 	return 0;
-}
-
-uint32 PaletteCastMember::getPaletteDataSize() {
-	// This is the actual Palette data, in the 'CLUT' resource
-	// PaletteCastMembers data stored in the 'CLUT' resource does not change in size (may change in content) (need to verify)
-	// Hence their original size can be written
-	// This is the length of the 'CLUT' resource without the header and size 
-	return _palette->length * 6;
 }
 
 void PaletteCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {

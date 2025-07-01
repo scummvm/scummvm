@@ -146,7 +146,7 @@ void TransitionCastMember::writeCastData(Common::MemoryWriteStream *writeStream)
 		writeStream->writeByte(_chunkSize);
 		writeStream->writeByte((uint8)_transType);
 		writeStream->writeByte(_flags);
-		writeStream->writeUint16LE(_durationMillis);	
+		writeStream->writeUint16LE(_durationMillis);
 	} else {
 		warning("RichTextCastMember()::writeCastData(): CastMember version invalid or not handled");
 	}

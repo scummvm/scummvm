@@ -1277,7 +1277,7 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 
 	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
 	writeStream->writeUint32LE(newResCount);
-	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff 
+	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff
 
 	// ID of the first 'free' resource
 	writeStream->writeUint32LE(0);

@@ -121,7 +121,7 @@ public:
 	bool _erase;
 	int _purgePriority;
 	uint32 _size;
-	
+
 	/* Data fields used when saving the Cast Member */
 	uint32 _castDataSize;
 	uint8 _flags1;
@@ -143,6 +143,9 @@ struct EditInfo {
 	int32 selEnd;
 	byte version;
 	byte rulerFlag;
+	bool valid;
+
+	EditInfo(): valid(false) {}
 };
 
 struct CastMemberInfo {

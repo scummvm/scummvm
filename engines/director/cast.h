@@ -183,7 +183,7 @@ public:
 
 	LingoDec::ScriptContext *_lingodec = nullptr;
 	LingoDec::ChunkResolver *_chunkResolver = nullptr;
-	
+
 	/* Data to be saved */
 	/*  0 */ uint16 _len;
 	/*  2 */ uint16 _fileVersion;
