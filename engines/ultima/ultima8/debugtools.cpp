@@ -24,9 +24,12 @@
 #include "ultima/ultima.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
 #include "ultima/ultima8/usecode/usecode.h"
+#include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/quick_avatar_mover_process.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/misc/debugger.h"
@@ -327,7 +330,47 @@ void onImGuiRender() {
 
 	io.ConfigFlags &= ~(ImGuiConfigFlags_NoMouseCursorChange | ImGuiConfigFlags_NoMouse);
 
+	Ultima8Engine *engine = Ultima8Engine::get_instance();
+
 	if (ImGui::BeginMainMenuBar()) {
+		if (ImGui::BeginMenu("Toggles")) {
+			if (ImGui::MenuItem("Cheats", NULL, engine->areCheatsEnabled())) {
+				bool flag = engine->areCheatsEnabled();
+				engine->setCheatMode(!flag);
+			}
+			if (ImGui::MenuItem("Editor Items", NULL, engine->isShowEditorItems())) {
+				bool flag = engine->isShowEditorItems();
+				engine->setShowEditorItems(!flag);
+			}
+			if (ImGui::MenuItem("Footpads", NULL, GameMapGump::getShowFootpads())) {
+				bool flag = GameMapGump::getShowFootpads();
+				GameMapGump::setShowFootpads(!flag);
+			}
+			if (ImGui::BeginMenu("Gridlines")) {
+				int gridlines = GameMapGump::getGridlines();
+				if (ImGui::MenuItem("Auto", NULL, gridlines == -1)) {
+					GameMapGump::setGridlines(gridlines == -1 ? 0 : -1);
+				}
+				if (ImGui::MenuItem("128 x 128", NULL, gridlines == 128)) {
+					GameMapGump::setGridlines(gridlines == 128 ? 0 : 128);
+				}
+				if (ImGui::MenuItem("256 x 256", NULL, gridlines == 256)) {
+					GameMapGump::setGridlines(gridlines == 256 ? 0 : 256);
+				}
+				if (ImGui::MenuItem("512 x 512", NULL, gridlines == 512)) {
+					GameMapGump::setGridlines(gridlines == 512 ? 0 : 512);
+				}
+				if (ImGui::MenuItem("1024 x 1024", NULL, gridlines == 1024)) {
+					GameMapGump::setGridlines(gridlines == 1024 ? 0 : 1024);
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Quick Movement", NULL, QuickAvatarMoverProcess::isEnabled())) {
+				bool flag = QuickAvatarMoverProcess::isEnabled();
+				QuickAvatarMoverProcess::setEnabled(!flag);
+			}
+			ImGui::EndMenu();
+		}
 		if (ImGui::BeginMenu("View")) {
 			ImGui::MenuItem("Item Stats", NULL, &_state->_itemStats);
 			ImGui::EndMenu();
