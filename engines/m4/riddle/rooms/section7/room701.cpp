@@ -254,7 +254,7 @@ void Room701::parser() {
 		digi_play("com005", 1, 255, -1, 997);
 	else if (takeFl && player_said("Yeti Skin"))
 		digi_play("701R24", 1, 255, -1, -1);
-	else if (player_said("PRAYER WHEEL BROCHURE", "PRAYER WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE")) {
+	else if (player_said_any("PRAYER WHEEL BROCHURE", "PRAYER WHEEL") && inv_player_has("PRAYER WHEEL BROCHURE")) {
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_set_commands_allowed(false);
