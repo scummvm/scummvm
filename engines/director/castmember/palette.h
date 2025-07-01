@@ -47,6 +47,9 @@ public:
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
 	void writeCastData(Common::MemoryWriteStream *writeStream) override;
 
+	void writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getPaletteDataSize();
+	
 	PaletteV4 *_palette;
 };
 
