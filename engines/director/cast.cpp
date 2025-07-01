@@ -319,7 +319,6 @@ bool Cast::loadConfig() {
 	if (stream->size() > 36) {
 		stream->seek(36);					// Seek to version
 		_version = stream->readSint16();	// Read version for post-D3
-		_directorVersion = _version;
 		stream->seek(0);					// Seek to start of stream
 	}
 
@@ -411,7 +410,7 @@ bool Cast::loadConfig() {
 		_field18 = stream->readByte();
 		_field19 = stream->readSint32();
 
-		_directorVersion =  stream->readUint16();
+		/* version = */ stream->readUint16();	// We've already read it, this is offset 36
 
 		_field21 = stream->readSint16();
 		_field22 = stream->readSint32();
@@ -476,7 +475,7 @@ bool Cast::loadConfig() {
 		check += _field24 + 24;
 		check *= _field25 + 25;
 		check += _frameRate + 26;
-		check *= _platform + 27;
+		check *= _platformID + 27;
 		check *= (_protection * 0xE06) + 0xFF450000u;
 		check ^= MKTAG('r', 'a', 'l', 'f');
 
@@ -566,7 +565,7 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	writeStream->writeByte(_field18);               // 30
 	writeStream->writeSint32LE(_field19);           // 34
 
-	writeStream->writeUint16LE(_directorVersion);   // 36
+	writeStream->writeUint16LE(_version);   // 36
 
 	writeStream->writeUint16LE(_field21);           // 38
 	writeStream->writeUint32LE(_field22);           // 40

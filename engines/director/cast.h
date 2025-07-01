@@ -155,7 +155,6 @@ private:
 
 public:
 	Archive *_castArchive;
-	uint16 _version;
 	Common::Platform _platform;
 	uint16 _castLibID;
 	uint16 _libResourceId;
@@ -216,7 +215,7 @@ public:
 	/* 30 */ uint8 _field17;
 	/* 31 */ uint8 _field18;
 	/* 32 */ int32 _field19;
-	/* 36 */ int16 _directorVersion;
+	/* 36 */ int16 _version;
 	/* 38 */ int16 _field21;
 	/* 40 */ int32 _field22;
 	/* 44 */ int32 _field23;
