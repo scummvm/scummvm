@@ -95,6 +95,9 @@ public:
 	void writeCastData(Common::MemoryWriteStream *writeStream) override;
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
 
+	uint32 getSTXTResourceSize();
+	uint32 writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+
 	uint8 _borderSize;
 	uint8 _gutterSize;
 	uint8 _boxShadow;

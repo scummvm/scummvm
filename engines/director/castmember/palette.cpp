@@ -155,4 +155,41 @@ void PaletteCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	// Since there is no data to write
 }
 
+uint32 PaletteCastMember::getPaletteDataSize() {
+	// This is the actual Palette data, in the 'CLUT' resource
+	// PaletteCastMembers data stored in the 'CLUT' resource does not change in size (may change in content) (need to verify)
+	// Hence their original size can be written
+	// This is the length of the 'CLUT' resource without the header and size
+	return _palette->length * 6;
+}
+void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 castSize = getPaletteDataSize() + 8;
+
+	/**/
+	byte *dumpData = nullptr;
+	dumpData = (byte *)calloc(castSize, sizeof(byte));
+	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+	/**/
+
+	// writeStream->seek(offset);
+	writeStream->writeUint32LE(MKTAG('C', 'L', 'U', 'T'));
+	writeStream->writeUint32LE(getPaletteDataSize());
+
+	const byte *pal = _palette->palette;
+
+	for (int i = 0; i < _palette->length; i++) {
+		writeStream->writeByte(pal[3 * i]);
+		writeStream->writeByte(pal[3 * i]);
+
+		writeStream->writeByte(pal[3 * i + 1]);
+		writeStream->writeByte(pal[3 * i + 1]);
+
+		writeStream->writeByte(pal[3 * i + 2]);
+		writeStream->writeByte(pal[3 * i + 2]);
+	}
+
+	dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
+	delete writeStream;
+}
+
 }	// End of namespace Director

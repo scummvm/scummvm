@@ -977,4 +977,63 @@ uint32 TextCastMember::getCastDataSize() {
 	return (_type == kCastButton) ? 30 : 28;
 }
 
+uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 castSize = getSTXTResourceSize() + 10;
+	byte *dumpData = nullptr;
+	dumpData = (byte *)calloc(castSize, sizeof(byte));
+
+	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+
+	writeStream->seek(offset);
+
+	writeStream->writeUint32BE(MKTAG('S', 'T', 'X', 'T'));
+	writeStream->writeUint32BE(getSTXTResourceSize() + 8);						// Size of the STXT resource without the header and size
+
+	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error and exit ScummVM
+	writeStream->writeUint32BE(_ptext.size());
+	// Encode only in one format, original may be encoded in multiple formats
+	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
+	writeStream->writeUint32BE(20 + 2);
+
+	Common::CodePage encoding = detectFontEncoding(_cast->_platform, _fontId);
+	writeStream->writeString(_ptext.encode(encoding));		// Currently using MacRoman encoding only, may change later to include others
+
+	writeStream->writeUint16BE(1);			// Only one formatting: MacRoman
+
+	writeStream->writeUint32BE(0);			// FontStyle::formatStartOffset
+	writeStream->writeUint16BE(_height);	// FontStyle::height 	// Apparently height doesn't matter
+	writeStream->writeUint16BE(_ascent);	// FontStyle::ascent	// And neither does ascent
+
+	writeStream->writeUint16BE(_fontId);	// FontStyle::fontId
+	writeStream->writeByte(_textSlant);		// FontStyle::textSlant
+	writeStream->writeByte(0);				// padding
+	writeStream->writeUint16BE(_fontSize);		// FontStyle::fontSize
+
+	writeStream->writeUint16BE(_fgpalinfo1); 	// FontStyle:r
+	writeStream->writeUint16BE(_fgpalinfo2); 	// FontStyle:g
+	writeStream->writeUint16BE(_fgpalinfo3); 	// FontStyle:b
+
+	Common::DumpFile out;
+	char buf[256];
+	Common::sprintf_s(buf, "./dumps/%d-%s-%s", _castId, tag2str(MKTAG('S', 'T', 'X', 'T')), "WrittenSTXTResource");
+
+	// Write the movie out, stored in dumpData
+	if (out.open(buf, true)) {
+		out.write(dumpData, castSize);
+		out.flush();
+		out.close();
+		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
+	} else {
+		warning("RIFXArchive::writeStream: Error saving the file %s", buf);
+	}
+	free(dumpData);
+	delete writeStream;
+	return getSTXTResourceSize() + 8;
+}
+
+uint32 TextCastMember::getSTXTResourceSize() {
+	// Header (offset, string length, data length) + text string + data (FontStyle)
+	return 12 + _ptext.size() + 22;
+}
+
 }	// End of namespace Director
