@@ -273,6 +273,7 @@ void Room510::parser() {
 			break;
 		case 3:
 			kernel_timing_trigger(1, 4);
+			player_set_commands_allowed(true);
 			break;
 		case 4:
 			series_unload(_ripLooksDown);
