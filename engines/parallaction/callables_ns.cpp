@@ -413,6 +413,23 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	_gfx->showLabel(_testResultLabels[0], CENTER_LABEL_HORIZONTAL, 38);
 	_gfx->showLabel(_testResultLabels[1], CENTER_LABEL_HORIZONTAL, 58);
 
+	const char *charName = nullptr;
+	switch (_characterVoiceID) {
+	case kDoug:
+		charName = "Doug Nuts";
+		break;
+	case kDonna:
+		charName = "Donna Fatale";
+		break;
+	case kDino:
+		charName = "Dino Fagioli";
+		break;
+	}
+	
+	if (charName != nullptr) {
+		sayText(charName, Common::TextToSpeechManager::QUEUE);
+	}
+
 	return;
 }
 

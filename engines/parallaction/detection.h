@@ -49,6 +49,8 @@ struct PARALLACTIONGameDescription {
 	uint32 features;
 };
 
+#define GAMEOPTION_TTS                    GUIO_GAMEOPTIONS1
+
 } // End of namespace Parallaction
 
 #endif // PARALLACTION_DETECTION_H

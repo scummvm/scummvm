@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
 #include "common/hashmap.h"
 #include "common/textconsole.h"
@@ -31,6 +32,24 @@
 
 
 namespace Parallaction {
+
+#ifdef USE_TTS
+
+static const char *languageSelectBlockTexts[] = {
+	"Dizionario\nGiapponese\nItaliano",
+	"Dictionnaire\nJaponais\nFran\347ais",
+	"Dictionary\nJapanese\nEnglish",
+	"W\366rterbuch\nJapanese\nDeutsch"
+};
+
+static const char *ttsLanguages[] = {
+	"it",
+	"fr",
+	"en",
+	"de"
+};
+
+#endif
 
 class SplashInputState_NS : public MenuInputState {
 protected:
@@ -109,6 +128,7 @@ class ChooseLanguageInputState_NS : public MenuInputState {
 	Common::Rect _dosLanguageSelectBlocks[4];
 	Common::Rect _amigaLanguageSelectBlocks[4];
 	const Common::Rect *_blocks;
+	int _previousBlock;
 
 	Parallaction *_vm;
 
@@ -128,6 +148,8 @@ public:
 		_amigaLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
 		_amigaLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
 		_amigaLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
+
+		_previousBlock = -1;
 
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
@@ -168,21 +190,38 @@ public:
 		}
 
 		int event = _vm->_input->getLastButtonEvent();
-		if (event != kMouseLeftUp) {
-			return this;
-		}
 
 		Common::Point p;
 		_vm->_input->getCursorPos(p);
 
 		for (uint16 i = 0; i < 4; i++) {
 			if (_blocks[i].contains(p)) {
+#ifdef USE_TTS
+				if (_previousBlock != i) {
+					Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+					if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+						ttsMan->setLanguage(ttsLanguages[i]);
+					}
+
+					_vm->setTTSVoice(kNarratorVoiceID);
+					_vm->sayText(languageSelectBlockTexts[i], Common::TextToSpeechManager::INTERRUPT);
+					_previousBlock = i;
+				}
+#endif
+
+				if (event != kMouseLeftUp) {
+					return this;
+				}
+
+				_vm->stopTextToSpeech();
 				_vm->setInternLanguage(i);
 				_vm->beep();
 				destroyLabels();
 				return _helper->getState(_nextState);
 			}
 		}
+
+		_previousBlock = -1;
 
 		return this;
 	}
@@ -259,7 +298,7 @@ public:
 				_vm->_gfx->hideLabel(_labels[_oldChoice]);
 
 			if (_choice != -1)
-				_vm->_gfx->showLabel(_labels[_choice], 60, 30);
+				_vm->_gfx->showLabel(_labels[_choice], 60, 30, false);
 
 			_oldChoice = _choice;
 		}
@@ -312,7 +351,25 @@ public:
 	}
 };
 
+#ifdef USE_TTS
 
+// This text is translated for TTS. Only English is translated in-game
+static const char *ttsIntroMsg[] = {
+	// Italian
+	"Premi il tasto sinistro del mouse per vedere l'introduzione\n"
+	"Premere il tasto destro del mouse per iniziare",
+	// French
+	"Appuyez sur le bouton gauche de la souris pour voir l'intro\n"
+	"Appuyez sur le bouton droit de la souris pour d\351marrer",
+	// English
+	"Press left mouse button to see intro\n"
+	"Press right mouse button to start",
+	// German
+	"Dr\374cken Sie die linke Maustaste, um das Intro anzuzeigen\n"
+	"Zum Starten rechte Maustaste dr\374cken"
+};
+
+#endif
 
 class NewGameInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
@@ -338,6 +395,7 @@ public:
 		if (event == kMouseLeftUp || event == kMouseRightUp) {
 			_vm->_input->setMouseState(MOUSE_ENABLED_SHOW);
 			destroyLabels();
+			_vm->stopTextToSpeech();
 
 			if (event == kMouseLeftUp) {
 				_vm->scheduleLocationSwitch("fogne.dough");
@@ -369,14 +427,17 @@ public:
 		_vm->changeBackground("test");
 		_vm->_input->setMouseState(MOUSE_ENABLED_HIDE);
 
+#ifdef USE_TTS
+		_vm->sayText(ttsIntroMsg[_vm->getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+#endif
 		_labels[0] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[0], 1);
 		_labels[1] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[1], 1);
 		_labels[2] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[2], 1);
 		_labels[3] = _vm->_gfx->createLabel(_vm->_menuFont, introMsg3[3], 1);
-		_vm->_gfx->showLabel(_labels[0], CENTER_LABEL_HORIZONTAL, 50);
-		_vm->_gfx->showLabel(_labels[1], CENTER_LABEL_HORIZONTAL, 70);
-		_vm->_gfx->showLabel(_labels[2], CENTER_LABEL_HORIZONTAL, 100);
-		_vm->_gfx->showLabel(_labels[3], CENTER_LABEL_HORIZONTAL, 120);
+		_vm->_gfx->showLabel(_labels[0], CENTER_LABEL_HORIZONTAL, 50, false, false);
+		_vm->_gfx->showLabel(_labels[1], CENTER_LABEL_HORIZONTAL, 70, false, false);
+		_vm->_gfx->showLabel(_labels[2], CENTER_LABEL_HORIZONTAL, 100, false, false);
+		_vm->_gfx->showLabel(_labels[3], CENTER_LABEL_HORIZONTAL, 120, false, false);
 	}
 };
 
@@ -676,6 +737,46 @@ const char *SelectCharacterInputState_NS::_charStartLocation[] = {
 	"test.dough"
 };
 
+#ifdef USE_TTS
+
+// Translated text for TTS. Only English is shown in-game
+static const char *italianCredits[] = {
+	"Musica e Effeti Sonori: Marco Caprelli",
+	"Versione PC: Riccardo Ballarino",
+	"Responsabile del progetto: Lovrano Canepa",
+	"Produzione: Bruno Boz",
+	"Sentiti ringraziamenti a: Luigi Benedicenti - Gilda e Danilo",
+	"Copyright 1992 Euclidea s.r.l Italia, tutti i diritti riservati"
+};
+
+static const char *frenchCredits[] = {
+	"Musique et Bruitages: Marco Caprelli",
+	"Version PC: Riccardo Ballarino",
+	"Chef de projet: Lovrano Canepa",
+	"Production: Bruno Boz",
+	"Nous tenons \340 remercier: Luigi Benedicenti - Gilda et Danilo",
+	"Copyright 1992 Euclidea s.r.l Italie, tous droits r\351serv\351s"
+};
+
+static const char *englishCredits[] = {
+	"Music and Sound Effects: Marco Caprelli",
+	"PC Version: Riccardo Ballarino",
+	"Project Manager: Lovrano Canepa",
+	"Production: Bruno Boz",
+	"Special thanks to: Luigi Benedicenti - Gilda and Danilo",
+	"Copyright 1992 Euclidea s.r.l Italy, all rights reserved"
+};
+
+static const char *germanCredits[] = {
+	"Musiken und Soundeffekte: Marco Caprelli",
+	"PC Version: Riccardo Ballarino",
+	"Projektmanager: Lovrano Canepa",
+	"Produktion: Bruno Boz",
+	"Wir danken: Luigi Benedicenti - Gilda und Danilo",
+	"Copyright 1992 Euclidea s.r.l Italien, Alle Rechte vorbehalten"
+};
+
+#endif
 
 class ShowCreditsInputState_NS : public MenuInputState {
 	Parallaction *_vm;
@@ -717,8 +818,31 @@ public:
 
 		_labels[0] = _vm->_gfx->createLabel(_vm->_menuFont, _credits[_current]._role, 1);
 		_labels[1] = _vm->_gfx->createLabel(_vm->_menuFont, _credits[_current]._name, 1);
-		_vm->_gfx->showLabel(_labels[0], CENTER_LABEL_HORIZONTAL, 80);
-		_vm->_gfx->showLabel(_labels[1], CENTER_LABEL_HORIZONTAL, 100);
+		_vm->_gfx->showLabel(_labels[0], CENTER_LABEL_HORIZONTAL, 80, false, false);
+		_vm->_gfx->showLabel(_labels[1], CENTER_LABEL_HORIZONTAL, 100, false, false);
+
+#ifdef USE_TTS
+		const char **creditsTexts;
+		switch (_vm->getInternLanguage()) {
+		case kItalian:
+			creditsTexts = italianCredits;
+			break;
+		case kFrench:
+			creditsTexts = frenchCredits;
+			break;
+		case kEnglish:
+			creditsTexts = englishCredits;
+			break;
+		case kGerman:
+			creditsTexts = germanCredits;
+			break;
+		default:
+			creditsTexts = englishCredits;
+			break;
+		}
+
+		_vm->sayText(creditsTexts[_current], Common::TextToSpeechManager::INTERRUPT);
+#endif
 	}
 
 
@@ -732,7 +856,8 @@ public:
 
 		int event = _vm->_input->getLastButtonEvent();
 		uint32 curTime = _vm->_system->getMillis();
-		if ((event == kMouseLeftUp) || (curTime - _startTime > 5500)) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if ((event == kMouseLeftUp) || (curTime - _startTime > 5500 && !(ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()))) {
 			_current++;
 			_startTime = curTime;
 			destroyLabels();
@@ -748,6 +873,7 @@ public:
 	}
 
 	void enter() override {
+		_vm->setTTSVoice(kNarratorVoiceID);
 		_current = -1;
 		_vm->_input->setMouseState(MOUSE_DISABLED);
 	}
@@ -761,6 +887,18 @@ const ShowCreditsInputState_NS::Credit ShowCreditsInputState_NS::_credits[6] = {
 	{"Special Thanks to", "LUIGI BENEDICENTI - GILDA and DANILO"},
 	{"Copyright 1992 Euclidea s.r.l ITALY", "All rights reserved"}
 };
+
+#ifdef USE_TTS
+
+// Only English is translated in-game
+static const char *clickMousePrompts[] = {
+	"Fare clic sul pulsante del mouse per iniziare",		// Italian
+	"Cliquez sur le bouton de la souris pour d\351marrer",	// French
+	"Click mouse button to start",							// English
+	"Klicken Sie mit der Maustaste, um zu starten"			// German
+};
+
+#endif
 
 class EndIntroInputState_NS : public MenuInputState {
 	Parallaction_ns *_vm;
@@ -806,7 +944,10 @@ public:
 		if (!_isDemo) {
 			_vm->_soundManI->stopMusic();
 			_label = _vm->_gfx->createLabel(_vm->_menuFont, "CLICK MOUSE BUTTON TO START", 1);
-			_vm->_gfx->showLabel(_label, CENTER_LABEL_HORIZONTAL, 80);
+#ifdef USE_TTS
+			_vm->sayText(clickMousePrompts[_vm->getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+#endif
+			_vm->_gfx->showLabel(_label, CENTER_LABEL_HORIZONTAL, 80, false, false);
 		}
 	}
 };

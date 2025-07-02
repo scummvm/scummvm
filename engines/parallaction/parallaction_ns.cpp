@@ -34,6 +34,43 @@
 
 namespace Parallaction {
 
+#ifdef USE_TTS
+
+static const char *openingCreditsFirstLine[] = {
+	"Programmatore Assoluto: Paolo Costabel",	// Italian
+	"Programmeur Absolu: Paolo Costabel",		// French
+	"Absolute Programmer: Paolo Costabel",		// English
+	"Absoluter Programmierer: Paolo Costabel"	// German
+};
+
+// Transcribed for TTS
+// First four names of the end credits are best voiced as one block; the remaining credits
+// are voiced one at a time elsewhere
+static const char *endCreditsFirstSection[] = {
+	// Italian
+	"Il Dottor Buoz\n"
+	"Lo Studente\n"
+	"Il Poliziotto\n"
+	"Secondo il Secondino",
+	// French
+	"Le Professeur Buoz\n"
+	"Le \311tudiant\n"
+	"Le Police\n"
+	"Secondo le Garde",
+	// English
+	"Doctor Buoz\n"
+	"Student\n"
+	"Police\n"
+	"Secondo the Warder",
+	// German
+	"Professor Buoz\n"
+	"Der Student\n"
+	"Die Polizei\n"
+	"Secondo der W\344chter"
+};
+
+#endif
+
 #define INITIAL_FREE_SARCOPHAGUS_SLOT_X	200
 
 
@@ -194,6 +231,7 @@ Common::Error Parallaction_ns::init() {
 
 	_intro = false;
 	_inTestResult = false;
+	_endCredits = false;
 
 	_location._animations.push_front(_char._ani);
 
@@ -382,6 +420,10 @@ void Parallaction_ns::changeLocation() {
 		_input->waitForButtonEvent(kMouseLeftUp);
 		_gfx->unregisterLabel(label);
 		delete label;
+
+		if (!locname.hasCharacter()) {
+			setTTSVoice(_characterVoiceID);
+		}
 	}
 
 	if (locname.hasCharacter()) {
@@ -423,7 +465,21 @@ void Parallaction_ns::changeLocation() {
 		// cave at the end of the game. Fix it here.
 		if (!strcmp(_location._name, "ingressocav"))
 			_input->setMouseState(MOUSE_ENABLED_SHOW);
+#ifdef USE_TTS
+		else if (!strcmp(_location._name, "final")) {	// End credits
+			setTTSVoice(kNarratorVoiceID);
+			sayText(endCreditsFirstSection[getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+			_endCredits = true;
+		}
+#endif
 	}
+	
+#ifdef USE_TTS
+	if (!strcmp(_location._name, "title1")) {		// First screen of opening credits
+		setTTSVoice(kNarratorVoiceID);
+		sayText(openingCreditsFirstLine[getInternLanguage()], Common::TextToSpeechManager::INTERRUPT);
+	}
+#endif
 
 	debugC(1, kDebugExec, "changeLocation() done");
 	_newLocationName.clear();
@@ -471,6 +527,18 @@ void Parallaction_ns::changeCharacter(const char *name) {
 	freeCharacter();
 
 	_char._ani->gfxobj = _gfx->loadCharacterAnim(_char.getFullName());
+
+	if (scumm_stricmp(_char.getBaseName(), g_doughName) == 0) {
+		_characterVoiceID = kDoug;
+	} else if (scumm_stricmp(_char.getBaseName(), g_donnaName) == 0) {
+		_characterVoiceID = kDonna;
+	} else if (scumm_stricmp(_char.getBaseName(), g_dinoName) == 0) {
+		_characterVoiceID = kDino;
+	} else {
+		_characterVoiceID = kDrki;
+	}
+
+	setTTSVoice(_characterVoiceID);
 
 	if (!_char.dummy()) {
 		_char._head = _disk->loadHead(_char.getBaseName());
