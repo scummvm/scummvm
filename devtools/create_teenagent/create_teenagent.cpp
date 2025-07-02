@@ -157,11 +157,10 @@ void writeSceneObjects(FILE* fd) {
 			const char *description = englishSceneObjectNamesDescs[i][j].description;
 			if (strlen(description) == 0) {
 				writeByte(fd, '\0');
-				curOffset++;
+				writeByte(fd, '\0');
 			} else if (strcmp(description, "\001") == 0) {
 				writeByte(fd, '\001');
 				writeByte(fd, '\0');
-				curOffset += 2;
 			} else {
 				for (uint k = 0; k < strlen(description); k++) {
 					if (description[k] == '\n')
@@ -170,8 +169,10 @@ void writeSceneObjects(FILE* fd) {
 						writeByte(fd, description[k]);
 				}
 				writeByte(fd, '\0');
-				curOffset += strlen(description) + 1;
+				writeByte(fd, '\0');
+				curOffset += strlen(description);
 			}
+			curOffset += 2;
 		}
 
 		// Add zero addr to indicate the end of objects
