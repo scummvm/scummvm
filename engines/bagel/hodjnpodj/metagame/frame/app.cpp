@@ -29,13 +29,13 @@ namespace Metagame {
 namespace Frame {
 
 bool dllLoaded;
-HWND hwndGame;
+CWnd *g_wndGame;
 HINSTANCE hExeInst;
 HINSTANCE hMetaInst;
 
 CTheApp::CTheApp() {
 	dllLoaded = false;
-	hwndGame = nullptr;
+	g_wndGame = nullptr;
 	hExeInst = nullptr;
 	hMetaInst = nullptr;
 }
@@ -71,15 +71,15 @@ BOOL CTheApp::InitInstance() {
 
 int CTheApp::ExitInstance() {
 	if (dllLoaded) {
-		if (hwndGame != nullptr)
-			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
+		if (g_wndGame != nullptr)
+			g_wndGame->SendMessage(WM_CLOSE);
 
 		dllLoaded = false;
 	}
 
 	if (hMetaInst > HINSTANCE_ERROR) {
-		if (hwndGame != nullptr)
-			SendMessage(hwndGame, WM_CLOSE, 0, 0L);
+		if (g_wndGame != nullptr)
+			g_wndGame->SendMessage(WM_CLOSE);
 
 		FreeLibrary(hMetaInst);
 		hMetaInst = nullptr;

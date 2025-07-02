@@ -63,7 +63,7 @@ public:
 };
 
 extern bool dllLoaded;
-extern HWND hwndGame;
+extern CWnd *g_wndGame;
 extern HINSTANCE hExeInst;
 extern HINSTANCE hMetaInst;
 

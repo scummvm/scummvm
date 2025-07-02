@@ -976,12 +976,12 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 				if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
 					if (bReturnToZoom) {
-						hwndGame = lpfnGame(m_hWnd, lpGameStruct);
+						g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, lpGameStruct));
 					} else {
 						if (bReturnToGrandTour) {
-							hwndGame = lpfnGame(m_hWnd, &lpGrandTour->stMiniGame);
+							g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpGrandTour->stMiniGame));
 						} else {
-							hwndGame = lpfnGame(m_hWnd, &lpMetaGame->m_stGameStruct);
+							g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpMetaGame->m_stGameStruct));
 						}
 					}
 					bLoadedDLL = TRUE;
@@ -1020,7 +1020,9 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 
 void CHodjPodjWindow::FreeCurrentDLL(void) {
-	// No DLLs under ScummVM
+	delete g_wndGame;
+	g_wndGame = nullptr;
+	dllLoaded = false;
 }
 
 
@@ -1031,11 +1033,9 @@ BOOL CHodjPodjWindow::LoadMetaDLL(void) {
 }
 
 BOOL CHodjPodjWindow::LoadZoomDLL(void) {
-	hwndGame = nullptr;
-
 	dllLoaded = true;
-	hwndGame = Metagame::Zoom::RunZoomMap(m_hWnd,
-		nChallengePhase == 0);
+	g_wndGame = CWnd::FromHandle(Metagame::Zoom::RunZoomMap(m_hWnd,
+		nChallengePhase == 0));
 
 	bReturnToZoom = TRUE;
 	return TRUE;
@@ -1074,8 +1074,7 @@ BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
 		lpGrandTour->stMiniGame.bPlayingHodj = TRUE;
 	}
 
-	hwndGame = nullptr;
-	hwndGame = Metagame::GrandTour::RunGrandTour(m_hWnd, lpGrandTour);
+	g_wndGame = CWnd::FromHandle(Metagame::GrandTour::RunGrandTour(m_hWnd, lpGrandTour));
 	bReturnToGrandTour = TRUE;
 	return TRUE;
 }
@@ -1783,12 +1782,13 @@ void CHodjPodjWindow::OnDestroy() {
 
 
 void CHodjPodjWindow::OnClose() {
+#if 0
 	if (dllLoaded) {
 		if (hwndGame != nullptr)
 			MFC::SetActiveWindow(hwndGame);
 		return;
 	}
-
+#endif
 	ReleaseResources();
 
 	SaveProfileSettings();
