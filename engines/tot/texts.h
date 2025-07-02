@@ -520,81 +520,86 @@ static const char *const animMessages[2][290] = {
 	"",
 	"",
 	// 170
-	"Toma una copita, te la has ganado...", "", "", "", "",
+	"Here, have a drink. You've earned it!", "", "", "", "",
 	// 175
-	"\xA8""Donde estoy? ... \xA8Qu\x82 me ha pasado?", "", "", "", "",
+	"What happened? Where am I? Why am I strapped",
+	"down like this? Is this some kinda pervy",
+	"thing or something?",
+	"",
+	"",
 	// 180
-	"Tranquilizate, no est\xA0s muerto...",
-	"Est\xA0s tras la puerta de acero...",
+	"SILENCE! We drugged you! You are behind the",
+	"\"Steel Door.\" And no it isn't!",
 	"",
 	"",
 	"",
 	// 185
-	"Te necesitamos para encontrar a Jacob,",
-	"nuestro Gran Maestre.",
-	"",
-	"",
+	"We need you to venture into the unknown to",
+	"find Jacob! The master! Some days ago he",
+	"began to study the book that you found for",
+	"me. However shortly afterward he disappeared!",
 	"",
 	// 190
-	"Hace unos dias se puso a estudiar el libro",
-	"que me diste y desapareci\xA2...",
+	"We think he passed over to the... OTHER SIDE!",
+	"",
 	"",
 	"",
 	"",
 	// 195
-	"Creemos que realiz\xA2 un conjuro sin darse cuenta...",
-	"",
-	"",
+	"Fortunately I had read some of the sacred",
+	"pages of the book for myself and I believe",
+	"that we can retrieve him!",
 	"",
 	"",
 	// 200
-	"Por fortuna, pudimos ponernos en contacto",
-	"con \x82l, y nos dijo que est\xA0 en problemas...",
-	"",
+	"It is therefore my belief that if another",
+	"soul is sent to search for his, he can be",
+	"brought back to us. That soul is YOURS!!",
 	"",
 	"",
 	// 205
-	"Nos pidi\xA2 que envi\xA0semos a alguien en su ayuda,",
-	"y TU eres el elegido...",
-	"",
+	"However in order to enter the Eternal Caverns,",
+	"you must DIE!!! No material substance may dwell",
+	"there.",
 	"",
 	"",
 	// 210
-	"Para ir a las CAVERNAS ETERNAS debes morir...",
-	"Ning\xA3n cuerpo con alma puede estar all\xA1...",
-	"",
-	"",
+	"So we will perform an ancient ritual in which",
+	"a beast is slaughtered to summon the link",
+	"between this world and the next, and YOU will",
+	"be sacrificed to carry out the task!",
 	"",
 	// 215
-	"Haremos un ritual para crear un v\xA1nculo entre tu",
-	"cuerpo y tu alma, s\xA2lo as\xA1 podr\xA0s volver a la vida...",
+	"If you rescue Jacob, your body will be brought",
+	"back to life.",
 	"",
 	"",
 	"",
 	// 220
-	"Si rescatas a Jacob, el v\xA1nculo te traer\xA0 de regreso...", "", "", "", "",
+	"Enough of this!  Your time has come!",
+	"Prepare to die!...", "", "", "",
 	// 225
-	"Ahora... \xADPrep\xA0rate!... Ha llegado tu hora...", "", "", "", "",
+	"Horribly!!!", "", "", "", "",
 	// 230
-	"\xADGracias ILUSO!...", "", "", "", "",
+	"Thank you my nieve young friend...", "", "", "", "",
 	// 235
-	"Ahora tendr\x82 un cuerpo nuevo y podr\x82",
-	"volver a la vida...",
-	"",
+	"Now I have a new young body to return",
+	"to the material world with. I'll live",
+	"once more!",
 	"",
 	"",
 	// 240
-	"Tu mientras tanto, puedes seguir en",
-	"las CAVERNAS ETERNAS...",
-	"",
+	"However I'm afraid you'll have to",
+	"remain here for a while; probably",
+	"only for eternity!",
 	"",
 	"",
 	// 245
-	"No te preocupes, seguro que nos mandan",
-	"otro encargado...  JA,JA,JA...",
-	"",
-	"",
-	"",
+	"But don't worry, I'm sure we'll find a new",
+	"Care Assistant to take care of the house.",
+	"Oh, by the way. If it's any consolation,",
+	"I'm ETERNALLY grateful!",
+	"     HA, HA, HA, HA, HAAAAAAAAAA......",
 	// 250
 	"I knew I shouldn't of",
 	"listened to her. \"Oh,",
@@ -646,7 +651,7 @@ static const char *const animMessages[2][290] = {
 }
 };
 
-static const char *const fullScreenMessages[2][56] = {
+static const char *const fullScreenMessages[2][58] = {
 	// Spanish
     {
 	// intro
@@ -719,6 +724,9 @@ static const char *const fullScreenMessages[2][56] = {
     "me ha liberado de las Cavernas",
     "Eternas, por lo cual le estar\x82 ",
     "por siempre agradecido."
+	// 57
+	"him back!  If you  achieve  this your  body will",
+	"  live once more."
 	},
 
 	// English
@@ -735,40 +743,40 @@ static const char *const fullScreenMessages[2][56] = {
     "",
     // sacrifice scene
     // 9
-    "    A pesar  de todo, no lo  has  hecho tan mal.",
-    "    Has  conseguido todo  lo que te  pidieron, y",
-    "    van a poder celebrar su fiesta de Halloween.",
-    "    Es  todo un  detalle que t\xA3 seas el invitado",
-    "    de honor...",
+    "  You didn't do too bad after all!  You got them ",
+    "  everything  that they asked for.  Now they can ",
+    "  have their fun and celebrate Halloween the way ",
+    "  they want to. Although you begin to wonder why ",
+    "  you are to be their... \"special guest.\"",
     // 14
-    "    Como recompensa a tus esfuerzos te mandan a",
-    "    darte una  vuelta  por ah\xA1 mientras ellos se",
-    "    encargan de  los  preparativos de la fiesta.",
-    "    T\xA3, obviamente, aceptas  de  inmediato  y te",
-    "    vas a tomar el fresco un rato...",
+    "  As a reward, they let you go on a break for half",
+    "  an hour while they prepare the party.",
+    "  Obviously  you jump  at the  chance and step out",
+    "  for a breath of fresh air...",
+    "",
     //19
-    "                  Horas m\xA0s tarde... ",
-    "    La  fiesta  ya  est\xA0  preparada, regresas al",
-    "    sal\xA2n a  recibir tus merecidos honores, tras",
-    "    un completo dia de trabajo... ",
+    "         A while later the party is set...",
+    "You return to find them in the living room, looking",
+    "a bit suspicious...",
+    "",
     // 23
-    "      Despu\x82s de todo lo que hice por ellos...",
-    "      Todos mis esfuerzos y desvelos para esto...",
-    "      Morir envenenado, ese era mi destino...",
+    "          Those bloody, old, ba^%$?ds!",
+    "   They've poisoned me!  After all the kindness",
+    "  and affection that I've shown them!  Oh, Bugger!",
     // 26
-    "   Presta atenci\xA2n, pues esta puede  ser la \xA3ltima",
-    "   vez que hablemos contigo. Definitivamente est\xA0s",
-    "   muerto, pero a\xA3n es  posible reunir tu alma con",
-    "   tu cuerpo,  para  ello  debes  buscar a Jacob y",
-    "   liberarlo de aquello  que lo retenga. Cuando lo",
-    "   consigas podremos traeros  a ambos de vuelta al",
-    "   mundo de los vivos.",
+    "  As the knife  plunges deep  into your chest, you ",
+    "  feel all of your life being drained from you. ",
+    "  But  through it all  you hear  a voice.  \"Listen ",
+    "  carfully,  for this  might be the last  time you ",
+    "  hear us.  You're dead!  But it  still is possible ",
+    "  for  your body  to return.  You must find Jacob,",
+    "  and free him from whoever or whatever is holding ",
 
     // 33
     "  However  you  must hurry,  for  the link  between ",
     "  your body and soul  will deminish  and  your soul ",
     "  will be trapped in the Eternal Caverns... FOREVER!",
-		//FIXME! dont show these in the english version!
+	// 36
     "   Si necesitaras  m\xA0s  energ\xA1""a de la que tienes, ",
     "   recuerda que all\xA0 donde vas un cuerpo contiene",
     "   m\xA0s energ\xA1""a que un alma al contrario que en el",
@@ -788,13 +796,16 @@ static const char *const fullScreenMessages[2][56] = {
     "... AAAHHHHH!! ...",
     // Diploma
     // 49
-    "CERTIFICADO N\xA7:",
-    "Yo, Jacob, el Gran Maestre ",
-    "de la Hermandad de Sek Umh Nejl",
-    "certifico que: ",
-    "me ha liberado de las Cavernas",
-    "Eternas, por lo cual le estar\x82 ",
-    "por siempre agradecido."
+    "CERTIFICATE No:",
+    "I, Jacob, the Great Master",
+    "of the Sek Umh Fraternity",
+    "certify that: ",
+    "has liberated me from the",
+    "Eternal Caverns, and I shall be",
+    "greatful to him forever.",
+	// 56
+	"  him back!  If you  achieve  this your  body will",
+	"  live once more."
 	},
 };
 
