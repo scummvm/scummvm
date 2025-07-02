@@ -293,6 +293,12 @@ Graphics::ManagedSurface *ManagedSurface::scale(int16 newWidth, int16 newHeight,
 		scaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format);
 	}
 
+	// Copy miscellaneous properties
+	if (hasTransparentColor())
+		target->setTransparentColor(getTransparentColor());
+	if (hasPalette())
+		target->setPalette(_palette->data(), 0, _palette->size());
+
 	return target;
 }
 
@@ -310,6 +316,12 @@ Graphics::ManagedSurface *ManagedSurface::rotoscale(const TransformStruct &trans
 	} else {
 		rotoscaleBlit((byte *)target->getPixels(), (const byte *)getPixels(), target->pitch, pitch, target->w, target->h, w, h, format, transform, newHotspot);
 	}
+
+	// Copy miscellaneous properties
+	if (hasTransparentColor())
+		target->setTransparentColor(getTransparentColor());
+	if (hasPalette())
+		target->setPalette(_palette->data(), 0, _palette->size());
 
 	return target;
 }
