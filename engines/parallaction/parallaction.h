@@ -29,6 +29,7 @@
 #include "common/random.h"
 #include "common/savefile.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -84,6 +85,12 @@ enum {
 	kEvIngameMenu   = 8000
 };
 
+enum LanguageIndex {
+	kItalian = 0,
+	kFrench = 1,
+	kEnglish = 2,
+	kGerman = 3
+};
 
 
 
@@ -219,6 +226,92 @@ public:
 	bool dummy() const;
 };
 
+#ifdef USE_TTS
+
+struct CharacterVoiceData {
+	const char *characterName;
+	uint8 voiceID;
+	bool male;
+};
+
+static const CharacterVoiceData characterVoiceDatas[] = {
+	{ nullptr, 0, true },		// Used as the narrator for cutscene text
+	{ "dough", 1, true },
+	{ "donna", 0, false },
+	{ "dino", 2, true },
+	{ "drki", 3, true },
+	{ "ddd.talk", 1, true },
+	{ nullptr, 0, false },	// Donna in ddd.talk
+	{ nullptr, 2, true },	// Dino in ddd.talk
+	{ "police.talk", 4, true },
+	{ "vecchio.talk", 5, true },
+	{ "karaoke.talk", 6, true },
+	{ "suicida.talk", 7, true },
+	{ "direttore.talk", 8, true },
+	{ "guardiano.talk", 9, true },
+	{ "sento.talk", 10, true },
+	{ "giocatore.talk", 11, true },
+	{ "mona.talk", 12, true },
+	{ "monaco2.talk", 13, true },
+	{ "uccello.talk", 14, true },
+	{ "guru.talk", 15, true },
+	{ "monaco1.talk", 16, true },
+	{ "segretario.talk", 17, true },
+	{ "imperatore.talk", 18, true },
+	{ "secondo.talk", 19, true },
+	{ "taxista.talk", 20, true },
+	{ "bemutsu.talk", 21, true },
+	{ "negro.talk", 22, true },
+	{ "punk.talk", 23, true },
+	{ "chan.talk", 24, true },
+	{ "donna0.talk", 0, false },
+	{ "maxkos.talk", 25, true },
+	{ nullptr, 26, true },		// Second person in the maxkos.talk dialogue
+	{ "drki.talk", 3, true },
+	{ "barman.talk", 27, true },
+	{ "losco.talk", 28, true },
+	{ "mitsu.talk", 29, true },
+	{ "autoradio.talk", 30, true },
+	{ "passa1.talk", 31, true },
+	{ "passa2.talk", 1, false },
+	{ "passa3.talk", 32, true },
+	{ "giornalaio.talk", 33, true },
+	{ "pazza1.talk", 2, false },
+	{ "pazza2.talk", 3, false },
+	{ "pazza3.talk", 4, false },
+	{ "citofono.talk", 34, true },
+	{ "perdelook.talk", 0, false },
+	{ "tele.talk", 35, true },
+	{ "dough.talk", 1, true },
+	{ "donna.talk", 0, false },
+	{ "guanti.talk", 36, true },
+	{ "cuoco.talk", 37, true },
+	{ "punks.talk", 38, true },
+	{ nullptr, 39, true },		// Second person in the punks.talk dialogue
+	{ "punko.talk", 40, true },
+	{ "hotdog.talk", 41, true },
+	{ "cameriera.talk", 5, false },
+	{ "rice1.talk", 42, true },
+	{ nullptr, 43, true },		// Second person in the rice1.talk dialogue
+	{ "segretaria.talk", 6, false },
+	{ "robot.talk", 44, true },
+	{ "portiere.talk", 45, true },
+	{ "figaro.talk", 46, true },
+	{ "ominos.talk", 47, true },
+	{ "cassiera.talk", 7, false },
+	{ "dino.talk", 2, true }
+};
+
+#endif
+
+enum PlayableCharacterVoiceID {
+	kDoug = 1,
+	kDonna = 2,
+	kDino = 3,
+	kDrki = 4
+};
+
+static const int kNarratorVoiceID = 0;
 
 class SaveLoad;
 
@@ -301,6 +394,7 @@ public:
 	Location		_location;
 	ZonePtr			_activeZone;
 	char			_characterName1[50];	// only used in changeCharacter
+	int				_characterVoiceID;
 	ZonePtr			_zoneTrap;
 	ZonePtr			_commentZone;
 	Common::String  _newLocationName;
@@ -359,6 +453,9 @@ public:
 	int16		getInventoryItemIndex(int16 pos);
 	void		openInventory();
 	void		closeInventory();
+	void		sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const;
+	void		setTTSVoice(int id) const;
+	void		stopTextToSpeech() const;
 
 	virtual void parseLocation(const char* name) = 0;
 	virtual void changeLocation() = 0;
@@ -388,6 +485,8 @@ public:
 
 	uint16			_score;
 	Common::String	_password;
+
+	bool _endCredits;
 
 
 public:

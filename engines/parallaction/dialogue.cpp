@@ -49,6 +49,7 @@ struct BalloonPositions {
 
 
 
+static const int kNumberOfVoiceDatas = 65;
 
 class DialogueManager {
 
@@ -59,6 +60,9 @@ class DialogueManager {
 	GfxObj			*_questioner;
 	GfxObj			*_answerer;
 	int				_faceId;
+
+	int 			_questionerVoiceID;
+	int 			_answererVoiceID;
 
 	Question		*_q;
 
@@ -137,6 +141,23 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 	_questioner = isNpc ? _vm->_disk->loadTalk(_z->u._filename.c_str()) : _vm->_char._talk;
 	_answerer = _vm->_char._talk;
 
+#ifdef USE_TTS
+	_answererVoiceID = _vm->_characterVoiceID;
+
+	if (!isNpc) {
+		_questionerVoiceID = _answererVoiceID;
+	} else {
+		_questionerVoiceID = kNarratorVoiceID;
+
+		for (int i = 1; i < kNumberOfVoiceDatas; ++i) {
+			if (characterVoiceDatas[i].characterName && !scumm_stricmp(characterVoiceDatas[i].characterName, _z->u._filename.c_str())) {
+				_questionerVoiceID = i;
+				break;
+			}
+		}
+	}
+#endif
+
 	_cmdList = nullptr;
 	_answerId = 0;
 
@@ -213,6 +234,8 @@ bool DialogueManager::testAnswerFlags(Answer *a) {
 
 void DialogueManager::displayAnswers() {
 
+	_vm->setTTSVoice(_answererVoiceID);
+
 	// create balloons
 	int id;
 	for (int i = 0; i < _numVisAnswers; ++i) {
@@ -277,6 +300,15 @@ int16 DialogueManager::selectAnswerN() {
 
 bool DialogueManager::displayQuestion() {
 	if (_q->textIsNull()) return false;
+
+#ifdef USE_TTS
+	// Some dialogue exchanges involve more than 1 character, differentiated by the mood
+	if (_questionerVoiceID < kNumberOfVoiceDatas - 1 && characterVoiceDatas[_questionerVoiceID + 1].characterName == nullptr) {
+		_vm->setTTSVoice(_questionerVoiceID + _q->speakerMood());
+	} else {
+		_vm->setTTSVoice(_questionerVoiceID);
+	}
+#endif
 
 	_balloonMan->setSingleBalloon(_q->_text, _ballonPos._questionBalloon.x, _ballonPos._questionBalloon.y, _q->balloonWinding(), BalloonManager::kNormalColor);
 	_faceId = _gfx->setItem(_questioner, _ballonPos._questionChar.x, _ballonPos._questionChar.y);
@@ -415,6 +447,7 @@ protected:
 		}
 
 		if ((_vm->_password.size() == MAX_PASSWORD_LENGTH) || ((_isKeyDown) && (_downKey == Common::KEYCODE_RETURN))) {
+			_vm->sayText(_vm->_password, Common::TextToSpeechManager::INTERRUPT);
 			if (checkPassword()) {
 				return 0;
 			} else {
@@ -448,6 +481,8 @@ public:
 
 			if (a->_text.contains("%P")) {
 				_askPassword = true;
+
+				_vm->sayText(a->_text.substr(0, a->_text.find('@')), Common::TextToSpeechManager::INTERRUPT);
 			}
 
 			_visAnswers[_numVisAnswers]._a = a;
@@ -534,6 +569,8 @@ void Parallaction::enterDialogueMode(ZonePtr z) {
 void Parallaction::exitDialogueMode() {
 	debugC(1, kDebugDialogue, "Parallaction::exitDialogueMode()");
 	_input->_inputMode = Input::kInputModeGame;
+
+	setTTSVoice(_characterVoiceID);
 
 	/* Since the current instance of _dialogueMan must be destroyed before the
 	   zone commands are executed, as they may create a new instance of _dialogueMan that
