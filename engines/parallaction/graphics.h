@@ -320,6 +320,8 @@ public:
 	int _pathId;
 	bool _hasPath;
 
+	Common::String _text;
+
 
 	GfxObj(uint type, Frames *frames, const char *name = NULL);
 	virtual ~GfxObj();
@@ -457,7 +459,7 @@ public:
 
 	GfxObj *renderFloatingLabel(Font *font, char *text);
 	GfxObj *createLabel(Font *font, const char *text, byte color);
-	void showLabel(GfxObj *label, int16 x, int16 y);
+	void showLabel(GfxObj *label, int16 x, int16 y, bool queueTTS = true, bool voiceText = true);
 	void hideLabel(GfxObj *label);
 	void freeLabels();
 	void unregisterLabel(GfxObj *label);
