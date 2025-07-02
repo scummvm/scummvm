@@ -502,8 +502,6 @@ void CastleEngine::pressedKey(const int keycode) {
 	}
 }
 
-extern Common::String centerAndPadString(const Common::String &x, int y);
-
 void CastleEngine::drawInfoMenu() {
 	PauseToken pauseToken = pauseEngine();
 	if (_savedScreen) {
