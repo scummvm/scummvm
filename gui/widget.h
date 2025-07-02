@@ -321,7 +321,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::ManagedSurface _gfx[kPicButtonStateMax + 1];
+	Graphics::ManagedSurface *_gfx[kPicButtonStateMax + 1];
 	Graphics::AlphaType _alphaType[kPicButtonStateMax + 1];
 	bool _showButton;
 };
@@ -457,7 +457,7 @@ public:
 protected:
 	void drawWidget() override;
 
-	Graphics::ManagedSurface _gfx;
+	Graphics::ManagedSurface *_gfx;
 	Graphics::AlphaType _alphaType;
 };
 
