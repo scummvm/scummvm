@@ -38,7 +38,8 @@ GraphicsManager::GraphicsManager() :
 	_screenPixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
 	_clut8Format(Graphics::PixelFormat::createFormatCLUT8()),
 	_transparentPixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
-	_isSuppressed(false) {}
+	_isSuppressed(false),
+	_screen(640, 480, _screenPixelFormat){}
 
 void GraphicsManager::init() {
 	auto *bsum = GetEngineData(BSUM);
@@ -54,7 +55,6 @@ void GraphicsManager::init() {
 	}
 
 	initGraphics(640, 480, &_screenPixelFormat);
-	_screen.create(640, 480, _screenPixelFormat);
 	_screen.setTransparentColor(getTransColor());
 	_screen.clear();
 
