@@ -5,7 +5,6 @@ MODULE_OBJS = \
 	awe.o \
 	aifc_player.o \
 	bitmap.o \
-	detection.o \
 	engine.o \
 	graphics_gl.o \
 	graphics_soft.o \
