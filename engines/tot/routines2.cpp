@@ -1767,15 +1767,15 @@ void introduction() {
 	pulsada_salida = false;
 	totalFadeOut(0);
 
-	// if (contadorpc > 6)
-	// 	showError(270);
-	// cleardevice();
-	// drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
-	// if (pulsada_salida)
-	// 	goto Lsalirpres;
-	// drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
-	// if (pulsada_salida)
-	// 	goto Lsalirpres;
+	if (contadorpc > 6)
+		showError(270);
+	cleardevice();
+	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
+	if (pulsada_salida)
+		goto Lsalirpres;
+	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
+	if (pulsada_salida)
+		goto Lsalirpres;
 	totalFadeOut(0);
 	cleardevice();
 	if(isSpanish) {
@@ -2357,22 +2357,31 @@ void sacrificeScene() {
 	saveAllowed = false;
 	palette palaux;
 
-	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	Common::File fich;
+	bool isSpanish = (g_engine->_lang == Common::ES_ESP);
+	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
 
-	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+	const long *offsets = (isSpanish) ? flcOffsets[0] : flcOffsets[1];
 
 	stopVoc();
 	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
 
 	bar(0, 139, 319, 149, 0);
-	bar(10, 10, 300, 120, 0);
-
-	outtextxy(10, 10, messages[9], 200);
-	outtextxy(10, 30, messages[10], 200);
-	outtextxy(10, 50, messages[11], 200);
-	outtextxy(10, 70, messages[12], 200);
-	outtextxy(10, 90, messages[13], 200);
+	bar(10, 10, 310, 120, 0);
+	if (isSpanish) {
+		outtextxy(10, 10, messages[9], 200);
+		outtextxy(10, 30, messages[10], 200);
+		outtextxy(10, 50, messages[11], 200);
+		outtextxy(10, 70, messages[12], 200);
+		outtextxy(10, 90, messages[13], 200);
+	} else {
+		outtextxy(10, 20, messages[9], 200);
+		outtextxy(10, 40, messages[10], 200);
+		outtextxy(10, 60, messages[11], 200);
+		outtextxy(10, 80, messages[12], 200);
+		outtextxy(10, 100, messages[13], 200);
+	}
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2384,12 +2393,19 @@ void sacrificeScene() {
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
-	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, messages[14], 200);
-	outtextxy(10, 30, messages[15], 200);
-	outtextxy(10, 50, messages[16], 200);
-	outtextxy(10, 70, messages[17], 200);
-	outtextxy(10, 90, messages[18], 200);
+	bar(10, 10, 310, 120, 0);
+	if (isSpanish) {
+		outtextxy(10, 10, messages[14], 200);
+		outtextxy(10, 30, messages[15], 200);
+		outtextxy(10, 50, messages[16], 200);
+		outtextxy(10, 70, messages[17], 200);
+		outtextxy(10, 90, messages[18], 200);
+	} else {
+		outtextxy(10, 20, messages[14], 200);
+		outtextxy(10, 40, messages[15], 200);
+		outtextxy(10, 60, messages[16], 200);
+		outtextxy(10, 80, messages[17], 200);
+	}
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2400,11 +2416,17 @@ void sacrificeScene() {
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 
-	bar(10, 10, 300, 120, 0);
-	outtextxy(10, 10, messages[19], 200);
-	outtextxy(10, 50, messages[20] , 200);
-	outtextxy(10, 70, messages[21] , 200);
-	outtextxy(10, 90, messages[22], 200);
+	bar(10, 10, 310, 120, 0);
+	if (isSpanish) {
+		outtextxy(10, 10, messages[19], 200);
+		outtextxy(10, 50, messages[20], 200);
+		outtextxy(10, 70, messages[21], 200);
+		outtextxy(10, 90, messages[22], 200);
+	} else {
+		outtextxy(10, 30, messages[19], 200);
+		outtextxy(10, 60, messages[20], 200);
+		outtextxy(10, 80, messages[21], 200);
+	}
 
 	for (int i = 0; i <= 28; i++)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
@@ -2414,9 +2436,8 @@ void sacrificeScene() {
 
 	for (int i = 28; i >= 0; i--)
 		setRGBPalette(200, i * 2, i * 2, i * 2);
-	bar(10, 10, 300, 120, 0);
+	bar(10, 10, 310, 120, 0);
 
-	Common::File fich;
 	if (!fich.open("SALONREC.PAN")) {
 		showError(318);
 	}
@@ -2456,17 +2477,17 @@ void sacrificeScene() {
 	outtextxy(10, 31, messages[23], 254);
 	outtextxy(10, 29, messages[23], 254);
 	outtextxy(11, 30, messages[23], 254);
-	outtextxy(9, 30,  messages[23], 254);
+	outtextxy(9, 30, messages[23], 254);
 
 	outtextxy(10, 51, messages[24], 254);
 	outtextxy(10, 49, messages[24], 254);
 	outtextxy(11, 50, messages[24], 254);
-	outtextxy(9, 50,  messages[24], 254);
+	outtextxy(9, 50, messages[24], 254);
 
 	outtextxy(10, 71, messages[25], 254);
 	outtextxy(10, 69, messages[25], 254);
 	outtextxy(11, 70, messages[25], 254);
-	outtextxy(9, 70,  messages[25], 254);
+	outtextxy(9, 70, messages[25], 254);
 
 	outtextxy(10, 30, messages[23], 255);
 	outtextxy(10, 50, messages[24], 255);
@@ -2557,13 +2578,31 @@ void sacrificeScene() {
 	outtextxy(11, 140, messages[32], 254);
 	outtextxy(9, 140,  messages[32], 254);
 
-	outtextxy(10, 20,  messages[26], 255);
-	outtextxy(10, 40,  messages[27], 255);
-	outtextxy(10, 60,  messages[28], 255);
-	outtextxy(10, 80,  messages[29], 255);
+	if (!isSpanish) {
+		outtextxy(10, 161, messages[56], 254);
+		outtextxy(10, 159, messages[56], 254);
+		outtextxy(11, 160, messages[56], 254);
+		outtextxy(9, 160,  messages[56], 254);
+
+		outtextxy(10, 181, messages[57], 254);
+		outtextxy(10, 179, messages[57], 254);
+		outtextxy(11, 180, messages[57], 254);
+		outtextxy(9,  180,  messages[57], 254);
+	}
+
+	outtextxy(10, 20, messages[26], 255);
+	outtextxy(10, 40, messages[27], 255);
+	outtextxy(10, 60, messages[28], 255);
+	outtextxy(10, 80, messages[29], 255);
 	outtextxy(10, 100, messages[30], 255);
 	outtextxy(10, 120, messages[31], 255);
 	outtextxy(10, 140, messages[32], 255);
+
+	if (!isSpanish) {
+		outtextxy(10, 160, messages[56], 255);
+		outtextxy(10, 180, messages[57], 255);
+	}
+
 	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
@@ -2581,48 +2620,52 @@ void sacrificeScene() {
 		return;
 
 	clear();
-	outtextxy(10, 21,  messages[33], 254);
-	outtextxy(10, 19,  messages[33], 254);
-	outtextxy(11, 20,  messages[33], 254);
-	outtextxy(9,  20,  messages[33], 254);
 
-	outtextxy(10, 41,  messages[34], 254);
-	outtextxy(10, 39,  messages[34], 254);
-	outtextxy(11, 40,  messages[34], 254);
-	outtextxy(9, 40,   messages[34], 254);
+	outtextxy(10, 21, messages[33], 254);
+	outtextxy(10, 19, messages[33], 254);
+	outtextxy(11, 20, messages[33], 254);
+	outtextxy(9, 20, messages[33], 254);
 
-	outtextxy(10, 61,  messages[35], 254);
-	outtextxy(10, 59,  messages[35], 254);
-	outtextxy(11, 60,  messages[35], 254);
-	outtextxy(9, 60,   messages[35], 254);
+	outtextxy(10, 41, messages[34], 254);
+	outtextxy(10, 39, messages[34], 254);
+	outtextxy(11, 40, messages[34], 254);
+	outtextxy(9, 40, messages[34], 254);
 
-	outtextxy(10, 81,  messages[36], 254);
-	outtextxy(10, 79,  messages[36], 254);
-	outtextxy(11, 80,  messages[36], 254);
-	outtextxy(9, 80,   messages[36], 254);
+	outtextxy(10, 61, messages[35], 254);
+	outtextxy(10, 59, messages[35], 254);
+	outtextxy(11, 60, messages[35], 254);
+	outtextxy(9, 60, messages[35], 254);
+	if (isSpanish) {
+		outtextxy(10, 81, messages[36], 254);
+		outtextxy(10, 79, messages[36], 254);
+		outtextxy(11, 80, messages[36], 254);
+		outtextxy(9, 80, messages[36], 254);
 
-	outtextxy(10, 101, messages[37], 254);
-	outtextxy(10, 99,  messages[37], 254);
-	outtextxy(11, 100, messages[37], 254);
-	outtextxy(9, 100,  messages[37], 254);
+		outtextxy(10, 101, messages[37], 254);
+		outtextxy(10, 99, messages[37], 254);
+		outtextxy(11, 100, messages[37], 254);
+		outtextxy(9, 100, messages[37], 254);
 
-	outtextxy(10, 121, messages[38], 254);
-	outtextxy(10, 119, messages[38], 254);
-	outtextxy(11, 120, messages[38], 254);
-	outtextxy(9, 120,  messages[38], 254);
+		outtextxy(10, 121, messages[38], 254);
+		outtextxy(10, 119, messages[38], 254);
+		outtextxy(11, 120, messages[38], 254);
+		outtextxy(9, 120, messages[38], 254);
 
-	outtextxy(10, 141, messages[39], 254);
-	outtextxy(10, 139, messages[39], 254);
-	outtextxy(11, 140, messages[39], 254);
-	outtextxy(9, 140,  messages[39], 254);
+		outtextxy(10, 141, messages[39], 254);
+		outtextxy(10, 139, messages[39], 254);
+		outtextxy(11, 140, messages[39], 254);
+		outtextxy(9, 140, messages[39], 254);
+	}
 
-	outtextxy(10, 20,  messages[33], 255);
-	outtextxy(10, 40,  messages[34], 255);
-	outtextxy(10, 60,  messages[35], 255);
-	outtextxy(10, 80,  messages[36], 255);
-	outtextxy(10, 100, messages[37], 255);
-	outtextxy(10, 120, messages[38], 255);
-	outtextxy(10, 140, messages[39], 255);
+	outtextxy(10, 20, messages[33], 255);
+	outtextxy(10, 40, messages[34], 255);
+	outtextxy(10, 60, messages[35], 255);
+	if (isSpanish) {
+		outtextxy(10, 80, messages[36], 255);
+		outtextxy(10, 100, messages[37], 255);
+		outtextxy(10, 120, messages[38], 255);
+		outtextxy(10, 140, messages[39], 255);
+	}
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2640,23 +2683,24 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 	clear();
-	outtextxy(10, 61,  messages[40], 254);
-	outtextxy(10, 59,  messages[40], 254);
-	outtextxy(11, 60,  messages[40], 254);
-	outtextxy(9, 60,   messages[40], 254);
 
-	outtextxy(10, 81,  messages[41], 254);
-	outtextxy(10, 79,  messages[41], 254);
-	outtextxy(11, 80,  messages[41], 254);
-	outtextxy(9, 80,   messages[41], 254);
+	outtextxy(10, 61, messages[40], 254);
+	outtextxy(10, 59, messages[40], 254);
+	outtextxy(11, 60, messages[40], 254);
+	outtextxy(9, 60, messages[40], 254);
+
+	outtextxy(10, 81, messages[41], 254);
+	outtextxy(10, 79, messages[41], 254);
+	outtextxy(11, 80, messages[41], 254);
+	outtextxy(9, 80, messages[41], 254);
 
 	outtextxy(10, 101, messages[42], 254);
-	outtextxy(10, 99,  messages[42], 254);
+	outtextxy(10, 99, messages[42], 254);
 	outtextxy(11, 100, messages[42], 254);
-	outtextxy(9, 100,  messages[42], 254);
+	outtextxy(9, 100, messages[42], 254);
 
-	outtextxy(10, 60,  messages[40], 255);
-	outtextxy(10, 80,  messages[41], 255);
+	outtextxy(10, 60, messages[40], 255);
+	outtextxy(10, 80, messages[41], 255);
 	outtextxy(10, 100, messages[42], 255);
 
 	for (int i = 0; i < 32; i++) {

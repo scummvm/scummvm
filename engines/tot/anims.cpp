@@ -36,7 +36,7 @@
 
 namespace Tot {
 
-const int sizefrase = 320 * 30 + 4;
+const int sizefrase = 320 * 70 + 4;
 
 int32 posflicfile;
 uint numerovuelta, posrelfli;
@@ -564,7 +564,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 1:
 			switch (framecontador) {
 			case 1:
-				getImg(0, 0, 319, 29, punterofondofrase);
+				getImg(0, 0, 319, 69, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -780,7 +780,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 1:
 			switch (framecontador) {
 			case 2:
-				getImg(0, 0, 319, 29, punterofondofrase);
+				getImg(0, 0, 319, 69, punterofondofrase);
 				break;
 			case 3:
 				drawText(65, 1,
