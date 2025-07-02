@@ -23,6 +23,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for SLUDGE-based games, such as Out of Order,
      The Secret of Tremendous Corporation, Robin's Rescue and
      others, 12 titles so far.
+   - Added support for Adibou 2: Nature & Sciences.
 
  Drascula:
    - Fixed displaying accented characters.
