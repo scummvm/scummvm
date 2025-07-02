@@ -315,7 +315,7 @@ bool WageEngine::attackHit(Chr *attacker, Chr *victim, Obj *weapon, int targetIn
 				Scene *currentScene = victim->_currentScene;
 
 				for (int i = victim->_inventory.size() - 1; i >= 0; i--) {
-					if (i < victim->_inventory.size())
+					if (i < (int)victim->_inventory.size())
 						_world->move(victim->_inventory[i], currentScene);
 				}
 				Common::String *s = getGroundItemsList(currentScene);
