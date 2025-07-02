@@ -29,17 +29,16 @@
 #include "create_teenagent.h"
 #include "static_tables.h"
 
-void writeCredits(FILE *fd) {
-	Common::Array<const char *> &credits = englishCredits;
-
-	for (auto &creditStr : credits) {
-		for (uint j = 0; j < strlen(creditStr); j++) {
-			if (creditStr[j] == '\n') {
+void writeStringsBlock(FILE* fd, const char **stringArr, uint size) {
+	for (uint i = 0; i < size; i++) {
+		for (uint j = 0; j < strlen(stringArr[i]); j++) {
+			if (stringArr[i][j] == '\n')
 				writeByte(fd, '\0');
-			} else {
-				writeByte(fd, creditStr[j]);
-			}
+			else
+				writeByte(fd, stringArr[i][j]);
 		}
+		writeByte(fd, '\0');
+		writeByte(fd, '\0');
 	}
 }
 
@@ -192,22 +191,6 @@ void writeSceneObjects(FILE* fd) {
 	fseek(fd, pos, SEEK_SET);
 }
 
-void writeMessages(FILE *fd) {
-	// Write out message string block
-	const char **messages = englishMessages;
-
-	for (uint i = 0; i < kNumMessages; i++) {
-		for (uint j = 0; j < strlen(messages[i]); j++) {
-			if (messages[i][j] == '\n')
-				writeByte(fd, '\0');
-			else
-				writeByte(fd, messages[i][j]);
-		}
-		writeByte(fd, '\0');
-		writeByte(fd, '\0');
-	}
-}
-
 void writeResource(FILE *fd, ResourceType resType) {
 	uint currentFilePos = ftell(fd);
 	uint prevFilePos = currentFilePos;
@@ -216,7 +199,7 @@ void writeResource(FILE *fd, ResourceType resType) {
 
 	switch (resType) {
 	case kResCredits:
-		writeCredits(fd);
+		writeStringsBlock(fd, englishCredits, kNumCredits);
 		break;
 	case kResDialogs:
 		writeDialogs(fd);
@@ -228,7 +211,7 @@ void writeResource(FILE *fd, ResourceType resType) {
 		writeSceneObjects(fd);
 		break;
 	case kResMessages:
-		writeMessages(fd);
+		writeStringsBlock(fd, englishMessages, kNumMessages);
 		break;
 	};
 
