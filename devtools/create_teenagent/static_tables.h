@@ -7444,7 +7444,9 @@ const static uint8 dsegStartBlock[DSEG_STARTBLK_SIZE] = {
 	0x69, 0x6e, 0x75, 0x65, 0x2e, 0x24
 };
 
-const static char* englishMessages[333] = {
+const uint kNumMessages = 333 + 1; // Plus one to account for combine error message
+
+const static char *englishMessages[kNumMessages] = {
 	"I have no idea what to do with it.", // 0
 	"I can't imagine what I could do with\nthis.", // 1
 	"I can't figure out what I should do\nwith this.", // 2
@@ -7777,7 +7779,12 @@ const static char* englishMessages[333] = {
 	"\"Greyhounds and other hunting dogs\".", // 329
 	"\"Greenhorn, or my adventures in the Wild West\".", // 330
 	"\"Charlie Brown and his company\".", // 331
-	"\"Pink Panther: an unauthorised biography\"." // 332
+	"\"Pink Panther: an unauthorised biography\".", // 332
+
+	// Combine error message.
+	// NOTE: This string is stored separately from
+	// the rest of the messages above in the executable.
+	"Using these two objects together won't\naccomplish anything.",
 };
 
 #define DSEG_ENDBLK_SIZE 34651

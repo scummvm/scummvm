@@ -133,6 +133,7 @@ public:
 	byte getFlag(uint16 addr);
 	void reloadLan();
 	void rejectMessage();
+	void bookColorMessage();
 
 	void playMusic(byte id); //schedules play
 	void playSound(byte id, byte skipFrames);

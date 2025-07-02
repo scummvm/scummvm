@@ -116,7 +116,7 @@ bool TeenAgentEngine::trySelectedObject() {
 
 	// error
 	inventory->resetSelectedObject();
-	displayMessage(dsAddr_objErrorMsg); // "That's no good"
+	displayMessage(res->getMessageAddr(kObjErrorMsg)); // "That's no good"
 	return true;
 }
 
@@ -721,7 +721,7 @@ Common::Error TeenAgentEngine::run() {
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
-	    const char *str = (const char *)res->dseg.ptr(addr);
+	    const char *str = (const char *)res->messagesSeg.ptr(addr);
 	    str[0] != 0 || str[1] != 0;
 	    ++str) {
 		char c = str[0];

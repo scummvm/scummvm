@@ -191,6 +191,22 @@ void writeSceneObjects(FILE* fd) {
 	fseek(fd, pos, SEEK_SET);
 }
 
+void writeMessages(FILE *fd) {
+	// Write out message string block
+	const char **messages = englishMessages;
+
+	for (uint i = 0; i < kNumMessages; i++) {
+		for (uint j = 0; j < strlen(messages[i]); j++) {
+			if (messages[i][j] == '\n')
+				writeByte(fd, '\0');
+			else
+				writeByte(fd, messages[i][j]);
+		}
+		writeByte(fd, '\0');
+		writeByte(fd, '\0');
+	}
+}
+
 void writeResource(FILE *fd, ResourceType resType) {
 	uint currentFilePos = ftell(fd);
 	uint prevFilePos = currentFilePos;
@@ -209,6 +225,9 @@ void writeResource(FILE *fd, ResourceType resType) {
 		break;
 	case kResSceneObjects:
 		writeSceneObjects(fd);
+		break;
+	case kResMessages:
+		writeMessages(fd);
 		break;
 	};
 
@@ -238,47 +257,10 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	// Write out message string block
-	for (uint i = 0; i < (sizeof(englishMessages)/sizeof(char*)); i++) {
-		if (i == 0) {
-			// Write out reject message pointer block
-			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[0]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[1]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[2]) + 2;
-			writeUint16LE(fout, off);
-		}
-
-		if (i == 327) {
-			// Write out book color pointer block
-			uint16 off = DSEG_STARTBLK_SIZE + (4 * 2);
-			for (uint k = 0; k < 327; k++)
-				off += strlen(englishMessages[k]) + 2;
-			off += (6 * 2);
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[327]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[328]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[329]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[330]) + 2;
-			writeUint16LE(fout, off);
-			off += strlen(englishMessages[331]) + 2;
-			writeUint16LE(fout, off);
-		}
-		for (uint j = 0; j < strlen(englishMessages[i]); j++) {
-			if (englishMessages[i][j] == '\n')
-				writeByte(fout, '\0');
-			else
-				writeByte(fout, englishMessages[i][j]);
-		}
-		writeByte(fout, '\0');
-		writeByte(fout, '\0');
-	}
+	// Skip messages block
+	// It is written as a resource after the data segment
+	uint msgBlockSize = 11415; // The size of messages block in the English exe
+	fseek(fout, msgBlockSize, SEEK_CUR);
 
 	if (fwrite(dsegEndBlock, DSEG_ENDBLK_SIZE, 1, fout) != 1) {
 		perror("Writing data segment end block");
