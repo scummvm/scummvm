@@ -142,6 +142,33 @@ void Resources::precomputeItemOffsets() {
 		debug(1, "\tItem #%d: Offset 0x%04x", i, itemOffsets[i]);
 }
 
+void Resources::precomputeMessageOffsets() {
+	messageOffsets.push_back(0);
+	int n = 0;
+	byte current, last = 0xff;
+
+	for (uint i = 0; i < messagesSeg.size(); i++) {
+		current = messagesSeg.get_byte(i);
+
+		if (n == 2) {
+			if (messageOffsets.size() == 294) {
+				// Skip extra two bytes (padding?) after 294th message.
+				i += 2;
+			}
+			messageOffsets.push_back(i);
+			n = 0;
+		}
+
+		if (current != 0x00 && last == 0x00)
+			n = 0;
+
+		if (current == 0x00)
+			n++;
+
+		last = current;
+	}
+}
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	Common::String filename = "teenagent.dat";
@@ -175,11 +202,15 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	resourceSize = dat->readUint32LE();
 	sceneObjectsSeg.read(dat, resourceSize);
 
+	resourceSize = dat->readUint32LE();
+	messagesSeg.read(dat, resourceSize);
+
 	delete dat;
 
 	precomputeDialogOffsets();
 	precomputeItemOffsets();
 	precomputeCreditsOffsets();
+	precomputeMessageOffsets();
 
 	FilePack varia;
 	varia.open("varia.res");

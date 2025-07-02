@@ -88,7 +88,7 @@ void TeenAgentEngine::fnIntro() {
 	showActor();
 	moveTo(319, 150, 1, true);
 	moveTo(63, 150, 1);
-	displayAsyncMessage(dsAddr_HeyWtmQMsg, 4, 62, 18, 36); // hey, what's the matter?
+	displayAsyncMessage(res->getMessageAddr(kHeyWtmQMsg), 4, 62, 18, 36); // hey, what's the matter?
 	playAnimation(851, 0, true);
 	playActorAnimation(930, true);
 	waitAnimation();
@@ -135,7 +135,7 @@ void TeenAgentEngine::fnGotAnchor() {
 	playActorAnimation(619);
 	fnGetOutOfLake();
 	inventory->add(kInvItemAnchor);
-	displayMessage(dsAddr_hookedAnchorMsg); // "I was really hooked on this anchor!"
+	displayMessage(res->getMessageAddr(kHookedAnchorMsg)); // "I was really hooked on this anchor!"
 }
 
 void TeenAgentEngine::fnGetOutOfLake() {
@@ -153,7 +153,7 @@ void TeenAgentEngine::fnGuardDrinking() {
 	scene->getAnimation(0)->free();
 	SET_FLAG(dsAddr_scaredGuardAlreadyFlag, 1);
 
-	displayAsyncMessage(dsAddr_BooMsg, 300, 130, 1, 5); // "Booo!"
+	displayAsyncMessage(res->getMessageAddr(kBooMsg), 300, 130, 1, 5); // "Booo!"
 	setOns(0, 16);
 	enableObject(2);
 
@@ -184,7 +184,7 @@ void TeenAgentEngine::fnEnterCave() {
 	playActorAnimation(601);
 	moveTo(230, 179, 3);
 	if (!CHECK_FLAG(dsAddr_lightOnFlag, 1))
-		displayMessage(dsAddr_kindaDarkMsg); // "It's kinda dark here"
+		displayMessage(res->getMessageAddr(kKindaDarkMsg)); // "It's kinda dark here"
 }
 
 void TeenAgentEngine::fnEgoScaredBySpider() {
@@ -276,10 +276,10 @@ bool TeenAgentEngine::fnCheckingDrawers() {
 
 void TeenAgentEngine::fnDrawerOpenMessage() {
 	if (CHECK_FLAG(dsAddr_drawerPuzzleHintGivenFlag, 1))
-		displayMessage(dsAddr_drawerOpenMsg); // "I cannot open the drawer if the next one is open!"
+		displayMessage(res->getMessageAddr(kDrawerOpenMsg)); // "I cannot open the drawer if the next one is open!"
 	else {
-		displayMessage(dsAddr_strangeDrawerMsg); // "Strange, but the drawer is stuck if the next drawer is open"
-		displayMessage(dsAddr_notOrdinaryDrawersMsg); // "Maybe these are not just ordinary drawers!"
+		displayMessage(res->getMessageAddr(kStrangeDrawerMsg)); // "Strange, but the drawer is stuck if the next drawer is open"
+		displayMessage(res->getMessageAddr(kNotOrdinaryDrawersMsg)); // "Maybe these are not just ordinary drawers!"
 		SET_FLAG(dsAddr_drawerPuzzleHintGivenFlag, 1);
 	}
 }
@@ -288,7 +288,7 @@ bool TeenAgentEngine::fnRobotSafeAlreadyUnlockedCheck() {
 	if (CHECK_FLAG(dsAddr_MansionRobotSafeUnlockedFlag, 1)) {
 		return true;
 	} else {
-		displayMessage(dsAddr_noReasonMsg); // "There's no reason to do it"
+		displayMessage(res->getMessageAddr(kNoReasonMsg)); // "There's no reason to do it"
 		return false;
 	}
 }
@@ -319,7 +319,7 @@ bool TeenAgentEngine::fnMansionIntrusionAttempt() {
 		byte id = scene->getId();
 
 		playMusic(11);
-		displayCutsceneMessage(dsAddr_cutsceneMsg2, 84, 95); // "Meanwhile in the mansion"
+		displayCutsceneMessage(res->getMessageAddr(kCutsceneMsg2), 84, 95); // "Meanwhile in the mansion"
 		switch (attempts) {
 		case 2:
 			fnSecondMansionIntrusion();
@@ -426,14 +426,14 @@ void TeenAgentEngine::fnSixthMansionIntrusion() {
 }
 
 void TeenAgentEngine::fnTooDark() {
-	displayMessage(dsAddr_TooDarkMsg); // "It's too dark to see clearly"
+	displayMessage(res->getMessageAddr(kTooDarkMsg)); // "It's too dark to see clearly"
 }
 
 bool TeenAgentEngine::fnIsCookGone() {
 	if (CHECK_FLAG(dsAddr_MansionCookGoneFlag, 1)) {
 		return true;
 	} else {
-		displayMessage(dsAddr_cookAroundMsg); // "I can't do anything with this cook around"
+		displayMessage(res->getMessageAddr(kCookAroundMsg)); // "I can't do anything with this cook around"
 		return false;
 	}
 }
@@ -482,20 +482,27 @@ void TeenAgentEngine::fnGiveAnotherFlowerToAnne() {
 	dialog->pop(scene, dsAddr_dialogStackAnotherFlowerToAnne, 0, 524, kMark, kAnne, 0, 2);
 }
 
+void TeenAgentEngine::bookColorMessage() {
+	uint bookIndex = GET_FLAG(dsAddr_drawerPuzzleBookValue) - 1;
+	uint16 addr = res->getMessageAddr(MessageType((int)kBookColorMsg0 + bookIndex));
+
+	displayMessage(addr);
+}
+
 void TeenAgentEngine::rejectMessage() {
 	uint i = _rnd.getRandomNumber(3);
 	switch (i) {
 	case 0:
-		displayMessage(dsAddr_rejectMsg0); // "I have no idea what to do with it"
+		displayMessage(res->getMessageAddr(kRejectMsg0)); // "I have no idea what to do with it"
 		break;
 	case 1:
-		displayMessage(dsAddr_rejectMsg1); // "I can't imagine what I could do with this"
+		displayMessage(res->getMessageAddr(kRejectMsg1)); // "I can't imagine what I could do with this"
 		break;
 	case 2:
-		displayMessage(dsAddr_rejectMsg2); // "I can't figure out what I should do with this"
+		displayMessage(res->getMessageAddr(kRejectMsg2)); // "I can't figure out what I should do with this"
 		break;
 	case 3:
-		displayMessage(dsAddr_rejectMsg3); // "I can't find any reason to mess with it"
+		displayMessage(res->getMessageAddr(kRejectMsg3)); // "I can't find any reason to mess with it"
 		break;
 	default:
 		error("rejectMessage() index out of range");
@@ -531,18 +538,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(844);
 			playActorAnimation(846);
 			playActorAnimation(845);
-			displayMessage(dsAddr_pullObjMsg1); // "I can't pull it out"
+			displayMessage(res->getMessageAddr(kPullObjMsg1)); // "I can't pull it out"
 		} else {
-			displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+			displayMessage(res->getMessageAddr(kPullObjMsg2)); // "I can't reach it"
 		}
 		break;
 
 	case 0x4048:
-		displayMessage(dsAddr_dontWantToTouchMsg); // "I don't want to touch it - I might get hurt"
+		displayMessage(res->getMessageAddr(kDontWantToTouchMsg)); // "I don't want to touch it - I might get hurt"
 		break;
 
 	case 0x404f:
-		displayMessage(dsAddr_notWantToSleepMsg); // "I don't want to sleep"
+		displayMessage(res->getMessageAddr(kNotWantToSleepMsg)); // "I don't want to sleep"
 		break;
 
 	case 0x4056:
@@ -563,7 +570,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4094: // climbing to the pole near mudpool
 		if (CHECK_FLAG(dsAddr_gotMugOfMudFlag, 1)) {
-			displayMessage(dsAddr_poleClimbDoneMsg); // "Never Again!"
+			displayMessage(res->getMessageAddr(kPoleClimbDoneMsg)); // "Never Again!"
 		} else {
 			for (byte i = 11; i <= 27; i += 4)
 				playSound(76, i);
@@ -599,7 +606,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4195:
-		displayMessage(dsAddr_preferWaterMsg); // "I prefer water"
+		displayMessage(res->getMessageAddr(kPreferWaterMsg)); // "I prefer water"
 		break;
 
 	case 0x419c: // getting the bird
@@ -611,7 +618,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x41c3:
-		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		displayMessage(res->getMessageAddr(kPullObjMsg2)); // "I can't reach it"
 		break;
 
 	case 0x41ca:
@@ -629,7 +636,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x422c:
-		displayMessage(dsAddr_tooWeakToClimbMsg); // "I'm too weak to climb it"
+		displayMessage(res->getMessageAddr(kTooWeakToClimbMsg)); // "I'm too weak to climb it"
 		break;
 
 	case 0x4233:
@@ -655,11 +662,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(842);
 		wait(100);
 		// shown in different positions
-		displayMessage(dsAddr_fnMsg2, kMark, 16, 68); // "And how am I supposed to get back?"
+		displayMessage(res->getMessageAddr(kFnMsg2), kMark, 16, 68); // "And how am I supposed to get back?"
 		wait(50);
-		displayMessage(dsAddr_fnMsg3, kMark, 92, 68); // "Great"
+		displayMessage(res->getMessageAddr(kFnMsg3), kMark, 92, 68); // "Great"
 		wait(50);
-		displayMessage(dsAddr_fnMsg4, kMark, 62, 68); // "Oh, yeah, right"
+		displayMessage(res->getMessageAddr(kFnMsg4), kMark, 62, 68); // "Oh, yeah, right"
 		wait(50);
 		playActorAnimation(843);
 		showActor();
@@ -667,7 +674,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(7);
 		disableObject(1);
 		inventory->add(kInvItemShovelAct1);
-		displayMessage(dsAddr_fnMsg1); // "Piece of cake"
+		displayMessage(res->getMessageAddr(kFnMsg1)); // "Piece of cake"
 		break;
 
 	case 0x433a:
@@ -698,7 +705,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (res->dseg.get_byte(dsAddr_FirstActTrialState) < 2) {
 			wait(150);
 			moveTo(134, 167, 2);
-			displayMessage(dsAddr_firstTrialMsg); // "Sir, I'm Mark. A rookie"
+			displayMessage(res->getMessageAddr(kFirstTrialMsg)); // "Sir, I'm Mark. A rookie"
 			setLan(1, 0);
 			playAnimation(812, 0, true);
 			playActorAnimation(811);
@@ -720,7 +727,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4482:
 		if (CHECK_FLAG(dsAddr_FirstActTrialState, 0)) {
 			playActorAnimation(968);
-			displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+			displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		} else {
 			playSound(80, 3);
 			playSound(79, 4);
@@ -741,7 +748,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x44cb:
 		if (CHECK_FLAG(dsAddr_gotRopeAct1Flag, 1)) {
-			displayMessage(dsAddr_vacMsg); // "What am I? A vacuum cleaner?!"
+			displayMessage(res->getMessageAddr(kVacMsg)); // "What am I? A vacuum cleaner?!"
 		} else {
 			playSound(49, 14);
 			playSound(5, 21);
@@ -752,13 +759,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4532:
-		displayMessage(dsAddr_springPrickMsg); // "The springs would prick my back"
+		displayMessage(res->getMessageAddr(kSpringPrickMsg)); // "The springs would prick my back"
 		break;
 
 	case 0x4539: // prison cell: use crates
 		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 2)) {
 			// finished the meal - trap
-			displayMessage(dsAddr_mealFinishedMsg); // "Hey! I finished my meal."
+			displayMessage(res->getMessageAddr(kMealFinishedMsg)); // "Hey! I finished my meal."
 			moveTo(306, 196, 2);
 			wait(50);
 			//playAnimation(825, 1); //very long empty animation. what for?
@@ -775,7 +782,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			loadScene(6, scene->getPosition());
 			setOns(3, 0x5b);
 			wait(50);
-			displayMessage(dsAddr_bowlWeldedMsg); // "Wow. He got welded to the bowl"
+			displayMessage(res->getMessageAddr(kBowlWeldedMsg)); // "Wow. He got welded to the bowl"
 			SET_FLAG(dsAddr_JailCableAndBowlState, 3);
 			scene->getObject(4)->setName("body");
 		} else {
@@ -790,7 +797,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				wait(150);
 				moveTo(scene->getPosition().x, scene->getPosition().y - 1, 2);
 				wait(100);
-				displayMessage(dsAddr_ThanksMsg); // "Thanks."
+				displayMessage(res->getMessageAddr(kThanksMsg)); // "Thanks."
 				enableObject(4);
 				SET_FLAG(dsAddr_GotFoodBowlInJailFlag, 1);
 			}
@@ -800,7 +807,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4662:
 		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 3)) {
 			if (CHECK_FLAG(dsAddr_GotJailKeyFlag, 1)) {
-				displayMessage(dsAddr_noPocketMsg); // "I don't want to touch his pockets again."
+				displayMessage(res->getMessageAddr(kNoPocketMsg)); // "I don't want to touch his pockets again."
 			} else {
 				moveTo(280, 179, 2);
 				playSound(49, 7);
@@ -810,23 +817,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				SET_FLAG(dsAddr_GotJailKeyFlag, 1);
 			}
 		} else
-			displayMessage(dsAddr_foodAliveMsg); // "No, thanks. This food seems still alive"
+			displayMessage(res->getMessageAddr(kFoodAliveMsg)); // "No, thanks. This food seems still alive"
 		break;
 
 	case 0x46af: // prison cell: use live cable
 		if (CHECK_FLAG(dsAddr_GotFoodBowlInJailFlag, 1)) {
-			displayMessage(dsAddr_ideaMsg); // "That gives me an idea"
+			displayMessage(res->getMessageAddr(kIdeaMsg)); // "That gives me an idea"
 			setOns(2, 0);
 			playActorAnimation(821);
 			setOns(2, 0x5a);
 			setOns(3, 0);
 			playSound(22, 2);
 			playActorAnimation(822);
-			displayMessage(dsAddr_checkWorksMsg); // "Now I got to check if it works"
+			displayMessage(res->getMessageAddr(kCheckWorksMsg)); // "Now I got to check if it works"
 			disableObject(5);
 			SET_FLAG(dsAddr_JailCableAndBowlState, 1);
 		} else
-			displayMessage(dsAddr_unkUsageMsg); // "I don't have any idea what to do with it right now"
+			displayMessage(res->getMessageAddr(kUnkUsageMsg)); // "I don't have any idea what to do with it right now"
 		break;
 
 	case 0x4705: // prison: getting lamp bulb
@@ -857,7 +864,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (res->dseg.get_byte(dsAddr_FirstActTrialState) >= 2) {
 			loadScene(5, 287, 143);
 		} else {
-			displayMessage(dsAddr_doorClosedMsg); // "The door is closed. What a surprise."
+			displayMessage(res->getMessageAddr(kDoorClosedMsg)); // "The door is closed. What a surprise."
 		}
 		break;
 
@@ -865,7 +872,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(79, 5);
 		playSound(1, 14);
 		playActorAnimation(966);
-		displayMessage(dsAddr_emptyMsg); // "It's Empty"
+		displayMessage(res->getMessageAddr(kEmptyMsg)); // "It's Empty"
 		break;
 
 	case 0x47db: // prison: use switch
@@ -873,18 +880,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(71, 4);
 			playActorAnimation(823);
 			if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 0)) {
-				displayMessage(dsAddr_NotHappenMsg); // "Nothing happened"
+				displayMessage(res->getMessageAddr(kNotHappenMsg)); // "Nothing happened"
 			} else {
 				playSound(74, 1);
 				playAnimation(824, 1);
 				if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 1)) {
 					wait(100);
-					displayMessage(dsAddr_timeToCallMsg); // "I think it is time to call captain"
+					displayMessage(res->getMessageAddr(kTimeToCallMsg)); // "I think it is time to call captain"
 					SET_FLAG(dsAddr_JailCableAndBowlState, 2);
 				}
 			}
 		} else {
-			displayMessage(dsAddr_nahMsg); // "Nah"
+			displayMessage(res->getMessageAddr(kNahMsg)); // "Nah"
 		}
 		break;
 
@@ -894,19 +901,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4871:
 		playActorAnimation(965);
-		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		break;
 
 	case 0x487e:
-		displayMessage(dsAddr_geographyClassMsg); // "I should have paid more attention in geography classes."
+		displayMessage(res->getMessageAddr(kGeographyClassMsg)); // "I should have paid more attention in geography classes."
 		break;
 
 	case 0x4885:
-		displayMessage(dsAddr_dontNeedMessMsg); // "I don't need this mess"
+		displayMessage(res->getMessageAddr(kDontNeedMessMsg)); // "I don't need this mess"
 		break;
 
 	case 0x488c:
-		displayMessage(dsAddr_seenSofterRocksMsg); // "Thanks, but I've seen softer rocks"
+		displayMessage(res->getMessageAddr(kSeenSofterRocksMsg)); // "Thanks, but I've seen softer rocks"
 		break;
 
 	case 0x4893: // taking pills
@@ -919,16 +926,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			disableObject(7);
 		} else {
 			playActorAnimation(964);
-			displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+			displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		}
 		break;
 
 	case 0x48d4:
-		displayMessage(dsAddr_tooBluntMsg); // "They are too blunt to be of any use"
+		displayMessage(res->getMessageAddr(kTooBluntMsg)); // "They are too blunt to be of any use"
 		break;
 
 	case 0x48db:
-		displayMessage(dsAddr_uselessModelsMsg); // "What's the use of the models?"
+		displayMessage(res->getMessageAddr(kUselessModelsMsg)); // "What's the use of the models?"
 		break;
 
 	case 0x48e2:
@@ -937,7 +944,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4911:
-		displayMessage(dsAddr_barmanWillNoticeMsg); // "The barman will surely notice its disappearing"
+		displayMessage(res->getMessageAddr(kBarmanWillNoticeMsg)); // "The barman will surely notice its disappearing"
 		break;
 
 	case 0x4918: // talking with barmen
@@ -945,7 +952,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(140, 152, 1);
 			if (CHECK_FLAG(dsAddr_swappedBarmanMugFlag, 1)) {
 				dialog->showMono(177, scene, 0, kMark, 0);
-				displayMessage(dsAddr_yeahRightMsg, kBarman, 32, 67); // "Yeah right!"
+				displayMessage(res->getMessageAddr(kYeahRightMsg), kBarman, 32, 67); // "Yeah right!"
 				//reloadLan();
 				setLan(1, 0);
 				playAnimation(882, 0);
@@ -959,7 +966,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				disableObject(2);
 				SET_FLAG(dsAddr_barmanPassedOutFlag, 1);
 			} else
-				displayMessage(dsAddr_talkNotNowMsg); // "I've got no reason to talk to him right now."
+				displayMessage(res->getMessageAddr(kTalkNotNowMsg)); // "I've got no reason to talk to him right now."
 		} else {
 			if (CHECK_FLAG(dsAddr_FirstActTrialState, 3)) {
 				if (CHECK_FLAG(dsAddr_spokeToBarmanAboutThirdTrialFlag, 1)) {
@@ -988,7 +995,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4d89:
-		displayMessage(dsAddr_getRidOfGuardFirstMsg); // "If I want to get inside I must get rid of this guard first..."
+		displayMessage(res->getMessageAddr(kGetRidOfGuardFirstMsg)); // "If I want to get inside I must get rid of this guard first..."
 		break;
 
 	case 0x4d90:
@@ -1012,14 +1019,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4f14: // use the hollow
 		if (CHECK_FLAG(dsAddr_mansionTreeHollowEmptyFlag, 1))
-			displayMessage(dsAddr_totalEmptyMsg); // "I can see it's totally empty"
+			displayMessage(res->getMessageAddr(kTotalEmptyMsg)); // "I can see it's totally empty"
 		else
-			displayMessage(dsAddr_noHandsMsg); // "I'd better not put my hands in there..."
+			displayMessage(res->getMessageAddr(kNoHandsMsg)); // "I'd better not put my hands in there..."
 		break;
 
 	case 0x4a64:
 		if (CHECK_FLAG(dsAddr_gotPasswordNeedSpeakBarmanFlag, 1))
-			displayMessage(dsAddr_firstBusinessMsg); // "First I've got some business to take care of"
+			displayMessage(res->getMessageAddr(kFirstBusinessMsg)); // "First I've got some business to take care of"
 		else
 			loadScene(5, 35, 162);
 		break;
@@ -1034,12 +1041,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4c29:
-		displayMessage(dsAddr_tooManyToSearchMsg); // "There are too many of them to search"
+		displayMessage(res->getMessageAddr(kTooManyToSearchMsg)); // "There are too many of them to search"
 		break;
 
 	case 0x4c30:
 	case 0x4c37:
-		displayMessage(dsAddr_captainWouldNotFitMsg); // "Captain surely wouldn't fit them. I must look elsewhere"
+		displayMessage(res->getMessageAddr(kCaptainWouldNotFitMsg)); // "Captain surely wouldn't fit them. I must look elsewhere"
 		break;
 
 	case 0x483a:
@@ -1066,14 +1073,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(958);
 			loadScene(9, 240, 182, 4);
 		} else if (CHECK_FLAG(dsAddr_birdOnBarRadioAntennaFlag, 1)) {
-			displayMessage(dsAddr_barmanTooCloseMsg); // "The barman is too close"
+			displayMessage(res->getMessageAddr(kBarmanTooCloseMsg)); // "The barman is too close"
 		} else {
 			dialog->pop(scene, dsAddr_dialogStackBarCellarDoor, 0, 857, kMark, kBarman, 0, 1);
 		}
 		break;
 
 	case 0x4aed:
-		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
+		displayMessage(res->getMessageAddr(kTooBigMsg)); // "It's too big and I doubt if I'll ever need it"
 		break;
 
 	case 0x4af4: // taking the crumbs
@@ -1090,11 +1097,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x4b27:
-		displayMessage(dsAddr_tooMuchToDrinkMsg); // "It'd take too much time to drink it..."
+		displayMessage(res->getMessageAddr(kTooMuchToDrinkMsg)); // "It'd take too much time to drink it..."
 		break;
 
 	case 0x4b2e:
-		displayMessage(dsAddr_notThiefMsg); // "I'm not a thief. And it's empty, by the way."
+		displayMessage(res->getMessageAddr(kNotThiefMsg)); // "I'm not a thief. And it's empty, by the way."
 		break;
 
 	case 0x4b35:
@@ -1137,19 +1144,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				dialog->pop(scene, dsAddr_dialogStackCampGuardWantsDocuments, 0, 809, kMark, kCampGuard, 0, 1);
 			}
 		} else {
-			displayMessage(dsAddr_helloQMsg); // "Hello?"
+			displayMessage(res->getMessageAddr(kHelloQMsg)); // "Hello?"
 			wait(100);
-			displayMessage(dsAddr_totallyAddictedMsg); // "He's totally addicted"
+			displayMessage(res->getMessageAddr(kTotallyAddictedMsg)); // "He's totally addicted"
 		}
 		break;
 
 	case 0x4c1c:
 		playActorAnimation(960);
-		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		break;
 
 	case 0x4ca5:
-		displayMessage(dsAddr_chickenNeverMsg); // "Chickening? Me? Never!"
+		displayMessage(res->getMessageAddr(kChickenNeverMsg)); // "Chickening? Me? Never!"
 		break;
 
 	case 0x4cac:
@@ -1183,7 +1190,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4d94: // talking with fatso
 		dialog->show(87, scene, 0, 666, kMark, kJohnNoty, 0, 2);
-		displayAsyncMessage(dsAddr_BribeMsg, 120, 109, 1, 10, kJohnNoty); // FIXME: Original (x,y) was (100, 78), rather than (120, 109)?
+		displayAsyncMessage(res->getMessageAddr(kBribeMsg), 120, 109, 1, 10, kJohnNoty); // FIXME: Original (x,y) was (100, 78), rather than (120, 109)?
 		playSound(5, 3);
 		playAnimation(667, 1);
 		playAnimation(668, 1);
@@ -1207,7 +1214,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(2, 0);
 		playSound(5, 12);
 		playActorAnimation(676);
-		displayMessage(dsAddr_WimpMsg); // "I'm a pathetic little wimp"
+		displayMessage(res->getMessageAddr(kWimpMsg)); // "I'm a pathetic little wimp"
 		disableObject(15);
 		inventory->add(kInvItemBanknote);
 		break;
@@ -1239,13 +1246,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4f25:
 		playActorAnimation(967);
-		displayMessage(dsAddr_tooHardWoodMsg); // "This wood is too hard to break"
+		displayMessage(res->getMessageAddr(kTooHardWoodMsg)); // "This wood is too hard to break"
 		break;
 
 	case 0x4f32: // use tree near the mansion
 		if (CHECK_FLAG(dsAddr_mansionTreeHollowEmptyFlag, 1)) {
 			if (CHECK_FLAG(dsAddr_climbedMansionTreeAlreadyFlag, 1)) {
-				displayMessage(dsAddr_noChanceMsg); // "I won't take my chances a second time"
+				displayMessage(res->getMessageAddr(kNoChanceMsg)); // "I won't take my chances a second time"
 			} else {
 				playSound(26, 13);
 				playSound(26, 15);
@@ -1260,7 +1267,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(60, 16);
 				playActorAnimation(591);
 				wait(50);
-				displayMessage(dsAddr_oneSmallStepMsg); // "One small step for man, one big pain in the head"
+				displayMessage(res->getMessageAddr(kOneSmallStepMsg)); // "One small step for man, one big pain in the head"
 				SET_FLAG(dsAddr_climbedMansionTreeAlreadyFlag, 1);
 				fnMansionIntrusionAttempt();
 			}
@@ -1269,17 +1276,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(56, 8);
 			playSound(56, 12);
 			playSound(49, 10);
-			displayAsyncMessage(dsAddr_laughterMsg, 219, 98, 16, 24); // "(laughter)"
+			displayAsyncMessage(res->getMessageAddr(kLaughterMsg), 219, 98, 16, 24); // "(laughter)"
 			playActorAnimation(587);
 			moveRel(0, 0, 2);
 			wait(100);
-			displayMessage(dsAddr_tickledMsg); // "Something tickled me!"
+			displayMessage(res->getMessageAddr(kTickledMsg)); // "Something tickled me!"
 		}
 		break;
 
 	case 0x500d: // picking up wild plant
 		if (CHECK_FLAG(dsAddr_gotPotatoAlreadyFlag, 1)) {
-			displayMessage(dsAddr_noPotatoMsg); // "There are no more potatoes"
+			displayMessage(res->getMessageAddr(kNoPotatoMsg)); // "There are no more potatoes"
 		} else {
 			SET_FLAG(dsAddr_gotPotatoAlreadyFlag, 1);
 			setOns(2, 0);
@@ -1293,7 +1300,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x505f:
-		displayMessage(dsAddr_wallTooSmoothMsg); // "The wall surface is too smooth to climb"
+		displayMessage(res->getMessageAddr(kWallTooSmoothMsg)); // "The wall surface is too smooth to climb"
 		break;
 
 	case 0x5066:
@@ -1307,11 +1314,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x50f6:
-		displayMessage(dsAddr_tooMuchResinToClimbMsg); // "I could climb it if there wasn't so much resin"
+		displayMessage(res->getMessageAddr(kTooMuchResinToClimbMsg)); // "I could climb it if there wasn't so much resin"
 		break;
 
 	case 0x50fd:
-		displayMessage(dsAddr_onlyGreenRectMsg); // "The only green stuff that I like is that rectangular piece of paper with..."
+		displayMessage(res->getMessageAddr(kOnlyGreenRectMsg)); // "The only green stuff that I like is that rectangular piece of paper with..."
 		break;
 
 	case 0x5104:
@@ -1333,7 +1340,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x51c8:
-		displayMessage(dsAddr_wallTooSmoothMsg); // "The wall surface is too smooth to climb"
+		displayMessage(res->getMessageAddr(kWallTooSmoothMsg)); // "The wall surface is too smooth to climb"
 		break;
 
 	case 0x51cf:
@@ -1342,7 +1349,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x51e9:
-		displayMessage(dsAddr_dontWannaTouchHedgehogMsg); // "I don't wanna touch it. Its spines could hurt my delicate hands"
+		displayMessage(res->getMessageAddr(kDontWannaTouchHedgehogMsg)); // "I don't wanna touch it. Its spines could hurt my delicate hands"
 		break;
 
 	case 0x51f0:
@@ -1355,13 +1362,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5217:
 		if (CHECK_FLAG(dsAddr_beesGoneFlag, 1))
-			displayMessage(dsAddr_notHungryMsg); // "Thanks, I'm not hungry"
+			displayMessage(res->getMessageAddr(kNotHungryMsg)); // "Thanks, I'm not hungry"
 		else
-			displayMessage(dsAddr_avoidBeesMsg); // "I'm going to stay at least five meters away from these bees!"
+			displayMessage(res->getMessageAddr(kAvoidBeesMsg)); // "I'm going to stay at least five meters away from these bees!"
 		break;
 
 	case 0x522c:
-		displayMessage(dsAddr_avoidBeesMsg); // "I'm going to stay at least five meters away from these bees!"
+		displayMessage(res->getMessageAddr(kAvoidBeesMsg)); // "I'm going to stay at least five meters away from these bees!"
 		break;
 
 	case 0x5233:
@@ -1370,9 +1377,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5237:
 		if (!CHECK_FLAG(dsAddr_beesGoneFlag, 1)) {
-			displayMessage(dsAddr_avoidBeesMsg); // "I'm going to stay at least five meters away from these bees!"
+			displayMessage(res->getMessageAddr(kAvoidBeesMsg)); // "I'm going to stay at least five meters away from these bees!"
 		} else if (CHECK_FLAG(dsAddr_mansionTunnelDoneFlag, 1))
-			displayMessage(dsAddr_roadNowhereMsg); // "Nah. It's a road to nowhere"
+			displayMessage(res->getMessageAddr(kRoadNowhereMsg)); // "Nah. It's a road to nowhere"
 		else {
 			moveTo(173, 138, 2);
 			playSound(28, 5);
@@ -1389,7 +1396,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(28, 2);
 			playActorAnimation(586);
 			moveTo(138, 163, 3);
-			displayMessage(dsAddr_lifeBrutalMsg); // "Life is really brutal"
+			displayMessage(res->getMessageAddr(kLifeBrutalMsg)); // "Life is really brutal"
 			SET_FLAG(dsAddr_mansionTunnelDoneFlag, 1);
 			fnMansionIntrusionAttempt();
 		}
@@ -1401,15 +1408,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x533a:
-		displayMessage(dsAddr_noLongHandsMsg); // "I really don't have such long hands"
+		displayMessage(res->getMessageAddr(kNoLongHandsMsg)); // "I really don't have such long hands"
 		break;
 
 	case 0x5341:
-		displayMessage(dsAddr_tooFarToSwimMsg); // "It's too far to swim there"
+		displayMessage(res->getMessageAddr(kTooFarToSwimMsg)); // "It's too far to swim there"
 		break;
 
 	case 0x5403:
-		displayMessage(dsAddr_noBucketMsg); // "It's not a barrel-organ. And there's no bucket."
+		displayMessage(res->getMessageAddr(kNoBucketMsg)); // "It's not a barrel-organ. And there's no bucket."
 		break;
 
 	case 0x540a:
@@ -1444,7 +1451,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(53, 32);
 				playAnimation(570, 0);
 				wait(50);
-				displayMessage(dsAddr_ThanksMsg); // "Thanks."
+				displayMessage(res->getMessageAddr(kThanksMsg)); // "Thanks."
 				disableObject(5);
 				SET_FLAG(dsAddr_squirrelNutState, 1);
 			} else if (d != 0x2c9b) { // 5th (last) try
@@ -1459,9 +1466,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5663:
 		if (CHECK_FLAG(dsAddr_squirrelNutState, 1))
-			displayMessage(dsAddr_findNutMsg); // "I won't find the nut just like that. The grass is too dense"
+			displayMessage(res->getMessageAddr(kFindNutMsg)); // "I won't find the nut just like that. The grass is too dense"
 		else
-			displayMessage(dsAddr_hmmGrassMsg); // "Hmmm. Grass..."
+			displayMessage(res->getMessageAddr(kHmmGrassMsg)); // "Hmmm. Grass..."
 		break;
 
 	case 0x5674:
@@ -1470,17 +1477,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x568e:
-		displayMessage(dsAddr_notHornyMsg); // "I'm not horny"
+		displayMessage(res->getMessageAddr(kNotHornyMsg)); // "I'm not horny"
 		break;
 
 	case 0x5695:
-		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		displayMessage(res->getMessageAddr(kDontNeedToOpenMsg)); // "I don't need to open it"
 		break;
 
 	case 0x569c:
 		playSound(67, 5);
 		playActorAnimation(983);
-		displayMessage(dsAddr_emptyMsg); // "It's Empty"
+		displayMessage(res->getMessageAddr(kEmptyMsg)); // "It's Empty"
 		break;
 
 	case 0x56b3:
@@ -1491,23 +1498,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(66, 5);
 		playSound(67, 11);
 		playActorAnimation(984);
-		displayMessage(dsAddr_emptyMsg); // "It's Empty"
+		displayMessage(res->getMessageAddr(kEmptyMsg)); // "It's Empty"
 		break;
 
 	case 0x56d6:
-		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
+		displayMessage(res->getMessageAddr(kCantJumpMsg)); // "No way I can jump so high, cause, err, white men can't jump"
 		break;
 
 	case 0x56dd:
-		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		displayMessage(res->getMessageAddr(kDontNeedItMsg)); // "I don't need it"
 		break;
 
 	case 0x56e4:
-		displayMessage(dsAddr_notSantaClausMsg); // "I'm not Santa Claus"
+		displayMessage(res->getMessageAddr(kNotSantaClausMsg)); // "I'm not Santa Claus"
 		break;
 
 	case 0x56eb:
-		displayMessage(dsAddr_noPlasticImitationsMsg); // "I don't need plastic imitations"
+		displayMessage(res->getMessageAddr(kNoPlasticImitationsMsg)); // "I don't need plastic imitations"
 		break;
 
 	case 0x56f2:
@@ -1515,7 +1522,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5721:
-		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		displayMessage(res->getMessageAddr(kDontNeedItMsg)); // "I don't need it"
 		break;
 
 	case 0x5728:
@@ -1527,14 +1534,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x574f:
-		displayMessage(dsAddr_tooFragileMsg); // "It's too fragile to carry around"
+		displayMessage(res->getMessageAddr(kTooFragileMsg)); // "It's too fragile to carry around"
 		break;
 
 	case 0x5793:
 		if (!CHECK_FLAG(dsAddr_alreadyPulledTrunkReleaseLeverFlag, 1)) {
-			displayMessage(dsAddr_shutTightMsg); // "It's shut tight"
+			displayMessage(res->getMessageAddr(kShutTightMsg)); // "It's shut tight"
 		} else if (CHECK_FLAG(dsAddr_carTrunkEmptyFlag, 1)) {
-			displayMessage(dsAddr_bootEmptyMsg); // "There's nothing else in the boot"
+			displayMessage(res->getMessageAddr(kBootEmptyMsg)); // "There's nothing else in the boot"
 		} else {
 			SET_FLAG(dsAddr_carTrunkEmptyFlag, 1);
 			moveTo(188, 179, 0);
@@ -1547,7 +1554,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x57fa:
-		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		displayMessage(res->getMessageAddr(kDontNeedItMsg)); // "I don't need it"
 		break;
 
 	case 0x5801:
@@ -1556,11 +1563,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x583f:
 	case 0x5846:
-		displayMessage(dsAddr_dontNeedToOpenMsg);
+		displayMessage(res->getMessageAddr(kDontNeedToOpenMsg));
 		break;
 
 	case 0x584d:
-		displayMessage(dsAddr_pullObjMsg2);
+		displayMessage(res->getMessageAddr(kPullObjMsg2));
 		break;
 
 	case 0x5854:
@@ -1579,7 +1586,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5903:
-		displayMessage(dsAddr_keepItOpenMsg); // "I'd like to keep it open"
+		displayMessage(res->getMessageAddr(kKeepItOpenMsg)); // "I'd like to keep it open"
 		break;
 
 	case 0x590a:
@@ -1593,13 +1600,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5978:
-		displayMessage(dsAddr_notTakingSocksMsg); // "I really don't want to walk around with someone else's socks"
+		displayMessage(res->getMessageAddr(kNotTakingSocksMsg)); // "I really don't want to walk around with someone else's socks"
 		break;
 
 	case 0x597f:
 	case 0x5986:
 	case 0x598d:
-		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		displayMessage(res->getMessageAddr(kDontNeedToOpenMsg)); // "I don't need to open it"
 		break;
 
 	case 0x5b44:
@@ -1607,15 +1614,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		// i.e. Granny and Anne's House. Need to analyse cseg data properly.
 		// Current code inferred from behaviour.
 		// FIXME - Add animation call for Ego pushing doorbell.
-		displayMessage(dsAddr_ItsOpenMsg);
+		displayMessage(res->getMessageAddr(kItsOpenMsg));
 		break;
 
 	case 0x5c72:
-		displayMessage(dsAddr_notTiredMsg); // "Thanks, I'm not tired"
+		displayMessage(res->getMessageAddr(kNotTiredMsg)); // "Thanks, I'm not tired"
 		break;
 
 	case 0x5c79:
-		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		displayMessage(res->getMessageAddr(kDontNeedToOpenMsg)); // "I don't need to open it"
 		break;
 
 	case 0x5c80:
@@ -1624,15 +1631,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5cdb:
 	case 0x5ce2:
-		displayMessage(dsAddr_dontNeedItMsg); // "I don't need it"
+		displayMessage(res->getMessageAddr(kDontNeedItMsg)); // "I don't need it"
 		break;
 
 	case 0x5ce9:
-		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
+		displayMessage(res->getMessageAddr(kTooBigMsg)); // "It's too big and I doubt if I'll ever need it"
 		break;
 
 	case 0x5d1d:
-		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
+		displayMessage(res->getMessageAddr(kCantJumpMsg)); // "No way I can jump so high, cause, err, white men can't jump"
 		break;
 
 	case 0x5d88:
@@ -1658,7 +1665,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				wait(100);
 				moveRel(0, 0, 3);
 				wait(50);
-				displayMessage(dsAddr_giveUpMsg); // "I give up"
+				displayMessage(res->getMessageAddr(kGiveUpMsg)); // "I give up"
 				wait(50);
 			}
 		}
@@ -1666,23 +1673,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5f9a:
 	case 0x5fa1:
-		displayMessage(dsAddr_dontNeedToOpenMsg); // "I don't need to open it"
+		displayMessage(res->getMessageAddr(kDontNeedToOpenMsg)); // "I don't need to open it"
 		break;
 
 	case 0x5fa8:
-		displayMessage(dsAddr_CantJumpMsg); // "No way I can jump so high, cause, err, white men can't jump"
+		displayMessage(res->getMessageAddr(kCantJumpMsg)); // "No way I can jump so high, cause, err, white men can't jump"
 		break;
 
 	case 0x5faf:
-		displayMessage(dsAddr_noSecretPassageMsg); // "I don't think there's any secret passage inside"
+		displayMessage(res->getMessageAddr(kNoSecretPassageMsg)); // "I don't think there's any secret passage inside"
 		break;
 
 	case 0x5fe5:
-		displayMessage(dsAddr_jugMeMsg); // "They can jug me if I steal this"
+		displayMessage(res->getMessageAddr(kJugMeMsg)); // "They can jug me if I steal this"
 		break;
 
 	case 0x5fec:
-		displayMessage(dsAddr_leaveFlowersAloneMsg); // "I'd better leave it. Women are really oversensitive about flowers."
+		displayMessage(res->getMessageAddr(kLeaveFlowersAloneMsg)); // "I'd better leave it. Women are really oversensitive about flowers."
 		break;
 
 	case 0x5ff3: // get duster
@@ -1705,15 +1712,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x603e:
 		if (CHECK_FLAG(dsAddr_spokenToMirrorFlag, 1)) {
-			displayMessage(dsAddr_busyThinkingMsg); // "I'd better not interrupt it's thought process"
+			displayMessage(res->getMessageAddr(kBusyThinkingMsg)); // "I'd better not interrupt it's thought process"
 		} else {
-			displayMessage(dsAddr_mirrorMirrorMsg); // "Mirror, Mirror on the wall...."
+			displayMessage(res->getMessageAddr(kMirrorMirrorMsg)); // "Mirror, Mirror on the wall...."
 			wait(150);
-			displayMessage(dsAddr_thinkTooLongMsg); // "Hey, don't think too long"
+			displayMessage(res->getMessageAddr(kThinkTooLongMsg)); // "Hey, don't think too long"
 			wait(150);
-			displayMessage(dsAddr_HintMaleMsg); // "A hint: Someone in this room, a male"
+			displayMessage(res->getMessageAddr(kHintMaleMsg)); // "A hint: Someone in this room, a male"
 			wait(150);
-			displayMessage(dsAddr_okWaitMsg); // "OK, take your time"
+			displayMessage(res->getMessageAddr(kOkWaitMsg)); // "OK, take your time"
 			wait(150);
 			SET_FLAG(dsAddr_spokenToMirrorFlag, 1);
 		}
@@ -1724,19 +1731,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6078:
-		displayMessage(dsAddr_tooBigMsg); // "It's too big and I doubt if I'll ever need it"
+		displayMessage(res->getMessageAddr(kTooBigMsg)); // "It's too big and I doubt if I'll ever need it"
 		break;
 
 	case 0x6205:
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
-			displayMessage(dsAddr_tooHeavyMsg); // "It's too heavy. Not that I'm wimp"
+			displayMessage(res->getMessageAddr(kTooHeavyMsg)); // "It's too heavy. Not that I'm wimp"
 		else
 			fnTooDark();
 		break;
 
 	case 0x6217:
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
-			displayMessage(dsAddr_noDentistsMsg); // "I don't want to have anything in common with dentists"
+			displayMessage(res->getMessageAddr(kNoDentistsMsg)); // "I don't want to have anything in common with dentists"
 		else
 			fnTooDark();
 		break;
@@ -1749,7 +1756,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x634a:
-		displayMessage(dsAddr_noHandsSharpThornsMsg); // "I can't remove it with my hands. these thorns look really sharp"
+		displayMessage(res->getMessageAddr(kNoHandsSharpThornsMsg)); // "I can't remove it with my hands. these thorns look really sharp"
 		break;
 
 	case 0x637f:
@@ -1758,16 +1765,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6399:
-		displayMessage(dsAddr_rockWalkingGeeMsg); // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
+		displayMessage(res->getMessageAddr(kRockWalkingGeeMsg)); // "Yeah, great idea. Let's take this rock and walk around a bit. Gee..."
 		break;
 
 	case 0x63a0:
 	case 0x63a7:
-		displayMessage(dsAddr_butterflyMsg); // "I'd better leave them alone, they make this place beautiful"
+		displayMessage(res->getMessageAddr(kButterflyMsg)); // "I'd better leave them alone, they make this place beautiful"
 		break;
 
 	case 0x63ae:
-		displayMessage(dsAddr_notSureIfAliveMsg); // "I'm not sure if it's alive"
+		displayMessage(res->getMessageAddr(kNotSureIfAliveMsg)); // "I'm not sure if it's alive"
 		break;
 
 	case 0x63bc:
@@ -1780,7 +1787,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x63e3:
-		displayMessage(dsAddr_holeTooNarrowMsg); // "The hole is too narrow to fit my hand"
+		displayMessage(res->getMessageAddr(kHoleTooNarrowMsg)); // "The hole is too narrow to fit my hand"
 		break;
 
 	case 0x646e:
@@ -1796,7 +1803,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(dsAddr_birdsGoneFromScarecrowFlag, 1))
 			rejectMessage();
 		else
-			displayMessage(dsAddr_birdAttackMsg); // "Hey You! Wake up! Bird attack!"
+			displayMessage(res->getMessageAddr(kBirdAttackMsg)); // "Hey You! Wake up! Bird attack!"
 		break;
 
 	case 0x6541:
@@ -1805,15 +1812,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6635:
-		displayMessage(dsAddr_uninterestingHaystackMsg); // "I don't see anything interesting about this haystack"
+		displayMessage(res->getMessageAddr(kUninterestingHaystackMsg)); // "I don't see anything interesting about this haystack"
 		break;
 
 	case 0x6663:
-		displayMessage(dsAddr_uninterestingHaystackMsg); // "I don't see anything interesting about this haystack"
+		displayMessage(res->getMessageAddr(kUninterestingHaystackMsg)); // "I don't see anything interesting about this haystack"
 		break;
 
 	case 0x666a:
-		displayMessage(dsAddr_moreComplicatedMsg); // "It's more complicated than that"
+		displayMessage(res->getMessageAddr(kMoreComplicatedMsg)); // "It's more complicated than that"
 		break;
 
 	case 0x65c3:
@@ -1827,15 +1834,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(kInvItemHandkerchief);
 			inventory->add(kInvItemMouse);
 			moveTo(scene->getPosition().x - 1, 139, 1, true);
-			displayMessage(dsAddr_yikesMsg); // "Yikes!"
+			displayMessage(res->getMessageAddr(kYikesMsg)); // "Yikes!"
 			SET_FLAG(dsAddr_mouseHoleState, 2);
 			SET_FLAG(dsAddr_HankerchiefInMouseholeFlag, 0);
 		} else
-			displayMessage(dsAddr_noSearchWarrantMsg); // "I don't have a search-warrant"
+			displayMessage(res->getMessageAddr(kNoSearchWarrantMsg)); // "I don't have a search-warrant"
 		break;
 
 	case 0x6671:
-		displayMessage(dsAddr_cantOpenItMsg); // "I can't open it"
+		displayMessage(res->getMessageAddr(kCantOpenItMsg)); // "I can't open it"
 		break;
 
 	case 0x6678:
@@ -1843,11 +1850,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x670f:
-		displayMessage(dsAddr_dontNeedThemMsg); // "I don't need them"
+		displayMessage(res->getMessageAddr(kDontNeedThemMsg)); // "I don't need them"
 		break;
 
 	case 0x6716:
-		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		displayMessage(res->getMessageAddr(kPullObjMsg2)); // "I can't reach it"
 		break;
 
 	case 0x6772:
@@ -1865,27 +1872,27 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x67fe:
-		displayMessage(dsAddr_troubleWithStairsMsg); // "If I put it on I might have trouble walking up the stairs"
+		displayMessage(res->getMessageAddr(kTroubleWithStairsMsg)); // "If I put it on I might have trouble walking up the stairs"
 		break;
 
 	case 0x6911:
-		displayMessage(dsAddr_9LivesToReadMsg); // "I'd need 9 lives to read them all"
+		displayMessage(res->getMessageAddr(k9LivesToReadMsg)); // "I'd need 9 lives to read them all"
 		break;
 
 	case 0x6954:
-		displayMessage(dsAddr_thanksNotTiredMsg); // "Thanks, I'm not so tired"
+		displayMessage(res->getMessageAddr(kThanksNotTiredMsg)); // "Thanks, I'm not so tired"
 		break;
 
 	case 0x695b:
-		displayMessage(dsAddr_noNeedToTurnOnMsg); // "There's no need to turn it on"
+		displayMessage(res->getMessageAddr(kNoNeedToTurnOnMsg)); // "There's no need to turn it on"
 		break;
 
 	case 0x6ba6:
-		displayMessage(dsAddr_wontBearWeightMsg); // "It won't bear my weight"
+		displayMessage(res->getMessageAddr(kWontBearWeightMsg)); // "It won't bear my weight"
 		break;
 
 	case 0x6bda:
-		displayMessage(dsAddr_peepingTomMsg); // "What am I? A Peeping Tom?"
+		displayMessage(res->getMessageAddr(kPeepingTomMsg)); // "What am I? A Peeping Tom?"
 		break;
 
 	case 0x6c1c:
@@ -1894,7 +1901,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6c24:
-		displayMessage(dsAddr_dontNeedThemMsg); // "I don't need them"
+		displayMessage(res->getMessageAddr(kDontNeedThemMsg)); // "I don't need them"
 		break;
 
 	case 0x6c2b:
@@ -1903,11 +1910,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x6c7c:
-		displayMessage(dsAddr_bigPocketsMsg); // "I have big pockets, but there are limits"
+		displayMessage(res->getMessageAddr(kBigPocketsMsg)); // "I have big pockets, but there are limits"
 		break;
 
 	case 0x724e:
-		displayMessage(dsAddr_soSharpMsg); // "They're so sharp they'd rip my trousers!"
+		displayMessage(res->getMessageAddr(kSoSharpMsg)); // "They're so sharp they'd rip my trousers!"
 		break;
 
 	case 0x72be:
@@ -1919,23 +1926,23 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x7328:
-		displayMessage(dsAddr_noTimeForPleasuresMsg); // "I don't have time for pleasures"
+		displayMessage(res->getMessageAddr(kNoTimeForPleasuresMsg)); // "I don't have time for pleasures"
 		break;
 
 	case 0x732f:
-		displayMessage(dsAddr_notSocksWithBareHandsMsg); // "I won't touch these socks with my bare hands!"
+		displayMessage(res->getMessageAddr(kNotSocksWithBareHandsMsg)); // "I won't touch these socks with my bare hands!"
 		break;
 
 	case 0x739c:
-		displayMessage(dsAddr_notHalloweenMsg); // "It's not Halloween"
+		displayMessage(res->getMessageAddr(kNotHalloweenMsg)); // "It's not Halloween"
 		break;
 
 	case 0x7401:
-		displayMessage(dsAddr_NotManualMsg); // "It can't be controlled manually! I hate it!"
+		displayMessage(res->getMessageAddr(kNotManualMsg)); // "It can't be controlled manually! I hate it!"
 		break;
 
 	case 0x746f:
-		displayMessage(dsAddr_nothingToPlayMsg); // "I have nothing to play"
+		displayMessage(res->getMessageAddr(kNothingToPlayMsg)); // "I have nothing to play"
 		break;
 
 	case 0x74b3:
@@ -1953,24 +1960,24 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x784a:
-		displayMessage(dsAddr_notMineMsg); // "I can't take it. It's not mine."
+		displayMessage(res->getMessageAddr(kNotMineMsg)); // "I can't take it. It's not mine."
 		break;
 
 	case 0x7851:
-		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		break;
 
 	case 0x7858:
-		displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+		displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		break;
 
 	case 0x785f:
-		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		displayMessage(res->getMessageAddr(kPullObjMsg2)); // "I can't reach it"
 		break;
 
 	case 0x7866:
 		if (CHECK_FLAG(dsAddr_JailCableAndBowlState, 3))
-			displayMessage(dsAddr_gotchaMsg); // "Gotcha"
+			displayMessage(res->getMessageAddr(kGotchaMsg)); // "Gotcha"
 		else
 			retVal = false;
 		break;
@@ -1983,22 +1990,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			switch (v) {
 			case 1:
-				displayMessage(dsAddr_SavingFineMsg); // "Saving is a very fine thing..."
+				displayMessage(res->getMessageAddr(kSavingFineMsg)); // "Saving is a very fine thing..."
 				break;
 			case 2:
-				displayMessage(dsAddr_loveCaptainMsg); // "I love captain"
+				displayMessage(res->getMessageAddr(kLoveCaptainMsg)); // "I love captain"
 				break;
 			case 3:
-				displayMessage(dsAddr_soccerRulzMsg); // "Soccer rulz"
+				displayMessage(res->getMessageAddr(kSoccerRulzMsg)); // "Soccer rulz"
 				break;
 			case 4:
-				displayMessage(dsAddr_treeCutMsg); // "Don't cut the trees..."
+				displayMessage(res->getMessageAddr(kTreeCutMsg)); // "Don't cut the trees..."
 				break;
 			case 5:
-				displayMessage(dsAddr_visaAcceptedMsg); // "VISA Accepted"
+				displayMessage(res->getMessageAddr(kVisaAcceptedMsg)); // "VISA Accepted"
 				break;
 			default:
-				displayMessage(dsAddr_otherGraffitiMsg); // "The rest of graffiti is obscene"
+				displayMessage(res->getMessageAddr(kOtherGraffitiMsg)); // "The rest of graffiti is obscene"
 				break;
 			}
 		}
@@ -2006,21 +2013,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x78a9:
 		if (CHECK_FLAG(dsAddr_captainDrawerState, 1))
-			displayMessage(dsAddr_nowOpenMsg); // "Now it's open"
+			displayMessage(res->getMessageAddr(kNowOpenMsg)); // "Now it's open"
 		else
 			retVal = false;
 		break;
 
 	case 0x78bb:
 		if (CHECK_FLAG(dsAddr_swappedBarmanMugFlag, 1))
-			displayMessage(dsAddr_yuckMsg); // "Yuck!"
+			displayMessage(res->getMessageAddr(kYuckMsg)); // "Yuck!"
 		else
 			retVal = false;
 		break;
 
 	case 0x78ce:
 		if (!CHECK_FLAG(dsAddr_mansionTreeHollowEmptyFlag, 1))
-			displayMessage(dsAddr_monstersMsg); // "Who knows what monsters live in there"
+			displayMessage(res->getMessageAddr(kMonstersMsg)); // "Who knows what monsters live in there"
 		else
 			retVal = false;
 		break;
@@ -2073,11 +2080,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(kInvItemKaleidoscope);
 			inventory->remove(kInvItemShovelAct1);
 		} else
-			displayMessage(dsAddr_fenceBlocksMsg); // "The fence blocks the way"
+			displayMessage(res->getMessageAddr(kFenceBlocksMsg)); // "The fence blocks the way"
 		break;
 
 	case 0x7bf6:
-		displayMessage(dsAddr_noDiggingKnifeMsg); // "Digging it out with the knife could take a hundred years"
+		displayMessage(res->getMessageAddr(kNoDiggingKnifeMsg)); // "Digging it out with the knife could take a hundred years"
 		break;
 
 	case 0x7bfd:
@@ -2093,7 +2100,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(76, 63);
 		playActorAnimation(873);
 		moveTo(240, 163, 4);
-		displayMessage(dsAddr_cmonBabyMsg); // "C'mon baby, it's all yours!"
+		displayMessage(res->getMessageAddr(kCmonBabyMsg)); // "C'mon baby, it's all yours!"
 		waitLanAnimationFrame(1, 0x22);
 		playSound(77, 2);
 		playSound(77, 12);
@@ -2115,15 +2122,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7cc9:
 	case 0x7cd0:
-		displayMessage(dsAddr_throwCrumbsToBirdQMsg); // "Should I throw the crumbs to the bird?"
+		displayMessage(res->getMessageAddr(kThrowCrumbsToBirdQMsg)); // "Should I throw the crumbs to the bird?"
 		break;
 
 	case 0x7cd7:
-		displayMessage(dsAddr_dontWasteCrumbs); // "I don't want to waste these tasty crumbs"
+		displayMessage(res->getMessageAddr(kDontWasteCrumbsMsg)); // "I don't want to waste these tasty crumbs"
 		break;
 
 	case 0x7cde:
-		displayMessage(dsAddr_mightSlipFallInMsg); // "Better not... I might slip and fall in..."
+		displayMessage(res->getMessageAddr(kMightSlipFallInMsg)); // "Better not... I might slip and fall in..."
 		break;
 
 	case 0x7ce5: // put spring on the solid ground
@@ -2166,12 +2173,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			SET_FLAG(dsAddr_FirstActTrialState, 2);
 		} else
-			displayMessage(dsAddr_nahMsg); // "Nah"
+			displayMessage(res->getMessageAddr(kNahMsg)); // "Nah"
 		break;
 
 	case 0x7e02: // tickling the captain
 		if (CHECK_FLAG(dsAddr_AlreadyTickledCaptainFlag, 1)) {
-			displayMessage(dsAddr_doesNotWorkMsg); // "That doesn't work"
+			displayMessage(res->getMessageAddr(kDoesNotWorkMsg)); // "That doesn't work"
 		} else {
 			playSound(5, 6);
 			playSound(27, 49);
@@ -2191,11 +2198,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 3);
 		playActorAnimation(852, true);
 		playActorAnimation(853, true);
-		displayMessage(dsAddr_whatAboutMsg); // "What about a new"
-		displayMessage(dsAddr_hotOffMsg); // "hot off the press"
-		displayMessage(dsAddr_fullColorMsg); // "full-color"
-		displayMessage(dsAddr_specialEdMsg); // "special edition"
-		displayMessage(dsAddr_soldierNewsMsg); // "of Soldier News?!"
+		displayMessage(res->getMessageAddr(kWhatAboutMsg)); // "What about a new"
+		displayMessage(res->getMessageAddr(kHotOffMsg)); // "hot off the press"
+		displayMessage(res->getMessageAddr(kFullColorMsg)); // "full-color"
+		displayMessage(res->getMessageAddr(kSpecialEdMsg)); // "special edition"
+		displayMessage(res->getMessageAddr(kSoldierNewsMsg)); // "of Soldier News?!"
 		playAnimation(856, 1);
 		playSound(5, 3);
 		//playActorAnimation(854);
@@ -2242,9 +2249,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x808b:
 		if (CHECK_FLAG(dsAddr_ShownPassToGuardFlag, 1)) {
-			displayMessage(dsAddr_gotPermissionMsg); // "I already got the permission"
+			displayMessage(res->getMessageAddr(kGotPermissionMsg)); // "I already got the permission"
 		} else {
-			displayMessage(dsAddr_showPapersMsg); // "Here are my papers"
+			displayMessage(res->getMessageAddr(kShowPapersMsg)); // "Here are my papers"
 			playSound(5, 2);
 			playSound(5, 18);
 			playActorAnimation(810);
@@ -2271,34 +2278,34 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x8398:
-		displayMessage(dsAddr_trySomewhereElseMsg); // "I'd better try somewhere else - I suppose this side is heavily guarded"
+		displayMessage(res->getMessageAddr(kTrySomewhereElseMsg)); // "I'd better try somewhere else - I suppose this side is heavily guarded"
 		break;
 
 	case 0x85dd:
-		displayMessage(dsAddr_branchNotPaddleMsg); // "This branch is not a paddle. It doesn't even look like one"
+		displayMessage(res->getMessageAddr(kBranchNotPaddleMsg)); // "This branch is not a paddle. It doesn't even look like one"
 		break;
 
 	case 0x85e4:
-		displayMessage(dsAddr_sharpenNotPulverizeMsg); // "I needed to sharpen it, not pulverize"
+		displayMessage(res->getMessageAddr(kSharpenNotPulverizeMsg)); // "I needed to sharpen it, not pulverize"
 		break;
 
 	case 0x8d42:
-		displayMessage(dsAddr_bluntSickleMsg); // "The sickle is too blunt"
+		displayMessage(res->getMessageAddr(kBluntSickleMsg)); // "The sickle is too blunt"
 		break;
 
 	case 0x8d49:
-		displayMessage(dsAddr_noChainsawFuelMsg); // "There's no fuel in the chainsaw"
+		displayMessage(res->getMessageAddr(kNoChainsawFuelMsg)); // "There's no fuel in the chainsaw"
 		break;
 
 	case 0x8d50:
-		displayMessage(dsAddr_thornsTooThinMsg); // "Thorns are too thin, the chainsaw is useless here"
+		displayMessage(res->getMessageAddr(kThornsTooThinMsg)); // "Thorns are too thin, the chainsaw is useless here"
 		break;
 
 	// Shore
 
 	case 0x5348:
 		if (CHECK_FLAG(dsAddr_alreadyGotBrokenPaddleFlag, 1)) { // got broken paddle from boat
-			displayMessage(dsAddr_boatEmptyMsg); // "There's nothing else in the boat"
+			displayMessage(res->getMessageAddr(kBoatEmptyMsg)); // "There's nothing else in the boat"
 		} else {
 			SET_FLAG(dsAddr_alreadyGotBrokenPaddleFlag, 1);
 			playSound(57, 6);
@@ -2310,18 +2317,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x53a1:
 		if (CHECK_FLAG(dsAddr_spokenToManInWellFlag, 1)) { // spoken to man in well
-			displayMessage(dsAddr_stillThereMsg); // "Are you still there?"
+			displayMessage(res->getMessageAddr(kStillThereMsg)); // "Are you still there?"
 		} else {
-			displayMessage(dsAddr_echoMsg); // "Echo!"
-			displayMessage(dsAddr_loudEchoMsg, kWellEcho, 248, 164); // "ECHO!"
-			displayMessage(dsAddr_whoThereMsg); // "Who's there?!"
-			displayMessage(dsAddr_loudWhoThereMsg, kWellEcho, 225, 164); // "WHO'S THERE?!"
-			displayMessage(dsAddr_dontCopyMsg); // "DON'T COPY ME!"
-			displayMessage(dsAddr_loudDontCopyMsg, kWellEcho, 172, 164); // "DON'T COPY ME!!!"
-			displayMessage(dsAddr_throwRockMsg); // "OR I WILL THROW A ROCK DOWN THERE!"
-			displayMessage(dsAddr_orIWillMsg, kWellEcho, 232, 164); // "OR I WILL"
+			displayMessage(res->getMessageAddr(kEchoMsg)); // "Echo!"
+			displayMessage(res->getMessageAddr(kLoudEchoMsg), kWellEcho, 248, 164); // "ECHO!"
+			displayMessage(res->getMessageAddr(kWhoThereMsg)); // "Who's there?!"
+			displayMessage(res->getMessageAddr(kLoudWhoThereMsg), kWellEcho, 225, 164); // "WHO'S THERE?!"
+			displayMessage(res->getMessageAddr(kDontCopyMsg)); // "DON'T COPY ME!"
+			displayMessage(res->getMessageAddr(kLoudDontCopyMsg), kWellEcho, 172, 164); // "DON'T COPY ME!!!"
+			displayMessage(res->getMessageAddr(kThrowRockMsg)); // "OR I WILL THROW A ROCK DOWN THERE!"
+			displayMessage(res->getMessageAddr(kOrIWillMsg), kWellEcho, 232, 164); // "OR I WILL"
 			wait(100);
-			displayMessage(dsAddr_loudEchoMsg, kWellEcho, 248, 164);
+			displayMessage(res->getMessageAddr(kLoudEchoMsg), kWellEcho, 248, 164);
 			SET_FLAG(dsAddr_spokenToManInWellFlag, 1);
 		}
 		break;
@@ -2387,7 +2394,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x5634:
-		displayMessage(dsAddr_pullObjMsg2); // "I can't reach it"
+		displayMessage(res->getMessageAddr(kPullObjMsg2)); // "I can't reach it"
 		break;
 
 	case 0x563b:
@@ -2404,7 +2411,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(626);
 		disableObject(12);
 		inventory->add(kInvItemCheese);
-		displayMessage(dsAddr_foundFoodMsg); // "People leave food in unbelievable places"
+		displayMessage(res->getMessageAddr(kFoundFoodMsg)); // "People leave food in unbelievable places"
 		break;
 
 	case 0x5756: // Open car door
@@ -2426,7 +2433,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5832: // Ring doorbell
 		playActorAnimation(509);
-		displayMessage(dsAddr_outOfOrderMsg); // "It's out of order"
+		displayMessage(res->getMessageAddr(kOutOfOrderMsg)); // "It's out of order"
 		break;
 
 	case 0x58a2:
@@ -2477,7 +2484,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(42, 19);
 			playAnimation(656, 0);
 			wait(50);
-			displayMessage(dsAddr_goodDoggyMsg); // "I understand. Good doggy"
+			displayMessage(res->getMessageAddr(kGoodDoggyMsg)); // "I understand. Good doggy"
 		} else if (!CHECK_FLAG(dsAddr_cellarDoorOpenFlag, 1)) { // Dog has bone
 			playSound(28, 3);
 			playActorAnimation(596);
@@ -2490,7 +2497,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(597);
 			SET_FLAG(dsAddr_cellarDoorOpenFlag, 0);
 			disableObject(8);
-			displayMessage(dsAddr_wallShakenMsg); // "Wow! This must have shaken all the nearby walls!"
+			displayMessage(res->getMessageAddr(kWallShakenMsg)); // "Wow! This must have shaken all the nearby walls!"
 			setOns(1, 32, 24);
 			enableObject(4, 24);
 		}
@@ -2526,12 +2533,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(89, 5);
 		playSound(67, 11);
 		playActorAnimation(982);
-		displayMessage(dsAddr_emptyMsg); // "It's Empty"
+		displayMessage(res->getMessageAddr(kEmptyMsg)); // "It's Empty"
 		break;
 
 	case 0x5c0d: // grandpa - drawers
 		if (CHECK_FLAG(dsAddr_SearchedGrandpaDrawersFlag, 1)) {
-			displayMessage(dsAddr_drawersEmptyMsg); // "There's nothing else in the drawers"
+			displayMessage(res->getMessageAddr(kDrawersEmptyMsg)); // "There's nothing else in the drawers"
 		} else {
 			if (!CHECK_FLAG(dsAddr_alreadyAdjustedHoopPoleFlag, 1))
 				dialog->show(24, scene, 0, 522, kMark, kGrandpa, 0, 1);
@@ -2577,7 +2584,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5e4d: // right click on ann
 		if (!CHECK_FLAG(dsAddr_alreadySpokenToAnneFlag, 0)) {
-			displayMessage(dsAddr_girlTalkMsg); // "I really don't know how to talk to girls"
+			displayMessage(res->getMessageAddr(kGirlTalkMsg)); // "I really don't know how to talk to girls"
 		} else {
 			moveTo(245, 198, 1);
 			dialog->show(51, scene, 0, 524, kMark, kAnne, 0, 2);
@@ -2615,7 +2622,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x5fba:
 		if (CHECK_FLAG(dsAddr_nutSwappedForAppleFlag, 1)) {
-			displayMessage(dsAddr_noFruitMsg); // "There are no more interesting fruits here"
+			displayMessage(res->getMessageAddr(kNoFruitMsg)); // "There are no more interesting fruits here"
 		} else {
 			dialog->pop(scene, dsAddr_dialogStackGetAppleOldLady, 0, 523, kMark, kOldLady, 0, 1);
 		}
@@ -2650,7 +2657,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6176:
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1)) {
-			displayMessage(dsAddr_notInDarkMsg); // "I'm not going to wander here in the dark again"
+			displayMessage(res->getMessageAddr(kNotInDarkMsg)); // "I'm not going to wander here in the dark again"
 		} else {
 			playSound(71, 6);
 			playActorAnimation(598);
@@ -2672,7 +2679,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_TooDark:
-		displayMessage(dsAddr_TooDarkMsg); // "It's too dark to see clearly"
+		displayMessage(res->getMessageAddr(kTooDarkMsg)); // "It's too dark to see clearly"
 		break;
 
 	case 0x6229: // shelves in cellar
@@ -2681,27 +2688,27 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			byte v = GET_FLAG(dsAddr_cellarShelfExamineCount);
 			switch (v) {
 			case 0:
-				displayMessage(dsAddr_whatGotMsg); // "Let's look what we've got here"
+				displayMessage(res->getMessageAddr(kWhatGotMsg)); // "Let's look what we've got here"
 				moveRel(-34, 0, 1);
-				displayMessage(dsAddr_strawberryJamMsg); // "Strawberry jam"
+				displayMessage(res->getMessageAddr(kStrawberryJamMsg)); // "Strawberry jam"
 				moveRel(20, 0, 1);
-				displayMessage(dsAddr_gooseberryJamMsg); // "Gooseberry jam"
+				displayMessage(res->getMessageAddr(kGooseberryJamMsg)); // "Gooseberry jam"
 				moveRel(20, 0, 1);
-				displayMessage(dsAddr_blackberryJamMsg); // "Blackberry jam"
+				displayMessage(res->getMessageAddr(kBlackberryJamMsg)); // "Blackberry jam"
 				moveRel(20, 0, 1);
-				displayMessage(dsAddr_bilberryJamMsg); // "Bilberry jam"
+				displayMessage(res->getMessageAddr(kBilberryJamMsg)); // "Bilberry jam"
 				moveTo(p, 3);
-				displayMessage(dsAddr_getMeOutJamMsg); // "Get me out of this jam!"
+				displayMessage(res->getMessageAddr(kGetMeOutJamMsg)); // "Get me out of this jam!"
 				SET_FLAG(dsAddr_cellarShelfExamineCount, 1);
 				break;
 			case 1:
-				displayMessage(dsAddr_rosemaryJamMsg); // "Oh, and there is Rosemary jam"
+				displayMessage(res->getMessageAddr(kRosemaryJamMsg)); // "Oh, and there is Rosemary jam"
 				wait(100);
-				displayMessage(dsAddr_knowRosemaryMsg); // "I used to know someone called Rosemary"
+				displayMessage(res->getMessageAddr(kKnowRosemaryMsg)); // "I used to know someone called Rosemary"
 				SET_FLAG(dsAddr_cellarShelfExamineCount, 2);
 				break;
 			default:
-				displayMessage(dsAddr_unwantedJamsMsg); // "I don't want those jams"
+				displayMessage(res->getMessageAddr(kUnwantedJamsMsg)); // "I don't want those jams"
 				break;
 			}
 		} else
@@ -2716,9 +2723,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(3, 36);
 			inventory->add(kInvItemMask);
 			disableObject(5);
-			displayMessage(dsAddr_needSunglassesMsg); // "Sorry buddy, but I need your sunglasses"
+			displayMessage(res->getMessageAddr(kNeedSunglassesMsg)); // "Sorry buddy, but I need your sunglasses"
 		} else
-			displayMessage(dsAddr_crowKillMsg); // "I'm sure these crows will kill me"
+			displayMessage(res->getMessageAddr(kCrowKillMsg)); // "I'm sure these crows will kill me"
 		break;
 
 	case 0x64c4: // flippers
@@ -2730,18 +2737,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(kInvItemFins);
 			disableObject(6);
 		} else
-			displayMessage(dsAddr_crowKillMsg); // "I'm sure these crows will kill me"
+			displayMessage(res->getMessageAddr(kCrowKillMsg)); // "I'm sure these crows will kill me"
 		break;
 
 	case 0x7907: // Describe car lever
 		if (CHECK_FLAG(dsAddr_alreadyPulledTrunkReleaseLeverFlag, 1)) { // Already pulled lever?
-			displayMessage(dsAddr_openBootMsg); // "It opens the boot"
+			displayMessage(res->getMessageAddr(kOpenBootMsg)); // "It opens the boot"
 		} else
 			retVal = false;
 		break;
 
 	case 0x62d0: // Get bone from under rock
-		displayAsyncMessage(dsAddr_yeowMsg, 218, 96, 16, 24); // "YEEEOOOWWWW!"
+		displayAsyncMessage(res->getMessageAddr(kYeowMsg), 218, 96, 16, 24); // "YEEEOOOWWWW!"
 		playSound(26, 6);
 		playSound(26, 10);
 		playSound(24, 13);
@@ -2753,7 +2760,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(kInvItemBone);
 		playSound(5, 2);
 		playActorAnimation(595);
-		displayMessage(dsAddr_dinoBoneMsg); // "I really hope this is DINOSAUR bone"
+		displayMessage(res->getMessageAddr(kDinoBoneMsg)); // "I really hope this is DINOSAUR bone"
 		break;
 
 	case 0x6351:
@@ -2761,7 +2768,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playMusic(8);
 			loadScene(26, 319, 169, 4);
 		} else
-			displayMessage(dsAddr_ridBushMsg); // "I must get rid of this bush first"
+			displayMessage(res->getMessageAddr(kRidBushMsg)); // "I must get rid of this bush first"
 		break;
 
 	case 0x63ea:
@@ -2774,10 +2781,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6411: // Kick hen
 		if (CHECK_FLAG(dsAddr_alreadyKickedHenFlag, 1)) { // already kicked hen
-			displayMessage(dsAddr_ridFrustationsMsg); // "I'd already got rid of my frustrations"
+			displayMessage(res->getMessageAddr(kRidFrustationsMsg)); // "I'd already got rid of my frustrations"
 		} else {
 			SET_FLAG(dsAddr_alreadyKickedHenFlag, 1);
-			displayMessage(dsAddr_henFlyMsg); // "I wonder if hens can fly. Come here, baby"
+			displayMessage(res->getMessageAddr(kHenFlyMsg)); // "I wonder if hens can fly. Come here, baby"
 			waitLanAnimationFrame(1, 87);
 			playSound(30, 26);
 			playSound(29, 49);
@@ -2786,7 +2793,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			waitAnimation();
 			setOns(0, 1);
 			enableObject(14);
-			displayMessage(dsAddr_firstTestFailMsg); // "First test failed"
+			displayMessage(res->getMessageAddr(kFirstTestFailMsg)); // "First test failed"
 		}
 		break;
 
@@ -2796,7 +2803,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(553);
 		inventory->add(kInvItemRakeBroken);
 		wait(50);
-		displayMessage(dsAddr_trousersMsg); // "Good I always asked mum for trousers with BIG pockets"
+		displayMessage(res->getMessageAddr(kTrousersMsg)); // "Good I always asked mum for trousers with BIG pockets"
 		disableObject(11);
 		break;
 
@@ -2816,13 +2823,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x655b: // Get needle from haystack
 		if (CHECK_FLAG(dsAddr_gotNeedleAlreadyFlag, 1)) { // already have needle
-			displayMessage(dsAddr_dontPushLuckMsg); // "I don't think I should push my luck"
+			displayMessage(res->getMessageAddr(kDontPushLuckMsg)); // "I don't think I should push my luck"
 		} else {
 			SET_FLAG(dsAddr_gotNeedleAlreadyFlag, 1);
 			playSound(49, 3);
 			playActorAnimation(548);
 			inventory->add(kInvItemNeedle);
-			displayMessage(dsAddr_needleHaystackMsg); // "And they say you can't find a needle in a haystack"
+			displayMessage(res->getMessageAddr(kNeedleHaystackMsg)); // "And they say you can't find a needle in a haystack"
 		}
 		break;
 
@@ -2841,7 +2848,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x66a9:
-		displayMessage(dsAddr_dontLeaveMansionMsg); // "I don't want to leave the mansion, I want blood!"
+		displayMessage(res->getMessageAddr(kDontLeaveMansionMsg)); // "I don't want to leave the mansion, I want blood!"
 		disableObject(4);
 		break;
 
@@ -2858,9 +2865,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x71ae:
 		if (CHECK_FLAG(dsAddr_MansionRadioBrokenFlag, 1)) {
 			if (CHECK_FLAG(dsAddr_MansionGotRadioBatteriesFlag, 1)) {
-				displayMessage(dsAddr_restUselessMsg); // "The rest is useless"
+				displayMessage(res->getMessageAddr(kRestUselessMsg)); // "The rest is useless"
 			} else {
-				displayMessage(dsAddr_twoBatteriesMsg); // "Wow! Two 1.5V batteries!"
+				displayMessage(res->getMessageAddr(kTwoBatteriesMsg)); // "Wow! Two 1.5V batteries!"
 				playSound(32, 6);
 				playActorAnimation(717);
 				inventory->add(kInvItemBatteries);
@@ -2873,7 +2880,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x70c8:
 		if (fnIsCookGone()) {
 			moveTo(81, 160, 4);
-			displayMessage(dsAddr_cognacMsg); // "Pfui! The cognac really didn't do any good"
+			displayMessage(res->getMessageAddr(kCognacMsg)); // "Pfui! The cognac really didn't do any good"
 		}
 		break;
 
@@ -2883,14 +2890,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x70ef:
 		if (fnIsCookGone())
-			displayMessage(dsAddr_tooHotMsg); // "It's too hot to touch!"
+			displayMessage(res->getMessageAddr(kTooHotMsg)); // "It's too hot to touch!"
 		break;
 
 	case 0x70f9:
 		if (inventory->has(kInvItemBurningPaper)) {
 			inventory->remove(kInvItemBurningPaper);
 			loadScene(29, 40, 176, 2);
-			displayMessage(dsAddr_paperBurntMsg); // "The paper burnt out completely!"
+			displayMessage(res->getMessageAddr(kPaperBurntMsg)); // "The paper burnt out completely!"
 		} else
 			loadScene(29, 40, 176, 2);
 		break;
@@ -2908,10 +2915,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playSound(89, 4);
 				playSound(89, 4);
 				playSound(87, 45);
-				displayAsyncMessage(dsAddr_oneTakenMsg, 112, 108, 11, 35, kEskimo); // "This one's taken, OK?"
+				displayAsyncMessage(res->getMessageAddr(kOneTakenMsg), 112, 108, 11, 35, kEskimo); // "This one's taken, OK?"
 				playActorAnimation(718);
 				wait(100);
-				displayMessage(dsAddr_slightMadMsg); // "It finally happened. I'm slightly mad"
+				displayMessage(res->getMessageAddr(kSlightMadMsg)); // "It finally happened. I'm slightly mad"
 				SET_FLAG(dsAddr_MansionHaveOpenedFridgeBeforeFlag, 1);
 			}
 		}
@@ -2928,7 +2935,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7244:
 		if (fnIsCookGone())
-			displayMessage(dsAddr_neverLearntMsg); // "I never learnt to how use one"
+			displayMessage(res->getMessageAddr(kNeverLearntMsg)); // "I never learnt to how use one"
 		break;
 
 	case 0x7255:
@@ -2940,7 +2947,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->add(kInvItemMeat);
 		} else {
 			playActorAnimation(721);
-			displayMessage(dsAddr_frozenShelfMsg); // "It has frozen hard onto the shelf!"
+			displayMessage(res->getMessageAddr(kFrozenShelfMsg)); // "It has frozen hard onto the shelf!"
 		}
 		break;
 
@@ -2955,7 +2962,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7336:
 		setOns(1, 0);
 		playSound(5, 42);
-		displayAsyncMessage(dsAddr_noDepraveMsg, 2, 102, 20, 38); // "Nah, I don't want to deprave the kids"
+		displayAsyncMessage(res->getMessageAddr(kNoDepraveMsg), 2, 102, 20, 38); // "Nah, I don't want to deprave the kids"
 		playActorAnimation(697);
 		inventory->add(kInvItemCognac);
 		disableObject(1);
@@ -2970,7 +2977,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7408:
 		if (CHECK_FLAG(dsAddr_mansionReadNewspaperFlag, 1)) {
-			displayMessage(dsAddr_noReadAgainMsg); // "I don't want to read it again. I might like it."
+			displayMessage(res->getMessageAddr(kNoReadAgainMsg)); // "I don't want to read it again. I might like it."
 		} else {
 			setOns(0, 0);
 			playSound(26, 17);
@@ -2990,14 +2997,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7476:
 		if (CHECK_FLAG(dsAddr_mansionExaminedCouchBeforeFlag, 1)) {
-			displayMessage(dsAddr_noSleepMsg); // "I don't want to sleep"
+			displayMessage(res->getMessageAddr(kNoSleepMsg)); // "I don't want to sleep"
 		} else {
 			SET_FLAG(dsAddr_mansionExaminedCouchBeforeFlag, 1);
 			dialog->showMark(94, scene);
 			playSound(61, 5);
 			playSound(5, 14);
 			playActorAnimation(705);
-			displayMessage(dsAddr_justCorkMsg); // "It's just a cork"
+			displayMessage(res->getMessageAddr(kJustCorkMsg)); // "It's just a cork"
 			inventory->add(kInvItemCork);
 		}
 		break;
@@ -3107,9 +3114,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				loadScene(31, 298, 177, 4);
 				SET_FLAG(dsAddr_MansionJohnNotyEscapingFlag, 1);
 			} else
-				displayMessage(dsAddr_ventFirstMsg); // "I'd better stop this ventilator first"
+				displayMessage(res->getMessageAddr(kVentFirstMsg)); // "I'd better stop this ventilator first"
 		} else
-			displayMessage(dsAddr_noSaladMsg); // "I don't want to turn myself into a salad"
+			displayMessage(res->getMessageAddr(kNoSaladMsg)); // "I don't want to turn myself into a salad"
 		break;
 
 	case 0x783d:
@@ -3140,7 +3147,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7ade:
 		if (CHECK_FLAG(dsAddr_MansionRadioBrokenFlag, 1))
-			displayMessage(dsAddr_whatInsideMsg); // "I was always curious what's inside these things"
+			displayMessage(res->getMessageAddr(kWhatInsideMsg)); // "I was always curious what's inside these things"
 		else
 			retVal = false;
 		break;
@@ -3159,11 +3166,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(dsAddr_captainDrawerState, 1);
 			setOns(1, 0x66);
 			moveTo(224, 194, 0, true);
-			displayCutsceneMessage(dsAddr_cutsceneMsg1, 23, 95); // "sixty seven rude words later"
+			displayCutsceneMessage(res->getMessageAddr(kCutsceneMsg1), 23, 95); // "sixty seven rude words later"
 			inventory->remove(kInvItemRopeAndGrenade);
 			enableOn(true);
 		} else
-			displayMessage(dsAddr_captainWatchingMsg); // "with captain watching? Better not"
+			displayMessage(res->getMessageAddr(kCaptainWatchingMsg)); // "with captain watching? Better not"
 		break;
 
 	case csAddr_egoSuspiciousPosition:
@@ -3182,7 +3189,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7802:
 		if (CHECK_FLAG(dsAddr_MansionThruFanByTimePillFlag, 1)) {
 			if (CHECK_FLAG(dsAddr_MansionVentFanStoppedFlag, 1))
-				displayMessage(dsAddr_nahMsg); // "Nah"
+				displayMessage(res->getMessageAddr(kNahMsg)); // "Nah"
 			else {
 				playSound(71, 4);
 				playActorAnimation(796);
@@ -3190,7 +3197,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				SET_FLAG(dsAddr_MansionVentFanStoppedFlag, 1);
 			}
 		} else
-			displayMessage(dsAddr_noSaladMsg); // "I don't want to turn myself into a salad"
+			displayMessage(res->getMessageAddr(kNoSaladMsg)); // "I don't want to turn myself into a salad"
 		break;
 
 	case 0x78e0:
@@ -3206,7 +3213,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x78f5:
 		if (CHECK_FLAG(dsAddr_carTrunkEmptyFlag, 1)) {
-			displayMessage(dsAddr_bootEmptyMsg); // "There's nothing else in the boot"
+			displayMessage(res->getMessageAddr(kBootEmptyMsg)); // "There's nothing else in the boot"
 		} else
 			retVal = false;
 		break;
@@ -3215,12 +3222,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (!CHECK_FLAG(dsAddr_laundryState, 1))
 			retVal = false;
 		else
-			displayMessage(dsAddr_clothesDryMsg); // "The clothes are dry now."
+			displayMessage(res->getMessageAddr(kClothesDryMsg)); // "The clothes are dry now."
 		break;
 
 	case 0x7950:
 		if (CHECK_FLAG(dsAddr_nutSwappedForAppleFlag, 1))
-			displayMessage(dsAddr_nutRealMsg); // "Only the nut is real"
+			displayMessage(res->getMessageAddr(kNutRealMsg)); // "Only the nut is real"
 		else
 			retVal = false;
 		break;
@@ -3229,7 +3236,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(dsAddr_lightOnFlag, 1))
 			retVal = false;
 		else
-			displayMessage(dsAddr_shutValveMsg); // "Shutting the valve shook the dirt from the wall..."
+			displayMessage(res->getMessageAddr(kShutValveMsg)); // "Shutting the valve shook the dirt from the wall..."
 		break;
 
 	case 0x7987:
@@ -3246,7 +3253,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (!CHECK_FLAG(dsAddr_gotNeedleAlreadyFlag, 1))
 			retVal = false;
 		else
-			displayMessage(dsAddr_ordinaryHaystackMsg); // "Just an ordinary hay stack. Now."
+			displayMessage(res->getMessageAddr(kOrdinaryHaystackMsg)); // "Just an ordinary hay stack. Now."
 		break;
 
 	case 0x7af0:
@@ -3299,7 +3306,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(588, true);
 		waitAnimation();
 		wait(50);
-		displayMessage(dsAddr_itsGoneMsg); // "At least it's gone"
+		displayMessage(res->getMessageAddr(kItsGoneMsg)); // "At least it's gone"
 		inventory->remove(kInvItemPaintedPotato);
 		SET_FLAG(dsAddr_mansionTreeHollowEmptyFlag, 1);
 		break;
@@ -3313,26 +3320,26 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		for (byte i = 3; i <= 18; i += 3)
 			playSound(56, i);
 
-		displayAsyncMessage(dsAddr_heyLetGoMsg, 38, 12, 20, 37, kMansionGuard); // "Hey, let go, will ya?!"
+		displayAsyncMessage(res->getMessageAddr(kHeyLetGoMsg), 38, 12, 20, 37, kMansionGuard); // "Hey, let go, will ya?!"
 		playActorAnimation(621, true);
 		playAnimation(623, 1, true);
 		waitAnimation();
 
-		displayAsyncMessage(dsAddr_aaahhhMsg, 30, 12, 1, 9, kMansionGuard); // "Aaaaaaaaaaaaahhh!"
+		displayAsyncMessage(res->getMessageAddr(kAaahhhMsg), 30, 12, 1, 9, kMansionGuard); // "Aaaaaaaaaaaaahhh!"
 		playSound(35, 1);
 		playActorAnimation(622, true);
 		playAnimation(624, 0, true);
 		waitAnimation();
 
 		wait(150);
-		displayMessage(dsAddr_oopsMsg); // "Oops"
+		displayMessage(res->getMessageAddr(kOopsMsg)); // "Oops"
 
 		inventory->remove(kInvItemGrapplingHook);
 		fnMansionIntrusionAttempt();
 		break;
 
 	case 0x830b:
-		displayMessage(dsAddr_noChainsawFuelMsg); // "There's no fuel in the chainsaw"
+		displayMessage(res->getMessageAddr(kNoChainsawFuelMsg)); // "There's no fuel in the chainsaw"
 		break;
 
 	case 0x8312: // hedgehog + plastic apple
@@ -3354,7 +3361,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		waitAnimation();
 
 		disableObject(6);
-		displayMessage(dsAddr_lifeIsBrutalMsg); // "Life is brutal"
+		displayMessage(res->getMessageAddr(kLifeIsBrutalMsg)); // "Life is brutal"
 		inventory->remove(kInvItemPlasticApple);
 		inventory->add(kInvItemCone);
 		break;
@@ -3418,7 +3425,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x85d6:
-		displayMessage(dsAddr_paddleBrokenMsg); // "The paddle is BROKEN"
+		displayMessage(res->getMessageAddr(kPaddleBrokenMsg)); // "The paddle is BROKEN"
 		break;
 
 	case 0x85eb:
@@ -3431,7 +3438,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(1, 23);
 			SET_FLAG(dsAddr_squirrelNutState, 2);
 		} else
-			displayMessage(dsAddr_dontWorkPurposeMsg); // "I usually don't work without a purpose"
+			displayMessage(res->getMessageAddr(kDontWorkPurposeMsg)); // "I usually don't work without a purpose"
 		break;
 
 	case 0x863d:
@@ -3454,14 +3461,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x862c:
 		if (CHECK_FLAG(dsAddr_squirrelNutState, 1))
-			displayMessage(dsAddr_nutRakeMsg); // "It's pointless, the nut will slip between the rake's teeth"
+			displayMessage(res->getMessageAddr(kNutRakeMsg)); // "It's pointless, the nut will slip between the rake's teeth"
 		else
-			displayMessage(dsAddr_objErrorMsg); // "That's no good"
+			displayMessage(res->getMessageAddr(kObjErrorMsg)); // "That's no good"
 		break;
 
 	case 0x86a9: // correcting height of the pole with spanner
 		if (CHECK_FLAG(dsAddr_alreadyAdjustedHoopPoleFlag, 1)) {
-			displayMessage(dsAddr_noNeedMsg); // "No need to do it again"
+			displayMessage(res->getMessageAddr(kNoNeedMsg)); // "No need to do it again"
 		} else {
 			SET_FLAG(dsAddr_alreadyAdjustedHoopPoleFlag, 1);
 			dialog->show(17, scene, 0, 502, kMark, kSonny, 0, 1);
@@ -3483,7 +3490,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 43);
 			playSound(61, 70);
 			playSound(61, 91);
-			displayAsyncMessage(dsAddr_ConfusionMsg, 77, 90, 6, 17); // "!?&!"
+			displayAsyncMessage(res->getMessageAddr(kConfusionMsg), 77, 90, 6, 17); // "!?&!"
 			playActorAnimation(505, true);
 			playAnimation(507, 0, true);
 			waitAnimation();
@@ -3507,8 +3514,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			disableObject(15);
 			disableObject(16);
 			moveTo(162, 164, 2);
-			displayMessage(dsAddr_grandpaPromiseMsg, kSonny, 70, 76); // "But grandpa, you promised!"
-			displayMessage(dsAddr_ohLetsGoMsg, kGrandpa, 90, 76); // "Oh all right. Let's go"
+			displayMessage(res->getMessageAddr(kGrandpaPromiseMsg), kSonny, 70, 76); // "But grandpa, you promised!"
+			displayMessage(res->getMessageAddr(kOhLetsGoMsg), kGrandpa, 90, 76); // "Oh all right. Let's go"
 			moveTo(162, 191, 2);
 			setOns(1, 0);
 			setOns(2, 0);
@@ -3527,7 +3534,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(512, 0);
 
 			wait(100);
-			displayMessage(dsAddr_byeMsg); // "Bye."
+			displayMessage(res->getMessageAddr(kByeMsg)); // "Bye."
 			{
 				Object *obj = scene->getObject(7);
 				obj->actorRect.left = obj->actorRect.right = 228;
@@ -3638,7 +3645,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			//playAnimation(672, 1);
 
 			playSound(83, 12);
-			displayAsyncMessage(dsAddr_hundredBucksMsg, 204, 114, 23, 38, kAnne); // "A hundred bucks!!!"
+			displayAsyncMessage(res->getMessageAddr(kHundredBucksMsg), 204, 114, 23, 38, kAnne); // "A hundred bucks!!!"
 			playActorAnimation(673);
 			loadScene(11, scene->getPosition());
 			playSound(24, 31);
@@ -3650,11 +3657,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			loadScene(28, 0, 167, 2);
 			playMusic(10);
 			moveTo(66, 167, 2);
-			displayMessage(dsAddr_wantBloodMsg); // "I want Blood!"
+			displayMessage(res->getMessageAddr(kWantBloodMsg)); // "I want Blood!"
 			inventory->clear();
 			inventory->add(kInvItemSuperGlue);
 		} else
-			displayMessage(dsAddr_showHerMoneyMsg); // "If I just show her the money, she might take it"
+			displayMessage(res->getMessageAddr(kShowHerMoneyMsg)); // "If I just show her the money, she might take it"
 		break;
 
 	case 0x8b82: // use fan on laundry
@@ -3665,7 +3672,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(92, 20);
 		playSound(92, 38);
 		playSound(92, 58);
-		displayAsyncMessage(dsAddr_yawnMsg, 30, 114, 58, 67); // "(yawn)"
+		displayAsyncMessage(res->getMessageAddr(kYawnMsg), 30, 114, 58, 67); // "(yawn)"
 		playActorAnimation(602);
 		playSound(5, 3);
 		playActorAnimation(603);
@@ -3674,7 +3681,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x8bfc: // Give bone to dog
-		displayMessage(dsAddr_hereBoyMsg); // "Here, boy"
+		displayMessage(res->getMessageAddr(kHereBoyMsg)); // "Here, boy"
 		playSound(5, 3);
 		playSound(26, 13);
 		playActorAnimation(657, true);
@@ -3707,7 +3714,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			w->save();
 		}
 		wait(100);
-		displayMessage(dsAddr_friendsNowMsg); // "I hope we're friends now"
+		displayMessage(res->getMessageAddr(kFriendsNowMsg)); // "I hope we're friends now"
 		break;
 
 	case 0x8c6e: // Use car jack on rock
@@ -3764,7 +3771,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(654, true);
 			playAnimation(655, 2, true);
 			waitAnimation();
-			displayMessage(dsAddr_mouseGoneMsg); // "The mouse has gone!"
+			displayMessage(res->getMessageAddr(kMouseGoneMsg)); // "The mouse has gone!"
 			inventory->add(kInvItemRock);
 			setLan(2, 4, 27);
 			enableObject(4, 27);
@@ -3783,7 +3790,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(56, i);
 		playSound(2, 64);
 		playSound(3, 74);
-		displayAsyncMessage(dsAddr_lastChanceMsg, 212, 80, 35, 50); // "Last chance?"
+		displayAsyncMessage(res->getMessageAddr(kLastChanceMsg), 212, 80, 35, 50); // "Last chance?"
 		playActorAnimation(516, true);
 		playAnimation(517, 2, true);
 		playAnimation(518, 3, true);
@@ -3797,7 +3804,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x8fc8:
-		displayMessage(dsAddr_comeHereMsg); // "Come here, I've got something for you"
+		displayMessage(res->getMessageAddr(kComeHereMsg)); // "Come here, I've got something for you"
 		waitLanAnimationFrame(2, 4);
 		playSound(5, 3);
 		playActorAnimation(627, true);
@@ -3812,19 +3819,19 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(634, 1, true);
 			waitAnimation();
 			disableObject(4);
-			displayMessage(dsAddr_trappedMouseMsg); // "The mouse is trapped!"
+			displayMessage(res->getMessageAddr(kTrappedMouseMsg)); // "The mouse is trapped!"
 			SET_FLAG(dsAddr_mouseHoleState, 1);
 		} else {
 			playActorAnimation(628, true);
 			playAnimation(630, 1, true);
 			waitAnimation();
-			displayMessage(dsAddr_cantCatchMsg); // "I can't catch it!"
+			displayMessage(res->getMessageAddr(kCantCatchMsg)); // "I can't catch it!"
 		}
 		break;
 
 	case 0x9054: // mouse hole
 		if (CHECK_FLAG(dsAddr_mouseGotGoldNuggetFlag, 1)) {
-			displayMessage(dsAddr_nonsenseMsg); // "Nonsense"
+			displayMessage(res->getMessageAddr(kNonsenseMsg)); // "Nonsense"
 		} else {
 			playSound(5, 11);
 			playSound(49, 21);
@@ -3836,7 +3843,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->remove(kInvItemHandkerchief);
 			if (!CHECK_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1)) {
 				SET_FLAG(dsAddr_mouseNerveMsgSaidFlag, 1);
-				displayMessage(dsAddr_mouseNerveMsg); // "Boy, this mouse has some nerve!"
+				displayMessage(res->getMessageAddr(kMouseNerveMsg)); // "Boy, this mouse has some nerve!"
 			}
 		}
 		break;
@@ -3844,7 +3851,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x933d:
 		if (fnIsCookGone()) {
 			if (CHECK_FLAG(dsAddr_MansionRadioBrokenFlag, 1))
-				displayMessage(dsAddr_breakFlattenMsg); // "I wanted to break it, not to flatten it!"
+				displayMessage(res->getMessageAddr(kBreakFlattenMsg)); // "I wanted to break it, not to flatten it!"
 			else {
 				setOns(1, 0);
 				playSound(5, 3);
@@ -3881,12 +3888,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(88, 12);
 		playSound(87, 24);
 		playActorAnimation(723);
-		displayMessage(dsAddr_burnBabyMsg); // "Burn, baby, burn!"
+		displayMessage(res->getMessageAddr(kBurnBabyMsg)); // "Burn, baby, burn!"
 		wait(100);
 		playSound(89, 4);
 		playActorAnimation(724);
 		setOns(4, 68);
-		displayMessage(dsAddr_voilaMsg); // "Voila"
+		displayMessage(res->getMessageAddr(kVoilaMsg)); // "Voila"
 		inventory->remove(kInvItemBurningPaper);
 		SET_FLAG(dsAddr_MansionPutBurningPaperInFridgeFlag, 1);
 		break;
@@ -3897,7 +3904,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(kInvItemCarJack);
 		inventory->activate(false);
 		inventory->resetSelectedObject();
-		displayMessage(dsAddr_carJackMsg); // "Wow! There's a car jack inside! Great!"
+		displayMessage(res->getMessageAddr(kCarJackMsg)); // "Wow! There's a car jack inside! Great!"
 		break;
 
 	case csAddr_openHalfEmptyToolbox:
@@ -3905,7 +3912,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		inventory->add(kInvItemSpanner);
 		inventory->activate(false);
 		inventory->resetSelectedObject();
-		displayMessage(dsAddr_spannerMsg); // "There's something else inside the toolbox! A spanner!"
+		displayMessage(res->getMessageAddr(kSpannerMsg)); // "There's something else inside the toolbox! A spanner!"
 		break;
 
 	case 0x671d: // very last part of the game
@@ -3930,7 +3937,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(15, 8);
 		playAnimation(693, 0);
 		setOns(6, 0);
-		displayMessage(dsAddr_fullAutomaticMsg); // "Fully Automatic"
+		displayMessage(res->getMessageAddr(kFullAutomaticMsg)); // "Fully Automatic"
 		inventory->add(kInvItemVideoTape);
 		disableObject(4);
 		break;
@@ -3941,14 +3948,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x687a: // using the book
 		if (CHECK_FLAG(dsAddr_drawerPuzzleSolvedFlag, 1)) {
-			displayMessage(dsAddr_dontMessMsg); // "I don't need to mess with it anymore"
+			displayMessage(res->getMessageAddr(kDontMessMsg)); // "I don't need to mess with it anymore"
 		} else {
 			playSound(49, 5);
 			playSound(49, 17);
 			playActorAnimation(691);
 			if (!fnCheckingDrawers()) {
 				if (!CHECK_FLAG(dsAddr_drawerPuzzleBookMessageFlag, 1)) {
-					displayMessage(dsAddr_bookHeldMsg); // "Something's got hold of the book!"
+					displayMessage(res->getMessageAddr(kBookHeldMsg)); // "Something's got hold of the book!"
 					SET_FLAG(dsAddr_drawerPuzzleBookMessageFlag, 1);
 				}
 			} else {
@@ -3956,7 +3963,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playAnimation(692, 0);
 				setOns(6, 59);
 				enableObject(4);
-				displayMessage(dsAddr_secretCompartmentMsg); // "Wow! A secret compartment!"
+				displayMessage(res->getMessageAddr(kSecretCompartmentMsg)); // "Wow! A secret compartment!"
 				SET_FLAG(dsAddr_drawerPuzzleSolvedFlag, 1);
 			}
 		}
@@ -3968,7 +3975,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6918:
 		if (inventory->has(kInvItemSheetOfPaper))
-			displayMessage(dsAddr_noMoreSheetsMsg); // "Right now I don't need any more sheets"
+			displayMessage(res->getMessageAddr(kNoMoreSheetsMsg)); // "Right now I don't need any more sheets"
 		else {
 			if (!CHECK_FLAG(dsAddr_mansionTrashcanSearchedFlag, 1)) {
 				playActorAnimation(695);
@@ -4087,7 +4094,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6be1: // handle to the bathroom
 		if (CHECK_FLAG(dsAddr_MansionJohnNotyEscapingFlag, 1))
-			displayMessage(dsAddr_catchJohnFirstMsg); // "I'd better catch John Noty first"
+			displayMessage(res->getMessageAddr(kCatchJohnFirstMsg)); // "I'd better catch John Noty first"
 		else {
 			playSound(88, 4);
 			playActorAnimation(808);
@@ -4126,7 +4133,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playActorAnimation(754);
 		hideActor();
 
-		displayCutsceneMessage(dsAddr_cutsceneMsg0, 30, 95); // "A secret diary of ..."
+		displayCutsceneMessage(res->getMessageAddr(kCutsceneMsg0), 30, 95); // "A secret diary of ..."
 
 		playMusic(3);
 		loadScene(11, scene->getPosition());
@@ -4198,7 +4205,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6f20:
 		if (CHECK_FLAG(dsAddr_MansionJohnNotyOutsideBathroomFlag, 1))
-			displayMessage(dsAddr_cantHideMsg); // "I can't hide here!"
+			displayMessage(res->getMessageAddr(kCantHideMsg)); // "I can't hide here!"
 		else
 			rejectMessage();
 		break;
@@ -4232,7 +4239,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		showActor();
 		playActorAnimation(757);
 		moveRel(0, 0, 1);
-		displayMessage(dsAddr_wasCloseMsg); // "That was close"
+		displayMessage(res->getMessageAddr(kWasCloseMsg)); // "That was close"
 		enableObject(8);
 		disableObject(7);
 
@@ -4241,17 +4248,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6f4d:
 		if (CHECK_FLAG(dsAddr_MansionJohnNotyOutsideBathroomFlag, 1))
-			displayMessage(dsAddr_johnOutsideMsg); // "There's John Noty outside! I can't go out!"
+			displayMessage(res->getMessageAddr(kJohnOutsideMsg)); // "There's John Noty outside! I can't go out!"
 		else
 			loadScene(31, 139, 172, 3);
 		break;
 
 	case 0x6f32:
 		if (CHECK_FLAG(dsAddr_MansionJohnNotyOutsideBathroomFlag, 1)) {
-			displayMessage(dsAddr_cantHideMsg); // "I can't hide here!"
+			displayMessage(res->getMessageAddr(kCantHideMsg)); // "I can't hide here!"
 		} else {
 			playActorAnimation(977);
-			displayMessage(dsAddr_lockedMsg); // "It's Locked!"
+			displayMessage(res->getMessageAddr(kLockedMsg)); // "It's Locked!"
 		}
 		break;
 
@@ -4275,17 +4282,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x72c2:
 		if (CHECK_FLAG(dsAddr_MansionSinkState, 2)) {
-			displayMessage(dsAddr_enoughWaterMsg); // "There's enough water in the sink"
+			displayMessage(res->getMessageAddr(kEnoughWaterMsg)); // "There's enough water in the sink"
 		} else {
 			playSound(79, 6);
 			playSound(84, 9);
 			playActorAnimation(801);
 			wait(50);
 			if (CHECK_FLAG(dsAddr_MansionSinkState, 1)) {
-				displayMessage(dsAddr_sinkFullMsg); // "The sink is full of hot water"
+				displayMessage(res->getMessageAddr(kSinkFullMsg)); // "The sink is full of hot water"
 				SET_FLAG(dsAddr_MansionSinkState, 2);
 			} else
-				displayMessage(dsAddr_waterHotMsg); // "The water looks very hot"
+				displayMessage(res->getMessageAddr(kWaterHotMsg)); // "The water looks very hot"
 		}
 		break;
 
@@ -4293,12 +4300,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(66, 5);
 		playSound(67, 11);
 		playActorAnimation(976);
-		displayMessage(dsAddr_emptyMsg); // "It's Empty"
+		displayMessage(res->getMessageAddr(kEmptyMsg)); // "It's Empty"
 		break;
 
 	case 0x77d5:
 		if (CHECK_FLAG(dsAddr_MansionThruFanByTimePillFlag, 1) && !CHECK_FLAG(dsAddr_MansionVentFanStoppedFlag, 1)) { // disallow exiting through the first door until switch turned on, not present in original game
-			displayMessage(dsAddr_noSaladMsg); // "I don't want to turn myself into a salad"
+			displayMessage(res->getMessageAddr(kNoSaladMsg)); // "I don't want to turn myself into a salad"
 		} else {
 			playSound(89, 6);
 			playActorAnimation(978);
@@ -4313,12 +4320,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x79eb: // color of the book
 		// FIXME - Replace with internal lookup and switch
-		displayMessage(res->dseg.get_word(dsAddr_bookColorMsgPtr + GET_FLAG(dsAddr_drawerPuzzleBookValue) * 2 - 2));
+		bookColorMessage();
 		break;
 
 	case 0x79fd:
 		if (CHECK_FLAG(dsAddr_blueDrawerOpenFlag, 1))
-			displayMessage(dsAddr_blueInteriorMsg); // "It's got a blue interior"
+			displayMessage(res->getMessageAddr(kBlueInteriorMsg)); // "It's got a blue interior"
 		else
 			retVal = false;
 		break;
@@ -4326,34 +4333,34 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7a0f:
 		if (CHECK_FLAG(dsAddr_redDrawerOpenFlag, 1)) {
 			if (!CHECK_FLAG(dsAddr_drawerGotPolaroidFlag, 1)) {
-				displayMessage(dsAddr_foundPolaroidMsg); // "There's a polaroid inside! I might need that"
+				displayMessage(res->getMessageAddr(kFoundPolaroidMsg)); // "There's a polaroid inside! I might need that"
 				playSound(5, 11);
 				playActorAnimation(690);
 				inventory->add(kInvItemPolaroidCamera);
 				SET_FLAG(dsAddr_drawerGotPolaroidFlag, 1);
 			}
-			displayMessage(dsAddr_redInteriorMsg); // "It's got a red interior"
+			displayMessage(res->getMessageAddr(kRedInteriorMsg)); // "It's got a red interior"
 		} else
 			retVal = false;
 		break;
 
 	case 0x7a49:
 		if (CHECK_FLAG(dsAddr_greyDrawerOpenFlag, 1))
-			displayMessage(dsAddr_greyInteriorMsg); // "It's got a grey interior"
+			displayMessage(res->getMessageAddr(kGreyInteriorMsg)); // "It's got a grey interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a5b:
 		if (CHECK_FLAG(dsAddr_greenDrawerOpenFlag, 1))
-			displayMessage(dsAddr_greenInteriorMsg); // "It's got a green interior"
+			displayMessage(res->getMessageAddr(kGreenInteriorMsg)); // "It's got a green interior"
 		else
 			retVal = false;
 		break;
 
 	case 0x7a6d:
 		if (CHECK_FLAG(dsAddr_brownDrawerOpenFlag, 1))
-			displayMessage(dsAddr_brownInteriorMsg); // "It's got a brown interior"
+			displayMessage(res->getMessageAddr(kBrownInteriorMsg)); // "It's got a brown interior"
 		else
 			retVal = false;
 		break;
@@ -4361,20 +4368,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7a7f:
 		if (CHECK_FLAG(dsAddr_pinkDrawerOpenFlag, 1)) {
 			if (!CHECK_FLAG(dsAddr_drawerGotDictaphoneFlag, 1)) {
-				displayMessage(dsAddr_dictaphoneInsideMsg); // "Wow! There's a dictaphone inside!"
+				displayMessage(res->getMessageAddr(kDictaphoneInsideMsg)); // "Wow! There's a dictaphone inside!"
 				playSound(5, 12);
 				playActorAnimation(689);
 				inventory->add(kInvItemDictaphoneNoBatteries);
 				SET_FLAG(dsAddr_drawerGotDictaphoneFlag, 1);
 			}
-			displayMessage(dsAddr_pinkInteriorMsg); // "It's got a pink interior"
+			displayMessage(res->getMessageAddr(kPinkInteriorMsg)); // "It's got a pink interior"
 		} else
 			retVal = false;
 		break;
 
 	case 0x7af7:
 		if (CHECK_FLAG(dsAddr_MansionPutBurningPaperInFridgeFlag, 1))
-			displayMessage(dsAddr_yummyMsg); // "Yummy"
+			displayMessage(res->getMessageAddr(kYummyMsg)); // "Yummy"
 		else
 			retVal = false;
 		break;
@@ -4384,10 +4391,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			byte v = GET_FLAG(dsAddr_MansionSinkState);
 			switch (v) {
 			case 1:
-				displayMessage(dsAddr_corkInHoleMsg); // "The cork is stuck in the hole"
+				displayMessage(res->getMessageAddr(kCorkInHoleMsg)); // "The cork is stuck in the hole"
 				break;
 			case 2:
-				displayMessage(dsAddr_sinkFullMsg); // "The sink is full of hot water"
+				displayMessage(res->getMessageAddr(kSinkFullMsg)); // "The sink is full of hot water"
 				break;
 			default:
 				retVal = false;
@@ -4418,17 +4425,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x90fc: // dictaphone on robot
 		if (fnRobotSafeAlreadyUnlockedCheck()) {
 			if (CHECK_FLAG(dsAddr_MansionRobotSafeVoiceTestPassedFlag, 1)) {
-				displayMessage(dsAddr_fooledOnceMsg); // "I'd already fooled him once"
+				displayMessage(res->getMessageAddr(kFooledOnceMsg)); // "I'd already fooled him once"
 			} else {
 				if (!CHECK_FLAG(dsAddr_usedDictaphoneOnTVFlag, 1)) {
-					displayMessage(dsAddr_notMyVoiceMsg); // "I won't cheat Mike with MY voice"
+					displayMessage(res->getMessageAddr(kNotMyVoiceMsg)); // "I won't cheat Mike with MY voice"
 				} else {
-					displayMessage(dsAddr_mikeVoiceTestMsg); // "Mike, activate the voice test"
+					displayMessage(res->getMessageAddr(kMikeVoiceTestMsg)); // "Mike, activate the voice test"
 					waitLanAnimationFrame(1, 1);
 
 					playSound(5, 3);
 					playSound(5, 39);
-					displayAsyncMessage(dsAddr_singingMsg, 68, 126, 9, 35, kJohnNoty); // "siiiiinging!"
+					displayAsyncMessage(res->getMessageAddr(kSingingMsg), 68, 126, 9, 35, kJohnNoty); // "siiiiinging!"
 					playActorAnimation(728);
 
 					waitLanAnimationFrame(1, 1);
@@ -4443,9 +4450,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x91cb: // use socks on robot
 		if (fnRobotSafeAlreadyUnlockedCheck()) {
 			if (CHECK_FLAG(dsAddr_MansionRobotSafeScentTestPassedFlag, 1)) {
-				displayMessage(dsAddr_fooledOnceMsg); // "I'd already fooled him once"
+				displayMessage(res->getMessageAddr(kFooledOnceMsg)); // "I'd already fooled him once"
 			} else {
-				displayMessage(dsAddr_mikeScentTestMsg); // "Mike, let's get on with the scent test"
+				displayMessage(res->getMessageAddr(kMikeScentTestMsg)); // "Mike, let's get on with the scent test"
 
 				waitLanAnimationFrame(1, 1);
 				playSound(5, 3);
@@ -4463,9 +4470,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x9209: // photo on robot
 		if (fnRobotSafeAlreadyUnlockedCheck()) {
 			if (CHECK_FLAG(dsAddr_MansionRobotSafeViewTestPassedFlag, 1)) {
-				displayMessage(dsAddr_fooledOnceMsg); // "I'd already fooled him once"
+				displayMessage(res->getMessageAddr(kFooledOnceMsg)); // "I'd already fooled him once"
 			} else {
-				displayMessage(dsAddr_mikeViewTestMsg); // "Mike, run the view test"
+				displayMessage(res->getMessageAddr(kMikeViewTestMsg)); // "Mike, run the view test"
 				waitLanAnimationFrame(1, 1);
 
 				playSound(5, 3);
@@ -4481,7 +4488,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x9247:
-		displayMessage(dsAddr_sameBottleMsg); // "The bottle's the same, but I doubt if it's enough to fool anyone"
+		displayMessage(res->getMessageAddr(kSameBottleMsg)); // "The bottle's the same, but I doubt if it's enough to fool anyone"
 		break;
 
 	case 0x924e:
@@ -4533,7 +4540,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 4);
 		playSound(19, 14);
 		playActorAnimation(793);
-		displayMessage(dsAddr_fitsPerfectMsg); // "It fits perfectly!"
+		displayMessage(res->getMessageAddr(kFitsPerfectMsg)); // "It fits perfectly!"
 		inventory->remove(kInvItemWrappedCork);
 		SET_FLAG(dsAddr_MansionSinkState, 1);
 		break;
@@ -4542,7 +4549,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 4);
 		playSound(63, 12);
 		playActorAnimation(726);
-		displayMessage(dsAddr_dislikeVealMsg); // "I never liked veal anyway"
+		displayMessage(res->getMessageAddr(kDislikeVealMsg)); // "I never liked veal anyway"
 		inventory->remove(kInvItemMeat);
 		inventory->add(kInvItemPlasticBag);
 		break;
@@ -4552,12 +4559,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 4);
 			playSound(5, 25);
 			playActorAnimation(802);
-			displayMessage(dsAddr_labelOffMsg); // "The label has come off!"
+			displayMessage(res->getMessageAddr(kLabelOffMsg)); // "The label has come off!"
 			inventory->remove(kInvItemChilliWithLabel);
 			inventory->add(kInvItemChilliNoLabel);
 			inventory->add(kInvItemLabel);
 		} else
-			displayMessage(dsAddr_noHotWaterMsg); // "There's no hot water in the sink"
+			displayMessage(res->getMessageAddr(kNoHotWaterMsg)); // "There's no hot water in the sink"
 		break;
 
 	case 0x94d4:
@@ -4571,14 +4578,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			inventory->remove(kInvItemPlasticBag);
 			inventory->add(kInvItemSocks);
 		} else
-			displayMessage(dsAddr_noSockStoreMsg); // "I don't have anything to store these socks in"
+			displayMessage(res->getMessageAddr(kNoSockStoreMsg)); // "I don't have anything to store these socks in"
 		break;
 
 	case 0x951b:
 		playSound(5, 4);
 		playSound(5, 22);
 		playActorAnimation(804);
-		displayMessage(dsAddr_corkTooSmallMsg); // "The cork is a bit too small"
+		displayMessage(res->getMessageAddr(kCorkTooSmallMsg)); // "The cork is a bit too small"
 		break;
 
 	case 0x73a3:
@@ -4592,7 +4599,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			reloadLan();
 
 			if (CHECK_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 1)) {
-				displayMessage(dsAddr_muchBetterMsg); // "That's much better"
+				displayMessage(res->getMessageAddr(kMuchBetterMsg)); // "That's much better"
 			}
 		} else {
 			SET_FLAG(dsAddr_mansionTVOnFlag, 1);
@@ -4609,13 +4616,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 16);
 		playActorAnimation(703);
 		if (!CHECK_FLAG(dsAddr_mansionVCRTapeLoadedFlag, 1))
-			displayMessage(dsAddr_NotHappenMsg); // "Nothing happened"
+			displayMessage(res->getMessageAddr(kNotHappenMsg)); // "Nothing happened"
 		else {
 			//0x955a
 			if (CHECK_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 0)) {
 				if (CHECK_FLAG(dsAddr_mansionTVOnFlag, 1)) {
 					if (!CHECK_FLAG(dsAddr_mansionVCRPlayedTapeBeforeFlag, 1))
-						displayMessage(dsAddr_tapeStartedMsg); // "The tape started!"
+						displayMessage(res->getMessageAddr(kTapeStartedMsg)); // "The tape started!"
 
 					SET_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 1);
 					reloadLan();
@@ -4624,12 +4631,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 						SET_FLAG(dsAddr_mansionVCRPlayedTapeBeforeFlag, 1);
 					}
 				} else
-					displayMessage(dsAddr_tvOffMsg); // "I just realized that the TV is off"
+					displayMessage(res->getMessageAddr(kTvOffMsg)); // "I just realized that the TV is off"
 			} else {
 				SET_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 0);
 				if (CHECK_FLAG(dsAddr_mansionTVOnFlag, 1)) {
 					reloadLan();
-					displayMessage(dsAddr_muchBetterMsg); // "That's much better"
+					displayMessage(res->getMessageAddr(kMuchBetterMsg)); // "That's much better"
 				}
 			}
 		}
@@ -4638,7 +4645,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x95eb: // polaroid + tv
 		if (CHECK_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 1)) {
 			if (CHECK_FLAG(dsAddr_usedPolaroidOnTVFlag, 1)) {
-				displayMessage(dsAddr_enoughPhotosMsg); // "I don't need any more photos"
+				displayMessage(res->getMessageAddr(kEnoughPhotosMsg)); // "I don't need any more photos"
 			} else {
 				playSound(5, 3);
 				playSound(5, 24);
@@ -4648,22 +4655,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				SET_FLAG(dsAddr_usedPolaroidOnTVFlag, 1);
 			}
 		} else
-			displayMessage(dsAddr_notRightMomentMsg); // "I don't think this is the right moment"
+			displayMessage(res->getMessageAddr(kNotRightMomentMsg)); // "I don't think this is the right moment"
 		break;
 
 	case 0x962f: // dictaphone + tv
 		if (CHECK_FLAG(dsAddr_mansionVCRPlayingTapeFlag, 1)) {
 			if (CHECK_FLAG(dsAddr_usedDictaphoneOnTVFlag, 1)) {
-				displayMessage(dsAddr_alreadyRecordedMsg); // "I already recorded what I wanted to"
+				displayMessage(res->getMessageAddr(kAlreadyRecordedMsg)); // "I already recorded what I wanted to"
 			} else {
-				displayMessage(dsAddr_recordScareMsg); // "Yeah, I can record this and scare the cats"
+				displayMessage(res->getMessageAddr(kRecordScareMsg)); // "Yeah, I can record this and scare the cats"
 				playSound(5, 3);
 				playSound(5, 27);
 				playActorAnimation(708);
 				SET_FLAG(dsAddr_usedDictaphoneOnTVFlag, 1);
 			}
 		} else
-			displayMessage(dsAddr_notRightMomentMsg); // "I don't think this is the right moment"
+			displayMessage(res->getMessageAddr(kNotRightMomentMsg)); // "I don't think this is the right moment"
 		break;
 
 	case 0x95c8:
@@ -4675,7 +4682,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case 0x966c:
-		displayMessage(dsAddr_cantRecordNoBatteriesMsg); // "I can't record anything until I find some batteries"
+		displayMessage(res->getMessageAddr(kCantRecordNoBatteriesMsg)); // "I can't record anything until I find some batteries"
 		break;
 
 	case 0x9673: // hit fatso - final scene
@@ -4690,7 +4697,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		wait(100);
 		playActorAnimation(805);
 		moveTo(50, 170, 3);
-		displayMessage(dsAddr_onlyChilliMsg); // "Good this red stuff is only a chilli"
+		displayMessage(res->getMessageAddr(kOnlyChilliMsg)); // "Good this red stuff is only a chilli"
 		//moveTo(105, 157, 0, true);
 		playMusic(3);
 		loadScene(11, 105, 157, 4);
@@ -4758,16 +4765,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		break;
 
 	case csAddr_useDivingEquipment: // using diving eq
-		// FIXME - Some code is missing here as displayMessage(dsAddr_cantTalkUnderwaterMsg),
-		//         displayMessage(dsAddr_notSwimmingThereMsg), displayMessage(dsAddr_tooLittleAirMsg)
-		//         displayMessage(dsAddr_fishDontWorryMsg) are never called.
+		// FIXME - Some code is missing here as displayMessage(res->getMessageAddr(kCantTalkUnderwaterMsg)),
+		//         displayMessage(res->getMessageAddr(kNotSwimmingThereMsg)), displayMessage(dsAddr_tooLittleAirMsg)
+		//         displayMessage(res->getMessageAddr(kFishDontWorryMsg)) are never called.
 		{
 			int id = scene->getId();
 			if (id != 15) {
 				if (id == 16)
-					displayMessage(dsAddr_notHereMsg); // "Not here"
+					displayMessage(res->getMessageAddr(kNotHereMsg)); // "Not here"
 				else
-					displayMessage(dsAddr_notBestPlaceMsg); // "It's not the best place for diving"
+					displayMessage(res->getMessageAddr(kNotBestPlaceMsg)); // "It's not the best place for diving"
 			} else {
 				playSound(5, 3);
 				playSound(38, 16);
@@ -4795,22 +4802,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		INC_FLAG(dsAddr_lakeDivingExitMessage);
 		switch (GET_FLAG(dsAddr_lakeDivingExitMessage)) {
 		case 1:
-			displayMessage(dsAddr_seaweedMsg); // "This seaweed is just like the flowers I gave mum on her last birthday"
+			displayMessage(res->getMessageAddr(kSeaweedMsg)); // "This seaweed is just like the flowers I gave mum on her last birthday"
 			break;
 		case 2:
-			displayMessage(dsAddr_fishBoatMsg); // "I wonder what fish do inside this boat at night"
+			displayMessage(res->getMessageAddr(kFishBoatMsg)); // "I wonder what fish do inside this boat at night"
 			break;
 		case 3:
-			displayMessage(dsAddr_fishSomethingMsg); // "I think I have to fish out something down there"
+			displayMessage(res->getMessageAddr(kFishSomethingMsg)); // "I think I have to fish out something down there"
 			break;
 		case 4:
-			displayMessage(dsAddr_notRedHerringMsg); // "I hope all this fish stuff is not a red herring"
+			displayMessage(res->getMessageAddr(kNotRedHerringMsg)); // "I hope all this fish stuff is not a red herring"
 			break;
 		case 5:
-			displayMessage(dsAddr_seaweedMsg); // "This seaweed is just like the flowers I gave mum on her last birthday"
+			displayMessage(res->getMessageAddr(kSeaweedMsg)); // "This seaweed is just like the flowers I gave mum on her last birthday"
 			break;
 		default:
-			displayMessage(dsAddr_niceDownMsg); // "It's nice down there"
+			displayMessage(res->getMessageAddr(kNiceDownMsg)); // "It's nice down there"
 			break;
 		}
 		break;
@@ -4830,7 +4837,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			for (uint i = 0; i < 8; ++i)
 				playSound(26, 30 + i * 11);
 			playActorAnimation(661);
-			displayCutsceneMessage(dsAddr_cutsceneMsgA, 84, 95); // "Hundred moments later"
+			displayCutsceneMessage(res->getMessageAddr(kCutsceneMsgA), 84, 95); // "Hundred moments later"
 			playSound(56, 10);
 			playSound(56, 21);
 
@@ -4844,7 +4851,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			waitAnimation();
 			setOns(1, 49);
 
-			displayCutsceneMessage(dsAddr_cutsceneMsgB, 53, 95); // "Another hundred moments later"
+			displayCutsceneMessage(res->getMessageAddr(kCutsceneMsgB), 53, 95); // "Another hundred moments later"
 			moveTo(162, 184, 0, true);
 			playSound(26, 6);
 			playSound(26, 17);
@@ -4856,30 +4863,30 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(664);
 			playAnimation(665, 1);
 			wait(100);
-			displayMessage(dsAddr_foundCrudeOilMsg); // "At least I found crude oil and I'll be rich"
+			displayMessage(res->getMessageAddr(kFoundCrudeOilMsg)); // "At least I found crude oil and I'll be rich"
 			wait(100);
-			displayMessage(dsAddr_myLifeMsg); // "That's my life"
+			displayMessage(res->getMessageAddr(kMyLifeMsg)); // "That's my life"
 			inventory->remove(kInvItemShovelAct2);
 			fnMansionIntrusionAttempt();
 		} else
-			displayMessage(dsAddr_notThinkRightPlaceMsg); // "I don't think this is the right place"
+			displayMessage(res->getMessageAddr(kNotThinkRightPlaceMsg)); // "I don't think this is the right place"
 		break;
 
 	case csAddr_tooDarkHere:
-		displayMessage(dsAddr_cantDoTooDarkMsg); // "I can't do anything here, it's too dark"
+		displayMessage(res->getMessageAddr(kCantDoTooDarkMsg)); // "I can't do anything here, it's too dark"
 		break;
 
 	case csAddr_examineBanknote:
-		displayMessage(dsAddr_bankNoteMsg); // "It's a note from some bank..."
+		displayMessage(res->getMessageAddr(kBankNoteMsg)); // "It's a note from some bank..."
 		SET_FLAG(dsAddr_examinedBanknoteFlag, 1);
 		retVal = false;
 		break;
 
 	case csAddr_useTimePills: // use pills
 		if (scene->getId() != 36) {
-			displayMessage(dsAddr_notTryNowMsg); // "There's no need to try them now"
+			displayMessage(res->getMessageAddr(kNotTryNowMsg)); // "There's no need to try them now"
 		} else if (CHECK_FLAG(dsAddr_mansionAlreadyUsedTimePillsFlag, 1)) {
-			displayMessage(dsAddr_nahMsg); // "Nah"
+			displayMessage(res->getMessageAddr(kNahMsg)); // "Nah"
 		} else {
 			SET_FLAG(dsAddr_mansionAlreadyUsedTimePillsFlag, 1);
 			moveTo(102, 195, 2);
