@@ -1573,7 +1573,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	// done here and this way...
 	if (_game.id == GID_INDY4 && _language == Common::DE_DEU && _currentRoom == 28 &&
 		isScriptRunning(204) && enhancementEnabled(kEnhTextLocFixes)) {
-		const size_t bogusTextLen = sizeof("Across-arms ") - 1;
+		const int bogusTextLen = sizeof("Across-arms ") - 1;
 		if (dstSize - (end - dst) > bogusTextLen && memcmp(dst - bogusTextLen, "Across-arms ", bogusTextLen) == 0)
 			dst -= bogusTextLen;
 	}
