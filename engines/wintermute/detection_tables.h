@@ -1439,6 +1439,15 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("goldencalf", "",
 		WME_ENTRY1s("data.dcp", "c611503c2c10137d1195878080cee2d1", 1174552), Common::DE_DEU, ADGF_UNSTABLE, WME_1_8_11),
 
+	// The Golden Calf (French)
+	WME_WINENTRY("goldencalf", "",
+		WME_ENTRY1s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553), Common::FR_FRA, ADGF_UNSTABLE, WME_1_8_11),
+
+	// The Golden Calf (Spanish fanmade)
+	WME_WINENTRY("goldencalf", "",
+		WME_ENTRY2s("data.dcp", "2e7bae5c1d0fd18f269147b834be2bc8", 1174553,
+					"string.tab", "639e54d5d5392e56785c1f6cb7d0d5e8", 122759), Common::ES_ESP, ADGF_UNSTABLE, WME_1_8_11),
+
 	// The Guttenburg Project (Demo)
 	WME_WINENTRY("guttenburg", "Demo",
 		WME_ENTRY1s("data.dcp", "0c90b369ad0928a450d092114376cf7f", 24121170), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
