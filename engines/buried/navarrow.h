@@ -47,7 +47,7 @@ public:
 	void onPaint();
 	void onEnable(bool enable);
 	void onLButtonDown(const Common::Point &point, uint flags);
-	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onActionEnd(const Common::CustomEventType &action, uint flags);
 
 	enum {
 		BUTTON_DISABLED = 0,

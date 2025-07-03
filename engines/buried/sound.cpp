@@ -34,6 +34,8 @@
 #include "buried/resources.h"
 #include "buried/sound.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Buried {
 
 #define TIMED_EFFECT_NONE   0x00
@@ -350,6 +352,10 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	// Play the file
 	bool retVal = _soundData[kAIVoiceIndex]->start();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+
 	while (retVal && !_vm->shouldQuit() && _soundData[kAIVoiceIndex]->isPlaying()) {
 		timerCallback();
 		_vm->yield(nullptr, kAIVoiceIndex);
@@ -358,6 +364,11 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	// Now that is has been played, kill it here and now
 	delete _soundData[kAIVoiceIndex];
 	_soundData[kAIVoiceIndex] = new Sound();
+
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("buried-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("inventory")->setEnabled(true);
 
 	// Return success
 	return true;
@@ -443,6 +454,10 @@ bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int 
 	if (soundChannel < 0)
 		return false;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("cutscene")->setEnabled(true);
+
 	// Otherwise, assume the sound has started playing and enter a wait and see loop until
 	// the sound finishes playing
 	do {
@@ -452,6 +467,11 @@ bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int 
 
 	// One last callback check
 	timerCallback();
+
+	keymapper->getKeymap("cutscene")->setEnabled(false);
+	keymapper->getKeymap("buried-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("inventory")->setEnabled(true);
 
 	// Reset the cursor
 	_vm->_gfx->setCursor(oldCursor);

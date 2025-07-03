@@ -200,29 +200,25 @@ void NavArrowWindow::onLButtonDown(const Common::Point &point, uint flags) {
 	}
 }
 
-void NavArrowWindow::onKeyUp(const Common::KeyState &key, uint flags) {
-	switch (key.keycode) {
-	case Common::KEYCODE_KP4:
-	case Common::KEYCODE_LEFT:
+void NavArrowWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	switch (action) {
+	case kActionMoveLeft:
 		if (_arrowStatus[1] == BUTTON_ENABLED)
 			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(kDirectionLeft);
 		break;
-	case Common::KEYCODE_KP6:
-	case Common::KEYCODE_RIGHT:
+	case kActionMoveRight:
 		if (_arrowStatus[2] == BUTTON_ENABLED)
 			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(kDirectionRight);
 		break;
-	case Common::KEYCODE_KP2:
-	case Common::KEYCODE_DOWN:
+	case kActionMoveDown:
 		if (_arrowStatus[3] == BUTTON_ENABLED)
 			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(kDirectionDown);
 		break;
-	case Common::KEYCODE_KP8:
-	case Common::KEYCODE_UP:
+	case kActionMoveUp:
 		if (_arrowStatus[0] == BUTTON_ENABLED)
 			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(kDirectionUp);
 		break;
-	case Common::KEYCODE_KP5:
+	case kActionMoveForward:
 		if (_arrowStatus[4] == BUTTON_ENABLED)
 			((GameUIWindow *)_parent)->_sceneViewWindow->moveInDirection(kDirectionForward);
 		break;

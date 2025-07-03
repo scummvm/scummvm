@@ -55,6 +55,33 @@ enum {
 	GF_TRIAL      = (1 << 4)
 };
 
+enum BURIEDActions {
+	kActionNone,
+	kActionQuit,
+	kActionQuitToMainMenu,
+	kActionQuitToMainMenuInv,
+	kActionSkip,
+	kActionMoveUp,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveDown,
+	kActionMoveForward,
+	kActionSave,
+	kActionLoad,
+	kActionPause,
+	kActionAIComment,
+	kActionBiochipAI,
+	kActionBiochipBlank,
+	kActionBiochipCloak,
+	kActionBiochipEvidence,
+	kActionBiochipFiles,
+	kActionBiochipInterface,
+	kActionBiochipJump,
+	kActionBiochipTranslate,
+	kActionPoints,
+	kActionControl,
+};
+
 class BuriedConsole;
 struct GlobalFlags;
 class GraphicsManager;
@@ -128,6 +155,7 @@ public:
 	void processAudioVideoSkipMessages(VideoWindow *video, int soundId);
 	void removeKeyboardMessages(Window *window);
 	void removeMouseMessages(Window *window);
+	void removeActionMessages(Window *window);
 	void removeAllMessages(Window *window);
 	void removeMessages(Window *window, int messageBegin, int messageEnd);
 	bool hasMessage(Window *window, int messageBegin, int messageEnd) const;
