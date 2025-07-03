@@ -1269,8 +1269,8 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 
 	uint32 newResCount = _resources.size();
 
-	// Need to recalcualte the following things
-	// Similarl to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
+	// Need to recalculate the following things
+	// Similarly to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
 	writeStream->writeUint32LE(getResourceSize(MKTAG('m', 'm', 'a', 'p'), 0));
 	writeStream->writeUint16LE(_mmapHeaderSize);
 	writeStream->writeUint16LE(_mmapEntrySize);

@@ -989,7 +989,7 @@ uint32 BitmapCastMember::getCastDataSize() {
 		dataSize += 4;
 		// if (_cast->_version >= kFileVer500) {
 		// 	dataSize += 2;		// Added two bytes for _clut.member
-		// 	dataSize -= 2;		// Removed two byte for castType (See Cast::loadCastData())
+		// 	dataSize -= 2;		// Removed two bytes for _castType and _flags (See Cast::loadCastData())
 		// }
 
 		if (_flags2 != 0) {
@@ -1033,7 +1033,7 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 			writeStream->writeUint16BE(_flags2);
 		}
 	}
-	// Ignoring the tail in the loading as well as saving
+	// Ignoring the tail during loading as well as saving
 }
 
 } // End of namespace Director

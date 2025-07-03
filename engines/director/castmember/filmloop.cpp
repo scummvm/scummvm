@@ -716,10 +716,10 @@ Common::Point FilmLoopCastMember::getRegistrationOffset(int16 currentWidth, int1
 
 uint32 FilmLoopCastMember::getCastDataSize() {
 	// We're only reading the _initialRect and _vflags from the Cast Data
-	// _initialRect : 8 bytes + flags : 4 bytes + 2 bytes unk1 + (castType (see Cast::loadCastData() for Director 4 only) 1 byte
+	// _initialRect : 8 bytes + flags : 4 bytes + 2 bytes unk1 + 2 bytes (castType and _flags1 (see Cast::loadCastData() for Director 4 only)
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		// It has been observed that the DigitalVideoCastMember has
-		return 8 + 4 + 2 + 1;			// No flags1 (differnt from flags read in the constructor) (so instead of 2 extra bytes, we have 1) for FilmLoopCastMember
+		// It has been observed that the FilmCastMember has _flags as 0x00
+		return 8 + 4 + 2 + 2;
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		return 8 + 4 + 2;
 	}

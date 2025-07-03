@@ -494,7 +494,7 @@ bool Cast::loadConfig() {
 				_defaultPalette.member -= 1;
 			else
 				_defaultPalette.castLib = DEFAULT_CAST_LIB;
-			for (int i = 0; i < 0x08; i++){
+			for (int i = 0; i < 0x08; i++) {
 				stream->readByte();
 			}
 		} else if (_version >= kFileVer500 && _version < kFileVer600) {
@@ -540,9 +540,9 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	}
 
 	writeStream->seek(offset);					// This will allow us to write cast config at any offset
-													// These offsets are only for Director Version 4 to Director version 6
-                                                    // offsets
-	writeStream->writeUint16LE(_len);				// 0    // This will change
+	// These offsets are only for Director Version 4 to Director version 6
+	// offsets
+	writeStream->writeUint16LE(_len);			// 0    // This will change
 	writeStream->writeUint16LE(_fileVersion);	    // 2
 
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
@@ -565,7 +565,7 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	writeStream->writeByte(_field18);               // 30
 	writeStream->writeSint32LE(_field19);           // 34
 
-	writeStream->writeUint16LE(_version);   // 36
+	writeStream->writeUint16LE(_version);   		// 36
 
 	writeStream->writeUint16LE(_field21);           // 38
 	writeStream->writeUint32LE(_field22);           // 40
@@ -806,7 +806,7 @@ void Cast::saveCast() {
 	// So, RIFXArchive::getResourceDetail will return the list of IDs present in the keytable
 	// Whereas, in the _loadedCast, the key of these Cast members is given by castId
 	for (auto &it : cast) {
-        // I need to call this just because I need the id
+	// I need to call this just because I need the id
 		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), it);
 		uint16 id = res.castId + _castArrayStart;               // Never encountered _castArrayStart != 0 till now
 		uint32 castSize = 0;
@@ -826,41 +826,24 @@ void Cast::saveCast() {
 		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
 
 		Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
-        CastType type = kCastTypeAny;
+		CastType type = kCastTypeAny;
 
 		if (!_loadedCast->contains(id)) {
-            writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
-            Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
-            uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
-            writeStream->writeUint32LE(size);
-            writeStream->writeStream(stream);
+			writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+			Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
+			uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
+			writeStream->writeUint32LE(size);
+			writeStream->writeStream(stream);
 
-            delete stream;
+			delete stream;
 		} else {
 			CastMember *target = _loadedCast->getVal(id);
-            type = target->_type;
-
-			switch (target->_type) {
-            case kCastPalette:
-            case kCastBitmap:
-            case kCastText:
-            case kCastButton:
-            case kCastDigitalVideo:
-            case kCastFilmLoop:
-            case kCastMovie:
-            case kCastSound:
-            case kCastRichText:
-            case kCastLingoScript:
-            case kCastShape:
-				target->writeCAStResource(writeStream, 0);
-				break;
-			default:
-				target->writeCAStResource(writeStream, 0, it);
-				break;
-			}
+			type = target->_type;
+			target->writeCAStResource(writeStream, 0);
+			break;
 		}
 
-        dumpFile(castType2str(type), res.index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
+		dumpFile(castType2str(type), res.index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
 		delete writeStream;
 	}
 
@@ -868,9 +851,9 @@ void Cast::saveCast() {
 
 void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) {
 	// The structure of the CastMemberInfo is as follows:
-	// First some headers: offset, unkonwns and flags, and then a count of strings to be read
+	// First some headers: offset, unknown and flags, and then a count of strings to be read
 	// (These strings contain properties of the cast member like filename, script attached to it, name, etc.)
-	// After the header, we have the next data is the lengths of the strings,
+	// After the header, we have a sequence of the lengths of the strings,
 	// The first int is 0, the second int is 0 + length of the first string, the third int is 0 + length of first string + length of second string and so on
 	// After the lengths of the strings are the actual strings
 
@@ -1007,10 +990,10 @@ void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) 
 	Movie::saveInfoEntries(writeStream, castInfo);
 }
 
-// This function is called three separate times
-// first when writing this 'CASt' resource in memory map (in getCastResourceSize())
-// second when writing the 'CASt' resource itself (in getCastResourceSize())
-// and thirdly when we're writing the info size in the 'CASt' resource
+// This function is called three separate times:
+// First, when writing this 'CASt' resource in memory map (in getCastResourceSize())
+// Second, when writing the 'CASt' resource itself (in getCastResourceSize())
+// Third, when we're writing the info size in the 'CASt' resource
 // All three times, it returns the same value, this could be more efficient
 uint32 Cast::getCastInfoSize(uint32 castId) {
 	CastMemberInfo *ci = getCastMemberInfo(castId);
@@ -1033,7 +1016,7 @@ uint32 Cast::computeChecksum() {
 }
 
 // The 'CASt' resource has strings containing information about the respective CastMember
-// This function is for retreiving the size of each while writing them back
+// This function is for retrieving the size of each while writing them back
 uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
 	switch (stringIndex) {
 	default:
@@ -1056,7 +1039,7 @@ uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
 		return ci->type.size();
 
 	case 6:
-		// Need a better check to see if script edit info is valid
+		// Need a better check to see if the script edit info is valid
 		if (ci->scriptEditInfo.valid) {
 			return 18;		// The length of an edit info
 		}
