@@ -146,6 +146,7 @@ MODULE_OBJS = \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/remixxcmd.o \
 	lingo/xlibs/serialportxobj.o \
+	lingo/xlibs/smallutil.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/spacemgr.o \
 	lingo/xlibs/stagetc.o \
