@@ -2733,7 +2733,7 @@ void Actor::startAnimActor(int f) {
 		}
 	}
 
-	assert(f != 0x3E);
+	assert(f != CHORE_FACE_DIR);
 
 	if (isInCurrentRoom() && _costume != 0) {
 		_animProgress = 0;
@@ -3102,6 +3102,20 @@ void ScummEngine::resetActorBgs() {
 }
 
 void ScummEngine_v70he::resetActorBgs() {
+	// FIXME: This function represent the exact behavior any HE70+ game should have.
+	//        This also needs the walk code to be in a certain way. The walk code is
+	//        basically used only on Fatty Bear, all other games ditched "normal" walking
+	//        in favour of special walking animations.
+	//
+	//        In order to have a walk without a couple of rare erase glitches in Fatty Bear,
+	//        we temporarily use the old function. That is, until I rewrite the walk code,
+	//        which could potentially never happen since it's used only for this game and this
+	//        exact version...
+	if (_game.id == GID_FBEAR && _game.heversion == 70) {
+		ScummEngine::resetActorBgs();
+		return;
+	}
+
 	for (int i = 0; i < _gdi->_numStrips; i++) {
 		int strip = _screenStartStrip + i;
 		clearGfxUsageBit(strip, USAGE_BIT_DIRTY);

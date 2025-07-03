@@ -34,6 +34,9 @@ namespace Scumm {
 #define CHORE_REDIRECT_STAND       58
 #define CHORE_REDIRECT_START_TALK  59
 #define CHORE_REDIRECT_STOP_TALK   60
+#define CHORE_TURN_DIR             61
+#define CHORE_FACE_DIR             62
+#define CHORE_STOP                 63
 
 enum {
 	V12_X_MULTIPLIER = 8,
