@@ -190,37 +190,32 @@ J_COLOR_SPACE fromScummvmPixelFormat(const Graphics::PixelFormat &format) {
 #if defined(JCS_EXTENSIONS) || defined(JCS_ALPHA_EXTENSIONS)
 	struct PixelFormatMapping {
 		Graphics::PixelFormat pixelFormat;
-		J_COLOR_SPACE bigEndianColorSpace;
-		J_COLOR_SPACE littleEndianColorSpace;
+		J_COLOR_SPACE colorSpace;
 	};
 
 	static const PixelFormatMapping mappings[] = {
-#ifdef JCS_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 24, 16,  8,  0), JCS_EXT_RGBX, JCS_EXT_XBGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  0,  8, 16, 24), JCS_EXT_XBGR, JCS_EXT_RGBX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0, 16,  8,  0, 24), JCS_EXT_XRGB, JCS_EXT_BGRX },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 0,  8, 16, 24,  0), JCS_EXT_BGRX, JCS_EXT_XRGB },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0, 16,  8,  0,  0), JCS_EXT_RGB,  JCS_EXT_BGR  },
-		{ Graphics::PixelFormat(3, 8, 8, 8, 0,  0,  8, 16,  0), JCS_EXT_BGR,  JCS_EXT_RGB  }
+#ifdef JCS_ALPHA_EXTENSIONS
+		{ Graphics::PixelFormat::createFormatRGBA32(true),  JCS_EXT_RGBA },
+		{ Graphics::PixelFormat::createFormatBGRA32(true),  JCS_EXT_BGRA },
+		{ Graphics::PixelFormat::createFormatARGB32(true),  JCS_EXT_ARGB },
+		{ Graphics::PixelFormat::createFormatABGR32(true),  JCS_EXT_ABGR }
 #endif
 #if defined(JCS_EXTENSIONS) && defined(JCS_ALPHA_EXTENSIONS)
 		,
 #endif
-#ifdef JCS_ALPHA_EXTENSIONS
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), JCS_EXT_RGBA, JCS_EXT_ABGR },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  0,  8, 16, 24), JCS_EXT_ABGR, JCS_EXT_RGBA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8, 16,  8,  0, 24), JCS_EXT_ARGB, JCS_EXT_BGRA },
-		{ Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), JCS_EXT_BGRA, JCS_EXT_ARGB }
+#ifdef JCS_EXTENSIONS
+		{ Graphics::PixelFormat::createFormatRGB24(),       JCS_EXT_RGB },
+		{ Graphics::PixelFormat::createFormatBGR24(),       JCS_EXT_BGR },
+		{ Graphics::PixelFormat::createFormatRGBA32(false), JCS_EXT_RGBX },
+		{ Graphics::PixelFormat::createFormatBGRA32(false), JCS_EXT_BGRX },
+		{ Graphics::PixelFormat::createFormatARGB32(false), JCS_EXT_XRGB },
+		{ Graphics::PixelFormat::createFormatABGR32(false), JCS_EXT_XBGR }
 #endif
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(mappings); i++) {
 		if (mappings[i].pixelFormat == format) {
-#ifdef SCUMM_BIG_ENDIAN
-			return mappings[i].bigEndianColorSpace;
-#else
-			return mappings[i].littleEndianColorSpace;
-#endif
+			return mappings[i].colorSpace;
 		}
 	}
 #endif
