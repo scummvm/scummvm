@@ -120,6 +120,7 @@ void Cutscene::update() {
 			g_engine->_room->restorePalette();
 			g_engine->_frame.draw();
 			g_engine->_cursor.showCursor(true);
+			g_engine->_room->loadRoomMusic();
 		}
 	}
 }
