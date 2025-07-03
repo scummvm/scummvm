@@ -146,10 +146,6 @@ public:
 	virtual void begin() override {
 		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR));
-		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_ALPHA, GL_PRIMARY_COLOR));
 		_currentLodBias = -1000.0f;
 		_currentTexture = nullptr;
 		_currentBlendMode = (BlendMode)-1;
@@ -206,30 +202,45 @@ public:
 		default: assert(false && "Invalid blend mode"); break;
 		}
 
-		/** now the texture stage, mind that this always applies:
-		 * SRC0_RGB is TEXTURE
-		 * SRC1_RGB/ALPHA is PRIMARY COLOR
-		 * COMBINE_ALPHA is REPLACE
-		 */
+		GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_COMBINE));
 		switch (blendMode) {
 		case BlendMode::AdditiveAlpha:
 		case BlendMode::Additive:
 		case BlendMode::Multiply:
-			// (1 - TintAlpha) * TexColor, TexAlpha
+			// TintAlpha * TexColor, TexAlpha
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE));
-			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_ONE_MINUS_SRC_ALPHA));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE));
+
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR));
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA));
+
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_ALPHA)); // alpha replaces color
 			break;
 		case BlendMode::Alpha:
 			// TexColor, TintAlpha
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_REPLACE));
-			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_CONSTANT));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE));
+
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_PRIMARY_COLOR));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA));
 			break;
 		case BlendMode::Tinted:
 			// (TintColor * TintAlpha) * TexColor, TexAlpha
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_RGB, GL_MODULATE));
-			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR)); // pre-multiplied with alpha
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_COMBINE_ALPHA, GL_REPLACE));
+
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_RGB, GL_TEXTURE));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_RGB, GL_SRC_COLOR));
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC0_ALPHA, GL_TEXTURE));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA, GL_SRC_ALPHA));
+
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR));
+			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR)); // we have to pre-multiply
 			break;
 		default: assert(false && "Invalid blend mode"); break;
 		}
@@ -274,12 +285,17 @@ public:
 		}
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
+		if (_currentBlendMode == BlendMode::Tinted)
+		{
+			colors[0] *= colors[3];
+			colors[1] *= colors[3];
+			colors[2] *= colors[3];
+		}
 
-		GL_CALL(glColor4f(color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f));
+		GL_CALL(glColor4fv(colors));
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, positions));
 		if (_currentTexture != nullptr)
 			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
-		GL_CALL(glTexEnvfv(GL_TEXTURE_ENV, GL_TEXTURE_ENV_COLOR, colors));
 		GL_CALL(glDrawArrays(GL_QUADS, 0, 4));
 
 #if _DEBUG
