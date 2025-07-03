@@ -19,6 +19,8 @@
  *
  */
 
+#include "engines/advancedDetector.h"
+
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
 #include "common/debug.h"
@@ -138,8 +140,45 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
 
+	char tempBuffer[256];
+	dat->read(tempBuffer, 9);
+	tempBuffer[9] = '\0';
+
+	if (strcmp(tempBuffer, "TEENAGENT") != 0) {
+		const char *msg = _s("The '%s' engine data file is corrupt.");
+		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str());
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
+		return false;
+	}
+
+	byte version = dat->readByte();
+	if (version != TEENAGENT_DAT_VERSION) {
+		const char *msg = _s("Incorrect version of the '%s' engine data file found. Expected %d but got %d.");
+		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str(), TEENAGENT_DAT_VERSION, version);
+		GUIErrorMessage(errorMessage);
+		warning(msg, filename.c_str());
+		return false;
+	}
+
 	dat->skip(CSEG_SIZE);
 	dseg.read(dat, DSEG_SIZE);
+
+	// Locate the correct language block
+	bool found = false;
+
+	while (!found) {
+		dat->read(tempBuffer, 5);
+		if (tempBuffer[0] == 0xff) {
+			error("Could not locate correct language block");
+		}
+
+		if (gd->language == tempBuffer[0]) {
+			found = true;
+			uint32 dataOffset = READ_LE_UINT32(&tempBuffer[1]);
+			dat->seek(dataOffset);
+		}
+	}
 
 	uint resourceSize = dat->readUint32LE();
 	eseg.read(dat, resourceSize);

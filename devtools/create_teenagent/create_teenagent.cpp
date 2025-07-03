@@ -42,8 +42,10 @@ void writeStringsBlock(FILE* fd, const char **stringArr, uint size) {
 	}
 }
 
-void writeCombineMessages(FILE *fd) {
+void writeCombineMessages(FILE *fd, Common::Language language) {
 	const char **combineMessages = englishCombineMessages;
+	if (language == RU_RUS)
+		combineMessages = russianCombineMessages;
 
 	for (uint i = 0; i < kNumCombinations; i++) {
 		combiningTable[i].write(fd);
@@ -58,26 +60,30 @@ void writeCombineMessages(FILE *fd) {
 	}
 }
 
-void writeDialogs(FILE *fd) {
+void writeDialogs(FILE *fd, Common::Language language) {
+	const char ***dialogs = englishDialogs;
+	if (language == RU_RUS)
+		dialogs = russianDialogs;
+
 	// Write out dialog string block
 	static const char nulls[6] = "\0\0\0\0\0";
-	for (uint i = 0; i < (sizeof(englishDialogs)/sizeof(char**)); i++) {
+	for (uint i = 0; i < kNumDialogs; i++) {
 		//printf("Writing Dialog #%d\n", i);
 		bool dialogEnd = false;
 		uint j = 0;
 		while (!dialogEnd) {
 			uint nullCount = 0;
-			if (strcmp(englishDialogs[i][j], NEW_LINE) == 0) {
+			if (strcmp(dialogs[i][j], NEW_LINE) == 0) {
 				nullCount = 1;
-			} else if (strcmp(englishDialogs[i][j], DISPLAY_MESSAGE) == 0) {
+			} else if (strcmp(dialogs[i][j], DISPLAY_MESSAGE) == 0) {
 				nullCount = 2;
-			} else if (strcmp(englishDialogs[i][j], CHANGE_CHARACTER) == 0) {
+			} else if (strcmp(dialogs[i][j], CHANGE_CHARACTER) == 0) {
 				nullCount = 3;
-			} else if (strcmp(englishDialogs[i][j], END_DIALOG) == 0) {
+			} else if (strcmp(dialogs[i][j], END_DIALOG) == 0) {
 				nullCount = 4;
 				dialogEnd = true;
 			} else { // Deals with normal dialogue and ANIM_WAIT cases
-				if (fwrite(englishDialogs[i][j], 1, strlen(englishDialogs[i][j]), fd) != strlen(englishDialogs[i][j])) {
+				if (fwrite(dialogs[i][j], 1, strlen(dialogs[i][j]), fd) != strlen(dialogs[i][j])) {
 					perror("Writing dialog string");
 					exit(1);
 				}
@@ -95,8 +101,11 @@ void writeDialogs(FILE *fd) {
 	}
 }
 
-void writeItems(FILE *fd) {
+void writeItems(FILE *fd, Common::Language language) {
 	const char ***items = englishItems;
+	if (language == RU_RUS)
+		items = russianItems;
+
 	const uint kNumInventoryItems = 92;
 
 	for (uint i = 0; i < kNumInventoryItems; i++) {
@@ -130,7 +139,11 @@ void writeItems(FILE *fd) {
 	}
 }
 
-void writeSceneObjects(FILE* fd) {
+void writeSceneObjects(FILE *fd, Common::Language language) {
+	Common::Array<Common::Array<ObjectNameDesc> > &objNamesDescs = englishSceneObjectNamesDescs;
+	if (language == RU_RUS)
+		objNamesDescs = russianSceneObjectNamesDescs;
+
 	uint sceneObjTableAddrsPos = ftell(fd);
 	uint16 sceneObjTableAddrs[42]{};
 	uint16 curOffset = 0;
@@ -206,30 +219,39 @@ void writeSceneObjects(FILE* fd) {
 	fseek(fd, pos, SEEK_SET);
 }
 
-void writeResource(FILE *fd, ResourceType resType) {
+void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 	uint currentFilePos = ftell(fd);
 	uint prevFilePos = currentFilePos;
 	uint32 resourceSize = 0;
 	writeUint32LE(fd, resourceSize);
 
 	switch (resType) {
-	case kResCredits:
-		writeStringsBlock(fd, englishCredits, kNumCredits);
+	case kResCredits: {
+		const char **credits = englishCredits;
+		if (language == RU_RUS)
+			credits = russianCredits;
+
+		writeStringsBlock(fd, credits, kNumCredits);
 		break;
+	}
 	case kResDialogs:
-		writeDialogs(fd);
+		writeDialogs(fd, language);
 		break;
 	case kResItems:
-		writeItems(fd);
+		writeItems(fd, language);
 		break;
 	case kResSceneObjects:
-		writeSceneObjects(fd);
+		writeSceneObjects(fd, language);
 		break;
-	case kResMessages:
-		writeStringsBlock(fd, englishMessages, kNumMessages);
+	case kResMessages: {
+		const char **messages = englishMessages;
+		if (language == RU_RUS)
+			messages = russianMessages;
+		writeStringsBlock(fd, messages, kNumMessages);
 		break;
+	}
 	case kResCombineMessages:
-		writeCombineMessages(fd);
+		writeCombineMessages(fd, language);
 		break;
 	};
 
@@ -248,6 +270,10 @@ int main(int argc, char *argv[]) {
 		perror("opening output file");
 		exit(1);
 	}
+
+	// Write header
+	fwrite("TEENAGENT", 9, 1, fout);
+	writeByte(fout, TEENAGENT_DAT_VERSION);
 
 	if (fwrite(cseg, CSEG_SIZE, 1, fout) != 1) {
 		perror("Writing code segment");
@@ -269,8 +295,27 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-	for (uint i = 0; i < NUM_RESOURCES; i++) {
-		writeResource(fout, ResourceType(i));
+	uint32 languageOffset = ftell(fout);
+
+	for (uint lang = 0; lang < NUM_LANGS; lang++) {
+		// Write language ID
+		writeByte(fout, supportedLanguages[lang]);
+
+		writeUint32LE(fout, 0);
+	}
+	writeByte(fout, (byte)Common::Language::UNK_LANG);
+
+	for (uint lang = 0; lang < NUM_LANGS; lang++) {
+		// Write offset to data
+		uint32 dataOffset = ftell(fout);
+		fseek(fout, languageOffset + (lang * 5 + 1), SEEK_SET);
+		writeUint32LE(fout, dataOffset);
+
+		fseek(fout, dataOffset, SEEK_SET);
+
+		for (uint i = 0; i < NUM_RESOURCES; i++) {
+			writeResource(fout, ResourceType(i), supportedLanguages[lang]);
+		}
 	}
 
 	fclose(fout);
