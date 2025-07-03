@@ -1887,7 +1887,7 @@ Lsalirpres:
 }
 
 void firstIntroduction() {
-	if (!hechaprimeravez) {
+	if (!hechaprimeravez && !introSeen) {
 		introduction();
 		hechaprimeravez = true;
 		ConfMan.setBool("introSeen", true);
