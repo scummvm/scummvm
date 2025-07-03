@@ -124,6 +124,8 @@ Menu::~Menu() {
 }
 
 void Menu::loadMenu() {
+	g_engine->_sound->stopSfx();
+	g_engine->_sound->stopSpeech();
 	if (g_engine->_sound->isPlayingMusic()) {
 		g_engine->_sound->startFadeOut();
 		while (g_engine->_sound->isFading()) {
