@@ -868,7 +868,7 @@ void MainCharacter::drawInner() {
 	}
 
 	assert(activeGraphic != nullptr);
-	activeGraphic->color() = kWhite; // TODO: Add and use character color
+	activeGraphic->color().a = room()->characterAlphaTint() * 255 / 100;
 	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
 
 }

@@ -317,7 +317,7 @@ int32 Animation::frameAtTime(uint32 time) const {
 
 void Animation::prerenderFrame(int32 frameI) {
 	assert(frameI >= 0 && (uint)frameI < frameCount());
-	if (frameI == _renderedFrameI)
+	if (frameI == _renderedFrameI && _renderedPremultiplyAlpha == _premultiplyAlpha)
 		return;
 	auto bounds = frameBounds(frameI);
 	_renderedSurface.clear();
@@ -331,16 +331,11 @@ void Animation::prerenderFrame(int32 frameI) {
 		fullBlend(*image, _renderedSurface, offsetX, offsetY);
 	}
 
-	/* TODO: Find a situation where this is actually used, otherwise this currently just produces bugs
-	if (_premultiplyAlpha != 100) {
-		byte *itPixel = (byte*)_renderedSurface.getPixels();
-		uint componentCount = _renderedSurface.w * _renderedSurface.h * 4;
-		for (uint32 i = 0; i < componentCount; i++, itPixel++)
-			*itPixel = *itPixel * _premultiplyAlpha / 100;
-	}*/
+	// Here was some alpha premultiplication, but it only produces bugs so is ignored
 
 	_renderedTexture->update(_renderedSurface);
 	_renderedFrameI = frameI;
+	_renderedPremultiplyAlpha = _premultiplyAlpha;
 }
 
 void Animation::draw2D(int32 frameI, Vector2d topLeft, float scale, BlendMode blendMode, Color color) {
