@@ -112,7 +112,6 @@ int                                     nInstallCode;
 
 BOOL                    bHomeWriteLocked = FALSE;
 BOOL                    bPathsDiffer = FALSE;
-static  BOOL        bHaveCDROM = FALSE;
 static  char        chProfilePath[PATHSPECSIZE];
 char                    chHomePath[PATHSPECSIZE];
 char                    chMiniPath[PATHSPECSIZE];
@@ -971,21 +970,20 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 		}
 
 		if (CMgStatic::cGameTable[nWhichDLL]._initFn) {
-			if (dllLoaded) {
-				lpfnGame = CMgStatic::cGameTable[nWhichDLL]._initFn;
+			dllLoaded = true;
+			lpfnGame = CMgStatic::cGameTable[nWhichDLL]._initFn;
 
-				if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
-					if (bReturnToZoom) {
-						g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, lpGameStruct));
+			if ((lpfnGame != nullptr) && PositionAtMiniPath(nWhichDLL)) {
+				if (bReturnToZoom) {
+					g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, lpGameStruct));
+				} else {
+					if (bReturnToGrandTour) {
+						g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpGrandTour->stMiniGame));
 					} else {
-						if (bReturnToGrandTour) {
-							g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpGrandTour->stMiniGame));
-						} else {
-							g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpMetaGame->m_stGameStruct));
-						}
+						g_wndGame = CWnd::FromHandle(lpfnGame(m_hWnd, &lpMetaGame->m_stGameStruct));
 					}
-					bLoadedDLL = TRUE;
 				}
+				bLoadedDLL = TRUE;
 			}
 		}
 
@@ -994,18 +992,11 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 
 			(void) PositionAtHomePath();
 
-			if (!bHaveCDROM) {
-				MessageBox("Unable to find the Hodj 'n' Podj CDROM!!!");
-				MessageBox("Please place the game disc in your CDROM drive.");
-				(void) GetCDPath();
-			} else {
-				cTmp = "Unable to find or load the ";
-				cTmp += CMgStatic::cGameTable[ nWhichDLL ].m_lpszGameName;
-				cTmp += " game!!!";
-				MessageBox(cTmp, "Game Launch Error");
-				MessageBox("Verify proper game installation and try again.");
-			}
-			bLoadedDLL = FALSE;
+			cTmp = "Unable to find or load the ";
+			cTmp += CMgStatic::cGameTable[ nWhichDLL ].m_lpszGameName;
+			cTmp += " game!!!";
+			MessageBox(cTmp, "Game Launch Error");
+			MessageBox("Verify proper game installation and try again.");
 
 			if (bReturnToZoom)
 				bSuccess = LoadZoomDLL();
@@ -1726,8 +1717,7 @@ BOOL CHodjPodjWindow::GetCDPath() {
 
 
 BOOL CHodjPodjWindow::PositionAtCDPath() {
-	bHaveCDROM = FALSE;
-	return FALSE;
+	return TRUE;
 }
 
 
