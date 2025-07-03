@@ -48,11 +48,11 @@ namespace Alcachofa {
  *
  */
 enum class BlendMode {
-	AdditiveAlpha,
-	Additive,
-	Multiply,
-	Alpha,
-	Tinted
+	AdditiveAlpha, // Normal objects
+	Additive,      // "Effect" objects, fades
+	Multiply,      // Unused in Movie Adventure
+	Alpha,         // Unused in Movie Adventure (used for debugging)
+	Tinted         // Used for fonts
 };
 
 class Shape;
@@ -221,7 +221,8 @@ private:
 	void prerenderFrame(int32 frameI);
 
 	int32_t _renderedFrameI = -1;
-	uint8 _premultiplyAlpha = 100; ///< in percent [0-100] not [0-255]
+	uint8 _premultiplyAlpha = 100, ///< in percent [0-100] not [0-255]
+		_renderedPremultiplyAlpha = 255;
 
 	Graphics::ManagedSurface _renderedSurface;
 	Common::ScopedPtr<ITexture> _renderedTexture;
