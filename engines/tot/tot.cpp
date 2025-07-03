@@ -86,7 +86,7 @@ Common::Error TotEngine::run() {
 	initGraph();
 	initPlayAnim();
 
-	hechaprimeravez = ConfMan.getBool("introSeen");
+	introSeen = ConfMan.getBool("introSeen");
 	// _inventoryManager = new InventoryManager();
 	// _totGame = new TotGame();
 	// Set the engine's debugger console

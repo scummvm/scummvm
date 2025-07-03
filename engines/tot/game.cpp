@@ -96,7 +96,6 @@ int engine_start() {
 
 	loadPalette("DEFAULT");
 	loadScreenMemory();
-
 	initialLogo();
 	playMidiFile("INTRODUC", true);
 	setMidiVolume(3, 3);

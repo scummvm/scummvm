@@ -67,6 +67,8 @@ bool inGame;
 
 bool hechaprimeravez;
 
+bool introSeen;
+
 bool salirdeljuego;
 
 bool partidanueva;
@@ -721,6 +723,7 @@ void initPlayAnim() {
 	contadorpc2 = 0;
 	continuarpartida = true;
 	hechaprimeravez = false;
+	introSeen = false;
 	inGame = false;
 }
 

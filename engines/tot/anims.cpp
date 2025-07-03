@@ -947,7 +947,7 @@ static void loadFlc(
 	flic.start();
 
 	do {
-		g_engine->_chrono->updateChrono();
+		exitProcedure(salidaflis, permitesalida);
 		numerovuelta++;
 		do {
 			g_engine->_chrono->updateChrono();
@@ -1011,7 +1011,6 @@ static void loadFlc(
 			framecontador = 0;
 			primeravuelta = false;
 		}
-		g_system->delayMillis(10);
 	} while (numerovuelta <= loop && !g_engine->shouldQuit());
 	flic.stop();
 Lsalir_proc:

@@ -343,6 +343,10 @@ extern bool inGame;
  * Flag for first time run of the game.
  */
 extern bool hechaprimeravez;
+
+
+extern bool introSeen;
+
 /**
  * Flag to exit program.
  */
