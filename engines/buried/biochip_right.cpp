@@ -282,6 +282,8 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_CLOAKING_SOUND_FILENAME));
 				video->playToFrame(23);
 
+				_vm->enableCutsceneKeymap(true);
+
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
 					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
@@ -289,6 +291,8 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				_vm->_sound->timerCallback();
 				delete video;
+
+				_vm->enableCutsceneKeymap(false);
 
 				invalidateWindow(false);
 
@@ -319,6 +323,8 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_CLOAKING_SOUND_FILENAME));
 				video->playToFrame(47);
 
+				_vm->enableCutsceneKeymap(true);
+
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
 					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
@@ -326,6 +332,8 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				_vm->_sound->timerCallback();
 				delete video;
+
+				_vm->enableCutsceneKeymap(false);
 
 				invalidateWindow(false);
 

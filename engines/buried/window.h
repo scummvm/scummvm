@@ -22,6 +22,7 @@
 #ifndef BURIED_WINDOW_H
 #define BURIED_WINDOW_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/list.h"
 
@@ -41,7 +42,8 @@ public:
 
 	// The message types used by Buried in Time's windows
 	virtual bool onEraseBackground() { return false; }
-	virtual void onKeyDown(const Common::KeyState &key, uint flags) {}
+	virtual void onActionStart(const Common::CustomEventType &action, uint flags) {}
+	virtual void onActionEnd(const Common::CustomEventType &action, uint flags) {}
 	virtual void onKeyUp(const Common::KeyState &key, uint flags) {}
 	virtual void onTimer(uint timer) {}
 	virtual void onKillFocus(Window *newWindow) {}
