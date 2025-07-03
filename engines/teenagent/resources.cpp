@@ -62,15 +62,15 @@ quick note on varia resources:
 #define DSEG_SIZE 59280 // 0xe790
 #define ESEG_SIZE 35810 // 0x8be2
 
-void Resources::precomputeDialogOffsets() {
-	dialogOffsets.push_back(0);
-	int n = 0;
+void Resources::precomputeResourceOffsets(Segment &seg, Common::Array<uint16> &offsets, uint numTerminators) {
+	offsets.push_back(0);
+	uint n = 0;
 	uint8 current, last = 0xff;
-	for (uint i = 0; i < eseg.size(); i++) {
-		current = eseg.get_byte(i);
+	for (uint i = 0; i < seg.size(); i++) {
+		current = seg.get_byte(i);
 
-		if (n == 4) {
-			dialogOffsets.push_back(i);
+		if (n == numTerminators) {
+			offsets.push_back(i);
 			n = 0;
 		}
 
@@ -82,6 +82,10 @@ void Resources::precomputeDialogOffsets() {
 
 		last = current;
 	}
+}
+
+void Resources::precomputeDialogOffsets() {
+	precomputeResourceOffsets(eseg, dialogOffsets, 4);
 
 	debug(1, "Resources::precomputeDialogOffsets() - Found %d dialogs", dialogOffsets.size());
 	for (uint i = 0; i < dialogOffsets.size(); i++)
@@ -89,26 +93,7 @@ void Resources::precomputeDialogOffsets() {
 }
 
 void Resources::precomputeCreditsOffsets() {
-	creditsOffsets.push_back(0);
-	int n = 0; // number of consecute newline characters
-	byte current, last = 0xff;
-
-	for (uint i = 0; i < creditsSeg.size(); i++) {
-		current = creditsSeg.get_byte(i);
-
-		if (n == 2) {
-			creditsOffsets.push_back(i);
-			n = 0;
-		}
-
-		if (current != 0x00 && last == 0x00)
-			n = 0;
-
-		if (current == 0x00)
-			n++;
-
-		last = current;
-	}
+	precomputeResourceOffsets(creditsSeg, creditsOffsets);
 
 	debug(1, "Resources::precomputeCreditsOffsets() - Found %d credits", creditsOffsets.size());
 	for (uint i = 0; i < creditsOffsets.size(); i++)
@@ -116,26 +101,7 @@ void Resources::precomputeCreditsOffsets() {
 }
 
 void Resources::precomputeItemOffsets() {
-	itemOffsets.push_back(0);
-	int n = 0;
-	byte current, last = 0xff;
-
-	for (uint i = 0; i < itemsSeg.size(); i++) {
-		current = itemsSeg.get_byte(i);
-
-		if (n == 2) {
-			itemOffsets.push_back(i);
-			n = 0;
-		}
-
-		if (current != 0x00 && last == 0x00)
-			n = 0;
-
-		if (current == 0x00)
-			n++;
-
-		last = current;
-	}
+	precomputeResourceOffsets(itemsSeg, itemOffsets);
 
 	debug(1, "Resources::precomputeItemOffsets() - Found %d items", itemOffsets.size());
 	for (uint i = 0; i < itemOffsets.size(); i++)
@@ -143,30 +109,15 @@ void Resources::precomputeItemOffsets() {
 }
 
 void Resources::precomputeMessageOffsets() {
-	messageOffsets.push_back(0);
-	int n = 0;
-	byte current, last = 0xff;
+	precomputeResourceOffsets(messagesSeg, messageOffsets);
+}
 
-	for (uint i = 0; i < messagesSeg.size(); i++) {
-		current = messagesSeg.get_byte(i);
+void Resources::precomputeCombineMessageOffsets() {
+	precomputeResourceOffsets(combineMessageSeg, combineMessageOffsets);
 
-		if (n == 2) {
-			if (messageOffsets.size() == 294) {
-				// Skip extra two bytes (padding?) after 294th message.
-				i += 2;
-			}
-			messageOffsets.push_back(i);
-			n = 0;
-		}
-
-		if (current != 0x00 && last == 0x00)
-			n = 0;
-
-		if (current == 0x00)
-			n++;
-
-		last = current;
-	}
+	debug(1, "Resources::precomputeCombineMessageOffsets() - Found %d combine messages", combineMessageOffsets.size());
+	for (uint i = 0; i < combineMessageOffsets.size(); i++)
+		debug(1, "\tCombination message #%d: Offset 0x%04x", i, combineMessageOffsets[i]);
 }
 
 bool Resources::loadArchives(const ADGameDescription *gd) {
@@ -205,12 +156,16 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	resourceSize = dat->readUint32LE();
 	messagesSeg.read(dat, resourceSize);
 
+	resourceSize = dat->readUint32LE();
+	combineMessageSeg.read(dat, resourceSize);
+
 	delete dat;
 
 	precomputeDialogOffsets();
 	precomputeItemOffsets();
 	precomputeCreditsOffsets();
 	precomputeMessageOffsets();
+	precomputeCombineMessageOffsets();
 
 	FilePack varia;
 	varia.open("varia.res");

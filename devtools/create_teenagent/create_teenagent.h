@@ -30,8 +30,9 @@ enum ResourceType {
 	kResCredits,
 	kResSceneObjects,
 	kResMessages,
+	kResCombineMessages,
 };
 
-#define NUM_RESOURCES 5
+#define NUM_RESOURCES 6
 
 #endif
