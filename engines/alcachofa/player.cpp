@@ -256,6 +256,9 @@ private:
 void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
 
+	if (door->targetRoom() == "LABERINTO" && door->targetObject() == "a_LABERINTO_desde_LABERINTO_2")
+		return; // Original exception
+
 	FakeLock lock(_activeCharacter->semaphore());
 	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
 }
