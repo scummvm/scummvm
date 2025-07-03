@@ -567,6 +567,7 @@ public:
 	void resumePlaying();
 
 	bool setTrack(int track);
+	byte getActiveTrack() { return _activeTrack; }
 	bool jumpToTick(uint32 tick, bool fireEvents = false, bool stopNotes = true, bool dontSendNoteOn = false);
 	/**
 	 * Returns true if the active track has a jump point defined for the
