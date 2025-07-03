@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "graphics/pixelformat.h"
 #include "graphics/yuv_to_rgb.h"
+#include "image/codecs/codec.h"
 
 #include "video/mkv/mkvparser.h"
 
@@ -315,11 +316,7 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
 
 	_width = pVideoTrack->GetWidth();
 	_height = pVideoTrack->GetHeight();
-	_pixelFormat = g_system->getScreenFormat();
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
 	debugC(1, kDebugLevelGVideo, "VideoTrack: %d x %d", _width, _height);
 

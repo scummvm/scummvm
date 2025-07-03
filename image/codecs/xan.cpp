@@ -63,11 +63,7 @@ XanDecoder::XanDecoder(int width, int height, int bitsPerPixel) : Codec(),
 	_ubuf = new uint8[_width * _height / 2]();
 	_vbuf = new uint8[_width * _height / 2]();
 
-	_pixelFormat = g_system->getScreenFormat();
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = getDefaultYUVFormat();
 }
 
 XanDecoder::~XanDecoder() {

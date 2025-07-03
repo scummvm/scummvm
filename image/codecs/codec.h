@@ -122,6 +122,11 @@ public:
 	 * Set the decoding accuracy of the codec, if supported
 	 */
 	virtual void setCodecAccuracy(CodecAccuracy accuracy) {}
+
+	/**
+	 * Get the preferred default pixel format for use with YUV codecs
+	 */
+	static Graphics::PixelFormat getDefaultYUVFormat();
 };
 
 /**
