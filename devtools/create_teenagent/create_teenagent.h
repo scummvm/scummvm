@@ -25,7 +25,7 @@
 #include "common/language.h"
 #include "util.h"
 
-#define TEENAGENT_DAT_VERSION 1
+#define TEENAGENT_DAT_VERSION 2
 
 enum ResourceType {
 	kResDialogs = 0,
@@ -37,10 +37,11 @@ enum ResourceType {
 };
 
 #define NUM_RESOURCES 6
-#define NUM_LANGS 2
+#define NUM_LANGS 3
 
 const Common::Language supportedLanguages[NUM_LANGS] = {
 	EN_ANY,
+	PL_POL,
 	RU_RUS,
 };
 

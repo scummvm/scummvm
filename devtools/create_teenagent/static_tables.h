@@ -7788,6 +7788,345 @@ const static char *englishMessages[kNumMessages] = {
 	"Using these two objects together won't\naccomplish anything.",
 };
 
+const static char *polishMessages[kNumMessages] = {
+	"Nie mam poj#cia, co z tym zrobi^.", // 0
+	"Nic mi nie przychodzi na my$l.", // 1
+	"Nie mam <adnego pomys%u...", // 2
+	"Nie ma powodu, <eby co$ z tym\npr*bowa^ robi^.", // 3
+	"Miodzio.", // 4
+	"To raczej nic nie da.", // 5
+	"]a%! W $rodku jest podno$nik!\nEkstra!", // 6
+	"W skrzynce jest co$ jeszcze!\nTo klucz francuski!", // 7
+	"Ostatnia\nszansa?", // 8
+	"Poddaj# si#.", // 9
+	"Nie zamierzam podchodzi^ do tych pszcz*%\nbli<ej ni< pi#^ metr*w!", // 10
+	"W %*dce niczego wi#cej nie ma.", // 11
+	"Drewno jest za twarde jak dla mnie.", // 12
+	"Bum!", // 13
+	"Nie powinienem przepracowywa^ swojego\nszcz#$cia.", // 14
+	"To zwyk%y st*g siana. Teraz.", // 15
+	"A m*wi@, <e nie mo<na znale>^ ig%y\nw stogu siana.", // 16
+	"Nie ma tam ju< wi#cej ziemniak*w.", // 17
+	"Dobrze, <e zawsze cisn@%em mam#\no spodnie z du<ymi kieszeniami...", // 18
+	"Lajf is brutal.", // 19
+	"Lajf is naprawd# brutal.", // 20
+	"Co$ mnie po%askota%o!", // 21
+	"Przynajmniej odlecia%o.", // 22
+	"Kto wie, co za potwory mog@\n<y^ w $rodku...", // 23
+	"Lepiej nie b#d# tam wsadza% r@k.\nCo$ mo<e mi je odgry>^\n(ble)!", // 24
+	"Wida^, <e jest kompletnie\npusta.", // 25
+	"Ma%y krok dla cz%owieka...\nDu<y b*l w ...g%owie..", // 26
+	"Wola%bym nie ryzykowa^\npo raz drugi...", // 27
+	"Naprawd# mam nadziej#, <e to ko$^\nDINOZAURA...", // 28
+	"Ooo! Chyba wstrz@sn@%em wszystkimi\n$cianami w pobli<u!", // 29
+	"Deko tu ciemnawo.", // 30
+	"Nie mam zamiaru gania^ tu\nznowu w ciemno$ciach.", // 31
+	"Zamkni#cie klapy strz@sn#%o kurz\nze $ciany i ods%oni%o w%@cznik!", // 32
+	"Sorry, kole$, ale potrzebuj#\ntwoich okulark*w.", // 33
+	"To nie najlepsze miejsce na nurkowanie...", // 34
+	"Lepiej b#d# nurkowa% tylko w pobli<u\nbrzegu...", // 35
+	"Naprawd# nie umiem gada^ pod wod@!...", // 36
+	"Pop%yni#cie tam chyba nie jest warte wysi%ku.", // 37
+	"Je$li chc# dorwa^ t# kotwiczk#, to musz# mie^\ntroch# wi#cej powietrza w p%ucach...", // 38
+	"Ta kotwiczka to by% niez%y haczyk!", // 39
+	"Te wodorosty wygl@daj@ idealnie jak kwiatki,\nkt*re da%em mamie na jej urodziny.", // 40
+	"Ciekawe, co ryby robi@ nocami\nwewn@trz tej %*dki.", // 41
+	"Chyba musz# wy|LEDZI\\ co$ tam na dole.", // 42
+	"Ryby przynajmniej nie przejmuj@ si# deszczem.", // 43
+	"To p%ywanie pod wod@ to chyba jedno\nwielkie lanie wody.", // 44
+	"Fajnie tam w dole.", // 45
+	"Ej, ty, popu$^, co?!", // 46
+	"Aaaaaaaaaaaaaahhh!...", // 47
+	"Oops.", // 48
+	"Ludzie zostawiaj@ jedzenie w niewiarygodnych\nmiejscach.", // 49
+	"Chod> tutaj, mam co$ specjalnego\ndla ciebie...", // 50
+	"Jest za szybka!", // 51
+	"Myszka wpad%a w pu%apk#!", // 52
+	"Ojej!", // 53
+	"Ch%opie, ta mysz to ma nerwy!...", // 54
+	"W szufladach nie ma nic wi#cej.", // 55
+	"Najpierw musz# pozby^ si# tego krzaka.", // 56
+	"Myszka uciek%a!", // 57
+	"Nonsens.", // 58
+	"Rozumiem. Dobry piesek.", // 59
+	"Tutaj, Burek.", // 60
+	"Chyba zostali$my przyjaci*%mi, co?", // 61
+	"To raczej nie jest w%a$ciwe miejsce.", // 62
+	"Sto moment*w p*>niej...", // 63
+	"Nast#pne sto moment*w p*>niej...", // 64
+	"Przynajmniej znalaz%em rop# i zostan# bogaty!", // 65
+	"Ca%e moje <ycie.", // 66
+	"!?&!", // 67
+	"Ale dziadku, obieca%e$!...", // 68
+	"Och, dobrze. Pojedziemy.", // 69
+	"Baj-baj.", // 70
+	"Nie ma powodu m#czy^ si# znowu.", // 71
+	"Naprawd# nie wiem, jak si# rozmawia\nz dziewczynami...", // 72
+	"Zwykle nie pracuj# bez powodu.", // 73
+	"Tylko orzech jest tu prawdziwy.", // 74
+	"Ciekawe, czy kury lataj@. Podejd> no,\ndziecinko...", // 75
+	"Pierwszy test oblany.", // 76
+	"Ju< si# pozby%em swoich frustracji.", // 77
+	"Eee tam, to droga do nik@d.", // 78
+	"Otwiera baga<nik.", // 79
+	"Jest zatrza$ni#ty.", // 80
+	"Nie ma tam ju< nic wi#cej.", // 81
+	"Ciuchy s@ ju< suche.", // 82
+	"Te wrony na pewno mnie zabij@!", // 83
+	"Jak chc# wej$^, to albo musz# pozby^ si#\ntego stra<nika, albo znale>^ jaki$\ninny spos*b.", // 84
+	"Powierzchnia muru jest zbyt g%adka, nie\ndam rady si# wspi@^.", // 85
+	"M*g%bym si# na nie\nwspi@^, gdyby nie\nby%o tu tyle <ywicy.", // 86
+	"Jedyna zielona rzecz, jak@ bym chcia% mie^, to\ntaki prostok@tny kawa%ek papieru z narysowanym\njakim$ wa<niakiem.", // 87
+	"Nie chc# go dotyka^. Jego kolce mog@\nmi zrani^ moje delikatne d%onie.", // 88
+	"Dzi#ki, nie jestem g%odny.", // 89
+	"Naprawd# nie mam tak d%ugich r@k.", // 90
+	"Nie dop%yn# tak daleko.", // 91
+	"Echo!", // 92
+	"ECHO!", // 93
+	"Kto tam jest?!", // 94
+	"KTO TAM JEST?!", // 95
+	"NIE POWTARZAJ PO MNIE!...", // 96
+	"NIE POWTARZAJ PO MNIE!!!", // 97
+	"...ALBO WRZUC[ CI TAM JAKIEGO| KAMOLA!", // 98
+	"ALBO WRZU...", // 99
+	"Jeste$ tam jeszcze?", // 100
+	"To nie katarynka. No i nie ma wiadra.", // 101
+	"Nie musz# go otwiera^.", // 102
+	"Hmmm... Trawka... Eh, jeszcze dzieci\nb#d@ patrze^.", // 103
+	"Nie znajd# orzecha ot tak sobie...", // 104
+	"Nie jestem rogaczem.", // 105
+	"Tak wysoko to nikt nie\npodskoczy.", // 106
+	"Nie potrzebuj# tego.", // 107
+	"Nie jestem |wi#tym Miko%ajem.", // 108
+	"Nie potrzebuj# plastikowych imitacji.", // 109
+	"Boj# si# nosi^ tak delikatne rzeczy.", // 110
+	"Lepiej niech zostan@ otwarte.", // 111
+	"Czu%bym si# g%upio ganiaj@c tam i nazad\nz cudzymi gaciami w kieszeni.", // 112
+	"Nie jestem zm#czony.", // 113
+	"W@tpi#, bym kiedykolwiek tego potrzebowa%.", // 114
+	"Tu chyba nie ma <adnego tajnego\nprzej$cia.", // 115
+	"Nie ma tu ju< wi#cej <adnych fajnych owoc*w.", // 116
+	"Kto$ mi mo<e oberwa^ UCHO za ten\nDZBANEK.", // 117
+	"Lepiej je zostawi#. Kobiety s@ lekko\nprzewra<liwione na punkcie\nkwiat*w.", // 118
+	"Lustereczko, lustereczko,\nkto tu jest najlepszy zdeczko?", // 119
+	"Hej, nie my$l tak d%ugo.", // 120
+	"Podpowied>: kto$ w tym pokoju,\np%ci m#skiej.", // 121
+	"OK, namy$l si#.", // 122
+	"Lepiej nie b#d# przerywa% jego\nproces*w my$lowych.", // 123
+	"Nie chc# mie^ nic wsp*lnego z dentystami.", // 124
+	"Jest za ci#<ki. Nie to, <e jestem\nrzadziak.", // 125
+	"Zobaczmy co tu mamy...", // 126
+	"\'Marmolada truskawkowa\'.", // 127
+	"\'Marmolada porzeczkowa\'.", // 128
+	"\'Marmolada jagodowa\'.", // 129
+	"\'Marmolada malinowa\'.", // 130
+	"Zabierzcie mnie st@d, albo zrobi#\nz kogo$ marmolad#!", // 131
+	"Och, i jest \'Marmolada z r*<y\'.", // 132
+	"Zna%em kiedy$ pewn@ R*<#.", // 133
+	"Nie chc# si# upapra^.", // 134
+	"Nie widz# dok%adnie, jest tu zbyt ciemno.", // 135
+	"JAAAAAAAA]]!", // 136
+	"(ziew)", // 137
+	"($mieszek)", // 138
+	"Nie wyrw# go r#koma - te ciernie s@\nostre jak szpilki.", // 139
+	"Pi%a nie ma paliwa.", // 140
+	"Ciernie s@ za cienkie, pi%a jest\ntu bezu<yteczna.", // 141
+	"Tak, $wietny pomys%. We>my sobie t#\nska%# i pospacerujmy. Jezu...", // 142
+	"Nie chc# ich p%oszy^. Dzi#ki nim to\nmiejsce wygl@da $licznie.", // 143
+	"Nawet nie wiem, czy toto <yje.", // 144
+	"Nie znam jego j#zyka.", // 145
+	"Moja d%o= nie zmie$ci si# w t# dziur#.", // 146
+	"Ej, ty! Obud> si#! Ptaki atakuj@!", // 147
+	"Nie mam nakazu rewizji.", // 148
+	"Nie widz# nic ciekawego w tym stogu.", // 149
+	"Dostanie si# tam wymaga chyba nieco\nwi#kszego wysi%ku.", // 150
+	"To bezcelowe, orzech prze$lizgnie si#\npomi#dzy drutami.", // 151
+	"Wios%o jest Z]AMANE.", // 152
+	"Ta ga%@> to nie wios%o. Nawet go nie\nprzypomina.", // 153
+	"Lepiej spr*buj# gdzie indziej - ta strona wygl@da\nna silniej strze<on@.", // 154
+	"Mia%em go naostrzy^, a nie zetrze^ w py%.", // 155
+	"Nie mog# tu nic u<y^, jest za ciemno.", // 156
+	"Dalej, niech ci kiesze=\ntroch# przytyje.", // 157
+	"To jaka$ nota z banku. Dziwne, ale kto$\ndopisa% na niej \"NIGDY! ANNA\"", // 158
+	"Jak poka<# jej fors# bez powodu,\nto mo<e j@ przyj@^.", // 159
+	"Sto dolc*w!!!", // 160
+	"Krwi!!!", // 161
+	"Nie chc# wyj$^, chc# krwi!", // 162
+	"Jestem <a%osnym pajacem.", // 163
+	"Dziwne, ale ta szuflada si# zacina,\nje$li szuflada obok jest otwarta...", // 164
+	"Mo<e to nie s@ zwyk%e szuflady!", // 165
+	"Nie mog# otworzy^ szuflady, je$li\njaka$ obok jest otwarta!", // 166
+	"Ma niebieskie wn#trze.", // 167
+	"Ma czerwone wn#trze.", // 168
+	"Ma szare wn#trze.", // 169
+	"Ma zielone wn#trze.", // 170
+	"Ma br@zowe wn#trze.", // 171
+	"Ma r*<owe wn#trze.", // 172
+	"]a%! W $rodku jest dyktafon!", // 173
+	"Le<y tu polaroid!\nMog# go potrzebowa^.", // 174
+	"Co$ nie puszcza ksi@<ki!", // 175
+	"]a%! Tajna skrytka!", // 176
+	"Nie musz# ju< z tym nic miesza^.", // 177
+	"Pe%na automatyzacja.", // 178
+	"Na razie nie potrzebuj#\ndalszych kartek.", // 179
+	"Nie, nie chc# deprawowa^ ma%oletnich.", // 180
+	"Nie chc# czyta^ jej znowu.\nJeszcze mi si# spodoba.", // 181
+	"W%a$nie skojarzy%em, <e telewizor jest\nwy%@czony.", // 182
+	"Nic si# nie sta%o.", // 183
+	"Ta$ma odpali%a!", // 184
+	"Znacznie lepiej.", // 185
+	"Nie chc# i$^ spa^.", // 186
+	"To tylko jaki$ korek.", // 187
+	"Nie potrzebuj# wi#cej zdj#^.", // 188
+	"Taaa, mog# to nagra^ i straszy^\ntym koty.", // 189
+	"Ju< nagra%em to, co chcia%em.", // 190
+	"Nie mog# nic nagra^, dop*ki nie znajd#\njakich$ baterii.", // 191
+	"Nie ma baterii, nie ma zabawy.", // 192
+	"Teraz chyba nie jest najlepszy moment.", // 193
+	"Dop*ki ten kuchcik jest tutaj,\nnie mog# nic zrobi^.", // 194
+	"Butelka jest podobna, ale\nto raczej nikogo nie oszuka.", // 195
+	"Chcia%em je rozwali^, a nie\nrozwa%kowa^!..", // 196
+	"Zawsze by%em ciekawy, co jest w $rodku\ntakich rzeczy.", // 197
+	"Inne resztki nie s@ interesuj@ce.", // 198
+	"]a%! P*%torej-woltowe baterie!", // 199
+	"To jest ju< zaj#te, OK?", // 200
+	"To si# w ko=cu sta%o. Oszala%em.", // 201
+	"Papier kompletnie si# spali%!", // 202
+	"P%o=, kochanie, p%o=!", // 203
+	"Voila.", // 204
+	"Za gor@ce!", // 205
+	"Przymarz%o do p*%ki!", // 206
+	"Pychota.", // 207
+	"I tak nie lubi# wo%owiny.", // 208
+	"Nie ma powodu, <eby to robi^.", // 209
+	"Ju< go oszuka%em \'w tym temacie\'.", // 210
+	"Czesiu, przeprowad> test g%osu.", // 211
+	"Nie oszukam Czesia MOIM g%osem.", // 212
+	"...laseczkaaaa!...", // 213
+	"Czesiu, pu$^ szybko test zapachu.", // 214
+	"Czesiu, dawaj no test wygl@du.", // 215
+	"\'Sekretny dziennik Ci@gwy. Autoryzowany.\'", // 216
+	"Nie mog# si# tu schowa^!", // 217
+	"Ci@gwa jest na zewn@trz! Nie mog# wyj$^!", // 218
+	"Ma%o brakowa%o.", // 219
+	"Korek twardo siedzi w zlewie.", // 220
+	"Pasuje idealnie!", // 221
+	"W zlewie jest ju< do$^ wody.", // 222
+	"W zlewie nie ma gor@cej wody.", // 223
+	"Naklejka odpad%a!", // 224
+	"Korek jest troch# za ma%y.", // 225
+	"Nie musz# ich pr*bowa^ teraz.", // 226
+	"Nie chc# zrobi^ z siebie sa%atki.", // 227
+	"Eee tam...", // 228
+	"Lepiej najpierw zatrzyma^ wentylator.", // 229
+	"Najpierw musz# z%apa^ Ci@gw#.", // 230
+	"Dobrze, <e to czerwone, to tylko chilli...", // 231
+	"Woda wygl@da na bardzo gor@c@.", // 232
+	"Zlew jest pe%en gor@cej wody.", // 233
+	"Nie mam niczego, w co\nm*g%bym zapakowa^ te\nskarpetki.", // 234
+	"Oto moje papiery.", // 235
+	"Ju< dosta%em zezwolenie.", // 236
+	"\'Oszcz#dzanie jest wspania%e. Zw%aszcza, je$li\nto zrobili ju< za ciebie rodzice\'", // 237
+	"\'Kocham kapitana\'", // 238
+	"\'MKS rz@dzi\'", // 239
+	"\'Nie wycinaj drzew, bo i ty mo<esz\nzosta^ partyzantem\'", // 240
+	"\'Przyjmujemy karty VISA\'", // 241
+	"Reszta graffiti jest wulgarna.", // 242
+	"Szpana, jestem Marek. Nowy.", // 243
+	"Zamkni#te!", // 244
+	"Dzi#ki.", // 245
+	"Teraz nie mam poj#cia, co\nm*g%bym z tym zrobi^.", // 246
+	"Mam pewien pomys%...", // 247
+	"Jeszcze musz# sprawdzi^, czy to dzia%a...", // 248
+	"Chyba czas zawo%a^ kapitana...", // 249
+	"Hej! Sko=czy%em je$^!", // 250
+	"Rany, przysma<y% si# do miski!...", // 251
+	"Mam ci#.", // 252
+	"Nie chc# mu wi#cej szpera^\nw kieszeniach.", // 253
+	"To nie dzia%a.", // 254
+	"Piku$.", // 255
+	"No i jak ja mam teraz wr*ci^?", // 256
+	"Ekstra.", // 257
+	"No tak, racja...", // 258
+	"Nie mog# go wyci@gn@^.", // 259
+	"Nie chc# go dotyka^ - mo<na %atwo si# skaleczy^.", // 260
+	"Ogrodzenie blokuje dost#p...", // 261
+	"Nie potrzebuj# snu.", // 262
+	"Nie mog# dosi#gn@^.", // 263
+	"Halo?", // 264
+	"Totalnie si# uzale<ni%.", // 265
+	"A co z nowym...", // 266
+	"...gor@cym...", // 267
+	"...kolorowym...", // 268
+	"...specjalnym wydaniem...", // 269
+	"...\'Tygodnia }o%nierza\'?!", // 270
+	"Nigdy wi#cej!", // 271
+	"Jeden raz wystarczy. W ko=cu nie jestem\na< tak zdesperowany...", // 272
+	"Trzydzie$ci siedem przekle=stw p*>niej...", // 273
+	"mczasem w posiad%o$ci...", // 274
+	"Teraz jest otwarta.", // 275
+	"Dawaj, dziecinko, to wszystko\ntwoje!", // 276
+	"Na razie nie mam z nim o czym\nrozmawia^.", // 277
+	"Ta... Racja!...", // 278
+	"Barman jest za blisko...", // 279
+	"Ble!", // 280
+	"Wol# wod#.", // 281
+	"Nie dam rady si# na ni@ wdrapa^.", // 282
+	"Spr#<yny k%u%yby mnie w plecki.", // 283
+	"Nie, dzi#ki. To <arcie chyba jeszcze <yje.", // 284
+	"Drzwi s@ zamkni#te. Co za niespodzianka.", // 285
+	"W $rodku nie ma nic ciekawego.", // 286
+	"Powinienem bardziej uwa<a^ na gegrze...", // 287
+	"Niczego st@d nie potrzebuj#.", // 288
+	"Dzi#ki, widzia%em ju< bardziej mi#kkie kamienie.", // 289
+	"}aden z nich u<ytek, s@ zbyt t#pe.", // 290
+	"Jaka pociecha z modeli?", // 291
+	"Barman na pewno zauwa<y%by jego\nznikni#cie.", // 292
+	"Nie dam rady wypi^ tego wszystkiego.\nMo<e na koniec...", // 293
+	"Nie jestem z%odziejem. Zreszt@,\ni tak jest pusta.", // 294
+	"Nie mam ochoty ich przeszukiwa^.", // 295
+	"Kapitan na pewno si# w nich nie zmie$ci%.\nMusz# szuka^ gdzie indziej.", // 296
+	"Stch*rzy^? Ja? Nigdy!", // 297
+	"Nie mog# otworzy^.", // 298
+	"Nie potrzebuj# ich.", // 299
+	"Brzydko jest podgl@da^.", // 300
+	"Kieszenie mam du<e, ale istniej@ jakie$ granice.", // 301
+	"Jak j@ za%o<#, mog# mie^\nk%opoty z wchodzeniem\npo schodach.", // 302
+	"}eby je wszystkie przeczyta^, musia%bym\nmie^ z 9 <y^!", // 303
+	"Nie potrzebuj# odpoczynku.", // 304
+	"W pokoju jest wystarczaj@co jasno.", // 305
+	"Nie uniesie mojej wagi.", // 306
+	"Nigdy si# nie nauczy%em obs%ugiwa^\ntakich rzeczy...", // 307
+	"S@ tak ostre, <e poprzecina%yby mi kieszenie!", // 308
+	"Pfuj! Ten koniak na pewno zepsu% ca%y smak...", // 309
+	"Nie mam czasu na przyjemno$ci.", // 310
+	"Nie dotkn# tych skarpetek go%ymi r#kami!", // 311
+	"To nie Halloween.", // 312
+	"Nie da si# sterowa^ r#cznie. Nienawidz# go!", // 313
+	"Nie mam nic do puszczenia.", // 314
+	"Nie mog# go wzi@^. Nie jest moje.", // 315
+	"Hej! O co chodzi?!", // 316
+	"Otwarte!", // 317
+	"Zepsuty.", // 318
+	"Przy kapitanie?... Lepiej nie...", // 319
+	"Sierp jest za t#py.", // 320
+	"Najpierw mam tu co$ do za%atwienia.", // 321
+	"Wydziabanie tego no<em mog%oby\ntrwa^ sto lat.", // 322
+	"Nie mam zamiaru dodatkowo\nza$mieca^ stolik.", // 323
+	"Mam rzuca^ mu okruszki\nwprost do dziubka?!\nNie trafi#!", // 324
+	"Szkoda takich fajnych okruszk*w.", // 325
+	"Lepiej nie... Jeszcze podczas nabierania\npo$lizgn# si# i wpadn#...", // 326
+	// "Sk@d ja znam ten g%os?... Ach, te firmy\nsoftware\'owe i ich niski bud<et...",
+	"\"Niebieskie ko%nierzyki\".", // 327
+	"\"Manchester United, czyli historia\nCzerwonych Diab%*w\".", // 328
+	"\"Jak zrobi^ Urz@d Skarbowy na szaro\".", // 329
+	"\"Zielone ludziki s@ w$r*d nas\".", // 330
+	"\"Odbr@zawianie mit*w\".", // 331
+	"\"R*<owa Pantera: nieautoryzowana biografia\".", // 332
+
+	"(U<ycie tych dw*ch rzeczy razem nie\nprzyniesie korzy$ci).",
+};
+
 const static char *russianMessages[kNumMessages] = {
 	"Bfh pon\200si\200, xso r ~sim eflas}.\x1f\x1f\x1f", // 0
 	"Mnf sqteno pqietmas}, xso r ~sim\neflas}.\x1f\x1f", // 1
@@ -12551,6 +12890,43 @@ const char *englishCombineMessages[kNumCombinations] = {
 	"Let's make it spicy.",
 };
 
+const char *polishCombineMessages[kNumCombinations] = {
+	"]a%, teraz wygl@da jak prosto ze sklepu!",
+	"Obwi@zanie grabi wst@<k@ zw#zi%o odst#py\nmi#dzy z#bami!",
+	"Z pomoc@ super kleju zrobi%em...\nco$...",
+	"Z pomoc@ super kleju zrobi%em...\nco$...",
+	"U<ywam super kleju raz jeszcze...",
+	"U<ywam super kleju raz jeszcze...",
+	"Whisky jest na tyle mocna, by zast@pi^ paliwo,\nale ciekawe, czy pi%a to prze<yje...",
+	"Raz jeszcze super klej si# przydaje...",
+	"Sadza nadaje ziemniakowi ca%kiem nowy wygl@d...",
+	"Teraz mog# podbi^ ka<de jezioro!",
+	"\'Alpinista\', co?...",
+	"Takim ciastkiem nikogo nie zainteresuj#.",
+	"Jest wystarczaj@co aktywna.",
+	"Wspania%y pomys%. Ale, widzisz, ekomaniacy\nmog@ patrze^...",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Nie b#dzie wygl@da^ lepiej w celofanie.",
+	"Ciastko jest za du<e na ten celofan.",
+	"Nie chc# zniszczy^ tego ciastka.",
+	"Kwiatek jest $liczny bez dodatk*w.",
+	"Kwiatek jest $liczny bez dodatk*w.",
+	"Dobry pomys%, ale potrzebuj# czego$\nmniejszego ni< ta lina.",
+	"Mog# jeszcze potrzebowa^ tego sera. Znowu.",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"Nie musz# go otwiera^.",
+	"To nie DOOM. To %agodna przygod*wka dla ca%ej\nrodziny (my chcemy DOOMA! my chcemy\nDOOMA!).",
+	"Powi#ksz# nieco ten korek.",
+	"Kolejny raz u<ywam super kleju.",
+	"Baterie pasuj@!",
+	"Przywi@za%em lin# do zawleczki.",
+	"Dodajmy troch# przypraw...",
+};
+
 const char *russianCombineMessages[kNumCombinations] = {
 	"Odo, sfpfq} ona c|dl\200eis kak\npq\200mikom ih madahina!\x1f\x1f\x1f\x1f\x1f",
 	"Obc\200hac dqabli lfnsoj, tealor} tmfn}yis}\nhahoq mfget htb}\200mi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
@@ -16569,6 +16945,3637 @@ const static char* englishDialog212[] = {
 	"Wow!",
 	DISPLAY_MESSAGE,
 	"This is charming!...",
+	END_DIALOG
+};
+
+const static char *polishDialog0[] = {
+	ANIM_WAIT,
+	"Dzie= dobry.",
+	CHANGE_CHARACTER,
+	"Taaa.",
+	CHANGE_CHARACTER,
+	"Dlaczego pan tu stoi?",
+	CHANGE_CHARACTER,
+	"To kwestia grawitacji.",
+	CHANGE_CHARACTER,
+	"Niesamowicie $mieszny dowcip...",
+	NEW_LINE,
+	"Jak na <o%nierza.",
+	CHANGE_CHARACTER,
+	"Nie jestem <o%nierzem, cho^ kiedy$",
+	NEW_LINE,
+	"stara%em si# nim zosta^.",
+	DISPLAY_MESSAGE,
+	"Nie zda%em testu na intel...",
+	NEW_LINE,
+	"fizycznego.",
+	DISPLAY_MESSAGE,
+	"Kazali mi strzeli^ w rzucon@",
+	NEW_LINE,
+	"monet# podczas skoku z drzewa...",
+	DISPLAY_MESSAGE,
+	"...na konia.",
+	CHANGE_CHARACTER,
+	"No, kiepska sprawa...",
+	CHANGE_CHARACTER,
+	"Oddzia%y Specjalne to nie bu%ka",
+	NEW_LINE,
+	"z mas%em, no wiesz.",
+	CHANGE_CHARACTER,
+	"Szkoda, <e si# nie uda%o.",
+	CHANGE_CHARACTER,
+	"Taaa, nie trafi%em w konia.",
+	END_DIALOG,
+};
+
+const static char *polishDialog1[] = {
+	"Wi#c...",
+	CHANGE_CHARACTER,
+	"Chcesz us%ysze^ $mieszn@ odpowied>?",
+	CHANGE_CHARACTER,
+	"Odpu$^ pan sobie.",
+	CHANGE_CHARACTER,
+	"No dobra, ale wiesz, tu w okolicy nie",
+	NEW_LINE,
+	"ma za wiele rozrywki.",
+	DISPLAY_MESSAGE,
+	"Czasami lubi# sobie troch# po<artowa^.",
+	CHANGE_CHARACTER,
+	"Wi#c...",
+	CHANGE_CHARACTER,
+	"Pilnuj# tej posesji...",
+	CHANGE_CHARACTER,
+	"]a%. A to niespodzianka.",
+	CHANGE_CHARACTER,
+	"...i mam rozkaz zabi^ KOGOKOLWIEK,",
+	NEW_LINE,
+	"kto b#dzie chcia% wej$^.",
+	CHANGE_CHARACTER,
+	"\377 co z w%a$cicielem?",
+	CHANGE_CHARACTER,
+	"\377n to nie KTOKOLWIEK, no nie?",
+	CHANGE_CHARACTER,
+	"To chyba nie pozwoli pan MI wej$^?",
+	CHANGE_CHARACTER,
+	"Bingo.",
+	CHANGE_CHARACTER,
+	"Nawet jak poprosz#?",
+	CHANGE_CHARACTER,
+	"Bez szans, dzieciaku.",
+	CHANGE_CHARACTER,
+	"\377PROOOOOSZ[.",
+	CHANGE_CHARACTER,
+	"Zapomnij. Mam serce z kamienia.",
+	CHANGE_CHARACTER,
+	"Jak i m*zg.",
+	CHANGE_CHARACTER,
+	"\377Nie %api#.",
+	CHANGE_CHARACTER,
+	"Niewa<ne... Jak m*g%bym panu",
+	NEW_LINE,
+	"zmi#kczy^ serce?",
+	CHANGE_CHARACTER,
+	"Nie dasz rady. Jestem prawdziwym twardzielem.",
+	DISPLAY_MESSAGE,
+	"Ale podejd> no, mam dla ciebie",
+	NEW_LINE,
+	"co$ na pocieszenie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog2[] = {
+	"Dzi#ki. Co to jest?",
+	CHANGE_CHARACTER,
+	"Ciastko z czekolady.",
+	DISPLAY_MESSAGE,
+	"M*j pracodawca da% mi kilka takich",
+	NEW_LINE,
+	"na podwieczorek...",
+	CHANGE_CHARACTER,
+	"To on jest w domu?!",
+	CHANGE_CHARACTER,
+	"Pan Ci@gwa? Tak, a dlaczego?",
+	CHANGE_CHARACTER,
+	"Och, nic... Ci@gwa...",
+	NEW_LINE,
+	"Chyba o nim s%ysza%em...",
+	CHANGE_CHARACTER,
+	"Musia%e$. Robi du<@ fors#, wiesz.",
+	NEW_LINE,
+	"Zw%aszcza ostatnio...",
+	CHANGE_CHARACTER,
+	"Taaa?...",
+	CHANGE_CHARACTER,
+	"Ale nie wiem jak.",
+	DISPLAY_MESSAGE,
+	"Mo<e ma to co$ wsp*lnego z tym",
+	NEW_LINE,
+	"postrzelonym profesorkiem, kt*ry",
+	NEW_LINE,
+	"wpad% tu pewnego dnia...",
+	DISPLAY_MESSAGE,
+	"Ah, wydaje ci si#, <e jeste$ cwany, co?!",
+	NEW_LINE,
+	"Jeste$ szpiegiem?!",
+	CHANGE_CHARACTER,
+	"Hej, ze mnie normalny go$^.",
+	NEW_LINE,
+	"Nie chcesz m*wi^, nie m*w.",
+	CHANGE_CHARACTER,
+	"Pan Ci@gwa kaza% mi uwa<a^",
+	NEW_LINE,
+	"na szpieg*w...",
+	CHANGE_CHARACTER,
+	"Czy ja wygl@dam na szpiega?",
+	CHANGE_CHARACTER,
+	"...I zabija^ ich bez pytania...",
+	CHANGE_CHARACTER,
+	"Hej, spoko...",
+	CHANGE_CHARACTER,
+	"...A ja nie zabi%em ju< nikogo",
+	NEW_LINE,
+	"od baaaaaardzo dawna...",
+	CHANGE_CHARACTER,
+	"To o to ciasteczko, no nie?",
+	NEW_LINE,
+	"Chcesz je z powrotem? Nie ma sprawy.",
+	CHANGE_CHARACTER,
+	"\377Sorry, troch# mnie ponios%o.",
+	CHANGE_CHARACTER,
+	"Rozumiem.",
+	NEW_LINE,
+	"Gor@co tutaj.",
+	CHANGE_CHARACTER,
+	"Taaa.",
+	END_DIALOG,
+};
+
+const static char *polishDialog3[] = {
+	"Panie stra<niku, ja...",
+	CHANGE_CHARACTER,
+	"Pos%uchaj, ch%opcze.",
+	DISPLAY_MESSAGE,
+	"Szpieg czy nie szpieg, to nie",
+	NEW_LINE,
+	"jest pytanie.",
+	DISPLAY_MESSAGE,
+	"I tak nie wejdziesz, bez wzgl#du na to...",
+	DISPLAY_MESSAGE,
+	"...czy chcesz sobie pozwiedza^, co$ ukra$^",
+	NEW_LINE,
+	"czy pogada^ z w%a$cicielem.",
+	DISPLAY_MESSAGE,
+	"I nie zmusisz mnie do gadania.",
+	DISPLAY_MESSAGE,
+	"Jeszcze jedna pr*ba, i zrobi# kilka",
+	NEW_LINE,
+	"autostrad dla robak*w.",
+	DISPLAY_MESSAGE,
+	"W twoim ciele.",
+	NEW_LINE,
+	"Ka pe wu?",
+	CHANGE_CHARACTER,
+	"Ka pe wu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog4[] = {
+	"Fajny mundur.",
+	END_DIALOG,
+};
+
+const static char *polishDialog5[] = {
+	CHANGE_CHARACTER,
+	"O kurka! To tylko ty!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog6[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Co jest w tej butelce?",
+	CHANGE_CHARACTER,
+	"Niczego nie udowodnisz!",
+	CHANGE_CHARACTER,
+	"Co$ \'gor@cego\', nie?..",
+	CHANGE_CHARACTER,
+	"Nie tw*j interes.",
+	CHANGE_CHARACTER,
+	"Pijemy na s%u<bie, co?",
+	CHANGE_CHARACTER,
+	"Wydaje ci si#, <e prawie mnie",
+	NEW_LINE,
+	"z%apa%e$, nie?... Zapomnij.",
+	END_DIALOG,
+};
+
+const static char *polishDialog7[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Nic nie widzia%e$.",
+	NEW_LINE,
+	"Jestem czysty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog8[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Spadaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog9[] = {
+	"Co by pan powiedzia%, gdybym da% panu",
+	NEW_LINE,
+	"troch# z%ota?...",
+	CHANGE_CHARACTER,
+	"Powiedzia%bym dzi#kuj#.",
+	CHANGE_CHARACTER,
+	"A wpu$ci%by mnie pan?",
+	CHANGE_CHARACTER,
+	"No chyba...",
+	CHANGE_CHARACTER,
+	"Musi pan by^ pewien.",
+	CHANGE_CHARACTER,
+	"OK, jestem pewien. Wpuszcz# ci#.",
+	CHANGE_CHARACTER,
+	"W porz@dku. Jedziemy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog10[] = {
+	"A teraz prosz# otworzy^ drzwi.",
+	CHANGE_CHARACTER,
+	"Nie ma szans. Zmykaj.",
+	CHANGE_CHARACTER,
+	"Hej! Da%em panu z%oto, pami#ta pan?...",
+	CHANGE_CHARACTER,
+	"Jakie z%oto?",
+	CHANGE_CHARACTER,
+	"JAKIE Z]OTO?!?",
+	CHANGE_CHARACTER,
+	"Nic nie wiem o <adnym z%ocie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog11[] = {
+	"Ty... Ty...",
+	CHANGE_CHARACTER,
+	"Odjazd.",
+	CHANGE_CHARACTER,
+	"Mia% mnie pan wpu$ci^!",
+	NEW_LINE,
+	"Ale nie w maliny!",
+	CHANGE_CHARACTER,
+	"No tak, ale za to puszczam ci# wolno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog12[] = {
+	"W dzisiejszych czasach nie mo<na wierzy^",
+	NEW_LINE,
+	"nawet skorumpowanym stra<nikom.",
+	END_DIALOG,
+};
+
+const static char *polishDialog13[] = {
+	"Siamanko.",
+	CHANGE_CHARACTER,
+	"Cze$^.",
+	CHANGE_CHARACTER,
+	"Jestem Marek. A ty jak",
+	NEW_LINE,
+	"masz na imi#?",
+	CHANGE_CHARACTER,
+	"Jak mam na imi#?",
+	CHANGE_CHARACTER,
+	"Nie wiem, to ty powiedz jak.",
+	CHANGE_CHARACTER,
+	"Jak.",
+	CHANGE_CHARACTER,
+	"Nie m*w \'jak\', tylko powiedz",
+	NEW_LINE,
+	"swoje imi#!",
+	CHANGE_CHARACTER,
+	"Swoje im..",
+	CHANGE_CHARACTER,
+	"Rany!... Jak na ciebie wo%a tata?",
+	CHANGE_CHARACTER,
+	"Synku.",
+	CHANGE_CHARACTER,
+	"No tak. A inni ludzie?",
+	CHANGE_CHARACTER,
+	"A inni ludzie nie.",
+	CHANGE_CHARACTER,
+	"A jak na ciebie wo%aj@ inni ludzie?",
+	CHANGE_CHARACTER,
+	"Ch%opczyku.",
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog14[] = {
+	"Sluchaj no, ma%y. Co ty pr*bujesz",
+	NEW_LINE,
+	"zrobi^ z t@ pi%k@?",
+	CHANGE_CHARACTER,
+	"No, dziadek powiedzia%, <e",
+	NEW_LINE,
+	"we>mie mnie do ZOO, jak",
+	NEW_LINE,
+	"trafi# do kosza.",
+	CHANGE_CHARACTER,
+	"Wydaje mi si#, <e powiniene$",
+	NEW_LINE,
+	"rzuca^ pi%k# troch# wy<ej.",
+	CHANGE_CHARACTER,
+	"Tak, wiem.",
+	CHANGE_CHARACTER,
+	"No wi#c?",
+	CHANGE_CHARACTER,
+	"No wi#c co?",
+	CHANGE_CHARACTER,
+	"No wi#c czemu tego nie robisz?!",
+	CHANGE_CHARACTER,
+	"To chyba co$ z moimi oczami.",
+	CHANGE_CHARACTER,
+	"Powiniene$ nosi^ okulary?",
+	CHANGE_CHARACTER,
+	"Nie, a dlaczego?",
+	CHANGE_CHARACTER,
+	"(westchnienie) A mo<e po prostu jeste$ zbyt...",
+	DISPLAY_MESSAGE,
+	"...s%aby, by dorzuci^ pi%k#",
+	NEW_LINE,
+	"wystarczaj@co wysoko?",
+	CHANGE_CHARACTER,
+	"Na pewno nie.",
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog15[] = {
+	"Hej, ma%y! Mam wspania%y pomys%!",
+	CHANGE_CHARACTER,
+	"Tak?",
+	CHANGE_CHARACTER,
+	"Id> do dziadka i powiedz",
+	NEW_LINE,
+	"mu, <e trafi%e$!",
+	CHANGE_CHARACTER,
+	"Mam sk%ama^?",
+	CHANGE_CHARACTER,
+	"No, tylko troch#...",
+	CHANGE_CHARACTER,
+	"NIGDY NIE K]AMI[!",
+	CHANGE_CHARACTER,
+	"Nigdy?!",
+	CHANGE_CHARACTER,
+	"NIGDY!",
+	CHANGE_CHARACTER,
+	"Dobre dziecko.",
+	END_DIALOG,
+};
+
+const static char *polishDialog16[] = {
+	"Hej...",
+	CHANGE_CHARACTER,
+	"Odejd>.",
+	END_DIALOG,
+};
+
+const static char *polishDialog17[] = {
+	"Ty, mikro! To niesamowite!",
+	CHANGE_CHARACTER,
+	"Co znowu?",
+	CHANGE_CHARACTER,
+	"Pomy$lisz, <e to <art, ale",
+	NEW_LINE,
+	"z jeziora wy%ania si# jaka$",
+	NEW_LINE,
+	"r#ka z mieczem!",
+	CHANGE_CHARACTER,
+	"Dobra, popatrz#, ale nie my$l ",
+	NEW_LINE,
+	"sobie, <e mnie nabra%e$.",
+	NEW_LINE,
+	"Ona pojawia si# co roku.",
+	DISPLAY_MESSAGE,
+	"Mo<e tym razem przyniesie",
+	NEW_LINE,
+	"mi szcz#$cie w koszyk*wce...",
+	END_DIALOG,
+};
+
+const static char *polishDialog18[] = {
+	"Dzie= dobry panu!",
+	CHANGE_CHARACTER,
+	"I tobie tak<e,",
+	NEW_LINE,
+	"m*j ch%opcze.",
+	CHANGE_CHARACTER,
+	"Na imi# mam Marek, prosz# pana.",
+	CHANGE_CHARACTER,
+	"Wspaniale. Co ci# tu sprowadza?",
+	CHANGE_CHARACTER,
+	"Tylko podziwiam pa=ski fotel. Fajny.",
+	CHANGE_CHARACTER,
+	"Fajny i ca%kiem",
+	NEW_LINE,
+	"komfortowy.",
+	CHANGE_CHARACTER,
+	"I du<y.",
+	CHANGE_CHARACTER,
+	"Model dwuosobowy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog19[] = {
+	"Zna pan mo<e ch%opca",
+	NEW_LINE,
+	"bawi@cego si# na zewn@trz",
+	NEW_LINE,
+	"pi%k@?",
+	CHANGE_CHARACTER,
+	"Oczywi$cie, to",
+	NEW_LINE,
+	"m*j wnuk.",
+	CHANGE_CHARACTER,
+	"Fajny dzieciak.",
+	CHANGE_CHARACTER,
+	"Fajny i m@dry.",
+	CHANGE_CHARACTER,
+	"Fajny i ma%y.",
+	CHANGE_CHARACTER,
+	"Uro$nie.",
+	CHANGE_CHARACTER,
+	"I zostanie s%awnym",
+	NEW_LINE,
+	"graczem w kosza?...",
+	CHANGE_CHARACTER,
+	"Mam nadziej#, <e nie.",
+	CHANGE_CHARACTER,
+	"To niech mu pan powie,",
+	NEW_LINE,
+	"<eby przesta%!",
+	CHANGE_CHARACTER,
+	"P*>niej... Mo<e... Teraz musz# troch#",
+	NEW_LINE,
+	"odpocz@^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog20[] = {
+	"Ma pan zamiar przesiedzie^",
+	NEW_LINE,
+	"tu ca%y dzie=?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Ca%y ten pi#kny dzionek?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Nie interesuje pana",
+	NEW_LINE,
+	"$wiat zewn#trzny?!",
+	CHANGE_CHARACTER,
+	"Nie za bardzo.",
+	CHANGE_CHARACTER,
+	"A to dlaczego?",
+	CHANGE_CHARACTER,
+	"Nie przepadam za",
+	NEW_LINE,
+	"nowo$ciami.",
+	CHANGE_CHARACTER,
+	"Ale...",
+	CHANGE_CHARACTER,
+	"Jak to m*wi@... Najlepsze wiadomo$ci",
+	NEW_LINE,
+	"to brak wiadomo$ci.",
+	CHANGE_CHARACTER,
+	"Ale ludzie musz@ wiedzie^",
+	NEW_LINE,
+	"o post#pie i w og*le!",
+	CHANGE_CHARACTER,
+	"Nawet nie b#d# si# trudzi%,",
+	NEW_LINE,
+	"by zapyta^ dlaczego...",
+	CHANGE_CHARACTER,
+	"Bo... Eeee...",
+	NEW_LINE,
+	"Bo... Uhm...",
+	CHANGE_CHARACTER,
+	"Racja.",
+	END_DIALOG,
+};
+
+const static char *polishDialog21[] = {
+	"Co nowego?",
+	CHANGE_CHARACTER,
+	"Mam nadziej#, <e nic.",
+	END_DIALOG,
+};
+
+const static char *polishDialog22[] = {
+	"Mog# po<yczy^ t# strzelb#?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Proooosz#...",
+	CHANGE_CHARACTER,
+	"M%odzie=cze, ta bro= jest",
+	NEW_LINE,
+	"bardzo stara i niebezpieczna...",
+	DISPLAY_MESSAGE,
+	"...a ja jestem odpowiedzialnym",
+	NEW_LINE,
+	"cz%owiekiem, rozumiesz?",
+	CHANGE_CHARACTER,
+	"Ale b#d#...",
+	CHANGE_CHARACTER,
+	"Nie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog23[] = {
+	"Mo<e zmieni pan jednak zdanie co",
+	NEW_LINE,
+	"do tej strzelby?...",
+	CHANGE_CHARACTER,
+	"Nie. Nope. Niet. Nein. Niente. No. Ne.",
+	CHANGE_CHARACTER,
+	"Dobra, rozumiem.",
+	END_DIALOG,
+};
+
+const static char *polishDialog24[] = {
+	"Mog# przeszuka^ sobie szuflady?",
+	CHANGE_CHARACTER,
+	"Tak.",
+	CHANGE_CHARACTER,
+	"TAK?!?",
+	CHANGE_CHARACTER,
+	"Och, zapomnia%em ci powiedzie^,",
+	NEW_LINE,
+	"<e s@ puste.",
+	DISPLAY_MESSAGE,
+	"Tylko w prawej g*rnej le<y chusteczka.",
+	DISPLAY_MESSAGE,
+	"Mo<esz sobie j@ wzi@^, nie potrzebuj# jej.",
+	CHANGE_CHARACTER,
+	"C*<, dzi#kuj#. Jest pan",
+	NEW_LINE,
+	"bardzo... uprzejmy...",
+	CHANGE_CHARACTER,
+	"Tylko sobie nie pomy$l, <e mo<esz",
+	NEW_LINE,
+	"wzi@^ cokolwiek innego.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie, nawet o tym nie marz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog25[] = {
+	"Mog# po<yczy^ wiatraczek?",
+	CHANGE_CHARACTER,
+	"O, nie. Dzi#ki niemu jako$ znosz#",
+	NEW_LINE,
+	"takie dni jak ten.",
+	END_DIALOG,
+};
+
+const static char *polishDialog26[] = {
+	"Co do tego wiatraka...",
+	CHANGE_CHARACTER,
+	"Wr*^ w zimie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog27[] = {
+	"]adn@ pogod# dzi$",
+	NEW_LINE,
+	"mamy...",
+	CHANGE_CHARACTER,
+	"W rzeczy samej,",
+	NEW_LINE,
+	"drogi ch%opcze.",
+	END_DIALOG,
+};
+
+const static char *polishDialog28[] = {
+	"Czy to pani c*rka?",
+	CHANGE_CHARACTER,
+	"Jeste$ bardzo mi%y,",
+	NEW_LINE,
+	"cukiereczku, tak",
+	NEW_LINE,
+	"mnie odm%adzaj@c...",
+	DISPLAY_MESSAGE,
+	"...ale oczywi$cie",
+	NEW_LINE,
+	"ta $licznotka to",
+	NEW_LINE,
+	"moja wnuczka.",
+	CHANGE_CHARACTER,
+	"O, tak! Naprawd# $licznotka!",
+	CHANGE_CHARACTER,
+	"C*<, i ja kiedy$",
+	NEW_LINE,
+	"taka by%am...",
+	CHANGE_CHARACTER,
+	"Wci@< pani jest!",
+	CHANGE_CHARACTER,
+	"To mi%o",
+	NEW_LINE,
+	"z twojej strony...",
+	CHANGE_CHARACTER,
+	"Eeee...",
+	END_DIALOG,
+};
+
+const static char *polishDialog29[] = {
+	"Mog# zapyta^, co pani",
+	NEW_LINE,
+	"robi?",
+	CHANGE_CHARACTER,
+	"Tak, mo<esz,",
+	NEW_LINE,
+	"cukiereczku.",
+	CHANGE_CHARACTER,
+	"\377Co pani robi?",
+	CHANGE_CHARACTER,
+	"Robi# na drutach.",
+	CHANGE_CHARACTER,
+	"Rozumiem. A co pani robi",
+	NEW_LINE,
+	"na drutach?",
+	CHANGE_CHARACTER,
+	"Tym razem nie",
+	NEW_LINE,
+	"zapyta%e$, czy",
+	NEW_LINE,
+	"mo<esz zapyta^.",
+	CHANGE_CHARACTER,
+	"Och, przepraszam. Mog# zapyta^?",
+	CHANGE_CHARACTER,
+	"Zapyta^ o co?",
+	CHANGE_CHARACTER,
+	"O to, co pani robi",
+	NEW_LINE,
+	"na drutach.",
+	CHANGE_CHARACTER,
+	"Ju< mnie przed chwil@",
+	NEW_LINE,
+	"o to pyta%e$, czy<",
+	NEW_LINE,
+	"nie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog30[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"W rzeczy samej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog31[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Przecie< wiesz.",
+	END_DIALOG,
+};
+
+const static char *polishDialog32[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Mi%o, <e pytasz,",
+	NEW_LINE,
+	"ale ju< ci",
+	NEW_LINE,
+	"odpowiedzia%am.",
+	END_DIALOG,
+};
+
+const static char *polishDialog33[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Nie powtarzaj",
+	NEW_LINE,
+	"si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog34[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Nie przeszkadzaj",
+	NEW_LINE,
+	"mi w pracy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog35[] = {
+	"Wszystko w porz@dku?",
+	CHANGE_CHARACTER,
+	"Zamknij si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog36[] = {
+	"Wszystko w porz@dku?",
+	END_DIALOG,
+};
+
+const static char *polishDialog37[] = {
+	"Prosz# wybaczy^",
+	NEW_LINE,
+	"moj@ $mia%o$^...",
+	CHANGE_CHARACTER,
+	"Tak?...",
+	CHANGE_CHARACTER,
+	"...ale pomy$la%em,",
+	NEW_LINE,
+	"<e niewinny kwiat...",
+	DISPLAY_MESSAGE,
+	"...przeka<e moj@",
+	NEW_LINE,
+	"rado$^ z okazji",
+	NEW_LINE,
+	"poznania pani.",
+	END_DIALOG,
+};
+
+const static char *polishDialog38[] = {
+	"Mam nadziej#,",
+	NEW_LINE,
+	"<e si# spodoba%...",
+	CHANGE_CHARACTER,
+	"Och, kochanie!",
+	NEW_LINE,
+	"Jestem wzruszona...",
+	DISPLAY_MESSAGE,
+	"To najmilsza rzecz,",
+	NEW_LINE,
+	"jak@ ktokolwiek",
+	NEW_LINE,
+	"uczyni% dla mnie...",
+	DISPLAY_MESSAGE,
+	"...od dziesi#ciu lat!",
+	DISPLAY_MESSAGE,
+	"Dzi#kuj# ci",
+	NEW_LINE,
+	"z ca%ego serca!",
+	CHANGE_CHARACTER,
+	"Prosz# bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog39[] = {
+	"Chcia%aby pani jeszcze",
+	NEW_LINE,
+	"jeden kwiat?",
+	CHANGE_CHARACTER,
+	"Jeste$ bardzo mi%y,",
+	NEW_LINE,
+	"cukiereczku, ale nie,",
+	NEW_LINE,
+	"dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog40[] = {
+	"Na pewno nie chce pani",
+	NEW_LINE,
+	"nast#pnego kwiatka?",
+	CHANGE_CHARACTER,
+	"Na pewno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog41[] = {
+	"Mog# po<yczy^ t#",
+	NEW_LINE,
+	"miote%k#?",
+	CHANGE_CHARACTER,
+	"Nie znamy si# zbyt",
+	NEW_LINE,
+	"dobrze, a ja z regu%y",
+	NEW_LINE,
+	"nie po<yczam...",
+	DISPLAY_MESSAGE,
+	"...rzeczy ka<demu,",
+	NEW_LINE,
+	"kto o to poprosi.",
+	CHANGE_CHARACTER,
+	"Czy ja nie wygl@dam",
+	NEW_LINE,
+	"odpowiedzialnie?",
+	CHANGE_CHARACTER,
+	"Odpowiedzia%am",
+	NEW_LINE,
+	"wystarczaj@co",
+	NEW_LINE,
+	"jasno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog42[] = {
+	"Jakie$ szanse na po<yczenie",
+	NEW_LINE,
+	"zmiotki?",
+	CHANGE_CHARACTER,
+	"Lubi#, gdy le<y",
+	NEW_LINE,
+	"tam, gdzie teraz.",
+	END_DIALOG,
+};
+
+const static char *polishDialog43[] = {
+	"Czy teraz mog%aby pani",
+	NEW_LINE,
+	"po<yczy^ mi t# miote%k#?",
+	CHANGE_CHARACTER,
+	"Ale< naturalnie, nie",
+	NEW_LINE,
+	"widz# powodu, dla",
+	NEW_LINE,
+	"kt*rego...",
+	DISPLAY_MESSAGE,
+	"...nie mia%abym pom*c tak",
+	NEW_LINE,
+	"mi%emu m%odzie=cowi!..",
+	CHANGE_CHARACTER,
+	"Dzi#kuj# pani bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog44[] = {
+	"Ha! Jestem szybszy ni< Indy`!",
+	CHANGE_CHARACTER,
+	"Wszystko widzia%am!",
+	END_DIALOG,
+};
+
+const static char *polishDialog45[] = {
+	"Eee... Uh... Ja tylko...",
+	CHANGE_CHARACTER,
+	"Nie martw si#. Mam",
+	NEW_LINE,
+	"nadziej#, <e zabi%e$",
+	NEW_LINE,
+	"t# much#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog46[] = {
+	"Przepraszam, ale wydaje mi si#,",
+	NEW_LINE,
+	"<e pani pranie ju< wysch%o...",
+	DISPLAY_MESSAGE,
+	"...a za du<o s%o=ca mo<e odbarwi^",
+	NEW_LINE,
+	"rzeczy...",
+	CHANGE_CHARACTER,
+	"Jakim cudem wysch%o",
+	NEW_LINE,
+	"tak szybko?",
+	DISPLAY_MESSAGE,
+	"Lepiej p*jd#",
+	NEW_LINE,
+	"i sprawdz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog47[] = {
+	CHANGE_CHARACTER,
+	"Mia%e$ racj#, m%odzie=cze.",
+	NEW_LINE,
+	"Dzi#kuj#.",
+	CHANGE_CHARACTER,
+	"Prosz# bardzo.",
+	END_DIALOG,
+};
+
+const static char *polishDialog48[] = {
+	"Czy potrzebuje pani tego",
+	NEW_LINE,
+	"sztucznego jab%ka?",
+	CHANGE_CHARACTER,
+	"To zale<y. Ten owoc ma",
+	NEW_LINE,
+	"swoj@ histori#.",
+	DISPLAY_MESSAGE,
+	"Pami#tam, jak pewnego",
+	NEW_LINE,
+	"dnia moja siostra Maria",
+	NEW_LINE,
+	"robi%a...",
+	CHANGE_CHARACTER,
+	"Eee, jak d%uga jest ta opowie$^?",
+	CHANGE_CHARACTER,
+	"Och, nie ma si#",
+	NEW_LINE,
+	"gdzie spieszy^.",
+	DISPLAY_MESSAGE,
+	"Mamy ca%e godziny na",
+	NEW_LINE,
+	"pogaduszki, prawda?",
+	CHANGE_CHARACTER,
+	"W%a$nie zda%em sobie spraw#, <e nie",
+	NEW_LINE,
+	"potrzebuj# tego jab%ka.",
+	NEW_LINE,
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog49[] = {
+	"To jab%ko...",
+	CHANGE_CHARACTER,
+	"Nie ma opowie$ci,",
+	NEW_LINE,
+	"nie ma jab%ka.",
+	CHANGE_CHARACTER,
+	"\377\377ie ma jab%ka.",
+	END_DIALOG,
+};
+
+const static char *polishDialog50[] = {
+	"\377Could she be ...the most beautiful girl...",
+	NEW_LINE,
+	"...in the world?...\"",
+	END_DIALOG,
+};
+
+const static char *polishDialog51[] = {
+	"Chyba najwy<szy czas si# przedstawi^.",
+	DISPLAY_MESSAGE,
+	"Jestem Marek.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	END_DIALOG,
+};
+
+const static char *polishDialog52[] = {
+	"Moment, w kt*rym ujrza%em",
+	NEW_LINE,
+	"te oczy, by% najpi#kniejszym",
+	NEW_LINE,
+	"w moim <yciu.",
+	DISPLAY_MESSAGE,
+	"\377Nie licz@c czasu, kiedy",
+	NEW_LINE,
+	"bawi%em si# z Edytk@",
+	NEW_LINE,
+	"w doktora.",
+	END_DIALOG,
+};
+
+const static char *polishDialog53[] = {
+	"Uh... Eee...",
+	NEW_LINE,
+	"Zastanawiam si#...",
+	DISPLAY_MESSAGE,
+	"Zastanawiam si#, czy",
+	NEW_LINE,
+	"nie zechcia%aby$",
+	NEW_LINE,
+	"przyj@^...",
+	DISPLAY_MESSAGE,
+	"Ee... Znaczy...",
+	DISPLAY_MESSAGE,
+	"Mam co$, co chcia%bym",
+	NEW_LINE,
+	"ci da^, poniewa<, eee...",
+	NEW_LINE,
+	"...poniewa<...",
+	DISPLAY_MESSAGE,
+	"Eh... My$l#, <e jeste$... No i...",
+	CHANGE_CHARACTER,
+	"Hej! Ja nie gryz#!",
+	DISPLAY_MESSAGE,
+	"Widz#, <e chcesz powiedzie^",
+	NEW_LINE,
+	"mi co$ mi%ego.",
+	DISPLAY_MESSAGE,
+	"Po prostu u<yj",
+	NEW_LINE,
+	"najprostszych s%*w...",
+	CHANGE_CHARACTER,
+	"Najprostszych s%*w?!",
+	CHANGE_CHARACTER,
+	"Tak, proste s%owa czyni@",
+	NEW_LINE,
+	"rzeczy prostymi.",
+	CHANGE_CHARACTER,
+	"Och, tak. Okej. Proste s%owa.",
+	NEW_LINE,
+	"Okej. Uwaga:...",
+	DISPLAY_MESSAGE,
+	"Ja lubi^ twoja",
+	NEW_LINE,
+	"i chcie^ da^ kwiat.",
+	CHANGE_CHARACTER,
+	"\377C*<, mo<e jednak powiniene$",
+	NEW_LINE,
+	"wyra<a^ si# bardziej...",
+	DISPLAY_MESSAGE,
+	"...skomplikowanie.",
+	CHANGE_CHARACTER,
+	"Uh... Sorry...",
+	NEW_LINE,
+	"Ja po prostu...",
+	DISPLAY_MESSAGE,
+	"Po prostu przynios%em",
+	NEW_LINE,
+	"ci kwiatek.",
+	CHANGE_CHARACTER,
+	"Och?...",
+	END_DIALOG,
+};
+
+const static char *polishDialog54[] = {
+	"Podoba ci si#?",
+	CHANGE_CHARACTER,
+	"Jeste$ czaruj@cy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog55[] = {
+	"Reasumuj@c fakty...",
+	CHANGE_CHARACTER,
+	"Proste s%owa,",
+	NEW_LINE,
+	"ch%opcze!",
+	NEW_LINE,
+	"Proste s%owa!",
+	END_DIALOG,
+};
+
+const static char *polishDialog56[] = {
+	"Ah, tak... Chcia%em tylko doda^,",
+	NEW_LINE,
+	"<e i ty jeste$ czaruj@ca.",
+	CHANGE_CHARACTER,
+	"Chyba powinnam",
+	NEW_LINE,
+	"powiedzie^ dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog57[] = {
+	"Nienawidz# si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog58[] = {
+	"Mam jeszcze jeden",
+	NEW_LINE,
+	"kwiat...",
+	CHANGE_CHARACTER,
+	"Nie przesadzajmy.",
+	DISPLAY_MESSAGE,
+	"Jak %atwo zauwa<y^, nie",
+	NEW_LINE,
+	"jestem jedyn@...",
+	DISPLAY_MESSAGE,
+	"...kobiet@ w tym pokoju...",
+	END_DIALOG,
+};
+
+const static char *polishDialog59[] = {
+	"Wi#c nie chcesz jeszcze",
+	NEW_LINE,
+	"jednego kwiatka?",
+	CHANGE_CHARACTER,
+	"Nie, dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog60[] = {
+	"Mo<e ciasteczko?",
+	CHANGE_CHARACTER,
+	"Raczej nie, dzi#kuj#.",
+	NEW_LINE,
+	"Nie chc# uty^.",
+	CHANGE_CHARACTER,
+	"Tam zaraz uty^. Nawet",
+	NEW_LINE,
+	"Obelix ma przyjaci*%.",
+	CHANGE_CHARACTER,
+	"A kto to Obelix?!",
+	CHANGE_CHARACTER,
+	"Ee, niewa<ne. Po prostu mam",
+	NEW_LINE,
+	"tu ciastko, kt*re znalaz%em...",
+	CHANGE_CHARACTER,
+	"ZNALAZ]E|?!",
+	CHANGE_CHARACTER,
+	"...znalaz%em w pewnym",
+	NEW_LINE,
+	"sklepie, oczywi$cie.",
+	DISPLAY_MESSAGE,
+	"D%ugo szuka%em. To nie jaki$ wyr*b...",
+	DISPLAY_MESSAGE,
+	"...czekoladopodobny, ale sama...",
+	DISPLAY_MESSAGE,
+	"...esencja s%odko$ci! Luksus!",
+	DISPLAY_MESSAGE,
+	"Naturalne sk%adniki.",
+	DISPLAY_MESSAGE,
+	"Bez konserwant*w.",
+	CHANGE_CHARACTER,
+	"No dobra, skoro nalegasz...",
+	END_DIALOG,
+};
+
+const static char *polishDialog61[] = {
+	"\377Khm...",
+	CHANGE_CHARACTER,
+	"Och tak, chyba powinnam da^",
+	NEW_LINE,
+	"ci co$ w zamian...",
+	CHANGE_CHARACTER,
+	"Och, nie... Nie musisz, naprawd#...",
+	CHANGE_CHARACTER,
+	"Dobra. Jak chcesz.",
+	CHANGE_CHARACTER,
+	"\377Chocia< z drugiej strony...",
+	CHANGE_CHARACTER,
+	"Wiedzia%am. Wy ch%opcy zawsze",
+	NEW_LINE,
+	"czego$ chcecie.",
+	DISPLAY_MESSAGE,
+	"Nie mo<ecie zrobi^ niczego",
+	NEW_LINE,
+	"za darmo.",
+	CHANGE_CHARACTER,
+	"Kiedy$ posprz@ta%em pok*j.",
+	DISPLAY_MESSAGE,
+	"\377C*<... Zapomnijmy",
+	NEW_LINE,
+	"o tym.",
+	CHANGE_CHARACTER,
+	"Oto m*j prezent dla",
+	NEW_LINE,
+	"ciebie.",
+	DISPLAY_MESSAGE,
+	"To moja wst@<ka. Pomy$l",
+	NEW_LINE,
+	"o mnie czasami.",
+	END_DIALOG,
+};
+
+const static char *polishDialog62[] = {
+	"Dzi#ki. Nigdy jej nie",
+	NEW_LINE,
+	"wypior#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog63[] = {
+	"Znalaz%em do$^ interesuj@c@ notk#...",
+	DISPLAY_MESSAGE,
+	"...na pewnym banknocie. Wiesz mo<e",
+	NEW_LINE,
+	"co$ na ten temat?",
+	CHANGE_CHARACTER,
+	"Poka< mi banknot.",
+	END_DIALOG,
+};
+
+const static char *polishDialog64[] = {
+	"Hej, co jest?!",
+	CHANGE_CHARACTER,
+	"O, ja nieszcz#$liwa!...",
+	CHANGE_CHARACTER,
+	"Dlaczego p%aczesz?!",
+	CHANGE_CHARACTER,
+	"O, ja nieszcz#sna!...",
+	DISPLAY_MESSAGE,
+	"Nasz... nasz s@siad, pan...",
+	DISPLAY_MESSAGE,
+	"...Ci@gwa, da% mi wczoraj...",
+	DISPLAY_MESSAGE,
+	"...troch# pieni#dzy...",
+	DISPLAY_MESSAGE,
+	"...i powiedzia%, <e jak",
+	NEW_LINE,
+	"dam mu buziaka to da...",
+	DISPLAY_MESSAGE,
+	"...mi wi#cej...",
+	DISPLAY_MESSAGE,
+	"...ale przemy$la%am to",
+	NEW_LINE,
+	"i odda%am mu ca%@...",
+	DISPLAY_MESSAGE,
+	"...kwot# z powrotem.",
+	CHANGE_CHARACTER,
+	"To znaczy, ta $winia",
+	NEW_LINE,
+	"pr*bowa%a ci# kupi^?!",
+	CHANGE_CHARACTER,
+	"Jestem taka nieszcz#$liwa!",
+	CHANGE_CHARACTER,
+	"O, ludzie! Mam",
+	NEW_LINE,
+	"tego do$^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog65[] = {
+	"Hej, ty! Mo<esz mi z %aski swojej",
+	NEW_LINE,
+	"poda^ ten orzech le<@cy obok?",
+	END_DIALOG,
+};
+
+const static char *polishDialog66[] = {
+	"Dasz mi ten orzech czy nie?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog67[] = {
+	"W porz@chu. Wystarczy.",
+	DISPLAY_MESSAGE,
+	"Teraz dostaniesz, na co zas%u<y%a$.",
+	DISPLAY_MESSAGE,
+	"B#d# ci# wyzywa% tak d%ugo,",
+	NEW_LINE,
+	"a< dasz mi ten orzech.",
+	DISPLAY_MESSAGE,
+	"Ty brzydka wiewi*rko ty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog68[] = {
+	"Nie wiesz, <e to noszenie futra nie",
+	NEW_LINE,
+	"jest politycznie poprawne?",
+	END_DIALOG,
+};
+
+const static char *polishDialog69[] = {
+	"Hej, raz jeszcze dzi#ki za orzech.",
+	END_DIALOG,
+};
+
+const static char *polishDialog70[] = {
+	"Nie zapyta%em, czy mog# j@ wzi@^.",
+	DISPLAY_MESSAGE,
+	"To naprawd# niegrzeczne bra^ czyj@$",
+	NEW_LINE,
+	"w%asno$^ bez pozwolenia.",
+	DISPLAY_MESSAGE,
+	"No i mog@ mnie z%apa^, oczywi$cie.",
+	DISPLAY_MESSAGE,
+	"I wsadz@ mnie do wi#zienia i nikt",
+	NEW_LINE,
+	"ju< nie b#dzie mnie szanowa%.",
+	DISPLAY_MESSAGE,
+	"Naprawd# mog# zmarnowa^ sobie <ycie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog71[] = {
+	"Bez pracy nie ma ko%aczy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog72[] = {
+	"S%uchajcie, wrony. Macie st@d",
+	NEW_LINE,
+	"spada^, ale ju<!",
+	DISPLAY_MESSAGE,
+	"Albo b#d# strzela%.",
+	DISPLAY_MESSAGE,
+	"Z prawdziwej broni.",
+	DISPLAY_MESSAGE,
+	"Zdaje si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog73[] = {
+	"Widz# ...<e jest tu... PAJ+K!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog74[] = {
+	"Nie to, <ebym stch*rzy%.",
+	DISPLAY_MESSAGE,
+	"Po prostu to m*g% by^",
+	NEW_LINE,
+	"zmutowany paj@k i m*g%by",
+	NEW_LINE,
+	"mnie ugry>^...",
+	DISPLAY_MESSAGE,
+	"...i ja te< zosta%bym mutantem...",
+	DISPLAY_MESSAGE,
+	"...i nosi%bym takie $mieszne",
+	NEW_LINE,
+	"r#kawice i w og*le...",
+	DISPLAY_MESSAGE,
+	"...i mia%bym podw*jne <ycie...",
+	DISPLAY_MESSAGE,
+	"...i musia%bym walczy^ z Venomem`",
+	DISPLAY_MESSAGE,
+	"i innymi i m*g%bym zosta^ ranny...",
+	DISPLAY_MESSAGE,
+	"...i ka<dy robi%by na tym fors#",
+	NEW_LINE,
+	"opr*cz mnie...",
+	DISPLAY_MESSAGE,
+	"Wi#c chyba sobie odpuszcz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog75[] = {
+	"Ten paj@k przyprawia mnie o ciarki...",
+	END_DIALOG,
+};
+
+const static char *polishDialog76[] = {
+	"Hej, ma%y kolego!",
+	DISPLAY_MESSAGE,
+	"Mam dla ciebie MORALN+ PROPOZYCJ[.",
+	DISPLAY_MESSAGE,
+	"Du<e, $wie<e i soczyste jab%ko za t@ star@",
+	NEW_LINE,
+	"szyszk#, co ci uciska plecy.",
+	DISPLAY_MESSAGE,
+	"Jak masz ochot# na wymian#, to sta=",
+	NEW_LINE,
+	"tutaj i potrz@$nij pyszczkiem.",
+	END_DIALOG,
+};
+
+const static char *polishDialog77[] = {
+	"Powinieniem wiedzie^,",
+	NEW_LINE,
+	"ze gdzie$ tkwi haczyk.",
+	DISPLAY_MESSAGE,
+	"\377Wios%o jest z%amane.",
+	END_DIALOG,
+};
+
+const static char *polishDialog78[] = {
+	"Cze$^, facet.",
+	END_DIALOG,
+};
+
+const static char *polishDialog79[] = {
+	"Nie ignoruj mnie, prosz#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog80[] = {
+	"Pieskie <ycie, co?",
+	END_DIALOG,
+};
+
+const static char *polishDialog81[] = {
+	"Co s%ycha^?",
+	END_DIALOG,
+};
+
+const static char *polishDialog82[] = {
+	"Tak, m*g%bym j@ wzi@^...",
+	DISPLAY_MESSAGE,
+	"To cicha ma%a wioska...",
+	DISPLAY_MESSAGE,
+	"Bez policji...",
+	DISPLAY_MESSAGE,
+	"Nikt nie us%ysza%by ich krzyk*w...",
+	DISPLAY_MESSAGE,
+	"\377Ale nie mam hokejowej maski.",
+	DISPLAY_MESSAGE,
+	"\377(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog83[] = {
+	"Nie chc# zostawi^ na niej swoich",
+	NEW_LINE,
+	"odcisk*w palc*w.",
+	DISPLAY_MESSAGE,
+	"Kto wie, do czego by%a u<ywana.",
+	END_DIALOG,
+};
+
+const static char *polishDialog84[] = {
+	"Obawiam si#, <e troch# za trudno",
+	NEW_LINE,
+	"z%apa^ sobie mysz ot tak, po",
+	NEW_LINE,
+	"prostu.",
+	DISPLAY_MESSAGE,
+	"I co to by%oby za wyzwanie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog85[] = {
+	"M*g%bym spr*bow^ odstraszy^ te ptaki",
+	NEW_LINE,
+	"samemu, gdybym nie ogl@da% tego filmu...",
+	DISPLAY_MESSAGE,
+	"...Hitchcocka, kiedy mia%em 5 lat.",
+	DISPLAY_MESSAGE,
+	"Moja mama nie powinna by%a mi pozwoli^.",
+	DISPLAY_MESSAGE,
+	"Teraz znosz# jajo nawet gdy widz# go%#bie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog86[] = {
+	"\"Z%oto oczekuje na ko=cu drogi.\"",
+	END_DIALOG,
+};
+
+const static char *polishDialog87[] = {
+	"Czy to pan jest Ci@gwa?",
+	CHANGE_CHARACTER,
+	"Jak si# masz, m*j przyjacielu.",
+	DISPLAY_MESSAGE,
+	"Moi ludzie twierdz@, <e",
+	NEW_LINE,
+	"pr*bujesz wedrze^ si# do",
+	NEW_LINE,
+	"mojej posiad%o$ci.",
+	DISPLAY_MESSAGE,
+	"Dlaczego?",
+	CHANGE_CHARACTER,
+	"Eee... Widzi pan...",
+	DISPLAY_MESSAGE,
+	"Jestem tu...",
+	NEW_LINE,
+	"Tu...",
+	DISPLAY_MESSAGE,
+	"Znaczy, jestem tu na wakacjach,",
+	NEW_LINE,
+	"ale zrobi%o mi si# niedobrze od...",
+	DISPLAY_MESSAGE,
+	"...wszystkich tych zielono$ci...",
+	DISPLAY_MESSAGE,
+	"...i po prostu chcia%em lizn@^",
+	NEW_LINE,
+	"troch# cywilizacji.",
+	CHANGE_CHARACTER,
+	"C*<... Dobrze ci# rozumiem,",
+	NEW_LINE,
+	"przyjacielu.",
+	DISPLAY_MESSAGE,
+	"Ja tak<e s@dz#, <e naturalne",
+	NEW_LINE,
+	"$rodowisko dla nas, ludzi...",
+	DISPLAY_MESSAGE,
+	"...dwudziestego wieku...",
+	DISPLAY_MESSAGE,
+	"..to telewizor i paczka snack*w.",
+	NEW_LINE,
+	"Ale m*wi@c o rzeczach zielonych...",
+	DISPLAY_MESSAGE,
+	"Nie mog# zezwoli^ ci na",
+	NEW_LINE,
+	"wej$cie do mego domu, bo... uh...",
+	DISPLAY_MESSAGE,
+	"...poniewa< jest...w%a$nie...",
+	DISPLAY_MESSAGE,
+	"...w remocie. Ale jako cz%owiek",
+	NEW_LINE,
+	"maj#tny dam ci sto dolc*w...",
+	DISPLAY_MESSAGE,
+	"...aby$ m*g% sobie kupi^ co$, co",
+	NEW_LINE,
+	"pomo<e ci tutaj prze<y^.",
+	DISPLAY_MESSAGE,
+	"Na przyk%ad walkmana.",
+	NEW_LINE,
+	"Co ty na to?",
+	CHANGE_CHARACTER,
+	"Za kogo pan mnie ma?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog88[] = {
+	"NIGDY tego nie wezm#! NIGDY!",
+	CHANGE_CHARACTER,
+	"Nie podniecaj si# tak. Pecunia non olet.",
+	DISPLAY_MESSAGE,
+	"Teraz musz# ju< i$^. Nie b@d>",
+	NEW_LINE,
+	"wstydkiem i podnie$ banknot.",
+	DISPLAY_MESSAGE,
+	"Nikogo to nie wzburzy...",
+	DISPLAY_MESSAGE,
+	"Do widzenia, przyjacielu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog89[] = {
+	"Nie mog# uwierzy^, <e mnie tak",
+	NEW_LINE,
+	"potraktowa%.",
+	DISPLAY_MESSAGE,
+	"Przy okazji...",
+	DISPLAY_MESSAGE,
+	"\377Pekunia nie omlet?...",
+	END_DIALOG,
+};
+
+const static char *polishDialog90[] = {
+	"Rany... Jest ca%a czarna ...i wygl@da jak facet...",
+	DISPLAY_MESSAGE,
+	"...z jak@$ d%ug@ lask@ ...i garnkiem na g%owie...",
+	DISPLAY_MESSAGE,
+	"\377Go$^ od grafiki powinien mniej pi^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog91[] = {
+	"Znowu szperanko w $mietnikach?",
+	DISPLAY_MESSAGE,
+	"\377No dobra, na szcz#$cie s@ tu tylko",
+	NEW_LINE,
+	"jakie$ papiery.",
+	END_DIALOG,
+};
+
+const static char *polishDialog92[] = {
+	"To samo, co zwykle...",
+	DISPLAY_MESSAGE,
+	"Katastrofy...",
+	DISPLAY_MESSAGE,
+	"Korupcja...",
+	DISPLAY_MESSAGE,
+	"Morderstwa...",
+	DISPLAY_MESSAGE,
+	"Krzy<*wki...",
+	DISPLAY_MESSAGE,
+	"Rozebrane panienki...",
+	DISPLAY_MESSAGE,
+	"\377Musz# zaprenumerowa^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog93[] = {
+	"\377S%odki Jezu...",
+	CHANGE_CHARACTER,
+	"...Sz%aaaaa dzieweczka...",
+	DISPLAY_MESSAGE,
+	"...doooo laseczka...",
+	CHANGE_CHARACTER,
+	"To Ci@gwa...",
+	CHANGE_CHARACTER,
+	"...dooo zielooooonego!...",
+	CHANGE_CHARACTER,
+	"...$piewaj@cy do kamery!",
+	CHANGE_CHARACTER,
+	"...doooo zielooonegooooooo!...",
+	CHANGE_CHARACTER,
+	"Chocia< stanowczo nie powinien.",
+	CHANGE_CHARACTER,
+	"...ho-ho-hooo...",
+	CHANGE_CHARACTER,
+	"Nie mog# w to uwierzy^.",
+	CHANGE_CHARACTER,
+	"...my$liweeeeeczka...",
+	CHANGE_CHARACTER,
+	"Co za horror.",
+	CHANGE_CHARACTER,
+	"...baaaaardzo $waaarnegooooo...",
+	CHANGE_CHARACTER,
+	"Pies mojego s@siada robi to lepiej.",
+	CHANGE_CHARACTER,
+	"...baaaaardzoooo...",
+	CHANGE_CHARACTER,
+	"Mam dosy^.",
+	CHANGE_CHARACTER,
+	"...ho-ho-hoooooooo!....",
+	END_DIALOG,
+};
+
+const static char *polishDialog94[] = {
+	"Nie ma tu nic intere...",
+	DISPLAY_MESSAGE,
+	"Nie, zaraz...",
+	DISPLAY_MESSAGE,
+	"Co$ jest pod spodem!",
+	END_DIALOG,
+};
+
+const static char *polishDialog95[] = {
+	"Nie wydaje si# panu,",
+	NEW_LINE,
+	"<e powinien doda^",
+	NEW_LINE,
+	">d>iebko chilli?",
+	CHANGE_CHARACTER,
+	"Doda^? Dlaczego?",
+	CHANGE_CHARACTER,
+	"Wci@< pan pr*buje swoj@",
+	NEW_LINE,
+	"potraw#. Co$ jest nie",
+	NEW_LINE,
+	"tak.",
+	DISPLAY_MESSAGE,
+	"Mo<e powinien pan j@",
+	NEW_LINE,
+	"ma%e conieco zaostrzy^?",
+	CHANGE_CHARACTER,
+	"No c*<... To chyba dobry pomys%.",
+	NEW_LINE,
+	"Na szcz#$cie mam tu co$.",
+	END_DIALOG,
+};
+
+const static char *polishDialog96[] = {
+	CHANGE_CHARACTER,
+	"To... hik!... To chillllllii ...musia%o",
+	NEW_LINE,
+	"by^ ...sfermentowane...",
+	DISPLAY_MESSAGE,
+	"Zupka si# schrzani%a iiiiii...",
+	DISPLAY_MESSAGE,
+	"...jestem zwolniony! Hik!",
+	END_DIALOG,
+};
+
+const static char *polishDialog97[] = {
+	"Radia nie potrzebuj#, ale",
+	NEW_LINE,
+	"mog# potrzebowa^ baterii.",
+	DISPLAY_MESSAGE,
+	"Pechowo nie mam poj#cia, jak",
+	NEW_LINE,
+	"si# otwiera te japo=skie",
+	NEW_LINE,
+	"cude=ka.",
+	END_DIALOG,
+};
+
+const static char *polishDialog98[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"G%os rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Fajny kawa%ek, cz%owieku.",
+	END_DIALOG,
+};
+
+const static char *polishDialog99[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"Zapach rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Ja te< nie lubi# wody, brachu.",
+	END_DIALOG,
+};
+
+const static char *polishDialog100[] = {
+	CHANGE_CHARACTER,
+	"Test bezpiecze=stwa: g%os, zapach, wygl@d.",
+	DISPLAY_MESSAGE,
+	"Wygl@d rozpoznany pozytywnie.",
+	DISPLAY_MESSAGE,
+	"\377Nast#pnym razem sta= troch# bli<ej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog101[] = {
+	"Mog# rozmawia^ z...",
+	CHANGE_CHARACTER,
+	"Odejd>.",
+	DISPLAY_MESSAGE,
+	"Jestem zaj#ty. Praca. Obiad zaraz.",
+	NEW_LINE,
+	"Si# spiesz#.",
+	CHANGE_CHARACTER,
+	"Aye, kapitanie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog102[] = {
+	"Ale mo<e...",
+	CHANGE_CHARACTER,
+	"TERAZ ...JESTEM ...ZAJ[TY.",
+	NEW_LINE,
+	"NIE ...PRZESZKADZAJ ...MI.",
+	NEW_LINE,
+	"DOBRZE?",
+	CHANGE_CHARACTER,
+	"Okej, okej.",
+	END_DIALOG,
+};
+
+const static char *polishDialog103[] = {
+	"Ostatnio chcia%em...",
+	CHANGE_CHARACTER,
+	"ZAJ[TY. Z jak Zuzanna.",
+	NEW_LINE,
+	"A jak Artur.",
+	NEW_LINE,
+	"J jak Jadwiga.",
+	DISPLAY_MESSAGE,
+	"[ jak Eugeniusz.",
+	NEW_LINE,
+	"T jak Tomasz.",
+	DISPLAY_MESSAGE,
+	"Y jak...",
+	NEW_LINE,
+	"...jak...",
+	CHANGE_CHARACTER,
+	"Yeti?",
+	CHANGE_CHARACTER,
+	"Nie. Jak...",
+	CHANGE_CHARACTER,
+	"Yabbadabbadoo?",
+	CHANGE_CHARACTER,
+	"Nie, nie, nie. Jak...",
+	CHANGE_CHARACTER,
+	"Yoko?",
+	CHANGE_CHARACTER,
+	"Yoko. A teraz zostaw mnie w spokoju,",
+	NEW_LINE,
+	"PROSZ[!",
+	CHANGE_CHARACTER,
+	"Dobra ju<, dobra.",
+	END_DIALOG,
+};
+
+const static char *polishDialog104[] = {
+	"Ee...",
+	CHANGE_CHARACTER,
+	"Wrrrr...",
+	END_DIALOG,
+};
+
+const static char *polishDialog105[] = {
+	"Dzie= dobry, panie robocie.",
+	CHANGE_CHARACTER,
+	"Siamanko, cz%owieku,",
+	NEW_LINE,
+	"kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"M*w mi Czesiek, ju no% %ot",
+	NEW_LINE,
+	"ajm sejin?",
+	CHANGE_CHARACTER,
+	"Eee... Jeste$ pewien, <e wszystko",
+	NEW_LINE,
+	"w porz@dku z twoim ...programem?...",
+	CHANGE_CHARACTER,
+	"Masz jaki$ problem, cz%owieku?!",
+	DISPLAY_MESSAGE,
+	"Sie nie widzia%o nigdy rapuj@cego",
+	NEW_LINE,
+	"robo-sejfu, frajerze?",
+	CHANGE_CHARACTER,
+	"W%a$ciwie to nigdy.",
+	CHANGE_CHARACTER,
+	"Jestem n*wka, brachu.",
+	NEW_LINE,
+	"Gor@cy towar, jarzysz?",
+	DISPLAY_MESSAGE,
+	"M*zgole m*wi@, co roboty maj@",
+	NEW_LINE,
+	"by^ dla ka<dego, kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"Dali mi ludzk@ osobowo$^...",
+	DISPLAY_MESSAGE,
+	"...ju no% %ot aj min?",
+	DISPLAY_MESSAGE,
+	"Miodzio, no nie?",
+	CHANGE_CHARACTER,
+	"Khm... Tak, wspaniale.",
+	NEW_LINE,
+	"Znaczy, jeste$ rodzajem sejfu?",
+	CHANGE_CHARACTER,
+	"Racja, cz%owieku.",
+	DISPLAY_MESSAGE,
+	"Totalnie pewny, kumasz czacz#?",
+	DISPLAY_MESSAGE,
+	"Jak chcesz, cobym si# otworzy%,",
+	NEW_LINE,
+	"musisz udowodni^, <e$ w%a$ciciel.",
+	DISPLAY_MESSAGE,
+	"A teraz czek dis (OCENZUROWANE) a%t:",
+	NEW_LINE,
+	"Mog# os@dzi^, czy$ w%a$ciwy go$^...",
+	DISPLAY_MESSAGE,
+	"...po trzech rzeczach:",
+	DISPLAY_MESSAGE,
+	"\377..wygl@dzie, zapachu i g%osie.",
+	NEW_LINE,
+	"Ju no% %ot ajm sejin?",
+	CHANGE_CHARACTER,
+	"\377 nie otworzy%by$ ...si#...",
+	NEW_LINE,
+	"na chwil#, tylko <ebym zobaczy%...",
+	DISPLAY_MESSAGE,
+	"...co masz w $rodku?",
+	CHANGE_CHARACTER,
+	"Sorry, brachu.",
+	DISPLAY_MESSAGE,
+	"Nie wygl@dasz jak w%a$ciciel...",
+	DISPLAY_MESSAGE,
+	"...nie capisz, jak on...",
+	DISPLAY_MESSAGE,
+	"...i g%osik te< nie ten.",
+	DISPLAY_MESSAGE,
+	"Teraz (OCENZUROWANE), kumasz czacz#?",
+	END_DIALOG,
+};
+
+const static char *polishDialog106[] = {
+	"Sezamie, otw*rz si#.",
+	CHANGE_CHARACTER,
+	"(OCENZUROWANE), ty (OCENZUROWANE).",
+	END_DIALOG,
+};
+
+const static char *polishDialog107[] = {
+	"Cze$^!",
+	CHANGE_CHARACTER,
+	"(OSTRZE}ENIE DLA RODZIC{W: WULGARNE TEKSTY)",
+	END_DIALOG,
+};
+
+const static char *polishDialog108[] = {
+	"M*wi# ci, to co$ niesamowitego.",
+	CHANGE_CHARACTER,
+	"Pami#tam, jak zabi%e$ mojego",
+	NEW_LINE,
+	"s%u<@cego testuj@c kulo-odporny",
+	NEW_LINE,
+	"szalik.",
+	CHANGE_CHARACTER,
+	"To by%o dawno temu...",
+	CHANGE_CHARACTER,
+	"Albo jak zrobi%e$ rapuj@cy",
+	NEW_LINE,
+	"robo-sejf, kt*ry psuje si#",
+	NEW_LINE,
+	"$rednio co dwa dni.",
+	CHANGE_CHARACTER,
+	"Masz uprzedzenia...",
+	CHANGE_CHARACTER,
+	"Albo jak sprzeda%e$",
+	NEW_LINE,
+	"mi recept# na %amanie",
+	NEW_LINE,
+	"dziewcz#cych serc.",
+	CHANGE_CHARACTER,
+	"Forsa nie dzia%a?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Dziwne. Zwykle dzia%a.",
+	CHANGE_CHARACTER,
+	"Albo jak...",
+	CHANGE_CHARACTER,
+	"DOBRZE JU}, DOBRZE!",
+	DISPLAY_MESSAGE,
+	"Zapomnijmy o tym!",
+	DISPLAY_MESSAGE,
+	"M*j nowy wynalazek sprawdzi%em",
+	NEW_LINE,
+	"ju< na sobie samym!",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Powa<nie. Mog# zademonstrowa^.",
+	CHANGE_CHARACTER,
+	"\377Dobra, zaryzykuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog109[] = {
+	"\377Cudownie. Super zamieniacz w gnoma.",
+	CHANGE_CHARACTER,
+	"Khm, to tylko efekt uboczny.",
+	DISPLAY_MESSAGE,
+	"Czasami nie kontroluj# swoich",
+	NEW_LINE,
+	"wynalazk*w.",
+	DISPLAY_MESSAGE,
+	"Ale nie b*j si#, to trwa tylko",
+	NEW_LINE,
+	"sekundk#.",
+	CHANGE_CHARACTER,
+	"No my$l#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog110[] = {
+	"I ju< jestem. Czy zauwa<y%e$ jakie$ inne",
+	NEW_LINE,
+	"niezwyk%e rzeczy?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Wspaniale! Wi#c pigu%ki wci@<",
+	NEW_LINE,
+	"dzia%aj@!",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	CHANGE_CHARACTER,
+	"Tak! Sprawd> sw*j portfel!",
+	CHANGE_CHARACTER,
+	"M*j porftel jest wci@<...",
+	END_DIALOG,
+};
+
+const static char *polishDialog111[] = {
+	"Gdzie jest portfel?!",
+	NEW_LINE,
+	"Ty z%odzieju! Oddaj go!",
+	CHANGE_CHARACTER,
+	"Spokojnie, oto tw*j portfel.",
+	END_DIALOG,
+};
+
+const static char *polishDialog112[] = {
+	"}@dam wyja$nie=.",
+	CHANGE_CHARACTER,
+	"Ha! To najlepsza rzecz, jak@",
+	NEW_LINE,
+	"kiedykolwiek wynalaz%em!",
+	CHANGE_CHARACTER,
+	"Co to jest?",
+	CHANGE_CHARACTER,
+	"Nie widzia%e$, jak kradn# ci",
+	NEW_LINE,
+	"portfel,",
+	DISPLAY_MESSAGE,
+	"...poniewa< zjad%em...",
+	NEW_LINE,
+	"PIGU]K[ CZASU!",
+	CHANGE_CHARACTER,
+	"\377Pigu%k# czasu?",
+	CHANGE_CHARACTER,
+	"Tak! Ka<dy, kto j@ zje, <yje",
+	NEW_LINE,
+	"1000 razy szybciej ni<...",
+	DISPLAY_MESSAGE,
+	"...reszta $wiata!",
+	CHANGE_CHARACTER,
+	"To oznacza...",
+	CHANGE_CHARACTER,
+	"To oznacza, <e $wiat dla",
+	NEW_LINE,
+	"tej osoby rusza si# 1000",
+	NEW_LINE,
+	"razy wolniej!",
+	DISPLAY_MESSAGE,
+	"Chocia<, niestety, tylko",
+	NEW_LINE,
+	"przez kilka sekund...",
+	CHANGE_CHARACTER,
+	"C*<... To interesuj@ce.",
+	NEW_LINE,
+	"Ale jaki z tego po<ytek?",
+	CHANGE_CHARACTER,
+	"Nie dbam o to. Wymy$l co$.",
+	DISPLAY_MESSAGE,
+	"M*g%by$, dla przyk%adu, wchodzi^",
+	NEW_LINE,
+	"do kina bez biletu, i nikt by...",
+	DISPLAY_MESSAGE,
+	"...tego nie zauwa<y%.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie! Wspaniale!",
+	NEW_LINE,
+	"Kupuj# patent!",
+	CHANGE_CHARACTER,
+	"To w%a$nie jest problem...",
+	DISPLAY_MESSAGE,
+	"Jak mo<e pami#tasz, m*j wuj Gallagher",
+	NEW_LINE,
+	"dokonywa% najlepszych wynalazk*w,",
+	DISPLAY_MESSAGE,
+	"kiedy by%... powiedzmy...",
+	CHANGE_CHARACTER,
+	"...pijany...",
+	CHANGE_CHARACTER,
+	"...zatruty.",
+	DISPLAY_MESSAGE,
+	"I to samo przydarzy%o si# mnie.",
+	NEW_LINE,
+	"(westchnienie).",
+	DISPLAY_MESSAGE,
+	"Tak wi#c ostatniej nocy obudzi%em",
+	NEW_LINE,
+	"si# z potwornym b*lem g%owy...",
+	DISPLAY_MESSAGE,
+	"...i z pigu%kami na stole.",
+	DISPLAY_MESSAGE,
+	"Nie pami#tam, jak je zrobi%em.",
+	CHANGE_CHARACTER,
+	"Och nie!",
+	CHANGE_CHARACTER,
+	"Ale mog# nad nimi popracowa^.",
+	DISPLAY_MESSAGE,
+	"Do tego potrzebuj# twoich pieni#dzy.",
+	NEW_LINE,
+	"Zawrzyjmy umow#.",
+	DISPLAY_MESSAGE,
+	"Ty sponsorujesz badania,",
+	NEW_LINE,
+	"budujesz laboratorium",
+	NEW_LINE,
+	"i w og*le...",
+	DISPLAY_MESSAGE,
+	"...a ja ci daj# swoje prawa.",
+	CHANGE_CHARACTER,
+	"Dasz mi patent?!",
+	CHANGE_CHARACTER,
+	"Tak. Wszystko, na czym mi zale<y, to",
+	NEW_LINE,
+	"szacunek $rodowiska naukowego.",
+	DISPLAY_MESSAGE,
+	"I Nobel.",
+	DISPLAY_MESSAGE,
+	"No wiesz, honoris causa tu",
+	NEW_LINE,
+	"i tam, wywiady...",
+	CHANGE_CHARACTER,
+	"Zgoda. Umowa stoi.",
+	DISPLAY_MESSAGE,
+	"Przygotuj list# potrzebnego",
+	NEW_LINE,
+	"wyposa<enia.",
+	CHANGE_CHARACTER,
+	"Znakomicie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog113[] = {
+	"Ten g%upiec mi ufa.",
+	DISPLAY_MESSAGE,
+	"Ale wykorzystam go...",
+	DISPLAY_MESSAGE,
+	"Pigu%ki czasu...",
+	DISPLAY_MESSAGE,
+	"Nie b#d# ich sprzedawa%",
+	NEW_LINE,
+	"tym g%upim ludziom!",
+	DISPLAY_MESSAGE,
+	"Mam gdzie$ patent!",
+	DISPLAY_MESSAGE,
+	"Mog# obrobi^ bank i nikt",
+	NEW_LINE,
+	"mnie nie zauwa<y!",
+	DISPLAY_MESSAGE,
+	"Szybciej ni< $wiat%o!",
+	DISPLAY_MESSAGE,
+	"Ukradn# najpierw troch# forsy",
+	NEW_LINE,
+	"lub z%ota na laboratorium",
+	NEW_LINE,
+	"dla tego szale=ca.",
+	END_DIALOG,
+};
+
+const static char *polishDialog114[] = {
+	"Ale wkr*tce...",
+	DISPLAY_MESSAGE,
+	"B#d# bogaty. Baaaardzo bogaty.",
+	DISPLAY_MESSAGE,
+	"\377Czuj#, jakbym m*g%...",
+	DISPLAY_MESSAGE,
+	"\377...jakbym m*g%...",
+	END_DIALOG,
+};
+
+const static char *polishDialog115[] = {
+	"\377PODBI\\ |WIAT!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog116[] = {
+	"\377Zawsze chcia%em to powiedzie^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog117[] = {
+	"To ja, znowu.",
+	CHANGE_CHARACTER,
+	"Do widzenia, znowu.",
+	CHANGE_CHARACTER,
+	"\377Powiedzmy, <e tego nie s%ysza%em.",
+	DISPLAY_MESSAGE,
+	"Czy  jest w domu?",
+	CHANGE_CHARACTER,
+	"Tak, ale kaza% mi pana nie wpuszcza^.",
+	CHANGE_CHARACTER,
+	"Mnie?! Dlaczego?!",
+	CHANGE_CHARACTER,
+	"Pa=ski ostatni wynalazek kosztowa%",
+	NEW_LINE,
+	"go dwie $ciany.",
+	CHANGE_CHARACTER,
+	"Och, ten wehiku% czasu...",
+	DISPLAY_MESSAGE,
+	"Ale teraz mam...",
+	CHANGE_CHARACTER,
+	"}e nie wspomn# znikni#cia jego kota.",
+	CHANGE_CHARACTER,
+	"Kot jest teraz bardziej szcz#$liwy",
+	NEW_LINE,
+	"ni< ktokolwiek z nas!",
+	DISPLAY_MESSAGE,
+	"\377O ile $wiat wci@< istnieje",
+	NEW_LINE,
+	"w XXV wieku.",
+	DISPLAY_MESSAGE,
+	"Niewa<ne. Musisz mnie wpu$ci^.",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	CHANGE_CHARACTER,
+	"Albo powiem Ci@gwie, <e pijesz na s%u<bie.",
+	CHANGE_CHARACTER,
+	"Blefujesz pan. Nie ma dowod*w.",
+	CHANGE_CHARACTER,
+	"Niby tak, ale nigdy nie wiesz na pewno.",
+	END_DIALOG,
+};
+
+const static char *polishDialog118[] = {
+	"Dobra, w%a>, ty obrzydliwy terrorysto.",
+	NEW_LINE,
+	"Tylko nikomu nic nie m*w.",
+	CHANGE_CHARACTER,
+	"Oczywi$cie. Dzi#kuj#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog119[] = {
+	"Ah... Wi#c to tak si# wszystko sta%o...",
+	DISPLAY_MESSAGE,
+	"To dlatego nikt nie widzia%,",
+	NEW_LINE,
+	"jak skarbce by%y ograbiane...",
+	DISPLAY_MESSAGE,
+	"To naprawd# niebezpieczny",
+	NEW_LINE,
+	"wynalazek!",
+	DISPLAY_MESSAGE,
+	"\377MUSZ[ zatrzyma^ Ci@gw#!",
+	DISPLAY_MESSAGE,
+	"\377Jako$.",
+	DISPLAY_MESSAGE,
+	"\377O rany! Te pigu%ki, kt*re",
+	NEW_LINE,
+	"wyj@%em z Cze$ka...",
+	DISPLAY_MESSAGE,
+	"Och, nie! Kto$ nadchodzi!",
+	END_DIALOG,
+};
+
+const static char *polishDialog120[] = {
+	"Musz# si# gdzie$ schowa^!",
+	NEW_LINE,
+	"Teraz!",
+	END_DIALOG,
+};
+
+const static char *polishDialog121[] = {
+	"Musz# kupi^ tradycyjny sejf.",
+	DISPLAY_MESSAGE,
+	"Ten g%upi robot znowu si# popsu%.",
+	DISPLAY_MESSAGE,
+	"Nienawidz# go. ZAMKNIJ SI[,",
+	NEW_LINE,
+	"TY KUPO Z]OMU!",
+	END_DIALOG,
+};
+
+const static char *polishDialog122[] = {
+	"Trzeci raz w tym tygodniu.",
+	NEW_LINE,
+	"Ju< dobrze, dobrze!...",
+	NEW_LINE,
+	"Id#!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog123[] = {
+	"...pokry^ wszystko. Potrzebuj# wi#cej",
+	NEW_LINE,
+	"pieni#dzy na system ochronny.",
+	DISPLAY_MESSAGE,
+	"Mam tylko dw*ch ludzi i...",
+	CHANGE_CHARACTER,
+	"Wi#cej i wi#cej! Tylko to s%ysz#!",
+	CHANGE_CHARACTER,
+	"Wyja$ni# raz jeszcze...",
+	END_DIALOG,
+};
+
+const static char *polishDialog124[] = {
+	"Szefie? W%a$nie otrzyma%em informacj#",
+	NEW_LINE,
+	"od profesora.",
+	DISPLAY_MESSAGE,
+	"Prosi pana do laboratorium.",
+	DISPLAY_MESSAGE,
+	"M*wi, <e rozszyfrowa% struktur#",
+	NEW_LINE,
+	"pigu%ek.",
+	END_DIALOG,
+};
+
+const static char *polishDialog125[] = {
+	"Wi#c to jest to?!",
+	CHANGE_CHARACTER,
+	"Zdecydowanie ...hik!... tak.",
+	CHANGE_CHARACTER,
+	"Wspaniale!",
+	END_DIALOG,
+};
+
+const static char *polishDialog126[] = {
+	"Musz# ich powstrzyma^!",
+	DISPLAY_MESSAGE,
+	"Nie ma czasu do stracenia!",
+	END_DIALOG,
+};
+
+const static char *polishDialog127[] = {
+	"Prosz#, prosz#...",
+	DISPLAY_MESSAGE,
+	"Naprawd# dzia%asz mi na nerwy.",
+	DISPLAY_MESSAGE,
+	"Dobrze, <e nie oszcz#dza%em na",
+	NEW_LINE,
+	"systemie ochronnym...",
+	DISPLAY_MESSAGE,
+	"To pole si%owe jest niezniszczalne!",
+	DISPLAY_MESSAGE,
+	"Ha!",
+	END_DIALOG,
+};
+
+const static char *polishDialog128[] = {
+	"Ale i tak musz# ci# zabi^.",
+	// END_DIALOG,
+	CHANGE_CHARACTER,
+	"Nie, nie!",
+	CHANGE_CHARACTER,
+	"Cisza!",
+	CHANGE_CHARACTER,
+	"To nie jest tego warte!",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Ja nie chc#...",
+	END_DIALOG,
+};
+
+const static char *polishDialog129[] = {
+	CHANGE_CHARACTER,
+	"Biedny profesor zemdla%...",
+	CHANGE_CHARACTER,
+	"Ale... Jak...",
+	NEW_LINE,
+	"NIC Z TEGO NIE ROZUMIEM!!!",
+	CHANGE_CHARACTER,
+	"To bardzo proste.",
+	DISPLAY_MESSAGE,
+	"Do twojej czapki przymocowali$my",
+	NEW_LINE,
+	"mikro-kamer#.",
+	DISPLAY_MESSAGE,
+	"W ten spos*b przez ca%y czas wiedzieli$my,",
+	NEW_LINE,
+	"co si# dzieje.",
+	CHANGE_CHARACTER,
+	"A widzieli$cie, jak ja?...",
+	CHANGE_CHARACTER,
+	"Nie chc# ci# zawstydza^.",
+	DISPLAY_MESSAGE,
+	"By%o nie by%o, odwali%e$ dla RGB kawa%",
+	NEW_LINE,
+	"dobrej roboty.",
+	CHANGE_CHARACTER,
+	"Ale Ci@gwa uciek%!",
+	CHANGE_CHARACTER,
+	"On jest niewa<ny. Mamy profesora,",
+	NEW_LINE,
+	"a ty dasz nam pigu%ki.",
+	DISPLAY_MESSAGE,
+	"Przepraszam, ale nie mo<esz ich zatrzyma^.",
+	CHANGE_CHARACTER,
+	"Okej, ale... Niech mi pan",
+	NEW_LINE,
+	"da tylko minut#...",
+	DISPLAY_MESSAGE,
+	"Mam pewien interes do za%atwienia",
+	NEW_LINE,
+	"z tym %ajdakiem.",
+	CHANGE_CHARACTER,
+	"\377W porz@dku. Ale pospiesz si#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog130[] = {
+	"\377(gulp) Ten efekt czasowy naprawd#",
+	NEW_LINE,
+	"nie trwa d%ugo...",
+	END_DIALOG,
+};
+
+const static char *polishDialog131[] = {
+	"Przegra%e$, %otrze!",
+	NEW_LINE,
+	"Policja otacza budynek!",
+	CHANGE_CHARACTER,
+	"Nie wyg%upiaj si#.",
+	NEW_LINE,
+	"Chyba nie my$lisz, <e nie mam",
+	NEW_LINE,
+	"tajnej drogi ucieczki, co?",
+	CHANGE_CHARACTER,
+	"Taak? Jak@?",
+	CHANGE_CHARACTER,
+	"Jakbym mia% ci powiedzie^...",
+	NEW_LINE,
+	"Spadaj, robaku. Jestem zaj#ty.",
+	END_DIALOG,
+};
+
+const static char *polishDialog132[] = {
+	"Musz# pana rozbroi^.",
+	NEW_LINE,
+	"Prosz# by^ grzecznym i podda^ si#",
+	NEW_LINE,
+	"bez utrudnie=.",
+	CHANGE_CHARACTER,
+	"Nie mam czasu na <arty.",
+	DISPLAY_MESSAGE,
+	"Zje<d<aj st@d, albo znowu",
+	NEW_LINE,
+	"wyci@gn# sw*j pistolet.",
+	CHANGE_CHARACTER,
+	"Ostrzegam...",
+	CHANGE_CHARACTER,
+	"Gdzie oni sprzedaj@ takich",
+	NEW_LINE,
+	"nudziarzy jak ty?",
+	END_DIALOG,
+};
+
+const static char *polishDialog133[] = {
+	"Nie dam panu kolejnej szansy...",
+	CHANGE_CHARACTER,
+	"Fajnie. A teraz <egnam.",
+	END_DIALOG,
+};
+
+const static char *polishDialog134[] = {
+	"Niech pan przestanie pakowa^ t# fors#!",
+	END_DIALOG,
+};
+
+const static char *polishDialog135[] = {
+	"Witam.",
+	CHANGE_CHARACTER,
+	"No. O co chodzi?",
+	CHANGE_CHARACTER,
+	"Przys%ano mnie, <ebym tu nieco",
+	NEW_LINE,
+	"potrenowa%.",
+	CHANGE_CHARACTER,
+	"Kolejny napalony na bycie tajnym agentem,",
+	NEW_LINE,
+	"co?",
+	CHANGE_CHARACTER,
+	"U-hm.",
+	CHANGE_CHARACTER,
+	"Poka< mi jakie$ papiery, to ci# wpuszcz#.",
+	CHANGE_CHARACTER,
+	"Si# robi.",
+	END_DIALOG,
+};
+
+const static char *polishDialog136[] = {
+	"Nie m*g%bym wle>^ bez ca%ej tej",
+	NEW_LINE,
+	"biurokracji?",
+	CHANGE_CHARACTER,
+	"Przykro mi, ale nie.",
+	NEW_LINE,
+	"Rozkazy to rozkazy.",
+	CHANGE_CHARACTER,
+	"A barany to barany.",
+	CHANGE_CHARACTER,
+	"\377A martwi ludzie to martwi ludzie.",
+	CHANGE_CHARACTER,
+	"\377}ycz# mi%ego dnia, prosz# pana.",
+	END_DIALOG,
+};
+
+const static char *polishDialog137[] = {
+	"PROSZ[, MOG[ WEJ|\?!",
+	CHANGE_CHARACTER,
+	"TAK, MO}ESZ!",
+	NEW_LINE,
+	"POKA} TYLKO PRZEPUSTK[!",
+	END_DIALOG,
+};
+
+const static char *polishDialog138[] = {
+	"Wpu$^ mnie!",
+	CHANGE_CHARACTER,
+	"Poka< dokumenty!",
+	CHANGE_CHARACTER,
+	"Przejmujesz si# swoj@ prac@, no nie?",
+	CHANGE_CHARACTER,
+	"|lepy jeste$, czy co?",
+	NEW_LINE,
+	"Czytam gazet# na s%u<bie.",
+	CHANGE_CHARACTER,
+	"\377No tak. Sorry.",
+	END_DIALOG,
+};
+
+const static char *polishDialog139[] = {
+	"Musz#...",
+	CHANGE_CHARACTER,
+	"Dokumenty!",
+	END_DIALOG,
+};
+
+const static char *polishDialog140[] = {
+	"Co czytasz?",
+	CHANGE_CHARACTER,
+	"\'Tydzie= }o%nierza\', oczywi$cie.",
+	CHANGE_CHARACTER,
+	"Kochasz te wszystkie militaria,",
+	NEW_LINE,
+	"no nie?",
+	CHANGE_CHARACTER,
+	"Zg%upia%e$? Mam tu zdj#cia fajnych babek...",
+	DISPLAY_MESSAGE,
+	"...krzy<*wki ...stron# z dowcipami...",
+	DISPLAY_MESSAGE,
+	"...plotki ...przepisy...",
+	CHANGE_CHARACTER,
+	"PRZEPISY?!",
+	CHANGE_CHARACTER,
+	"Tak, staraj@ si# zwi#kszy^ nak%ad.",
+	NEW_LINE,
+	"Zdoby^ nowych czytelnik*w, no wiesz.",
+	CHANGE_CHARACTER,
+	"Ah tak. |wietny pomys%.",
+	NEW_LINE,
+	"A jest co$ o szyde%kowaniu?",
+	CHANGE_CHARACTER,
+	"Mam wra<enie, <e chcesz by^ dowcipny.",
+	CHANGE_CHARACTER,
+	"Eee, ja? Nigdy.",
+	CHANGE_CHARACTER,
+	"To dobrze.",
+	END_DIALOG,
+};
+
+const static char *polishDialog141[] = {
+	"Po<yczy%by$ mi to pismo?",
+	CHANGE_CHARACTER,
+	"A czym ja wtedy b#d# zabija% czas?",
+	CHANGE_CHARACTER,
+	"Eee... Mo<esz policzy^ li$cie na drzewach.",
+	CHANGE_CHARACTER,
+	"Jest tu 11034 li$ci.",
+	CHANGE_CHARACTER,
+	"\377]a%.",
+	END_DIALOG,
+};
+
+const static char *polishDialog142[] = {
+	"Co poza tym?",
+	CHANGE_CHARACTER,
+	"Nie marud>.",
+	END_DIALOG,
+};
+
+const static char *polishDialog143[] = {
+	"Tak trzymaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog144[] = {
+	CHANGE_CHARACTER,
+	"Ty tam, wracaj!",
+	END_DIALOG,
+};
+
+const static char *polishDialog145[] = {
+	"O co chodzi?",
+	CHANGE_CHARACTER,
+	"Musisz pokaza^ mi przepustk#.",
+	CHANGE_CHARACTER,
+	"A jak wejd# na chama?",
+	CHANGE_CHARACTER,
+	"B#d# musia% ci# zastrzeli^.",
+	CHANGE_CHARACTER,
+	"(gulp)",
+	END_DIALOG,
+};
+
+const static char *polishDialog146[] = {
+	CHANGE_CHARACTER,
+	"Ostrzegam... Moje naboje s@",
+	NEW_LINE,
+	"szybsze od ciebie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog147[] = {
+	CHANGE_CHARACTER,
+	"W porz@dku. Zamelduj si# u kapitana.",
+	NEW_LINE,
+	"Powinien by^ w pobli<u.",
+	CHANGE_CHARACTER,
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog148[] = {
+	CHANGE_CHARACTER,
+	"Zrobimy z ciebie m#<czyzn#,",
+	NEW_LINE,
+	"racja, synu?!",
+	CHANGE_CHARACTER,
+	"Eee...",
+	CHANGE_CHARACTER,
+	"Najlepszego z najlepszych!...",
+	CHANGE_CHARACTER,
+	"Uh...",
+	CHANGE_CHARACTER,
+	"Przez pot, krew i %zy!",
+	CHANGE_CHARACTER,
+	"Wola%bym...",
+	CHANGE_CHARACTER,
+	"Ciesz# si# z twojego entuzjazmu, synu!",
+	DISPLAY_MESSAGE,
+	"Nie tra^my czasu!",
+	DISPLAY_MESSAGE,
+	"Kazano mi odby^ z tob@ trening ekspresowy.",
+	DISPLAY_MESSAGE,
+	"W porz@dku, synu!",
+	DISPLAY_MESSAGE,
+	"Musisz przej$^ trzy testy!",
+	DISPLAY_MESSAGE,
+	"Zacznijmy od naj%atwiejszego!...",
+	END_DIALOG,
+};
+
+const static char *polishDialog149[] = {
+	CHANGE_CHARACTER,
+	"Zadanie jest proste.",
+	DISPLAY_MESSAGE,
+	"Zamkn# ci# tutaj...",
+	DISPLAY_MESSAGE,
+	"...i b#dziesz musia% si# jako$ wydosta^.",
+	DISPLAY_MESSAGE,
+	"Jasne?!",
+	CHANGE_CHARACTER,
+	"Prosz# pana, ja...",
+	CHANGE_CHARACTER,
+	"TO DOBRZE!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog150[] = {
+	"\377Halo?... Wspaniale.",
+	END_DIALOG,
+};
+
+const static char *polishDialog151[] = {
+	"No dobra, to by%o zabawne.",
+	NEW_LINE,
+	"Teraz prosz# mnie wypu$ci^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog152[] = {
+	"Hej! Jest tam kto$?!",
+	DISPLAY_MESSAGE,
+	"\377POMOCY!!!",
+	END_DIALOG,
+};
+
+const static char *polishDialog153[] = {
+	"Lito$ci! Ja tu umr#!",
+	END_DIALOG,
+};
+
+const static char *polishDialog154[] = {
+	"Robi# si# g%odny!",
+	END_DIALOG,
+};
+
+const static char *polishDialog155[] = {
+	"Nie wiem, co teraz powiedzie^...",
+	END_DIALOG,
+};
+
+const static char *polishDialog156[] = {
+	"Chyba ...zda%e$ ...pierwszy test...",
+	DISPLAY_MESSAGE,
+	"...Przejd>my ...do nast#pnego...",
+	END_DIALOG,
+};
+
+const static char *polishDialog157[] = {
+	CHANGE_CHARACTER,
+	"Dobrze, <o%nierzu.",
+	DISPLAY_MESSAGE,
+	"Za%*<my, <e jestem twoim je=cem...",
+	DISPLAY_MESSAGE,
+	"\377..i znam jakie$ tajne has%o.",
+	DISPLAY_MESSAGE,
+	"\377usisz je ode mnie wydosta^.",
+	DISPLAY_MESSAGE,
+	"JASNE?!?",
+	CHANGE_CHARACTER,
+	"Jestem jako$ ograniczony?",
+	CHANGE_CHARACTER,
+	"Nie. R*b, co chcesz.",
+	CHANGE_CHARACTER,
+	"Mog# nawet splun@^ panu w oko?",
+	CHANGE_CHARACTER,
+	"\377Tak.",
+	CHANGE_CHARACTER,
+	"\377Dzi#ki, tylko sprawdza%em.",
+	END_DIALOG,
+};
+
+const static char *polishDialog158[] = {
+	"Prosz# powiedzie^ mi has%o...",
+	DISPLAY_MESSAGE,
+	"...i miejmy to ju< z g%owy.",
+	DISPLAY_MESSAGE,
+	"\377OK, niech pan o tym pomy$li.",
+	END_DIALOG,
+};
+
+const static char *polishDialog159[] = {
+	"Hej, przem*w pan do mnie.",
+	DISPLAY_MESSAGE,
+	"\377S%ycha^ mnie?",
+	DISPLAY_MESSAGE,
+	"\377ZIEMIA DO KAPITANA, ZIEMIA DO KAPITANA!",
+	DISPLAY_MESSAGE,
+	"\377Jest pan beznadziejny.",
+	END_DIALOG,
+};
+
+const static char *polishDialog160[] = {
+	"Gotowy do m*wienia?",
+	DISPLAY_MESSAGE,
+	"\377Dobra, jeszcze poczekam.",
+	END_DIALOG,
+};
+
+const static char *polishDialog161[] = {
+	"No, a teraz, jak brzmi has%o?",
+	CHANGE_CHARACTER,
+	"Spadaj, <a%osny $mieciu.",
+	CHANGE_CHARACTER,
+	"B@d> grzeczny, albo po%askocz# znowu.",
+	CHANGE_CHARACTER,
+	"Dalej, to b#dzie przyjemno$^.",
+	CHANGE_CHARACTER,
+	"\377Podoba%o si# panu to, no nie?",
+	CHANGE_CHARACTER,
+	"No wiesz...",
+	CHANGE_CHARACTER,
+	"Dobra, znajd# jaki$ inny spos*b.",
+	END_DIALOG,
+};
+
+const static char *polishDialog162[] = {
+	"Przynios%em panu co$...",
+	CHANGE_CHARACTER,
+	"Nie dam si# przekupi^.",
+	CHANGE_CHARACTER,
+	"Taaak?",
+	END_DIALOG,
+};
+
+const static char *polishDialog163[] = {
+	NEW_LINE,
+	"OH DAJMIDAJMIDAJMI!!!",
+	DISPLAY_MESSAGE,
+	"ZROBI[ WSZYSTKO!!!",
+	CHANGE_CHARACTER,
+	"Has%o...",
+	CHANGE_CHARACTER,
+	"Has%o brzmi \'KAWA\'.",
+	DISPLAY_MESSAGE,
+	"Powiedz je barmanowi, a co$ ci da.",
+	DISPLAY_MESSAGE,
+	"Potem opowie ci o trzecim te$cie.",
+	DISPLAY_MESSAGE,
+	"TERAZ UWOLNIJ MNIE!!!",
+	CHANGE_CHARACTER,
+	"Pomy$l# o tym.",
+	END_DIALOG,
+};
+
+const static char *polishDialog164[] = {
+	"Ty...",
+	DISPLAY_MESSAGE,
+	"...ty...",
+	DISPLAY_MESSAGE,
+	"\377...zda%e$!",
+	END_DIALOG,
+};
+
+const static char *polishDialog165[] = {
+	"Co powiesz na cudowny kalejdoskop?",
+	CHANGE_CHARACTER,
+	"Mia%em kiedy$ jeden, ale kapitan zobaczy%...",
+	DISPLAY_MESSAGE,
+	"...jak si# nim bawi# i zabra% mi go.",
+	DISPLAY_MESSAGE,
+	"My$l#, <e sam go chcia%, no wiesz...",
+	CHANGE_CHARACTER,
+	"Jak dasz mi gazet#, dam ci",
+	NEW_LINE,
+	"ten kalejdoskop.",
+	CHANGE_CHARACTER,
+	"Nawet nie chc# wiedzie^, sk@d go masz...",
+	CHANGE_CHARACTER,
+	"I dobrze.",
+	CHANGE_CHARACTER,
+	"...ale co, je$li kapitan mnie znowu zobaczy?",
+	CHANGE_CHARACTER,
+	"Nie martw si#, jest zwi@zany.",
+	CHANGE_CHARACTER,
+	"Och, test numer dwa, co?...",
+	CHANGE_CHARACTER,
+	"Yep.",
+	CHANGE_CHARACTER,
+	"Dobra, dawaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog166[] = {
+	"\'KAWA\'.",
+	END_DIALOG,
+};
+
+const static char *polishDialog167[] = {
+	"Gor@ca, nie?",
+	CHANGE_CHARACTER,
+	"Uh-huh.",
+	CHANGE_CHARACTER,
+	"Kapitan powiedzia%, <e opowie mi pan",
+	NEW_LINE,
+	"o trzecim te$cie.",
+	CHANGE_CHARACTER,
+	"Znowu...",
+	DISPLAY_MESSAGE,
+	"Dobra, to rodzaj chowanego.",
+	DISPLAY_MESSAGE,
+	"Kapitan si# chowa, ty szukasz.",
+	CHANGE_CHARACTER,
+	"Ale on jest wci@< przywi@zany do krzes%a!",
+	CHANGE_CHARACTER,
+	"Ten cz%owiek i te jego gierki...",
+	DISPLAY_MESSAGE,
+	"Prze<ywa je bardziej, ni< powinien!...",
+	DISPLAY_MESSAGE,
+	"Oszuka% ci#.",
+	DISPLAY_MESSAGE,
+	"Id> i sprawd>.",
+	DISPLAY_MESSAGE,
+	"Na pewno ju< si# uwolni%.",
+	CHANGE_CHARACTER,
+	"Ale zabra%em mu n*<!",
+	DISPLAY_MESSAGE,
+	"Jak m*g% rozci@^ wi#zy?!",
+	CHANGE_CHARACTER,
+	"Mo<e odszed% z krzes%em przywi@zanym do...",
+	DISPLAY_MESSAGE,
+	"Niewa<ne.",
+	CHANGE_CHARACTER,
+	"Jakie$ wskaz*wki co do miejsca jego ukrycia?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	CHANGE_CHARACTER,
+	"Och, daj pan spok*j.",
+	CHANGE_CHARACTER,
+	"Nie, ch%opcze. Graj uczciwie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog168[] = {
+	"Czas na ma%@ podpowied>?",
+	CHANGE_CHARACTER,
+	"Nie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog169[] = {
+	"Dzie= dobry. Jestem Marek.",
+	CHANGE_CHARACTER,
+	"A ja nie.",
+	DISPLAY_MESSAGE,
+	"Co mog# dla ciebie zrobi^?",
+	CHANGE_CHARACTER,
+	"\377Da^ mi mn*stwo forsy...",
+	DISPLAY_MESSAGE,
+	"...lub stan@^ na g%owie...",
+	DISPLAY_MESSAGE,
+	"...lub...",
+	CHANGE_CHARACTER,
+	"Okej, okej. Remis.",
+	DISPLAY_MESSAGE,
+	"Wi#c?...",
+	CHANGE_CHARACTER,
+	"Kto jeszcze jest w obozie?",
+	CHANGE_CHARACTER,
+	"Jeste$ dziennikarzem?",
+	CHANGE_CHARACTER,
+	"Nie, tajnym agentem.",
+	CHANGE_CHARACTER,
+	"Ty te<?... W ka<dym razie jest",
+	NEW_LINE,
+	"tu tylko nas trzech.",
+	DISPLAY_MESSAGE,
+	"Ja, kapitan i stra<nik.",
+	CHANGE_CHARACTER,
+	"Bez kobiet?",
+	CHANGE_CHARACTER,
+	"Bez p%aczu.",
+	CHANGE_CHARACTER,
+	"\377No c*<...",
+	END_DIALOG,
+};
+
+const static char *polishDialog170[] = {
+	"Ruch nie za wielki, nie?",
+	CHANGE_CHARACTER,
+	"Zamawiasz co$ czy nie?",
+	CHANGE_CHARACTER,
+	"Nie mam forsy.",
+	CHANGE_CHARACTER,
+	"Dzisiaj za darmo.",
+	CHANGE_CHARACTER,
+	"Powa<nie?",
+	CHANGE_CHARACTER,
+	"Powa<nie.",
+	CHANGE_CHARACTER,
+	"Chc# hot-doga.",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Pizz#?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Tosta?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"Cokolwiek?",
+	CHANGE_CHARACTER,
+	"Pud%o.",
+	CHANGE_CHARACTER,
+	"\377Nie, dzi#kuj#. Nie jestem",
+	NEW_LINE,
+	"g%odny.",
+	END_DIALOG,
+};
+
+const static char *polishDialog171[] = {
+	"Co pan pije?",
+	CHANGE_CHARACTER,
+	"Herbat#.",
+	CHANGE_CHARACTER,
+	"Na pewno...",
+	END_DIALOG,
+};
+
+const static char *polishDialog172[] = {
+	"]adna pogoda.",
+	CHANGE_CHARACTER,
+	"Mhmmm...",
+	END_DIALOG,
+};
+
+const static char *polishDialog173[] = {
+	"Czasem czuj# si# zm#czony.",
+	DISPLAY_MESSAGE,
+	"\377Bardzo zm#czony.",
+	END_DIALOG,
+};
+
+const static char *polishDialog174[] = {
+	"Hej, Woodstock si# sko=czy%!",
+	END_DIALOG,
+};
+
+const static char *polishDialog175[] = {
+	"Dzi#ki.",
+	END_DIALOG,
+};
+
+const static char *polishDialog176[] = {
+	CHANGE_CHARACTER,
+	"Co u licha...",
+	END_DIALOG,
+};
+
+const static char *polishDialog177[] = {
+	"Hej, nie jest pan spraginony?",
+	DISPLAY_MESSAGE,
+	"Pana kubek le<y od%ogiem...",
+	END_DIALOG,
+};
+
+const static char *polishDialog178[] = {
+	"Sir, mamy sygna%y, <e...",
+	CHANGE_CHARACTER,
+	"P*<niej! Teraz jestem",
+	NEW_LINE,
+	"bardzo zaj#ty.",
+	CHANGE_CHARACTER,
+	"Jak pan sobie <yczy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog179[] = {
+	"Sir, jaki$ %epek pr*bowa% dosta^ si#",
+	NEW_LINE,
+	"do posiad%o$ci.",
+	END_DIALOG,
+};
+
+const static char *polishDialog180[] = {
+	"Nie przejmuj si#.",
+	DISPLAY_MESSAGE,
+	"M%odzi ch%opcy zawsze s@ ciekawi...",
+	DISPLAY_MESSAGE,
+	"...a moje domostwo musi dzia%a^ im na wyobra>ni#.",
+	DISPLAY_MESSAGE,
+	"Ale trzymaj na niego oko.",
+	CHANGE_CHARACTER,
+	"Tak jest, sir!",
+	END_DIALOG,
+};
+
+const static char *polishDialog181[] = {
+	"Sir, ten ch%opak zn*w pr*bowa%.",
+	END_DIALOG,
+};
+
+const static char *polishDialog182[] = {
+	"My$lisz, <e to powa<ne?",
+	CHANGE_CHARACTER,
+	"Hmmm... Nie...",
+	DISPLAY_MESSAGE,
+	"On nie wygl@da gro>nie.",
+	DISPLAY_MESSAGE,
+	"Ale mo<e powinni$my...",
+	CHANGE_CHARACTER,
+	"Nieee.",
+	DISPLAY_MESSAGE,
+	"Po prostu r*b dalej swoj@ robot#.",
+	DISPLAY_MESSAGE,
+	"Ale powiedz mi, jak si# znowu pojawi.",
+	DISPLAY_MESSAGE,
+	"Teraz wracaj do pracy.",
+	END_DIALOG,
+};
+
+const static char *polishDialog183[] = {
+	"Nie m*w mi, <e to znowu ten szczyl...",
+	CHANGE_CHARACTER,
+	"Obawiam si#, <e tak.",
+	DISPLAY_MESSAGE,
+	"Stra<nik m*wi, <e ch%opiec jest zdesperowany.",
+	END_DIALOG,
+};
+
+const static char *polishDialog184[] = {
+	"Zaczyna mnie denerwowa^.",
+	DISPLAY_MESSAGE,
+	"Za co ja wam p%ac#?",
+	CHANGE_CHARACTER,
+	"Mam go?...",
+	CHANGE_CHARACTER,
+	"Jeszcze nie. Dajmy mu",
+	NEW_LINE,
+	"ostatni@ szans#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog185[] = {
+	"Sir...",
+	CHANGE_CHARACTER,
+	"Niech zgadn#...",
+	DISPLAY_MESSAGE,
+	"CH]OPAK?!?...",
+	CHANGE_CHARACTER,
+	"Bingo.",
+	CHANGE_CHARACTER,
+	"Dlaczego ja musz# troszczy^",
+	NEW_LINE,
+	"si# o wszystko?!",
+	DISPLAY_MESSAGE,
+	"Nie mo<esz zrobi^ niczego samemu?",
+	CHANGE_CHARACTER,
+	"Mam go zabi^, czy tylko st%uc?",
+	CHANGE_CHARACTER,
+	"Jeste$ g%upi. Istniej@",
+	NEW_LINE,
+	"...lepsze sposoby...",
+	END_DIALOG,
+};
+
+const static char *polishDialog186[] = {
+	"Zajm# si# tym osobi$cie.",
+	DISPLAY_MESSAGE,
+	"A teraz wyjd>!",
+	DISPLAY_MESSAGE,
+	"Musz# si# ubra^.",
+	END_DIALOG,
+};
+
+const static char *polishDialog187[] = {
+	"Ty tam, na g*rze!",
+	DISPLAY_MESSAGE,
+	"Z%a> natychmiast!",
+	DISPLAY_MESSAGE,
+	"\377Zero reakcji.",
+	DISPLAY_MESSAGE,
+	"\377G%uchy czy co?",
+	END_DIALOG,
+};
+
+const static char *polishDialog188[] = {
+	"Ty, ptasiek, nie b*j si#.",
+	DISPLAY_MESSAGE,
+	"Chod> do tatusia...",
+	DISPLAY_MESSAGE,
+	"\377(westchnienie)",
+	END_DIALOG,
+};
+
+const static char *polishDialog189[] = {
+	"Chod> tu, ptaszku...",
+	END_DIALOG,
+};
+
+const static char *polishDialog190[] = {
+	NEW_LINE,
+	"Trzymaj si# z dala od tamtych drzwi!",
+	CHANGE_CHARACTER,
+	"Czemu?",
+	CHANGE_CHARACTER,
+	"Nie tw*j interes.",
+	DISPLAY_MESSAGE,
+	"Po prostu nie dotykaj ich.",
+	END_DIALOG,
+};
+
+const static char *polishDialog191[] = {
+	CHANGE_CHARACTER,
+	"M*wi%em, <eby$ trzyma% si# z dala, nie?",
+	CHANGE_CHARACTER,
+	"OK, OK...",
+	END_DIALOG,
+};
+
+const static char *polishDialog192[] = {
+	"Przywioz%em now@ dostaw# z%ota.",
+	CHANGE_CHARACTER,
+	"Tak, wiem. Has%o?",
+	CHANGE_CHARACTER,
+	"Grzyb.",
+	CHANGE_CHARACTER,
+	"W porz@dku. Mo<esz zacz@^ wnosi^",
+	NEW_LINE,
+	"depozyt do $rodka.",
+	CHANGE_CHARACTER,
+	"Znakomicie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog193[] = {
+	"Jak ju< powiedzia%em, nasza organizacja",
+	NEW_LINE,
+	"zajmuje si# niezwyk%ymi sprawami.",
+	DISPLAY_MESSAGE,
+	"Ostatnio na przyk%ad rozwi@zali$my problem",
+	NEW_LINE,
+	"UFO nad Bia%ym Domem.",
+	CHANGE_CHARACTER,
+	"Oh, naphawd#? Jak?",
+	CHANGE_CHARACTER,
+	"Zestrzelili$my go.",
+	CHANGE_CHARACTER,
+	"\377Hozumiem. I kto ...lub co",
+	NEW_LINE,
+	"by%o w $hodku?",
+	CHANGE_CHARACTER,
+	"Chce pani wiedzie^?",
+	CHANGE_CHARACTER,
+	"O, tak! Jako wh*<ka jestem",
+	NEW_LINE,
+	"bahdzo ciekawska.",
+	CHANGE_CHARACTER,
+	"NAPRAWD[ chce pani wiedzie^?",
+	CHANGE_CHARACTER,
+	"TAK!",
+	CHANGE_CHARACTER,
+	"Ale ...NAPRAWD[ NAPRAWD[?",
+	CHANGE_CHARACTER,
+	"TAK!",
+	CHANGE_CHARACTER,
+	"\377Przepraszam, ale nie mog# powiedzie^.",
+	DISPLAY_MESSAGE,
+	"W ka<dym razie... Potrzebujemy pani pomocy.",
+	CHANGE_CHARACTER,
+	"Nie jestem tajnym agentem, tylko wh*<k@...",
+	CHANGE_CHARACTER,
+	"Wiem. Ale mam tutaj bardzo",
+	NEW_LINE,
+	"trudn@ spraw#...",
+	DISPLAY_MESSAGE,
+	"...kt*rej nie mog# rozwi@za^ od p*% roku.",
+	DISPLAY_MESSAGE,
+	"Jestem w beznadziejnej sytuacji.",
+	DISPLAY_MESSAGE,
+	"Pomy$la%em wi#c sobie, <e skoro zajmujemy",
+	NEW_LINE,
+	"si# dziwnymi sprawami...",
+	DISPLAY_MESSAGE,
+	"...to czemu nie u<y^ dziwnych",
+	NEW_LINE,
+	"$rodk*w?",
+	CHANGE_CHARACTER,
+	"I?...",
+	CHANGE_CHARACTER,
+	"Poka<# pani ksi@<k# telefoniczn@.",
+	DISPLAY_MESSAGE,
+	"Niech pani u<yje swoich mocy i losowo",
+	NEW_LINE,
+	"wska<e nazwisko.",
+	DISPLAY_MESSAGE,
+	"Mo<e $wie<y umys% pomo<e nam w $ledztwie.",
+	CHANGE_CHARACTER,
+	"Pan nie wierzy, <e to zadzia%a, phawda?",
+	CHANGE_CHARACTER,
+	"Nie, nie wierz#.",
+	CHANGE_CHARACTER,
+	"\377To jest g%upie.",
+	CHANGE_CHARACTER,
+	"Wiem.",
+	CHANGE_CHARACTER,
+	"\377Dobrze. Phosz# pokaza^ mi ksi@<k#.",
+	END_DIALOG,
+};
+
+const static char *polishDialog194[] = {
+	"\377Nazwisko brzmi...",
+	DISPLAY_MESSAGE,
+	"...Hoppeh...",
+	DISPLAY_MESSAGE,
+	"...Mahek Hoppeh...",
+	DISPLAY_MESSAGE,
+	"Hm...",
+	END_DIALOG,
+};
+
+const static char *polishDialog195[] = {
+	"Nadchodzi.",
+	END_DIALOG,
+};
+
+const static char *polishDialog196[] = {
+	"Och, przepraszam za moich ludzi.",
+	DISPLAY_MESSAGE,
+	"S@ ostatnio zbyt nerwowi...",
+	DISPLAY_MESSAGE,
+	"Ale, prosz#... Porozmawiajmy...",
+	END_DIALOG,
+};
+
+const static char *polishDialog197[] = {
+	"S%uchaj pan...",
+	CHANGE_CHARACTER,
+	"Wiem, wiem.",
+	DISPLAY_MESSAGE,
+	"Prosz# da^ mi pi#^ minut, a wszystko",
+	NEW_LINE,
+	"stanie si# jasne.",
+	CHANGE_CHARACTER,
+	"Wal pan, zawsze lubi%em zabaw#",
+	NEW_LINE,
+	"w konspiracj#.",
+	CHANGE_CHARACTER,
+	"C*<...",
+	DISPLAY_MESSAGE,
+	"Jestem szefem organizacji zwanej RGB.",
+	CHANGE_CHARACTER,
+	"A czemu RGB?",
+	CHANGE_CHARACTER,
+	"Nawet ja nie wiem.",
+	DISPLAY_MESSAGE,
+	"Jest tak tajna.",
+	CHANGE_CHARACTER,
+	"\377Miodzio.",
+	CHANGE_CHARACTER,
+	"Celem organizacji jest rozwi@zywanie",
+	NEW_LINE,
+	"wszystkich nadzwyczajnych problem*w",
+	NEW_LINE,
+	"$wiata.",
+	CHANGE_CHARACTER,
+	"Jak podatki?",
+	CHANGE_CHARACTER,
+	"Nie, jak UFO, dziwne wynalazki,",
+	NEW_LINE,
+	"duchy...",
+	CHANGE_CHARACTER,
+	"]a%!",
+	CHANGE_CHARACTER,
+	"Tak, kiedy policja, wywiad i inne s%u<by",
+	NEW_LINE,
+	"nie mog@ da^ sobie rady...",
+	DISPLAY_MESSAGE,
+	"...my wkraczamy. Ale...",
+	DISPLAY_MESSAGE,
+	"\377Sze$^ miesi#cy temu z%oto i got*wka",
+	NEW_LINE,
+	"zdeponowane w najlepszych bankach zacz#%y",
+	NEW_LINE,
+	"znika^.",
+	DISPLAY_MESSAGE,
+	"Dos%ownie. Pum! I nie ma!",
+	CHANGE_CHARACTER,
+	"No i?...",
+	CHANGE_CHARACTER,
+	"Nie mamy <adnych $lad*w.",
+	DISPLAY_MESSAGE,
+	"Ca%a rzecz odbywa si# w kilka sekund.",
+	DISPLAY_MESSAGE,
+	"Mamy nagrania wideo, ale one nic nie",
+	NEW_LINE,
+	"pomagaj@.",
+	DISPLAY_MESSAGE,
+	"Dlatego wynaj#li$my wr*<k#,",
+	NEW_LINE,
+	"aby wskaza%a nam kogo$...",
+	DISPLAY_MESSAGE,
+	"...kto mo<e sta^ si# naszym",
+	NEW_LINE,
+	"zbawieniem.",
+	DISPLAY_MESSAGE,
+	"Wybra%a ciebie.",
+	CHANGE_CHARACTER,
+	"Bardzo przepraszam...",
+	DISPLAY_MESSAGE,
+	"Pan powiedzia%, <e wynaj#li$cie...",
+	NEW_LINE,
+	"...WR{}K[?!?",
+	CHANGE_CHARACTER,
+	"Ton@cy brzytwy si# chwyta.",
+	CHANGE_CHARACTER,
+	"To jest szalone. Mamo, obud> mnie!",
+	CHANGE_CHARACTER,
+	"Spokojnie. Mamy dla ciebie",
+	NEW_LINE,
+	"propozycj#.",
+	DISPLAY_MESSAGE,
+	"Spr*buj nam pom*c, a zostaniesz nagrodzony.",
+	CHANGE_CHARACTER,
+	"Nie mam motywacji.",
+	CHANGE_CHARACTER,
+	"Samozadowolenie?",
+	END_DIALOG,
+};
+
+const static char *polishDialog198[] = {
+	CHANGE_CHARACTER,
+	"Nasz szacunek?",
+	END_DIALOG,
+};
+
+const static char *polishDialog199[] = {
+	CHANGE_CHARACTER,
+	"Patriotyzm?",
+	END_DIALOG,
+};
+
+const static char *polishDialog200[] = {
+	CHANGE_CHARACTER,
+	"Dziewczyny?",
+	CHANGE_CHARACTER,
+	"To znaczy?...",
+	CHANGE_CHARACTER,
+	"To proste. Ka<da dziewczyna zakocha si#",
+	NEW_LINE,
+	"w tajnym agencie.",
+	END_DIALOG,
+};
+
+const static char *polishDialog201[] = {
+	"Dobra, zgadzam si#. Co mam robi^?",
+	CHANGE_CHARACTER,
+	"Zanim zaczniesz, sugeruj# kr*tki pobyt",
+	NEW_LINE,
+	"w naszym specjalnym tajnym obozie",
+	NEW_LINE,
+	"treningowym.",
+	DISPLAY_MESSAGE,
+	"Wydam ci przepustk#.",
+	DISPLAY_MESSAGE,
+	"Umowa stoi?",
+	CHANGE_CHARACTER,
+	"Stoi!",
+	END_DIALOG,
+};
+
+const static char *polishDialog202[] = {
+	"\377..i nawet mia%em niez%y ubaw.",
+	CHANGE_CHARACTER,
+	"\377iesz# si#, <e podobaj@ ci si# nasze metody.",
+	DISPLAY_MESSAGE,
+	"Ale przejd>my do rzeczy.",
+	DISPLAY_MESSAGE,
+	"Musz# przyzna^, i< nie wierzy%em, <e mo<e by^",
+	NEW_LINE,
+	"z ciebie jaki$ po<ytek.",
+	DISPLAY_MESSAGE,
+	"Nic osobistego.",
+	CHANGE_CHARACTER,
+	"Mam nadziej#.",
+	CHANGE_CHARACTER,
+	"Ale przynios%e$ nam szcz#$cie.",
+	DISPLAY_MESSAGE,
+	"Nasi ludzie dowiedzieli si#, <e",
+	NEW_LINE,
+	"pewien przeci#tny biznesmen...",
+	DISPLAY_MESSAGE,
+	"...niejaki Ci@gwa Jan...",
+	DISPLAY_MESSAGE,
+	"...wydaje fors# jak szalony...",
+	DISPLAY_MESSAGE,
+	"...na jakie$ dziwne materia%y.",
+	DISPLAY_MESSAGE,
+	"Zwi@zane s@ z tym trzy bardzo podejrzane",
+	NEW_LINE,
+	"rzeczy:",
+	DISPLAY_MESSAGE,
+	"...P%aci got*wk@...",
+	DISPLAY_MESSAGE,
+	"...co jest co najmniej bez sensu",
+	NEW_LINE,
+	"w erze kart kredytowych...",
+	DISPLAY_MESSAGE,
+	"...Po drugie, jeszcze p*% roku temu nie by% tak",
+	NEW_LINE,
+	"bogaty, jak jest dzi$...",
+	DISPLAY_MESSAGE,
+	"...Po trzecie, po diab%a mu sto kilogram*w",
+	NEW_LINE,
+	"saletry?",
+	CHANGE_CHARACTER,
+	"Mo<e to jaki$ dziwak.",
+	CHANGE_CHARACTER,
+	"Mo<e. Jednak chcia%bym, <eby$ w$lizgn@% si#",
+	NEW_LINE,
+	"jako$ do jego posiad%o$ci...",
+	DISPLAY_MESSAGE,
+	"...i rozejrza% si# co nieco.",
+	DISPLAY_MESSAGE,
+	"Co ty na to?",
+	CHANGE_CHARACTER,
+	"No, nie wiem...",
+	CHANGE_CHARACTER,
+	"Obiecuj#, <e po twojej misji zrobi# ci#",
+	NEW_LINE,
+	"oficjalnym tajnym agentem.",
+	CHANGE_CHARACTER,
+	"\377S%owo?",
+	CHANGE_CHARACTER,
+	"Moje s%owo honoru.",
+	CHANGE_CHARACTER,
+	"Okej. Jestem gotowy.",
+	NEW_LINE,
+	"Gdzie mam si# uda^?",
+	CHANGE_CHARACTER,
+	"To ma%a wioska. Nie znajdziesz jej",
+	NEW_LINE,
+	"na wielu mapach...",
+	DISPLAY_MESSAGE,
+	"Ale przed wyjazdem dam ci specjalne",
+	NEW_LINE,
+	"wyposa<enie agenta.",
+	DISPLAY_MESSAGE,
+	"Szkoda, <e lataj@ce buty s@ w%a$nie",
+	NEW_LINE,
+	"wypo<yczone.",
+	DISPLAY_MESSAGE,
+	"R#kawice o megamocy te< si# sko=czy%y.",
+	DISPLAY_MESSAGE,
+	"W%a$ciwie to mam tylko specjalny super klej.",
+	DISPLAY_MESSAGE,
+	"No, ale lepszy rydz ni< nic...",
+	DISPLAY_MESSAGE,
+	"Powodzenia!",
+	END_DIALOG,
+};
+
+const static char *polishDialog203[] = {
+	CHANGE_CHARACTER,
+	"Nie martw si#. Wyzdrowieje.",
+	DISPLAY_MESSAGE,
+	"Zreszt@... o, patrz, idzie...",
+	END_DIALOG,
+};
+
+const static char *polishDialog204[] = {
+	CHANGE_CHARACTER,
+	"Nale<a%o mu si#. Ale zmarnowali$my",
+	NEW_LINE,
+	"do$^ czasu. Chod>my!",
+	CHANGE_CHARACTER,
+	"Nie! Chwila!... Musz# zobaczy^ Ann#!",
+	CHANGE_CHARACTER,
+	"Eemm... Nie da rady.",
+	CHANGE_CHARACTER,
+	"A to niby dlaczego?!",
+	CHANGE_CHARACTER,
+	"\377Widzisz... Anna to nasz cz%owiek.",
+	DISPLAY_MESSAGE,
+	"Mia%a rozkaz trzyma^ na ciebie oko...",
+	DISPLAY_MESSAGE,
+	"Na wypadek, gdyby zawiod%a mikrokamera.",
+	DISPLAY_MESSAGE,
+	"Mia%a by^ tak<e twoim natchnieniem...",
+	CHANGE_CHARACTER,
+	"Nie wierz# panu!",
+	CHANGE_CHARACTER,
+	"Ona ju< odlecia%a na",
+	NEW_LINE,
+	"kolejn@ misj#.",
+	NEW_LINE,
+	"Sorry.",
+	CHANGE_CHARACTER,
+	"To babcia pewnie te< by%a w to zamieszana?",
+	CHANGE_CHARACTER,
+	"To tubylka. Op%acili$my j@.",
+	CHANGE_CHARACTER,
+	"To ciekawe. Bo skoro tak, to dlaczego",
+	NEW_LINE,
+	"mia%em tyle trudno$ci?...",
+	CHANGE_CHARACTER,
+	"Wzbudzali$my twoj@ determinacj#.",
+	DISPLAY_MESSAGE,
+	"Liczyli$my na to, <e masz charakter.",
+	DISPLAY_MESSAGE,
+	"No i nie pomylili$my si#.",
+	CHANGE_CHARACTER,
+	"Traktujecie ludzi jak zwierz@tka",
+	NEW_LINE,
+	"do$wiadczalne.",
+	DISPLAY_MESSAGE,
+	"Jeste$cie bez lito$ci...",
+	CHANGE_CHARACTER,
+	"Ale to dzia%a, nie?",
+	CHANGE_CHARACTER,
+	"To wszystko jest takie niewiarygodne.",
+	DISPLAY_MESSAGE,
+	"Mo<e jeszcze zaraz si# dowiem, <e pies to",
+	NEW_LINE,
+	"zamaskowany ninja...",
+	DISPLAY_MESSAGE,
+	"...staruszek by% moim gorylem...",
+	DISPLAY_MESSAGE,
+	"...a pan jest z Marsa?!",
+	END_DIALOG,
+};
+
+const static char *polishDialog205[] = {
+	CHANGE_CHARACTER,
+	"To nie \'Dynastia\', to zwyk%a",
+	NEW_LINE,
+	"praca agenta.",
+	DISPLAY_MESSAGE,
+	"Ale, ale... Wst@p do RGB i tam",
+	NEW_LINE,
+	"na pewno spotkasz Ann#!",
+	CHANGE_CHARACTER,
+	"\377C*<... Pomy$l# o tym...",
+	CHANGE_CHARACTER,
+	"Wspaniale. W ka<dym razie...",
+	DISPLAY_MESSAGE,
+	"To by%a przyjemno$^ z tob@ pracowa^!",
+	END_DIALOG,
+};
+
+const static char *polishDialog206[] = {
+	CHANGE_CHARACTER,
+	"Nie musisz mi m*wi^. W%a$nie przeczyta%em",
+	NEW_LINE,
+	"szczeg*%owy raport.",
+	CHANGE_CHARACTER,
+	"Ale co sta%o si# z profesorem?",
+	CHANGE_CHARACTER,
+	"Och, ten biedak znowu zapomnia% formu%y.",
+	DISPLAY_MESSAGE,
+	"Damy mu najlepsze laboratorium, jakie mo<emy.",
+	DISPLAY_MESSAGE,
+	"Obecnie mamy tylko tych kilka pigu%ek,",
+	NEW_LINE,
+	"kt*re nam przekaza%e$.",
+	CHANGE_CHARACTER,
+	"A Ci@gwa?",
+	CHANGE_CHARACTER,
+	"Nie b*j si#, jego chciwo$^ zostanie ukarana.",
+	DISPLAY_MESSAGE,
+	"Mam nadziej#...",
+	CHANGE_CHARACTER,
+	"Jeszcze tylko drobiazg...",
+	DISPLAY_MESSAGE,
+	"Obieca% mi pan co$...",
+	END_DIALOG,
+};
+
+const static char *polishDialog207[] = {
+	CHANGE_CHARACTER,
+	"Ja?... Nie pami#tam...",
+	CHANGE_CHARACTER,
+	"Powiedzia% pan, <e zrobi mnie",
+	NEW_LINE,
+	"oficjalnym agentem...",
+	DISPLAY_MESSAGE,
+	"\'Dziewczyny kochaj@ si# w agentach\'.",
+	NEW_LINE,
+	"Pami#ta pan?",
+	END_DIALOG,
+};
+
+const static char *polishDialog208[] = {
+	CHANGE_CHARACTER,
+	"(westchnienie)",
+	DISPLAY_MESSAGE,
+	"Obietnica to obietnica...",
+	DISPLAY_MESSAGE,
+	"Niech pomy$l#.",
+	DISPLAY_MESSAGE,
+	"\377W porz@dku. Podejd> tutaj.",
+	END_DIALOG,
+};
+
+const static char *polishDialog209[] = {
+	"W imieniu...",
+	DISPLAY_MESSAGE,
+	"...ple...ple...ple...",
+	NEW_LINE,
+	"...ple...ple...",
+	DISPLAY_MESSAGE,
+	"...dla naszego kraju.",
+	END_DIALOG,
+};
+
+const static char *polishDialog210[] = {
+	"       C*<...       ",
+	NEW_LINE,
+	"To wszystko, kochani!",
+	END_DIALOG,
+};
+
+const static char *polishDialog211[] = {
+	"Znalaz%em pigu%k# czasu!",
+	DISPLAY_MESSAGE,
+	"Musia%a wypa$^ ze s%oika!...",
+	DISPLAY_MESSAGE,
+	"\377Miodzio.",
+	END_DIALOG,
+};
+
+const static char *polishDialog212[] = {
+	"]a%! Uroczo",
+	NEW_LINE,
+	"tutaj!...",
 	END_DIALOG
 };
 
@@ -20948,6 +24955,222 @@ const static char** englishDialogs[] = {
 	englishDialog212
 };
 
+const static char **polishDialogs[] = {
+	polishDialog0,
+	polishDialog1,
+	polishDialog2,
+	polishDialog3,
+	polishDialog4,
+	polishDialog5,
+	polishDialog6,
+	polishDialog7,
+	polishDialog8,
+	polishDialog9,
+	polishDialog10,
+	polishDialog11,
+	polishDialog12,
+	polishDialog13,
+	polishDialog14,
+	polishDialog15,
+	polishDialog16,
+	polishDialog17,
+	polishDialog18,
+	polishDialog19,
+	polishDialog20,
+	polishDialog21,
+	polishDialog22,
+	polishDialog23,
+	polishDialog24,
+	polishDialog25,
+	polishDialog26,
+	polishDialog27,
+	polishDialog28,
+	polishDialog29,
+	polishDialog30,
+	polishDialog31,
+	polishDialog32,
+	polishDialog33,
+	polishDialog34,
+	polishDialog35,
+	polishDialog36,
+	polishDialog37,
+	polishDialog38,
+	polishDialog39,
+	polishDialog40,
+	polishDialog41,
+	polishDialog42,
+	polishDialog43,
+	polishDialog44,
+	polishDialog45,
+	polishDialog46,
+	polishDialog47,
+	polishDialog48,
+	polishDialog49,
+	polishDialog50,
+	polishDialog51,
+	polishDialog52,
+	polishDialog53,
+	polishDialog54,
+	polishDialog55,
+	polishDialog56,
+	polishDialog57,
+	polishDialog58,
+	polishDialog59,
+	polishDialog60,
+	polishDialog61,
+	polishDialog62,
+	polishDialog63,
+	polishDialog64,
+	polishDialog65,
+	polishDialog66,
+	polishDialog67,
+	polishDialog68,
+	polishDialog69,
+	polishDialog70,
+	polishDialog71,
+	polishDialog72,
+	polishDialog73,
+	polishDialog74,
+	polishDialog75,
+	polishDialog76,
+	polishDialog77,
+	polishDialog78,
+	polishDialog79,
+	polishDialog80,
+	polishDialog81,
+	polishDialog82,
+	polishDialog83,
+	polishDialog84,
+	polishDialog85,
+	polishDialog86,
+	polishDialog87,
+	polishDialog88,
+	polishDialog89,
+	polishDialog90,
+	polishDialog91,
+	polishDialog92,
+	polishDialog93,
+	polishDialog94,
+	polishDialog95,
+	polishDialog96,
+	polishDialog97,
+	polishDialog98,
+	polishDialog99,
+	polishDialog100,
+	polishDialog101,
+	polishDialog102,
+	polishDialog103,
+	polishDialog104,
+	polishDialog105,
+	polishDialog106,
+	polishDialog107,
+	polishDialog108,
+	polishDialog109,
+	polishDialog110,
+	polishDialog111,
+	polishDialog112,
+	polishDialog113,
+	polishDialog114,
+	polishDialog115,
+	polishDialog116,
+	polishDialog117,
+	polishDialog118,
+	polishDialog119,
+	polishDialog120,
+	polishDialog121,
+	polishDialog122,
+	polishDialog123,
+	polishDialog124,
+	polishDialog125,
+	polishDialog126,
+	polishDialog127,
+	polishDialog128,
+	polishDialog129,
+	polishDialog130,
+	polishDialog131,
+	polishDialog132,
+	polishDialog133,
+	polishDialog134,
+	polishDialog135,
+	polishDialog136,
+	polishDialog137,
+	polishDialog138,
+	polishDialog139,
+	polishDialog140,
+	polishDialog141,
+	polishDialog142,
+	polishDialog143,
+	polishDialog144,
+	polishDialog145,
+	polishDialog146,
+	polishDialog147,
+	polishDialog148,
+	polishDialog149,
+	polishDialog150,
+	polishDialog151,
+	polishDialog152,
+	polishDialog153,
+	polishDialog154,
+	polishDialog155,
+	polishDialog156,
+	polishDialog157,
+	polishDialog158,
+	polishDialog159,
+	polishDialog160,
+	polishDialog161,
+	polishDialog162,
+	polishDialog163,
+	polishDialog164,
+	polishDialog165,
+	polishDialog166,
+	polishDialog167,
+	polishDialog168,
+	polishDialog169,
+	polishDialog170,
+	polishDialog171,
+	polishDialog172,
+	polishDialog173,
+	polishDialog174,
+	polishDialog175,
+	polishDialog176,
+	polishDialog177,
+	polishDialog178,
+	polishDialog179,
+	polishDialog180,
+	polishDialog181,
+	polishDialog182,
+	polishDialog183,
+	polishDialog184,
+	polishDialog185,
+	polishDialog186,
+	polishDialog187,
+	polishDialog188,
+	polishDialog189,
+	polishDialog190,
+	polishDialog191,
+	polishDialog192,
+	polishDialog193,
+	polishDialog194,
+	polishDialog195,
+	polishDialog196,
+	polishDialog197,
+	polishDialog198,
+	polishDialog199,
+	polishDialog200,
+	polishDialog201,
+	polishDialog202,
+	polishDialog203,
+	polishDialog204,
+	polishDialog205,
+	polishDialog206,
+	polishDialog207,
+	polishDialog208,
+	polishDialog209,
+	polishDialog210,
+	polishDialog211,
+	polishDialog212
+};
+
 const static char **russianDialogs[] = {
 	russianDialog0,
 	russianDialog1,
@@ -21874,6 +26097,720 @@ const static char *englishItem91[] = {
 	"\n\n",
 };
 
+const static char *polishItem0[] = {
+	"pi*ro",
+	"\n",
+	"Troch# puszu i zostan# wodzem!",
+	"\n\n",
+};
+
+const static char *polishItem1[] = {
+	"strzelba",
+	"\n",
+	"Lufa jak tr@bka...",
+	"\n\n",
+};
+
+const static char *polishItem2[] = {
+	"skrzynka",
+	"\n",
+	"Chyba nie jest zamkni#ta na klucz!...",
+	"\n\n",
+};
+
+const static char *polishItem3[] = {
+	"skrzynka",
+	// No description
+	"\n\n",
+};
+
+const static char *polishItem4[] = {
+	"klucz francuski",
+	"\n",
+	"Takie rzeczy zawsze si# przydaj@.",
+	"\n\n",
+};
+
+const static char *polishItem5[] = {
+	"grzebie=",
+	"\n",
+	"Pono^ niekt*rzy tego u<ywaj@.",
+	"\n\n",
+};
+
+const static char *polishItem6[] = {
+	"wiatraczek",
+	"\n",
+	"Od$wie<aj@cy.",
+	"\n\n",
+};
+
+const static char *polishItem7[] = {
+	"kawa%ek wios%a",
+	"\n",
+	"Takie po%amane wios%o jest nieco za kr*tkie.",
+	"\n\n",
+};
+
+const static char *polishItem8[] = {
+	"wios%o",
+	"\n",
+	"Klej trzyma ga%@> naprawd#",
+	"\n",
+	"mocno.",
+	"\n\n",
+};
+
+const static char *polishItem9[] = {
+	"kwiat",
+	"\n",
+	"Doprawdy, pachnie",
+	"\n",
+	"bardzo %adnie.",
+	"\n\n",
+};
+
+const static char *polishItem10[] = {
+	"kwiat",
+	"\n",
+	"Jest przepi#kny.",
+	"\n\n",
+};
+
+const static char *polishItem11[] = {
+	"miote%ka",
+	"\n",
+	"Jak sobie j@ przymocuj# tam, gdzie plecy",
+	"\n",
+	"trac@ sw@ szlachetn@ nazw#, to mog#",
+	"\n",
+	"udawa^ kogucika.",
+	"\n\n",
+};
+
+const static char *polishItem12[] = {
+	"pi%a %a=cuchowa",
+	"\n",
+	"Jest w dobrym stanie, ale nie ma paliwa.",
+	"\n\n",
+};
+
+const static char *polishItem13[] = {
+	"pijana pi%a",
+	"\n",
+	"Troch# wierzga, ale dzia%a.",
+	"\n\n",
+};
+
+const static char *polishItem14[] = {
+	"ga%@>",
+	"\n",
+	"Drewno jest bardzo twarde.",
+	"\n\n",
+};
+
+const static char *polishItem15[] = {
+	"whisky",
+	"\n",
+	"Naklejka m*wi, <e ta whisky jest",
+	"\n",
+	"bardzo mocna.",
+	"\n\n",
+};
+
+const static char *polishItem16[] = {
+	"ig%a",
+	"\n",
+	"Ca%kiem du<a, jak na ig%#...",
+	"\n\n",
+};
+
+const static char *polishItem17[] = {
+	"celofan",
+	"\n",
+	"Fajne napisy. Zw%aszcza ten: \'CIASTECZKO",
+	"\n",
+	"MI]O|CI\'. I jest tu narysowane serduszko.",
+	"\n",
+	"Jakie to S]ODKIE...",
+	"\n\n",
+};
+
+const static char *polishItem18[] = {
+	"czekoladowe ciastko",
+	"\n",
+	"Jest to okr@g%e czekoladowe ciastko.",
+	"\n",
+	"Wspania%y prezent.",
+	"\n\n",
+};
+
+const static char *polishItem19[] = {
+	"dziki ziemniak",
+	"\n",
+	"O kurcz#! Ma kszta%t granatu!..",
+	"\n\n",
+};
+
+const static char *polishItem20[] = {
+	"grabie",
+	"\n",
+	"S@ bezu<yteczne, bo odst#py mi#dzy",
+	"\n",
+	"drutami s@ za du<e.",
+	"\n\n",
+};
+
+const static char *polishItem21[] = {
+	"ciastko-serduszko",
+	"\n",
+	"Chyba to jedno ulepszenie nie wystarczy.",
+	"\n\n",
+};
+
+const static char *polishItem22[] = {
+	"owini#te ciastko",
+	"\n",
+	"N*weczka. Przynajmniej tak wygl@da.",
+	"\n\n",
+};
+
+const static char *polishItem23[] = {
+	"wst@<ka",
+	"\n",
+	"B#dzie mi przypomina^ o tej niuni. To jest,",
+	"\n",
+	"chcia%em rzec, o owej istocie ludzkiej",
+	"\n",
+	"przeciwnej p%ci.",
+	"\n\n",
+};
+
+const static char *polishItem24[] = {
+	"grabie",
+	"\n",
+	"Gotowe do pracy.",
+	"\n\n",
+};
+
+const static char *polishItem25[] = {
+	"orzech",
+	"\n",
+	"Prawie tak du<y jak kokos.",
+	"\n\n",
+};
+
+const static char *polishItem26[] = {
+	"sztuczne jab%ko",
+	"\n",
+	"Wygl@da tak prawdziwie, <e prawie",
+	"\n",
+	"wida^ pestki w $rodku.",
+	"\n\n",
+};
+
+const static char *polishItem27[] = {
+	"szyszka",
+	"\n",
+	"Wygl@da jak jedna z tych Hawa=skich dziecinek,",
+	"\n",
+	"co to ka<dy szanuj@cy si# biznesmen musi mie^",
+	"\n",
+	"przyklejon@ do u$miechu.",
+	"\n\n",
+};
+
+const static char *polishItem28[] = {
+	"super klej",
+	"\n",
+	"Jest to turbo mega giga super ultra",
+	"\n",
+	"szybko-schn@cy klej plus.",
+	"\n\n",
+};
+
+const static char *polishItem29[] = {
+	"szyszka & ig%a",
+	"\n",
+	"Wci@< tu czego$ brakuje...",
+	"\n\n",
+};
+
+const static char *polishItem30[] = {
+	"szyszka & pi*ro",
+	"\n",
+	"Wci@< tu czego$ brakuje...",
+	"\n\n",
+};
+
+const static char *polishItem31[] = {
+	"strza%ka",
+	"\n",
+	"Teraz wszystko, czego potrzebuj#, to cel!",
+	"\n\n",
+};
+
+const static char *polishItem32[] = {
+	"brudna miote%ka",
+	"\n",
+	"Jest ca%a pomazana sadz@.",
+	"\n\n",
+};
+
+const static char *polishItem33[] = {
+	"malowany ziemniak",
+	"\n",
+	"Jedyna r*<nica mi#dzy tym a granatem jest taka,",
+	"\n",
+	"<e kartofle zwykle nie wybuchaj@.",
+	"\n\n",
+};
+
+const static char *polishItem34[] = {
+	"podno$nik",
+	"\n",
+	"Chyba mo<na mu zawierzy^.",
+	"\n\n",
+};
+
+const static char *polishItem35[] = {
+	"ko$^ dinozaura",
+	"\n",
+	"Du<a i dobrze zakonserwowana. To musia% by^",
+	"\n",
+	"naprawd# du<y, eee..., zwierz...",
+	"\n\n",
+};
+
+const static char *polishItem36[] = {
+	"%opata",
+	"\n",
+	"Prawdziwa podpora ludzi pracy.",
+	"\n\n",
+};
+
+const static char *polishItem37[] = {
+	"lina",
+	"\n",
+	"Wygl@da na siln@.",
+	"\n\n",
+};
+
+const static char *polishItem38[] = {
+	"maska",
+	"\n",
+	"Mo<e zmieni mnie w kogo$ nadzwyczajnego?",
+	"\n\n",
+};
+
+const static char *polishItem39[] = {
+	"p%etwy",
+	"\n",
+	"Pomo<e mi czu^ si# bli<ej moich",
+	"\n",
+	"podwodnych braci.",
+	"\n\n",
+};
+
+const static char *polishItem40[] = {
+	"sprz#t do nurkowania",
+	"\n",
+	"Uwaga, wodo! Oto nadchodz#!",
+	"\n\n",
+};
+
+const static char *polishItem41[] = {
+	"kotwiczka",
+	"\n",
+	"Niedu<a, ale mog%aby zatopi^ %*d>.",
+	"\n\n",
+};
+
+const static char *polishItem42[] = {
+	"sprz#t do wspinaczki",
+	"\n",
+	"Uwaga, g*ry! Oto nadchodz#!",
+	"\n\n",
+};
+
+const static char *polishItem43[] = {
+	"sierp",
+	"\n",
+	"Jest tak t#py, <e nie m*g%bym nim przeci@^",
+	"\n",
+	"nawet mas%a.",
+	"\n\n",
+};
+
+const static char *polishItem44[] = {
+	"cokolwiek zgni%y ser",
+	"\n",
+	"Zapach zupe%nie jak w moim pokoju.",
+	"\n\n",
+};
+
+const static char *polishItem45[] = {
+	"ostry sierp",
+	"\n",
+	"Owce, zamilknijcie. Oto nadchodzi b*l...",
+	"\n\n",
+};
+
+const static char *polishItem46[] = {
+	"chusteczka",
+	"\n",
+	"W%a$ciciel musia% mie^ tak du<y nos, <e na jego",
+	"\n",
+	"umycie zu<ywa% ca%e myd%o.",
+	"\n\n",
+};
+
+const static char *polishItem47[] = {
+	"mysz",
+	"\n",
+	"Ale< to ruchliwe, za przeproszeniem.",
+	"\n\n",
+};
+
+const static char *polishItem48[] = {
+	"kamie=",
+	"\n",
+	"Jest bardzo regularny, jak $nie<ka.",
+	"\n\n",
+};
+
+const static char *polishItem49[] = {
+	"samorodek",
+	"\n",
+	"Symbol: Au, nr atomowy: 79, waga at.: 196.97.",
+	"\n\n",
+};
+
+const static char *polishItem50[] = {
+	"banknot",
+	// No description
+	"\n\n",
+};
+
+const static char *polishItem51[] = {
+	"dyktafon",
+	"\n",
+	"Nie ma baterii.",
+	"\n\n",
+};
+
+const static char *polishItem52[] = {
+	"polaroid",
+	"\n",
+	"Gotowy do robienia zdj#^.",
+	"\n\n",
+};
+
+const static char *polishItem53[] = {
+	"kaseta wideo",
+	"\n",
+	"Nie jest oznaczona.",
+	"\n\n",
+};
+
+const static char *polishItem54[] = {
+	"kartka papieru",
+	"\n",
+	"Jest czysta i lekko pognieciona.",
+	"\n\n",
+};
+
+const static char *polishItem55[] = {
+	"koniak",
+	"\n",
+	"Wyszukana nazwa dla usprawiedliwienia picia.",
+	"\n\n",
+};
+
+const static char *polishItem56[] = {
+	"pilot",
+	"\n",
+	"Ma przyjazny interfejs: dwa klawisze",
+	"\n",
+	"do startu i zatrzymywania.",
+	"\n\n",
+};
+
+const static char *polishItem57[] = {
+	"szczypce",
+	"\n",
+	"Klak! Klak! Klak!",
+	"\n\n",
+};
+
+const static char *polishItem58[] = {
+	"korek",
+	"\n",
+	"Chyba nie pochodzi z butelki, bo jest gumowy.",
+	"\n\n",
+};
+
+const static char *polishItem59[] = {
+	"owin#ty korek",
+	"\n",
+	"Teraz jest bardziej odpowiedni.",
+	"\n\n",
+};
+
+const static char *polishItem60[] = {
+	"fotka",
+	"\n",
+	"To fotografia Ci@gwy. Z%apa%em go,",
+	"\n",
+	"gdy wyci@ga% g*rne C. Wida^, co jad%.",
+	"\n\n",
+};
+
+const static char *polishItem61[] = {
+	"chilli",
+	"\n",
+	"Nalepka na butelce twierdzi, <e jest to",
+	"\n",
+	"\'ORYGINALNE MEKSYKA;SKIE CHILLI\'. Pewnie.",
+	"\n\n",
+};
+
+const static char *polishItem62[] = {
+	"wa%ek",
+	"\n",
+	"Potencjalne narz#dzie zbrodni.",
+	"\n\n",
+};
+
+const static char *polishItem63[] = {
+	"fa%szywe chilli",
+	"\n",
+	"O, to jest dopiero mocna przyprawa.",
+	"\n\n",
+};
+
+const static char *polishItem64[] = {
+	"naklejka",
+	"\n",
+	"\'ORYGINALNE MEKSYKA;SKIE CHILLI\'.",
+	"\n\n",
+};
+
+const static char *polishItem65[] = {
+	"baterie",
+	"\n",
+	"Jest to para nowych baterii.",
+	"\n\n",
+};
+
+const static char *polishItem66[] = {
+	"dyktafon",
+	"\n",
+	"\'Raz-dwa-raz-dwa, super rapper",
+	"\n",
+	"MC Marek to ja...\'",
+	"\n",
+	"Dzia%a.",
+	"\n\n",
+};
+
+const static char *polishItem67[] = {
+	"p%on@cy papier",
+	"\n",
+	"Zadziwiaj@ce, nieprawda<?",
+	"\n",
+	"(}e nie wspomn#: niewiarygodne).",
+	"\n\n",
+};
+
+const static char *polishItem68[] = {
+	"mi#so",
+	"\n",
+	"To wo%owina zapakowana w nylonowy woreczek.",
+	"\n\n",
+};
+
+const static char *polishItem69[] = {
+	"nylonowa torba",
+	"\n",
+	"Rany, mam nadziej#, <e nadaje si# do wt*rnej",
+	"\n",
+	"przer*bki. Inaczej nie m*g%bym spa^.",
+	"\n\n",
+};
+
+const static char *polishItem70[] = {
+	"skarpety",
+	"\n",
+	"Lepsze ni< chloroform.",
+	"\n\n",
+};
+
+const static char *polishItem71[] = {
+	"pigu%ki",
+	"\n",
+	"W s%oiku jest oko%o dwudziestu pigu%ek.",
+	"\n\n",
+};
+
+const static char *polishItem72[] = {
+	"klamka",
+	"\n",
+	"Wygl@da jak zwyk%a klamka do drzwi...",
+	"\n\n",
+};
+
+const static char *polishItem73[] = {
+	"chilli",
+	"\n",
+	"Fajna butelka. Zw%aszcza kszta%t.",
+	"\n\n",
+};
+
+const static char *polishItem74[] = {
+	"przepustka",
+	"\n",
+	"\"Wpu$^ go. Szef RGB.\"",
+	"\n\n",
+};
+
+const static char *polishItem75[] = {
+	"<ar*wka",
+	"\n",
+	"Jest kompletnie bezu<yteczna.",
+	"\n\n",
+};
+
+const static char *polishItem76[] = {
+	"klucz do karceru",
+	"\n",
+	"Ku mojemu zaskoczeniu jest to klucz do",
+	"\n",
+	"karceru.",
+	"\n\n",
+};
+
+const static char *polishItem77[] = {
+	"trawa",
+	"\n",
+	"]a%, to %askocze!",
+	"\n\n",
+};
+
+const static char *polishItem78[] = {
+	"Rambo-n*<",
+	"\n",
+	"Ciekawe, czy ma wmontowany telewizor.",
+	"\n\n",
+};
+
+const static char *polishItem79[] = {
+	"spr#<yna",
+	"\n",
+	"M*g%bym ni@ wystartowa^ rakiet#!",
+	"\n\n",
+};
+
+const static char *polishItem80[] = {
+	"saperka",
+	"\n",
+	"Fajne, podr#czne narz#dzie.",
+	"\n\n",
+};
+
+const static char *polishItem81[] = {
+	"kalejdoskop",
+	"\n",
+	"M*g%bym bawi^ si# nim ca%e <ycie.",
+	"\n",
+	"No, powiedzmy pi#^ minut.",
+	"\n",
+	"Eee tam...",
+	"\n\n",
+};
+
+const static char *polishItem82[] = {
+	"\"Tydzie= }o%nierza\"",
+	"\n",
+	"Co$ jak te pisma dla kobiet, tylko <e mamy",
+	"\n",
+	"karabiny zamiast perfum. Jest fajny tak",
+	"\n",
+	"czy owak.",
+	"\n\n",
+};
+
+const static char *polishItem83[] = {
+	"granat",
+	"\n",
+	"Musz# by^ szalony, <eby wk%ada^ go do kieszeni.",
+	"\n",
+	"Mo<e si# zdarzy^ straszna rzecz...",
+	"\n\n",
+};
+
+const static char *polishItem84[] = {
+	"kubek",
+	"\n",
+	"Jest pusty.",
+	"\n\n",
+};
+
+const static char *polishItem85[] = {
+	"kubek z b%otem",
+	"\n",
+	"A po co ja go nape%ni%em b%otem?",
+	"\n",
+	"To jaki$ straszny nonsens!",
+	"\n\n",
+};
+
+const static char *polishItem86[] = {
+	"resztki",
+	"\n",
+	"To jakie$ okruszki chleba.",
+	"\n\n",
+};
+
+const static char *polishItem87[] = {
+	"lina",
+	"\n",
+	"Jest d%uga i cienka.",
+	"\n\n",
+};
+
+const static char *polishItem88[] = {
+	"lina z granatem",
+	"\n",
+	"M*j patent na bombowe jojo.",
+	"\n\n",
+};
+
+const static char *polishItem89[] = {
+	"lekarstwo",
+	"\n",
+	"Wygl@da na pigu%ki nasenne. Chocia<",
+	"\n",
+	"nie mam poj#cia dlaczego.",
+	"\n\n",
+};
+
+const static char *polishItem90[] = {
+	"zatrute okruchy",
+	"\n",
+	"Pachn@ krymina%em...",
+	"\n\n",
+};
+
+const static char *polishItem91[] = {
+	"ptak",
+	"\n",
+	"By%by z niego niez%y obi... To jest,",
+	"\n",
+	"przyjaciel, oc",
+	"\n\n",
+};
+
 const static char *russianItem0[] = {
 	"pfqo",
 	"\n",
@@ -22676,6 +27613,28 @@ const static char **englishItems[] = {
 	englishItem90, englishItem91,
 };
 
+const static char **polishItems[] = {
+	polishItem0, polishItem1, polishItem2, polishItem3, polishItem4,
+	polishItem5, polishItem6, polishItem7, polishItem8, polishItem9,
+	polishItem10, polishItem11, polishItem12, polishItem13, polishItem14,
+	polishItem15, polishItem16, polishItem17, polishItem18, polishItem19,
+	polishItem20, polishItem21, polishItem22, polishItem23, polishItem24,
+	polishItem25, polishItem26, polishItem27, polishItem28, polishItem29,
+	polishItem30, polishItem31, polishItem32, polishItem33, polishItem34,
+	polishItem35, polishItem36, polishItem37, polishItem38, polishItem39,
+	polishItem40, polishItem41, polishItem42, polishItem43, polishItem44,
+	polishItem45, polishItem46, polishItem47, polishItem48, polishItem49,
+	polishItem50, polishItem51, polishItem52, polishItem53, polishItem54,
+	polishItem55, polishItem56, polishItem57, polishItem58, polishItem59,
+	polishItem60, polishItem61, polishItem62, polishItem63, polishItem64,
+	polishItem65, polishItem66, polishItem67, polishItem68, polishItem69,
+	polishItem70, polishItem71, polishItem72, polishItem73, polishItem74,
+	polishItem75, polishItem76, polishItem77, polishItem78, polishItem79,
+	polishItem80, polishItem81, polishItem82, polishItem83, polishItem84,
+	polishItem85, polishItem86, polishItem87, polishItem88, polishItem89,
+	polishItem90, polishItem91,
+};
+
 const static char **russianItems[] = {
 	russianItem0, russianItem1, russianItem2, russianItem3, russianItem4,
 	russianItem5, russianItem6, russianItem7, russianItem8, russianItem9,
@@ -22708,6 +27667,16 @@ const static char *englishCredits[kNumCredits] = {
 	"\xdd\xec\\after the tiring journey...",
 	"\xdd\xec\\THE END",
 	"programming\nADRIAN CHMIELARZ\n \n \nanimation\nGRZEGORZ MIECHOWSKI\n \n \nadditional animations\nTOMASZ PILIK\n \n \nbackgrounds\nANDRZEJ DOBRZYNSKI\n \n \nmusic\nRADEK SZAMREJ\n \n \ncover art\nDARIUSZ ANACKI\n \n \ntranslation help\nPETER WELLS\n \n \nbetatesters\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWEL MIECHOWSKI\nMAREK CHMIELARZ\nJEDREK WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nideas\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \nprint\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \nthanks\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecial thanks\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nproduction\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nAll allusions and puns\nare intentional\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char *polishCredits[kNumCredits] = {
+	"\xdd\xecPrysunki\niANDRZEJ DOBRZY;SKI",
+	"\xe3\xd2Pmuzyka\niRADEK SZAMREJ",
+	"\xd7\xe6Panimacje i grafika\niGRZEGORZ MIECHOWSKI",
+	"\xd9\xe8Pprogramowanie i scenariusz\niADRIAN CHMIELARZ",
+	"\xdd\xec\\po wyczerpuj@cej podr*<y...",
+	"\xdd\xec\\KONIEC",
+	"programowanie\nADRIAN CHMIELARZ\n \n \n \nanimacje\nGRZEGORZ MIECHOWSKI\n \n \n \ndodatkowe animacje\nTOMASZ PILIK\n \n \n \nrysunki\nANDRZEJ DOBRZY;SKI\n \n \n \nmuzyka\nRADEK SZAMREJ\n \n \n \ng%os*w u<yczyli:AGNIESZKA\nBASIA\nGULASH\nMARTiNEZ\nALEX\nPAJA\nJOSEPH\nPAZDRO\nPIONST\nWICIK\nKOLA\n \n \n \nok%adka i plakat\nDARIUSZ ANACKI\n \n \n \nbetatesterzy\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWE] MIECHOWSKI\nMAREK CHMIELARZ\nANDRZEJ WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nbank pomys%*w\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \npoligrafia\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \npodzi#kowania\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecjalne podzi#kowania\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nprodukcja\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nWszelkie podobie=stwa i aluzje\nby%y zamierzone\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
 };
 
 const static char* russianCredits[kNumCredits] = {
@@ -23559,6 +28528,413 @@ Common::Array<Common::Array<ObjectNameDesc>> englishSceneObjectNamesDescs = {
 		{"safe", "\001"},
 		{"safe", "\001"},
 		{"camera", "It must be a part of the security system."},
+	},
+	{},
+	{},
+	{},
+	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> polishSceneObjectNamesDescs = {
+	{},
+	{
+		{"$cie<ka", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"tajemniczy przedmiot", "Rany, to mo<e by^ jaki$ skarb!"},
+		{"ogrodzenie", "Jest zrobione z zardzewia%ego\ndrutu kolczastego."},
+		{"namiot", "Elegancki, modny dese=."},
+	},
+	{
+		{"ptak", "A my$la%em, <e niebieskie ptaki znikn#%y\nz naszego krajobrazu."},
+		{"$cie<ka", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"pal", "Wygl@da na %atwy do wdrapywania si#."},
+		{"b%oto", "Raj dla fan*w Woodstock , krokodyli i tych\ntwardych babek walcz@cych w TV o p*>nej\nporze."},
+		{"ptak", "Najad% si# lek*w i spad% z 5 metr*w. Kto nie\nchcia%by si# potem zdrzemn@^?"},
+	},
+	{
+		{"saperka", "Ciekawe, gdzie podzia% si# saper..."},
+		{"twarda ziemia", "Mam wra<enie, <e b#d# jej musia% jako$ u<y^..."},
+		{"trawa", "To tylko zwyk%e zielsko, niestety."},
+		{"ceglana $ciana", "Budowniczy za d%ugo s%ucha% Pink\nFloyd."},
+		{"$cie<ka", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"spr#<yna", "Znam lepsze rzeczy do siedzenia."},
+	},
+	{
+		{"$cie<ka", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"drzwi do kantyny", "Neon chyba z Hamburga?"},
+		{"drzwi", "Zero zero jeden?!?"},
+		{"drzwi do karceru", "Chcia%bym mie^\ntakie do swojego\npokoju..."},
+		{"$mietnik", "Jest w po%owie pe%ny lub, jak kto woli,\nw po%owie pusty."},
+	},
+	{
+		{"spr#<yna", "O, tak, musz# st@d wyprysn@^."},
+		{"%*<ko", "Spanie na czym$ takim bez materaca musi by^\nniezapomnianym prze<yciem."},
+		{"kraty", "|wiat wygl@da lepiej\nz drugiej strony."},
+		{"micha", "Jest zrobiona z aluminium."},
+		{"ko=c*wka kabla", "Ostro<nie, jest pod pr@dem!"},
+		{"<ar*wka", "Jest samotna, go%a i zepsuta."},
+		{"drzwi", "Przeciwpancerne."},
+		{"$mietnik", "Przynajmniej mam nadziej#, <e to $mietnik..."},
+		{"w%@cznik", "Mam nadziej#, <e nie b#d#\nmusia% na niego plu^."},
+		{"graffiti", "\x01"},
+	},
+	{
+		{"kapitan", "Jest bardzo przywi@zany do krzes%a."},
+		{"drzwi", "\x01"},
+		{"szafka", "Zamkni#ta. Nie to, <ebym\nsi# zdziwi%."},
+		{"mapa", "Picasso?"},
+		{"biurko", "Le<y tu mn*stwo $mieci, ale\nnic interesuj@cego."},
+		{"%*<ko", "Nieco sparta=skie."},
+		{"szuflada", "Zamkni#ta!"},
+		{"szable", "M*j dziadek mia% kiedy$ jedn@.\nZamieni%em si# na d<ojstik.\nDziadek si# obrazi%."},
+		{"strzelby", "Szkoda, <e to tylko modele..."},
+		{"obraz", "\x01"},
+		{"obraz", "Fajny helikopter."},
+		{"Rambo-n*<", "Robi wra<enie."},
+	},
+	{
+		{"kubek", "Niespodzianka, ale w $rodku jest\nherbata."},
+		{"barman", "C*< za ci#<ko pracuj@cy obywatel."},
+		{"wyj$cie", "\x01"},
+		{"drzwi", "To chyba drzwi do jakiego$ magazynu."},
+		{"radio", "Radio jak radio, ale antena jest chyba\nzrobiona z wieszaka."},
+		{"resztki jedzenia", "Obrzydlistwo. Ludzie powinni po sobie\nsprz@ta^."},
+		{"zegar", "Chyba jest ma%e conieco zepsuty..."},
+		{"p*%ki", "A po co taki wyb*r alkoholi w obozie\ntreningowym? }eby ^wiczy^ siln@\nwol#?"},
+		{"kasa", "Kocham j@."},
+	},
+	{
+		{"mrugaj@ca dziurka", "To jest dziwaczne..."},
+		{"drzwi", "\x01"},
+		{"beczki", "Dobrze wiedzie^, <e armia jest dobrze\nwyposa<ona."},
+		{"szafka", "To jest szafka z rodzaju zamkni#tych."},
+		{"mn*stwo szafek", "Nienawidz# biurokracji."},
+		{"pud%a", "\'Pieprz\'"},
+		{"pud%a", "\'Nie pieprz\'"},
+	},
+	{
+		{"granat", "Fiu! Zawsze chcia%em mie^ taki."},
+		{"stra<nik", "Raczej nie wywo%uje odpowiedniego wra<enia..."},
+		{"wyj$cie", "Dom, s%odki dom..."},
+		{"$cie<ka", "\x01"},
+	},
+	{
+		{"stra<nik", "Wygl@da jak przebrany pastuszek."},
+		{"butelka", "To whisky!.."},
+		{"rze>ba", "Jakie$ dwa zwierzaczki musia%y si#\nkiedy$ ci#<ko pomyli^..."},
+		{"rze>ba", "Jakie$ dwa zwierzaczki musia%y si#\nkiedy$ ci#<ko pomyli^..."},
+		{"rze>ba", "Weso%e s%oneczko!"},
+		{"drzwi", "Pot#<ne i masywne."},
+		{"$ciana posiad%o$ci", "Musi mie^ w przekroju chyba z 3 kilometry..."},
+		{"Jan Ci@gwa", "Szczup%y inaczej."},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"$cie<ka do %@ki", "Prowadzi w g%@b ciemnego\ni strasznego lasu."},
+		{"$cie<ka do jeziora", "\x01"},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"celofan", "To opakowanie z jakiego$ cukierka czy co$."},
+		{"las", "Tam gdzie$ zgubi%a si# moja nauka..."},
+		{"banknot", "Jestem dumny z siebie, <e go nie przyj@%em."},
+	},
+	{
+		{"", ""},
+		{"dziupla", "Teraz jest pusta."},
+		{"ga%@>", "Prowokuje mnie."},
+		{"drzewo", "Si#ga powy<ej szczytu muru!"},
+		{"dzika ro$lina", "To jaki$ rodzaj zdzicza%ego ziemniaka."},
+		{"mur", "Jest pokryty czym$ $liskim."},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"ga%@>", "Odci#ta od reszty $wiata."},
+	},
+	{
+		{"drzewo", "Wysokie."},
+		{"dzika ro$lina", "Zwyk%e zielsko."},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"mur", "Zosta% pokryty czym$ $liskim."},
+		{"zakr#cona $cie<ka", "\x01"},
+		{"je<", "Na grzbiecie ma szyszk#."},
+		{"kamyk", "\x01"},
+	},
+	{
+		{"gniazdo", "Miodowy balon."},
+		{"pszczo%y", "SKRAJNIE NIEBEZPIECZNE!"},
+		{"krzak", "Niez%e miejsce na randk#."},
+		{"klapa", "Jest zardzewia%a i bez zamka."},
+		{"$cie<ka", "\x01"},
+	},
+	{
+		{"kwiat", "To naj%adniejszy kwiat, jaki w <yciu\nwidzia%em!"},
+		{"wysepka", "Tam m*g%bym rozpocz@^ ekologiczne <ycie.\nBez Niny."},
+		{"%*dka", "Nie wierz#, ale %*d> wygl@da na ca%@!"},
+		{"studnia", "Ta przynajmniej, w odr*<nieniu\nod bud<etu, ma dno."},
+		{"uchwyt", "Znam lepsze."},
+		{"$cie<ka do wioski", "\x01"},
+		{"$cie<ka do posiad%o$ci", "\x01"},
+		{"$cie<ka do lasu", "\x01"},
+	},
+	{
+		{"kwiat", "Jest $liczny!"},
+		{"kwiat", "Przepi#knie pachnie!"},
+		{"%*dka", "Nic nowego. Dos%ownie."},
+	},
+	{
+		{"ryba", ""},
+		{"ryba", ""},
+		{"?", ""},
+		{"?", ""},
+		{"kotwica", ""},
+		{"%*d>", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"wodorost", ""},
+		{"ro$lina", ""},
+		{"kamienie", ""},
+	},
+	{
+		{"$cie<ka nad jezioro", "\x01"},
+		{"drzwi", "Nie ma tu <adnego nazwiska..."},
+		{"okna", "Wol# DOS."},
+		{"wiewi*rka", "Jest szybka i zwinna."},
+		{"orzech", "Pi#kny okaz."},
+		{"orzech", "W ko=cu go mam."},
+		{"trawa", "~dziebko g#sta."},
+	},
+	{
+		{"wyj$cie", "\x01"},
+		{"r*g", "Musi wywiera^ du<e wra<enie na\nzwierz#tach."},
+		{"okno", "Nie jestem pewien, ale ono powinno\nby^ chyba po drugiej stronie..."},
+		{"kredens", "A ten jest hebanowy, nie?"},
+		{"otw*r w kszta%cie serca", "Co za urocza dziurka."},
+		{"kredens", "Wygl@da na stary."},
+		{"<yrandol", "Elektryczno$^ w le$nicz*wce?!"},
+		{"obraz", "Wygl@da zupe%nie jak okno."},
+		{"kominek", "W $rodku jest mn*stwo sadzy."},
+		{"strzelby", "To kolejne plastikowe imitacje."},
+		{"st*%", "\x01"},
+		{"nadgni%y ser", "Pfuj!"},
+		{"trofea", "Ka<dy ma jakiego$ bzika."},
+		{"pi%a", "Nie wiem dlaczego, ale kojarzy mi\nsi# z pewnym facetem z Texasu,\nkt*rego kiedy$ spotka%em."},
+		{"porcelana", "Obok takich rzeczy boj# si# nawet\noddycha^."},
+	},
+	{
+		{"drzwiczki", "Nie s@ zablokowane."},
+		{"baga<nik", "Za%o<# si#, <e w $rodku jest\nkupa u<ytecznych rzeczy..."},
+		{"kosz", "Powoduje u mnie mieszane uczucia:\nprzypomina mi o szkole."},
+		{"rura", "Niez%a, jak na metalow@ rur#."},
+		{"drzwi", "\x01"},
+		{"dzwonek", "Zawsze lubi%em straszy^ czym$ takim\nludzi z drugiej strony drzwi."},
+		{"okno", "\x01"},
+		{"okno", "I to te< miodzio."},
+		{"okno od strychu", "\x01"},
+		{"$cie<ka do jeziora", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"$cie<ka na pole", "\x01"},
+		{"ch%opiec", ""},
+		{"grzebie=", "Harmonijka dla ubogich."},
+		{"d>wigienka", "Ciekawe, do czego\nto s%u<y?"},
+		{"drzwiczki", "\x01"},
+	},
+	{
+		{"$cie<ka", "\x01"},
+		{"$cie<ka do jaskini", "\x01"},
+		{"drzwi", "\x01"},
+		{"pranie", "Powietrze jest gor@ce, ale wilgotne.\nTo pranie szybko nie wyschnie..."},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"czarna otch%a=", "Droga do piwnicy."},
+		{"klapa", "Heavy metal."},
+		{"pies", "Ciekawe, czy ma na imi# Bogu$."},
+		{"dzwonek", "Prawie jak starter do rakiety."},
+		{"lina", "Podoba mi si#, czemu nie."},
+	},
+	{
+		{"starszy pan", "Przypomina emerytowanego\nwilka morskiego."},
+		{"szafka", "\x01"},
+		{"szuflady", "O kulka! Troch# ich jest!"},
+		{"%*<ko", "Jak w domciu..."},
+		{"okno", "Widok na pole."},
+		{"st*%", "Nie le<y na nim nic ciekawego."},
+		{"strzelba", "Rany, ona jest chyba\nna dinozaury!.."},
+		{"obraz", "Czaruj@cy."},
+		{"portrety rodzinne", "Nie chcia%bym, <eby moi\nprzodkowie wisieli jak\njakie$ trofea..."},
+		{"kwiat", "Jest zielony."},
+		{"drzwi", "\x01"},
+		{"<yrandol", "Nieco nieprzemy$lany."},
+		{"wiatraczek", "Na szcz#$cie baterie czyni@ go\nprzeno$nym."},
+	},
+	{
+		{"starsza pani", "Dzierga jak na Olimpiadzie."},
+		{"dziewcz#", "Jest super."},
+		{"wyj$cie", "\x01"},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"<yrandol", "Co za brzydactwo."},
+		{"zegar", "Kawa%ek dobrej roboty, od razu czu^\nstarych mistrz*w."},
+		{"", ""},
+		{"sztuczne owoce", "Jab%ko wygl@da prawie jak\nprawdziwe!"},
+		{"dzban", "Jest pe%en kwiat*w."},
+		{"kwiaty", "Mam nadziej#, <e nie pochodz@ od\njakiego$ adoratora..."},
+		{"miote%ka", "Najpewniej do czyszczenia\nkurzu."},
+		{"st*%", "To, <e jest okr@g%y, to jeszcze chyba nie\nznaczy, <e ma co$ wsp*lnego z pewn@\n$redniowieczn@ legend@..."},
+		{"lustro", "Widz# w nim $liczn@ twarz\nniewie$ci@..."},
+		{"obraz", "Fajnie jest <y^ w wiosce i mie^\nna $cianach krajobrazy."},
+		{"ro$lina", "Pora<aj@ca."},
+	},
+	{
+		{"paj@k", "To jest..."},
+		{"%opata", "Zawsze my$la%em, <e kopie si#\nnogami, a tu prosz#, wynale>li\n%opat#."},
+		{"drabina", "Wyj$cie na $wiat."},
+		{"w%@cznik", "Jest ma%y, ale wszechmocny."},
+		{"siekiera", "Mam nadziej#, <e te $lady na niej\nto tylko ze staro$ci..."},
+		{"%a=cuch", "To powinien by^ szalik klubowy\nka<dego pseudokibica."},
+		{"obc#gi", "Rany, to miejsce przypomina bardziej\nsal# tortur ni< piwnic#..."},
+		{"p*%ki", "Mrowie s%oik*w i takich tam.\nNic rajcuj@cego."},
+		{"pojemniki", "Puste, niestety."},
+	},
+	{
+		{"ko$^", "S@dz@c po wieku kamienia, to jest\nto chyba ko$^ dinozaura..."},
+		{"krzak", "Blokuje drog# do jaskini. Mo<e\nkto$ go tutaj zasadzi%, aby trzyma^\nsekrety groty bezpiecznymi..."},
+		{"wej$cie do jaskini", "\x01"},
+		{"$cie<ka", "\x01"},
+		{"ska%a", "Musia%a tu spa$^ wiele tysi#cy lat temu.\nCiekawe, czy komu$ co$ si# sta%o..."},
+		{"motylek", "Czy< nie jest uroczy?"},
+		{"motylek", "Jakie< to rozkoszne..."},
+	},
+	{
+		{"jaszczurka", "Rozleniwiona, bestia."},
+		{"???", "CO TO MO}E BY\\?!"},
+		{"wyj$cie", "\x01"},
+		{"napis", "Ta inskrypcja jest bardzo stara, ale wci@<\nmog# j@ odczyta^."},
+		{"otw*r", "Wygl@da na bardzo g%#boki."},
+		{"samorodek", "Czyste z%oto!"},
+	},
+	{
+		{"kura", "Mmmm... Roso%ek..."},
+		{"wrona", "Skrajnie nieprzyjazna."},
+		{"wrona", "Wygl@da niebezpiecznie..."},
+		{"mysz", "Jest bardzo nerwowa."},
+		{"maska p%etwonurka", "Tak, mnie te< zadziwia."},
+		{"p%etwy", "Pasowa%yby na mnie idealnie."},
+		{"strach na wr*ble", "Strach to on jest, niestety,\ntylko w teorii."},
+		{"sierp", "Bardzo niebezpieczne narz#dzie."},
+		{"$cie<ka", "\x01"},
+		{"st*g", "W $rodku musi by^ co$ metalowego,\nwidz# jak si# b%yszczy!"},
+		{"grabie", "S@ bardzo stare, bez wielu z#b*w\ni nieco rozregulowane."},
+		{"mysia dziura", "Dom i spi<arnia w jednym..."},
+		{"st*g", "W $rodku jest mysia dziura!"},
+		{"pi*ro", "To chyba kura je upu$ci%a."},
+		{"st*g", "Sianko zawsze wzbudza we mnie\nciep%e uczucia."},
+		{"posiad%o$^", "Rany, niekt*rzy ludzie rzeczywi$cie\nnie maj@ smaku."},
+	},
+	{
+		{"okno", "Ma <aluzje, i nic nie widz#."},
+		{"rze>ba", "W%a$ciciel to psychol."},
+		{"drzwi", "\x01"},
+		{"wyj$cie z posiad%o$ci", "\x01"},
+	},
+	{
+		{"drzwi", "\x01"},
+		{"drzwi", "\x01"},
+		{"kwiaty", "Zdziwko, zdziwko, ale nie\ns@ plastikowe."},
+		{"ro$lina", "Wszystko jej wisi."},
+		{"schody", "M*wi@, <e ka<dy schodek wyd%u<a\n<ycie o trzy sekundy."},
+		{"dalsza cz#$^ korytarza", "\x01"},
+		{"przej$cie na ganek", "\x01"},
+	},
+	{
+		{"zej$cie", "\x01"},
+		{"obraz", "To jaki$ zamek."},
+		{"zbroja", "Beta wersja czo%gu."},
+		{"kaseta wideo", "Jaki rodzaj filmu zosta% na niej\nnagrany, skoro zosta%a schowana\ntak g%#boko?"},
+		{"ksi@<ka", ""},
+		{"ksi@<ki", "O, ludzie!"},
+		{"kosz", "W $rodku jest mn*stwo papier*w."},
+		{"krzes%o", "Mi#ciutkie."},
+		{"lampka", "\x01"},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"szuflada", "Jest zamkni#ta."},
+		{"drabinka", "Nieod%@czny dodatek do dziewczyn w sp*dnicach."},
+	},
+	{
+		{"drzwi", "\x01"},
+		{"otw*r", "Ma kwadratowy kszta%t."},
+		{"klamka", "Pasuje w tym miejscu idealnie."},
+		{"obraz", "Zawsze by%em fanem S`T`A`R` W`A`R`S`."},
+		{"obraz", "A my$la%em, <e to ja jestem dziwny."},
+		{"kwiaty", "]adny zapach."},
+		{"dalsza cz#$^ korytarza", "\x01"},
+		{"drzwi", "\x01"},
+		{"statua", "Dziwaczna."},
+	},
+	{
+		{"robot", ""},
+		{"s%oik", "Ten s%oik jest pe%en jakich$ pigu%ek."},
+		{"ksi#ga", "Jest du<a i wygl@da\njakby by%a rodzajem\npami#tnika."},
+		{"obraz", "Ten jest $wietny. Chcia%bym mie^ taki."},
+		{"szafka", "\x01"},
+		{"wyj$cie", "\x01"},
+		{"lewy dolny brzeg ekranu", "Mog# spr*bowa^ skry^ si# tutaj!"},
+		{"klamka", "Ci@gwa j@ tu zostawi%."},
+	},
+	{
+		{"kucharz", "Ca%kowicie odda% si# swojej pracy."},
+		{"zupa", "To jaka$ warzywna. Teraz z ekstra dodatkami."},
+		{"gor@ca p%ytka", "Rozgrzana jak piec, czerwona\njak ma%y pionier."},
+		{"wyj$cie", "\x01"},
+		{"lod*wka", "Moja ulubiona rzecz w kuchni."},
+		{"radio", "Jest na baterie, jak walkman."},
+		{"chilli", "Sproszkowany ogie=!"},
+		{"miejsce, gdzie sta%o chilli", "To miejsce, gdzie... itd."},
+		{"wa%ek", "Faceci u<ywaj@ karabin*w.\nKobiety tego. Stan meczu:\n1 : 0 dla kobiet."},
+		{"kuchenka mikrofalowa", "To magiczna rzecz. Zmieni\nka<de danie w gum#."},
+		{"no<e i no<yki", "Godna szacunku kolekcja."},
+		{"mi#so", "Jest w plastikowej torebce, kt*ra\nprzymarz%a do p*%ki."},
+	},
+	{
+		{"drzwi", "\x01"},
+		{"zlew", "Ma odp%yw."},
+		{"kurek", "Kurek, to taki wyro$ni#ty\npisklak."},
+		{"lustro", "Jest ca%e pokryte kurzem."},
+		{"szafka", "\x01"},
+		{"wanna", "Ho-ho! Pojemna!"},
+		{"skarpetki", "To chyba Ci@gwy..."},
+	},
+	{
+		{"koniak", "Butla du<a jak sam Napoleon."},
+		{"szczypce", "W wiadrze jest jeszcze para szczypiec."},
+		{"maska", "Oto przyk%ad prymitywnej sztuki."},
+		{"telewizor", "Jeszcze jeden morderca czasu i osobowo$ci."},
+		{"odtwarzacz wideo", "Nie ma funkcji nagrywania,\nale to i tak nie jest mi\npotrzebne."},
+		{"gazeta", "To tutejsza plotkorama."},
+		{"hi-fi", "Co za cudo! Doprowadzi%bym wszystkich\ns@siad*w do szale=stwa!..."},
+		{"kanapa", "Nie chcia%bym takiej, bo nie wiem,\ngdzie tu si# k%adzie poduszk#."},
+		{"wyj$cie", "\x01"},
+		{"obraz", "Ten naprawd# dzia%a na wyobra>ni#."},
+		{"pilot", "By% schowany mi#dzy stronami gazety."},
+		{"otwarta szafa", "Sekretne przej$cie!"},
+	},
+	{
+		{"drzwi", "\x01"},
+		{"drzwi", "\x01"},
+		{"pstryczek", "\x01"},
+	},
+	{},
+	{
+		{"Jan Ci@gwa", "Wpad% w obsesj# pakowania pieni#dzy."},
+		{"tony z%ota", "(gulp)"},
+		{"sejf", "\x01"},
+		{"sejf", "\x01"},
+		{"kamera", "To musi by^ cz#$^ systemu ochronnego."},
 	},
 	{},
 	{},
