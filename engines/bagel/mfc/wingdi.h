@@ -801,6 +801,7 @@ extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
                              int nIDLastButton, int nIDCheckButton);
 
 extern DWORD GetSysColor(int nIndex);
+extern HBRUSH GetSysColorBrush(int nIndex);
 extern BOOL DestroyMenu(HMENU hMenu);
 extern void SetActiveWindow(HWND hWnd);
 

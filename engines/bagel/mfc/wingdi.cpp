@@ -375,6 +375,20 @@ DWORD GetSysColor(int nIndex) {
 	}
 }
 
+HBRUSH GetSysColorBrush(int nIndex) {
+	COLORREF color;
+	CBrush::Impl *brush;
+
+	switch (nIndex) {
+	case COLOR_WINDOW:
+		return new CBrush::Impl(RGB(255, 255, 255));
+
+	default:
+		error("Unknown GetSysColorBrush value");
+		break;
+	}
+}
+
 BOOL DestroyMenu(HMENU hMenu) {
 	error("TODO: DestroyMenu");
 }

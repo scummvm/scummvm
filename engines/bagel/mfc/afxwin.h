@@ -1576,6 +1576,9 @@ public:
 class CEdit : public CWnd {
 	DECLARE_DYNAMIC(CEdit)
 
+private:
+	size_t _maxLength = 0;
+
 protected:
 	DECLARE_MESSAGE_MAP()
 
@@ -1585,6 +1588,9 @@ public:
 	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 	void LimitText(int nChars);
 	void SetSel(int nStartChar, int nEndChar, BOOL bNoScroll = FALSE);
+
+	afx_msg void OnPaint();
+	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 class CScrollBar : public CWnd {

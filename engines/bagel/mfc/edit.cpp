@@ -27,18 +27,67 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CEdit, CWnd)
 BEGIN_MESSAGE_MAP(CEdit, CWnd)
+ON_WM_PAINT()
+ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 BOOL CEdit::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
-	error("TODO: CEdit::Create");
+	return CWnd::Create("EDIT", nullptr, dwStyle,
+		rect, pParentWnd, nID);
 }
 
 void CEdit::LimitText(int nChars) {
-	error("TODO: CEdit::LimitText");
+	_maxLength = nChars;
 }
 
 void CEdit::SetSel(int nStartChar, int nEndChar, BOOL bNoScroll) {
-	error("TODO: CEdit::SetSel");
+	warning("TODO: CEdit::SetSel");
+}
+
+void CEdit::OnPaint() {
+	CPaintDC dc(this); // Automatically calls BeginPaint and EndPaint
+
+	// Get client area
+	CRect clientRect;
+	GetClientRect(&clientRect);
+
+	// Fill background with system window color
+	HBRUSH hBrush = MFC::GetSysColorBrush(COLOR_WINDOW);
+	CBrush *winBrush = CBrush::FromHandle(hBrush);
+	dc.FillRect(&clientRect, winBrush);
+
+	// Set text and background properties
+	dc.SetTextColor(MFC::GetSysColor(COLOR_WINDOWTEXT));
+	dc.SetBkMode(TRANSPARENT);
+
+	// Select the current font if one was set
+	HFONT hFont = (HFONT)SendMessage(WM_GETFONT);
+	HFONT hOldFont = nullptr;
+	if (hFont)
+		hOldFont = (HFONT)dc.SelectObject(hFont);
+
+	// Draw the stored text
+	dc.DrawText(_windowText.c_str(), -1, &clientRect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
+
+	// Restore font if changed
+	if (hFont)
+		dc.SelectObject(hOldFont);
+}
+
+void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if (Common::isPrint(nChar)) {
+		if (_maxLength != 0 && _windowText.size() == _maxLength)
+			return;
+
+		_windowText += (char)nChar;
+	} else if (nChar == Common::KEYCODE_BACKSPACE ||
+			nChar == Common::KEYCODE_DELETE) {
+		if (!_windowText.empty()) {
+			_windowText.deleteLastChar();
+		}
+	}
+
+	Invalidate();
 }
 
 } // namespace MFC
