@@ -124,11 +124,13 @@ void writeSceneObjects(FILE* fd) {
 	curOffset += 84; // 2 bytes * 42 scenes
 
 	for (uint i = 0; i < sceneObjects.size(); i++) {
-		if (sceneObjects[i].size() > 0)
-			sceneObjTableAddrs[i] = curOffset;
+		sceneObjTableAddrs[i] = curOffset;
 
 		uint firstObjsAddrFilePos = ftell(fd);
 		Common::Array<uint16> sceneObjAddrs(sceneObjects[i].size(), 0);
+		// Add blank object to the end
+		sceneObjAddrs.push_back(0);
+
 		for (uint16 addr : sceneObjAddrs)
 			writeUint16LE(fd, addr);
 
@@ -173,9 +175,6 @@ void writeSceneObjects(FILE* fd) {
 			}
 			curOffset += 2;
 		}
-
-		// Add zero addr to indicate the end of objects
-		sceneObjAddrs.push_back(0);
 
 		uint pos = ftell(fd);
 		fseek(fd, firstObjsAddrFilePos, SEEK_SET);
