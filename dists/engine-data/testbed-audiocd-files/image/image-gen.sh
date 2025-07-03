@@ -13,11 +13,16 @@ magick $1 -depth 24 -type TrueColor $base-24bpp.pcx
 magick $1 -depth 24 -type TrueColor $base-24bpp.pict
 magick $1 -depth 24 -type TrueColor $base-24bpp.png
 magick $1 -depth 24 -type TrueColor $base-24bpp.tga
+magick $1 -depth 24 -type TrueColor -compress RLE $base-24bpp-rle.tga
 magick $1 -depth 8 -type Palette $base-8bpp.bmp
 magick $1 -depth 8 -type Palette $base-8bpp.gif
 magick $1 -depth 8 -type Palette $base-8bpp.pcx
 magick $1 -depth 8 -type Palette $base-8bpp.pict
 magick $1 -depth 8 -type Palette $base-8bpp.png
 magick $1 -depth 8 -type Palette $base-8bpp.tga
-magick $1 -depth 1 -type Palette $base-1bpp.xbm
+magick $1 -depth 8 -type Palette -compress RLE $base-8bpp-rle.tga
+magick $1 -depth 8 -type Grayscale $base-8bpp-grey.png
+magick $1 -depth 8 -type Grayscale $base-8bpp-grey.tga
+magick $1 -depth 8 -type Grayscale -compress RLE $base-8bpp-grey-rle.tga
+magick $1 -depth 1 -type Grayscale $base-1bpp.xbm
 

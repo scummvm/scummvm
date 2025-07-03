@@ -248,6 +248,12 @@ TestExitStatus ImageTests::testPNGDecoder() {
 		return kTestFailed;
 	}
 
+	filepath = "image/pm5544-8bpp-grey.png";
+	decoder.reset(new Image::PNGDecoder());
+	if (!testImageDecoder(filepath, *decoder)) {
+		return kTestFailed;
+	}
+
 	Testsuite::logDetailedPrintf("PNG decoder is OK\n");
 	return kTestPassed;
 }
@@ -267,7 +273,31 @@ TestExitStatus ImageTests::testTGADecoder() {
 		return kTestFailed;
 	}
 
+	filepath = "image/pm5544-24bpp-rle.tga";
+	decoder.reset(new Image::TGADecoder());
+	if (!testImageDecoder(filepath, *decoder)) {
+		return kTestFailed;
+	}
+
 	filepath = "image/pm5544-8bpp.tga";
+	decoder.reset(new Image::TGADecoder());
+	if (!testImageDecoder(filepath, *decoder)) {
+		return kTestFailed;
+	}
+
+	filepath = "image/pm5544-8bpp-rle.tga";
+	decoder.reset(new Image::TGADecoder());
+	if (!testImageDecoder(filepath, *decoder)) {
+		return kTestFailed;
+	}
+
+	filepath = "image/pm5544-8bpp-grey.tga";
+	decoder.reset(new Image::TGADecoder());
+	if (!testImageDecoder(filepath, *decoder)) {
+		return kTestFailed;
+	}
+
+	filepath = "image/pm5544-8bpp-grey-rle.tga";
 	decoder.reset(new Image::TGADecoder());
 	if (!testImageDecoder(filepath, *decoder)) {
 		return kTestFailed;
