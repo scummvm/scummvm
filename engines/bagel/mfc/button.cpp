@@ -196,9 +196,11 @@ void CButton::OnOwnerDrawPaint() {
 }
 
 void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
-	SetCapture();
-	_pressed = true;
-	Invalidate();
+	if (!(_itemState & ODS_DISABLED)) {
+		SetCapture();
+		_pressed = true;
+		Invalidate();
+	}
 }
 
 void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
