@@ -60,7 +60,15 @@ BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
 BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 	assert(!m_hDC);
 	CDC::Impl *dc = new CDC::Impl();
-	dc->setFormat(pDC->impl()->getFormat());
+
+	if (pDC) {
+		dc->setFormat(pDC->impl()->getFormat());
+	} else {
+		CDC::Impl *src = (CDC::Impl *)MFC::GetDC(nullptr);
+		dc->setFormat(src->getFormat());
+		MFC::ReleaseDC(nullptr, src);
+	}
+
 	m_hDC = dc;
 
 	// This is where it becomes permanent
