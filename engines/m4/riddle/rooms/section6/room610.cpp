@@ -365,7 +365,10 @@ void Room610::daemon() {
 		break;
 
 	case 401:
-		switch (_kShould) {
+		if (_kShould)
+			break;
+		
+		switch (_val5) {
 		case 0:
 			sendWSMessage_10000(1, _k, _k00, 54, 54, 400, _k00, 54, 54, 0);
 			break;
@@ -743,7 +746,7 @@ void Room610::daemonPostprocess() {
 				!player_said("talk to", "SAMANTHA") &&
 				_G(player_info).x <= 222) {
 			intr_cancel_sentence();
-			ws_walk(_G(my_walker), 202, 244, nullptr, 666, 11);
+			ws_walk(_G(my_walker), 202, 244, nullptr, 666, 11, true);
 			_flag1 = true;
 			_val5 = 2;
 			_sgShould = 4;
