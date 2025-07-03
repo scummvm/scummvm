@@ -116,6 +116,7 @@
 #include "director/lingo/xlibs/registercomponent.h"
 #include "director/lingo/xlibs/remixxcmd.h"
 #include "director/lingo/xlibs/serialportxobj.h"
+#include "director/lingo/xlibs/smallutil.h"
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/spacemgr.h"
 #include "director/lingo/xlibs/stagetc.h"
@@ -316,6 +317,7 @@ static const struct XLibProto {
 	XLIBDEF(RolloverToolkitXtra,			kXtraObj,					500),	// D5
 	XLIBDEF(ScrnUtilXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(SerialPortXObj,		kXObj,			200),	// D2
+	XLIBDEF(SmallUtilXObj,			kXObj,					400),	// D4
 	XLIBDEF(SoundJam,			kXObj,			400),	// D4
 	XLIBDEF(SpaceMgr,			kXObj,			400),	// D4
 	XLIBDEF(StageTCXObj,		kXObj,			400),	// D4
