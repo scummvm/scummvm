@@ -42,6 +42,22 @@ void writeStringsBlock(FILE* fd, const char **stringArr, uint size) {
 	}
 }
 
+void writeCombineMessages(FILE *fd) {
+	const char **combineMessages = englishCombineMessages;
+
+	for (uint i = 0; i < kNumCombinations; i++) {
+		combiningTable[i].write(fd);
+		for (uint j = 0; j < strlen(combineMessages[i]); j++) {
+			if (combineMessages[i][j] == '\n')
+				writeByte(fd, '\0');
+			else
+				writeByte(fd, combineMessages[i][j]);
+		}
+		writeByte(fd, '\0');
+		writeByte(fd, '\0');
+	}
+}
+
 void writeDialogs(FILE *fd) {
 	// Write out dialog string block
 	static const char nulls[6] = "\0\0\0\0\0";
@@ -211,6 +227,9 @@ void writeResource(FILE *fd, ResourceType resType) {
 		break;
 	case kResMessages:
 		writeStringsBlock(fd, englishMessages, kNumMessages);
+		break;
+	case kResCombineMessages:
+		writeCombineMessages(fd);
 		break;
 	};
 

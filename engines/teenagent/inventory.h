@@ -36,6 +36,8 @@ class TeenAgentEngine;
 // Maximum number of items found within game
 const uint8 kNumInventoryItems = 92;
 
+const uint kNumCombinations = 34;
+
 // Inventory Item Ids
 enum {
 	kInvItemNoItem = 0, // No item i.e. empty inventory slot

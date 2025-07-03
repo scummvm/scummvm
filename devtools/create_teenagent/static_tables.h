@@ -7741,7 +7741,8 @@ const static char *englishMessages[kNumMessages] = {
 	"What's the use of the models?", // 291
 	"The barman will surely notice its\ndisappearing.", // 292
 	"It'd take too much time to drink it all.\nMaybe after the mission...", // 293
-	"\n\nI'm not a thief. And it's empty, by the way.", // 294
+	// Two extra null bytes  at are removed from here.
+	"I'm not a thief. And it's empty, by the way.", // 294
 	"There are too many of them to search.", // 295
 	"Captain surely wouldn't fit them.\nI must look elsewhere.", // 296
 	"Chickening? Me? Never!", // 297
@@ -12122,6 +12123,94 @@ const static uint8 dsegEndBlock[DSEG_ENDBLK_SIZE] = {
 	0x00, 0x20, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00
+};
+
+struct Combination {
+	byte _obj1Id;
+	byte _obj2Id;
+	byte _newObjId;
+
+	void write(FILE *fd) {
+		writeByte(fd, _obj1Id);
+		writeByte(fd, _obj2Id);
+		writeByte(fd, _newObjId);
+	}
+};
+
+const uint kNumCombinations = 34;
+
+Combination combiningTable[kNumCombinations] = {
+	{0x12, 0x16, 0x17},
+	{0x15, 0x18, 0x19},
+	{0x01, 0x1c, 0x1f},
+	{0x11, 0x1c, 0x1e},
+	{0x1f, 0x11, 0x20},
+	{0x1e, 0x01, 0x20},
+	{0x0d, 0x10, 0x0e},
+	{0x08, 0x0f, 0x09},
+	{0x14, 0x21, 0x22},
+	{0x27, 0x28, 0x29},
+	{0x26, 0x2a, 0x2b},
+	{0x12, 0x13, 0x00},
+	{0x01, 0x30, 0x00},
+	{0x10, 0x30, 0x00},
+	{0x12, 0x14, 0x00},
+	{0x12, 0x22, 0x00},
+	{0x12, 0x1a, 0x00},
+	{0x12, 0x1c, 0x00},
+	{0x12, 0x31, 0x00},
+	{0x12, 0x13, 0x00},
+	{0x13, 0x30, 0x00},
+	{0x18, 0x0a, 0x00},
+	{0x18, 0x0b, 0x00},
+	{0x15, 0x26, 0x00},
+	{0x2d, 0x30, 0x00},
+	{0x2c, 0x30, 0x00},
+	{0x2e, 0x30, 0x00},
+	{0x31, 0x1a, 0x00},
+	{0x31, 0x30, 0x00},
+	{0x37, 0x3b, 0x3c},
+	{0x41, 0x38, 0x40},
+	{0x42, 0x34, 0x43},
+	{0x54, 0x58, 0x59},
+	{0x57, 0x5a, 0x5b},
+};
+
+const char *englishCombineMessages[kNumCombinations] = {
+	"Wow, now it looks like it came straight\nfrom the store!",
+	"Tying the ribbon around the rake narrowed\nthe space between the teeth!",
+	"With the help of super glue I made...\nsomething...",
+	"With the help of super glue I made...\nsomething...",
+	"Using the super glue once again...",
+	"Using the super glue once again...",
+	"The whisky is strong enough to use as\nfuel, but I wonder if the chainsaw\ncan take it...",
+	"Once again the super-glue comes in handy...",
+	"The soot gives the potatoe a brand new look...",
+	"Now I'm ready to conquer the lake!",
+	"It makes me feel like another\nwanna-be cliffhanger.",
+	"I wouldn't impress anyone with such candy.",
+	"It's active enough.",
+	"Great idea! But, you see, ecomaniacs might\nbe watching...",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"It won't look any better in a wrapper.",
+	"The cake is too big for this wrapper.",
+	"I don't want to waste this candy.",
+	"The flower is beautiful enough without\nany fancy extras.",
+	"The flower is beautiful enough without\nany fancy extras.",
+	"Good idea, but I need something smaller\nthan this rope.",
+	"I might need this cheese. Again.",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"I don't need to open this nut.",
+	"It's not DOOM. It's a harmless graphic adventure\nfor the whole family (we want DOOM! we want\nDOOM!).",
+	"Let's make this cork larger.",
+	"Once again the super glue comes in handy.",
+	"The batteries fit!",
+	"I tied the rope to the pin.",
+	"Let's make it spicy.",
 };
 
 // Dialog Strings Block

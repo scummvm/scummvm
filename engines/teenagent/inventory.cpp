@@ -212,8 +212,9 @@ bool Inventory::processEvent(const Common::Event &event) {
 			return true;
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
-		byte *table = _vm->res->dseg.ptr(dsAddr_objCombiningTablePtr);
-		while (table[0] != 0 && table[1] != 0) {
+		for (uint i = 0; i < kNumCombinations; i++) {
+			byte *table = _vm->res->combineMessageSeg.ptr(_vm->res->getCombineMessageAddr(i));
+
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte newObj = table[2];
 				if (newObj != 0) {
@@ -223,13 +224,12 @@ bool Inventory::processEvent(const Common::Event &event) {
 					add(newObj);
 					_vm->playSoundNow(&_vm->res->sam_sam, 69);
 				}
-				uint16 msg = READ_LE_UINT16(table + 3);
+				Common::String msg = Object::parseDescription((const char *)(table + 3));
 				_vm->displayMessage(msg);
 				activate(false);
 				resetSelectedObject();
 				return true;
 			}
-			table += 5;
 		}
 		_vm->displayMessage(_vm->res->getMessageAddr(kObjCombineErrorMsg));
 		activate(false);

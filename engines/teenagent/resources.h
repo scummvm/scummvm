@@ -1528,21 +1528,26 @@ public:
 	uint16 getCreditAddr(uint16 creditNum) { return creditsOffsets[creditNum]; }
 	uint16 getItemAddr(uint16 itemNum) { return itemOffsets[itemNum]; }
 	uint16 getMessageAddr(MessageType msgType) { return messageOffsets[msgType]; }
+	uint16 getCombineMessageAddr(uint16 msgNum) { return combineMessageOffsets[msgNum]; }
 
 	// Artificial segments added to support multiple languages
 	Segment eseg;
 	Segment creditsSeg, itemsSeg, sceneObjectsSeg;
-	Segment messagesSeg;
+	Segment messagesSeg, combineMessageSeg;
 
 private:
+	void precomputeResourceOffsets(Segment &seg, Common::Array<uint16> &offsets, uint numTerminators = 2);
+
 	void precomputeDialogOffsets();
 	void precomputeCreditsOffsets();
 	void precomputeItemOffsets();
 	void precomputeMessageOffsets();
+	void precomputeCombineMessageOffsets();
 
 	Common::Array<uint16> dialogOffsets;
 	Common::Array<uint16> creditsOffsets, itemOffsets;
 	Common::Array<uint16> messageOffsets;
+	Common::Array<uint16> combineMessageOffsets;
 };
 
 } // End of namespace TeenAgent
