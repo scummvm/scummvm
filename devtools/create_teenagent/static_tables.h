@@ -7788,6 +7788,344 @@ const static char *englishMessages[kNumMessages] = {
 	"Using these two objects together won't\naccomplish anything.",
 };
 
+const static char *russianMessages[kNumMessages] = {
+	"Bfh pon\200si\200, xso r ~sim eflas}.\x1f\x1f\x1f", // 0
+	"Mnf sqteno pqietmas}, xso r ~sim\neflas}.\x1f\x1f", // 1
+	"Nf modt pqfersacis}, xso r\n~sim eflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 2
+	"Nt i na koj mnf r ~sim\nrc\200h|cas}r\200.\x1f\x1f\x1f\x1f\x1f", // 3
+	"Cfz}.", // 4
+	"Sak nf poje>s.\x1f", // 5
+	"Tv s|! Cntsqi eomkqas!\nHeoqoco!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 6
+	"Cntsqi \200zika fz> xso-so frs}!\nKl\177x!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 7
+	"Bfh\nobie?\x1f\x1f\x1f", // 8
+	"Rea\177r}.\x1f\x1f\x1f", // 9
+	"` nf poeojet k ~sim px>lam bligf xfm\nna p\200s} mfsqoc!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 10
+	"C loekf bol}yf nixfdo nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 11
+	"^so efqfco oxfn} rlogno lomas}.", // 12
+	"^j!\x1f\x1f", // 13
+	"Cq\200e li rsois pqocfq\200s}\nteaxt.\x1f\x1f\x1f\x1f\x1f\x1f", // 14
+	"Ob|xn|j rsod rfna. Sfpfq}.\x1f\x1f\x1f\x1f\x1f\x1f", // 15
+	"A fz> docoq\200s, xso nfl}h\200 najsi\nidlt c rsodf rfna.\x1f\x1f", // 16
+	"Hefr} bol}yf nfs\nkaqsoyki.\x1f", // 17
+	"Nf hq\200 \200 pqoril t mam|\nysan| r bol}yimi kaqmanami...\x1f\x1f\x1f\x1f", // 18
+	"Sakoca gihn}.\x1f\x1f", // 19
+	"Gihn} cpqacet gfrsoka.", // 20
+	"Mfn\200 xso-so\nzfkoxfs!\x1f", // 21
+	"Cqoef pqonfrlo.\x1f\x1f\x1f\x1f", // 22
+	"Kso hnafs, kakif xteiza\nsts modts obisas}...", // 23
+	"Qtki ltxyf stea nf rocas}.\nA so fz> kso-nibte} tktris\n(b-q-q)!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 24
+	"Kak cieim, sts rocrfm\nptrso.\x1f", // 25
+	"Oein yad el\200 xflocfka\ni odqomna\200 bol} el\200 doloc|.\x1f\x1f\x1f\x1f\x1f", // 26
+	"Nf voxt rnoca irp|s|cas}\nrte}bt...\x1f\x1f\x1f\x1f\x1f\x1f", // 27
+	"^so kors} einohacqa, \200\nnaef\177r}...\x1f\x1f\x1f\x1f\x1f", // 28
+	"Odo! ^so eolgno qaryasas}\ncrf rorfenif rsfn|!\x1f\x1f\x1f", // 29
+	"Hefr} sfmnocaso.\x1f\x1f\x1f\x1f\x1f", // 30
+	"Nf robiqa\177r} rnoca bqoeis} sts\nc pos>mkav.\x1f\x1f\x1f\x1f\x1f", // 31
+	"Os vlopka ecfqwfj oscalilar} dq\200h},\nrkq|cacya\200 c|kl\177xasfl} na rsfnf!\x1f\x1f\x1f\x1f", // 32
+	"Pqorsi, pqi\200sfl}, no mnf ntgn|\nscoi oxki.", // 33
+	"Nf ramof ltxyff mfrso el\200 n|q\200ni\200...\x1f", // 34
+	"Nf hefr}...", // 35
+	"` nf modt docoqis} poe coeoj!..\x1f\x1f\x1f", // 36
+	"Cq\200e li ktpanif sam rsois posqaxfnn|v trilij.\x1f\x1f\x1f\x1f", // 37
+	"Frli \200 voxt eorsas} \200koq}, ntgno pl|s} stea r\nbol}yim haparom cohetva c l>dkiv...\x1f\x1f\x1f\x1f", // 38
+	"` rmod hawfpis}r\200 ha \200koq}!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 39
+	"^si coeoqorli povogi na wcfs|, xso\n\200 eaqil mamf na efn} qogefni\200.\x1f\x1f\x1f\x1f\x1f", // 40
+	"Insfqfrno, xso eflafs q|ba\nc loekf nox}\177.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 41
+	"Nacfqn\200ka, \200 rmodt sts xso-nibte}\nc|teis}.\x1f\x1f\x1f\x1f\x1f\x1f", // 42
+	"Vos\200 b| q|bt eoge>m nf naptdas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 43
+	"Naef\177r}, ~si rnarsi nf osclfka\177zij man>cq.\x1f\x1f\x1f\x1f\x1f\x1f", // 44
+	"Voqoyo sam, cniht.\x1f\x1f\x1f", // 45
+	"^j, osptrsi, a?!\x1f\x1f\x1f\x1f\x1f\x1f", // 46
+	"A-a-a!..\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 47
+	"Oj.\x1f\x1f", // 48
+	"L\177ei orsacl\200\177s fet c nfcfqo\200sn|v mfrsav.\x1f", // 49
+	"Iei r\177ea, t mfn\200 kof-xso frs}\nel\200 sfb\200.\x1f", // 50
+	"Nf modt pojmas}!\x1f", // 51
+	"M|y} c loctykf!\x1f\x1f\x1f\x1f\x1f\x1f", // 52
+	"Oj!\x1f\x1f\x1f", // 53
+	"A m|y} nf saka\200 i sqtrlica\200!\x1f\x1f\x1f", // 54
+	"C \200zikav bol}yf nixfdo nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 55
+	"Rpfqca naeo ihbacis}r\200 os ktrsa.\x1f\x1f", // 56
+	"M|y} tbfgala!\x1f\x1f\x1f\x1f\x1f\x1f", // 57
+	"Bqfe.\x1f\x1f\x1f\x1f", // 58
+	"` pon\200l. Voqoyij p>rik.\x1f\x1f", // 59
+	"Efqgi.\x1f\x1f\x1f\x1f", // 60
+	"Naef\177r}, m| eqth}\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 61
+	"Romnfca\177r}, xso ~so ntgnof mfrso.\x1f\x1f\x1f\x1f\x1f", // 62
+	"Rso mdnocfnij rptrs\200...\x1f", // 63
+	"I fz> rso mdnocfnij rptrs\200...\x1f\x1f\x1f", // 64
+	"Vos\200 b| nay>l nfus} i rkoqo\nqahbodasf\177.\x1f\x1f\x1f\x1f\x1f", // 65
+	"Iqoni\200 rte}b|.\x1f", // 66
+	"!?&!", // 67
+	"No efea, s| gf obfzal!..\x1f\x1f\x1f\x1f\x1f", // 68
+	"Ov, nt laeno. Poyli.\x1f\x1f\x1f\x1f", // 69
+	"Pa.\x1f", // 70
+	"Nfhaxfm pocsoq\200s}.\x1f\x1f\x1f\x1f\x1f", // 71
+	"` cpqacet nf tmf\177 docoqis} r\nefctykami...\x1f\x1f", // 72
+	"` ob|xno nf qabosa\177 bfh x>skoj wfli.\x1f\x1f\x1f", // 73
+	"Rtzfrsctfs liy} oqfv.", // 74
+	"Thnafm, lfsa\177s li ktq|. Iei-ka\nr\177ea...\x1f\x1f\x1f\x1f\x1f\x1f", // 75
+	"Nf hax>s.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 76
+	"` tgf c|ptrsil paq.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 77
+	"Nfs, ~so eoqoda c niktea.\x1f\x1f\x1f", // 78
+	"Oskqofs badagnik.\x1f", // 79
+	"On hapfqs.\x1f\x1f\x1f\x1f\x1f\x1f", // 80
+	"C badagnikf bol}yf nixfdo nfs.\x1f\x1f\x1f", // 81
+	"Oefgea tgf c|rovla.\x1f\x1f\x1f\x1f\x1f", // 82
+	"Tcfqfn, coqon| mfn\200 hakl\177\177s!\x1f\x1f\x1f\x1f\x1f\x1f", // 83
+	"Frli \200 voxt popars} cntsq}, ntgno ihbacis}r\200\nos ovqannika ili najsi eqtdoj\npts}.\x1f\x1f", // 84
+	"Rsfna rliykom dlaeka\200, xsob| poen\200s}r\200.\x1f", // 85
+	"` rmod b|\nhabqas}r\200, bte}\nsts mfn}yf rmol|.\x1f\x1f\x1f\x1f", // 86
+	"` l\177bl\177 liy} oent hfl>nt\177 cfz}, pq\200motdol}n|j\nktroxfk btmadi r kakim-libo cagn|m\npolisikom c wfnsqf.\x1f", // 87
+	"Nf voxt fdo sqodas}. Kol\177xki modts\npokolos} moi nfgn|f qtki.\x1f\x1f\x1f\x1f", // 88
+	"Rparibo, \200 nf doloefn.\x1f", // 89
+	"Moi qtki nf narsol}ko elinn|f.\x1f\x1f\x1f\x1f\x1f\x1f", // 90
+	"Stea ealfkocaso pl|s}.\x1f\x1f\x1f\x1f\x1f", // 91
+	"^vo!\x1f", // 92
+	"^VO!\x1f", // 93
+	"Kso hefr}?!\x1f\x1f", // 94
+	"KSO HEFR]?!\x1f\x1f", // 95
+	"NF POCSOQ`J!..\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 96
+	"NF POCSOQ`J!!!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 97
+	"...ILI ` BQOYT STEA KAMFN]!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 98
+	"ILI `...\x1f\x1f\x1f\x1f", // 99
+	"Cr> fz> hefr}?\x1f\x1f\x1f\x1f\x1f\x1f", // 100
+	"^so nf yaqmanka. I cfeqa\nhefr} nfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 101
+	"Nfhaxfm ~so oskq|cas}.\x1f\x1f", // 102
+	"Vm-m... sqacka... Nf, modts tciefs}\nefsi.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 103
+	"Sak mnf oqfv nf najsi.\nSqaca rliykom dtrsa\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 104
+	"Nf rsois.\x1f\x1f\x1f\x1f\x1f", // 105
+	"Nikodea nf eopq|dnt,\n~-~... cfe} bfl|f\nnf tmf\177s pq|das}.\x1f\x1f\x1f\x1f\x1f\x1f", // 106
+	"Mnf nf ntgno.\x1f\x1f\x1f", // 107
+	"` nf Ransa-Klatr.\x1f\x1f\x1f", // 108
+	"Plarsikoc|f kopii nf insfqfrt\177s.", // 109
+	"Vqtpkof oparno noris} r roboj.\x1f\x1f\x1f", // 110
+	"Ptrs} btefs oskq|so.\x1f\x1f\x1f\x1f\x1f", // 111
+	"` nf robiqa\177r} qarvagicas}\nr xtgimi norkami.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 112
+	"Rparibo, \200 nf trsal.\x1f\x1f", // 113
+	"Oxfn} bol}yoj - i cq\200e li\nponaeobisr\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 114
+	"Romnfca\177r}, xso cntsqi frs} sajn|j\nvoe.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 115
+	"Sts bol}yf nfs insfqfrn|v uqtksoc.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 116
+	"Frli ~so tkqaet, mfn\200 porae\200s.\x1f\x1f", // 117
+	"Ltxyf orsacl\177. Gfnzin| rliykom\nxtcrscisfl}n| k wcfsam.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 118
+	"Rcfs moj, hfqkal}wf, rkagi,\nkso crfv tmnff, pokagi?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 119
+	"^j, nf etmaj sak eoldo.\x1f\x1f\x1f", // 120
+	"Poerkahka: kof-kso c komnasf,\npaqfn}.", // 121
+	"Laeno, nf soqopir}.", // 122
+	"Ltxyf nf btet\nmfyas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 123
+	"` nf voxt imfs} nixfdo obzfdo\nr eansirsami.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 124
+	"S\200gflfnna\200. I \200 cocrf nf plakra.\x1f\x1f", // 125
+	"Ea t nar sts halfgi pociela...\x1f\x1f\x1f", // 126
+	"Kltbnixnof.\x1f\x1f\x1f\x1f\x1f\x1f", // 127
+	"`bloxnof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 128
+	"Fgfcixnof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 129
+	"Rlicocof.\x1f\x1f\x1f\x1f\x1f\x1f", // 130
+	"Nt \200 i clip!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 131
+	"O, fz> sts qohmaqinocof.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 132
+	"Hnacal \200 oent Qohmaqi.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 133
+	"Nfnacigt ~si \"halipon|\".", // 134
+	"Sfmno, vos} dlah c|koli.\x1f\x1f\x1f\x1f\x1f", // 135
+	"T-A-A-A!\x1f\x1f\x1f\x1f", // 136
+	"(rson)", // 137
+	"(rmfv)\x1f\x1f\x1f\x1f", // 138
+	"` nf modt ihbacis}r\200 os niv qtkami -\nyip| na cie oxfn} orsq|f.\x1f\x1f\x1f", // 139
+	"C bfnhopilf nfs soplica.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 140
+	"Yip| rliykom sonkif, bfnhopila\nsts bfrpolfhna.\x1f\x1f\x1f\x1f", // 141
+	"Ea, oslixna\200 m|rl}. Ch\200s} kamfn} i\ndtl\200s} r nim. M-ea...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 142
+	"Ltxyf nf btet iv sqodas}, oni oxfn}\ntkqaya\177s ~so mfrso.\x1f\x1f\x1f\x1f\x1f", // 143
+	"Romnfca\177r}, xso ono gicof.\x1f", // 144
+	"Nf hna\177, na kakom \200h|kf ona docoqis.\x1f", // 145
+	"E|qa rliykom thka\200 el\200 mofj qtki.\x1f\x1f\x1f\x1f\x1f", // 146
+	"^j! Pqornir}! Psiw| napaea\177s!\x1f\x1f", // 147
+	"T mfn\200 nfs oqefqa na ob|rk.\x1f\x1f\x1f", // 148
+	"Nf cigt c ~som rsodf rfna\nnixfdo insfqfrnodo.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 149
+	"Cr> nfmnodo rlognff.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 150
+	"Bfrpolfhno, oqfv pqorkol}hn>s mfg\nhtb}fc dqabfl}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 151
+	"Cfrlo RLOMANO.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 152
+	"^sa cfska nf cfrlo. Ona na nfdo\neagf nf povoga.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 153
+	"Ltxyf pop|sas}r\200 inaxf - ~sa rsoqona\nvoqoyo ovqan\200fsr\200.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 154
+	"Ntgno fdo hasoxis}, a nf ihmfl}xis}.\x1f\x1f", // 155
+	"Nf modt nixfdo sts eflas}, oxfn} sfmno.\x1f", // 156
+	"Cos, eacaj nab}>m scoj\nkaqman.\x1f\x1f\x1f", // 157
+	"^so kaka\200-so banknosa. Rsqanno,\nna nfj kso-so napiral \"NIKODEA!\nANNA\".\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 158
+	"Frli \200 pokagt fj efn}di,\nona mogfs iv habqas}.\x1f\x1f", // 159
+	"Rosn\200 bakroc!!!\x1f\x1f\x1f", // 160
+	"Gaget kqoci!\x1f", // 161
+	"` nf robiqa\177r} pokieas} orobn\200k,\n\200 gaget kqoci!\x1f", // 162
+	"` galka\200 malfn}ka\200 plakra.\x1f", // 163
+	"Rsqanno, no \200zik hafeafs, kodea\noskq|s rorfenij...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 164
+	"Cohmogno, ~so nf rocrfm ob|xn|f\n\200ziki!\x1f\x1f\x1f\x1f", // 165
+	"` nf modt oskq|s} \200zik,\nfrli oskq|s rorfenij!\x1f\x1f\x1f\x1f", // 166
+	"On cntsqi rinij.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 167
+	"On cntsqi kqarn|j.\x1f\x1f\x1f\x1f\x1f\x1f", // 168
+	"On cntsqi rfq|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 169
+	"On cntsqi hfl>n|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 170
+	"On cntsqi koqixnfc|j.\x1f\x1f\x1f\x1f\x1f", // 171
+	"On cntsqi qohoc|j.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 172
+	"Odo! Cntsqi lfgis eiksouon!\x1f\x1f\x1f\x1f\x1f\x1f", // 173
+	"Sts lfgis polaqoie!\nOn mogfs mnf pqidoeis}r\200.", // 174
+	"C knidf xso-so pq\200sali!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 175
+	"Tv s|! Sajn|j osrfk!\x1f\x1f\x1f\x1f\x1f\x1f", // 176
+	"Mnf tgf nf ntgno r nim\ncohis}r\200.\x1f\x1f\x1f\x1f\x1f", // 177
+	"O, acsomasika.\x1f\x1f", // 178
+	"Maktlastq| mnf poka\nvcasis.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 179
+	"Nfs, nf voxt poqsis} efsfj.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 180
+	"Nfs gflani\200 xisas} rnoca.\nModlo ponqacis}r\200.\x1f\x1f\x1f", // 181
+	"` pon\200l, xso sflfcihoq c|kl\177xfn.\x1f\x1f\x1f", // 182
+	"Bfh solkt.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 183
+	"Karrfsa ckl\177xfna!", // 184
+	"Sak namnodo ltxyf.\x1f", // 185
+	"Nf voxt rpas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 186
+	"Pqorso pqobka.\x1f\x1f\x1f", // 187
+	"Bol}yf uoso mnf nf ntgno.\x1f\x1f\x1f\x1f", // 188
+	"Ea, \200 modt ~so hapiras} i ptdas}\nkoyfk.\x1f\x1f\x1f\x1f", // 189
+	"` tgf hapiral so, xso vosfl.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 190
+	"` nixfdo nf rmodt hapiras}, poka nf najet\nbasaqfjki.", // 191
+	"Bfh basaqffk nikak.\x1f\x1f", // 192
+	"Nf etma\177, xso momfns poevoeis.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 193
+	"Nixfdo nf poltxisr\200,\npoka pocaq q\200eom.\x1f\x1f\x1f\x1f", // 194
+	"Vos} i bts|lka sa gf, cq\200e\nli \200 sak rmodt kodo-nibte}\nobmants}.\x1f\x1f", // 195
+	"` voxt fdo qahbis}, a nf\nqaheacis}!..\x1f\x1f\x1f\x1f\x1f", // 196
+	"Crfdea insfqfrocalo, xso cntsqi\nsakiv ystk.\x1f\x1f\x1f\x1f\x1f", // 197
+	"Orsal}nof liynff.\x1f\x1f\x1f", // 198
+	"O! 2 basaqfjki na 1,5C!\x1f", // 199
+	"Hefr} han\200so, \200rno?\x1f\x1f", // 200
+	"Nakonfw ~so pqoihoylo. ` roy>l r tma.\x1f", // 201
+	"Btmada polnors}\177 rdoqfla!\x1f\x1f\x1f\x1f\x1f\x1f", // 202
+	"Doqi, efska!\x1f\x1f\x1f\x1f\x1f", // 203
+	"Ctal\200.", // 204
+	"Nf kornts}r\200, gaqko!\x1f\x1f", // 205
+	"Ono pqim>qhlo k polkf!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 206
+	"N\200mki.", // 207
+	"Nikodea nf l\177bil sfl\200sint.", // 208
+	"Nfhaxfm sak eflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 209
+	"Oenage| \200 fdo tgf obmantl.\x1f\x1f", // 210
+	"Majk, ckl\177xi pqocfqkt dolora.\x1f", // 211
+	"Moim dolorom Majka nf obmants}.\x1f\x1f", // 212
+	"...pooooo>s!...\x1f\x1f\x1f", // 213
+	"Majk, haptrsi pqocfqkt\nhapava.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 214
+	"Eacaj pqocfqkt obqaha.\x1f\x1f", // 215
+	"\"Sajn|j enfcnik Egona Nosi\". R poepir}\177.\x1f\x1f", // 216
+	"Sts nf rpq\200sas}r\200!", // 217
+	"Rnaqtgi Egon Nosi! ` nf modt c|jsi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 218
+	"Pqonfrlo!\x1f\x1f\x1f\x1f\x1f\x1f", // 219
+	"Pqobka harsq\200la c oscfqrsii.\x1f\x1f", // 220
+	"Oslixno poeoyla!\x1f\x1f", // 221
+	"C qakocinf eorsasoxno coe|.\x1f\x1f\x1f\x1f\x1f\x1f", // 222
+	"C qakocinf nfs doq\200xfj coe|.\x1f\x1f\x1f\x1f\x1f", // 223
+	"^sikfska osrsala!\x1f\x1f\x1f\x1f\x1f\x1f", // 224
+	"Pqobka rliykom mflka\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 225
+	"Rfjxar nf rsois i p|sas}r\200.\x1f\x1f\x1f\x1f\x1f", // 226
+	"Xso-so nf voxfsr\200 pqfcqasis}r\200 c ralas.\x1f\x1f", // 227
+	"Nfs...", // 228
+	"Rnaxala rsois orsanocis} cfnsil\200soq.\x1f\x1f", // 229
+	"Rnaxala ntgno pojmas} Egona Nosi.", // 230
+	"Voqoyo, xso ~so crfdo liy} xili...\x1f\x1f\x1f\x1f\x1f", // 231
+	"Coea, povogf, kip\200sok.\x1f\x1f\x1f", // 232
+	"Qakocina polna doq\200xfj coe|.\x1f\x1f", // 233
+	"Mnf nfktea pologis}\n~si norki.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 234
+	"Cos moi btmadi.\x1f\x1f\x1f\x1f", // 235
+	"` tgf poltxil qahqfyfnif.\x1f\x1f\x1f\x1f", // 236
+	"\"Rbfqfgfni\200 - cfz} voqoya\200. Orobfnno\nfrli ha sfb\200 kop\200s qoeisfli\"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 237
+	"\"L\177bl\177 kapisana\"", // 238
+	"\"Utsbol qtlh\"", // 239
+	"\"Nf qtbisf efqfc}\200, ceqtd\noenage| havosisf tjsi\nc paqsihan|\"\x1f\x1f", // 240
+	"\"Crsac} kaqst\"\x1f", // 241
+	"Orsal}n|f dqauuisi nfpqilixn|f.\x1f", // 242
+	"R~q, \200 Maqk. Nocobqanfw.", // 243
+	"Hapfqso!\x1f\x1f\x1f\x1f", // 244
+	"Rparib.", // 245
+	"Bfh pon\200si\200, xso rfjxar\nr ~sim\neflas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 246
+	"Nasalkicafs na m|rl}...\x1f", // 247
+	"Pqocfq\177, kak ~so qabosafs...\x1f\x1f\x1f\x1f\x1f", // 248
+	"Ramof cqfm\200 hcas} kapisana...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 249
+	"^j! ` tgf poktyal!\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 250
+	"Odo, on pqicaqilr\200 k mirkf!...\x1f\x1f\x1f\x1f", // 251
+	"Rwapan.", // 252
+	"Nf voxt bol}yf q|s}r\200\nc fdo kaqmanav.\x1f\x1f\x1f", // 253
+	"^so nf qabosafs.\x1f\x1f", // 254
+	"Paqa ptrs\200koc.", // 255
+	"I kak \200 eolgfn cfqnts}r\200?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 256
+	"Laeno.", // 257
+	"Nt ea, cfqno...\x1f\x1f\x1f", // 258
+	"Nf modt c|sazis}.\x1f\x1f\x1f", // 259
+	"Nf voxt pqikaras}r\200, a so fz> poqan\177r}.\x1f\x1f\x1f\x1f\x1f", // 260
+	"Qfy>ska pqfdqageafs pts}...", // 261
+	"` nf voxt rpas}.\x1f\x1f\x1f\x1f\x1f\x1f", // 262
+	"Nf modt eorsas}.\x1f", // 263
+	"^j?\x1f\x1f\x1f", // 264
+	"On rliykom tclfx>n.\x1f\x1f\x1f", // 265
+	"Kak narx>s...\x1f\x1f\x1f\x1f\x1f\x1f", // 266
+	"nocodo rcfgfdo...\x1f\x1f\x1f\x1f\x1f\x1f", // 267
+	"polnowcfsnodo...", // 268
+	"rpfwc|ptrka...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 269
+	"\"Roleasrkiv nocorsfj\"?\x1f", // 270
+	"Vcasis!\x1f\x1f\x1f\x1f\x1f", // 271
+	"` sfbf kso? P|lfror?!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 272
+	"Rptrs\200 67 bqann|v rloc...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 273
+	"C so gf cqfm\200 c orobn\200kf...", // 274
+	"Tqa, oskq|so.\x1f", // 275
+	"Eacaj, kqoyka, cr> el\200 sfb\200!", // 276
+	"Nf cigt pqixin| docoqis} r nim\nrfjxar.\x1f\x1f\x1f\x1f\x1f\x1f", // 277
+	"Ada, pqacea!..\x1f", // 278
+	"Baqmfn oxfn} blihko...\x1f\x1f\x1f\x1f", // 279
+	"S}ut!", // 280
+	"Ltxyf b| coea.\x1f", // 281
+	"Mnf ril nf vcasis clfhs}.", // 282
+	"Pqtgin| modts pokolos} rpint.\x1f\x1f\x1f", // 283
+	"Nfs, rparibo. Fea, povogf, fz> gica\200.\x1f\x1f\x1f", // 284
+	"Ecfq} hapfqsa. Kaka\200 nfogieannors}.\x1f", // 285
+	"Sts ptrso.\x1f", // 286
+	"Rsoilo b|s} bolff cnimasfl}n|m\nna tqokav dfodqauii...\x1f\x1f\x1f\x1f", // 287
+	"Mnf nfhaxfm ~sos vlam.\x1f", // 288
+	"Rparibo, \200 ciefl kamni pom\200dxf.\x1f\x1f\x1f\x1f", // 289
+	"Oxfn} stp|f - i cq\200e li pqidoe\200sr\200.\x1f", // 290
+	"Kaka\200 os niv pol}ha?\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 291
+	"Baqmfn nacfqn\200ka hamfsis\npqopagt.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 292
+	"Ntgno nfmalo cqfmfni, xsob| cr> c|pis}.\nMogfs, porlf haeani\200...\x1f\x1f\x1f\x1f", // 293
+	"` cfe} nf coq. I cr> qacno hefr} ptrso.\x1f\x1f\x1f\x1f\x1f", // 294
+	"Iv rliykom mnodo, xsob pqocfqis} crf.", // 295
+	"Kapisan r\177ea nf pomfrsisr\200.\nPoizt c eqtdom mfrsf.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 296
+	"Rsqtril? `? Nikodea!\x1f\x1f", // 297
+	"Nf modt oskq|s}.", // 298
+	"Oni mnf nf ntgn|.\x1f", // 299
+	"` L\177bop|sna\200 Caqcaqa?\x1f\x1f\x1f\x1f", // 300
+	"T mfn\200 bol}yif kaqman|, no nf bfheonn|f.\x1f", // 301
+	"Frli \200 iv naefnt, btefs rlogno iesi\npo lfrsniwf.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 302
+	"Xsob iv pqoxisas}, ntgno 9 gihnfj.", // 303
+	"Rparibo, \200 fz> nf trsal.\x1f", // 304
+	"Nfs ntge| ~so ckl\177xas}.\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 305
+	"Ona cfris bol}yf mfn\200.\x1f\x1f", // 306
+	"Nikodea nf tmfl fj pol}hocas}r\200.", // 307
+	"Sakif orsq|f, xso ysan| modts qahqfhas}!", // 308
+	"Ut! Os kon}\200ka nixfdo voqoyfdo nf gei...\x1f\x1f\x1f\x1f\x1f", // 309
+	"Nfs cqfmfni qarrlabl\200s}r\200.\x1f\x1f\x1f\x1f\x1f\x1f", // 310
+	"` nf btet sqodas} ~si norki dol|mi qtkami!\x1f\x1f\x1f", // 311
+	"N|nf nf V~llotin.\x1f\x1f", // 312
+	"Na n>m nfs knopok! Nfnacigt!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 313
+	"Mnf nfxfdo porsacis}.\x1f\x1f", // 314
+	"` nf coh}mt so, xso nf mo>.\x1f\x1f\x1f\x1f", // 315
+	"^j! C x>m eflo?!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 316
+	"Oskq|so!\x1f\x1f", // 317
+	"Nf qabosafs.\x1f\x1f\x1f\x1f\x1f\x1f", // 318
+	"Poka kapisan nabl\177eafs?..\nNf rsois...\x1f\x1f", // 319
+	"Rfqp rliykom stpoj.\x1f\x1f\x1f\x1f\x1f", // 320
+	"Co-pfqc|v, t mfn\200 vcasafs eqtdiv habos.\x1f\x1f\x1f\x1f\x1f\x1f", // 321
+	"Na poekop r pomoz}\177 noga tje>s\neobqa\200 rosn\200 lfs.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 322
+	"Nfs gflani\200 fz> i trtdtbl\200s}\n~sos bfrpoq\200eok.", // 323
+	"Rsois li bqoras} iv psiwf natdae?\x1f\x1f\x1f\x1f\x1f", // 324
+	"Nf voxt posqasis} sakif cktrn|f kqoyki.\x1f\x1f", // 325
+	"Nf rsois... Modt rorkol}hnts} c...\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 326
+	"\"Irsoqi\200 bl\177ha\".\x1f\x1f\x1f\x1f\x1f\x1f\x1f", // 327
+	"\"Manxfrsfq _najsfe: idqa kqarn|v e}\200coloc\".\x1f\x1f", // 328
+	"\"Boqh|f i eqtdif ovosnix}i robaki\".\x1f", // 329
+	"\"Molokoror, ili mo\200 gihn} na Eikom Hapaef\".\x1f\x1f\x1f\x1f", // 330
+	"\"Xaqli Bqatn i fdo kompani\200\".\x1f\x1f\x1f", // 331
+	"\"Qohoca\200 pansfqa: nfihcfrsna\200 biodqaui\200\".\x1f", // 332
+
+	"Irpol}hocanif ~siv ectv pqfemfsoc cmfrsf\nnixfdo nf ears.",
+};
+
 #define DSEG_ENDBLK_SIZE 34651
 
 const static uint8 dsegEndBlock[DSEG_ENDBLK_SIZE] = {
@@ -12213,6 +12551,43 @@ const char *englishCombineMessages[kNumCombinations] = {
 	"Let's make it spicy.",
 };
 
+const char *russianCombineMessages[kNumCombinations] = {
+	"Odo, sfpfq} ona c|dl\200eis kak\npq\200mikom ih madahina!\x1f\x1f\x1f\x1f\x1f",
+	"Obc\200hac dqabli lfnsoj, tealor} tmfn}yis}\nhahoq mfget htb}\200mi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"R pomoz}\177 rtpfqklf\200 \200 reflal...\nxso-so...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"R pomoz}\177 rtpfqklf\200 \200 reflal...\nxso-so...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Rnoca pqimfnic rtpfqklfj...\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Rnoca pqimfnic rtpfqklfj...\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Cirki eorsasoxno kqfpkij, xsob|\nrojsi ha soplico, no cos poje>s li\nono el\200 bfnhopil|...",
+	"Rtpfqklfj rnoca pqidoeilr\200...\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Raga pqieala kaqsoykf rocfqyfnno inoj cie...\x1f\x1f",
+	"Sfpfq} \200 dosoc pokoqis} ohfqo!\x1f\x1f\x1f\x1f",
+	"Oztzfnif, xso ~so rnoca\ndltp|j \"qo\200l} c ktrsav\".\x1f\x1f\x1f",
+	"Feca li saka\200 konufsa komt-so ponqacisr\200.\x1f",
+	"Sfpfq} poecigna\200.\x1f\x1f",
+	"Oslixno! No ha mnoj modts nabl\177eas}\n~kolodi-uanasiki...\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"C ob>qskf ltxyf c|dl\200efs} nf rsanfs.\x1f\x1f",
+	"Piqod rliykom bol}yoj el\200 ob>qski.\x1f\x1f\x1f",
+	"` nf voxt liyis}r\200 ~soj konufs|.\x1f",
+	"Wcfsok eorsasoxno kqaric i bfh\nc|xtqn|v ystxfk.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Wcfsok eorsasoxno kqaric i bfh\nc|xtqn|v ystxfk.\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Voqoya\200 m|rl}, no ntgno xso-nibte} mfn}yf\n~soj cfq>cki.",
+	"R|q mogfs pqidoeis}r\200. Rnoca.\x1f\x1f\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Nf ntgno oskq|cas} ~sos oqfv.\x1f",
+	"^so nf ETM. ^so bfhobienof pqikl\177xfnif\nel\200 crfj rfm}i (ea>y} ETM! Ea>y}\nETM!).\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Eacajsf tcflixim ~st pqobkt.",
+	"I rnoca rtpfqklfj mnf pqidoeilr\200!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"Basaqfjki poeoyli!",
+	"` pqic\200hal cfq>ckt k xfkf.\x1f",
+	"Eobacim pfqxinkt.\x1f\x1f\x1f",
+};
+
 // Dialog Strings Block
 
 #define ANIM_WAIT        "\xff"
@@ -12220,6 +12595,8 @@ const char *englishCombineMessages[kNumCombinations] = {
 #define DISPLAY_MESSAGE  "\n\n"
 #define CHANGE_CHARACTER "\n\n\n"
 #define END_DIALOG       "\n\n\n\n"
+
+const uint kNumDialogs = 213;
 
 const static char* englishDialog0[] = {
 	ANIM_WAIT,
@@ -16195,6 +16572,4166 @@ const static char* englishDialog212[] = {
 	END_DIALOG
 };
 
+const static char *russianDialog0[] = {
+	ANIM_WAIT,
+	"Eobq|j efn}.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Poxfmt c| hefr} rsoisf?",
+	CHANGE_CHARACTER,
+	"Eflo c dqacisawii.",
+	CHANGE_CHARACTER,
+	"Oxfn} rmfyna\200 ytska.",
+	DISPLAY_MESSAGE,
+	"El\200 roleasa.",
+	CHANGE_CHARACTER,
+	"` nf roleas, no vosfl",
+	NEW_LINE,
+	"im rsas}.",
+	DISPLAY_MESSAGE,
+	"Nf pqoy>l sfrs na tmrs...",
+	NEW_LINE,
+	"uihpoedosockt.",
+	DISPLAY_MESSAGE,
+	"Mnf pqikahali poersqflis}",
+	NEW_LINE,
+	"poebqoyfnnt\177 monfskt c pq|gkf",
+	NEW_LINE,
+	"r efqfca na loyae}.",
+	CHANGE_CHARACTER,
+	"Odo, s\200gflocaso.",
+	CHANGE_CHARACTER,
+	"Rpfwnah - ~so sfbf nf",
+	NEW_LINE,
+	"vtvq|-mtvq|.",
+	CHANGE_CHARACTER,
+	"Roxtcrsct\177, xso nf c|ylo.",
+	CHANGE_CHARACTER,
+	"Ada, pqolfsfl mimo loyaei.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog1[] = {
+	"Nt i...",
+	DISPLAY_MESSAGE,
+	"Xfm rfjxar hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"Voxfy} rmfynoj oscfs?",
+	CHANGE_CHARACTER,
+	"Nf tsqtgeajsfr}.",
+	CHANGE_CHARACTER,
+	"Laeno, no voxt sfbf rkahas},",
+	NEW_LINE,
+	"sts nf avsi rkol}ko qahclfxfnij.",
+	DISPLAY_MESSAGE,
+	"L\177bl\177, kodea qahdocoq ytskami nabis.",
+	NEW_LINE,
+	"Ili na bajs, vf-vf!",
+	CHANGE_CHARACTER,
+	"Nt konfxno...",
+	CHANGE_CHARACTER,
+	"` ovqan\200\177 ~so mfrso...",
+	CHANGE_CHARACTER,
+	"Odo. Kaka\200 nfogieannors}.",
+	CHANGE_CHARACTER,
+	"I pqirsqfl\177 l\177bodo, kso",
+	NEW_LINE,
+	"r\177ea rtnfsr\200.",
+	CHANGE_CHARACTER,
+	"A frli ~so claeflfw?",
+	CHANGE_CHARACTER,
+	"Sak on gf nf l\177boj, ram ponimafy}.",
+	CHANGE_CHARACTER,
+	"Polada\177, mfn\200 c| sogf nf ptrsisf?",
+	CHANGE_CHARACTER,
+	"Soxno.",
+	CHANGE_CHARACTER,
+	"A frli \200 rkagt \"pogaltjrsa\"?",
+	CHANGE_CHARACTER,
+	"Nf pqokasis, paqfn>k.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"POGA-A-ALTJRSA.",
+	CHANGE_CHARACTER,
+	"Habte}.",
+	NEW_LINE,
+	"T mfn\200 kamfnnof rfqewf.",
+	CHANGE_CHARACTER,
+	"Kak i mohdi.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nf pon\200l.",
+	CHANGE_CHARACTER,
+	"Pqofvali.",
+	NEW_LINE,
+	"Kak \200 modt rm\200dxis} cayf kamfnnof rfqewf?",
+	CHANGE_CHARACTER,
+	"Nikak. ` kqfmfn}.",
+	DISPLAY_MESSAGE,
+	"No poeojei,",
+	NEW_LINE,
+	"\200 sfb\200 tsfyt...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog2[] = {
+	"Rparibo. Xso ~so?",
+	CHANGE_CHARACTER,
+	"Yokolaena\200 konufsa.",
+	DISPLAY_MESSAGE,
+	"Moj qabosoeasfl} eal mnf paqoxkt",
+	NEW_LINE,
+	"na obfe i...",
+	CHANGE_CHARACTER,
+	"Cay qabosoeasfl} eoma?!",
+	CHANGE_CHARACTER,
+	"Mirsfq Egon Nosi? Ea, a xso?",
+	CHANGE_CHARACTER,
+	"O, nixfdo...",
+	DISPLAY_MESSAGE,
+	"Egon Nosi...",
+	DISPLAY_MESSAGE,
+	"Kagfsr\200, \200 o n>m rl|yal...",
+	CHANGE_CHARACTER,
+	"Nacfqn\200ka.",
+	NEW_LINE,
+	"On eflafs odqomn|f efn}di.",
+	DISPLAY_MESSAGE,
+	"Orobfnno c porlfenff cqfm\200...",
+	CHANGE_CHARACTER,
+	"Ea?..",
+	CHANGE_CHARACTER,
+	"Pqacea, \200 nf hna\177 kak.",
+	DISPLAY_MESSAGE,
+	"Mogfs, ~so kak-so rc\200hano",
+	NEW_LINE,
+	"r bfhtmn|m tx>n|m, kosoq|j",
+	NEW_LINE,
+	"havoeil na en\200v...",
+	DISPLAY_MESSAGE,
+	"O, etmafy}, s| ram|j tmn|j, ea?!",
+	NEW_LINE,
+	"S| ypion?!",
+	CHANGE_CHARACTER,
+	"^j, \200 ob|xn|j paqfn}.",
+	DISPLAY_MESSAGE,
+	"Nf vosisf docoqis} -",
+	NEW_LINE,
+	"nf naeo.",
+	CHANGE_CHARACTER,
+	"Mirsfq Hloefj cflfl mnf",
+	NEW_LINE,
+	"c|rmasqicas} ypionoc...",
+	CHANGE_CHARACTER,
+	"Nftgfli \200 povog na ypiona?",
+	CHANGE_CHARACTER,
+	"...I rsqfl\200s} iv na mfrsf...",
+	CHANGE_CHARACTER,
+	"^j, polfdxf...",
+	CHANGE_CHARACTER,
+	"...A \200 o-o-oxfn} eacno",
+	NEW_LINE,
+	"nikodo nf tbical...",
+	CHANGE_CHARACTER,
+	"^so ih-ha konufs|, ea?",
+	NEW_LINE,
+	"Oseas} f>? Nf copqor.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pqorsi, nfmnodo qahdoq\200xilr\200.",
+	CHANGE_CHARACTER,
+	"Ponima\177.",
+	NEW_LINE,
+	"Sts eocol}no gaqko.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog3[] = {
+	"Mirsfq ovqannik, \200...",
+	CHANGE_CHARACTER,
+	"Rltyaj, paqfn}.",
+	DISPLAY_MESSAGE,
+	"Ypion s| ili nfs -",
+	NEW_LINE,
+	"bfh qahniw|.",
+	DISPLAY_MESSAGE,
+	"` sfb\200 nf ptzt, i nf cagno, pqiy>l s|",
+	NEW_LINE,
+	"pqodtl\200s}r\200, xso-nibte} tkqars} ili",
+	NEW_LINE,
+	"pobolsas} r mirsfqom Nosi.",
+	DISPLAY_MESSAGE,
+	"I sfbf mfn\200 nf habolsas}.",
+	DISPLAY_MESSAGE,
+	"Fz> pop|ska, i \200 pqoefla\177 paqt",
+	NEW_LINE,
+	"noqok el\200 xfqcfj.",
+	DISPLAY_MESSAGE,
+	"C sco>m sflf.",
+	DISPLAY_MESSAGE,
+	"Pon\200l?",
+	CHANGE_CHARACTER,
+	"Pon\200l.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog4[] = {
+	"R idoloxki.",
+	CHANGE_CHARACTER,
+	"Ada.",
+	END_DIALOG
+};
+
+const static char *russianDialog5[] = {
+	CHANGE_CHARACTER,
+	"X>qs!",
+	DISPLAY_MESSAGE,
+	"A, ~so s|!..",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog6[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"Xso?",
+	CHANGE_CHARACTER,
+	"Xso c bts|lkf?",
+	CHANGE_CHARACTER,
+	"S| nixfdo nf eokagfy}!",
+	CHANGE_CHARACTER,
+	"Xso pokqfpxf, polada\177?..",
+	CHANGE_CHARACTER,
+	"Nf sco> eflo.",
+	CHANGE_CHARACTER,
+	"P}>sf na porst, a?",
+	CHANGE_CHARACTER,
+	"Etmafy}, harstkal mfn\200,",
+	NEW_LINE,
+	"ea?",
+	DISPLAY_MESSAGE,
+	"Nf mfxsaj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog7[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"S| nixfdo nf ciefl.",
+	DISPLAY_MESSAGE,
+	"` xirs.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog8[] = {
+	"Pqicfs!",
+	CHANGE_CHARACTER,
+	"Rcali.",
+	END_DIALOG
+};
+
+const static char *russianDialog9[] = {
+	"Xso rkagfsf, frli \200 eam cam nfmnodo",
+	NEW_LINE,
+	"holosa?..",
+	CHANGE_CHARACTER,
+	"Rkagt rparibo.",
+	CHANGE_CHARACTER,
+	"A cojsi eaeisf?",
+	CHANGE_CHARACTER,
+	"Nacfqnof...",
+	CHANGE_CHARACTER,
+	"Rkagisf soxno.",
+	CHANGE_CHARACTER,
+	"Laeno, soxno. ` eam sfbf cojsi.",
+	CHANGE_CHARACTER,
+	"Oslixno. Cos.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog10[] = {
+	"Sfpfq} oskqojsf, pogaltjrsa, ecfq}.",
+	CHANGE_CHARACTER,
+	"Ni ha xso. Tvoei.",
+	CHANGE_CHARACTER,
+	"^! ` g holoso eal, pomnisf?..",
+	CHANGE_CHARACTER,
+	"Kakof holoso?",
+	CHANGE_CHARACTER,
+	"KAKOF HOLOSO?!",
+	CHANGE_CHARACTER,
+	"Nixfdo nf hna\177 ni o kakom holosf.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog11[] = {
+	"C|... C|...",
+	CHANGE_CHARACTER,
+	"Pqox}.",
+	CHANGE_CHARACTER,
+	"C| obfzali mfn\200 cptrsis}!",
+	DISPLAY_MESSAGE,
+	"No qfyili optrsis}!",
+	CHANGE_CHARACTER,
+	"Haso modt sfb\200 osptrsis}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog12[] = {
+	"N|nxf nfl}h\200 cfqis} eagf",
+	NEW_LINE,
+	"pqoeagn|m ovqannikam.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog13[] = {
+	"Pqicfs.",
+	CHANGE_CHARACTER,
+	"Pqicfs.",
+	CHANGE_CHARACTER,
+	"` Maqk.",
+	DISPLAY_MESSAGE,
+	"Kak sfb\200 hocts?",
+	CHANGE_CHARACTER,
+	"Kak mfn\200 hocts?",
+	CHANGE_CHARACTER,
+	"Nf hna\177, s| rkagi mnf.",
+	CHANGE_CHARACTER,
+	"Mnf.",
+	CHANGE_CHARACTER,
+	"Nf docoqi mnf \"mnf\", pqorso rkagi",
+	NEW_LINE,
+	"rco> im\200!",
+	CHANGE_CHARACTER,
+	"Rco> i...",
+	CHANGE_CHARACTER,
+	"Ut s|!",
+	DISPLAY_MESSAGE,
+	"Kak sfb\200 hoc>s osfw?",
+	CHANGE_CHARACTER,
+	"R|na.",
+	CHANGE_CHARACTER,
+	"R|na c rm|rlf im\200 ili r|na",
+	NEW_LINE,
+	"c rm|rlf r|n?",
+	CHANGE_CHARACTER,
+	"R|na.",
+	CHANGE_CHARACTER,
+	"S| etqak ili pqiscoq\200fy}r\200?",
+	CHANGE_CHARACTER,
+	"` R|na.",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog14[] = {
+	"Rl|y}, R|na ili kak sam sfb\200.",
+	DISPLAY_MESSAGE,
+	"Xso s| eflafy}",
+	NEW_LINE,
+	"r ~sim m\200xom?",
+	CHANGE_CHARACTER,
+	"Efetyka rkahal, xso rcoeis mfn\200 c hoopaqk,",
+	NEW_LINE,
+	"frli \200 popaet c koqhint.",
+	CHANGE_CHARACTER,
+	"Etma\177, sfbf ntgno poebqar|cas} m\200x",
+	NEW_LINE,
+	"nfmnodo c|yf.",
+	CHANGE_CHARACTER,
+	"Ram hna\177.",
+	CHANGE_CHARACTER,
+	"Nt i?",
+	CHANGE_CHARACTER,
+	"Nt i xso?",
+	CHANGE_CHARACTER,
+	"Nt i poxfmt s| sak nf eflafy}?!",
+	CHANGE_CHARACTER,
+	"Nacfqnof, ro hqfnifm",
+	NEW_LINE,
+	"xso-so.",
+	CHANGE_CHARACTER,
+	"S| oxki noriy}?",
+	CHANGE_CHARACTER,
+	"Nfs, haxfm?",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	DISPLAY_MESSAGE,
+	"Mogfs, s| pqorso rlabocas, xsob",
+	NEW_LINE,
+	"eobqoris} m\200x poc|yf?",
+	CHANGE_CHARACTER,
+	"Nf pqikal|cajr\200.",
+	CHANGE_CHARACTER,
+	"(cheov)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog15[] = {
+	"^, pawan!",
+	DISPLAY_MESSAGE,
+	"Frs} klarrna\200 ief\200!",
+	CHANGE_CHARACTER,
+	"Ea?",
+	CHANGE_CHARACTER,
+	"Iei rkagi,",
+	NEW_LINE,
+	"xso popal c koqhint!",
+	CHANGE_CHARACTER,
+	"So frs} rocqas}?",
+	CHANGE_CHARACTER,
+	"Sipa sodo...",
+	CHANGE_CHARACTER,
+	"` NIKODEA NF CQT!",
+	CHANGE_CHARACTER,
+	"Nikodea?!",
+	CHANGE_CHARACTER,
+	"NIKODEA!",
+	CHANGE_CHARACTER,
+	"Voqoyij mal}xik.",
+	END_DIALOG
+};
+
+const static char *russianDialog16[] = {
+	"Pqicfs...",
+	CHANGE_CHARACTER,
+	"Tjei.",
+	END_DIALOG
+};
+
+const static char *russianDialog17[] = {
+	"^j, paqfn}! Pqorso nfcfqo\200sno!",
+	CHANGE_CHARACTER,
+	"Xso?",
+	CHANGE_CHARACTER,
+	"^so mogfs pokahas}r\200 ytskoj,",
+	NEW_LINE,
+	"no ih ohfqa po\200cilar}",
+	NEW_LINE,
+	"qtka, rgima\177za\200 mfx!",
+	CHANGE_CHARACTER,
+	"Laeno, \200 chdl\200nt, no nf etmaj,",
+	NEW_LINE,
+	"xso oetqaxil mfn\200.",
+	NEW_LINE,
+	"^sa qtka kage|j doe po\200cl\200fsr\200.",
+	DISPLAY_MESSAGE,
+	"Mogfs, vos} c ~sos qah",
+	NEW_LINE,
+	"pocfh>s...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog18[] = {
+	"Eobq|j efn}, r~q!",
+	CHANGE_CHARACTER,
+	"I sfbf eobq|j,",
+	NEW_LINE,
+	"r|nok.",
+	CHANGE_CHARACTER,
+	"Mfn\200 hocts Maqk, r~q.",
+	CHANGE_CHARACTER,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Xfdo s| voxfy}?",
+	CHANGE_CHARACTER,
+	"Pqorso l\177bt\177r} cayim kqfrlom.",
+	DISPLAY_MESSAGE,
+	"Voqoyff.",
+	CHANGE_CHARACTER,
+	"Voqoyff i cfr}ma",
+	NEW_LINE,
+	"teobnof.",
+	CHANGE_CHARACTER,
+	"I bol}yof.",
+	CHANGE_CHARACTER,
+	"Ectvmfrsnof.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog19[] = {
+	"Hnafsf paqn\200, idqa\177zfdo",
+	NEW_LINE,
+	"r m\200xom",
+	NEW_LINE,
+	"na tliwf?",
+	CHANGE_CHARACTER,
+	"Konfxno, ~so",
+	NEW_LINE,
+	"moj cntk.",
+	CHANGE_CHARACTER,
+	"Voqoyij paqfn>k.",
+	CHANGE_CHARACTER,
+	"Voqoyij i tmn|j.",
+	CHANGE_CHARACTER,
+	"Voqoyij i malfn}kij.",
+	CHANGE_CHARACTER,
+	"On poeqars>s.",
+	CHANGE_CHARACTER,
+	"I rsanfs ram|m",
+	NEW_LINE,
+	"hnamfnis|m",
+	NEW_LINE,
+	"barkfsbolirsom?..",
+	CHANGE_CHARACTER,
+	"Naef\177r}, nfs.",
+	CHANGE_CHARACTER,
+	"Sodea rkagisf fmt, xso vcasis idqas}!",
+	CHANGE_CHARACTER,
+	"Ea.",
+	DISPLAY_MESSAGE,
+	"Pohgf.",
+	DISPLAY_MESSAGE,
+	"Cohmogno.",
+	DISPLAY_MESSAGE,
+	"Rfjxar \200 voxt",
+	NEW_LINE,
+	"oseovnts}.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog20[] = {
+	"C| robiqafsfr} riefs} hefr}",
+	NEW_LINE,
+	"cfr} efn}?",
+	CHANGE_CHARACTER,
+	"Vosflor} b|.",
+	CHANGE_CHARACTER,
+	"Cfr} ~sos hamfxasfl}n|j efn}?",
+	CHANGE_CHARACTER,
+	"Vosflor} b|.",
+	CHANGE_CHARACTER,
+	"Cam nf insfqfrfn",
+	NEW_LINE,
+	"okqtga\177zij miq?!",
+	CHANGE_CHARACTER,
+	"Nf oxfn}.",
+	CHANGE_CHARACTER,
+	"Poxfmt sak?",
+	CHANGE_CHARACTER,
+	"Mnf nf insfqfrn|",
+	NEW_LINE,
+	"nocorsi.",
+	CHANGE_CHARACTER,
+	"No...",
+	CHANGE_CHARACTER,
+	"Kak docoqisr\200...",
+	DISPLAY_MESSAGE,
+	"Ltxyif nocorsi -",
+	NEW_LINE,
+	"iv osrtsrscif.",
+	CHANGE_CHARACTER,
+	"No l\177ei eolgn| hnas} o",
+	NEW_LINE,
+	"pqodqfrrf i pqoxfm!",
+	CHANGE_CHARACTER,
+	"Eagf nf rsant",
+	NEW_LINE,
+	"rpqayicas} poxfmt...",
+	CHANGE_CHARACTER,
+	"Posomt xso...",
+	DISPLAY_MESSAGE,
+	"^...",
+	DISPLAY_MESSAGE,
+	"Posomt xso...",
+	DISPLAY_MESSAGE,
+	"^m...",
+	CHANGE_CHARACTER,
+	"Cfqno.",
+	NEW_LINE,
+"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog21[] = {
+	"Kakif nocorsi?",
+	CHANGE_CHARACTER,
+	"Nikakiv.",
+	END_DIALOG
+};
+
+const static char *russianDialog22[] = {
+	"Mogno ch\200s} ~so qtg}>?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Poga-a-altjrsa...",
+	CHANGE_CHARACTER,
+	"Moloeoj xflocfk, ~so oxfn}",
+	NEW_LINE,
+	"rsaqof i oparnof oqtgif...",
+	DISPLAY_MESSAGE,
+	"...a \200 oscfsrscfnn|j xflocfk,",
+	NEW_LINE,
+	"\200rno?",
+	CHANGE_CHARACTER,
+	"No \200...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	END_DIALOG
+};
+
+const static char *russianDialog23[] = {
+	"Mogfs, pfqfetmafsf",
+	NEW_LINE,
+	"narx>s qtg}\200?...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Not.",
+	DISPLAY_MESSAGE,
+	"Najn.",
+	DISPLAY_MESSAGE,
+	"No.",
+	DISPLAY_MESSAGE,
+	"Naj.",
+	DISPLAY_MESSAGE,
+	"Nf.",
+	DISPLAY_MESSAGE,
+	"Ni.",
+	CHANGE_CHARACTER,
+	"Laeno, \200 pon\200l.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog24[] = {
+	"Mogno pokopas}r\200 c cayiv ykauxikav?",
+	CHANGE_CHARACTER,
+	"Ea.",
+	CHANGE_CHARACTER,
+	"EA?!",
+	CHANGE_CHARACTER,
+	"O, hab|l tsoxnis}, xso oni",
+	NEW_LINE,
+	"ptrs|f.",
+	DISPLAY_MESSAGE,
+	"Sol}ko norocoj plasok c",
+	NEW_LINE,
+	"cfqvnfm pqacom.",
+	DISPLAY_MESSAGE,
+	"Mogfy} ch\200s}, frli voxfy}, mnf on nf ntgfn.",
+	CHANGE_CHARACTER,
+	"Laeno, rparibo.",
+	DISPLAY_MESSAGE,
+	"C| oxfn}... eobq|...",
+	CHANGE_CHARACTER,
+	"Sol}ko nf poetmaj, xso \200 pohcol\177 pqikaqmanis}",
+	NEW_LINE,
+	"xso-nibte} fz>.",
+	CHANGE_CHARACTER,
+	"Konfxno, i c m|rl\200v nf b|lo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog25[] = {
+	"` coh}mt cfsqoetj?",
+	CHANGE_CHARACTER,
+	"Ni ha xso. R nim gaqa rfdoen\200",
+	NEW_LINE,
+	"xtska sfqpimff.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog26[] = {
+	"Narx>s cfsqoet\200...",
+	CHANGE_CHARACTER,
+	"Pqivoei himoj.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog27[] = {
+	"Voqoya\200 rfdoen\200",
+	NEW_LINE,
+	"podoeka...",
+	CHANGE_CHARACTER,
+	"Rodlarna,",
+	NEW_LINE,
+	"eoqodtya.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog28[] = {
+	"^so caya eox}?",
+	CHANGE_CHARACTER,
+	"Rparibo,",
+	NEW_LINE,
+	"pohcolil mnf rnoca oztsis}",
+	NEW_LINE,
+	"rfb\200 moloeoj..",
+	DISPLAY_MESSAGE,
+	"...no, ramo roboj,",
+	NEW_LINE,
+	"~sa qaeors} -",
+	NEW_LINE,
+	"mo\200 cntxka.",
+	CHANGE_CHARACTER,
+	"O, soxno! I kak gf \200",
+	NEW_LINE,
+	"nf eodaealr\200!",
+	CHANGE_CHARACTER,
+	"Kodea-so i \200 b|la",
+	NEW_LINE,
+	"sakoj gf...",
+	CHANGE_CHARACTER,
+	"C| i rfjxar saka\200!",
+	CHANGE_CHARACTER,
+	"O, kak milo r scofj rsoqon|...",
+	DISPLAY_MESSAGE,
+	"Nikso bol}yf",
+	NEW_LINE,
+	"nf po>s",
+	NEW_LINE,
+	"mnf poe oknom.",
+	DISPLAY_MESSAGE,
+	"Frli ponimafy},",
+	NEW_LINE,
+	"o x>m \200.",
+	CHANGE_CHARACTER,
+	"^-~-~...",
+	DISPLAY_MESSAGE,
+	"Ea...",
+	DISPLAY_MESSAGE,
+	"Ponima\177...",
+	DISPLAY_MESSAGE,
+	"T mfn\200 sf gf",
+	NEW_LINE,
+	"xtcrsca...",
+	DISPLAY_MESSAGE,
+	"Inodea...",
+	DISPLAY_MESSAGE,
+	"Nacfqnof...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog29[] = {
+	"Modt \200 rpqoris}, xfm c|",
+	NEW_LINE,
+	"hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"Ea, mogfy},",
+	NEW_LINE,
+	"eoqodtya.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Xfm c| hanimafsfr}?",
+	CHANGE_CHARACTER,
+	"` c\200gt.",
+	CHANGE_CHARACTER,
+	"^so pon\200sno.",
+	DISPLAY_MESSAGE,
+	"Xso c| c\200gfsf?",
+	CHANGE_CHARACTER,
+	"A rfjxar s|",
+	NEW_LINE,
+	"nf rpqoril,",
+	NEW_LINE,
+	"mogno li rpqoris}.",
+	CHANGE_CHARACTER,
+	"Oj, pqorsisf. Modt \200 rpqoris}?",
+	CHANGE_CHARACTER,
+	"O x>m?",
+	CHANGE_CHARACTER,
+	"O som, xso c|",
+	NEW_LINE,
+	"c\200gfsf.",
+	CHANGE_CHARACTER,
+	"S| tgf rpqayical",
+	NEW_LINE,
+	"mfn\200 ob ~som,",
+	NEW_LINE,
+	"qahcf nfs?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog30[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Ea, cpolnf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog31[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"S| ram hnafy}.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog32[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Rparibo, xso rpqorili,",
+	NEW_LINE,
+	"no \200 tgf cam",
+	NEW_LINE,
+	"oscfxala.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog33[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Nf",
+	NEW_LINE,
+	"pocsoq\200jr\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog34[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Nf osclfkaj",
+	NEW_LINE,
+	"mfn\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog35[] = {
+	"Cr> voqoyo?",
+	CHANGE_CHARACTER,
+	"Ea hamolxi tgf.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog36[] = {
+	"Cr> voqoyo?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog37[] = {
+	"Pqorsisf",
+	NEW_LINE,
+	"mo\177 nadlors}...",
+	CHANGE_CHARACTER,
+	"Ea?..",
+	CHANGE_CHARACTER,
+	"...no \200 poetmal,",
+	NEW_LINE,
+	"xso ~sos nfcinn|j",
+	NEW_LINE,
+	"wcfsok...",
+	DISPLAY_MESSAGE,
+	"...c|qahis,",
+	NEW_LINE,
+	"narkol}ko \200 qae",
+	NEW_LINE,
+	"nayfj crsqfxf.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog38[] = {
+	"Naef\177r},",
+	NEW_LINE,
+	"on cam ponqacisr\200...",
+	CHANGE_CHARACTER,
+	"O, pqflfrs}!",
+	DISPLAY_MESSAGE,
+	"` oxfn}",
+	NEW_LINE,
+	"sqontsa...",
+	DISPLAY_MESSAGE,
+	"Mnf nikso",
+	NEW_LINE,
+	"nf eflal",
+	NEW_LINE,
+	"sak pqi\200sno...",
+	DISPLAY_MESSAGE,
+	"...cos tgf",
+	NEW_LINE,
+	"efr\200s} lfs!",
+	DISPLAY_MESSAGE,
+	"Rparibo",
+	NEW_LINE,
+	"os crfj etyi!",
+	CHANGE_CHARACTER,
+	"Pogaltjrsa.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog39[] = {
+	"Nf vosisf fz> oein",
+	NEW_LINE,
+	"wcfsok?",
+	CHANGE_CHARACTER,
+	"S| oxfn} eobq,",
+	NEW_LINE,
+	"moj mal}xik, no nfs,",
+	NEW_LINE,
+	"rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog40[] = {
+	"Tcfqfn|, xso nf vosisf",
+	NEW_LINE,
+	"fz> wcfsok?",
+	CHANGE_CHARACTER,
+	"Ea, tcfqfna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog41[] = {
+	"Modt \200 oeolgis}",
+	NEW_LINE,
+	"mfs>lkt?",
+	CHANGE_CHARACTER,
+	"M| nfeorsasoxno voqoyo",
+	NEW_LINE,
+	"hnakom|, k somt gf",
+	NEW_LINE,
+	"\200 nf...",
+	DISPLAY_MESSAGE,
+	"...oealgica\177 cfzi",
+	NEW_LINE,
+	"crfm,",
+	NEW_LINE,
+	"kso popqoris.",
+	CHANGE_CHARACTER,
+	"` nf c|h|ca\177 eocfqi\200?",
+	CHANGE_CHARACTER,
+	"Qahdocoq okonxfn.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog42[] = {
+	"Frs} yanr cr> gf",
+	NEW_LINE,
+	"oeolgis} mfs>lkt?",
+	CHANGE_CHARACTER,
+	"Mnf nqacisr\200, kak ona lfgis.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog43[] = {
+	"A sfpfq} c|",
+	NEW_LINE,
+	"mnf mfs>lkt",
+	NEW_LINE,
+	"nf oeolgisf?",
+	CHANGE_CHARACTER,
+	"Konfxno, poxfmt",
+	NEW_LINE,
+	"b| i nf...",
+	DISPLAY_MESSAGE,
+	"...pomox} sakomt milomt",
+	NEW_LINE,
+	"\177noyf, kak s|!..",
+	CHANGE_CHARACTER,
+	"Bol}yof rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog44[] = {
+	"Va! ` eagf b|rsqff Inei!",
+	CHANGE_CHARACTER,
+	"` cr> ciefla, mal}xik!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog45[] = {
+	"^-~-~...",
+	DISPLAY_MESSAGE,
+	"M-m-m...",
+	DISPLAY_MESSAGE,
+	"`...",
+	CHANGE_CHARACTER,
+	"Trpokojr\200. Naef\177r}, s| tbil",
+	NEW_LINE,
+	"~st mtvt.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog46[] = {
+	"Pqorsisf, lfei, mnf kagfsr\200, xso cayf",
+	NEW_LINE,
+	"bfl}> tgf c|rovlo...",
+	DISPLAY_MESSAGE,
+	"...i na sakom rolnwf b|rsqo",
+	NEW_LINE,
+	"c|wcfsfs...",
+	CHANGE_CHARACTER,
+	"Kak bfl}> modlo c|rovnts}",
+	NEW_LINE,
+	"sak b|rsqo?",
+	DISPLAY_MESSAGE,
+	"Ltxyf rvogt pqocfq\177.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog47[] = {
+	CHANGE_CHARACTER,
+	"C| b|li pqac|, moloeoj xflocfk.",
+	DISPLAY_MESSAGE,
+	"Rparibo.",
+	CHANGE_CHARACTER,
+	"Nf ha xso.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog48[] = {
+	"Cam ntgno ~so corkocof \200bloko?",
+	CHANGE_CHARACTER,
+	"Kak rkahas}. T nfdo",
+	NEW_LINE,
+	"rco\200 irsoqi\200.",
+	DISPLAY_MESSAGE,
+	"Pomn\177, oenage|",
+	NEW_LINE,
+	"mo\200 mlaeya\200 rfrsqa M~qi",
+	NEW_LINE,
+	"hanimalar}...",
+	CHANGE_CHARACTER,
+	"A narkol}ko irsoqi\200 elinna\200?",
+	CHANGE_CHARACTER,
+	"O, nam nfktea rpfyis}.",
+	DISPLAY_MESSAGE,
+	"T nar gf rsol}ko cqfmfni,",
+	NEW_LINE,
+	"xsob| pobolsas}, cfqno?",
+	CHANGE_CHARACTER,
+	"` sol}ko xso pon\200l, mnf nf ntgno",
+	NEW_LINE,
+	"\200bloko.",
+	DISPLAY_MESSAGE,
+	"Rparibo.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog49[] = {
+	"`bloko...",
+	CHANGE_CHARACTER,
+	"Bfh irsoqii nfs \200bloka.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nf ntgno.",
+	END_DIALOG
+};
+
+const static char *russianDialog50[] = {
+	"Nftgfli crsqfsil...",
+	DISPLAY_MESSAGE,
+	"...ramt\177 kqarict\177 efctykt...",
+	DISPLAY_MESSAGE,
+	"...c miqf?..",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog51[] = {
+	"Etma\177, pqiylo cqfm\200",
+	NEW_LINE,
+	"pqfersacis}r\200.",
+	DISPLAY_MESSAGE,
+	"` Maqk.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog52[] = {
+	"Sos momfns, kodea \200 tciefl f> dlaha,",
+	NEW_LINE,
+	"rsal ltxyim",
+	NEW_LINE,
+	"c mofj gihni.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nf rxisa\200 sodo, kak \200",
+	NEW_LINE,
+	"idqal c eoksoqa",
+	NEW_LINE,
+	"r R}\177hi.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog53[] = {
+	"^m...",
+	DISPLAY_MESSAGE,
+	"Mnf...",
+	DISPLAY_MESSAGE,
+	"`...",
+	DISPLAY_MESSAGE,
+	"` sts poetmal,",
+	NEW_LINE,
+	"nf voxfy}",
+	NEW_LINE,
+	"kof-xfdo...",
+	DISPLAY_MESSAGE,
+	"^m...",
+	DISPLAY_MESSAGE,
+	"C rm|rlf...",
+	DISPLAY_MESSAGE,
+	"T mfn\200 kof-xso frs},",
+	NEW_LINE,
+	"i \200 vosfl b| eas}",
+	NEW_LINE,
+	"~so sfbf, posomt xso...",
+	DISPLAY_MESSAGE,
+	"^-~...",
+	DISPLAY_MESSAGE,
+	"` etma\177,",
+	NEW_LINE,
+	"s|... i...",
+	CHANGE_CHARACTER,
+	"^j! ` nf ktra\177r}!",
+	DISPLAY_MESSAGE,
+	"Cigt, s| p|safy}r\200 rkahas} mnf",
+	NEW_LINE,
+	"xso-so pqi\200snof.",
+	DISPLAY_MESSAGE,
+	"Docoqi pqors|mi",
+	NEW_LINE,
+	"rlocami...",
+	CHANGE_CHARACTER,
+	"Pqors|mi rlocami?!",
+	CHANGE_CHARACTER,
+	"Ea, pqors|f rloca",
+	NEW_LINE,
+	"cr> tpqoza\177s.",
+	CHANGE_CHARACTER,
+	"Nt ea.",
+	DISPLAY_MESSAGE,
+	"Soxno.",
+	DISPLAY_MESSAGE,
+	"Pqors|f rloca.",
+	DISPLAY_MESSAGE,
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Naxal.",
+	DISPLAY_MESSAGE,
+	"` nqaciy}r\200 s|,",
+	NEW_LINE,
+	"i voxt eas} wcfsok.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cohmogno, sfbf rsois",
+	NEW_LINE,
+	"docoqis}...",
+	DISPLAY_MESSAGE,
+	"...nfrkol}ko rlognff.",
+	CHANGE_CHARACTER,
+	"Ov...",
+	DISPLAY_MESSAGE,
+	"Pqorsi...",
+	DISPLAY_MESSAGE,
+	"Pqorso \200...",
+	DISPLAY_MESSAGE,
+	"Pqorso \200 pqin>r sfbf",
+	NEW_LINE,
+	"wcfsok.",
+	CHANGE_CHARACTER,
+	"O?..",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog54[] = {
+	"Nqacisr\200?",
+	CHANGE_CHARACTER,
+	"S| ramo oxaqocanif.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog55[] = {
+	"Coobzf,",
+	NEW_LINE,
+	"xfrsno docoq\200...",
+	CHANGE_CHARACTER,
+	"Pqors|f rloca, pomni!",
+	NEW_LINE,
+	"Pqors|f!",
+	END_DIALOG
+};
+
+const static char *russianDialog56[] = {
+	"Soxno...",
+	DISPLAY_MESSAGE,
+	"Pqorso vosfl rkahas},",
+	NEW_LINE,
+	"xso s| sogf",
+	NEW_LINE,
+	"oxaqocasfl}na\200.",
+	CHANGE_CHARACTER,
+	"Nt, rparibo,",
+	NEW_LINE,
+	"nacfqnof.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog57[] = {
+	"Nfnacigt rfb\200.",
+	END_DIALOG
+};
+
+const static char *russianDialog58[] = {
+	"T mfn\200 frs}",
+	NEW_LINE,
+	"fz> wcfsok...",
+	CHANGE_CHARACTER,
+	"O, ~so tgf",
+	NEW_LINE,
+	"liynff.",
+	DISPLAY_MESSAGE,
+	"Kak cieiy},",
+	NEW_LINE,
+	"\200 hefr}...",
+	DISPLAY_MESSAGE,
+	"...nf feinrscfnna\200 gfnzina...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog59[] = {
+	"Hnaxis, nf voxfy} fz>",
+	NEW_LINE,
+	"wcfsoxfk?",
+	CHANGE_CHARACTER,
+	"Nfs, rparibo.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog60[] = {
+	"Voxfy} konufskt?",
+	CHANGE_CHARACTER,
+	"Oxfn} milo, no nfs, rparibo.",
+	NEW_LINE,
+	"Nf voxt qarsolrsfs}.",
+	CHANGE_CHARACTER,
+	"^j, nf pfqfgicaj. Eagf t Obflikra",
+	NEW_LINE,
+	"b|li eqth}\200.",
+	CHANGE_CHARACTER,
+	"Kso sakoj Obflikr?!",
+	CHANGE_CHARACTER,
+	"M-m, habte}. Pqorso \200 nay>l",
+	NEW_LINE,
+	"konufst...",
+	CHANGE_CHARACTER,
+	"NAY<L?!",
+	CHANGE_CHARACTER,
+	"Nay>l f> oxfn} cktrnoj,",
+	NEW_LINE,
+	"qahtmffsr\200.",
+	DISPLAY_MESSAGE,
+	"^so nf kakoj-so efy>c|j yokolaeohamfnisfl},",
+	NEW_LINE,
+	"a pqoetks c|ryfdo kaxfrsca!",
+	DISPLAY_MESSAGE,
+	"Ihdosoclfn sol}ko ih",
+	NEW_LINE,
+	"nastqal}n|v komponfnsoc.",
+	DISPLAY_MESSAGE,
+	"Bfh konrfqcansoc.",
+	CHANGE_CHARACTER,
+	"O, laeno. Frli narsaicafy}...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog61[] = {
+	ANIM_WAIT,
+	"Kvm...",
+	CHANGE_CHARACTER,
+	"A, nt ea, polada\177, naeo eas} sfbf",
+	NEW_LINE,
+	"xso-nibte} chamfn...",
+	CHANGE_CHARACTER,
+	"Nfs-nfs... Cocrf",
+	NEW_LINE,
+	"nf ob\200hasfl}no...",
+	CHANGE_CHARACTER,
+	"Laeno, kak voxfy}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Vos\200 r eqtdoj rsoqon|...",
+	CHANGE_CHARACTER,
+	"` sak i hnala. Paqni crfdea xfdo-so",
+	NEW_LINE,
+	"vos\200s.",
+	DISPLAY_MESSAGE,
+	"Nixfdo nf efla\177s",
+	NEW_LINE,
+	"pqorso sak.",
+	CHANGE_CHARACTER,
+	"Oenage| \200 tbqalr\200 c komnasf.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ada...",
+	DISPLAY_MESSAGE,
+	"Laeno, hab|li.",
+	DISPLAY_MESSAGE,
+	"Cos sfbf moj",
+	NEW_LINE,
+	"poeaqok.",
+	DISPLAY_MESSAGE,
+	"^so mo\200 lfnsa. Inodea",
+	NEW_LINE,
+	"crpominaj obo mnf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog62[] = {
+	"Parib. Crfdea btet",
+	NEW_LINE,
+	"noris}.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog63[] = {
+	"` nay>l sco> im\200 na banknosf,",
+	NEW_LINE,
+	"kosoqt\177 mnf eal oein solrs\200k.",
+	NEW_LINE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Pokagi mnf banknost.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog64[] = {
+	"^j, c x>m eflo?!",
+	CHANGE_CHARACTER,
+	"O, doqf mnf!..",
+	CHANGE_CHARACTER,
+	"Poxfmt s| plaxfy}?!",
+	CHANGE_CHARACTER,
+	"Poso... posomt...",
+	DISPLAY_MESSAGE,
+	"O, doqf mnf!..",
+	DISPLAY_MESSAGE,
+	"Nay... nay rorfe, mirsfq",
+	NEW_LINE,
+	"Egon Nosi, oenage| eal mnf",
+	NEW_LINE,
+	"nfmnodo efnfd...",
+	DISPLAY_MESSAGE,
+	"...i rkahal, xso frli",
+	NEW_LINE,
+	"\200 fdo powflt\177,",
+	NEW_LINE,
+	"so on ears mnf fz>...",
+	DISPLAY_MESSAGE,
+	"...no \200 oskahalar}",
+	NEW_LINE,
+	"i cfqntla fmt",
+	NEW_LINE,
+	"crf efn}di obqasno.",
+	CHANGE_CHARACTER,
+	"So frs} ~sa rcin}\200 p|salar}",
+	NEW_LINE,
+	"ktpis} sfb\200?!",
+	CHANGE_CHARACTER,
+	"` sak nfrxarsna!",
+	CHANGE_CHARACTER,
+	"Cos blin!",
+	NEW_LINE,
+	"Nt cr>!",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog65[] = {
+	"^j s|!",
+	DISPLAY_MESSAGE,
+	"Nf btefy} sak eobqa pfqfeas} mnf",
+	NEW_LINE,
+	"con sos oqfv?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog66[] = {
+	"Sak s| eay} mnf oqfv ili nfs?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog67[] = {
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Cr> \200rno.",
+	DISPLAY_MESSAGE,
+	"Rfjxar s| poltxiy} po harltdam.",
+	DISPLAY_MESSAGE,
+	"Btet obh|cas} sfb\200, poka nf poltxt oqfv.",
+	DISPLAY_MESSAGE,
+	"Mfqhka\200 bflka.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog68[] = {
+	"Qahcf s| nf hnafy}, xso noris} mfv",
+	NEW_LINE,
+	"nfpoliskoqqfksno, a?",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog69[] = {
+	"^j, fz> qah rparibo ha oqfv!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog70[] = {
+	"` nf rpqoril na ~so qahqfyfni\200.",
+	DISPLAY_MESSAGE,
+	"Oxfn} plovo bqas} xtgt\177 cfz}",
+	NEW_LINE,
+	"bfh qahqfyfni\200.",
+	DISPLAY_MESSAGE,
+	"Mfn\200 modts pojmas} ha",
+	NEW_LINE,
+	"~sim eflom.",
+	DISPLAY_MESSAGE,
+	"I bqoris} c s\177q\200dt. Sodea crf",
+	NEW_LINE,
+	"pfqfrsants mfn\200 tcagas}.",
+	DISPLAY_MESSAGE,
+	"^sim porstpkom \200 modt tdqobis} rco\177 gihn}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog71[] = {
+	"Bfh qirka...",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog72[] = {
+	"Sak, qfb\200sa. Eqtgno crf",
+	NEW_LINE,
+	"irxfhli osr\177ea!",
+	DISPLAY_MESSAGE,
+	"Ili mnf pqie>sr\200 rsqfl\200s}.",
+	DISPLAY_MESSAGE,
+	"Ih narso\200zfdo oqtgi\200.",
+	DISPLAY_MESSAGE,
+	"Nacfqnof.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog73[] = {
+	"` cigt...",
+	DISPLAY_MESSAGE,
+	"...sam...",
+	DISPLAY_MESSAGE,
+	"PATKA!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog74[] = {
+	"Nf so xsob| \200 bo\177r}.",
+	DISPLAY_MESSAGE,
+	"Pqorso ~so mogfs okahas}r\200",
+	NEW_LINE,
+	"patk-mtsans, i frli on mfn\200",
+	NEW_LINE,
+	"tktris...",
+	DISPLAY_MESSAGE,
+	"...\200 sogf mtsiqt\177...",
+	DISPLAY_MESSAGE,
+	"...mnf pqie>sr\200 noris} habacn|f",
+	NEW_LINE,
+	"kors\177m| i pqoxt\177 miytqt...",
+	DISPLAY_MESSAGE,
+	"...cfrsi ecojnt\177 gihn}...",
+	DISPLAY_MESSAGE,
+	"...rqagas}r\200 r Cfnomom i eqtdimi,",
+	NEW_LINE,
+	"oni mfn\200 qanis} modts...",
+	DISPLAY_MESSAGE,
+	"...crf btets na mnf",
+	NEW_LINE,
+	"haqabas|cas}, a \200...",
+	DISPLAY_MESSAGE,
+	"Etma\177, \200 par.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog75[] = {
+	"Os ~sodo patka pqorso gtsko...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog76[] = {
+	"^j, eqtgok!",
+	DISPLAY_MESSAGE,
+	"T mfn\200 k sfbf xfrsnof pqfelogfnif.",
+	DISPLAY_MESSAGE,
+	"Bol}yof, rcfgff, roxnof \200bloko ha rsaqt\177 yiykt",
+	NEW_LINE,
+	"t sfb\200 na rpinf.",
+	DISPLAY_MESSAGE,
+	"Frli rodlarfn, so crsan} i",
+	NEW_LINE,
+	"posq\200ri moqeoxkoj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog77[] = {
+	"Naeo b|lo eodaeas}r\200,",
+	NEW_LINE,
+	"xso ~so qahcoe.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Cfrlo rlomano.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog78[] = {
+	"Pqicfs, eqtgok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog79[] = {
+	"Nt pormosqi gf na mfn\200.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog80[] = {
+	"Hnafy}, \200 trsal kak robaka",
+	NEW_LINE,
+	"bolsas} r soboj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog81[] = {
+	"Kak efla?",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog82[] = {
+	"Ea, \200 mod b| fdo ch\200s}...",
+	DISPLAY_MESSAGE,
+	"Siva\200 efqfcfn}ka...",
+	DISPLAY_MESSAGE,
+	"Nikakoj poliwii...",
+	DISPLAY_MESSAGE,
+	"Nikso nf trl|yis iv kqiki...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"No t mfn\200 nfs vokkfjnoj marki.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(cheov)",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog83[] = {
+	"Nf voxt orsacl\200s} rcoi ospfxaski.",
+	DISPLAY_MESSAGE,
+	"Kso hnafs, xso im eflali.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog84[] = {
+	"Bo\177r}, sak",
+	NEW_LINE,
+	"pojmas} m|ykt",
+	NEW_LINE,
+	"rliykom rlogno.",
+	DISPLAY_MESSAGE,
+	"I kakoj pqok c napqarn|v trili\200v?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog85[] = {
+	"` b| pop|salr\200 pqodnas} psiw,",
+	NEW_LINE,
+	"frli b| c p\200s} lfs nf pormosqfl",
+	NEW_LINE,
+	"sos uil}m Vixkoka.",
+	DISPLAY_MESSAGE,
+	"Hq\200 mama mnf ~so pohcolila.",
+	DISPLAY_MESSAGE,
+	"Mnf sfpfq} eagf \200jwa frs} rsqayno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog86[] = {
+	"Heoqoco. Naeo pon\200s} nam>k.",
+	DISPLAY_MESSAGE,
+	"\"Holoso ogieafs c konwf eoqodi\".",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog87[] = {
+	"C| mirsfq Egon Nosi?",
+	CHANGE_CHARACTER,
+	"Kak pogicafy}, eqtd moj?",
+	DISPLAY_MESSAGE,
+	"Moi l\177ei rkahali, xso s| p|salr\200",
+	NEW_LINE,
+	"pqoniknts} c orobn\200k.",
+	NEW_LINE,
+	"Haxfm?",
+	CHANGE_CHARACTER,
+	"`... Ponimafsf...",
+	DISPLAY_MESSAGE,
+	"` sts,",
+	NEW_LINE,
+	"xsob|...",
+	DISPLAY_MESSAGE,
+	"C rm|rlf, \200 sts na kaniktlav,",
+	NEW_LINE,
+	"no mfn\200 tgf soynis os hflfni",
+	NEW_LINE,
+	"i efqfc}fc...",
+	DISPLAY_MESSAGE,
+	"...i mnf havosflor} cktris} nfmnodo",
+	NEW_LINE,
+	"wicilihawii.",
+	CHANGE_CHARACTER,
+	"Nt xso gf... ` ponima\177 sfb\200,",
+	NEW_LINE,
+	"\177n|j eqtd.",
+	DISPLAY_MESSAGE,
+	"Mnf sogf kagfsr\200, xso",
+	NEW_LINE,
+	"frsfrscfnna\200 rqfea el\200 nar,",
+	NEW_LINE,
+	"l\177efj 20-do cfka...",
+	DISPLAY_MESSAGE,
+	"...sflfcihoq i popkoqn.",
+	NEW_LINE,
+	"No k rloct o",
+	NEW_LINE,
+	"hflfni...",
+	DISPLAY_MESSAGE,
+	"` nf modt ptrsis} sfb\200",
+	NEW_LINE,
+	"c eom, posomt xso... ~m...",
+	NEW_LINE,
+	"posomt xso c n>m... ie>s...",
+	DISPLAY_MESSAGE,
+	"...qfmons, no kak rorso\200sfl}n|j",
+	NEW_LINE,
+	"xflocfk \200 eam sfbf",
+	NEW_LINE,
+	"rso bakroc...",
+	DISPLAY_MESSAGE,
+	"...mogfy} ktpis}",
+	NEW_LINE,
+	"xso-nibte}, xso pomogfs",
+	NEW_LINE,
+	"sfbf hefr} c|gis}.",
+	DISPLAY_MESSAGE,
+	"Plffq, napqimfq.",
+	NEW_LINE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Ha kodo c| mfn\200 pqinimafsf?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog88[] = {
+	"` nikodea iv nf coh}mt!",
+	DISPLAY_MESSAGE,
+	"Nikodea!",
+	CHANGE_CHARACTER,
+	"Nf nfqcnixaj sak.",
+	DISPLAY_MESSAGE,
+	"Pfktni\200 non olfs.",
+	DISPLAY_MESSAGE,
+	"` pojet, a s| nf rsfrn\200jr\200",
+	NEW_LINE,
+	"i coh}mi banknost.",
+	DISPLAY_MESSAGE,
+	"Nikso nf thnafs...",
+	DISPLAY_MESSAGE,
+	"Eo rcieani\200, eqtd moj.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog89[] = {
+	"Pocfqis} nf modt, kak on ro mnoj",
+	NEW_LINE,
+	"obqazalr\200.",
+	DISPLAY_MESSAGE,
+	"Krsasi...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Pfkt \200 omlfs?..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog90[] = {
+	"O-o-o...",
+	DISPLAY_MESSAGE,
+	"Cr> x>qnof...",
+	DISPLAY_MESSAGE,
+	"...i povogf na xflocfka...",
+	DISPLAY_MESSAGE,
+	"...r elinnoj palkoj...",
+	DISPLAY_MESSAGE,
+	"...i r doqykom na dolocf...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nf rsoilo eihajnfqt rsol}ko pis}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog91[] = {
+	"Rnoca kopas}r\200 c mtroqf?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A, nt laeno, sts sol}ko kakif-so",
+	NEW_LINE,
+	"btmagki.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog92[] = {
+	"Cr> kak ob|xno...",
+	DISPLAY_MESSAGE,
+	"Kasarsqou|...",
+	DISPLAY_MESSAGE,
+	"Rkaneal|...",
+	DISPLAY_MESSAGE,
+	"Insqidi...",
+	DISPLAY_MESSAGE,
+	"Qarrlfeocani\200...",
+	DISPLAY_MESSAGE,
+	"Poltdol|f bab|...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Naeo poepiras}r\200.",
+	END_DIALOG
+};
+
+const static char *russianDialog93[] = {
+	ANIM_WAIT,
+	"Odo...",
+	CHANGE_CHARACTER,
+	"...\200 sanwt-t-t\177...",
+	DISPLAY_MESSAGE,
+	"...i po\177-\177-\177...",
+	CHANGE_CHARACTER,
+	"^so Egon Nosi...",
+	CHANGE_CHARACTER,
+	"...eoge>->->m!...",
+	CHANGE_CHARACTER,
+	"...po>s na kamfqt!",
+	CHANGE_CHARACTER,
+	"...kakof hamfxa-a-asfl}nof...",
+	CHANGE_CHARACTER,
+	"Vos\200 fmt \200cno nf rsoilo.",
+	CHANGE_CHARACTER,
+	"...xt-t-tcrsco...",
+	CHANGE_CHARACTER,
+	"Tyam nf cfq\177.",
+	CHANGE_CHARACTER,
+	"...rnoca rxa-a-arslic!..",
+	CHANGE_CHARACTER,
+	"Kakoj tgar.",
+	CHANGE_CHARACTER,
+	"...pqorso sanwt\200 poe eoge>->->m...",
+	CHANGE_CHARACTER,
+	"Rorferka\200 robaka rpo>s ltxyf.",
+	CHANGE_CHARACTER,
+	"...la-a-a-la-a-a!...",
+	CHANGE_CHARACTER,
+	"Vcasis tgf.",
+	CHANGE_CHARACTER,
+	"...la-la! La-la-a-a....",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog94[] = {
+	"Nixfdo insfqf...",
+	DISPLAY_MESSAGE,
+	"Rfktneoxkt...",
+	DISPLAY_MESSAGE,
+	"Poe eicanom xso-so frs}!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog95[] = {
+	"Cam nf kagfsr\200, xso",
+	NEW_LINE,
+	"rsois eobacis}",
+	NEW_LINE,
+	"nfmnodo xili?",
+	CHANGE_CHARACTER,
+	"Eobacis}?",
+	DISPLAY_MESSAGE,
+	"Haxfm?",
+	CHANGE_CHARACTER,
+	"Povogf, c| nf c corsoqdf",
+	NEW_LINE,
+	"os dosoc\200zfdor\200",
+	NEW_LINE,
+	"qadt.",
+	DISPLAY_MESSAGE,
+	"Cohmogno, rlfetfs",
+	NEW_LINE,
+	"pqibacis} fmt",
+	NEW_LINE,
+	"orsqos|?",
+	CHANGE_CHARACTER,
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"Voqoya\200 m|rl}.",
+	DISPLAY_MESSAGE,
+	"K rxars}\177, t mfn\200 hefr} frs} nfmnodo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog96[] = {
+	CHANGE_CHARACTER,
+	"^sos... ik!..",
+	DISPLAY_MESSAGE,
+	"^sos xi-i-ili... ik!",
+	DISPLAY_MESSAGE,
+	"...cieimo...",
+	DISPLAY_MESSAGE,
+	"...habqoeil...",
+	DISPLAY_MESSAGE,
+	"Qadt irpoqxfno, i...",
+	DISPLAY_MESSAGE,
+	"...\200 tcolfn!",
+	DISPLAY_MESSAGE,
+	"Ik!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog97[] = {
+	"Qaeio mnf nf ntgno, a cos",
+	NEW_LINE,
+	"basaqfjki modts pqidoeis}r\200.",
+	DISPLAY_MESSAGE,
+	"K rogalfni\177, \200 nf tmf\177",
+	NEW_LINE,
+	"oskq|cas} ~si \200ponrkif",
+	NEW_LINE,
+	"ystki.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog98[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Dolor poescfqge>n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kqtso rpfl.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog99[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Hapav poescfqge>n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"` sogf bo\177r} coe|, bqo.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog100[] = {
+	CHANGE_CHARACTER,
+	"Pqocfqka bfhoparnorsi: dolor, hapav, cnfynors}.",
+	DISPLAY_MESSAGE,
+	"Cnfynors} poescfqgefna.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"C eqtdoj qah rsoj bligf.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog101[] = {
+	"Mogno rpqoris}...",
+	CHANGE_CHARACTER,
+	"Tvoei.",
+	DISPLAY_MESSAGE,
+	"` han\200s.",
+	DISPLAY_MESSAGE,
+	"Qabosa\177.",
+	DISPLAY_MESSAGE,
+	"Rkoqo obfe.",
+	DISPLAY_MESSAGE,
+	"Naeo rpfyis}.",
+	CHANGE_CHARACTER,
+	"Frs}, kapisan.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog102[] = {
+	"Nt a mogfs...",
+	CHANGE_CHARACTER,
+	"`...",
+	DISPLAY_MESSAGE,
+	"...OXFN]...",
+	DISPLAY_MESSAGE,
+	"...HAN`S.",
+	DISPLAY_MESSAGE,
+	"NF...",
+	DISPLAY_MESSAGE,
+	"...MFYAJ...",
+	DISPLAY_MESSAGE,
+	"...MNF.",
+	DISPLAY_MESSAGE,
+	"LAENO?",
+	CHANGE_CHARACTER,
+	"Laeno, laeno.",
+	END_DIALOG
+};
+
+const static char *russianDialog103[] = {
+	"Porlfenij qah pqoyt...",
+	CHANGE_CHARACTER,
+	"CON.",
+	DISPLAY_MESSAGE,
+	"C kak cali.",
+	DISPLAY_MESSAGE,
+	"O kak osr\177ea.",
+	DISPLAY_MESSAGE,
+	"N kak...",
+	DISPLAY_MESSAGE,
+	"Kak...",
+	DISPLAY_MESSAGE,
+	"Kak na...",
+	CHANGE_CHARACTER,
+	"Nacrfdea?",
+	CHANGE_CHARACTER,
+	"Nfs. Kak...",
+	CHANGE_CHARACTER,
+	"Nacfki?",
+	CHANGE_CHARACTER,
+	"Nfs, nfs. Kak...",
+	CHANGE_CHARACTER,
+	"Nfmfelfnno?",
+	CHANGE_CHARACTER,
+	"Nfmfelfnno.",
+	DISPLAY_MESSAGE,
+	"Pogaltjrsa, orsac} mfn\200 oenodo!",
+	CHANGE_CHARACTER,
+	"Laeno, laeno.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog104[] = {
+	"^m...",
+	CHANGE_CHARACTER,
+	"Dq-q-q...",
+	CHANGE_CHARACTER,
+	"Ea nixfdo.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog105[] = {
+	"Eobq|j efn}, mirsfq Qobos.",
+	CHANGE_CHARACTER,
+	"^j, heoqoc, x> kak,",
+	NEW_LINE,
+	"rfx>y}?",
+	DISPLAY_MESSAGE,
+	"Hoci mfn\200 Majk, nt x>,",
+	NEW_LINE,
+	"rfx>y}?",
+	CHANGE_CHARACTER,
+	"^...",
+	DISPLAY_MESSAGE,
+	"S| tcfqfn, xso t sfb\200 cr>",
+	NEW_LINE,
+	"c poq\200ekf r...",
+	DISPLAY_MESSAGE,
+	"...pqodqammoj?..",
+	CHANGE_CHARACTER,
+	"A x> nf sak, xtcak?!",
+	DISPLAY_MESSAGE,
+	"Nikodea nf ciefl q~pt\177zij qobo-rfju,",
+	NEW_LINE,
+	"rfx>y}?",
+	CHANGE_CHARACTER,
+	"Xfrsno docoq\200, nikodea.",
+	CHANGE_CHARACTER,
+	"` nocinka, bqo.",
+	DISPLAY_MESSAGE,
+	"Rcfgak, rfx>y}?",
+	DISPLAY_MESSAGE,
+	"Tmn|f l\177ei dcq\200s,",
+	NEW_LINE,
+	"qobos| eolgn| b|s} crfm pon\200sn|.",
+	DISPLAY_MESSAGE,
+	"Rfx>y},",
+	NEW_LINE,
+	"cos mnf i pqieali xflocfxfrkt\177",
+	NEW_LINE,
+	"lixnors}.",
+	DISPLAY_MESSAGE,
+	"Rfx>y}?",
+	NEW_LINE,
+	"Kqtso, ea?",
+	CHANGE_CHARACTER,
+	"Kvm... Ada, heoqoco.",
+	DISPLAY_MESSAGE,
+	"So frs} s| sipa rfju, ea?",
+	CHANGE_CHARACTER,
+	"Cfqno, xtcak.",
+	DISPLAY_MESSAGE,
+	"Rcfqvnae>gn|j, rfx>y},",
+	NEW_LINE,
+	"ea?",
+	DISPLAY_MESSAGE,
+	"Frli voy}, xsob oskq|lr\200,",
+	NEW_LINE,
+	"eokagi, xso s| claeflfw.",
+	DISPLAY_MESSAGE,
+	"Sfq} hawfni ~st (WFNHTQA):",
+	NEW_LINE,
+	"` opqfefl\200\177, sos li",
+	NEW_LINE,
+	"s| xfl, po sq>m cfzam:",
+	DISPLAY_MESSAGE,
+	"...cnfynors}, hapav i dolor.",
+	NEW_LINE,
+	"Rfx>y}?",
+	CHANGE_CHARACTER,
+	"A nf btefy} sak eobq oskq|s}",
+	NEW_LINE,
+	"...rfb\200... i \200 pqorso hadl\200nt,",
+	NEW_LINE,
+	"xso sam cntsqi?",
+	CHANGE_CHARACTER,
+	"Pqorsi, bqo.",
+	DISPLAY_MESSAGE,
+	"Nf povog s| na claefl}wa...",
+	DISPLAY_MESSAGE,
+	"...nf pavnfy}, kak on...",
+	DISPLAY_MESSAGE,
+	"...i dolor t sfb\200 eqtdoj.",
+	DISPLAY_MESSAGE,
+	"Sfpfq}, (WFNHTQA), rfx>y}?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog106[] = {
+	"Rfham, oskqojr\200...",
+	CHANGE_CHARACTER,
+	"(WFNHTQA), s| (WFNHTQA).",
+	END_DIALOG
+};
+
+const static char *russianDialog107[] = {
+	"Vaj!",
+	CHANGE_CHARACTER,
+	"(QOEISFL]RKIJ KONSQOL]: DQTBA` LFKRIKA)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog108[] = {
+	"Docoq\177 sfbf, ~so pqorso nfxso.",
+	CHANGE_CHARACTER,
+	"` pomn\177, kak s| tbil mofdo rltdt,",
+	NEW_LINE,
+	"sfrsiqt\200 ptlfnfpqobicafmt\177",
+	NEW_LINE,
+	"utsbolkt.",
+	CHANGE_CHARACTER,
+	"^so b|lo oxfn} eacno...",
+	CHANGE_CHARACTER,
+	"Ili kak s| reflal xisa\177zij",
+	NEW_LINE,
+	"q~p qobo-rfju, kosoq|j cfxno",
+	NEW_LINE,
+	"rvoeis r tma...",
+	DISPLAY_MESSAGE,
+	"...kodea \200 pqoyt fdo oskq|s}r\200.",
+	CHANGE_CHARACTER,
+	"Pqorso s| narsqofn na nfdasic...",
+	CHANGE_CHARACTER,
+	"Ili kak s| pqoeal",
+	NEW_LINE,
+	"mnf kl\177x k efcix}im",
+	NEW_LINE,
+	"rfqewam.",
+	CHANGE_CHARACTER,
+	"Efn}di nf rqabosali?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Rsqanno. Crfdea poltxalor}.",
+	CHANGE_CHARACTER,
+	"A kodea s|...",
+	CHANGE_CHARACTER,
+	"LAENO, LAENO!",
+	DISPLAY_MESSAGE,
+	"Hab|li!",
+	DISPLAY_MESSAGE,
+	"` tgf irp|sal nocof",
+	NEW_LINE,
+	"ihobqfsfnif na rfbf!",
+	CHANGE_CHARACTER,
+	"Pqacea?",
+	CHANGE_CHARACTER,
+	"Pqacea.",
+	DISPLAY_MESSAGE,
+	"Modt pqoefmonrsqiqocas}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Laeno, qirkn>m.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog109[] = {
+	ANIM_WAIT,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Rocfqyfnn|j dnomoefl.",
+	CHANGE_CHARACTER,
+	"Vm, ~so poboxn|j ~uufks.",
+	DISPLAY_MESSAGE,
+	"Poqoj \200 nf konsqoliqt\177 rcoi",
+	NEW_LINE,
+	"ihobqfsfni\200.",
+	DISPLAY_MESSAGE,
+	"No nf colntjr\200, ~so elisr\200",
+	NEW_LINE,
+	"crfdo rfktnet.",
+	CHANGE_CHARACTER,
+	"Naef\177r}.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog110[] = {
+	"Cos i \200.",
+	DISPLAY_MESSAGE,
+	"Nt, hamfsil xso-nibte}",
+	NEW_LINE,
+	"nfob|xnof?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Heoqoco!",
+	DISPLAY_MESSAGE,
+	"Sablfski qabosa\177s!",
+	CHANGE_CHARACTER,
+	"Ea nftgfli?",
+	CHANGE_CHARACTER,
+	"Ea!",
+	DISPLAY_MESSAGE,
+	"Pqocfq} rcoj btmagnik!",
+	CHANGE_CHARACTER,
+	"Moj btmagnik pqi...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog111[] = {
+	"Def moj btmagnik?!",
+	DISPLAY_MESSAGE,
+	"Coqiyka!",
+	DISPLAY_MESSAGE,
+	"Cfqni fdo!",
+	CHANGE_CHARACTER,
+	"Polfdxf, cos scoj",
+	NEW_LINE,
+	"btmagnik.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog112[] = {
+	"` sqfbt\177 ob{\200rnfnij.",
+	CHANGE_CHARACTER,
+	"Va!",
+	DISPLAY_MESSAGE,
+	"^so mo> ramof",
+	NEW_LINE,
+	"ltxyff ihobqfsfnif!",
+	CHANGE_CHARACTER,
+	"Xso imfnno?",
+	CHANGE_CHARACTER,
+	"S| nf ciefl, kak \200 tkqal",
+	NEW_LINE,
+	"scoj btmagnik...",
+	DISPLAY_MESSAGE,
+	"...posomt xso \200 pqin\200l...",
+	DISPLAY_MESSAGE,
+	"SABLFSKI CQFMFNI!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Sablfski cqfmfni?",
+	CHANGE_CHARACTER,
+	"Ea!",
+	DISPLAY_MESSAGE,
+	"Sos, kso iv pqimfs, gic>s",
+	NEW_LINE,
+	"c 1000 qah b|rsqfj,",
+	NEW_LINE,
+	"xfm orsal}noj miq!",
+	CHANGE_CHARACTER,
+	"^so ohnaxafs...",
+	CHANGE_CHARACTER,
+	"^so ohnaxafs, xso miq el\200 nfdo",
+	NEW_LINE,
+	"ecigfsr\200 c 1000",
+	NEW_LINE,
+	"qah mfelfnnfj!",
+	DISPLAY_MESSAGE,
+	"Pqacea, liy} na",
+	NEW_LINE,
+	"nfrkol}ko rfktne...",
+	CHANGE_CHARACTER,
+	"Nt... Insfqfrno, konfxno.",
+	NEW_LINE,
+	"No haxfm ~so?",
+	CHANGE_CHARACTER,
+	"X>qs fdo hnafs.",
+	DISPLAY_MESSAGE,
+	"Ram poetmaj.",
+	DISPLAY_MESSAGE,
+	"Mogno, napqimfq, pqojsi",
+	NEW_LINE,
+	"c kino bfh bilfsa, i nikso",
+	NEW_LINE,
+	"sfb\200 nf hamfsis.",
+	CHANGE_CHARACTER,
+	"Cos ~so ea!",
+	DISPLAY_MESSAGE,
+	"Heoqoco!",
+	DISPLAY_MESSAGE,
+	"` voxt ktpis} pasfns!",
+	CHANGE_CHARACTER,
+	"A cos sts pqoblfma...",
+	DISPLAY_MESSAGE,
+	"Kak s| hnafy}, moj e\200e\200 Dalladfq",
+	NEW_LINE,
+	"pqietm|cal ltxyif ihobqfsfni\200,",
+	NEW_LINE,
+	"kodea b|l... rkagfm sak...",
+	CHANGE_CHARACTER,
+	"...p}\200n...",
+	CHANGE_CHARACTER,
+	"...c rorso\200nii insokrikawii.",
+	DISPLAY_MESSAGE,
+	"I so gf ramof ro mnoj",
+	NEW_LINE,
+	"(cheov).",
+	DISPLAY_MESSAGE,
+	"Pqoyloj nox}\177 \200 pqorntlr\200",
+	NEW_LINE,
+	"os tgarnoj dolocnoj boli i",
+	NEW_LINE,
+	"nay>l ~si sablfski.",
+	DISPLAY_MESSAGE,
+	"` nf pomn\177, kak ihdosocil iv.",
+	CHANGE_CHARACTER,
+	"O nfs!",
+	CHANGE_CHARACTER,
+	"No modt pop|sas}r\200 poqabosas} nae nimi.",
+	DISPLAY_MESSAGE,
+	"El\200 ~sodo mnf ntgn| scoi efn}di.",
+	DISPLAY_MESSAGE,
+	"Eacaj hakl\177xim reflkt.",
+	DISPLAY_MESSAGE,
+	"S| porsqoiy} mnf noct\177",
+	NEW_LINE,
+	"laboqasoqi\177...",
+	DISPLAY_MESSAGE,
+	"...a \200 pfqfeam sfbf pqaca.",
+	CHANGE_CHARACTER,
+	"S| eay} mnf pasfns?!",
+	CHANGE_CHARACTER,
+	"Ea.",
+	DISPLAY_MESSAGE,
+	"Mfn\200 insfqfrtfs sol}ko",
+	NEW_LINE,
+	"tcagfnif crfmiqnodo",
+	NEW_LINE,
+	"natxnodo roobzfrsca.",
+	DISPLAY_MESSAGE,
+	"I Nobflfcrka\200.",
+	DISPLAY_MESSAGE,
+	"Ram ponimafy}, crfobzij pox>s",
+	NEW_LINE,
+	"i tcagfnif, insfqc}\177...",
+	CHANGE_CHARACTER,
+	"Laeno. Ie>s.",
+	DISPLAY_MESSAGE,
+	"Poedosoc} rpirok nfobvoeimodo",
+	NEW_LINE,
+	"oboqteocani\200.",
+	CHANGE_CHARACTER,
+	"Xtefrno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog113[] = {
+	"^sos etqak mnf cfqis.",
+	DISPLAY_MESSAGE,
+	"No \200 fdo irpol}ht\177...",
+	DISPLAY_MESSAGE,
+	"Sablfski cqfmfni...",
+	DISPLAY_MESSAGE,
+	"` nf rsant pqoeacas} iv",
+	NEW_LINE,
+	"dltp|m l\177eiykam!",
+	DISPLAY_MESSAGE,
+	"Plfcas} mnf na",
+	NEW_LINE,
+	"pasfns!",
+	DISPLAY_MESSAGE,
+	"` modt nfhamfsno",
+	NEW_LINE,
+	"dqabis} banki!",
+	DISPLAY_MESSAGE,
+	"B|rsqff rcfsa!",
+	DISPLAY_MESSAGE,
+	"Naeo tkqars} efnfd ili holosa",
+	NEW_LINE,
+	"na laboqasoqi\177 ~sodo",
+	NEW_LINE,
+	"bfhtmwa.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog114[] = {
+	"No rkoqo...",
+	DISPLAY_MESSAGE,
+	"\200 qahbodasf\177.",
+	DISPLAY_MESSAGE,
+	"Oxfn} ril}no.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"` xtcrsct\177, xso rmodt...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...xso rmodt...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog115[] = {
+	ANIM_WAIT,
+	"HAVCASIS] MIQ!..",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog116[] = {
+	ANIM_WAIT,
+	"Crfdea vosfl ~so rkahas}.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog117[] = {
+	"Rnoca \200.",
+	CHANGE_CHARACTER,
+	"Rnoca poka.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Reflafm cie, xso \200 nf rl|yal.",
+	DISPLAY_MESSAGE,
+	"Mirsfq Egon Nosi eoma?",
+	CHANGE_CHARACTER,
+	"Ea, no on cflfl nf ptrkas} sfb\200.",
+	CHANGE_CHARACTER,
+	"Mfn\200?! Poxfmt?!",
+	CHANGE_CHARACTER,
+	"Scoj porlfenij cihis rsoil fmt",
+	NEW_LINE,
+	"ectv rsfn.",
+	CHANGE_CHARACTER,
+	"A, sa mayina cqfmfni...",
+	DISPLAY_MESSAGE,
+	"No rfjxar \200...",
+	CHANGE_CHARACTER,
+	"Nf docoq\200 tgf o fdo koykf.",
+	CHANGE_CHARACTER,
+	"Koyka rfjxar rxarslicfj",
+	NEW_LINE,
+	"l\177bodo ih nar!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Frli miq fz> rtzfrsctfs c",
+	NEW_LINE,
+	"VV% cfkf.",
+	DISPLAY_MESSAGE,
+	"Nf bfqisf c doloct.",
+	DISPLAY_MESSAGE,
+	"C| ob\200han| mfn\200 cptrsis}.",
+	CHANGE_CHARACTER,
+	"Nftgfli?",
+	CHANGE_CHARACTER,
+	"` qarrkagt mirsfqt Nosi, xso c| p}>sf.",
+	CHANGE_CHARACTER,
+	"S| blfutfy}. T sfb\200 nfs eokahasfl}rsc.",
+	CHANGE_CHARACTER,
+	"Kak hnas}, kak hnas}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog118[] = {
+	"Laeno, cvoei, dq\200hn|j sfqqoqirs.",
+	DISPLAY_MESSAGE,
+	"Sol}ko nikomt ni rloca.",
+	CHANGE_CHARACTER,
+	"Konfxno. Rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog119[] = {
+	"Hnaxis...",
+	DISPLAY_MESSAGE,
+	"Cos kak cr> pqoirvoeilo...",
+	DISPLAY_MESSAGE,
+	"Po~somt nikso nf ciefl,",
+	NEW_LINE,
+	"kak tkqali",
+	NEW_LINE,
+	"wfnnorsi...",
+	DISPLAY_MESSAGE,
+	"^so oxfn} oparnof",
+	NEW_LINE,
+	"ihobqfsfnif!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Mnf ntgno orsanocis} Egona Nosi!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kak-so.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"^j! ^si sablfski, xso \200 habqal",
+	NEW_LINE,
+	"t Majka, cieimo...",
+	DISPLAY_MESSAGE,
+	"O nfs!",
+	DISPLAY_MESSAGE,
+	"` rl|yt x}i-so yadi!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog120[] = {
+	"Ntgno def-so tkq|s}r\200!",
+	DISPLAY_MESSAGE,
+	"B|rsqo!",
+	END_DIALOG
+};
+
+const static char *russianDialog121[] = {
+	"Pqie>sr\200 ktpis} ob|xn|j rfju.",
+	DISPLAY_MESSAGE,
+	"^sos etqawkij qobos op\200s} rp\200sil.",
+	DISPLAY_MESSAGE,
+	"Nfnacigt fdo.",
+	DISPLAY_MESSAGE,
+	"HAKQOJR`, VLAMA KTROK!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog122[] = {
+	"Sqfsij qah ha nfefl\177.",
+	DISPLAY_MESSAGE,
+	"Ov, laeno, laeno!...",
+	DISPLAY_MESSAGE,
+	"Iet!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog123[] = {
+	"...cr> pokq|s}.",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno bol}yf efnfd na ovqannt\177 rirsfmt.",
+	DISPLAY_MESSAGE,
+	"T mfn\200 crfdo eca xflocfka i...",
+	CHANGE_CHARACTER,
+	"Bol}yf, bol}yf!",
+	DISPLAY_MESSAGE,
+	"^so cr>, xso rl|yt!",
+	CHANGE_CHARACTER,
+	"Laeno, ob{\200rn\177 fz> qah...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog124[] = {
+	"Mirsfq Egon Nosi?",
+	DISPLAY_MESSAGE,
+	"` pqin>r roobzfnif",
+	NEW_LINE,
+	"os pqoufrroqa.",
+	DISPLAY_MESSAGE,
+	"On pqoris car hajsi c laboqasoqi\177.",
+	DISPLAY_MESSAGE,
+	"Docoqis, xso nay>l",
+	NEW_LINE,
+	"qfwfps sablfsok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog125[] = {
+	"Tgf cr>?!",
+	CHANGE_CHARACTER,
+	"Opqfefl>nno... ik!.. ea.",
+	CHANGE_CHARACTER,
+	"Heoqoco!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog126[] = {
+	"Naeo iv orsanocis}!",
+	DISPLAY_MESSAGE,
+	"Nfl}h\200 sfq\200s} cqfmfni!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog127[] = {
+	"Sak-sak-sak...",
+	DISPLAY_MESSAGE,
+	"S| efjrsctfy} mnf na nfqc|.",
+	DISPLAY_MESSAGE,
+	"Nf galfs} efnfd na ovqannt\177 rirsfmt",
+	NEW_LINE,
+	"okahalor} pqacil}noj m|rl}\177...",
+	DISPLAY_MESSAGE,
+	"^so rilocof polf nftnixsogimo!",
+	DISPLAY_MESSAGE,
+	"Va!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog128[] = {
+	"No mnf cr> qacno pqie>sr\200 sfb\200 tbis}.",
+	CHANGE_CHARACTER,
+	"Nfs, nfs!",
+	CHANGE_CHARACTER,
+	"Hasknir}!",
+	CHANGE_CHARACTER,
+	"Ono sodo nf rsois!",
+	CHANGE_CHARACTER,
+	"Ea nt?",
+	CHANGE_CHARACTER,
+	"` nf voxt...",
+	END_DIALOG
+};
+
+const static char *russianDialog129[] = {
+	CHANGE_CHARACTER,
+	"Bfen\200da pqoufrroq liyilr\200 xtcrsc...",
+	CHANGE_CHARACTER,
+	"No... kak...",
+	DISPLAY_MESSAGE,
+	"` NIXFDO NF PONIMA_!",
+	CHANGE_CHARACTER,
+	"Oxfn} pqorso.",
+	DISPLAY_MESSAGE,
+	"M| pqikqfpili rfkqfsnt\177 mikqokamfqt",
+	NEW_LINE,
+	"k scofj kfpkf.",
+	DISPLAY_MESSAGE,
+	"Po~somt crfdea b|li c ktqrf",
+	NEW_LINE,
+	"pqoirvoe\200zfdo.",
+	CHANGE_CHARACTER,
+	"C| ciefli, kak \200?..",
+	CHANGE_CHARACTER,
+	"Nf voxt sfb\200 rmtzas}.",
+	DISPLAY_MESSAGE,
+	"S| ril}no pomod KCE.",
+	CHANGE_CHARACTER,
+	"No Egon Nosi rbfgal!",
+	CHANGE_CHARACTER,
+	"On nf pqfersacl\200fs insfqfra.",
+	DISPLAY_MESSAGE,
+	"Pqoufrroq t nar, a s| eay} nam sablfski.",
+	DISPLAY_MESSAGE,
+	"Pqorsi, no rfbf s| iv orsacis} nf mogfy}.",
+	CHANGE_CHARACTER,
+	"Laeno, no...",
+	DISPLAY_MESSAGE,
+	"Mogfsf eas} mnf mintskt?",
+	DISPLAY_MESSAGE,
+	"T mfn\200 k ~somt mfqhacwt",
+	NEW_LINE,
+	"lixnof eflo.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Voqoyo. No porpfyi.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog130[] = {
+	ANIM_WAIT,
+	"(rdlosntl)",
+	DISPLAY_MESSAGE,
+	"A cqfmfnnoj ~uufks i pqacea",
+	NEW_LINE,
+	"nfeoldij...",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog131[] = {
+	"C| pqoidqali, mirsfq!",
+	DISPLAY_MESSAGE,
+	"Poliwi\200 okqtgafs heanif!",
+	CHANGE_CHARACTER,
+	"Nf bte} etqakom.",
+	DISPLAY_MESSAGE,
+	"Nf etmal, xso t mfn\200 frs}",
+	NEW_LINE,
+	"caqians pqo hapar?",
+	CHANGE_CHARACTER,
+	"Av sak?",
+	DISPLAY_MESSAGE,
+	"I kakoj gf?",
+	CHANGE_CHARACTER,
+	"Sak \200 sfbf i qarrkahal...",
+	DISPLAY_MESSAGE,
+	"Oscali, btkayka.",
+	DISPLAY_MESSAGE,
+	"` han\200s.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog132[] = {
+	"Mnf pqie>sr\200 car qahoqtgis}.",
+	DISPLAY_MESSAGE,
+	"Bte}sf eobq|, reajsfr} eobqocol}no.",
+	CHANGE_CHARACTER,
+	"T mfn\200 nfs cqfmfni na ytski.",
+	DISPLAY_MESSAGE,
+	"Pqocalicaj osr\177ea,",
+	NEW_LINE,
+	"poka rnoca na sfb\200 ptykt",
+	NEW_LINE,
+	"nf narsacil.",
+	CHANGE_CHARACTER,
+	"Pqfetpqfgea\177...",
+	CHANGE_CHARACTER,
+	"Osktea bfqtsr\200 sakif",
+	NEW_LINE,
+	"hante|, kak s|?",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog133[] = {
+	"Bol}yf cohmognorsi nf btefs...",
+	CHANGE_CHARACTER,
+	"Oslixno.",
+	DISPLAY_MESSAGE,
+	"I pqozaj.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog134[] = {
+	"Vcasis pakocas} efn}di!",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog135[] = {
+	"Pqicfsik!",
+	CHANGE_CHARACTER,
+	"Pqicfs.",
+	DISPLAY_MESSAGE,
+	"Sfbf xfdo?",
+	CHANGE_CHARACTER,
+	"Mfn\200 napqacili r\177ea na sqfniqockt.",
+	CHANGE_CHARACTER,
+	"Oxfqfenoj c|rkoxka, mfs\200zij c adfns|?",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Pokagi eoktmfns|, i mogfy} cojsi.",
+	CHANGE_CHARACTER,
+	"Laetyki.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog136[] = {
+	"Mogfy} mfn\200 cptrsis} bfh crfj ~soj",
+	NEW_LINE,
+	"b\177qokqasii?",
+	CHANGE_CHARACTER,
+	"Pqorsi, nfs.",
+	DISPLAY_MESSAGE,
+	"Pqacila frs} pqacila.",
+	CHANGE_CHARACTER,
+	"Bolcan| frs} bolcan|.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"A mfqscfw| frs} mfqscfw|.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Voqoyfdo en\200, r~q.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog137[] = {
+	"MOGNO COJSI, POGALTJRSA?!",
+	CHANGE_CHARACTER,
+	"EA, MOGNO!",
+	DISPLAY_MESSAGE,
+	"PQORSO POKAGI EOKTMFNS\\!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog138[] = {
+	"Pqoptrsi mfn\200!",
+	CHANGE_CHARACTER,
+	"Pokagi tgf eoktmfns|!",
+	CHANGE_CHARACTER,
+	"S| rliykom rfq}>hno osnoriy}r\200 k qabosf,",
+	NEW_LINE,
+	"nf kagfsr\200?",
+	CHANGE_CHARACTER,
+	"S| rlfpoj, xso li?",
+	DISPLAY_MESSAGE,
+	"` xisa\177 gtqnal na porst.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Soxno.",
+	DISPLAY_MESSAGE,
+	"Pqorsi.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog139[] = {
+	"Mnf naeo...",
+	CHANGE_CHARACTER,
+	"Eoktmfns|!",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog140[] = {
+	"Xso xisafy}?",
+	CHANGE_CHARACTER,
+	"\"Roleasrkif nocorsi\".",
+	CHANGE_CHARACTER,
+	"Nqac\200sr\200 crf ~si cofnn|f ystxki,",
+	NEW_LINE,
+	"ea?",
+	CHANGE_CHARACTER,
+	"Rp\200sil?",
+	DISPLAY_MESSAGE,
+	"Mnf nqac\200sr\200 uoski klarrn|v efcxonok...",
+	DISPLAY_MESSAGE,
+	"...kqorrcoqe|...",
+	DISPLAY_MESSAGE,
+	"...rsqanixka r \177moqom...",
+	DISPLAY_MESSAGE,
+	"...rplfsni...",
+	DISPLAY_MESSAGE,
+	"...qfwfps|...",
+	CHANGE_CHARACTER,
+	"KTLINAQN\\F?!",
+	CHANGE_CHARACTER,
+	"Ea, oni p|sa\177sr\200 poen\200s} rcoj pqfrsig.",
+	DISPLAY_MESSAGE,
+	"Pqiclfx} noc|v xisasflfj.",
+	CHANGE_CHARACTER,
+	"O ea.",
+	DISPLAY_MESSAGE,
+	"Klarrna\200 ief\200.",
+	DISPLAY_MESSAGE,
+	"Rsqanixka r c\200hanifm sogf frs}?",
+	CHANGE_CHARACTER,
+	"Mnf kagfsr\200, s|",
+	NEW_LINE,
+	"p|safy}r\200 ytsis}.",
+	CHANGE_CHARACTER,
+	"Kso, \200?",
+	DISPLAY_MESSAGE,
+	"Ea nikodea.",
+	CHANGE_CHARACTER,
+	"Oslixno.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog141[] = {
+	"Nf oeolgiy} mnf gtqnal?",
+	CHANGE_CHARACTER,
+	"I kak sodea",
+	NEW_LINE,
+	"\200 btet",
+	NEW_LINE,
+	"tbicas} cqfm\200?",
+	CHANGE_CHARACTER,
+	"^m...",
+	DISPLAY_MESSAGE,
+	"Mogfy} rxisas} lirs}\200.",
+	CHANGE_CHARACTER,
+	"Hefr} 11034 lirsa.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Odo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog142[] = {
+	"Xso eflafy}?",
+	CHANGE_CHARACTER,
+	"Sfbf oscfxa\177.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog143[] = {
+	"Sak efqgas}, moloefw.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog144[] = {
+	CHANGE_CHARACTER,
+	"^j, nahae!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog145[] = {
+	"A xso sakof?",
+	CHANGE_CHARACTER,
+	"S| eolgfn pokahas} pqoptrk,",
+	NEW_LINE,
+	"pqfgef xfm \200 cptzt",
+	NEW_LINE,
+	"sfb\200 c ladfq}.",
+	CHANGE_CHARACTER,
+	"A inaxf?",
+	CHANGE_CHARACTER,
+	"Mnf pqie>sr\200 sfb\200 harsqflis}.",
+	CHANGE_CHARACTER,
+	"(rdlosntl)",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog146[] = {
+	CHANGE_CHARACTER,
+	"Pqfetpqfgea\177...",
+	DISPLAY_MESSAGE,
+	"Moi ptli b|rsqff sfb\200...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog147[] = {
+	CHANGE_CHARACTER,
+	"Laeno.",
+	DISPLAY_MESSAGE,
+	"Osxisajr\200 kapisant.",
+	DISPLAY_MESSAGE,
+	"On def-so poblihorsi.",
+	CHANGE_CHARACTER,
+	"Rparibo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog148[] = {
+	CHANGE_CHARACTER,
+	"M| reflafm ih sfb\200 narso\200zfdo mtgxint,",
+	NEW_LINE,
+	"cfqno, r|nok?!",
+	CHANGE_CHARACTER,
+	"^...",
+	CHANGE_CHARACTER,
+	"Ltxyfdo ih ltxyiv!..",
+	CHANGE_CHARACTER,
+	"A...",
+	CHANGE_CHARACTER,
+	"Rkcoh} pos, kqoc} i rl>h|!",
+	CHANGE_CHARACTER,
+	"` pqfepox>l b|...",
+	CHANGE_CHARACTER,
+	"Qae scofmt ~nsthiahmt, r|nok!",
+	DISPLAY_MESSAGE,
+	"Nf btefm sfq\200s} cqfmfni!",
+	DISPLAY_MESSAGE,
+	"Mnf pqikahali pqocfrsi trkoqfnnt\177 poedosockt.",
+	DISPLAY_MESSAGE,
+	"Isak, r|nok!",
+	DISPLAY_MESSAGE,
+	"S| eolgfn pqojsi sqi irp|sani\200!",
+	DISPLAY_MESSAGE,
+	"Naxn>m r l>dkodo!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog149[] = {
+	CHANGE_CHARACTER,
+	"Haeaxa pqorsa.",
+	DISPLAY_MESSAGE,
+	"` hapqt sfb\200 hefr}...",
+	DISPLAY_MESSAGE,
+	"...a s| eolgfn c|bqas}r\200.",
+	DISPLAY_MESSAGE,
+	"Cr> \200rno?!",
+	CHANGE_CHARACTER,
+	"R~q, \200...",
+	CHANGE_CHARACTER,
+	"OSLIXNO!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog150[] = {
+	ANIM_WAIT,
+	"^j?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Heoqoco.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog151[] = {
+	"Pohabacilir} i vcasis.",
+	DISPLAY_MESSAGE,
+	"C|ptrsisf!",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog152[] = {
+	"^j! Frs} kso",
+	NEW_LINE,
+	"rnaqtgi?!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"POMODISF!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog153[] = {
+	"Pozaeisf!",
+	DISPLAY_MESSAGE,
+	"` hefr} pomqt!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog154[] = {
+	"` pqodoloealr\200!",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog155[] = {
+	"` nf hna\177, xso fz> rkahas}...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog156[] = {
+	"Etma\177...",
+	DISPLAY_MESSAGE,
+	"...s| pqoy>l...",
+	DISPLAY_MESSAGE,
+	"...pfqc|j sfrs...",
+	DISPLAY_MESSAGE,
+	"...Pfqfje>m...",
+	DISPLAY_MESSAGE,
+	"...k rlfet\177zfmt...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog157[] = {
+	CHANGE_CHARACTER,
+	"Voqoyo, roleas.",
+	DISPLAY_MESSAGE,
+	"Pqfersacim, xso \200 scoj plfnnik...",
+	DISPLAY_MESSAGE,
+	"...i hna\177 rfkqfsn|j paqol}.",
+	DISPLAY_MESSAGE,
+	"Sco\200 wfl} - c|cfeas} fdo t mfn\200.",
+	DISPLAY_MESSAGE,
+	"`RNO?!",
+	CHANGE_CHARACTER,
+	"` xfm-nibte} odqanixfn?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Eflaj xso voxfy}.",
+	CHANGE_CHARACTER,
+	"Modt eagf c dlah pl\177nts}?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ea.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Rparibo, pqorso tsoxnil.",
+	"\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog158[] = {
+	"Pogaltjrsa, rkagisf paqol},",
+	NEW_LINE,
+	"i pokonxim r ~sim.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ea\177 cqfm\200 poetmas}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog159[] = {
+	"^j, podocoqisf ro mnoj.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"C| mfn\200 rl|yisf?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"HFML` C\\H\\CAFS KAPISANA, PQI<M!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ea nt car.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog160[] = {
+	"Rohqfli el\200 qahdocoqa?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Laeno, eam cam fz> cqfmfni.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog161[] = {
+	"Nt sak kakoj paqol}?",
+	CHANGE_CHARACTER,
+	"Oscali, galkij n|sik.",
+	CHANGE_CHARACTER,
+	"Bte}sf pocfglicfj, a so rnoca hazfkoxt.",
+	CHANGE_CHARACTER,
+	"Eacaj, mnf eagf pqi\200sno.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cam ~so nqacisr\200, ea?",
+	CHANGE_CHARACTER,
+	"Hnafy}...",
+	CHANGE_CHARACTER,
+	"Laeno, najet eqtdoj rporob.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog162[] = {
+	"` cam kof-xso pqin>r...",
+	CHANGE_CHARACTER,
+	"S| mfn\200 nf poektpiy}.",
+	CHANGE_CHARACTER,
+	"Cos kak?",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog163[] = {
+	NEW_LINE,
+	"O, VOXT-VOXT-VOXT!",
+	DISPLAY_MESSAGE,
+	"` REFLA_ XSO TDOENO!",
+	CHANGE_CHARACTER,
+	"Paqol}...",
+	CHANGE_CHARACTER,
+	"Paqol} \"KOUF\".",
+	DISPLAY_MESSAGE,
+	"Rkagi fdo baqmfnt,",
+	NEW_LINE,
+	"i on sfbf kof-xso ears.",
+	DISPLAY_MESSAGE,
+	"A posom qarrkagfs o sqfs}fm haeanii.",
+	DISPLAY_MESSAGE,
+	"SFPFQ] ORCOBOEI!",
+	CHANGE_CHARACTER,
+	"` fz> poetma\177.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog164[] = {
+	"S|...",
+	DISPLAY_MESSAGE,
+	"...c|...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...pqoyli, r~q!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog165[] = {
+	"Voxfy} hamfxasfl}n|j kalfjeorkop?",
+	CHANGE_CHARACTER,
+	"T mfn\200 b|l sakoj, no kapisan tciefl,",
+	NEW_LINE,
+	"kak \200 r nim idqa\177, i habqal fdo.",
+	DISPLAY_MESSAGE,
+	"Kak mnf kagfsr\200,",
+	NEW_LINE,
+	"el\200 lixnodo pol}hocani\200.",
+	CHANGE_CHARACTER,
+	"Frli eay} mnf gtqnal,",
+	NEW_LINE,
+	"\200 eam sfbf kalfjeorkop.",
+	CHANGE_CHARACTER,
+	"Nf voxt hnas}, kak s| fdo eorsal...",
+	CHANGE_CHARACTER,
+	"Voqoyo.",
+	CHANGE_CHARACTER,
+	"...no ceqtd kapisan mfn\200 rnoca harstkafs?",
+	CHANGE_CHARACTER,
+	"Nf pfqfgicaj, t nfdo qtki rc\200han|.",
+	CHANGE_CHARACTER,
+	"O, sfrs nomfq eca, polada\177?..",
+	CHANGE_CHARACTER,
+	"Ada.",
+	CHANGE_CHARACTER,
+	"Laeno, eacaj pocfrflimr\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog166[] = {
+	"KOUF.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog167[] = {
+	CHANGE_CHARACTER,
+	"Doq\200xij, ea?",
+	CHANGE_CHARACTER,
+	"Oj-oj.",
+	DISPLAY_MESSAGE,
+	"Kapisan docoqil, c| eolgn| qarrkahas} mnf",
+	NEW_LINE,
+	"o sqfs}fm haeanii.",
+	CHANGE_CHARACTER,
+	"Op\200s}...",
+	DISPLAY_MESSAGE,
+	"Nt, ~so cqoef idq| c pq\200ski.",
+	DISPLAY_MESSAGE,
+	"Kapisan pq\200xfsr\200, a s| izfy}.",
+	CHANGE_CHARACTER,
+	"No on rieis pqic\200hann|j k rstlt!",
+	CHANGE_CHARACTER,
+	"Mtgik ro rcoimi bol}n|mi idqami...",
+	DISPLAY_MESSAGE,
+	"On tgf nfvilo c niv haidqalr\200!..",
+	DISPLAY_MESSAGE,
+	"On sfb\200 obmantl.",
+	DISPLAY_MESSAGE,
+	"Iei pqocfq}.",
+	DISPLAY_MESSAGE,
+	"Tcfqfn, on tgf orcoboeilr\200.",
+	CHANGE_CHARACTER,
+	"No \200 habqal fdo nog!",
+	DISPLAY_MESSAGE,
+	"Kak on mod pfqfqfhas} cfq>ckt?!",
+	CHANGE_CHARACTER,
+	"Mogfs, on sak i ty>l,",
+	NEW_LINE,
+	"pqic\200hann|j k rstlt...",
+	CHANGE_CHARACTER,
+	"Nf bfea!",
+	DISPLAY_MESSAGE,
+	"Nf c ktqrf, def on mogfs pq\200sas}r\200?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	"Oj, ea laeno.",
+	CHANGE_CHARACTER,
+	"Nfs, paqfn}. Idqaj xfrsno.",
+	END_DIALOG
+};
+
+const static char *russianDialog168[] = {
+	"Cqfm\200 el\200 poerkahki?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog169[] = {
+	"Pqicfs, r~q. ` Maqk.",
+	CHANGE_CHARACTER,
+	"Gal}, xso maqki nf eollaq|.",
+	DISPLAY_MESSAGE,
+	"Xso modt reflas}?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Mogfsf eas} mnf ktxt efnfd...",
+	DISPLAY_MESSAGE,
+	"...ili crsas} na doloct...",
+	DISPLAY_MESSAGE,
+	"...ili...",
+	CHANGE_CHARACTER,
+	"Laeno, laeno. Kcis|.",
+	DISPLAY_MESSAGE,
+	"Nt?..",
+	CHANGE_CHARACTER,
+	"Kso fz> frs} c ladfqf?",
+	CHANGE_CHARACTER,
+	"S| gtqnalirs?",
+	CHANGE_CHARACTER,
+	"Nfs, \200 rfkqfsn|j adfns.",
+	CHANGE_CHARACTER,
+	"I s| sogf?",
+	DISPLAY_MESSAGE,
+	"Nt ea laeno, hefr} crfdo sqi xflocfka.",
+	DISPLAY_MESSAGE,
+	"`, kapisan i ovqannik.",
+	CHANGE_CHARACTER,
+	"Nfs gfnzin?",
+	CHANGE_CHARACTER,
+	"Nf plax}.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"^-~-~, laeno...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog170[] = {
+	"Ronnof waqrsco sts, a?",
+	CHANGE_CHARACTER,
+	"Voxfy} xso-nibte} hakahas} ili nfs?",
+	CHANGE_CHARACTER,
+	"T mfn\200 nfs efnfd.",
+	CHANGE_CHARACTER,
+	"Rfdoen\200 bfrplasno.",
+	CHANGE_CHARACTER,
+	"Pqacea?",
+	CHANGE_CHARACTER,
+	"Pqacea.",
+	CHANGE_CHARACTER,
+	"Eajsf vos-eod.",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Piwwt?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Sors|?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	"Xfdo tdoeno?",
+	CHANGE_CHARACTER,
+	"Nfst.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nfs, rparibo.",
+	DISPLAY_MESSAGE,
+	"` nf doloefn.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog171[] = {
+	"Xso c| p}>sf?",
+	CHANGE_CHARACTER,
+	"Xaj.",
+	CHANGE_CHARACTER,
+	"Nt ea.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog172[] = {
+	"Voqoya\200 podoeka.",
+	CHANGE_CHARACTER,
+	"Vm...",
+	END_DIALOG
+};
+
+const static char *russianDialog173[] = {
+	"Poqoj \200 sak trsa\177.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Oxfn} trsa\177.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog174[] = {
+	"^, Ctersok tgf pqoy>l!",
+	END_DIALOG
+};
+
+const static char *russianDialog175[] = {
+	"Rparib.",
+	END_DIALOG
+};
+
+const static char *russianDialog176[] = {
+	CHANGE_CHARACTER,
+	"Xso ha...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog177[] = {
+	"^j, pis} nf vosisf?",
+	DISPLAY_MESSAGE,
+	"Hab|li o rcofj kqtgkf?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog178[] = {
+	"R~q, nam roobzili, xso...",
+	CHANGE_CHARACTER,
+	"Pohgf!",
+	DISPLAY_MESSAGE,
+	"` rfjxar han\200s!",
+	CHANGE_CHARACTER,
+	"Kak rkagfsf, r~q.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog179[] = {
+	"R~q, kakoj-so poeqorsok p|safsr\200 halfhs}",
+	NEW_LINE,
+	"c orobn\200k.",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog180[] = {
+	"Nixfdo rsqaynodo.",
+	DISPLAY_MESSAGE,
+	"_noyi l\177bop|sn|...",
+	DISPLAY_MESSAGE,
+	"...a moj eom poqagafs iv coobqagfnif.",
+	DISPLAY_MESSAGE,
+	"No cr> qacno pqirmasqicaj ha nim.",
+	CHANGE_CHARACTER,
+	"Ea, r~q!",
+	END_DIALOG
+};
+
+const static char *russianDialog181[] = {
+	"R~q, paqfn} op\200s} p|salr\200 halfhs}.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog182[] = {
+	"Etmafy}, ~so oparno?",
+	CHANGE_CHARACTER,
+	"Vm-m-m... Nfs...",
+	DISPLAY_MESSAGE,
+	"On c|dl\200eis bfhobieno.",
+	DISPLAY_MESSAGE,
+	"No, cohmogno, rsois fdo...",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	DISPLAY_MESSAGE,
+	"Pqorso nf poeptrkaj.",
+	DISPLAY_MESSAGE,
+	"No roobzi, frli on rnoca po\200cisr\200.",
+	DISPLAY_MESSAGE,
+	"A sfpfq} ha qabost.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog183[] = {
+	"Sol}ko nf docoqi, xso rnoca mal}xiyka...",
+	CHANGE_CHARACTER,
+	"Bo\177r}, xso sak.",
+	DISPLAY_MESSAGE,
+	"Ovqannik docoqis, on oxfn} nars|qn|j.",
+	END_DIALOG
+};
+
+const static char *russianDialog184[] = {
+	"On naxinafs mfn\200 bfris}.",
+	DISPLAY_MESSAGE,
+	"I ha xso \200 sfbf plaxt?",
+	CHANGE_CHARACTER,
+	"Mnf fdo...",
+	CHANGE_CHARACTER,
+	"Poka nfs.",
+	DISPLAY_MESSAGE,
+	"Eaeim fmt porlfenij yanr.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog185[] = {
+	"R~q...",
+	CHANGE_CHARACTER,
+	"Eaj tdaea\177...",
+	DISPLAY_MESSAGE,
+	"MAL]XIYKA?!",
+	CHANGE_CHARACTER,
+	"Soxno.",
+	CHANGE_CHARACTER,
+	"Poxfmt cr> pqivoeisr\200 eflas} mnf?!",
+	DISPLAY_MESSAGE,
+	"Mogfy} vos} xso-so reflas} ramorso\200sfl}no?",
+	CHANGE_CHARACTER,
+	"Mnf tbis} fdo ili pqorso na ktrki poqcas}?",
+	CHANGE_CHARACTER,
+	"S| ieios.",
+	DISPLAY_MESSAGE,
+	"Frs}... mfsoe| ltxyf...",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog186[] = {
+	"` ram qahbfqtr}.",
+	DISPLAY_MESSAGE,
+	"Sfpfq} tjei!",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno pfqfoefs}r\200.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog187[] = {
+	"^j sam, nacfqvt!",
+	DISPLAY_MESSAGE,
+	"Rptrkajr\200!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nikakoj qfakwii.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ona dltva\200, xso li?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog188[] = {
+	"^j, psixka, nf rsfrn\200jr\200.",
+	DISPLAY_MESSAGE,
+	"Iei r\177ea...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(cheov)",
+	"\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog189[] = {
+	"R\177ea, psayka...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog190[] = {
+	NEW_LINE,
+	"^j, nf poevoei k ~soj ecfqi!",
+	CHANGE_CHARACTER,
+	"Poxfmt?",
+	CHANGE_CHARACTER,
+	"Nf sco> eflo.",
+	DISPLAY_MESSAGE,
+	"Pqorso nf poevoei.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog191[] = {
+	CHANGE_CHARACTER,
+	"` cqoef rkahal nf poevoeis}?",
+	CHANGE_CHARACTER,
+	"Laeno, laeno...",
+	END_DIALOG
+};
+
+const static char *russianDialog192[] = {
+	"` pqic>h noct\177 paqsi\177 holosa.",
+	CHANGE_CHARACTER,
+	"Ea, \200 c ktqrf.",
+	DISPLAY_MESSAGE,
+	"Paqol}?",
+	CHANGE_CHARACTER,
+	"Bimbo.",
+	CHANGE_CHARACTER,
+	"Cfqno.",
+	DISPLAY_MESSAGE,
+	"Hanorisf cntsq}.",
+	CHANGE_CHARACTER,
+	"Lae|.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog193[] = {
+	"Kak \200 tgf docoqil, naya oqdanihawi\200",
+	NEW_LINE,
+	"qfyafs nfrsaneaqsn|f pqoblfm|.",
+	DISPLAY_MESSAGE,
+	"Porlfenfj b|l NLO",
+	NEW_LINE,
+	"nae Bfl|m eomom.",
+	CHANGE_CHARACTER,
+	"Placea?",
+	DISPLAY_MESSAGE,
+	"I xso c|?",
+	CHANGE_CHARACTER,
+	"Rbili ~st ystkocint.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pon\200sno.",
+	DISPLAY_MESSAGE,
+	"I kso... xso b|lo cntsli?",
+	CHANGE_CHARACTER,
+	"Vosisf hnas}?",
+	CHANGE_CHARACTER,
+	"O ea! ` gf ~krslarfnr,",
+	NEW_LINE,
+	"mnf oxfn} l\177bop|sno.",
+	CHANGE_CHARACTER,
+	"C| OXFN] vosisf hnas}?",
+	CHANGE_CHARACTER,
+	"EA!",
+	CHANGE_CHARACTER,
+	"No...",
+	DISPLAY_MESSAGE,
+	"OXFN]-OXFN]?",
+	CHANGE_CHARACTER,
+	"EA!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pqorsisf, \200 nf modt qarrkahas}.",
+	DISPLAY_MESSAGE,
+	"C obzfm, nam ntgna caya pomoz}.",
+	CHANGE_CHARACTER,
+	"` nf rfklfsn|j adfns, \200 ~krslarfnr...",
+	CHANGE_CHARACTER,
+	"Hna\177.",
+	DISPLAY_MESSAGE,
+	"T nar oxfn} rlognof eflo,",
+	NEW_LINE,
+	"m| b}>mr\200 r nim",
+	NEW_LINE,
+	"tgf poldoea.",
+	DISPLAY_MESSAGE,
+	"M| c bfhc|voenom pologfnii.",
+	DISPLAY_MESSAGE,
+	"` sts poetmal, qah m| hanimafmr\200",
+	NEW_LINE,
+	"rsqann|mi eflami...",
+	DISPLAY_MESSAGE,
+	"...sak poxfmt b| nf irpol}hocas}",
+	NEW_LINE,
+	"rsqann|f mfsoe|?",
+	CHANGE_CHARACTER,
+	"I?..",
+	CHANGE_CHARACTER,
+	"Pohcol}sf, \200 eam cam sflfuonn|j rpqacoxnik.",
+	DISPLAY_MESSAGE,
+	"Corpol}htjsfr} rporobnors\200mi i c|bfqisf im\200.",
+	DISPLAY_MESSAGE,
+	"Cohmogno, rcfga\200 doloca qarkqofs ~so eflo.",
+	CHANGE_CHARACTER,
+	"C| cfe} nf cflisf, xso poltxisr\200?",
+	CHANGE_CHARACTER,
+	"Nfs.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"^so dltpo.",
+	CHANGE_CHARACTER,
+	"Hna\177.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Laeno. Eacajsf rplacoxnik.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog194[] = {
+	ANIM_WAIT,
+	"Im\200...",
+	DISPLAY_MESSAGE,
+	"...Voppfl...",
+	DISPLAY_MESSAGE,
+	"...Malk Voppfl...",
+	DISPLAY_MESSAGE,
+	"Vm...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog195[] = {
+	"On ie>s.",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog196[] = {
+	"O, \200 ihcin\200\177r} ha rcoiv l\177efj.",
+	DISPLAY_MESSAGE,
+	"Poqoj oni rliykom nfqcn|f...",
+	DISPLAY_MESSAGE,
+	"Pogaltjrsa...",
+	DISPLAY_MESSAGE,
+	"Eacaj podocoqim...",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog197[] = {
+	"Porltyajsf, mirsfq...",
+	CHANGE_CHARACTER,
+	"Hna\177, hna\177.",
+	DISPLAY_MESSAGE,
+	"Pqoyt, eaj mnf p\200s} mints,",
+	NEW_LINE,
+	"i \200 cr> ob{\200rn\177.",
+	CHANGE_CHARACTER,
+	"Cal\200jsf, mnf crfdea nqacilir} rfkqfsn|f ystxki.",
+	CHANGE_CHARACTER,
+	"Isak...",
+	DISPLAY_MESSAGE,
+	"` dlaca rfkqfsnoj pqacisfl}rscfnnoj",
+	NEW_LINE,
+	"oqdanihawii poe nahcanifm KCE.",
+	CHANGE_CHARACTER,
+	"Xso hnaxis KCE?",
+	CHANGE_CHARACTER,
+	"` i ram nf hna\177.",
+	DISPLAY_MESSAGE,
+	"Narsol}ko ~so rfkqfsno.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Kqtso.",
+	CHANGE_CHARACTER,
+	"Haeaxa mofj oqdanihawii - qfyas}",
+	NEW_LINE,
+	"ram|f nfrsaneaqsn|f pqoblfm|",
+	NEW_LINE,
+	"po crfmt miqt.",
+	CHANGE_CHARACTER,
+	"Cqoef nalodoc?",
+	CHANGE_CHARACTER,
+	"Nfs, cqoef NLO, rsqann|v ihobqfsfnij,",
+	NEW_LINE,
+	"pqiciefnij...",
+	CHANGE_CHARACTER,
+	"Odo!",
+	CHANGE_CHARACTER,
+	"Ea, kodea poliwi\200, rfkqfsna\200 rltgba i pqoxif",
+	NEW_LINE,
+	"nf modts rpqacis}r\200...",
+	DISPLAY_MESSAGE,
+	"...oni ospqacl\200\177sr\200 k nam. No...",
+	DISPLAY_MESSAGE,
+	"Cieiy} li, poldoea nahae",
+	NEW_LINE,
+	"ih bankocrkiv rfjuoc naxali",
+	NEW_LINE,
+	"irxfhas} holoso i nalixka.",
+	DISPLAY_MESSAGE,
+	"C pq\200mom rm|rlf. Bav! I kak nf b|calo!",
+	CHANGE_CHARACTER,
+	"I?..",
+	CHANGE_CHARACTER,
+	"Pqopali bfh rlfea.",
+	DISPLAY_MESSAGE,
+	"Cr> pqoirvoeilo ha rfktne|.",
+	DISPLAY_MESSAGE,
+	"T nar frs} ciefohapiri, no na niv",
+	NEW_LINE,
+	"nixfdo nf cieno.",
+	DISPLAY_MESSAGE,
+	"Po~somt m| nan\200li ~krsqarfnra,",
+	NEW_LINE,
+	"xsob| ona tkahala na sodo, kso mod b| rsas}",
+	NEW_LINE,
+	"nayim rparisflfm.",
+	DISPLAY_MESSAGE,
+	"Ona c|bqala sfb\200.",
+	CHANGE_CHARACTER,
+	"Pqorsisf...",
+	DISPLAY_MESSAGE,
+	"C| rkahali, xso nan\200li...",
+	DISPLAY_MESSAGE,
+	"...^KRSQARFNRA?!",
+	CHANGE_CHARACTER,
+	"Ea, m| c osxa\200nii i",
+	NEW_LINE,
+	"dosoc| na cr>.",
+	CHANGE_CHARACTER,
+	"Bqfe kakoj-so. Mam, qahbtei mfn\200!",
+	CHANGE_CHARACTER,
+	"Trpokojr\200.",
+	DISPLAY_MESSAGE,
+	"T nar k sfbf pqfelogfnif.",
+	DISPLAY_MESSAGE,
+	"Pomodi i poltxiy} nadqaet.",
+	CHANGE_CHARACTER,
+	"R xfdo mnf pomodas}?",
+	CHANGE_CHARACTER,
+	"Xtcrsco robrscfnnodo eorsoinrsca?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog198[] = {
+	CHANGE_CHARACTER,
+	"Pqihnanif?",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog199[] = {
+	CHANGE_CHARACTER,
+	"Pasqiosihm?",
+	END_DIALOG
+};
+
+const static char *russianDialog200[] = {
+	CHANGE_CHARACTER,
+	"Efcxonki?",
+	CHANGE_CHARACTER,
+	"C| o x>m?",
+	CHANGE_CHARACTER,
+	"Efctyki oboga\177s adfnsoc.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog201[] = {
+	"Laeno, rodlarfn. Xso eflas}?",
+	CHANGE_CHARACTER,
+	"Pqfgef crfdo, pqfelada\177 sfbf",
+	NEW_LINE,
+	"rpfqca pqojsi poedosockt c nayfm",
+	NEW_LINE,
+	"orobom rfkqfsnom ladfqf.",
+	DISPLAY_MESSAGE,
+	"` c|eam sfbf pqoptrk.",
+	DISPLAY_MESSAGE,
+	"Ie>s?",
+	CHANGE_CHARACTER,
+	"Ie>s!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog202[] = {
+	"...i ~so eagf b|lo cfrflo.",
+	CHANGE_CHARACTER,
+	"Qae, xso sfbf ponqacilir} nayi mfsoe| obtxfni\200.",
+	DISPLAY_MESSAGE,
+	"No pfqfje>m k eflt.",
+	DISPLAY_MESSAGE,
+	"Eolgfn pqihnas}r\200, \200 nf cfq\177,",
+	NEW_LINE,
+	"xso s| rmogfy} pomox}.",
+	DISPLAY_MESSAGE,
+	"Nixfdo lixnodo.",
+	CHANGE_CHARACTER,
+	"Naef\177r}.",
+	CHANGE_CHARACTER,
+	"No s| pqin>r nam teaxt.",
+	DISPLAY_MESSAGE,
+	"Nayi l\177ei c|yli na oenodo",
+	NEW_LINE,
+	"bihnfrmfna, kosoq|j nf rxisafs",
+	NEW_LINE,
+	"efn}di pqi poktpkf...",
+	DISPLAY_MESSAGE,
+	"...cfr}ma nfob|xn|v cfzfj.",
+	DISPLAY_MESSAGE,
+	"Sqi momfnsa c|h|ca\177s poeohqfni\200",
+	NEW_LINE,
+	"na fdo rx>s:",
+	DISPLAY_MESSAGE,
+	"...On plasis nalixkoj, xso rsqanno",
+	NEW_LINE,
+	"c cfk plarsikoc|v kaqs...",
+	DISPLAY_MESSAGE,
+	"...Co-csoq|v, poldoea nahae on i blihko nf b|l",
+	NEW_LINE,
+	"sak bodas, kak rfjxar...",
+	DISPLAY_MESSAGE,
+	"...C-sqfs}iv, na koj x>qs fmt",
+	NEW_LINE,
+	"ponaeobilor} 100 kd btq|?",
+	CHANGE_CHARACTER,
+	"Cohmogno, on pqorso xteak.",
+	CHANGE_CHARACTER,
+	"Cohmogno.",
+	DISPLAY_MESSAGE,
+	"No s| eolgfn c|lfsfs} na mfrso",
+	NEW_LINE,
+	"i pop|sas}r\200 pqoniknts} c fdo orobn\200k...",
+	DISPLAY_MESSAGE,
+	"...xsob| qaheob|s} bol}yf inuoqmawii.",
+	DISPLAY_MESSAGE,
+	"Xso rkagfy}?",
+	CHANGE_CHARACTER,
+	"Nt...",
+	CHANGE_CHARACTER,
+	"Obfza\177, xso porlf ~sodo haeani\200 s|",
+	NEW_LINE,
+	"ouiwial}no rsanfy} rfkqfsn|m adfnsom.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Obfzafsf?",
+	CHANGE_CHARACTER,
+	"Xfrsnof rloco.",
+	CHANGE_CHARACTER,
+	"Laeno, \200 dosoc.",
+	DISPLAY_MESSAGE,
+	"Ktea ospqacl\200s}r\200?",
+	CHANGE_CHARACTER,
+	"C malfn}kt\177 efqfctykt.",
+	DISPLAY_MESSAGE,
+	"F> eagf na kaqsav nf naje>y}...",
+	DISPLAY_MESSAGE,
+	"No rpfqca \200 c|eam sfbf ornazfnif",
+	NEW_LINE,
+	"rpfwial}nodo adfnsa.",
+	DISPLAY_MESSAGE,
+	"` b| eal sfbf qfaksicn|f bosinki el\200 pol>soc,",
+	NEW_LINE,
+	"no tgf oseal iv komt-so.",
+	DISPLAY_MESSAGE,
+	"Mfdamozn|v pfqxasok",
+	NEW_LINE,
+	"sogf nf orsalor}.",
+	DISPLAY_MESSAGE,
+	"El\200 nayfdo efla t mfn\200 orsalr\200 sol}ko",
+	NEW_LINE,
+	"orob|j rtpfqklfj.",
+	DISPLAY_MESSAGE,
+	"Cr>-saki ~so ltxyf, xfm nixfdo...",
+	DISPLAY_MESSAGE,
+	"Teaxi!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog203[] = {
+	CHANGE_CHARACTER,
+	"Nf colntjr\200.",
+	DISPLAY_MESSAGE,
+	"On oklfmafsr\200.",
+	DISPLAY_MESSAGE,
+	"Con ~so stlocizf...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog204[] = {
+	CHANGE_CHARACTER,
+	"On poltxil po harltdam.",
+	DISPLAY_MESSAGE,
+	"No m| tgf posfq\200li tjmt cqfmfni. Cpfq>e!",
+	CHANGE_CHARACTER,
+	"Nfs! Rsojsf!",
+	DISPLAY_MESSAGE,
+	"Mnf ntgno tciefs}r\200 r Annoj!",
+	CHANGE_CHARACTER,
+	"^m... S| nf mogfy}.",
+	CHANGE_CHARACTER,
+	"^so fz> poxfmt?!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Cieiy} li... Anna b|la nayim adfnsom.",
+	DISPLAY_MESSAGE,
+	"Fj b|lo poqtxfno rlfeis} ha soboj,",
+	NEW_LINE,
+	"frli mikqokamfqa",
+	NEW_LINE,
+	"ceqtd rlomafsr\200.",
+	DISPLAY_MESSAGE,
+	"A fz> ona sfb\200 mosiciqocala...",
+	CHANGE_CHARACTER,
+	"` cam nf cfq\177!",
+	CHANGE_CHARACTER,
+	"Ona tgf ospqacilar}",
+	NEW_LINE,
+	"na eqtdof haeanif.",
+	DISPLAY_MESSAGE,
+	"Pqorsi.",
+	CHANGE_CHARACTER,
+	"Babtl\200, sak polada\177, sogf r cami?",
+	CHANGE_CHARACTER,
+	"Nfs, ona sam gic>s. M| fj haplasili.",
+	CHANGE_CHARACTER,
+	"A cos ~so insfqfrno.",
+	DISPLAY_MESSAGE,
+	"Frli cr> sak, poxfmt t mfn\200 b|lo",
+	NEW_LINE,
+	"rsol}ko sqtenorsfj?...",
+	CHANGE_CHARACTER,
+	"M| poers>dicali sco\177 qfyimors}.",
+	DISPLAY_MESSAGE,
+	"M| qarrxis|cali, xso t sfb\200 ril}na\200 col\200.",
+	DISPLAY_MESSAGE,
+	"M| cfe} nf oyiblir}?",
+	CHANGE_CHARACTER,
+	"C| osnorisfr} k l\177e\200m kak k poeop|sn|m",
+	NEW_LINE,
+	"kqolikam.",
+	DISPLAY_MESSAGE,
+	"C| gfrsokij...",
+	CHANGE_CHARACTER,
+	"No cfe} efjrsctfs?",
+	CHANGE_CHARACTER,
+	"^so pqorso nfm|rlimo.",
+	DISPLAY_MESSAGE,
+	"Mogfs, fz> rkagfsf, xso robaka -",
+	NEW_LINE,
+	"hamarkiqocann|j adfns...",
+	DISPLAY_MESSAGE,
+	"...rsaqixok - moj ovqannik...",
+	DISPLAY_MESSAGE,
+	"...a rami c| r Maqra?!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog205[] = {
+	CHANGE_CHARACTER,
+	"^so nf sflfrfqial, ~so",
+	NEW_LINE,
+	"ob|xn|f bteni adfnsa.",
+	DISPLAY_MESSAGE,
+	"No crstpaj c KCE i rmogfy}",
+	NEW_LINE,
+	"qabosas} r Annoj t nar!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"` poetma\177...",
+	CHANGE_CHARACTER,
+	"Heoqoco.",
+	DISPLAY_MESSAGE,
+	"Pqi\200sno b|lo nabl\177eas} ha scofj qabosoj!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog206[] = {
+	CHANGE_CHARACTER,
+	"Nixfdo nf qarrkah|caj.",
+	DISPLAY_MESSAGE,
+	"` tgf pqoxisal efsal}n|j osx>s.",
+	CHANGE_CHARACTER,
+	"A xso r pqoufrroqom?",
+	CHANGE_CHARACTER,
+	"O, bfen\200da rnoca hab|l qfwfps",
+	NEW_LINE,
+	"sablfsok.",
+	DISPLAY_MESSAGE,
+	"M| eaeim fmt nayt ltxyt\177 laboqasoqi\177.",
+	DISPLAY_MESSAGE,
+	"Rfjxar t nar liy} paqa sablfsok,",
+	NEW_LINE,
+	"kosoq|f s| nam eal.",
+	CHANGE_CHARACTER,
+	"A Egon Nosi?",
+	CHANGE_CHARACTER,
+	"Nf bfrpokojr\200, on poplasisr\200 ha rco\177 gaenors}.",
+	CHANGE_CHARACTER,
+	"Naef\177r}...",
+	DISPLAY_MESSAGE,
+	"I fz> oena mflox}...",
+	DISPLAY_MESSAGE,
+	"C| mnf kof-xso obfzali...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog207[] = {
+	CHANGE_CHARACTER,
+	"`?..",
+	DISPLAY_MESSAGE,
+	"Nf pomn\177...",
+	CHANGE_CHARACTER,
+	"C| rkahali, \200 rsant narso\200zim adfnsom...",
+	DISPLAY_MESSAGE,
+	"\"Efctyki oboga\177s adfnsoc\". Pomnisf?",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog208[] = {
+	CHANGE_CHARACTER,
+	"(cheov)",
+	DISPLAY_MESSAGE,
+	"Obfzanif frs} obfzanif...",
+	DISPLAY_MESSAGE,
+	"Eaj poetmas}.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Laeno. Poeojei.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog209[] = {
+	"Imfnfm...",
+	DISPLAY_MESSAGE,
+	"...bla-bla-bla...",
+	DISPLAY_MESSAGE,
+	"...bla-bla...",
+	DISPLAY_MESSAGE,
+	"...ha nayt rsqant.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog210[] = {
+	"Nt...",
+	DISPLAY_MESSAGE,
+	"Cos i cr>, qfb\200sa!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog211[] = {
+	"` nay>l sablfskt cqfmfni!",
+	DISPLAY_MESSAGE,
+	"Nacfqnof, c|calilar} ih banki!..",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kqtso.",
+	"\x1f\x1f",
+	END_DIALOG
+};
+
+const static char *russianDialog212[] = {
+	"Odo!",
+	DISPLAY_MESSAGE,
+	"Oxaqocasfl}no!..",
+	"\x1f\x1f\x1f\x1f",
+	END_DIALOG
+};
+
 const static char** englishDialogs[] = {
 	englishDialog0,
 	englishDialog1,
@@ -16409,6 +20946,222 @@ const static char** englishDialogs[] = {
 	englishDialog210,
 	englishDialog211,
 	englishDialog212
+};
+
+const static char **russianDialogs[] = {
+	russianDialog0,
+	russianDialog1,
+	russianDialog2,
+	russianDialog3,
+	russianDialog4,
+	russianDialog5,
+	russianDialog6,
+	russianDialog7,
+	russianDialog8,
+	russianDialog9,
+	russianDialog10,
+	russianDialog11,
+	russianDialog12,
+	russianDialog13,
+	russianDialog14,
+	russianDialog15,
+	russianDialog16,
+	russianDialog17,
+	russianDialog18,
+	russianDialog19,
+	russianDialog20,
+	russianDialog21,
+	russianDialog22,
+	russianDialog23,
+	russianDialog24,
+	russianDialog25,
+	russianDialog26,
+	russianDialog27,
+	russianDialog28,
+	russianDialog29,
+	russianDialog30,
+	russianDialog31,
+	russianDialog32,
+	russianDialog33,
+	russianDialog34,
+	russianDialog35,
+	russianDialog36,
+	russianDialog37,
+	russianDialog38,
+	russianDialog39,
+	russianDialog40,
+	russianDialog41,
+	russianDialog42,
+	russianDialog43,
+	russianDialog44,
+	russianDialog45,
+	russianDialog46,
+	russianDialog47,
+	russianDialog48,
+	russianDialog49,
+	russianDialog50,
+	russianDialog51,
+	russianDialog52,
+	russianDialog53,
+	russianDialog54,
+	russianDialog55,
+	russianDialog56,
+	russianDialog57,
+	russianDialog58,
+	russianDialog59,
+	russianDialog60,
+	russianDialog61,
+	russianDialog62,
+	russianDialog63,
+	russianDialog64,
+	russianDialog65,
+	russianDialog66,
+	russianDialog67,
+	russianDialog68,
+	russianDialog69,
+	russianDialog70,
+	russianDialog71,
+	russianDialog72,
+	russianDialog73,
+	russianDialog74,
+	russianDialog75,
+	russianDialog76,
+	russianDialog77,
+	russianDialog78,
+	russianDialog79,
+	russianDialog80,
+	russianDialog81,
+	russianDialog82,
+	russianDialog83,
+	russianDialog84,
+	russianDialog85,
+	russianDialog86,
+	russianDialog87,
+	russianDialog88,
+	russianDialog89,
+	russianDialog90,
+	russianDialog91,
+	russianDialog92,
+	russianDialog93,
+	russianDialog94,
+	russianDialog95,
+	russianDialog96,
+	russianDialog97,
+	russianDialog98,
+	russianDialog99,
+	russianDialog100,
+	russianDialog101,
+	russianDialog102,
+	russianDialog103,
+	russianDialog104,
+	russianDialog105,
+	russianDialog106,
+	russianDialog107,
+	russianDialog108,
+	russianDialog109,
+	russianDialog110,
+	russianDialog111,
+	russianDialog112,
+	russianDialog113,
+	russianDialog114,
+	russianDialog115,
+	russianDialog116,
+	russianDialog117,
+	russianDialog118,
+	russianDialog119,
+	russianDialog120,
+	russianDialog121,
+	russianDialog122,
+	russianDialog123,
+	russianDialog124,
+	russianDialog125,
+	russianDialog126,
+	russianDialog127,
+	russianDialog128,
+	russianDialog129,
+	russianDialog130,
+	russianDialog131,
+	russianDialog132,
+	russianDialog133,
+	russianDialog134,
+	russianDialog135,
+	russianDialog136,
+	russianDialog137,
+	russianDialog138,
+	russianDialog139,
+	russianDialog140,
+	russianDialog141,
+	russianDialog142,
+	russianDialog143,
+	russianDialog144,
+	russianDialog145,
+	russianDialog146,
+	russianDialog147,
+	russianDialog148,
+	russianDialog149,
+	russianDialog150,
+	russianDialog151,
+	russianDialog152,
+	russianDialog153,
+	russianDialog154,
+	russianDialog155,
+	russianDialog156,
+	russianDialog157,
+	russianDialog158,
+	russianDialog159,
+	russianDialog160,
+	russianDialog161,
+	russianDialog162,
+	russianDialog163,
+	russianDialog164,
+	russianDialog165,
+	russianDialog166,
+	russianDialog167,
+	russianDialog168,
+	russianDialog169,
+	russianDialog170,
+	russianDialog171,
+	russianDialog172,
+	russianDialog173,
+	russianDialog174,
+	russianDialog175,
+	russianDialog176,
+	russianDialog177,
+	russianDialog178,
+	russianDialog179,
+	russianDialog180,
+	russianDialog181,
+	russianDialog182,
+	russianDialog183,
+	russianDialog184,
+	russianDialog185,
+	russianDialog186,
+	russianDialog187,
+	russianDialog188,
+	russianDialog189,
+	russianDialog190,
+	russianDialog191,
+	russianDialog192,
+	russianDialog193,
+	russianDialog194,
+	russianDialog195,
+	russianDialog196,
+	russianDialog197,
+	russianDialog198,
+	russianDialog199,
+	russianDialog200,
+	russianDialog201,
+	russianDialog202,
+	russianDialog203,
+	russianDialog204,
+	russianDialog205,
+	russianDialog206,
+	russianDialog207,
+	russianDialog208,
+	russianDialog209,
+	russianDialog210,
+	russianDialog211,
+	russianDialog212
 };
 
 const static char *englishItem0[] = {
@@ -17121,6 +21874,786 @@ const static char *englishItem91[] = {
 	"\n\n",
 };
 
+const static char *russianItem0[] = {
+	"pfqo",
+	"\n",
+	"Naeqali komt-so hae!",
+	"\n\n",
+};
+
+const static char *russianItem1[] = {
+	"qtg}>",
+	"\n",
+	"Cntyisfl}n|j cie...",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem2[] = {
+	"\200zik",
+	"\n",
+	"Povogf, nf hakq|s|!..",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem3[] = {
+	"\200zik",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem4[] = {
+	"kl\177x",
+	"\n",
+	"Poeobn|f cfziw| crfdea pqidoe\200sr\200.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem5[] = {
+	"qarx>rka",
+	"\n",
+	"Rl|yal, nfkosoq|f imi pol}ht\177sr\200.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem6[] = {
+	"cfsqoetj",
+	"\n",
+	"Rcfgo.",
+	"\n\n",
+};
+
+const static char *russianItem7[] = {
+	"rlomannof cfrlo",
+	"\n",
+	"Oxfn} koqoskof.",
+	"\n\n",
+};
+
+const static char *russianItem8[] = {
+	"cfrlo",
+	"\n",
+	"Klfj efqgis cfskt",
+	"\n",
+	"oxfn} kqfpko.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem9[] = {
+	"wcfsok",
+	"\n",
+	"On oxfn} pqi\200sno",
+	"\n",
+	"pavnfs.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem10[] = {
+	"wcfsok",
+	"\n",
+	"On oxfn} kqaric|j.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem11[] = {
+	"mfs>lka",
+	"\n",
+	"R nfj mogno poidqas} c tboqzika.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem12[] = {
+	"bfnhopila",
+	"\n",
+	"C voqoyfm rorso\200nii, no nfs soplica.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem13[] = {
+	"p}\200na\200 bfnhopila",
+	"\n",
+	"E>qdafsr\200, no qabosafs.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem14[] = {
+	"cfska",
+	"\n",
+	"Oxfn} sc>qeof efqfco.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem15[] = {
+	"cirki",
+	"\n",
+	"^sikfska dlaris \"Oxfn}",
+	"\n",
+	"kqfpkij cirki\".",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem16[] = {
+	"idla",
+	"\n",
+	"Ona cfr}ma elinna\200 el\200 idolki...",
+	"\n\n",
+};
+
+const static char *russianItem17[] = {
+	"ob>qska",
+	"\n",
+	"Kqarica\200. Orobfnno naepir} \"KONUFSA L_BCI\".",
+	"\n",
+	"A fz> na nfj ihobqagfno rfqewf.",
+	"\n",
+	"Kak milo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem18[] = {
+	"yokolae",
+	"\n",
+	"Kqtdla\200 yokolaena\200 konufsa.",
+	"\n",
+	"Oslixn|j poeaqok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem19[] = {
+	"eikij kaqsoufl}",
+	"\n",
+	"Odo! Povog uoqmoj na dqanast!..",
+	"\n\n",
+};
+
+const static char *russianItem20[] = {
+	"dqabli",
+	"\n",
+	"Qarrso\200nif mfget htb}\200mi rliykom bol}yof,",
+	"\n",
+	"xsob| xso-nibte} rdqfrsi.",
+	"\n\n",
+};
+
+const static char *russianItem21[] = {
+	"konufsa c uoqmf rfqewa",
+	"\n",
+	"Cq\200e li oenodo ~sodo tltxyfni\200 vcasis.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem22[] = {
+	"konufsa c ob>qskf",
+	"\n",
+	"Noca\200 konufsa. Nt, ili c|dl\200eis sakoj.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem23[] = {
+	"lfnsa",
+	"\n",
+	"Ona btefs napominas} mnf o soj s>lkf,",
+	"\n",
+	"c rm|rlf, xflocfxfrkoj ramkf.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem24[] = {
+	"dqabli",
+	"\n",
+	"Poqa dqfrsi.",
+	"\n\n",
+};
+
+const static char *russianItem25[] = {
+	"oqfv",
+	"\n",
+	"Bol}yoj oqfyfk.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem26[] = {
+	"plarsikocof \200bloko",
+	"\n",
+	"Sak povogf na narso\200zff,",
+	"\n",
+	"xso cieno rfmfxki cntsqi.",
+	"\n\n",
+};
+
+const static char *russianItem27[] = {
+	"yiyka",
+	"\n",
+	"Povoga na dacanrkt\177 ridaqt, kosoqa\200 eolgna",
+	"\n",
+	"b|s} pqiklffna k tl|bkf kageodo",
+	"\n",
+	"tcaga\177zfdo rfb\200 bihnfrmfna.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem28[] = {
+	"rtpfqklfj",
+	"\n",
+	"^so rtpfq-stqbo-mfda-tl}sqa",
+	"\n",
+	"b|rsqorovnt\177zij klfj-pl\177r.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem29[] = {
+	"yiyka i idla",
+	"\n",
+	"Xfdo-so cr> qacno nf vcasafs...",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem30[] = {
+	"yiyka i idla",
+	"\n",
+	"Xfdo-so cr> qacno nf vcasafs...",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem31[] = {
+	"eqosik",
+	"\n",
+	"Orsalor} liy} najsi wfl}!",
+	"\n\n",
+};
+
+const static char *russianItem32[] = {
+	"dq\200hna\200 mfs>lka",
+	"\n",
+	"Ona lipka\200 i pfqfpaxkana ragfj.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem33[] = {
+	"qarkqayfnn|j kaqsoufl}",
+	"\n",
+	"Feinrscfnnof fdo oslixif os dqanas| c som,",
+	"\n",
+	"xso kaqsoufl} ob|xno nf chq|cafsr\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem34[] = {
+	"eomkqas",
+	"\n",
+	"Na cie pqoxn|j.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem35[] = {
+	"kors} einohacqa",
+	"\n",
+	"Bol}ya\200 i voqoyo rovqanilar}.",
+	"\n",
+	"^so \200cno b|l odqomn|j... hcfq}, cieimo...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem36[] = {
+	"lopasa",
+	"\n",
+	"Mogno r|dqas} c EIDDFQa. Sak, k rloct.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem37[] = {
+	"cfq>cka",
+	"\n",
+	"Pqoxna\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem38[] = {
+	"marka",
+	"\n",
+	"Ona pomogfs ltxyf ciefs} poe coeoj.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem39[] = {
+	"lars|",
+	"\n",
+	"Oni pomodts mnf bol}yf povoeis}",
+	"\n",
+	"na poecoen|v bqas}fc.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem40[] = {
+	"coeolahnof rnaq\200gfnif",
+	"\n",
+	"Bfqfdir}, coea! ` iet!",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem41[] = {
+	"\200koq}",
+	"\n",
+	"Malfn}kij, no s\200g>l|j, mogfs posopis} loekt.",
+	"\n\n",
+};
+
+const static char *russianItem42[] = {
+	"kq\177k",
+	"\n",
+	"Bfqfdisfr}, doq|! ` iet!",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem43[] = {
+	"rfqp",
+	"\n",
+	"On narsol}ko stpoj, xso eagf",
+	"\n",
+	"marlo poqfhas} nf tearsr\200.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem44[] = {
+	"haplfrnfcfl|j r|q",
+	"\n",
+	"Napominafs mo\177 komnast.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem45[] = {
+	"hasoxfnn|j rfqp",
+	"\n",
+	"`dn\200sa, molxisf. Btefs bol}no...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem46[] = {
+	"norocoj plasok",
+	"\n",
+	"T claefl}wa sakoj odqomn|j nor, xso fmt ntgfn",
+	"\n",
+	"wfl|j ktrok m|la, xsob| fdo pom|s}.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem47[] = {
+	"m|y}",
+	"\n",
+	"Ea ona nfporfea.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem48[] = {
+	"kamfn}",
+	"\n",
+	"Ram|j ob|xn|j, kak rnfgok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem49[] = {
+	"ramoqoeok",
+	"\n",
+	"Rimcol: A$, nomfq: 79, asomn|j cfr: 196,97.",
+	"\n",
+	"Eqtdimi rlocami: HOLOSO! Ea! Ea!",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem50[] = {
+	"banknosa",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem51[] = {
+	"eiksouon",
+	"\n",
+	"C n>m nfs basaqffk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem52[] = {
+	"polaqoie",
+	"\n",
+	"On dosoc k r{>mkf.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem53[] = {
+	"ciefokarrfsa",
+	"\n",
+	"Nf poepirana.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem54[] = {
+	"kloxok btmadi",
+	"\n",
+	"Nixfdo cagnodo.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem55[] = {
+	"kon}\200k",
+	"\n",
+	"Habacnof im\200 el\200 paqoeii na c|pickt.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem56[] = {
+	"ptl}s ET",
+	"\n",
+	"T nfdo eqtgfrscfnn|j insfqufjr.",
+	"\n",
+	"L\177boj mogfs pol}hocas}r\200.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem57[] = {
+	"zipw| el\200 l}ea",
+	"\n",
+	"Pqidoe\200sr\200.",
+	"\n\n",
+};
+
+const static char *russianItem58[] = {
+	"pqobka",
+	"\n",
+	"Pqobka el\200 haktpoqki.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem59[] = {
+	"obmosanna\200 pqobka",
+	"\n",
+	"Sfpfq} eqtdof eflo.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem60[] = {
+	"uoso",
+	"\n",
+	"^so uosodqaui\200 Egona Nosi. ` hapfxaslfl fdo,",
+	"\n",
+	"kodea on bqal nost ri. Tgar!",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem61[] = {
+	"xili",
+	"\n",
+	"Na ~sikfskf napirano",
+	"\n",
+	"\"Mfkrikanrkij xili\". Nt pq\200m.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem62[] = {
+	"rkalka",
+	"\n",
+	"Reflana ih oxfn} sc>qeoj eqfcfrin|.",
+	"\n\n",
+};
+
+const static char *russianItem63[] = {
+	"ual}yic|j xili",
+	"\n",
+	"Cos ~so \200 ponima\177 - eolda\200 c|efqgka.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem64[] = {
+	"~sikfska",
+	"\n",
+	"\"Mfkrikanrkij xili\".",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem65[] = {
+	"basaqfjki",
+	"\n",
+	"Paqa noc|v basaqffk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem66[] = {
+	"eiksouon",
+	"\n",
+	"\"Qah-eca, qah-eca, dqomxf ckl\177xi,",
+	"\n",
+	"~so \200, Maqk ^mRi\"...",
+	"\n",
+	"Qabosafs.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem67[] = {
+	"doq\200za\200 btmada",
+	"\n",
+	"Posq\200ra\177zf, ea?",
+	"\n",
+	"(Eagf bol}yf - nfcfqo\200sno).",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem68[] = {
+	"m\200ro",
+	"\n",
+	"Sfl\200sina c plarsikocom pakfsf.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem69[] = {
+	"plarsikoc|j pakfs",
+	"\n",
+	"Naef\177r}, bioqahladafm|j. Inaxf",
+	"\n",
+	"nf rmodt rpas}.",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem70[] = {
+	"norki",
+	"\n",
+	"Osrsojn|f norki.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem71[] = {
+	"sablfski",
+	"\n",
+	"C bankf okolo ecaewasi sablfsok.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem72[] = {
+	"qtxka",
+	"\n",
+	"Ob|xna\200 ecfqna\200 qtxka...",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem73[] = {
+	"xili",
+	"\n",
+	"Mnf nqacisr\200 uoqma bts|loxki.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem74[] = {
+	"pqoptrk",
+	"\n",
+	"\"Cptrsisf fdo. Dlaca KCE.\"",
+	"\n\n",
+};
+
+const static char *russianItem75[] = {
+	"lampoxka",
+	"\n",
+	"Rocrfm bfrpolfhna.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem76[] = {
+	"kl\177x os kamfq|",
+	"\n",
+	"Kakoj r\177qpqih, kl\177x os kamfq|.",
+	"\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem77[] = {
+	"nfgnof qarsfnif",
+	"\n",
+	"Aj, zfkosno!",
+	"\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem78[] = {
+	"ycfjwaqrkij nog",
+	"\n",
+	"Insfqfrno, frs} li c n>m sflfcihoq.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem79[] = {
+	"pqtgina",
+	"\n",
+	"R nfj \200 rmodt haptrsis} qakfst!",
+	"\n\n",
+};
+
+const static char *russianItem80[] = {
+	"lopasa",
+	"\n",
+	"Ntgna\200 cfz}.",
+	"\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem81[] = {
+	"kalfjeorkop",
+	"\n",
+	"Cr\177 gihn} b| c nfdo rmosqfl.",
+	"\n",
+	"Nt, ili mints p\200s}.",
+	"\n",
+	"Rktka.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem82[] = {
+	"\"Roleasrkif nocorsi\"",
+	"\n",
+	"So gf ramof, xso gtqnal| el\200 gfnzin,",
+	"\n",
+	"sol}ko cmfrso kormfsiki hefr} ptyki.",
+	"\n",
+	"Cr> qacno kqtso.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem83[] = {
+	"dqanasa",
+	"\n",
+	"Cieno, \200 rp\200sil, pologic f> c kaqman.",
+	"\n",
+	"Mogfs pqoihojsi nfxso tgarnof...",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem84[] = {
+	"kqtgka",
+	"\n",
+	"Ptrsa\200.",
+	"\x1f",
+	"\n\n",
+};
+
+const static char *russianItem85[] = {
+	"kqtgka r dq\200h}\177",
+	"\n",
+	"Haxfm \200 napolnil kqtgkt dq\200h}\177?",
+	"\n",
+	"Bfrrm|rliwa kaka\200-so!",
+	"\n\n",
+};
+
+const static char *russianItem86[] = {
+	"kqoyki",
+	"\n",
+	"Gmfn}ka vlfbn|v kqoyfk.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem87[] = {
+	"cfq>cka",
+	"\n",
+	"Sonka\200, elinna\200.",
+	"\n\n",
+};
+
+const static char *russianItem88[] = {
+	"cfq>cka r dqanasoj",
+	"\n",
+	"Mo> ihobqfsfnif - chq|cnoj jo-jo.",
+	"\n\n",
+};
+
+const static char *russianItem89[] = {
+	"sablfski",
+	"\n",
+	"Povogf na rnoscoqnof.",
+	"\n",
+	"Pqacea, pon\200si\200 nf imf\177 poxfmt.",
+	"\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\n\n",
+};
+
+const static char *russianItem90[] = {
+	"naqkosixfrkif kqoyki",
+	"\n",
+	"Pocf\200lo \177nors}\177.",
+	"\n\n",
+};
+
+const static char *russianItem91[] = {
+	"psiwa",
+	"\n",
+	"Btefs oslixn|m obfeom... So frs}",
+	"\n",
+	"eqtdom, konfxno gf.",
+	"\x1f\x1f",
+	"\n\n",
+};
+
 const static char **englishItems[] = {
 	englishItem0, englishItem1, englishItem2, englishItem3, englishItem4,
 	englishItem5, englishItem6, englishItem7, englishItem8, englishItem9,
@@ -17143,6 +22676,28 @@ const static char **englishItems[] = {
 	englishItem90, englishItem91,
 };
 
+const static char **russianItems[] = {
+	russianItem0, russianItem1, russianItem2, russianItem3, russianItem4,
+	russianItem5, russianItem6, russianItem7, russianItem8, russianItem9,
+	russianItem10, russianItem11, russianItem12, russianItem13, russianItem14,
+	russianItem15, russianItem16, russianItem17, russianItem18, russianItem19,
+	russianItem20, russianItem21, russianItem22, russianItem23, russianItem24,
+	russianItem25, russianItem26, russianItem27, russianItem28, russianItem29,
+	russianItem30, russianItem31, russianItem32, russianItem33, russianItem34,
+	russianItem35, russianItem36, russianItem37, russianItem38, russianItem39,
+	russianItem40, russianItem41, russianItem42, russianItem43, russianItem44,
+	russianItem45, russianItem46, russianItem47, russianItem48, russianItem49,
+	russianItem50, russianItem51, russianItem52, russianItem53, russianItem54,
+	russianItem55, russianItem56, russianItem57, russianItem58, russianItem59,
+	russianItem60, russianItem61, russianItem62, russianItem63, russianItem64,
+	russianItem65, russianItem66, russianItem67, russianItem68, russianItem69,
+	russianItem70, russianItem71, russianItem72, russianItem73, russianItem74,
+	russianItem75, russianItem76, russianItem77, russianItem78, russianItem79,
+	russianItem80, russianItem81, russianItem82, russianItem83, russianItem84,
+	russianItem85, russianItem86, russianItem87, russianItem88, russianItem89,
+	russianItem90, russianItem91,
+};
+
 const uint kNumCredits = 7;
 
 const static char *englishCredits[kNumCredits] = {
@@ -17153,6 +22708,16 @@ const static char *englishCredits[kNumCredits] = {
 	"\xdd\xec\\after the tiring journey...",
 	"\xdd\xec\\THE END",
 	"programming\nADRIAN CHMIELARZ\n \n \nanimation\nGRZEGORZ MIECHOWSKI\n \n \nadditional animations\nTOMASZ PILIK\n \n \nbackgrounds\nANDRZEJ DOBRZYNSKI\n \n \nmusic\nRADEK SZAMREJ\n \n \ncover art\nDARIUSZ ANACKI\n \n \ntranslation help\nPETER WELLS\n \n \nbetatesters\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWEL MIECHOWSKI\nMAREK CHMIELARZ\nJEDREK WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nideas\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \nprint\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \nthanks\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecial thanks\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nproduction\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nAll allusions and puns\nare intentional\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char* russianCredits[kNumCredits] = {
+	"\xdd\xecPharsacki\niANGFJ EOBGINRKI\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\xe3\xd2Pmth|ka\niQAEFK YAMQFJ",
+	"\xd7\xe6Panimawi\x80 i dqauika\niDGFDOG MFVOCRKI\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
+	"\xd9\xe8Pnapiranif koea i rwfnaqi\x80\niAEQIAN VMFLAG",
+	"\xdd\xec\\porlf eoldoj pofheki...\x1f\x1f\x1f\x1f",
+	"\xdd\xec\\KONFW\x1f\x1f",
+	"pqodqammiqocanif\nAEQIAN VMFLAG\n \n \nanimawi\x80\nDGFDOG MFVOCRKI\n \n \npomoz} r animawifj\nSOMAY PILIK\n \n \nharsacki\nANGFJ EOBGINRKI\n \n \nmth|ka\nQAEFK YAMQFJ\n \n \noblogka\nEAQITY ANAWKI\n \n \npomoz} r pfqfcoeom\nPISFQ T^LLR\n \n \nsfrsfq|\nSOMAY UTQMAN_K\nPASQ\\K RACIWKI\nPACFL MFVOCRKI\nMAQFK VMFLAG\nFEQFK CIVA\nM-Q EGON ET\nMAQWIN EQFCTR\n \n \n \nief\x80\nAEQIAN VMFLAG\nDGFDOG MFVOCRKI\nANGFJ RACIWKI\n \n \n \npfxas}\n`QORLAC CFJRR\nADFNWI` \"RSIL]\"\n \n \n \nrparibo\nDFNQI KASSNFQ\nC\\-HNAFSF-KSO-`-NO-LTXYF-ORSAS]R`-C-SFNI\n^PIK MFDADFJMR\nIKRL^NE PABLIYIND\nKASAGINA MFVOCRKA\n \n \n \norobof rparibo\nANGFJ MIVALAK\n \n \n \n \n \n \n \n \npqoihcoersco\nMFSQOPOLIR ROUSCFQ VATR\n(r) 1994-1995\n \n \n \nCrf osr|lki i kalambtq|\nnamfqfn|\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
 };
 
 struct Object {
@@ -17999,6 +23564,414 @@ Common::Array<Common::Array<ObjectNameDesc>> englishSceneObjectNamesDescs = {
 	{},
 	{},
 	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> russianSceneObjectNamesDescs = {
+	{},
+	{
+		{"sqopa", "Cool."},
+		{"sqopa", "Cool."},
+		{"sainrscfnn|j pqfemfs", "^j, ~so mogfs b|s} kakoj-so klae!\037\037\037\037\037"},
+		{"haboq", "Reflan ih kol\177xfj qgacoj\012pqocoloki.\037\037\037\037\037\037\037\037\037"},
+		{"palaska", "Qahqirocanna\200, rlocno nflfpa\200 kaqsina...\037\037\037"},
+	},
+	{
+		{"psiwa", "Eqtgok."},
+		{"sqopa", "Cool."},
+		{"sqopa", "Cool."},
+		{"rsolb", "Halfhs} cqoef nfrlogno.\037"},
+		{"ltga dq\200hi", "Qaj el\200 uanasoc Ctersoka, allidasoqoc\012i kqfpkiv gfnzin, x}i boi pokah|ca\177s\012nox}\177.\037\037\037"},
+		{"psiwa", "Pofla sablfsok i pqolfsfla 5 mfsqoc.\012Kso b| nf cheqfmntl porlf sakodo?\037\037\037"},
+	},
+	{
+		{"rap>qka", "Nfbol}ya\200 aqmfjrka\200 lopasa.\037"},
+		{"sc>qea\200 poxca", "Xtcrsct\177, rkoqo ona mnf btefs ntgna\012kak nikodea."},
+		{"qarsfnif", "Oxfn} pqi\200snof na oztp}.\037\037\037\037"},
+		{"kiqpixna\200 rsfna", "Povogf, kamfnzik\012poklonnik \"Pink Uloje\".\037\037\037"},
+		{"sqopa", "Cool."},
+		{"sqopa", "Cool."},
+		{"pqtgina", "` ciefl i bolff teobn|f riefn}\200.\037"},
+	},
+	{
+		{"sqopa", "Cool."},
+		{"sqopa", "Cool."},
+		{"sqopa", "Cool."},
+		{"obzfpisfjna\200 ecfq}", "Ih\200zno.\037\037"},
+		{"ecfq}", "Cool."},
+		{"s\177qfmna\200 ecfq}", "^so \200 nah|ca\177\012voqoyfj\012ecfq}\177.\037"},
+		{"mtroqn|j bak", "Con\200fs."},
+	},
+	{
+		{"pqtgina", "Ada, cos i eopq|dalar}.\037\037\037\037\037\037\037\037"},
+		{"savsa", "Nf avsi."},
+		{"qfy>ska", "R eqtdoj rsoqon|\012miq c|dl\200eis ltxyf.\037\037\037\037\037\037"},
+		{"mirka", "Reflana ih al\177mini\200."},
+		{"pqocoe", "Pqocoe poe napq\200gfnifm!\037\037\037"},
+		{"lampoxka", "Ona pfqfdoqfla i nf qabosafs."},
+		{"ecfq}", "Tcfqfnna\200.\037\037\037\037\037"},
+		{"tqna\037\037\037\037\037", "Cool."},
+		{"knopka", "Cool."},
+		{"dqauuisi", "Cool."},
+	},
+	{
+		{"kapisan", "Nfm kak q|ba.\037\037\037\037\037\037"},
+		{"ecfq}", "Cool."},
+		{"ykauxik", "Hapfqso. ` eagf\012nf teicl>n.\037\037\037\037\037\037\037\037"},
+		{"kaqsa", "Pikarro?"},
+		{"rsol", "Sts lfgis ktxa rsaqodo vlama.\037\037"},
+		{"kqocas}", "Nf c|dl\200eis teobnoj.\037\037\037\037\037\037"},
+		{"\200zik", "On hapfqs!\037\037\037\037"},
+		{"rabli", "T mofdo efea b|la povoga\200.\012` obmfn\200l f> na egojrsik.\012Efetl\200 nf pqonikr\200 ~soj hasffj.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oqtgif", "Kak gal}, xso ~so liy}\012makfs|...\037"},
+		{"kaqsina", "Cool."},
+		{"plakas", "Mil|j cfqsik.\037"},
+		{"ycfjwaqrkij nog", "Rocrfm eqtdof eflo.\037\037\037"},
+	},
+	{
+		{"kqtgka", "Cntsqi nfogieanno okahalr\200\012xaj.\037\037\037\037\037\037\037"},
+		{"baqmfn", "Kakoj sqteol\177bic|j socaqiz.\037"},
+		{"c|voe", "Cool."},
+		{"ecfq}", "Ona eolgna cfrsi c klaeockt.\037\037\037\037"},
+		{"qaeio", "Qaeio c|dl\200eis kak qaeio, no ansfnna\012reflana ih kakoj-so cfyalki.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"kqoyki", "Oscqasisfl}no. Coobzf-so l\177e\200m rsois\012tbiqas} ha roboj.\037\037\037\037\037\037\037\037\037\037"},
+		{"xar|", "Povogf, r nimi nf cr> c poq\200ekf.\037\037\037\037\037\037\037\037\037"},
+		{"polki", "Insfqfrno, osktea c sqfniqocoxnom ladfqf\012sakoj bol}yoj c|boq alkodol\200.\012El\200 poen\200si\200 bofcodo etva?\037\037\037\037"},
+		{"karra", "Oboga\177.\037\037\037\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"moqda\177za\200 e|qa", "Rsqanno...\037\037\037\037"},
+		{"ecfq}", "Cool."},
+		{"boxki", "Pqi\200sno, naya aqmi\200 polnors}\177 obfrpfxfna.\037\037\037\037\037"},
+		{"ykauxik", "Kakoj-so hapfqs|j ykauxik.\037\037"},
+		{"ktxa polok", "Nfnacigt b\177qokqasi\177.\037\037\037\037"},
+		{"\200ziki", "Pfqfw."},
+		{"\200ziki", "Rol}.\037"},
+	},
+	{
+		{"dqanasa", "Odo! Crfdea vosfl sakt\177.\037\037\037\037\037\037\037\037\037\037"},
+		{"ovqannik", "Cq\200e li on sakoj, kakim voxfs kahas}r\200.\037\037\037\037\037"},
+		{"c|voe", "Eom, mil|j eom...\037\037\037\037"},
+		{"sqopa", "Cool."},
+	},
+	{
+		{"ovqannik", "Povog na pfqfoefst\177\012efqfcfnzint.\037"},
+		{"bts|lka", "^so cirki!..\037"},
+		{"daqdtl}\200", "Cool."},
+		{"daqdtl}\200", "Cool."},
+		{"rktl}pstqa", "Oxfn} nfsqicial}na\200!"},
+		{"ecfq}", "Bol}ya\200, pqoxna\200."},
+		{"rsfna orobn\200ka", "Solzinoj c sqi kilomfsqa...\037\037\037"},
+		{"Egon Nosi", "Pthan."},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{"sqopa k ltdt", "Ona cfe>s c s>mn|j i\012rsqayn|j lfr.\037\037\037\037\037\037\037\037\037\037"},
+		{"pts} k bfqfdt", "Cool."},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{"ob>qska", "^so wfllouanoca\200 ob>qska os konufs|\012ili sipa sodo.\037\037\037\037\037"},
+		{"lfr", "T mfn\200 os nfdo mtqayki..."},
+		{"banknosa", "` oxfn} doqe, xso NF CH`L f>.\037\037\037\037\037\037\037"},
+	},
+	{
+		{"\037", ""},
+		{"etplo", "Rfjxar ono ptrsof.\037\037\037\037"},
+		{"cfska", "Mogfs pqidoeis}r\200.\037\037"},
+		{"efqfco", "Ono c|yf rsfn| orobn\200ka!\037\037\037\037\037\037\037\037"},
+		{"eikof qarsfnif", "Eikij kaqsoufl}.\037\037\037"},
+		{"rsfna", "Pokq|sa xfm-so rocrfm qocn|m.\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{"cfska", "Eorsal.\037"},
+	},
+	{
+		{"efqfco", "C|rokof."},
+		{"roqn\200k", "Ob|xna\200 hflfn}.\037\037\037\037\037\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{"rsfna", "Pokq|sa xfm-so rocrfm qocn|m.\037\037\037\037\037"},
+		{"sqopa t orobn\200ka\037\037\037", "Cool."},
+		{">g", "T nfdo na rpinf yiyka.\037\037\037\037\037\037\037\037\037\037"},
+		{"kamfn}", "Cool."},
+	},
+	{
+		{"tlfj", "Yaq r m>eom.\037\037\037\037\037\037\037"},
+		{"px>l|", "NFNACIGT!\037\037"},
+		{"ktrs", "Voqoyo pq\200sas}r\200.\037\037"},
+		{"l\177k", "Qgac|j i nfhapfqs|j.\037\037\037\037\037\037\037\037\037"},
+		{"pts} k orobn\200kt", "Cool."},
+	},
+	{
+		{"wcfsok", "^so ram|j kqaric|j wcfsok, xso \200\012ciefl c rcofj gihni!\037\037\037\037\037\037"},
+		{"orsqoc", "Hefr} voqoyo gis} osyfl}nikom.\037\037\037\037"},
+		{"loeka", "Nf modt pocfqis}, xso ona nf e|q\200ca\200.\037\037\037\037\037\037\037"},
+		{"koloefw", "Na andlijrkom \"koloefw\"\012imffs mnodo omonimoc.\037\037"},
+		{"qtxka", "Coh}mt f> c qtxkt.\037"},
+		{"sqopa c efqfcn\177", "Cool."},
+		{"pts} k orobn\200kt", "Cool."},
+		{"sqopa c lfr\037\037\037", "Cool."},
+	},
+	{
+		{"wcfsok", "Kakoj kqaric|j!"},
+		{"wcfsok", "On pqi\200sno pavnfs!\037\037"},
+		{"loeka", "Nixfdo nocodo.\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"q|ba\037", ""},
+		{"q|ba\037", ""},
+		{"?\037", ""},
+		{"?\037", ""},
+		{"\200koq}\037\037", ""},
+		{"loeka", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"coeoqorli", ""},
+		{"sqaca\037", ""},
+		{"kamni\037\037", ""},
+	},
+	{
+		{"pts} k ohfqt\037\037\037\037\037\037", "Cool."},
+		{"ecfq}", "Na ecfqi nf napirano\012imfni..."},
+		{"okna", "EOR ltxyf.\037\037\037\037\037\037"},
+		{"bflka", "Ona oxfn} ytrsqa\200."},
+		{"oqfv", "Bol}yoj."},
+		{"oqfv", "Nay>l."},
+		{"sqaca", "Cool."},
+	},
+	{
+		{"c|voe\037\037", "Cool."},
+		{"qod", "On pqoihcoeis cpfxaslfnif na\012gicosn|v.\037\037\037\037\037\037\037\037"},
+		{"okno", "Po-mofmt, ono eolgno b|s}\012na pqosicopolognoj rsfnf...\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"btufs\037\037\037", "Cool."},
+		{"e|qa c uoqmf rfqewa", "Qomansixna\200 e|qa."},
+		{"btufs\037\037\037", "Cool."},
+		{"l\177rsqa\037\037\037\037", "Cool."},
+		{"kaqsina", "Os okna poxsi nf oslixis}.\037\037\037\037"},
+		{"kamin", "C n>m polno ragi.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oqtgif", "^so liy} plarsikoc|f kopii.\037\037\037\037"},
+		{"rsol\037", "Cool."},
+		{"r|q r plfrfn}\177", "Ut!\037"},
+		{"sqoufi\037\037", "Cool."},
+		{"bfnhopila", "Nf hna\177 poxfmt, no ona napominafs\012oenodo paqn\200 ih Sfvara.\037\037\037"},
+		{"uaquoq", "Cohlf sakiv cfzfj \200 eagf e|yas}\012bo\177r}.\037\037\037\037\037\037\037\037\037\037\037"},
+	},
+	{
+		{"ecfqwa", "Ona nf hapfqsa.\037"},
+		{"badagnik", "C badagnikf crfdea frs} xso-so\012polfhnof..."},
+		{"kol}wo", "T mfn\200 ecojrscfnn|f xtcrsca:\012ono napominafs o ykolf.\037\037"},
+		{"yfrs", "Kol}wo pqikqtxfno k elinnomt\012mfsallixfrkomt yfrst.\037\037\037\037\037\037\037\037"},
+		{"ecfq}", "Cool."},
+		{"ecfqnoj hconok", "Im mogno naptdas} l\177efj\012ha ecfq}\177.\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"okno\037\037", "Cool."},
+		{"okno\037\037", "Cool."},
+		{"okno xfqeaka", "Cool."},
+		{"pts} k ohfqt", "Cool."},
+		{"sqopa", "Cool."},
+		{"sqopa k pol\177\037", "Cool."},
+		{"mal}xik", ""},
+		{"qarx>rka", "Rsqanna\200.\037"},
+		{"q|xad", "Insfqfrno haxfm\012on?\037\037\037\037"},
+		{"ecfqwa\037\037", "Cool."},
+	},
+	{
+		{"sqopa", "Cool."},
+		{"pts} k dqost", "Cool."},
+		{"ecfq}", "Cool."},
+		{"bfl}>", "Cohetv rliykom clagn|j,\012xsob| fdo c|rtyis}...\037\037\037"},
+		{"okno\037\037", "Cool."},
+		{"okno\037\037", "Cool."},
+		{"okno\037\037", "Cool."},
+		{"pqovoe", "Pts} c poecal.\037\037\037\037"},
+		{"l\177k", "Mfsallixfrkij i s\200g>l|j.\037\037\037"},
+		{"p>r", "Rntpi.\037"},
+		{"hconok", "Cool."},
+		{"cfq>cka", "Cool."},
+	},
+	{
+		{"rsaqik", "Povog na moqrkodo colka\012na pfnrii."},
+		{"btufs\037\037\037", "Cool."},
+		{"polki", "Odo! Iv sts ktxa!\037\037\037"},
+		{"kqocas}", "Eom, mil|j eom."},
+		{"okno", "Cie na polf.\037\037\037\037\037\037\037\037\037\037"},
+		{"rsol\037", "Cool."},
+		{"qtg}>", "Va, r sakim sol}ko\012na einohacqoc!..\037\037"},
+		{"kaqsina", "Kqarosa.\037"},
+		{"rfmfjn|f uoso", "Nf vosflor} b|, xsob| moi pqfeki cirfli,\012kak sqoufi...\037\037\037\037\037\037\037\037"},
+		{"wcfsok", "On hfl>n|j."},
+		{"ecfq}", "Cool."},
+		{"l\177rsqa\037\037\037\037", "Cool."},
+		{"cfsqoetj", "Na basaqfjkav.\037\037"},
+	},
+	{
+		{"rsaqtva", "Ih rboqnoj rsqan| po c\200hani\177.\037\037\037"},
+		{"efctyka", "Klarr."},
+		{"c|voe\037\037", "Cool."},
+		{"okno\037\037", "Cool."},
+		{"okno\037\037", "Cool."},
+		{"l\177rsqa\037\037\037\037", "Cool."},
+		{"xar|", "Efjrscisfl}no yfefcq.\037\037\037\037\037"},
+		{"\037", ""},
+		{"nfnarso\200zif uqtks|", "`bloko kak\012narso\200zff!\037\037\037\037\037"},
+		{"ktcyin", "C n>m wcfs|.\037\037\037\037\037\037"},
+		{"wcfs|", "Naef\177r}, nf os kakodo-so\012poklonnika...\037\037\037\037\037"},
+		{"mfs>lka", "Ona qfyafs pqoblfmt p|li.\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rsol", "On kqtdl|j, no feca li rc\200han ro\012rqfenfcfkocoj lfdfneoj...\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"hfqkalo", "` nf cigt c n>m liwa\012efctyki...\037\037"},
+		{"kaqsina", "Voqoyo gis} c efqfcnf c eomf r efqfcfnrkimi\012pfjhagami na rsfnav.\037\037\037\037\037\037\037\037"},
+		{"qarsfnif", "`qko.\037\037\037"},
+	},
+	{
+		{"patk", "^so...\037\037\037"},
+		{"lopasa", "Mogno poidqas} c eiddfqa.\037\037\037"},
+		{"lfrsniwa", "C|voe."},
+		{"knopka", "Malfn}ka\200, no mozna\200.\037\037\037\037\037"},
+		{"sopoq", "Naef\177r}, rlfe| na rsfnf r sopoqom\012nikak nf rc\200han|...\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"wfp}\037", "Cool."},
+		{"zipw|", "Tv, ~sos poecal bol}yf povog\012na kamfqt p|sok...\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"polki", "Harsaclfn| bankami i vlamom.\012Nixfdo insfqfrnodo.\037\037\037\037\037"},
+		{">mkorsi", "Oni ptrs|f.\037\037\037\037\037\037"},
+	},
+	{
+		{"kors}", "Rte\200 po cohqarst kamn\200, ~so\012eolgna b|s} kors} einohacqa....\037\037\037\037\037\037\037\037"},
+		{"ktrs", "On mfyafs pqojsi c dqos.\012Mogfs, kso-so poraeil fdo, xsob|\012rkq|s} sajn| ~sodo dqosa...\037\037\037\037\037\037\037\037"},
+		{"cvoe c dqos\037\037", "Cool."},
+		{"sqopa", "Cool."},
+		{"kamfn}", "On lfgis hefr} eacn|m-eacno.\012Naef\177r}, nikodo nf pqiyiblo...\037\037\037\037\037"},
+		{"baboxka", "Nt qahcf nf mila\200?\037\037"},
+		{"baboxka", "Nt qahcf nf mila\200?\037\037"},
+	},
+	{
+		{"idtana", "Cool."},
+		{"???", "XSO ^SO?!\037\037\037"},
+		{"c|voe\037\037", "Cool."},
+		{"roobzfnif", "Naepir} oxfn} rsaqa\200, no \200 fz> modt\012f> pqoxisas}.\037\037\037"},
+		{"e|qa", "Cqoef dltboka\200.\037\037\037\037"},
+		{"ramoqoeok", "Holoso!"},
+	},
+	{
+		{"pfstv", "Nfmnodo rsqann|j."},
+		{"coqona", "Tgarno cqagefbna\200.\037"},
+		{"coqona", "C|dl\200eis oparno."},
+		{"m|y}", ""},
+		{"poecoena\200 marka", "Nt nixfdo rfbf.\037\037"},
+		{"lars|", "Poevoe\200s mnf iefal}no.\037\037\037\037"},
+		{"ptdalo", "Ystka, ptda\177za\200 coqon.\012Po kqajnfj mfqf,\012c sfoqii.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rfqp", "Oparn|j inrsqtmfns.\037\037\037\037\037"},
+		{"sqopa c efqfcn\177", "Cool."},
+		{"rsod rfna", "Cntsqi frs} xso-so mfsallixfrkof -\012\200 cigt, kak ono blfrsis!\037\037\037"},
+		{"dqabli", "Oni rsaq|f, i htb}fc orsalor}\012nf oxfn} mnodo."},
+		{"m|yina\200 noqa", "I eom, i rklae...\037\037\037\037\037\037"},
+		{"rsod rfna", "C n>m frs} m|yina\200 noqa!\037\037\037\037"},
+		{"pfqo", "Cieimo, fdo tqonil pfstv.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"rsod rfna", "Cool."},
+		{"orobn\200k", "Ba, t nfkosoq|v coobzf\012nfs cktra.\037\037\037\037\037"},
+	},
+	{
+		{"okno", "Ha ysoqoj nixfdo nf qahdl\200efs}.\037\037\037\037\037\037\037\037\037\037"},
+		{"rktl}pstqa", "Claeflfw bolfn.\037\037"},
+		{"ecfq}", "Cool."},
+		{"c|voe ih orobn\200ka\037\037\037\037\037", "Cool."},
+	},
+	{
+		{"ecfq}", "Cool."},
+		{"ecfq}", "Cool."},
+		{"wcfs|", "Cos sak r\177qpqih, oni\012nf irktrrscfnn|f.\037\037\037\037"},
+		{"qarsfnif", "Kak cfriyki, Qobbi?\037\037\037"},
+		{"lfrsniwa", "Docoq\200s, oein yad pqoelfcafs gihn}\012na sqi rfktne|.\037"},
+		{"eqtda\200 xars} koqieoqa\037\037\037\037\037", "Cool."},
+		{"na kq|l}wo\037\037", "Cool."},
+	},
+	{
+		{"cnih\037\037\037\037\037\037", "Cool."},
+		{"kaqsina", "Kakoj-so hamok.\037\037"},
+		{"eorpfvi", "Qann\200\200 cfqri\200 sanka.\037\037\037\037\037\037"},
+		{"ciefokarrfsa", "I xso ha uil}m ntgno sak\012szasfl}no pq\200sas}?\037\037\037"},
+		{"knida", ""},
+		{"knidi", "Odo!\037\037\037\037"},
+		{"mtroqna\200 tqna", "Cntsqi mnodo btmad.\037\037\037\037\037\037\037\037\037\037"},
+		{"rstl", "M\200dkij."},
+		{"lampa", "Cool."},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"\200zik", "On hakq|s.\037\037\037\037"},
+		{"lfrsniwa", "I ~so nf efctyka, kosoqa\200 sfbf l}rsis.\037\037"},
+	},
+	{
+		{"ecfq}", "Cool."},
+		{"oscfqrsif", "Ono kcaeqasnof.\037\037"},
+		{"qtxka", "Ona soxno coyla c oscfqrsif.\037\037\037"},
+		{"kaqsina", "Crfdea l\177bil \"Hc>hen|f cojn|\".\037\037\037"},
+		{"kaqsina", "Etmal, xso \200 rsqann|j.\037\037\037"},
+		{"wcfs|", "Boeqo pavnts."},
+		{"eqtda\200 xars} koqieoqa\037", "Cool."},
+		{"ecfq}", "Cool."},
+		{"rsast\200", "Rsqanno."},
+	},
+	{
+		{"qobos", "Cpfxasl\200fs."},
+		{"banka", "Ona polna sablfsok.\037\037\037\037\037"},
+		{"knida", "Ona odqomna\200 i povoga\012na kakoj-so\012enfcnik."},
+		{"kaqsina", "Ona cflikolfpna. ` sogf voxt sakt\177.\037\037\037\037\037\037\037\037\037\037\037"},
+		{"ykauxik", "Cool."},
+		{"c|voe", "Cool."},
+		{"lfc|j nignij tdol ~kqana", "Hefr} mogno rpq\200sas}r\200!\037\037\037"},
+		{"ecfqna\200 qtxka", "F> orsacil Egon Nosi."},
+	},
+	{
+		{"pocaq", "Wflikom tclfx>n rcofj qabosoj.\037\037\037\037\037\037"},
+		{"caqfco", "Nacfqn\200ka kakoj-so rtp.\012Sfpfq} fz> cktrnff.\037\037\037\037\037\037"},
+		{"plisa", "Rcaqis ckqtst\177.\037"},
+		{"c|voe\037\037", "Cool."},
+		{"voloeil}nik", "Mo\200 l\177bima\200 cfz} na ktvnf.\037\037\037\037\037\037\037\037\037"},
+		{"qaeio", "Qabosafs os basaqffk. Rocrfm kak\012plffq.\037\037\037\037\037\037\037\037"},
+		{"xili", "Kqarn|j i obgida\177zij... Xili!\037\037\037\037\037\037\037\037"},
+		{"mfrso el\200 bts|lki r xili", "Hefr} rso\200la... i s.e i s.p.\037\037\037\037\037\037\037"},
+		{"rkalka", "T mtgxin ptyki, t gfnzin - ~so.\0121:0 c pol}ht gfnzin.\037"},
+		{"mikqocolnocka", "Colyfbna\200 ystka, pqfcq\320\340afs\012fet c qfhint.\037\037\037\037"},
+		{"nogi", "Oxfn} roliena\200 kollfkwi\200.\037\037\037\037\037\037\037"},
+		{"m\200ro", "Ono c plarsikocom pakfsf i pqim>qhlo\012k polkf.\037\037\037\037\037\037\037"},
+	},
+	{
+		{"ecfq}", "Cool."},
+		{"qakocina", "R e|qkoj.\037"},
+		{"kqan", "Cool."},
+		{"hfqkalo", "Pokq|so rlofm dq\200hi.\037\037\037\037"},
+		{"ykauxik", "Cool."},
+		{"canna", "Odo! Bol}ya\200!\037"},
+		{"norok", "Cfqo\200sno, Egona Nosi...\037"},
+	},
+	{
+		{"kon}\200k", "Qahmfq bts|lki r ramodo Napolfona."},
+		{"zipw|", "C cfeqf lfgas zipw|.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"marka", "Kakof-so kqtsof pfqcob|snof irktrrsco.\037"},
+		{"sflfcihoq", "Cfz}, kosoqa\200 tbicafs cqfm\200 i\012lixnors}.\037\037\037"},
+		{"pqoidq|casfl}", "On nf tmffs hapir|cas},\012no mnf ~so nf\012ntgno.\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"dahfsa", "Kaka\200-so mfrsna\200 dahfs>nka.\037\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"einamik", "Kaka\200 kqoyka! Pqicfe>s\012c irrstplfnif crfv rorfefj!\037\037\037\037"},
+		{"eican", "Rlogno pon\200s}, def sts klars}\012poetykt.\037\037\037\037\037"},
+		{"c|voe\037\037", "Cool."},
+		{"kaqsina", "Cos ~so narso\200zff scoqxfrsco.\037\037"},
+		{"ptl}s ET", "On b|l rpq\200san mfget rsqaniwami dahfs|.\037\037\037\037\037\037\037\037\037\037\037\037"},
+		{"oskq|s|j ykau", "Sam sajn|j pqovoe!\037\037\037\037"},
+	},
+	{
+		{"ecfq}", "Cool."},
+		{"ecfq}", "Cool."},
+		{"knopka", "Cool."},
+	},
+	{},
+	{
+		{"Egon Nosi", "On tclfx>n nabicanifm efnfd c rtmkt.\037"},
+		{"sonn| holosa", "(rson)"},
+		{"rfju", "Cool."},
+		{"rfju", "Cool."},
+		{"kamfqa", "Nacfqn\200ka ~so xars} rirsfm| bfhoparnorsi."},
+	},
+	{},
+	{},
+	{},
+	{},
+
 };
 
 #endif

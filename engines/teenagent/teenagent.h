@@ -62,6 +62,8 @@ class Resources;
 class Inventory;
 class Pack;
 
+#define TEENAGENT_DAT_VERSION 1
+
 // Engine Debug Flags
 enum {
 	kDebugActor = 1,
