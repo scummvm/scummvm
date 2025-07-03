@@ -733,7 +733,50 @@ void CDC::Impl::rectangle(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
-	error("TODO: CDC::floodFill");
+	CBitmap::Impl *bitmap = static_cast<CBitmap::Impl *>(_bitmap);
+	assert(bitmap->format.bytesPerPixel == 1);
+
+	if (x < 0 || y < 0 || x >= bitmap->w || y >= bitmap->h)
+		return;
+
+	uint color = GetNearestColor(crColor);
+	byte *pixel = (byte *)bitmap->getBasePtr(x, y);
+	const byte oldColor = *pixel;
+	int cx, cy;
+	int minX = 9999, maxX = -1, minY = 9999, maxY = -1;
+
+	Common::Queue<Common::Pair<int, int>> queue;
+	queue.push({ x, y });
+
+	while (!queue.empty()) {
+		cx = queue.front().first;
+		cy = queue.front().second;
+		queue.pop();
+
+		// Check bounds and color match
+		if (cx < 0 || cx >= bitmap->w || cy < 0 || cy >= bitmap->h)
+			continue;
+		pixel = (byte *)bitmap->getBasePtr(cx, cy);
+		if (*pixel != oldColor)
+			continue;
+
+		// Set new color
+		*pixel = color;
+
+		// Keep track of the modified area
+		minX = MIN(minX, cx);
+		maxX = MAX(maxX, cx);
+		minY = MIN(minY, cy);
+		maxY = MAX(maxY, cy);
+
+		// Push neighboring pixels
+		queue.push({ cx + 1, cy });
+		queue.push({ cx - 1, cy });
+		queue.push({ cx, cy + 1 });
+		queue.push({ cx, cy - 1 });
+	}
+
+	bitmap->addDirtyRect(Common::Rect(minX, minY, maxX + 1, maxY + 1));
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor,
