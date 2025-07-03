@@ -16345,7 +16345,6 @@ const static char *englishItem2[] = {
 
 const static char *englishItem3[] = {
 	"toolbox",
-	"\n",
 	// No description
 	"\n\n",
 };
@@ -16710,7 +16709,6 @@ const static char *englishItem49[] = {
 
 const static char *englishItem50[] = {
 	"banknote",
-	"\n",
 	// No description
 	"\n\n",
 };
@@ -16981,7 +16979,8 @@ const static char *englishItem85[] = {
 	"mug full of mud",
 	"\n",
 	"Why did I fill the mug with mud?",
-	"\n",
+	// Remove extra byte
+	// "\n",
 	"\n",
 	"That makes no sense!",
 	"\n\n",
