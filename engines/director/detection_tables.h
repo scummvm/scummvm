@@ -6918,9 +6918,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Developed by Brilliant Interactive Ideas, published by Brainstorm
 	// Win version needs extraction/installation (DATA.Z)
-	MACGAME1("flipper", "", "Flipper/Flipper!",  "rt:7130f0fd98e0b169a2f3bfeb6fbded9a", 718125, 501),
-	WINGAME2("flipper", "", "FLIP32.EXE",		 "t:f5f0b26a2506fadac19f66cc2ae235f9", 1398201,
-							"FLIPPER/CPA24.DXR", "d:fcfd7c09d92797fa42f4a38a301b8c13", 2780110, 500),
+	MACGAME1f("flipper", "", "Flipper/Flipper!",  "rt:7130f0fd98e0b169a2f3bfeb6fbded9a", 718125, 501, GF_32BPP),
+	WINGAME2f("flipper", "", "FLIP32.EXE",		 "t:f5f0b26a2506fadac19f66cc2ae235f9", 1398201,
+							"FLIPPER/CPA24.DXR", "d:fcfd7c09d92797fa42f4a38a301b8c13", 2780110, 500, GF_32BPP),
 
 	MACGAME1("fplit", "", "Toyland",			  "r:7fc35c7129cb027987528b027c6cc27c", 705445, 500),
 	WINGAME2("fplit", "", "PIR32BIT/START32.EXE", "t:564db7e9ffacb6c0fecbf83c1f988069", 1394437,
