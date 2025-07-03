@@ -40,6 +40,8 @@
 #include "graphics/yuv_to_rgb.h"
 #include "graphics/surface.h"
 
+#include "image/codecs/codec.h"
+
 #include "math/rdft.h"
 #include "math/dct.h"
 
@@ -279,11 +281,7 @@ BinkDecoder::BinkVideoTrack::BinkVideoTrack(uint32 width, uint32 height, uint32 
 		_surfaceWidth++;
 	}
 
-	_pixelFormat = g_system->getScreenFormat();
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
 	// Compute the video dimensions in blocks
 	_yBlockWidth   = (width  +  7) >> 3;
