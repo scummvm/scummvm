@@ -214,7 +214,7 @@ void Room996::parser() {
 		break;
 	case 2:
 		if (_G(kernel).trigger == -1) {
-			if (_flagArray[_moveValue] != 0 || _G(flags)[V047] || _G(flags)[V196] || _G(flags)[V201] || _G(flags)[V207] || _G(flags)[V208] || _G(flags)[V209])
+			if (_flagArray[_moveValue + 1] != 0 || _G(flags)[V047] || _G(flags)[V196] || _G(flags)[V201] || _G(flags)[V207] || _G(flags)[V208] || _G(flags)[V209])
 				hotspot_set_active(_G(currentSceneDef).hotspots, "forward", true);
 			else
 				hotspot_set_active(_G(currentSceneDef).hotspots, "forward", false);
