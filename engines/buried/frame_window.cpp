@@ -27,6 +27,8 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #include "buried/buried.h"
 #include "buried/complete.h"
 #include "buried/credits.h"
@@ -116,10 +118,14 @@ bool FrameWindow::showTitleSequence() {
 	_vm->removeMouseMessages(this);
 	_vm->removeMouseMessages(video);
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped && !_vm->hasMessage(this, kMessageTypeLButtonDown, kMessageTypeLButtonDown))
 		_vm->yield(video, -1);
 
 	delete video;
+
+	_vm->enableCutsceneKeymap(false);
 
 	invalidateWindow();
 	return true;
@@ -128,6 +134,11 @@ bool FrameWindow::showTitleSequence() {
 bool FrameWindow::showMainMenu() {
 	_gameInProgress = false;
 	_atMainMenu = true;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("buried-default")->setEnabled(true);
+	keymapper->getKeymap("main-menu")->setEnabled(true);
 
 	// If we still have a child window, delete it now
 	delete _mainChildWindow;
@@ -153,6 +164,11 @@ bool FrameWindow::showMainMenu() {
 bool FrameWindow::returnToMainMenu() {
 	_gameInProgress = false;
 	_atMainMenu = true;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("buried-default")->setEnabled(true);
+	keymapper->getKeymap("main-menu")->setEnabled(true);
 
 	// Kill the ambient and restart it
 	_vm->_sound->restart();
@@ -201,6 +217,7 @@ bool FrameWindow::showClosingScreen() {
 
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 
 	// If we still have a child window, delete it now
 	delete _mainChildWindow;
@@ -219,8 +236,10 @@ bool FrameWindow::showClosingScreen() {
 	// Empty the input queue
 	_vm->removeMouseMessages(this);
 	_vm->removeKeyboardMessages(this);
+	_vm->removeActionMessages(this);
 	_vm->removeMouseMessages(_mainChildWindow);
 	_vm->removeKeyboardMessages(_mainChildWindow);
+	_vm->removeActionMessages(_mainChildWindow);
 
 	return true;
 }
@@ -252,6 +271,9 @@ bool FrameWindow::startNewGame(bool walkthrough, bool introMovie) {
 	_mainChildWindow->showWindow(kWindowShow);
 	setFocus();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("main-menu")->setEnabled(false);
+	
 	if (introMovie)
 		((GameUIWindow *)_mainChildWindow)->startNewGameIntro(walkthrough);
 	else
@@ -352,24 +374,36 @@ bool FrameWindow::onEraseBackground() {
 	return true;
 }
 
-void FrameWindow::onKeyDown(const Common::KeyState &key, uint flags) {
-	_controlDown = (key.flags & Common::KBD_CTRL) != 0;
+void FrameWindow::onActionStart(const Common::CustomEventType &action, uint flags) {
+	if (action == kActionControl)
+		_controlDown = true;
 
-	if (key.keycode == Common::KEYCODE_ESCAPE) {
+	switch (action) {
+	case kActionQuitToMainMenu:
 		if (_gameInProgress || !_atMainMenu) {
 			// Ask if the player wants to return
 			if (_vm->runQuitDialog())
 				showMainMenu();
-		} else {
-			// Quit from the main menu
-			_vm->quitGame();
 		}
+		break;
+	case kActionQuit:
+		// Quit from the main menu
+		_vm->quitGame();
+		break;
+	default:
+		break;
 	}
 }
 
-void FrameWindow::onKeyUp(const Common::KeyState &key, uint flags) {
-	_controlDown = (key.flags & Common::KBD_CTRL) != 0;
+void FrameWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	if (action == kActionControl)
+		_controlDown = false;
 
+	if (_mainChildWindow)
+		_mainChildWindow->sendMessage(new ActionEndMessage(action, flags));
+}
+
+void FrameWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	if (_mainChildWindow)
 		_mainChildWindow->sendMessage(new KeyUpMessage(key, flags));
 }
@@ -402,6 +436,12 @@ void FrameWindow::loadFromState(const Location &location, GlobalFlags &flags, Co
 		_mainChildWindow->showWindow(kWindowShow);
 		setFocus();
 	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("buried-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("inventory")->setEnabled(true);
 
 	GameUIWindow *gameUI = (GameUIWindow *)_mainChildWindow;
 

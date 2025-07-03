@@ -154,6 +154,10 @@ void TitleSequenceWindow::onKeyUp(const Common::KeyState &key, uint flags) {
 	_exitNow = true;
 }
 
+void TitleSequenceWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	_exitNow = true;
+}
+
 void TitleSequenceWindow::onTimer(uint timer) {
 	if (_exitNow || (_currentMovie && _currentMovie->getMode() == VideoWindow::kModeStopped)) {
 		// Destroy all resources

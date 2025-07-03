@@ -44,6 +44,7 @@ public:
 	bool onEraseBackground();
 	void onLButtonUp(const Common::Point &point, uint flags);
 	void onKeyUp(const Common::KeyState &key, uint flags);
+	void onActionEnd(const Common::CustomEventType &action, uint flags);
 	void onTimer(uint timer);
 
 private:

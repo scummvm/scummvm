@@ -79,11 +79,14 @@ Common::Rect Window::getAbsoluteRect() const {
 
 void Window::sendMessage(Message *message) {
 	switch (message->getMessageType()) {
+	case kMessageTypeActionStart:
+		onActionStart(((ActionStartMessage *)message)->getAction(), ((ActionStartMessage *)message)->getFlags());
+		break;
+	case kMessageTypeActionEnd:
+		onActionEnd(((ActionEndMessage *)message)->getAction(), ((ActionEndMessage *)message)->getFlags());
+		break;
 	case kMessageTypeKeyUp:
 		onKeyUp(((KeyUpMessage *)message)->getKeyState(), ((KeyUpMessage *)message)->getFlags());
-		break;
-	case kMessageTypeKeyDown:
-		onKeyDown(((KeyDownMessage *)message)->getKeyState(), ((KeyDownMessage *)message)->getFlags());
 		break;
 	case kMessageTypeTimer:
 		onTimer(((TimerMessage *)message)->getTimer());

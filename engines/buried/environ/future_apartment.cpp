@@ -1891,6 +1891,7 @@ int ViewEnvironCart::timerCallback(Window *viewWindow) {
 		BuriedEngine *vm = _vm;
 		vm->removeMouseMessages(viewWindow);
 		vm->removeKeyboardMessages(viewWindow);
+		vm->removeActionMessages(viewWindow);
 
 		// Make the jump to Agent 3's lair
 		DestinationScene newScene;
@@ -1903,6 +1904,7 @@ int ViewEnvironCart::timerCallback(Window *viewWindow) {
 
 		vm->removeMouseMessages(viewWindow);
 		vm->removeKeyboardMessages(viewWindow);
+		vm->removeActionMessages(viewWindow);
 	}
 
 	return SC_TRUE;

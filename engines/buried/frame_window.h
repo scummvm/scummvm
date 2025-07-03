@@ -51,7 +51,8 @@ public:
 	bool setTimerPause(bool pause);
 
 	bool onEraseBackground();
-	void onKeyDown(const Common::KeyState &key, uint flags);
+	void onActionStart(const Common::CustomEventType &action, uint flags);
+	void onActionEnd(const Common::CustomEventType &action, uint flags);
 	void onKeyUp(const Common::KeyState &key, uint flags);
 	void onTimer(uint timer);
 	void onKillFocus(Window *newWindow);

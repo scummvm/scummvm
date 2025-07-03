@@ -30,6 +30,10 @@
 #include "buried/buried.h"
 #include "buried/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Buried {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -107,6 +111,7 @@ public:
 		// We set a standard target because saves are compatible among all versions
 		return AdvancedMetaEngine::getSavegameFile(saveGameIdx, "buried");
 	}
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool BuriedMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -119,6 +124,183 @@ Common::Error BuriedMetaEngine::createInstance(OSystem *syst, Engine **engine, c
 	*engine = new Buried::BuriedEngine(syst, desc);
 
 	return Common::kNoError;
+}
+
+Common::KeymapArray BuriedMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Buried;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "buried-default", _("Default keymappings"));
+	Keymap *cutSceneKeyMap = new Keymap(Keymap::kKeymapTypeGame, "cutscene", _("Cutscene keymappings"));
+	Keymap *mainMenuKeyMap = new Keymap(Keymap::kKeymapTypeGame, "main-menu", _("Main menu keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *inventoryKeyMap = new Keymap(Keymap::kKeymapTypeGame, "inventory", _("Inventory keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Select / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	// I18N: This action refers to the control key on the keyboard.
+	act = new Action("CTRL", _("Control key"));
+	act->setCustomEngineActionEvent(kActionControl);
+	act->addDefaultInputMapping("LCTRL");
+	act->addDefaultInputMapping("RCTRL");
+	engineKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("ESCAPE");
+	mainMenuKeyMap->addAction(act);
+
+	if (ConfMan.getBool("skip_support", target)) {
+		act = new Action("SKIP", _("Skip cutscene"));
+		act->setCustomEngineActionEvent(kActionSkip);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_Y");
+		cutSceneKeyMap->addAction(act);
+	}
+
+	act = new Action("PAUSE", _("Pause"));
+	act->setCustomEngineActionEvent(kActionPause);
+	act->addDefaultInputMapping("C+p");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUITMENU", _("Quit to main menu"));
+	act->setCustomEngineActionEvent(kActionQuitToMainMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_B");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("C+s");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("C+l");
+	act->addDefaultInputMapping("C+o");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEUP", _("Look up"));
+	act->setCustomEngineActionEvent(kActionMoveUp);
+	act->addDefaultInputMapping("UP");
+	act->addDefaultInputMapping("KP8");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEDOWN", _("Look down"));
+	act->setCustomEngineActionEvent(kActionMoveDown);
+	act->addDefaultInputMapping("DOWN");
+	act->addDefaultInputMapping("KP2");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVELEFT", _("Look left"));
+	act->setCustomEngineActionEvent(kActionMoveLeft);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("KP4");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVERIGHT", _("Look right"));
+	act->setCustomEngineActionEvent(kActionMoveRight);
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("KP6");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVEFORWARD", _("Move forward"));
+	act->setCustomEngineActionEvent(kActionMoveForward);
+	act->addDefaultInputMapping("KP5");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUITMENUINV", _("Quit to main menu"));
+	act->setCustomEngineActionEvent(kActionQuitToMainMenuInv);
+	act->addDefaultInputMapping("C+q");
+	gameKeyMap->addAction(act);
+
+	// I18N: AI is Artificial Intelligence
+	act = new Action("AICOMMENTS", _("Replay last AI comment"));
+	act->setCustomEngineActionEvent(kActionAIComment);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
+	act = new Action("BIOAI", _("Biochip AI"));
+	act->setCustomEngineActionEvent(kActionBiochipAI);
+	act->addDefaultInputMapping("C+a");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
+	act = new Action("BIOBLANK", _("Biochip blank"));
+	act->setCustomEngineActionEvent(kActionBiochipBlank);
+	act->addDefaultInputMapping("C+b");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
+	act = new Action("BIOCLOAK", _("Biochip cloak"));
+	act->setCustomEngineActionEvent(kActionBiochipCloak);
+	act->addDefaultInputMapping("C+c");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
+	act = new Action("BIOEVIDENCE", _("Biochip evidence"));
+	act->setCustomEngineActionEvent(kActionBiochipEvidence);
+	act->addDefaultInputMapping("C+e");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
+	act = new Action("BIOFILES", _("Biochip files"));
+	act->setCustomEngineActionEvent(kActionBiochipFiles);
+	act->addDefaultInputMapping("C+f");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
+	act = new Action("BIOINTERFACE", _("Biochip interface"));
+	act->setCustomEngineActionEvent(kActionBiochipInterface);
+	act->addDefaultInputMapping("C+i");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
+	act = new Action("BIOJUMP", _("Biochip jump"));
+	act->setCustomEngineActionEvent(kActionBiochipJump);
+	act->addDefaultInputMapping("C+j");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
+	act = new Action("BIOTRANSLATE", _("Biochip translate"));
+	act->setCustomEngineActionEvent(kActionBiochipTranslate);
+	act->addDefaultInputMapping("C+t");
+	inventoryKeyMap->addAction(act);
+
+	// I18N: Shows a summary of collected points in the game.
+	act = new Action("SHOWPOINTS", _("Show points"));
+	act->setCustomEngineActionEvent(kActionPoints);
+	act->addDefaultInputMapping("C+d");
+	inventoryKeyMap->addAction(act);
+
+	Common::KeymapArray keymaps(5);
+
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = cutSceneKeyMap;
+	keymaps[2] = mainMenuKeyMap;
+	keymaps[3] = gameKeyMap;
+	keymaps[4] = inventoryKeyMap;
+
+	cutSceneKeyMap->setEnabled(false);
+	mainMenuKeyMap->setEnabled(false);
+	gameKeyMap->setEnabled(false);
+	inventoryKeyMap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BURIED)
