@@ -394,6 +394,9 @@ void DarkseedEngine::updateEvents() {
 				}
 			} else if (event.customType == kDarkseedActionQuit) {
 				quitGame();
+			} else if (event.customType == kDarkseedActionSkipCutscene) {
+				// TODO Implement properly
+				_isRightMouseClicked = true;
 			}
 			break;
 		default:

@@ -95,6 +95,11 @@ Common::KeymapArray DarkseedMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("C+q");
 	engineKeyMap->addAction(act);
 
+	act = new Action("SKIPCUTSCENE", _("Skip Cutscene"));
+	act->setCustomEngineActionEvent(Darkseed::kDarkseedActionSkipCutscene);
+	act->addDefaultInputMapping("SPACE");
+	engineKeyMap->addAction(act);
+
 	return Keymap::arrayOf(engineKeyMap);
 }
 

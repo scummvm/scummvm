@@ -58,7 +58,8 @@ enum DarkseedAction {
 	kDarkseedActionSelect,
 	kDarkseedActionChangeCommand,
 	kDarkseedActionTimeAdvance,
-	kDarkseedActionQuit
+	kDarkseedActionQuit,
+	kDarkseedActionSkipCutscene
 };
 
 enum ActionMode : uint8 {
