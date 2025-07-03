@@ -277,8 +277,10 @@ void DarkseedEngine::gameLoop() {
 			}
 			if ((_room->_roomNumber < 10 || _room->_roomNumber == 61 || _room->_roomNumber == 62) && _currentTimeInSeconds % 3600 == 0) {
 				if (_room->_roomNumber == 7) {
+					if (!_sound->isPlayingSfx(45))
 					playSound(45, 5, -1);
 				} else {
+					if (!_sound->isPlayingSfx(46))
 					playSound(46, 5, -1);
 				}
 			}
