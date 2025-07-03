@@ -187,7 +187,7 @@ public:
 	/*  0 */ uint16 _len;
 	/*  2 */ uint16 _fileVersion;
 	/*  4, 6, 8, 10 */ Common::Rect _checkRect;
-    /* 12 */ uint16 _castArrayStart;
+	/* 12 */ uint16 _castArrayStart;
 	/* 14 */ uint16 _castArrayEnd;
 	/* 16 */ byte _readRate;
 	/* 17 */ byte _lightswitch;
