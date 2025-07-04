@@ -403,7 +403,7 @@ BOOL EventLoop::KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
 void EventLoop::triggerTimers() {
 	uint32 currTime = g_system->getMillis();
 
-	for (auto it = _timers.begin(); it != _timers.end(); ++it) {
+	for (auto it = _timers.begin(); it != _timers.end(); ) {
 		if (currTime >= it->_nextTriggerTime) {
 			// First update the timer for the next time
 			it->_nextTriggerTime = currTime + it->_interval;
@@ -417,6 +417,12 @@ void EventLoop::triggerTimers() {
 				if (wnd)
 					wnd->SendMessage(WM_TIMER, it->_idEvent, 0);
 			}
+
+			// Since it's conceivable that a timer callback might
+			// remove timers, always restart the iterator afterwards
+			it = _timers.begin();
+		} else {
+			++it;
 		}
 	}
 }
