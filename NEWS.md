@@ -32,6 +32,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Freescape:
    - Added roll rotation to Driller and Dark Side.
 
+ Lure:
+   - Added Russian version support to lure.dat.
+
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
 
