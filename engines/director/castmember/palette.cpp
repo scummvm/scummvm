@@ -131,6 +131,10 @@ void PaletteCastMember::load() {
 	}
 
 	_loaded = true;
+	
+	if (debugChannelSet(5, kDebugSaving)) { 
+		writePaletteData(nullptr, 0);
+	}
 }
 
 void PaletteCastMember::unload() {
@@ -162,6 +166,7 @@ uint32 PaletteCastMember::getPaletteDataSize() {
 	// This is the length of the 'CLUT' resource without the header and size
 	return _palette->length * 6;
 }
+
 void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	uint32 castSize = getPaletteDataSize() + 8;
 
@@ -178,8 +183,8 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 	const byte *pal = _palette->palette;
 
 	for (int i = 0; i < _palette->length; i++) {
-		writeStream->writeByte(pal[3 * i]);
-		writeStream->writeByte(pal[3 * i]);
+		writeStream->writeByte(pal[3 * i]);		// The palette data is converted to 8-bit at the time of loading
+		writeStream->writeByte(pal[3 * i]);		// Duplicating the data to convert to 16-bit
 
 		writeStream->writeByte(pal[3 * i + 1]);
 		writeStream->writeByte(pal[3 * i + 1]);

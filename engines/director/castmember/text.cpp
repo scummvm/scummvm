@@ -26,6 +26,7 @@
 
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -635,6 +636,7 @@ void TextCastMember::load() {
 	}
 
 	_loaded = true;
+	writeSTXTResource(nullptr, 0);
 }
 
 void TextCastMember::unload() {
@@ -978,62 +980,82 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	uint32 castSize = getSTXTResourceSize() + 10;
+	uint32 castSize = getSTXTResourceSize() + 8;
+
 	byte *dumpData = nullptr;
 	dumpData = (byte *)calloc(castSize, sizeof(byte));
-
 	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
 
 	writeStream->seek(offset);
 
-	writeStream->writeUint32BE(MKTAG('S', 'T', 'X', 'T'));
-	writeStream->writeUint32BE(getSTXTResourceSize() + 8);						// Size of the STXT resource without the header and size
+	writeStream->writeUint32LE(MKTAG('S', 'T', 'X', 'T'));
+	writeStream->writeUint32LE(getSTXTResourceSize());						// Size of the STXT resource without the header and size
 
-	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error and exit ScummVM
-	writeStream->writeUint32BE(_ptext.size());
+	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error, other offsets are not handled
+
+	int8 formatting = getFormattingCount();
+	writeStream->writeUint32BE(_rtext.size());		// Length of the string
 	// Encode only in one format, original may be encoded in multiple formats
 	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
-	writeStream->writeUint32BE(20 + 2);
+	writeStream->writeUint32BE(20 * formatting + 2);				// Data Length
 
-	Common::CodePage encoding = detectFontEncoding(_cast->_platform, _fontId);
-	writeStream->writeString(_ptext.encode(encoding));		// Currently using MacRoman encoding only, may change later to include others
+	FontStyle style;
+	writeStream->writeString(_rtext);
+	debug("what is the size of _rtext = %d", _rtext.size());
 
-	writeStream->writeUint16BE(1);			// Only one formatting: MacRoman
+	writeStream->writeUint16BE(formatting);
 
-	writeStream->writeUint32BE(0);			// FontStyle::formatStartOffset
-	writeStream->writeUint16BE(_height);	// FontStyle::height 	// Apparently height doesn't matter
-	writeStream->writeUint16BE(_ascent);	// FontStyle::ascent	// And neither does ascent
+	uint32 it = 0;
+	while (it < _ftext.size() - 1) {
+		uint32 rIndex = 0;
+		if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
+			debug("Found Styling header at position: %d", it);
+			// Styling header found
+			it += 2;
 
-	writeStream->writeUint16BE(_fontId);	// FontStyle::fontId
-	writeStream->writeByte(_textSlant);		// FontStyle::textSlant
-	writeStream->writeByte(0);				// padding
-	writeStream->writeUint16BE(_fontSize);		// FontStyle::fontSize
+			if (it + 22 > _ftext.size()) {
+				warning("TextCastMember::writeSTXTResource: incorrect format sequence");
+				break;
+			}
 
-	writeStream->writeUint16BE(_fgpalinfo1); 	// FontStyle:r
-	writeStream->writeUint16BE(_fgpalinfo2); 	// FontStyle:g
-	writeStream->writeUint16BE(_fgpalinfo3); 	// FontStyle:b
+			// Ignoring height and ascent for now from FontStyle
+			uint16 temp;
+			style.formatStartOffset = rIndex;
+			Graphics::readHex(&style.fontId, _ftext.substr(it, 4).c_str(), 4);
+			Graphics::readHex(&temp, _ftext.substr(it, 2).c_str(), 2);
+			Graphics::readHex(&style.fontSize, _ftext.substr(it + 6, 4).c_str(), 4);
+			Graphics::readHex(&style.r, _ftext.substr(it + 10, 4).c_str(), 4);
+			Graphics::readHex(&style.g, _ftext.substr(it + 14, 4).c_str(), 4);
+			Graphics::readHex(&style.b, _ftext.substr(it + 18, 4).c_str(), 4);
+			style.textSlant = temp;
 
-	Common::DumpFile out;
-	char buf[256];
-	Common::sprintf_s(buf, "./dumps/%d-%s-%s", _castId, tag2str(MKTAG('S', 'T', 'X', 'T')), "WrittenSTXTResource");
+			style.write(writeStream);
+			it += 22;
+			continue;
+		}
 
-	// Write the movie out, stored in dumpData
-	if (out.open(buf, true)) {
-		out.write(dumpData, castSize);
-		out.flush();
-		out.close();
-		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", buf);
-	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", buf);
+		rIndex += 1;
+		it++;
 	}
-	free(dumpData);
+
+	dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
 	delete writeStream;
 	return getSTXTResourceSize() + 8;
 }
 
 uint32 TextCastMember::getSTXTResourceSize() {
-	// Header (offset, string length, data length) + text string + data (FontStyle)
-	return 12 + _ptext.size() + 22;
+	// Header (offset, string length, data length) + text string + data (FontStyle) 
+	return 12 + _rtext.size() + getFormattingCount() * 20 + 2;
+}
+
+uint8 TextCastMember::getFormattingCount() {
+	uint8 count = 0;	
+	for (uint32 i = 0; i < _ftext.size() - 1; i++) {
+		if (_ftext[i] == '\001' && _ftext[i + 1] == '\016') {
+			count++;
+		}
+	}
+	return count;
 }
 
 }	// End of namespace Director

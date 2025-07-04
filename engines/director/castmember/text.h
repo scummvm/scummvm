@@ -97,6 +97,7 @@ public:
 
 	uint32 getSTXTResourceSize();
 	uint32 writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint8 getFormattingCount();
 
 	uint8 _borderSize;
 	uint8 _gutterSize;
