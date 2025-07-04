@@ -249,6 +249,10 @@ typedef struct tagMSG {
 	DWORD       time = 0;
 	POINT       pt;
 
+	// Extra fields for TranslateMessage convenience
+	byte        _kbdFlags = 0;
+	char        _ascii = 0;
+
 	tagMSG() {
 		pt.x = pt.y = 0;
 	}

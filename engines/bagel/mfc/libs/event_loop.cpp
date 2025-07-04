@@ -282,7 +282,14 @@ BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 }
 
 void EventLoop::TranslateMessage(LPMSG lpMsg) {
-	// No implementation
+	if ((lpMsg->message == WM_KEYDOWN || lpMsg->message == WM_SYSKEYDOWN) &&
+			Common::isPrint(lpMsg->_ascii)) {
+		uint message = (lpMsg->message == WM_SYSKEYDOWN) ?
+			WM_SYSCHAR : WM_CHAR;
+		WPARAM wParam = lpMsg->_ascii;
+		LPARAM lParam = lpMsg->lParam;
+		PostMessage(lpMsg->hwnd, message, wParam, lParam);
+	}
 }
 
 void EventLoop::DispatchMessage(LPMSG lpMsg) {
