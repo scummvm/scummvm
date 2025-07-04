@@ -27690,28 +27690,28 @@ const static char *russianCredits[kNumCredits] = {
 };
 
 struct Object {
-	byte id;
+	byte _id;
 	struct Rect {
-		int16 left, top, right, bottom;
+		int16 _left, _top, _right, _bottom;
 		void write(FILE *fp) {
-			writeUint16LE(fp, left);
-			writeUint16LE(fp, top);
-			writeUint16LE(fp, right);
-			writeUint16LE(fp, bottom);
+			writeUint16LE(fp, _left);
+			writeUint16LE(fp, _top);
+			writeUint16LE(fp, _right);
+			writeUint16LE(fp, _bottom);
 		}
 	};
-	Rect rect;
-	Rect actorRect;
-	byte actorOrientation;
-	byte enabled;
+	Rect _rect;
+	Rect _actorRect;
+	byte _actorOrientation;
+	byte _enabled;
 
 public:
 	void write(FILE *fp) {
-		writeByte(fp, id);
-		rect.write(fp);
-		actorRect.write(fp);
-		writeByte(fp, actorOrientation);
-		writeByte(fp, enabled);
+		writeByte(fp, _id);
+		_rect.write(fp);
+		_actorRect.write(fp);
+		writeByte(fp, _actorOrientation);
+		writeByte(fp, _enabled);
 	}
 };
 
@@ -28124,8 +28124,8 @@ Common::Array<Common::Array<Object>> sceneObjects = {
 };
 
 struct ObjectNameDesc {
-	const char *name;
-	const char *description;
+	const char *_name;
+	const char *_description;
 };
 
 Common::Array<Common::Array<ObjectNameDesc>> englishSceneObjectNamesDescs = {
