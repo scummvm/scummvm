@@ -73,15 +73,7 @@ static int gnLDieLeftFinal,    // final positions of dice.
        gnRDieTopFinal,
        gnRDieLeftFinal;                   //these are set in AnimateDice
 
-
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
-/*
-#ifdef BAGEL_DEBUG
-    static int gSleepTime;          //dice animation sync variable.
-#endif
-*/
+extern HWND ghParentWnd;
 
 CMainWindow::CMainWindow(VOID) {
 	CString  WndClass;
@@ -1819,13 +1811,9 @@ VOID CMainWindow::OnClose() {
 		ReleaseDC(pDC);
 	}
 
-	#ifdef _USRDLL
-	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
-
-
 	CFrameWnd::OnClose();
 
+	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 }
 
 

@@ -82,9 +82,7 @@ bool       bInGame;
 CText        *txtScore, *txtTotalScore, *txtTitle;
 LPGAMESTRUCT  pGameParams;
 
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
+extern HWND ghParentWnd;
 
 CMainWindow::CMainWindow() {
 	CString  WndClass;
@@ -584,9 +582,7 @@ void CMainWindow::OnClose() {
 
 	CFrameWnd::OnClose();
 
-	#ifdef _USRDLL
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {

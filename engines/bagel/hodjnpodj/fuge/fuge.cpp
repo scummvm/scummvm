@@ -41,6 +41,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Fuge {
 
+extern CWnd *ghParentWnd;
+
 #define CSOUND      0
 
 //
@@ -226,9 +228,7 @@ const CHAR  *INI_SECTION = "Fuge";
 LPGAMESTRUCT pGameParams;
 CVector gvCenter(CENTER_X, CENTER_Y);
 
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
+extern HWND ghParentWnd;
 
 typedef struct {
 	VECTOR v1, v2;
@@ -2850,9 +2850,7 @@ VOID CFugeWindow::OnClose() {
 
 	CFrameWnd::OnClose();
 
-	#ifdef _USRDLL
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 //

@@ -238,9 +238,7 @@ CPalette    *pGamePalette;
 const CHAR  *INI_SECTION = "BattleFish";
 LPGAMESTRUCT pGameParams;
 
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
+extern HWND ghParentWnd;
 
 
 // these arrays to be filled with the values of the grid screen coordinates
@@ -3692,9 +3690,7 @@ VOID CBFishWindow::OnClose() {
 
 	CFrameWnd::OnClose();
 
-	#ifdef _USRDLL
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 //////////// Additional Sound Notify routines //////////////

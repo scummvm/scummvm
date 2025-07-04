@@ -146,9 +146,7 @@ VOID CALLBACK GetGameParams(CWnd *);
 CPalette *pGamePalette;
 LPGAMESTRUCT pGameParams;
 
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
+extern HWND ghParentWnd;
 
 STATIC INT aBales[N_HAY];
 
@@ -3172,9 +3170,7 @@ VOID CMainWindow::OnClose() {
 
 	DestroyWindow();                            // destruct the main window
 
-	#ifdef _USRDLL
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 

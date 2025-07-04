@@ -141,9 +141,7 @@ const CHAR  *INI_SECTION = "Riddles";
 LPGAMESTRUCT pGameParams;
 
 
-#ifdef _USRDLL
-	extern HWND ghParentWnd;
-#endif
+extern HWND ghParentWnd;
 
 STATIC RIDDLE curRiddle;
 
@@ -1549,9 +1547,7 @@ VOID CRiddlesWindow::OnClose() {
 
 	CFrameWnd::OnClose();
 
-	#ifdef _USRDLL
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 //////////// Additional Sound Notify routines //////////////

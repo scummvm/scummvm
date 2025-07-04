@@ -933,8 +933,9 @@ VOID CMainWindow::OnClose() {
 		delete m_pGamePalette;
 	}
 
-	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM) pGameParams);
 	CFrameWnd::OnClose();
+
+	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)pGameParams);
 }
 
 //

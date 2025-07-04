@@ -47,6 +47,8 @@ CPoint  WinToArt(CPoint point);
 void    MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
 void    CALLBACK GetSubOptions(CWnd* pParentWind);
 
+extern CWnd *ghParentWnd;
+
 POINT Grid[MAX_COLUMNS][MAX_ROWS];          // Location of the art parts
 
 CBmpButton  *m_pScrollButton;
@@ -1864,9 +1866,8 @@ void CMainWindow::OnClose() {
 	}
 
 	CFrameWnd::OnClose();
-	#ifdef _USRDLL
+
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif
 }
 
 void CALLBACK GetSubOptions(CWnd* pParentWind) {

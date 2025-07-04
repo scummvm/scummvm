@@ -1096,20 +1096,8 @@ void CMnkWindow::OnClose() {
 	ReleaseResources() ;    // release game specific resources
 
 	CFrameWnd ::OnClose() ;
-	#ifdef _USRDLL
-	if (IsWindow(ghParentWnd)) {
-		MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, MAKELPARAM(m_hWnd, 0));
-//      MFC::PostMessage( ghParentWnd, WM_PAINT, 0, 0L);
-	} else {
-		#ifdef BAGEL_DEBUG
-		MessageBox("ghParentWnd not a Window", "Debug Message");
-		#endif //BAGEL_DEBUG
-	}
-	#endif // _USRDLL
 
-	#ifdef _MACROS
-	EM("Returning from OnClose\n");
-	#endif  //_MACROS
+	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, MAKELPARAM(m_hWnd, 0));
 }
 
 
