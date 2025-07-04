@@ -52,6 +52,16 @@ void CDC::AfxHookObject() {
 	_permanent = true;
 }
 
+void CDC::AfxUnhookObject() {
+	if (m_hDC && _permanent) {
+		CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
+		assert(pMap != nullptr);
+
+		pMap->RemoveHandle(m_hDC);
+		_permanent = false;
+	}
+}
+
 BOOL CDC::CreateDC(LPCSTR lpszDriverName, LPCSTR lpszDeviceName,
                    LPCSTR lpszOutput, const void *lpInitData) {
 	error("TODO: CDC::CreateDC");
@@ -77,13 +87,7 @@ BOOL CDC::CreateCompatibleDC(CDC *pDC) {
 }
 
 BOOL CDC::DeleteDC() {
-	if (m_hDC && _permanent) {
-		CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
-		assert(pMap != nullptr);
-
-		pMap->RemoveHandle(m_hDC);
-		_permanent = false;
-	}
+	AfxUnhookObject();
 
 	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
 	delete dc;

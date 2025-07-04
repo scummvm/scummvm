@@ -670,12 +670,14 @@ public:
 
 class CDC : public CObject {
 	DECLARE_DYNCREATE(CDC)
+	friend class CWnd;
 
 private:
 	bool _permanent = false;
 
 protected:
 	void AfxHookObject();
+	void AfxUnhookObject();
 
 public:
 	class Impl : public Gfx::TextRender {

@@ -281,8 +281,6 @@ void CWnd::DestroyWindow() {
 	if (m_pParentWnd) {
 		m_pParentWnd->_ownedControls.remove(this);
 		m_pParentWnd->_children.erase(_controlId);
-		//m_pParentWnd->SendMessage(WM_PARENTNOTIFY,
-		//	WM_DESTROY, (LPARAM)m_hWnd);
 	}
 
 	SendMessage(WM_DESTROY);
@@ -316,17 +314,24 @@ void CWnd::SetStyle(DWORD nStyle) {
 
 CDC *CWnd::GetDC() {
 	if (_dc == nullptr) {
+		// Get a screen DC and create a CDC to wrap it
 		HDC hDC = MFC::GetDC(nullptr);
-		return CDC::FromHandle(hDC);
+		CDC *pDC = new CDC();
+		pDC->Attach(hDC);
+		pDC->AfxHookObject();
+
+		return pDC;
 	} else {
 		return _dc;
 	}
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	// As far as I can tell, this doesn't need to do anything.
-	// The CWnd's _dc itself isn't freed when you release it.
-	// And temporary DCs will be freed by the handle map
+	if (pDC != _dc) {
+		pDC->DeleteDC();
+		delete pDC;
+	}
+
 	return 1;
 }
 
