@@ -44,7 +44,9 @@ void writeStringsBlock(FILE *fd, const char **stringArr, uint size) {
 
 void writeCombineMessages(FILE *fd, Common::Language language) {
 	const char **combineMessages = englishCombineMessages;
-	if (language == PL_POL)
+	if (language == CS_CZE)
+		combineMessages = czechCombineMessages;
+	else if (language == PL_POL)
 		combineMessages = polishCombineMessages;
 	else if (language == RU_RUS)
 		combineMessages = russianCombineMessages;
@@ -64,7 +66,9 @@ void writeCombineMessages(FILE *fd, Common::Language language) {
 
 void writeDialogs(FILE *fd, Common::Language language) {
 	const char ***dialogs = englishDialogs;
-	if (language == PL_POL)
+	if (language == CS_CZE)
+		dialogs = czechDialogs;
+	else if (language == PL_POL)
 		dialogs = polishDialogs;
 	else if (language == RU_RUS)
 		dialogs = russianDialogs;
@@ -107,7 +111,9 @@ void writeDialogs(FILE *fd, Common::Language language) {
 
 void writeItems(FILE *fd, Common::Language language) {
 	const char ***items = englishItems;
-	if (language == PL_POL)
+	if (language == CS_CZE)
+		items = czechItems;
+	else if (language == PL_POL)
 		items = polishItems;
 	else if (language == RU_RUS)
 		items = russianItems;
@@ -147,7 +153,9 @@ void writeItems(FILE *fd, Common::Language language) {
 
 void writeSceneObjects(FILE *fd, Common::Language language) {
 	Common::Array<Common::Array<ObjectNameDesc> > &objNamesDescs = englishSceneObjectNamesDescs;
-	if (language == PL_POL)
+	if (language == CS_CZE)
+		objNamesDescs = czechSceneObjectNamesDescs;
+	else if (language == PL_POL)
 		objNamesDescs = polishSceneObjectNamesDescs;
 	else if (language == RU_RUS)
 		objNamesDescs = russianSceneObjectNamesDescs;
@@ -236,7 +244,9 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 	switch (resType) {
 	case kResCredits: {
 		const char **credits = englishCredits;
-		if (language == PL_POL)
+		if (language == CS_CZE)
+			credits = czechCredits;
+		else if (language == PL_POL)
 			credits = polishCredits;
 		else if (language == RU_RUS)
 			credits = russianCredits;
@@ -255,7 +265,9 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 		break;
 	case kResMessages: {
 		const char **messages = englishMessages;
-		if (language == PL_POL)
+		if (language == CS_CZE)
+			messages = czechMessages;
+		else if (language == PL_POL)
 			messages = polishMessages;
 		else if (language == RU_RUS)
 			messages = russianMessages;

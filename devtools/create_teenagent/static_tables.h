@@ -8127,6 +8127,345 @@ const static char *polishMessages[kNumMessages] = {
 	"(U<ycie tych dw*ch rzeczy razem nie\nprzyniesie korzy$ci).",
 };
 
+const static char *czechMessages[kNumMessages] = {
+	"Nem#m tu@en;, co bych s t;m mohl d+lat.", // 0
+	"Mu$te m+, ale nevim co by s t;mhle @lo\nud+lat.", // 1
+	"Nejde mi do hlavy, na co by tohle bylo\ndobr*. Hmm...", // 2
+	"Tohle rad@i nech#m b^t jak to je.", // 3
+	"Bezva.", // 4
+	"To je na nic.", // 5
+	"Bezva! V bedn+ se v#lel hever!\nChe!", // 6
+	"Ah#, je tam schovan^ je@t+ n+co! Polez ven...\nFrancouzskej kl;$!", // 7
+	"Posledn;\n@ance?", // 8
+	"Vzd#v#m to.", // 9
+	"Ne, ne, od t+ch vos si m;n;m dr{et\naspo< p+timetrovej odstup!", // 10
+	"V lo%ce je u{ jenom tma.", // 11
+	"P>;li@ tuh^ d>evo na to, aby se dalo zlomit.", // 12
+	"Baf!", // 13
+	"Nemysl;m si, {e bych m+l pokou@et\nsv* @t+st;.", // 14
+	"Jenom takov# oby$ejn# kupa sena.", // 15
+	"Che, a to se >;k#, {e jehlu\nv kupce sena nenajde@.", // 16
+	"~#dn^ dal@; raj$ata\nu{ se nekonaj.", // 17
+	"No jo, v{dycky jsem po mamce cht+l\nkalhoty s velk^ma kapsama...", // 18
+	"~ivot je n+kdy tvrdej.", // 19
+	"~ivot je n+kdy fakticky tvrdej.", // 20
+	"N+co m+ lochtalo!\nNo co $um;te? N+co m+ lochtalo!", // 21
+	"Kone$n+ je ta \\chyln# v+c pry$.", // 22
+	"Kdo v; co se tam kr$; za p>;@eru\nmo{n# n+jakej Beast...", // 23
+	"Rad@i tam nebudu strkat ruce, nejsem masochista.\nN+co by mi je mohlo ukousnout\n(bl**)!", // 24
+	"Vidim, {e nic nevidim...", // 25
+	"Ruka, noha, hlava OK, nic zlomen^ho.\nAle na dal@; pokus to nevidim.", // 26
+	"Podruh^ u{ ani zlat^ pr..\nza modr^ z nebe!", // 27
+	"To vypad# na kost n+jk^ho po>#dn^ho macka.", // 28
+	"Uh! To muselo set>#st om;tku\nze v@ech st+n okolo!", // 29
+	"Je tu jak v Jir#skov+ temnu.", // 30
+	"No podruh^ u{ tu potm+ @#trat\nrozhodn+ nebudu.", // 31
+	"To, {e jsem naho>e zabouchnul poklop odlepilo\nn+jakej plivanec ze st+ny a je tu tla$;tko!", // 32
+	"Promi<, ale musim si p]j$it\ntvoje fe@n^ brejle.", // 33
+	"M-mmm, tady se {#dn^ pot#p+n; konat nebude...", // 34
+	"Tady ne...", // 35
+	"Pod vodou mi n+jak ne@lo mluvit...", // 36
+	"Tam p>eci v]bec nic nebylo, pro$ bych tam m+l plavat?", // 37
+	"To vypadalo zaj;mav+, ale bohu{el u{ se mi jaksi\nnedost#valo vzduchu, abych se tam pod;val...", // 38
+	"...a po velk*m z#polen; jsem vylovil kotvu!", // 39
+	"Mo>sk^ >asy mi nejedou od t^ doby, co jsem vid+l,\njak si v^chodn; N+mci ulevuj; do mo>e...", // 40
+	"Mo{n# v t*hle lo%ce ryby v noci\npo>#daj; mal* ryb; orgie.", // 41
+	"}ekl bych, {e tam dole mus;m n+co ulovit.\nAle co?", // 42
+	"Mysl;te, {e si ryby n+kdy kupujou de@tn;ky?", // 43
+	"Douf#m, {e tohle plav#n; nen; jen takov#\nslep# uli$ka.", // 44
+	"Tam dole je to p+kn^.", // 45
+	"Magore, co to d+l#@?!", // 46
+	"Aaaaaaaaaaaaaahhh!...", // 47
+	"Je{i@!", // 48
+	"Lidi nechaj j;dlo tam, kde jim \nod huby upadne.", // 49
+	"P==[, m#m tu pro tebe n+co m==c\ndobr^ho...", // 50
+	"Tu ne$apnu!", // 51
+	"Zamotala se do kapesn;ku!", // 52
+	"OH!", // 53
+	"Ta m# ale nervy, mrcha, j# m#m ale del@;!", // 54
+	"V t+ch @upl;k#ch se u{ kr$; jen tma.", // 55
+	"Nejd>;v si to mus;m vy>;dit s t;mhle ke>;kem.", // 56
+	"My@ pr#skla do tlapek!", // 57
+	"Nesmysl.", // 58
+	"Kl;dek, j# tu jenom lap#m vzduch...", // 59
+	"Tum#@, papej.", // 60
+	"A te% u{ jsme k#mo@i, ale nic intimn;ho!", // 61
+	"Taky si m]{u leda tak vykopat hrob.", // 62
+	"O sto uhynul^ch minut pozd+ji...", // 63
+	"A dal@;ch sto uhynul^ch minut pozd+ji...", // 64
+	"Kone$n+ jsem na@el lo{isko ropy, sem \nbohatej!", // 65
+	"Hmmm, bohatej, kulov^!", // 66
+	"!?&!", // 67
+	"Ale d+do, p>ece si mi sl;bil..", // 68
+	"Ach no jo, tak teda jdeme.", // 69
+	"Nashle.", // 70
+	"Ermm, tak teda navid+nou.", // 71
+	"Probl*m: nikdy jsem nev+d+l, jak\nkecat s holkama...", // 72
+	"Oby$ejn+ ned+l#m v+ci, kter* ned#vaj; smysl.", // 73
+	"Jenom o>ech je pravej.", // 74
+	"Zaj;malo by m+, jestli slepice opravdu l;taj.\nPoj% ke m+ mil#@ku...", // 75
+	"Prvn; test ne\\sp+@n^.", // 76
+	"U{ sem se mindr#k] zbavil a druh^ test by stejn+\ndopadl stejn+.", // 77
+	"Ne ne, tahle cesta nikam nevede.", // 78
+	"Otev;r# kufr.", // 79
+	"Pevn+ zav>enej.", // 80
+	"Nic jin*ho u{ v kufru nen;.", // 81
+	"Pr#dlo je te% such*, koho by to tak mohlo zaj;mat?", // 82
+	"Ty vr#ny m+ pravd+podobn+ oklobou na kost!", // 83
+	"Jestli se chci dostat dovnit>, mus;m se\nnejd>;v zbavit str#{n*ho, ale i kdy{ m#m\nmotorovou pilu, @el bych na to trochu jinak.", // 84
+	"St+na je p>;li@ hladk#, aby se po n; dalo l*zt.", // 85
+	"Mohl bych po n+m vyl*zt, ale na\nkmeni je n+jakej\nzelenej fujtabl, bl***.", // 86
+	"Jedin* zelen^ v+ci, kter* je@t+ snesu, jsou takov*\nobd*ln;kov* pap;rky s d]le{it+ vypadaj;c;mi\nosobnostmi $um;c;mi na m+ mezi kulat^mi $;sly.", // 87
+	"Nechci se toho dot^kat, mohl bych se po@kr#bat\na pak bych se nemohl... po@kr#bat.", // 88
+	"D;k, ale nem#m hlad.", // 89
+	"Tak dlouh* ruce opravdu nem#m.", // 90
+	"Ostrov je moc daleko, abych tam mohl doplavat.", // 91
+	"Ozv+na!", // 92
+	"Ozv+na!", // 93
+	"Kdo je tam?!", // 94
+	"KDO JE TAM?!", // 95
+	"     Neopakuj to po m+!...", // 96
+	"        Neopakuj po mn+!!!", // 97
+	"...Nebo tam dolu hodim k#men!", // 98
+	"NEBO TAM...", // 99
+	"Se@ po>#d tam?", // 100
+	"Chyb; tu kompletn; kladka a nav;c\nnem#m {#dnej kybl;k.", // 101
+	"Nepot>ebuju otev;rat okno, je@t+ d^ch#m.", // 102
+	"Hmmm... Tr#va... Ale ne, mohly by to vid+t\n n+jak* mal* d+ti.", // 103
+	"Takhle ten o>ech nenajdu.\nTr#va je p>;li@ hust#.", // 104
+	"Nebudu tu troubit jen tak pro srandu kr#l;k]m.", // 105
+	"Tak vysoko nevysko$im,\nproto{e b;l; mu{i er..., b;l; mu{i\nneum+j; sk#kat.", // 106
+	"To nepot>ebuju (a vy taky ne).", // 107
+	"Nejsem mikul#@.", // 108
+	"Atrapy m+ z bryndy nepom]{ou.", // 109
+	"Je p>;li@ k>ehk^, nem# smysl ho br#t s sebou.", // 110
+	"Rad+ji je nech#m otev>en*.", // 111
+	"Nejsem na tom tak b;dn+, abych se musel\nproch#zet v ciz;ch pono{k#ch.", // 112
+	"A{ um>u.", // 113
+	"Je to moc velk*, t+{ko n+co takov*ho\nbudu pot>ebovat.", // 114
+	"~#dnej tajnej vchod za nima asi nebude\nLeda tak hejno plesnivejch pavouk].", // 115
+	"~#dn* dal@; ovoce nevypad# zaj;mav+.", // 116
+	"Malovan^ d{b#nku, te% m#@ na kah#nku,\nukradnu t+ a rozbiju t+!", // 117
+	"Rad@i ho nech#m bejt, kdo v;, jestli\nta babka necvi$ila d{udo.", // 118
+	"Zrcadlo, zrcadlo na st+n+,\nkdo je ze v@ech lid; nejchyt>ej@;?", // 119
+	"Hej, nep>em^@lej tak dlouho.", // 120
+	"Napov;m: n+kdo v tomhle pokoji...\na je mu{sk*ho pohlav;.", // 121
+	"OK, nech#m ti $as na rozmy@lenou.", // 122
+	"Rad@i ho nebudu vyru@ovat z p>em^@len;,\nmohlo by rupnout.", // 123
+	"Se zuba>ema nechci m;t nic spole$n*ho,\nned#vno jsem hr#l hru Hell.", // 124
+	"Moc t+{kej. Tykat si nebudeme.", // 125
+	"Mrkneme se, co to tady m#me...", // 126
+	"\'Jahodevej d{em\'.", // 127
+	"\'Malinovej d{em\'.", // 128
+	"\'Bor]vkovej d{em\'.", // 129
+	"\'~ampi=novej d{em (?)\'.", // 130
+	"Oupln# d{em#rna!", // 131
+	"O==, a tady je poloplesnivej \'Veverkovej d{em!\'.", // 132
+	"Jednu docela hodnou veverku zn#m,\n mo{n# z jej;ch sester.", // 133
+	"Asi budu blinkat. Najd+te rychle n+jakej igeli[#k!", // 134
+	"Vidim, {e nic nevidim.", // 135
+	"AAA########!", // 136
+	"U#u#u#u# (z;v#n;)", // 137
+	"Che, che. H# ha H####.. CHE!", // 138
+	"Moc ostr^ trny, po@kr#bal bych si ruce\na nemohl bych se.. v@ak v;te.", // 139
+	"V pile bohu{el nen; palivo, tak{e trucuje.", // 140
+	"Trny jsou moc tenk^, tady motorov#\npila nepom]{e. M-mmm.", // 141
+	"No, mohl byl vz;t ten k#men a b+hat s n;m\ndokola. Hele, a nen; n+co pod n;m...?", // 142
+	"Rad@i je nech#m b^t, mohli by m+ pokousat\nnebo dokonce zn#silnit!", // 143
+	"Mo{n# u{ je tuhej, chov# se tak.", // 144
+	"B]hv; jak^m jazykem tohle mluv;.", // 145
+	"Musel bych dlouho hubnout, ne{ bych\ntam dok#zal str$it ruku.", // 146
+	"Hej, vy! Vst#vat, bude pogroma na vr#ny!", // 147
+	"Nem#m povolen; k prohl;dce.", // 148
+	"Na t^hle kupce nevidim ani zbla zaj;mav*ho. Sorry.", // 149
+	"Dostat se dovnit> nebude @#dn# @vanda.", // 150
+	"Nem# to smysl, o>ech by mezi vyl#man^mi\nzuby ur$it+ proklouzl.", // 151
+	"P#dlo je p>ece rozbit^.", // 152
+	"Tahle v+tev nen; {#dn^ p#dlo, jak v#s to\nv]bec mohlo napadnout?", // 153
+	"Rad@i to zkusim vedle, m#m takovej pocit, {e\nje tahle $#st st+ny dob>e hl;dan#.", // 154
+	"Chci to nabrousit, ne rozdrtit.", // 155
+	"K ni$emu m+ nedonut;te, je tady moc tma.", // 156
+	"Hele, chce@ si trochu\np>ivyd+lat?", // 157
+	"Je to oby$ejn# bankovka, ale n+kdo\nna n; zezadu napsal \"Nezapome< Ani$ko!\".\nAsi n+jakej \\chyl, nebo...?", // 158
+	"Kdyby j; ty pen;ze jen tak uk#zal,,\nmohla by si myslet, {e si j; chci koupit.", // 159
+	"P+t tis;c, to jest asi dva\na p]l tis;ce rohl;k]!!!", // 160
+	"Chci krev!", // 161
+	"Neodejdu z vily, dokud neproliju\nPankr#covu krev!", // 162
+	"Tum de dum, tu de d###... nic jste nevid+li!", // 163
+	"Divn^, kdy{ je jedno @uple otev>en^,\njin^ nejde otev>;t, hmm..", // 164
+	"Mo{n# to nejsou jen tak oby$ejn^\n@uplata!", // 165
+	"Nem]{u otev>;t druh* @uple,\nkdy{ u{ je jedno otev>en*. Pro$?", // 166
+	"M# modr^ vnit>ek.", // 167
+	"M# $erven^ vnit>ek.", // 168
+	"M# @ed^ vnit>ek.", // 169
+	"M# zelen^ vnit>ek.", // 170
+	"M# hn+d^ vnit>ek.", // 171
+	"M# r]{ovou$kou$k^ vnit>ek.", // 172
+	"Ale ale! Tady se v#l; diktafon!", // 173
+	"Vzadu n+co je. Fo[#k polaroid!\nM]{e se hodit.", // 174
+	"N+co knihu dr{;, nem]{u s n; pohnout!", // 175
+	"Vida! Tajn# skr^@, copak skr^v#@, tajn# skr^@i?", // 176
+	"U{ se s nem#m na co d;vat.\nCopak doma nem#te video?", // 177
+	"Pln+ automatick*.", // 178
+	"Jeden pap;r mi sta$; ke @t+st;.\nJsem jednoduch^ $lov+k.", // 179
+	"Opil bych se a mlel bych spros[#rny,\nco{ mi auto>i zak#zali.", // 180
+	"Vsad;m se, {e tam bude naps#no to sam*,\nco minule.", // 181
+	"Osah#v#n; vypnut* televize? Hmm, takov^ maniak nejsem.", // 182
+	"Nic. V]bec nic.", // 183
+	"P#ska se spustila!", // 184
+	"To u{ je lep@;.", // 185
+	"Korek vod vokurek.", // 186
+	"Prachoby$ejn^ korek. Z korku, kulat^ a nez#{ivn^.", // 187
+	"Jedna fotografie sta$;.", // 188
+	"Jo, to si teda nahraju na zastra@ov#n;\npotuln^ch jehovist].", // 189
+	"U{ jsem nahr#l, co byla pot>eba nahr#t.", // 190
+	"Bez bateri; v diktafonu se {#dn* nahr#v#n;\nkonat nebude.", // 191
+	"~#dn* baterie, {#dn# @vanda.", // 192
+	"Ne>ekl bych, {e je pr#v+ te%\nten spr#vn^ moment.", // 193
+	"Dokud tu oxiduje ten zpropadenej\nkucha>, nem]{u nic d+lat.", // 194
+	"Lahev je to sice stejn#,\nale pochybuju, {e by na to kucha>\njen tak sko$il.", // 195
+	"Cht+l jsem to jenom rozb;t,\na ne rozpl#cnout!..", // 196
+	"V{dycky jsem byl zv+davej, co se\nv t+chto v+ci$k#ch skr^v#.", // 197
+	"Z toho u{ {#dnej Gott nikdy >v#t nebude.", // 198
+	"Ga ga ga! Dv+ 1.5-voltov* baterie!", // 199
+	"Tahle lednice je u{ zabran#, OK?", // 200
+	"Kone$n+ se to stalo, jsem @;len^!", // 201
+	"Kurnik, pap;r doho>el!", // 202
+	"Pap;r chytil a ho>;.\nRychle, kam s n;m?!", // 203
+	"Gut.", // 204
+	"Haisss, haisss, p#l; to!", // 205
+	"P>imrzlo to k Poli$ce, mrcha jedna!", // 206
+	"M<am.", // 207
+	"Pol;vka \'Vyblitka\' bude tahkhle\nje@t+ pikantn+j@;.", // 208
+	"~#dn^ d]vod pro$ tohle d+lat\nnikde bl;zko nepoletuje.", // 209
+	"U{ jsem ho obelhal jednou.", // 210
+	"Ludv;ku, aktivuj test hlasu.", // 211
+	"Sv^m vlastn;m hlasem Ludv;ka neo@#l;m.", // 212
+	"...zp;;;v###n;;;..", // 213
+	"Ludv;ku, pust;me se do testu smradu,\nvlastn+ testu pachu.", // 214
+	"Ludv;ku, je% vizu#ln; test!", // 215
+	"\'Tajn^ di#> Pankr#ce Oblouka. Top Secret.\'", // 216
+	"Tam se neschov#m!", // 217
+	"Nem]{u ven, $apli by m+ a sn+dli!", // 218
+	"Jen tak tak.", // 219
+	"Korek zapadl do d;ry.", // 220
+	"Pasuje perfektn+!", // 221
+	"V umyvadle u{ je dost vody.", // 222
+	"V umyvadle nen; {#dn# voda!", // 223
+	"N#lepka se odlepila!", // 224
+	"Korek je moc malej, neucpe to.", // 225
+	"Te% sp;@ n+co na hlavu,\nt>eba heroin.", // 226
+	"U{ takhle jsem sal#t, nechci bejt @pen#t.", // 227
+	"Ne.", // 228
+	"Byla by ze m+ fa@;rka.\nBlb+ by se to ukl;zelo ze st+n.", // 229
+	"Rad@i nejd>;v $apnu Pankr#ce Oblouka.", // 230
+	"Douf#m, {e to $erven^ je jenom chilli...", // 231
+	"Voda vypad# opravdu \'horce\'.", // 232
+	"Do umyvadla natekla hork# voda.", // 233
+	"Nem#m nic, do $eho bych\nty plesniv* pono{ky mohl zabalit.", // 234
+	"Tady jsou moje pap;ry.", // 235
+	"Nen; t>eba vytahovat se\ns povolen;m dvakr#t.", // 236
+	"\'Ahoj brou$ku, m#m r]{ovou$k^ pr#dlo\na hlav$u plnou bezvadnejch my@lenek.\nCinkni na 05 535 113\'", // 237
+	"\'Dungeon Master II je bomba!\'", // 238
+	"\'Vochozka je.. (cenzurov#no)\'", // 239
+	"\'Je to $erven^ a je to na p=diu?\nCo je to?\nKULTURN; VLO~KA!\'", // 240
+	"\'Orgie po>#dan* redakc; Score\nse konaj; v{dy ve $tvrtek...\'", // 241
+	"Zbytek n#pis] je p>;li@ perverzn;.", // 242
+	"Pane veliteli, jsem Marek. Zelen#$.", // 243
+	"Hrome, zam$eno!", // 244
+	"D;k.", // 245
+	"No, nev;m co bych s t;m mohl d+lat\npr#v+ te%.\nLeda tak ob+sit se.", // 246
+	"M#m n#pad, sledujte m+..", // 247
+	"Te%ko mus;m vyzkou@et, jestli to funguje...", // 248
+	"}ekl bych, {e je $as zavolat kapit#na...", // 249
+	"Hej! U{ jsem to vyl;zal do sucha!", // 250
+	"Tak a te% se p>ifa>il k misce!...", // 251
+	"N+co m#m!", // 252
+	"Na jeho kapsy\nu{ nem;n;m @matat.", // 253
+	"To asi nep]jde.", // 254
+	"Levou rukou.", // 255
+	"A jak se m#m dostat zp#tky?", // 256
+	"Taky to @lo.", // 257
+	"Jo, j# vim...", // 258
+	"Nejde to vyt#hnout.", // 259
+	"Hal=, vy tam p>ed obrazovkou, u{ jste n+kdy,\nrukama p#rali dr#t+nej plot?", // 260
+	"Plot stoj; v cest+\nJen tak si stoj;, stoj; si tam...", // 261
+	"Rad@i ne, co kdy{ je to sklad mrtv^ch.", // 262
+	"Nedos#hnu tam.", // 263
+	"Hal=?", // 264
+	"Je \\pln+ mimo.", // 265
+	"Co{ takhle d#t si..", // 266
+	"...$erstv+ vy@l*...", // 267
+	"...pln+ barevn*...", // 268
+	"...extra vzru@uj;c;..", // 269
+	"... \'Vojensk* Noviny\'?!", // 270
+	"Roch<a$ka!", // 271
+	"Jsem snad n+jakej vysava$?!", // 272
+	"          Po dlouh*m a ohavn*m klen;...", // 273
+	"Zat;m ve vile...", // 274
+	"Te% je otev>eno.", // 275
+	"Poj%, ptakovit* stvo>en;, je to ba@ta!", // 276
+	"Te% zrovna nevypad# p>;li@ konzerva$n+,\nehm, konverza$n+.", // 277
+	"Tak, te% to jenom nepokazit...", // 278
+	"Barman je moc bl;zko...", // 279
+	"Fuj!", // 280
+	"J# rad@i vodu.", // 281
+	"Nejsem kobylka, sko$te si to sami.", // 282
+	"Lezouc; p*ra by ze m+ nad+laly >e@eto.", // 283
+	"Ne d;ky, to j;dlo je po>#d je@t+ {iv^.", // 284
+	"To je ale p>ekvapen;, nejdou otev>;t!", // 285
+	"Jenom t>i kr#li$; bobky a pou{it^ toaletn; pap;r.\nNez#jem.", // 286
+	"Nem]{u naj;t Prahu, mo{n# u{ ji p>ejmenovali\nna n+co, co se N+mc]m l*pe vyslovuje.", // 287
+	"Binec, {e by se dal fotit do aktualit.", // 288
+	"D;k, ale u{ jsem vid+l m+k$; kameny.", // 289
+	"Tup^ a m#lo zahnut^. Turci vym;raj.", // 290
+	"Na co by mi byly mod^lky zbran;?", // 291
+	"Barman by si ur$it+ v@iml, {e hrn;$ek\nvzal roha.", // 292
+	"Vo{;rat se budu, a{ tuhle hru dohraju.\nPak si tu d#me zpicha a vypijem to v@echno!", // 293
+	"J# nekradu! A nav;c je stejn+ pr#zdn#.", // 294
+	"Toho je na mn+ trochu moc a nem#m lupu.", // 295
+	"Na ty je kapit#n moc tlustej.\nKdo hled# najde, ale ne tady.", // 296
+	"Pr#sknout do bot? Nikdy!", // 297
+	"Nejde to otev>;t.", // 298
+	"Nepot>ebuju.", // 299
+	"Nejsem {#dnej sebeukaje$ $um+n;m do d+r!", // 300
+	"Kapsy m#m sice po>#dn^, ale maj sv]j limit.", // 301
+	"Kdybych si to obl*kl, cesta ze schod] by se\npravd+podobn+ stala osudovou.", // 302
+	"Bohu{el nejsem knihomol, aspo< bych si mohl\njuchnout radost;.", // 303
+	"Tv#>; se l#kav+. Ale j# nechci j;t \'sed+t\'.", // 304
+	"Sv+tla dost, sta$; jen nezav;rat o$i.", // 305
+	"Moje @peky tahle @unka neunese.", // 306
+	"Nem#m r#d mikrovlnky, tak{e\ns nima neum;m zach#zet.", // 307
+	"Jsou tak ostr^, {e by mi pro>ezaly kapsy.", // 308
+	"Ko<ak se sna{il, ale moc tomu nepomohl..", // 309
+	"C;tite po>ebu zbavit se @p;ny {ivota?\nJ# ne.", // 310
+	"Nejsem masochista, ty pono{ky jsou ve\nst#diu rozkladu. Rukama ne!", // 311
+	"Na Masku p]jdu rad@i do kina.", // 312
+	"Sakra, je to JENOM na d#lkov* ovl#d#n;!", // 313
+	"Nem#m s sebou ani Depe@#ky ani Oldfielda.", // 314
+	"Nen; to moje. Sta$ilo,\n {e jsem zvedl tu bankovku.", // 315
+	"Hej! Co je?!", // 316
+	"Je otev>eno!", // 317
+	"Nefunguje.", // 318
+	"Kdy{ se d+dek d;v#?...\nRad@i ne...", // 319
+	"Srp je tupej, mus; se o n+co nabrousit.", // 320
+	"Nejd>;ve je tu n+co jin*ho,\no co se mus;m postarat.", // 321
+	"Rejpat do toho no{ejkem by trvalo\ntak sto - dv+ st+ let.", // 322
+	"Na stole je u{ takhle p+knej\nbinec, net>eba tomu pom#hat.", // 323
+	"To m#m ty drobky jako HODIT nahoru?\nTo snad ne.", // 324
+	"Takov^ p+kn^ drobky, p>ece bych je \nnevyplejtval takhle zbrkle.", // 325
+	"Rad@i ne, mohl bych tam spadnout a obahnit se.", // 326
+	"\"Historie Blues\".", // 327
+	"\"Manchester United neboli p>;b+h Rud*ho %#bla\".", // 328
+	"\"Vl$#ci a jin; love$t; psi\".", // 329
+	"\"Zelen#$ neboli moje dob^v#n; divok*ho z#padu\".", // 330
+	"\"Charlie Brown and jeho spole$nost\".", // 331
+	"\"R]{ov^ Panter: neleg#ln; biografie\".", // 332
+
+	// Combine error message
+	"Tyto dva p>edm+ty nejdou dohromady,\nnejdou a nejdou a nejdou. GRR! (to chce klid) ",
+};
+
 const static char *russianMessages[kNumMessages] = {
 	"Bfh pon\200si\200, xso r ~sim eflas}.\x1f\x1f\x1f", // 0
 	"Mnf sqteno pqietmas}, xso r ~sim\neflas}.\x1f\x1f", // 1
@@ -12927,6 +13266,43 @@ const char *polishCombineMessages[kNumCombinations] = {
 	"Dodajmy troch# przypraw...",
 };
 
+const char *czechCombineMessages[kNumCombinations] = {
+	"No par#da, vypad# to jako $erstv+ koupen*\nv obchod+!",
+	"Uta{en; zbyl^ch zub] hr#b; p#skou zmen@ilo\nmezery mezi zuby, hr#b+ jsou ready!",
+	"Pou{it;m super lepidla jsem cosi stvo>il.\nN+jak* cosi. Zat;m...",
+	"Pou{it;m super lepidla jsem cosi stvo>il.\nN+jak* cosi. Zat;m...",
+	"Dal@;m pou{it;m super lepidla...",
+	"Dal@;m pou{it;m super lepidla...",
+	"Whiska je dost siln#, aby se dala pou{;t\njako palivo, jen aby to ale vydr{ela\nchud#k motorov# pila.",
+	"A znovu se hodilo super lepidlo...",
+	"Saze m+n; brambor na n+co \\pln+ jin*ho,\nhroziv+j@;ho.",
+	"Poslu@n+ hl#s;m, jsem p>ipraven k pot#p+n;!",
+	"C;t;m se jako dal@; novope$en^ Cliffhanger.\nSly@;@ Sly?",
+	"S takov^mhle ocucan^m bonb=nem nikoho neosln;m.",
+	"Mele se, jako by m+la padoucnici.",
+	"Bezvadnej n#pad, ale bacha, ekomaniaci \njsou po>#d na pozoru...",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"Ani takovej p+knej obal tomu zat;m nepom]{e.",
+	"M-mm. Moc malej obal na moc velkej bonb=n.",
+	"Nechci ten bonb=n jen tak promarnit.",
+	"Kv+tina je kr#sn# i tak, nepot>ebuje\n{#dn* vylep@ov#ky.",
+	"Kv+tina je kr#sn# i tak, nepot>ebuje\n{#dn* vylep@ov#ky.",
+	"Dobrej n#pad, ale pot>ebuju n+co men@;ho\nne{ tenhle provaz.",
+	"Fuj. A nav;c se ten s^r m]{e je@t+ hodit.",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Nen; pot>eba o>ech otev;rat.",
+	"Nejsme v DOOMu, ale v ne@kodn* adventu>e\npro celou rodinu (My chceme DOOM! my chceme\nDOOM!).",
+	"Ano, ud+l#me ten @punt v+t@;, tak!",
+	"A je@t+ jednou se super lepidlo hodilo.",
+	"Baterky pasovaly!",
+	"P>iv#zal jsem lano k tomu, k $emu pat>;.",
+	"Trochu to oko>en;me...",
+};
+
 const char *russianCombineMessages[kNumCombinations] = {
 	"Odo, sfpfq} ona c|dl\200eis kak\npq\200mikom ih madahina!\x1f\x1f\x1f\x1f\x1f",
 	"Obc\200hac dqabli lfnsoj, tealor} tmfn}yis}\nhahoq mfget htb}\200mi!\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f\x1f",
@@ -16947,6 +17323,4000 @@ const static char *englishDialog212[] = {
 	"This is charming!...",
 	END_DIALOG
 };
+
+const static char *czechDialog0[] = {
+	ANIM_WAIT,
+	"Dobr^ den.",
+	CHANGE_CHARACTER,
+	"Jo.",
+	CHANGE_CHARACTER,
+	"Pro$ tu tak stoj;@?",
+	CHANGE_CHARACTER,
+	"Zeptej se gravitace.",
+	CHANGE_CHARACTER,
+	"Docela vtipn^.",
+	DISPLAY_MESSAGE,
+	"Na voj#ka.",
+	CHANGE_CHARACTER,
+	"Nejsem voj#k, i kdy{ jsem se",
+	NEW_LINE,
+	"o to pokou@el.",
+	DISPLAY_MESSAGE,
+	"Neud+lalt jsem test intel...",
+	NEW_LINE,
+	"test zdatnosti.",
+	DISPLAY_MESSAGE,
+	"Na>;dili mi sest>elit let;c;",
+	NEW_LINE,
+	"minci zat;mco jsem sk#kal",
+	NEW_LINE,
+	"ze stromu na kon+.",
+	CHANGE_CHARACTER,
+	"Jo, to zn; komplikovan+.",
+	CHANGE_CHARACTER,
+	"Speci#ln; Jednotky, to nen; {#dn# sranda,",
+	NEW_LINE,
+	"v;@?",
+	CHANGE_CHARACTER,
+	"Je mi l;to, {es\' to nezvl#d.",
+	CHANGE_CHARACTER,
+	"Jo, minul jsem kon+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog1[] = {
+	"Tak...",
+	DISPLAY_MESSAGE,
+	"A co d+l#@ te%?",
+	CHANGE_CHARACTER,
+	"Chce@ sly@et fakt vtipnou odpov+%?",
+	CHANGE_CHARACTER,
+	"Hele, ani se nenam#hej...",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e, ale zn#@ to, nen; tu",
+	NEW_LINE,
+	"{#dn# z#bava.",
+	DISPLAY_MESSAGE,
+	"Tak{e si ob$as chci zavtipkovat.",
+	NEW_LINE,
+	"N+jak# ta le-hegr#cka, v;@? He, he. He.",
+	CHANGE_CHARACTER,
+	"A-ha. Ha, ehm...",
+	CHANGE_CHARACTER,
+	"Hl;d#m to tady...",
+	CHANGE_CHARACTER,
+	"Wow. To je teda p>ekvapen;.",
+	CHANGE_CHARACTER,
+	"...a >ekli mi, {e m#m zab;t ka{d^ho,",
+	NEW_LINE,
+	"kdo se pokus; vej;t dovnit>.",
+	CHANGE_CHARACTER,
+	"Tak{e prvn; tuhej byl majitel domu, ne?",
+	CHANGE_CHARACTER,
+	"Je{i@, ten neni jen tak n+kdo. P>ece.",
+	CHANGE_CHARACTER,
+	"J# taky ne, tak{e bych mohl vej;t?",
+	CHANGE_CHARACTER,
+	"Ne-e.",
+	CHANGE_CHARACTER,
+	"A co kdy{ p+kn+ poprosim a >eknu \'b#bovka\'?",
+	CHANGE_CHARACTER,
+	"Ani n#pad, mladej, ani n#pad.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Pros;;;m, b##bovk###.",
+	CHANGE_CHARACTER,
+	"Ani n#pad.",
+	NEW_LINE,
+	"M#m srdce z kamene.",
+	CHANGE_CHARACTER,
+	"Tak{e ze stejn*ho materi#lu",
+	NEW_LINE,
+	"jako mozek, to je unik#t.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Nech#pu.",
+	CHANGE_CHARACTER,
+	"Nic si z toho ned+lej.",
+	NEW_LINE,
+	"Jakpak bych tedy mohl",
+	NEW_LINE,
+	"obm+k$it tv* srdce?",
+	CHANGE_CHARACTER,
+	"To nep]jde, sem tvr%#k.",
+	DISPLAY_MESSAGE,
+	"Ale poj% sem, d#m ti n+co",
+	NEW_LINE,
+	"abys ne>ekl...",
+	END_DIALOG,
+};
+
+const static char *czechDialog2[] = {
+	"D;ky, co to je?",
+	CHANGE_CHARACTER,
+	"|okol#dovej bonb=n.",
+	DISPLAY_MESSAGE,
+	"M]j zam+stnavatel mi jich dal p#r",
+	NEW_LINE,
+	"k ob+du a...",
+	CHANGE_CHARACTER,
+	"A je tv]j @*f doma?!",
+	CHANGE_CHARACTER,
+	"Pan Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"A#, tak...",
+	DISPLAY_MESSAGE,
+	"Pankr#c Oblouk...",
+	DISPLAY_MESSAGE,
+	"Mysl;m, {e jsem o n+m sly@el...",
+	CHANGE_CHARACTER,
+	"No bodej[. D+l# te% velk^ pen;ze, v;@?",
+	NEW_LINE,
+	"Hlavn+ v posledn; dob+...",
+	CHANGE_CHARACTER,
+	"Jo?...",
+	CHANGE_CHARACTER,
+	"No, j# nevim p>esn+ jak.",
+	DISPLAY_MESSAGE,
+	"Mo{n# to m# n+co spole$n^ho s takovym",
+	NEW_LINE,
+	"divnym v+dcem, co takhle jednou",
+	NEW_LINE,
+	"p>i@el a..",
+	DISPLAY_MESSAGE,
+	"A#, ty si mysl;@, {e se@ chytrej, co?!",
+	NEW_LINE,
+	"Nejse@ ty n#hodou @peh?!",
+	CHANGE_CHARACTER,
+	"Ale pros;mt+, j# a @peh? Nesmysl.",
+	DISPLAY_MESSAGE,
+	"J# jsem jenom oby$ejnej pas#$ek bobr] z kolchozu",
+	NEW_LINE,
+	"t#mhle za kopcem. Dru{ba se to tam jmenuje",
+	CHANGE_CHARACTER,
+	"Aha, pase@ teda bobry. Boss mi >ekl,",
+	NEW_LINE,
+	"abych si dal na @pi=ny velkej pozor...",
+	CHANGE_CHARACTER,
+	"Copak vypad#m jako n+jakej @pi=n?",
+	CHANGE_CHARACTER,
+	"...a abych se zab;jel na potk#n;...",
+	CHANGE_CHARACTER,
+	"Hele, kl;dek...",
+	CHANGE_CHARACTER,
+	"...a j# u{ jsem nikoho nezabil",
+	NEW_LINE,
+	"h===dn+ dlouhou dobu!",
+	CHANGE_CHARACTER,
+	"Hele to kv]li tomu bomb=nu, {ejo?",
+	NEW_LINE,
+	"Ty ho chce@ zp#tky, co? ~#dnej probl*m.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Promi<, nechal jsem trochu un*st.",
+	CHANGE_CHARACTER,
+	"Ch#pu.",
+	NEW_LINE,
+	"Je tu p+kn^ vedro, co?",
+	CHANGE_CHARACTER,
+	"Jo, to jo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog3[] = {
+	"Pane str#{n^, j#..",
+	CHANGE_CHARACTER,
+	"Posly@ mladej:",
+	DISPLAY_MESSAGE,
+	"@peh ne@peh ned+lej si iluze,",
+	NEW_LINE,
+	"{e t+ pust;m do domu.",
+	DISPLAY_MESSAGE,
+	"Postav se t>eba na hlavu,",
+	NEW_LINE,
+	"ale dovnit> se prost+ nedostane@,",
+	NEW_LINE,
+	"mohl bys tam n+co ukr#st nebo",
+	DISPLAY_MESSAGE,
+	"n+jak obt+{ovat pana Oblouka.",
+	DISPLAY_MESSAGE,
+	"A taky u{ ze mn+ nic nedostane@.",
+	DISPLAY_MESSAGE,
+	"Je@t+ jeden pokus o takovejhle rozhovor",
+	NEW_LINE,
+	"a se@ d#lnice pro $ervy.",
+	DISPLAY_MESSAGE,
+	"Kap]to.",
+	DISPLAY_MESSAGE,
+	"Jasn^?",
+	CHANGE_CHARACTER,
+	"Jasn^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog4[] = {
+	"Hezkej oblek. Od Vision?",
+	CHANGE_CHARACTER,
+	"Jo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog5[] = {
+	CHANGE_CHARACTER,
+	"Zatracen+!",
+	DISPLAY_MESSAGE,
+	"Tos zas ty!",
+	END_DIALOG,
+};
+
+const static char *czechDialog6[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Copak je v t^ lahvi?",
+	CHANGE_CHARACTER,
+	"Nem]{e@ mi nic dok#zat!",
+	CHANGE_CHARACTER,
+	"N+jakej tvrdej, {e jo?..",
+	CHANGE_CHARACTER,
+	"Do toho je ti kulov^.",
+	CHANGE_CHARACTER,
+	"Ty chlast#@ ve slu{b+? Cha ch#, von chlast# ve slu{b+!",
+	CHANGE_CHARACTER,
+	"Mysl;@ si, {es\' na m+ vyzr#l, co?",
+	NEW_LINE,
+	"Je to tak?",
+	DISPLAY_MESSAGE,
+	"Lejna. M]{e@ se j;t vycpat!",
+	END_DIALOG,
+};
+
+const static char *czechDialog7[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Nic si nevid+l.",
+	DISPLAY_MESSAGE,
+	"Jsem $istej jak cejcha.",
+	END_DIALOG,
+};
+
+const static char *czechDialog8[] = {
+	"Hej!",
+	CHANGE_CHARACTER,
+	"Vypadni.",
+	END_DIALOG,
+};
+
+const static char *czechDialog9[] = {
+	"Co bys >ekl tomu, kdybych ti",
+	NEW_LINE,
+	"dal n+jak* zlato?...",
+	CHANGE_CHARACTER,
+	"}ekl bych \'d+kuju\'.",
+	CHANGE_CHARACTER,
+	"A pustil bys m+ dovnit>?",
+	CHANGE_CHARACTER,
+	"}ek bych, {e jo..",
+	CHANGE_CHARACTER,
+	"Aha, tak a{ si bude@ jist+j@;...",
+	CHANGE_CHARACTER,
+	"OK, jsem si jistej. Ur$it+, ur$it+ te pust;m dovnit>.",
+	CHANGE_CHARACTER,
+	"Dob>e, tak tum#@.",
+	END_DIALOG,
+};
+
+const static char *czechDialog10[] = {
+	"Tak a te% otev>i dve>e.",
+	CHANGE_CHARACTER,
+	"Neexistuje, vypadni.",
+	CHANGE_CHARACTER,
+	"Sakra co je to? Dal jsem ti zlato!",
+	CHANGE_CHARACTER,
+	"Jak^ zlato?",
+	CHANGE_CHARACTER,
+	"Jak^ zlato?!?",
+	CHANGE_CHARACTER,
+	"Nevim nic o {#dn^m zlat+, vid;@ ho tady n+kde?",
+	END_DIALOG,
+};
+
+const static char *czechDialog11[] = {
+	"Ty... ty sr#goro!",
+	CHANGE_CHARACTER,
+	"Padej malej.",
+	CHANGE_CHARACTER,
+	"}ek\' si, {e m+ za zlato pust;@ dovnit>!",
+	DISPLAY_MESSAGE,
+	"A ty m+ p>itom pou@t;@ k vod+!",
+	CHANGE_CHARACTER,
+	"To jo, ale m]{e@ bejt aspo< r#d,",
+	NEW_LINE,
+	"{e k t^ vod+ odejde@ celej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog12[] = {
+	"V dne@n; nechutn^ dob+ nem]{e@ v+>it",
+	NEW_LINE,
+	"ani dementn;m zkorumpovan^m str#{c]m!",
+	END_DIALOG,
+};
+
+const static char *czechDialog13[] = {
+	"|au.",
+	CHANGE_CHARACTER,
+	"Ahoj.",
+	CHANGE_CHARACTER,
+	"J# jsem Kevin.",
+	DISPLAY_MESSAGE,
+	"}ekni mi, jak se jmenuje@ ty.",
+	CHANGE_CHARACTER,
+	"Jak se jmenuje@ ty?",
+	CHANGE_CHARACTER,
+	"No j# to nevim, to pr#v+ mus;@ ty >;ct mn+...",
+	CHANGE_CHARACTER,
+	"Mn+.",
+	CHANGE_CHARACTER,
+	"Ne>;kej jenom \'mn+\', >ekni",
+	NEW_LINE,
+	"svoje jm*no! (Bo{e!)",
+	CHANGE_CHARACTER,
+	"Svoje jm*..",
+	CHANGE_CHARACTER,
+	"A#! V@ude jsou tu sam; vypatlanci a dementi!",
+	DISPLAY_MESSAGE,
+	"A jak ti >;k# tat;nek?",
+	CHANGE_CHARACTER,
+	"Synku.",
+	CHANGE_CHARACTER,
+	"Synek jako jm*no a nebo synek jako",
+	NEW_LINE,
+	"prost+ jenom synek? (U{ mi z toho jebe)",
+	CHANGE_CHARACTER,
+	"Synek.",
+	CHANGE_CHARACTER,
+	"Jse@ debiln; nebo jenom drzej?",
+	CHANGE_CHARACTER,
+	"Synek, to jsem.",
+	CHANGE_CHARACTER,
+	"(Asi dement, uff, ale m# gr#dy!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog14[] = {
+	"Poslouhej, synku nebo n+co.",
+	DISPLAY_MESSAGE,
+	"Co se pokou@;@ d+lat s t;m",
+	NEW_LINE,
+	"basketov^m bal=nem?",
+	CHANGE_CHARACTER,
+	"D+da >;kal, {e m+ vezme do ZOO,",
+	NEW_LINE,
+	"kdy{ d#m ko@.",
+	CHANGE_CHARACTER,
+	"}ekl bych, {e bys m+l ten m;$ h#zet",
+	NEW_LINE,
+	"o trochu v^@, vej@ jako nahoru, ch#pe@?",
+	CHANGE_CHARACTER,
+	"Jo, ch#pu.",
+	CHANGE_CHARACTER,
+	"Tak co?",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Tak pro$ to neud+l#@?! (U{ to zas za$;n#)",
+	CHANGE_CHARACTER,
+	"Mus;m m;t asi n+co s o$ima.",
+	NEW_LINE,
+	"Jo, asi ty o$i.",
+	CHANGE_CHARACTER,
+	"Jako {e bys m+l m;t brejle, ne?",
+	CHANGE_CHARACTER,
+	"Ne, pro$?",
+	CHANGE_CHARACTER,
+	"(Sprcha! Kde je?)",
+	DISPLAY_MESSAGE,
+	"Mo{n# jse@ jenom moc slabej,",
+	NEW_LINE,
+	"abys hodil m;$ tak vysoko.",
+	CHANGE_CHARACTER,
+	"Vysoko.",
+	CHANGE_CHARACTER,
+	"(Aa####, je fakt TVRDEJ!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog15[] = {
+	"Hele, synku!",
+	DISPLAY_MESSAGE,
+	"M#m bezva n#pad!",
+	CHANGE_CHARACTER,
+	"Fakt?",
+	CHANGE_CHARACTER,
+	"Jdi za d+de$kem a >ekni mu,",
+	NEW_LINE,
+	"{es\' hodil ko@!",
+	CHANGE_CHARACTER,
+	"To jako mysl;@ lh#t?",
+	CHANGE_CHARACTER,
+	"No jo, tak n+jak...",
+	CHANGE_CHARACTER,
+	"J# NIKDY NEL~U!",
+	CHANGE_CHARACTER,
+	"Nikdy?!",
+	CHANGE_CHARACTER,
+	"NIKDY!",
+	CHANGE_CHARACTER,
+	"To se@ teda hodnej kluk (grrr).",
+	END_DIALOG,
+};
+
+const static char *czechDialog16[] = {
+	"Hej...",
+	CHANGE_CHARACTER,
+	"\'di pry$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog17[] = {
+	"Hele synku, to je neuv+>iteln^!",
+	CHANGE_CHARACTER,
+	"Co?",
+	CHANGE_CHARACTER,
+	"Mo{n# si bude@ myslet, {e je to vtip,",
+	NEW_LINE,
+	"ale z jezera $ouh# ruka a dr{;",
+	NEW_LINE,
+	"nov* vyd#n; Brava!",
+	CHANGE_CHARACTER,
+	"OK, jdu se tam pod;vat, ale nemysli si,",
+	NEW_LINE,
+	"{e m+ obel{e@.",
+	NEW_LINE,
+	"Norm#ln; utopenej po@[#k.",
+	DISPLAY_MESSAGE,
+	"Mo{n# te% budu m;t v+t@; @t+st;",
+	NEW_LINE,
+	"v basketu...",
+	END_DIALOG,
+};
+
+const static char *czechDialog18[] = {
+	"Dobr^ den, pane!",
+	CHANGE_CHARACTER,
+	"Dobr^ den, synku.",
+	CHANGE_CHARACTER,
+	"Jmenuju se Kevin, pane.",
+	CHANGE_CHARACTER,
+	"Skv+l*.",
+	DISPLAY_MESSAGE,
+	"Co chce@?",
+	CHANGE_CHARACTER,
+	"P>i@el jsem obdivovat va@e k>eslo.",
+	DISPLAY_MESSAGE,
+	"P+knej kousek.",
+	CHANGE_CHARACTER,
+	"P+knej a stylovej",
+	NEW_LINE,
+	"Taky pohodlnej.",
+	CHANGE_CHARACTER,
+	"A velkej.",
+	CHANGE_CHARACTER,
+	"Model pro dva.",
+	END_DIALOG,
+};
+
+const static char *czechDialog19[] = {
+	"Zn#te chlapce hraj;c;ho venku basket?",
+	NEW_LINE,
+	"Hopsaj;c;ho s m;$em.",
+	NEW_LINE,
+	"};k# si \'Synek\'",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+,",
+	NEW_LINE,
+	"je to m]j vnuk.",
+	CHANGE_CHARACTER,
+	"P+knej kluk. Trochu jako buk (V hlav+).",
+	CHANGE_CHARACTER,
+	"Hodnej a chytrej.",
+	CHANGE_CHARACTER,
+	"Taky trochu malej (A tvrdej po d+dovi).",
+	CHANGE_CHARACTER,
+	"Vyroste.",
+	CHANGE_CHARACTER,
+	"A stane se z n+j tak slavnej basketbalovej",
+	NEW_LINE,
+	"hr#$ jako je Magic Johnson, {e?",
+	CHANGE_CHARACTER,
+	"No, to se, douf#m, nestane.",
+	CHANGE_CHARACTER,
+	"Tak mu >ekn+te, a[ p>estane hr#t!",
+	CHANGE_CHARACTER,
+	"Jo, to jo.",
+	DISPLAY_MESSAGE,
+	"Pozd+ji.",
+	DISPLAY_MESSAGE,
+	"Mo{n#.",
+	DISPLAY_MESSAGE,
+	"Te% si pot>ebuju trochu",
+	NEW_LINE,
+	"odpo$inout...",
+	END_DIALOG,
+};
+
+const static char *czechDialog20[] = {
+	"Budete tady sed+t celej den?",
+	NEW_LINE,
+	"Jenom si tak sed+t a d;vat se na vzduch?",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Kdy{ je venku tak kr#snej den?",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Copak v#s sv+t venku",
+	NEW_LINE,
+	"v]bec nezaj;m#?!",
+	CHANGE_CHARACTER,
+	"Ani ne.",
+	CHANGE_CHARACTER,
+	"A co to?",
+	CHANGE_CHARACTER,
+	"Nezaj;maj; m+ nov* v+ci.",
+	CHANGE_CHARACTER,
+	"Ale...",
+	CHANGE_CHARACTER,
+	"Jak se >;k#...",
+	DISPLAY_MESSAGE,
+	"Nejlep@; zpr#vy -",
+	NEW_LINE,
+	"{#dn* zpr#vy.",
+	CHANGE_CHARACTER,
+	"Ale lidi se mus; zaj;mat",
+	NEW_LINE,
+	"o pokrok nebo tak n+co!",
+	CHANGE_CHARACTER,
+	"Ani se nebudu obt+{ovat",
+	NEW_LINE,
+	"pt#t se t+, pro$ by to tak m+lo b^t...",
+	CHANGE_CHARACTER,
+	"Proto{e...",
+	DISPLAY_MESSAGE,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Proto{e...",
+	DISPLAY_MESSAGE,
+	"Umm...",
+	CHANGE_CHARACTER,
+	"Aha.",
+	NEW_LINE,
+	"    ",
+	END_DIALOG,
+};
+
+const static char *czechDialog21[] = {
+	"N+co nov*ho?",
+	CHANGE_CHARACTER,
+	"Douf#m, {e ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog22[] = {
+	"M]{u si p]j$it va@i brokovnici?",
+	CHANGE_CHARACTER,
+	"Vra[ se do hrobu.",
+	CHANGE_CHARACTER,
+	"P+kn+ prosim...",
+	CHANGE_CHARACTER,
+	"Mlad^ mu{i, tato zbra< je",
+	NEW_LINE,
+	"u{ velmi star# a je tuze nebezpe$n#...",
+	DISPLAY_MESSAGE,
+	"a j# jsem zodpov+dn^ $lov+k,",
+	NEW_LINE,
+	"ch#pe@?",
+	CHANGE_CHARACTER,
+	"Ale j# u{ dohr#l i Doom II...",
+	CHANGE_CHARACTER,
+	"Ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog23[] = {
+	"Mo{n# jste si to s tou pu@kou",
+	NEW_LINE,
+	"u{ rozmyslel, t>eba..",
+	CHANGE_CHARACTER,
+	"Ne.",
+	DISPLAY_MESSAGE,
+	"Nope.",
+	DISPLAY_MESSAGE,
+	"Niet.",
+	DISPLAY_MESSAGE,
+	"Nein.",
+	DISPLAY_MESSAGE,
+	"Niente.",
+	DISPLAY_MESSAGE,
+	"Nie.",
+	DISPLAY_MESSAGE,
+	"No.",
+	CHANGE_CHARACTER,
+	"OK, ch#pu to.",
+	END_DIALOG,
+};
+
+const static char *czechDialog24[] = {
+	"M]{u v#m prohledat @uplata?",
+	CHANGE_CHARACTER,
+	"Ano.",
+	CHANGE_CHARACTER,
+	"ANO?!?",
+	CHANGE_CHARACTER,
+	"Oh, zapomn+l jsem ti >;ct, {e jsou v@echna pr#zdn#.",
+	DISPLAY_MESSAGE,
+	"Jenom v prav*m horn;m je uschov#n kapesn;k.",
+	DISPLAY_MESSAGE,
+	"Jestli chce@, m]{e@ si ho vz;t, nepot>ebuju ho.",
+	CHANGE_CHARACTER,
+	"No, tak d+kuju.",
+	DISPLAY_MESSAGE,
+	"Jste velmi... posoplen..",
+	CHANGE_CHARACTER,
+	"Ale nemysli si, {e t+ nech#m",
+	NEW_LINE,
+	"vz;t si n+co dal@;ho.",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+, to by m+ ani nenapadlo.",
+	END_DIALOG,
+};
+
+const static char *czechDialog25[] = {
+	"M]{u si p]j$it tenhle v+tr#k?",
+	CHANGE_CHARACTER,
+	"V {#dn*m p>;pad+, pr#v+ ho pou{;v#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog26[] = {
+	"Tenhleten v+tr#k...",
+	CHANGE_CHARACTER,
+	"P>ij% se zeptat a{ v zim+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog27[] = {
+	"To m#me dneska p+kn^",
+	NEW_LINE,
+	"po$as;..",
+	CHANGE_CHARACTER,
+	"Tak, tak, to m#me,",
+	NEW_LINE,
+	"m]j mil^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog28[] = {
+	"To je va@e pra.. va@e dcera?",
+	CHANGE_CHARACTER,
+	"Je od tebe hezk*,",
+	NEW_LINE,
+	"m]j drah^, {e m+ d+l#@",
+	NEW_LINE,
+	"tak mladou,",
+	DISPLAY_MESSAGE,
+	"ale tahle",
+	NEW_LINE,
+	"d;vka je moje",
+	NEW_LINE,
+	"vnu$ka.",
+	CHANGE_CHARACTER,
+	"Aha, tak je to! Opravdu",
+	NEW_LINE,
+	"vypad# dob>e! (To je kus, co?)",
+	CHANGE_CHARACTER,
+	"Jednou jsem byla",
+	NEW_LINE,
+	"tak* takov#...",
+	CHANGE_CHARACTER,
+	"Ale to vy po>#d je@t+ jste!",
+	CHANGE_CHARACTER,
+	"To je od tebe sladk*, {e to >;k#@..",
+	DISPLAY_MESSAGE,
+	"ale nikdo u{ nezp;v#",
+	NEW_LINE,
+	"pod m^m oknem,",
+	DISPLAY_MESSAGE,
+	"jestli v;@",
+	NEW_LINE,
+	"co t;m mysl;m.",
+	CHANGE_CHARACTER,
+	"Errr...",
+	DISPLAY_MESSAGE,
+	"Ano...",
+	DISPLAY_MESSAGE,
+	"To vim...",
+	DISPLAY_MESSAGE,
+	"N+kdy m#m",
+	NEW_LINE,
+	"podobn* pocity...",
+	DISPLAY_MESSAGE,
+	"i j# s#m...",
+	DISPLAY_MESSAGE,
+	"asi...",
+	END_DIALOG,
+};
+
+const static char *czechDialog29[] = {
+	"M]{u se zeptat, co to",
+	NEW_LINE,
+	"d+l#te?",
+	CHANGE_CHARACTER,
+	"Ano, m]{e@,",
+	NEW_LINE,
+	"m]j drah^.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Co to d+l#te?",
+	CHANGE_CHARACTER,
+	"Pletu.",
+	CHANGE_CHARACTER,
+	"Ch#pu.",
+	DISPLAY_MESSAGE,
+	"Co pletete?",
+	CHANGE_CHARACTER,
+	"Tentokr#t ses",
+	NEW_LINE,
+	"m+ nezeptal, zdalipak",
+	NEW_LINE,
+	"se m]{e@ zeptat.",
+	CHANGE_CHARACTER,
+	"Oh, promi<te. M]{u se tedy zeptat?",
+	CHANGE_CHARACTER,
+	"Zeptat na co?",
+	CHANGE_CHARACTER,
+	"Na to, co pletete.",
+	NEW_LINE,
+	"(Za$;n# se to komplikovat)",
+	CHANGE_CHARACTER,
+	"Na to u{ ses",
+	NEW_LINE,
+	"m+ p>ed chv;l; ptal",
+	NEW_LINE,
+	"nebo ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog30[] = {
+	"Je v@echno v po>#dku, nebol; v#s b>icho?",
+	CHANGE_CHARACTER,
+	"Ano, v@echno je v naprost*m po>#dku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog31[] = {
+	"Je v@echno v po>#dku, netla$; v#s lopatky?",
+	CHANGE_CHARACTER,
+	"V{dy[ v;@. V@echno je, jak m# b^t.",
+	END_DIALOG,
+};
+
+const static char *czechDialog32[] = {
+	"Je v@echno v po>#dku, nem#te nad^m#n;?",
+	CHANGE_CHARACTER,
+	"Je hezk*, {e se pt#@,",
+	NEW_LINE,
+	"ale u{ jsem ti to",
+	NEW_LINE,
+	">;kala n+kolikr#t.",
+	END_DIALOG,
+};
+
+const static char *czechDialog33[] = {
+	"Je v@echno v po>#dku, nec;t;te se mdle?",
+	CHANGE_CHARACTER,
+	"Neopakuj se.",
+	END_DIALOG,
+};
+
+const static char *czechDialog34[] = {
+	"Je v@echno v po>#dku, nep#l; v#s",
+	NEW_LINE,
+	"{#ha nebo nebol; chodidla?",
+	CHANGE_CHARACTER,
+	"Nep>eru@uj mou pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog35[] = {
+	"Je v@echno v po>#dku?",
+	NEW_LINE,
+	"U@i, nos, \\sta, krk, h^{d+,",
+	NEW_LINE,
+	"n+co takov*ho?",
+	CHANGE_CHARACTER,
+	"Dr{ ml$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog36[] = {
+	"Je v@echno v po>#dku?",
+	END_DIALOG,
+};
+
+const static char *czechDialog37[] = {
+	"Promi<te moji",
+	NEW_LINE,
+	"vlezlost...",
+	CHANGE_CHARACTER,
+	"Ano?...",
+	CHANGE_CHARACTER,
+	"...ale koupil jsem tuto",
+	NEW_LINE,
+	"nevinnou",
+	NEW_LINE,
+	"kv+tinu...",
+	DISPLAY_MESSAGE,
+	"...kter# symbolizuje",
+	NEW_LINE,
+	"moje pot+@en;",
+	NEW_LINE,
+	"{e jsem se s v#mi setkal.",
+	END_DIALOG,
+};
+
+const static char *czechDialog38[] = {
+	"Douf#m,",
+	NEW_LINE,
+	"{e se v#m bude l;bit...",
+	CHANGE_CHARACTER,
+	"Oh, mil^!",
+	DISPLAY_MESSAGE,
+	"C;t;m se opravdu",
+	NEW_LINE,
+	"@[astna...",
+	DISPLAY_MESSAGE,
+	"To je nejhez$; v+c,",
+	NEW_LINE,
+	"co pro mne n+kdo",
+	NEW_LINE,
+	"za posledn;ch deset let...",
+	DISPLAY_MESSAGE,
+	"...ud+lal!",
+	DISPLAY_MESSAGE,
+	"D+kuji ti!",
+	CHANGE_CHARACTER,
+	"Nen; za$. (ufff)",
+	END_DIALOG,
+};
+
+const static char *czechDialog39[] = {
+	"Cht+la byste je@t+",
+	NEW_LINE,
+	"jednu kv+tinu?",
+	CHANGE_CHARACTER,
+	"Jsi velmi hodn^,",
+	NEW_LINE,
+	"m]j mil^, ale ne,",
+	NEW_LINE,
+	"d+kuji.",
+	END_DIALOG,
+};
+
+const static char *czechDialog40[] = {
+	"Jste si jist#, {e",
+	NEW_LINE,
+	"nechcete dal@; kv+tinu?",
+	CHANGE_CHARACTER,
+	"Ano. Jsem si jist#.",
+	END_DIALOG,
+};
+
+const static char *czechDialog41[] = {
+	"Mohl bych si p]j$it tenhle",
+	NEW_LINE,
+	"opra@ova$?",
+	CHANGE_CHARACTER,
+	"Nezn#me se je@t+ tak dob>e,",
+	NEW_LINE,
+	"abych ti p]j$ovala",
+	NEW_LINE,
+	"v+ci na dobr* slovo...",
+	DISPLAY_MESSAGE,
+	"...mo{n# a{ se l*pe pozn#me",
+	NEW_LINE,
+	"nebudu m;t",
+	NEW_LINE,
+	"nic proti.",
+	CHANGE_CHARACTER,
+	"Copak vypad#m nespolehliv+?",
+	CHANGE_CHARACTER,
+	"U{ jsem >ekla.",
+	END_DIALOG,
+};
+
+const static char *czechDialog42[] = {
+	"Zm+nilo se n+co okolo kausy",
+	NEW_LINE,
+	"p]j$ov#n; opra@ova$e?",
+	CHANGE_CHARACTER,
+	"Docela se mi zamlouv# tam, kde je.",
+	END_DIALOG,
+};
+
+const static char *czechDialog43[] = {
+	"Mysl;te, {e bych si mohl",
+	NEW_LINE,
+	"p]j$it opra@ova$",
+	NEW_LINE,
+	"te%, kdy{...?",
+	CHANGE_CHARACTER,
+	"Ale samoz>ejm+,",
+	NEW_LINE,
+	"nevid;m d]vod, pro$ bych nemohla...",
+	DISPLAY_MESSAGE,
+	"...vypomoci takov*mu mil*mu",
+	NEW_LINE,
+	"mlad*mu mu{i jako jse@ ty!..",
+	CHANGE_CHARACTER,
+	"Mnohokr#t v#m d+kuji. (to ale trvalo, babo!)",
+	END_DIALOG,
+};
+
+const static char *czechDialog44[] = {
+	"Ha! Jsem p>ece rychlej@; ne{ pr]jem!",
+	CHANGE_CHARACTER,
+	"V@echno jsem to vid+la, chlap$e!",
+	END_DIALOG,
+};
+
+const static char *czechDialog45[] = {
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	CHANGE_CHARACTER,
+	"To je v po>#dku, jenom douf#m,",
+	NEW_LINE,
+	"{es\' tu mouchu alespo< zabil.",
+	END_DIALOG,
+};
+
+const static char *czechDialog46[] = {
+	"Promi<te, pan;, ale >ekl bych,",
+	NEW_LINE,
+	"{e je va@e pr#dlo u{ such*...",
+	DISPLAY_MESSAGE,
+	"...tak{e by ho te% slunko mohlo",
+	NEW_LINE,
+	"zbyte$n+ vykrabatit a nakrabatit...",
+	CHANGE_CHARACTER,
+	"Jak je mo{n*, {e uschnulo tak rychle?",
+	DISPLAY_MESSAGE,
+	"Rad@i se na to p]jdu pod;vat.",
+	END_DIALOG,
+};
+
+const static char *czechDialog47[] = {
+	CHANGE_CHARACTER,
+	"M+l jsi pravdu chlap$e.",
+	DISPLAY_MESSAGE,
+	"D+kuji ti.",
+	CHANGE_CHARACTER,
+	"Nen; za$.",
+	END_DIALOG,
+};
+
+const static char *czechDialog48[] = {
+	"Pot>ebujete to um+l* jablko?",
+	CHANGE_CHARACTER,
+	"Z#le{; na tom. O tom jablku bych",
+	NEW_LINE,
+	"toho mohla mnoho vypr#v+t.",
+	DISPLAY_MESSAGE,
+	"Vzpom;n#m si, jak jednoho dne",
+	NEW_LINE,
+	"moje mlad@; sestra Marie",
+	NEW_LINE,
+	"zkou@ela...",
+	CHANGE_CHARACTER,
+	"Er, jak je to pov;d#n; asi dlouh*?",
+	CHANGE_CHARACTER,
+	"Oh, nen; p>ece kam sp+chat.",
+	DISPLAY_MESSAGE,
+	"M#me na mluven; cel* hodiny,",
+	NEW_LINE,
+	"ne?",
+	CHANGE_CHARACTER,
+	"Jak tak o tom p>em^@l;m, j# to jablko",
+	NEW_LINE,
+	"vlastn+ ani nepot>ebuju.",
+	DISPLAY_MESSAGE,
+	"D+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog49[] = {
+	"To jabko...",
+	CHANGE_CHARACTER,
+	"~#dn^ p>;b+h, {#dn* jablko.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"~#dn* jablko.",
+	END_DIALOG,
+};
+
+const static char *czechDialog50[] = {
+	"Mohla by to bejt...",
+	DISPLAY_MESSAGE,
+	"...nev+t@; ko$ka ze v@ech ko$ek...",
+	DISPLAY_MESSAGE,
+	"na cel*m sv+t+?...",
+	END_DIALOG,
+};
+
+const static char *czechDialog51[] = {
+	"Mysl;m si, {e je nejvy@@; $as,",
+	NEW_LINE,
+	"abych se p>edstavil.",
+	DISPLAY_MESSAGE,
+	"J# jsem Kevin.",
+	CHANGE_CHARACTER,
+	"Anna.",
+	END_DIALOG,
+};
+
+const static char *czechDialog52[] = {
+	"Ten moment, co jsem zahl*dl ty o$i,",
+	NEW_LINE,
+	"to byla snad nejkr#sn+j@; chv;le",
+	NEW_LINE,
+	"m*ho {ivota.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Teda kdy{ nepo$;t#m,",
+	NEW_LINE,
+	"jak jsme hr#li na doktora",
+	NEW_LINE,
+	"se Zuzanou.",
+	END_DIALOG,
+};
+
+const static char *czechDialog53[] = {
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Ehm...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	DISPLAY_MESSAGE,
+	"Jenom jestli",
+	NEW_LINE,
+	"bys necht+la",
+	NEW_LINE,
+	"n+jak*...",
+	DISPLAY_MESSAGE,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"toti{...",
+	DISPLAY_MESSAGE,
+	"M#m n+co",
+	NEW_LINE,
+	"co bych dal...",
+	NEW_LINE,
+	"teda tob+ dal, proto{e...",
+	DISPLAY_MESSAGE,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Mysl;m, {e",
+	NEW_LINE,
+	"jsi... A...",
+	CHANGE_CHARACTER,
+	"Hej! J# nekou@u!",
+	DISPLAY_MESSAGE,
+	"evidentn+ mi chce@ >;ct n+co hezk^ho,",
+	NEW_LINE,
+	"tak jen do toho.",
+	DISPLAY_MESSAGE,
+	"}ekni to prost+ jednoduch^mi",
+	NEW_LINE,
+	"slovy...",
+	CHANGE_CHARACTER,
+	"Jednoduch^mi slovy?!",
+	CHANGE_CHARACTER,
+	"Ano, jednoduch# slova d+laj;",
+	NEW_LINE,
+	"v+ci jednodu@@;.",
+	CHANGE_CHARACTER,
+	"Oh, ano.",
+	DISPLAY_MESSAGE,
+	"OK.",
+	DISPLAY_MESSAGE,
+	"Jednoduch# slova.",
+	DISPLAY_MESSAGE,
+	"OK.",
+	DISPLAY_MESSAGE,
+	"Tak teda jo.",
+	DISPLAY_MESSAGE,
+	"J# t+ l;bit se a",
+	NEW_LINE,
+	"cht;t d#t kytku.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"}ekla bych, {e tohle bylo a{ moc",
+	NEW_LINE,
+	"zjednodu@en*, mohl bys zkusit...",
+	DISPLAY_MESSAGE,
+	"...n+co trochu komplikovan+j@;ho.",
+	CHANGE_CHARACTER,
+	"Uh...",
+	DISPLAY_MESSAGE,
+	"Promi<...",
+	DISPLAY_MESSAGE,
+	"J# jenom...",
+	DISPLAY_MESSAGE,
+	"jenom jsem ti donesl",
+	NEW_LINE,
+	"kytku.",
+	CHANGE_CHARACTER,
+	"Oh?...",
+	END_DIALOG,
+};
+
+const static char *czechDialog54[] = {
+	"L;b; se ti?",
+	CHANGE_CHARACTER,
+	"Se@ @armantn;.",
+	END_DIALOG,
+};
+
+const static char *czechDialog55[] = {
+	"J#, vlastn+...",
+	CHANGE_CHARACTER,
+	"Jednoduch# slova, chlap$e!",
+	NEW_LINE,
+	"Jednoduch# slova!",
+	END_DIALOG,
+};
+
+const static char *czechDialog56[] = {
+	"Oh, ano...",
+	DISPLAY_MESSAGE,
+	"Cht+l jsem jenom >;ci,",
+	NEW_LINE,
+	"{e jse@ velk#",
+	NEW_LINE,
+	"ko$ka.",
+	CHANGE_CHARACTER,
+	"No to bych asi m+la pod+kovat za poklonu,",
+	NEW_LINE,
+	"d+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog57[] = {
+	"(Ve$er bude sebetr^ze<)",
+	END_DIALOG,
+};
+
+const static char *czechDialog58[] = {
+	"M#m je@t+ jednu",
+	NEW_LINE,
+	"kv+tinu...",
+	CHANGE_CHARACTER,
+	"No, rad+ji to",
+	NEW_LINE,
+	"nep>eh#n+jme.",
+	DISPLAY_MESSAGE,
+	"A jak vid;@, j# tu nejsem jedin# {ena...",
+	DISPLAY_MESSAGE,
+	"...v tomto pokoji...",
+	END_DIALOG,
+};
+
+const static char *czechDialog59[] = {
+	"Tak{e ty nechce@",
+	NEW_LINE,
+	"dal@; kytku?",
+	CHANGE_CHARACTER,
+	"Ne, d+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog60[] = {
+	"Cht+la bys cukr#tko?",
+	CHANGE_CHARACTER,
+	"Se@ roztomilej, ale chci b^t",
+	NEW_LINE,
+	"@t;hl#, nej;m sladk*.",
+	CHANGE_CHARACTER,
+	"Ned+lej si s t;m takov* starosti",
+	NEW_LINE,
+	"i Hardy a Obelix maj; kamar#dy.",
+	CHANGE_CHARACTER,
+	"Hardy a Obelix?!",
+	CHANGE_CHARACTER,
+	"Er, zapome< na to. j# jenom, {e jsem",
+	NEW_LINE,
+	"tadyten bonb=n na@el...",
+	CHANGE_CHARACTER,
+	"Tys ho na@el?!",
+	CHANGE_CHARACTER,
+	"...na@el v jednom luxusn;m obchod+,",
+	NEW_LINE,
+	"le{el tam vystavenej.",
+	DISPLAY_MESSAGE,
+	"Nen; to {#dn# levn# pseudo $okol#da,",
+	NEW_LINE,
+	"ale maxim#ln+ kvalitn; zbo{;!",
+	DISPLAY_MESSAGE,
+	"Je to jenom z p>;rodn;ch v+c;.",
+	NEW_LINE,
+	"(A[ u{ si to sakra vezme,",
+	NEW_LINE,
+	"m#m z toho u{ bolen;).",
+	DISPLAY_MESSAGE,
+	"~#dn* prezervativy v tom nejsou,",
+	NEW_LINE,
+	"vlastn+ nen; v tom nic prezerv...",
+	CHANGE_CHARACTER,
+	"Tak dob>e, kdy{ tolik nal*h#@...",
+	END_DIALOG,
+};
+
+const static char *czechDialog61[] = {
+	ANIM_WAIT,
+	"Khm...",
+	CHANGE_CHARACTER,
+	"Jasn+, asi bych ti m+la",
+	NEW_LINE,
+	"taky n+co d#t...",
+	CHANGE_CHARACTER,
+	"Ale to n*... To samoz>ejm+",
+	NEW_LINE,
+	"nemus;@...",
+	CHANGE_CHARACTER,
+	"OK. Jak si p>eje@.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"No, kdy{ tak nad t;m p>em^@l;m...",
+	CHANGE_CHARACTER,
+	"Tu@ila jsem to. Vy kluci v{dycky",
+	NEW_LINE,
+	"\'n+co\' chcete.",
+	DISPLAY_MESSAGE,
+	"Zadarmo nehrabete nikdy,",
+	NEW_LINE,
+	"jste hor@; ne{ ku>ata.",
+	CHANGE_CHARACTER,
+	"Jednou jsem si uklidil pokoj.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dob>e...",
+	DISPLAY_MESSAGE,
+	"Zapome< na to.",
+	DISPLAY_MESSAGE,
+	"Tady je m]j d#rek pro",
+	NEW_LINE,
+	"tebe.",
+	DISPLAY_MESSAGE,
+	"Je to moje stuha na vlasy.",
+	NEW_LINE,
+	"Mo{n# si na m+ n+kdy vzpomene@.",
+	END_DIALOG,
+};
+
+const static char *czechDialog62[] = {
+	"D+kuju.",
+	NEW_LINE,
+	"Ur$it+ se bude hodit.",
+	END_DIALOG,
+};
+
+const static char *czechDialog63[] = {
+	"Na@el jsem tvoje jm*no na bankovce,",
+	NEW_LINE,
+	"kterou mi dal n+jakej tlus[och.",
+	NEW_LINE,
+	"V;@ o tom n+co?",
+	CHANGE_CHARACTER,
+	"Uka{ mi tu bankovku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog64[] = {
+	"Copak je?!",
+	CHANGE_CHARACTER,
+	"Oh, tohle!...",
+	CHANGE_CHARACTER,
+	"Pro$ bre$;@?!",
+	CHANGE_CHARACTER,
+	"Tahle... tahle...",
+	DISPLAY_MESSAGE,
+	"To jsem si nazaslou{ila!...",
+	DISPLAY_MESSAGE,
+	"N#@... soused, pan.",
+	NEW_LINE,
+	"Pankr#c Oblouk mi jednoho dne",
+	NEW_LINE,
+	"p#r pen+z...",
+	DISPLAY_MESSAGE,
+	"...a >;kal, {e kdy{ mu d#m",
+	NEW_LINE,
+	"pusu, tak {e mi d#",
+	NEW_LINE,
+	"v;c...a kdy{ mu d#m kalhotky, tak...",
+	DISPLAY_MESSAGE,
+	"...ale m+ se to nezd#lo,",
+	NEW_LINE,
+	"tak jsem mu ty...(smrk)",
+	NEW_LINE,
+	"pen;ze vr#tila.",
+	CHANGE_CHARACTER,
+	"Chce@ >;ct, {e se t+ to prase",
+	NEW_LINE,
+	"pokusilo koupit?!",
+	CHANGE_CHARACTER,
+	"Jsem tak ne@[astn#!",
+	CHANGE_CHARACTER,
+	"Tak a je vymalov#no.",
+	NEW_LINE,
+	"Ten chlap;k skon$il!",
+	END_DIALOG,
+};
+
+const static char *czechDialog65[] = {
+	"Hej, ty!",
+	DISPLAY_MESSAGE,
+	"Podala bys\' mi, pros;m ten o>ech,",
+	NEW_LINE,
+	"co le{; vedle tebe?",
+	END_DIALOG,
+};
+
+const static char *czechDialog66[] = {
+	"Tak sakra, pod#@ mi ten o>ech nebo ne?!",
+	END_DIALOG,
+};
+
+const static char *czechDialog67[] = {
+	"Tak jo.",
+	DISPLAY_MESSAGE,
+	"Dostane@, co si zaslou{;@.",
+	DISPLAY_MESSAGE,
+	"Budu ti nad#vat tak dlouho, a{ ti.",
+	DISPLAY_MESSAGE,
+	"studem vyra@; druhej ocas.",
+	DISPLAY_MESSAGE,
+	"Ty hnusn# veverko debiln; vypatlan#...",
+	END_DIALOG,
+};
+
+const static char *czechDialog68[] = {
+	"Ahoj, j# jsem z laborato>;.",
+	NEW_LINE,
+	"Sh#n;me vzorky vever$;ch ko{e@in...",
+	END_DIALOG,
+};
+
+const static char *czechDialog69[] = {
+	"Tak d;ky na o>ech, za to t+ neud#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog70[] = {
+	"Ale j# jsem se nikoho nezeptal,",
+	NEW_LINE,
+	"jestli si tenhle provaz m]{u p]j$it.",
+	DISPLAY_MESSAGE,
+	"|etl jsem v novin#ch, {e br#t si n+$; ",
+	NEW_LINE,
+	"majetek bez dovolen; je trestn*.",
+	DISPLAY_MESSAGE,
+	"Mohli by m+ p>i tom chytit,",
+	NEW_LINE,
+	"a bylo by zle.",
+	DISPLAY_MESSAGE,
+	"Taky by m+ pak @oupli do v+zen;",
+	NEW_LINE,
+	"a tam by m+ tr^znili malomocn; cik#ni.",
+	DISPLAY_MESSAGE,
+	"Mohl bych si t;m po[apat celej {ivot.",
+	END_DIALOG,
+};
+
+const static char *czechDialog71[] = {
+	"I kdy{, kdo krade, m# za t>i.",
+	END_DIALOG,
+};
+
+const static char *czechDialog72[] = {
+	"Posly@te, kamar#di, bu% odsud",
+	NEW_LINE,
+	"okam{it+ vypadnete,",
+	DISPLAY_MESSAGE,
+	"nebo budu muset st>;let.",
+	DISPLAY_MESSAGE,
+	"Opravdovou boucha$kou.",
+	DISPLAY_MESSAGE,
+	"A to bude v#@ Doom.",
+	END_DIALOG,
+};
+
+const static char *czechDialog73[] = {
+	"N+co jsem nachmatal...",
+	DISPLAY_MESSAGE,
+	"...je to...",
+	DISPLAY_MESSAGE,
+	"PAVOUK!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog74[] = {
+	"Ne, {e bych byl n+jakej srab.",
+	DISPLAY_MESSAGE,
+	"Ale m]{e to bejt n+jakej zmutovanej",
+	NEW_LINE,
+	"pavouk, kterej by m+ moh\'",
+	NEW_LINE,
+	"p+kn+ pokousat...",
+	DISPLAY_MESSAGE,
+	"...a j# bych pak byl taky mutant...",
+	DISPLAY_MESSAGE,
+	"...a @lo by po mn+ spousta",
+	NEW_LINE,
+	"mutantobijc]...",
+	DISPLAY_MESSAGE,
+	"...taky bych musel d+lat takov^ ty obli$eje...",
+	DISPLAY_MESSAGE,
+	"...co mutanti oby$ejn+ d+l#vaj;",
+	NEW_LINE,
+	"Vy i J# bych pak mohl p>ij;t k \\razu...",
+	DISPLAY_MESSAGE,
+	"...a ka{dej by m+ cht+l >ezat",
+	NEW_LINE,
+	"a pitvat a kr#jet...",
+	DISPLAY_MESSAGE,
+	"a \\chylov* by m+ dokonce cht+li DO POSTELE!",
+	END_DIALOG,
+};
+
+const static char *czechDialog75[] = {
+	"M#m v;tr z pavouka...",
+	END_DIALOG,
+};
+
+const static char *czechDialog76[] = {
+	"Hal=, mladej je{ku!",
+	DISPLAY_MESSAGE,
+	"M#m pro tebe jeden slu@nej n#vrh.",
+	DISPLAY_MESSAGE,
+	"Velk^ $erstv^ @[avnat^ jabko",
+	NEW_LINE,
+	"ti vym+nim za tu malou zpuch>elou",
+	DISPLAY_MESSAGE,
+	"@i@ku, co m#@ na z#dech.",
+	NEW_LINE,
+	"Jestli to bere@, kejvni $um#kem.",
+	END_DIALOG,
+};
+
+const static char *czechDialog77[] = {
+	"M+lo m+ napadnout, {e se n+co ur$it+",
+	NEW_LINE,
+	"pokaz; - p#dlo je zlomen^.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A hned je o probl*m v;c.",
+	END_DIALOG,
+};
+
+const static char *czechDialog78[] = {
+	"Jak se m#@, velkej chlupatej P*-Es-E*?",
+	END_DIALOG,
+};
+
+const static char *czechDialog79[] = {
+	"P>esta< m+ laskav+ ignorovat.",
+	END_DIALOG,
+};
+
+const static char *czechDialog80[] = {
+	"Je s tebou t+{k# >e$, asi jsi byl",
+	NEW_LINE,
+	"v^>e$n+j@; jako @t+n+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog81[] = {
+	"Tak co? Nechce se ti na velkou bobkovou?",
+	END_DIALOG,
+};
+
+const static char *czechDialog82[] = {
+	"Ano, mohl bych si to vz;t...",
+	DISPLAY_MESSAGE,
+	"Jsem v tich*, klidn* vesni$ce...",
+	DISPLAY_MESSAGE,
+	"Nikde {#dn# policie...",
+	DISPLAY_MESSAGE,
+	"Nikdo neusly@; jejich n#>ek...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Ale j# nem#m {#dnou >eznickou z#st+ru.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(ach jo)",
+	END_DIALOG,
+};
+
+const static char *czechDialog83[] = {
+	"Nedotknu s toho,",
+	NEW_LINE,
+	" jinak bych dostat amok.",
+	DISPLAY_MESSAGE,
+	"Nejd>;v bych pobil v@echny tady",
+	NEW_LINE,
+	"a pak bych vysko$il z obrazovky...",
+	END_DIALOG,
+};
+
+const static char *czechDialog84[] = {
+	"My@ p>ece nechyt;te jen tak.",
+	NEW_LINE,
+	"Bez sna{en;, b+dov#n; a zoufalstv;,",
+	NEW_LINE,
+	"to by p>eci nebyla",
+	DISPLAY_MESSAGE,
+	"{#dn# po>#dn# adventura, ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog85[] = {
+	"Norm#ln+ byl se pokusil ty pt#ky",
+	NEW_LINE,
+	"vystra@it ru$n+, ale kdy{ mi bylo",
+	NEW_LINE,
+	"deset let, vid+l jsem Hitchcook]v film",
+	DISPLAY_MESSAGE,
+	"\'Pt#ci\'. A od t* doby jsem s pt#ky kamar#d.",
+	DISPLAY_MESSAGE,
+	"Mus;me spole$n+ p>ij;t",
+	NEW_LINE,
+	"na n+co jin*ho, na n+jakou fintu.",
+	END_DIALOG,
+};
+
+const static char *czechDialog86[] = {
+	"Hmmm, je tam naps#na divn# v+c.",
+	DISPLAY_MESSAGE,
+	"\"Na konci d;ry najde@ zlato.\"",
+	END_DIALOG,
+};
+
+const static char *czechDialog87[] = {
+	"Vy jste pan Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"Ano, jak se m#te, p>;teli.",
+	DISPLAY_MESSAGE,
+	"Moji lid* m+ upozor<ovali,",
+	NEW_LINE,
+	"{e jste se pokou@el dostat",
+	NEW_LINE,
+	"do m* vily. Pro$pak?",
+	CHANGE_CHARACTER,
+	"Er... v;te...",
+	DISPLAY_MESSAGE,
+	"p>i@el jsem...",
+	NEW_LINE,
+	"se pod;vat na interi*ry dom]...",
+	DISPLAY_MESSAGE,
+	"M#m toti{ pr#zdniny a cht+l jsem",
+	NEW_LINE,
+	"nafotit n+jak* ty fotky, tak*",
+	NEW_LINE,
+	"bych t>eba vy$istil okna a ...",
+	DISPLAY_MESSAGE,
+	"...umyl psa nebo dohodil n+jakej ten",
+	NEW_LINE,
+	"k@eft s digit#ln;ma hodinkama...",
+	CHANGE_CHARACTER,
+	"Aha.Hmm.. Ch#pu t+, p>;teli",
+	NEW_LINE,
+	"je mi to jasn*.",
+	DISPLAY_MESSAGE,
+	"V;@, mal; $muchalov* mi n+kdy nevad;",
+	NEW_LINE,
+	"a n+kdy mi zase ned+laj; dob>e.",
+	NEW_LINE,
+	"Takov^ mal^ $muchal m]{e pracovat...",
+	DISPLAY_MESSAGE,
+	"t>eba pro n+jakou tajnou agenturu",
+	NEW_LINE,
+	"jako je t>eba Hurv;nkovo Osv;cen;",
+	NEW_LINE,
+	"a tak podobn+...",
+	DISPLAY_MESSAGE,
+	"Nem]{u ti dovolit vstoupit do m*ho",
+	NEW_LINE,
+	"domu, proto{e se tam pr#v+",
+	NEW_LINE,
+	"kon# sjezd masochist] a p>ijel",
+	DISPLAY_MESSAGE,
+	"i mark^z DeSade i se svoj; chot;",
+	NEW_LINE,
+	"pan; |achtickou, kter* bys jist+ nerad ru@il",
+	NEW_LINE,
+	"Ud+l#me to jinak.",
+	DISPLAY_MESSAGE,
+	"J# ti tady d#m n+jakej pen;z",
+	NEW_LINE,
+	"a ty si m]{e@ j;t koupit t>eba walkmana",
+	NEW_LINE,
+	"nebo zapou@t+c; $;pky proti",
+	NEW_LINE,
+	"bolestem hlavy.",
+	DISPLAY_MESSAGE,
+	"Co tomu >;k#@?",
+	CHANGE_CHARACTER,
+	"Za co m+ m#te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog88[] = {
+	"No to si teda NIKDY nevezmu!",
+	DISPLAY_MESSAGE,
+	"NIKDY!",
+	CHANGE_CHARACTER,
+	"Neroz$iluj se tak.",
+	DISPLAY_MESSAGE,
+	"Hloupej d#v#, hloup+j@; nebere.",
+	DISPLAY_MESSAGE,
+	"J# u{ te% mus;m j;t, ty se uklidni",
+	NEW_LINE,
+	"a seber si ty prachy.",
+	DISPLAY_MESSAGE,
+	"Nikdo se to nemus; dozv+d+t...",
+	DISPLAY_MESSAGE,
+	"Sbohem, p>;teli.",
+	END_DIALOG,
+};
+
+const static char *czechDialog89[] = {
+	"Nem]{u uv+>it tomu, jak se mnou",
+	NEW_LINE,
+	"zach#zel.",
+	DISPLAY_MESSAGE,
+	"Mimochodem...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"J# ale nejsem hloup+j@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog90[] = {
+	"~]va...",
+	DISPLAY_MESSAGE,
+	"je $ern# jak smola...",
+	DISPLAY_MESSAGE,
+	"...a vypad# jako jednoro{ec,...",
+	DISPLAY_MESSAGE,
+	"...kter^mu n+kdo ust>ih\' zadn; nohy...",
+	DISPLAY_MESSAGE,
+	"...a prot#hl mu hlavu zadkem...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Kresli$ pozad; m+l asi t+{k^ den.",
+	END_DIALOG,
+};
+
+const static char *czechDialog91[] = {
+	"U{ zase musim prohled#vat ko@e?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"No dob>e, vy santus#ci, jsou tam",
+	NEW_LINE,
+	"n+jak^ pap;ry.",
+	END_DIALOG,
+};
+
+const static char *czechDialog92[] = {
+	"Stejn* jako v{dycky...",
+	DISPLAY_MESSAGE,
+	"Katastrofy...",
+	DISPLAY_MESSAGE,
+	"Multimedi#ln; b>e$ky...",
+	DISPLAY_MESSAGE,
+	"Brut#ln; vra{dy...",
+	DISPLAY_MESSAGE,
+	"Satanistick# kolonka...",
+	DISPLAY_MESSAGE,
+	"Polonah^ star^ baby...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"To si mus;m p>edplatit.",
+	END_DIALOG,
+};
+
+const static char *czechDialog93[] = {
+	ANIM_WAIT,
+	"Je{i@...",
+	CHANGE_CHARACTER,
+	"...Ja da d#, ja da d#..",
+	DISPLAY_MESSAGE,
+	"...tada d###, da da d###...",
+	CHANGE_CHARACTER,
+	"To je Oblouk!",
+	CHANGE_CHARACTER,
+	"...d*****@[!...",
+	CHANGE_CHARACTER,
+	"Zp;val n+co do kamery.",
+	CHANGE_CHARACTER,
+	"...cik####nsk^^^ bar==< jsem j###...",
+	CHANGE_CHARACTER,
+	"Byl asi \\pln+ namazanej.",
+	CHANGE_CHARACTER,
+	"...sou{en;;;...",
+	CHANGE_CHARACTER,
+	"To je ubohost. Je{i@.",
+	CHANGE_CHARACTER,
+	"...zase @[astn^^^^;;;;;;!..",
+	CHANGE_CHARACTER,
+	"Hr]za.",
+	CHANGE_CHARACTER,
+	"...a toho v>**da $apnul d+***da...",
+	CHANGE_CHARACTER,
+	"D]kaz o neexistenci boha.",
+	CHANGE_CHARACTER,
+	"...tak, tak, t###k!...",
+	CHANGE_CHARACTER,
+	"To mi sta$ilo.",
+	CHANGE_CHARACTER,
+	"...la, la! La, l###....",
+	END_DIALOG,
+};
+
+const static char *czechDialog94[] = {
+	"Sam^ kulov^...",
+	DISPLAY_MESSAGE,
+	"Toti{, velk^ kulov^, i kdy{, moment...",
+	DISPLAY_MESSAGE,
+	"N+co tam je! N+co se tam v#l;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog95[] = {
+	"Nemysl;te si, pane kucha>, {e byste",
+	NEW_LINE,
+	"m+l p>idat malinko tady toho chilli,",
+	NEW_LINE,
+	"jen tak pro chu[?",
+	CHANGE_CHARACTER,
+	"P>idat?",
+	DISPLAY_MESSAGE,
+	"Pro$?",
+	CHANGE_CHARACTER,
+	"M#m takov^ pocit,",
+	NEW_LINE,
+	"{e nejste zrovna dvakr#t spokojen^",
+	NEW_LINE,
+	"s tou pol*vkou,",
+	DISPLAY_MESSAGE,
+	"kterou va>;te.",
+	NEW_LINE,
+	"Trochu toho ko>en; neu@kod; tolik",
+	NEW_LINE,
+	"jako t>eba p#r pan#k] ko<aku, nemysl;te?",
+	CHANGE_CHARACTER,
+	"N==...",
+	DISPLAY_MESSAGE,
+	"Nen; to @patnej n#pad.",
+	DISPLAY_MESSAGE,
+	"N#hodou taky jedno $ili m#m...",
+	END_DIALOG,
+};
+
+const static char *czechDialog96[] = {
+	CHANGE_CHARACTER,
+	"Tohle... hik!...",
+	DISPLAY_MESSAGE,
+	"Tohle chilllllleeeeee... hble!",
+	DISPLAY_MESSAGE,
+	"...muselo...",
+	DISPLAY_MESSAGE,
+	"...vykvasit...",
+	DISPLAY_MESSAGE,
+	"..je puuo puuol;vce...",
+	DISPLAY_MESSAGE,
+	"...mus;m se j;t proj;t po skle!",
+	DISPLAY_MESSAGE,
+	"Je to trest bo{;!",
+	END_DIALOG,
+};
+
+const static char *czechDialog97[] = {
+	"To r#dio nepot>ebuju,",
+	NEW_LINE,
+	"ale mohly by se hodit jeho baterie.",
+	DISPLAY_MESSAGE,
+	"Bohu{el nikdy nev;m, kudy vniknout",
+	NEW_LINE,
+	"do \\trob t+hle japonskejch",
+	NEW_LINE,
+	"ko$i$ek.",
+	END_DIALOG,
+};
+
+const static char *czechDialog98[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach",
+	DISPLAY_MESSAGE,
+	"Hlas pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Yo, p+kn# p;sni$ka.",
+	END_DIALOG,
+};
+
+const static char *czechDialog99[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach.",
+	DISPLAY_MESSAGE,
+	"Pach pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"M#lem mi to odpravilo $ichov# $idla.",
+	END_DIALOG,
+};
+
+const static char *czechDialog100[] = {
+	CHANGE_CHARACTER,
+	"Kontroln; test: hlas, obraz, pach.",
+	DISPLAY_MESSAGE,
+	"Obraz pozitivn+ analyzov#n.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"A p>;@t+ si stoupni trochu bl;{, br#cho.",
+	END_DIALOG,
+};
+
+const static char *czechDialog101[] = {
+	"M]{u mluvit s...",
+	CHANGE_CHARACTER,
+	"Jdi pry$.",
+	DISPLAY_MESSAGE,
+	"M#m pr#ci.",
+	DISPLAY_MESSAGE,
+	"Va>;m.",
+	DISPLAY_MESSAGE,
+	"Ob+d bude brzy.",
+	DISPLAY_MESSAGE,
+	"Mus;m fachat.",
+	CHANGE_CHARACTER,
+	"Ano, kapit#ne .",
+	END_DIALOG,
+};
+
+const static char *czechDialog102[] = {
+	"Dob>e, ale mo{n#...",
+	CHANGE_CHARACTER,
+	"J#...",
+	DISPLAY_MESSAGE,
+	"...m#m...",
+	DISPLAY_MESSAGE,
+	"...pr#ci.",
+	DISPLAY_MESSAGE,
+	"nech...",
+	DISPLAY_MESSAGE,
+	"...m+...",
+	DISPLAY_MESSAGE,
+	"...NA POKOJI.",
+	DISPLAY_MESSAGE,
+	"OK?",
+	CHANGE_CHARACTER,
+	"Okaj, dokaj.",
+	END_DIALOG,
+};
+
+const static char *czechDialog103[] = {
+	"To je naposled, co se pt#m...",
+	CHANGE_CHARACTER,
+	"Pr#ce.",
+	DISPLAY_MESSAGE,
+	"P jako -censored-.",
+	DISPLAY_MESSAGE,
+	"R jako Rumburak.",
+	DISPLAY_MESSAGE,
+	"A jako Andrew.",
+	DISPLAY_MESSAGE,
+	"C jako Cip;sek",
+	DISPLAY_MESSAGE,
+	"a E jako...",
+	CHANGE_CHARACTER,
+	"Embl*m?",
+	CHANGE_CHARACTER,
+	"Ne. Jako...",
+	CHANGE_CHARACTER,
+	"Evangelium svat^ho Tetsua?",
+	CHANGE_CHARACTER,
+	"Ne, ne. Jako...",
+	CHANGE_CHARACTER,
+	"Emocion#ln+ p>et;{en; kucha>i?",
+	CHANGE_CHARACTER,
+	"Ano, to p>esn+ ono.",
+	DISPLAY_MESSAGE,
+	"A te% u{ m+ pros;mt+ nech b^t!",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e.",
+	END_DIALOG,
+};
+
+const static char *czechDialog104[] = {
+	"Er...",
+	CHANGE_CHARACTER,
+	"Wrrrr...",
+	CHANGE_CHARACTER,
+	"Vlastn+ nic.",
+	END_DIALOG,
+};
+
+const static char *czechDialog105[] = {
+	"Dobr^ den, pane robot.",
+	CHANGE_CHARACTER,
+	"Hej, yo, tak co m]j k#mo,",
+	NEW_LINE,
+	"sly@;@, co ti pov;d#m?",
+	DISPLAY_MESSAGE,
+	"V;@, j# jsem Ludv;k, yo,",
+	NEW_LINE,
+	"Co {e to poud#m?",
+	CHANGE_CHARACTER,
+	"Er...",
+	DISPLAY_MESSAGE,
+	"Je ur$it+ v@echno v po>#dku",
+	NEW_LINE,
+	"s tv^m programem...",
+	DISPLAY_MESSAGE,
+	"...nepozn#v#@, {e jsem Karel |apek?...",
+	CHANGE_CHARACTER,
+	"Co m#@ za probl*m, br#cho?!",
+	DISPLAY_MESSAGE,
+	"Nikdys\' nevid+l repuj;c;ho,",
+	NEW_LINE,
+	"sejf-robota, YO, pohoda, bahno?",
+	CHANGE_CHARACTER,
+	"Vlastn+, nikdy.",
+	CHANGE_CHARACTER,
+	"J# sem nimbl novej.",
+	DISPLAY_MESSAGE,
+	"Novinka, hork# v+c, jasn^?",
+	DISPLAY_MESSAGE,
+	"N+jak^ chytr^ lidi >ikaj, {e",
+	NEW_LINE,
+	"takovej robot m# bejt pro ka{d^ho.",
+	DISPLAY_MESSAGE,
+	"Je@t+ po>#d m+ st;h#@?",
+	NEW_LINE,
+	"Tak mi ty lidi dali lidskou",
+	NEW_LINE,
+	"osobnost, br#cho.",
+	DISPLAY_MESSAGE,
+	"Sleduje@?",
+	NEW_LINE,
+	"Cool, {e jo?",
+	CHANGE_CHARACTER,
+	"Khm... Jo, super.",
+	DISPLAY_MESSAGE,
+	"Tak{e ty jse@ n+jakj sejf?",
+	CHANGE_CHARACTER,
+	"Pozitivn;, br#cho.",
+	DISPLAY_MESSAGE,
+	"Tot#ln+ spolehlivej,",
+	NEW_LINE,
+	"je to jasn^?",
+	DISPLAY_MESSAGE,
+	"Kdy{ m+ bude@ cht;t otev>;t,",
+	NEW_LINE,
+	"mus;@ dok#zat, {e jse@ m]j majitel.",
+	DISPLAY_MESSAGE,
+	"A te% d#vej trojit^ho bacha:",
+	NEW_LINE,
+	"J# m]{u ROZSOUDIT, jestli se@",
+	NEW_LINE,
+	"m]j majitel podle t>ech v+c;:",
+	DISPLAY_MESSAGE,
+	"...obraz, pach a hlas.",
+	NEW_LINE,
+	"Ch#pe@ to, br#cho? YO!",
+	CHANGE_CHARACTER,
+	"A mohl by ses na chvilku otev>;t",
+	NEW_LINE,
+	"jenom abych se pod;val,",
+	NEW_LINE,
+	"co v sob+ m#@?",
+	CHANGE_CHARACTER,
+	"Sor#@, br#cho.",
+	DISPLAY_MESSAGE,
+	"nevypad#@ jako majitel...",
+	DISPLAY_MESSAGE,
+	"...nep#chne@ jako majitel...",
+	DISPLAY_MESSAGE,
+	"...a nezvu$;@ jako majitel.",
+	DISPLAY_MESSAGE,
+	"Tak{e vem rohy na ramena a vypadni!",
+	END_DIALOG,
+};
+
+const static char *czechDialog106[] = {
+	"Sesame, otev>i se...",
+	CHANGE_CHARACTER,
+	"Polib si ty -CENSORED-, skapanej -CENSORED-",
+	END_DIALOG,
+};
+
+const static char *czechDialog107[] = {
+	"Nazd#rek!",
+	CHANGE_CHARACTER,
+	"(Zde bylo tak stra@n* klen;,",
+	NEW_LINE,
+	" {e jsme ho museli",
+	NEW_LINE,
+	"p>ekladateli vyjmout - distribuce)",
+	END_DIALOG,
+};
+
+const static char *czechDialog108[] = {
+	"};k#m v#m, {e tentokr#t",
+	NEW_LINE,
+	"je to n+co velkolep*ho.",
+	CHANGE_CHARACTER,
+	"Je@t+ si vzpom;n#m, jak p>i@el o {ivot",
+	NEW_LINE,
+	"m]j slu{ebn^ p>i zkou@en;",
+	NEW_LINE,
+	"nepr]st>eln*ho tri$ka.",
+	CHANGE_CHARACTER,
+	"To u{ je d#vno...",
+	CHANGE_CHARACTER,
+	"Nebo jak jste mi vnutil @;len^",
+	NEW_LINE,
+	"RAPuj;c; robot-trezor,",
+	NEW_LINE,
+	"kter^ si >;k# Ludv;k...",
+	DISPLAY_MESSAGE,
+	"...a odm;t# se otev;rat.",
+	CHANGE_CHARACTER,
+	"Proto{e se k n+mu chov#te @patn+...",
+	CHANGE_CHARACTER,
+	"Nebo ten recept na l#m#n;",
+	NEW_LINE,
+	"{ensk^ch srdc;, co jste",
+	NEW_LINE,
+	"mi prodal.",
+	CHANGE_CHARACTER,
+	"Pen;ze nazabraly?",
+	CHANGE_CHARACTER,
+	"Negativn;.",
+	CHANGE_CHARACTER,
+	"Zvl#@tn;, v+t@inou zab;raj.",
+	CHANGE_CHARACTER,
+	"Nebo kdy{ jste...",
+	CHANGE_CHARACTER,
+	"DOB}E, DOB}E!",
+	DISPLAY_MESSAGE,
+	"Zapome<me na to!",
+	DISPLAY_MESSAGE,
+	"Ten novej vyn#lez u{ jsem",
+	NEW_LINE,
+	"tak jako tak otestovat s#m!",
+	CHANGE_CHARACTER,
+	"Opravdu?",
+	CHANGE_CHARACTER,
+	"Opravdu.",
+	DISPLAY_MESSAGE,
+	"A m]{u to p>edv*st.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ou kej, jsem sam* oko.",
+	END_DIALOG,
+};
+
+const static char *czechDialog109[] = {
+	ANIM_WAIT,
+	"Velkolep*.",
+	DISPLAY_MESSAGE,
+	"Vyr#b+dlo trpasl;k].",
+	CHANGE_CHARACTER,
+	"Uh, to je jen postrann; efekt.",
+	DISPLAY_MESSAGE,
+	"N+kdy se podobn* v+ci st#vaj;,",
+	NEW_LINE,
+	"tuhle jsem byl na chv;li {ena.",
+	DISPLAY_MESSAGE,
+	"Ale nem+jte obavy, cel* to trv#",
+	NEW_LINE,
+	"jen chvili$ku.",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	END_DIALOG,
+};
+
+const static char *czechDialog110[] = {
+	"Tak a jsem tady.",
+	DISPLAY_MESSAGE,
+	"Tak{e mi pov+zte, post>ehl jste",
+	NEW_LINE,
+	"n+co neobvykl*ho?",
+	CHANGE_CHARACTER,
+	"Ani co by se za p]l nehtu ve@lo.",
+	CHANGE_CHARACTER,
+	"Skv+l*!",
+	DISPLAY_MESSAGE,
+	"Tak{e ty pilulky skute$n+ funguj;!",
+	CHANGE_CHARACTER,
+	"Nepov;dejte.",
+	CHANGE_CHARACTER,
+	"Ano!",
+	DISPLAY_MESSAGE,
+	"Zkuste si zkontrolovat svoji pen+{enku!",
+	CHANGE_CHARACTER,
+	"Moje pen+{enka se m# dob>e jako v{dy...",
+	END_DIALOG,
+};
+
+const static char *czechDialog111[] = {
+	"Kde m#m pen+{enku?!",
+	DISPLAY_MESSAGE,
+	"Zlod+ji!",
+	DISPLAY_MESSAGE,
+	"Vra[ mi ji!",
+	CHANGE_CHARACTER,
+	"Zachovejte klid, tady ji m#te.",
+	END_DIALOG,
+};
+
+const static char *czechDialog112[] = {
+	"Vypro@uji si vysv+tlen;.",
+	CHANGE_CHARACTER,
+	"Ha!",
+	DISPLAY_MESSAGE,
+	"To je nejlep@; v+c, kterou jsem",
+	NEW_LINE,
+	"kdy vynalezl!",
+	CHANGE_CHARACTER,
+	"A co je to?",
+	CHANGE_CHARACTER,
+	"Nevid+l jste m+,",
+	NEW_LINE,
+	"jak jsem v#m ukradl pen+{enku",
+	DISPLAY_MESSAGE,
+	"...proto{e jsem spolknul...",
+	DISPLAY_MESSAGE,
+	"PILULKU |ASU!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Jakou pilulku $asu?",
+	CHANGE_CHARACTER,
+	"Yes!",
+	DISPLAY_MESSAGE,
+	"Ten kdo ji spolkne",
+	NEW_LINE,
+	"{ije tis;ckr#t rychleji",
+	NEW_LINE,
+	"ne{ zbytek sv+ta!",
+	CHANGE_CHARACTER,
+	"Co{ znamen#...",
+	CHANGE_CHARACTER,
+	"To znamen#, {e se sv+t",
+	NEW_LINE,
+	"pro tohoto $lov+ka h^be",
+	NEW_LINE,
+	"tis;ckr#t pomaleji!",
+	DISPLAY_MESSAGE,
+	"Ale jenom na p#r sekund,",
+	NEW_LINE,
+	"d*le to nevydr{;...",
+	CHANGE_CHARACTER,
+	"No... to je zaj;mav*.",
+	NEW_LINE,
+	"Ale na co je to dobr*?",
+	CHANGE_CHARACTER,
+	"O tom jsem nep>em^@lel.",
+	DISPLAY_MESSAGE,
+	"Zamyslete se nad t;m vy.",
+	DISPLAY_MESSAGE,
+	"Nap>;klad byste se mohl dostat",
+	NEW_LINE,
+	"do kina \\pln+ bez l;stku",
+	NEW_LINE,
+	"a nikdo by si toho ani nev@iml!",
+	CHANGE_CHARACTER,
+	"Jo tak, samoz>ejm+!",
+	DISPLAY_MESSAGE,
+	"Skv+l*!",
+	DISPLAY_MESSAGE,
+	"R#d bych si koupil patent!",
+	CHANGE_CHARACTER,
+	"A v tom je pr#v+ probl*m...",
+	DISPLAY_MESSAGE,
+	"Jak v;te, m]j str^$ek Eisler,",
+	NEW_LINE,
+	"v{dycky vynal*zal ty nejlep@; v+ci,",
+	NEW_LINE,
+	"kdy{ byl jaksi...",
+	CHANGE_CHARACTER,
+	"...namazanej...",
+	CHANGE_CHARACTER,
+	"...prost+ vo{ralej.",
+	DISPLAY_MESSAGE,
+	"A to sam* se te% st#v# m+. Bohu{el.",
+	DISPLAY_MESSAGE,
+	"Tak{e v$era ve$er jsem se vzbudil",
+	NEW_LINE,
+	"se sta@nou opic; a...",
+	NEW_LINE,
+	"na@el jsem tyhle pilulky.",
+	DISPLAY_MESSAGE,
+	"Nepamatuju si ani za m#k,",
+	NEW_LINE,
+	"jak jsem je vlastn+ vyrobil.",
+	CHANGE_CHARACTER,
+	"No to snad ne!",
+	CHANGE_CHARACTER,
+	"Ale mohu se pokusit je znovu vyrobit.",
+	DISPLAY_MESSAGE,
+	"Na to ale pot>ebuju va@e pen;ze.",
+	DISPLAY_MESSAGE,
+	"Domluvme se takto:",
+	DISPLAY_MESSAGE,
+	"vy mi postav;te novou",
+	NEW_LINE,
+	"laborato> s modern;m vybaven;m...",
+	DISPLAY_MESSAGE,
+	"...a v#m d#m u{;vac; pr#va.",
+	CHANGE_CHARACTER,
+	"Vy my tedy d#te patent?!",
+	CHANGE_CHARACTER,
+	"Ano.",
+	DISPLAY_MESSAGE,
+	"Jedin*, co m+ zaj;m# je",
+	NEW_LINE,
+	"respekt k v+d+",
+	NEW_LINE,
+	"utopenci s cibulkou.",
+	DISPLAY_MESSAGE,
+	"A Nobelova Cena.",
+	DISPLAY_MESSAGE,
+	"Ch#pete, v+c profesion#ln; cti",
+	NEW_LINE,
+	"rozhovory v novin#ch...",
+	CHANGE_CHARACTER,
+	"Ch#pu. Jsme domluveni.",
+	DISPLAY_MESSAGE,
+	"P>iprav smlouvu.",
+	CHANGE_CHARACTER,
+	"To ti V*na p;sk.",
+	END_DIALOG,
+};
+
+const static char *czechDialog113[] = {
+	"Ten bl#zen mi v+>;.",
+	DISPLAY_MESSAGE,
+	"Ale j# ho vyu{iju...",
+	DISPLAY_MESSAGE,
+	"A ty pilulky $asu...",
+	DISPLAY_MESSAGE,
+	"To bych byl magor,",
+	NEW_LINE,
+	"kdybych je prod#val lidem!",
+	DISPLAY_MESSAGE,
+	"Na patent se m]{u zvysoka",
+	NEW_LINE,
+	"vyzvr#tit!",
+	DISPLAY_MESSAGE,
+	"S pilulkami m]{u vykr#st jakoukoliv banku,",
+	NEW_LINE,
+	"ani{ by m+ n+kdo v]bec vid+l!",
+	DISPLAY_MESSAGE,
+	"Rychleji ne{ sv+tlo!",
+	DISPLAY_MESSAGE,
+	"Nejd>;v ale pot>ebuju ukr#st n+jak^",
+	NEW_LINE,
+	"pen;ze nebo zlato",
+	NEW_LINE,
+	"na vybaven; t* laborato>e.",
+	END_DIALOG,
+};
+
+const static char *czechDialog114[] = {
+	"Ale brzo...",
+	DISPLAY_MESSAGE,
+	"Budu bohatej.",
+	DISPLAY_MESSAGE,
+	"Stra@n+ bohatej.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Budu moci po>#dat orgie, hody, doprovody...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...a nebo bych...",
+	END_DIALOG,
+};
+
+const static char *czechDialog115[] = {
+	ANIM_WAIT,
+	"MOHL KOUPIT PRAHU!...",
+	END_DIALOG,
+};
+
+const static char *czechDialog116[] = {
+	ANIM_WAIT,
+	"To je n#pad!",
+	END_DIALOG,
+};
+
+const static char *czechDialog117[] = {
+	"To u{ jsem zase j#.",
+	CHANGE_CHARACTER,
+	"Tak zase sbohem.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dejme tomu, {e jsem tohle nesly@el.",
+	DISPLAY_MESSAGE,
+	"Je pan Pankr#c Oblouk doma?",
+	CHANGE_CHARACTER,
+	"Ano, ale >;kal, {e v#s nem#m pou@t+t dovnit>.",
+	CHANGE_CHARACTER,
+	"M+?! Pro$?!",
+	CHANGE_CHARACTER,
+	"V#@ posledn; vyn#lez ho st#l",
+	NEW_LINE,
+	"v@echny hodiny v dom+.",
+	CHANGE_CHARACTER,
+	"Oh, ten stroj $asu mysl;te...",
+	DISPLAY_MESSAGE,
+	"Ale te%ko m#m n+co...",
+	CHANGE_CHARACTER,
+	"A to ani nezmi<uju vypa>enou ko$ku.",
+	CHANGE_CHARACTER,
+	"Ta ko$ka je te% @[astn+j@; ne{",
+	NEW_LINE,
+	"my v@ichni ostatn;.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Tedy jestli sv+t je@t+ ve 25. stolet;",
+	NEW_LINE,
+	"v]bec existuje.",
+	DISPLAY_MESSAGE,
+	"Ale to je jedno.",
+	DISPLAY_MESSAGE,
+	"Prost+ m+ mus;te pustit dovnit>.",
+	CHANGE_CHARACTER,
+	"Mysl;te?",
+	CHANGE_CHARACTER,
+	"Nebo >eknu panu Obloukovi,",
+	NEW_LINE,
+	"{e pijete ve slu{b+.",
+	CHANGE_CHARACTER,
+	"Blafujete, nem#te {#dn^ d]kaz.",
+	CHANGE_CHARACTER,
+	"To je bohu{el jedna z v+c;,",
+	NEW_LINE,
+	"kterou si nem]{ete b^t jist^.",
+	END_DIALOG,
+};
+
+const static char *czechDialog118[] = {
+	"Ou Kej, tak teda vejdi ty @pinavej teroristo.",
+	DISPLAY_MESSAGE,
+	"Hlavn+ to nikomu ne>;kej.",
+	CHANGE_CHARACTER,
+	"Jasan. M#@ to u m+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog119[] = {
+	"Tak...",
+	DISPLAY_MESSAGE,
+	"Tak takhle se to v@echno stalo...",
+	DISPLAY_MESSAGE,
+	"Proto nikdo nevid+l kdo ty v+ci",
+	NEW_LINE,
+	"vlastn+ krade. Douf#m, {e m+ pr#v+ te%",
+	NEW_LINE,
+	"n+kdo sexu#ln+ nezneu{;v#...",
+	DISPLAY_MESSAGE,
+	"To je teda opravdu nebezpe$nej",
+	NEW_LINE,
+	"vyn#lez!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Musim Oblouka zastavit!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"N+jak.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Je{i@ ty pilulky co jsem na@el",
+	NEW_LINE,
+	"v Ludv;kovi musej bejt...",
+	DISPLAY_MESSAGE,
+	"Lejna!",
+	DISPLAY_MESSAGE,
+	"Sly@im n+koho p>ich#zet!",
+	END_DIALOG,
+};
+
+const static char *czechDialog120[] = {
+	"Mus;m se n+kam uklidit!",
+	DISPLAY_MESSAGE,
+	"Hned te%!",
+	END_DIALOG,
+};
+
+const static char *czechDialog121[] = {
+	"Budu si muset koupit klasick^ sejf.",
+	DISPLAY_MESSAGE,
+	"Ludv;kovi u{ zase stra@ilo na mozku.",
+	DISPLAY_MESSAGE,
+	"Svat# Panno!",
+	DISPLAY_MESSAGE,
+	"ZAV}I SE ty pod+lan# pixlo!",
+	END_DIALOG,
+};
+
+const static char *czechDialog122[] = {
+	"To u{ je tenhle t^den pot>et;.",
+	DISPLAY_MESSAGE,
+	"Ale dob>e, dob>e!...",
+	DISPLAY_MESSAGE,
+	"U{ jdu!...",
+	END_DIALOG,
+};
+
+const static char *czechDialog123[] = {
+	"...a[ je st>e{eno \\pln+ v@echno.",
+	DISPLAY_MESSAGE,
+	"Pot>ebuju v;c pen+z na bezpe$nostn; syst*m.",
+	DISPLAY_MESSAGE,
+	"M#m jenom dva mu{e a...",
+	CHANGE_CHARACTER,
+	"V;ce pen+z, v;c pen+z!",
+	DISPLAY_MESSAGE,
+	"Nic jin^ho nesly@im jenom v;c pen+z!",
+	CHANGE_CHARACTER,
+	"Dobr#, vysv+tl;m v#m to je@t+ jednou...",
+	END_DIALOG,
+};
+
+const static char *czechDialog124[] = {
+	"Pan Pankr#c Oblouk?",
+	DISPLAY_MESSAGE,
+	"Zrovna jsem dostal zpr#vu",
+	NEW_LINE,
+	"od profesora.",
+	DISPLAY_MESSAGE,
+	"Pros; v#s, zdalipak byste se",
+	NEW_LINE,
+	"nestavil v laborato>i.",
+	DISPLAY_MESSAGE,
+	"};k#, {e znova odhalil strukturu",
+	NEW_LINE,
+	"t+ch pilulek.",
+	END_DIALOG,
+};
+
+const static char *czechDialog125[] = {
+	"A to je v@echno?!",
+	CHANGE_CHARACTER,
+	"Jasn+ ...hik!... ano.",
+	CHANGE_CHARACTER,
+	"Hm, super.",
+	END_DIALOG,
+};
+
+const static char *czechDialog126[] = {
+	"Mus;m je zastavit!",
+	DISPLAY_MESSAGE,
+	"A nezb^v# u{ moc $asu!",
+	END_DIALOG,
+};
+
+const static char *czechDialog127[] = {
+	"Tak, tak...",
+	DISPLAY_MESSAGE,
+	"Za$;n#@ mi pomalu ale jist+ l*zt na nervy.",
+	DISPLAY_MESSAGE,
+	"Nebyl to v]bec @patn^ n#pad utratit",
+	NEW_LINE,
+	"tolik pen+z za bezpe$nostn; syst*m...",
+	DISPLAY_MESSAGE,
+	"Tohle silov* pole je nezni$iteln*!",
+	DISPLAY_MESSAGE,
+	"Cha Cha!",
+	END_DIALOG,
+};
+
+const static char *czechDialog128[] = {
+	"Ale stejn+ t+ musim zab;t.",
+	CHANGE_CHARACTER,
+	"N*, n*!",
+	CHANGE_CHARACTER,
+	"Dr{ hubu!",
+	CHANGE_CHARACTER,
+	"Nestoj; ti to za to!",
+	CHANGE_CHARACTER,
+	"Fakticky?",
+	CHANGE_CHARACTER,
+	"Nechci...",
+	END_DIALOG,
+};
+
+const static char *czechDialog129[] = {
+	CHANGE_CHARACTER,
+	"Chud#k profesor omdlel...",
+	CHANGE_CHARACTER,
+	"Ale... Jak...",
+	DISPLAY_MESSAGE,
+	"Nech#pu v]bec NIC!!!",
+	CHANGE_CHARACTER,
+	"Je to jednoduch*.",
+	DISPLAY_MESSAGE,
+	"P>ipevnili jsme malou mikrokameru",
+	NEW_LINE,
+	"na tvoj; $epici,",
+	DISPLAY_MESSAGE,
+	"tak{e jsme celou dobu v+d+li,",
+	NEW_LINE,
+	"co se d+je.",
+	CHANGE_CHARACTER,
+	"Vy jste vid+li, kdy{ jsem?...",
+	CHANGE_CHARACTER,
+	"Nechci t+ zbyte$n+ znepokojovat.",
+	DISPLAY_MESSAGE,
+	"Ud+lal jsi pro n#s dobrou pr#ci.",
+	CHANGE_CHARACTER,
+	"Ale Pankr#c Oblouk vzal roha!",
+	CHANGE_CHARACTER,
+	"Nen; dule{it^.",
+	DISPLAY_MESSAGE,
+	"M#me profesora a ty n#m d#@ pilulky.",
+	DISPLAY_MESSAGE,
+	"Promi<, ale asi ch#pe@,",
+	NEW_LINE,
+	" {e si je nem]{e@ nechat.",
+	CHANGE_CHARACTER,
+	"Dob>e, ale...",
+	DISPLAY_MESSAGE,
+	"D#te mi alespo< minutku?",
+	DISPLAY_MESSAGE,
+	"M#m s Pankr#cem je@t+ n+jak* osobn;",
+	NEW_LINE,
+	"nevy>e@en* \\$ty.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Dob>e, ale d+lej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog130[] = {
+	ANIM_WAIT,
+	"(gulp)",
+	DISPLAY_MESSAGE,
+	"Ten $asovej efekt nevydr{;",
+	NEW_LINE,
+	"zrovna dvakr#t dlouho...",
+	END_DIALOG,
+};
+
+const static char *czechDialog131[] = {
+	"Prohr#l jste pane!",
+	DISPLAY_MESSAGE,
+	"Polici pr#v+ obklik$uje budovu!",
+	CHANGE_CHARACTER,
+	"Naivko.",
+	DISPLAY_MESSAGE,
+	"Copak ti nedo@lo, {e tu m#m",
+	NEW_LINE,
+	"tajnou \\nikovou chodbu?",
+	CHANGE_CHARACTER,
+	"Nepov;dej.",
+	DISPLAY_MESSAGE,
+	"A ta je jako kde?",
+	CHANGE_CHARACTER,
+	"To ti tak budu >;kat...",
+	DISPLAY_MESSAGE,
+	"Vypadni, ty malej srabe.",
+	DISPLAY_MESSAGE,
+	"M#m pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog132[] = {
+	"Mus;m v#s odzbrojit.",
+	DISPLAY_MESSAGE,
+	"Bu%te hodnej a vzdejte se bez pot;{;.",
+	CHANGE_CHARACTER,
+	"Hele p>esta< s tim, jenom zdr{uje@.",
+	DISPLAY_MESSAGE,
+	"Prost+ odsud vypadni,",
+	NEW_LINE,
+	"ne{ na tebe vyt#hnu pu@ku.",
+	CHANGE_CHARACTER,
+	"Varuju v#s...",
+	CHANGE_CHARACTER,
+	"Kde se v]bec berou takov; nudn^",
+	NEW_LINE,
+	"lidi jako ty?",
+	END_DIALOG,
+};
+
+const static char *czechDialog133[] = {
+	"Dal@; @anci u{ nedostanete...",
+	CHANGE_CHARACTER,
+	"Dob>e.",
+	DISPLAY_MESSAGE,
+	"Te% vypadni.",
+	END_DIALOG,
+};
+
+const static char *czechDialog134[] = {
+	"Nechte u{ kone$n+ toho sb;r#n; pen+z!",
+	END_DIALOG,
+};
+
+const static char *czechDialog135[] = {
+	"Brej den!",
+	CHANGE_CHARACTER,
+	"Zdrav;$ko.",
+	DISPLAY_MESSAGE,
+	"S $;mpak jde@?",
+	CHANGE_CHARACTER,
+	"Poslali m+ sem na n+jak* @kolen;.",
+	CHANGE_CHARACTER,
+	"Dal@; r#doby tajn^ agent, co?",
+	CHANGE_CHARACTER,
+	"Sed;.",
+	CHANGE_CHARACTER,
+	"Uka{ mi pap;ry a pust;m t+ dovnit>.",
+	CHANGE_CHARACTER,
+	"Jasn+.",
+	END_DIALOG,
+};
+
+const static char *czechDialog136[] = {
+	"Nem]{e@ m+ pustit dovnit> bez",
+	NEW_LINE,
+	"t* tup* byrokracie?",
+	CHANGE_CHARACTER,
+	"Bohu{el ne.",
+	DISPLAY_MESSAGE,
+	"Pravidla hry plat; (pou{ije@-pohne@ se).",
+	CHANGE_CHARACTER,
+	"A morousov* jsou morousov* v{dycky.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"A mrtv; lidi jsou mrtv; lidi. V{dycky.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"J=, jasn+. To m#me ale p+knej den, co?",
+	END_DIALOG,
+};
+
+const static char *czechDialog137[] = {
+	"PROSIM, m]{u proj;t?!",
+	CHANGE_CHARACTER,
+	"Samoz>ejm+!",
+	DISPLAY_MESSAGE,
+	"JENOM MI UKA~ SVOJE PAP;RY!",
+	END_DIALOG,
+};
+
+const static char *czechDialog138[] = {
+	"Pus[ m+ dovnit>!",
+	CHANGE_CHARACTER,
+	"Uka{ mi pap;ry!",
+	CHANGE_CHARACTER,
+	"Ty sv]j d{ob bere@ opravdu v#{n+,",
+	NEW_LINE,
+	"{e jo?",
+	CHANGE_CHARACTER,
+	"Jse@ slepej nebo co?",
+	DISPLAY_MESSAGE,
+	"|tu si p>ece $asopis ve slu{b+.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Oh, to jo.",
+	DISPLAY_MESSAGE,
+	"Promi<.",
+	END_DIALOG,
+};
+
+const static char *czechDialog139[] = {
+	"Musim...",
+	CHANGE_CHARACTER,
+	"Pap;ry!",
+	END_DIALOG,
+};
+
+const static char *czechDialog140[] = {
+	"Co to $tete?",
+	CHANGE_CHARACTER,
+	"\'Vojensk* noviny\', samoz>ejm+.",
+	CHANGE_CHARACTER,
+	"Vy se v t+ch vojenskejch v+cech,",
+	NEW_LINE,
+	"p>;mo vy{;v#te, {e?",
+	CHANGE_CHARACTER,
+	"Se@ bl#zen?",
+	DISPLAY_MESSAGE,
+	"Prohl;{;m si obr#zky n#dhern^ch mu{]...",
+	DISPLAY_MESSAGE,
+	"...taky lu@tim k>;{ovky...",
+	DISPLAY_MESSAGE,
+	"...chlemt#m se vtip]m...",
+	DISPLAY_MESSAGE,
+	"...$tu drby...",
+	DISPLAY_MESSAGE,
+	"...poln; a p>espoln; recepty...",
+	CHANGE_CHARACTER,
+	"Va>en;?!",
+	CHANGE_CHARACTER,
+	"No, ano. Noviny se t;m sna{;",
+	DISPLAY_MESSAGE,
+	"z;skat @ir@; okruh $ten#>].",
+	CHANGE_CHARACTER,
+	"Aha.",
+	DISPLAY_MESSAGE,
+	"Dobrej n#pad.",
+	DISPLAY_MESSAGE,
+	"A je tam taky n+co o pleten;?",
+	CHANGE_CHARACTER,
+	"M#m takov^ pocit, {e to byl pokus",
+	NEW_LINE,
+	"o n+jak^ trapn^ vtip.",
+	CHANGE_CHARACTER,
+	"J# a pokou@et se o trapn* vtipy?",
+	DISPLAY_MESSAGE,
+	"Nikdy.",
+	CHANGE_CHARACTER,
+	"Dobr#.",
+	END_DIALOG,
+};
+
+const static char *czechDialog141[] = {
+	"P]j$il byste mi ten $asopis pane?",
+	CHANGE_CHARACTER,
+	"A s $;m si mysl;@, {e potom",
+	NEW_LINE,
+	"budu zab;jet $as?",
+	CHANGE_CHARACTER,
+	"Hmmm...n=..",
+	DISPLAY_MESSAGE,
+	"M#te u sebe alespo< vojenskou kudli$ku, ne?",
+	CHANGE_CHARACTER,
+	"Str#nky $as#ku jsou ale ost>ej@;.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Oh-oh.",
+	END_DIALOG,
+};
+
+const static char *czechDialog142[] = {
+	"Co se d+je?",
+	CHANGE_CHARACTER,
+	"~ijeme. Nebo ne?",
+	END_DIALOG,
+};
+
+const static char *czechDialog143[] = {
+	"Jen tak d#l, pokra$uj ve sv* pr#ci.",
+	END_DIALOG,
+};
+
+const static char *czechDialog144[] = {
+	CHANGE_CHARACTER,
+	"HEJ! Ho% tam zp#te$ku!",
+	END_DIALOG,
+};
+
+const static char *czechDialog145[] = {
+	"Co je? Ho>; ti v budce?",
+	CHANGE_CHARACTER,
+	"Mus;@ mi uk#zat povolen; ke vstupu",
+	NEW_LINE,
+	"ne{ bude@ moci vstoupit",
+	NEW_LINE,
+	"do t#bora.",
+	CHANGE_CHARACTER,
+	"Co kdy{ ti uk#{u jenom z#da?",
+	CHANGE_CHARACTER,
+	"Tak t+ zast>elim.",
+	CHANGE_CHARACTER,
+	"(oh)",
+	END_DIALOG,
+};
+
+const static char *czechDialog146[] = {
+	CHANGE_CHARACTER,
+	"Varuju t+...",
+	DISPLAY_MESSAGE,
+	"Moje kulky jsou rychlej@; ne{ ty..",
+	END_DIALOG,
+};
+
+const static char *czechDialog147[] = {
+	CHANGE_CHARACTER,
+	"V po>#dku.",
+	DISPLAY_MESSAGE,
+	"Ohla@ se u kapit#na.",
+	DISPLAY_MESSAGE,
+	"M+l by tu n+kde b^t.",
+	CHANGE_CHARACTER,
+	"D+kuju. A pozor na datly.",
+	NEW_LINE,
+	"A[ ti nezaberou budku.",
+	END_DIALOG,
+};
+
+const static char *czechDialog148[] = {
+	CHANGE_CHARACTER,
+	"Tak{e my tady z tebe m#me ud+lat mu{e.",
+	NEW_LINE,
+	"Je to tak, Ml;$<#ku?!",
+	CHANGE_CHARACTER,
+	"Erm...",
+	CHANGE_CHARACTER,
+	"Po>#dn^ho tvr%#ka!...",
+	CHANGE_CHARACTER,
+	"Uh...",
+	CHANGE_CHARACTER,
+	"Kterej bude potit krev!",
+	CHANGE_CHARACTER,
+	"J# bych rad@i, t#hle jsou brabci...",
+	CHANGE_CHARACTER,
+	"R#d vid;m tvoje nad@en;, Ml;$<#ku!",
+	DISPLAY_MESSAGE,
+	"Ale neztr#cejme $as!",
+	DISPLAY_MESSAGE,
+	"}ekli mi, {e pot>ebuje@ n+jak* cvi$n* cvi$en;.",
+	DISPLAY_MESSAGE,
+	"Telefonn; seznam znalost; za$;naj;c;ho agenta!",
+	DISPLAY_MESSAGE,
+	"Bude@ muset proj;t t>emi zkou@kami!",
+	DISPLAY_MESSAGE,
+	"Za$neme tou jednodu@@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog149[] = {
+	CHANGE_CHARACTER,
+	"Tv]j \\kol je jednoduch^.",
+	DISPLAY_MESSAGE,
+	"Zamknu t+ tady...",
+	DISPLAY_MESSAGE,
+	"...a ty mus;@ ut*ct.",
+	DISPLAY_MESSAGE,
+	"Je to jasn*?!",
+	CHANGE_CHARACTER,
+	"Pane, j#...",
+	CHANGE_CHARACTER,
+	"SNA~ SE!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog150[] = {
+	ANIM_WAIT,
+	"Hal=?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Hm, super.",
+	END_DIALOG,
+};
+
+const static char *czechDialog151[] = {
+	"OK, bylo to vtipn^.",
+	DISPLAY_MESSAGE,
+	"A te% m+ pus[te ven!",
+	END_DIALOG,
+};
+
+const static char *czechDialog152[] = {
+	"Hej! Je tam n+kdo.",
+	NEW_LINE,
+	"Hal=, proboha je tam n+kdo?!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"POMOC!!!",
+	END_DIALOG,
+};
+
+const static char *czechDialog153[] = {
+	"M+jte slitov#n;!",
+	DISPLAY_MESSAGE,
+	"J# tu zhebnu! Hele, u{ heb#m!",
+	END_DIALOG,
+};
+
+const static char *czechDialog154[] = {
+	"Dost#v#m hlad!",
+	END_DIALOG,
+};
+
+const static char *czechDialog155[] = {
+	"U{ m+ nenapad#, co tam m#m je$et...",
+	END_DIALOG,
+};
+
+const static char *czechDialog156[] = {
+	"}ekl bych...",
+	DISPLAY_MESSAGE,
+	"...{e jsi pro@el prvn;...",
+	DISPLAY_MESSAGE,
+	"...zkou@kou...",
+	DISPLAY_MESSAGE,
+	"...hned se pust;me...",
+	DISPLAY_MESSAGE,
+	"...do zkou@ky dal@;...",
+	END_DIALOG,
+};
+
+const static char *czechDialog157[] = {
+	CHANGE_CHARACTER,
+	"Tak{e, voj#ku.",
+	DISPLAY_MESSAGE,
+	"P>edpokl#dejme,",
+	NEW_LINE,
+	"{e j# jsem te% tv]j zajatec...",
+	DISPLAY_MESSAGE,
+	"...a zn#m moc d]le{it* tajn* heslo.",
+	DISPLAY_MESSAGE,
+	"Tv^m \\kolem je ho ze m+ dostat.",
+	DISPLAY_MESSAGE,
+	"JASAN?!?",
+	CHANGE_CHARACTER,
+	"A jsou zde n+jak# omezen; jako...?",
+	CHANGE_CHARACTER,
+	"Ne.",
+	DISPLAY_MESSAGE,
+	"M]{e@ d+lat, co se ti zl;b;.",
+	CHANGE_CHARACTER,
+	"M]{u v#m taky plivat na $elo",
+	NEW_LINE,
+	"a tahat v#s za...",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ano.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"D+kuju, jenom si d+l#m ment#ln; pozn#mky.",
+	END_DIALOG,
+};
+
+const static char *czechDialog158[] = {
+	"Tak{e rad+ji mi >ekn+te heslo hned,",
+	NEW_LINE,
+	"abychom to m+li rychleji za sebou.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Promyslim si to.",
+	END_DIALOG,
+};
+
+const static char *czechDialog159[] = {
+	"Hej, tak mluvte.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Sly@;te m+?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Orel vol# kapit#na, orel vol# kapit#na!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Beznad+jn*.",
+	END_DIALOG,
+};
+
+const static char *czechDialog160[] = {
+	"Jste p>ipraven mluvit?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"OK, d#m v#m je@t+ p#r chvil.",
+	END_DIALOG,
+};
+
+const static char *czechDialog161[] = {
+	"Tak{e, co je to za heslo?",
+	CHANGE_CHARACTER,
+	"Di se zprznit, patetickej fracku.",
+	CHANGE_CHARACTER,
+	"Bu%te hezky hodnej nebo v#s polocht#m znova...",
+	CHANGE_CHARACTER,
+	"Jen do toho, budu jen r#d.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"V#m se to l;bilo, {e ano?",
+	CHANGE_CHARACTER,
+	"Nebylo te nejhor@;...",
+	CHANGE_CHARACTER,
+	"Aha, vymysl;m tedy n+co chyt>ej@;ho.",
+	END_DIALOG,
+};
+
+const static char *czechDialog162[] = {
+	"N+co jsem v#m p>inesl...",
+	CHANGE_CHARACTER,
+	"M+ neuplat;@.",
+	CHANGE_CHARACTER,
+	"Mysl;te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog163[] = {
+	NEW_LINE,
+	"SEM S TIM!!!",
+	DISPLAY_MESSAGE,
+	"Ud+l#m COKOLIV!!!",
+	CHANGE_CHARACTER,
+	"Heslo...",
+	CHANGE_CHARACTER,
+	"Heslo je \'KAFE\'.",
+	DISPLAY_MESSAGE,
+	"}ekni to barmanovi a on ti n+co d#.",
+	DISPLAY_MESSAGE,
+	"Pak ti >ekne o t>et;m \\kolu.",
+	DISPLAY_MESSAGE,
+	"A te% m+ rozva{!!!",
+	CHANGE_CHARACTER,
+	"Promyslim si to...",
+	END_DIALOG,
+};
+
+const static char *czechDialog164[] = {
+	"Ty...",
+	DISPLAY_MESSAGE,
+	"...ty...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"...tys to dok#zal!",
+	END_DIALOG,
+};
+
+const static char *czechDialog165[] = {
+	"Zaj;mal by t+ tenhle m==c p+knej",
+	NEW_LINE,
+	"kaleidoskop?",
+	CHANGE_CHARACTER,
+	"Jednou jsem takovej taky m;val, ale",
+	NEW_LINE,
+	"kapit#n mi ho vzal, abych si s n;m",
+	DISPLAY_MESSAGE,
+	"nehr#l, te% si s n;m asi hraje,",
+	NEW_LINE,
+	"s#m, zloduch.",
+	CHANGE_CHARACTER,
+	"Kdy{ tak vid;m ty kr#sn* noviny napad# m+,",
+	NEW_LINE,
+	"{e bychom mohli ud+lat v^m+nu.",
+	CHANGE_CHARACTER,
+	"Ale nesm;@ nikomu vyzvonit, odkud je m#@...",
+	CHANGE_CHARACTER,
+	"Plat;.",
+	CHANGE_CHARACTER,
+	"...ale co kdy{ m+ s t;m kapit#n zase uvid;?",
+	CHANGE_CHARACTER,
+	"Neboj se, je p>iv#zanej k {idli.",
+	CHANGE_CHARACTER,
+	"Aha, test $;slo dv+, p>edpokl#d#m...",
+	CHANGE_CHARACTER,
+	"Jo.",
+	CHANGE_CHARACTER,
+	"Dobr#, tak co to v t* trubce m#me te%?",
+	END_DIALOG,
+};
+
+const static char *czechDialog166[] = {
+	"\'KAFE.",
+	END_DIALOG,
+};
+
+const static char *czechDialog167[] = {
+	CHANGE_CHARACTER,
+	"Hork*, {e?",
+	CHANGE_CHARACTER,
+	"Uh-huh.",
+	DISPLAY_MESSAGE,
+	"Kapit#n >;kal, {e mi pov;te n+co o",
+	NEW_LINE,
+	"t>et;m \\kolu.",
+	CHANGE_CHARACTER,
+	"Jsem sam^ ucho...",
+	DISPLAY_MESSAGE,
+	"No, je to takov# hra na schov#vanou.",
+	DISPLAY_MESSAGE,
+	"Kapit#n se schov# a ty hled#@.",
+	CHANGE_CHARACTER,
+	"Ale j# ho nechal p>iv#zan*ho k {idli!",
+	CHANGE_CHARACTER,
+	"Vy jste se bi$ovali, co?",
+	DISPLAY_MESSAGE,
+	"V posledn; dob+ to n+jak p>eh#n;!...",
+	DISPLAY_MESSAGE,
+	"Ale stejn+ - oklamal t+.",
+	DISPLAY_MESSAGE,
+	"Jdi se tam schv#ln+ pod;vat.",
+	DISPLAY_MESSAGE,
+	"Vsadim se, {e u{ je pry$.",
+	CHANGE_CHARACTER,
+	"Ale j# jsem mu sebral n]{!",
+	DISPLAY_MESSAGE,
+	"|;m by si p>e>ezal provazy?!",
+	CHANGE_CHARACTER,
+	"Mo{n# odhopsal s {idl; u zadku,",
+	NEW_LINE,
+	"u{ se to p#rkr#t stalo...",
+	CHANGE_CHARACTER,
+	"Rozumim.",
+	DISPLAY_MESSAGE,
+	"Na@ly by se n+jak^ Tipy a Triky?",
+	CHANGE_CHARACTER,
+	"Nic.",
+	CHANGE_CHARACTER,
+	"Ale no tak.",
+	CHANGE_CHARACTER,
+	"Ne, chlap$e. Hraje se f*r.",
+	END_DIALOG,
+};
+
+const static char *czechDialog168[] = {
+	"Na@la by se n+jak# ta rada?",
+	CHANGE_CHARACTER,
+	"Ne.",
+	END_DIALOG,
+};
+
+const static char *czechDialog169[] = {
+	"Zdrav;$ko pane, j# jsem Kevin.",
+	CHANGE_CHARACTER,
+	"To je @koda, {e nejse@ rad@i stokoruna.",
+	DISPLAY_MESSAGE,
+	"Co pro tebe m]{u ud+lat?",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"M]{ete mi d#t velkou spoustu pen+z...",
+	DISPLAY_MESSAGE,
+	"...nebo se m]{ete postavit na hlavu...",
+	DISPLAY_MESSAGE,
+	"...nebo mastur...",
+	CHANGE_CHARACTER,
+	"Dob>e, dob>e. D+l#m si b{undu.",
+	DISPLAY_MESSAGE,
+	"Tak{e?...",
+	CHANGE_CHARACTER,
+	"Kdo jin^ je tu je@t+ s n#mi v t#bo>e?",
+	CHANGE_CHARACTER,
+	"Ty jse@ novin#>?",
+	CHANGE_CHARACTER,
+	"Ne, jsem tajnej agent.",
+	CHANGE_CHARACTER,
+	"Ty taky?",
+	DISPLAY_MESSAGE,
+	"Jsme tady jenom t>i.",
+	DISPLAY_MESSAGE,
+	"J#, kapit#n a str#{n^.",
+	CHANGE_CHARACTER,
+	"~#dn* {ensk*?",
+	CHANGE_CHARACTER,
+	"Ani noha.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Erm, tak to bychom nem+li...",
+	END_DIALOG,
+};
+
+const static char *czechDialog170[] = {
+	"Nen; tu moc velkej provoz, co?",
+	CHANGE_CHARACTER,
+	"Chce@ si n+co objednat nebo ne?",
+	CHANGE_CHARACTER,
+	"Nem#m pen;ze.",
+	CHANGE_CHARACTER,
+	"Dnes je to zdarma.",
+	CHANGE_CHARACTER,
+	"Fakticky?",
+	CHANGE_CHARACTER,
+	"Fakticky.",
+	CHANGE_CHARACTER,
+	"Chci p#rek v rohl;ku.",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Pizza?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Brambor#k?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	"Cokoliv?",
+	CHANGE_CHARACTER,
+	"N+t.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ne, d+kuju.",
+	DISPLAY_MESSAGE,
+	"Nem#m hlad.",
+	END_DIALOG,
+};
+
+const static char *czechDialog171[] = {
+	"Co pijete?",
+	CHANGE_CHARACTER,
+	"|aj.",
+	CHANGE_CHARACTER,
+	"Aha.",
+	END_DIALOG,
+};
+
+const static char *czechDialog172[] = {
+	"Hezk^ po$as;.",
+	CHANGE_CHARACTER,
+	"Mhmmm...",
+	END_DIALOG,
+};
+
+const static char *czechDialog173[] = {
+	"N+kdy se c;t;m unaven+.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Jako kdyby m+ vedla slep# my@ (doslova).",
+	END_DIALOG,
+};
+
+const static char *czechDialog174[] = {
+	"Hele, Woodstock u{ skon$il!",
+	END_DIALOG,
+};
+
+const static char *czechDialog175[] = {
+	"D+kuju.",
+	END_DIALOG,
+};
+
+const static char *czechDialog176[] = {
+	CHANGE_CHARACTER,
+	"Co to sakra...",
+	END_DIALOG,
+};
+
+const static char *czechDialog177[] = {
+	"Hej, Nem#te {;ze<?",
+	DISPLAY_MESSAGE,
+	"Nezapomn+l jste na sv]j @#lek $aje?",
+	END_DIALOG,
+};
+
+const static char *czechDialog178[] = {
+	"Pane, byl jsem informov#n, {e...",
+	CHANGE_CHARACTER,
+	"Pozd+ji!",
+	DISPLAY_MESSAGE,
+	"Te% jsem zanepr#zdn+n!",
+	CHANGE_CHARACTER,
+	"Jak si p>ejete pane.",
+	END_DIALOG,
+};
+
+const static char *czechDialog179[] = {
+	"Pane, n+jak^ mlad^ chlapec se pokou@el",
+	NEW_LINE,
+	"dostat do vily.",
+	END_DIALOG,
+};
+
+const static char *czechDialog180[] = {
+	"Nem+jte strach.",
+	DISPLAY_MESSAGE,
+	"Mlad^ chlapci jsou zv+dav;...",
+	DISPLAY_MESSAGE,
+	"...a m]j d]m v nich zv+davost jenom podn+cuje.",
+	DISPLAY_MESSAGE,
+	"Ale m+jte ho na o$;ch.",
+	CHANGE_CHARACTER,
+	"Ano, pane!",
+	END_DIALOG,
+};
+
+const static char *czechDialog181[] = {
+	"Pane, ten chlapec se zase pokou@el dostat dovnit>.",
+	END_DIALOG,
+};
+
+const static char *czechDialog182[] = {
+	"Mysl;@, {e je to v#{n*?",
+	CHANGE_CHARACTER,
+	"Hmmm... Ne...",
+	DISPLAY_MESSAGE,
+	"To u{ je zvl#@tn;. Ale snad to bude OK,",
+	DISPLAY_MESSAGE,
+	"pokud to nen; n+jakej cvok.",
+	DISPLAY_MESSAGE,
+	"Mo{n# bychom m+li...",
+	CHANGE_CHARACTER,
+	"Ale n*.",
+	DISPLAY_MESSAGE,
+	"Jenom ho dr{ pry$ od vily.",
+	DISPLAY_MESSAGE,
+	"Ale >ekni mi, kdyby se o n+co pokou@el.",
+	DISPLAY_MESSAGE,
+	"Te% se vra[ do pr#ce.",
+	END_DIALOG,
+};
+
+const static char *czechDialog183[] = {
+	"Ne>;kej mi, {e u{ je to zase ten kluk...",
+	CHANGE_CHARACTER,
+	"Ob#v#m se, {e ano.",
+	DISPLAY_MESSAGE,
+	"Str#{n^ u br#ny >;k#,",
+	DISPLAY_MESSAGE,
+	"{e ten kluk je zoufalej.",
+	END_DIALOG,
+};
+
+const static char *czechDialog184[] = {
+	"U{ my za$;n# l*zt na nervy.",
+	DISPLAY_MESSAGE,
+	"A za co t+ asi plat;m? Pr#v+ od toho,",
+	DISPLAY_MESSAGE,
+	"aby pot;{e lezly po nervech tv^ch a ne m^ch!",
+	CHANGE_CHARACTER,
+	"Tak j# ho...",
+	CHANGE_CHARACTER,
+	"Je@t+ ne. D#me mu je@t+ posledn; @anci.",
+	DISPLAY_MESSAGE,
+	"U{ je to opravdu n+jak^ divn^. ",
+	END_DIALOG,
+};
+
+const static char *czechDialog185[] = {
+	"Pane...",
+	CHANGE_CHARACTER,
+	"Nech m+ h#dat...",
+	DISPLAY_MESSAGE,
+	"TEN Chlapec?!?...",
+	CHANGE_CHARACTER,
+	"Z#sah.",
+	CHANGE_CHARACTER,
+	"Pro$ se mus;m o v@echno starat j#?!",
+	DISPLAY_MESSAGE,
+	"copak nedok#{e@ nic vy>;dit s#m?",
+	CHANGE_CHARACTER,
+	"M#m ho zab;t nebo jenom rozb;t na kousky?",
+	CHANGE_CHARACTER,
+	"Stupidn; housko.",
+	DISPLAY_MESSAGE,
+	"Jsou zde... lep@; cesty...",
+	END_DIALOG,
+};
+
+const static char *czechDialog186[] = {
+	"Zvl#dnu to s#m.",
+	DISPLAY_MESSAGE,
+	"Te% vypadni!",
+	DISPLAY_MESSAGE,
+	"Musim se p>evl*knout.",
+	END_DIALOG,
+};
+
+const static char *czechDialog187[] = {
+	"Hele, ty tam naho>e!",
+	DISPLAY_MESSAGE,
+	"Okam{it+ slez dol]!",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Nulov# reakce.",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Je snad hluchej nebo co?",
+	END_DIALOG,
+};
+
+const static char *czechDialog188[] = {
+	"Hej, pt#ku, nesty% se.",
+	DISPLAY_MESSAGE,
+	"Poj% se sezn#mit...",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"(ach jo)",
+	END_DIALOG,
+};
+
+const static char *czechDialog189[] = {
+	"Pu[a Ba[a, malej ope>enej...",
+	END_DIALOG,
+};
+
+const static char *czechDialog190[] = {
+	NEW_LINE,
+	"Hej, vypadni od t+ch dve>;!",
+	CHANGE_CHARACTER,
+	"Pro$?",
+	CHANGE_CHARACTER,
+	"Ty dve>e t+ nemaj r#dy,",
+	NEW_LINE,
+	"mohly by se na@tvat a zamknout.",
+	DISPLAY_MESSAGE,
+	"Prost+ se od nich dr{ d#l.",
+	END_DIALOG,
+};
+
+const static char *czechDialog191[] = {
+	CHANGE_CHARACTER,
+	"};kal jsem ti, abys tam ne$muchal!",
+	CHANGE_CHARACTER,
+	"OK, OK...",
+	END_DIALOG,
+};
+
+const static char *czechDialog192[] = {
+	"M#m pro v#s novou z#silku zlata.",
+	CHANGE_CHARACTER,
+	"Ano, v;m.",
+	DISPLAY_MESSAGE,
+	"Heslo?",
+	CHANGE_CHARACTER,
+	"M+s;$ky.",
+	CHANGE_CHARACTER,
+	"V po>#dku.",
+	DISPLAY_MESSAGE,
+	"M]{ete to odn*st dovnit>.",
+	CHANGE_CHARACTER,
+	"\'si pi@, @*fe.",
+	END_DIALOG,
+};
+
+const static char *czechDialog193[] = {
+	"Jak u{ jsem >ekl, na@e organizace",
+	NEW_LINE,
+	"se zab^v# nevy>e@iteln^mi z#hadami.",
+	DISPLAY_MESSAGE,
+	"Nap>;klad ned#vno jsme vy>e@ili spat>en;",
+	NEW_LINE,
+	"kor#bu UFO nad nudistpl#{i \'Amerika\'",
+	NEW_LINE,
+	"a{ kdesi v |esk* republice.",
+	CHANGE_CHARACTER,
+	"Nef;kejte!",
+	DISPLAY_MESSAGE,
+	"Jak?",
+	CHANGE_CHARACTER,
+	"Sest>elili jsme je.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ch#pu.",
+	DISPLAY_MESSAGE,
+	"A co bylo.. co bylo ufnitf?",
+	CHANGE_CHARACTER,
+	"Chcete to v+d+t?",
+	CHANGE_CHARACTER,
+	"O= ano, jako v+ftkyn+ jfem velmi",
+	NEW_LINE,
+	"zv+dav# a zv;dav# ofobnoft.",
+	CHANGE_CHARACTER,
+	"OPRAVDU to chcete v+d+t?",
+	CHANGE_CHARACTER,
+	"ANO!",
+	CHANGE_CHARACTER,
+	"Ale...",
+	DISPLAY_MESSAGE,
+	"...opravdu, OPRAVDU?",
+	CHANGE_CHARACTER,
+	"ANO!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Bohu{el, je to tajn*...",
+	DISPLAY_MESSAGE,
+	"Ka{dop#dn+, pot>ebujeme va@i pomoc.",
+	CHANGE_CHARACTER,
+	"J# nejsem {#dn^ agent, ale v+ftkyn+...",
+	CHANGE_CHARACTER,
+	"J# v;m.",
+	DISPLAY_MESSAGE,
+	"M#me tu velice slo{it^ p>;pad,",
+	NEW_LINE,
+	"se kter^m jsme za posledn;ch @est",
+	NEW_LINE,
+	"m+s;c] nedok#zali v]bec hnout.",
+	DISPLAY_MESSAGE,
+	"Jsme v beznad+jn* situaci.",
+	DISPLAY_MESSAGE,
+	"Tak{e jsem si >ekl, kdy{ u{ se zab^v#me",
+	NEW_LINE,
+	"zvl#@tn;mi p>;pady...",
+	DISPLAY_MESSAGE,
+	"...tak pro$ bychom nepou{ili",
+	NEW_LINE,
+	"i trochu nestandardn; metody?",
+	CHANGE_CHARACTER,
+	"A?...",
+	CHANGE_CHARACTER,
+	"Pod;vejte, uk#{u v#m Zlat* Str#nky.",
+	DISPLAY_MESSAGE,
+	"Za pou{it; sv^ch schopnost; vyberte jm*no.",
+	DISPLAY_MESSAGE,
+	"Mo{n# to bude pr#v+ ON,",
+	NEW_LINE,
+	"ten, kdo n#m pom]{e celou v+c vy>e@it.",
+	CHANGE_CHARACTER,
+	"Ale nev+f;te fnad, {e to bude fungovat?",
+	CHANGE_CHARACTER,
+	"Ne, to v]bec ne.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Fdy[ je to blboft!",
+	CHANGE_CHARACTER,
+	"J# vim.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Ou key, tak mi ty Zlat^ Stf#nky uka{te.",
+	END_DIALOG,
+};
+
+const static char *czechDialog194[] = {
+	ANIM_WAIT,
+	"To jm*no je...",
+	DISPLAY_MESSAGE,
+	"...Kevin...",
+	DISPLAY_MESSAGE,
+	"...Kevin Hoppef...",
+	END_DIALOG,
+};
+
+const static char *czechDialog195[] = {
+	"T#mhle je.",
+	END_DIALOG,
+};
+
+const static char *czechDialog196[] = {
+	"Omlouv#m se za svoje mu{e.",
+	DISPLAY_MESSAGE,
+	"N+kdy jsou mali$ko nerv=zn;...",
+	DISPLAY_MESSAGE,
+	"Ale pros;m,",
+	DISPLAY_MESSAGE,
+	"poj%me si promluvit...",
+	END_DIALOG,
+};
+
+const static char *czechDialog197[] = {
+	"Poslouchej ty plesnivej d+dku...",
+	CHANGE_CHARACTER,
+	"Uklidni se.",
+	DISPLAY_MESSAGE,
+	"Dej mi p+t minut a j# se budu sna{it",
+	NEW_LINE,
+	"v@echno vysv+tlit.",
+	CHANGE_CHARACTER,
+	"Dob>e, p+t minut. Pak za$nu zu>it.",
+	CHANGE_CHARACTER,
+	"Tak{e...",
+	DISPLAY_MESSAGE,
+	"J# jsem @*f tajn* @pion#{n; organizace",
+	NEW_LINE,
+	"Hurv;nkovo spasen;.",
+	CHANGE_CHARACTER,
+	"Hurv;nkovo spasen;? Proboha pro$?",
+	CHANGE_CHARACTER,
+	"Ani s#m nev;m.",
+	DISPLAY_MESSAGE,
+	"Je to tajn*.",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Tak to je teda n+co.",
+	CHANGE_CHARACTER,
+	"C;lem na@; organizace je >e@it v@echny",
+	NEW_LINE,
+	"z#hadn* a potenci#ln+ nebezpe$n* probl*my sv+ta.",
+	CHANGE_CHARACTER,
+	"Jako dan+?",
+	CHANGE_CHARACTER,
+	"Ne, jako UFO, vyn#lezy @;len^ch v+dc],",
+	NEW_LINE,
+	"o{ivl* mrtv*...",
+	CHANGE_CHARACTER,
+	"F;ha!",
+	CHANGE_CHARACTER,
+	"Ano, kdy{ si nev; rady ani policie a speci#ln;",
+	NEW_LINE,
+	"vl#dn; jednotky...",
+	DISPLAY_MESSAGE,
+	"...p>ed#v# se to n#m. Ale...",
+	DISPLAY_MESSAGE,
+	"Jinak. P>ed @esti m+s;ci za$alo mizet p>;mo",
+	NEW_LINE,
+	"z trezor] bank obrovsk* mno{stv; zlata,",
+	NEW_LINE,
+	"bankovek a cenn^ch pap;r].",
+	DISPLAY_MESSAGE,
+	"Doslova! Puf! A je to v@echno pry$.",
+	CHANGE_CHARACTER,
+	"Jako \'PUF\' a je to pry$...?",
+	CHANGE_CHARACTER,
+	"P>esn+ tak, zmiz; beze stopy,",
+	NEW_LINE,
+	" zn; to neuv+>iteln+, {e?",
+	DISPLAY_MESSAGE,
+	"Cel* se to v{dy odehraje za pouh^ch p#r sekund.",
+	DISPLAY_MESSAGE,
+	"Jsou tam v@ude kamery, ale neukazuj;",
+	NEW_LINE,
+	"v]bec nic, pouze miz;c; zlato.",
+	DISPLAY_MESSAGE,
+	"A proto jsme najmuli vizion#>ku,",
+	NEW_LINE,
+	"aby n#m na@la n+koho, kdo si s t;m",
+	NEW_LINE,
+	"bude v+d+t rady.",
+	DISPLAY_MESSAGE,
+	"Vybrala tebe.",
+	CHANGE_CHARACTER,
+	"Prosim?!",
+	DISPLAY_MESSAGE,
+	"};kal jste, {e jste najmuli vizion#>ku...",
+	DISPLAY_MESSAGE,
+	"...takovou tu, co vykl#d# budoucnost?!?",
+	CHANGE_CHARACTER,
+	"Ano, jsme v beznad+jn* situaci",
+	NEW_LINE,
+	"a pokou@;me se o ka{d* mo{n* >e@en;.",
+	CHANGE_CHARACTER,
+	"(o$i v sloup) Tohle je @;len^! Maminko, vzbu% m+.",
+	NEW_LINE,
+	"Je tu n+jakej @;lenej buzik a...",
+	CHANGE_CHARACTER,
+	"Uklidni se.",
+	DISPLAY_MESSAGE,
+	"M#me pro tebe n#vrh.",
+	DISPLAY_MESSAGE,
+	"Pokus se n#m pomoci a bude@ @t+d>e odm+n+n.",
+	CHANGE_CHARACTER,
+	"Jak?",
+	CHANGE_CHARACTER,
+	"Uspokojen;m z dob>e vykonan* pr#ce?",
+	END_DIALOG,
+};
+
+const static char *czechDialog198[] = {
+	CHANGE_CHARACTER,
+	"Slavnostn; poh>eb?",
+	END_DIALOG,
+};
+
+const static char *czechDialog199[] = {
+	CHANGE_CHARACTER,
+	"|estn# vyznamen#n;?",
+	END_DIALOG,
+};
+
+const static char *czechDialog200[] = {
+	CHANGE_CHARACTER,
+	"Holky?",
+	CHANGE_CHARACTER,
+	"HOLKY! Kde?.",
+	CHANGE_CHARACTER,
+	"Ka{d# holka miluje tajn^ agenty.",
+	END_DIALOG,
+};
+
+const static char *czechDialog201[] = {
+	"Dob>e, beru to. Co m#m tedy d+lat?",
+	CHANGE_CHARACTER,
+	"Ne{ p]jde@ do ostr* mise, doporu$uji",
+	NEW_LINE,
+	"alespo< kr#tk^ speci#ln; v^cvik",
+	NEW_LINE,
+	"v na@em tajn*m v^cvikov*m t#bo>e.",
+	DISPLAY_MESSAGE,
+	"P>iprav;m pro tebe propustku.",
+	DISPLAY_MESSAGE,
+	"Domluveno?",
+	CHANGE_CHARACTER,
+	"Domluveno!",
+	END_DIALOG,
+};
+
+const static char *czechDialog202[] = {
+	"...a byla to docela sranda.",
+	CHANGE_CHARACTER,
+	"To jsem r#d, {e se ti l;bily na@e",
+	NEW_LINE,
+	"tr*ninkov* metody.",
+	DISPLAY_MESSAGE,
+	"Ale k v+ci.",
+	DISPLAY_MESSAGE,
+	"Mus;m se p>iznat, {e jsem nev+>il,",
+	NEW_LINE,
+	"{e bys mohl b^t skute$n+ u{ite$n^.",
+	DISPLAY_MESSAGE,
+	"Nic osobn;ho.",
+	CHANGE_CHARACTER,
+	"To douf#m.",
+	CHANGE_CHARACTER,
+	"Ale p>inesl jsi n#m @t+st;.",
+	DISPLAY_MESSAGE,
+	"Na@i lid* zjistili, {e jak^si...",
+	DISPLAY_MESSAGE,
+	"...byznysnem utr#c; pen;ze jak @;len^",
+	NEW_LINE,
+	"kupuje nejen stovky prezervativ] a,",
+	NEW_LINE,
+	"ply@ov^ch medv;dk], ale tak*...",
+	DISPLAY_MESSAGE,
+	"...n+kter* velice podivn* suroviny.",
+	DISPLAY_MESSAGE,
+	"Mimoto jsou zde t>i velmi podivn*",
+	NEW_LINE,
+	"v+ci okolo tohoto chl#pka:",
+	DISPLAY_MESSAGE,
+	"...v{dy plat; bankovkami, co{ je v dne@n;",
+	NEW_LINE,
+	"dob+ platebn;ch karet dost divn*...",
+	DISPLAY_MESSAGE,
+	"...za druh*, p>ed p]l rokem se mu o bohatstv;",
+	NEW_LINE,
+	"jak* m# te% ani nesnilo...",
+	DISPLAY_MESSAGE,
+	"...a za t>et;, na co, sakra, pot>ebuje",
+	NEW_LINE,
+	"100 kilo tampax]?",
+	CHANGE_CHARACTER,
+	"Mo{n# je to transvestit a mysl; si...",
+	CHANGE_CHARACTER,
+	"Mo{n#.",
+	DISPLAY_MESSAGE,
+	"Ale j# chci, abys tam let+l,",
+	NEW_LINE,
+	"pokusil se dostat do jeho vily...",
+	DISPLAY_MESSAGE,
+	"...a pod;val se tam po zaj;mav^ch informac;ch.",
+	DISPLAY_MESSAGE,
+	"Co tomu >;k#@?",
+	CHANGE_CHARACTER,
+	"No...",
+	CHANGE_CHARACTER,
+	"Slibuji, {e bude@ ofici#ln; tajn^ agent",
+	NEW_LINE,
+	"kdy{ se vr#t;@ {iv^ zp#tky, ehm...",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"Slibujete?",
+	CHANGE_CHARACTER,
+	"M#@ moje $estn* slovo.",
+	CHANGE_CHARACTER,
+	"Dob>e. Jsem p>ipravenej.",
+	DISPLAY_MESSAGE,
+	"Tak{e kam se to m#m vydat?",
+	CHANGE_CHARACTER,
+	"Je to mal# vesni$ka.",
+	DISPLAY_MESSAGE,
+	"Na map#ch ji ani nenajde@...",
+	DISPLAY_MESSAGE,
+	"Ale p>edt;m ne{ p]jde@, dostane@ jistou speci#ln;",
+	NEW_LINE,
+	"agentskou v^bavu.",
+	DISPLAY_MESSAGE,
+	"Dal bych n+jak* l*taj;c; sand#ly,",
+	NEW_LINE,
+	"ale bohu{el mi s nimi n+kdo ulet+l.",
+	DISPLAY_MESSAGE,
+	"~v^ka$ky zp]sobuj;c; mozkovou mrtvici",
+	NEW_LINE,
+	"u{ taky do@ly...",
+	DISPLAY_MESSAGE,
+	"vlastn+ jedin# speci#ln; v+c, kter# tu pr#v+ je",
+	NEW_LINE,
+	"je super lepidlo.",
+	DISPLAY_MESSAGE,
+	"No, lep@; ne{ dr#tem do oka...",
+	DISPLAY_MESSAGE,
+	"Zlom vaz!",
+	END_DIALOG,
+};
+
+const static char *czechDialog203[] = {
+	CHANGE_CHARACTER,
+	"~#dnej strach.",
+	DISPLAY_MESSAGE,
+	"Bude zase v po>#dku.",
+	DISPLAY_MESSAGE,
+	"Vida, my o vlku a tady ho pr#v+ vyn#@ej...",
+	END_DIALOG,
+};
+
+const static char *czechDialog204[] = {
+	CHANGE_CHARACTER,
+	"Dostal, co si zaslou{il.",
+	DISPLAY_MESSAGE,
+	"Ale konec tlach#n;, m#me m#lo $asu!",
+	CHANGE_CHARACTER,
+	"Ne! Po$kejte!",
+	DISPLAY_MESSAGE,
+	"Musim je@t+ za (P)Ani$kou!",
+	CHANGE_CHARACTER,
+	"Ermm... to nejde.",
+	CHANGE_CHARACTER,
+	"Jak to NEJDE?!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"V;@... Anna byla n#@ mu{.",
+	DISPLAY_MESSAGE,
+	"M+la za \\kol na tebe dohl;{et",
+	NEW_LINE,
+	"kdyby mikrokamera p>estala",
+	NEW_LINE,
+	"fungovat.",
+	DISPLAY_MESSAGE,
+	"A taky to byla tvoje motivace...",
+	CHANGE_CHARACTER,
+	"To v#m nev+>im!",
+	CHANGE_CHARACTER,
+	"U{ dokonce odjela na svou dal@; misi",
+	NEW_LINE,
+	"do Som#lska.",
+	DISPLAY_MESSAGE,
+	"Je mi l;to.",
+	CHANGE_CHARACTER,
+	"Chcete mi snad >;ct, {e i ta baba...?",
+	CHANGE_CHARACTER,
+	"Ne, ta je odtud, zaplatili jsme j;.",
+	CHANGE_CHARACTER,
+	"No to je teda zaj;mav^.",
+	DISPLAY_MESSAGE,
+	"Pro$ byste kv]li takov* hlouposti",
+	NEW_LINE,
+	"zab>edali do tolika probl*m]?...",
+	CHANGE_CHARACTER,
+	"Jde o tv]j adrenalin. Musel b^t na \\rovni.",
+	DISPLAY_MESSAGE,
+	"Po$;tali jsme s t;m, {e t+ to na@tve.",
+	DISPLAY_MESSAGE,
+	"A nem^lili jsme se, {e?",
+	CHANGE_CHARACTER,
+	"Zach#z;te s lidma jako se zv;>atama",
+	NEW_LINE,
+	"v pokusn* laborato>i.",
+	DISPLAY_MESSAGE,
+	"Jste nechutn;...",
+	CHANGE_CHARACTER,
+	"Ale fungovalo to, ne?",
+	CHANGE_CHARACTER,
+	"Je to v@echno a{ moc neuv+>iteln^.",
+	DISPLAY_MESSAGE,
+	"Mo{n# mi je@t+ >eknete, {e i ten pes",
+	NEW_LINE,
+	"byl maskovanej zakrn+lej agent...",
+	DISPLAY_MESSAGE,
+	"...{e m+ ten starek d+dek hl;dal...",
+	DISPLAY_MESSAGE,
+	"...a {e Delvita poskytuje kvalitn; slu{by?!",
+	END_DIALOG,
+};
+
+const static char *czechDialog205[] = {
+	CHANGE_CHARACTER,
+	"Nen; to jak v {#dnym b*$kovym filmu,",
+	NEW_LINE,
+	"prost+ b+{n# agentsk# pr#ce.",
+	DISPLAY_MESSAGE,
+	"Ale co, ml;$<#ku, p>idej se k n#m a mo{n#",
+	NEW_LINE,
+	"bude@ n+kdy pracovat s (P)Annou!",
+	CHANGE_CHARACTER,
+	ANIM_WAIT,
+	"No...",
+	DISPLAY_MESSAGE,
+	"Promyslim to...",
+	CHANGE_CHARACTER,
+	"B#je$n*.",
+	DISPLAY_MESSAGE,
+	"Bylo m^m pot+@en;m vid+t t+ v akci!",
+	END_DIALOG,
+};
+
+const static char *czechDialog206[] = {
+	CHANGE_CHARACTER,
+	"Ani mi to nemus;@ popisovat,",
+	DISPLAY_MESSAGE,
+	"u{ jsem si p>e$etl velice detailn; zpr#vu.",
+	CHANGE_CHARACTER,
+	"A co se stane s profesorem?",
+	CHANGE_CHARACTER,
+	"Ten chud#k u{ zase zapomn+l recept.",
+	NEW_LINE,
+	"Nat#hneme ho na sk>ipec.",
+	DISPLAY_MESSAGE,
+	"A pak mu d#me nejlep@; laborato>, co m#me.",
+	DISPLAY_MESSAGE,
+	"Te% m#me jen t+ch p#r pilulek,",
+	NEW_LINE,
+	"co jsi zachr#nil.",
+	CHANGE_CHARACTER,
+	"A Pankr#c Oblouk?",
+	CHANGE_CHARACTER,
+	"Ned+lej si starost, jeho hrabivost bude potrest#na.",
+	CHANGE_CHARACTER,
+	"To douf#m...",
+	DISPLAY_MESSAGE,
+	"A je@t+ jedna mali$kost...",
+	DISPLAY_MESSAGE,
+	"N+co jste mi sl;bil...",
+	END_DIALOG,
+};
+
+const static char *czechDialog207[] = {
+	CHANGE_CHARACTER,
+	"J#?...",
+	DISPLAY_MESSAGE,
+	"To si u{ nepamatuju...",
+	CHANGE_CHARACTER,
+	"};kal jste, {e m+ ud+l#te offici#ln;m agentem...",
+	DISPLAY_MESSAGE,
+	"\'Holky maj r#dy tajn^ agenty\'. Vzpom;n#te?",
+	END_DIALOG,
+};
+
+const static char *czechDialog208[] = {
+	CHANGE_CHARACTER,
+	"(sigh)",
+	DISPLAY_MESSAGE,
+	"Slib je slib..",
+	DISPLAY_MESSAGE,
+	"Mysl;@?",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"Tak jo, poj% sem.",
+	END_DIALOG,
+};
+
+const static char *czechDialog209[] = {
+	"Ve jm*nu...",
+	DISPLAY_MESSAGE,
+	"...bla...bla...bla...",
+	DISPLAY_MESSAGE,
+	"...bla...bla...",
+	DISPLAY_MESSAGE,
+	"...pro na@; zemi.",
+	END_DIALOG,
+};
+
+const static char *czechDialog210[] = {
+	"       No...       ",
+	DISPLAY_MESSAGE,
+	"a to je v@echno, chlapci!",
+	END_DIALOG,
+};
+
+const static char *czechDialog211[] = {
+	"Na@el jsem pilulku $asu!",
+	DISPLAY_MESSAGE,
+	"Musela vypadnout z lahvi$ky, mr@ka..",
+	DISPLAY_MESSAGE,
+	ANIM_WAIT,
+	"To je @t;gro.",
+	END_DIALOG,
+};
+
+const static char *czechDialog212[] = {
+	"J]ha!",
+	DISPLAY_MESSAGE,
+	"To je okouzluj;c;!...",
+	END_DIALOG,
+};	
 
 const static char *polishDialog0[] = {
 	ANIM_WAIT,
@@ -25171,6 +29541,222 @@ const static char **polishDialogs[] = {
 	polishDialog212
 };
 
+const static char **czechDialogs[] = {
+	czechDialog0,
+	czechDialog1,
+	czechDialog2,
+	czechDialog3,
+	czechDialog4,
+	czechDialog5,
+	czechDialog6,
+	czechDialog7,
+	czechDialog8,
+	czechDialog9,
+	czechDialog10,
+	czechDialog11,
+	czechDialog12,
+	czechDialog13,
+	czechDialog14,
+	czechDialog15,
+	czechDialog16,
+	czechDialog17,
+	czechDialog18,
+	czechDialog19,
+	czechDialog20,
+	czechDialog21,
+	czechDialog22,
+	czechDialog23,
+	czechDialog24,
+	czechDialog25,
+	czechDialog26,
+	czechDialog27,
+	czechDialog28,
+	czechDialog29,
+	czechDialog30,
+	czechDialog31,
+	czechDialog32,
+	czechDialog33,
+	czechDialog34,
+	czechDialog35,
+	czechDialog36,
+	czechDialog37,
+	czechDialog38,
+	czechDialog39,
+	czechDialog40,
+	czechDialog41,
+	czechDialog42,
+	czechDialog43,
+	czechDialog44,
+	czechDialog45,
+	czechDialog46,
+	czechDialog47,
+	czechDialog48,
+	czechDialog49,
+	czechDialog50,
+	czechDialog51,
+	czechDialog52,
+	czechDialog53,
+	czechDialog54,
+	czechDialog55,
+	czechDialog56,
+	czechDialog57,
+	czechDialog58,
+	czechDialog59,
+	czechDialog60,
+	czechDialog61,
+	czechDialog62,
+	czechDialog63,
+	czechDialog64,
+	czechDialog65,
+	czechDialog66,
+	czechDialog67,
+	czechDialog68,
+	czechDialog69,
+	czechDialog70,
+	czechDialog71,
+	czechDialog72,
+	czechDialog73,
+	czechDialog74,
+	czechDialog75,
+	czechDialog76,
+	czechDialog77,
+	czechDialog78,
+	czechDialog79,
+	czechDialog80,
+	czechDialog81,
+	czechDialog82,
+	czechDialog83,
+	czechDialog84,
+	czechDialog85,
+	czechDialog86,
+	czechDialog87,
+	czechDialog88,
+	czechDialog89,
+	czechDialog90,
+	czechDialog91,
+	czechDialog92,
+	czechDialog93,
+	czechDialog94,
+	czechDialog95,
+	czechDialog96,
+	czechDialog97,
+	czechDialog98,
+	czechDialog99,
+	czechDialog100,
+	czechDialog101,
+	czechDialog102,
+	czechDialog103,
+	czechDialog104,
+	czechDialog105,
+	czechDialog106,
+	czechDialog107,
+	czechDialog108,
+	czechDialog109,
+	czechDialog110,
+	czechDialog111,
+	czechDialog112,
+	czechDialog113,
+	czechDialog114,
+	czechDialog115,
+	czechDialog116,
+	czechDialog117,
+	czechDialog118,
+	czechDialog119,
+	czechDialog120,
+	czechDialog121,
+	czechDialog122,
+	czechDialog123,
+	czechDialog124,
+	czechDialog125,
+	czechDialog126,
+	czechDialog127,
+	czechDialog128,
+	czechDialog129,
+	czechDialog130,
+	czechDialog131,
+	czechDialog132,
+	czechDialog133,
+	czechDialog134,
+	czechDialog135,
+	czechDialog136,
+	czechDialog137,
+	czechDialog138,
+	czechDialog139,
+	czechDialog140,
+	czechDialog141,
+	czechDialog142,
+	czechDialog143,
+	czechDialog144,
+	czechDialog145,
+	czechDialog146,
+	czechDialog147,
+	czechDialog148,
+	czechDialog149,
+	czechDialog150,
+	czechDialog151,
+	czechDialog152,
+	czechDialog153,
+	czechDialog154,
+	czechDialog155,
+	czechDialog156,
+	czechDialog157,
+	czechDialog158,
+	czechDialog159,
+	czechDialog160,
+	czechDialog161,
+	czechDialog162,
+	czechDialog163,
+	czechDialog164,
+	czechDialog165,
+	czechDialog166,
+	czechDialog167,
+	czechDialog168,
+	czechDialog169,
+	czechDialog170,
+	czechDialog171,
+	czechDialog172,
+	czechDialog173,
+	czechDialog174,
+	czechDialog175,
+	czechDialog176,
+	czechDialog177,
+	czechDialog178,
+	czechDialog179,
+	czechDialog180,
+	czechDialog181,
+	czechDialog182,
+	czechDialog183,
+	czechDialog184,
+	czechDialog185,
+	czechDialog186,
+	czechDialog187,
+	czechDialog188,
+	czechDialog189,
+	czechDialog190,
+	czechDialog191,
+	czechDialog192,
+	czechDialog193,
+	czechDialog194,
+	czechDialog195,
+	czechDialog196,
+	czechDialog197,
+	czechDialog198,
+	czechDialog199,
+	czechDialog200,
+	czechDialog201,
+	czechDialog202,
+	czechDialog203,
+	czechDialog204,
+	czechDialog205,
+	czechDialog206,
+	czechDialog207,
+	czechDialog208,
+	czechDialog209,
+	czechDialog210,
+	czechDialog211,
+	czechDialog212
+};
+
 const static char **russianDialogs[] = {
 	russianDialog0,
 	russianDialog1,
@@ -26811,6 +31397,722 @@ const static char *polishItem91[] = {
 	"\n\n",
 };
 
+const static char *czechItem0[] = {
+	"p;rko",
+	"\n",
+	"Je z pr.. z krku slepice.",
+	"\n\n"
+};
+
+const static char *czechItem1[] = {
+	"brokovnice",
+	"\n",
+	"M# r#{i, hned bych n+koho odd+lal...",
+	"\n\n"
+};
+
+const static char *czechItem2[] = {
+	"bedni$ka",
+	"\n",
+	"netv#>; se zam$en+...",
+	"\n\n"
+};
+
+const static char *czechItem3[] = {
+	"bedni$ka",
+	"\n\n",
+
+};
+
+const static char *czechItem4[] = {
+	"francouz#k",
+	"\n",
+	"Francouz#k se n+kdy hod;. Mlask!",
+	"\n\n"
+};
+
+const static char *czechItem5[] = {
+	"h>eben",
+	"\n",
+	"Sly@el jsem, {e ho n+kte>; lid* pou{;vaj;.",
+	"\n\n"
+};
+
+const static char *czechItem6[] = {
+	"v+tr#k",
+	"\n",
+	"V+truje. Asi m# v+try",
+	"\n\n"
+};
+
+const static char *czechItem7[] = {
+	"rozbit* p#dlo",
+	"\n",
+	"P>;li@ kr#tk*.",
+	"\n\n"
+};
+
+const static char *czechItem8[] = {
+	"p#dlo",
+	"\n",
+	"Lepidlo dr{; v+tev jako",
+	"\n",
+	"p>ibitou.",
+	"\n\n"
+};
+
+const static char *czechItem9[] = {
+	"kv+tina",
+	"\n",
+	"Von; omamn+.",
+	"\n",
+	"A moc hezky k tomu.",
+	"\n\n"
+};
+
+const static char *czechItem10[] = {
+	"kv+tina",
+	"\n",
+	"N#dhern#.",
+	"\n\n"
+};
+
+const static char *czechItem11[] = {
+	"opra@ova$",
+	"\n",
+	"M]{u se s n;m opra@ovat.",
+	"\n\n"
+};
+
+const static char *czechItem12[] = {
+	"motorov# pila",
+	"\n",
+	"Fe@n#, ale nem# palivo, aby mohla zp;vat.",
+	"\n\n"
+};
+
+const static char *czechItem13[] = {
+	"opil# pila",
+	"\n",
+	"Trochu nestabiln;, ale pou{iteln#.",
+	"\n\n"
+};
+
+const static char *czechItem14[] = {
+	"v+tev",
+	"\n",
+	"Velmi nepoddajn* d>evo.",
+	"\n\n"
+};
+
+const static char *czechItem15[] = {
+	"whiska",
+	"\n",
+	"Opilc]v feti@, zna$kov* balen;.",
+	"\n",
+	"Velmi siln*.",
+	"\n\n"
+};
+
+const static char *czechItem16[] = {
+	"jehla",
+	"\n",
+	"Trochu p>erostl# jehla...",
+	"\n\n"
+};
+
+const static char *czechItem17[] = {
+	"obal",
+	"\n",
+	"Hezkej, speci#ln+ ten n#pis \'Mlska z l#sky\'.",
+	"\n",
+	"A v@ude okolo malink# srd;$ka,",
+	"\n",
+	"roztomil*... str#{nej je asi teplej.",
+	"\n\n"
+};
+
+const static char *czechItem18[] = {
+	"bonb=n z l#sky",
+	"\n",
+	"Pracn+ vyrobenej bonb=n.",
+	"\n",
+	"Bezvadnej d#rek.",
+	"\n\n"
+};
+
+const static char *czechItem19[] = {
+	"brambora",
+	"\n",
+	"Fuj, sem se lek - vypad# jak gran#t!",
+	"\n\n"
+};
+
+const static char *czechItem20[] = {
+	"hr#b+",
+	"\n",
+	"M# p>;li@ velk* pot;{e s chrupem",
+	"\n",
+	"na to, aby se s n;m dalo hrabat.",
+	"\n\n"
+};
+
+const static char *czechItem21[] = {
+	"srdcoidn; bonb=n",
+	"\n",
+	"Mysl;m, {e tohle mal* vylep@en; nesta$;.",
+	"\n\n"
+};
+
+const static char *czechItem22[] = {
+	"bonb=n v pap;rku",
+	"\n",
+	"Vypad# jako novej, ale nev+>;m tomu.",
+	"\n\n"
+};
+
+const static char *czechItem23[] = {
+	"p#ska",
+	"\n",
+	"Von; (P)Annou, l*tem, @krobidlem a pudrem.",
+	"\n",
+	"A sexem. T;m hlavn+.",
+	"\n\n"
+};
+
+const static char *czechItem24[] = {
+	"hr#b+",
+	"\n",
+	"Cel* nadr{en* na hrab#n;.",
+	"\n\n"
+};
+
+const static char *czechItem25[] = {
+	"o>ech",
+	"\n",
+	"P+knej macek.",
+	"\n\n"
+};
+
+const static char *czechItem26[] = {
+	"um+l* jablko",
+	"\n",
+	"Vypad# skoro opravdov+.",
+	"\n",
+	"Proto se >;k# \'ni$emu nev+>\'.",
+	"\n\n"
+};
+
+const static char *czechItem27[] = {
+	"@i@ka",
+	"\n",
+	"Vypad# jako ta, co jsem narval mal*mu br#@kovi",
+	"\n",
+	"a{ do krku, kdy{ si po>#d necht+l spolknout,",
+	"\n",
+	"tak jsem mu j; tam nacpal prav;tkem.",
+	"\n\n"
+};
+
+const static char *czechItem28[] = {
+	"super lepidlo",
+	"\n",
+	"Je to turbo mega giga super ultra",
+	"\n",
+	"rychle schnouc; lepidlo plus.",
+	"\n\n"
+};
+
+const static char *czechItem29[] = {
+	"@i@ka & jehla",
+	"\n",
+	"N+co tu je@t+ chyb;...",
+	"\n\n"
+};
+
+const static char *czechItem30[] = {
+	"@i@ka & p;rko",
+	"\n",
+	"N+co tu je@t+ chyb;...",
+	"\n\n"
+};
+
+const static char *czechItem31[] = {
+	"@ipka",
+	"\n",
+	"Te% u{ mi chyb; jenom ter$!",
+	"\n\n"
+};
+
+const static char *czechItem32[] = {
+	"umoun+nej opra@ova$",
+	"\n",
+	"Je hnusn+ @pinavej od saz;.",
+	"\n\n"
+};
+
+const static char *czechItem33[] = {
+	"pomalovan# brambora",
+	"\n",
+	"Jedin^ rozd;l mezi t;mhle a gran#tem je v tom,",
+	"\n",
+	"{e brambory nemaj; ve zvyku vybuchovat.",
+	"\n\n"
+};
+
+const static char *czechItem34[] = {
+	"hever",
+	"\n",
+	"Vypad# spolehliv+.",
+	"\n\n"
+};
+
+const static char *czechItem35[] = {
+	"kost",
+	"\n",
+	"Zachoval#, ten komu pat>ila musel bejt asi",
+	"\n",
+	"velk^ zv;>e... jako kousav^ zv;>e, >ekl bych...",
+	"\n\n"
+};
+
+const static char *czechItem36[] = {
+	"r^$",
+	"\n",
+	"Jakmile ho jednou zabodnu do zem+,",
+	"\n",
+	"skon$;m a{ v Sydney.",
+	"\n\n"
+};
+
+const static char *czechItem37[] = {
+	"lano",
+	"\n",
+	"Vypad# pevn+.",
+	"\n\n"
+};
+
+const static char *czechItem38[] = {
+	"br^le",
+	"\n",
+	"Pom#haj; zejm*na jako maskov#n; p>ed rybami.",
+	"\n\n"
+};
+
+const static char *czechItem39[] = {
+	"ploutve",
+	"\n",
+	"Kdy{ se s nimi m#v# sem a tam tak pod",
+	"\n",
+	"vodou plavete a na sou@i tan$;te charlston.",
+	"\n\n"
+};
+
+const static char *czechItem40[] = {
+	"pot#p+$sk# v^stroj",
+	"\n",
+	"Pozor, vodo, jdu na tebe!",
+	"\n\n"
+};
+
+const static char *czechItem41[] = {
+	"kotva",
+	"\n",
+	"Dost t+{k# na to, aby potopila lo%.",
+	"\n\n"
+};
+
+const static char *czechItem42[] = {
+	"kotvi$ka",
+	"\n",
+	"Pozor, hory, jdu na v#s!",
+	"\n\n"
+};
+
+const static char *czechItem43[] = {
+	"srp",
+	"\n",
+	"Je tak tupej, {e by m+l dostat podporu",
+	"\n",
+	"pro t+lesn+ posti{en*.",
+	"\n\n"
+};
+
+const static char *czechItem44[] = {
+	"vyhnil^ s^r",
+	"\n",
+	"P>ipom;n# mi m]j pokoj.",
+	"\n\n"
+};
+
+const static char *czechItem45[] = {
+	"nabrou@en^ srp",
+	"\n",
+	"Jeh<#tka, rad@i ml$te, p>ich#z; bolest...",
+	"\n\n"
+};
+
+const static char *czechItem46[] = {
+	"kapesn;k",
+	"\n",
+	"Oby$ejnej, nudnej, f#dn;, nezaj;mavej, pou{itej,",
+	"\n",
+	"nechutnej, jednoduchej a starej kapesn;k.",
+	"\n\n"
+};
+
+const static char *czechItem47[] = {
+	"my@",
+	"\n",
+	"Neposedn#. To jsou ty nervy.",
+	"\n\n"
+};
+
+const static char *czechItem48[] = {
+	"k#men",
+	"\n",
+	"P>ipom;n# mi sn+hovou kouli,",
+	"\n",
+	"ale kaz; to ta barva.",
+	"\n\n"
+};
+
+const static char *czechItem49[] = {
+	"nugeta",
+	"\n",
+	"Zna$ka: AU, at. $;slo: 79, at. hmot.: 196.97.",
+	"\n",
+	"Jin^mi slovy: ZLATO!!! Cha-ch#!",
+	"\n\n"
+};
+
+const static char *czechItem50[] = {
+	"bankovka",
+	"\n\n",
+
+};
+
+const static char *czechItem51[] = {
+	"diktafon",
+	"\n",
+	"Nem# baterie.",
+	"\n\n"
+};
+
+const static char *czechItem52[] = {
+	"fo[#k",
+	"\n",
+	"P>ipravenej na focen;.",
+	"\n\n"
+};
+
+const static char *czechItem53[] = {
+	"videokazeta",
+	"\n",
+	"Nem# {#dnou n#lepku.",
+	"\n\n"
+};
+
+const static char *czechItem54[] = {
+	"list pap;ru",
+	"\n",
+	"Pr#zdnej jak o$i nirv#nisty.",
+	"\n\n"
+};
+
+const static char *czechItem55[] = {
+	"ko<ak",
+	"\n",
+	"M#te @t+st;, {e ko<ak nepiju, jinak...",
+	"\n\n"
+};
+
+const static char *czechItem56[] = {
+	"d#lkov* ovl#d#n;",
+	"\n",
+	"Bedni$ka s tla$;tky.",
+	"\n",
+	"Jednoduch* jak facka.",
+	"\n\n"
+};
+
+const static char *czechItem57[] = {
+	"kle@t+ na led",
+	"\n",
+	"Bezvadn* n#>ad;.",
+	"\n\n"
+};
+
+const static char *czechItem58[] = {
+	"korek",
+	"\n",
+	"Korkov^ @punt oby$ejn*ho vzez>en;.",
+	"\n\n"
+};
+
+const static char *czechItem59[] = {
+	"zabalen^ korek",
+	"\n",
+	"Takhle u{ vypad# zaj;mav+.",
+	"\n\n"
+};
+
+const static char *czechItem60[] = {
+	"fotografie",
+	"\n",
+	"Je to fotka Oblouka v moment+, kdy se",
+	"\n",
+	"pokou@; o vysok* C, nechutn# pod;van#!",
+	"\n\n"
+};
+
+const static char *czechItem61[] = {
+	"chilli",
+	"\n",
+	"N#lepka na lahvi prav;:",
+	"\n",
+	"\'P]vodn; mexick* CHILLI\'. To tak.",
+	"\n\n"
+};
+
+const static char *czechItem62[] = {
+	"v#le$ek",
+	"\n",
+	"Tvrd^ d>evo na brut#ln; vra{dy.",
+	"\n\n"
+};
+
+const static char *czechItem63[] = {
+	"fale@n* chilli",
+	"\n",
+	"P]vodn; Ml;$<#kovo chilli. Che.",
+	"\n\n"
+};
+
+const static char *czechItem64[] = {
+	"n#lepka",
+	"\n",
+	"\'P]vodn; mexick* CHILLI\'.",
+	"\n\n"
+};
+
+const static char *czechItem65[] = {
+	"baterky",
+	"\n",
+	"P#rek m^ch nov^ch bateri;.",
+	"\n\n"
+};
+
+const static char *czechItem66[] = {
+	"diktafon",
+	"\n",
+	"\'Jedna-dv+-jedna-dv+, opakuj..\'",
+	"\n",
+	"\'Dev+t, dvan#ct, t>i, osm...\'",
+	"\n",
+	"Funguje.",
+	"\n\n"
+};
+
+const static char *czechItem67[] = {
+	"ho>;c; pap;r",
+	"\n",
+	"Vzru@uj;c;, {e?",
+	"\n",
+	"(ale nesm; se to p>eh#n+t viz pyrotoman).",
+	"\n\n"
+};
+
+const static char *czechItem68[] = {
+	"maso",
+	"\n",
+	"Je pe$liv+ zabalen* v pr]hledn*m pytl;ku.",
+	"\n\n"
+};
+
+const static char *czechItem69[] = {
+	"plastick^ pytl;k",
+	"\n",
+	"Douf#m, {e je recyklovateln^, jinak",
+	"\n",
+	"bych m+l @patn* sny.",
+	"\n\n"
+};
+
+const static char *czechItem70[] = {
+	"pono{ky",
+	"\n",
+	"Ble, uhc, bl, bl****...",
+	"\n",
+	"J# >ikal, {e m#m slabej {aludek!",
+	"\n\n"
+};
+
+const static char *czechItem71[] = {
+	"pilulky",
+	"\n",
+	"Je jich tam asi dvacet.",
+	"\n",
+	"Tla$; se na sebe v hrozn* orgii.",
+	"\n\n"
+};
+
+const static char *czechItem72[] = {
+	"klika",
+	"\n",
+	"M# kliku, vypad# jako \\pln+ norm#ln; klika.",
+	"\n\n"
+};
+
+const static char *czechItem73[] = {
+	"chilli",
+	"\n",
+	"Hezk# lahev. Elegantn;.",
+	"\n\n"
+};
+
+const static char *czechItem74[] = {
+	"pas",
+	"\n",
+	"\"Pus[te tohoto chlapce dovnit>. Pytel.\"",
+	"\n\n"
+};
+
+const static char *czechItem75[] = {
+	"{#rovka",
+	"\n",
+	"Je na nic - aspo< n+co.",
+	"\n\n"
+};
+
+const static char *czechItem76[] = {
+	"kl;$ od v+zen;",
+	"\n",
+	"V]n+ svobody mi d#v# s;lu {;t.",
+	"\n\n"
+};
+
+const static char *czechItem77[] = {
+	"jem<ou$k# rostlinka",
+	"\n",
+	"Che ch**, locht#!",
+	"\n\n"
+};
+
+const static char *czechItem78[] = {
+	"arm#dn; n]{",
+	"\n",
+	"Mo{n# je na n+m i mali$k^ vibr#tor.",
+	"\n\n"
+};
+
+const static char *czechItem79[] = {
+	"p*ro",
+	"\n",
+	"Mohl bych fingovat permanentn; potenci.",
+	"\n\n"
+};
+
+const static char *czechItem80[] = {
+	"r^$",
+	"\n",
+	"Co kouk#te? Je p>ece v ka{d* adventu>e.",
+	"\n\n"
+};
+
+const static char *czechItem81[] = {
+	"kaleidoskop",
+	"\n",
+	"|um+l bych dovnit>,",
+	"\n",
+	"a{ by mi upadaly ruce a nohy.",
+	"\n",
+	"A pak bych toho asi nechal. V@eho s m;rou.",
+	"\n\n"
+};
+
+const static char *czechItem82[] = {
+	"\"Vojensk* noviny\"",
+	"\n",
+	"Je to n+co jako magaz;ny pro {eny",
+	"\n",
+	"nebo Excalibur.",
+	"\n",
+	"Spousta p;smenek, ale nic se nedo$te@.",
+	"\n\n"
+};
+
+const static char *czechItem83[] = {
+	"gran#t",
+	"\n",
+	"Voj#ci ho pou{;vaj; nam;sto @i@at*ho.",
+	"\n",
+	"rugby m;$e ve stavu nejvy@@; nouze...",
+	"\n\n"
+};
+
+const static char *czechItem84[] = {
+	"@#lek",
+	"\n",
+	"Pr#zdnej (zat;m).",
+	"\n\n"
+};
+
+const static char *czechItem85[] = {
+	"@#lek bahna",
+	"\n",
+	"Sou$#st som#lsk* sn;dan+.",
+	"\n",
+	"e@t+ t>i l;skov* o>;@ky a m#me ob+d.",
+	"\n\n"
+};
+
+const static char *czechItem86[] = {
+	"drobky",
+	"\n",
+	"N+kdo m; >;kal, {e poch#z; z chleba.",
+	"\n\n"
+};
+
+const static char *czechItem87[] = {
+	"provaz",
+	"\n",
+	"Tenk^ a dlouh^. N+co mi to p>ipom;n#, ehm.",
+	"\n\n"
+};
+
+const static char *czechItem88[] = {
+	"provaz p>iv#zan^ ke gran#tu",
+	"\n",
+	"M]j patent na \'bombastick*\' jojo.",
+	"\n\n"
+};
+
+const static char *czechItem89[] = {
+	"l*ky",
+	"\n",
+	"Mo{n# to jsou pilulky na span;.",
+	"\n",
+	"A{ m+ budete @tv#t, nasypu je do sebe!",
+	"\n\n"
+};
+
+const static char *czechItem90[] = {
+	"j;dlo s l*ky",
+	"\n",
+	"M]{e m;t oblouz<ovac; efekt.",
+	"\n\n"
+};
+
+const static char *czechItem91[] = {
+	"pt#k",
+	"\n",
+	"Douf#m, {e se bl;{e sp>#tel;me.",
+	"\n",
+	"Na pek#$i.",
+	"\n\n"
+};
+
 const static char *russianItem0[] = {
 	"pfqo",
 	"\n",
@@ -27635,6 +32937,28 @@ const static char **polishItems[] = {
 	polishItem90, polishItem91,
 };
 
+const static char **czechItems[] = {
+	czechItem0, czechItem1, czechItem2, czechItem3, czechItem4,
+	czechItem5, czechItem6, czechItem7, czechItem8, czechItem9,
+	czechItem10, czechItem11, czechItem12, czechItem13, czechItem14,
+	czechItem15, czechItem16, czechItem17, czechItem18, czechItem19,
+	czechItem20, czechItem21, czechItem22, czechItem23, czechItem24,
+	czechItem25, czechItem26, czechItem27, czechItem28, czechItem29,
+	czechItem30, czechItem31, czechItem32, czechItem33, czechItem34,
+	czechItem35, czechItem36, czechItem37, czechItem38, czechItem39,
+	czechItem40, czechItem41, czechItem42, czechItem43, czechItem44,
+	czechItem45, czechItem46, czechItem47, czechItem48, czechItem49,
+	czechItem50, czechItem51, czechItem52, czechItem53, czechItem54,
+	czechItem55, czechItem56, czechItem57, czechItem58, czechItem59,
+	czechItem60, czechItem61, czechItem62, czechItem63, czechItem64,
+	czechItem65, czechItem66, czechItem67, czechItem68, czechItem69,
+	czechItem70, czechItem71, czechItem72, czechItem73, czechItem74,
+	czechItem75, czechItem76, czechItem77, czechItem78, czechItem79,
+	czechItem80, czechItem81, czechItem82, czechItem83, czechItem84,
+	czechItem85, czechItem86, czechItem87, czechItem88, czechItem89,
+	czechItem90, czechItem91,
+};
+
 const static char **russianItems[] = {
 	russianItem0, russianItem1, russianItem2, russianItem3, russianItem4,
 	russianItem5, russianItem6, russianItem7, russianItem8, russianItem9,
@@ -27677,6 +33001,16 @@ const static char *polishCredits[kNumCredits] = {
 	"\xdd\xec\\po wyczerpuj@cej podr*<y...",
 	"\xdd\xec\\KONIEC",
 	"programowanie\nADRIAN CHMIELARZ\n \n \n \nanimacje\nGRZEGORZ MIECHOWSKI\n \n \n \ndodatkowe animacje\nTOMASZ PILIK\n \n \n \nrysunki\nANDRZEJ DOBRZY;SKI\n \n \n \nmuzyka\nRADEK SZAMREJ\n \n \n \ng%os*w u<yczyli:AGNIESZKA\nBASIA\nGULASH\nMARTiNEZ\nALEX\nPAJA\nJOSEPH\nPAZDRO\nPIONST\nWICIK\nKOLA\n \n \n \nok%adka i plakat\nDARIUSZ ANACKI\n \n \n \nbetatesterzy\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWE] MIECHOWSKI\nMAREK CHMIELARZ\nANDRZEJ WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nbank pomys%*w\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \npoligrafia\nJAROS]AW WEISS\nAGENCJA STYL\n \n \n \npodzi#kowania\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nspecjalne podzi#kowania\nANDRZEJ MICHALAK\n \n \n \n \n \n \n \n \n \nprodukcja\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \nWszelkie podobie=stwa i aluzje\nby%y zamierzone\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
+};
+
+const static char *czechCredits[kNumCredits] = {
+	"\xdd\xecPkresby\niANDRZEJ DOBRZYNSKI",
+	"\xe3\xd2Phudba\niRADEK SZAMREJ",
+	"\xd7\xe6Panimace a grafika\niGRZEGORZ MIECHOWSKI",
+	"\xd9\xe8Pprogram a story\niADRIAN CHMIELARZ",
+	"\xdd\xeczZa moment...",
+	"\xdd\xec\\A to je konec...",
+	"program\nADRIAN CHMIELARZ\n \n \nanimace\nGRZEGORZ MIECHOWSKI\nTOMASZ PILIK\n \n \nkresby\nANDRZEJ DOBRZYNSKI\n \n \nhudba\nRADEK SZAMREJ\n \n \ntranslace\nANDREJ ANASTASOV\n \n \nbetatesters\nTOMASZ FURMANIUK\nPATRYK SAWICKI\nPAWEL MIECHOWSKI\nMAREK CHMIELARZ\nJEDREK WICHA\nMR. JOHN DOE\nMARCIN DREWS\n \n \n \nidey\nADRIAN CHMIELARZ\nGRZEGORZ MIECHOWSKI\nANDRZEJ SAWICKI\n \n \n \nthanxx to:\nHENRY KUTTNER\nU-KNOW-WHO-U-R-BUT-WANT-2-STAY-IN-SHADOW\nEPIC MEGAGAMES\nXLAND SOFTWARE PUBLISHING\nKATARZYNA MIECHOWSKA\n \n \n \nCzech Republic distribution\nVochozka Trading\n \n \n \n \n \n \n \n \n \n \n \nprodukce\nMETROPOLIS SOFTWARE HOUSE\n(c) 1994-1995\n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ",
 };
 
 const static char *russianCredits[kNumCredits] = {
@@ -28936,6 +34270,414 @@ Common::Array<Common::Array<ObjectNameDesc>> polishSceneObjectNamesDescs = {
 		{"sejf", "\x01"},
 		{"kamera", "To musi by^ cz#$^ systemu ochronnego."},
 	},
+	{},
+	{},
+	{},
+	{},
+};
+
+Common::Array<Common::Array<ObjectNameDesc>> czechSceneObjectNamesDescs = {
+	{},
+	{
+		{"cesta", "\x01"},
+		{"cesta", "\x01"},
+		{"z#hadn# v+c", "klidn+ mohl bejt n+jakej poklad!"},
+		{"plot", "Je z ostnat*ho dr#tu,\na nav;c rezavej."},
+		{"stan", "Nen; zrovna suprov+ maskovanej, ale ujde to..."},
+	},
+	{
+		{"pt#k", "Je to macek."},
+		{"cesta", "\x01"},
+		{"cesta", "\x01"},
+		{"sloup", "Vypad#, {e by se dal zdolat..."},
+		{"bahni@t+", "Nebe pro fandy Woodstock*ho koncertu, alig#tory\na ty tvrd^ {ensk^, co se perou v bahn+ a cpou\nsi ho do kalhotek, m<am!"},
+		{"pt#k", "Nadrogoval se a spadnul z p+ti metr],\nkdo by si po takovym v^konu nedal dvacet?"},
+	},
+	{
+		{"r^$", "Mali$k^ vojensk^ r^$ Rambo."},
+		{"pevn# p]da", "M#m takov^ pocit, {e pr#v+ tady bych se\nm+l trochu vzpru{it..."},
+		{"rostlinka", "Hmm, m# takov^ jem<ou$k^ dotek."},
+		{"zd+n# st+na", "Mistr zedn;k musel bejt asi fanda\nPink Floyd], co?"},
+		{"cesta", "\x01"},
+		{"cesta", "\x01"},
+		{"pru{ina", "Mohla by m+ navrtat jako sud v;na."},
+	},
+	{
+		{"cesta", "\x01"},
+		{"cesta", "\x01"},
+		{"cesta", "\x01"},
+		{"dve>e do kant^ny", "P+kn# v^v+ska."},
+		{"dve>e", "\x01"},
+		{"dve>e v+zen;", "N+jak takov^hle dve>e nem#m r#d,\ni kdy{ jsou to dve>e\ndocela byteln^."},
+		{"ko@ na odpadky", "Smrd;."},
+	},
+	{
+		{"pru{ina", "Jo, asi bych se m+l n+jak vzpru{it."},
+		{"postel", "Vypad# postelov+."},
+		{"m>;{e", "Vid;te to co j#.\nBedny, bedny a bedny."},
+		{"miska", "Je z hlin;ku."},
+		{"utr{en^ kabel", "Dr#ty jsou obna{en*!"},
+		{"{#rovka", "Lustr nikde a nav;c nefunguje."},
+		{"dve>e", "Tuh^ jak Me$iar."},
+		{"ko@ na odpadky", "\x01"},
+		{"vyp;na$", "\x01"},
+		{"n#pisy", "\x01"},
+	},
+	{
+		{"kapit#n", "Je zauzlovanej."},
+		{"dve>e", "\x01"},
+		{"sk>;<ka", "Zam$en#. Ne {e bych\nse tomu divil."},
+		{"mapa", "Picasso?"},
+		{"st]l", "Nacpanej haramp#d;m z doby protektor#tu."},
+		{"postel", "Vypad# sp;@ jako v+t@; prkno na v#len; t+sta."},
+		{"@uple", "Zam$en^, sakra!"},
+		{"@avle", "M]j d+da jednu takovou m;val.\nVym+nil jsem ji s n+k^m za joystick.\nD+dovi se to moc nel;bilo."},
+		{"zbran+", "Bohu{el jsou to jenom\nmod^lky..."},
+		{"obraz", "\x01"},
+		{"obraz", "Mona Lisa ve vrtuln;ku."},
+		{"|esk^ arm#dn; n]{", "P+knej. P#dnej. Vostrej."},
+	},
+	{
+		{"hrne$ek", "Mo{n# mi to nebudete v+>it, ale je tam\nv#{n+ $aj."},
+		{"barman", "Nefal@ovanej $eskej pracant."},
+		{"v^chod", "\x01"},
+		{"dve>e", "Stopro vedou do skladu."},
+		{"r#dio", "R#dio vypad# docela r#diov+, ale zato ta ant*na\nvypad# jako zmu$en* ram;nko."},
+		{"drobky", "To je nechutn^! N+kdy si >;k#m, {e by po sob+\nlidi mohli ukl;zet (a n+kdy taky ne)."},
+		{"hodiny", "Maj asi {alude$n; pot;{e."},
+		{"poli$ky", "Pro$ tady, ve vojenskym t#bo>e, maj tolik alkoholu?\nTr*nujou pit;?\nNebo na to l#kaj holky?"},
+		{"pokladna", "Pokladny miluju."},
+	},
+	{
+		{"mrkaj;c; d;rka", "Opravdu divn*..."},
+		{"dve>e", "\x01"},
+		{"barely", "Asi louhov#n; arm#dn;ch pono{ek \'Stojanek\'."},
+		{"sk>;<ka", "N+kdo tu byl p>ede mnou a zamkl j;. To je pech."},
+		{"spousta @uplat", "Smrd; byrokraci;."},
+		{"bedny", "\'pepch>\'"},
+		{"bedny", "\'sch]l\'"},
+	},
+	{
+		{"gran#t", "Cha! V{dycky jsem jeden takovej cht+l."},
+		{"str#{", "Nevypad# spr#vn+ upnut+, m+l by\nspolknout prav;tko."},
+		{"cesta pry$", "Kde domov m]j..."},
+		{"cesta", "\x01"},
+	},
+	{
+		{"str#{", "Vypad# jako Stallone\nkter^ V+tnamc]m neutekl."},
+		{"lahev", "Je to Whiska!.."},
+		{"so@ka", "\x01"},
+		{"so@ka", "\x01"},
+		{"busta", "Pokro$il* st#dium @;lenstv;."},
+		{"dve>e", "Solidn; a masivn;."},
+		{"ze% vily", "P>ibli{n+ t>i kilometry v pr]m+ru..."},
+		{"Pankr#c Oblouk", "Brzy pukne."},
+		{"cesta okolo vily", "\x01"},
+		{"p+@inka na palouk", "Vede do temn*ho a stra@ideln*ho lesa. H\\\\\\.\nProhledat kalhoty - te%!"},
+		{"cesta na b>eh rybn;ka", "\x01"},
+		{"cesta okolo vily", "\x01"},
+		{"obal", "Je to celof#nov^ obal od n+jak*ho bonb=nu\n, kter^ u{ mezi n#mi nen;."},
+		{"les", "LES. LES! No, prost+ L-E-S, nerozum;te?"},
+		{"bankovka", "Sem py@nej, {e jsem si j; nevzal, i kdy{..."},
+	},
+	{
+		{"", ""},
+		{"d;ra", "Te% je zrovna pr#zdn#."},
+		{"v+tev", "Mohla by se hodit."},
+		{"strom", "Je vy@@; ne{ st+na vily, na tom n+co bude!"},
+		{"ke>;$ek pros[#$ek", "Asi n+jak^ plan^ bramborovn;k."},
+		{"st+na", "Je namazan# n+$;m hladk^m, asi to bude om;tka."},
+		{"cesta okolo vily", "\x01"},
+		{"cesta okolo vily", "\x01"},
+		{"v+tev", "A m#m t+."},
+	},
+	{
+		{"strom", "Vysokej nejalovec."},
+		{"lesn; kytka", "B+{n# zelen# hav+[."},
+		{"cesta okolo vily", "\x01"},
+		{"st+na", "St+na obecn#."},
+		{"cesta okolo vily", "\x01"},
+		{"je{ek", "Pe$e si @i@ku, nem]{u mu ji jen tak sebrat..."},
+		{"k#men", "\x01"},
+	},
+	{
+		{"v$el; hn;zdo", "Nacpan* medem."},
+		{"v$ely", "Nejsou zrovna m]j typ."},
+		{"ke>", "P>i schov#van* bych ho pou{il."},
+		{"poklop", "Rezavej, ale nezam$enej. Hmmm."},
+		{"cesta k vile", "\x01"},
+	},
+	{
+		{"kv+tina", "To je snad nejhez$; kytka, na kter* kdy\nspo$inul m]j orl; zrak!"},
+		{"ostr]vek", "Kde se tam vzal? Irituje m+."},
+		{"lo%ka", "Je to neuv+>iteln^, ale a$ jsme v adventu>e\ntak nem# {#dnou d;ru!"},
+		{"studna", "Co se v#m vybav; p>i slov+ \"Studna\",\nelektrickej pes nebo srp?"},
+		{"to$idlo", "Jsem z n+ho celej vyto$enej."},
+		{"cesta do vesnice", "\x01"},
+		{"cesta k vile", "\x01"},
+		{"cesta k h#jhovn+", "\x01"},
+	},
+	{
+		{"kv+tina", "P>ekr#sn#!"},
+		{"kv+tina", "N###dhern+ von;... -hep$;;;"},
+		{"lo%ka", "Nic nov*ho. Doslova."},
+	},
+	{
+		{"ryba", ""},
+		{"ryba", ""},
+		{"?", ""},
+		{"?", ""},
+		{"kotva", ""},
+		{"vrak", ""},
+		{">;$n; >asy", ""},
+		{"mo>sk* >asy", ""},
+		{"poto$n; >asy", ""},
+		{"sladkovodn; >asy", ""},
+		{"rostliny", ""},
+		{"kameny", ""},
+	},
+	{
+		{"cesta k rybn;ku", "\x01"},
+		{"dve>e", "Vizitka @la na sch]zi vizitek,\ntak{e NONAME"},
+		{"okna", "J# rad@i DOS."},
+		{"veverka", "nevon; j; pozad; aneb domyslete si sami."},
+		{"o>ech", "Povedenej"},
+		{"o>ech", "M#m t+."},
+		{"tr#va", "\x01"},
+	},
+	{
+		{"v^chod", "\x01"},
+		{"lesn; roh", "D>;v troubil jeho nositel,\nte% troub; jeho majitel."},
+		{"okno", "}ekl bych, {e by m+lo b^t sp;@ na\ndruh* stran+ zdi, co d+l# tady?"},
+		{"almara", "\x01"},
+		{"d;ra ve tvaru srd;$ka", "Ve tvaru srd;$ka, ve tvaru.. srd;$ka.. hmmm"},
+		{"sk>;<ka", "\x01"},
+		{"lustr", "\x01"},
+		{"obraz", "Skoro jako okna, ale ne tak pomal^."},
+		{"krb", "Mo>e a mraky saz; dohromady. Asi n+jak* shrom#{d+n;"},
+		{"zbran+", "Jenom atrapy. Ale jedna prav# by ur$it+ bodla"},
+		{"st]l", "\x01"},
+		{"vyhnil^ s^r", "Pfui!"},
+		{"trofeje", "\x01"},
+		{"motorov# pila", "V >et+zu m# zara{en* lidsk* zuby,\njej; majitel je asi nerv=zn; $lov+k."},
+		{"porcel#n", "Rad@i nek^chat, a[ se to nerozsype,\na{ tak k>ehce se to tv#>;."},
+	},
+	{
+		{"dve>e auta", "Odem$eno, co v;c si m]{ete p>#t."},
+		{"kufr", "No jo, kufr, v tom b^v# v{dycky n+co\nmoc u{ite$n*ho..."},
+		{"ko@", "Bez s;[ky vypad# sp;@ jako zv^@en# toaleta, ale bylo\nby to nepraktick*, $lov+k by to nestihl v$as..."},
+		{"sloup", "Asi $ty>metrov^ stabiln; sloup,\nke kter*mu je p>i@roubovan# obru$."},
+		{"dve>e", "\x01"},
+		{"zvonek", "M]{e se pou{;vat k vystra@en; lid;\nnach#zej;c;ch se za dve>mi."},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"okno p]dy", "\x01"},
+		{"cesta k jezeru", "\x01"},
+		{"cesta", "\x01"},
+		{"cesta na pole", "\x01"},
+		{"kluk jako buk", ""},
+		{"h>eben", "Zvl#@tn; v+c."},
+		{"p#$ka", "Na co asi\nm]{e b^t?"},
+		{"dve>e auta", "\x01"},
+	},
+	{
+		{"cesta", "\x01"},
+		{"cesta k jeskyni", "\x01"},
+		{"dve>e", "\x01"},
+		{"pr#dlo", "Je moc sychravo na to, aby to uschlo\nani v#nek nezafouk#..."},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"otvor", "Otvor do sklepa. Nen; tam moc tma?"},
+		{"poklop", "Po>#nej macek, tenhle poklop, jak to, {e tak narost?"},
+		{"pes", "Klidnej."},
+		{"zvonek", "\x01"},
+		{"provaz", "\x01"},
+	},
+	{
+		{"star^ mu{", "Vypad# jako by u{ snil\no dubov*m spac#ku."},
+		{"sk>;<ka", "\x01"},
+		{"@uplata", "~]jo! T+ch je!"},
+		{"postel", "Nevad; mi, dokud si jen tak le{;..."},
+		{"okno", "V^hled na pole."},
+		{"st]l", "\x01"},
+		{"brokovnice", "Asi na Impy nebo na Kakod*mony,\nmo{n# na Barony Bolesti?"},
+		{"obraz", "Klaus v mo>i pen+z."},
+		{"rodinn* obr#zky", "Necht+l bych m;t sv* p>edky vysteven* v ob^v#ku\njako trofeje..."},
+		{"kv+tina", "Zelen#, asi je j; zle."},
+		{"dve>e", "\x01"},
+		{"lustr", "\x01"},
+		{"v+tr#k", "Na baterky. Leze z n+j v;tr."},
+	},
+	{
+		{"babka", "Plete za n#rodn; ligu."},
+		{"sami$ka", "Je cool."},
+		{"v^chod", "\x01"},
+		{"okno", "\x01"},
+		{"okno", "\x01"},
+		{"lustr", "\x01"},
+		{"hodiny", "Um+leck^ kousek plus $ervy."},
+		{"", ""},
+		{"um+l* ovoce", "Jablko vypad# skoro jako prav*,\na{ na to, je na n+m s*riov* $;slo"},
+		{"v#zi$ka", "Muml# si s kv+tinami."},
+		{"kv+tiny", "Douf#m, {e nejsou od n+jak*ho\nn#padn;ka..."},
+		{"opra@ova$", "}e@i$ probl*m] s prachem."},
+		{"st]l", "Je sice kulat^, ale pochybuju {e m# co do $in+n;\ns kr#lem Artu@em a jeho ryt;>i..."},
+		{"zrcadlo", "Je v n+m n+$; obli$ej a\nnevypad# @patn+...ugh.."},
+		{"obraz", "Na tomto obrazu se odehr#v# tak stra@n* przn+n;\nnevi<#tek, {e ho prost+ nem]{u popsat..."},
+		{"kv+tina", "Depresivn;, promi<te, impresivn;"},
+	},
+	{
+		{"pavouk", "Pavou$; mu{ v klidov*m stavu!"},
+		{"r^$", "Je na n+m naps#no -Na kop#n; u zd;- Hmmm."},
+		{"{eb>;k", "Cesta ven."},
+		{"vyp;na$", "Mal^, ale s tmou dok#{e divy."},
+		{"sekera", "Douf#m, {e ty fleky na st+n+ s n;\nnemaj; nic spole$n*ho..."},
+		{">et+z", "\x01"},
+		{"kle@t+", "N+komu bych s nimi stra@n+ r#d od n+$eho odleh$il,\nale nedos#hnu na n+..."},
+		{"poli$ky", "Hrn;$ky a sklenice\nsklenice a hrn;$ky."},
+		{"n#doby", "Pr#zdn* jak hlava po matu>e"},
+	},
+	{
+		{"kost", "M# n#b+h na dinosau>; velikost\nale na takov* st#>; je m#lo b;l#."},
+		{"ke>", "Stoj; mezi mnou a jeskyn;, mrcha.\nMo{n# ho tu n+kdo zasadil,\naby tajemstv; jeskyn+ z]stala zachov#na..."},
+		{"vchod do jeskyn+", "\x01"},
+		{"cesta", "\x01"},
+		{"k#men", "Spadl u{ asi dost d#vno.\nMo{n# pod n;m n+kdo le{;, douf#m,\n{e to nen; mamka nebo ta[ka."},
+		{"mot^lek", "Nen; sexy?"},
+		{"mot^lek", "Nen; frigidn;?"},
+	},
+	{
+		{"je@t+rka", "\x01"},
+		{"???", "Co je to?!"},
+		{"cesta ven", "\x01"},
+		{"zpr#va", "N#pis je ji{ velmi star^, ale mysl;m, {e ho\ns pomoc; bo{; rozlu@t;m."},
+		{"d;ra", "Vypad# bezedn+."},
+		{"nugeta", "Zlato! Sem boh#$! To je skoro na oslavu."},
+	},
+	{
+		{"slepice", "N+jak# divn#, asi m# mal#rii..."},
+		{"vr#na jedna", "Nebezpe$n# jako Jacksonovo Dangerous."},
+		{"vr#na dv+", "Nebezpe$n# jako Roxe[#ck* Dangerous"},
+		{"my@", "Je na nervy. Chv;li nepostoj;."},
+		{"pot#p+$sk* br^le", "Taky je mi divn#."},
+		{"ploutve", "Mo{n# by mi byly. Mo{n# taky ne."},
+		{"stra@#k", "V+c, kter# by m+la stra@it vr#ny.\nAlespo< tak to >;k# teorie.\nVr#ny o tom asi pr#v+ debatuj;."},
+		{"srp", "Je@t+ kladivo a seberou m+ pro pobu>ov#n;."},
+		{"cesta do vesnice", "\x01"},
+		{"kupka sena", "Uvnit> je asi n+co kovov*ho,\nvid;m, jak se to bl^sk#!"},
+		{"hr#b+", "U{ jsou star* a vypadaly jim skoro\nv@echny zuby."},
+		{"my@; d;ra", "Vypad# a{ eroticky..."},
+		{"kupka sl#my", "P>i@el jsem, prozkoumal jsem\na na@el jsem my@; d;ru!"},
+		{"pe>;$ko", "Slepice ho v k>e$;ch vytla$ila z krku."},
+		{"kupka sl#my", "\x01"},
+		{"vila", "Bl**, n+kter^ lidi v]bec nemaj vkus\nkdyby bylo sv+t+ tolik vkusu jako p>edkus]..."},
+	},
+	{
+		{"okno", "Je na n+m okenice, vid;m kulov^."},
+		{"so@ka", "Hnusn#. Majitel je asi cvok."},
+		{"dve>e", "\x01"},
+		{"cesta z vily", "\x01"},
+	},
+	{
+		{"dve>e", "\x01"},
+		{"dve>e", "\x01"},
+		{"kv+tiny", "P>ekv#p$o, nejsou um+lohmotn^,\nto bych teda ne$ekal."},
+		{"kv+tina", "Jak se ti roste, zele<#$ku? Vezmi to trochu doleva."},
+		{"schody", "Jsou na nich stopy nohou, n+kdo tudy @el.\nA mnohokr#t. Hmmm."},
+		{"druh# $#st koridoru", "\x01"},
+		{"ven z domu", "\x01"},
+	},
+	{
+		{"do p>;zem;", "\x01"},
+		{"obraz", "Je na n+m tla$enice lid;.\nJmenuje se -Vy@lo Score-."},
+		{"brn+n;", "Beta verze tanku :-)))."},
+		{"videokazeta", "Je{i@ snad to neni n+jak^ P-$ko,\nkdy{ to bylo tak schovan^?"},
+		{"kniha", ""},
+		{"knihy", "Alespo< jedna by mohla b^t zaj;mav#."},
+		{"odpadkov^ ko@", "Mo>e pap;r]. |ist^ch jak sn;h."},
+		{"{idle", "Pohodln#."},
+		{"lampa", "\x01"},
+		{"@uple", "Zav>en*."},
+		{"@uple", "Zav>en* jako v@echny ostatn;."},
+		{"@uple", "Pro zm+nu zav>en*."},
+		{"@uple", "Vypad# zav>en+."},
+		{"@uple", "P>ibouchnut* jak veden; p>i p;semce."},
+		{"@uple", "Tra la-l#, za-v>en*...."},
+		{"{eb>;k", "V+t@inou se vyskytuje v bl;zkosti d+v$at v minisukn;ch"},
+	},
+	{
+		{"dve>e", "\x01"},
+		{"%uzna", "Oby$ejn# $tvercov# %uzna.\nJako vyst>i{en# z katalogu %uzen"},
+		{"klika", "Pasovala do %uzny jak.. jak..., ehm..."},
+		{"obraz", "Parodie na n+co, co nezn#m."},
+		{"obraz", "Orgie s d*mony."},
+		{"kv+tiny", "Fl#kaj; kveten;."},
+		{"do prvn; $#sti koridoru", "\x01"},
+		{"dve>e", "\x01"},
+		{"socha", "Na zlat*m @t;tku je vyryto -Velk^ pa>an Mamoulian-"},
+	},
+	{
+		{"robot", "|apkova stv]ra."},
+		{"lahvi$ka", "Lahvi$ka pln# pilulek."},
+		{"kniha", "Je hutn#, asi n+jak^ grafoman]v\ndi#>."},
+		{"obraz", "Nepopsateln* h>;chy zbyte$n+\nodv#d+j;c; pozornost."},
+		{"sk>;<", "\x01"},
+		{"v^chod", "\x01"},
+		{"levej doln; r]{ek obrazovky", "Tam bych se mohl schovat!"},
+		{"klika", "Pankr#c Oblouk si j; tu nechal. Sklerotik."},
+	},
+	{
+		{"kucha>", "Typickej kucha> co v kuchyni i sp;\na d+l# {en#m dob>e."},
+		{"pol*vka", "To mus; bejt lahoda\nte% s extra buj=nem."},
+		{"rozp#len# plotna", "Je COOL."},
+		{"v^chod", "\x01"},
+		{"ledni$ka", "Douf#m, {e se tam neskr^v# zatoulanej eskym#k."},
+		{"r#dio", "Fach$; na baterky, douf#m, {e chyt#\nr#dio City."},
+		{"chilli", "Je $erven* a p#liv*, typicky p>;@ern* CHILLI!"},
+		{"m;sto, kde st#lo chilli", "Jednodu@e m;sto, kde st#lo chilli."},
+		{"v#le$ek", "Mu{i pou{;vaj; pu@ky a {eny tohle.\n1:0 pro {eny."},
+		{"mikrovlnka", "Magick* v+c. Z ka{d*ho j;dla ud+l# gumu."},
+		{"no{e", "No{a>ova chlouba, usekan* prsty\nzapomn+l vystavit."},
+		{"maso", "Maso v plastick*m pytli, kter^\np>imrzl k p>ihr#dce."},
+	},
+	{
+		{"dve>e", "\x01"},
+		{"umyvadlo", "M# dole d;ru."},
+		{"kohoutek", "\x01"},
+		{"zrcadlo", "Nejsem tam, jak to?"},
+		{"sk>;<ka", "\x01"},
+		{"vana", "Asi na mro{e."},
+		{"pono{ka", "Obloukova, mohla by se pou{;vat jako kadidlo."},
+	},
+	{
+		{"ko<ak", "CO KDYBYCH SE VO~RAL? I kdy{... rad@i ne."},
+		{"kle@t+", "V kybl;ku si hov; kle@t+ na nab;r#n; ledu."},
+		{"maska", "Mo{n# podobenka zakladatele rodu Oblouk]?"},
+		{"televize", "Nen#vidim televizi, blbne lidi a jde\nv n; $asto Mraz;k."},
+		{"video", "Nem# funkci nahr#v#n;m ale,\nte% u{ mi to vlastn+ nevad;,\nkdy{ jsem na@el Annu."},
+		{"noviny", "Je v nich Cats a v n+m Score a v n+m...!"},
+		{"hi-fi", "Technics! M;t takovou v+{,\nsousedi jsou po smrti!"},
+		{"gau$", "Nikdy bych nev+d+l, kam polo{it\npol@t#>."},
+		{"v^chod", "\x01"},
+		{"obraz", "N#dhern# lesn; v;la tan$;c; na louce. Nah#."},
+		{"d#lkov* ovl#d#n;", "Bylo schovan* v $asopisech."},
+		{"otev>en# p>evl*k#rna", "Vypad# to na tajn^ vchod nebo snad v^chod?"},
+	},
+	{
+		{"dve>e", "\x01"},
+		{"dve>e", "\x01"},
+		{"vyp;na$", "\x01"},
+	},
+	{},
+	{
+		{"Pankr#c Oblouk", "Je v amoku ze sb;r#n; pen+z."},
+		{"tuny zlata", "(slint)"},
+		{"sejf", "\x01"},
+		{"sejf", "\x01"},
+		{"kamera", "Asi sou$#st bezpe$nostn;ho syst*mu."},
+	},
+	{},
 	{},
 	{},
 	{},
