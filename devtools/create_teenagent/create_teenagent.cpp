@@ -181,7 +181,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 			curOffset += 19;
 
 			// Name
-			const char *name = englishSceneObjectNamesDescs[i][j].name;
+			const char *name = englishSceneObjectNamesDescs[i][j]._name;
 			for (uint k = 0; k < strlen(name); k++) {
 				if (name[k] == '\n')
 					writeByte(fd, '\0');
@@ -192,7 +192,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 			curOffset += strlen(name) + 1;
 
 			// Description (if exists)
-			const char *description = englishSceneObjectNamesDescs[i][j].description;
+			const char *description = englishSceneObjectNamesDescs[i][j]._description;
 			if (strlen(description) == 0) {
 				writeByte(fd, '\0');
 				writeByte(fd, '\0');
