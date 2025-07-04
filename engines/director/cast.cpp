@@ -1169,6 +1169,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream, int id) {
 			break;
 		}
 
+		// Ignoring the lower 8 bits of a 16-bit data
 		palette[3 * colorIndex] = stream.readByte();
 		stream.readByte();
 
