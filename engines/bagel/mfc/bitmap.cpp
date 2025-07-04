@@ -55,7 +55,7 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	h.biClrImportant = 0;
 
 	m_hObject = CreateDIBitmap(nullptr, &h,
-		CBM_INIT, nullptr, nullptr, DIB_RGB_COLORS);
+		0, nullptr, nullptr, DIB_RGB_COLORS);
 
 	// This is where it becomes permanent
 	AfxHookObject();
@@ -80,7 +80,7 @@ BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 	h.biClrImportant = 0;
 
 	m_hObject = CreateDIBitmap(nullptr, &h,
-		CBM_INIT, lpBits, nullptr, DIB_RGB_COLORS);
+		lpBits ? CBM_INIT : 0, lpBits, nullptr, DIB_RGB_COLORS);
 
 	// This is where it becomes permanent
 	AfxHookObject();

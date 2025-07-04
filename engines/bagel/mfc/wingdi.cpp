@@ -25,6 +25,7 @@
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/gfx/blitter.h"
+#include "bagel/mfc/gfx/palette_map.h"
 
 namespace Bagel {
 namespace MFC {
@@ -192,22 +193,34 @@ HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, DWORD flInit,
 	bitmap->create(pbmih->biWidth, pbmih->biHeight, format);
 
 	// Set the palette
+	Graphics::Palette pal((pbmi && pbmih->biClrUsed) ? pbmih->biClrUsed : 0);
 	if (pbmi && pbmih->biClrUsed) {
-		Graphics::Palette pal(pbmih->biClrUsed);
 		for (uint i = 0; i < pbmih->biClrUsed; ++i) {
 			const RGBQUAD &col = pbmi->bmiColors[i];
 			pal.set(i, col.rgbRed, col.rgbGreen, col.rgbBlue);
 		}
 
-		bitmap->setPalette(pal.data(), 0, pal.size());
+//		bitmap->setPalette(pal.data(), 0, pal.size());
 	}
 
 	// If pixels are provided, copy them over
-	if (pjBits) {
-		size_t size = bitmap->w * bitmap->h *
-			bitmap->format.bytesPerPixel;
-		Common::copy((const byte *)pjBits, (const byte *)pjBits + size,
-			(byte *)bitmap->getPixels());
+	if (flInit & CBM_INIT) {
+		assert(pjBits);
+
+		if (bitmap->format.bytesPerPixel == 1 && !pal.empty()) {
+			const CDC::Impl *destDC = (const CDC::Impl *)hdc;
+			const CPalette::Impl *destPal = (const CPalette::Impl * )destDC->_palette;
+
+			Gfx::PaletteMap palMap(pal, *destPal);
+			palMap.map((const byte *)pjBits, (byte *)bitmap->getPixels(),
+				bitmap->w * bitmap->h);
+
+		} else {
+			size_t size = bitmap->w * bitmap->h *
+				bitmap->format.bytesPerPixel;
+			Common::copy((const byte *)pjBits, (const byte *)pjBits + size,
+				(byte *)bitmap->getPixels());
+		}
 	}
 
 	return bitmap;

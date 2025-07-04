@@ -53,13 +53,13 @@ static inline void copyPixel(const T *srcP, T *destP, int mode, const T &WHITE,
 		break;
 	case DSTINVERT:
 		*destP = ~*destP;
-		break;
+		return;
 	case BLACKNESS:
 		*destP = 0;
-		break;
+		return;
 	case WHITENESS:
 		*destP = WHITE;
-		break;
+		return;
 	default:
 		error("Unsupported blit mode");
 		break;

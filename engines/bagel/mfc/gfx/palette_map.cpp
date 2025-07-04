@@ -19,37 +19,33 @@
  *
  */
 
-#ifndef BAGEL_MFC_GFX_TEXT_RENDER_H
-#define BAGEL_MFC_GFX_TEXT_RENDER_H
-
-#include "common/str-array.h"
-#include "graphics/font.h"
-#include "graphics/managed_surface.h"
-#include "bagel/mfc/minwindef.h"
-#include "bagel/mfc/atltypes.h"
-#include "bagel/mfc/wingdi.h"
+#include "bagel/mfc/gfx/palette_map.h"
 
 namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-class TextRender {
-protected:
-	CSize renderText(const Common::String &str,
-		Graphics::ManagedSurface *dest, Graphics::Font *font,
-		uint textCol, LPCRECT lpRect, UINT nFormat,
-		const Common::Array<int> &tabStops,
-		int nTabOrigin, uint bkColor, int bkMode,
-		uint textColor, uint textAlign);
+PaletteMap::PaletteMap(const Graphics::Palette &src,
+		const Graphics::Palette &dest) : _srcPalCount(src.size()) {
+	// Set up lookup map
+	Graphics::PaletteLookup lookup(dest.data(), dest.size());
+	_map = lookup.createMap(src.data(), src.size());
+}
 
-	void wordWrapText(Graphics::Font *font, const Common::String &str,
-		const Common::Array<int> tabStops,
-		int maxWidth, Common::StringArray &lines);
-	int getStringWidth(Graphics::Font *font, const Common::String &str);
-};
+PaletteMap::~PaletteMap() {
+	delete[] _map;
+}
+
+void PaletteMap::map(const byte *src, byte *dest, size_t len) {
+	if (_map) {
+		for (; len > 0; --len, ++src, ++dest)
+			*dest = _map[*src];
+	} else {
+		// Identical palettes, so pixels can just be copied
+		Common::copy(src, src + len, dest);
+	}
+}
 
 } // namespace Gfx
 } // namespace MFC
 } // namespace Bagel
-
-#endif
