@@ -1474,6 +1474,8 @@ protected:
 	virtual void PostModal() {
 	}
 
+	void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+
 public:
 	CDialog() {}
 	explicit CDialog(LPCSTR lpszTemplateName,
@@ -1544,6 +1546,7 @@ protected:
 	void OnLButtonDown(UINT nFlags, CPoint point);
 	void OnLButtonUp(UINT nFlags, CPoint point);
 	void OnMouseMove(UINT nFlags, CPoint point);
+	LRESULT OnBnClicked(WPARAM wParam, LPARAM lParam);
 
 public:
 	~CButton() override {

@@ -31,6 +31,7 @@ ON_WM_PAINT()
 ON_WM_LBUTTONDOWN()
 ON_WM_LBUTTONUP()
 ON_WM_MOUSEMOVE()
+ON_MESSAGE(BM_CLICK, OnBnClicked)
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
@@ -217,8 +218,7 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	case BS_DEFPUSHBUTTON:
 	case BS_PUSHBOX:
 	case BS_OWNERDRAW:
-		GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
-			MAKELPARAM(0, BN_CLICKED));
+		SendMessage(BM_CLICK);
 		break;
 
 	case BS_CHECKBOX:
@@ -240,6 +240,13 @@ void CButton::OnMouseMove(UINT nFlags, CPoint point) {
 			Invalidate();
 		}
 	}
+}
+
+LRESULT CButton::OnBnClicked(WPARAM wParam, LPARAM lParam) {
+	GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
+		MAKELPARAM(0, BN_CLICKED));
+
+	return 0;
 }
 
 } // namespace MFC

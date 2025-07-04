@@ -31,6 +31,7 @@ ON_COMMAND(IDOK, CDialog::OnOK)
 ON_COMMAND(IDCANCEL, CDialog::OnCancel)
 ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
 ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
+ON_WM_SYSCHAR()
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
@@ -260,6 +261,29 @@ BOOL CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 BOOL CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
 		CWnd *pParentWnd, HINSTANCE hInst) {
 	error("TODO: CDialog::CreateIndirect");
+}
+
+void CDialog::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	// Convert input character to uppercase for case-insensitive match
+	char pressedChar = toupper(nChar);
+	for (auto &child : _children) {
+		CWnd *pChild = child._value;
+		CString text;
+		pChild->GetWindowText(text);
+
+		// Check for ampersand for hotkey underlining
+		uint idx = text.findFirstOf('&');
+
+		if (idx != Common::String::npos &&
+			pressedChar == toupper(text[idx + 1])) {
+			// Found match – simulate button click
+			pChild->SendMessage(BM_CLICK);
+			return;
+		}
+	}
+
+	// If no match found, pass to base class
+	CWnd::OnSysChar(nChar, nRepCnt, nFlags);
 }
 
 } // namespace MFC
