@@ -207,7 +207,6 @@ void AtariSurface::drawMaskedSprite(
 	const Graphics::Surface &boundingSurface,
 	int destX, int destY,
 	const Common::Rect &subRect) {
-	assert(srcSurface.format == format);
 	assert(srcSurface.w == srcMask.w);
 	assert(srcSurface.h == srcMask.h);
 

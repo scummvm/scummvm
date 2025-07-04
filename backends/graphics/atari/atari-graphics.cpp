@@ -606,7 +606,7 @@ void AtariGraphicsManager::unlockScreen() {
 }
 
 void AtariGraphicsManager::fillScreen(uint32 col) {
-	atari_debug("fillScreen: %d", col);
+	//atari_debug("fillScreen: %d", col);
 
 	Graphics::Surface &dstSurface = *lockScreen();
 
