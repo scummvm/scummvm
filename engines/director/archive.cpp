@@ -1231,7 +1231,8 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 			it->tag != SWAP_BYTES_32(_metaTag) &&
 			it->tag != MKTAG('i', 'm', 'a', 'p') &&
 			it->tag != MKTAG('m', 'm', 'a', 'p') &&
-			it->tag != MKTAG('K', 'E', 'Y', '*')
+			it->tag != MKTAG('K', 'E', 'Y', '*') &&
+			it->tag != MKTAG('f', 'r', 'e', 'e')
 		) {
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
@@ -1381,7 +1382,6 @@ void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, ui
 	} else {
 		warning("RIFXArchive::writeStream: Error saving the file %s", fname.c_str());
 	}
-	free(dumpData);
 }
 
 } // End of namespace Director

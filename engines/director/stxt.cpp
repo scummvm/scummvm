@@ -45,7 +45,8 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	uint32 offset = textStream.readUint32();
 	if (offset != 12) {
-		error("Stxt init: unhandled offset");
+		textStream.hexdump(textStream.size());
+		error("Stxt init: unhandled offset, %d", offset);
 		return;
 	}
 	uint32 strLen = textStream.readUint32();
