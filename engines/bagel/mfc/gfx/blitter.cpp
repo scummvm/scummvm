@@ -159,6 +159,9 @@ void blit(const Graphics::ManagedSurface *src,
 		error("Invalid surface bytesPerPixel");
 		break;
 	}
+
+	dest->addDirtyRect(Common::Rect(destPos.x, destPos.y,
+		destPos.x + srcRect.width(), destPos.y + srcRect.height()));
 }
 
 void stretchBlit(const Graphics::ManagedSurface *src,

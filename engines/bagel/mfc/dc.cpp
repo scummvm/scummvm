@@ -820,11 +820,7 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	const Common::Point destPos(x, y);
 	uint bgColor = getBkPixel();
 
-	if (dwRop == SRCCOPY && src->format == dest->format) {
-		dest->blitFrom(*src, srcRect, destPos);
-	} else {
-		Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
-	}
+	Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
 }
 
 void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
