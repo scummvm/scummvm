@@ -29,7 +29,7 @@
 #include "create_teenagent.h"
 #include "static_tables.h"
 
-void writeStringsBlock(FILE* fd, const char **stringArr, uint size) {
+void writeStringsBlock(FILE *fd, const char **stringArr, uint size) {
 	for (uint i = 0; i < size; i++) {
 		for (uint j = 0; j < strlen(stringArr[i]); j++) {
 			if (stringArr[i][j] == '\n')
