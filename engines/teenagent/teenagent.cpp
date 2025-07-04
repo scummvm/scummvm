@@ -52,8 +52,12 @@
 
 namespace TeenAgent {
 
+TeenAgentEngine *g_engine = nullptr;
+
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
 	: Engine(system), _action(kActionNone), _gameDescription(gd), _rnd("teenagent") {
+	g_engine = this;
+
 	music = new MusicPlayer(this);
 	dialog = new Dialog(this);
 	res = new Resources();

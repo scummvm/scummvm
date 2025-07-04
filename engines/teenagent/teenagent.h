@@ -217,6 +217,8 @@ private:
 	void fnGiveAnotherFlowerToAnne();
 };
 
+extern TeenAgentEngine *g_engine;
+
 } // End of namespace TeenAgent
 
 #endif
