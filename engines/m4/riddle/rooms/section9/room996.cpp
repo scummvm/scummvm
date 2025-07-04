@@ -237,7 +237,9 @@ void Room996::parser() {
 			kernel_timing_trigger(10, 1, nullptr);
 
 		} else if (_G(kernel).trigger == 1) {
-			if (_G(flags)[V285])
+			// Original is only checking against flag 285. The problem is that if it's missing, it's becoming incoherent after,
+			// so I added the other flags in the check to display the title when other things are displayed.
+			if (_G(flags)[V285] || _G(flags)[V286] || _G(flags)[V287] || _G(flags)[V288] || _G(flags)[V289])
 				_roomStates_ripTalker = series_show("996 TITLE JOURNAL TYPE", 256, 16, -1, -1, 0, 100, 0, 0);
 
 			if (_G(flags)[V286])
