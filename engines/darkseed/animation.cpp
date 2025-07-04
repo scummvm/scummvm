@@ -530,9 +530,13 @@ void Animation::updateAnimation() {
 		}
 		break;
 	case 30:
-	case 31: {
+	case 31: { // Have a drink of water
 		int animIdx = _otherNspAnimationType_maybe - 30;
 		advanceAnimationFrame(animIdx);
+		if (_frameAdvanced && _otherNspAnimationType_maybe == 30 && _animIndexTbl[animIdx] == 6) {
+			// This sound effect is missing in the CD version
+			g_engine->playSound(35, 5, -1); // water
+		}
 		if (_isPlayingAnimation_maybe) {
 			_player->_frameIdx = _player->_animations.getAnimAt(animIdx)._frameNo[_animIndexTbl[animIdx]];
 		}
