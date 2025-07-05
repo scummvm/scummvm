@@ -248,7 +248,7 @@ void Animation::load() {
 	if (_isLoaded)
 		return;
 	AnimationBase::load();
-	const auto withMipmaps = _folder != AnimationFolder::Backgrounds;
+	const bool withMipmaps = _folder != AnimationFolder::Backgrounds;
 	Rect maxBounds = maxFrameBounds();
 	_renderedSurface.create(maxBounds.width(), maxBounds.height(), BlendBlit::getSupportedPixelFormat());
 	_renderedTexture = g_engine->renderer().createTexture(maxBounds.width(), maxBounds.height(), withMipmaps);
