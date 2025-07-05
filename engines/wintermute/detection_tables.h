@@ -1725,13 +1725,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("klaymen1", "",
 		WME_ENTRY1s("data.dcp", "8a066d13d32567ca88a6918bfa3c01fa", 17086470), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
-	// K'NOSSOS
-	WME_WINENTRY("knossos", "",
-		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 1654383903), Common::EN_ANY, ADGF_UNSTABLE, WME_1_9_3),
-
-	// K'NOSSOS (Alpha Demo)
+	// K'NOSSOS (Alpha Demo AKA Prologue 23.3RC7-E04)
 	WME_WINENTRY("knossos", "Alpha Demo",
 		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 867516208), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// K'NOSSOS (Prologue 29.18RC4-E05)
+	WME_WINENTRY("knossos", "Prologue",
+		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 1482635116), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
+
+	// K'NOSSOS (Prologue 30.21RC5-E05)
+	WME_WINENTRY("knossos", "Prologue",
+		WME_ENTRY1s("K'NOSSOS.exe", "694e488cc99bb78d2fe906f82d3ee9e1", 1654383903), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_3),
 
 	// Kulivocko (Czech)
 	WME_WINENTRY("kulivocko", "",
