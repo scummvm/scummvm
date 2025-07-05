@@ -737,9 +737,7 @@ void MPEGPSDecoder::MPEGVideoTrack::findDimensions(Common::SeekableReadStream *f
 	_height = firstPacket->readByte();
 	_width |= (_height & 0xF0) >> 4;
 	_height = ((_height & 0x0F) << 8) | firstPacket->readByte();
-	_pixelFormat = g_system->getScreenFormat();
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
 	debugC(3, kDebugLevelGVideo, "MPEG dimensions: %dx%d", _width, _height);
 

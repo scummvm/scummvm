@@ -48,9 +48,20 @@
 #include "image/codecs/xan.h"
 
 #include "common/endian.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 
 namespace Image {
+
+Graphics::PixelFormat Codec::getDefaultYUVFormat() {
+	Graphics::PixelFormat format = g_system->getScreenFormat();
+
+	// Default to a 32bpp format, if in 8bpp mode
+	if (format.isCLUT8())
+		return Graphics::PixelFormat::createFormatRGBA32();
+	else
+		return format;
+}
 
 Codec *createBitmapCodec(uint32 tag, uint32 streamTag, int width, int height, int bitsPerPixel) {
 	// Crusader videos are special cased here because the frame type is not in the "compression"

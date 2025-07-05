@@ -517,13 +517,13 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 		break;
 	case 3:
 		// We have a planar 24-bit surface
-		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatRGB24());
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
+			byte *dst = (byte *)_outputSurface->getBasePtr(0, y);
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
-				byte r = *(buffer + y * _outputSurface->w * 3 + x);
-				byte g = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w + x);
-				byte b = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w * 2 + x);
-				*((uint32 *)_outputSurface->getBasePtr(x, y)) = _outputSurface->format.RGBToColor(r, g, b);
+				*dst++ = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w * 0 + x);
+				*dst++ = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w * 1 + x);
+				*dst++ = *(buffer + y * _outputSurface->w * 3 + _outputSurface->w * 2 + x);
 			}
 		}
 		break;
@@ -532,14 +532,14 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 		// Note that we ignore the alpha channel since it seems to not be correct
 		// macOS does not ignore it, but then displays it incorrectly. Photoshop
 		// does ignore it and displays it correctly.
-		_outputSurface->create(width, height, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatRGB24());
 		for (uint16 y = 0; y < _outputSurface->h; y++) {
+			byte *dst = (byte *)_outputSurface->getBasePtr(0, y);
 			for (uint16 x = 0; x < _outputSurface->w; x++) {
-				byte a = 0xFF;
-				byte r = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w + x);
-				byte g = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 2 + x);
-				byte b = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 3 + x);
-				*((uint32 *)_outputSurface->getBasePtr(x, y)) = _outputSurface->format.ARGBToColor(a, r, g, b);
+				// *dst++ = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 0 + x);
+				*dst++ = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 1 + x);
+				*dst++ = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 2 + x);
+				*dst++ = *(buffer + y * _outputSurface->w * 4 + _outputSurface->w * 3 + x);
 			}
 		}
 		break;

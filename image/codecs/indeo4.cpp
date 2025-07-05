@@ -114,7 +114,8 @@ int Indeo4Decoder::decodePictureHeader() {
 	if (_ctx._hasTransp && _surface->format.aBits() == 0) {
 		// Surface is 4 bytes per pixel, but only RGB. So promote the
 		// surface to full RGBA, and convert all the existing pixels
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+		// TODO: Use a mask instead?
+		_pixelFormat = Graphics::PixelFormat::createFormatRGBA32();
 		_surface->convertToInPlace(_pixelFormat);
 	}
 
