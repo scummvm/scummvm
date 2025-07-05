@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-05 20:45+0000\n"
-"PO-Revision-Date: 2025-07-05 20:49+0000\n"
+"PO-Revision-Date: 2025-07-05 20:51+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -14180,15 +14180,11 @@ msgid "Use recall"
 msgstr "Usa memoria"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory & Statistics"
 msgid "Open inventory & statistics"
-msgstr "Apri Inventario e Statistiche"
+msgstr "Apri inventario e parametri"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
-#, fuzzy
-#| msgid "Close All Displays"
 msgid "Close all displays"
 msgstr "Chiudi tutte le finestre"
 
@@ -14197,74 +14193,50 @@ msgid "Jump (fake both-button-click)"
 msgstr "Salta (simula clic con entrambi i tasti)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
-#, fuzzy
-#| msgid "Careful Step"
 msgid "Careful step"
-msgstr "Passo Prudente"
+msgstr "Passo prudente"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle through Weapon Inventory"
 msgid "Cycle through weapon inventory"
-msgstr "Itera nell'inventario delle Armi"
+msgstr "Itera nell'inventario delle armi"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through Item Inventory"
 msgid "Cycle through item inventory"
-msgstr "Itera nell'inventario degli Oggetti"
+msgstr "Itera nell'inventario degli oggetti"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Use Inventory Item"
 msgid "Use inventory item"
 msgstr "Usa oggetto dell'inventario"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medikit"
 msgid "Use medikit"
-msgstr "Usa Medikit"
+msgstr "Usa medikit"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
-#, fuzzy
-#| msgid "Use Energy Cube"
 msgid "Use energy cube"
-msgstr "Usa Cubo di Energia"
+msgstr "Usa cubo di energia"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
-#, fuzzy
-#| msgid "Detonate Bomb"
 msgid "Detonate bomb"
-msgstr "Detonazione Bomba"
+msgstr "Detonazione bomba"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Drop Weapon"
 msgid "Drop weapon"
-msgstr "Abbandona Arma"
+msgstr "Abbandona arma"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Search / Select Item"
 msgid "Search / Select item"
-msgstr "Cerca / Seleziona Oggetto"
+msgstr "Cerca / Seleziona oggetto"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
-#, fuzzy
-#| msgid "Use Selection"
 msgid "Use selection"
-msgstr "Usa Selezione"
+msgstr "Usa selezione"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
-#, fuzzy
-#| msgid "Grab Items"
 msgid "Grab items"
-msgstr "Prendi Oggetti"
+msgstr "Prendi oggetti"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Fire Weapon"
 msgid "Fire weapon"
 msgstr "Spara con l'arma"
 
@@ -14277,32 +14249,22 @@ msgid "Jump / Roll / Crouch"
 msgstr "Salta / Rotola / Abbassati"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Short Jump"
 msgid "Short jump"
-msgstr "Salto Corto"
+msgstr "Salto corto"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Sidestep Left"
 msgid "Sidestep left"
 msgstr "Passo a sinistra"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Sidestep Right"
 msgid "Sidestep right"
 msgstr "Passo a destra"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Step Forward"
 msgid "Step forward"
 msgstr "Passo in avanti"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Crouch"
 msgid "Toggle crouch"
 msgstr "Alterna in piedi / abbassato"
 
