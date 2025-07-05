@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-01 05:54+0000\n"
-"PO-Revision-Date: 2025-06-16 18:26+0000\n"
+"PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.12.2\n"
 "X-Language-name: Korean\n"
 
 #: audio/mac_plugin.cpp:30
@@ -6296,7 +6296,7 @@ msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합
 
 #: engines/agi/metaengine.cpp:207
 msgid "Use PCjr's sound chip in 16-bit shift mode"
-msgstr ""
+msgstr "16비트 시프트 모드에서 PCjr 사운드 칩 사용"
 
 #: engines/agi/metaengine.cpp:208
 msgid ""
@@ -6305,6 +6305,10 @@ msgid ""
 "especially in fanmade games, but original Sierra music designed strictly for "
 "PCjr may sound wrong."
 msgstr ""
+"PCjr 사운드 모드에서는 세가 마스터 시스템 콘솔에 사용되는 칩과 유사한 비표준 "
+"SN76496 사운드 칩을 에뮬레이션합니다. 특히 팬이 만든 게임에서 특정 음악 "
+"효과를 사용할 수 있지만, PCjr용으로만 제작된 오리지널 시에라 음악은 제대로 "
+"들리지 않을 수 있습니다."
 
 #: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
@@ -6482,22 +6486,16 @@ msgid "Music volume up"
 msgstr "음악 볼륨 높임"
 
 #: engines/agos/metaengine.cpp:268 engines/vcruise/metaengine.cpp:201
-#, fuzzy
-#| msgid "Toggle music on/off"
 msgid "Toggle music on / off"
-msgstr "음악 켜기/끄기 전환"
+msgstr "음악 켜기 / 끄기 전환"
 
 #: engines/agos/metaengine.cpp:273 engines/vcruise/metaengine.cpp:206
-#, fuzzy
-#| msgid "Toggle sound effects on/off"
 msgid "Toggle sound effects on / off"
-msgstr "사운드 효과 켜기/끄기 전환"
+msgstr "사운드 효과 켜기 / 끄기 전환"
 
 #: engines/agos/metaengine.cpp:278 engines/sky/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle fast mode on/off"
 msgid "Toggle fast mode on / off"
-msgstr "빠른 모드 켜기/끄기 전환"
+msgstr "빠른 모드 켜기 / 끄기 전환"
 
 #: engines/agos/metaengine.cpp:290
 msgid "Walk forward"
@@ -6552,10 +6550,8 @@ msgid "Show objects to interact"
 msgstr "소통할 개체 표시"
 
 #: engines/agos/metaengine.cpp:346
-#, fuzzy
-#| msgid "Toggle background sounds on/off"
 msgid "Toggle background sounds on / off"
-msgstr "배경음 켜기/끄기 전환"
+msgstr "배경음 켜기 / 끄기 전환"
 
 #. I18N: Characters are game actors
 #: engines/agos/metaengine.cpp:355
@@ -6563,10 +6559,8 @@ msgid "Switch characters"
 msgstr "캐릭터 전환"
 
 #: engines/agos/metaengine.cpp:361
-#, fuzzy
-#| msgid "Toggle hitbox names on/off"
 msgid "Toggle hitbox names on / off"
-msgstr "히트박스 이름 켜기/끄기 전환"
+msgstr "히트박스 이름 켜기 / 끄기 전환"
 
 #: engines/agos/metaengine.cpp:368
 msgid "Switches between speech only and combined speech and subtitles"
@@ -6818,10 +6812,8 @@ msgid "Move right"
 msgstr "오른쪽으로 이동"
 
 #: engines/asylum/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle animation on/off"
 msgid "Toggle animation on / off"
-msgstr "애니메이션 켜기/끄기 전환"
+msgstr "애니메이션 켜기 / 끄기 전환"
 
 #: engines/asylum/metaengine.cpp:232
 msgid "Return to gameplay"
@@ -6861,16 +6853,13 @@ msgstr "무시하고 불러오기"
 
 #: engines/awe/metaengine.cpp:35
 msgid "Enable title and copy protection screens (if present)"
-msgstr ""
+msgstr "제목 및 복사 방지 화면 (있는 경우) 활성화"
 
 #: engines/awe/metaengine.cpp:36
-#, fuzzy
-#| msgid ""
-#| "Enable any copy protection that would otherwise be bypassed by default."
 msgid ""
 "Displays title and copy protection screens that would otherwise be bypassed "
 "by default."
-msgstr "기본적으로 우회되는 모든 복사 방지 기능을 활성화합니다."
+msgstr "기본적으로 우회되는 제목 및 복사 방지 화면을 표시합니다."
 
 #: engines/awe/metaengine.cpp:61
 msgid "Select/Kick/Run"
@@ -7117,8 +7106,6 @@ msgstr "걷기 / 보기 / 말하기 / 선택하기 / 쏘기"
 #. TOGGLE MCCOY'S COMBAT MODE
 #: engines/bladerunner/metaengine.cpp:220
 #: engines/ultima/nuvie/metaengine.cpp:73
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat"
 msgstr "전투 전환"
 
@@ -7140,8 +7127,6 @@ msgstr "컷씬 건너뛰기"
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
 #: engines/sludge/keymapper_tables.h:535 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
-#, fuzzy
-#| msgid "Skip dialogue"
 msgid "Skip dialog"
 msgstr "대화 건너뛰기"
 
@@ -7150,8 +7135,6 @@ msgstr "대화 건너뛰기"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:253
-#, fuzzy
-#| msgid "Game Options"
 msgid "Game options"
 msgstr "게임 옵션"
 
@@ -7161,16 +7144,12 @@ msgstr "게임 옵션"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ACTIVATE KIA CLUE DATABASE SYSTEM
 #: engines/bladerunner/metaengine.cpp:264
-#, fuzzy
-#| msgid "Open KIA Database"
 msgid "Open KIA database"
 msgstr "KIA 데이터베이스 열기"
 
 #. I18N: This keymap works within the KIA Save Game screen
 #. and allows submitting a selected existing save game for deletion.
 #: engines/bladerunner/metaengine.cpp:282
-#, fuzzy
-#| msgid "Delete Selected Saved Game"
 msgid "Delete selected saved game"
 msgstr "선택한 저장된 게임 삭제"
 
@@ -7209,8 +7188,6 @@ msgstr "아래로 스크롤"
 #. I18N: This keymap allows (in KIA only) for a clue to be set as private or public
 #. (only when the KIA is upgraded).
 #: engines/bladerunner/metaengine.cpp:311
-#, fuzzy
-#| msgid "Toggle Clue Privacy"
 msgid "Toggle clue privacy"
 msgstr "단서 개인 정보 보호 전환"
 
@@ -7263,8 +7240,6 @@ msgstr "게임 불러오기"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CRIME SCENE DATABASE
 #: engines/bladerunner/metaengine.cpp:348
-#, fuzzy
-#| msgid "Crime Scene Database"
 msgid "Crime scene database"
 msgstr "범죄 현장 데이터베이스"
 
@@ -7273,8 +7248,6 @@ msgstr "범죄 현장 데이터베이스"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SUSPECT DATABASE
 #: engines/bladerunner/metaengine.cpp:357
-#, fuzzy
-#| msgid "Suspect Database"
 msgid "Suspect database"
 msgstr "용의자 데이터베이스"
 
@@ -7283,8 +7256,6 @@ msgstr "용의자 데이터베이스"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. CLUE DATABASE
 #: engines/bladerunner/metaengine.cpp:366
-#, fuzzy
-#| msgid "Clue Database"
 msgid "Clue database"
 msgstr "단서 데이터베이스"
 
@@ -7374,23 +7345,17 @@ msgstr "게임 키맵핑"
 
 #: engines/cge/metaengine.cpp:215 engines/hopkins/metaengine.cpp:223
 #: engines/sword1/metaengine.cpp:283
-#, fuzzy
-#| msgid "Exit/Skip"
 msgid "Exit / Skip"
-msgstr "나가기/건너뛰기"
+msgstr "나가기 / 건너뛰기"
 
 #. I18N: 3-4 dialogs of game version info, (translation) credits, etc.
 #: engines/cge/metaengine.cpp:234 engines/cge2/metaengine.cpp:248
-#, fuzzy
-#| msgid "Game Info"
 msgid "Game info"
 msgstr "게임 정보"
 
 #. I18N: This opens a Quit Prompt where you have to choose
 #. [Confirm] or [Continue Playing] lines with Left Click.
 #: engines/cge/metaengine.cpp:242 engines/cge2/metaengine.cpp:256
-#, fuzzy
-#| msgid "Quit Prompt"
 msgid "Quit prompt"
 msgstr "프롬프트 종료"
 
@@ -7401,87 +7366,61 @@ msgid "ALTered Item"
 msgstr "ALTered 아이템"
 
 #: engines/cge/metaengine.cpp:257
-#, fuzzy
-#| msgid "Inventory Item 1 (Select/Deselect)"
 msgid "Inventory Item 1 (Select / Deselect)"
-msgstr "인벤토리 아이템 1 (선택/해제)"
+msgstr "인벤토리 아이템 1 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:262
-#, fuzzy
-#| msgid "Inventory Item 2 (Select/Deselect)"
 msgid "Inventory Item 2 (Select / Deselect)"
-msgstr "인벤토리 아이템 2 (선택/해제)"
+msgstr "인벤토리 아이템 2 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:267
-#, fuzzy
-#| msgid "Inventory Item 3 (Select/Deselect)"
 msgid "Inventory Item 3 (Select / Deselect)"
-msgstr "인벤토리 아이템 3 (선택/해제)"
+msgstr "인벤토리 아이템 3 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:272
-#, fuzzy
-#| msgid "Inventory Item 4 (Select/Deselect)"
 msgid "Inventory Item 4 (Select / Deselect)"
-msgstr "인벤토리 아이템 4 (선택/해제)"
+msgstr "인벤토리 아이템 4 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:277
-#, fuzzy
-#| msgid "Inventory Item 5 (Select/Deselect)"
 msgid "Inventory Item 5 (Select / Deselect)"
-msgstr "인벤토리 아이템 5 (선택/해제)"
+msgstr "인벤토리 아이템 5 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:282
-#, fuzzy
-#| msgid "Inventory Item 6 (Select/Deselect)"
 msgid "Inventory Item 6 (Select / Deselect)"
-msgstr "인벤토리 아이템 6 (선택/해제)"
+msgstr "인벤토리 아이템 6 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:287
-#, fuzzy
-#| msgid "Inventory Item 7 (Select/Deselect)"
 msgid "Inventory Item 7 (Select / Deselect)"
-msgstr "인벤토리 아이템 7 (선택/해제)"
+msgstr "인벤토리 아이템 7 (선택 / 해제)"
 
 #: engines/cge/metaengine.cpp:292
-#, fuzzy
-#| msgid "Inventory Item 8 (Select/Deselect)"
 msgid "Inventory Item 8 (Select / Deselect)"
-msgstr "인벤토리 아이템 8 (선택/해제)"
+msgstr "인벤토리 아이템 8 (선택 / 해제)"
 
 #. I18N: There are 24 single-room/screen locations in the game.
 #. You switch between them from numbered buttons on interface.
 #. Sets the current access to only the first Location
 #: engines/cge/metaengine.cpp:300
-#, fuzzy
-#| msgid "DEBUG: Access to Location 1"
 msgid "DEBUG: Access to location 1"
 msgstr "디버그: 위치 1에 대한 접속"
 
 #. I18N: Sets the current access to Locations 1 to 8.
 #: engines/cge/metaengine.cpp:306
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-8"
 msgid "DEBUG: Access to locations 1-8"
 msgstr "디버그: 위치 1-8에 대한 접속"
 
 #. I18N: Sets the current access to Locations 1 to 16.
 #: engines/cge/metaengine.cpp:312
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-16"
 msgid "DEBUG: Access to locations 1-16"
 msgstr "디버그: 위치 1-16에 대한 접속"
 
 #. I18N: Sets the current access to Locations 1 to 23.
 #: engines/cge/metaengine.cpp:318
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-23"
 msgid "DEBUG: Access to locations 1-23"
 msgstr "디버그: 위치 1-23에 대한 접속"
 
 #. I18N: Sets the current access to Locations 1 to 24.
 #: engines/cge/metaengine.cpp:324
-#, fuzzy
-#| msgid "DEBUG: Access to Locations 1-24"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "디버그: 위치 1-24에 대한 접속"
 
@@ -7507,8 +7446,6 @@ msgstr "TTS를 사용하여 자막 읽기 (TTS가 가능한 경우)"
 
 #. I18N: This closes the Dialog/text box.
 #: engines/cge2/metaengine.cpp:229
-#, fuzzy
-#| msgid "Close the Dialogue box"
 msgid "Close the dialog box"
 msgstr "대화 상자를 닫기"
 
@@ -7657,10 +7594,8 @@ msgstr ""
 "Stealth를 시작하는 것을 고려해 보세요."
 
 #: engines/crab/input/input.cpp:119
-#, fuzzy
-#| msgid "Talk/Interact"
 msgid "Talk / Interact"
-msgstr "대화/소통"
+msgstr "대화 / 소통"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
@@ -7790,14 +7725,10 @@ msgid "Action"
 msgstr "액션"
 
 #: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
-#, fuzzy
-#| msgid "Change Command"
 msgid "Change command"
-msgstr "변경 명령"
+msgstr "명령 변경"
 
 #: engines/darkseed/metaengine.cpp:87
-#, fuzzy
-#| msgid "Time Advance"
 msgid "Time advance"
 msgstr "타임 어드밴스"
 
@@ -7858,10 +7789,8 @@ msgstr ""
 "게임이 실제 색상 그래픽 모드로 설계되지 않았더라도 실제 색상 그래픽 모드 사용"
 
 #: engines/draci/metaengine.cpp:153
-#, fuzzy
-#| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
-msgstr "인트로 건너뛰기/지도 또는 인벤토리 나가기"
+msgstr "인트로 건너뛰기 / 지도 또는 인벤토리 나가기"
 
 #: engines/draci/metaengine.cpp:159
 msgid "Open map"
@@ -7924,20 +7853,14 @@ msgstr ""
 " %s 참조"
 
 #: engines/dragons/metaengine.cpp:207
-#, fuzzy
-#| msgid "Left Shoulder"
 msgid "Left shoulder"
 msgstr "왼쪽 숄더 버튼"
 
 #: engines/dragons/metaengine.cpp:213
-#, fuzzy
-#| msgid "Right Shoulder"
 msgid "Right shoulder"
 msgstr "오른쪽 숄더 버튼"
 
 #: engines/dragons/metaengine.cpp:219
-#, fuzzy
-#| msgid "Debug Graphics"
 msgid "Debug graphics"
 msgstr "그래픽 디버그"
 
@@ -8343,8 +8266,6 @@ msgid "Magic"
 msgstr "마법"
 
 #: engines/got/metaengine.cpp:64
-#, fuzzy
-#| msgid "Thor Dies"
 msgid "Thor dies"
 msgstr "토르가 죽음"
 
@@ -8357,8 +8278,6 @@ msgid "Menu / Skip"
 msgstr "메뉴 / 건너뛰기"
 
 #: engines/griffon/metaengine.cpp:159
-#, fuzzy
-#| msgid "Speed Up Cutscene"
 msgid "Speed up cutscene"
 msgstr "컷씬 속도 높임"
 
@@ -8374,16 +8293,12 @@ msgstr ""
 "%s를 계속 실행하겠습니까?"
 
 #: engines/grim/grim.cpp:511 engines/grim/grim.cpp:611
-#, fuzzy
-#| msgid "Use/Talk"
 msgid "Use / Talk"
-msgstr "사용/대화"
+msgstr "사용 / 대화"
 
 #: engines/grim/grim.cpp:516 engines/grim/grim.cpp:616
-#, fuzzy
-#| msgid "Pick up/Put away"
 msgid "Pick up / Put away"
-msgstr "줍기/내려놓기"
+msgstr "줍기 / 내려놓기"
 
 #: engines/grim/grim.cpp:526 engines/grim/grim.cpp:626
 msgid "Skip dialog lines"
@@ -8391,29 +8306,21 @@ msgstr "대화 줄 건너뛰기"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:584
-#, fuzzy
-#| msgid "Cycle Objects Up"
 msgid "Cycle objects up"
 msgstr "개체 위로 순환"
 
 #. I18N: Cycle means rotate through
 #: engines/grim/grim.cpp:590
-#, fuzzy
-#| msgid "Cycle Objects Down"
 msgid "Cycle objects down"
 msgstr "개체 아래로 순환"
 
 #: engines/grim/grim.cpp:601
-#, fuzzy
-#| msgid "Quick Room Exit"
 msgid "Quick room exit"
 msgstr "빠른 룸 나가기"
 
 #: engines/grim/grim.cpp:606
-#, fuzzy
-#| msgid "Examine/Look"
 msgid "Examine / Look"
-msgstr "조사하기/보기"
+msgstr "조사하기 / 보기"
 
 #: engines/grim/grim.cpp:1394
 msgid "Error: the game could not be saved."
@@ -8625,8 +8532,6 @@ msgstr "사용 가능한 경우 고어 모드를 활성화"
 
 #: engines/hopkins/metaengine.cpp:248 engines/tinsel/metaengine.cpp:307
 #: engines/twine/metaengine.cpp:307
-#, fuzzy
-#| msgid "Options Menu"
 msgid "Options menu"
 msgstr "옵션 메뉴"
 
@@ -8639,28 +8544,20 @@ msgid "Backward"
 msgstr "뒤로"
 
 #: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
 msgid "Strafe left"
-msgstr "왼쪽으로 폭겨"
+msgstr "왼쪽 폭격"
 
 #: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
 msgid "Strafe right"
-msgstr "오른쪽으로 폭격"
+msgstr "오른쪽 폭격"
 
 #: engines/hpl1/metaengine.cpp:80
-#, fuzzy
-#| msgid "Lean Left"
 msgid "Lean left"
-msgstr "십자 패드 왼쪽"
+msgstr "왼쪽 기울기"
 
 #: engines/hpl1/metaengine.cpp:81
-#, fuzzy
-#| msgid "Lean Right"
 msgid "Lean right"
-msgstr "십자 패드 오른쪽"
+msgstr "오른쪽 기울기"
 
 #. I18N: Action in In Cold Blood
 #: engines/hpl1/metaengine.cpp:84 engines/icb/icb.cpp:119
@@ -8669,14 +8566,10 @@ msgid "Crouch"
 msgstr "웅크리기"
 
 #: engines/hpl1/metaengine.cpp:87
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Interact mode"
 msgstr "소통 모드"
 
 #: engines/hpl1/metaengine.cpp:88
-#, fuzzy
-#| msgid "Look Mode"
 msgid "Look mode"
 msgstr "보기 모드"
 
@@ -8689,8 +8582,6 @@ msgid "Notebook"
 msgstr "노트북"
 
 #: engines/hpl1/metaengine.cpp:96
-#, fuzzy
-#| msgid "Personal Notes"
 msgid "Personal notes"
 msgstr "개인 노트"
 
@@ -8833,8 +8724,6 @@ msgstr "레모라"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:125 engines/icb/icb.cpp:191
-#, fuzzy
-#| msgid "Side Step"
 msgid "Side step"
 msgstr "사이드 스텝"
 
@@ -9001,66 +8890,46 @@ msgstr "앞으로 이동"
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
 #: engines/wintermute/keymapper_tables.h:2238
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backwards"
 msgstr "뒤로 이동"
 
 #: engines/kyra/engine/eobcommon.cpp:375
-#, fuzzy
-#| msgid "Open/Close Inventory"
 msgid "Open / Close inventory"
-msgstr "인벤토리 열기/닫기"
+msgstr "인벤토리 열기 / 닫기"
 
 #: engines/kyra/engine/eobcommon.cpp:376
-#, fuzzy
-#| msgid "Switch Inventory/Character screen"
 msgid "Switch inventory / Character screen"
-msgstr "인벤토리/캐릭터 화면 전환"
+msgstr "인벤토리 / 캐릭터 화면 전환"
 
 #: engines/kyra/engine/eobcommon.cpp:377
 msgid "Camp"
 msgstr "캠프"
 
 #: engines/kyra/engine/eobcommon.cpp:378 engines/mm/mm1/metaengine.cpp:102
-#, fuzzy
-#| msgid "Cast Spell"
 msgid "Cast spell"
 msgstr "주문 시전"
 
 #: engines/kyra/engine/eobcommon.cpp:381
-#, fuzzy
-#| msgid "Spell Level 1"
 msgid "Spell level 1"
 msgstr "주문 수준 1"
 
 #: engines/kyra/engine/eobcommon.cpp:382
-#, fuzzy
-#| msgid "Spell Level 2"
 msgid "Spell level 2"
 msgstr "주문 수준 2"
 
 #: engines/kyra/engine/eobcommon.cpp:383
-#, fuzzy
-#| msgid "Spell Level 3"
 msgid "Spell level 3"
 msgstr "주문 수준 3"
 
 #: engines/kyra/engine/eobcommon.cpp:384
-#, fuzzy
-#| msgid "Spell Level 4"
 msgid "Spell level 4"
 msgstr "주문 수준 4"
 
 #: engines/kyra/engine/eobcommon.cpp:385
-#, fuzzy
-#| msgid "Spell Level 5"
 msgid "Spell level 5"
 msgstr "주문 수준 5"
 
 #: engines/kyra/engine/eobcommon.cpp:387
-#, fuzzy
-#| msgid "Spell Level 6"
 msgid "Spell level 6"
 msgstr "주문 수준 6"
 
@@ -9087,24 +8956,18 @@ msgid "Show map"
 msgstr "지도 표시"
 
 #: engines/kyra/engine/lol.cpp:512
-#, fuzzy
-#| msgid "Slide Left"
 msgid "Slide left"
 msgstr "왼쪽으로 슬라이드"
 
 #: engines/kyra/engine/lol.cpp:513
-#, fuzzy
-#| msgid "Slide Right"
 msgid "Slide right"
-msgstr "오른쪽으로 슬라이드"
+msgstr "오른쪽 슬라이드"
 
 #: engines/kyra/engine/lol.cpp:517
 msgid "Options"
 msgstr "옵션"
 
 #: engines/kyra/engine/lol.cpp:518
-#, fuzzy
-#| msgid "Choose Spell"
 msgid "Choose spell"
 msgstr "주문 선택"
 
@@ -9415,38 +9278,26 @@ msgid "Replace a colored gem with bars for hit points and spell points."
 msgstr "색깔 있는 보석을 히트 포인트와 주문 포인트를 나타내는 바로 대체합니다."
 
 #: engines/mm/mm1/metaengine.cpp:54
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "View party member 1"
 msgstr "파티 멤버 1 보기"
 
 #: engines/mm/mm1/metaengine.cpp:55
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "View party member 2"
 msgstr "파티 멤버 2 보기"
 
 #: engines/mm/mm1/metaengine.cpp:56
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "View party member 3"
 msgstr "파티 멤버 3 보기"
 
 #: engines/mm/mm1/metaengine.cpp:57
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "View party member 4"
 msgstr "파티 멤버 4 보기"
 
 #: engines/mm/mm1/metaengine.cpp:58
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "View party member 5"
 msgstr "파티 멤버 5 보기"
 
 #: engines/mm/mm1/metaengine.cpp:59
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "View party member 6"
 msgstr "파티 멤버 6 보기"
 
@@ -9468,8 +9319,6 @@ msgstr "대결"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/mm/mm1/metaengine.cpp:75 engines/mm/mm1/metaengine.cpp:116
-#, fuzzy
-#| msgid "Quick Reference"
 msgid "Quick reference"
 msgstr "빠른 참조"
 
@@ -9500,14 +9349,10 @@ msgid "Backwards"
 msgstr "뒤로"
 
 #: engines/mm/mm1/metaengine.cpp:104
-#, fuzzy
-#| msgid "Toggle Minimap"
 msgid "Toggle minimap"
 msgstr "미니맵 전환"
 
 #: engines/mm/mm1/metaengine.cpp:105
-#, fuzzy
-#| msgid "Reorder Party"
 msgid "Reorder party"
 msgstr "파티 재편성"
 
@@ -9996,10 +9841,8 @@ msgid "Nancy Drew - Maze"
 msgstr "낸시 드류 - 미로"
 
 #: engines/nancy/input.cpp:236
-#, fuzzy
-#| msgid "Show/hide maze map"
 msgid "Show / hide maze map"
-msgstr "미로지도 표시/숨기기"
+msgstr "미로지도 표시 / 숨기기"
 
 #: engines/nancy/metaengine.cpp:38
 msgid "Player Speech"
@@ -10155,50 +9998,36 @@ msgstr ""
 "개발 팀에 보고해 주세요."
 
 #: engines/pegasus/pegasus.cpp:2724
-#, fuzzy
-#| msgid "Up/Zoom In/Move Forward/Open Doors"
 msgid "Up / Zoom in / Move forward / Open door"
-msgstr "위로/확대/앞으로 이동/문 열기"
+msgstr "위로 / 확대 / 앞으로 이동 / 문 열기"
 
 #: engines/pegasus/pegasus.cpp:2732
-#, fuzzy
-#| msgid "Down/Zoom Out"
 msgid "Down / Zoom out"
-msgstr "아래로/축소"
+msgstr "아래 / 축소"
 
 #: engines/pegasus/pegasus.cpp:2754
 msgid "Action/Select"
 msgstr "동작/선택"
 
 #: engines/pegasus/pegasus.cpp:2774
-#, fuzzy
-#| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory tray"
-msgstr "인벤토리/IQ 포인트 표시를 전환"
+msgstr "인벤토리 트레이 전환"
 
 #: engines/pegasus/pegasus.cpp:2781
-#, fuzzy
-#| msgid "Toggle Height"
 msgid "Toggle biochip tray"
-msgstr "높이 전환"
+msgstr "바이오칩 트레이 전환"
 
 #: engines/pegasus/pegasus.cpp:2789
-#, fuzzy
-#| msgid "Toggle Center Data Display"
 msgid "Toggle center data display"
 msgstr "중앙 데이터 표시 전환"
 
 #: engines/pegasus/pegasus.cpp:2796
-#, fuzzy
-#| msgid "Toggle fullscreen"
 msgid "Toggle info screen"
-msgstr "전체화면 전환"
+msgstr "정보 화면 전환"
 
 #: engines/pegasus/pegasus.cpp:2803
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle pause menu"
-msgstr "빠른 모드 전환"
+msgstr "일시 정지 메뉴 전환"
 
 #: engines/pegasus/pegasus.cpp:2810
 msgid "Toggle Chatty AI"
@@ -10327,8 +10156,6 @@ msgid "Abort speech"
 msgstr "음성 중단"
 
 #: engines/saga/metaengine.cpp:344
-#, fuzzy
-#| msgid "Show dialogue"
 msgid "Show dialog"
 msgstr "대화 표시"
 
@@ -11746,28 +11573,20 @@ msgid "Enable ambience sounds."
 msgstr "공연장 분위기 사운드 활성화합니다."
 
 #: engines/scumm/metaengine.cpp:965
-#, fuzzy
-#| msgid "Down Left"
 msgid "Down left"
 msgstr "왼쪽 아래"
 
 #: engines/scumm/metaengine.cpp:978
-#, fuzzy
-#| msgid "Down Right"
 msgid "Down right"
 msgstr "오른쪽 아래"
 
 #: engines/scumm/metaengine.cpp:998
-#, fuzzy
-#| msgid "Upper left item"
 msgid "Up left"
-msgstr "왼쪽 상단 아이템"
+msgstr "왼쪽 상단"
 
 #: engines/scumm/metaengine.cpp:1011
-#, fuzzy
-#| msgid "Up Right"
 msgid "Up right"
-msgstr "오른쪽 위"
+msgstr "오른쪽 상단"
 
 #: engines/scumm/metaengine.cpp:1023
 msgid "Switch weapon"
@@ -12116,10 +11935,8 @@ msgid "Open control panel"
 msgstr "제어판 열기"
 
 #: engines/sky/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle really fast mode on/off"
 msgid "Toggle really fast mode on / off"
-msgstr "정말 빠른 모드 켜기/끄기 전환"
+msgstr "정말 빠른 모드 켜기 / 끄기 전환"
 
 #: engines/sky/metaengine.cpp:156
 msgid "Floppy intro"
@@ -12150,14 +11967,10 @@ msgid "Change action"
 msgstr "동작 변경"
 
 #: engines/sludge/keymapper_tables.h:70 engines/sludge/keymapper_tables.h:293
-#, fuzzy
-#| msgid "Speed up dialogue"
 msgid "Speed up dialog"
 msgstr "대화 속도 높임"
 
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
-#, fuzzy
-#| msgid "Slow down dialogue"
 msgid "Slow down dialog"
 msgstr "대화 속도 천천히"
 
@@ -12193,8 +12006,6 @@ msgid "Inventory / Examine"
 msgstr "인벤토리 / 조사하다"
 
 #: engines/sludge/keymapper_tables.h:281
-#, fuzzy
-#| msgid "Examine / Skip dialogue"
 msgid "Examine / Skip dialog"
 msgstr "조사하다 / 대화 건너뛰기"
 
@@ -12228,14 +12039,10 @@ msgid "Cast water spell"
 msgstr "물의 주문 시전"
 
 #: engines/sludge/keymapper_tables.h:423 engines/sludge/keymapper_tables.h:510
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Move / Interact / Skip dialog"
 msgstr "이동 / 소통 / 대화 건너뛰기"
 
 #: engines/sludge/keymapper_tables.h:516
-#, fuzzy
-#| msgid "Inventory / Skip dialogue"
 msgid "Inventory / Skip dialog"
 msgstr "인벤토리 / 대화 건너뛰기"
 
@@ -12321,38 +12128,26 @@ msgid "Scroll down in inventory"
 msgstr "인벤토리에서 아래로 스크롤"
 
 #: engines/stark/metaengine.cpp:306
-#, fuzzy
-#| msgid "Scroll up in your dialogues"
 msgid "Scroll up in your dialogs"
 msgstr "대화에서 위로 스크롤"
 
 #: engines/stark/metaengine.cpp:312
-#, fuzzy
-#| msgid "Scroll down in your dialogues"
 msgid "Scroll down in your dialogs"
 msgstr "대화에서 아래로 스크롤"
 
 #: engines/stark/metaengine.cpp:318
-#, fuzzy
-#| msgid "Go to next dialogue"
 msgid "Go to next dialog"
 msgstr "다음 대화로 이동"
 
 #: engines/stark/metaengine.cpp:323
-#, fuzzy
-#| msgid "Go to previous dialogues"
 msgid "Go to previous dialogs"
 msgstr "이전 대화로 이동"
 
 #: engines/stark/metaengine.cpp:328
-#, fuzzy
-#| msgid "Select dialogue"
 msgid "Select dialog"
 msgstr "대화 선택"
 
 #: engines/stark/metaengine.cpp:335
-#, fuzzy
-#| msgid "Skip video sequence or dialogue"
 msgid "Skip video sequence or dialog"
 msgstr "비디오 시퀀스 또는 대화 건너뛰기"
 
@@ -12437,64 +12232,44 @@ msgstr ""
 "일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
 
 #: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Cutscene keymappings"
-msgstr "나가기 화면 키맵핑"
+msgstr "컷신 키맵핑"
 
 #: engines/supernova/metaengine.cpp:220
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Improved mode keymappings"
-msgstr "색인 키맵핑"
+msgstr "개선된 모드 키맵핑"
 
 #: engines/supernova/metaengine.cpp:221
-#, fuzzy
-#| msgid "Exit screen keymappings"
 msgid "Text reader keymappings"
-msgstr "나가기 화면 키맵핑"
+msgstr "텍스트 리더 키맵핑"
 
 #: engines/supernova/metaengine.cpp:222
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Computer keymappings"
-msgstr "게임 키맵핑"
+msgstr "컴퓨터 키맵핑"
 
 #: engines/supernova/metaengine.cpp:232
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Perform default action"
-msgstr "이동 / 기본 작업 수행"
+msgstr "기본 작업 수행"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "보간:"
+msgstr "소개"
 
 #: engines/supernova/metaengine.cpp:250
-#, fuzzy
-#| msgid "General Information"
 msgid "Information"
-msgstr "일반 정보"
+msgstr "정보"
 
 #: engines/supernova/metaengine.cpp:256
-#, fuzzy
-#| msgid "Text speed - Fast"
 msgid "Text speed"
-msgstr "문장 속도 - 빠름"
+msgstr "텍스트 속도"
 
 #: engines/supernova/metaengine.cpp:285
-#, fuzzy
-#| msgid "Rotate up"
 msgid "Page up"
-msgstr "위로 회전"
+msgstr "페이지 위"
 
 #: engines/supernova/metaengine.cpp:291
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Page down"
-msgstr "아래로 회전"
+msgstr "페이지 아래"
 
 #. I18N: Exits the game
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
@@ -12505,28 +12280,24 @@ msgid "Exit"
 msgstr "나가기"
 
 #: engines/supernova/metaengine.cpp:321
-#, fuzzy
-#| msgid "Good"
 msgid "Go"
-msgstr "좋음"
+msgstr "가기"
 
 #: engines/supernova/metaengine.cpp:379
-#, fuzzy
-#| msgid "Open Files manager"
 msgid "Office manager"
-msgstr "파일 관리자 열기"
+msgstr "오피스 관리자"
 
 #: engines/supernova/metaengine.cpp:385
 msgid "Phone"
-msgstr ""
+msgstr "전화"
 
 #: engines/supernova/metaengine.cpp:391
 msgid "ProText"
-msgstr ""
+msgstr "ProText"
 
 #: engines/supernova/metaengine.cpp:397
 msgid "Calculata"
-msgstr ""
+msgstr "Calculata"
 
 #: engines/sword1/animation.cpp:566 engines/sword2/animation.cpp:459
 msgid ""
@@ -12631,8 +12402,6 @@ msgid "Additional options:"
 msgstr "추가 옵션:"
 
 #: engines/sword1/metaengine.cpp:301
-#, fuzzy
-#| msgid "Main Menu"
 msgid "Main menu"
 msgstr "메인 메뉴"
 
@@ -12696,178 +12465,130 @@ msgid "Save/Load keymappings"
 msgstr "키맵핑 저장/불러오기"
 
 #: engines/tinsel/metaengine.cpp:341
-#, fuzzy
-#| msgid "Page Up in save/load menu"
 msgid "Page up in save / load menu"
-msgstr "저장/불러오기 메뉴에서 페이지 위로"
+msgstr "저장 / 로드 메뉴에서 페이지 위로 이동"
 
 #: engines/tinsel/metaengine.cpp:347
-#, fuzzy
-#| msgid "Page down in save/load menu"
 msgid "Page down in save / load menu"
-msgstr "저장/불러오기 메뉴에서 페이지 아래로"
+msgstr "저장 / 로드 메뉴에서 페이지 아래로 이동"
 
 #: engines/tinsel/metaengine.cpp:353
-#, fuzzy
-#| msgid "Go to start of save/load menu"
 msgid "Go to start of save / load menu"
-msgstr "저장/불러오기 메뉴 시작으로 이동"
+msgstr "저장 / 로드 메뉴 시작으로 이동"
 
 #: engines/tinsel/metaengine.cpp:359
-#, fuzzy
-#| msgid "Go to end of save/load menu"
 msgid "Go to end of save / load menu"
-msgstr "저장/불러오기 메뉴 끝으로 이동"
+msgstr "저장 / 로드 메뉴 끝으로 이동"
 
 #: engines/tinsel/tinsel.cpp:1040
 msgid "Discworld Noir needs ScummVM with TinyGL enabled"
 msgstr "Discworld Noir는 TinyGL이 활성화된 ScummVM이 필요함"
 
 #: engines/titanic/metaengine.cpp:173
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "PET keymappings"
-msgstr "Escape 키맵핑"
+msgstr "PET 키맵핑"
 
 #: engines/titanic/metaengine.cpp:174
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Real Life keymappings"
-msgstr "게임 키맵핑"
+msgstr "실제 키맵핑"
 
 #: engines/titanic/metaengine.cpp:175
-#, fuzzy
-#| msgid "KIA only shortcuts"
 msgid "Inventory shortcut"
-msgstr "KIA 전용 단축키"
+msgstr "인벤토리 단축키"
 
 #: engines/titanic/metaengine.cpp:176
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Continue game dialogue keymappings"
-msgstr "미니게임 키맵핑"
+msgstr "게임 대화 키맵핑 계속"
 
 #: engines/titanic/metaengine.cpp:177
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Star Map keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "별자리 지도 키맵핑"
 
 #: engines/titanic/metaengine.cpp:178
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Movement keymappings"
-msgstr "메뉴 키매핑"
+msgstr "이동 키맵핑"
 
 #: engines/titanic/metaengine.cpp:182
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact / Move"
-msgstr "소통 모드"
+msgstr "선택 / 소통 / 이동"
 
 #: engines/titanic/metaengine.cpp:188
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Select / Interact / Quick move"
-msgstr "이동 / 소통 / 대화 건너뛰기"
+msgstr "선택 / 소통 / 빠른 이동"
 
 #: engines/titanic/metaengine.cpp:194
-#, fuzzy
-#| msgid "Game menu"
 msgid "Cheat menu"
-msgstr "게임 메뉴"
+msgstr "치트 메뉴"
 
 #: engines/titanic/metaengine.cpp:239
-#, fuzzy
-#| msgid "Conversation log"
 msgid "Conversation"
-msgstr "대화 로그"
+msgstr "대화"
 
 #: engines/titanic/metaengine.cpp:249
-#, fuzzy
-#| msgid "Remove"
 msgid "Remote"
-msgstr "제거"
+msgstr "원격"
 
 #: engines/titanic/metaengine.cpp:254
-#, fuzzy
-#| msgid "Room:"
 msgid "Rooms"
-msgstr "룸:"
+msgstr "룸"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
-msgstr ""
+msgstr "실제"
 
 #: engines/titanic/metaengine.cpp:264
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Scroll up page"
-msgstr "위로 스크롤"
+msgstr "페이지 위로 스크롤"
 
 #: engines/titanic/metaengine.cpp:271
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Scroll down page"
-msgstr "아래로 스크롤"
+msgstr "페이지 아래로 스크롤"
 
 #: engines/titanic/metaengine.cpp:278
-#, fuzzy
-#| msgid "Scroll list up"
 msgid "Scroll to top"
-msgstr "목록 위로 스크롤"
+msgstr "위로 스크롤"
 
 #: engines/titanic/metaengine.cpp:284
-#, fuzzy
-#| msgid "Move to bottom"
 msgid "Scroll to bottom"
-msgstr "아래로 이동"
+msgstr "아래로 스크롤"
 
 #: engines/titanic/metaengine.cpp:291
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Translation"
-msgstr "전환:"
+msgstr "번역"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
-msgstr ""
+msgstr "별자리 지도와 집 사진 사이를 전환"
 
 #: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
-#, fuzzy
-#| msgid "Move backwards"
 msgid "Move backward"
 msgstr "뒤로 이동"
 
 #: engines/titanic/metaengine.cpp:350
 msgid "Stop moving"
-msgstr ""
+msgstr "움직임 정지"
 
 #: engines/titanic/metaengine.cpp:356
 msgid "Lock coordinate"
-msgstr ""
+msgstr "좌표 잠금"
 
 #: engines/titanic/metaengine.cpp:362
 msgid "Unlock coordinate"
-msgstr ""
+msgstr "좌표 잠금 해제"
 
 #: engines/titanic/metaengine.cpp:368
-#, fuzzy
-#| msgid "Exit conversation"
 msgid "View constellations"
-msgstr "대화 나가기"
+msgstr "별자리 보기"
 
 #: engines/titanic/metaengine.cpp:373
 msgid "View boundaries"
-msgstr ""
+msgstr "경계 보기"
 
 #: engines/toltecs/metaengine.cpp:216
 msgid "Move / Select"
 msgstr "이동 / 선택"
 
 #: engines/toltecs/metaengine.cpp:222
-#, fuzzy
-#| msgid "Move / Perform Default Action"
 msgid "Move / Perform default action"
 msgstr "이동 / 기본 작업 수행"
 
@@ -12931,10 +12652,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
 
 #: engines/touche/metaengine.cpp:135
-#, fuzzy
-#| msgid "Skip sequence/open quit dialogue"
 msgid "Skip sequence / open quit dialog"
-msgstr "시퀀스 건너뛰기/종료 대화 상자 열기"
+msgstr "시퀀스 건너뛰기 / 종료 대화 상자 열기"
 
 #: engines/touche/metaengine.cpp:147
 msgid "Open options menu"
@@ -12955,10 +12674,8 @@ msgid "Toggle fast mode"
 msgstr "빠른 모드 전환"
 
 #: engines/touche/metaengine.cpp:173
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between voice / text / text and voice"
-msgstr "음성/텍스트/텍스트 및 음성 간 전환"
+msgstr "음성 / 텍스트 / 텍스트 및 음성 간 전환"
 
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
@@ -12999,16 +12716,12 @@ msgid "Crawl South"
 msgstr "남쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:278
-#, fuzzy
-#| msgid "Turn Left/Crawl West"
 msgid "Turn left / Crawl West"
-msgstr "좌회전/서쪽으로 기어가기"
+msgstr "좌회전 / 서쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:285
-#, fuzzy
-#| msgid "Turn Right/Crawl East"
 msgid "Turn right / Crawl East"
-msgstr "우회전/동쪽으로 기어가기"
+msgstr "우회전 / 동쪽으로 기어가기"
 
 #: engines/tsage/metaengine.cpp:292
 msgid "Increase speed"
@@ -13132,74 +12845,50 @@ msgid "Enable a higher resolution for the game"
 msgstr "게임의 고해상도 지원을 활성화"
 
 #: engines/twine/metaengine.cpp:228
-#, fuzzy
-#| msgid "Debug Grid Camera Up"
 msgid "Debug grid camera up"
-msgstr "디버그 격자 카메라 위"
+msgstr "격자 카메라 위 디버그"
 
 #: engines/twine/metaengine.cpp:233
-#, fuzzy
-#| msgid "Debug Grid Camera Down"
 msgid "Debug grid camera down"
-msgstr "디버그 격자 카메라 아래"
+msgstr "격자 카메라 아래 디버그"
 
 #: engines/twine/metaengine.cpp:238
-#, fuzzy
-#| msgid "Debug Grid Camera Left"
 msgid "Debug grid camera left"
-msgstr "디버그 격자 카메라 왼쪽"
+msgstr "격자 카메라 왼쪽 디버그"
 
 #: engines/twine/metaengine.cpp:244
-#, fuzzy
-#| msgid "Debug Grid Camera Right"
 msgid "Debug grid camera right"
-msgstr "디버그 격자 카메라 오른쪽"
+msgstr "격자 카메라 오른쪽 디버그"
 
 #: engines/twine/metaengine.cpp:249 engines/twine/metaengine.cpp:269
-#, fuzzy
-#| msgid "Normal Behaviour"
 msgid "Normal behavior"
 msgstr "기본 동작"
 
 #: engines/twine/metaengine.cpp:254 engines/twine/metaengine.cpp:274
-#, fuzzy
-#| msgid "Athletic Behaviour"
 msgid "Athletic behavior"
 msgstr "육상 동작"
 
 #: engines/twine/metaengine.cpp:259 engines/twine/metaengine.cpp:279
-#, fuzzy
-#| msgid "Aggressive Behaviour"
 msgid "Aggressive behavior"
 msgstr "공격적인 동작"
 
 #: engines/twine/metaengine.cpp:264 engines/twine/metaengine.cpp:284
-#, fuzzy
-#| msgid "Discreet Behaviour"
 msgid "Discreet behavior"
 msgstr "신중한 동작"
 
 #: engines/twine/metaengine.cpp:289
-#, fuzzy
-#| msgid "Behaviour Action"
 msgid "Behavior action"
 msgstr "동작 작업"
 
 #: engines/twine/metaengine.cpp:295
-#, fuzzy
-#| msgid "Change Behaviour"
 msgid "Change behavior"
 msgstr "동작 변경"
 
 #: engines/twine/metaengine.cpp:319
-#, fuzzy
-#| msgid "Use Selected Object"
 msgid "Use selected object"
 msgstr "선택한 개체를 사용"
 
 #: engines/twine/metaengine.cpp:325
-#, fuzzy
-#| msgid "Throw Magic Ball"
 msgid "Throw magic ball"
 msgstr "매직 볼을 던지기"
 
@@ -13212,16 +12901,12 @@ msgid "Open Holomap"
 msgstr "홀로맵을 열기"
 
 #: engines/twine/metaengine.cpp:378
-#, fuzzy
-#| msgid "Special Action"
 msgid "Special action"
 msgstr "특수 작업"
 
 #: engines/twine/metaengine.cpp:384
-#, fuzzy
-#| msgid "Scenery Zoom"
 msgid "Scenery zoom"
-msgstr "풍경 확대/축소"
+msgstr "풍경 확대 / 축소"
 
 #: engines/twine/metaengine.cpp:527
 msgid "Previous location"
@@ -13306,110 +12991,74 @@ msgid "Go to next object"
 msgstr "다음 개체로 이동"
 
 #: engines/twp/metaengine.cpp:158
-#, fuzzy
-#| msgid "Select verb/item Left"
 msgid "Select verb / item left"
-msgstr "왼쪽 버브/아이템 선택"
+msgstr "왼쪽 버브 / 아이템 선택"
 
 #: engines/twp/metaengine.cpp:159
-#, fuzzy
-#| msgid "Select verb/item Right"
 msgid "Select verb / item right"
-msgstr "오른쪽 버브/아이템 선택"
+msgstr "오른쪽 버브 / 아이템 선택"
 
 #: engines/twp/metaengine.cpp:160
-#, fuzzy
-#| msgid "Select verb/item Up"
 msgid "Select verb / item up"
-msgstr "위쪽 버브/아이템 선택"
+msgstr "위쪽 버브 / 아이템 선택"
 
 #: engines/twp/metaengine.cpp:161
-#, fuzzy
-#| msgid "Select verb/item Down"
 msgid "Select verb / item down"
-msgstr "아래쪽 버브/아이템 선택"
+msgstr "아래쪽 버브 / 아이템 선택"
 
 #: engines/twp/metaengine.cpp:163
-#, fuzzy
-#| msgid "Select Actor 1"
 msgid "Select actor 1"
 msgstr "배우 1 선택"
 
 #: engines/twp/metaengine.cpp:164
-#, fuzzy
-#| msgid "Select Actor 2"
 msgid "Select actor 2"
 msgstr "배우 2 선택"
 
 #: engines/twp/metaengine.cpp:165
-#, fuzzy
-#| msgid "Select Actor 3"
 msgid "Select actor 3"
 msgstr "배우 3 선택"
 
 #: engines/twp/metaengine.cpp:166
-#, fuzzy
-#| msgid "Select Actor 4"
 msgid "Select actor 4"
 msgstr "배우 4 선택"
 
 #: engines/twp/metaengine.cpp:167
-#, fuzzy
-#| msgid "Select Actor 5"
 msgid "Select actor 5"
 msgstr "배우 5 선택"
 
 #: engines/twp/metaengine.cpp:168
-#, fuzzy
-#| msgid "Select Choice 1"
 msgid "Select choice 1"
 msgstr "선택 1 선택"
 
 #: engines/twp/metaengine.cpp:169
-#, fuzzy
-#| msgid "Select Choice 2"
 msgid "Select choice 2"
 msgstr "선택 2 선택"
 
 #: engines/twp/metaengine.cpp:170
-#, fuzzy
-#| msgid "Select Choice 3"
 msgid "Select choice 3"
 msgstr "선택 3 선택"
 
 #: engines/twp/metaengine.cpp:171
-#, fuzzy
-#| msgid "Select Choice 4"
 msgid "Select choice 4"
 msgstr "선택 4 선택"
 
 #: engines/twp/metaengine.cpp:172
-#, fuzzy
-#| msgid "Select Choice 5"
 msgid "Select choice 5"
 msgstr "선택 5 선택"
 
 #: engines/twp/metaengine.cpp:173
-#, fuzzy
-#| msgid "Select Choice 6"
 msgid "Select choice 6"
 msgstr "선택 6 선택"
 
 #: engines/twp/metaengine.cpp:174
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select next Actor"
 msgstr "다음 배우 선택"
 
 #: engines/twp/metaengine.cpp:175
-#, fuzzy
-#| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "이전 배우 선택"
 
 #: engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip Text"
 msgid "Skip text"
 msgstr "대사 건너뛰기"
 
@@ -13499,20 +13148,16 @@ msgstr "올바른 ultima.dat 데이터 파일을 찾을 수 없음"
 #: engines/ultima/ultima4/metaengine.cpp:130
 #: engines/ultima/ultima4/metaengine.cpp:135
 #: engines/ultima/ultima4/metaengine.cpp:145
-#, fuzzy
-#| msgid "Next action"
 msgid "Abort action"
-msgstr "다음 행동"
+msgstr "행동 중단"
 
 #: engines/ultima/ultima4/metaengine.cpp:49
-#, fuzzy
-#| msgid "Keyboard"
 msgid "Board"
-msgstr "키보드"
+msgstr "보드"
 
 #: engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
-msgstr ""
+msgstr "오름"
 
 #: engines/ultima/ultima4/metaengine.cpp:52
 #: engines/ultima/ultima8/metaengine.cpp:108
@@ -13521,262 +13166,203 @@ msgstr "내림차순"
 
 #: engines/ultima/ultima4/metaengine.cpp:56
 msgid "Get chest"
-msgstr ""
+msgstr "상자 획득"
 
 #: engines/ultima/ultima4/metaengine.cpp:57
 msgid "Hole up & camp"
-msgstr ""
+msgstr "숨기 & 야영"
 
 #: engines/ultima/ultima4/metaengine.cpp:58
 msgid "Jimmy"
-msgstr ""
+msgstr "지미"
 
 #: engines/ultima/ultima4/metaengine.cpp:59
 msgid "Ignite"
-msgstr ""
+msgstr "점화"
 
 #: engines/ultima/ultima4/metaengine.cpp:60
-#, fuzzy
-#| msgid "Look at"
 msgid "Locate position"
-msgstr "보기"
+msgstr "위치 찾기"
 
 #: engines/ultima/ultima4/metaengine.cpp:61
 msgid "Mix reagents"
-msgstr ""
+msgstr "시약 섞기"
 
 #: engines/ultima/ultima4/metaengine.cpp:62
-#, fuzzy
-#| msgid "New kid"
 msgid "New order"
-msgstr "새 캐릭터"
+msgstr "새로운 주문"
 
 #: engines/ultima/ultima4/metaengine.cpp:63
-#, fuzzy
-#| msgid "Open Holomap"
 msgid "Open door"
-msgstr "홀로맵을 열기"
+msgstr "문 열기"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
-#, fuzzy
-#| msgid "Password:"
 msgid "Pass"
-msgstr "비밀번호:"
+msgstr "통과"
 
 #: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Peer"
-msgstr ""
+msgstr "주시"
 
 #: engines/ultima/ultima4/metaengine.cpp:66
-#, fuzzy
-#| msgid "Quick save"
 msgid "Quit and save"
-msgstr "빠른 저장"
+msgstr "종료하고 저장"
 
 #: engines/ultima/ultima4/metaengine.cpp:67
-#, fuzzy
-#| msgid "Next Weapon"
 msgid "Ready weapon"
-msgstr "다음 무기"
+msgstr "무기 준비"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
-#, fuzzy
-#| msgid "Status:"
 msgid "Stats"
-msgstr "상태:"
+msgstr "스탯"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
-msgstr ""
+msgstr "갑옷 착용"
 
 #: engines/ultima/ultima4/metaengine.cpp:73
 msgid "Yell"
-msgstr ""
+msgstr "소리침"
 
 #: engines/ultima/ultima4/metaengine.cpp:79
-#, fuzzy
-#| msgid "Speed:"
 msgid "Speed up"
-msgstr "속도:"
+msgstr "속도 높임"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
-#, fuzzy
-#| msgid "Move down"
 msgid "Speed down"
-msgstr "아래로 이동"
+msgstr "속도 낮춤"
 
 #: engines/ultima/ultima4/metaengine.cpp:81
-#, fuzzy
-#| msgid "Speech Only"
 msgid "Speed normal"
-msgstr "음성만"
+msgstr "속도 보통"
 
 #: engines/ultima/ultima4/metaengine.cpp:82
 msgid "Combat speed up"
-msgstr ""
+msgstr "전투 속도 높임"
 
 #: engines/ultima/ultima4/metaengine.cpp:83
-#, fuzzy
-#| msgid "Rotate down"
 msgid "Combat speed down"
-msgstr "아래로 회전"
+msgstr "전투 속도 낮춤"
 
 #: engines/ultima/ultima4/metaengine.cpp:84
 msgid "Combat speed normal"
-msgstr ""
+msgstr "전투 속도 보통"
 
 #: engines/ultima/ultima4/metaengine.cpp:90
 msgid "Party - None"
-msgstr ""
+msgstr "파티 - 없음"
 
 #: engines/ultima/ultima4/metaengine.cpp:91
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #1"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #1"
 
 #: engines/ultima/ultima4/metaengine.cpp:92
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #2"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #2"
 
 #: engines/ultima/ultima4/metaengine.cpp:93
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #3"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #3"
 
 #: engines/ultima/ultima4/metaengine.cpp:94
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #4"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #4"
 
 #: engines/ultima/ultima4/metaengine.cpp:95
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #5"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #5"
 
 #: engines/ultima/ultima4/metaengine.cpp:96
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #6"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #6"
 
 #: engines/ultima/ultima4/metaengine.cpp:97
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #7"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #7"
 
 #: engines/ultima/ultima4/metaengine.cpp:98
-#, fuzzy
-#| msgid "Transfer Character"
 msgid "Party - Character #8"
-msgstr "캐릭터 전송"
+msgstr "파티 - 캐릭터 #8"
 
 #: engines/ultima/ultima4/metaengine.cpp:104
 msgid "Destroy all creatures"
-msgstr ""
+msgstr "모든 생명체 파괴"
 
 #: engines/ultima/ultima4/metaengine.cpp:105
-#, fuzzy
-#| msgctxt "Options menu"
-#| msgid "Wall collision on"
 msgid "Toggle collision handling"
-msgstr "벽 충돌 켬"
+msgstr "충돌 처리 전환"
 
 #: engines/ultima/ultima4/metaengine.cpp:106
-#, fuzzy
-#| msgid "Next object"
 msgid "Destroy object"
-msgstr "다음 개체"
+msgstr "개체 파괴"
 
 #: engines/ultima/ultima4/metaengine.cpp:107
 msgid "Full equipment"
-msgstr ""
+msgstr "전체 장비"
 
 #: engines/ultima/ultima4/metaengine.cpp:108
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Flee combat"
-msgstr "전투 전환"
+msgstr "전투에서 도망"
 
 #: engines/ultima/ultima4/metaengine.cpp:110
 msgid "Help - Teleport to Lord British"
-msgstr ""
+msgstr "도움 - 로드 브리티시로 순간이동"
 
 #: engines/ultima/ultima4/metaengine.cpp:111
-#, fuzzy
-#| msgid "Grab Items"
 msgid "Give items"
-msgstr "아이템 획득"
+msgstr "아이템 제공"
 
 #: engines/ultima/ultima4/metaengine.cpp:112
 msgid "List karma"
-msgstr ""
+msgstr "카르마 목록"
 
 #: engines/ultima/ultima4/metaengine.cpp:113
-#, fuzzy
-#| msgid "Next location"
 msgid "Leave location"
-msgstr "다음 위치"
+msgstr "위치 떠남"
 
 #: engines/ultima/ultima4/metaengine.cpp:114
 msgid "Give mixtures"
-msgstr ""
+msgstr "혼합물 제공"
 
 #: engines/ultima/ultima4/metaengine.cpp:115
 msgid "Combat encounters"
-msgstr ""
+msgstr "전투 조우"
 
 #: engines/ultima/ultima4/metaengine.cpp:116
-#, fuzzy
-#| msgid "Toggle Drag Mode"
 msgid "Toggle overhead view"
-msgstr "드래그 모드 전환"
+msgstr "오버헤드 뷰 전환"
 
 #: engines/ultima/ultima4/metaengine.cpp:117
 msgid "Full party"
-msgstr ""
+msgstr "전체 파티"
 
 #: engines/ultima/ultima4/metaengine.cpp:118
 msgid "Give reagents"
-msgstr ""
+msgstr "시약 제공"
 
 #: engines/ultima/ultima4/metaengine.cpp:119
 msgid "Full stats"
-msgstr ""
+msgstr "전체 스탯"
 
 #: engines/ultima/ultima4/metaengine.cpp:120
-#, fuzzy
-#| msgid "Create directory"
 msgid "Create transport"
-msgstr "디렉터리 만들기"
+msgstr "운송 수단 만들기"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up level"
-msgstr "디버그 수준:"
+msgstr "레벨 상승"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down level"
-msgstr "디버그 수준:"
+msgstr "레벨 하락"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Grant virtue"
-msgstr ""
+msgstr "미덕 부여"
 
 #: engines/ultima/ultima4/metaengine.cpp:124
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change wind"
-msgstr "사운드 변경"
+msgstr "바람 변경"
 
 #: engines/ultima/nuvie/nuvie.cpp:403
 #, c-format
@@ -13793,44 +13379,36 @@ msgid "Original Save"
 msgstr "원본 저장"
 
 #: engines/ultima/nuvie/metaengine.cpp:59
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk west"
-msgstr "걷기"
+msgstr "서쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:60
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk east"
-msgstr "걷기"
+msgstr "동쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:61
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk north"
-msgstr "걷기"
+msgstr "북쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:62
-#, fuzzy
-#| msgid "Walk to"
 msgid "Walk south"
-msgstr "걷기"
+msgstr "남쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:63
 msgid "Walk north-east"
-msgstr ""
+msgstr "북동쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:64
 msgid "Walk south-east"
-msgstr ""
+msgstr "남동쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:65
 msgid "Walk north-west"
-msgstr ""
+msgstr "북서쪽으로 걷기"
 
 #: engines/ultima/nuvie/metaengine.cpp:66
 msgid "Walk south-west"
-msgstr ""
+msgstr "남서쪽으로 걷기"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/ultima/nuvie/metaengine.cpp:72
@@ -13840,457 +13418,373 @@ msgstr "떨어뜨리기"
 
 #: engines/ultima/nuvie/metaengine.cpp:75
 msgid "Multi-use"
-msgstr ""
+msgstr "다용도"
 
 #: engines/ultima/nuvie/metaengine.cpp:76
-#, fuzzy
-#| msgid "Select shader"
 msgid "Select command bar"
-msgstr "셰이더 선택"
+msgstr "명령바 선택"
 
 #: engines/ultima/nuvie/metaengine.cpp:77
-#, fuzzy
-#| msgid "Select Next Actor"
 msgid "Select new command bar"
-msgstr "다음 배우 선택"
+msgstr "새 명령바 선택"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:79
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Doll gump"
-msgstr "위로 스크롤"
+msgstr "인형 검프"
 
 #: engines/ultima/nuvie/metaengine.cpp:80
-#, fuzzy
-#| msgid "Previous page"
 msgid "Previous party member"
-msgstr "이전 페이지"
+msgstr "이전 파티원"
 
 #: engines/ultima/nuvie/metaengine.cpp:81
-#, fuzzy
-#| msgid "View Party Member 1"
 msgid "Next party member"
-msgstr "파티 멤버 1 보기"
+msgstr "다음 파티원"
 
 #: engines/ultima/nuvie/metaengine.cpp:82
-#, fuzzy
-#| msgid "Boss key"
 msgid "Home key"
-msgstr "보스 키"
+msgstr "홈 키"
 
 #: engines/ultima/nuvie/metaengine.cpp:83
 msgid "End key"
-msgstr ""
+msgstr "엔드 키"
 
 #: engines/ultima/nuvie/metaengine.cpp:84
-#, fuzzy
-#| msgid "Toggle between voice/text/text and voice"
 msgid "Toggle between inventory and actor view"
-msgstr "음성/텍스트/텍스트 및 음성 간 전환"
+msgstr "인벤토리와 배우 보기 간 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:85
-#, fuzzy
-#| msgid "List view"
 msgid "Party view"
-msgstr "목록 표시"
+msgstr "파티 보기"
 
 #: engines/ultima/nuvie/metaengine.cpp:86
-#, fuzzy
-#| msgid "Shorty mode"
 msgid "Party mode"
-msgstr "쇼티 모드"
+msgstr "파티 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:87
-#, fuzzy
-#| msgid "Game menu"
 msgid "Save menu"
-msgstr "게임 메뉴"
+msgstr "저장 메뉴"
 
 #: engines/ultima/nuvie/metaengine.cpp:88
-#, fuzzy
-#| msgid "Load auto save"
 msgid "Load latest save"
-msgstr "자동 저장 로드"
+msgstr "최신 저장 로드"
 
 #: engines/ultima/nuvie/metaengine.cpp:93
 msgid "Show game menu; Cancel action if in middle of action"
-msgstr ""
+msgstr "게임 메뉴 표시; 작업 중이면 작업 취소"
 
 #: engines/ultima/nuvie/metaengine.cpp:95
-#, fuzzy
-#| msgid "Toggle Crouch"
 msgid "Toggle Cursor"
-msgstr "움크리기 전환"
+msgstr "커서 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:96
-#, fuzzy
-#| msgid "Toggle Combat"
 msgid "Toggle combat strategy"
-msgstr "전투 전환"
+msgstr "전투 전략 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:97
-#, fuzzy
-#| msgid "Max frames per second limit"
 msgid "Toggle frames per second display"
-msgstr "초당 최대 프레임 제한"
+msgstr "초당 프레임 표시 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:98
-#, fuzzy
-#| msgid "Toggle Sound"
 msgid "Toggle audio"
-msgstr "사운드 전환"
+msgstr "오디오 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-#| msgid "Toggle mute"
 msgid "Toggle music"
-msgstr "음소거 전환"
+msgstr "음악 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle sound"
 msgid "Toggle sfx"
-msgstr "사운드 전환"
+msgstr "특수효과 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:101
 msgid "Toggle original style command bar"
-msgstr ""
+msgstr "원래 스타일 명령 모음 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:102
-#, fuzzy
-#| msgid "Droid's action"
 msgid "Do action"
-msgstr "드로이드의 행동"
+msgstr "동작함"
 
 #: engines/ultima/nuvie/metaengine.cpp:103
-#, fuzzy
-#| msgid "Change action"
 msgid "Cancel action"
-msgstr "동작 변경"
+msgstr "동작 취소"
 
 #: engines/ultima/nuvie/metaengine.cpp:104
-#, fuzzy
-#| msgid "Scroll up"
 msgid "Msg scroll up"
-msgstr "위로 스크롤"
+msgstr "메세지 위로 스크롤"
 
 #: engines/ultima/nuvie/metaengine.cpp:105
-#, fuzzy
-#| msgid "Scroll down"
 msgid "Msg scroll down"
-msgstr "아래로 스크롤"
+msgstr "메세지 아래로 스크롤"
 
 #: engines/ultima/nuvie/metaengine.cpp:106
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show keys"
-msgstr "인용문 표시"
+msgstr "키 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:107
-#, fuzzy
-#| msgid "Decrease speed"
 msgid "Decrease debug"
-msgstr "속도 감소"
+msgstr "디버그 감소"
 
 #: engines/ultima/nuvie/metaengine.cpp:108
-#, fuzzy
-#| msgid "Increase speed"
 msgid "Increase debug"
-msgstr "속도 증가"
+msgstr "디버그 증가"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:110
-#, fuzzy
-#| msgid "Close Gumps"
 msgid "Close gumps"
 msgstr "검프 닫기"
 
 #: engines/ultima/nuvie/metaengine.cpp:112
 msgid "Enter ALT code (hold)"
-msgstr ""
+msgstr "대체 코드 입력 (누르고 있음)"
 
 #: engines/ultima/nuvie/metaengine.cpp:113
 msgid "ALT code 0"
-msgstr ""
+msgstr "대체 코드 0"
 
 #: engines/ultima/nuvie/metaengine.cpp:114
 msgid "ALT code 1"
-msgstr ""
+msgstr "대체 코드 1"
 
 #: engines/ultima/nuvie/metaengine.cpp:115
 msgid "ALT code 2"
-msgstr ""
+msgstr "대체 코드 2"
 
 #: engines/ultima/nuvie/metaengine.cpp:116
 msgid "ALT code 3"
-msgstr ""
+msgstr "대체 코드 3"
 
 #: engines/ultima/nuvie/metaengine.cpp:117
 msgid "ALT code 4"
-msgstr ""
+msgstr "대체 코드 4"
 
 #: engines/ultima/nuvie/metaengine.cpp:118
 msgid "ALT code 5"
-msgstr ""
+msgstr "대체 코드 5"
 
 #: engines/ultima/nuvie/metaengine.cpp:119
 msgid "ALT code 6"
-msgstr ""
+msgstr "대체 코드 6"
 
 #: engines/ultima/nuvie/metaengine.cpp:120
 msgid "ALT code 7"
-msgstr ""
+msgstr "대체 코드 7"
 
 #: engines/ultima/nuvie/metaengine.cpp:121
 msgid "ALT code 8"
-msgstr ""
+msgstr "대체 코드 8"
 
 #: engines/ultima/nuvie/metaengine.cpp:122
 msgid "ALT code 9"
-msgstr ""
+msgstr "대체 코드 9"
 
 #: engines/ultima/nuvie/metaengine.cpp:126
 msgid "Open the asset viewer"
-msgstr ""
+msgstr "자산 뷰어 열기"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:128
-#, fuzzy
-#| msgid "Show quotes"
 msgid "Show eggs"
-msgstr "인용문 표시"
+msgstr "알 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:129
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle hack move"
-msgstr "빠른 모드 전환"
+msgstr "해킹 이동 전환"
 
 #. I18N: Eggs are in-game hatchable objects that are normally invisible
 #: engines/ultima/nuvie/metaengine.cpp:131
-#, fuzzy
-#| msgid "Toggle Menu"
 msgid "Toggle egg spawn"
-msgstr "전환 메뉴"
+msgstr "알 낳기 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:132
-#, fuzzy
-#| msgid "Toggle mouse capture"
 msgid "Toggle no darkness"
-msgstr "마우스 캡처 전환"
+msgstr "어둠 없음 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:133
-#, fuzzy
-#| msgid "Toggle fight mode"
 msgid "Toggle pickpocket mode"
-msgstr "전투 모드 전환"
+msgstr "소매치기 모드 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:134
-#, fuzzy
-#| msgid "Toggle fight mode"
 msgid "Toggle god mode"
-msgstr "전투 모드 전환"
+msgstr "신 모드 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:135
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle ethereal mode"
-msgstr "빠른 모드 전환"
+msgstr "천상 모드 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:136
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle X-ray mode"
-msgstr "빠른 모드 전환"
+msgstr "엑스레이 모드 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:137
 msgid "Heal party"
-msgstr ""
+msgstr "파티 치유"
 
 #: engines/ultima/nuvie/metaengine.cpp:138
-#, fuzzy
-#| msgid "Regular cursor"
 msgid "Teleport to cursor"
-msgstr "일반 커서"
+msgstr "커서로 순간이동"
 
 #: engines/ultima/nuvie/metaengine.cpp:139
-#, fuzzy
-#| msgid "Enable cheats"
 msgid "Toggle cheats"
-msgstr "치트 활성화"
+msgstr "치트 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:143
 msgid "Solo mode as Avatar"
-msgstr ""
+msgstr "아바타로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:144
-#, fuzzy
-#| msgid "View Party Member 2"
 msgid "Solo mode as party member 2"
-msgstr "파티 멤버 2 보기"
+msgstr "파티원 2로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:145
-#, fuzzy
-#| msgid "View Party Member 3"
 msgid "Solo mode as party member 3"
-msgstr "파티 멤버 3 보기"
+msgstr "파티원 3으로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:146
-#, fuzzy
-#| msgid "View Party Member 4"
 msgid "Solo mode as party member 4"
-msgstr "파티 멤버 4 보기"
+msgstr "파티원 4로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:147
-#, fuzzy
-#| msgid "View Party Member 5"
 msgid "Solo mode as party member 5"
-msgstr "파티 멤버 5 보기"
+msgstr "파티원 5로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:148
-#, fuzzy
-#| msgid "View Party Member 6"
 msgid "Solo mode as party member 6"
-msgstr "파티 멤버 6 보기"
+msgstr "파티원 6으로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:149
 msgid "Solo mode as party member 7"
-msgstr ""
+msgstr "파티원 7로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:150
 msgid "Solo mode as party member 8"
-msgstr ""
+msgstr "파티원 8로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:151
 msgid "Solo mode as party member 9"
-msgstr ""
+msgstr "파티원 9로 솔로 모드"
 
 #: engines/ultima/nuvie/metaengine.cpp:152
 msgid "Show stats for Avatar"
-msgstr ""
+msgstr "아바타 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:153
 msgid "Show stats for party member 2"
-msgstr ""
+msgstr "파티원 2 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:154
 msgid "Show stats for party member 3"
-msgstr ""
+msgstr "파티원 3 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:155
 msgid "Show stats for party member 4"
-msgstr ""
+msgstr "파티원 4 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:156
 msgid "Show stats for party member 5"
-msgstr ""
+msgstr "파티원 5 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:157
 msgid "Show stats for party member 6"
-msgstr ""
+msgstr "파티원 6 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:158
 msgid "Show stats for party member 7"
-msgstr ""
+msgstr "파티원 7 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:159
 msgid "Show stats for party member 8"
-msgstr ""
+msgstr "파티원 8 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:160
 msgid "Show stats for party member 9"
-msgstr ""
+msgstr "파티원 9 스탯 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:161
-#, fuzzy
-#| msgid "Show inventory"
 msgid "Show inventory for Avatar"
-msgstr "인벤토리 표시"
+msgstr "아바타 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:162
 msgid "Show inventory for party member 2"
-msgstr ""
+msgstr "파티원 2 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:163
 msgid "Show inventory for party member 3"
-msgstr ""
+msgstr "파티원 3 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:164
 msgid "Show inventory for party member 4"
-msgstr ""
+msgstr "파티원 4 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:165
 msgid "Show inventory for party member 5"
-msgstr ""
+msgstr "파티원 5 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:166
 msgid "Show inventory for party member 6"
-msgstr ""
+msgstr "파티원 6 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:167
 msgid "Show inventory for party member 7"
-msgstr ""
+msgstr "파티원 7 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:168
 msgid "Show inventory for party member 8"
-msgstr ""
+msgstr "파티원 8 인벤토리 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:169
 msgid "Show inventory for party member 9"
-msgstr ""
+msgstr "파티원 9 인벤토리 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:171
 msgid "Show doll gump for Avatar"
-msgstr ""
+msgstr "아바타 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:173
 msgid "Show doll gump for party member 2"
-msgstr ""
+msgstr "파티원 2 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:175
 msgid "Show doll gump for party member 3"
-msgstr ""
+msgstr "파티원 3 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:177
 msgid "Show doll gump for party member 4"
-msgstr ""
+msgstr "파티원 4 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:179
 msgid "Show doll gump for party member 5"
-msgstr ""
+msgstr "파티원 5 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:181
 msgid "Show doll gump for party member 6"
-msgstr ""
+msgstr "파티원 6 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:183
 msgid "Show doll gump for party member 7"
-msgstr ""
+msgstr "파티원 7 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:185
 msgid "Show doll gump for party member 8"
-msgstr ""
+msgstr "파티원 8 인형 검프 표시"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/nuvie/metaengine.cpp:187
 msgid "Show doll gump for party member 9"
-msgstr ""
+msgstr "파티원 9에게 인형 검프 표시"
 
 #: engines/ultima/nuvie/metaengine.cpp:193
 #: engines/ultima/nuvie/metaengine.cpp:198
-#, fuzzy
-#| msgid "Toggle linear filtered scaling"
 msgid "Toggle unlimited casting"
-msgstr "선형 필터 크기 조정 전환"
+msgstr "무제한 시전 전환"
 
 #: engines/ultima/nuvie/metaengine.cpp:224
 msgid "Ultima VI"
@@ -14310,60 +13804,44 @@ msgstr "캐릭터 전송"
 
 #: engines/ultima/ultima8/metaengine.cpp:47
 msgid "Draw weapon / Combat"
-msgstr ""
+msgstr "무기 뽑기 / 전투"
 
 #: engines/ultima/ultima8/metaengine.cpp:52
-#, fuzzy
-#| msgid "Move Back"
 msgid "Move back"
 msgstr "뒤로 이동"
 
 #: engines/ultima/ultima8/metaengine.cpp:58
-#, fuzzy
-#| msgid "Highlight Items"
 msgid "Highlight items"
 msgstr "아이템 강조 표시"
 
 #: engines/ultima/ultima8/metaengine.cpp:64
-#, fuzzy
-#| msgid "Use Bedroll"
 msgid "Use bedroll"
 msgstr "침낭 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use Backpack"
 msgid "Open backpack"
-msgstr "백팩 사용"
+msgstr "백팩 열기"
 
 #: engines/ultima/ultima8/metaengine.cpp:66
-#, fuzzy
-#| msgid "Use Keyring"
 msgid "Use keyring"
 msgstr "키링 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:67
-#, fuzzy
-#| msgid "Open Minimap"
 msgid "Open minimap"
 msgstr "미니맵 열기"
 
 #: engines/ultima/ultima8/metaengine.cpp:68
-#, fuzzy
-#| msgid "Use Recall"
 msgid "Use recall"
 msgstr "리콜 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:69
-#, fuzzy
-#| msgid "Open Inventory"
 msgid "Open inventory & statistics"
-msgstr "인벤토리 열기"
+msgstr "인벤토리 & 스탯 열기"
 
 #. I18N: gump is Graphical User Menu Pop-up
 #: engines/ultima/ultima8/metaengine.cpp:71
 msgid "Close all displays"
-msgstr ""
+msgstr "모든 디스플레이 닫기"
 
 #: engines/ultima/ultima8/metaengine.cpp:72
 msgid "Jump (fake both-button-click)"
@@ -14371,123 +13849,85 @@ msgstr "점프 (가짜 두 버튼 클릭)"
 
 #: engines/ultima/ultima8/metaengine.cpp:73
 msgid "Careful step"
-msgstr ""
+msgstr "조심스러운 발걸음"
 
 #: engines/ultima/ultima8/metaengine.cpp:79
-#, fuzzy
-#| msgid "Cycle back through inventory cursor items"
 msgid "Cycle through weapon inventory"
-msgstr "인벤토리 커서 아이템 뒤로 순환"
+msgstr "무기 인벤토리간 주기"
 
 #: engines/ultima/ultima8/metaengine.cpp:80
-#, fuzzy
-#| msgid "Cycle through stretch modes"
 msgid "Cycle through item inventory"
-msgstr "늘리기 모드간 순환"
+msgstr "아이템 인벤토리간 주기"
 
 #: engines/ultima/ultima8/metaengine.cpp:81
-#, fuzzy
-#| msgid "Use Inventory Item"
 msgid "Use inventory item"
 msgstr "인벤토리 아이템 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:82
-#, fuzzy
-#| msgid "Use Medical Kit"
 msgid "Use medikit"
 msgstr "의료 키트 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:83
-#, fuzzy
-#| msgid "Use Energy Cube"
 msgid "Use energy cube"
 msgstr "에너지 큐브 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:84
-#, fuzzy
-#| msgid "Detonate Bomb"
 msgid "Detonate bomb"
 msgstr "폭탄 터뜨리기"
 
 #: engines/ultima/ultima8/metaengine.cpp:86
-#, fuzzy
-#| msgid "Drop Weapon"
 msgid "Drop weapon"
 msgstr "무기 버리기"
 
 #: engines/ultima/ultima8/metaengine.cpp:87
-#, fuzzy
-#| msgid "Select Item"
 msgid "Search / Select item"
-msgstr "아이템 선택"
+msgstr "검색 / 아이템 선택"
 
 #: engines/ultima/ultima8/metaengine.cpp:88
-#, fuzzy
-#| msgid "Use Selection"
 msgid "Use selection"
 msgstr "선택 사용"
 
 #: engines/ultima/ultima8/metaengine.cpp:89
-#, fuzzy
-#| msgid "Grab Items"
 msgid "Grab items"
 msgstr "아이템 획득"
 
 #: engines/ultima/ultima8/metaengine.cpp:90
-#, fuzzy
-#| msgid "Next Weapon"
 msgid "Fire weapon"
-msgstr "다음 무기"
+msgstr "무기 발사"
 
 #: engines/ultima/ultima8/metaengine.cpp:91
-#, fuzzy
-#| msgid "Focus Camera on Silencer"
 msgid "Center screen on Silencer"
-msgstr "소음기에 카메라 초점 맞추기"
+msgstr "소음기의 중앙 화면"
 
 #: engines/ultima/ultima8/metaengine.cpp:92
 msgid "Jump / Roll / Crouch"
 msgstr "점프 / 구르기 / 웅크리기"
 
 #: engines/ultima/ultima8/metaengine.cpp:93
-#, fuzzy
-#| msgid "Short Jump"
 msgid "Short jump"
 msgstr "단거리 점프"
 
 #: engines/ultima/ultima8/metaengine.cpp:94
-#, fuzzy
-#| msgid "Sidestep Left"
 msgid "Sidestep left"
 msgstr "왼쪽으로 옆으로 이동"
 
 #: engines/ultima/ultima8/metaengine.cpp:95
-#, fuzzy
-#| msgid "Sidestep Right"
 msgid "Sidestep right"
 msgstr "오른쪽으로 옆으로 이동"
 
 #: engines/ultima/ultima8/metaengine.cpp:96
-#, fuzzy
-#| msgid "Step Forward"
 msgid "Step forward"
 msgstr "앞으로 이동"
 
 #: engines/ultima/ultima8/metaengine.cpp:100
-#, fuzzy
-#| msgid "Toggle Crouch"
 msgid "Toggle crouch"
 msgstr "움크리기 전환"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
-#, fuzzy
-#| msgid "Side Step / Advance / Retreat"
 msgid "Side step / Advance / Retreat"
 msgstr "회피 / 고급 / 후퇴"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clipping"
 msgid "Toggle clipping"
 msgstr "클리핑 전환"
 
@@ -14496,52 +13936,36 @@ msgid "Ascend"
 msgstr "오름차순"
 
 #: engines/ultima/ultima8/metaengine.cpp:115
-#, fuzzy
-#| msgid "Show Touching Items"
 msgid "Show touching items"
 msgstr "터치 항목 표시"
 
 #: engines/ultima/ultima8/metaengine.cpp:116
-#, fuzzy
-#| msgid "Show Editor Items"
 msgid "Show editor items"
 msgstr "편집기 항목 표시"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
-#, fuzzy
-#| msgid "Decrement Map Sort Order"
 msgid "Decrement map sort order"
 msgstr "감소 맵 정렬 순서"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
-#, fuzzy
-#| msgid "Increment Map Sort Order"
 msgid "Increment map sort order"
 msgstr "증가 맵 정렬 순서"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Toggle Frame By Frame"
 msgid "Toggle frame by frame"
 msgstr "프레임별로 전환"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
-#, fuzzy
-#| msgid "Advance Frame"
 msgid "Advance frame"
 msgstr "고급 프레임"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
-#, fuzzy
-#| msgid "Toggle Avatar In Stasis"
 msgid "Toggle Avatar in stasis"
 msgstr "정지 상태에서 아바타 전환"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
-#, fuzzy
-#| msgid "Show Shape Viewer"
 msgid "Show shape viewer"
-msgstr "모양 뷰어 표시"
+msgstr "형상 뷰어 표시"
 
 #: engines/ultima/ultima8/metaengine.cpp:132
 msgid "Ultima VIII"
@@ -14708,42 +14132,32 @@ msgid "Require a lockout code to start the game."
 msgstr "게임을 시작하려면 잠금 코드가 필요합니다."
 
 #: engines/voyeur/metaengine.cpp:186
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Room keymappings"
-msgstr "게임 키맵핑"
+msgstr "룸 키매핑"
 
 #: engines/voyeur/metaengine.cpp:187
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Camera keymappings"
-msgstr "게임 키맵핑"
+msgstr "카메라 키맵핑"
 
 #: engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "색인 키맵핑"
+msgstr "인트로 키맵핑"
 
 #: engines/voyeur/metaengine.cpp:204
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip scene"
-msgstr "컷씬 건너뛰기"
+msgstr "장면 건너뛰기"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "증거 보기"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "나가기 / 증거물 치우기"
 
 #: engines/voyeur/metaengine.cpp:223
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter room"
-msgstr "엔터"
+msgstr "룸에 들어감"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -15193,26 +14607,18 @@ msgid "Settings"
 msgstr "설정"
 
 #: engines/wintermute/keymapper_tables.h:1619
-#, fuzzy
-#| msgid "Dialogue answer 1"
 msgid "Dialog answer 1"
 msgstr "대화 답변 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
-#, fuzzy
-#| msgid "Dialogue answer 2"
 msgid "Dialog answer 2"
 msgstr "대화 답변 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
-#, fuzzy
-#| msgid "Dialogue answer 3"
 msgid "Dialog answer 3"
 msgstr "대화 답변 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
-#, fuzzy
-#| msgid "Dialogue answer 4"
 msgid "Dialog answer 4"
 msgstr "대화 답변 4"
 
@@ -15341,28 +14747,23 @@ msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
 msgstr "저해상도 AVI 대신 DVD 버전의 MPEG 비디오를 사용"
 
 #: engines/zvision/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Enable widescreen support"
-msgstr "게임 ID가 지원되지 않음"
+msgstr "와이드스크린 지원 활성화"
 
 #: engines/zvision/metaengine.cpp:103
 msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
-msgstr ""
+msgstr "최신 와이드 화면비 디스플레이를 더욱 효과적으로 활용할 수 있도록 메뉴 및 "
+"자막 배치 재정비"
 
 #: engines/zvision/metaengine.cpp:114
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Enable high quality panoramas"
-msgstr "히트 포인트 바 그래프를 활성화"
+msgstr "고품질 파노라마 활성화"
 
 #: engines/zvision/metaengine.cpp:115
-#, fuzzy
-#| msgid "Apply bilinear filtering to individual sprites"
 msgid "Apply bilinear filtering to panoramic backgrounds"
-msgstr "개별 스프라이트에 이중선형 필터링을 적용"
+msgstr "파노라마 배경에 선형 필터링 적용"
 
 #: engines/zvision/metaengine.cpp:258
 msgid "Spellbook"
@@ -15408,6 +14809,9 @@ msgid ""
 "solved.  These puzzles may alternatively be solved using subtitles, if "
 "supported. Continue launching game?"
 msgstr ""
+"MIDI 재생을 사용할 수 없거나, 제대로 구성되지 않았습니다. 죠크 네미시스에는 "
+"MIDI 오디오가 필요한 여러 음악 퍼즐이 포함되어 있습니다.  이러한 퍼즐은 "
+"지원되는 경우 자막을 사용하여 해결할 수 있습니다. 게임을 계속 실행할까요?"
 
 #~ msgid "Scroll Up"
 #~ msgstr "위로 스크롤"
