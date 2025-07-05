@@ -489,7 +489,8 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 		fileChecksums.push_back(fileChecksum);
 	}
 
-	setState(kChecksumComplete);
+	if (currentPath == gamePath) // Enter "checksum complete" state only once the whole root directory has been processed
+		setState(kChecksumComplete);
 	return fileChecksums;
 }
 
