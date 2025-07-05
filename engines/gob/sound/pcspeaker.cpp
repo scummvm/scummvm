@@ -30,29 +30,26 @@
 
 namespace Gob {
 
-PCSpeaker::PCSpeaker(Audio::Mixer &mixer) : _mixer(&mixer) {
-
-	_stream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playStream(Audio::Mixer::kSFXSoundType,
-			&_handle, _stream, -1, 50, 0, DisposeAfterUse::NO, true);
+PCSpeaker::PCSpeaker() {
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 }
 
 PCSpeaker::~PCSpeaker() {
-	_mixer->stopHandle(_handle);
-	delete _stream;
+	delete _speaker;
 }
 
 void PCSpeaker::speakerOn(int16 frequency, int32 length) {
-	_stream->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
+	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, frequency, length);
 }
 
 void PCSpeaker::speakerOff() {
-	_stream->stop();
+	_speaker->stop();
 }
 
 void PCSpeaker::onUpdate(uint32 millis) {
-	if (_stream->isPlaying())
-		_stream->stop(millis);
+	if (_speaker->isPlaying())
+		_speaker->stop(millis);
 }
 
 } // End of namespace Gob

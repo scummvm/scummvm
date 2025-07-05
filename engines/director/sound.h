@@ -162,7 +162,6 @@ private:
 	Audio::SoundHandle _scriptSound;
 	Audio::Mixer *_mixer;
 	Audio::PCSpeaker *_speaker;
-	Audio::SoundHandle _pcSpeakerHandle;
 
 	// these two were used in fplay xobj
 	Common::Queue<Common::String> _fplayQueue;

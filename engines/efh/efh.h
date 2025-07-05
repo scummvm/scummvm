@@ -640,8 +640,7 @@ private:
 
 	int16 _regenCounter;
 
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle _speakerHandle;
+	Audio::PCSpeaker *_speaker;
 };
 
 } // End of namespace Efh

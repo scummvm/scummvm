@@ -23,12 +23,15 @@
 #define AUDIO_SOFTSYNTH_PCSPK_H
 
 #include "audio/audiostream.h"
+#include "audio/mixer.h"
 #include "common/mutex.h"
 #include "common/queue.h"
 
 namespace Audio {
 
-class PCSpeaker : public AudioStream {
+class PCSpeakerStream;
+
+class PCSpeaker {
 public:
 	enum WaveForm {
 		kWaveFormSquare = 0,
@@ -38,25 +41,71 @@ public:
 		kWaveFormSilence
 	};
 
-protected:
-	// PC speaker instruction: play this waveform at frequency x for y microseconds.
-	struct Command {
-		WaveForm waveForm;
-		float frequency;
-		uint32 length;
-
-		Command(WaveForm waveForm, float frequency, uint32 length);
-	};
-
 public:
-	PCSpeaker(int rate = 44100);
+	PCSpeaker();
 	~PCSpeaker();
+
+	bool init();
+	void quit();
 
 	/** Play a note for length ms.
 	 *
 	 *  If length is negative, play until told to stop.
 	 */
 	void play(WaveForm wave, int freq, int32 length);
+
+	/**
+	 * Queue the specified playback instruction. It will be executed when all
+	 * previously queued instructions have finished. Use this method for
+	 * playback of effects which require timing precision of less than a
+	 * millisecond.
+	 *
+	 * Calling this method will terminate any waveform started with the play
+	 * method. Calling the play method will terminate the active queued
+	 * instruction and clear the instruction queue.
+	 *
+	 * Use isPlaying to check if all queued instructions have finished playing.
+	 * This will return true even if the current instruction is "playing"
+	 * silence.
+	 *
+	 * @param wave The waveform to use. For PC speaker, use square wave or
+	 * silence.
+	 * @param freq The frequency (in Hertz) to play.
+	 * @param lengthus The length in microseconds for which to play the
+	 * waveform.
+	 */
+	void playQueue(WaveForm wave, float freq, uint32 lengthus);
+	/** Stop the currently playing note after delay ms. */
+	void stop(int32 delay = 0);
+
+	bool isPlaying() const;
+
+private:
+	PCSpeakerStream *_speakerStream;
+	SoundHandle _speakerHandle;
+};
+
+
+class PCSpeakerStream : public AudioStream {
+protected:
+	// PC speaker instruction: play this waveform at frequency x for y microseconds.
+	struct Command {
+		PCSpeaker::WaveForm waveForm;
+		float frequency;
+		uint32 length;
+
+		Command(PCSpeaker::WaveForm waveForm, float frequency, uint32 length);
+	};
+
+public:
+	PCSpeakerStream(int rate = 44100);
+	~PCSpeakerStream();
+
+	/** Play a note for length ms.
+	 *
+	 *  If length is negative, play until told to stop.
+	 */
+	void play(PCSpeaker::WaveForm wave, int freq, int32 length);
 	/**
 	 * Queue the specified playback instruction. It will be executed when all
 	 * previously queued instructions have finished. Use this method for
@@ -77,7 +126,7 @@ public:
 	 * @param lengthus The length in microseconds for which to play the
 	 * waveform.
 	 */
-	void playQueue(WaveForm wave, float freq, uint32 lengthus);
+	void playQueue(PCSpeaker::WaveForm wave, float freq, uint32 lengthus);
 	/** Stop the currently playing note after delay ms. */
 	void stop(int32 delay = 0);
 	/** Adjust the volume. */
@@ -96,7 +145,7 @@ protected:
 	Common::Mutex _mutex;
 
 	int _rate;
-	WaveForm _wave;
+	PCSpeaker::WaveForm _wave;
 	bool _playForever;
 	uint32 _oscLength;
 	uint32 _oscSamples;
