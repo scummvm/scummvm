@@ -36,6 +36,7 @@ class MacWidget;
 namespace Common {
 class SeekableReadStream;
 class SeekableReadStreamEndian;
+class MemoryWriteStream;
 }
 
 namespace Director {
@@ -100,6 +101,16 @@ public:
 
 	virtual CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) { return bbox.contains(pos) ? kCollisionYes : kCollisionNo; }
 
+	// When writing the 'CASt' resource, the general structure is the same for all the CastMembers
+	// Three parts to a 'CASt' resource (header + _info_, _data_)
+	// The headers, are common, the _info_ writing is handled by the Cast class, so no worries there
+	// So, the only thing that differs is the _data_, for which we'll have separate implementations for each CastMember
+	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getCastInfoSize();
+	uint32 getCastResourceSize();
+	virtual void writeCastData(Common::MemoryWriteStream *writeStream);
+	virtual uint32 getCastDataSize();
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -109,6 +120,9 @@ public:
 	bool _erase;
 	int _purgePriority;
 	uint32 _size;
+
+	/* Data fields used when saving the Cast Member */
+	uint32 _castDataSize;
 	uint8 _flags1;
 
 protected:
@@ -128,9 +142,16 @@ struct EditInfo {
 	int32 selEnd;
 	byte version;
 	byte rulerFlag;
+	bool valid;
+
+	EditInfo(): valid(false) {}
 };
 
 struct CastMemberInfo {
+	uint32 unk1;
+	uint32 unk2;
+	uint32 flags;
+	uint16 count;
 	bool autoHilite;
 	uint32 scriptId;
 	Common::String script;
@@ -143,6 +164,16 @@ struct CastMemberInfo {
 	EditInfo textEditInfo;
 	Common::String modifiedBy;
 	Common::String comments;
+
+	// There just has to be a better solution
+	// It is not rare to find these strings in the CastMemberInfo
+	Common::Array<byte> unknown1;
+	Common::Array<byte> unknown2;
+	Common::Array<byte> unknown3;
+	Common::Array<byte> unknown4;
+	Common::Array<byte> unknown5;
+	Common::Array<byte> unknown6;
+	Common::Array<byte> unknown7;
 
 	CastMemberInfo() : autoHilite(false), scriptId(0) {}
 };

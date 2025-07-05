@@ -19,14 +19,20 @@
  *
  */
 
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
+
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/palette.h"
+
 
 namespace Director {
 
 PaletteCastMember::PaletteCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 	: CastMember(cast, castId, stream) {
+	stream.hexdump(stream.size());
 	_type = kCastPalette;
 	_palette = nullptr;
 }
@@ -131,4 +137,22 @@ void PaletteCastMember::unload() {
 	// No unload necessary.
 }
 
+// PaletteCastMember has no data in the 'CASt' resource or is ignored
+// This is the data in 'CASt' resource
+uint32 PaletteCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		// It has been observed as well that the Data size in PaletteCastMember's CASt resource is 0 for d5
+		return 0;
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// (castType (see Cast::loadCastData() for Director 4 only) 1 byte
+		return 1;			// Since SoundCastMember doesn't have any flags
+	}
+	return 0;
 }
+
+void PaletteCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	// This should never get triggered
+	// Since there is no data to write
+}
+
+}	// End of namespace Director

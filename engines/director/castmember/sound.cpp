@@ -199,6 +199,21 @@ bool SoundCastMember::setField(int field, const Datum &d) {
 	return CastMember::setField(field, d);
 }
 
+// Similar to PaletteCastMember, SoundCastMember has no data in the 'CASt' resource or is ignored
+// This is the data in 'CASt' resource
+uint32 SoundCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		return 0;
+	} else if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// (castType (see Cast::loadCastData() for Director 4 only) 1 byte
+		return 1;		// Since SoundCastMember doesn't have any flags
+	}
+	return 0;
+}
 
+void SoundCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	// This should never get triggered
+	// since there is no data to write
+}
 
 } // End of namespace Director

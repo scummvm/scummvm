@@ -92,6 +92,9 @@ public:
 	void load() override;
 	void unload() override;
 
+	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+
 	uint8 _borderSize;
 	uint8 _gutterSize;
 	uint8 _boxShadow;
@@ -99,6 +102,8 @@ public:
 	uint16 _textHeight;
 
 	uint32 _fontId;
+	uint16 _height;
+	uint16 _ascent;
 	uint16 _fontSize;
 	TextType _textType;
 	TextAlignType _textAlign;

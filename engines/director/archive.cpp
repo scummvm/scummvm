@@ -1173,7 +1173,7 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
-	dumpData = (byte *)malloc(_size);
+	dumpData = (byte *)calloc(_size, sizeof(byte));
 
 	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
 
@@ -1210,7 +1210,9 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 	int32 keyTag = MKTAG('K', 'E', 'Y', '*');
 	if (hasResource(keyTag, -1)) {
 		uint16 firstID = getResourceIDList(keyTag)[0];
-		uint32 offset = getOffset(keyTag, firstID) + 8;	// The +8 is consistent with RIFXArchive::getResource()
+		// The +8 is consistent with RIFXArchive::getResource()
+		// The +8 is to ignore the resource tag (e.g. 'KEY*') and the size entry
+		uint32 offset = getOffset(keyTag, firstID) + 8;
 		writeKeyTable(writeStream, offset);
 	}
 
@@ -1231,7 +1233,9 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 			it->tag != MKTAG('m', 'm', 'a', 'p') &&
 			it->tag != MKTAG('K', 'E', 'Y', '*')
 		) {
-			writeStream->seek(it->offset + 8);
+			writeStream->seek(it->offset);
+			writeStream->writeUint32LE(it->tag);
+			writeStream->writeUint32LE(it->size);
 			writeStream->writeStream(getResource(it->tag, it->index));
 		}
 	}
@@ -1265,21 +1269,21 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream)
 
 	uint32 newResCount = _resources.size();
 
-	// Need to recalcualte the following things
-	// Similarl to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
+	// Need to recalculate the following things
+	// Similarly to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
 	writeStream->writeUint32LE(getResourceSize(MKTAG('m', 'm', 'a', 'p'), 0));
 	writeStream->writeUint16LE(_mmapHeaderSize);
 	writeStream->writeUint16LE(_mmapEntrySize);
 
 	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
 	writeStream->writeUint32LE(newResCount);
-	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff 
+	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff
 
 	// ID of the first 'free' resource
 	writeStream->writeUint32LE(0);
 
 	for (auto &it : _resources) {
-		debugC(3, kDebugLoading, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
+		debugC(3, kDebugSaving, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
 			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
 
 		// Write down the tag, the size and offset of the current resource
@@ -1339,7 +1343,7 @@ bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, 
 			KeyArray keyArray = parentIndex._value;
 
 			for (auto childIndex : keyArray) {
-				debugC(3, kDebugLoading, "RIFXArchive::writeKeyTable: _keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
+				debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: _keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
 				writeStream->writeUint32LE(childIndex);
 				writeStream->writeUint32LE(parentIndex._key);
 				writeStream->writeUint32LE(childTag._key);
@@ -1362,6 +1366,22 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 	}
 
 	return true;
+}
+
+void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize) {
+	debug("dumpFile():: dumping file %s, resource: %s (id: %d)", fileName.c_str(), tag2str(tag), id);
+	Common::DumpFile out;
+	Common::String fname = Common::String::format("./dumps/%d-%s-%s", id, tag2str(tag), fileName.c_str());
+
+	// Write the movie out, stored in dumpData
+	if (out.open(Common::Path(fname), true)) {
+		out.write(dumpData, dumpSize);
+		out.flush();
+		out.close();
+	} else {
+		warning("RIFXArchive::writeStream: Error saving the file %s", fname.c_str());
+	}
+	free(dumpData);
 }
 
 } // End of namespace Director

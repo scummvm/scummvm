@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/memstream.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/movie.h"
 #include "director/castmember/shape.h"
 #include "director/lingo/lingo-the.h"
@@ -212,4 +214,43 @@ Common::String ShapeCastMember::formatInfo() {
 	);
 }
 
+uint32 ShapeCastMember::getCastDataSize() {
+	// unk1 : 1 byte
+	// _shapeType : 1 byte
+	// _initalRect : 8 bytes
+	// _pattern : 2 bytes
+	// _fgCol : 1 byte
+	// _bgCol : 1 byte
+	// _fillType : 1 byte
+	// _lineThickness : 1 byte
+	// _lineDirection : 1 byte
+	// Total : 17 bytes
+	// For Director 4 : 1 byte extra for casttype (See Cast::loadCastData())
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		return 17 + 1;
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		return 17;
+	} else {
+		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+		return 0;
+	}
 }
+
+void ShapeCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	writeStream->writeByte(0);
+	writeStream->writeByte(1);
+
+	Movie::writeRect(writeStream, _initialRect);
+	writeStream->writeUint16LE(_pattern);
+
+	// The foreground and background colors are transformed
+	// Need to retreive the original colors for saving
+	writeStream->writeByte(_fgCol);
+	writeStream->writeByte(_bgCol);
+
+	writeStream->writeByte(_fillType);
+	writeStream->writeByte(_lineThickness);
+	writeStream->writeByte(_lineDirection);
+}
+
+}	// End of namespace Director

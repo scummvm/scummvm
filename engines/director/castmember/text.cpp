@@ -20,6 +20,9 @@
  */
 
 #include "common/events.h"
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
 
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macwindow.h"
@@ -259,6 +262,8 @@ void TextCastMember::setForeColor(uint32 fgCol, int start, int end) {
 
 void TextCastMember::importStxt(const Stxt *stxt) {
 	_fontId = stxt->_style.fontId;
+	_height = stxt->_style.height;
+	_ascent = stxt->_style.ascent;
 	_textSlant = stxt->_style.textSlant;
 	_fontSize = stxt->_style.fontSize;
 	_fgpalinfo1 = stxt->_style.r;
@@ -944,4 +949,32 @@ bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d
 	return false;
 }
 
+void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	writeStream->writeByte(_borderSize);	// 1 byte
+	writeStream->writeByte(_gutterSize);	// 2 bytes
+	writeStream->writeByte(_boxShadow);		// 3 bytes
+	writeStream->writeByte(_textType);		// 4 bytes
+	writeStream->writeSint16LE(_textAlign);		// 6 bytes
+	writeStream->writeUint16LE(_bgpalinfo1);	// 8 bytes
+	writeStream->writeUint16LE(_bgpalinfo2);	// 10 bytes
+	writeStream->writeUint16LE(_bgpalinfo3);	// 12 bytes
+	writeStream->writeUint16LE(_scroll);		// 14 bytes
+
+	Movie::writeRect(writeStream, _initialRect);	// (+8) 22 bytes
+	writeStream->writeUint16LE(_maxHeight);			// 24 bytes
+	writeStream->writeByte(_textShadow);			// 25 bytes
+	writeStream->writeByte(_textFlags);				// 26 bytes
+
+	writeStream->writeUint16LE(_textHeight);		// 28 bytes
+
+	if (_type == kCastButton) {
+		writeStream->writeUint16LE(_buttonType + 1);		// 30 bytes
+	}
 }
+
+uint32 TextCastMember::getCastDataSize() {
+	// In total 30 bytes for text and 28 for button
+	return (_type == kCastButton) ? 30 : 28;
+}
+
+}	// End of namespace Director

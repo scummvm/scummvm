@@ -19,7 +19,9 @@
  *
  */
 
+#include "common/memstream.h"
 #include "director/director.h"
+#include "director/cast.h"
 #include "director/castmember/script.h"
 #include "director/lingo/lingo-the.h"
 
@@ -137,6 +139,41 @@ Common::String ScriptCastMember::formatInfo() {
 	return Common::String::format(
 		"scriptType: %s", scriptType2str(_scriptType)
 	);
+}
+
+uint32 ScriptCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// 2 bytes for type and unk1 + 1 byte for castType (see Cast::loadCastData() for Director 4 only
+		return 2 + 1;
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		// type and unk1: 2 bytes
+		return 2;
+	} else {
+		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+		return 0;
+	}
+}
+
+void ScriptCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+		writeStream->writeByte(0);
+
+		switch (_scriptType) {
+		case kScoreScript:
+			writeStream->writeByte(1);
+			break;
+		case kMovieScript:
+			writeStream->writeByte(3);
+			break;
+		case kParentScript:
+			writeStream->writeByte(7);
+			break;
+		default:
+			break;
+		}
+	} else {
+		warning("ScriptCastMember::writeCastData(): invalid or unhandled Script version: %d", _cast->_version);
+	}
 }
 
 }

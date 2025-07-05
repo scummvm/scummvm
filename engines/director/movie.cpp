@@ -284,6 +284,13 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
+void Movie::writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect) {
+	writeStream->writeSint16BE(rect.top);
+	writeStream->writeSint16BE(rect.left);
+	writeStream->writeSint16BE(rect.bottom);
+	writeStream->writeSint16BE(rect.right);
+}
+
 InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version) {
 	uint32 offset = stream.pos();
 	offset += stream.readUint32();
@@ -297,21 +304,21 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 		res.scriptId = stream.readUint32();
 
 	stream.seek(offset);
-	uint16 count = stream.readUint16() + 1;
+	uint16 count = stream.readUint16();
 
-	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries", count - 1);
+	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries", count);
 
-	if (count == 1)
+	if (count == 0)
 		return res;
 
-	uint32 *entries = (uint32 *)calloc(count, sizeof(uint32));
+	uint32 *entries = (uint32 *)calloc(count + 1, sizeof(uint32));
 
-	for (uint i = 0; i < count; i++)
+	for (int i = 0; i < count + 1; i++)
 		entries[i] = stream.readUint32();
 
-	res.strings.resize(count - 1);
+	res.strings.resize(count);
 
-	for (uint16 i = 0; i < count - 1; i++) {
+	for (uint16 i = 0; i < count; i++) {
 		res.strings[i].len = entries[i + 1] - entries[i];
 		res.strings[i].data = (byte *)malloc(res.strings[i].len);
 		stream.read(res.strings[i].data, res.strings[i].len);
@@ -322,6 +329,27 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 	free(entries);
 
 	return res;
+}
+
+void Movie::saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info) {
+	// The writing functionality was intrioduced in Director 4
+	writeStream->writeUint32BE(20);				// offset: d4 and up movies is always 20
+	writeStream->writeUint32BE(info.unk1);
+	writeStream->writeUint32BE(info.unk2);
+	writeStream->writeUint32BE(info.flags);
+	writeStream->writeUint32BE(info.scriptId);
+	writeStream->writeUint16BE(info.strings.size());		// count of strings in the info
+
+	uint32 length = 0;
+	writeStream->writeUint32BE(length);
+	for (uint16 i = 0; i < info.strings.size(); i++) {
+		length += info.strings[i].len;
+		writeStream->writeUint32BE(length);
+	}
+
+	for (uint16 i = 0; i < info.strings.size(); i++) {
+		writeStream->write(info.strings[i].data, info.strings[i].len);
+	}
 }
 
 void Movie::loadFileInfo(Common::SeekableReadStreamEndian &stream) {

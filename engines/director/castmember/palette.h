@@ -43,6 +43,10 @@ public:
 	void load() override;
 	void unload() override;
 
+	uint32 writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+
 	PaletteV4 *_palette;
 };
 

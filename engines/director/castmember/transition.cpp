@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -123,6 +124,32 @@ bool TransitionCastMember::setField(int field, const Datum &d) {
 
 Common::String TransitionCastMember::formatInfo() {
 	return Common::String::format("transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
+}
+
+uint32 TransitionCastMember::getCastDataSize() {
+	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		// Ignored 1 byte
+		// _chunkSize 1 byte
+		// _transType 1 byte
+		// _flags 1 byte
+		// _durationMiilis 2 bytes
+		return 6;
+	} else {
+		warning("RichTextCastMember()::getCastDataSize(): CastMember version invalid or not handled");
+		return 0;
+	}
+}
+
+void TransitionCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
+		writeStream->writeByte(0);
+		writeStream->writeByte(_chunkSize);
+		writeStream->writeByte((uint8)_transType);
+		writeStream->writeByte(_flags);
+		writeStream->writeUint16LE(_durationMillis);
+	} else {
+		warning("RichTextCastMember()::writeCastData(): CastMember version invalid or not handled");
+	}
 }
 
 } // End of namespace Director

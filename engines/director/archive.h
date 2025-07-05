@@ -240,6 +240,9 @@ private:
 
 	bool _isLoaded;
 };
+
+void dumpFile(Common::String filename, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize);
+
 } // End of namespace Director
 
 #endif

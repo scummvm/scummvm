@@ -24,6 +24,7 @@
 
 namespace Common {
 class ReadStreamEndian;
+class MemoryWriteStream;
 }
 
 namespace Director {
@@ -44,6 +45,7 @@ struct FontStyle {
 
 	FontStyle();
 	void read(Common::ReadStreamEndian &textStream, Cast *cast);
+	void write(Common::MemoryWriteStream *writeStream);
 };
 
 class Stxt {

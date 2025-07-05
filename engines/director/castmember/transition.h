@@ -39,6 +39,9 @@ public:
 
 	Common::String formatInfo() override;
 
+	uint32 getCastDataSize() override;
+	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+
 	TransitionType _transType;
 	uint16 _durationMillis;
 	uint8 _flags;

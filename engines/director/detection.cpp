@@ -78,6 +78,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugImGui, "imgui", "Show ImGui debug window (if available)"},
 	{Director::kDebugPaused, "paused", "Pause first movie right after start"},
 	{Director::kDebugPauseOnLoad, "pauseonload", "Pause every movie right after loading"},
+	{Director::kDebugSaving, "saving", "Show Debug output while saving movies"},
 	DEBUG_CHANNEL_END
 };
 

@@ -21,6 +21,7 @@
 
 #include "audio/decoders/aiff.h"
 #include "common/macresman.h"
+#include "common/memstream.h"
 
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
@@ -650,6 +651,25 @@ bool DigitalVideoCastMember::setField(int field, const Datum &d) {
 	}
 
 	return CastMember::setField(field, d);
+}
+
+uint32 DigitalVideoCastMember::getCastDataSize() {
+	// We're only reading the _initialRect and _vflags from the Cast Data
+	// _initialRect : 8 bytes + _vflags : 4 bytes + castType and flags1 (see Cast::loadCastData() for Director 4 only) 2 byte
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// It has been observed that the DigitalVideoCastMember has _flags set to 0x00
+		return (_flags1 == 0xFF) ? 13 : 14;
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		return 8 + 4;
+	}
+
+	warning("DigitalVideoCastMember::getCastDataSize(): unhandled or invalid cast version: %d", _cast->_version);
+	return 0;
+}
+
+void DigitalVideoCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	Movie::writeRect(writeStream, _initialRect);
+	writeStream->writeUint32BE(_vflags);
 }
 
 } // End of namespace Director

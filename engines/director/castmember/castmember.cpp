@@ -20,8 +20,13 @@
  */
 
 #include "common/events.h"
+#include "common/substream.h"
+#include "common/macresman.h"
+#include "common/memstream.h"
+
 #include "director/director.h"
 #include "director/cast.h"
+#include "director/movie.h"
 #include "director/castmember/castmember.h"
 #include "director/lingo/lingo-the.h"
 
@@ -301,6 +306,103 @@ void CastMember::unload() {
 		return;
 
 	_loaded = false;
+}
+
+// Cast members have two types of "information", one is _data_ and the other is _info_
+// _data_ is the actual "data" (e.g. the pixel image data of a bitmap, sound data of a sound cast member)
+// Whereas _info_ is metadata (size, name, flags, etc.)
+// Some cast members have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
+// Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource)
+uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 castResourceSize = getCastResourceSize();
+
+	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+	writeStream->writeUint32LE(castResourceSize);		// this is excluding the 'CASt' header and the size itself (- 8 bytes)
+
+	uint32 castDataToWrite = getCastDataSize();
+	uint32 castInfoToWrite = getCastInfoSize();
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		writeStream->writeUint16BE(castDataToWrite);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeByte((uint8)_type);
+		castDataToWrite -= 1;
+
+		if (_flags1 != 0xFF) {					// In case of TextCastMember, this should be true
+			writeStream->writeByte(_flags1);
+			castDataToWrite -= 1;
+		}
+
+		// For cast members with dedicated resources for data, the castDataToWrite is zero
+		if (castDataToWrite) {
+			writeCastData(writeStream);
+		}
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		writeStream->writeUint32BE((uint32)_type);
+		writeStream->writeUint32BE(castInfoToWrite);
+		writeStream->writeUint32BE(castDataToWrite);
+
+		if (castInfoToWrite) {
+			_cast->writeCastInfo(writeStream, _castId);
+		}
+
+		// For cast members with dedicated resources for data, the castDataToWrite is zero
+		if (castDataToWrite) {
+			writeCastData(writeStream);
+		}
+	}
+	return 0;
+}
+
+// This is the data that is inside the 'CASt' resource
+// These functions (getCastDataSize() and writeCastData() default implementations, are not supposed to be called
+// If the data is modified in the cast member, we implement a custom getCastDataSize() and writeCastData() for that member
+// If it is not modified, then we write it as it is from the original source in the overridden
+// writeCAStResource(Common::MemoryWriteStream, uint32, uint32) function which doesn't call these default functions
+uint32 CastMember::getCastDataSize() {
+	warning("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data size");
+	return _castDataSize;
+}
+
+void CastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+	warning("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data");
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		if (_flags1 != 0xFF) {
+			writeStream->write(0, _castDataSize - 2);
+		} else {
+			writeStream->write(0, _castDataSize - 1);
+		}
+	} else {
+		writeStream->write(0, _castDataSize);
+	}
+}
+
+// This is the info that is inside the 'CASt' resource
+uint32 CastMember::getCastInfoSize() {
+	return _cast->getCastInfoSize(_castId);
+}
+
+// getCastResourceSize only returns the size of the resource without the header
+uint32 CastMember::getCastResourceSize() {
+	uint32 headerSize = 0;
+
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+		// Header size for director version 4
+		headerSize = 7;			// see Cast::loadCastData() for director version 4
+		if (_flags1 != 0xFF) {
+			headerSize += 1;
+		}
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+		// Header size for director version 5
+		headerSize = 12;		// See Cast::loadCastData() for director version 5
+	}
+
+	return headerSize + getCastInfoSize() + getCastDataSize();
 }
 
 } // End of namespace Director

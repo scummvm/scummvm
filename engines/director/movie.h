@@ -29,6 +29,7 @@ namespace Common {
 struct Event;
 class ReadStreamEndian;
 class SeekableReadStreamEndian;
+class MemoryWriteStream;
 }
 
 namespace Director {
@@ -90,6 +91,9 @@ public:
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
+	static void saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info);
+
+	static void writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect);
 
 	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	bool loadArchive();
