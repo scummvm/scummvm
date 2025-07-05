@@ -118,7 +118,9 @@ static AudioStream *openAudio(const String &fileName) {
 	String path = String::format("Sonidos/%s.SND", fileName.c_str());
 	File *file = new File();
 	if (file->open(path.c_str()))
-		return loadSND(file);
+		return file->size() == 0
+			? makeSilentAudioStream(8000, false) // Movie Adventure has some null-size audio files, they are treated like infinite samples
+			: loadSND(file);
 	path.setChar('W', path.size() - 3);
 	path.setChar('A', path.size() - 2);
 	path.setChar('V', path.size() - 1);
