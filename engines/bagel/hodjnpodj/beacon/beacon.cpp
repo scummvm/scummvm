@@ -97,9 +97,7 @@ struct BLOCK {
 static CSound   *pGameSound = nullptr;                             // Game theme song
 
 extern  LPGAMESTRUCT pGameInfo;
-#ifdef  _USRDLL
-	extern HWND ghParentWnd;
-#endif  // _USRDLL
+extern HWND ghParentWnd;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1693,9 +1691,8 @@ void CMainWindow::OnClose() {
 	}
 
 	CFrameWnd::OnClose();
-	#ifdef  _USRDLL
+
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif  //_USRDLL
 }
 
 void CALLBACK GetSubOptions(CWnd* pParentWind) {

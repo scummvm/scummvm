@@ -112,10 +112,7 @@ struct  TILE {          // Data type for each square of the underlying Grid of t
 static CSound   *_gameSound = nullptr;                             // Game theme song
 
 extern  LPGAMESTRUCT pGameInfo;
-
-#ifdef  _USRDLL
-	extern HWND ghParentWnd;
-#endif  // _USRDLL
+extern HWND ghParentWnd;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1893,9 +1890,8 @@ void CMainWindow::OnClose() {
 	}
 
 	CFrameWnd::OnClose();
-	#ifdef  _USRDLL
+
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
-	#endif  //_USRDLL
 }
 
 

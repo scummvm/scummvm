@@ -47,8 +47,6 @@ CPoint  WinToArt(CPoint point);
 void    MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
 void    CALLBACK GetSubOptions(CWnd* pParentWind);
 
-extern CWnd *ghParentWnd;
-
 POINT Grid[MAX_COLUMNS][MAX_ROWS];          // Location of the art parts
 
 CBmpButton  *m_pScrollButton;
@@ -91,9 +89,7 @@ BOOL        tempFramed = TRUE;                      //...when NewGame is called.
 
 static CSound   *pGameSound = nullptr;                 // Game theme song
 
-#ifdef  _USRDLL
-	extern  HWND ghParentWnd;
-#endif
+extern  HWND ghParentWnd;
 extern  LPGAMESTRUCT pGameInfo;
 
 /////////////////////////////////////////////////////////////////////////////
