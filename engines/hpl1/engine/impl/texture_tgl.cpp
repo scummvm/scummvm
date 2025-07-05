@@ -37,17 +37,17 @@ static void getSettings(Bitmap2D *apSrc, int &alChannels, TGLint &internalFormat
 
 	if (alChannels == 4) {
 		internalFormat = TGL_RGBA;
-		if (bmpFormat.contains("BGRA")) {
+		/* if (bmpFormat.contains("BGRA")) {
 			format = TGL_BGRA;
-		} else {
+		} else */ {
 			format = TGL_RGBA;
 		}
 	}
 	if (alChannels == 3) {
 		internalFormat = TGL_RGB;
-		if (bmpFormat.contains("BGR")) {
+		/* if (bmpFormat.contains("BGR")) {
 			format = TGL_BGR;
-		} else {
+		} else */ {
 			format = TGL_RGB;
 		}
 	}
