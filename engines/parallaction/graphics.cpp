@@ -551,6 +551,7 @@ GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "floatingLabel");
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
+	obj->_text = text;
 
 	return obj;
 }
@@ -559,6 +560,8 @@ void Gfx::showFloatingLabel(GfxObj *label) {
 	hideFloatingLabel();
 
 	if (label) {
+		_vm->sayText(label->_text, Common::TextToSpeechManager::INTERRUPT);
+
 		label->x = -1000;
 		label->y = -1000;
 		label->setFlags(kGfxObjVisible);
@@ -648,11 +651,13 @@ GfxObj *Gfx::createLabel(Font *font, const char *text, byte color) {
 	GfxObj *obj = new GfxObj(kGfxObjTypeLabel, new SurfaceToFrames(cnv), "label");
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
+	obj->_text = text;
+	obj->_text.replace('@', ' ');
 
 	return obj;
 }
 
-void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
+void Gfx::showLabel(GfxObj *label, int16 x, int16 y, bool queueTTS, bool voiceText) {
 	if (!label) {
 		return;
 	}
@@ -672,6 +677,20 @@ void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
 
 	label->x = x;
 	label->y = y;
+
+	if (voiceText) {
+		_vm->setTTSVoice(kNarratorVoiceID);
+
+		Common::TextToSpeechManager::Action action;
+
+		if (queueTTS) {
+			action = Common::TextToSpeechManager::QUEUE;
+		} else {
+			action = Common::TextToSpeechManager::INTERRUPT;
+		}
+
+		_vm->sayText(label->_text, action);
+	}
 
 	_labels.push_back(label);
 }
