@@ -603,10 +603,10 @@ Common::Error TeenAgentEngine::run() {
 
 			debug(5, "event");
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.hasFlags(0) && event.kbd.keycode == Common::KEYCODE_F5) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionPause) {
 					openMainMenuDialog();
-				} if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_f) {
+				} else if (event.customType == kActionFastMode) {
 					_markDelay = _markDelay == 80 ? 40 : 80;
 					debug(5, "markDelay = %u", _markDelay);
 				}
