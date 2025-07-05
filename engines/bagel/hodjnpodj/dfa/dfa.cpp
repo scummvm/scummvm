@@ -213,6 +213,9 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 		m_hMissRes[i] = nullptr;
 	}
 
+	// WORKAROUND: Original uses pDC after calling ReleaseDC
+	pDC = GetDC();
+
 	pTimerSprite = new CSprite;
 	pTimerSprite->SharePalette(pGamePalette);
 	bTestCreate = pTimerSprite->LoadCels(pDC, TIMERSPRITE, TIMERSPRITECELS);
@@ -317,6 +320,8 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	if (m_lpGameStruct->bPlayingMetagame)
 		SetTimer(GAMETIMER, 500, nullptr);
 
+	// WORKAROUND: Free re-allocated DC
+	ReleaseDC(pDC);
 }
 
 /*****************************************************************
