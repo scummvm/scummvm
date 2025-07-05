@@ -210,6 +210,29 @@ bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
 			   const uint w, const uint h,
 			   const uint bytesPerPixel, const uint32 *map);
 
+typedef void (*FastBlitFunc)(byte *, const byte *, const uint, const uint, const uint, const uint);
+
+/**
+ * Look up optimised routines for converting between pixel formats.
+ *
+ * @param dstFmt	the desired pixel format
+ * @param srcFmt	the original pixel format
+ * @return			a function pointer to an optimised routine,
+ *					or nullptr if none are available.
+ *
+ * @note Not all combinations of pixel formats are supported on
+ *       all platforms. Users of this function should provide a
+ *       fallback using crossBlit() if no optimised functions
+ *       can be found.
+ * @note This can convert a surface in place, regardless of the
+ *       source and destination format, as long as there is enough
+ *       space for the destination. The dstPitch / srcPitch ratio
+ *       must at least equal the dstBpp / srcBpp ratio for
+ *       dstPitch >= srcPitch and at most dstBpp / srcBpp for
+ *       dstPitch < srcPitch though.
+ */
+FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt);
+
 bool scaleBlit(byte *dst, const byte *src,
 			   const uint dstPitch, const uint srcPitch,
 			   const uint dstW, const uint dstH,

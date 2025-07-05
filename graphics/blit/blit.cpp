@@ -321,6 +321,13 @@ bool crossBlit(byte *dst, const byte *src,
 		return true;
 	}
 
+	// Attempt to use a faster method if possible
+	FastBlitFunc blitFunc = getFastBlitFunc(dstFmt, dstFmt);
+	if (blitFunc) {
+		blitFunc(dst, src, dstPitch, srcPitch, w, h);
+		return true;
+	}
+
 	return crossBlitHelper<false, false>(dst, src, nullptr, w, h, srcFmt, dstFmt, srcPitch, dstPitch, 0, 0);
 }
 
