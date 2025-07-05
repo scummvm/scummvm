@@ -135,6 +135,7 @@ struct ScriptTimerTask : public Task {
 				_result = g_engine->script().variable("SeHaPulsadoRaton") ? 0 : 2;
 			else
 				_result = 1;
+			g_engine->player().drawCursor();
 		}
 		TASK_YIELD; // Wait a frame to not produce an endless loop
 		TASK_RETURN(_result);
