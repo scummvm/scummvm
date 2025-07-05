@@ -25,6 +25,7 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 #include "common/keyboard.h"
+#include "common/rect.h"
 #include "common/rotationmode.h"
 
 #include "graphics/mode.h"
@@ -104,6 +105,13 @@ public:
 	virtual void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) = 0;
 	virtual int16 getOverlayHeight() const = 0;
 	virtual int16 getOverlayWidth() const = 0;
+	virtual Common::Rect getSafeOverlayArea(int16 *width, int16 *height) const {
+		int16 w = getOverlayWidth(),
+			  h = getOverlayHeight();
+		if (width) *width = w;
+		if (height) *height = h;
+		return Common::Rect(w, h);
+	}
 	virtual float getHiDPIScreenFactor() const { return 1.0f; }
 
 	virtual bool showMouse(bool visible) = 0;

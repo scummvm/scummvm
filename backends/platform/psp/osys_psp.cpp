@@ -274,11 +274,11 @@ void OSystem_PSP::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 	_overlay.copyFromRect(buf, pitch, x, y, w, h);
 }
 
-int16 OSystem_PSP::getOverlayWidth() {
+int16 OSystem_PSP::getOverlayWidth() const {
 	return (int16)_overlay.getWidth();
 }
 
-int16 OSystem_PSP::getOverlayHeight() {
+int16 OSystem_PSP::getOverlayHeight() const {
 	return (int16)_overlay.getHeight();
 }
 

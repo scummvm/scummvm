@@ -729,11 +729,11 @@ void OSystem_N64::copyRectToOverlay(const void *buf, int pitch, int x, int y, in
 	return;
 }
 
-int16 OSystem_N64::getOverlayHeight() {
+int16 OSystem_N64::getOverlayHeight() const {
 	return _overlayHeight;
 }
 
-int16 OSystem_N64::getOverlayWidth() {
+int16 OSystem_N64::getOverlayWidth() const {
 	return _overlayWidth;
 }
 

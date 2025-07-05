@@ -182,8 +182,8 @@ public:
 	void grabOverlay(Graphics::Surface &surface) override;
 	virtual void copyRectToOverlay(const void *buf, int pitch,
 									int x, int y, int w, int h) override;
-	int16 getOverlayWidth() override;
-	int16 getOverlayHeight() override;
+	int16 getOverlayWidth() const override;
+	int16 getOverlayHeight() const override;
 	Graphics::PixelFormat getOverlayFormat() const override;
 
 	bool showMouse(bool visible) override;

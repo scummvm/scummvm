@@ -37,6 +37,8 @@ public:
 	void deinitSurface();
 	void resizeSurface();
 
+	WindowedGraphicsManager::Insets getSafeAreaInsets() const override;
+
 	void updateScreen() override;
 
 	void displayMessageOnOSD(const Common::U32String &msg) override;
