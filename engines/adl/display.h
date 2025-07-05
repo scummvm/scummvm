@@ -22,6 +22,7 @@
 #ifndef ADL_DISPLAY_H
 #define ADL_DISPLAY_H
 
+#include "common/text-to-speech.h"
 #include "common/types.h"
 
 namespace Common {
@@ -53,8 +54,10 @@ public:
 	void moveCursorTo(const Common::Point &pos);
 	void moveCursorForward();
 	void moveCursorBackward();
-	void printString(const Common::String &str);
-	void printAsciiString(const Common::String &str);
+	void printString(const Common::String &str, bool voiceString = true);
+	void printAsciiString(const Common::String &str, bool voiceString = true);
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE) const;
+	Common::U32String convertText(const Common::String &text) const;
 	void setCharAtCursor(byte c);
 	uint getTextWidth() const { return _textWidth; }
 	uint getTextHeight() const { return _textHeight; }

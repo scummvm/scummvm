@@ -237,7 +237,8 @@ Common::String AdlEngine::inputString(byte prompt) const {
 
 		if (b == ('\r' | 0x80)) {
 			s += b;
-			_display->printString(Common::String(b));
+			_display->printString(Common::String(b), false);
+			_display->sayText(s, Common::TextToSpeechManager::INTERRUPT);
 			return s;
 		}
 
@@ -256,7 +257,7 @@ Common::String AdlEngine::inputString(byte prompt) const {
 		} else {
 			if (s.size() < 255) {
 				s += b;
-				_display->printString(Common::String(b));
+				_display->printString(Common::String(b), false);
 			}
 		}
 	}
@@ -279,8 +280,10 @@ byte AdlEngine::inputKey(bool showCursor) const {
 				continue;
 
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_BACKSPACE:
 			case Common::KEYCODE_RETURN:
+				stopTextToSpeech();
+				// fall through
+			case Common::KEYCODE_BACKSPACE:
 				key = convertKey(event.kbd.keycode);
 				break;
 			default:
@@ -544,6 +547,13 @@ void AdlEngine::loadDroppedItemOffsets(Common::ReadStream &stream, byte count) {
 	}
 }
 
+void AdlEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
 void AdlEngine::drawPic(byte pic, Common::Point pos) const {
 	if (_roomData.pictures.contains(pic)) {
 		Common::StreamPtr stream(_roomData.pictures[pic]->createReadStream());
@@ -775,6 +785,12 @@ Common::Error AdlEngine::run() {
 
 	init();
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
 
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {

@@ -109,6 +109,8 @@ protected:
 void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 	_display->setMode(Display::kModeText);
 
+	Common::String ttsMessage;
+
 	for (;;) {
 		byte opc = stream.readByte();
 
@@ -121,6 +123,9 @@ void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 			// HOME
 			_display->home();
 		} else if (addr == 0x6ffd) {
+			_display->sayText(ttsMessage);
+			ttsMessage.clear();
+
 			// GETLN1
 			inputString();
 
@@ -129,6 +134,13 @@ void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 		} else {
 			// We assume print string call (addr varies per game)
 			Common::String str = readString(stream);
+			ttsMessage += str;
+
+			// If the string ends in two carriage returns, add a newline to the end of the TTS message
+			// (since carriage returns will be replaced with spaces)
+			if (str.size() > 1 && str[str.size() - 1] == '\x8d' && str[str.size() - 2] == '\x8d') {
+				ttsMessage += '\n';
+			}
 
 			if (stream.err() || stream.eos())
 				error("Error reading instructions");
@@ -137,11 +149,11 @@ void HiRes1Engine::showInstructions(Common::SeekableReadStream &stream) {
 			size_t posChr4 = str.findFirstOf(_display->asciiToNative(4));
 
 			if (posChr4 != str.npos) {
-				_display->printString(str.substr(0, posChr4));
+				_display->printString(str.substr(0, posChr4), false);
 				return;
 			}
 
-			_display->printString(str);
+			_display->printString(str, false);
 		}
 	}
 }
@@ -186,18 +198,23 @@ void HiRes1Engine::runIntro() {
 		_display->home();
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_0, '"');
-		_display->printAsciiString(str + '\r');
+		_display->printAsciiString(str + '\r', false);
+		Common::String ttsMessage = str + ' ';
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_1, '"');
-		_display->printAsciiString(str + "\r\r");
+		_display->printAsciiString(str + "\r\r", false);
+		ttsMessage += str + '\n';
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_2, '"');
-		_display->printAsciiString(str + "\r\r");
+		_display->printAsciiString(str + "\r\r", false);
+		ttsMessage += str + '\n';
 
 		str = readStringAt(*basic, IDI_HR1_OFS_PD_TEXT_3, '"');
-		_display->printAsciiString(str + '\r');
+		_display->printAsciiString(str + '\r', false);
+		_display->sayText(ttsMessage + ' ' + str);
 
 		inputKey();
+		stopTextToSpeech();
 		if (shouldQuit())
 			return;
 	}
@@ -636,9 +653,11 @@ void HiRes1Engine_VF::runIntro() {
 
 		if (key == _display->asciiToNative('M')) {
 			stream->seek(0x75);
+			_display->sayText("M", Common::TextToSpeechManager::INTERRUPT);
 			showInstructions(*stream);
 			return;
 		} else if (key == _display->asciiToNative('J')) {
+			_display->sayText("J", Common::TextToSpeechManager::INTERRUPT);
 			return;
 		}
 	}
