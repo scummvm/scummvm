@@ -38,6 +38,8 @@
 
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Buried {
 
 BioChipRightWindow::BioChipRightWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
@@ -265,6 +267,7 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 		break;
 	case kItemBioChipCloak:
 		if (upperButton.contains(point)) {
+			Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 			if (_status == 0) {
 				_status = 1;
 
@@ -282,6 +285,9 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_CLOAKING_SOUND_FILENAME));
 				video->playToFrame(23);
 
+				keymapper->disableAllGameKeymaps();
+				keymapper->getKeymap("cutscene")->setEnabled(true);
+
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
 					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
@@ -289,6 +295,11 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				_vm->_sound->timerCallback();
 				delete video;
+
+				keymapper->getKeymap("cutscene")->setEnabled(false);
+				keymapper->getKeymap("buried-default")->setEnabled(true);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+				keymapper->getKeymap("inventory")->setEnabled(true);
 
 				invalidateWindow(false);
 
@@ -319,6 +330,9 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				_vm->_sound->playInterfaceSound(_vm->getFilePath(IDS_BC_CLOAKING_SOUND_FILENAME));
 				video->playToFrame(47);
 
+				keymapper->disableAllGameKeymaps();
+				keymapper->getKeymap("cutscene")->setEnabled(true);
+
 				while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped) {
 					_vm->yield(video, -1);
 					_vm->_sound->timerCallback();
@@ -326,6 +340,11 @@ void BioChipRightWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				_vm->_sound->timerCallback();
 				delete video;
+
+				keymapper->getKeymap("cutscene")->setEnabled(false);
+				keymapper->getKeymap("buried-default")->setEnabled(true);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+				keymapper->getKeymap("inventory")->setEnabled(true);
 
 				invalidateWindow(false);
 
