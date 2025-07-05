@@ -22,6 +22,7 @@
 #include "common/gui_options.h"
 
 #include "common/config-manager.h"
+#include "common/platform.h"
 #include "common/str.h"
 
 namespace Common {
@@ -167,6 +168,8 @@ String parseGameGUIOptions(const String &str) {
 		}
 	}
 
+	res += parseGameGUIOptionsPlatforms(str);
+
 	return res;
 }
 
@@ -177,13 +180,15 @@ const String getGameGUIOptionsDescription(const String &options) {
 		if (options.contains(g_gameOptions[i].option[0]))
 			res += String(g_gameOptions[i].desc) + " ";
 
+	res += getGameGUIOptionsDescriptionPlatforms(options);
 	res.trim();
 
 	return res;
 }
 
-void updateGameGUIOptions(const String &options, const String &langOption) {
-	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
+void updateGameGUIOptions(const String &options, const String &langOption, const String &platOption) {
+	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption + " " + platOption;
+
 	ConfMan.setAndFlush("guioptions", newOptionString);
 }
 

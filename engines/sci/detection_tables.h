@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/gui_options.h"
 #include "common/translation.h"
 
 namespace Sci {
@@ -907,17 +908,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_TTS, \
 							  GAMEOPTION_ENABLE_GMM_SAVE)
-#define GUIO_GK1_CD_DOS GUIO6(GUIO_LINKSPEECHTOSFX, \
+#define GUIO_GK1_CD_DOS GUIO7(GUIO_LINKSPEECHTOSFX, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, \
 							  GAMEOPTION_HQ_VIDEO, \
 							  GAMEOPTION_ENABLE_GMM_SAVE, \
-							  GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX)
-#define GUIO_GK1_CD_WIN GUIO5(GUIO_LINKSPEECHTOSFX, \
+							  GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX, \
+							  GUIO_PLATFORM(kPlatformWindows))
+#define GUIO_GK1_CD_WIN GUIO6(GUIO_LINKSPEECHTOSFX, \
 							  GAMEOPTION_ORIGINAL_SAVELOAD, \
 							  GAMEOPTION_HQ_VIDEO, \
 							  GAMEOPTION_ENABLE_GMM_SAVE, \
-							  GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX)
+							  GAMEOPTION_GK1_ENABLE_AUDIO_POPFIX, \
+							  GUIO_PLATFORM(kPlatformDOS))
 #define GUIO_GK1_MAC    GUIO3(GUIO_NOSPEECH, \
 							  GAMEOPTION_TTS, \
 							  GAMEOPTION_ENABLE_GMM_SAVE)
@@ -5902,7 +5905,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "0d8dfe42683b46f3131823233a91ce6a", 787066},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_UNSTABLE, GUIO_STD16_MAC_PALETTEMODS	},
-		
+
 	// Space Quest 3 - Hebrew DOS (from the Space Quest Collection)
 	// Executable scanning reports "0.000.685", VERSION file reports "1.018"
 	// This translation is still a work in progress
@@ -5914,7 +5917,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"PATCHES/font.000", 0, "6fab182f1c071d1ed47be27776964baf", 3334},
 		AD_LISTEND},
 		Common::HE_ISR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_STD16_PALETTEMODS },
-		
+
 	// Space Quest 3 - Spanish fan translation. VERSION file reports "06/03/2002"
 	{ "sq3", "", {
 		{"resource.map", 0, "9ba042c797b62dd46d8979caeed61116", 3726},
