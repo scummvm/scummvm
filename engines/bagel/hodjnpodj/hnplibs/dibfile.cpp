@@ -144,8 +144,10 @@ HDIB ReadDIBFile(CFile &file) {
 	surf->copyFrom(*decoder.getSurface());
 
 	if (decoder.hasPalette()) {
+		// WORKAROUND: dfa/art/mallet.bmp has 257 palette entries.
+		// Other bitmaps may likewise.
 		const Graphics::Palette &pal = decoder.getPalette();
-		surf->setPalette(pal.data(), 0, pal.size());
+		surf->setPalette(pal.data(), 0, MIN<int>(pal.size(), 256));
 	}
 
 	return surf;
