@@ -98,6 +98,10 @@ Cursors::~Cursors() {
 }
 
 HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
+	if (!cursorId)
+		// Null cursor used to hide cursor
+		return (HCURSOR)nullptr;
+
 	if (_cursors.contains(cursorId))
 		return (HCURSOR)_cursors[cursorId];
 
