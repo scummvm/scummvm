@@ -125,7 +125,7 @@ Cursor::Cursor(LPCSTR cursorId) :
 
 	Common::SeekableReadStream *bmp = nullptr;
 	for (const auto &res : resList) {
-		bmp = res._value->getResource(
+		bmp = res._res->getResource(
 			Common::kWinBitmap,
 			(id < 65536) ? Common::WinResourceID(id) :
 			Common::WinResourceID(cursorId));
@@ -144,7 +144,7 @@ Cursor::Cursor(LPCSTR cursorId) :
 
 	if (_surface.empty()) {
 		for (const auto &res : resList) {
-			_cursorGroup = Graphics::WinCursorGroup::createCursorGroup(res._value, id);
+			_cursorGroup = Graphics::WinCursorGroup::createCursorGroup(res._res, id);
 			if (_cursorGroup) {
 				success = true;
 				break;

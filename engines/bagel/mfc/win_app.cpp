@@ -342,8 +342,7 @@ int LoadString(HINSTANCE hInstance, UINT uID,
 
 	// Walk through up to 16 strings in the block
 	for (uint i = 0; i < 16; ++i) {
-		uint length = READ_BE_UINT16(pData);
-		pData += 2;
+		uint length = *pData++;
 
 		if (i == indexInBlock) {
 			// Found the desired string

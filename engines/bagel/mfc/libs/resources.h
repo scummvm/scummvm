@@ -46,9 +46,18 @@ struct Resource {
 		_size(size) {}
 };
 typedef Common::List<Resource> ResCache;
-typedef Common::HashMap<Common::String, Common::WinResources *> ResourcesHash;
 
-class Resources : public ResourcesHash {
+struct ResourceFile {
+	Common::String _filename;
+	Common::WinResources *_res = nullptr;
+
+	~ResourceFile() {
+		delete _res;
+	}
+};
+typedef Common::List<ResourceFile> ResList;
+
+class Resources : public ResList {
 private:
 	ResCache _cache;
 

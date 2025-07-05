@@ -29,8 +29,7 @@ namespace MFC {
 namespace Libs {
 
 Resources::~Resources() {
-	for (auto &it : *this)
-		delete it._value;
+	clear();
 }
 
 void Resources::addResources(const Common::Path &file) {
@@ -38,12 +37,16 @@ void Resources::addResources(const Common::Path &file) {
 	if (!res->loadFromEXE(file))
 		error("Could not load %s", file.baseName().c_str());
 
-	(*this)[file.baseName()] = res;
+	push_front(ResourceFile());
+	front()._filename = file.baseName();
+	front()._res = res;
 	_cache.clear();
 }
 
 void Resources::removeResources(const Common::Path &file) {
-	erase(file.baseName());
+	// Expect resources to be removed in order
+	assert(file.baseName() == front()._filename);
+	pop_front();
 	_cache.clear();
 }
 
@@ -73,7 +76,7 @@ HRSRC Resources::findResource(LPCSTR lpName, LPCSTR lpType) {
 
 	// Get the resource
 	for (auto &it : (*this)) {
-		Common::WinResources *res = it._value;
+		Common::WinResources *res = it._res;
 		Common::SeekableReadStream *rs = res->getResource(type, id);
 
 		if (rs) {
