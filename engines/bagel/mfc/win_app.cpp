@@ -319,9 +319,45 @@ HINSTANCE AfxGetInstanceHandle() {
 	return 0;
 }
 
-int LoadString(HINSTANCE hInstance,
-               UINT uID, LPSTR lpBuffer, int cchBufferMax) {
-	error("TODO: LoadString");
+int LoadString(HINSTANCE hInstance, UINT uID,
+		LPSTR lpBuffer, int cchBufferMax) {
+	if (lpBuffer == nullptr || cchBufferMax <= 0)
+		return 0;
+
+	// Calculate which string block (resource ID) contains this string
+	UINT blockID = (uID / 16) + 1;
+	UINT indexInBlock = uID % 16;
+
+	// Find the RT_STRING resource with that block ID
+	HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(blockID), RT_STRING);
+	if (!hRes)
+		return 0;
+
+	HGLOBAL hResData = LoadResource(hInstance, hRes);
+	if (!hResData)
+		return 0;
+
+	const byte *pData = (const byte *)LockResource(hResData);
+	assert(pData);
+
+	// Walk through up to 16 strings in the block
+	for (uint i = 0; i < 16; ++i) {
+		uint length = READ_BE_UINT16(pData);
+		pData += 2;
+
+		if (i == indexInBlock) {
+			// Found the desired string
+			int copyLen = MIN((int)length, cchBufferMax - 1);
+			strncpy(lpBuffer, (const char *)pData, copyLen);
+			return copyLen;
+		}
+
+		// Skip this string
+		pData += length;
+	}
+
+	// String ID not found (shouldn't happen if resource is valid)
+	return 0;
 }
 
 HMODULE LoadLibrary(LPCSTR lpLibFileName) {
