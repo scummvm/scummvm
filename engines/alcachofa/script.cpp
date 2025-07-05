@@ -709,11 +709,11 @@ private:
 
 		// Inventory control
 		case ScriptKernelTask::Pickup:
-			relatedCharacter().pickup(getStringArg(0), getNumberArg(1));
+			relatedCharacter().pickup(getStringArg(0), !getNumberArg(1));
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::CharacterPickup: {
 			auto &character = g_engine->world().getMainCharacterByKind((MainCharacterKind)getNumberArg(1));
-			character.pickup(getStringArg(0), getNumberArg(2));
+			character.pickup(getStringArg(0), !getNumberArg(2));
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::Drop:

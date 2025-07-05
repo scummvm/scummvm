@@ -928,7 +928,8 @@ void MainCharacter::pickup(const String &name, bool putInHand) {
 		error("Tried to pickup unknown item: %s", name.c_str());
 	item->toggle(true);
 	if (g_engine->player().activeCharacter() == this) {
-		// TODO: Put item in hand for pickup
+		if (putInHand)
+			g_engine->player().heldItem() = item;
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 	}
 }
