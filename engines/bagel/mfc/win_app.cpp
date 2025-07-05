@@ -347,7 +347,8 @@ int LoadString(HINSTANCE hInstance, UINT uID,
 		if (i == indexInBlock) {
 			// Found the desired string
 			int copyLen = MIN((int)length, cchBufferMax - 1);
-			strncpy(lpBuffer, (const char *)pData, copyLen);
+			memcpy(lpBuffer, (const char *)pData, copyLen);
+			lpBuffer[copyLen] = '\0';
 			return copyLen;
 		}
 
