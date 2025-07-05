@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-05 20:45+0000\n"
-"PO-Revision-Date: 2025-07-05 20:51+0000\n"
+"PO-Revision-Date: 2025-07-05 20:58+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -14269,68 +14269,48 @@ msgid "Toggle crouch"
 msgstr "Alterna in piedi / abbassato"
 
 #: engines/ultima/ultima8/metaengine.cpp:101
-#, fuzzy
-#| msgid "Side Step / Advance / Retreat"
 msgid "Side step / Advance / Retreat"
-msgstr "Passo Laterale / Avanza / Arretra"
+msgstr "Passo laterale / Avanza / Arretra"
 
 #: engines/ultima/ultima8/metaengine.cpp:106
-#, fuzzy
-#| msgid "Toggle Clipping"
 msgid "Toggle clipping"
-msgstr "Attiva/disattiva Clipping"
+msgstr "Attiva/disattiva clipping"
 
 #: engines/ultima/ultima8/metaengine.cpp:107
 msgid "Ascend"
 msgstr "Sali"
 
 #: engines/ultima/ultima8/metaengine.cpp:115
-#, fuzzy
-#| msgid "Show Touching Items"
 msgid "Show touching items"
 msgstr "Mostra oggetti in contatto"
 
 #: engines/ultima/ultima8/metaengine.cpp:116
-#, fuzzy
-#| msgid "Show Editor Items"
 msgid "Show editor items"
-msgstr "Mostra Oggetti Editor"
+msgstr "Mostra oggetti editor"
 
 #: engines/ultima/ultima8/metaengine.cpp:117
-#, fuzzy
-#| msgid "Decrement Map Sort Order"
 msgid "Decrement map sort order"
-msgstr "Decrementa ordinamento della Mappa"
+msgstr "Decrementa ordinamento della mappa"
 
 #: engines/ultima/ultima8/metaengine.cpp:118
-#, fuzzy
-#| msgid "Increment Map Sort Order"
 msgid "Increment map sort order"
-msgstr "Incrementa ordinamento della Mappa"
+msgstr "Incrementa ordinamento della mappa"
 
 #: engines/ultima/ultima8/metaengine.cpp:119
-#, fuzzy
-#| msgid "Toggle Frame By Frame"
 msgid "Toggle frame by frame"
-msgstr "Attiva/Disattiva Frame By Frame"
+msgstr "Attiva / disattiva frame by frame"
 
 #: engines/ultima/ultima8/metaengine.cpp:120
-#, fuzzy
-#| msgid "Advance Frame"
 msgid "Advance frame"
 msgstr "Frame successivo"
 
 #: engines/ultima/ultima8/metaengine.cpp:121
-#, fuzzy
-#| msgid "Toggle Avatar In Stasis"
 msgid "Toggle Avatar in stasis"
-msgstr "Attiva/Disattiva stasi di Avatar"
+msgstr "Attiva / disattiva stasi dell'Avatar"
 
 #: engines/ultima/ultima8/metaengine.cpp:122
-#, fuzzy
-#| msgid "Show Shape Viewer"
 msgid "Show shape viewer"
-msgstr "Mostra Visualizzatore Forme"
+msgstr "Mostra visualizzatore forme"
 
 #: engines/ultima/ultima8/metaengine.cpp:132
 msgid "Ultima VIII"
@@ -14506,42 +14486,32 @@ msgid "Require a lockout code to start the game."
 msgstr "Richiede un codice di sicurezza all'avvio del gioco."
 
 #: engines/voyeur/metaengine.cpp:186
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Room keymappings"
-msgstr "Mappature tasti gioco"
+msgstr "Mappature tasti delle stanza"
 
 #: engines/voyeur/metaengine.cpp:187
-#, fuzzy
-#| msgid "Game keymappings"
 msgid "Camera keymappings"
-msgstr "Mappature tasti gioco"
+msgstr "Mappature tasti della camera"
 
 #: engines/voyeur/metaengine.cpp:188
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Intro keymappings"
-msgstr "Mappature tasti indice"
+msgstr "Mappatura tasti dell'introduzione"
 
 #: engines/voyeur/metaengine.cpp:204
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip scene"
-msgstr "Salta scena di intermezzo"
+msgstr "Salta scena"
 
 #: engines/voyeur/metaengine.cpp:211
 msgid "View evidence"
-msgstr ""
+msgstr "Mostra prove"
 
 #: engines/voyeur/metaengine.cpp:217
 msgid "Exit / Put away evidence"
-msgstr ""
+msgstr "Esci / Riponi prove"
 
 #: engines/voyeur/metaengine.cpp:223
-#, fuzzy
-#| msgid "Enter"
 msgid "Enter room"
-msgstr "Invio"
+msgstr "Entra in stanza"
 
 #: engines/wintermute/metaengine.cpp:42
 msgid "Show FPS-counter"
@@ -14995,26 +14965,18 @@ msgid "Settings"
 msgstr "Impostazioni"
 
 #: engines/wintermute/keymapper_tables.h:1619
-#, fuzzy
-#| msgid "Dialogue answer 1"
 msgid "Dialog answer 1"
 msgstr "Risposta dialogo 1"
 
 #: engines/wintermute/keymapper_tables.h:1624
-#, fuzzy
-#| msgid "Dialogue answer 2"
 msgid "Dialog answer 2"
 msgstr "Risposta dialogo 2"
 
 #: engines/wintermute/keymapper_tables.h:1629
-#, fuzzy
-#| msgid "Dialogue answer 3"
 msgid "Dialog answer 3"
 msgstr "Risposta dialogo 3"
 
 #: engines/wintermute/keymapper_tables.h:1634
-#, fuzzy
-#| msgid "Dialogue answer 4"
 msgid "Dialog answer 4"
 msgstr "Risposta dialogo 4"
 
@@ -15146,28 +15108,24 @@ msgstr ""
 "inferiore"
 
 #: engines/zvision/metaengine.cpp:102
-#, fuzzy
-#| msgid "Game id not supported"
 msgid "Enable widescreen support"
-msgstr "ID di gioco non supportato"
+msgstr "Abilita modalità widescreen"
 
 #: engines/zvision/metaengine.cpp:103
 msgid ""
 "Rearrange placement of menus & subtitles so as to make better use of modern "
 "wide aspect ratio displays"
 msgstr ""
+"Ridispone i menù e i sottotitoli per un migliore uso dello spazio su schermi "
+"widescreen moderni"
 
 #: engines/zvision/metaengine.cpp:114
-#, fuzzy
-#| msgid "Enable hit point bar graphs"
 msgid "Enable high quality panoramas"
-msgstr "Attiva le barre di energia (Hit Points)"
+msgstr "Abilita panorami ad alta qualità"
 
 #: engines/zvision/metaengine.cpp:115
-#, fuzzy
-#| msgid "Apply bilinear filtering to individual sprites"
 msgid "Apply bilinear filtering to panoramic backgrounds"
-msgstr "Applica un filtro grafico bilineare ad ogni sprite"
+msgstr "Applica un filtro grafico bilineare agli sfondi panoramici"
 
 #: engines/zvision/metaengine.cpp:258
 msgid "Spellbook"
