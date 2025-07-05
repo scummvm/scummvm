@@ -67,6 +67,7 @@ namespace Bagel {
 #define SOUND_TYPE_WAV 1
 #define SOUND_TYPE_XM 2
 #define SOUND_TYPE_QT 3
+#define SOUND_TYPE_SMF 4
 
 #define FMT_MILLISEC 1 // Time format specifiers.
 #define FMT_BPM 2

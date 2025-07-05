@@ -104,7 +104,8 @@ void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
 	}
 
 	if (_wFlags & SOUND_MIDI) {
-		_chType = SOUND_TYPE_XM;
+		_chType = g_engine->isSpaceBar() ?
+			SOUND_TYPE_XM : SOUND_TYPE_SMF;
 	} else {
 		_chType = SOUND_TYPE_WAV;
 	}
