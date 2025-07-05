@@ -121,6 +121,7 @@ public:
 	}
 
 	void SetPermanent(HANDLE h, T *permOb) {
+		assert(!LookupPermanent(h));
 		_permanentMap[(LPVOID)h] = permOb;
 	}
 

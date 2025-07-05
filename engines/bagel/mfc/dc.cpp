@@ -33,6 +33,10 @@ IMPLEMENT_DYNCREATE(CDC, CObject)
 CDC::~CDC() {
 	if (m_hDC && _permanent)
 		DeleteDC();
+	else if (m_hDC) {
+		auto *pMap = AfxGetApp()->afxMapHDC(true);
+		assert(!pMap->LookupTemporary(m_hDC));
+	}
 }
 
 CDC *CDC::FromHandle(HDC hDC) {
@@ -48,8 +52,10 @@ void CDC::AfxHookObject() {
 	CHandleMap<CDC> *pMap = AfxGetApp()->afxMapHDC(TRUE);
 	assert(pMap != nullptr);
 
-	pMap->SetPermanent(m_hDC, this);
-	_permanent = true;
+	if (!pMap->LookupPermanent(m_hDC)) {
+		pMap->SetPermanent(m_hDC, this);
+		_permanent = true;
+	}
 }
 
 void CDC::AfxUnhookObject() {
@@ -101,21 +107,16 @@ BOOL CDC::Attach(HDC hDC) {
 	if (hDC == nullptr)
 		return FALSE;
 
-	auto *pMap = AfxGetApp()->afxMapHDC(TRUE);
-	assert(pMap != nullptr);
 	m_hDC = hDC;
-	pMap->SetPermanent(m_hDC, this);
+	AfxHookObject();
 
 	return TRUE;
 }
 
 HDC CDC::Detach() {
 	HDC hDC = m_hDC;
-	if (hDC != nullptr) {
-		auto *pMap = AfxGetApp()->afxMapHDC();
-		if (pMap != nullptr)
-			pMap->RemoveHandle(m_hDC);
-	}
+	if (hDC != nullptr)
+		AfxUnhookObject();
 
 	m_hDC = nullptr;
 	return hDC;

@@ -65,18 +65,28 @@ HDC CreateCompatibleDC(HDC hdc) {
 HDC GetDC(HWND hWnd) {
 	assert(!hWnd);
 
-	CDC::Impl *dc = new CDC::Impl();
-	dc->setScreenRect();
-	return dc;
+	if (hWnd) {
+		CWnd *wnd = CWnd::FromHandle(hWnd);
+		return wnd->GetDC();
+	} else {
+		// Screen DC, so set the screen rect
+		CDC::Impl *dc = new CDC::Impl();
+		dc->setScreenRect();
+		return dc;
+	}
 }
 
-int ReleaseDC(HWND hWnd, HDC hDC) {	
-	// In ScummVM window creation is hard-coded with CS_OWNDC.
-	// Which means, the only DCs passed here should be global
-	// temporary DCs that can be immediately deleted
-	assert(!hWnd && hDC);
-	delete (CDC::Impl *)hDC;
-	return 1;
+int ReleaseDC(HWND hWnd, HDC hDC) {
+	if (hWnd) {
+		// Window based DC
+		CWnd *wnd = CWnd::FromHandle(hWnd);
+		CDC *dc = CDC::FromHandle(hDC);
+		return wnd->ReleaseDC(dc);
+	} else {
+		// System screen DC
+		delete (CDC::Impl *)hDC;
+		return 1;
+	}
 }
 
 BOOL DeleteDC(HDC hDC) {
@@ -389,9 +399,6 @@ DWORD GetSysColor(int nIndex) {
 }
 
 HBRUSH GetSysColorBrush(int nIndex) {
-	COLORREF color;
-	CBrush::Impl *brush;
-
 	switch (nIndex) {
 	case COLOR_WINDOW:
 		return new CBrush::Impl(RGB(255, 255, 255));

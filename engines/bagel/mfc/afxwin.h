@@ -1072,6 +1072,11 @@ protected:
 
 protected:
 	Libs::Array<CWnd *> _ownedControls;
+	CDC *_pDC = nullptr;
+	HFONT _hFont;
+	HBRUSH _hBrush;
+	HPEN _hPen;
+	HPALETTE _hPalette;
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
@@ -1283,8 +1288,6 @@ public:
 	Common::Rect _updateRect;
 	Common::Rect _updatingRect;
 	bool _updateErase = false;
-	CDC *_dc = nullptr;
-	HFONT _hFont = nullptr;
 
 public:
 	/**

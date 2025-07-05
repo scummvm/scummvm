@@ -50,18 +50,26 @@ CWnd *CWnd::FromHandle(HWND hWnd) {
 }
 
 CWnd::CWnd() : m_hWnd(this) {
-	auto *pMap = AfxGetApp()->afxMapWnd(true);
+	CWinApp *app = AfxGetApp();
+	auto *pMap = app->afxMapWnd(true);
 	assert(pMap != nullptr);
 
 	pMap->SetPermanent(m_hWnd, this);
+
+	// Defaults
+	_hFont = app->getDefaultFont();
+	_hPen = app->getDefaultPen();
+	_hBrush = app->getDefaultBrush();
+	_hPalette = app->getSystemPalette();
 }
 
 CWnd::~CWnd() {
 	// Although we check the flag here, currently it's
 	// hardcoded to be on for ScummVM
-	if (m_nClassStyle & CS_OWNDC) {
-		_dc->DeleteDC();
-		delete _dc;
+	if ((m_nClassStyle & CS_OWNDC) && _pDC) {
+		_pDC->DeleteDC();
+		delete _pDC;
+		_pDC = nullptr;
 	}
 
 	DestroyWindow();
@@ -105,12 +113,6 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	WNDCLASS wc;
 	GetClassInfo(nullptr, lpszClassName, &wc);
 	m_nClassStyle = wc.style;
-
-	// Create the client DC
-	CDC::Impl *destDC = new CDC::Impl();
-	destDC->setScreenRect(screenRect);
-	_dc = new CDC();
-	_dc->Attach(destDC);
 
 	if (m_pParentWnd)
 		m_pParentWnd->_children[nID] = this;
@@ -313,22 +315,45 @@ void CWnd::SetStyle(DWORD nStyle) {
 }
 
 CDC *CWnd::GetDC() {
-	if (_dc == nullptr) {
-		// Get a screen DC and create a CDC to wrap it
-		HDC hDC = MFC::GetDC(nullptr);
+	if (_pDC != nullptr) {
+		// Return persistent DC
+		return _pDC;
+	} else if (_windowRect.isEmpty()) {
+		// Window hasn't yet been created, so return
+		// a full screen DC
+		HDC hdc = MFC::GetDC(nullptr);
+		CDC *dc = new CDC();
+		dc->Attach(hdc);
+		return dc;
+
+	} else {
+		// Return a new DC for the window
+		CDC::Impl *hDC = new CDC::Impl();
+		hDC->Attach(_hFont);
+		hDC->Attach(_hPen);
+		hDC->Attach(_hBrush);
+		hDC->selectPalette(_hPalette);
+
+		RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+		ClientToScreen(&screenRect);
+		hDC->setScreenRect(screenRect);
+
 		CDC *pDC = new CDC();
 		pDC->Attach(hDC);
-		pDC->AfxHookObject();
+
+		if (m_nClassStyle & CS_OWNDC)
+			_pDC = pDC;
 
 		return pDC;
-	} else {
-		return _dc;
 	}
 }
 
 int CWnd::ReleaseDC(CDC *pDC) {
-	if (pDC != _dc) {
-		pDC->DeleteDC();
+	if (pDC && pDC == _pDC) {
+		// Wnd has persistent dc
+		assert(m_nClassStyle & CS_OWNDC);
+
+	} else {
 		delete pDC;
 	}
 
@@ -758,10 +783,12 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	_windowRect = *lpRect;
 	ValidateRect(nullptr);
 
-	// Get the screen area
-	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
-	ClientToScreen(&screenRect);
-	_dc->impl()->setScreenRect(screenRect);
+	if (_pDC) {
+		// Get the screen area
+		RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+		ClientToScreen(&screenRect);
+		_pDC->impl()->setScreenRect(screenRect);
+	}
 
 	// Iterate through all child controls. We won't
 	// change their relative position, but doing so will
@@ -781,8 +808,9 @@ void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
 }
 
 HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
-	assert(_dc);
-	lpPaint->hdc = _dc->m_hDC;
+	CDC *dc = GetDC();
+
+	lpPaint->hdc = dc->m_hDC;
 	lpPaint->fErase = _updateErase;
 	lpPaint->rcPaint = _updateRect;
 	lpPaint->fRestore = false;
@@ -793,20 +821,21 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 	_updatingRect = _updateRect;
 
 	// Restrict drawing to the update area
-	_dc->setClipRect(_updateRect);
+	dc->setClipRect(_updateRect);
 
 	if (_hFont)
 		SelectObject(lpPaint->hdc, _hFont);
 
-	return lpPaint->hdc;
+	return dc->m_hDC;
 }
 
 BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
 	_updateRect = Common::Rect();
 	_updateErase = false;
 
-	// Reset dc clipping back to allow entire surface
-	_dc->resetClipRect();
+	// If it's a persistent dc for the window, reset clipping
+	if (_pDC)
+		_pDC->resetClipRect();
 
 	return true;
 }
@@ -853,18 +882,11 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
 	ClientToScreen(&screenRect);
 
-	// Create the client DC
-	assert(oldControl->_dc && oldControl->_dc->m_hDC);
-	const CDC::Impl *srcDC = (const CDC::Impl *)oldControl->_dc->m_hDC;
-	assert(srcDC);
-	CDC::Impl *destDC = new CDC::Impl();
-	destDC->setScreenRect(screenRect);
-	destDC->Attach(srcDC->_font);
-	destDC->Attach(srcDC->_pen);
-	destDC->Attach(srcDC->_brush);
-
-	_dc = new CDC();
-	_dc->Attach(destDC);
+	// Copy over the settings	
+	_hFont = oldControl->_hFont;
+	_hPen = oldControl->_hPen;
+	_hBrush = oldControl->_hBrush;
+	_hPalette = oldControl->_hPalette;
 
 	return true;
 }
