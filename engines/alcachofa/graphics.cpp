@@ -194,7 +194,8 @@ void AnimationBase::loadMissingAnimation() {
 		!_fileName.equalsIgnoreCase("PP_MORTA.AN0") &&
 		!_fileName.equalsIgnoreCase("DESPACHO_SUPER2___FONDO_PP_SUPER.AN0") &&
 		!_fileName.equalsIgnoreCase("ESTOMAGO.AN0") &&
-		!_fileName.equalsIgnoreCase("CREDITOS.AN0"))
+		!_fileName.equalsIgnoreCase("CREDITOS.AN0") &&
+		!_fileName.equalsIgnoreCase("MONITOR___OL_EFECTO_FONDO.AN0"))
 		error("Could not open animation %s", _fileName.c_str());
 
 	// otherwise setup a functioning but empty animation
