@@ -674,6 +674,7 @@ class CDC : public CObject {
 
 private:
 	bool _permanent = false;
+	int _stretchMode = STRETCH_ANDSCANS;
 
 protected:
 	void AfxHookObject();

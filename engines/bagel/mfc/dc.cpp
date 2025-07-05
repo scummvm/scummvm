@@ -123,7 +123,9 @@ HDC CDC::Detach() {
 }
 
 int CDC::SetStretchBltMode(int nStretchMode) {
-	error("TODO: CDC::SetStretchBltMode");
+	int oldMode = _stretchMode;
+	_stretchMode = nStretchMode;
+	return oldMode;
 }
 
 int CDC::GetDeviceCaps(int nIndex) const {
