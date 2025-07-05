@@ -3805,6 +3805,7 @@ if test -n "$_host"; then
 			fi
 
 			append_var LDFLAGS "-Wl,--msuper-memory"
+			append_var LDFLAGS "-Wl,--stack,256k"
 
 			_seq_midi=no
 			_timidity=no
