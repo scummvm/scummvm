@@ -294,10 +294,10 @@ struct ScriptTask : public Task {
 				pushNumber(-popNumber() + popNumber());
 				break;
 			case ScriptOp::Less:
-				pushNumber(popNumber() >= popNumber());
+				pushNumber(popNumber() > popNumber());
 				break;
 			case ScriptOp::Greater:
-				pushNumber(popNumber() <= popNumber());
+				pushNumber(popNumber() < popNumber());
 				break;
 			case ScriptOp::LessEquals:
 				pushNumber(popNumber() >= popNumber());
