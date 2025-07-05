@@ -928,7 +928,7 @@ void Script::updateCommonVariables() {
 
 	variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
 	variable("textoson") = 1; // TODO: Add subtitle option
-	variable("modored") = 1; // this is signalling whether a network connection is established
+	variable("modored") = 0; // this is signalling whether a network connection is established
 }
 
 }
