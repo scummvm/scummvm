@@ -569,7 +569,7 @@ void SubtitleRenderer::render() {
 			int surfaceWidth = static_cast<int>(widestLine) + borderWidth * 2 + horizontalPadding * 2;
 			int surfaceHeight = static_cast<int>(itemLines) * _fontHeight + borderWidth * 2 + verticalPadding * 2;
 
-			Graphics::PixelFormat fmt = Graphics::createPixelFormat<8888>();
+			Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 16, 8, 0, 24);
 			Common::SharedPtr<Graphics::ManagedSurface> surface(new Graphics::ManagedSurface(surfaceWidth, surfaceHeight, fmt));
 
 			surface->fillRect(Common::Rect(0, 0, surfaceWidth, surfaceHeight), fmt.RGBToColor(0, 0, 0));
