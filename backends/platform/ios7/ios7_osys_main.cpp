@@ -71,20 +71,17 @@ public:
 			: DefaultSaveFileManager(defaultSavepath), _sandboxRootPath(sandboxRootPath) {
 	}
 
-	bool removeSavefile(const Common::String &filename) override {
-		Common::Path chrootedFile = getSavePath().join(filename);
-		Common::Path realFilePath = _sandboxRootPath.join(chrootedFile);
+	Common::ErrorCode removeFile(const Common::FSNode &fileNode) override {
+		Common::Path chrootedFile(fileNode.getPath());
+		Common::Path realFilePath(_sandboxRootPath.join(chrootedFile));
 
-		if (remove(realFilePath.toString(Common::Path::kNativeSeparator).c_str()) != 0) {
-			if (errno == EACCES)
-				setError(Common::kWritePermissionDenied, "Search or write permission denied: "+chrootedFile.toString(Common::Path::kNativeSeparator));
-
-			if (errno == ENOENT)
-				setError(Common::kPathDoesNotExist, "removeSavefile: '"+chrootedFile.toString(Common::Path::kNativeSeparator)+"' does not exist or path is invalid");
-			return false;
-		} else {
-			return true;
-		}
+		if (remove(realFilePath.toString(Common::Path::kNativeSeparator).c_str()) == 0)
+			return Common::kNoError;
+		if (errno == EACCES)
+			return Common::kWritePermissionDenied;
+		if (errno == ENOENT)
+			return Common::kPathDoesNotExist;
+		return Common::kUnknownError;
 	}
 };
 
