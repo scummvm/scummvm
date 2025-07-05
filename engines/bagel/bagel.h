@@ -108,7 +108,7 @@ extern BagelEngine *g_engine;
 #define SHOULD_QUIT ::Bagel::g_engine->shouldQuit()
 
 inline int brand() {
-	return g_engine->getRandomNumber();
+	return g_engine->getRandomNumber(RAND_MAX);
 }
 
 } // End of namespace Bagel
