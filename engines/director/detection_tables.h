@@ -3196,7 +3196,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("directorshokai", "", "Director Movie", "276bee761e48a6fd709df77d5c2f60dd", 395882, Common::JA_JPN, 313),
 
 	// Original filename is Station-四季を旅する
-	MACGAME1t_l("shikiotabisuru", "", "xn--Station--883ghrnc9646d4kmin9a", "rt:5ee55eaa551cd866da692454e0691f1d", 398904, Common::JA_JPN, 311),
+	MACGAME1_l("shikiotabisuru", "", "xn--Station--883ghrnc9646d4kmin9a", "rt:5ee55eaa551cd866da692454e0691f1d", 398904, Common::JA_JPN, 311),
 
 	// Found on The Cat Came Back
 	WINDEMO1("sitfarm", "Demo", "MOREFUN.EXE", "65d06b5fef155a2473434571aff5bc29", 4397800, 310),
@@ -6660,8 +6660,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Requires installation, DATA.Z, InstallShield v3
 	WINGAME1t("cocktailhour", "", "COCKT32.EXE", "f594dd4e50ea175e8d3453b3cd16b536", 1411465, 501),
 
-	MACGAME1t("coldcutletusplay", "", "MainMenu", "t:e835056d51945ffc0822f6ae2e6f73a3", 1693312, 500),
-	WINGAME1t("coldcutletusplay", "", "MAINMENU.EXE", "t:6715f522a4c1483570ebfbb5561b674e", 1393839, 500),
+	MACGAME2("coldcutletusplay", "", "MainMenu",		  		  "rt:946bee76a867ded034b02894c0bfd303", 719005,
+									 "Coldcut A to Z/CCAtoZ.Dxr", "d:774d0eb3c3b376d237c49741c83949be", 8195642, 500),
+	WINGAME2("coldcutletusplay", "", "MAINMENU.EXE",	  "t:6715f522a4c1483570ebfbb5561b674e", 1393839,
+									 "CCATOZ/CCATOZ.DXR", "f:ed0e743c375b8d2cb135c775310ddfc3", 8197662, 500),
+	WINGAME2("coldcutletusplay", "My Little FunKit", "FUNKIT.EXE", "t:807de8c4a3d6b6b5ca709fec2021244d", 10476689,
+													 "FUNKIT.TXT", "f:406dee54f8cd867b4a29f818d111d47a",	  432, 500),
 
 	MACGAME1("colormind", "v1.5", "ColorMind 1.5", "r:37faaf693259d7a4fa031f4a2edf3098", 125831, 501),
 
