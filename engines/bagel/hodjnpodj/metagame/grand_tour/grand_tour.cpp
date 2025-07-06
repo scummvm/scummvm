@@ -1520,6 +1520,9 @@ void CMainGTWindow::SaveCurrGame() {
 			WritePrivateProfileString("GRAND TOUR", cTemp, "0", INI_FILENAME);
 		}
 	}
+
+	// Flush settings changes
+	AfxGetApp()->SaveAllModified();
 }
 
 /*****************************************************************

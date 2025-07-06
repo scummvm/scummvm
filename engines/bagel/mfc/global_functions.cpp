@@ -159,6 +159,14 @@ Common::SeekableReadStream *OpenFile(const char *filename) {
 	Common::String fname(filename);
 	if (fname.hasPrefix(".\\"))
 		fname = Common::String(fname.c_str() + 2);
+
+	// In cases where ..\ is used as a prefix, presume
+	// that we're only a single level deep, and the remainder
+	// is relative to the game's root folder. So we can
+	// just strip it off, and Common::File will find it
+	if (fname.hasPrefix("..\\"))
+		fname = Common::String(fname.c_str() + 3);
+
 	fname.replace('\\', '/');
 
 	Common::File *f = new Common::File();

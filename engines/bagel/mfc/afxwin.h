@@ -1741,7 +1741,6 @@ protected:
 	virtual BOOL InitApplication();
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
-	virtual BOOL SaveAllModified();
 
 public:
 	static CWinApp *_activeApp;
@@ -1762,6 +1761,8 @@ public:
 	 * Main execution for MFC applications
 	 */
 	int Run();
+
+	virtual BOOL SaveAllModified();
 
 	void SetDialogBkColor();
 	HCURSOR LoadStandardCursor(LPCSTR lpszCursorName);

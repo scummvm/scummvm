@@ -56,6 +56,8 @@ void Settings::save() {
 		return;
 
 	Common::OutSaveFile *dest = g_system->getSavefileManager()->openForSaving(getFilename(), false);
+	if (!dest)
+		return;
 	Common::String domainName;
 
 	for (Domains::iterator it = _domains.begin(); it != _domains.end(); ++it) {
