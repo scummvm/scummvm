@@ -258,7 +258,7 @@ void CDC::Ellipse(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
-	impl()->frameRect(*lpRect, pBrush);
+	impl()->drawRect(*lpRect, pBrush);
 }
 
 void CDC::Draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight) {
@@ -722,21 +722,28 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 		GetNearestColor(crColor));
 }
 
-void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
-	frameRect(r, getBrushColor());
+void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
+	drawRect(r, getBrushColor());
 }
 
-void CDC::Impl::frameRect(const Common::Rect &r, COLORREF crColor) {
-	static_cast<CBitmap::Impl *>(_bitmap)->frameRect(r,
-		GetNearestColor(crColor));
+void CDC::Impl::drawRect(const Common::Rect &r, COLORREF crColor) {
+	CPen::Impl *pen = (CPen::Impl *)_pen;
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+	uint brushColor = GetNearestColor(crColor);
+	uint penColor = getPenColor();
+
+	if (pen->_penStyle == PS_INSIDEFRAME)
+		bitmap->fillRect(r, brushColor);
+	
+	bitmap->frameRect(r, penColor);
 }
 
 void CDC::Impl::rectangle(LPCRECT lpRect) {
-	frameRect(*lpRect, getBrushColor());
+	drawRect(*lpRect, getBrushColor());
 }
 
 void CDC::Impl::rectangle(int x1, int y1, int x2, int y2) {
-	frameRect(Common::Rect(x1, y1, x2, y2), getBrushColor());
+	drawRect(Common::Rect(x1, y1, x2, y2), getBrushColor());
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
@@ -799,13 +806,21 @@ void CDC::Impl::draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrB
 }
 
 void CDC::Impl::drawFocusRect(const CRect &rect) {
-	frameRect(rect, GetNearestColor(RGB(128, 128, 128)));
+	drawRect(rect, GetNearestColor(RGB(128, 128, 128)));
 }
 
 void CDC::Impl::ellipse(const Common::Rect &r, COLORREF crColor) {
-	static_cast<CBitmap::Impl *>(_bitmap)->drawEllipse(
-		r.left, r.top, r.right, r.bottom,
-		GetNearestColor(crColor), false);
+	CPen::Impl *pen = (CPen::Impl *)_pen;
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+	uint brushColor = GetNearestColor(crColor);
+	uint penColor = getPenColor();
+
+	if (pen->_penStyle == PS_INSIDEFRAME)
+		bitmap->drawEllipse(r.left, r.top, r.right, r.bottom,
+			brushColor, true);
+
+	bitmap->drawEllipse(r.left, r.top, r.right, r.bottom,
+		penColor, false);
 }
 
 void CDC::Impl::ellipse(LPCRECT lpRect) {
@@ -857,7 +872,8 @@ void CDC::Impl::lineTo(int x, int y) {
 
 uint CDC::Impl::getPenColor() const {
 	CPen::Impl *pen = (CPen::Impl *)_pen;
-	assert(pen->_penStyle == PS_SOLID);
+	assert(pen->_penStyle == PS_SOLID ||
+		pen->_penStyle == PS_INSIDEFRAME);
 
 	return GetNearestColor(pen->_color);
 }

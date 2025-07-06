@@ -720,8 +720,8 @@ public:
 		void fillSolidRect(LPCRECT lpRect, COLORREF clr);
 		void fillSolidRect(int x, int y, int cx, int cy, COLORREF clr);
 		void fillRect(const Common::Rect &r, COLORREF crColor);
-		void frameRect(const Common::Rect &r, CBrush *brush);
-		void frameRect(const Common::Rect &r, COLORREF crColor);
+		void drawRect(const Common::Rect &r, CBrush *brush);
+		void drawRect(const Common::Rect &r, COLORREF crColor);
 		void floodFill(int x, int y, COLORREF crColor);
 		void floodFill(int x, int y, COLORREF crColor,
 			UINT nFillType);

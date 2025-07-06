@@ -172,10 +172,8 @@ void CButton::OnOwnerDrawPaint() {
 
 	if (IsWindowEnabled())
 		dis.itemState |= ODS_ENABLED;
-	if (GetState() & BST_PUSHED)
+	if (GetState() & ODS_CHECKED)
 		dis.itemState |= ODS_SELECTED;
-	if (GetState() & BST_CHECKED)
-		dis.itemState |= ODS_CHECKED;
 	if (GetFocus() == this)
 		dis.itemState |= ODS_FOCUS;
 
@@ -255,10 +253,40 @@ LRESULT CButton::OnBnClicked(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CButton::OnBnSetCheck(WPARAM wParam, LPARAM lParam) {
-	if (wParam == BST_CHECKED)
-		_itemState |= BST_CHECKED;
-	else
+	if (wParam == BST_UNCHECKED) {
+		// Uncheck the button
 		_itemState &= ~BST_CHECKED;
+	} else {
+		// Check the button
+		_itemState |= BST_CHECKED;
+
+		// Gather up the buttons in the group
+		Common::Array<CButton *> buttons;
+		bool foundButton = false;
+		for (auto &node : m_pParentWnd->getChildren()) {
+			// Get next control
+			CButton *btn = dynamic_cast<CButton *>(node._value);
+			if (!btn)
+				continue;
+
+			if (btn == this)
+				foundButton = true;
+
+			if (btn->GetStyle() & WS_GROUP) {
+				// New group
+				if (foundButton)
+					break;
+				buttons.clear();
+			}
+
+			if (btn != this)
+				buttons.push_back(btn);
+		}
+
+		// Mark all the other buttons as unchecked
+		for (CButton *btn : buttons)
+			btn->SendMessage(BM_SETCHECK, BST_UNCHECKED);
+	}
 
 	Invalidate();
 	return 0;
