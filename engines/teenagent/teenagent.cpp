@@ -239,6 +239,43 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	free(data);
 
+	uint32 tag = in->readUint32BE();
+	if (tag == MKTAG('T', 'H', 'M', 'B')) { // Old save (before TEENAGENT_SAVEGAME_VERSION was added)
+		uint16 baseAddr = dsAddr_sceneObjectTablePtr;
+		// Copy scene object data in the dseg to sceneObjectsSeg
+		Common::copy(res->dseg.ptr(baseAddr), res->dseg.ptr(0xb4f3), res->sceneObjectsSeg.ptr(0));
+
+		// Set correct addresses, i.e., make them relative to dsAddr_sceneObjectTablePtr
+		for (byte i = 0; i < 42; i++) {
+			uint16 sceneTable = res->dseg.get_word(baseAddr + (i * 2));
+			res->sceneObjectsSeg.set_word(i * 2, sceneTable - baseAddr);
+
+			uint16 objectAddr;
+			while ((objectAddr = res->dseg.get_word(sceneTable)) != 0) {
+				res->sceneObjectsSeg.set_word(sceneTable - baseAddr, objectAddr - baseAddr);
+				sceneTable += 2;
+			}
+			res->sceneObjectsSeg.set_word(sceneTable - baseAddr, 0);
+		}
+	} else {
+		if (tag != MKTAG('T', 'N', 'G', 'T')) {
+			warning("loadGameState(): Invalid save file");
+			return Common::kUnknownError;
+		}
+
+		byte saveVersion = in->readByte();
+		if (saveVersion != TEENAGENT_SAVEGAME_VERSION) {
+			warning("loadGameState(): Failed to load %d - incorrect version", slot);
+			return Common::kUnknownError;
+		}
+
+		uint32 resourceSize = in->readUint32LE();
+		if (in->read(res->sceneObjectsSeg.ptr(0), resourceSize) != resourceSize) {
+			warning("loadGameState(): corrupted data");
+			return Common::kReadingFailed;
+		}
+	}
+
 	scene->clear();
 	inventory->activate(false);
 	inventory->reload();
@@ -255,7 +292,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 }
 
 Common::String TeenAgentEngine::getSaveStateName(int slot) const {
-	return Common::String::format("teenagent.%02d", slot);
+	return Common::String::format("%s.%02d", _targetName.c_str(), slot);
 }
 
 Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -274,6 +311,16 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	// FIXME: Description string is 24 bytes and null based on detection.cpp code, not 22?
 	strncpy((char *)res->dseg.ptr(dsAddr_saveState), desc.c_str(), 22);
 	out->write(res->dseg.ptr(dsAddr_saveState), saveStateSize);
+
+	// Write tag
+	out->writeUint32BE(MKTAG('T', 'N', 'G', 'T'));
+	// Write save version
+	out->writeByte(TEENAGENT_SAVEGAME_VERSION);
+
+	// Write scene object data
+	out->writeUint32LE(res->sceneObjectsSeg.size());
+	out->write(res->sceneObjectsSeg.ptr(0), res->sceneObjectsSeg.size());
+
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
 

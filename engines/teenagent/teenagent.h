@@ -63,6 +63,7 @@ class Inventory;
 class Pack;
 
 #define TEENAGENT_DAT_VERSION 5
+#define TEENAGENT_SAVEGAME_VERSION 1
 
 // Engine Debug Flags
 enum {
