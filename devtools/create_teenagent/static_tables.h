@@ -33457,6 +33457,38 @@ Common::Array<Common::Array<Object>> sceneObjects = {
 
 };
 
+// Scene object names that are changed in runtime
+// by the game. Must be in the same order as in the engine.
+const char *englishSettableObjectNames[] = {
+	"Anne",
+	"Mike",
+	"Sonny",
+	"body"
+};
+
+// Data segment start address - 0xB550
+const char *polishSettableObjectNames[] = {
+	"Ania", // 0x9FB4
+	"Czesiek", // 0xB441
+	"denerwuj@cy bubek", // 0x995c
+	"cia%o" // 0x7CB4
+};
+
+// Data segment start address - 0xB660
+const char *czechSettableObjectNames[] = {
+	"Anna", // 0xA267
+	"Ludv;k", // 0xB730
+	"Deb;lek", // 0x9CC0
+	"t+lo" // 0x80BC
+};
+
+const char *russianSettableObjectNames[] = {
+	"Anna",
+	"Majk",
+	"R|na ili kak fdo\x1f",
+	"sflo"
+};
+
 struct ObjectNameDesc {
 	const char *_name;
 	const char *_description;
