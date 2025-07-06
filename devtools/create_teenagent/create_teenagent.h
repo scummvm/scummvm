@@ -25,10 +25,11 @@
 #include "common/language.h"
 #include "util.h"
 
-#define TEENAGENT_DAT_VERSION 4
+#define TEENAGENT_DAT_VERSION 5
 
 enum ResourceType {
 	kResDialogs = 0,
+	kResDialogStacks,
 	kResItems,
 	kResCredits,
 	kResSceneObjects,
@@ -37,7 +38,7 @@ enum ResourceType {
 	kResCombineMessages,
 };
 
-#define NUM_RESOURCES 7
+#define NUM_RESOURCES 8
 #define NUM_LANGS 4
 
 const Common::Language supportedLanguages[NUM_LANGS] = {

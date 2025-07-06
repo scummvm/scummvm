@@ -64,6 +64,50 @@ void writeCombineMessages(FILE *fd, Common::Language language) {
 	}
 }
 
+void writeDialogStacks(FILE *fd, Common::Language language) {
+	const char ***dialogs = englishDialogs;
+	if (language == CS_CZE)
+		dialogs = czechDialogs;
+	else if (language == PL_POL)
+		dialogs = polishDialogs;
+	else if (language == RU_RUS)
+		dialogs = russianDialogs;
+
+	uint16 offset = 0;
+	uint16 dialogOffsets[kNumDialogs];
+
+	for (uint i = 0; i < kNumDialogs; i++) {
+		dialogOffsets[i] = offset;
+
+		bool dialogEnd = false;
+		uint j = 0;
+		while (!dialogEnd) {
+			offset += strlen(dialogs[i][j]);
+			if (strcmp(dialogs[i][j], END_DIALOG) == 0)
+				dialogEnd = true;
+			j++;
+		}
+	}
+
+	for (uint i = 0; i < sizeof(dialogStacks) / sizeof(uint16); i++) {
+		if (dialogStacks[i] != 0xffff) {
+			if (i == 0) {
+				// skip ANIM_WAIT (0xff) byte
+				writeUint16LE(fd, dialogOffsets[dialogStacks[i]] + 1);
+			} else if (i == 190) {
+				// There are two extra null bytes
+				// in at the beginning of this dialog.
+				// Skip them.
+				writeUint16LE(fd, dialogOffsets[dialogStacks[i]] + 2);
+			} else {
+				writeUint16LE(fd, dialogOffsets[dialogStacks[i]]);
+			}
+		} else {
+			writeUint16LE(fd, 0xffff);
+		}
+	}
+}
+
 void writeDialogs(FILE *fd, Common::Language language) {
 	const char ***dialogs = englishDialogs;
 	if (language == CS_CZE)
@@ -270,6 +314,9 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 		writeStringsBlock(fd, credits, kNumCredits);
 		break;
 	}
+	case kResDialogStacks:
+		writeDialogStacks(fd, language);
+		break;
 	case kResDialogs:
 		writeDialogs(fd, language);
 		break;
