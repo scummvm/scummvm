@@ -235,8 +235,7 @@ void Room303::init() {
 
 			_fengLi = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 480, 256, 86, 0xc00, true,
 				triggerMachineByHashCallback, "fl");
-			sendWSMessage_10000(1, _fengLi, _feng4, 1, 16, 400,
-				_feng4, 1, 6, 0);
+			sendWSMessage_10000(1, _fengLi, _feng4, 1, 1, 400, _feng4, 1, 6, 0);
 
 			_fengMode = _fengShould = 1;
 			setShadow5(true);
@@ -254,6 +253,7 @@ void Room303::init() {
 		} else {
 			_ripBends = series_load("RIP BENDS TO SEE CREATURE");
 			setGlobals1(_ripBends, 26, 1, 1, 1);
+			sendWSMessage_110000(60);
 		}
 		break;
 
@@ -303,7 +303,7 @@ void Room303::init() {
 
 void Room303::daemon() {
 	int frame;
-	
+
 	switch (_G(kernel).trigger) {
 	case 3:
 		sendWSMessage_120000(4);
