@@ -38,7 +38,7 @@ class Camera {
 public:
 	inline Math::Angle rotation() const { return _cur._rotation; }
 	inline Math::Vector2d &shake() { return _shake; }
-	inline WalkingCharacter *followTarget() { return _cur._followTarget; }
+	inline WalkingCharacter *followTarget() { return _followTarget; }
 
 	void update();
 	Math::Vector3d transform2Dto3D(Math::Vector3d v) const;
@@ -93,11 +93,12 @@ private:
 			_maxSpeedFactor = 230.0f;
 		Math::Angle _rotation;
 		bool _isBraking = false;
-		WalkingCharacter *_followTarget = nullptr;
+		bool _isFollowingTarget = false;
 	};
 
 	static constexpr uint kStateBackupCount = 2;
 	State _cur, _backups[kStateBackupCount];
+	WalkingCharacter *_followTarget = nullptr;
 	uint32 _lastUpdateTime = 0;
 	bool _isChanging = false,
 		_catchUp = false;

@@ -49,7 +49,8 @@ void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 }
 
 void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
-	_cur._followTarget = target;
+	_cur._isFollowingTarget = target != nullptr;
+	_followTarget = target;
 	_lastUpdateTime = g_system->getMillis();
 	_catchUp = catchUp;
 	if (target == nullptr)
@@ -167,7 +168,7 @@ void Camera::update() {
 	deltaTime = MAX(0.001f, MIN(0.5f, deltaTime));
 	_lastUpdateTime = now;
 
-	if (_catchUp && _cur._followTarget != nullptr) {
+	if (_catchUp) {
 		for (int i = 0; i < 4; i++)
 			updateFollowing(50.0f);
 		_catchUp = false;
@@ -177,27 +178,27 @@ void Camera::update() {
 }
 
 void Camera::updateFollowing(float deltaTime) {
-	if (_cur._followTarget == nullptr)
+	if (!_cur._isFollowingTarget || _followTarget == nullptr)
 		return;
 	const float resolutionFactor = g_system->getWidth() * 0.00125f;
 	const float acceleration = 460 * resolutionFactor;
 	const float baseDeadZoneSize = 25 * resolutionFactor;
 	const float minSpeed = 20 * resolutionFactor;
 	const float maxSpeed = this->_cur._maxSpeedFactor * resolutionFactor;
-	const float depthScale = _cur._followTarget->graphic()->depthScale();
-	const auto characterPolygon = _cur._followTarget->shape()->at(0);
+	const float depthScale = _followTarget->graphic()->depthScale();
+	const auto characterPolygon = _followTarget->shape()->at(0);
 	const float halfHeight = ABS(characterPolygon._points[0].y - characterPolygon._points[2].y) / 2.0f;
 
 	Vector3d targetCenter = setAppliedCenter({
-		_shake.getX() + _cur._followTarget->position().x,
-		_shake.getY() + _cur._followTarget->position().y - depthScale * 85,
+		_shake.getX() + _followTarget->position().x,
+		_shake.getY() + _followTarget->position().y - depthScale * 85,
 		_cur._usedCenter.z()});
 	targetCenter.y() -= halfHeight;
 	float distanceToTarget = as2D(_cur._usedCenter - targetCenter).getMagnitude();
-	float moveDistance = _cur._followTarget->stepSizeFactor() * _cur._speed * deltaTime;
+	float moveDistance = _followTarget->stepSizeFactor() * _cur._speed * deltaTime;
 
 	float deadZoneSize = baseDeadZoneSize / _cur._scale;
-	if (_cur._followTarget->isWalking() && depthScale > 0.8f)
+	if (_followTarget->isWalking() && depthScale > 0.8f)
 		deadZoneSize = (baseDeadZoneSize + (depthScale - 0.8f) * 200) / _cur._scale;
 	bool isFarAway = false;
 	if (ABS(targetCenter.x() - _cur._usedCenter.x()) > deadZoneSize ||
