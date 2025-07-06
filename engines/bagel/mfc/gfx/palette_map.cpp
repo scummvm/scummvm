@@ -42,9 +42,12 @@ PaletteMap::PaletteMap(const Graphics::Palette &src,
 		for (int i = 0; i < 256; ++i)
 			_map[i] = i;
 	}
-	if (_map) {
-		_map[0xf0] = 0xff;
-		_map[0xff] = 0xff;
+
+	byte r, g, b;
+	for (int i = 0; i < 256; ++i) {
+		src.get(i, r, g, b);
+		if (r == 0xff && g == 0xff && b == 0xff)
+			_map[i] = 0xff;
 	}
 }
 
