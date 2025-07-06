@@ -281,6 +281,10 @@ void Room::drawDebug() {
 void Room::loadResources() {
 	for (auto *object : _objects)
 		object->loadResources();
+
+	// this fixes some camera backups not working when closing the inventory
+	if (g_engine->player().currentRoom() == this)
+		updateRoomBounds();
 }
 
 void Room::freeResources() {
