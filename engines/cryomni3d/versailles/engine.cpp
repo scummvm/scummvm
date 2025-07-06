@@ -596,10 +596,14 @@ void CryOmni3DEngine_Versailles::setupFonts() {
 void CryOmni3DEngine_Versailles::setupSprites() {
 	Common::File file;
 
-	Common::String fName = (getLanguage() == Common::ZH_TWN ? "allsprtw.bin" : "all_spr.bin");
-
-	if (!file.open(getFilePath(kFileTypeSprite, fName))) {
-		error("Failed to open all_spr.bin file");
+	if (!file.open(getFilePath(kFileTypeSprite, "all_spr.bin"))) {
+		// Try with TW specific file
+		if (getLanguage() == Common::ZH_TWN &&
+			!file.open(getFilePath(kFileTypeSprite, "allsprtw.bin"))) {
+			error("Failed to open all_spr.bin and allsprtw.bin file");
+		} else {
+			error("Failed to open all_spr.bin file");
+		}
 	}
 	_sprites.loadSprites(file);
 
