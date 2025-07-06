@@ -27,6 +27,8 @@ namespace Gfx {
 
 PaletteMap::PaletteMap(const Graphics::Palette &src,
 		const Graphics::Palette &dest) : _srcPalCount(src.size()) {
+	assert(src.size() == 256 && dest.size() == 256);
+
 	// Set up lookup map
 	Graphics::PaletteLookup lookup(dest.data(), dest.size());
 	_map = lookup.createMap(src.data(), src.size());
@@ -35,9 +37,14 @@ PaletteMap::PaletteMap(const Graphics::Palette &src,
 	// in order for transparency to work. In cases where the
 	// palette has multiple White entries, PaletteLookup could
 	// end up using the first match, not the last (255) one
+	if (!_map) {
+		_map = new uint32[256];
+		for (int i = 0; i < 256; ++i)
+			_map[i] = i;
+	}
 	if (_map) {
-		assert(src.size() == 256);
-		_map[255] = 255;
+		_map[0xf0] = 0xff;
+		_map[0xff] = 0xff;
 	}
 }
 
