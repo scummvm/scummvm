@@ -29,10 +29,8 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
 
-#define INTRO_WIDTH     640
-#define INTRO_HEIGHT    480
-#define MOVIE_WIDTH     320
-#define MOVIE_HEIGHT    240
+#define MOVIE_WIDTH     640
+#define MOVIE_HEIGHT    480
 #define MOVIE_OVER      1000         //this value may be changed if compiler detects a duplicate case error. 
 
 #define     PLAY_SUCCESSFUL     MCI_NOTIFY_SUCCESSFUL
