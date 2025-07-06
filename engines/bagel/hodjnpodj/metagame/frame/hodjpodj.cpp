@@ -1065,6 +1065,7 @@ BOOL CHodjPodjWindow::LoadGrandTourDLL(void) {
 		lpGrandTour->stMiniGame.bPlayingHodj = TRUE;
 	}
 
+	dllLoaded = true;
 	g_wndGame = CWnd::FromHandle(Metagame::GrandTour::RunGrandTour(m_hWnd, lpGrandTour));
 	bReturnToGrandTour = TRUE;
 	return TRUE;
