@@ -276,7 +276,7 @@ void CDialog::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 		if (idx != Common::String::npos &&
 			pressedChar == toupper(text[idx + 1])) {
-			// Found match – simulate button click
+			// Found match - simulate button click
 			pChild->SendMessage(BM_CLICK);
 			return;
 		}
