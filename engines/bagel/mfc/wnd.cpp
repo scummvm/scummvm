@@ -852,38 +852,40 @@ CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
 
 	// Get the starting index
 	int idStart = pWndCtl->GetDlgCtrlID();
-	uint startIdx;
-	for (startIdx = 0; startIdx < children.size() &&
+	int startIdx;
+	for (startIdx = 0; startIdx < (int)children.size() &&
 		children[startIdx]->GetDlgCtrlID() != idStart; ++startIdx) {
 	}
-	if (startIdx == children.size())
-		return pWndCtl;
+	assert(startIdx != (int)children.size());
 
-	const DWORD dwVisibleEnabled = WS_VISIBLE | WS_TABSTOP;
-	int currIdx = startIdx;
-
-	do {
-		if (bPrevious) {
-			if (--currIdx < 0)
-				currIdx = (int)children.size() - 1;
-		} else {
-			if (++currIdx == (int)children.size())
-				currIdx = 0;
+	// Remove any items from the array from the next WS_GROUP onwards
+	int idx = startIdx + 1;
+	for (; idx < (int)children.size(); ++idx) {
+		if (children[idx]->GetStyle() & WS_GROUP) {
+			// Found next group, remove remainder
+			while (idx < (int)children.size())
+				children.remove_at(idx);
 		}
+	}
 
-		// Stop if we hit the group boundary again (we've looped the group)
-		CWnd *wnd = children[currIdx];
-		if ((wnd->GetStyle() & WS_GROUP) && currIdx != startIdx)
-			break;
+	// Remove any items before the start of the current group
+	idx = startIdx;
+	while (idx >= 0 && !(children[idx]->GetStyle() & WS_GROUP))
+		--idx;
+	for (; idx > 0; --idx, --startIdx)
+		children.remove_at(0);
+	assert(children[startIdx] == pWndCtl);
 
-		// Return first valid candidate
-		if ((wnd->GetStyle() & dwVisibleEnabled) == dwVisibleEnabled) {
-			return children[currIdx];
-		}
-	} while (currIdx != startIdx);
+	// Get the next item
+	if (bPrevious) {
+		if (--startIdx < 0)
+			startIdx = (int)children.size() - 1;
+	} else {
+		if (++startIdx == (int)children.size())
+			startIdx = 0;
+	}
 
-	// Fallback if no better choice found
-	return pWndCtl;
+	return children[startIdx];
 }
 
 BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {

@@ -260,32 +260,18 @@ LRESULT CButton::OnBnSetCheck(WPARAM wParam, LPARAM lParam) {
 		// Check the button
 		_itemState |= BST_CHECKED;
 
-		// Gather up the buttons in the group
-		Common::Array<CButton *> buttons;
-		bool foundButton = false;
-		for (auto &node : m_pParentWnd->getChildren()) {
-			// Get next control
-			CButton *btn = dynamic_cast<CButton *>(node._value);
-			if (!btn)
-				continue;
+		// Need to clear all of the others
+		CWnd *pParent = GetParent();
+		CWnd *pWnd = this;
 
-			if (btn == this)
-				foundButton = true;
+		for (;;) {
+			pWnd = pParent->GetNextDlgGroupItem(pWnd, TRUE);
+			if (pWnd == this)
+				// No more to do
+				break;
 
-			if (btn->GetStyle() & WS_GROUP) {
-				// New group
-				if (foundButton)
-					break;
-				buttons.clear();
-			}
-
-			if (btn != this)
-				buttons.push_back(btn);
+			pWnd->SendMessage(BM_SETCHECK, FALSE);
 		}
-
-		// Mark all the other buttons as unchecked
-		for (CButton *btn : buttons)
-			btn->SendMessage(BM_SETCHECK, BST_UNCHECKED);
 	}
 
 	Invalidate();
