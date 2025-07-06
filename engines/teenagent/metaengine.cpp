@@ -143,6 +143,16 @@ public:
 		Common::String desc = buf;
 
 		in->seek(TeenAgent::saveStateSize);
+
+		// Skip tag
+		in->skip(4);
+		// Skip save version
+		in->skip(1);
+
+		// Skip scene object data
+		uint32 size = in->readUint32LE();
+		in->skip(size);
+
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(this, slot, desc);
 
