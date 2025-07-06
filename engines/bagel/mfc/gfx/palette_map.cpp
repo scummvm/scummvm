@@ -30,6 +30,15 @@ PaletteMap::PaletteMap(const Graphics::Palette &src,
 	// Set up lookup map
 	Graphics::PaletteLookup lookup(dest.data(), dest.size());
 	_map = lookup.createMap(src.data(), src.size());
+
+	// Hack: Index 255 must always remain mapped to 255,
+	// in order for transparency to work. In cases where the
+	// palette has multiple White entries, PaletteLookup could
+	// end up using the first match, not the last (255) one
+	if (_map) {
+		assert(src.size() == 256);
+		_map[255] = 255;
+	}
 }
 
 PaletteMap::~PaletteMap() {
