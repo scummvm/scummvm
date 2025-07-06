@@ -2451,6 +2451,8 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		} else {
 			g_lingo->lingoError("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
+	} else if (obj.type == INT) {
+		obj.u.i = val.asInt();
 	} else if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
