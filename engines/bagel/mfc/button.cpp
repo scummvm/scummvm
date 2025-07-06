@@ -47,12 +47,7 @@ int CButton::GetCheck() const {
 }
 
 void CButton::SetCheck(int nCheck) {
-	if (nCheck == BST_UNCHECKED)
-		_itemState &= ~ODS_CHECKED;
-	else
-		_itemState |= ODS_CHECKED;
-
-	Invalidate();
+	SendMessage(BM_SETCHECK, nCheck);
 }
 
 void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
@@ -179,6 +174,8 @@ void CButton::OnOwnerDrawPaint() {
 		dis.itemState |= ODS_ENABLED;
 	if (GetState() & BST_PUSHED)
 		dis.itemState |= ODS_SELECTED;
+	if (GetState() & BST_CHECKED)
+		dis.itemState |= ODS_CHECKED;
 	if (GetFocus() == this)
 		dis.itemState |= ODS_FOCUS;
 
@@ -225,9 +222,14 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 		break;
 
 	case BS_CHECKBOX:
+		SetCheck(_itemState & BST_CHECKED ?
+			BST_CHECKED : BST_UNCHECKED);
+		SendMessage(BM_SETCHECK, _itemState & BST_CHECKED);
+		break;
+
 	case BS_AUTORADIOBUTTON:
-		SetCheck(GetCheck() == BST_CHECKED ?
-			BST_UNCHECKED : BST_CHECKED);
+		SetCheck(BST_CHECKED);
+		SendMessage(BM_SETCHECK, BST_CHECKED);
 		break;
 
 	default:
@@ -253,7 +255,12 @@ LRESULT CButton::OnBnClicked(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CButton::OnBnSetCheck(WPARAM wParam, LPARAM lParam) {
-	SetCheck(wParam);
+	if (wParam == BST_CHECKED)
+		_itemState |= BST_CHECKED;
+	else
+		_itemState &= ~BST_CHECKED;
+
+	Invalidate();
 	return 0;
 }
 

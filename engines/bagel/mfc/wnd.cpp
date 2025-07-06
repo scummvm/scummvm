@@ -305,8 +305,7 @@ BOOL CWnd::SetWindowText(LPCSTR lpszString) {
 }
 
 UINT CWnd::GetState() const {
-	// TODO: CWnd::GetState
-	return 0;
+	return _itemState;
 }
 
 void CWnd::SetStyle(DWORD nStyle) {
@@ -845,7 +844,46 @@ CWnd *CWnd::GetDlgItem(int nID) const {
 }
 
 CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
-	error("TODO: CWnd::GetNextDlgGroupItem");
+	// First set up the children hash map as a straight array
+	// for easier iterating over
+	Common::Array<CWnd *> children;
+	for (auto &child : _children)
+		children.push_back(child._value);
+
+	// Get the starting index
+	int idStart = pWndCtl->GetDlgCtrlID();
+	uint startIdx;
+	for (startIdx = 0; startIdx < children.size() &&
+		children[startIdx]->GetDlgCtrlID() != idStart; ++startIdx) {
+	}
+	if (startIdx == children.size())
+		return pWndCtl;
+
+	const DWORD dwVisibleEnabled = WS_VISIBLE | WS_TABSTOP;
+	int currIdx = startIdx;
+
+	do {
+		if (bPrevious) {
+			if (--currIdx < 0)
+				currIdx = (int)children.size() - 1;
+		} else {
+			if (++currIdx == (int)children.size())
+				currIdx = 0;
+		}
+
+		// Stop if we hit the group boundary again (we've looped the group)
+		CWnd *wnd = children[currIdx];
+		if ((wnd->GetStyle() & WS_GROUP) && currIdx != startIdx)
+			break;
+
+		// Return first valid candidate
+		if ((wnd->GetStyle() & dwVisibleEnabled) == dwVisibleEnabled) {
+			return children[currIdx];
+		}
+	} while (currIdx != startIdx);
+
+	// Fallback if no better choice found
+	return pWndCtl;
 }
 
 BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
