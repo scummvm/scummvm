@@ -6895,7 +6895,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Other versions are D3
 	PIPGAME1("gadget", "", "GADGET", "d7e907d3933869f055ae59774c87f501", 111000, 501),
 
-	MACGAME1f("gadgetpaf",	"",		 "GADGET -Past as Future- (Disc1)", "3b96e0a903130cf68e6f8362bb4d096c", 178907, 501, GF_32BPP),
+	MACGAME1f("gadgetpaf",	"",		 "GADGET -Past as Future- (Disc1)", "r:3b96e0a903130cf68e6f8362bb4d096c", 178651, 501, GF_32BPP),
 	MACGAME1f_l("gadgetpaf", "",		 "GADGET -Past as Future- (Disc1)", "4b2213a9fb04f390ec074c54b916370d", 113169, Common::JA_JPN, 501, GF_32BPP),
 	WINGAME2f("gadgetpaf",	"",		 "GADGET/GADGET.EXE", "t:c8a85e9a0eda2b7dd7974197c02d6469", 1411507,
 									 "DATA/TEXT_E.Cxt", "f:e74119685db701dea9f31f91521fd078", 2457643, 501, GF_32BPP),
