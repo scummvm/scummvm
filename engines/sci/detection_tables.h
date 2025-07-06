@@ -5309,19 +5309,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							   GAMEOPTION_HQ_VIDEO, \
 							   GAMEOPTION_ENABLE_GMM_SAVE)
 
+	// Quest for Glory 4 1.0 Floppy - English DOS
+	// SCI interpreter version 2.000.000
+	{"qfg4", "", {
+		{"resource.map", 0, "d10a4cc177d2091d744e2ad8c049b0ae", 9295},
+		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11003589},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_QFG4_FLOPPY },			   
+
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #4280)
 	// SCI interpreter version 2.000.000
 	{"qfg4", "", {
 		{"resource.map", 0, "685bdb1ed47bbbb0e5e25db392da83ce", 9301},
 		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11004993},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_QFG4_FLOPPY },
-
-	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by abevi in bug report #4176)
-	// SCI interpreter version 2.000.000
-	{"qfg4", "", {
-		{"resource.map", 0, "d10a4cc177d2091d744e2ad8c049b0ae", 9295},
-		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11003589},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_QFG4_FLOPPY },
 
