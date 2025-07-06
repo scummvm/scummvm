@@ -134,11 +134,13 @@ void b_updateFrame(int nargs);
 
 void b_abort(int nargs);
 void b_cancelIdleLoad(int nargs);
+void b_close(int nargs);
 void b_continue(int nargs);
 void b_dontPassEvent(int nargs);
 void b_delay(int nargs);
 void b_do(int nargs);
 void b_finishIdleLoad(int nargs);
+void b_forget(int nargs);
 void b_go(int nargs);
 void b_halt(int nargs);
 void b_idleLoadDone(int nargs);
