@@ -1863,29 +1863,30 @@ END_MESSAGE_MAP()
 void CMainWindow::AnimateDice(void) {
 	CDC* pDC;
 
-	// coordinates of each cel from cell strip on splash screen.
+	// Coordinates of each cel from cell strip on splash screen.
 	// make these static so as not to encroach upon the limited stack.
-	static int LDieLeft[NUM_LDIE_CELS] = {234, 442, 400, 384, 365, 346, 310, 264, 242, 235, 235, 236};
-	static int LDieTop[NUM_LDIE_CELS] = {344, 395, 340, 323, 323, 379, 372, 336, 365, 365, 347, 344};
-	static int RDieLeft[NUM_RDIE_CELS] = {336, 595, 571, 527, 480, 442, 398, 373, 356, 341, 337};
-	static int RDieTop[NUM_RDIE_CELS] = {345, 374, 353, 324, 334, 387, 342, 349, 376, 357, 346};
+	static const int16 LDieLeft[NUM_LDIE_CELS] = {234, 442, 400, 384, 365, 346, 310, 264, 242, 235, 235, 236};
+	static const int16 LDieTop[NUM_LDIE_CELS] = {344, 395, 340, 323, 323, 379, 372, 336, 365, 365, 347, 344};
+	static const int16 RDieLeft[NUM_RDIE_CELS] = {336, 595, 571, 527, 480, 442, 398, 373, 356, 341, 337};
+	static const int16 RDieTop[NUM_RDIE_CELS] = {345, 374, 353, 324, 334, 387, 342, 349, 376, 357, 346};
 
 	int ii;
 
-	// coordinates of where to place dice on splash screen from cell strips.
+	// Coordinates of where to place dice on splash screen from cell strips.
 	gnLDieLeftFinal = LDieLeft[0];
 	gnLDieTopFinal = LDieTop[0];
 	gnRDieLeftFinal = RDieLeft[0];
 	gnRDieTopFinal = RDieTop[0];
 
-	///////// paint sprites ////////////
+	///////// Paint sprites ////////////
 	pDC = GetDC();
 
 	m_pCLRollingDie->EraseSprite(pDC);
 	m_pCRRollingDie->EraseSprite(pDC);
 
-//	if(pGameParams->bSoundEffectsEnabled) sndPlaySound(GetStringFromResource(IDS_ROLLING_DICE_WAVE),SND_ASYNC);
-	if (pGameParams->bSoundEffectsEnabled) sndPlaySound(GetStringFromResource(IDS_SHAKE), SND_ASYNC);
+	if (pGameParams->bSoundEffectsEnabled)
+		sndPlaySound(GetStringFromResource(IDS_SHAKE), SND_ASYNC);
+
 	if (!m_bOneDieCase) {
 		m_pCLRollingDie->SetCel(0);
 		m_pCRRollingDie->SetCel(0);
@@ -1895,6 +1896,7 @@ void CMainWindow::AnimateDice(void) {
 		for (ii = 2; ii < NUM_LDIE_CELS ; ii++) {
 			m_pCLRollingDie->PaintSprite(pDC, *(LDieLeft + ii), *(LDieTop + ii));
 			m_pCRRollingDie->PaintSprite(pDC, *(RDieLeft + ii - 1), *(RDieTop + ii - 1));
+			pause();
 		}
 
 		if (pGameParams->bSoundEffectsEnabled) {
@@ -1905,14 +1907,18 @@ void CMainWindow::AnimateDice(void) {
 		m_pCRRollingDie->PaintSprite(pDC, *(RDieLeft + NUM_RDIE_CELS - 1), *(RDieTop + NUM_RDIE_CELS - 1));
 
 	} else {
-
-		// the single die case...
+		// The single die case...
 		m_pCLRollingDie->SetCel(0);                     /*Single*/
 		for (ii = 1; ii < NUM_SINGLE_DIE_CELS; ii++) {
 			m_pCLRollingDie->PaintSprite(pDC, *(LDieLeft + ii), *(LDieTop + ii)); /*Single*/
-			if (ii < NUM_SINGLE_DIE_CELS - 1) Sleep(22); //slow down animation, except for the last cel (this enables quick
-			//repainting of actual dice throws .)
-			else if (pGameParams->bSoundEffectsEnabled) {
+			pause();
+
+			if (ii < NUM_SINGLE_DIE_CELS - 1) {
+				// Slow down animation, except for the last cel (this enables quick
+				// repainting of actual dice throws .)
+				Sleep(22);
+
+			} else if (pGameParams->bSoundEffectsEnabled) {
 				sndPlaySound(nullptr, 0);                           // kill rattle
 				sndPlaySound(GetStringFromResource(IDS_ROLL), SND_ASYNC);    // and roll!
 			}

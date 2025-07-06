@@ -1417,6 +1417,8 @@ public:
 		return _hFont;
 	}
 	void SetFont(CFont *pFont, BOOL bRedraw = true);
+
+	void pause();
 };
 
 class CFrameWnd : public CWnd {

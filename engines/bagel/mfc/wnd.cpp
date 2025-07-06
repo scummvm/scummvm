@@ -1022,5 +1022,9 @@ void CWnd::SetFont(CFont *pFont, BOOL bRedraw) {
 	SendMessage(WM_SETFONT, (WPARAM)pFont->m_hObject, bRedraw);
 }
 
+void CWnd::pause() {
+	AfxGetApp()->pause();
+}
+
 } // namespace MFC
 } // namespace Bagel
