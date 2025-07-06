@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-05 20:45+0000\n"
+"POT-Creation-Date: 2025-07-06 09:01+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -1243,12 +1243,12 @@ msgstr "הקודם"
 msgid "Save Image..."
 msgstr "שומר תמונה..."
 
-#: gui/imagealbum-dialog.cpp:263
+#: gui/imagealbum-dialog.cpp:260
 #, c-format
 msgid "%u of %u"
 msgstr "%u מתוך %u"
 
-#: gui/imagealbum-dialog.cpp:376
+#: gui/imagealbum-dialog.cpp:373
 msgid "Save Image"
 msgstr "שמירת תמונה"
 

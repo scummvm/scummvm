@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-05 20:45+0000\n"
+"POT-Creation-Date: 2025-07-06 09:01+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -1269,12 +1269,12 @@ msgstr "Forrige"
 msgid "Save Image..."
 msgstr "Lagrar spel..."
 
-#: gui/imagealbum-dialog.cpp:263
+#: gui/imagealbum-dialog.cpp:260
 #, c-format
 msgid "%u of %u"
 msgstr "%u av %u"
 
-#: gui/imagealbum-dialog.cpp:376
+#: gui/imagealbum-dialog.cpp:373
 msgid "Save Image"
 msgstr "Lagre spel"
 

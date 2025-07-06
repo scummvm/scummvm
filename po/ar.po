@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-05 20:45+0000\n"
+"POT-Creation-Date: 2025-07-06 09:01+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -1287,12 +1287,12 @@ msgstr "السابق"
 msgid "Save Image..."
 msgstr "حفظ اللعبة ..."
 
-#: gui/imagealbum-dialog.cpp:263
+#: gui/imagealbum-dialog.cpp:260
 #, c-format
 msgid "%u of %u"
 msgstr ""
 
-#: gui/imagealbum-dialog.cpp:376
+#: gui/imagealbum-dialog.cpp:373
 #, fuzzy
 #| msgid "Save Game"
 msgid "Save Image"
