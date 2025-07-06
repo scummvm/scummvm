@@ -353,6 +353,8 @@ void Room703::parser() {
 	} // talkFl && player_said("MONK #4")
 
 	else if (lookFl && player_said("GRATE")) {
+		player_set_commands_allowed(false);
+		
 		switch (_G(kernel).trigger) {
 		case -1: {
 			int32 keyValue = 0;

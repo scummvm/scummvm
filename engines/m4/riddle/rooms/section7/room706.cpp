@@ -326,6 +326,8 @@ void Room706::parser() {
 	} // talkFl && player_said("MONK #15")
 
 	else if (lookFl && player_said("GRATE")) {
+		player_set_commands_allowed(false);
+
 		switch (_G(kernel).trigger) {
 		case -1:
 			player_update_info(_G(my_walker), &_G(player_info));
