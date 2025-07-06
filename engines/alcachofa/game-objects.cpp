@@ -134,7 +134,7 @@ CursorType Door::cursorType() const {
 	CursorType fromObject = ShapeObject::cursorType();
 	if (fromObject != CursorType::Point)
 		return fromObject;
-	switch (_characterDirection) {
+	switch (_interactionDirection) {
 	case Direction::Up: return CursorType::LeaveUp;
 	case Direction::Right: return CursorType::LeaveRight;
 	case Direction::Down: return CursorType::LeaveDown;
