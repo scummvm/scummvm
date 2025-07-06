@@ -21,6 +21,7 @@
 
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/translation.h"
@@ -245,18 +246,12 @@ Common::SeekableReadStream *SaveManager::getSlotFile(uint slot) {
 		else if (_engine->getGameId() == GID_NEMESIS)
 			filename = Common::Path(Common::String::format("nemsav%u.sav", slot));
 
-		saveFile = _engine->getSearchManager()->openFile(filename);
-		if (saveFile == NULL) {
-			Common::File *tmpFile = new Common::File;
-			if (!tmpFile->open(filename)) {
-				delete tmpFile;
-			} else {
-				saveFile = tmpFile;
-			}
-		}
-
+		Common::File *tmpFile = new Common::File;
+		if (!tmpFile->open(filename))
+			delete tmpFile;
+		else
+			saveFile = tmpFile;
 	}
-
 	return saveFile;
 }
 

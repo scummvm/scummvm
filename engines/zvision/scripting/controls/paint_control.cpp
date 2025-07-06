@@ -20,6 +20,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 #include "zvision/zvision.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/graphics/render_manager.h"

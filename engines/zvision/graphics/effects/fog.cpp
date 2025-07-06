@@ -38,7 +38,7 @@ FogFx::FogFx(ZVision *engine, uint32 key, Common::Rect region, bool ported, Effe
 
 	_pos = 0;
 
-	if (_engine->getSearchManager()->hasFile(clouds))
+	if (SearchMan.hasFile(clouds))
 		_engine->getRenderManager()->readImageToSurface(clouds, _fog);
 	else
 		_engine->getRenderManager()->readImageToSurface("cloud.tga", _fog);

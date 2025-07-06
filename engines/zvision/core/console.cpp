@@ -80,7 +80,7 @@ bool Console::cmdLoadSound(int argc, const char **argv) {
 		int isStereo = atoi(argv[3]);
 
 		Common::File *file = new Common::File();
-		if (!_engine->getSearchManager()->openFile(*file, argv[1])) {
+		if (!file->open(argv[1])) {
 			warning("File not found: %s", argv[1]);
 			return true;
 		}
@@ -103,7 +103,7 @@ bool Console::cmdRawToWav(int argc, const char **argv) {
 	}
 
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, argv[1])) {
+	if (!file.open(argv[1])) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}
@@ -232,7 +232,7 @@ bool Console::cmdDumpFile(int argc, const char **argv) {
 	}
 
 	Common::File f;
-	if (!_engine->getSearchManager()->openFile(f, argv[1])) {
+	if (!f.open(argv[1])) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}
@@ -251,16 +251,20 @@ bool Console::cmdDumpFiles(int argc, const char **argv) {
 		return true;
 	}
 
-	SearchManager::MatchList fileList;
-	_engine->getSearchManager()->listMembersWithExtension(fileList, argv[1]);
-
-	for (SearchManager::MatchList::iterator iter = fileList.begin(); iter != fileList.end(); ++iter) {
-		fileName = iter->_value.name;
+	Common::ArchiveMemberList fileList;
+	Common::Path pattern;
+	pattern = Common::Path(Common::String::format("*.%s", argv[1]));
+	SearchMan.listMatchingMembers(fileList, pattern);
+	
+	for (auto iter = fileList.begin(); iter != fileList.end(); ++iter) {
+		fileName = iter->get()->getFileName();
 		debugPrintf("Dumping %s\n", fileName.toString().c_str());
 
-		in = iter->_value.arch->createReadStreamForMember(iter->_value.name);
+		in = iter->get()->createReadStream();
 		if (in)
 			dumpFile(in, fileName);
+		else
+			debugPrintf("Failed to dump!");
 		delete in;
 	}
 
@@ -280,7 +284,7 @@ bool Console::cmdDumpImage(int argc, const char **argv) {
 	}
 
 	Common::File f;
-	if (!_engine->getSearchManager()->openFile(f, fileName)) {
+	if (!f.open(fileName)) {
 		warning("File not found: %s", argv[1]);
 		return true;
 	}

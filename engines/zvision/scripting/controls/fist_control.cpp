@@ -160,7 +160,7 @@ bool FistControl::onMouseUp(const Common::Point &screenSpacePos, const Common::P
 
 void FistControl::readDescFile(const Common::Path &fileName) {
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("Desc file %s could could be opened", fileName.toString().c_str());
 		return;
 	}

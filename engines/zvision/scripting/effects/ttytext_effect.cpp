@@ -43,7 +43,8 @@ ttyTextNode::ttyTextNode(ZVision *engine, uint32 key, const Common::Path &file, 
 	_lineStartPos = 0;
 	_startX = 0;
 
-	Common::File *infile = _engine->getSearchManager()->openFile(file);
+	Common::File *infile = new Common::File;
+	infile->open(file);
 	if (infile) {
 		while (!infile->eos()) {
 			Common::U32String asciiLine = readWideLine(*infile);

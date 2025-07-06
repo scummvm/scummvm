@@ -79,7 +79,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 
 	if (filename.baseName().contains(".wav")) {
 		Common::File *file = new Common::File();
-		if (_engine->getSearchManager()->openFile(*file, filename)) {
+		if (file->open(filename)) {
 			audioStream = Audio::makeWAVStream(file, DisposeAfterUse::YES);
 		}
 	} else {
@@ -108,7 +108,7 @@ MusicNode::MusicNode(ZVision *engine, uint32 key, Common::Path &filename, bool l
 		subname.setChar('b', subname.size() - 1);
 
 		Common::Path subpath(filename.getParent().appendComponent(subname));
-		if (_engine->getSearchManager()->hasFile(subpath))
+		if (SearchMan.hasFile(subpath))
 			_sub = _engine->getSubtitleManager()->create(subpath, _handle); // NB automatic subtitle!
 
 		_loaded = true;

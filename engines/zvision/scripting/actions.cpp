@@ -576,9 +576,6 @@ bool ActionMusic::execute() {
 	if (_midi) {
 		_scriptManager->addSideFX(new MusicMidiNode(_engine, _slotKey, _prog, _note, volume));
 	} else {
-		if (!_engine->getSearchManager()->hasFile(_fileName))
-			return true;
-
 		_scriptManager->addSideFX(new MusicNode(_engine, _slotKey, _fileName, _loop, volume));
 	}
 
@@ -1113,7 +1110,7 @@ bool ActionStreamVideo::execute() {
 	subname.setChar('u', subname.size() - 2);
 	subname.setChar('b', subname.size() - 1);
 	Common::Path subpath(_fileName.getParent().appendComponent(subname));
-	bool subtitleExists = _engine->getSearchManager()->hasFile(subpath);
+	bool subtitleExists = SearchMan.hasFile(subpath);
 	bool switchToHires = false;
 
 // NOTE: We only show the hires MPEG2 videos when libmpeg2 and liba52 are compiled in,
@@ -1127,13 +1124,13 @@ bool ActionStreamVideo::execute() {
 
 	Common::Path hiresPath(_fileName.getParent().appendComponent(hiresFileName));
 
-	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 &&_engine->getSearchManager()->hasFile(hiresPath)) {
+	if (_scriptManager->getStateValue(StateKey_MPEGMovies) == 1 && SearchMan.hasFile(hiresPath)) {
 		_fileName = hiresPath;
 		switchToHires = true;
-	} else if (!_engine->getSearchManager()->hasFile(_fileName))
+	} else if (!SearchMan.hasFile(_fileName))
 		return true;
 #else
-	if (!_engine->getSearchManager()->hasFile(_fileName))
+	if (!SearchMan.hasFile(_fileName))
 		return true;
 #endif
 

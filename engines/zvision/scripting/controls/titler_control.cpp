@@ -85,7 +85,7 @@ void TitlerControl::setString(int strLine) {
 
 void TitlerControl::readStringsFile(const Common::Path &fileName) {
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("String_resource_file %s could could be opened", fileName.toString().c_str());
 		return;
 	}

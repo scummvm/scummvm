@@ -155,7 +155,7 @@ void HotMovControl::readHsFile(const Common::Path &fileName) {
 		return;
 
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("HS file %s could could be opened", fileName.toString().c_str());
 		return;
 	}

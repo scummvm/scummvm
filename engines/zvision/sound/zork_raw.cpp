@@ -242,7 +242,7 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZVision *engine) {
 	Common::File *file = new Common::File();
-	bool found = engine->getSearchManager()->openFile(*file, filePath);
+	bool found = file->open(filePath);
 	Common::String baseName = filePath.baseName();
 	bool isRaw = baseName.hasSuffix(".raw");
 
@@ -251,13 +251,17 @@ Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZV
 			file->close();
 
 		// Check for an audio patch (.src)
-		baseName.setChar('s', baseName.size() - 3);
-		baseName.setChar('r', baseName.size() - 2);
-		baseName.setChar('c', baseName.size() - 1);
+		Common::String patchName = baseName;
+		patchName.setChar('s', baseName.size() - 3);
+		patchName.setChar('r', baseName.size() - 2);
+		patchName.setChar('c', baseName.size() - 1);
 
-		if (!engine->getSearchManager()->openFile(*file, filePath.getParent().appendComponent(baseName)))
+		if (!file->open(filePath.getParent().appendComponent(patchName))) {
+			warning("Audio file %s AND audio patch %s not found", baseName.c_str(), patchName.c_str());
 			return NULL;
+			}
 	} else if (!found && !isRaw) {
+		warning("Audio file %s not found", baseName.c_str());
 		return NULL;
 	}
 

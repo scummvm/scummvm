@@ -77,7 +77,7 @@ void ScriptManager::parseScrFile(const Common::Path &fileName, ScriptScope &scop
 	Common::Path auxFilePath(auxFileName);
 	debugC(1, kDebugFile, "Auxiliary path %s", auxFilePath.toString().c_str());
 
-	if (!_engine->getSearchManager()->openFile(mainFile, fileName))
+	if (!mainFile.open(fileName))
 		error("Script file not found: %s", fileName.toString().c_str());
 	else {
 		debugC(1, kDebugScript, "Parsing primary script file %s", fileName.toString().c_str());

@@ -23,8 +23,10 @@
 #define ZVISION_TITLER_CONTROL_H
 
 #include "common/array.h"
+#include "common/file.h"
 #include "common/path.h"
 #include "common/rect.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 #include "zvision/scripting/control.h"
 

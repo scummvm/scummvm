@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/scummsys.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/rational.h"
 #include "engines/util.h"

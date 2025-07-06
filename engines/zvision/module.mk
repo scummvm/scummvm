@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	core/events.o \
 	file/lzss_read_stream.o \
 	file/save_manager.o \
-	file/search_manager.o \
 	file/zfs_archive.o \
 	graphics/cursors/cursor.o \
 	graphics/cursors/cursor_manager.o \

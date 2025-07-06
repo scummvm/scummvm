@@ -20,9 +20,9 @@
  */
 
 #include "common/config-manager.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "zvision/detection.h"
-#include "zvision/file/search_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/text/subtitle_manager.h"
@@ -291,7 +291,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 	_redraw(false) {
 	Common::File subFile;
 	Common::Point _textOffset = _engine->getSubtitleManager()->getTextOffset();
-	if (!_engine->getSearchManager()->openFile(subFile, subname)) {
+	if (!subFile.open(subname)) {
 		warning("Failed to open subtitle %s", subname.toString().c_str());
 		_toDelete = true;
 		return;
@@ -318,7 +318,7 @@ Subtitle::Subtitle(ZVision *engine, const Common::Path &subname, bool vob) :
 			char filename[64];
 			if (sscanf(str.c_str(), "%*[^:]:%s", filename) == 1) {
 				Common::File txtFile;
-				if (_engine->getSearchManager()->openFile(txtFile, Common::Path(filename))) {
+				if (txtFile.open(Common::Path(filename))) {
 					while (!txtFile.eos()) {
 						Common::String txtline = readWideLine(txtFile).encode();
 						Line curLine;

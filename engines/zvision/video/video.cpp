@@ -58,7 +58,8 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	else
 		error("Unknown suffix for animation %s", fileName.toString().c_str());
 
-	Common::File *_file = getSearchManager()->openFile(fileName);
+	Common::File *_file = new Common::File();	//TODO - verify that this is safely deleted when done with
+	_file->open(fileName);
 	if (!_file)
 		error("Error opening %s", fileName.toString().c_str());
 

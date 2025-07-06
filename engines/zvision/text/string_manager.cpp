@@ -25,7 +25,6 @@
 #include "common/tokenizer.h"
 #include "graphics/fontman.h"
 #include "zvision/zvision.h"
-#include "zvision/file/search_manager.h"
 #include "zvision/text/string_manager.h"
 #include "zvision/text/text.h"
 
@@ -48,7 +47,7 @@ void StringManager::initialize(ZVisionGameId gameId) {
 
 void StringManager::loadStrFile(const Common::Path &fileName) {
 	Common::File file;
-	if (!_engine->getSearchManager()->openFile(file, fileName))
+	if (!file.open(fileName))
 		error("%s does not exist. String parsing failed", fileName.toString().c_str());
 
 	uint lineNumber = 0;

@@ -30,7 +30,6 @@
 #include "gui/debugger.h"
 #include "zvision/detection.h"
 #include "zvision/core/clock.h"
-#include "zvision/file/search_manager.h"
 
 namespace Common {
 class Keymap;
@@ -142,7 +141,6 @@ private:
 	RenderManager *_renderManager;
 	CursorManager *_cursorManager;
 	StringManager *_stringManager;
-	SearchManager *_searchManager;
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
 	SaveManager *_saveManager;
@@ -195,9 +193,6 @@ public:
 	}
 	StringManager *getStringManager() const {
 		return _stringManager;
-	}
-	SearchManager *getSearchManager() const {
-		return _searchManager;
 	}
 	TextRenderer *getTextRenderer() const {
 		return _textRenderer;
@@ -281,6 +276,8 @@ public:
 private:
 	void initialize();
 	void initFonts();
+	
+	void initializePath(const Common::FSNode &gamePath) override;
 
 	void parseStrFile(const Common::String &fileName);
 
@@ -297,6 +294,7 @@ private:
 	uint8 getBufferedKey(uint8 pos);
 
 	double getVobAmplification(Common::String fileName) const;
+	bool loadZix(const Common::Path &name);
 };
 
 } // End of namespace ZVision

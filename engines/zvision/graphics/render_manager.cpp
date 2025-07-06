@@ -295,7 +295,7 @@ void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::S
 void RenderManager::readImageToSurface(const Common::Path &fileName, Graphics::Surface &destination, bool transposed) {
 	Common::File file;
 
-	if (!_engine->getSearchManager()->openFile(file, fileName)) {
+	if (!file.open(fileName)) {
 		warning("Could not open file %s", fileName.toString().c_str());
 		return;
 	}
