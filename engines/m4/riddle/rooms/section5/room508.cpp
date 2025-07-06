@@ -283,6 +283,8 @@ void Room508::daemon() {
 			triggerMachineByHashCallback, "Chain Breaking Machine");
 		sendWSMessage_10000(1, _chain, _chainBreaking, 1, 58, 675,
 			_chainBreaking, 58, 58, 0);
+		sendWSMessage_190000(_chain, 3);
+
 		digi_play("508_s08", 1, 255, 555);
 		break;
 
