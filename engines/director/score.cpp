@@ -326,7 +326,7 @@ void Score::startPlay() {
 	updateCurrentFrame();
 
 	// All frames in the same movie have the same number of channels
-	if (_playState != kPlayStopped)
+	if (_playState != kPlayStopped && _channels.size() == 0)
 		for (uint i = 0; i < _currentFrame->_sprites.size(); i++)
 			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
 
@@ -1902,6 +1902,12 @@ void Score::setSpriteCasts() {
 		debugC(8, kDebugLoading, "Score::setSpriteCasts(): Frame: 0 Channel: %d castId: %s type: %d (%s)",
 			 j, _currentFrame->_sprites[j]->_castId.asString().c_str(), _currentFrame->_sprites[j]->_spriteType,
 			spriteType2str(_currentFrame->_sprites[j]->_spriteType));
+	}
+
+	if (_channels.size() == 0) {
+		for (uint i = 0; i < _currentFrame->_sprites.size(); i++) {
+			_channels.push_back(new Channel(this, _currentFrame->_sprites[i], i));
+		}
 	}
 }
 
