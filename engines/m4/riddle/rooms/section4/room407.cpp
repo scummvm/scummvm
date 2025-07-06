@@ -3100,7 +3100,7 @@ void Room407::gardenHoseSurgicalTube2() {
 			"407 TUBE AND HOSE INTO SINK", 0, 0, 0, 100, 0xe00);
 		hotspot_set_active("GARDEN HOSE  ", true);
 
-		if (_hoseState == 1061) {
+		if (_hoseState != 1061) {
 			inv_move_object("GARDEN HOSE", 407);
 		} else {
 			_faucetPipe = series_place_sprite("407 FAUCET IN SINK",
@@ -3426,6 +3426,7 @@ void Room407::faucetPipeGlassJar() {
 		break;
 
 	case 777:
+		player_set_commands_allowed(false);
 		ws_walk(_G(my_walker), 436, 331, nullptr, 70, 1);
 		break;
 
