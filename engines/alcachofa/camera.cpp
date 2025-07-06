@@ -78,11 +78,10 @@ void Camera::restore(uint slot) {
 	_cur = backupState;
 }
 
-static Matrix4 scaleMatrix(float scale) {
+static Matrix4 scale2DMatrix(float scale) {
 	Matrix4 m;
 	m(0, 0) = scale;
 	m(1, 1) = scale;
-	m(2, 2) = scale;
 	return m;
 }
 
@@ -92,13 +91,13 @@ void Camera::setupMatricesAround(Vector3d center) {
 	_mat3Dto2D.setToIdentity();
 	_mat3Dto2D.translate(-center);
 	_mat3Dto2D = matTemp * _mat3Dto2D;
-	_mat3Dto2D = _mat3Dto2D * scaleMatrix(_cur._scale);
+	_mat3Dto2D = scale2DMatrix(_cur._scale) * _mat3Dto2D;
 
 	_mat2Dto3D.setToIdentity();
 	_mat2Dto3D.translate(center);
 	matTemp.buildAroundZ(-_cur._rotation);
-	matTemp = scaleMatrix(1 / _cur._scale) * matTemp;
-	_mat2Dto3D = matTemp * _mat2Dto3D;
+	matTemp = matTemp * scale2DMatrix(1 / _cur._scale);
+	_mat2Dto3D = _mat2Dto3D * matTemp;
 }
 
 void minmax(Vector3d &min, Vector3d &max, Vector3d val) {
