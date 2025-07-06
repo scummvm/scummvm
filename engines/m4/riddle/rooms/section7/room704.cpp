@@ -903,6 +903,7 @@ void Room704::conv704a() {
 	const int32 who = conv_whos_talking();
 	if (who <= 0) {
 		_field5C_should = 121;
+		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(10, 127, nullptr);
 		_G(kernel).trigger_mode = KT_PARSE;
 	} else if (who == 1) {
