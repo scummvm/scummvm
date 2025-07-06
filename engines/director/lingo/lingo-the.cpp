@@ -1730,6 +1730,16 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 					channel->_dirty = true;
 				}
 				channel->setCast(castId);
+
+				// If we change the channel cast we also have to update the sprite in the score.
+				// If we don't then the cast will show up incorrectly when the score is updated.
+				Sprite *nextSprite = score->_currentFrame->_sprites[id];
+				if (nextSprite) {
+					nextSprite->setWidth(sprite->getWidth());
+					nextSprite->setHeight(sprite->getHeight());
+					nextSprite->setCast(castId, true);
+				}
+
 				channel->_dirty = true;
 			}
 		}
