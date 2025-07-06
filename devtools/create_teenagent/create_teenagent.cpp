@@ -152,13 +152,13 @@ void writeItems(FILE *fd, Common::Language language) {
 }
 
 void writeSceneObjects(FILE *fd, Common::Language language) {
-	Common::Array<Common::Array<ObjectNameDesc> > &objNamesDescs = englishSceneObjectNamesDescs;
+	Common::Array<Common::Array<ObjectNameDesc>> *objNamesDescs = &englishSceneObjectNamesDescs;
 	if (language == CS_CZE)
-		objNamesDescs = czechSceneObjectNamesDescs;
+		objNamesDescs = &czechSceneObjectNamesDescs;
 	else if (language == PL_POL)
-		objNamesDescs = polishSceneObjectNamesDescs;
+		objNamesDescs = &polishSceneObjectNamesDescs;
 	else if (language == RU_RUS)
-		objNamesDescs = russianSceneObjectNamesDescs;
+		objNamesDescs = &russianSceneObjectNamesDescs;
 
 	uint sceneObjTableAddrsPos = ftell(fd);
 	uint16 sceneObjTableAddrs[42]{};
@@ -189,7 +189,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 			curOffset += 19;
 
 			// Name
-			const char *name = englishSceneObjectNamesDescs[i][j]._name;
+			const char *name = (*objNamesDescs)[i][j]._name;
 			for (uint k = 0; k < strlen(name); k++) {
 				if (name[k] == '\n')
 					writeByte(fd, '\0');
@@ -200,7 +200,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 			curOffset += strlen(name) + 1;
 
 			// Description (if exists)
-			const char *description = englishSceneObjectNamesDescs[i][j]._description;
+			const char *description = (*objNamesDescs)[i][j]._description;
 			if (strlen(description) == 0) {
 				writeByte(fd, '\0');
 				writeByte(fd, '\0');
@@ -235,6 +235,22 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 	fseek(fd, pos, SEEK_SET);
 }
 
+void writeSettableObjectNames(FILE *fd, Common::Language language) {
+	// Write settable scene object names: "Sonny", "Anne", "Mike", "body"
+	const char **settableObjectNames = englishSettableObjectNames;
+	if (language == CS_CZE)
+		settableObjectNames = czechSettableObjectNames;
+	else if (language == PL_POL)
+		settableObjectNames = polishSettableObjectNames;
+	else if (language == RU_RUS)
+		settableObjectNames = russianSettableObjectNames;
+
+	for (uint i = 0; i < 4; i++) {
+		fwrite(settableObjectNames[i], 1, strlen(settableObjectNames[i]), fd);
+		writeByte(fd, '\0');
+	}
+}
+
 void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 	uint currentFilePos = ftell(fd);
 	uint prevFilePos = currentFilePos;
@@ -262,6 +278,9 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 		break;
 	case kResSceneObjects:
 		writeSceneObjects(fd, language);
+		break;
+	case kResSettableObjectNames:
+		writeSettableObjectNames(fd, language);
 		break;
 	case kResMessages: {
 		const char **messages = englishMessages;

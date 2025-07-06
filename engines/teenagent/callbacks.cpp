@@ -784,7 +784,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			wait(50);
 			displayMessage(res->getMessageAddr(kBowlWeldedMsg)); // "Wow. He got welded to the bowl"
 			SET_FLAG(dsAddr_JailCableAndBowlState, 3);
-			scene->getObject(4)->setName("body");
+			scene->getObject(4)->setName(res->getScnObjName(kScnObjNameBody));
 		} else {
 			if (dialog->pop(scene, dsAddr_dialogStackJailDoorGrates, 0, 0, kMark, kMark, 0, 0) == 0x636b) { // 'im getting hungry'
 				wait(100);
@@ -2438,7 +2438,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x58a2:
 		dialog->pop(scene, dsAddr_dialogStackSonny, 0, 502, kMark, kSonny, 0, 1);
-		scene->getObject(13)->setName((const char *)res->dseg.ptr(dsAddr_scnObjNameSonny));
+		scene->getObject(13)->setName(res->getScnObjName(kScnObjNameSonny));
 		break;
 
 	case 0x58b7: // Get comb from car
@@ -2610,7 +2610,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(527);
 			wait(50);
 			dialog->show(52, scene, 0, 524, kMark, kAnne, 0, 2);
-			scene->getObject(2)->setName((const char *)res->dseg.ptr(dsAddr_scnObjNameAnne));
+			scene->getObject(2)->setName(res->getScnObjName(kScnObjNameAnne));
 		}
 		break;
 
@@ -4117,7 +4117,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x6c83:
 		waitLanAnimationFrame(1, 1);
 		dialog->pop(scene, dsAddr_dialogStackRobotSafe, 0, 727, kMark, kMike, 0, 1);
-		scene->getObject(1)->setName((const char *)res->dseg.ptr(dsAddr_scnObjNameMike));
+		scene->getObject(1)->setName(res->getScnObjName(kScnObjNameMike));
 		SET_FLAG(dsAddr_MansionRobotSafeUnlockedFlag, 1);
 		break;
 
