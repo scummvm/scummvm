@@ -786,7 +786,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			SET_FLAG(dsAddr_JailCableAndBowlState, 3);
 			scene->getObject(4)->setName(res->getScnObjName(kScnObjNameBody));
 		} else {
-			if (dialog->pop(scene, dsAddr_dialogStackJailDoorGrates, 0, 0, kMark, kMark, 0, 0) == 0x636b) { // 'im getting hungry'
+			if (dialog->pop(scene, dsAddr_dialogStackJailDoorGrates, 0, 0, kMark, kMark, 0, 0) == res->getDialogAddr(154)) { // 'im getting hungry'
 				wait(100);
 				playSound(52, 8);
 				playSound(52, 13);
@@ -1171,7 +1171,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4cf1: // talking with mansion guard
 		SET_FLAG(dsAddr_spokenWithMansionGuardFlag, 1);
-		if (dialog->pop(scene, dsAddr_dialogStackPleadingToMansionGuard, 0, 529, kMark, kMansionGuard, 0, 1) == 0x01b4) { // 2nd try
+		if (dialog->pop(scene, dsAddr_dialogStackPleadingToMansionGuard, 0, 529, kMark, kMansionGuard, 0, 1) == res->getDialogAddr(1)) { // 2nd try
 			Common::Point p = scene->getPosition();
 			moveTo(189, 159, 0);
 			//waitLanAnimationFrame(1, 1);

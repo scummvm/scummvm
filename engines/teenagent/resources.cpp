@@ -122,6 +122,21 @@ void Resources::precomputeCombineMessageOffsets() {
 		debug(1, "\tCombination message #%d: Offset 0x%04x", i, combineMessageOffsets[i]);
 }
 
+void Resources::readDialogStacks(byte *src) {
+	uint16 base = dsAddr_dialogStackPleadingToMansionGuard;
+
+	byte dialogStackWritten = 0;
+	uint i = 0;
+
+	while (dialogStackWritten < kNumDialogStacks) {
+		uint16 word = READ_LE_UINT16(src + i * 2);
+		dseg.set_word(base + i * 2, word);
+		if (word == 0xFFFF)
+			dialogStackWritten++;
+		i++;
+	}
+}
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	Common::String filename = "teenagent.dat";
@@ -182,6 +197,11 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 
 	uint resourceSize = dat->readUint32LE();
 	eseg.read(dat, resourceSize);
+
+	// Dialog stack data
+	resourceSize = dat->readUint32LE();
+	dat->read(tempBuffer, resourceSize);
+	readDialogStacks((byte *)tempBuffer);
 
 	resourceSize = dat->readUint32LE();
 	itemsSeg.read(dat, resourceSize);

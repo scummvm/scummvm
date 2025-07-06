@@ -1160,6 +1160,8 @@ const uint16 dsAddr_finalCredits6 = 0xe47c; // "THE END..."
 const uint16 dsAddr_finalCredits7 = 0xe488; // "programming..."
 // 0xe783 to 0xe78f: 13 null bytes at end of dseg data - segment alignment padding?
 
+const byte kNumDialogStacks = 26;
+
 enum MessageType{
 	kRejectMsg0 = 0,
 	kRejectMsg1,
@@ -1552,6 +1554,8 @@ private:
 	void precomputeItemOffsets();
 	void precomputeMessageOffsets();
 	void precomputeCombineMessageOffsets();
+
+	void readDialogStacks(byte *src);
 
 	Common::Array<uint16> dialogOffsets;
 	Common::Array<uint16> creditsOffsets, itemOffsets;

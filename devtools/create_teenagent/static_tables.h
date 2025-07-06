@@ -13340,6 +13340,36 @@ const char *russianCombineMessages[kNumCombinations] = {
 	"Eobacim pfqxinkt.\x1f\x1f\x1f",
 };
 
+// Dialog stack arr
+const uint16 dialogStacks[] = {
+	0, 1, 2, 3, 4, 0xffff, // 0
+	6, 7, 8, 0xffff, // 1
+	13, 14, 15, 16, 0xffff, // 2
+	18, 19, 20, 21, 0xffff, // 3
+	22, 23, 0xffff, // 4
+	25, 26, 0xffff, // 5
+	27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 0xffff, // 6
+	39, 40, 0xffff, // 7
+	41, 42, 0xffff, // 8
+	48, 49, 0xffff, // 9
+	58, 59, 0xffff, // 10
+	65, 66, 67, 68, 69, 0xffff, // 11
+	78, 79, 80, 81, 0xffff, // 12
+	82, 83, 0xffff, // 13
+	101, 102, 103, 104, 0xffff, // 14
+	105, 106, 107, 0xffff, // 15
+	131, 132, 133, 134, 0xffff, // 16
+	135, 136, 137, 138, 139, 0xffff, // 17
+	140, 141, 142, 143, 0xffff, // 18
+	145, 146, 0xffff, // 19
+	151, 152, 153, 154, 155, 0xffff, // 20
+	169, 170, 171, 172, 0xffff, // 21
+	173, 174, 175, 0xffff, // 22
+	187, 188, 189, 0xffff, // 23
+	158, 159, 160, 0xffff, // 24
+	190, 191, 0xffff, // 25
+};
+
 // Dialog Strings Block
 
 #define ANIM_WAIT        "\xff"
