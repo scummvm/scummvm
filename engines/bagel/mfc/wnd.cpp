@@ -900,7 +900,9 @@ int CWnd::GetDlgCtrlID() const {
 }
 
 void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
-	error("TODO: CWnd::CheckDlgButton");
+	CWnd *btn = GetDlgItem(nIDButton);
+	assert(btn);
+	btn->SendMessage(BM_SETCHECK, nCheck);
 }
 
 LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,

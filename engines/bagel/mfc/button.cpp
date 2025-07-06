@@ -32,6 +32,7 @@ ON_WM_LBUTTONDOWN()
 ON_WM_LBUTTONUP()
 ON_WM_MOUSEMOVE()
 ON_MESSAGE(BM_CLICK, OnBnClicked)
+ON_MESSAGE(BM_SETCHECK, OnBnSetCheck)
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(LPCTSTR lpszCaption, DWORD dwStyle,
@@ -50,6 +51,8 @@ void CButton::SetCheck(int nCheck) {
 		_itemState &= ~ODS_CHECKED;
 	else
 		_itemState |= ODS_CHECKED;
+
+	Invalidate();
 }
 
 void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
@@ -246,6 +249,11 @@ LRESULT CButton::OnBnClicked(WPARAM wParam, LPARAM lParam) {
 	GetParent()->SendMessage(WM_COMMAND, GetDlgCtrlID(),
 		MAKELPARAM(0, BN_CLICKED));
 
+	return 0;
+}
+
+LRESULT CButton::OnBnSetCheck(WPARAM wParam, LPARAM lParam) {
+	SetCheck(wParam);
 	return 0;
 }
 

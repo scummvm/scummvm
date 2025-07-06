@@ -1551,6 +1551,7 @@ protected:
 	void OnLButtonUp(UINT nFlags, CPoint point);
 	void OnMouseMove(UINT nFlags, CPoint point);
 	LRESULT OnBnClicked(WPARAM wParam, LPARAM lParam);
+	LRESULT OnBnSetCheck(WPARAM wParam, LPARAM lParam);
 
 public:
 	~CButton() override {
