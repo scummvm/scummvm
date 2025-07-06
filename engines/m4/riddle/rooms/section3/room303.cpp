@@ -1594,7 +1594,7 @@ void Room303::parser() {
 			}
 		}
 	} else if (lookFlag && player_said("cobra case")) {
-		digi_play(player_been_here(201) ? "203r38" : "303r32", 1);
+		digi_play(player_been_here(201) ? "303r38" : "303r32", 1);
 	} else if ((lookFlag || player_said("peer into")) &&
 			player_said("copper tank viewer")) {
 		if (player_been_here(301)) {
