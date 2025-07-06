@@ -121,11 +121,13 @@ static const BuiltinProto builtins[] = {
 	// Control
 	{ "abort",			LB::b_abort,		0, 0, 400, CBLTIN },	//			D4 c
 	{ "cancelIdleLoad",	LB::b_cancelIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
+	{ "close",          LB::b_close,        0, 1, 400, CBLTIN },    // D2 c
 	{ "continue",		LB::b_continue,		0, 0, 200, CBLTIN },	// D2 c
 	{ "dontPassEvent",	LB::b_dontPassEvent,0, 0, 200, CBLTIN },	// D2 c
 	{ "delay",	 		LB::b_delay,		1, 1, 200, CBLTIN },	// D2 c
 	{ "do",		 		LB::b_do,			1, 1, 200, CBLTIN },	// D2 c
 	{ "finishIdleLoad",	LB::b_finishIdleLoad,1, 1, 500, CBLTIN },	//				D5 c
+	{ "forget",         LB::b_forget,       0, 1, 200, CBLTIN },    //          D4 c
 	{ "go",		 		LB::b_go,			1, 2, 200, CBLTIN },	// D2 c
 	{ "halt",	 		LB::b_halt,			0, 0, 400, CBLTIN },	//			D4 c
 	{ "idleLoadDone",	LB::b_idleLoadDone,	1, 1, 500, FBLTIN },	//				D5 f
@@ -1654,6 +1656,24 @@ void LB::b_cancelIdleLoad(int nargs) {
 	g_lingo->dropStack(nargs);
 }
 
+void LB::b_close(int nargs) {
+	Datum d = g_lingo->pop();
+
+	Common::Array<Window *> *windowArray = g_director->getWindowList();
+
+	if (d.type == INT || d.type == FLOAT) {
+		int windowIndex = d.asInt();
+
+		if (windowIndex >= 0 && windowIndex < (int)windowArray->size()) {
+			Window *window = (*windowArray)[windowIndex];
+			window->setVisible(false);
+			return;
+		} else {
+			warning("LB::b_close: Window referenced by index %d, out of bounds.", windowIndex);
+		}
+	}
+}
+
 void LB::b_continue(int nargs) {
 	g_director->_playbackPaused = false;
 }
@@ -1697,6 +1717,38 @@ void LB::b_do(int nargs) {
 void LB::b_finishIdleLoad(int nargs) {
 	g_lingo->printSTUBWithArglist("b_finishIdleLoad", nargs);
 	g_lingo->dropStack(nargs);
+}
+
+void LB::b_forget(int nargs) {
+	Datum d = g_lingo->pop();
+
+	Common::Array<Window *> *windowArray = g_director->getWindowList();
+
+	if (d.type == INT || d.type == FLOAT) {
+		int windowIndex = d.asInt();
+
+		if (windowIndex >= 0 && windowIndex < (int)windowArray->size()) {
+			Window *window = (*windowArray)[windowIndex];
+
+			Movie *movie = window->getCurrentMovie();
+			if (movie)
+				movie->getScore()->_playState = kPlayStopped;
+
+			// remove me from global vars
+			for (auto &it : g_lingo->_globalvars) {
+				if (it._value.type != OBJECT || it._value.u.obj->getObjType() != kWindowObj)
+					continue;
+
+				if (it._value.u.obj == window)
+					g_lingo->_globalvars[it._key] = 0;
+			}
+
+			g_director->forgetWindow(window);
+			return;
+		} else {
+			warning("LB::b_forget: Window referenced by index %d, out of bounds.", windowIndex);
+		}
+	}
 }
 
 void LB::b_go(int nargs) {
