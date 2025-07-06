@@ -33489,34 +33489,39 @@ Common::Array<Common::Array<Object>> sceneObjects = {
 
 // Scene object names that are changed in runtime
 // by the game. Must be in the same order as in the engine.
-const char *englishSettableObjectNames[] = {
-	"Anne",
-	"Mike",
-	"Sonny",
-	"body"
+struct SettableObjectName {
+	const char *_initialName;
+	const char *_setName;
+};
+
+SettableObjectName englishSettableObjectNames[] = {
+	{"girl", "Anne"},
+	{"robot", "Mike"},
+	{"boy", "Sonny or whatever"},
+	{"bowl", "body"}
 };
 
 // Data segment start address - 0xB550
-const char *polishSettableObjectNames[] = {
-	"Ania", // 0x9FB4
-	"Czesiek", // 0xB441
-	"denerwuj@cy bubek", // 0x995c
-	"cia%o" // 0x7CB4
+SettableObjectName polishSettableObjectNames[] = {
+	{"dziewcz#", "Ania"}, // 0x9FB4
+	{"robot", "Czesiek"}, // 0xB441
+	{"ch%opiec", "denerwuj@cy bubek"}, // 0x995c
+	{"micha", "cia%o"} // 0x7CB4
 };
 
 // Data segment start address - 0xB660
-const char *czechSettableObjectNames[] = {
-	"Anna", // 0xA267
-	"Ludv;k", // 0xB730
-	"Deb;lek", // 0x9CC0
-	"t+lo" // 0x80BC
+SettableObjectName czechSettableObjectNames[] = {
+	{"sami$ka", "Anna"}, // 0xA267
+	{"robot", "Ludv;k"}, // 0xB730
+	{"kluk jako buk", "Deb;lek"}, // 0x9CC0
+	{"miska", "t+lo"} // 0x80BC
 };
 
-const char *russianSettableObjectNames[] = {
-	"Anna",
-	"Majk",
-	"R|na ili kak fdo\x1f",
-	"sflo"
+SettableObjectName russianSettableObjectNames[] = {
+	{"efctyka", "Anna"},
+	{"qobos", "Majk"},
+	{"mal}xik", "R|na ili kak fdo\x1f"},
+	{"mirka", "sflo"}
 };
 
 struct ObjectNameDesc {
