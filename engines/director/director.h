@@ -329,7 +329,7 @@ private:
 	StartOptions _options;
 
 public:
-	const Common::Array<Window *> *getWindowList() { return &_windowList; }
+	Common::Array<Window *> *getWindowList() { return &_windowList; }
 
 	int _tickBaseline;
 	Common::Path _traceLogFile;
