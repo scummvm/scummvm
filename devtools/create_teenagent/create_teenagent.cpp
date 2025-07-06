@@ -197,12 +197,18 @@ void writeItems(FILE *fd, Common::Language language) {
 
 void writeSceneObjects(FILE *fd, Common::Language language) {
 	Common::Array<Common::Array<ObjectNameDesc>> *objNamesDescs = &englishSceneObjectNamesDescs;
-	if (language == CS_CZE)
+	SettableObjectName *settableSceneObjects = englishSettableObjectNames;
+
+	if (language == CS_CZE) {
 		objNamesDescs = &czechSceneObjectNamesDescs;
-	else if (language == PL_POL)
+		settableSceneObjects = czechSettableObjectNames;
+	} else if (language == PL_POL) {
 		objNamesDescs = &polishSceneObjectNamesDescs;
-	else if (language == RU_RUS)
+		settableSceneObjects = polishSettableObjectNames;
+	} else if (language == RU_RUS) {
 		objNamesDescs = &russianSceneObjectNamesDescs;
+		settableSceneObjects = russianSettableObjectNames;
+	}
 
 	uint sceneObjTableAddrsPos = ftell(fd);
 	uint16 sceneObjTableAddrs[42]{};
@@ -240,6 +246,24 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 				else
 					writeByte(fd, name[k]);
 			}
+
+			bool nameIsSettable = false;
+			const char *setName = nullptr;
+			for (byte k = 0; k < 4; k++) {
+				if (strcmp(name, settableSceneObjects[k]._initialName) == 0) {
+					nameIsSettable = true;
+					setName = settableSceneObjects[k]._setName;
+
+					if (strlen(setName) > strlen(settableSceneObjects[k]._initialName)) {
+						uint nameLengthDiff = strlen(setName) - strlen(settableSceneObjects[k]._initialName);
+						for (uint c = 0; c < nameLengthDiff; c++) {
+							writeByte(fd, '\0');
+							curOffset++;
+						}
+					}
+					break;
+				}
+			}
 			writeByte(fd, '\0');
 			curOffset += strlen(name) + 1;
 
@@ -248,9 +272,10 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 			if (strlen(description) == 0) {
 				writeByte(fd, '\0');
 				writeByte(fd, '\0');
+				curOffset += 2;
 			} else if (strcmp(description, "\001") == 0) {
 				writeByte(fd, '\001');
-				writeByte(fd, '\0');
+				curOffset++;
 			} else {
 				for (uint k = 0; k < strlen(description); k++) {
 					if (description[k] == '\n')
@@ -261,8 +286,15 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 				writeByte(fd, '\0');
 				writeByte(fd, '\0');
 				curOffset += strlen(description);
+				curOffset += 2;
 			}
-			curOffset += 2;
+
+			if (nameIsSettable) {
+				fwrite(setName, 1, strlen(setName), fd);
+				writeByte(fd, '\0');
+				writeByte(fd, 0xFF);
+				curOffset += strlen(setName) + 2;
+			}
 		}
 
 		uint pos = ftell(fd);
@@ -281,7 +313,7 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 
 void writeSettableObjectNames(FILE *fd, Common::Language language) {
 	// Write settable scene object names: "Sonny", "Anne", "Mike", "body"
-	const char **settableObjectNames = englishSettableObjectNames;
+	SettableObjectName *settableObjectNames = englishSettableObjectNames;
 	if (language == CS_CZE)
 		settableObjectNames = czechSettableObjectNames;
 	else if (language == PL_POL)
@@ -290,7 +322,7 @@ void writeSettableObjectNames(FILE *fd, Common::Language language) {
 		settableObjectNames = russianSettableObjectNames;
 
 	for (uint i = 0; i < 4; i++) {
-		fwrite(settableObjectNames[i], 1, strlen(settableObjectNames[i]), fd);
+		fwrite(settableObjectNames[i]._setName, 1, strlen(settableObjectNames[i]._setName), fd);
 		writeByte(fd, '\0');
 	}
 }
