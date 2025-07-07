@@ -592,6 +592,16 @@ public:
 	static bool warnUserAboutUnsupportedGame(Common::String msg = Common::String());
 
 	/**
+	/**
+	 * Display an error message to the user that the game is an add-on than cannot be
+	 * run independently.
+	 *
+	 * @param addOnName The name of the add-on.
+	 * @param gameId    The ID of the base game that this add-on requires.
+	 */
+	static void errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::String gameId);
+
+	/**
 	 * Display an error message to the user that the game is not supported.
 	 *
 	 * @param extraMsg  An extra message that will be appended to the default message.

@@ -814,6 +814,23 @@ bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	return true;
 }
 
+void Engine::errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::String gameId) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
+
+	Common::U32String messageFormat = _("The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be run independently."
+		" Please copy the add-on contents into a subdirectory of the base game, and start the base game itself.");
+	Common::U32String message = Common::U32String::format(messageFormat, addOnName.c_str(), gameId.c_str());
+
+	GUI::MessageDialog(message).runModal();
+
+	if (ttsMan != nullptr)
+		ttsMan->popState();
+}
+
 void Engine::errorUnsupportedGame(Common::String extraMsg) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {

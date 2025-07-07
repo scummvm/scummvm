@@ -730,6 +730,11 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 
 	if (0 <= idx && idx < (int)candidates.size()) {
 		const DetectedGame &result = candidates[idx];
+		if (result.isAddOn) {
+			Engine::errorAddingAddOnWithoutBaseGame(result.description, result.gameId);
+			return true;
+		}
+
 		Common::String domain = EngineMan.createTargetForGame(result);
 
 		// Display edit dialog for the new entry
