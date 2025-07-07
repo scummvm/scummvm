@@ -290,6 +290,10 @@ ActionRecord *ActionManager::createActionRecord(uint16 type, Common::SeekableRea
 		return new GoInvViewScene();
 	case 140:
 		return new SetVolume();
+	case 148:
+		// MakeScreenFile - seems to save a cropped image of the screen in a bitmap file?
+		// TODO: Used in Nancy 9, sand castle puzzle
+		return nullptr;
 	case 149:
 		if (g_nancy->getGameType() >= kGameTypeNancy9) {
 			// This got moved in nancy9

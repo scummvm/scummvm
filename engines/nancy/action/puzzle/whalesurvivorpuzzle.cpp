@@ -46,9 +46,9 @@ void WhaleSurvivorPuzzle::execute() {
 	// TODO
 	// Stub - move to the winning screen
 	warning("STUB - Whale survivor puzzle");
-	NancySceneState.setEventFlag(425, g_nancy->_true); // Set puzzle flag to solved
+	NancySceneState.setEventFlag(439, g_nancy->_true); // EV_Solved_Whale_Survivor
 	SceneChangeDescription scene;
-	scene.sceneID = 2990;
+	scene.sceneID = 2926;
 	NancySceneState.resetStateToInit();
 	NancySceneState.changeScene(scene);
 }

@@ -46,9 +46,9 @@ void MemoryPuzzle::execute() {
 	// TODO
 	// Stub - move to the winning screen
 	warning("STUB - Memory puzzle");
-	NancySceneState.setEventFlag(423, g_nancy->_true); // Set puzzle flag to solved
+	NancySceneState.setEventFlag(423, g_nancy->_true); // EV_Solved_Necklace_Box
 	SceneChangeDescription scene;
-	scene.sceneID = 3879;
+	scene.sceneID = 3846;
 	NancySceneState.resetStateToInit();
 	NancySceneState.changeScene(scene);
 }

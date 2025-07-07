@@ -38,7 +38,34 @@ void QuizPuzzle::init() {
 
 void QuizPuzzle::execute() {
 	// TODO
-	warning("STUB - Nancy 8 Quiz Puzzle");
+
+	if (g_nancy->getGameType() == kGameTypeNancy8) {
+		warning("STUB - Nancy 8 Quiz Puzzle");
+	} else if (g_nancy->getGameType() == kGameTypeNancy9) {
+		const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
+		if (sceneId == 6450) {
+			warning("STUB - Nancy 9 Quiz Puzzle - Holt Scotto's quiz");
+			// Set the puzzle event flags to flag it as done
+			NancySceneState.setEventFlag(59, g_nancy->_true); // EV_Answered_SQ_Q06
+			NancySceneState.setEventFlag(61, g_nancy->_true); // EV_Answered_SQ_Q09
+		} else if (sceneId == 6342) {
+			warning("STUB - Nancy 9 Quiz Puzzle - GPS new waypoint");
+			// Set the GPS waypoint as discovered
+			NancySceneState.setEventFlag(410, g_nancy->_true);	// EV_Solved_GPS_Beach
+		} else if (sceneId == 6431) {
+			warning("STUB - Nancy 9 Quiz Puzzle - Hilda Swenson's letter");
+			NancySceneState.setEventFlag(179, g_nancy->_true); // EV_Hilda_Said_Objects
+		} else if (sceneId == 6443) {
+			warning("STUB - Nancy 9 Quiz Puzzle - Holt Scotto's chess problem");
+			NancySceneState.setEventFlag(119, g_nancy->_true);	// EV_Finished_Chess_Quiz
+		} else if (sceneId == 4184) {
+			warning("STUB - Nancy 9 Quiz Puzzle - Lighthouse Morse code");
+			NancySceneState.setEventFlag(420, g_nancy->_true);	// EV_Solved_Morse_Code
+		} else {
+			warning("STUB - Nancy 9 Quiz Puzzle");
+		}
+	}
+
 	_isDone = true;
 }
 

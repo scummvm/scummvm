@@ -56,8 +56,9 @@ void MultiBuildPuzzle::execute() {
 		break;
 	case 2575:
 		warning("STUB - Nancy 9 Sandwich making puzzle");
-		NancySceneState.setEventFlag(429, g_nancy->_true); // Set puzzle flag to solved
-		scene.sceneID = 2574;
+		NancySceneState.setEventFlag(428, g_nancy->_true); // EV_Solved_Sandwich_Bad
+		NancySceneState.setEventFlag(429, g_nancy->_true); // EV_Solved_Sandwich_Good
+		scene.sceneID = 2572;
 		break;
 	case 2585:
 		warning("STUB - Nancy 9 Book sorting puzzle");

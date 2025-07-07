@@ -233,6 +233,19 @@ void Scene::changeScene(const SceneChangeDescription &sceneDescription) {
 		return;
 	}
 
+	// HACK: Nancy 9 tries to reload the same scene when changing
+	// angle/power in scene 5651 (stuck bottle in rocks). This ends up
+	// resetting the scene flags, which makes the angle/power buttons
+	// unresponsive. We avoid reloading the scene in this case, if the
+	// new scene is the same as the current one. This has the negative
+	// side-effect that the button arrows are not updated, but at least
+	// it makes them usable.
+	// TODO: find a better solution for this.
+	if (sceneDescription.sceneID == _sceneState.currentScene.sceneID &&
+		g_nancy->getGameType() == kGameTypeNancy9 && sceneDescription.sceneID == 5651) {
+		return;
+	}
+
 	_sceneState.nextScene = sceneDescription;
 	_state = kLoad;
 }

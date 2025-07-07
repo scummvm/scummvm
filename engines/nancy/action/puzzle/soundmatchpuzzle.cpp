@@ -46,9 +46,9 @@ void SoundMatchPuzzle::execute() {
 	// TODO
 	// Stub - move to the winning screen
 	warning("STUB - Nancy 9 Whale sounds puzzle");
-	NancySceneState.setEventFlag(436, g_nancy->_true); // Set puzzle flag to solved
+	NancySceneState.setEventFlag(436, g_nancy->_true); // EV_Solved_Whale_Call
 	SceneChangeDescription scene;
-	scene.sceneID = 2985;
+	scene.sceneID = 2936;
 	NancySceneState.resetStateToInit();
 	NancySceneState.changeScene(scene);
 }

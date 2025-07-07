@@ -44,13 +44,26 @@ void OneBuildPuzzle::execute() {
 	}
 
 	// TODO
-	// Stub - move to the winning screen
-	warning("STUB - Nancy 9 Pipe joining puzzle under sink");
-	NancySceneState.setEventFlag(425, g_nancy->_true); // Set puzzle flag to solved
+	const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
 	SceneChangeDescription scene;
-	scene.sceneID = 6520;
-	NancySceneState.resetStateToInit();
-	NancySceneState.changeScene(scene);
+
+	if (sceneId == 6519) {
+		// Stub - move to the winning screen
+		warning("STUB - Nancy 9 Pipe joining puzzle under sink");
+		NancySceneState.setEventFlag(425, g_nancy->_true); // EV_Solved_Pipes
+		scene.sceneID = 6520;
+		NancySceneState.resetStateToInit();
+		NancySceneState.changeScene(scene);
+	} else if (sceneId == 2916) {
+		// Stub - move to the winning screen
+		warning("STUB - Nancy 9 Carborosaurus Puzzle");
+		NancySceneState.setEventFlag(424, g_nancy->_true); // EV_Solved_Permit_Task
+		scene.sceneID = 2915;
+		NancySceneState.resetStateToInit();
+		NancySceneState.changeScene(scene);
+	} else {
+		warning("STUB - Nancy 9 One Build Puzzle");
+	}
 }
 
 void OneBuildPuzzle::readData(Common::SeekableReadStream &stream) {
