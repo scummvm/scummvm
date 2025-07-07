@@ -34748,7 +34748,6 @@ Common::Array<Common::Array<ObjectNameDesc>> czechSceneObjectNamesDescs = {
 	{},
 	{},
 	{},
-	{},
 };
 
 Common::Array<Common::Array<ObjectNameDesc>> russianSceneObjectNamesDescs = {
