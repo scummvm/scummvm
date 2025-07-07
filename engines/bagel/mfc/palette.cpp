@@ -90,7 +90,19 @@ UINT CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
 
 BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
 		const PALETTEENTRY *lpPaletteColors) {
-	error("TODO: CPalette::AnimatePalette");
+	// Set the new colors
+	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
+	for (; nNumEntries > 0; ++nStartIndex, --nNumEntries,
+			++lpPaletteColors) {
+		impl->set(nStartIndex, lpPaletteColors->peRed,
+			lpPaletteColors->peGreen,
+			lpPaletteColors->peBlue);
+	}
+
+	// Set the new system palette
+	AfxGetApp()->setPalette(*impl);
+
+	return TRUE;
 }
 
 UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
