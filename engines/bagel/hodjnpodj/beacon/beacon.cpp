@@ -167,6 +167,8 @@ CMainWindow::CMainWindow() {
 	bSuccess = (*m_pScrollButton).Create(nullptr, BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScrollRect, this, IDC_SCROLL);
 	ASSERT(bSuccess);
 	bSuccess = (*m_pScrollButton).LoadBitmaps(pGamePalette, pScrollUp, pScrollDown, nullptr, nullptr);
+	pScrollUp = nullptr;
+	pScrollDown = nullptr;
 
 	ASSERT(bSuccess);
 	m_bIgnoreScrollClick = FALSE;
