@@ -317,7 +317,7 @@ uint GlkMetaEngineDetection::getMD5Bytes() const {
 }
 
 void GlkMetaEngineDetection::dumpDetectionEntries() const {
-#if 0
+#if 1
 	enum class EngineName : uint8 {
     	COMPREHEND,
     	LEVEL9,
@@ -348,7 +348,7 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
         { Glk::TADS::TADSMetaEngine::getDetectionEntries(), EngineName::OTHER },
         { nullptr, EngineName::OTHER }
     };
-   
+
 	for (const Detection *detection = detectionEntries; detection->entries; ++detection) {
 		EngineName engineName =	detection->engineName;
 
@@ -368,17 +368,17 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 
 			Common::String checksum = entry->_md5;
 
-			// Filename for Comprehend Engine's md5 is stored in the extra field. 
+			// Filename for Comprehend Engine's md5 is stored in the extra field.
 			// For other engines, filename is not available, so it has been kept as the gameId
 			const char *fname = engineName == EngineName::COMPREHEND ? entry->_extra : entry->_gameId;
 
-			// Level9 engine does not use md5 checksums, so checksums are not printed. 
+			// Level9 engine does not use md5 checksums, so checksums are not printed.
 			if (engineName == EngineName::LEVEL9) {
 				printf("\trom ( name \"%s\" size %lld )\n", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize));
 			} else {
 				printf("\trom ( name \"%s\" size %lld md5-%d %s )\n", escapeString(fname).c_str(), static_cast<long long int>(entry->_filesize), getMD5Bytes(), checksum.c_str());
 			}
-			
+
 			printf(")\n\n");
 		}
 	}
