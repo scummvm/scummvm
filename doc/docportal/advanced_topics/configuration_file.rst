@@ -184,6 +184,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
+		enable_unsupported_addon_warning,boolean,true, Shows a warning when starting a game including an add-on that is unsupported.
 		":ref:`extended_timer <extended>`",boolean,false,
 		extra,string, ,"Shows additional information about a game, such as version"
 		":ref:`english_speech <english>`",boolean,false,
