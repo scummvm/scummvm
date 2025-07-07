@@ -348,10 +348,40 @@ int ShowCursor(BOOL bShow) {
 	return 0;
 }
 
-BOOL LineDDA(int nXStart, int nYStart,
-             int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
-             LPARAM lpData) {
-	error("TODO: LineDDA");
+BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, LPARAM lpData) {
+	if (!lpProc)
+		return FALSE;
+
+	int dx = ABS(x1 - x0);
+	int dy = ABS(y1 - y0);
+
+	int sx = (x0 < x1) ? 1 : -1;
+	int sy = (y0 < y1) ? 1 : -1;
+
+	int err = dx - dy;
+
+	for (;;) {
+		lpProc(x0, y0, lpData);  // Call the callback for this pixel
+
+		if (x0 == x1 && y0 == y1)
+			break;
+
+		int e2 = 2 * err;
+
+		if (e2 > -dy)
+		{
+			err -= dy;
+			x0 += sx;
+		}
+
+		if (e2 < dx)
+		{
+			err += dx;
+			y0 += sy;
+		}
+	}
+
+	return TRUE;
 }
 
 BYTE GetRValue(COLORREF color) {

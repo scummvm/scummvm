@@ -784,10 +784,9 @@ extern HCURSOR LoadCursor(HINSTANCE hInstance,
 extern HCURSOR SetCursor(HCURSOR hCursor);
 extern int ShowCursor(BOOL bShow);
 
-typedef FARPROC LINEDDAPROC;
-extern BOOL LineDDA(int nXStart, int nYStart,
-                    int nXEnd, int nYEnd, LINEDDAPROC lpLineFunc,
-                    LPARAM lpData);
+typedef void (CALLBACK *LINEDDAPROC)(int x, int y, LPARAM lpData);
+extern BOOL LineDDA(int x0, int y0, int x1, int y1,
+	LINEDDAPROC lpProc, LPARAM lpData);
 
 extern BYTE GetRValue(COLORREF color);
 extern BYTE GetGValue(COLORREF color);
