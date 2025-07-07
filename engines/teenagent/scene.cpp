@@ -251,7 +251,7 @@ void Scene::loadObjectData() {
 		uint16 objectAddr;
 		while ((objectAddr = _vm->res->sceneObjectsSeg.get_word(sceneTable)) != 0) {
 			Object obj;
-			obj.load(_vm->res->sceneObjectsSeg.ptr(objectAddr));
+			obj.load(_vm->res->sceneObjectsSeg.ptr(objectAddr), i + 1);
 			//obj.dump();
 			sceneObjects.push_back(obj);
 			sceneTable += 2;

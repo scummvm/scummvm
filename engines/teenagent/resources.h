@@ -1500,13 +1500,6 @@ enum MessageType{
 	kObjCombineErrorMsg,
 };
 
-enum ScnObjName {
-	kScnObjNameAnne = 0,
-	kScnObjNameMike,
-	kScnObjNameSonny,
-	kScnObjNameBody,
-};
-
 class Resources {
 public:
 	Resources();
@@ -1539,8 +1532,6 @@ public:
 	uint16 getMessageAddr(MessageType msgType) { return messageOffsets[msgType]; }
 	uint16 getCombineMessageAddr(uint16 msgNum) { return combineMessageOffsets[msgNum]; }
 
-	Common::String getScnObjName(ScnObjName name) { return settableObjectNames[name]; }
-
 	// Artificial segments added to support multiple languages
 	Segment eseg;
 	Segment creditsSeg, itemsSeg, sceneObjectsSeg;
@@ -1561,8 +1552,6 @@ private:
 	Common::Array<uint16> creditsOffsets, itemOffsets;
 	Common::Array<uint16> messageOffsets;
 	Common::Array<uint16> combineMessageOffsets;
-
-	Common::String settableObjectNames[4];
 };
 
 } // End of namespace TeenAgent
