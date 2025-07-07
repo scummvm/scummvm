@@ -1010,6 +1010,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "loewe6",				"Löwenzahn 6" },
 	{ "loewe7",				"Löwenzahn 7" },
 	{ "loewe8",				"Löwenzahn 8" },
+	{ "loewecalendar",		"Löwenzahn Adventskalender" },
+	{ "loewespielebox",		"Löwenzahn Spielebox" },
 	{ "lulu",				"Das Buch von Lulu" },
 	{ "mathica",			"Mathica ... und Mathematik wird zum Abenteuer" },
 	{ "mats3",				"Mats und das rätselhafte Tier" },
@@ -9760,6 +9762,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("loewe8", "OSX",	"xn--Lwenzahn 8 (OSX)-mwb", "rt:bdb87b75fe7db4ee20d859bd640f5697", 276263, Common::DE_DEU, 851),
 	WINGAME1_l("loewe8", "",	"Setup/WinRoot/Terzio/Loewenzahn 8/Loewe_8.exe", "t:973b650dd2564c20cc1d3501a7498dc1", 71020, Common::DE_DEU, 851),
 
+	MACGAME1_l("loewecalendar", "", "Adventskalender",										 "rt:0e5578cf47954a2c7af8930264791666", 157787, Common::DE_DEU, 850),
+	WINGAME1_l("loewecalendar", "",	"Setup/WinRoot/Terzio/LZ_Adventskalender/LZ_Advent.exe", "t:a08e0377bea127d46b3491db914ef07a",   78516, Common::DE_DEU, 851),
+
+	// Windows versions are D9
+	MACGAME1_l("loewespielebox", "OS9",  "xn--Lwenzahn Spielebox (OS9)-loc",  "rt:19e9fb7b215165e975ab6c6fcedc07cd", 195151, Common::DE_DEU, 850),
+	MACGAME1_l("loewespielebox", "OS X", "xn--Lwenzahn Spielebox (OS X)-yrc", "rt:314c3d52b50d730a3e9382273404eea4", 277675, Common::DE_DEU, 850),
+	MACGAME1_l("loewespielebox", "Farbenspiel",		"Farbenspiel",	   "rt:d381da584c1b1a6e4a6b79b2576a15da", 429369, Common::DE_DEU, 850),
+	MACGAME1_l("loewespielebox", "Farbenspiel OSX", "Farbenspiel OSX", "rt:843d35914a24c6b221aff7cc80a4eead", 528991, Common::DE_DEU, 850),
+
 	WINGAME1_l("lunes", "", "Lunes.exe", "9482a4a5f6ae02470ce1863808120f6e", 2258509, Common::IT_ITA, 851),
 
 	// Advertainment film from Ferrero (chocolates)
@@ -10203,6 +10214,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("loewe3", "", "Loewenzahn 3.exe", "46243628b1d79872340993bdc4a156d8", 87791, Common::DE_DEU, 900),
 	WINGAME1t_l("loewe4", "", "Loewenzahn 4.exe", "fcd7e3e7b9b1080f848c518b6e66d860", 87795, Common::DE_DEU, 900),
 	WINGAME1t_l("loewe6", "", "Loewenzahn 6.exe", "c4135f262abdbf3f2dc660e341b8a192", 87820, Common::DE_DEU, 900),
+
+	// Mac versions are D8
+	WINGAME1_l("loewespielebox", "",			"Setup/WinRoot/Terzio/LZ_Spielebox/LZ_Spielebox.exe", "t:2e0749bd71f312abdf445e958f6fd737", 95544, Common::DE_DEU, 900),
+	WINGAME1_l("loewespielebox", "Farbenspiel", "Setup/WinRoot/Terzio/LZ_Spielebox/Farbenspiel.exe",  "t:7fef21c2e52f377d53f2489f25258fae", 95714, Common::DE_DEU, 900),
 
 	// Original Mac filename is Mats und das rätselhafte Tier
 	// Mac version must be installed. Additional OS X installer runs the game Classic environment.
