@@ -54,6 +54,7 @@ public:
 	void load(PalIndex index, Common::ReadStream &rs, Common::ReadStream &xformrs);
 	void load(PalIndex index, Common::ReadStream &rs);
 	Palette *getPalette(PalIndex index);
+	uint getNumPalettes() const { return _palettes.size(); }
 
 	void duplicate(PalIndex src, PalIndex dest);
 

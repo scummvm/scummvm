@@ -21,9 +21,12 @@
 
 #include "ultima/ultima8/debugtools.h"
 #include "backends/imgui/imgui.h"
+#include "backends/imgui/imgui_utils.h"
 #include "ultima/ultima.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/gfx/palette.h"
+#include "ultima/ultima8/gfx/palette_manager.h"
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/gumps/item_relative_gump.h"
 #include "ultima/ultima8/gumps/target_gump.h"
@@ -38,7 +41,8 @@ namespace Ultima {
 namespace Ultima8 {
 
 typedef struct ImGuiState {
-	bool _itemStats = false;
+	bool _itemStatsWindow = false;
+	bool _paletteWindow = false;
 	uint32 _targetItemId = kMainActorId;
 	ObjId _targetGumpId = 0;
 } ImGuiState;
@@ -46,13 +50,13 @@ typedef struct ImGuiState {
 ImGuiState *_state = nullptr;
 
 void showItemStats() {
-	if (!_state->_itemStats)
+	if (!_state->_itemStatsWindow)
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 550), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Item Stats", &_state->_itemStats)) {
+	if (ImGui::Begin("Item Stats", &_state->_itemStatsWindow)) {
 		if (_state->_targetGumpId) {
 			// Check if gump still exists and has a result
 			Gump *gump = getGump(_state->_targetGumpId);
@@ -314,6 +318,40 @@ void showItemStats() {
 	ImGui::End();
 }
 
+static void showPalette() {
+	if (!_state->_paletteWindow) {
+		return;
+	}
+
+	ImGui::SetNextWindowSize(ImVec2(320, 550), ImGuiCond_FirstUseEver);
+
+	if (ImGui::Begin("Palettes", &_state->_paletteWindow)) {
+		PaletteManager  *pm = PaletteManager::get_instance();
+		Palette *p = pm->getPalette(PaletteManager::Pal_Game);
+		if (p) {
+			ImGui::SeparatorText("Game palette");
+			ImGui::PushID("palette_0");
+			ImGuiEx::Palette(*p);
+			ImGui::PopID();
+			ImGui::NewLine();
+		}
+
+		for (uint i = 1; i < pm->getNumPalettes(); i++) {
+			p = pm->getPalette(static_cast<PaletteManager::PalIndex>(i));
+			if (p) {
+				Common::String text = Common::String::format("Palette %d", i);
+				Common::String id = Common::String::format("palette_%d", i);
+				ImGui::SeparatorText(text.c_str());
+				ImGui::PushID(id.c_str());
+				ImGuiEx::Palette(*p);
+				ImGui::PopID();
+				ImGui::NewLine();
+			}
+		}
+	}
+	ImGui::End();
+}
+
 void onImGuiInit() {
 	_state = new ImGuiState();
 }
@@ -372,13 +410,15 @@ void onImGuiRender() {
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("View")) {
-			ImGui::MenuItem("Item Stats", NULL, &_state->_itemStats);
+			ImGui::MenuItem("Item Stats", NULL, &_state->_itemStatsWindow);
+			ImGui::MenuItem("Palette", NULL, &_state->_paletteWindow);
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
 	}
 
 	showItemStats();
+	showPalette();
 }
 
 void onImGuiCleanup() {
