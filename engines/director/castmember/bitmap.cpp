@@ -1058,6 +1058,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 		offset = _picture->_surface.w % 2;
 	}
 	
+	debug("What is _bitsPerPixel = %d", _bitsPerPixel);
 	for (int y = 0; y < _picture->_surface.h; y++) {
 		for (int x = 0; x < _picture->_surface.w;) {
 			uint32 color = 0;

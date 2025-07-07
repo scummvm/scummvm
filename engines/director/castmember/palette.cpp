@@ -183,14 +183,11 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 	const byte *pal = _palette->palette;
 
 	for (int i = 0; i < _palette->length; i++) {
-		writeStream->writeByte(pal[3 * i]);		// The palette data is converted to 8-bit at the time of loading
-		writeStream->writeByte(pal[3 * i]);		// Duplicating the data to convert to 16-bit
-
-		writeStream->writeByte(pal[3 * i + 1]);
-		writeStream->writeByte(pal[3 * i + 1]);
-
-		writeStream->writeByte(pal[3 * i + 2]);
-		writeStream->writeByte(pal[3 * i + 2]);
+		// Duplicating the data to convert to 16-bit
+		// The palette data is converted to 8-bit at the time of loading
+		writeStream->writeUint16BE(pal[3 * i] << 8);		
+		writeStream->writeUint16BE(pal[3 * i + 1] << 8);
+		writeStream->writeUint16BE(pal[3 * i + 2] << 8);
 	}
 
 	dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);

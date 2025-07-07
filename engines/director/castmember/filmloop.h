@@ -61,6 +61,9 @@ public:
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::MemoryWriteStream *writeStream) override;
 
+	void writeSCVWResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getSCVWResourceSize(uint32 channelSize);
+
 	bool _enableSound;
 	bool _looping;
 	bool _crop;
