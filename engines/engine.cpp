@@ -814,6 +814,32 @@ bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	return true;
 }
 
+bool Engine::warnUserAboutUnsupportedAddOn(Common::String addOnName) {
+	if (ConfMan.getBool("enable_unsupported_addon_warning")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->pushState();
+			g_gui.initTextToSpeech();
+		}
+
+		Common::U32String messageFormat = _("WARNING: the game you are about to start contains the add-on \"%s\""
+			" which is not yet fully supported by ScummVM. As such, it is likely to be unstable, and any saved"
+			" game you make might not work in future versions of ScummVM.");
+
+		Common::U32String message = Common::U32String::format(messageFormat, addOnName.c_str());
+
+		GUI::MessageDialog alert(message, _("Start anyway"), _("Cancel"));
+		int status = alert.runModal();
+
+		if (ttsMan != nullptr)
+			ttsMan->popState();
+
+		return status == GUI::kMessageOK;
+	}
+
+	return true;
+}
+
 void Engine::errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::String gameId) {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
