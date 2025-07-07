@@ -186,6 +186,11 @@ struct DetectedGame {
 	 */
 	bool canBeAdded;
 
+	/**
+	 * The game is an add-on that cannot be run independently.
+	 */
+	bool isAddOn = false;
+
 	Common::String gameId;
 	Common::String preferredTarget;
 	Common::String description;

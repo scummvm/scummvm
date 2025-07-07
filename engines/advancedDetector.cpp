@@ -162,6 +162,10 @@ static Common::String generatePreferredTarget(const ADGameDescription *desc, int
 		res = res + "-" + getLanguageCode(desc->language);
 	}
 
+	if (desc->flags & ADGF_ADDON) {
+		res = res + "-addon";
+	}
+
 	return res;
 }
 
@@ -207,6 +211,9 @@ DetectedGame AdvancedMetaEngineDetectionBase::toDetectedGame(const ADDetectedGam
 		game.gameSupportLevel = kUnsupportedGame;
 	else if (desc->flags & ADGF_WARNING)
 		game.gameSupportLevel = kWarningGame;
+
+	if (desc->flags & ADGF_ADDON)
+		game.isAddOn = true;
 
 	game.setGUIOptions(desc->guiOptions + _guiOptions);
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(desc->language));
