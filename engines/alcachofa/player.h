@@ -48,7 +48,6 @@ public:
 
 	void preUpdate();
 	void postUpdate();
-	void drawScreenStates(); // black borders and/or permanent fade
 	void updateCursor();
 	void drawCursor(bool forceDefaultCursor = false);
 	void resetCursor();
@@ -56,7 +55,6 @@ public:
 	void changeRoomToBeforeInventory();
 	void triggerObject(ObjectBase *object, const char *action);
 	void triggerDoor(const Door *door);
-	void setPermanentFade(bool isFaded);
 	void addLastDialogCharacter(Character *character);
 	void stopLastDialogCharacters();
 	void setActiveCharacter(MainCharacterKind kind);
@@ -76,8 +74,7 @@ private:
 	bool
 		_isOptionsMenuOpen = false,
 		_isGameLoaded = true,
-		_didLoadGlobalRooms = false,
-		_isPermanentFaded = false;
+		_didLoadGlobalRooms = false;
 	Character *_lastDialogCharacters[kMaxLastDialogCharacters] = { nullptr };
 	int _nextLastDialogCharacter = 0;
 };
