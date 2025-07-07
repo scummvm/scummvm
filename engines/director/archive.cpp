@@ -1232,7 +1232,7 @@ bool RIFXArchive::writeToFile(Common::Path path) {
 			it->tag != MKTAG('i', 'm', 'a', 'p') &&
 			it->tag != MKTAG('m', 'm', 'a', 'p') &&
 			it->tag != MKTAG('K', 'E', 'Y', '*') &&
-			it->tag != MKTAG('f', 'r', 'e', 'e')
+			it->tag != MKTAG('f', 'r', 'e', 'e')		// Sometimes 'free' resources have garbage values, they might overwrite other data
 		) {
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
