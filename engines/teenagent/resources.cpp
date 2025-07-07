@@ -114,12 +114,12 @@ void Resources::precomputeMessageOffsets() {
 	precomputeResourceOffsets(messagesSeg, messageOffsets);
 }
 
-void Resources::precomputeCombineMessageOffsets() {
-	precomputeResourceOffsets(combineMessageSeg, combineMessageOffsets);
+void Resources::precomputeCombinationOffsets() {
+	precomputeResourceOffsets(combinationsSeg, combinationOffsets);
 
-	debug(1, "Resources::precomputeCombineMessageOffsets() - Found %d combine messages", combineMessageOffsets.size());
-	for (uint i = 0; i < combineMessageOffsets.size(); i++)
-		debug(1, "\tCombination message #%d: Offset 0x%04x", i, combineMessageOffsets[i]);
+	debug(1, "Resources::precomputeCombinationOffsets() - Found %d combination items", combinationOffsets.size());
+	for (uint i = 0; i < combinationOffsets.size(); i++)
+		debug(1, "\tCombination #%d: Offset 0x%04x", i, combinationOffsets[i]);
 }
 
 void Resources::readDialogStacks(byte *src) {
@@ -216,7 +216,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	messagesSeg.read(dat, resourceSize);
 
 	resourceSize = dat->readUint32LE();
-	combineMessageSeg.read(dat, resourceSize);
+	combinationsSeg.read(dat, resourceSize);
 
 	delete dat;
 
@@ -224,7 +224,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	precomputeItemOffsets();
 	precomputeCreditsOffsets();
 	precomputeMessageOffsets();
-	precomputeCombineMessageOffsets();
+	precomputeCombinationOffsets();
 
 	FilePack varia;
 	varia.open("varia.res");
