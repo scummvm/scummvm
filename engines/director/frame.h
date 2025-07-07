@@ -34,6 +34,7 @@ struct Surface;
 namespace Common {
 class ReadStreamEndian;
 class MemoryReadStreamEndian;
+class MemoryWriteStream;
 }
 
 namespace Director {
@@ -198,6 +199,8 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+
+void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite);
 
 } // End of namespace Director
 

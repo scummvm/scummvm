@@ -594,6 +594,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+	debug("I'm here to read: %d bytes, I'm at: %ld, starting at: %d, ending at %d", finishPosition - startPosition, stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -714,6 +715,38 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 	// We set it to zero, so then could skip
 	if (sprite._width <= 0 || sprite._height <= 0)
 		sprite._width = sprite._height = 0;
+}
+
+void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
+	// Writing 20 bytes of sprite data
+	// The original data for a certain sprite might be less
+	writeStream->writeByte(sprite._scriptId.member);			// 0
+	
+	// If the sprite is a puppet (controlled by lingo scripting)
+	// The rest of the data isn't read
+	if (sprite._puppet) {
+		writeStream->write(0, 19);
+	} else {
+		writeStream->writeByte((byte) sprite._spriteType);		// 1
+		writeStream->writeByte(sprite._foreColor);				// 2
+		writeStream->writeByte(sprite._backColor);				// 3
+		writeStream->writeByte(sprite._thickness);				// 4
+		writeStream->writeByte(sprite._inkData);				// 5
+
+		if (sprite.isQDShape()) {
+			writeStream->writeUint16BE(sprite._pattern);		// 6, 7
+		} else {
+			writeStream->writeUint16BE(sprite._castId.member);	// 6, 7
+		}
+
+		writeStream->writeUint16BE(sprite._startPoint.y);		// 8, 9
+		writeStream->writeUint16BE(sprite._startPoint.x);		// 10, 11
+		writeStream->writeUint16BE(sprite._height);				// 12, 13
+		writeStream->writeUint16BE(sprite._width);				// 14, 15
+		writeStream->writeUint16BE(sprite._scriptId.member);	// 16, 17
+		writeStream->writeByte(sprite._colorcode);				// 18
+		writeStream->writeByte(sprite._blendAmount);			// 19
+	}
 }
 
 /**************************

@@ -315,7 +315,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			int channelOffset = order % channelSize;
 			int offset = order;
 
-			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, channel %d, channelOffset %d", msgWidth, channel, channelOffset);
+			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -746,6 +746,90 @@ void FilmLoopCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 
 	writeStream->writeUint32LE(flags);
 	writeStream->writeUint16LE(0);		// May need to save proper value in the future, currently ignored
+}
+
+void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 channelSize = 0; 
+	switch (_cast->_version)  {
+	case kFileVer400:
+		channelSize = kSprChannelSizeD4;
+		break;
+		
+	case kFileVer500:
+		channelSize = kSprChannelSizeD5;
+		break;
+		
+	default:
+		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6 not supported yet");
+		return;
+	}
+
+	// Go to the desired offset put in the memory map
+	writeStream->seek(offset);
+
+	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
+	writeStream->writeUint32LE(getSCVWResourceSize(channelSize));	// Size of the resource
+
+	uint32 sizePos = writeStream->pos();
+	writeStream->writeUint32BE(0);						// Putting zeroes instead of size currently
+
+	uint32 frameOffset = 16;							// Should be greater than 16
+	writeStream->writeUint32BE(frameOffset);			// framesOffset
+	writeStream->seek(6, SEEK_CUR);						// Ignored data
+	writeStream->writeUint16BE(kSprChannelSizeD4);
+	writeStream->seek(frameOffset - 16, SEEK_CUR);				// Ignored data			
+
+	// The structure of the filmloop 'SCVW' data is as follows
+	// The 'SCVW' tag -> the size of the resource ->
+	// frameoffset (This offset is where the frame date actually starts) ->
+	// Some headers which we ignore except the Sprite Channel Size (which we also ignore during loading) ->
+	
+	// until there are no more frames
+	// size of the frame ->
+
+	// until there are no more channels in the frame
+	// width of message (One chunk of data) (This is the size of data for the sprite that needs to be read) ->
+	// order of message (this order tells us the channel we're reading) ->
+	// 1-20 bytes of Sprite data
+
+	for (FilmLoopFrame frame : _frames) {
+		writeStream->writeUint16BE(0);					// Frame Size
+
+		for (auto it : frame.sprites) {
+			int channel = it._key;
+			// For now writing the order considering that each sprite will have 20 bytes of data
+			// In the future, for optimization, we can actually calculate the data of each sprite
+			// And write the order accordingly 
+			// But for this we'll need a way to find how many data values (out of 20) of a sprite are valid, i.e. determine message width
+			// this means while loading, the channelOffset will always be 0, order will always be multiple of 20
+			// And message width will always be 20
+			// Channel indexes start with 0
+			writeStream->writeUint16BE(kSprChannelSizeD4);						// message width
+			writeStream->writeUint16BE(channel * kSprChannelSizeD4);
+
+			Sprite sprite = it._value;
+
+			writeSpriteDataD4(writeStream, sprite);
+		}
+		
+	}	
+}
+
+uint32 FilmLoopCastMember::getSCVWResourceSize(uint32 channelSize) {
+	// Size of the filmloop data: 4 bytes
+	// frameoffset: 4 bytes
+	// Header (Ignored data): 12 bytes
+	// 
+	uint32 framesSize = 0;
+	for (FilmLoopFrame frame : _frames) { 
+		for (auto it : frame.sprites) {
+			// message width: 2 bytes
+			// order: 2 bytes
+			// Sprite data: 20 bytes
+			framesSize += 2 + 2 + channelSize; 	
+		}
+	}
+	return 4 + 4 + 12 + framesSize;
 }
 
 } // End of namespace Director
