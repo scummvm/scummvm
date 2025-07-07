@@ -258,11 +258,15 @@ BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 
 BOOL StretchBlt(HDC hdcDest, int xDest, int yDest, int wDest, int hDest,
                 HDC hdcSrc, int xSrc, int ySrc, int wSrc, int hSrc, DWORD rop) {
-	error("TODO: StretchBlt");
+	CDC *srcDC = CDC::FromHandle(hdcSrc);
+	CDC *destDC = CDC::FromHandle(hdcDest);
+	return destDC->StretchBlt(xDest, yDest, wDest, hDest,
+		srcDC, xSrc, ySrc, wSrc, hSrc, rop);
 }
 
 int SetStretchBltMode(HDC hdc, int mode) {
-	error("TODO: SetStretchBltMode");
+	CDC *dc = CDC::FromHandle(hdc);
+	return dc->SetStretchBltMode(mode);
 }
 
 int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
