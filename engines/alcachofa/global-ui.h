@@ -35,12 +35,14 @@ public:
 
 	inline Font &generalFont() const { assert(_generalFont != nullptr); return *_generalFont; }
 	inline Font &dialogFont() const { assert(_dialogFont != nullptr); return *_dialogFont; }
+	inline bool &isPermanentFaded() { return _isPermanentFaded; }
 
 	bool updateChangingCharacter();
 	void drawChangingButton();
 	bool updateOpeningInventory();
 	void updateClosingInventory();
 	void startClosingInventory();
+	void drawScreenStates(); // black borders and/or permanent fade
 
 private:
 	Animation *activeAnimation() const;
@@ -57,7 +59,8 @@ private:
 
 	bool
 		_isOpeningInventory = false,
-		_isClosingInventory = false;
+		_isClosingInventory = false,
+		_isPermanentFaded = false;
 	uint32 _timeForInventory = 0;
 };
 

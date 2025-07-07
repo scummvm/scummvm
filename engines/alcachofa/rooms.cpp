@@ -150,8 +150,7 @@ void Room::draw() {
 	g_engine->camera().update();
 	drawObjects();
 	world().globalRoom().drawObjects();
-	// TODO: Draw black borders
-	g_engine->player().drawScreenStates();
+	g_engine->globalUI().drawScreenStates();
 	g_engine->drawQueue().draw();
 	drawDebug();
 	world().globalRoom().drawDebug();

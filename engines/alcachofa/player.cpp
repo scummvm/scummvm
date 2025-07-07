@@ -44,11 +44,6 @@ void Player::postUpdate() {
 		_pressedObject = nullptr;
 }
 
-void Player::drawScreenStates() {
-	if (_isPermanentFaded && !_isOptionsMenuOpen)
-		g_engine->drawQueue().add<FadeDrawRequest>(FadeType::ToBlack, 1.0f, -9);
-}
-
 void Player::resetCursor() {
 	_cursorFrameI = 0;
 }
@@ -260,10 +255,6 @@ void Player::triggerDoor(const Door *door) {
 
 	FakeLock lock(_activeCharacter->semaphore());
 	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
-}
-
-void Player::setPermanentFade(bool isFaded) {
-	_isPermanentFaded = isFaded;
 }
 
 // the last dialog character mechanic seems like a hack in the original engine

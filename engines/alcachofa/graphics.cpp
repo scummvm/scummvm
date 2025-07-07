@@ -22,6 +22,7 @@
 #include "graphics.h"
 #include "alcachofa.h"
 #include "shape.h"
+#include "global-ui.h"
 
 #include "common/system.h"
 #include "common/file.h"
@@ -784,7 +785,7 @@ struct FadeTask : public Task {
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		if (_permanentFadeAction == PermanentFadeAction::UnsetFaded)
-			g_engine->player().setPermanentFade(false);
+			g_engine->globalUI().isPermanentFaded() = false;
 		_startTime = g_system->getMillis();
 		while (g_system->getMillis() - _startTime < _duration) {
 			draw((g_system->getMillis() - _startTime) / (float)_duration);
@@ -792,7 +793,7 @@ struct FadeTask : public Task {
 		}
 		draw(1.0f); // so that during a loading lag the screen is completly black/white
 		if (_permanentFadeAction == PermanentFadeAction::SetFaded)
-			g_engine->player().setPermanentFade(true);
+			g_engine->globalUI().isPermanentFaded() = true;
 		TASK_END;
 	}
 
@@ -826,6 +827,19 @@ Task *fade(Process &process, FadeType fadeType,
 	if (!process.isActiveForPlayer())
 		return new DelayTask(process, (uint32)duration);
 	return new FadeTask(process, fadeType, from, to, duration, easingType, order, permanentFadeAction);
+}
+
+BorderDrawRequest::BorderDrawRequest(Rect rect, Color color)
+	: IDrawRequest(-kForegroundOrderCount)
+	, _rect(rect)
+	, _color(color) {
+}
+
+void BorderDrawRequest::draw() {
+	auto &renderer = g_engine->renderer();
+	renderer.setTexture(nullptr);
+	renderer.setBlendMode(BlendMode::AdditiveAlpha);
+	renderer.quad({ (float)_rect.left, (float)_rect.top }, { (float)_rect.width(), (float)_rect.height() }, _color);
 }
 
 DrawQueue::DrawQueue(IRenderer *renderer)

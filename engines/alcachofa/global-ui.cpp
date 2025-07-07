@@ -21,6 +21,7 @@
 
 #include "global-ui.h"
 #include "alcachofa.h"
+#include "script.h"
 
 using namespace Common;
 
@@ -222,6 +223,21 @@ private:
 
 Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs) {
 	return new CenterBottomTextTask(process, dialogId, durationMs);
+}
+
+void GlobalUI::drawScreenStates() {
+	if (g_engine->player().isOptionsMenuOpen())
+		return;
+
+	auto &drawQueue = g_engine->drawQueue();
+	if (_isPermanentFaded)
+		drawQueue.add<FadeDrawRequest>(FadeType::ToBlack, 1.0f, -9);
+	else if (int32 borderWidth = g_engine->script().variable("BordesNegros")) {
+		int16 width = g_system->getWidth();
+		int16 height = g_system->getHeight();
+		drawQueue.add<BorderDrawRequest>(Rect(0, 0, width, borderWidth), kBlack);
+		drawQueue.add<BorderDrawRequest>(Rect(0, height - borderWidth, width, height), kBlack);
+	}
 }
 
 }

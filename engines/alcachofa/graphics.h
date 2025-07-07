@@ -412,6 +412,17 @@ Task *fade(Process &process, FadeType fadeType,
 	int8 order,
 	PermanentFadeAction permanentFadeAction = PermanentFadeAction::Nothing);
 
+class BorderDrawRequest : public IDrawRequest {
+public:
+	BorderDrawRequest(Common::Rect rect, Color color);
+
+	virtual void draw() override;
+
+private:
+	Common::Rect _rect;
+	Color _color;
+};
+
 class BumpAllocator {
 public:
 	BumpAllocator(size_t pageSize);
