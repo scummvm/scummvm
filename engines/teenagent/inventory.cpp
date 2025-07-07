@@ -213,7 +213,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
 		for (uint i = 0; i < kNumCombinations; i++) {
-			byte *table = _vm->res->combineMessageSeg.ptr(_vm->res->getCombineMessageAddr(i));
+			byte *table = _vm->res->combinationsSeg.ptr(_vm->res->getCombinationAddr(i));
 
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte newObj = table[2];

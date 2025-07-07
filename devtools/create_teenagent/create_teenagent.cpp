@@ -42,7 +42,7 @@ void writeStringsBlock(FILE *fd, const char **stringArr, uint size) {
 	}
 }
 
-void writeCombineMessages(FILE *fd, Common::Language language) {
+void writeCombinations(FILE *fd, Common::Language language) {
 	const char **combineMessages = englishCombineMessages;
 	if (language == CS_CZE)
 		combineMessages = czechCombineMessages;
@@ -353,8 +353,8 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 		writeStringsBlock(fd, messages, kNumMessages);
 		break;
 	}
-	case kResCombineMessages:
-		writeCombineMessages(fd, language);
+	case kResCombinations:
+		writeCombinations(fd, language);
 		break;
 	};
 
