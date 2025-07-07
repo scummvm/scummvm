@@ -384,11 +384,11 @@ void CDC::LineTo(int x, int y) {
 }
 
 COLORREF CDC::GetPixel(int x, int y) const {
-	error("TODO: CDC::GetPixel");
+	return impl()->getPixel(x, y);
 }
 
 COLORREF CDC::GetPixel(const POINT &point) const {
-	error("TODO: CDC::GetPixel");
+	return impl()->getPixel(point.x, point.y);
 }
 
 CGdiObject *CDC::SelectStockObject(int nIndex) {
@@ -868,6 +868,12 @@ void CDC::Impl::lineTo(int x, int y) {
 	dest->drawLine(_linePos.x, _linePos.y, x, y, color);
 	_linePos.x = x;
 	_linePos.y = y;
+}
+
+COLORREF CDC::Impl::getPixel(int x, int y) const {
+	Graphics::ManagedSurface *src = getSurface();
+	const byte *pixel = (const byte *)src->getBasePtr(x, y);
+	return *pixel;
 }
 
 uint CDC::Impl::getPenColor() const {

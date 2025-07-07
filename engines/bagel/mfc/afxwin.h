@@ -741,7 +741,7 @@ public:
 
 		void moveTo(int x, int y);
 		void lineTo(int x, int y);
-
+		COLORREF getPixel(int x, int y) const;
 
 		// Text functions
 		COLORREF setBkColor(COLORREF crColor);
