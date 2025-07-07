@@ -286,7 +286,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		// is alive (as else the string storage is modified/deleted).
 		g_fallbackDesc.desc.gameId = _gameid.c_str();
 		g_fallbackDesc.desc.extra = _extra.c_str();
-		g_fallbackDesc.desc.guiOptions = GAMEOPTIONS_FANMADE_MOUSE_VGA;
+		g_fallbackDesc.desc.guiOptions = GAMEOPTIONS_FANMADE_MOUSE;
 
 		Common::String fallbackWarning;
 
