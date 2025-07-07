@@ -52,11 +52,23 @@ ifstream &ifstream::getline(char *buffer, size_t count) {
 	char c;
 	_cCount = 0;
 
-	while (!_file->eos() && (c = _file->readByte()) != '\n') {
+	while (!_file->eos()) {
+		c = _file->readByte();
+
+		// Check for end of line characters
+		if (c == '\n')
+			break;
+		if (c == '\r') {
+			c = _file->readByte();
+			assert(c == '\n');
+			break;
+		}
+
 		*buffer++ = c;
 		++_cCount;
 	}
 
+	*buffer = '\0';
 	return *this;
 }
 
