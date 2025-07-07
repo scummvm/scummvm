@@ -36,13 +36,15 @@ enum openmode {
 
 class ifstream {
 private:
-	Common::File _file;
+	Common::SeekableReadStream *_file = nullptr;
 	size_t _cCount = 0;
 
 public:
 	ifstream();
 	ifstream(const char *filename, ios::openmode mode = ios::in);
-	virtual ~ifstream() {}
+	virtual ~ifstream() {
+		close();
+	}
 
 	virtual void open(const char *filename, ios::openmode mode = ios::in);
 	virtual bool is_open() const;

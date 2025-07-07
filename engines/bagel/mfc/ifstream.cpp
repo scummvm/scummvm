@@ -21,6 +21,7 @@
 
 #include "common/file.h"
 #include "bagel/mfc/ifstream.h"
+#include "bagel/mfc/global_functions.h"
 
 namespace Bagel {
 namespace MFC {
@@ -33,23 +34,25 @@ ifstream::ifstream(const char *filename, ios::openmode mode) {
 }
 
 void ifstream::open(const char *filename, ios::openmode mode) {
-	if (!_file.open(filename))
+	_file = OpenFile(filename);
+	if (!_file)
 		error("Could not open - %s", filename);
 }
 
 bool ifstream::is_open() const {
-	return _file.isOpen();
+	return _file;
 }
 
 void ifstream::close() {
-	_file.close();
+	delete _file;
+	_file = nullptr;
 }
 
 ifstream &ifstream::getline(char *buffer, size_t count) {
 	char c;
 	_cCount = 0;
 
-	while (!_file.eos() && (c = _file.readByte()) != '\n') {
+	while (!_file->eos() && (c = _file->readByte()) != '\n') {
 		*buffer++ = c;
 		++_cCount;
 	}
@@ -58,7 +61,7 @@ ifstream &ifstream::getline(char *buffer, size_t count) {
 }
 
 ifstream &ifstream::read(char *buffer, size_t count) {
-	_cCount = _file.read(buffer, count);
+	_cCount = _file->read(buffer, count);
 	return *this;
 }
 
@@ -67,31 +70,31 @@ size_t ifstream::gcount() const {
 }
 
 bool ifstream::good() const {
-	return !_file.err();
+	return !_file->err();
 }
 
 bool ifstream::eof() const {
-	return _file.eos();
+	return _file->eos();
 }
 
 bool ifstream::ifstream::fail() const {
-	return _file.err();
+	return _file->err();
 }
 
 bool ifstream::ifstream::bad() const {
-	return _file.err();
+	return _file->err();
 }
 
 size_t ifstream::tellg() {
-	return _file.pos();
+	return _file->pos();
 }
 
 ifstream &ifstream::seekg(size_t pos) {
-	_file.seek(pos);
+	_file->seek(pos);
 	return *this;
 }
 ifstream &ifstream::seekg(int32 off, int dir) {
-	_file.seek(off, dir);
+	_file->seek(off, dir);
 	return *this;
 }
 
