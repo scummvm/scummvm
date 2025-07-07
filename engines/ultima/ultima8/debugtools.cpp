@@ -403,6 +403,10 @@ void onImGuiRender() {
 				}
 				ImGui::EndMenu();
 			}
+			if (ImGui::MenuItem("Hack Mover", NULL, engine->isHackMoverEnabled())) {
+				bool flag = engine->isHackMoverEnabled();
+				engine->setHackMoverEnabled(!flag);
+			}
 			if (ImGui::MenuItem("Quick Movement", NULL, QuickAvatarMoverProcess::isEnabled())) {
 				bool flag = QuickAvatarMoverProcess::isEnabled();
 				QuickAvatarMoverProcess::setEnabled(!flag);

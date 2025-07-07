@@ -139,7 +139,8 @@ Ultima8Engine::Ultima8Engine(OSystem *syst, const Ultima::UltimaGameDescription 
 		_world(nullptr), _desktopGump(nullptr), _gameMapGump(nullptr), _avatarMoverProcess(nullptr),
 		_frameSkip(false), _frameLimit(true), _interpolate(true), _animationRate(100),
 		_avatarInStasis(false), _cruStasis(false), _showEditorItems(false), _inversion(0),
-		_showTouching(false), _timeOffset(0), _hasCheated(false), _cheatsEnabled(false),
+		_showTouching(false), _hackMoverEnabled(false), _timeOffset(0),
+		_hasCheated(false), _cheatsEnabled(false),
 		_fontOverride(false), _fontAntialiasing(false), _audioMixer(0), _inverterGump(nullptr),
 		_lerpFactor(256), _inBetweenFrame(false), _crusaderTeleporting(false), _moveKeyFrame(0),
 		_highRes(false), _priorFrameCounterTime(0) {

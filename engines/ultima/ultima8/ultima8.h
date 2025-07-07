@@ -122,6 +122,7 @@ private:
 	//!< nor can Avatar start more usecode
 	bool _showEditorItems;   //!< If true, paint items with the SI_EDITOR flag
 	bool _showTouching;      //!< If true, highlight items touching Avatar
+	bool _hackMoverEnabled;  //!< If true, any item can be moved
 	int32 _timeOffset;
 	bool _hasCheated;
 	bool _cheatsEnabled;
@@ -248,6 +249,13 @@ public:
 	}
 	void setShowTouchingItems(bool flag) {
 		_showTouching = flag;
+	}
+
+	bool isHackMoverEnabled() const {
+		return _hackMoverEnabled;
+	}
+	void setHackMoverEnabled(bool flag) {
+		_hackMoverEnabled = flag;
 	}
 
 	bool isCrusaderTeleporting() const {

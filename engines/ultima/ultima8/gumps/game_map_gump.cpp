@@ -385,10 +385,15 @@ void GameMapGump::IncSortOrder(int count) {
 bool GameMapGump::StartDraggingItem(Item *item, int mx, int my) {
 //	ParentToGump(mx, my);
 
-	if (!item->canDrag()) return false;
+	bool hackMover = Ultima8Engine::get_instance()->isHackMoverEnabled();
+	if (!hackMover) {
+		if (!item->canDrag())
+			return false;
 
-	MainActor *avatar = getMainActor();
-	if (!avatar->canReach(item, 128)) return false;  // CONSTANT!
+		MainActor *avatar = getMainActor();
+		if (!avatar->canReach(item, 128))
+			return false;  // CONSTANT!
+	}
 
 	// get item offset
 	int32 itemx = 0;
@@ -422,19 +427,25 @@ bool GameMapGump::DraggingItem(Item *item, int mx, int my) {
 		return  backpack->CanAddItem(item, true);
 	}
 
+	bool hackMover = Ultima8Engine::get_instance()->isHackMoverEnabled();
+	if (hackMover) {
+		Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_TARGET);
+		return true;
+	}
+
 	bool throwing = false;
 	if (!avatar->canReach(item, 128, // CONSTANT!
 	                      _draggingPos.x, _draggingPos.y, _draggingPos.z)) {
 		// can't reach, so see if we can throw
 		int throwrange = item->getThrowRange();
 		if (throwrange && avatar->canReach(item, throwrange, _draggingPos.x,
-		                                   _draggingPos.y, _draggingPos.z)) {
+										   _draggingPos.y, _draggingPos.z)) {
 			int speed = 64 - item->getTotalWeight() + avatar->getStr();
 			if (speed < 1) speed = 1;
 			Point3 pt = avatar->getLocation();
 			MissileTracker t(item, 1, pt.x, pt.y, pt.z,
-			                 _draggingPos.x, _draggingPos.y, _draggingPos.z,
-			                 speed, 4);
+							 _draggingPos.x, _draggingPos.y, _draggingPos.z,
+							 speed, 4);
 			if (t.isPathClear())
 				throwing = true;
 			else
@@ -478,6 +489,10 @@ void GameMapGump::DropItem(Item *item, int mx, int my) {
 	Item *targetitem = getItem(trace);
 	bool canReach = avatar->canReach(item, 128, // CONSTANT!
 									_draggingPos.x, _draggingPos.y, _draggingPos.z);
+
+	bool hackMover = Ultima8Engine::get_instance()->isHackMoverEnabled();
+	if (hackMover)
+		canReach = true;
 
 	if (item->getShapeInfo()->hasQuantity()) {
 		if (item->getQuality() > 1) {

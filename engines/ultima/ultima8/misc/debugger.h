@@ -66,6 +66,7 @@ private:
 	bool cmdMaxStats(int argc, const char **argv);
 	bool cmdHeal(int argc, const char **argv);
 	bool cmdInvincibility(int argc, const char **argv);
+	bool cmdHackMover(int argc, const char **argv);
 
 	// Game Map Gump
 	bool cmdHighlightItems(int argc, const char **argv);

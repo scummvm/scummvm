@@ -89,6 +89,7 @@ Debugger::Debugger() : GUI::Debugger() {
 	registerCmd("Cheat::toggleInvincibility", WRAP_METHOD(Debugger, cmdInvincibility));
 	registerCmd("Cheat::items", WRAP_METHOD(Debugger, cmdCheatItems));
 	registerCmd("Cheat::equip", WRAP_METHOD(Debugger, cmdCheatEquip));
+	registerCmd("Cheat::hackMover", WRAP_METHOD(Debugger, cmdHackMover));
 
 	registerCmd("GameMapGump::toggleHighlightItems", WRAP_METHOD(Debugger, cmdHighlightItems));
 	registerCmd("GameMapGump::toggleFootpads", WRAP_METHOD(Debugger, cmdFootpads));
@@ -628,6 +629,26 @@ bool Debugger::cmdInvincibility(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Debugger::cmdHackMover(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Usage: %s [on|off]\n", argv[0]);
+		return true;
+	}
+
+	Ultima8Engine *g = Ultima8Engine::get_instance();
+	bool flag = !g->isHackMoverEnabled();
+	if (argc > 1) {
+		if (scumm_stricmp(argv[1], "on") == 0 || scumm_stricmp(argv[1], "true") == 0)
+			flag = true;
+		else if (scumm_stricmp(argv[1], "off") == 0 || scumm_stricmp(argv[1], "false") == 0)
+			flag = false;
+	}
+
+	g->setHackMoverEnabled(flag);
+	debugPrintf("Hack mover = %s\n", strBool(flag));
+	return false;
 }
 
 bool Debugger::cmdHighlightItems(int argc, const char **argv) {
@@ -1366,11 +1387,6 @@ bool Debugger::cmdObjectInfo(int argc, const char **argv) {
 bool Debugger::cmdQuickMover(int argc, const char **argv) {
 	if (argc > 2) {
 		debugPrintf("Usage: %s [on|off]\n", argv[0]);
-		return true;
-	}
-
-	if (!Ultima8Engine::get_instance()->areCheatsEnabled()) {
-		debugPrintf("Cheats aren't enabled\n");
 		return true;
 	}
 
