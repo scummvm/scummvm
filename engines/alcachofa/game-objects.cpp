@@ -606,12 +606,12 @@ void WalkingCharacter::updateWalkingAnimation() {
 			stepFrameTo = 2 * expectedFrame;
 		}
 		else {
-			stepFrameFrom = 2 * halfFrameCount - 4;
+			stepFrameFrom = 2 * (halfFrameCount - 2);
 			stepFrameTo = 2 * halfFrameCount - 2;
 		}
 	}
 	if (isUnexpectedFrame) {
-		const uint stepSize = (uint)sqrtf(animation->frameCenter(stepFrameFrom).sqrDist(animation->frameCenter(stepFrameTo)));
+		const float stepSize = sqrtf(animation->frameCenter(stepFrameFrom).sqrDist(animation->frameCenter(stepFrameTo)));
 		_walkedDistance += (int32)(stepSize * _stepSizeFactor);
 	}
 	_graphicNormal.frameI() = 2 * expectedFrame; // especially this: wtf?

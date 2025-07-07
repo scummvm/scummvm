@@ -510,15 +510,15 @@ void Graphic::update() {
 		return;
 
 	const uint32 totalDuration = _animation->totalDuration();
-	uint32 curTime = _lastTime;
-	if (!_isPaused)
-		curTime = g_system->getMillis() - curTime;
-	if (curTime > totalDuration && totalDuration > 0) {
-		if (_isLooping)
+	uint32 curTime = _isPaused
+		? _lastTime
+		: g_system->getMillis() - _lastTime;
+	if (curTime > totalDuration) {
+		if (_isLooping && totalDuration > 0)
 			curTime %= totalDuration;
 		else {
 			pause();
-			curTime = _lastTime = totalDuration - 1;
+			curTime = _lastTime = totalDuration ? totalDuration - 1 : 0;
 		}
 	}
 
