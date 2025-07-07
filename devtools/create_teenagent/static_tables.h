@@ -34278,7 +34278,7 @@ Common::Array<Common::Array<ObjectNameDesc>> polishSceneObjectNamesDescs = {
 		{"statua", "Dziwaczna."},
 	},
 	{
-		{"robot", ""},
+		{"robot", "Jak dobry grzejnik."},
 		{"s%oik", "Ten s%oik jest pe%en jakich$ pigu%ek."},
 		{"ksi#ga", "Jest du<a i wygl@da\njakby by%a rodzajem\npami#tnika."},
 		{"obraz", "Ten jest $wietny. Chcia%bym mie^ taki."},
