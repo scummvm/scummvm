@@ -231,30 +231,17 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
 	WORD wNumColors;         // number of colors in color table
-	BOOL bRetry = FALSE;
 	BOOL bResult;
-	int  nResult;
 
-try_again:
-
-	nResult = (*pOrigPal).GetObject(sizeof(WORD), &wNumColors);
-	if (nResult == 0)
-		return (nullptr);
+	wNumColors = pOrigPal->GetPaletteEntries(0, 0, nullptr);
+	if (wNumColors == 0)
+		return nullptr;
 
 	/* allocate memory block for logical palette */
 	hLogPal = GlobalAlloc(GPTR, sizeof(LOGPALETTE)
 	                      + sizeof(PALETTEENTRY)
 	                      * wNumColors);
-
-	/* if not enough memory, clean up and return nullptr */
-	if (hLogPal == 0) {
-		if (!bRetry) {
-			bRetry = TRUE;
-			(void)GlobalCompact(1000000L);
-			goto try_again;
-		}
-		return (nullptr);
-	}
+	assert(hLogPal);
 
 	lpPal = (LPLOGPALETTE) GlobalLock((HGLOBAL)hLogPal);
 
@@ -276,7 +263,7 @@ try_again:
 	GlobalUnlock((HGLOBAL)hLogPal);
 	GlobalFree((HGLOBAL)hLogPal);
 
-	return (pPal);
+	return pPal;
 }
 
 LPSTR FindDIBBits(HDIB hDIB) {

@@ -38,15 +38,21 @@ BOOL CPalette::CreatePalette(LPLOGPALETTE lpLogPalette) {
 int CPalette::GetObject(int nCount, LPVOID lpObject) const {
 	LOGPALETTE *pal = (LOGPALETTE *)lpObject;
 	const Impl *src = static_cast<const Impl *>(m_hObject);
-	assert((uint)nCount < 4 + (4 * src->size()));
+	assert(nCount >= 4);
 
-	for (uint i = 0; i < src->size(); ++i) {
+	pal->palVersion = 0x300;
+	nCount -= 2;
+	pal->palNumEntries = src->size();
+	nCount -= 2;
+
+	uint i;
+	for (i = 0; i < src->size() && nCount > 0; ++i, nCount -= 4) {
 		auto &entry = pal->palPalEntry[i];
 		src->get(i, entry.peRed, entry.peGreen, entry.peBlue);
 		entry.peFlags = 0;
 	}
 
-	return 4 + (4 * src->size());
+	return 4 + (4 * i);
 }
 
 UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
@@ -60,7 +66,7 @@ UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 		entry.peFlags = 0;
 	}
 
-	return nNumEntries;
+	return src->size();
 }
 
 UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
