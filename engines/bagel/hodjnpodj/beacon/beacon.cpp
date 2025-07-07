@@ -155,6 +155,10 @@ CMainWindow::CMainWindow() {
 	pScrollUp = FetchResourceBitmap(pDC, nullptr, SCROLLUP);            // Get the up scroll button
 	pScrollDown = FetchResourceBitmap(pDC, nullptr, SCROLLDOWN);        // Get the dowm scroll button
 
+	ShowWindow(SW_SHOWNORMAL);
+	PaintBitmap(pDC, pGamePalette, pBorderBitmap, 0, 0);
+	PaintMaskedBitmap(pDC, pGamePalette, pScrollUp, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
+
 	m_pScrollButton = new CBmpButton;
 	ASSERT(m_pScrollButton != nullptr);
 	ScrollRect.SetRect(SCROLL_BUTTON_X, SCROLL_BUTTON_Y,
@@ -166,10 +170,6 @@ CMainWindow::CMainWindow() {
 
 	ASSERT(bSuccess);
 	m_bIgnoreScrollClick = FALSE;
-
-	ShowWindow(SW_SHOWNORMAL);
-	PaintBitmap(pDC, pGamePalette, pBorderBitmap, 0, 0);
-	PaintMaskedBitmap(pDC, pGamePalette, pScrollUp, SCROLL_BUTTON_X, SCROLL_BUTTON_Y);
 
 	pBackBitmap = new CBitmap();
 	pBackDC = new CDC();
