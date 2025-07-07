@@ -213,15 +213,6 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	sceneObjectsSeg.read(dat, resourceSize);
 
 	resourceSize = dat->readUint32LE();
-	dat->read(tempBuffer, resourceSize);
-	const char *ptr = tempBuffer;
-
-	for (uint i = 0; i < 4; i++) {
-		settableObjectNames[i] = ptr;
-		ptr += settableObjectNames[i].size() + 1;
-	}
-
-	resourceSize = dat->readUint32LE();
 	messagesSeg.read(dat, resourceSize);
 
 	resourceSize = dat->readUint32LE();

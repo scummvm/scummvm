@@ -33,12 +33,11 @@ enum ResourceType {
 	kResItems,
 	kResCredits,
 	kResSceneObjects,
-	kResSettableObjectNames,
 	kResMessages,
 	kResCombineMessages,
 };
 
-#define NUM_RESOURCES 8
+#define NUM_RESOURCES 7
 #define NUM_LANGS 4
 
 const Common::Language supportedLanguages[NUM_LANGS] = {

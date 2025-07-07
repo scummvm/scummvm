@@ -166,8 +166,8 @@ struct Object {
 
 	Object(): _base(NULL), _nameSize(0) { id = 0; actorOrientation = 0; enabled = 0;  }
 	void dump(int level = 0) const;
-	void setName(const Common::String &newName);
-	void load(byte *addr);
+	void setRealName();
+	void load(byte *addr, byte sceneId = 0);
 	void save() const;
 
 	static Common::String parseDescription(const char *desc);
@@ -175,6 +175,9 @@ struct Object {
 protected:
 	byte *_base;
 	size_t _nameSize;
+
+	// New name that will be set when certain event is triggered
+	Common::String _realName;
 };
 
 struct InventoryObject {
