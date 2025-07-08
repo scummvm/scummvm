@@ -1283,7 +1283,6 @@ public:
 	int m_nClassStyle = 0;
 	int m_nStyle = 0;
 	int m_nModalResult = -1;
-	bool _visible = true;
 	bool _hasFocus = false;
 	CString _windowText;
 	Common::Rect _windowRect;
@@ -1339,7 +1338,7 @@ public:
 	void SetFocus();
 	CWnd *GetFocus() const;
 	BOOL IsWindowVisible() const {
-		return _visible;
+		return (GetStyle() & WS_VISIBLE) != 0;
 	}
 	void DestroyWindow();
 	void Invalidate(BOOL bErase = TRUE);

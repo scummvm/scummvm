@@ -421,6 +421,20 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		goto LReturnTrue;
 	}
 
+	// Ignoring messages to hidden controls
+	if (!IsWindowVisible()) {
+		static const uint16 MESSAGES[] = {
+			WM_PAINT, WM_ERASEBKGND, WM_LBUTTONDOWN,
+			WM_LBUTTONUP, WM_MOUSEMOVE, WM_SETFOCUS,
+			WM_KILLFOCUS, WM_KEYDOWN, WM_KEYUP, WM_CHAR,
+			WM_COMMAND, WM_TIMER, 0
+		};
+		for (const uint16 *msgP = MESSAGES; *msgP; ++msgP) {
+			if (message == *msgP)
+				return true;
+		}
+	}
+
 	// Special cases we don't currently support
 #define UNHANDLED(MSG) if (message == MSG) \
 		error(#MSG " not currently supported")
@@ -924,6 +938,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	_windowRect = oldControl->_windowRect;
 	_controlId = oldControl->_controlId;
 	m_nClassStyle = oldControl->m_nClassStyle;
+	m_nStyle = oldControl->m_nStyle;
 	_hFont = oldControl->_hFont;
 
 	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());

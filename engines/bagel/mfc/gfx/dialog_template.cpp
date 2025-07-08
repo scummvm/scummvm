@@ -209,7 +209,7 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	CWnd *wndDialog = static_cast<CWnd *>(dialog);
 	wndDialog->Create(_header._className.c_str(),
 		_header._caption.c_str(),
-		_header._style,
+		_header._style | WS_POPUP | WS_VISIBLE,
 		bounds,
 		dialog->m_pParentWnd,
 		0
@@ -242,7 +242,7 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 		bounds = RECT(x1, y1, x2, y2);
 		ctl->Create(item._className.c_str(),
 			item._title.c_str(),
-			item._style,
+			item._style | WS_VISIBLE | WS_TABSTOP,
 			bounds,
 			dialog,
 			item._id
