@@ -44,6 +44,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("drop", WRAP_METHOD(Console, cmdItem));
 	registerCmd("debugMode", WRAP_METHOD(Console, cmdDebugMode));
 	registerCmd("tp", WRAP_METHOD(Console, cmdTeleport));
+	registerCmd("toggleRoomFloor", WRAP_METHOD(Console, cmdToggleRoomFloor));
 }
 
 Console::~Console() {
@@ -251,12 +252,24 @@ bool Console::cmdTeleport(int argc, const char **args) {
 		param = (int32)strtol(args[1], &end, 10);
 		if (end == nullptr || *end != '\0')
 		{
-			debugPrintf("Character kind can only be integer");
+			debugPrintf("Character kind can only be integer\n");
 			return true;
 		}
 	}
 
 	g_engine->setDebugMode(DebugMode::TeleportCharacter, param);
+	return false;
+}
+
+bool Console::cmdToggleRoomFloor(int argc, const char **args) {
+	auto room = g_engine->player().currentRoom();
+	if (room == nullptr)
+	{
+		debugPrintf("No room is active");
+		return true;
+	}
+
+	room->toggleActiveFloor();
 	return false;
 }
 
