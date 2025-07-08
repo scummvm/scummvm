@@ -140,29 +140,6 @@
 			// Set the frame alpha to the user specified value
 			// to make the virtual controller more transparent
 			view.alpha = ((float)ConfMan.getInt("gamepad_controller_opacity") / 10.0);
-
-			// Since the iOS7 view controller frame is adjusted for the safe area, the same
-			// has to be done for the gamepad controller view. One could think that subviews
-			// would adjust automatically but it seems that the gamepad controller buttons
-			// can be positioned outside the device screen if not adjusting manually.
-			if (@available(iOS 11.0, *)) {
-				UIEdgeInsets insets = [[[UIApplication sharedApplication] keyWindow] safeAreaInsets];
-				UIInterfaceOrientation orientation = [iOS7AppDelegate currentOrientation];
-
-				// Set anchor point to lower right corner
-				view.layer.anchorPoint = CGPointMake(1, 1);
-
-				// Specify the position of the view layer from the anchor point
-				if (orientation == UIInterfaceOrientationLandscapeLeft) {
-					view.layer.position = CGPointMake(view.frame.size.width, view.layer.position.y);
-				} else if (orientation == UIInterfaceOrientationLandscapeRight) {
-					// When a device with e.g. a sensor bar is rotated so the sensor bar
-					// is to the left, we can adjust the anchor point a bit more to the left
-					// to make the left thumb buttons be at the same distance from the screen
-					// border.
-					view.layer.position = CGPointMake(view.frame.size.width - insets.left, view.layer.position.y);
-				}
-			}
 			stop = YES;
 		} else {
 			// Keep drilling
