@@ -35,6 +35,8 @@
 namespace Alcachofa {
 
 struct EdgeDistances {
+	EdgeDistances(Common::Point edgeA, Common::Point edgeB, Common::Point query);
+
 	float _edgeLength;
 	float _onEdge;
 	float _toEdge;

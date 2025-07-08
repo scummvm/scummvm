@@ -54,10 +54,24 @@ static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
 	}
 }
 
+EdgeDistances::EdgeDistances(Point edgeA, Point edgeB, Point query) {
+	Vector2d
+		a = as2D(edgeA),
+		b = as2D(edgeB),
+		q = as2D(query);
+	float edgeLength = a.getDistanceTo(b);
+	Vector2d edgeDir = (b - a) / edgeLength;
+	Vector2d edgeNormal(-edgeDir.getY(), edgeDir.getX());
+	_edgeLength = edgeLength;
+	_onEdge = edgeDir.dotProduct(q - a);
+	_toEdge = abs(edgeNormal.dotProduct(q) - edgeNormal.dotProduct(a));
+}
+
 bool Polygon::contains(Point query) const {
 	switch (_points.size()) {
 	case 0: return false;
 	case 1: return query == _points[0];
+	case 2: return edgeDistances(0, query)._toEdge < 2.0f;
 	default:
 		// we assume that the polygon is convex
 		for (uint i = 1; i < _points.size(); i++) {
@@ -77,18 +91,7 @@ bool Polygon::intersectsEdge(uint startPointI, Point a, Point b) const {
 EdgeDistances Polygon::edgeDistances(uint startPointI, Point query) const {
 	assert(startPointI < _points.size());
 	uint endPointI = startPointI + 1 == _points.size() ? 0 : startPointI + 1;
-	Vector2d
-		a = as2D(_points[startPointI]),
-		b = as2D(_points[endPointI]),
-		q = as2D(query);
-	float edgeLength = a.getDistanceTo(b);
-	Vector2d edgeDir = (b - a) / edgeLength;
-	Vector2d edgeNormal(-edgeDir.getY(), edgeDir.getX());
-	EdgeDistances distances;
-	distances._edgeLength = edgeLength;
-	distances._onEdge = edgeDir.dotProduct(q - a);
-	distances._toEdge = abs(edgeNormal.dotProduct(q) - edgeNormal.dotProduct(a));
-	return distances;
+	return EdgeDistances(_points[startPointI], _points[endPointI], query);
 }
 
 static Point wiggleOnToLine(Point a, Point b, Point q) {
