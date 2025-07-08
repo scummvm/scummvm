@@ -289,7 +289,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_events->showCursor();
 	_vm->_screen->forceFadeIn();
 
-	_vm->_events->waitKeyMouse();
+	_vm->_events->waitKeyActionMouse();
 	_vm->_midi->stopSong();
 	_vm->_midi->freeMusic();
 

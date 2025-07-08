@@ -249,7 +249,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 
 	while (!shouldQuit()) {
 		soundsLeft = _countTbl[curPage];
-		_events->zeroKeys();
+		_events->zeroKeysActions();
 
 		int width = 0;
 		bool lastLine = _fonts._font2->getLine(lines, s->_maxChars * 6, line, width);
@@ -275,7 +275,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 
 				_scripts->cmdFreeSound();
 
-				if (_events->isKeyMousePressed()) {
+				if (_events->isKeyActionMousePressed()) {
 					_sndSubFile += soundsLeft;
 					break;
 				} else {
@@ -312,7 +312,7 @@ void AccessEngine::speakText(BaseSurface *s, const Common::String &msg) {
 			_events->debounceLeft();
 			_sndSubFile += soundsLeft;
 			break;
-		} else if (_events->isKeyPending()) {
+		} else if (_events->isKeyActionPending()) {
 			_sndSubFile += soundsLeft;
 			break;
 		} else {
@@ -340,7 +340,7 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 		s->_printOrg = Common::Point(s->_printStart.x, s->_printOrg.y + 9);
 
 		if (s->_printOrg.y >_printEnd && !lastLine) {
-			_events->waitKeyMouse();
+			_events->waitKeyActionMouse();
 			s->copyBuffer(&_buffer2);
 			s->_printOrg.y = s->_printStart.y;
 		}
@@ -348,7 +348,7 @@ void AccessEngine::printText(BaseSurface *s, const Common::String &msg) {
 		if (lastLine)
 			break;
 	}
-	_events->waitKeyMouse();
+	_events->waitKeyActionMouse();
 }
 
 

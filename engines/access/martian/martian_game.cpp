@@ -123,12 +123,12 @@ void MartianEngine::displayNote(const Common::String &msg) {
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
 		if (_screen->_printOrg.y == 196) {
-			_events->waitKeyMouse();
+			_events->waitKeyActionMouse();
 			setNoteParams();
 			_screen->_printOrg = _screen->_printStart;
 		}
 	} while (!lastLine);
-	_events->waitKeyMouse();
+	_events->waitKeyActionMouse();
 }
 
 void MartianEngine::doSpecial5(int param1) {
@@ -236,7 +236,7 @@ bool MartianEngine::showCredits() {
 	_screen->forceFadeIn();
 	_timers[3]._timer = _timers[3]._initTm = posY;
 
-	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[3]._timer) {
+	while (!shouldQuit() && !_events->isKeyActionMousePressed() && _timers[3]._timer) {
 		_events->pollEventsAndWait();
 	}
 
@@ -271,11 +271,11 @@ void MartianEngine::doCredits() {
 		_screen->forceFadeIn();
 
 		_events->_vbCount = 550;
-		while (!shouldQuit() && !_events->isKeyMousePressed() && _events->_vbCount > 0)
+		while (!shouldQuit() && !_events->isKeyActionMousePressed() && _events->_vbCount > 0)
 			_events->pollEventsAndWait();
 
 		_screen->forceFadeOut();
-		while (!shouldQuit() && !_events->isKeyMousePressed()&& !showCredits())
+		while (!shouldQuit() && !_events->isKeyActionMousePressed()&& !showCredits())
 			_events->pollEventsAndWait();
 
 		warning("TODO: Free word_21E2B");
@@ -324,12 +324,12 @@ void MartianEngine::showDeathText(Common::String msg) {
 		_screen->_printOrg.x = _screen->_printStart.x;
 
 		if (_screen->_printOrg.y == 180) {
-			_events->waitKeyMouse();
+			_events->waitKeyActionMouse();
 			_screen->copyBuffer(&_buffer2);
 			_screen->_printOrg.y = _screen->_printStart.y;
 		}
 	} while (!lastLine);
-	_events->waitKeyMouse();
+	_events->waitKeyActionMouse();
 }
 
 void MartianEngine::dead(int deathId) {
