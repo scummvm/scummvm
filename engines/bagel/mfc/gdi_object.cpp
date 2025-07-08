@@ -34,24 +34,25 @@ CGdiObject::~CGdiObject() {
 }
 
 BOOL CGdiObject::Attach(HGDIOBJ hObject) {
+	// Detach any prior object
+	Detach();
+
+	// Attach new object
 	m_hObject = hObject;
+	AfxHookObject();
+
 	return true;
 }
 
 HGDIOBJ CGdiObject::Detach() {
-	HGDIOBJ result = nullptr;
-	SWAP(result, m_hObject);
+	HGDIOBJ result = m_hObject;
+	AfxUnhookObject();
+
 	return result;
 }
 
 BOOL CGdiObject::DeleteObject() {
-	if (m_hObject && _permanent) {
-		CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
-		assert(pMap != nullptr);
-
-		pMap->RemoveHandle(m_hObject);
-		_permanent = false;
-	}
+	AfxUnhookObject();
 
 	delete m_hObject;
 	m_hObject = nullptr;
@@ -71,9 +72,22 @@ void CGdiObject::AfxHookObject() {
 	CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
 	assert(pMap != nullptr);
 
-	pMap->SetPermanent(m_hObject, this);
-	_permanent = true;
+	if (!pMap->LookupPermanent(m_hObject)) {
+		pMap->SetPermanent(m_hObject, this);
+		_permanent = true;
+	}
 }
+
+void CGdiObject::AfxUnhookObject() {
+	if (m_hObject && _permanent) {
+		CHandleMap<CGdiObject> *pMap = AfxGetApp()->afxMapHGDIOBJ(TRUE);
+		assert(pMap != nullptr);
+
+		pMap->RemoveHandle(m_hObject);
+		_permanent = false;
+	}
+}
+
 
 } // namespace MFC
 } // namespace Bagel

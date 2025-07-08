@@ -474,6 +474,7 @@ private:
 
 protected:
 	void AfxHookObject();
+	void AfxUnhookObject();
 
 public:
 	HGDIOBJ m_hObject = nullptr;
