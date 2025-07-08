@@ -54,6 +54,10 @@ HGDIOBJ CGdiObject::Detach() {
 BOOL CGdiObject::DeleteObject() {
 	AfxUnhookObject();
 
+	// Check added to ensure I don't accidentally
+	// delete the _defaultBitmap field of the CDC::Impl
+	assert(!dynamic_cast<CDC::DefaultBitmap *>(this));
+
 	delete m_hObject;
 	m_hObject = nullptr;
 	return true;

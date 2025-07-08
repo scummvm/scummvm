@@ -682,9 +682,14 @@ protected:
 	void AfxUnhookObject();
 
 public:
+	class DefaultBitmap : public CBitmap {
+	public:
+		~DefaultBitmap() override {
+		};
+	};
 	class Impl : public Gfx::TextRender {
 	private:
-		CBitmap _defaultBitmap;
+		DefaultBitmap _defaultBitmap;
 		Common::Point _linePos;
 		COLORREF _bkColor = RGB(255, 255, 255);
 		int _bkMode = TRANSPARENT;
