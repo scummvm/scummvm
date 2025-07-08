@@ -113,6 +113,8 @@ public:
 	uint32 getCastInfoSize(uint32 castId);
 	uint32 getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci);
 
+	uint32 getConfigSize();
+	
 	int getCastSize();
 	int getCastMaxID();
 	int getNextUnusedID();
@@ -183,7 +185,7 @@ public:
 	LingoDec::ScriptContext *_lingodec = nullptr;
 	LingoDec::ChunkResolver *_chunkResolver = nullptr;
 
-	/* Data to be saved */
+	/* Config Data to be saved */
 	/*  0 */ uint16 _len;
 	/*  2 */ uint16 _fileVersion;
 	/*  4, 6, 8, 10 */ Common::Rect _checkRect;

@@ -124,10 +124,15 @@ public:
 	/* Data fields used when saving the Cast Member */
 	uint32 _castDataSize;
 	uint8 _flags1;
+	// This index is the index that it appears in the original movie archive
+	int16 _index; 
 
 protected:
 	Cast *_cast;
-	uint16 _castId;
+	// This is the id of the cast member, this id is unique to only cast members
+	// Basically the cast members are given ids starting from _castArrayStart to _castArrayEnd
+	// e.g. 0, 1, 2, 3, 4
+	uint16 _castId;		
 	// a link to the widget we created, we may use it later
 	Graphics::MacWidget *_widget;
 	bool _loaded;
