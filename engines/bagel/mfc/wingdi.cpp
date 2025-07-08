@@ -427,6 +427,7 @@ DWORD GetSysColor(int nIndex) {
 	case COLOR_BTNFACE:
 		return RGB(192, 192, 192);
 	case COLOR_BTNTEXT:
+	case COLOR_WINDOWTEXT:
 		return RGB(0, 0, 0);
 	default:
 		error("Unknown GetSysColor value");
