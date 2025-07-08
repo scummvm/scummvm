@@ -522,15 +522,13 @@ bool iOS7_fetchEvent(InternalEvent *event) {
 		CGFloat scale = [self contentScaleFactor];
 		iOS7_setSafeAreaInsets(inset.left * scale, inset.right * scale, inset.top * scale, 0);
 
-		// Add margins to respect the iPhone and iPad safe areas. Use the right
-		// safe area inset if available since the position of the buttons are
-		// on the right hand side. The iPhone corners on the later models have
-		// the form of squircles rather than circles which cause button images
-		// to become cropped if placed too close to the corner.
-		// iPads has a more rectangular screen form. The inset margin on iPads
-		// is 0, however due to the rounding of the corners images gets cropped
-		// if placed too close to the corners. Use a constant margin for those.
-		const CGFloat margin = inset.right > 0 ? inset.right/4 : 10;
+		// Add a margin to the on-screen control buttons. The shape of the iPhone
+		// screen corners on the later models have the shape of squircles rather
+		// than circles which cause button images to become cropped if placed too
+		// close to the corner. iPads have 90 degrees screen corners and does have
+		// the same problem with cropped images. However add the same margin for
+		// consistency.
+		const CGFloat margin = 20;
 		// Touch mode button on top
 		[_toggleTouchModeButton setFrame:CGRectMake(self.frame.size.width - _toggleTouchModeButton.imageView.image.size.width - margin, margin, _toggleTouchModeButton.imageView.image.size.width, _toggleTouchModeButton.imageView.image.size.height)];
 		// Burger menu button below
