@@ -725,9 +725,9 @@ bool AccessEngine::playMovie(const Common::Path &filename, const Common::Point &
 
 		_events->pollEventsAndWait();
 
-		Common::KeyState keyState;
-		if (_events->getKey(keyState)) {
-			if (keyState.keycode == Common::KEYCODE_ESCAPE)
+		Common::CustomEventType action;
+		if (_events->getAction(action)) {
+			if (action == kActionSkip)
 				skipVideo = true;
 		}
 	}
