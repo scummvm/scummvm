@@ -540,6 +540,10 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	}
 
 	writeStream->seek(offset);					// This will allow us to write cast config at any offset
+
+	writeStream->writeUint32LE(MKTAG('V', 'W', 'C', 'F'));
+	writeStream->writeUint32LE(getConfigSize());
+
 	// These offsets are only for Director Version 4 to Director version 6
 	// offsets
 	writeStream->writeUint16LE(_len);			// 0    // This will change
@@ -548,7 +552,8 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
 	writeStream->writeUint16LE(_castArrayStart);    // 12
-	writeStream->writeUint16LE(_castArrayEnd);      // 14   // This will change
+	// This will change
+	writeStream->writeUint16LE(_castArrayStart + _loadedCast->size());      // 14   
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
@@ -598,9 +603,20 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 		}
 
 		writeStream->writeSint16LE(_defaultPalette.castLib);    // 76
-		writeStream->writeSint16LE(_defaultPalette.member);     // 77
+		writeStream->writeSint16LE(_defaultPalette.member);     // 78
 	}
 
+}
+
+uint32 Cast::getConfigSize() {
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		return 78; // 78 bytes of data in castConfig
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		return 80;	// 80 bytes of data in castConfig
+	}
+
+	warning("Cast::getConfigSize: Director version 6+ is not handled");
+	return 0;
 }
 
 void Cast::loadCast() {
@@ -1432,6 +1448,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	if (target) {
 		target->_castDataSize = castDataSize;
 		target->_flags1 = flags1;
+		target->_index = res->index;
 		setCastMember(id, target);
 	}
 	if (castStream.eos()) {
