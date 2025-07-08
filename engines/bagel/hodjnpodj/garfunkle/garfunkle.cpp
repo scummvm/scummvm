@@ -1092,6 +1092,7 @@ BOOL CMainWindow::wait_awhile(int nHundSecs) {                      // Given tim
 
 	goal = (nHundSecs * 10) + GetTickCount();                                // time is in millisecs
 	while (goal > GetTickCount()) {
+		pause();
 
 		if (PeekMessage(&msg, m_hWnd, 0, WM_MOUSEMOVE, PM_REMOVE)) {    // Remove any messages except
 			if (msg.message == WM_CLOSE || msg.message == WM_QUIT)      //...quit & close, which get
