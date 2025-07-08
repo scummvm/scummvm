@@ -422,10 +422,12 @@ DWORD GetSysColor(int nIndex) {
 	switch (nIndex) {
 	case COLOR_3DHIGHLIGHT:
 		return RGB(255, 255, 255);
-	case COLOR_3DSHADOW:
+	case COLOR_BTNSHADOW:
 		return RGB(128, 128, 128);
 	case COLOR_BTNFACE:
 		return RGB(192, 192, 192);
+	case COLOR_BTNTEXT:
+		return RGB(0, 0, 0);
 	default:
 		error("Unknown GetSysColor value");
 		break;
