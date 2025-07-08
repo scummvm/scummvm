@@ -22,11 +22,27 @@
 #ifndef DIRECTOR_LINGO_XLIBS_VOYAGERXSOUND_H
 #define DIRECTOR_LINGO_XLIBS_VOYAGERXSOUND_H
 
+#include "director/sound.h"
+
 namespace Director {
+
+struct VoyagerChannel {
+	int channelID;
+};
 
 class VoyagerXSoundXObject : public Object<VoyagerXSoundXObject> {
 public:
 	VoyagerXSoundXObject(ObjectType objType);
+	~VoyagerXSoundXObject();
+
+	int open(int monoStereo, int numChan);
+	void close();
+	int status(int chan);
+	int playfile(int chan, Common::String &path, int tstart, int tend);
+
+	DirectorSound *_soundManager;
+
+	Common::HashMap<int, VoyagerChannel *> _channels;
 };
 
 namespace VoyagerXSoundXObj {

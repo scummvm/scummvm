@@ -22,6 +22,7 @@
 #include "common/system.h"
 
 #include "director/director.h"
+#include "director/window.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-utils.h"
@@ -109,6 +110,41 @@ static BuiltinProto xlibBuiltins[] = {
 
 VoyagerXSoundXObject::VoyagerXSoundXObject(ObjectType ObjectType) :Object<VoyagerXSoundXObject>("XSound") {
 	_objType = ObjectType;
+	_soundManager = g_director->getCurrentWindow()->getSoundManager();
+
+}
+
+VoyagerXSoundXObject::~VoyagerXSoundXObject() {
+	close();
+}
+
+int VoyagerXSoundXObject::open(int numChan, int monoStereo) {
+	if (!_channels.contains(numChan)) {
+		_channels[numChan] = new VoyagerChannel();
+		_channels[numChan]->channelID = numChan + 1000;
+	}
+	return 1;
+}
+
+void VoyagerXSoundXObject::close() {
+	for (auto &it : _channels)
+		delete it._value;
+	_channels.clear();
+}
+
+int VoyagerXSoundXObject::status(int chan) {
+	if (_channels.contains(chan)) {
+		return _soundManager->isChannelActive(_channels[chan]->channelID) ? 1 : 0;
+	}
+	return 0;
+}
+
+int VoyagerXSoundXObject::playfile(int chan, Common::String &path, int tstart, int tend) {
+	if (!_channels.contains(chan)) {
+		open(chan, 2);
+	}
+	_soundManager->playFile(path, _channels[chan]->channelID);
+	return 1;
 }
 
 void VoyagerXSoundXObj::open(ObjectType type, const Common::Path &path) {
@@ -123,7 +159,6 @@ void VoyagerXSoundXObj::open(ObjectType type, const Common::Path &path) {
 void VoyagerXSoundXObj::close(ObjectType type) {
     VoyagerXSoundXObject::cleanupMethods();
     g_lingo->_globalvars[xlibName] = Datum();
-
 }
 
 void VoyagerXSoundXObj::m_new(int nargs) {
@@ -132,18 +167,72 @@ void VoyagerXSoundXObj::m_new(int nargs) {
 	g_lingo->push(g_lingo->_state->me);
 }
 
+
 // For some reason the game code calls all of these with ARGC, so always return something
 XOBJSTUBNR(VoyagerXSoundXObj::m_dispose)
 XOBJSTUBNR(VoyagerXSoundXObj::m_init)
-XOBJSTUB(VoyagerXSoundXObj::m_open, 0)
-XOBJSTUB(VoyagerXSoundXObj::m_close, 0)
+
+void VoyagerXSoundXObj::m_open(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_open", nargs);
+	ARGNUMCHECK(2);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	Datum monoStereo = g_lingo->pop();
+	Datum numChan = g_lingo->pop();
+	int result = me->open(numChan.asInt(), monoStereo.asInt());
+	g_lingo->push(result);
+}
+
+void VoyagerXSoundXObj::m_close(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_close", nargs);
+	ARGNUMCHECK(0);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	me->close();
+	g_lingo->push(0);
+}
+
 XOBJSTUB(VoyagerXSoundXObj::m_bufsize, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_exists, 0)
-XOBJSTUB(VoyagerXSoundXObj::m_status, 0)
+
+void VoyagerXSoundXObj::m_status(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_status", nargs);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	ARGNUMCHECK(1);
+	Datum chan = g_lingo->pop();
+	g_lingo->push(me->status(chan.asInt()));
+}
+
 XOBJSTUB(VoyagerXSoundXObj::m_path, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_duration, "")
 XOBJSTUB(VoyagerXSoundXObj::m_curtime, "")
-XOBJSTUB(VoyagerXSoundXObj::m_playfile, 0)
+
+void VoyagerXSoundXObj::m_playfile(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_playfile", nargs);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	if (nargs < 2) {
+		warning("VoyagerXSoundXObj::m_playfile: expected at least 2 args");
+		g_lingo->dropStack(nargs);
+		g_lingo->push(0);
+		return;
+	} else if (nargs > 4) {
+		g_lingo->dropStack(nargs - 4);
+		nargs = 4;
+	}
+	Datum tend(-1);
+	if (nargs == 4) {
+		tend = g_lingo->pop();
+		nargs--;
+	}
+	Datum tstart(-1);
+	if (nargs == 3) {
+		tstart = g_lingo->pop();
+		nargs--;
+	}
+	Common::String path = g_lingo->pop().asString();
+	Datum chan = g_lingo->pop();
+	int result = me->playfile(chan.asInt(), path, tstart.asInt(), tend.asInt());
+	g_lingo->push(result);
+}
+
 XOBJSTUB(VoyagerXSoundXObj::m_loadfile, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_unloadfile, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_playsnd, 0)
