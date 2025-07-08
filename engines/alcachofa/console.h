@@ -56,6 +56,7 @@ private:
 	bool cmdItem(int argc, const char **args);
 	bool cmdDebugMode(int argc, const char **args);
 	bool cmdTeleport(int argc, const char **args);
+	bool cmdToggleRoomFloor(int argc, const char **args);
 
 	bool _showInteractables = false;
 	bool _showCharacters = false;
