@@ -1001,7 +1001,6 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 
 	FontStyle style;
 	writeStream->writeString(_rtext);
-	debug("what is the size of _rtext = %d", _rtext.size());
 
 	writeStream->writeUint16BE(formatting);
 
@@ -1009,7 +1008,6 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 	while (it < _ftext.size() - 1) {
 		uint32 rIndex = 0;
 		if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
-			debug("Found Styling header at position: %d", it);
 			// Styling header found
 			it += 2;
 

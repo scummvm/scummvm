@@ -169,7 +169,7 @@ private:
 	uint32 getMmapSize();
 	uint32 getImapSize();
 	uint32 getCASResourceSize();
-	void rebuildTypes(Movie *movie);
+	void rebuildResources(Movie *movie);
 
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
@@ -208,11 +208,17 @@ private:
 
 protected:
 	uint32 _rifxType;
+
+	// Each resource is independent
 	Common::Array<Resource *> _resources;
 	Common::HashMap<uint32, byte *> _ilsData;
 	uint32 _ilsBodyOffset;
 	typedef Common::Array<uint32> KeyArray;
 	typedef Common::HashMap<uint32, KeyArray> KeyMap;
+
+	// In the RIFX container type, some resources are related of other resources in a child-parent relation
+	// If you want to check the relation between a 'BITD' resource and some other resource (e.g. 'CASt')
+	// Check if index of 'BITD' resource is present in _keyData['BITD'][index of 'CASt' resource]
 	Common::HashMap<uint32, KeyMap> _keyData;
 };
 

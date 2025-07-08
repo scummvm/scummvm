@@ -518,18 +518,6 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
-    if (debugChannelSet(7, kDebugSaving)) {
-        // Adding +8 because the stream doesn't include the header and the entry for the size itself
-        uint32 configSize = stream->size() + 8;
-        byte *dumpData = (byte *)calloc(configSize, sizeof(byte));
-
-        Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, configSize);
-
-        saveConfig(writeStream, 0);
-        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize);
-        delete writeStream;
-    }
-
 	delete stream;
 	return true;
 }
@@ -541,8 +529,10 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 
 	writeStream->seek(offset);					// This will allow us to write cast config at any offset
 
+	uint32 configSize = getConfigSize();
+
 	writeStream->writeUint32LE(MKTAG('V', 'W', 'C', 'F'));
-	writeStream->writeUint32LE(getConfigSize());
+	writeStream->writeUint32LE(configSize);
 
 	// These offsets are only for Director Version 4 to Director version 6
 	// offsets
@@ -605,6 +595,21 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 		writeStream->writeSint16LE(_defaultPalette.castLib);    // 76
 		writeStream->writeSint16LE(_defaultPalette.member);     // 78
 	}
+
+    if (debugChannelSet(7, kDebugSaving)) {
+        // Adding +8 because the stream doesn't include the header and the entry for the size itself
+        byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
+
+		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, configSize + 8);
+
+		uint32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, configSize + 8);
+		writeStream->seek(currentPos);
+
+        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
+        delete writeStream;
+    }
 
 }
 
@@ -807,62 +812,59 @@ void Cast::loadCast() {
 	}
 }
 
-void Cast::saveCast() {
+void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
-	// writeStream->seek(offset);
-
-	Common::Array<uint16> cast = _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
+	uint32 offset = res->offset;
+	writeStream->seek(offset);
 
 	// Okay, this is going to cause confusion
-	// In the director movie archive, each CASt resource is given an ID, Not sure how this ID is assigned
-	// but it is present in the keytable and is loaded while reading the keytable in RIFXArchive::readKeyTable();
-	// The castId on the other hand present in the Resource struct is assigned by ScummVM Director in RIFXArchive::readCast()
+	// In the director movie archive, each CASt resource is given an index, which is the number at which it appears in the mmap
+	// The _castId_ on the other hand present in the Resource struct is assigned by in RIFXArchive::readCast()
 	// It is basically the index at which it occurs in the CAS* resource
-	// So, RIFXArchive::getResourceDetail will return the list of IDs present in the keytable
-	// Whereas, in the _loadedCast, the key of these Cast members is given by castId
-	for (auto &it : cast) {
+	// So, RIFXArchive::getResourceDetail will return the list of indexes of the 'CASt' resources in the mmap (read in the 'CAS*' resource)
+	// Whereas, in the _loadedCast, the key of these Cast members is given by _castId_
 	// I need to call this just because I need the id
-		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), it);
-		uint16 id = res.castId + _castArrayStart;               // Never encountered _castArrayStart != 0 till now
-		uint32 castSize = 0;
+	uint32 castSize = 0;
+	uint16 id = res->castId + _castArrayStart;
 
-		if (_loadedCast->contains(id)) {
-			CastMember *target = _loadedCast->getVal(id);
-			// To make it consistent with how the data is stored originally, getResourceSize returns
-			// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
-			castSize = target->getCastResourceSize() + 8;
-		} else {
-			// The size stored in the memory map (_resources array), as well as the resource itself is the size
-			// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
-			castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), it) + 8;
-		}
 
-		debugC(5, kDebugSaving, "Cast::saveCast()::Saving 'CASt' resource, id: %d, size: %d", id, castSize);
-		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
+	CastType type = kCastTypeAny;
 
-		Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
-		CastType type = kCastTypeAny;
+	if (_loadedCast->contains(id)) {
+		CastMember *target = _loadedCast->getVal(id);
+		// To make it consistent with how the data is stored originally, getResourceSize returns
+		// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
+		castSize = target->getCastResourceSize() + 8;
+		type = target->_type;
+		target->writeCAStResource(writeStream, 0);
+	} else {
+		// The size stored in the memory map (_resources array), as well as the resource itself is the size
+		// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
+		castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), res->index) + 8;
+		writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+		Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), res->index);
+		uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
+		writeStream->writeUint32LE(size);
+		writeStream->writeStream(stream);
 
-		if (!_loadedCast->contains(id)) {
-			writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
-			Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
-			uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
-			writeStream->writeUint32LE(size);
-			writeStream->writeStream(stream);
-
-			delete stream;
-		} else {
-			CastMember *target = _loadedCast->getVal(id);
-			type = target->_type;
-			target->writeCAStResource(writeStream, 0);
-			break;
-		}
-
-		dumpFile(castType2str(type), res.index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
-		delete writeStream;
+		delete stream;
 	}
 
+	debugC(5, kDebugSaving, "Cast::saveCast()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
+	
+	if (debugChannelSet(7, kDebugSaving)) {
+		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
+		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+
+		uint32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, castSize);
+		writeStream->seek(currentPos);
+
+		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
+		delete dumpStream;
+	}
 }
 
 void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) {
