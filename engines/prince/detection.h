@@ -46,6 +46,10 @@ struct PrinceGameDescription {
 	PrinceGameType gameType;
 };
 
+#define GAMEOPTION_TTS_OBJECTS				GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS_SPEECH				GUIO_GAMEOPTIONS2
+#define GAMEOPTION_TTS_MISSING_VOICE        GUIO_GAMEOPTIONS3
+
 } // End of namespace Prince
 
 #endif // PRINCE_DETECTION_H
