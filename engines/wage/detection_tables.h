@@ -56,6 +56,9 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("3rd Floor", "afe1a9eb0d4e5857f9f748570862c88e", 281213), // v1.3
 	BIGGAME("afm", "v1.3", "Another Fine Mess 1.3", "25934edf84e814f41f3ddf87185b554b", 1409792),
 	BIGGAME("afm", "v1.4", "Another Fine Mess 1.4", "28d2b78c7abcbfd526f9c252444ef0b3", 1420563),
+	BIGGAME("afm", "v1.4", "Another Fine Mess 1.4", "r:49de322edff7118ec14b240047cef6d2", 1410160),
+	BIGGAME("afm", "v1.5", "Another Fine Mess 1.5", "r:9a3351c5e216d56529779a0685dba182", 1420717),
+	BIGGAME("afm", "v1.6", "Another Fine Mess 1.6", "r:b87fbc493f93a2b1da340b3448b18b26", 1420717),
 	BIGGAME("afm", "v1.8", "Another Fine Mess 1.8", "8bbec64ffe9deee4ff48d27f01176814", 1420467),
 	FANGAMEN("Alien Clutch", "Alien Clutch 2.0", "5c783f6b7f4a7d8d49e138be94e00f5a", 514976),
 	BIGGAME("amot", "v1.8", "A Mess O' Trouble 1.8", "57de8f1f79a24fa1a296aa10242c3648", 1842848),
@@ -108,6 +111,7 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("drakmythcastle", "Disk I", "Drakmyth Castle", "b796545fc4b7c2b89683db873e005e92", 792355), // alt version
 	BIGGAME("drakmythcastle", "Disk II", "Drakmyth Castle II", "b57af17c805775d7d68b62133164c4e4", 1685403),
 	FANGAMENr("Dune Eternity", "xn--DUNE ETERNITY -paaanaa75fbbobb", "4946bc99cc42bf83b628352aa9b81a7b", 289945, GF_RES800), // Original file name is "***DUNE ETERNITY*** "
+	FANGAMENr("Dune Eternity", "xn--DUNE ETERNITY1-paaaoaa65fbbpbb", "r:4946bc99cc42bf83b628352aa9b81a7b", 289945, GF_RES800), // Same as above with different name
 	FANGAMEN("Dungeon World II", "DungeonWorld2", "74a7153f9ae61a59a216078a37f68f2c", 229943),
 	FANGAMEr("Dynasty of Dar", "e118a261d33831c224f3b776ec5dd2a8", 275437, GF_RES800),
 	FANGAMEr("Dynasty of Dar", "e15eae8d9a4c40512be3bb81ecedf32c", 275423, GF_RES800), // alt version
@@ -250,6 +254,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Quest for T-Rex", "90d5ac734a3944480bdeb4a89524db41", 591728), // alt version
 	FANGAMEN("Quest for T-Rex", "Quest for T-Rex 1.2", "edd1164eccad3eaa23b3636000b5a047", 593924),
 	FANGAMEN("Quest for the Dark Sword", "xn--Quest for the Dark Sword-3r4o", "d98c3879ff20ca7e835e3a630c2c74ef", 572320), // original file name "Quest for the Dark Sword™"
+	FANGAMEN("Quester: The Forbidden Lands", "Quester (Demo)", "r:5f0b06526d3a951121333953f559da3f", 254868),
 	FANGAMEN("Quester: The Forbidden Lands", "Quester-The Forbidden Lands", "5f0b06526d3a951121333953f559da3f", 254868),
 	FANGAME("Radical Castle", "e424dea5542817435b4b6da41fd532cb", 355345),
 	FANGAME("Radical Castle", "c8393e30ecf376b9635e30894eacecd0", 347022), // alt version
