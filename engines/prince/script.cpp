@@ -608,6 +608,7 @@ void Interpreter::O_SETUPPALETTE() {
 void Interpreter::O_INITROOM() {
 	int32 roomId = readScriptFlagValue();
 	debugInterpreter("O_INITROOM %d", roomId);
+	_vm->_printMapNotification = true;
 	_vm->loadLocation(roomId);
 	_opcodeNF = 1;
 }
@@ -872,6 +873,8 @@ void Interpreter::O_CHANGECURSOR() {
 	int32 cursorId = readScriptFlagValue();
 	debugInterpreter("O_CHANGECURSOR %x", cursorId);
 	_vm->changeCursor(cursorId);
+
+	_vm->_isConversing = (cursorId == 0);
 }
 
 // Not used in script
@@ -1108,6 +1111,9 @@ void Interpreter::O_HEROON() {
 void Interpreter::O_CLSTEXT() {
 	int32 slot = readScriptFlagValue();
 	debugInterpreter("O_CLSTEXT slot %d", slot);
+	if (slot == 0) {
+		_vm->stopTextToSpeech();
+	}
 	_vm->_textSlots[slot]._str = nullptr;
 	_vm->_textSlots[slot]._time = 0;
 }
