@@ -27,6 +27,7 @@
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 #include "common/rect.h"
 #include "common/events.h"
 #include "common/endian.h"
@@ -267,6 +268,8 @@ enum Type {
 
 };
 
+static const uint8 kHeroTextColor = 220;
+
 class PrinceEngine : public Engine {
 protected:
 	Common::Error run() override;
@@ -343,6 +346,14 @@ public:
 	int calcTextTime(int numberOfLines);
 	void correctStringDEU(char *s);
 
+	void sayText(const Common::String &text, bool isSpeech, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
+#ifdef USE_TTS
+	Common::U32String convertText(const Common::String &text) const;
+	bool checkConversionTable(const byte *character, int &index, byte *convertedBytes, const uint16 *table) const;
+#endif
+	void setTTSVoice(uint8 textColor) const;
+	void stopTextToSpeech() const;
+
 	static const uint8 kMaxTexts = 32;
 	Text _textSlots[kMaxTexts];
 
@@ -360,6 +371,10 @@ public:
 	uint16 _sceneWidth;
 	int32 _picWindowX;
 	int32 _picWindowY;
+
+	bool _printMapNotification;
+	bool _intro;
+	bool _credits;
 
 	Image::BitmapDecoder *_roomBmp;
 	MhwanhDecoder *_suitcaseBmp;
@@ -425,6 +440,8 @@ public:
 	void grabMap();
 
 	int _selectedMob; // number of selected Mob / inventory item
+	int _previousMob;
+	int _dialogMob;
 	int _selectedItem; // number of item on mouse cursor
 	int _selectedMode;
 	int _currentPointerNumber;
@@ -517,6 +534,8 @@ public:
 	int _dialogLineSpace;
 	int _dialogColor1; // color for non-selected options
 	int _dialogColor2; // color for selected option
+	int _previousSelectedDialog;
+	bool _isConversing;
 	Graphics::Surface *_dialogImage;
 
 	void createDialogBox(int dialogBoxNr);

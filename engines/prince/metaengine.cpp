@@ -19,11 +19,57 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "prince/prince.h"
 #include "prince/detection.h"
 
 namespace Prince {
+
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS_OBJECTS,
+		{
+			_s("Enable Text to Speech for Objects and Options"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled_objects",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_SPEECH,
+		{
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_MISSING_VOICE,
+		{
+			_s("Enable Text to Speech for Missing Voiceovers"),
+			_s("Use TTS to read the subtitles of missing voiceovers (if TTS is available)"),
+			"tts_enabled_missing_voice",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
 
 int PrinceEngine::getGameType() const {
 	return _gameDescription->gameType;
@@ -48,6 +94,12 @@ public:
 	const char *getName() const override {
 		return "prince";
 	}
+
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Prince::optionsList;
+	}
+#endif
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
