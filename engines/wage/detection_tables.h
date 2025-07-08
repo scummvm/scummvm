@@ -197,7 +197,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("MacWanker 1.0", "2fd407020adf527d1193f3351d7244b5", 178005),
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 108788),
 	FANGAMEN("Mansion!", "Mansion! 1.0", "c993619e5bd99ccca6e3ce28d93be33a", 389857),
-	FANGAMEN("Master's Familiar", "xn--Masters Familiar v2.3 -245mphaaa", "d5ee3e1ff136482ef1de7935a0ac3918", 142827), // Original file name "Master’s Familiar v2.3 ••••"
 	FANGAMEN("Maze of the Questing Beast", "MQB", "03775e1894809f24234aeaab18f39451", 134444),
 	FANGAMEN("Maze of the Questing Beast Solutions", "MQB Solutions", "8a27e515f12162cc8b85e4f2bd16a1e5", 37606),
 	FANGAME("Messy House", "32ca71f2ff37997407cead590c2dd306", 176864),
