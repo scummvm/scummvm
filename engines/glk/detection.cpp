@@ -317,7 +317,6 @@ uint GlkMetaEngineDetection::getMD5Bytes() const {
 }
 
 void GlkMetaEngineDetection::dumpDetectionEntries() const {
-#if 1
 	enum class EngineName : uint8 {
     	COMPREHEND,
     	LEVEL9,
@@ -345,7 +344,9 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
         { Glk::Quest::QuestMetaEngine::getDetectionEntries(), EngineName::OTHER },
         { Glk::Scott::ScottMetaEngine::getDetectionEntries(), EngineName::OTHER },
         { Glk::ZCode::ZCodeMetaEngine::getDetectionEntries(), EngineName::OTHER },
+#ifndef RELEASE_BUILD
         { Glk::TADS::TADSMetaEngine::getDetectionEntries(), EngineName::OTHER },
+#endif
         { nullptr, EngineName::OTHER }
     };
 
@@ -382,7 +383,6 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 			printf(")\n\n");
 		}
 	}
-#endif
 }
 
 
