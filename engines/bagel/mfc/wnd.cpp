@@ -174,7 +174,13 @@ HWND CWnd::GetSafeHwnd() const {
 }
 
 void CWnd::ShowWindow(int nCmdShow) {
-	assert(nCmdShow == SW_SHOWNORMAL);
+	assert(nCmdShow == SW_SHOWNORMAL || nCmdShow == SW_HIDE);
+
+	if (nCmdShow == SW_SHOWNORMAL)
+		m_nStyle |= WS_VISIBLE;
+	else
+		m_nStyle &= ~WS_VISIBLE;
+
 	Invalidate(false);
 	SendMessage(WM_SHOWWINDOW);
 }
@@ -859,9 +865,10 @@ CWnd *CWnd::GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious) const {
 	assert(startIdx != (int)children.size());
 
 	// Remove any items from the array from the next WS_GROUP onwards
+	const int style = WS_GROUP | WS_VISIBLE;
 	int idx = startIdx + 1;
 	for (; idx < (int)children.size(); ++idx) {
-		if (children[idx]->GetStyle() & WS_GROUP) {
+		if ((children[idx]->GetStyle() & style) == style) {
 			// Found next group, remove remainder
 			while (idx < (int)children.size())
 				children.remove_at(idx);
