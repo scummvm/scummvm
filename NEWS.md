@@ -56,6 +56,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed text rendering in Chinese and Japanese localizations.
    - Added support for Japanese DVD version of Schizm: Mysterious Journey.
 
+ Wintermute:
+   - 3D renderer enabled by default for 2D games.
+
 #### 2.9.1 "Slappin da BASS" (2025-05-25)
 
  AGI:
