@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-07 02:38+0000\n"
+"POT-Creation-Date: 2025-07-08 10:42+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -3667,7 +3667,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ПАМЫЛКА: Ня выйшла перанесьці захоў у новы слот"
 
 #: engines/engine.cpp:687 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:263 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:260 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "Аўтазахаваньне"

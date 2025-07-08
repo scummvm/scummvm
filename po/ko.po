@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-07 02:38+0000\n"
+"POT-Creation-Date: 2025-07-08 10:42+0000\n"
 "PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3648,7 +3648,7 @@ msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "오류: 저장 게임을 새 슬롯에 복사할 수 없음"
 
 #: engines/engine.cpp:687 engines/savestate.cpp:98
-#: backends/platform/ios7/ios7_osys_main.cpp:263 engines/mm/xeen/saves.cpp:293
+#: backends/platform/ios7/ios7_osys_main.cpp:260 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "자동 저장"
