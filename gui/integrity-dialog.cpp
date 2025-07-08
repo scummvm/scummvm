@@ -30,6 +30,7 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "gui/chooser.h"
 #include "gui/gui-manager.h"
 #include "gui/launcher.h"
 #include "gui/message.h"
@@ -71,6 +72,7 @@ struct ChecksumDialogState {
 
 	Common::String endpoint;
 	Common::Path gamePath;
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> ignoredSubdirsMap;
 	Common::String gameid;
 	Common::String engineid;
 	Common::String extra;
@@ -126,6 +128,48 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 		g_checksum_state = new ChecksumDialogState();
 		g_checksum_state->dialog = this;
 
+		Common::Array<Common::String> gameAddOns;
+
+		Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+		for (; iter != ConfMan.endGameDomains(); ++iter) {
+			Common::String name(iter->_key);
+			Common::ConfigManager::Domain &dom = iter->_value;
+
+			Common::String parent;
+			if (dom.tryGetVal("parent", parent) && parent == domain)
+				gameAddOns.push_back(name);
+		}
+
+		if (!gameAddOns.empty()) {
+			// Ask the user to choose between the base game or one of its add-ons
+			Common::U32StringArray list;
+			list.push_back(ConfMan.get("description", domain));
+
+			for (Common::String &gameAddOn : gameAddOns) {
+				list.push_back(ConfMan.get("description", gameAddOn));
+			}
+
+			ChooserDialog dialog(_("This game includes add-ons, pick the part you want to be checked:"));
+			dialog.setList(list);
+			int idx = dialog.runModal();
+			if (idx < 0) {
+				// User cancelled the dialog
+				_close = true;
+				return;
+			}
+
+			if (idx >= 1 && idx < (int)gameAddOns.size() + 1) {
+				// User selected an add-on, change the selected domain
+				domain = gameAddOns[idx - 1];
+			} else {
+				// User selected the base game, ignore the add-ons subdirectories
+				for (Common::String &gameAddOn : gameAddOns) {
+					Common::Path addOnPath = ConfMan.getPath("path", gameAddOn);
+					g_checksum_state->ignoredSubdirsMap[addOnPath] = true;
+				}
+			}
+		}
+
 		setState(kChecksumStateCalculating);
 		refreshWidgets();
 
@@ -136,7 +180,7 @@ IntegrityDialog::IntegrityDialog(Common::String endpoint, Common::String domain)
 		g_checksum_state->extra = ConfMan.get("extra", domain);
 		g_checksum_state->platform = ConfMan.get("platform", domain);
 		g_checksum_state->language = ConfMan.get("language", domain);
-		calculateTotalSize(g_checksum_state->gamePath);
+		calculateTotalSize(g_checksum_state->gamePath, g_checksum_state->ignoredSubdirsMap);
 	} else {
 		g_checksum_state->dialog = this;
 
@@ -311,7 +355,7 @@ void IntegrityDialog::setError(Common::U32String &msg) {
 	_cancelButton->setCmd(kCleanupCmd);
 }
 
-void IntegrityDialog::calculateTotalSize(Common::Path gamePath) {
+void IntegrityDialog::calculateTotalSize(Common::Path gamePath, const Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> &ignoredSubdirsMap) {
 	const Common::FSNode dir(gamePath);
 
 	if (!dir.exists() || !dir.isDirectory())
@@ -326,9 +370,10 @@ void IntegrityDialog::calculateTotalSize(Common::Path gamePath) {
 
 	// Process the files and subdirectories in the current directory recursively
 	for (const auto &entry : fileList) {
-		if (entry.isDirectory())
-			calculateTotalSize(entry.getPath());
-		else {
+		if (entry.isDirectory()) {
+			if (!ignoredSubdirsMap.contains(entry.getPath()))
+				calculateTotalSize(entry.getPath(), ignoredSubdirsMap);
+		} else {
 			Common::File file;
 			if (!file.open(entry))
 				continue;
@@ -407,7 +452,8 @@ Common::Array<Common::StringArray> IntegrityDialog::generateChecksums(Common::Pa
 			continue;
 
 		if (entry.isDirectory()) {
-			generateChecksums(entry.getPath(), fileChecksums, gamePath);
+			if (!g_checksum_state->ignoredSubdirsMap.contains(entry.getPath()))
+				generateChecksums(entry.getPath(), fileChecksums, gamePath);
 
 			continue;
 		}
