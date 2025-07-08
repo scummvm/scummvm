@@ -531,6 +531,13 @@ enum {
 	kRightButtonDbl		= 1 << 3
 };
 
+
+struct EasterEggVideo {
+	const char *filename;
+	Common::KeyCode key;
+};
+
+
 /* PrisonerEngine */
 
 class PrisonerEngine : public ::Engine {
@@ -606,6 +613,8 @@ public:
 	/* Screensaver */
 	bool _screensaverRunning;
 	bool _screensaverAborted;
+	int32 _screensaverTime;
+	int32 _lastInputTicks;
 
 	/* Frame time */
 	uint32 _lastFrameTime;
@@ -831,6 +840,7 @@ public:
 	bool waitForInput();
 
 	const Common::String getGlobalText(Common::String &identifier);
+	void checkScreensaver();
 	void mainLoop();
 
 	/* Frame time */

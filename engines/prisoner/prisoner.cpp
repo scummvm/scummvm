@@ -177,6 +177,7 @@ Common::Error PrisonerEngine::run() {
 
 	_screensaverRunning = false;
 	_screensaverAborted = false;
+	_screensaverTime = 6000;
 
 	_cameraFollowsActorIndex = -1;
 	_backgroundResourceCacheSlot = -1;
@@ -345,6 +346,14 @@ const Common::String PrisonerEngine::getGlobalText(Common::String &identifier) {
 	return textResource->getText(identifier)->getChunkLineString(0, 0);
 }
 
+void PrisonerEngine::checkScreensaver() {
+	if (_screensaverTime < (int32)getTicks() - _lastInputTicks) {
+		_mainMenuRequested = false;
+		_screensaverRunning = true;
+		playIntroVideos();
+	}
+}
+
 void PrisonerEngine::mainLoop() {
 
 	while (!_mainLoopDone) {
@@ -354,6 +363,7 @@ void PrisonerEngine::mainLoop() {
 		if (_mainMenuRequested) {
 			updateFrameTime();
 			updateAnimationFrameTicks();
+			checkScreensaver();
 
 			if (_menuFunctionArray[_selectedMenuIndex]) {
 				(this->*_menuFunctionArray[_selectedMenuIndex])(67, 77);
@@ -494,12 +504,14 @@ void PrisonerEngine::updateEvents() {
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			this->_lastInputTicks = getTicks();
 			_keyState = event.kbd.keycode;
 			break;
 		case Common::EVENT_KEYUP:
 			_keyState = Common::KEYCODE_INVALID;
 			break;
 		case Common::EVENT_MOUSEMOVE:
+			this->_lastInputTicks = getTicks();
 			_mouseX = event.mouse.x;
 			_mouseY = event.mouse.y;
 			break;
@@ -534,18 +546,24 @@ void PrisonerEngine::addDirtyRect(int16 x1, int16 y1, int16 x2, int16 y2, int16 
 }
 
 void PrisonerEngine::playIntroVideos() {
+	const EasterEggVideo introSequence[] = {
+		{"vintro.mux", Common::KEYCODE_i},
+		{"vcredits.mux", Common::KEYCODE_c},
+		{"vtitre.mux", Common::KEYCODE_e}};
+
 	_muxEasterEggCount = 0;
 	_muxClearScreenBefore = true;
 	_muxClearScreenAfter = true;
-	playMux("vintro.mux");
-	if (_muxEasterEggKey == Common::KEYCODE_i)
-		_muxEasterEggCount++;
-	playMux("vcredits.mux");
-	if (_muxEasterEggKey == Common::KEYCODE_c)
-		_muxEasterEggCount++;
-	playMux("vtitre.mux");
-	if (_muxEasterEggKey == Common::KEYCODE_e)
-		_muxEasterEggCount++;
+
+	for (const auto &entry : introSequence) {
+		playMux(entry.filename);
+		if (_muxEasterEggKey == entry.key)
+			_muxEasterEggCount++;
+		else if (_screensaverRunning) {
+			_screensaverRunning = false;
+			return;
+		}
+	}
 	if (_muxEasterEggCount == 3)
 		playMux("vice.mux");
 	_muxEasterEggCount = 0;
