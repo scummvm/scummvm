@@ -48,6 +48,13 @@ void Telephone::init() {
 	if (_isNewPhone) {
 		_font = g_nancy->_graphics->getFont(_displayFont);
 	}
+
+	// Set the phone tutorial flag to false for Nancy9, so that
+	// the actual phone interface is available after the tutorial.
+	// TODO: Is this the right place to set this flag?
+	if (g_nancy->getGameType() == kGameTypeNancy9) {
+		NancySceneState.setEventFlag(592, g_nancy->_false);
+	}
 }
 
 void Telephone::readData(Common::SeekableReadStream &stream) {
