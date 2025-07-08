@@ -540,7 +540,7 @@ void Plotter::load(Common::SeekableReadStream *stream, int wallCount, int blockC
 
 void Room::doCommands() {
 	int commandId = 0;
-	Common::KeyState keyState;
+	Common::CustomEventType action;
 
 	if (_vm->_startup != -1)
 		return;
@@ -576,11 +576,13 @@ void Room::doCommands() {
 			// Mouse click in main game area
 			mainAreaClick();
 		}
-	} else if (_vm->_events->getKey(keyState)) {
-		if (keyState.keycode == Common::KEYCODE_F1)
-			handleCommand(keyState.keycode - Common::KEYCODE_F1 + 1);
-		else if (keyState.keycode >= Common::KEYCODE_F2 && keyState.keycode <= Common::KEYCODE_F10)
-			handleCommand(keyState.keycode - Common::KEYCODE_F1);
+	} else if (_vm->_events->getAction(action)) {
+		for (int i = 0; i < ARRAYSIZE(_accessActionCodes); ++i) {
+			if (_accessActionCodes[i]._action == action) {
+				handleCommand(_accessActionCodes[i]._code);
+				break;
+			}
+		}
 	}
 }
 

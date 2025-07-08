@@ -68,6 +68,43 @@ enum AccessDebugChannels {
 	kDebugSound,
 };
 
+enum ACCESSActions {
+	kActionNone,
+	kActionMoveUp,
+	kActionMoveDown,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveUpLeft,
+	kActionMoveUpRight,
+	kActionMoveDownLeft,
+	kActionMoveDownRight,
+	kActionLook,
+	kActionUse,
+	kActionTake,
+	kActionInventory,
+	kActionClimb,
+	kActionTalk,
+	kActionWalk,
+	kActionHelp,
+	kActionSkip,
+};
+
+struct AccessActionCode {
+	ACCESSActions _action;
+	int8 _code;
+};
+
+static const AccessActionCode _accessActionCodes[] = {
+	{ kActionLook, 1 },
+	{ kActionUse, 2 },
+	{ kActionTake, 3 },
+	{ kActionInventory, 4 },
+	{ kActionClimb, 5 },
+	{ kActionTalk, 6 },
+	{ kActionWalk, 7 },
+	{ kActionHelp, 8 },
+};
+
 extern const char *const _estTable[];
 
 #define ACCESS_SAVEGAME_VERSION 1

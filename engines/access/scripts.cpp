@@ -211,12 +211,12 @@ void Scripts::printWatch() {
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
 
 		if (_vm->_screen->_printOrg.y == 106) {
-			_vm->_events->waitKeyMouse();
+			_vm->_events->waitKeyActionMouse();
 			clearWatch();
 			_vm->_screen->_printOrg.y = _vm->_screen->_printStart.y;
 		}
 	} while (!lastLine);
-	_vm->_events->waitKeyMouse();
+	_vm->_events->waitKeyActionMouse();
 }
 
 void Scripts::findNull() {
@@ -314,7 +314,7 @@ void Scripts::doCmdPrint_v1(Common::String msg) {
 	_vm->_screen->_printOrg = Common::Point(20, 42);
 	_vm->_screen->_printStart = Common::Point(20, 32);
 	_vm->_bubbleBox->placeBubble(msg);
-	_vm->_events->waitKeyMouse();
+	_vm->_events->waitKeyActionMouse();
 	_vm->_events->hideCursor();
 	_vm->_screen->restoreBlock();
 	_vm->_events->showCursor();
@@ -337,7 +337,7 @@ void Scripts::printString(const Common::String &msg) {
 
 	// Display the text in a bubble, and wait for a keypress or mouse click
 	_vm->_bubbleBox->placeBubble(msg);
-	_vm->_events->waitKeyMouse();
+	_vm->_events->waitKeyActionMouse();
 
 	// Wait until the bubble display is expired
 	while (!_vm->shouldQuit() && _vm->_timers[PRINT_TIMER]._flag) {
@@ -558,7 +558,7 @@ void Scripts::cmdSetTimer() {
 	_vm->_timers[idx]._initTm = val;
 
 	_vm->_events->debounceLeft();
-	_vm->_events->zeroKeys();
+	_vm->_events->zeroKeysActions();
 }
 
 void Scripts::cmdCheckTimer() {
@@ -574,8 +574,8 @@ void Scripts::cmdCheckTimer() {
 	if (_endFlag)
 		return;
 
-	if ((idx == 9) && _vm->_events->isKeyPending()) {
-		_vm->_events->zeroKeys();
+	if ((idx == 9) && _vm->_events->isKeyActionPending()) {
+		_vm->_events->zeroKeysActions();
 		_vm->_timers[9]._timer = 0;
 		_vm->_timers[9]._flag = 0;
 	}
@@ -938,9 +938,9 @@ void Scripts::cmdWait() {
 	_vm->_timers[3]._timer = time;
 	_vm->_timers[3]._initTm = time;
 	_vm->_timers[3]._flag++;
-	_vm->_events->zeroKeys();
+	_vm->_events->zeroKeysActions();
 
-	while (!_vm->shouldQuit() && !_vm->_events->isKeyMousePressed() &&
+	while (!_vm->shouldQuit() && !_vm->_events->isKeyActionMousePressed() &&
 			_vm->_timers[3]._flag) {
 		_vm->_midi->midiRepeat();
 		charLoop();
@@ -949,7 +949,7 @@ void Scripts::cmdWait() {
 	}
 
 	_vm->_events->debounceLeft();
-	_vm->_events->zeroKeys();
+	_vm->_events->zeroKeysActions();
 }
 
 void Scripts::cmdSetConPos() {

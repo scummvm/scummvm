@@ -524,7 +524,7 @@ void AmazonEngine::startChapter(int chapter) {
 			return;
 
 		_events->debounceLeft();
-		_events->zeroKeys();
+		_events->zeroKeysActions();
 		playVideo(_chapter, Common::Point(4, 113));
 		if (shouldQuit())
 			return;
@@ -544,14 +544,14 @@ void AmazonEngine::startChapter(int chapter) {
 		}
 
 		// Wait loop
-		while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
+		while (!shouldQuit() && !_events->isKeyActionMousePressed() && _timers[20]._flag) {
 			_events->pollEventsAndWait();
 		}
 	}
 
 	_screen->forceFadeOut();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 	_screen->clearScreen();
 
 	_screen->setPanel(3);
@@ -584,7 +584,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_timers[20]._flag++;
 
 	// Wait loop
-	while (!shouldQuit() && !_events->isKeyMousePressed() && _timers[20]._flag) {
+	while (!shouldQuit() && !_events->isKeyActionMousePressed() && _timers[20]._flag) {
 		_events->pollEventsAndWait();
 	}
 	if (shouldQuit())
@@ -592,7 +592,7 @@ void AmazonEngine::startChapter(int chapter) {
 
 	_screen->forceFadeOut();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 
 	_screen->clearBuffer();
 	_files->loadScreen(96, 16);
@@ -676,7 +676,7 @@ void AmazonEngine::dead(int deathId) {
 	_screen->forceFadeOut();
 	_scripts->cmdFreeSound();
 	_events->debounceLeft();
-	_events->zeroKeys();
+	_events->zeroKeysActions();
 
 	_sound->_soundTable.push_back(SoundEntry(_files->loadFile(98, 44), 1));
 

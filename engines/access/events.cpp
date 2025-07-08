@@ -147,7 +147,12 @@ void EventsManager::pollEvents(bool skipTimers) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			return;
-
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			actionControl(event.customType, true);
+			return;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			actionControl(event.customType, false);
+			return;
 		case Common::EVENT_KEYDOWN:
 			// Check for debugger
 			keyControl(event.kbd.keycode, true);
@@ -202,34 +207,44 @@ void EventsManager::keyControl(Common::KeyCode keycode, bool isKeyDown) {
 	}
 
 	_keyCode = keycode;
+}
 
-	switch (keycode) {
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP8:
+void EventsManager::actionControl(Common::CustomEventType action, bool isKeyDown) {
+	Player &player = *_vm->_player;
+
+	if (!isKeyDown) {
+		if (player._move != NONE) {
+			_action = kActionNone;
+			player._move = NONE;
+		}
+		return;
+	}
+
+	_action = action;
+
+	switch (action) {
+	case kActionMoveUp:
 		player._move = UP;
 		break;
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP2:
+	case kActionMoveDown:
 		player._move = DOWN;
 		break;
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP4:
+	case kActionMoveLeft:
 		player._move = LEFT;
 		break;
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP6:
+	case kActionMoveRight:
 		player._move = RIGHT;
 		break;
-	case Common::KEYCODE_KP7:
+	case kActionMoveUpLeft:
 		player._move = UPLEFT;
 		break;
-	case Common::KEYCODE_KP9:
+	case kActionMoveUpRight:
 		player._move = UPRIGHT;
 		break;
-	case Common::KEYCODE_KP1:
+	case kActionMoveDownLeft:
 		player._move = DOWNLEFT;
 		break;
-	case Common::KEYCODE_KP3:
+	case kActionMoveDownRight:
 		player._move = DOWNRIGHT;
 		break;
 	default:
@@ -281,22 +296,23 @@ void EventsManager::delay(int time) {
 	g_system->delayMillis(time);
 }
 
-void EventsManager::zeroKeys() {
+void EventsManager::zeroKeysActions() {
 	_keyCode = Common::KEYCODE_INVALID;
+	_action = kActionNone;
 }
 
-bool EventsManager::getKey(Common::KeyState &key) {
-	if (_keyCode == Common::KEYCODE_INVALID) {
+bool EventsManager::getAction(Common::CustomEventType &action) {
+	if (_action == kActionNone) {
 		return false;
 	} else {
-		key = _keyCode;
-		_keyCode = Common::KEYCODE_INVALID;
+		action = _action;
+		_action = kActionNone;
 		return true;
 	}
 }
 
-bool EventsManager::isKeyPending() const {
-	return _keyCode != Common::KEYCODE_INVALID;
+bool EventsManager::isKeyActionPending() const {
+	return (_keyCode != Common::KEYCODE_INVALID || _action != kActionNone);
 }
 
 void EventsManager::debounceLeft() {
@@ -307,11 +323,11 @@ void EventsManager::debounceLeft() {
 
 void EventsManager::clearEvents() {
 	_leftButton = _rightButton = false;
-	zeroKeys();
+	zeroKeysActions();
 }
 
-void EventsManager::waitKeyMouse() {
-	while (!_vm->shouldQuit() && !isKeyMousePressed()) {
+void EventsManager::waitKeyActionMouse() {
+	while (!_vm->shouldQuit() && !isKeyActionMousePressed()) {
 		pollEvents(true);
 		delay();
 	}
@@ -341,10 +357,10 @@ int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
 	return -1;
 }
 
-bool EventsManager::isKeyMousePressed() {
-	bool result = _leftButton || _rightButton || isKeyPending();
+bool EventsManager::isKeyActionMousePressed() {
+	bool result = _leftButton || _rightButton || isKeyActionPending();
 	debounceLeft();
-	zeroKeys();
+	zeroKeysActions();
 
 	return result;
 }
