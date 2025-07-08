@@ -594,7 +594,6 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
-	debug("I'm here to read: %d bytes, I'm at: %ld, starting at: %d, ending at %d", finishPosition - startPosition, stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:

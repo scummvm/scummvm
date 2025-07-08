@@ -37,6 +37,7 @@
 #include "director/castmember/bitmap.h"
 #include "director/castmember/filmloop.h"
 
+
 namespace Director {
 
 FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
@@ -46,6 +47,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, Common::Seekab
 	_enableSound = true;
 	_crop = false;
 	_center = false;
+	_index = -1;
 
 	// We are ignoring some of the bits in the flags
 	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
@@ -86,6 +88,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	_center = source._center;
 	_frames = source._frames;
 	_subchannels = source._subchannels;
+	_index = -1;
 }
 
 FilmLoopCastMember::~FilmLoopCastMember() {
@@ -315,7 +318,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			int channelOffset = order % channelSize;
 			int offset = order;
 
-			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -768,7 +771,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 	writeStream->seek(offset);
 
 	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
-	writeStream->writeUint32LE(getSCVWResourceSize(channelSize));	// Size of the resource
+	writeStream->writeUint32LE(getSCVWResourceSize());	// Size of the resource
 
 	uint32 sizePos = writeStream->pos();
 	writeStream->writeUint32BE(0);						// Putting zeroes instead of size currently
@@ -815,11 +818,20 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 	}	
 }
 
-uint32 FilmLoopCastMember::getSCVWResourceSize(uint32 channelSize) {
+uint32 FilmLoopCastMember::getSCVWResourceSize() {
 	// Size of the filmloop data: 4 bytes
 	// frameoffset: 4 bytes
 	// Header (Ignored data): 12 bytes
-	// 
+
+	uint32 channelSize = 0;
+	if (_cast->_version == kFileVer400) {
+		channelSize = kSprChannelSizeD4;
+	} else if (_cast->_version == kFileVer400) {
+		channelSize = kSprChannelSizeD5;
+	} else {
+		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
+	}
+
 	uint32 framesSize = 0;
 	for (FilmLoopFrame frame : _frames) { 
 		for (auto it : frame.sprites) {
