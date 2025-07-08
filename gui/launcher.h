@@ -202,7 +202,7 @@ protected:
 	 */
 	void loadGame(int item);
 
-	Common::Array<LauncherEntry> generateEntries(const Common::ConfigManager::DomainMap &domains);
+	Common::Array<LauncherEntry> generateEntries(const Common::ConfigManager::DomainMap &domains, bool skipAddOns);
 
 	/**
 	 * Select the target with the given name in the launcher game list.
