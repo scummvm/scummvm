@@ -60,7 +60,10 @@ void QuizPuzzle::execute() {
 			NancySceneState.setEventFlag(119, g_nancy->_true);	// EV_Finished_Chess_Quiz
 		} else if (sceneId == 4184) {
 			warning("STUB - Nancy 9 Quiz Puzzle - Lighthouse Morse code");
-			NancySceneState.setEventFlag(420, g_nancy->_true);	// EV_Solved_Morse_Code
+			SceneChangeDescription scene;
+			scene.sceneID = 4190;
+			NancySceneState.resetStateToInit();
+			NancySceneState.changeScene(scene);
 		} else {
 			warning("STUB - Nancy 9 Quiz Puzzle");
 		}
