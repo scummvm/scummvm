@@ -168,17 +168,11 @@ uint32 PaletteCastMember::getPaletteDataSize() {
 }
 
 void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	uint32 castSize = getPaletteDataSize() + 8;
+	uint32 castSize = getPaletteDataSize();
 
-	/**/
-	byte *dumpData = nullptr;
-	dumpData = (byte *)calloc(castSize, sizeof(byte));
-	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
-	/**/
-
-	// writeStream->seek(offset);
+	writeStream->seek(offset);
 	writeStream->writeUint32LE(MKTAG('C', 'L', 'U', 'T'));
-	writeStream->writeUint32LE(getPaletteDataSize());
+	writeStream->writeUint32LE(castSize);
 
 	const byte *pal = _palette->palette;
 
@@ -190,8 +184,19 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 		writeStream->writeUint16BE(pal[3 * i + 2] << 8);
 	}
 
-	dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
-	delete writeStream;
+	if (debugChannelSet(7, kDebugSaving)) {
+		byte *dumpData = nullptr;
+		dumpData = (byte *)calloc(castSize, sizeof(byte));
+		auto dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);
+
+		uint32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, castSize);
+		writeStream->seek(currentPos);
+
+		dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
+		delete dumpStream;
+	}
 }
 
 }	// End of namespace Director
