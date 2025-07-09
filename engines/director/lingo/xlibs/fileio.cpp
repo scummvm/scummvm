@@ -567,7 +567,9 @@ void FileIO::m_writeString(int nargs) {
 		return;
 	}
 
-	me->_outStream->writeString(d.asString());
+	Common::String encodedString = d.asString().encode(g_director->getPlatformEncoding());
+	me->_outStream->writeString(encodedString);
+
 	g_lingo->push(Datum(kErrorNone));
 }
 
