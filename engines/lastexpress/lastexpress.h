@@ -622,6 +622,7 @@ public:
 
 	bool _pendingExitEvent = false;
 	bool _exitFromMenuButton = false;
+	int32 _lastForcedScreenUpdateTicks = 0; // Not in the original
 
 	Seq *_doorSeqs[8] = { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr };
 	Seq *_clockHandsSeqs[2] = { nullptr, nullptr };

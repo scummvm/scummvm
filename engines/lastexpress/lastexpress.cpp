@@ -467,13 +467,7 @@ bool LastExpressEngine::handleEvents() {
 	// Handle input
 	Common::Event ev;
 	int32 curFlags = 0;
-
-#ifdef USE_IMGUI
-	// Allow the debugger to pick up the changes...
-	if (gDebugLevel >= 3) {
-		_system->updateScreen();
-	}
-#endif
+	bool eventWillUpdateScreen = false;
 
 	while (_eventMan->pollEvent(ev)) {
 		switch (ev.type) {
@@ -498,6 +492,7 @@ bool LastExpressEngine::handleEvents() {
 				curFlags |= kMouseFlagRightButton;
 
 			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
+			eventWillUpdateScreen = true;
 			break;
 		case Common::EVENT_LBUTTONUP:
 			_systemEventLeftMouseDown = false;
@@ -506,6 +501,7 @@ bool LastExpressEngine::handleEvents() {
 				curFlags |= kMouseFlagRightButton;
 
 			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
+			eventWillUpdateScreen = true;
 			break;
 
 		case Common::EVENT_RBUTTONDOWN:
@@ -516,6 +512,7 @@ bool LastExpressEngine::handleEvents() {
 				curFlags |= kMouseFlagLeftButton;
 
 			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
+			eventWillUpdateScreen = true;
 			break;
 		case Common::EVENT_RBUTTONUP:
 			_systemEventRightMouseDown = false;
@@ -524,6 +521,7 @@ bool LastExpressEngine::handleEvents() {
 				curFlags |= kMouseFlagLeftButton;
 
 			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
+			eventWillUpdateScreen = true;
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
@@ -535,7 +533,7 @@ bool LastExpressEngine::handleEvents() {
 			if (!getLogicManager()->_doubleClickFlag) {
 				if (_systemEventLeftMouseDown)
 					curFlags |= kMouseFlagLeftButton;
-			
+
 				if (_systemEventRightMouseDown)
 					curFlags |= kMouseFlagRightButton;
 			}
@@ -544,6 +542,7 @@ bool LastExpressEngine::handleEvents() {
 			_systemEventLastMouseCoords.y = ev.mouse.y;
 
 			getMessageManager()->addEvent(kEventChannelMouse, ev.mouse.x, ev.mouse.y, curFlags);
+			eventWillUpdateScreen = true;
 			break;
 
 		case Common::EVENT_QUIT:
@@ -562,6 +561,23 @@ bool LastExpressEngine::handleEvents() {
 
 	if (_exitFromMenuButton)
 		_exitFromMenuButton = false;
+
+#ifdef USE_IMGUI
+	// Allow the debugger to pick up the changes...
+	if (gDebugLevel >= 3) {
+		_system->updateScreen();
+	} else {
+#endif
+
+		// Force the update only if it hasn't been already triggered by an event...
+		if (!eventWillUpdateScreen && (_system->getMillis() - _lastForcedScreenUpdateTicks >= 17)) {
+			_lastForcedScreenUpdateTicks = _system->getMillis();
+			_system->updateScreen();
+		}
+
+#ifdef USE_IMGUI
+	}
+#endif
 
 	return true;
 }
