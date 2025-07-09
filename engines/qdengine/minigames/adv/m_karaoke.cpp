@@ -138,9 +138,14 @@ Karaoke::Karaoke(MinigameManager *runtime) {
 		return;
 
 	Common::File file;
-	if (!file.open(Common::Path((const char *)transCyrillic(fileName), '\\'))) {
-		assert(!(Common::String() + "Не удалось открыть файл \"" + fileName + "\"").c_str());
-		return;
+	Common::Path path((const char *)transCyrillic(fileName), '\\');
+
+	if (!file.open(path)) {
+		// Try with punyencoded path
+		if (!file.open(path.punycodeEncode())) {
+			assert(!(Common::String() + "Не удалось открыть файл \"" + fileName + "\"").c_str());
+			return;
+		}
 	}
 
 	Parse(file, _nodes);

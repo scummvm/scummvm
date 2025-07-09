@@ -54,32 +54,36 @@ bool mpegPlayer::play(const Common::Path &file, bool loop, int vol) {
 
 	Common::SeekableReadStream *stream;
 
-	if (qdFileManager::instance().open_file(&stream, file, false)) {
-		Audio::SeekableAudioStream *audiostream;
+	if (!qdFileManager::instance().open_file(&stream, file, false)) {
+		if (!qdFileManager::instance().open_file(&stream, file.punycodeEncode(), false)) {
+			warning(" mpegPlayer::play(): Failed to open file %s", file.toString().c_str());
+		}
+	}
 
-		if (isOGG) {
+	Audio::SeekableAudioStream *audiostream;
+
+	if (isOGG) {
 #ifdef USE_VORBIS
-			audiostream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+		audiostream = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
 #else
-			warning("mpegPlayer::play(%s, %d, %d): Vorbis support not compiled", file.toString().c_str(), loop, vol);
-			return false;
+		warning("mpegPlayer::play(%s, %d, %d): Vorbis support not compiled", file.toString().c_str(), loop, vol);
+		return false;
 #endif
-		} else {
+	} else {
 #ifdef USE_MPCDEC
-			audiostream = Audio::makeMPCStream(stream, DisposeAfterUse::YES);
+		audiostream = Audio::makeMPCStream(stream, DisposeAfterUse::YES);
 #else
-			warning("mpegPlayer::play(%s, %d, %d): MPC support not compiled", file.toString().c_str(), loop, vol);
-			return false;
+		warning("mpegPlayer::play(%s, %d, %d): MPC support not compiled", file.toString().c_str(), loop, vol);
+		return false;
 #endif
-		}
+	}
 
-		if (!loop) {
-			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audiostream);
-		} else {
-			Audio::LoopingAudioStream *looped = new Audio::LoopingAudioStream(audiostream, 0, DisposeAfterUse::YES);
+	if (!loop) {
+		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, audiostream);
+	} else {
+		Audio::LoopingAudioStream *looped = new Audio::LoopingAudioStream(audiostream, 0, DisposeAfterUse::YES);
 
-			g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, looped);
-		}
+		g_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, looped);
 	}
 
 	set_volume(vol);

@@ -81,10 +81,13 @@ bool winVideo::open_file(const Common::Path &fname) {
 	_videostream = new Common::File();
 
 	if (!_videostream->open(filename.c_str())) {
-		warning("WinVideo::open: Failed to open file %s", filename.c_str());
-		delete _videostream;
-		_videostream = nullptr;
-		return false;
+		// Try with punyencoded path
+		if (!_videostream->open(Common::Path(filename).punycodeEncode())) {
+			warning("WinVideo::open: Failed to open file %s", filename.c_str());
+			delete _videostream;
+			_videostream = nullptr;
+			return false;
+		}
 	}
 
 	// WORKAROUND: Fix lagging audio in mng and rybalka
