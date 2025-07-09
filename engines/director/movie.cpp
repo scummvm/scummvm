@@ -738,4 +738,19 @@ Common::String InfoEntry::readString(bool pascal) {
 	return g_director->getCurrentMovie()->getCast()->decodeString(encodedStr).encode(Common::kUtf8);
 }
 
+void InfoEntry::writeString(Common::String string, bool pascal) {
+	if (string.size() == 0) {
+		return;
+	}
+
+	data = (byte *)malloc(len);
+
+	uint16 start = pascal ? 1 : 0; 
+	
+	for (uint16 i = start; i < len && string.size(); i++) {
+		data[i] = string.firstChar();
+		string.deleteChar(0);
+	}
+}
+
 } // End of namespace Director
