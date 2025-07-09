@@ -397,7 +397,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 		extra = p[2];
 		p += 3;
-		uint32 decFlag = sequenceLayerIndirection[0];
+		uint32 displayCel = sequenceLayerIndirection[0];
 
 		for (i = 0; i != extra; i++) {
 			code = p[4];
@@ -428,11 +428,11 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			uint16 shadowMask = 0;
 
 			if (!useConditionalTable || !_akct) {
-				decFlag = 1;
+				displayCel = 1;
 			} else {
 				uint32 cond = READ_LE_UINT32(_akct + cost.heCondMaskTable[limb] + sequenceLayerIndirection[i] * 4);
 				if (cond == 0) {
-					decFlag = 1;
+					displayCel = 1;
 				} else {
 					uint32 type = cond & ~0x3FFFFFFF;
 					cond &= 0x3FFFFFFF;
@@ -441,27 +441,37 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 						cond &= ~0xE000;
 					}
 					if (_vm->_game.heversion >= 90 && cond == 0) {
-						decFlag = 1;
+						displayCel = 1;
 					} else if (type == 0x40000000) { // restored_bit
-						decFlag = (a->_heCondMask & cond) == cond ? 1 : 0;
+						displayCel = (a->_heCondMask & cond) == cond ? 1 : 0;
 					} else if (type == 0x80000000) { // dirty_bit
-						decFlag = (a->_heCondMask & cond) ? 0 : 1;
+						displayCel = (a->_heCondMask & cond) ? 0 : 1;
 					} else {
-						decFlag = (a->_heCondMask & cond) ? 1 : 0;
+						displayCel = (a->_heCondMask & cond) ? 1 : 0;
 					}
 				}
 			}
 
 			p += (p[4] & AKC_ExtendBit) ? 6 : 5;
 
-			if (decFlag == 0)
+			if (displayCel == 0)
 				continue;
 
+			const uint8 *currentShadowPtr = _xmap;
+
 			if (_vm->_game.heversion >= 90) {
-				if (_vm->_game.heversion >= 99)
+				if (_vm->_game.heversion >= 99) {
 					_shadowMode = 0;
-				if (_xmap && (shadowMask & AKC_ExtendWordBit))
+
+					// From source/disasm: the system should only shadow
+					// the layers that have the shadow system bit set...
+					currentShadowPtr = nullptr;
+				}
+
+				if (_xmap && (shadowMask & AKC_ExtendWordBit)) {
 					_shadowMode = 3;
+					currentShadowPtr = _xmap;
+				}
 			}
 
 			switch (_codec) {
@@ -475,7 +485,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				result |= paintCelMajMin(xMoveCur, yMoveCur);
 				break;
 			case AKOS_TRLE_CODEC:
-				result |= paintCelTRLE(a->_number, a->_drawToBackBuf, xMoveCur, yMoveCur, _width, _height, _akpl[0], _xmap, 0);
+				result |= paintCelTRLE(a->_number, a->_drawToBackBuf, xMoveCur, yMoveCur, _width, _height, _akpl[0], currentShadowPtr, 0);
 				break;
 			default:
 				error("akos_drawLimb: invalid _codec %d", _codec);
