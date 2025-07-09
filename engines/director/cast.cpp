@@ -131,6 +131,10 @@ Cast::~Cast() {
 CastMember *Cast::getCastMember(int castId, bool load) {
 	CastMember *result = nullptr;
 
+	debug("What is the loadedcast:");
+	for (auto it : *_loadedCast) {
+		debug("%d: %s/load", it._key, castType2str(it._value->_type));
+	}
 	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);
 	}
@@ -536,51 +540,51 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 
 	// These offsets are only for Director Version 4 to Director version 6
 	// offsets
-	writeStream->writeUint16LE(_len);			// 0    // This will change
-	writeStream->writeUint16LE(_fileVersion);	    // 2
+	writeStream->writeUint16BE(configSize);			// 0    // This will change
+	writeStream->writeUint16BE(_fileVersion);	    // 2
 
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
-	writeStream->writeUint16LE(_castArrayStart);    // 12
+	writeStream->writeUint16BE(_castArrayStart);    // 12
 	// This will change
-	writeStream->writeUint16LE(_castArrayStart + _loadedCast->size());      // 14   
+	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14   
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
-	writeStream->writeSint16LE(_unk1);              // 18
+	writeStream->writeSint16BE(_unk1);              // 18
 
-	writeStream->writeUint16LE(_commentFont);       // 20
-	writeStream->writeUint16LE(_commentSize);       // 22
-	writeStream->writeUint16LE(_commentStyle);      // 24
-	writeStream->writeUint16LE(_stageColor);        // 26
+	writeStream->writeUint16BE(_commentFont);       // 20
+	writeStream->writeUint16BE(_commentSize);       // 22
+	writeStream->writeUint16BE(_commentStyle);      // 24
+	writeStream->writeUint16BE(_stageColor);        // 26
 
-	writeStream->writeUint16LE(_bitdepth);          // 28
+	writeStream->writeUint16BE(_bitdepth);          // 28
 
 	writeStream->writeByte(_field17);               // 29
 	writeStream->writeByte(_field18);               // 30
-	writeStream->writeSint32LE(_field19);           // 34
+	writeStream->writeSint32BE(_field19);           // 34
 
-	writeStream->writeUint16LE(_version);   		// 36
+	writeStream->writeUint16BE(_version);   		// 36
 
-	writeStream->writeUint16LE(_field21);           // 38
-	writeStream->writeUint32LE(_field22);           // 40
-	writeStream->writeUint32LE(_field23);           // 44
+	writeStream->writeUint16BE(_field21);           // 38
+	writeStream->writeUint32BE(_field22);           // 40
+	writeStream->writeUint32BE(_field23);           // 44
 
-	writeStream->writeSint32LE(_field24);           // 48
+	writeStream->writeSint32BE(_field24);           // 48
 	writeStream->writeSByte(_field25);              // 52
 	writeStream->writeSByte(_field26);              // 53
 
-	writeStream->writeSint16LE(_frameRate);         // 54
-	writeStream->writeUint16LE(_platform);          // 56
-	writeStream->writeSint16LE(_protection);        // 58
-	writeStream->writeSint32LE(_field29);           // 60
+	writeStream->writeSint16BE(_frameRate);         // 54
+	writeStream->writeUint16BE(_platform);          // 56
+	writeStream->writeSint16BE(_protection);        // 58
+	writeStream->writeSint32BE(_field29);           // 60
 
 	// Currently a stub
 	uint32 checksum = computeChecksum();
-	writeStream->writeUint32LE(checksum);           // 64
+	writeStream->writeUint32BE(checksum);           // 64
 
 	if (_version >= kFileVer400 && _version < kFileVer500) {
-		writeStream->writeSint16LE(_field30);       // 68
+		writeStream->writeSint16BE(_field30);       // 68
 
 		// This loop isn't writing meaningful data currently
 		// But it is possible that this data might be needed
@@ -592,8 +596,8 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 			writeStream->writeByte(0);              // 68, 69, 70, 71, 72, 73, 74, 75
 		}
 
-		writeStream->writeSint16LE(_defaultPalette.castLib);    // 76
-		writeStream->writeSint16LE(_defaultPalette.member);     // 78
+		writeStream->writeSint16BE(_defaultPalette.castLib);    // 76
+		writeStream->writeSint16BE(_defaultPalette.member);     // 78
 	}
 
     if (debugChannelSet(7, kDebugSaving)) {
@@ -608,7 +612,7 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 		writeStream->seek(currentPos);
 
         dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
-        delete writeStream;
+        delete dumpStream;
     }
 
 }
