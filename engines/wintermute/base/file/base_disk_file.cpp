@@ -188,25 +188,25 @@ Common::SeekableReadStream *openDiskFile(const Common::String &filename) {
 
 			byte *compBuffer = new byte[compSize];
 			if (!compBuffer) {
-				error("Error allocating memory for compressed file '%s'", filename.c_str());
 				delete file;
+				error("Error allocating memory for compressed file '%s'", filename.c_str());
 				return nullptr;
 			}
 
 			byte *data = new byte[uncompSize];
 			if (!data) {
-				error("Error allocating buffer for file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;
+				error("Error allocating buffer for file '%s'", filename.c_str());
 				return nullptr;
 			}
 			file->seek(dataOffset + prefixSize, SEEK_SET);
 			file->read(compBuffer, compSize);
 
 			if (Common::inflateZlib(data, &uncompSize, compBuffer, compSize) != true) {
-				error("Error uncompressing file '%s'", filename.c_str());
 				delete[] compBuffer;
 				delete file;
+				error("Error uncompressing file '%s'", filename.c_str());
 				return nullptr;
 			}
 
