@@ -392,7 +392,11 @@ COLORREF CDC::GetPixel(const POINT &point) const {
 }
 
 CGdiObject *CDC::SelectStockObject(int nIndex) {
-	error("TODO: CDC::SelectStockObject");
+	HGDIOBJ hObject = MFC::GetStockObject(nIndex);
+	assert(hObject != nullptr);
+
+	HGDIOBJ hOldObj = SelectObject(hObject);
+	return CGdiObject::FromHandle(hOldObj);
 }
 
 CPen *CDC::SelectObject(CPen *pPen) {
@@ -980,7 +984,7 @@ BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
 		int nTabPositions, const LPINT lpnTabStopPositions, int nTabOrigin) {
-	Common::String str(lpszString, nCount);
+	CString str(lpszString, nCount);
 
 	CSize size;
 	textOut(x, y, str.c_str(), str.size(),
@@ -1028,7 +1032,7 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
 }
 
 CSize CDC::Impl::getTextExtent(LPCSTR lpszString, int nCount) const {
-	Common::String str(lpszString, lpszString + nCount);
+	CString str(lpszString, nCount);
 	Graphics::Font *font = *(CFont::Impl *)_font;
 
 	CSize s;

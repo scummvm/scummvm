@@ -25,10 +25,15 @@
 namespace Bagel {
 namespace MFC {
 
+#define TIMER_ID 1
+
 IMPLEMENT_DYNAMIC(CEdit, CWnd)
 BEGIN_MESSAGE_MAP(CEdit, CWnd)
 ON_WM_PAINT()
 ON_WM_KEYDOWN()
+ON_WM_SETFOCUS()
+ON_WM_KILLFOCUS()
+ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 BOOL CEdit::Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
@@ -69,6 +74,27 @@ void CEdit::OnPaint() {
 	// Draw the stored text
 	dc.DrawText(_windowText.c_str(), -1, &clientRect, DT_LEFT | DT_SINGLELINE | DT_VCENTER | DT_NOPREFIX);
 
+	// If needed, draw the caret
+	if (_cursorVisible) {
+		CSize size = dc.GetTextExtent(_windowText.c_str(), -1);
+
+		CPen caretPen(PS_SOLID, 1, GetSysColor(COLOR_WINDOWTEXT));
+		CPen *pOldPen = dc.SelectObject(&caretPen);
+
+		// Draw the caret (as a vertical line or filled rectangle)
+#if 0
+		CBrush *pOldBrush = static_cast<CBrush *>(dc.SelectStockObject(NULL_BRUSH));
+		CRect caretRect(size.cx + 2, 2, size.cx + 4, clientRect.bottom - 2);
+		dc.Rectangle(&caretRect);
+#endif
+		dc.MoveTo(size.cx + 3, 2);
+		dc.LineTo(size.cx + 3, clientRect.bottom - 2);
+		
+		// Restore old objects
+		dc.SelectObject(pOldPen);
+//		dc.SelectObject(pOldBrush);
+	}
+
 	// Restore font if changed
 	if (hFont)
 		dc.SelectObject(hOldFont);
@@ -87,6 +113,26 @@ void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		}
 	}
 
+	Invalidate();
+}
+
+void CEdit::OnSetFocus(CWnd *pOldWnd) {
+	SetTimer(TIMER_ID, 500);
+	CWnd::OnSetFocus(pOldWnd);
+}
+
+void CEdit::OnKillFocus(CWnd *pNewWnd) {
+	KillTimer(TIMER_ID);
+	CWnd::OnKillFocus(pNewWnd);
+
+	if (_cursorVisible) {
+		_cursorVisible = false;
+		OnPaint();
+	}
+}
+
+void CEdit::OnTimer(UINT_PTR nTimerId) {
+	_cursorVisible = !_cursorVisible;
 	Invalidate();
 }
 

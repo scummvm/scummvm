@@ -1400,7 +1400,7 @@ public:
 	                           WPARAM wParam = 0, LPARAM lParam = 0) const;
 
 	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	                  void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
+	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 
 	BOOL GetScrollRange(int nBar,
@@ -1595,6 +1595,7 @@ class CEdit : public CWnd {
 
 private:
 	size_t _maxLength = 0;
+	bool _cursorVisible = false;
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -1608,6 +1609,9 @@ public:
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnSetFocus(CWnd *pOldWnd);
+	afx_msg void OnKillFocus(CWnd *pNewWnd);
+	afx_msg void OnTimer(UINT_PTR nTimerId);
 };
 
 class CScrollBar : public CWnd {

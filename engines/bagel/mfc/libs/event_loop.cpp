@@ -54,8 +54,15 @@ void EventLoop::runEventLoop() {
 }
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
+	// If it's the first window added, and we don't have
+	// a main window defined, set it as the main window
 	if (_activeWindows.empty())
 		_mainWindow = wnd;
+
+	// Add the window to the list
+	// Note: Currently we don't supportly multiple
+	// open windows at the same time. Each new window
+	// is effectively a dialog on top of previous ones
 	_activeWindows.push(wnd);
 }
 
@@ -283,7 +290,7 @@ BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 
 void EventLoop::TranslateMessage(LPMSG lpMsg) {
 	if ((lpMsg->message == WM_KEYDOWN || lpMsg->message == WM_SYSKEYDOWN) &&
-			Common::isPrint(lpMsg->_ascii)) {
+			(isChar((Common::KeyCode)lpMsg->wParam) || Common::isPrint(lpMsg->_ascii))) {
 		uint message = (lpMsg->message == WM_SYSKEYDOWN) ?
 			WM_SYSCHAR : WM_CHAR;
 		WPARAM wParam = lpMsg->_ascii;
@@ -452,6 +459,14 @@ void EventLoop::pause() {
 	Common::Event ev;
 	while (g_system->getEventManager()->pollEvent(ev))
 		_events.push(ev);
+}
+
+bool EventLoop::isChar(Common::KeyCode kc) const {
+	return kc == Common::KEYCODE_SPACE ||
+		kc == Common::KEYCODE_TAB ||
+		kc == Common::KEYCODE_RETURN ||
+		kc == Common::KEYCODE_BACKSPACE ||
+		kc == Common::KEYCODE_ESCAPE;
 }
 
 } // namespace Libs

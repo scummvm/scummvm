@@ -111,6 +111,12 @@ private:
 	 */
 	void triggerTimers();
 
+	/**
+	 * Returns true if a keycode is one that
+	 * generates a WM_CHAR or WM_SYSCHAR event
+	 */
+	bool isChar(Common::KeyCode kc) const;
+
 public:
 	EventLoop() {}
 

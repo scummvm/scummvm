@@ -74,6 +74,12 @@ int CDialog::DoModal() {
 	assert(m_lpszTemplateName != nullptr || m_hDialogTemplate != nullptr ||
 		m_lpDialogTemplate != nullptr);
 
+	// Save the prior focus, if any
+	CWnd *oldWin = AfxGetApp()->GetActiveWindow();
+	CWnd *oldFocus = GetFocus();
+	if (oldFocus)
+		AfxGetApp()->SetFocus(nullptr);
+
 	// load resource as necessary
 	LPCDLGTEMPLATE lpDialogTemplate = m_lpDialogTemplate;
 	HGLOBAL hDialogTemplate = m_hDialogTemplate;
@@ -115,6 +121,10 @@ int CDialog::DoModal() {
 		UnlockResource(hDialogTemplate);
 	if (m_lpszTemplateName != NULL)
 		FreeResource(hDialogTemplate);
+
+	// Restore any old focus
+	if (oldFocus && AfxGetApp()->GetActiveWindow() == oldWin)
+		oldFocus->SetFocus();
 
 	return m_nModalResult;
 }
