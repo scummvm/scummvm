@@ -1635,7 +1635,7 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
 	if ((_game.platform == Common::kPlatformFMTowns && _game.version == 5) ||
 		(_game.platform == Common::kPlatformMacintosh && _game.version > 3)) {
-		drawBox(x1, y1, x2, y2, color);
+		drawBox(x1, _screenTop + y1, x2, _screenTop + y2, color);
 		return;
 	}
 
