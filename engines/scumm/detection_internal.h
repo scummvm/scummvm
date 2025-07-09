@@ -533,6 +533,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 				d.md5Entry = findInMD5Table(md5str.c_str());
 
 				if (!d.md5Entry && (platform == Common::Platform::kPlatformMacintosh || platform == Common::Platform::kPlatformUnknown)) {
+					tmp->seek(0);
 					Common::SeekableReadStream *dataStream = Common::MacResManager::openDataForkFromMacBinary(tmp);
 					if (dataStream) {
 						Common::String dataMD5 = computeStreamMD5AsString(*dataStream, kMD5FileSizeLimit);
