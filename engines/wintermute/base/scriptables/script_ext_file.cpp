@@ -456,8 +456,7 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	// ReadDouble
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ReadDouble") == 0) { // TODO: Solve reading a 8 byte double.
-		error("SXFile::ReadDouble - Not endian safe yet");
+	else if (strcmp(name, "ReadDouble") == 0) {
 		stack->correctParams(0);
 		if (_textMode || !_readFile) {
 			script->runtimeError("File.%s: File must be open for reading in binary mode.", name);
@@ -598,16 +597,15 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	// WriteDouble
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WriteDouble") == 0) {
-		error("SXFile::WriteDouble - Not endian safe yet");
 		stack->correctParams(1);
-		/* double val = */ stack->pop()->getFloat();
+		double val = stack->pop()->getFloat();
 
 		if (_textMode || !_writeFile) {
 			script->runtimeError("File.%s: File must be open for writing in binary mode.", name);
 			stack->pushBool(false);
 			return STATUS_OK;
 		}
-		//fwrite(&val, sizeof(val), 1, (FILE *)_writeFile);
+		_writeFile->writeDoubleLE(val);
 		stack->pushBool(true);
 
 		return STATUS_OK;
