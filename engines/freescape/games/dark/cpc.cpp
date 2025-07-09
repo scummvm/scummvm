@@ -162,6 +162,7 @@ void DarkEngine::drawCPCUI(Graphics::Surface *surface) {
 	}
 	drawBinaryClock(surface, 300, 124, front, back);
 	drawIndicator(surface, 160, 136);
+	drawVerticalCompass(surface, 24, 76, _pitch, front);
 }
 
 } // End of namespace Freescape

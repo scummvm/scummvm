@@ -191,6 +191,7 @@ void DarkEngine::drawZXUI(Graphics::Surface *surface) {
 	uint32 clockColor = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0x00, 0x00);
 	drawBinaryClock(surface, 273, 128, clockColor, back);
 	drawIndicator(surface, 152, 140);
+	drawVerticalCompass(surface, 47, 79, _pitch, front);
 }
 
 } // End of namespace Freescape

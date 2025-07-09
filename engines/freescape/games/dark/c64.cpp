@@ -243,6 +243,7 @@ void DarkEngine::drawC64UI(Graphics::Surface *surface) {
 			surface->drawLine(64, 147 + 8, 127 - (_maxEnergy - energy) - 1, 155, lineColor);
 	}
 	drawBinaryClock(surface, 304, 124, front, back);
+	drawVerticalCompass(surface, 17, 77, _pitch, front);
 }
 
 } // End of namespace Freescape

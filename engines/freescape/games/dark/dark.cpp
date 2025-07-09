@@ -818,6 +818,24 @@ void DarkEngine::drawBinaryClock(Graphics::Surface *surface, int xPosition, int 
 	}
 }
 
+void DarkEngine::drawVerticalCompass(Graphics::Surface *surface, int x, int y, float angle, uint32 color) {
+	int pitch = int(angle / 1.65);
+	Common::Array<int> xpoints;
+	Common::Array<int> ypoints;
+
+	xpoints.push_back(x);
+	xpoints.push_back(x + 3);
+	xpoints.push_back(x + 3);
+	xpoints.push_back(x);
+
+	ypoints.push_back(y - pitch);
+	ypoints.push_back(y + 3 - pitch);
+	ypoints.push_back(y - 4 - pitch);
+	ypoints.push_back(y - pitch);
+
+	surface->drawPolygonScan(xpoints.data(), ypoints.data(), 4, Common::Rect(0, 0, surface->w, surface->h), color);
+}
+
 void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yPosition) {
 	if (_indicators.size() == 0)
 		return;

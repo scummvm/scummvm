@@ -242,6 +242,7 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	uint32 clockColor = _renderMode == Common::kRenderCGA ? front : _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 	drawBinaryClock(surface, 300, 124, clockColor, back);
 	drawIndicator(surface, 160, 136);
+	drawVerticalCompass(surface, 24, 76, _pitch, blue);
 }
 
 } // End of namespace Freescape

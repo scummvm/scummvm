@@ -995,10 +995,18 @@ void FreescapeEngine::rotate(float xoffset, float yoffset, float zoffset) {
 	_roll += zoffset;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 360.0f)
-		_pitch -= 360.0f;
-	if (_pitch < 0.0f)
-		_pitch += 360.0f;
+	if (!isDriller()) {
+		if (_pitch > 90.0f)
+			_pitch = 90.0f;
+		else if (_pitch < -89.9f)
+			_pitch = -89.9f;
+	} else {
+		// Driller allowed to rotate pitch up to 360 degrees
+		if (_pitch > 360.0f)
+			_pitch -= 360.0f;
+		if (_pitch < 0.0f)
+			_pitch += 360.0f;
+	}
 
 	if (_yaw > 360.0f)
 		_yaw -= 360.0f;
