@@ -954,9 +954,6 @@ void Room604::killRipley() {
 		digi_play("dooropn2", 3);
 
 		switch (_G(flags)[V189]) {
-		case 1:
-			_shedDoor = series_play("SHED DOOR OPENS", 0x300, 16, 1, 11);
-			break;
 		case 2:
 			terminateMachineAndNull(_doorWireGone);
 			terminateMachineAndNull(_cord);
@@ -968,6 +965,7 @@ void Room604::killRipley() {
 			_shedDoor = series_play("604 DOOR OPEN PLUG IN", 0x300, 0, 556, 5, 0, 100, 0, 0, 0, 1);
 			break;
 		default:
+			_shedDoor = series_play("SHED DOOR OPENS", 0x300, 16, 1, 11);
 			break;
 		}
 		break;
