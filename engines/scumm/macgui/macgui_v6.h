@@ -38,6 +38,7 @@ private:
 	byte *_backupPalette;
 
 	int _screenSaveLevel = 0;
+	bool _skipScene = false;
 
 #if ENABLE_SCUMM_7_8
 	// V7 games don't honor the music_mute and sfx_mute settings, so we
@@ -60,6 +61,8 @@ public:
 	// See setMacGuiColors()
 	uint32 getBlack() const override { return 255; }
 	uint32 getWhite() const override { return 254; }
+
+	void updateWindowManager() override;
 
 	const Graphics::Font *getFontByScummId(int32 id) override;
 

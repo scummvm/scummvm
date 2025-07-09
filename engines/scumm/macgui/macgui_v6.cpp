@@ -283,9 +283,7 @@ bool MacV6Gui::handleMenu(int id, Common::String &name) {
 		return true;
 
 	case 202:
-		// TODO: This doesn't work when skipping SMUSH videos, e.g.
-		// the Dig intro video.
-		_vm->processKeyboard(Common::KEYCODE_ESCAPE);
+		_skipScene = true;
 		return true;
 
 	case 203:
@@ -1300,6 +1298,15 @@ bool MacV6Gui::runRestartDialog() {
 
 void MacV6Gui::resetAfterLoad() {
 	reset();
+}
+
+void MacV6Gui::updateWindowManager() {
+	MacGuiImpl::updateWindowManager();
+
+	if (_skipScene && _screenSaveLevel == 0) {
+		_skipScene = false;
+		_vm->processKeyboard(Common::KEYCODE_ESCAPE);
+	}
 }
 
 } // End of namespace Scumm
