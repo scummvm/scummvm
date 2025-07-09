@@ -27,7 +27,14 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/config-manager.h"
+#include "common/hashmap.h"
+
 #include "common/translation.h"
+
+#include "gui/chooser.h"
+#include "gui/message.h"
+#include "gui/unknown-game-dialog.h"
 
 #include "gob/gameidtotype.h"
 #include "gob/gob.h"
@@ -75,9 +82,16 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Gob::GOBGameDescription *gd) const {
-	*engine = new Gob::GobEngine(syst);
-	((Gob::GobEngine *)*engine)->initGame(gd);
-	return Common::kNoError;
+
+	Gob::GobEngine *gobEngine = new Gob::GobEngine(syst);
+	*engine = gobEngine;
+	gobEngine->initGame(gd);
+	Common::ErrorCode errorCode = Common::kNoError;
+
+	if (gobEngine->gameTypeHasAddOns())
+		errorCode = gobEngine->updateAddOns(this, gd);
+
+	return errorCode;
 }
 
 
@@ -99,6 +113,158 @@ GameType GobEngine::getGameType(const char *gameId) const {
 	}
 
 	error("Unknown game ID: %s", gameId);
+}
+
+bool GobEngine::gameTypeHasAddOns() {
+	return  getGameType() == kGameTypeAdibou1 ||
+			getGameType() == kGameTypeAdibou2 ||
+			getGameType() == kGameTypeAdi2 ||
+			getGameType() == kGameTypeAdi4;
+}
+
+
+// Accelerator, to discard some directories we know have no chance to be add-ons
+bool GobEngine::dirCanBeGameAddOn(Common::FSDirectory dir) const {
+	if (getGameType() == kGameTypeAdibou2)
+		return dir.hasFile("intro_ap.stk");
+
+	return true;
+}
+
+// To display a warning if a directory likely to be an add-on does not match anything
+bool GobEngine::dirMustBeGameAddOn(Common::FSDirectory dir) const {
+	if (getGameType() == kGameTypeAdibou2)
+		return dir.hasFile("intro_ap.stk");
+
+	return false;
+}
+
+Common::ErrorCode GobEngine::updateAddOns(const GobMetaEngine *metaEngine, const GOBGameDescription *gd) const {
+	const Plugin *detectionPlugin = EngineMan.findDetectionPlugin(metaEngine->getName());
+	if (!detectionPlugin) {
+		warning("Engine plugin for GOB not present. Add-ons detection is disabled");
+		return Common::kNoError;
+	}
+
+	// Update silently the targets associated with the add-ons, unless some unsupported version is detected
+
+	// List already registered add-ons for this game, and detect removed ones
+	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
+	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> existingAddOnsPaths;
+
+	bool anyAddOnRemoved = false;
+	for (; iter != ConfMan.endGameDomains(); ++iter) {
+		Common::String name(iter->_key);
+		Common::ConfigManager::Domain &dom = iter->_value;
+
+		Common::String parent;
+		if (dom.tryGetVal("parent", parent) && parent == ConfMan.getActiveDomainName()) {
+			// Existing add-on, check if its path still exists
+			Common::Path addOnPath(Common::Path::fromConfig(dom.getVal("path")));
+			if (addOnPath.empty() || !Common::FSNode(addOnPath).isDirectory()) {
+				// Path does not exist, remove the add-on
+				ConfMan.removeGameDomain(name);
+				anyAddOnRemoved = true;
+			} else {
+				existingAddOnsPaths[addOnPath] = true;
+			}
+		}
+	}
+
+	if (anyAddOnRemoved)
+		ConfMan.flushToDisk();
+
+	// Look for newly added add-ons
+	bool anyAddOnAdded = false;
+	const Common::FSNode gameDataDir(ConfMan.getPath("path"));
+	Common::FSList subdirNodes;
+	gameDataDir.getChildren(subdirNodes, Common::FSNode::kListDirectoriesOnly);
+	for (const Common::FSNode &subdirNode : subdirNodes) {
+		Common::FSDirectory subdir(subdirNode);
+		if (dirCanBeGameAddOn(subdir)) {
+			Common::FSList files;
+			if (!subdirNode.getChildren(files, Common::FSNode::kListAll))
+				continue;
+
+			ADCacheMan.clear();
+
+			DetectedGames detectedGames = detectionPlugin->get<MetaEngineDetection>().detectGames(files);
+			DetectedGames detectedAddOns;
+			for (DetectedGame &game : detectedGames) {
+				if (game.isAddOn) {
+					detectedAddOns.push_back(game);
+				}
+			}
+
+			int idx = 0;
+			if (detectedAddOns.empty() && dirMustBeGameAddOn(subdir)) {
+				Common::U32String msgFormat(_("The directory '%s' looks like an add-on for the game '%s', but ScummVM could not find any matching add-on in it."));
+				Common::U32String msg = Common::U32String::format(msgFormat,
+																  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str(),
+																  gd->desc.gameId);
+
+				GUI::MessageDialog alert(msg);
+				alert.runModal();
+				continue;
+			} else if (detectedAddOns.size() == 1) {
+				// Exact match
+				idx = 0;
+			} else {
+				// Display the candidates to the user and let her/him pick one
+				Common::U32StringArray list;
+				for (idx = 0; idx < (int)detectedAddOns.size(); idx++) {
+					Common::U32String description = detectedAddOns[idx].description;
+
+					if (detectedAddOns[idx].hasUnknownFiles) {
+						description += Common::U32String(" - ");
+						// Unknown game variant
+						description += _("Unknown variant");
+					}
+
+					list.push_back(description);
+				}
+
+				Common::U32String msgFormat(_("Directory '%s' matches several add-ons, please pick one."));
+				Common::U32String msg = Common::U32String::format(msgFormat,
+																  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+
+				GUI::ChooserDialog dialog(msg);
+				dialog.setList(list);
+				idx = dialog.runModal();
+				if (idx < 0)
+					return Common::kUserCanceled;
+			}
+
+			if (0 <= idx && idx < (int)detectedAddOns.size()) {
+				DetectedGame &selectedAddOn = detectedAddOns[idx];
+				selectedAddOn.path = subdirNode.getPath();
+				selectedAddOn.shortPath = subdirNode.getDisplayName();
+
+				if (selectedAddOn.hasUnknownFiles) {
+					GUI::UnknownGameDialog dialog(selectedAddOn);
+					dialog.runModal();
+					continue; // Do not create an entry for unknown variants
+				}
+
+				if (selectedAddOn.gameSupportLevel != kStableGame) {
+					if (!warnUserAboutUnsupportedAddOn(selectedAddOn.description)) {
+						return Common::kUserCanceled;
+					}
+				}
+
+				if (!existingAddOnsPaths.contains(subdirNode.getPath())) {
+					Common::String domain = EngineMan.createTargetForGame(selectedAddOn);
+					ConfMan.set("parent", ConfMan.getActiveDomainName(), domain);
+					anyAddOnAdded = true;
+				}
+			}
+		}
+	}
+
+	if (anyAddOnAdded)
+		ConfMan.flushToDisk();
+
+	return Common::kNoError;
 }
 
 void GobEngine::initGame(const GOBGameDescription *gd) {
