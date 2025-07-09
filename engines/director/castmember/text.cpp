@@ -955,27 +955,31 @@ void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(_gutterSize);	// 2 bytes
 	writeStream->writeByte(_boxShadow);		// 3 bytes
 	writeStream->writeByte(_textType);		// 4 bytes
-	writeStream->writeSint16LE(_textAlign);		// 6 bytes
-	writeStream->writeUint16LE(_bgpalinfo1);	// 8 bytes
-	writeStream->writeUint16LE(_bgpalinfo2);	// 10 bytes
-	writeStream->writeUint16LE(_bgpalinfo3);	// 12 bytes
-	writeStream->writeUint16LE(_scroll);		// 14 bytes
+	writeStream->writeSint16BE(_textAlign);		// 6 bytes
+	writeStream->writeUint16BE(_bgpalinfo1);	// 8 bytes
+	writeStream->writeUint16BE(_bgpalinfo2);	// 10 bytes
+	writeStream->writeUint16BE(_bgpalinfo3);	// 12 bytes
+	writeStream->writeUint16BE(_scroll);		// 14 bytes
 
 	Movie::writeRect(writeStream, _initialRect);	// (+8) 22 bytes
-	writeStream->writeUint16LE(_maxHeight);			// 24 bytes
+	writeStream->writeUint16BE(_maxHeight);			// 24 bytes
 	writeStream->writeByte(_textShadow);			// 25 bytes
 	writeStream->writeByte(_textFlags);				// 26 bytes
 
-	writeStream->writeUint16LE(_textHeight);		// 28 bytes
+	writeStream->writeUint16BE(_textHeight);		// 28 bytes
 
 	if (_type == kCastButton) {
-		writeStream->writeUint16LE(_buttonType + 1);		// 30 bytes
+		writeStream->writeUint16BE(_buttonType + 1);		// 30 bytes
 	}
 }
 
 uint32 TextCastMember::getCastDataSize() {
 	// In total 30 bytes for text and 28 for button
-	return (_type == kCastButton) ? 30 : 28;
+	uint32 size = (_type == kCastButton) ? 30 : 28;
+
+	// See Cast::loadCastData
+	size += (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) ? 2 : 0;
+	return size;
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {

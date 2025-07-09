@@ -839,13 +839,13 @@ void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
 		CastMember *target = _loadedCast->getVal(id);
 		// To make it consistent with how the data is stored originally, getResourceSize returns
 		// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
-		castSize = target->getCastResourceSize() + 8;
+		castSize = target->getCastResourceSize();
 		type = target->_type;
-		target->writeCAStResource(writeStream, 0);
+		target->writeCAStResource(writeStream);
 	} else {
 		// The size stored in the memory map (_resources array), as well as the resource itself is the size
 		// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
-		castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), res->index) + 8;
+		castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), res->index);
 		writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
 		Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), res->index);
 		uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
@@ -858,15 +858,15 @@ void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
 	debugC(5, kDebugSaving, "Cast::saveCast()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
 	
 	if (debugChannelSet(7, kDebugSaving)) {
-		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
-		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+		byte *dumpData = (byte *)calloc(castSize + 8, sizeof(byte));
+		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);
 
 		uint32 currentPos = writeStream->pos();
 		writeStream->seek(offset);
 		dumpStream->write(writeStream, castSize);
 		writeStream->seek(currentPos);
 
-		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
+		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize + 8);
 		delete dumpStream;
 	}
 }
@@ -907,28 +907,23 @@ void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) 
 			break;
 
 		case 1:
-			castInfo.strings[0].data = (byte *)malloc(castInfo.strings[0].len);
-			memcpy(castInfo.strings[0].data, ci->script.c_str(), castInfo.strings[0].len);
+			castInfo.strings[0].writeString(ci->script, false);
 			break;
 
 		case 2:
-			castInfo.strings[1].data = (byte *)malloc(castInfo.strings[1].len);
-			memcpy(castInfo.strings[1].data, ci->name.c_str(), castInfo.strings[1].len);
+			castInfo.strings[1].writeString(ci->name, false);
 			break;
 
 		case 3:
-			castInfo.strings[2].data = (byte *)malloc(castInfo.strings[2].len);
-			memcpy(castInfo.strings[2].data, ci->directory.c_str(), castInfo.strings[2].len);
+			castInfo.strings[2].writeString(ci->directory, false);
 			break;
 
 		case 4:
-			castInfo.strings[3].data = (byte *)malloc(castInfo.strings[3].len);
-			memcpy(castInfo.strings[3].data, ci->fileName.c_str(), castInfo.strings[3].len);
+			castInfo.strings[3].writeString(ci->fileName);
 			break;
 
 		case 5:
-			castInfo.strings[4].data = (byte *)malloc(castInfo.strings[4].len);
-			memcpy(castInfo.strings[4].data, ci->type.c_str(), castInfo.strings[4].len);
+			castInfo.strings[4].writeString(ci->type);
 			break;
 
 		case 6:
@@ -1727,6 +1722,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (!_loadedCast->contains(id))
 		return;
 
+	if (debugChannelSet(7, kDebugLoading)) {
+		debug("Cast::loadingCastInfo: Loading cast info for castId: %d", id);
+		stream.hexdump(stream.size());
+	}
 	InfoEntries castInfo = Movie::loadInfoEntries(stream, _version);
 
 	CastMemberInfo *ci = new CastMemberInfo();
@@ -1823,16 +1822,16 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 		// fallthrough
 	case 5:
-		ci->type = castInfo.strings[4].readString();
+		ci->type = castInfo.strings[4].readString(false);
 		// fallthrough
 	case 4:
-		ci->fileName = castInfo.strings[3].readString();
+		ci->fileName = castInfo.strings[3].readString(false);
 		// fallthrough
 	case 3:
-		ci->directory = castInfo.strings[2].readString();
+		ci->directory = castInfo.strings[2].readString(false);
 		// fallthrough
 	case 2:
-		ci->name = castInfo.strings[1].readString();
+		ci->name = castInfo.strings[1].readString(false);
 		// fallthrough
 	case 1:
 		ci->script = castInfo.strings[0].readString(false);

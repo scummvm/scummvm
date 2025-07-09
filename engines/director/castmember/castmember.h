@@ -105,7 +105,7 @@ public:
 	// Three parts to a 'CASt' resource (header + _info_, _data_)
 	// The headers, are common, the _info_ writing is handled by the Cast class, so no worries there
 	// So, the only thing that differs is the _data_, for which we'll have separate implementations for each CastMember
-	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 writeCAStResource(Common::MemoryWriteStream *writeStream);
 	uint32 getCastInfoSize();
 	uint32 getCastResourceSize();
 	virtual void writeCastData(Common::MemoryWriteStream *writeStream);
