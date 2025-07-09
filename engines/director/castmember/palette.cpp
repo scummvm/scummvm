@@ -131,10 +131,6 @@ void PaletteCastMember::load() {
 	}
 
 	_loaded = true;
-	
-	if (debugChannelSet(5, kDebugSaving)) { 
-		writePaletteData(nullptr, 0);
-	}
 }
 
 void PaletteCastMember::unload() {
