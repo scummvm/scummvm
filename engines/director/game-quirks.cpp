@@ -349,6 +349,12 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 	if (!list.empty()) {
 		CachedArchive *archive = new CachedArchive(list);
 
+		// If gameQuirks is called as an update we need to remove the old quirks cache
+		// archive before adding the new one.
+		if (SearchMan.hasArchive(kQuirksCacheArchive)) {
+			SearchMan.remove(kQuirksCacheArchive);
+		}
+
 		SearchMan.add(kQuirksCacheArchive, archive);
 	}
 }
