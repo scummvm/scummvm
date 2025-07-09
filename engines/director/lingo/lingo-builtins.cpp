@@ -1427,6 +1427,10 @@ void LB::b_getNthFileNameInFolder(int nargs) {
 	Datum r("");
 	Common::Array<Common::String> fileNameList;
 
+	// Update the game quirks archive in case our save state has changed.
+	// This is necessary because we may save a game and then try to open a game in the same session.
+	g_director->gameQuirks(g_director->getGameId(), g_director->getPlatform());
+
 	// First, mix in any files injected from the quirks
 	Common::Archive *cache = SearchMan.getArchive(kQuirksCacheArchive);
 	if (cache) {
