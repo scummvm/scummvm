@@ -324,6 +324,58 @@ void BlendBlit::blitNEON(Args &args, const TSpriteBlendMode &blendMode, const Al
 	blitT<BlendBlitImpl_NEON>(args, blendMode, alphaType);
 }
 
+void fastBlitNEON_XRGB1555_RGB565(byte *dst, const byte *src,
+                  const uint dstPitch, const uint srcPitch,
+                  const uint w, const uint h) {
+	const uint srcDelta = (srcPitch - w * 2);
+	const uint dstDelta = (dstPitch - w * 2);
+
+	const uint16 *src_ptr = (const uint16 *)src;
+	uint16 *dst_ptr = (uint16 *)dst;
+	uint16x4_t pixels;
+
+	for (uint y = h; y > 0; --y) {
+		uint x = w;
+		for (; x >= 4; x -= 4) {
+			src_ptr = (const uint16 *)src;
+			dst_ptr = (uint16 *)dst;
+
+			// Load pixels to NEON
+			pixels = vld1_u16(src_ptr);
+
+			// Convert from XRGB1555 to RGB565
+			// Here we do : ((pixels & 0x7FE0) << 1) | ((pixels & 0x0200) >> 4) | (pixels & 0x001F)
+			pixels = vorr_u16(
+				vorr_u16(
+					vshl_n_u16(vand_u16(pixels, vmov_n_u16(0x7FE0)), 1),
+					vshr_n_u16(vand_u16(pixels, vmov_n_u16(0x0200)), 4)
+				),
+				vand_u16(pixels, vmov_n_u16(0x001F))
+			);
+
+			// Store pixels to destination
+			vst1_u16(dst_ptr, pixels);
+
+			src += 4 * 2;
+			dst += 4 * 2;
+		}
+
+		for (; x > 0; --x) {
+			// We have remaining pixels, convert them the classic way
+			src_ptr = (const uint16 *)src;
+			dst_ptr = (uint16 *)dst;
+
+			*dst_ptr = ((((*src_ptr) & 0x7FE0) << 1) | (((*src_ptr) & 0x0200) >> 4) | ((*src_ptr) & 0x001F));
+
+			src += 2;
+			dst += 2;
+		}
+
+		src += srcDelta;
+		dst += dstDelta;
+	}
+}
+
 } // end of namespace Graphics
 
 #if !defined(__aarch64__) && !defined(__ARM_NEON)

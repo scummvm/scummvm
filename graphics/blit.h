@@ -212,6 +212,11 @@ bool crossMaskBlitMap(byte *dst, const byte *src, const byte *mask,
 
 typedef void (*FastBlitFunc)(byte *, const byte *, const uint, const uint, const uint, const uint);
 
+#ifdef SCUMMVM_NEON
+// Fast blit functions for ARM NEON
+void fastBlitNEON_XRGB1555_RGB565(byte *, const byte *, const uint, const uint, const uint, const uint);
+#endif
+
 /**
  * Look up optimised routines for converting between pixel formats.
  *
