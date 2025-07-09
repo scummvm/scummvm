@@ -636,7 +636,6 @@ void TextCastMember::load() {
 	}
 
 	_loaded = true;
-	writeSTXTResource(nullptr, 0);
 }
 
 void TextCastMember::unload() {
@@ -980,11 +979,7 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	uint32 castSize = getSTXTResourceSize() + 8;
-
-	byte *dumpData = nullptr;
-	dumpData = (byte *)calloc(castSize, sizeof(byte));
-	writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
+	uint32 stxtSize = getSTXTResourceSize() + 8;
 
 	writeStream->seek(offset);
 
@@ -1036,9 +1031,21 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 		it++;
 	}
 
-	dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
-	delete writeStream;
-	return getSTXTResourceSize() + 8;
+	if (debugChannelSet(7, kDebugSaving)) {
+		byte *dumpData = nullptr;
+		dumpData = (byte *)calloc(stxtSize, sizeof(byte));
+		Common::MemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, stxtSize);
+
+		int32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, stxtSize);
+		writeStream->seek(currentPos);
+
+		dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
+		delete dumpStream;
+	}
+
+	return stxtSize + 8;
 }
 
 uint32 TextCastMember::getSTXTResourceSize() {

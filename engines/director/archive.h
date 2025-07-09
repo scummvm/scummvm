@@ -52,6 +52,24 @@ struct Resource {
 	Common::String name;
 	Common::Array<Resource> children;
 	bool accessed;
+
+	Resource() = default;
+	Resource(Resource *original) {
+		index = original->index;
+		offset = original->offset;
+		size = original->size;
+		uncompSize = original->uncompSize;
+		compressionType = original->compressionType;
+		castId = original->castId;
+		libResourceId = original->libResourceId;
+		tag = original->tag;
+		flags = original->flags;
+		unk1 = original->unk1;
+		nextFreeResourceID = original->nextFreeResourceID;
+		name = Common::String(original->name);
+		children = Common::Array<Resource>(original->children);
+		accessed = original->accessed;
+	}
 };
 
 class Archive {
@@ -160,16 +178,17 @@ public:
 
 private:
 	/* These functions are for writing movies */
-	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream); 	// Parallel to readMemoryMap
+	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
 	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
 	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
 	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib);	// Parallel to readCast
 
-	uint32 getArchiveSize();
+	uint32 getArchiveSize(Common::Array<Resource *> resources);
 	uint32 getMmapSize();
 	uint32 getImapSize();
-	uint32 getCASResourceSize();
-	void rebuildResources(Movie *movie);
+	uint32 getCASResourceSize(uint32 castLib);
+	uint32 getKeyTableResourceSize();
+	Common::Array<Resource *> rebuildResources(Movie *movie);
 
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
@@ -180,8 +199,6 @@ private:
 	uint32 _metaTag;
 	uint32 _moreOffset;
 	uint32 _mapversion;
-	uint32 _mmapOffset;
-	uint32 _mmapLength;
 	uint32 _mmapHeaderSize;
 	uint32 _mmapEntrySize;
 	uint32 _totalCount;

@@ -802,26 +802,26 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 	_imapLength = stream.readUint32(); // imap length
 	_mapversion = stream.readUint32(); // version, seen 0 or 1
 	uint32 mmapOffsetPos = stream.pos();
-	_mmapOffset = stream.readUint32() + moreOffset;
+	uint32 mmapOffset = stream.readUint32() + moreOffset;
 
 	if (dumpStream) {
 		// If we're dumping the movie, patch this offset in the dump data.
 		dumpStream->seek(mmapOffsetPos - movieStartOffset);
 		if (stream.isBE())
-			dumpStream->writeUint32BE(_mmapOffset - movieStartOffset);
+			dumpStream->writeUint32BE(mmapOffset - movieStartOffset);
 		else
-			dumpStream->writeUint32LE(_mmapOffset - movieStartOffset);
+			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
 	}
 	_version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	debugC(2, kDebugLoading, "RIFXArchive::readMemoryMap: _mapversion: %d version: %x offset: 0x%x (%d)", _mapversion, _version, _mmapOffset, _mmapOffset);
+	debugC(2, kDebugLoading, "RIFXArchive::readMemoryMap: _mapversion: %d version: %x offset: 0x%x (%d)", _mapversion, _version, mmapOffset, mmapOffset);
 
-	stream.seek(_mmapOffset);
+	stream.seek(mmapOffset);
 	if (stream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
 		warning("RIFXArchive::readMemoryMap: mmap expected but not found");
 		return false;
 	}
 
-	_mmapLength = stream.readUint32(); // mmap length
+	/* uint32 mmapLength = */ stream.readUint32(); // mmap length
 	_mmapHeaderSize = stream.readUint16(); // header size
 	_mmapEntrySize = stream.readUint16(); // size of map entry
 	_totalCount = stream.readUint32(); // resCount + empty entries
@@ -1074,6 +1074,13 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		}
 		_keyData[childTag][parentIndex].push_back(childIndex);
 
+		if (childTag == MKTAG('C', 'A', 'S', '*')) {
+			// A 'CAS*' resource contains indexes of 'CASt' resources that are linked to the 
+			// Resource at parentIndex, hence, mark the 'CAS*' libResourceId to parentIndex
+			// This means all the 'CASt' resources are linked to the parent with index equal to 'CAS*' libResourceId
+			_types[childTag][childIndex].libResourceId = parentIndex;
+		}
+
 		// Link cast members to their resources.
 		if (castResMap.contains(parentIndex)) {
 			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
@@ -1177,9 +1184,8 @@ Common::String RIFXArchive::formatArchiveInfo() {
 }
 
 bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
-	rebuildResources(movie);
-	// The offsets used in this function should be not the same as original
-	// That defeats the whole purpose of writing movies
+	// Update the resources, their sizes and offsets
+	Common::Array<Resource *> builtResources = rebuildResources(movie);
 
 	// ignoring the startOffset
 	// For RIFX stream, moreoffset = 0, we won't be writing macbinary
@@ -1187,31 +1193,21 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
-	_size = getArchiveSize();
+	_size = getArchiveSize(builtResources);
 	dumpData = (byte *)calloc(_size, sizeof(byte));
 
 	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
 
-	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR" for this case
+	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
 
-	// This includes the size of 'RIFX', 'mmap' and 'imap' resources
-	// This method of calculating new size is inefficient and prone to error
-	/* uint32 newSize = 0;
-	 * for (auto &it: _resources) {
-	 * 	newSize += it->size;
-	 * }
-	*/
-
-	// We'll need to update the size of the RIFX resource whenever there is a modification
-	// The -8 is consistent with RIFXArchive::openStream()
-	writeStream->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive
+	writeStream->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
 	writeStream->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
 
 	switch (_rifxType) {
 	case MKTAG('M', 'V', '9', '3'):
 	case MKTAG('M', 'C', '9', '5'):
 	case MKTAG('A', 'P', 'P', 'L'):
-		writeMemoryMap(writeStream);
+		writeMemoryMap(writeStream, builtResources);
 		break;
 
 	case MKTAG('F', 'G', 'D', 'M'):
@@ -1225,7 +1221,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	Cast *cast = movie->getCast();
 	ResourceMap castResMap = _types[MKTAG('C', 'A', 'S', 't')];
 
-	for (auto &it : _resources) {
+	for (auto &it : builtResources) {
 		debugC(5, kDebugSaving, "RIFXArchive::writeToFile: writing resource: index: %d, size: %d, tag = %s, offset = %d", it->index, it->size, tag2str(it->tag), it->offset);
 
 		switch (it->tag) {
@@ -1244,7 +1240,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			break;
 
 		case MKTAG('C', 'A', 'S', '*'):
-			writeCast(writeStream, it->offset, it->castId);
+			writeCast(writeStream, it->offset, it->libResourceId);
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
@@ -1254,7 +1250,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 		case MKTAG('V', 'W', 'C', 'F'):
 			cast->saveConfig(writeStream, it->offset);
 			break;
-		
+
 		case MKTAG('B', 'I', 'T', 'D'):
 			{
 				// Get one of the parents of the 'BITD' resource stored in the _keyData
@@ -1263,7 +1259,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeBITDResource(writeStream, it->offset);	
+				target->writeBITDResource(writeStream, it->offset);
 			}
 			break;
 
@@ -1273,7 +1269,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSTXTResource(writeStream, it->offset);	
+				target->writeSTXTResource(writeStream, it->offset);
 			}
 			break;
 
@@ -1283,25 +1279,35 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writePaletteData(writeStream, it->offset);	
-			}	
+				target->writePaletteData(writeStream, it->offset);
+			}
 			break;
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
 				uint32 parentIndex = _keyData[MKTAG('S', 'C', 'V', 'W')].begin()->_key;
+				// If the parentIndex is 1024 that means this 'SCVW' is a score or a movie
+				if (parentIndex == 1024) {
+					writeStream->seek(it->offset);
+					writeStream->writeUint32LE(it->tag);
+					writeStream->writeUint32LE(it->size);
+					writeStream->writeStream(getResource(it->tag, it->index));
+					break;
+				}
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSCVWResource(writeStream, it->offset);	
-			}	
+				target->writeSCVWResource(writeStream, it->offset);
+			}
 			break;
 
 		default:
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
 			writeStream->writeUint32LE(it->size);
-			writeStream->writeStream(getResource(it->tag, it->index));
+			Common::SeekableReadStreamEndian *r = getResource(it->tag, it->index);
+			r->hexdump(r->size());
+			writeStream->writeStream(r);
 			break;
 		}
 	}
@@ -1323,32 +1329,37 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	return true;
 }
 
-bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream) {
+bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream, Common::Array<Resource *> resources) {
+	Resource mmap;
+
+	for (auto it : resources) {
+		if (it->tag == MKTAG('m', 'm', 'a', 'p')) {
+			mmap = *it;
+		}
+	}
+
 	writeStream->writeUint32LE(MKTAG('i', 'm', 'a', 'p')); // The "imap" resource
 	writeStream->writeUint32LE(_imapLength);		// length of "imap" resource
 	writeStream->writeUint32LE(_mapversion);		// "imap" version
-	writeStream->writeUint32LE(_mmapOffset);		// offset of the "mmap" resource
+	writeStream->writeUint32LE(mmap.offset);		// offset of the "mmap" resource
 	writeStream->writeUint32LE(_version);
 
-	writeStream->seek(_mmapOffset);
+	writeStream->seek(mmap.offset);
 	writeStream->writeUint32LE(MKTAG('m', 'm', 'a', 'p'));
+	writeStream->writeUint32LE(mmap.size);
 
-	uint32 newResCount = _resources.size();
-
-	// Need to recalculate the following things
-	// Similarly to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
-	writeStream->writeUint32LE(getResourceSize(MKTAG('m', 'm', 'a', 'p'), 2));
 	writeStream->writeUint16LE(_mmapHeaderSize);
 	writeStream->writeUint16LE(_mmapEntrySize);
-
+	
+	uint32 newResCount = resources.size();
 	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
 	writeStream->writeUint32LE(newResCount);
 	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff
 
-	// ID of the first 'free' resource
+	// ID of the first 'free' resource, we don't make use of it
 	writeStream->writeUint32LE(0);
 
-	for (auto &it : _resources) {
+	for (auto &it : resources) {
 		debugC(3, kDebugSaving, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
 			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
 
@@ -1398,11 +1409,14 @@ bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, 
 	writeStream->seek(offset);
 
 	writeStream->writeUint32LE(MKTAG('K', 'E', 'Y', '*'));
+	writeStream->writeUint32LE(getResourceSize(MKTAG('K', 'E', 'Y', '*'), getResourceIDList(MKTAG('K', 'E', 'Y', '*'))[0]));
 
 	writeStream->writeUint16LE(_keyTableEntrySize);
 	writeStream->writeUint16LE(_keyTableEntrySize2);
 	writeStream->writeUint32LE(_keyTableEntryCount);
 	writeStream->writeUint32LE(_keyTableUsedCount);
+
+	debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: writing key table:");
 
 	for (auto &childTag : _keyData) {
 		KeyMap keyMap = childTag._value;
@@ -1411,7 +1425,7 @@ bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, 
 			KeyArray keyArray = parentIndex._value;
 
 			for (auto childIndex : keyArray) {
-				debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: _keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
+				debugC(3, kDebugSaving, "_keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
 				writeStream->writeUint32LE(childIndex);
 				writeStream->writeUint32LE(parentIndex._key);
 				writeStream->writeUint32LE(childTag._key);
@@ -1426,17 +1440,29 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 	writeStream->seek(offset);
 
 	uint castTag = MKTAG('C', 'A', 'S', 't');
+	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', '*'));
+	writeStream->writeUint32LE(getCASResourceSize(castLib));
 
+	Common::HashMap<uint16, uint16> castIndexes;
+
+	// We can't just write all the 'CASt' indices randomly, we have to sort them by castId
+	// Since the order they appear matters, they are given castIds accordingly
+	uint32 maxCastId = 0;
 	for (auto &it : _types[castTag]) {
 		if (it._value.libResourceId == castLib) {
-			writeStream->writeUint32LE(it._key);
+			castIndexes[it._value.castId] = it._value.index;
+			maxCastId = MAX(maxCastId, it._value.castId);
 		}
-	}
+	} 
 
+	for (uint32 i = 0; i <= maxCastId; i++) {
+		uint32 castIndex = castIndexes.getValOrDefault(i, 0); 
+		writeStream->writeUint32BE(castIndex);
+	}
 	return true;
 }
 
-void RIFXArchive::rebuildResources(Movie *movie) {
+Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// Currently I'm modifying the original _resources, _types and _keydata structures, this is what happens in the original Director
 	// However, if we don't want that, we could make copies of them and then modify them
 
@@ -1446,12 +1472,12 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 	// RIFX		// STXT
 	// KEY*		// SCVW (filmloop)
 	// CAS*		// VWCF
-	// CASt		// 
+	// CASt		//
 
 	// Resources yet to be handled
 	// Any external file
 	// Script 'Lscr'
-	// Script Names 'Lnam' 
+	// Script Names 'Lnam'
 	// Lingo Context 'Lctx'
 	// Score 'SCVW'
 	// Rich Text 'RTE0', 'RTE1', 'RTE2'
@@ -1459,13 +1485,13 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 	// 'SCVW' External Movies
 
 	// Transitions and OLE are Director 5+, not yet loaded in ScummVM Director
-	
+
 	// Resources that are loaded but probably need not be handled
 	// 'VWFM' Font Mapping
 	// 'FXmp' Corss Platform Font Mapping
 	// 'VWTL' Pattern Tiles
 	// 'STR ' External Sound files
-	// 'MooV' External Digital Video 
+	// 'MooV' External Digital Video
 	// 'XCOD' XObjects
 	// 'Cinf' Cast Lib Info
 	// 'VWCI' Cast Info (For what cast though?)
@@ -1489,9 +1515,11 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 			res->libResourceId = cast->_castLibID;
 			res->children = it._value->_children;
 			res->index = _resources.size() + 1;
-			
+
 			for (auto child : it._value->_children) {
 				_keyData[child.tag][res->index].push_back(child.index);			// Indices are a huge problem, need to figure out them first
+				_keyTableUsedCount += 1;
+				_keyTableEntryCount += 1;
 			}
 			_resources.push_back(res);
 
@@ -1508,46 +1536,51 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 	// Ignoring that for now
 
 	// Next step is to recalculate the sizes and the offsets of all the resources
-	// Handle writing KEY* and CAS* last, because they need to know the indices before hand
-	// Also their indexes will be 0 through 4 (fixed), RIFX and imap need to be the very first two indices 0 and 1
-	// The rest can be rearranged to any index, but for simplicity, we'll assign them a fixed index 
 
-	// This might become easier if ResourceMap was an Array rather than a HasMap, can consider refactoring
-	// Anyways its key is not used anywhere
-
-	// Since the first 5 resources are determined (for simplicity)
+	// Since the first 3 resources are determined (RIFX, imap and mmap)
+	// (the mmap doesn't need to be the third resource, but for simplicity, it's better there)
 	// We'll start writing after that RIFX header, mmap and imap resources
-	uint32 currentSize = 12 + getImapSize() + getMmapSize();
+	// The first 12 bytes are metaTag ('RIFX'), size of file, and RIFX type ('MV93', 'MV95', etc.)
+	// The +8 bytes are to account for the header and size
+	uint32 currentSize = 12 + (getImapSize() + 8) + (getMmapSize() + 8);
 
 	// This switch statement can be simplified by keeping a pointer to the write function of the resrouce in the Resource
 	// But that will require accessing _resource every time so not doing that right now
+
+	// need to make a new resources array, because we need the old offsets as well as new ones
+	Common::Array<Resource *> builtResources;
+
+	for (auto it: _resources) {
+		builtResources.push_back(new Resource(it));
+	}
+	
 	uint32 resSize = 0;
-	for (auto &it : _resources) {
-		switch (it->tag) { 
+	for (auto &it : builtResources) {
+		switch (it->tag) {
 		case MKTAG('R', 'I', 'F', 'X'):
-		case MKTAG('X', 'F', 'I', 'R'):   
+		case MKTAG('X', 'F', 'I', 'R'):
 			// only one resource only
 			// Size will be determined after all other sizes have been calculated
 			it->offset = 0;
 			break;
-		
-		case MKTAG('i', 'm', 'a', 'p'): 
+
+		case MKTAG('i', 'm', 'a', 'p'):
 			// one resource only
 			it->size = getImapSize();
-			it->offset = 12;
+			it->offset = 12;		// First 12 bytes are reserved for metaTag ('RIFX'), size of file, and RIFX type ('MV93', 'MV95', etc.)
 			break;
 
-		case MKTAG('m', 'm', 'a', 'p'):  
+		case MKTAG('m', 'm', 'a', 'p'):
 			// one resource only
 			it->size = getMmapSize();
-			it->offset = 12 + getImapSize(); 
+			it->offset = 12 + (getImapSize() + 8);	// The +8 is to account for header and size 
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
 			{
 				// The castIds of cast members start from _castArrayStart
 				CastMember *target = cast->getCastMember(it->castId - cast->_castArrayStart);
-				
+
 				if (target) {
 					resSize = target->getCastResourceSize();
 					it->size = resSize;		// getCastResourceSize returns size without header and size
@@ -1561,10 +1594,17 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('C', 'A', 'S', '*'):
 			// Currently handling only movies with one 'CAS*' resource, i.e. only one cast
-			resSize = getCASResourceSize();	// getCASResourceSize() returns size without header and size
+			resSize = getCASResourceSize(it->libResourceId);	// getCASResourceSize() returns size without header and size
 			it->size = resSize;
 			it->offset = currentSize;
-			currentSize += resSize + 8; 
+			currentSize += resSize + 8;
+			break;
+
+		case MKTAG('K', 'E', 'Y', '*'):
+			resSize = getKeyTableResourceSize();
+			it->size = resSize;
+			it->offset = currentSize;
+			currentSize += resSize + 8;
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
@@ -1572,17 +1612,29 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 				// Cast config, as many resources as Casts
 				// No need to update the key mapping
 				resSize = cast->getConfigSize();
-				
+
 				it->offset = currentSize;
 
 				currentSize += resSize + 8;			// getConfigSize() doesn't include header and size
-				it->size = resSize; 
+				it->size = resSize;
 			}
 			break;
 
 		case MKTAG('S', 'T', 'X', 'T'):
 			{
-				uint32 parentIndex = _keyData[MKTAG('S', 'T', 'X', 'T')].begin()->_key;
+				uint32 parentIndex = 0;
+				for (auto &jt : _keyData[MKTAG('S', 'T', 'X', 'T')]) {
+					for (auto &kt : jt._value) { 
+						if (kt == it->index) {
+							parentIndex = jt._key;
+							break;
+						}
+					}
+					if (parentIndex) {
+						break;
+					}
+				}
+
 				Resource parent = castResMap[parentIndex];
 
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1592,12 +1644,27 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 				it->size = resSize;
 
 				currentSize += resSize + 8;
-			}	
+			}
 			break;
-			
+
 		case MKTAG('C', 'L', 'U', 'T'):
 			{
-				uint32 parentIndex = _keyData[MKTAG('C', 'L', 'U', 'T')].begin()->_key;
+				// We have to find the parent
+				// Look into the keyData, for all parents of 'CLUT' resource 
+				// If the parent contains this 'CLUT' resource's index, that's our parent 
+				uint32 parentIndex = 0;
+				for (auto &jt : _keyData[MKTAG('C', 'L', 'U', 'T')]) {
+					for (auto &kt : jt._value) { 
+						if (kt == it->index) {
+							parentIndex = jt._key;
+							break;
+						}
+					}
+					if (parentIndex) {
+						break;
+					}
+				}
+
 				Resource parent = castResMap[parentIndex];
 
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1607,16 +1674,25 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 				it->size = resSize;
 
 				currentSize += resSize + 8;
-			}	
+			}
 			break;
 
 		case MKTAG('B', 'I', 'T', 'D'):
 			{
-				// One child can have multiple parents, so the question is whether or not to choose parent arbitrarily
-				// and whether a single parent can have multiple 'BITD' children, BitmapCastMember:load() suggests that it doesn't
-				uint32 parentIndex = _keyData[MKTAG('B', 'I', 'T', 'D')].begin()->_key;
-				
-				// This begs the question whether 'BITD' resources can be children to resources other than 'CASt'
+				uint32 parentIndex = 0;
+				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
+					for (auto &kt : jt._value) { 
+						if (kt == it->index) {
+							parentIndex = jt._key;
+							break;
+						}
+					}
+					if (parentIndex) {
+						break;
+					}
+				}
+
+				debug("What is the parentIndex = %d, cast->_castArraySize = %d", parentIndex, cast->_castArrayStart);
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1626,12 +1702,31 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 				it->size = resSize;
 
 				currentSize += resSize + 8;
-			}	
+			}
 			break;
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
-				uint32 parentIndex = _keyData[MKTAG('S', 'C', 'V', 'W')].begin()->_key;
+				uint32 parentIndex = 0;
+				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
+					for (auto &kt : jt._value) { 
+						if (kt == it->index) {
+							parentIndex = jt._key;
+							break;
+						}
+					}
+					if (parentIndex) {
+						break;
+					}
+				}
+
+				// If parent index is 1024, that means this 'SCVW' resource is a score or a movie
+				if (parentIndex == 1024) {
+					it->offset = currentSize;
+					currentSize += it->size + 8;		// This size doesn't include the header and size entry
+					break;
+				}
+
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1641,15 +1736,14 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 				it->size = resSize;
 
 				currentSize += resSize + 8;
-			}	
+			}
 			break;
-			break;
-		
+
 		case MKTAG('f', 'r', 'e', 'e'):
 		case MKTAG('j', 'u', 'n', 'k'):
 			// These resource do not hold any data
 			it->size = 0;
-			
+
 			// We could just ignore these and not write them at all
 			it->offset = currentSize;
 			currentSize += 8;
@@ -1666,29 +1760,31 @@ void RIFXArchive::rebuildResources(Movie *movie) {
 	}
 
 	// Now that all sizes have been updated, we can safely calculate the overall archive size
-	for (auto &it : _resources) {
+	for (auto &it : builtResources) {
 		if (it->tag == MKTAG('R', 'I', 'F', 'X') || it->tag == MKTAG('X', 'F', 'I', 'R')) {
-			it->size = getArchiveSize() + 8;
+			it->size = getArchiveSize(builtResources) + 8;
 		}
 	}
+
+	return builtResources;
 }
 
 uint32 RIFXArchive::getImapSize() {
 	// The length of imap doesn't change
-	// This is the length without 
-	return 12;
+	// This is the length without header and size
+	return _imapLength;
 }
 
 uint32 RIFXArchive::getMmapSize() {
-	// The headers: 24 bytes and and 8 bytes per resources
-	return 24 + 8 * _resources.size();
+	// The headers: 24 bytes and and 20 bytes per resources
+	return 24 + 20 * _resources.size();
 }
 
-uint32 RIFXArchive::getArchiveSize() {
+uint32 RIFXArchive::getArchiveSize(Common::Array<Resource *> resources) {
 	// This will be called after updating the size of all the resources
 	uint32 size = 0;
 
-	for (auto it : _resources) {
+	for (auto it : resources) {
 		if (it->tag != MKTAG('R', 'I', 'F', 'X') && it->tag != MKTAG('X', 'F', 'I', 'R')) {
 			size += it->size + 8;		// The 8 is to account for the header and size
 		}
@@ -1696,8 +1792,24 @@ uint32 RIFXArchive::getArchiveSize() {
 	return size;
 }
 
-uint32 RIFXArchive::getCASResourceSize() {
-	return _types[MKTAG('C', 'A', 'S', 't')].size() * 4;
+uint32 RIFXArchive::getCASResourceSize(uint32 castLib) {
+	uint castTag = MKTAG('C', 'A', 'S', 't');
+	uint32 maxCastId = 0;
+
+	// maxCastId is the basically the number of cast members present in the cast
+	// This is the number of entries present in the 'CAS*' resource
+	for (auto &it : _types[castTag]) {
+		if (it._value.libResourceId == castLib) {
+			maxCastId = MAX(maxCastId, it._value.castId);
+		}
+	} 
+
+	return (maxCastId + 1) * 4;
+}
+
+uint32 RIFXArchive::getKeyTableResourceSize() {
+	// 12 bytes of header + 12 * number of entries
+	return 12 + _keyTableUsedCount * 12;
 }
 
 void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize) {

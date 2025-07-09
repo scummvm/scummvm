@@ -1203,6 +1203,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	for (uint16 i = 0; i < constsCount; i++) {
 		Datum constant;
 		uint32 constType = 0;
+		debug("what is the version %d", version);
 		if (version >= kFileVer500) {
 			constType = stream.readUint32();
 		} else {

@@ -279,16 +279,16 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 	_frames.clear();
 
 	uint32 size = stream.readUint32BE();
-	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "loadFilmLoopDataD4: SCVW body:");
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW body:");
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
 		stream.seek(pos);
 	}
 	uint32 framesOffset = stream.readUint32BE();
-	if (debugChannelSet(5, kDebugLoading)) {
-		debugC(5, kDebugLoading, "loadFilmLoopDataD4: SCVW header:");
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW header:");
 		stream.hexdump(framesOffset - 8);
 	}
 	stream.skip(6);
@@ -304,8 +304,8 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			continue;
 		}
 		frameSize -= 2;
-		if (debugChannelSet(5, kDebugLoading)) {
-			debugC(5, kDebugLoading, "loadFilmLoopDataD4: Frame entry:");
+		if (debugChannelSet(8, kDebugLoading)) {
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -351,12 +351,12 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 		}
 
 		for (auto &s : newFrame.sprites) {
-			debugC(5, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
 					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
 					s._value._width, s._value._height);
 
 			if (s._key == -1) {
-				debugC(5, kDebugLoading, "loadFilmLoopDataD4: Skipping channel -1");
+				debugC(8, kDebugLoading, "loadFilmLoopDataD4: Skipping channel -1");
 				if (s._value._startPoint.x != 0 || s._value._startPoint.y != 0 || s._value._width != 0 ||
 						 (s._value._height != -256 && s._value._height != 0))
 					warning("BUILDBOT: loadFilmLoopDataD4: Malformed VWSC resource: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
@@ -774,7 +774,6 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
 	writeStream->writeUint32LE(filmloopSize);	// Size of the resource
 
-	uint32 sizePos = writeStream->pos();
 	writeStream->writeUint32BE(0);						// Putting zeroes instead of size currently
 
 	uint32 frameOffset = 16;							// Should be greater than 16
@@ -839,9 +838,9 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 	// Header (Ignored data): 12 bytes
 
 	uint32 channelSize = 0;
-	if (_cast->_version == kFileVer400) {
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
-	} else if (_cast->_version == kFileVer400) {
+	} else if (_cast->_version >= kFileVer500) {
 		channelSize = kSprChannelSizeD5;
 	} else {
 		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
