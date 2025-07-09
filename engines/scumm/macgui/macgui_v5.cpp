@@ -1127,9 +1127,6 @@ bool MacV5Gui::handleEvent(Common::Event event) {
 		}
 	}
 
-	if (_vm->_userPut <= 0)
-		return false;
-
 	return false;
 }
 

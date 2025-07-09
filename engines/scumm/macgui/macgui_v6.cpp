@@ -1302,17 +1302,4 @@ void MacV6Gui::resetAfterLoad() {
 	reset();
 }
 
-bool MacV6Gui::handleEvent(Common::Event event) {
-	if (MacGuiImpl::handleEvent(event))
-		return true;
-
-	if (_vm->isPaused())
-		return false;
-
-	if (_vm->_userPut <= 0)
-		return false;
-
-	return false;
-}
-
 } // End of namespace Scumm

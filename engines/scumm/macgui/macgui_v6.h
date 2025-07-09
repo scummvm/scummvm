@@ -61,8 +61,6 @@ public:
 	uint32 getBlack() const override { return 255; }
 	uint32 getWhite() const override { return 254; }
 
-	bool handleEvent(Common::Event event) override;
-
 	const Graphics::Font *getFontByScummId(int32 id) override;
 
 	void setupCursor(int &width, int &height, int &hotspotX, int &hotspotY, int &animate) override;
