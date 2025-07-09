@@ -573,7 +573,10 @@ void FileIO::m_writeString(int nargs) {
 		return;
 	}
 
-	me->_outStream->writeString(d.asString());
+	Common::U32String unicodeString = Common::U32String(d.asString(), Common::kUtf8);
+	Common::String encodedString = unicodeString.encode(g_director->getPlatformEncoding());
+	me->_outStream->writeString(encodedString);
+
 	g_lingo->push(Datum(kErrorNone));
 }
 
