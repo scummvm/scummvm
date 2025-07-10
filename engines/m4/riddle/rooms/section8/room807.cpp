@@ -181,7 +181,7 @@ void Room807::init() {
 		break;
 	}
 
-	digi_play_loop("950_s29", 2, 127, -1, -1);
+	digi_play_loop("950_s29", 3, 127, -1, -1);
 }
 
 void Room807::pre_parser() {
