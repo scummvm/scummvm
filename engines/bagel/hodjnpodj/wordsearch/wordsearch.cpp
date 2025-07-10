@@ -980,6 +980,9 @@ void CMainWSWindow::OnMouseMove(UINT nFlags, CPoint point) {
 		return;
 
 	if (m_bMouseCaptured) {
+		for (int i = 0; i < 6; ++i)
+			aptFrame[i].x = aptFrame[i].y = 0;
+
 		for (y = 0; y < NUMBEROFROWS; y++) {
 			for (x = 0; x < NUMBEROFCOLS; x++) {
 				if (arScreenGrid[y][x].PtInRect(point)) {

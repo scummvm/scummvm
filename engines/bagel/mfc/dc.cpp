@@ -372,7 +372,8 @@ BOOL CDC::Pie(LPCRECT lpRect, const POINT &ptStart, const POINT &ptEnd) {
 
 BOOL CDC::FrameRgn(CRgn *pRgn, CBrush *pBrush,
                    int nWidth, int nHeight) {
-	error("TODO: CDC::FrameRgn");
+	impl()->frameRgn(pRgn, pBrush, nWidth, nHeight);
+	return true;
 }
 
 void CDC::MoveTo(int x, int y) {
@@ -740,6 +741,34 @@ void CDC::Impl::drawRect(const Common::Rect &r, COLORREF crColor) {
 		bitmap->fillRect(r, brushColor);
 	
 	bitmap->frameRect(r, penColor);
+}
+
+void CDC::Impl::frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight) {
+	// We don't currently support larger brush sizes
+	assert(nWidth == 1 && nHeight == 1);
+	uint brushColor = getBrushColor();
+
+	// Set up a pen using the specified brush color
+	CPen pen;
+	pen.CreatePen(PS_SOLID, 1, brushColor);
+	HPEN oldPen = Attach(pen.m_hObject);
+
+	// Iterate over drawing lines to each point
+	bool firstTime = true;
+	for (const POINT &pt : pRgn->_points) {
+		if (firstTime) {
+			firstTime = false;
+			moveTo(pt.x, pt.y);
+		} else {
+			lineTo(pt.x, pt.y);
+		}
+	}
+
+	// Final line segment back to original point
+	lineTo(pRgn->_points[0].x, pRgn->_points[0].y);
+
+	// Restore old pen
+	Attach(oldPen);
 }
 
 void CDC::Impl::rectangle(LPCRECT lpRect) {

@@ -654,7 +654,7 @@ public:
 };
 
 class CRgn : public CGdiObject {
-private:
+public:
 	Common::Array<POINT> _points;
 	Common::Rect _rect;
 	int _polyFillMode = 0;
@@ -728,6 +728,7 @@ public:
 		void fillRect(const Common::Rect &r, COLORREF crColor);
 		void drawRect(const Common::Rect &r, CBrush *brush);
 		void drawRect(const Common::Rect &r, COLORREF crColor);
+		void frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight);
 		void floodFill(int x, int y, COLORREF crColor);
 		void floodFill(int x, int y, COLORREF crColor,
 			UINT nFillType);
