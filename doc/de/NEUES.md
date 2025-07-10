@@ -49,6 +49,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Option hinzugefügt, über welche die Sega CD-Version von MI1 mit der "Shadow Mode"-Farbpalette
      dargestellt wird. Die Farbpalette wurde für diese Veröffentlichung ursprünglich benutzt.
 	 (Es ist unklar, ob die deutlich dunklere Darstellung beabsichtigt ist oder nicht.)
+   - Erkennungs-Routine für die Macintosh-Version von MI1 des ersten LucasArts Mac CD Game-Pack korrigiert.
+     Bisher musstest du sicherstellen, dass du nur die Daten-Dateien, aber nicht die (leeren) Resource-Forks kopiert hast.
 
  Teenagent:
    - Unterstützung für die polnische, tschechische und russischen Versionen hinzugefügt.
