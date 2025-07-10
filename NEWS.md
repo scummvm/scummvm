@@ -48,7 +48,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added an option to render Sega CD MI1 with the "Shadow Mode" palette
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
-   - Fixed game detection for for the Macintosh version of MI1 from the first
+   - Fixed game detection for the Macintosh version of MI1 from the first
      first LucasArts Mac CD Game Pack. Previously you had to make sure to
      only copy the data fork, not the (empty) resource fork.
 
