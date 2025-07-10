@@ -155,10 +155,7 @@ uint32 ScriptCastMember::getCastDataSize() {
 }
 
 void ScriptCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
-	debug("************* I NEED TO CHECK HERE *************");
-	debug("what is the version: %d", _cast->_version);
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
-		debug("I'm here");
 		writeStream->writeByte(0);		// unknown
 
 		switch (_scriptType) {

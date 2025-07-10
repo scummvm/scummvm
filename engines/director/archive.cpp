@@ -1266,7 +1266,6 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 					}
 				}
 
-				debug("What is the parentIndex = %d, cast->_castArraySize = %d", parentIndex, cast->_castArrayStart);
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1344,9 +1343,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
 			writeStream->writeUint32LE(it->size);
-			Common::SeekableReadStreamEndian *r = getResource(it->tag, it->index);
-			r->hexdump(r->size());
-			writeStream->writeStream(r);
+			writeStream->writeStream(getResource(it->tag, it->index));
 			break;
 		}
 	}
@@ -1356,6 +1353,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	}
 
 	Common::DumpFile out;
+	Common::Path dirname(path.getParent());
 
 	// Write the movie out, stored in dumpData
 	if (out.open(path, true)) {
@@ -1515,7 +1513,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// RIFX		// STXT
 	// KEY*		// SCVW (filmloop)
 	// CAS*		// VWCF
-	// CASt		//
+	// CASt	
 
 	// Resources yet to be handled
 	// Any external file
