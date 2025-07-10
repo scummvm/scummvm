@@ -137,6 +137,9 @@ bool XMeshOpenGLShader::render(XModel *model) {
 		if (mat->getSurface()) {
 			glEnable(GL_TEXTURE_2D);
 			static_cast<BaseSurfaceOpenGL3D *>(mat->getSurface())->setTexture();
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glGenerateMipmap(GL_TEXTURE_2D);
 			_shader->setUniform("useTexture", true);
 		} else {
 			_shader->setUniform("useTexture", false);

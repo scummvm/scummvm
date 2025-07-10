@@ -250,9 +250,6 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 	if (_state != RSTATE_2D || force) {
 		_state = RSTATE_2D;
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 		glDisable(GL_DEPTH_TEST);
 
 		glEnable(GL_BLEND);
@@ -271,9 +268,6 @@ bool BaseRenderOpenGL3DShader::setup2D(bool force) {
 bool BaseRenderOpenGL3DShader::setup3D(Camera3D *camera, bool force) {
 	if (_state != RSTATE_3D || force) {
 		_state = RSTATE_3D;
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glEnable(GL_DEPTH_TEST);
 		// WME uses 8 as a reference value and Direct3D expects it to be in the range [0, 255]

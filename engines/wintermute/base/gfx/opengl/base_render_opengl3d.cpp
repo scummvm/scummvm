@@ -172,9 +172,6 @@ bool BaseRenderOpenGL3D::setup2D(bool force) {
 	if (_state != RSTATE_2D || force) {
 		_state = RSTATE_2D;
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
 
@@ -199,9 +196,6 @@ bool BaseRenderOpenGL3D::setup3D(Camera3D *camera, bool force) {
 		_state = RSTATE_3D;
 
 		glEnable(GL_NORMALIZE);
-
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LIGHTING);
