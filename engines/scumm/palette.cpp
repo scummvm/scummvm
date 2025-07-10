@@ -55,7 +55,7 @@ uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
 	return _outputPixelFormat.RGBToColor(r, g, b);
 }
 
-void ScummEngine::resetPalette() {
+void ScummEngine::resetPalette(bool isBootUp) {
 	static const byte tableC64Palette[] = {
 #if 1  // VICE-based palette. See bug #4576
 		0x00, 0x00, 0x00,	0xFF, 0xFF, 0xFF,	0x7E, 0x35, 0x2B,	0x6E, 0xB7, 0xC1,
@@ -243,8 +243,11 @@ void ScummEngine::resetPalette() {
 		if ((_game.platform == Common::kPlatformAmiga) && _game.version == 4) {
 			// if rendermode is set to EGA we use the full palette from the resources
 			// else we initialize and then lock down the first 16 colors.
-			if (_renderMode != Common::kRenderEGA)
+			if (_renderMode != Common::kRenderEGA) {
 				setPaletteFromTable(tableAmigaMIPalette, sizeof(tableAmigaMIPalette) / 3);
+			} else {
+				setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
+			}
 		} else if (_renderMode == Common::kRenderEGA && _supportsEGADithering) {
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 			_enableEGADithering = true;
@@ -259,7 +262,7 @@ void ScummEngine::resetPalette() {
 			if (_game.id == GID_INDY4 || _game.id == GID_MONKEY2)
 				_townsClearLayerFlag = 0;
 #ifdef USE_RGB_COLOR
-			else if (_game.id == GID_LOOM)
+			else if (_game.id == GID_LOOM || _game.id == GID_MONKEY) // Setting a default for MI1 as well!
 				towns_setTextPaletteFromPtr(tableTownsLoomPalette);
 			else if (_game.version == 3)
 				towns_setTextPaletteFromPtr(tableTownsV3Palette);
@@ -267,9 +270,21 @@ void ScummEngine::resetPalette() {
 
 			_townsScreen->toggleLayers(_townsActiveLayerFlags);
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
+		} else if (isBootUp && (_game.version >= 5 && _game.heversion == 0) &&
+			(_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformUnknown) &&
+			_renderMode == Common::kRenderDefault) {
+			// VGA games at boot-up have at their disposal whatever mode 13h
+			// is offering at that moment: the default palette.
+			// We just need the first few colors, which are the same as the EGA colors.
+			// (See #15869: "SCUMM: MI1: Message banner can be invisible if palette is all black")
+			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
 		}
+
 		setDirtyColors(0, 255);
 	}
+
+	if (isBootUp)
+		updatePalette();
 }
 
 void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) {

@@ -1366,7 +1366,7 @@ protected:
 	const byte *getPalettePtr(int palindex, int room);
 
 	void setPaletteFromTable(const byte *ptr, int numcolor, int firstIndex = 0);
-	void resetPalette();
+	void resetPalette(bool isBootUp = false);
 
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);

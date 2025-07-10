@@ -1916,7 +1916,7 @@ void ScummEngine::resetScumm() {
 	for (i = 0; i < 256; i++)
 		_roomPalette[i] = i;
 
-	resetPalette();
+	resetPalette(true);
 	if (_game.version == 1) {
 	} else if (_game.features & GF_16COLOR) {
 		for (i = 0; i < 16; i++)
