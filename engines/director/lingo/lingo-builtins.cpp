@@ -1555,7 +1555,7 @@ void LB::b_save(int nargs) {
 void LB::b_saveMovie(int nargs) {
 	Common::Path path;
 	if (nargs) {
-		path = Common::Path(g_lingo->pop().asString()); 
+		path = Common::Path("./" + g_lingo->pop().asString()); 
 	}
 	g_director->getMainArchive()->writeToFile(path, g_director->getCurrentMovie());
 }

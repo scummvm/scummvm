@@ -825,10 +825,8 @@ void Cast::saveCastData(Common::MemoryWriteStream *writeStream, Resource *res) {
 	// It is basically the index at which it occurs in the CAS* resource
 	// So, RIFXArchive::getResourceDetail will return the list of indexes of the 'CASt' resources in the mmap (read in the 'CAS*' resource)
 	// Whereas, in the _loadedCast, the key of these Cast members is given by _castId_
-	// I need to call this just because I need the id
 	uint32 castSize = 0;
 	uint16 id = res->castId + _castArrayStart;
-
 
 	CastType type = kCastTypeAny;
 
@@ -909,11 +907,11 @@ void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) 
 			break;
 
 		case 2:
-			castInfo.strings[1].writeString(ci->name, false);
+			castInfo.strings[1].writeString(ci->name);
 			break;
 
 		case 3:
-			castInfo.strings[2].writeString(ci->directory, false);
+			castInfo.strings[2].writeString(ci->directory);
 			break;
 
 		case 4:
@@ -1039,19 +1037,19 @@ uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
 		return 0;
 
 	case 1:
-		return ci->script.size();
+		return ci->script.size();		// not pascal string
 
 	case 2:
-		return ci->name.size();
+		return ci->name.size() ? ci->name.size() + 1 : 0;		// pascal string
 
 	case 3:
-		return ci->directory.size();
+		return ci->directory.size() ? ci->directory.size() + 1 : 0;		// pascal string
 
 	case 4:
-		return ci->fileName.size();
+		return ci->fileName.size() ? ci->fileName.size() + 1 : 0;		// pascal string
 
 	case 5:
-		return ci->type.size();
+		return ci->type.size() ? ci->type.size() + 1 : 0;			// pascal string
 
 	case 6:
 		// Need a better check to see if the script edit info is valid
@@ -1818,16 +1816,16 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		}
 		// fallthrough
 	case 5:
-		ci->type = castInfo.strings[4].readString(false);
+		ci->type = castInfo.strings[4].readString();
 		// fallthrough
 	case 4:
-		ci->fileName = castInfo.strings[3].readString(false);
+		ci->fileName = castInfo.strings[3].readString();
 		// fallthrough
 	case 3:
-		ci->directory = castInfo.strings[2].readString(false);
+		ci->directory = castInfo.strings[2].readString();
 		// fallthrough
 	case 2:
-		ci->name = castInfo.strings[1].readString(false);
+		ci->name = castInfo.strings[1].readString();
 		// fallthrough
 	case 1:
 		ci->script = castInfo.strings[0].readString(false);
