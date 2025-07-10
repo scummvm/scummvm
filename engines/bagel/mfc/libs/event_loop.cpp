@@ -70,8 +70,27 @@ void EventLoop::PopActiveWindow() {
 	_activeWindows.pop();
 }
 
-bool EventLoop::GetMessage(MSG &msg) {
+void EventLoop::checkMessages() {
+	// Don't do any actual ScummVM event handling
+	// until at least one window has been set up
+	if (_activeWindows.empty())
+		return;
+
+	// Poll for event in ScummVM event manager
 	Libs::Event ev;
+	while (pollEvents(ev)) {
+		HWND hWnd = nullptr;
+		setMessageWnd(ev, hWnd);
+		MSG msg = ev;
+		msg.hwnd = hWnd;
+
+		if (msg.message != WM_NULL)
+			_messages.push(msg);
+	}
+}
+
+bool EventLoop::GetMessage(MSG &msg) {
+	checkMessages();
 
 	// Queue window repaints if needed and no messages pending
 	if (_messages.empty() && _activeWindows.top()->IsWindowDirty())
@@ -81,48 +100,42 @@ bool EventLoop::GetMessage(MSG &msg) {
 	if (!_messages.empty()) {
 		msg = _messages.pop();
 
-	} else {
-		// Poll for event in ScummVM event manager
-		if (!pollEvents(ev)) {
-			msg.message = WM_NULL;
-		} else {
-			HWND hWnd = nullptr;
-			setMessageWnd(ev, hWnd);
-			msg = ev;
-			msg.hwnd = hWnd;
+		if (msg.hwnd) {
+			if (msg.message >= WM_MOUSEFIRST && msg.message <= WM_MOUSELAST) {
+				// Update saved mouse position
+				_mousePos.x = LOWORD(msg.lParam);
+				_mousePos.y = HIWORD(msg.lParam);
 
-			if (hWnd) {
-				if (isMouseMsg(ev)) {
-					// Update saved mouse position
-					_mousePos = ev.mouse;
+				// For mouse messages, if the highlighted control
+				// changes, generate a WM_SETCURSOR event
+				if (msg.hwnd != _highlightedWin) {
+					// Add mouse leave event if win is still alive
+					CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
+					if (highlightedWin)
+						highlightedWin->PostMessage(WM_MOUSELEAVE);
 
-					// For mouse messages, if the highlighted control
-					// changes, generate a WM_SETCURSOR event
-					if (hWnd != _highlightedWin) {
-						// Add mouse leave event if win is still alive
-						CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
-						if (highlightedWin)
-							highlightedWin->PostMessage(WM_MOUSELEAVE);
-
-						// Switch to newly highlighted control
-						_highlightedWin = hWnd;
-						if (_highlightedWin)
-							PostMessage(_highlightedWin,
-								WM_SETCURSOR, (WPARAM)hWnd,
-								MAKELPARAM(HTCLIENT, msg.message)
-							);
-					}
+					// Switch to newly highlighted control
+					_highlightedWin = msg.hwnd;
+					if (_highlightedWin)
+						PostMessage(_highlightedWin,
+							WM_SETCURSOR, (WPARAM)msg.hwnd,
+							MAKELPARAM(HTCLIENT, msg.message)
+						);
 				}
-
-				if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&
-						_kbdHookProc) {
-					if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
-						msg.message = WM_NULL;
-				}
-			} else {
-				msg.message = WM_NULL;
 			}
+
+			if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&
+					_kbdHookProc) {
+				if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
+					msg.message = WM_NULL;
+			}
+		} else {
+			msg.message = WM_NULL;
 		}
+	} else {
+		msg.message = WM_NULL;
+
+		messagesIdle();
 	}
 
 	return !g_engine->shouldQuit() && msg.message != WM_QUIT;
@@ -237,27 +250,8 @@ bool EventLoop::pollEvents(Common::Event &event) {
 	if (_quitFlag)
 		return false;
 
-	if (!_events.empty()) {
-		event = _events.pop();
-	} else if (!g_system->getEventManager()->pollEvent(event)) {
-		// Brief pauses and screen updates
-		g_system->delayMillis(10);
-
-		// Trigger any pending timers
-		triggerTimers();
-
-		// Handle screen updates
-		uint32 time = g_system->getMillis();
-		if (time >= _nextFrameTime) {
-			_nextFrameTime = time + (1000 / FRAME_RATE);
-			AfxGetApp()->getScreen()->update();
-		}
-
-		// Cleanup any temporary handle wrapper
-		AfxGetApp()->AfxUnlockTempMaps();
-
+	if (!g_system->getEventManager()->pollEvent(event))
 		return false;
-	}
 
 	// Check for quit event
 	if ((event.type == Common::EVENT_QUIT) ||
@@ -269,6 +263,24 @@ bool EventLoop::pollEvents(Common::Event &event) {
 	return true;
 }
 
+void EventLoop::messagesIdle() {
+	// Brief pauses and screen updates
+	g_system->delayMillis(10);
+
+	// Trigger any pending timers
+	triggerTimers();
+
+	// Handle screen updates
+	uint32 time = g_system->getMillis();
+	if (time >= _nextFrameTime) {
+		_nextFrameTime = time + (1000 / FRAME_RATE);
+		AfxGetApp()->getScreen()->update();
+	}
+
+	// Cleanup any temporary handle wrapper
+	AfxGetApp()->AfxUnlockTempMaps();
+}
+
 bool EventLoop::PreTranslateMessage(MSG *pMsg) {
 	// No implementation currently
 	return false;
@@ -277,6 +289,7 @@ bool EventLoop::PreTranslateMessage(MSG *pMsg) {
 BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 		UINT wMsgFilterMin, UINT wMsgFilterMax,
 		UINT wRemoveMsg) {
+	checkMessages();
 	return _messages.peekMessage(lpMsg, hWnd,
 		wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 }
@@ -452,13 +465,7 @@ void EventLoop::pause() {
 	// Pause and update screen
 	g_system->delayMillis(20);
 	AfxGetApp()->getScreen()->update();
-
-	// Do polling, and save the events for
-	// when we can process them. This allows
-	// the backend to keep the mouse cursor updated
-	Common::Event ev;
-	while (g_system->getEventManager()->pollEvent(ev))
-		_events.push(ev);
+	AfxGetApp()->checkMessages();
 }
 
 bool EventLoop::isChar(Common::KeyCode kc) const {

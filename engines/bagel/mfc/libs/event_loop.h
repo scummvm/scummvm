@@ -61,7 +61,6 @@ private:
 	HWND _captureWin = nullptr;
 	HWND _focusedWin = nullptr;
 	HWND _joystickWin = nullptr;
-	Common::Queue<Common::Event> _events;
 	Libs::EventQueue _messages;
 	TimerList _timers;
 	int _timerIdCtr = 0;
@@ -117,6 +116,12 @@ private:
 	 */
 	bool isChar(Common::KeyCode kc) const;
 
+	/**
+	 * Called when there are no pending messages.
+	 * Handles screen frame updates and timers
+	 */
+	void messagesIdle();
+
 public:
 	EventLoop() {}
 
@@ -134,6 +139,12 @@ public:
 		if (GetActiveWindow() == wnd)
 			_activeWindows.pop();
 	}
+
+	/**
+	 * Polls for any pending messages and adds
+	 * them to the messages queue
+	 */
+	void checkMessages();
 
 	/**
 	 * Polls the ScummVM backend for any pending events.

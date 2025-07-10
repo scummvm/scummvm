@@ -1973,8 +1973,7 @@ VOID CMainWindow::OnTimer(UINT_PTR nEventID) {
 	KillTimer(nEventID);
 
 	while (m_bTimerActive) {
-
-		if (MainLoop())
+		if (MainLoop() || AfxGetApp()->shouldQuit())
 			break;
 
 		if (CheckMessages()) {

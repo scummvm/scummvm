@@ -58,8 +58,7 @@ Event::operator MSG() const {
 		_mouseX = mouse.x;
 		_mouseY = mouse.y;
 
-		msg.lParam = (uint32)((int16)_mouseX) |
-		             (((uint32)(int16)_mouseY) << 16);
+		msg.lParam = MAKELPARAM(_mouseX, _mouseY);
 
 		switch (type) {
 		case Common::EVENT_LBUTTONDOWN:
