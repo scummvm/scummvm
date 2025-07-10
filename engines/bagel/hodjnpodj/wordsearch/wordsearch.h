@@ -34,6 +34,7 @@
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
 #include "bagel/hodjnpodj/wordsearch/globals.h"
 #include "bagel/hodjnpodj/wordsearch/resource.h"
+#include "bagel/hodjnpodj/wordsearch/wordlist.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -134,6 +135,10 @@ private:
 	long            m_lScore;
 	CString         m_alpszCurrectGrid[NUMBEROFROWS * NUMBEROFCOLS];
 	BOOL            m_bNoGrid;
+
+	CString _strGameList[WORDSPERLIST];
+	CString _strGameListDisplay[WORDSPERLIST];
+	CText _txtDisplayWord[WORDSPERLIST];
 
 public:
 	CMainWSWindow(HWND, LPGAMESTRUCT);

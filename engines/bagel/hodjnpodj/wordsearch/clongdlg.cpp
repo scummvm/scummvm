@@ -41,9 +41,9 @@ namespace WordSearch {
 
 #define IDD_1BTNDLG 321
 
-extern  CString astrGameList[WORDSPERLIST];
-extern  CString astrGameListDisplay[WORDSPERLIST];
-extern  CText   atxtDisplayWord[WORDSPERLIST];
+extern  CString *astrGameList[WORDSPERLIST];
+extern  CString *astrGameListDisplay[WORDSPERLIST];
+extern  CText   *atxtDisplayWord[WORDSPERLIST];
 extern  int     anWordIndex[NUMBEROFLISTS][WORDSPERLIST];       // Key to alphabetical order of words
 extern  int     nWordList;                                      // Which is the current list index
 
@@ -211,11 +211,11 @@ void CLongDialog::OnPaint() {
 				break;                                                  //...display it!
 			}
 		}
-		if (astrGameList[nDisplayWord].IsEmpty()) {
-			Common::sprintf_s(buf, "%s", astrGameListDisplay[nDisplayWord].c_str());
+		if ((*astrGameList)[nDisplayWord].IsEmpty()) {
+			Common::sprintf_s(buf, "%s", (*astrGameListDisplay)[nDisplayWord].c_str());
 			m_cWordList[i]->DisplayString(pDC,  buf, 12, FW_BOLD, TEXT_COLOR);
 		} else {
-			Common::sprintf_s(buf, "%s", astrGameListDisplay[nDisplayWord].c_str());
+			Common::sprintf_s(buf, "%s", (*astrGameListDisplay)[nDisplayWord].c_str());
 			m_cWordList[i]->DisplayString(pDC,  buf, 12, FW_BOLD, RED_TEXT);
 		}                          //Shadowed
 	}

@@ -72,10 +72,10 @@ CRect       rScore(190, 340, 610, 365);
 CString     astrCurrentDisplay[NUMBEROFROWS];
 
 char    acGameGrid[NUMBEROFROWS][NUMBEROFCOLS];
-CString astrGameList[WORDSPERLIST];
-CString astrGameListDisplay[WORDSPERLIST];
-CText   atxtDisplayWord[WORDSPERLIST];
 CRect   arWordDisplay[WORDSPERLIST];
+CString *astrGameList[WORDSPERLIST];
+CString *astrGameListDisplay[WORDSPERLIST];
+CText *atxtDisplayWord[WORDSPERLIST];
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 
@@ -156,6 +156,13 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	m_bWordsForwardOnly = FALSE;
 
+	// Initialize globals to point to class fields
+	for (int i = 0; i < WORDSPERLIST; ++i) {
+		astrGameList[i] = &_strGameList[i];
+		astrGameListDisplay[i] = &_strGameListDisplay[i];
+		atxtDisplayWord[i] = &_txtDisplayWord[i];
+	}
+
 	// load splash screen
 	pDC = GetDC();                                  // get a device context for our window
 
@@ -227,7 +234,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 
 	for (y = 0; y < WORDSPERLIST; y++) {
 		arWordDisplay[y].SetRect(20, 50 + (y * 15), 170, 50 + (y * 15) + 14);
-		atxtDisplayWord[y].SetupText(pOffScreenDC, pGamePalette, &arWordDisplay[y], JUSTIFY_RIGHT);
+		_txtDisplayWord[y].SetupText(pOffScreenDC, pGamePalette, &arWordDisplay[y], JUSTIFY_RIGHT);
 	}
 
 	// paint splash screen to offscreen DC
@@ -479,8 +486,8 @@ void CMainWSWindow::CreateNewGrid() {
 				}
 			}
 			for (x = 0; x < WORDSPERLIST; x++) {
-				astrGameList[x].Empty();
-				astrGameListDisplay[x].Empty();
+				_strGameList[x].Empty();
+				_strGameListDisplay[x].Empty();
 			}
 		}
 
@@ -497,8 +504,8 @@ void CMainWSWindow::CreateNewGrid() {
 			cTemp2[x] = acList[nWordList][y][x];
 		}
 
-		astrGameList[y] = cTemp1;
-		astrGameListDisplay[y] = cTemp2;
+		_strGameList[y] = cTemp1;
+		_strGameListDisplay[y] = cTemp2;
 
 		nWordLen = strlen(cTemp1);
 		bTemp1 = TRUE;
@@ -1204,13 +1211,13 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 			for (x = 0; x < WORDSPERLIST; x++) {
 				bFoundWord = FALSE;
 				nWordNum = 0;
-				if (astrGameList[x].IsEmpty() == FALSE) {
-					if (astrGameList[x] == acWordChosen) {
+				if (_strGameList[x].IsEmpty() == FALSE) {
+					if (_strGameList[x] == acWordChosen) {
 						bFoundWord = TRUE;
 						nWordNum = x;
 						break;
 					} else {
-						if (astrGameList[x] == acWordBack) {
+						if (_strGameList[x] == acWordBack) {
 							bFoundWord = TRUE;
 							nWordNum = x;
 							break;
@@ -1224,7 +1231,7 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 					sndPlaySound(nullptr, 0);
 					sndPlaySound(FIND_WAV, SND_ASYNC);
 				}
-				astrGameList[nWordNum].Empty();
+				_strGameList[nWordNum].Empty();
 				nWordsLeft--;
 				char    cDisplayTemp[32];
 				Common::sprintf_s(cDisplayTemp, "Words Left: %i", nWordsLeft);

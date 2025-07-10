@@ -43,9 +43,9 @@ namespace WordSearch {
 
 #define IDD_1BTNDLG 321
 
-extern  CString astrGameList[WORDSPERLIST];
-extern  CString astrGameListDisplay[WORDSPERLIST];
-extern  CText   atxtDisplayWord[WORDSPERLIST];
+extern  CString *astrGameList[WORDSPERLIST];
+extern  CString *astrGameListDisplay[WORDSPERLIST];
+extern  CText   *atxtDisplayWord[WORDSPERLIST];
 
 
 
@@ -209,11 +209,11 @@ void C1ButtonDialog::OnPaint() {
 	    }
 	*/
 	for (i = 0; i < WORDSPERLIST; i++) {
-		if (astrGameList[i].IsEmpty()) {
-			Common::sprintf_s(buf, "%s", astrGameListDisplay[i].c_str());
+		if ((*astrGameList)[i].IsEmpty()) {
+			Common::sprintf_s(buf, "%s", (*astrGameListDisplay)[i].c_str());
 			m_cWordList[i]->DisplayString(pDC,  buf, 12, FW_BOLD);
 		} else {
-			Common::sprintf_s(buf, "%s", astrGameListDisplay[i].c_str());
+			Common::sprintf_s(buf, "%s", (*astrGameListDisplay)[i].c_str());
 			m_cWordList[i]->DisplayShadowedString(pDC,  buf, 12, FW_BOLD, (COLORREF)RGB(0, 255, 255));
 		}
 	}
