@@ -359,7 +359,9 @@ void Room701::parser() {
 			}
 		}
 	} // player_said("rm702")
-
+	else
+		return;
+	
 	_G(player).command_ready = false;
 }
 
