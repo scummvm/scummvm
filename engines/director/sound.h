@@ -47,9 +47,10 @@ struct FadeParams {
 	int startTicks;
 	int lapsedTicks;
 	bool fadeIn;
+	bool autoStop;
 
-	FadeParams(int sv, int tv, int tt, int st, bool f) :
-		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
+	FadeParams(int sv, int tv, int tt, int st, bool f, bool as) :
+		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f), autoStop(as) {}
 };
 
 const uint16 kMinSampledMenu = 10;
@@ -136,6 +137,8 @@ struct SoundChannel {
 	SoundID lastPlayedSound;
 	bool stopOnZero; // Should the sound be stopped when the channel contains cast member 0?
 	byte volume;
+	int pitchShiftPercent;
+	int originalRate;
 	FadeParams *fade;
 
 	// a non-zero sound ID if the channel is a puppet. i.e. it's controlled by lingo
@@ -150,7 +153,7 @@ struct SoundChannel {
 	// a stop at the end of a loop.
 	Audio::LoopableAudioStream *loopPtr;
 
-	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr) {}
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), originalRate(-1), pitchShiftPercent(100), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr) {}
 };
 
 class DirectorSound {
@@ -200,7 +203,8 @@ public:
 
 	Common::String getCurrentSound() { return _currentSoundName; }
 
-	void registerFade(int soundChannel, bool fadeIn, int ticks);
+	void registerFade(int soundChannel, int startVol, int targetVol, int ticks, bool autoStop = false);
+	void registerFade(int soundChannel, bool fadeIn, int ticks, bool autoStop = false);
 	bool fadeChannels();
 
 	bool isChannelActive(int soundChannel);
@@ -209,6 +213,7 @@ public:
 	void stopSound(int soundChannel);
 	void stopSound();
 	void setChannelDefaultVolume(int soundChannel);
+	void setChannelPitchShift(int soundChannel, int pitchShiftPercent);
 
 private:
 	void setLastPlayedSound(int soundChannel, SoundID soundId, bool stopOnZero = true);

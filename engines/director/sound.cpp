@@ -89,6 +89,10 @@ void DirectorSound::playFile(Common::String filename, int soundChannel) {
 
 	setChannelDefaultVolume(soundChannel);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, sound, -1, getChannelVolume(soundChannel));
+	_channels[soundChannel]->originalRate = (int)_mixer->getChannelRate(_channels[soundChannel]->handle);
+	if (_channels[soundChannel]->pitchShiftPercent != 100) {
+		_mixer->setChannelRate(_channels[soundChannel]->handle, _channels[soundChannel]->originalRate*_channels[soundChannel]->pitchShiftPercent/100);
+	}
 
 	// Set the last played sound so that cast member 0 in the sound channel doesn't stop this file.
 	setLastPlayedSound(soundChannel, SoundID(), false);
@@ -116,6 +120,14 @@ void DirectorSound::setChannelDefaultVolume(int soundChannel) {
 	_channels[soundChannel]->volume = vol;
 }
 
+void DirectorSound::setChannelPitchShift(int soundChannel, int pitchShiftPercent) {
+	_channels[soundChannel]->pitchShiftPercent = pitchShiftPercent;
+	if (isChannelActive(soundChannel)) {
+		_mixer->setChannelRate(_channels[soundChannel]->handle, _channels[soundChannel]->originalRate*_channels[soundChannel]->pitchShiftPercent/100);
+	}
+}
+
+
 void DirectorSound::playStream(Audio::AudioStream &stream, int soundChannel) {
 	if (!assertChannel(soundChannel))
 		return;
@@ -126,7 +138,12 @@ void DirectorSound::playStream(Audio::AudioStream &stream, int soundChannel) {
 
 	setChannelDefaultVolume(soundChannel);
 
+
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel]->handle, &stream, -1, getChannelVolume(soundChannel));
+	_channels[soundChannel]->originalRate = (int)_mixer->getChannelRate(_channels[soundChannel]->handle);
+	if (_channels[soundChannel]->pitchShiftPercent != 100) {
+		_mixer->setChannelRate(_channels[soundChannel]->handle, _channels[soundChannel]->originalRate*_channels[soundChannel]->pitchShiftPercent/100);
+	}
 }
 
 void DirectorSound::playSound(SoundID soundID, int soundChannel, bool forPuppet) {
@@ -257,11 +274,20 @@ void SNDDecoder::loadExternalSoundStream(Common::SeekableReadStreamEndian &strea
 	_channels = 1;
 }
 
-void DirectorSound::registerFade(int soundChannel, bool fadeIn, int ticks) {
+void DirectorSound::registerFade(int soundChannel, bool fadeIn, int ticks, bool autoStop) {
 	if (!assertChannel(soundChannel))
 		return;
 
-	debugC(5, kDebugSound, "DirectorSound::registerFade(): registered fading channel %d %s over %d ticks", soundChannel, fadeIn ? "in" : "out", ticks);
+	int startVol = fadeIn ? 0 :  _channels[soundChannel]->volume;
+	int targetVol = fadeIn ? _channels[soundChannel]->volume : 0;
+	registerFade(soundChannel, startVol, targetVol, ticks, autoStop);
+}
+
+void DirectorSound::registerFade(int soundChannel, int startVol, int targetVol, int ticks, bool autoStop) {
+	if (!assertChannel(soundChannel))
+		return;
+
+	debugC(5, kDebugSound, "DirectorSound::registerFade(): registered fading channel %d over %d ticks, startVol: %d, targetVol: %d, autostop: %d", soundChannel, ticks, startVol, targetVol, autoStop);
 
 	// sound enable is not working on fade sounds, so we just return directly when sounds are not enabling
 	if (!_enable)
@@ -269,10 +295,7 @@ void DirectorSound::registerFade(int soundChannel, bool fadeIn, int ticks) {
 
 	cancelFade(soundChannel);
 
-	int startVol = fadeIn ? 0 :  _channels[soundChannel]->volume;
-	int targetVol = fadeIn ? _channels[soundChannel]->volume : 0;
-
-	_channels[soundChannel]->fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), fadeIn);
+	_channels[soundChannel]->fade = new FadeParams(startVol, targetVol, ticks, _window->getVM()->getMacTicks(), targetVol > startVol, autoStop);
 	_mixer->setChannelVolume(_channels[soundChannel]->handle, startVol);
 
 	_channels[soundChannel]->volume = startVol;
@@ -288,6 +311,8 @@ bool DirectorSound::fadeChannels() {
 
 		fade->lapsedTicks = _window->getVM()->getMacTicks() - fade->startTicks;
 		if (fade->lapsedTicks > fade->totalTicks) {
+			if (fade->autoStop)
+				stopSound(it._key);
 			continue;
 		}
 
