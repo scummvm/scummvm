@@ -688,6 +688,11 @@ void BitmapCastMember::load() {
 		break;
 	}
 	
+	if (debugChannelSet(7, kDebugLoading)) {
+		debug("BitmapCastMember::load(): Bitmap data:");
+		pic->hexdump(pic->size());
+	}
+
 	if (!img || !img->loadStream(*pic)) {
 		warning("BitmapCastMember::load(): Unable to load id: %d", imgId);
 		delete pic;
@@ -715,7 +720,6 @@ void BitmapCastMember::load() {
 	debugC(5, kDebugImages, "BitmapCastMember::load(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %s", imgId, w, h, _flags1, _flags2, _bytes, _bitsPerPixel, _clut.asString().c_str());
 
 	_loaded = true;
-	writeBITDResource(nullptr, 0);
 }
 
 void BitmapCastMember::unload() {
@@ -1030,7 +1034,7 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 		if (_flags2 != 0) {
 			// Skipping 14 bytes because they are not stored in ScummVM Director
 			// May need to save in the future, see BitCastMember::BitCastMember constructor
-			writeStream->write(0, 14);
+			writeStream->seek(14, SEEK_CUR);
 			writeStream->writeUint16BE(_flags2);
 		}
 	}
@@ -1038,10 +1042,10 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 }
 
 uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	// writeStream->seek(offset);
+	writeStream->seek(offset);
 
-	// writeStream->writeUint32LE(MKTAG('B', 'I', 'T', 'D'));
-	// writeStream->writeUint32LE(_size);
+	writeStream->writeUint32LE(MKTAG('B', 'I', 'T', 'D'));
+	writeStream->writeUint32LE(getBITDResourceSize());
 
 	if (_external) {
 		warning("BitmapCastMember::writeBITDResource: the bitmap is external, ignoring for now");	
@@ -1112,7 +1116,11 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 		}
 	}
 
-	dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), pixels.data(), pixels.size());
+	writeStream->write(pixels.data(), pixels.size());
+
+	if (debugChannelSet(7, kDebugSaving)) {
+		dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), pixels.data(), pixels.size());
+	}
 	return 0;
 }
 
