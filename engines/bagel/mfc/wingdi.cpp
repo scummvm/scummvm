@@ -63,8 +63,6 @@ HDC CreateCompatibleDC(HDC hdc) {
 }
 
 HDC GetDC(HWND hWnd) {
-	assert(!hWnd);
-
 	if (hWnd) {
 		CWnd *wnd = CWnd::FromHandle(hWnd);
 		return wnd->GetDC();
