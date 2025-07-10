@@ -156,23 +156,27 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::initMask() {
-	DXViewport viewport = _gameRef->_renderer3D->getViewPort();
+	auto *rend = _gameRef->_renderer3D;
 
-	_shadowMask[0].x = viewport._x;
-	_shadowMask[0].y = viewport._height;
-	_shadowMask[0].z = 0.0f;
+	// bottom left
+	_shadowMask[0].x = 0.0f;
+	_shadowMask[0].y = rend->getHeight();
+	_shadowMask[0].z = 1.0f;
 
-	_shadowMask[1].x = viewport._x;
-	_shadowMask[1].y = viewport._y;
-	_shadowMask[1].z = 0.0f;
+	// top left
+	_shadowMask[1].x = 0.0f;
+	_shadowMask[1].y = 0.0f;
+	_shadowMask[1].z = 1.0f;
 
-	_shadowMask[2].x = viewport._width;
-	_shadowMask[2].y = viewport._height;
-	_shadowMask[2].z = 0.0f;
+	// bottom right
+	_shadowMask[2].x = rend->getWidth();
+	_shadowMask[2].y = rend->getHeight();
+	_shadowMask[2].z = 1.0f;
 
-	_shadowMask[3].x = viewport._width;
-	_shadowMask[3].y = viewport._y;
-	_shadowMask[3].z = 0.0f;
+	// top right
+	_shadowMask[3].x = rend->getWidth();
+	_shadowMask[3].y = 0.0f;
+	_shadowMask[3].z = 1.0f;
 
 	byte a = RGBCOLGetA(_color);
 	byte r = RGBCOLGetR(_color);
