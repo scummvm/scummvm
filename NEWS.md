@@ -49,6 +49,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      which was originally used for that release. (It's unclear whether that
      much darker rendering was used on purpose, or unintentionally.)
 
+ Teenagent:
+   - Add language support for Polish, Czech and Russian versions.
+     New teenagent.dat file is generated.
+
  TwinE:
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
 
