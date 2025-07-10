@@ -1046,6 +1046,7 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 		writeStream->seek(currentPos);
 
 		dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
+		free(dumpData);
 		delete dumpStream;
 	}
 

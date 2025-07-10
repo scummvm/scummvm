@@ -1075,7 +1075,7 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		_keyData[childTag][parentIndex].push_back(childIndex);
 
 		if (childTag == MKTAG('C', 'A', 'S', '*')) {
-			// A 'CAS*' resource contains indexes of 'CASt' resources that are linked to the 
+			// A 'CAS*' resource contains indexes of 'CASt' resources that are linked to the
 			// Resource at parentIndex, hence, mark the 'CAS*' libResourceId to parentIndex
 			// This means all the 'CASt' resources are linked to the parent with index equal to 'CAS*' libResourceId
 			_types[childTag][childIndex].libResourceId = parentIndex;
@@ -1244,7 +1244,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
-			cast->saveCast(writeStream, it);
+			cast->saveCastData(writeStream, it);
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
@@ -1255,7 +1255,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1278,7 +1278,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('S', 'T', 'X', 'T')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1300,7 +1300,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('C', 'L', 'U', 'T')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1320,15 +1320,19 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
-				uint32 parentIndex = _keyData[MKTAG('S', 'C', 'V', 'W')].begin()->_key;
-				// If the parentIndex is 1024 that means this 'SCVW' is a score or a movie
-				if (parentIndex == 1024) {
-					writeStream->seek(it->offset);
-					writeStream->writeUint32LE(it->tag);
-					writeStream->writeUint32LE(it->size);
-					writeStream->writeStream(getResource(it->tag, it->index));
-					break;
+				uint32 parentIndex = 0;
+				for (auto &jt : _keyData[MKTAG('S', 'C', 'V', 'W')]) {
+					for (auto &kt : jt._value) {
+						if (kt == it->index) {
+							parentIndex = jt._key;
+							break;
+						}
+					}
+					if (parentIndex) {
+						break;
+					}
 				}
+
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -1389,7 +1393,7 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream,
 
 	writeStream->writeUint16LE(_mmapHeaderSize);
 	writeStream->writeUint16LE(_mmapEntrySize);
-	
+
 	uint32 newResCount = resources.size();
 	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
 	writeStream->writeUint32LE(newResCount);
@@ -1492,10 +1496,10 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 			castIndexes[it._value.castId] = it._value.index;
 			maxCastId = MAX(maxCastId, it._value.castId);
 		}
-	} 
+	}
 
 	for (uint32 i = 0; i <= maxCastId; i++) {
-		uint32 castIndex = castIndexes.getValOrDefault(i, 0); 
+		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
 		writeStream->writeUint32BE(castIndex);
 	}
 	return true;
@@ -1592,7 +1596,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	for (auto it: _resources) {
 		builtResources.push_back(new Resource(it));
 	}
-	
+
 	uint32 resSize = 0;
 	for (auto &it : builtResources) {
 		switch (it->tag) {
@@ -1612,7 +1616,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 		case MKTAG('m', 'm', 'a', 'p'):
 			// one resource only
 			it->size = getMmapSize();
-			it->offset = 12 + (getImapSize() + 8);	// The +8 is to account for header and size 
+			it->offset = 12 + (getImapSize() + 8);	// The +8 is to account for header and size
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
@@ -1663,7 +1667,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('S', 'T', 'X', 'T')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1689,11 +1693,11 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 		case MKTAG('C', 'L', 'U', 'T'):
 			{
 				// We have to find the parent
-				// Look into the keyData, for all parents of 'CLUT' resource 
-				// If the parent contains this 'CLUT' resource's index, that's our parent 
+				// Look into the keyData, for all parents of 'CLUT' resource
+				// If the parent contains this 'CLUT' resource's index, that's our parent
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('C', 'L', 'U', 'T')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1720,7 +1724,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1747,7 +1751,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			{
 				uint32 parentIndex = 0;
 				for (auto &jt : _keyData[MKTAG('S', 'C', 'V', 'W')]) {
-					for (auto &kt : jt._value) { 
+					for (auto &kt : jt._value) {
 						if (kt == it->index) {
 							parentIndex = jt._key;
 							break;
@@ -1756,13 +1760,6 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 					if (parentIndex) {
 						break;
 					}
-				}
-
-				// If parent index is 1024, that means this 'SCVW' resource is a score or a movie
-				if (parentIndex == 1024) {
-					it->offset = currentSize;
-					currentSize += it->size + 8;		// This size doesn't include the header and size entry
-					break;
 				}
 
 				Resource parent = castResMap[parentIndex];
@@ -1779,7 +1776,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('f', 'r', 'e', 'e'):
 		case MKTAG('j', 'u', 'n', 'k'):
-			// These resource do not hold any data
+			// These resources do not hold any data
 			it->size = 0;
 
 			// We could just ignore these and not write them at all
@@ -1840,7 +1837,7 @@ uint32 RIFXArchive::getCASResourceSize(uint32 castLib) {
 		if (it._value.libResourceId == castLib) {
 			maxCastId = MAX(maxCastId, it._value.castId);
 		}
-	} 
+	}
 
 	return (maxCastId + 1) * 4;
 }

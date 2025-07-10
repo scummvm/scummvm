@@ -191,6 +191,7 @@ void PaletteCastMember::writePaletteData(Common::MemoryWriteStream *writeStream,
 		writeStream->seek(currentPos);
 
 		dumpFile("PaletteData", _castId, MKTAG('C', 'L', 'U', 'T'), dumpData, castSize);
+		free(dumpData);
 		delete dumpStream;
 	}
 }
