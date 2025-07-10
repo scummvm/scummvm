@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 12:09+0000\n"
+"POT-Creation-Date: 2025-07-10 12:48+0000\n"
 "PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6105,7 +6105,7 @@ msgstr "업데이트 확인 중..."
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:959
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
-#: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:97
+#: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:146
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
 #: engines/ultima/ultima8/ultima8.cpp:193
 #, c-format
@@ -6115,7 +6115,8 @@ msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:975
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
-#: engines/tony/tony.cpp:200 engines/toon/toon.cpp:5431
+#: engines/teenagent/resources.cpp:163 engines/tony/tony.cpp:200
+#: engines/toon/toon.cpp:5431
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "'%s' 엔진 데이터 파일이 손상되었습니다."
@@ -12196,7 +12197,7 @@ msgstr ""
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr "엔진 데이터 파일에서 %s 언어에 대한 텍스트를 찾을 수 없습니다."
 
-#: engines/supernova/supernova.cpp:479
+#: engines/supernova/supernova.cpp:479 engines/teenagent/resources.cpp:172
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
