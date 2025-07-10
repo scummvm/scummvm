@@ -77,16 +77,28 @@ void EventLoop::checkMessages() {
 		return;
 
 	// Poll for event in ScummVM event manager
+	MSG priorMsg;
 	Libs::Event ev;
+
 	while (pollEvents(ev)) {
 		HWND hWnd = nullptr;
 		setMessageWnd(ev, hWnd);
 		MSG msg = ev;
 		msg.hwnd = hWnd;
 
-		if (msg.message != WM_NULL)
-			_messages.push(msg);
+		if (msg.message == WM_MOUSEMOVE &&
+				priorMsg.message == WM_MOUSEMOVE) {
+			// Preventing multiple sequential mouse move messages
+			priorMsg = msg;
+		} else if (msg.message != WM_NULL) {
+			if (priorMsg.message != WM_NULL)
+				_messages.push(priorMsg);
+			priorMsg = msg;
+		}
 	}
+
+	if (priorMsg.message != WM_NULL)
+		_messages.push(priorMsg);
 }
 
 bool EventLoop::GetMessage(MSG &msg) {
