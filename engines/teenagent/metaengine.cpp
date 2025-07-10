@@ -148,14 +148,17 @@ public:
 
 		in->seek(TeenAgent::saveStateSize);
 
-		// Skip tag
-		in->skip(4);
-		// Skip save version
-		in->skip(1);
+		uint32 tag = in->readUint32BE();
+		if (tag == MKTAG('T', 'N', 'G', 'T')) {
+			// Skip save version
+			in->skip(1);
 
-		// Skip scene object data
-		uint32 size = in->readUint32LE();
-		in->skip(size);
+			// Skip scene object data
+			uint32 size = in->readUint32LE();
+			in->skip(size);
+		} else {
+			in->seek(-4, SEEK_CUR);
+		}
 
 		if (!Graphics::checkThumbnailHeader(*in))
 			return SaveStateDescriptor(this, slot, desc);
