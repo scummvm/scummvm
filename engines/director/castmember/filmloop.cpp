@@ -280,7 +280,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 
 	uint32 size = stream.readUint32BE();
 	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW body:");
+		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW body of size: %d", size);
 		uint32 pos = stream.pos();
 		stream.seek(0);
 		stream.hexdump(size);
@@ -288,7 +288,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 	}
 	uint32 framesOffset = stream.readUint32BE();
 	if (debugChannelSet(8, kDebugLoading)) {
-		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW header:");
+		debugC(8, kDebugLoading, "loadFilmLoopDataD4: SCVW header of size: %d", framesOffset - 8);
 		stream.hexdump(framesOffset - 8);
 	}
 	stream.skip(6);
@@ -304,8 +304,8 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			continue;
 		}
 		frameSize -= 2;
+		debugC(2, kDebugLoading, "loadFilmLoopDataD4: Frame entry: %d", frameSize);
 		if (debugChannelSet(8, kDebugLoading)) {
-			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Frame entry:");
 			stream.hexdump(frameSize);
 		}
 
@@ -318,7 +318,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			int channelOffset = order % channelSize;
 			int offset = order;
 
-			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
+			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -351,7 +351,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 		}
 
 		for (auto &s : newFrame.sprites) {
-			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
 					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
 					s._value._width, s._value._height);
 
@@ -753,30 +753,27 @@ void FilmLoopCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 
 void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	uint32 channelSize = 0; 
-	switch (_cast->_version)  {
-	case kFileVer400:
+	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
-		break;
-		
-	case kFileVer500:
+	} else if (_cast->_version <= kFileVer500 && _cast->_version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
-		break;
-		
-	default:
-		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6 not supported yet");
+	} else {
+		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
 		return;
 	}
 
 	// Go to the desired offset put in the memory map
 	writeStream->seek(offset);
 
+	debugC(5, kDebugSaving, "FilmLoopCastmember::writeSCVWResource: Saving FilmLoop 'SCVW' data at offset %d", offset);
+
 	uint32 filmloopSize = getSCVWResourceSize();
 	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
 	writeStream->writeUint32LE(filmloopSize);	// Size of the resource
 
-	writeStream->writeUint32BE(0);						// Putting zeroes instead of size currently
+	writeStream->writeUint32BE(filmloopSize);
 
-	uint32 frameOffset = 16;							// Should be greater than 16
+	uint32 frameOffset = 20;							// Should be greater than 20
 	writeStream->writeUint32BE(frameOffset);			// framesOffset
 	writeStream->seek(6, SEEK_CUR);						// Ignored data
 	writeStream->writeUint16BE(channelSize);
@@ -795,7 +792,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 			// 1-20 bytes of Sprite data
 
 	for (FilmLoopFrame frame : _frames) {
-		writeStream->writeUint16BE(0);					// Frame Size
+		writeStream->writeUint16BE(frame.sprites.size() * (channelSize + 4) + 2);					// Frame Size
 
 		for (auto it : frame.sprites) {
 			int channel = it._key;
@@ -827,15 +824,16 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 		dumpStream->write(writeStream, filmloopSize + 8);
 		writeStream->seek(currentPos);
 
-        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
-        delete writeStream;
+        dumpFile("FilmLoopData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
+		free(dumpData);
+        delete dumpStream;
     }
 }
 
 uint32 FilmLoopCastMember::getSCVWResourceSize() {
-	// Size of the filmloop data: 4 bytes
+	// Size: 4 bytes
 	// frameoffset: 4 bytes
-	// Header (Ignored data): 12 bytes
+	// Header (Ignored data): 16 bytes
 
 	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
@@ -848,6 +846,8 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 
 	uint32 framesSize = 0;
 	for (FilmLoopFrame frame : _frames) { 
+		// Frame size
+		framesSize += 2;
 		for (auto it : frame.sprites) {
 			// message width: 2 bytes
 			// order: 2 bytes
@@ -855,7 +855,7 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 			framesSize += 2 + 2 + channelSize; 	
 		}
 	}
-	return 4 + 4 + 12 + framesSize;
+	return 4 + 4 + 16 + framesSize;
 }
 
 } // End of namespace Director

@@ -131,10 +131,6 @@ Cast::~Cast() {
 CastMember *Cast::getCastMember(int castId, bool load) {
 	CastMember *result = nullptr;
 
-	debug("What is the loadedcast:");
-	for (auto it : *_loadedCast) {
-		debug("%d: %s/load", it._key, castType2str(it._value->_type));
-	}
 	if (_loadedCast && _loadedCast->contains(castId)) {
 		result = _loadedCast->getVal(castId);
 	}
@@ -612,6 +608,7 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 		writeStream->seek(currentPos);
 
         dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
+		free(dumpData);
         delete dumpStream;
     }
 
@@ -816,7 +813,7 @@ void Cast::loadCast() {
 	}
 }
 
-void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
+void Cast::saveCastData(Common::MemoryWriteStream *writeStream, Resource *res) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
 	uint32 offset = res->offset;
@@ -855,7 +852,7 @@ void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
 		delete stream;
 	}
 
-	debugC(5, kDebugSaving, "Cast::saveCast()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
+	debugC(5, kDebugSaving, "Cast::saveCastData()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
 	
 	if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = (byte *)calloc(castSize + 8, sizeof(byte));
@@ -867,6 +864,7 @@ void Cast::saveCast(Common::MemoryWriteStream *writeStream, Resource *res) {
 		writeStream->seek(currentPos);
 
 		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize + 8);
+		free(dumpData);
 		delete dumpStream;
 	}
 }

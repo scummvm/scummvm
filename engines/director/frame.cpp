@@ -594,6 +594,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+	debugC(8, kDebugLoading, "stream.pos(): %ld, startPosition: %d, finishPosition: %d", stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -724,7 +725,7 @@ void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
 	// If the sprite is a puppet (controlled by lingo scripting)
 	// The rest of the data isn't read
 	if (sprite._puppet) {
-		writeStream->write(0, 19);
+		writeStream->write(0, 19);								// 1-19
 	} else {
 		writeStream->writeByte((byte) sprite._spriteType);		// 1
 		writeStream->writeByte(sprite._foreColor);				// 2
