@@ -99,6 +99,11 @@ void EventLoop::checkMessages() {
 
 	if (priorMsg.message != WM_NULL)
 		_messages.push(priorMsg);
+
+	// If there are no pending messages,
+	// do a brief pause and check for frame updates
+	if (_messages.empty())
+		checkForFrameUpdate();
 }
 
 bool EventLoop::GetMessage(MSG &msg) {
@@ -146,8 +151,6 @@ bool EventLoop::GetMessage(MSG &msg) {
 		}
 	} else {
 		msg.message = WM_NULL;
-
-		messagesIdle();
 	}
 
 	return !g_engine->shouldQuit() && msg.message != WM_QUIT;
@@ -275,7 +278,7 @@ bool EventLoop::pollEvents(Common::Event &event) {
 	return true;
 }
 
-void EventLoop::messagesIdle() {
+void EventLoop::checkForFrameUpdate() {
 	// Brief pauses and screen updates
 	g_system->delayMillis(10);
 

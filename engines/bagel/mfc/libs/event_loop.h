@@ -120,7 +120,7 @@ private:
 	 * Called when there are no pending messages.
 	 * Handles screen frame updates and timers
 	 */
-	void messagesIdle();
+	void checkForFrameUpdate();
 
 public:
 	EventLoop() {}
