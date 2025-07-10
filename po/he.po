@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 23:41+0000\n"
+"POT-Creation-Date: 2025-07-10 23:51+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -991,7 +991,7 @@ msgstr "ממשק משתמש"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:192
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -5906,14 +5906,14 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:51
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
 #: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "הפעלת המרת טקסט לדיבור"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:46
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "שימוש בהמרת טקסט לדיבור כדי לקרוא טקסט במשחק (אם זמינה)"
 
@@ -6687,11 +6687,11 @@ msgstr "כללי"
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/teenagent/metaengine.cpp:182 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -6923,8 +6923,9 @@ msgstr "דילוג על סרטוני מעבר"
 #: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
 #: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
-#: engines/sludge/keymapper_tables.h:535 engines/tetraedge/metaengine.cpp:98
-#: engines/toltecs/metaengine.cpp:228 engines/touche/metaengine.cpp:141
+#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:198
+#: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
+#: engines/touche/metaengine.cpp:141
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip dialog"
@@ -12685,6 +12686,36 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "השתמש בדיבור באנגלית במקום גרמנית בכל שפה שאינה גרמנית"
 
+#: engines/teenagent/metaengine.cpp:186
+#, fuzzy
+#| msgid "Inventory"
+msgid "Move / Examine"
+msgstr "מלאי"
+
+#: engines/teenagent/metaengine.cpp:206
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Close inventory"
+msgstr "מלאי פתוח / סגור"
+
+#: engines/teenagent/metaengine.cpp:211
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle inventory"
+msgstr "החלף מצב תצוגת מלאי/נקודות IQ"
+
+#: engines/teenagent/metaengine.cpp:217 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip intro"
+msgstr "דילוג על שורה"
+
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/teenagent/metaengine.cpp:224 engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
+msgstr "מיתוג מצב מהיר"
+
 #: engines/tetraedge/metaengine.cpp:32
 #, fuzzy
 #| msgid "Correct aspect ratio for games"
@@ -12919,12 +12950,6 @@ msgstr "דילוג על שורה"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "גרסת גופן לא קיימת בקובץ נתוני המנוע של '%s'."
 
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip line"
-msgid "Skip intro"
-msgstr "דילוג על שורה"
-
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
 #, fuzzy
@@ -13001,10 +13026,6 @@ msgstr "מיתוג מצב מהיר"
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Disable fast walk"
-msgstr "מיתוג מצב מהיר"
-
-#: engines/touche/metaengine.cpp:167
-msgid "Toggle fast mode"
 msgstr "מיתוג מצב מהיר"
 
 #: engines/touche/metaengine.cpp:173

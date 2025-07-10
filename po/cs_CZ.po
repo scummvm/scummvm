@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 23:41+0000\n"
+"POT-Creation-Date: 2025-07-10 23:51+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1032,7 +1032,7 @@ msgstr "GUI"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:192
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -5995,7 +5995,7 @@ msgstr ""
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:51
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
 #: engines/wage/metaengine.cpp:51
 #, fuzzy
 msgid "Enable Text to Speech"
@@ -6003,7 +6003,7 @@ msgstr "Použít Text ke čtení"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:46
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Použít zvuky na CD místo ve hře, pokud je dostupné"
@@ -6757,11 +6757,11 @@ msgstr ""
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/teenagent/metaengine.cpp:182 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -6988,8 +6988,9 @@ msgstr "Přeskočit video"
 #: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
 #: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
-#: engines/sludge/keymapper_tables.h:535 engines/tetraedge/metaengine.cpp:98
-#: engines/toltecs/metaengine.cpp:228 engines/touche/metaengine.cpp:141
+#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:198
+#: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
+#: engines/touche/metaengine.cpp:141
 #, fuzzy
 msgid "Skip dialog"
 msgstr "Přeskočit řádek"
@@ -12564,6 +12565,37 @@ msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr "Použít anglickou řeč místo německé pro každý jazyk kromě němčiny"
 
+#: engines/teenagent/metaengine.cpp:186
+#, fuzzy
+#| msgid "Inventory"
+msgid "Move / Examine"
+msgstr "Inventář"
+
+#: engines/teenagent/metaengine.cpp:206
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Close inventory"
+msgstr "Otevřít/Zavřít Inventář"
+
+#: engines/teenagent/metaengine.cpp:211
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle inventory"
+msgstr "Přepínat zobrazení inventáře/chytrostních bodů"
+
+#: engines/teenagent/metaengine.cpp:217 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip intro"
+msgstr "Přeskočit řádek"
+
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/teenagent/metaengine.cpp:224 engines/touche/metaengine.cpp:167
+#, fuzzy
+msgid "Toggle fast mode"
+msgstr "Rychlý režim"
+
 #: engines/tetraedge/metaengine.cpp:32
 #, fuzzy
 msgid "Correct movie aspect ratio"
@@ -12778,12 +12810,6 @@ msgstr "Přeskočit řádek"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Varianta písma není dostupná v datovém souboru jádra '%s'."
 
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip line"
-msgid "Skip intro"
-msgstr "Přeskočit řádek"
-
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
 #, fuzzy
@@ -12857,11 +12883,6 @@ msgstr "Rychlý režim"
 #: engines/touche/metaengine.cpp:161
 #, fuzzy
 msgid "Disable fast walk"
-msgstr "Rychlý režim"
-
-#: engines/touche/metaengine.cpp:167
-#, fuzzy
-msgid "Toggle fast mode"
 msgstr "Rychlý režim"
 
 #: engines/touche/metaengine.cpp:173

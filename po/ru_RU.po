@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 23:41+0000\n"
+"POT-Creation-Date: 2025-07-10 23:51+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1010,7 +1010,7 @@ msgstr "GUI"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:192
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -6298,14 +6298,14 @@ msgstr "Используйте курсор-шахматку из более п�
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:51
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
 #: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Включить текст-в-речь"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:46
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Использовать TTS для чтения игровых текстов вслух (если TTS доступна)"
 
@@ -7066,11 +7066,11 @@ msgstr "Общие клавиши"
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/teenagent/metaengine.cpp:182 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Раскладки клавиш по умолчанию"
 
@@ -7303,8 +7303,9 @@ msgstr "Пропустить заставку"
 #: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
 #: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
-#: engines/sludge/keymapper_tables.h:535 engines/tetraedge/metaengine.cpp:98
-#: engines/toltecs/metaengine.cpp:228 engines/touche/metaengine.cpp:141
+#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:198
+#: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
+#: engines/touche/metaengine.cpp:141
 #, fuzzy
 #| msgid "Skip dialogue"
 msgid "Skip dialog"
@@ -12945,6 +12946,34 @@ msgstr ""
 "Использовать английскую озвучку вместо немецкой для всех языков, кроме "
 "немецкого"
 
+#: engines/teenagent/metaengine.cpp:186
+#, fuzzy
+#| msgid "Inventory"
+msgid "Move / Examine"
+msgstr "Инвентарь"
+
+#: engines/teenagent/metaengine.cpp:206
+#, fuzzy
+#| msgid "Open/Close Inventory"
+msgid "Close inventory"
+msgstr "Открыть/закрыть инвентарь"
+
+#: engines/teenagent/metaengine.cpp:211
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle inventory"
+msgstr "Переключить показ инвентаря/очков IQ"
+
+#: engines/teenagent/metaengine.cpp:217 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
+msgid "Skip intro"
+msgstr "Пропустить вступление"
+
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/teenagent/metaengine.cpp:224 engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
+msgstr "Переключить быстрый режим"
+
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
 msgstr "Корректировать соотношение сторон для роликов"
@@ -13178,10 +13207,6 @@ msgstr "Пропустить видео"
 msgid "Font variant not present in '%s' engine data file."
 msgstr "Вариант шрифта отсутствует в файле движка %s."
 
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
-msgid "Skip intro"
-msgstr "Пропустить вступление"
-
 #. I18N: Skips current line being spoken by a character
 #: engines/toon/metaengine.cpp:105
 msgid "Stop current voice"
@@ -13247,10 +13272,6 @@ msgstr "Включить быструю ходьбу"
 #: engines/touche/metaengine.cpp:161
 msgid "Disable fast walk"
 msgstr "Выключить быструю ходьбу"
-
-#: engines/touche/metaengine.cpp:167
-msgid "Toggle fast mode"
-msgstr "Переключить быстрый режим"
 
 #: engines/touche/metaengine.cpp:173
 #, fuzzy
