@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 11:58+0000\n"
+"POT-Creation-Date: 2025-07-10 12:09+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -3375,7 +3375,7 @@ msgstr "Μηχανή παιχνιδιών περιπέτειας"
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
-#: engines/adl/metaengine.cpp:338 engines/hdb/metaengine.cpp:275
+#: engines/adl/metaengine.cpp:352 engines/hdb/metaengine.cpp:275
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -6423,6 +6423,21 @@ msgstr "Χρήση καρό δρομέα"
 msgid "Use the checkered cursor from later Apple II models"
 msgstr "Χρήση του καρό δρομέα από τα μεταγενέστερα μοντέλα Apple II"
 
+#: engines/adl/metaengine.cpp:117 engines/cge/metaengine.cpp:56
+#: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:51
+#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
+#: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:45
+#: engines/wage/metaengine.cpp:51
+msgid "Enable Text to Speech"
+msgstr "Χρήση Κειμένου σε Ομιλία"
+
+#: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
+#: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:52
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:46
+msgid "Use TTS to read text in the game (if TTS is available)"
+msgstr "Χρήση TTS για την ανάγνωση κειμένου στο παιχνίδι (αν είναι διαθέσιμο)"
+
 #: engines/agi/detection_tables.h:262
 msgid "Early AGI games for Tandy Color Computer are not yet supported."
 msgstr ""
@@ -7658,20 +7673,6 @@ msgstr "Λειτουργία για Άτομα με Αχρωματοψία"
 #: engines/cge/metaengine.cpp:44 engines/cge2/metaengine.cpp:47
 msgid "Enable Color Blind Mode by default"
 msgstr "Ενεργοποίηση λειτουργίας για Άτομα με Αχρωματοψία εξ'ορισμού"
-
-#: engines/cge/metaengine.cpp:56 engines/cruise/metaengine.cpp:45
-#: engines/drascula/metaengine.cpp:51 engines/glk/metaengine.cpp:193
-#: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
-#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
-#: engines/teenagent/metaengine.cpp:45 engines/wage/metaengine.cpp:51
-msgid "Enable Text to Speech"
-msgstr "Χρήση Κειμένου σε Ομιλία"
-
-#: engines/cge/metaengine.cpp:57 engines/cruise/metaengine.cpp:46
-#: engines/drascula/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
-#: engines/teenagent/metaengine.cpp:46
-msgid "Use TTS to read text in the game (if TTS is available)"
-msgstr "Χρήση TTS για την ανάγνωση κειμένου στο παιχνίδι (αν είναι διαθέσιμο)"
 
 #: engines/cge/metaengine.cpp:199 engines/cge2/metaengine.cpp:212
 msgid "Game Keymappings"
