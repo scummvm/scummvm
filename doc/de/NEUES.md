@@ -20,6 +20,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Unterstützung für Dog-n-cat: In the Footsteps of Unprecedented Beasts hinzugefügt.
    - Unterstützung für Dog-n-cat: Island of Dr Ratiarty hinzugefügt.
    - Unterstützung für Out of this World (Another World) hinzugefügt.
+   - Unterstützung für auf SLUDGE basierende Spiele wie Out of Order,
+     The Secret of Tremendous Corporation, Robin's Rescue und andere hinzugefügt,
+	 aktuell insgesamt 12 Titel.
+   - Unterstützung für Adibou 2: Nature & Sciences hinzugefügt.
 
  Drascula:
    - Hervorgehobene Charaktere werden jetzt korrekt dargestellt.
@@ -27,6 +31,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Freescape:
    - Unterstützung für Rotation/Rollen in Driller und Dark Side hinzugefügt.
+
+ Lure:
+   - Unterstützung für die russische Version zu lure.dat hinzugefügt.
 
  Nuvie:
    - Funktion "Charakter übertragen" zum Hauptmenü hinzugefügt.
@@ -43,12 +50,19 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      dargestellt wird. Die Farbpalette wurde für diese Veröffentlichung ursprünglich benutzt.
 	 (Es ist unklar, ob die deutlich dunklere Darstellung beabsichtigt ist oder nicht.)
 
+ Teenagent:
+   - Unterstützung für die polnische, tschechische und russischen Versionen hinzugefügt.
+     Eine neue Version von teenagent.dat wurde erstellt.
+
  TwinE:
    - Ursprüngliche Fehlerkorrekturen aktiviert (Tür zum Hauptquartier von FunFrock und Probleme beim Speichern).
 
  V-Cruise:
    - Fehlerhafte Text-Darstellung in der chinesischen und japanischen Version korrigiert.
    - Unterstützung für die japanische DVD-Version von Schizm: Mysterious Journey hinzugefügt.
+
+ Wintermute:
+   - Der 3D-Renderer wird jetzt auch standardmäßig für 2D-Spiele genutzt.
 
 #### 2.9.1 "Slappin da BASS" (25.05.2025)
 
