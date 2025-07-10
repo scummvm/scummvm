@@ -1256,26 +1256,26 @@ void Room806::daemon() {
 			break;
 
 		case 2:
-			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-			sendWSMessage_110000(_mcTrekMach, 210);
+			setGlobals1(_ripTrekHeadTurnPos3Series, 1, 5, 5, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 210);
 
 			break;
 
 		case 3:
-			setGlobals1(_meiTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-			sendWSMessage_110000(_mcTrekMach, 211);
+			setGlobals1(_ripTrekHeadTurnPos3Series, 6, 9, 9, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 211);
 
 			break;
 
 		case 4:
-			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-			sendWSMessage_110000(_mcTrekMach, 212);
+			setGlobals1(_ripLookUpPos3Series, 1, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 212);
 
 			break;
 
 		case 5:
-			setGlobals1(_meiTrekHeadTurnPos3Series, 1, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-			sendWSMessage_110000(_mcTrekMach, 220);
+			setGlobals1(_ripPos3LookAroundSeries, 1, 20, 20, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+			sendWSMessage_110000(_G(my_walker), 220);
 
 			break;
 
