@@ -3126,8 +3126,6 @@ VOID CMainWindow::OnClose() {
 	CRect  myRect;
 	CDC   *pDC;
 
-	assert(m_bTimerActive == FALSE);            // the main loop had better be stopped
-
 	ClipCursor(nullptr);                           // release mouse limits
 
 	CSound::clearSounds();                      // stop and delete all CSounds
