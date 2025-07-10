@@ -150,7 +150,7 @@ Common::ErrorCode GobEngine::updateAddOns(const GobMetaEngine *metaEngine, const
 
 	// List already registered add-ons for this game, and detect removed ones
 	Common::ConfigManager::DomainMap::iterator iter = ConfMan.beginGameDomains();
-	Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> existingAddOnsPaths;
+	Common::HashMap<Common::Path, Common::String, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> existingAddOnsPaths;
 
 	bool anyAddOnRemoved = false;
 	for (; iter != ConfMan.endGameDomains(); ++iter) {
@@ -163,10 +163,14 @@ Common::ErrorCode GobEngine::updateAddOns(const GobMetaEngine *metaEngine, const
 			Common::Path addOnPath(Common::Path::fromConfig(dom.getVal("path")));
 			if (addOnPath.empty() || !Common::FSNode(addOnPath).isDirectory()) {
 				// Path does not exist, remove the add-on
+				debug("Removing entry of deleted add-on '%s' (former path: '%s')",
+					  name.c_str(),
+					  addOnPath.toString(Common::Path::kNativeSeparator).c_str());
+
 				ConfMan.removeGameDomain(name);
 				anyAddOnRemoved = true;
 			} else {
-				existingAddOnsPaths[addOnPath] = true;
+				existingAddOnsPaths[addOnPath] = name;
 			}
 		}
 	}
@@ -241,6 +245,9 @@ Common::ErrorCode GobEngine::updateAddOns(const GobMetaEngine *metaEngine, const
 				selectedAddOn.shortPath = subdirNode.getDisplayName();
 
 				if (selectedAddOn.hasUnknownFiles) {
+					debug("Detected an unknown variant of add-on '%s' (path: '%s')",
+						  selectedAddOn.gameId.c_str(),
+						  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 					GUI::UnknownGameDialog dialog(selectedAddOn);
 					dialog.runModal();
 					continue; // Do not create an entry for unknown variants
@@ -252,8 +259,16 @@ Common::ErrorCode GobEngine::updateAddOns(const GobMetaEngine *metaEngine, const
 					}
 				}
 
-				if (!existingAddOnsPaths.contains(subdirNode.getPath())) {
+				Common::String addOnName;
+				if (existingAddOnsPaths.tryGetVal(subdirNode.getPath(), addOnName)) {
+					debug("Detected existing add-on '%s' (path: '%s')",
+						  addOnName.c_str(),
+						  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
+				} else {
 					Common::String domain = EngineMan.createTargetForGame(selectedAddOn);
+					debug("Detected new add-on '%s' (path: '%s')",
+						  domain.c_str(),
+						  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str());
 					ConfMan.set("parent", ConfMan.getActiveDomainName(), domain);
 					anyAddOnAdded = true;
 				}
