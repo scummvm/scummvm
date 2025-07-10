@@ -39,6 +39,10 @@ public:
 	void close();
 	int status(int chan);
 	int playfile(int chan, Common::String &path, int tstart, int tend);
+	int fade(int chan, int endvol, int duration, bool autostop);
+	void stop(int chan);
+	void volume(int chan, int vol);
+	void frequency(int chan, int percent);
 
 	DirectorSound *_soundManager;
 
