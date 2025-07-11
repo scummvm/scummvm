@@ -1018,12 +1018,14 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 			// Ignoring height and ascent for now from FontStyle
 			uint16 temp;
 			style.formatStartOffset = rIndex;
-			Graphics::readHex(&style.fontId, _ftext.substr(it, 4).c_str(), 4);
-			Graphics::readHex(&temp, _ftext.substr(it, 2).c_str(), 2);
-			Graphics::readHex(&style.fontSize, _ftext.substr(it + 6, 4).c_str(), 4);
-			Graphics::readHex(&style.r, _ftext.substr(it + 10, 4).c_str(), 4);
-			Graphics::readHex(&style.g, _ftext.substr(it + 14, 4).c_str(), 4);
-			Graphics::readHex(&style.b, _ftext.substr(it + 18, 4).c_str(), 4);
+			const Common::u32char_type_t *s = _ftext.substr(it, 22).c_str();
+
+			s = Graphics::readHex(&style.fontId, s, 4);
+			s = Graphics::readHex(&temp, s, 2);
+			s = Graphics::readHex(&style.fontSize, s, 4);
+			s = Graphics::readHex(&style.r, s, 4);
+			s = Graphics::readHex(&style.g, s, 4);
+			s = Graphics::readHex(&style.b, s, 4);
 			style.textSlant = temp;
 
 			style.write(writeStream);
