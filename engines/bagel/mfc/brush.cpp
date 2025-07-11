@@ -59,6 +59,18 @@ BOOL CBrush::CreateBrushIndirect(const LOGBRUSH *lpLogBrush) {
 
 BOOL CBrush::CreateStockObject(int nIndex) {
 	switch (nIndex) {
+	case WHITE_BRUSH:
+		CreateSolidBrush(RGB(255, 255, 255));
+		break;
+	case LTGRAY_BRUSH:
+		CreateSolidBrush(RGB(192, 192, 192));
+		break;
+	case GRAY_BRUSH:
+		CreateSolidBrush(RGB(160, 160, 160));
+		break;
+	case DKGRAY_BRUSH:
+		CreateSolidBrush(RGB(128, 128, 128));
+		break;
 	case BLACK_BRUSH:
 		CreateSolidBrush(RGB(0, 0, 0));
 		break;
