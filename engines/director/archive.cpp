@@ -20,7 +20,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/hashmap.h"
 #include "common/file.h"
 #include "common/substream.h"
 #include "common/macresman.h"
@@ -1222,7 +1221,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	ResourceMap castResMap = _types[MKTAG('C', 'A', 'S', 't')];
 
 	for (auto &it : builtResources) {
-		debugC(5, kDebugSaving, "RIFXArchive::writeToFile: writing resource: index: %d, size: %d, tag = %s, offset = %d", it->index, it->size, tag2str(it->tag), it->offset);
+		debugC(5, kDebugSaving, "RIFXArchive::writeToFile: writing resource '%s': index: %d, size: %d, offset = %d", tag2str(it->tag), it->index, it->size, it->offset);
 
 		switch (it->tag) {
 		case MKTAG('R', 'I', 'F', 'X'):

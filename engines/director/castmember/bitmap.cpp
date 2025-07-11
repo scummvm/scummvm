@@ -700,6 +700,8 @@ void BitmapCastMember::load() {
 		return;
 	}
 
+	// dumpFile("LoadedBitmap", _castId, MKTAG('B', 'I', 'T', 'D'), (byte *)img->getSurface()->getPixels(), img->getSurface()->h * img->getSurface()->w);
+
 	setPicture(*img, true);
 
 	if (ConfMan.getBool("dump_scripts")) {
@@ -1059,9 +1061,10 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 	offset = 0;
 
 	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(pixels.size() / _picture->_surface.h)) {
-		offset = _picture->_surface.w % 2;
+		offset = (_pitch - _picture->_surface.w) % 2;
 	}
 	
+	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
 	for (int y = 0; y < _picture->_surface.h; y++) {
 		for (int x = 0; x < _picture->_surface.w;) {
 			uint32 color = 0;
@@ -1069,23 +1072,23 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 			switch (_bitsPerPixel) {
 			case 1:
 				for (int c = 0; c < 8 && x < _picture->_surface.w; c++, x++) {
-					color += *((byte *)_picture->_surface.getBasePtr(x, y)) & (1 << (7 - c));
+					color += (*((byte *)_picture->_surface.getBasePtr(x, y))) & (1 << (7 - c));
 				}
-				pixels[(y * _pitch) + (x >> 3)] = color;
+				pixels[(y * _pitch) + ((x - 8) >> 3)] = color;
 				break;
 
 			case 2:
 				for (int c = 0; c < 4 && x < _picture->_surface.w; c++, x++) {
 					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0x3) << (2 * (3 - c));
 				}
-				pixels[(y * _pitch) + (x >> 2)] = color;
+				pixels[(y * _pitch) + ((x - 4) >> 2)] = color;
 				break;
 
 			case 4:
 				for (int c = 0; c < 2 && x < _picture->_surface.w; c++, x++) {
-					color = (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0xF) << (4 * (1 - c));
+					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0xF) << (4 * (1 - c));
 				}
-				pixels[(y * _pitch) + (x >> 1)] = color;
+				pixels[(y * _pitch) + ((x - 2) >> 1)] = color;
 				break;
 
 			case 8:
