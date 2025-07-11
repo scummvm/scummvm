@@ -47,11 +47,8 @@ private:
 	Rooms::Section7 _section7;
 	Rooms::Section8 _section8;
 	Rooms::Section9 _section9;
-	GUI::MessageLog _messageLog;
 	int _ripAction = 0;
 	int _savedFacing = 0;
-	int32 _messageLogTrigger = 0;
-	TextScrn *_messageScreen = nullptr;
 
 	/**
 	 * Combines the items in the player _verb and _noun,

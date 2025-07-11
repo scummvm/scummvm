@@ -60,6 +60,9 @@ public:
 	Common::String _string2;
 	Common::String _string3;
 	int _ripSketching = 0;
+	TextScrn *_messageScreen = nullptr;
+	int32 _messageLogTrigger = 0;
+	int32 _messageLogResult = 0;
 
 public:
 	Vars();

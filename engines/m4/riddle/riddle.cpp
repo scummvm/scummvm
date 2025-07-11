@@ -339,7 +339,7 @@ void RiddleEngine::global_parser() {
 			player_set_commands_allowed(true);
 			break;
 		case 7777:
-			if (_messageLog._result != 16) {
+			if (_G(messageLogResult) != 16) {
 				_G(flags)[V052] = 1;
 
 				if (_G(player).walker_in_this_scene && _G(flags)[V292]) {
@@ -350,7 +350,7 @@ void RiddleEngine::global_parser() {
 					case 2:
 					case 3:
 					case 4:
-						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 5, 1);
+						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 5, true);
 						break;
 					case 5:
 					case 7:
@@ -361,7 +361,7 @@ void RiddleEngine::global_parser() {
 					case 9:
 					case 10:
 					case 11:
-						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 7, 1);
+						ws_walk(_G(my_walker), _G(player_info).x, _G(player_info).y, nullptr, 1, 7, true);
 						break;
 					default:
 						player_set_commands_allowed(false);
@@ -577,8 +577,12 @@ void RiddleEngine::splitItems(const char *item1, const char *item2) {
 	inv_give_to_player(item2);
 }
 
-void messageLogCallback(void *, void *) {
-	warning("TODO messageLogCallback");
+void messageLogCallback(TextItem *textItem, TextScrn *textScrn) {
+	_G(flags[V349]) = textItem->tag - 1;
+	_G(messageLogResult) = textItem->tag;
+	TextScrn_Destroy(_G(messageScreen));
+	_G(messageScreen) = nullptr;
+	kernel_trigger_dispatchx(_G(messageLogTrigger));
 }
 
 void RiddleEngine::showMessageLog(int trigger) {
@@ -599,7 +603,7 @@ void RiddleEngine::showMessageLog(int trigger) {
 		"Thank You Note from Feng Li"
 	};
 
-	_messageLogTrigger = kernel_trigger_create(trigger);
+	_G(messageLogTrigger) = kernel_trigger_create(trigger);
 	gr_font_set(_G(font_inter));
 	const int32 fontHeight = gr_font_get_height();
 	int32 ecx = 0;
@@ -618,27 +622,27 @@ void RiddleEngine::showMessageLog(int trigger) {
 		return;
 
 	maxWidth += 16;
-	_messageScreen = TextScrn_Create(601 - maxWidth, 361 - ((ecx + 2) * (fontHeight + 2) + 16), 600, 360, 65, 422, 13, 15);
-	TextScrn_Add_Message(_messageScreen, 8, 8, 0, TS_CENTRE, "MESSAGE LOG");
+	_G(messageScreen) = TextScrn_Create(601 - maxWidth, 361 - ((ecx + 2) * (fontHeight + 2) + 16), 600, 360, 65, 422, 13, 15);
+	TextScrn_Add_Message(_G(messageScreen), 8, 8, 0, TS_CENTRE, "MESSAGE LOG");
 
 	int32 edi = fontHeight + 14;
 	
 	int i = 0;
 	for (; i < 14; ++i) {
 		if (_G(flags)[(Flag)(V350 + i)]) {
-			TextScrn_Add_TextItem(_messageScreen, 8, edi, i + 1, TS_GIVEN, MESSAGE_TITLES[i], (M4CALLBACK)messageLogCallback);
+			TextScrn_Add_TextItem(_G(messageScreen), 8, edi, i + 1, TS_GIVEN, MESSAGE_TITLES[i], (M4CALLBACK)messageLogCallback);
 			edi += 1 + fontHeight;
 		}
 	}
-	TextScrn_Add_TextItem(_messageScreen, 8, edi + 4, i + 2, TS_GIVEN, "CLOSE LOG", (M4CALLBACK)messageLogCallback);
-	TextScrn_Activate(_messageScreen);
+	TextScrn_Add_TextItem(_G(messageScreen), 8, edi + 4, i + 2, TS_GIVEN, "CLOSE LOG", (M4CALLBACK)messageLogCallback);
+	TextScrn_Activate(_G(messageScreen));
 }
 
 void RiddleEngine::hide_message_log_dialog() {
-	if (_messageScreen)
-		TextScrn_Destroy(_messageScreen);
+	if (_G(messageScreen))
+		TextScrn_Destroy(_G(messageScreen));
 
-	_messageScreen = nullptr;
+	_G(messageScreen) = nullptr;
 }
 
 void RiddleEngine::lookAtInventoryItem() {
