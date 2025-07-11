@@ -597,12 +597,12 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 	}
 
     if (debugChannelSet(7, kDebugSaving)) {
-        // Adding +8 because the stream doesn't include the header and the entry for the size itself
-        byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
+		// Adding +8 because the stream doesn't include the header and the entry for the size itself
+		byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
 
 		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, configSize + 8);
 
-		uint32 currentPos = writeStream->pos();
+		int64 currentPos = writeStream->pos();
 		writeStream->seek(offset);
 		dumpStream->write(writeStream, configSize + 8);
 		writeStream->seek(currentPos);
