@@ -271,6 +271,7 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 
 			g_engine->_midi->play(this);
 			_bPlaying = true;
+			bSuccess = true;
 
 		} else if (_wFlags & SOUND_WAVE) {
 
