@@ -572,17 +572,30 @@ bool ScummEngine::checkXYInBoxBounds(int boxnum, int x, int y) {
 	// (quadrangle in this case), compute whether p is "left" or "right"
 	// from it.
 
-	if (!compareSlope(box.ul, box.ur, p))
-		return false;
+	if (_game.version >= 7) {
+		if (compareSlope(box.ul, box.ur, p) &&
+			compareSlope(box.ur, box.lr, p) &&
+			compareSlope(box.lr, box.ll, p) &&
+			compareSlope(box.ll, box.ul, p))
+				return true;
+		if (!compareSlope(box.ul, box.ll, p) ||
+			!compareSlope(box.ll, box.lr, p) ||
+			!compareSlope(box.lr, box.ur, p) ||
+			!compareSlope(box.ur, box.ul, p))
+				return false;
+	} else {
+		if (!compareSlope(box.ul, box.ur, p))
+			return false;
 
-	if (!compareSlope(box.ur, box.lr, p))
-		return false;
+		if (!compareSlope(box.ur, box.lr, p))
+			return false;
 
-	if (!compareSlope(box.lr, box.ll, p))
-		return false;
+		if (!compareSlope(box.lr, box.ll, p))
+			return false;
 
-	if (!compareSlope(box.ll, box.ul, p))
-		return false;
+		if (!compareSlope(box.ll, box.ul, p))
+			return false;
+	}
 
 	return true;
 }
@@ -603,20 +616,6 @@ BoxCoords ScummEngine::getBoxCoordinates(int boxnum) {
 		box->lr.x = (short)FROM_LE_32(bp->v8.lrx);
 		box->lr.y = (short)FROM_LE_32(bp->v8.lry);
 
-		// WORKAROUND (see patch #8173): Some walkboxes in CMI appear
-		// to have been flipped, in the sense that for instance the
-		// lower boundary is above the upper one. We work around this
-		// by simply flipping them back.
-
-		if (box->ul.y > box->ll.y && box->ur.y > box->lr.y) {
-			SWAP(box->ul, box->ll);
-			SWAP(box->ur, box->lr);
-		}
-
-		if (box->ul.x > box->ur.x && box->ll.x > box->lr.x) {
-			SWAP(box->ul, box->ur);
-			SWAP(box->ll, box->lr);
-		}
 	} else if (_game.version == 0) {
 		box->ul.x = bp->v0.x1;
 		box->ul.y = bp->v0.y1;

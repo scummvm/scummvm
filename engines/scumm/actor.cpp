@@ -2552,7 +2552,6 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 
 void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
-
 	bcr->_actorID = _number;
 	bcr->_actorX = _pos.x - _vm->_virtscr[kMainVirtScreen].xstart;
 	bcr->_actorY = _pos.y - _elevation;
