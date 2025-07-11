@@ -351,8 +351,8 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	swapPalette(areaID);
 	if (isDOS()) {
-		_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[0];
-		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[1];
+		_gfx->_colorPair[_currentArea->_underFireBackgroundColor] = _currentArea->_extraColor[1];
+		_gfx->_colorPair[_currentArea->_usualBackgroundColor] = _currentArea->_extraColor[0];
 		_gfx->_colorPair[_currentArea->_paperColor] = _currentArea->_extraColor[2];
 		_gfx->_colorPair[_currentArea->_inkColor] = _currentArea->_extraColor[3];
 	} else if (isAmiga()) {
