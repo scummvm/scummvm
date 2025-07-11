@@ -5,6 +5,7 @@ MODULE_OBJS := \
 	animator_scd.o \
 	graphics.o \
 	memory.o \
+	mem_mapping.o \
 	metaengine.o \
 	palette_scd.o \
 	resource.o \

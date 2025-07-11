@@ -21,6 +21,7 @@
 
 
 #include "snatcher/graphics.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/script.h"
 #include "snatcher/snatcher.h"
@@ -67,7 +68,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 		for (int i = 5; i < 15; ++i)
 			_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
 		_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaEnable, 0);
-		_gfx->enqueuePaletteEvent(_scd->makePtr(0x13622));
+		_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_05));
 		++_progress;
 		break;
 
@@ -136,7 +137,7 @@ bool UI::displayDialog(int sceneInfo, int sceneTextOffset, uint16 inputFlags) {
 	case 9:
 		_sceneInfo = sceneInfo;
 		_sceneTextOffset = sceneTextOffset;
-		_gfx->enqueueDrawCommands(_scd->makePtr(0xECB6));
+		_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_00));
 		++_progress;
 		break;
 
@@ -321,7 +322,7 @@ bool UI::drawVerbs() {
 			return false;
 		}
 		if (_progress2 == 7) {
-			const uint8 *src = _scd->makePtr(0x11D12)();
+			const uint8 *src = _scd->makePtr(MemMapping::MEM_UIDATA_05)();
 			uint8 *dst = _dialogTextBuffer;
 			for (int i = 0; i < 256; ++i) {
 				*dst = *src++;
@@ -374,7 +375,7 @@ bool UI::verbsTabInputPrompt(const SnatcherEngine::Input &input) {
 		if (_progress2 == 102) {
 			_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaEnable, 1);
 			if (_verbInterfaceMode >= 2) {
-				_verbsTabLayoutMap = _scd->makePtr(_verbInterfaceMode == 3 ? 0x11512 : 0x114DC)();
+				_verbsTabLayoutMap = _scd->makePtr(_verbInterfaceMode == 3 ? MemMapping::MEM_UIDATA_02 : MemMapping::MEM_UIDATA_01)();
 				_gfx->setAnimParameter(0, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimHide | GraphicsEngine::kAnimPause);
 				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
 				_gfx->setAnimParameter(63, GraphicsEngine::kAnimParaFrame, _verbInterfaceMode == 2 ? 2 : 0);
@@ -505,7 +506,7 @@ void UI::saveState(Common::SeekableWriteStream *out) {
 
 void UI::printDialogStringHead() {
 	static const uint8 strHead[] = { 0xFC, 0x00, 0xF9, 0x01, 0xFB, 0x10, 0x00, 0xFE };
-	const uint8 *s = _scd->makePtr(0x13552).getDataFromTable(_sceneId)();
+	const uint8 *s = _scd->makePtr(MemMapping::MEM_UIDATA_06).getDataFromTable(_sceneId)();
 	memcpy(_dialogTextBuffer, strHead, sizeof(strHead));
 	_dialogTextBuffer[6] = _headLineYOffset;
 	_dialogTextBuffer[8] = (*s & 0x80) ? 3 : (*s++ & 7);
@@ -592,9 +593,9 @@ bool UI::waitWithCursorAnim(uint16 inputFlags) {
 		return true;
 	if ((_waitCursorAnimDelay && --_waitCursorAnimDelay) || _sceneId == 0)
 		return false;
-	const uint8 *s = _scd->makePtr(0x1391C)() + _waitCursorFrame;
+	const uint8 *s = _scd->makePtr(MemMapping::MEM_UIDATA_10)() + _waitCursorFrame;
 
-	ResourcePointer drw = _scd->makePtr(_gfx->getVerbAreaType() == 0 ? 0x1387C : (_gfx->getVerbAreaType() == 1 ? 0x13894 : 0x138AC));
+	ResourcePointer drw = _scd->makePtr(_gfx->getVerbAreaType() == 0 ? MemMapping::MEM_UIDATA_07 : (_gfx->getVerbAreaType() == 1 ? MemMapping::MEM_UIDATA_08 : MemMapping::MEM_UIDATA_09));
 
 	uint32 frm = 0x138C4 + _waitCursorFrame * 4;
 	(drw + 2).writeUINT32(frm);
@@ -976,7 +977,7 @@ bool UI::verbSelect2() {
 
 		if (_progress2 == 0x100) {
 			if (_verbInterfaceMode == 3) {
-				uint8 frm = _scd->makePtr(0x115CA)[_vkeybPosTotal];
+				uint8 frm = _scd->makePtr(MemMapping::MEM_UIDATA_03)[_vkeybPosTotal];
 				_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaFrame, frm);
 				_gfx->setAnimParameter(62, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimNone);
 			}
@@ -1130,14 +1131,14 @@ void UI::virtKeybPrint() {
 
 		if (_videoPhoneMode != 0) {
 			uint8 v = _textInputStr[0];
-			if (_textInputStr[_scd->makePtr(0x11938)[(v == '*' || v == '#') ? 2 : (v & 0x0F)] - 1])
+			if (_textInputStr[_scd->makePtr(MemMapping::MEM_UIDATA_04)[(v == '*' || v == '#') ? 2 : (v & 0x0F)] - 1])
 				verbSelect2setResult();
 		}
 	}
 }
 
 uint8 UI::checkFlashLightPos(int16 x, int16 y) {
-	return _scd->makePtr(0x109E8)[y * 36 + x];
+	return _scd->makePtr(MemMapping::MEM_UIDATA_00)[y * 36 + x];
 }
 
 void UI::moveFlashLight(int32 offsX, int32 offsY) {
@@ -1155,7 +1156,6 @@ void UI::moveFlashLight(int32 offsX, int32 offsY) {
 	} else {
 		error("%s(): Invalid parameters", __FUNCTION__);
 	}
-	debug ("FLASHLIGHT: X: %d, Y: %d", _flashLight.posX >> 16, _flashLight.posY >> 16);
 }
 
 } // End of namespace Snatcher
