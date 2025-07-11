@@ -130,6 +130,8 @@ protected:
 	INT         m_nBallSpeed;
 	INT         m_nNumRows;
 	INT         m_nPaddleCelIndex;
+	INT			m_nOldSize = -1;
+
 	BOOL        m_bMovingPaddle;
 	BOOL        m_bGameActive;
 	BOOL        m_bPause;

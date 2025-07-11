@@ -846,7 +846,6 @@ VOID CFugeWindow::PlayGame(VOID) {
 }
 
 ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
-	STATIC INT nOldSize = -1;
 	CDC *pDC;
 	ERROR_CODE errCode;
 
@@ -859,7 +858,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
 
 		// don't try to load the same paddle
 		//
-		if (nOldSize != nNewSize) {
+		if (m_nOldSize != nNewSize) {
 
 			if (m_pPaddle != nullptr) {
 				m_pPaddle->EraseSprite(pDC);
@@ -874,7 +873,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
 
 					if (m_pPaddle->LoadCels(pDC, pszPaddles[nNewSize], N_PADDLE_CELS) != FALSE) {
 
-						nOldSize = nNewSize;
+						m_nOldSize = nNewSize;
 						m_pPaddle->SetMasked(TRUE);
 						m_pPaddle->SetMobile(TRUE);
 						m_pPaddle->SetAnimated(TRUE);
