@@ -211,7 +211,9 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 		return;
 	_pressed = false;
 
+	// Redraw the button immediately, before we trigger any actions
 	Invalidate();
+	UpdateWindow();
 
 	switch (GetButtonStyle()) {
 	case BS_PUSHBUTTON:
