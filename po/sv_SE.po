@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-11 16:32+0000\n"
-"PO-Revision-Date: 2025-07-02 00:36+0000\n"
+"PO-Revision-Date: 2025-07-11 18:19+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12603,22 +12603,16 @@ msgid ""
 msgstr "Använd engelskt tal istället för tyska för alla språk utom tyska"
 
 #: engines/teenagent/metaengine.cpp:189
-#, fuzzy
-#| msgid "Inventory / Examine"
 msgid "Move / Examine"
-msgstr "Inventarier / Utforska"
+msgstr "Flytta / Undersök"
 
 #: engines/teenagent/metaengine.cpp:209
-#, fuzzy
-#| msgid "Open / Close inventory"
 msgid "Close inventory"
-msgstr "Öppna/Stäng översikt"
+msgstr "Stäng inventarier"
 
 #: engines/teenagent/metaengine.cpp:214
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle inventory"
-msgstr "Visa inventariefack"
+msgstr "Växla inventarier"
 
 #: engines/teenagent/metaengine.cpp:220 engines/toon/metaengine.cpp:98
 #: engines/voyeur/metaengine.cpp:235
@@ -12649,10 +12643,8 @@ msgid "Restore some scenes originally in the Windows edition"
 msgstr "Återställ några scener som från början saknades i Windows-utgåvan"
 
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Interact / Select"
-msgstr "Flytta / Interagera"
+msgstr "Flytta / Interagera / Välj"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
