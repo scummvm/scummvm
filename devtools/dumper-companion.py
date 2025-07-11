@@ -571,7 +571,7 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
 
                 rec = iso.get_record(**arg).date
                 stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
-                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                                 (24 + rec.hour - rec.gmtoffset) % 24, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
 
                 f.close()
 
