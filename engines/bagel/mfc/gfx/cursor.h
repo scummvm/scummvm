@@ -34,6 +34,9 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
+constexpr int CURSOR_W = 12;
+constexpr int CURSOR_H = 20;
+
 struct ResourceString_Hash {
 	uint operator()(const LPCSTR s) const {
 		return (intptr)s <= 0xffff ? (intptr)s : Common::hashit(s);

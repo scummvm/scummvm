@@ -29,10 +29,6 @@ namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-
-constexpr int CURSOR_W = 12;
-constexpr int CURSOR_H = 20;
-
 static const byte ARROW_CURSOR[CURSOR_W * CURSOR_H] = {
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,

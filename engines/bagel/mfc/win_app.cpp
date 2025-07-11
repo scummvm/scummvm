@@ -27,6 +27,7 @@
 #include "bagel/mfc/global_functions.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/win_hand.h"
+#include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/libs/events.h"
 
 namespace Bagel {
@@ -390,7 +391,15 @@ BOOL GetClassInfo(HINSTANCE hInstance,
 }
 
 int GetSystemMetrics(int nIndex) {
-	error("TODO: GetSystemMetrics");
+	switch (nIndex) {
+	case SM_CXCURSOR:
+		return Gfx::CURSOR_W;
+	case SM_CYCURSOR:
+		return Gfx::CURSOR_H;
+	default:
+		error("TODO: GetSystemMetrics");
+		break;
+	}
 }
 
 } // namespace MFC
