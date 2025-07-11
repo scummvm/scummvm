@@ -583,23 +583,6 @@ Common::List<Graphics::PixelFormat> SurfaceSdlGraphicsManager::getSupportedForma
 	return _supportedFormats;
 }
 
-#if SDL_VERSION_ATLEAST(2, 0, 0)
-static void maskToBitCount(Uint32 mask, uint8 &numBits, uint8 &shift) {
-	numBits = 0;
-	shift = 32;
-	for (int i = 0; i < 32; ++i) {
-		if (mask & 1) {
-			if (i < shift) {
-				shift = i;
-			}
-			++numBits;
-		}
-
-		mask >>= 1;
-	}
-}
-#endif
-
 void SurfaceSdlGraphicsManager::detectSupportedFormats() {
 	_supportedFormats.clear();
 
