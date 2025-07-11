@@ -155,11 +155,11 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	// compatibility.
 	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(dat_file);
 
-	char tempBuffer[256];
+	byte tempBuffer[256];
 	dat->read(tempBuffer, 9);
 	tempBuffer[9] = '\0';
 
-	if (strcmp(tempBuffer, "TEENAGENT") != 0) {
+	if (strcmp((char *)tempBuffer, "TEENAGENT") != 0) {
 		const char *msg = _s("The '%s' engine data file is corrupt.");
 		Common::U32String errorMessage = Common::U32String::format(_(msg), filename.c_str());
 		GUIErrorMessage(errorMessage);
