@@ -270,7 +270,7 @@ void ScummEngine::resetPalette(bool isBootUp) {
 
 			_townsScreen->toggleLayers(_townsActiveLayerFlags);
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
-		} else if (isBootUp && (_game.version >= 5 && _game.heversion == 0) &&
+		} else if (isBootUp && (_game.version >= 4 && _game.heversion == 0) &&
 			(_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformUnknown) &&
 			_renderMode == Common::kRenderDefault) {
 			// VGA games at boot-up have at their disposal whatever mode 13h
@@ -278,6 +278,11 @@ void ScummEngine::resetPalette(bool isBootUp) {
 			// We just need the first few colors, which are the same as the EGA colors.
 			// (See #15869: "SCUMM: MI1: Message banner can be invisible if palette is all black")
 			setPaletteFromTable(tableEGAPalette, sizeof(tableEGAPalette) / 3);
+
+			if (_game.id == GID_MONKEY_VGA) {
+				for (int i = 0; i < _shadowPaletteSize; i++)
+					_shadowPalette[i] = i;
+			}
 		}
 
 		setDirtyColors(0, 255);
