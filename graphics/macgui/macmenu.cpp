@@ -998,7 +998,7 @@ template <typename T>
 static void drawMenuDelimiter(ManagedSurface &srcSurf, Common::Rect *r, int y, uint32 black, uint32 white) {
 	bool flip = r->left & 2;
 	T *ptr = (T *)srcSurf.getBasePtr(r->left + 1, y);
-	for (int xx = r->left + 1; xx <= r->right - 1; xx++, ptr++) {
+	for (int xx = r->left + 1; xx <= r->right - 2; xx++, ptr++) {
 		*ptr = flip ? black : white;
 		flip = !flip;
 	}
