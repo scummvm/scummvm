@@ -174,7 +174,7 @@ void CButton::OnOwnerDrawPaint() {
 		dis.itemState |= ODS_ENABLED;
 	else
 		dis.itemState |= ODS_DISABLED;
-	if (GetState() & ODS_CHECKED)
+	if ((GetState() & ODS_CHECKED) != 0 || _pressed)
 		dis.itemState |= ODS_SELECTED;
 	if (GetFocus() == this)
 		dis.itemState |= ODS_FOCUS;
