@@ -166,7 +166,7 @@ class CBmpObject {
 	class CSprite *m_xpcSprite ;   // if this is a sprite, store path
 	// there rather than in DIB
 	CDibDoc *m_xpDibDoc ;   // DIB document
-	LPVOID m_lpDib ;        // pointer to bitmap memory
+	HDIB m_lpDib;           // pointer to bitmap memory
 	CPoint m_cPosition ;    // position to paint bitmap
 	CSize m_cSize ;     // size of bitmap
 	char m_cEndData ;
