@@ -282,12 +282,31 @@ def punyencode(orig: str) -> str:
     # punyencoding adds an '-' at the end when there are no special chars
     # don't use it for comparing
     compare = encoded
+
+    if len(encoded) == 0:
+        return orig
+
     if encoded[-1] == "-":
         compare = encoded[:-1]
     if orig != compare or compare[-1] in " .":
         return "xn--" + encoded
     return orig
 
+def punyencode_filename(orig: str) -> str:
+    """
+    Punyencode a filename
+
+    - escape special characters and
+    - ensure filenames can't end in a space or dot
+    """
+    out = ""
+    for p in os.path.split(orig):
+        p = os.path.basename(p)
+        if len(p) == 0:
+            continue
+        out += "/" + punyencode(p)
+
+    return out
 
 def decode_string(orig: str) -> str:
     """
@@ -541,7 +560,10 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
         arg["encoding"] = "shift_jis"
 
     for dirname, dirlist, filelist in iso.walk(**arg):
-        pwd = output_dir + dirname
+        if punyencode:
+            pwd = output_dir + punyencode_filename(dirname)
+        else:
+            pwd = output_dir + dirname
 
         for dir in dirlist:
             if dopunycode:
@@ -581,19 +603,23 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
 
     arg[path_type] = "/"
     for dirname, dirlist, filelist in iso.walk(**arg):
-        pwd = output_dir + dirname
+        if punyencode:
+            pwd = output_dir + punyencode_filename(dirname)
+        else:
+            pwd = output_dir + dirname
         # Set the modified time for directories
         for dir in dirlist:
+            dirorig = dir
             if dopunycode:
                 dir = punyencode(dir)
 
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 print(joined_path)
-                arg[path_type] = os.path.join(dirname, dir)
+                arg[path_type] = os.path.join(dirname, dirorig)
                 rec = iso.get_record(**arg).date
                 stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
-                                 rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                                 (24 + rec.hour - rec.gmtoffset) % 24, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
                 os.utime(joined_path, (stamp, stamp))
 
     iso.close()
