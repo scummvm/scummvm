@@ -125,8 +125,8 @@ public:
 	void    InitGramPosition(CCryptRecord *pRec);
 	int     CenterGramVert(CCryptRecord *pRec);
 	void    PaintAlphabet(CDC *pDC);
-	void    PaintGram(CDC *pDC, char *lpszCryptedGram);
-	void    PaintLine(CDC *pDC, char *lpszCryptedGram, CSize cPos, int i);
+	void    PaintGram(CDC *pDC, const char *lpszCryptedGram);
+	void    PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, int i);
 	void    ReplaceLetter(CDC *pDC, int nOldType, int nNewType);
 	BOOL    IsHiLiteOn();
 	int     GetHiLiteType(CDC *pDC);

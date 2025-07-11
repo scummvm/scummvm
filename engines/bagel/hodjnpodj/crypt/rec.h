@@ -39,23 +39,21 @@ namespace Crypt {
 
 class CCryptRecord {
 private:
-	Common::File m_hfCryptFile;
-	int     m_nID;
-	char    m_lpszGram[MAX_GRAM_LEN];
-	char    m_lpszSource[MAX_SOURCE_LEN];
+	Common::SeekableReadStream *m_hfCryptFile = nullptr;
+	int     m_nID = 0;
+	char    m_lpszGram[MAX_GRAM_LEN] = { 0 };
+	char    m_lpszSource[MAX_SOURCE_LEN] = { 0 };
 
 public:
-	CCryptRecord();     // constructor
-	~CCryptRecord();    // destructor
+	BOOL GetRecord(int nID);
 
-	BOOL    GetRecord(int nID);
-	int     GetID() {
+	int GetID() const {
 		return m_nID;
 	};
-	char   *GetGram()   {
+	const char *GetGram() const {
 		return m_lpszGram;
 	};
-	char   *GetSource() {
+	const char *GetSource() const {
 		return m_lpszSource;
 	};
 };

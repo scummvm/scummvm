@@ -26,19 +26,11 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-CCryptRecord::CCryptRecord() {
-}
-
-CCryptRecord::~CCryptRecord() {
-}
-
-
 BOOL CCryptRecord::GetRecord(int nID) {
-	#ifdef TODO
-	OFSTRUCT    ofstFileStat;
+	//OFSTRUCT    ofstFileStat;
 	char        chBuf;
 	int         i;
-
+#if 0
 	if ((m_hfCryptFile = LZOpenFile(CRYPT_TXT_FILE, &ofstFileStat, OF_READ)) == -1)
 		return FALSE;
 
@@ -93,9 +85,8 @@ BOOL CCryptRecord::GetRecord(int nID) {
 	_fstrupr(m_lpszSource);
 	LZClose(m_hfCryptFile);
 	return TRUE;
-	#else
-	error("TODO: CCryptRecord::GetRecord");
-	#endif
+#endif
+	return true;
 }
 
 } // namespace Crypt

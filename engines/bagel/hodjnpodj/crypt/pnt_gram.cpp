@@ -680,7 +680,7 @@ void CPaintGram::PaintAlphabet(CDC *pDC) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CPaintGram::PaintGram(CDC *pDC, char *lpszCryptedGram) {
+void CPaintGram::PaintGram(CDC *pDC, const char *lpszCryptedGram) {
 	int     i;
 	int     nSpaceMarker;
 	int     nStartPos;
@@ -779,7 +779,7 @@ void CPaintGram::PaintGram(CDC *pDC, char *lpszCryptedGram) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CPaintGram::PaintLine(CDC *pDC, char *lpszCryptedGram, CSize cPos, int i) {
+void CPaintGram::PaintLine(CDC *pDC, const char *lpszCryptedGram, CSize cPos, int i) {
 	int     j;
 	int     nChar;
 	CSize   cLetterDim;
@@ -829,8 +829,8 @@ void CPaintGram::InitGramPosition(CCryptRecord *pRec) {
 
 
 int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
-	char    *lpszGram;
-	char    *lpszSource;
+	const char    *lpszGram;
+	const char    *lpszSource;
 	int     nSpaceMarker;
 	int     nLineLength;
 	int     nEstimate;
