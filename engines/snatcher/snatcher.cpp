@@ -22,6 +22,7 @@
 #include "snatcher/action.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/saveload.h"
 #include "snatcher/script.h"
@@ -106,6 +107,8 @@ bool SnatcherEngine::initResource() {
 	if (!_scd)
 		return false;
 
+	MemMapping::initMapping(_game.usePALTiming ? 1 : 0);
+
 	return true;
 }
 
@@ -139,7 +142,7 @@ bool SnatcherEngine::initGfx(Common::Platform platform, bool use8BitColorMode) {
 	if (_gfx) {
 		initGraphics(_gfx->realScreenWidth(), _gfx->realScreenHeight(), &pxf);
 		assert(_scd);
-		_gfx->setTextFont(_scd->makePtr(0x14B7C)(), 816, _scd->makePtr(0x14EAC)(), 102);
+		_gfx->setTextFont(_scd->makePtr(MemMapping::MEM_RAWDATA_04)(), 816, _scd->makePtr(MemMapping::MEM_RAWDATA_05)(), 102);
 		_gfx->createMouseCursor();
 		return true;
 	}
@@ -175,7 +178,7 @@ bool SnatcherEngine::initScriptEngine() {
 	if (!_ui)
 		return false;
 
-	_aseq = new ActionSequenceHandler(this, _scd);
+	_aseq = new ActionSequenceHandler(this, _scd, _game.usePALTiming);
 	if (!_aseq)
 		return false;
 
@@ -628,7 +631,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				state.finish = 0;
 				state.counter = 10;
 				++state.modProcessSub;
-				_gfx->enqueuePaletteEvent(_scd->makePtr(0x14B1C));
+				_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_06));
 			} else if (state.finish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
@@ -640,7 +643,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 3:
 			if (--state.counter == 1) {
-				_gfx->enqueueDrawCommands(_scd->makePtr(0x14B4E));
+				_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_05));
 			} else if (state.counter == 0) {
 				state.finish = -1;
 				state.modProcessSub = 0;

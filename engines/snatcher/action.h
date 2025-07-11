@@ -35,7 +35,7 @@ class ResourcePointer;
 class SnatcherEngine;
 class ActionSequenceHandler {
 public:
-	ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd);
+	ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd, bool palTiming);
 	~ActionSequenceHandler();
 
 	bool run(bool useLightGun);
@@ -96,6 +96,7 @@ private:
 	SnatcherEngine *_vm;
 	ResourcePointer *_scd;
 	bool _useLightGun;
+	const bool _palTiming;
 
 	Result _result;
 };
