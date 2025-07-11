@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-11 08:05+0000\n"
-"PO-Revision-Date: 2025-07-05 20:58+0000\n"
+"PO-Revision-Date: 2025-07-11 09:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -12763,22 +12763,16 @@ msgstr ""
 "diversa dal tedesco"
 
 #: engines/teenagent/metaengine.cpp:189
-#, fuzzy
-#| msgid "Inventory / Examine"
 msgid "Move / Examine"
-msgstr "Inventario / Esamina"
+msgstr "Spostamento / Esamina"
 
 #: engines/teenagent/metaengine.cpp:209
-#, fuzzy
-#| msgid "Open / Close inventory"
 msgid "Close inventory"
-msgstr "Apri / Chiudi inventario"
+msgstr "Chiudi inventario"
 
 #: engines/teenagent/metaengine.cpp:214
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle inventory"
-msgstr "Mostra / Nascondi cassetto inventario"
+msgstr "Mostra / nascondi inventario"
 
 #: engines/teenagent/metaengine.cpp:220 engines/toon/metaengine.cpp:98
 #: engines/voyeur/metaengine.cpp:235
@@ -12810,10 +12804,8 @@ msgstr ""
 "Ripristina alcune scene originariamente presenti nella versione Windows"
 
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Interact / Select"
-msgstr "Spostamento / Interazione"
+msgstr "Spostamento / Interazione / Selezione"
 
 #: engines/tinsel/detection_tables.h:481
 msgid "Saturn CD version is not yet supported"
