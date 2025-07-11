@@ -26,7 +26,7 @@ import unicodedata
 import urllib.request
 import zipfile
 from binascii import crc_hqx
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from enum import Enum
 from io import BytesIO, IOBase, StringIO
 from pathlib import Path
@@ -593,7 +593,7 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
 
                 rec = iso.get_record(**arg).date
                 stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
-                                 (24 + rec.hour - rec.gmtoffset) % 24, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                                 rec.hour, rec.minute, rec.second, tzinfo=timezone.utc).timestamp() - timedelta(minutes=rec.gmtoffset * 15).total_seconds()
 
                 f.close()
 
@@ -619,7 +619,7 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
                 arg[path_type] = os.path.join(dirname, dirorig)
                 rec = iso.get_record(**arg).date
                 stamp = datetime(rec.years_since_1900 + 1900, rec.month, rec.day_of_month,
-                                 (24 + rec.hour - rec.gmtoffset) % 24, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
+                                 rec.hour, rec.minute, rec.second, tzinfo=timezone.utc).timestamp() - timedelta(minutes=rec.gmtoffset * 15).total_seconds()
                 os.utime(joined_path, (stamp, stamp))
 
     iso.close()
