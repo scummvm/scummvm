@@ -542,13 +542,20 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
 
     for dirname, dirlist, filelist in iso.walk(**arg):
         pwd = output_dir + dirname
+
         for dir in dirlist:
+            if dopunycode:
+                dir = punyencode(dir)
+
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 os.makedirs(joined_path, exist_ok=True)
 
         for file in filelist:
             filename = file.split(";")[0]
+            if dopunycode:
+                filename = punyencode(filename)
+
             iso_file_path = os.path.join(dirname, file)
             out_file_path = os.path.join(pwd, filename)
             if not silent:
@@ -577,6 +584,9 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
         pwd = output_dir + dirname
         # Set the modified time for directories
         for dir in dirlist:
+            if dopunycode:
+                dir = punyencode(dir)
+
             joined_path = os.path.join(pwd, dir)
             if not dryrun:
                 print(joined_path)
@@ -586,8 +596,6 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
                                  rec.hour - rec.gmtoffset, rec.minute, rec.second, tzinfo=timezone.utc).timestamp()
                 os.utime(joined_path, (stamp, stamp))
 
-    if dopunycode:
-        punyencode_dir(Path(output_dir))
     iso.close()
 
 
