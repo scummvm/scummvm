@@ -22,6 +22,7 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/error.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/language.h"
@@ -39,6 +40,7 @@ class Mixer;
 }
 namespace Common {
 class Error;
+class FSDirectory;
 class EventManager;
 class SaveFileManager;
 class TimerManager;
@@ -689,6 +691,27 @@ public:
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
+
+	/**
+	 * Can the game type currently being played have add-ons?
+	 */
+	virtual	bool gameTypeHasAddOns() const;
+
+	/**
+	 * To discard some directories we know have no chance to be add-ons
+	 */
+	virtual bool dirCanBeGameAddOn(Common::FSDirectory dir) const;
+
+	/**
+	 * To display a warning if a directory likely to be an add-on does not match anything
+	 */
+	virtual bool dirMustBeGameAddOn(Common::FSDirectory dir) const;
+
+	/**
+	 * Update the add-ons targets associated with a base game (silently, unless some unsupported version is detected).
+	 */
+	Common::ErrorCode updateAddOns(const MetaEngine *metaEngine) const;
+
 
 protected:
 	/**

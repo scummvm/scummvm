@@ -260,12 +260,11 @@ public:
 	~GobEngine() override;
 
 	void initGame(const GOBGameDescription *gd);
-	Common::ErrorCode updateAddOns(const GobMetaEngine *metaEngine, const GOBGameDescription *gd) const;
 
 	GameType getGameType(const char *gameId) const;
-	bool gameTypeHasAddOns();
-	bool dirCanBeGameAddOn(Common::FSDirectory dir) const;
-	bool dirMustBeGameAddOn(Common::FSDirectory dir) const;
+	bool gameTypeHasAddOns() const override;
+	bool dirCanBeGameAddOn(Common::FSDirectory dir) const override;
+	bool dirMustBeGameAddOn(Common::FSDirectory dir) const override;
 
 	/**
 	 * Used to obtain the game version as a fallback
