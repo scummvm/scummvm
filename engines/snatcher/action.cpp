@@ -22,6 +22,7 @@
 
 #include "snatcher/action.h"
 #include "snatcher/graphics.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
@@ -31,7 +32,7 @@
 
 namespace Snatcher {
 
-ActionSequenceHandler::ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd) : _vm(vm), _scd(scd), _stage(0), _counter1(0), _counter2(0), _progressMSB(0), _progressLSB(0),
+ActionSequenceHandler::ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd, bool palTiming) : _vm(vm), _scd(scd), _palTiming(palTiming), _stage(0), _counter1(0), _counter2(0), _progressMSB(0), _progressLSB(0),
 	_weaponState(0), _enemySpeed(0), _active(false), _handleShotPhase(0), _updateEnemiesPhase(0), _enemyAttackStatus(0), _targetField(0), _hscrollB(0), _vscrollB(0),
 		_enemyAppearanceCount(0), _civilianAppearanceCount(0), _abortFight(0), _nextEnemyAppearanceTimer(0), _enemyAttackTimer(0), _shoot_78EE(0), _activeEnemies(0), _result(),
 			_attackerId(0), _animNo(0), _shoot_7912(0), _projectileCoords(nullptr) {
@@ -47,6 +48,13 @@ ActionSequenceHandler::~ActionSequenceHandler() {
 #define animGet(x, y) \
 	_vm->gfx()->getAnimParameter(x, GraphicsEngine::kAnimPara##y)
 
+uint16 fromPAL(uint16 value) {
+	// Convert the PAL value to NTSC equivalent. The original game's VINT interrupt obviously runs at a different speed for PAL versions, so the
+	// timer tables have been adjusted to produce the same result. We just convert the values from the tables so that they match the NTSC version.
+	uint32 clc = value * 0x3C0000 / 0x32;
+	return (clc >> 16) + ((clc & 0xFFFF) ? 1 : 0);
+}
+
 bool ActionSequenceHandler::run(bool useLightGun) {
 	_useLightGun = useLightGun;
 	switch (_progressMSB) {
@@ -55,20 +63,20 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 		case 0:
 			++_progressLSB;
 			_counter1 = 0;
-			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(0x11E7E));
+			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_02));
 			break;
 		case 1:
 			if (++_counter1 < 2)
 				break;
 			_counter1 = 0;
-			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(0x11E6A));
+			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_00));
 			if (_stage == 0 || _stage == 11) {
 				_progressLSB += 2;
 			} else {
-				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x11EE6));
+				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_02));
 				if (_stage != 5) {
-					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x11ED8));
-					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x11EF4));
+					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_01));
+					_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_03));
 				}
 				++_progressLSB;
 			}
@@ -96,12 +104,17 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 			_abortFight = 0;
 			initStage();
 
-			_nextEnemyAppearanceTimer = _scd->makePtr(0x11F60)[_stage];
-			_progressMSB = _scd->makePtr(0x11F50)[_stage];
+			_nextEnemyAppearanceTimer = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_05)[_stage];
+			if (_palTiming)
+				_nextEnemyAppearanceTimer = fromPAL(_nextEnemyAppearanceTimer);
+			_progressMSB = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_04)[_stage];
 			_progressLSB = 0;
 
-			if (_enemySpeed == 0)
-				_enemySpeed = _scd->makePtr(0x11F70)[_stage];
+			if (_enemySpeed == 0) {
+				_enemySpeed = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_06)[_stage];
+				if (_palTiming)
+					_enemySpeed = fromPAL(_enemySpeed);
+			}
 			break;
 
 		default:
@@ -164,7 +177,7 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 		if (_civilianAppearanceCount && _civilianAppearanceCount == _result.civiliansShot)
 			_result.allCiviliansShot = 1;
 		if (_stage != 0 && _stage != 11)
-			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(_result.hitsTaken < 6 ? 0x11E92 : 0x11E8C));
+			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(_result.hitsTaken < 6 ? MemMapping::MEM_PALDATA_04 : MemMapping::MEM_PALDATA_03));
 		animSet(22, Enable, 0);
 		animSet(23, Enable, 0);
 		_vm->allowLightGunInput(false);
@@ -178,7 +191,7 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 		case 0:
 			if (_vm->sound()->pcmGetStatus().statusBits & 8)
 				break;
-			if ((_scd->makePtr(_useLightGun ? 0x11FC0 : 0x11FB0)[_stage] == 1) || (++_counter1 >= 64)) {
+			if ((_scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_11 : MemMapping::MEM_ACTIONSEQDATA_10)[_stage] == 1) || (++_counter1 >= 64)) {
 					++_progressLSB;
 			} else if (_result.hitsTaken < 6) {
 				handleWeaponDrawAndTargetSelection();
@@ -193,14 +206,14 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 		case 2:
 			++_progressLSB;
 			_counter1 = 0;
-			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(0x11E7E));
+			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_02));
 			break;
 		case 3:
 			if (_stage != 0 && _stage != 11) {
 				if (++_counter1 < 2)
 					break;
 				_counter1 = 0;
-				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x11F02));
+				_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_04));
 			}
 			++_progressLSB;
 			break;
@@ -210,7 +223,7 @@ bool ActionSequenceHandler::run(bool useLightGun) {
 			_counter1 = 0;
 			++_progressMSB;
 			_progressLSB = 0;
-			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(0x11E74));
+			_vm->gfx()->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_01));
 			break;
 		default:
 			break;
@@ -293,14 +306,14 @@ void ActionSequenceHandler::resetVars() {
 }
 
 void ActionSequenceHandler::initStage() {
-	uint8 e = _scd->makePtr(0x11FD0)[_stage];
+	uint8 e = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage];
 	for (int i = 0; i < 9; ++i) {
 		animSet(32 + i, Frame, 2);
 		animSet(32 + i, FrameDelay, 0);
 		animSet(32 + i, Phase, 0);
 		animSet(32 + i, Enable, e);
 	}
-	const int16 *in = reinterpret_cast<const int16*>(_scd->makePtr(0x11FEC)());
+	const int16 *in = reinterpret_cast<const int16*>(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_15)());
 	for (int i = 0; i < 18; ++i)
 		_projectileCoords[i] = FROM_BE_16(*in++);
 
@@ -359,7 +372,7 @@ void ActionSequenceHandler::handleWeaponDrawAndTargetSelection() {
 			_weaponState ^= 1;
 			int16 enableAnim = 0;
 			if (_weaponState) {
-				_vm->sound()->pcmSendCommand(_scd->makePtr(0x11F20)[_stage], -1);
+				_vm->sound()->pcmSendCommand(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_01)[_stage], -1);
 				_result.weaponDrawn = enableAnim = 1;
 				if (_useLightGun) {
 					_vm->allowLightGunInput(true);
@@ -400,8 +413,8 @@ void ActionSequenceHandler::handleWeaponDrawAndTargetSelection() {
 		else
 			vert += 2;
 
-		animSet(22, PosX, (_scd->makePtr(0x11FE0) + horz).readSINT16());
-		animSet(22, PosY, (_scd->makePtr(0x11FE6) + vert).readSINT16());
+		animSet(22, PosX, (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_13) + horz).readSINT16());
+		animSet(22, PosY, (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_14) + vert).readSINT16());
 
 	} else {
 		if (_weaponState & 2) {
@@ -466,9 +479,9 @@ void ActionSequenceHandler::handleShot() {
 			animSet(21, FrameDelay, 2);
 			animSet(21, Frame, 0);
 			animSet(21, Target, tf);
-			animSet(21, PosX, (_scd->makePtr(0x11FEC) + (tf << 1)).readSINT16());
-			animSet(21, PosY, (_scd->makePtr(0x11FFE) + (tf << 1)).readSINT16());
-			_vm->sound()->pcmSendCommand(_scd->makePtr(0x11F30)[_stage], -1);
+			animSet(21, PosX, (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_15) + (tf << 1)).readSINT16());
+			animSet(21, PosY, (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_16) + (tf << 1)).readSINT16());
+			_vm->sound()->pcmSendCommand(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_02)[_stage], -1);
 			++_handleShotPhase;
 			break;
 
@@ -490,7 +503,7 @@ void ActionSequenceHandler::handleShot() {
 			vl = animGet(32 + tf, Phase) & 0x0F;
 			if (vl < 2 || vl > 4) {
 				if (_stage != 10) {
-					if (_useLightGun || _scd->makePtr(0x11FD0)[_stage] == 0) {
+					if (_useLightGun || _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] == 0) {
 						if (_enemySpeed < ((_stage == 0 || _stage == 11 || !_useLightGun) ? 32 : 48))
 								++_enemySpeed;
 					}
@@ -512,13 +525,13 @@ void ActionSequenceHandler::handleShot() {
 						animSet(59, ControlFlags, GraphicsEngine::kAnimPause);
 						animSet(59, Frame, animGet(59, Frame) + 1);
 					}
-					_vm->sound()->pcmSendCommand(_scd->makePtr(0x11F10)[_stage], -1);
+					_vm->sound()->pcmSendCommand(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_00)[_stage], -1);
 
 				} else {
 					++_result.civiliansShot;
 					if (_enemySpeed >= 2)
 						_enemySpeed -= 2;
-					if (_scd->makePtr(0x11FD0)[_stage] == 0)
+					if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] == 0)
 						_vm->sound()->pcmSendCommand(14, -1);
 				}
 
@@ -528,14 +541,14 @@ void ActionSequenceHandler::handleShot() {
 				}
 			}
 			if (_stage == 10) {
-				if (_scd->makePtr(0x12CE2)[tf] & 2) {
+				if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_19)[tf] & 2) {
 					_vm->sound()->pcmSendCommand(50, -1);
 					_vm->sound()->fmSendCommand(19, 0);
 					if (_result.hitsTaken < 6) {
 						vl = animGet(48, ActionTimer) - 1;
 						animSet(48, ActionTimer, vl);
-						(_scd->makePtr(0x12EA8) + 6).writeUINT16((_scd->makePtr(0x12EBC) + (vl << 1)).readUINT16());
-						_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x12EA8));
+						(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_20) + 6).writeUINT16((_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_21) + (vl << 1)).readUINT16());
+						_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_20));
 						++_result.hitsTaken;
 					}
 
@@ -611,7 +624,7 @@ void ActionSequenceHandler::updateEnemies() {
 			if (a == animGet(i, Frame)) {
 				animSet(i, Frame, a + 2);
 				animSet(i, Phase, animGet(i, Phase) + 1);
-				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
+				a = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
 			}
 
@@ -626,19 +639,19 @@ void ActionSequenceHandler::updateEnemies() {
 
 			if (b == 5) {
 				animSet(i, Frame, animGet(i, Frame) - 2);
-				if (_scd->makePtr(0x11FD0)[_stage] == 0 && animGet(i, Phase) >= 48)
+				if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] == 0 && animGet(i, Phase) >= 48)
 					++_result.hitsTaken;
 				animSet(i, Phase, 0);
 				break;
 			}
 
-			if (_scd->makePtr(0x11FD0)[_stage] == 0)
+			if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] == 0)
 				break;
 
-			if (b == 2 && (_result.enemiesShot <= _scd->makePtr(_useLightGun ? 0x11F90 : 0x11F80)[_stage]))
+			if (b == 2 && (_result.enemiesShot <= _scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_08 : MemMapping::MEM_ACTIONSEQDATA_07)[_stage]))
 				break;
 
-			if (b == 4 && !(_scd->makePtr(0x11FD0)[_stage] & 0x80) && ((_result.enemiesShot <= _scd->makePtr(_useLightGun ? 0x11F90 : 0x11F80)[_stage]) || (_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] >= 6)))
+			if (b == 4 && !(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] & 0x80) && ((_result.enemiesShot <= _scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_08 : MemMapping::MEM_ACTIONSEQDATA_07)[_stage]) || (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] >= 6)))
 				break;
 
 			if (b == 3) {
@@ -649,7 +662,7 @@ void ActionSequenceHandler::updateEnemies() {
 			} else {
 				animSet(i, Phase, (animGet(i, Phase) & 0xF0) + 7 - b);
 				animSet(i, Frame, _vm->gfx()->getAnimScriptByte(i, 6 - b) + 2);
-				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
+				a = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
 			}
 			break;
@@ -657,7 +670,7 @@ void ActionSequenceHandler::updateEnemies() {
 		case 6:
 			animSet(i, Phase, (animGet(i, Phase) & 0xF0) + 7);
 			animSet(i, Frame, _vm->gfx()->getAnimScriptByte(i, 6));
-			a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
+			a = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] << 1;
 			animSet(i, ActionTimer, a + _enemySpeed);
 			break;
 
@@ -666,7 +679,7 @@ void ActionSequenceHandler::updateEnemies() {
 			if (a == animGet(i, Frame)) {
 				animSet(i, Frame, a + 2);
 				animSet(i, Phase, animGet(i, Phase) + 1);
-				a = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1;
+				a = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] << 1;
 				animSet(i, ActionTimer, a + _enemySpeed);
 			}
 
@@ -690,24 +703,24 @@ void ActionSequenceHandler::updateStage() {
 		if (--_nextEnemyAppearanceTimer >= 0)
 			return;
 
-		uint8 v =_scd->makePtr(_useLightGun ? 0x11F90 : 0x11F80)[_stage];
+		uint8 v =_scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_08 : MemMapping::MEM_ACTIONSEQDATA_07)[_stage];
 		if (v && _result.enemiesShot >= v)
 			return;
 
-		v = _scd->makePtr(0x11FA0)[_stage];
+		v = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_09)[_stage];
 		if (v && _enemyAppearanceCount == v)
 			return;
 
-		if (_activeEnemies == _scd->makePtr(_useLightGun ? 0x11FC0 : 0x11FB0)[_stage])
+		if (_activeEnemies == _scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_11 : MemMapping::MEM_ACTIONSEQDATA_10)[_stage])
 			return;
 
-		_nextEnemyAppearanceTimer = 16 + _enemySpeed + (_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] << 1);
-		if (_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] >= 7)
+		_nextEnemyAppearanceTimer = 16 + _enemySpeed + (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] << 1);
+		if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] >= 7)
 			_nextEnemyAppearanceTimer = 5;
 		_updateEnemiesPhase = 1;
 
 	} else if (_updateEnemiesPhase == 1) {
-		uint8 num = _scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F];
+		uint8 num = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F];
 		_animNo = num + 32;
 		int16 v = animGet(_animNo, Phase);
 		if (v == 0xFF || ((v & 0x0F) != 0))
@@ -718,7 +731,7 @@ void ActionSequenceHandler::updateStage() {
 
 		switch (_stage) {
 		case 0:
-			v = _scd->makePtr(0x12C9A)[_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F] & 3];
+			v = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_18)[_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F] & 3];
 			_vm->gfx()->animCopySpec(26 + v - 1, _animNo);
 			animSet(_animNo, Frame, 2);
 			break;
@@ -733,10 +746,10 @@ void ActionSequenceHandler::updateStage() {
 			v = 1;
 			break;
 		case 10:
-			v = _scd->makePtr(0x12CE2)[num];
+			v = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_19)[num];
 			break;
 		case 11:
-			v = _scd->makePtr(0x12C9A)[_scd->makePtr(0x12010)[Util::rngMakeNumber() & 0x1F]];
+			v = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_18)[_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_17)[Util::rngMakeNumber() & 0x1F]];
 			_vm->gfx()->animCopySpec(26 + v + 1, _animNo);
 			animSet(_animNo, Frame, 2);
 			break;
@@ -775,7 +788,7 @@ void ActionSequenceHandler::updateStage() {
 }
 
 void ActionSequenceHandler::enemyAttack() {
-	if (!_scd->makePtr(0x11FD0)[_stage])
+	if (!_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage])
 		return;
 
 	if (_enemyAttackStatus == 0) {
@@ -789,7 +802,7 @@ void ActionSequenceHandler::enemyAttack() {
 		animSet(24, Enable, 1);
 		animSet(24, Frame, 2);
 		_enemyAttackStatus = 2;
-		uint8 snd = _scd->makePtr(0x11F40)[_stage];
+		uint8 snd = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_03)[_stage];
 		if (snd)
 			_vm->sound()->pcmSendCommand(snd, -1);
 	} else if (_enemyAttackStatus == 2) {
@@ -806,30 +819,30 @@ void ActionSequenceHandler::enemyAttack() {
 		if (_result.hitsTaken < 6) {
 			int16 vl = animGet(48, ActionTimer) - 1;
 			animSet(48, ActionTimer, vl);
-			(_scd->makePtr(0x12EA8) + 6).writeUINT16((_scd->makePtr(0x12EBC) + (vl << 1)).readUINT16());
-			_vm->gfx()->enqueueDrawCommands(_scd->makePtr(0x12EA8));
+			(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_20) + 6).writeUINT16((_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_21) + (vl << 1)).readUINT16());
+			_vm->gfx()->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_20));
 			++_result.hitsTaken;
 		}
 	}
 }
 
 void ActionSequenceHandler::checkFinished() {
-	if (_scd->makePtr(0x11FD0)[_stage] && _result.hitsTaken >= 6) {
+	if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] && _result.hitsTaken >= 6) {
 		for (int i = 32; i < 41; ++i)
 			animSet(i, ControlFlags, animGet(i, ControlFlags) | GraphicsEngine::kAnimPause);
 		_vm->gfx()->reset(GraphicsEngine::kResetPalEvents);
 		_progressMSB = 3;
 		_result.hitsTaken = 6;
 	} else {
-		uint8 v = _scd->makePtr(_useLightGun ? 0x11F90 : 0x11F80)[_stage];
+		uint8 v = _scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_08 : MemMapping::MEM_ACTIONSEQDATA_07)[_stage];
 		if (v && _result.enemiesShot < v)
 			return;
 
-		v = _scd->makePtr(0x11FA0)[_stage];
+		v = _scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_09)[_stage];
 		if (v && (_updateEnemiesPhase || (_enemyAppearanceCount < v)))
 			return;
 
-		if (_scd->makePtr(_useLightGun ? 0x11FC0 : 0x11FB0)[_stage] != 1 && _enemyAttackStatus != 0)
+		if (_scd->makePtr(_useLightGun ? MemMapping::MEM_ACTIONSEQDATA_11 : MemMapping::MEM_ACTIONSEQDATA_10)[_stage] != 1 && _enemyAttackStatus != 0)
 			return;
 
 		if (_handleShotPhase != 0)
@@ -841,7 +854,7 @@ void ActionSequenceHandler::checkFinished() {
 				continue;
 			if ((a & 0x0F) != 0)
 				return;
-			if (_scd->makePtr(0x11FD0)[_stage] == 0 || _stage == 7)
+			if (_scd->makePtr(MemMapping::MEM_ACTIONSEQDATA_12)[_stage] == 0 || _stage == 7)
 				continue;
 			animSet(i, Enable, 0);
 		}

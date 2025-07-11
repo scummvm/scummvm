@@ -23,6 +23,7 @@
 #include "snatcher/action.h"
 #include "snatcher/graphics.h"
 #include "snatcher/memory.h"
+#include "snatcher/mem_mapping.h"
 #include "snatcher/resource.h"
 #include "snatcher/saveload.h"
 #include "snatcher/script.h"
@@ -171,7 +172,7 @@ void CmdQueue::m_animPauseAll(const uint16 *&data) {
 		_vm->gfx()->reset(GraphicsEngine::kResetPalEvents);
 		for (int i = 0; i < 64; ++i)
 			_vm->gfx()->setAnimParameter(i, GraphicsEngine::kAnimParaControlFlags, GraphicsEngine::kAnimPause);
-		_vm->gfx()->enqueuePaletteEvent(_vm->_scd->makePtr(0x100D8));
+		_vm->gfx()->enqueuePaletteEvent(_vm->_scd->makePtr(MemMapping::MEM_RAWDATA_00));
 		_counter = 48;
 		++_progress;
 	} else if (--_counter == 0) {
@@ -271,7 +272,7 @@ void CmdQueue::m_chatWithPortraitAnim(const uint16 *&data) {
 	} else if (_progress == 1) {
 		++_progress;
 	} else if (_progress == 2) {
-		if (_vm->_scd->makePtr(0x13FEC)[*data] != 0xFF)
+		if (_vm->_scd->makePtr(MemMapping::MEM_RAWDATA_01)[*data] != 0xFF)
 			_vm->gfx()->setVar(11, 1);
 		if (!_vm->gfx()->getVar(11)) {
 			_progress = -1;
@@ -281,7 +282,7 @@ void CmdQueue::m_chatWithPortraitAnim(const uint16 *&data) {
 		}
 
 	} else {
-		uint8 f = _vm->_scd->makePtr(0x13FEC)[*data];
+		uint8 f = _vm->_scd->makePtr(MemMapping::MEM_RAWDATA_01)[*data];
 		if (f != 0xFF) {
 			//_vm->gfx()->dataMode = 1;
 			_vm->gfx()->runScript(_vm->_module->getGfxData(), f);
@@ -382,8 +383,8 @@ void CmdQueue::m_invItemCloseUp(const uint16 *&data) {
 	if (_vm->gfx()->getVar(8))
 		return;
 
-	_vm->gfx()->runScript(_vm->_scd->makePtr(0x146CE), *data++);
-	ResourcePointer coords = _vm->_scd->makePtr(0x144C6) + ((*data++) << 2);
+	_vm->gfx()->runScript(_vm->_scd->makePtr(MemMapping::MEM_RAWDATA_03), *data++);
+	ResourcePointer coords = _vm->_scd->makePtr(MemMapping::MEM_RAWDATA_02) + ((*data++) << 2);
 	_vm->gfx()->setAnimParameter(1, GraphicsEngine::kAnimParaPosX, coords.readIncrSINT16());
 	_vm->gfx()->setAnimParameter(1, GraphicsEngine::kAnimParaPosY, coords.readIncrSINT16());
 
@@ -943,7 +944,7 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 	};
 #undef OP
 
-	const uint8 *in = scd->makePtr(0x16CDC)();
+	const uint8 *in = scd->makePtr(MemMapping::MEM_RAWDATA_06)();
 
 	for (uint i = 0; i < ARRAYSIZE(funcTbl); ++i) {
 #ifndef SNATCHER_SCRIPT_DEBUG
