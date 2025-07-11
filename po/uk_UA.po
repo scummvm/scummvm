@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-10 23:51+0000\n"
+"POT-Creation-Date: 2025-07-11 08:05+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -1014,7 +1014,7 @@ msgstr "GUI"
 #: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:192
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:195
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -7045,7 +7045,7 @@ msgstr "Загальні клавіші"
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
 #: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
 #: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/teenagent/metaengine.cpp:182 engines/tetraedge/metaengine.cpp:86
+#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
 #: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
 #: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
@@ -7281,7 +7281,7 @@ msgstr "Пропустити ролік"
 #: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
 #: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
-#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:198
+#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:201
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
 #, fuzzy
@@ -12907,31 +12907,31 @@ msgstr ""
 "Використовувати озвучення англійскою замість німецької для всіх мов окрім "
 "німецької"
 
-#: engines/teenagent/metaengine.cpp:186
+#: engines/teenagent/metaengine.cpp:189
 #, fuzzy
 #| msgid "Inventory"
 msgid "Move / Examine"
 msgstr "Інвентар"
 
-#: engines/teenagent/metaengine.cpp:206
+#: engines/teenagent/metaengine.cpp:209
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Close inventory"
 msgstr "Відкрити/закрити інвентар"
 
-#: engines/teenagent/metaengine.cpp:211
+#: engines/teenagent/metaengine.cpp:214
 #, fuzzy
 #| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory"
 msgstr "Перемикання показування інвентарю або значення IQ"
 
-#: engines/teenagent/metaengine.cpp:217 engines/toon/metaengine.cpp:98
+#: engines/teenagent/metaengine.cpp:220 engines/toon/metaengine.cpp:98
 #: engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Пропустити вступ"
 
 #. I18N: Speeds up the game to twice its normal speed
-#: engines/teenagent/metaengine.cpp:224 engines/touche/metaengine.cpp:167
+#: engines/teenagent/metaengine.cpp:227 engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
 msgstr "Перемикання швидкого режиму"
 
