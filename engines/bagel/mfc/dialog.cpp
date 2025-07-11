@@ -191,8 +191,11 @@ void CDialog::SetDefID(UINT nID) {
 	CWnd *newBtn = GetDlgItem(nID);
 	if (newBtn) {
 		DWORD style = newBtn->GetStyle();
-		style = (style & ~0xF) | BS_DEFPUSHBUTTON;
-		newBtn->SetStyle(style);
+
+		if ((style & 0xf) != BS_OWNERDRAW) {
+			style = (style & ~0xF) | BS_DEFPUSHBUTTON;
+			newBtn->SetStyle(style);
+		}
 	}
 }
 
