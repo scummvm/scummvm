@@ -50,6 +50,8 @@ private:
 	GUI::MessageLog _messageLog;
 	int _ripAction = 0;
 	int _savedFacing = 0;
+	int32 _messageLogTrigger = 0;
+	TextScrn *_messageScreen = nullptr;
 
 	/**
 	 * Combines the items in the player _verb and _noun,
@@ -65,6 +67,7 @@ private:
 	void splitItems(const char *item1, const char *item2);
 
 	void showMessageLog(int trigger);
+	void hide_message_log_dialog();
 	void lookAtInventoryItem();
 	bool canLoadGameStateCurrently(Common::U32String *msg) override;
 

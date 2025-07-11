@@ -577,9 +577,68 @@ void RiddleEngine::splitItems(const char *item1, const char *item2) {
 	inv_give_to_player(item2);
 }
 
+void messageLogCallback(void *, void *) {
+	warning("TODO messageLogCallback");
+}
+
 void RiddleEngine::showMessageLog(int trigger) {
-	// TODO
-	warning("TODO: showMessageLog");
+	static const char *MESSAGE_TITLES[14] = {
+		"Reminder from Feng Li",
+		"Appeal for Oddities from Feng Li",
+		"2nd Appeal for Oddities from Feng Li",
+		"3rd Appeal for Oddities from Feng Li",
+		"Urgent Warning from Feng Li",
+		"Radiogram from Mei's Aunt & Uncle",
+		"Radiogram from Danzig Chief of Police",
+		"Message about Emerald from Feng Li",
+		"Ultimatum about Emerald from Feng Li",
+		"Refused Delivery",
+		"Radiogram from Prof. Menendez's Assistant",
+		"2nd Radiogram from Prof. Menendez's Assistant",
+		"Radiogram from Mei",
+		"Thank You Note from Feng Li"
+	};
+
+	_messageLogTrigger = kernel_trigger_create(trigger);
+	gr_font_set(_G(font_inter));
+	const int32 fontHeight = gr_font_get_height();
+	int32 ecx = 0;
+	int32 maxWidth = 0;
+	
+	for (int i = 0; i < 14; ++i) {
+		if (_G(flags)[(Flag)(V350 + i)]) {
+			++ecx;
+			const int width = gr_font_string_width(MESSAGE_TITLES[i], 0);
+			if (width > maxWidth)
+				maxWidth = width;
+		}
+	}
+
+	if (ecx == 0)
+		return;
+
+	maxWidth += 16;
+	_messageScreen = TextScrn_Create(601 - maxWidth, 361 - ((ecx + 2) * (fontHeight + 2) + 16), 600, 360, 65, 422, 13, 15);
+	TextScrn_Add_Message(_messageScreen, 8, 8, 0, TS_CENTRE, "MESSAGE LOG");
+
+	int32 edi = fontHeight + 14;
+	
+	int i = 0;
+	for (; i < 14; ++i) {
+		if (_G(flags)[(Flag)(V350 + i)]) {
+			TextScrn_Add_TextItem(_messageScreen, 8, edi, i + 1, TS_GIVEN, MESSAGE_TITLES[i], (M4CALLBACK)messageLogCallback);
+			edi += 1 + fontHeight;
+		}
+	}
+	TextScrn_Add_TextItem(_messageScreen, 8, edi + 4, i + 2, TS_GIVEN, "CLOSE LOG", (M4CALLBACK)messageLogCallback);
+	TextScrn_Activate(_messageScreen);
+}
+
+void RiddleEngine::hide_message_log_dialog() {
+	if (_messageScreen)
+		TextScrn_Destroy(_messageScreen);
+
+	_messageScreen = nullptr;
 }
 
 void RiddleEngine::lookAtInventoryItem() {

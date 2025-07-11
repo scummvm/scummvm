@@ -43,7 +43,6 @@ Interface::Interface() : M4::Interface() {
 
 bool Interface::init(int arrow, int wait, int look, int grab, int use) {
 	M4::Interface::init(arrow, wait, look, grab, use);
-
 	_sprite = AddWSAssetCELS("INTERFACE STUFF", 22, _G(master_palette));
 	gr_pal_interface(_G(master_palette));
 

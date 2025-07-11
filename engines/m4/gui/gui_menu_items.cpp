@@ -99,8 +99,8 @@ bool guiMenu::initialize(RGB8 *myPalette) {
 	// Pause the game
 	game_pause(true);
 
-	// Hide the telegram window
-	// Hide_telegram_dialog(); // Ripley shit again!
+	// Hide the Message Log window
+	// TODO hide_message_log_dialog();
 
 	// Hide the interface
 	if (INTERFACE_VISIBLE) {
