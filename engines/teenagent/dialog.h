@@ -135,7 +135,7 @@ public:
 private:
 	TeenAgentEngine *_vm;
 
-	void show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2);
+	void show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2);
 };
 
 } // End of namespace TeenAgent

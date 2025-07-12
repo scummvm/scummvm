@@ -62,8 +62,8 @@ Inventory::Inventory(TeenAgentEngine *vm) : _vm(vm) {
 	_objects.push_back(ioBlank);
 	for (byte i = 0; i < kNumInventoryItems; ++i) {
 		InventoryObject io;
-		uint16 objAddr = vm->res->getItemAddr(i);
-		io.load(vm->res->itemsSeg.ptr(objAddr));
+		uint32 objAddr = vm->res->getItemAddr(i);
+		io.load(vm->res->eseg.ptr(objAddr));
 		_objects.push_back(io);
 	}
 
@@ -213,7 +213,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
 		for (uint i = 0; i < kNumCombinations; i++) {
-			byte *table = _vm->res->combinationsSeg.ptr(_vm->res->getCombinationAddr(i));
+			byte *table = _vm->res->eseg.ptr(_vm->res->getCombinationAddr(i));
 
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte newObj = table[2];
