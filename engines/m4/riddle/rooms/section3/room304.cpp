@@ -23,6 +23,8 @@
 #include "m4/gui/gui_sys.h"
 #include "m4/platform/keys.h"
 #include "m4/riddle/rooms/section3/room304.h"
+
+#include "m4/adv_r/other.h"
 #include "m4/riddle/vars.h"
 #include "m4/riddle/riddle.h"
 
@@ -248,6 +250,7 @@ void Room304::parser() {
 			kernel_timing_trigger(120, 53);
 			break;
 		case 53:
+			other_save_game_for_resurrection();
 			_G(game).setRoom(413);
 			break;
 		case 54:
