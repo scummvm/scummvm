@@ -201,6 +201,7 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 
 void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite);
+void writeSpriteDataD5(Common::MemoryWriteStream *writeStream, Sprite &sprite);
 
 } // End of namespace Director
 
