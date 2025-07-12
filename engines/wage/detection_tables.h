@@ -197,7 +197,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("MacWanker 1.0", "2fd407020adf527d1193f3351d7244b5", 178005),
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 108788),
 	FANGAMEN("Mansion!", "Mansion! 1.0", "c993619e5bd99ccca6e3ce28d93be33a", 389857),
-	FANGAMEN("Master's Familiar", "xn--Masters Familiar v2.3 -245mphaaa", "d5ee3e1ff136482ef1de7935a0ac3918", 142827), // Original file name "Master’s Familiar v2.3 ••••"
 	FANGAMEN("Maze of the Questing Beast", "MQB", "03775e1894809f24234aeaab18f39451", 134444),
 	FANGAMEN("Maze of the Questing Beast Solutions", "MQB Solutions", "8a27e515f12162cc8b85e4f2bd16a1e5", 37606),
 	FANGAME("Messy House", "32ca71f2ff37997407cead590c2dd306", 176864),
@@ -312,6 +311,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("Time Star", "xn--Time Star-eh2e", "761e91f3da7217dc9516879a8ba08fd9", 210562), // Original file name "Time Star™"
 	FANGAMEN("Time Streak!!", "xn--Time Streak!!-8q9g", "e90f123a113e38c83c205b5fe50521fb", 483488), // Original file name "Time Streak!!™"
 	FANGAME("The Tower", "4cd8755ccb5bbeaf2e5f7848a8daa033", 556283),
+	FANGAME("The Tower", "r:a79282051dd190bb8d41c7600bdc157e", 733539), // alt version
 	FANGAMEND("Tombworld", "xn--Demo TombWorld-8ra", "695734292024290d5d0aa6a66ff628f6", 663996), // Original file name "Demo TombWorld©"
 	FANGAMEND("Tombworld", "DemoTombWorld", "4b3f56cfa595eab3919a918767e11870", 387403), // alt version
 	BIGGAME("twisted", "", "Twisted! 1.1", "7226874582d7e5fa13004340e9c5ba2b", 957878),
@@ -319,6 +319,7 @@ static const ADGameDescription gameDescriptions[] = {
 	BIGGAME("twisted", "", "Twisted! 1.6", "6e0be4c7d83231e56a431dc4ef7bf978", 960698),
 	FANGAME("The Village", "fd35cad8c61064d6c8aaadab7070ccad", 314572),
 	FANGAME("The Village", "b84ac84be610498c4de5d9bd4fd36175", 314620), // alt version
+	FANGAMEN("Volcano I", "Volcano", "r:d55531ddaa800b77e8f3da6385283183", 101635),
 	FANGAMEN("Volcano", "Volcano 2.4", "d04eba23fe7d566fba0c9b34242d8f10", 227431),
 	FANGAMEN("Volcano II", "xn--Volcano II-0y6e", "7941c08b34bc2408b98c0004c7154aeb", 82735), // Original file name "Volcano II†"
 	FANGAMEN("Who Shot Brownie Dog?", "xn--Who Shot Brownie Dogv1.01-lba88n", "4e7a950567c73e98e4478e5683e943ca", 195923),
