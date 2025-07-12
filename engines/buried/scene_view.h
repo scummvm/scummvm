@@ -140,6 +140,7 @@ public:
 	void onLButtonUp(const Common::Point &point, uint flags);
 	void onMouseMove(const Common::Point &point, uint flags);
 
+	void onActionEnd(const Common::CustomEventType &action, uint flags);
 	void onKeyUp(const Common::KeyState &key, uint flags);
 
 	bool isScenePresent() { return _currentScene != 0; }

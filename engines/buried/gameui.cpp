@@ -42,6 +42,8 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Buried {
 
 GameUIWindow::GameUIWindow(BuriedEngine *vm, Window *parent) : Window(vm, parent) {
@@ -76,6 +78,10 @@ bool GameUIWindow::startNewGame(bool walkthrough) {
 	_sceneViewWindow->showWindow(kWindowShow);
 	_sceneViewWindow->startNewGame(walkthrough);
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("inventory")->setEnabled(true);
+
 	return true;
 }
 
@@ -94,10 +100,14 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	_vm->_sound->stop();
 	video->playVideo();
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (!_vm->shouldQuit() && video->getMode() != VideoWindow::kModeStopped)
 		_vm->yield(video, -1);
 
 	delete video;
+
+	_vm->enableCutsceneKeymap(false);
 
 	if (_vm->shouldQuit())
 		return false;
@@ -113,6 +123,7 @@ bool GameUIWindow::startNewGameIntro(bool walkthrough) {
 	_sceneViewWindow->showWindow(kWindowShow);
 	_sceneViewWindow->startNewGameIntro(walkthrough);
 
+	_vm->enableCutsceneKeymap(false);
 	return true;
 }
 
@@ -291,50 +302,47 @@ void GameUIWindow::onEnable(bool enable) {
 		_vm->removeMouseMessages(this);
 }
 
-void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
+void GameUIWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
 	const bool cloakingDisabled = _sceneViewWindow->getGlobalFlags().bcCloakingEnabled != 1;
 	const bool interfaceMenuActive = (_bioChipRightWindow->getCurrentBioChip() == kItemBioChipInterface);
 
-	switch (key.keycode) {
-	case Common::KEYCODE_KP4:
-	case Common::KEYCODE_LEFT:
-	case Common::KEYCODE_KP6:
-	case Common::KEYCODE_RIGHT:
-	case Common::KEYCODE_KP2:
-	case Common::KEYCODE_DOWN:
-	case Common::KEYCODE_KP8:
-	case Common::KEYCODE_UP:
-	case Common::KEYCODE_KP5:
+	switch (action) {
+	case kActionMoveLeft:
+	case kActionMoveRight:
+	case kActionMoveDown:
+	case kActionMoveUp:
+	case kActionMoveForward:
 		if (_navArrowWindow->isWindowEnabled())
-			_navArrowWindow->sendMessage(new KeyUpMessage(key, flags));
+			_navArrowWindow->sendMessage(new ActionEndMessage(action, flags));
 		break;
-	case Common::KEYCODE_s:
-		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
+	case kActionSave:
+		if (cloakingDisabled && !interfaceMenuActive) {
 			_vm->handleSaveDialog();
 			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
-		} else if (_sceneViewWindow)
-			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		}
 		break;
-	case Common::KEYCODE_o:
-	case Common::KEYCODE_l:
-		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
+	case kActionLoad:
+		if (cloakingDisabled && !interfaceMenuActive) {
 			_vm->handleRestoreDialog();
 			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
-		} else if (_sceneViewWindow)
-			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		}
 		break;
-	case Common::KEYCODE_p:
-		if ((key.flags & Common::KBD_CTRL) && cloakingDisabled && !interfaceMenuActive) {
+	case kActionPause:
+		if (cloakingDisabled && !interfaceMenuActive) {
 			_vm->pauseGame();
 			((FrameWindow *)_vm->_mainWindow)->_controlDown = false;
-		} else if (_sceneViewWindow)
-			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+		}
 		break;
 	default:
 		if (_sceneViewWindow)
-			_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
+			_sceneViewWindow->sendMessage(new ActionEndMessage(action, flags));
 		break;
 	}
+}
+
+void GameUIWindow::onKeyUp(const Common::KeyState &key, uint flags) {
+	if (_sceneViewWindow)
+		_sceneViewWindow->sendMessage(new KeyUpMessage(key, flags));
 }
 
 } // End of namespace Buried

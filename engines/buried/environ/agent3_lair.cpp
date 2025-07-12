@@ -93,6 +93,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 		// Empty the input queue
 		_vm->removeMouseMessages(viewWindow);
 		_vm->removeKeyboardMessages(viewWindow);
+		_vm->removeActionMessages(viewWindow);
 
 		return SC_TRUE;
 	}
@@ -100,6 +101,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	// Empty the input queue
 	_vm->removeMouseMessages(viewWindow);
 	_vm->removeKeyboardMessages(viewWindow);
+	_vm->removeActionMessages(viewWindow);
 
 	// Make sure we have the proper cycle going on
 	_staticData.cycleStartFrame = 54;
@@ -128,6 +130,8 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	_timerStart = g_system->getMillis();
 	lastTimerValue = g_system->getMillis();
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (!_vm->shouldQuit() && _vm->_sound->isSoundEffectPlaying(_currentSoundID)) {
 		if (g_system->getMillis() - lastTimerValue >= 50) {
 			timerCallback(viewWindow);
@@ -139,6 +143,8 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
+
+	_vm->enableCutsceneKeymap(false);
 
 	_vm->_gfx->setCursor(oldCursor);
 	((SceneViewWindow *)viewWindow)->playSynchronousAnimation(11);
@@ -157,6 +163,8 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	_timerStart = g_system->getMillis();
 	lastTimerValue = g_system->getMillis();
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (!_vm->shouldQuit() && _vm->_sound->isSoundEffectPlaying(_currentSoundID)) {
 		if (g_system->getMillis() - lastTimerValue >= 50) {
 			timerCallback(viewWindow);
@@ -168,6 +176,8 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	}
 
 	_vm->_sound->stopSoundEffect(_currentSoundID);
+
+	_vm->enableCutsceneKeymap(false);
 
 	_staticData.cycleStartFrame = 0;
 	_staticData.cycleFrameCount = 54;
@@ -189,6 +199,7 @@ int LairEntry::postEnterRoom(Window *viewWindow, const Location &priorLocation) 
 	// Empty the input queue
 	_vm->removeMouseMessages(viewWindow);
 	_vm->removeKeyboardMessages(viewWindow);
+	_vm->removeActionMessages(viewWindow);
 
 	_vm->_gfx->setCursor(oldCursor);
 	return SC_TRUE;
@@ -332,6 +343,8 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 			if (_currentSoundID >= 0)
 				_vm->_sound->stopSoundEffect(_currentSoundID);
 
+			_vm->enableCutsceneKeymap(true);
+
 			_currentSoundID = _vm->_sound->playSoundEffect(_vm->getFilePath(IDS_AGENT3_VIRUS_SOUND_BASE + 5), 128, false, true);
 
 			_timerStart = g_system->getMillis();
@@ -342,6 +355,8 @@ int LairEntry::onCharacter(Window *viewWindow, const Common::KeyState &character
 				_vm->_sound->timerCallback();
 				_vm->yield(nullptr, effectsIndexBase + _currentSoundID);
 			}
+
+			_vm->enableCutsceneKeymap(false);
 
 			_vm->_sound->stopSoundEffect(_currentSoundID);
 			((GameUIWindow *)viewWindow->getParent())->_inventoryWindow->removeItem(kItemBioChipAI);
