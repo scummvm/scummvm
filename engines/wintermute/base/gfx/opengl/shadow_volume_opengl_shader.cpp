@@ -48,9 +48,15 @@ ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Sha
 	: ShadowVolume(inGame), _volumeShader(volumeShader), _maskShader(maskShader) {
 	_shadowVolumeVertexBuffer = 0;
 
+	glGenBuffers(1, &_shadowVolumeVertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, _shadowVolumeVertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 	glGenBuffers(1, &_shadowMaskVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(ShadowVertexShader), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(ShadowVertexShader), nullptr, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 //////////////////////////////////////////////////////////////////////////
