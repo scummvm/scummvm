@@ -35,7 +35,7 @@ MidiDriver_PCSpeaker::MidiDriver_PCSpeaker(Audio::Mixer *mixer)
 	for (int i = 0; i < 2; ++i)
 		_note[i].hardwareChannel = 0xFF;
 
-	_speaker = new Audio::PCSpeaker(_rate);
+	_speaker = new Audio::PCSpeakerStream(_rate);
 	assert(_speaker);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
