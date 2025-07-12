@@ -173,6 +173,8 @@ public:
 	/** Python-like method **/
 	U32String decode(CodePage page = kUtf8) const;
 
+	String encode(CodePage page = kUtf8) const;
+
 protected:
 	StringEncodingResult encodeUTF8(const U32String &src, char errorChar);
 	StringEncodingResult encodeWindows932(const U32String &src, char errorChar);

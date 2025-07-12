@@ -1646,6 +1646,14 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	// Handler
 	funcSym = g_lingo->getHandler(name);
 
+	bool foundInMainStage = false;
+
+	if (g_director->getCurrentMovie()->getHandler(name).type == VOIDSYM) {
+		if (g_director->getStage()->getCurrentMovie()->getHandler(name).type != VOIDSYM) {
+			foundInMainStage = true;
+		}
+	}
+
 	if (g_lingo->_builtinListHandlers.contains(name) && nargs >= 1) {
 		// Lingo builtin functions in the "List" category have very strange override mechanics.
 		// If the first argument is an ARRAY or PARRAY, it will use the builtin.
@@ -1678,7 +1686,19 @@ void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 		return;
 	}
 
-	call(funcSym, nargs, allowRetVal);
+	if (foundInMainStage) {
+		// If the handler was found in the main stage instead of the current window,
+		// then we need to switch the current window to the stage window before calling the hadler.
+		// This is the equivalent of the tell command in Lingo.
+		Window *currentWindow = g_director->getCurrentWindow();
+		g_lingo->push(currentWindow);
+		Window *stageWindow = g_director->getStage()->getCurrentMovie()->getWindow();
+		currentWindow->moveLingoState(stageWindow);
+		g_director->setCurrentWindow(stageWindow);
+		call(funcSym, nargs, allowRetVal);
+	} else {
+		call(funcSym, nargs, allowRetVal);
+	}
 }
 
 void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
