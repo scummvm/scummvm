@@ -88,6 +88,7 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	_center = source._center;
 	_frames = source._frames;
 	_subchannels = source._subchannels;
+	_looping = source._looping;
 }
 
 FilmLoopCastMember::~FilmLoopCastMember() {
@@ -754,7 +755,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 	uint32 channelSize = 0; 
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
-	} else if (_cast->_version <= kFileVer500 && _cast->_version < kFileVer600) {
+	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		channelSize = kSprChannelSizeD5;
 	} else {
 		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
@@ -807,7 +808,11 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 
 			Sprite sprite = it._value;
 
-			writeSpriteDataD4(writeStream, sprite);
+			if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
+				writeSpriteDataD4(writeStream, sprite);
+			} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
+				writeSpriteDataD5(writeStream, sprite);
+			}
 		}
 		
 	}	
@@ -823,7 +828,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 		dumpStream->write(writeStream, filmloopSize + 8);
 		writeStream->seek(currentPos);
 
-        dumpFile("FilmLoopData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
+		dumpFile("FilmLoopData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
 		free(dumpData);
         delete dumpStream;
     }
