@@ -30,6 +30,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/yuv_to_rgb.h"
+#include "image/codecs/codec.h"
 
 #include "video/psx_decoder.h"
 
@@ -353,12 +354,7 @@ PSXStreamDecoder::PSXVideoTrack::PSXVideoTrack(Common::SeekableReadStream *first
 	firstSector->seek(40);
 	_width = firstSector->readUint16LE();
 	_height = firstSector->readUint16LE();
-
-	_pixelFormat = g_system->getScreenFormat();
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
+	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 
 	_macroBlocksW = (_width + 15) / 16;
 	_macroBlocksH = (_height + 15) / 16;

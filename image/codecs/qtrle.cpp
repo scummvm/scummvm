@@ -325,7 +325,7 @@ void QTRLEDecoder::dither16(Common::SeekableReadStream &stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	uint32 *rgb = (uint32 *)_surface->getPixels();
+	uint8 *rgb = (uint8 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -345,23 +345,22 @@ void QTRLEDecoder::decode24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 				byte r = stream.readByte();
 				byte g = stream.readByte();
 				byte b = stream.readByte();
-				uint32 color = _surface->format.RGBToColor(r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
 
-				while (rleCode--)
-					rgb[pixelPtr++] = color;
+				while (rleCode--) {
+					rgb[(pixelPtr * 3) + 0] = r;
+					rgb[(pixelPtr * 3) + 1] = g;
+					rgb[(pixelPtr * 3) + 2] = b;
+					pixelPtr++;
+				}
 			} else {
 				CHECK_STREAM_PTR(rleCode * 3);
 				CHECK_PIXEL_PTR(rleCode);
 
 				// copy pixels directly to output
-				while (rleCode--) {
-					byte r = stream.readByte();
-					byte g = stream.readByte();
-					byte b = stream.readByte();
-					rgb[pixelPtr++] = _surface->format.RGBToColor(r, g, b);
-				}
+				stream.read(&rgb[pixelPtr * 3], rleCode * 3);
+				pixelPtr += rleCode;
 			}
 		}
 
@@ -439,7 +438,7 @@ void QTRLEDecoder::dither24(Common::SeekableReadStream &stream, uint32 rowPtr, u
 
 void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, uint32 linesToChange) {
 	uint32 pixelPtr = 0;
-	uint32 *rgb = (uint32 *)_surface->getPixels();
+	uint8 *rgb = (uint8 *)_surface->getPixels();
 
 	while (linesToChange--) {
 		CHECK_STREAM_PTR(2);
@@ -460,24 +459,23 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream &stream, uint32 rowPtr, u
 				byte r = stream.readByte();
 				byte g = stream.readByte();
 				byte b = stream.readByte();
-				uint32 color = _surface->format.ARGBToColor(a, r, g, b);
 
 				CHECK_PIXEL_PTR(rleCode);
 
-				while (rleCode--)
-					rgb[pixelPtr++] = color;
+				while (rleCode--) {
+					rgb[(pixelPtr * 4) + 0] = a;
+					rgb[(pixelPtr * 4) + 1] = r;
+					rgb[(pixelPtr * 4) + 2] = g;
+					rgb[(pixelPtr * 4) + 3] = b;
+					pixelPtr++;
+				}
 			} else {
 				CHECK_STREAM_PTR(rleCode * 4);
 				CHECK_PIXEL_PTR(rleCode);
 
 				// copy pixels directly to output
-				while (rleCode--) {
-					byte a = stream.readByte();
-					byte r = stream.readByte();
-					byte g = stream.readByte();
-					byte b = stream.readByte();
-					rgb[pixelPtr++] = _surface->format.ARGBToColor(a, r, g, b);
-				}
+				stream.read(&rgb[pixelPtr * 4], rleCode * 4);
+				pixelPtr += rleCode;
 			}
 		}
 
@@ -642,8 +640,9 @@ Graphics::PixelFormat QTRLEDecoder::getPixelFormat() const {
 	case 16:
 		return Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 	case 24:
+		return Graphics::PixelFormat::createFormatRGB24();
 	case 32:
-		return Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24);
+		return Graphics::PixelFormat::createFormatARGB32();
 	default:
 		error("Unsupported QTRLE bits per pixel %d", _bitsPerPixel);
 	}

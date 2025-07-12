@@ -111,8 +111,7 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 	int x, y;
 
 	if (nPlanes == 3 && bitsPerPixel == 8) {	// 24bpp
-		Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-		_surface->create(width, height, format);
+		_surface->create(width, height, Graphics::PixelFormat::createFormatRGB24());
 		dst = (byte *)_surface->getPixels();
 		_palette.clear();
 
@@ -120,13 +119,9 @@ bool PCXDecoder::loadStream(Common::SeekableReadStream &stream) {
 			decodeRLE(stream, scanLine, bytesPerscanLine, compressed);
 
 			for (x = 0; x < width; x++) {
-				byte r = scanLine[x];
-				byte g = scanLine[x +  bytesPerLine];
-				byte b = scanLine[x + (bytesPerLine << 1)];
-				uint32 color = format.RGBToColor(r, g, b);
-
-				*((uint32 *)dst) = color;
-				dst += format.bytesPerPixel;
+				*dst++ = scanLine[x];
+				*dst++ = scanLine[x +  bytesPerLine];
+				*dst++ = scanLine[x + (bytesPerLine << 1)];
 			}
 		}
 	} else if (nPlanes == 1 && bitsPerPixel == 8) {	// 8bpp indexed

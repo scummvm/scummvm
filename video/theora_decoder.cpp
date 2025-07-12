@@ -43,6 +43,7 @@
 #include "common/util.h"
 #include "graphics/pixelformat.h"
 #include "graphics/yuv_to_rgb.h"
+#include "image/codecs/codec.h"
 
 namespace Video {
 
@@ -272,12 +273,8 @@ TheoraDecoder::TheoraVideoTrack::TheoraVideoTrack(th_info &theoraInfo, th_setup_
 	_surfaceWidth = theoraInfo.frame_width;
 	_surfaceHeight = theoraInfo.frame_height;
 
-	_pixelFormat = g_system->getScreenFormat();
+	_pixelFormat = Image::Codec::getDefaultYUVFormat();
 	_theoraPixelFormat = theoraInfo.pixel_fmt;
-
-	// Default to a 32bpp format, if in 8bpp mode
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0);
 
 	// Set the frame rate
 	_frameRate = Common::Rational(theoraInfo.fps_numerator, theoraInfo.fps_denominator);

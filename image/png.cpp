@@ -63,7 +63,10 @@ void PNGDecoder::destroy() {
 }
 
 Graphics::PixelFormat PNGDecoder::getByteOrderRgbaPixelFormat(bool isAlpha) const {
-	return Graphics::PixelFormat::createFormatRGBA32(isAlpha);
+	if (isAlpha)
+		return Graphics::PixelFormat::createFormatRGBA32();
+	else
+		return Graphics::PixelFormat::createFormatRGB24();
 }
 
 #ifdef USE_PNG
@@ -228,9 +231,6 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 		if (colorType == PNG_COLOR_TYPE_GRAY ||
 			colorType == PNG_COLOR_TYPE_GRAY_ALPHA)
 			png_set_gray_to_rgb(pngPtr);
-
-		if (colorType != PNG_COLOR_TYPE_RGB_ALPHA)
-			png_set_filler(pngPtr, 0xff, PNG_FILLER_AFTER);
 	}
 
 	// After the transformations have been registered, the image data is read again.
