@@ -349,7 +349,7 @@ void Grid::decompColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *des
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(0);
 			}
-		} else if (type == 1) {
+		} else if (type == 1) { // 0x40
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
@@ -497,7 +497,7 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 }
 
 // WARNING: Rewrite this function to have better performance
-bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
+bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *pGraph, bool isSprite) { // AffGraph
 	if (_engine->_debugState->_disableGridRendering) {
 		return false;
 	}
@@ -505,34 +505,34 @@ bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSpri
 		return false;
 	}
 
-	const int32 left = posX + *(ptr + 2);
+	const int32 left = posX + pGraph[2];
 	if (left >= _engine->_interface->_clip.right) {
 		return false;
 	}
-	const int32 right = *ptr + left;
-	if (right < _engine->_interface->_clip.left) {
-		return false;
-	}
-	const int32 top = posY + *(ptr + 3);
+	const int32 top = posY + pGraph[3];
 	if (top >= _engine->_interface->_clip.bottom) {
 		return false;
 	}
-	const int32 bottom = (int32)*(ptr + 1) + top;
+	const int32 right = pGraph[0] + left;
+	if (right < _engine->_interface->_clip.left) {
+		return false;
+	}
+	const int32 bottom = pGraph[1] + top;
 	if (bottom < _engine->_interface->_clip.top) {
 		return false;
 	}
 	const int32 maxY = MIN(bottom, (int32)_engine->_interface->_clip.bottom);
 
-	ptr += 4;
+	pGraph += 4; // skip the header
 
 	int32 x = left;
 
 	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
 	{
 		for (int32 y = top; y < maxY; ++y) {
-			const uint8 rleAmount = *ptr++;
+			const uint8 rleAmount = *pGraph++;
 			for (int32 run = 0; run < rleAmount; ++run) {
-				const uint8 rleMask = *ptr++;
+				const uint8 rleMask = *pGraph++;
 				const uint8 iterations = bits(rleMask, 0, 6) + 1;
 				const uint8 opCode = bits(rleMask, 6, 2);
 				if (opCode == 0) {
@@ -541,9 +541,9 @@ bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSpri
 				}
 				if (y < _engine->_interface->_clip.top || x >= _engine->_interface->_clip.right || x + iterations < _engine->_interface->_clip.left) {
 					if (opCode == 1) {
-						ptr += iterations;
+						pGraph += iterations;
 					} else {
-						++ptr;
+						++pGraph;
 					}
 					x += iterations;
 					continue;
@@ -552,15 +552,15 @@ bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *ptr, bool isSpri
 					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
 						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
-							*out = *ptr;
+							*out = *pGraph;
 						}
 
 						++out;
 						++x;
-						++ptr;
+						++pGraph;
 					}
 				} else {
-					const uint8 pixel = *ptr++;
+					const uint8 pixel = *pGraph++;
 					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
 						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
