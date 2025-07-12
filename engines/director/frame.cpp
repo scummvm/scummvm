@@ -1063,6 +1063,34 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 
 }
 
+void writeSpriteDataD5(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
+	// Writing 20 bytes of sprite data
+	// The original data for a certain sprite might be less
+	writeStream->writeByte(sprite._spriteType);			// 0
+	
+	// If the sprite is a puppet (controlled by lingo scripting)
+	// The rest of the data isn't read
+	if (sprite._puppet) {
+		writeStream->write(0, 19);								// 1-19
+	} else {
+		writeStream->writeByte(sprite._inkData);				// 1
+		writeStream->writeSint16BE(sprite._castId.castLib);		// 2, 3
+		writeStream->writeUint16BE(sprite._castId.member);		// 4, 5
+		writeStream->writeSint16BE(sprite._scriptId.castLib);	// 6, 7
+		writeStream->writeUint16BE(sprite._scriptId.member);	// 8, 9
+		writeStream->writeByte(sprite._foreColor);				// 10
+		writeStream->writeByte(sprite._backColor);				// 11
+		writeStream->writeUint16BE(sprite._startPoint.y);		// 12, 13
+		writeStream->writeUint16BE(sprite._startPoint.x);		// 14, 15
+		writeStream->writeUint16BE(sprite._height);				// 16, 17
+		writeStream->writeUint16BE(sprite._width);				// 18, 19
+		writeStream->writeByte(sprite._colorcode);				// 20
+		writeStream->writeByte(sprite._blendAmount);			// 21
+		writeStream->writeByte(sprite._thickness);				// 22
+		writeStream->writeByte(0);								// 23, unused
+	}
+}
+
 /**************************
  *
  * D6 Loading

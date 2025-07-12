@@ -20,9 +20,6 @@
  */
 
 #include "common/substream.h"
-#include "common/macresman.h"
-#include "common/memstream.h"
-#include "common/file.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/pixelformat.h"
 #include "image/codecs/bmp_raw.h"
