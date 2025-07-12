@@ -140,7 +140,7 @@ public:
 	void copyScreen(const Graphics::ManagedSurface &source, Graphics::ManagedSurface &destination);
 
 	/** Clear front buffer screen */
-	void clearScreen();
+	void clearScreen(); // Cls()
 
 	/** Init palettes */
 	void initPalettes();

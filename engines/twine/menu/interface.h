@@ -40,6 +40,7 @@ private:
 
 public:
 	Interface(TwinEEngine *engine);
+	// ClipXmin, ClipXmax, ClipYmin, ClipYmax
 	Common::Rect _clip { 0, 0, 0, 0 };
 	bool _animateTexture = false; // lba2: AnimateTexture
 

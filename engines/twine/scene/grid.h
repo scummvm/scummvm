@@ -45,7 +45,7 @@ struct BlockEntry {
 	uint8 brickBlockIdx = 0;
 };
 /** Brick entry data */
-struct BrickEntry {
+struct BrickEntry { // T_COLONB
 	/** Brick X position in screen */
 	int16 x = 0; //z
 	/** Brick Y position in screen */
@@ -88,7 +88,7 @@ struct BrickEntry {
 #define SCENE_SIZE_HALF (SIZE_BRICK_XZ * SIZE_CUBE_X / 2)
 #define SCENE_SIZE_HALFF (SIZE_BRICK_XZ * SIZE_CUBE_X / 2.0f)
 
-#define MAXBRICKS 150
+#define MAX_BRICKS 150
 
 class TwinEEngine;
 
@@ -104,14 +104,14 @@ private:
 	 * @param y column y position
 	 * @param z column z position
 	 */
-	void drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z);
+	void drawBrickBlock(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z);
 	/**
 	 * Get brick position in the screen
 	 * @param x column x position in the current camera
 	 * @param y column y position in the current camera
 	 * @param z column z position in the current camera
 	 */
-	void getBrickPos(int32 x, int32 y, int32 z, int32 &_brickPixelPosX, int32 &_brickPixelPosY) const;
+	void map2Screen(int32 x, int32 y, int32 z, int32 &_brickPixelPosX, int32 &_brickPixelPosY) const;
 	/**
 	 * Create celling grid map from celling grid to block library buffer
 	 * @param gridPtr celling grid buffer pointer
@@ -151,7 +151,7 @@ private:
 	void copyMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer);
 
 	/** Table with all loaded bricks */
-	uint8 *_brickTable[NUM_BRICKS]{nullptr};
+	uint8 *_bufferBrick[NUM_BRICKS]{nullptr};
 	/** Table with all loaded bricks masks */
 	uint8 *_brickMaskTable[NUM_BRICKS]{nullptr};
 	/** Table with all loaded bricks sizes */
@@ -166,9 +166,9 @@ private:
 	BlockLibraryData _currentBlockLibrary;
 
 	/** Brick data buffer */
-	BrickEntry *_bricksDataBuffer = nullptr;
+	BrickEntry *_listBrickColon = nullptr;
 	/** Brick info buffer */
-	int16 *_brickInfoBuffer = nullptr;
+	int16 *_nbBrickColon = nullptr;
 	int32 _brickInfoBufferSize = 0;
 
 	/** Celling grid brick block buffer */
@@ -239,7 +239,7 @@ public:
 	 * @param posX brick X position to draw
 	 * @param posY brick Y position to draw
 	 */
-	bool drawBrick(int32 index, int32 posX, int32 posY);
+	bool drawGraph(int32 index, int32 posX, int32 posY);
 
 	/**
 	 * Draw sprite in the screen
