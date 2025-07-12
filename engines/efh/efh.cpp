@@ -71,6 +71,12 @@ Common::Error EfhEngine::run() {
 	// Setup mixer
 	syncSoundSettings();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+
 	// Sometimes a ghost key event stops the intro, so we ass a short delay and purge the keyboard events
 	_system->delayMillis(100);
 	_system->getEventManager()->purgeKeyboardEvents();
@@ -149,7 +155,7 @@ Common::Error EfhEngine::run() {
 }
 
 void EfhEngine::handleEvents() {
-	Common::KeyCode retVal = getLastCharAfterAnimCount(4);
+	Common::KeyCode retVal = getLastCharAfterAnimCount(4, false);
 
 	switch (_customAction) {
 	case kActionSave:
@@ -226,6 +232,8 @@ void EfhEngine::handleEvents() {
 }
 
 void EfhEngine::handleActionSave() {
+	sayText("Are you sure you want to save?", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+
 	for (uint counter = 0; counter < 2; ++counter) {
 		clearBottomTextZone(0);
 		displayCenteredString("Are You Sure You Want To Save?", 24, 296, 160);
@@ -235,10 +243,12 @@ void EfhEngine::handleActionSave() {
 	Common::KeyCode input = waitForKey();
 	if (input == Common::KEYCODE_y) {
 		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+		sayText("Yes", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 		getInput(2);
 		saveGameDialog();
 	} else {
 		displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+		sayText("No", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 		getInput(2);
 	}
 	clearBottomTextZone_2(0);
@@ -246,6 +256,8 @@ void EfhEngine::handleActionSave() {
 }
 
 void EfhEngine::handleActionLoad() {
+	sayText("Are you sure you want to load?", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+
 	for (uint counter = 0; counter < 2; ++counter) {
 		clearBottomTextZone(0);
 		displayCenteredString("Are You Sure You Want To Load?", 24, 296, 160);
@@ -255,10 +267,12 @@ void EfhEngine::handleActionLoad() {
 	Common::KeyCode input = waitForKey();
 	if (input == Common::KEYCODE_y) {
 		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
+		sayText("Yes", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 		getInput(2);
 		loadGameDialog();
 	} else {
 		displayMenuAnswerString("-> No!!! <-", 24, 296, 169);
+		sayText("No", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 		getInput(2);
 	}
 	clearBottomTextZone_2(0);
@@ -411,8 +425,12 @@ void EfhEngine::initEngine() {
 	readFileToBuffer(fileName, _titleSong);
 	Common::KeyCode lastInput = Common::KEYCODE_INVALID;
 
-	if (_loadSaveSlot == -1)
+	if (_loadSaveSlot == -1) {
+		sayText("Richard and Alan's Escape from Hell\nCopyright 1990 Electronic Arts\n"
+				"By Richard L. Seaborne with Alan J. Murphy", kNoRestriction);
 		lastInput = playSong(_titleSong);
+		stopTextToSpeech();
+	}
 
 	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1)
 		playIntro();
@@ -427,6 +445,7 @@ void EfhEngine::initEngine() {
 		loadEfhGame();
 		resetGame();
 	} else {
+		_sayLowStatusScreen = true;
 		loadGameState(_loadSaveSlot);
 		_loadSaveSlot = -1;
 	}
@@ -680,15 +699,20 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				Common::String buffer = _npcBuf[charId]._name;
 				setTextPos(16, textPosY);
 				displayStringAtTextPos(buffer);
+				sayText("Name: " + buffer, kLowStatusMenu);
 				buffer = Common::String::format("%d", getEquipmentDefense(charId));
 				displayCenteredString(buffer, 104, 128, textPosY);
+				sayText("Defense: " + buffer, kLowStatusMenu);
 				buffer = Common::String::format("%d", _npcBuf[charId]._hitPoints);
 				displayCenteredString(buffer, 144, 176, textPosY);
+				sayText("HP: " + buffer, kLowStatusMenu);
 				buffer = Common::String::format("%d", _npcBuf[charId]._maxHP);
 				displayCenteredString(buffer, 192, 224, textPosY);
+				sayText("Max HP: " + buffer, kLowStatusMenu);
 
 				if (_npcBuf[charId]._hitPoints <= 0) {
 					displayCenteredString("* DEAD *", 225, 302, textPosY);
+					sayText("Dead", kLowStatusMenu);
 					continue;
 				}
 
@@ -713,11 +737,19 @@ void EfhEngine::displayLowStatusScreen(bool flag) {
 				}
 
 				displayCenteredString(_nameBuffer, 225, 302, textPosY);
+
+				if (_teamChar[i]._status._type == kEfhStatusNormal) {
+					sayText("Weapon: " + _nameBuffer, kLowStatusMenu);
+				} else {
+					sayText(_nameBuffer, kLowStatusMenu);
+				}
 			}
 		}
 
 		if (counter == 0 && flag)
 			displayFctFullScreen();
+		
+		_sayLowStatusScreen = false;
 	}
 }
 
@@ -807,6 +839,8 @@ void EfhEngine::handleWinSequence() {
 	uint8 *winSeqSubFilesArray2[20];
 	loadImageSet(64, winSeqBuf3, winSeqSubFilesArray1, decompBuffer);
 	loadImageSet(65, winSeqBuf4, winSeqSubFilesArray2, decompBuffer);
+
+	sayText("Come back soon", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
@@ -931,6 +965,7 @@ int16 EfhEngine::handleCharacterJoining() {
 		if (counter == 0)
 			displayFctFullScreen();
 	}
+	sayText("Replace Who?", kNoRestriction);
 
 	int16 charId = chooseCharacterToReplace();
 	for (uint counter = 0; counter < 2; ++counter) {
@@ -942,6 +977,7 @@ int16 EfhEngine::handleCharacterJoining() {
 	if (charId == 0x1B) // Escape Keycode
 		return -1;
 
+	sayText(_npcBuf[_teamChar[charId]._id]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 	removeCharacterFromTeam(charId);
 	return 2;
 }
@@ -972,6 +1008,8 @@ void EfhEngine::drawText(uint8 *srcPtr, int16 posX, int16 posY, int16 maxX, int1
 		}
 	}
 
+	sayText(_messageToBePrinted, kNoRestriction, Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+
 	script_parse(_messageToBePrinted, posX, posY, maxX, maxY, flag);
 }
 
@@ -985,6 +1023,7 @@ void EfhEngine::displayMiddleLeftTempText(uint8 *impArray, bool flag) {
 			if (impArray != nullptr) {
 				_tempTextDelay = 4;
 				_tempTextPtr = impArray;
+				stopTextToSpeech();
 				drawText(impArray, 17, 115, 110, 133, false);
 			}
 			if (counter == 0 && flag)
@@ -1027,7 +1066,7 @@ void EfhEngine::transitionMap(int16 centerX, int16 centerY) {
 		drawScreen();
 	}
 
-	getLastCharAfterAnimCount(3);
+	getLastCharAfterAnimCount(3, false);
 	_drawHeroOnMapFl = true;
 }
 
@@ -1221,6 +1260,8 @@ void EfhEngine::goSouthWest() {
 
 void EfhEngine::showCharacterStatus(uint8 character) {
 	if (_teamChar[character]._id != -1) {
+		stopTextToSpeech();
+		_sayMenu = true;
 		handleStatusMenu(1, _teamChar[character]._id);
 		_tempTextPtr = nullptr;
 		drawGameScreenAndTempText(true);
@@ -1704,8 +1745,10 @@ void EfhEngine::handleMapMonsterMoves() {
 		} while (!monsterMovedFl && retryCounter > 0 && !shouldQuit());
 	}
 
-	if (attackMonsterId != -1)
+	if (attackMonsterId != -1) {
+		stopTextToSpeech();
 		handleFight(attackMonsterId);
+	}
 }
 
 bool EfhEngine::checkMapMonsterAvailability(int16 monsterId) {
@@ -1870,6 +1913,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 				_enemyNamePt2 = _npcBuf[npcId]._name;
 				_characterNamePt2 = _npcBuf[_teamChar[charId]._id]._name;
 				Common::String buffer = Common::String::format("%s asks that %s leave your party.", _enemyNamePt2.c_str(), _characterNamePt2.c_str());
+				sayText(buffer, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				for (uint i = 0; i < 2; ++i) {
 					clearBottomTextZone(0);
 					_textColor = 0xE;
@@ -1879,6 +1923,7 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 					if (i == 0)
 						displayFctFullScreen();
 				}
+				sayText("Will you do this?", kNoRestriction);
 				setTextColorRed();
 				Common::KeyCode input = waitForKey();
 				if (input == Common::KEYCODE_y) {
@@ -2017,6 +2062,10 @@ void EfhEngine::displayImp1Text(int16 textId) {
 								displayFctFullScreen();
 						}
 
+						if (!_initiatedTalkByMenu) {
+							stopTextToSpeech();
+						}
+
 						nextTextId = displayBoxWithText(_messageToBePrinted, 1, 1, true);
 						if (nextTextId != 0xFF)
 							curTextId = nextTextId;
@@ -2031,7 +2080,15 @@ void EfhEngine::displayImp1Text(int16 textId) {
 								if (counter == 0)
 									displayFctFullScreen();
 							}
+
+							if (textComplete) {
+								sayText("Done", kNoRestriction);
+							} else {
+								sayText("More", kNoRestriction);
+							}
 							waitForKey();
+							stopTextToSpeech();
+							_initiatedTalkByMenu = false;
 						}
 					}
 					if (nextTextId != 0xFF)
@@ -2115,6 +2172,7 @@ bool EfhEngine::handleInteractionText(int16 mapPosX, int16 mapPosY, int16 charId
 			// Note: The 2 checks on var6 are useless, as [0x78..0xEF] - 0x78 => [0x00..0x77]
 			// Note: In the data,all resulting values are between 2 and 14, so it's working
 			if (var6 >= 0 && var6 <= 0x8B && var6 == itemId && _mapSpecialTiles[_techId][tileId]._triggerValue <= _npcBuf[charId]._activeScore[itemId]) {
+				_initiatedTalkByMenu = true;
 				displayImp1Text(_mapSpecialTiles[_techId][tileId]._field5_textId);
 				return true;
 			}
@@ -2347,6 +2405,7 @@ bool EfhEngine::checkMonsterCollision() {
 				++mobsterCount;
 		}
 
+		_sayMenu = true;
 		bool endLoop = false;
 		Common::String buffer;
 		do {
@@ -2375,50 +2434,62 @@ bool EfhEngine::checkMonsterCollision() {
 				_textColor = 0xE;
 				displayCenteredString("Interaction", 24, 296, 152);
 				displayCenteredString(buffer, 24, 296, 161);
+				sayText("Interaction " + buffer, kMenu, Common::TextToSpeechManager::INTERRUPT);
 				setTextPos(24, 169);
 				setTextColorWhite();
 				displayStringAtTextPos("T");
 				setTextColorRed();
 				buffer = Common::String("alk to the ") + dest;
 				displayStringAtTextPos(buffer);
+				sayText("Talk to the " + dest, kMenu);
 				setTextPos(24, 178);
 				setTextColorWhite();
 				displayStringAtTextPos("A");
 				setTextColorRed();
 				buffer = Common::String("ttack the ") + dest;
 				displayStringAtTextPos(buffer);
+				sayText("Attack the " + dest, kMenu);
 				setTextPos(198, 169);
 				setTextColorWhite();
 				displayStringAtTextPos("S");
 				setTextColorRed();
 				displayStringAtTextPos("tatus");
+				sayText("Status", kMenu);
 				setTextPos(198, 178);
 				setTextColorWhite();
 				displayStringAtTextPos("L");
 				setTextColorRed();
 				displayStringAtTextPos("eave");
+				sayText("Leave", kMenu);
 				if (displayCounter == 0)
 					displayFctFullScreen();
+				_sayMenu = false;
 			}
 
 			Common::KeyCode input = waitForKey();
 
 			switch (input) {
 			case Common::KEYCODE_a: // Attack
+				sayText("Attack", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				handleFight(monsterId);
 				endLoop = true;
 				break;
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_l: // Leave
+				sayText("Leave", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				endLoop = true;
 				break;
 			case Common::KEYCODE_s: // Status
+				sayText("Status", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+				_sayMenu = true;
 				handleStatusMenu(1, _teamChar[0]._id);
 				endLoop = true;
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
 				break;
 			case Common::KEYCODE_t: // Talk
+				sayText("Talk", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+				_initiatedTalkByMenu = true;
 				startTalkMenu(monsterId);
 				endLoop = true;
 				break;
@@ -2520,6 +2591,8 @@ void EfhEngine::loadEfhGame() {
 
 	_lastMainPlaceId = 0xFFFF;
 	loadPlacesFile(_fullPlaceId, true);
+
+	_sayLowStatusScreen = true;
 }
 
 uint8 EfhEngine::getMapTileInfo(int16 mapPosX, int16 mapPosY) {
@@ -2575,5 +2648,21 @@ void EfhEngine::copyCurrentPlaceToBuffer(int16 id) {
 		}
 	}
 }
+
+void EfhEngine::sayText(const Common::String &text, TTSMenuRestriction menuRestriction, Common::TextToSpeechManager::Action action) const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	bool speak = menuRestriction == kNoRestriction || (menuRestriction == kLowStatusMenu && _sayLowStatusScreen) || (menuRestriction == kMenu && _sayMenu);
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && speak) {
+		ttsMan->say(text, action, Common::CodePage::kDos850);
+	}
+}
+
+void EfhEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
 
 } // End of namespace Efh

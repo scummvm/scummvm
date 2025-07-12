@@ -352,6 +352,10 @@ EfhEngine::EfhEngine(OSystem *syst, const ADGameDescription *gd) : Engine(syst),
 	_statusMenuActive = false;
 	_menuDepth = 0;
 	_menuItemCounter = 0;
+	_selectedMenuBox = -1;
+	_sayMenu = true;
+	_sayLowStatusScreen = false;
+	_initiatedTalkByMenu = false;
 
 	for (int i = 0; i < 15; ++i)
 		_menuStatItemArr[i] = 0;
