@@ -332,6 +332,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("cdrom", 0);
 
 	ConfMan.registerDefault("enable_unsupported_game_warning", true);
+	ConfMan.registerDefault("enable_unsupported_addon_warning", true);
 
 #ifdef USE_FLUIDSYNTH
 	ConfMan.registerDefault("soundfont", "Roland_SC-55.sf2");

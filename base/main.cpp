@@ -217,6 +217,12 @@ static Common::Error runGame(const Plugin *enginePlugin, OSystem &system, const 
 		err = metaEngine.createInstance(&system, &engine, game, meDescriptor);
 	}
 
+	if (err.getCode() == Common::kNoError) {
+		// Update add-on targets
+		if (engine != nullptr && engine->gameTypeHasAddOns())
+			err = engine->updateAddOns(&metaEngine);
+	}
+
 	// Check for errors
 	if (!engine || err.getCode() != Common::kNoError) {
 
