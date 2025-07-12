@@ -25,16 +25,22 @@
 #include "common/language.h"
 #include "util.h"
 
-#define TEENAGENT_DAT_VERSION 5
+#define TEENAGENT_DAT_VERSION 6
 
 enum ResourceType {
-	kResDialogs = 0,
-	kResDialogStacks,
+	kResDialogStacks = 0,
+	kResDialogs,
 	kResItems,
 	kResCredits,
 	kResSceneObjects,
 	kResMessages,
 	kResCombinations,
+};
+
+struct ResourceInfo {
+	byte _id;
+	uint32 _offset;
+	uint32 _size;
 };
 
 #define NUM_RESOURCES 7

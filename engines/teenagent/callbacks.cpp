@@ -484,7 +484,7 @@ void TeenAgentEngine::fnGiveAnotherFlowerToAnne() {
 
 void TeenAgentEngine::bookColorMessage() {
 	uint bookIndex = GET_FLAG(dsAddr_drawerPuzzleBookValue) - 1;
-	uint16 addr = res->getMessageAddr(MessageType((int)kBookColorMsg0 + bookIndex));
+	uint32 addr = res->getMessageAddr(MessageType((int)kBookColorMsg0 + bookIndex));
 
 	displayMessage(addr);
 }

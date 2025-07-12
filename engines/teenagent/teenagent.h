@@ -62,7 +62,7 @@ class Resources;
 class Inventory;
 class Pack;
 
-#define TEENAGENT_DAT_VERSION 5
+#define TEENAGENT_DAT_VERSION 6
 #define TEENAGENT_SAVEGAME_VERSION 1
 
 // Engine Debug Flags
@@ -121,15 +121,15 @@ public:
 	bool showMetropolis();
 	int skipEvents() const;
 
-	Common::String parseMessage(uint16 addr);
+	Common::String parseMessage(uint32 addr);
 
 	//event driven:
-	void displayMessage(uint16 addr, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
+	void displayMessage(uint32 addr, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
 	void displayMessage(const Common::String &str, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
-	void displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID = kMark);
-	void displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color = textColorMark);
-	void displayCredits(uint16 addr, uint16 timer = 0);
-	void displayCutsceneMessage(uint16 addr, uint16 x, uint16 y);
+	void displayAsyncMessage(uint32 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID = kMark);
+	void displayAsyncMessageInSlot(uint32 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color = textColorMark);
+	void displayCredits(uint32 addr, uint16 timer = 0);
+	void displayCutsceneMessage(uint32 addr, uint16 x, uint16 y);
 	void moveTo(const Common::Point &dst, byte o, bool warp = false);
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
 	void moveTo(Object *obj);
