@@ -27,7 +27,7 @@
 namespace TeenAgent {
 
 void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
-	uint16 addr = _vm->res->getDialogAddr(dialogNum);
+	uint32 addr = _vm->res->getDialogAddr(dialogNum);
 	// WORKAROUND: For Dialog 163, The usage of this in the engine overlaps the previous dialog i.e. the
 	// starting offset used is two bytes early, thus implicitly changing the first command of this dialog
 	// from NEW_LINE to CHANGE_CHARACTER.
@@ -39,7 +39,7 @@ void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 anim
 	show(scene, addr, animation1, animation2, character1ID, character2ID, slot1, slot2);
 }
 
-void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
+void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;
 	Common::String message;
@@ -151,7 +151,11 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animatio
 	uint16 next2 = _vm->res->dseg.get_word(addr);
 	if (next2 != 0xffff)
 		_vm->res->dseg.set_word(addr - 2, 0);
-	show(scene, next, animation1, animation2, character1ID, character2ID, slot1, slot2);
+
+	// Dialog addresses popped from stack are relative
+	// to dialog start offset. So we add that offset first
+	uint32 dialogAddr = _vm->res->getDialogStartPos() + next;
+	show(scene, dialogAddr, animation1, animation2, character1ID, character2ID, slot1, slot2);
 	return next;
 }
 

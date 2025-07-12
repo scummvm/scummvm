@@ -247,11 +247,12 @@ void Scene::loadObjectData() {
 		Common::Array<Object> &sceneObjects = objects[i];
 		sceneObjects.clear();
 
-		uint16 sceneTable = _vm->res->sceneObjectsSeg.get_word(i * 2);
-		uint16 objectAddr;
-		while ((objectAddr = _vm->res->sceneObjectsSeg.get_word(sceneTable)) != 0) {
+		uint32 sceneObjectStartAddr = _vm->res->getSceneObjectsStartPos();
+		uint32 sceneTable = _vm->res->eseg.get_word(sceneObjectStartAddr + i * 2);
+		uint32 objectAddr;
+		while ((objectAddr = _vm->res->eseg.get_word(sceneObjectStartAddr + sceneTable)) != 0) {
 			Object obj;
-			obj.load(_vm->res->sceneObjectsSeg.ptr(objectAddr), i + 1);
+			obj.load(_vm->res->eseg.ptr(sceneObjectStartAddr + objectAddr), i + 1);
 			//obj.dump();
 			sceneObjects.push_back(obj);
 			sceneTable += 2;

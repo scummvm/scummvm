@@ -31,6 +31,13 @@
 namespace TeenAgent {
 
 Resources::Resources() {
+	_combinationsStartOffset = 0;
+	_creditsStartOffset = 0;
+	_dialogsStartOffset = 0;
+	_messagesStartOffset = 0;
+	_sceneObjectsStartOffset = 0;
+	_sceneObjectsBlockSize = 0;
+	_itemsStartOffset = 0;
 }
 
 Resources::~Resources() {
@@ -64,12 +71,12 @@ quick note on varia resources:
 #define DSEG_SIZE 59280 // 0xe790
 #define ESEG_SIZE 35810 // 0x8be2
 
-void Resources::precomputeResourceOffsets(Segment &seg, Common::Array<uint16> &offsets, uint numTerminators) {
-	offsets.push_back(0);
+void Resources::precomputeResourceOffsets(const ResourceInfo &resInfo, Common::Array<uint32> &offsets, uint numTerminators) {
+	offsets.push_back(resInfo._offset);
 	uint n = 0;
 	uint8 current, last = 0xff;
-	for (uint i = 0; i < seg.size(); i++) {
-		current = seg.get_byte(i);
+	for (uint32 i = resInfo._offset; i < resInfo._offset + resInfo._size; i++) {
+		current = eseg.get_byte(i);
 
 		if (n == numTerminators) {
 			offsets.push_back(i);
@@ -86,36 +93,36 @@ void Resources::precomputeResourceOffsets(Segment &seg, Common::Array<uint16> &o
 	}
 }
 
-void Resources::precomputeDialogOffsets() {
-	precomputeResourceOffsets(eseg, dialogOffsets, 4);
+void Resources::precomputeDialogOffsets(const ResourceInfo &resInfo) {
+	precomputeResourceOffsets(resInfo, dialogOffsets, 4);
 
 	debug(1, "Resources::precomputeDialogOffsets() - Found %d dialogs", dialogOffsets.size());
 	for (uint i = 0; i < dialogOffsets.size(); i++)
 		debug(1, "\tDialog #%d: Offset 0x%04x", i, dialogOffsets[i]);
 }
 
-void Resources::precomputeCreditsOffsets() {
-	precomputeResourceOffsets(creditsSeg, creditsOffsets);
+void Resources::precomputeCreditsOffsets(const ResourceInfo &resInfo) {
+	precomputeResourceOffsets(resInfo, creditsOffsets);
 
 	debug(1, "Resources::precomputeCreditsOffsets() - Found %d credits", creditsOffsets.size());
 	for (uint i = 0; i < creditsOffsets.size(); i++)
 		debug(1, "\tCredit #%d: Offset 0x%04x", i, creditsOffsets[i]);
 }
 
-void Resources::precomputeItemOffsets() {
-	precomputeResourceOffsets(itemsSeg, itemOffsets);
+void Resources::precomputeItemOffsets(const ResourceInfo &resInfo) {
+	precomputeResourceOffsets(resInfo, itemOffsets);
 
 	debug(1, "Resources::precomputeItemOffsets() - Found %d items", itemOffsets.size());
 	for (uint i = 0; i < itemOffsets.size(); i++)
 		debug(1, "\tItem #%d: Offset 0x%04x", i, itemOffsets[i]);
 }
 
-void Resources::precomputeMessageOffsets() {
-	precomputeResourceOffsets(messagesSeg, messageOffsets);
+void Resources::precomputeMessageOffsets(const ResourceInfo &resInfo) {
+	precomputeResourceOffsets(resInfo, messageOffsets);
 }
 
-void Resources::precomputeCombinationOffsets() {
-	precomputeResourceOffsets(combinationsSeg, combinationOffsets);
+void Resources::precomputeCombinationOffsets(const ResourceInfo &resInfo) {
+	precomputeResourceOffsets(resInfo, combinationOffsets);
 
 	debug(1, "Resources::precomputeCombinationOffsets() - Found %d combination items", combinationOffsets.size());
 	for (uint i = 0; i < combinationOffsets.size(); i++)
@@ -134,6 +141,41 @@ void Resources::readDialogStacks(byte *src) {
 		if (word == 0xFFFF)
 			dialogStackWritten++;
 		i++;
+	}
+}
+
+void Resources::precomputeAllOffsets(const Common::Array<ResourceInfo> &resourceInfos) {
+	for (const auto &resInfo : resourceInfos) {
+		switch ((ResourceType)resInfo._id) {
+		case kResCombinations:
+			_combinationsStartOffset = resInfo._offset;
+			precomputeCombinationOffsets(resInfo);
+			break;
+		case kResCredits:
+			_creditsStartOffset = resInfo._offset;
+			precomputeCreditsOffsets(resInfo);
+			break;
+		case kResDialogs:
+			_dialogsStartOffset = resInfo._offset;
+			precomputeDialogOffsets(resInfo);
+			break;
+		case kResItems:
+			_itemsStartOffset = resInfo._offset;
+			precomputeItemOffsets(resInfo);
+			break;
+		case kResMessages:
+			_messagesStartOffset = resInfo._offset;
+			precomputeMessageOffsets(resInfo);
+			break;
+		case kResSceneObjects:
+			_sceneObjectsStartOffset = resInfo._offset;
+			_sceneObjectsBlockSize = resInfo._size;
+			break;
+		case kResDialogStacks:
+		// fall through
+		default:
+			break;
+		}
 	}
 }
 
@@ -195,36 +237,30 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 		}
 	}
 
-	uint resourceSize = dat->readUint32LE();
-	eseg.read(dat, resourceSize);
+	Common::Array<ResourceInfo> resourceInfos(kNumResources);
+	uint32 allResourcesSize = 0;
+
+	for (auto &resInfo : resourceInfos) {
+		resInfo._id = dat->readByte();
+		resInfo._offset = dat->readUint32LE();
+		resInfo._size = dat->readUint32LE();
+
+		// Don't count Dialog stack's size
+		// since it will be stored in dseg, not eseg
+		if ((ResourceType)resInfo._id != kResDialogStacks)
+			allResourcesSize += resInfo._size;
+	}
 
 	// Dialog stack data
-	resourceSize = dat->readUint32LE();
-	dat->read(tempBuffer, resourceSize);
+	dat->read(tempBuffer, resourceInfos[(uint)kResDialogStacks]._size);
 	readDialogStacks((byte *)tempBuffer);
 
-	resourceSize = dat->readUint32LE();
-	itemsSeg.read(dat, resourceSize);
-
-	resourceSize = dat->readUint32LE();
-	creditsSeg.read(dat, resourceSize);
-
-	resourceSize = dat->readUint32LE();
-	sceneObjectsSeg.read(dat, resourceSize);
-
-	resourceSize = dat->readUint32LE();
-	messagesSeg.read(dat, resourceSize);
-
-	resourceSize = dat->readUint32LE();
-	combinationsSeg.read(dat, resourceSize);
+	// Store rest of the resources to eseg
+	eseg.read(dat, allResourcesSize);
 
 	delete dat;
 
-	precomputeDialogOffsets();
-	precomputeItemOffsets();
-	precomputeCreditsOffsets();
-	precomputeMessageOffsets();
-	precomputeCombinationOffsets();
+	precomputeAllOffsets(resourceInfos);
 
 	FilePack varia;
 	varia.open("varia.res");
