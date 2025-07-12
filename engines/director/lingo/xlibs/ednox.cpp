@@ -55,6 +55,7 @@
  * SSS    deleteDocumentFile,hDir,hFile  -- delete a file from the directory
 */
 
+#include "common/savefile.h"
 #include "director/director.h"
 #include "director/lingo/lingo.h"
 #include "director/lingo/lingo-object.h"
@@ -121,13 +122,6 @@ void Ednox::m_new(int nargs) {
 
 XOBJSTUBNR(Ednox::m_dispose)
 
-void Ednox::m_getdocumentfile(int nargs) {
-	// Common::U32String hFile = g_lingo->pop().asString();
-	// Common::U32String hDir = g_lingo->pop().asString();
-	g_lingo->printSTUBWithArglist("Ednox::m_getdocumentfile", nargs);
-	g_lingo->dropStack(nargs);
-}
-
 void Ednox::m_getpathx(int nargs) {
 	/* int mMacMode = */ g_lingo->pop().asInt();
 	Common::U32String hStrIn = g_lingo->pop().asString();
@@ -145,25 +139,17 @@ void Ednox::m_iscdx(int nargs) {
 	Common::U32String hDrive = g_lingo->pop().asString();
 	// g_lingo->printSTUBWithArglist("Ednox::m_iscdx", nargs);
 	if (hDrive == "d:\\"){
-		g_lingo->push(Datum(0));
+		g_lingo->push(Datum("0"));
 	} else {
-		g_lingo->push(Datum(-1));
+		g_lingo->push(Datum("-1"));
 	}
-}
-
-void Ednox::m_savedocumentfile(int nargs) {
-	// Common::U32String hStrIn = g_lingo->pop().asString();
-	// Common::U32String hFile = g_lingo->pop().asString();
-	// Common::U32String hDir = g_lingo->pop().asString();
-	g_lingo->printSTUBWithArglist("Ednox::m_savedocumentfile", nargs);
-	g_lingo->dropStack(nargs);
 }
 
 void Ednox::m_setdrivex(int nargs) {
 	// Common::U32String hStrIn = g_lingo->pop().asString();
 	g_lingo->printSTUBWithArglist("Ednox::m_setdrivex", nargs);
 	g_lingo->dropStack(nargs);
-	g_lingo->push(Datum(0));
+	g_lingo->push(Datum("1"));
 }
 
 XOBJSTUB(Ednox::m_checksoundx, "")
@@ -185,11 +171,70 @@ void Ednox::m_drawbkgndx(int nargs) {
 }
 
 void Ednox::m_getdocumentname(int nargs) {
-	// Common::U32String hExt = g_lingo->pop().asString();
-	// Common::U32String hDir = g_lingo->pop().asString();
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	Common::String prefix = savePrefix();
 	g_lingo->printSTUBWithArglist("Ednox::m_getdocumentname", nargs);
-	g_lingo->dropStack(nargs);
+	ARGNUMCHECK(2);
+	Common::String hExt = g_lingo->pop().asString();
+	Common::String hDir = g_lingo->pop().asString();
+	Common::String result;
+	Common::StringArray existing = saves->listSavefiles(Common::String::format("%s*", prefix.c_str()));
+	bool first = true;
+	for (auto &it : existing) {
+		if (first)
+			first = false;
+		else
+			result += ",";
+		result += it.substr(prefix.size());
+	}
+	g_lingo->push(result);
 }
+
+void Ednox::m_getdocumentfile(int nargs) {
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	Common::String prefix = savePrefix();
+	g_lingo->printSTUBWithArglist("Ednox::m_getdocumentfile", nargs);
+	ARGNUMCHECK(2);
+	Common::String hFile = g_lingo->pop().asString();
+	Common::String hDir = g_lingo->pop().asString();
+
+	Common::String filename = prefix + hFile;
+	// ignore the directory, we just care about the filename
+	if (!saves->exists(filename)) {
+		warning("Ednox::m_getdocumentfile: No file exists for %s", filename.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
+	Common::SeekableReadStream *stream = saves->openForLoading(filename);
+	if (!stream) {
+		warning("Ednox::m_getdocumentfile: Unable to open file %s", filename.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
+	Common::String result = stream->readString();
+	delete stream;
+	g_lingo->push(Datum(result));
+}
+
+void Ednox::m_savedocumentfile(int nargs) {
+	Common::SaveFileManager *saves = g_system->getSavefileManager();
+	g_lingo->printSTUBWithArglist("Ednox::m_savedocumentfile", nargs);
+	ARGNUMCHECK(3);
+	Common::String hStrIn = g_lingo->pop().asString();
+	Common::String hFile = g_lingo->pop().asString();
+	Common::String hDir = g_lingo->pop().asString();
+	Common::String filename = savePrefix() + hFile;
+	Common::SeekableWriteStream *stream = saves->openForSaving(filename, false);
+	if (!stream) {
+		warning("Ednox::m_savedocumentfile: Unable to open file %s", filename.c_str());
+		g_lingo->push(Datum());
+		return;
+	}
+	stream->writeString(hStrIn);
+	delete stream;
+	g_lingo->push(Common::String(""));
+}
+
 
 void Ednox::m_error(int nargs) {
 	// int code = g_lingo->pop().asInt();

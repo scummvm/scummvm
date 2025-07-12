@@ -256,6 +256,8 @@ const struct Quirk {
 	{ "vnc", Common::kPlatformMacintosh, &quirkPretend16Bit },
 	{ "finkletimes", Common::kPlatformWindows, &quirkPretend16Bit },
 	{ "finkletimes", Common::kPlatformMacintosh, &quirkPretend16Bit },
+	{ "flipper", Common::kPlatformMacintosh, &quirkPretend16Bit },
+	{ "flipper", Common::kPlatformWindows, &quirkPretend16Bit },
 
 	{ nullptr, Common::kPlatformUnknown, nullptr }
 };
