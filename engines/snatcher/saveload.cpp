@@ -26,6 +26,7 @@
 #include "snatcher/snatcher.h"
 #include "snatcher/sound.h"
 #include "snatcher/ui.h"
+#include "snatcher/util.h"
 #include "common/algorithm.h"
 #include "common/config-manager.h"
 #include "common/memstream.h"
@@ -77,10 +78,24 @@ void SaveLoadManager::saveSettings(const Config &config) {
 }
 
 void SaveLoadManager::updateSaveSlotsStatus(GameState &state) {
-	state.saveSlotUsage = 0;
+	state.saveInfo.slotUsage = 0;
+	SaveHeader header;
+
 	for (int i = 0; i < 4; ++i) {
-		if (isSaveSlotUsed(i + 1)) // Skip autosave slot 0
-			state.saveSlotUsage |= (1 << i);
+		if (!isSaveSlotUsed(i + 1)) // Skip autosave slot 0
+			continue;
+		state.saveInfo.slotUsage |= (1 << i);
+		Common::String fileName = getSavegameFilename(i + 1, _vm->_targetName);
+		Common::SeekableReadStream *in = _vm->_saveFileMan->openForLoading(fileName);
+		if (!in)
+			error("%s(): Unable to open savegame file", __FUNCTION__);
+
+		readSaveHeader(in, header);
+		state.saveInfo.slots[i].desc = header.desc;
+		state.saveInfo.slots[i].playTime = Util::makeBCDTimeStamp(header.totalPlayTime * 1000, Util::kBCD_HHMMSS) >> 16;
+		state.saveInfo.slots[i].numSaves = Util::toBCD(header.saveCount);
+		state.saveInfo.slots[i].act = header.act;
+		delete in;
 	}
 }
 
@@ -94,11 +109,13 @@ void SaveLoadManager::requestSave(int slot, const Common::String &desc) {
 }
 
 void SaveLoadManager::handleSaveLoad(GameState &state) {
-	if (_pendingSaveLoad > 0)
+	if (state.pendingSaveLoad)
+		loadState(state.pendingSaveLoad, state);
+	else if (_pendingSaveLoad > 0)
 		loadState(_pendingSaveLoad - 1, state);
 	else if (_pendingSaveLoad < 0)
 		saveState(-_pendingSaveLoad - 1, state);
-	_pendingSaveLoad = 0;
+	state.pendingSaveLoad = _pendingSaveLoad = 0;
 }
 
 bool SaveLoadManager::isSaveSlotUsed(int16 slot) const {
@@ -125,17 +142,20 @@ void SaveLoadManager::enableSaving(bool enable) {
 void SaveLoadManager::saveTempState(Script &script) {
 	Common::MemoryWriteStreamDynamic out(DisposeAfterUse::NO);
 	_vm->_scriptEngine->saveState(&out, script, true);
-	_vm->gfx()->saveState(&out);
+	_vm->gfx()->saveState(&out, true);
 	_vm->sound()->saveState(&out);
 	_vm->_ui->saveState(&out);
 	_tempState = Common::SharedPtr<Common::MemoryReadStream>(new Common::MemoryReadStream(out.getData(), out.size(), DisposeAfterUse::YES));
 }
 
 void SaveLoadManager::restoreTempState(Script &script) {
-	_vm->_scriptEngine->loadState(_tempState.get(), script, true);
-	_vm->gfx()->loadState(_tempState.get());
-	_vm->sound()->loadState(_tempState.get());
-	_vm->_ui->loadState(_tempState.get());
+	Common::MemoryReadStream *m = _tempState.get();
+	assert(m != nullptr);
+	m->seek(0);
+	_vm->_scriptEngine->loadState(m, script, true);
+	_vm->gfx()->loadState(m, true);
+	_vm->sound()->loadState(m);
+	_vm->_ui->loadState(m);
 }
 
 Common::String SaveLoadManager::getSavegameFilename(int slot, const Common::String target) {
@@ -168,6 +188,7 @@ bool SaveLoadManager::readSaveHeader(Common::SeekableReadStream *saveFile, SaveH
 	header.td.tm_wday = saveFile->readUint32BE();
 
 	header.totalPlayTime = saveFile->readUint32BE();
+	//header.act = saveFile->readSint16BE();
 	header.saveCount = saveFile->readSint16BE();
 
 	return true;
@@ -181,20 +202,27 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	_vm->_enableLightGun = in->readByte();
 
 	state.phase = in->readSint16BE();
-	state.phaseFlags = in->readSint16BE();
+	state.updateFlags = in->readSint16BE();
 	state.counter = in->readSint16BE();
-	state.finish = in->readSint16BE();
+	state.modFinish = in->readSint16BE();
 	state.frameNo = in->readSint16BE();
 	state.frameState = in->readSint16BE();
 	state.menuSelect = in->readSint16BE();
 	state.modIndex = in->readSint16BE();
-	state.modProcessSub = in->readSint16BE();
-	state.modProcessTop = in->readSint16BE();
+	state.modPhaseSub = in->readSint16BE();
+	state.modPhaseTop = in->readSint16BE();
 	state.prologue = in->readSint16BE();
+
+	uint16 tsize = 0;//in->readUint16BE();
+	if (tsize) {
+		uint8 *tmp = new uint8[tsize];
+		in->read(tmp, tsize);
+		_tempState = Common::SharedPtr<Common::MemoryReadStream>(new Common::MemoryReadStream(tmp, tsize, DisposeAfterUse::YES));
+	}
 
 	_vm->_scriptEngine->loadState(in, state.script, false);
 	_vm->_cmdQueue->loadState(in);
-	_vm->gfx()->loadState(in);
+	_vm->gfx()->loadState(in, false);
 	_vm->sound()->loadState(in);
 	_vm->_ui->loadState(in);
 
@@ -205,7 +233,7 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 
 	if (state.prologue == -1) {
 		state.phase = 0;
-		state.phaseFlags = 0;
+		state.updateFlags = 0;
 		state.menuSelect = 1;
 	}
 }
@@ -217,20 +245,33 @@ void SaveLoadManager::saveState(int slot, GameState &state) {
 	out->writeByte(_vm->_enableLightGun);
 
 	out->writeSint16BE(state.phase);
-	out->writeSint16BE(state.phaseFlags);
+	out->writeSint16BE(state.updateFlags);
 	out->writeSint16BE(state.counter);
-	out->writeSint16BE(state.finish);
+	out->writeSint16BE(state.modFinish);
 	out->writeSint16BE(state.frameNo);
 	out->writeSint16BE(state.frameState);
 	out->writeSint16BE(state.menuSelect);
 	out->writeSint16BE(state.modIndex);
-	out->writeSint16BE(state.modProcessSub);
-	out->writeSint16BE(state.modProcessTop);
+	out->writeSint16BE(state.modPhaseSub);
+	out->writeSint16BE(state.modPhaseTop);
 	out->writeSint16BE(state.prologue);
+
+	Common::MemoryReadStream *m = _tempState.get();
+	if (m) {
+		m->seek(0);
+		uint32 tsize = m->size();
+		uint8 *tmp = new uint8[tsize];
+		m->read(tmp, tsize);
+		out->writeUint16BE(tsize);
+		out->write(tmp, tsize);
+		delete[] tmp;
+	} else {
+		out->writeUint16BE(0);
+	}
 
 	_vm->_scriptEngine->saveState(out, state.script, false);
 	_vm->_cmdQueue->saveState(out);
-	_vm->gfx()->saveState(out);
+	_vm->gfx()->saveState(out, false);
 	_vm->sound()->saveState(out);
 	_vm->_ui->saveState(out);
 
@@ -250,8 +291,8 @@ Common::SeekableReadStream *SaveLoadManager::openFileForLoading(int slot, GameSt
 
 	readSaveHeader(in, header);
 	state.totalPlayTime = header.totalPlayTime;
-	state.saveCount = header.saveCount;
-
+	state.saveInfo.act = header.act;
+	state.saveInfo.saveCount = header.saveCount;
 	return in;
 }
 
@@ -286,7 +327,8 @@ Common::OutSaveFile *SaveLoadManager::openFileForSaving(int slot, const Common::
 	out->writeSint32BE(td.tm_wday);
 
 	out->writeUint32BE(state.totalPlayTime);
-	out->writeSint16BE(++state.saveCount);
+	out->writeUint16BE(state.saveInfo.act);
+	out->writeSint16BE(++state.saveInfo.saveCount);
 
 	return out;
 }

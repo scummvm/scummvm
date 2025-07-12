@@ -30,7 +30,13 @@ namespace Util {
 
 extern uint32 decodeSCDData(const uint8 *src, uint8 *dst);
 
-extern uint32 makeBCDTimeStamp(uint32 msecs);
+enum BCDResolution {
+	kBCD_MMSSFR = 0,
+	kBCD_HHMMSS
+};
+
+extern uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res);
+extern uint8 toBCD(uint8 v);
 
 extern void rngReset();
 extern uint16 rngMakeNumber();

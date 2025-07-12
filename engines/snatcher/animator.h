@@ -23,6 +23,7 @@
 #define SNATCHER_ANIMATOR_H
 
 #include "common/platform.h"
+#include "snatcher/state.h"
 #include "snatcher/graphics.h"
 #include "snatcher/resource.h"
 
@@ -45,6 +46,8 @@ public:
 	virtual void clearTextInputLine() = 0;
 	virtual uint8 *getTextRenderBuffer() const = 0;
 	virtual void renderTextBuffer(uint16 firstLine, uint8 numLines) = 0;
+
+	virtual void updateSaveLoadDialog(SaveInfo &saveInfo) = 0;
 
 	virtual void updateScreen(uint8 *screen) = 0;
 	virtual void updateAnimations() = 0;

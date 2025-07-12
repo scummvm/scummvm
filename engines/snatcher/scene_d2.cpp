@@ -208,7 +208,7 @@ SH_IMPL_FRM(D2, 07) {
 		break;
 	default:
 		++state.frameNo;
-		if (state.saveSlotUsage)
+		if (state.saveInfo.slotUsage)
 			++state.frameNo;
 		state.frameState = 0;
 		break;
@@ -248,8 +248,8 @@ SH_IMPL_FRM(D2, 09) {
 	switch (state.frameState) {
 	case 0:
 		_vm->gfx()->transitionCommand(0xFF);
-		_vm->gfx()->clearAnimParameterFlags(state.saveSlotUsage ? 17 : 16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
-		state.frameState += (state.saveSlotUsage ? 1 : 2);
+		_vm->gfx()->clearAnimParameterFlags(state.saveInfo.slotUsage ? 17 : 16, GraphicsEngine::kAnimParaControlFlags, ~GraphicsEngine::kAnimHide);
+		state.frameState += (state.saveInfo.slotUsage ? 1 : 2);
 		break;
 	case 1:
 		if (_vm->input().singleFrameControllerFlags & 3)
@@ -286,9 +286,8 @@ SH_IMPL_FRM(D2, 10) {
 	bool fin = false;
 	switch (state.frameState) {
 	case 0:
-		if (state.counter == 3) {
-
-		}
+		if (state.counter == 3)
+			_vm->gfx()->updateSaveLoadDialog(state.saveInfo);
 		if (state.counter != 21) {;
 			_vm->gfx()->enqueueDrawCommands(_module->getPtr(0x29142).getDataFromTable(state.counter));
 			if (state.counter != 0)
@@ -305,13 +304,14 @@ SH_IMPL_FRM(D2, 10) {
 			if (_vm->input().singleFrameControllerFlags & 2)
 				++_curSaveFile;
 			_curSaveFile &= 3;
-		} while (!(state.saveSlotUsage & (1 << _curSaveFile)));
+		} while (!(state.saveInfo.slotUsage & (1 << _curSaveFile)));
 
 		_vm->gfx()->setAnimParameter(24, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
 		_vm->gfx()->setAnimParameter(25, GraphicsEngine::kAnimParaFrame, _curSaveFile << 2);
 
 		if (_vm->input().singleFrameControllerFlags & 0x80) {
 			_vm->sound()->fmSendCommand(56, 0, 2);
+			state.pendingSaveLoad = _curSaveFile + 1;
 			_loadCancelled = false;
 			fin = true;
 		} else if (_vm->input().singleFrameControllerFlags & 0x10) {
@@ -522,7 +522,7 @@ SH_IMPL_FRM(D2, 11) {
 SH_IMPL_FRM(D2, 12) {
 	if (--state.counter)
 		return;
-	state.finish = 1;
+	state.modFinish = 1;
 	state.frameNo = 0;
 	state.frameState = 0;
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
