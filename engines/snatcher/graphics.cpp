@@ -164,6 +164,10 @@ bool GraphicsEngine::isVerbsTabActive() const {
 	return _trs->scroll_getState().verbsTabVisible;
 }
 
+void GraphicsEngine::updateSaveLoadDialog(SaveInfo &saveInfo) {
+	_animator->updateSaveLoadDialog(saveInfo);
+}
+
 void GraphicsEngine::updateAnimations() {
 	_animator->updateAnimations();
 }
@@ -269,15 +273,19 @@ uint16 GraphicsEngine::frameCount() const {
 	return _state.frameCount();
 }
 
-void GraphicsEngine::loadState(Common::SeekableReadStream *in) {
+void GraphicsEngine::loadState(Common::SeekableReadStream *in, bool onlyTempData) {
 	if (in->readUint32BE() != MKTAG('S', 'N', 'A', 'T'))
 		error("%s(): Save file invalid or corrupt", __FUNCTION__);
 	in->read(_animSaveLoadData, 64);
+
+	if (onlyTempData)
+		return;
+
 	//for (int i = 0; i < 13; ++i)
 	//	_state.setVar(i, in->readByte());
 }
 
-void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
+void GraphicsEngine::saveState(Common::SeekableWriteStream *out, bool onlyTempData) {
 	out->writeUint32BE(MKTAG('S', 'N', 'A', 'T'));
 	for (int i = 0; i < 64; ++i) {
 		uint8 v = 0;
@@ -298,6 +306,10 @@ void GraphicsEngine::saveState(Common::SeekableWriteStream *out) {
 		_animSaveLoadData[i] = v;
 	}
 	out->write(_animSaveLoadData, 64);
+
+	if (onlyTempData)
+		return;
+
 	for (int i = 0; i < 13; ++i)
 		out->writeByte(_state.getVar(i));
 }

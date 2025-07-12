@@ -123,6 +123,8 @@ public:
 	uint8 *getTextRenderBuffer() const override;
 	void renderTextBuffer(uint16 firstLine, uint8 numLines) override;
 
+	void updateSaveLoadDialog(SaveInfo &saveInfo) override;
+
 	void updateScreen(uint8 *screen) override;
 	void updateAnimations() override;
 
@@ -439,6 +441,59 @@ void Animator_SCD::renderTextBuffer(uint16 firstLine, uint8 numLines) {
 	uint16 start = firstLine << 10;
 	uint16 len = numLines << 10;
 	_sr->loadToVRAM(_tempBuffer + 0x6000 + start, len, start);
+}
+
+void Animator_SCD::updateSaveLoadDialog(SaveInfo &saveInfo) {
+	uint8 *dst = _tempBuffer + 0x256;
+	uint8 *dst2 = _tempBuffer + 0x1EE;
+
+	for (int i = 0; i < 4; ++i) {
+		if (saveInfo.slotUsage & (1 << i)) {
+			uint16 vl = 0;
+			uint16 tm = saveInfo.slots[i].playTime;
+			uint16 nm = saveInfo.slots[i].numSaves;
+
+			if ((tm >> 8) & 0xF0) {
+				vl = 0x4580 + (((tm >> 8) & 0xF0) >> 3);
+				WRITE_BE_UINT16(&dst[0x00], vl);
+				WRITE_BE_UINT16(&dst[0x40], vl + 1);
+			}
+			vl = 0x4580 + (((tm >> 8) & 0x0F) << 1);
+			WRITE_BE_UINT16(&dst[0x02], vl);
+			WRITE_BE_UINT16(&dst[0x42], vl + 1);
+			WRITE_BE_UINT16(&dst[0x04], 0x4594);
+			WRITE_BE_UINT16(&dst[0x44], 0x4595);
+			vl = 0x4580 + ((tm & 0xF0) >> 3);
+			WRITE_BE_UINT16(&dst[0x06], vl);
+			WRITE_BE_UINT16(&dst[0x46], vl + 1);
+			vl = 0x4580 + ((tm & 0x0F) << 1);
+			WRITE_BE_UINT16(&dst[0x08], vl);
+			WRITE_BE_UINT16(&dst[0x48], vl + 1);
+
+			vl = 0x4596 + saveInfo.slots[i].act;
+			WRITE_BE_UINT16(&dst2[0x00], vl);
+			WRITE_BE_UINT16(&dst2[0x40], vl + 1);
+
+			if (nm & 0xF0) {
+				vl = 0x4580 + ((nm & 0xF0) >> 3);
+				WRITE_BE_UINT16(&dst[0x16], vl);
+				WRITE_BE_UINT16(&dst[0x56], vl + 1);
+			}
+			vl = 0x4580 + ((nm & 0x0F) << 1);
+			WRITE_BE_UINT16(&dst[0x18], vl);
+			WRITE_BE_UINT16(&dst[0x58], vl + 1);
+
+		} else {
+			static const uint8 data[2][10] = {
+				{ 0x45, 0x9C, 0x45, 0x9D, 0x45, 0x9E, 0x45, 0x9F, 0x45, 0xA0 },
+				{ 0x45, 0xA1, 0x45, 0xA2, 0x45, 0xA3, 0x45, 0xA4, 0x45, 0xA5 }
+			};
+			memcpy(dst, data[0], 10);
+			memcpy(&dst[64], data[1], 10);
+		}
+		dst += 0x100;
+		dst2 += 0x100;
+	}
 }
 
 void Animator_SCD::updateScreen(uint8 *screen) {

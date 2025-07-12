@@ -79,14 +79,19 @@ uint32 decodeSCDData(const uint8 *src, uint8 *dst) {
 	return (dst - dstStart);
 }
 
-uint8 toDecimal(uint8 v) {
+uint8 toBCD(uint8 v) {
 	return (v / 10) << 4 | (v % 10);
 }
 
-uint32 makeBCDTimeStamp(uint32 msecs) {
-	uint32 min = toDecimal(msecs / 60000);
-	uint32 sec = toDecimal((msecs / 1000) % 60);
-	uint32 frm = toDecimal((msecs % 1000) * 1000000 / 13333333);
+uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res) {
+	uint32 hrs = toBCD((msecs / 3600000) % 24);
+	uint32 min = toBCD((msecs / 60000) % 60);
+	uint32 sec = toBCD((msecs / 1000) % 60);
+	uint32 frm = toBCD((msecs % 1000) * 1000000 / 13333333);
+
+	if (res == kBCD_HHMMSS) // BCD time code hh:mm:ss
+		return ((hrs & 0xFF) << 24) | ((min & 0xFF) << 16) | ((sec & 0xFF) << 8);
+
 	// BCD time code mm:ss:ff:md (md = mode: 00 = CD-DA, 01 = CD-ROM mode 1, 02 = CD-ROM mode 2; irrelevant to us)
 	return ((min & 0xFF) << 24) | ((sec & 0xFF) << 16) | ((frm & 0xFF) << 8);
 }

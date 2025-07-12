@@ -189,7 +189,7 @@ SH_IMPL_FRM(Y16, 17) {
 		return;
 	}
 	state.counter = 300;
-	if (state.saveCount)
+	if (state.saveInfo.saveCount)
 		state.frameNo = 24;
 }
 
@@ -251,7 +251,7 @@ SH_IMPL_FRM(Y16, 26) {
 
 SH_IMPL_FRM(Y16, 27) {
 	state.frameNo = 0;
-	state.finish = 1;
+	state.modFinish = 1;
 }
 
 } // End of namespace Snatcher

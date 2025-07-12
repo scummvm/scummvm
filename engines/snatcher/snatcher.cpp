@@ -200,7 +200,7 @@ void SnatcherEngine::reset() {
 }
 
 void SnatcherEngine::playBootLogoAnimation(const GameState &state) {
-	if (ConfMan.hasKey("save_slot"))
+	if (!_reset && ConfMan.hasKey("save_slot"))
 		return; // Skip logo animation when loading a savegame from the launcher
 
 	uint32 frameTimer = 0;
@@ -228,6 +228,7 @@ bool SnatcherEngine::start() {
 	GameState state;
 	_saveMan->loadSettings(state.conf);
 	_saveMan->updateSaveSlotsStatus(state);
+	_saveMan->enableSaving(false);
 	_memHandler->setGameState(&state);
 
 	playBootLogoAnimation(state);
@@ -282,6 +283,8 @@ bool SnatcherEngine::start() {
 			}
 		}
 
+		_saveMan->enableSaving(state.phase == 2 && state.modPhaseTop == 5);
+
 		checkEvents(state);
 
 		_saveMan->handleSaveLoad(state);
@@ -290,7 +293,7 @@ bool SnatcherEngine::start() {
 		_snd->update();
 		delayUntil(nextFrame);
 
-		if (state.modProcessTop == 5) {
+		if (state.modPhaseTop == 5) {
 			playTimer += _frameLen;
 			if (playTimer >= (1000 << 14)) {
 				playTimer -= (1000 << 14);
@@ -421,14 +424,14 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 }
 
 void SnatcherEngine::updateMainState(GameState &state) {
-	// The phaseFlags variable is an invention to emulate the interaction between the main thread and the
+	// The updateFlags variable is an invention to emulate the interaction between the main thread and the
 	// vertical interrupt handlers in the original code. It may complicate things a bit (e. g. I have to
 	// provide means to drop out of several involved functions and continue with them later), but I still
 	// like this better than making the code multi-threaded (using a timer proc as vint handler replacment).
 
-	if (state.phaseFlags & 0x80) {
+	if (state.updateFlags & 0x80) {
 		if (!(_cmdQueue->enabled() || (_snd->pcmGetStatus().statusBits & 7)))
-			state.phaseFlags &= ~0x80;
+			state.updateFlags &= ~0x80;
 		else
 			return;
 	}
@@ -455,7 +458,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		_cmdQueue->start();
 
 		++state.phase;
-		state.phaseFlags |= 0x80;
+		state.updateFlags |= 0x80;
 
 		break;
 
@@ -491,40 +494,40 @@ void SnatcherEngine::updateMainState(GameState &state) {
 
 		_cmdQueue->start();
 		++state.phase;
-		state.phaseFlags |= 0x80;
+		state.updateFlags |= 0x80;
 		break;
 
 	case 2:
 		// Ingame logic
-		if (state.phaseFlags & 0x40) {
+		if (state.updateFlags & 0x40) {
 			if (_scriptEngine->postProcess(state.script)) {
 				for (int i = 5; i < 15; ++i)
 					_gfx->setAnimParameter(i, GraphicsEngine::kAnimParaEnable, 0);
 				_cmdQueue->writeUInt16(0x22);
 				_cmdQueue->writeUInt32(0x139D0);
 				_cmdQueue->start();
-				state.phaseFlags |= 0xA0;
+				state.updateFlags |= 0xA0;
 			}
-			state.phaseFlags &= ~0x40;
-		} else if (state.phaseFlags & 0x20) {
+			state.updateFlags &= ~0x40;
+		} else if (state.updateFlags & 0x20) {
 			_gfx->setVar(11, 0xFF);
 			if (!_ui->drawVerbs() || !_ui->verbsTabInputPrompt(_input)) {
-				state.phaseFlags |= 0x80;
+				state.updateFlags |= 0x80;
 			} else {
 				_scriptEngine->processInput();
-				state.phaseFlags &= ~0x20;
+				state.updateFlags &= ~0x20;
 			}
-		} else if (state.phaseFlags == 0) {
+		} else if (state.updateFlags == 0) {
 			_scriptEngine->run(state.script);
 			_cmdQueue->start();
-			state.phaseFlags |= 0xC0;
+			state.updateFlags |= 0xC0;
 		}
 		break;
 
 	case 3:
 		// Ending sequence
 		state.phase = 5;
-		state.finish = 1;
+		state.modFinish = 1;
 		break;
 
 	case 4:
@@ -535,7 +538,9 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		break;
 
 	default:
-		// Infinite loop (maybe change this to quit the engine instead)
+		// Infinite loop
+		// Possible TODO: Maybe change this to quit the engine instead. For the console hardware, there was
+		// not much choice except just letting it run, but we don't necessarily have to copy that behavior.
 		break;
 	}
 }
@@ -544,55 +549,55 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 	bool _sub_bool_5 = false;
 	++_gfxInfo.frameCounter;
 
-	switch (state.modProcessTop) {
+	switch (state.modPhaseTop) {
 	case -1:
 		_snd->cdaStop();
-		state.modProcessTop = 0;
+		state.modPhaseTop = 0;
 		break;
 	case 0:
-		switch (state.modProcessSub) {
+		switch (state.modPhaseSub) {
 		case 0:
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 1:
 			if (!_snd->cdaIsPlaying()) {
 				delete _module;
 				_module = _fio->loadModule(4);
 				assert(_module);
-				++state.modProcessSub;
+				++state.modPhaseSub;
 			}
 			break;
 		case 2:
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 3:
-			state.modProcessSub = 0;
-			state.finish = 0;
-			++state.modProcessTop;
+			state.modPhaseSub = 0;
+			state.modFinish = 0;
+			++state.modPhaseTop;
 			break;
 		default:
 			break;
 		}
 		break;
 	case 1:
-		switch (state.modProcessSub) {
+		switch (state.modPhaseSub) {
 		case 0:
 			state.frameNo = 0;
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			_snd->pcmInitSound(30);
 			break;
 		case 1:
 			if (!(_snd->pcmGetStatus().statusBits & 0x0F))
-				++state.modProcessSub;
+				++state.modPhaseSub;
 			break;
 		case 2:
 			if (_module)
 				_module->run(state);
-			if (state.finish) {
+			if (state.modFinish) {
 				_saveMan->saveSettings(state.conf);
-				state.modProcessSub = 0;
-				state.finish = 0;
-				state.modProcessTop = state.menuSelect ? 7 : state.modProcessTop + 1;
+				state.modPhaseSub = 0;
+				state.modFinish = 0;
+				state.modPhaseTop = state.menuSelect ? 7 : state.modPhaseTop + 1;
 				state.modIndex = 0;
 				state.prologue = 1;
 			}
@@ -602,7 +607,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		break;
 	case 2:
-		switch (state.modProcessSub) {
+		switch (state.modPhaseSub) {
 		case 0:
 			if (!(_gfx->frameCount() & 0x1F)) {
 				if (!_snd->cdaIsPlaying()) {
@@ -611,7 +616,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 					assert(state.modIndex < ARRAYSIZE(scids));
 					_module = _fio->loadModule(scids[state.modIndex]);
 					assert(_module);
-					++state.modProcessSub;
+					++state.modPhaseSub;
 				} else {
 					_snd->cdaStop();
 				}
@@ -621,67 +626,67 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			if (!(_gfx->frameCount() & 0x1F)) {
 				// original: check whether file is loaded
 				state.frameNo = -1;
-				++state.modProcessSub;
+				++state.modPhaseSub;
 			}
 			break;
 		case 2:
 			if (_module)
 				_module->run(state);
-			if (state.finish < 0) {
-				state.finish = 0;
+			if (state.modFinish < 0) {
+				state.modFinish = 0;
 				state.counter = 10;
-				++state.modProcessSub;
+				++state.modPhaseSub;
 				_gfx->enqueuePaletteEvent(_scd->makePtr(MemMapping::MEM_PALDATA_06));
-			} else if (state.finish) {
+			} else if (state.modFinish) {
 				if (state.modIndex == 0) {
 					++state.modIndex;
-					state.finish = 0;
+					state.modFinish = 0;
 				}
 				_gfx->reset(GraphicsEngine::kResetAnimations);
-				state.modProcessSub = 0;
+				state.modPhaseSub = 0;
 			}
 			break;
 		case 3:
 			if (--state.counter == 1) {
 				_gfx->enqueueDrawCommands(_scd->makePtr(MemMapping::MEM_GFXDATA_05));
 			} else if (state.counter == 0) {
-				state.finish = -1;
-				state.modProcessSub = 0;
+				state.modFinish = -1;
+				state.modPhaseSub = 0;
 				_gfx->reset(GraphicsEngine::kResetSetDefaultsExt);
 			}
 			break;
 		default:
 			break;
 		}
-		if (state.finish) {
-			state.finish = 0;
-			state.modProcessTop = 7;
-			state.modProcessSub = 0;
+		if (state.modFinish) {
+			state.modFinish = 0;
+			state.modPhaseTop = 7;
+			state.modPhaseSub = 0;
 			_gfx->transitionCommand(0xFF);
 			_gfx->setVar(9, 1);
 			_gfx->reset(GraphicsEngine::kResetPalEvents | GraphicsEngine::kResetAnimations);
 		}
 		break;
 	case 3:
-		state.finish = 0;
-		state.modProcessTop = 0;
-		state.modProcessSub = 0;
+		state.modFinish = 0;
+		state.modPhaseTop = 0;
+		state.modPhaseSub = 0;
 		_gfx->reset(GraphicsEngine::kResetScrollState);
 		break;
 	case 5:
-		if (state.finish) {
-			++state.modProcessTop;
-			state.modProcessSub = 0;
-			state.finish = 0;
+		if (state.modFinish) {
+			++state.modPhaseTop;
+			state.modPhaseSub = 0;
+			state.modFinish = 0;
 		}
 		break;
 	case 6:
-		switch (state.modProcessSub) {
+		switch (state.modPhaseSub) {
 		case 0:
 			if (!_gfx->getAnimParameter(31, GraphicsEngine::kAnimParaEnable)) {
 				_gfx->reset(GraphicsEngine::kResetSetDefaults | GraphicsEngine::kResetAnimations);
 				_gfx->setVar(11, 0xFF);
-				++state.modProcessSub;
+				++state.modPhaseSub;
 				state.frameNo = -1;
 				state.frameState = 0;
 			}
@@ -691,19 +696,19 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 				delete _module;
 				_module = _fio->loadModule(52);
 				assert(_module);
-				++state.modProcessSub;
+				++state.modPhaseSub;
 			}
 			break;
 		case 2:
 			//original: check if file loaded
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 3:
 			if (_module)
 				_module->run(state);
-			if (state.finish) {
+			if (state.modFinish) {
 				_sub_bool_5 = true;
-				++state.modProcessSub;
+				++state.modPhaseSub;
 			}
 			break;
 		default:
@@ -711,24 +716,24 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 		}
 		break;
 	case 7:
-		switch (state.modProcessSub) {
+		switch (state.modPhaseSub) {
 		case 0:
 			_snd->cdaStop();
 			// original: start load PCMLT_01.BIN
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 1:
 		case 3:
 			// original: check if file loaded
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 2:
 			// original: start load PCMDRMDT.BIN
-			++state.modProcessSub;
+			++state.modPhaseSub;
 			break;
 		case 4:
-			state.modProcessTop = 5;
-			state.modProcessSub = 0;
+			state.modPhaseTop = 5;
+			state.modPhaseSub = 0;
 			state.prologue = -1;
 			break;
 		default:
