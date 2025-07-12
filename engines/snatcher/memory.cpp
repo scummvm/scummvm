@@ -70,6 +70,7 @@ uint16 MemAccessHandler::readWord(uint16 addr) {
 		result = _saveMan->isSaveSlotUsed((addr - 0x79E0) >> 1) ? 1 : 0; // The correct start address is 0x79E2, but we want to skip the autosave slot 0 here.
 		break;
 	case 0x79F0:
+		result = _state->saveInfo.act;
 		break;
 	case 0x96D6:
 		result = _ui->getFlashLightStatus().inputFlags;
@@ -95,6 +96,7 @@ void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 		_vm->gfx()->setVar(12, val);
 		break;
 	case 0x79F0:
+		_state->saveInfo.act = val;
 		break;
 	case 0x9718:
 		_ui->setInputStringLength(val);
@@ -108,7 +110,8 @@ void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 		_ui->setVideoPhoneMode(val);
 		break;
 	case 0xFFFF:
-		// The 0xFFFF "address" is an exception that is also handled separately in the original code.
+		// The 0xFFFF "address" is an exception that is also handled separately in the original code (probably,
+		// because the actual address for that sound setting is outside the addressable 16-bit range)
 		_vm->sound()->reduceVolume2(val);
 		break;
 	default:

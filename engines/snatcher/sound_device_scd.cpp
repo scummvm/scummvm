@@ -1800,7 +1800,7 @@ bool SegaSoundDevice::cdaIsPlaying() const {
 
 uint32 SegaSoundDevice::cdaGetTime() const {
 	uint32 relTime = cdaIsPlaying() ? g_system->getMillis() - _musicStartTime : 0;
-	return Util::makeBCDTimeStamp(relTime);
+	return Util::makeBCDTimeStamp(relTime, Util::kBCD_MMSSFR);
 }
 
 void SegaSoundDevice::fmSendCommand(int cmd, int restoreVolume) {

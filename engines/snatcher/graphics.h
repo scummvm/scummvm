@@ -77,6 +77,8 @@ public:
 	uint8 getVerbAreaType() const;
 	bool isVerbsTabActive() const;
 
+	void updateSaveLoadDialog(SaveInfo &saveInfo);
+
 	void updateAnimations();
 	void updateText();
 	void nextFrame();
@@ -148,8 +150,8 @@ public:
 	bool busy(int type) const;
 	uint16 frameCount() const;
 
-	void loadState(Common::SeekableReadStream *in);
-	void saveState(Common::SeekableWriteStream *out);
+	void loadState(Common::SeekableReadStream *in, bool onlyTempData);
+	void saveState(Common::SeekableWriteStream *out, bool onlyTempData);
 	void postLoadProcess();
 
 	void createMouseCursor();

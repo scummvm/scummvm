@@ -123,7 +123,7 @@ SH_IMPL_UPDT(D1) {
 		(*_frameProcs[state.frameNo])(state);
 		++state.frameNo;
 	} else if (_vm->input().singleFrameControllerFlags & 0x80) {
-		state.finish = -1;
+		state.modFinish = -1;
 		state.frameNo = 0;
 	}
 }
@@ -219,7 +219,7 @@ SH_IMPL_FRM(D1, 27) {
 }
 
 SH_IMPL_FRM(D1, 28) {
-	state.finish = 1;
+	state.modFinish = 1;
 	state.frameNo = 0;
 	_vm->gfx()->reset(GraphicsEngine::kResetSetDefaultsExt);
 }

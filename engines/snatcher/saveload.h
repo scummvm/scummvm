@@ -63,7 +63,7 @@ public:
 
 public:
 	struct SaveHeader {
-		SaveHeader() : version(0), lang(0), platform(0), desc(), thumbnail(), totalPlayTime(0), saveCount(0) {
+		SaveHeader() : version(0), lang(0), platform(0), desc(), thumbnail(), totalPlayTime(0), saveCount(0), act(0) {
 			memset(&td, 0, sizeof(TimeDate));
 		}
 		uint32 version;
@@ -74,6 +74,7 @@ public:
 		Common::SharedPtr<Graphics::Surface> thumbnail;
 		uint32 totalPlayTime;
 		int16 saveCount;
+		int16 act;
 	};
 
 	static Common::String getSavegameFilename(int slot, Common::String target);

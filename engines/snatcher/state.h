@@ -22,6 +22,7 @@
 #ifndef SNATCHER_STATE_H
 #define SNATCHER_STATE_H
 
+#include "common/str.h"
 #include "common/rect.h"
 #include "common/scummsys.h"
 
@@ -45,6 +46,20 @@ struct Config {
 	Common::Point lightGunBias;
 };
 
+struct SaveInfo {
+	SaveInfo() : slotUsage(0), saveCount(0), act(0) {}
+	struct Slot {
+		Slot() : playTime(0), numSaves(0), act(0), desc() {}
+		Common::String desc;
+		uint16 numSaves;
+		uint16 playTime;
+		uint8 act;
+	} slots[4];
+	int16 slotUsage;
+	int16 saveCount;
+	uint8 act;
+};
+
 struct Script {
 	Script(uint32 textResourceOffset, int16 &chaptr) : sentenceDone(0), sentencePos(0), data(nullptr), dataSize(0), curPos(0), newPos(0xFFFF), curFileNo(0), curGfxScript(-1), phase(chaptr), textResOffset(textResourceOffset) {}
 	~Script() {
@@ -66,20 +81,20 @@ struct Script {
 };
 
 struct GameState {
-	GameState() : frameNo(0), frameState(0), finish(0), modProcessTop(0), modProcessSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), phase(0), phaseFlags(0), saveSlotUsage(0), saveCount(0), conf(Config()), script(0x3800, phase), totalPlayTime(0) {}
+	GameState() : frameNo(0), frameState(0), modFinish(0), modPhaseTop(0), modPhaseSub(0), counter(0), modIndex(0), menuSelect(0), prologue(0), pendingSaveLoad(0), phase(0), updateFlags(0), saveInfo(), conf(), script(0x3800, phase), totalPlayTime(0) {}
 	int16 frameNo;
 	int16 frameState;
-	int16 finish;
-	int16 modProcessTop;
-	int16 modProcessSub;
+	int16 modFinish;
+	int16 modPhaseTop;
+	int16 modPhaseSub;
 	int16 counter;
 	int16 modIndex;
 	int16 menuSelect;
+	int16 pendingSaveLoad;
 	int16 prologue;
 	int16 phase;
-	int16 phaseFlags;
-	int16 saveSlotUsage;
-	int16 saveCount;
+	int16 updateFlags;
+	SaveInfo saveInfo;
 	Config conf;
 	Script script;
 	uint32 totalPlayTime;
