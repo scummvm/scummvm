@@ -71,8 +71,8 @@ void MessageDialog::reflowLayout() {
 	const int horizontalMargin = 10;
 	const int buttonSpacing = 10;
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	int16 screenW, screenH;
+	const Common::Rect safeArea = g_system->getSafeOverlayArea(&screenW, &screenH);
 
 	int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 	int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
@@ -84,7 +84,7 @@ void MessageDialog::reflowLayout() {
 	Common::Array<Common::U32String> lines;
 	size_t lineCount;
 
-	int maxlineWidth = g_gui.getFont().wordWrapText(_message, screenW - 2 * horizontalMargin - 20, lines);
+	int maxlineWidth = g_gui.getFont().wordWrapText(_message, safeArea.width() - 2 * horizontalMargin - 20, lines);
 
 	const size_t buttonCount = _buttons.size();
 	const int buttonsTotalWidth = buttonCount * buttonWidth + (buttonCount - 1) * buttonSpacing;
@@ -97,28 +97,34 @@ void MessageDialog::reflowLayout() {
 	_h = 16;
 	if (buttonCount)
 		_h += buttonHeight + 8;
+	if (_extraMessage)
+		_h += kLineHeight;
 
 	// Limit the number of lines so that the dialog still fits on the screen.
-	if (lineCount > size_t((screenH - 20 - _h) / kLineHeight)) {
-		lineCount = (screenH - 20 - _h) / kLineHeight;
-	}
+	lineCount = MIN(lineCount, (size_t)((safeArea.height() - 20 - _h) / kLineHeight));
 	_h += lineCount * kLineHeight;
 
 	// Center the dialog
 	_x = (screenW - _w) / 2;
 	_y = (screenH - _h) / 2;
 
+	safeArea.constrain(_x, _y, _w, _h);
+
+	int curY = 10;
+
 	// Each line is represented by one static text item.
 	// Update existing lines
 	size_t toUpdateLines = MIN<size_t>(lineCount, _lines.size());
 	for (size_t i = 0; i < toUpdateLines; i++) {
-		_lines[i]->setPos(horizontalMargin, 10 + i * kLineHeight);
+		_lines[i]->setPos(horizontalMargin, curY);
 		_lines[i]->setSize(maxlineWidth, kLineHeight);
 		_lines[i]->setLabel(lines[i]);
+		curY += kLineHeight;
 	}
 	// Create missing lines
 	for (size_t i = toUpdateLines; i < lineCount; i++) {
-		_lines.push_back(new StaticTextWidget(this, horizontalMargin, 10 + i * kLineHeight, maxlineWidth, kLineHeight, lines[i], _alignment));
+		_lines.push_back(new StaticTextWidget(this, horizontalMargin, curY, maxlineWidth, kLineHeight, lines[i], _alignment));
+		curY += kLineHeight;
 	}
 	// Cleanup old useless lines
 	for (size_t i = lineCount, total = _lines.size(); i < total; i++) {
@@ -127,17 +133,22 @@ void MessageDialog::reflowLayout() {
 	}
 	_lines.resize(lineCount);
 
-	int buttonPos = (_w - buttonsTotalWidth) / 2;
-	for (size_t i = 0; i < buttonCount; ++i) {
-		_buttons[i]->setPos(buttonPos, _h - buttonHeight - 8);
-		_buttons[i]->setSize(buttonWidth, buttonHeight);
-		buttonPos += buttonWidth + buttonSpacing;
+	if (buttonCount) {
+		curY += 8;
+		int buttonPos = (_w - buttonsTotalWidth) / 2;
+		for (size_t i = 0; i < buttonCount; ++i) {
+			_buttons[i]->setPos(buttonPos, curY);
+			_buttons[i]->setSize(buttonWidth, buttonHeight);
+			buttonPos += buttonWidth + buttonSpacing;
+		}
+		curY += buttonHeight;
 	}
 
+	curY += 6;
+
 	if (_extraMessage) {
-		_extraMessage->setPos(10, _h);
+		_extraMessage->setPos(10, curY);
 		_extraMessage->setSize(maxlineWidth, kLineHeight);
-		_h += kLineHeight;
 	}
 }
 

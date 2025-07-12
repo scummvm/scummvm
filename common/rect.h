@@ -364,7 +364,40 @@ struct Rect {
 		moveTo(p.x, p.y);
 	}
 
-	 /**
+	/**
+	 * Ensures the rectangle fits in an another one
+	 *
+	 * @return True if the rectangle could be constrained
+	 */
+	bool constrain(const Rect &o) {
+		return o.constrain(left, top, width(), height());
+	}
+
+	/**
+	 * Ensures the provided coordinates fit inside our rectangle
+	 *
+	 * @return True if the rectangle could be constrained
+	 */
+	bool constrain(int16 &x, int16 &y, int16 w, int16 h) const {
+		if (w > width() || h > height()) {
+			return false;
+		}
+
+		if (x < left) {
+			x = left;
+		} else if (x > right - w) { // x + w > right
+			x = right - w;
+		}
+		if (y < top) {
+			y = top;
+		} else if (y > bottom - h) { // y + h > bottom
+			y = bottom - h;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Print debug messages related to this class.
 	 */
 	void debugPrint(int debuglevel = 0, const char *caption = "Rect:") const {

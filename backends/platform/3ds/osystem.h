@@ -172,8 +172,8 @@ public:
 	void grabOverlay(Graphics::Surface &surface);
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w,
 	                       int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
+	virtual int16 getOverlayHeight() const;
+	virtual int16 getOverlayWidth() const;
 	void displayMessageOnOSD(const Common::U32String &msg) override;
 	void displayActivityIconOnOSD(const Graphics::Surface *icon) override;
 

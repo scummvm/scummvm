@@ -245,12 +245,16 @@ void ModularGraphicsBackend::copyRectToOverlay(const void *buf, int pitch, int x
 	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
 }
 
-int16 ModularGraphicsBackend::getOverlayHeight() {
+int16 ModularGraphicsBackend::getOverlayHeight() const {
 	return _graphicsManager->getOverlayHeight();
 }
 
-int16 ModularGraphicsBackend::getOverlayWidth() {
+int16 ModularGraphicsBackend::getOverlayWidth() const {
 	return _graphicsManager->getOverlayWidth();
+}
+
+Common::Rect ModularGraphicsBackend::getSafeOverlayArea(int16 *width, int16 *height) const {
+	return _graphicsManager->getSafeOverlayArea(width, height);
 }
 
 float ModularGraphicsBackend::getHiDPIScreenFactor() const {

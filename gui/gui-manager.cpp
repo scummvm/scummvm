@@ -120,8 +120,9 @@ void GuiManager::initIconsSet() {
 }
 
 void GuiManager::computeScaleFactor() {
-	uint16 w = g_system->getOverlayWidth();
-	uint16 h = g_system->getOverlayHeight();
+	const Common::Rect safeArea = g_system->getSafeOverlayArea();
+	const uint16 w = safeArea.width();
+	const uint16 h = safeArea.height();
 
 	_scaleFactor = g_system->getHiDPIScreenFactor();
 	if (ConfMan.hasKey("gui_scale"))
