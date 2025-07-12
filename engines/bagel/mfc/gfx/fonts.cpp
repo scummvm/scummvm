@@ -214,8 +214,14 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 }
 
 void Font::drawChar(Graphics::ManagedSurface *dst, uint32 chr, int x, int y, uint32 color) const {
-	_font->drawChar(dst, chr, x, y, color);
-	_font->drawChar(dst, chr, x + 1, y, color);
+	const int charW = _font->getCharWidth(chr) + 1;
+	const int charH = _font->getFontHeight();
+
+	if (x >= 0 && y >= 0 && (x + charW) <= dst->w &&
+			(y + charH) <= dst->h) {
+		_font->drawChar(dst, chr, x, y, color);
+		_font->drawChar(dst, chr, x + 1, y, color);
+	}
 }
 
 } // namespace Gfx

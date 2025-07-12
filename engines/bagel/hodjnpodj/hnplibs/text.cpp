@@ -395,6 +395,9 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 		m_cPosition.x = m_cSize.cx - textInfo.cx;
 	}
 
+	m_cPosition.x = MAX(m_cPosition.x, 0);
+	m_cPosition.y = MAX(m_cPosition.y, 0);
+
 	if (bShadowed) {
 		(*m_pWorkDC).SetTextColor(m_cShadowColor);      // set the color of the shadow
 		(*m_pWorkDC).TabbedTextOut(                     // zap the shadow to the work area
