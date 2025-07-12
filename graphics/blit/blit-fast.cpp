@@ -22,6 +22,7 @@
 #include "graphics/blit.h"
 #include "graphics/pixelformat.h"
 #include "common/endian.h"
+#include "common/system.h"
 
 namespace Graphics {
 
@@ -85,7 +86,15 @@ static const FastBlitLookup fastBlitFuncs_4to4[] = {
 	// 32-bit byteswap and rotate left
 	{ swapBlit<true,  24>, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0), Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0) }, // RGBA8888 -> BGRA8888
 	{ swapBlit<true,  24>, Graphics::PixelFormat(4, 8, 8, 8, 8,  8, 16, 24,  0), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16,  8,  0) }  // BGRA8888 -> RGBA8888
+
 };
+
+#ifdef SCUMMVM_NEON
+static const FastBlitLookup fastBlitFuncs_NEON[] = {
+	// 16-bit with NEON
+	{ fastBlitNEON_XRGB1555_RGB565, Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0), Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0) }, // XRGB1555 -> RGB565
+};
+#endif
 
 FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFmt) {
 	const uint dstBpp = dstFmt.bytesPerPixel;
@@ -96,18 +105,33 @@ FastBlitFunc getFastBlitFunc(const PixelFormat &dstFmt, const PixelFormat &srcFm
 	if (srcBpp == 4 && dstBpp == 4) {
 		table = fastBlitFuncs_4to4;
 		length = ARRAYSIZE(fastBlitFuncs_4to4);
-	} else {
-		return nullptr;
+
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
 	}
 
-	for (size_t i = 0; i < length; i++) {
-		if (srcFmt != table[i].srcFmt)
-			continue;
-		if (dstFmt != table[i].dstFmt)
-			continue;
+#ifdef SCUMMVM_NEON
+	if (srcBpp == 2 && dstBpp == 2 && g_system->hasFeature(OSystem::kFeatureCpuNEON)) {
+		table = fastBlitFuncs_NEON;
+		length = ARRAYSIZE(fastBlitFuncs_NEON);
 
-		return table[i].func;
+		for (size_t i = 0; i < length; i++) {
+			if (srcFmt != table[i].srcFmt)
+				continue;
+			if (dstFmt != table[i].dstFmt)
+				continue;
+
+			return table[i].func;
+		}
 	}
+#endif
+
 	return nullptr;
 }
 
