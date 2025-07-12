@@ -26,6 +26,7 @@
 
 #include "graphics/macgui/macbutton.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macwindowmanager.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -954,27 +955,119 @@ void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(_gutterSize);	// 2 bytes
 	writeStream->writeByte(_boxShadow);		// 3 bytes
 	writeStream->writeByte(_textType);		// 4 bytes
-	writeStream->writeSint16LE(_textAlign);		// 6 bytes
-	writeStream->writeUint16LE(_bgpalinfo1);	// 8 bytes
-	writeStream->writeUint16LE(_bgpalinfo2);	// 10 bytes
-	writeStream->writeUint16LE(_bgpalinfo3);	// 12 bytes
-	writeStream->writeUint16LE(_scroll);		// 14 bytes
+	writeStream->writeSint16BE(_textAlign);		// 6 bytes
+	writeStream->writeUint16BE(_bgpalinfo1);	// 8 bytes
+	writeStream->writeUint16BE(_bgpalinfo2);	// 10 bytes
+	writeStream->writeUint16BE(_bgpalinfo3);	// 12 bytes
+	writeStream->writeUint16BE(_scroll);		// 14 bytes
 
 	Movie::writeRect(writeStream, _initialRect);	// (+8) 22 bytes
-	writeStream->writeUint16LE(_maxHeight);			// 24 bytes
+	writeStream->writeUint16BE(_maxHeight);			// 24 bytes
 	writeStream->writeByte(_textShadow);			// 25 bytes
 	writeStream->writeByte(_textFlags);				// 26 bytes
 
-	writeStream->writeUint16LE(_textHeight);		// 28 bytes
+	writeStream->writeUint16BE(_textHeight);		// 28 bytes
 
 	if (_type == kCastButton) {
-		writeStream->writeUint16LE(_buttonType + 1);		// 30 bytes
+		writeStream->writeUint16BE(_buttonType + 1);		// 30 bytes
 	}
 }
 
 uint32 TextCastMember::getCastDataSize() {
 	// In total 30 bytes for text and 28 for button
-	return (_type == kCastButton) ? 30 : 28;
+	uint32 size = (_type == kCastButton) ? 30 : 28;
+
+	// See Cast::loadCastData
+	size += (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) ? 2 : 0;
+	return size;
+}
+
+uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 stxtSize = getSTXTResourceSize() + 8;
+
+	writeStream->seek(offset);
+
+	writeStream->writeUint32LE(MKTAG('S', 'T', 'X', 'T'));
+	writeStream->writeUint32LE(getSTXTResourceSize());						// Size of the STXT resource without the header and size
+
+	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error, other offsets are not handled
+
+	int8 formatting = getFormattingCount();
+	writeStream->writeUint32BE(_rtext.size());		// Length of the string
+	// Encode only in one format, original may be encoded in multiple formats
+	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
+	writeStream->writeUint32BE(20 * formatting + 2);				// Data Length
+
+	FontStyle style;
+	writeStream->writeString(_rtext);
+
+	writeStream->writeUint16BE(formatting);
+
+	uint32 it = 0;
+	while (it < _ftext.size() - 1) {
+		uint32 rIndex = 0;
+		if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
+			// Styling header found
+			it += 2;
+
+			if (it + 22 > _ftext.size()) {
+				warning("TextCastMember::writeSTXTResource: incorrect format sequence");
+				break;
+			}
+
+			// Ignoring height and ascent for now from FontStyle
+			uint16 temp;
+			style.formatStartOffset = rIndex;
+			const Common::u32char_type_t *s = _ftext.substr(it, 22).c_str();
+
+			s = Graphics::readHex(&style.fontId, s, 4);
+			s = Graphics::readHex(&temp, s, 2);
+			s = Graphics::readHex(&style.fontSize, s, 4);
+			s = Graphics::readHex(&style.r, s, 4);
+			s = Graphics::readHex(&style.g, s, 4);
+			s = Graphics::readHex(&style.b, s, 4);
+			style.textSlant = temp;
+
+			style.write(writeStream);
+			it += 22;
+			continue;
+		}
+
+		rIndex += 1;
+		it++;
+	}
+
+	if (debugChannelSet(7, kDebugSaving)) {
+		byte *dumpData = nullptr;
+		dumpData = (byte *)calloc(stxtSize, sizeof(byte));
+		Common::MemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, stxtSize);
+
+		int32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, stxtSize);
+		writeStream->seek(currentPos);
+
+		dumpFile("TextData", _castId, MKTAG('S', 'T', 'X', 'T'), dumpData, getSTXTResourceSize() + 8);
+		free(dumpData);
+		delete dumpStream;
+	}
+
+	return stxtSize + 8;
+}
+
+uint32 TextCastMember::getSTXTResourceSize() {
+	// Header (offset, string length, data length) + text string + data (FontStyle) 
+	return 12 + _rtext.size() + getFormattingCount() * 20 + 2;
+}
+
+uint8 TextCastMember::getFormattingCount() {
+	uint8 count = 0;	
+	for (uint32 i = 0; i < _ftext.size() - 1; i++) {
+		if (_ftext[i] == '\001' && _ftext[i + 1] == '\016') {
+			count++;
+		}
+	}
+	return count;
 }
 
 }	// End of namespace Director

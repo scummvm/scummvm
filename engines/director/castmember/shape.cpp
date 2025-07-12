@@ -244,7 +244,7 @@ void ShapeCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeUint16LE(_pattern);
 
 	// The foreground and background colors are transformed
-	// Need to retreive the original colors for saving
+	// Need to retrieve the original colors for saving
 	writeStream->writeByte(_fgCol);
 	writeStream->writeByte(_bgCol);
 

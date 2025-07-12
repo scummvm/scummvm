@@ -687,6 +687,11 @@ void BitmapCastMember::load() {
 		warning("BitmapCastMember::load(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
 		break;
 	}
+	
+	if (debugChannelSet(7, kDebugLoading)) {
+		debug("BitmapCastMember::load(): Bitmap data:");
+		pic->hexdump(pic->size());
+	}
 
 	if (!img || !img->loadStream(*pic)) {
 		warning("BitmapCastMember::load(): Unable to load id: %d", imgId);
@@ -694,6 +699,8 @@ void BitmapCastMember::load() {
 		delete img;
 		return;
 	}
+
+	// dumpFile("LoadedBitmap", _castId, MKTAG('B', 'I', 'T', 'D'), (byte *)img->getSurface()->getPixels(), img->getSurface()->h * img->getSurface()->w);
 
 	setPicture(*img, true);
 
@@ -1034,6 +1041,96 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 		}
 	}
 	// Ignoring the tail during loading as well as saving
+}
+
+uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	writeStream->seek(offset);
+
+	writeStream->writeUint32LE(MKTAG('B', 'I', 'T', 'D'));
+	writeStream->writeUint32LE(getBITDResourceSize());
+
+	if (_external) {
+		warning("BitmapCastMember::writeBITDResource: the bitmap is external, ignoring for now");	
+		return 8;		// 8 for the tag and size
+	}
+
+	// No compression for now
+	// pixels.size() == bytes needed
+	Common::Array<byte> pixels;
+	pixels.resize(_pitch * _picture->_surface.h);  // for <= 8bpp
+	offset = 0;
+
+	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(pixels.size() / _picture->_surface.h)) {
+		offset = (_pitch - _picture->_surface.w) % 2;
+	}
+	
+	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
+	for (int y = 0; y < _picture->_surface.h; y++) {
+		for (int x = 0; x < _picture->_surface.w;) {
+			uint32 color = 0;
+			int startX = x;
+
+			switch (_bitsPerPixel) {
+			case 1:
+				for (int c = 0; c < 8 && x < _picture->_surface.w; c++, x++) {
+					color += (*((byte *)_picture->_surface.getBasePtr(x, y))) & (1 << (7 - c));
+				}
+				pixels[(y * _pitch) + (startX >> 3)] = color;
+				break;
+
+			case 2:
+				for (int c = 0; c < 4 && x < _picture->_surface.w; c++, x++) {
+					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0x3) << (2 * (3 - c));
+				}
+				pixels[(y * _pitch) + (startX >> 2)] = color;
+				break;
+
+			case 4:
+				for (int c = 0; c < 2 && x < _picture->_surface.w; c++, x++) {
+					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0xF) << (4 * (1 - c));
+				}
+				pixels[(y * _pitch) + (startX >> 1)] = color;
+				break;
+
+			case 8:
+				pixels[(y * _picture->_surface.w) + x + (y * offset)] = *((byte *)_picture->_surface.getBasePtr(x, y));
+				x++;
+				break;
+
+			case 16:
+				color = *((uint16 *)_picture->_surface.getBasePtr(x, y));
+				pixels[(y * _picture->_surface.w * 2) + x * 2] = color >> 8;
+				pixels[(y * _picture->_surface.w * 2) + x * 2 + 1] = color & 0xFF;
+				x++;
+				break;
+
+			case 32:
+				color = *((uint32 *)(_picture->_surface.getBasePtr(x, y)));
+				// only storing RGB, no alpha
+				pixels[(y * _picture->_surface.w * 4) + x * 4 + 1] = (color >> 16) & 0xFF;
+				pixels[(y * _picture->_surface.w * 4) + x * 4 + 2] = (color >> 8) & 0xFF;
+				pixels[(y * _picture->_surface.w * 4) + x * 4 + 3] = color & 0xFF;
+				x++;
+				break;
+
+			default:
+				x++;
+				break;
+			}
+		}
+	}
+
+	writeStream->write(pixels.data(), pixels.size());
+
+	if (debugChannelSet(7, kDebugSaving)) {
+		dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), pixels.data(), pixels.size());
+	}
+	return 0;
+}
+
+uint32 BitmapCastMember::getBITDResourceSize() {
+	// No compression for now
+	return _pitch * _picture->_surface.h; 
 }
 
 } // End of namespace Director
