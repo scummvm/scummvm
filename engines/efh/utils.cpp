@@ -134,7 +134,7 @@ int16 EfhEngine::getRandom(int16 maxVal) {
 	return 1 + _rnd->getRandomNumber(maxVal - 1);
 }
 
-Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
+Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay, bool waitForTTS) {
 	debugC(1, kDebugUtils, "getLastCharAfterAnimCount %d", delay);
 	if (delay == 0)
 		return Common::KEYCODE_INVALID;
@@ -143,7 +143,8 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && lastChar == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while ((delay > 0 || (waitForTTS && ttsMan && ttsMan->isSpeaking())) && lastChar == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -154,6 +155,10 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 		}
 
 		lastChar = handleAndMapInput(false);
+	}
+
+	if (waitForTTS) {
+		stopTextToSpeech();
 	}
 
 	return lastChar;
@@ -168,7 +173,8 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 
 	uint32 lastMs = _system->getMillis();
-	while (delay > 0 && !shouldQuit()) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while ((delay > 0 || (ttsMan && ttsMan->isSpeaking())) && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
