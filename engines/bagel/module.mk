@@ -157,6 +157,7 @@ MODULE_OBJS = \
 	hodjnpodj/hnplibs/dibapi.o \
 	hodjnpodj/hnplibs/dibdoc.o \
 	hodjnpodj/hnplibs/dibfile.o \
+	hodjnpodj/hnplibs/lzss.o \
 	hodjnpodj/hnplibs/mainmenu.o \
 	hodjnpodj/hnplibs/rules.o \
 	hodjnpodj/hnplibs/sprite.o \

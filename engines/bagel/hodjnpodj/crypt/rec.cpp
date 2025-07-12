@@ -20,6 +20,7 @@
  */
 
 #include "bagel/hodjnpodj/hnplibs/stdafx.h"
+#include "bagel/hodjnpodj/hnplibs/lzss.h"
 #include "bagel/hodjnpodj/crypt/rec.h"
 
 namespace Bagel {
@@ -27,66 +28,57 @@ namespace HodjNPodj {
 namespace Crypt {
 
 BOOL CCryptRecord::GetRecord(int nID) {
-	//OFSTRUCT    ofstFileStat;
-	char        chBuf;
-	int         i;
-#if 0
-	if ((m_hfCryptFile = LZOpenFile(CRYPT_TXT_FILE, &ofstFileStat, OF_READ)) == -1)
+	Common::SeekableReadStream *cryptFile;
+	char chBuf;
+	int i;
+
+	if ((cryptFile = makeLzssStream(CRYPT_TXT_FILE)) == nullptr)
 		return FALSE;
 
-	m_nID = 0;
-	for (m_nID = 0; m_nID < nID; m_nID++) {              // Locate record
-		LZSeek(
-		    m_hfCryptFile,
-		    RECORD_LEN * sizeof(char),
-		    1
-		);                                          // Advance past initial quote mark
-	}
-
-	LZSeek(m_hfCryptFile, sizeof(char), 1);             // Advance past initial quote mark
+	cryptFile->seek(nID * RECORD_LEN + 1);
 
 	for (i = 0; ; i++) {                                 // Grab cryptogram
-		if (i >= MAX_GRAM_LEN)
+		if (i >= MAX_GRAM_LEN) {
+			delete cryptFile;
 			return FALSE;
+		}
 
-		LZRead(m_hfCryptFile, &chBuf, sizeof(char));
+		chBuf = (char)cryptFile->readByte();
 		if (chBuf == '\\') {
-			LZRead(m_hfCryptFile, &chBuf, sizeof(char));
+			chBuf = (char)cryptFile->readByte();
 
-			m_lpszGram[i] = chBuf;
+			m_lpszGram[i] = toupper(chBuf);
 			i++;
 		} else if (chBuf == '\"') {
 			m_lpszGram[i] = '\0';
 			break;
 		}
 
-		m_lpszGram[i] = chBuf;
+		m_lpszGram[i] = toupper(chBuf);
 	}
 
-	_fstrupr(m_lpszGram);
-	LZSeek(m_hfCryptFile, 2 * sizeof(char), 1);         // Advance past dilimiting comma and initial quote mark
+	// Advance past dilimiting comma and initial quote mark
+	cryptFile->skip(2);
 
-	for (i = 0; ; i++) {             // Grab source
+	for (i = 0; ; i++) {
+		// Grab source
 		if (i >= MAX_SOURCE_LEN)
 			return FALSE;
 
-		LZRead(m_hfCryptFile, &chBuf, sizeof(char));
+		chBuf = (char)cryptFile->readByte();
 		if (chBuf == '\\') {
-			LZRead(m_hfCryptFile, &chBuf, sizeof(char));
-			m_lpszSource[i] = chBuf;
+			chBuf = (char)cryptFile->readByte();
+			m_lpszSource[i] = toupper(chBuf);
 		} else if (chBuf == '\"') {
 			m_lpszSource[i] = '\0';
 			break;
 		}
 
-		m_lpszSource[i] = chBuf;
+		m_lpszSource[i] = toupper(chBuf);
 	}
 
-	_fstrupr(m_lpszSource);
-	LZClose(m_hfCryptFile);
+	delete cryptFile;
 	return TRUE;
-#endif
-	return true;
 }
 
 } // namespace Crypt

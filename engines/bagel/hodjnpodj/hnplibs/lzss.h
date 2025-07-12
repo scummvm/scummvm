@@ -19,45 +19,17 @@
  *
  */
 
-#ifndef HODJNPODJ_CRYPT_REC_H
-#define HODJNPODJ_CRYPT_REC_H
+#ifndef HODJNPODJ_HNPLIBS_LZSS_H
+#define HODJNPODJ_HNPLIBS_LZSS_H
 
-#include "common/file.h"
-//#include <lzexpand.h>
+#include "common/path.h"
+#include "common/stream.h"
 
 namespace Bagel {
 namespace HodjNPodj {
-namespace Crypt {
 
-#define CRYPT_TXT_FILE      "Crypt.lz"
-#define CRYPT_RECS          200
+extern Common::SeekableReadStream *makeLzssStream(const Common::Path &filename);
 
-#define MAX_GRAM_LEN        512
-#define MAX_SOURCE_LEN      128
-#define RECORD_LEN          392
-
-
-class CCryptRecord {
-private:
-	int     m_nID = 0;
-	char    m_lpszGram[MAX_GRAM_LEN] = { 0 };
-	char    m_lpszSource[MAX_SOURCE_LEN] = { 0 };
-
-public:
-	BOOL GetRecord(int nID);
-
-	int GetID() const {
-		return m_nID;
-	};
-	const char *GetGram() const {
-		return m_lpszGram;
-	};
-	const char *GetSource() const {
-		return m_lpszSource;
-	};
-};
-
-} // namespace Crypt
 } // namespace HodjNPodj
 } // namespace Bagel
 
