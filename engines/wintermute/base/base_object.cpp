@@ -1119,6 +1119,21 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 		persistMgr->transferFloat(TMEMBER(_scale3D));
 		persistMgr->transferVector3d(TMEMBER(_shadowLightPos));
 		persistMgr->transferBool(TMEMBER(_drawBackfaces));
+		Common::String tempString;
+		if (persistMgr->getIsSaving()) {
+			if (_shadowImage) {
+				tempString = _shadowImage->getFileName();
+			}
+			persistMgr->transferString(TMEMBER(tempString));
+		} else {
+			_shadowImage = nullptr;
+			if (persistMgr->checkVersion(1, 6, 1)) {
+				persistMgr->transferString(TMEMBER(tempString));
+				if (!tempString.empty()) {
+					_shadowImage = _gameRef->_surfaceStorage->addSurface(tempString);
+				}
+			}
+		}
 	} else {
 		_xmodel = nullptr;
 		_shadowModel = nullptr;
