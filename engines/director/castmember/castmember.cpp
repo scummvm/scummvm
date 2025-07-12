@@ -50,6 +50,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 
 	_widget = nullptr;
 	_erase = false;
+	_index = -1;
 }
 
 CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMember") {
@@ -69,6 +70,7 @@ CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMemb
 
 	_widget = nullptr;
 	_erase = false;
+	_index = -1;
 }
 
 CastMember *CastMember::duplicate(Cast *cast, uint16 castId) {

@@ -1400,7 +1400,7 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream,
 	writeStream->writeUint32LE(0);
 
 	for (auto &it : resources) {
-		debugC(3, kDebugSaving, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
+		debugC(3, kDebugSaving, "RIFXArchive::writeMemoryMap: Memory map entry: '%s', size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
 			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
 
 		// Write down the tag, the size and offset of the current resource
@@ -1495,10 +1495,16 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 		}
 	}
 
+	debugC(5, kDebugSaving, "RIFXArchive::writeCast: Writing CAS* resource:");
+	debugCN(5, kDebugSaving, "'CASt' indexes: [");
 	for (uint32 i = 0; i <= maxCastId; i++) {
 		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
-		writeStream->writeUint32BE(castIndex);
+		if (castIndex) {
+			debugCN(5, kDebugSaving, "%d, ", castIndex);
+			writeStream->writeUint32BE(castIndex);
+		}
 	}
+	debugC(5, kDebugSaving, "\b\b]");
 	return true;
 }
 
@@ -1514,32 +1520,10 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// CAS*		// VWCF
 	// CASt	
 
-	// Resources yet to be handled
-	// Any external file
-	// Script 'Lscr'
-	// Script Names 'Lnam'
-	// Lingo Context 'Lctx'
 	// Score 'SCVW'
 	// Rich Text 'RTE0', 'RTE1', 'RTE2'
 	// Sound ('snd ')
 	// 'SCVW' External Movies
-
-	// Transitions and OLE are Director 5+, not yet loaded in ScummVM Director
-
-	// Resources that are loaded but probably need not be handled
-	// 'VWFM' Font Mapping
-	// 'FXmp' Corss Platform Font Mapping
-	// 'VWTL' Pattern Tiles
-	// 'STR ' External Sound files
-	// 'MooV' External Digital Video
-	// 'XCOD' XObjects
-	// 'Cinf' Cast Lib Info
-	// 'VWCI' Cast Info (For what cast though?)
-	// 'Sord' Score Order List Resource
-	// 'PICT' Picture data
-	// 'SCRF' External Cast Reference
-	// 'Xtra' Xtras
-	// 'THUM' Thumbnail
 
 	// First we'll have to update the _types table to include all the newly added
 	// cast members, and their 'CASt' resources
@@ -1548,16 +1532,21 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	ResourceMap &castResMap = _types[MKTAG('C', 'A', 'S', 't')];
 
 	for (auto it : *(cast->_loadedCast)) {
-		if (!castResMap.contains(it._value->_index)) {
-			Resource *res = &castResMap[it._value->_index - cast->_castArrayStart];
+		if (it._value->_index == -1) {
+			// Assigning the next available index to the resource
+			Resource *res = &castResMap[_resources.size()];
 			res->tag = MKTAG('C', 'A', 'S', 't');
 			res->accessed = true;
-			res->libResourceId = cast->_castLibID;
+
+			// Again considering here that there is only one CAS* resource, so the first resource will have our necessary libResourceId
+			res->libResourceId = _types[MKTAG('C', 'A', 'S', '*')].begin()->_value.libResourceId;
 			res->children = it._value->_children;
-			res->index = _resources.size() + 1;
+			res->index = _resources.size();
+			res->castId = it._value->getID() - cast->_castArrayStart;
+			debug("What is res->castId = %d", it._value->getID());
 
 			for (auto child : it._value->_children) {
-				_keyData[child.tag][res->index].push_back(child.index);			// Indices are a huge problem, need to figure out them first
+				_keyData[child.tag][res->index].push_back(child.index);
 				_keyTableUsedCount += 1;
 				_keyTableEntryCount += 1;
 			}
