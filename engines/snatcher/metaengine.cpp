@@ -25,11 +25,12 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
-
+#include "common/translation.h"
 #include "engines/advancedDetector.h"
-
 #include "base/plugins.h"
-
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
 
 const ADExtraGuiOptionsMap gameGuiOptions[] = {
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
@@ -165,8 +166,49 @@ SaveStateDescriptor SnatcherMetaEngine::querySaveMetaInfos(const char *target, i
 	return desc;
 }
 
+const char *const kLightGunKeymapName = "snlightgun";
+const char *const kControllerKeymapName = "sncontroller";
+
+void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, const Common::Functor0Mem<void, Common::Action>::FuncType setEventProc, const Common::String &mapping1, const Common::String &mapping2) {
+	Common::Action *act = new Common::Action(actionId, actionDesc);
+	Common::Functor0Mem<void, Common::Action>(act, setEventProc)();
+	act->addDefaultInputMapping(mapping1);
+	act->addDefaultInputMapping(mapping2);
+	keyMap->addAction(act);
+}
+
+void addKeymapAction(Common::Keymap *const keyMap, const char *actionId, const Common::U32String &actionDesc, Common::KeyState eventKeyState, const Common::String &mapping1, const Common::String &mapping2) {
+	Common::Action *act = new Common::Action(actionId, actionDesc);
+	act->setKeyEvent(eventKeyState);
+	act->addDefaultInputMapping(mapping1);
+	act->addDefaultInputMapping(mapping2);
+	keyMap->addAction(act);
+}
+
 Common::KeymapArray SnatcherMetaEngine::initKeymaps(const char *target) const {
-	return AdvancedMetaEngine::initKeymaps(target);
+	Common::Keymap *keyMap1 = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kLightGunKeymapName, "Snatcher - Lightgun");
+	Common::Keymap *keyMap2 = new Common::Keymap(Common::Keymap::kKeymapTypeGame, kControllerKeymapName, "Snatcher - Controller");
+	Common::KeymapArray res;
+
+	addKeymapAction(keyMap1, Common::kStandardActionLeftClick, _("Lightgun Fire Button"), &Common::Action::setLeftClickEvent, "MOUSE_LEFT", "JOY_LEFT_SHOULDER");
+	addKeymapAction(keyMap1, Common::kStandardActionRightClick, _("Lightgun Start Button"), &Common::Action::setRightClickEvent, "MOUSE_RIGHT", "JOY_RIGHT_SHOULDER");
+	res.push_back(keyMap1);
+
+	addKeymapAction(keyMap2, "CTRL_A", _("Controller Button A"), Common::KeyState(Common::KEYCODE_a, 'a'), "a", "JOY_A");
+	addKeymapAction(keyMap2, "CTRL_B", _("Controller Button B"), Common::KeyState(Common::KEYCODE_b, 'b'), "b", "JOY_B");
+	addKeymapAction(keyMap2, "CTRL_C", _("Controller Button C"), Common::KeyState(Common::KEYCODE_c, 'c'), "c", "JOY_X");
+	addKeymapAction(keyMap2, "CTRL_START", _("Controller Start Button"), Common::KeyState(Common::KEYCODE_SPACE, Common::ASCII_SPACE), "SPACE", "JOY_START");
+	addKeymapAction(keyMap2, "CTRL_UP", _("Controller Up"), Common::KeyState(Common::KEYCODE_UP), "UP", "JOY_UP");
+	addKeymapAction(keyMap2, "CTRL_DOWN", _("Controller Down"), Common::KeyState(Common::KEYCODE_DOWN), "DOWN", "JOY_DOWN");
+	addKeymapAction(keyMap2, "CTRL_LEFT", _("Controller Left"), Common::KeyState(Common::KEYCODE_LEFT), "LEFT", "JOY_LEFT");
+	addKeymapAction(keyMap2, "CTRL_RIGHT", _("Controller Right"), Common::KeyState(Common::KEYCODE_RIGHT), "RIGHT", "JOY_RIGHT");
+	addKeymapAction(keyMap2, "CTRL_UP_LEFT", _("Controller Up Left"), Common::KeyState(Common::KEYCODE_KP7), "UP_LEFT", "");
+	addKeymapAction(keyMap2, "CTRL_UP_RIGHT", _("Controller Up Right"), Common::KeyState(Common::KEYCODE_KP9), "UP_RIGHT", "");
+	addKeymapAction(keyMap2, "CTRL_DOWN_LEFT", _("Controller Down Left"), Common::KeyState(Common::KEYCODE_KP1), "DOWN_LEFT", "");
+	addKeymapAction(keyMap2, "CTRL_DOWN_RIGHT", _("Controller Down Right"), Common::KeyState(Common::KEYCODE_KP3), "DOWN_RIGHT", "");
+	res.push_back(keyMap2);
+
+	return res;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SNATCHER)
