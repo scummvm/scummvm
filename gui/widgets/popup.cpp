@@ -74,13 +74,12 @@ void PopUpDialog::open() {
 	// FIXME - OSystem should send out notification messages when the screen
 	// resolution changes... we could generalize CommandReceiver and CommandSender.
 
-	const int screenW = g_system->getOverlayWidth();
-	const int screenH = g_system->getOverlayHeight();
+	Common::Rect safeArea = g_system->getSafeOverlayArea();
 
 	// HACK: For now, we do not do scrolling. Instead, we draw the dialog
 	// in two columns if it's too tall.
 
-	if (_h >= screenH) {
+	if (_h >= safeArea.height()) {
 		_twoColumns = true;
 		_entriesPerColumn = _entries.size() / 2;
 
@@ -104,19 +103,19 @@ void PopUpDialog::open() {
 		_w = MAX<uint16>(_boss->getWidth(), _w + 20);
 	}
 
-	if (_w >= screenW)
-		_w = screenW - 1;
-	if (_x < 0)
-		_x = 0;
-	if (_x + _w >= screenW)
-		_x = screenW - 1 - _w;
+	if (_w >= safeArea.width())
+		_w = safeArea.width() - 1;
+	if (_x < safeArea.left)
+		_x = safeArea.left;
+	if (_x + _w >= safeArea.right)
+		_x = safeArea.right - 1 - _w;
 
-	if (_h >= screenH)
-		_h = screenH - 1;
-	if (_y < 0)
-		_y = 0;
-	else if (_y + _h >= screenH)
-		_y = screenH - 1 - _h;
+	if (_h >= safeArea.height())
+		_h = safeArea.height() - 1;
+	if (_y < safeArea.top)
+		_y = safeArea.top;
+	else if (_y + _h >= safeArea.bottom)
+		_y = safeArea.bottom - 1 - _h;
 
 	// TODO - implement scrolling if we had to move the menu, or if there are too many entries
 
