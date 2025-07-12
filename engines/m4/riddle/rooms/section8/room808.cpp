@@ -1453,10 +1453,9 @@ void Room808::daemon() {
 			ws_unhide_walker(_G(my_walker));
 			ws_demand_location(_G(my_walker), 202, 179);
 			ws_demand_facing(_G(my_walker), 2);
-			other_save_game_for_resurrection();
 
-			_G(game).new_section = 4;
-			_G(game).new_room = 413;
+			other_save_game_for_resurrection();
+			_G(game).setRoom(413);
 		}
 
 		break;
@@ -1690,9 +1689,9 @@ void Room808::daemon() {
 		ws_unhide_walker(_G(my_walker));
 		ws_demand_location(_G(my_walker), 202, 179);
 		ws_demand_facing(_G(my_walker), 2);
+
 		other_save_game_for_resurrection();
-		_G(game).section_id = 4;
-		_G(game).new_room = 413;
+		_G(game).setRoom(413);
 
 		break;
 

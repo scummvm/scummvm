@@ -512,8 +512,8 @@ void Room205::parser() {
 			_fieldDC = 0;
 			_fieldE0 = 0;
 			other_save_game_for_resurrection();
-			_G(game).new_section = 4;
-			_G(game).new_room = 413;
+			_G(game).setRoom(413);
+
 			break;
 
 		case 99:

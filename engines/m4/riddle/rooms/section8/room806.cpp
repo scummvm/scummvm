@@ -1073,8 +1073,7 @@ void Room806::parser() {
 			ws_demand_location(_G(my_walker), 221, 316);
 			ws_demand_facing(_G(my_walker), 3);
 			other_save_game_for_resurrection();
-			_G(game).new_section = 4;
-			_G(game).new_room = 413;
+			_G(game).setRoom(413);
 
 			break;
 

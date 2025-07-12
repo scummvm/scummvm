@@ -1024,8 +1024,7 @@ void Room807::daemon() {
 		_field38 = 1;
 		_G(flags)[V274] = 0;
 		other_save_game_for_resurrection();
-		_G(game).new_section = 4;
-		_G(game).new_room = 413;
+		_G(game).setRoom(413);
 
 		break;
 
