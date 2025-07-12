@@ -1543,7 +1543,6 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 			res->children = it._value->_children;
 			res->index = _resources.size();
 			res->castId = it._value->getID() - cast->_castArrayStart;
-			debug("What is res->castId = %d", it._value->getID());
 
 			for (auto child : it._value->_children) {
 				_keyData[child.tag][res->index].push_back(child.index);
