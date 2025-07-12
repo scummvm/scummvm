@@ -119,6 +119,8 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 
 	_active = true;
 
+	_gameRef->_supportsRealTimeShadows = true;
+
 	return true;
 }
 
@@ -642,7 +644,6 @@ BaseImage *BaseRenderOpenGL3D::takeScreenshot(int newWidth, int newHeight) {
 }
 
 bool BaseRenderOpenGL3D::enableShadows() {
-	_gameRef->_supportsRealTimeShadows = true;
 	return true;
 }
 
