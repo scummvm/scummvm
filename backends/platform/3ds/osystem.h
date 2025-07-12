@@ -53,7 +53,6 @@ enum InputMode {
 enum GraphicsModeID {
 	RGBA8,
 	RGB565,
-	RGB555,
 	RGB5A1,
 	RGBA4,
 	CLUT8
