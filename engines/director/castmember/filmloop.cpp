@@ -88,7 +88,6 @@ FilmLoopCastMember::FilmLoopCastMember(Cast *cast, uint16 castId, FilmLoopCastMe
 	_center = source._center;
 	_frames = source._frames;
 	_subchannels = source._subchannels;
-	_index = -1;
 }
 
 FilmLoopCastMember::~FilmLoopCastMember() {
@@ -304,8 +303,8 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			continue;
 		}
 		frameSize -= 2;
-		debugC(2, kDebugLoading, "loadFilmLoopDataD4: Frame entry: %d", frameSize);
 		if (debugChannelSet(8, kDebugLoading)) {
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Frame entry: %d", frameSize);
 			stream.hexdump(frameSize);
 		}
 
@@ -318,7 +317,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 			int channelOffset = order % channelSize;
 			int offset = order;
 
-			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Message: msgWidth %d, order: %d, channel %d, channelOffset %d", msgWidth, order, channel, channelOffset);
 			if (debugChannelSet(8, kDebugLoading)) {
 				stream.hexdump(msgWidth);
 			}
@@ -351,7 +350,7 @@ void FilmLoopCastMember::loadFilmLoopDataD4(Common::SeekableReadStreamEndian &st
 		}
 
 		for (auto &s : newFrame.sprites) {
-			debugC(2, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
+			debugC(8, kDebugLoading, "loadFilmLoopDataD4: Sprite: channel %d, castId %s, bbox %d %d %d %d", s._key,
 					s._value._castId.asString().c_str(), s._value._startPoint.x, s._value._startPoint.y,
 					s._value._width, s._value._height);
 
