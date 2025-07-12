@@ -1146,7 +1146,7 @@ void Room604::daemon1() {
 	if (_suppressChatter)
 		return;
 
-	static const char *DIGI[3] = { "610_s03a", "610_s03b", "610_s03" };
+	static const char *DIGI[3] = { "610_s03", "610_s03a", "610_s03b" };
 
 	switch (_G(kernel).trigger) {
 	case 126:
@@ -1158,7 +1158,7 @@ void Room604::daemon1() {
 		if (++_val1 >= 8)
 			_val1 = 1;
 
-		digi_play(Common::String::format("610k%.2d", _val1 + 6).c_str(), 3, 130, 136);
+		digi_play(Common::String::format("610k%.2d", _val1 + 6).c_str(), 3, 130, (_val1 == 6) ? 137 : 136);
 		break;
 
 	case 136:
