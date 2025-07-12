@@ -875,6 +875,11 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	const Common::Point destPos(x, y);
 	uint bgColor = getBkPixel();
 
+	assert(srcRect.left >= 0 && srcRect.top >= 0 &&
+		srcRect.right <= src->w && srcRect.bottom <= src->h);
+	assert(x >= 0 && y >= 0 && (x + srcRect.width()) <= dest->w &&
+		(y + srcRect.height()) <= dest->h);
+
 	Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
 }
 
