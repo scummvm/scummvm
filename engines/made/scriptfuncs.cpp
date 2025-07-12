@@ -30,6 +30,8 @@
 
 #include "backends/audiocd/audiocd.h"
 
+#include "common/config-manager.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
@@ -42,6 +44,7 @@ ScriptFunctions::ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false)
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle1, _pcSpeaker1);
 	_vm->_system->getMixer()->playStream(Audio::Mixer::kMusicSoundType, &_pcSpeakerHandle2, _pcSpeaker2);
 	_soundResource = nullptr;
+	_soundWasPlaying = false;
 }
 
 ScriptFunctions::~ScriptFunctions() {
@@ -248,6 +251,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 		soundNum = argv[1];
 		_vm->_autoStopSound = (argv[0] == 1);
 	}
+	_soundWasPlaying = true;
 	if (soundNum > 0) {
 		SoundResource *soundRes = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioStreamHandle,
@@ -390,6 +394,15 @@ int16 ScriptFunctions::sfShowMouseCursor(int16 argc, int16 *argv) {
 }
 
 int16 ScriptFunctions::sfGetMusicBeat(int16 argc, int16 *argv) {
+	// Delay the opening credits when TTS is enabled until TTS is done speaking,
+	// as they move too fast otherwise
+	if (_vm->getGameID() == GID_RTZ && _vm->_openingCreditsOpen) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+			return 0;
+		}
+	}
+
 	// This is used as timer in some games
 	return (_vm->_system->getMillis() - _vm->_musicBeatStart) / 360;
 }
@@ -506,6 +519,17 @@ int16 ScriptFunctions::sfDrawText(int16 argc, int16 *argv) {
 			// Leave it empty
 			break;
 		}
+
+		// 1946 and 1947 are strings for the save/load screen, which we don't want to voice here (since they're
+		// in the form of buttons)
+		// 1828, 1831, 1837, and 1843 are strings for the tape recorder, which are voiced elsewhere to be
+		// combined with their corresponding values (i.e. the name or the time)
+		if (argv[argc - 1] != 1946 && argv[argc - 1] != 1947 && argv[argc - 1] != 1828 && argv[argc - 1] != 1831 && 
+				argv[argc - 1] != 1837 && argv[argc - 1] != 1843 && _vm->getGameID() == GID_RTZ) {
+			_vm->sayText(finalText, Common::TextToSpeechManager::QUEUE);
+			_vm->_screen->setQueueNextText(true);
+		}
+
 		_vm->_screen->printText(finalText.c_str());
 	}
 
@@ -598,8 +622,16 @@ int16 ScriptFunctions::sfSetSpriteMask(int16 argc, int16 *argv) {
 
 int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 	if (_vm->getGameID() == GID_RTZ) {
-		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle))
+		if (!_vm->_mixer->isSoundHandleActive(_audioStreamHandle)) {
+			if (_soundWasPlaying) {
+				_vm->_screen->setVoiceTimeText(true);
+				_soundWasPlaying = false;
+			}
+			
 			return 0;
+		}
+
+		_vm->_screen->setVoiceTimeText(false);
 
 		// For looping sounds the game script regularly checks if the sound has
 		// finished playing, then plays it again. This works in the original
@@ -930,8 +962,30 @@ int16 ScriptFunctions::sfDrawMenu(int16 argc, int16 *argv) {
 	MenuResource *menu = _vm->_res->getMenu(menuIndex);
 	if (menu) {
 		const char *text = menu->getString(textIndex);
-		if (text)
+		if (text) {
 			_vm->_screen->printText(text);
+
+			// menuIndex 22 is the opening credits following the intro cutscene
+			if (menuIndex == 22) {
+				_vm->sayText(text, Common::TextToSpeechManager::QUEUE);
+				_vm->_openingCreditsOpen = true;
+			} else if (menuIndex != 1) {
+				// menuIndex 1 corresponds to the buttons in the save/load screen, which we don't want
+				// to voice right away
+				_vm->sayText(text);
+
+				_vm->_saveScreenOpen = false;
+				_vm->_loadScreenOpen = false;
+			} else {
+				if (textIndex == 26) {	// Save screen
+					_vm->_saveScreenOpen = true;
+					_vm->_loadScreenOpen = false;
+				} else {	// Load screen
+					_vm->_saveScreenOpen = false;
+					_vm->_loadScreenOpen = true;
+				}
+			}
+		}
 
 		_vm->_res->freeResource(menu);
 	}
