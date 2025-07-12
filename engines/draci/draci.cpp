@@ -26,8 +26,10 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
+#include "common/text-to-speech.h"
 
 #include "engines/util.h"
+#include "engines/advancedDetector.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -46,6 +48,60 @@
 #include "draci/sprite.h"
 
 namespace Draci {
+
+#ifdef USE_TTS
+
+// Used by all languages but Polish
+static const uint16 kamenickyEncodingTable[] = {
+	0xc48c, 0xc3bc, 0xc3a9, 0xc48f,	// Č, ü, é, ď
+	0xc3a4, 0xc48e, 0xc5a4, 0xc48d,	// ä, Ď, Ť, č
+	0xc49b, 0xc494, 0xc4b9, 0xc38d,	// ě, Ě, Ĺ, Í
+	0xc4be, 0xc4ba, 0xc384, 0xc381,	// ľ, ĺ, Ä, Á
+	0xc389, 0xc5be, 0xc5bd, 0xc3b4,	// É, ž, Ž, ô
+	0xc3b6, 0xc393, 0xc5af, 0xc39a,	// ö, Ó, ů, Ú
+	0xc3bd, 0xc396, 0xc39c, 0xc5a0,	// ý, Ö, Ü, Š
+	0xc4bd, 0xc39d, 0xc598, 0xc5a5,	// Ľ, Ý, Ř, ť
+	0xc3a1, 0xc3ad, 0xc3b3, 0xc3ba,	// á, í, ó, ú
+	0xc588, 0xc587, 0xc5ae, 0xc394,	// ň, Ň, Ů, Ô
+	0xc5a1, 0xc599, 0xc595, 0xc594	// š, ř, ŕ, Ŕ
+};
+
+// Name of encoding unknown (described by the Draci website as "some ridiculous proprietary encoding")
+// After 0x9b (0xc5bb/Ż), it matches Kamenický encoding (though some of these Czech characters are replaced
+// for TTS because it struggles to pronounce them)
+static const uint16 polishEncodingTable[] = {
+	0xc485, 0xc487, 0xc499, 0xc582,	// ą, ć, ę, ł
+	0xc584, 0xc3b3, 0xc59b, 0xc5ba,	// ń, ó, ś, ź
+	0xc5bc, 0xc484, 0xc486, 0xc498, // ż, Ą, Ć, Ę
+	0xc581, 0xc583, 0xc393, 0xc59a,	// Ł, Ń, Ó, Ś
+	0xc5b9, 0xc5bb, 0x5a, 0x6f,		// Ź, Ż, Z, o
+	0xc3b6, 0xc393, 0xc5af, 0xc39a,	// ö, Ó, ů, Ú
+	0xc3bd, 0xc396, 0xc39c, 0x53,	// ý, Ö, Ü, S
+	0xc4bd, 0xc39d, 0x52, 0x74,		// Ľ, Ý, R, t
+	0xc3a1, 0xc3ad, 0xc3b3, 0xc3ba,	// á, í, ó, ú
+	0x6e, 0x4e, 0xc5ae, 0xc394,		// n, N, Ů, Ô
+	0x73, 0x72, 0x72, 0x52			// s, r, r, R
+};
+
+// TTS for all languages but Czech struggles to voice a lot of Czech characters in the credits, 
+// and oftentimes skips them entirely (i.e. "Špalek" is pronounced as "Palek")
+// To more closely resemble how the names are supposed to be pronounced,
+// this table replaces certain Czech characters with an alternative
+static const uint16 czechCharacterConversionTable[] = {
+	0x43, 0xc3bc, 0xc3a9, 0x64,		// C, ü, é, d
+	0xc3a4, 0x44, 0x54, 0x63,		// ä, D, T, c
+	0x65, 0x45, 0x4c, 0xc38d,		// e, E, L, Í
+	0x6c, 0xc4ba, 0xc384, 0xc381,	// l, ĺ, Ä, Á
+	0xc389, 0x7a, 0x5a, 0x6f,		// É, z, Z, o
+	0xc3b6, 0xc393, 0x75, 0xc39a,	// ö, Ó, u, Ú
+	0x0079, 0xc396, 0xc39c, 0x53,	// y, Ö, Ü, S
+	0x4c, 0x59, 0x52, 0x74,			// L, Y, R, t
+	0xc3a1, 0xc3ad, 0xc3b3, 0xc3ba,	// á, í, ó, ú
+	0x6e, 0x4e, 0x55, 0x4f,			// n, N, U, O
+	0x73, 0x72, 0x72, 0x52			// s, r, r, R
+};
+
+#endif
 
 // Data file paths
 
@@ -69,7 +125,7 @@ const uint kSoundsFrequency = 13000;
 const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
- : Engine(syst), _rnd("draci") {
+ : Engine(syst), _gameDescription(gameDesc), _rnd("draci") {
 
 	setDebugger(new DraciConsole(this));
 
@@ -302,6 +358,8 @@ void DraciEngine::handleEvents() {
 					// cut-scenes won't be played.
 					_game->setExitLoop(true);
 					_script->endCurrentProgram(true);
+
+					stopTextToSpeech();
 				}
 				break;
 			}
@@ -403,6 +461,12 @@ Common::Error DraciEngine::run() {
 	setTotalPlayTime(0);
 	_game->init();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+
 	// Load game from specified slot, if any
 	if (ConfMan.hasKey("save_slot")) {
 		loadGameState(ConfMan.getInt("save_slot"));
@@ -471,5 +535,144 @@ bool DraciEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return (_game->getLoopStatus() == kStatusOrdinary) &&
 		(_game->getLoopSubstatus() == kOuterLoop);
 }
+
+void DraciEngine::sayText(const Common::String &text, bool isSubtitle) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
+	// for example when the cursor stays on a dialog option. Without it when the text ends it would speak
+	// the same text again.
+	// _previousSaid is cleared when appropriate to allow for repeat requests
+	bool speak = (!isSubtitle && ConfMan.getBool("tts_enabled_objects") && _previousSaid != text) || 
+				 (isSubtitle && (ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice")));
+	if (ttsMan != nullptr && speak) {
+#ifdef USE_TTS
+		ttsMan->say(convertText(text), Common::TextToSpeechManager::INTERRUPT);
+#endif
+		_previousSaid = text;
+	}
+}
+
+void DraciEngine::stopTextToSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice")) && 
+			ttsMan->isSpeaking()) {
+		ttsMan->stop();
+		_previousSaid.clear();
+		setTTSVoice(kBertID);
+	}
+}
+
+void DraciEngine::setTTSVoice(int characterID) const {
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech") || ConfMan.getBool("tts_enabled_missing_voice"))) {
+		Common::Array<int> voices;
+		int pitch = 0;
+		Common::TTSVoice::Gender gender;
+
+		if (characterDialogData[characterID].male) {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::MALE);
+			gender = Common::TTSVoice::MALE;
+		} else {
+			voices = ttsMan->getVoiceIndicesByGender(Common::TTSVoice::FEMALE);
+			gender = Common::TTSVoice::FEMALE;
+		}
+
+		// If no voice is available for the necessary gender, set the voice to default
+		if (voices.empty()) {
+			ttsMan->setVoice(0);
+		} else {
+			int voiceIndex = characterDialogData[characterID].voiceID % voices.size();
+			ttsMan->setVoice(voices[voiceIndex]);
+		}
+
+		// If no voices are available for this gender, alter the pitch to mimic a voice
+		// of the other gender
+		if (ttsMan->getVoice().getGender() != gender) {
+			if (gender == Common::TTSVoice::MALE) {
+				pitch -= 50;
+			} else {
+				pitch += 50;
+			}
+		}
+
+		ttsMan->setPitch(pitch);
+	}
+#endif
+}
+
+#ifdef USE_TTS
+
+Common::U32String DraciEngine::convertText(const Common::String &text) const {
+	const uint16 *translationTable;
+
+	if (getLanguage() == Common::PL_POL) {
+		translationTable = polishEncodingTable;
+	} else {
+		translationTable = kamenickyEncodingTable;
+	}
+
+	const byte *bytes = (const byte *)text.c_str();
+	byte *convertedBytes = new byte[text.size() * 2 + 1];
+
+	int i = 0;
+	for (const byte *b = bytes; *b; ++b) {
+		if (*b == 0x7c) {	// Convert | to a space
+			convertedBytes[i] = 0x20;
+			i++;
+			continue;
+		}
+
+		if (*b < 0x80 || *b > 0xab) {
+			convertedBytes[i] = *b;
+			i++;
+			continue;
+		}
+
+		bool inTable = false;
+		for (int j = 0; translationTable[j]; ++j) {
+			if (*b - 0x80 == j) {
+				int convertedValue = translationTable[j];
+
+				if (translationTable[j] == 0xc3b4 && getLanguage() == Common::DE_DEU) {
+					// German encoding replaces ô with ß
+					convertedValue = 0xc39f;
+				} else if ((getLanguage() == Common::EN_ANY || getLanguage() == Common::DE_DEU) && 
+								translationTable[j] != czechCharacterConversionTable[j]) {
+					// Replace certain Czech characters for English and German TTS with close alternatives
+					// in those languages, for better TTS
+					convertedValue = czechCharacterConversionTable[j];
+				}
+
+				if (convertedValue <= 0xff) {
+					convertedBytes[i] = convertedValue;
+					i++;
+				} else {
+					convertedBytes[i] = (convertedValue >> 8) & 0xff;
+					convertedBytes[i + 1] = convertedValue & 0xff;
+					i += 2;
+				}
+				
+				inTable = true;
+				break;
+			}
+		}
+
+		if (!inTable) {
+			convertedBytes[i] = *b;
+			i++;
+		}
+	}
+	
+	convertedBytes[i] = 0;
+
+	Common::U32String result((char *)convertedBytes);
+	delete[] convertedBytes;
+
+	return result;
+}
+
+#endif
+
 
 } // End of namespace Draci

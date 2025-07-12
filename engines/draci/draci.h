@@ -54,6 +54,60 @@ enum DRACIAction {
 	kActionInvRotateNext
 };
 
+#ifdef USE_TTS
+
+struct CharacterDialogData {
+	uint8 voiceID;
+	bool male;
+};
+
+static const CharacterDialogData characterDialogData[] = {
+	{ 0, true },	// Bert
+	{ 1, true },	// Narrator
+	{ 2, true },	// Giant
+	{ 3, true },	// Captured dwarf
+	{ 4, true },	// Troll
+	{ 0, false },	// Berta
+	{ 5, true },	// Herbert
+	{ 1, false },	// Evelyn
+	{ 1, false },	// Evelyn
+	{ 2, false },	// Karmela
+	{ 6, true },	// King
+	{ 7, true },	// Wind
+	{ 8, true },	// Worm
+	{ 9, true },	// Pub dwarf
+	{ 10, true },	// Card player 2
+	{ 11, true },	// Card player 1
+	{ 12, true },	// Barkeeper
+	{ 13, true },	// Lazy man
+	{ 14, true },	// Goblin 1
+	{ 15, true },	// Goblin 2
+	{ 3, false },	// Chronicle
+	{ 16, true },	// Beggar
+	{ 17, true },	// Horn-blower
+	{ 18, true },	// Herbert
+	{ 19, true },	// Wizard
+	{ 20, true },	// Comedian
+	{ 21, true },	// Darter
+	{ 4, true },	// Troll
+	{ 21, true },	// Darter
+	{ 0, true },	// Skull
+	{ 22, true },	// Canary
+	{ 23, true },	// Oak-tree
+	{ 24, true },	// Beech-tree
+	{ 4, false },	// Agatha
+	{ 5, false },	// Eulanie
+	{ 25, true },	// Knight
+	{ 1, false },	// Evelyn
+	{ 20, true },	// Comedian
+	{ 1, true },	// Narrator
+};
+
+#endif
+
+static const int kBertID = 0;
+static const int kNarratorID = 1;
+
 class Screen;
 class Mouse;
 class Game;
@@ -73,6 +127,8 @@ public:
 	int init();
 	Common::Error run() override;
 
+	Common::Language getLanguage() const;
+
 	bool hasFeature(Engine::EngineFeature f) const override;
 	void pauseEngineIntern(bool pause) override;
 	void syncSoundSettings() override;
@@ -86,6 +142,15 @@ public:
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	void sayText(const Common::String &text, bool isSubtitle = false);
+	void stopTextToSpeech();
+	void setTTSVoice(int characterID) const;
+#ifdef USE_TTS
+	Common::U32String convertText(const Common::String &text) const;
+#endif
+
+	const ADGameDescription *_gameDescription;
+
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
@@ -96,6 +161,8 @@ public:
 
 	Font *_smallFont;
 	Font *_bigFont;
+
+	Common::String _previousSaid;
 
 	BArchive *_iconsArchive;
 	BArchive *_objectsArchive;
