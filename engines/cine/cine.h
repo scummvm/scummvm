@@ -31,6 +31,7 @@
 #include "common/hash-str.h"
 #include "common/random.h"
 #include "common/events.h"
+#include "common/text-to-speech.h"
 
 #include "engines/engine.h"
 
@@ -122,6 +123,14 @@ enum CINEAction {
 	kActionMenuOptionDown
 };
 
+enum TTSLanguage {
+	kEnglish = 0,
+	kFrench = 1,
+	kGerman = 2,
+	kSpanish = 3,
+	kItalian = 4
+};
+
 class CineConsole;
 
 class CineEngine : public Engine {
@@ -159,6 +168,12 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action);
+	void stopTextToSpeech();
+#ifdef USE_TTS
+	void mouseOverButton();
+#endif
+
 	const CINEGameDescription *_gameDescription;
 	Common::File _partFileHandle;
 
@@ -169,6 +184,12 @@ public:
 	TextHandler _textHandler;
 
 	bool _restartRequested;
+
+	Common::String _previousSaid;
+	TTSLanguage _ttsLanguage;
+	bool _copyProtectionTextScreen;
+	bool _copyProtectionColorScreen;
+	bool _saveInputMenuOpen;
 
 private:
 	void initialize();
