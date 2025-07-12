@@ -40,6 +40,7 @@ namespace Wintermute {
 struct ShadowVertexShader {
 	float x;
 	float y;
+	float z;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -146,7 +147,7 @@ bool ShadowVolumeOpenGLShader::renderToScene() {
 	renderer->_shadowMaskShader->use();
 	renderer->setProjection2D(renderer->_shadowMaskShader);
 
-	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 2, GL_FLOAT, false, 8, 0);
+	_maskShader->enableVertexAttribute("position", _shadowMaskVertexBuffer, 3, GL_FLOAT, false, 12, 0);
 	_maskShader->use(true);
 
 	glFrontFace(GL_CW);
@@ -174,18 +175,22 @@ bool ShadowVolumeOpenGLShader::initMask() {
 	// bottom left
 	shadowMask[0].x = 0.0f;
 	shadowMask[0].y = rend->getHeight();
+	shadowMask[0].z = 1.0f;
 
 	// top left
 	shadowMask[1].x = 0.0f;
 	shadowMask[1].y = 0.0f;
+	shadowMask[1].z = 1.0f;
 
 	// bottom right
 	shadowMask[2].x = rend->getWidth();
 	shadowMask[2].y = rend->getHeight();
+	shadowMask[2].z = 1.0f;
 
 	// top right
 	shadowMask[3].x = rend->getWidth();
 	shadowMask[3].y = 0.0f;
+	shadowMask[3].z = 1.0f;
 
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowMaskVertexBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, 4 * sizeof(ShadowVertexShader), shadowMask);
