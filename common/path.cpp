@@ -1083,6 +1083,18 @@ bool Path::punycodeNeedsEncode() const {
 		}, tmp);
 }
 
+bool Path::punycodeIsEncoded() const {
+	bool tmp = false;
+	return reduceComponents<bool &>(
+		[](bool &result, const String &in, bool last) -> bool & {
+			// If we already are encoded, we still are
+			if (result) return result;
+
+			result = punycode_hasprefix(in);
+			return result;
+		}, tmp);
+}
+
 // For a path component creates a string with following property:
 // if 2 files have the same case-insensitive
 // identifier string then and only then we treat them as
