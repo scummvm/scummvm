@@ -45,6 +45,11 @@ endif
 	TEST_LIBS += engines/ultima/libultima.a
 endif
 
+ifeq ($(ENABLE_TWINE), STATIC_PLUGIN)
+	TESTS += $(srcdir)/test/engines/twine/*.h
+	TEST_LIBS += engines/twine/libtwine.a
+endif
+
 #
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh
 TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest

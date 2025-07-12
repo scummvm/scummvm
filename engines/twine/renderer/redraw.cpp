@@ -475,7 +475,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	}
 
 	if (validClip) {
-		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
+		_engine->_grid->drawGraph(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->_workFlags.bWasDrawn = 1;
 

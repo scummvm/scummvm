@@ -19,7 +19,6 @@
  *
  */
 
-#include "twine/scene/grid.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/textconsole.h"
@@ -32,6 +31,8 @@
 #include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/collision.h"
+#include "twine/scene/graph.h"
+#include "twine/scene/grid.h"
 #include "twine/scene/scene.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
@@ -162,7 +163,7 @@ void Grid::copyMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurfac
 	} while (--vSize);
 }
 
-const BrickEntry* Grid::getBrickEntry(int32 j, int32 i) const {
+const BrickEntry *Grid::getBrickEntry(int32 j, int32 i) const {
 	return &_listBrickColon[j * MAX_BRICKS + i];
 }
 
@@ -249,7 +250,7 @@ void Grid::processGridMask(const uint8 *buffer, uint8 *ptr) {
 					numOfBlock++;
 					opaquePixels = 0;
 				}
-				*targetPtrPos++ = runLength; //write skip
+				*targetPtrPos++ = runLength; // write skip
 				numOfBlock++;
 			}
 		}
@@ -465,12 +466,12 @@ bool Grid::initCellingGrid(int32 index) { // IncrustGrm
 }
 
 bool Grid::drawGraph(int32 index, int32 posX, int32 posY) { // AffGraph
-	return drawBrickSprite(posX, posY, _bufferBrick[index], false);
+	return drawGraph(posX, posY, _bufferBrick[index], false);
 }
 
-bool Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) { // AffGraph
-	ptr = ptr + READ_LE_INT32(ptr + index * 4);
-	return drawBrickSprite(posX, posY, ptr, true);
+bool Grid::drawGraph(int32 index, int32 posX, int32 posY, const uint8 *ptr) { // AffGraph
+	ptr = ptr + READ_LE_INT32(ptr + index * 4);                               // GetGraph, GetMask
+	return drawGraph(posX, posY, ptr, true);
 }
 
 bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteIndex) {
@@ -496,98 +497,18 @@ bool Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr, int spriteI
 	return true;
 }
 
-// WARNING: Rewrite this function to have better performance
-bool Grid::drawBrickSprite(int32 posX, int32 posY, const uint8 *pGraph, bool isSprite) { // AffGraph
+bool Grid::drawGraph(int32 posX, int32 posY, const uint8 *pGraph, bool isSprite) {
 	if (_engine->_debugState->_disableGridRendering) {
 		return false;
 	}
-	if (!_engine->_interface->_clip.isValidRect()) {
-		return false;
-	}
-
-	const int32 left = posX + pGraph[2];
-	if (left >= _engine->_interface->_clip.right) {
-		return false;
-	}
-	const int32 top = posY + pGraph[3];
-	if (top >= _engine->_interface->_clip.bottom) {
-		return false;
-	}
-	const int32 right = pGraph[0] + left;
-	if (right < _engine->_interface->_clip.left) {
-		return false;
-	}
-	const int32 bottom = pGraph[1] + top;
-	if (bottom < _engine->_interface->_clip.top) {
-		return false;
-	}
-	const int32 maxY = MIN(bottom, (int32)_engine->_interface->_clip.bottom);
-
-	pGraph += 4; // skip the header
-
-	int32 x = left;
-
-	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
-	{
-		for (int32 y = top; y < maxY; ++y) {
-			const uint8 rleAmount = *pGraph++;
-			for (int32 run = 0; run < rleAmount; ++run) {
-				const uint8 rleMask = *pGraph++;
-				const uint8 iterations = bits(rleMask, 0, 6) + 1;
-				const uint8 opCode = bits(rleMask, 6, 2);
-				if (opCode == 0) {
-					x += iterations;
-					continue;
-				}
-				if (y < _engine->_interface->_clip.top || x >= _engine->_interface->_clip.right || x + iterations < _engine->_interface->_clip.left) {
-					if (opCode == 1) {
-						pGraph += iterations;
-					} else {
-						++pGraph;
-					}
-					x += iterations;
-					continue;
-				}
-				if (opCode == 1) { // 0x40
-					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
-					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
-							*out = *pGraph;
-						}
-
-						++out;
-						++x;
-						++pGraph;
-					}
-				} else {
-					const uint8 pixel = *pGraph++;
-					uint8 *out = (uint8 *)_engine->_frontVideoBuffer.getBasePtr(x, y);
-					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->_clip.left && x < _engine->_interface->_clip.right) {
-							*out = pixel;
-						}
-
-						++out;
-						++x;
-					}
-				}
-			}
-			x = left;
-		}
-	}
-
-	Common::Rect rect(left, top, right, bottom);
-	_engine->_frontVideoBuffer.addDirtyRect(rect);
-
-	return true;
+	const Common::Rect &clip = _engine->_interface->_clip;
+	TwineScreen &frontVideoBuffer = _engine->_frontVideoBuffer;
+	return TwinE::drawGraph(posX, posY, pGraph, isSprite, frontVideoBuffer, clip);
 }
 
 const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	const IVec3 &collision = updateCollisionCoordinates(pos.x, pos.y, pos.z);
-	const uint8 *ptr = _bufCube
-					   + collision.y * 2
-					   + collision.x * SIZE_CUBE_Y * 2
-					   + collision.z * SIZE_CUBE_X * SIZE_CUBE_Y * 2;
+	const uint8 *ptr = _bufCube + collision.y * 2 + collision.x * SIZE_CUBE_Y * 2 + collision.z * SIZE_CUBE_X * SIZE_CUBE_Y * 2;
 
 	int32 collisionY = collision.y;
 	while (collisionY) {
@@ -604,7 +525,7 @@ const uint8 *Grid::getBlockBufferGround(const IVec3 &pos, int32 &ground) {
 	return ptr;
 }
 
-const BlockDataEntry* Grid::getAdrBlock(int32 blockIdx, int32 brickIdx) const {
+const BlockDataEntry *Grid::getAdrBlock(int32 blockIdx, int32 brickIdx) const {
 	const BlockData *blockPtr = getBlockLibrary(blockIdx);
 	return &blockPtr->entries[brickIdx];
 }
@@ -837,7 +758,7 @@ uint8 Grid::worldCodeBrick(int32 x, int32 y, int32 z) {
 	return code;
 }
 
-void Grid::centerOnActor(const ActorStruct* actor) {
+void Grid::centerOnActor(const ActorStruct *actor) {
 	_startCube.x = (actor->_posObj.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 	_startCube.y = (actor->_posObj.y + SIZE_BRICK_Y) / SIZE_BRICK_Y;
 	_startCube.z = (actor->_posObj.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
