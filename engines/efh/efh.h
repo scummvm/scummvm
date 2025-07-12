@@ -28,6 +28,7 @@
 #include "common/rect.h"
 #include "common/events.h"
 #include "common/serializer.h"
+#include "common/text-to-speech.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
@@ -257,6 +258,12 @@ struct TeamMonster {
 	void init();
 };
 
+enum TTSMenuRestriction {
+	kNoRestriction,
+	kLowStatusMenu,
+	kMenu
+};
+
 enum EFHAction {
 	kActionNone,
 	kActionExit,
@@ -480,7 +487,7 @@ private:
 	void displayColoredMenuBox(int16 minX, int16 minY, int16 maxX, int16 maxY, int16 color);
 
 	// Menu
-	int16 displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl);
+	int16 displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl, bool voiceText = true);
 	bool handleDeathMenu();
 	void displayCombatMenu(int16 charId);
 	void displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str);
@@ -516,13 +523,15 @@ private:
 	void generateSound5(int repeat);
 	void generateSound(int16 soundType);
 	void genericGenerateSound(int16 soundType, int16 repeatCount);
+	void sayText(const Common::String &text, TTSMenuRestriction menuRestriction, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE) const;
+	void stopTextToSpeech() const;
 
 	// Utils
 	void decryptImpFile(bool techMapFl);
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	int16 getRandom(int16 maxVal);
-	Common::KeyCode getLastCharAfterAnimCount(int16 delay);
+	Common::KeyCode getLastCharAfterAnimCount(int16 delay, bool waitForTTS = true);
 	Common::KeyCode getInput(int16 delay);
 	Common::KeyCode waitForKey();
 	Common::KeyCode handleAndMapInput(bool animFl);
@@ -632,6 +641,10 @@ private:
 	int16 _menuStatItemArr[15];
 	int16 _menuDepth;
 	int16 _menuItemCounter;
+	int16 _selectedMenuBox;
+	bool _sayMenu;
+	bool _sayLowStatusScreen;
+	bool _initiatedTalkByMenu;
 
 	TeamChar _teamChar[3];
 	TeamMonster _teamMonster[5];

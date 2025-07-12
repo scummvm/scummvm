@@ -483,6 +483,7 @@ int16 EfhEngine::script_parse(Common::String stringBuffer, int16 posX, int16 pos
 			_teamChar[teamSlot]._id = joiningNpcId;
 		}
 		refreshTeamSize();
+		_sayLowStatusScreen = true;
 	}
 
 	return retVal;
