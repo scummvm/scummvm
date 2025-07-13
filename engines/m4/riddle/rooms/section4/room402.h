@@ -37,8 +37,8 @@ private:
 	int _val6 = 0;
 	int _val8 = 0;
 	int _currentNode = 0;
-	int _val10 = 0;
-	int _val11 = 0;
+	int _dialogMode = 0;
+	int _dialogShould = 0;
 	int _wolfMode = 0;
 	int _wolfShould = 0;
 	int _val14 = 0;

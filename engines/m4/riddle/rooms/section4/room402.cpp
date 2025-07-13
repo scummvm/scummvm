@@ -50,8 +50,8 @@ void Room402::init() {
 		_val6 = 0;
 		_val8 = 0;
 		_currentNode = -1;
-		_val10 = 0;
-		_val11 = 0;
+		_dialogMode = 0;
+		_dialogShould = 0;
 		_wolfMode = 0;
 		_wolfShould = 0;
 		_sound1.clear();
@@ -394,15 +394,15 @@ void Room402::daemon() {
 		break;
 
 	case 101:
-		switch (_val10) {
+		switch (_dialogMode) {
 		case 1000:
-			_val11 = 1105;
+			_dialogShould = 1105;
 			break;
 		case 1001:
 			if (_G(flags)[V132])
 				_trigger1 = 300;
 			else
-				_val11 = 1112;
+				_dialogShould = 1112;
 			break;
 
 		default:
@@ -420,9 +420,9 @@ void Room402::daemon() {
 		break;
 
 	case 103:
-		switch (_val10) {
+		switch (_dialogMode) {
 		case 1000:
-			switch (_val11) {
+			switch (_dialogShould) {
 			case 1100:
 				ws_hide_walker();
 				player_set_commands_allowed(false);
@@ -439,14 +439,14 @@ void Room402::daemon() {
 					_ripTalker, 1, 1, 0);
 				sendWSMessage_10000(1, _safariShadow, _shadow3, 1, 1, 102,
 					_shadow3, 1, 1, 0);
-				_val11 = 1101;
+				_dialogShould = 1101;
 				_wolfMode = 2000;
 				_wolfShould = 2100;
 				kernel_timing_trigger(1, 110);
 				break;
 
 			case 1101:
-				_val11 = 1103;
+				_dialogShould = 1103;
 				kernel_timing_trigger(1, 102);
 				conv_load("conv402a", 10, 10, 101);
 
@@ -508,7 +508,7 @@ void Room402::daemon() {
 				terminateMachineAndNull(_ripEnterLeave);
 				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 0, -53, 100, 0x100, false,
 					triggerMachineByHashCallback, "rip talks wolf");
-				_val11 = 1122;
+				_dialogShould = 1122;
 				_letter = series_load("RIP SHOWS WOLF THE LETTER");
 				sendWSMessage_10000(1, _ripEnterLeave, _letter, 1, 12, 103,
 					_letter, 12, 12, 0);
@@ -524,7 +524,7 @@ void Room402::daemon() {
 				break;
 
 			case 1123:
-				_val11 = 1124;
+				_dialogShould = 1124;
 				sendWSMessage_10000(1, _ripEnterLeave, _letter, 12, 1, 103,
 					_ripTalker, 1, 1, 0);
 				break;
@@ -537,8 +537,8 @@ void Room402::daemon() {
 				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
 					_G(player_info).x, _G(player_info).y, _G(player_info).scale, 0x100, false,
 					triggerMachineByHashCallback, "rip talks wolf");
-				_val10 = 1000;
-				_val11 = 1103;
+				_dialogMode = 1000;
+				_dialogShould = 1103;
 				sendWSMessage_10000(1, _ripEnterLeave, _ripTalker, 1, 1, 102,
 					_ripTalker, 1, 1, 0);
 				conv_resume();
@@ -550,7 +550,7 @@ void Room402::daemon() {
 			break;
 
 		case 1001:
-			switch (_val11) {
+			switch (_dialogShould) {
 			case 1110:
 				player_update_info();
 				_ripEnterLeave = TriggerMachineByHash(1, 1, 0, 0, 0, 0,
@@ -572,13 +572,13 @@ void Room402::daemon() {
 				_wolfShould = 2141;
 				kernel_timing_trigger(1, 110);
 
-				_val11 = 1111;
+				_dialogShould = 1111;
 				kernel_timing_trigger(1, 102);
 				break;
 
 			case 1111:
-				_val10 = 1001;
-				_val11 = 1115;
+				_dialogMode = 1001;
+				_dialogShould = 1115;
 				kernel_timing_trigger(1, 102);
 
 				conv_load("conv402a", 0, 10, 101);
@@ -614,7 +614,7 @@ void Room402::daemon() {
 
 					if (!_sound2.empty()) {
 						_wolfShould = 2142;
-						_val11 = 1113;
+						_dialogShould = 1113;
 						digi_play(_sound2.c_str(), 1, 255, 103);
 						_sound2.clear();
 					}
@@ -1159,8 +1159,8 @@ void Room402::daemon() {
 		terminateMachineAndNull(_safariShadow);
 		ws_unhide_walker();
 		_trigger1 = -1;
-		_val10 = 1001;
-		_val11 = 1110;
+		_dialogMode = 1001;
+		_dialogShould = 1110;
 		kernel_timing_trigger(1, 102);
 		break;
 
@@ -1465,8 +1465,8 @@ void Room402::parser() {
 	} else if (talkFlag && player_said("WOLF")) {
 		player_set_commands_allowed(false);
 		_trigger1 = -1;
-		_val10 = 1000;
-		_val11 = 1100;
+		_dialogMode = 1000;
+		_dialogShould = 1100;
 
 		_G(kernel).trigger_mode = KT_DAEMON;
 		kernel_timing_trigger(1, 102);
@@ -1668,7 +1668,7 @@ void Room402::conv402a() {
 		case 19:
 		case 22:
 		case 23:
-			_val10 = 1001;
+			_dialogMode = 1001;
 			_sound2 = sound;
 			conv_resume();
 			break;
@@ -1731,25 +1731,25 @@ void Room402::conv402a() {
 		case 1:
 			if (entry == 3) {
 				_sound1 = sound;
-				_val10 = 1000;
-				_val11 = 1120;
-			} else if (_val10 == 1001) {
-				_val11 = 1114;
+				_dialogMode = 1000;
+				_dialogShould = 1120;
+			} else if (_dialogMode == 1001) {
+				_dialogShould = 1114;
 				digi_play(sound, 1, 255, 777);
 			} else {
-				_val11 = 1102;
+				_dialogShould = 1102;
 				digi_play(sound, 1, 255, 777);
 			}
 			break;
 
 		case 6:
 		case 11:
-			_val10 = 1000;
+			_dialogMode = 1000;
 			if (entry == 1) {
 				_sound1 = sound;
 				conv_resume();
 			} else {
-				_val11 = 1102;
+				_dialogShould = 1102;
 				digi_play(sound, 1, 255, 777);
 			}
 			break;
@@ -1757,8 +1757,8 @@ void Room402::conv402a() {
 		case 14:
 		case 16:
 			if (entry == 1) {
-				_val10 = 1001;
-				_val11 = 1115;
+				_dialogMode = 1001;
+				_dialogShould = 1115;
 				_sound2 = sound;
 				_wolfMode = 2002;
 				_wolfShould = 2180;
@@ -1767,14 +1767,14 @@ void Room402::conv402a() {
 				kernel_timing_trigger(1, 110);
 				_G(kernel).trigger_mode = KT_PARSE;
 			} else {
-				_val11 = (_val10 == 1001) ? 1114 : 2142;
+				_dialogShould = (_dialogMode == 1001) ? 1114 : 1102;
 				digi_play(sound, 1, 255, 777);
 			}
 			break;
 		case 26:
 			if (entry == 2) {
-				_val10 = 1001;
-				_val11 = 1115;
+				_dialogMode = 1001;
+				_dialogShould = 1115;
 				_sound2 = sound;
 				_wolfMode = 2002;
 				_wolfShould = 2180;
@@ -1786,7 +1786,7 @@ void Room402::conv402a() {
 			break;
 			
 		default:
-			_val11 = (_val10 == 1001) ? 1114 : 2142;
+			_dialogShould = (_dialogMode == 1001) ? 1114 : 1102;
 			digi_play(sound, 1, 255, 777);
 			break;
 		}
@@ -1800,8 +1800,8 @@ void Room402::conv402a777() {
 
 	if (who <= 0) {
 		if (node == 26 && entry == 0) {
-			_val10 = 1000;
-			_val11 = 1123;
+			_dialogMode = 1000;
+			_dialogShould = 1123;
 			_G(kernel).trigger_mode = KT_DAEMON;
 			kernel_timing_trigger(1, 102);
 			_G(kernel).trigger_mode = KT_PARSE;
@@ -1810,7 +1810,7 @@ void Room402::conv402a777() {
 			conv_resume();
 		}
 	} else if (who == 1) {
-		_val11 = (_val10 == 1001) ? 1115 : 1103;
+		_dialogShould = (_dialogMode == 1001) ? 1115 : 1103;
 		conv_resume();
 	}
 }
@@ -1918,8 +1918,8 @@ void Room402::syncGame(Common::Serializer &s) {
 	s.syncAsSint16LE(_val6);
 	s.syncAsSint16LE(_val8);
 	s.syncAsSint16LE(_currentNode);
-	s.syncAsSint16LE(_val10);
-	s.syncAsSint16LE(_val11);
+	s.syncAsSint16LE(_dialogMode);
+	s.syncAsSint16LE(_dialogShould);
 	s.syncAsSint16LE(_wolfMode);
 	s.syncAsSint16LE(_wolfShould);
 }
