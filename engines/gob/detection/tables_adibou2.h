@@ -352,8 +352,6 @@
 },
 { // Shipped as an Demo / Preview for Nature et Sciences on Adibou presente Dessin CD
   // Supplied by BJNFNE
-  // ToDo: adding unimplemented opcodes is required.
-  // Also support needs added for static images (.TGA files), The Banner for Nature et Sciences can't be loaded because of the missing opcode.
 	{
 		"adibou2",
 		"Nature et Sciences Preview",
@@ -366,4 +364,5 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
 #endif // GOB_DETECTION_TABLES_ADIBOU2_H
