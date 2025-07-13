@@ -2516,7 +2516,7 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 	if (m_pMaskDC != nullptr)
 		bHaveMaskContext = TRUE;
 
-	mySize.cx = m_cSize.cx * m_nCelCount;
+	mySize.cx = m_nCelCount ? m_cSize.cx * m_nCelCount : m_cSize.cx;
 	mySize.cy = m_cSize.cy;
 
 	m_pMask = new CBitmap();                            // create object to hold the mask
