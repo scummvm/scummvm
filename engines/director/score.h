@@ -36,6 +36,7 @@ namespace Common {
 	class ReadStreamEndian;
 	class MemoryReadStreamEndian;
 	class SeekableReadStreamEndian;
+	class MemoryWriteStream;
 }
 
 namespace Director {
@@ -153,6 +154,8 @@ private:
 
 	bool processImmediateFrameScript(Common::String s, int id);
 	bool processFrozenScripts(bool recursion = false, int count = 0);
+
+	void writeFrame(Common::MemoryWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize);
 
 public:
 	Common::Array<Channel *> _channels;

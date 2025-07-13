@@ -110,6 +110,17 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 	}
 }
 
+void Frame::writeMainChannels(Common::MemoryWriteStream *writeStream, uint16 version) {
+	debugC(6, kDebugLoading, "Frame::writeChannel: writing main channels for version %d", version);
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeMainChannelsD4(writeStream);
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeMainChannelsD5(writeStream);
+	} else {
+		warning("Frame::writeChannel(): Unsupported Director version: %d", version);
+	}
+}
 /**************************
  *
  * D2 Loading
@@ -573,7 +584,7 @@ void Frame::writeMainChannelsD4(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(0);		// Unknown: Sound/Tempo/Transition	// 0
 
 	writeStream->writeByte(_mainChannels.soundType1);		// 1
-	writeStream->writeByte((_mainChannels.transArea ? 0x80 : 0x00) | (_mainChannels.transDuration / 250) & 0x7F);	// 2
+	writeStream->writeByte((_mainChannels.transArea ? 0x80 : 0x00) | ((_mainChannels.transDuration / 250) & 0x7F));	// 2
 	writeStream->writeByte(_mainChannels.transChunkSize);	// 3
 	writeStream->writeByte(_mainChannels.tempo);			// 4
 	writeStream->writeByte(_mainChannels.transType);		// 5
