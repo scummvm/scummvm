@@ -197,3 +197,4 @@ Known Issues
 ===============
 
 - MT-32 emulation is not available on the PS Vita.
+- ScummVM crashes when using the PS button or when suspending the console. Install the `FdFix plugin <https://github.com/TheOfficialFloW/FdFix>`_ to fix this.
