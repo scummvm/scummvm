@@ -160,6 +160,7 @@ public:
 	Score *getScore() const { return _score; }
 
 	void readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size, uint16 version);
+	void writeMainChannels(Common::MemoryWriteStream *writeStream, uint16 version);
 
 	void executeImmediateScripts();
 

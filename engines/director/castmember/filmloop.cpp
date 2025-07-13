@@ -835,10 +835,6 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 }
 
 uint32 FilmLoopCastMember::getSCVWResourceSize() {
-	// Size: 4 bytes
-	// frameoffset: 4 bytes
-	// Header (Ignored data): 16 bytes
-
 	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
@@ -859,6 +855,10 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 			framesSize += 2 + 2 + channelSize; 	
 		}
 	}
+
+	// Size: 4 bytes
+	// frameoffset: 4 bytes
+	// Header (Ignored data): 16 bytes
 	return 4 + 4 + 16 + framesSize;
 }
 
