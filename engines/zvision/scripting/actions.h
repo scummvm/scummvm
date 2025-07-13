@@ -402,10 +402,6 @@ public:
 	bool execute() override;
 
 private:
-	enum {
-		DIFFERENT_DIMENSIONS = 0x1 // 0x1 flags that the destRect dimensions are different from the original video dimensions
-	};
-
 	Common::Path _fileName;
 	uint _x1;
 	uint _y1;

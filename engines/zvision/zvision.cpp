@@ -488,6 +488,7 @@ bool ZVision::loadZix(const Common::Path &name) {
 		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
 	
 	const char* genExcluded[] {"*.dll", "*.ini", "*.exe", "*.isu", "*.inf", "*path*.txt", "r.svr", "*.zix"};
+	//TODO - change this to a list of alternate pairs; only throw an error if both alternatives are unavailable
 	const char* zgiExcluded[] {
 		"c000h01q.raw", "cm00h01q.raw", "dm00h01q.raw", "e000h01q.raw", "em00h11p.raw", "em00h50q.raw", "gjnph65p.raw", 
 		"gjnph72p.raw", "h000h01q.raw", "m000h01q.raw", "p000h01q.raw", "q000h01q.raw", "sw00h01q.raw", "t000h01q.raw", 
