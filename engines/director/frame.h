@@ -175,9 +175,13 @@ private:
 	void readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 
+	void writeMainChannelsD4(Common::MemoryWriteStream *writeStream);
+
 	void readChannelD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void writeMainChannelsD5(Common::MemoryWriteStream *writeStream);
 
 	void readChannelD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
