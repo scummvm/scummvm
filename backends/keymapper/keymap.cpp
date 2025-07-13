@@ -36,6 +36,7 @@ Keymap::Keymap(KeymapType type, const String &id, const U32String &description) 
 		_type(type),
 		_id(id),
 		_description(description),
+		_partialMatchAllowed(true),
 		_enabled(true),
 		_configDomain(nullptr),
 		_hardwareInputSet(nullptr),
@@ -47,6 +48,7 @@ Keymap::Keymap(KeymapType type, const String &id, const String &description) :
 		_type(type),
 		_id(id),
 		_description(U32String(description)),
+		_partialMatchAllowed(true),
 		_enabled(true),
 		_configDomain(nullptr),
 		_hardwareInputSet(nullptr),
@@ -145,7 +147,7 @@ Keymap::KeymapMatch Keymap::getMappedActions(const Event &event, ActionArray &ac
 			return kKeymapMatchExact;
 		}
 
-		if (normalizedKeystate.flags & KBD_NON_STICKY) {
+		if (_partialMatchAllowed && normalizedKeystate.flags & KBD_NON_STICKY) {
 			// If no matching actions and non-sticky keyboard modifiers are down,
 			// check again for matches without the exact keyboard modifiers
 			for (const auto &itInput : _hwActionMap) {
