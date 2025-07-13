@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/gfx/skin_mesh_helper.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 
 #include "graphics/opengl/system_headers.h"
 
@@ -181,6 +182,13 @@ bool XMeshOpenGLShader::renderFlatShadowModel(uint32 shadowColor) {
 	if (!_gameRef->_renderer3D->_camera)
 		return false;
 
+	// W/A for the scene with the table in the laboratory where the engine switches to flat shadows.
+	// Presumably, it's supposed to disable shadows.
+	// Instead, OpenGL draws graphical glitches.
+	// Original DX version does not have this issue due to rendering shadows differently.
+	if (BaseEngine::instance().getGameId() == "alphapolaris")
+		return false;
+	
 	uint32 vertexSize = DXGetFVFVertexSize(_blendedMesh->getFVF()) / sizeof(float);
 	float *vertexData = (float *)_blendedMesh->getVertexBuffer().ptr();
 	if (vertexData == nullptr) {
