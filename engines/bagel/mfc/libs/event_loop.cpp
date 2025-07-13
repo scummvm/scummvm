@@ -33,12 +33,15 @@ namespace Libs {
 void EventLoop::runEventLoop() {
 	MSG msg;
 
-	while (!g_engine->shouldQuit() && !_activeWindows.empty()) {
+	while (!shouldQuit() && !_activeWindows.empty()) {
 		CWnd *activeWin = GetActiveWindow();
 		if (activeWin->m_nModalResult != -1)
 			break;
 
 		if (!GetMessage(msg))
+			break;
+
+		if (msg.message == WM_QUIT)
 			break;
 
 		if (msg.message != WM_NULL && !PreTranslateMessage(&msg)) {
@@ -47,13 +50,16 @@ void EventLoop::runEventLoop() {
 		}
 
 		CWnd *activeWin2 = GetActiveWindow();
-		if (activeWin2 != nullptr && activeWin2 != activeWin)
+		if (activeWin2 != nullptr && activeWin2 != activeWin) {
 			// New top window, so signal to redraw it
 			activeWin2->Invalidate();
+		}
 	}
 }
 
 void EventLoop::SetActiveWindow(CWnd *wnd) {
+	assert(_quitFlag == QUIT_NONE);
+
 	// If it's the first window added, and we don't have
 	// a main window defined, set it as the main window
 	if (_activeWindows.empty())
@@ -73,7 +79,7 @@ void EventLoop::PopActiveWindow() {
 void EventLoop::checkMessages() {
 	// Don't do any actual ScummVM event handling
 	// until at least one window has been set up
-	if (_activeWindows.empty())
+	if (_activeWindows.empty() || shouldQuit())
 		return;
 
 	// Poll for event in ScummVM event manager
@@ -85,6 +91,29 @@ void EventLoop::checkMessages() {
 		setMessageWnd(ev, hWnd);
 		MSG msg = ev;
 		msg.hwnd = hWnd;
+
+		if (msg.message == WM_QUIT) {
+			_quitFlag = QUIT_QUITTING;
+			msg.hwnd = nullptr;
+
+			// For a shutdown, flag any open dialogs with
+			// a modal result so they close, and a WM_CLOSE
+			// to any non-dialogs
+			auto wnds = GetActiveWindow()->GetSafeParents(true);
+			for (auto wnd : wnds) {
+				CDialog *d = dynamic_cast<CDialog *>(wnd);
+				MSG closeMsg;
+				closeMsg.hwnd = wnd->m_hWnd;
+
+				if (d) {
+					d->m_nModalResult = -999;
+					closeMsg.message = WM_NULL;
+				} else {
+					closeMsg.message = WM_CLOSE;
+				}
+				_messages.push(closeMsg);
+			}
+		}
 
 		if (msg.message == WM_MOUSEMOVE &&
 				priorMsg.message == WM_MOUSEMOVE) {
@@ -146,14 +175,19 @@ bool EventLoop::GetMessage(MSG &msg) {
 				if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
 					msg.message = WM_NULL;
 			}
-		} else {
+		} else if (msg.message != WM_QUIT) {
 			msg.message = WM_NULL;
 		}
 	} else {
 		msg.message = WM_NULL;
 	}
 
-	return !g_engine->shouldQuit() && msg.message != WM_QUIT;
+	if (msg.message == WM_QUIT) {
+		_quitFlag = QUIT_QUIT;
+		return false;
+	}
+
+	return true;
 }
 
 void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
@@ -262,20 +296,7 @@ bool EventLoop::mousePosToClient(CWnd *wnd, POINT &pt) {
 }
 
 bool EventLoop::pollEvents(Common::Event &event) {
-	if (_quitFlag)
-		return false;
-
-	if (!g_system->getEventManager()->pollEvent(event))
-		return false;
-
-	// Check for quit event
-	if ((event.type == Common::EVENT_QUIT) ||
-		(event.type == Common::EVENT_RETURN_TO_LAUNCHER)) {
-		_quitFlag = true;
-		return false;
-	}
-
-	return true;
+	return g_system->getEventManager()->pollEvent(event);
 }
 
 void EventLoop::checkForFrameUpdate() {
@@ -311,6 +332,9 @@ BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 
 BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
+	if (_quitFlag != QUIT_NONE)
+		return false;
+
 	assert(hWnd && hWnd != (HWND)0xdddddddd);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
@@ -329,12 +353,14 @@ void EventLoop::TranslateMessage(LPMSG lpMsg) {
 
 void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
-	if (!wnd)
-		// Recipient has been destroyed
-		return;
 
-	wnd->SendMessage(lpMsg->message,
-		lpMsg->wParam, lpMsg->lParam);
+	if (lpMsg->message == WM_QUIT)
+		_quitFlag = QUIT_QUIT;
+
+	if (wnd) {
+		wnd->SendMessage(lpMsg->message,
+			lpMsg->wParam, lpMsg->lParam);
+	}
 }
 
 bool EventLoop::isMouseMsg(const Common::Event &ev) const {

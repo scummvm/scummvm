@@ -3379,7 +3379,7 @@ void CMainPackRatWindow::OnClose() {
  *
  ****************************************************************/
 void CMainPackRatWindow::OnDestroy() {
-//  send a message to the calling app to tell it the user has quit the game
+	//  send a message to the calling app to tell it the user has quit the game
 	m_lpGameStruct->lScore = m_lScore;
 	MFC::PostMessage(m_hCallAppWnd, WM_PARENTNOTIFY, WM_DESTROY, (LPARAM)m_lpGameStruct);
 	m_lpGameStruct = nullptr;
@@ -3430,59 +3430,81 @@ void CMainPackRatWindow::ReleaseResources(void) {
 
 	#endif
 
-	if (pBalloonSprite != nullptr) {
-		delete pBalloonSprite;
-	}
+	delete pBalloonSprite;
+	pBalloonSprite = nullptr;
 
-	if (pGameSound != nullptr) {
-		delete pGameSound;                      // delete the game theme song
-		pGameSound = nullptr;
-	}
+	delete pGameSound;                      // delete the game theme song
+	pGameSound = nullptr;
 
 	CSound::clearSounds();
-
 	CSprite::FlushSpriteChain();
 
 	if (pSSpaceBMP != nullptr) {
 		pSSpaceBMP->DeleteObject();
 		delete pSSpaceBMP;
+		pSSpaceBMP = nullptr;
 	}
 	if (pLSpaceBMP != nullptr) {
 		pLSpaceBMP->DeleteObject();
 		delete pLSpaceBMP;
+		pLSpaceBMP = nullptr;
 	}
 
 	delete pPlayerRightSprite;
 	delete pPlayerLeftSprite;
 	delete pPlayerUpSprite;
 	delete pPlayerDownSprite;
+	pPlayerRightSprite = nullptr;
+	pPlayerLeftSprite = nullptr;
+	pPlayerUpSprite = nullptr;
+	pPlayerDownSprite = nullptr;
 
 	delete pBadGuyUpSprite;
 	delete pBadGuyDownSprite;
 	delete pBadGuyLeftSprite;
 	delete pBadGuyRightSprite;
+	pBadGuyUpSprite = nullptr;
+	pBadGuyDownSprite = nullptr;
+	pBadGuyLeftSprite = nullptr;
+	pBadGuyRightSprite = nullptr;
 
 	delete pGoodGuyUpSprite;
 	delete pGoodGuyDownSprite;
 	delete pGoodGuyLeftSprite;
 	delete pGoodGuyRightSprite;
+	pGoodGuyUpSprite = nullptr;
+	pGoodGuyDownSprite = nullptr;
+	pGoodGuyLeftSprite = nullptr;
+	pGoodGuyRightSprite = nullptr;
 
 	delete pFlashUpSprite;
 	delete pFlashDownSprite;
 	delete pFlashLeftSprite;
 	delete pFlashRightSprite;
+	pFlashUpSprite = nullptr;
+	pFlashDownSprite = nullptr;
+	pFlashLeftSprite = nullptr;
+	pFlashRightSprite = nullptr;
 
-	for (nLoop1 = 0; nLoop1 < MAXLIVESPRITE; nLoop1++)
+	for (nLoop1 = 0; nLoop1 < MAXLIVESPRITE; nLoop1++) {
 		delete pLivesSprite[nLoop1];
+		pLivesSprite[nLoop1] = nullptr;
+	}
 
 	delete pLiveSprite;
+	pLiveSprite = nullptr;
 
 	CSprite::ClearBackdrop();
-	(*pGamePalette).DeleteObject();         // release the game color palette
-	delete pGamePalette;
-	delete pOptionButton;                                       // release the buttons we used
 
-	return;
+	if (pGamePalette) {
+		(*pGamePalette).DeleteObject();         // release the game color palette
+
+		delete pGamePalette;
+		pGamePalette = nullptr;
+	}
+
+	delete pOptionButton;
+	pOptionButton = nullptr;
 }
 
 

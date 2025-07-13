@@ -70,19 +70,21 @@ BOOL CTheApp::InitInstance() {
 }
 
 int CTheApp::ExitInstance() {
-	if (dllLoaded) {
-		if (g_wndGame != nullptr)
-			g_wndGame->SendMessage(WM_CLOSE);
+	if (!shouldQuit()) {
+		if (dllLoaded) {
+			if (g_wndGame != nullptr)
+				g_wndGame->SendMessage(WM_CLOSE);
 
-		dllLoaded = false;
-	}
+			dllLoaded = false;
+		}
 
-	if (hMetaInst > HINSTANCE_ERROR) {
-		if (g_wndGame != nullptr)
-			g_wndGame->SendMessage(WM_CLOSE);
+		if (hMetaInst > HINSTANCE_ERROR) {
+			if (g_wndGame != nullptr)
+				g_wndGame->SendMessage(WM_CLOSE);
 
-		FreeLibrary(hMetaInst);
-		hMetaInst = nullptr;
+			FreeLibrary(hMetaInst);
+			hMetaInst = nullptr;
+		}
 	}
 
 	delete m_pMainWnd;

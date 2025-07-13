@@ -73,8 +73,7 @@ BOOL CMovieWindow::PlayMovie() {
 
 	decoder.start();
 
-	while (!app->shouldQuit() &&
-			!decoder.endOfVideo()) {
+	while (!decoder.endOfVideo()) {
 		if (decoder.hasDirtyPalette()) {
 			Graphics::Palette pal(decoder.getPalette(), 256);
 			AfxGetApp()->setPalette(pal);
@@ -86,10 +85,12 @@ BOOL CMovieWindow::PlayMovie() {
 		}
 
 		bool breakFlag = false;
-		while (app->pollEvents(event) && !app->shouldQuit() && !breakFlag) {
-			breakFlag = ((event.type == Common::EVENT_KEYDOWN &&
+		while (app->pollEvents(event) && !breakFlag) {
+			breakFlag = (event.type == Common::EVENT_KEYDOWN &&
 				event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
-				(event.type == Common::EVENT_LBUTTONDOWN));
+				(event.type == Common::EVENT_LBUTTONDOWN) ||
+				(event.type == Common::EVENT_QUIT) ||
+				(event.type == Common::EVENT_RETURN_TO_LAUNCHER);
 		}
 		if (breakFlag)
 			break;

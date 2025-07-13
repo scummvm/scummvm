@@ -32,6 +32,7 @@ ON_COMMAND(IDCANCEL, CDialog::OnCancel)
 ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
 ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
 ON_WM_SYSCHAR()
+ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {

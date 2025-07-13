@@ -65,11 +65,12 @@ private:
 	TimerList _timers;
 	int _timerIdCtr = 0;
 	uint32 _nextFrameTime = 0;
-	bool _quitFlag = false;
 	Common::Point _joystickPos;
 	Common::Point _mousePos;
 	uint _joystickButtons = 0;
 	HOOKPROC _kbdHookProc = nullptr;
+	enum QuitFlag { QUIT_NONE, QUIT_QUITTING, QUIT_QUIT };
+	QuitFlag _quitFlag = QUIT_NONE;
 
 	/**
 	 * Get any pending event
@@ -175,11 +176,14 @@ public:
 
 	void DispatchMessage(LPMSG lpMsg);
 
+	/**
+	 * Returns whether the app should quit.
+	 * It does not use g_engine->shouldQuit(),
+	 * since messages need to be processed to
+	 * cleanly shut down any active windows
+	 */
 	bool shouldQuit() const {
-		return _quitFlag;
-	}
-	void quit() {
-		_quitFlag = true;
+		return _quitFlag == QUIT_QUIT;
 	}
 
 	void SetCapture(HWND hWnd);
