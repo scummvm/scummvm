@@ -73,6 +73,9 @@ public:
 	void updateFrame(Frame *frame);
 	Frame *getFrameData(int frameNum);
 
+	void writeVWSCResource(Common::MemoryWriteStream *writeStream, uint32 offset);
+	uint32 getVWSCResourceSize();
+
 	void loadLabels(Common::SeekableReadStreamEndian &stream);
 	void loadActions(Common::SeekableReadStreamEndian &stream);
 	void loadSampleSounds(uint type);
@@ -196,6 +199,9 @@ public:
 	bool _skipTransition;
 
 	int _numChannelsDisplayed;
+
+	/* Data to be saved */
+	uint16 _spriteRecordSize;
 
 private:
 	DirectorEngine *_vm;

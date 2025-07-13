@@ -1730,7 +1730,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		uint32 frame1Offset = _framesStream->readUint32();
 		/* uint32 numOfFrames = */ _framesStream->readUint32();
 		_framesVersion = _framesStream->readUint16();
-		uint16 spriteRecordSize = _framesStream->readUint16();
+		_spriteRecordSize = _framesStream->readUint16();
 		_numChannels = _framesStream->readUint16();
 
 		if (_framesVersion > 13) {
@@ -1745,7 +1745,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		}
 
 		debugC(1, kDebugLoading, "Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
-			frame1Offset, _framesVersion, spriteRecordSize, _numChannels, _numChannelsDisplayed);
+			frame1Offset, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else {
 		error("STUB: Score::loadFrames(): score not yet supported for version %d", version);
@@ -2050,6 +2050,38 @@ Common::String Score::formatChannelInfo() {
 
 	return result;
 
+}
+
+void Score::writeVWSCResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	writeStream->seek(offset);
+
+	uint32 scoreSize = getVWSCResourceSize();
+
+	writeStream->writeUint32LE(MKTAG('V', 'W', 'S', 'C'));
+	writeStream->writeUint32LE(scoreSize);
+	
+	// The format of a score is similar to that of FilmLoopCastMember, or rather its vice-verca 
+	writeStream->writeUint32BE(scoreSize);
+
+	// Headers
+	writeStream->writeUint32BE(0);		// frame10Offset
+	writeStream->writeUint32BE(0);		// numOfFrames
+	writeStream->writeUint16BE(_framesVersion);
+	writeStream->writeUint16BE(_spriteRecordSize); 
+	writeStream->writeUint16BE(_numChannels);
+
+	writeStream->writeUint16BE(_numChannelsDisplayed);		// In case _framesVersion > 13, we ignore this while loading
+
+	// until there are no more frames
+		// size of the frame ->
+		// until there are no more channels in the frame
+			// width of message (One chunk of data) (This is the size of data for the sprite that needs to be read) ->
+			// order of message (this order tells us the channel we're reading) ->
+			// 1-20 bytes of Sprite data	
+	
+	for (Frame *frame : _scoreCache) {
+		
+	}
 }
 
 } // End of namespace Director
