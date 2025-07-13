@@ -126,9 +126,26 @@ GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5
 	return bestMatch;
 }
 
+struct EntryPos {
+	const char *gameid;
+	int id;
+
+	EntryPos(const char *gameid, int id) : gameid(gameid), id(id) {}
+};
+
+static int compareTreeNodes(const void *a, const void *b) {
+	return scumm_stricmp(((const EntryPos *)a)->gameid, ((const EntryPos *)b)->gameid);
+}
+
  void ScummMetaEngineDetection::dumpDetectionEntries() const {
-#if 0
-	for (const MD5Table *entry = md5table; entry->gameid != 0; ++entry) {
+
+	// Sort all entrues by gameid, as they are sorted by md5
+	Common::SortedArray<EntryPos *> gameIDs(compareTreeNodes);
+	for (int i = 0; md5table[i].gameid != 0; ++i)
+		gameIDs.insert(new EntryPos(md5table[i].gameid , i));
+
+	for (auto &iter : gameIDs) {
+		const MD5Table *entry = &md5table[iter->id];
 		PlainGameDescriptor pd = findGame(entry->gameid);
 		const char *title = pd.description;
 
@@ -160,7 +177,9 @@ GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5
 
 		printf(")\n\n"); // Closing for 'game ('
 	}
-#endif
+
+	for (auto &iter : gameIDs)
+		delete iter;
 }
 
 PlainGameDescriptor ScummMetaEngineDetection::findGame(const char *gameid) const {
