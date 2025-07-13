@@ -74,6 +74,9 @@ Common::KeymapArray MetaEngine::initKeymaps(const char *target) const {
 
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "engine-default", _("Default game keymap"));
 
+	// Default keymap for engines should not match partial as it may hide intended input handling.
+	engineKeyMap->setPartialMatchAllowed(false);
+
 	Action *act;
 
 	act = new Action(kStandardActionLeftClick, _("Left click"));
