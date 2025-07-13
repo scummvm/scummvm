@@ -249,8 +249,10 @@ void CmdQueue::m_pcmWait(const uint16 *&data) {
 		_counter = 3600;
 		++_progress;
 	}
-	if (--_counter == 0 || !(_vm->sound()->pcmGetStatus().statusBits & 0x0F))
+	if (_progress == 2)
 		_progress = -1;
+	else if (--_counter == 0 || !(_vm->sound()->pcmGetStatus().statusBits & 0x0F))
+		++_progress;
 }
 
 void CmdQueue::m_cdaWait(const uint16 *&data) {
@@ -896,16 +898,16 @@ void ScriptEngine::makeOpcodeTable(ResourcePointer *scd) {
 		OP(doIf),
 		OP(setResult),
 		OP(setResult),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
-		OP(execFunc),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
+		OP(runFunction),
 		OP(evalGreater),
 		OP(evalGreater),
 		OP(evalGreaterOrEqual),
@@ -1181,7 +1183,7 @@ void ScriptEngine::o_setResult() {
 	setFlags(sel, _result);
 }
 
-void ScriptEngine::o_execFunc() {
+void ScriptEngine::o_runFunction() {
 	_pos2 = _pos1;
 	uint8 num = countFunctionOps();
 	uint8 cnt = 1;
