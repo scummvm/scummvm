@@ -1055,7 +1055,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			if (anim != nullptr) {
 				BaseSprite *item = anim->getSprite((TDirection)dir);
 				if (item != nullptr) {
-					for (uint32 i = 0; i < item->_frames.size(); i++) {
+					for (uint32 i = 0; i < item->_frames.getSize(); i++) {
 						BaseFrame *frame = item->_frames[i];
 						if (frame != nullptr) {
 							frame->_delay = speedWalk;

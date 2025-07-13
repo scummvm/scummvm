@@ -254,7 +254,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		BaseScriptable *arr;
 		stack->pushInt(0);
 		arr = makeSXArray(_gameRef, stack);
-		for (uint32 i = 0; i < sprites.size(); i++) {
+		for (uint32 i = 0; i < sprites.getSize(); i++) {
 			stack->pushString(sprites[i]->getFilename());
 			((SXArray *)arr)->push(stack->pop());
 		}

@@ -860,12 +860,12 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
+		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
 			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+			for (uint32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					// found source layer and index, looking for target node
-					for (uint32 k = 0; k < layer->_nodes.size(); k++) {
+					for (uint32 k = 0; k < layer->_nodes.getSize(); k++) {
 						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->getName(), nodeName) == 0) {
 							// update target index, depending on method name and comparison of index values
 							if (j < k && strcmp(name, "SetBeforeEntity") == 0) {
@@ -903,9 +903,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "GetLayer") == 0 || strcmp(name, "GetIndex") == 0) {
 		stack->correctParams(0);
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.size(); i++) {
+		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
 			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.size(); j++) {
+			for (uint32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					if (strcmp(name, "GetLayer") == 0) {
 						stack->pushNative(layer, true);
