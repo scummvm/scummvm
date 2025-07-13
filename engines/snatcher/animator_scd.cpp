@@ -1570,6 +1570,7 @@ void Animator_SCD::anim_setGroupParameter(AnimObject &a, int para, int16 val, bo
 			break;
 		case 6:
 			ta->controlFlags = GraphicsEngine::kAnimPause | GraphicsEngine::kAnimHide;
+			ta->scriptComFlags = 0;
 			break;
 		case 7:
 			ta->controlFlags = ta->scriptComFlags = 0;

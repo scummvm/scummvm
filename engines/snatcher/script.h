@@ -209,7 +209,7 @@ private:
 	void o_doEitherOr();
 	void o_doIf();
 	void o_setResult();
-	void o_execFunc();
+	void o_runFunction();
 	void o_evalGreater();
 	void o_evalGreaterOrEqual();
 	void o_break();
