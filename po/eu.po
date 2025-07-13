@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-11 16:32+0000\n"
+"POT-Creation-Date: 2025-07-13 15:26+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -56,9 +56,9 @@ msgid "Available engines:"
 msgstr "Motore erabilgarriak:"
 
 #. I18N: Close dialog button
-#: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
+#: gui/about.cpp:527 gui/downloadpacksdialog.cpp:297
 #: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:310
-#: gui/gui-manager.cpp:167 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
@@ -193,7 +193,7 @@ msgid "Now, open this link in your browser:"
 msgstr "Orain, ireki lotura hau nabigatzailean:"
 
 #: gui/cloudconnectionwizard.cpp:272 gui/cloudconnectionwizard.cpp:329
-#: gui/message.cpp:246 gui/message.cpp:250
+#: gui/message.cpp:257 gui/message.cpp:261
 msgid "Open URL"
 msgstr "Ireki URLa"
 
@@ -247,8 +247,8 @@ msgstr "Eskuzko modua: 2. pausua"
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr "Kopiatu hemen nabigatzaileko JSON kodea eta sakatu Hurrengoa:"
 
-#: gui/cloudconnectionwizard.cpp:367 gui/gui-manager.cpp:255
-#: gui/gui-manager.cpp:270
+#: gui/cloudconnectionwizard.cpp:367 gui/gui-manager.cpp:256
+#: gui/gui-manager.cpp:271
 msgid "Paste"
 msgstr "Itsatsi"
 
@@ -543,7 +543,7 @@ msgstr ""
 "%s-%S datu ezabatzekotan zaude, aurreko deskargatutako %S ezabatuz. Aurrera "
 "jarraitu nahi duzu?"
 
-#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:117
 #: backends/platform/android/options.cpp:289
 msgid "Proceed"
 msgstr "Jarraitu"
@@ -994,12 +994,12 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "FluidSynth-en ezarpen guztiak berrezarri balio lehenetsietara?"
 
-#: gui/gui-manager.cpp:158 gui/options.cpp:2362
+#: gui/gui-manager.cpp:159 gui/options.cpp:2362
 msgid "GUI"
 msgstr "GUI"
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
+#: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 #: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:195
@@ -1008,7 +1008,7 @@ msgstr "GUI"
 msgid "Interact"
 msgstr "Elkarreragin"
 
-#: gui/gui-manager.cpp:173 engines/metaengine.cpp:134
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:134
 #: engines/awe/metaengine.cpp:57 engines/crab/input/input.cpp:95
 #: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:159
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:55
@@ -1027,7 +1027,7 @@ msgstr "Elkarreragin"
 msgid "Up"
 msgstr "Gora"
 
-#: gui/gui-manager.cpp:179 engines/metaengine.cpp:140
+#: gui/gui-manager.cpp:180 engines/metaengine.cpp:140
 #: engines/awe/metaengine.cpp:58 engines/crab/input/input.cpp:101
 #: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:165
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:56
@@ -1046,7 +1046,7 @@ msgstr "Gora"
 msgid "Down"
 msgstr "Behera"
 
-#: gui/gui-manager.cpp:185 engines/metaengine.cpp:146
+#: gui/gui-manager.cpp:186 engines/metaengine.cpp:146
 #: engines/awe/metaengine.cpp:59 engines/crab/input/input.cpp:107
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:133
@@ -1065,7 +1065,7 @@ msgstr "Behera"
 msgid "Left"
 msgstr "Ezker"
 
-#: gui/gui-manager.cpp:191 engines/metaengine.cpp:152
+#: gui/gui-manager.cpp:192 engines/metaengine.cpp:152
 #: engines/awe/metaengine.cpp:60 engines/crab/input/input.cpp:113
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:58 engines/griffon/metaengine.cpp:139
@@ -1084,41 +1084,41 @@ msgstr "Ezker"
 msgid "Right"
 msgstr "Eskuin"
 
-#: gui/gui-manager.cpp:197
+#: gui/gui-manager.cpp:198
 msgid "Backspace"
 msgstr "Ezabatu"
 
-#: gui/gui-manager.cpp:203
+#: gui/gui-manager.cpp:204
 #, fuzzy
 #| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Ezabatu karakterea"
 
-#: gui/gui-manager.cpp:209
+#: gui/gui-manager.cpp:210
 msgid "Go to end of line"
 msgstr "Lerro bukaerara joan"
 
-#: gui/gui-manager.cpp:219
+#: gui/gui-manager.cpp:220
 msgid "Select to end of line"
 msgstr "Lerro bukaerara aukeratu"
 
-#: gui/gui-manager.cpp:229
+#: gui/gui-manager.cpp:230
 msgid "Select to start of line"
 msgstr "Lerro hasierara aukeratu"
 
-#: gui/gui-manager.cpp:239
+#: gui/gui-manager.cpp:240
 msgid "Go to start of line"
 msgstr "Lerro hasierara joan"
 
-#: gui/gui-manager.cpp:250 gui/gui-manager.cpp:265
+#: gui/gui-manager.cpp:251 gui/gui-manager.cpp:266
 msgid "Cut"
 msgstr "Moztu"
 
-#: gui/gui-manager.cpp:260 gui/gui-manager.cpp:275
+#: gui/gui-manager.cpp:261 gui/gui-manager.cpp:276
 msgid "Copy"
 msgstr "Kopiatu"
 
-#: gui/gui-manager.cpp:281 engines/pegasus/pegasus.cpp:2819
+#: gui/gui-manager.cpp:282 engines/pegasus/pegasus.cpp:2819
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -1570,87 +1570,87 @@ msgstr "ScummVM-k ezin izan du jokorik aurkitu zehazturiko direktorioan!"
 msgid "Unknown variant"
 msgstr "Aldaera ezezaguna"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:935 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Zerrenda ikuspegia"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:936 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Sareta ikuspegia"
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1078
 msgid "~S~tart"
 msgstr "~H~asi"
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1078
 msgid "Start selected game"
 msgstr "Aukeraturiko jokora jolastu"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1081
 msgid "~L~oad..."
 msgstr "~K~argatu..."
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1081
 msgid "Load saved game for selected game"
 msgstr "Aukeraturiko jokorako partida gordea kargatu"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1083
 msgid "Record..."
 msgstr "Grabatu..."
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 #, fuzzy
 msgid "~G~ame Options..."
 msgstr "~A~ukerak..."
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 msgid "Change game options"
 msgstr "Aldatu jokoaren aukerak"
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~A~ukerak..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1385
+#: gui/launcher.cpp:1186 gui/launcher.cpp:1382
 msgid "Unknown Engine"
 msgstr "Motore Ezezaguna"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1402
+#: gui/launcher.cpp:1203 gui/launcher.cpp:1399
 msgid "Unknown Publisher"
 msgstr "Argitaratzaile ezezaguna"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1223 gui/launcher.cpp:1419
+#: gui/launcher.cpp:1220 gui/launcher.cpp:1416
 msgid "No Series"
 msgstr "Sailik ez"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1237 gui/launcher.cpp:1433
+#: gui/launcher.cpp:1234 gui/launcher.cpp:1430
 msgid "Language not detected"
 msgstr "Hizkuntza ez da detektatu"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1251 gui/launcher.cpp:1447
+#: gui/launcher.cpp:1248 gui/launcher.cpp:1444
 msgid "Platform not detected"
 msgstr "Plataforma ez da detektatu"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1268 gui/launcher.cpp:1464
+#: gui/launcher.cpp:1265 gui/launcher.cpp:1461
 msgid "Unknown Year"
 msgstr "Urte ezezaguna"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1468 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Guztiak"
 
-#: gui/launcher.cpp:1626
+#: gui/launcher.cpp:1623
 msgid "Icons per row:"
 msgstr ""
 
@@ -2394,7 +2394,7 @@ msgstr ""
 "Erakutsi Discord-en jolasten ari zaren jokoen informazioa, Discord bezeroa "
 "martxan badago."
 
-#: gui/options.cpp:2777 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2777 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Eguneratze egiaztatzea:"
 
@@ -2931,7 +2931,7 @@ msgstr "Jokoari buruzko beharrezko informazio guztia arbelean kopiatu da"
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "Jokoaren informazioa arblean kopiatzean huts egin da!"
 
-#: gui/updates-dialog.cpp:48
+#: gui/updates-dialog.cpp:47
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
@@ -2941,7 +2941,7 @@ msgstr ""
 "internetera sarbidea beharrezkoa da. Aukera hau\n"
 "aktibatu nahi al duzu?"
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:50
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."

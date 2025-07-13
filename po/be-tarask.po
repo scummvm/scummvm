@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-11 16:32+0000\n"
+"POT-Creation-Date: 2025-07-13 15:26+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -63,9 +63,9 @@ msgid "Available engines:"
 msgstr "Даступныя рухавікі:"
 
 #. I18N: Close dialog button
-#: gui/about.cpp:523 gui/downloadpacksdialog.cpp:297
+#: gui/about.cpp:527 gui/downloadpacksdialog.cpp:297
 #: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:310
-#: gui/gui-manager.cpp:167 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
+#: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
@@ -202,7 +202,7 @@ msgid "Now, open this link in your browser:"
 msgstr ""
 
 #: gui/cloudconnectionwizard.cpp:272 gui/cloudconnectionwizard.cpp:329
-#: gui/message.cpp:246 gui/message.cpp:250
+#: gui/message.cpp:257 gui/message.cpp:261
 msgid "Open URL"
 msgstr "Адкрыць URL"
 
@@ -255,8 +255,8 @@ msgstr ""
 msgid "Copy the JSON code from the browser here and press Next:"
 msgstr ""
 
-#: gui/cloudconnectionwizard.cpp:367 gui/gui-manager.cpp:255
-#: gui/gui-manager.cpp:270
+#: gui/cloudconnectionwizard.cpp:367 gui/gui-manager.cpp:256
+#: gui/gui-manager.cpp:271
 msgid "Paste"
 msgstr "Уставіць"
 
@@ -572,7 +572,7 @@ msgid ""
 "%S. Do you want to proceed?"
 msgstr ""
 
-#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:115
+#: gui/downloadpacksdialog.cpp:464 gui/updates-dialog.cpp:117
 #: backends/platform/android/options.cpp:289
 msgid "Proceed"
 msgstr "Працягнуць"
@@ -1021,12 +1021,12 @@ msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr "Ці сапраўды вы хочаце аднавіць усе стандартныя налады FluidSynth?"
 
-#: gui/gui-manager.cpp:158 gui/options.cpp:2362
+#: gui/gui-manager.cpp:159 gui/options.cpp:2362
 msgid "GUI"
 msgstr "Графічны інтэрфэйс"
 
 #. I18N: Action in In Cold Blood
-#: gui/gui-manager.cpp:162 engines/hpl1/metaengine.cpp:91
+#: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 #: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:195
@@ -1035,7 +1035,7 @@ msgstr "Графічны інтэрфэйс"
 msgid "Interact"
 msgstr "Інтэракцыя"
 
-#: gui/gui-manager.cpp:173 engines/metaengine.cpp:134
+#: gui/gui-manager.cpp:174 engines/metaengine.cpp:134
 #: engines/awe/metaengine.cpp:57 engines/crab/input/input.cpp:95
 #: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:159
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:55
@@ -1054,7 +1054,7 @@ msgstr "Інтэракцыя"
 msgid "Up"
 msgstr "Угару"
 
-#: gui/gui-manager.cpp:179 engines/metaengine.cpp:140
+#: gui/gui-manager.cpp:180 engines/metaengine.cpp:140
 #: engines/awe/metaengine.cpp:58 engines/crab/input/input.cpp:101
 #: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:165
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:56
@@ -1073,7 +1073,7 @@ msgstr "Угару"
 msgid "Down"
 msgstr "Уніз"
 
-#: gui/gui-manager.cpp:185 engines/metaengine.cpp:146
+#: gui/gui-manager.cpp:186 engines/metaengine.cpp:146
 #: engines/awe/metaengine.cpp:59 engines/crab/input/input.cpp:107
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:57 engines/griffon/metaengine.cpp:133
@@ -1092,7 +1092,7 @@ msgstr "Уніз"
 msgid "Left"
 msgstr "Налева"
 
-#: gui/gui-manager.cpp:191 engines/metaengine.cpp:152
+#: gui/gui-manager.cpp:192 engines/metaengine.cpp:152
 #: engines/awe/metaengine.cpp:60 engines/crab/input/input.cpp:113
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:58 engines/griffon/metaengine.cpp:139
@@ -1111,47 +1111,47 @@ msgstr "Налева"
 msgid "Right"
 msgstr "Направа"
 
-#: gui/gui-manager.cpp:197
+#: gui/gui-manager.cpp:198
 #, fuzzy
 #| msgid "Backend"
 msgid "Backspace"
 msgstr "Бэкэнд"
 
-#: gui/gui-manager.cpp:203
+#: gui/gui-manager.cpp:204
 #, fuzzy
 #| msgid "Delete char"
 msgid "Delete Character"
 msgstr "Выдаліць сымбаль"
 
-#: gui/gui-manager.cpp:209
+#: gui/gui-manager.cpp:210
 msgid "Go to end of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:219
+#: gui/gui-manager.cpp:220
 #, fuzzy
 #| msgid "Select SoundFont"
 msgid "Select to end of line"
 msgstr "Выбярыце SoundFont"
 
-#: gui/gui-manager.cpp:229
+#: gui/gui-manager.cpp:230
 #, fuzzy
 #| msgid "Select directory for plugins"
 msgid "Select to start of line"
 msgstr "Выбярыце тэчку для плаґінаў"
 
-#: gui/gui-manager.cpp:239
+#: gui/gui-manager.cpp:240
 msgid "Go to start of line"
 msgstr ""
 
-#: gui/gui-manager.cpp:250 gui/gui-manager.cpp:265
+#: gui/gui-manager.cpp:251 gui/gui-manager.cpp:266
 msgid "Cut"
 msgstr ""
 
-#: gui/gui-manager.cpp:260 gui/gui-manager.cpp:275
+#: gui/gui-manager.cpp:261 gui/gui-manager.cpp:276
 msgid "Copy"
 msgstr ""
 
-#: gui/gui-manager.cpp:281 engines/pegasus/pegasus.cpp:2819
+#: gui/gui-manager.cpp:282 engines/pegasus/pegasus.cpp:2819
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -1512,88 +1512,88 @@ msgstr "ScummVM не знайшоў гульняў у гэтай тэчцы!"
 msgid "Unknown variant"
 msgstr "Невядомы варыянт"
 
-#: gui/launcher.cpp:938 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:935 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Сьпіс"
 
-#: gui/launcher.cpp:939 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:936 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Сетка"
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1078
 msgid "~S~tart"
 msgstr "~П~ачаць"
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1078
 msgid "Start selected game"
 msgstr "Распачаць выбраную гульню"
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1081
 msgid "~L~oad..."
 msgstr "~З~аладаваць..."
 
-#: gui/launcher.cpp:1084
+#: gui/launcher.cpp:1081
 msgid "Load saved game for selected game"
 msgstr "Заладаваць захоў для выбранай гульні"
 
-#: gui/launcher.cpp:1086
+#: gui/launcher.cpp:1083
 msgid "Record..."
 msgstr "Запіс…"
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 msgid "~G~ame Options..."
 msgstr "~Н~алады гульні..."
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 msgid "Change game options"
 msgstr "Зьмяніць налады гульні"
 
-#: gui/launcher.cpp:1092
+#: gui/launcher.cpp:1089
 #, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "~Н~алады гульні..."
 
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1189 gui/launcher.cpp:1385
+#: gui/launcher.cpp:1186 gui/launcher.cpp:1382
 msgid "Unknown Engine"
 msgstr "Невядомы рухавік"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1206 gui/launcher.cpp:1402
+#: gui/launcher.cpp:1203 gui/launcher.cpp:1399
 msgid "Unknown Publisher"
 msgstr "Невядомае выдавецтва"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1223 gui/launcher.cpp:1419
+#: gui/launcher.cpp:1220 gui/launcher.cpp:1416
 msgid "No Series"
 msgstr "Бяз сэрыі"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1237 gui/launcher.cpp:1433
+#: gui/launcher.cpp:1234 gui/launcher.cpp:1430
 msgid "Language not detected"
 msgstr "Нявызначаная мова"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1251 gui/launcher.cpp:1447
+#: gui/launcher.cpp:1248 gui/launcher.cpp:1444
 msgid "Platform not detected"
 msgstr "Нявызначаная пляцформа"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1268 gui/launcher.cpp:1464
+#: gui/launcher.cpp:1265 gui/launcher.cpp:1461
 #, fuzzy
 #| msgid "Unknown error"
 msgid "Unknown Year"
 msgstr "Невядомая памылка"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1471 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1468 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Усе"
 
-#: gui/launcher.cpp:1626
+#: gui/launcher.cpp:1623
 msgid "Icons per row:"
 msgstr ""
 
@@ -2356,7 +2356,7 @@ msgid ""
 "client is running."
 msgstr "Паказваць гульню, у якую вы гуляеце ў Discord, калі ён запушчаны."
 
-#: gui/options.cpp:2777 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2777 gui/updates-dialog.cpp:87
 msgid "Update check:"
 msgstr "Правяраць абновы:"
 
@@ -2912,7 +2912,7 @@ msgstr "Уся патрэбная інфармацыя пра гульню ск�
 msgid "Copying the game information to the clipboard has failed!"
 msgstr "Ня выйшла скапіяваць ў кішэню інфармацыю пра гульню!"
 
-#: gui/updates-dialog.cpp:48
+#: gui/updates-dialog.cpp:47
 msgid ""
 "ScummVM now supports automatic check for updates\n"
 "which requires access to the Internet. Would you\n"
@@ -2922,7 +2922,7 @@ msgstr ""
 "абновы цераз інтэрнэт. Ці хочаце вы\n"
 "далучыць гэтую функцыю?"
 
-#: gui/updates-dialog.cpp:51
+#: gui/updates-dialog.cpp:50
 msgid ""
 "You can change this setting later in the Misc tab\n"
 "in the Options dialog."
