@@ -149,7 +149,7 @@ Common::Error EfhEngine::run() {
 }
 
 void EfhEngine::handleEvents() {
-	Common::KeyCode retVal = getLastCharAfterAnimCount(4);
+	getLastCharAfterAnimCount(4);
 
 	switch (_customAction) {
 	case kActionSave:
@@ -191,37 +191,30 @@ void EfhEngine::handleEvents() {
 	case kActionCharacter3Status:
 		showCharacterStatus(2);
 		break;
+	// debug cases to test sound
+	case kActionSound13:
+		generateSound(13);
+		break;
+	case kActionSound14:
+		generateSound(14);
+		break;
+	case kActionSound15:
+		generateSound(15);
+		break;
+	case kActionSound5:
+		generateSound(5);
+		break;
+	case kActionSound10:
+		generateSound(10);
+		break;
+	case kActionSound9:
+		generateSound(9);
+		break;
+	case kActionSound16:
+		generateSound(16);
+		break;
 	default:
 		break;
-	}
-
-	// debug cases to test sound
-	if (ConfMan.getBool("dump_scripts")) {
-		switch (retVal) {
-		case Common::KEYCODE_4:
-			generateSound(13);
-			break;
-		case Common::KEYCODE_5:
-			generateSound(14);
-			break;
-		case Common::KEYCODE_6:
-			generateSound(15);
-			break;
-		case Common::KEYCODE_7:
-			generateSound(5);
-			break;
-		case Common::KEYCODE_8:
-			generateSound(10);
-			break;
-		case Common::KEYCODE_9:
-			generateSound(9);
-			break;
-		case Common::KEYCODE_0:
-			generateSound(16);
-			break;
-		default:
-			break;
-		}
 	}
 }
 
@@ -232,8 +225,10 @@ void EfhEngine::handleActionSave() {
 		if (counter == 0)
 			displayFctFullScreen();
 	}
-	Common::KeyCode input = waitForKey();
-	if (input == Common::KEYCODE_y) {
+	setKeymap(kKeymapMenu);
+	waitForKey();
+	setKeymap(kKeymapDefault);
+	if (_customAction == kActionYes) {
 		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 		getInput(2);
 		saveGameDialog();
@@ -252,8 +247,10 @@ void EfhEngine::handleActionLoad() {
 		if (counter == 0)
 			displayFctFullScreen();
 	}
-	Common::KeyCode input = waitForKey();
-	if (input == Common::KEYCODE_y) {
+	setKeymap(kKeymapMenu);
+	waitForKey();
+	setKeymap(kKeymapDefault);
+	if (_customAction == kActionYes) {
 		displayMenuAnswerString("-> Yes <-", 24, 296, 169);
 		getInput(2);
 		loadGameDialog();
@@ -280,8 +277,8 @@ void EfhEngine::playIntro() {
 	// Load animations on previous picture with GF
 	loadImageSet(63, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(100, false);
-	Common::KeyCode lastInput = getLastCharAfterAnimCount(8);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(8);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	// With GF on the bed
@@ -291,8 +288,8 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[0], 6, 150, 268, 186, false);
 
-	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(80);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	// Poof
@@ -303,8 +300,8 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[1], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[1], 6, 150, 268, 186, false);
-	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(80);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	// On the phone
@@ -315,8 +312,8 @@ void EfhEngine::playIntro() {
 	displayRawDataAtPos(_circleImageSubFileArray[2], 110, 16);
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[2], 6, 150, 268, 186, false);
-	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(80);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
@@ -324,8 +321,8 @@ void EfhEngine::playIntro() {
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[3], 6, 150, 268, 186, false);
-	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(80);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
@@ -333,8 +330,8 @@ void EfhEngine::playIntro() {
 	displayFctFullScreen();
 	displayRawDataAtPos(_circleImageSubFileArray[0], 0, 144);
 	drawText(_imp2PtrArray[4], 6, 150, 268, 186, false);
-	lastInput = getLastCharAfterAnimCount(80);
-	if (lastInput == Common::KEYCODE_ESCAPE)
+	getLastCharAfterAnimCount(80);
+	if (_customAction == kActionSkipVideo)
 		return;
 
 	displayRawDataAtPos(_circleImageSubFileArray[3], 110, 16);
@@ -409,13 +406,19 @@ void EfhEngine::initEngine() {
 	loadImageSet(62, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	fileName = "titlsong";
 	readFileToBuffer(fileName, _titleSong);
-	Common::KeyCode lastInput = Common::KEYCODE_INVALID;
+	_customAction = kActionNone;
+
+	setKeymap(kKeymapSkipSong);
 
 	if (_loadSaveSlot == -1)
-		lastInput = playSong(_titleSong);
+		playSong(_titleSong);
 
-	if (lastInput != Common::KEYCODE_ESCAPE && _loadSaveSlot == -1)
+	setKeymap(kKeymapSkipVideo);
+
+	if (_customAction != kActionSkipSongAndIntro && _loadSaveSlot == -1)
 		playIntro();
+
+	setKeymap(kKeymapDefault);
 
 	loadImageSet(6, _circleImageBuf, _circleImageSubFileArray, _decompBuf);
 	readImpFile(99, false);
@@ -826,48 +829,51 @@ void EfhEngine::handleWinSequence() {
 		getInput(1);
 	}
 
-	Common::KeyCode input = Common::KEYCODE_INVALID;
+	_customAction = kActionNone;
+	setKeymap(kKeymapSkipVideo);
 
-	while (input != Common::KEYCODE_ESCAPE && !shouldQuit()) {
+	while (_customAction != kActionSkipVideo && !shouldQuit()) {
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
 		displayFctFullScreen();
 		displayRawDataAtPos(winSeqSubFilesArray1[0], 0, 0);
-		input = getInput(32);
-		if (input != Common::KEYCODE_ESCAPE) {
+		getInput(32);
+		if (_customAction != kActionSkipVideo) {
 			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[10], 136, 72);
-			input = getInput(1);
+			getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (_customAction != kActionSkipVideo) {
 			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[11], 136, 72);
-			input = getInput(1);
+			getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (_customAction != kActionSkipVideo) {
 			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[12], 136, 72);
-			input = getInput(1);
+			getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (_customAction != kActionSkipVideo) {
 			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[13], 136, 72);
-			input = getInput(1);
+			getInput(1);
 		}
 
-		if (input != Common::KEYCODE_ESCAPE) {
+		if (_customAction != kActionSkipVideo) {
 			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
 			displayFctFullScreen();
 			displayRawDataAtPos(winSeqSubFilesArray2[14], 136, 72);
-			input = getInput(1);
+			getInput(1);
 		}
 	}
+
+	setKeymap(kKeymapDefault);
 
 	free(decompBuffer);
 	free(winSeqBuf3);
@@ -902,18 +908,30 @@ bool EfhEngine::giveItemTo(int16 charId, int16 objectId, int16 fromCharId) {
 int16 EfhEngine::chooseCharacterToReplace() {
 	debugC(3, kDebugEngine, "chooseCharacterToReplace");
 
-	Common::KeyCode maxVal = (Common::KeyCode)(Common::KEYCODE_0 + _teamSize);
-	Common::KeyCode input;
-	for (;;) {
-		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input < maxVal))
+	int16 charId = -1;
+
+	setKeymap(kKeymapCharacterSelection);
+
+	while (charId == -1) {
+		waitForKey();
+		if (_customAction == kActionCancelCharacterSelection)
 			break;
+		for (int i = 0; i < ARRAYSIZE(_efhTeamSelectionCodes); ++i) {
+			if (_customAction == _efhTeamSelectionCodes[i]._action) {
+				if (_efhTeamSelectionCodes[i]._charId > 0 && _efhTeamSelectionCodes[i]._charId < _teamSize) {
+					charId =  _efhTeamSelectionCodes[i]._charId;
+					break;
+				}
+			}
+		}
 	}
 
-	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
+	setKeymap(kKeymapDefault);
+
+	if (_customAction == kActionCancelCharacterSelection)
 		return 0x1B;
 
-	return (int16)input - (int16)Common::KEYCODE_1;
+	return charId;
 }
 
 int16 EfhEngine::handleCharacterJoining() {
@@ -1880,11 +1898,17 @@ bool EfhEngine::handleTalk(int16 monsterId, int16 arg2, int16 itemId) {
 						displayFctFullScreen();
 				}
 				setTextColorRed();
-				Common::KeyCode input = waitForKey();
-				if (input == Common::KEYCODE_y) {
+
+				setKeymap(kKeymapMenu);
+
+				waitForKey();
+				if (_customAction == kActionYes) {
 					removeCharacterFromTeam(charId);
 					displayImp1Text(_npcBuf[npcId].field14_textId);
 				}
+
+				setKeymap(kKeymapDefault);
+
 				displayAnimFrames(0xFE, true);
 				return true;
 			}
@@ -2303,18 +2327,30 @@ void EfhEngine::setCharacterObjectToBroken(int16 charId, int16 objectId) {
 int16 EfhEngine::selectOtherCharFromTeam() {
 	debugC(3, kDebugEngine, "selectOtherCharFromTeam");
 
-	Common::KeyCode maxVal = (Common::KeyCode) (Common::KEYCODE_0 + _teamSize);
-	Common::KeyCode input = Common::KEYCODE_INVALID;
-	for (;;) {
-		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || (input >= Common::KEYCODE_0 && input <= maxVal))
+	int16 charId = -1;
+
+	setKeymap(kKeymapCharacterSelection);
+
+	while (charId == -1) {
+		waitForKey();
+		if (_customAction == kActionCancelCharacterSelection)
 			break;
+		for (int i = 0; i < ARRAYSIZE(_efhTeamSelectionCodes); ++i) {
+			if (_customAction == _efhTeamSelectionCodes[i]._action) {
+				if (_efhTeamSelectionCodes[i]._charId < _teamSize) {
+					charId = _efhTeamSelectionCodes[i]._charId;
+					break;
+				}
+			}
+		}
 	}
 
-	if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0)
+	setKeymap(kKeymapDefault);
+
+	if (_customAction == kActionCancelCharacterSelection)
 		return 0x1B;
 
-	return (int16)input - (int16)Common::KEYCODE_1;
+	return charId;
 }
 
 bool EfhEngine::checkMonsterCollision() {
@@ -2401,24 +2437,27 @@ bool EfhEngine::checkMonsterCollision() {
 					displayFctFullScreen();
 			}
 
-			Common::KeyCode input = waitForKey();
+			setKeymap(kKeymapInteraction);
 
-			switch (input) {
-			case Common::KEYCODE_a: // Attack
+			waitForKey();
+
+			setKeymap(kKeymapDefault);
+
+			switch (_customAction) {
+			case kActionStartFight: // Attack
 				handleFight(monsterId);
 				endLoop = true;
 				break;
-			case Common::KEYCODE_ESCAPE:
-			case Common::KEYCODE_l: // Leave
+			case kActionLeave: // Leave
 				endLoop = true;
 				break;
-			case Common::KEYCODE_s: // Status
+			case kActionStatus: // Status
 				handleStatusMenu(1, _teamChar[0]._id);
 				endLoop = true;
 				_tempTextPtr = nullptr;
 				drawGameScreenAndTempText(true);
 				break;
-			case Common::KEYCODE_t: // Talk
+			case kActionTalk: // Talk
 				startTalkMenu(monsterId);
 				endLoop = true;
 				break;
@@ -2426,6 +2465,9 @@ bool EfhEngine::checkMonsterCollision() {
 				break;
 			}
 		} while (!endLoop && !shouldQuit());
+
+		setKeymap(kKeymapDefault);
+
 		return false;
 	}
 

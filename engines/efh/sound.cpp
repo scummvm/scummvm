@@ -44,14 +44,13 @@ void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 	}
 }
 
-Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
+void EfhEngine::playSong(uint8 *buffer) {
 	debugC(3, kDebugEngine, "playSong");
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 					   _speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
-	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
 	int totalDelay = 0;
 
 	int8 stopFl;
@@ -84,10 +83,10 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 
 		songDelay(10);
 		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			inputChar = event.kbd.keycode;
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+			_customAction = event.customType;
 			// Hack, sometimes there's a ghost event after the 2nd note
-			if (inputChar == Common::KEYCODE_ESCAPE || inputChar == Common::KEYCODE_RETURN)
+			if (_customAction == kActionSkipSong || _customAction == kActionSkipSongAndIntro)
 				stopFl = 0;
 		}
 	} while (stopFl != 0 && !shouldQuit());
@@ -95,8 +94,6 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	_mixer->stopHandle(_speakerHandle);
 	delete _speakerStream;
 	_speakerStream = nullptr;
-
-	return inputChar;
 }
 
 void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {
