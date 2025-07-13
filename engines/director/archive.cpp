@@ -27,6 +27,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
+#include "director/score.h"
 #include "director/movie.h"
 #include "director/cast.h"
 #include "director/window.h"
@@ -1338,6 +1339,10 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			}
 			break;
 
+		case MKTAG('V', 'W', 'S', 'C'):
+			movie->getScore()->writeVWSCResource(writeStream, it->offset);
+			break;
+		
 		default:
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
@@ -1757,6 +1762,13 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 				currentSize += resSize + 8;
 			}
+			break;
+
+		case MKTAG('V', 'W', 'S', 'C'):
+			resSize = movie->getScore()->getVWSCResourceSize(); 
+			it->size = resSize; 				
+			it->offset = currentSize;
+			currentSize += resSize + 8;		// The size doesn't include the header and the size entry
 			break;
 
 		case MKTAG('f', 'r', 'e', 'e'):
