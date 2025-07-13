@@ -113,7 +113,7 @@ bool AdInventoryBox::display() {
 
 	if (_window) {
 		_window->enableWidget("prev", _scrollOffset > 0);
-		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.size());
+		_window->enableWidget("next", _scrollOffset + itemsX * itemsY < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.getSize());
 	}
 
 
@@ -142,7 +142,7 @@ bool AdInventoryBox::display() {
 		int xxx = rect.left;
 		for (int i = 0; i < itemsX; i++) {
 			int itemIndex = _scrollOffset + j * itemsX + i;
-			if (itemIndex >= 0 && itemIndex < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.size()) {
+			if (itemIndex >= 0 && itemIndex < (int32)adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
 				AdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
 				if (item != ((AdGame *)_gameRef)->_selectedItem || !_hideSelected) {
 					item->update();
@@ -324,7 +324,7 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 	_visible = alwaysVisible;
 
 	if (_window) {
-		for (uint32 i = 0; i < _window->_widgets.size(); i++) {
+		for (uint32 i = 0; i < _window->_widgets.getSize(); i++) {
 			if (!_window->_widgets[i]->getListener()) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}

@@ -44,7 +44,7 @@ ShadowVolume::~ShadowVolume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolume::reset() {
-	_vertices.clear();
+	_vertices.removeAll();
 	return true;
 }
 

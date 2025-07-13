@@ -61,10 +61,10 @@ BaseSoundMgr::~BaseSoundMgr() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::cleanup() {
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.getSize(); i++) {
 		delete _sounds[i];
 	}
-	_sounds.clear();
+	_sounds.removeAll();
 	return STATUS_OK;
 }
 
@@ -135,7 +135,7 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	sound->updateVolume();
 
 	// register sound
-	_sounds.push_back(sound);
+	_sounds.add(sound);
 
 	return sound;
 
@@ -152,17 +152,17 @@ bool BaseSoundMgr::addSound(BaseSoundBuffer *sound, Audio::Mixer::SoundType type
 	sound->updateVolume();
 
 	// register sound
-	_sounds.push_back(sound);
+	_sounds.add(sound);
 
 	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::removeSound(BaseSoundBuffer *sound) {
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i] == sound) {
 			delete _sounds[i];
-			_sounds.remove_at(i);
+			_sounds.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -231,7 +231,7 @@ bool BaseSoundMgr::setMasterVolume(byte value) {
 	// be none the wiser about round-off-errors. This function should thus
 	// ONLY be called by setMasterVolumePercent.
 	_volumeMaster = value;
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.getSize(); i++) {
 		_sounds[i]->updateVolume();
 	}
 	return STATUS_OK;
@@ -259,7 +259,7 @@ byte BaseSoundMgr::getMasterVolume() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::pauseAll(bool includingMusic) {
 
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->isPlaying() && (_sounds[i]->getType() != Audio::Mixer::kMusicSoundType || includingMusic)) {
 			_sounds[i]->pause();
 			_sounds[i]->setFreezePaused(true);
@@ -273,7 +273,7 @@ bool BaseSoundMgr::pauseAll(bool includingMusic) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundMgr::resumeAll() {
 
-	for (uint32 i = 0; i < _sounds.size(); i++) {
+	for (uint32 i = 0; i < _sounds.getSize(); i++) {
 		if (_sounds[i]->isFreezePaused()) {
 			_sounds[i]->resume();
 			_sounds[i]->setFreezePaused(false);

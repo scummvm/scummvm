@@ -143,15 +143,15 @@ AdObject::~AdObject() {
 	}
 
 
-	for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+	for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 		_gameRef->unregisterObject(_attachmentsPre[i]);
 	}
-	_attachmentsPre.clear();
+	_attachmentsPre.removeAll();
 
-	for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+	for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 		_gameRef->unregisterObject(_attachmentsPost[i]);
 	}
-	_attachmentsPost.clear();
+	_attachmentsPost.removeAll();
 }
 
 
@@ -313,7 +313,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			regFound = true;
 		} else if (val->isString()) {
 			const char *regionName = val->getString();
-			for (i = 0; i < main->_nodes.size(); i++) {
+			for (i = 0; i < main->_nodes.getSize(); i++) {
 				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region->getName() && scumm_stricmp(main->_nodes[i]->_region->getName(), regionName) == 0) {
 					_stickRegion = main->_nodes[i]->_region;
 					regFound = true;
@@ -323,7 +323,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		} else if (val->isNative()) {
 			BaseScriptable *obj = val->getNative();
 
-			for (i = 0; i < main->_nodes.size(); i++) {
+			for (i = 0; i < main->_nodes.getSize(); i++) {
 				if (main->_nodes[i]->_type == OBJECT_REGION && main->_nodes[i]->_region == obj) {
 					_stickRegion = main->_nodes[i]->_region;
 					regFound = true;
@@ -447,7 +447,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			} else {
 				stack->pushNULL();
 			}
-		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= (int32)_inventory->_takenItems.size()) {
+		} else if (val->isNULL() || val->getInt() < 0 || val->getInt() >= (int32)_inventory->_takenItems.getSize()) {
 			stack->pushNULL();
 		} else {
 			stack->pushNative(_inventory->_takenItems[val->getInt()], true);
@@ -469,7 +469,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		ScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			for (uint32 i = 0; i < _inventory->_takenItems.size(); i++) {
+			for (uint32 i = 0; i < _inventory->_takenItems.getSize(); i++) {
 				if (val->getNative() == _inventory->_takenItems[i]) {
 					stack->pushBool(true);
 					return STATUS_OK;
@@ -564,37 +564,37 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		bool found = false;
 		if (val->isNative()) {
 			BaseScriptable *obj = val->getNative();
-			for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+			for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i] == obj) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.remove_at(i);
+					_attachmentsPre.removeAt(i);
 					i--;
 				}
 			}
-			for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+			for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i] == obj) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.remove_at(i);
+					_attachmentsPost.removeAt(i);
 					i--;
 				}
 			}
 		} else {
 			const char *attachmentName = val->getString();
-			for (int32 i = 0; i < (int32)_attachmentsPre.size(); i++) {
+			for (int32 i = 0; i < (int32)_attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPre[i]);
-					_attachmentsPre.remove_at(i);
+					_attachmentsPre.removeAt(i);
 					i--;
 				}
 			}
-			for (int32 i = 0; i < (int32)_attachmentsPost.size(); i++) {
+			for (int32 i = 0; i < (int32)_attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 					found = true;
 					_gameRef->unregisterObject(_attachmentsPost[i]);
-					_attachmentsPost.remove_at(i);
+					_attachmentsPost.removeAt(i);
 					i--;
 				}
 			}
@@ -615,13 +615,13 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (val->isInt()) {
 			int index = val->getInt();
 			int currIndex = 0;
-			for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+			for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (currIndex == index) {
 					ret = _attachmentsPre[i];
 				}
 				currIndex++;
 			}
-			for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+			for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (currIndex == index) {
 					ret = _attachmentsPost[i];
 				}
@@ -629,14 +629,14 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 		} else {
 			const char *attachmentName = val->getString();
-			for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+			for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->getName() && scumm_stricmp(_attachmentsPre[i]->getName(), attachmentName) == 0) {
 					ret = _attachmentsPre[i];
 					break;
 				}
 			}
 			if (!ret) {
-				for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+				for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 					if (_attachmentsPost[i]->getName() && scumm_stricmp(_attachmentsPost[i]->getName(), attachmentName) == 0) {
 						ret = _attachmentsPre[i];
 						break;
@@ -738,7 +738,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumItems") {
-		_scValue->setInt(getInventory()->_takenItems.size());
+		_scValue->setInt(getInventory()->_takenItems.getSize());
 		return _scValue;
 	}
 
@@ -759,7 +759,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumAttachments") {
-		_scValue->setInt(_attachmentsPre.size() + _attachmentsPost.size());
+		_scValue->setInt(_attachmentsPre.getSize() + _attachmentsPost.getSize());
 		return _scValue;
 	} else {
 		return BaseObject::scGetProperty(name);
@@ -861,12 +861,12 @@ bool AdObject::setFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdObject::getHeight() {
-	if (!_currentSprite || (int32)_currentSprite->_frames.size() <= _currentSprite->_currentFrame) {
+	if (!_currentSprite || (int32)_currentSprite->_frames.getSize() <= _currentSprite->_currentFrame) {
 		return 0;
 	} else {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
 		int32 ret = 0;
-		for (uint32 i = 0; i < frame->_subframes.size(); i++) {
+		for (uint32 i = 0; i < frame->_subframes.getSize(); i++) {
 			ret = MAX(ret, frame->_subframes[i]->_hotspotY);
 		}
 
@@ -1205,10 +1205,10 @@ bool AdObject::getScale(float *scaleX, float *scaleY) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updateSpriteAttachments() {
-	for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+	for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 		_attachmentsPre[i]->update();
 	}
-	for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+	for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 		_attachmentsPost[i]->update();
 	}
 	return STATUS_OK;
@@ -1217,11 +1217,11 @@ bool AdObject::updateSpriteAttachments() {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::displaySpriteAttachments(bool preDisplay) {
 	if (preDisplay) {
-		for (uint32 i = 0; i < _attachmentsPre.size(); i++) {
+		for (uint32 i = 0; i < _attachmentsPre.getSize(); i++) {
 			displaySpriteAttachment(_attachmentsPre[i]);
 		}
 	} else {
-		for (uint32 i = 0; i < _attachmentsPost.size(); i++) {
+		for (uint32 i = 0; i < _attachmentsPost.getSize(); i++) {
 			displaySpriteAttachment(_attachmentsPost[i]);
 		}
 	}

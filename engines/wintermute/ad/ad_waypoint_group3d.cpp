@@ -39,10 +39,10 @@ AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdWaypointGroup3D::~AdWaypointGroup3D() {
-	for (uint i = 0; i < _points.size(); i++) {
+	for (uint i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////

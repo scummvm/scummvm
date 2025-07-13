@@ -73,16 +73,16 @@ AdObject3D::~AdObject3D() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdObject3D::clearIgnoredLights() {
-	for (uint32 i = 0; i < _ignoredLights.size(); ++i) {
+	for (uint32 i = 0; i < _ignoredLights.getSize(); ++i) {
 		delete _ignoredLights[i];
 	}
 
-	_ignoredLights.clear();
+	_ignoredLights.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::addIgnoredLight(char *lightName) {
-	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
+	for (uint32 i = 0; i < _ignoredLights.getSize(); i++) {
 		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			return true;
 		}
@@ -94,10 +94,10 @@ bool AdObject3D::addIgnoredLight(char *lightName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::removeIgnoredLight(char *lightName) {
-	for (uint32 i = 0; i < _ignoredLights.size(); i++) {
+	for (uint32 i = 0; i < _ignoredLights.getSize(); i++) {
 		if (scumm_stricmp(_ignoredLights[i], lightName) == 0) {
 			delete[] _ignoredLights[i];
-			_ignoredLights.remove_at(i);
+			_ignoredLights.removeAt(i);
 			return true;
 		}
 	}

@@ -96,45 +96,45 @@ AdSceneGeometry::~AdSceneGeometry() {
 void AdSceneGeometry::cleanup() {
 	uint i;
 
-	for (i = 0; i < _planes.size(); i++) {
+	for (i = 0; i < _planes.getSize(); i++) {
 		delete _planes[i];
 	}
-	_planes.clear();
+	_planes.removeAll();
 
-	for (i = 0; i < _blocks.size(); i++) {
+	for (i = 0; i < _blocks.getSize(); i++) {
 		delete _blocks[i];
 	}
-	_blocks.clear();
+	_blocks.removeAll();
 
-	for (i = 0; i < _generics.size(); i++) {
+	for (i = 0; i < _generics.getSize(); i++) {
 		delete _generics[i];
 	}
-	_generics.clear();
+	_generics.removeAll();
 
-	for (i = 0; i < _waypointGroups.size(); i++) {
+	for (i = 0; i < _waypointGroups.getSize(); i++) {
 		delete _waypointGroups[i];
 	}
-	_waypointGroups.clear();
+	_waypointGroups.removeAll();
 
-	for (i = 0; i < _cameras.size(); i++) {
+	for (i = 0; i < _cameras.getSize(); i++) {
 		if (_gameRef->_renderer3D->_camera == _cameras[i])
 			_gameRef->_renderer3D->_camera = nullptr;
 		delete _cameras[i];
 	}
-	_cameras.clear();
+	_cameras.removeAll();
 
-	for (i = 0; i < _lights.size(); i++) {
+	for (i = 0; i < _lights.getSize(); i++) {
 		delete _lights[i];
 	}
-	_lights.clear();
+	_lights.removeAll();
 
 	_activeCamera = _activeLight = -1;
 	DXMatrixIdentity(&_viewMatrix);
 
-	for (i = 0; i < _PFPath.size(); i++) {
+	for (i = 0; i < _PFPath.getSize(); i++) {
 		delete _PFPath[i];
 	}
-	_PFPath.clear();
+	_PFPath.removeAll();
 
 	_PFTargetPath = nullptr;
 }
@@ -249,7 +249,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 					delete geomExt;
 					return false;
 				} else {
-					if (_waypointGroups.size() == 0) {
+					if (_waypointGroups.getSize() == 0) {
 						_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
 					}
 					_waypointGroups[0]->addFromMesh(mesh);
@@ -305,12 +305,12 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	SystemClassRegistry::getInstance()->_disabled = false;
 
-	if (_cameras.size() > 0) {
+	if (_cameras.getSize() > 0) {
 		setActiveCamera(0, -1.0f, -1.0f, -1.0f);
 	}
 	createLights();
 
-	if (_lights.size() > 0) {
+	if (_lights.getSize() > 0) {
 		setActiveLight(0);
 	}
 
@@ -329,8 +329,8 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::dropWaypoints() {
-	for (uint i = 0; i < _waypointGroups.size(); i++) {
-		for (uint j = 0; j < _waypointGroups[i]->_points.size(); j++) {
+	for (uint i = 0; i < _waypointGroups.getSize(); i++) {
+		for (uint j = 0; j < _waypointGroups[i]->_points.getSize(); j++) {
 			DXVector3 *point = _waypointGroups[i]->_points[j];
 			point->_y = getHeightAt(*point) + _waypointHeight;
 		}
@@ -340,7 +340,7 @@ bool AdSceneGeometry::dropWaypoints() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane, float farClipPlane) {
-	if (camera < 0 || static_cast<uint>(camera) >= _cameras.size()) {
+	if (camera < 0 || static_cast<uint>(camera) >= _cameras.getSize()) {
 		_gameRef->LOG(0, "Warning: Camera %d is out of bounds.", camera);
 		return false;
 	} else {
@@ -362,7 +362,7 @@ bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveCamera(const char *camera, float fov, float nearClipPlane, float farClipPlane) {
-	for (uint i = 0; i < _cameras.size(); i++) {
+	for (uint i = 0; i < _cameras.getSize(); i++) {
 		if (scumm_stricmp(_cameras[i]->getName(), camera) == 0)
 			return setActiveCamera(i, fov, nearClipPlane, farClipPlane);
 	}
@@ -373,7 +373,7 @@ bool AdSceneGeometry::setActiveCamera(const char *camera, float fov, float nearC
 
 //////////////////////////////////////////////////////////////////////////
 Camera3D *AdSceneGeometry::getActiveCamera() {
-	if (_activeCamera >= 0 && static_cast<uint>(_activeCamera) < _cameras.size()) {
+	if (_activeCamera >= 0 && static_cast<uint>(_activeCamera) < _cameras.getSize()) {
 		return _cameras[_activeCamera];
 	} else {
 		return nullptr;
@@ -382,7 +382,7 @@ Camera3D *AdSceneGeometry::getActiveCamera() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveLight(int light) {
-	if (light < 0 || static_cast<uint>(light) >= _lights.size()) {
+	if (light < 0 || static_cast<uint>(light) >= _lights.getSize()) {
 		_gameRef->LOG(0, "Warning: Light %d is out of bounds.", light);
 		return false;
 	} else {
@@ -393,7 +393,7 @@ bool AdSceneGeometry::setActiveLight(int light) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveLight(char *light) {
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(_lights[i]->getName(), light) == 0) {
 			return setActiveLight(i);
 		}
@@ -475,7 +475,7 @@ float AdSceneGeometry::getHeightAt(DXVector3 pos, float tolerance, bool *intFoun
 
 	bool intFoundTmp = false;
 
-	for (uint32 i = 0; i < _planes.size(); i++) {
+	for (uint32 i = 0; i < _planes.getSize(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
 			if (C3DUtils::intersectTriangle(pos, dir,
 				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
@@ -507,7 +507,7 @@ bool AdSceneGeometry::directPathExists(DXVector3 *p1, DXVector3 *p2) {
 	DXVector3 v0, v1, v2;
 
 	// test walkplanes
-	for (uint i = 0; i < _planes.size(); i++) {
+	for (uint i = 0; i < _planes.getSize(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
 			v0 = _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos;
 			v1 = _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[1]]._pos;
@@ -529,7 +529,7 @@ bool AdSceneGeometry::directPathExists(DXVector3 *p1, DXVector3 *p2) {
 	}
 
 	// test blocks
-	for (uint i = 0; i < _blocks.size(); i++) {
+	for (uint i = 0; i < _blocks.getSize(); i++) {
 		if (!_blocks[i]->_active) {
 			continue;
 		}
@@ -564,7 +564,7 @@ DXVector3 AdSceneGeometry::getBlockIntersection(DXVector3 *p1, DXVector3 *p2) {
 	DXVector3 v0, v1, v2;
 
 	// test blocks
-	for (uint i = 0; i < _blocks.size(); i++) {
+	for (uint i = 0; i < _blocks.getSize(); i++) {
 		if (!_blocks[i]->_active) {
 			continue;
 		}
@@ -724,7 +724,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	bool intFound = false;
 	float minDist = FLT_MAX;
 	DXVector3 intersection, ray;
-	for (uint32 i = 0; i < _planes.size(); i++) {
+	for (uint32 i = 0; i < _planes.getSize(); i++) {
 		for (int j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
 			if (C3DUtils::intersectTriangle(vPickRayOrig, vPickRayDir,
 								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
@@ -766,10 +766,10 @@ bool AdSceneGeometry::getPath(DXVector3 source, DXVector3 target, AdPath3D *path
 
 		// prepare working path
 		uint i, j;
-		for (i = 0; i < _PFPath.size(); i++) {
+		for (i = 0; i < _PFPath.getSize(); i++) {
 			delete _PFPath[i];
 		}
-		_PFPath.clear();
+		_PFPath.removeAll();
 
 		// first point
 		_PFPath.add(new AdPathPoint3D(source, 0));
@@ -778,9 +778,9 @@ bool AdSceneGeometry::getPath(DXVector3 source, DXVector3 target, AdPath3D *path
 		_PFPath.add(new AdPathPoint3D(target, FLT_MAX));
 
 		// add all active waypoints
-		for (i = 0; i < _waypointGroups.size(); i++) {
+		for (i = 0; i < _waypointGroups.getSize(); i++) {
 			if (_waypointGroups[i]->_active) {
-				for (j = 0; j < _waypointGroups[i]->_points.size(); j++) {
+				for (j = 0; j < _waypointGroups[i]->_points.getSize(); j++) {
 					_PFPath.add(new AdPathPoint3D(*_waypointGroups[i]->_points[j], FLT_MAX));
 				}
 			}
@@ -798,7 +798,7 @@ void AdSceneGeometry::pathFinderStep() {
 	float lowestDist = FLT_MAX;
 	AdPathPoint3D *lowestPt = NULL;
 
-	for (i = 0; i < _PFPath.size(); i++) {
+	for (i = 0; i < _PFPath.getSize(); i++) {
 		if (!_PFPath[i]->_marked && _PFPath[i]->_distance < lowestDist) {
 			lowestDist = _PFPath[i]->_distance;
 			lowestPt = _PFPath[i];
@@ -825,13 +825,13 @@ void AdSceneGeometry::pathFinderStep() {
 	// target point marked, generate path and terminate
 	if (lowestPt->_pos == _PFTarget) {
 		while (lowestPt != nullptr) {
-			_PFTargetPath->_points.insert_at(0, new DXVector3(lowestPt->_pos));
+			_PFTargetPath->_points.insertAt(0, new DXVector3(lowestPt->_pos));
 			lowestPt = lowestPt->_origin;
 		}
 		// remove current position
-		if (_PFTargetPath->_points.size() > 0) {
+		if (_PFTargetPath->_points.getSize() > 0) {
 			delete _PFTargetPath->_points[0];
-			_PFTargetPath->_points.remove_at(0);
+			_PFTargetPath->_points.removeAt(0);
 		}
 
 		_PFReady = true;
@@ -840,7 +840,7 @@ void AdSceneGeometry::pathFinderStep() {
 	}
 
 	// otherwise keep on searching
-	for (i = 0; i < _PFPath.size(); i++) {
+	for (i = 0; i < _PFPath.getSize(); i++) {
 		if (!_PFPath[i]->_marked) {
 			float dist = getPointsDist(lowestPt->_pos, _PFPath[i]->_pos);
 			if (dist >= 0 && lowestPt->_distance + dist < _PFPath[i]->_distance) {
@@ -893,7 +893,7 @@ bool AdSceneGeometry::createLights() {
 		_gameRef->_renderer3D->lightEnable(i, false);
 	}
 
-	int lightCount = MIN(static_cast<int>(_lights.size()), maxLights);
+	int lightCount = MIN(static_cast<int>(_lights.getSize()), maxLights);
 
 	for (int i = 0; i < lightCount; i++) {
 		_lights[i]->setLight(i);
@@ -908,7 +908,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 	int maxLights = _gameRef->_renderer3D->getMaxActiveLights();
 
 	int numActiveLights = 0;
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		_lights[i]->_isAvailable = false;
 		if (_lights[i]->_active) {
 			numActiveLights++;
@@ -916,7 +916,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 	}
 
 	if (numActiveLights <= maxLights) {
-		for (uint i = 0; i < _lights.size(); i++) {
+		for (uint i = 0; i < _lights.getSize(); i++) {
 			_lights[i]->_isAvailable = true;
 		}
 	} else {
@@ -928,7 +928,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		BaseArray<Light3D *> activeLights;
 
 		// compute distance to point
-		for (uint i = 0; i < _lights.size(); i++) {
+		for (uint i = 0; i < _lights.getSize(); i++) {
 			if (!_lights[i]->_active) {
 				continue;
 			}
@@ -944,14 +944,14 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 
 			_lights[i]->_distance = fabs(DXVec3Length(&dif));
 
-			activeLights.push_back(_lights[i]);
+			activeLights.add(_lights[i]);
 		}
 
 		// sort by distance
-		if (activeLights.size() > 0) {
-			qsort(activeLights.begin(), activeLights.size(), sizeof(Light3D *), AdSceneGeometry::compareLights);
+		if (activeLights.getSize() > 0) {
+			qsort(activeLights.getData(), activeLights.getSize(), sizeof(Light3D *), AdSceneGeometry::compareLights);
 
-			for (uint i = 0; i < activeLights.size(); i++) {
+			for (uint i = 0; i < activeLights.getSize(); i++) {
 				activeLights[i]->_isAvailable = static_cast<int>(i) < maxLights;
 			}
 		}
@@ -963,14 +963,14 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 	}
 
 	numActiveLights = 0;
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		if (numActiveLights >= maxLights) {
 			break;
 		}
 
-		if (ignoreLights.size()) {
+		if (ignoreLights.getSize()) {
 			bool ignore = false;
-			for (uint j = 0; j < ignoreLights.size(); j++) {
+			for (uint j = 0; j < ignoreLights.getSize(); j++) {
 				if (scumm_stricmp(_lights[i]->getName(), ignoreLights[j]) == 0) {
 					ignore = true;
 					break;
@@ -1106,21 +1106,21 @@ bool AdSceneGeometry::enableNode(const char *nodeName, bool enable) {
 	bool ret = false;
 
 	uint i;
-	for (i = 0; i < _blocks.size(); i++) {
+	for (i = 0; i < _blocks.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _blocks[i]->getName()) == 0) {
 			_blocks[i]->_active = enable;
 			ret = true;
 		}
 	}
 
-	for (i = 0; i < _planes.size(); i++) {
+	for (i = 0; i < _planes.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _planes[i]->getName()) == 0) {
 			_planes[i]->_active = enable;
 			ret = true;
 		}
 	}
 
-	for (i = 0; i < _generics.size(); i++) {
+	for (i = 0; i < _generics.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _generics[i]->getName()) == 0) {
 			_generics[i]->_active = enable;
 			ret = true;
@@ -1132,18 +1132,18 @@ bool AdSceneGeometry::enableNode(const char *nodeName, bool enable) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::isNodeEnabled(const char *nodeName) {
-	for (uint i = 0; i < _blocks.size(); i++) {
+	for (uint i = 0; i < _blocks.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _blocks[i]->getName()) == 0) {
 			return _blocks[i]->_active;
 		}
 	}
-	for (uint i = 0; i < _planes.size(); i++) {
+	for (uint i = 0; i < _planes.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _planes[i]->getName()) == 0) {
 			return _planes[i]->_active;
 		}
 	}
 
-	for (uint i = 0; i < _generics.size(); i++) {
+	for (uint i = 0; i < _generics.getSize(); i++) {
 		if (scumm_stricmp(nodeName, _generics[i]->getName()) == 0) {
 			return _generics[i]->_active;
 		}
@@ -1157,7 +1157,7 @@ bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 	bool ret = false;
 
 	uint i;
-	for (i = 0; i < _lights.size(); i++) {
+	for (i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			_lights[i]->_active = enable;
 			ret = true;
@@ -1170,7 +1170,7 @@ bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::isLightEnabled(const char *lightName) {
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_active;
 		}
@@ -1183,7 +1183,7 @@ bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 	bool ret = false;
 
 	uint i;
-	for (i = 0; i < _lights.size(); i++) {
+	for (i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			_lights[i]->_diffuseColor = color;
 			ret = true;
@@ -1196,7 +1196,7 @@ bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 AdSceneGeometry::getLightColor(const char *lightName) {
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_diffuseColor;
 		}
@@ -1206,7 +1206,7 @@ uint32 AdSceneGeometry::getLightColor(const char *lightName) {
 
 //////////////////////////////////////////////////////////////////////////
 DXVector3 AdSceneGeometry::getLightPos(const char *lightName) {
-	for (uint i = 0; i < _lights.size(); i++) {
+	for (uint i = 0; i < _lights.getSize(); i++) {
 		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
 			return _lights[i]->_pos;
 		}
@@ -1244,7 +1244,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	int i;
 
 	//////////////////////////////////////////////////////////////////////////
-	int32 numLights = _lights.size();
+	int32 numLights = _lights.getSize();
 	persistMgr->transferSint32(TMEMBER(numLights));
 	for (i = 0; i < numLights; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1255,7 +1255,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
 
-			for (uint j = 0; j < _lights.size(); j++) {
+			for (uint j = 0; j < _lights.getSize(); j++) {
 				if (scumm_stricmp(name, _lights[j]->getName()) == 0) {
 					_lights[j]->persist(persistMgr);
 					found = true;
@@ -1278,7 +1278,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	createLights();
 
 	//////////////////////////////////////////////////////////////////////////
-	int32 numBlocks = _blocks.size();
+	int32 numBlocks = _blocks.getSize();
 	persistMgr->transferSint32(TMEMBER(numBlocks));
 	for (i = 0; i < numBlocks; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1288,7 +1288,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			char *name = nullptr;
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
-			for (uint j = 0; j < _blocks.size(); j++) {
+			for (uint j = 0; j < _blocks.getSize(); j++) {
 				if (scumm_stricmp(name, _blocks[j]->getName()) == 0) {
 					_blocks[j]->persist(persistMgr);
 					found = true;
@@ -1309,7 +1309,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	int32 numPlanes = _planes.size();
+	int32 numPlanes = _planes.getSize();
 	persistMgr->transferSint32(TMEMBER(numPlanes));
 	for (i = 0; i < numPlanes; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1319,7 +1319,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			char *name = nullptr;
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
-			for (uint j = 0; j < _planes.size(); j++) {
+			for (uint j = 0; j < _planes.getSize(); j++) {
 				if (scumm_stricmp(name, _planes[j]->getName()) == 0) {
 					_planes[j]->persist(persistMgr);
 					found = true;
@@ -1340,7 +1340,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	int32 numGenerics = _generics.size();
+	int32 numGenerics = _generics.getSize();
 	persistMgr->transferSint32(TMEMBER(numGenerics));
 	for (i = 0; i < numGenerics; i++) {
 		if (persistMgr->getIsSaving()) {
@@ -1350,7 +1350,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			char *name = nullptr;
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
-			for (uint j = 0; j < _generics.size(); j++) {
+			for (uint j = 0; j < _generics.getSize(); j++) {
 				if (scumm_stricmp(name, _generics[j]->getName()) == 0) {
 					_generics[j]->persist(persistMgr);
 					found = true;

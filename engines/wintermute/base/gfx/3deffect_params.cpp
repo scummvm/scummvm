@@ -121,18 +121,18 @@ Effect3DParams::~Effect3DParams() {
 
 //////////////////////////////////////////////////////////////////////////
 void Effect3DParams::clear() {
-	for (size_t i = 0; i < _params.size(); i++) {
+	for (size_t i = 0; i < _params.getSize(); i++) {
 		delete _params[i];
 		_params[i] = nullptr;
 	}
 
-	_params.clear();
+	_params.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool Effect3DParams::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving()) {
-		uint32 numItems = _params.size();
+		uint32 numItems = _params.getSize();
 		persistMgr->transferUint32(TMEMBER(numItems));
 
 		for (uint32 i = 0; i < numItems; i++) {
@@ -182,7 +182,7 @@ void Effect3DParams::setParam(const char *paramName, DXVector4 val) {
 Effect3DParams::Effect3DParam *Effect3DParams::getParamByName(const char *paramName) {
 	Effect3DParam *param = nullptr;
 
-	for (uint32 i = 0; i < _params.size(); i++) {
+	for (uint32 i = 0; i < _params.getSize(); i++) {
 		if (_params[i]->getParamName() && strcmp(paramName, _params[i]->getParamName()) == 0) {
 			param = _params[i];
 			break;

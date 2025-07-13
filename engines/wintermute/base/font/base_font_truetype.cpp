@@ -67,10 +67,10 @@ BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 BaseFontTT::~BaseFontTT() {
 	clearCache();
 
-	for (uint32 i = 0; i < _layers.size(); i++) {
+	for (uint32 i = 0; i < _layers.getSize(); i++) {
 		delete _layers[i];
 	}
-	_layers.clear();
+	_layers.removeAll();
 
 	delete[] _fontFile;
 	_fontFile = nullptr;
@@ -227,7 +227,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	if (surface) {
 		Rect32 rc;
 		rc.setRect(0, 0, surface->getWidth(), surface->getHeight());
-		for (uint32 i = 0; i < _layers.size(); i++) {
+		for (uint32 i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = renderer->_forceAlphaColor;
 			if (renderer->_forceAlphaColor != 0) {
@@ -439,7 +439,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 	}
 
 	// create at least one layer
-	if (_layers.size() == 0) {
+	if (_layers.getSize() == 0) {
 		BaseTTFontLayer *layer = new BaseTTFontLayer;
 		layer->_color = baseColor;
 		_layers.add(layer);
@@ -518,13 +518,13 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 	// persist layers
 	int32 numLayers;
 	if (persistMgr->getIsSaving()) {
-		numLayers = _layers.size();
+		numLayers = _layers.getSize();
 		persistMgr->transferSint32(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
 			_layers[i]->persist(persistMgr);
 		}
 	} else {
-		numLayers = _layers.size();
+		numLayers = _layers.getSize();
 		persistMgr->transferSint32(TMEMBER(numLayers));
 		for (int i = 0; i < numLayers; i++) {
 			BaseTTFontLayer *layer = new BaseTTFontLayer;

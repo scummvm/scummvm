@@ -129,42 +129,42 @@ AdGame::~AdGame() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::cleanup() {
-	for (uint32 i = 0; i < _objects.size(); i++) {
+	for (uint32 i = 0; i < _objects.getSize(); i++) {
 		unregisterObject(_objects[i]);
 		_objects[i] = nullptr;
 	}
-	_objects.clear();
+	_objects.removeAll();
 
 
-	for (uint32 i = 0; i < _dlgPendingBranches.size(); i++) {
+	for (uint32 i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete[] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.clear();
+	_dlgPendingBranches.removeAll();
 
-	for (uint32 i = 0; i < _speechDirs.size(); i++) {
+	for (uint32 i = 0; i < _speechDirs.getSize(); i++) {
 		delete[] _speechDirs[i];
 	}
-	_speechDirs.clear();
+	_speechDirs.removeAll();
 
 
 	unregisterObject(_scene);
 	_scene = nullptr;
 
 	// remove items
-	for (uint32 i = 0; i < _items.size(); i++) {
+	for (uint32 i = 0; i < _items.getSize(); i++) {
 		_gameRef->unregisterObject(_items[i]);
 	}
-	_items.clear();
+	_items.removeAll();
 
 
 	// clear remaining inventories
 	delete _invObject;
 	_invObject = nullptr;
 
-	for (uint32 i = 0; i < _inventories.size(); i++) {
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
 		delete _inventories[i];
 	}
-	_inventories.clear();
+	_inventories.removeAll();
 
 
 	if (_responseBox) {
@@ -192,20 +192,20 @@ bool AdGame::cleanup() {
 	delete _sceneViewport;
 	_sceneViewport = nullptr;
 
-	for (uint32 i = 0; i < _sceneStates.size(); i++) {
+	for (uint32 i = 0; i < _sceneStates.getSize(); i++) {
 		delete _sceneStates[i];
 	}
-	_sceneStates.clear();
+	_sceneStates.removeAll();
 
-	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	for (uint32 i = 0; i < _responsesBranch.getSize(); i++) {
 		delete _responsesBranch[i];
 	}
-	_responsesBranch.clear();
+	_responsesBranch.removeAll();
 
-	for (uint32 i = 0; i < _responsesGame.size(); i++) {
+	for (uint32 i = 0; i < _responsesGame.getSize(); i++) {
 		delete _responsesGame[i];
 	}
-	_responsesGame.clear();
+	_responsesGame.removeAll();
 
 	return BaseGame::cleanup();
 }
@@ -232,7 +232,7 @@ bool AdGame::initLoop() {
 		res = _scene->initLoop();
 	}
 
-	_sentences.clear();
+	_sentences.removeAll();
 
 	return res;
 }
@@ -255,9 +255,9 @@ bool AdGame::removeObject(AdObject *object) {
 		}
 	}
 
-	for (uint32 i = 0; i < _objects.size(); i++) {
+	for (uint32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i] == object) {
-			_objects.remove_at(i);
+			_objects.removeAt(i);
 			break;
 		}
 	}
@@ -285,7 +285,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 
 	if (_scene) {
 		// reset objects
-		for (uint32 i = 0; i < _objects.size(); i++) {
+		for (uint32 i = 0; i < _objects.getSize(); i++) {
 			_objects[i]->reset();
 		}
 
@@ -305,7 +305,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 
 		if (DID_SUCCEED(ret)) {
 			// invalidate references to the original scene
-			for (uint32 i = 0; i < _objects.size(); i++) {
+			for (uint32 i = 0; i < _objects.getSize(); i++) {
 				_objects[i]->invalidateCurrRegions();
 				_objects[i]->_stickRegion = nullptr;
 			}
@@ -331,7 +331,7 @@ void AdGame::addSentence(AdSentence *sentence) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::displaySentences(bool frozen) {
-	for (uint32 i = 0; i < _sentences.size(); i++) {
+	for (uint32 i = 0; i < _sentences.getSize(); i++) {
 		if (frozen && _sentences[i]->_freezable) {
 			continue;
 		} else {
@@ -344,7 +344,7 @@ bool AdGame::displaySentences(bool frozen) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdGame::finishSentences() {
-	for (uint32 i = 0; i < _sentences.size(); i++) {
+	for (uint32 i = 0; i < _sentences.getSize(); i++) {
 		if (_sentences[i]->canSkip()) {
 			_sentences[i]->_duration = 0;
 			if (_sentences[i]->_sound) {
@@ -535,7 +535,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		AdItem *item = nullptr;
 		if (val->isInt()) {
 			int index = val->getInt();
-			if (index >= 0 && index < (int32)_items.size()) {
+			if (index >= 0 && index < (int32)_items.getSize()) {
 				item = _items[index];
 			}
 		} else {
@@ -721,8 +721,8 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	else if (strcmp(name, "GetCurrentDlgBranch") == 0) {
 		stack->correctParams(0);
 
-		if (_dlgPendingBranches.size() > 0) {
-			stack->pushString(_dlgPendingBranches[_dlgPendingBranches.size() - 1]);
+		if (_dlgPendingBranches.getSize() > 0) {
+			stack->pushString(_dlgPendingBranches[_dlgPendingBranches.getSize() - 1]);
 		} else {
 			stack->pushNULL();
 		}
@@ -766,10 +766,10 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 		ScValue *val = stack->pop();
 		if (!val->isNULL()) {
-			for (uint32 i = 0; i < _inventories.size(); i++) {
+			for (uint32 i = 0; i < _inventories.getSize(); i++) {
 				AdInventory *inv = _inventories[i];
 
-				for (uint32 j = 0; j < inv->_takenItems.size(); j++) {
+				for (uint32 j = 0; j < inv->_takenItems.getSize(); j++) {
 					if (val->getNative() == inv->_takenItems[j]) {
 						stack->pushBool(true);
 						return STATUS_OK;
@@ -1085,7 +1085,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	// TotalNumItems
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "TotalNumItems") {
-		_scValue->setInt(_items.size());
+		_scValue->setInt(_items.getSize());
 		return _scValue;
 	}
 
@@ -1143,7 +1143,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		} else {
 			if (value->isNative()) {
 				_selectedItem = nullptr;
-				for (uint32 i = 0; i < _items.size(); i++) {
+				for (uint32 i = 0; i < _items.getSize(); i++) {
 					if (_items[i] == value->getNative()) {
 						_selectedItem = (AdItem *)value->getNative();
 						break;
@@ -1656,7 +1656,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 		p.y = yCenter;
 		// Looking through all objects for entities near to the center
 		if (_scene && _scene->getSceneObjects(objects, true)) {
-			for (uint32 i = 0; i < objects.size(); i++) {
+			for (uint32 i = 0; i < objects.getSize(); i++) {
 				BaseRegion *region;
 				if (objects[i]->getType() != OBJECT_ENTITY ||
 					!objects[i]->_active ||
@@ -1764,7 +1764,7 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 	BaseParser parser;
 
 	if (!merge) {
-		while (_items.size() > 0) {
+		while (_items.getSize() > 0) {
 			deleteItem(_items[0]);
 		}
 	}
@@ -1819,7 +1819,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 		}
 	}
 
-	for (uint32 i = 0; i < _sceneStates.size(); i++) {
+	for (uint32 i = 0; i < _sceneStates.getSize(); i++) {
 		if (scumm_stricmp(_sceneStates[i]->getFilename(), filenameCor) == 0) {
 			delete[] filenameCor;
 			return _sceneStates[i];
@@ -1914,8 +1914,8 @@ bool AdGame::startDlgBranch(const char *branchName, const char *scriptName, cons
 bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
 	char *name = nullptr;
 	bool deleteName = false;
-	if (branchName == nullptr && _dlgPendingBranches.size() > 0) {
-		name = _dlgPendingBranches[_dlgPendingBranches.size() - 1];
+	if (branchName == nullptr && _dlgPendingBranches.getSize() > 0) {
+		name = _dlgPendingBranches[_dlgPendingBranches.getSize() - 1];
 	} else {
 		if (branchName != nullptr) {
 			size_t sz = strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1;
@@ -1931,27 +1931,27 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 
 
 	int startIndex = -1;
-	for (int i = _dlgPendingBranches.size() - 1; i >= 0; i--) {
+	for (int i = _dlgPendingBranches.getSize() - 1; i >= 0; i--) {
 		if (scumm_stricmp(name, _dlgPendingBranches[i]) == 0) {
 			startIndex = i;
 			break;
 		}
 	}
 	if (startIndex >= 0) {
-		for (uint32 i = startIndex; i < _dlgPendingBranches.size(); i++) {
+		for (uint32 i = startIndex; i < _dlgPendingBranches.getSize(); i++) {
 			//ClearBranchResponses(_dlgPendingBranches[i]);
 			delete[] _dlgPendingBranches[i];
 			_dlgPendingBranches[i] = nullptr;
 		}
-		_dlgPendingBranches.remove_at(startIndex, _dlgPendingBranches.size() - startIndex);
+		_dlgPendingBranches.removeAt(startIndex, _dlgPendingBranches.getSize() - startIndex);
 	}
 
 	// dialogue is over, forget selected responses
-	if (_dlgPendingBranches.size() == 0) {
-		for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	if (_dlgPendingBranches.getSize() == 0) {
+		for (uint32 i = 0; i < _responsesBranch.getSize(); i++) {
 			delete _responsesBranch[i];
 		}
-		_responsesBranch.clear();
+		_responsesBranch.removeAll();
 	}
 
 	if (deleteName) {
@@ -1964,10 +1964,10 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::clearBranchResponses(char *name) {
-	for (int32 i = 0; i < (int32)_responsesBranch.size(); i++) {
+	for (int32 i = 0; i < (int32)_responsesBranch.getSize(); i++) {
 		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
 			delete _responsesBranch[i];
-			_responsesBranch.remove_at(i);
+			_responsesBranch.removeAt(i);
 			i--;
 		}
 	}
@@ -1982,7 +1982,7 @@ bool AdGame::addBranchResponse(int id) {
 	}
 	AdResponseContext *r = new AdResponseContext(_gameRef);
 	r->_id = id;
-	r->setContext(_dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr);
+	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr);
 	_responsesBranch.add(r);
 	return STATUS_OK;
 }
@@ -1990,8 +1990,8 @@ bool AdGame::addBranchResponse(int id) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::branchResponseUsed(int id) const {
-	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
-	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
+	for (uint32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
 			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
 				return true;
@@ -2009,7 +2009,7 @@ bool AdGame::addGameResponse(int id) {
 	}
 	AdResponseContext *r = new AdResponseContext(_gameRef);
 	r->_id = id;
-	r->setContext(_dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr);
+	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr);
 	_responsesGame.add(r);
 	return STATUS_OK;
 }
@@ -2017,8 +2017,8 @@ bool AdGame::addGameResponse(int id) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::gameResponseUsed(int id) const {
-	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
-	for (uint32 i = 0; i < _responsesGame.size(); i++) {
+	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
+	for (uint32 i = 0; i < _responsesGame.getSize(); i++) {
 		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
 			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->getContext()) == 0))) {
@@ -2032,23 +2032,23 @@ bool AdGame::gameResponseUsed(int id) const {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::resetResponse(int id) {
-	char *context = _dlgPendingBranches.size() > 0 ? _dlgPendingBranches[_dlgPendingBranches.size() - 1] : nullptr;
+	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
 
-	for (uint32 i = 0; i < _responsesGame.size(); i++) {
+	for (uint32 i = 0; i < _responsesGame.getSize(); i++) {
 		if (_responsesGame[i]->_id == id) {
 			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesGame[i]->getContext()) == 0)) {
 				delete _responsesGame[i];
-				_responsesGame.remove_at(i);
+				_responsesGame.removeAt(i);
 				break;
 			}
 		}
 	}
 
-	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	for (uint32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
 			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
 				delete _responsesBranch[i];
-				_responsesBranch.remove_at(i);
+				_responsesBranch.removeAt(i);
 				break;
 			}
 		}
@@ -2149,7 +2149,7 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::registerInventory(AdInventory *inv) {
-	for (uint32 i = 0; i < _inventories.size(); i++) {
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
 		if (_inventories[i] == inv) {
 			return STATUS_OK;
 		}
@@ -2162,10 +2162,10 @@ bool AdGame::registerInventory(AdInventory *inv) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::unregisterInventory(AdInventory *inv) {
-	for (uint32 i = 0; i < _inventories.size(); i++) {
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
 		if (_inventories[i] == inv) {
 			unregisterObject(_inventories[i]);
-			_inventories.remove_at(i);
+			_inventories.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -2174,10 +2174,10 @@ bool AdGame::unregisterInventory(AdInventory *inv) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::isItemTaken(char *itemName) {
-	for (uint32 i = 0; i < _inventories.size(); i++) {
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
 		AdInventory *inv = _inventories[i];
 
-		for (uint32 j = 0; j < inv->_takenItems.size(); j++) {
+		for (uint32 j = 0; j < inv->_takenItems.getSize(); j++) {
 			if (scumm_stricmp(itemName, inv->_takenItems[j]->getName()) == 0) {
 				return true;
 			}
@@ -2188,7 +2188,7 @@ bool AdGame::isItemTaken(char *itemName) {
 
 //////////////////////////////////////////////////////////////////////////
 AdItem *AdGame::getItemByName(const char *name) const {
-	for (uint32 i = 0; i < _items.size(); i++) {
+	for (uint32 i = 0; i < _items.getSize(); i++) {
 		if (scumm_stricmp(_items[i]->getName(), name) == 0) {
 			return _items[i];
 		}
@@ -2207,34 +2207,34 @@ bool AdGame::addItem(AdItem *item) {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::resetContent() {
 	// clear pending dialogs
-	for (uint32 i = 0; i < _dlgPendingBranches.size(); i++) {
+	for (uint32 i = 0; i < _dlgPendingBranches.getSize(); i++) {
 		delete[] _dlgPendingBranches[i];
 	}
-	_dlgPendingBranches.clear();
+	_dlgPendingBranches.removeAll();
 
 
 	// clear inventories
-	for (uint32 i = 0; i < _inventories.size(); i++) {
-		_inventories[i]->_takenItems.clear();
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
+		_inventories[i]->_takenItems.removeAll();
 	}
 
 	// clear scene states
-	for (uint32 i = 0; i < _sceneStates.size(); i++) {
+	for (uint32 i = 0; i < _sceneStates.getSize(); i++) {
 		delete _sceneStates[i];
 	}
-	_sceneStates.clear();
+	_sceneStates.removeAll();
 
 	// clear once responses
-	for (uint32 i = 0; i < _responsesBranch.size(); i++) {
+	for (uint32 i = 0; i < _responsesBranch.getSize(); i++) {
 		delete _responsesBranch[i];
 	}
-	_responsesBranch.clear();
+	_responsesBranch.removeAll();
 
 	// clear once game responses
-	for (uint32 i = 0; i < _responsesGame.size(); i++) {
+	for (uint32 i = 0; i < _responsesGame.getSize(); i++) {
 		delete _responsesGame[i];
 	}
-	_responsesGame.clear();
+	_responsesGame.removeAll();
 
 	// reload inventory items
 	if (_itemsFile) {
@@ -2259,15 +2259,15 @@ bool AdGame::deleteItem(AdItem *item) {
 	_scene->handleItemAssociations(item->getName(), false);
 
 	// remove from all inventories
-	for (uint32 i = 0; i < _inventories.size(); i++) {
+	for (uint32 i = 0; i < _inventories.getSize(); i++) {
 		_inventories[i]->removeItem(item);
 	}
 
 	// remove object
-	for (uint32 i = 0; i < _items.size(); i++) {
+	for (uint32 i = 0; i < _items.getSize(); i++) {
 		if (_items[i] == item) {
 			unregisterObject(_items[i]);
-			_items.remove_at(i);
+			_items.removeAt(i);
 			break;
 		}
 	}
@@ -2289,7 +2289,7 @@ bool AdGame::addSpeechDir(const char *dir) {
 		Common::strcat_s(temp, dirSize, "\\");
 	}
 
-	for (uint32 i = 0; i < _speechDirs.size(); i++) {
+	for (uint32 i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete[] temp;
 			return STATUS_OK;
@@ -2315,10 +2315,10 @@ bool AdGame::removeSpeechDir(const char *dir) {
 	}
 
 	bool found = false;
-	for (uint32 i = 0; i < _speechDirs.size(); i++) {
+	for (uint32 i = 0; i < _speechDirs.getSize(); i++) {
 		if (scumm_stricmp(_speechDirs[i], temp) == 0) {
 			delete[] _speechDirs[i];
-			_speechDirs.remove_at(i);
+			_speechDirs.removeAt(i);
 			found = true;
 			break;
 		}
@@ -2333,7 +2333,7 @@ bool AdGame::removeSpeechDir(const char *dir) {
 char *AdGame::findSpeechFile(char *stringID) {
 	char *ret = new char[MAX_PATH_LENGTH];
 
-	for (uint32 i = 0; i < _speechDirs.size(); i++) {
+	for (uint32 i = 0; i < _speechDirs.getSize(); i++) {
 		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.ogg", _speechDirs[i], stringID);
 		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;

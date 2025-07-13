@@ -312,7 +312,7 @@ bool AdSentence::update(TDirection dir) {
 	currentTime = _gameRef->getTimer()->getTime() - _startTime;
 
 	bool talkNodeFound = false;
-	for (uint32 i = 0; i < _talkDef->_nodes.size(); i++) {
+	for (uint32 i = 0; i < _talkDef->_nodes.getSize(); i++) {
 		if (_talkDef->_nodes[i]->isInTimeInterval(currentTime, dir)) {
 			talkNodeFound = true;
 

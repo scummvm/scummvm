@@ -1510,7 +1510,7 @@ bool ScScript::copyParameters(ScStack *stack) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::finishThreads() {
-	for (uint32 i = 0; i < _engine->_scripts.size(); i++) {
+	for (uint32 i = 0; i < _engine->_scripts.getSize(); i++) {
 		ScScript *scr = _engine->_scripts[i];
 		if (scr->_thread && scr->_state != SCRIPT_FINISHED && scr->_owner == _owner && scumm_stricmp(scr->_filename, _filename) == 0) {
 			scr->finish(true);

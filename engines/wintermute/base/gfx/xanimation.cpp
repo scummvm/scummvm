@@ -44,20 +44,20 @@ Animation::Animation(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 Animation::~Animation() {
-	for (uint32 i = 0; i < _posKeys.size(); i++) {
+	for (uint32 i = 0; i < _posKeys.getSize(); i++) {
 		delete _posKeys[i];
 	}
-	_posKeys.clear();
+	_posKeys.removeAll();
 
-	for (uint32 i = 0; i < _rotKeys.size(); i++) {
+	for (uint32 i = 0; i < _rotKeys.getSize(); i++) {
 		delete _rotKeys[i];
 	}
-	_rotKeys.clear();
+	_rotKeys.removeAll();
 
-	for (uint32 i = 0; i < _scaleKeys.size(); i++) {
+	for (uint32 i = 0; i < _scaleKeys.getSize(); i++) {
 		delete _scaleKeys[i];
 	}
-	_scaleKeys.clear();
+	_scaleKeys.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 	uint32 numKeys = animationKey->_numKeys;
 
 	if (keyType == 0) { // rotation key
-		if (_rotKeys.size() != 0) {
+		if (_rotKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Rotation key duplicated");
 			return false;
 		}
@@ -158,10 +158,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			rotKey->_rotation._y = fileRotKey->_tfkeys[2];
 			rotKey->_rotation._z = fileRotKey->_tfkeys[3];
 
-			_rotKeys.push_back(rotKey);
+			_rotKeys.add(rotKey);
 		}
 	} else if (keyType == 1) { // scale key
-		if (_scaleKeys.size() != 0) {
+		if (_scaleKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Scale key duplicated");
 			return false;
 		}
@@ -176,10 +176,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			scaleKey->_scale._y = fileScaleKey->_tfkeys[1];
 			scaleKey->_scale._z = fileScaleKey->_tfkeys[2];
 
-			_scaleKeys.push_back(scaleKey);
+			_scaleKeys.add(scaleKey);
 		}
 	} else if (keyType == 2) { // position key
-		if (_posKeys.size() != 0) {
+		if (_posKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Position key duplicated");
 			return false;
 		}
@@ -194,10 +194,10 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			posKey->_pos._y = filePosKey->_tfkeys[1];
 			posKey->_pos._z = filePosKey->_tfkeys[2];
 
-			_posKeys.push_back(posKey);
+			_posKeys.add(posKey);
 		}
 	} else if (keyType == 4) { // matrix key
-		if (_rotKeys.size() != 0 || _scaleKeys.size() != 0 || _posKeys.size() != 0) {
+		if (_rotKeys.getSize() != 0 || _scaleKeys.getSize() != 0 || _posKeys.getSize() != 0) {
 			BaseEngine::LOG(0, "Matrix key duplicated");
 			return false;
 		}
@@ -235,9 +235,9 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			rotationKey->_rotation._y = -rotationKey->_rotation._y;
 			rotationKey->_rotation._z = -rotationKey->_rotation._z;
 
-			_posKeys.push_back(positionKey);
-			_scaleKeys.push_back(scaleKey);
-			_rotKeys.push_back(rotationKey);
+			_posKeys.add(positionKey);
+			_scaleKeys.add(scaleKey);
+			_rotKeys.add(rotationKey);
 		}
 	} else {
 		// the type is unknown, report the error
@@ -264,11 +264,11 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 	bool animate = false;
 
 	// scale keys
-	if (_scaleKeys.size() > 0) {
+	if (_scaleKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys between which the time is currently in
-		for (uint32 key = 0; key < _scaleKeys.size(); key++) {
+		for (uint32 key = 0; key < _scaleKeys.getSize(); key++) {
 			if (_scaleKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 
@@ -299,11 +299,11 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 	}
 
 	// rotation keys
-	if (_rotKeys.size() > 0) {
+	if (_rotKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the current time value
-		for (uint32 key = 0; key < _rotKeys.size(); key++) {
+		for (uint32 key = 0; key < _rotKeys.getSize(); key++) {
 			if (_rotKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -344,11 +344,11 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 	}
 
 	// position keys
-	if (_posKeys.size() > 0) {
+	if (_posKeys.getSize() > 0) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the time value
-		for (uint32 key = 0; key < _posKeys.size(); key++) {
+		for (uint32 key = 0; key < _posKeys.getSize(); key++) {
 			if (_posKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -389,7 +389,7 @@ int Animation::getFrameTime() {
 
 	// get the shortest frame time
 	prevTime = 0;
-	for (uint32 i = 0; i < _rotKeys.size(); i++) {
+	for (uint32 i = 0; i < _rotKeys.getSize(); i++) {
 		if (frameTime == 0 || _rotKeys[i]->_time - prevTime < frameTime)
 			frameTime = _rotKeys[i]->_time - prevTime;
 
@@ -397,7 +397,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _posKeys.size(); i++) {
+	for (uint32 i = 0; i < _posKeys.getSize(); i++) {
 		if (frameTime == 0 || _posKeys[i]->_time - prevTime < frameTime)
 			frameTime = _posKeys[i]->_time - prevTime;
 
@@ -405,7 +405,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _scaleKeys.size(); i++) {
+	for (uint32 i = 0; i < _scaleKeys.getSize(); i++) {
 		if (frameTime == 0 || _scaleKeys[i]->_time - prevTime < frameTime)
 			frameTime = _scaleKeys[i]->_time - prevTime;
 
@@ -418,16 +418,16 @@ int Animation::getFrameTime() {
 //////////////////////////////////////////////////////////////////////////
 uint32 Animation::getTotalTime() {
 	uint32 totalTime = 0;
-	if (_rotKeys.size() > 0) {
-		totalTime = MAX(totalTime, _rotKeys[_rotKeys.size() - 1]->_time);
+	if (_rotKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _rotKeys[_rotKeys.getSize() - 1]->_time);
 	}
 
-	if (_posKeys.size() > 0) {
-		totalTime = MAX(totalTime, _posKeys[_posKeys.size() - 1]->_time);
+	if (_posKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _posKeys[_posKeys.getSize() - 1]->_time);
 	}
 
-	if (_scaleKeys.size() > 0) {
-		totalTime = MAX(totalTime, _scaleKeys[_scaleKeys.size() - 1]->_time);
+	if (_scaleKeys.getSize() > 0) {
+		totalTime = MAX(totalTime, _scaleKeys[_scaleKeys.getSize() - 1]->_time);
 	}
 
 	return totalTime;

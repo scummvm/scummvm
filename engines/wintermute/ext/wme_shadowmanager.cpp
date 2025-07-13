@@ -419,7 +419,7 @@ void SXShadowManager::run() {
 	AdGame *adGame = (AdGame *)_gameRef;
 	if (!adGame->_scene || !adGame->_scene->_geom)
 		return;
-	for (uint32 l = 0; l < adGame->_scene->_geom->_lights.size(); l++) {
+	for (uint32 l = 0; l < adGame->_scene->_geom->_lights.getSize(); l++) {
 		auto light = adGame->_scene->_geom->_lights[l];
 		_lights.push_back(Common::Pair<Light3D *, bool>(light, true));
 	}

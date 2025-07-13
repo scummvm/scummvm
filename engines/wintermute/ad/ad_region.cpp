@@ -142,10 +142,10 @@ bool AdRegion::loadBuffer(char *buffer, bool complete) {
 		buffer = params;
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (uint32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 
@@ -379,7 +379,7 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "ALPHA = %d\n", RGBCOLGetA(_alpha));
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED=%s\n", _editorSelected ? "TRUE" : "FALSE");
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (uint32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
@@ -387,7 +387,7 @@ bool AdRegion::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		_scProp->saveAsText(buffer, indent + 2);
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (uint32 i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 

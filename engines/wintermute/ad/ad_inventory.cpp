@@ -43,7 +43,7 @@ AdInventory::AdInventory(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdInventory::~AdInventory() {
-	_takenItems.clear(); // ref only
+	_takenItems.removeAll(); // ref only
 }
 
 
@@ -59,9 +59,9 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 	}
 
 	int32 insertIndex = -1;
-	for (int32 i = 0; i < (int32)_takenItems.size(); i++) {
+	for (int32 i = 0; i < (int32)_takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
-			_takenItems.remove_at(i);
+			_takenItems.removeAt(i);
 			i--;
 			continue;
 		}
@@ -74,7 +74,7 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 	if (insertIndex == -1) {
 		_takenItems.add(item);
 	} else {
-		_takenItems.insert_at(insertIndex, item);
+		_takenItems.insertAt(insertIndex, item);
 	}
 
 	return STATUS_OK;
@@ -87,12 +87,12 @@ bool AdInventory::removeItem(const char *name) {
 		return STATUS_FAILED;
 	}
 
-	for (uint32 i = 0; i < _takenItems.size(); i++) {
+	for (uint32 i = 0; i < _takenItems.getSize(); i++) {
 		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
 			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i]) {
 				((AdGame *)_gameRef)->_selectedItem = nullptr;
 			}
-			_takenItems.remove_at(i);
+			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
 	}
@@ -108,12 +108,12 @@ bool AdInventory::removeItem(AdItem *item) {
 		return STATUS_FAILED;
 	}
 
-	for (uint32 i = 0; i < _takenItems.size(); i++) {
+	for (uint32 i = 0; i < _takenItems.getSize(); i++) {
 		if (_takenItems[i] == item) {
 			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i]) {
 				((AdGame *)_gameRef)->_selectedItem = nullptr;
 			}
-			_takenItems.remove_at(i);
+			_takenItems.removeAt(i);
 			return STATUS_OK;
 		}
 	}

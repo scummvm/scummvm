@@ -30,6 +30,7 @@
 
 #include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
+#include "engines/wintermute/coll_templ.h"
 
 #include "common/rect.h"
 #include "common/array.h"
@@ -222,7 +223,7 @@ protected:
 	Rect32 _screenRect;
 	Rect32 _monitorRect;
 private:
-	Common::Array<BaseActiveRect *> _rectList;
+	BaseArray<BaseActiveRect *> _rectList;
 	bool displaySaveloadImage();
 	bool displaySaveloadRect();
 };

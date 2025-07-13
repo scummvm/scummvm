@@ -311,7 +311,7 @@ Listing* DebuggerController::getListing(Error* &error) {
 Common::Array<TopEntry> DebuggerController::getTop() const {
 	Common::Array<TopEntry> res;
 	assert(SCENGINE);
-	for (uint i = 0; i < SCENGINE->_scripts.size(); i++) {
+	for (uint i = 0; i < SCENGINE->_scripts.getSize(); i++) {
 		TopEntry entry;
 		entry.filename = SCENGINE->_scripts[i]->_filename;
 		entry.current = (SCENGINE->_scripts[i] == SCENGINE->_currentScript);

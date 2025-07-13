@@ -1168,7 +1168,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "HINT_Y=%d\n", _hintY);
 #endif
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (uint32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 

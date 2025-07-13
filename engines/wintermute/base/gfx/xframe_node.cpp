@@ -56,16 +56,16 @@ FrameNode::FrameNode(BaseGame *inGame) : BaseNamedObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 FrameNode::~FrameNode() {
 	// remove child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		delete _frames[i];
 	}
-	_frames.clear();
+	_frames.removeAll();
 
 	// remove meshes
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		delete _meshes[i];
 	}
-	_meshes.clear();
+	_meshes.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -208,12 +208,12 @@ bool FrameNode::mergeFromXData(const Common::String &filename, XModel *model, XF
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::findBones(FrameNode *rootFrame) {
 	// find the bones of the meshes
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->findBones(rootFrame);
 	}
 
 	// find the bones for the child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->findBones(rootFrame);
 	}
 
@@ -225,7 +225,7 @@ FrameNode *FrameNode::findFrame(const char *frameName) {
 	if (getName() && strcmp(getName(), frameName) == 0) {
 		return this;
 	} else {
-		for (uint32 i = 0; i < _frames.size(); i++) {
+		for (uint32 i = 0; i < _frames.getSize(); i++) {
 			FrameNode *foundFrame = _frames[i]->findFrame(frameName);
 			if (foundFrame) {
 				return foundFrame;
@@ -271,7 +271,7 @@ bool FrameNode::updateMatrices(DXMatrix *parentMat) {
 	DXMatrixMultiply(&_combinedMatrix, &_transformationMatrix, parentMat);
 
 	// update child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->updateMatrices(&_combinedMatrix);
 	}
 
@@ -283,7 +283,7 @@ bool FrameNode::updateMeshes() {
 	bool res = true;
 
 	// update meshes
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		res = _meshes[i]->update(this);
 		if (!res) {
 			return res;
@@ -291,7 +291,7 @@ bool FrameNode::updateMeshes() {
 	}
 
 	// render child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		res = _frames[i]->updateMeshes();
 		if (!res) {
 			return res;
@@ -305,7 +305,7 @@ bool FrameNode::resetMatrices() {
 	_transformationMatrix = _originalMatrix;
 
 	// update child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->resetMatrices();
 	}
 
@@ -317,7 +317,7 @@ bool FrameNode::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVect
 	bool res = true;
 
 	// meshes
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		res = _meshes[i]->updateShadowVol(shadow, modelMat, light, extrusionDepth);
 		if (!res) {
 			return res;
@@ -325,7 +325,7 @@ bool FrameNode::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVect
 	}
 
 	// child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		res = _frames[i]->updateShadowVol(shadow, modelMat, light, extrusionDepth);
 		if (!res) {
 			return res;
@@ -339,7 +339,7 @@ bool FrameNode::render(XModel *model) {
 	bool res = true;
 
 	// render meshes
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		res = _meshes[i]->render(model);
 		if (!res) {
 			return res;
@@ -347,7 +347,7 @@ bool FrameNode::render(XModel *model) {
 	}
 
 	// render child frames
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		res = _frames[i]->render(model);
 		if (!res) {
 			return res;
@@ -359,14 +359,14 @@ bool FrameNode::render(XModel *model) {
 bool FrameNode::renderFlatShadowModel(uint32 shadowColor) {
 	bool res = true;
 
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		res = _meshes[i]->renderFlatShadowModel(shadowColor);
 		if (!res) {
 			return res;
 		}
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		res = _frames[i]->renderFlatShadowModel(shadowColor);
 		if (!res) {
 			return res;
@@ -379,14 +379,14 @@ bool FrameNode::renderFlatShadowModel(uint32 shadowColor) {
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 	bool found = false;
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		found = _meshes[i]->pickPoly(pickRayOrig, pickRayDir);
 		if (found) {
 			return true;
 		}
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		found = _frames[i]->pickPoly(pickRayOrig, pickRayDir);
 		if (found) {
 			return true;
@@ -397,7 +397,7 @@ bool FrameNode::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd) {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		boxStart->_x = MIN(boxStart->_x, _meshes[i]->_BBoxStart._x);
 		boxStart->_y = MIN(boxStart->_y, _meshes[i]->_BBoxStart._y);
 		boxStart->_z = MIN(boxStart->_z, _meshes[i]->_BBoxStart._z);
@@ -407,7 +407,7 @@ bool FrameNode::getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd) {
 		boxEnd->_z = MAX(boxEnd->_z, _meshes[i]->_BBoxEnd._z);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->getBoundingBox(boxStart, boxEnd);
 	}
 	return true;
@@ -415,16 +415,16 @@ bool FrameNode::getBoundingBox(DXVector3 *boxStart, DXVector3 *boxEnd) {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::hasChildren() {
-	return _frames.size() > 0;
+	return _frames.getSize() > 0;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::setMaterialSprite(char *matName, BaseSprite *sprite) {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->setMaterialSprite(matName, sprite);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->setMaterialSprite(matName, sprite);
 	}
 
@@ -433,11 +433,11 @@ bool FrameNode::setMaterialSprite(char *matName, BaseSprite *sprite) {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::setMaterialTheora(char *matName, VideoTheoraPlayer *theora) {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->setMaterialTheora(matName, theora);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->setMaterialTheora(matName, theora);
 	}
 
@@ -446,11 +446,11 @@ bool FrameNode::setMaterialTheora(char *matName, VideoTheoraPlayer *theora) {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::setMaterialEffect(char *matName, Effect3D *effect, Effect3DParams *params) {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->setMaterialEffect(matName, effect, params);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->setMaterialEffect(matName, effect, params);
 	}
 
@@ -459,11 +459,11 @@ bool FrameNode::setMaterialEffect(char *matName, Effect3D *effect, Effect3DParam
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::removeMaterialEffect(const char *matName) {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->removeMaterialEffect(matName);
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->removeMaterialEffect(matName);
 	}
 
@@ -472,11 +472,11 @@ bool FrameNode::removeMaterialEffect(const char *matName) {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::invalidateDeviceObjects() {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->invalidateDeviceObjects();
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->invalidateDeviceObjects();
 	}
 
@@ -485,11 +485,11 @@ bool FrameNode::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::restoreDeviceObjects() {
-	for (uint32 i = 0; i < _meshes.size(); i++) {
+	for (uint32 i = 0; i < _meshes.getSize(); i++) {
 		_meshes[i]->restoreDeviceObjects();
 	}
 
-	for (uint32 i = 0; i < _frames.size(); i++) {
+	for (uint32 i = 0; i < _frames.getSize(); i++) {
 		_frames[i]->restoreDeviceObjects();
 	}
 

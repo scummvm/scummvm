@@ -67,7 +67,7 @@ XMesh::~XMesh() {
 	delete[] _adjacency;
 	_adjacency = nullptr;
 
-	_materials.clear();
+	_materials.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -309,7 +309,7 @@ bool XMesh::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 
 ////////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(),  matName.c_str()) == 0) {
 			_materials[i]->setSprite(sprite);
 		}
@@ -319,7 +319,7 @@ bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite)
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
 			_materials[i]->setTheora(theora);
 		}
@@ -329,7 +329,7 @@ bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialEffect(const Common::String &matName, Effect3D *effect, Effect3DParams *params) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
 			_materials[i]->setEffect(effect, params);
 		}
@@ -339,7 +339,7 @@ bool XMesh::setMaterialEffect(const Common::String &matName, Effect3D *effect, E
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::removeMaterialEffect(const Common::String &matName) {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
 			_materials[i]->setEffect(nullptr, nullptr);
 		}
@@ -354,7 +354,7 @@ bool XMesh::invalidateDeviceObjects() {
 		_blendedMesh = nullptr;
 	}
 
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		_materials[i]->invalidateDeviceObjects();
 	}
 
@@ -363,7 +363,7 @@ bool XMesh::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::restoreDeviceObjects() {
-	for (uint32 i = 0; i < _materials.size(); i++) {
+	for (uint32 i = 0; i < _materials.getSize(); i++) {
 		_materials[i]->restoreDeviceObjects();
 	}
 

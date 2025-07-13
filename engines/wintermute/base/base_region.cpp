@@ -59,10 +59,10 @@ BaseRegion::~BaseRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRegion::cleanup() {
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (uint32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 
 	_rect.setEmpty();
 	_editorSelectedPoint = -1;
@@ -77,7 +77,7 @@ bool BaseRegion::createRegion() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::pointInRegion(int x, int y) {
-	if (_points.size() < 3) {
+	if (_points.getSize() < 3) {
 		return false;
 	}
 
@@ -159,10 +159,10 @@ bool BaseRegion::loadBuffer(char *buffer, bool complete) {
 		buffer = params;
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (uint32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
-	_points.clear();
+	_points.removeAll();
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -248,8 +248,8 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
-			_points.insert_at(index, new BasePoint(x, y));
+		if (index >= 0 && index < (int32)_points.getSize()) {
+			_points.insertAt(index, new BasePoint(x, y));
 			createRegion();
 
 			stack->pushBool(true);
@@ -269,7 +269,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int x = stack->pop()->getInt();
 		int y = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
+		if (index >= 0 && index < (int32)_points.getSize()) {
 			_points[index]->x = x;
 			_points[index]->y = y;
 			createRegion();
@@ -289,11 +289,11 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
+		if (index >= 0 && index < (int32)_points.getSize()) {
 			delete _points[index];
 			_points[index] = nullptr;
 
-			_points.remove_at(index);
+			_points.removeAt(index);
 			createRegion();
 
 			stack->pushBool(true);
@@ -311,7 +311,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		stack->correctParams(1);
 		int index = stack->pop()->getInt();
 
-		if (index >= 0 && index < (int32)_points.size()) {
+		if (index >= 0 && index < (int32)_points.getSize()) {
 			ScValue *val = stack->getPushValue();
 			if (val) {
 				val->setProperty("X", _points[index]->x);
@@ -360,7 +360,7 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumPoints") {
-		_scValue->setInt(_points.size());
+		_scValue->setInt(_points.getSize());
 		return _scValue;
 	} else {
 		return BaseObject::scGetProperty(name);
@@ -409,11 +409,11 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (uint32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	for (uint32 i = 0; i < _points.size(); i++) {
+	for (uint32 i = 0; i < _points.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "POINT {%d,%d}\n", _points[i]->x, _points[i]->y);
 	}
 
@@ -449,7 +449,7 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::ptInPolygon(int32 x, int32 y) {
-	if (_points.size() < 3) {
+	if (_points.getSize() < 3) {
 		return false;
 	}
 
@@ -463,9 +463,9 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 	p1.x = (double)_points[0]->x;
 	p1.y = (double)_points[0]->y;
 
-	for (uint32 i = 1; i <= _points.size(); i++) {
-		p2.x = (double)_points[i % _points.size()]->x;
-		p2.y = (double)_points[i % _points.size()]->y;
+	for (uint32 i = 1; i <= _points.getSize(); i++) {
+		p2.x = (double)_points[i % _points.getSize()]->x;
+		p2.y = (double)_points[i % _points.getSize()]->y;
 
 		if (p.y > MIN(p1.y, p2.y)) {
 			if (p.y <= MAX(p1.y, p2.y)) {
@@ -492,12 +492,12 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
-	if (_points.size() == 0) {
+	if (_points.getSize() == 0) {
 		rect->setEmpty();
 	} else {
 		int32 minX = INT_MAX_VALUE, minY = INT_MAX_VALUE, maxX = INT_MIN_VALUE, maxY = INT_MIN_VALUE;
 
-		for (uint32 i = 0; i < _points.size(); i++) {
+		for (uint32 i = 0; i < _points.getSize(); i++) {
 			minX = MIN(minX, _points[i]->x);
 			minY = MIN(minY, _points[i]->y);
 
@@ -518,7 +518,7 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 
 	cleanup();
 
-	for (uint32 i = 0; i < region->_points.size(); i++) {
+	for (uint32 i = 0; i < region->_points.getSize(); i++) {
 		int xVal, yVal;
 
 		xVal = (int)((float)region->_points[i]->x * scale / 100.0f);

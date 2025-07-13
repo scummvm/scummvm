@@ -45,11 +45,11 @@ AdPath3D::~AdPath3D() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath3D::reset() {
-	for (uint i = 0; i < _points.size(); i++) {
+	for (uint i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
 
-	_points.clear();
+	_points.removeAll();
 	_currIndex = -1;
 	_ready = false;
 }
@@ -74,7 +74,7 @@ bool AdPath3D::setReady(bool ready) {
 
 //////////////////////////////////////////////////////////////////////////
 DXVector3 *AdPath3D::getFirst() {
-	if (_points.size() > 0) {
+	if (_points.getSize() > 0) {
 		_currIndex = 0;
 		return _points[_currIndex];
 	} else {
@@ -85,7 +85,7 @@ DXVector3 *AdPath3D::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 DXVector3 *AdPath3D::getNext() {
 	_currIndex++;
-	if (static_cast<uint>(_currIndex) < _points.size()) {
+	if (static_cast<uint>(_currIndex) < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -94,7 +94,7 @@ DXVector3 *AdPath3D::getNext() {
 
 //////////////////////////////////////////////////////////////////////////
 DXVector3 *AdPath3D::getCurrent() {
-	if (_currIndex >= 0 && static_cast<uint>(_currIndex) < _points.size()) {
+	if (_currIndex >= 0 && static_cast<uint>(_currIndex) < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -109,7 +109,7 @@ bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_ready));
 
 	if (persistMgr->getIsSaving()) {
-		int32 j = _points.size();
+		int32 j = _points.getSize();
 		persistMgr->transferSint32("ArraySize", &j);
 		for (int i = 0; i < j; i++) {
 			persistMgr->transferFloat("x", &_points[i]->_x);

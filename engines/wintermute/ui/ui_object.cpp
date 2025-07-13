@@ -256,7 +256,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			// find directly
 			if (val->isNative()) {
 				UIObject *widget = (UIObject *)val->getNative();
-				for (i = 0; i < win->_widgets.size(); i++) {
+				for (i = 0; i < win->_widgets.getSize(); i++) {
 					if (win->_widgets[i] == widget) {
 						found = true;
 						break;
@@ -266,7 +266,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			// find by name
 			else {
 				const char *findName = val->getString();
-				for (i = 0; i < win->_widgets.size(); i++) {
+				for (i = 0; i < win->_widgets.getSize(); i++) {
 					if (scumm_stricmp(win->_widgets[i]->getName(), findName) == 0) {
 						found = true;
 						break;
@@ -276,7 +276,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			if (found) {
 				bool done = false;
-				for (uint32 j = 0; j < win->_widgets.size(); j++) {
+				for (uint32 j = 0; j < win->_widgets.getSize(); j++) {
 					if (win->_widgets[j] == this) {
 						if (strcmp(name, "MoveAfter") == 0) {
 							i++;
@@ -285,8 +285,8 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 							j++;
 						}
 
-						win->_widgets.insert_at(i, this);
-						win->_widgets.remove_at(j);
+						win->_widgets.insertAt(i, this);
+						win->_widgets.removeAt(j);
 
 						done = true;
 						stack->pushBool(true);
@@ -315,10 +315,10 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.size(); i++) {
+			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.remove_at(i);
-					win->_widgets.insert_at(0, this);
+					win->_widgets.removeAt(i);
+					win->_widgets.insertAt(0, this);
 					break;
 				}
 			}
@@ -338,9 +338,9 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.size(); i++) {
+			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					win->_widgets.remove_at(i);
+					win->_widgets.removeAt(i);
 					win->_widgets.add(this);
 					break;
 				}
@@ -440,10 +440,10 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.size(); i++) {
+			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (name == "NextSibling") {
-						if (i < win->_widgets.size() - 1) {
+						if (i < win->_widgets.getSize() - 1) {
 							_scValue->setNative(win->_widgets[i + 1], true);
 						}
 					} else {

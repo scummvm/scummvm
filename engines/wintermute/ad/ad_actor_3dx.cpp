@@ -104,16 +104,16 @@ AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdActor3DX::~AdActor3DX() {
 	// delete attachments
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		delete _attachments[i];
 	}
-	_attachments.clear();
+	_attachments.removeAll();
 
 	// delete transition times
-	for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+	for (uint32 i = 0; i < _transitionTimes.getSize(); i++) {
 		delete _transitionTimes[i];
 	}
-	_transitionTimes.clear();
+	_transitionTimes.removeAll();
 
 	delete _path2D;
 	_path2D = nullptr;
@@ -499,7 +499,7 @@ bool AdActor3DX::displayShadowVolume() {
 	_gameRef->_renderer3D->getWorldTransform(&origWorld);
 
 	// handle the attachments
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		AdAttach3DX *at = _attachments[i];
 
 		if (!at->_active) {
@@ -557,7 +557,7 @@ bool AdActor3DX::displayFlatShadow() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::updateAttachments() {
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		if (_attachments[i]->_active) {
 			_attachments[i]->update();
 		}
@@ -571,14 +571,14 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 		return false;
 	}
 
-	if (_attachments.size() == 0) {
+	if (_attachments.getSize() == 0) {
 		return true;
 	}
 
 	DXMatrix origView;
 	_gameRef->_renderer3D->getWorldTransform(&origView);
 
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		AdAttach3DX *at = _attachments[i];
 		if (!at->_active) {
 			continue;
@@ -1454,7 +1454,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 					stack->pushBool(false);
 				} else {
 					bool isSet = false;
-					for (uint32 i = 0; i < _attachments.size(); i++) {
+					for (uint32 i = 0; i < _attachments.getSize(); i++) {
 						if (scumm_stricmp(_attachments[i]->getName(), attachName) == 0) {
 							delete _attachments[i];
 							_attachments[i] = at;
@@ -1488,10 +1488,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			stack->pushBool(false);
 		} else {
 			bool isFound = false;
-			for (uint32 i = 0; i < _attachments.size(); i++) {
+			for (uint32 i = 0; i < _attachments.getSize(); i++) {
 				if (scumm_stricmp(_attachments[i]->getName(), attachmentName) == 0) {
 					delete _attachments[i];
-					_attachments.remove_at(i);
+					_attachments.removeAt(i);
 					isFound = true;
 					break;
 				}
@@ -1512,7 +1512,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			stack->pushNULL();
 		} else {
 			bool isFound = false;
-			for (uint32 i = 0; i < _attachments.size(); i++) {
+			for (uint32 i = 0; i < _attachments.getSize(); i++) {
 				if (scumm_stricmp(_attachments[i]->getName(), attachmentName) == 0) {
 					stack->pushNative(_attachments[i], true);
 					isFound = true;
@@ -1978,13 +1978,13 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int time = stack->pop()->getInt();
 
 		bool found = false;
-		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+		for (uint32 i = 0; i < _transitionTimes.getSize(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
 			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
 				found = true;
 				if (time < 0) {
 					delete trans;
-					_transitionTimes.remove_at(i);
+					_transitionTimes.removeAt(i);
 				} else
 					trans->_time = (uint32)time;
 				break;
@@ -2009,7 +2009,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		const char *animTo = stack->pop()->getString();
 
 		int time = -1;
-		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+		for (uint32 i = 0; i < _transitionTimes.getSize(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
 
 			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
@@ -2309,13 +2309,13 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_defaultStopTransTime));
 
 	if (persistMgr->getIsSaving()) {
-		int32 numItems = _transitionTimes.size();
+		int32 numItems = _transitionTimes.getSize();
 		persistMgr->transferSint32(TMEMBER(numItems));
-		for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+		for (uint32 i = 0; i < _transitionTimes.getSize(); i++) {
 			_transitionTimes[i]->persist(persistMgr);
 		}
 	} else {
-		int32 numItems = _transitionTimes.size();
+		int32 numItems = _transitionTimes.getSize();
 		persistMgr->transferSint32(TMEMBER(numItems));
 		for (int i = 0; i < numItems; i++) {
 			BaseAnimationTransitionTime *trans = new BaseAnimationTransitionTime();
@@ -2339,7 +2339,7 @@ bool AdActor3DX::invalidateDeviceObjects() {
 	if (_shadowModel)
 		_shadowModel->invalidateDeviceObjects();
 
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		_attachments[i]->invalidateDeviceObjects();
 	}
 
@@ -2356,7 +2356,7 @@ bool AdActor3DX::restoreDeviceObjects() {
 		_shadowModel->restoreDeviceObjects();
 	}
 
-	for (uint32 i = 0; i < _attachments.size(); i++) {
+	for (uint32 i = 0; i < _attachments.getSize(); i++) {
 		_attachments[i]->restoreDeviceObjects();
 	}
 
@@ -2445,7 +2445,7 @@ bool AdActor3DX::isGoToNeeded(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 uint32 AdActor3DX::getAnimTransitionTime(char *from, char *to) {
-	for (uint32 i = 0; i < _transitionTimes.size(); i++) {
+	for (uint32 i = 0; i < _transitionTimes.getSize(); i++) {
 		BaseAnimationTransitionTime *trans = _transitionTimes[i];
 		if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(from) == 0 && trans->_animTo.compareToIgnoreCase(to) == 0) {
 			return trans->_time;

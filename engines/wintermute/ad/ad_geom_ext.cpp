@@ -41,10 +41,10 @@ AdGeomExt::AdGeomExt(BaseGame *in_gameRef) : BaseClass(in_gameRef) {
 
 //////////////////////////////////////////////////////////////////////////
 AdGeomExt::~AdGeomExt() {
-	for (uint i = 0; i < _nodes.size(); i++) {
+	for (uint i = 0; i < _nodes.getSize(); i++) {
 		delete _nodes[i];
 	}
-	_nodes.clear();
+	_nodes.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -144,7 +144,7 @@ AdGeomExtNode *AdGeomExt::matchName(const char *name) {
 		return nullptr;
 	}
 
-	for (uint i = 0; i < _nodes.size(); i++) {
+	for (uint i = 0; i < _nodes.getSize(); i++) {
 		if (_nodes[i]->matchesName(name)) {
 			return _nodes[i];
 		}

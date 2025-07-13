@@ -50,7 +50,7 @@ ShadowVolumeOpenGLShader::ShadowVolumeOpenGLShader(BaseGame *inGame, OpenGL::Sha
 
 	glGenBuffers(1, &_shadowVolumeVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowVolumeVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.getSize(), _vertices.getData(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	glGenBuffers(1, &_shadowMaskVertexBuffer);
@@ -76,7 +76,7 @@ bool ShadowVolumeOpenGLShader::render() {
 	colorValue.w() = 1.0f;
 	_volumeShader->setUniform("color", colorValue);
 
-	glDrawArrays(GL_TRIANGLES, 0, _vertices.size());
+	glDrawArrays(GL_TRIANGLES, 0, _vertices.getSize());
 
 	return true;
 }
@@ -90,7 +90,7 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	glDeleteBuffers(1, &_shadowVolumeVertexBuffer);
 	glGenBuffers(1, &_shadowVolumeVertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, _shadowVolumeVertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 12 * _vertices.getSize(), _vertices.getData(), GL_STATIC_DRAW);
 
 	_volumeShader->enableVertexAttribute("position", _shadowVolumeVertexBuffer, 3, GL_FLOAT, false, 12, 0);
 	_volumeShader->use(true);

@@ -87,23 +87,23 @@ void XModel::cleanup(bool complete) {
 	}
 
 	// remove animation sets
-	for (uint32 i = 0; i < _animationSets.size(); i++) {
+	for (uint32 i = 0; i < _animationSets.getSize(); i++) {
 		delete _animationSets[i];
 	}
-	_animationSets.clear();
+	_animationSets.removeAll();
 
 	if (complete) {
-		for (uint i = 0; i < _mergedModels.size(); ++i) {
+		for (uint i = 0; i < _mergedModels.getSize(); ++i) {
 			delete[] _mergedModels[i];
 		}
-		_mergedModels.clear();
+		_mergedModels.removeAll();
 	}
 
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		delete _matSprites[i];
 		_matSprites[i] = nullptr;
 	}
-	_matSprites.clear();
+	_matSprites.removeAll();
 
 	// remove root frame
 	delete _rootFrame;
@@ -212,7 +212,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 
 	// remember path for save/load purposes
 	bool found = false;
-	for (uint i = 0; i < _mergedModels.size(); ++i) {
+	for (uint i = 0; i < _mergedModels.getSize(); ++i) {
 		if (scumm_stricmp(_mergedModels[i], filename.c_str()) == 0) {
 			found = true;
 			break;
@@ -334,7 +334,7 @@ bool XModel::findBones(bool animOnly, XModel *parentModel) {
 		_rootFrame->findBones(rootFrame);
 	}
 
-	for (uint32 i = 0; i < _animationSets.size(); i++) {
+	for (uint32 i = 0; i < _animationSets.getSize(); i++) {
 		_animationSets[i]->findBones(rootFrame);
 	}
 
@@ -666,7 +666,7 @@ void XModel::updateRect(Rect32 *rc, DXVector3 *vec) {
 
 //////////////////////////////////////////////////////////////////////////
 AnimationSet *XModel::getAnimationSetByName(const Common::String &name) {
-	for (uint32 i = 0; i < _animationSets.size(); i++) {
+	for (uint32 i = 0; i < _animationSets.getSize(); i++) {
 		if (name.equalsIgnoreCase(_animationSets[i]->_name)) {
 			return _animationSets[i];
 		}
@@ -804,7 +804,7 @@ bool XModel::setMaterialSprite(const char *materialName, const char *spriteFilen
 	}
 
 	XModelMatSprite *matSprite = nullptr;
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			matSprite = _matSprites[i];
 			break;
@@ -841,7 +841,7 @@ bool XModel::setMaterialTheora(const char *materialName, const char *theoraFilen
 	theora->play(VID_PLAY_POS, 0, 0, false, false, true);
 
 	XModelMatSprite *matSprite = nullptr;
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			matSprite = _matSprites[i];
 			break;
@@ -874,7 +874,7 @@ bool XModel::setMaterialEffect(const char *materialName, const char *effectFilen
 	}
 
 	XModelMatSprite *matSprite = nullptr;
-	for (uint32 i = 0 ; i < _matSprites.size(); i++) {
+	for (uint32 i = 0 ; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			matSprite = _matSprites[i];
 			break;
@@ -898,11 +898,11 @@ bool XModel::removeMaterialEffect(const char *materialName) {
 	if (!_rootFrame)
 		return false;
 
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			delete _matSprites[i];
 			_matSprites[i] = nullptr;
-			_matSprites.remove_at(i);
+			_matSprites.removeAt(i);
 			_rootFrame->removeMaterialEffect(materialName);
 			return true;
 		}
@@ -918,7 +918,7 @@ bool XModel::setMaterialEffectParam(const char *materialName, const char *paramN
 		return false;
 
 
-	for (uint32 i = 0 ; i < _matSprites.size(); i++) {
+	for (uint32 i = 0 ; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			if (_matSprites[i]->_effectParams) {
 				_matSprites[i]->_effectParams->setParam(paramName, val);
@@ -938,7 +938,7 @@ bool XModel::setMaterialEffectParam(const char *materialName, const char *paramN
 		return false;
 
 
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		if (scumm_stricmp(_matSprites[i]->_matName, materialName) == 0) {
 			if (_matSprites[i]->_effectParams) {
 				_matSprites[i]->_effectParams->setParam(paramName, val);
@@ -957,7 +957,7 @@ bool XModel::initializeSimple() {
 	}
 
 	// init after load
-	for (uint32 i = 0; i < _matSprites.size(); i++) {
+	for (uint32 i = 0; i < _matSprites.getSize(); i++) {
 		if (_matSprites[i]->_theora) {
 			_rootFrame->setMaterialTheora(_matSprites[i]->_matName, _matSprites[i]->_theora);
 		} else if (_matSprites[i]->_sprite) {
@@ -1016,7 +1016,7 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 			loadFromFile(getFilename());
 		}
 
-		for (uint i = 0; i < _mergedModels.size(); ++i) {
+		for (uint i = 0; i < _mergedModels.getSize(); ++i) {
 			mergeFromFile(_mergedModels[i]);
 		}
 	}
@@ -1026,13 +1026,13 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 	// animation properties
 	int32 numAnims;
 	if (persistMgr->getIsSaving()) {
-		numAnims = _animationSets.size();
+		numAnims = _animationSets.getSize();
 	}
 
 	persistMgr->transferSint32(TMEMBER(numAnims));
 
 	if (persistMgr->getIsSaving()) {
-		for (uint32 i = 0; i < _animationSets.size(); i++) {
+		for (uint32 i = 0; i < _animationSets.getSize(); i++) {
 			persistMgr->transferCharPtr(TMEMBER(_animationSets[i]->_name));
 			_animationSets[i]->persist(persistMgr);
 		}
@@ -1064,7 +1064,7 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 	// persist material sprites
 	int32 numMatSprites;
 	if (persistMgr->getIsSaving()) {
-		numMatSprites = _matSprites.size();
+		numMatSprites = _matSprites.getSize();
 	}
 
 	persistMgr->transferSint32(TMEMBER(numMatSprites));
@@ -1103,7 +1103,7 @@ bool XModel::restoreDeviceObjects() {
 //////////////////////////////////////////////////////////////////////////
 bool XModel::unloadAnimation(const char *animName) {
 	bool found = false;
-	for (uint32 i = 0; i < _animationSets.size(); i++) {
+	for (uint32 i = 0; i < _animationSets.getSize(); i++) {
 		if (scumm_stricmp(animName, _animationSets[i]->_name) == 0) {
 			for (int j = 0; j < X_NUM_ANIMATION_CHANNELS; j++) {
 				if (_channels[j])
@@ -1112,7 +1112,7 @@ bool XModel::unloadAnimation(const char *animName) {
 
 			found = true;
 			delete _animationSets[i];
-			_animationSets.remove_at(i);
+			_animationSets.removeAt(i);
 			i++;
 		}
 	}

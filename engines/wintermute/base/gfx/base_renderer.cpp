@@ -189,7 +189,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 	point.x = x;
 	point.y = y;
 
-	for (int i = _rectList.size() - 1; i >= 0; i--) {
+	for (int i = _rectList.getSize() - 1; i >= 0; i--) {
 		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
 			if (_rectList[i]->_precise) {
 				// frame
@@ -236,10 +236,10 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
-	for (uint32 i = 0; i < _rectList.size(); i++) {
+	for (uint32 i = 0; i < _rectList.getSize(); i++) {
 		delete _rectList[i];
 	}
-	_rectList.clear();
+	_rectList.removeAll();
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -339,7 +339,7 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 }
 
 void BaseRenderer::addRectToList(BaseActiveRect *rect) {
-	_rectList.push_back(rect);
+	_rectList.add(rect);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -330,13 +330,13 @@ bool BaseGame::cleanup() {
 	unregisterObject(_fader);
 	_fader = nullptr;
 
-	for (uint32 i = 0; i < _regObjects.size(); i++) {
+	for (uint32 i = 0; i < _regObjects.getSize(); i++) {
 		delete _regObjects[i];
 		_regObjects[i] = nullptr;
 	}
-	_regObjects.clear();
+	_regObjects.removeAll();
 
-	_windows.clear(); // refs only
+	_windows.removeAll(); // refs only
 	_focusedWindow = nullptr; // ref only
 
 	delete _cursorNoninteractive;
@@ -351,11 +351,11 @@ bool BaseGame::cleanup() {
 	_scValue = nullptr;
 	_sFX = nullptr;
 
-	for (uint32 i = 0; i < _scripts.size(); i++) {
+	for (uint32 i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->_owner = nullptr;
 		_scripts[i]->finish();
 	}
-	_scripts.clear();
+	_scripts.removeAll();
 
 	_fontStorage->removeFont(_systemFont);
 	_systemFont = nullptr;
@@ -370,12 +370,12 @@ bool BaseGame::cleanup() {
 	}
 #endif
 
-	for (uint32 i = 0; i < _quickMessages.size(); i++) {
+	for (uint32 i = 0; i < _quickMessages.getSize(); i++) {
 		delete _quickMessages[i];
 	}
-	_quickMessages.clear();
+	_quickMessages.removeAll();
 
-	_viewportStack.clear();
+	_viewportStack.removeAll();
 	_viewportSP = -1;
 
 	setName(nullptr);
@@ -707,7 +707,7 @@ bool BaseGame::initLoop() {
 	getMousePos(&_mousePos);
 
 	_focusedWindow = nullptr;
-	for (int i = _windows.size() - 1; i >= 0; i--) {
+	for (int i = _windows.getSize() - 1; i >= 0; i--) {
 		if (_windows[i]->isVisible()) {
 			_focusedWindow = _windows[i];
 			break;
@@ -1877,7 +1877,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteWindow") == 0) {
 		stack->correctParams(1);
 		BaseObject *obj = (BaseObject *)stack->pop()->getNative();
-		for (uint32 i = 0; i < _windows.size(); i++) {
+		for (uint32 i = 0; i < _windows.getSize(); i++) {
 			if (_windows[i] == obj) {
 				unregisterObject(_windows[i]);
 				stack->pushBool(true);
@@ -3278,15 +3278,15 @@ const char *BaseGame::scToString() {
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayQuickMsg() {
-	if (_quickMessages.size() == 0 || !_systemFont) {
+	if (_quickMessages.getSize() == 0 || !_systemFont) {
 		return STATUS_OK;
 	}
 
 	// update
-	for (int32 i = 0; i < (int32)_quickMessages.size(); i++) {
+	for (int32 i = 0; i < (int32)_quickMessages.getSize(); i++) {
 		if (_currentTime - _quickMessages[i]->getStartTime() >= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
-			_quickMessages.remove_at(i);
+			_quickMessages.removeAt(i);
 			i--;
 		}
 	}
@@ -3294,7 +3294,7 @@ bool BaseGame::displayQuickMsg() {
 	int posY = 20;
 
 	// display
-	for (uint32 i = 0; i < _quickMessages.size(); i++) {
+	for (uint32 i = 0; i < _quickMessages.getSize(); i++) {
 		_systemFont->drawText((const byte *)_quickMessages[i]->getText(), 0, posY, _renderer->getWidth());
 		posY += _systemFont->getTextHeight((const byte *)_quickMessages[i]->getText(), _renderer->getWidth());
 	}
@@ -3305,9 +3305,9 @@ bool BaseGame::displayQuickMsg() {
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessage(const char *text) {
-	if (_quickMessages.size() >= MAX_QUICK_MSG) {
+	if (_quickMessages.getSize() >= MAX_QUICK_MSG) {
 		delete _quickMessages[0];
-		_quickMessages.remove_at(0);
+		_quickMessages.removeAt(0);
 	}
 	_quickMessages.add(new BaseQuickMsg(_currentTime,  text));
 }
@@ -3340,9 +3340,9 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	}
 
 	// is it a window?
-	for (uint32 i = 0; i < _windows.size(); i++) {
+	for (uint32 i = 0; i < _windows.getSize(); i++) {
 		if ((BaseObject *)_windows[i] == object) {
-			_windows.remove_at(i);
+			_windows.removeAt(i);
 
 			// get new focused window
 			if (_focusedWindow == object) {
@@ -3364,9 +3364,9 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	}
 
 	// destroy object
-	for (uint32 i = 0; i < _regObjects.size(); i++) {
+	for (uint32 i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) {
-			_regObjects.remove_at(i);
+			_regObjects.removeAt(i);
 			if (!_loadInProgress) {
 				SystemClassRegistry::getInstance()->enumInstances(invalidateValues, "ScValue", (void *)object);
 			}
@@ -3402,7 +3402,7 @@ bool BaseGame::validObject(BaseObject *object) {
 		return true;
 	}
 
-	for (uint32 i = 0; i < _regObjects.size(); i++) {
+	for (uint32 i = 0; i < _regObjects.getSize(); i++) {
 		if (_regObjects[i] == object) {
 			return true;
 		}
@@ -3858,7 +3858,7 @@ bool BaseGame::displayWindows(bool inGame) {
 	// did we lose focus? focus topmost window
 	if (_focusedWindow == nullptr || !_focusedWindow->isVisible() || _focusedWindow->isDisabled()) {
 		_focusedWindow = nullptr;
-		for (int i = _windows.size() - 1; i >= 0; i--) {
+		for (int i = _windows.getSize() - 1; i >= 0; i--) {
 			if (_windows[i]->isVisible() && !_windows[i]->isDisabled()) {
 				_focusedWindow = _windows[i];
 				break;
@@ -3867,7 +3867,7 @@ bool BaseGame::displayWindows(bool inGame) {
 	}
 
 	// display all windows
-	for (uint32 i = 0; i < _windows.size(); i++) {
+	for (uint32 i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i]->isVisible() && _windows[i]->getInGame() == inGame) {
 
 			res = _windows[i]->display();
@@ -3973,10 +3973,10 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 bool BaseGame::focusWindow(UIWindow *window) {
 	UIWindow *prev = _focusedWindow;
 
-	for (uint32 i = 0; i < _windows.size(); i++) {
+	for (uint32 i = 0; i < _windows.getSize(); i++) {
 		if (_windows[i] == window) {
-			if (i < _windows.size() - 1) {
-				_windows.remove_at(i);
+			if (i < _windows.getSize() - 1) {
+				_windows.removeAt(i);
 				_windows.add(window);
 
 				_gameRef->_focusedWindow = window;
@@ -4180,7 +4180,7 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pushViewport(BaseViewport *viewport) {
 	_viewportSP++;
-	if (_viewportSP >= (int32)_viewportStack.size()) {
+	if (_viewportSP >= (int32)_viewportStack.getSize()) {
 		_viewportStack.add(viewport);
 	} else {
 		_viewportStack[_viewportSP] = viewport;
@@ -4199,7 +4199,7 @@ bool BaseGame::popViewport() {
 		_gameRef->LOG(0, "Fatal: Viewport stack underflow!");
 	}
 
-	if (_viewportSP >= 0 && _viewportSP < (int32)_viewportStack.size()) {
+	if (_viewportSP >= 0 && _viewportSP < (int32)_viewportStack.getSize()) {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
 	} else _renderer->setViewport(_renderer->_drawOffsetX,
 		                              _renderer->_drawOffsetY,
@@ -4328,7 +4328,7 @@ void BaseGame::DEBUG_DumpClassRegistry() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::invalidateDeviceObjects() {
-	for (uint32 i = 0; i < _regObjects.size(); i++) {
+	for (uint32 i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->invalidateDeviceObjects();
 	}
 	return STATUS_OK;
@@ -4337,7 +4337,7 @@ bool BaseGame::invalidateDeviceObjects() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::restoreDeviceObjects() {
-	for (uint32 i = 0; i < _regObjects.size(); i++) {
+	for (uint32 i = 0; i < _regObjects.getSize(); i++) {
 		_regObjects[i]->restoreDeviceObjects();
 	}
 	return STATUS_OK;

@@ -56,7 +56,7 @@ public:
 	bool _soundAvailable;
 	BaseSoundMgr(BaseGame *inGame);
 	~BaseSoundMgr() override;
-	Common::Array<BaseSoundBuffer *> _sounds;
+	BaseArray<BaseSoundBuffer *> _sounds;
 	void saveSettings();
 private:
 	int32 _volumeMasterPercent; // Necessary to avoid round-offs.
