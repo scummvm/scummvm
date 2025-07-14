@@ -82,6 +82,11 @@ Common::Error GrimMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 
 	if (gd->gameType == GType_MONKEY4) {
 #ifdef ENABLE_MONKEY4
+#if !defined(USE_MPEG2)
+		if (gd->desc.platform == Common::kPlatformPS2) {
+			return Common::Error(Common::kUnsupportedGameidError, _s("Escape from Monkey Island PS2 support required MPEG2 support, which is not compiled in"));
+		}
+#endif
 		*engine = new EMIEngine(syst, gd->desc.flags, gd->gameType, gd->desc.platform, gd->desc.language);
 #else
 		return Common::Error(Common::kUnsupportedGameidError, _s("Escape from Monkey Island support is not compiled in"));
