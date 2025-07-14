@@ -1499,10 +1499,13 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	for (StringList::const_iterator i = setup.includeDirs.begin(); i != setup.includeDirs.end(); ++i)
 		scummvmOSX_HeaderPaths.push_back("\"" + *i + "\"");
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include/" + libSDL);
+	scummvmOSX_HeaderPaths.push_back("/opt/homebrew/include/" + libSDL);
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include/" + libSDL);
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include");
+	scummvmOSX_HeaderPaths.push_back("/opt/homebrew/include");
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include");
 	scummvmOSX_HeaderPaths.push_back("/usr/local/include/freetype2");
+	scummvmOSX_HeaderPaths.push_back("/opt/homebrew/include/freetype2");
 	scummvmOSX_HeaderPaths.push_back("/opt/local/include/freetype2");
 	scummvmOSX_HeaderPaths.push_back("include/");
 	scummvmOSX_HeaderPaths.push_back("$(SRCROOT)/engines/");
@@ -1513,6 +1516,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	for (StringList::const_iterator i = setup.libraryDirs.begin(); i != setup.libraryDirs.end(); ++i)
 		scummvmOSX_LibPaths.push_back("\"" + *i + "\"");
 	scummvmOSX_LibPaths.push_back("/usr/local/lib");
+	scummvmOSX_LibPaths.push_back("/opt/homebrew/lib");
 	scummvmOSX_LibPaths.push_back("/opt/local/lib");
 	scummvmOSX_LibPaths.push_back("\"$(inherited)\"");
 	scummvmOSX_LibPaths.push_back("\"\\\"$(SRCROOT)/lib\\\"\"");
