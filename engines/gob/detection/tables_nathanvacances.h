@@ -37,7 +37,8 @@
 	{
 		"nathanvacances",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // CM1/CE2 1.00 (DEV7 version 1.20a)
-		AD_ENTRY1s("common.stk", "344185d17c593122a548122df63b70cf", 1851672),
+		AD_ENTRY2s("common.stk", "344185d17c593122a548122df63b70cf", 1851672,
+				   "ah88f100.cd1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
