@@ -60,6 +60,20 @@
 },
 {
 	{	// German Fan Translation by BJNFNE
+		// ??.0?.2023
+		"crousti",
+		"v1.01",
+		AD_ENTRY1s("intro.stk", "d71d49d89295b2f47182c0455a49bf6a", 864728),
+		DE_DEU,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
+{
+	{	// German Fan Translation by BJNFNE
 		// 23.07.2023
 		"crousti",
 		"v1.01",
