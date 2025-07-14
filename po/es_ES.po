@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-14 12:58+0000\n"
-"PO-Revision-Date: 2025-07-11 08:34+0000\n"
+"PO-Revision-Date: 2025-07-14 13:56+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8603,13 +8603,12 @@ msgstr ""
 "a estos parches."
 
 #: engines/grim/metaengine.cpp:87
-#, fuzzy
-#| msgid "Escape from Monkey Island support is not compiled in"
 msgid ""
 "Escape from Monkey Island PS2 support required MPEG2 support, which is not "
 "compiled in"
 msgstr ""
-"No se ha incluido el soporte para Escape from/La fuga de Monkey Island."
+"Escape from/La fuga de Monkey Island para PS2 necesita el soporte para "
+"MPEG2, que no ha sido incluido en la compilación."
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
@@ -8695,13 +8694,13 @@ msgstr ""
 
 #: engines/groovie/metaengine.cpp:101
 msgid "Slim Left/Right Hotspots"
-msgstr "Reducir zonas activas a izquierda y derecha"
+msgstr "Reducir zonas interactivas a izquierda y derecha"
 
 #: engines/groovie/metaengine.cpp:102
 msgid "Shrinks the hotspots on the left and right sides for exiting puzzles"
 msgstr ""
-"Hace más estrechas las zonas activas que hay en ambos laterales para salir "
-"de los acertijos"
+"Hace más estrechas las zonas interactivas que hay en ambos laterales para "
+"salir de los acertijos"
 
 #: engines/groovie/metaengine.cpp:113
 msgid "Speedrun Mode"
@@ -12243,15 +12242,15 @@ msgstr "Al cambiar de escena, se utiliza una transición aleatoria de píxeles"
 
 #: engines/sherlock/metaengine.cpp:63
 msgid "Don't show hotspots when moving mouse"
-msgstr "No mostrar los puntos interactivos al mover el ratón"
+msgstr "No mostrar las zonas interactivas al mover el ratón"
 
 #: engines/sherlock/metaengine.cpp:64
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
-"El nombre de los puntos interactivos solo aparece al hacer clic en uno de "
-"ellos o en un botón de acción"
+"El nombre de las zonas interactivas solo aparecerá al hacer clic en una zona "
+"o en un botón de acción"
 
 #: engines/sherlock/metaengine.cpp:75
 msgid "Show character portraits"
@@ -12803,7 +12802,7 @@ msgstr "Utiliza las voces en inglés al usar cualquier idioma ajeno al alemán"
 
 #: engines/sword25/metaengine.cpp:130
 msgid "Reveal all interactive hotspots (hold the key)"
-msgstr ""
+msgstr "Mostrar todas las zonas interactivas (mantener pulsado)"
 
 #: engines/teenagent/metaengine.cpp:189
 msgid "Move / Examine"
@@ -13464,7 +13463,7 @@ msgstr "Omitir texto"
 
 #: engines/twp/metaengine.cpp:177
 msgid "Show hotspots"
-msgstr "Mostrar zonas de interés"
+msgstr "Mostrar zonas interactivas"
 
 #: engines/twp/twp.cpp:830
 msgid ""
