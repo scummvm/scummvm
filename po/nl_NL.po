@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-14 12:58+0000\n"
+"POT-Creation-Date: 2025-07-14 20:36+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -3762,7 +3762,7 @@ msgstr "Standaard speltoetsenkoppelingen"
 #: engines/asylum/metaengine.cpp:159 engines/bbvs/metaengine.cpp:99
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
 #: engines/cine/metaengine.cpp:264 engines/composer/metaengine.cpp:113
-#: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:141
+#: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
 #: engines/efh/metaengine.cpp:207 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
@@ -3797,7 +3797,7 @@ msgstr "Middelste Klik"
 #: engines/asylum/metaengine.cpp:165 engines/bbvs/metaengine.cpp:105
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
 #: engines/cine/metaengine.cpp:270 engines/composer/metaengine.cpp:119
-#: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:147
+#: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
 #: engines/efh/metaengine.cpp:213 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:368
@@ -6248,7 +6248,7 @@ msgstr "AGOS basis"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:169
-#: engines/draci/metaengine.cpp:137 engines/efh/metaengine.cpp:203
+#: engines/draci/metaengine.cpp:196 engines/efh/metaengine.cpp:203
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
 #: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
 #: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
@@ -6708,7 +6708,7 @@ msgid "General Keys"
 msgstr "Algemene Toetsen"
 
 #: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:257
-#: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:136
+#: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
 #: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
@@ -7293,24 +7293,27 @@ msgstr "DEBUG: Toegang tot Locaties 1-23"
 msgid "DEBUG: Access to locations 1-24"
 msgstr "DEBUG: Toegang tot Locaties 1-24"
 
-#: engines/cge2/metaengine.cpp:59
+#: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "Zet tekst-naar-spraak aan voor Objecten en Opties"
 
-#: engines/cge2/metaengine.cpp:60 engines/dreamweb/metaengine.cpp:74
-#: engines/griffon/metaengine.cpp:41 engines/lure/metaengine.cpp:54
-#: engines/mads/metaengine.cpp:125 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
-#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
+#: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
+#: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
+#: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
+#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
+#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
+#: engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
-#: engines/cge2/metaengine.cpp:71 engines/dreamweb/metaengine.cpp:85
+#: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
+#: engines/dreamweb/metaengine.cpp:85
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Zet Spreek Tekst uit voor ondertiteling aan"
 
-#: engines/cge2/metaengine.cpp:72 engines/dreamweb/metaengine.cpp:86
+#: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
+#: engines/dreamweb/metaengine.cpp:86
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr ""
 "Gebruik TTS voor het lezen van de ondertiteling (als TTS beschikbaar is)"
@@ -7407,7 +7410,7 @@ msgstr "Doe af"
 
 #. I18N: Action in In Cold Blood
 #: engines/cine/metaengine.cpp:324 engines/crab/input/input.cpp:251
-#: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:178
+#: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
@@ -7727,47 +7730,61 @@ msgstr ""
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr "Antialias tekst zelfs als het spel er niet om vraagt"
 
-#: engines/draci/metaengine.cpp:153
+#: engines/draci/metaengine.cpp:68
+#, fuzzy
+#| msgid "Enable Text to Speech for Subtitles"
+msgid "Enable Text to Speech for Missing Voiceovers"
+msgstr "Zet Spreek Tekst uit voor ondertiteling aan"
+
+#: engines/draci/metaengine.cpp:69
+#, fuzzy
+#| msgid "Use TTS to read the subtitles (if TTS is available)"
+msgid ""
+"Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
+msgstr ""
+"Gebruik TTS voor het lezen van de ondertiteling (als TTS beschikbaar is)"
+
+#: engines/draci/metaengine.cpp:212
 #, fuzzy
 #| msgid "Skip intro/Exit map or inventory"
 msgid "Skip intro / Exit map or inventory"
 msgstr "Sla intro over/Verlaat map of inventaris"
 
-#: engines/draci/metaengine.cpp:159
+#: engines/draci/metaengine.cpp:218
 #, fuzzy
 #| msgid "Open Holomap"
 msgid "Open map"
 msgstr "Open Holomap"
 
 #. I18N: shows where the game actor is able to move
-#: engines/draci/metaengine.cpp:166
+#: engines/draci/metaengine.cpp:225
 #, fuzzy
 #| msgid "Show map"
 msgid "Show walking map"
 msgstr "Toon kaart"
 
-#: engines/draci/metaengine.cpp:172
+#: engines/draci/metaengine.cpp:231
 #, fuzzy
 #| msgid "Toggle fast mode"
 msgid "Toggle walk speed"
 msgstr "Snelle modus aan-/uitzetten"
 
-#: engines/draci/metaengine.cpp:184 engines/mohawk/myst.cpp:554
+#: engines/draci/metaengine.cpp:243 engines/mohawk/myst.cpp:554
 #: engines/mohawk/riven.cpp:835 engines/nancy/input.cpp:225
 msgid "Open main menu"
 msgstr "Open hoofd menu"
 
-#: engines/draci/metaengine.cpp:190
+#: engines/draci/metaengine.cpp:249
 msgid "Toggle between mouse pointer and the last game item"
 msgstr "Schakel tussen muiswijzer en het laatste spel voorwerp"
 
-#: engines/draci/metaengine.cpp:196
+#: engines/draci/metaengine.cpp:255
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Previous item in inventory"
 msgstr "Open/Sluit Inventaris"
 
-#: engines/draci/metaengine.cpp:202
+#: engines/draci/metaengine.cpp:261
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Next item in inventory"
