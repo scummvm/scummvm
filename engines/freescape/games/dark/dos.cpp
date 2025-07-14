@@ -182,6 +182,8 @@ void DarkEngine::drawDOSUI(Graphics::Surface *surface) {
 	_gfx->readFromPalette(color, r, g, b);
 	uint32 back = _gfx->_texturePixelFormat.ARGBToColor(0xFF, r, g, b);
 
+	// Drawing the horizontal compass should be done first, so that the background is properly filled
+	drawHorizontalCompass(200, 143, _yaw, front, back, surface);
 	Common::Rect stepBackgroundRect = Common::Rect(69, 177, 98, 185);
 	surface->fillRect(stepBackgroundRect, back);
 

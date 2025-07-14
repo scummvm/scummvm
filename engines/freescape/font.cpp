@@ -103,6 +103,15 @@ void Font::drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 col
 	assert(chr >= 32);
 	chr -= 32;
 
+	// Check if the character drawing is completely contained in the surface
+	// Make sure you use the correct width for the character
+	int height = getCharWidth(chr);
+	int width = getCharWidth(chr);
+	if (x < 0 || y < 0 || x + width > dst->w || y + height > dst->h) {
+		//warning("drawChar: Character %d (%c) is out of bounds at (%d, %d)", chr + 32, char(chr + 32), x, y);
+		return;
+	}
+
 	Graphics::ManagedSurface surface = Graphics::ManagedSurface();
 	surface.copyFrom(*_chars[chr]);
 
