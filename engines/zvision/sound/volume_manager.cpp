@@ -135,15 +135,15 @@ static constexpr uint8 directionalAmplitude[181] = {
 VolumeManager::VolumeManager(ZVision *engine, volumeScaling mode) :
 	_engine(engine),
 	_mode(mode) {
-};
+}
 
 uint8 VolumeManager::convert(uint8 inputValue) {
 	return convert(inputValue, _mode);
-};
+}
 
 uint8 VolumeManager::convert(uint8 inputValue, Math::Angle azimuth, uint8 directionality) {
 	return convert(inputValue, _mode, azimuth, directionality);
-};
+}
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode, Math::Angle azimuth, uint8 directionality) {
 	uint8 index = abs(round(azimuth.getDegrees(-180)));
@@ -154,7 +154,7 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode, Math::Angle 
 	output = (output + directionalOutput) / 0xFF;
 	debugC(4, kDebugSound, "Directionally converted output %d", output);
 	return output;
-};
+}
 
 uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode) {
 	if (inputValue > _scriptScale)
@@ -192,6 +192,6 @@ uint8 VolumeManager::convert(uint8 inputValue, volumeScaling &mode) {
 	}
 	debugC(4, kDebugSound, "Scripted volume %d, scaled volume %d, converted output %d", inputValue, scaledInput, output);
 	return output;
-};
+}
 
 } // End of namespace ZVision
