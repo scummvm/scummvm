@@ -54,7 +54,8 @@
 	{ // Supplied by BJNFNE
 		"adiboudchoumer",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Addy Buschu am Meer 1.01 (Engine: DEV7 version unknown)
-		AD_ENTRY1s("adbc_envir_obc.stk", "46b7db9f7e77a077d9ac8506130ba9a2", 2830950),
+		AD_ENTRY2s("adbc_envir_obc.stk", "46b7db9f7e77a077d9ac8506130ba9a2", 2830950,
+				   "DMDCD101.CD1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
@@ -68,7 +69,8 @@
 
 		"adiboudchoubanquise",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Addy Buschu Schnee & Eis 1.00 (Engine: DEV7 version 1.0.0.0)
-		AD_ENTRY1s("adbc_envir_obc.stk", "fde006186b93b4f33486f021826f88a0", 5199806),
+		AD_ENTRY2s("adbc_envir_obc.stk", "fde006186b93b4f33486f021826f88a0", 5199806,
+				   "DNDCD100.CD1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
@@ -81,7 +83,8 @@
 	{ // Supplied by BJNFNE
 		"adiboudchoucampagne",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Addy Buschu auf dem Land 1.00 (Engine: DEV7 version unknown)
-		AD_ENTRY1s("adbc_envir_obc.stk", "4b43d3d1a8bc908d80e729069c5bb59f", 2831471),
+		AD_ENTRY2s("adbc_envir_obc.stk", "4b43d3d1a8bc908d80e729069c5bb59f", 2831471,
+				   "DCDCD100.CD1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
@@ -94,7 +97,8 @@
 	{ // Supplied by BJNFNE
 		"adiboudchoujunglesavane",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Addy Buschu Die bunte Tierwelt 1.00 (Engine: DEV7 version 1.0.0.0)
-		AD_ENTRY1s("adbc_envir_obc.stk", "7f33561f295030cbe64a21f941ef1efc", 3188852),
+		AD_ENTRY2s("adbc_envir_obc.stk", "7f33561f295030cbe64a21f941ef1efc", 3188852,
+				   "djdcd100.cd1", "d41d8cd98f00b204e9800998ecf8427e", 0),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
@@ -110,7 +114,8 @@
 	{
 		"adiboudchoucampagne",
 		MetaEngineDetection::GAME_NOT_IMPLEMENTED, // Антошка. В гостях у друзей 1.00 (Engine: DEV7 version 1.0.0.0)
-		AD_ENTRY1s("adbc_envir_obc.stk", "1b65643b2aa794f38f3b18efb9e68b92", 3210008),
+		AD_ENTRY2s("adbc_envir_obc.stk", "1b65643b2aa794f38f3b18efb9e68b92", 3210008,
+				   "DCDCF100.CD1", "d41d8cd98f00b204e9800998ecf8427e" ,0),
 		RU_RUS,
 		kPlatformWindows,
 		ADGF_UNSUPPORTED,
