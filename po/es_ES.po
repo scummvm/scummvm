@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-14 20:36+0000\n"
-"PO-Revision-Date: 2025-07-14 13:56+0000\n"
+"PO-Revision-Date: 2025-07-14 21:02+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7999,18 +7999,14 @@ msgstr ""
 "diseñado para dicho modo"
 
 #: engines/draci/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "Leer subtítulos mediante conversión texto a voz"
+msgstr "Usar texto a voz para las voces que faltan"
 
 #: engines/draci/metaengine.cpp:69
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
 msgstr ""
-"Utiliza la conversión de texto a voz para leer los subtítulos (si está "
+"Utiliza la conversión de texto a voz para leer los diálogos sin voz (si está "
 "disponible)"
 
 #: engines/draci/metaengine.cpp:212
