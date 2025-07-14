@@ -98,7 +98,7 @@ void IMuseDigital::waveOutWrite(uint8 **audioData, int &feedSize, int &sampleRat
 	//
 	// We're not using DirectSound, so recreate this I could either simulate the
 	// play cursor handling shenanigans, or I could just do exactly what I have done :-)
-	if (_vm->_game.id == GID_CMI && _waveOutXorTrigger == 1) {
+	if (_vm->_game.id == GID_CMI && _waveOutXorTrigger != 0) {
 		_waveOutXorTrigger = 0;
 		return;
 	}
