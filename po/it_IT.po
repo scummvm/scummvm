@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-13 23:17+0000\n"
+"POT-Creation-Date: 2025-07-14 12:58+0000\n"
 "PO-Revision-Date: 2025-07-11 09:13+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -8569,6 +8569,16 @@ msgstr ""
 "assistenza per le suddette patch."
 
 #: engines/grim/metaengine.cpp:87
+#, fuzzy
+#| msgid "Escape from Monkey Island support is not compiled in"
+msgid ""
+"Escape from Monkey Island PS2 support required MPEG2 support, which is not "
+"compiled in"
+msgstr ""
+"Il supporto per Escape from Monkey Island (Fuga da Monkey Island) non è "
+"stato incluso nella compilazione"
+
+#: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr ""
 "Il supporto per Escape from Monkey Island (Fuga da Monkey Island) non è "

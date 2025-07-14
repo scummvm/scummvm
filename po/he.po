@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-13 23:17+0000\n"
+"POT-Creation-Date: 2025-07-14 12:58+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -8352,6 +8352,14 @@ msgstr ""
 "טעינת טלאי משתמש. יש לשים לב שצוות ScummVM לא מספק תמיכה בשימוש בטלאים כאלו."
 
 #: engines/grim/metaengine.cpp:87
+#, fuzzy
+#| msgid "Escape from Monkey Island support is not compiled in"
+msgid ""
+"Escape from Monkey Island PS2 support required MPEG2 support, which is not "
+"compiled in"
+msgstr "תמיכה במשחק Escape from Monkey Island לא נבנתה"
+
+#: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
 msgstr "תמיכה במשחק Escape from Monkey Island לא נבנתה"
 
