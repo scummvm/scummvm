@@ -317,6 +317,7 @@ uint GlkMetaEngineDetection::getMD5Bytes() const {
 }
 
 void GlkMetaEngineDetection::dumpDetectionEntries() const {
+#if 0
 	enum class EngineName : uint8 {
     	COMPREHEND,
     	LEVEL9,
@@ -383,6 +384,7 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 			printf(")\n\n");
 		}
 	}
+#endif
 }
 
 
