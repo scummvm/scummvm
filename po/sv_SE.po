@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-13 23:17+0000\n"
-"PO-Revision-Date: 2025-07-11 18:19+0000\n"
+"PO-Revision-Date: 2025-07-14 11:36+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -12606,7 +12606,7 @@ msgstr "Använd engelskt tal istället för tyska för alla språk utom tyska"
 
 #: engines/sword25/metaengine.cpp:130
 msgid "Reveal all interactive hotspots (hold the key)"
-msgstr ""
+msgstr "Visa alla interaktiva hotspots (håll ned tangenten)"
 
 #: engines/teenagent/metaengine.cpp:189
 msgid "Move / Examine"
