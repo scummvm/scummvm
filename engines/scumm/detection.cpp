@@ -126,16 +126,18 @@ GameFilenamePattern ScummMetaEngineDetection::matchGameFilenamePattern(const MD5
 	return bestMatch;
 }
 
+#if 0
 struct EntryPos {
 	const char *gameid;
 	int id;
 
-	EntryPos(const char *gameid, int id) : gameid(gameid), id(id) {}
+	EntryPos(const char *strId, int intId) : gameid(strId), id(intId) {}
 };
 
 static int compareTreeNodes(const void *a, const void *b) {
 	return scumm_stricmp(((const EntryPos *)a)->gameid, ((const EntryPos *)b)->gameid);
 }
+#endif
 
  void ScummMetaEngineDetection::dumpDetectionEntries() const {
 #if 0
