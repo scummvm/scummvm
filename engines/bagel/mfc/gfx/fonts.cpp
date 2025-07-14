@@ -77,12 +77,14 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 	} else {
 		// Cell to char height mappings
 		// TODO: This needs to be set properly
-		static const int8 HEIGHTS[6][2] = {
+		static const int8 HEIGHTS[][2] = {
 			{ 8, 8 }, { 10, 10 }, { 12, 8 },
-			{ 14, 9 }, { 16, 10 }, { 18, 24 }
+			{ 14, 9 }, { 16, 10 }, { 18, 24 },
+			{ 21, 12 },		// The Gesng Gme
+			{ 0, 0 }
 		};
 		charHeight = nHeight * 16 / 24;	// Rough default
-		for (int i = 0; i < 6; ++i) {
+		for (int i = 0; HEIGHTS[i][0]; ++i) {
 			if (nHeight == HEIGHTS[i][0]) {
 				charHeight = HEIGHTS[i][1];
 				break;
