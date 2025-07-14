@@ -167,7 +167,7 @@ CMainWindow::CMainWindow() {
 		//
 		// set up the score controls
 		//
-		tmpRect.SetRect(401, 145, 585, 160);
+		tmpRect.SetRect(401, 143, 585, 163);
 		if ((txtTitle = new CText) != nullptr)
 			txtTitle->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_LEFT);
 
