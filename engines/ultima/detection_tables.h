@@ -46,7 +46,6 @@ namespace Ultima {
 #define ENTRY_ULTIMA6_NORMAL_UNSTABLE(FILENAME, MD5, FILESIZE, LANG, PLATFORM) {{"ultima6", 0, AD_ENTRY1s(FILENAME, MD5, FILESIZE), LANG, PLATFORM, ADGF_UNSTABLE, GUI_OPTIONS_ULTIMA6}, GAME_ULTIMA6, 0}
 
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
-#ifdef ENABLE_ULTIMA1
 	{
 		// Ultima I - The First Age of Darkness
 		{
@@ -97,9 +96,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA1,
 		0
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA4
 	{
 		// Ultima IV - Quest of the Avatar
 		{
@@ -129,9 +126,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA6
 	// GOG Ultima VI
 	ENTRY_ULTIMA6("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615,
 				Common::EN_ANY,
@@ -182,9 +177,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 	ENTRY_ULTIMA6("converse.a", "ee22a6ac3964f9ff11a48fcb3f4a9389", 162458,
 				Common::EN_ANY,
 				Common::kPlatformDOS),
-#endif
 
-#ifdef ENABLE_ULTIMA8
 	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
 	{
 		{
@@ -533,9 +526,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_CRUSADER_REG,
 		0
 	},
-#endif
 
-#ifdef ENABLE_ULTIMA6
 	// GOG Martian Dreams
 	{
 		{
@@ -656,7 +647,6 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER, (GameId)0, 0 }
 };
