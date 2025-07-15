@@ -31,13 +31,9 @@
 namespace TeenAgent {
 
 Resources::Resources() {
-	_combinationsStartOffset = 0;
-	_creditsStartOffset = 0;
 	_dialogsStartOffset = 0;
-	_messagesStartOffset = 0;
 	_sceneObjectsStartOffset = 0;
 	_sceneObjectsBlockSize = 0;
-	_itemsStartOffset = 0;
 }
 
 Resources::~Resources() {
@@ -148,11 +144,9 @@ void Resources::precomputeAllOffsets(const Common::Array<ResourceInfo> &resource
 	for (const auto &resInfo : resourceInfos) {
 		switch ((ResourceType)resInfo._id) {
 		case kResCombinations:
-			_combinationsStartOffset = resInfo._offset;
 			precomputeCombinationOffsets(resInfo);
 			break;
 		case kResCredits:
-			_creditsStartOffset = resInfo._offset;
 			precomputeCreditsOffsets(resInfo);
 			break;
 		case kResDialogs:
@@ -160,11 +154,9 @@ void Resources::precomputeAllOffsets(const Common::Array<ResourceInfo> &resource
 			precomputeDialogOffsets(resInfo);
 			break;
 		case kResItems:
-			_itemsStartOffset = resInfo._offset;
 			precomputeItemOffsets(resInfo);
 			break;
 		case kResMessages:
-			_messagesStartOffset = resInfo._offset;
 			precomputeMessageOffsets(resInfo);
 			break;
 		case kResSceneObjects:
