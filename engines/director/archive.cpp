@@ -1524,11 +1524,8 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// KEY*		// SCVW (filmloop)
 	// CAS*		// VWCF
 	// CASt	
-
-	// Score 'SCVW'
-	// Rich Text 'RTE0', 'RTE1', 'RTE2'
-	// Sound ('snd ')
-	// 'SCVW' External Movies
+	// SCVW
+	// 'RTE0', 'RTE1', 'RTE2'
 
 	// First we'll have to update the _types table to include all the newly added
 	// cast members, and their 'CASt' resources
@@ -1538,25 +1535,55 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 	for (auto it : *(cast->_loadedCast)) {
 		if (it._value->_index == -1) {
-			// Assigning the next available index to the resource
-			Resource *res = &castResMap[_resources.size()];
-			res->tag = MKTAG('C', 'A', 'S', 't');
-			res->accessed = true;
+			Resource *res = nullptr;
+			uint16 targetCastId = it._value->getID() - cast->_castArrayStart;
 
-			// Again considering here that there is only one CAS* resource, so the first resource will have our necessary libResourceId
-			res->libResourceId = _types[MKTAG('C', 'A', 'S', '*')].begin()->_value.libResourceId;
-			res->children = it._value->_children;
-			res->index = _resources.size();
-			res->castId = it._value->getID() - cast->_castArrayStart;
-
-			for (auto child : it._value->_children) {
-				_keyData[child.tag][res->index].push_back(child.index);
-				_keyTableUsedCount += 1;
-				_keyTableEntryCount += 1;
+			// Checking if the castId already exists in the CASt resources
+			for (auto castRes : castResMap) {
+				if (castRes._value.castId == targetCastId) {
+					res = &castRes._value;
+				} 
 			}
-			_resources.push_back(res);
 
-			debugC(5, kDebugSaving, "RIFXArchive::rebuildResources(): new 'CASt' resource added");
+			if (!res) {
+				// If the castId is new, create a new resource 
+				// Assigning the next available index to the resource
+				res = &castResMap[_resources.size()];
+				res->tag = MKTAG('C', 'A', 'S', 't');
+				res->accessed = true;
+
+				// Again considering here that there is only one CAS* resource, so the first resource will have our necessary libResourceId
+				res->libResourceId = _types[MKTAG('C', 'A', 'S', '*')].begin()->_value.libResourceId;
+				res->children = it._value->_children;
+				res->index = _resources.size();
+				res->castId = it._value->getID() - cast->_castArrayStart;
+
+				for (auto child : it._value->_children) {
+					_keyData[child.tag][res->index].push_back(child.index);
+					_keyTableUsedCount += 1;
+					_keyTableEntryCount += 1;
+				}
+				_resources.push_back(res);
+
+				debugC(5, kDebugSaving, "RIFXArchive::rebuildResources(): new 'CASt' resource added");
+			} else {
+				// The castId is not new, overwrite the key data of the previous cast
+				for (auto child : res->children) {
+					// Remove the data of the previous (removed) 'CASt'
+					int8 count = _keyData[child.tag][res->index].size();
+					_keyData[child.tag][res->index].clear();
+					_keyTableUsedCount -= count;
+					_keyTableEntryCount -= count;
+				}
+
+				res->children = it._value->_children;
+
+				for (auto child : res->children) {
+					_keyData[child.tag][res->index].push_back(child.index);
+					_keyTableUsedCount += 1;
+					_keyTableEntryCount += 1;
+				}
+			}
 		}
 	}
 
