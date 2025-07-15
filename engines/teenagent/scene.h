@@ -69,6 +69,7 @@ struct SceneEvent {
 	} type;
 
 	Common::String message;
+	uint16 voiceId;
 	byte color;
 	byte slot;
 	union {
@@ -99,6 +100,7 @@ struct SceneEvent {
 	void clear() {
 		type = kNone;
 		message.clear();
+		voiceId = 0;
 		color = textColorMark;
 		slot = 0;
 		orientation = 0;
@@ -140,7 +142,7 @@ public:
 	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = false);
 	Common::Point getPosition() const { return position; }
 
-	void displayMessage(const Common::String &str, byte color = textColorMark, const Common::Point &pos = Common::Point());
+	void displayMessage(const Common::String &str, uint16 voiceIndex, byte color = textColorMark, const Common::Point &pos = Common::Point());
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 	byte peekFlagEvent(uint16 addr) const;
@@ -219,6 +221,8 @@ private:
 	byte messageFirstFrame;
 	byte messageLastFrame;
 	Animation *messageAnimation;
+
+	uint16 _voiceId;
 
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;

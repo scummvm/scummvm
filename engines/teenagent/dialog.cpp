@@ -42,6 +42,7 @@ void Dialog::show(uint16 dialogNum, Scene *scene, uint16 animation1, uint16 anim
 void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation2, CharacterID character1ID, CharacterID character2ID, byte slot1, byte slot2) {
 	debugC(0, kDebugDialog, "Dialog::show(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
 	int n = 0;
+	uint16 voiceId = 0;
 	Common::String message;
 	byte color = characterDialogData[character1ID].textColor;
 	byte color1 = color;
@@ -60,6 +61,10 @@ void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation
 		e2.slot = 0xc0 | slot2; //looped, paused
 		scene->push(e2);
 	}
+
+	// Number of ANIM_WAIT (0xff) bytes.
+	// Used to correctly find voice index.
+	uint numOfAnimWaits = 0;
 
 	while (n < 4) {
 		byte c = _vm->res->eseg.get_byte(addr++);
@@ -99,6 +104,7 @@ void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation
 				}
 
 				message.trim();
+				voiceId = _vm->res->getVoiceIndex(addr - message.size() - numOfAnimWaits - 2); // -2 for '\n'
 				if (!message.empty()) {
 					SceneEvent em(SceneEvent::kMessage);
 					em.message = message;
@@ -111,8 +117,10 @@ void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation
 						em.slot = slot2;
 						em.characterID = character2ID;
 					}
+					em.voiceId = voiceId;
 					scene->push(em);
 					message.clear();
+					numOfAnimWaits = 0;
 				}
 				break;
 
@@ -127,6 +135,7 @@ void Dialog::show(Scene *scene, uint32 addr, uint16 animation1, uint16 animation
 			break;
 
 		case 0xff:
+			numOfAnimWaits++;
 			//FIXME : wait for the next cycle of the animation
 			break;
 

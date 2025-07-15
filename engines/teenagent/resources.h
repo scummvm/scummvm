@@ -1555,6 +1555,13 @@ public:
 	uint16 sceneObjectsBlockSize() { return _sceneObjectsBlockSize; }
 	uint32 getSceneObjectsStartPos() { return _sceneObjectsStartOffset; }
 
+	uint16 getVoiceIndex(uint32 addr) {
+		if (_addrToVoiceIndx.contains(addr))
+			return _addrToVoiceIndx[addr];
+		return 0;
+	}
+	void setVoiceIndex(uint32 addr, uint16 index) { _addrToVoiceIndx[addr] = index; }
+
 	// Artificial segment that contains various
 	// string items (messages, dialogs, item names, etc.)
 	// Used to support multiple languages
@@ -1569,6 +1576,9 @@ private:
 	void precomputeItemOffsets(const ResourceInfo &resInfo);
 	void precomputeMessageOffsets(const ResourceInfo &resInfo);
 	void precomputeCombinationOffsets(const ResourceInfo &resInfo);
+
+	void precomputeVoiceIndices(const Common::Array<ResourceInfo> &resourceInfos);
+	bool isVoiceIndexEmpty(uint16 index);
 
 	void readDialogStacks(byte *src);
 
@@ -1586,6 +1596,8 @@ private:
 	uint32 _itemsStartOffset;
 	uint32 _creditsStartOffset;
 	uint32 _dialogsStartOffset;
+
+	Common::HashMap<uint32, uint16> _addrToVoiceIndx;
 };
 
 } // End of namespace TeenAgent
