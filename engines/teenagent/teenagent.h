@@ -125,7 +125,7 @@ public:
 
 	//event driven:
 	void displayMessage(uint32 addr, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
-	void displayMessage(const Common::String &str, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
+	void displayMessage(const Common::String &str, uint16 voiceIndex, CharacterID characterID = kMark, uint16 x = 0, uint16 y = 0);
 	void displayAsyncMessage(uint32 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID = kMark);
 	void displayAsyncMessageInSlot(uint32 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color = textColorMark);
 	void displayCredits(uint32 addr, uint16 timer = 0);
@@ -150,6 +150,8 @@ public:
 	void playMusic(byte id); //schedules play
 	void playSound(byte id, byte skipFrames);
 	void playSoundNow(Pack *pack, uint32 id);
+	void playVoiceNow(Pack *pack, uint32 id);
+	void stopVoice();
 	void enableObject(byte id, byte sceneId = 0);
 	void disableObject(byte id, byte sceneId = 0);
 	void hideActor();
@@ -179,7 +181,8 @@ public:
 	Common::U32String convertCyrillic(const Common::String &text) const;
 
 	Common::String _previousSaid;
-	
+	uint16 _previousVoiceId;
+
 private:
 	void processObject();
 	bool trySelectedObject();
@@ -189,7 +192,7 @@ private:
 	Object *_dstObject;
 
 	Audio::AudioStream *_musicStream;
-	Audio::SoundHandle _musicHandle, _soundHandle;
+	Audio::SoundHandle _musicHandle, _soundHandle, _voiceHandle;
 	const ADGameDescription *_gameDescription;
 
 	uint _markDelay, _gameDelay;

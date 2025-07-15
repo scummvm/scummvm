@@ -202,7 +202,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 				return true;
 			//activate(false);
 			int w = _vm->res->font7.render(NULL, 0, 0, _hoveredObj->description, textColorMark);
-			_vm->scene->displayMessage(_hoveredObj->description, textColorMark, Common::Point((kScreenWidth - w) / 2, 162));
+			uint16 voiceIndex = _vm->res->getVoiceIndex(_vm->res->getItemAddr(_hoveredObj->id - 1));
+			_vm->scene->displayMessage(_hoveredObj->description, voiceIndex, textColorMark, Common::Point((kScreenWidth - w) / 2, 162));
 			return true;
 		}
 
@@ -213,7 +214,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		debugC(0, kDebugInventory, "combine(%u, %u)!", id1, id2);
 		for (uint i = 0; i < kNumCombinations; i++) {
-			byte *table = _vm->res->eseg.ptr(_vm->res->getCombinationAddr(i));
+			uint32 addr = _vm->res->getCombinationAddr(i);
+			byte *table = _vm->res->eseg.ptr(addr);
 
 			if ((id1 == table[0] && id2 == table[1]) || (id2 == table[0] && id1 == table[1])) {
 				byte newObj = table[2];
@@ -225,7 +227,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 					_vm->playSoundNow(&_vm->res->sam_sam, 69);
 				}
 				Common::String msg = Object::parseDescription((const char *)(table + 3));
-				_vm->displayMessage(msg);
+				_vm->displayMessage(msg, _vm->res->getVoiceIndex(addr));
 				activate(false);
 				resetSelectedObject();
 				return true;

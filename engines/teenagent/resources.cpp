@@ -179,6 +179,138 @@ void Resources::precomputeAllOffsets(const Common::Array<ResourceInfo> &resource
 	}
 }
 
+bool Resources::isVoiceIndexEmpty(uint16 index) {
+	uint size = voices.getSize(index);
+	if (size == 4 || size == 5)
+		return true;
+	return false;
+}
+
+void Resources::precomputeVoiceIndices(const Common::Array<ResourceInfo>& resourceInfos) {
+	byte numTerminators = 0;
+	uint16 voiceIndex = 0;
+
+	for (auto &resInfo : resourceInfos) {
+		switch ((ResourceType)resInfo._id) {
+		case kResMessages:
+			voiceIndex = 1;
+			numTerminators = 2;
+			break;
+		case kResCombinations:
+			voiceIndex = 567;
+			numTerminators = 2;
+			break;
+		case kResItems:
+			voiceIndex = 592;
+			numTerminators = 2;
+			break;
+		case kResDialogs:
+			voiceIndex = 902;
+			numTerminators = 4;
+			break;
+		case kResCredits:
+		case kResDialogStacks:
+		case kResSceneObjects:
+			// There are no voiceovers for credits and dialog stacks.
+			// For scene objects, voice indices calculated separately
+			// in Scene::loadObjectData()
+			continue;
+		default:
+			break;
+		}
+
+		_addrToVoiceIndx[resInfo._offset] = voiceIndex++;
+
+		uint16 currentNum = 1;
+		uint n = 0; // number of consecutive zero bytes
+		byte current, last = 0xff;
+
+		bool setNoIMessage = false;
+
+		for (uint32 i = resInfo._offset; i < resInfo._offset + resInfo._size; i++) {
+			current = eseg.get_byte(i);
+
+			if (n == numTerminators) {
+				currentNum++;
+				n = 0;
+
+				if ((ResourceType)resInfo._id == kResCombinations) {
+					uint16 nthCombination = currentNum - 1;
+					// For dublicate combination messages don't increment voice index
+					if (nthCombination == 3 || nthCombination == 5 ||
+						nthCombination == 15 || nthCombination == 16 || nthCombination == 17 ||
+						nthCombination == 18 || nthCombination == 22 || nthCombination == 26) {
+						_addrToVoiceIndx[i] = voiceIndex - 1;
+					} else if (nthCombination == 28) {
+						_addrToVoiceIndx[i] = voiceIndex - 2;
+					} else {
+						_addrToVoiceIndx[i] = voiceIndex++;
+					}
+				} else if ((ResourceType)resInfo._id == kResDialogs) {
+					if (voiceIndex == 1416) {
+						// "Dzie= dobry, panie robocie." starts at 1418
+						voiceIndex += 2;
+						_addrToVoiceIndx[i] = voiceIndex++;
+					} else if (voiceIndex == 1864) {
+						// "Jak ju< powiedzia%em, nasza organizacja" starts at 1867
+						voiceIndex += 3;
+						_addrToVoiceIndx[i] = voiceIndex++;
+					} else if (isVoiceIndexEmpty(voiceIndex)) {
+						voiceIndex += 1;
+						if (current != 0x00)
+							_addrToVoiceIndx[i] = voiceIndex++;
+					} else if (voiceIndex == 1801) {
+						_addrToVoiceIndx[i] = 2041; // "]adna pogoda."
+					} else if (voiceIndex == 1809) {
+						_addrToVoiceIndx[i] = 2042; // "Sir, mamy sygna%y, <e..."
+					} else {
+						if (current != 0x00)
+							_addrToVoiceIndx[i] = voiceIndex++;
+					}
+				} else if ((ResourceType)resInfo._id == kResMessages) {
+					if (currentNum == 334) { // Combination error message
+						// HACK: Use most good sounding (sigh) version
+						// TODO: Find the correct voice index used in the original
+						_addrToVoiceIndx[i] = 1304;
+					} else
+						_addrToVoiceIndx[i] = voiceIndex++;
+				} else {
+					_addrToVoiceIndx[i] = voiceIndex++;
+				}
+			}
+
+			if (current != 0x00 && last == 0x00) {
+				if ((ResourceType)resInfo._id == kResDialogs) {
+					if (n == 2 || n == 3) {
+						// "...to czemu nie u<y^ dziwnych" at 1886
+						// "Sze$^ miesi#cy temu z%oto i got*wka" at 1921
+						if (voiceIndex == 1885 || voiceIndex == 1920 || isVoiceIndexEmpty(voiceIndex)) {
+							voiceIndex += 1;
+							_addrToVoiceIndx[i] = voiceIndex++;
+						} else if (voiceIndex == 1923 && !setNoIMessage) {
+							_addrToVoiceIndx[i] = 1885; // "No i?..."
+							setNoIMessage = true;
+						} else {
+							_addrToVoiceIndx[i] = voiceIndex++;
+						}
+					} else if (n == 1 && (voiceIndex == 1720 || voiceIndex == 1852)) {
+						// Because of the rare case with
+						// NEW_LINE at the beginning of dialogs 163, 190
+						// we have to assign voiceIndex here
+						_addrToVoiceIndx[i] = voiceIndex++;
+					}
+				}
+				n = 0;
+			}
+
+			if (current == 0x00)
+				n++;
+
+			last = current;
+		}
+	}
+}
+
 bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File *dat_file = new Common::File();
 	Common::String filename = "teenagent.dat";
@@ -277,6 +409,9 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	sam_mmm.open("sam_mmm.res");
 	sam_sam.open("sam_sam.res");
 	voices.open("voices.res");
+
+	if (gd->language == Common::PL_POL)
+		precomputeVoiceIndices(resourceInfos);
 
 	return true;
 }
