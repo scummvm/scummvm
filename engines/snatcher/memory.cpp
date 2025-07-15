@@ -103,6 +103,7 @@ void MemAccessHandler::writeWord(uint16 addr, uint16 val) {
 		break;
 	case 0x971A:
 		_ui->setInterpreterMode(val);
+		break;
 	case 0x971C:
 		_ui->setHeadLineYOffset(val);
 		break;

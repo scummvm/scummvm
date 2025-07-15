@@ -32,10 +32,12 @@ class SnatcherMetaEngine;
 namespace Snatcher {
 
 class ActionSequenceHandler;
+class CmdQueue;
 class GraphicsEngine;
 class FIO;
 class MemAccessHandler;
 class ResourcePointer;
+class SaveLoadManager;
 class ScriptEngine;
 class SoundEngine;
 class SceneModule;
