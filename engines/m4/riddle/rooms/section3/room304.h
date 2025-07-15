@@ -34,7 +34,7 @@ private:
 	int _val1 = 0;
 	bool _useSword = false;
 	bool _useHandlingStick = false;
-	int _val4 = 0;
+	bool _cobraKillingFl = false;
 	machine *_sword = nullptr;
 	machine *_trunk = nullptr;
 	machine *_stick = nullptr;
