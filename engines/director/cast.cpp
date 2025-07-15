@@ -258,6 +258,13 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 		_castsInfo[targetId] = newInfo;
 	}
 	setCastMember(targetId, target);
+
+	debugN("loaded cast: [");
+	for (auto it: (*_loadedCast)) {
+		debugN("%d:%d, ", it._key, it._value->getID());
+	}
+	debug("\b\b]");
+
 	if (info) {
 		rebuildCastNameCache();
 	}
