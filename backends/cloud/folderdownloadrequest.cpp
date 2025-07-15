@@ -138,7 +138,7 @@ void FolderDownloadRequest::downloadNextFile() {
 	}
 	Common::Path localPath(localPathStr);
 	if (!_localDirectoryPath.empty()) {
-		localPath = _localDirectoryPath.append(localPath);
+		localPath = _localDirectoryPath.join(localPath);
 	}
 	debug(9, "FolderDownloadRequest: %s -> %s", remotePath.c_str(), localPath.toString(Common::Path::kNativeSeparator).c_str());
 	_workingRequest = _storage->downloadById(
