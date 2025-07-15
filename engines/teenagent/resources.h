@@ -1587,14 +1587,9 @@ private:
 	Common::Array<uint32> messageOffsets;
 	Common::Array<uint32> combinationOffsets;
 
-	uint32 _messagesStartOffset;
-
 	uint32 _sceneObjectsStartOffset;
 	uint32 _sceneObjectsBlockSize; // Needed to know how much to write to savefile
 
-	uint32 _combinationsStartOffset;
-	uint32 _itemsStartOffset;
-	uint32 _creditsStartOffset;
 	uint32 _dialogsStartOffset;
 
 	Common::HashMap<uint32, uint16> _addrToVoiceIndx;
