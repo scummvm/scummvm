@@ -55,6 +55,7 @@ void Rect::render(Graphics::Surface *surface, uint8 color) const {
 
 void Object::load(byte *src, byte sceneId) {
 	_base = src;
+	_addr = src - g_engine->res->eseg.ptr(0);
 
 	id = *src++;
 
@@ -78,6 +79,9 @@ void Object::load(byte *src, byte sceneId) {
 		while (*src == 0)
 			src++;
 	}
+
+	if (*src == 1)
+		_hasDefaultDescription = true;
 
 	description = parseDescription((const char *)src);
 

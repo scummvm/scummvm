@@ -164,11 +164,14 @@ struct Object {
 	//19
 	Common::String name, description;
 
-	Object(): _base(NULL), _nameSize(0) { id = 0; actorOrientation = 0; enabled = 0;  }
+	Object(): _base(NULL), _nameSize(0) { id = 0; actorOrientation = 0; enabled = 0; _hasDefaultDescription = false;  }
 	void dump(int level = 0) const;
 	void setRealName();
 	void load(byte *addr, byte sceneId = 0);
 	void save() const;
+
+	bool hasDefaultDescription() { return _hasDefaultDescription; }
+	uint32 getAddr() { return _addr; };
 
 	static Common::String parseDescription(const char *desc);
 
@@ -178,6 +181,9 @@ protected:
 
 	// New name that will be set when certain event is triggered
 	Common::String _realName;
+
+	bool _hasDefaultDescription;
+	uint32 _addr = 0; // Address inside eseg
 };
 
 struct InventoryObject {

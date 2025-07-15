@@ -138,7 +138,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
-			displayMessage(_dstObject->description);
+			displayMessage(_dstObject->description, res->getVoiceIndex(_dstObject->getAddr()));
 	}
 	break;
 	case kActionUse: {
@@ -150,7 +150,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
-			displayMessage(_dstObject->description);
+			displayMessage(_dstObject->description, 0);
 	}
 	break;
 
@@ -783,7 +783,7 @@ Common::String TeenAgentEngine::parseMessage(uint32 addr) {
 	return message;
 }
 
-void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID characterID, uint16 x, uint16 y) {
+void TeenAgentEngine::displayMessage(const Common::String &str, uint16 voiceIndex, CharacterID characterID, uint16 x, uint16 y) {
 	if (str.empty()) {
 		return;
 	}
@@ -803,6 +803,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID char
 		event.dst.x = x;
 		event.dst.y = y;
 		event.characterID = characterID;
+		event.voiceId = voiceIndex;
 		scene->push(event);
 	}
 
@@ -815,12 +816,13 @@ void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID char
 }
 
 void TeenAgentEngine::displayMessage(uint32 addr, CharacterID characterID, uint16 x, uint16 y) {
-	displayMessage(parseMessage(addr), characterID, x, y);
+	displayMessage(parseMessage(addr), res->getVoiceIndex(addr), characterID, x, y);
 }
 
 void TeenAgentEngine::displayAsyncMessage(uint32 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
+	event.voiceId = res->getVoiceIndex(addr);
 	event.slot = 0;
 	event.color = characterDialogData[characterID].textColor;
 	event.dst.x = x;
@@ -835,6 +837,7 @@ void TeenAgentEngine::displayAsyncMessage(uint32 addr, uint16 x, uint16 y, uint1
 void TeenAgentEngine::displayAsyncMessageInSlot(uint32 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
+	event.voiceId = res->getVoiceIndex(addr);
 	event.slot = slot + 1;
 	event.color = color;
 	event.firstFrame = firstFrame;
@@ -892,6 +895,7 @@ void TeenAgentEngine::displayCutsceneMessage(uint32 addr, uint16 x, uint16 y) {
 	event.dst.y = y;
 	event.lan = 7;
 	event.characterID = kMark;
+	event.voiceId = res->getVoiceIndex(addr);
 
 	scene->push(event);
 }
@@ -1104,6 +1108,29 @@ void TeenAgentEngine::playSoundNow(Pack *pack, uint32 id) {
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); // dispose is YES by default
+}
+
+void TeenAgentEngine::playVoiceNow(Pack *pack, uint32 id) {
+	uint size = pack->getSize(id);
+	if (size == 0) {
+		warning("skipping invalid sound %u", id);
+		return;
+	}
+
+	if (!_mixer->isSoundHandleActive(_voiceHandle) && id != _previousVoiceId) {
+		byte *data = (byte *)malloc(size);
+		pack->read(id, data, size);
+		debug(3, "playing %u samples...", size);
+
+		Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_voiceHandle, stream);
+		_previousVoiceId = id;
+	}
+}
+
+void TeenAgentEngine::stopVoice() {
+	_mixer->stopHandle(_voiceHandle);
+	_previousVoiceId = 0;
 }
 
 void TeenAgentEngine::setMusic(byte id) {
