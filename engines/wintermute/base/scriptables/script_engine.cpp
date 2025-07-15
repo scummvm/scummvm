@@ -99,7 +99,7 @@ ScEngine::~ScEngine() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < (int32)_scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->_owner) {
 			_scripts[i]->_owner->removeScript(_scripts[i]);
 		}
