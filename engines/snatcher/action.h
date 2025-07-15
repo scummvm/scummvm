@@ -78,8 +78,7 @@ private:
 	int16 _hscrollB;
 	int16 _vscrollB;
 	int16 _enemyAppearanceCount;
-	int16 _shoot_7912;
-	int16 _civiliansShot;
+	int16 _stage2Temp;
 	int16 _civilianAppearanceCount;
 	int16 _abortFight;
 	int16 _nextEnemyAppearanceTimer;

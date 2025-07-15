@@ -132,7 +132,6 @@ private:
 	uint8 _nextStepExt;
 	uint8 _lastStepExt;
 	int16 _restoreDlgTab;
-	int16 _hint_proc;
 	int16 _transitionType;
 	int16 _transitionState;
 	int16 _transitionState2;
@@ -211,7 +210,7 @@ private:
 	void hIntHandler_videoPhoneCallEnd2(Graphics::SegaRenderer *sr);
 };
 
-TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _hint_proc(0), _transitionStep(0),
+TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _transitionStep(0),
 	_trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0), _lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0),
 		_lineScrollTimer5(0), _trs__DB(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0), _transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr) {
 	_internalState = new ScrollInternalState[4];

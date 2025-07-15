@@ -476,7 +476,7 @@ void CmdQueue::m_clearTextInputLine(const uint16 *&data) {
 	_progress = -1;
 }
 
-ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, ActionSequenceHandler *aseq, MemAccessHandler *mem, ResourcePointer *scd) : _que(que), _ui(ui), _aseq(aseq), _mem(mem), _arrayData(nullptr), _pos1(0), _pos2(0), _op(0), /*_v1(0), _v2(0), _v3(0),*/ _result(0), _flagsTable(nullptr) {
+ScriptEngine::ScriptEngine(CmdQueue *que, UI *ui, ActionSequenceHandler *aseq, MemAccessHandler *mem, ResourcePointer *scd) : _que(que), _ui(ui), _aseq(aseq), _mem(mem), _arrayData(nullptr), _pos1(0), _pos2(0), _result(0), _flagsTable(nullptr) {
 	_flagsTable = new uint8[352]();
 	_arrayData = new uint8[256]();
 	makeOpcodeTable(scd);

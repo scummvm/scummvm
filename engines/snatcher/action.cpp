@@ -35,7 +35,7 @@ namespace Snatcher {
 ActionSequenceHandler::ActionSequenceHandler(SnatcherEngine *vm, ResourcePointer *scd, bool palTiming) : _vm(vm), _scd(scd), _palTiming(palTiming), _stage(0), _counter1(0), _counter2(0), _progressMSB(0), _progressLSB(0),
 	_weaponState(0), _enemySpeed(0), _active(false), _handleShotPhase(0), _updateEnemiesPhase(0), _enemyAttackStatus(0), _targetField(0), _hscrollB(0), _vscrollB(0),
 		_enemyAppearanceCount(0), _civilianAppearanceCount(0), _abortFight(0), _nextEnemyAppearanceTimer(0), _enemyAttackTimer(0), _shoot_78EE(0), _activeEnemies(0), _result(),
-			_attackerId(0), _animNo(0), _shoot_7912(0), _projectileCoords(nullptr) {
+			_attackerId(0), _animNo(0), _stage2Temp(0), _projectileCoords(nullptr) {
 	_projectileCoords = new int16[18]();
 }
 
@@ -301,7 +301,7 @@ void ActionSequenceHandler::resetVars() {
 	_hscrollB = _vscrollB = 0;
 	_result = Result();
 	_enemyAppearanceCount = _civilianAppearanceCount = 0;
-	_shoot_7912 = _attackerId = 0;
+	_stage2Temp = _attackerId = 0;
 	_animNo = 0;
 }
 
@@ -736,9 +736,9 @@ void ActionSequenceHandler::updateStage() {
 			animSet(_animNo, Frame, 2);
 			break;
 		case 2:
-			v = _shoot_7912 | (num < 3 ? 1 : 0);
+			v = _stage2Temp | (num < 3 ? 1 : 0);
 			_vm->gfx()->animCopySpec(26 + v, _animNo);
-			_shoot_7912 = (v & 2) ^ 2;
+			_stage2Temp = (v & 2) ^ 2;
 			v = (v << 1) | 1;
 			break;
 		case 4:

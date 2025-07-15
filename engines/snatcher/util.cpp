@@ -89,15 +89,14 @@ uint32 makeBCDTimeStamp(uint32 msecs, BCDResolution res) {
 	uint32 sec = toBCD((msecs / 1000) % 60);
 	uint32 frm = toBCD((msecs % 1000) * 1000000 / 13333333);
 
-	if (res == kBCD_HHMMSS) // BCD time code hh:mm:ss
+	if (res == kBCD_HHMMSS) // BCD time code hh:mm:ss:00
 		return ((hrs & 0xFF) << 24) | ((min & 0xFF) << 16) | ((sec & 0xFF) << 8);
 
-	// BCD time code mm:ss:ff:md (md = mode: 00 = CD-DA, 01 = CD-ROM mode 1, 02 = CD-ROM mode 2; irrelevant to us)
+	// BCD time code mm:ss:ff:md (md = mode (irrelevant to us): 00 = CD-DA, 01 = CD-ROM mode 1, 02 = CD-ROM mode 2)
 	return ((min & 0xFF) << 24) | ((sec & 0xFF) << 16) | ((frm & 0xFF) << 8);
 }
 
 union RNDC {
-	RNDC() : b(0) {}
 	uint8 a[2];
 	uint16 b;
 };

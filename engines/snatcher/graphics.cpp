@@ -33,8 +33,8 @@
 
 namespace Snatcher {
 
-GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd, bool enableAspectRatioCorrection) : _system(system), _state(vmstate),
-	_animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _flags(0), _verbAreaType(0) {
+GraphicsEngine::GraphicsEngine(const Graphics::PixelFormat *pxf, OSystem *system, Common::Platform platform, const VMInfo &vmstate, SoundEngine *snd, bool enableAspectRatioCorrection) :
+	_system(system), _state(vmstate), _animator(nullptr), _text(nullptr), _dataMode(0), _screen(nullptr), _bpp(pxf ? pxf->bytesPerPixel : 1), _verbAreaType(0) {
 	assert(system);
 	_palette = Palette::create(pxf, _system->getPaletteManager(), platform, _state);
 	assert(_palette);

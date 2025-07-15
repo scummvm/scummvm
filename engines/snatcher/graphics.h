@@ -224,7 +224,6 @@ private:
 	const uint8 _bpp;
 	uint8 _dataMode;
 	uint8 _verbAreaType;
-	uint8 _flags;
 
 	uint8 *_animSaveLoadData;
 

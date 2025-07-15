@@ -22,6 +22,7 @@
 
 #include "snatcher/animator.h"
 #include "snatcher/text.h"
+#include "common/endian.h"
 
 namespace Snatcher {
 
@@ -35,7 +36,6 @@ public:
 
 	void enqueuePrintJob(const uint8 *text) override;
 	void setPrintDelay(int delay) override;
-	//void setColor(uint8 color) override;
 
 	void draw() override;
 	void reset() override { _needDraw = false; }
@@ -91,11 +91,7 @@ void TextRenderer_SCD::enqueuePrintJob(const uint8 *text) {
 void TextRenderer_SCD::setPrintDelay(int delay) {
 	_printDelay = delay;
 }
-/*
-void TextRenderer_SCD::setColor(uint8 color) {
-	_color = color;
-}
-*/
+
 void TextRenderer_SCD::draw() {
 	if (!_needDraw || _block)
 		return;
@@ -142,7 +138,8 @@ void TextRenderer_SCD::draw() {
 					_pscr_byt3 = *s++;
 					break;
 				case 0xF8:
-					_pscr_wd = (*s++ << 8) | (*s++);
+					_pscr_wd = READ_BE_INT16(s);
+					s += 2;
 					break;
 				case 0xF7:
 					_fixedWith9 = *s++ ? true : false;

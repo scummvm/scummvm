@@ -367,7 +367,6 @@ void SnatcherEngine::checkEvents(const GameState &state) {
 	_lastKeys &= ~_releaseKeys;
 	_releaseKeys = 0;
 	_input.singleFrameControllerFlags = _input.singleFrameControllerFlagsRemapped = 0;
-	Common::Point mouse;
 
 	while (_eventMan->pollEvent(evt)) {
 		for (const InputEvent &k : _defaultKeyEvents) {
@@ -546,7 +545,6 @@ void SnatcherEngine::updateMainState(GameState &state) {
 }
 
 void SnatcherEngine::updateModuleState(GameState &state) {
-	bool _sub_bool_5 = false;
 	++_gfxInfo.frameCounter;
 
 	switch (state.modPhaseTop) {
@@ -707,7 +705,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			if (_module)
 				_module->run(state);
 			if (state.modFinish) {
-				_sub_bool_5 = true;
+				_reset = true;
 				++state.modPhaseSub;
 			}
 			break;
