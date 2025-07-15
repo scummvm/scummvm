@@ -138,9 +138,13 @@ void EventLoop::checkMessages() {
 bool EventLoop::GetMessage(MSG &msg) {
 	checkMessages();
 
-	// Queue window repaints if needed and no messages pending
-	if (_messages.empty() && _activeWindows.top()->IsWindowDirty())
-		PostMessage(_activeWindows.top()->m_hWnd, WM_PAINT, 0, 0);
+	// Queue window/control repaints if needed
+	for (CWnd *wnd : _updateWnds) {
+		if (wnd->IsWindowDirty())
+			wnd->PostMessage(WM_PAINT);
+	}
+
+	_updateWnds.clear();
 
 	// Check for any existing messages
 	if (!_messages.empty()) {

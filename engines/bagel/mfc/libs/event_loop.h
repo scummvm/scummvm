@@ -40,6 +40,30 @@ typedef void(*TimerProc)(
 	DWORD dwTime     // system time when the callback was called (in milliseconds)
 );
 
+class WndList : public Common::List<CWnd *> {
+public:
+	bool contains(CWnd *wnd) const {
+		for (auto it = begin(); it != end(); ++it) {
+			if (*it == wnd)
+				return true;
+		}
+
+		return false;
+	}
+
+	void add(CWnd *wnd) {
+		if (!contains(wnd))
+			push_back(wnd);
+	}
+	void remove(CWnd *wnd) {
+		Common::List<CWnd *>::remove(wnd);
+	}
+	void clear() {
+		Common::List<CWnd *>::clear();
+	}
+};
+
+
 class EventLoop {
 	struct TimerEntry {
 		HWND _hWnd = nullptr;
@@ -57,6 +81,7 @@ class EventLoop {
 private:
 	CWnd *_mainWindow = nullptr;
 	Common::Stack<CWnd *> _activeWindows;
+	WndList _updateWnds;
 	HWND _highlightedWin = nullptr;
 	HWND _captureWin = nullptr;
 	HWND _focusedWin = nullptr;
@@ -220,6 +245,10 @@ public:
 	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
 
 	void pause();
+
+	WndList &afxUpdateWnds() {
+		return _updateWnds;
+	}
 };
 
 } // namespace Libs

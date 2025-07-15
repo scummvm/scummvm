@@ -64,6 +64,8 @@ CWnd::CWnd() : m_hWnd(this) {
 }
 
 CWnd::~CWnd() {
+	AfxGetApp()->afxUpdateWnds().remove(this);
+
 	// Although we check the flag here, currently it's
 	// hardcoded to be on for ScummVM
 	if ((m_nClassStyle & CS_OWNDC) && _pDC) {
@@ -118,6 +120,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 		m_pParentWnd->_children[nID] = this;
 
 	SendMessage(WM_CREATE, 0, (LPARAM)&cs);
+	Invalidate();
 
 	return true;
 }
@@ -382,14 +385,8 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 
 	// Handle messages that get sent to child controls
 	if (isRecursiveMessage(message)) {
-		for (auto &ctl : _children) {
-			if (message == WM_PAINT) {
-				if (!_updatingRect.intersects(ctl._value->_windowRect))
-					continue;
-			}
-
+		for (auto &ctl : _children)
 			ctl._value->SendMessage(message, wParam, lParam);
-		}
 	}
 
 	return lResult;
@@ -398,8 +395,7 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 bool CWnd::isRecursiveMessage(UINT message) {
 	// TODO: Need to refactor these to use the
 	// SendMessageToDescendants instead of this
-	return message == WM_PAINT ||
-		message == WM_SHOWWINDOW ||
+	return message == WM_SHOWWINDOW ||
 		message == WM_ENABLE;
 }
 
@@ -694,8 +690,9 @@ BOOL CWnd::ValidateRect(LPCRECT lpRect) {
 		_updateRect = Common::Rect();
 
 	} else {
-		if (_updateRect.isEmpty() || _updateRect.contains(*lpRect))
+		if (_updateRect.isEmpty() || _updateRect.contains(*lpRect)) {
 			_updateRect = Common::Rect();
+		}
 	}
 
 	return true;
@@ -717,23 +714,8 @@ BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
 		_updateRect.right <= _windowRect.width() &&
 		_updateRect.bottom <= _windowRect.bottom);
 
-	// Handle bubbling up to parent
-	const CWnd *child = this;
-	Common::Rect r = _updateRect;
-	for (CWnd *wnd : GetSafeParents(false)) {
-		r.translate(child->_windowRect.left,
-			child->_windowRect.top);
-		if (wnd->_updateRect.isEmpty())
-			wnd->_updateRect = r;
-		else
-			wnd->_updateRect.extend(r);
-
-		assert(wnd->_updateRect.left >= 0 && wnd->_updateRect.top >= 0 &&
-			wnd->_updateRect.right <= wnd->_windowRect.width() &&
-			wnd->_updateRect.bottom <= wnd->_windowRect.bottom);
-
-		child = wnd;
-	}
+	// Add wnd to update list
+	AfxGetApp()->afxUpdateWnds().add(this);
 
 	return true;
 }
@@ -850,6 +832,7 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 
 BOOL CWnd::EndPaint(const PAINTSTRUCT *lpPaint) {
 	_updateRect = Common::Rect();
+	AfxGetApp()->afxUpdateWnds().remove(this);
 	_updateErase = false;
 
 	// If it's a persistent dc for the window, reset clipping
@@ -949,6 +932,10 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	_hPen = oldControl->_hPen;
 	_hBrush = oldControl->_hBrush;
 	_hPalette = oldControl->_hPalette;
+
+	// Mark the control for being drawn
+	AfxGetApp()->afxUpdateWnds().remove(oldControl);
+	Invalidate();
 
 	return true;
 }
