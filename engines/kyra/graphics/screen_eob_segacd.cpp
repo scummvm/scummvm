@@ -539,7 +539,8 @@ void SegaAnimator::update() {
 		if (s->x == 0x4000)
 			continue;
 		*dst++ = TO_BE_16(s->y + 128);
-		*dst++ = (*dst & 0xFF00) | (s->hw & 0xFF);
+		uint16 a = (*dst & 0xFF00);
+		*dst++ = a | (s->hw & 0xFF);
 		*dst++ = TO_BE_16(s->nameTbl);
 		*dst++ = TO_BE_16(s->x + 128);
 	}
