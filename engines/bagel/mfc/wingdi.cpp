@@ -65,7 +65,8 @@ HDC CreateCompatibleDC(HDC hdc) {
 HDC GetDC(HWND hWnd) {
 	if (hWnd) {
 		CWnd *wnd = CWnd::FromHandle(hWnd);
-		return wnd->GetDC();
+		CDC *dc = wnd->GetDC();
+		return dc->m_hDC;
 	} else {
 		// Screen DC, so set the screen rect
 		CDC::Impl *dc = new CDC::Impl();
