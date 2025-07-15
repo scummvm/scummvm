@@ -1654,7 +1654,7 @@ void Sprite::buildActiveSpriteList() {
 			}
 		}
 
-		if (_vm->_game.heversion > 90) {
+		if (_vm->_game.heversion > 95) {
 			_spriteTable[i].combinedPriority =  (_spriteTable[i].priority +
 				(((_spriteTable[i].group) ? _groupTable[_spriteTable[i].group].priority : 0)));
 		}
@@ -1703,12 +1703,24 @@ void Sprite::renderSprites(bool negativeOrPositiveRender) {
 		// If it reaches a positive priority it stops, because the active list
 		// should be sorted by this point...
 		if (negativeOrPositiveRender) {
-			if (spritePtr[i]->combinedPriority >= 0) {
-				break;
+			if (_vm->_game.heversion > 95) {
+				if (spritePtr[i]->combinedPriority >= 0) {
+					break;
+				}
+			} else {
+				if (spritePtr[i]->priority >= 0) {
+					break;
+				}
 			}
 		} else {
-			if (spritePtr[i]->combinedPriority < 0) {
-				continue;
+			if (_vm->_game.heversion > 95) {
+				if (spritePtr[i]->combinedPriority < 0) {
+					continue;
+				}
+			} else {
+				if (spritePtr[i]->priority < 0) {
+					continue;
+				}
 			}
 		}
 
