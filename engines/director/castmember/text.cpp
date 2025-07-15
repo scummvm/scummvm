@@ -983,6 +983,8 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s, _ftext = %s", _ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str());
+
 	uint32 stxtSize = getSTXTResourceSize() + 8;
 
 	writeStream->seek(offset);
@@ -1004,10 +1006,14 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 	writeStream->writeUint16BE(formatting);
 
 	uint32 it = 0;
+	uint32 rIndex = 0;
 	while (it < _ftext.size() - 1) {
-		uint32 rIndex = 0;
 		if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
 			// Styling header found
+			debugC(3, kDebugSaving, "Format start offset: %d, text: %s", rIndex, 
+				Common::toPrintable(_rtext.substr(style.formatStartOffset, rIndex - style.formatStartOffset)).c_str());
+
+			debugC(3, kDebugSaving, "Formatting: %s", Common::toPrintable(_ftext.substr(it, 22)).encode().c_str());
 			it += 2;
 
 			if (it + 22 > _ftext.size()) {
@@ -1036,6 +1042,9 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 		rIndex += 1;
 		it++;
 	}
+
+	debugC(3, kDebugSaving, "format start offset: %d, text: %s", rIndex, 
+		Common::toPrintable(_rtext.substr(style.formatStartOffset, rIndex - style.formatStartOffset)).c_str());
 
 	if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = nullptr;

@@ -154,6 +154,9 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 }
 
 void FontStyle::write(Common::MemoryWriteStream *writeStream) {
+	debugC(3, kDebugSaving, "FontStyle::write(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
+			formatStartOffset, height, ascent, fontId, textSlant, fontSize, r, g, b);
+
 	writeStream->writeUint32BE(formatStartOffset);
 	writeStream->writeUint16BE(height);
 	writeStream->writeUint16BE(ascent);
