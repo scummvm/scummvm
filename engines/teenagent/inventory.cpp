@@ -264,6 +264,8 @@ bool Inventory::processEvent(const Common::Event &event) {
 			activate(!_active);
 			return true;
 		}
+		if (event.customType == kActionSkipDialog)
+			return true;
 		return false;
 
 	case Common::EVENT_LBUTTONUP:
