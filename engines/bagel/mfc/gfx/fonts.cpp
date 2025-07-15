@@ -78,7 +78,9 @@ HFONT Fonts::createFont(int nHeight, int nWidth, int nEscapement,
 		// Cell to char height mappings
 		// TODO: This needs to be set properly
 		static const int8 HEIGHTS[][2] = {
-			{ 8, 8 }, { 10, 10 }, { 12, 8 },
+			{ 8, 8 },		// Default font
+			{ 10, 10 },		// Boardgame dialog
+			{ 12, 8 },
 			{ 14, 9 }, { 16, 10 }, { 18, 24 },
 			{ 21, 12 },		// The Gesng Gme
 			{ 0, 0 }

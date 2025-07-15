@@ -206,6 +206,10 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 		SafeMulDiv(_header._y + _header._h, base_unit_y, 8)
 	);
 
+	// WORKAROUND: For Hodj n Podj Boardgame dialog
+	bounds.right = MIN<LONG>(bounds.right, 640);
+	bounds.bottom = MIN<LONG>(bounds.bottom, 480);
+
 	CWnd *wndDialog = static_cast<CWnd *>(dialog);
 	wndDialog->Create(_header._className.c_str(),
 		_header._caption.c_str(),
