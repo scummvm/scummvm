@@ -288,7 +288,7 @@ void ScummEngine::resetPalette(bool isBootUp) {
 		setDirtyColors(0, 255);
 	}
 
-	if (isBootUp)
+	if (isBootUp && _game.heversion == 0)
 		updatePalette();
 }
 
