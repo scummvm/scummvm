@@ -26,7 +26,7 @@
 #include "common/func.h"
 #include "common/ptr.h"
 
-#define		SNATCHER_SCRIPT_DEBUG
+//#define		SNATCHER_SCRIPT_DEBUG
 
 namespace Common {
 class SeekableReadStream;
@@ -160,7 +160,6 @@ private:
 	int _pos1;
 	int _pos2;
 	uint16 _result;
-	uint _op;
 
 private:
 	void runOpcode();

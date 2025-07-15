@@ -37,7 +37,7 @@
 
 namespace Snatcher {
 
-#define		ANIM_DEBUG
+//#define		ANIM_DEBUG
 
 struct AnimObject {
 	AnimObject(int num) : id(num), enable(0), blinkRate(0), drawFlags(0), posX(0), posY(0), relSpeedX(0), relSpeedY(0), palette(0), target(0), f18(0), f1c(0),

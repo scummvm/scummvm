@@ -194,7 +194,6 @@ private:
 	uint8 _faderTimer1;
 	uint8 _faderTimer2;
 	bool _reduceVolume2;
-	uint8 _pcmMsgFromDriver[4];
 	uint8 *_temp;
 
 private:
