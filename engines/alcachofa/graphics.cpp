@@ -182,8 +182,9 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 	if (source->w == 2 && source->h == 1)
 		return nullptr;
 
+	const auto &palette = decoder.getPalette();
 	auto target = new ManagedSurface();
-	target->setPalette(decoder.getPalette(), 0, decoder.getPaletteColorCount());
+	target->setPalette(palette.data(), 0, palette.size());
 	target->convertFrom(*source, BlendBlit::getSupportedPixelFormat());
 	return target;
 }
