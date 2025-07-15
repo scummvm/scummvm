@@ -866,17 +866,20 @@ void CDC::Impl::ellipse(int x1, int y1, int x2, int y2) {
 
 void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop) {
-	Graphics::ManagedSurface dummySrc;
-	Graphics::ManagedSurface *src = !pSrcDC ? &dummySrc :
-		pSrcDC->impl()->getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
+
+	Graphics::ManagedSurface dummySrc;
+	Graphics::ManagedSurface *src = &dummySrc;
+	if (pSrcDC) {
+		src = pSrcDC->impl()->getSurface();
+		assert(srcRect.left >= 0 && srcRect.top >= 0 &&
+			srcRect.right <= src->w && srcRect.bottom <= src->h);
+	}
 
 	Graphics::ManagedSurface *dest = getSurface();
 	const Common::Point destPos(x, y);
 	uint bgColor = getBkPixel();
 
-	assert(srcRect.left >= 0 && srcRect.top >= 0 &&
-		srcRect.right <= src->w && srcRect.bottom <= src->h);
 	assert(x >= 0 && y >= 0 && (x + srcRect.width()) <= dest->w &&
 		(y + srcRect.height()) <= dest->h);
 
