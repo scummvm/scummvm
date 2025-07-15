@@ -588,6 +588,11 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget, bool spriteEd
 		Common::String content = ((Graphics::MacText *)widget)->getEditedString();
 		content.replace('\n', '\r');
 		_ptext = content;
+
+		// This string will be formatted with the default formatting
+		Common::String format = Common::String::format("\001\016%04x%02x%04x%04x%04x%04x", _fontId, _textSlant, _fontSize, _fgpalinfo1, _fgpalinfo2, _fgpalinfo2);
+		_ftext = format;
+		_ftext += _ptext;
 	}
 }
 
@@ -983,7 +988,8 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s, _ftext = %s", _ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str());
+	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s", 
+		_ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str(), Common::toPrintable(_rtext).c_str());
 
 	uint32 stxtSize = getSTXTResourceSize() + 8;
 
@@ -995,63 +1001,89 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 	writeStream->writeUint32BE(12);							// This is the offset, if it's not 12, we throw an error, other offsets are not handled
 
 	int8 formatting = getFormattingCount();
-	writeStream->writeUint32BE(_rtext.size());		// Length of the string
+
+	writeStream->writeUint32BE(_ptext.size());		// Length of the string
 	// Encode only in one format, original may be encoded in multiple formats
 	// Size of one Font Style is 20 + The number of encodings takes 2 bytes
 	writeStream->writeUint32BE(20 * formatting + 2);				// Data Length
 
-	FontStyle style;
-	writeStream->writeString(_rtext);
-
+	uint64 textPos = writeStream->pos();
+	writeStream->seek(_ptext.size(), SEEK_CUR);
 	writeStream->writeUint16BE(formatting);
+	debug("Number of formattings: %d", formatting);
+
+	FontStyle style;
+	Common::String rawText;
 
 	uint32 it = 0;
-	uint32 rIndex = 0;
-	while (it < _ftext.size() - 1) {
-		if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
-			// Styling header found
-			debugC(3, kDebugSaving, "Format start offset: %d, text: %s", rIndex, 
-				Common::toPrintable(_rtext.substr(style.formatStartOffset, rIndex - style.formatStartOffset)).c_str());
+	uint32 pIndex = 0;
+	
+	if (!_ftext.empty()) {
+		while (it < _ftext.size() - 1) {
+			if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
+				// Styling header found
+				debugC(3, kDebugSaving, "Format start offset: %d, text: %s", style.formatStartOffset, 
+					Common::toPrintable(_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset)).encode().c_str());
 
-			debugC(3, kDebugSaving, "Formatting: %s", Common::toPrintable(_ftext.substr(it, 22)).encode().c_str());
-			it += 2;
+				Common::CodePage encoding = detectFontEncoding(_cast->_platform, style.fontId);
+				rawText += _ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
 
-			if (it + 22 > _ftext.size()) {
-				warning("TextCastMember::writeSTXTResource: incorrect format sequence");
-				break;
+				debugC(3, kDebugSaving, "Formatting: %s", Common::toPrintable(_ftext.substr(it, 22)).encode().c_str());
+				it += 2;
+
+				if (it + 22 > _ftext.size()) {
+					warning("TextCastMember::writeSTXTResource: incorrect format sequence");
+					break;
+				}
+
+				// Ignoring height and ascent for now from FontStyle
+				uint16 temp;
+				style.formatStartOffset = pIndex;
+				const Common::u32char_type_t *s = _ftext.substr(it, 22).c_str();
+
+				s = Graphics::readHex(&style.fontId, s, 4);
+				s = Graphics::readHex(&temp, s, 2);
+				s = Graphics::readHex(&style.fontSize, s, 4);
+				s = Graphics::readHex(&style.r, s, 4);
+				s = Graphics::readHex(&style.g, s, 4);
+				s = Graphics::readHex(&style.b, s, 4);
+				style.textSlant = temp;
+				style.height = _height;
+				style.ascent = _ascent;
+
+				style.write(writeStream);
+				it += 22;
+				continue;
 			}
 
-			// Ignoring height and ascent for now from FontStyle
-			uint16 temp;
-			style.formatStartOffset = rIndex;
-			const Common::u32char_type_t *s = _ftext.substr(it, 22).c_str();
-
-			s = Graphics::readHex(&style.fontId, s, 4);
-			s = Graphics::readHex(&temp, s, 2);
-			s = Graphics::readHex(&style.fontSize, s, 4);
-			s = Graphics::readHex(&style.r, s, 4);
-			s = Graphics::readHex(&style.g, s, 4);
-			s = Graphics::readHex(&style.b, s, 4);
-			style.textSlant = temp;
-
-			style.write(writeStream);
-			it += 22;
-			continue;
+			pIndex += 1;
+			it++;
 		}
-
-		rIndex += 1;
-		it++;
+		// Because we iterate over _ftext.size() - 1
+		pIndex += 1;
+	} else {
+		pIndex = _ptext.size() - 1;
 	}
 
-	debugC(3, kDebugSaving, "format start offset: %d, text: %s", rIndex, 
-		Common::toPrintable(_rtext.substr(style.formatStartOffset, rIndex - style.formatStartOffset)).c_str());
+	debugC(3, kDebugSaving, "format start offset: %d, text: %s", style.formatStartOffset, 
+		Common::toPrintable(_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset)).encode().c_str());
+
+	Common::CodePage encoding = detectFontEncoding(_cast->_platform, style.fontId);
+	_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
+	rawText += _ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
+
+	debug("ptext length: %d, rawText length: %d", _ptext.size(), rawText.size());
+	uint64 currentPos = writeStream->pos(); 	
+	writeStream->seek(textPos);
+	writeStream->writeString(rawText);
+	writeStream->seek(currentPos);
 
 	if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = nullptr;
 		dumpData = (byte *)calloc(stxtSize, sizeof(byte));
 		Common::MemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, stxtSize);
 
-		int32 currentPos = writeStream->pos();
+		currentPos = writeStream->pos();
 		writeStream->seek(offset);
 		dumpStream->write(writeStream, stxtSize);
 		writeStream->seek(currentPos);
@@ -1066,10 +1098,14 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 
 uint32 TextCastMember::getSTXTResourceSize() {
 	// Header (offset, string length, data length) + text string + data (FontStyle) 
-	return 12 + _rtext.size() + getFormattingCount() * 20 + 2;
+	return 12 + _ptext.size() + getFormattingCount() * 20 + 2;
 }
 
 uint8 TextCastMember::getFormattingCount() {
+	if (_ftext.empty()) {
+		return 0;
+	}
+
 	uint8 count = 0;	
 	for (uint32 i = 0; i < _ftext.size() - 1; i++) {
 		if (_ftext[i] == '\001' && _ftext[i + 1] == '\016') {
