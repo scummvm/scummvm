@@ -331,6 +331,11 @@ bool BaseFileManager::registerPackages() {
 }
 
 bool BaseFileManager::registerPackage(Common::FSNode file, const Common::String &filename, bool searchSignature) {
+	if (_packages.hasArchive(filename.c_str())) {
+		debugC(kWintermuteDebugFileAccess, "BaseFileManager::registerPackage - file %s already added to archive", filename.c_str());
+		return STATUS_FAILED;
+	}
+
 	PackageSet *pack = new PackageSet(file, filename, searchSignature);
 	_packages.add(filename, pack, pack->getPriority() , true);
 	_versions[filename] = pack->getVersion();
