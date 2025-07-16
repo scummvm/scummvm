@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-15 11:29+0000\n"
-"PO-Revision-Date: 2025-07-14 18:37+0000\n"
+"PO-Revision-Date: 2025-07-16 06:39+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8000,17 +8000,14 @@ msgstr ""
 "cela"
 
 #: engines/draci/metaengine.cpp:68
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "Activer la synthèse vocale pour les sous-titres"
+msgstr "Activer la synthèse vocale pour les doublages manquants"
 
 #: engines/draci/metaengine.cpp:69
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
-msgstr "Utilise la synthèse vocale pour lire les sous-titres (si disponible)"
+msgstr ""
+"Utilise la synthèse vocale (si disponible) pour lire des doublages manquants"
 
 #: engines/draci/metaengine.cpp:212
 msgid "Skip intro / Exit map or inventory"
