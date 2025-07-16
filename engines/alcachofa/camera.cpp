@@ -349,12 +349,61 @@ private:
 	Camera &_camera;
 };
 
+struct CamSetInactiveAttributeTask final : public Task {
+	enum Attribute {
+		kPosZ,
+		kScale,
+		kRotation
+	};
+
+	CamSetInactiveAttributeTask(Process &process, Attribute attribute, float value, int32 delay)
+		: Task(process)
+		, _camera(g_engine->camera())
+		, _attribute(attribute)
+		, _value(value)
+		, _delay(delay) {}
+
+	virtual TaskReturn run() override {
+		if (_delay > 0) {
+			uint32 delay = (uint32)_delay;
+			_delay = 0;
+			return TaskReturn::waitFor(new DelayTask(process(), delay));
+		}
+
+		auto &state = _camera._backups[0];
+		switch (_attribute) {
+		case kPosZ: state._usedCenter.z() = _value; break;
+		case kScale: state._scale = _value; break;
+		case kRotation: state._rotation = _value; break;
+		default:
+			warning("Unknown CamSetInactiveAttribute attribute: %d", (int)_attribute);
+			break;
+		}
+	}
+
+	virtual void debugPrint() override {
+		const char *attributeName;
+		switch (_attribute) {
+		case kPosZ: attributeName = "PosZ"; break;
+		case kScale: attributeName = "Scale"; break;
+		case kRotation: attributeName = "Rotation"; break;
+		default: attributeName = "<unknown>"; break;
+		}
+		g_engine->console().debugPrintf("Set inactive camera %s to %f after %dms\n", attributeName, _value, _delay);
+	}
+
+private:
+	Camera &_camera;
+	Attribute _attribute;
+	float _value;
+	int32 _delay;
+};
+
 Task *Camera::lerpPos(Process &process,
 					  Vector2d targetPos,
 					  int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new DelayTask(process, duration); // lerpPos does not handle inactive players
 	}
 	Vector3d targetPos3d(targetPos.getX(), targetPos.getY(), _appliedCenter.z());
 	return new CamLerpPosTask(process, targetPos3d, duration, easingType);
@@ -364,8 +413,7 @@ Task *Camera::lerpPos(Process &process,
 					  Vector3d targetPos,
 					  int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new DelayTask(process, duration); // lerpPos does not handle inactive players
 	}
 	setFollow(nullptr); // 3D position lerping is the only task that resets following
 	return new CamLerpPosTask(process, targetPos, duration, easingType);
@@ -375,8 +423,7 @@ Task *Camera::lerpPosZ(Process &process,
 					   float targetPosZ,
 					   int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new CamSetInactiveAttributeTask(process, CamSetInactiveAttributeTask::kPosZ, targetPosZ, duration);
 	}
 	Vector3d targetPos(_appliedCenter.x(), _appliedCenter.y(), targetPosZ);
 	return new CamLerpPosTask(process, targetPos, duration, easingType);
@@ -386,8 +433,7 @@ Task *Camera::lerpScale(Process &process,
 						float targetScale,
 						int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new CamSetInactiveAttributeTask(process, CamSetInactiveAttributeTask::kScale, targetScale, duration);
 	}
 	return new CamLerpScaleTask(process, targetScale, duration, easingType);
 }
@@ -396,8 +442,7 @@ Task *Camera::lerpRotation(Process &process,
 						   float targetRotation,
 						   int32 duration, EasingType easingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new CamSetInactiveAttributeTask(process, CamSetInactiveAttributeTask::kRotation, targetRotation, duration);
 	}
 	return new CamLerpRotationTask(process, targetRotation, duration, easingType);
 }
