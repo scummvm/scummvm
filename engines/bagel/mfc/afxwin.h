@@ -617,6 +617,9 @@ public:
 	    UINT nBitcount, const void *lpBits);
 	int GetObject(int nCount, LPVOID lpObject) const;
 	LONG GetBitmapBits(LONG dwCount, LPVOID lpBits) const;
+	BOOL GetBitmap(BITMAP *pBitMap) const {
+		return GetObject(sizeof(BITMAP), pBitMap);
+	}
 };
 
 class CPalette : public CGdiObject {

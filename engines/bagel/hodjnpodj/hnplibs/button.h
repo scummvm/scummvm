@@ -88,6 +88,13 @@ private:
 	BOOL        m_bSharedPalette;
 
 private:
+	/**
+	 * Given inaccuracies in the ScummVM dialog template
+	 * system, the co-ordinates determined for buttons
+	 * may be slightly too small for the bitmaps we load.
+	 * If so, we need to increase the bounds to accommodate.
+	 */
+	void ensureSize();
 
 	void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 

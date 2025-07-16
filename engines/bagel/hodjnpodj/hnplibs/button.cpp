@@ -273,7 +273,9 @@ BOOL CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelec
 		delete pDisabled;
 	}
 
-	return (TRUE);
+	ensureSize();
+
+	return TRUE;
 }
 
 
@@ -359,7 +361,10 @@ BOOL CBmpButton::LoadBitmaps(const int nBase, const int nSelected, const int nFo
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
-	return (bSuccess);
+	if (bSuccess)
+		ensureSize();
+
+	return bSuccess;
 }
 
 
@@ -445,7 +450,10 @@ BOOL CBmpButton::LoadBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lpszFo
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
-	return (bSuccess);
+	if (bSuccess)
+		ensureSize();
+
+	return bSuccess;
 }
 
 
@@ -531,9 +539,27 @@ BOOL CBmpButton::LoadBmpBitmaps(LPCSTR lpszBase, LPCSTR lpszSelected, LPCSTR lps
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
-	return (bSuccess);
+	if (bSuccess)
+		ensureSize();
+
+	return bSuccess;
 }
 
+void CBmpButton::ensureSize() {
+	CRect clientRect;
+	GetClientRect(&clientRect);
+	BITMAP bmpInfo;
+	m_bitmap.GetBitmap(&bmpInfo);
+
+	if (clientRect.right < bmpInfo.bmWidth ||
+		clientRect.bottom < bmpInfo.bmHeight) {
+		clientRect.right = MAX(clientRect.right, bmpInfo.bmWidth);
+		clientRect.bottom = MAX(clientRect.bottom, bmpInfo.bmHeight);
+		ClientToScreen(&clientRect);
+		m_pParentWnd->ScreenToClient(&clientRect);
+		MoveWindow(&clientRect);
+	}
+}
 
 // CBmpButton message map:
 // Associate messages with member functions.
