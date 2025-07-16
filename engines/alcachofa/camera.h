@@ -81,6 +81,7 @@ private:
 	friend struct CamLerpRotationTask;
 	//friend struct CamShakeTask;
 	friend struct CamWaitToStopTask;
+	friend struct CamSetInactiveAttributeTask;
 	Math::Vector3d setAppliedCenter(Math::Vector3d center);
 	void setupMatricesAround(Math::Vector3d center);
 	void updateFollowing(float deltaTime);
