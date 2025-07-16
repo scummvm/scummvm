@@ -913,8 +913,15 @@ void CDC::Impl::lineTo(int x, int y) {
 
 COLORREF CDC::Impl::getPixel(int x, int y) const {
 	Graphics::ManagedSurface *src = getSurface();
+	assert(src->format.bytesPerPixel == 1);
 	const byte *pixel = (const byte *)src->getBasePtr(x, y);
-	return *pixel;
+
+	assert(_palette);
+	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
+	byte r, g, b;
+	pal->get(*pixel, r, g, b);
+
+	return RGB(r, g, b);
 }
 
 uint CDC::Impl::getPenColor() const {
