@@ -564,9 +564,6 @@ private:
 			else
 				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
 			return TaskReturn::finish(1);
-		case ScriptKernelTask::LerpWorldLodBias:
-			warning("STUB KERNEL CALL: LerpWorldLodBias");
-			return TaskReturn::finish(0);
 
 			// object control / animation
 		case ScriptKernelTask::On:
@@ -733,9 +730,6 @@ private:
 			return TaskReturn::finish(1);
 
 		// Camera tasks
-		case ScriptKernelTask::SetMaxCamSpeedFactor:
-			warning("STUB KERNEL CALL: SetMaxCamSpeedFactor");
-			return TaskReturn::finish(0);
 		case ScriptKernelTask::WaitCamStopping:
 			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
 		case ScriptKernelTask::CamFollow:
@@ -787,13 +781,15 @@ private:
 				getNumberArg(1), (EasingType)getNumberArg(2)));
 		}
 		case ScriptKernelTask::LerpCamToObjectWithScale: {
+			float targetScale = getNumberArg(1) * 0.01f;
 			if (!process().isActiveForPlayer())
-				return TaskReturn::waitFor(delay(getNumberArg(2)));
+				// the scale will wait then snap the scale
+				return TaskReturn::waitFor(g_engine->camera().lerpScale(process(), targetScale, getNumberArg(2), EasingType::Linear));
 			auto pointObject = getObjectArg<PointObject>(0);
 			if (pointObject == nullptr)
 				error("Invalid target object for LerpCamToObjectWithScale: %s", getStringArg(0));
 			return TaskReturn::waitFor(g_engine->camera().lerpPosScale(process(),
-				as3D(pointObject->position()), getNumberArg(1) * 0.01f,
+				as3D(pointObject->position()), targetScale,
 				getNumberArg(2), (EasingType)getNumberArg(3), (EasingType)getNumberArg(4)));
 		}
 
@@ -823,7 +819,13 @@ private:
 				1.0f, 0.0f, getNumberArg(0), (EasingType)getNumberArg(1), -5,
 				PermanentFadeAction::SetFaded));
 
-		// Unused and useless
+		// Unused and/or useless
+		case ScriptKernelTask::SetMaxCamSpeedFactor:
+			warning("STUB KERNEL CALL: SetMaxCamSpeedFactor");
+			return TaskReturn::finish(0);
+		case ScriptKernelTask::LerpWorldLodBias:
+			warning("STUB KERNEL CALL: LerpWorldLodBias");
+			return TaskReturn::finish(0);
 		case ScriptKernelTask::SetActiveTextureSet:
 			// Fortunately this seems to be unused.
 			warning("STUB KERNEL CALL: SetActiveTextureSet");
