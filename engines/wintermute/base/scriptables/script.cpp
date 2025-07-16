@@ -635,10 +635,15 @@ bool ScScript::executeInstruction() {
 
 		if (DID_FAIL(res)) {
 
-			// W/A: Avoid crash here:
-			if (var->isNative() && var->getNative() == nullptr) {
+			// W/A: The Sprite class instance is released earlier,
+			// but a native variable still holds a reference to it,
+			// leading to call on a non-existent (freed) instance.
+			if (BaseEngine::instance().getGameId() == "alphapolaris" &&
+			        var->isNative() &&
+					strcmp(methodName, "Reset") &&
+			        strcmp(_filename, "scenes\\Out_door\\scr\\barrel.script")) {
+
 				_stack->correctParams(0);
-				runtimeError("Cannot call method '%s'. Native variable is null.", methodName);
 				_stack->pushNULL();
 				delete[] methodName;
 				break;
