@@ -201,8 +201,8 @@ BOOL CWnd::EnableWindow(BOOL bEnable) {
 void CWnd::UpdateWindow() {
 	// If there's a pending paint, do it now
 	MSG msg;
-	if (PeekMessage(&msg, nullptr, WM_PAINT, WM_PAINT, PM_REMOVE) ||
-		IsWindowDirty()) {
+	if (PeekMessage(&msg, m_hWnd, WM_PAINT, WM_PAINT, PM_REMOVE) ||
+			IsWindowDirty()) {
 		msg.hwnd = m_hWnd;
 		msg.message = WM_PAINT;
 		TranslateMessage(&msg);
