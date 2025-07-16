@@ -640,8 +640,8 @@ bool ScScript::executeInstruction() {
 			// leading to call on a non-existent (freed) instance.
 			if (BaseEngine::instance().getGameId() == "alphapolaris" &&
 			        var->isNative() &&
-					strcmp(methodName, "Reset") &&
-			        strcmp(_filename, "scenes\\Out_door\\scr\\barrel.script")) {
+					strcmp(methodName, "Reset") == 0 &&
+			        strcmp(_filename, "scenes\\Out_door\\scr\\barrel.script") == 0) {
 
 				_stack->correctParams(0);
 				_stack->pushNULL();
