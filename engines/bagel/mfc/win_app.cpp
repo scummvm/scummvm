@@ -216,7 +216,7 @@ void CWinApp::setDirectory(const char *folder) {
 	_currentDirectory = gameDataDir;
 	if (folder && *folder) {
 		_currentDirectory = gameDataDir.getChild(folder);
-		SearchMan.addDirectory("CurrentDir", _currentDirectory, 0, 2);
+		SearchMan.addDirectory("CurrentDir", _currentDirectory, 10, 2);
 	}
 }
 
