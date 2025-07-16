@@ -211,11 +211,12 @@ CMainWindow::CMainWindow() {
 
 	for (i = 0; i < NUM_BUTTONS; i++) {
 		int level = i / 2;
-		colorBlock[i].rLocation.SetRect(BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)),
-		                                BLOCK_OFFSET_Y + ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level),
-		                                BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)) + BLOCK_WIDTH,
-		                                BLOCK_OFFSET_Y +
-		                                ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level) + BLOCK_HEIGHT);
+		colorBlock[i].rLocation.SetRect(
+			BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)),
+		    BLOCK_OFFSET_Y + ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level),
+		    BLOCK_OFFSET_X + ((BLOCK_WIDTH + BLOCK_SPACE_X) * ((i + 2) % 2)) + BLOCK_WIDTH,
+		    BLOCK_OFFSET_Y +
+		    ((BLOCK_HEIGHT + BLOCK_SPACE_Y) * level) + BLOCK_HEIGHT);
 		colorBlock[i].nColorIndex = BUTTON_ENTRY + i;
 
 		pMyBrush = new CBrush();                        // Construct new brush

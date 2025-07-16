@@ -700,8 +700,8 @@ UINT CDC::Impl::realizePalette() {
 }
 
 COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {
-	if (crColor <= 255)
-		return crColor;
+	if (crColor <= 255 || (crColor >> 24) == 1)
+		return crColor & 0xff;
 
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
 

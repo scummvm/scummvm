@@ -229,6 +229,9 @@ byte CWinApp::getColor(COLORREF color) const {
 	if (_palette.isEmpty())
 		return 0;
 
+	if (color <= 0xff || (color >> 24) == 1)
+		return (byte)(color & 0xff);
+
 	return _palette._palette->findBestColor(
 		GetRValue(color),
 		GetGValue(color),
