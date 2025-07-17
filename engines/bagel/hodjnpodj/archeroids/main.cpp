@@ -2611,6 +2611,7 @@ VOID CMainWindow::LoseLife(CDC *pDC, BOOL bAnimate) {
 
 			for (i = 1; i < N_HODJDIE_CELLS; i++) {
 				pSprite->PaintSprite(pDC, m_pHodj->GetPosition());
+				pause();
 				Sleep(300);
 			}
 			DeleteSprite(pSprite);
