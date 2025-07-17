@@ -253,10 +253,11 @@ struct CamLerpTask : public Task {
 		uint32 remaining = g_system->getMillis() - _startTime <= _duration
 			? _duration - (g_system->getMillis() - _startTime)
 			: 0;
-		g_engine->console().debugPrintf("Lerp camera with %ums remaining\n", remaining);
+		g_engine->console().debugPrintf("%s camera with %ums remaining\n", taskName(), remaining);
 	}
 
 protected:
+	virtual const char *taskName() const = 0;
 	virtual void update(float t) = 0;
 
 	Camera &_camera;
@@ -271,6 +272,10 @@ struct CamLerpPosTask final : public CamLerpTask {
 		, _deltaPos(targetPos - _camera._appliedCenter) {}
 
 protected:
+	virtual const char *taskName() const {
+		return "Lerp pos of";
+	}
+
 	virtual void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * t);
 	}
@@ -285,6 +290,10 @@ struct CamLerpScaleTask final : public CamLerpTask {
 		, _deltaScale(targetScale - _camera._cur._scale) {}
 
 protected:
+	virtual const char *taskName() const {
+		return "Lerp scale of";
+	}
+
 	virtual void update(float t) override {
 		_camera._cur._scale = _fromScale + _deltaScale * t;
 	}
@@ -306,6 +315,10 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 		, _scaleEasingType(scaleEasingType) {}
 
 protected:
+	virtual const char *taskName() const {
+		return "Lerp pos and scale of";
+	}
+
 	virtual void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * ease(t, _moveEasingType));
 		_camera._cur._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
@@ -323,11 +336,39 @@ struct CamLerpRotationTask final : public CamLerpTask {
 		, _deltaRotation(targetRotation - _camera._cur._rotation.getDegrees()) {}
 
 protected:
+	virtual const char *taskName() const {
+		return "Lerp rotation of";
+	}
+
 	virtual void update(float t) override {
 		_camera._cur._rotation = Angle(_fromRotation + _deltaRotation * t);
 	}
 
 	float _fromRotation, _deltaRotation;
+};
+
+struct CamShakeTask final : public CamLerpTask {
+	CamShakeTask(Process &process, Vector2d amplitude, Vector2d frequency, int32 duration)
+		: CamLerpTask(process, duration, EasingType::Linear)
+		, _amplitude(amplitude)
+		, _frequency(frequency) { }
+
+protected:
+	virtual const char *taskName() const {
+		return "Shake";
+	}
+
+	virtual void update(float t) override {
+		const Vector2d phase = _frequency * t * (float)M_PI * 2.0f;
+		const float amplTimeFactor = 1.0f / expf(t * 5.0f); // a curve starting at 1, depreciating towards 0 
+		_camera.shake() = {
+			sinf(phase.getX()) * _amplitude.getX() * amplTimeFactor,
+			sinf(phase.getY()) * _amplitude.getY() * amplTimeFactor
+		};
+	}
+
+	Vector2d _amplitude, _frequency;
+
 };
 
 struct CamWaitToStopTask final : public Task {
@@ -379,6 +420,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 			warning("Unknown CamSetInactiveAttribute attribute: %d", (int)_attribute);
 			break;
 		}
+		return TaskReturn::finish(0);
 	}
 
 	virtual void debugPrint() override {
@@ -452,14 +494,20 @@ Task *Camera::lerpPosScale(Process &process,
 						   int32 duration,
 						   EasingType moveEasingType, EasingType scaleEasingType) {
 	if (!process.isActiveForPlayer()) {
-		warning("stub: non-active camera lerp script invoked");
-		return new DelayTask(process, duration);
+		return new CamSetInactiveAttributeTask(process, CamSetInactiveAttributeTask::kScale, targetScale, duration);
 	}
 	return new CamLerpPosScaleTask(process, targetPos, targetScale, duration, moveEasingType, scaleEasingType);
 }
 
 Task *Camera::waitToStop(Process &process) {
 	return new CamWaitToStopTask(process);
+}
+
+Task *Camera::shake(Process &process, Math::Vector2d amplitude, Math::Vector2d frequency, int32 duration) {
+	if (!process.isActiveForPlayer()) {
+		return new DelayTask(process, (uint32)duration);
+	}
+	return new CamShakeTask(process, amplitude, frequency, duration);
 }
 
 } // namespace Alcachofa
