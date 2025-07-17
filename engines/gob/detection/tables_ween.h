@@ -254,9 +254,9 @@
 	0, "show.tot", 0
 },
 {
-	{
+	{ // August 1, 1993
 		"ween",
-		"Demo (v2.0)", // dated 8/1/93
+		"Demo (v2.0)",
 		AD_ENTRY1s("intro.stk", "15fb91a1b9b09684b28ac75edf66e504", 2340230),
 		EN_USA,
 		kPlatformDOS,

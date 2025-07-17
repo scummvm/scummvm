@@ -60,7 +60,7 @@
 },
 {
 	{	// German Fan Translation by BJNFNE
-		// 23.07.2023
+		// July 23, 2023
 		"crousti",
 		"v1.01",
 		AD_ENTRY1s("intro.stk", "df96be976e53cc7de9e2741c45c18a1f", 864746),
@@ -74,7 +74,7 @@
 },
 {
 	{	// German Fan Translation by BJNFNE
-		// 10.09.2023
+		// September 10, 2023
 		"crousti",
 		"v1.01",
 		AD_ENTRY1s("intro.stk", "7b86a951602bccc2c55eb5f644310d93", 864040),
@@ -88,7 +88,7 @@
 },
 {
 	{	// German Fan Translation by BJNFNE
-		// 10.09.2023
+		// September 10, 2023
 		"crousti",
 		"v1.01 Big Letters",
 		AD_ENTRY1s("intro.stk", "f739ed7d681a8e2619a14faafbf169e1", 864044),
@@ -102,7 +102,7 @@
 },
 {
 	{	// German Fan Translation by BJNFNE
-		// 10.09.2023
+		// September 10, 2023
 		"crousti",
 		"v1.01 Small/Big Letters",
 		AD_ENTRY1s("intro.stk", "e35840d99c89544021524a9b99ab20f7", 864032),

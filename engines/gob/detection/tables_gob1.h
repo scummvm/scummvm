@@ -649,7 +649,7 @@
 	0, 0, 0
 },
 {
-	{ // dated 8/1/93
+	{ // August 1, 1993
 		"gob1",
 		"Interactive Demo (v2.0)",
 		AD_ENTRY1s("intro.stk", "e72bd1e3828c7dec4c8a3e58c48bdfdb", 280044),

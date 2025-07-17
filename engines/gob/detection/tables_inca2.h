@@ -238,10 +238,10 @@
 
 // -- Demos --
 
-{
+{ // August 1, 1993
 	{
 		"inca2",
-		"Non-Interactive Demo (v2.0)", // dated 8/1/93
+		"Non-Interactive Demo (v2.0)",
 		AD_ENTRY1s("cons.imd", "f896ba0c4a1ac7f7260d342655980b49", 17804),
 		EN_ANY,
 		kPlatformDOS,
