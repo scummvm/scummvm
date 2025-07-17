@@ -7529,9 +7529,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("princetonsat98", "", "sat98_32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1446775, 501),
 
-	// 1998 PC/Mac re-release
-	MACGAME1("puppetmotel", "", "Puppet Motel Folder/Puppet Motel", "rt:04e7ccf432f8f968e6dd2282bf46c3a9", 812398, 501),
-	WINGAME1("puppetmotel", "", "PUPPET/PUPPET.EXE", "t:c43660296f937be289ffaa593b47b4a1", 1434927, 501),
+	// 1998 PC/Mac re-release - box has yellow "New Release" marking
+	MACGAME1("puppetmotel", "New Release", "Puppet Motel Folder/Puppet Motel", "rt:04e7ccf432f8f968e6dd2282bf46c3a9", 812398, 501),
+	WINGAME1("puppetmotel", "New Release", "PUPPET/PUPPET.EXE", "t:c43660296f937be289ffaa593b47b4a1", 1434927, 501),
 
 	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
