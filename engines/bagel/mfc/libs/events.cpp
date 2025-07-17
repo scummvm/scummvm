@@ -173,7 +173,7 @@ bool EventQueue::peekMessage(MSG *lpMsg, HWND hWnd,
 			// Found a matching message
 			*lpMsg = msg;
 
-			if (wRemoveMsg == PM_REMOVE)
+			if (wRemoveMsg & PM_REMOVE)
 				// Remove the message
 				_queue.remove_at(i);
 
