@@ -20,9 +20,15 @@
  */
 
 #include "director/director.h"
+#include "director/debugger.h"
 #include "director/cast.h"
+#include "director/channel.h"
+#include "director/frame.h"
 #include "director/movie.h"
 #include "director/sprite.h"
+#include "director/score.h"
+#include "director/window.h"
+#include "director/castmember/bitmap.h"
 
 #include "director/castmember/movie.h"
 
@@ -30,17 +36,23 @@
 
 namespace Director {
 
+// Assigning ID 0, because this windows is not managed by the Window Manager
+// This Virtual Window will not be responsible for rendering the movie cast member
+// But we still need the event processing
+SubWindow::SubWindow(Window *parent, Common::Rect rect)
+		: Window(g_director->getMacWindowManager()->getNextId(), false, false, false, g_director->getMacWindowManager(), g_director, false), _parent(parent) {
+	_parent = parent;
+}
+
+void SubWindow::setMainWindow() {
+	_parent->setMainWindow();
+}
+
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
-		: FilmLoopCastMember(cast, castId, stream, version) {
+		: CastMember(cast, castId, stream) {
 	_type = kCastMovie;
 
 	_enableScripts = _flags & 0x10;
-
-	if (debugChannelSet(2, kDebugLoading))
-		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
-	debugC(2, kDebugLoading, "MovieCastMember(): flags: (%d 0x%04x)", _flags, _flags);
-	debugC(2, kDebugLoading, "_looping: %d, _enableScripts %d, _enableSound: %d, _crop %d, _center: %d",
-			_looping, _enableScripts, _enableSound, _crop, _center);
 
 	// We are ignoring some of the bits in the flags
 	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
@@ -63,21 +75,79 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 		_center = flags & 1 ? 1 : 0;
 	}
 
+	_window = new SubWindow(g_director->getCurrentWindow(), _initialRect);
+	_movie = new Movie(_window);
+	_window->setCurrentMovie(_movie);
+	_window->incRefCount();
+
+	if (debugChannelSet(2, kDebugLoading))
+		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
+	debugC(2, kDebugLoading, "MovieCastMember(): flags: (%d 0x%04x)", _flags, _flags);
+	debugC(2, kDebugLoading, "_looping: %d, _enableScripts %d, _enableSound: %d, _crop %d, _center: %d",
+			_looping, _enableScripts, _enableSound, _crop, _center);
 }
 
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source)
-	: FilmLoopCastMember(cast, castId, source) {
+	: CastMember(cast, castId) {
 	_type = kCastMovie;
 
 	_enableScripts = source._enableScripts;
 }
 
 Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
+	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(), bbox.height() ? bbox.height() : _initialRect.height());
+
 	if (_needsReload) {
 		_loaded = false;
 		load();
 	}
 
+	if (channel->_movieFrame >= _movie->getScore()->getFramesNum()) {
+		warning("MovieCastMember::getSubChannels(): Movie frame %d requested, only %d available", channel->_movieFrame, _movie->getScore()->getFramesNum());
+		return &_subchannels;
+	}
+
+	_subchannels.clear();
+
+	debug("MovieCastMember::getSubChannels():: Current Frame number of movie %s: %d", _filename.toString().c_str(), _movie->getScore()->_curFrameNumber);
+	_movie->getScore()->step();
+
+	Common::Array<Sprite *> sprites = _movie->getScore()->_currentFrame->_sprites;
+
+	// copy the sprites in order to the list
+	for (auto src: sprites) {
+		if (!src->_cast)
+			continue;
+		// translate sprite relative to the global bounding box
+		int16 relX = (src->_startPoint.x - _initialRect.left) * widgetRect.width() / _initialRect.width();
+		int16 relY = (src->_startPoint.y - _initialRect.top) * widgetRect.height() / _initialRect.height();
+		int16 absX = relX + bbox.left;
+		int16 absY = relY + bbox.top;
+		int16 width = src->_width * widgetRect.width() / _initialRect.width();
+		int16 height = src->_height * widgetRect.height() / _initialRect.height();
+
+		// Re-inject the translated position into the Sprite.
+		// This saves the hassle of having to force the Channel to be in puppet mode.
+		src->_width = width;
+		src->_height = height;
+		src->_startPoint = Common::Point(absX, absY);
+		src->_stretch = true;
+
+		// Film loop frames are constructed as a series of Channels, much like how a normal frame
+		// is rendered by the Score. We don't include a pointer to the current Score here,
+		// that's only for querying the constraint channel which is not used.
+		Channel chan(nullptr, src);
+		_subchannels.push_back(chan);
+	}
+	// Initialise the widgets on all of the subchannels.
+	// This has to be done once the list has been constructed, otherwise
+	// the list grow operation will erase the widgets as they aren't
+	// part of the Channel assignment constructor.
+	for (auto &iter : _subchannels) {
+		iter.replaceWidget();
+	}
+
+	return &_subchannels;
 	return FilmLoopCastMember::getSubChannels(bbox, frame);
 }
 
@@ -85,7 +155,20 @@ void MovieCastMember::load() {
 	if (_loaded)
 		return;
 
-	FilmLoopCastMember::load();
+	if (_filename.empty()) {
+		warning("MovieCastMember::load(): load called on MovieCastMember before filename was set");
+		return;
+	}
+
+	debug("what is filename: %s", _filename.toString().c_str());
+
+	_archive = g_director->openArchive(_filename);
+	_movie->setArchive(_archive);
+	_movie->loadArchive();
+
+	_movie->getScore()->startPlay();
+	_movie->getScore()->setCurrentFrame(1);
+	g_debugger->movieHook();
 
 	_loaded = true;
 	_needsReload = false;
@@ -163,7 +246,9 @@ bool MovieCastMember::setField(int field, const Datum &d) {
 	case kTheUpdateLock:
 		warning("STUB: MovieCastMember::setField(): updateLock not implemented");
 		return false;
-	default:
+	case kTheFileName:
+		_filename = Common::Path(d.asString());
+		break;default:
 		break;
 	}
 

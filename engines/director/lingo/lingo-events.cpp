@@ -519,15 +519,17 @@ void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
 	_vm->setCurrentWindow(this->getWindow());
-	_lingo->processEvents(queue, false);
+	_lingo->processEvents(queue, false, this);
 }
 
-void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent) {
+void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent, Movie *movie) {
 	if (isInputEvent && _currentInputEvent.type != VOIDSYM) {
 		// only one input event should be in flight at a time.
 		return;
 	}
-	Movie *movie = _vm->getCurrentMovie();
+	if (!movie) {
+		movie = _vm->getCurrentMovie();
+	}
 	Score *sc = movie->getScore();
 
 	while (!queue.empty()) {

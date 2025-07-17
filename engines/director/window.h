@@ -136,6 +136,9 @@ public:
 	void setVisible(bool visible, bool silent = false) override;
 	bool setNextMovie(Common::String &movieFilenameRaw);
 
+	virtual void setMainWindow();
+	virtual void setCurrentMovie(Movie *movie);
+
 	void ensureMovieIsLoaded();
 
 	void setWindowType(int type) { _windowType = type; updateBorderType(); }

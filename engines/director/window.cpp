@@ -428,6 +428,15 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 	return true;
 }
 
+void Window::setMainWindow() {
+	_vm->setCurrentWindow(this);
+}
+
+
+void Window::setCurrentMovie(Movie *movie) {
+	_currentMovie = movie;
+}
+
 void Window::updateBorderType() {
 	if (_isStage) {
 		setBorderType(3);

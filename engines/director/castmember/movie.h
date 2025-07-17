@@ -23,10 +23,28 @@
 #define DIRECTOR_CASTMEMBER_MOVIE_H
 
 #include "director/castmember/filmloop.h"
+#include "director/window.h"
 
 namespace Director {
 
-class MovieCastMember : public FilmLoopCastMember {
+// For MovieCastMember
+// virtual-window.cpp
+class SubWindow : public Window {
+public:
+	SubWindow(Window *parent, Common::Rect rect);
+	~SubWindow() = default;
+
+	void setMainWindow() override;
+
+private:
+	Window *_parent;
+	int offsetX;	// With respect to parent window origin
+	int offsetY;	// With respect to parent window origin
+	int width;
+	int height;
+};
+
+class MovieCastMember : public CastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
@@ -44,6 +62,21 @@ public:
 
 	uint32 _flags;
 	bool _enableScripts;
+
+	bool _enableSound;
+	bool _looping;
+	bool _crop;
+	bool _center;
+
+	Common::Array<FilmLoopFrame> _frames;
+	Common::Array<Channel> _subchannels;
+
+private:
+	Common::Path _filename;
+	Archive *_archive;
+	Movie *_movie;
+
+	SubWindow *_window;
 };
 
 } // End of namespace Director

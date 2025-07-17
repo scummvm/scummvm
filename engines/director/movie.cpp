@@ -263,6 +263,7 @@ bool Movie::loadArchive() {
 	}
 
 	_score->loadFrames(*r, _version);
+	debug("What is score: %d", _score);
 	delete r;
 
 	// Action list
