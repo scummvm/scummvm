@@ -221,7 +221,7 @@ int CDC::SelectClipRgn(CRgn *pRgn, int nMode) {
 }
 
 int CDC::SetROP2(int nDrawMode) {
-	error("TODO: CDC::SetROP2");
+	return impl()->setROP2(nDrawMode);
 }
 
 BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
@@ -924,6 +924,11 @@ COLORREF CDC::Impl::getPixel(int x, int y) const {
 	pal->get(*pixel, r, g, b);
 
 	return RGB(r, g, b);
+}
+
+int CDC::Impl::setROP2(int nDrawMode) {
+	// No implementation in ScummVM yet
+	return 0;
 }
 
 uint CDC::Impl::getPenColor() const {
