@@ -738,8 +738,10 @@ private:
 				getNumberArg(1) != 0);
 			return TaskReturn::finish(1);
 		case ScriptKernelTask::CamShake:
-			warning("STUB KERNEL CALL: CamShake");
-			return TaskReturn::finish(0);
+			return TaskReturn::waitFor(g_engine->camera().shake(process(),
+				Vector2d(getNumberArg(1), getNumberArg(2)),
+				Vector2d(getNumberArg(3), getNumberArg(4)),
+				getNumberArg(0)));
 		case ScriptKernelTask::LerpCamXY:
 			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
 				Vector2d(getNumberArg(0), getNumberArg(1)),
