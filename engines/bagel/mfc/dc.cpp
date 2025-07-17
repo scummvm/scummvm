@@ -567,7 +567,7 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 
 /*--------------------------------------------*/
 
-CDC::Impl::Impl() {
+CDC::Impl::Impl() : _drawMode(R2_COPYPEN) {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
 	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
@@ -739,10 +739,14 @@ void CDC::Impl::drawRect(const Common::Rect &r, COLORREF crColor) {
 	uint brushColor = GetNearestColor(crColor);
 	uint penColor = getPenColor();
 
-	if (pen->_penStyle == PS_INSIDEFRAME)
-		bitmap->fillRect(r, brushColor);
-	
-	bitmap->frameRect(r, penColor);
+	if (pen->_penStyle == PS_INSIDEFRAME &&
+			_drawMode == R2_COPYPEN) {
+		Common::Rect rInner(r.left + 1, r.top + 1,
+			r.right - 1, r.bottom - 1);
+		bitmap->fillRect(rInner, brushColor);
+	}
+
+	Gfx::frameRect(bitmap, r, penColor, _drawMode);
 }
 
 void CDC::Impl::frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight) {
@@ -927,8 +931,9 @@ COLORREF CDC::Impl::getPixel(int x, int y) const {
 }
 
 int CDC::Impl::setROP2(int nDrawMode) {
-	// No implementation in ScummVM yet
-	return 0;
+	int oldMode = _drawMode;
+	_drawMode = nDrawMode;
+	return oldMode;
 }
 
 uint CDC::Impl::getPenColor() const {

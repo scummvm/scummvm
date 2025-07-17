@@ -186,6 +186,50 @@ void stretchBlit(const Graphics::ManagedSurface *src,
 	}
 }
 
+static inline void rasterPixel(byte *pixel, byte) {
+	// Currently only R2_NOT
+	*pixel = ~*pixel;
+}
+
+void frameRect(Graphics::ManagedSurface *dest,
+		const Common::Rect &r, byte color, int drawMode) {
+	assert(dest->format.bytesPerPixel == 1);
+
+	if (drawMode == R2_COPYPEN) {
+		dest->frameRect(r, color);
+		return;
+	}
+
+	assert(drawMode == R2_NOT);
+
+	const int w = r.right - r.left;
+	const int h = r.bottom - r.top - 2;
+	byte *pixel;
+
+	// Top line
+	pixel = (byte *)dest->getBasePtr(r.left, r.top);
+	for (int x = 0; x < w; ++x, ++pixel)
+		rasterPixel(pixel, color);
+
+	// Bottom line
+	pixel = (byte *)dest->getBasePtr(r.left, r.bottom - 1);
+	for (int x = 0; x < w; ++x, ++pixel)
+		rasterPixel(pixel, color);
+
+	// Left edge
+	pixel = (byte *)dest->getBasePtr(r.left, r.top + 1);
+	for (int y = 0; y < h; ++y, pixel += dest->pitch)
+		rasterPixel(pixel, color);
+
+	// Right edge
+	pixel = (byte *)dest->getBasePtr(r.right - 1, r.top + 1);
+	for (int y = 0; y < h; ++y, pixel += dest->pitch)
+		rasterPixel(pixel, color);
+
+	// Mark the rectangle area as dirty
+	dest->addDirtyRect(r);
+}
+
 } // namespace Gfx
 } // namespace MFC
 } // namespace Bagel

@@ -38,6 +38,9 @@ extern void stretchBlit(const Graphics::ManagedSurface *src,
 	const Common::Rect &srcRect, const Common::Rect &destRect,
 	uint bgColor, int mode);
 
+extern void frameRect(Graphics::ManagedSurface *dest,
+	const Common::Rect &r, byte color, int drawMode);
+
 } // namespace Gfx
 } // namespace MFC
 } // namespace Bagel
