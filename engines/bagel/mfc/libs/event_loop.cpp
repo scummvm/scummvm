@@ -124,6 +124,29 @@ void EventLoop::checkMessages() {
 				_messages.push(priorMsg);
 			priorMsg = msg;
 		}
+
+		if (msg.message >= WM_MOUSEFIRST && msg.message <= WM_MOUSELAST) {
+			// Update saved mouse position
+			_mousePos.x = LOWORD(msg.lParam);
+			_mousePos.y = HIWORD(msg.lParam);
+
+			// For mouse messages, if the highlighted control
+			// changes, generate a WM_SETCURSOR event
+			if (msg.hwnd != _highlightedWin) {
+				// Add mouse leave event if win is still alive
+				CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
+				if (highlightedWin)
+					highlightedWin->PostMessage(WM_MOUSELEAVE);
+
+				// Switch to newly highlighted control
+				_highlightedWin = msg.hwnd;
+				if (_highlightedWin)
+					PostMessage(_highlightedWin,
+						WM_SETCURSOR, (WPARAM)msg.hwnd,
+						MAKELPARAM(HTCLIENT, msg.message)
+					);
+			}
+		}
 	}
 
 	if (priorMsg.message != WM_NULL)
@@ -151,29 +174,6 @@ bool EventLoop::GetMessage(MSG &msg) {
 		msg = _messages.pop();
 
 		if (msg.hwnd) {
-			if (msg.message >= WM_MOUSEFIRST && msg.message <= WM_MOUSELAST) {
-				// Update saved mouse position
-				_mousePos.x = LOWORD(msg.lParam);
-				_mousePos.y = HIWORD(msg.lParam);
-
-				// For mouse messages, if the highlighted control
-				// changes, generate a WM_SETCURSOR event
-				if (msg.hwnd != _highlightedWin) {
-					// Add mouse leave event if win is still alive
-					CWnd *highlightedWin = CWnd::FromHandle(_highlightedWin);
-					if (highlightedWin)
-						highlightedWin->PostMessage(WM_MOUSELEAVE);
-
-					// Switch to newly highlighted control
-					_highlightedWin = msg.hwnd;
-					if (_highlightedWin)
-						PostMessage(_highlightedWin,
-							WM_SETCURSOR, (WPARAM)msg.hwnd,
-							MAKELPARAM(HTCLIENT, msg.message)
-						);
-				}
-			}
-
 			if ((msg.message == WM_KEYDOWN || msg.message == WM_KEYUP) &&
 					_kbdHookProc) {
 				if (_kbdHookProc(HC_ACTION, msg.wParam, msg.lParam))
