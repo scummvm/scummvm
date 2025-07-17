@@ -612,15 +612,17 @@ void CBofSound::waitMidiSounds() {
 
 
 bool CBofSound::handleMessages() {
-	Common::Event e;
-	while (g_system->getEventManager()->pollEvent(e)) {
+	if (g_engine->isSpaceBar()) {
+		Common::Event e;
+		while (g_system->getEventManager()->pollEvent(e)) {
+		}
+
+		g_system->delayMillis(10);
+	} else {
+		AfxGetApp()->pause();
 	}
 
-	g_system->delayMillis(10);
-	if (g_engine->shouldQuit())
-		return true;
-
-	return false;
+	return g_engine->shouldQuit();
 }
 
 
