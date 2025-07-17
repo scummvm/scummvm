@@ -79,8 +79,14 @@ void EventLoop::PopActiveWindow() {
 void EventLoop::checkMessages() {
 	// Don't do any actual ScummVM event handling
 	// until at least one window has been set up
-	if (_activeWindows.empty() || shouldQuit())
+	if (_activeWindows.empty())
 		return;
+
+	if (_quitFlag != QUIT_NONE) {
+		if (_messages.empty() && !_activeWindows.empty())
+			_messages.push(MSG(_activeWindows.top()->m_hWnd, WM_CLOSE, 0, 0));
+		return;
+	}
 
 	// Poll for event in ScummVM event manager
 	MSG priorMsg;
