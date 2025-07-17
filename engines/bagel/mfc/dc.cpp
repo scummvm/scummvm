@@ -729,18 +729,12 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 
 void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
 	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
-	byte color = brush->_brush->getColor();
-	bitmap->frameRect(r, color);
-}
-
-void CDC::Impl::drawRect(const Common::Rect &r, COLORREF crColor) {
 	CPen::Impl *pen = (CPen::Impl *)_pen;
-	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
-	uint brushColor = GetNearestColor(crColor);
+	byte brushColor = brush->_brush->getColor();
 	uint penColor = getPenColor();
 
 	if (pen->_penStyle == PS_INSIDEFRAME &&
-			_drawMode == R2_COPYPEN) {
+			brush->_brush->_type != BS_HOLLOW) {
 		Common::Rect rInner(r.left + 1, r.top + 1,
 			r.right - 1, r.bottom - 1);
 		bitmap->fillRect(rInner, brushColor);
@@ -778,11 +772,13 @@ void CDC::Impl::frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeigh
 }
 
 void CDC::Impl::rectangle(LPCRECT lpRect) {
-	drawRect(*lpRect, getBrushColor());
+	CBrush *brush = CBrush::FromHandle(_brush);
+	drawRect(*lpRect, brush);
 }
 
 void CDC::Impl::rectangle(int x1, int y1, int x2, int y2) {
-	drawRect(Common::Rect(x1, y1, x2, y2), getBrushColor());
+	CBrush *brush = CBrush::FromHandle(_brush);
+	drawRect(Common::Rect(x1, y1, x2, y2), brush);
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
@@ -845,7 +841,8 @@ void CDC::Impl::draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrB
 }
 
 void CDC::Impl::drawFocusRect(const CRect &rect) {
-	drawRect(rect, GetNearestColor(RGB(128, 128, 128)));
+	CBrush brush(RGB(128, 128, 128));
+	drawRect(rect, &brush);
 }
 
 void CDC::Impl::ellipse(const Common::Rect &r, COLORREF crColor) {
