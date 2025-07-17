@@ -70,8 +70,8 @@ public:
 	Task *lerpPosScale(Process &process,
 		Math::Vector3d targetPos, float targetScale,
 		int32 duration, EasingType moveEasingType, EasingType scaleEasingType);
-	//Task *shake(Process &process, Math::Vector2d amplitude, Math::Vector2d frequency, int32 duration);
 	Task *waitToStop(Process &process);
+	Task *shake(Process &process, Math::Vector2d amplitude, Math::Vector2d frequency, int32 duration);
 
 private:
 	friend struct CamLerpTask;
@@ -79,7 +79,7 @@ private:
 	friend struct CamLerpScaleTask;
 	friend struct CamLerpPosScaleTask;
 	friend struct CamLerpRotationTask;
-	//friend struct CamShakeTask;
+	friend struct CamShakeTask;
 	friend struct CamWaitToStopTask;
 	friend struct CamSetInactiveAttributeTask;
 	Math::Vector3d setAppliedCenter(Math::Vector3d center);
