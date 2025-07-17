@@ -728,7 +728,9 @@ void CDC::Impl::fillRect(const Common::Rect &r, COLORREF crColor) {
 }
 
 void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
-	drawRect(r, getBrushColor());
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+	byte color = brush->_brush->getColor();
+	bitmap->frameRect(r, color);
 }
 
 void CDC::Impl::drawRect(const Common::Rect &r, COLORREF crColor) {
