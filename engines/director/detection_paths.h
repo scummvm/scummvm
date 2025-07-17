@@ -31,8 +31,6 @@ const char *const directoryGlobs[] = {
 	"program",						// Arc Media products
 	"media",						// Gundam
 	"mvm",							// Master of the Elements
-	"module_1",
-	"module_2",						// Takeru
 	"datas",						// O!KAY! subscription from Domino Verlag
 	"data_k",
 	"data_1",
