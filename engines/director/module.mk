@@ -156,6 +156,7 @@ MODULE_OBJS = \
 	lingo/xlibs/valkyrie.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/vmisonxfcn.o \
+	lingo/xlibs/vmpresent.o \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/voyagerxsound.o \
 	lingo/xlibs/widgetxobj.o \

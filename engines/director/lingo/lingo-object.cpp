@@ -126,6 +126,7 @@
 #include "director/lingo/xlibs/valkyrie.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
 #include "director/lingo/xlibs/vmisonxfcn.h"
+#include "director/lingo/xlibs/vmpresent.h"
 #include "director/lingo/xlibs/volumelist.h"
 #include "director/lingo/xlibs/voyagerxsound.h"
 #include "director/lingo/xlibs/widgetxobj.h"
@@ -325,6 +326,7 @@ static const struct XLibProto {
 	XLIBDEF(TenguXObj,			kXObj,					400),	// D4
 	XLIBDEF(TimextraXtra,		kXtraObj,		500),	// D5
 	XLIBDEF(UnitTestXObj,		kXObj,			400),	// D4
+	XLIBDEF(VMPresentXObj,			kXObj,					400),	// D4
 	XLIBDEF(VMisOnXFCN,			kXObj,			400),	// D4
 	XLIBDEF(ValkyrieXObj,		kXObj,			400),	// D4
 	XLIBDEF(VideodiscXObj,		kXObj,			200),	// D2
