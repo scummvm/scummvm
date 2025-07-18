@@ -76,7 +76,7 @@ private:
 	void updateModuleState(GameState &state);
 
 	const uint32 _frameLen;
-	bool _reset;
+	uint16 _reset;
 
 	// ConfigManager sync
 	void syncSoundSettings() override;
