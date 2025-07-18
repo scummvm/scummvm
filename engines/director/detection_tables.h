@@ -132,7 +132,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "criticalpath",		"Critical Path" },
 	{ "crimescouts",		"Crime Scouts" },
 	{ "crusader",			"Crusader: A Conspiracy in the Kingdom of Jerusalem" },
-	{ "crusader2000",		"Crusader: Edition 2000" },
 	{ "crystalskull",		"The Crystal Skull" },
 	{ "csi",				"CSI: Crime Scene Investigation" },
 	{ "csidarkmotives",		"CSI: Crime Scene Investigation - Dark Motives" },
@@ -960,6 +959,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "affaires1",			"Affaires à suivre: L'Île diabolique" },
 	{ "boulebill",			"Boule et Bill: Au Voleur!" },
 	{ "boitearire",			"La boîte à rire" },
+	{ "crusader2000",		"Croisades: Édition 2000" },
 	{ "fg25ans",			"25 Ans! Le CD-ROM de Fluide Glacial" },
 	{ "forestiajr",			"Forestia Révoltozoo" },
 	{ "guignols1",			"Les Guignols de l'Info ... LE JEU!" },
@@ -8026,21 +8026,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Disney's 101 Dalmatians
 	WINGAME1("101pet", "", "101pet.exe", "d62438566e44826960fc16c5c23dbe43", 1862441, 650),
 
-	MACGAME1("10plus2", "", "10plus2 PPC", "22e2e91bed55f087b739983679e4a0ff", 114739, 600),
-	WINGAME2("10plus2", "", "START95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1508485,
-							"START.Dir",   "b9f7a692dce72c30e54325c4a957e582", 9290, 600),
+	// Developed by Media Enterprises, published by Victory Multimedia Fonds (1997)
+	// Includes English, Spanish, Catalan, German, French languages selectable in-game
+	MACGAME1("10plus2", "", "10plus2 PPC", "r:22e2e91bed55f087b739983679e4a0ff",  114483, 600),
+	WINGAME2("10plus2", "", "START95.EXE", "t:4f702724461295288ba036c11cbde833", 1508485,
+							"START.Dir",   "f:b9f7a692dce72c30e54325c4a957e582", 	9290, 600),
 
 	WINGAME1("1stcdtoddler", "", "_dkilbbt.exe", "d62438566e44826960fc16c5c23dbe43", 2012554, 650),
 
 	WINGAME2_l("3iadins", "", "TVC.EXE",		  "t:fc5dab118ff590b701c50c3182a6754d", 1777420,
-							  "DOCS/3IADINS.DXR", "d:4d1f421e4aa7ed898fb8caf0d8c45a96",   90103, Common::CA_ESP, 650),
+							  "DOCS/3IADINS.DXR", "f:4d1f421e4aa7ed898fb8caf0d8c45a96",   90103, Common::CA_ESP, 650),
 
 	// Created by NOVA Online for PBS / WGBH Boston
 	// Companion app for NOVA episode "Special Effects: Titanic and Beyond"
 	// Original PBS Airdate: November 3, 1998
 	// https://www.pbs.org/wgbh/nova/specialfx2/
 	// Win9X version found on apcmag.cd Dec 1999 disc 3, published by Australian Consolidated Press
-	MACGAME1("50ftchicken", "",		   "NOVA_Chicken", "7b83483a881626b278258c109c1bd3b4", 1030370, 602),
+	MACGAME1("50ftchicken", "",		   "NOVA_Chicken", "r:7b83483a881626b278258c109c1bd3b4", 1030114, 602),
 	WINGAME1("50ftchicken", "Win 9X",  "NOVAchi9.exe", "a593079aecf5bd938ce75264cac24b2d", 1637982, 600),
 	WINGAME1("50ftchicken", "Win 3.x", "NOVAchi3.exe", "b0f3841f6e8005e519445b22de37749b", 1259932, 600),
 	SHKGAME1("50ftchicken", "",		   "chicken.dcr",  "55fa0c9afa4ee4102b50258544fc28d4", 442575, 600),
@@ -8051,8 +8053,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"Xyz.dxr", "d:e3a7e0ade70f67fb3bdef3ee809912dd", 451604, Common::AR_ARB, 600),
 
 	// Mini-game from X-Fools that can also be launched separately
-	MACGAME1("abductthis", "", "Abduct This!", "41fa2186d635be3094403c75b5f44d4b", 115391, 600),
-	WINGAME1t("abductthis", "", "abduct32.exe", "eef786210abfb8e140e843dc707e5025", 3644633, 600),
+	MACGAME1("abductthis", "", "Abduct This!", "r:41fa2186d635be3094403c75b5f44d4b",  115391, 600),
+	WINGAME1("abductthis", "", "abduct32.exe", "t:eef786210abfb8e140e843dc707e5025", 3644633, 600),
 
 	// TODO: unconfirmed version (TRAC #13302)
 	WINGAME1("acadia", "", "Acadia.exe", "t:947fda59fdcd99aa8bd97291a6562526", 1516555, 600),
@@ -8060,7 +8062,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Windows version requires installation
 	MACGAME1_l("activamulti6", "", "Activa",	 "r:1e8ee2145d02b5184d52f37343cf97b9", 1028909, Common::PT_PRT, 600),
 	WINGAME2_l("activamulti6", "", "Activa.exe", "t:6b59353dc2aad51dacc7e8793b86a095", 6216128,
-								   "BOT.CXT",	 "d:4a33170be6952fb900a7c25dae986115", 128221, Common::PT_PRT, 600),
+								   "BOT.CXT",	 "f:4a33170be6952fb900a7c25dae986115", 128221, Common::PT_PRT, 600),
 
 	MACGAME1_l("activamulti7", "", "Activa 7",	   "r:47b8dc414c507a479aea5b93d041cb49", 1031466, Common::PT_PRT, 602),
 	WINGAME1_l("activamulti7", "", "ACTIVA95.EXE", "t:b544bab0592182c206dfa577c6c01b0e", 1962000, Common::PT_PRT, 602),
@@ -8070,24 +8072,26 @@ static const DirectorGameDescription gameDescriptions[] = {
 						   "intro.dir",		"8030f92799c85ab5a6fd1c23f4ce6734", 396047, 602),
 
 	// Cherry Coke Presents a Myst clone
-	MACGAME1("alanna", "", "Alanna", "05c94e6fcb102f9fa795e354c956b28e", 1029257, 600),
+	MACGAME1("alanna", "", "Lost Island of Alanna/Alanna", "r:05c94e6fcb102f9fa795e354c956b28e",   1029001,	600),
+	WINGAME1("alanna", "", "LOSTISLE/ALANNA.EXE",		   "t:b61ca497bf705c9371d973af08e04968", 109893253, 601),
 
-	MACGAME1("amertailmb", "", "An American Tail MB", "41fa2186d635be3094403c75b5f44d4b", 115647, 600),
-	WINGAME1("amertailmb", "", "Amer32.exe", "518a98696fe1122e08410b0f157f21bf", 2075235, 602),
+	// Both versions require installation
+	MACGAME1("amertailmb", "", "An American Tail MB", "rt:f76fd08228d417309952dc815fba1b61", 115391, 600),
+	WINGAME1("amertailmb", "", "Amer32.exe",		  "t:c90b0cdc334e48dcda962cc4d86b2306", 2075235, 602),
 
 	// Full game is not Director; no Director content on Disc 2
-	MACDEMO1("amgpremiere", "Advanced Tutorial", "Advanced Tutorial", "ddfa76b82cb37f6349b55f13ff5b034a", 1026901, 600),
-	MACDEMO1("amgpremiere", "Beginning Tutorial", "Beginning Tutorial", "ddfa76b82cb37f6349b55f13ff5b034a", 1026901, 600),
-	MACDEMO1("amgpremiere", "Director's Guide", "Director's Guide", "ddfa76b82cb37f6349b55f13ff5b034a", 1026901, 600),
-	WINDEMO1("amgpremiere", "Advanced Tutorial", "ADVTUTOR.EXE", "a593079aecf5bd938ce75264cac24b2d", 3019357, 600),
-	WINDEMO1("amgpremiere", "Beginning Tutorial", "BEGTUTOR.EXE", "a593079aecf5bd938ce75264cac24b2d", 2078039, 600),
-	WINDEMO1("amgpremiere", "Director's Guide", "DIRGUIDE.EXE", "a593079aecf5bd938ce75264cac24b2d", 2070484, 600),
+	MACDEMO1("amgpremiere", "Advanced Tutorial",  "Advanced Tutorial",	"r:ddfa76b82cb37f6349b55f13ff5b034a",  1026645, 600),
+	MACDEMO1("amgpremiere", "Beginning Tutorial", "Beginning Tutorial", "r:ddfa76b82cb37f6349b55f13ff5b034a",  1026645, 600),
+	MACDEMO1("amgpremiere", "Director's Guide",   "Director's Guide",	"r:ddfa76b82cb37f6349b55f13ff5b034a",  1026645, 600),
+	WINDEMO1("amgpremiere", "Advanced Tutorial",  "ADVTUTOR.EXE",		"t:199c05b72c18c08c614944470883b44a",  3019357, 600),
+	WINDEMO1("amgpremiere", "Beginning Tutorial", "BEGTUTOR.EXE",		"t:9ca6b80436c8299896c17daafffa1c7f",  2078039, 600),
+	WINDEMO1("amgpremiere", "Director's Guide",   "DIRGUIDE.EXE",		"t:f6e1906d9a2a6bf4bcf57e068f952139",  2070484, 600),
 
 	// Requires installation
 	MACGAME2("animaniacsgp", "", "Animaniacs Game Pack", "r:8efda43c2eac46f285b30638b366de4a",  114476,
 								 "files/baintro.dxr",	 "d:5405488cd743d4095cda80c22907cb0d",   19766, 601),
 	WINGAME2("animaniacsgp", "", "wacky.exe",			 "t:1f250b20a44eda893e41e74058ef31b0", 1562433,
-								 "FILES/BAINTRO.DXR",	 "d:5405488cd743d4095cda80c22907cb0d",   19766, 601),
+								 "FILES/BAINTRO.DXR",	 "f:5405488cd743d4095cda80c22907cb0d",   19766, 601),
 
 	MACGAME1_l("anony", "", "Anony", "65063397536553c4f6ff2a6c07194bf7", 1845815, Common::JA_JPN, 602),
 	WINGAME1t_l("anony", "", "ANONY.EXE", "83a8b0577877f3ca90ef2df6e6e287ae", 2029722, Common::JA_JPN, 602),
@@ -8111,13 +8115,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Windows version requires installation
 	MACGAME1("bettypage", "", "put me on your desktop/Betty", "r:be947e969e358cc77e6a96ee42bab3f1", 1031418, 601),
 	WINGAME2("bettypage", "", "betty.exe", "t:2a8cabfc37dbee8d7a98fde7ce9c38fd", 1510046,
-							  "bar1.dir",  "d:362bb652f7bb3881aefcffc228e65b93", 39766, 600),
+							  "bar1.dir",  "f:362bb652f7bb3881aefcffc228e65b93", 39766, 600),
 
 	WINGAME1_l("bigmax", "nº20", "BIG32.EXE", "518a98696fe1122e08410b0f157f21bf", 7313980, Common::PT_BRA, 602),
 
 	// From Soleau Software, New York, a member of the Association of Shareware Professionals (ASP)
 	WINGAME2("bingobuds", "v1.1", "BINGO.EXE", "t:c01c18a4f9f294afe1316a97827d72eb", 4373364,
-								  "LINGO.INI", "d:3ce3abdaacd4cd7a4dbdfcf3fa2e988a", 	  62, 600),
+								  "LINGO.INI", "f:3ce3abdaacd4cd7a4dbdfcf3fa2e988a", 	  62, 600),
 
 	WINGAME1("biobalance", "", "Bioblnc/Bio.exe", "t:722dfefcebd9db546021b3251b428a6c", 1830151, 600),
 	WINGAME1("biobalance", "Preferences", "BioBalance.exe", "t:05519343f11e6394dbdf3cbfb7eceaf7", 1830137, 600),
@@ -8143,11 +8147,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("carmenmath", "", "Carmen Math Detective", "65063397536553c4f6ff2a6c07194bf7", 1420730, 602),
 	WINGAME1t("carmenmath", "", "CMD32.EXE", "75c2569890b01e3d701b2784c25c2866", 1552305, 602),
 
-	MACGAME1("casperact", "", "Casper Activity Center", "904cb6465321d8e1d12d2a5a29612050", 1029165, 600),
-	WINGAME1("casperact", "", "CASPER32.EXE", "a593079aecf5bd938ce75264cac24b2d", 1819279, 600),
+	MACGAME1("casperact", "", "Casper Activity Center", "r:904cb6465321d8e1d12d2a5a29612050", 1028909, 600),
+	WINGAME1("casperact", "", "CASPER32.EXE",			"t:7d835003c3486f3e708ec364e5267dcd", 1819279, 600),
 
 	WINGAME2("casperadv", "", "Casper.exe", "t:bad431801fb440c49a98bd3ab5fb6c39", 1824319,
-							  "LSG.dxr",	"d:ec1cd0f8cdd1dd409ced038a88da1565", 2742700, 601),
+							  "LSG.dxr",	"f:ec1cd0f8cdd1dd409ced038a88da1565", 2742700, 601),
 
 	// Earlier entries use Director 4
 	MACGAME1("catseyeview", "Vol. 4 v2.0", "Cat'sEyeView vol.4_v2.0", "55d01cca925752c170ac1e9c01d1f87e", 1032146, 601),
@@ -8161,19 +8165,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("catseyeview", "Vol. 7", "Cat'sEyeView7", "55d01cca925752c170ac1e9c01d1f87e", 1030462, 601),
 	WINGAME1t("catseyeview", "Vol. 7", "Cat'sEyeView7.exe", "1c8ec55a7a65ba13890697e0e92670a5", 6017657, 600),
 
-	MACGAME1("catshats", "", "Cats and Hats", "cc27aab06406e53f53bcf7efd154ac1c", 1033985, 602),
-	WINGAME1("catshats", "", "HEXEN32.EXE", "be5ee23851ba95ce0b790e50f75f7e2e", 1661593, 602),
+	// Bilingual English/German
+	MACGAME1("catshats", "", "Cats and Hats", "r:cc27aab06406e53f53bcf7efd154ac1c", 1033729, 602),
+	WINGAME1("catshats", "", "HEXEN32.EXE",	  "t:a6d98f124483409c0aa060fe0cfec013", 1661593, 602),
 
 	// Developed by Real World Multimedia, Wiltshire, England (1997)
 	// Distributed in Germany by Funware, Hamburg
 	MACGAME2("ceremony", "",   "INSTALL/copytohd/Ceremony PPC",			  "r:d001d6e8615e35edc03465683f56e84d",  115419,
 							   "INSTALL/copytohd/00startCD.dir",		  "d:f40c38467c0ad3fca7d3626b134c13b3",   15503, 600),
 	WINGAME2("ceremony", "",   "INSTALL/copytohd/CEREMONY/ceremony.exe",  "t:ed46ad036782efe47e2b7c754492de2a", 1700809,
-							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "d:f40c38467c0ad3fca7d3626b134c13b3",	  15503, 600),
+							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "f:f40c38467c0ad3fca7d3626b134c13b3",	  15503, 600),
 	MACGAME2_l("ceremony", "", "INSTALL/copytohd/Ceremony PPC",			  "r:d001d6e8615e35edc03465683f56e84d",  115419,
 							   "INSTALL/copytohd/00startCD.dir",		  "d:39d2e56f6a29bdf0f38888489f99d60c",   15507, Common::DE_DEU, 600),
 	WINGAME2_l("ceremony", "", "INSTALL/copytohd/CEREMONY/ceremony.exe",  "t:ed46ad036782efe47e2b7c754492de2a", 1700809,
-							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "d:39d2e56f6a29bdf0f38888489f99d60c",   15507, Common::DE_DEU, 600),
+							   "INSTALL/copytohd/CEREMONY/00startCD.dir", "f:39d2e56f6a29bdf0f38888489f99d60c",   15507, Common::DE_DEU, 600),
 
 	// General preview for ClueFinders series. Does not correspond to a specific game.
 	WINGAME1t("cfdemo", "", "CFdemo.exe", "30ed83ee5d4c757df42517befc0fd129", 11941853, 650),
@@ -8182,8 +8187,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Developed by LittleFingers Software, Redding, Connecticut
 	// Later Mac OS X version is D10
 	// https://web.archive.org/*/http://littlefingers.com/
-	MACGAME1("checkersvillage", "Classic OS", "Checkers Village", "a593079aecf5bd938ce75264cac24b2d", 3871783, 600),
-	WINGAME1("checkersvillage", "", "Checkers Village.exe", "a593079aecf5bd938ce75264cac24b2d", 3871783, 600),
+	MACGAME1("checkersvillage", "Classic OS", "Checkers Village",	  "r:18edee4d51b3d6d8f79bc4c6b8c31685", 1026557, 600),
+	WINGAME1("checkersvillage", "",			  "Checkers Village.exe", "t:cd3febeaf3a57a9e70f0f5f0667f8f69", 3871783, 600),
 
 	// Clocks from Let's Play with Sakura CD
 	// Mac versions are D5
@@ -8192,14 +8197,18 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("clocksakura", "", "Movies/CLOCK/xn--.exe-p73c9a32ao187a6j1c", "t:d94ffc5e25360b60330d1c5fc2078e88", 2754593, Common::JA_JPN, 650), // さくら時計.exe
 	WINGAME1_l("clocktomoyo", "", "Movies/CLOCK/xn--.exe-pc5fi49j71zall4a",	  "t:403b03e07ea8b592e2ff5e86c8d6807b", 3184823, Common::JA_JPN, 650), // 知世時計.exe
 
-	MACGAME1("concentration", "ECD", "Natural",	   "f987dae6f5cdd01875c886a491591e72", 1031658, 650),
-	WINGAME2("concentration", "ECD", "win95.exe",  "d62438566e44826960fc16c5c23dbe43", 1703271,
-									 "stub32.dxr", "c835559b5556665bc755350ec9bd8244", 47639, 650),
+	MACGAME2("concentration", "ECD", "Natural",		"r:f987dae6f5cdd01875c886a491591e72", 1031402,
+									 "stubmac.dxr", "d:a47f0b3053a1177be9702cf510ee93b1",	45985, 650),
+	WINGAME2("concentration", "ECD", "win95.exe",   "t:7cab96499b68087e682426dc50db1f89", 1703271,
+									 "stub32.dxr",  "f:c835559b5556665bc755350ec9bd8244",   47639, 650),
 
 	WINGAME1t_l("creativenursery", "", "Nursery.exe", "62db2ff1a11e43aeab99efd97620c398", 1798660, Common::ZH_CHN, 602),
 
-	MACGAME1_l("crusader2000", "", "Lancer Croisades", "398eb2cdf121feb490097c6323d52267", 1031745, Common::FR_FRA, 650),
-	WINGAME1_l("crusader2000", "", "Croisade.exe", "d62438566e44826960fc16c5c23dbe43", 1546312, Common::FR_FRA, 650),
+	// Improved version of "Croisades. Conspiration au Royaume d'Orient", aka "Crusader: A Conspiracy in the Kingdom of Jerusalem"
+	// Released only in France
+	// Mac version requires installation
+	MACGAME1_l("crusader2000", "", "Lancer Croisades",	   "rt:5e4afb72510fc45bc4afb1f6c5cbd78b", 1031489, Common::FR_FRA, 650),
+	WINGAME1_l("crusader2000", "", "INSTALL/Croisade.exe", "t:2f17937e885d22092ad49c0fe0f36743",  1546312, Common::FR_FRA, 650),
 
 	// TRAC report #14548
 	WINGAME1("custardloverama", "", "CUSTARD.EXE", "t:89c0c1dc1cdd57e8d868e09f034f85ba", 1515663, 650),
@@ -8221,12 +8230,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1("delphi4tutor", "", "Del4Tutor.exe", "ece1c7a090010965890840102978e693", 3125198, 601),
 
-	WINGAME1("dfireworks", "Ver.98", "Firewk32.exe", "ece1c7a090010965890840102978e693", 1513130, 601),
+	WINGAME1("dfireworks", "Ver.98", "Firewk32.exe", "t:6e995c019f9cacf76b28e429a766f79a", 1513130, 601),
 
 	// Plays movies and launches 5 demos. Only the MSN preview uses Director
 	// Other engines include MediaStation ASB and Bill Appleton's DreamFactory
-	MACGAME1("disneyint", "", "DIeduSLVppc", "0096dc69d72faeb63ec7dbbb96899fac", 113411, 600),
-	WINGAME1("disneyint", "", "DIEdu32.exe", "a593079aecf5bd938ce75264cac24b2d", 1510321, 600),
+	MACGAME1("disneyint", "", "DEMO/DIeduSLVppc", "r:0096dc69d72faeb63ec7dbbb96899fac",  113155, 600),
+	WINGAME1("disneyint", "", "DEMO/DIEdu32.exe", "t:f95b4559258575912614210a96271c0c", 1510321, 600),
 
 	MACGAME1("disney97", "", "Sampler PPC", "r:41fa2186d635be3094403c75b5f44d4b", 115419, 600),
 	WINGAME1("disney97", "", "SAMP32.EXE", "t:2f87d92076446eaee551d3937e458f86", 1791900, 600),
@@ -8238,7 +8247,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Needs installation
 	// Mac version on same discs is D5
 	WINGAME2("dynamichuman", "v2.0", "DH2.EXE",	   "t:75dde9796fb6ee5f235dab48ff61a3f3", 1718624,
-									 "switch.dxr", "d:75df3aa5fa9674a161928f24f4a21650",  158934, 650),
+									 "switch.dxr", "f:75df3aa5fa9674a161928f24f4a21650",  158934, 650),
 
 	// Published by Birchtree Interactive, Tillson, Ontario (1998)
 	// There are four demos described here:
@@ -8873,6 +8882,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From Microshaft Winblows, full game is D5
 	MACDEMO1("starwarped", "Preview", "Star Warped Preview", "089658f6d7d68f07eece8a68e5fdc35e", 115391, 600),
 	WINDEMO1t("starwarped", "Preview", "EWOK32.EXE", "9502e2cb4d6e767310b908950bb7f74b", 1701371, 600),
+	// From The X-Fools
+	MACDEMO1("starwarped", "Preview", "Star Warped Preview", "rt:59cb84d866ddba64b9ce0d0c1ca1dcd7", 107835, 600),
 
 	// Developed by Accurate Research, Inc. of Sunnyvale, California (1998)
 	// Part of the Super Tutor series sold through Homeworkhelp.com
