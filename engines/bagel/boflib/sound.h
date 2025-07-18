@@ -81,6 +81,7 @@ public:
 	CBofSound();
 	CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, int nLoops = 1);
 	virtual ~CBofSound();
+	void addToSoundChain();
 
 	void initialize(const char *pszPathName, WORD wFlags) {
 		initialize(nullptr, pszPathName, wFlags);

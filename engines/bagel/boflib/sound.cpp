@@ -58,11 +58,25 @@ int CBofSound::_nSlotVol[NUM_QUEUES];
 
 CBofSound::CBofSound() {
 	_wLoops = 1;
+	addToSoundChain();
 }
 
 CBofSound::CBofSound(void *pWnd, const char *pszPathName, uint16 wFlags, const int nLoops) {
 	_wLoops = (uint16)nLoops;
 	initialize(pWnd, pszPathName, wFlags);
+	addToSoundChain();
+}
+
+void CBofSound::addToSoundChain() {
+	// Insert this sound into the sound list
+	if (_pSoundChain != nullptr) {
+		_pSoundChain->Insert(this);
+
+		// _pSoundchain must always be the head of the list
+		assert(_pSoundChain == _pSoundChain->getHead());
+	} else {
+		_pSoundChain = this;
+	}
 }
 
 void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
@@ -144,16 +158,6 @@ void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
 		} else {
 			reportError(ERR_FFIND, szTempPath);
 		}
-	}
-
-	// Insert this sound into the sound list
-	if (_pSoundChain != nullptr) {
-		_pSoundChain->Insert(this);
-
-		// _pSoundchain must always be the head of the list
-		assert(_pSoundChain == _pSoundChain->getHead());
-	} else {
-		_pSoundChain = this;
 	}
 }
 
