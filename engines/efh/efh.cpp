@@ -906,7 +906,7 @@ int16 EfhEngine::chooseCharacterToReplace() {
 	Common::KeyCode input;
 	for (;;) {
 		input = waitForKey();
-		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input < maxVal))
+		if (input == Common::KEYCODE_ESCAPE || input == Common::KEYCODE_0 || (input > Common::KEYCODE_1 && input <= maxVal))
 			break;
 	}
 
