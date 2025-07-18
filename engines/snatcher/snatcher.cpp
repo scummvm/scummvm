@@ -539,9 +539,6 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		break;
 
 	default:
-		// Infinite loop
-		// Possible TODO: Maybe change this to quit the engine instead. For the console hardware, there was
-		// not much choice except just letting it run, but we don't necessarily have to copy that behavior.
 		break;
 	}
 }
@@ -624,7 +621,11 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			break;
 		case 1:
 			if (!(_gfx->frameCount() & 0x1F)) {
-				// original: check whether file is loaded
+				// We don't really check if the file has finished loading here (which it obviously has),
+				// we just try to emulate the original timing, since the original's delays are not always
+				// sufficient to match the desired total delay correctly.
+				if (!_fio->loadingCompleted())
+					break;
 				state.frameNo = -1;
 				++state.modPhaseSub;
 			}
@@ -700,7 +701,11 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			}
 			break;
 		case 2:
-			//original: check if file loaded
+			// We don't really check if the file has finished loading here (which it obviously has),
+			// we just try to emulate the original timing, since the original's delays are not always
+			// sufficient to match the desired total delay correctly.
+			if (!_fio->loadingCompleted())
+				break;
 			++state.modPhaseSub;
 			break;
 		case 3:

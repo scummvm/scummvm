@@ -27,7 +27,7 @@
 namespace Snatcher {
 
 struct PalEventSCD {
-	PalEventSCD() : cmd(0), delay(0), countDown(0), destOffset(0), destFlag(false), len(0), srcOffsetCur(0), srcOffsets(0), res(), progress(0), fD(0), fE(0), fF(0) {}
+	PalEventSCD() : cmd(0), delay(0), countDown(0), destOffset(0), destFlag(false), len(0), srcOffsetCur(0), srcOffsets(0), res(), progress(0) {}
 	void clear() {
 		cmd = 0;
 		delay = 0;
@@ -39,9 +39,6 @@ struct PalEventSCD {
 		srcOffsetCur = 0;
 		srcOffsets = 0;
 		progress = 0;
-		fD = 0;
-		fE = 0;
-		fF = 0;
 	}
 	uint8 cmd;
 	uint8 delay;
@@ -53,9 +50,6 @@ struct PalEventSCD {
 	const uint32 *srcOffsets;
 	ResourcePointer res;
 	uint8 progress;
-	uint8 fD;
-	uint8 fE;
-	uint8 fF;
 };
 
 } // End of namespace Snatcher
