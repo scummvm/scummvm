@@ -193,7 +193,7 @@ void SCDPalette::setDefaults(int mode) {
 	if (mode == 0) {
 		int cnt = (_gfxState.testFlag(1, 1) || _gfxState.getVar(5)) ? 64 : 48;
 		_gfxState.clearFlag(1, 1);
-		Common::fill<uint16*, uint16>(&_colors[64 - cnt], &_colors[cnt], 0);
+		Common::fill<uint16*, uint16>(&_colors[64 - cnt], &_colors[64], 0);
 		if (_gfxState.testFlag(1, 2)) {
 			_gfxState.clearFlag(1, 2);
 			Common::fill<uint16*, uint16>(&_colors[80], &_colors[128], 0);

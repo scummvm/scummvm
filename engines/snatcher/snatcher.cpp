@@ -50,7 +50,7 @@
 namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
-	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(false),
+	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(0),
 		_memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
@@ -233,14 +233,14 @@ bool SnatcherEngine::start() {
 
 	playBootLogoAnimation(state);
 
-	_reset = false;
+	_reset = 0;
 	uint32 frameTimer = 0;
 	uint32 playTimer = 0;
 
 	int16 countTo5 = 0;
 	int16 runspeed = 0;
 
-	while (!shouldQuit() && !_reset) {
+	while (!shouldQuit() && _reset != 1) {
 		frameTimer += _frameLen;
 		uint32 nextFrame = _system->getMillis() + (frameTimer >> 14);
 		frameTimer &= 0x3FFF;
@@ -300,6 +300,8 @@ bool SnatcherEngine::start() {
 				++state.totalPlayTime;
 			}
 		}
+		if (_reset)
+			--_reset;
 	}
 
 	return true;
@@ -533,7 +535,7 @@ void SnatcherEngine::updateMainState(GameState &state) {
 		// Reset
 		_cmdQueue->writeUInt16(0x02);
 		_cmdQueue->start();
-		_reset = true;
+		_reset = 100;
 		break;
 
 	default:
@@ -705,7 +707,7 @@ void SnatcherEngine::updateModuleState(GameState &state) {
 			if (_module)
 				_module->run(state);
 			if (state.modFinish) {
-				_reset = true;
+				_reset = 100;
 				++state.modPhaseSub;
 			}
 			break;
