@@ -62,6 +62,7 @@ protected:
 	Audio::SoundHandle _voiceStreamHandle;
 	SoundResource* _soundResource;
 	bool _soundStarted;
+	bool _soundWasPlaying;
 	// The sound length in milliseconds for purpose of checking if the sound is
 	// still playing.
 	int _soundCheckLength;

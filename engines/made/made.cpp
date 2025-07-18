@@ -39,6 +39,22 @@
 
 namespace Made {
 
+static const Common::Rect rtzSaveLoadScreenButtons[] = {
+	Common::Rect(184, 174, 241, 189),	// Cancel button
+	Common::Rect(109, 174, 166, 189),	// Save/load button
+	Common::Rect(25, 20, 297, 158)		// Text entry box
+};
+
+static const int kRtzSaveBoxHeight = 13;
+
+enum RtzSaveLoadScreenIndex {
+	kCancel = 0,
+	kSaveOrLoad = 1,
+	kTextBox = 2
+};
+
+static const int kNumberOfSaveLoadButtons = 3;
+
 MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 
 	_eventNum = 0;
@@ -76,6 +92,12 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 	_music = nullptr;
 
 	_soundRate = 0;
+
+	_saveScreenOpen = false;
+	_loadScreenOpen = false;
+	_openingCreditsOpen = false;
+	_previousRect = -1;
+	_previousTextBox = -1;
 
 	// Set default sound frequency
 	switch (getGameID()) {
@@ -156,6 +178,74 @@ void MadeEngine::resetAllTimers() {
 		_timers[i] = -1;
 }
 
+void MadeEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action, _ttsTextEncoding);
+	}
+}
+
+void MadeEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+void MadeEngine::checkHoveringSaveLoadScreen() {
+	if (_saveScreenOpen || _loadScreenOpen) {
+		bool hoveringOverButton = false;
+		for (int i = 0; i < kNumberOfSaveLoadButtons; ++i) {
+			if (rtzSaveLoadScreenButtons[i].contains(_eventMouseX, _eventMouseY)) {
+				if (_previousRect != i) {
+					if (i == kTextBox) {
+						int index = MIN((_eventMouseY - 20) / kRtzSaveBoxHeight, 9);
+
+						if (index != _previousTextBox) {
+							// The string of object 1946 is the number of the last save slot
+							sayText(Common::String::format("%d", atoi(_dat->getObjectString(1946)) - 9 + index));
+							_previousTextBox = index;
+						}
+					} else {
+						const char *text = nullptr;
+
+						MenuResource *menu = _res->getMenu(1);
+						if (menu) {
+							if (i == kCancel) {
+								text = menu->getString(0);
+							} else {
+								if (_saveScreenOpen) {
+									text = menu->getString(26);
+								} else {
+									text = menu->getString(27);
+								}
+							}	
+						}
+
+						if (text) {
+							sayText(text);
+						}
+
+						_previousRect = i;
+					}
+				}
+
+				hoveringOverButton = true;
+				break;
+			}
+		}
+
+		if (!hoveringOverButton) {
+			_previousRect = -1;
+			_previousTextBox = -1;
+		}
+	}
+}
+
 Common::String MadeEngine::getSavegameFilename(int16 saveNum) {
 	return Common::String::format("%s.%03d", getTargetName().c_str(), saveNum);
 }
@@ -173,10 +263,19 @@ void MadeEngine::handleEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			_eventMouseX = event.mouse.x;
 			_eventMouseY = event.mouse.y;
+
+			checkHoveringSaveLoadScreen();
+
 			break;
 
 		case Common::EVENT_LBUTTONDOWN:
 			_eventNum = 2;
+
+			if (_openingCreditsOpen) {
+				_openingCreditsOpen = false;
+				stopTextToSpeech();
+			}
+
 			break;
 
 		case Common::EVENT_LBUTTONUP:
@@ -260,6 +359,23 @@ Common::Error MadeEngine::run() {
 	initGraphics(320, 200);
 
 	resetAllTimers();
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+
+		if (getLanguage() == Common::KO_KOR) {	// Korean version doesn't translate any text
+			ttsMan->setLanguage("en");
+		} else {
+			ttsMan->setLanguage(ConfMan.get("language"));
+		}
+
+		if (getLanguage() == Common::JA_JPN) {
+			_ttsTextEncoding = Common::CodePage::kWindows932;
+		} else {
+			_ttsTextEncoding = Common::CodePage::kDos850;
+		}
+	}
 
 	if (getGameID() == GID_RTZ) {
 		if (getFeatures() & GF_DEMO) {
