@@ -106,11 +106,11 @@ public:
 	~Window();
 
 	void decRefCount() override;
-	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
+	virtual bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr);
 	void invertChannel(Channel *channel, const Common::Rect &destRect);
 
 	bool needsAppliedColor(DirectorPlotData *pd);
-	void setStageColor(uint32 stageColor, bool forceReset = false);
+	virtual void setStageColor(uint32 stageColor, bool forceReset = false);
 	uint32 getStageColor() { return _stageColor; }
 
 	void reset();

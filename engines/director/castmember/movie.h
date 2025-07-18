@@ -35,6 +35,11 @@ public:
 	~SubWindow() = default;
 
 	void setMainWindow() override;
+	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr) override;
+	void addDirtyRect(const Common::Rect &r) override;
+	void markAllDirty() override;
+	void setDirty(bool dirty) override;
+	void setStageColor(uint32 stageColor, bool forceReset = false) override;
 
 private:
 	Window *_parent;
@@ -54,6 +59,7 @@ public:
 	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, uint frame) override;
 	void load() override;
 
+	bool isModified();
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;

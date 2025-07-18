@@ -518,7 +518,7 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
-	_vm->setCurrentWindow(this->getWindow());
+	this->getWindow()->setMainWindow();
 	_lingo->processEvents(queue, false, this);
 }
 
@@ -531,7 +531,6 @@ void Lingo::processEvents(Common::Queue<LingoEvent> &queue, bool isInputEvent, M
 		movie = _vm->getCurrentMovie();
 	}
 	Score *sc = movie->getScore();
-
 	while (!queue.empty()) {
 		LingoEvent el = queue.pop();
 

@@ -48,6 +48,30 @@ void SubWindow::setMainWindow() {
 	_parent->setMainWindow();
 }
 
+bool SubWindow::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
+	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: render: Movie cast member is not allowed to render");
+	return false;
+}
+
+void SubWindow::addDirtyRect(const Common::Rect &r) {
+	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: addDirtyRect: Marking the rect dirty in the main window");
+	_parent->addDirtyRect(r);
+}
+
+void SubWindow::markAllDirty() {
+	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: markAllDirty: Marking all the rect dirty in the main window");
+	_parent->markAllDirty();
+}
+
+void SubWindow::setDirty(bool dirty) {
+	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: setDirty: Marking the content as dirty in the main window");
+	_parent->setDirty(dirty);
+}
+
+void SubWindow::setStageColor(uint32 stageColor, bool forceReset) {
+	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: setStageColor: Marking the rect dirty in the main window");
+}
+
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastMovie;
@@ -100,11 +124,6 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 	if (_needsReload) {
 		_loaded = false;
 		load();
-	}
-
-	if (channel->_movieFrame >= _movie->getScore()->getFramesNum()) {
-		warning("MovieCastMember::getSubChannels(): Movie frame %d requested, only %d available", channel->_movieFrame, _movie->getScore()->getFramesNum());
-		return &_subchannels;
 	}
 
 	_subchannels.clear();
@@ -168,6 +187,7 @@ void MovieCastMember::load() {
 
 	_movie->getScore()->startPlay();
 	_movie->getScore()->setCurrentFrame(1);
+
 	g_debugger->movieHook();
 
 	_loaded = true;
@@ -221,6 +241,16 @@ Datum MovieCastMember::getField(int field) {
 	}
 
 	return d;
+}
+
+bool MovieCastMember::isModified() {
+	if (_frames.size())
+		return true;
+
+	if (_initialRect.width() && _initialRect.height())
+		return true;
+
+	return false;
 }
 
 bool MovieCastMember::setField(int field, const Datum &d) {
