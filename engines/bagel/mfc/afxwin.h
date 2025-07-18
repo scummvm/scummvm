@@ -1730,8 +1730,6 @@ class CWinThread : public CCmdTarget {
 public:
 	~CWinThread() override {
 	}
-
-	virtual BOOL OnIdle(LONG lCount);
 };
 
 class CWinApp : public CWinThread, public Libs::EventLoop {

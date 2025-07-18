@@ -86,6 +86,10 @@ void EventLoop::checkMessages() {
 		if (_messages.empty() && !_activeWindows.empty())
 			_messages.push(MSG(_activeWindows.top()->m_hWnd, WM_CLOSE, 0, 0));
 		return;
+	} else if (_messages.empty() && _idleCtr >= 0) {
+		if (!OnIdle(_idleCtr))
+			// OnIdle returning false means disabling permanently
+			_idleCtr = -1;
 	}
 
 	// Poll for event in ScummVM event manager

@@ -60,6 +60,8 @@ public:
 	 *  being terminated.
 	 */
 	int ExitInstance() override;
+
+	BOOL OnIdle(LONG lCount) override;
 };
 
 extern bool dllLoaded;

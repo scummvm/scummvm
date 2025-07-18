@@ -22,6 +22,7 @@
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -128,6 +129,10 @@ void CTheApp::selectMinigame() {
 	game->_initFn(nullptr, lpGameStruct);
 }
 
+BOOL CTheApp::OnIdle(LONG lCount) {
+	CBofSound::audioTask();
+	return true;
+}
 
 } // namespace Frame
 } // namespace Metagame

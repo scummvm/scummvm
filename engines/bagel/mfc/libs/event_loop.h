@@ -96,6 +96,7 @@ private:
 	HOOKPROC _kbdHookProc = nullptr;
 	enum QuitFlag { QUIT_NONE, QUIT_QUITTING, QUIT_QUIT };
 	QuitFlag _quitFlag = QUIT_NONE;
+	int _idleCtr = 0;
 
 	/**
 	 * Get any pending event
@@ -248,6 +249,10 @@ public:
 
 	WndList &afxUpdateWnds() {
 		return _updateWnds;
+	}
+
+	virtual BOOL OnIdle(LONG lCount) {
+		return false;
 	}
 };
 
