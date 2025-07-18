@@ -695,12 +695,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
-			} else if (hasObjectEquipped(charId, objectId)) {
-				displayStringInSmallWindowWithBorder("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
-				if (!getValidationFromUser())
-					validationFl = false;
-				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
-
+			} else {
+				if (hasObjectEquipped(charId, objectId)) {
+					displayStringInSmallWindowWithBorder("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
+					if (!getValidationFromUser())
+						validationFl = false;
+					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
+				}
 				if (validationFl) {
 					if (gameMode == 2) {
 						displayStringInSmallWindowWithBorder("Not a Combat Option !", true, charId, windowId, menuId, curMenuLine);
@@ -782,12 +783,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
-			} else if (hasObjectEquipped(charId, objectId)) {
-				displayStringInSmallWindowWithBorder("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
-				if (!getValidationFromUser())
-					validationFl = false;
-				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
-
+			} else {
+				if (hasObjectEquipped(charId, objectId)) {
+					displayStringInSmallWindowWithBorder("Item Is Equipped!  Drop Anyway?", false, charId, windowId, menuId, curMenuLine);
+					if (!getValidationFromUser())
+						validationFl = false;
+					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
+				}
 				if (validationFl) {
 					removeObject(charId, objectId);
 					if (gameMode == 2) {
