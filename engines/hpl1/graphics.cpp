@@ -30,7 +30,7 @@ namespace Hpl1 {
 bool areShadersAvailable() {
 #if defined(USE_OPENGL_SHADERS)
 	return Graphics::Renderer::getAvailableTypes() & Graphics::kRendererTypeOpenGLShaders;
-#elif
+#else
 	return false;
 #endif
 }
@@ -38,7 +38,7 @@ bool areShadersAvailable() {
 Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
 #ifdef USE_OPENGL
 	return createGLViewportScreenshot();
-#elif
+#else
 	return nullptr;
 #endif
 }
@@ -46,7 +46,7 @@ Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
 bool useOpenGL() {
 #if defined(USE_OPENGL) || defined(USE_OPENGL_GAME)
 	return Graphics::Renderer::getAvailableTypes() & (Graphics::kRendererTypeOpenGLShaders | Graphics::kRendererTypeOpenGL);
-#elif
+#else
 	return false;
 #endif
 }
