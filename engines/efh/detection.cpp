@@ -22,6 +22,7 @@
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 
+#include "efh/detection.h"
 #include "efh/efh.h"
 
 namespace Efh {
@@ -40,7 +41,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_TTS)
 	},
 	// Escape From Hell English
 	{
@@ -48,7 +49,7 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
-		GUIO0()
+		GUIO1(GAMEOPTION_TTS)
 	},
 	AD_TABLE_END_MARKER
 };

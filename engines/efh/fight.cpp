@@ -92,6 +92,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		return true;
 	}
 
+	_sayMenu = false;
 	drawCombatScreen(0, false, true);
 
 	for (bool mainLoopCond = false; !mainLoopCond && !shouldQuit();) {
@@ -129,7 +130,7 @@ bool EfhEngine::handleFight(int16 monsterId) {
 		}
 
 		computeInitiatives();
-		displayBoxWithText("", 2, 1, false);
+		displayBoxWithText("", 2, 1, false, false);
 
 		for (uint counter = 0; counter < 8; ++counter) {
 			int16 monsterGroupIdOrMonsterId = _initiatives[counter]._id;
@@ -1000,10 +1001,15 @@ int16 EfhEngine::determineTeamTarget(int16 charId, int16 unkFied18Val, bool chec
 	}
 
 	do {
+		if (_teamMonster[1]._id != -1) {
+			_sayMenu = true;
+			sayText("Select Monster Group:", kMenu);
+		}
+
 		for (uint counter = 0; counter < 2; ++counter) {
 			drawCombatScreen(charId, true, false);
 			if (_teamMonster[1]._id != -1)
-				displayBoxWithText("Select Monster Group:", 3, 0, false);
+				displayBoxWithText("Select Monster Group:", 3, 0, false, false);
 
 			if (counter == 0)
 				displayFctFullScreen();
@@ -1034,7 +1040,9 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 	debugC(3, kDebugFight, "getTeamAttackRoundPlans");
 
 	bool retVal = false;
+	_sayLowStatusScreen = true;
 	for (int charId = 0; charId < _teamSize; ++charId) {
+		_sayMenu = true;
 		_teamChar[charId]._lastAction = 0;
 		if (!isTeamMemberStatusNormal(charId))
 			continue;
@@ -1044,23 +1052,29 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 			drawCombatScreen(_teamChar[charId]._id, false, true);
 			switch (handleAndMapInput(true)) {
 			case Common::KEYCODE_a: // Attack
+				sayText("Attack", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				_teamChar[charId]._lastAction = 'A';
 				_teamChar[charId]._nextAttack = determineTeamTarget(_teamChar[charId]._id, 9, true);
 				if (_teamChar[charId]._nextAttack == -1)
 					_teamChar[charId]._lastAction = 0;
 				break;
 			case Common::KEYCODE_d: // Defend
+				sayText("Defend", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				_teamChar[charId]._lastAction = 'D';
 				break;
 			case Common::KEYCODE_h: // Hide
+				sayText("Hide", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				_teamChar[charId]._lastAction = 'H';
 				break;
 			case Common::KEYCODE_r: // Run
+				sayText("Run", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				for (int counter2 = 0; counter2 < _teamSize; ++counter2) {
 					_teamChar[counter2]._lastAction = 'R';
 				}
 				return true;
 			case Common::KEYCODE_s: { // Status
+				sayText("Status", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+				_sayMenu = true;
 				int16 lastInvId = handleStatusMenu(2, _teamChar[charId]._id);
 				redrawCombatScreenWithTempText(_teamChar[charId]._id);
 				if (lastInvId >= 999) {
@@ -1122,7 +1136,9 @@ bool EfhEngine::getTeamAttackRoundPlans() {
 			} break;
 			case Common::KEYCODE_t: // Terrain
 				redrawScreenForced();
+				sayText("Terrain", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 				waitForKey();
+				_sayMenu = true;
 				drawCombatScreen(_teamChar[charId]._id, false, true);
 				break;
 			default:
@@ -1143,10 +1159,19 @@ void EfhEngine::drawCombatScreen(int16 charId, bool whiteFl, bool drawFl) {
 			displayCenteredString("Combat", 128, 303, 9);
 			drawColoredRect(200, 112, 278, 132, 0);
 			displayCenteredString("'T' for Terrain", 128, 303, 117);
-			displayBoxWithText("", 1, 0, false);
+			displayBoxWithText("", 1, 0, false, false);
+			if (!whiteFl) {
+				sayText(_npcBuf[charId]._name, kMenu);
+			}
 			displayEncounterInfo(whiteFl);
+			if (whiteFl) {
+				_sayMenu = false;
+			} else {
+				sayText("'T' for Terrain", kMenu);
+			}
 			displayCombatMenu(charId);
 			displayLowStatusScreen(false);
+			_sayMenu = false;
 		}
 
 		if (counter == 0 && drawFl)
@@ -1334,46 +1359,58 @@ void EfhEngine::displayEncounterInfo(bool whiteFl) {
 
 		setTextPos(129, textPosY);
 		Common::String buffer = Common::String::format("%c)", 'A' + counter);
+		Common::String ttsMessage = buffer + " ";
 		displayStringAtTextPos(buffer);
 		setTextColorRed();
 		int16 var1 = _mapMonsters[_techId][_teamMonster[counter]._id]._possessivePronounSHL6 & 0x3F;
 		if (var1 <= 0x3D) {
 			buffer = Common::String::format("%d %s", mobsterCount, kEncounters[_mapMonsters[_techId][_teamMonster[counter]._id]._monsterRef]._name);
+			ttsMessage += buffer;
 			displayStringAtTextPos(buffer);
-			if (mobsterCount > 1)
+			if (mobsterCount > 1) {
 				displayStringAtTextPos("s");
+				ttsMessage += "s";
+			}
 		} else if (var1 == 0x3E) {
 			displayStringAtTextPos("(NOT DEFINED)");
 		} else if (var1 == 0x3F) {
 			Common::String stringToDisplay = _npcBuf[_mapMonsters[_techId][_teamMonster[counter]._id]._npcId]._name;
 			displayStringAtTextPos(stringToDisplay);
+			ttsMessage += stringToDisplay;
 		}
 
 		setTextPos(228, textPosY);
 		if (checkMonsterMovementType(counter, true)) {
 			_textColor = 0xE;
 			displayStringAtTextPos("Hostile");
+			ttsMessage += ", Hostile, ";
 		} else {
 			_textColor = 0x2;
 			displayStringAtTextPos("Friendly");
+			ttsMessage += ", Friendly, ";
 		}
 
 		setTextColorRed();
 		switch (monsterDistance) {
 		case 1:
 			displayCenteredString("S", 290, 302, textPosY);
+			ttsMessage += "S";
 			break;
 		case 2:
 			displayCenteredString("M", 290, 302, textPosY);
+			ttsMessage += "M";
 			break;
 		case 3:
 			displayCenteredString("L", 290, 302, textPosY);
+			ttsMessage += "L";
 			break;
 		default:
 			displayCenteredString("?", 290, 302, textPosY);
+			ttsMessage += "?";
 			break;
 		}
 
+		sayText(ttsMessage, kMenu);
 		textPosY += 9;
 	}
 }
@@ -1680,6 +1717,12 @@ int16 EfhEngine::selectMonsterGroup() {
 		default:
 			break;
 		}
+	}
+
+	_sayMenu = true;
+	stopTextToSpeech();
+	if (retVal != -1 && retVal != 27) {
+		sayText(Common::String::format("%c", retVal + Common::KEYCODE_a), kNoRestriction);
 	}
 
 	return retVal;
