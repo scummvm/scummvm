@@ -698,8 +698,6 @@ BOOL CBarber::IsInRect(CRect cStk, CRect cCrd) {
  *
  ****************************************************************/
 BOOL CBarber::IsGameOver(CWnd *pWnd) {
-	CSound  cSound(pWnd, nullptr, 0);              // sound effects
-
 	/*****************************
 	* Determine if game is over. *
 	*****************************/
