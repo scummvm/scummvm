@@ -128,6 +128,7 @@ public:
 	SceneModule *loadModule(int index);
 	uint8 *fileData(int index, uint32 *fileSize);
 	uint8 *fileData(const Common::Path &file, uint32 *fileSize);
+	bool loadingCompleted();
 	Common::SeekableReadStream *readStream(int index);
 	Common::SeekableReadStream *readStream(const Common::Path &file);
 	Common::SeekableReadStreamEndian *readStreamEndian(int index, EndianMode em = kPlatformEndianness);
@@ -137,6 +138,7 @@ public:
 private:
 	Common::SearchSet _files;
 	SnatcherEngine *_vm;
+	uint32 _loadingTimer;
 	bool _bigEndianTarget;
 
 private:

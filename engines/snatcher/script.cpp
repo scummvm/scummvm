@@ -357,8 +357,10 @@ void CmdQueue::m_loadResource(const uint16 *&data) {
 			error("%s(): Unexpected target address 0x%08x", __FUNCTION__, dest);
 		}
 
-	} else {
-		// original: is file done loading
+		// We don't really check if the file has finished loading here (which it obviously has),
+		// we just try to emulate the original timing, since the original's delays are not always
+		// sufficient to match the desired total delay correctly.
+	} else if (_vm->_fio->loadingCompleted()) {
 		_progress = -1;
 	}
 }

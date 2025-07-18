@@ -24,6 +24,7 @@
 #include "snatcher/scene.h"
 
 #include "common/stream.h"
+#include "common/system.h"
 
 namespace Snatcher {
 
@@ -49,7 +50,7 @@ private:
 	bool _dispose;
 };
 
-FIO::FIO(SnatcherEngine *vm, bool isBigEndian) : _vm(vm), _bigEndianTarget(isBigEndian) {
+FIO::FIO(SnatcherEngine *vm, bool isBigEndian) : _vm(vm), _bigEndianTarget(isBigEndian), _loadingTimer(0) {
 	_files.add("global_search", &SearchMan, 0, false);
 }
 
@@ -61,6 +62,8 @@ SceneModule *FIO::loadModule(int index) {
 }
 
 uint8 *FIO::fileData(int index, uint32 *fileSize) {
+	if (index > 60)
+		debug("%s(): loading file %s", __FUNCTION__, _resFileList[index]);
 	return (index >= 0 && index < _resFileListSize) ? fileData(_resFileList[index], fileSize) : nullptr;
 }
 
@@ -80,7 +83,20 @@ uint8 *FIO::fileData(const Common::Path &file, uint32 *fileSize) {
 	s->read(data, size);
 	delete s;
 
+	// The single speed CD drive fetches one sector (2048 decoded bytes) every 13.5 milliseconds.
+	_loadingTimer = g_system->getMillis() + ((((size + 0x7FF) >> 11) * 27) >> 1);
+
 	return data;
+}
+
+bool FIO::loadingCompleted() {
+	if (_loadingTimer == 0)
+		return true;
+	if (g_system->getMillis() >= _loadingTimer) {
+		_loadingTimer = 0;
+		return true;
+	}
+	return false;
 }
 
 Common::SeekableReadStream *FIO::readStream(int index) {
