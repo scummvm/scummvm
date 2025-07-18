@@ -384,7 +384,7 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	newWindow->resizeInner(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
 	newWindow->setCallback(inventoryWindowCallback, this);
-	//newWindow->setCloseable(true);
+	newWindow->setCloseable(true);
 
 	_inventoryWindows.push_back(newWindow);
 
@@ -969,6 +969,29 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	return kNoWindow;
 }
 
+WindowReference Gui::findInventoryAtPoint(Common::Point point) {
+	Common::List<WindowData>::iterator it;
+	Graphics::MacWindow *win = nullptr;
+
+	for (auto &invWindow : _inventoryWindows) {
+		// Add window offset to get the actual coordinates (not relative to inv window)
+		Common::Point p(invWindow->_dims.left + point.x, invWindow->_dims.top + point.y);
+		win = _wm.findWindowAtPoint(p);
+	}
+
+	if (win) {
+		for (it = _windowData->begin(); it != _windowData->end(); it++) {
+			if (win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) {
+				Common::Point p(win->_dims.left + point.x, win->_dims.top + point.y);
+				if (win->getDimensions().contains(p)) {
+					return it->refcon;
+				}
+			}
+		}
+	}
+	return kNoWindow;
+}
+
 Common::Point Gui::getGlobalScrolledSurfacePosition(WindowReference reference) {
 	const WindowData &data = getWindowData(reference);
 	//BorderBounds border = borderBounds(data.type);
@@ -1404,12 +1427,17 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &eve
 
 bool Gui::processInventoryEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONDOWN && click == kBorderCloseButton) {
-		WindowReference ref = findWindowAtPoint(event.mouse);
+		WindowReference ref = findInventoryAtPoint(event.mouse);
 		if (ref == kNoWindow) {
 			return false;
 		}
 
 		if (click == kBorderCloseButton) {
+			WindowData &data = findWindowData((WindowReference)ref);
+			// HACK: Run script with "close" action
+			ScriptEngine *scriptEngine = _engine->getScriptEngine();
+			scriptEngine->runControl(kClose, data.objRef, 0, {0, 0});
+
 			removeInventoryWindow(ref);
 			return true;
 		}
@@ -1420,7 +1448,7 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event &event) {
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		// Find the appropriate window
-		WindowReference ref = findWindowAtPoint(event.mouse);
+		WindowReference ref = findInventoryAtPoint(event.mouse);
 		if (ref == kNoWindow) {
 			return false;
 		}

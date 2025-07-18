@@ -256,6 +256,7 @@ public:
 	uint getPrefixNdx(ObjID obj);
 	Common::String getPrefixString(uint flag, ObjID obj);
 	Common::String getNoun(ObjID ndx);
+	ScriptEngine *getScriptEngine() const { return _scriptEngine; }
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
