@@ -386,7 +386,7 @@ private:
 enum class FadeType {
 	ToBlack,
 	ToWhite
-	// TODO: Add CrossFade fade type
+	// Originally there was a CrossFade, but it is unused for now and thus not implemented
 };
 
 enum class PermanentFadeAction {

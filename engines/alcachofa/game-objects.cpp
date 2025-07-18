@@ -905,7 +905,8 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 void MainCharacter::clearInventory() {
 	for (auto *item : _items)
 		item->toggle(false);
-	// TODO: Clear held item on clearInventory
+	if (g_engine->player().activeCharacter() == this)
+		g_engine->player().heldItem() = nullptr;
 	g_engine->world().inventory().updateItemsByActiveCharacter();
 }
 
