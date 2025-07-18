@@ -8500,7 +8500,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
 	// Krakel Spektakel - Krakels ABC
-	MACGAME1_l("krakeldamm", "Hemglass V1.1", "xn--Krakels ABC, 7-9 r-lub", "r:2d2ac01320f4c2dce8e156cda5c73fe8", 1239087, Common::SV_SWE, 501),
+	MACGAME1_l("krakeldamm", "Hemglass V1.1", "xn--Krakels ABC, 7-9 r-lub", "r:2d2ac01320f4c2dce8e156cda5c73fe8", 719033, Common::SV_SWE, 501),
 	WINGAME1_l("krakeldamm", "Hemglass V1.1", "DAMMNT.EXE", "518a98696fe1122e08410b0f157f21bf", 1515971, Common::SV_SWE, 602),
 
 
