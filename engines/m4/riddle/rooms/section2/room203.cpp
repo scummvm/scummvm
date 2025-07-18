@@ -1151,6 +1151,7 @@ void Room203::daemon() {
 					triggerMachineByHashCallback, "pesky peasant");
 				_peasantShadow = TriggerMachineByHash(1, 1, 0, 0, 0, 0, 745, 325, 75, 0x800, false,
 					triggerMachineByHashCallback, "pesky peasant shadow");
+				peasantAnim1();
 				_peasantShould = 4118;
 				break;
 
