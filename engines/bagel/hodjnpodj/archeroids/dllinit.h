@@ -30,9 +30,6 @@ namespace Archeroids {
 
 HWND FAR PASCAL RunArch(HWND, LPGAMESTRUCT);
 
-BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL ProcessDllIdle();
-
 } // namespace Archeroids
 } // namespace HodjNPodj
 } // namespace Bagel

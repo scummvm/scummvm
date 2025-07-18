@@ -30,9 +30,6 @@ namespace DFA {
 
 HWND FAR PASCAL RunDFA(HWND, LPGAMESTRUCT);
 
-BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg);
-void FAR PASCAL ProcessDllIdle();
-
 } // namespace DFA
 } // namespace HodjNPodj
 } // namespace Bagel

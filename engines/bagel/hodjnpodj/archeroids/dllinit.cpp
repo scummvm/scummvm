@@ -94,24 +94,6 @@ HWND FAR PASCAL RunArch(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	return pMainWnd->m_hWnd;   // return the m_hWnd of your main game window
 }
 
-BOOL FAR PASCAL FilterDllMsg(LPMSG lpMsg) {
-	TRY {
-		return AfxGetApp()->PreTranslateMessage(lpMsg);
-	}
-	END_TRY
-	return FALSE;
-}
-
-void FAR PASCAL ProcessDllIdle() {
-	TRY {
-		// flush it all at once
-		long lCount = 0;
-		while (AfxGetApp()->OnIdle(lCount))
-			lCount++;
-	}
-	END_TRY
-}
-
 } // namespace Archeroids
 } // namespace HodjNPodj
 } // namespace Bagel
