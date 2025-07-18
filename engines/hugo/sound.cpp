@@ -120,9 +120,8 @@ void MidiPlayer::sendToChannel(byte channel, uint32 b) {
 
 SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 	_midiPlayer = new MidiPlayer();
-	_speakerStream = new Audio::PCSpeaker(_vm->_mixer->getOutputRate());
-	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
-						_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_speaker = new Audio::PCSpeaker();
+	_speaker->init();
 	_DOSSongPtr = nullptr;
 	_curPriority = 0;
 	_pcspkrTimer = 0;
@@ -133,8 +132,7 @@ SoundHandler::SoundHandler(HugoEngine *vm) : _vm(vm) {
 
 SoundHandler::~SoundHandler() {
 	_vm->getTimerManager()->removeTimerProc(&loopPlayer);
-	_vm->_mixer->stopHandle(_speakerHandle);
-	delete _speakerStream;
+	delete _speaker;
 	delete _midiPlayer;
 }
 
@@ -288,7 +286,7 @@ void SoundHandler::pcspkr_player() {
 	// Check the timer state..
 	if (!_pcspkrTimer) {
 		// A note just finished, stop the sound (if any) and return.
-		_speakerStream->stop();
+		_speaker->stop();
 		return;
 	} else if (_pcspkrTimer > 0) {
 		// A (rest or normal) note is still playing, return.
@@ -367,13 +365,13 @@ void SoundHandler::pcspkr_player() {
 			count *= (1 << (3 - _pcspkrOctave));
 
 		// Start a note playing (we will stop it when the timer expires).
-		_speakerStream->play(Audio::PCSpeaker::kWaveFormSquare, kHugoCNT / count, -1);
+		_speaker->play(Audio::PCSpeaker::kWaveFormSquare, kHugoCNT / count, -1);
 		_pcspkrTimer = _pcspkrNoteDuration;
 		_DOSSongPtr++;
 		break;
 	case '.':
 		// Play a 'rest note' by being silent for a bit.
-		_speakerStream->stop();
+		_speaker->stop();
 		_pcspkrTimer = _pcspkrNoteDuration;
 		_DOSSongPtr++;
 		break;

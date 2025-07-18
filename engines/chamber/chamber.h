@@ -85,8 +85,7 @@ public:
 	uint8 _fontWidth; ///< Font height
 
 
-	Audio::PCSpeaker *_speakerStream;
-	Audio::SoundHandle *_speakerHandle;
+	Audio::PCSpeaker *_speaker;
 
 private:
 	const ADGameDescription *_gameDescription;
