@@ -53,6 +53,9 @@ MacWindowBorder::MacWindowBorder() {
 	_borderOffsets.titleBottom = -1;
 	_borderOffsets.dark = false;
 	_borderOffsets.titlePos = 0;
+	_borderOffsets.closeButtonTop = -1;
+	_borderOffsets.closeButtonLeft = -1;
+	_borderOffsets.closeButtonWidth = 0;
 	_borderOffsets.upperScrollHeight = 0;
 	_borderOffsets.lowerScrollHeight = 0;
 
