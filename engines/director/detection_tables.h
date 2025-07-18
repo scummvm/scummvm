@@ -1532,7 +1532,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
 	{ "kosmopolska",		"Kosmopolska" },
-	{ "krakeldamm",		"Krakels ABC: Den galna dammsugaren/Mera Krakel" },
+	{ "krakeldamm",			"Krakels ABC: Den galna dammsugaren/Mera Krakel" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
 	{ "onsalakorv",			"Onsalakorv" },
 	{ "pettson1",			"Pettson o Findus i snickarbon" },
@@ -7134,6 +7134,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("keroncuel", "", "keron folder/KERONCUEL", "8f4da7096fa8725ad3ed3153811c9e38", 719664, Common::JA_JPN, 501),
 	WINGAME1t_l("keroncuel", "", "KERONFOL/KERONCUE.EXE", "4bf5fa422a92233d03280dfb30df4ed9", 1418708, Common::JA_JPN, 501),
 
+	// Krakel Spektakel - Krakels ABC
+	// Win version is D6
+	MACGAME1_l("krakeldamm", "Hemglass V1.1", "xn--Krakels ABC, 7-9 r-lub", "rt:88bb2f80f559465ed2219131866713a5", 719033, Common::SV_SWE, 501),
+
 	// Requires installation
 	// Windows files in DATA.1 (renamed InstallShield v3 archive)
 	// Mac files in Life in the Universe Installer
@@ -8500,7 +8504,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
 	// Krakel Spektakel - Krakels ABC
-	WINGAME1_l("krakeldamm", "Hemglass V1.1", "DAMMNT.EXE", "518a98696fe1122e08410b0f157f21bf", 1515971, Common::SV_SWE, 602),
+	// Mac version is D5
+	WINGAME1_l("krakeldamm", "Hemglass V1.1", "DAMMNT.EXE", "t:f371122bcd4ea0661b1eab4bf3e7f47a", 1515971, Common::SV_SWE, 602),
 
 
 	// Published by Future Soft of Nasr City, Cairo
