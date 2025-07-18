@@ -230,6 +230,7 @@ private: // Methods
 
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
+	WindowReference findInventoryAtPoint(Common::Point point);
 	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
