@@ -833,6 +833,10 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			_statusMenuActive = false;
 			return 0x7FFF;
 		}
+
+		if (shouldQuit()) {
+			return 0;
+		}
 	}
 
 	return 0;
