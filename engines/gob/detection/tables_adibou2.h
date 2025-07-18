@@ -278,6 +278,86 @@
 	0, 0, 0
 },
 
+// -- Add-ons : Read/Count 4-5 years --
+{
+	{
+		"adibou2readcount45",
+		"", // "Lecture/Calcul 4-5 ans"
+		AD_ENTRY2s("intro_ap.stk", "7ff46d8c804186d3a11bf6b921fac2c0", 40835594,
+				   "appli_01.vmd",  "11635be4aeaac46d199e7e37cf905240", 54402),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : Read/Count 6-7 years --
+{
+	{
+		"adibou2readcount67",
+		"", // "Lecture/Calcul 6-7 ans"
+		AD_ENTRY2s("intro_ap.stk", "0e91d0d693d5731353ad4738f4aa065c", 36540132,
+				   "appli_03.vmd", "6bf95a48f366bdf8af3a198c7b723c77", 58858),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : "Nature & Sciences" --
+{
+	{
+		"adibou2sciences",
+		"", // "Je découvre la nature et les sciences"
+		AD_ENTRY2s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
+				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : "Anglais" (English for non-native speakers) --
+{
+	{
+		"adibou2anglais",
+		"",
+		AD_ENTRY2s("intro_ap.stk", "1c83832cfeeace2a4b1b9ca448fc5322", 1967132,
+				   "LIPSYNC.ITK", "90ea1687c8d40989b5ff52c7ecaaf8b3", 107792384),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : Music --
+{
+	{
+		"adibou2music",
+		"",
+		AD_ENTRY2s("intro_ap.stk", "2147748e04ac11bd7155779e1456be07", 1631068,
+				   "MUZIKO.ITK", "101cd1690f13bf458e3988822a46e942", 54806528),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 // -- Demos --
 
 {

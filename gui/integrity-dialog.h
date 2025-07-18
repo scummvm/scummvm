@@ -83,7 +83,7 @@ public:
 	void checksumResponseCallback(const Common::JSONValue *r);
 	void errorCallback(const Networking::ErrorResponse &error);
 
-	void calculateTotalSize(Common::Path gamePath);
+	void calculateTotalSize(Common::Path gamePath, const Common::HashMap<Common::Path, bool, Common::Path::IgnoreCase_Hash, Common::Path::IgnoreCase_EqualTo> &ignoredSubdirsMap);
 
 	Common::Array<Common::StringArray> generateChecksums(Common::Path currentPath, Common::Array<Common::StringArray> &fileChecksums, Common::Path gamePath);
 	Common::JSONValue *generateJSONRequest(Common::Path gamePath, Common::String gameid, Common::String engineid, Common::String extra, Common::String platform, Common::String language);

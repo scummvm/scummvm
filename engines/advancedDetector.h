@@ -137,6 +137,7 @@ struct ADGameFileDescription {
  */
 enum ADGameFlags : uint {
 	ADGF_NO_FLAGS        =  0u,        ///< No flags.
+	ADGF_ADDON           = (1u << 15), ///< An add-on game, that cannot be run independently without its base game.
 	ADGF_TAILMD5         = (1u << 16), ///< Calculate the MD5 for this entry from the end of the file.
 	ADGF_AUTOGENTARGET   = (1u << 17), ///< Automatically generate gameid from @ref ADGameDescription::extra.
 	ADGF_UNSTABLE        = (1u << 18), ///< Flag to designate not yet officially supported games that are not fit for public testing.

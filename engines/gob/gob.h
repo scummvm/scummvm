@@ -87,6 +87,8 @@
  * - Croustibat
  */
 
+class GobMetaEngine;
+
 namespace Gob {
 
 class Game;
@@ -258,7 +260,11 @@ public:
 	~GobEngine() override;
 
 	void initGame(const GOBGameDescription *gd);
+
 	GameType getGameType(const char *gameId) const;
+	bool gameTypeHasAddOns() const override;
+	bool dirCanBeGameAddOn(Common::FSDirectory dir) const override;
+	bool dirMustBeGameAddOn(Common::FSDirectory dir) const override;
 
 	/**
 	 * Used to obtain the game version as a fallback

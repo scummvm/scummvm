@@ -463,6 +463,14 @@ void LauncherDialog::removeGame(int item) {
 		assert(item >= 0);
 		ConfMan.removeGameDomain(_domains[item]);
 
+		// Remove all the add-ons for this game
+		const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+		for (const auto &domain : domains) {
+			if (domain._value.getValOrDefault("parent") == _domains[item]) {
+				ConfMan.removeGameDomain(domain._key);
+			}
+		}
+
 		// Write config to disk
 		ConfMan.flushToDisk();
 
@@ -566,11 +574,14 @@ void LauncherDialog::loadGame(int item) {
 	PluginMan.loadDetectionPlugin(); // only for uncached manager
 }
 
-Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::ConfigManager::DomainMap &domains) {
+Common::Array<LauncherEntry> LauncherDialog::generateEntries(const Common::ConfigManager::DomainMap &domains, bool skipAddOns) {
 	Common::Array<LauncherEntry> domainList;
 	for (const auto &domain : domains) {
 		// Do not list temporary targets added when starting a game from the command line
 		if (domain._value.contains("id_came_from_command_line"))
+			continue;
+
+		if (skipAddOns && domain._value.contains("parent"))
 			continue;
 
 		Common::String description;
@@ -730,6 +741,11 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 
 	if (0 <= idx && idx < (int)candidates.size()) {
 		const DetectedGame &result = candidates[idx];
+		if (result.isAddOn) {
+			Engine::errorAddingAddOnWithoutBaseGame(result.description, result.gameId);
+			return true;
+		}
+
 		Common::String domain = EngineMan.createTargetForGame(result);
 
 		// Display edit dialog for the new entry
@@ -756,6 +772,11 @@ bool LauncherDialog::doGameDetection(const Common::Path &path) {
 
 void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	int item = getSelected();
+	bool isAddOn = false;
+	if (item >= 0) {
+		Common::ConfigManager::Domain *domain = ConfMan.getDomain(_domains[item]);
+		isAddOn = domain && domain->contains("parent");
+	}
 
 	switch (cmd) {
 	case kAddGameCmd:
@@ -772,15 +793,15 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 #endif
 	case kRemoveGameCmd:
-		if (item < 0) return;
+		if (item < 0 || isAddOn) return;
 		removeGame(item);
 		break;
 	case kEditGameCmd:
-		if (item < 0) return;
+		if (item < 0 || isAddOn) return;
 		editGame(item);
 		break;
 	case kLoadGameCmd:
-		if (item < 0) return;
+		if (item < 0 || isAddOn) return;
 		loadGame(item);
 		break;
 #ifdef ENABLE_EVENTRECORDER
@@ -801,7 +822,7 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kStartCmd:
 		// Start the selected game.
-		if (item < 0) return;
+		if (item < 0 || isAddOn) return;
 		ConfMan.setActiveDomain(_domains[item]);
 		close();
 		break;
@@ -1116,7 +1137,36 @@ void LauncherSimple::updateListing(int selPos) {
 	const bool scanEntries = (numEntries == -1) || ((int)domains.size() <= numEntries);
 
 	// Turn it into a sorted list of entries
-	Common::Array<LauncherEntry> domainList = generateEntries(domains);
+	Common::Array<LauncherEntry> domainList = generateEntries(domains, false);
+	Common::HashMap<Common::String, Common::Array<const LauncherEntry*>> addOnsMap;
+
+	for (const auto &curDomain : domainList) {
+		Common::String parentDomain;
+		if (curDomain.domain->tryGetVal("parent", parentDomain)) {
+			Common::Array<const LauncherEntry*> &gameAddOns = addOnsMap.getOrCreateVal(parentDomain);
+			gameAddOns.push_back(&curDomain);
+		}
+	}
+
+	if (!addOnsMap.empty()) {
+		// Rebuild the list by adding add-ons just next to their parent game
+		Common::Array<LauncherEntry> newDomainList;
+		for (const auto &curDomain : domainList) {
+			if (curDomain.domain->contains("parent"))
+				continue;
+
+			newDomainList.push_back(curDomain);
+			Common::Array<const LauncherEntry*> gameAddOns;
+			if (addOnsMap.tryGetVal(curDomain.key, gameAddOns)) {
+				// Add add-ons for this game
+				for (const auto *addOn : gameAddOns) {
+					newDomainList.push_back(*addOn);
+				}
+			}
+		}
+
+		domainList = newDomainList;
+	}
 
 	// And fill out our structures
 	for (const auto &curDomain : domainList) {
@@ -1133,7 +1183,15 @@ void LauncherSimple::updateListing(int selPos) {
 				// description += Common::String::format(" (%s)", _("Not found"));
 			}
 		}
+
+		bool isAddOn = curDomain.domain->contains("parent");
+		if (isAddOn)
+			color = ThemeEngine::kFontColorAlternate;
+
 		Common::U32String gameDesc = GUI::ListWidget::getThemeColor(color) + Common::U32String(curDomain.description);
+
+		if (isAddOn)
+			gameDesc += Common::U32String(" - ") + _("Add-on");
 
 		l.push_back(gameDesc);
 		_domains.push_back(curDomain.key);
@@ -1334,16 +1392,22 @@ void LauncherSimple::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 }
 
 void LauncherSimple::updateButtons() {
-	bool enable = (_list->getSelected() >= 0);
+	int item = _list->getSelected();
+	bool isAddOn = false;
+	if (item >= 0) {
+		const Common::ConfigManager::Domain *domain = ConfMan.getDomain(_domains[item]);
+		isAddOn = domain && domain->contains("parent");
+	}
+
+	bool enable = (item >= 0 && !isAddOn);
 
 	_startButton->setEnabled(enable);
 	_editButton->setEnabled(enable);
 	_removeButton->setEnabled(enable);
 
-	int item = _list->getSelected();
 	bool en = enable;
 
-	if (item >= 0)
+	if (item >= 0  && !isAddOn)
 		en = !(Common::checkGameGUIOption(GUIO_NOLAUNCHLOAD, ConfMan.get("guioptions", _domains[item])));
 
 	_loadButton->setEnabled(en);
@@ -1553,7 +1617,7 @@ void LauncherGrid::updateListing(int selPos) {
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 
 	// Turn it into a sorted list of entries
-	Common::Array<LauncherEntry> domainList = generateEntries(domains);
+	Common::Array<LauncherEntry> domainList = generateEntries(domains, true);
 
 	Common::Array<GridItemInfo> gridList;
 

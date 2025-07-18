@@ -27,6 +27,9 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/config-manager.h"
+#include "common/hashmap.h"
+
 #include "common/translation.h"
 
 #include "gob/gameidtotype.h"
@@ -75,8 +78,9 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 }
 
 Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const Gob::GOBGameDescription *gd) const {
-	*engine = new Gob::GobEngine(syst);
-	((Gob::GobEngine *)*engine)->initGame(gd);
+	Gob::GobEngine *gobEngine = new Gob::GobEngine(syst);
+	*engine = gobEngine;
+	gobEngine->initGame(gd);
 	return Common::kNoError;
 }
 
@@ -99,6 +103,30 @@ GameType GobEngine::getGameType(const char *gameId) const {
 	}
 
 	error("Unknown game ID: %s", gameId);
+}
+
+bool GobEngine::gameTypeHasAddOns() const {
+	return  getGameType() == kGameTypeAdibou1 ||
+			getGameType() == kGameTypeAdibou2 ||
+			getGameType() == kGameTypeAdi2 ||
+			getGameType() == kGameTypeAdi4;
+}
+
+
+// Accelerator, to discard some directories we know have no chance to be add-ons
+bool GobEngine::dirCanBeGameAddOn(Common::FSDirectory dir) const {
+	if (getGameType() == kGameTypeAdibou2)
+		return dir.hasFile("intro_ap.stk");
+
+	return true;
+}
+
+// To display a warning if a directory likely to be an add-on does not match anything
+bool GobEngine::dirMustBeGameAddOn(Common::FSDirectory dir) const {
+	if (getGameType() == kGameTypeAdibou2)
+		return dir.hasFile("intro_ap.stk");
+
+	return false;
 }
 
 void GobEngine::initGame(const GOBGameDescription *gd) {

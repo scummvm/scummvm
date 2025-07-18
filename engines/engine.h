@@ -22,6 +22,7 @@
 #ifndef ENGINES_ENGINE_H
 #define ENGINES_ENGINE_H
 
+#include "common/error.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/language.h"
@@ -39,6 +40,7 @@ class Mixer;
 }
 namespace Common {
 class Error;
+class FSDirectory;
 class EventManager;
 class SaveFileManager;
 class TimerManager;
@@ -592,6 +594,25 @@ public:
 	static bool warnUserAboutUnsupportedGame(Common::String msg = Common::String());
 
 	/**
+	 * Display a warning to the user that the game contains an add-not which is not
+	 * fully supported.
+	 *
+	 * @param addOnName The name of the add-on.
+	 *
+	 * @return True if the user chooses to start anyway, false otherwise.
+	 */
+	static bool warnUserAboutUnsupportedAddOn(Common::String addOnName);
+
+	/**
+	 * Display an error message to the user that the game is an add-on than cannot be
+	 * run independently.
+	 *
+	 * @param addOnName The name of the add-on.
+	 * @param gameId    The ID of the base game that this add-on requires.
+	 */
+	static void errorAddingAddOnWithoutBaseGame(Common::String addOnName, Common::String gameId);
+
+	/**
 	 * Display an error message to the user that the game is not supported.
 	 *
 	 * @param extraMsg  An extra message that will be appended to the default message.
@@ -670,6 +691,27 @@ public:
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
+
+	/**
+	 * Can the game type currently being played have add-ons?
+	 */
+	virtual	bool gameTypeHasAddOns() const;
+
+	/**
+	 * To discard some directories we know have no chance to be add-ons
+	 */
+	virtual bool dirCanBeGameAddOn(Common::FSDirectory dir) const;
+
+	/**
+	 * To display a warning if a directory likely to be an add-on does not match anything
+	 */
+	virtual bool dirMustBeGameAddOn(Common::FSDirectory dir) const;
+
+	/**
+	 * Update the add-ons targets associated with a base game (silently, unless some unsupported version is detected).
+	 */
+	Common::ErrorCode updateAddOns(const MetaEngine *metaEngine) const;
+
 
 protected:
 	/**
