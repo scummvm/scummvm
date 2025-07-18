@@ -247,7 +247,14 @@ void SceneScriptPS05::turnOnTV() {
 				ADQ_Add(kActorNewscaster, 130, kAnimationModeTalk);
 				ADQ_Add(kActorNewscaster, 140, kAnimationModeTalk);
 				ADQ_Add(kActorNewscaster, 150, kAnimationModeTalk);
-				if (_vm->_cutContent && Random_Query(1, 3) == 1) {
+				if (_vm->_cutContent && Game_Flag_Query(kFlagLutherLanceIsReplicant)) {
+					// NOTE This cut content restoration (Guzza saying "No comment") is intentionally
+					// made dependent on the flag for Luther and Lance being Replicants.
+					// This is because the news item can be replayed multiple times,
+					// so making Guzza's alternative quote depend on a random "dice" roll
+					// could create inconsistent statement from Guzza for the same situation.
+					// However, since this is a minor content restoration, not worth using
+					// a separate flag for it, we re-use kFlagLutherLanceIsReplicant here.
 					ADQ_Add(kActorGuzza, 1600, kAnimationModeTalk);
 				} else {
 					ADQ_Add(kActorGuzza, 1570, kAnimationModeTalk);
