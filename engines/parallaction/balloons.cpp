@@ -334,6 +334,8 @@ int BalloonManager_ns::setSingleBalloon(const Common::String &text, uint16 x, ui
 	w = _se.width() + 14;
 	h = _se.height() + 20;
 
+	_vm->sayText(text, Common::TextToSpeechManager::INTERRUPT);
+
 	int id = createBalloon(w+5, h, winding, 1);
 	Balloon *balloon = &_intBalloons[id];
 
@@ -379,6 +381,10 @@ int BalloonManager_ns::setDialogueBalloon(const Common::String &text, uint16 win
 void BalloonManager_ns::setBalloonText(uint id, const Common::String &text, TextColor textColor) {
 	Balloon *balloon = getBalloon(id);
 	balloon->surface->fillRect(balloon->innerBox, 1);
+
+	if (textColor != kUnselectedColor && !text.contains("%P")) {
+		_vm->sayText(text, Common::TextToSpeechManager::INTERRUPT);
+	}
 
 	_sw.write(text, MAX_BALLOON_WIDTH, _textColors[textColor], balloon->surface);
 }
@@ -426,6 +432,10 @@ void BalloonManager_ns::reset() {
 		_intBalloons[i].surface = nullptr;	// no need to delete surface, since it is done by Gfx
 	}
 	_numBalloons = 0;
+
+	if (_vm->_password.size() == 0) {
+		_vm->stopTextToSpeech();
+	}
 }
 
 
@@ -585,6 +595,8 @@ Graphics::Surface *BalloonManager_br::expandBalloon(Frames *data, int frameNum) 
 int BalloonManager_br::setSingleBalloon(const Common::String &text, uint16 x, uint16 y, uint16 winding, TextColor textColor) {
 	cacheAnims();
 
+	_vm->sayText(text, Common::TextToSpeechManager::INTERRUPT);
+
 	int id = _numBalloons;
 	Frames *src = nullptr;
 	int srcFrame = 0;
@@ -657,6 +669,11 @@ int BalloonManager_br::setDialogueBalloon(const Common::String &text, uint16 win
 
 void BalloonManager_br::setBalloonText(uint id, const Common::String &text, TextColor textColor) {
 	Balloon *balloon = getBalloon(id);
+
+	if (textColor != kUnselectedColor) {
+		_vm->sayText(text, Common::TextToSpeechManager::INTERRUPT);
+	}
+
 	_sw.write(text, 216, _textColors[textColor], balloon->surface);
 }
 
@@ -713,6 +730,8 @@ void BalloonManager_br::reset() {
 	}
 
 	_numBalloons = 0;
+
+	_vm->stopTextToSpeech();
 }
 
 void BalloonManager_br::cacheAnims() {

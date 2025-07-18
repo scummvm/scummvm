@@ -70,7 +70,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -96,7 +96,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -120,7 +120,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_MULT,
@@ -135,7 +135,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_Nippon,
 		GF_LANG_EN | GF_DEMO,
@@ -158,7 +158,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_Nippon,
 		GF_LANG_IT,
@@ -173,7 +173,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_IT | GF_LANG_MULT,
@@ -187,7 +187,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_DEMO,
@@ -201,7 +201,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_LANG_FR | GF_LANG_DE | GF_LANG_MULT,
@@ -215,7 +215,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_DEMO | ADGF_UNSTABLE,
-			GUIO1(GUIO_NOSPEECH)
+			GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 		},
 		GType_BRA,
 		GF_LANG_EN | GF_DEMO,
