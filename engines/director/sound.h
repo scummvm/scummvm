@@ -47,9 +47,10 @@ struct FadeParams {
 	int startTicks;
 	int lapsedTicks;
 	bool fadeIn;
+	bool autoStop;
 
-	FadeParams(int sv, int tv, int tt, int st, bool f) :
-		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f) {}
+	FadeParams(int sv, int tv, int tt, int st, bool f, bool as) :
+		startVol(sv), targetVol(tv), totalTicks(tt), startTicks(st), lapsedTicks(0), fadeIn(f), autoStop(as) {}
 };
 
 const uint16 kMinSampledMenu = 10;
@@ -136,6 +137,8 @@ struct SoundChannel {
 	SoundID lastPlayedSound;
 	bool stopOnZero; // Should the sound be stopped when the channel contains cast member 0?
 	byte volume;
+	int pitchShiftPercent;
+	int originalRate;
 	FadeParams *fade;
 
 	// a non-zero sound ID if the channel is a puppet. i.e. it's controlled by lingo
@@ -150,7 +153,7 @@ struct SoundChannel {
 	// a stop at the end of a loop.
 	Audio::LoopableAudioStream *loopPtr;
 
-	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr) {}
+	SoundChannel(): handle(), lastPlayedSound(SoundID()), stopOnZero(true), volume(255), originalRate(-1), pitchShiftPercent(100), fade(nullptr), puppet(SoundID()), newPuppet(false), movieChanged(false), loopPtr(nullptr) {}
 };
 
 class DirectorSound {
@@ -176,13 +179,13 @@ public:
 	DirectorSound(Window *window);
 	~DirectorSound();
 
-	SoundChannel *getChannel(uint8 soundChannel);
-	void playFile(Common::String filename, uint8 soundChannel);
+	SoundChannel *getChannel(int soundChannel);
+	void playFile(Common::String filename, int soundChannel);
 	void playMCI(Audio::AudioStream &stream, uint32 from, uint32 to);
-	void playStream(Audio::AudioStream &stream, uint8 soundChannel);
-	void playSound(SoundID soundId, uint8 soundChannel, bool forPuppet = false);
-	void playCastMember(CastMemberID memberID, uint8 soundChannel, bool forPuppet = false);
-	void playExternalSound(uint16 menu, uint16 submenu, uint8 soundChannel);
+	void playStream(Audio::AudioStream &stream, int soundChannel);
+	void playSound(SoundID soundId, int soundChannel, bool forPuppet = false);
+	void playCastMember(CastMemberID memberID, int soundChannel, bool forPuppet = false);
+	void playExternalSound(uint16 menu, uint16 submenu, int soundChannel);
 	void playFPlaySound(const Common::Array<Common::String> &fplayList);
 	void playFPlaySound();
 	void setSoundEnabled(bool enabled);
@@ -192,32 +195,34 @@ public:
 	void loadSampleSounds(uint type);
 	void unloadSampleSounds();
 
-	bool isChannelPuppet(uint8 soundChannel);
-	void setPuppetSound(SoundID soundId, uint8 soundChannel);
-	void playPuppetSound(uint8 soundChannel);
+	bool isChannelPuppet(int soundChannel);
+	void setPuppetSound(SoundID soundId, int soundChannel);
+	void playPuppetSound(int soundChannel);
 
 	bool getSoundEnabled() { return _enable; }
 
 	Common::String getCurrentSound() { return _currentSoundName; }
 
-	void registerFade(uint8 soundChannel, bool fadeIn, int ticks);
+	void registerFade(int soundChannel, int startVol, int targetVol, int ticks, bool autoStop = false);
+	void registerFade(int soundChannel, bool fadeIn, int ticks, bool autoStop = false);
 	bool fadeChannels();
 
-	bool isChannelActive(uint8 soundChannel);
-	uint8 getChannelVolume(uint8 soundChannel);
+	bool isChannelActive(int soundChannel);
+	uint8 getChannelVolume(int soundChannel);
 	void setChannelVolume(int channel, uint8 volume);
-	void stopSound(uint8 soundChannel);
+	void stopSound(int soundChannel);
 	void stopSound();
 	void setChannelDefaultVolume(int soundChannel);
+	void setChannelPitchShift(int soundChannel, int pitchShiftPercent);
 
 private:
-	void setLastPlayedSound(uint8 soundChannel, SoundID soundId, bool stopOnZero = true);
-	bool isLastPlayedSound(uint8 soundChannel, const SoundID &soundId);
-	bool shouldStopOnZero(uint8 soundChannel);
+	void setLastPlayedSound(int soundChannel, SoundID soundId, bool stopOnZero = true);
+	bool isLastPlayedSound(int soundChannel, const SoundID &soundId);
+	bool shouldStopOnZero(int soundChannel);
 
-	void setChannelVolumeInternal(uint8 soundChannel, uint8 volume);
+	void setChannelVolumeInternal(int soundChannel, uint8 volume);
 	bool assertChannel(int soundChannel);
-	void cancelFade(uint8 soundChannel);
+	void cancelFade(int soundChannel);
 };
 
 class AudioDecoder {

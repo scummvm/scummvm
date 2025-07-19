@@ -159,7 +159,7 @@ void Cursor::readFromCast(Datum cursorCasts) {
 }
 
 void Cursor::readBuiltinType(Datum resourceId) {
-	if (resourceId.equalTo(_cursorResId))
+	if (resourceId.type == _cursorResId.type && resourceId.equalTo(_cursorResId))
 		return;
 
 	if (resourceId.type != INT) {
@@ -194,7 +194,7 @@ void Cursor::readBuiltinType(Datum resourceId) {
 }
 
 void Cursor::readFromResource(Datum resourceId) {
-	if (resourceId == _cursorResId)
+	if (resourceId.type == _cursorResId.type && resourceId.equalTo(_cursorResId))
 		return;
 
 	if (resourceId.type != INT) {

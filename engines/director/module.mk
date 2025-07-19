@@ -146,6 +146,7 @@ MODULE_OBJS = \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/remixxcmd.o \
 	lingo/xlibs/serialportxobj.o \
+	lingo/xlibs/smallutil.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/spacemgr.o \
 	lingo/xlibs/stagetc.o \
@@ -155,6 +156,7 @@ MODULE_OBJS = \
 	lingo/xlibs/valkyrie.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/vmisonxfcn.o \
+	lingo/xlibs/vmpresent.o \
 	lingo/xlibs/volumelist.o \
 	lingo/xlibs/voyagerxsound.o \
 	lingo/xlibs/widgetxobj.o \
