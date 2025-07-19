@@ -61,7 +61,12 @@
 #endif
 	_controller.view = _view;
 
-	[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithFrame:rect]];
+	if (@available(iOS 13.0, *)) {
+		// iOS13 and later uses of UIScene.
+		// The keyWindow is setup by iOS7SceneDelegate
+	} else {
+		[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithFrame:rect]];
+	}
 
 	// Force creation of the shared instance on the main thread
 	iOS7_buildSharedOSystemInstance();
@@ -114,6 +119,21 @@
 
 - (BOOL)application:(UIApplication *)application shouldRestoreSecureApplicationState:(NSCoder *)coder {
 	return YES;
+}
+#endif
+
+#ifdef __IPHONE_13_0
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options API_AVAILABLE(ios(13.0)) {
+	// Called when a new scene session is being created.
+	UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"ScummVM Scene Configuration" sessionRole:connectingSceneSession.role];
+	[config setDelegateClass:NSClassFromString(@"iOS7SceneDelegate")];
+	return config;
+}
+
+- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions API_AVAILABLE(ios(13.0)) {
+	// Called when the user discards a scene session.
+	// Use this method to release any resources that were
+	// specific to the discarded scenes, as they will not return.
 }
 #endif
 
