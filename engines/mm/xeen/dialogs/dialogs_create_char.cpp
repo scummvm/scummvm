@@ -26,6 +26,43 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kCreateCharacterBasicInfoCount = 6;
+static const uint8 kCreateCharacterSideButtonCount = 3;
+
+#endif
+
+enum CreateCharacterButtonTTSTextIndex {
+	kCreateCharacterRoll = 0,
+	kCreateCharacterCreate = 1,
+	kCreateCharacterExit = 2,
+	kCreateCharacterMight = 3,
+	kCreateCharacterIntellect = 4,
+	kCreateCharacterPersonality = 5,
+	kCreateCharacterEndurance = 6,
+	kCreateCharacterSpeed = 7,
+	kCreateCharacterAccuracy = 8,
+	kCreateCharacterLuck = 9,
+	kCreateCharacterKnight = 10,
+	kCreateCharacterPaladin = 11,
+	kCreateCharacterArcher = 12,
+	kCreateCharacterCleric = 13,
+	kCreateCharacterSorcerer = 14,
+	kCreateCharacterRobber = 15,
+	kCreateCharacterNinja = 16,
+	kCreateCharacterBarbarian = 17,
+	kCreateCharacterDruid = 18,
+	kCreateCharacterRanger = 19,
+	kCreateCharacterSwapMight = 20,
+	kCreateCharacterSwapIntellect = 21,
+	kCreateCharacterSwapPersonality = 22,
+	kCreateCharacterSwapEndurance = 23,
+	kCreateCharacterSwapSpeed = 24,
+	kCreateCharacterSwapAccuracy = 25,
+	kCreateCharacterSwapLuck = 26
+};
+
 void CreateCharacterDialog::show(XeenEngine *vm) {
 	CreateCharacterDialog *dlg = new CreateCharacterDialog(vm);
 	dlg->execute();
@@ -104,9 +141,13 @@ void CreateCharacterDialog::execute() {
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(
 				w, 0, Common::Point(27, 102));
 
+			Common::String ttsMessage;
 			// Render all on-screen text
-			w.writeString(msg);
+			w.writeString(msg, false, &ttsMessage);
 			w.update();
+#ifdef USE_TTS
+			speakText(ttsMessage, false, classId != -1, selectedClass);
+#endif
 
 			// Draw the arrow for the selected class, if applicable
 			if (selectedClass != -1)
@@ -221,8 +262,12 @@ void CreateCharacterDialog::execute() {
 			party._roster[freeCharList[charIndex]]._faceSprites->draw(w, 0,
 				Common::Point(27, 102));
 
-			w.writeString(msg);
+			Common::String ttsMessage;
+			w.writeString(msg, false, &ttsMessage);
 			w.update();
+#ifdef USE_TTS
+			speakText(ttsMessage, true, classId != -1, selectedClass);
+#endif
 
 			if (selectedClass != -1) {
 				printSelectionArrow(selectedClass);
@@ -249,31 +294,31 @@ void CreateCharacterDialog::loadButtons() {
 	_icons.load("create.icn");
 
 	// Add buttons
-	addButton(Common::Rect(132, 98, 156, 118), Res.KeyConstants.DialogsCreateChar.KEY_ROLL, &_icons);
-	addButton(Common::Rect(132, 128, 156, 148), Res.KeyConstants.DialogsCreateChar.KEY_CREATE, &_icons);
+	addButton(Common::Rect(132, 98, 156, 118), Res.KeyConstants.DialogsCreateChar.KEY_ROLL, &_icons, kCreateCharacterRoll);
+	addButton(Common::Rect(132, 128, 156, 148), Res.KeyConstants.DialogsCreateChar.KEY_CREATE, &_icons, kCreateCharacterCreate);
 
-	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(132, 158, 156, 178), Common::KEYCODE_ESCAPE, &_icons, kCreateCharacterExit);
 	addButton(Common::Rect(86, 98, 110, 118), Common::KEYCODE_UP, &_icons);
 	addButton(Common::Rect(86, 120, 110, 140), Common::KEYCODE_DOWN, &_icons);
 
-	addButton(Common::Rect(168, 19, 192, 39), Res.KeyConstants.DialogsCreateChar.KEY_MGT, nullptr);
-	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT, nullptr);
-	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER, nullptr);
-	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END, nullptr);
-	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD, nullptr);
-	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY, nullptr);
-	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK, nullptr);
+	addButton(Common::Rect(168, 19, 192, 39), Res.KeyConstants.DialogsCreateChar.KEY_MGT, nullptr, kCreateCharacterMight);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT, nullptr, kCreateCharacterIntellect);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER, nullptr, kCreateCharacterPersonality);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END, nullptr, kCreateCharacterEndurance);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD, nullptr, kCreateCharacterSpeed);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY, nullptr, kCreateCharacterAccuracy);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK, nullptr, kCreateCharacterLuck);
 
-	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr);
-	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr);
-	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr);
-	addButton(Common::Rect(227, 52, 239, 62), 1003, nullptr);
-	addButton(Common::Rect(227, 63, 239, 73), 1004, nullptr);
-	addButton(Common::Rect(227, 74, 239, 84), 1005, nullptr);
-	addButton(Common::Rect(227, 85, 239, 95), 1006, nullptr);
-	addButton(Common::Rect(227, 96, 239, 106), 1007, nullptr);
-	addButton(Common::Rect(227, 107, 239, 117), 1008, nullptr);
-	addButton(Common::Rect(227, 118, 239, 128), 1009, nullptr);
+	addButton(Common::Rect(227, 19, 239, 29), 1000, nullptr, kCreateCharacterKnight);
+	addButton(Common::Rect(227, 30, 239, 40), 1001, nullptr, kCreateCharacterPaladin);
+	addButton(Common::Rect(227, 41, 239, 51), 1002, nullptr, kCreateCharacterArcher);
+	addButton(Common::Rect(227, 52, 239, 62), 1003, nullptr, kCreateCharacterCleric);
+	addButton(Common::Rect(227, 63, 239, 73), 1004, nullptr, kCreateCharacterSorcerer);
+	addButton(Common::Rect(227, 74, 239, 84), 1005, nullptr, kCreateCharacterRobber);
+	addButton(Common::Rect(227, 85, 239, 95), 1006, nullptr, kCreateCharacterNinja);
+	addButton(Common::Rect(227, 96, 239, 106), 1007, nullptr, kCreateCharacterBarbarian);
+	addButton(Common::Rect(227, 107, 239, 117), 1008, nullptr, kCreateCharacterDruid);
+	addButton(Common::Rect(227, 118, 239, 128), 1009, nullptr, kCreateCharacterRanger);
 }
 
 void CreateCharacterDialog::drawIcons() {
@@ -523,13 +568,21 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 	saveButtons();
 
 	addButton(Common::Rect(118, 58, 142, 78), Common::KEYCODE_ESCAPE, &_icons);
-	addButton(Common::Rect(168, 19, 192, 39),   Res.KeyConstants.DialogsCreateChar.KEY_MGT);
-	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT);
-	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER);
-	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END);
-	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD);
-	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY);
-	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK);
+	addButton(Common::Rect(168, 19, 192, 39),   Res.KeyConstants.DialogsCreateChar.KEY_MGT, nullptr, kCreateCharacterSwapMight);
+	addButton(Common::Rect(168, 43, 192, 63),   Res.KeyConstants.DialogsCreateChar.KEY_INT, nullptr, kCreateCharacterSwapIntellect);
+	addButton(Common::Rect(168, 67, 192, 87),   Res.KeyConstants.DialogsCreateChar.KEY_PER, nullptr, kCreateCharacterSwapPersonality);
+	addButton(Common::Rect(168, 91, 192, 111),  Res.KeyConstants.DialogsCreateChar.KEY_END, nullptr, kCreateCharacterSwapEndurance);
+	addButton(Common::Rect(168, 115, 192, 135), Res.KeyConstants.DialogsCreateChar.KEY_SPD, nullptr, kCreateCharacterSwapSpeed);
+	addButton(Common::Rect(168, 139, 192, 159), Res.KeyConstants.DialogsCreateChar.KEY_ACY, nullptr, kCreateCharacterSwapAccuracy);
+	addButton(Common::Rect(168, 163, 192, 183), Res.KeyConstants.DialogsCreateChar.KEY_LCK, nullptr, kCreateCharacterSwapLuck);
+
+#ifdef USE_TTS
+	for (uint i = 0; i < TOTAL_ATTRIBUTES; ++i) {
+		_buttonTexts.push_back(Res.STAT_NAMES[i]);
+	}
+
+	_vm->stopTextToSpeech();
+#endif
 
 	Window &w = windows[26];
 	w.open();
@@ -558,6 +611,11 @@ int CreateCharacterDialog::exchangeAttribute(int srcAttr) {
 
 	w.close();
 	restoreButtons();
+#ifdef USE_TTS
+	for (uint i = 0; i < TOTAL_ATTRIBUTES; ++i) {
+		_buttonTexts.pop_back();
+	}
+#endif
 	_buttonValue = 0;
 	return result;
 }
@@ -588,6 +646,9 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 		// Name aborted, so exit
 		return false;
 
+#ifdef USE_TTS
+	_vm->sayText(name, Common::TextToSpeechManager::INTERRUPT);
+#endif
 	// Save new character details
 	c.clear();
 	c._name = name;
@@ -639,6 +700,92 @@ bool CreateCharacterDialog::saveCharacter(Character &c, int classId, Race race, 
 	c._currentSp = c.getMaxSP();
 	return true;
 }
+
+#ifdef USE_TTS
+
+void CreateCharacterDialog::speakText(const Common::String &text, bool hasAttributeLabels, bool classSelected, int selectedClass) {
+	_vm->stopTextToSpeech();
+	uint index = 0;
+	bool addNewButtons = _buttonTexts.empty();
+
+	Common::String buttonTexts;
+	if (!hasAttributeLabels) {
+		// Roll/create/ESC buttons
+		if (addNewButtons) {
+			buttonTexts = addNextTextToButtons(text, index, kCreateCharacterSideButtonCount);
+		} else {
+			buttonTexts = getNextTextSection(text, index, kCreateCharacterSideButtonCount);
+		}
+
+		for (uint i = 0; i < TOTAL_ATTRIBUTES; ++i) {
+			getNextTextSection(text, index);
+		}
+	}
+
+	// Race/sex/class info
+	_vm->sayText(getNextTextSection(text, index, kCreateCharacterBasicInfoCount));
+
+	uint classIndex = 0;
+
+	// The selected class is at the very end of the string, but it should be voiced with the rest of the race/sex/class
+	// info, so find it here early and voice it
+	if (classSelected) {
+		uint endClassIndex = text.findLastNotOf('\n');
+
+		if (endClassIndex != Common::String::npos) {
+			for (uint i = endClassIndex; i >= index; --i) {
+				if (text[i] == '\n') {
+					classIndex = i;
+					_vm->sayText(text.substr(classIndex));
+					break;
+				}
+			}
+		}
+	}
+
+	if (!hasAttributeLabels) {
+		_vm->sayText(buttonTexts);
+	}
+
+	// Get attribute values
+	for (uint i = 0; i < TOTAL_ATTRIBUTES; ++i) {
+		Common::String attribute = Common::String(Res.STAT_NAMES[i]) + ": " + getNextTextSection(text, index);
+
+		if (addNewButtons) {
+			_buttonTexts.push_back(attribute);
+		} else {
+			_buttonTexts[i + kCreateCharacterSideButtonCount] = attribute;
+		}
+
+		_vm->sayText(attribute);
+	}
+
+	// Classes
+	for (int i = 0; i < TOTAL_CLASSES; ++i) {
+		Common::String buttonText;
+		if (_allowedClasses[i]) {
+			buttonText = getNextTextSection(text, index);
+		} else {
+			buttonText = "";
+			getNextTextSection(text, index);
+		}
+
+		if (addNewButtons) {
+			_buttonTexts.push_back(buttonText);
+		} else {
+			_buttonTexts[i + TOTAL_CLASSES] = buttonText;
+		}
+
+		if (i == selectedClass) {
+			_vm->sayText(buttonText);
+		}
+	}
+
+	// Skills
+	_vm->sayText(text.substr(index, classIndex - index));
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

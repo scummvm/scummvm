@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/scummsys.h"
 #include "mm/xeen/subtitles.h"
 #include "mm/xeen/events.h"
@@ -90,6 +91,13 @@ void Subtitles::setLine(int line) {
 	_lineSize = _lines[_lineNum].size();
 	_lineEnd = 1;
 	_displayLine.clear();
+
+#ifdef USE_TTS
+	// Only voice subtitles if there's no voice
+	if ((ConfMan.hasKey("subtitles") && ConfMan.getBool("subtitles")) || ConfMan.getInt("speech_volume") == 0) {
+		g_vm->sayText(_lines[_lineNum], Common::TextToSpeechManager::QUEUE_NO_REPEAT);
+	}
+#endif
 }
 
 bool Subtitles::active() const {
@@ -134,7 +142,8 @@ void Subtitles::show() {
 		// Subtitles aren't needed
 		reset();
 	} else {
-		if (timeElapsed()) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (timeElapsed() && (_lineEnd != _lineSize - 1 || !ttsMan || !ttsMan->isSpeaking())) {
 			_lineEnd = (_lineEnd + 1) % _lineSize;
 			int count;
 			if (Common::RU_RUS == g_vm->getLanguage())
@@ -159,9 +168,9 @@ void Subtitles::show() {
 		_boxSprites->draw(0, 0, Common::Point(36, 189));
 
 		// Write the subtitle line
-		windows[0].writeString(_displayLine);
+		windows[0].writeString(_displayLine, false);
 
-		if (_lineEnd == 0)
+		if (_lineEnd == 0 && (!ttsMan || !ttsMan->isSpeaking()))
 			reset();
 	}
 }

@@ -27,6 +27,12 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kCopyProtectionDirectionCount = 2;
+
+#endif
+
 bool CopyProtection::show(XeenEngine *vm) {
 	CopyProtection *dlg = new CopyProtection(vm);
 	int result = dlg->execute();
@@ -52,8 +58,13 @@ bool CopyProtection::execute() {
 		protEntry._pageNum, protEntry._lineNum, protEntry._wordNum);
 
 	w.open();
-	w.writeString(msg);
+	Common::String ttsMessage;
+	w.writeString(msg, false, &ttsMessage);
 	w.update();
+
+#ifdef USE_TTS
+	speakText(ttsMessage);
+#endif
 
 	for (int tryNum = 0; tryNum < 3 && !_vm->shouldExit(); ++tryNum) {
 		line.clear();
@@ -96,6 +107,18 @@ void CopyProtection::loadEntries() {
 		_entries.push_back(pe);
 	}
 }
+
+#ifdef USE_TTS
+
+void CopyProtection::speakText(const Common::String &text) const {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+	// Combine the directions so they're spoken cleanly as one sentence
+	_vm->sayText(getNextTextSection(text, index, kCopyProtectionDirectionCount, " "));
+	_vm->sayText(text.substr(index));
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

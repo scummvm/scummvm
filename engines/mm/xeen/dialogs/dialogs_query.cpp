@@ -61,6 +61,9 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 		}
 	}
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	w.writeString(msg);
 	w.update();
 
@@ -84,6 +87,9 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 		}
 	}
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	events.clearEvents();
 	w.close();
 	return result;

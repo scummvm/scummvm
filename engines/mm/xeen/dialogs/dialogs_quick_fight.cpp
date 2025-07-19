@@ -26,6 +26,18 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kQuickFightInfoCount = 4;
+static const uint8 kQuickFightButtonCount = 2;
+
+#endif
+
+enum QuickFightButtonTTSTextIndex {
+	kQuickFightNext = 0,
+	kQuickFightExit = 1
+};
+
 void QuickFight::show(XeenEngine *vm, Character *currentChar) {
 	QuickFight *dlg = new QuickFight(vm, currentChar);
 	dlg->execute();
@@ -45,14 +57,23 @@ void QuickFight::execute() {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
 	w.open();
+	bool ttsVoiceText = true;
 
 	do {
 		// Draw the dialog text and buttons
 		Common::String msg = Common::String::format(Res.QUICK_FIGHT_TEXT,
 			_currentChar->_name.c_str(),
 			Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption]);
-		w.writeString(msg);
+		Common::String ttsMessage;
+		w.writeString(msg, ttsVoiceText, &ttsMessage);
 		drawButtons(&w);
+
+#ifdef USE_TTS
+		if (ttsVoiceText) {
+			setUpButtons(ttsMessage);
+			ttsVoiceText = false;
+		}
+#endif
 
 		// Wait for selection
 		_buttonValue = 0;
@@ -76,11 +97,17 @@ void QuickFight::execute() {
 			if (charIdx < (int)combat._combatParty.size()) {
 				// Highlight new character
 				_currentChar = &party._activeParty[charIdx];
+#ifdef USE_TTS
+				_vm->sayText(_currentChar->_name + ": " + Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption], Common::TextToSpeechManager::INTERRUPT);
+#endif	
 				intf.highlightChar(charIdx);
 			}
 		} else if (Common::KEYCODE_n == _buttonValue || 
 				   Res.KeyConstants.DialogsQuickFight.KEY_NEXT == _buttonValue) {
 			_currentChar->_quickOption = (QuickAction)(((int)_currentChar->_quickOption + 1) % 4);
+#ifdef USE_TTS
+			_vm->sayText(Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption], Common::TextToSpeechManager::INTERRUPT);
+#endif
 		}
 	} while (_buttonValue != Common::KEYCODE_RETURN && _buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -90,10 +117,22 @@ void QuickFight::execute() {
 
 void QuickFight::loadButtons() {
 	_icons.load("train.icn");
-	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons, kQuickFightExit);
 
-	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons, kQuickFightNext);
 }
+
+#ifdef USE_TTS
+
+void QuickFight::setUpButtons(const Common::String &text) {
+	if (_buttonTexts.empty()) {
+		uint index = 0;
+		getNextTextSection(text, index, kQuickFightInfoCount);
+		addNextTextToButtons(text, index, kQuickFightButtonCount);
+	}
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

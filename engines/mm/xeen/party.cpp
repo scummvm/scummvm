@@ -722,6 +722,9 @@ void Party::giveTreasure() {
 	events.clearEvents();
 	w.close();
 	w.open();
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	w.writeString(Common::String::format(Res.PARTY_FOUND, _treasure._gold, _treasure._gems));
 	w.update();
 
@@ -801,6 +804,9 @@ void Party::giveTreasure() {
 	_gems += _treasure._gems;
 	_treasure._gold = 0;
 	_treasure._gems = 0;
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 
 	_treasure._hasItems = false;
 	_treasure.clear();
@@ -850,7 +856,12 @@ void Party::giveTreasureToCharacter(Character &c, ItemCategory category, int ite
 	if (index >= (_vm->getGameID() == GType_Swords ? 88 : 82)) {
 		// Quest item, give an extra '*' prefix
 		Common::String format = Common::String::format("\f04 * \fd%s", itemName);
-		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), getFoundForm(c), format.c_str()));
+		Common::String ttsMessage;
+		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), getFoundForm(c), format.c_str()), false, &ttsMessage);
+#ifdef USE_TTS
+		ttsMessage.replace('*', ' ');
+		_vm->sayText(ttsMessage);
+#endif
 	} else {
 		w.writeString(Common::String::format(Res.X_FOUND_Y, c._name.c_str(), getFoundForm(c), itemName));
 	}

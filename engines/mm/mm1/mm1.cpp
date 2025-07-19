@@ -24,6 +24,7 @@
 #include "common/debug-channels.h"
 #include "common/file.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -72,6 +73,14 @@ Common::Error MM1Engine::run() {
 	// Setup mixer
 	_sound = new Sound(_mixer);
 	syncSoundSettings();
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+#endif
 
 	// Setup console
 	setDebugger(new Console());

@@ -257,6 +257,9 @@ int Scripts::checkEvents() {
 	} else {
 		Window &w = windows[38];
 		w.open();
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		w.writeString(Res.NOTHING_HERE);
 		w.update();
 
@@ -266,7 +269,9 @@ int Scripts::checkEvents() {
 			events.wait(1);
 		} while (!events.isKeyMousePressed() && !_vm->shouldExit());
 		events.clearEvents();
-
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		w.close();
 	}
 

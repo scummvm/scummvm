@@ -259,6 +259,8 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 	screen.update();
 	_subtitles.setLine(0);
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+
 	// Loop through each spoken line
 	int ctr1 = 0, ctr2 = 0, ctr3 = 0, ctr4 = 0, ctr5 = 0, totalCtr = 0;
 	for (int lineCtr = 0; lineCtr < 14; ++lineCtr) {
@@ -337,7 +339,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			case 12:
 			case 13: {
 				crodo.draw(0, 0, Common::Point(0, -5));
-				windows[0].writeString(Res.CLOUDS_INTRO1);
+				windows[0].writeString(Res.CLOUDS_INTRO1, false);
 
 				ctr5 = (ctr5 + 1) % 19;
 
@@ -350,7 +352,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 				if (lookup > 30)
 					lookup = 30;
 				frameCtr = _INTRO_FRAMES_VALS[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
-				windows[0].writeString(Res.CLOUDS_INTRO1);
+				windows[0].writeString(Res.CLOUDS_INTRO1, false);
 
 				ctr5 = (ctr5 + 1) % 19;
 				break;
@@ -359,7 +361,7 @@ bool CloudsCutscenes::showCloudsIntroInner() {
 			uint expiry = _INTRO_FRAMES_WAIT[_INTRO_FRAMES_LOOKUP[lineCtr]][lookup];
 			do {
 				WAIT(1);
-			} while (events.timeElapsed1() < expiry);
+			} while (events.timeElapsed1() < expiry || (!sound.isSoundPlaying() && ttsMan && ttsMan->isSpeaking()));
 
 			++lookup;
 			if (!sound._fxOn && lookup > 30)

@@ -28,6 +28,18 @@ namespace MM {
 namespace Xeen {
 namespace SwordsOfXeen {
 
+#ifdef USE_TTS
+
+static const char *swordsMainMenuButtons = "Start\nLoad\nView Credits";
+
+#endif
+
+enum SwordsMainMenuButtonTTSTextIndex {
+	kSwordsStart = 0,
+	kSwordsLoad = 1,
+	kSwordsCredits = 2
+};
+
 void MainMenu::show(XeenEngine *vm) {
 	MainMenu *dlg = new MainMenu(vm);
 	dlg->execute();
@@ -48,6 +60,9 @@ void MainMenu::execute() {
 	events.setCursor(0);
 	events.showCursor();
 	sound.playSong("newbrigh.m");
+#ifdef USE_TTS
+	setButtonTexts(swordsMainMenuButtons);
+#endif
 
 	do {
 		// Draw the screen
@@ -99,9 +114,9 @@ void MainMenu::execute() {
 }
 
 void MainMenu::loadButtons() {
-	addButton(Common::Rect(93, 87, 227, 97), Common::KEYCODE_s);
-	addButton(Common::Rect(93, 98, 227, 108), Common::KEYCODE_l);
-	addButton(Common::Rect(93, 110, 227, 120), Common::KEYCODE_v);
+	addButton(Common::Rect(93, 87, 227, 97), Common::KEYCODE_s, nullptr, kSwordsStart);
+	addButton(Common::Rect(93, 98, 227, 108), Common::KEYCODE_l, nullptr, kSwordsLoad);
+	addButton(Common::Rect(93, 110, 227, 120), Common::KEYCODE_v, nullptr, kSwordsCredits);
 }
 
 } // End of namespace SwordsOfXeen

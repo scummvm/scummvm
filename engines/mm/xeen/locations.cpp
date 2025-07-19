@@ -34,6 +34,57 @@ namespace MM {
 namespace Xeen {
 namespace Locations {
 
+#ifdef USE_TTS
+	static const uint8 kBankButtonCount = 3;
+
+	static const uint8 kTavernOptionsCount = 4;
+	static const uint8 kTavernButtonCount = 2;
+
+	static const uint8 kTempleOptionsCount = 3;
+
+	static const uint8 kTrainingButtonCount = 2;
+	static const uint8 kTrainingIneligibleInfoCount = 2;
+	static const uint8 kTrainingEligibleInfoCount = 4;
+#endif
+
+enum BankButtonTTSTextIndex {
+	kBankDeposit = 0,
+	kBankWithdraw = 1,
+	kBankEscape = 2
+};
+
+enum BlacksmithButtonTTSTextIndex {
+	kBlacksmithBrowse = 0,
+	kBlacksmithExit = 1
+};
+
+enum GuildButtonTTSTextIndex {
+	kGuildBuySpells = 0,
+	kGuildSpellInfo = 1,
+	kGuildExit = 2
+};
+
+enum TavernButtonTTSTextIndex {
+	kTavernDrink = 0,
+	kTavernFood = 1,
+	kTavernTip = 2,
+	kTavernRumors = 3,
+	kTavernSignIn = 4,
+	kTavernExit = 5
+};
+
+enum TempleButtonTTSTextIndex {
+	kTempleHeal = 0,
+	kTempleDonation = 1,
+	kTempleUncurse = 2,
+	kTempleExit = 3
+};
+
+enum TrainingButtonTTSTextIndex {
+	kTrainingTrain = 0,
+	kTrainingExit = 1
+};
+
 BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
 		_locationActionId(action), _ccNum(g_vm->_files->_ccNum),
 		_vocName("hello1.voc"), _exitToUi(false) {
@@ -48,6 +99,10 @@ BaseLocation::BaseLocation(LocationAction action) : ButtonContainer(g_vm),
 	_farewellTime = 0;
 	_drawCtr1 = _drawCtr2 = 0;
 	_animPos = Common::Point(8, 8);
+	_ttsVoiceText = false;
+#ifdef USE_TTS
+	_resetText = false;
+#endif
 }
 
 BaseLocation::~BaseLocation() {
@@ -92,8 +147,19 @@ int BaseLocation::show() {
 		if (_vm->shouldExit() || _exitToUi)
 			return 0;
 
+		Common::String ttsMessage;
 		Common::String msg = createLocationText(*charP);
-		windows[10].writeString(msg);
+		windows[10].writeString(msg, _ttsVoiceText, &ttsMessage);
+		_ttsVoiceText = false;
+
+#ifdef USE_TTS
+		if (_resetText) {
+			_buttonTexts.clear();
+			speakTextAndButtons(ttsMessage);
+			_resetText = false;
+		}
+#endif
+
 		drawButtons(&windows[0]);
 	} while (_buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -135,8 +201,12 @@ void BaseLocation::drawWindow() {
 	// Open up the window and write the string
 	intf.assembleBorder();
 	windows[10].open();
-	windows[10].writeString(title);
+	Common::String ttsMessage;
+	windows[10].writeString(title, false, &ttsMessage);
 	drawButtons(&windows[0]);
+#ifdef USE_TTS
+	speakTextAndButtons(ttsMessage);
+#endif
 
 	windows[0].update();
 	intf.highlightChar(0);
@@ -303,9 +373,9 @@ int BaseLocation::wait() {
 BankLocation::BankLocation() : BaseLocation(BANK) {
 	_icons1.load("bank.icn");
 	_icons2.load("bank2.icn");
-	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.Locations.KEY_DEP, &_icons1);
-	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.Locations.KEY_WITH, &_icons1);
-	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.Locations.KEY_DEP, &_icons1, kBankDeposit);
+	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.Locations.KEY_WITH, &_icons1, kBankWithdraw);
+	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_icons1, kBankEscape);
 	_animFrame = 1;
 
 	_vocName = _ccNum ? "bank1.voc" : "banker.voc";
@@ -372,9 +442,15 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		XeenEngine::printMil(gems).c_str());
 
 	w.open();
-	w.writeString(msg);
+	Common::String ttsMessage;
+	w.writeString(msg, false, &ttsMessage);
 	drawButtons(&w);
 	w.update();
+
+#ifdef USE_TTS
+	Common::String oldButtonTexts[kBankButtonCount];
+	speakDepositWithdrawalText(ttsMessage, oldButtonTexts);
+#endif
 
 	sound.stopSound();
 	File voc("coina.voc");
@@ -437,8 +513,12 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 		}
 	} while (!g_vm->shouldExit());
 
-	for (uint idx = 0; idx < _buttons.size(); ++idx)
+	for (uint idx = 0; idx < _buttons.size(); ++idx) {
 		_buttons[idx]._sprites = &_icons1;
+#ifdef USE_TTS
+		_buttonTexts[idx] = oldButtonTexts[idx];
+#endif
+	}
 	_buttons[0]._value = Res.KeyConstants.Locations.KEY_DEP;
 	_buttons[1]._value = Res.KeyConstants.Locations.KEY_WITH;
 	_buttons[2]._value = Common::KEYCODE_ESCAPE;
@@ -447,13 +527,60 @@ void BankLocation::depositWithdrawl(PartyBank whereId) {
 	clearEvents();
 }
 
+#ifdef USE_TTS
+
+void BankLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+
+	// Dep/With/ESC buttons
+	Common::String buttonTexts = addNextTextToButtons(text, index, kBankButtonCount);
+
+	// Header ("Bank of ..." and "Bank")
+	_vm->sayText(getNextTextSection(text, index, 2));
+
+	// Bank gold and gems
+	for (uint8 i = 0; i < 2; ++i) {
+		_vm->sayText(getNextTextSection(text, index, 2, ": "));
+	}
+
+	// Header ("Party")
+	_vm->sayText(getNextTextSection(text, index));
+
+	// Party gold and gems
+	for (uint8 i = 0; i < 2; ++i) {
+		_vm->sayText(getNextTextSection(text, index, 2, ": "));
+	}
+
+	_vm->sayText(buttonTexts);
+}
+
+void BankLocation::speakDepositWithdrawalText(const Common::String &text, Common::String oldButtonTexts[]) {
+	uint index = 0;
+	// Title
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+
+	// Gold and gems
+	for (uint8 i = 0; i < 2; ++i) {
+		_vm->sayText(getNextTextSection(text, index, 2, ": "));
+	}
+
+	// New buttons
+	for (uint i = 0; i < _buttonTexts.size(); ++i) {
+		oldButtonTexts[i] = _buttonTexts[i];
+		_buttonTexts[i] = getNextTextSection(text, index);
+		_vm->sayText(_buttonTexts[i]);
+	}
+}
+
+#endif
+
 /*------------------------------------------------------------------------*/
 
 BlacksmithLocation::BlacksmithLocation() : BaseLocation(BLACKSMITH) {
 	_icons1.load("esc.icn");
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1, kBlacksmithExit);
 	addButton(Common::Rect(234, 54, 308, 62), 0);
-	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BROWSE);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BROWSE, nullptr, kBlacksmithBrowse);
 	addButton(Common::Rect(234, 74, 308, 82), 0);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
@@ -475,6 +602,9 @@ Character *BlacksmithLocation::doOptions(Character *c) {
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
+#ifdef USE_TTS
+			_vm->sayText(c->_name, Common::TextToSpeechManager::INTERRUPT);
+#endif
 			intf.highlightChar(_buttonValue);
 		}
 	} else if (_buttonValue == Res.KeyConstants.Locations.KEY_BROWSE) {
@@ -497,15 +627,34 @@ void BlacksmithLocation::farewell() {
 	}
 }
 
+#ifdef USE_TTS
+
+void BlacksmithLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+	// Header ("Store options for" and character name)
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+
+	// Browse option
+	_vm->sayText(addNextTextToButtons(text, index));
+
+	// Gold
+	_vm->sayText(getNextTextSection(text, index, 2, ": "));
+
+	// ESC button
+	_vm->sayText(addNextTextToButtons(text, index));
+}
+
+#endif
+
 /*------------------------------------------------------------------------*/
 
 GuildLocation::GuildLocation() : BaseLocation(GUILD) {
 	loadStrings("spldesc.bin");
 	_icons1.load("esc.icn");
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1, kGuildExit);
 	addButton(Common::Rect(234, 54, 308, 62), 0);
-	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BUY_SPELLS);
-	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_SPELL_INFO);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_BUY_SPELLS, nullptr, kGuildBuySpells);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_SPELL_INFO, nullptr, kGuildSpellInfo);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 	g_vm->_mode = MODE_INTERACTIVE7;
 
@@ -532,7 +681,10 @@ Character *GuildLocation::doOptions(Character *c) {
 		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
 			intf.highlightChar(_buttonValue);
-
+#ifdef USE_TTS
+			_vm->stopTextToSpeech();
+			_resetText = true;
+#endif
 			if (!c->guildMember()) {
 				sound.stopSound();
 				_animFrame = 5;
@@ -554,6 +706,38 @@ Character *GuildLocation::doOptions(Character *c) {
 	return c;
 }
 
+#ifdef USE_TTS
+
+void GuildLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+	bool isInGuild = g_vm->_party->_activeParty[_buttonValue].guildMember();
+
+	// Header
+	if (isInGuild) {	// "Guild options for" and character name
+		_vm->sayText(getNextTextSection(text, index, 2, " "));
+	} else {	// "Guild options for" and "need to be a member"
+		_vm->sayText(getNextTextSection(text, index, 2));
+	}
+
+	_buttonTexts.clear();
+
+	if (isInGuild) {
+		// Options
+		_vm->sayText(addNextTextToButtons(text, index, 2));
+	} else {
+		// Add empty buffers for the usual options strings, so the escape button aligns properly with the text
+		_buttonTexts.resize(2);
+	}
+
+	// Gold
+	_vm->sayText(getNextTextSection(text, index, 2, ": "));
+
+	// ESC
+	_vm->sayText(addNextTextToButtons(text, index));
+}
+
+#endif
+
 /*------------------------------------------------------------------------*/
 
 TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
@@ -564,12 +748,12 @@ TavernLocation::TavernLocation() : BaseLocation(TAVERN) {
 
 	loadStrings("tavern.bin");
 	_icons1.load("tavern.icn");
-	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_SIGN_IN, &_icons1);
-	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_DRINK);
-	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_FOOD);
-	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_TIP);
-	addButton(Common::Rect(234, 84, 308, 92), Res.KeyConstants.Locations.KEY_RUMORS);
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1, kTavernExit);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_SIGN_IN, &_icons1, kTavernSignIn);
+	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_DRINK, nullptr, kTavernDrink);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_FOOD, nullptr, kTavernFood);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_TIP, nullptr, kTavernTip);
+	addButton(Common::Rect(234, 84, 308, 92), Res.KeyConstants.Locations.KEY_RUMORS, nullptr, kTavernRumors);
 	g_vm->_mode = MODE_INTERACTIVE7;
 
 	_vocName = _ccNum ? "hello1.voc" : "hello.voc";
@@ -601,6 +785,9 @@ Character *TavernLocation::doOptions(Character *c) {
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
+#ifdef USE_TTS
+			_vm->sayText(c->_name, Common::TextToSpeechManager::INTERRUPT);
+#endif
 			intf.highlightChar(_buttonValue);
 			_v21 = 0;
 		}
@@ -612,9 +799,18 @@ Character *TavernLocation::doOptions(Character *c) {
 				sound.playSound("gulp.voc");
 				_v21 = 1;
 
+#ifdef USE_TTS
+				// Disable voicing for option buttons
+				disableButtonVoicing(2, _buttons.size());
+#endif
+
+				Common::String ttsMessage;
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 					c->_name.c_str(), Res.GOOD_STUFF,
-					XeenEngine::printMil(party._gold).c_str()));
+					XeenEngine::printMil(party._gold).c_str()), false, &ttsMessage);
+#ifdef USE_TTS
+				speakNotificationText(ttsMessage);
+#endif
 				drawButtons(&windows[0]);
 				windows[10].update();
 
@@ -625,6 +821,10 @@ Character *TavernLocation::doOptions(Character *c) {
 				}
 
 				wait();
+#ifdef USE_TTS
+				_vm->stopTextToSpeech();
+				enableButtonVoicing(2, _buttons.size());
+#endif
 			}
 		}
 	} else if (Res.KeyConstants.Locations.KEY_FOOD == _buttonValue) {
@@ -663,7 +863,13 @@ Character *TavernLocation::doOptions(Character *c) {
 
 		if (YesNo::show(_vm, false, true)) {
 			if (party._food >= _v22) {
+#ifdef USE_TTS
+				disableButtonVoicing(0, _buttons.size());
+#endif
 				ErrorScroll::show(_vm, Res.FOOD_PACKS_FULL, WT_LOC_WAIT);
+#ifdef USE_TTS
+				enableButtonVoicing(0, _buttons.size());
+#endif
 			} else if (party.subtract(CONS_GOLD, _v23, WHERE_PARTY, WT_LOC_WAIT)) {
 				party._food = _v22;
 				sound.stopSound();
@@ -673,6 +879,9 @@ Character *TavernLocation::doOptions(Character *c) {
 
 		windows[12].close();
 		windows[10].open();
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+#endif
 		_buttonValue = 0;
 	} else if (Res.KeyConstants.Locations.KEY_RUMORS == _buttonValue) {
 		// Rumors
@@ -684,6 +893,9 @@ Character *TavernLocation::doOptions(Character *c) {
 			idx = 20;
 		}
 
+#ifdef USE_TTS
+		disableButtonVoicing(0, _buttons.size());
+#endif
 		Common::String msg = Common::String::format("\x03""c\x0B""012%s",
 			_textStrings[(party._day % 10) + idx].c_str());
 		Window &w = windows[12];
@@ -692,6 +904,10 @@ Character *TavernLocation::doOptions(Character *c) {
 		w.update();
 
 		wait();
+#ifdef USE_TTS
+		enableButtonVoicing(0, _buttons.size());
+		_vm->stopTextToSpeech();
+#endif
 		w.close();
 	} else if (Res.KeyConstants.Locations.KEY_SIGN_IN == _buttonValue) {
 		// Sign In
@@ -760,21 +976,46 @@ Character *TavernLocation::doOptions(Character *c) {
 	} else if (Res.KeyConstants.Locations.KEY_TIP == _buttonValue) {
 		if (!c->noActions()) {
 			if (!_v21) {
+#ifdef USE_TTS
+				disableButtonVoicing(0, _buttons.size());
+#endif
+				Common::String ttsMessage;
 				windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 					c->_name.c_str(), Res.HAVE_A_DRINK,
-					XeenEngine::printMil(party._gold).c_str()));
+					XeenEngine::printMil(party._gold).c_str()), false, &ttsMessage);
 				drawButtons(&windows[0]);
 				windows[10].update();
+
+#ifdef USE_TTS
+				speakNotificationText(ttsMessage);
+#endif
+
 				wait();
+#ifdef USE_TTS
+				enableButtonVoicing(0, _buttons.size());
+#endif
 			} else {
 				_v21 = 0;
 				if (c->_conditions[DRUNK]) {
+#ifdef USE_TTS
+					disableButtonVoicing(2, _buttons.size());
+#endif
+					Common::String ttsMessage;
 					windows[10].writeString(Common::String::format(Res.TAVERN_TEXT,
 						c->_name.c_str(), Res.YOURE_DRUNK,
-						XeenEngine::printMil(party._gold).c_str()));
+						XeenEngine::printMil(party._gold).c_str()), false, &ttsMessage);
 					drawButtons(&windows[0]);
 					windows[10].update();
+
+#ifdef USE_TTS
+					speakNotificationText(ttsMessage);
+#endif
+
 					wait();
+#ifdef USE_TTS
+					_vm->stopTextToSpeech();
+					enableButtonVoicing(2, _buttons.size());
+#endif
 				} else if (party.subtract(CONS_GOLD, 1, WHERE_PARTY, WT_LOC_WAIT)) {
 					sound.stopSound();
 					sound.playSound(_ccNum ? "thanks2.voc" : "thankyou.voc", 1);
@@ -791,6 +1032,9 @@ Character *TavernLocation::doOptions(Character *c) {
 						_v24 = 50;
 					}
 
+#ifdef USE_TTS
+					disableButtonVoicing(0, _buttons.size());
+#endif
 					Common::String msg = _textStrings[map.mazeData()._tavernTips + _v24];
 					map.mazeData()._tavernTips = (map.mazeData()._tavernTips + 1) /
 						(_ccNum ? 10 : 15);
@@ -800,6 +1044,10 @@ Character *TavernLocation::doOptions(Character *c) {
 					w.writeString(Common::String::format("\x03""c\x0B""012%s", msg.c_str()));
 					w.update();
 					wait();
+#ifdef USE_TTS
+					enableButtonVoicing(0, _buttons.size());
+					_vm->stopTextToSpeech();
+#endif
 					w.close();
 				}
 			}
@@ -822,6 +1070,33 @@ void TavernLocation::farewell() {
 	map.mazeData()._mazeNumber = party._mazeId;
 }
 
+#ifdef USE_TTS
+
+void TavernLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+	// Header
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+
+	// Options
+	_vm->sayText(addNextTextToButtons(text, index, kTavernOptionsCount));
+
+	// Gold
+	_vm->sayText(getNextTextSection(text, index, 2, ": "));
+
+	// Sign in/ESC buttons
+	_vm->sayText(addNextTextToButtons(text, index, kTavernButtonCount));
+}
+
+void TavernLocation::speakNotificationText(const Common::String &text) const {
+	uint index = 0;
+	// Header
+	getNextTextSection(text, index, 2);
+	// Info
+	_vm->sayText(getNextTextSection(text, index, 2));
+}
+
+#endif
+
 /*------------------------------------------------------------------------*/
 
 TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
@@ -837,10 +1112,10 @@ TempleLocation::TempleLocation() : BaseLocation(TEMPLE) {
 	_v5 = _v6 = 0;
 
 	_icons1.load("esc.icn");
-	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_HEAL);
-	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_DONATION);
-	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_UNCURSE);
+	addButton(Common::Rect(261, 108, 285, 128), Common::KEYCODE_ESCAPE, &_icons1, kTempleExit);
+	addButton(Common::Rect(234, 54, 308, 62), Res.KeyConstants.Locations.KEY_HEAL, nullptr, kTempleHeal);
+	addButton(Common::Rect(234, 64, 308, 72), Res.KeyConstants.Locations.KEY_DONATION, nullptr, kTempleDonation);
+	addButton(Common::Rect(234, 74, 308, 82), Res.KeyConstants.Locations.KEY_UNCURSE, nullptr, kTempleUncurse);
 	addButton(Common::Rect(234, 84, 308, 92), 0);
 
 	_vocName = _ccNum ? "help2.voc" : "maywe2.voc";
@@ -924,6 +1199,9 @@ Character *TempleLocation::doOptions(Character *c) {
 		_buttonValue -= Common::KEYCODE_F1;
 		if (_buttonValue < (int)party._activeParty.size()) {
 			c = &party._activeParty[_buttonValue];
+#ifdef USE_TTS
+			_resetText = true;
+#endif
 			intf.highlightChar(_buttonValue);
 			_dayOfWeek = 0;
 		}
@@ -989,6 +1267,31 @@ Character *TempleLocation::doOptions(Character *c) {
 	return c;
 }
 
+#ifdef USE_TTS
+
+void TempleLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+	
+	// Header ("Options for" and character name)
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+
+	// Options
+	for (uint8 i = 0; i < kTempleOptionsCount; ++i) {
+		// Text and price
+		Common::String optionText = getNextTextSection(text, index, 2, ": ");
+		_buttonTexts.push_back(optionText);
+		_vm->sayText(optionText);
+	}
+
+	// Gold
+	_vm->sayText(getNextTextSection(text, index, 2, ": "));
+
+	// ESC button
+	_vm->sayText(addNextTextToButtons(text, index));
+}
+
+#endif
+
 /*------------------------------------------------------------------------*/
 
 TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
@@ -997,8 +1300,8 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	_charIndex = 0;
 
 	_icons1.load("train.icn");
-	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1);
-	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_TRAIN, &_icons1);
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons1, kTrainingExit);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.Locations.KEY_TRAIN, &_icons1, kTrainingTrain);
 
 	_vocName = _ccNum ? "youtrn1.voc" : "training.voc";
 }
@@ -1077,6 +1380,10 @@ Character *TrainingLocation::doOptions(Character *c) {
 		if (_buttonValue < (int)party._activeParty.size()) {
 			_charIndex = _buttonValue;
 			c = &party._activeParty[_buttonValue];
+#ifdef USE_TTS
+			_vm->sayText(c->_name, Common::TextToSpeechManager::INTERRUPT);
+#endif
+			_ttsVoiceText = true;
 			intf.highlightChar(_buttonValue);
 		}
 	} else if (Res.KeyConstants.Locations.KEY_TRAIN == _buttonValue) {
@@ -1112,12 +1419,41 @@ Character *TrainingLocation::doOptions(Character *c) {
 				c->_currentHp = c->getMaxHP();
 				c->_currentSp = c->getMaxSP();
 				intf.drawParty(true);
+				_ttsVoiceText = true;
 			}
 		}
 	}
 
 	return c;
 }
+
+#ifdef USE_TTS
+
+void TrainingLocation::speakTextAndButtons(const Common::String &text) {
+	uint index = 0;
+	uint infoCount;
+
+	if (_experienceToNextLevel || g_vm->_party->_activeParty[_buttonValue]._level._permanent >= maxLevel()) {
+		infoCount = kTrainingIneligibleInfoCount;
+	} else {
+		infoCount = kTrainingEligibleInfoCount;
+	}
+
+	// Header and info
+	_vm->sayText(getNextTextSection(text, index, infoCount));
+
+	// Gold
+	_vm->sayText(getNextTextSection(text, index, 2, ": "));
+
+	// Train/ESC buttons
+	if (_buttonTexts.empty()) {
+		_vm->sayText(addNextTextToButtons(text, index, 2));
+	} else {
+		_vm->sayText(getNextTextSection(text, index, 2));
+	}
+}
+
+#endif
 
 /*------------------------------------------------------------------------*/
 
@@ -2381,12 +2717,21 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 
 	int result = -1;
 	Common::String msgText = text;
+#ifdef USE_TTS
+	bool voiceName = true;
+#endif
 	do {
 		Common::String msg = Common::String::format(g_vm->getLanguage() == Common::ZH_TWN ? "\r\v014\x0c""07\x03""c\t125%s\x0c""04\x03""l\t000\v044%s" : "\r\v014\x03""c\t125%s\t000\v054%s",
 			name.c_str(), msgText.c_str());
 
+		Common::String ttsMessage;
 		// Count the number of words
-		const char *msgEnd = w.writeString(msg);
+		const char *msgEnd = w.writeString(msg, false, &ttsMessage);
+#ifdef USE_TTS
+		speakText(ttsMessage, name, voiceName);
+		voiceName = false;
+#endif
+
 		int wordCount = 0;
 
 		for (const char *msgP = msg.c_str(); msgP != msgEnd && *msgP; ++msgP) {
@@ -2452,6 +2797,9 @@ bool LocationMessage::execute(int portrait, const Common::String &name, const Co
 	if (!confirm)
 		intf.mainIconsPrint();
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	_townSprites[0].clear();
 	_townSprites[1].clear();
 	events.clearEvents();
@@ -2465,6 +2813,29 @@ void LocationMessage::loadButtons() {
 	addButton(Common::Rect(260, 75, 284, 95), Common::KEYCODE_n, &_iconSprites);
 	addButton(Common::Rect(), Common::KEYCODE_ESCAPE);
 }
+
+#ifdef USE_TTS
+
+void LocationMessage::speakText(const Common::String &text, const Common::String &name, bool voiceName) const {
+	uint index = 0;
+	_vm->stopTextToSpeech();
+
+	Common::String cleanedName;
+	// If the name has a newline character, it has two parts
+	if (name.find('\n') != Common::String::npos) {
+		cleanedName = getNextTextSection(text, index, 2, " ");
+	} else {
+		cleanedName = getNextTextSection(text, index);
+	}
+
+	if (voiceName) {
+		_vm->sayText(cleanedName);
+	}
+
+	_vm->sayText(text.substr(index));
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM

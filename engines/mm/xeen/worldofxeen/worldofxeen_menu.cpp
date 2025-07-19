@@ -30,6 +30,86 @@ namespace MM {
 namespace Xeen {
 namespace WorldOfXeen {
 
+#ifdef USE_TTS
+
+static const uint8 kOtherOptionsMaxButtonCount = 5;
+
+static const char *worldMainMenuButtons[] = {
+	"Start a New Game\nLoad a Saved Game\nCredits\nOther Options\n",	// English
+	"Neues Spiel\nSpielstand laden\nCredits\nWeitere Optionen\n",		// German
+	"Nouvelle Partie\nCharger une Partie\nCredits\nOptions\n",			// French
+	"Partida nueva\nCargar una partida\nCr\44ditos\nOtras opciones\n"	// Spanish
+	// No Russian or Chinese versions exist
+};
+
+static const char *worldOtherOptionsButtons[] = {
+	"View Darkside Intro\nView Clouds Intro\nView Darkside End\nView Clouds End\nView World End\n",			// English
+	"Darkside-Intro\nClouds-Intro\nDarkside-Ende\nClouds-Ende\nWorld-Ende\n",								// German
+	"Intro de Darkside\nIntro des Nuages\nFin de Darkside\nFin des Nuages\nFin de World\n",					// French	
+	"Intro de Darkside\nIntro de Clouds\nVer Final de Darkside\nVer Final de Clouds\nVer Final de World\n",	// Spanish
+	"",																										// Russian (no version exists)
+	// Chinese
+	"\xb6\xc2\xb7\x74\xbb\xe2\xa5\x44\xa4\xb6\xd2\xd0\n"	// 黑暗領主介紹
+	"\xb6\xb3\xa4\xb6\xd2\xd0\n"							// 雲介紹
+	"\xb6\xc2\xb7\x74\xbb\xe2\xa5\x44\xa5\xbd\xa7\xc0\n"	// 黑暗領主末尾
+	"\xb6\xb3\xa5\xbd\xa7\xc0\n"							// 雲末尾
+	"\xa5\x40\xac\xc9\n"									// 世界末尾
+};
+
+static const char *cloudsMainMenuButtons[] = {
+	"Start a New Game\nLoad a Saved Game\nCredits\nView Endgame\n",	// English
+	"Neues Spiel\nSpielstand laden\nCredits\nEndspiel ansehen\n",	// German
+	"Nouvelle Partie\nCharger une Partie\nCr\202dits\nVoir la fin",	// French
+	"",																// Spanish (no version exists)
+	// Russian
+	"\x8d\xa0\xe7\xa0\xe2\xec \xad\xae\xa2\xe3\xee \xa8\xa3\xe0\xe3\n"	// Начать новую игру
+	"\x87\xa0\xa3\xe0\xe3\xa7\xa8\xe2\xec \xa8\xa3\xe0\xe3\n"			// Загрузить игру
+	"\x91\xae\xa7\xa4\xa0\xe2\xa5\xab\xa8\n"							// Создатели
+	"\x94\xa8\xad\xa0\xab\xec\xad\xeb\xa9 \xe0\xae\xab\xa8\xaa\n",		// Финальный ролик
+	// Chinese
+	"\xb6\x7d\xa9\x6c\xb7\x73\xb9\x43\xc0\xb8\n"						// 開始新遊戲
+	"\xb8\xfc\xa4\x4a\xb6\x69\xab\xd7\xc0\xc9\n"						// 載入進度檔
+	"\xb9\x43\xc0\xb8\xbb\x73\xa7\x40\xb8\x73\n"						// 遊戲製作群
+	"\xac\x64\xac\xdd\xb4\xdd\xa7\xbd\n"								// 查看殘局
+};
+
+static const char *darksideMainMenuButtons[] = {
+	"Start\nLoad\nView Credits\nOther Options\n",	// English
+	"Start\nLaden\nCredits\nWeitere Optionen\n",	// German
+	"Nouveau\nPartie\nCredits\nOptions\n",			// French
+	"",												// Spanish (no version exists)
+	"",												// Russian (no version exists)
+	// Chinese
+	"\xb6\x7d\xa9\x6c\xb7\x73\xb9\x43\xc0\xb8\n"	// 開始新遊戲
+	"\xb8\xfc\xa4\x4a\xc2\xc2\xc0\xc9\n"			// 載入舊檔
+	"\xf7\x54\xac\xdd\xb3\x5d\xad\x70\xb8\x73\n"	// 覾看設計群
+	"\xa8\xe4\xa5\x4c\xbf\xef\xb6\xb5\n"			// 其他選項
+};
+
+#endif
+
+enum CloudsMainMenuButtonTTSTextIndex {
+	kCloudsNew = 0,
+	kCloudsLoad = 1,
+	kCloudsCredits = 2,
+	kCloudsEndgame = 3
+};
+
+enum DarksideWorldMainMenuButtonTTSTextIndex {
+	kDarksideWorldStart = 0,
+	kDarksideWorldLoad = 1,
+	kDarksideWorldCredits = 2,
+	kDarksideWorldOther = 3
+};
+
+enum OtherOptionsButtonTTSTextIndex {
+	kDarksideIntro = 0,
+	kCloudsIntro = 1,
+	kDarksideEnd = 2,
+	kCloudsEnd = 3,
+	kWorldEnd = 4
+};
+
 void MainMenuContainer::show() {
 	MainMenuContainer *menu;
 
@@ -105,11 +185,20 @@ void MainMenuContainer::execute() {
 
 	screen.doScroll(true, false);
 
+	if (_dialog) {
+		_dialog->_ttsVoiceText = true;
+	}
+
 	while (!g_vm->shouldExit() && g_vm->_gameMode == GMODE_NONE) {
 		// Draw the menu
 		draw();
-		if (_dialog)
+		if (_dialog) {
 			_dialog->draw();
+#ifdef USE_TTS
+			_dialog->checkHoverOverButton();
+#endif
+			_dialog->_ttsVoiceText = false;
+		}
 
 		// Fade/scroll in screen if first frame showing screen
 		if (!showFlag) {
@@ -306,6 +395,9 @@ CloudsMenuDialog::CloudsMenuDialog(MainMenuContainer *owner) : MainMenuDialog(ow
 	w.open();
 
 	loadButtons();
+#ifdef USE_TTS
+	setButtonTexts(cloudsMainMenuButtons[_vm->_ttsLanguage]);
+#endif
 }
 
 CloudsMenuDialog::~CloudsMenuDialog() {
@@ -316,11 +408,11 @@ CloudsMenuDialog::~CloudsMenuDialog() {
 
 void CloudsMenuDialog::loadButtons() {
 	_buttonSprites.load("start.icn");
-	addButton(Common::Rect(93, 53, 227, 73), Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME, &_buttonSprites);
-	addButton(Common::Rect(93, 78, 227, 98), Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME, &_buttonSprites);
-	addButton(Common::Rect(93, 103, 227, 123), Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS, &_buttonSprites);
+	addButton(Common::Rect(93, 53, 227, 73), Res.KeyConstants.CloudsOfXeenMenu.KEY_START_NEW_GAME, &_buttonSprites, kCloudsNew);
+	addButton(Common::Rect(93, 78, 227, 98), Res.KeyConstants.CloudsOfXeenMenu.KEY_LOAD_GAME, &_buttonSprites, kCloudsLoad);
+	addButton(Common::Rect(93, 103, 227, 123), Res.KeyConstants.CloudsOfXeenMenu.KEY_SHOW_CREDITS, &_buttonSprites, kCloudsCredits);
 	if (g_vm->_gameWon[0])
-		addButton(Common::Rect(93, 128, 227, 148), Res.KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME, &_buttonSprites);
+		addButton(Common::Rect(93, 128, 227, 148), Res.KeyConstants.CloudsOfXeenMenu.KEY_VIEW_ENDGAME, &_buttonSprites, kCloudsEndgame);
 }
 
 void CloudsMenuDialog::draw() {
@@ -328,7 +420,7 @@ void CloudsMenuDialog::draw() {
 	Window &w = windows[GAME_WINDOW];
 
 	w.frame();
-	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[0], g_vm->_gameWon[0] ? 117 : 92, 1992));
+	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[0], g_vm->_gameWon[0] ? 117 : 92, 1992), _ttsVoiceText);
 	drawButtons(&w);
 }
 
@@ -360,6 +452,9 @@ DarkSideMenuDialog::DarkSideMenuDialog(MainMenuContainer *owner) : MainMenuDialo
 	w.open();
 
 	loadButtons();
+#ifdef USE_TTS
+	setButtonTexts(darksideMainMenuButtons[_vm->_ttsLanguage]);
+#endif
 }
 
 DarkSideMenuDialog::~DarkSideMenuDialog() {
@@ -369,10 +464,10 @@ DarkSideMenuDialog::~DarkSideMenuDialog() {
 }
 
 void DarkSideMenuDialog::loadButtons() {
-	addButton(Common::Rect(124, 87, 177, 97), Common::KEYCODE_s);
-	addButton(Common::Rect(126, 98, 173, 108), Common::KEYCODE_l);
-	addButton(Common::Rect(91, 110, 209, 120), Common::KEYCODE_c);
-	addButton(Common::Rect(85, 121, 216, 131), Common::KEYCODE_o);
+	addButton(Common::Rect(124, 87, 177, 97), Common::KEYCODE_s, nullptr, kDarksideWorldStart);
+	addButton(Common::Rect(126, 98, 173, 108), Common::KEYCODE_l, nullptr, kDarksideWorldLoad);
+	addButton(Common::Rect(91, 110, 209, 120), Common::KEYCODE_c, nullptr, kDarksideWorldCredits);
+	addButton(Common::Rect(85, 121, 216, 131), Common::KEYCODE_o, nullptr, kDarksideWorldOther);
 }
 
 void DarkSideMenuDialog::draw() {
@@ -450,6 +545,9 @@ WorldMenuDialog::WorldMenuDialog(MainMenuContainer *owner) : MainMenuDialog(owne
 	w.open();
 
 	loadButtons();
+#ifdef USE_TTS
+	setButtonTexts(worldMainMenuButtons[_vm->_ttsLanguage]);
+#endif
 }
 
 WorldMenuDialog::~WorldMenuDialog() {
@@ -460,10 +558,10 @@ WorldMenuDialog::~WorldMenuDialog() {
 
 void WorldMenuDialog::loadButtons() {
 	_buttonSprites.load("start.icn");
-	addButton(Common::Rect(93, 53, 227, 73), Common::KEYCODE_s, &_buttonSprites);
-	addButton(Common::Rect(93, 78, 227, 98), Common::KEYCODE_l, &_buttonSprites);
-	addButton(Common::Rect(93, 103, 227, 123), Common::KEYCODE_c, &_buttonSprites);
-	addButton(Common::Rect(93, 128, 227, 148), Common::KEYCODE_o, &_buttonSprites);
+	addButton(Common::Rect(93, 53, 227, 73), Common::KEYCODE_s, &_buttonSprites, kDarksideWorldStart);
+	addButton(Common::Rect(93, 78, 227, 98), Common::KEYCODE_l, &_buttonSprites, kDarksideWorldLoad);
+	addButton(Common::Rect(93, 103, 227, 123), Common::KEYCODE_c, &_buttonSprites, kDarksideWorldCredits);
+	addButton(Common::Rect(93, 128, 227, 148), Common::KEYCODE_o, &_buttonSprites, kDarksideWorldOther);
 }
 
 void WorldMenuDialog::draw() {
@@ -471,7 +569,7 @@ void WorldMenuDialog::draw() {
 	Window &w = windows[GAME_WINDOW];
 
 	w.frame();
-	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[2], 117, 1993));
+	w.writeString(Common::String::format(Res.OPTIONS_MENU, Res.GAME_NAMES[2], 117, 1993), _ttsVoiceText);
 	drawButtons(&w);
 }
 
@@ -527,39 +625,44 @@ void OtherOptionsDialog::loadButtons() {
 	Common::Rect r(93, 53, 227, 73);
 
 	// View Darkside Intro
-	addButton(r, Common::KEYCODE_d, &_buttonSprites);
+	addButton(r, Common::KEYCODE_d, &_buttonSprites, kDarksideIntro);
 	r.translate(0, 25);
 
 	// View Clouds Intro
 	if (g_vm->getGameID() == GType_WorldOfXeen) {
-		addButton(r, Common::KEYCODE_c, &_buttonSprites);
+		addButton(r, Common::KEYCODE_c, &_buttonSprites, kCloudsIntro);
 		r.translate(0, 25);
 	} else {
-		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+		addButton(Common::Rect(), Common::KEYCODE_INVALID, nullptr, kCloudsIntro);
 	}
 
 	// View Darkside End
 	if (g_vm->_gameWon[1]) {
-		addButton(r, Common::KEYCODE_e, &_buttonSprites);
+		addButton(r, Common::KEYCODE_e, &_buttonSprites, kDarksideEnd);
 		r.translate(0, 25);
 	} else {
-		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+		addButton(Common::Rect(), Common::KEYCODE_INVALID, nullptr, kDarksideEnd);
 	}
 
 	// View Clouds End
 	if (g_vm->_gameWon[0]) {
-		addButton(r, Common::KEYCODE_v, &_buttonSprites);
+		addButton(r, Common::KEYCODE_v, &_buttonSprites, kCloudsEnd);
 		r.translate(0, 25);
 	} else {
-		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+		addButton(Common::Rect(), Common::KEYCODE_INVALID, nullptr, kCloudsEnd);
 	}
 
 	// View World End
 	if (g_vm->_gameWon[2]) {
-		addButton(r, Common::KEYCODE_w, &_buttonSprites);
+		addButton(r, Common::KEYCODE_w, &_buttonSprites, kWorldEnd);
 	} else {
-		addButton(Common::Rect(), Common::KEYCODE_INVALID);
+		addButton(Common::Rect(), Common::KEYCODE_INVALID, nullptr, kWorldEnd);
 	}
+
+#ifdef USE_TTS
+	uint index = 0;
+	addNextTextToButtons(worldOtherOptionsButtons[_vm->_ttsLanguage], index, kOtherOptionsMaxButtonCount);
+#endif
 }
 
 void OtherOptionsDialog::draw() {
@@ -569,7 +672,7 @@ void OtherOptionsDialog::draw() {
 	w.frame();
 	w.writeString(Common::String::format(Res.OPTIONS_MENU,
 		Res.GAME_NAMES[g_vm->getGameID() == GType_WorldOfXeen ? 2 : 1],
-		w.getBounds().height() - 33, 1993));
+		w.getBounds().height() - 33, 1993), _ttsVoiceText);
 	drawButtons(&w);
 }
 
