@@ -239,7 +239,12 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 
 		// Consolidate matched files across all engines and detection entries
 		for (const auto &file : game.matchedFiles) {
-			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(file._value.md5prop).c_str(), file._key.punycodeEncode().toString('/').c_str());
+			Common::Path filename = file._key;
+			// Avoid double encoding of punycoded files
+			if (!filename.punycodeIsEncoded()) {
+				filename = filename.punycodeEncode();
+			}
+			Common::String key = Common::String::format("%s:%s", md5PropToCachePrefix(file._value.md5prop).c_str(), filename.toString('/').c_str());
 			matchedFiles.setVal(key, file._value);
 		}
 	}
@@ -271,7 +276,7 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		// Skip the md5 prefix and since we could have full paths, take it into account
 		Common::Path filepath(strchr(filenames[i].c_str(), ':') + 1);
 		report += Common::String::format("  {\"%s\", 0, \"%s%s\", %lld},\n",
-			filepath.punycodeEncode().toString().c_str(),
+			filepath.toString().c_str(),
 			md5Prefix.c_str(), file.md5.c_str(), (long long)file.size);
 	}
 

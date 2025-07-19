@@ -514,6 +514,14 @@ public:
 	bool punycodeNeedsEncode() const;
 
 	/**
+	 * Returns whether the path is already Punycoded
+	 *
+	 * Only the prefix is checked and not the Punycode correctness.
+	 * Use this function only with known Punycoded paths.
+	 */
+	bool punycodeIsEncoded() const;
+
+	/**
 	 * Convert all characters in the path to lowercase.
 	 *
 	 * Be aware that this only affects the case of ASCII characters. All
