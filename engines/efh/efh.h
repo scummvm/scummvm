@@ -260,6 +260,10 @@ struct TeamMonster {
 enum EFHAction {
 	kActionNone,
 	kActionExit,
+	kActionQuit,
+	kActionSkipVideo,
+	kActionSkipSong,
+	kActionSkipSongAndIntro,
 	kActionSave,
 	kActionLoad,
 	kActionMoveUp,
@@ -272,7 +276,98 @@ enum EFHAction {
 	kActionMoveDownRight,
 	kActionCharacter1Status,
 	kActionCharacter2Status,
-	kActionCharacter3Status
+	kActionCharacter3Status,
+	kActionYes,
+	kActionNo,
+	kActionCharacter1,
+	kActionCharacter2,
+	kActionCharacter3,
+	kActionCancelCharacterSelection,
+	kActionStartFight,
+	kActionLeave,
+	kActionStatus,
+	kActionTalk,
+	kActionAttack,
+	kActionDefend,
+	kActionHide,
+	kActionRun,
+	kActionTeamStatus,
+	kActionTerrain,
+	kActionEnemy1,
+	kActionEnemy2,
+	kActionEnemy3,
+	kActionEnemy4,
+	kActionEnemy5,
+	kActionCancelEnemySelection,
+	kActionreset,
+	kActionActive,
+	kActionDrop,
+	kActionEquip,
+	kActionGive,
+	kActionInfo,
+	kActionPassive,
+	kActionTrade,
+	kActionUse,
+	kActionSelect,
+	kActionScrollDown,
+	kActionScrollUp,
+	kActionSound13,
+	kActionSound14,
+	kActionSound15,
+	kActionSound5,
+	kActionSound10,
+	kActionSound9,
+	kActionSound16,
+};
+
+struct EfhCharacterSelectionAction {
+	EFHAction _action;
+	int8 _charId;
+};
+
+static const EfhCharacterSelectionAction _efhEnemySelectionCodes[] = {
+	{ kActionEnemy1, 0 },
+	{ kActionEnemy2, 1 },
+	{ kActionEnemy3, 2 },
+	{ kActionEnemy4, 3 },
+	{ kActionEnemy5, 4 },
+};
+
+static const EfhCharacterSelectionAction _efhTeamSelectionCodes[] = {
+	{ kActionCharacter1, 0 },
+	{ kActionCharacter2, 1 },
+	{ kActionCharacter3, 2 },
+};
+
+enum EfhKeymapCode {
+	kKeymapDefault,
+	kKeymapMenu,
+	kKeymapSkipVideo,
+	kKeymapSkipSong,
+	kKeymapStatusMenu,
+	kKeymapInteraction,
+	kKeymapFight,
+	kKeymapCharacterSelection,
+	kKeymapEnemySelection,
+	kKeymapDeathMenu,
+};
+
+struct EfhKeymap {
+	EfhKeymapCode _keymap;
+	Common::String _id;
+};
+
+static const EfhKeymap _efhKeymaps[] = {
+	{ kKeymapDefault, "efh-default" },
+	{ kKeymapMenu, "menu" },
+	{ kKeymapSkipVideo, "skip-video" },
+	{ kKeymapSkipSong, "skip-song" },
+	{ kKeymapStatusMenu, "status-menu" },
+	{ kKeymapInteraction, "interaction" },
+	{ kKeymapFight, "fight" },
+	{ kKeymapCharacterSelection, "character-selection" },
+	{ kKeymapEnemySelection, "enemy-selection" },
+	{ kKeymapDeathMenu, "death-menu" },
 };
 
 class EfhEngine : public Engine {
@@ -508,7 +603,7 @@ private:
 	// Sound
 	void songDelay(int delay);
 	void playNote(int frequencyIndex, int totalDelay);
-	Common::KeyCode playSong(uint8 *buffer);
+	void playSong(uint8 *buffer);
 	void generateSound1(int lowFreq, int highFreq, int duration);
 	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
@@ -529,6 +624,7 @@ private:
 	bool getValidationFromUser();
 	uint32 ROR(uint32 val, uint8 shiftVal);
 	Common::String getArticle(int pronoun);
+	void setKeymap(EfhKeymapCode keymapCode);
 
 	// Actions
 	void handleActionSave();
