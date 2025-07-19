@@ -138,7 +138,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback))
-			displayMessage(_dstObject->description);
+			displayMessage(_dstObject->description, res->getVoiceIndex(_dstObject->getAddr()));
 	}
 	break;
 	case kActionUse: {
@@ -150,7 +150,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * _dstObject->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (!processCallback(callback))
-			displayMessage(_dstObject->description);
+			displayMessage(_dstObject->description, 0);
 	}
 	break;
 
@@ -242,20 +242,21 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	uint32 tag = in->readUint32BE();
 	if (tag == MKTAG('T', 'H', 'M', 'B')) { // Old save (before TEENAGENT_SAVEGAME_VERSION was added)
 		uint16 baseAddr = dsAddr_sceneObjectTablePtr;
+		uint32 sceneObjectStartAddr = res->getSceneObjectsStartPos();
 		// Copy scene object data in the dseg to sceneObjectsSeg
-		Common::copy(res->dseg.ptr(baseAddr), res->dseg.ptr(0xb4f3), res->sceneObjectsSeg.ptr(0));
+		Common::copy(res->dseg.ptr(baseAddr), res->dseg.ptr(0xb4f3), res->eseg.ptr(sceneObjectStartAddr));
 
 		// Set correct addresses, i.e., make them relative to dsAddr_sceneObjectTablePtr
 		for (byte i = 0; i < 42; i++) {
 			uint16 sceneTable = res->dseg.get_word(baseAddr + (i * 2));
-			res->sceneObjectsSeg.set_word(i * 2, sceneTable - baseAddr);
+			res->eseg.set_word(sceneObjectStartAddr + i * 2, sceneTable - baseAddr);
 
 			uint16 objectAddr;
 			while ((objectAddr = res->dseg.get_word(sceneTable)) != 0) {
-				res->sceneObjectsSeg.set_word(sceneTable - baseAddr, objectAddr - baseAddr);
+				res->eseg.set_word(sceneObjectStartAddr + sceneTable - baseAddr, objectAddr - baseAddr);
 				sceneTable += 2;
 			}
-			res->sceneObjectsSeg.set_word(sceneTable - baseAddr, 0);
+			res->eseg.set_word(sceneObjectStartAddr + sceneTable - baseAddr, 0);
 		}
 	} else {
 		if (tag != MKTAG('T', 'N', 'G', 'T')) {
@@ -270,7 +271,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 		}
 
 		uint32 resourceSize = in->readUint32LE();
-		if (in->read(res->sceneObjectsSeg.ptr(0), resourceSize) != resourceSize) {
+		if (in->read(res->eseg.ptr(res->getSceneObjectsStartPos()), resourceSize) != resourceSize) {
 			warning("loadGameState(): corrupted data");
 			return Common::kReadingFailed;
 		}
@@ -318,8 +319,8 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const Common::String &des
 	out->writeByte(TEENAGENT_SAVEGAME_VERSION);
 
 	// Write scene object data
-	out->writeUint32LE(res->sceneObjectsSeg.size());
-	out->write(res->sceneObjectsSeg.ptr(0), res->sceneObjectsSeg.size());
+	out->writeUint32LE(res->sceneObjectsBlockSize());
+	out->write(res->eseg.ptr(res->getSceneObjectsStartPos()), res->sceneObjectsBlockSize());
 
 	if (!Graphics::saveThumbnail(*out))
 		warning("saveThumbnail failed");
@@ -767,10 +768,10 @@ Common::Error TeenAgentEngine::run() {
 	return Common::kNoError;
 }
 
-Common::String TeenAgentEngine::parseMessage(uint16 addr) {
+Common::String TeenAgentEngine::parseMessage(uint32 addr) {
 	Common::String message;
 	for (
-	    const char *str = (const char *)res->messagesSeg.ptr(addr);
+	    const char *str = (const char *)res->eseg.ptr(addr);
 	    str[0] != 0 || str[1] != 0;
 	    ++str) {
 		char c = str[0];
@@ -782,7 +783,7 @@ Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	return message;
 }
 
-void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID characterID, uint16 x, uint16 y) {
+void TeenAgentEngine::displayMessage(const Common::String &str, uint16 voiceIndex, CharacterID characterID, uint16 x, uint16 y) {
 	if (str.empty()) {
 		return;
 	}
@@ -802,6 +803,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID char
 		event.dst.x = x;
 		event.dst.y = y;
 		event.characterID = characterID;
+		event.voiceId = voiceIndex;
 		scene->push(event);
 	}
 
@@ -813,13 +815,14 @@ void TeenAgentEngine::displayMessage(const Common::String &str, CharacterID char
 	}
 }
 
-void TeenAgentEngine::displayMessage(uint16 addr, CharacterID characterID, uint16 x, uint16 y) {
-	displayMessage(parseMessage(addr), characterID, x, y);
+void TeenAgentEngine::displayMessage(uint32 addr, CharacterID characterID, uint16 x, uint16 y) {
+	displayMessage(parseMessage(addr), res->getVoiceIndex(addr), characterID, x, y);
 }
 
-void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID) {
+void TeenAgentEngine::displayAsyncMessage(uint32 addr, uint16 x, uint16 y, uint16 firstFrame, uint16 lastFrame, CharacterID characterID) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
+	event.voiceId = res->getVoiceIndex(addr);
 	event.slot = 0;
 	event.color = characterDialogData[characterID].textColor;
 	event.dst.x = x;
@@ -831,9 +834,10 @@ void TeenAgentEngine::displayAsyncMessage(uint16 addr, uint16 x, uint16 y, uint1
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color) {
+void TeenAgentEngine::displayAsyncMessageInSlot(uint32 addr, byte slot, uint16 firstFrame, uint16 lastFrame, byte color) {
 	SceneEvent event(SceneEvent::kMessage);
 	event.message = parseMessage(addr);
+	event.voiceId = res->getVoiceIndex(addr);
 	event.slot = slot + 1;
 	event.color = color;
 	event.firstFrame = firstFrame;
@@ -842,10 +846,10 @@ void TeenAgentEngine::displayAsyncMessageInSlot(uint16 addr, byte slot, uint16 f
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayCredits(uint16 addr, uint16 timer) {
+void TeenAgentEngine::displayCredits(uint32 addr, uint16 timer) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
-	const byte *src = res->creditsSeg.ptr(addr);
+	const byte *src = res->eseg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
 	event.lan = 8;
@@ -883,7 +887,7 @@ void TeenAgentEngine::displayCredits() {
 	scene->push(event);
 }
 
-void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 x, uint16 y) {
+void TeenAgentEngine::displayCutsceneMessage(uint32 addr, uint16 x, uint16 y) {
 	SceneEvent event(SceneEvent::kCreditsMessage);
 
 	event.message = parseMessage(addr);
@@ -891,6 +895,7 @@ void TeenAgentEngine::displayCutsceneMessage(uint16 addr, uint16 x, uint16 y) {
 	event.dst.y = y;
 	event.lan = 7;
 	event.characterID = kMark;
+	event.voiceId = res->getVoiceIndex(addr);
 
 	scene->push(event);
 }
@@ -1103,6 +1108,29 @@ void TeenAgentEngine::playSoundNow(Pack *pack, uint32 id) {
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); // dispose is YES by default
+}
+
+void TeenAgentEngine::playVoiceNow(Pack *pack, uint32 id) {
+	uint size = pack->getSize(id);
+	if (size == 0) {
+		warning("skipping invalid sound %u", id);
+		return;
+	}
+
+	if (!_mixer->isSoundHandleActive(_voiceHandle) && id != _previousVoiceId) {
+		byte *data = (byte *)malloc(size);
+		pack->read(id, data, size);
+		debug(3, "playing %u samples...", size);
+
+		Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_voiceHandle, stream);
+		_previousVoiceId = id;
+	}
+}
+
+void TeenAgentEngine::stopVoice() {
+	_mixer->stopHandle(_voiceHandle);
+	_previousVoiceId = 0;
 }
 
 void TeenAgentEngine::setMusic(byte id) {

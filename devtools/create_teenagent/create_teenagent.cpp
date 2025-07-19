@@ -311,11 +311,8 @@ void writeSceneObjects(FILE *fd, Common::Language language) {
 	fseek(fd, pos, SEEK_SET);
 }
 
-void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
-	uint currentFilePos = ftell(fd);
-	uint prevFilePos = currentFilePos;
-	uint32 resourceSize = 0;
-	writeUint32LE(fd, resourceSize);
+uint32 writeResource(FILE *fd, ResourceType resType, Common::Language language) {
+	uint prevFilePos = ftell(fd);
 
 	switch (resType) {
 	case kResCredits: {
@@ -358,11 +355,9 @@ void writeResource(FILE *fd, ResourceType resType, Common::Language language) {
 		break;
 	};
 
-	currentFilePos = ftell(fd);
-	resourceSize = currentFilePos - prevFilePos - sizeof(uint32);
-	fseek(fd, prevFilePos, SEEK_SET);
-	writeUint32LE(fd, resourceSize);
-	fseek(fd, currentFilePos, SEEK_SET);
+	uint currentFilePos = ftell(fd);
+	uint32 resourceSize = currentFilePos - prevFilePos;
+	return resourceSize;
 }
 
 int main(int argc, char *argv[]) {
@@ -416,9 +411,32 @@ int main(int argc, char *argv[]) {
 
 		fseek(fout, dataOffset, SEEK_SET);
 
+		ResourceInfo resourceInfos[NUM_RESOURCES];
+		uint32 resInfoPos = ftell(fout);
+		fseek(fout, (2 * sizeof(uint32) + sizeof(byte)) * NUM_RESOURCES, SEEK_CUR);
+
 		for (uint i = 0; i < NUM_RESOURCES; i++) {
-			writeResource(fout, ResourceType(i), supportedLanguages[lang]);
+			resourceInfos[i]._id = i;
+			resourceInfos[i]._offset = ftell(fout);
+
+			uint32 size = writeResource(fout, ResourceType(i), supportedLanguages[lang]);
+			resourceInfos[i]._size = size;
 		}
+
+		fseek(fout, resInfoPos, SEEK_SET);
+		for (uint i = 0; i < NUM_RESOURCES; i++) {
+			writeByte(fout, resourceInfos[i]._id);
+			if (resourceInfos[i]._id != 0) {
+				// Offsets are stored relative to first resource's offset
+				// NOTE: First resource is kResDialogs(1), not kResDialogStacks(0)
+				// because kResDialogStacks is not stored with the rest of resources.
+				writeUint32LE(fout, resourceInfos[i]._offset - resourceInfos[1]._offset);
+			} else
+				writeUint32LE(fout, resourceInfos[i]._offset);
+			writeUint32LE(fout, resourceInfos[i]._size);
+		}
+		// Go back to current file pos
+		fseek(fout, resourceInfos[NUM_RESOURCES - 1]._offset + resourceInfos[NUM_RESOURCES - 1]._size, SEEK_SET);
 	}
 
 	fclose(fout);
