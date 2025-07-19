@@ -738,6 +738,19 @@ void PrinceEngine::doTalkAnim(int animNumber, int slot, AnimType animType) {
 		correctStringDEU((char *)_interpreter->getString());
 	}
 	text._str = (const char *)_interpreter->getString();
+
+	if (slot == 9) {
+		// Location 4 has the gambling merchants, who speak frequently and can interrupt the player's
+		// dialog with other characters, so don't voice their text unless the player isn't in dialog
+		if ((!_dialogFlag && !_isConversing) || _locationNr != 4) {
+			setTTSVoice(text._color);
+			sayText(text._str, true, Common::TextToSpeechManager::QUEUE);
+		}
+	} else {
+		setTTSVoice(text._color);
+		sayText(text._str, true);
+	}
+
 	_interpreter->increaseString();
 }
 
