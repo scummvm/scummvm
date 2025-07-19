@@ -332,11 +332,11 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Alpha Polaris (English)
 	WME_WINENTRY("alphapolaris", "",
-		WME_ENTRY1s("data.dcp", "6d5d2264a3135dae3a9a74de50b4ea68", 706780438), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "6d5d2264a3135dae3a9a74de50b4ea68", 706780438), Common::EN_ANY, GF_3D, WME_1_9_1),
 
 	// Alpha Polaris (English, UK CD release)
 	WME_WINENTRY("alphapolaris", "",
-		WME_ENTRY1s("data.dcp", "1df8eb749676752c3e0ab6e24d31971c", 748056178), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "1df8eb749676752c3e0ab6e24d31971c", 748056178), Common::EN_ANY, GF_3D, WME_1_9_1),
 
 	// Alpha Polaris (Polish)
 	WME_WINENTRY("alphapolaris", "",
@@ -349,7 +349,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alpha Polaris (English) (1.1.0) (1280x800 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
 		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
-					"data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987), Common::EN_ANY, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (German) (1.1.0) (1280x800 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
@@ -369,7 +369,7 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alpha Polaris (English) (1.1.0) (1280x768 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
 		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
-					"data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987), Common::EN_ANY, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (German) (1.1.0) (1280x768 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
@@ -389,16 +389,16 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alpha Polaris (English Demo)
 	WME_WINENTRY("alphapolaris", "Demo",
 		WME_ENTRY2s("data.dcp", "68f93edfb69de8f8c06c81566f279e07", 409562809,
-					"data.dcp", "68f93edfb69de8f8c06c81566f279e07", 409562809), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_3),
+					"data.dcp", "68f93edfb69de8f8c06c81566f279e07", 409562809), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (German Demo)
 	WME_WINENTRY("alphapolaris", "Demo",
 		WME_ENTRY2s("data.dcp", "130545e152d0b53d84c2c99ce118d5e5", 409564920,
-					"german language pack.dcp", "71e19682f93399018bef90ceda0a1bfd", 16174995), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_3),
+					"german language pack.dcp", "71e19682f93399018bef90ceda0a1bfd", 16174995), Common::DE_DEU, ADGF_DEMO | GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (Polish Demo)
 	WME_WINENTRY("alphapolaris", "Demo",
-		WME_ENTRY1s("data.dcp", "c040af58c38c40997fce4b4832f43a5d", 416066977), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "c040af58c38c40997fce4b4832f43a5d", 416066977), Common::PL_POL, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// Apeiron
 	WME_WINENTRY("apeiron", "",
