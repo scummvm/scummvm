@@ -55,8 +55,11 @@ void CreditsScreen::execute(const char *content) {
 	windows[GAME_WINDOW].close();
 
 	screen.loadBackground("marb.raw");
-	windows[0].writeString(content);
+	Common::String ttsMessage;
+	windows[0].writeString(content, false, &ttsMessage);
 	doScroll(false, false);
+
+	speakText(ttsMessage, (_vm->getGameID() != GType_Swords || content == Res.SWORDS_CREDITS1));
 
 	events.setCursor(0);
 	windows[0].update();
@@ -66,7 +69,51 @@ void CreditsScreen::execute(const char *content) {
 	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 
+	_vm->stopTextToSpeech();
 	doScroll(true, false);
+}
+
+void CreditsScreen::speakText(const Common::String &text, bool firstCreditsScreen) const {
+	if (_vm->getGameID() == GType_Swords && firstCreditsScreen) {
+		uint index = 0;
+		// Developed/published by
+		_vm->sayText(getNextTextSection(text, index, 2));
+
+		// Next four headers are separate from their corresponding credits
+		for (uint8 i = 0; i < 2; ++i) {
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeader = getNextTextSection(text, index);
+			_vm->sayText(getNextTextSection(text, index));
+			_vm->sayText(nextHeader);
+			_vm->sayText(getNextTextSection(text, index));
+		}
+
+		// Same as first four headers, but with two people at a time instead of one
+		for (uint8 i = 0; i < 2; ++i) {
+			// Headers
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeader = getNextTextSection(text, index);
+
+			// First people listed
+			_vm->sayText(getNextTextSection(text, index));
+			Common::String nextHeaderPerson = getNextTextSection(text, index);
+
+			// Second person listed under first header
+			_vm->sayText(getNextTextSection(text, index));
+
+			// Next header
+			_vm->sayText(nextHeader);
+			_vm->sayText(nextHeaderPerson);
+
+			if (i == 0) {
+				_vm->sayText(getNextTextSection(text, index));
+			} else {	// Last header has more than two people
+				_vm->sayText(text.substr(index));
+			}
+		}
+	} else {
+		_vm->sayText(text);
+	}
 }
 
 } // End of namespace Xeen

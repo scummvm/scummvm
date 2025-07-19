@@ -257,6 +257,7 @@ int Scripts::checkEvents() {
 	} else {
 		Window &w = windows[38];
 		w.open();
+		_vm->stopTextToSpeech();
 		w.writeString(Res.NOTHING_HERE);
 		w.update();
 
@@ -266,7 +267,7 @@ int Scripts::checkEvents() {
 			events.wait(1);
 		} while (!events.isKeyMousePressed() && !_vm->shouldExit());
 		events.clearEvents();
-
+		_vm->stopTextToSpeech();
 		w.close();
 	}
 

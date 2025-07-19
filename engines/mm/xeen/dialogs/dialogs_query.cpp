@@ -61,6 +61,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 		}
 	}
 
+	_vm->stopTextToSpeech();
 	w.writeString(msg);
 	w.update();
 
@@ -84,6 +85,7 @@ bool Confirm::execute(const Common::String &msg, int mode) {
 		}
 	}
 
+	_vm->stopTextToSpeech();
 	events.clearEvents();
 	w.close();
 	return result;

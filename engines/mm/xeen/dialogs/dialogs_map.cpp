@@ -78,6 +78,9 @@ void MapDialog::execute() {
 	windows[5].open();
 	bool drawFlag = true;
 
+	_vm->stopTextToSpeech();
+	bool voiceText = true;
+
 	events.updateGameCounter();
 	do {
 		if (drawFlag)
@@ -105,7 +108,8 @@ void MapDialog::execute() {
 
 		windows[5].writeString(Common::String::format(Res.MAP_TEXT,
 			map._mazeName.c_str(), party._mazePosition.x,
-			party._mazePosition.y, Res.DIRECTION_TEXT[party._mazeDirection]));
+			party._mazePosition.y, Res.DIRECTION_TEXT[party._mazeDirection]), voiceText);
+		voiceText = false;
 		windows[5].update();
 		windows[3].update();
 
@@ -113,6 +117,7 @@ void MapDialog::execute() {
 		drawFlag = false;
 	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
+	_vm->stopTextToSpeech();
 	events.clearEvents();
 	windows[5].close();
 }

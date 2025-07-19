@@ -72,6 +72,21 @@ private:
 	 * Sets the spell text
 	 */
 	const char *setSpellText(Character *c, int isCasting);
+
+	/**
+	 * Voices text with TTS and sets up buttons
+	 * @param text	Text for voicing and buttons. Each section should be separated by a newline
+	 * @param mode	Mode of the spells menu
+	 */
+	void speakText(const Common::String &text, int mode);
+
+	/**
+	 * Resets all button texts to what's currently on screen
+	 * @param text	Text, both for buttons and for voicing. Each section should be separated by a newline
+	 * @param mode	Mode of the spells menu
+	 * @returns		All text combined
+	 */
+	Common::String resetButtonTexts(const Common::String &text, int mode);
 public:
 	/**
 	 * Show the spells list dialog
@@ -91,6 +106,8 @@ private:
 	int execute(Character *&c);
 
 	void loadButtons();
+
+	void speakText(const Common::String &text);
 public:
 	static int show(XeenEngine *vm);
 };
@@ -113,6 +130,8 @@ private:
 	int execute(int spellId);
 
 	void loadButtons();
+
+	void speakText(const Common::String &text);
 public:
 	static int show(XeenEngine *vm, int spellId);
 };
@@ -135,6 +154,8 @@ private:
 	bool execute();
 
 	void loadButtons();
+
+	void speakText(const Common::String &text);
 public:
 	static bool show(XeenEngine *vm);
 };
@@ -164,6 +185,10 @@ private:
 	IdentifyMonster(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute();
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text) const;
+#endif
 public:
 	static void show(XeenEngine *vm);
 };

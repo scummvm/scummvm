@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 #include "common/error.h"
 #include "common/random.h"
 #include "common/serializer.h"
@@ -86,6 +87,15 @@ enum GameMode {
 	GMODE_MENU = 2,
 	GMODE_PLAY_GAME = 3,
 	GMODE_QUIT = 4
+};
+
+enum TTSLanguage {
+	kEnglish = 0,
+	kGerman = 1,
+	kFrench = 2,
+	kSpanish = 3,
+	kRussian = 4,
+	kChinese = 5
 };
 
 #define XEEN_SAVEGAME_VERSION 2
@@ -181,6 +191,9 @@ public:
 	bool _gameWon[3];
 	uint _finalScore;
 	ExtendedOptions _extOptions;
+	bool _mouseMoved;
+	TTSLanguage _ttsLanguage;
+	Common::CodePage _ttsTextEncoding;
 
 	CCArchive *_xeenCc = nullptr, *_darkCc = nullptr,
 		*_introCc = nullptr;
@@ -285,6 +298,25 @@ public:
 	 * Show an error message in a GUI dialog
 	 */
 	void GUIError(const Common::U32String &msg);
+
+	/**
+	 * Voice text with the text-to-speech system
+	 */
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE_NO_REPEAT) const;
+
+	/**
+	 * Stop the text-to-speech system's speech
+	 */
+	void stopTextToSpeech() const;
+
+#ifdef USE_TTS
+	/**
+	 * Convert text to a custom encoding for Spanish text
+	 * @param text	Text to convert
+	 * @returns		Converted string
+	 */
+	Common::U32String convertSpanishText(const Common::String &text) const;
+#endif
 };
 
 extern XeenEngine *g_vm;

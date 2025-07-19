@@ -61,8 +61,12 @@ void Quests::execute() {
 		windowFlag = true;
 	}
 
-	windows[29].writeString(Res.QUESTS_DIALOG_TEXT);
+	_vm->stopTextToSpeech();
+	Common::String ttsButtons;
+	windows[29].writeString(Res.QUESTS_DIALOG_TEXT, false, &ttsButtons);
+	setButtonTexts(ttsButtons);
 	drawButtons(&windows[0]);
+	Common::String ttsMessage;
 
 	while (!_vm->shouldExit()) {
 		Common::String lines[MAX_DIALOG_LINES];
@@ -116,6 +120,7 @@ void Quests::execute() {
 				}
 			}
 
+			ttsMessage.clear();
 			if (count == 0) {
 				windows[30].writeString(Res.NO_QUEST_ITEMS);
 			} else {
@@ -125,7 +130,9 @@ void Quests::execute() {
 					lines[topRow + 4].c_str(), lines[topRow + 5].c_str(),
 					lines[topRow + 6].c_str(), lines[topRow + 7].c_str(),
 					lines[topRow + 8].c_str()
-				));
+				), false, &ttsMessage);
+				ttsMessage.replace('*', ' ');
+				_vm->sayText(ttsMessage);
 			}
 			break;
 
@@ -152,8 +159,11 @@ void Quests::execute() {
 			if (count == 0)
 				lines[1] = Res.NO_CURRENT_QUESTS;
 
+			ttsMessage.clear();
 			windows[30].writeString(Common::String::format(Res.CURRENT_QUESTS_DATA,
-				lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()));
+				lines[topRow].c_str(), lines[topRow + 1].c_str(), lines[topRow + 2].c_str()), false, &ttsMessage);
+			ttsMessage.replace('*', ' ');
+			_vm->sayText(ttsMessage);
 			break;
 
 		case AUTO_NOTES: {
@@ -211,6 +221,7 @@ void Quests::execute() {
 
 		windows[30].writeString("\v000\t000");
 		windows[24].update();
+		g_vm->sayText(ttsButtons);
 
 		// Key handling
 		_buttonValue = 0;
@@ -260,13 +271,13 @@ void Quests::execute() {
 void Quests::addButtons() {
 	_iconSprites.load("quest.icn");
 
-	addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS, &_iconSprites);
-	addButton(Common::Rect(80, 109, 104, 129),  Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS, &_iconSprites);
-	addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES, &_iconSprites);
+	addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsQuests.KEY_QUEST_ITEMS, &_iconSprites, 0);
+	addButton(Common::Rect(80, 109, 104, 129),  Res.KeyConstants.DialogsQuests.KEY_CURRENT_QUESTS, &_iconSprites, 1);
+	addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsQuests.KEY_AUTO_NOTES, &_iconSprites, 2);
 
-	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_UP, &_iconSprites);
-	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_DOWN, &_iconSprites);
-	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addButton(Common::Rect(216, 109, 240, 129), Common::KEYCODE_UP, &_iconSprites, 3);
+	addButton(Common::Rect(250, 109, 274, 129), Common::KEYCODE_DOWN, &_iconSprites, 4);
+	addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites, 5);
 }
 
 void Quests::loadQuestNotes() {
