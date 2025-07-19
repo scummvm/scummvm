@@ -941,7 +941,14 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 }
 
 BOOL CWnd::SetDlgItemText(int nIDDlgItem, LPCSTR lpString) {
-	error("TODO: CWnd::SetDlgItemText");
+	CWnd *wnd = GetDlgItem(nIDDlgItem);
+
+	if (wnd) {
+		wnd->SetWindowText(lpString);
+		return true;
+	}
+
+	return false;
 }
 
 int CWnd::GetDlgCtrlID() const {
