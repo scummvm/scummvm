@@ -31,8 +31,11 @@ namespace Hpl1 {
 static Graphics::RendererType getBestRendererType() {
 	Common::String renderConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(renderConfig);
+	uint32 availableRendererTypes = Graphics::Renderer::getAvailableTypes();
+	// only the following renderer types are supported for now
+	availableRendererTypes &= Graphics::kRendererTypeOpenGL | Graphics::kRendererTypeOpenGLShaders | Graphics::kRendererTypeTinyGL;
 	return Graphics::Renderer::getBestMatchingType(
-		desiredRendererType, Graphics::Renderer::getAvailableTypes());
+		desiredRendererType, availableRendererTypes);
 }
 
 bool areShadersAvailable() {
