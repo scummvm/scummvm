@@ -1690,8 +1690,9 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	if ((*lpDrawItemStruct).itemState & ODS_FOCUS) {
 		myQuill.CreateStockObject(DKGRAY_BRUSH);
 		(*pDC).FrameRect(&focusRect, &myQuill);
-	} else
-		(*pDC).FrameRect(&focusRect, &faceBrush);
+	} else {
+//		(*pDC).FrameRect(&focusRect, &faceBrush);
+	}
 
 	if (pPalOld != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
