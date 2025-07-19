@@ -34,6 +34,7 @@
 
 #if TARGET_OS_IOS
 + (UIInterfaceOrientation)currentOrientation;
++ (void)setKeyWindow:(UIWindow *)window;
 #endif
 
 @end
