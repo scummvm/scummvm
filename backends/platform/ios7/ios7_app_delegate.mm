@@ -51,9 +51,6 @@
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
 	}
 
-	_window = [[UIWindow alloc] initWithFrame:rect];
-	[_window retain];
-
 	_controller = [[iOS7ScummVMViewController alloc] init];
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
@@ -64,8 +61,7 @@
 #endif
 	_controller.view = _view;
 
-	[_window setRootViewController:_controller];
-	[_window makeKeyAndVisible];
+	[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithFrame:rect]];
 
 	// Force creation of the shared instance on the main thread
 	iOS7_buildSharedOSystemInstance();
@@ -148,6 +144,14 @@
 + (UIInterfaceOrientation)currentOrientation {
 	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
 	return [appDelegate->_controller currentOrientation];
+}
+
++ (void)setKeyWindow:(UIWindow *)window {
+	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
+	appDelegate->_window = window;
+	[appDelegate->_window retain];
+	[appDelegate->_window setRootViewController:appDelegate->_controller];
+	[appDelegate->_window makeKeyAndVisible];
 }
 #endif
 
