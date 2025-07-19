@@ -326,8 +326,8 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 			dims.bottom = MIN<int>(dims.bottom, dims.top + _initialRect.height());
 		} else if (_textType == kTextTypeFixed || _textType == kTextTypeScrolling) {
 			// use initialRect to create widget for fixed style text, this maybe related to version.
-			dims.right = MAX<int>(dims.right, dims.left + _initialRect.width());
-			dims.bottom = MAX<int>(dims.bottom, dims.top + MAX<int>(_initialRect.height(), _maxHeight));
+			dims.right = MIN<int>(dims.right, dims.left + _initialRect.width());
+			dims.bottom = MIN<int>(dims.bottom, dims.top + MAX<int>(_initialRect.height(), _maxHeight));
 		}
 		widget = createWindowOrWidget(bbox, dims, macFont);
 		if (_textType != kTextTypeScrolling) {
