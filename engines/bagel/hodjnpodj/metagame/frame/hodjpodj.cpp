@@ -35,6 +35,7 @@
 #include "bagel/boflib/sound.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/gtstruct.h"
+#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
 #include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
 #include "bagel/hodjnpodj/metagame/zoom/dllinit.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
@@ -1018,7 +1019,9 @@ void CHodjPodjWindow::FreeCurrentDLL(void) {
 
 
 BOOL CHodjPodjWindow::LoadMetaDLL(void) {
-	// No DLLs under ScummVM
+	FreeCurrentDLL();
+	Metagame::Gtl::RunMeta(m_hWnd, lpMetaGame, FALSE);
+
 	bReturnToMeta = TRUE;
 	return TRUE;
 }

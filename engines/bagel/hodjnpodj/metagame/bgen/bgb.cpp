@@ -31,6 +31,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+namespace Gtl {
 
 #define CONTROL_PHYSICAL_MEMORY     TRUE
 
@@ -1121,6 +1122,7 @@ DWORD GetPhysicalMemory(void) {
 	return (lFreeBytes);
 }
 
+} // namespace Gtl
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

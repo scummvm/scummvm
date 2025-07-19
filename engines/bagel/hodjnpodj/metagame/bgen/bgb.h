@@ -29,6 +29,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+namespace Gtl {
 
 #define BGBT_DIB 1
 #define BGBT_SPRITE 2
@@ -46,25 +47,25 @@ public:
 
 	// Following should be in view-specific block
 	//
-	char        m_cStartData ;
-	CView      *m_xpcView ;                 // current window, when non-null
-	CDC        *m_xpDc ;                    // current device context
+	char        m_cStartData;
+	CView *m_xpcView;                 // current window, when non-null
+	CDC *m_xpDc;                    // current device context
 	COLORREF    m_cPenColor, m_cBrushColor;
 	int         m_iPenWidth, m_iBrushStyle;
-	CBrush     *m_xpOldBrush;
-	CPen       *m_xpOldPen;
+	CBrush *m_xpOldBrush;
+	CPen *m_xpOldPen;
 	BOOL        m_bCreatePen, m_bCreateBrush;
 	BOOL        m_bReleaseDc;               // flag: release DC when done
 	int         m_iLockCount;               // if positive, don't release DC
 
-	CBsuSet    *m_xpBsuSet;                 // scroll bar set, if any
+	CBsuSet *m_xpBsuSet;                 // scroll bar set, if any
 
-	CPalette   *m_xpGamePalette;            // game pallet
-	CPalette   *m_xpOldPalette;
+	CPalette *m_xpGamePalette;            // game pallet
+	CPalette *m_xpOldPalette;
 
 	CBgbObject *m_lpBgbChain;               // chain of bgb objects
 
-	CLList     *m_pFXList;                  // Special Effects list
+	CLList *m_pFXList;                  // Special Effects list
 
 	BOOL        m_bInMenu;                  // within options menu
 	char        m_szDataDirectory[100];     // directory for data files
@@ -84,7 +85,7 @@ public:
 	BOOL SetPosition(CBgbObject *, CRPoint);
 	BOOL PaintBitmapObject(CBgbObject *, BOOL bPaint PDFT(FALSE), CRect *p = nullptr);
 	BOOL AnimateSprite(CBgbObject *, CPoint, CPoint);
-	BOOL InitDc(CView * xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC * xpDc PDFT(nullptr));
+	BOOL InitDc(CView *xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC *xpDc PDFT(nullptr));
 	BOOL ReInitDc(void);
 	BOOL AdjustLockCount(int iIncr);
 	BOOL SetBrush(COLORREF cBrushColor, int iBrushStyle PDFT(BS_SOLID));
@@ -93,7 +94,7 @@ public:
 	BOOL ClearBitmapObject(CBgbObject *lpcBgbObject);
 	BOOL ReleaseResources(void);
 	VOID DoAnimations(VOID);
-	VOID PauseAnimations(VOID)  {
+	VOID PauseAnimations(VOID) {
 		m_bAnimationsPaused = TRUE;
 	}
 	VOID ResumeAnimations(VOID) {
@@ -120,17 +121,17 @@ public:
 	int         m_iBgbType;             // BGBT_xxxx -- object type
 	CBgbObject *m_xpcNext;              // pointer to next in chain
 	CBgbObject *m_xpcPrev;              // pointer to Previous in chain
-	bool        m_bChained: 1;          // on m_xBgbChain
-	bool        m_bNoDelete: 1;         // not allocated with "new"
-	bool        m_bMasked: 1;           // mask white areas of bitmap
-	bool        m_bInit: 1;             // TRUE if object is initialized
-	bool        m_bCleared: 1;          // FALSE if need a ClearBackground()
-	bool        m_bVisible: 1;          // bitmap is at least visible
-	bool        m_bEdge: 1;             // bitmap is on edge of phys wnd
-	bool        m_bLoaded: 1;           // TRUE if currently in cache
-	bool        m_bAnimated: 1;         // TRUE if this sprite is animated
-	bool        m_bSpecial: 1;          // TRUE if Special Animation
-	bool        m_bLocked: 1;           // TRUE if object is locked in cache
+	bool        m_bChained : 1;          // on m_xBgbChain
+	bool        m_bNoDelete : 1;         // not allocated with "new"
+	bool        m_bMasked : 1;           // mask white areas of bitmap
+	bool        m_bInit : 1;             // TRUE if object is initialized
+	bool        m_bCleared : 1;          // FALSE if need a ClearBackground()
+	bool        m_bVisible : 1;          // bitmap is at least visible
+	bool        m_bEdge : 1;             // bitmap is on edge of phys wnd
+	bool        m_bLoaded : 1;           // TRUE if currently in cache
+	bool        m_bAnimated : 1;         // TRUE if this sprite is animated
+	bool        m_bSpecial : 1;          // TRUE if Special Animation
+	bool        m_bLocked : 1;           // TRUE if object is locked in cache
 	// (i.e. Cannot be released)
 
 	int         m_nCels;                // number of cels in this cel strip
@@ -140,7 +141,7 @@ public:
 	UINT        m_nFreqCount;
 	CRPoint     m_crPosition;           // relocatable position to paint bitmap
 	CSize       m_cSize;                // size of bitmap
-	CObject    *m_pObject;              // can be CSprite or CBitmap...
+	CObject *m_pObject;              // can be CSprite or CBitmap...
 	ULONG       m_lAge;                 // age of this object
 	char        m_cEndData;
 
@@ -157,6 +158,7 @@ public:
 	}
 };
 
+} // namespace Gtl
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

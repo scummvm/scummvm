@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	mfc/cmd_target.o \
 	mfc/dialog.o \
 	mfc/dc.o \
+	mfc/doc_template.o \
 	mfc/document.o \
 	mfc/edit.o \
 	mfc/file.o \
@@ -43,7 +44,9 @@ MODULE_OBJS = \
 	mfc/rgn.o \
 	mfc/scroll_view.o \
 	mfc/scrollbar.o \
+	mfc/single_doc_template.o \
 	mfc/static.o \
+	mfc/view.o \
 	mfc/win_app.o \
 	mfc/win_thread.o \
 	mfc/wingdi.o \

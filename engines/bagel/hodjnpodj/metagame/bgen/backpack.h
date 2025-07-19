@@ -28,6 +28,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+namespace Gtl {
 
 #define BACKPACK_SPEC   ".\\art\\mlscroll.bmp"      // path for backpack's DIB on disk
 #define BACKPACK_DX             502
@@ -60,10 +61,10 @@ namespace Metagame {
 
 
 class CBackpack : public CDialog {
-// Construction
+	// Construction
 public:
 	CBackpack(CWnd *pParent, CPalette *pPalette,
-	          CInventory *pInventory);
+		CInventory *pInventory);
 
 	int SelectedItem(CPoint point);
 
@@ -85,15 +86,17 @@ private:
 private:
 	BOOL    m_bKeyboardHook;                // whether keyboard hook present
 
-// Dialog Data
-	//{{AFX_DATA(CBackpack)
-	enum { IDD = IDD_BACKPACK_DIALOG };
+	// Dialog Data
+		//{{AFX_DATA(CBackpack)
+	enum {
+		IDD = IDD_BACKPACK_DIALOG
+	};
 	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CBackpack)
@@ -114,8 +117,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+} // namespace Gtl
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel
 
-#endif //!_INC_BACKPACK
+#endif

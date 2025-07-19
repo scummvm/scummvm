@@ -1696,17 +1696,25 @@ public:
 
 class CDocTemplate : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocTemplate)
-
-protected:
-	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
-	             const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
+private:
+	UINT m_nIDResource = 0;
+	const CRuntimeClass *m_pDocClass = nullptr;
+	const CRuntimeClass *m_pFrameClass = nullptr;
+	const CRuntimeClass *m_pViewClass = nullptr;
 
 public:
 	DECLARE_MESSAGE_MAP()
+
+protected:
+	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
+	    const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
 };
 
 class CSingleDocTemplate : public CDocTemplate {
 	DECLARE_DYNAMIC(CSingleDocTemplate)
+
+public:
+	DECLARE_MESSAGE_MAP()
 
 public:
 	CSingleDocTemplate(
@@ -1717,8 +1725,6 @@ public:
 	) : CDocTemplate(nIDResource, pDocClass,
 		                 pFrameClass, pViewClass) {
 	}
-
-	DECLARE_MESSAGE_MAP()
 };
 
 /*============================================================================*/

@@ -27,6 +27,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+namespace Gtl {
 
 #define NOTEBOOK_SPEC   ".\\art\\mlscroll.bmp"      // path for notebook's DIB on disk
 #define NOTEBOOK_DX             502
@@ -81,9 +82,9 @@ namespace Metagame {
 
 
 class CNotebook : public CDialog {
-// Construction
+	// Construction
 public:
-	CNotebook(CWnd* pParent, CPalette *pPalette, CNote *pNoteList, CNote *pNote);
+	CNotebook(CWnd *pParent, CPalette *pPalette, CNote *pNoteList, CNote *pNote);
 
 	static  void UpdateNotebook(CDC *pDC);
 	static  void UpdateContent(CDC *pDC);
@@ -104,15 +105,17 @@ private:
 private:
 	BOOL    m_bKeyboardHook;                // whether keyboard hook present
 
-// Dialog Data
-	//{{AFX_DATA(CNotebook)
-	enum { IDD = IDD_NOTEBOOK_DIALOG };
+	// Dialog Data
+		//{{AFX_DATA(CNotebook)
+	enum {
+		IDD = IDD_NOTEBOOK_DIALOG
+	};
 	// NOTE: the ClassWizard will add data members here
 	//}}AFX_DATA
 
 // Implementation
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange *pDX) override;    // DDX/DDV support
 
 	// Generated message map functions
 	//{{AFX_MSG(CNotebook)
@@ -133,6 +136,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
+} // namespace Gtl
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

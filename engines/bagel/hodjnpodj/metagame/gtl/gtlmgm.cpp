@@ -41,7 +41,7 @@ extern BOOL         bExitMetaDLL;
 
 int gnFurlongs = 10;
 
-extern char *szGameSounds[MG_SOUND_COUNT];
+extern const char *szGameSounds[MG_SOUND_COUNT];
 
 #define MAX_SPECIAL_LINKS 14
 
@@ -366,7 +366,7 @@ int CGtlData::DoSpecialTravel(int iVisitId, BOOL bHodj) {
 	int iLinkThis, iLinkNext;
 	int iHodjSound, iPodjSound;
 	char chPlayerChar;
-	char *pSoundFile;
+	const char *pSoundFile;
 	CSound *pSound;
 	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
 	BOOL bDoTransport;
