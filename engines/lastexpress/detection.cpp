@@ -60,7 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -79,7 +79,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -98,7 +98,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -115,7 +115,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_TESTING | GF_COMPRESSED,
+		GF_COMPRESSED,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -131,7 +131,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformUnknown,
-		ADGF_DEMO | ADGF_TESTING,
+		ADGF_DEMO,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -150,7 +150,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::FR_FRA,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::DE_DEU,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -188,7 +188,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::ES_ESP,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -207,7 +207,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
@@ -226,7 +226,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::IT_ITA,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 	// The Last Express (Russian)
@@ -244,7 +244,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS,
 		Common::kPlatformUnknown,
-		ADGF_TESTING,
+		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOASPECT, GUIO_NOMIDI)
 	},
 
