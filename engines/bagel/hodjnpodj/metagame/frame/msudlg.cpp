@@ -438,7 +438,14 @@ BOOL CMetaSetupDlg::OnInitDialog() {
 	bSuccess = pPHButton->SetControl(IDC_PODJ_HUMAN, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	// FIXME: Don't know where WS_GROUP flag is set
+	// for start of radio button groups, so it's done here
+	pHSHButton->SetStyle(BS_OWNERDRAW | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
+	pPSLButton->SetStyle(BS_OWNERDRAW | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
+	pGTLButton->SetStyle(BS_OWNERDRAW | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
+	pPCButton->SetStyle(BS_OWNERDRAW  | WS_GROUP | WS_TABSTOP | WS_VISIBLE);
+
+	return TRUE;
 }
 
 /*****************************************************************
