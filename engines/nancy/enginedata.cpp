@@ -205,19 +205,15 @@ INV::INV(Common::SeekableReadStream *chunkStream) : EngineData(chunkStream) {
 
 			item.cantSound.readNormal(*chunkStream);
 		} else if (s.getVersion() >= kGameTypeNancy9) {
-			s.syncBytes(textBuf, 60);
-			textBuf[59] = '\0';
-			assembleTextLine((char *)textBuf, item.cantText, 60);
+			for (int j = 0; j < 3; ++j) {
+				s.syncBytes(textBuf, 60);
+				textBuf[59] = '\0';
+				assembleTextLine((char *)textBuf, item.cantTexts[j], 60);
+				readFilename(s, item.cantSounds[j].name);
+			}
 
-			// TODO: The "I can't do that" sound format has changed,
-			// so only override the sound name, to avoid reading junk
-			// into the SoundDescription members.
-			// item.cantSound.readNormal(*chunkStream);
-			SoundDescription tmp;
-			tmp.readNormal(*chunkStream);
-			item.cantSound.name = tmp.name;
-
-			s.skip(170);	// TODO: Handle this data properly
+			item.cantText = item.cantTexts[0]; // Default text is the first one
+			item.cantSound.name = item.cantSounds[0].name;
 		}
 	}
 }

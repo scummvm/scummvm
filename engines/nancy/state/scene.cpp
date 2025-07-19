@@ -22,6 +22,7 @@
 #include "common/serializer.h"
 #include "common/config-manager.h"
 #include "common/func.h"
+#include "common/random.h"
 
 #include "engines/nancy/nancy.h"
 #include "engines/nancy/iff.h"
@@ -481,11 +482,23 @@ void Scene::playItemCantSound(int16 itemID, bool notHoldingSound) {
 
 		if (item.cantSound.name.size()) {
 			// The inventory data contains a custom "can't" sound for this item
-			g_nancy->_sound->loadSound(item.cantSound);
-			g_nancy->_sound->playSound(item.cantSound);
+			SoundDescription cantSound = item.cantSound;
+			Common::String cantText = item.cantText;
+
+			// For Nancy9 and newer, we have multiple sounds to choose from,
+			// so randomly select one, if available
+			if (g_nancy->getGameType() >= kGameTypeNancy9 && !item.cantSounds[1].name.empty()) {
+				const uint maxSound = item.cantSounds[2].name.empty() ? 1 : 2;
+				uint soundIndex = g_nancy->_randomSource->getRandomNumber(maxSound);
+				cantSound = item.cantSounds[soundIndex];
+				cantText = item.cantTexts[soundIndex];
+			}
+
+			g_nancy->_sound->loadSound(cantSound);
+			g_nancy->_sound->playSound(cantSound);
 
 			if (ConfMan.getBool("subtitles")) {
-				_textbox.addTextLine(item.cantText, inventoryData->captionAutoClearTime);
+				_textbox.addTextLine(cantText, inventoryData->captionAutoClearTime);
 			}
 		} else if (inventoryData->cantSound.name.size()) {
 			// No custom sound, play default "can't" inside inventory data. Should (?) be unreachable

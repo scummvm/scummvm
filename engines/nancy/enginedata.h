@@ -116,8 +116,10 @@ struct INV : public EngineData {
 
 		Common::String cantText;
 		Common::String cantTextNotHolding; // nancy2 only
+		Common::String cantTexts[3];       // Nancy9 and newer
 		SoundDescription cantSound;
 		SoundDescription cantSoundNotHolding; // nancy2 only
+		SoundDescription cantSounds[3];       // Nancy9 and newer
 	};
 
 	INV(Common::SeekableReadStream *chunkStream);
