@@ -1730,7 +1730,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		uint32 frame1Offset = _framesStream->readUint32();
 		/* uint32 numOfFrames = */ _framesStream->readUint32();
 		_framesVersion = _framesStream->readUint16();
-		uint16 spriteRecordSize = _framesStream->readUint16();
+		_spriteRecordSize = _framesStream->readUint16();
 		_numChannels = _framesStream->readUint16();
 
 		if (_framesVersion > 13) {
@@ -1745,7 +1745,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		}
 
 		debugC(1, kDebugLoading, "Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
-			frame1Offset, _framesVersion, spriteRecordSize, _numChannels, _numChannelsDisplayed);
+			frame1Offset, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else {
 		error("STUB: Score::loadFrames(): score not yet supported for version %d", version);
@@ -2050,6 +2050,111 @@ Common::String Score::formatChannelInfo() {
 
 	return result;
 
+}
+
+void Score::writeVWSCResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+	uint32 channelSize = 0;
+	uint32 mainChannelSize = 0;
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		channelSize = kSprChannelSizeD4;
+		mainChannelSize = kMainChannelSizeD4;
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		channelSize = kSprChannelSizeD5;
+		mainChannelSize = kMainChannelSizeD5;
+	} else {
+		warning("FilmLoopCastMember::writeSCVWResource: Writing Director Version 6+ not supported yet");
+		return;
+	}
+	
+	writeStream->seek(offset);
+
+	uint32 scoreSize = getVWSCResourceSize();
+
+	writeStream->writeUint32LE(MKTAG('V', 'W', 'S', 'C'));
+	writeStream->writeUint32LE(scoreSize);
+	
+	// The format of a score is similar to that of FilmLoopCastMember, or rather its vice-verca 
+	writeStream->writeUint32BE(scoreSize);
+
+	// Headers
+	writeStream->writeUint32BE(0);		// frame10Offset
+	writeStream->writeUint32BE(0);		// numOfFrames
+	writeStream->writeUint16BE(_framesVersion);
+	writeStream->writeUint16BE(_spriteRecordSize); 
+	writeStream->writeUint16BE(_numChannels);
+
+	writeStream->writeUint16BE(_numChannelsDisplayed);		// In case _framesVersion > 13, we ignore this while loading
+
+	// until there are no more frames
+		// size of the frame ->
+		// until there are no more channels in the frame
+			// width of message (One chunk of data) (This is the size of data for the sprite that needs to be read) ->
+			// order of message (this order tells us the channel we're reading) ->
+			// 1-20 bytes of Sprite data	
+
+	for (uint it = 0; it < _scoreCache.size(); it ++) {
+		Frame frame = *(_scoreCache[it]);
+
+		// The frame._sprites had an empty 0th index
+		writeStream->writeUint16BE((mainChannelSize + 4) + (frame._sprites.size() - 1) * (channelSize + 4) + 2);		// frameSize
+
+		// It's not necessary to make this code this modular, but for the sake of paralleling loading code
+		// dividing this writing function into different parts
+		// writeFrame is parallel to the combination of (loadFrame() and readOneFrame())
+		writeFrame(writeStream, frame, channelSize, mainChannelSize);
+	}
+}
+
+void Score::writeFrame(Common::MemoryWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize) {
+	// The first sprite is the main channel
+	writeStream->writeUint16BE(mainChannelSize);
+	// the offset for the main channel should be 0 since we're writing all the 40/48 bytes
+	writeStream->writeUint16BE(0);
+	frame.writeMainChannels(writeStream, _version);
+	
+	for (uint it = 1; it < frame._sprites.size(); it++) {
+		Sprite sprite = *(frame._sprites[it]);
+
+		writeStream->writeUint16BE(channelSize);
+		writeStream->writeUint16BE(((it - 1) * channelSize) + mainChannelSize);
+
+		if (_version >= kFileVer400 && _version < kFileVer500) {
+			writeSpriteDataD4(writeStream, sprite);
+		} else if (_version >= kFileVer500 && _version < kFileVer600) {
+			writeSpriteDataD5(writeStream, sprite);
+		}
+	}
+}
+
+uint32 Score::getVWSCResourceSize() {
+	uint32 channelSize = 0;
+	uint32 mainChannelSize = 0;
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		channelSize = kSprChannelSizeD4;
+		mainChannelSize = kMainChannelSizeD4;
+	} else if (_version >= kFileVer500) {
+		channelSize = kSprChannelSizeD5;
+		mainChannelSize = kMainChannelSizeD5;
+	} else {
+		warning("FilmLoopCastMember::getSCVWResourceSize: Director version unsupported");
+	}
+
+	uint32 framesSize = 0;
+	for (Frame *frame : _scoreCache) { 
+		// Frame size
+		framesSize += 2;
+
+		framesSize += (2 + 2 + mainChannelSize);
+		for (uint it = 1; it < frame->_sprites.size(); it++) {
+			// message width: 2 bytes
+			// order: 2 bytes
+			// Sprite data: 20 bytes
+			framesSize += 2 + 2 + channelSize; 	
+		}
+	}
+	// _firstFramePosition is the header size
+	// header + frames (main channel + sprite channels) (20 bytes)
+	return _firstFramePosition + framesSize;
 }
 
 } // End of namespace Director

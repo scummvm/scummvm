@@ -50,6 +50,7 @@ CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndi
 
 	_widget = nullptr;
 	_erase = false;
+	_index = -1;
 }
 
 CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMember") {
@@ -69,6 +70,7 @@ CastMember::CastMember(Cast *cast, uint16 castId) : Object<CastMember>("CastMemb
 
 	_widget = nullptr;
 	_erase = false;
+	_index = -1;
 }
 
 CastMember *CastMember::duplicate(Cast *cast, uint16 castId) {
@@ -313,7 +315,7 @@ void CastMember::unload() {
 // Whereas _info_ is metadata (size, name, flags, etc.)
 // Some cast members have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
 // Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource)
-uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream) {
 	uint32 castResourceSize = getCastResourceSize();
 
 	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));

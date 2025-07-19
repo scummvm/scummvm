@@ -72,6 +72,7 @@ struct InfoEntry {
 	}
 
 	Common::String readString(bool pascal = true);
+	void writeString(Common::String string, bool pascal = true);
 };
 
 struct InfoEntries {
