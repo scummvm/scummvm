@@ -33,6 +33,8 @@
 #include "common/error.h"
 #include "graphics/surface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Buried {
 
 enum {
@@ -110,6 +112,8 @@ bool MainMenuWindow::showMainMenu() {
 
 	_vm->removeKeyboardMessages(this);
 	_vm->removeKeyboardMessages(_parent);
+	_vm->removeActionMessages(this);
+	_vm->removeActionMessages(_parent);
 
 	showWindow(kWindowShow);
 	invalidateWindow();
@@ -205,6 +209,10 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 				// Play the intro movie
 				VideoWindow *video = new VideoWindow(_vm, this);
 
+				Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+				keymapper->disableAllGameKeymaps();
+				keymapper->getKeymap("cutscene")->setEnabled(true);
+
 				if (video->openVideo("BITDATA/INTRO/INTRO_O.BTV")) {
 					video->setWindowPos(nullptr, 104, 145, 0, 0, kWindowPosNoSize | kWindowPosNoZOrder);
 					video->enableWindow(false);
@@ -220,6 +228,10 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 
 				delete video;
 
+				keymapper->getKeymap("cutscene")->setEnabled(false);
+				keymapper->getKeymap("main-menu")->setEnabled(true);
+				keymapper->getKeymap("buried-default")->setEnabled(true);
+
 				if (_vm->shouldQuit())
 					return;
 
@@ -230,7 +242,12 @@ void MainMenuWindow::onLButtonUp(const Common::Point &point, uint flags) {
 			}
 			return;
 		case BUTTON_RESTORE_GAME:
-			_vm->loadGameDialog();
+			if(_vm->loadGameDialog()) {
+				Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+				keymapper->getKeymap("main-menu")->setEnabled(false);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+				keymapper->getKeymap("inventory")->setEnabled(true);
+			}
 			return;
 		case BUTTON_CREDITS:
 			((FrameWindow *)_parent)->showCredits();

@@ -350,6 +350,8 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	// Play the file
 	bool retVal = _soundData[kAIVoiceIndex]->start();
 
+	_vm->enableCutsceneKeymap(true);
+
 	while (retVal && !_vm->shouldQuit() && _soundData[kAIVoiceIndex]->isPlaying()) {
 		timerCallback();
 		_vm->yield(nullptr, kAIVoiceIndex);
@@ -358,6 +360,8 @@ bool SoundManager::playSynchronousAIComment(const Common::Path &fileName) {
 	// Now that is has been played, kill it here and now
 	delete _soundData[kAIVoiceIndex];
 	_soundData[kAIVoiceIndex] = new Sound();
+
+	_vm->enableCutsceneKeymap(false);
 
 	// Return success
 	return true;
@@ -443,6 +447,8 @@ bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int 
 	if (soundChannel < 0)
 		return false;
 
+	_vm->enableCutsceneKeymap(true);
+
 	// Otherwise, assume the sound has started playing and enter a wait and see loop until
 	// the sound finishes playing
 	do {
@@ -452,6 +458,8 @@ bool SoundManager::playSynchronousSoundEffect(const Common::Path &fileName, int 
 
 	// One last callback check
 	timerCallback();
+
+	_vm->enableCutsceneKeymap(false);
 
 	// Reset the cursor
 	_vm->_gfx->setCursor(oldCursor);

@@ -31,6 +31,8 @@
 
 #include "engines/engine.h"
 
+#include "backends/keymapper/keymapper.h"
+
 class OSystem;
 
 struct ADGameDescription;
@@ -53,6 +55,33 @@ enum {
 	GF_WIN95      = (1 << 2),
 	GF_COMPRESSED = (1 << 3),
 	GF_TRIAL      = (1 << 4)
+};
+
+enum BURIEDActions {
+	kActionNone,
+	kActionQuit,
+	kActionQuitToMainMenu,
+	kActionQuitToMainMenuInv,
+	kActionSkip,
+	kActionMoveUp,
+	kActionMoveLeft,
+	kActionMoveRight,
+	kActionMoveDown,
+	kActionMoveForward,
+	kActionSave,
+	kActionLoad,
+	kActionPause,
+	kActionAIComment,
+	kActionBiochipAI,
+	kActionBiochipBlank,
+	kActionBiochipCloak,
+	kActionBiochipEvidence,
+	kActionBiochipFiles,
+	kActionBiochipInterface,
+	kActionBiochipJump,
+	kActionBiochipTranslate,
+	kActionPoints,
+	kActionControl,
 };
 
 class BuriedConsole;
@@ -128,6 +157,7 @@ public:
 	void processAudioVideoSkipMessages(VideoWindow *video, int soundId);
 	void removeKeyboardMessages(Window *window);
 	void removeMouseMessages(Window *window);
+	void removeActionMessages(Window *window);
 	void removeAllMessages(Window *window);
 	void removeMessages(Window *window, int messageBegin, int messageEnd);
 	bool hasMessage(Window *window, int messageBegin, int messageEnd) const;
@@ -141,6 +171,7 @@ public:
 	bool isControlDown() const;
 	void pauseGame();
 	void showPoints();
+	void enableCutsceneKeymap(bool enable);
 
 	// Save/Load
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;

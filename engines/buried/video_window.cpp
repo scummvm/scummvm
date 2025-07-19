@@ -199,8 +199,8 @@ void VideoWindow::onPaint() {
 	}
 }
 
-void VideoWindow::onKeyUp(const Common::KeyState &key, uint flags) {
-	if (key.keycode == Common::KEYCODE_ESCAPE)
+void VideoWindow::onActionEnd(const Common::CustomEventType &action, uint flags) {
+	if (action == kActionSkip)
 		stopVideo();
 }
 

@@ -332,13 +332,13 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		MessageType messageType = it->message->getMessageType();
 
-		if (messageType == kMessageTypeKeyUp) {
-			Common::KeyState keyState = ((KeyUpMessage *)it->message)->getKeyState();
+		if (messageType == kMessageTypeActionEnd) {
+			Common::CustomEventType action = ((ActionEndMessage *)it->message)->getAction();
 
 			// Send any skip keyup events to the audio/video players
-			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			if (action == kActionSkip) {
 				if (video)
-					video->onKeyUp(keyState, ((KeyUpMessage *)it->message)->getFlags());
+					video->onActionEnd(action, ((ActionEndMessage *)it->message)->getFlags());
 
 				if (soundId >= 0)
 					_sound->stopSound(soundId);
@@ -348,12 +348,12 @@ void BuriedEngine::processAudioVideoSkipMessages(VideoWindow *video, int soundId
 			} else {
 				++it;
 			}
-		} else if (messageType == kMessageTypeKeyDown) {
-			Common::KeyState keyState = ((KeyDownMessage *)it->message)->getKeyState();
+		} else if (messageType == kMessageTypeActionStart) {
+			Common::CustomEventType action = ((ActionStartMessage *)it->message)->getAction();
 
 			// Erase any skip video keydown events from the queue, to avoid
 			// interpreting them as game quit events after the video ends
-			if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+			if (action == kActionSkip) {
 				delete it->message;
 				it = _messageQueue.erase(it);
 			} else {
@@ -419,6 +419,10 @@ void BuriedEngine::removeMouseMessages(Window *window) {
 	removeMessages(window, kMessageTypeMouseBegin, kMessageTypeMouseEnd);
 }
 
+void BuriedEngine::removeActionMessages(Window *window) {
+	removeMessages(window, kMessageTypeActionRangeBegin, kMessageTypeActionRangeEnd);
+}
+
 void BuriedEngine::removeAllMessages(Window *window) {
 	for (MessageQueue::iterator it = _messageQueue.begin(); it != _messageQueue.end();) {
 		if (it->dest == window) {
@@ -477,13 +481,17 @@ void BuriedEngine::pollForEvents() {
 			window->postMessage(new SetCursorMessage(kMessageTypeMouseMove));
 			break;
 		}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new ActionEndMessage(event.customType, 0));
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (_focusedWindow)
+				_focusedWindow->postMessage(new ActionStartMessage(event.customType, 0));
+			break;
 		case Common::EVENT_KEYUP:
 			if (_focusedWindow)
 				_focusedWindow->postMessage(new KeyUpMessage(event.kbd, 0));
-			break;
-		case Common::EVENT_KEYDOWN:
-			if (_focusedWindow)
-				_focusedWindow->postMessage(new KeyDownMessage(event.kbd, 0));
 			break;
 		case Common::EVENT_LBUTTONDOWN: {
 			Window *window = _captureWindow ? _captureWindow : _mainWindow->childWindowAtPoint(event.mouse);
@@ -640,6 +648,14 @@ void BuriedEngine::handleRestoreDialog() {
 
 	if (loadGameDialog())
 		bioChipWindow->destroyBioChipViewWindow();
+}
+
+void BuriedEngine::enableCutsceneKeymap(bool enable) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("cutscene")->setEnabled(enable);
+	keymapper->getKeymap("buried-default")->setEnabled(!enable);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(!enable);
+	keymapper->getKeymap("inventory")->setEnabled(!enable);
 }
 
 } // End of namespace Buried
