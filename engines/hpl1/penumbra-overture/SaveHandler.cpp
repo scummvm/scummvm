@@ -582,8 +582,10 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 
 void cSaveHandler::AutoLoad(const tWString &asDir) {
 	tWString latestSave = GetLatest(asDir + _W(":*"));
-	LoadGameFromFile(latestSave);
-	mpInit->mpGame->ResetLogicTimer();
+	if (!latestSave.empty()) {
+		LoadGameFromFile(latestSave);
+		mpInit->mpGame->ResetLogicTimer();
+	}
 }
 
 //-----------------------------------------------------------------------
