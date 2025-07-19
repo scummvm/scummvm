@@ -148,10 +148,12 @@ class MenuContainerDialog : public ButtonContainer {
 protected:
 	MainMenuContainer *_owner;
 public:
+	bool _ttsVoiceText;
+public:
 	/**
 	 * Constructor
 	 */
-	MenuContainerDialog(MainMenuContainer *owner) : ButtonContainer(g_vm), _owner(owner) {}
+	MenuContainerDialog(MainMenuContainer *owner) : ButtonContainer(g_vm), _owner(owner), _ttsVoiceText(true) {}
 
 	/**
 	 * Destructor

@@ -74,6 +74,10 @@ private:
 	*/
 	const char *getFoodOnHandPlurals(int food);
 
+#ifdef USE_TTS
+	void speakText(const Common::String &text);
+#endif
+
 	bool expandStat(int attrib, const Character &c);
 public:
 	static void show(XeenEngine *vm, int charIndex);

@@ -26,6 +26,12 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kInfoTimeCount = 3;
+
+#endif
+
 void InfoDialog::show(XeenEngine *vm) {
 	InfoDialog *dlg = new InfoDialog(vm);
 	dlg->execute();
@@ -64,21 +70,54 @@ void InfoDialog::execute() {
 	Window &w = windows[28];
 	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
 	w.open();
-	w.writeString(details);
+	Common::String ttsMessage;
+	w.writeString(details, false, &ttsMessage);
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+	speakText(ttsMessage);
+#endif
 
 	do {
 		events.updateGameCounter();
 		intf.draw3d(false, false);
 		w.frame();
-		w.writeString(details);
+		w.writeString(details, false);
 		w.update();
 
 		events.wait(1);
 	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
+
 	events.clearEvents();
 	w.close();
 }
+
+#ifdef USE_TTS
+
+void InfoDialog::speakText(const Common::String &text) const {
+	uint index = 0;
+
+	_vm->sayText(getNextTextSection(text, index, kInfoTimeCount));
+
+	Common::String timeInfo[kInfoTimeCount];
+	// Time, day, and year headers
+	for (uint i = 0; i < kInfoTimeCount; ++i) {
+		timeInfo[i] = getNextTextSection(text, index);
+	}
+
+	// Time, day, and year numbers
+	for (uint i = 0; i < kInfoTimeCount; ++i) {
+		_vm->sayText(timeInfo[i] + ": " + getNextTextSection(text, index));
+	}
+
+	// Any remaining lines
+	_vm->sayText(text.substr(index));
+}
+
+#endif
 
 void InfoDialog::protectionText() {
 	Party &party = *_vm->_party;

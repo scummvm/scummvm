@@ -32,6 +32,10 @@ private:
 	WhoWill(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int message, int action, bool type);
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text) const;
+#endif
 public:
 	static int show(XeenEngine *vm, int message, int action, bool type);
 };

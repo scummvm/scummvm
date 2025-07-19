@@ -89,6 +89,9 @@ void EventsManager::pollEvents() {
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
+#ifdef USE_TTS
+			_vm->_mouseMoved = true;
+#endif
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			_mousePressed = true;

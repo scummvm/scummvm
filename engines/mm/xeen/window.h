@@ -147,13 +147,15 @@ public:
 
 	/**
 	 * Write a string to the window
-	 * @param s			String to display
-	 * @returns			Any string remainder that couldn't be displayed
+	 * @param s				String to display
+	 * @param ttsVoiceText	Whether to voice the text with the TTS system
+	 * @param ttsMessage	Message for TTS, which will be built
+	 * @returns				Any string remainder that couldn't be displayed
 	 * @remarks		Note that bounds is just used for wrapping purposes. Unless
 	 *		justification is set, the message will be written at _writePos
 	 */
-	const char *writeString(const Common::String &s) {
-		return FontSurface::writeString(s, _innerBounds);
+	const char *writeString(const Common::String &s, bool ttsVoiceText = true, Common::String *ttsMessage = nullptr) {
+		return FontSurface::writeString(s, _innerBounds, ttsVoiceText, ttsMessage);
 	}
 
 	/**

@@ -54,6 +54,21 @@ private:
 	 * Gets the current time
 	 */
 	Common::String getTimeText() const;
+
+#ifdef USE_TTS
+	/**
+	 * Voices text as text-to-speech and sets the buttons
+	 * @param text	Text of the control panel, each piece separated by a newline
+	 */
+	void speakText(const Common::String &text);
+
+	/**
+	 * Voices "On" or "Off" text and changes the TTS text of an on/off button to this text
+	 * @param on				Whether to voice "on" or "off"
+	 * @param buttonTextIndex	The index of the button text to change
+	 */
+	void voiceOnOffText(bool on, uint buttonTextIndex);
+#endif
 public:
 	/**
 	 * Show the control panel

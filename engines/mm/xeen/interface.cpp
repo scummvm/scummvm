@@ -40,8 +40,20 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kCombatButtonCount = 3;
+
+#endif
+
 enum {
 	SCENE_WINDOW = 11, SCENE_WIDTH = 216, SCENE_HEIGHT = 132
+};
+
+enum CombatButtonTTSTextIndex {
+	kCombatMonster1 = 0,
+	kCombatMonster2 = 1,
+	kCombatMonster3 = 2
 };
 
 PartyDrawer::PartyDrawer(XeenEngine *vm): _vm(vm) {
@@ -337,9 +349,9 @@ void Interface::setMainButtons(IconsMode mode) {
 	addButton(Common::Rect(260, 169, 284, 189), Common::KEYCODE_DOWN, spr);
 	addButton(Common::Rect(286, 169, 310, 189), (Common::KBD_CTRL << 16) | Common::KEYCODE_RIGHT, spr);
 	addButton(Common::Rect(236,  11, 308,  69),  Common::KEYCODE_EQUALS);
-	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1);
-	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2);
-	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3);
+	addButton(Common::Rect(239,  27, 312,  37),  Common::KEYCODE_1, nullptr, kCombatMonster1);
+	addButton(Common::Rect(239, 37, 312, 47), Common::KEYCODE_2, nullptr, kCombatMonster2);
+	addButton(Common::Rect(239, 47, 312, 57), Common::KEYCODE_3, nullptr, kCombatMonster3);
 	addPartyButtons(_vm);
 
 	if (mode == ICONS_COMBAT) {
@@ -1357,7 +1369,10 @@ void Interface::draw3d(bool updateFlag, bool pauseFlag) {
 
 	// Draw any on-screen text if flagged to do so
 	if (_upDoorText && combat._attackMonsters[0] == -1) {
-		windows[3].writeString(_screenText);
+		windows[3].writeString(_screenText, _screenText != _ttsPreviousScreenText);
+		_ttsPreviousScreenText = _screenText;
+	} else {
+		_ttsPreviousScreenText.clear();
 	}
 
 	if (updateFlag) {
@@ -1627,6 +1642,11 @@ void Interface::doCombat() {
 		Window &w = windows[2];
 		w.open();
 		bool breakFlag = false;
+		Common::String ttsMessage;
+		bool ttsVoiceText = true;
+#ifdef USE_TTS
+		uint ttsIndex = 0;
+#endif
 
 		while (!_vm->shouldExit() && !breakFlag && !party._dead && _vm->_mode == MODE_COMBAT) {
 			// FIXME: I've had a rare issue where the loop starts with a non-party _whosTurn. Unfortunately,
@@ -1638,11 +1658,21 @@ void Interface::doCombat() {
 			highlightChar(combat._whosTurn);
 			combat.setSpeedTable();
 
+			ttsMessage.clear();
 			// Write out the description of the monsters being battled
-			w.writeString(combat.getMonsterDescriptions());
+			w.writeString(combat.getMonsterDescriptions(), ttsVoiceText, &ttsMessage);
+			ttsVoiceText = false;
+
 			_combatIcons.draw(0, 32, Common::Point(233, combat._attackDurationCtr * 10 + 27),
 				SPRFLAG_800, 0);
 			w.update();
+
+#ifdef USE_TTS
+			ttsIndex = 0;
+			getNextTextSection(ttsMessage, ttsIndex);	// "Combat"
+			_buttonTexts.clear();
+			addNextTextToButtons(ttsMessage, ttsIndex, kCombatButtonCount);
+#endif
 
 			// Wait for keypress
 			index = 0;
@@ -1682,6 +1712,9 @@ void Interface::doCombat() {
 				if (combat._attackMonsters[_buttonValue] != -1) {
 					combat._monster2Attack = combat._attackMonsters[_buttonValue];
 					combat._attackDurationCtr = _buttonValue;
+#ifdef USE_TTS
+					_vm->sayText(_buttonTexts[_buttonValue], Common::TextToSpeechManager::INTERRUPT);
+#endif
 				}
 				break;
 

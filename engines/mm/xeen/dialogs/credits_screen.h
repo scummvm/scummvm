@@ -32,6 +32,10 @@ private:
 	CreditsScreen(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	void execute(const char *content);
+
+#ifdef USE_TTS
+	void speakText(const Common::String &text, bool firstCreditsScreen) const;
+#endif
 public:
 	static void show(XeenEngine *vm);
 };

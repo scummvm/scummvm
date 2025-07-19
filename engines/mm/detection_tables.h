@@ -24,7 +24,7 @@
 
 namespace MM {
 
-#define GUIO_XEEN GUIO4(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR, GAMEOPTION_SHOW_HP_SP_BARS, GAMEOPTION_COPY_PROTECTION)
+#define GUIO_XEEN GUIO5(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR, GAMEOPTION_SHOW_HP_SP_BARS, GAMEOPTION_COPY_PROTECTION, GAMEOPTION_TTS)
 
 static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 #ifdef ENABLE_MM1
@@ -37,7 +37,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 		GType_MightAndMagic1,
 		0
@@ -52,7 +52,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 		GType_MightAndMagic1,
 		GF_ENHANCED
@@ -69,7 +69,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_TTS)
 		},
 		GType_MightAndMagic1,
 		GF_GFX_PACK

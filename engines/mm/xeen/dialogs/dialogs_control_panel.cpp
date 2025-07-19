@@ -28,6 +28,23 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kControlPanelTextCount = 7;
+static const uint8 kControlPanelEfxIndex = 1;
+static const uint8 kControlPanelMusicIndex = 3;
+
+#endif
+
+enum ControlPanelButtonTTSTextIndex {
+	kControlPanelLoad = 0,
+	kControlPanelEfx = 1,
+	kControlPanelSave = 2,
+	kControlPanelMusic = 3,
+	kControlPanelQuit = 4,
+	kControlPanelWizard = 5
+};
+
 int ControlPanel::show(XeenEngine *vm) {
 	ControlPanel *dlg = new ControlPanel(vm);
 	int result = dlg->execute();
@@ -51,24 +68,37 @@ int ControlPanel::execute() {
 
 	int result = 0, debugCtr = 0;
 	w.open();
+#ifdef USE_TTS
+	bool voiceText = true;
+	_vm->stopTextToSpeech();
+#endif
 
 	do {
 		Common::String btnText = getButtonText();
 		Common::String text = Common::String::format(Res.CONTROL_PANEL_TEXT, btnText.c_str());
 
 		drawButtons(&w);
-		w.writeString(text);
+
+		Common::String ttsMessage;
+		w.writeString(text, false, &ttsMessage);
 		w.writeString("\xB""000\t000\x1");
 		w.update();
+
+#ifdef USE_TTS
+		if (voiceText) {
+			speakText(ttsMessage);
+			voiceText = false;
+		}
+#endif
 
 		events.updateGameCounter();
 		intf.draw3d(false, false);
 
 		do {
-			w.writeString("\r");
+			w.writeString("\r", false);
 			drawButtons(&w);
-			w.writeString(text);
-			w.writeString("\v000\t000");
+			w.writeString(text, false);
+			w.writeString("\v000\t000", false);
 			w.frame();
 
 			if (_debugFlag)
@@ -131,10 +161,14 @@ int ControlPanel::execute() {
 			sound.setFxOn(!sound._fxOn);
 			if (sound._fxOn)
 				sound.playFX(20);
-
+#ifdef USE_TTS
+			voiceOnOffText(sound._fxOn, kControlPanelEfxIndex);
+#endif
 		} else if (Res.KeyConstants.DialogsControlPanel.KEY_MUSICON == _buttonValue) {
 			sound.setMusicOn(!sound._musicOn);
-
+#ifdef USE_TTS
+			voiceOnOffText(sound._musicOn, kControlPanelMusicIndex);
+#endif
 		} else if (Common::KEYCODE_ESCAPE == _buttonValue) {
 			result = 1;
 
@@ -168,17 +202,17 @@ int ControlPanel::execute() {
 
 void ControlPanel::loadButtons() {
 	_iconSprites.load("cpanel.icn");
-	addButton(Common::Rect(214, 56, 244, 69), Res.KeyConstants.DialogsControlPanel.KEY_FXON, 0, &_iconSprites);
-	addButton(Common::Rect(214, 75, 244, 88), Res.KeyConstants.DialogsControlPanel.KEY_MUSICON, 0, &_iconSprites);
-	addButton(Common::Rect(135, 56, 165, 69), Res.KeyConstants.DialogsControlPanel.KEY_LOAD, 0, &_iconSprites);
-	addButton(Common::Rect(135, 75, 165, 88), Res.KeyConstants.DialogsControlPanel.KEY_SAVE, 0, &_iconSprites);
+	addButton(Common::Rect(214, 56, 244, 69), Res.KeyConstants.DialogsControlPanel.KEY_FXON, 0, &_iconSprites, kControlPanelEfx);
+	addButton(Common::Rect(214, 75, 244, 88), Res.KeyConstants.DialogsControlPanel.KEY_MUSICON, 0, &_iconSprites, kControlPanelMusic);
+	addButton(Common::Rect(135, 56, 165, 69), Res.KeyConstants.DialogsControlPanel.KEY_LOAD, 0, &_iconSprites, kControlPanelLoad);
+	addButton(Common::Rect(135, 75, 165, 88), Res.KeyConstants.DialogsControlPanel.KEY_SAVE, 0, &_iconSprites, kControlPanelSave);
 
 	// For ScummVM we've merged both Save and Save As into a single
 	// save item, so we don't need this one
 	addButton(Common::Rect(), 0);
 
-	addButton(Common::Rect(135, 94, 165, 107), Res.KeyConstants.DialogsControlPanel.KEY_QUIT, 0, &_iconSprites);
-	addButton(Common::Rect(175, 113, 205, 126), Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD, 0, &_iconSprites);
+	addButton(Common::Rect(135, 94, 165, 107), Res.KeyConstants.DialogsControlPanel.KEY_QUIT, 0, &_iconSprites, kControlPanelQuit);
+	addButton(Common::Rect(175, 113, 205, 126), Res.KeyConstants.DialogsControlPanel.KEY_MRWIZARD, 0, &_iconSprites, kControlPanelWizard);
 }
 
 Common::String ControlPanel::getButtonText() {
@@ -204,6 +238,28 @@ Common::String ControlPanel::getTimeText() const {
 		"\x2\x3l\xB""000\t000\x4""160%s\x3r\xB""000\t000%s\x1",
 		timeStr.c_str(), playtimeStr.c_str());
 }
+
+#ifdef USE_TTS
+
+void ControlPanel::speakText(const Common::String &text) {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index, kControlPanelTextCount));
+	addNextTextToButtons(text, index, kControlPanelTextCount - 1);
+}
+
+void ControlPanel::voiceOnOffText(bool on, uint buttonTextIndex) {
+	const char *baseMessage = on ? Res.ON : Res.OFF;
+	Common::String cleanedMessage;
+	for (uint i = 0; i < strlen(baseMessage); ++i) {
+		if (Common::isAlpha(baseMessage[i])) {
+			cleanedMessage += baseMessage[i];
+		}
+	}
+	_vm->sayText(cleanedMessage, Common::TextToSpeechManager::INTERRUPT);
+	_buttonTexts[buttonTextIndex] = cleanedMessage;
+}
+
+#endif
 
 } // End of namespace Xeen
 } // End of namespace MM
