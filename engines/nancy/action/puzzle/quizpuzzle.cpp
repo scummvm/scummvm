@@ -44,9 +44,12 @@ void QuizPuzzle::execute() {
 	} else if (g_nancy->getGameType() == kGameTypeNancy9) {
 		const uint16 sceneId = NancySceneState.getSceneInfo().sceneID;
 		if (sceneId == 6450) {
-			warning("STUB - Nancy 9 Quiz Puzzle - Holt Scotto's quiz");
+			warning("STUB - Nancy 9 Quiz Puzzle - Holt Scotto's quiz, page 1");
 			// Set the puzzle event flags to flag it as done
 			NancySceneState.setEventFlag(59, g_nancy->_true); // EV_Answered_SQ_Q06
+		} else if (sceneId == 6451) {
+			warning("STUB - Nancy 9 Quiz Puzzle - Holt Scotto's quiz, page 2");
+			// Set the puzzle event flags to flag it as done
 			NancySceneState.setEventFlag(61, g_nancy->_true); // EV_Answered_SQ_Q09
 		} else if (sceneId == 6342) {
 			warning("STUB - Nancy 9 Quiz Puzzle - GPS new waypoint");
