@@ -34,12 +34,10 @@ public:
 	SubWindow(Window *parent, Common::Rect rect);
 	~SubWindow() = default;
 
-	void setMainWindow() override;
+	void setAsCurrent() override;
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr) override;
-	void addDirtyRect(const Common::Rect &r) override;
-	void markAllDirty() override;
-	void setDirty(bool dirty) override;
 	void setStageColor(uint32 stageColor, bool forceReset = false) override;
+	uint32 getStageColor() override;
 
 private:
 	Window *_parent;

@@ -430,7 +430,7 @@ bool Window::setNextMovie(Common::String &movieFilenameRaw) {
 	return true;
 }
 
-void Window::setMainWindow() {
+void Window::setAsCurrent() {
 	_vm->setCurrentWindow(this);
 }
 

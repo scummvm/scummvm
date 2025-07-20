@@ -95,6 +95,7 @@ Movie::Movie(Window *window) {
 	_timeOutPlay = false;
 
 	_isBeepOn = false; // Beep is off by default in the original
+	_isCastMember = false;
 }
 
 Movie::~Movie() {

@@ -761,7 +761,7 @@ bool Channel::hasSubChannels() {
 }
 
 Common::Array<Channel> *Channel::getSubChannels() {
-	debug("Channel::getSubChannels: Called");
+	debug("Channel::getSubChannels: Called by %s", g_director->getCurrentMovie()->getMacName().c_str());
 	if (_sprite->_cast) {
 		Common::Rect bbox = getBbox();
 		if (_sprite->_cast->_type == kCastFilmLoop)

@@ -44,8 +44,8 @@ SubWindow::SubWindow(Window *parent, Common::Rect rect)
 	_parent = parent;
 }
 
-void SubWindow::setMainWindow() {
-	_parent->setMainWindow();
+void SubWindow::setAsCurrent() {
+	_parent->setAsCurrent();
 }
 
 bool SubWindow::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
@@ -53,30 +53,19 @@ bool SubWindow::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 	return false;
 }
 
-void SubWindow::addDirtyRect(const Common::Rect &r) {
-	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: addDirtyRect: Marking the rect dirty in the main window");
-	_parent->addDirtyRect(r);
-}
-
-void SubWindow::markAllDirty() {
-	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: markAllDirty: Marking all the rect dirty in the main window");
-	_parent->markAllDirty();
-}
-
-void SubWindow::setDirty(bool dirty) {
-	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: setDirty: Marking the content as dirty in the main window");
-	_parent->setDirty(dirty);
-}
-
 void SubWindow::setStageColor(uint32 stageColor, bool forceReset) {
 	debugC(3, kDebugMovieCast, "MovieCastMember::SubWindow: setStageColor: Marking the rect dirty in the main window");
+}
+
+uint32 SubWindow::getStageColor() {
+	return _parent->getStageColor();
 }
 
 MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version)
 		: CastMember(cast, castId, stream) {
 	_type = kCastMovie;
 
-	_enableScripts = _flags & 0x10;
+	_enableScripts = true;
 
 	// We are ignoring some of the bits in the flags
 	if (cast->_version >= kFileVer400 && cast->_version < kFileVer500) {
@@ -103,6 +92,7 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	_movie = new Movie(_window);
 	_window->setCurrentMovie(_movie);
 	_window->incRefCount();
+	_movie->_isCastMember = true;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
@@ -128,8 +118,9 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 
 	_subchannels.clear();
 
-	debug("MovieCastMember::getSubChannels():: Current Frame number of movie %s: %d", _filename.toString().c_str(), _movie->getScore()->_curFrameNumber);
 	_movie->getScore()->step();
+	_movie->getScore()->loadFrame(_movie->getScore()->_curFrameNumber, true);
+	debugC(3, kDebugMovieCast, "MovieCastMember::getSubChannels():: Current Frame number of movie %s: %d", _filename.toString().c_str(), _movie->getScore()->_curFrameNumber);
 
 	Common::Array<Sprite *> sprites = _movie->getScore()->_currentFrame->_sprites;
 
@@ -155,7 +146,7 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 		// Film loop frames are constructed as a series of Channels, much like how a normal frame
 		// is rendered by the Score. We don't include a pointer to the current Score here,
 		// that's only for querying the constraint channel which is not used.
-		Channel chan(nullptr, src);
+		Channel chan(_movie->getScore(), src);
 		_subchannels.push_back(chan);
 	}
 	// Initialise the widgets on all of the subchannels.

@@ -518,7 +518,7 @@ void Movie::queueInputEvent(LEvent event, int targetId, Common::Point pos) {
 void Movie::processEvent(LEvent event, int targetId) {
 	Common::Queue<LingoEvent> queue;
 	queueEvent(queue, event, targetId);
-	this->getWindow()->setMainWindow();
+	this->getWindow()->setAsCurrent();
 	_lingo->processEvents(queue, false, this);
 }
 
