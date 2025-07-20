@@ -297,8 +297,6 @@ private:
 	void pushKeyToCheatBuf(uint8 key);
 	bool checkCode(const char *code);
 	uint8 getBufferedKey(uint8 pos);
-
-	double getVobAmplification(Common::String fileName) const;
 };
 
 } // End of namespace ZVision
