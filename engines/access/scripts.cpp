@@ -818,9 +818,9 @@ void Scripts::cmdTexSpeak() {
 		tmpStr += (char)v;
 
 	if (_vm->getGameID() == GType_MartianMemorandum)
-		_vm->_bubbleBox->_bubbleDisplStr = Common::String("TEX");
+		_vm->_bubbleBox->_bubbleDisplStr = "TEX";
 	else
-		_vm->_bubbleBox->_bubbleDisplStr = Common::String("JASON");
+		_vm->_bubbleBox->_bubbleDisplStr = "JASON";
 
 	_vm->_bubbleBox->placeBubble1(tmpStr);
 	findNull();
@@ -856,7 +856,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_screen->_printStart = _texsOrg;
 
 	_vm->_bubbleBox->clearBubbles();
-	_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 1");
+	_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 1";
 
 	byte v;
 	Common::String tmpStr = "";
@@ -877,7 +877,7 @@ void Scripts::cmdTexChoice() {
 		tmpStr += (char)v;
 
 	if (tmpStr.size() != 0) {
-		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 2");
+		_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 2";
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -892,7 +892,7 @@ void Scripts::cmdTexChoice() {
 		tmpStr += (char)v;
 
 	if (tmpStr.size() != 0) {
-		_vm->_bubbleBox->_bubbleDisplStr = Common::String("RESPONSE 3");
+		_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 3";
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);

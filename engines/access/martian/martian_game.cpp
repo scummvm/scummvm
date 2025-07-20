@@ -30,11 +30,10 @@ namespace Access {
 
 namespace Martian {
 
-MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) : AccessEngine(syst, gameDesc) {
-	_skipStart = false;
-	_introObjects = nullptr;
-	_creditsStream = nullptr;
-	_spec7Objects = nullptr;
+MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
+AccessEngine(syst, gameDesc), _skipStart(false), _introObjects(nullptr),
+_creditsStream(nullptr), _spec7Objects(nullptr)
+{
 }
 
 MartianEngine::~MartianEngine() {
@@ -63,15 +62,7 @@ void MartianEngine::initVariables() {
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
 	_player->_playerOff = false;
 
-	// Setup timers
-	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
-	for (int i = 0; i < 32; ++i) {
-		TimerEntry te;
-		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
-		te._flag = 1;
-
-		_timers.push_back(te);
-	}
+	setupTimers();
 
 	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
 	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
@@ -80,12 +71,10 @@ void MartianEngine::initVariables() {
 	_mouseMode = 0;
 	_numAnimTimers = 0;
 
-	for (int i = 0; i < 60; i++)
-		_travel[i] = 0;
+	ARRAYCLEAR(_travel);
 	_travel[7] = 1;
 
-	for (int i = 0; i < 40; i++)
-		_ask[i] = 0;
+	ARRAYCLEAR(_ask);
 	_ask[33] = 1;
 }
 
@@ -155,11 +144,7 @@ void MartianEngine::doSpecial5(int param1) {
 	notesRes->_stream->skip(param1 * 2);
 	int pos = notesRes->_stream->readUint16LE();
 	notesRes->_stream->seek(pos);
-	Common::String msg = "";
-	byte c;
-	while ((c = (char)notesRes->_stream->readByte()) != '\0')
-		msg += c;
-
+	Common::String msg = notesRes->_stream->readString();
 	displayNote(msg);
 
 	_midi->stopSong();
@@ -218,7 +203,7 @@ bool MartianEngine::showCredits() {
 	int posX = _creditsStream->readSint16LE();
 	int posY = 0;
 
-	while(posX != -1) {
+	while (posX != -1) {
 		posY = _creditsStream->readSint16LE();
 		int frameNum = _creditsStream->readSint16LE();
 		_screen->plotImage(_introObjects, frameNum, Common::Point(posX, posY));
@@ -283,15 +268,8 @@ void MartianEngine::doCredits() {
 	}
 }
 
-void MartianEngine::setupGame() {
-	// Load death list
-	_deaths.resize(_res->DEATHS.size());
-	for (uint idx = 0; idx < _deaths.size(); ++idx) {
-		_deaths[idx]._screenId = _res->DEATHS[idx]._screenId;
-		_deaths[idx]._msg = _res->DEATHS[idx]._msg;
-	}
-
-	// Setup timers
+void MartianEngine::setupTimers() {
+	_timers.clear();
 	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
@@ -300,6 +278,17 @@ void MartianEngine::setupGame() {
 
 		_timers.push_back(te);
 	}
+}
+
+void MartianEngine::setupGame() {
+	// Load death list
+	_deaths.resize(_res->DEATHS.size());
+	for (uint idx = 0; idx < _deaths.size(); ++idx) {
+		_deaths[idx]._screenId = _res->DEATHS[idx]._screenId;
+		_deaths[idx]._msg = _res->DEATHS[idx]._msg;
+	}
+
+	setupTimers();
 
 	// Miscellaneous
 	Martian::MartianResources &res = *((Martian::MartianResources *)_res);

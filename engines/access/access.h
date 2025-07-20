@@ -248,7 +248,7 @@ public:
 	int _numLines;
 	byte _byte26CB5;
 	int _bcnt;
-	byte *_tempList;
+	//byte *_tempList;
 	int _pictureTaken;
 	//
 

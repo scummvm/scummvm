@@ -48,6 +48,7 @@ private:
 	void initObjects();
 	void configSelect();
 	void initVariables();
+	void setupTimers();
 protected:
 	/**
 	 * Play the game

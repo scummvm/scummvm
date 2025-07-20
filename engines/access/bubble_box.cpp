@@ -761,7 +761,7 @@ void BubbleBox::getList(const char *const data[], int *flags) {
 	int destIdx = 0;
 	while (data[srcIdx]) {
 		if (flags[srcIdx]) {
-			_tempList[destIdx] = Common::String(data[srcIdx]);
+			_tempList[destIdx] = data[srcIdx];
 			_tempListIdx[destIdx] = srcIdx;
 			++destIdx;
 		}
