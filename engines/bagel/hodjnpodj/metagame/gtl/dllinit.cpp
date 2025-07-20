@@ -31,8 +31,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-CGtlApp NEAR theApp;
-
+CGtlApp *theApp;
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 HWND        ghwndParent;
@@ -79,6 +78,8 @@ BOOL            bJustReturned = FALSE;
 HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	ghwndParent = hParentWnd;
 	lpMetaGameStruct = lpBfcMgr;
+
+	theApp = new CGtlApp();
 
 	#if RETAIN_META_DLL
 	if (bMetaLoaded) {

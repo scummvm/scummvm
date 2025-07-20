@@ -94,10 +94,15 @@ private:
 	Common::Point _mousePos;
 	uint _joystickButtons = 0;
 	HOOKPROC _kbdHookProc = nullptr;
-	enum QuitFlag { QUIT_NONE, QUIT_QUITTING, QUIT_QUIT };
-	QuitFlag _quitFlag = QUIT_NONE;
 	int _idleCtr = 0;
 
+protected:
+	enum QuitFlag {
+		QUIT_NONE, QUIT_QUITTING, QUIT_QUIT
+	};
+	QuitFlag _quitFlag = QUIT_NONE;
+
+private:
 	/**
 	 * Get any pending event
 	 * @return      Returns false if app should quit

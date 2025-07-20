@@ -49,7 +49,7 @@ CWinApp::CWinApp(const char *appName) :
 		CWinThread(), EventLoop(),
 		_cursors(_resources),
 		_fonts(_resources) {
-	assert(!_activeApp);    // Only one app per engine
+	_priorWinApp = _activeApp;
 	_activeApp = this;
 	Libs::Event::init();
 }
@@ -67,7 +67,9 @@ CWinApp::~CWinApp() {
 	m_pmapHDC = nullptr;
 	m_pmapHGDIOBJ = nullptr;
 
-	_activeApp = nullptr;
+	_activeApp = _priorWinApp;
+	if (_activeApp)
+		_activeApp->_quitFlag = _quitFlag;
 }
 
 BOOL CWinApp::InitApplication() {

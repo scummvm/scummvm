@@ -1742,6 +1742,7 @@ class CWinApp : public CWinThread, public Libs::EventLoop {
 	DECLARE_DYNAMIC(CWinApp)
 
 private:
+	CWinApp *_priorWinApp;
 	Libs::Resources _resources;
 	Libs::Settings _settings;
 	Gfx::Cursors _cursors;
