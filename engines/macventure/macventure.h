@@ -346,6 +346,7 @@ private: // Attributes
 	bool _haltedAtEnd, _haltedInSelection;
 	bool _gameChanged;
 	bool _clickToContinue;
+	bool _enginePaused;
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _inQueue;
