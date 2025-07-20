@@ -960,9 +960,11 @@ Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
 	// Autosave tries to lock the screen to get a screenshot
 	// Fail it like with old graphics3d backends
 	// TODO: Try to return a surface containing a screenshot
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	if (_renderer3d) {
 		return nullptr;
 	}
+#endif
 
 	assert(_gameScreen);
 	return _gameScreen->getSurface();
