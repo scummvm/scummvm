@@ -134,6 +134,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 	ScreenItem *screenItem = new ScreenItem(plane->_object, celInfo, Common::Point(), ScaleInfo());
 	plane->_screenItemList.add(screenItem);
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	// frameOut must be called after the screen item is created, and before it
 	// is updated at the end of the event loop, otherwise it has both created
 	// and updated flags set which crashes the engine (updates are handled
@@ -187,6 +189,8 @@ reg_t GfxControls32::kernelEditText(const reg_t controlObject) {
 			textChanged = true;
 		}
 	}
+
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	g_sci->_gfxFrameout->deletePlane(*plane);
 	if (readSelectorValue(_segMan, controlObject, SELECTOR(frameOut))) {
@@ -253,6 +257,8 @@ reg_t GfxControls32::kernelInputText(const reg_t textObject, const reg_t titleOb
 	ScreenItem *screenItem = new ScreenItem(plane->_object, celInfo, Common::Point(), ScaleInfo());
 	plane->_screenItemList.add(screenItem);
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	g_sci->_gfxFrameout->frameOut(true);
 
 	EventManager *eventManager = g_sci->getEventManager();
@@ -290,6 +296,8 @@ reg_t GfxControls32::kernelInputText(const reg_t textObject, const reg_t titleOb
 
 		processEditTextEvent(event, editor, screenItem, clearTextOnInput);
 	}
+
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
 	g_sci->_gfxFrameout->deletePlane(*plane);
 	g_sci->_gfxFrameout->frameOut(true);
