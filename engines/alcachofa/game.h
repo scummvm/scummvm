@@ -50,6 +50,7 @@ public:
 
 	virtual bool doesRoomHaveBackground(const Room *room);
 	virtual void unknownRoomObject(const Common::String &type);
+	virtual void unknownRoomType(const Common::String &type);
 	virtual void unknownDoorTargetRoom(const Common::String &name);
 	virtual void unknownDoorTargetDoor(const Common::String &room, const Common::String &door);
 
@@ -83,6 +84,8 @@ public:
 	virtual void missingAnimation(const Common::String &fileName);
 	virtual void missingSound(const Common::String &fileName);
 	virtual void invalidSNDFormat(uint format, uint channels, uint freq, uint bps);
+	virtual void notEnoughRoomDataRead(const char *path, int64 filePos, int64 objectEnd);
+	virtual void notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd);
 
 	static Game *createForMovieAdventure();
 
