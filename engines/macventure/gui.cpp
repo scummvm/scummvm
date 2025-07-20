@@ -334,7 +334,10 @@ void Gui::updateWindowInfo(WindowReference ref, ObjID objID, const Common::Array
 }
 
 void Gui::addChild(WindowReference target, ObjID child) {
-	findWindowData(target).children.push_back(DrawableObject(child, kBlitBIC));
+	WindowData &winData = findWindowData(target);
+	winData.children.push_back(DrawableObject(child, kBlitBIC));
+	winData.updateScroll = true;
+	_engine->updateWindow(winData.refcon);
 }
 
 void Gui::removeChild(WindowReference target, ObjID child) {

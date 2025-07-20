@@ -163,7 +163,7 @@ Common::Error MacVentureEngine::run() {
 	while (_gameState != kGameStateQuitting) {
 		processEvents();
 
-		if (_gameState != kGameStateQuitting && !_gui->isDialogOpen()) {
+		if (!_enginePaused && _gameState != kGameStateQuitting && !_gui->isDialogOpen()) {
 
 			if (_prepared) {
 				_prepared = false;
@@ -218,6 +218,7 @@ void MacVentureEngine::setInitialFlags() {
 	_gameState = kGameStateInit;
 	_destObject = 0;
 	_prepared = true;
+	_enginePaused = false;
 }
 
 void MacVentureEngine::setNewGameState() {
@@ -264,6 +265,7 @@ void MacVentureEngine::selectControl(ControlAction id) {
 	debugC(2, kMVDebugMain, "Select control %x", id);
 	if (id == kClickToContinue) {
 		_clickToContinue = false;
+		_enginePaused = false;
 		_paused = true;
 		return;
 	}
@@ -310,6 +312,7 @@ void MacVentureEngine::loseGame() {
 
 void MacVentureEngine::clickToContinue() {
 	_clickToContinue = true;
+	_enginePaused = true;
 }
 
 void MacVentureEngine::enqueueObject(ObjectQueueID type, ObjID objID, ObjID target) {
@@ -437,6 +440,7 @@ void MacVentureEngine::setTextInput(const Common::String &content) {
 	_prepared = true;
 	_userInput = content;
 	_clickToContinue = false;
+	_enginePaused = false;
 }
 
 Common::String MacVentureEngine::getUserInput() {
