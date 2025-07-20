@@ -957,11 +957,20 @@ void OpenGLGraphicsManager::presentBuffer() {
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
+	// Autosave tries to lock the screen to get a screenshot
+	// Fail it like with old graphics3d backends
+	// TODO: Try to return a surface containing a screenshot
+	if (_renderer3d) {
+		return nullptr;
+	}
+
 	assert(_gameScreen);
 	return _gameScreen->getSurface();
 }
 
 void OpenGLGraphicsManager::unlockScreen() {
+	// In 3D mode, we always fail to lock the screen
+	// The code is never supposed to call unlockScreen
 	assert(_gameScreen);
 	_gameScreen->flagDirty();
 }
