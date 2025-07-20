@@ -86,7 +86,6 @@ public:
 	Common::Array<RoomEntry> ROOMTBL;
 	Common::Array<DeathEntry> DEATHS;
 	Common::Array<InventoryEntry> INVENTORY;
-	Common::Array< Common::Array<byte> > CURSORS;
 	Common::String CANT_GET_THERE;
 public:
 	Resources(AccessEngine *vm) : _vm(vm) {}
@@ -97,6 +96,11 @@ public:
 	 * Load the access.dat file
 	 */
 	bool load(Common::U32String &errorMessage);
+
+	/**
+	 * Get the raw data for the given cursor number
+	 */
+	virtual const byte *getCursor(int num) const = 0;
 };
 
 } // End of namespace Access

@@ -203,7 +203,10 @@ void Scripts::printWatch() {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars * 6, line, width);
+		if (_vm->getGameID() == GType_MartianMemorandum)
+			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
+		else
+			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars * 6, line, width);
 		// Draw the text
 		_vm->_bubbleBox->printString(line);
 

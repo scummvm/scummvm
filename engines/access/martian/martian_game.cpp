@@ -107,7 +107,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	int width = 0;
 	bool lastLine = false;
 	do {
-		lastLine = _fonts._font1->getLine(lines, _screen->_maxChars * 6, line, width);
+		lastLine = _fonts._font1->getLine(lines, _screen->_maxChars, line, width, Font::kWidthInChars);
 		_bubbleBox->printString(line);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
@@ -263,7 +263,7 @@ void MartianEngine::doCredits() {
 		while (!shouldQuit() && !_events->isKeyActionMousePressed()&& !showCredits())
 			_events->pollEventsAndWait();
 
-		warning("TODO: Free word_21E2B");
+		warning("TODO: Free word_21E2B (roomSprites+54h)");
 		_midi->freeMusic();
 	}
 }
@@ -292,7 +292,7 @@ void MartianEngine::setupGame() {
 
 	// Miscellaneous
 	Martian::MartianResources &res = *((Martian::MartianResources *)_res);
-	_fonts.load(res._font6x6, res._font3x5);
+	_fonts.load(res._font1, res._font2);
 
 	// Set player room and position
 	_player->_roomNumber = 7;
@@ -305,7 +305,7 @@ void MartianEngine::showDeathText(Common::String msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _fonts._font2->getLine(msg, _screen->_maxChars * 6, line, width);
+		lastLine = _fonts._font2->getLine(msg, _screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		_bubbleBox->printString(line);
 

@@ -89,6 +89,11 @@ void AmazonResources::load(Common::SeekableReadStream &s) {
 	_font6x6 = new AmazonFont(&index[0], &data[0]);
 }
 
+const byte *AmazonResources::getCursor(int num) const {
+	return CURSORS[num].data();
+}
+
+
 /*------------------------------------------------------------------------*/
 
 const int SIDEOFFR[] = { 5, 5, 5, 5, 5, 5, 5, 5, 0 };

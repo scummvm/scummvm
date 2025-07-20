@@ -117,7 +117,11 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+		if (_vm->getGameID() == GType_MartianMemorandum)
+			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
+		else
+			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
 		screen._printOrg.y += 6;
@@ -173,7 +177,7 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 	do {
 		// Get next line
 		Font &font2 = *_vm->_fonts._font2;
-		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
+		lastLine = font2.getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		printString(line);
 
@@ -336,7 +340,6 @@ void BubbleBox::setCursorPos(int posX, int posY) {
 }
 
 void BubbleBox::printString(Common::String msg) {
-	warning("TODO: Proper implementation of printString");
 	_vm->_fonts._font1->drawString(_vm->_screen, msg, _vm->_screen->_printOrg);
 }
 
