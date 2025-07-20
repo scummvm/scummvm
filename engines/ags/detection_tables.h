@@ -272,6 +272,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
 	{ "apotheosis", "The Apotheosis Project" },
+	{ "arijigoku", "Arijigoku" },
 	{ "ashinaredwitch", "Ashina: The Red Witch" },
 	{ "astroloco", "Astroloco: Worst Contact" },
 	{ "atotk", "A Tale Of Two Kingdoms" },
@@ -301,6 +302,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "crimsondiamond","The Crimson Diamond" },
 	{ "crystalshardadventurebundle", "Crystal Shard Adventure Bundle" },
 	{ "danewguys2", "Da New Guys: Day of the Jackass" },
+	{ "darkrites", "The Dark Rites of Arkham" },
 	{ "detectivebhdino", "Detective Boiled-Hard - Case File: Death of the Space Dino Hunter" },
 	{ "detectivegallo", "Detective Gallo" },
 	{ "diamondsintherough", "Diamonds in the Rough" },
@@ -369,6 +371,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "phoenixtales", "Phoenix Tales" },
 	{ "piratethemepark", "Pirate Theme Park: A Short Adventure" },
 	{ "primordia", "Primordia" },
+	{ "primordialfate", "Primordial Fate" },
 	{ "projectorface", "Projector Face" },
 	{ "puzzlebots", "Puzzle Bots" },
 	{ "qfi", "Quest for Infamy" },
@@ -1170,6 +1173,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "detectiveobriced", "Detective O.Briced" },
 	{ "detectiverizal", "Detective Rizal and the Jaded Ruby" },
 	{ "detention", "Detention!" },
+	{ "detentionrampage", "Detention Room Rampage" },
 	{ "deusexmachina", "Deus Ex Machina" },
 	{ "devilgotwoman", "The Devil Got My Woman" },
 	{ "devochkaquest", "Devochka Quest" },
@@ -1412,6 +1416,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "flashdown", "Flash Down" },
 	{ "flashmccoy", "Flash McCoy" },
 	{ "flayedman", "The Flayed Man" },
+	{ "flight", "Flight" },
 	{ "flightrobots", "Flight from the Robots" },
 	{ "flightrobotsch2", "Flight from the Robots - Chapter 2" },
 	{ "floatyrog", "Floaty Rog'" },
@@ -2983,6 +2988,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "slickadv", "Slick Adventures: The Warehouse" },
 	{ "slidersquest", "Sliders Quest" },
 	{ "slimequestforpizza", "Slime Quest for Pizza" },
+	{ "slimequest2", "Slime Quest 2: Slime Battle for Burgers" },
 	{ "slothforseasons", "A Sloth For Both Seasons" },
 	{ "slugprincess", "Slug Princess" },
 	{ "slvsaus", "SL vs. AUS 07" },
@@ -3720,6 +3726,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 
 
 	// AGS 3.6.2 games. not currently supported
+	{ "agent11", "Agent 11 - The Missing Knight" },
 	{ "badcoral", "Bad to the Coral" },
 	{ "beachbelly", "Beach Belly Bloodbath" },
 	{ "burncloset", "Burn Down The Closet: a game about being agender" },
@@ -4265,11 +4272,14 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("zak2", "Zak2.exe", "0b7529a76f38283d6e850b8d56526fc1", 9205143),
 
 	// AGS 3.6.2 games
+	UNSUPPORTED_GAME_ENTRY_EN("agent11", "Agent 11 - The Missing Knight.ags", "4b9c9d5bdab4df97f13ac68fff8f9a1e", 472664809),
 	UNSUPPORTED_GAME_ENTRY_EN("badcoral", "BadToTheCoral.ags", "404ba29796e56672febce37c38d41d23", 4638605),  //v1.02
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "4792bc8c90ba9d08dfe32394af61420b", 25562809),
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "08d7ab12e0844b2217171b9f16f87062", 11267330),  // Post-Jam
 	UNSUPPORTED_GAME_ENTRY_EN("beachbelly", "BeachBellyBloodbath.ags", "b9e0b0bbbb82a04d9c83efa455610eda", 11728709),  // Post-Jam v11
 	UNSUPPORTED_GAME_ENTRY_EN("burncloset", "BurnDownTheCLoset.ags", "adfdd31c0cfa9ae131da1f1071e75a7a", 4734045),
+	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.exe", "2587f046d5f079359e6aec043519fa70", 7264253),  // v1.0.1
+	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.ags", "e0fcd3d59fb160e504700ab8a0101e2f", 4147230),
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
 	UNSUPPORTED_GAME_ENTRY_EN("vasafasa", "The Vasa Fasa.ags", "0bffe4b12ae8f62bf7c0b9b51f7173e8", 50323076),
@@ -4326,6 +4336,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("apotheosis", "the apotheosis project.exe", "0115a64ddec9396108f32da31d761ecb", 1144677502),  // Eng-Ita
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.exe", "4c0c28d58ebd53823fc0248e5b777c52", 1144826071),
 	GAME_ENTRY_STEAM("apotheosis", "The Apotheosis Project.ags", "0d9ae5a4ffd3e3e968c6addb5d524954", 1142362222), // Linux
+	GAME_ENTRY_EN_STEAM("arijigoku", "Arijigoku.exe", "1263af4b7ae146be14aa8ada3c8c7d9c", 71152822),
 	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),  // Original (rollback 0.0) Multilang
 	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51056669, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),  // v1.1 (rollback 0.1)
 	DETECTION_ENTRY_GUIO("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51089445, Common::UNK_LANG, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),  // v1.2
@@ -4941,6 +4952,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("primordia", "ac2game.dat", "fe4f46407ac736cf0e6badf96cef4ee5", 866351966, 0),  // Mac v5.2a
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
+	GAME_ENTRY_EN_STEAM("primordialfate", "PrimordialFate.exe", "1263af4b7ae146be14aa8ada3c8c7d9c", 131697770),
 	GAME_ENTRY_PLUGIN_STEAM_NOAUTOSAVE("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502, 0),  // En-De-It
 	GAME_ENTRY_PLUGIN_STEAM_EN_NOAUTOSAVE("puzzlebots", "ac2game.dat", "34b49df9cf6eadb5c3587b3921d5b72f", 787776664, 0),
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("qfi", "qfi.exe", "0702df6e67ef87fd3c51d09303803126", 534847265, 0),
@@ -5391,11 +5403,13 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("cyberpunk97ep1", "zone - Copy.exe", "78dd4ca028ee0156b6a093d6d780aa65", 1014330648),
 	DEMO_ENTRY_EN("danewguys2", "dng2 demo.exe", "0d2e8dc76f9ac381d204a3ac763b0bac", 5235302),
 	DEMO_ENTRY_EN("dangermouse", "Danger Mouse.exe", "eed666c68be394737de478a52210dde4", 247422806),
+	DEMO_ENTRY("darkrites", "The Dark Rites of Arkham DEMO.exe", "9723324dd132040c240728de41ac8e5d", 189288639),  // Steam Eng/Esp
 	DEMO_ENTRY_EN("dawnswonderedatagesend", "myGame.exe", "75f4c7f66b1be60af5b2d65f617b91a7", 243406385),
 	DEMO_ENTRY_EN("deflus", "Deflusdemo.exe", "0710e2ec71042617f565c01824f0cf3c", 2939316),
 	DEMO_ENTRY_EN("demonicdollhouse", "DemonHunter.exe", "923a79b80d267f21dfdf723e8a013752", 26616797),
 	DEMO_ENTRY("detectivegallo", "dgbuild.exe", "5f2e683b0d5e66e47f5800322982171e", 466252165),  // En-It
 	DEMO_ENTRY_EN("detectiverizal", "Detective Rizal and the Jaded Ruby.exe", "615e73fc1874e92d60a1996c2330ea36", 28411427),
+	DEMO_ENTRY_EN("detentionrampage", "DetentionRR.ags", "301059fac453ac10804812bd6c935e91", 26717503),
 	DEMO_ENTRY_EN("diamondsintherough", "diamonds demo.exe", "14c995189266969d538b31d1df451d3f", 2439365),
 	DEMO_ENTRY_EN("doctorwho", "Doctor Who.exe", "06a03fe35791b0578068ab1873455463", 50728727),
 	DEMO_ENTRY_EN("doses", "PN.exe", "615e73fc1874e92d60a1996c2330ea36", 3891599),  // v1.0
@@ -5747,6 +5761,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("skytowerrescue", "STR.exe", "2b7ae26333ba15529a8bbbdb49605133", 8630945),
 	DEMO_ENTRY_EN("slazakloss", "Slazak.exe", "7633f0919378749cebf6dacba61ca0e1", 58494797),  // itch.io
 	DEMO_ENTRY_EN("slazakloss", "Slazakd.exe", "b5478748a11747ecd3185a9c76781eff", 58121492),  // Steam
+	DEMO_ENTRY_EN("slimequest2", "slime2.exe", "97d700529f5cc826f230c27acf81adfd", 1379623),
 	DEMO_ENTRY_EN("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18528035),
 	DEMO_ENTRY_EN("smileordie", "SmileOrDie.exe", "06a03fe35791b0578068ab1873455463", 12740162),
 	DEMO_ENTRY_EN("snowproblem", "Snow Problem Demo V3.exe", "fae163b58c16e194688727d0903684be", 5047803),  //v3
@@ -6447,7 +6462,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("butcherstanys", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1404933),
 	GAME_ENTRY_EN("butcherstanys2", "stanys.exe", "97d700529f5cc826f230c27acf81adfd", 1489182),
 	GAME_ENTRY_EN("buttercup", "Buttercups gone missing!.exe", "4d17844029d8910fbaae1bdc99e250f2", 2854591),
-	GAME_ENTRY_EN("bvsr", "BvR.exe", "74adb5f9f94e0fc29c7ab6518d6de9e4", 7278740),
+	GAME_ENTRY_EN("bvsr", "BvR.exe", "74adb5f9f94e0fc29c7ab6518d6de9e4", 7278740),  // v1.0
 	GAME_ENTRY_EN("bvsr", "BvR.ags", "7630852721801f6bdd66fe29f37d5aa8", 4135552),
 	GAME_ENTRY_EN("byohero", "BYO-Hero.exe", "f0dd8a7e2c0e033d8f928e65aa54b10f", 163626763),
 	GAME_ENTRY_EN("bytebetrayal", "Byte-Sized Betrayal.exe", "bf0c8894a91378e7772dbb0a930b188d", 167768171),
@@ -7076,6 +7091,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("flashmccoy", "FlashMcCoy.exe", "0564de07d3fd5c16e6947a647061913c", 16314015),
 	GAME_ENTRY_EN("flayedman", "The Flayed Man.ags", "f4619de8649a175d74e58b5f5706da45", 217945676),  // itch.io v1.0
 	GAME_ENTRY_EN_STEAM("flayedman", "The Flayed Man.ags", "01f2113fd14b6f09c42d00bf34a96cae", 217942719),  // Steam v1.0
+	GAME_ENTRY("flight", "flight.exe", "7b721b3870660eaaf3e2a4defa71ebc2", 44278977),  // Eng-Kor-Jap
 	GAME_ENTRY_EN("flightrobots", "FlightFromTheRobots.exe", "3ab9922a2ab7c5875af4c9794b33e012", 4517631),
 	GAME_ENTRY_EN_PLATFORM("flightrobotsch2", "FlightFromTheRobots2.exe", "9bb70a54ea1c4063c6821c88c7427dfb", 4751416, "Original Version"),
 	GAME_ENTRY_EN_PLATFORM("flightrobotsch2", "FlightFromTheRobots2.ags", "ae9236152eef64bf635f7bb63c981a88", 1643556, "Original Version"),
