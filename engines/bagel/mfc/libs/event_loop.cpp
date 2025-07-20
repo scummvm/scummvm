@@ -48,12 +48,6 @@ void EventLoop::runEventLoop() {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
-
-		CWnd *activeWin2 = GetActiveWindow();
-		if (activeWin2 != nullptr && activeWin2 != activeWin) {
-			// New top window, so signal to redraw it
-			activeWin2->Invalidate();
-		}
 	}
 }
 
