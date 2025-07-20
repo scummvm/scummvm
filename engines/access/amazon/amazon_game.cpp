@@ -734,7 +734,7 @@ void AmazonEngine::dead(int deathId) {
 			_screen->_printOrg = Common::Point(20, 155);
 			_screen->_printStart = Common::Point(20, 155);
 
-			Common::String &msg = de._msg;
+			const Common::String &msg = de._msg;
 			_printEnd = 180;
 
 			printText(_screen, msg);
@@ -760,7 +760,7 @@ void AmazonEngine::dead(int deathId) {
 			_screen->_printOrg = Common::Point(15, 165);
 			_screen->_printStart = Common::Point(15, 165);
 
-			Common::String msg = Common::String(_deaths[deathId]._msg);
+			const Common::String &msg = _deaths[deathId]._msg;
 			_printEnd = 200;
 
 			printText(_screen, msg);

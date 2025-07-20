@@ -98,15 +98,12 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_cheatFl = false;
 	_restartFl = false;
 	_printEnd = 0;
-	for (int i = 0; i < 100; i++)
-		_objectsTable[i] = nullptr;
+	ARRAYCLEAR(_objectsTable);
 	_clearSummaryFlag = false;
 
-	for (int i = 0; i < 60; i++)
-		_travel[i] = 0;
+	ARRAYCLEAR(_travel);
 	_startTravelItem = _startTravelBox = 0;
-	for (int i = 0; i < 33; i++)
-		_ask[i] = 0;
+	ARRAYCLEAR(_ask);
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
 	_bcnt = 0;
@@ -115,13 +112,12 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_boxSelectY = 0;
 	_boxSelectYOld = -1;
 	_numLines = 0;
-	_tempList = nullptr;
+	//_tempList = nullptr;
 	_pictureTaken = 0;
 
 	_vidEnd = false;
 
-	for (int i = 0; i < 6; ++i)
-		_countTbl[i] = 0;
+	ARRAYCLEAR(_countTbl);
 }
 
 AccessEngine::~AccessEngine() {
@@ -235,7 +231,7 @@ void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
 }
 
 void AccessEngine::freeCells() {
-	for (int i = 0; i < 100; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_objectsTable); ++i) {
 		delete _objectsTable[i];
 		_objectsTable[i] = nullptr;
 	}
