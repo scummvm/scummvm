@@ -136,9 +136,15 @@ public:
 	Common::String BAR_MESSAGE;
 	Common::String HELPLVLTXT[3];
 	Common::String IQLABELS[9];
+
+private:
+	Common::Array< Common::Array<byte> > CURSORS;
+
 public:
 	AmazonResources(AccessEngine *vm) : Resources(vm), _font3x5(nullptr), _font6x6(nullptr) {}
 	~AmazonResources() override;
+
+	const byte *getCursor(int num) const override;
 };
 
 #define AMRES (*((Amazon::AmazonResources *)_vm->_res))

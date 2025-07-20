@@ -67,14 +67,27 @@ public:
 	int stringWidth(const Common::String &msg);
 
 	/**
+	 * Type of line wrapping - Martian wraps based on chars, Amazon based on px.
+	 *
+	 * Since the fonts are variable width we need to support both types to
+	 * exactly wrap like the originals.
+	 */
+	enum LINE_WIDTH_TYPE {
+		kWidthInPixels,
+		kWidthInChars
+	};
+
+	/**
 	 * Get a partial string that will fit in a given width
 	 * @param s			Source string. Modified to remove line
-	 * @param maxWidth	Maximum width allowed
+	 * @param maxWidth	Maximum width allowed in px or chars (see widthType)
 	 * @param line		Output line
-	 * @param width		Calculated width of returned line
+	 * @param width		Actual width of returned line in selected units
+	 * @param widthType Select the type of width constraint - px or chars
 	 * @returns			True if last line
 	 */
-	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width);
+	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
+				 LINE_WIDTH_TYPE widthType = kWidthInPixels);
 
 	/**
 	 * Draw a string on a given surface
@@ -109,12 +122,14 @@ private:
 	/**
 	 * Load the given font data
 	 */
-	void load(Common::SeekableReadStream &s);
+	void loadFromStream(Common::SeekableReadStream &s);
+	void loadFromData(size_t count, const byte *widths, const int *offsets, const byte *data);
 public:
 	/**
 	* Constructor
 	*/
 	MartianFont(int height, Common::SeekableReadStream &s);
+	MartianFont(int height, size_t count, const byte *widths, const int *offsets, const byte *data);
 };
 
 

@@ -61,11 +61,13 @@ protected:
 	 */
 	void load(Common::SeekableReadStream &s) override;
 public:
-	MartianFont *_font6x6;
-	MartianFont *_font3x5;
+	MartianFont *_font1;
+	MartianFont *_font2;
 public:
-	MartianResources(AccessEngine *vm) : Resources(vm), _font6x6(nullptr), _font3x5(nullptr) {}
+	MartianResources(AccessEngine *vm) : Resources(vm), _font1(nullptr), _font2(nullptr) {}
 	~MartianResources() override;
+
+	const byte *getCursor(int num) const override;
 };
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))
