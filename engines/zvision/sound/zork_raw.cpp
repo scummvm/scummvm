@@ -30,6 +30,7 @@
 #include "common/tokenizer.h"
 #include "common/util.h"
 #include "zvision/zvision.h"
+#include "zvision/file/file_manager.h"
 #include "zvision/sound/zork_raw.h"
 
 namespace ZVision {
@@ -241,30 +242,9 @@ Audio::RewindableAudioStream *makeRawZorkStream(Common::SeekableReadStream *stre
 }
 
 Audio::RewindableAudioStream *makeRawZorkStream(const Common::Path &filePath, ZVision *engine) {
-	Common::File *file = new Common::File();
-	bool found = file->open(filePath);
 	Common::String baseName = filePath.baseName();
-	bool isRaw = baseName.hasSuffix(".raw");
-
-	if ((!found && isRaw) || (found && isRaw && file->size() < 10)) {
-		if (found)
-			file->close();
-
-		// Check for an audio patch (.src)
-		Common::String patchName = baseName;
-		patchName.setChar('s', baseName.size() - 3);
-		patchName.setChar('r', baseName.size() - 2);
-		patchName.setChar('c', baseName.size() - 1);
-
-		if (!file->open(filePath.getParent().appendComponent(patchName))) {
-			warning("Audio file %s AND audio patch %s not found", baseName.c_str(), patchName.c_str());
-			return NULL;
-			}
-	} else if (!found && !isRaw) {
-		warning("Audio file %s not found", baseName.c_str());
-		return NULL;
-	}
-
+	Common::File *file = engine->getFileManager()->open(filePath);
+	
 	const SoundParams *soundParams = NULL;
 
 	if (engine->getGameId() == GID_NEMESIS) {

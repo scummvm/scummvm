@@ -30,6 +30,7 @@
 #endif
 #include "zvision/zvision.h"
 #include "zvision/core/clock.h"
+#include "zvision/file/file_manager.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/scripting/script_manager.h"
 #include "zvision/sound/volume_manager.h"
@@ -40,6 +41,7 @@
 namespace ZVision {
 
 Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
+	debugC(5, kDebugVideo, "loadAnimation()");
 	Common::String tmpFileName = fileName.baseName();
 	tmpFileName.toLowercase();
 	Video::VideoDecoder *animation = NULL;
@@ -59,15 +61,15 @@ Video::VideoDecoder *ZVision::loadAnimation(const Common::Path &fileName) {
 	else
 		error("Unknown suffix for animation %s", fileName.toString().c_str());
 
-	Common::File *_file = new Common::File();	//TODO - verify that this is safely deleted when done with
-	_file->open(fileName);
-	if (!_file)
+	Common::File *file = getFileManager()->open(fileName);
+	if (!file)
 		error("Error opening %s", fileName.toString().c_str());
 
-	bool loaded = animation->loadStream(_file);
+	bool loaded = animation->loadStream(file);
 	if (!loaded)
 		error("Error loading animation %s", fileName.toString().c_str());
 
+	debugC(5, kDebugVideo, "~loadAnimation()");
 	return animation;
 }
 

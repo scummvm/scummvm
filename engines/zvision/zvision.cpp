@@ -395,7 +395,7 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.setIgnoreClashes(true);
 	SearchMan.addDirectory(gamePath, 0, 5, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FONTS");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "addon");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "addon");	// TODO - load zfs files found here and make sure they take priority over all others.
 	
 	if (ConfMan.hasKey("extrapath")) {
 		Common::Path gameExtraPath = ConfMan.getPath("extrapath");
