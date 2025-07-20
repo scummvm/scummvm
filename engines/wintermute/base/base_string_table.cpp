@@ -109,6 +109,31 @@ char *BaseStringTable::getKey(const char *str) const {
 	}
 }
 
+void BaseStringTable::replaceExpand(char *key, char *newStr, size_t newStrSize) const {
+	// W/A: Remove accented chars as input text in Polish version of Alpha Polaris
+	if (BaseEngine::instance().getGameId() == "alphapolaris" &&
+	    BaseEngine::instance().getLanguage() == Common::PL_POL) {
+		if (strcmp(key, "hotspot0360") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Skuter sniezny");
+		if (strcmp(key, "hotspot0361") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Slizgacz");
+		if (strcmp(key, "hotspot0362") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Sniezny");
+		if (strcmp(key, "hotspot0364") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Plemie");
+		if (strcmp(key, "hotspot0369") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Lad");
+		if (strcmp(key, "hotspot0370") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Wschod");
+		if (strcmp(key, "hotspot0375") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Krzeslo");
+		if (strcmp(key, "hotspot0373") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Wladza");
+		if (strcmp(key, "hotspot0378") == 0)
+			Common::strcpy_s(newStr, newStrSize, "Czlowiek");
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(char **str) const {
 	if (str == nullptr || *str == nullptr || *str[0] != '/') {
@@ -134,6 +159,7 @@ void BaseStringTable::expand(char **str) const {
 		size_t newStrSize = it->_value.size() + 1;
 		newStr = new char[newStrSize];
 		Common::strcpy_s(newStr, newStrSize, it->_value.c_str());
+		replaceExpand(key, newStr, newStrSize);
 	} else {
 		size_t newStrSize = strlen(value) + 1;
 		newStr = new char[newStrSize];

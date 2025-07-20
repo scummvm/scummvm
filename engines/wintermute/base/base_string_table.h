@@ -51,7 +51,7 @@ private:
 	Common::HashMap<Common::String, Common::String> _strings;
 	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
-
+	void replaceExpand(char *key, char *newStr, size_t newStrSize) const;
 };
 
 } // End of namespace Wintermute
