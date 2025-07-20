@@ -33,8 +33,7 @@ namespace Alcachofa {
 Room::Room(World *world, ReadStream &stream) : Room(world, stream, false) {
 }
 
-static ObjectBase *readRoomObject(Room *room, ReadStream &stream) {
-	const auto type = readVarString(stream);
+static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &stream) {
 	if (type == ObjectBase::kClassName)
 		return new ObjectBase(room, stream);
 	else if (type == PointObject::kClassName)
@@ -82,7 +81,7 @@ static ObjectBase *readRoomObject(Room *room, ReadStream &stream) {
 	else if (type == FloorColor::kClassName)
 		return new FloorColor(room, stream);
 	else
-		error("Unknown type for room objects: %s", type.c_str());
+		return nullptr; // handled in Room::Room
 }
 
 Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
@@ -91,8 +90,6 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	_musicId = stream.readSByte();
 	_characterAlphaTint = stream.readByte();
 	auto backgroundScale = stream.readSint16LE();
-	if (_name == "MINA")
-		backgroundScale += 0;
 	_floors[0] = PathFindingShape(stream);
 	_floors[1] = PathFindingShape(stream);
 	_fixedCameraOnEntering = readBool(stream);
@@ -104,11 +101,15 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	uint32 objectSize = stream.readUint32LE(); // TODO: Maybe switch to seekablereadstream and assert objectSize?
 	while (objectSize > 0)
 	{
-		_objects.push_back(readRoomObject(this, stream));
+		const auto type = readVarString(stream);
+		auto object = readRoomObject(this, type, stream);
+		if (object == nullptr)
+			// TODO: Make this a warning after using SeekableReadStream in Room::Room
+			g_engine->game().unknownRoomObject(type);
+		_objects.push_back(object);
 		objectSize = stream.readUint32LE();
 	}
-	if (!_name.equalsIgnoreCase("Global") &&
-		!_name.equalsIgnoreCase("HABITACION_NEGRA"))
+	if (g_engine->game().doesRoomHaveBackground(this))
 		_objects.push_back(new Background(this, _name, backgroundScale));
 
 	if (!_floors[0].empty())
@@ -219,8 +220,8 @@ void Room::updateRoomBounds() {
 	if (graphic != nullptr) {
 		auto bgSize = graphic->animation().imageSize(0);
 		/* This fixes a bug where if the background image is invalid the original engine
-		 * would not update the background size. This would be around 1024,768 but I find
-		 * this very unstable. Instead a fixed value is used
+		 * would not update the background size. This would be around 1024,768 due to
+		 * previous rooms in the bug instances I found.
 		 */
 		if (bgSize == Point(0, 0))
 			bgSize = Point(1024, 768);
@@ -694,15 +695,12 @@ void World::loadDialogLines() {
 	while (lineStart < fileEnd) {
 		char *lineEnd = find(lineStart, fileEnd, '\n');
 		char *firstQuote = find(lineStart, lineEnd, '\"');
-		if (firstQuote == lineEnd)
-			error("Invalid dialog line - first quote");
-		char *secondQuote = find(firstQuote + 1, lineEnd, '\"');
-		if (secondQuote == lineEnd) {
-			// unfortunately one invalid line in the game
-			if (_dialogLines.size() != 4542)
-				error("Invalid dialog line - second quote");
-			firstQuote = lineStart; // for the invalid one save an empty string
-			secondQuote = firstQuote + 1;
+		char *secondQuote = firstQuote == lineEnd ? lineEnd : find(firstQuote + 1, lineEnd, '\"');
+
+		if (firstQuote == lineEnd || secondQuote == lineEnd) {
+			g_engine->game().invalidDialogLine(_dialogLines.size());
+			firstQuote = lineStart; // store an empty string
+			secondQuote = lineStart + 1;
 		}
 
 		*secondQuote = 0;

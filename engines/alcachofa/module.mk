@@ -5,6 +5,7 @@ MODULE_OBJS = \
 	camera.cpp \
 	common.cpp \
 	console.o \
+	game.cpp \
 	game-objects.cpp \
 	general-objects.cpp \
 	global-ui.cpp \

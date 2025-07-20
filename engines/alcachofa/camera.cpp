@@ -417,7 +417,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 		case kScale: state._scale = _value; break;
 		case kRotation: state._rotation = _value; break;
 		default:
-			warning("Unknown CamSetInactiveAttribute attribute: %d", (int)_attribute);
+			g_engine->game().unknownCamSetInactiveAttribute((int)_attribute);
 			break;
 		}
 		return TaskReturn::finish(0);

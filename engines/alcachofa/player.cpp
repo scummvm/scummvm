@@ -95,7 +95,7 @@ void Player::drawCursor(bool forceDefaultCursor) {
 }
 
 void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) {
-	debug("Change room to %s", targetRoomName.c_str());
+	debugC(1, kDebugGameplay, "Change room to %s", targetRoomName.c_str());
 
 	// original would be to always free all resources from globalRoom, inventory, GlobalUI
 	// We don't do that, it is unnecessary, all resources would be loaded right after
@@ -122,7 +122,7 @@ void Player::changeRoom(const Common::String &targetRoomName, bool resetCamera) 
 	}
 
 	_currentRoom = g_engine->world().getRoomByName(targetRoomName.c_str());
-	if (_currentRoom == nullptr)
+	if (_currentRoom == nullptr) // no good way to recover, leaving-the-room actions might already prevent further progress
 		error("Invalid room name: %s", targetRoomName.c_str());
 
 	if (!_didLoadGlobalRooms) {
@@ -165,7 +165,7 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 	assert(object != nullptr && action != nullptr);
 	if (_activeCharacter->isBusy() || _activeCharacter->currentlyUsing() != nullptr)
 		return;
-	debug("Trigger object %s %s with %s", object->typeName(), object->name().c_str(), action);
+	debugC(1, kDebugGameplay, "Trigger object %s %s with %s", object->typeName(), object->name().c_str(), action);
 
 	if (strcmp(action, "MIRAR") == 0 || inactiveCharacter()->currentlyUsing() == object) {
 		action = "MIRAR";
@@ -184,6 +184,7 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 	//else if (action[0] == 'i' && object->name()[0] == 'i')
 	// This case can happen if you combine two objects without procedure, the original engine
 	// would attempt to start the procedure "DefectoObjeto" which does not exist
+	// (this should be revised when working on further games)
 	else
 		script.createProcess(activeCharacterKind(), "DefectoUsar");
 }
@@ -196,12 +197,16 @@ struct DoorTask : public Task {
 		, _character(g_engine->player().activeCharacter())
 		, _player(g_engine->player()) {
 		_targetRoom = g_engine->world().getRoomByName(door->targetRoom().c_str());
-		if (_targetRoom == nullptr)
-			error("Invalid door target room: %s", door->targetRoom().c_str());
+		if (_targetRoom == nullptr) {
+			g_engine->game().unknownDoorTargetRoom(door->targetRoom());
+			return;
+		}
 
 		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(door->targetObject().c_str()));
-		if (_targetObject == nullptr)
-			error("Invalid door target door: %s", door->targetObject().c_str());
+		if (_targetObject == nullptr) {
+			g_engine->game().unknownDoorTargetDoor(door->targetRoom(), door->targetObject());
+			return;
+		}
 		auto targetDoor = dynamic_cast<const Door *>(_targetObject);
 		_targetDirection = targetDoor == nullptr
 			? _targetObject->interactionDirection()
@@ -212,6 +217,9 @@ struct DoorTask : public Task {
 
 	virtual TaskReturn run() {
 		TASK_BEGIN;
+		if (_targetRoom == nullptr || _targetObject == nullptr)
+			return TaskReturn::finish(1);
+
 		// TODO: Fade out music on room change
 		TASK_WAIT(fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
 		_player.changeRoom(_targetRoom->name(), true);
@@ -250,11 +258,10 @@ private:
 void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
 
-	if (door->targetRoom() == "LABERINTO" && door->targetObject() == "a_LABERINTO_desde_LABERINTO_2")
-		return; // Original exception
-
-	FakeLock lock(_activeCharacter->semaphore());
-	g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
+	if (g_engine->game().shouldTriggerDoor(door)) {
+		FakeLock lock(_activeCharacter->semaphore());
+		g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
+	}
 }
 
 // the last dialog character mechanic seems like a hack in the original engine

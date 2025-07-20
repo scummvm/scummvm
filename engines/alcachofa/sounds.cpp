@@ -108,10 +108,15 @@ static AudioStream *loadSND(File *file) {
 	auto subStream = new SeekableSubReadStream(file, (uint32)file->pos(), (uint32)file->size(), DisposeAfterUse::YES);
 	if (format == 1 && channels <= 2 && (bitsPerSample == 8 || bitsPerSample == 16))
 		return makeRawStream(subStream, (int)freq,
-			(channels == 2 ? FLAG_STEREO : 0) | (bitsPerSample == 16 ? FLAG_16BITS | FLAG_LITTLE_ENDIAN : FLAG_UNSIGNED));
+			(channels == 2 ? FLAG_STEREO : 0) |
+			(bitsPerSample == 16 ? FLAG_16BITS | FLAG_LITTLE_ENDIAN : FLAG_UNSIGNED));
 	else if (format == 17 && channels <= 2)
 		return makeADPCMStream(subStream, DisposeAfterUse::YES, 0, kADPCMMSIma, (int)freq, (int)channels, (uint32)bytesPerBlock);
-	error("Invalid SND file, format: %u, channels: %u, freq: %u, bps: %u", format, channels, freq, bitsPerSample);
+	else {
+		delete file;
+		g_engine->game().invalidSNDFormat(format, channels, freq, bitsPerSample);
+		return nullptr;
+	}
 }
 
 static AudioStream *openAudio(const String &fileName) {
@@ -128,10 +133,8 @@ static AudioStream *openAudio(const String &fileName) {
 		return makeWAVStream(file, DisposeAfterUse::YES);
 	delete file;
 
-	// Ignore the known, original wrong filenames given, report the rest
-	if (fileName == "CHAS" || fileName == "517")
-		return nullptr;
-	error("Could not open audio file: %s", fileName.c_str());
+	g_engine->game().missingSound(fileName);
+	return nullptr;
 }
 
 SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::SoundType type) {

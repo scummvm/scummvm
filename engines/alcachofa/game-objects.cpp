@@ -267,7 +267,7 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 			if (object == nullptr)
 				object = room()->world().getObjectByName(name.c_str());
 			if (object == nullptr)
-				error("Invalid object name \"%s\" saved for \"%s\" in \"%s\"",
+				g_engine->game().unknownSerializedObject(
 					name.c_str(), this->name().c_str(), room()->name().c_str());
 		}
 	}
@@ -280,15 +280,8 @@ void Character::onClick() {
 
 void Character::trigger(const char *action) {
 	g_engine->player().activeCharacter()->stopWalking(_interactionDirection);
-	if (scumm_stricmp(action, "iSABANA") == 0 &&
-		dynamic_cast<MainCharacter *>(this) != nullptr &&
-		!room()->name().equalsIgnoreCase("CASA_FREDDY_ARRIBA")) {
-		// An original hack to check that we use the bed sheet on the main character only in the correct room
-		// There *is* another script variable (es_casa_freddy) that should check this
-		// but, I guess, Alcachofa Soft found a corner case where this does not work?
-		return;
-	}
-	g_engine->player().triggerObject(this, action);
+	if (g_engine->game().shouldCharacterTrigger(this, action))
+		g_engine->player().triggerObject(this, action);
 }
 
 struct SayTextTask final : public Task {
@@ -307,11 +300,9 @@ struct SayTextTask final : public Task {
 
 			if (_soundId == kInvalidSoundID)
 			{
-				bool isMortadeloVoice =
-					_character == &g_engine->world().mortadelo() ||
-					_character->name().equalsIgnoreCase("MORTADELO_TREN"); // an original hard-coded special case
+				bool hasMortadeloVoice = g_engine->game().hasMortadeloVoice(_character);					
 				_soundId = g_engine->sounds().playVoice(
-					String::format(isMortadeloVoice ? "M%04d" : "%04d", _dialogId),
+					String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId),
 					0);
 			}
 			g_engine->sounds().setAppropriateVolume(_soundId, process().character(), _character);
@@ -885,6 +876,7 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 	if (serializer.isLoading()) {
 		room() = room()->world().getRoomByName(roomName.c_str());
 		if (room() == nullptr)
+			// no good way to recover from this
 			error("Invalid room name \"%s\" saved for \"%s\"", roomName.c_str(), name().c_str());
 	}
 
@@ -925,8 +917,10 @@ bool MainCharacter::hasItem(const String &name) const {
 
 void MainCharacter::pickup(const String &name, bool putInHand) {
 	auto item = getItemByName(name);
-	if (item == nullptr)
-		error("Tried to pickup unknown item: %s", name.c_str());
+	if (item == nullptr) {
+		g_engine->game().unknownPickupItem(name.c_str());
+		return;
+	}
 	item->toggle(true);
 	if (g_engine->player().activeCharacter() == this) {
 		if (putInHand)
@@ -939,8 +933,9 @@ void MainCharacter::drop(const Common::String &name) {
 	if (!name.empty()) {
 		auto item = getItemByName(name);
 		if (item == nullptr)
-			error("Tried to drop unknown item: %s", name.c_str());
-		item->toggle(false);
+			g_engine->game().unknownDropItem(name.c_str());
+		else
+			item->toggle(false);
 	}
 	if (g_engine->player().activeCharacter() == this) {
 		g_engine->player().heldItem() = nullptr;
