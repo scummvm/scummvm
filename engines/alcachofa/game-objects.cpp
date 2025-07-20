@@ -668,7 +668,10 @@ void WalkingCharacter::draw() {
 		currentGraphic->pause();
 	}
 	if (currentGraphic == nullptr) {
-		// TODO: draw dialog line
+		// The original game drew the current dialog line at this point,
+		// but I do not know of a scenario where this would be necessary
+		// As long as we cannot test this or have a bug report I rather not implement it
+
 		currentGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
 	}
 
