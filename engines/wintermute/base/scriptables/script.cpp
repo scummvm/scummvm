@@ -638,9 +638,9 @@ bool ScScript::executeInstruction() {
 			// W/A: The Sprite class instance is released earlier,
 			// but a native variable still holds a reference to it,
 			// leading to call on a non-existent (freed) instance.
-			if (BaseEngine::instance().getGameId() == "alphapolaris" &&
-			        var->isNative() &&
-					strcmp(methodName, "Reset") == 0 &&
+			if (var->isNative() &&
+			        strcmp(methodName, "Reset") == 0 &&
+			        BaseEngine::instance().getGameId() == "alphapolaris" &&
 			        strcmp(_filename, "scenes\\Out_door\\scr\\barrel.script") == 0) {
 
 				_stack->correctParams(0);
