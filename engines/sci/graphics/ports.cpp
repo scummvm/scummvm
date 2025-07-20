@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/system.h"
 #include "common/util.h"
 
 #include "sci/console.h"
@@ -248,6 +249,11 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 		}
 	} else {
 		error("kDisposeWindow: used unknown window id %d", windowId);
+	}
+
+	if (windowId == _portIdWithEditText) {
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+		_portIdWithEditText = -1;
 	}
 }
 

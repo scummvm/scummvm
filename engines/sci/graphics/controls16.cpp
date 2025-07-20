@@ -443,9 +443,15 @@ void GfxControls16::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char 
 		texteditCursorDraw(rect, text, cursorPos);
 		_text16->SetFont(oldFontId);
 		rect.grow(1);
+
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+	} else {
+		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	}
 	if (!getPicNotValid())
 		_paint16->bitsShow(rect);
+
+	_ports->setActiveWindowHasEditText();
 }
 
 void GfxControls16::kernelDrawIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, int16 loopNo, int16 celNo, int16 priority, int16 style, bool hilite) {
