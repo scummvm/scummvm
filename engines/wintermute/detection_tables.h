@@ -340,7 +340,7 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Alpha Polaris (Polish)
 	WME_WINENTRY("alphapolaris", "",
-		WME_ENTRY1s("data.dcp", "24ebca07b7cf0bd94ec994f26bdccf83", 710319064), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+		WME_ENTRY1s("data.dcp", "24ebca07b7cf0bd94ec994f26bdccf83", 710319064), Common::PL_POL, GF_3D, WME_1_9_1),
 
 	// Alpha Polaris (Russian)
 	WME_WINENTRY("alphapolaris", "",
@@ -354,12 +354,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alpha Polaris (German) (1.1.0) (1280x800 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
 		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
-					"german_language_pack.dcp", "0ed4ef1647445c73b5915b60f85ed8e4", 19251966), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"german_language_pack.dcp", "0ed4ef1647445c73b5915b60f85ed8e4", 19251966), Common::DE_DEU, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (Polish) (1.1.0) (1280x800 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
 		WME_ENTRY2s("data.dcp", "2d1bd35749b2538915b53ce79288bceb", 706580987,
-					"polish_language_pack.dcp", "91f80c5f8d522541d666d11b60b0ea6c", 15006039), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"polish_language_pack.dcp", "91f80c5f8d522541d666d11b60b0ea6c", 15006039), Common::PL_POL, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (Russian) (1.1.0) (1280x800 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x800 Steam)",
@@ -374,12 +374,12 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Alpha Polaris (German) (1.1.0) (1280x768 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
 		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
-					"german_language_pack.dcp", "2ffd9b2bdf2c2b3646067644572390c0", 19251966), Common::DE_DEU, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"german_language_pack.dcp", "2ffd9b2bdf2c2b3646067644572390c0", 19251966), Common::DE_DEU, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (Polish) (1.1.0) (1280x768 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
 		WME_ENTRY2s("data.dcp", "481b1bff44178ef2f3d879df05f65a96", 706580987,
-					"polish_language_pack.dcp", "4a24986189321f39b9f48cbc4889d89a", 15006039), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_9_3),
+					"polish_language_pack.dcp", "4a24986189321f39b9f48cbc4889d89a", 15006039), Common::PL_POL, GF_3D, WME_1_9_3),
 
 	// Alpha Polaris (Russian) (1.1.0) (1280x768 Steam)
 	WME_WINENTRY("alphapolaris", "1.1.0 (1280x768 Steam)",
