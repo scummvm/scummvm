@@ -30,7 +30,7 @@ using namespace Common;
 
 namespace Alcachofa {
 
-Room::Room(World *world, ReadStream &stream) : Room(world, stream, false) {
+Room::Room(World *world, SeekableReadStream &stream) : Room(world, stream, false) {
 }
 
 static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &stream) {
@@ -84,7 +84,7 @@ static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &st
 		return nullptr; // handled in Room::Room
 }
 
-Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
+Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
 	: _world(world) {
 	_name = readVarString(stream);
 	_musicId = stream.readSByte();
@@ -98,16 +98,25 @@ Room::Room(World *world, ReadStream &stream, bool hasUselessByte)
 	if (hasUselessByte)
 		stream.readByte();
 
-	uint32 objectSize = stream.readUint32LE(); // TODO: Maybe switch to seekablereadstream and assert objectSize?
-	while (objectSize > 0)
+	uint32 objectEnd = stream.readUint32LE();
+	while (objectEnd > 0)
 	{
 		const auto type = readVarString(stream);
 		auto object = readRoomObject(this, type, stream);
-		if (object == nullptr)
-			// TODO: Make this a warning after using SeekableReadStream in Room::Room
+		if (object == nullptr) {
 			g_engine->game().unknownRoomObject(type);
-		_objects.push_back(object);
-		objectSize = stream.readUint32LE();
+			stream.seek(objectEnd, SEEK_SET);
+		}
+		else if (stream.pos() < objectEnd) {
+			g_engine->game().notEnoughObjectDataRead(_name.c_str(), stream.pos(), objectEnd);
+			stream.seek(objectEnd, SEEK_SET);
+		}
+		else if (stream.pos() > objectEnd) // this is probably not recoverable
+			error("Read past the object data (%u > %dll) in room %s", objectEnd, stream.pos(), _name.c_str());
+
+		if (object != nullptr)
+			_objects.push_back(object);
+		objectEnd = stream.readUint32LE();
 	}
 	if (g_engine->game().doesRoomHaveBackground(this))
 		_objects.push_back(new Background(this, _name, backgroundScale));
@@ -318,19 +327,19 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 	return best;
 }
 
-OptionsMenu::OptionsMenu(World *world, ReadStream &stream)
+OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
 
-ConnectMenu::ConnectMenu(World *world, ReadStream &stream)
+ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
 
-ListenMenu::ListenMenu(World *world, ReadStream &stream)
+ListenMenu::ListenMenu(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
 
-Inventory::Inventory(World *world, ReadStream &stream)
+Inventory::Inventory(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
 
@@ -589,7 +598,7 @@ const char *World::getDialogLine(int32 dialogId) const {
 	return _dialogLines[dialogId];
 }
 
-static Room *readRoom(World *world, ReadStream &stream) {
+static Room *readRoom(World *world, SeekableReadStream &stream) {
 	const auto type = readVarString(stream);
 	if (type == Room::kClassName)
 		return new Room(world, stream);
@@ -601,8 +610,10 @@ static Room *readRoom(World *world, ReadStream &stream) {
 		return new ListenMenu(world, stream);
 	else if (type == Inventory::kClassName)
 		return new Inventory(world, stream);
-	else
-		error("Unknown type for room %s", type.c_str());
+	else {
+		g_engine->game().unknownRoomType(type);
+		return nullptr;
+	}
 }
 
 bool World::loadWorldFile(const char *path) {
@@ -632,8 +643,15 @@ bool World::loadWorldFile(const char *path) {
 
 	uint32 roomEnd = file.readUint32LE();
 	while (roomEnd > 0) {
-		_rooms.push_back(readRoom(this, file));
-		assert(file.pos() == roomEnd);
+		Room *room = readRoom(this, file);
+		if (room != nullptr)
+			_rooms.push_back(room);
+		if (file.pos() < roomEnd) {
+			g_engine->game().notEnoughRoomDataRead(path, file.pos(), roomEnd);
+			file.seek(roomEnd, SEEK_SET);
+		}
+		else if (file.pos() > roomEnd) // this surely is not recoverable
+			error("Read past the room data for world %s", path);
 		roomEnd = file.readUint32LE();
 	}
 
