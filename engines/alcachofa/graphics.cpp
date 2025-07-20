@@ -191,14 +191,7 @@ ManagedSurface *AnimationBase::readImage(SeekableReadStream &stream) const {
 
 void AnimationBase::loadMissingAnimation() {
 	// only allow missing animations we know are faulty in the original game
-	if (!_fileName.equalsIgnoreCase("ANIMACION.AN0") &&
-		!_fileName.equalsIgnoreCase("DESPACHO_SUPER2_OL_SOMBRAS2.AN0") &&
-		!_fileName.equalsIgnoreCase("PP_MORTA.AN0") &&
-		!_fileName.equalsIgnoreCase("DESPACHO_SUPER2___FONDO_PP_SUPER.AN0") &&
-		!_fileName.equalsIgnoreCase("ESTOMAGO.AN0") &&
-		!_fileName.equalsIgnoreCase("CREDITOS.AN0") &&
-		!_fileName.equalsIgnoreCase("MONITOR___OL_EFECTO_FONDO.AN0"))
-		error("Could not open animation %s", _fileName.c_str());
+	g_engine->game().missingAnimation(_fileName);
 
 	// otherwise setup a functioning but empty animation
 	_isLoaded = true;
@@ -444,7 +437,7 @@ void Font::load() {
 	}
 	_texture = g_engine->renderer().createTexture(atlasSurface.w, atlasSurface.h, false);
 	_texture->update(atlasSurface);
-	debug("Rendered font atlas %s at %dx%d", _fileName.c_str(), atlasSurface.w, atlasSurface.h);
+	debugCN(1, kDebugGraphics, "Rendered font atlas %s at %dx%d", _fileName.c_str(), atlasSurface.w, atlasSurface.h);
 }
 
 void Font::freeImages() {
@@ -660,8 +653,10 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 	const byte *itChar = (byte *)text, *itLine = (byte *)text, *textEnd = itChar + textLen + 1;
 	int lineWidth = 0;
 	while (true) {
-		if (lineCount >= kMaxLines)
-			error("Text to be rendered has too many lines, check text validity and max line count");
+		if (lineCount >= kMaxLines) {
+			g_engine->game().tooManyDialogLines(lineCount, kMaxLines);
+			break;
+		}
 
 		if (*itChar != '\r' && *itChar)
 			lineWidth += characterSize(font, *itChar).x;
@@ -760,7 +755,7 @@ void FadeDrawRequest::draw() {
 		g_engine->renderer().setBlendMode(BlendMode::Additive);
 		break;
 	default:
-		assert(false && "Invalid fade type");
+		g_engine->game().unknownFadeType((int)_type);
 		return;
 	}
 	g_engine->renderer().setTexture(nullptr);
@@ -860,7 +855,7 @@ void DrawQueue::addRequest(IDrawRequest *drawRequest) {
 	if (_requestsPerOrderCount[order] < kMaxDrawRequestsPerOrder)
 		_requestsPerOrder[order][_requestsPerOrderCount[order]++] = drawRequest;
 	else
-		error("Too many draw requests in order %d", order);
+		g_engine->game().tooManyDrawRequests(order);
 }
 
 void DrawQueue::setLodBias(int8 orderFrom, int8 orderTo, float newLodBias) {

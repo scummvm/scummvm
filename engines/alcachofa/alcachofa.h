@@ -41,6 +41,7 @@
 #include "alcachofa/player.h"
 #include "alcachofa/scheduler.h"
 #include "alcachofa/console.h"
+#include "alcachofa/game.h"
 
 namespace Alcachofa {
 
@@ -50,6 +51,7 @@ class DrawQueue;
 class World;
 class Script;
 class GlobalUI;
+class Game;
 struct AlcachofaGameDescription;
 
 class AlcachofaEngine : public Engine {
@@ -74,6 +76,7 @@ public:
 	inline GlobalUI &globalUI() { return *_globalUI; }
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
+	inline Game &game() { return *_game; }
 	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
 
 	void playVideo(int32 videoId);
@@ -131,6 +134,7 @@ private:
 	Common::ScopedPtr<Script> _script;
 	Common::ScopedPtr<Player> _player;
 	Common::ScopedPtr<GlobalUI> _globalUI;
+	Common::ScopedPtr<Game> _game;
 	Camera _camera;
 	Input _input;
 	Sounds _sounds;

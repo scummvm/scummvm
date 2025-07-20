@@ -29,6 +29,7 @@ namespace Alcachofa {
 enum AlcachofaDebugChannels {
 	kDebugGraphics = 1,
 	kDebugScript,
+	kDebugGameplay
 };
 
 extern const PlainGameDescriptor alcachofaGames[];
