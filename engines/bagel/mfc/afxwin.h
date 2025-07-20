@@ -1727,6 +1727,13 @@ public:
 	}
 };
 
+class CDocManager {
+public:
+	void AddDocTemplate(CDocTemplate *pTemplate);
+	void OnFileNew();
+	void OnFileOpen();
+};
+
 /*============================================================================*/
 
 template<class T>class CHandleMap;
@@ -1771,6 +1778,7 @@ public:
 	CPen _defaultPen;
 	CBrush _defaultBrush;
 	MSG _currentMessage;
+	CDocManager *m_pDocManager = nullptr;
 
 public:
 	CWinApp(const char *appName = nullptr);
@@ -1810,8 +1818,8 @@ public:
 		LPCSTR lpszEntry, LPCSTR lpszValue);
 
 
-	virtual void OnFileNew() {}
-	virtual void OnFileOpen() {}
+	virtual void OnFileNew();
+	virtual void OnFileOpen();
 	virtual void OnFilePrintSetup() {}
 
 	CHandleMap<CGdiObject> *afxMapHGDIOBJ(BOOL bCreate = false);

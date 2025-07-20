@@ -25,6 +25,7 @@ MODULE_OBJS = \
 	mfc/cmd_target.o \
 	mfc/dialog.o \
 	mfc/dc.o \
+	mfc/doc_manager.o \
 	mfc/doc_template.o \
 	mfc/document.o \
 	mfc/edit.o \

@@ -182,7 +182,19 @@ void CWinApp::DoWaitCursor(int nCode) {
 }
 
 void CWinApp::AddDocTemplate(CDocTemplate *pTemplate) {
-	error("TODO: CWinApp::AddDocTemplate");
+	if (m_pDocManager == NULL)
+		m_pDocManager = new CDocManager();
+	m_pDocManager->AddDocTemplate(pTemplate);
+}
+
+void CWinApp::OnFileNew() {
+	if (m_pDocManager != nullptr)
+		m_pDocManager->OnFileNew();
+}
+
+void CWinApp::OnFileOpen() {
+	assert(m_pDocManager != nullptr);
+	m_pDocManager->OnFileOpen();
 }
 
 void CWinApp::CloseAllDocuments(BOOL bEndSession) {
