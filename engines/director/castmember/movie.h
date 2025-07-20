@@ -38,6 +38,7 @@ public:
 	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr) override;
 	void setStageColor(uint32 stageColor, bool forceReset = false) override;
 	uint32 getStageColor() override;
+	Window *getParent() { return _parent; }
 
 private:
 	Window *_parent;

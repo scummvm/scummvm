@@ -762,7 +762,6 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
-
 	if (_skipTransition) {
 		incrementFilmLoops();
 		_window->render();

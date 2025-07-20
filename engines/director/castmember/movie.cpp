@@ -118,9 +118,13 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 
 	_subchannels.clear();
 
+	Movie *mainMovie = _window->getParent()->getCurrentMovie();
+	_window->getParent()->setCurrentMovie(_movie);
 	_movie->getScore()->step();
 	_movie->getScore()->loadFrame(_movie->getScore()->_curFrameNumber, true);
-	debugC(3, kDebugMovieCast, "MovieCastMember::getSubChannels():: Current Frame number of movie %s: %d", _filename.toString().c_str(), _movie->getScore()->_curFrameNumber);
+	_window->getParent()->setCurrentMovie(mainMovie);
+
+	debugC(3, kDebugMovieCast, "MovieCastMember::getSubChannels():: Current Frame number of movie %s: %d, fps: %d", _filename.toString().c_str(), _movie->getScore()->_curFrameNumber, _movie->getScore()->_currentFrameRate);
 
 	Common::Array<Sprite *> sprites = _movie->getScore()->_currentFrame->_sprites;
 
