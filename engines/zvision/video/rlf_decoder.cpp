@@ -35,15 +35,18 @@ RLFDecoder::~RLFDecoder() {
 }
 
 bool RLFDecoder::loadStream(Common::SeekableReadStream *stream) {
+	debugC(5, kDebugVideo, "loadStream()");
 	close();
-
+	bool isValid = false;
 	// Check if the stream is valid
 	if (stream && !stream->err() && stream->readUint32BE() == MKTAG('F', 'E', 'L', 'R')) {
 		addTrack(new RLFVideoTrack(stream));
-		return true;
+		isValid = true;
 	} else {
-		return false;
+		warning("Invalid rlf stream");
 	}
+	debugC(5, kDebugVideo, "~loadStream()");	
+	return isValid;
 }
 
 RLFDecoder::RLFVideoTrack::RLFVideoTrack(Common::SeekableReadStream *stream)
