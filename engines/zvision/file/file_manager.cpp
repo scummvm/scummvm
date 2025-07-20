@@ -37,58 +37,83 @@ FileManager::FileManager(ZVision *engine) :
 	_engine(engine) {}
 
 Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
+	debugC(5, kDebugFile, "FileManager::open()");
 	Common::File *file = new Common::File();
+	Common::File *out = nullptr;
+	
 	Common::String fileName = filePath.baseName();
+	bool open = false;
+	bool altFound = false;
+	bool altOpen = false;
+	
 	bool found = SearchMan.hasFile(filePath);
-	bool foundAlt = false;
+	if(found) {
+		debugC(5, kDebugFile,"File %s found", fileName.c_str());
+		open = file->open(filePath);
+		if(open)
+			debugC(5, kDebugFile,"File %s opened", fileName.c_str());
+	}
 	
 	if (allowSrc) {
+		Common::File *altFile = new Common::File();
 		Common::String altName = fileName;
 		altName.setChar('s', altName.size() - 3);
 		altName.setChar('r', altName.size() - 2);
 		altName.setChar('c', altName.size() - 1);
 		Common::Path altPath = filePath.getParent().appendComponent(altName);
-		foundAlt = SearchMan.hasFile(altPath);
-		if (!foundAlt) {
-			if (!found)
+		altFound = SearchMan.hasFile(altPath);
+		if (altFound) {
+			debugC(5, kDebugFile,"Alternate file %s found", altName.c_str());
+			altOpen = altFile->open(altPath);
+			if (altOpen)
+				debugC(5, kDebugFile,"Alternate file %s opened", altName.c_str());
+		}
+		
+		if(altOpen) {
+			if(open)
+				out = file->size() < altFile->size() ? altFile : file;
+			else
+				out = altFile;
+		}
+		else if(open)
+			out = file;
+		else {
+			if (found && altFound)
+				warning("Found file %s and alternate file %s but unable to open either", fileName.c_str(), altName.c_str());
+			else if (found)
+				warning("Found file %s but unable to open; alternate file %s not found", fileName.c_str(), altName.c_str());
+			else if (altFound)
+				warning("File %s not found; alternate file %s found but but unable to open", fileName.c_str(), altName.c_str());
+			else
 				warning("Unable to find file %s or alternate file %s", fileName.c_str(), altName.c_str());
 		}
+		
+		if (out == altFile) 
+			debugC(5, kDebugFile,"Returning alternate file %s", altName.c_str());
 		else {
-			Common::File *altFile = new Common::File();
-			if (!altFile->open(altPath))
-				warning("File %s not found; alternate file %s found but unable to open", fileName.c_str(), altName.c_str());
-			else {
-				if (!file->open(filePath)) {
-					delete file;
-					debugC(2, kDebugFile,"Opened alternative file %s", altName.c_str());
-					return altFile;
-				}
-				else if (file->size() < altFile->size()) {
-					file->close();
-					delete file;
-					debugC(2, kDebugFile,"Opened alternative file %s", altName.c_str());
-					return altFile;
-				}
-				else
-					altFile->close();
-			}
+			if(altOpen)
+				altFile->close();
 			delete altFile;
 		}
 	}
-	
-	if (!found) {
-		if(!allowSrc)
+	else {
+		if(open)
+			out = file;
+		else if (found)
+			warning("File %s found, but unable to open", fileName.c_str());
+		else
 			warning("File %s not found", fileName.c_str());
 	}
-	else if (!file->open(filePath))
-		warning("File %s found, but unable to open", fileName.c_str());
+	
+	if (out == file) 
+		debugC(5, kDebugFile,"Returning file %s", fileName.c_str());
 	else {
-		debugC(2, kDebugFile,"Opened file %s", fileName.c_str());
-		return file;
+		if(open)
+			file->close();
+		delete file;
 	}
 	
-	delete file;
-	return nullptr;
+	return out;
 }
 
 bool FileManager::loadZix(const Common::Path &name) {
