@@ -44,6 +44,10 @@ void Game::unknownRoomObject(const String &type) {
 	_message("Unknown type for room object: %s", type.c_str());
 }
 
+void Game::unknownRoomType(const String &type) {
+	_message("Unknown type for room: %s", type.c_str());
+}
+
 void Game::unknownDoorTargetRoom(const String &name) {
 	_message("Unknown door target room: %s", name.c_str());
 }
@@ -177,6 +181,14 @@ void Game::missingSound(const String &fileName) {
 
 void Game::invalidSNDFormat(uint format, uint channels, uint freq, uint bps) {
 	_message("Invalid SND file, format: %u, channels: %u, freq: %u, bps: %u", format, channels, freq, bps);
+}
+
+void Game::notEnoughRoomDataRead(const char *path, int64 filePos, int64 roomEnd) {
+	_message("Did not read enough data (%dll < %dll) for a room in %s", filePos, roomEnd, path);
+}
+
+void Game::notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd) {
+	_message("Did not read enough data (%dll < %dll) for an object in room %s", filePos, objectEnd, room);
 }
 
 }

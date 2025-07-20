@@ -31,7 +31,7 @@ class World;
 class Room {
 public:
 	static constexpr const char *kClassName = "CHabitacion";
-	Room(World *world, Common::ReadStream &stream);
+	Room(World *world, Common::SeekableReadStream &stream);
 	virtual ~Room();
 
 	inline World &world() { return *_world; }
@@ -64,7 +64,7 @@ public:
 	void debugPrint(bool withObjects) const;
 
 protected:
-	Room(World *world, Common::ReadStream &stream, bool hasUselessByte);
+	Room(World *world, Common::SeekableReadStream &stream, bool hasUselessByte);
 	void updateScripts();
 	void updateRoomBounds();
 	void updateInteraction();
@@ -90,25 +90,25 @@ protected:
 class OptionsMenu final : public Room {
 public:
 	static constexpr const char *kClassName = "CHabitacionMenuOpciones";
-	OptionsMenu(World *world, Common::ReadStream &stream);
+	OptionsMenu(World *world, Common::SeekableReadStream &stream);
 };
 
 class ConnectMenu final : public Room {
 public:
 	static constexpr const char *kClassName = "CHabitacionConectar";
-	ConnectMenu(World *world, Common::ReadStream &stream);
+	ConnectMenu(World *world, Common::SeekableReadStream &stream);
 };
 
 class ListenMenu final : public Room {
 public:
 	static constexpr const char *kClassName = "CHabitacionEsperar";
-	ListenMenu(World *world, Common::ReadStream &stream);
+	ListenMenu(World *world, Common::SeekableReadStream &stream);
 };
 
 class Inventory final : public Room {
 public:
 	static constexpr const char *kClassName = "CInventario";
-	Inventory(World *world, Common::ReadStream &stream);
+	Inventory(World *world, Common::SeekableReadStream &stream);
 	virtual ~Inventory() override;
 
 	virtual bool updateInput() override;
