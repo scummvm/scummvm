@@ -25,18 +25,55 @@ For a more comprehensive changelog of the latest experimental code, see:
      others, 12 titles so far.
    - Added support for Adibou 2: Nature & Sciences.
 
+ ADL:
+   - Added Text-to-Speech support.
+
+ Cruise:
+   - Added Text-to-Speech support.
+
+ Draci:
+   - Added Text-to-Speech support.
+
  Drascula:
    - Fixed displaying accented characters.
    - Added Text-to-Speech support.
 
+ EFH:
+   - Fixed giving and dropping unequippable items.
+   - Fixed being unable to replace 3rd party member.
+   - Fixed quitting in status menu.
+
  Freescape:
    - Added roll rotation to Driller and Dark Side.
+
+ Kyra:
+   - Reduce CPU usage in the LoL main menu.
+   - Reduce CPU usage in EoB 1 and 2.
 
  Lure:
    - Added Russian version support to lure.dat.
 
+ MM:
+   - Fixed protection from elements spell.
+
+ NANCY:
+   - Added support for ScummVM's save/load screens.
+   - Fixed a crash while reading files from the Zip disk in Secret of the
+     Scarlet Hand.
+
+ NGI:
+   - Added keymapper support.
+
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
+
+ SCI:
+   - Fixed the palette in SLATER Mac.
+   - Fixed LSL6 temporary freeze after control panel.
+   - Fixed PEPPER spinning in Ben Franklin's workshop.
+   - Enabled extra LSL6 messages when clicking on Larry.
+   - Virtual keyboard now correctly triggers on/off wherever text input is
+     needed.
 
  SCUMM:
    - Added support for the classic SE variants of MI1, MI2, DOTT and FT.
@@ -52,9 +89,23 @@ For a more comprehensive changelog of the latest experimental code, see:
      first LucasArts Mac CD Game Pack. Previously you had to make sure to
      only copy the data fork, not the (empty) resource fork.
 
+ Supernova:
+   - Added keymapper support.
+
+ Sword25:
+   - Added keymapper support.
+
  Teenagent:
-   - Add language support for Polish, Czech and Russian versions.
+   - Added language support for Polish, Czech and Russian versions.
      New teenagent.dat file is generated.
+   - Added keymapper support.
+   - Added Text-to-Speech support.
+
+ Tetraedge:
+   - Added keymapper support.
+
+ Titanic:
+   - Added keymapper support.
 
  TwinE:
    - Activate original bug fixes (FunFrock's HQ door and safe bugs).
@@ -62,6 +113,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  V-Cruise:
    - Fixed text rendering in Chinese and Japanese localizations.
    - Added support for Japanese DVD version of Schizm: Mysterious Journey.
+
+ Voyeur:
+   - Added keymapper support.
 
  Wintermute:
    - 3D renderer enabled by default for 2D games.
