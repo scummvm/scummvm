@@ -58,6 +58,7 @@ class ScriptManager;
 class RenderManager;
 class CursorManager;
 class StringManager;
+class FileManager;
 class SaveManager;
 class RLFDecoder;
 class MenuManager;
@@ -143,6 +144,7 @@ private:
 	StringManager *_stringManager;
 	TextRenderer *_textRenderer;
 	MidiManager *_midiManager;
+	FileManager *_fileManager;
 	SaveManager *_saveManager;
 	MenuManager *_menu;
 	SubtitleManager *_subtitleManager;
@@ -187,6 +189,9 @@ public:
 	}
 	CursorManager *getCursorManager() const {
 		return _cursorManager;
+	}
+	FileManager *getFileManager() const {
+		return _fileManager;
 	}
 	SaveManager *getSaveManager() const {
 		return _saveManager;
@@ -294,7 +299,6 @@ private:
 	uint8 getBufferedKey(uint8 pos);
 
 	double getVobAmplification(Common::String fileName) const;
-	bool loadZix(const Common::Path &name);
 };
 
 } // End of namespace ZVision

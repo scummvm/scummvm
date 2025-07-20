@@ -37,8 +37,8 @@
 #include "gui/message.h"
 #include "zvision/zvision.h"
 #include "zvision/core/console.h"
+#include "zvision/file/file_manager.h"
 #include "zvision/file/save_manager.h"
-#include "zvision/file/zfs_archive.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/scripting/menu.h"
@@ -89,6 +89,7 @@ ZVision::ZVision(OSystem *syst, const ZVisionGameDescription *gameDesc)
 	  _clock(_system),
 	  _scriptManager(nullptr),
 	  _renderManager(nullptr),
+	  _fileManager(nullptr),
 	  _saveManager(nullptr),
 	  _stringManager(nullptr),
 	  _cursorManager(nullptr),
@@ -119,6 +120,7 @@ ZVision::~ZVision() {
 	// Dispose of resources
 	delete _cursorManager;
 	delete _stringManager;
+	delete _fileManager;
 	delete _saveManager;
 	delete _scriptManager;
 	delete _renderManager;	// should be deleted after the script manager
@@ -210,6 +212,7 @@ void ZVision::initialize() {
 		break;
 	}
 	_scriptManager = new ScriptManager(this);
+	_fileManager = new FileManager(this);
 	_saveManager = new SaveManager(this);
 	_stringManager = new StringManager(this);
 	_cursorManager = new CursorManager(this, _resourcePixelFormat);
@@ -404,13 +407,13 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	
 	switch (getGameId()) {
 	case GID_GRANDINQUISITOR:
-		if (!loadZix("INQUIS.ZIX"))
+		if (!_fileManager->loadZix("INQUIS.ZIX"))
 			error("Unable to load file INQUIS.ZIX");
 		break;
 	case GID_NEMESIS:
-		if (!loadZix("NEMESIS.ZIX"))
+		if (!_fileManager->loadZix("NEMESIS.ZIX"))
 			// The game might not be installed, try MEDIUM.ZIX instead
-			if (!loadZix("ZNEMSCR/MEDIUM.ZIX"))
+			if (!_fileManager->loadZix("ZNEMSCR/MEDIUM.ZIX"))
 				error("Unable to load the file ZNEMSCR/MEDIUM.ZIX");
 		break;
 	case GID_NONE:
@@ -418,123 +421,6 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 		error("Unknown/unspecified GameId");
 		break;
 	}
-}
-
-bool ZVision::loadZix(const Common::Path &name) {
-	Common::File file;
-	if (!file.open(name))
-		return false;
-
-	Common::String line;
-
-	//Skip first block
-	while (!file.eos()) {
-		line = file.readLine();
-		if (line.matchString("----------*", true))
-			break;
-	}
-	
-	if (file.eos())
-		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
-
-	uint8 archives = 0;
-
-	//Parse subdirectories & archives
-	debugC(1, kDebugFile, "Parsing list of subdirectories & archives in %s", name.toString(Common::Path::kNativeSeparator).c_str());
-	while (!file.eos()) {
-		line = file.readLine();
-		line.trim();
-		if (line.matchString("----------*", true))
-			break;
-		else if (line.matchString("DIR:*", true) || line.matchString("CD0:*", true) || line.matchString("CD1:*", true) || line.matchString("CD2:*", true)) {
-			line = Common::String(line.c_str() + 5);
-			for (uint i = 0; i < line.size(); i++)
-				if (line[i] == '\\')
-					line.setChar('/', i);
-
-			// Check if NEMESIS.ZIX/MEDIUM.ZIX refers to the znemesis folder, and
-			// check the game root folder instead
-			if (line.hasPrefix("znemesis/"))
-				line = Common::String(line.c_str() + 9);
-
-			// Check if INQUIS.ZIX refers to the ZGI folder, and check the game
-			// root folder instead
-			if (line.hasPrefix("zgi/"))
-				line = Common::String(line.c_str() + 4);
-			if (line.hasPrefix("zgi_e/"))
-				line = Common::String(line.c_str() + 6);
-
-			if (line.size() && line[0] == '.')
-				line.deleteChar(0);
-			if (line.size() && line[0] == '/')
-				line.deleteChar(0);
-			if (line.size() && line.hasSuffix("/"))
-				line.deleteLastChar();
-
-			Common::Path path(line, '/');
-			path = path.getLastComponent();	//We are using the search manager in "flat" mode, so only filenames are needed
-
-			if (line.matchString("*.zfs", true)) {
-				debugC(1, kDebugFile, "Adding archive %s to search manager.", path.toString().c_str());
-				Common::Archive *arc;
-				arc = new ZfsArchive(path);
-				SearchMan.add(line, arc);
-			}
-			archives++;
-		}
-	}
-
-	if (file.eos())
-		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
-	
-	const char* genExcluded[] {"*.dll", "*.ini", "*.exe", "*.isu", "*.inf", "*path*.txt", "r.svr", "*.zix"};
-	//TODO - change this to a list of alternate pairs; only throw an error if both alternatives are unavailable
-	const char* zgiExcluded[] {
-		"c000h01q.raw", "cm00h01q.raw", "dm00h01q.raw", "e000h01q.raw", "em00h11p.raw", "em00h50q.raw", "gjnph65p.raw", 
-		"gjnph72p.raw", "h000h01q.raw", "m000h01q.raw", "p000h01q.raw", "q000h01q.raw", "sw00h01q.raw", "t000h01q.raw", 
-		"u000h01q.raw"
-		};
-
-	//Parse files
-	debugC(1, kDebugFile, "Parsing list of individual resource files in %s", name.toString(Common::Path::kNativeSeparator).c_str());
-	while (!file.eos()) {
-		line = file.readLine();
-		line.trim();
-		uint dr = 0;
-		char buf[32];
-		if (sscanf(line.c_str(), "%u %s", &dr, buf) == 2) {
-			if (dr <= archives && dr > 0) {
-				Common::String path(buf);
-				bool exclude = false;
-				for(auto filename : genExcluded)
-					if(path.matchString(filename, true)) {
-						exclude = true;
-						break;
-					}
-				for(auto filename : zgiExcluded)
-					if(path.matchString(filename, true)) {
-						//exclude = true;
-						break;
-					}
-				if(!exclude) {
-					//No need to add file, just verify that it exists
-					Common::File resource;
-					if(!resource.exists(buf))
-						warning("Missing file %s", path.c_str());
-					else
-						debugC(5, kDebugFile, "File found: %s", path.c_str());
-					if(path.matchString("*.zfs", true)) {
-						Common::Path path_(path);
-						debugC(kDebugFile, "Adding archive %s to search manager.", path.c_str());
-						Common::Archive *arc;
-						arc = new ZfsArchive(path_);
-						SearchMan.add(path, arc);
-					}
-				}
-			}
-		}
-	}
-	return true;
 }
 
 } // End of namespace ZVision

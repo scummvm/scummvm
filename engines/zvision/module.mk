@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	core/console.o \
 	core/events.o \
 	file/lzss_read_stream.o \
+	file/file_manager.o \
 	file/save_manager.o \
 	file/zfs_archive.o \
 	graphics/cursors/cursor.o \
