@@ -45,5 +45,68 @@ CDocTemplate::CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
 	m_pViewClass = pViewClass;
 }
 
+CDocument *CDocTemplate::CreateNewDocument() {
+	assert(m_pDocClass);
+	CDocument *pDocument = (CDocument *)m_pDocClass->CreateObject();
+	assert(pDocument);
+	ASSERT_KINDOF(CDocument, pDocument);
+
+	AddDocument(pDocument);
+	return pDocument;
+}
+
+void CDocTemplate::AddDocument(CDocument *pDoc) {
+	ASSERT_VALID(pDoc);
+	assert(pDoc->m_pDocTemplate == nullptr);   // no template attached yet
+	pDoc->m_pDocTemplate = this;
+}
+
+void CDocTemplate::RemoveDocument(CDocument *pDoc) {
+	ASSERT_VALID(pDoc);
+	assert(pDoc->m_pDocTemplate == this);   // must be attached to us
+	pDoc->m_pDocTemplate = nullptr;
+}
+
+CFrameWnd *CDocTemplate::CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther) {
+	if (pDoc != nullptr)
+		ASSERT_VALID(pDoc);
+
+	// Create a frame wired to the specified document
+	// Must have a resource ID to load from
+	assert(m_nIDResource != 0);
+	CCreateContext context;
+	context.m_pCurrentFrame = pOther;
+	context.m_pCurrentDoc = pDoc;
+	context.m_pNewViewClass = m_pViewClass;
+	context.m_pNewDocTemplate = this;
+
+	assert(m_pFrameClass);
+	CFrameWnd *pFrame = (CFrameWnd *)m_pFrameClass->CreateObject();
+	assert(pFrame);
+	ASSERT_KINDOF(CFrameWnd, pFrame);
+	assert(context.m_pNewViewClass);
+#ifdef TODO
+	// create new from resource
+	if (!pFrame->LoadFrame(m_nIDResource,
+		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,   // default frame styles
+		nullptr, &context))
+	{
+		TRACE0("Warning: CDocTemplate couldn't create a frame.\n");
+		// frame will be deleted in PostNcDestroy cleanup
+		return nullptr;
+	}
+#else
+	error("TODO: CDocTemplate::CreateNewFrame");
+#endif
+	// it worked !
+	return pFrame;
+}
+
+void CDocTemplate::InitialUpdateFrame(CFrameWnd *pFrame, CDocument *pDoc,
+		BOOL bMakeVisible) {
+	// Just delagate to implementation in CFrameWnd
+	pFrame->InitialUpdateFrame(pDoc, bMakeVisible);
+}
+
 } // namespace MFC
 } // namespace Bagel

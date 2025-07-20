@@ -57,6 +57,10 @@ class CFileException;
 	IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, 0xFFFF, \
 	                       class_name::CreateObject)
 
+#define ASSERT_KINDOF(class_name, object) \
+	assert((object)->IsKindOf(RUNTIME_CLASS(class_name)))
+#define ASSERT_VALID(X) ((X) != nullptr)
+
 struct CRuntimeClass {
 	// Attributes
 	const char *m_lpszClassName = nullptr;

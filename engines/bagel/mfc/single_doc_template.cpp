@@ -29,5 +29,105 @@ IMPLEMENT_DYNAMIC(CSingleDocTemplate, CDocTemplate)
 BEGIN_MESSAGE_MAP(CSingleDocTemplate, CDocTemplate)
 END_MESSAGE_MAP()
 
+CSingleDocTemplate::~CSingleDocTemplate() {
+	assert(!m_pOnlyDoc);
+}
+
+CDocument *CSingleDocTemplate::OpenDocumentFile(LPCSTR lpszPathName,
+		BOOL bMakeVisible) {
+	CDocument *pDocument = nullptr;
+	CFrameWnd *pFrame = nullptr;
+	BOOL bCreated = FALSE;      // => doc and frame created
+	BOOL bWasModified = FALSE;
+
+	if (m_pOnlyDoc != nullptr) {
+		// already have a document - reinit it
+		pDocument = m_pOnlyDoc;
+		if (!pDocument->SaveModified())
+			return nullptr;        // leave the original one
+
+		pFrame = (CFrameWnd *)AfxGetMainWnd();
+		assert(pFrame != nullptr);
+		ASSERT_KINDOF(CFrameWnd, pFrame);
+		ASSERT_VALID(pFrame);
+	} else {
+		// create a new document
+		pDocument = CreateNewDocument();
+		assert(pFrame == nullptr);     // will be created below
+		bCreated = TRUE;
+	}
+
+	assert(pDocument == m_pOnlyDoc);
+
+	if (pFrame == nullptr) {
+		assert(bCreated);
+
+		// Create frame - set as main document frame
+		BOOL bAutoDelete = pDocument->m_bAutoDelete;
+		pDocument->m_bAutoDelete = FALSE;
+		// don't destroy if something goes wrong
+		pFrame = CreateNewFrame(pDocument, nullptr);
+		pDocument->m_bAutoDelete = bAutoDelete;
+		assert(pFrame);
+	}
+
+	if (lpszPathName == nullptr) {
+		// Create a new document
+		SetDefaultTitle(pDocument);
+
+		// Avoid creating temporary compound file when starting up invisible
+		if (!bMakeVisible)
+			pDocument->m_bEmbedded = TRUE;
+
+		if (!pDocument->OnNewDocument()) {
+			warning("CDocument::OnNewDocument returned FALSE.");
+			if (bCreated)
+				pFrame->DestroyWindow();	// Will destroy document
+			return nullptr;
+		}
+	} else {
+		// open an existing document
+		bWasModified = pDocument->IsModified();
+		pDocument->SetModifiedFlag(FALSE);  // not dirty for open
+
+		if (!pDocument->OnOpenDocument(lpszPathName)) {
+			warning("CDocument::OnOpenDocument returned FALSE.");
+			if (bCreated) {
+				pFrame->DestroyWindow();    // will destroy document
+			} else if (!pDocument->IsModified()) {
+				// Original document is untouched
+				pDocument->SetModifiedFlag(bWasModified);
+			} else {
+				// We corrupted the original document
+				SetDefaultTitle(pDocument);
+
+				if (!pDocument->OnNewDocument()) {
+					warning("Error: OnNewDocument failed after trying to open a document - trying to continue.");
+					// Assume we can continue
+				}
+			}
+
+			return nullptr;	// Open failed
+		}
+
+		pDocument->SetPathName(lpszPathName);
+	}
+
+	// Set as main frame
+	CWinApp *app = AfxGetApp();
+	if (bCreated && !app->m_pMainWnd) {
+		// Set as main frame (InitialUpdateFrame will show the window)
+		app->m_pMainWnd = pFrame;
+	}
+
+	InitialUpdateFrame(pFrame, pDocument, bMakeVisible);
+
+	return pDocument;
+}
+
+void CSingleDocTemplate::SetDefaultTitle(CDocument *pDocument) {
+	pDocument->SetTitle("Untitled");
+}
+
 } // namespace MFC
 } // namespace Bagel

@@ -434,18 +434,15 @@ public:
 // All fields are optional and may be nullptr
 struct CCreateContext {
 	// for creating new views
-	CRuntimeClass *m_pNewViewClass; // runtime class of view to create or nullptr
-	CDocument *m_pCurrentDoc;
+	const CRuntimeClass *m_pNewViewClass = nullptr; // runtime class of view to create or nullptr
+	CDocument *m_pCurrentDoc = nullptr;
 
 	// for creating MDI children (CMDIChildWnd::LoadFrame)
-	CDocTemplate *m_pNewDocTemplate;
+	CDocTemplate *m_pNewDocTemplate = nullptr;
 
 	// for sharing view/frame state from the original view/frame
-	CView *m_pLastView;
-	CFrameWnd *m_pCurrentFrame;
-
-	// Implementation
-	CCreateContext();
+	CView *m_pLastView = nullptr;
+	CFrameWnd *m_pCurrentFrame = nullptr;
 };
 
 /*============================================================================*/
@@ -1006,8 +1003,13 @@ class CDocument : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocument)
 private:
 	CString _title;
-	bool _isModified = false;
 	CString _unusedPathName;
+	BOOL m_bModified = FALSE;
+
+public:
+	BOOL m_bAutoDelete = TRUE;	// default to auto delete document
+	BOOL m_bEmbedded = FALSE;	// default to file-based document
+	CDocTemplate *m_pDocTemplate = nullptr;
 
 public:
 	~CDocument() override {}
@@ -1027,6 +1029,7 @@ public:
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
 	virtual void ReportSaveLoadException(LPCSTR lpszPathName,
 	                                     CException *e, BOOL bSaving, UINT nIDPDefault);
+	bool SaveModified();
 
 	// delete doc items etc
 	virtual void DeleteContents();
@@ -1038,6 +1041,7 @@ public:
 		return true;
 	}
 	virtual void OnFileSaveAs() {}
+	virtual void OnCloseDocument();
 
 	DECLARE_MESSAGE_MAP()
 };
@@ -1460,6 +1464,7 @@ public:
 
 	HMENU GetMenu() const;
 	void RecalcLayout(BOOL bNotify = TRUE);
+	void InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible);
 };
 
 class CDialog : public CWnd {
@@ -1702,16 +1707,33 @@ private:
 	const CRuntimeClass *m_pFrameClass = nullptr;
 	const CRuntimeClass *m_pViewClass = nullptr;
 
-public:
+protected:
 	DECLARE_MESSAGE_MAP()
 
-protected:
 	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
 	    const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
+public:
+	/**
+	 * Open named file
+	 * @param lpszPathName	Path name. If null,
+	 * then create new file with this type
+	 */
+	virtual CDocument *OpenDocumentFile(LPCSTR lpszPathName,
+		BOOL bMakeVisible = TRUE) = 0;
+	virtual CDocument *CreateNewDocument();
+	virtual CFrameWnd *CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther);
+	virtual void SetDefaultTitle(CDocument *pDocument) = 0;
+	virtual void InitialUpdateFrame(CFrameWnd *pFrame, CDocument *pDoc,
+		BOOL bMakeVisible = TRUE);
+
+	virtual void AddDocument(CDocument *pDoc);      // must override
+	virtual void RemoveDocument(CDocument *pDoc);   // must override
 };
 
 class CSingleDocTemplate : public CDocTemplate {
 	DECLARE_DYNAMIC(CSingleDocTemplate)
+private:
+	CDocument *m_pOnlyDoc = nullptr;
 
 public:
 	DECLARE_MESSAGE_MAP()
@@ -1725,9 +1747,23 @@ public:
 	) : CDocTemplate(nIDResource, pDocClass,
 		                 pFrameClass, pViewClass) {
 	}
+	~CSingleDocTemplate();
+
+	/**
+	 * Open named file
+	 * @param lpszPathName	Path name. If null,
+	 * then create new file with this type
+	 */
+	CDocument *OpenDocumentFile(LPCSTR lpszPathName,
+		BOOL bMakeVisible = TRUE) override;
+
+	void SetDefaultTitle(CDocument *pDocument) override;
 };
 
 class CDocManager {
+protected:
+	Common::List<CDocTemplate *> m_templateList;
+
 public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void OnFileNew();

@@ -30,11 +30,19 @@ void CDocManager::AddDocTemplate(CDocTemplate *pTemplate) {
 }
 
 void CDocManager::OnFileNew() {
+	assert(!m_templateList.empty());
 
+	// ScummVM doesn't support more than 1 template
+	assert(m_templateList.size() == 1);
+
+	CDocTemplate *pTemplate = m_templateList.front();
+	ASSERT_KINDOF(CDocTemplate, pTemplate);
+
+	pTemplate->OpenDocumentFile(nullptr);
 }
 
 void CDocManager::OnFileOpen() {
-
+	error("TODO: CDocManager::onFileOpen");
 }
 
 } // namespace MFC

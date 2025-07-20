@@ -43,5 +43,49 @@ BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
 	error("TODO: CFrameWnd::RepositionBars");
 }
 
+void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
+#ifdef TODO
+	// if the frame does not have an active view, set to first pane
+	CView *pView = NULL;
+	if (GetActiveView() == NULL)
+	{
+		CWnd *pWnd = GetDescendantWindow(AFX_IDW_PANE_FIRST, TRUE);
+		if (pWnd != NULL && pWnd->IsKindOf(RUNTIME_CLASS(CView)))
+		{
+			pView = (CView *)pWnd;
+			SetActiveView(pView, FALSE);
+		}
+	}
+
+	if (bMakeVisible)
+	{
+		// send initial update to all views (and other controls) in the frame
+		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, TRUE, TRUE);
+
+		// give view a chance to save the focus (CFormView needs this)
+		if (pView != NULL)
+			pView->OnActivateFrame(WA_INACTIVE, this);
+
+		// finally, activate the frame
+		// (send the default show command unless the main desktop window)
+		int nCmdShow = -1;      // default
+		CWinApp *pApp = AfxGetApp();
+		if (pApp != NULL && pApp->m_pMainWnd == this)
+		{
+			nCmdShow = pApp->m_nCmdShow; // use the parameter from WinMain
+			pApp->m_nCmdShow = -1; // set to default after first time
+		}
+		ActivateFrame(nCmdShow);
+		if (pView != NULL)
+			pView->OnActivateView(TRUE, pView, pView);
+	}
+
+	// update frame counts and frame title (may already have been visible)
+	if (pDoc != NULL)
+		pDoc->UpdateFrameCounts();
+	OnUpdateFrameTitle(TRUE);
+#endif
+}
+
 } // namespace MFC
 } // namespace Bagel

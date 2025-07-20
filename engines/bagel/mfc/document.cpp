@@ -48,11 +48,11 @@ void CDocument::ClearPathName() {
 }
 
 BOOL CDocument::IsModified() {
-	return _isModified;
+	return m_bModified;
 }
 
 void CDocument::SetModifiedFlag(BOOL bModified) {
-	_isModified = bModified;
+	m_bModified = bModified;
 }
 
 void CDocument::DeleteContents() {
@@ -74,6 +74,40 @@ POSITION CDocument::GetFirstViewPosition() const {
 
 CView *CDocument::GetNextView(POSITION &rPosition) const {
 	error("TODO: CDocument::GetNextView");
+}
+
+bool CDocument::SaveModified() {
+	// TODO: CDocument::SaveModified
+	return true;
+}
+
+void CDocument::OnCloseDocument() {
+#ifdef TODO
+	// Destroy all frames viewing this document
+	// the last destroy may destroy us
+	BOOL bAutoDelete = m_bAutoDelete;
+	m_bAutoDelete = FALSE;  // don't destroy document while closing views
+	while (!m_viewList.IsEmpty()) {
+		// get frame attached to the view
+		CView *pView = (CView *)m_viewList.GetHead();
+		ASSERT_VALID(pView);
+		CFrameWnd *pFrame = pView->GetParentFrame();
+		ASSERT_VALID(pFrame);
+
+		// and close it
+		PreCloseFrame(pFrame);
+		pFrame->DestroyWindow();
+		// will destroy the view as well
+	}
+	m_bAutoDelete = bAutoDelete;
+
+	// clean up contents of document before destroying the document itself
+	DeleteContents();
+
+	// delete the document if necessary
+	if (m_bAutoDelete)
+		delete this;
+#endif
 }
 
 } // namespace MFC
