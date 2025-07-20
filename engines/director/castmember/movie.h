@@ -28,7 +28,6 @@
 namespace Director {
 
 // For MovieCastMember
-// virtual-window.cpp
 class SubWindow : public Window {
 public:
 	SubWindow(Window *parent, Common::Rect rect);

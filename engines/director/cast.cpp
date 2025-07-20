@@ -1675,6 +1675,8 @@ private:
 };
 
 void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
+	debug("I've been called again I guess: %s", g_director->getCurrentMovie()->getMacName().c_str());
+	debug("What is the name of the movie: %s", _movie->getMacName().c_str());
 	if (_version >= kFileVer400) {
 		debugC(1, kDebugCompile, "Add D4 script context");
 

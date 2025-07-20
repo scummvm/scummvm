@@ -266,7 +266,6 @@ bool Window::render(bool forceRedraw, Graphics::ManagedSurface *blitTo) {
 }
 
 void Window::setStageColor(uint32 stageColor, bool forceReset) {
-	debug("Window::setStageColor: Am I called? Which movie called me? %s", getCurrentMovie()->getMacName().c_str());
 	if (stageColor != _stageColor || forceReset) {
 		_stageColor = stageColor;
 		reset();

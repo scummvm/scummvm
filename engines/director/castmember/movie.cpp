@@ -36,8 +36,7 @@
 
 namespace Director {
 
-// Assigning ID 0, because this windows is not managed by the Window Manager
-// This Virtual Window will not be responsible for rendering the movie cast member
+// This SubWindow will not be responsible for rendering the movie cast member
 // But we still need the event processing
 SubWindow::SubWindow(Window *parent, Common::Rect rect)
 		: Window(g_director->getMacWindowManager()->getNextId(), false, false, false, g_director->getMacWindowManager(), g_director, false), _parent(parent) {
@@ -89,10 +88,8 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 	}
 
 	_window = new SubWindow(g_director->getCurrentWindow(), _initialRect);
-	_movie = new Movie(_window);
-	_window->setCurrentMovie(_movie);
 	_window->incRefCount();
-	_movie->_isCastMember = true;
+	_movie = nullptr;
 
 	if (debugChannelSet(2, kDebugLoading))
 		_initialRect.debugPrint(2, "MovieCastMember(): rect:");
@@ -118,6 +115,8 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 
 	_subchannels.clear();
 
+	// Since the main movie and the linked movie cast member share lingo execution, it is global
+	// We need to make sure that the movie that is processing lingo scripts is the main Window current movie
 	Movie *mainMovie = _window->getParent()->getCurrentMovie();
 	_window->getParent()->setCurrentMovie(_movie);
 	_movie->getScore()->step();
@@ -166,19 +165,36 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 }
 
 void MovieCastMember::load() {
-	if (_loaded)
-		return;
-
-	if (_filename.empty()) {
-		warning("MovieCastMember::load(): load called on MovieCastMember before filename was set");
+	debug("Called MovieCastMember::load on cast id: %d", _castId);
+	if (_loaded) {
+		debug("Called twice but returned");
 		return;
 	}
 
-	debug("what is filename: %s", _filename.toString().c_str());
+	if (_filename.empty()) {
+		debugC(5, kDebugLoading, "MovieCastMember::load(): load called on MovieCastMember before filename was set");
+		return;
+	}
 
-	_archive = g_director->openArchive(_filename);
+	debugC(6, kDebugLoading, "MovieCastMember::load(): loading archive: %s", _filename.toString().c_str());
+
+	Common::String pathString = _filename.toString();
+	pathString.trim();
+	pathString += g_director->getCurrentPath();
+	Common::Path resPath = findPath(pathString, true, true, false);
+
+	_archive = g_director->openArchive(resPath);
+
+	if (_movie) {
+		delete _movie;
+	}
+
+	_movie = new Movie(_window);
+	_window->setCurrentMovie(_movie);
+
 	_movie->setArchive(_archive);
 	_movie->loadArchive();
+	_movie->_isCastMember = true;
 
 	_movie->getScore()->startPlay();
 	_movie->getScore()->setCurrentFrame(1);
