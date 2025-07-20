@@ -609,7 +609,6 @@ bool PathFindingShape::findEvadeTarget(
 	Point centerTarget,
 	float depthScale, float minDistSqr,
 	Point &evadeTarget) const {
-	// TODO: Check if minDistSqr should just modify tryDistBase
 
 	for (float tryDistBase = 60; tryDistBase < 250; tryDistBase += 10) {
 		for (int tryAngleI = 0; tryAngleI < 6; tryAngleI++) {

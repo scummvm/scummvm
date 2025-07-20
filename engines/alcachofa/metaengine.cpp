@@ -28,7 +28,7 @@ namespace Alcachofa {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
+		GAMEOPTION_ORIGINAL_SAVELOAD, // TODO: Remove, this is not really possible
 		{
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),

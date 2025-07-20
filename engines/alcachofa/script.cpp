@@ -100,16 +100,19 @@ Script::Script() {
 
 int32 Script::variable(const char *name) const {
 	uint32 index;
-	if (!_variableNames.tryGetVal(name, index))
-		error("Unknown variable: %s", name);
-	return _variables[index];
+	if (_variableNames.tryGetVal(name, index))
+		return _variables[index];
+	g_engine->game().unknownVariable(name);
+	return 0;
 }
 
 int32 &Script::variable(const char *name) {
 	uint32 index;
-	if (!_variableNames.tryGetVal(name, index))
-		error("Unknown variable: %s", name);
-	return _variables[index];
+	if (_variableNames.tryGetVal(name, index))
+		return _variables[index];
+	g_engine->game().unknownVariable(name);
+	static int dummy = 0;
+	return dummy;
 }
 
 bool Script::hasProcedure(const Common::String &behavior, const Common::String &action) const {
@@ -196,11 +199,7 @@ struct ScriptTask : public Task {
 		if (_isFirstExecution || _returnsFromKernelCall)
 			setCharacterVariables();
 		if (_returnsFromKernelCall) {
-			// this is also original done, every KernelCall is followed by a PopN of the arguments
-			// only *after* the PopN the return value is pushed so that the following script can use it
-			scumm_assert(_pc < _script._instructions.size() && _script._instructions[_pc]._op == ScriptOp::PopN);
-			popN(_script._instructions[_pc++]._arg);
-			pushNumber(process().returnValue());
+			handleReturnFromKernelCall(process().returnValue());
 		}
 		_isFirstExecution = _returnsFromKernelCall = false;
 
@@ -264,7 +263,7 @@ struct ScriptTask : public Task {
 					return kernelReturn;
 				}
 				else
-					pushNumber(kernelReturn.returnValue());
+					handleReturnFromKernelCall(kernelReturn.returnValue());
 			}break;
 			case ScriptOp::JumpIfFalse:
 				if (popNumber() == 0)
@@ -325,19 +324,8 @@ struct ScriptTask : public Task {
 				else
 					pushNumber(returnValue);
 			}break;
-			case ScriptOp::Crash5:
-			case ScriptOp::Crash8:
-			case ScriptOp::Crash9:
-			case ScriptOp::Crash12:
-			case ScriptOp::Crash21:
-			case ScriptOp::Crash22:
-			case ScriptOp::Crash33:
-			case ScriptOp::Crash34:
-			case ScriptOp::Crash35:
-			case ScriptOp::Crash36:
-				error("Script reached crash instruction");
 			default:
-				error("Script reached invalid instruction");
+				g_engine->game().unknownInstruction(instruction);
 			}
 		}
 	}
@@ -352,9 +340,19 @@ private:
 		_script.variable("m_o_f_real") = (int32)g_engine->player().activeCharacterKind();
 	}
 
+	void handleReturnFromKernelCall(int32 returnValue) {
+		// this is also original done, every KernelCall is followed by a PopN of the arguments
+		// only *after* the PopN the return value is pushed so that the following script can use it
+		scumm_assert(_pc < _script._instructions.size() && _script._instructions[_pc]._op == ScriptOp::PopN);
+		popN(_script._instructions[_pc++]._arg);
+		pushNumber(returnValue);
+	}
+
 	void pushNumber(int32 value) {
 		_stack.push({ StackEntryType::Number, value });
 	}
+
+	// For the following methods error recovery is not really viable
 
 	void pushVariable(uint32 offset) {
 		uint32 index = offset / sizeof(int32);
@@ -574,10 +572,10 @@ private:
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::Animate: {
 			auto graphicObject = getObjectArg<GraphicObject>(0);
-			if (graphicObject == nullptr && !scumm_stricmp("EXPLOSION DISFRAZ", getStringArg(0)))
+			if (graphicObject == nullptr) {
+				g_engine->game().unknownAnimateObject(getStringArg(0));
 				return TaskReturn::finish(1);
-			if (graphicObject == nullptr)
-				error("Script tried to animate invalid graphic object %s", getStringArg(0));
+			}
 			if (getNumberOrStringArg(1)) {
 				graphicObject->toggle(true);
 				graphicObject->graphic()->start(false);
@@ -591,7 +589,7 @@ private:
 		case ScriptKernelTask::StopAndTurn: {
 			auto character = getObjectArg<WalkingCharacter>(0);
 			if (character == nullptr)
-				error("Script tried to stop-and-turn unknown character");
+				g_engine->game().unknownScriptCharacter("stop-and-turn", getStringArg(0));
 			else
 				character->stopWalking((Direction)getNumberArg(1));
 			return TaskReturn::finish(1);
@@ -602,11 +600,15 @@ private:
 		}
 		case ScriptKernelTask::Go: {
 			auto character = getObjectArg<WalkingCharacter>(0);
-			if (character == nullptr)
-				error("Script tried to make invalid character go: %s", getStringArg(0));
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("go", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			auto target = getObjectArg<PointObject>(1);
 			if (target == nullptr)
-				error("Script tried to make character go to invalid object %s", getStringArg(1));
+				target = g_engine->game().unknownGoPutTarget(process(), "go", getStringArg(1));
+			if (target == nullptr)
+				return TaskReturn::finish(0);
 			character->walkTo(target->position());
 
 			if (getNumberArg(2) & 2)
@@ -618,31 +620,39 @@ private:
 		}
 		case ScriptKernelTask::Put: {
 			auto character = getObjectArg<WalkingCharacter>(0);
-			if (character == nullptr)
-				error("Script tried to put invalid character: %s", getStringArg(0));
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("put", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			auto target = getObjectArg<PointObject>(1);
-			if (target == nullptr && !exceptionsForPut(target, getStringArg(1)))
-				return TaskReturn::finish(2);
 			if (target == nullptr)
-				error("Script tried to make character put to invalid object %s", getStringArg(1));
+				target = g_engine->game().unknownGoPutTarget(process(), "put", getStringArg(1));
+			if (target == nullptr)
+				return TaskReturn::finish(0);
 			character->setPosition(target->position());
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeCharacterRoom: {
 			auto *character = getObjectArg<Character>(0);
-			if (character == nullptr)
-				error("Invalid character name: %s", getStringArg(0));
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("change character room", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			auto *targetRoom = g_engine->world().getRoomByName(getStringArg(1));
-			if (targetRoom == nullptr)
-				error("Invalid room name: %s", getStringArg(1));
+			if (targetRoom == nullptr) {
+				g_engine->game().unknownChangeCharacterRoom(getStringArg(1));
+				return TaskReturn::finish(1);
+			}
 			character->resetTalking();
 			character->room() = targetRoom;
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::LerpCharacterLodBias: {
 			auto *character = getObjectArg<Character>(0);
-			if (character == nullptr)
-				error("Invalid character name: %s", getStringArg(0));
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("lerp character LOD bias", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			float targetLodBias = getNumberArg(1) * 0.01f;
 			int32 durationMs = getNumberArg(2);
 			if (durationMs <= 0)
@@ -655,28 +665,28 @@ private:
 		}
 		case ScriptKernelTask::AnimateCharacter: {
 			auto *character = getObjectArg<Character>(0);
-			if (character == nullptr)
-				error("Invalid character name: %s", getStringArg(0));
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("animate character", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			auto *animObject = getObjectArg(1);
-			if (animObject == nullptr && (
-				!scumm_stricmp("COGE F DCH", getStringArg(1)) ||
-				!scumm_stricmp("CHIQUITO_IZQ", getStringArg(1))))
-				return TaskReturn::finish(2); // original bug in MOTEL_ENTRADA
-			if (animObject == nullptr)
-				error("Invalid animate object name: %s", getStringArg(1));
+			if (animObject == nullptr) {
+				g_engine->game().unknownAnimateCharacterObject(getStringArg(1));
+				return TaskReturn::finish(1);
+			}
 			return TaskReturn::waitFor(character->animate(process(), animObject));
 		}
 		case ScriptKernelTask::AnimateTalking: {
 			auto *character = getObjectArg<Character>(0);
-			if (character == nullptr)
-				error("Invalid character name: %s", getStringArg(0));
-			const char *talkObjectName = getStringArg(1);
-			ObjectBase *talkObject = nullptr;
-			if (talkObjectName != nullptr && *talkObjectName)
+			if (character == nullptr) {
+				g_engine->game().unknownScriptCharacter("talk", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
+			ObjectBase *talkObject = getObjectArg(1);
+			if (talkObject == nullptr && *getStringArg(1) != '\0')
 			{
-				talkObject = getObjectArg(1);
-				if (talkObject == nullptr)
-					error("Invalid talk object name: %s", talkObjectName);
+				g_engine->game().unknownAnimateTalkingObject(getStringArg(1));
+				return TaskReturn::finish(1);
 			}
 			character->talkUsing(talkObject);
 			return TaskReturn::finish(1);
@@ -692,9 +702,8 @@ private:
 				? &relatedCharacter()
 				: getObjectArg<Character>(0);
 			if (_character == nullptr) {
-				if (strcmp(characterName, "OFELIA") == 0 && dialogId == 3737)
-					return TaskReturn::finish(1);
-				error("Invalid character for sayText: %s", characterName);
+				g_engine->game().unknownSayTextCharacter(characterName, dialogId);
+				return TaskReturn::finish(1);
 			}
 			return TaskReturn::waitFor(_character->sayText(process(), dialogId));
 		};
@@ -725,7 +734,7 @@ private:
 			switch ((MainCharacterKind)getNumberArg(0)) {
 			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;
 			case MainCharacterKind::Filemon: g_engine->world().filemon().clearInventory(); break;
-			default: error("Script attempted to clear inventory with invalid character kind"); break;
+			default: g_engine->game().unknownClearInventoryTarget(getNumberArg(0)); break;
 			}
 			return TaskReturn::finish(1);
 
@@ -766,8 +775,10 @@ private:
 			if (!process().isActiveForPlayer())
 				return TaskReturn::finish(0); // contrary to ...ResettingZ this one does not delay if not active
 			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr)
-				error("Invalid target object for LerpCamToObjectKeepingZ: %s", getStringArg(0));
+			if (pointObject == nullptr) {
+				g_engine->game().unknownCamLerpTarget("LerpCamToObjectKeepingZ", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
 				as2D(pointObject->position()),
 				getNumberArg(1), EasingType::Linear));
@@ -776,8 +787,10 @@ private:
 			if (!process().isActiveForPlayer())
 				return TaskReturn::waitFor(delay(getNumberArg(1)));
 			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr)
-				error("Invalid target object for LerpCamToObjectResettingZ: %s", getStringArg(0));
+			if (pointObject == nullptr) {
+				g_engine->game().unknownCamLerpTarget("LerpCamToObjectResettingZ", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			return TaskReturn::waitFor(g_engine->camera().lerpPos(process(),
 				as3D(pointObject->position()),
 				getNumberArg(1), (EasingType)getNumberArg(2)));
@@ -788,8 +801,10 @@ private:
 				// the scale will wait then snap the scale
 				return TaskReturn::waitFor(g_engine->camera().lerpScale(process(), targetScale, getNumberArg(2), EasingType::Linear));
 			auto pointObject = getObjectArg<PointObject>(0);
-			if (pointObject == nullptr)
-				error("Invalid target object for LerpCamToObjectWithScale: %s", getStringArg(0));
+			if (pointObject == nullptr) {
+				g_engine->game().unknownCamLerpTarget("LerpCamToObjectWithScale", getStringArg(0));
+				return TaskReturn::finish(1);
+			}
 			return TaskReturn::waitFor(g_engine->camera().lerpPosScale(process(),
 				as3D(pointObject->position()), targetScale,
 				getNumberArg(2), (EasingType)getNumberArg(3), (EasingType)getNumberArg(4)));
@@ -840,7 +855,7 @@ private:
 		case ScriptKernelTask::Nop34:
 			return TaskReturn::finish(0);
 		default:
-			error("Invalid kernel call");
+			g_engine->game().unknownKernelTask((int)task);
 			return TaskReturn::finish(0);
 		}
 	}
@@ -861,36 +876,6 @@ private:
 		assert(character.semaphore().isReleased()); // this process should be the last to hold a lock if at all...
 	}
 
-	/**
-	 * @brief Check for original bugs related to the Put kernel call and handle them
-	 * @param target An out reference to the point object (maybe we can find an alternative one)
-	 * @param targetName The given name of the target object
-	 * @return false if the put kernel call should be ignored, true if we set target and want to continue with the kernel call
-	 */
-	bool exceptionsForPut(PointObject *&target, const char *targetName) {
-		assert(target == nullptr); // if not, why did we check for exceptions?
-
-		if (!scumm_stricmp("A_Poblado_Indio", targetName)) {
-			// A_Poblado_Indio is a Door but is originally cast into a PointObject
-			// a pointer and the draw order is then interpreted as position and the character snapped onto the floor shape.
-			// Instead I just use the A_Poblado_Indio1 object which exists as counter-part for A_Poblado_Indio2 which should have been used
-			target = dynamic_cast<PointObject *>(g_engine->world().getObjectByName(process().character(), "A_Poblado_Indio1"));
-		}
-
-		if (!scumm_stricmp("PUNTO_VENTANA", targetName)) {
-			// The object is in the previous, now inactive room.
-			// Luckily Mortadelo already is at that point so not further action required
-			return false;
-		}
-
-		if (!scumm_stricmp("Puerta_Casa_Freddy_Intermedia", targetName)) {
-			// Another case of a door being cast into a PointObject
-			return false;
-		}
-
-		return true;
-	}
-
 	Script &_script;
 	Stack<StackEntry> _stack;
 	String _name;
@@ -909,7 +894,9 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 	if (!_procedures.tryGetVal(procedure, offset)) {
 		if (flags & ScriptFlags::AllowMissing)
 			return nullptr;
-		error("Unknown required procedure: %s", procedure.c_str());
+		// it is currently unnecessary but we could return an empty process to avoid returning nullptr here
+		g_engine->game().unknownScriptProcedure(procedure);
+		return nullptr;
 	}
 	FakeLock lock;
 	if (!(flags & ScriptFlags::IsBackground))
@@ -920,7 +907,7 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 }
 
 void Script::updateCommonVariables() {
-	if (g_engine->input().wasAnyMousePressed()) // yes, this variable is never reset by the engine
+	if (g_engine->input().wasAnyMousePressed()) // yes, this variable is never reset by the engine (only by script)
 		variable("SeHaPulsadoRaton") = 1;
 
 	if (variable("CalcularTiempoSinPulsarRaton")) {

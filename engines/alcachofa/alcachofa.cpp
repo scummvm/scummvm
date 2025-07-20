@@ -19,10 +19,6 @@
  *
  */
 
-#include "alcachofa/alcachofa.h"
-#include "graphics/framelimiter.h"
-#include "alcachofa/detection.h"
-#include "alcachofa/console.h"
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
@@ -33,10 +29,14 @@
 #include "graphics/framelimiter.h"
 #include "video/mpegps_decoder.h"
 
+#include "alcachofa.h"
+#include "console.h"
+#include "detection.h"
 #include "rooms.h"
 #include "script.h"
 #include "global-ui.h"
 #include "debug.h"
+#include "game.h"
 
 using namespace Math;
 
@@ -65,6 +65,7 @@ Common::String AlcachofaEngine::getGameId() const {
 Common::Error AlcachofaEngine::run() {
 	g_system->showMouse(false);
 	setDebugger(_console);
+	_game.reset(Game::createForMovieAdventure());
 	_renderer.reset(IRenderer::createOpenGLRenderer(Common::Point(1024, 768)));
 	_drawQueue.reset(new DrawQueue(_renderer.get()));
 	_world.reset(new World());
