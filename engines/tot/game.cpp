@@ -99,7 +99,6 @@ int engine_start() {
 	initialLogo();
 	playMidiFile("INTRODUC", true);
 	setMidiVolume(3, 3);
-
 	firstIntroduction();
 	setMousePos(1, xraton, yraton);
 	initialMenu(hechaprimeravez);
@@ -153,6 +152,7 @@ int startGame() {
 				changeGameSpeed(e);
 
 				switch (e.kbd.keycode) {
+
 				case Common::KEYCODE_ESCAPE:
 					escapePressed = true;
 					break;
@@ -164,43 +164,37 @@ int startGame() {
 					// saveLoad();
 					break;
 				default:
-					if(e.kbd.keycode == hotKeyOpen) {
+					if (e.kbd.keycode == hotKeyOpen) {
 						numeroaccion = 5;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else if (e.kbd.keycode == hotKeyClose) {
+					} else if (e.kbd.keycode == hotKeyClose) {
 						numeroaccion = 6;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else if (e.kbd.keycode == hotKeyPickup) {
+					} else if (e.kbd.keycode == hotKeyPickup) {
 						numeroaccion = 2;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else if (e.kbd.keycode == hotKeyTalk) {
+					} else if (e.kbd.keycode == hotKeyTalk) {
 						numeroaccion = 1;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else if (e.kbd.keycode == hotKeyLook) {
+					} else if (e.kbd.keycode == hotKeyLook) {
 						numeroaccion = 3;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else if (e.kbd.keycode == hotKeyUse) {
+					} else if (e.kbd.keycode == hotKeyUse) {
 						numeroaccion = 4;
 						action();
 						oldxrejilla = 0;
 						oldyrejilla = 0;
-					}
-					else {
+					} else {
 						numeroaccion = 0; // go to
 					}
 				}

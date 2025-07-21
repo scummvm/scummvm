@@ -22,7 +22,8 @@ MODULE_OBJS = \
 	graphman.o \
 	mouseman.o \
 	chrono.o \
-	saveload.o
+	saveload.o \
+	midi.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOT), DYNAMIC_PLUGIN)

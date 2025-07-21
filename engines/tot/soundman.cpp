@@ -19,6 +19,7 @@
  *
  */
 
+#include "audio/adlib_ms.h"
 #include "audio/audiostream.h"
 #include "audio/decoders/voc.h"
 #include "audio/midiparser.h"
@@ -27,6 +28,7 @@
 #include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
 #include "common/substream.h"
+#include "common/memstream.h"
 
 #include "soundman.h"
 #include "tot/soundman.h"
@@ -37,16 +39,20 @@ namespace Tot {
 
 SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 
-	_musicPlayer = new MusicPlayer();
+
+	_midiPlayer = new MidiPlayer();
+	_midiPlayer->open();
 
 	g_engine->syncSoundSettings();
-
+	_midiPlayer->syncSoundSettings();
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, 100);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 100);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, 100);
 }
 SoundManager::~SoundManager() {
-	delete _musicPlayer;
+	// delete _musicPlayer;
+	if(_midiPlayer)
+		delete _midiPlayer;
 	free(_lastSrcStream);
 	free(_audioStream);
 }
@@ -96,11 +102,24 @@ bool SoundManager::isVocPlaying() {
 }
 
 void SoundManager::playMidi(const char *fileName, bool loop) {
-	_musicPlayer->playMidi(fileName, loop);
+	Common::File musicFile;
+	debug("Opening music file %s", fileName);
+	musicFile.open(fileName);
+	if (!musicFile.isOpen()) {
+		showError(267);
+		return;
+	}
+	_midiPlayer->load(&musicFile, musicFile.size());
+	_midiPlayer->setLoop(loop);
+	_midiPlayer->play(0);
+
 }
 
 void SoundManager::playMidi(byte *data, int size, bool loop) {
-	_musicPlayer->playMidi(data, size, loop);
+	Common::MemoryReadStream stream = Common::MemoryReadStream(data, size);
+	_midiPlayer->load(&stream, size);
+	_midiPlayer->setLoop(loop);
+	_midiPlayer->play(0);
 }
 
 void SoundManager::toggleMusic() {
@@ -129,7 +148,6 @@ void SoundManager::setSfxVolume(int volume) {
 void SoundManager::setSfxBalance(bool left, bool right) {
 	int balance = left ? -127 : 127;
 	_mixer->setChannelBalance(_soundHandle, balance);
-	// _mixer->setChannelBalance();
 }
 
 void SoundManager::setMusicVolume(int volume) {
@@ -138,70 +156,7 @@ void SoundManager::setMusicVolume(int volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	ConfMan.setInt("music_volume", volume);
 	ConfMan.flushToDisk();
-
-	_musicPlayer->syncVolume();
-}
-
-MusicPlayer::MusicPlayer() {
-	_data = nullptr;
-
-	MidiPlayer::createDriver(MDT_MIDI | MDT_ADLIB);
-
-	int ret = _driver->open();
-	if (ret == 0) {
-		_driver->setTimerCallback(this, &timerCallback);
-	}
-	_dataSize = -1;
-}
-
-MusicPlayer::~MusicPlayer() {
-	killMidi();
-	free(_data);
-}
-
-void MusicPlayer::sndMidiStart(bool loop) {
-
-	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(_data, _dataSize)) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-
-		_parser = parser;
-
-		syncVolume();
-
-		// Al the tracks are supposed to loop
-		_isLooping = loop;
-		_isPlaying = true;
-	}
-}
-void MusicPlayer::playMidi(const char *fileName, bool loop) {
-	Common::File musicFile;
-	debug("Opening music file %s", fileName);
-	musicFile.open(fileName);
-	if (!musicFile.isOpen()) {
-		showError(267);
-		return;
-	}
-	byte *data = (byte *)malloc(musicFile.size());
-	musicFile.read(data, musicFile.size());
-	musicFile.close();
-	playMidi(data, musicFile.size(), loop);
-}
-
-void MusicPlayer::playMidi(byte *data, int size, bool loop) {
-	_dataSize = size;
-	_data = data;
-	// Start playing the music
-	sndMidiStart(loop);
-}
-
-void MusicPlayer::killMidi() {
-	Audio::MidiPlayer::stop();
-
-	free(_data);
-	_data = nullptr;
+	_midiPlayer->syncSoundSettings();
 }
 
 } // End of namespace Tot

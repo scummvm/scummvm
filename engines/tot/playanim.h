@@ -95,6 +95,7 @@ const int tamcarahablando = 7206;
  * Number of points in a
  */
 const int routePointCount = 7;
+
 /**
  * Trajectory changes
  */
