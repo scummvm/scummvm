@@ -73,6 +73,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Nuvie:
    - Added "Transfer a Character" feature to main menu.
 
+ Parallaction:
+   - Added Text-to-Speech support.
+
  SCI:
    - Fixed the palette in SLATER Mac.
    - Fixed LSL6 temporary freeze after control panel.
