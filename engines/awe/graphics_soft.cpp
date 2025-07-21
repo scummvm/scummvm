@@ -364,7 +364,11 @@ void GraphicsSoft::setFont(const uint8 *src, int w, int h) {
 
 void GraphicsSoft::setPalette(const Color *colors, int count) {
 	count = MIN(count, 16);
-	memcpy(_pal, colors, sizeof(Color) * count);
+	for (int i = 0; i < count; i++) {
+		_pal[i].r = colors[i].r;
+		_pal[i].g = colors[i].g;
+		_pal[i].b = colors[i].b;
+	}
 	_palChanged = true;
 }
 
