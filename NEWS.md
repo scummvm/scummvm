@@ -28,6 +28,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  ADL:
    - Added Text-to-Speech support.
 
+ Buried:
+   - Added keymapper support.
+
  CinE:
    - Added Text-to-Speech support.
 
