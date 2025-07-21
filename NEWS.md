@@ -28,6 +28,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  ADL:
    - Added Text-to-Speech support.
 
+ CinE:
+   - Added Text-to-Speech support.
+
  Cruise:
    - Added Text-to-Speech support.
 
