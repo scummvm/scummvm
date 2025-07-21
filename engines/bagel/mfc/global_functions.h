@@ -23,6 +23,7 @@
 #define BAGEL_MFC_GLOBAL_FUNCTIONS_H
 
 #include "common/stream.h"
+#include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/winnt.h"
 
@@ -140,6 +141,9 @@ extern LPVOID LockResource(HGLOBAL hResData);
 extern void UnlockResource(HGLOBAL hResData);
 extern BOOL FreeResource(HGLOBAL hResData);
 extern HFONT CreateFontIndirect(const LOGFONT *lf);
+
+extern BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
+	int iSubString, CHAR chSep = '\n');
 
 inline char *strUpper(char *s) {
 	for (char *curr = s; *curr; ++curr)

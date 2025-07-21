@@ -189,6 +189,7 @@ namespace MFC {
 #define WM_EXITMENULOOP                 0x0212
 #define WM_MOUSELEAVE					0x02A3
 #define UNICODE_NOCHAR                  0xFFFF
+#define WM_INITIALUPDATE                0x0364  // (params unused) - sent to children
 
 #define MM_JOY1MOVE						0x3A0
 #define MM_JOY2MOVE						0x3A1

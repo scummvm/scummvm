@@ -441,6 +441,27 @@ typedef DWORD (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 #define WS_SIZEBOX          WS_THICKFRAME
 #define WS_TILEDWINDOW      WS_OVERLAPPEDWINDOW
 
+ /*
+  * Common Window Styles
+  */
+#define WS_OVERLAPPEDWINDOW (WS_OVERLAPPED     | \
+                             WS_CAPTION        | \
+                             WS_SYSMENU        | \
+                             WS_THICKFRAME     | \
+                             WS_MINIMIZEBOX    | \
+                             WS_MAXIMIZEBOX)
+
+#define WS_POPUPWINDOW      (WS_POPUP          | \
+                             WS_BORDER         | \
+                             WS_SYSMENU)
+
+#define WS_CHILDWINDOW      (WS_CHILD)
+
+// Frame window styles
+#define FWS_ADDTOTITLE  0x00008000L // Modify title based on content
+#define FWS_PREFIXTITLE 0x00004000L // Show document name before app name
+#define FWS_SNAPTOBARS  0x00002000L // Snap size to size of contained bars
+
 /*
  * Edit Control Styles
  */

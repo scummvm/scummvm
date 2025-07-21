@@ -85,20 +85,17 @@ CFrameWnd *CDocTemplate::CreateNewFrame(CDocument *pDoc, CFrameWnd *pOther) {
 	assert(pFrame);
 	ASSERT_KINDOF(CFrameWnd, pFrame);
 	assert(context.m_pNewViewClass);
-#ifdef TODO
-	// create new from resource
+
+	// Create new from resource
 	if (!pFrame->LoadFrame(m_nIDResource,
-		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,   // default frame styles
+		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE,
 		nullptr, &context))
 	{
-		TRACE0("Warning: CDocTemplate couldn't create a frame.\n");
+		warning("CDocTemplate couldn't create a frame.");
 		// frame will be deleted in PostNcDestroy cleanup
 		return nullptr;
 	}
-#else
-	error("TODO: CDocTemplate::CreateNewFrame");
-#endif
-	// it worked !
+
 	return pFrame;
 }
 

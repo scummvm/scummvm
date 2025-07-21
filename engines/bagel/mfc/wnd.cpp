@@ -125,6 +125,52 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	return true;
 }
 
+BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, DWORD dwStyle,
+		const RECT &rect, CWnd *pParentWnd, UINT nID,
+		LPVOID lpParam /* = NULL */) {
+	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
+		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
+		pParentWnd->GetSafeHwnd(), (HMENU)nID, lpParam);
+}
+
+BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, DWORD dwStyle,
+		int x, int y, int nWidth, int nHeight,
+		HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam) {
+	// Set up create structure
+	CREATESTRUCT cs;
+	cs.x = x;
+	cs.y = y;
+	cs.cx = nWidth;
+	cs.cy = nHeight;
+
+	// Trigger pre-create event
+	if (!PreCreateWindow(cs))
+		return false;
+
+	// Create the actual window content
+	_windowRect.left = cs.x;
+	_windowRect.top = cs.y;
+	_windowRect.right = cs.x + cs.cx;
+	_windowRect.bottom = cs.y + cs.cy;
+	_windowText = lpszWindowName;
+
+	// Get the screen area
+	RECT screenRect(0, 0, cs.cx, cs.cy);
+	ClientToScreen(&screenRect);
+
+	// Get the class details
+	WNDCLASS wc;
+	GetClassInfo(nullptr, lpszClassName, &wc);
+	m_nClassStyle = wc.style;
+
+	SendMessage(WM_CREATE, 0, (LPARAM)&cs);
+	Invalidate();
+
+	return true;
+}
+
 const MSG *CWnd::GetCurrentMessage() {
 	return &AfxGetApp()->_currentMessage;
 }

@@ -1325,8 +1325,16 @@ public:
 	~CWnd() override;
 
 	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
-	                    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
-	                    CCreateContext *pContext = nullptr);
+	    DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+	    CCreateContext *pContext = nullptr);
+	BOOL CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName,
+		LPCTSTR lpszWindowName, DWORD dwStyle,
+		int x, int y, int nWidth, int nHeight,
+		HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam = nullptr);
+	BOOL CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
+		LPCSTR lpszWindowName, DWORD dwStyle,
+		const RECT &rect, CWnd *pParentWnd, UINT nID,
+		LPVOID lpParam = nullptr);
 
 	/**
 	 * Gets a list of CWnd pointers for parent controls
@@ -1438,6 +1446,11 @@ public:
 class CFrameWnd : public CWnd {
 	DECLARE_DYNCREATE(CFrameWnd)
 
+private:
+	CString m_strTitle;
+	UINT m_nIDHelp = 0;
+	static const CRect rectDefault;
+
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
@@ -1462,9 +1475,21 @@ public:
 	~CFrameWnd() override {
 	}
 
+	BOOL Create(LPCSTR lpszClassName,
+		LPCSTR lpszWindowName,
+		DWORD dwStyle = WS_OVERLAPPEDWINDOW,
+		const RECT &rect = rectDefault,
+		CWnd *pParentWnd = nullptr,
+		LPCSTR lpszMenuName = nullptr,
+		DWORD dwExStyle = 0,
+		CCreateContext *pContext = nullptr);
+
 	HMENU GetMenu() const;
 	void RecalcLayout(BOOL bNotify = TRUE);
 	void InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible);
+
+	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
+		CWnd *pParentWnd, CCreateContext *pContext);
 };
 
 class CDialog : public CWnd {

@@ -256,5 +256,29 @@ HFONT CreateFontIndirect(const LOGFONT *lf) {
 		lf->lfFaceName, lf->lfHeight);
 }
 
+BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
+		int iSubString, CHAR chSep) {
+	if (lpszFullString == nullptr)
+		return FALSE;
+
+	while (iSubString--) {
+		lpszFullString = strchr(lpszFullString, chSep);
+		if (!lpszFullString) {
+			rString.Empty();
+			return FALSE;
+		}
+
+		lpszFullString++;	// Point past the separator
+	}
+
+	LPCSTR lpchEnd = strchr(lpszFullString, chSep);
+	int nLen = !lpchEnd ? strlen(lpszFullString) :
+		(int)(lpchEnd - lpszFullString);
+	ASSERT(nLen >= 0);
+
+	memcpy(rString.GetBufferSetLength(nLen), lpszFullString, nLen * sizeof(TCHAR));
+	return TRUE;
+}
+
 } // namespace MFC
 } // namespace Bagel
