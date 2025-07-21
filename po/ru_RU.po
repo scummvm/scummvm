@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-20 10:18+0000\n"
+"POT-Creation-Date: 2025-07-21 10:34+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3797,7 +3797,7 @@ msgstr "Раскладка клавиш по умолчанию"
 #: engines/metaengine.cpp:82 engines/agos/metaengine.cpp:232
 #: engines/asylum/metaengine.cpp:159 engines/bbvs/metaengine.cpp:99
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
-#: engines/cine/metaengine.cpp:264 engines/composer/metaengine.cpp:113
+#: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
 #: engines/efh/metaengine.cpp:207 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
@@ -3832,7 +3832,7 @@ msgstr "Средний щелчок"
 #: engines/metaengine.cpp:93 engines/agos/metaengine.cpp:238
 #: engines/asylum/metaengine.cpp:165 engines/bbvs/metaengine.cpp:105
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
-#: engines/cine/metaengine.cpp:270 engines/composer/metaengine.cpp:119
+#: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
 #: engines/efh/metaengine.cpp:213 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
@@ -6295,17 +6295,18 @@ msgid "Use the checkered cursor from later Apple II models"
 msgstr "Используйте курсор-шахматку из более поздних моделей Apple II"
 
 #: engines/adl/metaengine.cpp:117 engines/cge/metaengine.cpp:56
-#: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:51
-#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
-#: engines/mortevielle/metaengine.cpp:37 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
-#: engines/wage/metaengine.cpp:51
+#: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
+#: engines/drascula/metaengine.cpp:51 engines/glk/metaengine.cpp:193
+#: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
+#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Включить текст-в-речь"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
-#: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
+#: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
+#: engines/drascula/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
+#: engines/teenagent/metaengine.cpp:50
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Использовать TTS для чтения игровых текстов вслух (если TTS доступна)"
 
@@ -6595,7 +6596,7 @@ msgid "AGOS main"
 msgstr "Главная AGOS"
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/cine/metaengine.cpp:258 engines/cruise/metaengine.cpp:169
+#: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/draci/metaengine.cpp:196 engines/efh/metaengine.cpp:203
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
 #: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
@@ -6933,7 +6934,7 @@ msgstr "Открыть инвентарь героя"
 
 #. I18N: Move Actor to upwards direction
 #: engines/asylum/metaengine.cpp:171 engines/asylum/metaengine.cpp:198
-#: engines/cine/metaengine.cpp:364 engines/efh/metaengine.cpp:231
+#: engines/cine/metaengine.cpp:377 engines/efh/metaengine.cpp:231
 #: engines/hdb/metaengine.cpp:213 engines/nancy/input.cpp:195
 #: engines/tinsel/metaengine.cpp:263 engines/titanic/metaengine.cpp:324
 #: engines/ultima/ultima8/metaengine.cpp:53
@@ -6942,7 +6943,7 @@ msgstr "Идти вверх"
 
 #. I18N: Move Actor to downwards direction
 #: engines/asylum/metaengine.cpp:177 engines/asylum/metaengine.cpp:205
-#: engines/cine/metaengine.cpp:371 engines/efh/metaengine.cpp:237
+#: engines/cine/metaengine.cpp:384 engines/efh/metaengine.cpp:237
 #: engines/hdb/metaengine.cpp:219 engines/nancy/input.cpp:201
 #: engines/tinsel/metaengine.cpp:269 engines/titanic/metaengine.cpp:330
 #: engines/ultima/ultima8/metaengine.cpp:54
@@ -6952,7 +6953,7 @@ msgstr "Идти вниз"
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
 #: engines/asylum/metaengine.cpp:183 engines/asylum/metaengine.cpp:212
-#: engines/cine/metaengine.cpp:378 engines/efh/metaengine.cpp:243
+#: engines/cine/metaengine.cpp:391 engines/efh/metaengine.cpp:243
 #: engines/hdb/metaengine.cpp:225 engines/kyra/engine/eobcommon.cpp:371
 #: engines/lure/metaengine.cpp:218 engines/nancy/input.cpp:207
 #: engines/tinsel/metaengine.cpp:275 engines/titanic/metaengine.cpp:312
@@ -6963,7 +6964,7 @@ msgstr "Идти влево"
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
 #: engines/asylum/metaengine.cpp:189 engines/asylum/metaengine.cpp:219
-#: engines/cine/metaengine.cpp:385 engines/efh/metaengine.cpp:249
+#: engines/cine/metaengine.cpp:398 engines/efh/metaengine.cpp:249
 #: engines/hdb/metaengine.cpp:231 engines/kyra/engine/eobcommon.cpp:372
 #: engines/lure/metaengine.cpp:226 engines/nancy/input.cpp:213
 #: engines/tinsel/metaengine.cpp:281 engines/titanic/metaengine.cpp:318
@@ -7059,7 +7060,7 @@ msgstr "Чит Глаз Солдата 714"
 msgid "General Keys"
 msgstr "Общие клавиши"
 
-#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:257
+#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
 #: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
@@ -7112,7 +7113,7 @@ msgid "Talk"
 msgstr "Говорить"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:329
+#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
 #: engines/hdb/metaengine.cpp:237 engines/mm/mm1/metaengine.cpp:81
 #: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
@@ -7683,63 +7684,63 @@ msgstr ""
 "Использовать прозрачные диалоговые окна в 16-цветных сценах даже если "
 "оригинальная игра их не поддерживала"
 
-#: engines/cine/metaengine.cpp:163
+#: engines/cine/metaengine.cpp:176
 msgid "Unnamed autosave"
 msgstr "Автосохранение без имени"
 
-#: engines/cine/metaengine.cpp:165 engines/cine/metaengine.cpp:237
+#: engines/cine/metaengine.cpp:178 engines/cine/metaengine.cpp:250
 msgid "Unnamed savegame"
 msgstr "Сохранённая игра без имени"
 
-#: engines/cine/metaengine.cpp:182 engines/cine/metaengine.cpp:245
+#: engines/cine/metaengine.cpp:195 engines/cine/metaengine.cpp:258
 msgid "Empty autosave"
 msgstr "Пустое автосохранение"
 
-#: engines/cine/metaengine.cpp:259
+#: engines/cine/metaengine.cpp:272
 msgid "Key to mouse keymappings"
 msgstr "Раскладки клавиш для мыши"
 
-#: engines/cine/metaengine.cpp:260
+#: engines/cine/metaengine.cpp:273
 msgid "Exit screen keymappings"
 msgstr "Раскладки клавиш экрана выхода"
 
-#: engines/cine/metaengine.cpp:276
+#: engines/cine/metaengine.cpp:289
 msgid "Exit Sony intro screen"
 msgstr "Выйти из заставки Sony"
 
-#: engines/cine/metaengine.cpp:282
+#: engines/cine/metaengine.cpp:295
 msgid "Select option / Click in game"
 msgstr "Выбрать опцию / Клик в игре"
 
-#: engines/cine/metaengine.cpp:289
+#: engines/cine/metaengine.cpp:302
 msgid "Open action menu / Close menu"
 msgstr "Открыть меню действий / Закрыть меню"
 
-#: engines/cine/metaengine.cpp:294
+#: engines/cine/metaengine.cpp:307
 msgid "Default game speed"
 msgstr "Скорость игры по умолчанию"
 
-#: engines/cine/metaengine.cpp:299
+#: engines/cine/metaengine.cpp:312
 msgid "Slower game speed"
 msgstr "Замедленная скорость игры"
 
-#: engines/cine/metaengine.cpp:306
+#: engines/cine/metaengine.cpp:319
 msgid "Faster game speed"
 msgstr "Ускоренная скорость игры"
 
-#: engines/cine/metaengine.cpp:314 engines/grim/grim.cpp:506
+#: engines/cine/metaengine.cpp:327 engines/grim/grim.cpp:506
 #: engines/hpl1/metaengine.cpp:90 engines/scumm/help.cpp:242
 #: engines/scumm/help.cpp:250 engines/sludge/keymapper_tables.h:313
 msgid "Examine"
 msgstr "Проверить"
 
-#: engines/cine/metaengine.cpp:319 engines/saga/metaengine.cpp:394
+#: engines/cine/metaengine.cpp:332 engines/saga/metaengine.cpp:394
 #: engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "Поднять"
 
 #. I18N: Action in In Cold Blood
-#: engines/cine/metaengine.cpp:324 engines/crab/input/input.cpp:251
+#: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:148 engines/griffon/metaengine.cpp:152
 #: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
@@ -7756,52 +7757,52 @@ msgstr "Поднять"
 msgid "Inventory"
 msgstr "Инвентарь"
 
-#: engines/cine/metaengine.cpp:334
+#: engines/cine/metaengine.cpp:347
 msgid "Activate"
 msgstr "Активировать"
 
-#: engines/cine/metaengine.cpp:339
+#: engines/cine/metaengine.cpp:352
 msgid "Speak"
 msgstr "Говорить"
 
-#: engines/cine/metaengine.cpp:344
+#: engines/cine/metaengine.cpp:357
 msgid "Action menu"
 msgstr "Меню действий"
 
-#: engines/cine/metaengine.cpp:350
+#: engines/cine/metaengine.cpp:363
 msgid "System menu"
 msgstr "Системное меню"
 
 #. I18N: Opens collision map of where the actor can freely move
-#: engines/cine/metaengine.cpp:357
+#: engines/cine/metaengine.cpp:370
 msgid "Show collisions"
 msgstr "Показать коллизии"
 
 #. I18N: Move Actor to top-left direction
-#: engines/cine/metaengine.cpp:392 engines/efh/metaengine.cpp:255
+#: engines/cine/metaengine.cpp:405 engines/efh/metaengine.cpp:255
 msgid "Move up-left"
 msgstr "Переместиться вверх-влево"
 
 #. I18N: Move Actor to top-right direction
-#: engines/cine/metaengine.cpp:398 engines/efh/metaengine.cpp:260
+#: engines/cine/metaengine.cpp:411 engines/efh/metaengine.cpp:260
 msgid "Move up-right"
 msgstr "Переместиться вверх-вправо"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/cine/metaengine.cpp:404 engines/efh/metaengine.cpp:265
+#: engines/cine/metaengine.cpp:417 engines/efh/metaengine.cpp:265
 msgid "Move down-left"
 msgstr "Переместиться вниз-влево"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/cine/metaengine.cpp:410 engines/efh/metaengine.cpp:270
+#: engines/cine/metaengine.cpp:423 engines/efh/metaengine.cpp:270
 msgid "Move down-right"
 msgstr "Переместиться вниз-вправо"
 
-#: engines/cine/metaengine.cpp:415
+#: engines/cine/metaengine.cpp:428
 msgid "Menu option up"
 msgstr "Опция меню вверх"
 
-#: engines/cine/metaengine.cpp:420
+#: engines/cine/metaengine.cpp:433
 msgid "Menu option down"
 msgstr "Опция меню вниз"
 
