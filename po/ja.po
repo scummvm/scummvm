@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 10:54+0000\n"
+"POT-Creation-Date: 2025-07-21 10:57+0000\n"
 "PO-Revision-Date: 2025-06-28 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -259,7 +259,7 @@ msgstr "クリップボードから貼り付ける"
 #: gui/cloudconnectionwizard.cpp:368 gui/launcher.cpp:317
 #: engines/dialogs.cpp:94 engines/engine.cpp:974 engines/mm/xeen/saves.cpp:259
 #: engines/nancy/state/loadsave.cpp:124 engines/nancy/state/loadsave.cpp:154
-#: engines/parallaction/metaengine.cpp:125
+#: engines/parallaction/metaengine.cpp:151
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
 #: engines/tinsel/metaengine.cpp:329 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
@@ -316,7 +316,7 @@ msgstr "すでに別のストレージが使用されています。切断しま
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/parallaction/metaengine.cpp:143
+#: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:339
 msgid "Yes"
@@ -329,7 +329,7 @@ msgstr "はい"
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/parallaction/metaengine.cpp:149
+#: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:340
 msgid "No"
@@ -3454,7 +3454,7 @@ msgstr "ゲームをセーブ："
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/nancy/state/loadsave.cpp:107 engines/nancy/state/loadsave.cpp:154
-#: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:131
+#: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:157
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
@@ -3693,7 +3693,7 @@ msgstr "キーマッピング(デフォルト)"
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
 #: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:107
 #: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:112
+#: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
 #: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:561
 #: engines/sludge/keymapper_tables.h:580 engines/stark/metaengine.cpp:189
 #: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
@@ -3724,7 +3724,7 @@ msgstr "中クリック"
 #: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
 #: engines/made/metaengine.cpp:114 engines/mads/metaengine.cpp:286
 #: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
-#: engines/parallaction/metaengine.cpp:118 engines/saga/metaengine.cpp:289
+#: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
 #: engines/sludge/keymapper_tables.h:567 engines/sludge/keymapper_tables.h:586
 #: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
 #: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
@@ -3753,7 +3753,7 @@ msgstr "右クリック"
 msgid "Pause"
 msgstr "一時停止"
 
-#: engines/metaengine.cpp:105 engines/parallaction/metaengine.cpp:137
+#: engines/metaengine.cpp:105 engines/parallaction/metaengine.cpp:163
 #: engines/ultima/ultima8/metaengine.cpp:48
 msgid "Game menu"
 msgstr "ゲームメニュー"
@@ -6068,8 +6068,9 @@ msgstr "これはApple IIの後期モデルから使用されます"
 #: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
 #: engines/drascula/metaengine.cpp:51 engines/glk/metaengine.cpp:193
 #: engines/griffon/metaengine.cpp:40 engines/mortevielle/metaengine.cpp:37
-#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
-#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
+#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "音声合成をオンにする"
 
@@ -7529,9 +7530,9 @@ msgstr "オブジェクト、オプションを読み上げる"
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
-#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
-#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
-#: engines/wage/metaengine.cpp:52
+#: engines/parallaction/metaengine.cpp:53 engines/sci/detection_options.h:224
+#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
+#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
