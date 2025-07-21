@@ -103,7 +103,16 @@ void SfxPlayer::play(int rate) {
 	_playing = true;
 	_rate = rate;
 	_samplesLeft = 0;
-	memset(_channels, 0, sizeof(_channels));
+
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		_channels[i].sampleData = nullptr;
+		_channels[i].sampleLen = 0;
+		_channels[i].sampleLoopPos = 0;
+		_channels[i].sampleLoopLen = 0;
+		_channels[i].volume = 0;
+		_channels[i].pos.inc = 0;
+		_channels[i].pos.offset = 0;
+	}
 }
 
 static int16 toS16(int a) {
@@ -201,7 +210,6 @@ void SfxPlayer::handleEvents() {
 
 void SfxPlayer::handlePattern(uint8 channel, const uint8 *data) {
 	SfxPattern pat;
-	memset(&pat, 0, sizeof(SfxPattern));
 	pat.note_1 = READ_BE_UINT16(data + 0);
 	pat.note_2 = READ_BE_UINT16(data + 2);
 	if (pat.note_1 != 0xFFFD) {
