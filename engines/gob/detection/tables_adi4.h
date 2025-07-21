@@ -239,4 +239,51 @@
 	0, 0, 0
 },
 
+// -- Add-ons : Geographie --
+{
+	{
+		"adi4geographie",
+		"", // Geographie
+		AD_ENTRY2s("INTROGEO.STK", "d86d0f53818dd285bebff25925627b8c", 3170680,
+				   "INTROGEO.ITK", "5daacbf8840f811e48b99e1d92933873", 20084736),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adi4geographie",
+		"", // Erdkunde
+		AD_ENTRY2s("INTROGEO.STK", "f01ffe9366df86a7ea5ed425b41081ba", 3284478,
+				   "INTROGEO.ITK", "998bb8e759d5b8b4e7aa22d6030f2dad", 22046720),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+
+// -- Add-ons : Euro --
+{
+	{
+		"adi4euro",
+		"", // Der Euro
+		AD_ENTRY2s("EURO.STK", "7dac3823570036c6eda57cc2c872aa59", 681944,
+				   "EURO.ITK", "09629a0aa35a00f68211f6429bd43e9f", 25409536),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADI4_H
