@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 11:08+0000\n"
+"POT-Creation-Date: 2025-07-21 12:13+0000\n"
 "PO-Revision-Date: 2025-07-20 09:20+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -57,7 +57,7 @@ msgstr "Motori disponibili:"
 
 #. I18N: Close dialog button
 #: gui/about.cpp:527 gui/downloadpacksdialog.cpp:297
-#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:310
+#: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
@@ -92,17 +92,17 @@ msgstr "Su"
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/cloudconnectionwizard.cpp:64
 #: gui/downloaddlcsdialog.cpp:61 gui/downloadpacksdialog.cpp:271
 #: gui/downloadpacksdialog.cpp:464 gui/editgamedialog.cpp:340
-#: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:120
-#: gui/integrity-dialog.cpp:209 gui/filebrowser-dialog.cpp:68
+#: gui/editrecorddialog.cpp:66 gui/integrity-dialog.cpp:122
+#: gui/integrity-dialog.cpp:253 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:153 gui/massadd.cpp:93 gui/options.cpp:2423
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:212 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:456
 #: gui/saveload-dialog.cpp:540 gui/saveload-dialog.cpp:839
 #: gui/saveload-dialog.cpp:1243 gui/shaderbrowser-dialog.cpp:80
-#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:588
-#: dists/android.strings.xml.cpp:46 engines/engine.cpp:806
-#: backends/dialogs/gtk/gtk-dialogs.cpp:65
+#: gui/themebrowser.cpp:54 gui/unknown-game-dialog.cpp:53 base/main.cpp:594
+#: dists/android.strings.xml.cpp:46 engines/engine.cpp:808
+#: engines/engine.cpp:833 backends/dialogs/gtk/gtk-dialogs.cpp:65
 #: backends/events/default/default-events.cpp:193
 #: backends/events/default/default-events.cpp:217
 #: backends/platform/android/options.cpp:289
@@ -257,7 +257,7 @@ msgid "Paste code from clipboard"
 msgstr "Incolla dagli appunti"
 
 #: gui/cloudconnectionwizard.cpp:368 gui/launcher.cpp:317
-#: engines/dialogs.cpp:94 engines/engine.cpp:974 engines/mm/xeen/saves.cpp:259
+#: engines/dialogs.cpp:94 engines/engine.cpp:1019 engines/mm/xeen/saves.cpp:259
 #: engines/nancy/state/loadsave.cpp:124 engines/nancy/state/loadsave.cpp:154
 #: engines/parallaction/metaengine.cpp:151
 #: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:388
@@ -312,8 +312,8 @@ msgstr "Un altro servizio di archiviazione è attivo. Vuoi interromperlo?"
 #: gui/cloudconnectionwizard.cpp:505 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:152 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3499 gui/options.cpp:3882
-#: base/main.cpp:588 backends/events/default/default-events.cpp:193
+#: gui/launcher.cpp:510 gui/options.cpp:3499 gui/options.cpp:3882
+#: base/main.cpp:594 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -326,7 +326,7 @@ msgstr "Sì"
 #: gui/cloudconnectionwizard.cpp:505 gui/downloaddialog.cpp:118
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
-#: gui/launcher.cpp:502 gui/options.cpp:3499 gui/options.cpp:3882
+#: gui/launcher.cpp:510 gui/options.cpp:3499 gui/options.cpp:3882
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
@@ -347,11 +347,11 @@ msgstr "Il codice JSON non è valido."
 
 #: gui/cloudconnectionwizard.cpp:563 gui/downloaddialog.cpp:146
 #: gui/editgamedialog.cpp:341 gui/editrecorddialog.cpp:67
-#: gui/integrity-dialog.cpp:216 gui/fluidsynth-dialog.cpp:154
-#: gui/launcher.cpp:558 gui/launcher.cpp:562 gui/massadd.cpp:90
+#: gui/integrity-dialog.cpp:260 gui/fluidsynth-dialog.cpp:154
+#: gui/launcher.cpp:566 gui/launcher.cpp:570 gui/massadd.cpp:90
 #: gui/options.cpp:2425 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1244 dists/android.strings.xml.cpp:33
-#: engines/engine.cpp:601 engines/engine.cpp:624
+#: engines/engine.cpp:603 engines/engine.cpp:626
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:577
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
@@ -455,7 +455,7 @@ msgstr ""
 "Sembra che la connessione abbia dei limiti di dati. Sei sicuro di voler "
 "procedere?"
 
-#: gui/downloaddialog.cpp:136 gui/launcher.cpp:662
+#: gui/downloaddialog.cpp:136 gui/launcher.cpp:673
 msgid "ScummVM couldn't open the specified directory!"
 msgstr "ScummVM non ha potuto aprire la cartella specificata!"
 
@@ -557,7 +557,7 @@ msgstr "pacchetti icone"
 msgid "shader packs"
 msgstr "pacchetti shaders"
 
-#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:713
+#: gui/dump-all-dialogs.cpp:144 gui/launcher.cpp:724
 msgid "Pick the game:"
 msgstr "Scegli il gioco:"
 
@@ -842,31 +842,35 @@ msgstr "Autore:"
 msgid "Notes:"
 msgstr "Note:"
 
-#: gui/integrity-dialog.cpp:102
+#: gui/integrity-dialog.cpp:104
 msgid ""
 "Verifying file integrity may take a long time to complete. Please wait...\n"
 msgstr ""
 "Il controllo di integrità potrebbe richiedere diverso tempo. Attendere "
 "prego...\n"
 
-#: gui/integrity-dialog.cpp:109 gui/integrity-dialog.cpp:208
+#: gui/integrity-dialog.cpp:111 gui/integrity-dialog.cpp:252
 msgid "Calculating file checksums..."
 msgstr "Calcolo checksum dei file..."
 
-#: gui/integrity-dialog.cpp:122
+#: gui/integrity-dialog.cpp:124
 msgid "Launch Email Client"
 msgstr "Apri client email"
 
-#: gui/integrity-dialog.cpp:214
+#: gui/integrity-dialog.cpp:152
+msgid "This game includes add-ons, pick the part you want to be checked:"
+msgstr ""
+
+#: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
 msgstr "Elaborazione completata"
 
-#: gui/integrity-dialog.cpp:297
+#: gui/integrity-dialog.cpp:341
 #, c-format
 msgid "Calculated %s %S / %s %S"
 msgstr "Calcolato %s %S / %s %S"
 
-#: gui/integrity-dialog.cpp:622
+#: gui/integrity-dialog.cpp:668
 msgid ""
 "### Results\n"
 "Your set of game files seems to be unknown to us.\n"
@@ -880,12 +884,12 @@ msgstr ""
 "Se sei certo della validità di questa variante, cortesemente invia la "
 "seguente email a integrity@scummvm.org"
 
-#: gui/integrity-dialog.cpp:646
+#: gui/integrity-dialog.cpp:692
 msgid ""
 "The game doesn't seem to have any files. Are you sure the path is correct?"
 msgstr "Non è stato trovato alcun file. Accertati che il percorso sia corretto"
 
-#: gui/integrity-dialog.cpp:651
+#: gui/integrity-dialog.cpp:697
 msgid ""
 "The game doesn't seem to have any metadata associated with it, so it is "
 "unable to be matched. Please fill in the correct metadata for the game."
@@ -894,7 +898,7 @@ msgstr ""
 "possibile confrontarlo. Per cortesia, aggiungi i metadata corretti per "
 "questo gioco."
 
-#: gui/integrity-dialog.cpp:678
+#: gui/integrity-dialog.cpp:724
 msgid "Files all OK"
 msgstr "Tutti i files sono validi"
 
@@ -1418,7 +1422,7 @@ msgstr "Anno"
 msgid "Select Group by"
 msgstr "Raggruppamento"
 
-#: gui/launcher.cpp:234 gui/launcher.cpp:898
+#: gui/launcher.cpp:234 gui/launcher.cpp:919
 msgid "Group:"
 msgstr "Gruppo:"
 
@@ -1509,17 +1513,17 @@ msgctxt "lowres"
 msgid "Mass Add..."
 msgstr "In massa..."
 
-#: gui/launcher.cpp:302 gui/launcher.cpp:868 gui/shaderbrowser-dialog.cpp:61
+#: gui/launcher.cpp:302 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:61
 #: gui/shaderbrowser-dialog.cpp:97
 msgid "Search in game list"
 msgstr "Cerca nella lista dei giochi"
 
-#: gui/launcher.cpp:306 gui/launcher.cpp:889 gui/shaderbrowser-dialog.cpp:65
+#: gui/launcher.cpp:306 gui/launcher.cpp:910 gui/shaderbrowser-dialog.cpp:65
 #: gui/shaderbrowser-dialog.cpp:107
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:974
+#: gui/launcher.cpp:317 engines/dialogs.cpp:94 engines/engine.cpp:1019
 #: engines/mm/xeen/saves.cpp:259 engines/nancy/state/loadsave.cpp:124
 #: engines/pegasus/pegasus.cpp:388 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:638 engines/wage/saveload.cpp:753
@@ -1543,23 +1547,23 @@ msgstr ""
 msgid "Do you really want to remove this game configuration?"
 msgstr "Sei sicuro di voler rimuovere questa configurazione di gioco?"
 
-#: gui/launcher.cpp:501
+#: gui/launcher.cpp:509
 msgid "Do you want to load saved game?"
 msgstr "Vuoi caricare il salvataggio?"
 
-#: gui/launcher.cpp:558
+#: gui/launcher.cpp:566
 msgid "This game does not support loading games from the launcher."
 msgstr ""
 "Questo gioco non supporta il caricamento di salvataggi dalla schermata di "
 "avvio."
 
-#: gui/launcher.cpp:562
+#: gui/launcher.cpp:570
 msgid "ScummVM could not find any engine capable of running the selected game!"
 msgstr ""
 "ScummVM non ha potuto trovare un motore in grado di eseguire il gioco "
 "selezionato!"
 
-#: gui/launcher.cpp:665 gui/launcher.cpp:689
+#: gui/launcher.cpp:676 gui/launcher.cpp:700
 msgid ""
 "Have you given ScummVM access rights to this directory? Press the help "
 "button [?] on the top for detailed instructions"
@@ -1567,94 +1571,98 @@ msgstr ""
 "Hai consentito a ScummVM l'accesso a questa cartella? Premi il tasto aiuto "
 "[?] per informazioni dettagliate"
 
-#: gui/launcher.cpp:686
+#: gui/launcher.cpp:697
 msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM non ha potuto trovare nessun gioco nella cartella specificata!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:707
+#: gui/launcher.cpp:718 engines/engine.cpp:1233
 msgid "Unknown variant"
 msgstr "Variante del gioco sconosciuta"
 
-#: gui/launcher.cpp:935 gui/saveload-dialog.cpp:381
+#: gui/launcher.cpp:956 gui/saveload-dialog.cpp:381
 msgid "List view"
 msgstr "Elenco"
 
-#: gui/launcher.cpp:936 gui/saveload-dialog.cpp:382
+#: gui/launcher.cpp:957 gui/saveload-dialog.cpp:382
 msgid "Grid view"
 msgstr "Griglia"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1099
 msgid "~S~tart"
 msgstr "~G~ioca"
 
-#: gui/launcher.cpp:1078
+#: gui/launcher.cpp:1099
 msgid "Start selected game"
 msgstr "Esegue il gioco selezionato"
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1102
 msgid "~L~oad..."
 msgstr "~C~arica..."
 
-#: gui/launcher.cpp:1081
+#: gui/launcher.cpp:1102
 msgid "Load saved game for selected game"
 msgstr "Carica un salvataggio del gioco selezionato"
 
-#: gui/launcher.cpp:1083
+#: gui/launcher.cpp:1104
 msgid "Record..."
 msgstr "Registra..."
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1110
 msgid "~G~ame Options..."
 msgstr "Op~z~ioni gioco..."
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1110
 msgid "Change game options"
 msgstr "Modifica le opzioni del gioco selezionato"
 
-#: gui/launcher.cpp:1089
+#: gui/launcher.cpp:1110
 msgctxt "lowres"
 msgid "~G~ame Opts..."
 msgstr "Op~z~. gioco..."
 
+#: gui/launcher.cpp:1194
+msgid "Add-on"
+msgstr ""
+
 #. I18N: List grouping when no engine is specified
-#: gui/launcher.cpp:1186 gui/launcher.cpp:1382
+#: gui/launcher.cpp:1244 gui/launcher.cpp:1446
 msgid "Unknown Engine"
 msgstr "Motore Sconosciuto"
 
 #. I18N: List grouping when no publisher is specified
 #. I18N: List group when no publisher is specified
-#: gui/launcher.cpp:1203 gui/launcher.cpp:1399
+#: gui/launcher.cpp:1261 gui/launcher.cpp:1463
 msgid "Unknown Publisher"
 msgstr "Editore Sconosciuto"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
-#: gui/launcher.cpp:1220 gui/launcher.cpp:1416
+#: gui/launcher.cpp:1278 gui/launcher.cpp:1480
 msgid "No Series"
 msgstr "Nessuna Serie"
 
 #. I18N: List group when no language is specified
-#: gui/launcher.cpp:1234 gui/launcher.cpp:1430
+#: gui/launcher.cpp:1292 gui/launcher.cpp:1494
 msgid "Language not detected"
 msgstr "Lingua non rilevata"
 
 #. I18N: List group when no platform is specified
-#: gui/launcher.cpp:1248 gui/launcher.cpp:1444
+#: gui/launcher.cpp:1306 gui/launcher.cpp:1508
 msgid "Platform not detected"
 msgstr "Piattaforma non rilevata"
 
 #. I18N: List group when no year is specified
-#: gui/launcher.cpp:1265 gui/launcher.cpp:1461
+#: gui/launcher.cpp:1323 gui/launcher.cpp:1525
 msgid "Unknown Year"
 msgstr "Anno sconosciuto"
 
 #. I18N: Group for All items
-#: gui/launcher.cpp:1468 gui/widgets/groupedlist.cpp:81
+#: gui/launcher.cpp:1532 gui/widgets/groupedlist.cpp:81
 msgid "All"
 msgstr "Tutti"
 
-#: gui/launcher.cpp:1623
+#: gui/launcher.cpp:1687
 msgid "Icons per row:"
 msgstr "Icone per riga:"
 
@@ -2634,7 +2642,7 @@ msgstr ""
 "\n"
 "E altri ancora..."
 
-#: gui/options.cpp:2975 engines/engine.cpp:653
+#: gui/options.cpp:2975 engines/engine.cpp:655
 #: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr "Sposta"
@@ -2766,7 +2774,7 @@ msgstr "Registra/riproduci Gameplay"
 
 #: gui/recorderdialog.cpp:72 gui/recorderdialog.cpp:212
 #: gui/saveload-dialog.cpp:460 gui/saveload-dialog.cpp:540
-#: dists/android.strings.xml.cpp:47 engines/engine.cpp:647
+#: dists/android.strings.xml.cpp:47 engines/engine.cpp:649
 msgid "Delete"
 msgstr "Elimina"
 
@@ -2980,12 +2988,12 @@ msgstr "Gioca"
 msgid "Saves"
 msgstr "Salvataggi"
 
-#: base/main.cpp:588
+#: base/main.cpp:594
 msgid "Bad config file format. overwrite?"
 msgstr "Il formato del file di configurazione non è valido. Sovrascrivere?"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:637
+#: base/main.cpp:643
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3029,7 +3037,7 @@ msgstr ""
 "\n"
 "Ripeti i punti 1 e 6 per ciascun gioco."
 
-#: base/main.cpp:655 base/main.cpp:680
+#: base/main.cpp:661 base/main.cpp:686
 #: engines/director/lingo/lingo-builtins.cpp:1469
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/director/lingo/xlibs/jitdraw3.cpp:131
@@ -3037,12 +3045,12 @@ msgid "Ok"
 msgstr "Ok"
 
 #. I18N: A button caption to dismiss a message and read it later
-#: base/main.cpp:657 base/main.cpp:682
+#: base/main.cpp:663 base/main.cpp:688
 msgid "Read Later"
 msgstr "Leggi più tardi"
 
 #. I18N: <Add a new folder> must match the translation done in backends/fs/android/android-saf-fs.h
-#: base/main.cpp:664
+#: base/main.cpp:670
 msgid ""
 "In this new version of ScummVM for Android, significant changes were made to "
 "the file access system to allow support for modern versions of the Android "
@@ -3081,7 +3089,7 @@ msgstr ""
 "gioco, quindi tocca **Scegli**.\n"
 "Ripeti i punti 1 e 6 per ciascun gioco."
 
-#: base/main.cpp:825 base/main.cpp:874
+#: base/main.cpp:831 base/main.cpp:880
 msgid "Error running game:"
 msgstr "Errore nell'esecuzione del gioco:"
 
@@ -3500,7 +3508,7 @@ msgstr ""
 msgid "Achievement unlocked!"
 msgstr "Obiettivo sbloccato!"
 
-#: engines/advancedDetector.cpp:237
+#: engines/advancedDetector.cpp:244
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Rilevata copia illegale. Non forniamo supporto in questi casi"
 
@@ -3537,7 +3545,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "~V~ai a elenco giochi"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:1003 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:1048 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3558,7 +3566,7 @@ msgstr "~V~ai a elenco giochi"
 msgid "Save game:"
 msgstr "Salva gioco:"
 
-#: engines/dialogs.cpp:95 engines/engine.cpp:1003 engines/agi/saveload.cpp:766
+#: engines/dialogs.cpp:95 engines/engine.cpp:1048 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
@@ -3632,46 +3640,46 @@ msgstr "~O~K"
 msgid "~C~ancel"
 msgstr "~A~nnulla"
 
-#: engines/engine.cpp:370
+#: engines/engine.cpp:372
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
 msgstr "Impossibile passare alla risoluzione '%dx%d'."
 
-#: engines/engine.cpp:379
+#: engines/engine.cpp:381
 msgid "Could not initialize color format."
 msgstr "Impossibile inizializzare il formato colore."
 
-#: engines/engine.cpp:388
+#: engines/engine.cpp:390
 #, c-format
 msgid "Could not switch to video mode '%s'."
 msgstr "Impossibile passare alla modalità video: '%s'."
 
-#: engines/engine.cpp:396
+#: engines/engine.cpp:398
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
 msgstr "Impossibile passare al ridimensionamento '%s'."
 
-#: engines/engine.cpp:403
+#: engines/engine.cpp:405
 msgid "Could not apply aspect ratio setting."
 msgstr "Impossibile applicare la correzione delle proporzioni."
 
-#: engines/engine.cpp:408
+#: engines/engine.cpp:410
 msgid "Could not apply fullscreen setting."
 msgstr "Impossibile applicare l'impostazione schermo intero."
 
-#: engines/engine.cpp:413
+#: engines/engine.cpp:415
 msgid "Could not apply filtering setting."
 msgstr "Impossibile applicare l'impostazione del filtro grafico."
 
-#: engines/engine.cpp:418
+#: engines/engine.cpp:420
 msgid "Could not apply shader setting."
 msgstr "Non è stato possibile applicare l'impostazione dello shader."
 
-#: engines/engine.cpp:534
+#: engines/engine.cpp:536
 msgid "Error"
 msgstr "Errore"
 
-#: engines/engine.cpp:597
+#: engines/engine.cpp:599
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -3686,7 +3694,7 @@ msgstr ""
 "Consulta la documentazione (CD audio) per\n"
 "informazioni aggiuntive."
 
-#: engines/engine.cpp:620
+#: engines/engine.cpp:622
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -3701,11 +3709,11 @@ msgstr ""
 "Consulta la documentazione (CD audio)\n"
 "per informazioni aggiuntive."
 
-#: engines/engine.cpp:648
+#: engines/engine.cpp:650
 msgid "Skip autosave"
 msgstr "Posticipa"
 
-#: engines/engine.cpp:650
+#: engines/engine.cpp:652
 #, c-format
 msgid ""
 "WARNING: The autosave slot contains a saved game named %S, and an autosave "
@@ -3721,22 +3729,22 @@ msgstr ""
 "In alternativa puoi posticipare la decisione (verrà chiesto nuovamente tra 5 "
 "minuti)."
 
-#: engines/engine.cpp:660
+#: engines/engine.cpp:662
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr ""
 "ERRORE: Non è stato possibile copiare il salvataggio in una nuova posizione"
 
-#: engines/engine.cpp:687 engines/savestate.cpp:98
+#: engines/engine.cpp:689 engines/savestate.cpp:98
 #: backends/platform/ios7/ios7_osys_main.cpp:260 engines/mm/xeen/saves.cpp:293
 #: engines/sky/metaengine.cpp:218
 msgid "Autosave"
 msgstr "Autosalvataggio"
 
-#: engines/engine.cpp:695
+#: engines/engine.cpp:697
 msgid "Error occurred making autosave"
 msgstr "Errore nel salvataggio automatico"
 
-#: engines/engine.cpp:778
+#: engines/engine.cpp:780
 #, c-format
 msgid ""
 "Failed to load saved game (%s)! Please consult the README for basic "
@@ -3746,15 +3754,15 @@ msgstr ""
 "informazioni di base e per le istruzioni su come ottenere ulteriore "
 "assistenza."
 
-#: engines/engine.cpp:802
+#: engines/engine.cpp:804
 msgid "WARNING: "
 msgstr "ATTENZIONE: "
 
-#: engines/engine.cpp:802
+#: engines/engine.cpp:804
 msgid " Shall we still run the game?"
 msgstr " Avviare comunque il gioco?"
 
-#: engines/engine.cpp:803
+#: engines/engine.cpp:805
 msgid ""
 "WARNING: The game you are about to start is not yet fully supported by "
 "ScummVM. As such, it is likely to be unstable, and any saved game you make "
@@ -3764,15 +3772,39 @@ msgstr ""
 "ScummVM. È quindi possibile che sia instabile, e i salvataggi potrebbero non "
 "funzionare con future versioni di ScummVM."
 
-#: engines/engine.cpp:806 engines/wintermute/wintermute.cpp:184
+#: engines/engine.cpp:808 engines/engine.cpp:833
+#: engines/wintermute/wintermute.cpp:184
 msgid "Start anyway"
 msgstr "Avvia comunque"
 
-#: engines/engine.cpp:824
+#: engines/engine.cpp:827
+#, fuzzy, c-format
+#| msgid ""
+#| "WARNING: The game you are about to start is not yet fully supported by "
+#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
+#| "make might not work in future versions of ScummVM."
+msgid ""
+"WARNING: the game you are about to start contains the add-on \"%s\" which is "
+"not yet fully supported by ScummVM. As such, it is likely to be unstable, "
+"and any saved game you make might not work in future versions of ScummVM."
+msgstr ""
+"ATTENZIONE: il gioco che stai avviando non è completamente supportato da "
+"ScummVM. È quindi possibile che sia instabile, e i salvataggi potrebbero non "
+"funzionare con future versioni di ScummVM."
+
+#: engines/engine.cpp:852
+#, c-format
+msgid ""
+"The game \"%s\" you are trying to add is an add-on for \"%s\" that cannot be "
+"run independently. Please copy the add-on contents into a subdirectory of "
+"the base game, and start the base game itself."
+msgstr ""
+
+#: engines/engine.cpp:869
 msgid "This game is not supported."
 msgstr "Questo gioco non è supportato."
 
-#: engines/engine.cpp:824
+#: engines/engine.cpp:869
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
@@ -3780,13 +3812,25 @@ msgstr ""
 "Questo gioco non è supportato per le seguenti ragioni:\n"
 "\n"
 
-#: engines/engine.cpp:970
+#: engines/engine.cpp:1015
 msgid "Loading game is currently unavailable"
 msgstr "Caricamento temporaneamente disabilitato"
 
-#: engines/engine.cpp:999
+#: engines/engine.cpp:1044
 msgid "Saving game is currently unavailable"
 msgstr "Salvataggio temporaneamente disabilitato"
+
+#: engines/engine.cpp:1213
+#, c-format
+msgid ""
+"The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
+"not find any matching add-on in it."
+msgstr ""
+
+#: engines/engine.cpp:1239
+#, c-format
+msgid "Directory '%s' matches several add-ons, please pick one."
+msgstr ""
 
 #: engines/game.cpp:199
 #, c-format
@@ -6598,7 +6642,7 @@ msgstr ""
 "Aggiunge un menu per regolare la velocità del gioco (simile alla versione PC)"
 
 #: engines/agi/metaengine.cpp:195 engines/agos/metaengine.cpp:44
-#: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:42
+#: engines/dreamweb/metaengine.cpp:36 engines/gob/metaengine.cpp:45
 #: engines/lure/metaengine.cpp:41 engines/mads/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:46 engines/saga/metaengine.cpp:52
 #: engines/scumm/dialogs.cpp:1202 engines/scumm/metaengine.cpp:821
@@ -6606,7 +6650,7 @@ msgid "Enable copy protection"
 msgstr "Abilita protezione anticopia"
 
 #: engines/agi/metaengine.cpp:196 engines/agos/metaengine.cpp:45
-#: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:43
+#: engines/dreamweb/metaengine.cpp:37 engines/gob/metaengine.cpp:46
 #: engines/lure/metaengine.cpp:42 engines/mads/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:47 engines/saga/metaengine.cpp:53
 #: engines/scumm/dialogs.cpp:1203 engines/scumm/metaengine.cpp:822
