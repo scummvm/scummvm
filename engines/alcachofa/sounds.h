@@ -24,6 +24,7 @@
 
 #include "scheduler.h"
 #include "audio/mixer.h"
+#include "audio/audiostream.h"
 
 namespace Alcachofa {
 
@@ -47,17 +48,19 @@ public:
 	void setAppropriateVolume(SoundID id,
 		MainCharacterKind processCharacter,
 		Character *speakingCharacter);
+	bool isNoisy(SoundID id, float windowSize, float minDifferences); ///< used for lip-sync
 
 private:
-	struct Playback {
-		Playback(uint32 id, Audio::SoundHandle handle, Audio::Mixer::SoundType type);
+	struct Playback {;
 		void fadeOut(uint32 duration);
 
-		SoundID _id;
+		SoundID _id = 0;
 		Audio::SoundHandle _handle;
-		Audio::Mixer::SoundType _type;
+		Audio::Mixer::SoundType _type = Audio::Mixer::SoundType::kPlainSoundType;
 		uint32 _fadeStart = 0,
 			_fadeDuration = 0;
+		int _inputRate;
+		Common::Array<int16> _samples; ///< might not be filled, only voice samples are preloaded for lip-sync
 	};
 	Playback *getPlaybackById(SoundID id);
 	SoundID playSoundInternal(const Common::String &fileName, byte volume, Audio::Mixer::SoundType type);
