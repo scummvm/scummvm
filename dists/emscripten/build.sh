@@ -185,9 +185,10 @@ if [ "$_liba52" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/liba52.a" ]]; then
     echo "building a52dec-0.7.4"
     cd "$LIBS_FOLDER"
-    wget -nc "https://liba52.sourceforge.io/files/a52dec-0.7.4.tar.gz"
-    tar -xf a52dec-0.7.4.tar.gz
-    cd "$LIBS_FOLDER/a52dec-0.7.4/"
+    wget -nc "https://code.videolan.org/videolan/liba52/-/archive/0.7.4/liba52-0.7.4.tar.gz"
+    tar -xf liba52-0.7.4.tar.gz
+    cd "$LIBS_FOLDER/liba52-0.7.4/"
+    autoreconf -i
     CFLAGS="-fPIC -Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
     emmake make -j 5
     emmake make install
