@@ -93,6 +93,14 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 
 	msFileName = asFileName;
 
+	cMatrixf transformMatrix = a_mtxTransform;
+	if (asFileName == "boat_dynamicparaffin.ent") {
+		// WORKAROUND: the light is placed inside another mesh, which results in janky movement
+		// which wasn't present in the original game. The following just shifts the light down a bit.
+		// The value was chosen by trial and error.
+		transformMatrix.m[1][3] -= 0.07f;
+	}
+
 	////////////////////////////////////////
 	// Load MAIN
 
@@ -106,7 +114,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 	msSubType = cString::ToString(pMainElem->Attribute("Subtype"), "");
 
 	// Before load virtual call.
-	BeforeLoad(apRootElem, a_mtxTransform, apWorld);
+	BeforeLoad(apRootElem, transformMatrix, apWorld);
 
 	////////////////////////////////////////
 	// Load GRAPHICS
@@ -200,7 +208,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 	// Properties for entities with joints
 	if ((mpMesh->GetPhysicsJointNum() > 0 || mpMesh->HasSeveralBodies()) &&
 		(mpMesh->GetAnimationNum() <= 0 || mpMesh->GetSkeleton())) {
-		mpMesh->CreateJointsAndBodies(&mvBodies, mpEntity, &mvJoints, a_mtxTransform, apWorld->GetPhysicsWorld());
+		mpMesh->CreateJointsAndBodies(&mvBodies, mpEntity, &mvJoints, transformMatrix, apWorld->GetPhysicsWorld());
 
 		////////////////////////////////////
 		// Properties for bodies
@@ -231,7 +239,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 
 				pBody->CreateNode()->AddEntity(pSubEntity);
 				pBody->SetMass(0);
-				pBody->SetMatrix(a_mtxTransform);
+				pBody->SetMatrix(transformMatrix);
 
 				pSubEntity->SetBody(pBody);
 
@@ -283,7 +291,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 		bUsingNodeBodies = true;
 
 		mpMesh->CreateNodeBodies(&pRootBody, &mvBodies, mpEntity, apWorld->GetPhysicsWorld(),
-								 a_mtxTransform);
+		                         transformMatrix);
 
 		TiXmlElement *pPhysicsElem = apRootElem->FirstChildElement("PHYSICS");
 		for (; pPhysicsElem != NULL; pPhysicsElem = pPhysicsElem->NextSiblingElement("PHYSICS")) {
@@ -336,8 +344,8 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 		// Only allow for one joint
 		if (mpMesh->GetPhysicsJointNum() == 1 && mvBodies.size() == 1) {
 			iPhysicsJoint *pJoint = mpMesh->CreateJointInWorld(asName, mpMesh->GetPhysicsJoint(0),
-															   NULL, mvBodies[0], a_mtxTransform,
-															   apWorld->GetPhysicsWorld());
+			                                                   NULL, mvBodies[0], transformMatrix,
+			                                                   apWorld->GetPhysicsWorld());
 			if (pJoint) {
 				TiXmlElement *pJointElem = apRootElem->FirstChildElement("JOINT");
 				if (pJointElem) {
@@ -404,12 +412,12 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 					}
 
 					pBody->CreateNode()->AddEntity(mpEntity);
-					// cMatrixf mtxTemp = a_mtxTransform;
+					// cMatrixf mtxTemp = transformMatrix;
 					// Log("-- Body: %s Mtx: %s\n", pBody->GetName().c_str(),
 					//	mtxTemp.ToString().c_str());
 					// pBody->GetBV()->GetSize().ToString().c_str());
 
-					pBody->SetMatrix(a_mtxTransform);
+					pBody->SetMatrix(transformMatrix);
 
 					mpEntity->SetBody(pBody);
 
@@ -514,7 +522,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 	////////////////////////////////////////
 	// Set matrix on entity if there are no bodies.
 	if ((mvBodies.size() <= 0 || bUsingNodeBodies) && mpEntity->GetBody() == NULL) {
-		mpEntity->SetMatrix(a_mtxTransform);
+		mpEntity->SetMatrix(transformMatrix);
 
 		// to make sure everything is in place.
 		mpEntity->UpdateLogic(0);
@@ -536,7 +544,7 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 
 	// After load virtual call.
 	// This is where the user adds extra stuff.
-	AfterLoad(apRootElem, a_mtxTransform, apWorld);
+	AfterLoad(apRootElem, transformMatrix, apWorld);
 
 	////////////////////////////////////////
 	// Create references
@@ -544,8 +552,9 @@ iEntity3D *cEntityLoader_Object::Load(const tString &asName, TiXmlElement *apRoo
 		cMeshEntity *pEntityCopy = mpEntity;
 		cMesh *pMeshCopy = mpMesh;
 		for (int i = 0; i < pMeshCopy->GetReferenceNum(); i++) {
-			/*iEntity3D *pRef = */ mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
-																  apWorld, a_mtxTransform);
+			/*iEntity3D *pRef = */
+			mpMesh->CreateReferenceInWorld(asName, pMeshCopy->GetReference(i), pEntityCopy,
+			                               apWorld, transformMatrix);
 			// if(pPS) mvParticleSystems.push_back(pPS);
 		}
 		return pEntityCopy;
