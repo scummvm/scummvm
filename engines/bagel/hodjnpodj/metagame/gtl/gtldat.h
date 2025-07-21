@@ -194,31 +194,32 @@ class CMap {
 	}
 } ;
 
-// CNode -- node on the map
-class FAR CNode {
-
+/**
+ * Node on the map
+ */
+class CNode {
 public:
 	#ifdef NODEEDIT
-	char m_szSector[MAX_LABEL_LENGTH] ; // node sector
+	char m_szSector[MAX_LABEL_LENGTH] = { 0 }; // node sector
 	#endif
-	char m_szLabel[MAX_LABEL_LENGTH] ;  // node label
-	int m_iLinks[MAX_LINKS_PER_NODE];   // up to 10 links per node
-	int m_iLocationCode ;               // MG_LOC_xxxx to specify location
-	int m_iSector ;                     // MG_SECTOR_xxxx to specify sector
-	int m_iBitmap ;                     // index of related bitmap
-	int m_iX, m_iY ;                    // position
-	int m_iNumLinks ;                   // number of links
-	bool m_bDeleted : 1 ;               // deleted node
-	bool m_bSelected : 1 ;              // this is selected node
-	bool m_bRelative : 1 ;              // relative to bitmap
-	bool m_bRelocatable : 1 ;           // relocatable node
-	bool m_bWgtSpec : 1 ;               // weight specified
-	bool m_bSenSpec : 1 ;               // sensitivity specified
-	bool m_bMenu : 1;                   // TRUE if menu
-	UBYTE m_iWeight ;                   // node weight
-	UBYTE m_iSensitivity ;              // distance to accept clickb
+	char m_szLabel[MAX_LABEL_LENGTH] = { 0 };  // node label
+	int m_iLinks[MAX_LINKS_PER_NODE] = { 0 };   // up to 10 links per node
+	int m_iLocationCode = 0;			// MG_LOC_xxxx to specify location
+	int m_iSector = 0;					// MG_SECTOR_xxxx to specify sector
+	int m_iBitmap = 0;					// index of related bitmap
+	int m_iX = 0, m_iY = 0;				// position
+	int m_iNumLinks = 0;				// number of links
+	bool m_bDeleted : 1;				// deleted node
+	bool m_bSelected : 1;				// this is selected node
+	bool m_bRelative : 1;				// relative to bitmap
+	bool m_bRelocatable : 1;			// relocatable node
+	bool m_bWgtSpec : 1;				// weight specified
+	bool m_bSenSpec : 1;				// sensitivity specified
+	bool m_bMenu : 1;					// TRUE if menu
+	UBYTE m_iWeight = 0;				// node weight
+	UBYTE m_iSensitivity = 0;			// distance to accept clickb
 
-	CNode(void);
+	CNode();
 
 	BOOL IfRelocatable(void) {
 		return (m_bRelocatable != 0) ;

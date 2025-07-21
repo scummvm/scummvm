@@ -48,22 +48,7 @@ namespace Gtl {
 extern DWORD GetPhysicalMemory(void);
 
 
-CNode::CNode(void) {
-	// the node table must stay under 32k
-	assert((UINT)sizeof(CNode) * MAX_NODES < (UINT)0x7FFF);
-
-	#ifdef NODEEDIT
-	memset(&m_szSector, 0, sizeof(char) * MAX_LABEL_LENGTH);
-	#endif
-	memset(&m_szLabel, 0, sizeof(char) * MAX_LABEL_LENGTH);
-
-	memset(&m_iLinks, 0, sizeof(int) * MAX_LINKS_PER_NODE);
-	m_iLocationCode = 0;
-	m_iSector = 0;
-	m_iBitmap = 0;
-	m_iX = 0;
-	m_iY = 0;
-	m_iNumLinks = 0;
+CNode::CNode() {
 	m_bDeleted = FALSE;
 	m_bSelected = FALSE;
 	m_bRelative = FALSE;
@@ -71,8 +56,6 @@ CNode::CNode(void) {
 	m_bWgtSpec = FALSE;
 	m_bSenSpec = FALSE;
 	m_bMenu = FALSE;
-	m_iWeight = 0;
-	m_iSensitivity = 0;
 }
 
 //* CGtlData::CGtlData -- constructor -- zero out all fields, allocate
