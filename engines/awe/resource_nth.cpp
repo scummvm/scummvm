@@ -43,18 +43,14 @@ static char *loadTextFile(Common::File &f, const int size) {
 
 struct Resource15th : ResourceNth {
 	Pak _pak;
-	char _dataPath[MAXPATHLEN];
-	char _menuPath[MAXPATHLEN];
+	const char *_dataPath = "Data";
+	const char *_menuPath = "Menu";
 	char *_textBuf;
 	const char *_stringsTable[157];
 	bool _hasRemasteredMusic;
 
 	Resource15th() {
-		Common::strcpy_s(_dataPath, "Music/AW/RmSnd");
-
-		_hasRemasteredMusic = Common::FSNode(_dataPath).isDirectory();
-		Common::strcpy_s(_dataPath, "Data");
-		Common::strcpy_s(_menuPath, "Menu");
+		_hasRemasteredMusic = Common::FSNode("Music/AW/RmSnd").isDirectory();
 		_textBuf = nullptr;
 		memset(_stringsTable, 0, sizeof(_stringsTable));
 	}
