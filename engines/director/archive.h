@@ -177,6 +177,7 @@ public:
 	Common::String formatArchiveInfo() override;
 
 private:
+	/* archive-save.cpp */
 	/* These functions are for writing movies */
 	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
 	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
