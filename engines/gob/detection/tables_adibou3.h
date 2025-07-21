@@ -259,4 +259,113 @@
 	"b3_common.stk", "b3_storyboard.obc", 0
 },
 
+// -- Add-ons : Read/Count 4-5 years --
+
+{
+	{
+		"adibou3readcount45",
+		"", // "Lecture/Calcul 4-5 ans"
+		AD_ENTRY2s("BMA45F300.BCD1", "0db3f04047a68606ca184037825dbedb", 284,
+				   "BFR45F300.BCD1",  "dbcbff695b14b80dc44f1b06b92d56b5", 301),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+// -- Add-ons : Read/Count 5-6 years --
+
+{
+	{
+		"adibou3readcount56",
+		"", // "Read/Count 5-6 age"
+		AD_ENTRY2s("BFR56A300.BCD1", "b6ab820cf0b8948731a634e5aea18a1a", 293,
+				   "BMA56A300.BCD1",  "9e2e7087a004cb0d4114ff07a3d1b41a", 285),
+		EN_ANY,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Read/Count 6-7 years --
+
+{
+	{
+		"adibou3readcount67",
+		"", // "Lesen/Rechnen 6-7 Jahre"
+		AD_ENTRY2s("BFR67D300.BCD1", "819f13cfaebf01a036131c60f6618d91", 303,
+				   "BMA67D300.BCD1",  "14d86a43a14ffc2a464e9c02946f0ed6", 302),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Nature & Sciences --
+
+{
+	{
+		"adibou3sciences",
+		"", // "L'île volante 4-7 ans"
+		AD_ENTRY1s("bsc47F310.bcd1", "e30b6a3fbe993dc867161d5465b7efba", 286),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+{
+	{
+		"adibou3sciences",
+		"", // "Das schwebende Land (Natur & Technik 4-7 Jahre)"
+		AD_ENTRY1s("bsc47D310.bcd1", "1ea4391027ea3d412577c13cad808249", 307),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Music --
+{
+	{
+		"adibou3music",
+		"", // Die rätselhafte Musikmaschine (Musik 4-7 Jahre)
+		AD_ENTRY1s("bmu47D310.bcd1", "cac210f0c5c7d13667a84072d2f3947c", 324),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : Anglais --
+{
+	{
+		"adibou3anglais",
+		"", // Das Königreich Hocus Pocus (Englisch 4-7 Jahre)
+		AD_ENTRY1s("blg47D310.bcd1", "cbbb2ab6399776ae3ec14c4c2edb1a96", 327),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADIBOU3_H
