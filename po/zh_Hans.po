@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 11:00+0000\n"
+"POT-Creation-Date: 2025-07-21 11:08+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -7613,25 +7613,27 @@ msgid "DEBUG: Access to locations 1-24"
 msgstr "调试：访问位置 1-24"
 
 #: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
+#: engines/prince/metaengine.cpp:36
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "为物品与设置启用文字转语音"
 
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
-#: engines/parallaction/metaengine.cpp:53 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
-#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
+#: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:37
+#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
+#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
+#: engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "使用 TTS 读出描述（若可用）"
 
 #: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
-#: engines/dreamweb/metaengine.cpp:85
+#: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:48
 msgid "Enable Text to Speech for Subtitles"
 msgstr "为字幕启用文字转语音"
 
 #: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
-#: engines/dreamweb/metaengine.cpp:86
+#: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:49
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "使用 TTS 读出字母（若可用）"
 
@@ -7944,13 +7946,13 @@ msgstr ""
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr "即使游戏不要求，也使用抗锯齿功能绘制文本"
 
-#: engines/draci/metaengine.cpp:68
+#: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:60
 #, fuzzy
 #| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
 msgstr "为字幕启用文字转语音"
 
-#: engines/draci/metaengine.cpp:69
+#: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:61
 #, fuzzy
 #| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""

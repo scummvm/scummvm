@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 11:00+0000\n"
+"POT-Creation-Date: 2025-07-21 11:08+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -7544,6 +7544,7 @@ msgid "DEBUG: Access to locations 1-24"
 msgstr ""
 
 #: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
+#: engines/prince/metaengine.cpp:36
 #, fuzzy
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "Testu eta ahotsa:"
@@ -7551,20 +7552,21 @@ msgstr "Testu eta ahotsa:"
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
-#: engines/parallaction/metaengine.cpp:53 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
-#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
+#: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:37
+#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
+#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
+#: engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
-#: engines/dreamweb/metaengine.cpp:85
+#: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:48
 #, fuzzy
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Testu eta ahotsa:"
 
 #: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
-#: engines/dreamweb/metaengine.cpp:86
+#: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:49
 #, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
@@ -7915,12 +7917,12 @@ msgstr ""
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
 
-#: engines/draci/metaengine.cpp:68
+#: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:60
 #, fuzzy
 msgid "Enable Text to Speech for Missing Voiceovers"
 msgstr "Testu eta ahotsa:"
 
-#: engines/draci/metaengine.cpp:69
+#: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:61
 #, fuzzy
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"

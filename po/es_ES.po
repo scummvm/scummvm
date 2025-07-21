@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 11:00+0000\n"
+"POT-Creation-Date: 2025-07-21 11:08+0000\n"
 "PO-Revision-Date: 2025-07-14 21:02+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7827,27 +7827,29 @@ msgid "DEBUG: Access to locations 1-24"
 msgstr "DEPURACIÓN: dar acceso a ubicaciones 1-24"
 
 #: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
+#: engines/prince/metaengine.cpp:36
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "Activa la conversión de texto a voz para objetos y opciones"
 
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
-#: engines/parallaction/metaengine.cpp:53 engines/sci/detection_options.h:224
-#: engines/sherlock/metaengine.cpp:113 engines/supernova/metaengine.cpp:54
-#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
+#: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:37
+#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
+#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
+#: engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Utiliza un narrador TTS para leer las descripciones (si el conversor texto-"
 "voz está disponible)"
 
 #: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
-#: engines/dreamweb/metaengine.cpp:85
+#: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:48
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Leer subtítulos mediante conversión texto a voz"
 
 #: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
-#: engines/dreamweb/metaengine.cpp:86
+#: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:49
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr ""
 "Utiliza la conversión de texto a voz para leer los subtítulos (si está "
@@ -8157,11 +8159,11 @@ msgstr ""
 "Utiliza el modo de gráficos en color verdadero, aunque el juego no estaba "
 "diseñado para dicho modo"
 
-#: engines/draci/metaengine.cpp:68
+#: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:60
 msgid "Enable Text to Speech for Missing Voiceovers"
 msgstr "Usar texto a voz para las voces que faltan"
 
-#: engines/draci/metaengine.cpp:69
+#: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:61
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
 msgstr ""
