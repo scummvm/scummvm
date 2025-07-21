@@ -29,28 +29,10 @@
 #include "audio/mixer.h"
 #include "common/file.h"
 
+#include "engines/tot/midi.h"
+
 namespace Tot {
 const int kSfxId = 1;
-class MusicPlayer : public Audio::MidiPlayer {
-
-private:
-	byte *_data;
-	int _dataSize;
-
-	// Start MIDI File
-	void sndMidiStart(bool loop);
-
-	// Stop MIDI File
-	void sndMidiStop();
-
-public:
-	MusicPlayer();
-	~MusicPlayer() override;
-
-	void playMidi(const char *fileName, bool loop);
-	void playMidi(byte *data, int size, bool loop);
-	void killMidi();
-};
 
 class SoundManager {
 public:
@@ -74,7 +56,8 @@ private:
 	Audio::SoundHandle _soundHandle;
 	Audio::SoundHandle _speakerHandle;
 	Audio::Mixer *_mixer;
-	MusicPlayer *_musicPlayer;
+	MidiPlayer *_midiPlayer;
+
 	Common::SeekableReadStream *_lastSrcStream = nullptr;
 	Audio::SeekableAudioStream *_audioStream = nullptr;
 };
