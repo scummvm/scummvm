@@ -25,6 +25,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      others, 12 titles so far.
    - Added support for Adibou 2: Nature & Sciences.
 
+ Access:
+   - Added keymapper support.
+
  ADL:
    - Added Text-to-Speech support.
 
