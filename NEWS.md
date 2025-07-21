@@ -79,6 +79,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Parallaction:
    - Added Text-to-Speech support.
 
+ Prince:
+   - Added Text-to-Speech support.
+
  SCI:
    - Fixed the palette in SLATER Mac.
    - Fixed LSL6 temporary freeze after control panel.
