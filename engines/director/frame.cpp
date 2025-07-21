@@ -590,8 +590,8 @@ void Frame::writeMainChannelsD4(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeByte(_mainChannels.transType);		// 5
 
 	writeStream->writeUint16BE(_mainChannels.sound1.member);		// 6, 7
-	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 8, 9 
-	
+	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 8, 9
+
 	writeStream->writeByte(_mainChannels.soundType2);			// 10
 	writeStream->writeByte(_mainChannels.skipFrameFlag);		// 11
 	writeStream->writeByte(_mainChannels.blend);				// 12
@@ -647,7 +647,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
-	debugC(8, kDebugLoading, "stream.pos(): %ld, startPosition: %d, finishPosition: %d", stream.pos(), startPosition, finishPosition);
+	debugC(8, kDebugLoading, "stream.pos(): %0x, startPosition: %d, finishPosition: %d", (int)stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -774,7 +774,7 @@ void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
 	// Writing 20 bytes of sprite data
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._scriptId.member);			// 0
-	
+
 	// If the sprite is a puppet (controlled by lingo scripting)
 	// The rest of the data isn't read
 	if (sprite._puppet) {
@@ -963,10 +963,10 @@ void Frame::writeMainChannelsD5(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.sound1.castLib);		// 4, 5
 	writeStream->writeUint16BE(_mainChannels.sound1.member);		// 6, 7
 	writeStream->writeUint16BE(_mainChannels.sound2.castLib);		// 8, 9
-	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 10, 11 
-	writeStream->writeUint16BE(_mainChannels.trans.member);			// 12, 13 
-	writeStream->writeUint16BE(_mainChannels.trans.member);			// 14, 15 
-	
+	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 10, 11
+	writeStream->writeUint16BE(_mainChannels.trans.member);			// 12, 13
+	writeStream->writeUint16BE(_mainChannels.trans.member);			// 14, 15
+
 	writeStream->writeUint16BE(0);		// Unknown	// 16, 17
 	writeStream->writeUint16BE(0);		// Unknown	// 18, 19
 	writeStream->writeByte(0);			// Unknown: Sound/Tempo/Transition	// 20
@@ -1152,7 +1152,7 @@ void writeSpriteDataD5(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
 	// Writing 20 bytes of sprite data
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._spriteType);			// 0
-	
+
 	// If the sprite is a puppet (controlled by lingo scripting)
 	// The rest of the data isn't read
 	if (sprite._puppet) {

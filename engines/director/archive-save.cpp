@@ -108,19 +108,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 		case MKTAG('B', 'I', 'T', 'D'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -130,19 +118,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 		case MKTAG('S', 'T', 'X', 'T'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('S', 'T', 'X', 'T')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -152,19 +128,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 		case MKTAG('C', 'L', 'U', 'T'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('C', 'L', 'U', 'T')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -174,19 +138,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('S', 'C', 'V', 'W')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -199,6 +151,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			break;
 
 		default:
+            debugC(7, kDebugLoading, "Saving resource %s as it is, without modification", tag2str(it->tag));
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
 			writeStream->writeUint32LE(it->size);
@@ -208,11 +161,10 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	}
 
 	if (path.empty()) {
-		path = Common::Path("./dumps/writtenMovie.dir");
+		path = Common::Path(movie->getMacName());
 	}
 
 	Common::DumpFile out;
-	Common::Path dirname(path.getParent());
 
 	// Write the movie out, stored in dumpData
 	if (out.open(path, true)) {
@@ -360,18 +312,16 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 	for (uint32 i = 0; i <= maxCastId; i++) {
 		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
 		if (castIndex) {
-			debugCN(5, kDebugSaving, "%d, ", castIndex);
+            debugCN(5, kDebugSaving, (i == 0 ? "%d" : ", %d"), castIndex);
 			writeStream->writeUint32BE(castIndex);
 		}
 	}
-	debugC(5, kDebugSaving, "\b\b]");
+    debugC(5, kDebugSaving, "]");
+
 	return true;
 }
 
 Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
-	// Currently I'm modifying the original _resources, _types and _keydata structures, this is what happens in the original Director
-	// However, if we don't want that, we could make copies of them and then modify them
-
 	// Currently handled Resource types:
 	// imap		// BITD
 	// mmap		// CLUT
@@ -537,19 +487,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('S', 'T', 'X', 'T'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('S', 'T', 'X', 'T')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -564,22 +502,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('C', 'L', 'U', 'T'):
 			{
-				// We have to find the parent
-				// Look into the keyData, for all parents of 'CLUT' resource
-				// If the parent contains this 'CLUT' resource's index, that's our parent
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('C', 'L', 'U', 'T')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -594,19 +517,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('B', 'I', 'T', 'D'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('B', 'I', 'T', 'D')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -621,19 +532,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
-				uint32 parentIndex = 0;
-				for (auto &jt : _keyData[MKTAG('S', 'C', 'V', 'W')]) {
-					for (auto &kt : jt._value) {
-						if (kt == it->index) {
-							parentIndex = jt._key;
-							break;
-						}
-					}
-					if (parentIndex) {
-						break;
-					}
-				}
-
+				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
@@ -739,6 +638,22 @@ void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, ui
 	} else {
 		warning("RIFXArchive::writeStream: Error saving the file %s", fname.c_str());
 	}
+}
+
+uint32 RIFXArchive::findParentIndex(uint32 tag, uint16 index) {
+    // We have to find the parent
+    // Look into the keyData, for all parents of resource tag
+    // If the parent contains this resource's index, that's our parent
+    for (auto &it : _keyData[tag]) {
+        for (auto &kt : it._value) {
+            if (kt == index) {
+                return it._key;
+            }
+        }
+    }
+
+    warning("RIFXArchive::findParentIndex: The parent for resource: %s, index: %d, was not found", tag2str(tag), index);
+    return 0;
 }
 
 }   // End of namespace Director

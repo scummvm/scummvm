@@ -259,11 +259,11 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 	}
 	setCastMember(targetId, target);
 
-	debugN("loaded cast: [");
+	debugCN(7, kDebugSaving, "loaded cast: [");
 	for (auto it: (*_loadedCast)) {
-		debugN("%d:%d, ", it._key, it._value->getID());
+		debugCN(7, kDebugSaving, ((it._key == _castArrayStart) ? "%d:%d" : ", %d:%d"), it._key, it._value->getID());
 	}
-	debug("\b\b]");
+	debugC(7, kDebugSaving, "]");
 
 	if (info) {
 		rebuildCastNameCache();
@@ -550,7 +550,7 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 
 	writeStream->writeUint16BE(_castArrayStart);    // 12
 	// This will change
-	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14   
+	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
@@ -858,7 +858,7 @@ void Cast::saveCastData(Common::MemoryWriteStream *writeStream, Resource *res) {
 	}
 
 	debugC(5, kDebugSaving, "Cast::saveCastData()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
-	
+
 	if (debugChannelSet(7, kDebugSaving)) {
 		byte *dumpData = (byte *)calloc(castSize + 8, sizeof(byte));
 		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);

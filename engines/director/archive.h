@@ -196,9 +196,10 @@ private:
 	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
+	uint32 findParentIndex(uint32 tag, uint16 index);
+
 	/* Memory Map data to save the file */
 	uint32 _metaTag;
-	uint32 _moreOffset;
 	uint32 _mapversion;
 	uint32 _mmapHeaderSize;
 	uint32 _mmapEntrySize;
