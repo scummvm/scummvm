@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 10:34+0000\n"
+"POT-Creation-Date: 2025-07-21 10:54+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -318,7 +318,7 @@ msgstr "Ein anna lagringsteneste arbeider nett no. Vill du abryta han?"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3499 gui/options.cpp:3882
 #: base/main.cpp:588 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:590 engines/director/events.cpp:101
+#: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:143
@@ -331,7 +331,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:502 gui/options.cpp:3499 gui/options.cpp:3882
-#: engines/buried/buried.cpp:590 engines/director/events.cpp:101
+#: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:149
@@ -3227,8 +3227,8 @@ msgstr ""
 #: dists/android.strings.xml.cpp:34
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
-#: engines/adl/metaengine.cpp:352 engines/hdb/metaengine.cpp:275
-#: engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
+#: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/sludge/keymapper_tables.h:95 engines/sludge/keymapper_tables.h:144
@@ -3774,9 +3774,10 @@ msgstr "Høgreklikk"
 
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:252
-#: engines/crab/input/input.cpp:261 engines/cruise/metaengine.cpp:217
-#: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
-#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
+#: engines/cruise/metaengine.cpp:217 engines/grim/grim.cpp:550
+#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
 #: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
 #: engines/sludge/keymapper_tables.h:187 engines/sludge/keymapper_tables.h:243
@@ -6250,16 +6251,16 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
-#: engines/draci/metaengine.cpp:196 engines/efh/metaengine.cpp:203
-#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
-#: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
-#: engines/made/metaengine.cpp:103 engines/mads/metaengine.cpp:275
-#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/buried/metaengine.cpp:136 engines/cine/metaengine.cpp:271
+#: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
+#: engines/efh/metaengine.cpp:203 engines/hopkins/metaengine.cpp:207
+#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:103
+#: engines/mads/metaengine.cpp:275 engines/sludge/keymapper_tables.h:33
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -6712,19 +6713,19 @@ msgstr ""
 msgid "General Keys"
 msgstr ""
 
-#: engines/bbvs/metaengine.cpp:92 engines/cine/metaengine.cpp:270
-#: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
-#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
-#: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:102 engines/mads/metaengine.cpp:274
-#: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:185
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
+#: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
+#: engines/draci/metaengine.cpp:195 engines/hopkins/metaengine.cpp:206
+#: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:102
+#: engines/mads/metaengine.cpp:274 engines/playground3d/metaengine.cpp:51
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Game Options"
 msgid "Default keymappings"
@@ -6936,10 +6937,10 @@ msgid "Toggle combat"
 msgstr "Veksle muslåsing"
 
 #. I18N: This keymap allows skipping video cutscenes
-#: engines/bladerunner/metaengine.cpp:229 engines/scumm/help.cpp:79
-#: engines/scumm/metaengine.cpp:1030 engines/supernova/metaengine.cpp:309
-#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
-#: engines/zvision/metaengine.cpp:304
+#: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1030
+#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
+#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Hopp over cutscene"
 
@@ -7030,9 +7031,10 @@ msgstr "Veksle muslåsing"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:330 engines/cge/metaengine.cpp:221
-#: engines/cge2/metaengine.cpp:235 engines/dgds/metaengine.cpp:75
-#: engines/efh/metaengine.cpp:219 engines/freescape/games/castle/castle.cpp:246
+#: engines/bladerunner/metaengine.cpp:330 engines/buried/metaengine.cpp:179
+#: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
+#: engines/dgds/metaengine.cpp:75 engines/efh/metaengine.cpp:219
+#: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:231
@@ -7054,9 +7056,10 @@ msgstr "Lagra spel:"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:339 engines/cge/metaengine.cpp:227
-#: engines/cge2/metaengine.cpp:241 engines/dgds/metaengine.cpp:74
-#: engines/efh/metaengine.cpp:225 engines/freescape/games/castle/castle.cpp:251
+#: engines/bladerunner/metaengine.cpp:339 engines/buried/metaengine.cpp:184
+#: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
+#: engines/dgds/metaengine.cpp:74 engines/efh/metaengine.cpp:225
+#: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:236
@@ -7115,26 +7118,149 @@ msgstr ""
 msgid "Quit game"
 msgstr " (Spel)"
 
-#: engines/buried/buried.cpp:590
+#: engines/buried/buried.cpp:598
 #, fuzzy
 msgid "Are you sure you want to quit?"
 msgstr "   Er du sikker på at du vil avslutte?   "
 
-#: engines/buried/buried.cpp:600
+#: engines/buried/buried.cpp:608
 #, fuzzy
 msgid "Your game is now Paused.  Click OK to continue."
 msgstr "Spelet er pausa. Trykk MELLOMROM for å fortsette."
 
 #. I18N: This option allows the user to skip cutscenes.
 #. I18N: This option allows the user to skip text and cutscenes.
-#: engines/buried/metaengine.cpp:40 engines/kyra/metaengine.cpp:61
+#: engines/buried/metaengine.cpp:44 engines/kyra/metaengine.cpp:61
 msgid "Skip support"
 msgstr "Hopp over-støtte"
 
-#: engines/buried/metaengine.cpp:41
+#: engines/buried/metaengine.cpp:45
 #, fuzzy
 msgid "Allow cutscenes to be skipped"
 msgstr "Tillat å hoppe over tekst og cutscenes"
+
+#: engines/buried/metaengine.cpp:134 engines/supernova/metaengine.cpp:219
+#: engines/voyeur/metaengine.cpp:185
+#, fuzzy
+#| msgid "Game Options"
+msgid "Cutscene keymappings"
+msgstr "Spelval"
+
+#: engines/buried/metaengine.cpp:135
+#, fuzzy
+#| msgid "Game Options"
+msgid "Main menu keymappings"
+msgstr "Spelval"
+
+#: engines/buried/metaengine.cpp:137
+#, fuzzy
+#| msgid "Game Options"
+msgid "Inventory keymappings"
+msgstr "Spelval"
+
+#: engines/buried/metaengine.cpp:141
+#, fuzzy
+msgid "Select / Interact"
+msgstr "Interpolering:"
+
+#. I18N: This action refers to the control key on the keyboard.
+#: engines/buried/metaengine.cpp:148
+msgid "Control key"
+msgstr ""
+
+#: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
+#, fuzzy
+msgid "Quit to main menu"
+msgstr " (Spel)"
+
+#: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
+#: engines/zvision/metaengine.cpp:217
+#, fuzzy
+msgid "Look up"
+msgstr "Kikk"
+
+#: engines/buried/metaengine.cpp:197 engines/mohawk/riven.cpp:918
+#: engines/zvision/metaengine.cpp:223
+#, fuzzy
+msgid "Look down"
+msgstr "Zoom ned"
+
+#: engines/buried/metaengine.cpp:204
+#, fuzzy
+#| msgid "Look at"
+msgid "Look left"
+msgstr "Se på"
+
+#: engines/buried/metaengine.cpp:211
+#, fuzzy
+#| msgid "Look at"
+msgid "Look right"
+msgstr "Se på"
+
+#: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
+#: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
+#: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
+#: engines/twine/metaengine.cpp:332 engines/ultima/ultima8/metaengine.cpp:51
+#: engines/wintermute/keymapper_tables.h:149
+#: engines/wintermute/keymapper_tables.h:731
+#: engines/wintermute/keymapper_tables.h:2116
+#: engines/wintermute/keymapper_tables.h:2216
+#, fuzzy
+msgid "Move forward"
+msgstr "Beveg Framover"
+
+#. I18N: AI is Artificial Intelligence
+#: engines/buried/metaengine.cpp:230
+msgid "Replay last AI comment"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
+#: engines/buried/metaengine.cpp:237
+msgid "Biochip AI"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
+#: engines/buried/metaengine.cpp:243
+msgid "Biochip blank"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
+#: engines/buried/metaengine.cpp:249
+msgid "Biochip cloak"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
+#: engines/buried/metaengine.cpp:255
+msgid "Biochip evidence"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
+#: engines/buried/metaengine.cpp:261
+#, fuzzy
+#| msgid "Show hidden files"
+msgid "Biochip files"
+msgstr "Vis skjulte filer"
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
+#: engines/buried/metaengine.cpp:267
+msgid "Biochip interface"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
+#: engines/buried/metaengine.cpp:273
+msgid "Biochip jump"
+msgstr ""
+
+#. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
+#: engines/buried/metaengine.cpp:279
+msgid "Biochip translate"
+msgstr ""
+
+#. I18N: Shows a summary of collected points in the game.
+#: engines/buried/metaengine.cpp:285
+#, fuzzy
+msgid "Show points"
+msgstr "Vis skjulte filer"
 
 #: engines/buried/saveload.cpp:80
 #, fuzzy
@@ -8880,18 +9006,6 @@ msgstr ""
 msgid "Eye of Beholder support is not compiled in"
 msgstr "Funksjonar innkompilert:"
 
-#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
-#: engines/mohawk/riven.cpp:881 engines/titanic/metaengine.cpp:336
-#: engines/titanic/metaengine.cpp:378 engines/twine/metaengine.cpp:332
-#: engines/ultima/ultima8/metaengine.cpp:51
-#: engines/wintermute/keymapper_tables.h:149
-#: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2116
-#: engines/wintermute/keymapper_tables.h:2216
-#, fuzzy
-msgid "Move forward"
-msgstr "Beveg Framover"
-
 #: engines/kyra/engine/eobcommon.cpp:370 engines/kyra/engine/lol.cpp:511
 #: engines/mohawk/riven.cpp:895 engines/twine/metaengine.cpp:339
 #: engines/wintermute/keymapper_tables.h:155
@@ -9660,16 +9774,6 @@ msgstr "Beveg Framover"
 #, fuzzy
 msgid "Move forward right"
 msgstr "Beveg Framover"
-
-#: engines/mohawk/riven.cpp:913 engines/zvision/metaengine.cpp:217
-#, fuzzy
-msgid "Look up"
-msgstr "Kikk"
-
-#: engines/mohawk/riven.cpp:918 engines/zvision/metaengine.cpp:223
-#, fuzzy
-msgid "Look down"
-msgstr "Zoom ned"
 
 #: engines/mohawk/riven.cpp:924
 msgid "Play intro videos"
@@ -12259,12 +12363,6 @@ msgstr "Vindusmodus"
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
-
-#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
-#, fuzzy
-#| msgid "Game Options"
-msgid "Cutscene keymappings"
-msgstr "Spelval"
 
 #: engines/supernova/metaengine.cpp:220
 #, fuzzy
