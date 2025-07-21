@@ -564,15 +564,16 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W("\n"), _W(" "));
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
-	tWString sFile = Common::U32String::format("%S: %S %d-%d-%d %d:%d:%d",
-											   asDir.c_str(),
-											   sMapName.c_str(),
-											   date.year,
-											   date.month + 1,
-											   date.month_day,
-											   date.hours,
-											   date.minutes,
-											   date.seconds);
+	Common::String dateString = Common::String::format("%02d-%02d-%02d %02d:%02d:%02d", date.year,
+	                                                   date.month + 1,
+	                                                   date.month_day,
+	                                                   date.hours,
+	                                                   date.minutes,
+	                                                   date.seconds);
+	tWString sFile = Common::U32String::format("%S: %S %s",
+	                                           asDir.c_str(),
+	                                           sMapName.c_str(),
+	                                           dateString.c_str());
 	SaveGameToFile(sFile);
 
 	mpInit->mpGame->ResetLogicTimer();
@@ -625,8 +626,7 @@ void cSaveHandler::OnExit() {
 
 cDate cSaveHandler::parseDate(const Common::String &saveFile) {
 	cDate date;
-	auto firstDigit = Common::find_if(saveFile.begin(), saveFile.end(), Common::isDigit);
-	Common::String strDate = saveFile.substr(Common::distance(saveFile.begin(), firstDigit));
+	Common::String strDate = saveFile.substr(saveFile.size() - 17);
 	sscanf(strDate.c_str(), "%d-%d-%d %d:%d:%d", &date.year, &date.month, &date.month_day, &date.hours, &date.minutes, &date.seconds);
 	return date;
 }
