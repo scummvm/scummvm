@@ -687,10 +687,10 @@ void BitmapCastMember::load() {
 		warning("BitmapCastMember::load(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
 		break;
 	}
-	
+
 	if (debugChannelSet(7, kDebugLoading)) {
 		debug("BitmapCastMember::load(): Bitmap data:");
-		pic->hexdump(pic->size());
+		pic->hexdump(MIN((int)pic->size(), 512));
 	}
 
 	if (!img || !img->loadStream(*pic)) {
@@ -1036,7 +1036,9 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 		if (_flags2 != 0) {
 			// Skipping 14 bytes because they are not stored in ScummVM Director
 			// May need to save in the future, see BitCastMember::BitCastMember constructor
-			writeStream->seek(14, SEEK_CUR);
+			writeStream->writeUint64BE(0);
+			writeStream->writeUint32BE(0);
+			writeStream->writeUint16BE(0);
 			writeStream->writeUint16BE(_flags2);
 		}
 	}
@@ -1050,7 +1052,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 	writeStream->writeUint32LE(getBITDResourceSize());
 
 	if (_external) {
-		warning("BitmapCastMember::writeBITDResource: the bitmap is external, ignoring for now");	
+		warning("BitmapCastMember::writeBITDResource: the bitmap is external, ignoring for now");
 		return 8;		// 8 for the tag and size
 	}
 
@@ -1063,7 +1065,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(pixels.size() / _picture->_surface.h)) {
 		offset = (_pitch - _picture->_surface.w) % 2;
 	}
-	
+
 	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
 	for (int y = 0; y < _picture->_surface.h; y++) {
 		for (int x = 0; x < _picture->_surface.w;) {
@@ -1130,7 +1132,7 @@ uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStrea
 
 uint32 BitmapCastMember::getBITDResourceSize() {
 	// No compression for now
-	return _pitch * _picture->_surface.h; 
+	return _pitch * _picture->_surface.h;
 }
 
 } // End of namespace Director
