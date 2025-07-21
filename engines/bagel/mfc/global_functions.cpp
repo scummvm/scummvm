@@ -276,7 +276,7 @@ BOOL AfxExtractSubString(CString &rString, LPCSTR lpszFullString,
 		(int)(lpchEnd - lpszFullString);
 	ASSERT(nLen >= 0);
 
-	memcpy(rString.GetBufferSetLength(nLen), lpszFullString, nLen * sizeof(TCHAR));
+	rString = CString(lpszFullString, nLen);
 	return TRUE;
 }
 

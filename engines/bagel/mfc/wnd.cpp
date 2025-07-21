@@ -219,7 +219,7 @@ Common::Array<CWnd *> CWnd::GetSafeParents(bool includeSelf) {
 }
 
 HWND CWnd::GetSafeHwnd() const {
-	error("TODO: CWnd::GetSafeHwnd");
+	return m_hWnd;
 }
 
 void CWnd::ShowWindow(int nCmdShow) {
