@@ -1712,6 +1712,15 @@ protected:
 
 	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
 	    const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
+
+public:
+	/**
+	 * '\n' separated names
+	 * The document names sub-strings are represented as _one_ string:
+	 * windowTitle\ndocName\n ... (see DocStringIndex enum)
+	 */
+	CString m_strDocStrings;
+
 public:
 	/**
 	 * Open named file
@@ -1728,6 +1737,8 @@ public:
 
 	virtual void AddDocument(CDocument *pDoc);      // must override
 	virtual void RemoveDocument(CDocument *pDoc);   // must override
+
+	void LoadTemplate();
 };
 
 class CSingleDocTemplate : public CDocTemplate {
@@ -1756,13 +1767,29 @@ public:
 	 */
 	CDocument *OpenDocumentFile(LPCSTR lpszPathName,
 		BOOL bMakeVisible = TRUE) override;
+	void AddDocument(CDocument *pDoc) override;
 
 	void SetDefaultTitle(CDocument *pDocument) override;
 };
 
+class CTemplateList : public Common::Array<CDocTemplate *> {
+public:
+	bool contains(const CDocTemplate *tmp) const {
+		for (auto it = begin(); it != end(); ++it) {
+			if (*it == tmp)
+				return true;
+		}
+		return false;
+	}
+};
+
 class CDocManager {
+private:
+	CTemplateList pStaticList;
+	bool bStaticInit = false;
+
 protected:
-	Common::List<CDocTemplate *> m_templateList;
+	CTemplateList m_templateList;
 
 public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
@@ -1800,7 +1827,6 @@ private:
 	CHandleMap<CWnd> *m_pmapWnd = nullptr;
 
 protected:
-	virtual BOOL InitApplication();
 	virtual BOOL InitInstance();
 	virtual int ExitInstance();
 
@@ -1825,6 +1851,7 @@ public:
 	 */
 	int Run();
 
+	virtual BOOL InitApplication();
 	virtual BOOL SaveAllModified();
 
 	void SetDialogBkColor();

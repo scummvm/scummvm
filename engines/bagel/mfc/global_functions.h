@@ -22,6 +22,7 @@
 #ifndef BAGEL_MFC_GLOBAL_FUNCTIONS_H
 #define BAGEL_MFC_GLOBAL_FUNCTIONS_H
 
+#include "common/stream.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/winnt.h"
 

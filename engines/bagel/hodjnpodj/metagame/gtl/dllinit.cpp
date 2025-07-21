@@ -80,6 +80,9 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	lpMetaGameStruct = lpBfcMgr;
 
 	theApp = new CGtlApp();
+	theApp->addResources("hnpmeta.dll");
+	theApp->addFontResource("msserif.fon");
+	theApp->InitApplication();
 
 	#if RETAIN_META_DLL
 	if (bMetaLoaded) {

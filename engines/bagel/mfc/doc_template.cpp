@@ -108,5 +108,15 @@ void CDocTemplate::InitialUpdateFrame(CFrameWnd *pFrame, CDocument *pDoc,
 	pFrame->InitialUpdateFrame(pDoc, bMakeVisible);
 }
 
+
+void CDocTemplate::LoadTemplate() {
+	if (m_strDocStrings.IsEmpty() && !m_strDocStrings.LoadString(m_nIDResource)) {
+		warning("No document names in string for template #%d.",
+			m_nIDResource);
+	}
+
+	// TODO: If needed, menus and accelerators
+}
+
 } // namespace MFC
 } // namespace Bagel

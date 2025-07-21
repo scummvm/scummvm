@@ -74,6 +74,8 @@ public:
 		Common::String::operator+=(c);
 		return *this;
 	}
+
+	BOOL LoadString(UINT nID);
 };
 
 

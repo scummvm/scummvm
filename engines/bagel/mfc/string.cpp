@@ -20,41 +20,20 @@
  */
 
 #include "common/textconsole.h"
-#include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/afxstr.h"
+#include "bagel/mfc/global_functions.h"
 
 namespace Bagel {
 namespace MFC {
 
-void CDocManager::AddDocTemplate(CDocTemplate *pTemplate) {
-	if (pTemplate == nullptr) {
-		for (auto it = pStaticList.begin(); it != pStaticList.end(); ++it) {
-			CDocTemplate *tmp = *it;
-			AddDocTemplate(tmp);
-		}
-		pStaticList.clear();
-		bStaticInit = FALSE;
-	} else {
-		ASSERT_VALID(pTemplate);
-		assert(!m_templateList.contains(pTemplate));
-		pTemplate->LoadTemplate();
-		m_templateList.push_back(pTemplate);
-	}
-}
+BOOL CString::LoadString(UINT nID) {
+	char szTemp[256];
+	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, _countof(szTemp));
+	if (nLen == 0)
+		return FALSE;
 
-void CDocManager::OnFileNew() {
-	assert(!m_templateList.empty());
-
-	// ScummVM doesn't support more than 1 template
-	assert(m_templateList.size() == 1);
-
-	CDocTemplate *pTemplate = m_templateList.front();
-	ASSERT_KINDOF(CDocTemplate, pTemplate);
-
-	pTemplate->OpenDocumentFile(nullptr);
-}
-
-void CDocManager::OnFileOpen() {
-	error("TODO: CDocManager::onFileOpen");
+	*this = szTemp;
+	return TRUE;
 }
 
 } // namespace MFC

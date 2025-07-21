@@ -55,6 +55,7 @@ Common::Error HodjNPodjEngine::run() {
 	// Run the game
 
 	Metagame::Frame::CTheApp app;
+	app.InitApplication();
 
 	if (getGameId() == "mazeodoom") {
 		app.setStartupMinigame("mazedoom_demo");

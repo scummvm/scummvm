@@ -104,7 +104,9 @@ BOOL CWinApp::SaveAllModified() {
 }
 
 int CWinApp::Run() {
-	InitApplication();
+	// Ensure app has been initialized
+	assert(_defaultFont._font);
+
 	InitInstance();
 
 	SetCursor(LoadCursor(IDC_ARROW));

@@ -47,6 +47,7 @@ MODULE_OBJS = \
 	mfc/scrollbar.o \
 	mfc/single_doc_template.o \
 	mfc/static.o \
+	mfc/string.o \
 	mfc/view.o \
 	mfc/win_app.o \
 	mfc/win_thread.o \

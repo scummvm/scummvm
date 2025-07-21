@@ -125,6 +125,14 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(LPCSTR lpszPathName,
 	return pDocument;
 }
 
+void CSingleDocTemplate::AddDocument(CDocument *pDoc) {
+	ASSERT(m_pOnlyDoc == NULL);     // one at a time please
+	ASSERT_VALID(pDoc);
+
+	CDocTemplate::AddDocument(pDoc);
+	m_pOnlyDoc = pDoc;
+}
+
 void CSingleDocTemplate::SetDefaultTitle(CDocument *pDocument) {
 	pDocument->SetTitle("Untitled");
 }
