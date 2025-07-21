@@ -293,6 +293,20 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{
+	{
+		"adibou2readcount45",
+		"", // "Lesen/Rechnen 4-5 Jahre"
+		AD_ENTRY2s("intro_ap.stk", "66a4ac911433c85b13811e874b5ceebd", 40946386,
+				   "appli_01.vmd",  "f4ec39fd93d405f7aea84bd31de48f67", 63226),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
 
 {
 	{
@@ -317,6 +331,20 @@
 		AD_ENTRY2s("intro_ap.stk", "0e91d0d693d5731353ad4738f4aa065c", 36540132,
 				   "appli_03.vmd", "6bf95a48f366bdf8af3a198c7b723c77", 58858),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2readcount67",
+		"", // "Lesen/Rechnen 6-7 Jahre"
+		AD_ENTRY2s("intro_ap.stk", "5b83051c6d123fe0c506fd1ee17a73da", 36132776,
+				   "appli_03.vmd", "462cd55c0759c1bd097b379995342b24", 65454),
+		DE_DEU,
 		kPlatformWindows,
 		ADGF_ADDON,
 		GUIO0()
@@ -395,6 +423,20 @@
 		AD_ENTRY2s("intro_ap.stk", "2147748e04ac11bd7155779e1456be07", 1631068,
 				   "MUZIKO.ITK", "101cd1690f13bf458e3988822a46e942", 54806528),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2music",
+		"",
+		AD_ENTRY2s("intro_ap.stk", "0f3a372bb2e7d49ee430208a868f8605", 1629000,
+				   "MUZIKO.ITK", "48e4576339b796f657a41d548abd97e1", 52834304),
+		DE_DEU,
 		kPlatformWindows,
 		ADGF_ADDON | ADGF_UNSTABLE,
 		GUIO0()
