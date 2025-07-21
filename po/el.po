@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 12:13+0000\n"
+"POT-Creation-Date: 2025-07-21 12:14+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4199,11 +4199,11 @@ msgstr "Προετοιμασία Εξομοιωτή MT-32"
 msgid "MT-32 emulator"
 msgstr "Εξομοιωτής MT-32"
 
-#: audio/softsynth/pcspk.cpp:204
+#: audio/softsynth/pcspk.cpp:254
 msgid "PC Speaker emulator"
 msgstr "Εξομοιωτής PC Speaker"
 
-#: audio/softsynth/pcspk.cpp:223
+#: audio/softsynth/pcspk.cpp:273
 msgid "IBM PCjr emulator"
 msgstr "Εξομοιωτής IBM PCjr"
 

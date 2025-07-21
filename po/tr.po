@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 12:13+0000\n"
+"POT-Creation-Date: 2025-07-21 12:14+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -4026,11 +4026,11 @@ msgstr ""
 msgid "MT-32 emulator"
 msgstr "AdLib emülatörü:"
 
-#: audio/softsynth/pcspk.cpp:204
+#: audio/softsynth/pcspk.cpp:254
 msgid "PC Speaker emulator"
 msgstr ""
 
-#: audio/softsynth/pcspk.cpp:223
+#: audio/softsynth/pcspk.cpp:273
 msgid "IBM PCjr emulator"
 msgstr ""
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 12:13+0000\n"
+"POT-Creation-Date: 2025-07-21 12:14+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -4070,11 +4070,11 @@ msgstr "Наладжваю эмулятар MT-32"
 msgid "MT-32 emulator"
 msgstr "Эмулятар MT-32"
 
-#: audio/softsynth/pcspk.cpp:204
+#: audio/softsynth/pcspk.cpp:254
 msgid "PC Speaker emulator"
 msgstr "Эмулятар дынаміка ПК"
 
-#: audio/softsynth/pcspk.cpp:223
+#: audio/softsynth/pcspk.cpp:273
 msgid "IBM PCjr emulator"
 msgstr "Эмулятар IBM PCjr"
 
