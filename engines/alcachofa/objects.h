@@ -396,6 +396,7 @@ public:
 	Task *animate(Process &process, ObjectBase *animateObject);
 	Task *lerpLodBias(Process &process, float targetLodBias, int32 durationMs);
 	inline float &lodBias() { return _lodBias; }
+	inline bool &isSpeaking() { return _isSpeaking; }
 
 protected:
 	friend struct SayTextTask;
@@ -406,7 +407,8 @@ protected:
 	Direction _direction = Direction::Right;
 	Graphic _graphicNormal, _graphicTalking;
 
-	bool _isTalking = false;
+	bool _isTalking = false; ///< as in "in the process of saying a line"
+	bool _isSpeaking = true; ///< as in "actively moving their mouth to produce sounds", used in updateTalkingAnimation
 	int _curDialogId = -1;
 	float _lodBias = 0.0f;
 	ObjectBase

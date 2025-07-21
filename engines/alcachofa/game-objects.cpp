@@ -201,7 +201,8 @@ void Character::updateTalkingAnimation() {
 		talkGraphic->reset();
 		return;
 	}
-	// TODO: Add lip-sync(?) animation behavior
+	if (talkGraphic == &_graphicTalking && !_isSpeaking)
+		talkGraphic->reset();
 	talkGraphic->update();
 }
 
@@ -292,6 +293,8 @@ struct SayTextTask final : public Task {
 	}
 
 	virtual TaskReturn run() override {
+		bool isSoundStillPlaying;
+
 		TASK_BEGIN;
 		_character->_isTalking = true;
 		graphicOf(_character->_curTalkingObject, &_character->_graphicTalking)->start(true);
@@ -305,8 +308,9 @@ struct SayTextTask final : public Task {
 					String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId),
 					0);
 			}
+			isSoundStillPlaying = g_engine->sounds().isAlive(_soundId);
 			g_engine->sounds().setAppropriateVolume(_soundId, process().character(), _character);
-			if (!g_engine->sounds().isAlive(_soundId) || g_engine->input().wasAnyMouseReleased())
+			if (!isSoundStillPlaying || g_engine->input().wasAnyMouseReleased())
 				_character->_isTalking = false;
 
 			if (true && // TODO: Add game option for subtitles
@@ -317,13 +321,15 @@ struct SayTextTask final : public Task {
 					Point(g_system->getWidth() / 2, g_system->getHeight() - 200),
 					-1, true, kWhite, -kForegroundOrderCount);
 			}
-			// TODO: Add lip sync for sayText
 
 			if (!_character->_isTalking) {
 				g_engine->sounds().fadeOut(_soundId, 100);
 				TASK_WAIT(delay(200));
 				TASK_RETURN(0);
 			}
+
+			_character->isSpeaking() = !isSoundStillPlaying ||
+				g_engine->sounds().isNoisy(_soundId, 80.0f, 150.0f);
 			TASK_YIELD;
 		}
 		TASK_END;
