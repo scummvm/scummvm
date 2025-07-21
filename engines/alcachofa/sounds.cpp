@@ -35,10 +35,6 @@ using namespace Audio;
 
 namespace Alcachofa {
 
-Sounds::Playback::Playback(uint32 id, SoundHandle handle, Mixer::SoundType type)
-	: _id(id), _handle(handle), _type(type) {
-}
-
 void Sounds::Playback::fadeOut(uint32 duration) {
 	_fadeStart = g_system->getMillis();
 	_fadeDuration = MAX<uint32>(duration, 1);
@@ -141,11 +137,58 @@ SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::So
 	AudioStream *stream = openAudio(fileName);
 	if (stream == nullptr)
 		return UINT32_MAX;
-	SoundHandle handle;
-	_mixer->playStream(type, &handle, stream, -1, volume);
-	SoundID id = _nextID++;
-	_playbacks.push_back({ id, handle, type });
-	return id;
+
+	Array<int16> samples;
+	SeekableAudioStream *seekStream = dynamic_cast<SeekableAudioStream *>(stream);
+	if (type == Mixer::kSpeechSoundType && seekStream != nullptr) {
+		// for lip-sync we need access to the samples so we decode the entire stream now
+		int sampleCount = seekStream->getLength().totalNumberOfFrames();
+		if (sampleCount > 0) {
+			// we actually got a length
+			samples.resize((uint)sampleCount);
+			sampleCount = seekStream->readBuffer(samples.data(), sampleCount);
+			if (sampleCount < 0)
+				samples.clear();
+			samples.resize((uint)sampleCount); // we might have gotten less samples
+		}
+		else {
+			// we did not, not it is getting inefficient
+			const int bufferSize = 512;
+			int16 buffer[bufferSize];
+			int chunkSampleCount;
+			do {
+				chunkSampleCount = seekStream->readBuffer(buffer, bufferSize);
+				if (chunkSampleCount <= 0)
+					break;
+				samples.resize(samples.size() + chunkSampleCount);
+				copy(buffer, buffer + chunkSampleCount, samples.data() + sampleCount);
+				sampleCount += chunkSampleCount;
+			} while (chunkSampleCount >= bufferSize);
+		}
+
+		if (sampleCount > 0) {
+			stream = makeRawStream(
+				(byte *)samples.data(),
+				samples.size() * sizeof(int16),
+				seekStream->getRate(),
+				FLAG_16BITS |
+#ifdef SCUMM_LITTLE_ENDIAN
+				FLAG_LITTLE_ENDIAN | // readBuffer returns native endian
+#endif
+				(seekStream->isStereo() ? FLAG_STEREO : 0),
+				DisposeAfterUse::NO);
+			delete seekStream;
+		}
+	}
+
+	Playback playback;
+	_mixer->playStream(type, &playback._handle, stream, -1, volume);
+	playback._id = _nextID++;
+	playback._type = type;
+	playback._inputRate = stream->getRate();
+	playback._samples = std::move(samples);
+	_playbacks.push_back(std::move(playback));
+	return playback._id;
 }
 
 SoundID Sounds::playVoice(const String &fileName, byte volume) {
@@ -207,6 +250,36 @@ void Sounds::fadeOutVoiceAndSFX(uint32 duration) {
 		if (playback._type == Mixer::kSpeechSoundType || playback._type == Mixer::kSFXSoundType)
 			playback.fadeOut(duration);
 	}
+}
+
+bool Sounds::isNoisy(SoundID id, float windowSize, float minDifferences) {
+	assert(windowSize > 0 && minDifferences > 0);
+	const Playback *playback = getPlaybackById(id);
+	if (playback == nullptr ||
+		playback->_samples.empty() ||
+		!_mixer->isSoundHandleActive(playback->_handle))
+		return false;
+
+	minDifferences *= windowSize;
+	uint windowSizeInSamples = (uint)(windowSize * 0.001f * playback->_inputRate);
+	uint samplePosition = (uint)_mixer->getElapsedTime(playback->_handle)
+		.convertToFramerate(playback->_inputRate)
+		.totalNumberOfFrames();
+	uint endPosition = MIN(playback->_samples.size(), samplePosition + windowSizeInSamples);
+	if (samplePosition >= endPosition)
+		return false;
+
+	/* While both ScummVM and the original engine use signed int16 samples
+	 * For this noise detection the samples are reinterpret as uint16
+	 * This causes changes going through zero to be much more significant.
+	 */
+	float sumOfDifferences = 0;
+	const uint16 *samplePtr = (const uint16 *)playback->_samples.data();
+	for (uint i = samplePosition; i < endPosition - 1; i++)
+		// cast to int before to not be constrained by uint16
+		sumOfDifferences += ABS((int)samplePtr[i + 1] - samplePtr[i]);
+
+	return sumOfDifferences / 256.0f >= minDifferences;
 }
 
 PlaySoundTask::PlaySoundTask(Process &process, SoundID soundID)
