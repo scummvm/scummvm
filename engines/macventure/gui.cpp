@@ -502,6 +502,7 @@ bool Gui::loadWindows() {
 		bottom = res->readUint16BE();
 		right = res->readUint16BE();
 		data.type = (MVWindowType)res->readUint16BE();
+		data.objRef = 0;
 		data.bounds = Common::Rect(
 			left,
 			top,
