@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-21 12:14+0000\n"
-"PO-Revision-Date: 2025-06-29 23:36+0000\n"
+"PO-Revision-Date: 2025-07-22 06:36+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -3659,19 +3659,16 @@ msgid "Start anyway"
 msgstr "Inicia de totes maneres"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"AVÍS: El joc que esteu a punt d'iniciar encara no està completament suportat "
-"pel ScummVM. Com a tal, probablement serà inestable, i pot ser que les "
-"partides que deseu no funcionin en versions futures de ScummVM."
+"AVÍS: el joc que esteu a punt d'iniciar conté el complement «%s», que encara "
+"no està completament suportat pel ScummVM. Com a tal, probablement serà "
+"inestable, i pot ser que les partides que deseu no funcionin en versions "
+"futures de ScummVM."
 
 #: engines/engine.cpp:852
 #, c-format
@@ -5833,10 +5830,8 @@ msgid "Default keymappings"
 msgstr "Assignació de tecles per defecte"
 
 #: engines/access/metaengine.cpp:196
-#, fuzzy
-#| msgid "Move / Interact / Skip dialogue"
 msgid "Move / Interact / Skip"
-msgstr "Mou / Interactua / Omet el diàleg"
+msgstr "Mou / Interactua / Omet"
 
 #: engines/access/metaengine.cpp:208
 #, fuzzy
