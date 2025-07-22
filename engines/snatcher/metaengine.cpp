@@ -27,6 +27,8 @@
 #include "common/savefile.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "gui/ThemeEval.h"
+#include "gui/widgets/popup.h"
 #include "base/plugins.h"
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymapper.h"
@@ -51,6 +53,8 @@ public:
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	int getAutosaveSlot() const override { return 0; }
+
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -164,6 +168,92 @@ SaveStateDescriptor SnatcherMetaEngine::querySaveMetaInfos(const char *target, i
 	delete in;
 
 	return desc;
+}
+
+class SnatcherOptionsWidget : public GUI::OptionsContainerWidget {
+public:
+	SnatcherOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	void load() override;
+	bool save() override;
+private:
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+
+	GUI::PopUpWidget *_buttonConfPopup;
+	GUI::CheckboxWidget *_enableLightgunBox;
+	GUI::CheckboxWidget *_monoSoundBox;
+};
+
+GUI::OptionsContainerWidget *SnatcherMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+
+	switch (platform) {
+	case Common::kPlatformSegaCD:
+		return new SnatcherOptionsWidget(boss, name, target);
+		break;
+	default:
+		break;
+	}
+
+	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+}
+
+static const char *buttonConfStrings[6] = {
+	_s("A - Draw Blaster, B - Cancel, C - Select/Shoot"),
+	_s("A - Draw Blaster, B - Select/Shoot, C - Cancel"),
+	_s("A - Cancel, B - Draw Blaster, C - Select/Shoot"),
+	_s("A - Cancel, B - Select/Shoot, C - Draw Blaster"),
+	_s("A - Select/Shoot, B - Cancel, C - Draw Blaster"),
+	_s("A - Select/Shoot, B - Draw Blaster, C - Cancel")
+};	
+
+SnatcherOptionsWidget::SnatcherOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+	OptionsContainerWidget(boss, name, "SnatcherOptionsWidget", domain), _buttonConfPopup(nullptr), _enableLightgunBox(nullptr), _monoSoundBox(nullptr) {
+	GUI::StaticTextWidget *text = new GUI::StaticTextWidget(widgetsBoss(), "SnatcherOptionsWidget.ButtonRemapLabel", _("Buttons Config:"));
+	text->setAlign(Graphics::TextAlign::kTextAlignEnd);
+
+	_buttonConfPopup = new GUI::PopUpWidget(widgetsBoss(), "SnatcherOptionsWidget.ButtonRemapPopup",_("Select Controller Buttons Config"));
+	assert(_buttonConfPopup);
+	for (int i = 0; i < ARRAYSIZE(buttonConfStrings); ++i) {
+		Common::U32String entryLabel = Common::U32String(buttonConfStrings[i]);
+		_buttonConfPopup->appendEntry(entryLabel, i);
+	}
+	_buttonConfPopup->setSelected(0);
+
+	_enableLightgunBox = new GUI::CheckboxWidget(widgetsBoss(), "SnatcherOptionsWidget.EnableLightgunBox", _("Enable Lightgun"), _("Enable lightgun emulation via mouse."));
+	assert(_enableLightgunBox);
+	_monoSoundBox = new GUI::CheckboxWidget(widgetsBoss(), "SnatcherOptionsWidget.MonoSoundBox", _("Mono Sound Mode"), _("Disable stereo sound."));
+	assert(_monoSoundBox);
+}
+
+void SnatcherOptionsWidget::load() {
+	_buttonConfPopup->setSelected(ConfMan.hasKey("controller_conf", _domain) ? ConfMan.getInt("controller_conf", _domain) : 0);
+	_enableLightgunBox->setState(ConfMan.hasKey("lightgun_usage", _domain) && ConfMan.getBool("lightgun_usage", _domain));
+	_monoSoundBox->setState(!ConfMan.hasKey("disable_stereo", _domain) || ConfMan.getBool("disable_stereo", _domain));
+}
+
+bool SnatcherOptionsWidget::save() {
+	ConfMan.setInt("controller_conf", _buttonConfPopup->getSelected(), _domain);
+	ConfMan.setBool("lightgun_usage", _enableLightgunBox->getState(), _domain);
+	ConfMan.setBool("disable_stereo", _monoSoundBox->getState(), _domain);
+	return true;
+}
+
+void SnatcherOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical)
+			.addLayout(GUI::ThemeLayout::kLayoutHorizontal)
+				.addPadding(0, 30, 0, 0)
+				.addWidget("ButtonRemapLabel", "OptionsLabel")
+				.addPadding(10, 0, 0, 0)
+				.addSpace(10)
+				.addWidget("ButtonRemapPopup", "PopupWidget")
+			.closeLayout()
+			.addPadding(0, 0, 10, 0)
+			.addWidget("EnableLightgunBox", "Checkbox")	
+			.addPadding(0, 0, 10, 0)
+			.addWidget("MonoSoundBox", "Checkbox")
+		.closeLayout()
+	.closeDialog();
 }
 
 const char *const kLightGunKeymapName = "snlightgun";
