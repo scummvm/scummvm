@@ -1460,6 +1460,7 @@ private:
 	CString m_strTitle;
 	UINT m_nIDHelp = 0;
 	static const CRect rectDefault;
+	CView *m_pViewActive = nullptr;
 
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
@@ -1500,6 +1501,11 @@ public:
 
 	BOOL LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
 		CWnd *pParentWnd, CCreateContext *pContext);
+
+	CView *GetActiveView() const;
+	void SetActiveView(CView *pViewNew, BOOL bNotify = TRUE);
+	void OnSetFocus(CWnd *pOldWnd);
+	CDocument *GetActiveDocument();
 };
 
 class CDialog : public CWnd {
@@ -1697,9 +1703,7 @@ class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
 
 protected:
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
-		return true;
-	}
+	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
 
 	DECLARE_MESSAGE_MAP()
 
@@ -1710,8 +1714,20 @@ public:
 	~CView() override {
 	}
 
+	int OnCreate(LPCREATESTRUCT lpcs);
+	void OnDestroy();
+	void PostNcDestroy();
+
 	void OnInitialUpdate();
 	void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
+	virtual void OnActivateView(BOOL, CView *, CView *) {}
+
+	CFrameWnd *GetParentFrame() const {
+		return dynamic_cast<CFrameWnd *>(m_pParentWnd);
+	}
+	CDocument *GetDocument() const {
+		return m_pDocument;
+	}
 };
 
 class CScrollView : public CView {

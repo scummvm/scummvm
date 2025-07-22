@@ -145,5 +145,48 @@ BOOL CFrameWnd::Create(LPCSTR lpszClassName,
 	return TRUE;
 }
 
+CView *CFrameWnd::GetActiveView() const {
+	ASSERT(m_pViewActive == NULL ||
+		m_pViewActive->IsKindOf(RUNTIME_CLASS(CView)));
+	return m_pViewActive;
+}
+
+void CFrameWnd::SetActiveView(CView *pViewNew, BOOL bNotify) {
+	CView *pViewOld = m_pViewActive;
+	if (pViewNew == pViewOld)
+		return;     // do not re-activate if SetActiveView called more than once
+
+	m_pViewActive = NULL;   // no active for the following processing
+
+	// deactivate the old one
+	if (pViewOld != NULL)
+		pViewOld->OnActivateView(FALSE, pViewNew, pViewOld);
+
+	// if the OnActivateView moves the active window,
+	//    that will veto this change
+	if (m_pViewActive != NULL)
+		return;     // already set
+	m_pViewActive = pViewNew;
+
+	// activate
+	if (pViewNew != NULL && bNotify)
+		pViewNew->OnActivateView(TRUE, pViewNew, pViewOld);
+}
+
+void CFrameWnd::OnSetFocus(CWnd *pOldWnd) {
+	if (m_pViewActive != NULL)
+		m_pViewActive->SetFocus();
+	else
+		CWnd::OnSetFocus(pOldWnd);
+}
+
+CDocument *CFrameWnd::GetActiveDocument() {
+	ASSERT_VALID(this);
+	CView *pView = GetActiveView();
+	if (pView != NULL)
+		return pView->GetDocument();
+	return NULL;
+}
+
 } // namespace MFC
 } // namespace Bagel

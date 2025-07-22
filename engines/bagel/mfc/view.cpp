@@ -29,12 +29,51 @@ IMPLEMENT_DYNAMIC(CView, CWnd)
 BEGIN_MESSAGE_MAP(CView, CWnd)
 END_MESSAGE_MAP()
 
+BOOL CView::PreCreateWindow(CREATESTRUCT &cs) {
+	assert(cs.style & WS_CHILD);
+	return TRUE;
+}
+
+int CView::OnCreate(LPCREATESTRUCT lpcs) {
+	if (CWnd::OnCreate(lpcs) == -1)
+		return -1;
+
+	// If ok, wire in the current document
+	assert(m_pDocument == nullptr);
+	CCreateContext *pContext = (CCreateContext *)lpcs->lpCreateParams;
+
+	// A view should be created in a given context!
+	if (pContext != nullptr && pContext->m_pCurrentDoc != nullptr) {
+		pContext->m_pCurrentDoc->AddView(this);
+		assert(m_pDocument != nullptr);
+	} else {
+		warning("Creating a pane with no CDocument.\n");
+	}
+
+	return 0;
+}
+
+void CView::OnDestroy() {
+	CFrameWnd *pFrame = GetParentFrame();
+	if (pFrame != nullptr && pFrame->GetActiveView() == this)
+		pFrame->SetActiveView(nullptr);    // deactivate during death
+	CWnd::OnDestroy();
+}
+
+// self destruction
+void CView::PostNcDestroy() {
+	// default for views is to allocate them on the heap
+	//  the default post-cleanup is to 'delete this'.
+	//  never explicitly call 'delete' on a view
+	delete this;
+}
+
 void CView::OnInitialUpdate() {
 	OnUpdate(nullptr, 0, nullptr);
 }
 
 void CView::OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/) {
-	ASSERT(pSender != this);
+	assert(pSender != this);
 	Invalidate(TRUE);
 }
 
