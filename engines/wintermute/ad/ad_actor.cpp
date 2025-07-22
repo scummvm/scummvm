@@ -1469,6 +1469,9 @@ int32 AdActor::getHeight() {
 
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
+	if (animName.empty())
+		return nullptr;
+
 	for (uint32 i = 0; i < _anims.getSize(); i++) {
 		if (animName.compareToIgnoreCase(_anims[i]->getName()) == 0) {
 			return _anims[i];
