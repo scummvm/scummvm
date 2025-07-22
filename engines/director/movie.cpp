@@ -745,12 +745,8 @@ void InfoEntry::writeString(Common::String string, bool pascal) {
 
 	data = (byte *)malloc(len);
 
-	uint16 start = pascal ? 1 : 0; 
-	
-	for (uint16 i = start; i < len && string.size(); i++) {
-		data[i] = string.firstChar();
-		string.deleteChar(0);
-	}
+	uint16 start = pascal ? 1 : 0;
+	memcpy(data + start, string.c_str(), string.size());
 }
 
 } // End of namespace Director

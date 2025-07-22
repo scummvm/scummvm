@@ -988,7 +988,7 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s", 
+	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s",
 		_ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str(), Common::toPrintable(_rtext).c_str());
 
 	uint32 stxtSize = getSTXTResourceSize() + 8;
@@ -1017,12 +1017,12 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 
 	uint32 it = 0;
 	uint32 pIndex = 0;
-	
+
 	if (!_ftext.empty()) {
 		while (it < _ftext.size() - 1) {
 			if (_ftext[it] == '\001' && _ftext[it + 1] == '\016') {
 				// Styling header found
-				debugC(3, kDebugSaving, "Format start offset: %d, text: %s", style.formatStartOffset, 
+				debugC(3, kDebugSaving, "Format start offset: %d, text: %s", style.formatStartOffset,
 					Common::toPrintable(_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset)).encode().c_str());
 
 				Common::CodePage encoding = detectFontEncoding(_cast->_platform, style.fontId);
@@ -1065,7 +1065,7 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 		pIndex = _ptext.size() - 1;
 	}
 
-	debugC(3, kDebugSaving, "format start offset: %d, text: %s", style.formatStartOffset, 
+	debugC(3, kDebugSaving, "format start offset: %d, text: %s", style.formatStartOffset,
 		Common::toPrintable(_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset)).encode().c_str());
 
 	Common::CodePage encoding = detectFontEncoding(_cast->_platform, style.fontId);
@@ -1073,7 +1073,7 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 	rawText += _ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
 
 	debug("ptext length: %d, rawText length: %d", _ptext.size(), rawText.size());
-	uint64 currentPos = writeStream->pos(); 	
+	uint64 currentPos = writeStream->pos();
 	writeStream->seek(textPos);
 	writeStream->writeString(rawText);
 	writeStream->seek(currentPos);
@@ -1097,16 +1097,21 @@ uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream,
 }
 
 uint32 TextCastMember::getSTXTResourceSize() {
-	// Header (offset, string length, data length) + text string + data (FontStyle) 
+	// Header (offset, string length, data length) + text string + data (FontStyle)
 	return 12 + _ptext.size() + getFormattingCount() * 20 + 2;
 }
 
 uint8 TextCastMember::getFormattingCount() {
+	if (_ftext.c_str() == nullptr) {
+		warning("TextCastMember::getFormattingCount(): The Text cast member has invalid formatted text");
+		return 0;
+	}
+
 	if (_ftext.empty()) {
 		return 0;
 	}
 
-	uint8 count = 0;	
+	uint8 count = 0;
 	for (uint32 i = 0; i < _ftext.size() - 1; i++) {
 		if (_ftext[i] == '\001' && _ftext[i + 1] == '\016') {
 			count++;

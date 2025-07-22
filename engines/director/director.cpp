@@ -383,8 +383,8 @@ Common::Error DirectorEngine::run() {
 	_system->setImGuiCallbacks(ImGuiCallbacks());
 #endif
 
-	if (debugChannelSet(-1, kDebugSaving)) {
-		Common::Path writePath("./dumps/writtenMovie.dir");
+	if (debugChannelSet(10, kDebugSaving)) {
+		Common::Path writePath;
 		_mainArchive->writeToFile(writePath, getCurrentMovie());
 	}
 
