@@ -1877,7 +1877,6 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "RemoveEffect") == 0) {
 		stack->correctParams(1);
 		const char *materialName = stack->pop()->getString();
-		stack->pop();
 
 		if (_xmodel && _xmodel->removeMaterialEffect(materialName)) {
 			stack->pushBool(true);
