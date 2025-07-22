@@ -346,7 +346,7 @@
 		AD_ENTRY1s("bmu47D310.bcd1", "cac210f0c5c7d13667a84072d2f3947c", 324),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_ADDON | ADGF_UNSTABLE,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
@@ -361,7 +361,7 @@
 		AD_ENTRY1s("blg47D310.bcd1", "cbbb2ab6399776ae3ec14c4c2edb1a96", 327),
 		DE_DEU,
 		kPlatformWindows,
-		ADGF_ADDON | ADGF_UNSTABLE,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 	kFeatures800x600,
