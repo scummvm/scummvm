@@ -127,13 +127,13 @@ bool Mesh3DS::fillVertexBuffer(uint32 color) {
 //////////////////////////////////////////////////////////////////////////
 void Mesh3DS::computeNormals() {
 	DXVector3 *normals = new DXVector3[_numVertices];
-	for (int i = 0; i < _numVertices; ++i) {
+	for (uint32 i = 0; i < _numVertices; i++) {
 		normals[i]._x = 0.0f;
 		normals[i]._y = 0.0f;
 		normals[i]._z = 0.0f;
 	}
 
-	for (int i = 0; i < _numFaces; ++i) {
+	for (uint32 i = 0; i < _numFaces; i++) {
 		uint16 a = _faces[i]._vertices[0];
 		uint16 b = _faces[i]._vertices[1];
 		uint16 c = _faces[i]._vertices[2];
@@ -154,8 +154,8 @@ void Mesh3DS::computeNormals() {
 	}
 
 	// Assign the newly computed normals back to the vertices
-	for (int i = 0; i < _numFaces; ++i) {
-		for (int j = 0; j < 3; j++) {
+	for (uint32 i = 0; i < _numFaces; i++) {
+		for (uint32 j = 0; j < 3; j++) {
 			DXVec3Normalize(&_faces[i]._normals[j], &normals[_faces[i]._vertices[j]]);
 			//_faces[i]._normals[j] = normals[_faces[i]._vertices[j]];
 		}
