@@ -77,7 +77,8 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	ResourceMap castResMap = _types[MKTAG('C', 'A', 'S', 't')];
 
 	for (auto &it : builtResources) {
-		debugC(5, kDebugSaving, "RIFXArchive::writeToFile: writing resource '%s': index: %d, size: %d, offset = %d", tag2str(it->tag), it->index, it->size, it->offset);
+		debugC(5, kDebugSaving, "RIFXArchive::writeToFile: writing resource '%s': index: %d, size: %d, offset = %d, index: %d",
+			tag2str(it->tag), it->index, it->size, it->offset, it->index);
 
 		switch (it->tag) {
 		case MKTAG('R', 'I', 'F', 'X'):
@@ -151,7 +152,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			break;
 
 		default:
-            debugC(7, kDebugLoading, "Saving resource %s as it is, without modification", tag2str(it->tag));
+            debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
 			writeStream->seek(it->offset);
 			writeStream->writeUint32LE(it->tag);
 			writeStream->writeUint32LE(it->size);
@@ -161,7 +162,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 	}
 
 	if (path.empty()) {
-		path = Common::Path(movie->getMacName());
+		path = g_director->_gameDataDir.getPath().join(Common::Path(movie->getMacName()));
 	}
 
 	Common::DumpFile out;
@@ -171,7 +172,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 		out.write(dumpData, _size);
 		out.flush();
 		out.close();
-		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", path.toString().c_str());
+		debugC(3, kDebugSaving, "RIFXArchive::writeStream:Saved the movie as file %s", path.toString().c_str());
 	} else {
 		warning("RIFXArchive::writeStream: Error saving the file %s", path.toString().c_str());
 	}
@@ -622,7 +623,19 @@ uint32 RIFXArchive::getCASResourceSize(uint32 castLib) {
 
 uint32 RIFXArchive::getKeyTableResourceSize() {
 	// 12 bytes of header + 12 * number of entries
-	return 12 + _keyTableUsedCount * 12;
+	uint32 size = 0;
+	for (auto &childTag : _keyData) {
+		KeyMap keyMap = childTag._value;
+
+		for (auto &parentIndex : keyMap) {
+			KeyArray keyArray = parentIndex._value;
+
+			for (auto _ : keyArray) {
+				size += 12;
+			}
+		}
+	}
+	return size + 12;
 }
 
 void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize) {
