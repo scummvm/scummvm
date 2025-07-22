@@ -27,6 +27,8 @@
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo_journal.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -94,16 +96,6 @@ ScalpelJournal::ScalpelJournal(SherlockEngine *vm) : Journal(vm) {
 	_fixedTextFirstPage = FIXED(Journal_FirstPage);
 	_fixedTextLastPage = FIXED(Journal_LastPage);
 	_fixedTextPrintText = FIXED(Journal_PrintText);
-
-	_hotkeyExit = toupper(_fixedTextExit[0]);
-	_hotkeyBack10 = toupper(_fixedTextBack10[0]);
-	_hotkeyUp = toupper(_fixedTextUp[0]);
-	_hotkeyDown = toupper(_fixedTextDown[0]);
-	_hotkeyAhead10 = toupper(_fixedTextAhead10[0]);
-	_hotkeySearch = toupper(_fixedTextSearch[0]);
-	_hotkeyFirstPage = toupper(_fixedTextFirstPage[0]);
-	_hotkeyLastPage = toupper(_fixedTextLastPage[0]);
-	_hotkeyPrintText = toupper(_fixedTextPrintText[0]);
 
 	_fixedTextSearchExit = FIXED(JournalSearch_Exit);
 	_fixedTextSearchBackward = FIXED(JournalSearch_Backward);
@@ -342,7 +334,7 @@ JournalButton ScalpelJournal::getHighlightedButton(const Common::Point &pt) {
 	return BTN_NONE;
 }
 
-bool ScalpelJournal::handleEvents(int key) {
+bool ScalpelJournal::handleEvents(Common::CustomEventType action) {
 	Events    &events    = *_vm->_events;
 	ScalpelScreen &screen = *(ScalpelScreen *)_vm->_screen;
 	bool doneFlag = false;
@@ -424,7 +416,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		// Exit button pressed
 		doneFlag = true;
 
-	} else if (((btn == BTN_BACK10 && events._released) || key == _hotkeyBack10) && (_page > 1)) {
+	} else if (((btn == BTN_BACK10 && events._released) || action == kActionScalpelJournalBack10) && (_page > 1)) {
 		// Scrolll up 10 pages
 		if (_page < 11)
 			drawJournal(1, (_page - 1) * LINES_PER_PAGE);
@@ -434,19 +426,19 @@ bool ScalpelJournal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((btn == BTN_UP && events._released) || key == _hotkeyUp) && _up) {
+	} else if (((btn == BTN_UP && events._released) || action == kActionScalpelJournalUp) && _up) {
 		// Scroll up
 		drawJournal(1, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((btn == BTN_DOWN && events._released) || key == _hotkeyDown) && _down) {
+	} else if (((btn == BTN_DOWN && events._released) || action == kActionScalpelJournalDown) && _down) {
 		// Scroll down
 		drawJournal(2, LINES_PER_PAGE);
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((btn == BTN_AHEAD110 && events._released) || key == _hotkeyAhead10) && _down) {
+	} else if (((btn == BTN_AHEAD110 && events._released) || action == kActionScalpelJournalAhead10) && _down) {
 		// Scroll down 10 pages
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
@@ -456,9 +448,12 @@ bool ScalpelJournal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((btn == BTN_SEARCH && events._released) || key == _hotkeySearch) && !_journal.empty()) {
+	} else if (((btn == BTN_SEARCH && events._released) || action == kActionScalpelJournalSearch) && !_journal.empty()) {
 		screen.buttonPrint(getButtonTextPoint(BTN_SEARCH), COMMAND_FOREGROUND, true, _fixedTextSearch);
 		bool notFound = false;
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->disableAllGameKeymaps();
 
 		do {
 			int dir;
@@ -487,7 +482,10 @@ bool ScalpelJournal::handleEvents(int key) {
 		} while (!doneFlag);
 		doneFlag = false;
 
-	} else if (((btn == BTN_FIRST_PAGE && events._released) || key == _hotkeyFirstPage) && _up) {
+		keymapper->getKeymap("scalpel-journal")->setEnabled(true);
+		keymapper->getKeymap("scalpel-quit")->setEnabled(true);
+
+	} else if (((btn == BTN_FIRST_PAGE && events._released) || action == kActionScalpelJournalFirstPage) && _up) {
 		// First page
 		_index = _sub = 0;
 		_up = _down = false;
@@ -498,7 +496,7 @@ bool ScalpelJournal::handleEvents(int key) {
 		doArrows();
 		screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
 
-	} else if (((btn == BTN_LAST_PAGE && events._released) || key == _hotkeyLastPage) && _down) {
+	} else if (((btn == BTN_LAST_PAGE && events._released) || action == kActionScalpelJournalLastPage) && _down) {
 		// Last page
 		if ((_page + 10) > _maxPage)
 			drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
@@ -565,6 +563,7 @@ int ScalpelJournal::getSearchString(bool printError) {
 		}
 
 		events.clearKeyboard();
+		events.clearActions();
 		screen._backBuffer1.fillRect(Common::Rect(13, 186, 306, 195), BUTTON_MIDDLE);
 
 		if (!_find.empty()) {
