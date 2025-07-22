@@ -46,21 +46,19 @@ BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
 }
 
 void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
-#ifdef TODO
 	// if the frame does not have an active view, set to first pane
 	CView *pView = nullptr;
-	if (GetActiveView() == nullptr)
-	{
-		CWnd *pWnd = GetDescendantWindow(AFX_IDW_PANE_FIRST, TRUE);
-		if (pWnd != nullptr && pWnd->IsKindOf(RUNTIME_CLASS(CView)))
-		{
+	if (GetActiveView() == nullptr) {
+		CWnd *pWnd = _children.empty() ? nullptr :
+			_children.begin()->_value;
+
+		if (pWnd != nullptr && pWnd->IsKindOf(RUNTIME_CLASS(CView))) {
 			pView = (CView *)pWnd;
 			SetActiveView(pView, FALSE);
 		}
 	}
 
-	if (bMakeVisible)
-	{
+	if (bMakeVisible) {
 		// send initial update to all views (and other controls) in the frame
 		SendMessageToDescendants(WM_INITIALUPDATE, 0, 0, TRUE, TRUE);
 
@@ -72,12 +70,13 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 		// (send the default show command unless the main desktop window)
 		int nCmdShow = -1;      // default
 		CWinApp *pApp = AfxGetApp();
-		if (pApp != nullptr && pApp->m_pMainWnd == this)
-		{
+		if (pApp != nullptr && pApp->m_pMainWnd == this) {
 			nCmdShow = pApp->m_nCmdShow; // use the parameter from WinMain
 			pApp->m_nCmdShow = -1; // set to default after first time
 		}
+
 		ActivateFrame(nCmdShow);
+
 		if (pView != nullptr)
 			pView->OnActivateView(TRUE, pView, pView);
 	}
@@ -85,8 +84,8 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 	// update frame counts and frame title (may already have been visible)
 	if (pDoc != nullptr)
 		pDoc->UpdateFrameCounts();
+
 	OnUpdateFrameTitle(TRUE);
-#endif
 }
 
 BOOL CFrameWnd::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
@@ -187,6 +186,15 @@ CDocument *CFrameWnd::GetActiveDocument() {
 		return pView->GetDocument();
 	return NULL;
 }
+
+void CFrameWnd::ActivateFrame(int nCmdShow) {
+	// TODO: CFrameWnd::ActivateFrame
+}
+
+void CFrameWnd::OnUpdateFrameTitle(BOOL bAddToTitle) {
+	// TODO: CFrameWnd::OnUpdateFrameTitle
+}
+
 
 } // namespace MFC
 } // namespace Bagel

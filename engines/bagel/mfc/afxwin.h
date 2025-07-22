@@ -1462,6 +1462,9 @@ private:
 	static const CRect rectDefault;
 	CView *m_pViewActive = nullptr;
 
+	void ActivateFrame(int nCmdShow);
+	void OnUpdateFrameTitle(BOOL bAddToTitle);
+
 protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
@@ -1721,6 +1724,7 @@ public:
 	void OnInitialUpdate();
 	void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
 	virtual void OnActivateView(BOOL, CView *, CView *) {}
+	virtual void OnActivateFrame(UINT nState, CFrameWnd *pFrameWnd) {}
 
 	CFrameWnd *GetParentFrame() const {
 		return dynamic_cast<CFrameWnd *>(m_pParentWnd);
