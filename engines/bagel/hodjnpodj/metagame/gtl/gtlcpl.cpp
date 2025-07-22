@@ -35,12 +35,7 @@ namespace Gtl {
 // ****** Note: Make this a 2-pass compile, defining labels
 //	on the first pass.
 
-
-//* CGtlData::Compile -- compile .gtl file to internal objects
-int CGtlData::Compile(const char *xpszPathName)
-// xpszPathName -- input file name
-// returns: TRUE if error, FALSE otherwise
-{
+int CGtlData::Compile(const char *xpszPathName) {
 	int iError = 0 ;        // error code
 	BOOL bDone ;        // loop termination variable
 	char szOut[100] ;

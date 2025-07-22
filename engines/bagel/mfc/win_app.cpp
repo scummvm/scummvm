@@ -107,8 +107,6 @@ int CWinApp::Run() {
 	// Ensure app has been initialized
 	assert(_defaultFont._font);
 
-	InitInstance();
-
 	SetCursor(LoadCursor(IDC_ARROW));
 
 	if (!m_pMainWnd) {
@@ -415,6 +413,10 @@ int GetSystemMetrics(int nIndex) {
 		return Gfx::CURSOR_W;
 	case SM_CYCURSOR:
 		return Gfx::CURSOR_H;
+	case SM_CXSCREEN:
+		return g_system->getWidth();
+	case SM_CYSCREEN:
+		return g_system->getHeight();
 	default:
 		error("TODO: GetSystemMetrics");
 		break;

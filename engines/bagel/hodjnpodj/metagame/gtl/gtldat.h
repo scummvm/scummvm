@@ -450,8 +450,13 @@ public:
 
 	// gtlcpl.cpp -- compiler for graphics utility
 
-	//- Compile -- compile .gtl file to internal objects
-	int Compile(const char * xpszPathName) ;
+	/**
+	 * Compile .gtl file to internal objects.
+	 * @param xpszPathName	Input file name
+	 * @returns		TRUE if error, FALSE otherwise
+	 */
+	int Compile(const char *xpszPathName);
+
 	//- ParseLine -- parse input line
 	BOOL ParseLine(void) ;
 	//- ParseInteger -- parse integer, store into node structure

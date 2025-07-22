@@ -83,6 +83,7 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	theApp->addResources("hnpmeta.dll");
 	theApp->addFontResource("msserif.fon");
 	theApp->InitApplication();
+	theApp->InitInstance();
 
 	#if RETAIN_META_DLL
 	if (bMetaLoaded) {
