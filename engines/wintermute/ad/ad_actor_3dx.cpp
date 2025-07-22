@@ -2225,8 +2225,7 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	// DirectionAngle / DirAngle
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "DirectionAngle") == 0 || strcmp(name, "DirAngle") == 0) {
-		_angle = value->getFloat();
-		BaseUtils::normalizeAngle(_angle);
+		_angle = BaseUtils::normalizeAngle(value->getFloat());
 		return true;
 	}
 
