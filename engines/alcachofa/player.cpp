@@ -207,10 +207,7 @@ struct DoorTask : public Task {
 			g_engine->game().unknownDoorTargetDoor(door->targetRoom(), door->targetObject());
 			return;
 		}
-		auto targetDoor = dynamic_cast<const Door *>(_targetObject);
-		_targetDirection = targetDoor == nullptr
-			? _targetObject->interactionDirection()
-			: targetDoor->characterDirection();
+		_targetDirection = door->characterDirection();
 
 		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetObject->name().c_str());
 	}
