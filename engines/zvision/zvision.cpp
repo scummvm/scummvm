@@ -39,6 +39,7 @@
 #include "zvision/core/console.h"
 #include "zvision/file/file_manager.h"
 #include "zvision/file/save_manager.h"
+#include "zvision/file/zfs_archive.h"
 #include "zvision/graphics/render_manager.h"
 #include "zvision/graphics/cursors/cursor_manager.h"
 #include "zvision/scripting/menu.h"
@@ -395,14 +396,24 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	SearchMan.setIgnoreClashes(true);
 	SearchMan.addDirectory(gamePath, 0, 5, true);
 	SearchMan.addSubDirectoryMatching(gameDataDir, "FONTS");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "addon");	// TODO - load zfs files found here and make sure they take priority over all others.
 	
+	//Ensure extras take first search priority 
 	if (ConfMan.hasKey("extrapath")) {
 		Common::Path gameExtraPath = ConfMan.getPath("extrapath");
 		const Common::FSNode gameExtraDir(gameExtraPath);
 		SearchMan.addDirectory(gameExtraPath, 0, 1, true);
 		SearchMan.addSubDirectoryMatching(gameExtraDir, "auxvid");
 		SearchMan.addSubDirectoryMatching(gameExtraDir, "auxscr");
+	}
+	
+	// Ensure addons (game patches) take search priority over files listed in .zix files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "addon");
+	Common::ArchiveMemberList listAddon;
+	SearchMan.listMatchingMembers(listAddon,"*.zfs");
+	for (auto member : listAddon) {
+		Common::Path path(member->getPathInArchive());
+		ZfsArchive *archive = new ZfsArchive(path);
+		SearchMan.add(path.toString(), archive);
 	}
 	
 	switch (getGameId()) {
