@@ -210,14 +210,14 @@ void WidgetMessage::handleEvents() {
 
 	// Check if a mouse or keypress has occurred, or the display counter has expired
 	if (events._pressed || events._released || events._rightPressed || events._rightReleased ||
-			ui._keyState.keycode || !_menuCounter) {
+			ui._keyState.keycode || !_menuCounter || ui._action) {
 		// Close the window
 		banishWindow();
 
 		// Reset cursor and switch back to standard mode
 		events.setCursor(ARROW);
 		events.clearEvents();
-		ui._key = -1;
+		ui._action = kActionNone;
 		ui._oldBgFound = -1;
 		ui._menuMode = STD_MODE;
 	}

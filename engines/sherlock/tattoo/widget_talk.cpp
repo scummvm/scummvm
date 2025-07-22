@@ -28,6 +28,8 @@
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -105,6 +107,12 @@ void WidgetTalk::load() {
 
 	// Form the background for the new window
 	makeInfoArea();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-scrolling")->setEnabled(true);
+	keymapper->getKeymap("tattoo-talk")->setEnabled(true);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
 }
 
 void WidgetTalk::handleEvents() {
@@ -117,6 +125,7 @@ void WidgetTalk::handleEvents() {
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	Common::KeyCode keycode = ui._keyState.keycode;
+	Common::CustomEventType action = ui._action;
 	bool hotkey = false;
 	bool callParrotFile = false;
 
@@ -157,13 +166,13 @@ void WidgetTalk::handleEvents() {
 	}
 
 	// Check for the tab keys
-	if (keycode == Common::KEYCODE_TAB && ui._scrollHighlight == SH_NONE) {
+	if ((action == kActionTattooTalkNext || action == kActionTattooTalkPrevious) && ui._scrollHighlight == SH_NONE) {
 		if (_selector == -1) {
 			_selector = _statementLines[_scroll ? _talkScrollIndex : 0]._num;
 
 			events.warpMouse(Common::Point(_bounds.right - BUTTON_SIZE - 10, _bounds.top + _surface.fontHeight() + 2));
 		} else {
-			if (ui._keyState.flags & Common::KBD_SHIFT) {
+			if (action == kActionTattooTalkPrevious) {
 				_selector = (mousePos.y - _bounds.top - 5) / (_surface.fontHeight() + 1) + _talkScrollIndex;
 				if (_statementLines[_selector]._num == _statementLines[_talkScrollIndex]._num) {
 					_selector = (_bounds.height() - 10) / (_surface.fontHeight() + 1) + _talkScrollIndex;
@@ -220,14 +229,16 @@ void WidgetTalk::handleEvents() {
 		_oldSelector = _selector;
 	}
 
-	if (events._released || events._rightReleased || keycode == Common::KEYCODE_ESCAPE || hotkey) {
+	if (events._released || events._rightReleased || action == kActionTattooExit || hotkey) {
 		events.clearEvents();
 		_dialogTimer = 0;
 		ui._scrollHighlight = SH_NONE;
 
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 		// See if they want to close the menu (click outside the window or Escape pressed)
-		if ((_outsideMenu && !_bounds.contains(mousePos)) || keycode == Common::KEYCODE_ESCAPE) {
-			if (keycode == Common::KEYCODE_ESCAPE)
+		if ((_outsideMenu && !_bounds.contains(mousePos)) || action == kActionTattooExit) {
+			if (action == kActionTattooExit)
 				_selector = -1;
 
 			talk.freeTalkVars();
@@ -243,6 +254,11 @@ void WidgetTalk::handleEvents() {
 			banishWindow();
 			ui._menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
+			keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
+			keymapper->getKeymap("tattoo-talk")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
+
 			if (scene._currentScene == WEARY_PUNT)
 				callParrotFile = true;
 		}
@@ -254,6 +270,11 @@ void WidgetTalk::handleEvents() {
 			if (!talk._talkHistory[talk._converseNum][_selector] && talk._statements[_selector]._journal)
 				journal.record(talk._converseNum, _selector);
 			talk._talkHistory[talk._converseNum][_selector] = true;
+
+			keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
+			keymapper->getKeymap("tattoo-talk")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 
 			banishWindow();
 			talk._speaker = _vm->readFlags(FLAG_PLAYER_IS_HOLMES) ? HOLMES : WATSON;

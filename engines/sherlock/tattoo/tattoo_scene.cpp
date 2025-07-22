@@ -27,6 +27,8 @@
 #include "sherlock/events.h"
 #include "sherlock/people.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -77,6 +79,9 @@ bool TattooScene::loadScene(const Common::Path &filename) {
 		vm._runningProlog = false;
 		events.showCursor();
 		talk._talkToAbort = false;
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("tattoo-prolog")->setEnabled(false);
 	}
 
 	// Check if it's a scene we need to keep track of how many times we've visited
@@ -683,12 +688,12 @@ int TattooScene::startCAnim(int cAnimNum, int playRate) {
 		// Draw the frame
 		doBgAnim();
 
-		// Check for Escape key being pressed to abort animation
+		// Check for skip prolog action being pressed to abort animation
 		events.pollEvents();
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
 
-			if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+			if (action == kActionTattooSkipProlog && vm._runningProlog) {
 				_vm->setFlags(-76);
 				_vm->setFlags(396);
 				_goToScene = STARTING_GAME_SCENE;
@@ -823,6 +828,9 @@ void TattooScene::synchronize(Serializer &s) {
 		// In case we were showing the intro prologue or the ending credits, stop them
 		vm._runningProlog = false;
 		ui._creditsWidget.close();
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("tattoo-prolog")->setEnabled(false);
 	}
 }
 

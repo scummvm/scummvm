@@ -26,6 +26,8 @@
 
 #include "common/algorithm.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 static const int NO_FRAMES = FRAMES_END;
@@ -69,6 +71,10 @@ bool Animation::play(const Common::Path &filename, bool intro, int minDelay, int
 		if (fade != 255)
 			screen.setPalette(images._palette);
 	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("animation")->setEnabled(true);
 
 	int frameNumber = 0;
 	Common::Point pt;
@@ -124,10 +130,9 @@ bool Animation::play(const Common::Path &filename, bool intro, int minDelay, int
 			events.wait(speed * 3);
 		}
 
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
-			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
-				keyState.keycode == Common::KEYCODE_SPACE) {
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
+			if (action == kActionSkipAnim) {
 				skipped = true;
 				break;
 			}
@@ -136,6 +141,11 @@ bool Animation::play(const Common::Path &filename, bool intro, int minDelay, int
 			break;
 		}
 	}
+
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
 
 	events.clearEvents();
 	sound.stopSound();
@@ -184,6 +194,10 @@ bool Animation::play3DO(const Common::Path &filename, bool intro, int minDelay, 
 		fadeActive = true;
 		fadeLimitColor = 0xCE59; // RGB565: 25, 50, 25 -> "grey"
 	}
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("animation")->setEnabled(true);
 
 	int frameNumber = 0;
 	Common::Point pt;
@@ -251,10 +265,9 @@ bool Animation::play3DO(const Common::Path &filename, bool intro, int minDelay, 
 			events.wait(speed * 3);
 		}
 
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
-			if (keyState.keycode == Common::KEYCODE_ESCAPE ||
-				keyState.keycode == Common::KEYCODE_SPACE) {
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
+			if (action == kActionSkipAnim) {
 				skipped = true;
 				break;
 			}
@@ -263,6 +276,11 @@ bool Animation::play3DO(const Common::Path &filename, bool intro, int minDelay, 
 			break;
 		}
 	}
+
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
 
 	events.clearEvents();
 	sound.stopSound();

@@ -24,6 +24,8 @@
 
 #include "sherlock/saveload.h"
 
+#include "common/events.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -41,21 +43,11 @@ public:
 	Common::String _fixedTextDown;
 	Common::String _fixedTextQuit;
 
-	byte _hotkeyExit;
-	byte _hotkeyLoad;
-	byte _hotkeySave;
-	byte _hotkeyUp;
-	byte _hotkeyDown;
-	byte _hotkeyQuit;
-
-	byte _hotkeysIndexed[6];
+	Common::CustomEventType _actionsIndexed[15];
 
 	Common::String _fixedTextQuitGameQuestion;
 	Common::String _fixedTextQuitGameYes;
 	Common::String _fixedTextQuitGameNo;
-
-	byte _hotkeyQuitGameYes;
-	byte _hotkeyQuitGameNo;
 
 public:
 	ScalpelSaveManager(SherlockEngine *vm, const Common::String &target);
@@ -87,9 +79,9 @@ public:
 	bool promptForDescription(int slot);
 
 	/**
-	 * Identifies a button number according to the key, that the user pressed
+	 * Identifies a button number according to the action, that the user pressed
 	 */
-	int identifyUserButton(int key);
+	int identifyUserButton(Common::CustomEventType action);
 };
 
 } // End of namespace Scalpel

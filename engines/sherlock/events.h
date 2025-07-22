@@ -61,6 +61,7 @@ public:
 	bool _oldRightButton;
 	bool _firstPress;
 	Common::Queue<Common::KeyState> _pendingKeys;
+	Common::Queue<Common::CustomEventType> _pendingActions;
 	Common::Point _hotspotPos;
 public:
 	Events(SherlockEngine *vm);
@@ -163,12 +164,22 @@ public:
 	bool kbHit() const { return !_pendingKeys.empty(); }
 
 	/**
+	 * Returns true if there's a pending action
+	 */
+	bool actionHit() const { return !_pendingActions.empty(); }
+
+	/**
 	 * Get a pending keypress
 	 */
 	Common::KeyState getKey();
 
 	/**
-	 * Clear any current keypress or mouse click
+	 * Get a pending action
+	 */
+	Common::CustomEventType getAction();
+
+	/**
+	 * Clear any current keypress, mouse click or action
 	 */
 	void clearEvents();
 
@@ -176,6 +187,11 @@ public:
 	 * Clear any pending keyboard inputs
 	 */
 	void clearKeyboard();
+
+	/**
+	 * Clear any pending actions
+	 */
+	void clearActions();
 
 	/**
 	 * Delay for a given number of game frames, where each frame is 1/60th of a second

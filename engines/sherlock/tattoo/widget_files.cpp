@@ -27,6 +27,8 @@
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -63,6 +65,11 @@ void WidgetFiles::show(SaveMode mode) {
 
 		summonWindow();
 		ui._menuMode = FILES_MODE;
+
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->getKeymap("tattoo")->setEnabled(false);
+		keymapper->getKeymap("tattoo-scrolling")->setEnabled(true);
+		keymapper->getKeymap("tattoo-files")->setEnabled(true);
 	} else if (mode == SAVEMODE_LOAD) {
 		showScummVMRestoreDialog();
 	} else {
@@ -166,7 +173,7 @@ void WidgetFiles::handleEvents() {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
-	Common::KeyState keyState = ui._keyState;
+	Common::CustomEventType action = ui._action;
 
 	// Handle scrollbar events
 	ScrollHighlight oldHighlight = ui._scrollHighlight;
@@ -184,22 +191,22 @@ void WidgetFiles::handleEvents() {
 		_selector = -1;
 	}
 
-	// Check for the Tab key
-	if (keyState.keycode == Common::KEYCODE_TAB) {
+	// Check for the slot change actions
+	if (action == kActionTattooFilesNextSlot || action == kActionTattooFilesNextPageSlot) {
 		// If the mouse is not over any of the filenames, move the mouse so that it points to the first one
 		if (_selector == -1) {
 			events.warpMouse(Common::Point(_bounds.right - BUTTON_SIZE - 20,
 				_bounds.top + _surface.fontHeight() * 2 + 8));
 		} else {
-			// See if we're doing Tab or Shift Tab
-			if (keyState.flags & Common::KBD_SHIFT) {
+			// See if we're doing Next Page Slot action
+			if (action == kActionTattooFilesNextPageSlot) {
 				// We're doing Shift Tab
 				if (_selector == _savegameIndex)
 					_selector = _savegameIndex + 4;
 				else
 					--_selector;
 			} else {
-				// We're doing Tab
+				// We're doing Next Slot action
 				++_selector;
 				if (_selector >= _savegameIndex + 5)
 					_selector = _savegameIndex;
@@ -218,10 +225,15 @@ void WidgetFiles::handleEvents() {
 	if (events._firstPress && !_bounds.contains(mousePos))
 		_outsideMenu = true;
 
-	if (events._released || events._rightReleased || keyState.keycode == Common::KEYCODE_ESCAPE) {
+	if (events._released || events._rightReleased || action == kActionTattooFilesSelect) {
 		ui._scrollHighlight = SH_NONE;
 
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 		if (_outsideMenu && !_bounds.contains(mousePos)) {
+			keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
+			keymapper->getKeymap("tattoo-files")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 		} else {
 			_outsideMenu = false;
@@ -231,9 +243,17 @@ void WidgetFiles::handleEvents() {
 					// We're in Load Mode
 					_vm->loadGameState(_selector);
 				} else if (_fileMode == SAVEMODE_SAVE) {
+					keymapper->getKeymap("tattoo-scrolling")->setEnabled(false);
+					keymapper->getKeymap("tattoo-files")->setEnabled(false);
+					keymapper->getKeymap("tattoo-files-name")->setEnabled(true);
+					keymapper->getKeymap("tattoo-exit")->setEnabled(true);
 					// We're in Save Mode
 					if (getFilename())
 						_vm->saveGameState(_selector, _savegames[_selector]);
+
+					keymapper->getKeymap("tattoo-files-name")->setEnabled(false);
+					keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+					keymapper->getKeymap("tattoo")->setEnabled(true);
 					close();
 				}
 			}
@@ -283,8 +303,8 @@ bool WidgetFiles::getFilename() {
 		Common::String charString = Common::String::format("%c", currentChar);
 		int width = screen.charWidth(currentChar);
 
-		// Wait for keypress
-		while (!events.kbHit()) {
+		// Wait for keypress or action
+		while (!events.kbHit() && !events.actionHit()) {
 			events.pollEventsAndWait();
 			events.setButtonState();
 
@@ -326,49 +346,6 @@ bool WidgetFiles::getFilename() {
 
 				_surface.fillRect(Common::Rect(pt.x, pt.y, _surface.width() - BUTTON_SIZE - 9, pt.y + _surface.fontHeight()), TRANSPARENCY);
 				_surface.writeString(filename.c_str() + index, pt, COMMAND_HIGHLIGHTED);
-			} else if ((keyState.keycode == Common::KEYCODE_LEFT && index > 0)
-					|| (keyState.keycode == Common::KEYCODE_RIGHT && index < (int)filename.size() && pt.x < (_bounds.right - BUTTON_SIZE - 20))
-					|| (keyState.keycode == Common::KEYCODE_HOME && index > 0)
-					|| (keyState.keycode == Common::KEYCODE_END)) {
-				_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
-				if (currentChar)
-					_surface.writeString(charString, pt, COMMAND_HIGHLIGHTED);
-
-				switch (keyState.keycode) {
-				case Common::KEYCODE_LEFT:
-					pt.x -= _surface.charWidth(filename[index - 1]);
-					--index;
-					break;
-
-				case Common::KEYCODE_RIGHT:
-					pt.x += _surface.charWidth(filename[index]);
-					++index;
-					break;
-
-				case Common::KEYCODE_HOME:
-					pt.x = _surface.stringWidth("00.") + _surface.widestChar() + 5;
-					index = 0;
-					break;
-
-				case Common::KEYCODE_END:
-					pt.x = _surface.stringWidth("00.") + _surface.stringWidth(filename) + _surface.widestChar() + 5;
-					index = filename.size();
-
-					while (filename[index - 1] == ' ' && index > 0) {
-						pt.x -= _surface.charWidth(filename[index - 1]);
-						--index;
-					}
-					break;
-
-				default:
-					break;
-				}
-			} else if (keyState.keycode == Common::KEYCODE_INSERT) {
-				insert = !insert;
-				if (insert)
-					cursorColor = 192;
-				else
-					cursorColor = 200;
 			} else if (keyState.keycode == Common::KEYCODE_DELETE && index < (int)filename.size()) {
 				filename.deleteChar(index);
 
@@ -376,10 +353,6 @@ bool WidgetFiles::getFilename() {
 				_surface.writeString(Common::String(filename.c_str() + index), pt, COMMAND_HIGHLIGHTED);
 			} else  if (keyState.keycode == Common::KEYCODE_RETURN) {
 				done = 1;
-			} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
-				_selector = -1;
-				render(RENDER_NAMES_AND_SCROLLBAR);
-				done = -1;
 			}
 
 			if ((keyState.ascii >= ' ') && (keyState.ascii <= 'z') && (index < 50)) {
@@ -401,6 +374,64 @@ bool WidgetFiles::getFilename() {
 			charString = Common::String::format("%c", currentChar);
 			width = screen.charWidth(currentChar);
 		}
+
+		while (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
+
+			if ((action == kActionTattooFilesNameLeft && index > 0)
+					|| (action == kActionTattooFilesNameRight && index < (int)filename.size() && pt.x < (_bounds.right - BUTTON_SIZE - 20))
+					|| (action == kActionTattooFilesNameStart && index > 0)
+					|| (action == kActionTattooFilesNameEnd)) {
+				_surface.fillRect(Common::Rect(pt.x, pt.y, pt.x + width, pt.y + _surface.fontHeight()), TRANSPARENCY);
+				if (currentChar)
+					_surface.writeString(charString, pt, COMMAND_HIGHLIGHTED);
+
+				switch (action) {
+				case kActionTattooFilesNameLeft:
+					pt.x -= _surface.charWidth(filename[index - 1]);
+					--index;
+					break;
+
+				case kActionTattooFilesNameRight:
+					pt.x += _surface.charWidth(filename[index]);
+					++index;
+					break;
+
+				case kActionTattooFilesNameStart:
+					pt.x = _surface.stringWidth("00.") + _surface.widestChar() + 5;
+					index = 0;
+					break;
+
+				case kActionTattooFilesNameEnd:
+					pt.x = _surface.stringWidth("00.") + _surface.stringWidth(filename) + _surface.widestChar() + 5;
+					index = filename.size();
+
+					while (filename[index - 1] == ' ' && index > 0) {
+						pt.x -= _surface.charWidth(filename[index - 1]);
+						--index;
+					}
+					break;
+
+				default:
+					break;
+				}
+			} else if (action == kActionTattooFilesNameToggleInsertMode) {
+				insert = !insert;
+				if (insert)
+					cursorColor = 192;
+				else
+					cursorColor = 200;
+			} else if (action == kActionTattooExit) {
+				_selector = -1;
+				render(RENDER_NAMES_AND_SCROLLBAR);
+				done = -1;
+			}
+
+			currentChar = (index == (int)filename.size()) ? ' ' : filename[index];
+			charString = Common::String::format("%c", currentChar);
+			width = screen.charWidth(currentChar);
+		}
+
 	} while (!done && !_vm->shouldQuit());
 
 	scene.doBgAnim();

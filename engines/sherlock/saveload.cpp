@@ -28,6 +28,8 @@
 #include "graphics/scaler.h"
 #include "graphics/thumbnail.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 const char *const EMPTY_SAVEGAME_SLOT = "-EMPTY-";
@@ -210,6 +212,16 @@ void SaveManager::loadGame(int slot) {
 	Serializer s(saveFile, nullptr);
 	s.setVersion(header._version);
 	synchronize(s);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	if (IS_SERRATED_SCALPEL) {
+		keymapper->getKeymap("scalpel")->setEnabled(true);
+		keymapper->getKeymap("scalpel-quit")->setEnabled(true);
+	} else if (IS_ROSE_TATTOO) {
+		keymapper->getKeymap("tattoo")->setEnabled(true);
+	}
 
 	delete saveFile;
 	events.clearEvents();

@@ -26,6 +26,8 @@
 #include "sherlock/tattoo/tattoo_user_interface.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -79,6 +81,11 @@ void TattooJournal::show() {
 	_exitJournal = false;
 	_scrollingTimer = 0;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-journal")->setEnabled(true);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
+
 	do {
 		events.pollEventsAndWait();
 		events.setButtonState();
@@ -93,6 +100,10 @@ void TattooJournal::show() {
 			events.wait(2);
 
 	} while (!_vm->shouldQuit() && !_exitJournal);
+
+	keymapper->getKeymap("tattoo-journal")->setEnabled(false);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	// Clear events
 	events.clearEvents();
@@ -110,12 +121,12 @@ void TattooJournal::handleKeyboardEvents() {
 	Screen &screen = *_vm->_screen;
 	Common::Point mousePos = events.mousePos();
 
-	if (!events.kbHit())
+	if (!events.actionHit())
 		return;
 
-	Common::KeyState keyState = events.getKey();
+	Common::CustomEventType action = events.getAction();
 
-	if (keyState.keycode == Common::KEYCODE_TAB && (keyState.flags & Common::KBD_SHIFT)) {
+	if (action == kActionTattooJournalOptionsLeft) {
 		// Shift tab
 		Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 		r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCREEN_HEIGHT - r.height());
@@ -137,57 +148,54 @@ void TattooJournal::handleKeyboardEvents() {
 			events.warpMouse(Common::Point(r.left + (r.width() / 3) * (_selector + 1) - 10, mousePos.y));
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_PAGEUP) {
-		// See if they have Shift held down to go forward 10 pages
-		if (keyState.flags & Common::KBD_SHIFT) {
-			if (_page > 1) {
-				// Scroll Up 10 pages if possible
-				if (_page < 11)
-					drawJournal(1, (_page - 1) * LINES_PER_PAGE);
-				else
-					drawJournal(1, 10 * LINES_PER_PAGE);
+	} else if (action == kActionTattooJournalBack10) {
+		if (_page > 1) {
+			// Scroll Up 10 pages if possible
+			if (_page < 11)
+				drawJournal(1, (_page - 1) * LINES_PER_PAGE);
+			else
+				drawJournal(1, 10 * LINES_PER_PAGE);
 
-				drawScrollBar();
-				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-				_wait = false;
-			}
-		} else {
-			if (_page > 1) {
-				// Scroll Up 1 page
-				drawJournal(1, LINES_PER_PAGE);
-				drawScrollBar();
-				drawJournal(0, 0);
-				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-				_wait = false;
-			}
+			drawScrollBar();
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			_wait = false;
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_PAGEDOWN) {
-		if (keyState.flags & Common::KBD_SHIFT) {
-			if (_down) {
-				// Scroll down 10 Pages
-				if (_page + 10 > _maxPage)
-					drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
-				else
-					drawJournal(2, 10 * LINES_PER_PAGE);
-				drawScrollBar();
-				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-
-				_wait = false;
-			}
-		} else {
-			if (_down) {
-				// Scroll down 1 page
-				drawJournal(2, LINES_PER_PAGE);
-				drawScrollBar();
-				drawJournal(0, 0);
-				screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
-
-				_wait = false;
-			}
+	} else if (action == kActionTattooJournalBack1){
+		if (_page > 1) {
+			// Scroll Up 1 page
+			drawJournal(1, LINES_PER_PAGE);
+			drawScrollBar();
+			drawJournal(0, 0);
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+			_wait = false;
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_HOME) {
+	} else if (action == kActionTattooJournalForward10) {
+		if (_down) {
+			// Scroll down 10 Pages
+			if (_page + 10 > _maxPage)
+				drawJournal(2, (_maxPage - _page) * LINES_PER_PAGE);
+			else
+				drawJournal(2, 10 * LINES_PER_PAGE);
+			drawScrollBar();
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+			_wait = false;
+		}
+
+	} else if (action == kActionTattooJournalForward1) {
+		if (_down) {
+			// Scroll down 1 page
+			drawJournal(2, LINES_PER_PAGE);
+			drawScrollBar();
+			drawJournal(0, 0);
+			screen.slamArea(0, 0, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_HEIGHT);
+
+			_wait = false;
+		}
+
+	} else if (action == kActionTattooJournalStart) {
 		// Scroll to start of journal
 		if (_page > 1) {
 			// Go to the beginning of the journal
@@ -203,7 +211,7 @@ void TattooJournal::handleKeyboardEvents() {
 			_wait = false;
 		}
 
-	} else if (keyState.keycode == Common::KEYCODE_END) {
+	} else if (action == kActionTattooJournalEnd) {
 		// Scroll to end of journal
 		if (_down) {
 			// Go to the end of the journal
@@ -213,13 +221,13 @@ void TattooJournal::handleKeyboardEvents() {
 
 			_wait = false;
 		}
-	} else if (keyState.keycode == Common::KEYCODE_RETURN) {
+	} else if (action == kActionTattooJournalSelect) {
 		events._pressed = false;
 		events._released = true;
 		events._oldButtons = 0;
-	} else if (keyState.keycode == Common::KEYCODE_ESCAPE) {
+	} else if (action == kActionTattooExit) {
 		_exitJournal = true;
-	} else if (keyState.keycode == Common::KEYCODE_TAB) {
+	} else if (action == kActionTattooJournalOptionsRight) {
 		Common::Rect r(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 		r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, SHERLOCK_SCENE_HEIGHT - r.height());
 
@@ -834,10 +842,15 @@ int TattooJournal::getFindName(bool printError) {
 	// Set the cursors X position
 	cursorX = r.left + screen.widestChar() + 3 + screen.stringWidth(name);
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("tattoo-journal-search")->setEnabled(true);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
+
 	do {
 		events._released = events._rightReleased = false;
 
-		while (!events.kbHit() && !events._released && !events._rightReleased) {
+		while (!events.kbHit() && !events._released && !events._rightReleased && !events.actionHit()) {
 			if (talk._talkToAbort)
 				return 0;
 
@@ -871,20 +884,40 @@ int TattooJournal::getFindName(bool printError) {
 
 		if (events.kbHit()) {
 			Common::KeyState keyState = events.getKey();
-			Common::Point mousePos = events.mousePos();
 
 			if (keyState.keycode == Common::KEYCODE_BACKSPACE && !name.empty()) {
 				cursorX -= screen.charWidth(name.lastChar());
 				name.deleteLastChar();
 			}
 
-			if (keyState.keycode == Common::KEYCODE_RETURN)
+			if (Common::isPrint(keyState.ascii)) {
+				if (keyState.ascii >= ' ' && keyState.ascii != '@' && name.size() < 50) {
+					if ((cursorX + screen.charWidth(keyState.ascii)) < (r.right - screen.widestChar() * 3)) {
+						char c = toupper(keyState.ascii);
+						cursorX += screen.charWidth(c);
+						name += c;
+					}
+				}
+			}
+
+			// Redraw the text
+			screen._backBuffer1.SHblitFrom(bgSurface, Common::Point(r.left + 3, cursorY));
+			screen.gPrint(Common::Point(r.left + screen.widestChar() + 3, cursorY), COMMAND_HIGHLIGHTED,
+				"%s", name.c_str());
+			screen.slamArea(r.left + 3, cursorY, r.right - 3, screen.fontHeight());
+		}
+
+		if (events.actionHit()) {
+			Common::Point mousePos = events.mousePos();
+			Common::CustomEventType action = events.getAction();
+
+			if (action == kActionTattooJournalSearch)
 				done = 1;
 
-			else if (keyState.keycode == Common::KEYCODE_ESCAPE)
+			else if (action == kActionTattooExit)
 				done = -1;
 
-			if (keyState.keycode == Common::KEYCODE_TAB) {
+			if (action == kActionTattooJournalSearchOptionsLeft || action == kActionTattooJournalSearchOptionsRight) {
 				r = Common::Rect(JOURNAL_BAR_WIDTH, BUTTON_SIZE + screen.fontHeight() + 13);
 				r.moveTo((SHERLOCK_SCREEN_WIDTH - r.width()) / 2, (SHERLOCK_SCREEN_HEIGHT - r.height()) / 2);
 
@@ -897,7 +930,7 @@ int TattooJournal::getFindName(bool printError) {
 				if (_selector == JH_NONE) {
 					events.warpMouse(Common::Point(r.left + r.width() / 3, r.top + screen.fontHeight() + 2));
 				} else {
-					if (keyState.keycode & Common::KBD_SHIFT) {
+					if (action == kActionTattooJournalSearchOptionsLeft) {
 						if (_selector == JH_CLOSE)
 							_selector = JH_SAVE;
 						else
@@ -910,14 +943,6 @@ int TattooJournal::getFindName(bool printError) {
 					}
 
 					events.warpMouse(Common::Point(r.left + (r.width() / 3) * (_selector + 1) - 10, mousePos.y));
-				}
-			}
-
-			if (keyState.ascii >= ' ' && keyState.ascii != '@' && name.size() < 50) {
-				if ((cursorX + screen.charWidth(keyState.ascii)) < (r.right - screen.widestChar() * 3)) {
-					char c = toupper(keyState.ascii);
-					cursorX += screen.charWidth(c);
-					name += c;
 				}
 			}
 
@@ -944,6 +969,11 @@ int TattooJournal::getFindName(bool printError) {
 			}
 		}
 	} while (!done);
+
+	keymapper->getKeymap("tattoo-journal-search")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("tattoo-journal")->setEnabled(true);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
 
 	if (done != -1) {
 		// Forwards or backwards search, so save the entered name

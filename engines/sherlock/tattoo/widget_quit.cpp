@@ -24,6 +24,8 @@
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -71,16 +73,23 @@ void WidgetQuit::show() {
 
 	ui._menuMode = QUIT_MODE;
 	summonWindow();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-quit-dialog")->setEnabled(true);
 }
 
 void WidgetQuit::handleEvents() {
 	Events &events = *_vm->_events;
 	Talk &talk = *_vm->_talk;
+	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
 	Common::Rect yesRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + 3, _bounds.right,
 		_bounds.top + (_surface.fontHeight() + 4) * 2 + 3 + _surface.fontHeight() + 7);
 	Common::Rect noRect(_bounds.left, _bounds.top + (_surface.fontHeight() + 4) * 2 + _surface.fontHeight() + 10,
 		_bounds.right, _bounds.top + (_surface.fontHeight() + 4) * 2 + 10 + _surface.fontHeight() * 2 + 7);
+	Common::CustomEventType action = ui._action;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	if (talk._talkToAbort)
 		return;
@@ -92,11 +101,10 @@ void WidgetQuit::handleEvents() {
 	else if (noRect.contains(mousePos))
 		_select = 0;
 
-	if (events.kbHit()) {
-		Common::KeyState keyState = events.getKey();
+	if (action != kActionNone) {
 
-		switch (keyState.keycode) {
-		case Common::KEYCODE_TAB:
+		switch (action) {
+		case kActionTattooQuitDialogNextOption:
 			// If the mouse is not over any of the options, move the mouse so that it points to the first option
 			if (_select == -1)
 				events.warpMouse(Common::Point(_bounds.right - 10, _bounds.top + (_surface.fontHeight() + 4) * 2
@@ -109,12 +117,15 @@ void WidgetQuit::handleEvents() {
 					+ 3 + _surface.fontHeight() + 1));
 			break;
 
-		case Common::KEYCODE_ESCAPE:
-		case Common::KEYCODE_n:
+		case kActionTattooQuitDialogNo:
+			keymapper->getKeymap("tattoo-quit-dialog")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			return;
 
-		case Common::KEYCODE_y:
+		case kActionTattooQuitDialogYes:
+			keymapper->getKeymap("tattoo-quit-dialog")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			_vm->quitGame();
 			break;
@@ -142,6 +153,9 @@ void WidgetQuit::handleEvents() {
 
 	if (events._released || events._rightReleased) {
 		events.clearEvents();
+		keymapper->getKeymap("tattoo-options")->setEnabled(false);
+		keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+		keymapper->getKeymap("tattoo")->setEnabled(true);
 		close();
 		if (_select == 1)
 			// Yes selected
