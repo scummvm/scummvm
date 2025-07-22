@@ -37,10 +37,10 @@ namespace Audio {
 /**
  * The default fractional type in frac.h (with 16 fractional bits) limits
  * the rate conversion code to 65536Hz audio: we need to able to handle
- * 96kHz audio, so we use fewer fractional bits in this code.
+ * 192kHz audio, so we use fewer fractional bits in this code.
  */
 enum {
-	FRAC_BITS_LOW = 15,
+	FRAC_BITS_LOW = 14,
 	FRAC_ONE_LOW = (1L << FRAC_BITS_LOW),
 	FRAC_HALF_LOW = (1L << (FRAC_BITS_LOW-1))
 };
