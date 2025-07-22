@@ -26,6 +26,7 @@
 #include "sherlock/saveload.h"
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/str-array.h"
 #include "common/stream.h"
@@ -51,16 +52,6 @@ public:
 	Common::String _fixedTextFirstPage;
 	Common::String _fixedTextLastPage;
 	Common::String _fixedTextPrintText;
-
-	byte _hotkeyExit;
-	byte _hotkeyBack10;
-	byte _hotkeyUp;
-	byte _hotkeyDown;
-	byte _hotkeyAhead10;
-	byte _hotkeySearch;
-	byte _hotkeyFirstPage;
-	byte _hotkeyLastPage;
-	byte _hotkeyPrintText;
 
 	Common::String _fixedTextSearchExit;
 	Common::String _fixedTextSearchBackward;
@@ -106,7 +97,7 @@ public:
 	/**
 	 * Handle events whilst the journal is being displayed
 	 */
-	bool handleEvents(int key);
+	bool handleEvents(Common::CustomEventType action);
 public:
 	/**
 	 * Draw the journal background, frame, and interface buttons

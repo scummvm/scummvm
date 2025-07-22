@@ -23,6 +23,8 @@
 #include "sherlock/tattoo/tattoo_fixed_text.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -93,6 +95,10 @@ void Darts::playDarts(GameType gameType) {
 	loadDarts();
 	initDarts();
 	events.hideCursor();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-darts")->setEnabled(true);
 
 	while (!done && !_vm->shouldQuit()) {
 		int roundStart, score;
@@ -262,7 +268,7 @@ void Darts::playDarts(GameType gameType) {
 				do {
 					events.pollEventsAndWait();
 					events.setButtonState();
-				} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed);
+				} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed && !events.actionHit());
 			} else {
 				events.wait(40);
 			}
@@ -288,13 +294,16 @@ void Darts::playDarts(GameType gameType) {
 	do {
 		events.pollEventsAndWait();
 		events.setButtonState();
-	} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed);
+	} while (!_vm->shouldQuit() && !events.kbHit() && !events._pressed && !events.actionHit());
 	events.clearEvents();
 
 	closeDarts();
 	screen.fadeToBlack();
 	screen.setFont(oldFontType);
 	events.showCursor();
+
+	keymapper->getKeymap("tattoo-darts")->setEnabled(false);
+	keymapper->getKeymap("tattoo")->setEnabled(true);
 
 	// Flag to return to the Billard's Academy scene
 	scene._goToScene = 26;
@@ -468,8 +477,8 @@ bool Darts::dartHit() {
 	events.setButtonState();
 
 	// Keyboard check
-	if (events.kbHit()) {
-		if (events.getKey().keycode == Common::KEYCODE_ESCAPE)
+	if (events.kbHit() || events.actionHit()) {
+		if (events.getAction() == kActionTattooSkipDarts)
 			_escapePressed = true;
 
 		events.clearEvents();

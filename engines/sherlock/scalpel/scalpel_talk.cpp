@@ -171,10 +171,6 @@ ScalpelTalk::ScalpelTalk(SherlockEngine *vm) : Talk(vm) {
 	_fixedTextWindowExit = FIXED(Window_Exit);
 	_fixedTextWindowUp   = FIXED(Window_Up);
 	_fixedTextWindowDown = FIXED(Window_Down);
-
-	_hotkeyWindowExit = toupper(_fixedTextWindowExit[0]);
-	_hotkeyWindowUp   = toupper(_fixedTextWindowUp[0]);
-	_hotkeyWindowDown = toupper(_fixedTextWindowDown[0]);
 }
 
 void ScalpelTalk::talkTo(const Common::String &filename) {

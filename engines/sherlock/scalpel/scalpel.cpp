@@ -35,6 +35,8 @@
 #include "sherlock/animation.h"
 #include "video/3do_decoder.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -643,7 +645,7 @@ bool ScalpelEngine::scrollCredits() {
 	_screen->_backBuffer1.SHblitFrom(*_screen);
 
 	// Loop for showing the credits
-	for(int idx = 0; idx < 600 && !_events->kbHit() && !shouldQuit(); ++idx) {
+	for(int idx = 0; idx < 600 && !_events->kbHit() && !_events->actionHit() && !shouldQuit(); ++idx) {
 		// Copy the entire screen background before writing text
 		_screen->SHblitFrom(_screen->_backBuffer1);
 
@@ -1321,6 +1323,10 @@ bool ScalpelEngine::play3doMovie(const Common::Path &filename, const Common::Poi
 	if (halfSize)
 		tempSurface.create(width / 2, height / 2, videoDecoder->getPixelFormat());
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("scalpel-3d0-movie")->setEnabled(true);
+
 	while (!shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 		if (videoDecoder->needsUpdate()) {
 			const Graphics::Surface *frame = videoDecoder->decodeNextFrame();
@@ -1405,14 +1411,19 @@ bool ScalpelEngine::play3doMovie(const Common::Path &filename, const Common::Poi
 		_events->pollEventsAndWait();
 		_events->setButtonState();
 
-		if (_events->kbHit()) {
-			Common::KeyState keyState = _events->getKey();
-			if (keyState.keycode == Common::KEYCODE_ESCAPE)
+		if (_events->actionHit()) {
+			Common::CustomEventType action = _events->getAction();
+			if (action == kActionScalpelSkipMovie)
 				skipVideo = true;
 		} else if (_events->_pressed) {
 			skipVideo = true;
 		}
 	}
+
+	keymapper->getKeymap("scalpel-3d0-movie")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
 
 	if (halfSize)
 		tempSurface.free();

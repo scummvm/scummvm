@@ -25,6 +25,8 @@
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo_user_interface.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -43,6 +45,11 @@ void WidgetOptions::load() {
 
 	summonWindow();
 	ui._menuMode = OPTION_MODE;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("tattoo")->setEnabled(false);
+	keymapper->getKeymap("tattoo-options")->setEnabled(true);
+	keymapper->getKeymap("tattoo-exit")->setEnabled(true);
 }
 
 void WidgetOptions::handleEvents() {
@@ -54,6 +61,8 @@ void WidgetOptions::handleEvents() {
 	Talk &talk = *_vm->_talk;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
 	Common::Point mousePos = events.mousePos();
+	Common::CustomEventType action = ui._action;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	if (talk._talkToAbort) {
 		sound.stopSound();
@@ -64,14 +73,15 @@ void WidgetOptions::handleEvents() {
 	if (events._firstPress && !_bounds.contains(mousePos))
 		_outsideMenu = true;
 
-	if (events.kbHit()) {
-		ui._keyState = events.getKey();
-
+	if (action != kActionNone) {
 		// Emulate a mouse release if Enter or Space Bar is pressed
-		if (ui._keyState.keycode == Common::KEYCODE_RETURN || ui._keyState.keycode == Common::KEYCODE_SPACE) {
+		if (ui._action == kActionTattooOptionsSelect) {
 			events._pressed  = events._oldButtons = false;
 			events._released = true;
-		} else if (ui._keyState.keycode == Common::KEYCODE_ESCAPE) {
+		} else if (ui._action == kActionTattooExit) {
+			keymapper->getKeymap("tattoo-options")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			return;
 		} else {
@@ -90,6 +100,9 @@ void WidgetOptions::handleEvents() {
 		_selector = -1;
 		if (_outsideMenu && (events._released || events._rightReleased)) {
 			events.clearEvents();
+			keymapper->getKeymap("tattoo-options")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			return;
 		}
@@ -153,12 +166,18 @@ void WidgetOptions::handleEvents() {
 		switch (temp) {
 		case 0:
 			// Load Game
+			keymapper->getKeymap("tattoo-options")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			ui.loadGame();
 			break;
 
 		case 1:
 			// Save Game
+			keymapper->getKeymap("tattoo-options")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			close();
 			ui.saveGame();
 			break;
@@ -222,6 +241,9 @@ void WidgetOptions::handleEvents() {
 
 		case 10:
 			// Quit
+			keymapper->getKeymap("tattoo-options")->setEnabled(false);
+			keymapper->getKeymap("tattoo-exit")->setEnabled(false);
+			keymapper->getKeymap("tattoo")->setEnabled(true);
 			banishWindow();
 			ui.doQuitMenu();
 			break;
