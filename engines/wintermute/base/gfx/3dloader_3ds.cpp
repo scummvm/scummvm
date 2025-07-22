@@ -314,7 +314,7 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 						// inject this roll value to the camera
 						if (key == 0) {
 							for (uint32 index = 0; index < _objects.getSize(); index++) {
-								if (_objects[index]->_type == OBJ_3DS_CAMERA && _objects[index]->_name == keyframerObject) {
+								if (_objects[index]->_type == OBJ_3DS_CAMERA && _objects[index]->_name.compareToIgnoreCase(keyframerObject) == 0) {
 									_objects[index]->_cameraBank = cameraRoll;
 									break;
 								}
