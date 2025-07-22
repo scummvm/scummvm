@@ -25,6 +25,8 @@
 #include "sherlock/tattoo/tattoo_scene.h"
 #include "sherlock/tattoo/tattoo.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Tattoo {
@@ -191,7 +193,8 @@ void TattooUserInterface::printObjectDesc(const Common::String &str, bool firstT
 		} else {
 			// Nope
 			events.setCursor(ARROW);
-			_key = -1;
+			_action = kActionNone;
+			_keyState.keycode = Common::KEYCODE_INVALID;
 			_menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 			events._pressed = events._released = events._rightReleased = false;
 			events._oldButtons = 0;
@@ -223,7 +226,8 @@ void TattooUserInterface::doJournal() {
 
 	_menuMode = STD_MODE;
 	_windowOpen = false;
-	_key = -1;
+	_action = kActionNone;
+	_keyState.keycode = Common::KEYCODE_INVALID;
 
 	// Restore the old screen palette and greyscale lookup table
 	screen.clear();
@@ -252,6 +256,7 @@ void TattooUserInterface::handleInput() {
 	Common::Point mousePos = events.mousePos();
 
 	_keyState.keycode = Common::KEYCODE_INVALID;
+	_action = kActionNone;
 
 	// Check for credits starting
 	if (_vm->readFlags(3000) && !_creditsWidget.active())
@@ -266,27 +271,33 @@ void TattooUserInterface::handleInput() {
 	if (_lockoutTimer)
 		--_lockoutTimer;
 
-	// Key handling
-	if (events.kbHit()) {
-		_keyState = events.getKey();
+	// Action handling
+	if (events.actionHit()) {
+		_action = events.getAction();
 
-		if (_keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog && !_lockoutTimer) {
+		if (_action == kActionTattooSkipProlog && vm._runningProlog && !_lockoutTimer) {
 			vm.setFlags(-76);
 			vm.setFlags(396);
 			scene._goToScene = STARTING_GAME_SCENE;
 		} else if (_menuMode == STD_MODE) {
-			if (_keyState.keycode == Common::KEYCODE_s && vm._allowFastMode) {
+			if (_action == kActionTattooChangeSpeed && vm._allowFastMode) {
 				events.toggleSpeed();
 
-			} else if (_keyState.keycode == Common::KEYCODE_l && _bgFound != -1) {
+			} else if (_action == kActionTattooLook && _bgFound != -1) {
 				// Beging used for testing that Look dialogs work
 				lookAtObject();
 			}
 		}
 	}
 
-	if (!events.isCursorVisible())
+	if (events.kbHit()) {
+		_keyState = events.getKey();
+	}
+
+	if (!events.isCursorVisible()) {
 		_keyState.keycode = Common::KEYCODE_INVALID;
+		_action = kActionNone;
+	}
 
 	// If there's any active widgets/windows, let the most recently open one do event processing
 	if (!_widgets.empty())
@@ -386,7 +397,7 @@ void TattooUserInterface::doStandardControl() {
 
 	// When the end credits are active, any press will open the ScummVM global main menu
 	if (_creditsWidget.active()) {
-		if (_keyState.keycode || events._released || events._rightReleased) {
+		if (_keyState.keycode || _action || events._released || events._rightReleased) {
 			vm._canLoadSave = true;
 			vm.openMainMenuDialog();
 			vm._canLoadSave = false;
@@ -398,20 +409,20 @@ void TattooUserInterface::doStandardControl() {
 	// Display the names of any Objects the cursor is pointing at
 	displayObjectNames();
 
-	switch (_keyState.keycode) {
-	case Common::KEYCODE_F5:
+	switch (_action) {
+	case kActionTattooSave:
 		// Save game
 		events.warpMouse();
 		saveGame();
 		return;
 
-	case Common::KEYCODE_F7:
+	case kActionTattooLoad:
 		// Load game
 		events.warpMouse();
 		loadGame();
 		return;
 
-	case Common::KEYCODE_F1:
+	case kActionTattooJournal:
 		// Display journal
 		if (vm.readFlags(FLAG_PLAYER_IS_HOLMES)) {
 			freeMenu();
@@ -423,20 +434,19 @@ void TattooUserInterface::doStandardControl() {
 		}
 		break;
 
-	case Common::KEYCODE_TAB:
-	case Common::KEYCODE_F3:
+	case kActionTattooInv:
 		// Display inventory
 		freeMenu();
 		doInventory(3);
 		return;
 
-	case Common::KEYCODE_F4:
+	case kActionTattooOptions:
 		// Display options
 		events.warpMouse();
 		_optionsWidget.load();
 		return;
 
-	case Common::KEYCODE_F10:
+	case kActionTattooQuit:
 		// Quit menu
 		freeMenu();
 		events.warpMouse();
@@ -519,8 +529,8 @@ void TattooUserInterface::doLookControl() {
 	Events &events = *_vm->_events;
 	TattooScene &scene = *(TattooScene *)_vm->_scene;
 
-	// See if a mouse button was released or a key pressed to close the active look dialog
-	if (events._released || events._rightReleased || _keyState.keycode) {
+	// See if a mouse button was released, a key pressed or a action pressed to close the active look dialog
+	if (events._released || events._rightReleased || _keyState.keycode || _action) {
 		// See if we were looking at an inventory object
 		if (!_invLookFlag) {
 			// See if there is any more text to display
@@ -529,7 +539,8 @@ void TattooUserInterface::doLookControl() {
 			} else {
 				// Otherwise restore the background and go back into STD_MODE
 				freeMenu();
-				_key = -1;
+				_action = kActionNone;
+				_keyState.keycode = Common::KEYCODE_INVALID;
 				_menuMode = scene._labTableScene ? LAB_MODE : STD_MODE;
 
 				events.setCursor(ARROW);
@@ -543,7 +554,8 @@ void TattooUserInterface::doLookControl() {
 			doInventory(0);
 
 			_invLookFlag = false;
-			_key = -1;
+			_action = kActionNone;
+			_keyState.keycode = Common::KEYCODE_INVALID;
 
 			events.setCursor(ARROW);
 			events._pressed = events._released = events._rightReleased = false;
@@ -638,6 +650,7 @@ void TattooUserInterface::pickUpObject(int objNum) {
 	if (_menuMode != TALK_MODE && _menuMode != MESSAGE_MODE) {
 		_menuMode = STD_MODE;
 		_keyState.keycode = Common::KEYCODE_INVALID;
+		_action = kActionNone;
 	}
 }
 

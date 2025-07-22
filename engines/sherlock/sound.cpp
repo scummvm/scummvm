@@ -140,7 +140,7 @@ bool Sound::playSound(const Common::Path &name, WaitType waitType, int priority,
 	do {
 		_vm->_events->pollEvents();
 		g_system->delayMillis(10);
-		if ((waitType == WAIT_KBD_OR_FINISH) && _vm->_events->kbHit()) {
+		if ((waitType == WAIT_KBD_OR_FINISH) && (_vm->_events->kbHit() || _vm->_events->actionHit())) {
 			retval = false;
 			break;
 		}

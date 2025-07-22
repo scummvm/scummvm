@@ -206,6 +206,8 @@ public:
 	const Common::String getActionMessage(FixedTextActionId actionId, int messageIndex) override;
 };
 
+extern const FixedTextLanguageEntry fixedTextLanguages[];
+
 } // End of namespace Scalpel
 
 } // End of namespace Sherlock
