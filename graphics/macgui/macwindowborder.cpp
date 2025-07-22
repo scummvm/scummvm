@@ -148,20 +148,28 @@ const BorderOffsets &MacWindowBorder::getOffset() const {
 	return _borderOffsets;
 }
 
+int MacWindowBorder::getMinWidth(uint32 flags) const {
+	return _border[flags]->getMinWidth();
+}
+
+int MacWindowBorder::getMinHeight(uint32 flags) const {
+	return _border[flags]->getMinHeight();
+}
+
 void MacWindowBorder::setTitle(const Common::String& title, int width) {
 	_title = title;
 	const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
-	int sidesWidth = getOffset().left + getOffset().right;
 	int titleWidth = font->getStringWidth(_title) + 8;
-	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
-	if (titleWidth > maxWidth)
-		titleWidth = maxWidth;
 
 	// if titleWidth is changed, then we modify it
 	// here, we change all the border that has title
 	for (uint32 i = 0; i < kWindowBorderMaxFlag; i++) {
-		if ((_border[i] != nullptr) && (i & kWindowBorderTitle))
+		if ((_border[i] != nullptr) && (i & kWindowBorderTitle)) {
+			int maxWidth = MAX<int>(width - _border[i]->getMinWidth() - 7, 0);
+			if (titleWidth > maxWidth)
+				titleWidth = maxWidth;
 			_border[i]->modifyTitleWidth(titleWidth);
+		}
 	}
 }
 
@@ -187,15 +195,14 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g) {
 		_scrollSize = -1;
 }
 
-void MacWindowBorder::drawTitle(ManagedSurface *g, int titleOffset) {
+void MacWindowBorder::drawTitle(ManagedSurface *g, int titleOffset, int minWidth) {
 	const Graphics::Font *font = _wm->_fontMan->getFont(Graphics::MacFont(kMacFontSystem, 12));
 	int width = g->w;
 	int titleColor = getOffset().dark ? _wm->_colorWhite: _wm->_colorBlack;
 	int titleY = getOffset().titleTop;
-	int sidesWidth = getOffset().left + getOffset().right;
 	int titleWidth = font->getStringWidth(_title) + 8;
 	int yOff = _wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
-	int maxWidth = width - sidesWidth - 7;
+	int maxWidth = MAX<int>(width - minWidth - 7 - 4, 0);
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
 
@@ -318,7 +325,7 @@ void MacWindowBorder::blitBorderInto(ManagedSurface &destination, uint32 flags) 
 	src->blit(destination, 0, 0, destination.w, destination.h, _wm);
 
 	if (flags & kWindowBorderTitle)
-		drawTitle(&destination, src->getTitleOffset());
+		drawTitle(&destination, src->getTitleOffset(), _border[flags]->getMinWidth());
 
 	if (flags & kWindowBorderScrollbar)
 		drawScrollBar(&destination);
