@@ -496,8 +496,10 @@ void AdActor::turnTo(TDirection dir) {
 	// already there?
 	if (abs(delta) < 2) {
 		_dir = dir;
+		_targetDir = dir;
 		_state = _nextState;
 		_nextState = STATE_READY;
+		_tempSprite2 = nullptr;
 		return;
 	}
 
