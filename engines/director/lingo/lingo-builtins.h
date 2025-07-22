@@ -173,6 +173,7 @@ void b_xFactoryList(int nargs);
 void b_xtra(int nargs);
 
 void b_point(int nargs);
+void b_inflate(int nargs);
 void b_inside(int nargs);
 void b_intersect(int nargs);
 void b_map(int nargs);
