@@ -1540,8 +1540,8 @@ void OptionsDialog::addAchievementsControls(GuiObject *boss, const Common::Strin
 			yPos += yStep;
 
 			if (!descr->comment.empty()) {
-				uint16 str_chars = descr->comment.size(), printed_chars = 0, i = 0;
 				Common::U32String comment_line(descr->comment);
+				uint16 str_chars = comment_line.size(), printed_chars = 0, i = 0;
 				while ((str_chars - printed_chars) > textline_numchars) { // check if string needs to go on multiple lines
 					for (i = (printed_chars + textline_numchars - 1); comment_line[i] != ' ' && i > 0; i--) {}; // find a space to avoid breaking words
 					new StaticTextWidget(scrollContainer, lineHeight + commentDelta, yPos, width - commentDelta, yStep, Common::U32String(comment_line.begin() + (!printed_chars ? 0 : (printed_chars + 1)), comment_line.begin() + i), Graphics::kTextAlignStart, Common::U32String(), ThemeEngine::kFontStyleNormal);
