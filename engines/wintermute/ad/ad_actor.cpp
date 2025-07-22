@@ -621,7 +621,7 @@ bool AdActor::update() {
 	}
 
 	// default: stand animation
-	if (!_currentSprite) {
+	if (BaseEngine::instance().getTargetExecutable() == WME_LITE && !_currentSprite) {
 		if (_sprite) {
 			_currentSprite = _sprite;
 		} else {
@@ -803,6 +803,21 @@ bool AdActor::update() {
 		error("AdActor::Update - Unhandled enum");
 	}
 
+	// default: stand animation
+	if (BaseEngine::instance().getTargetExecutable() < WME_LITE && !_currentSprite) {
+		if (_sprite) {
+			_currentSprite = _sprite;
+		} else {
+			if (_standSprite) {
+				_currentSprite = _standSprite->getSprite(_dir);
+			} else {
+				AdSpriteSet *anim = getAnimByName(_idleAnimName);
+				if (anim) {
+					_currentSprite = anim->getSprite(_dir);
+				}
+			}
+		}
+	}
 
 	if (_currentSprite && !already_moved) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
