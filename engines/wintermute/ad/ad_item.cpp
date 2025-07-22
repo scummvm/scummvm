@@ -202,6 +202,7 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 			_sprite = new BaseSprite(_gameRef, this);
 			if (!_sprite || DID_FAIL(_sprite->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _sprite;
+				_sprite = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -212,6 +213,7 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 			_spriteHover = new BaseSprite(_gameRef, this);
 			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
 				delete _spriteHover;
+				_spriteHover = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
