@@ -1747,6 +1747,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *valVelocity = stack->pop();
 		ScValue *valAnim = stack->pop();
 
+		_directWalkAnim.clear();
+
 		if (!valVelocity->isNULL()) {
 			_directWalkVelocity = valVelocity->getFloat();
 		} else {
@@ -1788,6 +1790,8 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 		ScValue *valVelocity = stack->pop();
 		ScValue *valAnim = stack->pop();
+
+		_directWalkAnim.clear();
 
 		if (!valVelocity->isNULL()) {
 			_directTurnVelocity = valVelocity->getFloat();
