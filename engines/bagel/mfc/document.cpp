@@ -41,6 +41,7 @@ void CDocument::SetTitle(LPCSTR lpszTitle) {
 const CString &CDocument::GetPathName() const {
 	return _unusedPathName;
 }
+
 void CDocument::SetPathName(LPCSTR lpszPathName, BOOL bAddToMRU) {
 }
 
@@ -55,25 +56,61 @@ void CDocument::SetModifiedFlag(BOOL bModified) {
 	m_bModified = bModified;
 }
 
+void CDocument::AddView(CView *pView) {
+	ASSERT_VALID(pView);
+	assert(pView->m_pDocument == nullptr); // must not be already attached
+	assert(!m_viewList.contains(pView));   // must not be in list
+
+	m_viewList.push_back(pView);
+	assert(pView->m_pDocument == nullptr); // must be un-attached
+	pView->m_pDocument = this;
+
+	OnChangedViewList();    // must be the last thing done to the document
+}
+
+void CDocument::RemoveView(CView *pView) {
+	ASSERT_VALID(pView);
+	assert(pView->m_pDocument == this); // Must be attached to us
+
+	m_viewList.remove(pView);
+	pView->m_pDocument = nullptr;
+
+	// Must be the last thing done to the document
+	OnChangedViewList();
+}
+
 void CDocument::DeleteContents() {
 }
 
 void CDocument::ReportSaveLoadException(LPCSTR lpszPathName,
-                                        CException *e, BOOL bSaving, UINT nIDPDefault) {
+        CException *e, BOOL bSaving, UINT nIDPDefault) {
 	error("Save/load error");
 }
 
 void CDocument::UpdateAllViews(CView *pSender, LPARAM lHint,
-                               CObject *pHint) {
-	error("TODO: CDocument::UpdateAllViews");
+        CObject *pHint) {
+	assert(pSender == nullptr || !m_viewList.empty());
+
+	for (ViewListPos pos = m_viewList.begin();
+			pos != m_viewList.end(); ++pos) {
+		CView *pView = *pos;
+		if (pView != pSender)
+			pView->OnUpdate(pSender, lHint, pHint);
+	}
 }
 
-POSITION CDocument::GetFirstViewPosition() const {
-	error("TODO: CDocument::GetFirstViewPosition");
+ViewListPos CDocument::GetFirstViewPosition() {
+	return m_viewList.begin();
 }
 
-CView *CDocument::GetNextView(POSITION &rPosition) const {
-	error("TODO: CDocument::GetNextView");
+CView *CDocument::GetNextView(ViewListPos &rPosition) const {
+	if (rPosition == m_viewList.end())
+		return nullptr;
+
+	rPosition++;
+	CView *pView = *rPosition;
+	ASSERT_KINDOF(CView, pView);
+	return pView;
 }
 
 bool CDocument::SaveModified() {
@@ -108,6 +145,21 @@ void CDocument::OnCloseDocument() {
 	if (m_bAutoDelete)
 		delete this;
 #endif
+}
+
+void CDocument::OnChangedViewList() {
+	// if no more views on the document, delete ourself
+	// not called if directly closing the document or terminating the app
+	if (m_viewList.empty() && m_bAutoDelete) {
+		OnCloseDocument();
+		return;
+	}
+
+	// update the frame counts as needed
+	UpdateFrameCounts();
+}
+
+void CDocument::UpdateFrameCounts() {
 }
 
 } // namespace MFC

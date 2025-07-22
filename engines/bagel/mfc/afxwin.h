@@ -41,6 +41,7 @@
 #include "bagel/mfc/libs/array.h"
 #include "bagel/mfc/libs/event_loop.h"
 #include "bagel/mfc/libs/events.h"
+#include "bagel/mfc/libs/list.h"
 #include "bagel/mfc/libs/settings.h"
 
 namespace Bagel {
@@ -999,12 +1000,16 @@ public:
 	int m_nID = 0;
 };
 
+typedef Libs::List<CView *> ViewList;
+typedef ViewList::iterator ViewListPos;
+
 class CDocument : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocument)
 private:
 	CString _title;
 	CString _unusedPathName;
 	BOOL m_bModified = FALSE;
+	 ViewList m_viewList;
 
 public:
 	BOOL m_bAutoDelete = TRUE;	// default to auto delete document
@@ -1016,8 +1021,8 @@ public:
 
 	void UpdateAllViews(CView *pSender, LPARAM lHint = 0,
 	                    CObject *pHint = nullptr);
-	POSITION GetFirstViewPosition() const;
-	CView *GetNextView(POSITION &rPosition) const;
+	ViewListPos GetFirstViewPosition();
+	CView *GetNextView(ViewListPos &rPosition) const;
 
 	const CString &GetTitle() const;
 	virtual void SetTitle(LPCSTR lpszTitle);
@@ -1028,10 +1033,13 @@ public:
 	virtual BOOL IsModified();
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
 	virtual void ReportSaveLoadException(LPCSTR lpszPathName,
-	                                     CException *e, BOOL bSaving, UINT nIDPDefault);
+		CException *e, BOOL bSaving, UINT nIDPDefault);
 	bool SaveModified();
 
-	// delete doc items etc
+	void AddView(CView *pView);
+	void RemoveView(CView *pView);
+
+	// Delete doc items etc
 	virtual void DeleteContents();
 
 	virtual BOOL OnNewDocument() {
@@ -1042,6 +1050,8 @@ public:
 	}
 	virtual void OnFileSaveAs() {}
 	virtual void OnCloseDocument();
+	virtual void OnChangedViewList();
+	void UpdateFrameCounts();
 
 	DECLARE_MESSAGE_MAP()
 };
@@ -1687,8 +1697,6 @@ class CView : public CWnd {
 	DECLARE_DYNAMIC(CView)
 
 protected:
-	CView *m_pDocument = nullptr;
-
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
 	}
@@ -1696,8 +1704,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	CDocument *m_pDocument = nullptr;
+
+public:
 	~CView() override {
 	}
+
+	void OnInitialUpdate();
+	void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
 };
 
 class CScrollView : public CView {
@@ -1797,16 +1811,7 @@ public:
 	void SetDefaultTitle(CDocument *pDocument) override;
 };
 
-class CTemplateList : public Common::Array<CDocTemplate *> {
-public:
-	bool contains(const CDocTemplate *tmp) const {
-		for (auto it = begin(); it != end(); ++it) {
-			if (*it == tmp)
-				return true;
-		}
-		return false;
-	}
-};
+typedef Libs::List<CDocTemplate *> CTemplateList;
 
 class CDocManager {
 private:

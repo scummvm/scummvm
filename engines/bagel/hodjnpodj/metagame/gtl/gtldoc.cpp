@@ -190,15 +190,12 @@ void CGtlDoc::Dump(CDumpContext& dc) const {
 
 //* CGtlDoc::OnChangedViewList -- called by MFC when a view is
 //		added or deleted
-VOID CGtlDoc::OnChangedViewList(void)
-// returns: VOID
-{
+VOID CGtlDoc::OnChangedViewList() {
 	JXENTER(CGtlDoc::OnChangedViewList) ;
-	POSITION nViewPosition = GetFirstViewPosition() ;
+	ViewListPos nViewPosition = GetFirstViewPosition() ;
 	CGtlView *xpGtlView ;
 
-	// if we haven't yet found frame window
-	//
+	// If we haven't yet found frame window
 	if (!m_xpGtlFrame) {
 
 		if ((xpGtlView = (CGtlView *)GetNextView(nViewPosition)) != nullptr) {

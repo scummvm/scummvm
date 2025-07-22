@@ -29,5 +29,14 @@ IMPLEMENT_DYNAMIC(CView, CWnd)
 BEGIN_MESSAGE_MAP(CView, CWnd)
 END_MESSAGE_MAP()
 
+void CView::OnInitialUpdate() {
+	OnUpdate(nullptr, 0, nullptr);
+}
+
+void CView::OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/) {
+	ASSERT(pSender != this);
+	Invalidate(TRUE);
+}
+
 } // namespace MFC
 } // namespace Bagel
