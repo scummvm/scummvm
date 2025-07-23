@@ -199,14 +199,17 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
 		} else {
-			sprites.add(spr);
+			if (ex) {
+				_talkSpritesEx.add(spr);
+			} else {
+				_talkSprites.add(spr);
+			}
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
@@ -220,22 +223,48 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
 
-		for (uint32 i = 0; i < sprites.getSize(); i++) {
-			if (scumm_stricmp(sprites[i]->getFilename(), filename) == 0) {
-				if (_currentSprite == sprites[i]) {
-					_currentSprite = _sprite;
+		bool setCurrent = false;
+		bool setTemp2 = false;
+
+		if (ex) {
+			for (uint32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+				if (scumm_stricmp(_talkSpritesEx[i]->getFilename(), filename) == 0) {
+					if (_currentSprite == _talkSpritesEx[i]) {
+						setCurrent = true;
+					}
+					if (_tempSprite2 == _talkSpritesEx[i]) {
+						setTemp2 = true;
+					}
+					delete _talkSpritesEx[i];
+					_talkSpritesEx.removeAt(i);
+					break;
 				}
-				if (_tempSprite2 == sprites[i]) {
-					_tempSprite2 = _sprite;
+			}
+		} else {
+			for (uint32 i = 0; i < _talkSprites.getSize(); i++) {
+				if (scumm_stricmp(_talkSprites[i]->getFilename(), filename) == 0) {
+					if (_currentSprite == _talkSprites[i]) {
+						setCurrent = true;
+					}
+					if (_tempSprite2 == _talkSprites[i]) {
+						setTemp2 = true;
+					}
+					delete _talkSprites[i];
+					_talkSprites.removeAt(i);
+					break;
 				}
-				delete sprites[i];
-				sprites.removeAt(i);
-				break;
 			}
 		}
+
 		stack->pushBool(true);
+		if (setCurrent) {
+			_currentSprite = _sprite;
+		}
+		if (setTemp2) {
+			_tempSprite2 = _sprite;
+		}
+
 		return STATUS_OK;
 	}
 
@@ -271,25 +300,54 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
-		BaseArray<BaseSprite *> &sprites = ex ? _talkSpritesEx : _talkSprites;
+		bool setCurrent = false;
+		bool setTemp2 = false;
 
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);
 		} else {
-			for (uint32 i = 0; i < sprites.getSize(); i++) {
-				if (_currentSprite == sprites[i]) {
-					_currentSprite = spr;
+
+			// delete current
+			if (ex) {
+				for (uint32 i = 0; i < _talkSpritesEx.getSize(); i++) {
+					if (_talkSpritesEx[i] == _currentSprite) {
+						setCurrent = true;
+					}
+					if (_talkSpritesEx[i] == _tempSprite2) {
+						setTemp2 = true;
+					}
+					delete _talkSpritesEx[i];
 				}
-				if (_tempSprite2 == sprites[i]) {
-					_tempSprite2 = spr;
+				_talkSpritesEx.removeAll();
+			} else {
+				for (uint32 i = 0; i < _talkSprites.getSize(); i++) {
+					if (_talkSprites[i] == _currentSprite) {
+						setCurrent = true;
+					}
+					if (_talkSprites[i] == _tempSprite2) {
+						setTemp2 = true;
+					}
+					delete _talkSprites[i];
 				}
-				delete sprites[i];
+				_talkSprites.removeAll();
 			}
-			sprites.removeAll();
-			sprites.add(spr);
+
+			// set new
+			if (ex) {
+				_talkSpritesEx.add(spr);
+			} else {
+				_talkSprites.add(spr);
+			}
 			stack->pushBool(true);
+
+			if (setCurrent) {
+				_currentSprite = spr;
+			}
+			if (setTemp2) {
+				_tempSprite2 = spr;
+			}
 		}
 		return STATUS_OK;
 	} else {
