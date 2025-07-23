@@ -698,6 +698,15 @@ typedef struct _GUID {
 #define HC_SYSMODALON       4
 #define HC_SYSMODALOFF      5
 
+// parts of Main Frame
+#define AFX_IDW_PANE_FIRST              0xE900  // first pane (256 max)
+#define AFX_IDW_PANE_LAST               0xE9ff
+#define AFX_IDW_HSCROLL_FIRST           0xEA00  // first Horz scrollbar (16 max)
+#define AFX_IDW_VSCROLL_FIRST           0xEA10  // first Vert scrollbar (16 max)
+
+#define AFX_IDW_SIZE_BOX                0xEA20  // size box for splitters
+#define AFX_IDW_PANE_SAVE               0xEA21  // to shift AFX_IDW_PANE_FIRST
+#define AFX_WS_DEFAULT_VIEW		WS_CHILD
 
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;

@@ -1464,11 +1464,15 @@ private:
 
 	void ActivateFrame(int nCmdShow);
 	void OnUpdateFrameTitle(BOOL bAddToTitle);
+	CWnd *CreateView(CCreateContext *pContext, UINT nID);
 
 protected:
-	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
+	BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
 		return true;
 	}
+	int OnCreate(LPCREATESTRUCT lpcs);
+	int OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext);
+	BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext);
 
 	enum RepositionFlags {
 		reposDefault = 0, reposQuery = 1, reposExtra = 2, reposNoPosLeftOver = 0x8000

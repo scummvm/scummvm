@@ -125,7 +125,12 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 
 	sndPlaySound(nullptr, 0);              // clear all rogue sounds
 
-	return pMainWindow->m_hWnd;
+	theApp->Run();
+
+	delete theApp;
+	theApp = nullptr;
+
+	return 0;
 }
 
 

@@ -29,14 +29,15 @@ const CRect CFrameWnd::rectDefault;
 
 IMPLEMENT_DYNAMIC(CFrameWnd, CWnd)
 BEGIN_MESSAGE_MAP(CFrameWnd, CWnd)
+ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 HMENU CFrameWnd::GetMenu() const {
-	error("TODO: CFrameWnd::GetMenu");
+	return nullptr;
 }
 
 void CFrameWnd::RecalcLayout(BOOL bNotify) {
-	error("TODO: CFrameWnd::RecalcLayout");
+	// No implementation in ScummVM
 }
 
 BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
@@ -133,7 +134,7 @@ BOOL CFrameWnd::Create(LPCSTR lpszClassName,
 	if (!CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 			rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 			pParentWnd ? pParentWnd->GetSafeHwnd() : nullptr,
-			hMenu, (LPVOID)pContext)) {
+			hMenu, pContext)) {
 		warning("failed to create CFrameWnd.");
 
 		if (hMenu != nullptr)
@@ -144,8 +145,52 @@ BOOL CFrameWnd::Create(LPCSTR lpszClassName,
 	return TRUE;
 }
 
+int CFrameWnd::OnCreate(LPCREATESTRUCT lpcs) {
+	CCreateContext *pContext = (CCreateContext *)lpcs->lpCreateParams;
+	return OnCreateHelper(lpcs, pContext);
+}
+
+int CFrameWnd::OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
+	if (CWnd::OnCreate(lpcs) == -1)
+		return -1;
+
+	// Create the client view, if any
+	if (!OnCreateClient(lpcs, pContext)) {
+		warning("Failed to create client pane/view for frame.\n");
+		return -1;
+	}
+
+	RecalcLayout();
+	return 0;
+}
+
+BOOL CFrameWnd::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
+	if (pContext != nullptr && pContext->m_pNewViewClass != nullptr) {
+		if (CreateView(pContext, AFX_IDW_PANE_FIRST) == nullptr)
+			return FALSE;
+	}
+	return TRUE;
+}
+
+CWnd *CFrameWnd::CreateView(CCreateContext *pContext, UINT nID) {
+	assert(m_hWnd != nullptr);
+	assert(pContext != nullptr);
+	assert(pContext->m_pNewViewClass != nullptr);
+
+	CWnd *pView = (CWnd *)pContext->m_pNewViewClass->CreateObject();
+	assert(pView);
+	ASSERT_KINDOF(CWnd, pView);
+
+	if (!pView->Create(nullptr, nullptr, AFX_WS_DEFAULT_VIEW,
+		CRect(0, 0, 0, 0), this, nID, pContext)) {
+		return nullptr;        // can't continue without a view
+	}
+
+	return pView;
+}
+
 CView *CFrameWnd::GetActiveView() const {
-	ASSERT(m_pViewActive == NULL ||
+	ASSERT(m_pViewActive == nullptr ||
 		m_pViewActive->IsKindOf(RUNTIME_CLASS(CView)));
 	return m_pViewActive;
 }
@@ -155,25 +200,25 @@ void CFrameWnd::SetActiveView(CView *pViewNew, BOOL bNotify) {
 	if (pViewNew == pViewOld)
 		return;     // do not re-activate if SetActiveView called more than once
 
-	m_pViewActive = NULL;   // no active for the following processing
+	m_pViewActive = nullptr;   // no active for the following processing
 
 	// deactivate the old one
-	if (pViewOld != NULL)
+	if (pViewOld != nullptr)
 		pViewOld->OnActivateView(FALSE, pViewNew, pViewOld);
 
 	// if the OnActivateView moves the active window,
 	//    that will veto this change
-	if (m_pViewActive != NULL)
+	if (m_pViewActive != nullptr)
 		return;     // already set
 	m_pViewActive = pViewNew;
 
 	// activate
-	if (pViewNew != NULL && bNotify)
+	if (pViewNew != nullptr && bNotify)
 		pViewNew->OnActivateView(TRUE, pViewNew, pViewOld);
 }
 
 void CFrameWnd::OnSetFocus(CWnd *pOldWnd) {
-	if (m_pViewActive != NULL)
+	if (m_pViewActive != nullptr)
 		m_pViewActive->SetFocus();
 	else
 		CWnd::OnSetFocus(pOldWnd);
@@ -182,9 +227,9 @@ void CFrameWnd::OnSetFocus(CWnd *pOldWnd) {
 CDocument *CFrameWnd::GetActiveDocument() {
 	ASSERT_VALID(this);
 	CView *pView = GetActiveView();
-	if (pView != NULL)
+	if (pView != nullptr)
 		return pView->GetDocument();
-	return NULL;
+	return nullptr;
 }
 
 void CFrameWnd::ActivateFrame(int nCmdShow) {
