@@ -37,7 +37,7 @@ void FrameLimiter::initialize() {
 }
 
 void FrameLimiter::initialize(const uint framerate) {
-	_frameLimit = (framerate > 0) ? 1000.0f / CLIP<uint>(framerate, 1, 100) : 0;
+	_frameLimit = (framerate > 0) ? 1000.0f / CLIP<uint>(framerate, 1, 120) : 0;
 	initialize();
 }
 
