@@ -181,7 +181,9 @@ void ZVision::playVideo(Video::VideoDecoder &vid, Common::Rect dstRect, bool ski
 
 		_system->delayMillis(vid.getTimeToNextFrame() / 2); // Exponentially decaying delay
 	}
-
+	
+	vid.close();	//Ensure resources are freed.
+	
 	_cutscenesKeymap->setEnabled(false);
 	_gameKeymap->setEnabled(true);
 
