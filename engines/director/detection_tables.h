@@ -3558,10 +3558,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Puzzle demo is found on apcmag.cd Dec 1999 disc 3, published by Australian Consolidated Press
 	// PUZZLE.EXE is the only file in this demo
 	// Versions 2.x are labeled 1997 Edition
-	MACGAME2("adamtis", "v1.1",		  "Adam Player.ppc",			   "17085276f3b938562330a4e8bfdc97ce", 57446,
-									  "A.D.A.M. The Inside Story 1.1", "aff58aef8781629c7fb011c389d45e37", 334061, 404),
-	MACGAME2("adamtis", "v1.11",	  "Adam Player.ppc",			   "17085276f3b938562330a4e8bfdc97ce", 57446,
-									  "A.D.A.M. The Inside Story 1.1", "aff58aef8781629c7fb011c389d45e37", 336715, 404),
+	MACGAME2("adamtis", "v1.1",		  "Adam Player.ppc",											 "17085276f3b938562330a4e8bfdc97ce", 57446,
+									  "A.D.A.M. The Inside Story 1.1/A.D.A.M. The Inside Story 1.1", "aff58aef8781629c7fb011c389d45e37", 334061, 404),
+	MACGAME2("adamtis", "v1.11",	  "Adam Player.ppc",											 "17085276f3b938562330a4e8bfdc97ce", 57446,
+									  "A.D.A.M. The Inside Story 1.1/A.D.A.M. The Inside Story 1.1", "aff58aef8781629c7fb011c389d45e37", 336715, 404),
 	WINGAME2t("adamtis", "v1.11",	  "ADAMPLAY.EXE",		   "e1df8f99d27cdead0717ee63685ceb2c", 695721,
 									  "INSIDE.EXE",			   "ddefd17508c1399690fa6127fb18faf8", 1341120,	404),
 	WINGAME2t("adamtis", "v2.01",	  "ADAMPLAY.EXE",		   "e1df8f99d27cdead0717ee63685ceb2c", 695855,
@@ -4878,9 +4878,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("karuta", "", "xn--t8jb4b0a4b1lzbf", "r:78138a77207907642744d0960c14d9e5", 486623, Common::JA_JPN, 404),
 	WINGAME1_l("karuta", "", "KARUTA.EXE",			"t:2afac76249c458f5151ed0ed0ddadfe9", 746987, Common::JA_JPN, 404),
 	// Original Mac filename is かるた
-	MACDEMO1_l("karuta", "Demo", "Karuta",		 "r:78138a77207907642744d0960c14d9e5", 484311, Common::JA_JPN, 404),
-	WINDEMO2_l("karuta", "Demo", "S.EXE",		 "t:c8890a8cf579b08410ac063226736407", 746989,
-								 "OPENING4.DIR", "f:89beafaa3b41f1c533d13fb378d5eebf", 3995204, Common::JA_JPN, 404),
+	MACDEMO1_l("karuta", "Demo", "Karuta",		 		  "r:78138a77207907642744d0960c14d9e5",  484311, Common::JA_JPN, 404),
+	WINDEMO2_l("karuta", "Demo", "S.EXE",				  "t:c8890a8cf579b08410ac063226736407",  746989,
+								 "WIN_DEMO/OPENING4.DIR", "f:89beafaa3b41f1c533d13fb378d5eebf", 3995204, Common::JA_JPN, 404),
 
 	WINGAME1t_l("kaiser", "", "KAISER.EXE", "5f7442ffcdabc4858a3fc1011aaabca2", 989321, Common::DE_DEU, 404),
 
@@ -7444,12 +7444,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Screen savers from Perfect Blue
 	// Windows versions require installation
-	MACGAME1("pbdisplay", "",   "Display",      "rt:2edbfc74e63df50f407b5c20dbdd5a6f", 806659, 501),
-	MACGAME1("pbflash", "",     "Flash",        "rt:76bf5854c4fc2d23f4b79dcc3f05f90b", 806657, 501),
-	MACGAME1("pbmima", "",      "MIMA",         "rt:9541d06fe92e70e2e7b5ed60cd08ae37", 806656, 501),
-	MACGAME1("pbosakana", "",   "OSAKANA",      "rt:bb9b4deb500f0089b15db194b55cf110", 806659, 501),
-	MACGAME1_l("pbtoilet1", "", "Toilet1",      "rt:dd36055e418a61dab0e4f94d78c949b2", 806659, Common::JA_JPN, 501),
-	MACGAME1_l("pbtoilet2", "", "Toilet2",      "rt:27ea13fc0907d038b621adad2d59c0bc", 806659, Common::JA_JPN, 501),
+	MACGAME1("pbdisplay", "",   "Display",			  "rt:2edbfc74e63df50f407b5c20dbdd5a6f", 806659, 501),
+	MACGAME1("pbflash", "",     "Flash",			  "rt:76bf5854c4fc2d23f4b79dcc3f05f90b", 806657, 501),
+	MACGAME1("pbmima", "",      "MIMA",				  "rt:9541d06fe92e70e2e7b5ed60cd08ae37", 806656, 501),
+	MACGAME1("pbosakana", "",   "OSAKANA",			  "rt:bb9b4deb500f0089b15db194b55cf110", 806659, 501),
+	MACGAME1_l("pbtoilet1", "", "Toilet1",			  "rt:dd36055e418a61dab0e4f94d78c949b2", 806659, Common::JA_JPN, 501),
+	MACGAME1_l("pbtoilet2", "", "xn--t8jo8k/Toilet2", "rt:27ea13fc0907d038b621adad2d59c0bc", 806659, Common::JA_JPN, 501),
 	WINGAME2("pbdisplay", "",   "INSTALL1.exe", "t:5130c98c28b84087d788c745e85e9d2f", 2339226,
 								"INSTALL1.scr", "f:e59b1b8c10adc7ee380e633d761b9854",   90374, 501),
 	WINGAME2("pbflash", "",     "INSTALL2.exe", "t:62ae1a088f3b03164e25504493a7f3f3", 2181972,
@@ -8257,28 +8257,29 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// There are four demos described here:
 	// https://web.archive.org/web/20000623024147/http://www.eddieandminx.com/demo.htm
 	// Map demo found on Disc Inferno from APC magazine (Australia), Dec 1999
-	WINDEMO1("eddieminx", "Map Demo", "mapgame.exe", "518a98696fe1122e08410b0f157f21bf", 5876875, 602),
+	WINDEMO1("eddieminx", "Map Demo", "mapgame.exe", "t:c8c3269724641e56c1873eb0f3ada089", 5876875, 602),
 
 	WINGAME1("egbingo", "", "wcsup.dll", "t:66e3453072a8b17112e19e7ed80d7bcd", 4893667, 600),
 	WINGAME1("egsnowboard", "", "wcsup.dll", "t:9baa7e1c5151d66d4f287a01f4aba790", 2196349, 600),
 	WINGAME1("egwendy", "", "wcsup.dll", "t:cf595fd98c2fd789217acbf97f03a724", 2037619, 600),
 
-	MACGAME1("egypt", "", "Egypt", "0944b962ebb00f4b5d5149d220f8449b", 114142, 702),
-
 	WINDEMO1_l("engl", "Demo", "ENGL.EXE", "a593079aecf5bd938ce75264cac24b2d", 13304811, Common::RU_RUS, 600),
 
-	MACGAME1("espanatomy", "", "Anatomy & Physiology ESP", "e3a044ab01f96d6645bc315628c2b00f", 118396, 602),
-	WINGAME1("espanatomy", "", "Anatomy & Physiology ESP.exe", "625deae5e42f9453c5e4ccf7d322f048", 1526924, 602),
+	// Essential Study Partner software
+	// Bundled with the textbook "Anatomy & Physiology: The Unity of Form and Function"
+	// Both versions require installation
+	MACGAME1("espanatomy", "", "Anatomy & Physiology ESP",	   "r:e3a044ab01f96d6645bc315628c2b00f",  118140, 602),
+	WINGAME1("espanatomy", "", "Anatomy & Physiology ESP.exe", "t:85d66d4eace2048cd7dbcfed7c4332e3", 1526924, 602),
 
 	// Mini-game from Microshaft Winblows that can also be launched separately
-	MACGAME1("exploder", "", "Winblows Exploder", "089658f6d7d68f07eece8a68e5fdc35e", 115391, 600),
-	WINGAME1t("exploder", "", "EXPLODER.EXE", "ae488c615d7ecb621c96c59b98eccf9b", 4712625, 600),
+	MACGAME1("exploder", "", "Winblows Exploder", "r:089658f6d7d68f07eece8a68e5fdc35e",  115391, 600),
+	WINGAME1("exploder", "", "EXPLODER.EXE",	  "t:ae488c615d7ecb621c96c59b98eccf9b", 4712625, 600),
 
 	MACGAME1("flingshot", "", "FlingShot", "769cbb727ae2dda3f8ab6682d65ab439", 1031461, 650),
 
-	WINGAME1("forestia", "", "FORESTIA.EXE", "9ba84c313bc116ffa08029aad52cd2e8", 1859350, 601),
+	MACGAME1_l("forestia", "", "FORESTIA", "r:3c0d928e84acac2ee6739a4360e70fc6", 1032406, Common::FR_FRA, 602),
+	WINGAME1("forestia", "", "FORESTIA.EXE", "t:1e2b8807a12a817596db87b8052a393b", 1859350, 601),
 	WINGAME1_l("forestia", "", "Forestia.exe", "5e123b0ddb0f1193e1f840c50f24e382", 1521194, Common::FI_FIN, 650),
-	MACGAME1_l("forestia", "", "FORESTIA", "3c0d928e84acac2ee6739a4360e70fc6", 1032662, Common::FR_FRA, 602),
 
 	// Later releases are D8
 	WINGAME1_l("forestiajr", "", "FJPC/Forestia Junior.exe", "t:07a7028e8d3c13ac730eeda6b60eec6c", 1553190, Common::FR_FRA, 650),
@@ -8303,8 +8304,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("fpgawestern", "Wacky Wanted Posters Demo v1.0d", "Western Town Demo", "ade290061bd8f78051a8e872a889855c", 1031646, 601),
 	WINDEMO1t("fpgawestern", "Wacky Wanted Posters Demo v1.0d", "WEST95.EXE", "d52066d7c271da97d1cfa9911d0ee0fc", 1512580, 602),
 
-	MACDEMO1("fpdollhouse", "Dress Up Demo", "FP Dollhouse Demo", "1d9149b9745e35ef93ed4cdf08ec3af7", 1031658, 602),
-	WINDEMO1("fpdollhouse", "Dress Up Demo", "DHDEMO95.EXE", "518a98696fe1122e08410b0f157f21bf", 1512578, 602),
+	MACDEMO1("fpdollhouse", "Dress Up Demo", "FP Dollhouse Demo", "rt:d31e40994fc7756d7c2a8a8f38645650", 1031402, 602),
+	WINDEMO1("fpdollhouse", "Dress Up Demo", "DHDEMO95.EXE",	  "t:36475ccacda79d906ca506c4c6fa4662",  1512578, 602),
 
 	// Mac version requires installation, Christmas Installer, Stuffit
 	MACGAME1("fplpxmas", "", "Christmas",		   "r:1d9149b9745e35ef93ed4cdf08ec3af7", 1032378, 602),
@@ -8457,14 +8458,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Flemish Edition (c) 2000, Standaard Uitgeverij, Antwerp
 	// Dutch Edition (c) 2000, Halloween Educational Software, Amsterdam
 	// Mac installer creates an invisible projector file
+	// Dutch and Flemish versions on same disk
 	MACGAME1("ispyschool", "",	 "Play I Spy School Days", "fa259c68cd2594e863524ca7d18db67a", 116034, 650),
-	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",   "904cb6465321d8e1d12d2a5a29612050", 1029165,
-								 "ISPYMAIN.DXR",		   "d46cbab557f938b88660e77c4fe64b5a", 7136056, Common::NL_BEL, 600),
-	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",   "904cb6465321d8e1d12d2a5a29612050", 1029165,
-								 "ISPYMAIN.DXR",		   "e152e96487decca8ddc8ab16de55366e", 7156892, Common::NL_NLD, 600),
+	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",     "rt:a13c7101c1bd4a927d91d8443fa706f5", 1028909,
+								 "Vlaams/Data/ISPYMAIN.dxr", "d:f722be141ac25eae22fb8ba06250b9ae",  7135928, Common::NL_BEL, 600),
+	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",	 "rt:a13c7101c1bd4a927d91d8443fa706f5", 1028909,
+								 "Ned/Data/ISPYMAIN.dxr",	 "d:82b3befc456b4ace5d09b1ab8546fffc",  7156764, Common::NL_NLD, 600),
 	WINGAME1("ispyschool", "",	 "Ispy.exe",			   "d62438566e44826960fc16c5c23dbe43", 1580375, 650),
-	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "a593079aecf5bd938ce75264cac24b2d", 1989859, Common::NL_BEL, 600),
-	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "a593079aecf5bd938ce75264cac24b2d", 1989785, Common::NL_NLD, 600),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "t:2af7f901e9fb93b4323d871067cd7ac5", 1989859, Common::NL_BEL, 600),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "t:2af7f901e9fb93b4323d871067cd7ac5", 1989785, Common::NL_NLD, 600),
 
 	MACGAME1("jmmg", "", "Just Me and My Grandpa", "66f1a7078033867061b05f3789c6e5de", 1032378, 602),
 	WINGAME1("jmmg", "", "JMMG.EXE", "t:9801c1217842b39b25e42584cf5f8548", 1704089, 600),
@@ -9086,9 +9088,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("beautyorbeast", "", "Beauty or the Beast.exe", "02b0d114c93b598c737b1c627178195c", 2190754, Common::RU_RUS, 702),
 
 	MACGAME1_l("bellini3", "", "Bellinis bikini",	   "0944b962ebb00f4b5d5149d220f8449b", 114321, Common::DA_DNK, 702),
-	MACGAME1_l("bellini3", "", "Bellinin bikinit",	   "0944b962ebb00f4b5d5149d220f8449b", 114321, Common::FI_FIN, 702),
+	MACGAME1_l("bellini3", "", "Bellinin bikinit/Bellinin bikinit", "rt:b3a13f7151a3413ae749c86185841c02", 114065, Common::FI_FIN, 702),
 	WINGAME1_l("bellini3", "", "Bellinis bikini.exe",  "7c18c9a6af2694156bf09ed195c1ab09", 2596204, Common::DA_DNK, 702),
-	WINGAME1_l("bellini3", "", "Bellinin bikinit.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2596204, Common::FI_FIN, 702),
+	WINGAME1_l("bellini3", "", "Bellinin bikinit/Bellinin bikinit.exe", "t:64f584eaa31ccb4123b5c794ae8f8a0f", 2596204, Common::FI_FIN, 702),
 
 	MACGAME2_l("bibi2", "", "Spielstart", 		 "rt:c6e0deab56351063041a084e3e5a412e", 117091,
 							"DATEN/SPIELST.DXR", "d:24139a522420d2c6e3f4d0aa502f5936", 2250124, Common::DE_DEU, 702),
@@ -9157,6 +9159,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME2("easports2000", "", "PC.EXE",	  "c1a2e8b7e41fa204009324a9c7db1030", 2212134,
 								 "INTRO.DXR", "209cd844f714140413eb58c3a69db454", 5179191, 700),
+
+	// Mac version requires installation
+	MACGAME1("egypt", "", "Egypt",			   "rt:2ebb1d55deb68cf386444c14a5e8137c", 113886, 702),
+	WINGAME2("egypt", "", "Install/Egypt.exe", "t:d65e257cff7eaf984b556515459c2877", 1815452,
+				 		  "Data/Generiq.dxr",  "f:7551627746d609619bfbedd01aa12319", 1044985, 702),
 
 	// PC "conversion" of the Jumbo Electro educational toys
 	// Multilanguage En-Fr-De-Nl
