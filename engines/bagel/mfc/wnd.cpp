@@ -96,6 +96,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	cs.cx = rect.right - rect.left;
 	cs.cy = rect.bottom - rect.top;
 	cs.style = dwStyle;
+	cs.lpCreateParams = pContext;
 
 	// Trigger pre-create event
 	if (!PreCreateWindow(cs))

@@ -145,15 +145,15 @@ int CDC::SetMapMode(int nMapMode) {
 }
 
 CPoint CDC::SetViewportOrg(int x, int y) {
-	error("TODO: CDC::SetViewportOrg");
+	return impl()->setViewportOrg(CPoint(x, y));
 }
 
 CPoint CDC::SetViewportOrg(POINT point) {
-	error("TODO: CDC::SetViewportOrg");
+	return impl()->setViewportOrg(point);
 }
 
 CPoint CDC::OffsetViewportOrg(int nWidth, int nHeight) {
-	error("TODO: CDC::OffsetViewportOrg");
+	return impl()->offsetViewportOrg(nWidth, nHeight);
 }
 
 int CDC::GetClipBox(LPRECT lpRect) const {
@@ -667,6 +667,25 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 
 	_defaultBitmap._bitmap->create(*scr, r);
 	_bitmap = _defaultBitmap._bitmap;
+}
+
+CPoint CDC::Impl::setViewportOrg(const CPoint &pt) {
+	CPoint oldOrg = _viewportOrigin;
+	if (pt.x != 0 || pt.y != 0)
+		error("TODO: CDC::SetViewportOrg");
+
+	return oldOrg;
+}
+
+CPoint CDC::Impl::offsetViewportOrg(int xDelta, int yDelta) {
+	CPoint oldOrg = _viewportOrigin;
+	_viewportOrigin.x += xDelta;
+	_viewportOrigin.y += yDelta;
+
+	if (_viewportOrigin.x != 0 || _viewportOrigin.y != 0)
+		error("TODO: CDC::OffsetViewportOrg");
+
+	return oldOrg;
 }
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {

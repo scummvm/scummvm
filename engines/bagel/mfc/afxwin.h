@@ -688,6 +688,7 @@ public:
 		~DefaultBitmap() override {
 		};
 	};
+
 	class Impl : public Gfx::TextRender {
 	private:
 		DefaultBitmap _defaultBitmap;
@@ -697,6 +698,7 @@ public:
 		COLORREF _textColor = 0;
 		uint _textAlign = TA_LEFT;
 		int _drawMode;
+		CPoint _viewportOrigin;
 
 		uint getPenColor() const;
 		uint getBrushColor() const;
@@ -719,6 +721,8 @@ public:
 		void setFormat(const Graphics::PixelFormat &format);
 		void setScreenRect();
 		void setScreenRect(const Common::Rect &r);
+		CPoint setViewportOrg(const CPoint &pt);
+		CPoint offsetViewportOrg(int xDelta, int yDelta);
 
 		HPALETTE selectPalette(HPALETTE pal);
 		CPalette *selectPalette(CPalette *pal);
