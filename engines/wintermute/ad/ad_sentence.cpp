@@ -178,7 +178,8 @@ char *AdSentence::getStance(int stance) {
 
 	_tempStance = new char [curr - start + 1];
 	if (_tempStance) {
-		Common::strlcpy(_tempStance, start, curr - start + 1);
+        _tempStance[curr - start] = '\0';
+		Common::strlcpy(_tempStance, start, curr - start);
 	}
 
 	return _tempStance;
