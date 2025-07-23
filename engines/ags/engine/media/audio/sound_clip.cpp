@@ -151,7 +151,7 @@ int SoundClipWaveBase::play() {
 			warning("Sound stream is null");
 			return 0;
 		}
-		if (_stream->getRate() < 131072)  // maximum accepted value in audio/rate.cpp
+		if (_stream->getRate() < 262144)  // maximum accepted value in audio/rate.cpp
 			_mixer->playStream(_soundType, &_soundHandle, _stream,
 							   -1, _vol255, 0, DisposeAfterUse::NO);
 		else
