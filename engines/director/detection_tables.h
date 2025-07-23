@@ -1001,7 +1001,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "geograficus",		"Geograficus ... und Geografie wird zum Abenteuer" },
 	{ "girlspack",			"Girl's Pack!" },
 	{ "glitzerschuppen",	"Der Regenbogenfisch Die Suche Nach Den Glitzerschuppen" },
-	{ "globiabc",			"Globi's ABC" },
+	{ "globiabc",			"Mit Globi von A-Z: Mit Globi dem ABC auf der Spur" }, // aka Globi's ABC
 	{ "hase",				"Mein Freund, der Hase" },
 	{ "ichsehewas",			"Ich sehe was..." },
 	{ "informaticus",		"Informaticus" },
@@ -8349,7 +8349,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("garygadget1", "",	  "Program",					  "rt:02afd6d4d73e63517688ca8373df5d57", 1032442,
 									  "Movies/LBStart.dxr",			  "d:d3147a37ac1c86964755ab0e72d07d1d",  1075838, Common::NL_NLD, 602),
 	WINGAME1_l("garygadget1", "",	  "DATA/Willy32.exe",			  "t:c55bbee037d85462b515712bfa88e7f0",  1518423, Common::DE_DEU, 650),
-	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "518a98696fe1122e08410b0f157f21bf", 1512519, Common::NL_NLD, 602),
+	WINDEMO1_l("garygadget1", "Demo", "miel.exe",          "t:f8700f728df75744a96b6d7111e5725e", 1512519, Common::NL_NLD, 602),
 	MACDEMO1_l("garygadget1", "Demo", "Miel Monteur demo", "329aab81c0d74c5d3f31ddad26bcc639", 1029165, Common::NL_NLD, 600),
 
 	// Dutch Windows version on same disc is D8
@@ -8357,7 +8357,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("garygadget2", "", "Game",                    "r:1d9149b9745e35ef93ed4cdf08ec3af7", 1030105,
 								  "Movies/StartCD.dxr",      "d:53ec9ea456377ffbf9b7dbaa33dffc7e",   23925, Common::NL_NLD, 600),
 	WINGAME2_l("garygadget2", "", "Willy2.exe",				 "t:abd57254ba75efcf9ea4e61efb5f54d4", 1507905,
-								  "Movies/01.dxr",			 "d:096cba8d6b02e765977e16fcea867398", 1778244, Common::DE_DEU, 650),
+								  "Movies/01.dxr",			 "f:096cba8d6b02e765977e16fcea867398", 1778244, Common::DE_DEU, 650),
 
 	MACGAME1_l("garygadget2", "", "xn--Bygg bter med Mulle Mekk-lcc", "rt:ccb569e29fadcc572cf60ae3a8cb6bfe", 1034678, Common::NB_NOR, 602),
 	WINGAME1_l("garygadget2", "", "Mullebat.exe",					  "t:1bb8255461245bc03a78c6c5079efd6e",  1522688, Common::NB_NOR, 602),
@@ -8425,29 +8425,31 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("gasbook6", "The Designers Republic", "DR-Infoburst", "a37dbec9be7989aed94fcacdad3747ea", 115767, 650),
 	WINGAME1t("gasbook6", "The Designers Republic", "DR_Infoburst.exe", "c567e0a8cd2d59ccd687706105a1f530", 10470327, 602),
 
-	WINDEMO1("generations", "v4.2 Demo", "GEN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 15646702, 600),
+	WINDEMO1("generations", "v4.2 Demo", "GEN95.EXE", "t:c3b6f3882debefbf2a506d10f6f099d9", 15646702, 600),
 
 	// Gigglebone Gang games (Beestenbende) were published in Belgium and the Netherlands by Zwijsen CD-ROMs
 	// https://nationaalarchiefeducatievegames.nl/archief?filter=Headbone%20Interactive
-	WINDEMO2_l("gigglecity", "Demo", "WIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1700151,
-									 "INTRO.DXR", "514a17949a7e30d2ed616c3954dadb7a", 3254498, Common::NL_NLD, 600),
-	WINDEMO2_l("gigglefarm", "Demo", "WIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1700151,
-									 "INTRO.DXR", "c6e4a53180109b3bf4a156910aa042aa", 1070088, Common::NL_NLD, 600),
+	WINDEMO2_l("gigglecity", "Demo", "WIN95.EXE", "t:ad0d9b969ac9452aa326f4ffd28fed39", 1700151,
+									 "SHELL.DXR", "f:f8ea6472bb956f45c1b07fe970eccbe2",	  62316, Common::NL_NLD, 600),
+	WINDEMO2_l("gigglefarm", "Demo", "WIN95.EXE", "t:ad0d9b969ac9452aa326f4ffd28fed39", 1700151,
+									 "FFFF2.DXR", "f:2c65df83aa7b05e511dcf58c6e3dc104",  823584, Common::NL_NLD, 600),
 
+	// 2000 release, older version is D5
 	// Language selection at start for High German / Swiss German
-	MACGAME1_l("globiabc", "", "Globi's ABC Power PC", "0bc838e9350c4749e2d10523d620a2ad", 117356, Common::DE_DEU, 650),
-	WINGAME1_l("globiabc", "", "GLOBI32.EXE", "d62438566e44826960fc16c5c23dbe43", 1711195, Common::DE_DEU, 650),
+	MACGAME1_l("globiabc", "", "Globi's ABC Power PC", "r:0bc838e9350c4749e2d10523d620a2ad",  117100, Common::DE_DEU, 650),
+	WINGAME1_l("globiabc", "", "GLOBI32.EXE",		   "t:1513152d33630090a05483f329742e23", 1711195, Common::DE_DEU, 650),
 
 	// Windows screen saver is in BILDNT directory
-	MACGAME1_l("globiss", "", "Globi's Bildschirmschoner", "512aa445bccb66babe48419237422745", 1150767, Common::DE_DEU, 650),
-	WINGAME1_l("globiss", "", "GLOBISAZ.EXE", "6e893e1d588f51d9d6202410a38a73a6", 9857917, Common::DE_DEU, 650),
+	MACGAME1_l("globiss", "", "Globi's Bildschirmschoner", "r:512aa445bccb66babe48419237422745", 1150511, Common::DE_DEU, 650),
+	WINGAME1_l("globiss", "", "BILDNT/GLOBISAZ.EXE",	   "t:32be9c21695f3b84f18dea0c34cf5960", 9857917, Common::DE_DEU, 650),
 
 	// Published by A-Star Interactive (Singapore)
-	WINGAME1("grammarplaytime2", "", "HD/H_32.exe", "a593079aecf5bd938ce75264cac24b2d", 2234889, 600),
+	WINGAME1("grammarplaytime2", "", "HD/H_32.exe", "t:8aec49df23da5b0ba8799182a5f9cdfc", 2234889, 600),
 
-	WINGAME1_l("griezelbus1", "", "BUS95.EXE", "518a98696fe1122e08410b0f157f21bf", 1748606, Common::NL_NLD, 602),
+	WINGAME1_l("griezelbus1", "", "BUS95.EXE", "t:c6d6bce3e22dcc8c5170df085d147e34", 1748606, Common::NL_NLD, 602),
 
-	WINGAME1("hamletmurder", "", "PMHamlet.exe", "a593079aecf5bd938ce75264cac24b2d", 1873557, 600),
+	// Requires installation
+	WINGAME1("hamletmurder", "", "PMHamlet.exe", "t:d6d84f2abf4cabadd3dcfdc97a97ef03", 1873557, 600),
 
 	WINGAME1t_l("historia", "", "HISTORIA.EXE", "1c213a176ea0441a145ebf6f1f5b9f66", 1508366, Common::SV_SWE, 600),
 
@@ -8459,14 +8461,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Dutch Edition (c) 2000, Halloween Educational Software, Amsterdam
 	// Mac installer creates an invisible projector file
 	// Dutch and Flemish versions on same disk
-	MACGAME1("ispyschool", "",	 "Play I Spy School Days", "fa259c68cd2594e863524ca7d18db67a", 116034, 650),
+	MACGAME1("ispyschool", "",	 "Play I Spy School Days",   "rt:1a06324f5a189f976fb59f45249d30f8",  115778, 650),
 	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",     "rt:a13c7101c1bd4a927d91d8443fa706f5", 1028909,
 								 "Vlaams/Data/ISPYMAIN.dxr", "d:f722be141ac25eae22fb8ba06250b9ae",  7135928, Common::NL_BEL, 600),
 	MACGAME2_l("ispyschool", "", "Speel ik zie, ik zie",	 "rt:a13c7101c1bd4a927d91d8443fa706f5", 1028909,
 								 "Ned/Data/ISPYMAIN.dxr",	 "d:82b3befc456b4ace5d09b1ab8546fffc",  7156764, Common::NL_NLD, 600),
-	WINGAME1("ispyschool", "",	 "Ispy.exe",			   "d62438566e44826960fc16c5c23dbe43", 1580375, 650),
-	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "t:2af7f901e9fb93b4323d871067cd7ac5", 1989859, Common::NL_BEL, 600),
-	WINGAME1_l("ispyschool", "", "Ikzie32.exe",			   "t:2af7f901e9fb93b4323d871067cd7ac5", 1989785, Common::NL_NLD, 600),
+	WINGAME2("ispyschool", "",	 "Ispy.exe",			     "t:e07d18ef42bb17e9f8faa436c62b7a90",  1580375,
+								 "DATA/BREAKER.dxr",		 "f:12e7762062fab71450081643e1d15c5e",  8466950, 650),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989859, Common::NL_BEL, 600),
+	WINGAME1_l("ispyschool", "", "Ikzie32.exe",				 "t:2af7f901e9fb93b4323d871067cd7ac5",  1989785, Common::NL_NLD, 600),
 
 	MACGAME1("jmmg", "", "Just Me and My Grandpa", "66f1a7078033867061b05f3789c6e5de", 1032378, 602),
 	WINGAME1("jmmg", "", "JMMG.EXE", "t:9801c1217842b39b25e42584cf5f8548", 1704089, 600),
