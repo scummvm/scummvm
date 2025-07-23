@@ -153,7 +153,7 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 			formatStartOffset, originalHeight, height, ascent, originalFontId, fontId, textSlant, fontSize, r, g, b);
 }
 
-void FontStyle::write(Common::MemoryWriteStream *writeStream) {
+void FontStyle::write(Common::SeekableWriteStream *writeStream) {
 	debugC(3, kDebugSaving, "FontStyle::write(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
 			formatStartOffset, height, ascent, fontId, textSlant, fontSize, r, g, b);
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/memstream.h"
+#include "common/stream.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/movie.h"
@@ -236,7 +236,7 @@ uint32 ShapeCastMember::getCastDataSize() {
 	}
 }
 
-void ShapeCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void ShapeCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeByte(0);
 	writeStream->writeByte(1);
 

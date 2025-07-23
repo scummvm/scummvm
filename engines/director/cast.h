@@ -106,15 +106,15 @@ public:
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
-	void saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset);
-	void saveCastData(Common::MemoryWriteStream *writeStream, Resource *res);
+	void saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset);
+	void saveCastData(Common::SeekableWriteStream *writeStream, Resource *res);
 	void saveCastData();
-	void writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId);
+	void writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId);
 	uint32 getCastInfoSize(uint32 castId);
 	uint32 getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci);
 
 	uint32 getConfigSize();
-	
+
 	int getCastSize();
 	int getCastMaxID();
 	int getNextUnusedID();

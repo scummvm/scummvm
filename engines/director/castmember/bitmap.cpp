@@ -1006,7 +1006,7 @@ uint32 BitmapCastMember::getCastDataSize() {
 	return dataSize;
 }
 
-void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_pitch);
 
 	Movie::writeRect(writeStream, _initialRect);
@@ -1045,7 +1045,7 @@ void BitmapCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	// Ignoring the tail during loading as well as saving
 }
 
-uint32 BitmapCastMember::writeBITDResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);
 
 	writeStream->writeUint32LE(MKTAG('B', 'I', 'T', 'D'));

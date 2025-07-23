@@ -383,8 +383,7 @@ Common::Error DirectorEngine::run() {
 #endif
 
 	if (debugChannelSet(10, kDebugSaving)) {
-		Common::Path writePath;
-		_mainArchive->writeToFile(writePath, getCurrentMovie());
+		_mainArchive->writeToFile(Common::String(""), getCurrentMovie());
 	}
 
 	return Common::kNoError;

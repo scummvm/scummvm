@@ -20,6 +20,8 @@
  */
 
 #include "common/memstream.h"
+#include "common/savefile.h"
+#include "common/config-manager.h"
 
 #include "director/director.h"
 #include "director/archive.h"
@@ -38,36 +40,42 @@
 
 namespace Director {
 
-bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
+bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
+	// If the filename is empty, we save the movie with the name of the current movie
+	if (filename.empty()) {
+		filename = movie->getMacName();
+	}
+
+	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(g_director->getTargetName() + "-" + filename);
+
+	if (!saveFile) {
+		warning("RIFXArchive::writeToFile: Failed to open file %s for saving");
+		return false;
+	}
+
 	// Update the resources, their sizes and offsets
 	Common::Array<Resource *> builtResources = rebuildResources(movie);
 
 	// ignoring the startOffset
 	// For RIFX stream, moreoffset = 0, we won't be writing macbinary
-	byte *dumpData = nullptr;
-
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
 	// Or might need to allocate even more size if extra chunks are written
 	_size = getArchiveSize(builtResources);
-	dumpData = (byte *)calloc(_size, sizeof(byte));
+	saveFile->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
 
-	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
-
-	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR"
-
-	writeStream->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
-	writeStream->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
+	saveFile->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive, except header and size
+	saveFile->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
 
 	switch (_rifxType) {
 	case MKTAG('M', 'V', '9', '3'):
 	case MKTAG('M', 'C', '9', '5'):
 	case MKTAG('A', 'P', 'P', 'L'):
-		writeMemoryMap(writeStream, builtResources);
+		writeMemoryMap(saveFile, builtResources);
 		break;
 
 	case MKTAG('F', 'G', 'D', 'M'):
 	case MKTAG('F', 'G', 'D', 'C'):
-		writeAfterBurnerMap(writeStream);
+		writeAfterBurnerMap(saveFile);
 		break;
 	default:
 		break;
@@ -92,19 +100,19 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 			break;
 
 		case MKTAG('K', 'E', 'Y', '*'):
-			writeKeyTable(writeStream, it->offset);
+			writeKeyTable(saveFile, it->offset);
 			break;
 
 		case MKTAG('C', 'A', 'S', '*'):
-			writeCast(writeStream, it->offset, it->libResourceId);
+			writeCast(saveFile, it->offset, it->libResourceId);
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
-			cast->saveCastData(writeStream, it);
+			cast->saveCastData(saveFile, it);
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
-			cast->saveConfig(writeStream, it->offset);
+			cast->saveConfig(saveFile, it->offset);
 			break;
 
 		case MKTAG('B', 'I', 'T', 'D'):
@@ -113,7 +121,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeBITDResource(writeStream, it->offset);
+				target->writeBITDResource(saveFile, it->offset);
 			}
 			break;
 
@@ -123,7 +131,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSTXTResource(writeStream, it->offset);
+				target->writeSTXTResource(saveFile, it->offset);
 			}
 			break;
 
@@ -133,7 +141,7 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writePaletteData(writeStream, it->offset);
+				target->writePaletteData(saveFile, it->offset);
 			}
 			break;
 
@@ -143,46 +151,39 @@ bool RIFXArchive::writeToFile(Common::Path path, Movie *movie) {
 				Resource parent = castResMap[parentIndex];
 
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
-				target->writeSCVWResource(writeStream, it->offset);
+				target->writeSCVWResource(saveFile, it->offset);
 			}
 			break;
 
 		case MKTAG('V', 'W', 'S', 'C'):
-			movie->getScore()->writeVWSCResource(writeStream, it->offset);
+			movie->getScore()->writeVWSCResource(saveFile, it->offset);
 			break;
 
 		default:
             debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
-			writeStream->seek(it->offset);
-			writeStream->writeUint32LE(it->tag);
-			writeStream->writeUint32LE(it->size);
-			writeStream->writeStream(getResource(it->tag, it->index));
+			saveFile->seek(it->offset, SEEK_SET);
+			saveFile->writeUint32LE(it->tag);
+			saveFile->writeUint32LE(it->size);
+			saveFile->writeStream(getResource(it->tag, it->index));
 			break;
 		}
-	}
-
-	if (path.empty()) {
-		path = g_director->_gameDataDir.getPath().join(Common::Path(movie->getMacName()));
 	}
 
 	Common::DumpFile out;
 
 	// Write the movie out, stored in dumpData
-	if (out.open(path, true)) {
-		out.write(dumpData, _size);
-		out.flush();
-		out.close();
-		debugC(3, kDebugSaving, "RIFXArchive::writeStream:Saved the movie as file %s", path.toString().c_str());
+	if (saveFile) {
+		saveFile->flush();
+		debugC(3, kDebugSaving, "RIFXArchive::writeStream:Saved the movie as file %s", filename.c_str());
 	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", path.toString().c_str());
+		warning("RIFXArchive::writeStream: Error saving the file %s", filename.c_str());
 	}
 
-	free(dumpData);
-	delete writeStream;
+	delete saveFile;
 	return true;
 }
 
-bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream, Common::Array<Resource *> resources) {
+bool RIFXArchive::writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resources) {
 	Resource mmap;
 
 	for (auto it : resources) {
@@ -230,7 +231,7 @@ bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream,
 	return true;
 }
 
-bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStream) {
+bool RIFXArchive::writeAfterBurnerMap(Common::SeekableWriteStream *writeStream) {
 	warning("RIFXArchive::writeAfterBurnerMap: STUB: Incomplete function, needs further changes, AfterBurnerMap not written");
 	return false;
 
@@ -258,7 +259,7 @@ bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeSt
 #endif
 }
 
-bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset) {
+bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->seek(offset);
 
 	writeStream->writeUint32LE(MKTAG('K', 'E', 'Y', '*'));

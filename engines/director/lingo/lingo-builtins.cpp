@@ -1553,11 +1553,11 @@ void LB::b_save(int nargs) {
 }
 
 void LB::b_saveMovie(int nargs) {
-	Common::Path path;
+	Common::String filename;
 	if (nargs) {
-		path = Common::Path(g_director->_gameDataDir.getPath().join(g_lingo->pop().asString()));
+		filename = g_lingo->pop().asString();
 	}
-	g_director->getMainArchive()->writeToFile(path, g_director->getCurrentMovie());
+	g_director->getMainArchive()->writeToFile(filename, g_director->getCurrentMovie());
 }
 
 void LB::b_setCallBack(int nargs) {

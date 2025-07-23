@@ -72,7 +72,7 @@ public:
 	Common::Point getRegistrationOffset(int16 width, int16 height) override;
 
 	uint32 getCastDataSize() override;
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 
 	Common::String _filename;
 

@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/memstream.h"
+#include "common/stream.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/script.h"
@@ -154,7 +154,7 @@ uint32 ScriptCastMember::getCastDataSize() {
 	}
 }
 
-void ScriptCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void ScriptCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
 		writeStream->writeByte(0);		// unknown
 

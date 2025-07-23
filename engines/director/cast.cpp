@@ -529,7 +529,7 @@ bool Cast::loadConfig() {
 	return true;
 }
 
-void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
+void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	if (_version < kFileVer400) {
 		error("Cast::saveConfig called on a pre-D4 Director movie");
 	}
@@ -820,7 +820,7 @@ void Cast::loadCast() {
 	}
 }
 
-void Cast::saveCastData(Common::MemoryWriteStream *writeStream, Resource *res) {
+void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
 	uint32 offset = res->offset;
@@ -874,7 +874,7 @@ void Cast::saveCastData(Common::MemoryWriteStream *writeStream, Resource *res) {
 	}
 }
 
-void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) {
+void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId) {
 	// The structure of the CastMemberInfo is as follows:
 	// First some headers: offset, unknown and flags, and then a count of strings to be read
 	// (These strings contain properties of the cast member like filename, script attached to it, name, etc.)
