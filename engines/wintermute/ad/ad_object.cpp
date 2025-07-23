@@ -158,7 +158,6 @@ AdObject::~AdObject() {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::playAnim(const char *filename) {
 	delete _animSprite;
-	_animSprite = nullptr;
 	_animSprite = new BaseSprite(_gameRef, this);
 	if (!_animSprite) {
 		_gameRef->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", getName(), filename);
@@ -269,7 +268,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Talk") == 0 || strcmp(name, "TalkAsync") == 0) {
 		stack->correctParams(5);
 
-		const char *text    = stack->pop()->getString();
+		const char *text = stack->pop()->getString();
 		ScValue *soundVal = stack->pop();
 		int duration  = stack->pop()->getInt();
 		ScValue *valStances = stack->pop();
@@ -533,7 +532,6 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		AdEntity *ent = new AdEntity(_gameRef);
 		if (DID_FAIL(res = ent->loadFile(filename))) {
 			delete ent;
-			ent = nullptr;
 			script->runtimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {
@@ -941,7 +939,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 	// set duration by text length
-	if (_sentence->_duration <= 0) {// TODO: Avoid longs.
+	if (_sentence->_duration <= 0) {
 		_sentence->_duration = MAX<int32>((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
@@ -960,7 +958,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	if (_subtitlesWidth > 0) {
 		width = _subtitlesWidth;
 	} else {
-		if ((x < _gameRef->_renderer->getWidth() / 4 || x > _gameRef->_renderer->getWidth() * 0.75) && !_gameRef->_touchInterface) {
+		if ((x < _gameRef->_renderer->getWidth() / 4 || x > _gameRef->_renderer->getWidth() * 0.75)) {
 			width = MAX(_gameRef->_renderer->getWidth() / 4, MIN(x * 2, (_gameRef->_renderer->getWidth() - x) * 2));
 		} else {
 			width = _gameRef->_renderer->getWidth() / 2;
@@ -1241,8 +1239,8 @@ bool AdObject::displaySpriteAttachment(AdObject *attachment) {
 	int origY = attachment->_posY;
 
 	// inherit position from owner
-	attachment->_posX = (int)(this->_posX + attachment->_posX * scaleX / 100.0f);
-	attachment->_posY = (int)(this->_posY + attachment->_posY * scaleY / 100.0f);
+	attachment->_posX = (int32)(this->_posX + attachment->_posX * scaleX / 100.0f);
+	attachment->_posY = (int32)(this->_posY + attachment->_posY * scaleY / 100.0f);
 
 	// inherit other props
 	attachment->_alphaColor = this->_alphaColor;
@@ -1294,8 +1292,8 @@ bool AdObject::updatePartEmitter() {
 		float scaleX, scaleY;
 		getScale(&scaleX, &scaleY);
 
-		_partEmitter->_posX = (int)(_posX + (scaleX / 100.0f) * _partOffsetX);
-		_partEmitter->_posY = (int)(_posY + (scaleY / 100.0f) * _partOffsetY);
+		_partEmitter->_posX = (int32)(_posX + (scaleX / 100.0f) * _partOffsetX);
+		_partEmitter->_posY = (int32)(_posY + (scaleY / 100.0f) * _partOffsetY);
 	}
 	return _partEmitter->update();
 }
