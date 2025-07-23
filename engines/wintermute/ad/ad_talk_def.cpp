@@ -137,7 +137,6 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 				_nodes.add(node);
 			} else {
 				delete node;
-				node = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 		}
