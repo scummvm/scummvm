@@ -752,7 +752,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete layer;
-				layer = nullptr;
 			} else {
 				_gameRef->registerObject(layer);
 				_layers.add(layer);
@@ -770,7 +769,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete wpt;
-				wpt = nullptr;
 			} else {
 				_gameRef->registerObject(wpt);
 				_waypointGroups.add(wpt);
@@ -783,7 +781,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete sl;
-				sl = nullptr;
 			} else {
 				_gameRef->registerObject(sl);
 				_scaleLevels.add(sl);
@@ -796,7 +793,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete rl;
-				rl = nullptr;
 			} else {
 				_gameRef->registerObject(rl);
 				_rotLevels.add(rl);
@@ -809,7 +805,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
-				entity = nullptr;
 			} else {
 				addObject(entity);
 			}
@@ -821,7 +816,6 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				delete _cursor;
-				_cursor = nullptr;
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -1642,7 +1636,6 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			stack->pushNative(act, true);
 		} else {
 			delete act;
-			act = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1659,7 +1652,6 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			addObject(act);
 			stack->pushNative(act, true);
 		} else {
-			delete act;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1677,7 +1669,6 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			stack->pushNative(ent, true);
 		} else {
 			delete ent;
-			ent = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -2123,9 +2114,9 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	else if (strcmp(name, "GetLightName") == 0) {
 		stack->correctParams(1);
 
-		int index = stack->pop()->getInt();
+		int32 index = stack->pop()->getInt();
 
-		if (_geom && index >= 0 && static_cast<uint>(index) < _geom->_lights.getSize()) {
+		if (_geom && index >= 0 && static_cast<uint32>(index) < _geom->_lights.getSize()) {
 			stack->pushString(_geom->_lights[index]->getName());
 		} else {
 			stack->pushNULL();
@@ -2274,7 +2265,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertLayer") == 0) {
 		stack->correctParams(2);
-		int index = stack->pop()->getInt();
+		int32 index = stack->pop()->getInt();
 		ScValue *val = stack->pop();
 
 		AdLayer *layer = new AdLayer(_gameRef);
@@ -2317,7 +2308,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				}
 			}
 		} else {
-			int index = val->getInt();
+			int32 index = val->getInt();
 			if (index >= 0 && index < (int32)_layers.getSize()) {
 				toDelete = _layers[index];
 			}
