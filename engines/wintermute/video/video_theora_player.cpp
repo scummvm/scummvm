@@ -90,6 +90,7 @@ void VideoTheoraPlayer::SetDefaults() {
 VideoTheoraPlayer::~VideoTheoraPlayer() {
 	cleanup();
 	delete _subtitler;
+	_subtitler = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

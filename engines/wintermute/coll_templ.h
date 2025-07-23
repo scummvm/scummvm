@@ -36,7 +36,7 @@ namespace Wintermute {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-inline void dcConstructElements(TYPE *pElements, int32 nCount) {
+inline void dcConstructElements(TYPE *pElements, uint32 nCount) {
 	// first do bit-wise zero initialization
 	memset((void *)pElements, 0, nCount * sizeof(TYPE));
 	
