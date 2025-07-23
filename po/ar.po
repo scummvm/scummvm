@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-21 12:14+0000\n"
+"POT-Creation-Date: 2025-07-23 22:12+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -127,7 +127,7 @@ msgstr "اذهب للأعلى"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:184
+#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:186
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -3756,7 +3756,7 @@ msgstr ""
 "بإنشائها قد لا تعمل في الإصدارات المستقبلية من ScummVM."
 
 #: engines/engine.cpp:808 engines/engine.cpp:833
-#: engines/wintermute/wintermute.cpp:184
+#: engines/wintermute/wintermute.cpp:186
 msgid "Start anyway"
 msgstr "ابدأ على أي حال"
 
@@ -15302,19 +15302,19 @@ msgstr "لم يتم تجميع دعم Hero Craft بتنسيق"
 msgid "Wintermute3D support is not compiled in"
 msgstr "لم يتم تجميع دعم Wintermute3D بتنسيق"
 
-#: engines/wintermute/wintermute.cpp:150
+#: engines/wintermute/wintermute.cpp:152
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "تتطلب هذه اللعبة دعم PNG و JPEG و Vorbis."
 
-#: engines/wintermute/wintermute.cpp:161
+#: engines/wintermute/wintermute.cpp:163
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "تتطلب هذه اللعبة محرك FoxTail الفرعي ، والذي لم يتم تجميعه بتنسيق."
 
-#: engines/wintermute/wintermute.cpp:172
+#: engines/wintermute/wintermute.cpp:174
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr "تتطلب هذه اللعبة محرك فرعي HeroCraft ، والذي لم يتم تجميعه في."
 
-#: engines/wintermute/wintermute.cpp:183
+#: engines/wintermute/wintermute.cpp:185
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
