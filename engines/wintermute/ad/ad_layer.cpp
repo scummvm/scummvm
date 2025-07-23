@@ -173,8 +173,6 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete region;
 				delete node;
-				region = nullptr;
-				node = nullptr;
 			} else {
 				node->setRegion(region);
 				_nodes.add(node);
@@ -192,8 +190,6 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 				cmd = PARSERR_GENERIC;
 				delete entity;
 				delete node;
-				entity = nullptr;
-				node = nullptr;
 			} else {
 				node->setEntity(entity);
 				_nodes.add(node);
@@ -240,7 +236,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	if (strcmp(name, "GetNode") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		int node = -1;
+		int32 node = -1;
 
 		if (val->_type == VAL_INT) {
 			node = val->getInt();
@@ -303,7 +299,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "InsertRegion") == 0 || strcmp(name, "InsertEntity") == 0) {
 		stack->correctParams(2);
-		int index = stack->pop()->getInt();
+		int32 index = stack->pop()->getInt();
 		ScValue *val = stack->pop();
 
 		AdSceneNode *node = new AdSceneNode(_gameRef);
@@ -351,7 +347,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 				}
 			}
 		} else {
-			int index = val->getInt();
+			int32 index = val->getInt();
 			if (index >= 0 && index < (int32)_nodes.getSize()) {
 				toDelete = _nodes[index];
 			}
