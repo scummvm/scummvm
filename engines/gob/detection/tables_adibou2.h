@@ -268,7 +268,7 @@
 		"adibou2",
 		"ADIBOO 2.13 Environment",
 		AD_ENTRY2s("intro.stk", "092707829555f27706920e4cacf1fada", 8737958,
-				   "BECBA213.CD1","bc828c320908a5eaa349956d396bd8e1", 8),
+				   "BECBA213.CD1", "bc828c320908a5eaa349956d396bd8e1", 8),
 		EN_GRB,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -284,8 +284,23 @@
 		"adibou2readcount45",
 		"", // "Lecture/Calcul 4-5 ans"
 		AD_ENTRY2s("intro_ap.stk", "7ff46d8c804186d3a11bf6b921fac2c0", 40835594,
-				   "appli_01.vmd",  "11635be4aeaac46d199e7e37cf905240", 54402),
+				   "appli_01.vmd", "11635be4aeaac46d199e7e37cf905240", 54402),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou2readcount45",
+		"", // "Leggere/Contare 4-5 anni"
+		AD_ENTRY2s("intro_ap.stk", "8540e44b24fef8dac2bbcd1aff6e0d8f", 44815582,
+				   "appli_01.vmd", "2eb5ed83c2b3408d2d7ff54f5bfdaf3a", 49228),
+		IT_ITA,
 		kPlatformWindows,
 		ADGF_ADDON,
 		GUIO0()
@@ -310,6 +325,21 @@
 	0, 0, 0
 },
 
+{
+	{
+		"adibou2readcount67",
+		"", // Yo leo/Yo calculo 2° primaria
+		AD_ENTRY2s("intro_ap.stk", "8ccaddbb40a3142db80d4e84fb4df447", 36332224,
+				   "appli_03.vmd", "a14a48e9f3cfba245857fc74e249befd", 65542),
+		ES_ESP,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 // -- Add-ons : "Nature & Sciences" --
 {
 	{
@@ -318,6 +348,21 @@
 		AD_ENTRY2s("intro_ap.stk", "bff25481fc05bc5c6a3aaa8c17e89e5b", 3446050,
 				   "FICHES.ITK", "1670cc3373df162aed3219368665a1ca", 51025920),
 		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou2sciences",
+		"", // "Discover Nature, Animals & Planets"
+		AD_ENTRY2s("intro_ap.stk", "b630020cb8b6bc6f4b98876647ad418d", 3460620,
+				   "FICHES.ITK", "2a704840f883b908f444f5215ab05e72", 52092928),
+		EN_GRB,
 		kPlatformWindows,
 		ADGF_ADDON,
 		GUIO0()
