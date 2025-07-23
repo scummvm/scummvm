@@ -246,14 +246,6 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_autoSaveSlot = 999;
 	_cursorHidden = false;
 
-	// Block kept as a reminder that the engine CAN run in constrained/touch-mode
-	/*#ifdef __IPHONEOS__
-	    _touchInterface = true;
-	    _constrainedMemory = true; // TODO differentiate old and new iOS devices
-	#else*/
-	_touchInterface = false;
-	_constrainedMemory = false;
-
 	_settings = new BaseGameSettings(this);
 
 #ifdef ENABLE_HEROCRAFT

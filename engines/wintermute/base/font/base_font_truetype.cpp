@@ -92,22 +92,6 @@ void BaseFontTT::clearCache() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseFontTT::initLoop() {
-	// we need more aggressive cache management on iOS not to waste too much memory on fonts
-	if (_gameRef->_constrainedMemory) {
-		// purge all cached images not used in the last frame
-		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
-			if (_cachedTexts[i] == nullptr) {
-				continue;
-			}
-
-			if (!_cachedTexts[i]->_marked) {
-				delete _cachedTexts[i];
-				_cachedTexts[i] = nullptr;
-			} else {
-				_cachedTexts[i]->_marked = false;
-			}
-		}
-	}
 }
 
 //////////////////////////////////////////////////////////////////////////

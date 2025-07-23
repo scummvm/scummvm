@@ -295,8 +295,6 @@ public:
 
 	SaveThumbHelper *_cachedThumbnail;
 	void addMem(int32 bytes);
-	bool _touchInterface;
-	bool _constrainedMemory;
 
 	bool stopVideo();
 protected:
