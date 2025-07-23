@@ -315,7 +315,7 @@ void CastMember::unload() {
 // Whereas _info_ is metadata (size, name, flags, etc.)
 // Some cast members have their _data_ as well as _info_ in this very 'CASt' resource, e.g. TextCastMember
 // Whereas some other have their _info_ in a 'CASt' resource and _data_ in a dedicated resource (e.g. PaletteCastMember has 'CLUT' resource)
-uint32 CastMember::writeCAStResource(Common::MemoryWriteStream *writeStream) {
+uint32 CastMember::writeCAStResource(Common::SeekableWriteStream *writeStream) {
 	uint32 castResourceSize = getCastResourceSize();
 
 	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
@@ -370,7 +370,7 @@ uint32 CastMember::getCastDataSize() {
 	return _castDataSize;
 }
 
-void CastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void CastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	warning("CastMember::getDataSize(): Defualt implementation of 'CASt' resource data");
 
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {

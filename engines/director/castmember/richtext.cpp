@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/memstream.h"
+#include "common/stream.h"
 #include "graphics/macgui/macwidget.h"
 
 #include "director/director.h"
@@ -246,7 +246,7 @@ uint32 RichTextCastMember::getCastDataSize() {
 	}
 }
 
-void RichTextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void RichTextCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		Movie::writeRect(writeStream, _initialRect);
 		Movie::writeRect(writeStream, _boundingRect);

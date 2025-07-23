@@ -955,7 +955,7 @@ bool TextCastMember::setChunkField(int field, int start, int end, const Datum &d
 	return false;
 }
 
-void TextCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void TextCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeByte(_borderSize);	// 1 byte
 	writeStream->writeByte(_gutterSize);	// 2 bytes
 	writeStream->writeByte(_boxShadow);		// 3 bytes
@@ -987,7 +987,7 @@ uint32 TextCastMember::getCastDataSize() {
 	return size;
 }
 
-uint32 TextCastMember::writeSTXTResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
+uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s",
 		_ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str(), Common::toPrintable(_rtext).c_str());
 

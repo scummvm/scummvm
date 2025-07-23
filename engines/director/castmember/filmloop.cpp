@@ -19,7 +19,6 @@
  *
  */
 
-#include "common/stream.h"
 #include "common/memstream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
@@ -731,7 +730,7 @@ uint32 FilmLoopCastMember::getCastDataSize() {
 	return 0;
 }
 
-void FilmLoopCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void FilmLoopCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	Movie::writeRect(writeStream, _initialRect);
 
 	uint32 flags = 0;
@@ -751,8 +750,8 @@ void FilmLoopCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
 	writeStream->writeUint16LE(0);		// May need to save proper value in the future, currently ignored
 }
 
-void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStream, uint32 offset) {
-	uint32 channelSize = 0; 
+void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
@@ -777,13 +776,13 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 	writeStream->writeUint32BE(frameOffset);			// framesOffset
 	writeStream->seek(6, SEEK_CUR);						// Ignored data
 	writeStream->writeUint16BE(channelSize);
-	writeStream->seek(frameOffset - 16, SEEK_CUR);				// Ignored data			
+	writeStream->seek(frameOffset - 16, SEEK_CUR);				// Ignored data
 
 	// The structure of the filmloop 'SCVW' data is as follows
 	// The 'SCVW' tag -> the size of the resource ->
 	// frameoffset (This offset is where the frame date actually starts) ->
 	// Some headers which we ignore except the Sprite Channel Size (which we also ignore during loading) ->
-	
+
 	// until there are no more frames
 		// size of the frame ->
 		// until there are no more channels in the frame
@@ -798,7 +797,7 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 			int channel = it._key;
 			// TODO: For now writing the order considering that each sprite will have 20 bytes of data
 			// In the future, for optimization, we can actually calculate the data of each sprite
-			// And write the order accordingly 
+			// And write the order accordingly
 			// But for this we'll need a way to find how many data values (out of 20) of a sprite are valid, i.e. determine message width
 			// this means while loading, the channelOffset will always be 0, order will always be multiple of 20
 			// And message width will always be 20
@@ -814,9 +813,9 @@ void FilmLoopCastMember::writeSCVWResource(Common::MemoryWriteStream *writeStrea
 				writeSpriteDataD5(writeStream, sprite);
 			}
 		}
-		
-	}	
-    
+
+	}
+
 	if (debugChannelSet(7, kDebugSaving)) {
         // Adding +8 because the stream doesn't include the header and the entry for the size itself
         byte *dumpData = (byte *)calloc(filmloopSize + 8, sizeof(byte));
@@ -845,14 +844,14 @@ uint32 FilmLoopCastMember::getSCVWResourceSize() {
 	}
 
 	uint32 framesSize = 0;
-	for (FilmLoopFrame frame : _frames) { 
+	for (FilmLoopFrame frame : _frames) {
 		// Frame size
 		framesSize += 2;
 		for (auto it : frame.sprites) {
 			// message width: 2 bytes
 			// order: 2 bytes
 			// Sprite data: 20 bytes
-			framesSize += 2 + 2 + channelSize; 	
+			framesSize += 2 + 2 + channelSize;
 		}
 	}
 

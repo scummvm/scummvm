@@ -284,7 +284,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-void Movie::writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect) {
+void Movie::writeRect(Common::SeekableWriteStream *writeStream, Common::Rect rect) {
 	writeStream->writeSint16BE(rect.top);
 	writeStream->writeSint16BE(rect.left);
 	writeStream->writeSint16BE(rect.bottom);
@@ -331,7 +331,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 	return res;
 }
 
-void Movie::saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info) {
+void Movie::saveInfoEntries(Common::SeekableWriteStream *writeStream, InfoEntries info) {
 	// The writing functionality was intrioduced in Director 4
 	writeStream->writeUint32BE(20);				// offset: d4 and up movies is always 20
 	writeStream->writeUint32BE(info.unk1);

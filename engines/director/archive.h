@@ -79,7 +79,7 @@ public:
 
 	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
-	virtual bool writeToFile(Common::Path path, Movie *movie) {
+	virtual bool writeToFile(Common::String filename, Movie *movie) {
 		// Saving Director movies was introduced in Director 4
 		// However, from DirectorEngine::createArchive, it is evident that after Director 4 only RIFX Archives were written
 		error("Archive::writeToFile was called on a non-RIFX Archive, which is not allowed");
@@ -166,7 +166,7 @@ public:
 	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
-	bool writeToFile(Common::Path writePath, Movie *movie) override;
+	bool writeToFile(Common::String filename, Movie *movie) override;
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
@@ -179,9 +179,9 @@ public:
 private:
 	/* archive-save.cpp */
 	/* These functions are for writing movies */
-	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
-	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
-	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
+	bool writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
+	bool writeAfterBurnerMap(Common::SeekableWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
+	bool writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
 	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib);	// Parallel to readCast
 
 	uint32 getArchiveSize(Common::Array<Resource *> resources);

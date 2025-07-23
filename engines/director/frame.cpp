@@ -110,7 +110,7 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 	}
 }
 
-void Frame::writeMainChannels(Common::MemoryWriteStream *writeStream, uint16 version) {
+void Frame::writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 version) {
 	debugC(6, kDebugLoading, "Frame::writeChannel: writing main channels for version %d", version);
 
 	if (version >= kFileVer400 && version < kFileVer500) {
@@ -580,7 +580,7 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
-void Frame::writeMainChannelsD4(Common::MemoryWriteStream *writeStream) {
+void Frame::writeMainChannelsD4(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeByte(0);		// Unknown: Sound/Tempo/Transition	// 0
 
 	writeStream->writeByte(_mainChannels.soundType1);		// 1
@@ -770,7 +770,7 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		sprite._width = sprite._height = 0;
 }
 
-void writeSpriteDataD4(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
+void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
 	// Writing 20 bytes of sprite data
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._scriptId.member);			// 0
@@ -957,7 +957,7 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
-void Frame::writeMainChannelsD5(Common::MemoryWriteStream *writeStream) {
+void Frame::writeMainChannelsD5(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.actionId.castLib);		// 0, 1
 	writeStream->writeUint16BE(_mainChannels.actionId.member);		// 2, 3
 	writeStream->writeUint16BE(_mainChannels.sound1.castLib);		// 4, 5
@@ -1148,7 +1148,7 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 
 }
 
-void writeSpriteDataD5(Common::MemoryWriteStream *writeStream, Sprite &sprite) {
+void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
 	// Writing 20 bytes of sprite data
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._spriteType);			// 0
