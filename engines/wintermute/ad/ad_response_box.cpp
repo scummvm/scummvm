@@ -122,11 +122,11 @@ void AdResponseBox::clearButtons() {
 bool AdResponseBox::invalidateButtons() {
 	for (uint32 i = 0; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->setImage(nullptr);
-		_respButtons[i]->setFont(nullptr);
-		_respButtons[i]->setText("");
 		_respButtons[i]->_cursor = nullptr;
+		_respButtons[i]->setFont(nullptr);
 		_respButtons[i]->setFontHover(nullptr);
 		_respButtons[i]->setFontPress(nullptr);
+		_respButtons[i]->setText("");
 	}
 	return STATUS_OK;
 }
@@ -173,11 +173,6 @@ bool AdResponseBox::createButtons() {
 				btn->setFontPress(btn->getFontHover());
 				btn->setTextAlign(_align);
 
-				if (_gameRef->_touchInterface) {
-					btn->setFontHover(btn->getFont());
-				}
-
-
 				if (_responses[i]->getFont()) {
 					btn->setFont(_responses[i]->getFont());
 				}
@@ -204,12 +199,6 @@ bool AdResponseBox::createButtons() {
 
 			btn->setName("response");
 			btn->correctSize();
-
-			// make the responses touchable
-			if (_gameRef->_touchInterface) {
-				btn->setHeight(MAX<int32>(btn->getHeight(), 50));
-			}
-
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->setListener(this, btn, i);
 			btn->setVisible(false);
@@ -483,7 +472,7 @@ bool AdResponseBox::display() {
 
 	// shift down if needed
 	if (!_horizontal) {
-		int totalHeight = 0;
+		int32 totalHeight = 0;
 		for (i = 0; i < (int32) _respButtons.getSize(); i++) {
 			totalHeight += (_respButtons[i]->getHeight() + _spacing);
 		}
@@ -511,7 +500,7 @@ bool AdResponseBox::display() {
 
 	// prepare response buttons
 	bool scrollNeeded = false;
-	for (i = _scrollOffset; i < (int32) _respButtons.getSize(); i++) {
+	for (i = _scrollOffset; i < (int32)_respButtons.getSize(); i++) {
 
 #ifdef ENABLE_FOXTAIL
 		// FoxTail's "HORIZONTAL=TRUE" display boxes are actual 2x3 display boxes
@@ -569,7 +558,7 @@ bool AdResponseBox::display() {
 
 
 	// display response buttons
-	for (i = _scrollOffset; i < (int32) _respButtons.getSize(); i++) {
+	for (i = _scrollOffset; i < (int32)_respButtons.getSize(); i++) {
 		_respButtons[i]->display();
 	}
 
