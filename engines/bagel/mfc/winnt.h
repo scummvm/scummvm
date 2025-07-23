@@ -706,7 +706,7 @@ typedef struct _GUID {
 
 #define AFX_IDW_SIZE_BOX                0xEA20  // size box for splitters
 #define AFX_IDW_PANE_SAVE               0xEA21  // to shift AFX_IDW_PANE_FIRST
-#define AFX_WS_DEFAULT_VIEW		WS_CHILD
+#define AFX_WS_DEFAULT_VIEW		(WS_CHILD | WS_VISIBLE)
 
 typedef struct tagTEXTMETRICA {
 	LONG        tmHeight = 0;

@@ -27,6 +27,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CView, CWnd)
 BEGIN_MESSAGE_MAP(CView, CWnd)
+ON_WM_PAINT()
 END_MESSAGE_MAP()
 
 BOOL CView::PreCreateWindow(CREATESTRUCT &cs) {
@@ -75,6 +76,11 @@ void CView::OnInitialUpdate() {
 void CView::OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/) {
 	assert(pSender != this);
 	Invalidate(TRUE);
+}
+
+void CView::OnPaint() {
+	CPaintDC dc(this);
+	OnDraw(&dc);
 }
 
 } // namespace MFC

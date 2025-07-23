@@ -240,6 +240,5 @@ void CFrameWnd::OnUpdateFrameTitle(BOOL bAddToTitle) {
 	// TODO: CFrameWnd::OnUpdateFrameTitle
 }
 
-
 } // namespace MFC
 } // namespace Bagel
