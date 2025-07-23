@@ -138,16 +138,12 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	if (cmd == PARSERR_TOKENNOTFOUND) {
 		delete[] propName;
 		delete[] propValue;
-		propName = nullptr;
-		propValue = nullptr;
 		BaseEngine::LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
 		delete[] propName;
 		delete[] propValue;
-		propName = nullptr;
-		propValue = nullptr;
 		BaseEngine::LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
@@ -157,8 +153,6 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	delete[] propName;
 	delete[] propValue;
-	propName = nullptr;
-	propValue = nullptr;
 
 	return STATUS_OK;
 }
