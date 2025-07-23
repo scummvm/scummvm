@@ -20,6 +20,7 @@
  */
 
 #include "audio/decoders/wave.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
