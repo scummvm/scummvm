@@ -295,7 +295,7 @@ static const struct {
 	uint stringSectionIndexOffset;
 	// Offset to the font
 	uint fontOffset;
-	// Next one isn't strictly necessarry but makes logic simpler
+	// Next one isn't strictly necessary but makes logic simpler
 	// by allowing to read string block into memory as whole
 	// without any parsing. Just has to cover the block containing
 	// the strings. Reading more (up to whole file) is OK.

@@ -419,7 +419,7 @@ public:
 
 	/**
 	 * Appends exactly one component, without any separators
-	 * and prepends a separator if necessarry
+	 * and prepends a separator if necessary
 	 */
 	WARN_UNUSED_RESULT Path appendComponent(const char *str) const;
 
