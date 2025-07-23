@@ -30,6 +30,8 @@
 #include "common/tokenizer.h"
 #include "common/translation.h"
 
+#include "graphics/framelimiter.h"
+
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/debugger.h"
@@ -280,13 +282,11 @@ int WintermuteEngine::init() {
 
 int WintermuteEngine::messageLoop() {
 	bool done = false;
+	uint32 maxFPS = ConfMan.getInt("engine_speed");
+	if (maxFPS == 0)
+		maxFPS = 60;
+	Graphics::FrameLimiter limiter(g_system, maxFPS);
 
-	uint32 prevTime = _system->getMillis();
-	uint32 time = _system->getMillis();
-	uint32 diff = 0;
-
-	const uint32 maxFPS = 60;
-	const uint32 frameTime = 2 * (uint32)((1.0 / maxFPS) * 1000);
 	while (!done) {
 		if (!_game) {
 			break;
@@ -303,20 +303,15 @@ int WintermuteEngine::messageLoop() {
 
 			_game->displayDebugInfo();
 
-			time = _system->getMillis();
-			diff = time - prevTime;
-			if (frameTime > diff) { // Avoid overflows
-				_system->delayMillis(frameTime - diff);
-			}
-
 			// ***** flip
+			limiter.delayBeforeSwap();
 			if (!_game->getSuspendedRendering()) {
 				_game->_renderer->flip();
 			}
+			limiter.startFrame();
 			if (_game->getIsLoading()) {
 				_game->loadGame(_game->_scheduledLoadSlot);
 			}
-			prevTime = time;
 		}
 		if (shouldQuit()) {
 			break;
