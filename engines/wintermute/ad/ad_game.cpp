@@ -1312,10 +1312,8 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::showCursor() {
-	if (BaseEngine::instance().getTargetExecutable() == WME_LITE) {
-		if (_cursorHidden) {
-			return STATUS_OK;
-		}
+	if (_cursorHidden) {
+		return STATUS_OK;
 	}
 
 	if (_selectedItem && _gameRef->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
