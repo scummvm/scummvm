@@ -22,6 +22,32 @@ put (1024/4096)*100.0       -- 0.0
 put ((1024*1.0)/4096)*100.0 -- 25.0
 
 put the sqrt of 9
+scummvmAssertEqual(ilk(sqrt(EMPTY)), #float)
+scummvmAssertEqual(sqrt(EMPTY), 0.0)
+
+scummvmAssertEqual(ilk(sqrt(4)), #integer)
+scummvmAssertEqual(string(sqrt(0)), "0")
+scummvmAssertEqual(string(sqrt(4)), "2")
+scummvmAssertEqual(string(sqrt(5)), "2")
+scummvmAssertEqual(string(sqrt(8)), "3")
+
+scummvmAssertEqual(ilk(sqrt(4.0)), #float)
+scummvmAssertEqual(sqrt(0.0), 0.0)
+scummvmAssertEqual(sqrt(4.0), 2.0)
+scummvmAssertEqual(abs(sqrt(5.0) - 2.2361) < 0.0001, 1)
+scummvmAssertEqual(abs(sqrt(8.0) - 2.8284) < 0.0001, 1)
+
+scummvmAssertEqual(ilk(sqrt("4.0")), #float)
+scummvmAssertEqual(sqrt("0.0"), 0.0)
+scummvmAssertEqual(sqrt("4.0"), 2.0)
+scummvmAssertEqual(abs(sqrt("5.0") - 2.2361) < 0.0001, 1)
+scummvmAssertEqual(abs(sqrt("8.0") - 2.8284) < 0.0001, 1)
+
+scummvmAssertEqual(ilk(sqrt("4")), #float)
+scummvmAssertEqual(sqrt("0"), 0.0)
+scummvmAssertEqual(sqrt("4"), 2.0)
+scummvmAssertEqual(abs(sqrt("5") - 2.2361) < 0.0001, 1)
+scummvmAssertEqual(abs(sqrt("8") - 2.8284) < 0.0001, 1)
 
 -- Testing rounding
 set save to the scummvmVersion

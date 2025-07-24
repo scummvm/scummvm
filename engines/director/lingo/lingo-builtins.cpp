@@ -513,7 +513,29 @@ void LB::b_sin(int nargs) {
 
 void LB::b_sqrt(int nargs) {
 	Datum d = g_lingo->pop();
-	Datum res(sqrt(d.asFloat()));
+	Datum res;
+	if (d.type == INT) {
+		// integer input returns the sqrt rounded to the nearest int
+		res = Datum((int)round(sqrt(d.asInt())));
+	} else if (d.type == FLOAT) {
+		// float input returns float output
+		res = Datum(sqrt(d.asFloat()));
+	} else if (d.type == STRING) {
+		// string input attempts to coerce to float, else crash
+		Common::String src = d.asString();
+		char *endPtr = nullptr;
+		double result = strtod(src.c_str(), &endPtr);
+		if (*endPtr == 0) {
+			res = Datum(sqrt(result));
+		} else {
+			g_lingo->lingoError("b_sqrt: Invalid string");
+		}
+	} else if (d.type == VOID) {
+		// void input returns float 0.0
+		res = Datum(0.0);
+	} else {
+		g_lingo->lingoError("b_sqrt: Invalid type");
+	}
 	g_lingo->push(res);
 }
 
