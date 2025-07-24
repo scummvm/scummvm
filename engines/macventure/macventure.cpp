@@ -382,7 +382,7 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 			if (objID > 0) {
 				int currentObjectIndex = findObjectInArray(objID, _currentSelection);
 
-				if (currentObjectIndex >= 0)
+				if (currentObjectIndex == -1)
 					unselectAll();
 
 				if (isDoubleClick) {
@@ -726,9 +726,7 @@ Common::String MacVentureEngine::getNoun(ObjID ndx) {
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
-	// TODO: It seems unnecessary since the GUI checks whether an object
-	//		is selected, which includes exits.
-	warning("STUB: highlightExit");
+	_gui->highlightExitButton(objID);
 }
 
 void MacVentureEngine::selectPrimaryObject(ObjID objID) {

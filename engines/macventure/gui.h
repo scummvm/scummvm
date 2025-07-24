@@ -110,6 +110,8 @@ public:
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
 
+	void highlightExitButton(ObjID objID);
+
 	Common::Point getObjMeasures(ObjID obj);
 
 	WindowReference getObjWindow(ObjID objID);
