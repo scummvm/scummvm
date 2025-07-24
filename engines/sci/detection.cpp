@@ -218,6 +218,8 @@ public:
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const override;
 
+	void dumpDetectionEntries() const override;
+
 private:
 	void addFileToDetectedGame(const Common::Path &name, const FileMap &allFiles, MD5Properties md5Prop, ADDetectedGame &game) const;
 };
@@ -312,6 +314,12 @@ void SciMetaEngineDetection::addFileToDetectedGame(const Common::Path &name, con
 		game.hasUnknownFiles = true;
 		game.matchedFiles[name] = fileProperties;
 	}
+}
+
+void SciMetaEngineDetection::dumpDetectionEntries() const {
+#if 0
+	AdvancedMetaEngineDetectionBase::dumpDetectionEntries();
+#endif
 }
 
 } // End of namespace Sci
