@@ -198,11 +198,11 @@ static Color colorAtForConvex(const FloorColorPolygon &p, Point query) {
 	// This is a quite literal translation of the original engine
 	// There may very well be a better way than this...
 	float weights[FloorColorShape::kPointsPerPolygon];
-	memset(weights, 0, sizeof(weights));
+	fill(weights, weights + FloorColorShape::kPointsPerPolygon, 0.0f);
 
 	for (uint i = 0; i < p._points.size(); i++) {
 		EdgeDistances distances = p.edgeDistances(i, query);
-		float edgeWeight = distances._toEdge * distances._onEdge / distances._edgeLength;
+		float edgeWeight = distances._toEdge * ABS(distances._onEdge) / distances._edgeLength;
 		if (distances._edgeLength > 1) {
 			weights[i] += edgeWeight;
 			weights[i + 1 == p._points.size() ? 0 : i + 1] += edgeWeight;
@@ -638,16 +638,19 @@ FloorColorShape::FloorColorShape(ReadStream &stream) {
 	for (int i = 0; i < polygonCount; i++) {
 		for (int j = 0; j < kPointsPerPolygon; j++)
 			_points.push_back(readPoint(stream));
-		Color color; // RGB and A components are stored separately
+
+		// For the colors the alpha channel is not used so we store the brightness into it instead
+		// Brightness is store 0-100, but we can scale it up here
+		int firstColorI = _pointColors.size();
+		_pointColors.resize(_pointColors.size() + kPointsPerPolygon);
 		for (int j = 0; j < kPointsPerPolygon; j++)
-			color.a = stream.readByte();
+			_pointColors[firstColorI + j].a = (uint8)MIN(255, stream.readByte() * 255 / 100);
 		for (int j = 0; j < kPointsPerPolygon; j++) {
-			color.r = stream.readByte();
-			color.g = stream.readByte();
-			color.b = stream.readByte();
+			_pointColors[firstColorI + j].r = stream.readByte();
+			_pointColors[firstColorI + j].g = stream.readByte();
+			_pointColors[firstColorI + j].b = stream.readByte();
 			stream.readByte(); // second alpha value is ignored
 		}
-		_pointColors.push_back(color);
 		stream.readByte(); // unused byte per polygon
 
 		uint pointCount = addPolygon(kPointsPerPolygon);
