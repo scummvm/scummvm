@@ -46,16 +46,17 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 		filename = movie->getMacName();
 	}
 
-	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(g_director->getTargetName() + "-" + filename);
+	Common::String saveFileName = g_director->getTargetName() + "-" + filename;
+	// Don't open the save file as compressed which doesn't support seeking
+	Common::OutSaveFile *saveFile = g_engine->getSaveFileManager()->openForSaving(saveFileName, false);
 
 	if (!saveFile) {
-		warning("RIFXArchive::writeToFile: Failed to open file %s for saving");
+		warning("RIFXArchive::writeToFile: Failed to open file %s for saving", saveFileName.c_str());
 		return false;
 	}
 
 	// Update the resources, their sizes and offsets
 	Common::Array<Resource *> builtResources = rebuildResources(movie);
-
 	// ignoring the startOffset
 	// For RIFX stream, moreoffset = 0, we won't be writing macbinary
 	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
@@ -174,9 +175,9 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	// Write the movie out, stored in dumpData
 	if (saveFile) {
 		saveFile->flush();
-		debugC(3, kDebugSaving, "RIFXArchive::writeStream:Saved the movie as file %s", filename.c_str());
+		debugC(3, kDebugSaving, "RIFXArchive::writeStream: Saved the movie as file %s", saveFileName.c_str());
 	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", filename.c_str());
+		warning("RIFXArchive::writeStream: Error saving the file %s", saveFileName.c_str());
 	}
 
 	delete saveFile;
@@ -655,19 +656,63 @@ void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, ui
 }
 
 uint32 RIFXArchive::findParentIndex(uint32 tag, uint16 index) {
-    // We have to find the parent
-    // Look into the keyData, for all parents of resource tag
-    // If the parent contains this resource's index, that's our parent
-    for (auto &it : _keyData[tag]) {
-        for (auto &kt : it._value) {
-            if (kt == index) {
-                return it._key;
-            }
-        }
-    }
+	// We have to find the parent
+	// Look into the keyData, for all parents of resource tag
+	// If the parent contains this resource's index, that's our parent
+	for (auto &it : _keyData[tag]) {
+		for (auto &kt : it._value) {
+			if (kt == index) {
+				return it._key;
+			}
+		}
+	}
 
-    warning("RIFXArchive::findParentIndex: The parent for resource: %s, index: %d, was not found", tag2str(tag), index);
-    return 0;
+	warning("RIFXArchive::findParentIndex: The parent for resource: %s, index: %d, was not found", tag2str(tag), index);
+	return 0;
 }
 
-}   // End of namespace Director
+SavedArchive::SavedArchive(Common::String target) {
+	Common::StringArray saveFileList = g_engine->getSaveFileManager()->listSavefiles(target + "-*");
+
+	debugC(3, kDebugLoading, "DirectorEngine:: loadSaveFiles: Loading save files");
+	for (auto saveFileName : saveFileList) {
+		// Derive the original file name from the save file name
+		// Save files are named target_name-save_filename
+		Common::String origFileName = saveFileName.substr(target.size() + 1);
+		debugC(3, kDebugLoading, "Found save file: %s -> %s", saveFileName.c_str(), origFileName.c_str());
+
+		_files[origFileName] = saveFileName;
+	}
+}
+
+bool SavedArchive::hasFile(const Common::Path &path) const {
+	return (_files.find(path.toString()) != _files.end());
+}
+
+int SavedArchive::listMembers(Common::ArchiveMemberList &list) const {
+	int count = 0;
+
+	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, *this)));
+		++count;
+	}
+
+	return count;
+}
+
+const Common::ArchiveMemberPtr SavedArchive::getMember(const Common::Path &path) const {
+	if (!hasFile(path))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(path, *this));
+}
+
+Common::SeekableReadStream *SavedArchive::createReadStreamForMember(const Common::Path &path) const {
+	FileMap::const_iterator fDesc = _files.find(path.toString());
+	if (fDesc == _files.end())
+		return nullptr;
+
+	return g_engine->getSaveFileManager()->openForLoading(fDesc->_value);
+}
+
+} // End of namespace Director

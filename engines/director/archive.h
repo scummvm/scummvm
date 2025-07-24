@@ -274,6 +274,18 @@ private:
 
 void dumpFile(Common::String filename, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize);
 
-} // End of namespace Director
+class SavedArchive : public Common::Archive {
+public:
+	SavedArchive(Common::String target) ;
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
+private:
+	typedef Common::HashMap<Common::String, Common::String> FileMap;
+	FileMap _files;
+};
+
+}
 #endif
