@@ -524,7 +524,7 @@ public:
 		return count;
 	}
 
-	void dumpDetectionEntries() const override final;
+	void dumpDetectionEntries() const override;
 
 	/**
 	 * Sanitizes a string to be usable by gameId
