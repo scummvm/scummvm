@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-23 22:12+0000\n"
+"POT-Creation-Date: 2025-07-24 18:13+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -319,7 +319,7 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:339
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:318
 msgid "Yes"
 msgstr "כן"
 
@@ -332,7 +332,7 @@ msgstr "כן"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:340
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:319
 msgid "No"
 msgstr "לא"
 
@@ -367,7 +367,7 @@ msgstr "תוכן קוד JSON משובש."
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
-#: engines/zvision/file/save_manager.cpp:210
+#: engines/zvision/file/save_manager.cpp:211
 msgid "OK"
 msgstr "אישור"
 
@@ -3441,7 +3441,7 @@ msgstr "~ח~זרה אל מסך הרצת המשחקים"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:46
+#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:47
 msgid "Save game:"
 msgstr "שמירת משחק:"
 
@@ -3466,7 +3466,7 @@ msgstr "שמירת משחק:"
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
-#: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
+#: engines/zvision/file/save_manager.cpp:47 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr "שמירה"
 
@@ -6300,7 +6300,7 @@ msgstr "מזהה המשחק אינו נתמך."
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:59
+#: engines/zvision/file/save_manager.cpp:60
 msgid "Restore game:"
 msgstr "שחזור משחק:"
 
@@ -6320,7 +6320,7 @@ msgstr "שחזור משחק:"
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:59 engines/zvision/metaengine.cpp:287
+#: engines/zvision/file/save_manager.cpp:60 engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "שחזור"
 
@@ -15587,7 +15587,7 @@ msgstr "F1"
 msgid "Key i"
 msgstr "Key i"
 
-#: engines/zvision/file/save_manager.cpp:206
+#: engines/zvision/file/save_manager.cpp:207
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
@@ -15672,7 +15672,7 @@ msgstr "חילוץ מטבעות"
 msgid "Preferences"
 msgstr "העדפות"
 
-#: engines/zvision/zvision.cpp:319
+#: engines/zvision/zvision.cpp:298
 #, fuzzy
 #| msgid ""
 #| "Before playing this game, you'll need to copy the required fonts into "
@@ -15699,7 +15699,7 @@ msgstr ""
 "יש להעתיק את כל הגופנים מהחבילה שנבחרה, לדוגמה, FreeMono, FreeSans "
 "ו-FreeSerif או LiberationMono, LiberationSans ו-LiberationSerif בהתאמה."
 
-#: engines/zvision/zvision.cpp:334
+#: engines/zvision/zvision.cpp:313
 msgid ""
 "MIDI playback is not available, or else improperly configured. Zork Nemesis "
 "contains several music puzzles which require MIDI audio in order to be "

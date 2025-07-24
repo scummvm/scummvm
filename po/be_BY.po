@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-23 22:12+0000\n"
+"POT-Creation-Date: 2025-07-24 18:13+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -335,7 +335,7 @@ msgstr "Цяпер працуе іншае сховішча. Перапыніц�
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:339
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:318
 msgid "Yes"
 msgstr "Так"
 
@@ -348,7 +348,7 @@ msgstr "Так"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:340
+#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:319
 msgid "No"
 msgstr "Не"
 
@@ -385,7 +385,7 @@ msgstr ""
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
 #: engines/vcruise/vcruise.cpp:96 engines/vcruise/vcruise.cpp:106
-#: engines/zvision/file/save_manager.cpp:210
+#: engines/zvision/file/save_manager.cpp:211
 msgid "OK"
 msgstr "OK"
 
@@ -3510,7 +3510,7 @@ msgstr "Г~а~лоўнае меню"
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
-#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:46
+#: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:47
 msgid "Save game:"
 msgstr "Захаваць гульню:"
 
@@ -3535,7 +3535,7 @@ msgstr "Захаваць гульню:"
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
-#: engines/zvision/file/save_manager.cpp:46 engines/zvision/metaengine.cpp:282
+#: engines/zvision/file/save_manager.cpp:47 engines/zvision/metaengine.cpp:282
 msgid "Save"
 msgstr "Захаваць"
 
@@ -6383,7 +6383,7 @@ msgstr "Game id не падтрымваецца"
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:59
+#: engines/zvision/file/save_manager.cpp:60
 msgid "Restore game:"
 msgstr "Узнавіць гульню:"
 
@@ -6403,7 +6403,7 @@ msgstr "Узнавіць гульню:"
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
 #: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
-#: engines/zvision/file/save_manager.cpp:59 engines/zvision/metaengine.cpp:287
+#: engines/zvision/file/save_manager.cpp:60 engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "Узнавіць"
 
@@ -15542,7 +15542,7 @@ msgstr "F1"
 msgid "Key i"
 msgstr "Кнопка i"
 
-#: engines/zvision/file/save_manager.cpp:206
+#: engines/zvision/file/save_manager.cpp:207
 #, c-format
 msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
@@ -15629,7 +15629,7 @@ msgstr "Дастаць манету"
 msgid "Preferences"
 msgstr "Перавагі"
 
-#: engines/zvision/zvision.cpp:319
+#: engines/zvision/zvision.cpp:298
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -15640,7 +15640,7 @@ msgid ""
 "LiberationSerif."
 msgstr ""
 
-#: engines/zvision/zvision.cpp:334
+#: engines/zvision/zvision.cpp:313
 msgid ""
 "MIDI playback is not available, or else improperly configured. Zork Nemesis "
 "contains several music puzzles which require MIDI audio in order to be "
