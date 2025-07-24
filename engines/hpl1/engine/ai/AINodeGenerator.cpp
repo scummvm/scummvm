@@ -84,7 +84,6 @@ bool cCollideRayCallback::OnIntersect(iPhysicsBody *pBody, cPhysicsRayParams *ap
 
 //-----------------------------------------------------------------------
 
-// TODO: remove after the game is tested
 unsigned generatorInstances = 0;
 
 cAINodeGenerator::cAINodeGenerator() {
@@ -93,6 +92,7 @@ cAINodeGenerator::cAINodeGenerator() {
 }
 
 cAINodeGenerator::~cAINodeGenerator() {
+	--generatorInstances;
 }
 
 //-----------------------------------------------------------------------
