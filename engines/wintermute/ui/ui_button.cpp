@@ -36,7 +36,6 @@
 #include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -667,9 +666,6 @@ bool UIButton::display(int offsetX, int offsetY) {
 		press();
 	}
 
-	if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
-		_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
-	}
 
 	if (_disable) {
 		if (_backDisable) {
@@ -771,9 +767,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		_imageHover->reset();
 	}
 
-	if (BaseEngine::instance().getTargetExecutable() == WME_LITE) {
-		_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
-	}
+	_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
 
 	return STATUS_OK;
 }
