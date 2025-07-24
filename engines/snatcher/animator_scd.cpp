@@ -232,7 +232,7 @@ private:
 	int anim_resumeAndUnsyncOther(AnimObject &a, const uint8 *data);
 	int anim_terminateOther(AnimObject &a, const uint8 *data);
 	int anim_pauseAndHideOther(AnimObject &a, const uint8 *data);
-	int anim_hide(AnimObject &a, const uint8 *data);
+	int anim_break(AnimObject &a, const uint8 *data);
 	int anim_setScriptComFlag(AnimObject &a, const uint8 *data);
 	int anim_audioSync(AnimObject &a, const uint8 *data);
 	int anim_protect(AnimObject &a, const uint8 *data);
@@ -1234,7 +1234,7 @@ void Animator_SCD::makeAnimFunctions() {
 		ANM(resumeAndUnsyncOther),
 		ANM(terminateOther),
 		ANM(pauseAndHideOther),
-		ANM(hide),
+		ANM(break),
 		ANM(setScriptComFlag),
 		ANM(audioSync),
 		ANM(audioSync),
@@ -1398,7 +1398,7 @@ int Animator_SCD::anim_pauseAndHideOther(AnimObject &a, const uint8 *data) {
 	return 1;
 }
 
-int Animator_SCD::anim_hide(AnimObject &a, const uint8 *data) {
+int Animator_SCD::anim_break(AnimObject &a, const uint8 *data) {
 	a.controlFlags |= GraphicsEngine::kAnimHide;
 	return anim_updateFrameDelay(a, data);
 }

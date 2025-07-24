@@ -179,8 +179,8 @@ void GraphicsEngine::updateText() {
 
 void GraphicsEngine::nextFrame() {
 	_palette->processEventQueue();
-	_palette->update();
 	_animator->updateScreen(_screen);
+	_palette->update();
 
 	_system->copyRectToScreen(_screen, _animator->realScreenWidth() * _bpp, 0, 0, _animator->realScreenWidth(), _animator->realScreenHeight());
 	_system->updateScreen();
