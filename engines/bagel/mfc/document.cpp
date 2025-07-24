@@ -91,7 +91,7 @@ void CDocument::UpdateAllViews(CView *pSender, LPARAM lHint,
         CObject *pHint) {
 	assert(pSender == nullptr || !m_viewList.empty());
 
-	for (ViewListPos pos = m_viewList.begin();
+	for (ViewArray::iterator pos = m_viewList.begin();
 			pos != m_viewList.end(); ++pos) {
 		CView *pView = *pos;
 		if (pView != pSender)
@@ -99,18 +99,22 @@ void CDocument::UpdateAllViews(CView *pSender, LPARAM lHint,
 	}
 }
 
-ViewListPos CDocument::GetFirstViewPosition() {
-	return m_viewList.begin();
+POSITION CDocument::GetFirstViewPosition() {
+	return m_viewList.empty() ? nullptr :
+		(POSITION)& m_viewList[0];
 }
 
-CView *CDocument::GetNextView(ViewListPos &rPosition) const {
-	if (rPosition == m_viewList.end())
+CView *CDocument::GetNextView(POSITION &rPosition) const {
+	if (rPosition == nullptr)
 		return nullptr;
 
-	rPosition++;
-	CView *pView = *rPosition;
-	ASSERT_KINDOF(CView, pView);
-	return pView;
+	CView **&rPos = reinterpret_cast<CView **&>(rPosition);
+	const CView *const *rEnd = &m_viewList[0] + m_viewList.size();
+
+	if (rPos >= rEnd)
+		return nullptr;
+
+	return *rPos++;
 }
 
 bool CDocument::SaveModified() {

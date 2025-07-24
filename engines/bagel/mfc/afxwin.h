@@ -1004,8 +1004,7 @@ public:
 	int m_nID = 0;
 };
 
-typedef Libs::List<CView *> ViewList;
-typedef ViewList::iterator ViewListPos;
+typedef Libs::Array<CView *> ViewArray;
 
 class CDocument : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocument)
@@ -1013,7 +1012,7 @@ private:
 	CString _title;
 	CString _unusedPathName;
 	BOOL m_bModified = FALSE;
-	 ViewList m_viewList;
+	ViewArray m_viewList;
 
 public:
 	BOOL m_bAutoDelete = TRUE;	// default to auto delete document
@@ -1025,8 +1024,8 @@ public:
 
 	void UpdateAllViews(CView *pSender, LPARAM lHint = 0,
 	                    CObject *pHint = nullptr);
-	ViewListPos GetFirstViewPosition();
-	CView *GetNextView(ViewListPos &rPosition) const;
+	POSITION GetFirstViewPosition();
+	CView *GetNextView(POSITION &rPosition) const;
 
 	const CString &GetTitle() const;
 	virtual void SetTitle(LPCSTR lpszTitle);

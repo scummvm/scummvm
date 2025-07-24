@@ -192,12 +192,11 @@ void CGtlDoc::Dump(CDumpContext& dc) const {
 //		added or deleted
 VOID CGtlDoc::OnChangedViewList() {
 	JXENTER(CGtlDoc::OnChangedViewList) ;
-	ViewListPos nViewPosition = GetFirstViewPosition() ;
+	POSITION nViewPosition = GetFirstViewPosition() ;
 	CGtlView *xpGtlView ;
 
 	// If we haven't yet found frame window
 	if (!m_xpGtlFrame) {
-
 		if ((xpGtlView = (CGtlView *)GetNextView(nViewPosition)) != nullptr) {
 			if (!m_xpcLastFocusView)
 				m_xpcLastFocusView = xpGtlView ;
