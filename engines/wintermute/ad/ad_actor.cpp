@@ -654,16 +654,10 @@ bool AdActor::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_LEFT:
 		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
-			if (BaseEngine::instance().getTargetExecutable() < WME_LITE) {
+			if (_dir > 0) {
 				_dir = (TDirection)(_dir - 1);
-				if (_dir < 0)
-					_dir = (TDirection)(NUM_DIRECTIONS - 1);
 			} else {
-				if (_dir > 0) {
-					_dir = (TDirection)(_dir - 1);
-				} else {
-					_dir = (TDirection)(NUM_DIRECTIONS - 1);
-				}
+				_dir = (TDirection)(NUM_DIRECTIONS - 1);
 			}
 
 			if (_dir == _targetDir) {
