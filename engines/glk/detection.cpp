@@ -366,7 +366,7 @@ void GlkMetaEngineDetection::dumpDetectionEntries() const {
 			printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(entry->_language)).c_str());
 			printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(entry->_platform)).c_str());
 			printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
-			printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
+			printf("\tengine \"%s\"\n", escapeString(getName()).c_str());
 
 			Common::String checksum = entry->_md5;
 

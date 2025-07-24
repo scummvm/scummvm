@@ -158,7 +158,7 @@ static int compareTreeNodes(const void *a, const void *b) {
 		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(entry->language)).c_str());
 		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(entry->platform)).c_str());
 		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
-		printf("\tengine \"%s\"\n", escapeString("SCUMM").c_str());
+		printf("\tengine \"%s\"\n", escapeString("scumm").c_str());
 
 		// Match the appropriate file name for the current game variant.
 		GameFilenamePattern gameEntry = matchGameFilenamePattern(entry);

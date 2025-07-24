@@ -686,7 +686,7 @@ void AdvancedMetaEngineDetectionBase::dumpDetectionEntries() const {
 		printf("\tlanguage \"%s\"\n", escapeString(getLanguageLocale(g->language)).c_str());
 		printf("\tplatform \"%s\"\n", escapeString(getPlatformCode(g->platform)).c_str());
 		printf("\tsourcefile \"%s\"\n", escapeString(getName()).c_str());
-		printf("\tengine \"%s\"\n", escapeString(getEngineName()).c_str());
+		printf("\tengine \"%s\"\n", escapeString(getName()).c_str());
 
 		for (auto fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			const char *fname = fileDesc->fileName;
