@@ -181,6 +181,9 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 	}
 
 	delete saveFile;
+	for (auto it : builtResources) {
+		delete it;
+	}
 	return true;
 }
 
@@ -396,7 +399,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	}
 
 	// TODO: Then we'll need to see if there are any other newly added resources
-	// Now when you duplicate a cast member, say BitmapCastMember, the cast member is duplicated
+	// Now when you use `duplicate`, say BitmapCastMember, the cast member is duplicated
 	// but its children resources are not, meaning the duplicated BitmapCastMember is also loaded from the same 'BITD' resource
 	// So it is not necessary to duplicate the 'BITD' resource
 	// However, in case an entirely new cast member is added, say a filmloop is recorded, then that requires a new 'SCVW' resource
@@ -411,9 +414,6 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 	// The first 12 bytes are metaTag ('RIFX'), size of file, and RIFX type ('MV93', 'MV95', etc.)
 	// The +8 bytes are to account for the header and size
 	uint32 currentSize = 12 + (getImapSize() + 8) + (getMmapSize() + 8);
-
-	// This switch statement can be simplified by keeping a pointer to the write function of the resrouce in the Resource
-	// But that will require accessing _resource every time so not doing that right now
 
 	// need to make a new resources array, because we need the old offsets as well as new ones
 	Common::Array<Resource *> builtResources;
