@@ -441,50 +441,7 @@ bool Cast::loadConfig() {
 		_checksum = stream->readUint32();
 
 		//Calculation and verification of checksum
-		uint32 check = _len + 1;
-		check *= _fileVersion + 2;
-		check /= _checkRect.top + 3;
-		check *= _checkRect.left + 4;
-		check /= _checkRect.bottom + 5;
-		check *= _checkRect.right + 6;
-		check -= _castArrayStart + 7;
-		check *= _castArrayEnd + 8;
-		check -= (int8)_readRate + 9;
-		check -= _lightswitch + 10;
-
-		if (humanVer < 700)
-			check += _unk1 + 11;
-		else
-			warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
-
-		check *= _commentFont + 12;
-		check += _commentSize + 13;
-
-		if (humanVer < 800)
-			check *= (uint8)((_commentStyle >> 8) & 0xFF) + 14;
-		else
-			check *= _commentStyle + 14;
-
-		if (humanVer < 700)
-			check += _stageColor + 15;
-		else
-			check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
-
-
-		check += _bitdepth + 16;
-		check += _field17 + 17;
-		check *= _field18 + 18;
-		check += _field19 + 19;
-		check *= _version + 20;
-		check += _field21 + 21;
-		check += _field22 + 22;
-		check += _field23 + 23;
-		check += _field24 + 24;
-		check *= _field25 + 25;
-		check += _frameRate + 26;
-		check *= _platformID + 27;
-		check *= (_protection * 0xE06) + 0xFF450000u;
-		check ^= MKTAG('r', 'a', 'l', 'f');
+		uint32 check = computeChecksum();
 
 		if (check != _checksum)
 			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, _checksum);
@@ -582,7 +539,6 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->writeSint16BE(_protection);        // 58
 	writeStream->writeSint32BE(_field29);           // 60
 
-	// Currently a stub
 	uint32 checksum = computeChecksum();
 	writeStream->writeUint32BE(checksum);           // 64
 
@@ -1031,8 +987,55 @@ uint32 Cast::getCastInfoSize(uint32 castId) {
 }
 
 uint32 Cast::computeChecksum() {
-	warning("STUB::ConfigChunk::computeChecksum() is not implemented yet");
-	return 0;
+	uint humanVer = humanVersion(_version);
+
+	//Calculation and verification of checksum
+	uint32 check = _len + 1;
+	check *= _fileVersion + 2;
+	check /= _checkRect.top + 3;
+	check *= _checkRect.left + 4;
+	check /= _checkRect.bottom + 5;
+	check *= _checkRect.right + 6;
+	check -= _castArrayStart + 7;
+	check *= _castArrayEnd + 8;
+	check -= (int8)_readRate + 9;
+	check -= _lightswitch + 10;
+
+	if (humanVer < 700)
+		check += _unk1 + 11;
+	else
+		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+
+	check *= _commentFont + 12;
+	check += _commentSize + 13;
+
+	if (humanVer < 800)
+		check *= (uint8)((_commentStyle >> 8) & 0xFF) + 14;
+	else
+		check *= _commentStyle + 14;
+
+	if (humanVer < 700)
+		check += _stageColor + 15;
+	else
+		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+
+
+	check += _bitdepth + 16;
+	check += _field17 + 17;
+	check *= _field18 + 18;
+	check += _field19 + 19;
+	check *= _version + 20;
+	check += _field21 + 21;
+	check += _field22 + 22;
+	check += _field23 + 23;
+	check += _field24 + 24;
+	check *= _field25 + 25;
+	check += _frameRate + 26;
+	check *= _platformID + 27;
+	check *= (_protection * 0xE06) + 0xFF450000u;
+	check ^= MKTAG('r', 'a', 'l', 'f');
+
+	return check;
 }
 
 // The 'CASt' resource has strings containing information about the respective CastMember
@@ -1375,7 +1378,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		error("Cast::loadCastData: unsupported Director version (%d)", _version);
 	}
 
-	debug("Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
 		id, castType, castDataSize, castInfoSize, castInfoSize, unk1, unk2, unk3);
 
 	// read the cast member itself
