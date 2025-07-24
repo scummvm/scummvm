@@ -161,7 +161,7 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		default:
-            debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
+			debugC(7, kDebugSaving, "Saving resource %s as it is, without modification", tag2str(it->tag));
 			saveFile->seek(it->offset, SEEK_SET);
 			saveFile->writeUint32LE(it->tag);
 			saveFile->writeUint32LE(it->size);
@@ -315,11 +315,11 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 	for (uint32 i = 0; i <= maxCastId; i++) {
 		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
 		if (castIndex) {
-            debugCN(5, kDebugSaving, (i == 0 ? "%d" : ", %d"), castIndex);
+			debugCN(5, kDebugSaving, (i == 0 ? "%d" : ", %d"), castIndex);
 			writeStream->writeUint32BE(castIndex);
 		}
 	}
-    debugC(5, kDebugSaving, "]");
+	debugC(5, kDebugSaving, "]");
 
 	return true;
 }

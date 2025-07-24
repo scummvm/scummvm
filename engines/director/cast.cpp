@@ -603,7 +603,7 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 		writeStream->writeSint16BE(_defaultPalette.member);     // 78
 	}
 
-    if (debugChannelSet(7, kDebugSaving)) {
+	if (debugChannelSet(7, kDebugSaving)) {
 		// Adding +8 because the stream doesn't include the header and the entry for the size itself
 		byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
 
@@ -614,10 +614,10 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 		dumpStream->write(writeStream, configSize + 8);
 		writeStream->seek(currentPos);
 
-        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
+		dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
 		free(dumpData);
-        delete dumpStream;
-    }
+		delete dumpStream;
+	}
 
 }
 
