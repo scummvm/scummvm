@@ -304,10 +304,12 @@ kBeginSerializeBase(cEngineBeam_SaveData)
 	// SOUND
 	//////////////////////////////////////////////////////////////////////////
 
-	void cEngineSound_SaveData::FromSound(cSoundEntity *apSound) {
+void cEngineSound_SaveData::FromSound(cSoundEntity *apSound) {
 	msName = apSound->GetName();
 	mbActive = apSound->IsActive();
 	mbStopped = apSound->IsStopped();
+	_fadingOut = apSound->IsFadingOut();
+	_fadeSpeed = apSound->getFadingSpeed();
 }
 
 void cEngineSound_SaveData::ToSound(cSoundEntity *apSound) {
