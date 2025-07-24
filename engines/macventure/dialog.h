@@ -117,12 +117,26 @@ private:
 
 class DialogTextInput : public DialogElement {
 public:
-	DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height);
+	DialogTextInput(Dialog *dialog, Gui *gui, Common::Point position, uint width, uint height);
 	~DialogTextInput() override;
+
+	void updateCursorPos();
+	void undrawCursor();
+
+	Common::Point _cursorPos;
+	bool _cursorState;
+	bool _cursorDirty;
 
 private:
 	bool doProcessEvent(Dialog *dialog, Common::Event event) override;
 	void doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) override;
+
+	int getCursorHeight() const;
+
+	Gui *_gui;
+
+	Common::Rect _cursorRect;
+	Graphics::ManagedSurface *_cursorSurface;
 };
 
 } // End of namespace MacVenture
