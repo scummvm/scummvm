@@ -156,5 +156,150 @@
 },
 
 // Italian: Adibù
+// (missing)
+
+// -- Add-ons : Read 4-5 years --
+{
+	{
+		"adibou1read45",
+		"", // Je lis 4-5 ans"
+		AD_ENTRY1s("l51.stk", "8eb81211f8ee163885cc8b31d04d9380", 325445),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib  | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1read45",
+		"", // Je lis 4-5 ans"
+		AD_ENTRY1s("l51.stk", "50004db83a88750d582113e0669a9604", 1437256),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
+// -- Add-ons : Count 4-5 years --
+{
+	{
+		"adibou1count45",
+		"", // Je calcule 4-5 ans"
+		AD_ENTRY1s("c51.stk", "c57292304c2657000bd92dbaee33b52b", 330329),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1count45",
+		"", // Je calcule 4-5 ans"
+		AD_ENTRY1s("c51.stk", "264e5426bd06d5fedd8edf7c08302984", 359953),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1count45",
+		"", // Je calcule 4-5 ans"
+		AD_ENTRY1s("c51.stk", "afefebef6256fe4f72bdbdc30fdc0f2d", 1313166),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
+// -- Add-ons : Read 6-7 years --
+{
+	{
+		"adibou1read67",
+		"", // Je lis 6-7 ans"
+		AD_ENTRY1s("l61.stk", "d236b4268d8265b958a90a41eae0f15a", 356444),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1read67",
+		"", // Je lis 6-7 ans"
+		AD_ENTRY1s("l61.stk", "1c993aa788b4159bbc9591921854d428", 353121),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1read67",
+		"", // Je lis 6-7 ans"
+		AD_ENTRY1s("l61.stk", "71ff03db9aa9d3be05ac6050d7d5e681", 1396282),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
+// -- Add-ons : Count 6-7 years --
+{
+	{
+		"adibou1count67",
+		"", // Je calcule 6-7 ans"
+		AD_ENTRY1s("c61.stk", "f5ef0318f342083f835426718b74c89a", 318641),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib | kFeatures16Colors,
+	0, 0, 0
+},
+
+{
+	{
+		"adibou1count67",
+		"", // Je calcule 6-7 ans"
+		AD_ENTRY1s("c61.stk", "b6849f45151b8dfe48d873fbd468b679", 1242750),
+		FR_FRA,
+		kPlatformDOS,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 #endif // GOB_DETECTION_TABLES_ADIBOU1_H
