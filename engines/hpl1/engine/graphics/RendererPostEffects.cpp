@@ -465,9 +465,6 @@ void cRendererPostEffects::RenderMotionBlur() {
 	// Setup
 	iTexture *pScreenTexture = mpScreenBuffer[mImageTrailData.mlCurrentBuffer == 0 ? 1 : 0];
 
-	// Size of the virtual screen
-	/*cVector2f vVirtSize = */ mpLowLevelGraphics->GetVirtualSize();
-
 	// Copy screen to texture
 	mpLowLevelGraphics->CopyContextToTexure(pScreenTexture, 0, cVector2l((int)mvScreenSize.x, (int)mvScreenSize.y));
 
