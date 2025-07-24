@@ -75,6 +75,7 @@ public:
 	~Init_v2() override;
 
 	void initVideo() override;
+	void initGame() override;
 };
 
 class Init_v3 : public Init_v2 {
