@@ -269,6 +269,15 @@
 //    - ...
 // ...
 
+//
+// If -fsanitize=alignment is in use (or UBSan enabled it), and the compiler
+// happens to report it, make sure SCUMM_NEED_ALIGNMENT is defined, in order
+// to avoid false positives. `alignment_sanitizer` may not be reported in
+// earlier releases though, so look for the UBSan flag in that case.
+//
+#if __has_feature(alignment_sanitizer) || __has_feature(undefined_behavior_sanitizer)
+	#define SCUMM_NEED_ALIGNMENT
+#endif
 
 //
 // By default we try to use pragma push/pop to ensure various structs we use
@@ -287,14 +296,6 @@
 // Determine the host endianess and whether memory alignment is required.
 //
 #if !defined(HAVE_CONFIG_H)
-
-	// If -fsanitize=undefined or -fsanitize=alignment is in use, and the
-	// compiler happens to report it, make sure SCUMM_NEED_ALIGNMENT is
-	// defined, in order to avoid false positives when not using the
-	// "configure" script to enable UBSan.
-	#if __has_feature(undefined_behavior_sanitizer)
-		#define SCUMM_NEED_ALIGNMENT
-	#endif
 
 	#if defined(__DC__) || \
 		  defined(__DS__) || \
