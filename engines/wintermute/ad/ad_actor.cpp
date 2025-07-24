@@ -623,7 +623,9 @@ bool AdActor::update() {
 	}
 
 	// default: stand animation
-	if (BaseEngine::instance().getTargetExecutable() == WME_LITE && !_currentSprite) {
+	if (BaseEngine::instance().getTargetExecutable() < WME_1_9_2 &&
+	    BaseEngine::instance().getTargetExecutable() >= WME_LITE &&
+	    !_currentSprite) {
 		if (_sprite) {
 			_currentSprite = _sprite;
 		} else {
@@ -800,7 +802,9 @@ bool AdActor::update() {
 	}
 
 	// default: stand animation
-	if (BaseEngine::instance().getTargetExecutable() < WME_LITE && !_currentSprite) {
+	if (BaseEngine::instance().getTargetExecutable() >= WME_1_9_2 &&
+	    BaseEngine::instance().getTargetExecutable() < WME_LITE &&
+	    !_currentSprite) {
 		if (_sprite) {
 			_currentSprite = _sprite;
 		} else {
