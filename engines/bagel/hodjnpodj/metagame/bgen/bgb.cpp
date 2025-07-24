@@ -1080,46 +1080,20 @@ void CBgbMgr::DoAnimations(void) {
 	}
 }
 
-
 BOOL CheckLowMemory(DWORD dwSpace) {
 	BOOL    bMemoryProblem;
 	DWORD   dwFreeSpace;
-	DWORD   dwFreeMemory;
-
 	bMemoryProblem = FALSE;
 
 	dwFreeSpace = GetFreeSpace(0);
 	if (dwFreeSpace < dwSpace)
 		bMemoryProblem = TRUE;
-	#if CONTROL_PHYSICAL_MEMORY
-	else {
-		dwFreeMemory = GetPhysicalMemory();
-		if (dwFreeMemory < lpMetaGameStruct->m_dwFreePhysicalMargin)
-			bMemoryProblem = TRUE;
-	}
-	#endif
 
-	return (bMemoryProblem);
+	return bMemoryProblem;
 }
 
-
-DWORD GetPhysicalMemory(void) {
-	DWORD   dwInfo;
-	WORD    wFreePages;
-	DWORD   lFreeBytes;
-
-	lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
-	if (lpfnGetFreeMemInfo != nullptr) {
-		dwInfo = lpfnGetFreeMemInfo();
-		if (dwInfo != -1L) {
-			wFreePages = HIWORD(dwInfo);
-			lFreeBytes = (DWORD) wFreePages * 4096L;
-		} else
-			lFreeBytes = GetFreeSpace(0);
-	} else
-		lFreeBytes = GetFreeSpace(0);
-
-	return (lFreeBytes);
+DWORD GetPhysicalMemory() {
+	return GetFreeSpace(0);
 }
 
 } // namespace Gtl
