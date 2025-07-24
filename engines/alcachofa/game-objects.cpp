@@ -1099,6 +1099,18 @@ FloorColor::FloorColor(Room *room, ReadStream &stream)
 	, _shape(stream) {
 }
 
+void FloorColor::update() {
+	auto updateFor = [&] (MainCharacter &character) {
+		if (character.room() == room()) {
+			const auto result = _shape.colorAt(character.position());
+			if (result.first)
+				character.color() = { 255, 255, 255, result.second.a };
+		}
+	};
+	updateFor(g_engine->world().mortadelo());
+	updateFor(g_engine->world().filemon());
+}
+
 void FloorColor::drawDebug() {
 	auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
 	if (!g_engine->console().showFloorColor() || renderer == nullptr || !isEnabled())
