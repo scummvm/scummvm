@@ -308,7 +308,7 @@ CNode FAR *CGtlData::PointToNode(CRPoint crPoint)
 		if (!(lpNode = m_lpNodes + iK)->m_bDeleted && (crPoint.IfRelocatable() == lpNode->IfRelocatable())) {
 
 			crNodePosition = NodeToPoint(lpNode) ;
-			lSqSensitivity = (m_bMetaGame ? lpNode->m_iSensitivity : NODERADIUS + 1) ;
+			lSqSensitivity = (_metaGame ? lpNode->m_iSensitivity : NODERADIUS + 1) ;
 			lSqSensitivity *= lSqSensitivity ;
 
 			if ((lSqDistance = LSQ(crNodePosition, crPoint)) < lSqSensitivity && lSqDistance < lSqMinDistance) {

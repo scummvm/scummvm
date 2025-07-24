@@ -64,9 +64,9 @@ public:
 	void OnSoundNotify(CSound *);
 
 	//- OnUpdate -- called when document changes to update view
-	virtual void OnUpdate(CView *xpSender, LPARAM lHint, CObject * xpHint);
+	void OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint) override;
 	//- OnDraw -- draw current view
-	virtual void OnDraw(CDC* xpDc);
+	void OnDraw(CDC* xpDc) override;
 
 private:
 	//- OnInitialUpdate --

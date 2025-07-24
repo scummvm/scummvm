@@ -178,7 +178,7 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 
 		//xpGtlData->Draw(this, nullptr);
 		xpGtlData->m_bStartMetaGame = FALSE;
-		xpGtlData->m_bMetaGame = xpGtlData->m_bInitMetaGame = TRUE;
+		xpGtlData->_metaGame = xpGtlData->m_bInitMetaGame = TRUE;
 		xpDoc->m_xpGtlData->InitMetaGame(this);
 
 		// BRIAN

@@ -1731,7 +1731,7 @@ public:
 	void PostNcDestroy();
 
 	void OnInitialUpdate();
-	void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
+	virtual void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
 	virtual void OnActivateView(BOOL, CView *, CView *) {}
 	virtual void OnActivateFrame(UINT nState, CFrameWnd *pFrameWnd) {}
 

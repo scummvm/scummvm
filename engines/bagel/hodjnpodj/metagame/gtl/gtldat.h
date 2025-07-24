@@ -408,7 +408,7 @@ public:
 	BOOL m_bShowNodes ;         // show nodes and links
 	BOOL m_bShowSensitivity ;           // show node sensitivities
 	BOOL m_bStartMetaGame ;     // start in meta game mode
-	BOOL m_bMetaGame ;          // meta game mode
+	BOOL _metaGame = false;		// meta game mode
 	BOOL m_bInitMetaGame ;      // init sprites at beginning of metagame
 
 	CXodj *m_xpXodjChain ;      // chain of characters

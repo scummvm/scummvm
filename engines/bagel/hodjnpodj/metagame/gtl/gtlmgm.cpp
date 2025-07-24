@@ -77,17 +77,17 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 	CPoint cLocation ;
 
 	// turn meta game on
-	if (bOn && (!m_bMetaGame || !m_bInitMetaGame || m_bStartMetaGame)) {
+	if (bOn && (!_metaGame || !m_bInitMetaGame || m_bStartMetaGame)) {
 		m_bStartMetaGame = FALSE ;
-		m_bMetaGame = m_bInitMetaGame = TRUE ;
+		_metaGame = m_bInitMetaGame = TRUE ;
 		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr) ;
 	}
 
 	// turn off meta game
-	if (!bOn && m_bMetaGame) {
+	if (!bOn && _metaGame) {
 //      dbgtrc = TRUE ;
 
-		m_bMetaGame = FALSE ;
+		_metaGame = FALSE ;
 		m_bInitMetaGame = TRUE ;
 		InitMetaGame(nullptr, FALSE) ;             // release sprites
 		((CGtlDoc *)m_xpcGtlDoc)->UpdateAllViews(nullptr, HINT_INIT_METAGAME, nullptr);
@@ -297,7 +297,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	// lpiShortPath[0] contains the number of nodes in the shortest
 	// path, and lpiShortPath[1] contains the total weight.
 	// The remaining array elements contain the path nodes.
-	for (iK = 3 ; m_bMetaGame && !bDone && iK <= lpiShortPath[0] ; ++iK) {
+	for (iK = 3 ; _metaGame && !bDone && iK <= lpiShortPath[0] ; ++iK) {
 
 		lpNextNode = m_lpNodes + lpiShortPath[iK] ;
 		bDone = (m_xpCurXodj->m_iFurlongs < lpNextNode->m_iWeight) ;

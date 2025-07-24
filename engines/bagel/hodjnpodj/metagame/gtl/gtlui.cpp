@@ -531,7 +531,7 @@ BOOL CGtlData::DrawBitmaps(CDC *pDC, BOOL bOverlay)
 
 		lpMap = m_lpMaps + iK ;
 
-		if (!lpMap->m_bSpecialPaint && EQV(lpMap->m_bOverlay, bOverlay) && (m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
+		if (!lpMap->m_bSpecialPaint && EQV(lpMap->m_bOverlay, bOverlay) && (_metaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr))
 			DrawABitmap(pDC, lpcBgbObject, TRUE);
 	}
 
@@ -1208,7 +1208,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 
 		lpMap = m_lpMaps + iK ;
 
-		if (m_bMetaGame || !lpMap->m_bMetaGame) {
+		if (_metaGame || !lpMap->m_bMetaGame) {
 
 			lpcBgbObject = lpMap->m_lpcBgbObject;
 
@@ -1280,7 +1280,7 @@ BOOL CGtlData::AdjustToView(CGtlView *xpGtlView)
 	for (iK = 0 ; iK < m_iMaps ; ++iK) {
 		lpMap = m_lpMaps + iK ;
 
-		if ((m_bMetaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr)) {
+		if ((_metaGame || !lpMap->m_bMetaGame) && ((lpcBgbObject = lpMap->m_lpcBgbObject) != nullptr)) {
 
 			// Adjust sprite positions in case anything's moved
 			// Note: May have to add code here to erase sprite background
