@@ -49,7 +49,7 @@ public:
 	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
 	inline bool fixedCameraOnEntering() const { return _fixedCameraOnEntering; }
 
-	using ObjectIterator = Common::Array<const ObjectBase *>::const_iterator;
+	using ObjectIterator = Common::Array<ObjectBase *>::const_iterator;
 	inline ObjectIterator beginObjects() const { return _objects.begin(); }
 	inline ObjectIterator endObjects() const { return _objects.end(); }
 

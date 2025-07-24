@@ -492,6 +492,8 @@ public:
 	inline MainCharacterKind kind() const { return _kind; }
 	inline ObjectBase *&currentlyUsing() { return _currentlyUsingObject; }
 	inline ObjectBase *currentlyUsing() const { return _currentlyUsingObject; }
+	inline Color &color() { return _color; }
+	inline uint8 &alphaPremultiplier() { return _alphaPremultiplier; }
 	inline FakeSemaphore &semaphore() { return _semaphore; }
 	bool isBusy() const;
 
@@ -531,6 +533,8 @@ private:
 	FakeSemaphore _semaphore;
 	ITriggerableObject *_activateObject = nullptr;
 	const char *_activateAction = nullptr;
+	Color _color = kWhite;
+	uint8 _alphaPremultiplier = 255;
 };
 
 class Background final : public GraphicObject {
