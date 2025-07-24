@@ -255,17 +255,17 @@ public:
 	}
 
 	virtual void quad(
-		Vector2d center,
+		Vector2d topLeft,
 		Vector2d size,
 		Color color,
 		Angle rotation,
 		Vector2d texMin,
 		Vector2d texMax) override {
 		Vector2d positions[] = {
-			center + Vector2d(0,			0),
-			center + Vector2d(0,			+size.getY()),
-			center + Vector2d(+size.getX(), +size.getY()),
-			center + Vector2d(+size.getX(), 0),
+			topLeft + Vector2d(0,			0),
+			topLeft + Vector2d(0,			+size.getY()),
+			topLeft + Vector2d(+size.getX(), +size.getY()),
+			topLeft + Vector2d(+size.getX(), 0),
 		};
 		if (abs(rotation.getDegrees()) > epsilon) {
 			const Vector2d zero(0, 0);

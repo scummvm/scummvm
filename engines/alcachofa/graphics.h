@@ -82,7 +82,7 @@ public:
 	virtual void setBlendMode(BlendMode blendMode) = 0;
 	virtual void setLodBias(float lodBias) = 0;
 	virtual void quad(
-		Math::Vector2d center, // TOOD: Use topLeft&size instead of center&size
+		Math::Vector2d topLeft,
 		Math::Vector2d size,
 		Color color = kWhite,
 		Math::Angle rotation = Math::Angle(),

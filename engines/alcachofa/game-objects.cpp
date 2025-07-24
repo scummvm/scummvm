@@ -784,7 +784,9 @@ void MainCharacter::update() {
 		_currentPos.x - halfWidth, _currentPos.y - height,
 		_currentPos.x + halfWidth, _currentPos.y));
 
-	// TODO: Update character alpha tint
+	// These are set as members as FloorColor might want to change them
+	_alphaPremultiplier = room()->characterAlphaPremultiplier();
+	_color = { 255, 255, 255, (uint8)(room()->characterAlphaTint() * 255 / 100) };
 }
 
 void MainCharacter::onArrived() {
@@ -860,17 +862,16 @@ void MainCharacter::drawInner() {
 	Graphic *activeGraphic = graphicOf(_curAnimateObject);
 	if (activeGraphic == nullptr && _isWalking) {
 		activeGraphic = &_graphicNormal;
-		_graphicNormal.premultiplyAlpha() = room()->characterAlphaPremultiplier();
+		_graphicNormal.premultiplyAlpha() = _alphaPremultiplier;
 	}
 	if (activeGraphic == nullptr) {
 		activeGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
-		_graphicTalking.premultiplyAlpha() = room()->characterAlphaPremultiplier();
+		_graphicTalking.premultiplyAlpha() = _alphaPremultiplier;
 	}
 
 	assert(activeGraphic != nullptr);
-	activeGraphic->color().a = room()->characterAlphaTint() * 255 / 100;
+	activeGraphic->color() = _color;
 	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha, _lodBias);
-
 }
 
 void syncDialogMenuLine(Serializer &serializer, DialogMenuLine &line) {

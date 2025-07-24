@@ -215,6 +215,8 @@ bool Console::cmdDebugMode(int argc, const char **args) {
 		debugPrintf("  1 - Closest floor point, param limits to polygon\n");
 		debugPrintf("  2 - Floor edge intersections, param limits to polygon\n");
 		debugPrintf("  3 - Teleport character to mouse click, param selects character\n");
+		debugPrintf("  4 - Show floor alpha, param selects index of floor color object\n");
+		debugPrintf("  5 - Show floor color, param selects index of floor color object\n");
 		return true;
 	}
 

@@ -32,6 +32,8 @@ enum class DebugMode {
 	ClosestFloorPoint,
 	FloorIntersections,
 	TeleportCharacter,
+	FloorAlpha,
+	FloorColor
 };
 
 class Console : public GUI::Debugger {
