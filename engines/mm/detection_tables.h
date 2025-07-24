@@ -27,7 +27,6 @@ namespace MM {
 #define GUIO_XEEN GUIO4(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR, GAMEOPTION_SHOW_HP_SP_BARS, GAMEOPTION_COPY_PROTECTION)
 
 static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
-#ifdef ENABLE_MM1
 	{
 		// Might and Magic 1
 		{
@@ -74,9 +73,7 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 		GType_MightAndMagic1,
 		GF_GFX_PACK
 	},
-#endif
 
-#ifdef ENABLE_XEEN
 	{
 		// World of Xeen
 		{
@@ -407,7 +404,6 @@ static const MightAndMagicGameDescription GAME_DESCRIPTIONS[] = {
 		GType_Swords,
 		0
 	},
-#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
