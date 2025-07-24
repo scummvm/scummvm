@@ -1209,14 +1209,17 @@ Common::ErrorCode Engine::updateAddOns(const MetaEngine *metaEngine) const {
 			}
 
 			int idx = 0;
-			if (detectedAddOns.empty() && dirMustBeGameAddOn(subdir)) {
-				Common::U32String msgFormat(_("The directory '%s' looks like an add-on for the game '%s', but ScummVM could not find any matching add-on in it."));
-				Common::U32String msg = Common::U32String::format(msgFormat,
-																  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str(),
-																  ConfMan.getActiveDomainName().c_str());
+			if (detectedAddOns.empty()) {
+				if (dirMustBeGameAddOn(subdir)) {
+					Common::U32String msgFormat(_("The directory '%s' looks like an add-on for the game '%s', but ScummVM could not find any matching add-on in it."));
+					Common::U32String msg = Common::U32String::format(msgFormat,
+																	  subdirNode.getPath().toString(Common::Path::kNativeSeparator).c_str(),
+																	  ConfMan.getActiveDomainName().c_str());
 
-				GUI::MessageDialog alert(msg);
-				alert.runModal();
+					GUI::MessageDialog alert(msg);
+					alert.runModal();
+				}
+
 				continue;
 			} else if (detectedAddOns.size() == 1) {
 				// Exact match
