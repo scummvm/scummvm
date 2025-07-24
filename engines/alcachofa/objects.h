@@ -549,6 +549,7 @@ public:
 	FloorColor(Room *room, Common::ReadStream &stream);
 	virtual ~FloorColor() override = default;
 
+	virtual void update() override;
 	virtual void drawDebug() override;
 	virtual Shape *shape() override;
 	virtual const char *typeName() const;
