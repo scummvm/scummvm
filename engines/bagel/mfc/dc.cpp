@@ -141,7 +141,8 @@ CPoint CDC::GetViewportOrg() const {
 }
 
 int CDC::SetMapMode(int nMapMode) {
-	error("TODO: CDC::SetMapMode");
+	assert(nMapMode == MM_TEXT);
+	return MM_TEXT;
 }
 
 CPoint CDC::SetViewportOrg(int x, int y) {
@@ -225,15 +226,21 @@ int CDC::SetROP2(int nDrawMode) {
 }
 
 BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
-	error("TODO: CDC::DPtoLP");
+	// Currently we only support MM_TEXT mode,
+	// which has a 1 to 1 mapping, so no effect
+	return true;
 }
 
 BOOL CDC::DPtoLP(RECT *lpRect) {
-	error("TODO: CDC::DPtoLP");
+	// Currently we only support MM_TEXT mode,
+	// which has a 1 to 1 mapping, so no effect
+	return true;
 }
 
 BOOL CDC::LPtoDP(RECT *lpRect) {
-	error("TODO: CDC::LPtoDP");
+	// Currently we only support MM_TEXT mode,
+	// which has a 1 to 1 mapping, so no effect
+	return true;
 }
 
 BOOL CDC::BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
