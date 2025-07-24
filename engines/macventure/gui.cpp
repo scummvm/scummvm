@@ -1297,9 +1297,22 @@ bool Gui::tryCloseWindow(WindowReference winID) {
 	return true;
 }
 
+void Gui::highlightExitButton(ObjID objID) {
+	if (!_exitsData)
+		return;
+
+	Common::Array<CommandButton>::iterator it = _exitsData->begin();
+	for (; it != _exitsData->end(); ++it) {
+		if (it->getData().refcon == (int)objID)
+			it->select();
+		else
+			it->unselect();
+	}
+}
+
 Common::Point Gui::getObjMeasures(ObjID obj) {
 	ensureAssetLoaded(obj);
- 	int w = _assets[obj]->getWidth();
+	int w = _assets[obj]->getWidth();
 	int h = _assets[obj]->getHeight();
 	return Common::Point(w, h);
 }
