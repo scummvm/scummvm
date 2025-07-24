@@ -67,6 +67,11 @@ public:
 		dirtyRect.clip(_clipRect);
 		Graphics::ManagedSurface::addDirtyRect(dirtyRect);
 	}
+
+	bool intersectClipRect(const Common::Rect &r) {
+		setClipRect(_clipRect.findIntersectingRect(r));
+		return _clipRect.isEmpty() ? 1 : 2;
+	}
 };
 
 } // namespace Gfx

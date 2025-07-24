@@ -186,7 +186,9 @@ BOOL CDC::RectVisible(LPCRECT lpRect) const {
 }
 
 int CDC::SelectClipRgn(CRgn *pRgn) {
-	error("TODO: CDC::SelectClipRgn");
+	// Custom clipping regions not supported in ScummVMM yet
+	assert(!pRgn);
+	return 2;	// SIMPLEREGION
 }
 
 int CDC::ExcludeClipRect(int x1, int y1, int x2, int y2) {
@@ -202,11 +204,14 @@ int CDC::ExcludeUpdateRgn(CWnd *pWnd) {
 }
 
 int CDC::IntersectClipRect(int x1, int y1, int x2, int y2) {
-	error("TODO: CDC::IntersectClipRect");
+	CDC::Impl *dc = static_cast<CDC::Impl *>(m_hDC);
+	assert(dc);
+	return dc->getSurface()->intersectClipRect(
+		Common::Rect(x1, y1, x2, y2));
 }
 
 int CDC::IntersectClipRect(LPCRECT lpRect) {
-	error("TODO: CDC::IntersectClipRect");
+	return impl()->getSurface()->intersectClipRect(*lpRect);
 }
 
 int CDC::OffsetClipRgn(int x, int y) {
