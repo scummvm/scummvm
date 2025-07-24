@@ -20,9 +20,8 @@
  */
 
 #include "common/config-manager.h"
+#include "common/stream.h"
 #include "common/macresman.h"
-#include "common/substream.h"
-#include "common/memstream.h"
 #include "graphics/surface.h"
 #include "graphics/macgui/macwidget.h"
 #include "image/bmp.h"

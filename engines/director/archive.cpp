@@ -27,9 +27,7 @@
 
 #include "director/director.h"
 #include "director/archive.h"
-#include "director/score.h"
 #include "director/movie.h"
-#include "director/cast.h"
 #include "director/window.h"
 
 namespace Director {

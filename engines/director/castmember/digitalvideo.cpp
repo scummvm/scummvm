@@ -20,8 +20,8 @@
  */
 
 #include "audio/decoders/aiff.h"
+#include "common/stream.h"
 #include "common/macresman.h"
-#include "common/memstream.h"
 
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"

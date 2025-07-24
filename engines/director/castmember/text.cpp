@@ -20,8 +20,6 @@
  */
 
 #include "common/events.h"
-#include "common/substream.h"
-#include "common/macresman.h"
 #include "common/memstream.h"
 
 #include "graphics/macgui/macbutton.h"

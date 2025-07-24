@@ -20,9 +20,7 @@
  */
 
 #include "common/events.h"
-#include "common/substream.h"
-#include "common/macresman.h"
-#include "common/memstream.h"
+#include "common/stream.h"
 
 #include "director/director.h"
 #include "director/cast.h"
