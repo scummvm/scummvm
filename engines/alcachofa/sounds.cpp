@@ -152,8 +152,8 @@ SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::So
 			samples.resize((uint)sampleCount); // we might have gotten less samples
 		}
 		else {
-			// we did not, not it is getting inefficient
-			const int bufferSize = 512;
+			// we did not, now it is getting inefficient
+			const int bufferSize = 2048;
 			int16 buffer[bufferSize];
 			int chunkSampleCount;
 			do {
