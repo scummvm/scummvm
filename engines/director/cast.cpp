@@ -578,7 +578,7 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	writeStream->writeSByte(_field26);              // 53
 
 	writeStream->writeSint16BE(_frameRate);         // 54
-	writeStream->writeUint16BE(_platform);          // 56
+	writeStream->writeUint16BE(_platformID);          // 56
 	writeStream->writeSint16BE(_protection);        // 58
 	writeStream->writeSint32BE(_field29);           // 60
 
