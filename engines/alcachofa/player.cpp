@@ -195,7 +195,9 @@ struct DoorTask : public Task {
 		, _lock(move(lock))
 		, _sourceDoor(door)
 		, _character(g_engine->player().activeCharacter())
-		, _player(g_engine->player()) {
+		, _player(g_engine->player())
+		, _targetObject(nullptr)
+		, _targetDirection(Direction::Invalid) {
 		_targetRoom = g_engine->world().getRoomByName(door->targetRoom().c_str());
 		if (_targetRoom == nullptr) {
 			g_engine->game().unknownDoorTargetRoom(door->targetRoom());

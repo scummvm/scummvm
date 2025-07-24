@@ -155,6 +155,12 @@ void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
 	case DebugMode::TeleportCharacter:
 		_debugHandler.reset(new TeleportCharacterDebugHandler(param));
 		break;
+	case DebugMode::FloorAlpha:
+		_debugHandler.reset(FloorColorDebugHandler::create(param, false));
+		break;
+	case DebugMode::FloorColor:
+		_debugHandler.reset(FloorColorDebugHandler::create(param, true));
+		break;
 	default: _debugHandler.reset(nullptr);
 	}
 	_input.toggleDebugInput(isDebugModeActive());
