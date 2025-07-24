@@ -30,6 +30,8 @@
 #include "common/system.h"
 
 #include "macventure/dialog.h"
+#include "macventure/gui.h"
+
 namespace MacVenture {
 
 
@@ -103,7 +105,7 @@ void Dialog::addText(Common::String content, Common::Point position) {
 }
 
 void Dialog::addTextInput(Common::Point position, int width, int height) {
-	_elements.push_back(new DialogTextInput(this, position, width, height));
+	_elements.push_back(new DialogTextInput(this, _gui, position, width, height));
 }
 
 void Dialog::draw() {
@@ -218,9 +220,24 @@ void DialogPlainText::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurfac
 
 }
 
-DialogTextInput::DialogTextInput(Dialog *dialog, Common::Point position, uint width, uint height) :
-	DialogElement(dialog, "", kDANone, position, width, height) {}
-DialogTextInput::~DialogTextInput() {}
+static void cursorTimerHandler(void *refCon);
+
+DialogTextInput::DialogTextInput(Dialog *dialog, Gui *gui, Common::Point position, uint width, uint height) :
+	DialogElement(dialog, "", kDANone, position, width, height), _gui(gui) {
+	_cursorPos = Common::Point(_bounds.left + 4, _bounds.top + _gui->getCurrentFont().getFontHeight() - 14);
+	_cursorState = false;
+	_cursorDirty = true;
+	_cursorRect = Common::Rect(0, 0, 1, getCursorHeight());
+	_cursorSurface = new Graphics::ManagedSurface(1, getCursorHeight());
+	_cursorSurface->fillRect(_cursorRect, kColorBlack);
+
+	g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 200000, this, "DialogTextWindowCursor");
+}
+
+DialogTextInput::~DialogTextInput() {
+	delete _cursorSurface;
+	g_system->getTimerManager()->removeTimerProc(&cursorTimerHandler);
+}
 
 bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
@@ -229,6 +246,7 @@ bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 			if (!_text.empty()) {
 				_text.deleteLastChar();
 				dialog->setUserInput(_text);
+				updateCursorPos();
 				return true;
 			}
 			break;
@@ -236,6 +254,7 @@ bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 			if (event.kbd.ascii >= 0x20 && event.kbd.ascii <= 0x7f) {
 				_text += (char)event.kbd.ascii;
 				dialog->setUserInput(_text);
+				updateCursorPos();
 				return true;
 			}
 			break;
@@ -245,9 +264,18 @@ bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 }
 
 void DialogTextInput::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {
+	_cursorDirty = false;
+
 	target.fillRect(_bounds, kColorWhite);
 	target.frameRect(_bounds, kColorBlack);
 	dialog->getFont().drawString(&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack);
+
+	if (_cursorState && _cursorPos.x < _bounds.right)
+		target.blitFrom(*_cursorSurface, _cursorRect, _cursorPos);
+}
+
+int DialogTextInput::getCursorHeight() const {
+	return _gui->getCurrentFont().getFontHeight();
 }
 
 void Dialog::calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds) {
@@ -257,4 +285,24 @@ void Dialog::calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds) {
 		bounds.right,
 		bounds.bottom);
 }
+
+static void cursorTimerHandler(void *refCon) {
+	DialogTextInput *w = (DialogTextInput *)refCon;
+
+	w->_cursorState = !w->_cursorState;
+	w->_cursorDirty = true;
+}
+
+void DialogTextInput::updateCursorPos() {
+	_cursorPos.x = _bounds.left + _gui->getCurrentFont().getStringWidth(_text); 
+	_cursorPos.y = _bounds.top + _gui->getCurrentFont().getFontHeight() - getCursorHeight();
+	_cursorPos.y += _text.empty() ? 3 : 0;
+	_cursorDirty = true;
+}
+
+void DialogTextInput::undrawCursor() {
+	_cursorState = false;
+	_cursorDirty = true;
+}
+
 } // End of namespace MacVenture
