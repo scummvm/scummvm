@@ -1579,7 +1579,7 @@ void LB::b_saveMovie(int nargs) {
 	if (nargs) {
 		filename = g_lingo->pop().asString();
 	}
-	g_director->getMainArchive()->writeToFile(filename, g_director->getCurrentMovie());
+	g_director->getCurrentMovie()->getArchive()->writeToFile(filename, g_director->getCurrentMovie());
 }
 
 void LB::b_setCallBack(int nargs) {
