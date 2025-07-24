@@ -622,6 +622,12 @@ bool AdActor::update() {
 		_sentence->finish();
 	}
 
+	// Below condition code is present in Lite up to (Feb 8, 2012) (SVN repo)
+	// Present in Lite up to (Nov 1, 2015) (Git repo)
+	// Present up to 1.9.1 (Jan 1, 2010)
+	// Seems removed into 1.10.1 beta (July 19, 2012)
+	// or later but before Mar 21, 2013 (import into Git repo)
+	//
 	// default: stand animation
 	if (BaseEngine::instance().getTargetExecutable() < WME_1_9_2 &&
 	    BaseEngine::instance().getTargetExecutable() >= WME_LITE &&
@@ -801,6 +807,12 @@ bool AdActor::update() {
 		error("AdActor::Update - Unhandled enum");
 	}
 
+	// Below condition code is not present in Lite up to (Feb 8, 2012) (SVN repo)
+	// Not present in Lite up to (Nov 1, 2015) (Git repo)
+	// Not present up to 1.9.1 (Jan 1, 2010)
+	// Seems added into 1.10.1 beta (July 19, 2012)
+	// or later but before Mar 21, 2013 (import into Git repo)
+	//
 	// default: stand animation
 	if (BaseEngine::instance().getTargetExecutable() >= WME_1_9_2 &&
 	    BaseEngine::instance().getTargetExecutable() < WME_LITE &&
