@@ -53,6 +53,11 @@ Common::Error MacVentureEngine::loadGameState(int slot) {
 	if (MetaEngine::readSavegameHeader(saveFile, &header))
 		setTotalPlayTime(header.playtime);
 
+	// Set description as window name for console window
+	if (header.description.size()) {
+		_gui->setWindowTitle(kOutConsoleWindow, header.description);
+	}
+
 	res = Common::kNoError;
 
 	delete saveFile;
