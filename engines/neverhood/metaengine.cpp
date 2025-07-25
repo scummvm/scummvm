@@ -28,6 +28,12 @@
 #include "neverhood/neverhood.h"
 #include "neverhood/detection.h"
 
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Neverhood {
 
 const char *NeverhoodEngine::getGameId() const {
@@ -73,6 +79,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool NeverhoodMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -166,6 +173,117 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 	}
 
 	return SaveStateDescriptor();
+}
+
+Common::KeymapArray NeverhoodMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Neverhood;
+
+	Common::String extra = ConfMan.get("extra", target);
+	const bool isDemo = extra.contains("Demo");
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "neverhood-default", _("Default keymappings"));
+	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, "game", _("Game keymappings"));
+	Keymap *textKeymap = new Keymap(Keymap::kKeymapTypeGame, "save-management", _("Save file management menus keymappings"));
+	Keymap *pauseKeymap = new Keymap(Keymap::kKeymapTypeGame, "pause", _("Pause menu keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionInteract, _("Move / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	if (isDemo) {
+		act = new Action("QUIT", _("Quit"));
+		act->setCustomEngineActionEvent(kActionQuit);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_Y");
+		pauseKeymap->addAction(act);
+	} else {
+		act = new Action("PAUSE", _("Pause / Exit menu"));
+		act->setCustomEngineActionEvent(kActionPause);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_Y");
+		pauseKeymap->addAction(act);
+	}
+
+	// I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
+	act = new Action("SKIP", _("Skip section of cutscene"));
+	act->setCustomEngineActionEvent(kActionSkipPartial);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_B");
+	gameKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
+	act = new Action("SKIPCREDITS", _("Skip entire scene (works only in some scenes)"));
+	act->setCustomEngineActionEvent(kActionSkipFull);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) cursor refers to the text cursor in the save file management menus.
+	act = new Action("CURSORSTART", _("Move cursor to start"));
+	act->setCustomEngineActionEvent(kActionCursorStart);
+	act->addDefaultInputMapping("HOME");
+	act->addDefaultInputMapping("JOY_UP");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) cursor refers to the text cursor in the save file management menus.
+	act = new Action("CURSOREND", _("Move cursor to end"));
+	act->setCustomEngineActionEvent(kActionCursorEnd);
+	act->addDefaultInputMapping("END");
+	act->addDefaultInputMapping("JOY_DOWN");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) cursor refers to the text cursor in the save file management menus.
+	act = new Action("CURSORLEFT", _("Move cursor left"));
+	act->setCustomEngineActionEvent(kActionCursorLeft);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) cursor refers to the text cursor in the save file management menus.
+	act = new Action("CURSORRIGHT", _("Move cursor right"));
+	act->setCustomEngineActionEvent(kActionCursorRight);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) refers to the Delete key on the keyboard.
+	act = new Action("DELETE", _("Delete"));
+	act->setCustomEngineActionEvent(kActionTextDel);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("DELETE");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) refers to the Backspace key on the keyboard.
+	act = new Action("BACKSPACE", _("Backspace"));
+	act->setCustomEngineActionEvent(kActionTextBackspace);
+	act->allowKbdRepeats();
+	act->addDefaultInputMapping("BACKSPACE");
+	act->addDefaultInputMapping("JOY_X");
+	textKeymap->addAction(act);
+
+	// I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
+	act = new Action("Confirm", _("Confirm the selected save / new save name"));
+	act->setCustomEngineActionEvent(kActionConfirm);
+	act->addDefaultInputMapping("RETURN");
+	textKeymap->addAction(act);
+
+	KeymapArray keymaps(4);
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeymap;
+	keymaps[2] = pauseKeymap;
+	keymaps[3] = textKeymap;
+
+	textKeymap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NEVERHOOD)
