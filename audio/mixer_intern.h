@@ -118,6 +118,10 @@ public:
 	virtual byte getChannelVolume(SoundHandle handle);
 	virtual void setChannelBalance(SoundHandle handle, int8 balance);
 	virtual int8 getChannelBalance(SoundHandle handle);
+	virtual void setChannelFaderL(SoundHandle handle, uint8 scaleL);
+	virtual uint8 getChannelFaderL(SoundHandle handle);
+	virtual void setChannelFaderR(SoundHandle handle, uint8 scaleR);
+	virtual uint8 getChannelFaderR(SoundHandle handle);
 	virtual void setChannelRate(SoundHandle handle, uint32 rate);
 	virtual uint32 getChannelRate(SoundHandle handle);
 	virtual void resetChannelRate(SoundHandle handle);
