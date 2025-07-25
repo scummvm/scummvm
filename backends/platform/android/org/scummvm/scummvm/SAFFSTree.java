@@ -311,6 +311,11 @@ public class SAFFSTree {
 		_root = new SAFFSNode().reset(null, "", DocumentsContract.getTreeDocumentId(treeUri), 0);
 		// Update flags and get name
 		_treeName = stat(_root);
+		if (_treeName == null) {
+			// The tree likely got deleted
+			// Use the document ID instead as this will let the user do some cleanup
+			_treeName = DocumentsContract.getTreeDocumentId(treeUri);
+		}
 	}
 
 	public String getTreeId() {
@@ -752,7 +757,8 @@ public class SAFFSTree {
 			long endIO = System.currentTimeMillis();
 			reportIO(startIO, endIO);
 		}
-		// We should never end up here...
+		// We should never end up here
+		// If we do, a tree or a file got likely removed
 		return null;
 	}
 }
