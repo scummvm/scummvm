@@ -37,6 +37,7 @@ namespace Gfx {
 class ClippedSurface : public Graphics::ManagedSurface {
 private:
 	Common::Rect _clipRect;
+	CPoint _viewportOrg;
 
 public:
 	~ClippedSurface() override {}
@@ -56,6 +57,10 @@ public:
 
 	void setClipRect(const Common::Rect &r) {
 		_clipRect = r;
+	}
+
+	Common::Rect getClipRect() const {
+		return _clipRect;
 	}
 
 	void resetClip() {
@@ -81,6 +86,19 @@ public:
 			setClipRect(_clipRect);
 			return SIMPLEREGION;
 		}
+	}
+
+	CPoint getViewportOrg() const {
+		return _viewportOrg;
+	}
+
+	void setViewportOrg(const CPoint &pt) {
+		_viewportOrg = pt;
+	}
+
+	void offsetViewportOrg(int x, int y) {
+		_viewportOrg.x += x;
+		_viewportOrg.y += y;
 	}
 };
 

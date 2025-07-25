@@ -142,23 +142,33 @@ int CDC::SetMapMode(int nMapMode) {
 }
 
 CPoint CDC::SetViewportOrg(int x, int y) {
-	return impl()->setViewportOrg(CPoint(x, y));
+	auto *surface = impl()->getSurface();
+	CPoint oldPos = surface->getViewportOrg();
+	surface->setViewportOrg(CPoint(x, y));
+	return oldPos;
 }
 
 CPoint CDC::SetViewportOrg(POINT point) {
-	return impl()->setViewportOrg(point);
+	auto *surface = impl()->getSurface();
+	CPoint oldPos = surface->getViewportOrg();
+	surface->setViewportOrg(point);
+	return oldPos;
 }
 
 CPoint CDC::GetViewportOrg() const {
-	return impl()->getViewportOrg();
+	return impl()->getSurface()->getViewportOrg();
 }
 
 CPoint CDC::OffsetViewportOrg(int nWidth, int nHeight) {
-	return impl()->offsetViewportOrg(nWidth, nHeight);
+	auto *surface = impl()->getSurface();
+	surface->offsetViewportOrg(nWidth, nHeight);
+	return surface->getViewportOrg();
 }
 
 int CDC::GetClipBox(LPRECT lpRect) const {
-	error("TODO: CDC::GetClipBox");
+	Common::Rect rect = impl()->getSurface()->getClipRect();
+	*lpRect = rect;
+	return rect.isEmpty() ? NULLREGION : SIMPLEREGION;
 }
 
 void CDC::setClipRect(const Common::Rect &r) {
@@ -234,7 +244,7 @@ BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
-	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+	const CPoint VIEWPORT_ORG = impl()->getSurface()->getViewportOrg();
 
 	for (int i = 0; i < nCount; ++i, ++lpPoints) {
 		lpPoints->x += WINDOW_ORG.x - VIEWPORT_ORG.x;
@@ -248,7 +258,7 @@ BOOL CDC::DPtoLP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
-	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+	const CPoint VIEWPORT_ORG = impl()->getSurface()->getViewportOrg();
 
 	lpRect->left += WINDOW_ORG.x - VIEWPORT_ORG.x;
 	lpRect->right += WINDOW_ORG.x - VIEWPORT_ORG.x;
@@ -262,7 +272,7 @@ BOOL CDC::LPtoDP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
 	// which has a 1 to 1 mapping, which simplifies matters
 	const CPoint WINDOW_ORG(0, 0);
-	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+	const CPoint VIEWPORT_ORG = impl()->getSurface()->getViewportOrg();
 
 	lpRect->left += VIEWPORT_ORG.x - WINDOW_ORG.x;
 	lpRect->right += VIEWPORT_ORG.x - WINDOW_ORG.x;
@@ -703,29 +713,6 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 
 	_defaultBitmap._bitmap->create(*scr, r);
 	_bitmap = _defaultBitmap._bitmap;
-}
-
-CPoint CDC::Impl::setViewportOrg(const CPoint &pt) {
-	CPoint oldOrg = _viewportOrigin;
-	if (pt.x != 0 || pt.y != 0)
-		error("TODO: CDC::SetViewportOrg");
-
-	return oldOrg;
-}
-
-CPoint CDC::Impl::getViewportOrg() const {
-	return _viewportOrigin;
-}
-
-CPoint CDC::Impl::offsetViewportOrg(int xDelta, int yDelta) {
-	CPoint oldOrg = _viewportOrigin;
-	_viewportOrigin.x += xDelta;
-	_viewportOrigin.y += yDelta;
-
-	if (_viewportOrigin.x != 0 || _viewportOrigin.y != 0)
-		error("TODO: CDC::OffsetViewportOrg");
-
-	return oldOrg;
 }
 
 HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
