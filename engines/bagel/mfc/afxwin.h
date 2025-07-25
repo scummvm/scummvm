@@ -722,6 +722,7 @@ public:
 		void setScreenRect();
 		void setScreenRect(const Common::Rect &r);
 		CPoint setViewportOrg(const CPoint &pt);
+		CPoint getViewportOrg() const;
 		CPoint offsetViewportOrg(int xDelta, int yDelta);
 
 		HPALETTE selectPalette(HPALETTE pal);

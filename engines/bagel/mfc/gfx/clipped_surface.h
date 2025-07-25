@@ -68,9 +68,19 @@ public:
 		Graphics::ManagedSurface::addDirtyRect(dirtyRect);
 	}
 
-	bool intersectClipRect(const Common::Rect &r) {
+	int intersectClipRect(const Common::Rect &r) {
 		setClipRect(_clipRect.findIntersectingRect(r));
-		return _clipRect.isEmpty() ? 1 : 2;
+		return _clipRect.isEmpty() ? NULLREGION : SIMPLEREGION;
+	}
+
+	int offsetClipRect(int x, int y) {
+		if (_clipRect.isEmpty()) {
+			return NULLREGION;
+		} else {
+			_clipRect.translate(x, y);
+			setClipRect(_clipRect);
+			return SIMPLEREGION;
+		}
 	}
 };
 

@@ -136,10 +136,6 @@ int CDC::GetMapMode() const {
 	error("TODO: CDC::GetMapMode");
 }
 
-CPoint CDC::GetViewportOrg() const {
-	error("TODO: CDC::GetViewportOrg");
-}
-
 int CDC::SetMapMode(int nMapMode) {
 	assert(nMapMode == MM_TEXT);
 	return MM_TEXT;
@@ -151,6 +147,10 @@ CPoint CDC::SetViewportOrg(int x, int y) {
 
 CPoint CDC::SetViewportOrg(POINT point) {
 	return impl()->setViewportOrg(point);
+}
+
+CPoint CDC::GetViewportOrg() const {
+	return impl()->getViewportOrg();
 }
 
 CPoint CDC::OffsetViewportOrg(int nWidth, int nHeight) {
@@ -215,7 +215,7 @@ int CDC::IntersectClipRect(LPCRECT lpRect) {
 }
 
 int CDC::OffsetClipRgn(int x, int y) {
-	error("TODO: CDC::OffsetClipRgn");
+	return impl()->getSurface()->offsetClipRect(x, y);
 }
 
 int CDC::OffsetClipRgn(SIZE size) {
@@ -232,19 +232,43 @@ int CDC::SetROP2(int nDrawMode) {
 
 BOOL CDC::DPtoLP(LPPOINT lpPoints, int nCount) {
 	// Currently we only support MM_TEXT mode,
-	// which has a 1 to 1 mapping, so no effect
+	// which has a 1 to 1 mapping, which simplifies matters
+	const CPoint WINDOW_ORG(0, 0);
+	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+
+	for (int i = 0; i < nCount; ++i, ++lpPoints) {
+		lpPoints->x += WINDOW_ORG.x - VIEWPORT_ORG.x;
+		lpPoints->y += WINDOW_ORG.y - VIEWPORT_ORG.y;
+	}
+
 	return true;
 }
 
 BOOL CDC::DPtoLP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
-	// which has a 1 to 1 mapping, so no effect
+	// which has a 1 to 1 mapping, which simplifies matters
+	const CPoint WINDOW_ORG(0, 0);
+	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+
+	lpRect->left += WINDOW_ORG.x - VIEWPORT_ORG.x;
+	lpRect->right += WINDOW_ORG.x - VIEWPORT_ORG.x;
+	lpRect->top += WINDOW_ORG.y - VIEWPORT_ORG.y;
+	lpRect->bottom += WINDOW_ORG.y - VIEWPORT_ORG.y;
+
 	return true;
 }
 
 BOOL CDC::LPtoDP(RECT *lpRect) {
 	// Currently we only support MM_TEXT mode,
-	// which has a 1 to 1 mapping, so no effect
+	// which has a 1 to 1 mapping, which simplifies matters
+	const CPoint WINDOW_ORG(0, 0);
+	const CPoint VIEWPORT_ORG = impl()->getViewportOrg();
+
+	lpRect->left += VIEWPORT_ORG.x - WINDOW_ORG.x;
+	lpRect->right += VIEWPORT_ORG.x - WINDOW_ORG.x;
+	lpRect->top += VIEWPORT_ORG.y - WINDOW_ORG.y;
+	lpRect->bottom += VIEWPORT_ORG.y - WINDOW_ORG.y;
+
 	return true;
 }
 
@@ -687,6 +711,10 @@ CPoint CDC::Impl::setViewportOrg(const CPoint &pt) {
 		error("TODO: CDC::SetViewportOrg");
 
 	return oldOrg;
+}
+
+CPoint CDC::Impl::getViewportOrg() const {
+	return _viewportOrigin;
 }
 
 CPoint CDC::Impl::offsetViewportOrg(int xDelta, int yDelta) {
