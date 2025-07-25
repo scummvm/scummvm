@@ -242,6 +242,9 @@ DialogTextInput::~DialogTextInput() {
 bool DialogTextInput::doProcessEvent(Dialog *dialog, Common::Event event) {
 	if (event.type == Common::EVENT_KEYDOWN) {
 		switch (event.kbd.keycode) {
+		case Common::KEYCODE_RETURN:
+			dialog->handleDialogAction(this, kDASubmit);
+			return true;
 		case Common::KEYCODE_BACKSPACE:
 			if (!_text.empty()) {
 				_text.deleteLastChar();
