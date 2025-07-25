@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 13:47+0000\n"
+"POT-Creation-Date: 2025-07-25 20:11+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -1512,7 +1512,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM не знайшоў гульняў у гэтай тэчцы!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:718 engines/engine.cpp:1236
+#: gui/launcher.cpp:718 engines/engine.cpp:1237
 msgid "Unknown variant"
 msgstr "Невядомы варыянт"
 
@@ -3760,14 +3760,14 @@ msgstr "Заладаваньне гульні немажліва цяпер"
 msgid "Saving game is currently unavailable"
 msgstr "Захаваньне гульні немажліва цяпер"
 
-#: engines/engine.cpp:1214
+#: engines/engine.cpp:1215
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
 
-#: engines/engine.cpp:1242
+#: engines/engine.cpp:1243
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""

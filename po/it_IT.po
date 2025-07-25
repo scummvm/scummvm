@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 13:47+0000\n"
+"POT-Creation-Date: 2025-07-25 20:11+0000\n"
 "PO-Revision-Date: 2025-07-20 09:20+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -1576,7 +1576,7 @@ msgid "ScummVM could not find any game in the specified directory!"
 msgstr "ScummVM non ha potuto trovare nessun gioco nella cartella specificata!"
 
 #. I18N: Unknown game variant
-#: gui/launcher.cpp:718 engines/engine.cpp:1236
+#: gui/launcher.cpp:718 engines/engine.cpp:1237
 msgid "Unknown variant"
 msgstr "Variante del gioco sconosciuta"
 
@@ -3820,14 +3820,14 @@ msgstr "Caricamento temporaneamente disabilitato"
 msgid "Saving game is currently unavailable"
 msgstr "Salvataggio temporaneamente disabilitato"
 
-#: engines/engine.cpp:1214
+#: engines/engine.cpp:1215
 #, c-format
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
 
-#: engines/engine.cpp:1242
+#: engines/engine.cpp:1243
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
 msgstr ""
