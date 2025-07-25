@@ -533,9 +533,9 @@ bool Movie::eraseCastMember(CastMemberID memberID) {
 bool Movie::duplicateCastMember(CastMemberID source, CastMemberID target) {
 	Cast *sourceCast = nullptr;
 	Cast *targetCast = nullptr;
-	if (_casts.contains(target.castLib)) {
-		if (_casts[target.castLib]->getCastMember(source.member)) {
-			sourceCast = _casts[target.castLib];
+	if (_casts.contains(source.castLib)) {
+		if (_casts[source.castLib]->getCastMember(source.member)) {
+			sourceCast = _casts[source.castLib];
 		} else if (_sharedCast && _sharedCast->getCastMember(source.member)) {
 			sourceCast = _sharedCast;
 		}
