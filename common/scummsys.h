@@ -123,6 +123,7 @@
 	#include <stddef.h>
 	#include <assert.h>
 	#include <ctype.h>
+	#include <errno.h>
 
 	// The C++11 standard removed the C99 requirement that some <inttypes.h>
 	// features should only be available when the following macros are defined.
