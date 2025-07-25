@@ -177,6 +177,15 @@ void VoyagerXSoundXObject::volume(int chan, int vol) {
 	_soundManager->setChannelVolume(channelID, vol);
 }
 
+void VoyagerXSoundXObject::leftrightvol(int chan, uint8 lvol, uint8 rvol) {
+	if (!_channels.contains(chan)) {
+		return;
+	}
+	int channelID = _channels[chan]->channelID;
+	_soundManager->setChannelFaderL(channelID, lvol);
+	_soundManager->setChannelFaderR(channelID, lvol);
+}
+
 void VoyagerXSoundXObject::frequency(int chan, int percent) {
 	if (!_channels.contains(chan)) {
 		return;
@@ -184,6 +193,16 @@ void VoyagerXSoundXObject::frequency(int chan, int percent) {
 	int channelID = _channels[chan]->channelID;
 	_soundManager->setChannelPitchShift(channelID, percent);
 }
+
+void VoyagerXSoundXObject::pan(int chan, int percent) {
+	if (!_channels.contains(chan)) {
+		return;
+	}
+	percent = MAX(MIN(100, percent), -100);
+	int channelID = _channels[chan]->channelID;
+	_soundManager->setChannelBalance(channelID, (int8)percent);
+}
+
 
 void VoyagerXSoundXObj::open(ObjectType type, const Common::Path &path) {
     VoyagerXSoundXObject::initMethods(xlibMethods);
@@ -299,7 +318,16 @@ void VoyagerXSoundXObj::m_volume(int nargs) {
 	g_lingo->push(Datum(1));
 }
 
-XOBJSTUB(VoyagerXSoundXObj::m_leftrightvol, 0)
+void VoyagerXSoundXObj::m_leftrightvol(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_pan", nargs);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	ARGNUMCHECK(3);
+	int rvol = g_lingo->pop().asInt();
+	int lvol = g_lingo->pop().asInt();
+	int chan = g_lingo->pop().asInt();
+	me->leftrightvol(chan, (uint8)lvol, (uint8)rvol);
+	g_lingo->push(Datum(1));
+}
 
 void VoyagerXSoundXObj::m_fade(int nargs) {
 	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_fade", nargs);
@@ -342,7 +370,17 @@ void VoyagerXSoundXObj::m_frequency(int nargs) {
 }
 
 
-XOBJSTUB(VoyagerXSoundXObj::m_pan, 0)
+void VoyagerXSoundXObj::m_pan(int nargs) {
+	g_lingo->printSTUBWithArglist("VoyagerXSoundXObj::m_pan", nargs);
+	VoyagerXSoundXObject *me = static_cast<VoyagerXSoundXObject *>(g_lingo->_state->me.u.obj);
+	ARGNUMCHECK(2);
+	int percent = g_lingo->pop().asInt();
+	int chan = g_lingo->pop().asInt();
+	me->pan(chan, percent);
+	g_lingo->push(Datum(1));
+}
+
+
 XOBJSTUB(VoyagerXSoundXObj::m_startrecord, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_stoprecord, 0)
 XOBJSTUB(VoyagerXSoundXObj::m_recordpath, 0)
