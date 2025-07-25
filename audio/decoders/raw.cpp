@@ -178,11 +178,14 @@ bool RawStream<bytesPerSample, isUnsigned, isLE>::seek(const Timestamp &where) {
 
 /* In the following, we use preprocessor / macro tricks to simplify the code
  * which instantiates the input streams. We used to use template functions for
- * this, but MSVC6 / EVC 3-4 (used for WinCE builds) are extremely buggy when it
- * comes to this feature of C++... so as a compromise we use macros to cut down
+ * this, but MSVC6 / EVC 3-4 (used for WinCE builds) were extremely buggy when it
+ * came to this feature of C++... so as a compromise we used macros to cut down
  * on the (source) code duplication a bit.
  * So while normally macro tricks are said to make maintenance harder, in this
  * particular case it should actually help it :-)
+ *
+ * TODO: WinCE and ancient MSVC releases are not supported anymore. Should the
+ * macro tricks introduced in commit c55652d be reverted now?
  */
 
 #define MAKE_RAW_STREAM(UNSIGNED) \
