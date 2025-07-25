@@ -129,7 +129,7 @@ public:
 
 	/**
 	 * Stop all currently playing sounds.
-	 */
+	*/
 	virtual void stopAll() = 0;
 
 	/**
@@ -251,6 +251,40 @@ public:
 	 * @return The channel balance.
 	 */
 	virtual int8 getChannelBalance(SoundHandle handle) = 0;
+
+	/**
+	 * Set the channel's left fader level for the given handle.
+	 *
+	 * @param handle   The sound to affect.
+	 * @param faderL  The channel's new left fader level, in the range of 0-255.
+	 */
+	virtual void setChannelFaderL(SoundHandle handle, uint8 faderL) = 0;
+
+	/**
+	 * Get the channel's left fader level for the given handle.
+	 *
+	 * @param handle  The sound to affect.
+	 *
+	 * @return The channel's left fader level.
+	 */
+	virtual uint8 getChannelFaderL(SoundHandle handle) = 0;
+
+	/**
+	 * Set the channel's right fader level for the given handle.
+	 *
+	 * @param handle   The sound to affect.
+	 * @param faderR  The channel's new right fader level, in the range of 0-255.
+	 */
+	virtual void setChannelFaderR(SoundHandle handle, uint8 faderR) = 0;
+
+	/**
+	 * Get the channel's right fader level for the given handle.
+	 *
+	 * @param handle  The sound to affect.
+	 *
+	 * @return The channel's right fader level.
+	 */
+	virtual uint8 getChannelFaderR(SoundHandle handle) = 0;
 
 	/**
 	 * Set the sample rate for the given handle.
