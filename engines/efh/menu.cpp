@@ -122,33 +122,37 @@ bool EfhEngine::handleDeathMenu() {
 			displayFctFullScreen();
 	}
 
+	setKeymap(kKeymapDeathMenu);
+
 	for (bool found = false; !found && !shouldQuit();) {
 		Common::KeyCode input = waitForKey();
-		switch (input) {
-		case Common::KEYCODE_l:
+		switch (_customAction) {
+		case kActionLoad:
 			// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
 			// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
 			// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
 			loadGameDialog();
 			found = _saveAuthorized;
 			break;
-		case Common::KEYCODE_q:
+		case kActionQuit:
 			quitGame();
 			return true;
 			break;
-		case Common::KEYCODE_r:
+		case kActionreset:
 			loadEfhGame();
 			resetGame();
 			found = true;
 			_saveAuthorized = true;
 			break;
-		case Common::KEYCODE_x: // mysterious and unexpected keycode ?
-			found = true;
-			break;
 		default:
 			break;
 		}
+
+		if (input == Common::KEYCODE_x) // mysterious and unexpected action ?
+			found = true;
 	}
+
+	setKeymap(kKeymapDefault);
 
 	displayAnimFrames(0xFE, true);
 	return false;
@@ -528,46 +532,47 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		else
 			windowId = kEfhMenuEquip;
 
+		setKeymap(kKeymapStatusMenu);
+
 		do {
 			Common::KeyCode input = handleAndMapInput(false);
 			if (_menuDepth == 0) {
-				switch (input) {
-				case Common::KEYCODE_a:
+				switch (_customAction) {
+				case kActionActive:
 					windowId = kEfhMenuActive;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_d:
+				case kActionDrop:
 					windowId = kEfhMenuDrop;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_e:
+				case kActionEquip:
 					windowId = kEfhMenuEquip;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_g:
+				case kActionGive:
 					windowId = kEfhMenuGive;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_i:
+				case kActionInfo:
 					windowId = kEfhMenuInfo;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_ESCAPE:
-				case Common::KEYCODE_l:
+				case kActionExit:
 					windowId = kEfhMenuLeave;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_p:
+				case kActionPassive:
 					windowId = kEfhMenuPassive;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_t:
+				case kActionTrade:
 					windowId = kEfhMenuTrade;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
-				case Common::KEYCODE_u:
+				case kActionUse:
 					windowId = kEfhMenuUse;
-					input = Common::KEYCODE_RETURN;
+					_customAction = kActionSelect;
 					break;
 				default:
 					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
@@ -579,13 +584,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					int16 var8 = input - Common::KEYCODE_a;
 					if (var8 < _menuItemCounter) {
 						curMenuLine = var8;
-						input = Common::KEYCODE_RETURN;
+						_customAction = kActionSelect;
 					}
 				}
 			}
 
-			switch (input) {
-			case Common::KEYCODE_RETURN:
+			switch (_customAction) {
+			case kActionSelect:
 				// case 0xFA: Joystick button 1
 				if (_menuDepth == 0) {
 					menuId = windowId;
@@ -607,19 +612,13 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					}
 				}
 				break;
-			case Common::KEYCODE_ESCAPE:
+			case kActionExit:
 				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = kEfhMenuInvalid;
 				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 				break;
-			case Common::KEYCODE_2:
-			case Common::KEYCODE_6:
-			// Added for ScummVM
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP2:
-			case Common::KEYCODE_KP6:
+			case kActionScrollDown:
 				// Original checks joystick axis: case 0xCC, 0xCF
 				if (_menuDepth == 0) {
 					if (++windowId > kEfhMenuLeave)
@@ -632,13 +631,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					}
 				}
 				break;
-			case Common::KEYCODE_4:
-			case Common::KEYCODE_8:
-			// Added for ScummVM
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP4:
-			case Common::KEYCODE_KP8:
+			case kActionScrollUp:
 				// Original checks joystick axis: case 0xC7, 0xCA
 				if (_menuDepth == 0) {
 					if (--windowId < kEfhMenuEquip)
@@ -658,6 +651,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
 		} while (!selectionDoneFl && !shouldQuit()); // Loop until a menu entry is confirmed by the user by pressing the enter key
+
+		setKeymap(kKeymapDefault);
 
 		bool validationFl = true;
 

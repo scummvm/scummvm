@@ -24,6 +24,8 @@
 #include "common/random.h"
 #include "efh/efh.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Efh {
 
 void EfhEngine::decryptImpFile(bool techMapFl) {
@@ -136,8 +138,10 @@ int16 EfhEngine::getRandom(int16 maxVal) {
 
 Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 	debugC(1, kDebugUtils, "getLastCharAfterAnimCount %d", delay);
-	if (delay == 0)
+	if (delay == 0) {
+		_customAction = kActionNone;
 		return Common::KEYCODE_INVALID;
+	}
 
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
 	_customAction = kActionNone;
@@ -161,11 +165,15 @@ Common::KeyCode EfhEngine::getLastCharAfterAnimCount(int16 delay) {
 
 Common::KeyCode EfhEngine::getInput(int16 delay) {
 	debugC(1, kDebugUtils, "getInput %d", delay);
-	if (delay == 0)
+	if (delay == 0) {
+		_customAction = kActionNone;
 		return Common::KEYCODE_INVALID;
+	}
 
 	Common::KeyCode lastChar = Common::KEYCODE_INVALID;
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
+
+	Common::CustomEventType lastAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
 	while (delay > 0 && !shouldQuit()) {
@@ -181,7 +189,11 @@ Common::KeyCode EfhEngine::getInput(int16 delay) {
 		lastChar = handleAndMapInput(false);
 		if (lastChar != Common::KEYCODE_INVALID)
 			retVal = lastChar;
+		if (_customAction != kActionNone)
+			lastAction = _customAction;
 	}
+
+	_customAction = lastAction;
 
 	return retVal;
 }
@@ -190,9 +202,10 @@ Common::KeyCode EfhEngine::waitForKey() {
 	debugC(1, kDebugUtils, "waitForKey");
 	Common::KeyCode retVal = Common::KEYCODE_INVALID;
 	Common::Event event;
+	_customAction = kActionNone;
 
 	uint32 lastMs = _system->getMillis();
-	while (retVal == Common::KEYCODE_INVALID && !shouldQuit()) {
+	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->delayMillis(20);
 		uint32 newMs = _system->getMillis();
 
@@ -202,11 +215,20 @@ Common::KeyCode EfhEngine::waitForKey() {
 		}
 
 		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			if ((event.kbd.flags & Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_q)
+		switch (event.type) {
+		case Common::EVENT_KEYUP:
+			retVal = event.kbd.keycode;
+			if (retVal == Common::KEYCODE_LCTRL || retVal == Common::KEYCODE_RCTRL || retVal == Common::KEYCODE_RALT || retVal == Common::KEYCODE_LALT)
+				retVal = Common::KEYCODE_INVALID; // Ignore control and alt keys
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionQuit) {
 				quitGame();
-			if (!event.kbd.flags)
-				retVal = event.kbd.keycode;
+			} else
+				_customAction = event.customType;
+			break;
+		default:
+			break;
 		}
 	}
 
@@ -225,15 +247,20 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 	while (retVal == Common::KEYCODE_INVALID && _customAction == kActionNone && !shouldQuit()) {
 		_system->getEventManager()->pollEvent(event);
 
-		if (event.type == Common::EVENT_KEYUP) {
-			if ((event.kbd.flags & Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_q)
+		switch (event.type) {
+		case Common::EVENT_KEYUP:
+			retVal = event.kbd.keycode;
+			if (retVal == Common::KEYCODE_LCTRL || retVal == Common::KEYCODE_RCTRL || retVal == Common::KEYCODE_RALT || retVal == Common::KEYCODE_LALT)
+				retVal = Common::KEYCODE_INVALID; // Ignore control and alt keys
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionQuit)
 				quitGame();
-			if (!event.kbd.flags)
-				retVal = event.kbd.keycode;
-		}
-
-		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START)
 			_customAction = event.customType;
+			break;
+		default:
+			break;
+		}
 
 		if (animFl) {
 			_system->delayMillis(20);
@@ -251,8 +278,14 @@ Common::KeyCode EfhEngine::handleAndMapInput(bool animFl) {
 
 bool EfhEngine::getValidationFromUser() {
 	debugC(1, kDebugUtils, "getValidationFromUser");
-	Common::KeyCode input = handleAndMapInput(true);
-	if (input == Common::KEYCODE_y) // or if joystick button 1
+
+	setKeymap(kKeymapMenu);
+
+	handleAndMapInput(true);
+
+	setKeymap(kKeymapDefault);
+
+	if (_customAction == kActionYes) // or if joystick button 1
 		return true;
 
 	return false;
@@ -267,5 +300,17 @@ Common::String EfhEngine::getArticle(int pronoun) {
 		return "The ";
 
 	return "";
+}
+
+void EfhEngine::setKeymap(EfhKeymapCode keymapCode) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("efh-quit")->setEnabled(true);
+	for(int i = 0;i < ARRAYSIZE(_efhKeymaps); ++i) {
+		if (_efhKeymaps[i]._keymap == keymapCode) {
+			keymapper->getKeymap(_efhKeymaps[i]._id)->setEnabled(true);
+			break;
+		}
+	}
 }
 } // End of namespace Efh
