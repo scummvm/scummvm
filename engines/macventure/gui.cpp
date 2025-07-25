@@ -361,7 +361,12 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	Graphics::MacWindow *newWindow = _wm.addWindow(true, true, false);
 	WindowData newData;
 	GlobalSettings settings = _engine->getGlobalSettings();
-	newData.refcon = (WindowReference)(_inventoryWindows.size() + kInventoryStart); // This is a HACK
+	if (!_objToInvRef.contains(objRef)) {
+		_objToInvRef[objRef] = (WindowReference)(_inventoryWindows.size() + kInventoryStart); // This is a HACK
+		newData.refcon = _objToInvRef[objRef];
+	} else {
+		newData.refcon = _objToInvRef[objRef];
+	}
 
 	if (_windowData->back().refcon < 0x80) { // There is already another inventory window
 		newData.bounds = _windowData->back().bounds; // Inventory windows are always last
@@ -386,10 +391,10 @@ WindowReference Gui::createInventoryWindow(ObjID objRef) {
 	loadBorders(newWindow, newData.type);
 	newWindow->resizeInner(newData.bounds.width(), newData.bounds.height() - bbs.bottomScrollbarHeight);
 	newWindow->move(newData.bounds.left - bbs.leftOffset, newData.bounds.top - bbs.topOffset);
-	newWindow->setCallback(inventoryWindowCallback, this);
-	newWindow->setCloseable(true);
+	newWindow->setCallback(inventoryWindowCallback, new InventoryCallbackStruct{this, newData.refcon});
+	//newWindow->setCloseable(true);
 
-	_inventoryWindows.push_back(newWindow);
+	_inventoryWindows.push_back(InventoryWindowData{newWindow, newData.refcon});
 
 	debugC(1, kMVDebugGUI, "Create new inventory window. Reference: %d", newData.refcon);
 	return newData.refcon;
@@ -650,9 +655,10 @@ void Gui::drawSelfWindow() {
 void Gui::drawInventories() {
 
 	Graphics::ManagedSurface *srf;
-	for (uint i = 0; i < _inventoryWindows.size(); i++) {
-		const WindowData &data = getWindowData((WindowReference)(kInventoryStart + i));
-		Graphics::MacWindow *win = findWindow(data.refcon);
+	for (auto &invWinData: _inventoryWindows) {
+		Graphics::MacWindow *win = invWinData.win;
+		WindowData data = getWindowData(invWinData.ref);
+
 		srf = win->getWindowSurface();
 		srf->clear(kColorGreen);
 		srf->fillRect(srf->getBounds(), kColorWhite);
@@ -664,7 +670,7 @@ void Gui::drawInventories() {
 			srf->frameRect(innerDims, kColorGreen);
 		}
 
-		findWindow(data.refcon)->setDirty(true);
+		invWinData.win->setDirty(true);
 	}
 
 }
@@ -973,29 +979,6 @@ WindowReference Gui::findWindowAtPoint(Common::Point point) {
 	return kNoWindow;
 }
 
-WindowReference Gui::findInventoryAtPoint(Common::Point point) {
-	Common::List<WindowData>::iterator it;
-	Graphics::MacWindow *win = nullptr;
-
-	for (auto &invWindow : _inventoryWindows) {
-		// Add window offset to get the actual coordinates (not relative to inv window)
-		Common::Point p(invWindow->_dims.left + point.x, invWindow->_dims.top + point.y);
-		win = _wm.findWindowAtPoint(p);
-	}
-
-	if (win) {
-		for (it = _windowData->begin(); it != _windowData->end(); it++) {
-			if (win == findWindow(it->refcon) && it->refcon != kDiplomaWindow) {
-				Common::Point p(win->_dims.left + point.x, win->_dims.top + point.y);
-				if (win->getDimensions().contains(p)) {
-					return it->refcon;
-				}
-			}
-		}
-	}
-	return kNoWindow;
-}
-
 Common::Point Gui::getGlobalScrolledSurfacePosition(WindowReference reference) {
 	const WindowData &data = getWindowData(reference);
 	//BorderBounds border = borderBounds(data.type);
@@ -1024,7 +1007,10 @@ WindowData &Gui::findWindowData(WindowReference reference) {
 
 Graphics::MacWindow *Gui::findWindow(WindowReference reference) {
 	if (reference < 0x80 && reference >= kInventoryStart) { // It's an inventory window
-		return _inventoryWindows[reference - kInventoryStart];
+		for (auto &invWindowData: _inventoryWindows) {
+			if (reference == invWindowData.ref)
+				return invWindowData.win;
+		}
 	}
 	switch (reference) {
 	case MacVenture::kNoWindow:
@@ -1167,7 +1153,13 @@ Common::Point Gui::localizeTravelledDistance(Common::Point point, WindowReferenc
 }
 
 void Gui::removeInventoryWindow(WindowReference ref) {
-	_inventoryWindows.remove_at(ref - kInventoryStart);
+	for (auto &invWinData: _inventoryWindows) {
+		if (invWinData.ref == ref) {
+			_inventoryWindows.erase(&invWinData);
+			break;
+		}
+	}
+
 	Common::List<WindowData>::iterator it;
 	for (it = _windowData->begin(); it != _windowData->end(); it++) {
 		if (it->refcon == ref) {
@@ -1263,10 +1255,14 @@ bool diplomaWindowCallback(Graphics::WindowClick click, Common::Event &event, vo
 	return g->processDiplomaEvents(click, event);
 }
 
-bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *gui) {
-	Gui *g = (Gui*)gui;
+bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, void *data) {
+	InventoryCallbackStruct *g = (InventoryCallbackStruct *)data;
+	bool res = g->gui->processInventoryEvents(g->ref, click, event);
 
-	return g->processInventoryEvents(click, event);
+	if (event.type == Common::EVENT_LBUTTONDOWN && click == Graphics::kBorderCloseButton)
+		delete g;
+
+	return res;
 }
 
 void menuCommandsCallback(int action, Common::String &text, void *data) {
@@ -1290,11 +1286,34 @@ void Gui::invertWindowColors(WindowReference winID) {
 bool Gui::tryCloseWindow(WindowReference winID) {
 	//WindowData data = findWindowData(winID);
 	Graphics::MacWindow *win = findWindow(winID);
-	_wm.removeWindow(win);
-	if (winID < 0x80) {
-		removeInventoryWindow(winID);
+	if (win) {
+		_wm.removeWindow(win);
+		if (winID < 0x80) {
+			removeInventoryWindow(winID);
+		}
 	}
 	return true;
+}
+
+bool Gui::tryCloseWindowRec(WindowReference ref, bool runControl) {
+	WindowData data = findWindowData(ref);
+	if (data.children.size()) {
+		for (auto &child: data.children) {
+			if (_objToInvRef.contains(child.obj)) { // child is inv window
+				if (findWindow(_objToInvRef[child.obj]) == nullptr)
+					continue;
+				tryCloseWindowRec(_objToInvRef[child.obj], runControl);
+			}
+		}
+	}
+
+	if (runControl) {
+		// HACK: Run script with "close" action
+		ScriptEngine *scriptEngine = _engine->getScriptEngine();
+		scriptEngine->runControl(kClose, data.objRef, 0, {0, 0});
+	}
+
+	return tryCloseWindow(ref);
 }
 
 void Gui::highlightExitButton(ObjID objID) {
@@ -1442,20 +1461,10 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &eve
 	return getWindowData(kDiplomaWindow).visible;
 }
 
-bool Gui::processInventoryEvents(WindowClick click, Common::Event &event) {
+bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONDOWN && click == kBorderCloseButton) {
-		WindowReference ref = findInventoryAtPoint(event.mouse);
-		if (ref == kNoWindow) {
-			return false;
-		}
-
 		if (click == kBorderCloseButton) {
-			WindowData &data = findWindowData((WindowReference)ref);
-			// HACK: Run script with "close" action
-			ScriptEngine *scriptEngine = _engine->getScriptEngine();
-			scriptEngine->runControl(kClose, data.objRef, 0, {0, 0});
-
-			removeInventoryWindow(ref);
+			tryCloseWindowRec(ref, true);
 			return true;
 		}
 	}
@@ -1464,12 +1473,6 @@ bool Gui::processInventoryEvents(WindowClick click, Common::Event &event) {
 		return true;
 
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		// Find the appropriate window
-		WindowReference ref = findInventoryAtPoint(event.mouse);
-		if (ref == kNoWindow) {
-			return false;
-		}
-
 		WindowData &data = findWindowData((WindowReference) ref);
 
 		if (click == kBorderScrollUp) {

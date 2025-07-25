@@ -109,6 +109,7 @@ public:
 
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
+	bool tryCloseWindowRec(WindowReference winID, bool runControl = false);
 
 	void highlightExitButton(ObjID objID);
 
@@ -124,7 +125,7 @@ public:
 	bool processSelfEvents(WindowClick click, Common::Event &event);
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
-	bool processInventoryEvents(WindowClick click, Common::Event &event);
+	bool processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
 
@@ -184,7 +185,14 @@ private: // Attributes
 	Graphics::MacWindow *_selfWindow;
 	Graphics::MacWindow *_exitsWindow;
 	Graphics::MacWindow *_diplomaWindow;
-	Common::Array<Graphics::MacWindow*> _inventoryWindows;
+
+	struct InventoryWindowData {
+		Graphics::MacWindow *win;
+		WindowReference ref;
+	};
+	Common::Array<InventoryWindowData> _inventoryWindows;
+	Common::HashMap<ObjID, WindowReference> _objToInvRef;
+
 	Graphics::MacMenu *_menu;
 	Dialog *_dialog;
 
@@ -232,7 +240,6 @@ private: // Methods
 
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
-	WindowReference findInventoryAtPoint(Common::Point point);
 	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
@@ -249,6 +256,11 @@ private: // Methods
 
 	void ensureAssetLoaded(ObjID obj);
 
+};
+
+struct InventoryCallbackStruct {
+	Gui *gui;
+	WindowReference ref;
 };
 
 enum ClickState {
