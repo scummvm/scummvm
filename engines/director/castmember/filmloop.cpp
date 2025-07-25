@@ -751,6 +751,11 @@ void FilmLoopCastMember::writeCastData(Common::SeekableWriteStream *writeStream)
 }
 
 void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	// Load it before writing
+	if (!_loaded) {
+		load();
+	}
+
 	uint32 channelSize = 0;
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
 		channelSize = kSprChannelSizeD4;
@@ -764,9 +769,9 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 	// Go to the desired offset put in the memory map
 	writeStream->seek(offset);
 
-	debugC(5, kDebugSaving, "FilmLoopCastmember::writeSCVWResource: Saving FilmLoop 'SCVW' data at offset %d", offset);
-
 	uint32 filmloopSize = getSCVWResourceSize();
+	debugC(5, kDebugSaving, "FilmLoopCastmember::writeSCVWResource: Saving FilmLoop 'SCVW' data of size: %d", filmloopSize);
+
 	writeStream->writeUint32LE(MKTAG('S', 'C', 'V', 'W'));
 	writeStream->writeUint32LE(filmloopSize);	// Size of the resource
 
@@ -817,8 +822,8 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 	}
 
 	if (debugChannelSet(7, kDebugSaving)) {
-        // Adding +8 because the stream doesn't include the header and the entry for the size itself
-        byte *dumpData = (byte *)calloc(filmloopSize + 8, sizeof(byte));
+		// Adding +8 because the stream doesn't include the header and the entry for the size itself
+		byte *dumpData = (byte *)calloc(filmloopSize + 8, sizeof(byte));
 
 		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, filmloopSize + 8);
 
@@ -829,8 +834,8 @@ void FilmLoopCastMember::writeSCVWResource(Common::SeekableWriteStream *writeStr
 
 		dumpFile("FilmLoopData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, filmloopSize);
 		free(dumpData);
-        delete dumpStream;
-    }
+		delete dumpStream;
+	}
 }
 
 uint32 FilmLoopCastMember::getSCVWResourceSize() {

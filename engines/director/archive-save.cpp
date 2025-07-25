@@ -109,10 +109,15 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 			break;
 
 		case MKTAG('C', 'A', 'S', 't'):
+			cast = movie->getCastByLibResourceID(it->libResourceId);
 			cast->saveCastData(saveFile, it);
 			break;
 
 		case MKTAG('V', 'W', 'C', 'F'):
+			// There is only 'VWCF' resource, that is for the internal cast
+			// The external casts don't have a config
+			// movie->getCast() returns the internal cast
+			cast = movie->getCast();
 			cast->saveConfig(saveFile, it->offset);
 			break;
 
@@ -121,6 +126,7 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				target->writeBITDResource(saveFile, it->offset);
 			}
@@ -131,6 +137,7 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				TextCastMember *target = (TextCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				target->writeSTXTResource(saveFile, it->offset);
 			}
@@ -141,6 +148,7 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				target->writePaletteData(saveFile, it->offset);
 			}
@@ -148,9 +156,11 @@ bool RIFXArchive::writeToFile(Common::String filename, Movie *movie) {
 
 		case MKTAG('S', 'C', 'V', 'W'):
 			{
+
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				FilmLoopCastMember *target = (FilmLoopCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				target->writeSCVWResource(saveFile, it->offset);
 			}
@@ -294,12 +304,13 @@ bool RIFXArchive::writeKeyTable(Common::SeekableWriteStream *writeStream, uint32
 	return true;
 }
 
-bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib) {
+bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 libResourceId) {
 	writeStream->seek(offset);
+	uint32 casSize = getCASResourceSize(libResourceId);
 
 	uint castTag = MKTAG('C', 'A', 'S', 't');
 	writeStream->writeUint32LE(MKTAG('C', 'A', 'S', '*'));
-	writeStream->writeUint32LE(getCASResourceSize(castLib));
+	writeStream->writeUint32LE(casSize);
 
 	Common::HashMap<uint16, uint16> castIndexes;
 
@@ -307,13 +318,13 @@ bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 off
 	// Since the order they appear matters, they are given castIds accordingly
 	uint32 maxCastId = 0;
 	for (auto &it : _types[castTag]) {
-		if (it._value.libResourceId == castLib) {
+		if (it._value.libResourceId == libResourceId) {
 			castIndexes[it._value.castId] = it._value.index;
 			maxCastId = MAX(maxCastId, it._value.castId);
 		}
 	}
 
-	debugC(5, kDebugSaving, "RIFXArchive::writeCast: Writing CAS* resource:");
+	debugC(5, kDebugSaving, "RIFXArchive::writeCast: Writing CAS* resource: size: %d, maxCastID: %d, libResourceID: %d", casSize, maxCastId, libResourceId);
 	debugCN(5, kDebugSaving, "'CASt' indexes: [");
 	for (uint32 i = 0; i <= maxCastId; i++) {
 		uint32 castIndex = castIndexes.getValOrDefault(i, 0);
@@ -340,59 +351,64 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 	// First we'll have to update the _types table to include all the newly added
 	// cast members, and their 'CASt' resources
-	// Only handling movies with a single cast for now
-	Cast *cast = movie->getCast();
+	Cast *cast = nullptr;
 	ResourceMap &castResMap = _types[MKTAG('C', 'A', 'S', 't')];
 
-	for (auto it : *(cast->_loadedCast)) {
-		if (it._value->_index == -1) {
-			Resource *res = nullptr;
-			uint16 targetCastId = it._value->getID() - cast->_castArrayStart;
+	// Iterate over all the casts
+	for (auto it : *(movie->getCasts())) {
+		cast = it._value;
 
-			// Checking if the castId already exists in the CASt resources
-			for (auto castRes : castResMap) {
-				if (castRes._value.castId == targetCastId) {
-					res = &castRes._value;
-				}
-			}
+		// Iterate over all the loaded members of the cast to check for new cast members
+		for (auto jt : *(cast->_loadedCast)) {
+			// If the index is -1, that means the cast member is new or duplicated
+			if (jt._value->_index == -1) {
+				Resource *res = nullptr;
+				uint16 targetCastId = jt._value->getID() - cast->_castArrayStart;
 
-			if (!res) {
-				// If the castId is new, create a new resource
-				// Assigning the next available index to the resource
-				res = &castResMap[_resources.size()];
-				res->tag = MKTAG('C', 'A', 'S', 't');
-				res->accessed = true;
-
-				// Again considering here that there is only one CAS* resource, so the first resource will have our necessary libResourceId
-				res->libResourceId = _types[MKTAG('C', 'A', 'S', '*')].begin()->_value.libResourceId;
-				res->children = it._value->_children;
-				res->index = _resources.size();
-				res->castId = it._value->getID() - cast->_castArrayStart;
-
-				for (auto child : it._value->_children) {
-					_keyData[child.tag][res->index].push_back(child.index);
-					_keyTableUsedCount += 1;
-					_keyTableEntryCount += 1;
-				}
-				_resources.push_back(res);
-
-				debugC(5, kDebugSaving, "RIFXArchive::rebuildResources(): new 'CASt' resource added");
-			} else {
-				// The castId is not new, overwrite the key data of the previous cast
-				for (auto child : res->children) {
-					// Remove the data of the previous (removed) 'CASt'
-					int8 count = _keyData[child.tag][res->index].size();
-					_keyData[child.tag][res->index].clear();
-					_keyTableUsedCount -= count;
-					_keyTableEntryCount -= count;
+				// Checking if the castId already exists in the CASt resources
+				for (auto castRes : castResMap) {
+					if (castRes._value.castId == targetCastId) {
+						res = &castRes._value;
+					}
 				}
 
-				res->children = it._value->_children;
+				if (!res) {
+					// If the castId is new, create a new resource
+					// Assigning the next available index to the resource
+					res = &castResMap[_resources.size()];
+					res->tag = MKTAG('C', 'A', 'S', 't');
+					res->accessed = true;
 
-				for (auto child : res->children) {
-					_keyData[child.tag][res->index].push_back(child.index);
-					_keyTableUsedCount += 1;
-					_keyTableEntryCount += 1;
+					res->libResourceId = cast->_libResourceId;
+					res->children = jt._value->_children;
+					res->index = _resources.size();
+					res->castId = jt._value->getID() - cast->_castArrayStart;
+
+					for (auto child : jt._value->_children) {
+						_keyData[child.tag][res->index].push_back(child.index);
+						_keyTableUsedCount += 1;
+						_keyTableEntryCount += 1;
+					}
+					_resources.push_back(res);
+
+					debugC(5, kDebugSaving, "RIFXArchive::rebuildResources(): new 'CASt' resource added");
+				} else {
+					// The castId is not new, overwrite the key data of the previous cast
+					for (auto child : res->children) {
+						// Remove the data of the previous (removed) 'CASt'
+						int8 count = _keyData[child.tag][res->index].size();
+						_keyData[child.tag][res->index].clear();
+						_keyTableUsedCount -= count;
+						_keyTableEntryCount -= count;
+					}
+
+					res->children = jt._value->_children;
+
+					for (auto child : res->children) {
+						_keyData[child.tag][res->index].push_back(child.index);
+						_keyTableUsedCount += 1;
+						_keyTableEntryCount += 1;
+					}
 				}
 			}
 		}
@@ -446,6 +462,7 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('C', 'A', 'S', 't'):
 			{
+				cast = movie->getCastByLibResourceID(it->libResourceId);
 				// The castIds of cast members start from _castArrayStart
 				CastMember *target = cast->getCastMember(it->castId + cast->_castArrayStart);
 
@@ -477,8 +494,9 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 
 		case MKTAG('V', 'W', 'C', 'F'):
 			{
-				// Cast config, as many resources as Casts
+				// Only one cast config per movie
 				// No need to update the key mapping
+				cast = movie->getCast();
 				resSize = cast->getConfigSize();
 
 				it->offset = currentSize;
@@ -508,6 +526,8 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				// Get the appropriate cast in case of multiple casts
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				PaletteCastMember *target = (PaletteCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				resSize = target->getPaletteDataSize();
 
@@ -523,6 +543,8 @@ Common::Array<Resource *> RIFXArchive::rebuildResources(Movie *movie) {
 				uint32 parentIndex = findParentIndex(it->tag, it->index);
 				Resource parent = castResMap[parentIndex];
 
+				// Get the appropriate cast in case of multiple casts
+				cast = movie->getCastByLibResourceID(parent.libResourceId);
 				BitmapCastMember *target = (BitmapCastMember *)cast->getCastMember(parent.castId + cast->_castArrayStart);
 				resSize = target->getBITDResourceSize();
 
@@ -608,14 +630,14 @@ uint32 RIFXArchive::getArchiveSize(Common::Array<Resource *> resources) {
 	return size;
 }
 
-uint32 RIFXArchive::getCASResourceSize(uint32 castLib) {
+uint32 RIFXArchive::getCASResourceSize(uint32 libResourceID) {
 	uint castTag = MKTAG('C', 'A', 'S', 't');
 	uint32 maxCastId = 0;
 
 	// maxCastId is the basically the number of cast members present in the cast
 	// This is the number of entries present in the 'CAS*' resource
 	for (auto &it : _types[castTag]) {
-		if (it._value.libResourceId == castLib) {
+		if (it._value.libResourceId == libResourceID) {
 			maxCastId = MAX(maxCastId, it._value.castId);
 		}
 	}

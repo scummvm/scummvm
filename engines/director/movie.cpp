@@ -506,6 +506,18 @@ Cast *Movie::getCast(CastMemberID memberID) {
 	return nullptr;
 }
 
+Cast *Movie::getCastByLibResourceID(int libresourceID) {
+	for (auto it : _casts) {
+		if (it._value->_libResourceId == libresourceID) {
+			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);
+			return it._value;
+		}
+	}
+
+	warning("Movie::getCastByLibResourceID: No cast with libresourceID: %d", libresourceID);
+	return nullptr;
+}
+
 CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
 	warning("Movie::createOrReplaceCastMember: stubbed: functions only handles create");
 	CastMember *result = nullptr;

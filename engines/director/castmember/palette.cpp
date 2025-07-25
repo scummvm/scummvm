@@ -162,6 +162,11 @@ uint32 PaletteCastMember::getPaletteDataSize() {
 }
 
 void PaletteCastMember::writePaletteData(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	// Load it before writing
+	if (!_loaded) {
+		load();
+	}
+
 	uint32 castSize = getPaletteDataSize();
 
 	writeStream->seek(offset);

@@ -1045,6 +1045,11 @@ void BitmapCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 }
 
 uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	// Load it before writing
+	if (!_loaded) {
+		load();
+	}
+
 	writeStream->seek(offset);
 
 	writeStream->writeUint32LE(MKTAG('B', 'I', 'T', 'D'));

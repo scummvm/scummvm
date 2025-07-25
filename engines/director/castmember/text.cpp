@@ -986,6 +986,11 @@ uint32 TextCastMember::getCastDataSize() {
 }
 
 uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStream, uint32 offset) {
+	// Load it before writing
+	if (!_loaded) {
+		load();
+	}
+
 	debugC(3, kDebugSaving, "writeSTXTResource(): _ptext: %s\n_ftext = %s\n_rtext: %s",
 		_ptext.encode().c_str(), Common::toPrintable(_ftext).encode().c_str(), Common::toPrintable(_rtext).c_str());
 
@@ -1008,7 +1013,6 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 	uint64 textPos = writeStream->pos();
 	writeStream->seek(_ptext.size(), SEEK_CUR);
 	writeStream->writeUint16BE(formatting);
-	debug("Number of formattings: %d", formatting);
 
 	FontStyle style;
 	Common::String rawText;
@@ -1070,7 +1074,6 @@ uint32 TextCastMember::writeSTXTResource(Common::SeekableWriteStream *writeStrea
 	_ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
 	rawText += _ptext.substr(style.formatStartOffset, pIndex - style.formatStartOffset).encode(encoding);
 
-	debug("ptext length: %d, rawText length: %d", _ptext.size(), rawText.size());
 	uint64 currentPos = writeStream->pos();
 	writeStream->seek(textPos);
 	writeStream->writeString(rawText);
