@@ -214,6 +214,12 @@ public:
 	bool isChannelActive(int soundChannel);
 	uint8 getChannelVolume(int soundChannel);
 	void setChannelVolume(int channel, uint8 volume);
+	int8 getChannelBalance(int soundChannel);
+	void setChannelBalance(int soundChannel, int8 balance);
+	uint8 getChannelFaderL(int soundChannel);
+	void setChannelFaderL(int soundChannel, uint8 faderL);
+	uint8 getChannelFaderR(int soundChannel);
+	void setChannelFaderR(int soundChannel, uint8 faderR);
 	void stopSound(int soundChannel);
 	void stopSound();
 	void setChannelDefaultVolume(int soundChannel);

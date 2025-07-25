@@ -42,7 +42,9 @@ public:
 	int fade(int chan, int endvol, int duration, bool autostop);
 	void stop(int chan);
 	void volume(int chan, int vol);
+	void leftrightvol(int chan, uint8 lvol, uint8 rvol);
 	void frequency(int chan, int percent);
+	void pan(int chan, int percent);
 
 	DirectorSound *_soundManager;
 
