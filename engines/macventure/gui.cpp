@@ -1259,7 +1259,7 @@ bool inventoryWindowCallback(Graphics::WindowClick click, Common::Event &event, 
 	InventoryCallbackStruct *g = (InventoryCallbackStruct *)data;
 	bool res = g->gui->processInventoryEvents(g->ref, click, event);
 
-	if (event.type == Common::EVENT_LBUTTONDOWN && click == Graphics::kBorderCloseButton)
+	if (event.type == Common::EVENT_LBUTTONUP && click == Graphics::kBorderCloseButton)
 		delete g;
 
 	return res;
@@ -1462,11 +1462,12 @@ bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &eve
 }
 
 bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event) {
-	if (event.type == Common::EVENT_LBUTTONDOWN && click == kBorderCloseButton) {
-		if (click == kBorderCloseButton) {
+	if (click == kBorderCloseButton) {
+		if (event.type == Common::EVENT_LBUTTONUP) {
 			tryCloseWindowRec(ref, true);
 			return true;
 		}
+		return true;
 	}
 
 	if (_engine->needsClickToContinue())
