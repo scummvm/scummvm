@@ -1131,6 +1131,18 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 		_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
 		_draggedObj.id = 0;
 		_draggedObj.hasMoved = false;
+	} else {
+		WindowReference destinationWindow = findWindowAtPoint(_cursor->getPos());
+		if (destinationWindow == kNoWindow) {
+			return;
+		}
+		if (isDoubleClick) {
+			// WORKAROUND: Make windows to be selectable as objects to
+			// trigger certain events when double clicking.
+			// TODO: Make object selection, dragging done with single click.
+			// Handle this in a single click as well.
+			_engine->handleObjectSelect(0, destinationWindow, shiftPressed, isDoubleClick);
+		}
 	}
 }
 
