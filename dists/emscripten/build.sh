@@ -48,13 +48,14 @@ Options:
   --bundle-games=    comma-separated list of demos and freeware games to bundle. 
   -v, --verbose      print all commands run by the script
   --*                all other options are passed on to the configure script
-                     Note: --enable-a52, --enable-faad, --enable-fluidlite,
-                     --enable-mad, --enable-mpcdec, --enable-mpeg2,  --enable-mikmod,
-                     --enable-theoradec and --enable-vpx
+                     Note: --enable-a52, --enable-faad, --enable-fluidlite, --enable-fribidi,
+                     --enable-mad,  --enable-mpcdec, --enable-mpeg2, --enable-mikmod,
+                     --enable-retrowave, --enable-theoradec and --enable-vpx
                      also download and build the required library before running configure or make.
 "
 
 _fluidlite=false
+_fribidi=false
 _liba52=false
 _libfaad=false
 _libmad=false
@@ -78,6 +79,10 @@ for i in "$@"; do
     ;;
   --enable-fluidlite)
     _fluidlite=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-fribidi)
+    _fribidi=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --enable-mad)
@@ -253,6 +258,19 @@ if [ "$_fluidlite" = true ]; then
   LIBS_FLAGS="${LIBS_FLAGS} --with-fluidlite-prefix=$LIBS_FOLDER/build"
 fi
 
+if [ "$_fribidi" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libfribidi.a" ]]; then
+    echo "building fribidi-1.0.10"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://github.com/fribidi/fribidi/releases/download/v1.0.10/fribidi-1.0.10.tar.xz"
+    tar -xf fribidi-1.0.10.tar.xz
+    cd "$LIBS_FOLDER/fribidi-1.0.10/"
+    CFLAGS="-fPIC -Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
+    emmake make -j 5
+    emmake make install
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-fribidi-prefix=$LIBS_FOLDER/build"
+fi
 
 if [ "$_libmad" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libmad.a" ]]; then
