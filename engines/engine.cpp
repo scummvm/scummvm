@@ -1136,6 +1136,7 @@ void PauseToken::operator=(PauseToken &&t2) {
 	_engine = t2._engine;
 	t2._engine = nullptr;
 }
+#endif
 
 bool Engine::gameTypeHasAddOns() const {
 	return false;
@@ -1292,5 +1293,3 @@ Common::ErrorCode Engine::updateAddOns(const MetaEngine *metaEngine) const {
 
 	return Common::kNoError;
 }
-
-#endif
