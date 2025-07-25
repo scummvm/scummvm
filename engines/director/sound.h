@@ -130,6 +130,11 @@ struct SoundID {
 	bool operator!=(const SoundID &b) {
 		return !(*this == b);
 	}
+	bool isZero() {
+		if (type == kSoundCast)
+			return u.cast.member == 0;
+		return false;
+	}
 };
 
 struct SoundChannel {
