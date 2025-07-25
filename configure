@@ -150,7 +150,6 @@ _sdlnet=auto
 _libcurl=auto
 _enet=yes
 _tremor=auto
-_tremolo=no
 _flac=auto
 _mad=auto
 _opl2lpt=no
@@ -5291,10 +5290,6 @@ echo "$_vorbis"
 # Check for Tremor
 #
 echocheck "Tremor"
-if test "$_tremolo" = yes ; then
-	_tremor=yes
-fi
-
 if test "$_tremor" = auto ; then
 	_tremor=no
 	cat > $TMPC << EOF
@@ -5312,12 +5307,7 @@ fi
 if test "$_tremor" = yes && test "$_vorbis" = no; then
 	add_line_to_config_h '#define USE_TREMOR'
 	add_line_to_config_h '#define USE_VORBIS'
-	if test "$_tremolo" = yes ; then
-		add_line_to_config_h '#define USE_TREMOLO'
-		append_var LIBS "$TREMOR_LIBS -ltremolo"
-	else
-		append_var LIBS "$TREMOR_LIBS -lvorbisidec"
-	fi
+	append_var LIBS "$TREMOR_LIBS -lvorbisidec"
 	append_var INCLUDES "$TREMOR_CFLAGS"
 else
 	if test "$_vorbis" = yes; then
