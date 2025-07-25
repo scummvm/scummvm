@@ -1135,6 +1135,10 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 }
 
 uint32 BitmapCastMember::getBITDResourceSize() {
+	if (_external) {
+		return 0;
+	}
+
 	// No compression for now
 	return _pitch * _picture->_surface.h;
 }
