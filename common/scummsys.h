@@ -35,6 +35,10 @@
 	#define GCC_ATLEAST(major, minor) 0
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1900
+	#error MSVC support requires MSVC 2015 or newer
+#endif
+
 #if defined(NONSTANDARD_PORT)
 
 	// Ports which need to perform #includes and #defines visible in
@@ -45,45 +49,6 @@
 #else // defined(NONSTANDARD_PORT)
 
 	#if defined(WIN32)
-
-		#if defined(_MSC_VER) && _MSC_VER <= 1800
-
-		// FIXME: The placement of the workaround functions for MSVC below
-		// require us to include stdio.h and stdarg.h for MSVC here. This
-		// is not exactly nice...
-		// We should think of a better way of doing this.
-		#include <stdio.h>
-		#include <stdarg.h>
-
-		// MSVC's vsnprintf is either non-existent (2003) or bugged since it
-		// does not always include a terminating NULL (2005+). To work around
-		// that we fix up the _vsnprintf included. Note that the return value
-		// will still not match C99's specs!
-		inline int vsnprintf_msvc(char *str, size_t size, const char *format, va_list args) {
-			// We do not pass size - 1 here, to ensure we would get the same
-			// return value as when we would use _vsnprintf directly, since
-			// for example Common::String::format relies on this.
-			int retValue = _vsnprintf(str, size, format, args);
-			str[size - 1] = 0;
-			return retValue;
-		}
-
-		#define vsnprintf vsnprintf_msvc
-
-		// Visual Studio does not include snprintf in its standard C library.
-		// Instead it includes a function called _snprintf with somewhat
-		// similar semantics. The minor difference is that the return value in
-		// case the formatted string exceeds the buffer size is different.
-		// A much more dangerous one is that _snprintf does not always include
-		// a terminating null (Whoops!). Instead we map to our fixed vsnprintf.
-		inline int snprintf(char *str, size_t size, const char *format, ...) {
-			va_list args;
-			va_start(args, format);
-			int len = vsnprintf(str, size, format, args);
-			va_end(args);
-			return len;
-		}
-		#endif
 
 		#define WIN32_LEAN_AND_MEAN		// Exclude rarely-used stuff from Windows headers
 		#define NOGDICAPMASKS
@@ -166,7 +131,7 @@
 #endif
 
 #ifndef STATIC_ASSERT
-#if __cplusplus >= 201103L || (defined(_MSC_VER) && _MSC_VER > 1600)
+#if __cplusplus >= 201103L || defined(_MSC_VER)
 	/**
 	 * Generates a compile-time assertion.
 	 *
@@ -378,7 +343,7 @@
 #endif
 
 #ifndef MSVC_PRINTF
-	#if defined(_MSC_VER) && _MSC_VER > 1400
+	#if defined(_MSC_VER)
 		#define MSVC_PRINTF _Printf_format_string_
 	#else
 		#define MSVC_PRINTF

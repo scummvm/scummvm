@@ -668,11 +668,7 @@ int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) {
 
 	int ret = vsnprintf(dst, size, format, ap);
 
-	if ((size_t)ret < size
-#if defined(_MSC_VER) && _MSC_VER <= 1800
-		&& ret != -1
-#endif
-		) {
+	if ((size_t)ret < size) {
 		// Nominal case: no truncation
 		return ret;
 	}

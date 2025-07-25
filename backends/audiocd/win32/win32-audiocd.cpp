@@ -61,13 +61,7 @@
 #include "common/timer.h"
 
 #include <winioctl.h>
-#if _MSC_VER < 1900
-// WORKAROUND: Older versions of MSVC might not supply DDK headers by default.
-// Visual Studio 2015 contains the required headers. We use a compatibility
-// header from MinGW's w32api for all older versions.
-// TODO: Limit this to the Visual Studio versions which actually require this.
-#include "msvc/ntddcdrm.h"
-#elif defined(__MINGW32__) && !defined(__MINGW64__)
+#if defined(__MINGW32__) && !defined(__MINGW64__)
 // Classic MinGW uses non standard paths for DDK headers.
 #include <ddk/ntddcdrm.h>
 #else
