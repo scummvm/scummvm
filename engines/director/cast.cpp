@@ -147,6 +147,12 @@ CastMember *Cast::getCastMember(int castId, bool load) {
 	} else if (result) {
 		_loadQueue.push_back(result);
 	}
+
+	if (result) {
+		debugC(4, kDebugSaving, "Returned castmember with castId: %d, type: %s", castId, castType2str(result->_type));
+	} else {
+		warning("No castmember with castId: %d, found for cast with libResourceID: %d", castId, _libResourceId);
+	}
 	return result;
 }
 
