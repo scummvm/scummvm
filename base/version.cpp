@@ -85,12 +85,7 @@ const char gScummVMFeatures[] = ""
 #endif
 
 #ifdef USE_TREMOR
-#  ifdef USE_TREMOLO
-	// libTremolo is used on WinCE for better ogg performance
-	"Tremolo "
-#  else
 	"Tremor "
-#  endif
 #elif defined(USE_VORBIS)
 	"Vorbis "
 #endif
