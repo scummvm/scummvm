@@ -73,6 +73,7 @@ Scene::Scene(TeenAgentEngine *vm) : _vm(vm), intro(false), _id(0), ons(0),
 
 	_onsCount = 0;
 	_messageColor = 0;
+	_voiceId = 0;
 }
 
 Scene::~Scene() {
@@ -243,16 +244,27 @@ void Scene::loadObjectData() {
 	walkboxes.resize(42);
 	fades.resize(42);
 
+	uint16 voiceStartIndx = 334;
+
 	for (byte i = 0; i < 42; ++i) {
 		Common::Array<Object> &sceneObjects = objects[i];
 		sceneObjects.clear();
 
-		uint16 sceneTable = _vm->res->sceneObjectsSeg.get_word(i * 2);
-		uint16 objectAddr;
-		while ((objectAddr = _vm->res->sceneObjectsSeg.get_word(sceneTable)) != 0) {
+		uint32 sceneObjectStartAddr = _vm->res->getSceneObjectsStartPos();
+		uint32 sceneTable = _vm->res->eseg.get_word(sceneObjectStartAddr + i * 2);
+		uint32 objectAddr;
+		while ((objectAddr = _vm->res->eseg.get_word(sceneObjectStartAddr + sceneTable)) != 0) {
 			Object obj;
-			obj.load(_vm->res->sceneObjectsSeg.ptr(objectAddr), i + 1);
+			obj.load(_vm->res->eseg.ptr(sceneObjectStartAddr + objectAddr), i + 1);
 			//obj.dump();
+			if (obj.hasDefaultDescription()) {
+				uint32 coolMsgAddr = _vm->res->getMessageAddr(kCoolMsg);
+				_vm->res->setVoiceIndex(sceneObjectStartAddr + objectAddr, _vm->res->getVoiceIndex(coolMsgAddr));
+			} else {
+				_vm->res->setVoiceIndex(sceneObjectStartAddr + objectAddr, voiceStartIndx);
+				voiceStartIndx++;
+			}
+
 			sceneObjects.push_back(obj);
 			sceneTable += 2;
 		}
@@ -496,6 +508,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				_vm->playMusic(4);
 				_vm->loadScene(10, Common::Point(136, 153));
 				_vm->stopTextToSpeech();
+				_vm->stopVoice();
 				_vm->setTTSVoice(kMark);
 				return true;
 			}
@@ -503,6 +516,7 @@ bool Scene::processEvent(const Common::Event &event) {
 		case kActionSkipDialog:
 			if (!message.empty() && messageFirstFrame == 0) {
 				_vm->stopTextToSpeech();
+				_vm->stopVoice();
 				clearMessage();
 				nextEvent();
 				return true;
@@ -847,6 +861,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 					}
 				}
 				_vm->sayText(ttsMessage);
+				_vm->playVoiceNow(&_vm->res->voices, _voiceId);
 			}
 		}
 
@@ -992,6 +1007,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::kMessage: {
 			_vm->setTTSVoice((CharacterID)currentEvent.characterID);
 			message = currentEvent.message;
+			_voiceId = currentEvent.voiceId;
 			messageAnimation = NULL;
 			if (currentEvent.firstFrame) {
 				messageTimer = 0;
@@ -1252,13 +1268,14 @@ uint Scene::messageDuration(const Common::String &str) {
 	return delay * 10;
 }
 
-void Scene::displayMessage(const Common::String &str, byte color, const Common::Point &pos) {
+void Scene::displayMessage(const Common::String &str, uint16 voiceIndex, byte color, const Common::Point &pos) {
 	//assert(!str.empty());
 	debugC(0, kDebugScene, "displayMessage: %s", str.c_str());
 	message = str;
 	messagePos = (pos.x | pos.y) ? pos : messagePosition(str, position);
 	_messageColor = color;
 	messageTimer = messageDuration(message);
+	_voiceId = voiceIndex;
 }
 
 void Scene::clear() {
@@ -1276,6 +1293,7 @@ void Scene::clear() {
 void Scene::clearMessage() {
 	message.clear();
 	messageTimer = 0;
+	_voiceId = 0;
 
 	// Reset TTS voice to Mark's voice so that objects and items are always narrated
 	// with his voice
