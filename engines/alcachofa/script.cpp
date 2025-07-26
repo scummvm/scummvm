@@ -486,10 +486,12 @@ private:
 				: TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::PlayMusic:
-			warning("STUB KERNEL CALL: PlayMusic");
+			if (process().isActiveForPlayer())
+				g_engine->sounds().startMusic((int)getNumberArg(0));
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::StopMusic:
-			warning("STUB KERNEL CALL: StopMusic");
+			if (process().isActiveForPlayer())
+				g_engine->sounds().fadeMusic();
 			return TaskReturn::finish(0);
 		case ScriptKernelTask::WaitForMusicToEnd:
 			warning("STUB KERNEL CALL: WaitForMusicToEnd");
@@ -549,7 +551,7 @@ private:
 						g_engine->world().inventory().open();
 					else
 						g_engine->player().changeRoom(targetRoom->name(), true);
-					// TODO: Change music on kernel change room
+					g_engine->sounds().setMusicToRoom(targetRoom->musicID());
 				}
 				g_engine->script().createProcess(process().character(), "ENTRAR_" + targetRoom->name(), ScriptFlags::AllowMissing);
 			}

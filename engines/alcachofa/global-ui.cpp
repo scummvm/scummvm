@@ -144,7 +144,14 @@ bool GlobalUI::updateChangingCharacter() {
 	g_engine->camera().setFollow(player.activeCharacter());
 	g_engine->camera().restore(0);
 	player.changeRoom(player.activeCharacter()->room()->name(), false);
-	// TODO: Queue character change jingle
+
+	int32 characterJingle = g_engine->script().variable(
+		player.activeCharacterKind() == MainCharacterKind::Mortadelo
+		? "PistaMorta"
+		: "PistaFile"
+	);
+	g_engine->sounds().startMusic(characterJingle);
+	g_engine->sounds().queueMusic(player.currentRoom()->musicID());
 
 	_changeButton.setAnimation(activeAnimation());
 	_changeButton.start(false);

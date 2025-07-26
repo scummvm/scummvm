@@ -48,6 +48,7 @@ public:
 	inline uint8 characterAlphaTint() const { return _characterAlphaTint; }
 	inline uint8 characterAlphaPremultiplier() const { return _characterAlphaPremultiplier; }
 	inline bool fixedCameraOnEntering() const { return _fixedCameraOnEntering; }
+	inline int musicID() const { return _musicId; }
 
 	using ObjectIterator = Common::Array<ObjectBase *>::const_iterator;
 	inline ObjectIterator beginObjects() const { return _objects.begin(); }
@@ -77,9 +78,8 @@ protected:
 	Common::String _name;
 	PathFindingShape _floors[2];
 	bool _fixedCameraOnEntering;
-	int8
-		_musicId,
-		_activeFloorI = -1;
+	int8 _activeFloorI = -1;
+	int _musicId = -1;
 	uint8
 		_characterAlphaTint,
 		_characterAlphaPremultiplier; ///< for some reason in percent instead of 0-255
