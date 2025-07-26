@@ -161,7 +161,7 @@ void AmazonEngine::setupGame() {
 		_deaths._cells[i] = CellIdent(DEATH_CELLS[i][0], DEATH_CELLS[i][1], DEATH_CELLS[i][2]);
 
 	// Miscellaneous
-	_fonts.load(res._font6x6, res._font3x5);
+	_fonts.load(res._font6x6, res._font3x5, nullptr);
 
 	initVariables();
 }

@@ -232,14 +232,34 @@ void MartianFont::loadFromData(size_t count, const byte *widths, const int *offs
 
 /*------------------------------------------------------------------------*/
 
-FontManager::FontManager() : _font1(nullptr), _font2(nullptr) {
+MartianBitFont::MartianBitFont(size_t count, const byte *data) : Font(0x20) {
+	_height = 8;
+	_chars.resize(count);
+	for (size_t i = 0; i < count; i++) {
+		Graphics::Surface &surface = _chars[i];
+		surface.create(8, _height, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < _height; y++) {
+			byte src = data[i * 8 + y];
+			byte *dst = static_cast<byte *>(surface.getBasePtr(0, y));
+			for (int x = 7; x >= 0; x--) {
+				dst[x] = (src & 1);
+				src >>= 1;
+			}
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+FontManager::FontManager() : _font1(nullptr), _font2(nullptr), _bitFont(nullptr) {
 	_printMaxX = 0;
 	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
 
-void FontManager::load(Font *font1, Font *font2) {
+void FontManager::load(Font *font1, Font *font2, Font *bitFont) {
 	_font1 = font1;
 	_font2 = font2;
+	_bitFont = bitFont;
 }
 
 
