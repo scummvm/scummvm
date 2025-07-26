@@ -111,6 +111,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 	Video::MPEGPSDecoder decoder;
 	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
 		error("Could not find video %d", videoId);
+	_sounds.stopAll();
 	auto texture = _renderer->createTexture(decoder.getWidth(), decoder.getHeight(), false);
 	decoder.start();
 

@@ -87,7 +87,7 @@ static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &st
 Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
 	: _world(world) {
 	_name = readVarString(stream);
-	_musicId = stream.readSByte();
+	_musicId = (int)stream.readByte();
 	_characterAlphaTint = stream.readByte();
 	auto backgroundScale = stream.readSint16LE();
 	_floors[0] = PathFindingShape(stream);
