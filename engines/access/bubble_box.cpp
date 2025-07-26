@@ -117,10 +117,12 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		if (_vm->getGameID() == GType_MartianMemorandum)
-			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
-		else
+		if (_vm->getGameID() == GType_MartianMemorandum) {
+			lastLine = _vm->_fonts._font1->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
+			width = _vm->_fonts._font1->stringWidth(line);
+		} else {
 			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+		}
 
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
@@ -128,25 +130,30 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		screen._printOrg.x = screen._printStart.x;
 	} while (!lastLine);
 
-	if (_type == kBoxTypeFileDialog)
-		++screen._printOrg.y += 6;
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		bounds.setWidth((_vm->_fonts._printMaxX / 16 + 2) * 16 + 2 + 1);
+		bounds.bottom = screen._printOrg.y + 4 + 1;
+	} else {
+		if (_type == kBoxTypeFileDialog)
+			++screen._printOrg.y += 6;
 
-	// Determine the width for the area
-	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
-	if (width >= 24)
-		width += 20 - ((width - 24) % 20);
-	bounds.setWidth(width);
+		// Determine the width for the area
+		width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
+		if (width >= 24)
+			width += 20 - ((width - 24) % 20);
+		bounds.setWidth(width);
 
-	// Determine the height for area
-	int y = screen._printOrg.y + 6;
-	if (_type == kBoxTypeFileDialog)
-		y += 6;
-	int height = y - bounds.top;
-	bounds.setHeight(height);
+		// Determine the height for area
+		int y = screen._printOrg.y + 6;
+		if (_type == kBoxTypeFileDialog)
+			y += 6;
+		int height = y - bounds.top;
+		bounds.setHeight(height);
 
-	height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
-	if (height >= 0)
-		bounds.setHeight(bounds.height() + 13 - (height % 13));
+		height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
+		if (height >= 0)
+			bounds.setHeight(bounds.height() + 13 - (height % 13));
+	}
 
 	if (bounds.bottom > screen.h)
 		bounds.translate(0, screen.h - bounds.bottom);
@@ -167,7 +174,11 @@ void BubbleBox::printBubble(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble_v1(const Common::String &msg) {
+	Font::_fontColors[1] = 255;
+
 	drawBubble(_bubbles.size() - 1);
+
+	Font::_fontColors[3] = 247;
 
 	// Loop through drawing the lines
 	Common::String s = msg;
@@ -176,8 +187,8 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 	bool lastLine;
 	do {
 		// Get next line
-		Font &font2 = *_vm->_fonts._font2;
-		lastLine = font2.getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
+		Font &font1 = *_vm->_fonts._font1;
+		lastLine = font1.getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		printString(line);
 
@@ -335,8 +346,11 @@ void BubbleBox::doBox(int item, int box) {
 }
 
 void BubbleBox::setCursorPos(int posX, int posY) {
-	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
-	warning("Missing call to setCursorPos");
+	Common::Point newPt =  Common::Point(posX * 8, posY * 8 + _boxPStartY);
+	_vm->_screen->_printStart = _vm->_screen->_printOrg = newPt;
+	// This function (at 0x6803) calculates something from a lookup table, but
+	// never does anything with it.
+	debug("Skipping call to setCursorPos");
 }
 
 void BubbleBox::printString(Common::String msg) {
@@ -444,6 +458,11 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_startItem = item;
 	_startBox = box;
 
+	Common::Point origPrintStart = _vm->_screen->_printStart;
+	Common::Point origPrintOrg = _vm->_screen->_printOrg;
+
+	_vm->_events->hideCursor();
+
 	// Save state information
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
@@ -473,8 +492,8 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	// Draw the inner box;
 	++_vm->_screen->_orgX1;
 	++_vm->_screen->_orgY1;
-	--_vm->_screen->_orgX2;
-	--_vm->_screen->_orgY2;
+	_vm->_screen->_orgX2 -= 2;
+	_vm->_screen->_orgY2 -= 2;
 	_vm->_screen->_lColor = 0xF9;
 
 	// Draw the inner border
@@ -587,31 +606,29 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->drawLine();
 	}
 
-	int len = _bubbleDisplStr.size();
-	int newX = _bounds.top >> 3;
-	newX = (len - newX) / 2;
+	int displStrLen = _bubbleDisplStr.size();
 
-	_boxPStartX = _bounds.left >> 3;
-	newX += _boxPStartX;
+	_boxPStartX = _bounds.left / 8;
+	int newX = (_boxPStartX + _bounds.width() / 8 - displStrLen) / 2;
 
-	int newY = _bounds.top >> 3;
-	int bp = _bounds.top - (newY << 3) + 1;
-	if (bp == 8) {
-		++newY;
-		bp = 0;
+	int _rowOff = _bounds.top / 8;
+	_boxPStartY = 1 - (_rowOff * 8 - _bounds.top);
+	if (_boxPStartY == 8) {
+		_boxPStartY = 0;
+		++_rowOff;
 	}
 
-	_rowOff = bp;
-	retval_ = _boxPStartY = newY;
+	retval_ = _boxPStartY;
 
-	setCursorPos(newX, newY);
+	setCursorPos(newX, _rowOff);
 
 	_vm->_fonts._charFor._lo = 0xFF;
-	_vm->_fonts._font1->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
+	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
 
 	if (_type == TYPE_2) {
 		_vm->_events->showCursor();
-		warning("TODO: pop values");
+		_vm->_screen->_printStart = origPrintStart;
+		_vm->_screen->_printOrg = origPrintOrg;
 		_vm->_screen->restoreScreen();
 		delete icons;
 		return retval_;
@@ -756,6 +773,10 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		retval_ = -1;
 	else
 		retval_ = _vm->_boxDataStart + _vm->_boxSelectY;
+
+	_vm->_screen->_printStart = origPrintStart;
+	_vm->_screen->_printOrg = origPrintOrg;
+
 	return retval_;
 }
 
