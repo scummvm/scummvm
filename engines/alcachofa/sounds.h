@@ -40,6 +40,7 @@ public:
 	void update();
 	SoundID playVoice(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
 	SoundID playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
+	void stopAll();
 	void stopVoice();
 	void fadeOut(SoundID id, uint32 duration);
 	void fadeOutVoiceAndSFX(uint32 duration);
@@ -49,6 +50,15 @@ public:
 		MainCharacterKind processCharacter,
 		Character *speakingCharacter);
 	bool isNoisy(SoundID id, float windowSize, float minDifferences); ///< used for lip-sync
+
+	void startMusic(int musicId);
+	void queueMusic(int musicId);
+	void fadeMusic(uint32 duration = 500);
+	void setMusicToRoom(int roomMusicId);
+	Task *waitForMusicToEnd(Process &processd);
+	inline bool isMusicPlaying() const { return _isMusicPlaying; }
+	inline int musicID() const { return _nextMusicID; }
+	inline FakeSemaphore &musicSemaphore() { return _musicSemaphore; }
 
 private:
 	struct Playback {;
@@ -63,11 +73,16 @@ private:
 		Common::Array<int16> _samples; ///< might not be filled, only voice samples are preloaded for lip-sync
 	};
 	Playback *getPlaybackById(SoundID id);
-	SoundID playSoundInternal(const Common::String &fileName, byte volume, Audio::Mixer::SoundType type);
+	SoundID playSoundInternal(const char *fileName, byte volume, Audio::Mixer::SoundType type);
 
 	Common::Array<Playback> _playbacks;
 	Audio::Mixer *_mixer;
 	SoundID _nextID = 1;
+
+	SoundID _musicSoundID = kInvalidSoundID; // we use another soundID to reuse fading
+	bool _isMusicPlaying = false;
+	int _nextMusicID = -1;
+	FakeSemaphore _musicSemaphore;
 };
 
 struct PlaySoundTask final : public Task {
@@ -76,6 +91,14 @@ struct PlaySoundTask final : public Task {
 	virtual void debugPrint() override;
 private:
 	SoundID _soundID;
+};
+
+struct WaitForMusicTask final : public Task {
+	WaitForMusicTask(Process &process, FakeLock &&lock);
+	virtual TaskReturn run() override;
+	virtual void debugPrint() override;
+private:
+	FakeLock _lock;
 };
 
 }

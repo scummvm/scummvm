@@ -22,6 +22,7 @@
 #include "sounds.h"
 #include "rooms.h"
 #include "alcachofa.h"
+#include "detection.h"
 
 #include "common/file.h"
 #include "common/substream.h"
@@ -49,24 +50,19 @@ Sounds::~Sounds() {
 }
 
 Sounds::Playback *Sounds::getPlaybackById(SoundID id) {
-	if (_playbacks.empty())
-		return nullptr;
-	uint first = 0, last = _playbacks.size() - 1;
-	while (first < last) {
-		uint mid = (first + last) / 2;
-		if (_playbacks[mid]._id == id)
-			return _playbacks.data() + mid;
-		else if (_playbacks[mid]._id < id)
-			first = mid + 1;
-		else
-			last = mid == 0 ? 0 : mid - 1;
-	}
-	return first == last && first < _playbacks.size()
-		? _playbacks.data() + first
-		: nullptr;
+	auto itPlayback = find_if(_playbacks.begin(), _playbacks.end(),
+		[&] (const Playback &playback) { return playback._id == id; });
+	return itPlayback == _playbacks.end() ? nullptr : itPlayback;
 }
 
 void Sounds::update() {
+	if (_isMusicPlaying && !isAlive(_musicSoundID)) {
+		if (_nextMusicID < 0)
+			fadeMusic();
+		else
+			startMusic(_nextMusicID);
+	}
+
 	for (uint i = _playbacks.size(); i > 0; i--) {
 		Playback &playback = _playbacks[i - 1];
 		if (!_mixer->isSoundHandleActive(playback._handle))
@@ -115,12 +111,12 @@ static AudioStream *loadSND(File *file) {
 	}
 }
 
-static AudioStream *openAudio(const String &fileName) {
-	String path = String::format("Sonidos/%s.SND", fileName.c_str());
+static AudioStream *openAudio(const char *fileName) {
+	String path = String::format("Sonidos/%s.SND", fileName);
 	File *file = new File();
 	if (file->open(path.c_str()))
-		return file->size() == 0
-			? makeSilentAudioStream(8000, false) // Movie Adventure has some null-size audio files, they are treated like infinite samples
+		return file->size() == 0 // Movie Adventure has some null-size audio files, they are treated like infinite silence
+			? makeSilentAudioStream(8000, false) 
 			: loadSND(file);
 	path.setChar('W', path.size() - 3);
 	path.setChar('A', path.size() - 2);
@@ -133,7 +129,7 @@ static AudioStream *openAudio(const String &fileName) {
 	return nullptr;
 }
 
-SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::SoundType type) {
+SoundID Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::SoundType type) {
 	AudioStream *stream = openAudio(fileName);
 	if (stream == nullptr)
 		return UINT32_MAX;
@@ -192,14 +188,23 @@ SoundID Sounds::playSoundInternal(const String &fileName, byte volume, Mixer::So
 }
 
 SoundID Sounds::playVoice(const String &fileName, byte volume) {
-	return playSoundInternal(fileName, volume, Mixer::kSpeechSoundType);
+	debugC(1, kDebugSounds, "Play voice: %s at %d", fileName.c_str(), (int)volume);
+	return playSoundInternal(fileName.c_str(), volume, Mixer::kSpeechSoundType);
 }
 
 SoundID Sounds::playSFX(const String &fileName, byte volume) {
-	return playSoundInternal(fileName, volume, Mixer::kSFXSoundType);
+	debugC(1, kDebugSounds, "Play SFX: %s at %d", fileName.c_str(), (int)volume);
+	return playSoundInternal(fileName.c_str(), volume, Mixer::kSFXSoundType);
+}
+
+void Sounds::stopAll() {
+	debugC(1, kDebugSounds, "Stop all sounds");
+	_mixer->stopAll();
+	_playbacks.clear();
 }
 
 void Sounds::stopVoice() {
+	debugC(1, kDebugSounds, "Stop all voices");
 	for (uint i = _playbacks.size(); i > 0; i--) {
 		if (_playbacks[i - 1]._type == Mixer::kSpeechSoundType) {
 			_mixer->stopHandle(_playbacks[i - 1]._handle);
@@ -282,6 +287,49 @@ bool Sounds::isNoisy(SoundID id, float windowSize, float minDifferences) {
 	return sumOfDifferences / 256.0f >= minDifferences;
 }
 
+void Sounds::startMusic(int musicId) {
+	debugC(2, kDebugSounds, "startMusic %d", musicId);
+	assert(musicId >= 0);
+	fadeMusic();
+	constexpr size_t kBufferSize = 16;
+	char filenameBuffer[kBufferSize];
+	snprintf(filenameBuffer, kBufferSize, "T%d", musicId);
+	_musicSoundID = playSoundInternal(filenameBuffer, Mixer::kMaxChannelVolume, Mixer::kMusicSoundType);
+	_isMusicPlaying = true;
+	_nextMusicID = musicId;
+}
+
+void Sounds::queueMusic(int musicId) {
+	debugC(2, kDebugSounds, "queueMusic %d", musicId);
+	_nextMusicID = musicId;
+}
+
+void Sounds::fadeMusic(uint32 duration) {
+	debugC(2, kDebugSounds, "fadeMusic");
+	fadeOut(_musicSoundID, duration);
+	_isMusicPlaying = false;
+	_nextMusicID = -1;
+	_musicSoundID = {};
+}
+
+void Sounds::setMusicToRoom(int roomMusicId) {
+	// Alcachofa Soft used IDs > 200 to mean "no change in music"
+	if (roomMusicId == _nextMusicID || roomMusicId > 200) {
+		debugC(1, kDebugSounds, "setMusicToRoom: from %d to %d, not executed", _nextMusicID, roomMusicId);
+		return;
+	}
+	debugC(1, kDebugSounds, "setMusicToRoom: from %d to %d", _nextMusicID, roomMusicId);
+	if (roomMusicId > 0)
+		startMusic(roomMusicId);
+	else
+		fadeMusic();
+}
+
+Task *Sounds::waitForMusicToEnd(Process &process) {
+	FakeLock lock(_musicSemaphore);
+	return new WaitForMusicTask(process, std::move(lock));
+}
+
 PlaySoundTask::PlaySoundTask(Process &process, SoundID soundID)
 	: Task(process)
 	, _soundID(soundID) {
@@ -300,6 +348,21 @@ TaskReturn PlaySoundTask::run() {
 
 void PlaySoundTask::debugPrint() {
 	g_engine->console().debugPrintf("PlaySound %u\n", _soundID);
+}
+
+WaitForMusicTask::WaitForMusicTask(Process &process, FakeLock &&lock)
+	: Task(process)
+	, _lock(std::move(lock)) {}
+
+TaskReturn WaitForMusicTask::run() {
+	g_engine->sounds().queueMusic(-1);
+	return g_engine->sounds().isMusicPlaying()
+		? TaskReturn::yield()
+		: TaskReturn::finish(0);
+}
+
+void WaitForMusicTask::debugPrint() {
+	g_engine->console().debugPrintf("WaitForMusic\n");
 }
 
 }

@@ -215,11 +215,15 @@ struct DoorTask : public Task {
 	}
 
 	virtual TaskReturn run() {
+		FakeLock musicLock;
+
 		TASK_BEGIN;
 		if (_targetRoom == nullptr || _targetObject == nullptr)
 			return TaskReturn::finish(1);
 
-		// TODO: Fade out music on room change
+		musicLock = FakeLock(g_engine->sounds().musicSemaphore());
+		if (g_engine->sounds().musicID() != _targetRoom->musicID())
+			g_engine->sounds().fadeMusic();
 		TASK_WAIT(fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
 		_player.changeRoom(_targetRoom->name(), true);
 
@@ -232,7 +236,9 @@ struct DoorTask : public Task {
 			g_engine->camera().setFollow(_character, true);
 		}
 
-		// TODO: Start music on room change
+		g_engine->sounds().setMusicToRoom(_targetRoom->musicID());
+		musicLock.release();
+
 		if (g_engine->script().createProcess(_character->kind(), "ENTRAR_" + _targetRoom->name(), ScriptFlags::AllowMissing))
 			TASK_YIELD;
 		else
