@@ -1220,6 +1220,16 @@ U32String String::decode(CodePage page) const {
 	return unicodeString;
 }
 
+String String::encode(CodePage page) const {
+	if (page == kCodePageInvalid ||
+		page > kLastEncoding) {
+		error("Invalid codepage");
+	}
+
+	U32String unicodeString(_str);
+	return unicodeString.encode(page);
+}
+
 String U32String::encode(CodePage page) const {
 	String string;
 	(void)encode(string, page, '?');
