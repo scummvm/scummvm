@@ -919,10 +919,15 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 
 	Gfx::Surface dummySrc;
 	Gfx::Surface *src = &dummySrc;
+
 	if (pSrcDC) {
 		src = pSrcDC->impl()->getSurface();
-		assert(srcRect.left >= 0 && srcRect.top >= 0 &&
-			srcRect.right <= src->w && srcRect.bottom <= src->h);
+		CPoint srcOrg = src->getViewportOrg();
+
+		assert((srcRect.left - srcOrg.x) >= 0);
+		assert((srcRect.right - srcOrg.x) <= src->w);
+		assert((srcRect.top - srcOrg.y) >= 0);
+		assert((srcRect.bottom - srcOrg.y) <= src->h);
 	}
 
 	Gfx::Surface *dest = getSurface();
