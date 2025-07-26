@@ -67,27 +67,27 @@ public:
 
 	void clearBuffer();
 
-	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
+	void plotImage(const SpriteResource *sprite, int frameNum, const Common::Point &pt);
 
 	/**
 	 * Scaled draw frame in forward orientation
 	 */
-	void sPlotF(SpriteFrame *frame, const Common::Rect &bounds);
+	void sPlotF(const SpriteFrame *frame, const Common::Rect &bounds);
 
 	/**
 	 * Scaled draw frame in backwards orientation
 	 */
-	void sPlotB(SpriteFrame *frame, const Common::Rect &bounds);
+	void sPlotB(const SpriteFrame *frame, const Common::Rect &bounds);
 
 	/**
 	 * Draw an image full-size in forward orientation
 	 */
-	void plotF(SpriteFrame *frame, const Common::Point &pt);
+	void plotF(const SpriteFrame *frame, const Common::Point &pt);
 
 	/**
 	 * Draw an image full-size in backwards orientation
 	 */
-	void plotB(SpriteFrame *frame, const Common::Point &pt);
+	void plotB(const SpriteFrame *frame, const Common::Point &pt);
 
 	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
 
@@ -144,7 +144,7 @@ public:
 
 	int getCount() { return _frames.size(); }
 
-	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
+	const SpriteFrame *getFrame(int idx) const { return _frames[idx]; }
 };
 
 enum ImageFlag {

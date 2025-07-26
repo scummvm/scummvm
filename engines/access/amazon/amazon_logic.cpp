@@ -615,7 +615,7 @@ void Plane::doFallCell() {
 	if (_vm->_scaleI <= 20)
 		return;
 
-	SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_planeCount / 6);
+	const SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_planeCount / 6);
 	Common::Rect r(115, 11, 115 + _vm->_screen->_scaleTable1[frame->w],
 		11 + _vm->_screen->_scaleTable1[frame->h]);
 	_vm->_buffer2.sPlotF(frame, r);

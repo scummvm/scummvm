@@ -130,8 +130,8 @@ void BaseSurface::clearBuffer() {
 	Common::fill(pSrc, pSrc + w * h, 0);
 }
 
-void BaseSurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt) {
-	SpriteFrame *frame = sprite->getFrame(frameNum);
+void BaseSurface::plotImage(const SpriteResource *sprite, int frameNum, const Common::Point &pt) {
+	const SpriteFrame *frame = sprite->getFrame(frameNum);
 	Common::Rect r(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
 
 	if (!clip(r)) {
@@ -148,19 +148,19 @@ void BaseSurface::copyBuffer(Graphics::ManagedSurface *src) {
 	blitFrom(*src);
 }
 
-void BaseSurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotF(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotB(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotF(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, false);
 }
 
-void BaseSurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotB(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, true);
 }
 
