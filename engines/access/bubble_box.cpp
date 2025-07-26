@@ -267,10 +267,7 @@ void BubbleBox::doBox(int item, int box) {
 		return;
 	}
 
-	// Get icons data
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *icons = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Set the up boundaries and color to use for the box background
 	_vm->_screen->_orgX1 = _bounds.left - 2;
@@ -340,9 +337,6 @@ void BubbleBox::doBox(int item, int box) {
 	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();
-
-	// Free icons data
-	delete icons;
 }
 
 void BubbleBox::setCursorPos(int posX, int posY) {
@@ -499,10 +493,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	// Draw the inner border
 	_vm->_screen->drawBox();
 
-	// Get icons data
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *icons = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw upper border
 	_vm->_bcnt = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
@@ -630,7 +621,6 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->_printStart = origPrintStart;
 		_vm->_screen->_printOrg = origPrintOrg;
 		_vm->_screen->restoreScreen();
-		delete icons;
 		return retval_;
 	}
 
@@ -662,8 +652,6 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 	}
-
-	delete icons;
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxDataStart = _startItem;

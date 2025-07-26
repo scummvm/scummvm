@@ -106,18 +106,15 @@ void MartianRoom::roomSet() {
 }
 
 void MartianRoom::roomMenu() {
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 	_vm->_destIn = _vm->_screen;	// TODO: Redundant
-	_vm->_screen->plotImage(spr, 0, Common::Point(5, 184));
-	_vm->_screen->plotImage(spr, 1, Common::Point(155, 184));
+	_vm->_screen->plotImage(icons, 0, Common::Point(5, 184));
+	_vm->_screen->plotImage(icons, 1, Common::Point(155, 184));
 
 	_vm->_screen->restoreScreen();
-	delete spr;
 }
 
 void MartianRoom::mainAreaClick() {

@@ -147,20 +147,18 @@ void CharManager::loadChar(int charId) {
 }
 
 void CharManager::charMenu() {
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	Screen &screen = *_vm->_screen;
 	screen.saveScreen();
 	screen.setDisplayScan();
 
 	if (_vm->getGameID() == GType_MartianMemorandum) {
-		screen.plotImage(spr, 17, Common::Point(0, 184));
-		screen.plotImage(spr, 18, Common::Point(193, 184));
+		screen.plotImage(icons, 17, Common::Point(0, 184));
+		screen.plotImage(icons, 18, Common::Point(193, 184));
 	} else if (_vm->getGameID() == GType_Amazon) {
-		screen.plotImage(spr, 17, Common::Point(0, 176));
-		screen.plotImage(spr, 18, Common::Point(155, 176));
+		screen.plotImage(icons, 17, Common::Point(0, 176));
+		screen.plotImage(icons, 18, Common::Point(155, 176));
 	} else
 		error("Game not supported");
 
@@ -169,7 +167,6 @@ void CharManager::charMenu() {
 	screen.copyTo(&_vm->_buffer1);
 
 	screen.restoreScreen();
-	delete spr;
 }
 
 } // End of namespace Access

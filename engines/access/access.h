@@ -123,6 +123,11 @@ private:
 	uint32 _lastTime, _curTime;
 
 	/**
+	 * A cache for the ICONS.LZ sprite data
+     */
+	SpriteResource *_icons;
+
+	/**
 	 * Handles basic initialization
 	 */
 	void initialize();
@@ -278,6 +283,8 @@ public:
 	bool shouldQuitOrRestart();
 
 	int getRandomNumber(int maxNumber);
+
+	const SpriteResource *getIcons();
 
 	void loadCells(Common::Array<CellIdent> &cells);
 

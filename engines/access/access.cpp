@@ -117,6 +117,8 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 
 	_vidEnd = false;
 
+	_icons = nullptr;
+
 	ARRAYCLEAR(_countTbl);
 }
 
@@ -139,6 +141,7 @@ AccessEngine::~AccessEngine() {
 	delete _scripts;
 	delete _sound;
 	delete _video;
+	delete _icons;
 
 	freeCells();
 	delete _establish;
@@ -200,6 +203,15 @@ void AccessEngine::initialize() {
 		if (saveSlot >= 0 && saveSlot <= 999)
 			_loadSaveSlot = saveSlot;
 	}
+}
+
+const SpriteResource *AccessEngine::getIcons() {
+	if (!_icons) {
+		Resource *iconData = _files->loadFile("ICONS.LZ");
+		_icons = new SpriteResource(this, iconData);
+		delete iconData;
+	}
+	return _icons;
 }
 
 Common::Error AccessEngine::run() {

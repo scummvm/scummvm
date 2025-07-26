@@ -29,7 +29,7 @@ namespace Access {
 
 const int TRANSPARENCY = 0;
 
-SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
+SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
 
@@ -52,7 +52,7 @@ SpriteResource::~SpriteResource() {
 		delete _frames[i];
 }
 
-SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
+SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 
