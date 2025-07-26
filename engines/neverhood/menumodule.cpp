@@ -31,6 +31,8 @@
 
 #include "engines/savestate.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #if defined(USE_FREETYPE2)
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -502,7 +504,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 		leaveScene(0);
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
+		if (param.asInteger() == kActionSkipFull && _canAbort)
 			leaveScene(0);
 		break;
 	case NM_MOUSE_HIDE:
@@ -740,30 +742,30 @@ void TextEditWidget::handleAsciiKey(char ch) {
 	}
 }
 
-void TextEditWidget::handleKeyDown(Common::KeyCode keyCode) {
+void TextEditWidget::handleKeyDown(Common::CustomEventType action) {
 	bool doRefresh = true;
-	switch (keyCode) {
-	case Common::KEYCODE_HOME:
+	switch (action) {
+	case kActionCursorStart:
 		_cursorPos = 0;
 		break;
-	case Common::KEYCODE_END:
+	case kActionCursorEnd:
 		_cursorPos = _entryString.size();
 		break;
-	case Common::KEYCODE_LEFT:
+	case kActionCursorLeft:
 		if (_entryString.size() > 0 && _cursorPos > 0)
 			--_cursorPos;
 		break;
-	case Common::KEYCODE_RIGHT:
+	case kActionCursorRight:
 		if (_cursorPos < (int)_entryString.size())
 			++_cursorPos;
 		break;
-	case Common::KEYCODE_DELETE:
+	case kActionTextDel:
 		if (_entryString.size() > 0 && _cursorPos < (int)_entryString.size()) {
 			_entryString.deleteChar(_cursorPos);
 			_modified = true;
 		}
 		break;
-	case Common::KEYCODE_BACKSPACE:
+	case kActionTextBackspace:
 		if (_entryString.size() > 0 && _cursorPos > 0) {
 			_entryString.deleteChar(--_cursorPos);
 			_modified = true;
@@ -803,7 +805,7 @@ uint32 TextEditWidget::handleMessage(int messageNum, const MessageParam &param, 
 		handleAsciiKey(param.asInteger());
 		break;
 	case 0x000B:
-		handleKeyDown((Common::KeyCode)param.asInteger());
+		handleKeyDown((Common::CustomEventType)param.asInteger());
 		break;
 	default:
 		break;
@@ -974,6 +976,10 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 		return;
 	}
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game")->setEnabled(false);
+	keymapper->getKeymap("save-management")->setEnabled(true);
+
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
 	insertScreenMouse(mouseFileHash, mouseRect);
@@ -1031,6 +1037,7 @@ void GameStateMenu::performAction() {
 
 uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	switch (messageNum) {
 	case 0x000A:
 		if (!_textEditWidget->isReadOnly()) {
@@ -1039,11 +1046,15 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		}
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN)
+		if (param.asInteger() == kActionConfirm) {
 			performAction();
-		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (param.asInteger() == kActionPause) {
 			leaveScene(1);
-		else if (!_textEditWidget->isReadOnly()) {
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (!_textEditWidget->isReadOnly()) {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
 			setCurrWidget(_textEditWidget);
 		}
@@ -1053,9 +1064,13 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		switch (param.asInteger()) {
 		case 0:
 			performAction();
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 1:
 			leaveScene(1);
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 2:
 			_listBox->pageUp();

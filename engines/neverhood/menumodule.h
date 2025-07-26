@@ -156,7 +156,7 @@ public:
 	Common::String& getString();
 	void setString(const Common::String &string);
 	void handleAsciiKey(char ch);
-	void handleKeyDown(Common::KeyCode keyCode);
+	void handleKeyDown(Common::CustomEventType action);
 	void refresh();
 	void setReadOnly(bool value) { _readOnly = value; }
 	bool isReadOnly() const { return _readOnly; }
