@@ -22,23 +22,22 @@
 #ifndef BAGEL_MFC_GFX_BLITTER_H
 #define BAGEL_MFC_GFX_BLITTER_H
 
-#include "graphics/managed_surface.h"
+#include "bagel/mfc/gfx/surface.h"
 
 namespace Bagel {
 namespace MFC {
 namespace Gfx {
 
-extern void blit(const Graphics::ManagedSurface *src,
-	Graphics::ManagedSurface *dest,
+extern void blit(Gfx::Surface *src, Gfx::Surface *dest,
 	const Common::Rect &srcRect, const Common::Point &destPos,
 	uint bgColor, int mode);
 
-extern void stretchBlit(const Graphics::ManagedSurface *src,
-	Graphics::ManagedSurface *dest,
-	const Common::Rect &srcRect, const Common::Rect &destRect,
+extern void stretchBlit(Gfx::Surface *src, Gfx::Surface *dest,
+	const Common::Rect &srcRect,
+	const Common::Rect &destRect,
 	uint bgColor, int mode);
 
-extern void frameRect(Graphics::ManagedSurface *dest,
+extern void frameRect(Gfx::Surface *dest,
 	const Common::Rect &r, byte color, int drawMode);
 
 } // namespace Gfx

@@ -242,9 +242,9 @@ int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
 
 BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
         HDC hdcSrc, int xSrc, int ySrc, DWORD rop) {
-	const CDC::Impl *srcDc = (const CDC::Impl *)hdcSrc;
+	CDC::Impl *srcDc = (CDC::Impl *)hdcSrc;
 	CDC::Impl *destDc = (CDC::Impl *)hdc;
-	const CBitmap::Impl *src = (CBitmap::Impl *)srcDc->_bitmap;
+	CBitmap::Impl *src = (CBitmap::Impl *)srcDc->_bitmap;
 	CBitmap::Impl *dest = (CBitmap::Impl *)destDc->_bitmap;
 	uint bgColor = destDc->getBkColor();
 

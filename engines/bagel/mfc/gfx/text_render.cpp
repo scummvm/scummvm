@@ -27,7 +27,7 @@ namespace MFC {
 namespace Gfx {
 
 CSize TextRender::renderText(const Common::String &str,
-		Graphics::ManagedSurface *dest, Graphics::Font *font,
+		Gfx::Surface *dest, Graphics::Font *font,
 		uint textCol, LPCRECT lpRect, UINT nFormat,
 		const Common::Array<int> &tabStops,
 		int nTabOrigin, uint bkColor, int bkMode,
@@ -126,8 +126,8 @@ CSize TextRender::renderText(const Common::String &str,
 				tempLine = Common::String(tempLine.c_str() + fragment.size());
 			}
 
-			font->drawString(dest, fragment, lineRect.left, lineRect.top,
-				lineRect.width(), textCol);
+			Graphics::ManagedSurface area = dest->getSubArea(lineRect);
+			font->drawString(&area, fragment, 0, 0, area.w, textCol);
 			lineRect.left += getStringWidth(font, fragment);
 		}
 

@@ -54,6 +54,7 @@ MODULE_OBJS = \
 	mfc/wingdi.o \
 	mfc/wnd.o \
 	mfc/gfx/blitter.o \
+	mfc/gfx/surface.o \
 	mfc/gfx/cursor.o \
 	mfc/gfx/dialog_template.o \
 	mfc/gfx/fonts.o \

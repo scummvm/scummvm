@@ -686,7 +686,7 @@ HGDIOBJ CDC::Impl::Attach(HGDIOBJ gdiObj) {
 	return nullptr;
 }
 
-Gfx::ClippedSurface *CDC::Impl::getSurface() const {
+Gfx::Surface *CDC::Impl::getSurface() const {
 	assert(_bitmap);
 	return static_cast<CBitmap::Impl *>(_bitmap);
 }
@@ -917,28 +917,25 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 		int xSrc, int ySrc, DWORD dwRop) {
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nWidth, ySrc + nHeight);
 
-	Graphics::ManagedSurface dummySrc;
-	Graphics::ManagedSurface *src = &dummySrc;
+	Gfx::Surface dummySrc;
+	Gfx::Surface *src = &dummySrc;
 	if (pSrcDC) {
 		src = pSrcDC->impl()->getSurface();
 		assert(srcRect.left >= 0 && srcRect.top >= 0 &&
 			srcRect.right <= src->w && srcRect.bottom <= src->h);
 	}
 
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *dest = getSurface();
 	const Common::Point destPos(x, y);
 	uint bgColor = getBkPixel();
-
-	assert(x >= 0 && y >= 0 && (x + srcRect.width()) <= dest->w &&
-		(y + srcRect.height()) <= dest->h);
 
 	Gfx::blit(src, dest, srcRect, destPos, bgColor, dwRop);
 }
 
 void CDC::Impl::stretchBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	int xSrc, int ySrc, int nSrcWidth, int nSrcHeight, DWORD dwRop) {
-	Graphics::ManagedSurface *src = pSrcDC->impl()->getSurface();
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *src = pSrcDC->impl()->getSurface();
+	Gfx::Surface *dest = getSurface();
 	const Common::Rect srcRect(xSrc, ySrc, xSrc + nSrcWidth, ySrc + nSrcHeight);
 	const Common::Rect destRect(x, y, x + nWidth, y + nHeight);
 	uint bgColor = getBkPixel();
@@ -952,7 +949,7 @@ void CDC::Impl::moveTo(int x, int y) {
 }
 
 void CDC::Impl::lineTo(int x, int y) {
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *dest = getSurface();
 	uint color = getPenColor();
 
 	dest->drawLine(_linePos.x, _linePos.y, x, y, color);
@@ -961,14 +958,14 @@ void CDC::Impl::lineTo(int x, int y) {
 }
 
 COLORREF CDC::Impl::getPixel(int x, int y) const {
-	Graphics::ManagedSurface *src = getSurface();
+	Gfx::Surface *src = getSurface();
 	assert(src->format.bytesPerPixel == 1);
-	const byte *pixel = (const byte *)src->getBasePtr(x, y);
+	const byte pixel = src->getPixel(x, y);
 
 	assert(_palette);
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
 	byte r, g, b;
-	pal->get(*pixel, r, g, b);
+	pal->get(pixel, r, g, b);
 
 	return RGB(r, g, b);
 }
@@ -1025,7 +1022,7 @@ COLORREF CDC::Impl::setTextColor(COLORREF crColor) {
 BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
 		int nTabPositions, const LPINT lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *dest = getSurface();
 	RECT r;
 
 	if ((_textAlign & 6) == TA_RIGHT) {
@@ -1058,7 +1055,7 @@ BOOL CDC::Impl::textOut(int x, int y, LPCSTR lpszString, int nCount,
 BOOL CDC::Impl::textOut(int x, int y, const CString &str,
 		int nTabPositions, const LPINT lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *dest = getSurface();
 	RECT r;
 	r.left = x;
 	r.top = y;
@@ -1112,7 +1109,7 @@ int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
 		int nTabPositions, const LPINT lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Graphics::Font *font = *(CFont::Impl *)_font;
-	Graphics::ManagedSurface *dest = getSurface();
+	Gfx::Surface *dest = getSurface();
 	uint textCol = GetNearestColor(_textColor);
 	CSize dummySize;
 	if (!size)

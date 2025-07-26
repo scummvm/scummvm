@@ -35,7 +35,7 @@ HBITMAP CBitmap::Detach() {
 
 BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	const CDC::Impl *dc = static_cast<CDC::Impl *>(pDC->m_hDC);
-	Graphics::ManagedSurface *src = dc->getSurface();
+	Gfx::Surface *src = dc->getSurface();
 
 	BITMAPINFOHEADER h;
 	h.biSize = 40;

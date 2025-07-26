@@ -33,7 +33,7 @@
 #include "bagel/mfc/afxstr.h"
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/global_functions.h"
-#include "bagel/mfc/gfx/clipped_surface.h"
+#include "bagel/mfc/gfx/surface.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/gfx/dialog_template.h"
 #include "bagel/mfc/gfx/fonts.h"
@@ -593,7 +593,7 @@ public:
 class CBitmap : public CGdiObject {
 public:
 	struct Impl : public CGdiObjectImpl,
-		public Gfx::ClippedSurface {
+		public Gfx::Surface {
 		~Impl() override {}
 	};
 
@@ -715,7 +715,7 @@ public:
 		Impl(HDC srcDc);
 
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
-		Gfx::ClippedSurface *getSurface() const;
+		Gfx::Surface *getSurface() const;
 		const Graphics::PixelFormat &getFormat() const;
 		void setFormat(const Graphics::PixelFormat &format);
 		void setScreenRect();

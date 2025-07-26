@@ -24,7 +24,7 @@
 
 #include "common/str-array.h"
 #include "graphics/font.h"
-#include "graphics/managed_surface.h"
+#include "bagel/mfc/gfx/surface.h"
 #include "bagel/mfc/minwindef.h"
 #include "bagel/mfc/atltypes.h"
 #include "bagel/mfc/wingdi.h"
@@ -36,7 +36,7 @@ namespace Gfx {
 class TextRender {
 protected:
 	CSize renderText(const Common::String &str,
-		Graphics::ManagedSurface *dest, Graphics::Font *font,
+		Gfx::Surface *dest, Graphics::Font *font,
 		uint textCol, LPCRECT lpRect, UINT nFormat,
 		const Common::Array<int> &tabStops,
 		int nTabOrigin, uint bkColor, int bkMode,
