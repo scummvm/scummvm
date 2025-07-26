@@ -125,6 +125,9 @@ public:
 	BorderOffsets &getOffset();
 	const BorderOffsets &getOffset() const;
 
+	int getMinWidth(uint32 flags) const;
+	int getMinHeight(uint32 flags) const;
+
 	/**
 	 * Blit the desired border (active or inactive) into a destination surface.
 	 * It automatically resizes the border to fit the given surface.
@@ -138,7 +141,7 @@ public:
 
 	void setScroll(int scrollPos, int scrollSize) { _scrollPos = scrollPos, _scrollSize = scrollSize; }
 
-	void drawTitle(ManagedSurface *g, int titleOffset);
+	void drawTitle(ManagedSurface *g, int titleOffset, int minWidth);
 
 	void drawScrollBar(ManagedSurface *g);
 
