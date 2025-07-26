@@ -34,10 +34,10 @@ MartianRoom::MartianRoom(AccessEngine *vm) : Room(vm) {
 	_game = (MartianEngine *)vm;
 
 	for (int i = 0; i < 30; i++)
-		_byte26CD2[i] = 0;
+		_vm->_flags[200 + i] = 0;
 
 	for (int i = 0; i < 10; i++)
-		_byte26CBC[i] = 0;
+		_vm->_flags[178 + i] = 0;
 }
 
 MartianRoom::~MartianRoom() {
@@ -92,16 +92,17 @@ void MartianRoom::reloadRoom1() {
 }
 
 void MartianRoom::roomSet() {
+	// aka runScriptInitScript
 	_vm->_numAnimTimers = 0;
 	_vm->_scripts->_sequence = 1000;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
 
 	for (int i = 0; i < 30; i++)
-		_byte26CD2[i] = 0;
+		_vm->_flags[200 + i] = 0;
 
 	for (int i = 0; i < 10; i++)
-		_byte26CBC[i] = 0;
+		_vm->_flags[178 + i] = 0;
 }
 
 void MartianRoom::roomMenu() {
