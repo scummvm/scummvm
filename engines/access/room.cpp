@@ -707,18 +707,18 @@ void Room::executeCommand(int commandId) {
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	// Get the toolbar icons resource
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw the button as selected
-	screen.plotImage(spr, 0, Common::Point(0, 177));
-	screen.plotImage(spr, 1, Common::Point(143, 177));
-	screen.plotImage(spr, _selectCommand + 2,
+	if (_vm->getGameID() == GType_MartianMemorandum) {
+		screen.plotImage(icons, 0, Common::Point(5, 184));
+		screen.plotImage(icons, 1, Common::Point(155, 184));
+	} else {
+		screen.plotImage(icons, 0, Common::Point(0, 177));
+		screen.plotImage(icons, 1, Common::Point(143, 177));
+	}
+	screen.plotImage(icons, _selectCommand + 2,
 		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
-
-	delete spr;
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;

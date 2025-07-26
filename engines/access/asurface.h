@@ -131,7 +131,7 @@ public:
 
 class SpriteFrame : public ASurface {
 public:
-	SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize);
+	SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize);
 	~SpriteFrame() override;
 };
 
@@ -139,7 +139,7 @@ class SpriteResource {
 public:
 	Common::Array<SpriteFrame *> _frames;
 public:
-	SpriteResource(AccessEngine *vm, Resource *res);
+	SpriteResource(const AccessEngine *vm, Resource *res);
 	~SpriteResource();
 
 	int getCount() { return _frames.size(); }

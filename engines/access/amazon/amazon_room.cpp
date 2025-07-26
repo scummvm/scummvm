@@ -143,19 +143,16 @@ void AmazonRoom::roomSet() {
 }
 
 void AmazonRoom::roomMenu() {
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	Screen &screen = *_vm->_screen;
 	screen.saveScreen();
 	screen.setDisplayScan();
 	_vm->_destIn = &screen;	// TODO: Redundant
-	screen.plotImage(spr, 0, Common::Point(0, 177));
-	screen.plotImage(spr, 1, Common::Point(143, 177));
+	screen.plotImage(icons, 0, Common::Point(0, 177));
+	screen.plotImage(icons, 1, Common::Point(143, 177));
 
 	screen.restoreScreen();
-	delete spr;
 }
 
 void AmazonRoom::mainAreaClick() {
