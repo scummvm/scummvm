@@ -152,7 +152,7 @@ int InventoryManager::newDisplayInv() {
 			_vm->_buffer1.clearBuffer();
 
 			SpriteResource *spr = _vm->_objectsTable[99];
-			SpriteFrame *frame = spr->getFrame(_vm->_useItem);
+			const SpriteFrame *frame = spr->getFrame(_vm->_useItem);
 
 			int w = screen._scaleTable1[46];
 			int h = screen._scaleTable1[35];

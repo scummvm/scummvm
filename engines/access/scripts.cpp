@@ -313,7 +313,7 @@ void Scripts::cmdPrint_v2() {
 	printString(msg);
 }
 
-void Scripts::doCmdPrint_v1(Common::String msg) {
+void Scripts::doCmdPrint_v1(const Common::String &msg) {
 	_vm->_screen->_printOrg = Common::Point(20, 42);
 	_vm->_screen->_printStart = Common::Point(20, 32);
 	_vm->_bubbleBox->placeBubble(msg);

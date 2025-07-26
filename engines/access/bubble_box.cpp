@@ -25,7 +25,7 @@
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title) : Manager(vm) {
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
@@ -39,8 +39,8 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_boxEndX = _boxEndY = 0;
 	_boxPStartX = _boxPStartY = 0;
 	// Unused in AGoE
-	for (int i = 0; i < 60; i++) {
-		_tempList[i] = "";
+	for (int i = 0; i < ARRAYSIZE(_tempList); i++) {
+		_tempList[i].clear();
 		_tempListIdx[i] = 0;
 	}
 	_btnUpPos = Common::Rect(0, 0, 0, 0);
