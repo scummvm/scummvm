@@ -208,10 +208,10 @@ void BaseSurface::drawLine() {
 }
 
 void BaseSurface::drawBox() {
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
+	Graphics::ManagedSurface::hLine(_orgX1, _orgY1, _orgX2, _lColor);
+	Graphics::ManagedSurface::hLine(_orgX1, _orgY2, _orgX2, _lColor);
+	Graphics::ManagedSurface::vLine(_orgX1, _orgY1, _orgY2, _lColor);
+	Graphics::ManagedSurface::vLine(_orgX2, _orgY1, _orgY2, _lColor);
 }
 
 void BaseSurface::flipHorizontal(BaseSurface &dest) {
