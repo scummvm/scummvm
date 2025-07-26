@@ -429,7 +429,8 @@ void MacVentureEngine::updateWindow(WindowReference winID) {
 
 bool MacVentureEngine::showTextEntry(ObjID text, ObjID srcObj, ObjID destObj) {
 	debugC(3, kMVDebugMain, "Showing speech dialog, asset %d from %d to %d", text, srcObj, destObj);
-	_gui->getTextFromUser();
+	Common::String title = _world->getText(text, srcObj, destObj);
+	_gui->getTextFromUser(title);
 
 	_prepared = false;
 	warning("Show text entry: not fully tested");
