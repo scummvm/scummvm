@@ -21,6 +21,7 @@
 
 #include "input.h"
 #include "alcachofa.h"
+#include "metaengine.h"
 
 using namespace Common;
 
@@ -34,6 +35,7 @@ void Input::nextFrame() {
 	_wasMouseRightPressed = false;
 	_wasMouseLeftReleased = false;
 	_wasMouseRightReleased = false;
+	_wasMenuKeyPressed = false;
 	updateMousePos3D(); // camera transformation might have changed
 }
 
@@ -67,6 +69,12 @@ bool Input::handleEvent(const Common::Event &event) {
 		_mousePos2D = event.mouse;
 		updateMousePos3D();
 		return true;
+	case EVENT_CUSTOM_ENGINE_ACTION_START:
+		switch ((InputAction)event.customType) {
+		case InputAction::Menu:
+			_wasMenuKeyPressed = true;
+			return true;
+		}
 	}
 	default:
 		return false;

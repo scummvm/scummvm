@@ -58,6 +58,7 @@ public:
 	void addLastDialogCharacter(Character *character);
 	void stopLastDialogCharacters();
 	void setActiveCharacter(MainCharacterKind kind);
+	bool isAllowedToOpenMenu();
 
 private:
 	static constexpr const int kMaxLastDialogCharacters = 4;

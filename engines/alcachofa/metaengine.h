@@ -24,6 +24,14 @@
 
 #include "engines/advancedDetector.h"
 
+namespace Alcachofa {
+
+enum class InputAction {
+	Menu
+};
+
+}
+
 class AlcachofaMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override;
@@ -38,6 +46,10 @@ public:
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
+	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	
 };
 
 #endif // ALCACHOFA_METAENGINE_H

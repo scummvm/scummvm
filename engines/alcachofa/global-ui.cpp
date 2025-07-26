@@ -247,4 +247,16 @@ void GlobalUI::drawScreenStates() {
 	}
 }
 
+void GlobalUI::updateOpeningMenu() {
+	if (_openMenuAtNextFrame) {
+		_openMenuAtNextFrame = false;
+		debug("Open menu");
+		// TODO: Actually open menu
+		return;
+	}
+	_openMenuAtNextFrame =
+		g_engine->input().wasMenuKeyPressed() &&
+		g_engine->player().isAllowedToOpenMenu();
+}
+
 }

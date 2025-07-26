@@ -20,9 +20,15 @@
  */
 
 #include "common/translation.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "alcachofa/metaengine.h"
 #include "alcachofa/alcachofa.h"
+
+using namespace Common;
+using namespace Alcachofa;
 
 namespace Alcachofa {
 
@@ -51,14 +57,40 @@ const ADExtraGuiOptionsMap *AlcachofaMetaEngine::getAdvancedExtraGuiOptions() co
 	return Alcachofa::optionsList;
 }
 
-Common::Error AlcachofaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Error AlcachofaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Alcachofa::AlcachofaEngine(syst, desc);
-	return Common::kNoError;
+	return kNoError;
 }
 
 bool AlcachofaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 		(f == kSupportsLoadingDuringStartup);
+}
+
+KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
+	Keymap *keymap = new Keymap(Keymap::kKeymapTypeGame, "alcachofa-default", _("Default keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Activate"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	keymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Look at"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	keymap->addAction(act);
+
+	act = new Action("MENU", _("Menu"));
+	act->setCustomEngineActionEvent((CustomEventType)InputAction::Menu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_START");
+	keymap->addAction(act);
+
+	return Keymap::arrayOf(keymap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ALCACHOFA)
