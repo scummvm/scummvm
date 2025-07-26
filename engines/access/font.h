@@ -132,6 +132,14 @@ public:
 	MartianFont(int height, size_t count, const byte *widths, const int *offsets, const byte *data);
 };
 
+class MartianBitFont : public Font {
+public:
+	/**
+	* Constructor
+	*/
+	MartianBitFont(size_t count, const byte *data);
+};
+
 
 class FontManager {
 public:
@@ -140,6 +148,7 @@ public:
 	int _printMaxX;
 	Font *_font1;
 	Font *_font2;
+	Font *_bitFont;
 public:
 	/**
 	 * Constructor
@@ -149,7 +158,7 @@ public:
 	/**
 	 * Set the fonts
 	 */
-	void load(Font *font1, Font *font2);
+	void load(Font *font1, Font *font2, Font *bitFont);
 };
 
 } // End of namespace Access

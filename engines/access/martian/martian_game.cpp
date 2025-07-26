@@ -290,7 +290,7 @@ void MartianEngine::setupGame() {
 
 	// Miscellaneous
 	Martian::MartianResources &res = *((Martian::MartianResources *)_res);
-	_fonts.load(res._font1, res._font2);
+	_fonts.load(res._font1, res._font2, res._bitFont);
 
 	// Set player room and position
 	_player->_roomNumber = 7;
