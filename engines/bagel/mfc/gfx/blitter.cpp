@@ -79,10 +79,19 @@ static void blitInner(Gfx::Surface *srcSurface,
 	Surface::XIterator xSrc(&ySrc);
 	Surface::YIterator yDest(destSurface);
 	Surface::XIterator xDest(&yDest);
+	byte dummy = 0;
+	byte *srcP, *destP;
 
 	for (ySrc = 0, yDest = destPos.y; ySrc < srcRect.height(); ++ySrc, ++yDest) {
 		for (xSrc = 0, xDest = destPos.x; xSrc < srcRect.width(); ++xSrc, ++xDest) {
-			copyPixel(xSrc, xDest, mode, WHITE, isDestMonochrome, bgColor);
+			srcP = xSrc;
+			destP = xDest;
+			if (!srcP)
+				srcP = &dummy;
+			if (!destP)
+				destP = &dummy;
+
+			copyPixel(srcP, destP, mode, WHITE, isDestMonochrome, bgColor);
 		}
 	}
 }

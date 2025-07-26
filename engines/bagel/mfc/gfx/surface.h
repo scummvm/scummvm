@@ -46,10 +46,8 @@ public:
 		Surface *_surface;
 		YIterator *_rowIter;
 		int _x = 0;
-		int _xOffset = 0;
 		int _xMax = 0;
 		byte *_pixelP = nullptr;
-		byte _dummyPixel = 0;
 
 	public:
 		XIterator(YIterator *rowIter);

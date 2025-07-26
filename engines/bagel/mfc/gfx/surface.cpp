@@ -31,35 +31,24 @@ Surface::XIterator::XIterator(YIterator *rowIter) :
 
 Surface::XIterator &Surface::XIterator::operator=(int x) {
 	const CPoint org = _surface->getViewportOrg();
-	_x = x;
+	_x = MAX(x, org.x);
 	_xMax = org.x + _surface->w;
 
-	if (_x < org.x) {
-		// Before left edge of viewport
-		_pixelP = &_dummyPixel;
-		_xOffset = org.x - x;
-	} else if (_rowIter->_y < org.y ||
-			_rowIter->_y >= _rowIter->_yMax) {
-		// On a row entirely outside viewport
-		_xMax = x;
-		_pixelP = &_dummyPixel;
-	} else {
+	if ((_rowIter->_y < org.y) ||
+		(_rowIter->_y >= (org.y + _surface->h)))
+		_pixelP = nullptr;
+	else if (_x >= _xMax)
+		_pixelP = nullptr;
+	else
 		_pixelP = _surface->getBasePtr(_x, _rowIter->_y);
-		_xOffset = 0;
-	}
 
 	return *this;
 }
 
 Surface::XIterator &Surface::XIterator::operator++() {
 	++_x;
-
-	if (_xOffset > 0) {
-		if (--_xOffset == 0)
-			_pixelP = _surface->getBasePtr(_x, _rowIter->_y);
-	} else {
+	if (_pixelP)
 		++_pixelP;
-	}
 
 	return *this;
 }
@@ -77,7 +66,8 @@ Surface::YIterator::YIterator(Surface *surface) : _surface(surface) {
 }
 
 Surface::YIterator &Surface::YIterator::operator=(int y) {
-	_y = y;
+	CPoint org = _surface->getViewportOrg();
+	_y = MAX(y, org.y);
 	return *this;
 }
 
