@@ -30,9 +30,30 @@
 #include "graphics/thumbnail.h"
 #include "graphics/surface.h"
 
+#include "efh/detection.h"
 #include "efh/efh.h"
 
 namespace Efh {
+
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
 
 uint32 EfhEngine::getFeatures() const {
 	return _gameDescription->flags;
@@ -66,6 +87,12 @@ public:
 	const char *getName() const override {
 		return "efh";
 	}
+
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Efh::optionsList;
+	}
+#endif
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
