@@ -39,6 +39,7 @@ static const PlainGameDescriptor madeGames[] = {
 class MadeMetaEngineDetection : public AdvancedMetaEngineDetection<Made::MadeGameDescription> {
 public:
 	MadeMetaEngineDetection() : AdvancedMetaEngineDetection(Made::gameDescriptions, madeGames) {
+		_guiOptions = GUIO1(GAMEOPTION_TTS);
 	}
 
 	const char *getName() const override {
