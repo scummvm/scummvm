@@ -3993,8 +3993,6 @@ if test -n "$_host"; then
 		psp2)
 			_backend="psp2"
 			_vkeybd=yes
-			_build_scalers=yes
-			_build_hq_scalers=no
 			_mt32emu=no
 			_timidity=no
 			_port_mk="backends/platform/sdl/psp2/psp2.mk"
