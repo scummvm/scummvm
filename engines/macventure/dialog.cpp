@@ -38,12 +38,12 @@ namespace MacVenture {
 Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
 	_gui(gui), _bounds(Common::Rect(pos.x, pos.y, pos.x + width, pos.y + height)) {}
 
-Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt) {
+Dialog::Dialog(Gui *gui, PrebuiltDialogs prebuilt, const Common::String &title) {
 	_gui = gui;
 	const PrebuiltDialog &dialog = g_prebuiltDialogs[prebuilt];
 	calculateBoundsFromPrebuilt(dialog.bounds);
 	for (int i = 0; dialog.elements[i].type != kDEEnd; i++) {
-		addPrebuiltElement(dialog.elements[i]);
+		addPrebuiltElement(dialog.elements[i], title);
 	}
 }
 
@@ -132,14 +132,17 @@ void Dialog::setUserInput(Common::String content) {
 	_userInput = content;
 }
 
-void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element) {
+void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element, const Common::String &title) {
 	Common::Point position(element.left, element.top);
 	switch(element.type) {
 	case kDEButton:
 		addButton(element.title, element.action, position, element.width, element.height);
 		break;
 	case kDEPlainText:
-		addText(element.title, position);
+		if (title.size())
+			addText(title, position);
+		else
+			addText(element.title, position);
 		break;
 	case kDETextInput:
 		addTextInput(position, element.width, element.height);

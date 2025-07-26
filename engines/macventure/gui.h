@@ -152,10 +152,10 @@ public:
 	void printText(const Common::String &text);
 
 	//Dialog interactions
-	void showPrebuiltDialog(PrebuiltDialogs type);
+	void showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title = "");
 	bool isDialogOpen();
 
-	void getTextFromUser();
+	void getTextFromUser(Common::String &title);
 	void setTextInput(const Common::String &str);
 	void closeDialog();
 

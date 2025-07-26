@@ -899,9 +899,9 @@ void Gui::printText(const Common::String &text) {
 	_consoleText->printLine(text, _outConsoleWindow->getInnerDimensions().width());
 }
 
-void Gui::showPrebuiltDialog(PrebuiltDialogs type) {
+void Gui::showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title) {
 	closeDialog();
-	_dialog = new Dialog(this, type);
+	_dialog = new Dialog(this, type, title);
 }
 
 bool Gui::isDialogOpen() {
@@ -917,11 +917,11 @@ void Gui::closeDialog() {
 	_dialog = nullptr;
 }
 
-void Gui::getTextFromUser() {
+void Gui::getTextFromUser(Common::String &title) {
 	if (_dialog) {
 		delete _dialog;
 	}
-	showPrebuiltDialog(kSpeakDialog);
+	showPrebuiltDialog(kSpeakDialog, title);
 }
 
 void Gui::loadGame() {

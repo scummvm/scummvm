@@ -44,7 +44,7 @@ class DialogElement;
 class Dialog {
 public:
 	Dialog(Gui *gui, Common::Point pos, uint width, uint height);
-	Dialog(Gui *gui, PrebuiltDialogs prebuilt);
+	Dialog(Gui *gui, PrebuiltDialogs prebuilt, const Common::String &title);
 
 	~Dialog();
 
@@ -62,7 +62,7 @@ public:
 	void setUserInput(Common::String content);
 
 private:
-	void addPrebuiltElement(const PrebuiltDialogElement &element);
+	void addPrebuiltElement(const PrebuiltDialogElement &element, const Common::String &title = "");
 
 	void calculateBoundsFromPrebuilt(const PrebuiltDialogBounds &bounds);
 
