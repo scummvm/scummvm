@@ -52,8 +52,6 @@ void MartianEngine::configSelect() {
 }
 
 void MartianEngine::initVariables() {
-	warning("TODO: initVariables");
-
 	// Set player room and position
 	_player->_roomNumber = 7;
 
