@@ -403,9 +403,9 @@ bool Logo::show(ScalpelEngine *vm) {
 		events.setButtonState();
 		++logo->_frameCounter;
 
-		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed;
+		interrupted = vm->shouldQuit() || events.kbHit() || events._pressed || events.actionHit();
 		if (interrupted) {
-			// Keyboard or mouse button pressed, so break out of logo display
+			// Keyboard, mouse, or action button pressed, so break out of logo display
 			events.clearEvents();
 			break;
 		}

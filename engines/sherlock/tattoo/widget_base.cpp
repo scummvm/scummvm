@@ -291,15 +291,15 @@ void WidgetBase::handleScrollbarEvents(int index, int pageSize, int count) {
 void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 	Events &events = *_vm->_events;
 	TattooUserInterface &ui = *(TattooUserInterface *)_vm->_ui;
-	Common::KeyCode keycode = ui._keyState.keycode;
+	Common::CustomEventType action = ui._action;
 	Common::Point mousePos = events.mousePos();
 
 	Common::Rect r = getScrollBarBounds();
 	r.translate(_bounds.left, _bounds.top);
 
-	if (ui._scrollHighlight != SH_NONE || keycode == Common::KEYCODE_HOME || keycode == Common::KEYCODE_END
-		|| keycode == Common::KEYCODE_PAGEUP || keycode == Common::KEYCODE_PAGEDOWN
-		|| keycode == Common::KEYCODE_UP || keycode == Common::KEYCODE_DOWN) {
+	if (ui._scrollHighlight != SH_NONE || action == kActionTattooWidgetScrollStart || action == kActionTattooWidgetScrollEnd
+		|| action == kActionTattooWidgetScrollPageUp || action == kActionTattooWidgetScrollPageDown
+		|| action == kActionTattooWidgetScrollUp || action == kActionTattooWidgetScrollDown) {
 		// Check for the scrollbar
 		if (ui._scrollHighlight == SH_THUMBNAIL) {
 			int yp = mousePos.y;
@@ -318,15 +318,15 @@ void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 			_dialogTimer = (_dialogTimer == 0) ? frameNum + pageSize : frameNum + 1;
 
 			// Check for Scroll Up
-			if ((ui._scrollHighlight == SH_SCROLL_UP || keycode == Common::KEYCODE_UP) && scrollIndex)
+			if ((ui._scrollHighlight == SH_SCROLL_UP || action == kActionTattooWidgetScrollUp) && scrollIndex)
 				--scrollIndex;
 
 			// Check for Page Up
-			else if ((ui._scrollHighlight == SH_PAGE_UP || keycode == Common::KEYCODE_PAGEUP) && scrollIndex)
+			else if ((ui._scrollHighlight == SH_PAGE_UP || action == kActionTattooWidgetScrollPageUp) && scrollIndex)
 				scrollIndex -= pageSize;
 
 			// Check for Page Down
-			else if ((ui._scrollHighlight == SH_PAGE_DOWN || keycode == Common::KEYCODE_PAGEDOWN)
+			else if ((ui._scrollHighlight == SH_PAGE_DOWN || action == kActionTattooWidgetScrollPageDown)
 				&& (scrollIndex + pageSize < max)) {
 				scrollIndex += pageSize;
 				if (scrollIndex + pageSize >max)
@@ -334,14 +334,14 @@ void WidgetBase::handleScrolling(int &scrollIndex, int pageSize, int max) {
 			}
 
 			// Check for Scroll Down
-			else if ((ui._scrollHighlight == SH_SCROLL_DOWN || keycode == Common::KEYCODE_DOWN) && (scrollIndex + pageSize < max))
+			else if ((ui._scrollHighlight == SH_SCROLL_DOWN || action == kActionTattooWidgetScrollDown) && (scrollIndex + pageSize < max))
 				++scrollIndex;
 		}
 
-		if (keycode == Common::KEYCODE_END)
+		if (action == kActionTattooWidgetScrollEnd)
 			scrollIndex = max - pageSize;
 
-		if (scrollIndex < 0 || keycode == Common::KEYCODE_HOME)
+		if (scrollIndex < 0 || action == kActionTattooWidgetScrollStart)
 			scrollIndex = 0;
 	}
 }

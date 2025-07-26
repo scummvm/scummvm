@@ -48,7 +48,8 @@ UserInterface::UserInterface(SherlockEngine *vm) : _vm(vm) {
 	_exitZone = -1;
 
 	_bgFound = _oldBgFound = -1;
-	_key = _oldKey = '\0';
+	_key = '\0';
+	_action = kActionNone;
 	_selector = _oldSelector = -1;
 	_temp = _oldTemp = 0;
 	_temp1 = 0;
@@ -199,7 +200,7 @@ void UserInterface::checkAction(ActionType &action, int objNum, FixedTextActionI
 
 void UserInterface::reset() {
 	_bgFound = _oldBgFound = -1;
-	_oldKey = -1;
+	_oldAction = kActionNone;
 	_oldTemp = _temp = -1;
 	_exitZone = -1;
 }

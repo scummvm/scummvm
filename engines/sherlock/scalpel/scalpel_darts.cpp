@@ -22,6 +22,8 @@
 #include "sherlock/scalpel/scalpel_darts.h"
 #include "sherlock/scalpel/scalpel.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -75,6 +77,11 @@ void Darts::playDarts() {
 
 	loadDarts();
 	initDarts();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("scalpel")->setEnabled(false);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(false);
+	keymapper->getKeymap("scalpel-darts")->setEnabled(true);
 
 	bool done = false;
 	do {
@@ -145,7 +152,7 @@ void Darts::playDarts() {
 				while (!(dartKey = dartHit()) && !_vm->shouldQuit())
 					events.delay(10);
 
-				if (dartKey == Common::KEYCODE_ESCAPE) {
+				if (dartKey == kActionScalpelDartsExit) {
 					idx = 10;
 					done = true;
 				}
@@ -173,6 +180,10 @@ void Darts::playDarts() {
 
 	closeDarts();
 	screen.fadeToBlack();
+
+	keymapper->getKeymap("scalpel-darts")->setEnabled(false);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
 
 	// Restore font
 	screen.setFont(oldFont);
@@ -419,6 +430,12 @@ int Darts::dartHit() {
 
 	// Process pending events
 	events.pollEvents();
+
+	if (events.actionHit()) {
+		// Action was pressed, so return it
+		Common::CustomEventType action = events.getAction();
+		return action;
+	}
 
 	if (events.kbHit()) {
 		// Key was pressed, so return it
