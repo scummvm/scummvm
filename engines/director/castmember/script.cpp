@@ -19,7 +19,7 @@
  *
  */
 
-#include "common/memstream.h"
+#include "common/stream.h"
 #include "director/director.h"
 #include "director/cast.h"
 #include "director/castmember/script.h"
@@ -143,8 +143,8 @@ Common::String ScriptCastMember::formatInfo() {
 
 uint32 ScriptCastMember::getCastDataSize() {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer500) {
-		// 2 bytes for type and unk1 + 1 byte for castType (see Cast::loadCastData() for Director 4 only
-		return 2 + 1;
+		// 2 bytes for type and unk1 + 2 byte for castType and flags ma(see Cast::loadCastData() for Director 4 only
+		return 2 + 2;
 	} else if (_cast->_version >= kFileVer500 && _cast->_version < kFileVer600) {
 		// type and unk1: 2 bytes
 		return 2;
@@ -154,9 +154,9 @@ uint32 ScriptCastMember::getCastDataSize() {
 	}
 }
 
-void ScriptCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void ScriptCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
-		writeStream->writeByte(0);
+		writeStream->writeByte(0);		// unknown
 
 		switch (_scriptType) {
 		case kScoreScript:

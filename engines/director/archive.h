@@ -52,6 +52,24 @@ struct Resource {
 	Common::String name;
 	Common::Array<Resource> children;
 	bool accessed;
+
+	Resource() = default;
+	Resource(Resource *original) {
+		index = original->index;
+		offset = original->offset;
+		size = original->size;
+		uncompSize = original->uncompSize;
+		compressionType = original->compressionType;
+		castId = original->castId;
+		libResourceId = original->libResourceId;
+		tag = original->tag;
+		flags = original->flags;
+		unk1 = original->unk1;
+		nextFreeResourceID = original->nextFreeResourceID;
+		name = Common::String(original->name);
+		children = Common::Array<Resource>(original->children);
+		accessed = original->accessed;
+	}
 };
 
 class Archive {
@@ -61,7 +79,7 @@ public:
 
 	virtual bool openFile(const Common::Path &path);
 	virtual bool openStream(Common::SeekableReadStream *stream, uint32 offset = 0) = 0;
-	virtual bool writeToFile(Common::Path path) {
+	virtual bool writeToFile(Common::String filename, Movie *movie) {
 		// Saving Director movies was introduced in Director 4
 		// However, from DirectorEngine::createArchive, it is evident that after Director 4 only RIFX Archives were written
 		error("Archive::writeToFile was called on a non-RIFX Archive, which is not allowed");
@@ -148,7 +166,7 @@ public:
 	~RIFXArchive() override;
 
 	bool openStream(Common::SeekableReadStream *stream, uint32 startOffset = 0) override;
-	bool writeToFile(Common::Path writePath) override;
+	bool writeToFile(Common::String filename, Movie *movie) override;
 
 	Common::SeekableReadStreamEndian *getFirstResource(uint32 tag) override;
 	virtual Common::SeekableReadStreamEndian *getFirstResource(uint32 tag, bool fileEndianness);
@@ -159,23 +177,30 @@ public:
 	Common::String formatArchiveInfo() override;
 
 private:
+	/* archive-save.cpp */
 	/* These functions are for writing movies */
-	bool writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream); 	// Parallel to readMemoryMap
-	bool writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
-	bool writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
-	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset);	// Parallel to readCast
+	bool writeMemoryMap(Common::SeekableWriteStream *writeStream, Common::Array<Resource *> resource); 	// Parallel to readMemoryMap
+	bool writeAfterBurnerMap(Common::SeekableWriteStream *writeStreaa);	// Parallel to readAfterBurnerMap
+	bool writeKeyTable(Common::SeekableWriteStream *writeStream, uint32 offset);	// Parallel to readKeyTable
+	bool writeCast(Common::SeekableWriteStream *writeStream, uint32 offset, uint32 castLib);	// Parallel to readCast
+
+	uint32 getArchiveSize(Common::Array<Resource *> resources);
+	uint32 getMmapSize();
+	uint32 getImapSize();
+	uint32 getCASResourceSize(uint32 castLib);
+	uint32 getKeyTableResourceSize();
+	Common::Array<Resource *> rebuildResources(Movie *movie);
 
 	bool readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset, Common::SeekableMemoryWriteStream *dumpStream, uint32 movieStartOffset);
 	bool readAfterburnerMap(Common::SeekableReadStreamEndian &stream, uint32 moreOffset);
 	void readCast(Common::SeekableReadStreamEndian &casStream, uint16 libResourceId);
 	void readKeyTable(Common::SeekableReadStreamEndian &keyStream);
 
+	uint32 findParentIndex(uint32 tag, uint16 index);
+
 	/* Memory Map data to save the file */
 	uint32 _metaTag;
-	uint32 _moreOffset;
 	uint32 _mapversion;
-	uint32 _mmapOffset;
-	uint32 _mmapLength;
 	uint32 _mmapHeaderSize;
 	uint32 _mmapEntrySize;
 	uint32 _totalCount;
@@ -202,11 +227,17 @@ private:
 
 protected:
 	uint32 _rifxType;
+
+	// Each resource is independent
 	Common::Array<Resource *> _resources;
 	Common::HashMap<uint32, byte *> _ilsData;
 	uint32 _ilsBodyOffset;
 	typedef Common::Array<uint32> KeyArray;
 	typedef Common::HashMap<uint32, KeyArray> KeyMap;
+
+	// In the RIFX container type, some resources are related of other resources in a child-parent relation
+	// If you want to check the relation between a 'BITD' resource and some other resource (e.g. 'CASt')
+	// Check if index of 'BITD' resource is present in _keyData['BITD'][index of 'CASt' resource]
 	Common::HashMap<uint32, KeyMap> _keyData;
 };
 
@@ -243,6 +274,18 @@ private:
 
 void dumpFile(Common::String filename, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize);
 
-} // End of namespace Director
+class SavedArchive : public Common::Archive {
+public:
+	SavedArchive(Common::String target) ;
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
+private:
+	typedef Common::HashMap<Common::String, Common::String> FileMap;
+	FileMap _files;
+};
+
+}
 #endif

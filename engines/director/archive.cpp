@@ -790,33 +790,29 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 	if (stream.readUint32() != MKTAG('i', 'm', 'a', 'p'))
 		return false;
 
-	_types[MKTAG('i', 'm', 'a', 'p')][0].accessed = true; // Mark it as accessed
-
 	_imapLength = stream.readUint32(); // imap length
 	_mapversion = stream.readUint32(); // version, seen 0 or 1
 	uint32 mmapOffsetPos = stream.pos();
-	_mmapOffset = stream.readUint32() + moreOffset;
+	uint32 mmapOffset = stream.readUint32() + moreOffset;
 
 	if (dumpStream) {
 		// If we're dumping the movie, patch this offset in the dump data.
 		dumpStream->seek(mmapOffsetPos - movieStartOffset);
 		if (stream.isBE())
-			dumpStream->writeUint32BE(_mmapOffset - movieStartOffset);
+			dumpStream->writeUint32BE(mmapOffset - movieStartOffset);
 		else
-			dumpStream->writeUint32LE(_mmapOffset - movieStartOffset);
+			dumpStream->writeUint32LE(mmapOffset - movieStartOffset);
 	}
 	_version = stream.readUint32(); // 0 for 4.0, 0x4c1 for 5.0, 0x4c7 for 6.0, 0x708 for 8.5, 0x742 for 10.0
-	debugC(2, kDebugLoading, "RIFXArchive::readMemoryMap: _mapversion: %d version: %x offset: 0x%x (%d)", _mapversion, _version, _mmapOffset, _mmapOffset);
+	debugC(2, kDebugLoading, "RIFXArchive::readMemoryMap: _mapversion: %d version: %x offset: 0x%x (%d)", _mapversion, _version, mmapOffset, mmapOffset);
 
-	stream.seek(_mmapOffset);
+	stream.seek(mmapOffset);
 	if (stream.readUint32() != MKTAG('m', 'm', 'a', 'p')) {
 		warning("RIFXArchive::readMemoryMap: mmap expected but not found");
 		return false;
 	}
 
-	_types[MKTAG('m', 'm', 'a', 'p')][0].accessed = true; // Mark it as accessed
-
-	_mmapLength = stream.readUint32(); // mmap length
+	/* uint32 mmapLength = */ stream.readUint32(); // mmap length
 	_mmapHeaderSize = stream.readUint16(); // header size
 	_mmapEntrySize = stream.readUint16(); // size of map entry
 	_totalCount = stream.readUint32(); // resCount + empty entries
@@ -855,6 +851,14 @@ bool RIFXArchive::readMemoryMap(Common::SeekableReadStreamEndian &stream, uint32
 		res.nextFreeResourceID = nextFreeResourceId;
 		res.accessed = false;
 		_resources.push_back(&res);
+	}
+
+	for (auto &it : _types[MKTAG('m', 'm', 'a', 'p')])	{
+		_types[MKTAG('m', 'm', 'a', 'p')][it._key].accessed = true; // Mark it as accessed
+	}
+
+	for (auto &it : _types[MKTAG('i', 'm', 'a', 'p')]) {
+		_types[MKTAG('i', 'm', 'a', 'p')][it._key].accessed = true; // Mark it as accessed
 	}
 
 	if (debugChannelSet(5, kDebugLoading)) {
@@ -1061,6 +1065,13 @@ void RIFXArchive::readKeyTable(Common::SeekableReadStreamEndian &keyStream) {
 		}
 		_keyData[childTag][parentIndex].push_back(childIndex);
 
+		if (childTag == MKTAG('C', 'A', 'S', '*')) {
+			// A 'CAS*' resource contains indexes of 'CASt' resources that are linked to the
+			// Resource at parentIndex, hence, mark the 'CAS*' libResourceId to parentIndex
+			// This means all the 'CASt' resources are linked to the parent with index equal to 'CAS*' libResourceId
+			_types[childTag][childIndex].libResourceId = parentIndex;
+		}
+
 		// Link cast members to their resources.
 		if (castResMap.contains(parentIndex)) {
 			castResMap[parentIndex].children.push_back(_types[childTag][childIndex]);
@@ -1161,227 +1172,6 @@ Common::String RIFXArchive::formatArchiveInfo() {
 	result += "type ";
 	result += tag2str(_rifxType);
 	return result;
-}
-
-bool RIFXArchive::writeToFile(Common::Path path) {
-	// The offsets used in this function should be not the same as original
-	// That defeats the whole purpose of writing movies
-
-	// ignoring the startOffset
-	// For RIFX stream, moreoffset = 0
-	byte *dumpData = nullptr;
-
-	// Don't need to allocate this much size in case 'junk' and 'free' resources are ignored
-	// Or might need to allocate even more size if extra chunks are written
-	dumpData = (byte *)calloc(_size, sizeof(byte));
-
-	Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, _size);
-
-	writeStream->writeUint32LE(_metaTag); // The _metaTag is "RIFX" or "XFIR" for this case
-
-	// This includes the size of 'RIFX', 'mmap' and 'imap' resources
-	// This method of calculating new size is inefficient and prone to error
-	/* uint32 newSize = 0;
-	 * for (auto &it: _resources) {
-	 * 	newSize += it->size;
-	 * }
-	*/
-
-	// We'll need to update the size of the RIFX resource whenever there is a modification
-	// The -8 is consistent with RIFXArchive::openStream()
-	writeStream->writeUint32LE(getResourceSize(_metaTag, 0) - 8); // The size of the RIFX archive
-	writeStream->writeUint32LE(_rifxType);	// e.g. "MV93", "MV95"
-
-	switch (_rifxType) {
-	case MKTAG('M', 'V', '9', '3'):
-	case MKTAG('M', 'C', '9', '5'):
-	case MKTAG('A', 'P', 'P', 'L'):
-		writeMemoryMap(writeStream);
-		break;
-
-	case MKTAG('F', 'G', 'D', 'M'):
-	case MKTAG('F', 'G', 'D', 'C'):
-		writeAfterBurnerMap(writeStream);
-		break;
-	default:
-		break;
-	}
-
-	int32 keyTag = MKTAG('K', 'E', 'Y', '*');
-	if (hasResource(keyTag, -1)) {
-		uint16 firstID = getResourceIDList(keyTag)[0];
-		// The +8 is consistent with RIFXArchive::getResource()
-		// The +8 is to ignore the resource tag (e.g. 'KEY*') and the size entry
-		uint32 offset = getOffset(keyTag, firstID) + 8;
-		writeKeyTable(writeStream, offset);
-	}
-
-	int32 casTag = MKTAG('C', 'A', 'S', '*');
-	if (_keyData.contains(casTag)) {
-		for (auto &it : _keyData[casTag]) {
-			for (auto &jt : it._value) {
-				uint32 offset = getOffset(casTag, jt) + 8;
-				writeCast(writeStream, offset);
-			}
-		}
-	}
-
-	for (auto &it : _resources) {
-		if (it->tag != _metaTag &&
-			it->tag != SWAP_BYTES_32(_metaTag) &&
-			it->tag != MKTAG('i', 'm', 'a', 'p') &&
-			it->tag != MKTAG('m', 'm', 'a', 'p') &&
-			it->tag != MKTAG('K', 'E', 'Y', '*')
-		) {
-			writeStream->seek(it->offset);
-			writeStream->writeUint32LE(it->tag);
-			writeStream->writeUint32LE(it->size);
-			writeStream->writeStream(getResource(it->tag, it->index));
-		}
-	}
-
-	Common::DumpFile out;
-
-	// Write the movie out, stored in dumpData
-	if (out.open(path, true)) {
-		out.write(dumpData, _size);
-		out.flush();
-		out.close();
-		debugC(3, kDebugLoading, "RIFXArchive::writeStream:Saved the movie as file %s", path.toString().c_str());
-	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", path.toString().c_str());
-	}
-
-	free(dumpData);
-	delete writeStream;
-	return true;
-}
-
-bool RIFXArchive::writeMemoryMap(Common::SeekableMemoryWriteStream *writeStream) {
-	writeStream->writeUint32LE(MKTAG('i', 'm', 'a', 'p')); // The "imap" resource
-	writeStream->writeUint32LE(_imapLength);		// length of "imap" resource
-	writeStream->writeUint32LE(_mapversion);		// "imap" version
-	writeStream->writeUint32LE(_mmapOffset);		// offset of the "mmap" resource
-	writeStream->writeUint32LE(_version);
-
-	writeStream->seek(_mmapOffset);
-	writeStream->writeUint32LE(MKTAG('m', 'm', 'a', 'p'));
-
-	uint32 newResCount = _resources.size();
-
-	// Need to recalculate the following things
-	// Similarly to the RIFX resource, we'll need to update the size of the mmap resource whenever there is some change
-	writeStream->writeUint32LE(getResourceSize(MKTAG('m', 'm', 'a', 'p'), 0));
-	writeStream->writeUint16LE(_mmapHeaderSize);
-	writeStream->writeUint16LE(_mmapEntrySize);
-
-	writeStream->writeUint32LE(newResCount + _totalCount - _resCount); // _totalCount - _resCount is the number of empty entries
-	writeStream->writeUint32LE(newResCount);
-	writeStream->seek(8, SEEK_CUR);		// In the original file, these 8 bytes are all 0xFF, so this will produce a diff
-
-	// ID of the first 'free' resource
-	writeStream->writeUint32LE(0);
-
-	for (auto &it : _resources) {
-		debugC(3, kDebugSaving, "Writing RIFX Resource: tag: %s, size: %d, offset: %08x, flags: %x, unk1: %x, nextFreeResourceID: %d",
-			tag2str(it->tag), it->size, it->offset, it->flags, it->unk1, it->nextFreeResourceID);
-
-		// Write down the tag, the size and offset of the current resource
-		writeStream->writeUint32LE(it->tag);
-		writeStream->writeUint32LE(it->size);
-		writeStream->writeUint32LE(it->offset);
-
-		// Currently ignoring flags, unk1 and nextFreeResourceID
-		writeStream->writeUint16LE(it->flags);
-		writeStream->writeUint16LE(it->unk1);
-		writeStream->writeUint32LE(it->nextFreeResourceID);
-	}
-
-	return true;
-}
-
-bool RIFXArchive::writeAfterBurnerMap(Common::SeekableMemoryWriteStream *writeStream) {
-	warning("RIFXArchive::writeAfterBurnerMap: STUB: Incomplete function, needs further changes, AfterBurnerMap not written");
-	return false;
-
-#if 0
-	writeStream->writeUint32LE(MKTAG('F', 'v', 'e', 'r'));
-
-	writeStream->writeUint32LE(_fverLength);
-	uint32 start = writeStream->pos();
-
-	writeStream->writeUint32LE(_afterBurnerVersion);
-	uint32 end = writeStream->pos();
-
-	if (end - start != _fverLength) {
-		warning("RIFXArchive::writeAfterburnerMap(): Expected Fver of length %d but read %d bytes", _fverLength, end - start);
-		writeStream->seek(start + _fverLength);
-	}
-
-	writeStream->writeUint32LE(MKTAG('F', 'c', 'd', 'r'));
-	writeStream->writeUint32LE(_fcdrLength);
-	writeStream->seek(_fcdrLength, SEEK_CUR);
-
-	writeStream->writeUint32LE(MKTAG('A', 'B', 'M', 'P'));
-
-	return true;
-#endif
-}
-
-bool RIFXArchive::writeKeyTable(Common::SeekableMemoryWriteStream *writeStream, uint32 offset) {
-	writeStream->seek(offset);
-
-	writeStream->writeUint16LE(_keyTableEntrySize);
-	writeStream->writeUint16LE(_keyTableEntrySize2);
-	writeStream->writeUint32LE(_keyTableEntryCount);
-	writeStream->writeUint32LE(_keyTableUsedCount);
-
-	for (auto &childTag : _keyData) {
-		KeyMap keyMap = childTag._value;
-
-		for (auto &parentIndex : keyMap) {
-			KeyArray keyArray = parentIndex._value;
-
-			for (auto childIndex : keyArray) {
-				debugC(3, kDebugSaving, "RIFXArchive::writeKeyTable: _keyData contains tag: %s, parentIndex: %d, childIndex: %d", tag2str(childTag._key), parentIndex._key, childIndex);
-				writeStream->writeUint32LE(childIndex);
-				writeStream->writeUint32LE(parentIndex._key);
-				writeStream->writeUint32LE(childTag._key);
-			}
-		}
-	}
-
-	return true;
-}
-
-bool RIFXArchive::writeCast(Common::SeekableWriteStream *writeStream, uint32 offset) {
-	writeStream->seek(offset);
-
-	uint castTag = MKTAG('C', 'A', 'S', 't');
-
-	for (auto &it : _types[castTag]) {
-		if (it._value.libResourceId) {
-			writeStream->writeUint32LE(it._key);
-		}
-	}
-
-	return true;
-}
-
-void dumpFile(Common::String fileName, uint32 id, uint32 tag, byte *dumpData, uint32 dumpSize) {
-	debug("dumpFile():: dumping file %s, resource: %s (id: %d)", fileName.c_str(), tag2str(tag), id);
-	Common::DumpFile out;
-	Common::String fname = Common::String::format("./dumps/%d-%s-%s", id, tag2str(tag), fileName.c_str());
-
-	// Write the movie out, stored in dumpData
-	if (out.open(Common::Path(fname), true)) {
-		out.write(dumpData, dumpSize);
-		out.flush();
-		out.close();
-	} else {
-		warning("RIFXArchive::writeStream: Error saving the file %s", fname.c_str());
-	}
-	free(dumpData);
 }
 
 } // End of namespace Director

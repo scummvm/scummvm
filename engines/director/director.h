@@ -289,6 +289,7 @@ protected:
 
 public:
 	const DirectorGameDescription *_gameDescription;
+	Common::HashMap<Common::String, Common::String> _cachedSaveFiles;
 	Common::FSNode _gameDataDir;
 	CastMemberID *_clipBoard;
 	uint32 _wmMode;

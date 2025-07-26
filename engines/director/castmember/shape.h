@@ -45,7 +45,7 @@ public:
 	Common::String formatInfo() override;
 
 	uint32 getCastDataSize() override;
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 
 	ShapeType _shapeType;
 	uint16 _pattern;

@@ -211,7 +211,7 @@ uint32 SoundCastMember::getCastDataSize() {
 	return 0;
 }
 
-void SoundCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void SoundCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	// This should never get triggered
 	// since there is no data to write
 }

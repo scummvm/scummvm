@@ -110,6 +110,17 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 	}
 }
 
+void Frame::writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 version) {
+	debugC(6, kDebugLoading, "Frame::writeChannel: writing main channels for version %d", version);
+
+	if (version >= kFileVer400 && version < kFileVer500) {
+		writeMainChannelsD4(writeStream);
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeMainChannelsD5(writeStream);
+	} else {
+		warning("Frame::writeChannel(): Unsupported Director version: %d", version);
+	}
+}
 /**************************
  *
  * D2 Loading
@@ -569,6 +580,48 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
+void Frame::writeMainChannelsD4(Common::SeekableWriteStream *writeStream) {
+	writeStream->writeByte(0);		// Unknown: Sound/Tempo/Transition	// 0
+
+	writeStream->writeByte(_mainChannels.soundType1);		// 1
+	writeStream->writeByte((_mainChannels.transArea ? 0x80 : 0x00) | ((_mainChannels.transDuration / 250) & 0x7F));	// 2
+	writeStream->writeByte(_mainChannels.transChunkSize);	// 3
+	writeStream->writeByte(_mainChannels.tempo);			// 4
+	writeStream->writeByte(_mainChannels.transType);		// 5
+
+	writeStream->writeUint16BE(_mainChannels.sound1.member);		// 6, 7
+	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 8, 9
+
+	writeStream->writeByte(_mainChannels.soundType2);			// 10
+	writeStream->writeByte(_mainChannels.skipFrameFlag);		// 11
+	writeStream->writeByte(_mainChannels.blend);				// 12
+	writeStream->writeByte(_mainChannels.colorTempo);			// 13
+	writeStream->writeByte(_mainChannels.colorSound1);			// 14
+	writeStream->writeByte(_mainChannels.colorSound2);			// 15
+	writeStream->writeUint16BE(_mainChannels.actionId.member);	// 16, 17
+	writeStream->writeByte(_mainChannels.colorScript);			// 18
+	writeStream->writeByte(_mainChannels.colorTrans);			// 19
+
+	// palette
+	writeStream->writeSint16BE(_mainChannels.palette.paletteId.member);		// 20, 21
+	writeStream->writeByte(_mainChannels.palette.firstColor ^ 0x80);		// 22
+	writeStream->writeByte(_mainChannels.palette.lastColor ^ 0x80);			// 23
+	writeStream->writeByte(_mainChannels.palette.flags);					// 24
+	writeStream->writeByte(_mainChannels.palette.speed);					// 25
+	writeStream->writeUint16BE(_mainChannels.palette.frameCount);			// 26, 27
+	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);			// 28, 29
+	writeStream->writeByte(_mainChannels.palette.fade);						// 30
+	writeStream->writeByte(_mainChannels.palette.delay);					// 31
+	writeStream->writeByte(_mainChannels.palette.style);					// 32
+
+	writeStream->writeByte(0);			// Unknown	// 33
+	writeStream->writeUint16BE(0);		// Unknown	// 34, 35
+	writeStream->writeUint16BE(0);		// Unknown	// 36, 37
+
+	writeStream->writeByte(_mainChannels.palette.colorCode);	// 38
+	writeStream->writeByte(0);			// Unknown	// 39
+}
+
 void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 spritePosition = (offset - kMainChannelSizeD4) / kSprChannelSizeD4;
 	uint16 spriteStart = spritePosition * kSprChannelSizeD4 + kMainChannelSizeD4;
@@ -594,6 +647,7 @@ void Frame::readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+	debugC(8, kDebugLoading, "stream.pos(): %0x, startPosition: %d, finishPosition: %d", (int)stream.pos(), startPosition, finishPosition);
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -714,6 +768,38 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 	// We set it to zero, so then could skip
 	if (sprite._width <= 0 || sprite._height <= 0)
 		sprite._width = sprite._height = 0;
+}
+
+void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
+	// Writing 20 bytes of sprite data
+	// The original data for a certain sprite might be less
+	writeStream->writeByte(sprite._scriptId.member);			// 0
+
+	// If the sprite is a puppet (controlled by lingo scripting)
+	// The rest of the data isn't read
+	if (sprite._puppet) {
+		writeStream->write(0, 19);								// 1-19
+	} else {
+		writeStream->writeByte((byte) sprite._spriteType);		// 1
+		writeStream->writeByte(sprite._foreColor);				// 2
+		writeStream->writeByte(sprite._backColor);				// 3
+		writeStream->writeByte(sprite._thickness);				// 4
+		writeStream->writeByte(sprite._inkData);				// 5
+
+		if (sprite.isQDShape()) {
+			writeStream->writeUint16BE(sprite._pattern);		// 6, 7
+		} else {
+			writeStream->writeUint16BE(sprite._castId.member);	// 6, 7
+		}
+
+		writeStream->writeUint16BE(sprite._startPoint.y);		// 8, 9
+		writeStream->writeUint16BE(sprite._startPoint.x);		// 10, 11
+		writeStream->writeUint16BE(sprite._height);				// 12, 13
+		writeStream->writeUint16BE(sprite._width);				// 14, 15
+		writeStream->writeUint16BE(sprite._scriptId.member);	// 16, 17
+		writeStream->writeByte(sprite._colorcode);				// 18
+		writeStream->writeByte(sprite._blendAmount);			// 19
+	}
 }
 
 /**************************
@@ -869,6 +955,38 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	_mainChannels.transChunkSize = CLIP<byte>(_mainChannels.transChunkSize, 0, 128);
 	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
+}
+
+void Frame::writeMainChannelsD5(Common::SeekableWriteStream *writeStream) {
+	writeStream->writeUint16BE(_mainChannels.actionId.castLib);		// 0, 1
+	writeStream->writeUint16BE(_mainChannels.actionId.member);		// 2, 3
+	writeStream->writeUint16BE(_mainChannels.sound1.castLib);		// 4, 5
+	writeStream->writeUint16BE(_mainChannels.sound1.member);		// 6, 7
+	writeStream->writeUint16BE(_mainChannels.sound2.castLib);		// 8, 9
+	writeStream->writeUint16BE(_mainChannels.sound2.member);		// 10, 11
+	writeStream->writeUint16BE(_mainChannels.trans.member);			// 12, 13
+	writeStream->writeUint16BE(_mainChannels.trans.member);			// 14, 15
+
+	writeStream->writeUint16BE(0);		// Unknown	// 16, 17
+	writeStream->writeUint16BE(0);		// Unknown	// 18, 19
+	writeStream->writeByte(0);			// Unknown: Sound/Tempo/Transition	// 20
+
+	writeStream->writeByte(_mainChannels.tempo);			// 21
+	writeStream->writeUint16BE(0);		// Unknown	// 22, 23
+
+	writeStream->writeSint16BE(_mainChannels.palette.paletteId.castLib);		// 24, 25
+	writeStream->writeSint16BE(_mainChannels.palette.paletteId.member);			// 26, 27
+	writeStream->writeByte(_mainChannels.palette.speed);					// 28
+	writeStream->writeByte(_mainChannels.palette.flags);					// 29
+	writeStream->writeByte(_mainChannels.palette.firstColor ^ 0x80);		// 30
+	writeStream->writeByte(_mainChannels.palette.lastColor ^ 0x80);				// 31
+
+	writeStream->writeUint16BE(_mainChannels.palette.frameCount);			// 32, 33
+	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);			// 34, 35
+
+	writeStream->writeUint16BE(0);		// Unknown	// 36, 37
+	writeStream->writeUint16BE(0);		// Unknown	// 38, 39
+	writeStream->writeUint64BE(0);		// Unknown 	// 40, 41, 42, 43, 44, 45, 46, 47
 }
 
 void Frame::readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
@@ -1028,6 +1146,34 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		}
 	}
 
+}
+
+void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
+	// Writing 20 bytes of sprite data
+	// The original data for a certain sprite might be less
+	writeStream->writeByte(sprite._spriteType);			// 0
+
+	// If the sprite is a puppet (controlled by lingo scripting)
+	// The rest of the data isn't read
+	if (sprite._puppet) {
+		writeStream->write(0, 19);								// 1-19
+	} else {
+		writeStream->writeByte(sprite._inkData);				// 1
+		writeStream->writeSint16BE(sprite._castId.castLib);		// 2, 3
+		writeStream->writeUint16BE(sprite._castId.member);		// 4, 5
+		writeStream->writeSint16BE(sprite._scriptId.castLib);	// 6, 7
+		writeStream->writeUint16BE(sprite._scriptId.member);	// 8, 9
+		writeStream->writeByte(sprite._foreColor);				// 10
+		writeStream->writeByte(sprite._backColor);				// 11
+		writeStream->writeUint16BE(sprite._startPoint.y);		// 12, 13
+		writeStream->writeUint16BE(sprite._startPoint.x);		// 14, 15
+		writeStream->writeUint16BE(sprite._height);				// 16, 17
+		writeStream->writeUint16BE(sprite._width);				// 18, 19
+		writeStream->writeByte(sprite._colorcode);				// 20
+		writeStream->writeByte(sprite._blendAmount);			// 21
+		writeStream->writeByte(sprite._thickness);				// 22
+		writeStream->writeByte(0);								// 23, unused
+	}
 }
 
 /**************************

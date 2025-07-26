@@ -284,7 +284,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-void Movie::writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect) {
+void Movie::writeRect(Common::SeekableWriteStream *writeStream, Common::Rect rect) {
 	writeStream->writeSint16BE(rect.top);
 	writeStream->writeSint16BE(rect.left);
 	writeStream->writeSint16BE(rect.bottom);
@@ -331,7 +331,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 	return res;
 }
 
-void Movie::saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info) {
+void Movie::saveInfoEntries(Common::SeekableWriteStream *writeStream, InfoEntries info) {
 	// The writing functionality was intrioduced in Director 4
 	writeStream->writeUint32BE(20);				// offset: d4 and up movies is always 20
 	writeStream->writeUint32BE(info.unk1);
@@ -503,6 +503,18 @@ Cast *Movie::getCast(CastMemberID memberID) {
 		warning("Movie::getCast: Unknown castLib %d", memberID.castLib);
 		return nullptr;
 	}
+	return nullptr;
+}
+
+Cast *Movie::getCastByLibResourceID(int libresourceID) {
+	for (auto it : _casts) {
+		if (it._value->_libResourceId == libresourceID) {
+			debugC(3, kDebugSaving, "Movie::getCastByLibResourceID: Found cast with libresourceID: %d", libresourceID);
+			return it._value;
+		}
+	}
+
+	warning("Movie::getCastByLibResourceID: No cast with libresourceID: %d", libresourceID);
 	return nullptr;
 }
 
@@ -736,6 +748,17 @@ Common::String InfoEntry::readString(bool pascal) {
 
 	// FIXME: Use the case which contains this string, not the main cast.
 	return g_director->getCurrentMovie()->getCast()->decodeString(encodedStr).encode(Common::kUtf8);
+}
+
+void InfoEntry::writeString(Common::String string, bool pascal) {
+	if (string.size() == 0) {
+		return;
+	}
+
+	data = (byte *)malloc(len);
+
+	uint16 start = pascal ? 1 : 0;
+	memcpy(data + start, string.c_str(), string.size());
 }
 
 } // End of namespace Director

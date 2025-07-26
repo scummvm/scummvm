@@ -92,8 +92,12 @@ public:
 	void load() override;
 	void unload() override;
 
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+
+	uint32 getSTXTResourceSize();
+	uint32 writeSTXTResource(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint8 getFormattingCount();
 
 	uint8 _borderSize;
 	uint8 _gutterSize;

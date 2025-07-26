@@ -20,8 +20,8 @@
  */
 
 #include "audio/decoders/aiff.h"
+#include "common/stream.h"
 #include "common/macresman.h"
-#include "common/memstream.h"
 
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
@@ -667,7 +667,7 @@ uint32 DigitalVideoCastMember::getCastDataSize() {
 	return 0;
 }
 
-void DigitalVideoCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void DigitalVideoCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	Movie::writeRect(writeStream, _initialRect);
 	writeStream->writeUint32BE(_vflags);
 }

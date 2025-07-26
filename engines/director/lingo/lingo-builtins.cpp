@@ -1575,9 +1575,11 @@ void LB::b_save(int nargs) {
 }
 
 void LB::b_saveMovie(int nargs) {
-	g_lingo->printSTUBWithArglist("b_saveMovie", nargs);
-
-	g_lingo->dropStack(nargs);
+	Common::String filename;
+	if (nargs) {
+		filename = g_lingo->pop().asString();
+	}
+	g_director->getCurrentMovie()->getArchive()->writeToFile(filename, g_director->getCurrentMovie());
 }
 
 void LB::b_setCallBack(int nargs) {

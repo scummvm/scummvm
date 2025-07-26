@@ -20,8 +20,7 @@
  */
 
 #include "common/macresman.h"
-#include "common/memstream.h"
-#include "common/substream.h"
+#include "common/stream.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -45,7 +44,8 @@ Stxt::Stxt(Cast *cast, Common::SeekableReadStreamEndian &textStream) : _cast(cas
 
 	uint32 offset = textStream.readUint32();
 	if (offset != 12) {
-		error("Stxt init: unhandled offset");
+		textStream.hexdump(textStream.size());
+		error("Stxt init: unhandled offset, %d", offset);
 		return;
 	}
 	uint32 strLen = textStream.readUint32();
@@ -152,7 +152,10 @@ void FontStyle::read(Common::ReadStreamEndian &stream, Cast *cast) {
 			formatStartOffset, originalHeight, height, ascent, originalFontId, fontId, textSlant, fontSize, r, g, b);
 }
 
-void FontStyle::write(Common::MemoryWriteStream *writeStream) {
+void FontStyle::write(Common::SeekableWriteStream *writeStream) {
+	debugC(3, kDebugSaving, "FontStyle::write(): formatStartOffset: %d, height: %d ascent: %d, fontId: %d, textSlant: %d, fontSize: %d, r: %x g: %x b: %x",
+			formatStartOffset, height, ascent, fontId, textSlant, fontSize, r, g, b);
+
 	writeStream->writeUint32BE(formatStartOffset);
 	writeStream->writeUint16BE(height);
 	writeStream->writeUint16BE(ascent);
