@@ -295,4 +295,12 @@ void Player::setActiveCharacter(MainCharacterKind kind) {
 	_activeCharacter = &g_engine->world().getMainCharacterByKind(kind);
 }
 
+bool Player::isAllowedToOpenMenu() {
+	return
+		isGameLoaded() &&
+		!isOptionsMenuOpen() &&
+		g_engine->sounds().musicSemaphore().isReleased() &&
+		!g_engine->script().variable("prohibirESC");
+}
+
 }

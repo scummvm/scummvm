@@ -197,7 +197,7 @@ bool Room::updateInput() {
 
 	if (player.currentRoom() == this) {
 		g_engine->globalUI().drawChangingButton();
-		// TODO: Add main menu handling
+		g_engine->globalUI().updateOpeningMenu();
 	}
 
 	return player.currentRoom() == this;

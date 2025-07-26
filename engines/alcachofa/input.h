@@ -38,6 +38,7 @@ public:
 	inline bool isMouseLeftDown() const { return _isMouseLeftDown; }
 	inline bool isMouseRightDown() const { return _isMouseRightDown; }
 	inline bool isAnyMouseDown() const { return _isMouseLeftDown || _isMouseRightDown; }
+	inline bool wasMenuKeyPressed() const { return _wasMenuKeyPressed; }
 	inline Common::Point mousePos2D() const { return _mousePos2D; }
 	inline Common::Point mousePos3D() const { return _mousePos3D; }
 	const Input &debugInput() const { scumm_assert(_debugInput != nullptr); return *_debugInput; }
@@ -55,7 +56,8 @@ private:
 		_wasMouseLeftReleased = false,
 		_wasMouseRightReleased = false,
 		_isMouseLeftDown = false,
-		_isMouseRightDown = false;
+		_isMouseRightDown = false,
+		_wasMenuKeyPressed = false;
 	Common::Point
 		_mousePos2D,
 		_mousePos3D;
