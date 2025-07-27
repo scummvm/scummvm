@@ -605,7 +605,7 @@ void AmazonEngine::startChapter(int chapter) {
 	_establishGroup = 1;
 	loadEstablish(0x40 + _chapter);
 
-	byte *entryOffset = _establish->data() + ((0x40 + _chapter) * 2);
+	const byte *entryOffset = _establish->data() + ((0x40 + _chapter) * 2);
 	if (isCD())
 		entryOffset += 2;
 

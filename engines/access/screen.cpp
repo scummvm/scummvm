@@ -133,7 +133,7 @@ void Screen::setIconPalette() {
 
 void Screen::loadPalette(int fileNum, int subfile) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
-	byte *palette = res->data();
+	const byte *palette = res->data();
 	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
 	delete res;
 }

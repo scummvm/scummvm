@@ -101,7 +101,7 @@ void SoundManager::playSound(int soundIndex, bool loop) {
 void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIndex) {
 	debugC(1, kDebugSound, "playSound");
 
-	byte *resourceData = res->data();
+	const byte *resourceData = res->data();
 
 	assert(res->_size >= 32);
 
