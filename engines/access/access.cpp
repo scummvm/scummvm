@@ -172,10 +172,11 @@ void AccessEngine::initialize() {
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
 	if (getGameID() == kGameMartianMemorandum) {
-		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP");
-		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL");
-		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY");
-		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 32, 2, 76, "ASK ABOUT");
+		// Note: add 1 more pixel to width and height to get the right box size.
+		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 147, 123, 1, 32, 2, 76, "HELP");
+		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 24, 2, 74, "TRAVEL");
+		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 147, 123, 1, 32, 2, 76, "INVENTORY");
+		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 32, 2, 76, "ASK ABOUT");
 	} else {
 		_helpBox = nullptr;
 		_travelBox = nullptr;
