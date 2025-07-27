@@ -42,6 +42,7 @@ public:
 	SoundID playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void stopAll();
 	void stopVoice();
+	void pauseAll(bool paused);
 	void fadeOut(SoundID id, uint32 duration);
 	void fadeOutVoiceAndSFX(uint32 duration);
 	bool isAlive(SoundID id);

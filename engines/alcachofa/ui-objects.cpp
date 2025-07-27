@@ -19,6 +19,7 @@
  *
  */
 
+#include "alcachofa.h"
 #include "objects.h"
 #include "rooms.h"
 
@@ -35,6 +36,75 @@ MenuButton::MenuButton(Room *room, ReadStream &stream)
 	, _graphicHovered(stream)
 	, _graphicClicked(stream)
 	, _graphicDisabled(stream) {
+}
+
+void MenuButton::draw() {
+	if (!isEnabled())
+		return;
+	Graphic &graphic =
+		!_isInteractable ? _graphicDisabled
+		: _isClicked ? _graphicClicked
+		: _isHovered ? _graphicHovered
+		: _graphicNormal;
+	graphic.update();
+	g_engine->drawQueue().add<AnimationDrawRequest>(graphic, true, BlendMode::AdditiveAlpha);
+}
+
+void MenuButton::update() {
+	PhysicalObject::update();
+	if (!_isClicked)
+		return;
+
+	_graphicClicked.update();
+	if (!_graphicClicked.isPaused())
+		return;
+
+	if (!_triggerNextFrame) {
+		// another delay probably to show the last frame of animation
+		_triggerNextFrame = true;
+		return;
+	}
+
+	_triggerNextFrame = false;
+	_isClicked = false;
+	trigger();
+}
+
+void MenuButton::loadResources() {
+	_graphicNormal.loadResources();
+	_graphicHovered.loadResources();
+	_graphicClicked.loadResources();
+	_graphicDisabled.loadResources();
+}
+
+void MenuButton::freeResources() {
+	_graphicNormal.freeResources();
+	_graphicHovered.freeResources();
+	_graphicClicked.freeResources();
+	_graphicDisabled.freeResources();
+}
+
+void MenuButton::onHoverStart() {
+	PhysicalObject::onHoverStart();
+	_isHovered = true;
+}
+
+void MenuButton::onHoverEnd() {
+	PhysicalObject::onHoverEnd();
+	_isHovered = false;
+}
+
+void MenuButton::onClick() {
+	if (_isInteractable) {
+		_isClicked = true;
+		_triggerNextFrame = false;
+		_graphicClicked.start(false);
+	}
+}
+
+void MenuButton::trigger() {
+	// all menu buttons should be inherited and override trigger
+	warning("Unimplemented %s %s action %d", typeName(), name().c_str(), _actionId);
 }
 
 const char *InternetMenuButton::typeName() const { return "InternetMenuButton"; }
