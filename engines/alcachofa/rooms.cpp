@@ -149,7 +149,7 @@ void Room::update() {
 		if (!updateInput())
 			return;
 	}
-	if (!g_engine->player().isOptionsMenuOpen() &&
+	if (!g_engine->player().isMenuOpen() &&
 		g_engine->player().currentRoom() != &g_engine->world().inventory())
 		world().globalRoom().updateObjects();
 	if (g_engine->player().currentRoom() == this)
@@ -183,7 +183,7 @@ bool Room::updateInput() {
 
 	bool canInteract = !player.activeCharacter()->isBusy();
 	// A complicated network condition can prevent interaction at this point
-	if (player.isOptionsMenuOpen() || !player.isGameLoaded())
+	if (player.isMenuOpen() || !player.isGameLoaded())
 		canInteract = true;
 	if (canInteract) {
 		player.resetCursor();
