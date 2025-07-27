@@ -28,6 +28,7 @@
 
 namespace Hpl1 {
 
+#ifdef HPL1_USE_OPENGL
 static Graphics::RendererType getBestRendererType() {
 	Common::String renderConfig = ConfMan.get("renderer");
 	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(renderConfig);
@@ -37,13 +38,18 @@ static Graphics::RendererType getBestRendererType() {
 	return Graphics::Renderer::getBestMatchingType(
 		desiredRendererType, availableRendererTypes);
 }
+#endif
 
 bool areShadersAvailable() {
+#ifdef HPL1_USE_OPENGL
 	return getBestRendererType() == Graphics::kRendererTypeOpenGLShaders;
+#else
+	return false;
+#endif
 }
 
 Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 	return createGLViewportScreenshot();
 #else
 	return nullptr;
@@ -51,9 +57,13 @@ Common::ScopedPtr<Graphics::Surface> createViewportScreenshot() {
 }
 
 bool useOpenGL() {
+#ifdef HPL1_USE_OPENGL
 	Graphics::RendererType bestRendererType = getBestRendererType();
 	return bestRendererType == Graphics::kRendererTypeOpenGL ||
 	       bestRendererType == Graphics::kRendererTypeOpenGLShaders;
+#else
+	return false;
+#endif
 }
 
 } // namespace Hpl1

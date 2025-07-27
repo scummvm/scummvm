@@ -30,8 +30,9 @@
 
 #include "common/scummsys.h"
 #include "hpl1/engine/graphics/OcclusionQuery.h"
+#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
 
@@ -52,5 +53,5 @@ public:
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
 #endif // HPL_OCCLUSION_QUERY_H

@@ -33,9 +33,8 @@
 #include "hpl1/debug.h"
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include "hpl1/opengl.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace hpl {
 
@@ -654,4 +653,4 @@ GLenum cSDLTexture::GetGLWrap(eTextureWrap aMode) {
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
