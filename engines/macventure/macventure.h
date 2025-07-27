@@ -198,7 +198,7 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void newGame();
-	void setInitialFlags();
+	void setInitialFlags(GameState gameState = kGameStateInit);
 	void setNewGameState();
 
 	void reset();

@@ -110,6 +110,7 @@ public:
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
 	bool tryCloseWindowRec(WindowReference winID, bool runControl = false);
+	void resetWindows(); // Close and destroy inventory and main game windows
 
 	void highlightExitButton(ObjID objID);
 
