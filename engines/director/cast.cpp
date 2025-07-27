@@ -1626,12 +1626,14 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		if (ConfMan.getBool("dump_scripts")) {
 			for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
 				Common::DumpFile out;
-				ScriptType scriptType = kMovieScript;
+				ScriptType scriptType = kNoneScript;
 
 				if (_loadedCast->contains(it->second->castID)) {
 					CastMember *member = _loadedCast->getVal(it->second->castID);
 					if (member && member->_type == kCastLingoScript) {
 						scriptType = ((ScriptCastMember *)member)->_scriptType;
+					} else {
+						scriptType = kCastScript;
 					}
 				}
 
