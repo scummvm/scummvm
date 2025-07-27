@@ -181,7 +181,7 @@ void AmazonEngine::initVariables() {
 	_player->_playerOff = false;
 
 	// Setup timers
-	const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
+	static const int TIMER_DEFAULTS[] = { 3, 10, 8, 1, 1, 1, 1, 2 };
 	for (int i = 0; i < 32; ++i) {
 		TimerEntry te;
 		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
@@ -209,14 +209,14 @@ void AmazonEngine::establishCenter(int screenId, int esatabIndex) {
 	doEstablish(screenId, esatabIndex);
 }
 
-const char *const _estTable[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
+static const char *const EST_TABLE[] = { "ETEXT0.DAT", "ETEXT1.DAT", "ETEXT2.DAT", "ETEXT3.DAT" };
 
 void AmazonEngine::loadEstablish(int estabIndex) {
 	if (!_files->existFile("ETEXT.DAT")) {
 		int oldGroup = _establishGroup;
 		_establishGroup = 0;
 
-		_establish = _files->loadFile(_estTable[oldGroup]);
+		_establish = _files->loadFile(EST_TABLE[oldGroup]);
 		_establishCtrlTblOfs = READ_LE_UINT16(_establish->data());
 
 		int ofs = _establishCtrlTblOfs + (estabIndex * 2);

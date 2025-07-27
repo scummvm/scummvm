@@ -105,8 +105,6 @@ static const AccessActionCode _accessActionCodes[] = {
 	{ kActionHelp, 8 },
 };
 
-extern const char *const _estTable[];
-
 #define ACCESS_SAVEGAME_VERSION 1
 
 struct AccessSavegameHeader {
