@@ -10,7 +10,8 @@ psp2vpk: $(PSP2_EXE_STRIPPED) $(PLUGINS)
 	mkdir -p psp2pkg/data/
 	mkdir -p psp2pkg/doc/
 	vita-elf-create $(PSP2_EXE_STRIPPED) $(EXECUTABLE).velf
-	vita-make-fself -s -c $(EXECUTABLE).velf psp2pkg/eboot.bin
+# 	Disable ASLR with -na to support profiling, also it can slow things down
+	vita-make-fself -na -s -c $(EXECUTABLE).velf psp2pkg/eboot.bin
 ifdef DYNAMIC_MODULES
 	# Use psp2rela to convert the main binary to static, this allows plugins to use functions from it without any relocation
 	# TODO: Use psp2rela -fetch_base flag instead of using objdump when the change is widespread

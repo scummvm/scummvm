@@ -3449,7 +3449,14 @@ EOF
 		#the next line fixes "branch out of range" error in gob engine when -Os is used
 		append_var CXXFLAGS "-mlong-calls"
 		append_var CXXFLAGS "-mword-relocations"
-		append_var CXXFLAGS "-fomit-frame-pointer"
+		if test "$_enable_prof" = no ; then
+			# -fomit-frame-pointer is incompatible with profiling but is needed for gob engine
+			append_var CXXFLAGS "-fomit-frame-pointer"
+		fi
+		if test "$_enable_prof" = yes ; then
+			# disable dynamic modules when profiling
+			_dynamic_modules=no
+		fi
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
@@ -4192,6 +4199,9 @@ case $_backend in
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub"
 		append_var LIBS "-lSceAppMgr_stub -lSceAppUtil_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub -lSceMotion_stub"
+		if test "$_enable_prof" = yes ; then
+			append_var LIBS "-lvitagprof"
+		fi
 		_sdl=yes
 		_sdlversion=2.0.0
 		append_var MODULES "backends/platform/sdl"
