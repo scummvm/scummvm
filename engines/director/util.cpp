@@ -1152,22 +1152,22 @@ Common::Path dumpScriptName(const char *prefix, int type, int id, const char *ex
 
 	switch (type) {
 	case kNoneScript:
-		typeName = "unknown";
+		typeName = "UnknownScript";
 		break;
 	case kMovieScript:
-		typeName = "movie";
+		typeName = "MovieScript";
 		break;
 	case kCastScript:
-		typeName = "cast";
+		typeName = "CastScript";
 		break;
 	case kEventScript:
-		typeName = "event";
+		typeName = "EventScript";
 		break;
 	case kScoreScript:
-		typeName = "score";
+		typeName = "ScoreScript";
 		break;
 	case kParentScript:
-		typeName = "parent";
+		typeName = "ParentScript";
 		break;
 	default:
 		error("dumpScriptName(): Incorrect call (type %d)", type);
