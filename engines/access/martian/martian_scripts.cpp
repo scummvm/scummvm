@@ -50,28 +50,40 @@ void MartianScripts::cmdSpecial0() {
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(46, 30), "HVID.VID", 20);
 
+	warning("TODO: MartianScripts::cmdSpecial0: Work out how to get timing right");
 	do {
 		_vm->_video->playVideo();
+		_vm->_events->pollEvents();
 		if (_vm->_video->_videoFrame == 4) {
 			_vm->_screen->flashPalette(16);
 			_vm->_sound->playSound(4);
 			do {
 				_vm->_events->pollEvents();
 			} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
-			_vm->_timers[31]._timer = _vm->_timers[31]._initTm = 40;
+			//
+			// TODO:
+			//
+			// The original sets these, probably to hold the video until the sound finishes?
+			// But, if we do that they never get past frame 4, because in the next iteration
+			// of the loop the timer is still "counting down", so we stay on frame 4 forever.
+			//
+			// Need to double-check the exact flow of the original here.
+			//
+			//_vm->_timers[31]._timer = _vm->_timers[31]._initTm = 40;
 		}
 	} while (!_vm->_video->_videoEnd && !_vm->shouldQuit());
 
-	if (_vm->_video->_videoEnd) {
-		_vm->_screen->flashPalette(12);
-		_vm->_sound->playSound(4);
-		do {
-			_vm->_events->pollEvents();
-		} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
-		_vm->_midi->stopSong();
-		_vm->_midi->freeMusic();
-		warning("TODO: Pop Midi");
-	}
+	if (_vm->shouldQuit())
+		return;
+
+	_vm->_screen->flashPalette(12);
+	_vm->_sound->playSound(4);
+	do {
+		_vm->_events->pollEvents();
+	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	_vm->_midi->stopSong();
+	_vm->_midi->freeMusic();
+	warning("TODO: Pop Midi");
 }
 
 void MartianScripts::cmdSpecial1(int param1) {

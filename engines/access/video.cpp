@@ -112,7 +112,7 @@ void VideoPlayer::getFrame() {
 void VideoPlayer::playVideo() {
 	if (_vm->_timers[31]._flag)
 		return;
-	++_vm->_timers[31]._flag;
+	_vm->_timers[31]._flag = 1;
 
 	byte *pDest = _startCoord;
 	byte *pLine = _startCoord;
