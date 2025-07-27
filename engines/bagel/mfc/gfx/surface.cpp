@@ -26,16 +26,20 @@ namespace MFC {
 namespace Gfx {
 
 Surface::XIterator::XIterator(YIterator *rowIter) :
-	_rowIter(rowIter), _surface(rowIter->_surface) {
+		_rowIter(rowIter), _surface(rowIter->_surface) {
+	const CPoint org = _surface->getViewportOrg();
+	_xMin = 0 - org.x;
+	_xMax = _surface->w - org.x;
 }
 
 Surface::XIterator &Surface::XIterator::operator=(int x) {
 	const CPoint org = _surface->getViewportOrg();
-	_x = x - org.x;
-	_xMax = _surface->w - org.x;
+	_x = x;
+	int y = _rowIter->_y;
 
-	if (_x >= _xMax)
-		_pixelP = nullptr;
+	if (x < _xMin || x >= _xMax ||
+			y < _rowIter->_yMin || y >= _rowIter->_yMax)
+		_pixelP = &_dummyPixel;
 	else
 		_pixelP = _surface->getBasePtr(_x, _rowIter->_y);
 
@@ -44,27 +48,47 @@ Surface::XIterator &Surface::XIterator::operator=(int x) {
 
 Surface::XIterator &Surface::XIterator::operator++() {
 	++_x;
-	if (_pixelP)
+	int y = _rowIter->_y;
+
+	if (y < _rowIter->_yMin || y >= _rowIter->_yMax)
+		_pixelP = &_dummyPixel;
+	else if (_x == _xMin)
+		_pixelP = _surface->getBasePtr(_x, y);
+	else if (_x >= _xMax)
+		_pixelP = &_dummyPixel;
+	else if (_x >= _xMin)
 		++_pixelP;
 
 	return *this;
 }
 
 bool Surface::XIterator::operator<(int xEnd) const {
-	return _x < _xMax && _x < xEnd;
+	return _x < xEnd;
 }
+
+Surface::XIterator::operator byte *() {
+	// Keep resetting the dummy pixel, in case
+	// the pixel pointer is pointing to it
+	_dummyPixel = 0;
+
+	// Return the pixel pointer
+	return _pixelP;
+}
+
 
 /*--------------------------------------------*/
 
 Surface::YIterator::YIterator(Surface *surface) : _surface(surface) {
 	assert(surface && surface->format.bytesPerPixel == 1);
 	CPoint org = surface->getViewportOrg();
+
+	_yMin = 0 - org.y;
 	_yMax = surface->h - org.y;
 }
 
 Surface::YIterator &Surface::YIterator::operator=(int y) {
-	CPoint org = _surface->getViewportOrg();
-	_y = y - org.y;
+	_y = y;
+
 	return *this;
 }
 
@@ -74,7 +98,7 @@ Surface::YIterator &Surface::YIterator::operator++() {
 }
 
 bool Surface::YIterator::operator<(int yEnd) const {
-	return _y < _yMax && _y < yEnd;
+	return _y < yEnd;
 }
 
 /*--------------------------------------------*/

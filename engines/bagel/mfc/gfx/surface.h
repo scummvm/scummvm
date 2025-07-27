@@ -46,8 +46,9 @@ public:
 		Surface *_surface;
 		YIterator *_rowIter;
 		int _x = 0;
-		int _xMax = 0;
+		int _xMin, _xMax;
 		byte *_pixelP = nullptr;
+		byte _dummyPixel = 0;
 
 	public:
 		XIterator(YIterator *rowIter);
@@ -55,9 +56,7 @@ public:
 		XIterator &operator=(int x);
 		XIterator &operator++();
 		bool operator<(int xEnd) const;
-		operator byte *() {
-			return _pixelP;
-		}
+		operator byte *();
 	};
 
 	/**
@@ -68,7 +67,7 @@ public:
 	private:
 		Surface *_surface;
 		int _y = 0;
-		int _yMax;
+		int _yMin, _yMax;
 
 	public:
 		YIterator(Surface *surface);
