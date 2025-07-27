@@ -7500,7 +7500,7 @@ case $_host_os in
 		fi
 		;;
 	emscripten)
-		append_var LDFLAGS "--pre-js ./dists/emscripten/custom_shell-pre.js --post-js ./dists/emscripten/custom_shell-post.js --shell-file ./dists/emscripten/custom_shell.html"
+		append_var LDFLAGS '--pre-js $(srcdir)/dists/emscripten/custom_shell-pre.js --post-js $(srcdir)/dists/emscripten/custom_shell-post.js --shell-file $(srcdir)/dists/emscripten/custom_shell.html'
 		# we remove some linker flags for libs which will be added by emscripten from emscripten-ports to avoid duplicate symbols
 		if test "${LDFLAGS#*-s USE_GIFLIB=1}" != "$LDFLAGS"; then
 			LIBS=`echo ${LIBS} | sed 's/-lgif//g'`
