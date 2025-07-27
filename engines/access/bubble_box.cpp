@@ -76,7 +76,7 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 30 : 27;
+	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 30 : 27;
 	placeBubble1(msg);
 }
 
@@ -84,8 +84,8 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = (_vm->getGameID() == GType_MartianMemorandum) ? 247 : 29;
-	_vm->_fonts._charFor._hi = (_vm->getGameID() == GType_MartianMemorandum) ? 255 : 32;
+	_vm->_fonts._charFor._lo = (_vm->getGameID() == kGameMartianMemorandum) ? 247 : 29;
+	_vm->_fonts._charFor._hi = (_vm->getGameID() == kGameMartianMemorandum) ? 255 : 32;
 
 	calcBubble(msg);
 
@@ -117,7 +117,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		if (_vm->getGameID() == GType_MartianMemorandum) {
+		if (_vm->getGameID() == kGameMartianMemorandum) {
 			lastLine = _vm->_fonts._font1->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
 			width = _vm->_fonts._font1->stringWidth(line);
 		} else {
@@ -130,7 +130,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 		screen._printOrg.x = screen._printStart.x;
 	} while (!lastLine);
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		bounds.setWidth((_vm->_fonts._printMaxX / 16 + 2) * 16 + 2 + 1);
 		bounds.bottom = screen._printOrg.y + 4 + 1;
 	} else {
@@ -167,7 +167,7 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble(const Common::String &msg) {
-	if (_vm->getGameID() == GType_MartianMemorandum)
+	if (_vm->getGameID() == kGameMartianMemorandum)
 		printBubble_v1(msg);
 	else
 		printBubble_v2(msg);
@@ -233,7 +233,7 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 
 void BubbleBox::drawBubble(int index) {
 	_bounds = _bubbles[index];
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		int btnSelected = 0;
 		doBox_v1(0, 0, btnSelected);
 	} else

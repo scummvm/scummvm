@@ -30,7 +30,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() != GType_Amazon || !vm->isCD()) {
+	if (vm->getGameID() != kGameAmazon || !vm->isCD()) {
 		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
@@ -40,7 +40,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 
 	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() == kGameMartianMemorandum) {
 		int lastColor = s.readUint16LE();
 		_numColors = lastColor - _startColor;
 	} else
@@ -153,10 +153,10 @@ void CharManager::charMenu() {
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		screen.plotImage(icons, 17, Common::Point(0, 184));
 		screen.plotImage(icons, 18, Common::Point(193, 184));
-	} else if (_vm->getGameID() == GType_Amazon) {
+	} else if (_vm->getGameID() == kGameAmazon) {
 		screen.plotImage(icons, 17, Common::Point(0, 176));
 		screen.plotImage(icons, 18, Common::Point(155, 176));
 	} else

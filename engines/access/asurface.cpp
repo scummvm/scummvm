@@ -56,7 +56,7 @@ SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *str
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() == kGameMartianMemorandum) {
 		int size = stream->readUint16LE();
 		if (size != frameSize)
 			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);

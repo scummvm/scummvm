@@ -171,7 +171,7 @@ void AccessEngine::initialize() {
 	// Create sub-objects of the engine
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
-	if (getGameID() == GType_MartianMemorandum) {
+	if (getGameID() == kGameMartianMemorandum) {
 		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP");
 		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL");
 		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY");

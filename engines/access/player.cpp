@@ -31,10 +31,10 @@ namespace Access {
 
 Player *Player::init(AccessEngine *vm) {
 	switch (vm->getGameID()) {
-	case GType_Amazon:
+	case kGameAmazon:
 		vm->_playerDataCount = 8;
 		return new Amazon::AmazonPlayer(vm);
-	case GType_MartianMemorandum:
+	case kGameMartianMemorandum:
 		vm->_playerDataCount = 10;
 		return new Martian::MartianPlayer(vm);
 	default:
@@ -668,11 +668,11 @@ void Player::plotCom(int flags) {
 }
 
 void Player::plotCom0() {
-	plotCom(_vm->getGameID() == GType_Amazon ? 0 : IMGFLAG_BACKWARDS);
+	plotCom(_vm->getGameID() == kGameAmazon ? 0 : IMGFLAG_BACKWARDS);
 }
 
 void Player::plotCom1() {
-	plotCom(_vm->getGameID() == GType_Amazon ? IMGFLAG_BACKWARDS : 0);
+	plotCom(_vm->getGameID() == kGameAmazon ? IMGFLAG_BACKWARDS : 0);
 }
 
 void Player::plotCom2() {

@@ -176,7 +176,7 @@ void Room::doRoom() {
 			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
 
-			if ((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+			if ((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
 				takePicture();
 			} else {
 				_vm->_player->walk();
@@ -232,8 +232,8 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
-						((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
+					if (((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
+						((_vm->getGameID() == kGameAmazon) && (_vm->_events->_mousePos.y < 177)))
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
@@ -608,7 +608,7 @@ void Room::executeCommand(int commandId) {
 	Screen &screen = *_vm->_screen;
 	_selectCommand = commandId;
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		switch (commandId) {
 		case 4:
 			events.setCursor(CURSOR_ARROW);
@@ -698,7 +698,7 @@ void Room::executeCommand(int commandId) {
 	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw the button as selected
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		screen.plotImage(icons, 0, Common::Point(5, 184));
 		screen.plotImage(icons, 1, Common::Point(155, 184));
 	} else {
@@ -706,7 +706,7 @@ void Room::executeCommand(int commandId) {
 		screen.plotImage(icons, 1, Common::Point(143, 177));
 	}
 	screen.plotImage(icons, _selectCommand + 2,
-		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
+		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == kGameMartianMemorandum) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;
@@ -927,7 +927,7 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
 	_roomFlag = stream.readByte();
 
 	_estIndex = -1;
-	if (gameType == GType_Amazon && isCD)
+	if (gameType == kGameAmazon && isCD)
 		_estIndex = stream.readSint16LE();
 
 	_musicFile.load(stream);
