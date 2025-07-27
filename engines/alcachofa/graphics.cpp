@@ -845,6 +845,7 @@ DrawQueue::DrawQueue(IRenderer *renderer)
 }
 
 void DrawQueue::clear() {
+	_allocator.deallocateAll();
 	memset(_requestsPerOrderCount, 0, sizeof(_requestsPerOrderCount));
 	memset(_lodBiasPerOrder, 0, sizeof(_lodBiasPerOrder));
 }

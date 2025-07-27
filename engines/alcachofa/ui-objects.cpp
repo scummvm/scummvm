@@ -20,12 +20,28 @@
  */
 
 #include "alcachofa.h"
+#include "script.h"
+#include "global-ui.h"
+#include "menu.h"
 #include "objects.h"
 #include "rooms.h"
 
 using namespace Common;
 
 namespace Alcachofa {
+
+enum class MainMenuAction : int32 {
+	ContinueGame = 0,
+	Save,
+	Load,
+	InternetMenu,
+	OptionsMenu,
+	Exit,
+	NextSave,
+	PrevSave,
+	NewGame,
+	AlsoExit // there seems to be no difference to Exit
+};
 
 const char *MenuButton::typeName() const { return "MenuButton"; }
 
@@ -123,6 +139,51 @@ const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
 
 MainMenuButton::MainMenuButton(Room *room, ReadStream &stream)
 	: MenuButton(room, stream) {
+}
+
+void MainMenuButton::update() {
+	MenuButton::update();
+	const auto action = (MainMenuAction)actionId();
+	if (g_engine->input().wasMenuKeyPressed() &&
+		(action == MainMenuAction::ContinueGame || action == MainMenuAction::NewGame))
+		onClick();
+}
+
+void MainMenuButton::trigger() {
+	switch ((MainMenuAction)actionId()) {
+	case MainMenuAction::ContinueGame:
+		g_engine->menu().continueGame();
+		break;
+	case MainMenuAction::Save:
+		warning("STUB: MainMenuAction Save");
+		break;
+	case MainMenuAction::Load:
+		warning("STUB: MainMenuAction Load");
+		break;
+	case MainMenuAction::InternetMenu:
+		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
+		break;
+	case MainMenuAction::OptionsMenu:
+		//g_engine->menu().openOptionsMenu();
+		break;
+	case MainMenuAction::Exit:
+	case MainMenuAction::AlsoExit:
+		// implemented in AlcachofaEngine as it has its own event loop
+		g_engine->fadeExit();
+		break;
+	case MainMenuAction::NextSave:
+		warning("STUB: MainMenuAction NextSave");
+		break;
+	case MainMenuAction::PrevSave:
+		warning("STUB: MainMenuAction PrevSave");
+		break;
+	case MainMenuAction::NewGame:
+		g_engine->menu().newGame();
+		break;
+	default:
+		warning("Unknown main menu action: %d", actionId());
+		break;
+	}
 }
 
 const char *PushButton::typeName() const { return "PushButton"; }
