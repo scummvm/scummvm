@@ -150,34 +150,22 @@ public:
 
 // CBsuBar -- scroll bar
 class CBsuBar {
+private:
 	friend class CBsuSet;
 
-	char m_cStartData;
-	CBsuBar *m_xpNextBar;  // next bar for this set
-	int m_iBarType;        // BSCT_xxxx -- scroll bar type
-	int m_iWndScrollCode;  // windows scroll code --
+	CBsuBar *m_xpNextBar = nullptr;  // next bar for this set
+	int m_iBarType = 0;        // BSCT_xxxx -- scroll bar type
+	int m_iWndScrollCode = 0;  // windows scroll code --
 	// SB_HORZ (=0) or SB_VERT (=1)
-	int m_iId;         // control id
-	//  CScrollBar * m_xpScrollBar ;    // MFC scroll bar object
-	int m_iMin, m_iMax, m_iPosition;   // scroll bar values
-	//  int m_iDevPosition ;    // position in device units
-	LPINT m_lpiVariable;   // ptr to integer variable
-	int m_iDocSize;        // document size (logical units)
-	//  int m_iDevDocSize ;     // ditto (device units)
-	int m_iDevWndSize;     // window size (device units)
-	int m_iWndSize;        // window size (logical units)
-	int m_iMargin1, m_iMargin2;    // left/top and right/bottom
+	int m_iId = 0;         // control id
+	int m_iMin = 0, m_iMax = 0, m_iPosition = 0;   // scroll bar values
+	LPINT m_lpiVariable = 0;   // ptr to integer variable
+	int m_iDocSize = 0;        // document size (logical units)
+	int m_iDevWndSize = 0;     // window size (device units)
+	int m_iWndSize = 0;        // window size (logical units)
+	int m_iMargin1 = 0, m_iMargin2 = 0;    // left/top and right/bottom
 	// scroll margins (logical units)
-	int m_iDevMargin1, m_iDevMargin2;  // ditto (device units)
-
-	char m_cEndData;
-
-	// methods
-public:
-	CBsuBar() {
-		memset(&m_cStartData, 0,
-			&m_cEndData - &m_cStartData);
-	}
+	int m_iDevMargin1 = 0, m_iDevMargin2 = 0;  // ditto (device units)
 };
 
 // CBsuInfo -- information returned by GetInfo
