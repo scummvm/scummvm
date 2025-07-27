@@ -764,8 +764,8 @@ void Scripts::cmdSpecial() {
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();
 
-	if (_specialFunction == 1) {
-		if (_vm->_establishTable[p2])
+	if (_specialFunction == 1 || _vm->getGameID() == kGameMartianMemorandum) {
+		if (_vm->getGameID() == kGameAmazon && _vm->_establishTable[p2])
 			return;
 
 		_vm->_screen->savePalette();
@@ -773,7 +773,7 @@ void Scripts::cmdSpecial() {
 
 	executeSpecial(_specialFunction, p1, p2);
 
-	if (_specialFunction == 1) {
+	if (_specialFunction == 1 || _vm->getGameID() == kGameMartianMemorandum) {
 		_vm->_screen->restorePalette();
 		_vm->_room->_function = FN_RELOAD;
 

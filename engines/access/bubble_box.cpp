@@ -709,7 +709,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
 		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
-			int val = (_vm->_events->_mousePos.x >> 3) - _boxPStartY;
+			int val = (_vm->_events->_mousePos.y >> 3) - _boxPStartY;
 			if (val > _vm->_bcnt)
 				continue;
 			--val;
