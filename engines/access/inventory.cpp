@@ -211,15 +211,17 @@ int InventoryManager::newDisplayInv() {
 }
 
 int InventoryManager::displayInv() {
-	int *inv = (int *) malloc(_vm->_res->INVENTORY.size() * sizeof(int));
-	const char **names = (const char **)malloc(_vm->_res->INVENTORY.size() * sizeof(const char *));
+	size_t invSize = _vm->_res->INVENTORY.size();
 
-	for (uint i = 0; i < _vm->_res->INVENTORY.size(); i++) {
-		inv[i] = _inv[i]._value;
-		names[i] = _inv[i]._name.c_str();
+	Common::Array<int> invNums(invSize + 1);
+	Common::Array<const char *> invNames(invSize + 1);
+
+	for (size_t i = 0; i < invSize; i++) {
+		invNums[i] = _inv[i]._value;
+		invNames[i] = _inv[i]._name.c_str();
 	}
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	_vm->_invBox->getList(names, inv);
+	_vm->_invBox->getList(invNames.data(), invNums.data());
 
 	int btnSelected = 0;
 	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
@@ -234,8 +236,6 @@ int InventoryManager::displayInv() {
 	else
 		_vm->_useItem = -1;
 
-	free(names);
-	free(inv);
 	return 0;
 }
 
