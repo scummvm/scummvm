@@ -416,10 +416,6 @@ void MacVentureEngine::setDeltaPoint(Common::Point newPos) {
 	_deltaPoint = newPos;
 }
 
-void MacVentureEngine::focusObjWin(ObjID objID) {
-	_gui->bringToFront(getObjWindow(objID));
-}
-
 void MacVentureEngine::updateWindow(WindowReference winID) {
 	_gui->updateWindow(winID, true);
 }

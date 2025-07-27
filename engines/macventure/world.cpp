@@ -201,7 +201,7 @@ void World::updateObj(ObjID objID) {
 		win = _engine->getObjWindow(objID);
 	}
 	if (win) {
-		_engine->focusObjWin(objID);
+		_engine->focusObjectWindow(objID);
 		_engine->runObjQueue();
 		_engine->updateWindow(win);
 	}

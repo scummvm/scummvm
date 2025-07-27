@@ -234,7 +234,7 @@ public:
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
 	void setDeltaPoint(Common::Point newPos);
-	void focusObjWin(ObjID objID);
+	void focusObjectWindow(ObjID objID);
 	void updateWindow(WindowReference winID);
 
 	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
@@ -298,7 +298,6 @@ private:
 	void updateExits();
 
 	// Object queue methods
-	void focusObjectWindow(ObjID objID);
 	void openObject(ObjID objID);
 	void closeObject(ObjID objID);
 	void checkObject(QueuedObject objID);
