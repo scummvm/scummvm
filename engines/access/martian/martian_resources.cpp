@@ -26,11 +26,33 @@ namespace Access {
 
 namespace Martian {
 
+static const int RMOUSE[10][2] = {
+	{ 7, 36 },    { 38, 68 },   { 70, 99 },   { 102, 125 }, { 128, 152 },
+	{ 155, 185 }, { 188, 216 }, { 219, 260 }, { 263, 293 }, { 295, 314 }
+};
+
+// MM defines the last range twice in the original.
+static const int BTN_RANGES[6][2] = {
+	{ 0, 60 }, { 64, 124 }, { 129, 192 }, { 194, 227 }, { 233, 292 }, { 297, 319 }
+};
+
 
 MartianResources::~MartianResources() {
 	delete _font1;
 	delete _font2;
 	delete _bitFont;
+}
+
+int MartianResources::getRMouse(int i, int j) const {
+	return RMOUSE[i][j];
+}
+
+int MartianResources::inButtonXRange(int x) const {
+	for (int i = 0; i < ARRAYSIZE(BTN_RANGES); i++) {
+		if ((x >= BTN_RANGES[i][0]) && (x < BTN_RANGES[i][1]))
+			return i;
+	}
+	return -1;
 }
 
 /*------------------------------------------------------------------------*/
@@ -67,11 +89,6 @@ const byte ICON_PALETTE[] = {
 	0x00, 0x11, 0x28, 0x00, 0x15, 0x30,
 	0x00, 0x19, 0x39, 0x00, 0x1B, 0x3F,
 	0x00, 0x2D, 0x3A
-};
-
-const int RMOUSE[10][2] = {
-	{ 7, 36 },    { 38, 68 },   { 70, 99 },   { 102, 125 }, { 128, 152 },
-	{ 155, 185 }, { 188, 216 }, { 219, 260 }, { 263, 293 }, { 295, 314 }
 };
 
 const char *const TRAVDATA[] = {

@@ -101,6 +101,22 @@ public:
 	 * Get the raw data for the given cursor number
 	 */
 	virtual const byte *getCursor(int num) const = 0;
+
+	/**
+	 * Get the name of the lead character
+	 */
+	virtual const char *getEgoName() const = 0;
+
+	/**
+	 * Get the room mouse values
+	 */
+	virtual int getRMouse(int i, int j) const = 0;
+
+	/**
+	 * Find if the mouse X is inside the range for a button,
+	 * or -1 if no button range matches.
+	 */
+	virtual int inButtonXRange(int x) const = 0;
 };
 
 } // End of namespace Access

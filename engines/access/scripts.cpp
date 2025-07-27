@@ -820,26 +820,13 @@ void Scripts::cmdTexSpeak() {
 	while ((v = _data->readByte()) != 0)
 		tmpStr += (char)v;
 
-	if (_vm->getGameID() == GType_MartianMemorandum)
-		_vm->_bubbleBox->_bubbleDisplStr = "TEX";
-	else
-		_vm->_bubbleBox->_bubbleDisplStr = "JASON";
+	_vm->_bubbleBox->_bubbleDisplStr = _vm->_res->getEgoName();
 
 	_vm->_bubbleBox->placeBubble1(tmpStr);
 	findNull();
 }
 
-#define BTN_COUNT 6
 void Scripts::cmdTexChoice() {
-	// MM is defining 2 times the last range in the original.
-	static const int BTN_RANGES_v1[BTN_COUNT][2] = {
-		{ 0, 60 }, { 64, 124 }, { 129, 192 }, { 194, 227 }, { 233, 292 }, { 297, 319 }
-	};
-
-	static const int BTN_RANGES_v2[BTN_COUNT][2] = {
-		{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, { 277, 319 }
-	};
-
 
 	_vm->_oldRects.clear();
 	_choiceStart = _data->pos() - 1;
@@ -869,9 +856,11 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->calcBubble(tmpStr);
 	_vm->_bubbleBox->printBubble(tmpStr);
 
+	const int responseYOff = (_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11;
+
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
-	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
+	_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + responseYOff;
 
 	findNull();
 
@@ -884,7 +873,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + responseYOff;
 	}
 
 	findNull();
@@ -899,7 +888,7 @@ void Scripts::cmdTexChoice() {
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
 		responseCoords.push_back(_vm->_bubbleBox->_bounds);
-		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + ((_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11);
+		_vm->_screen->_printOrg.y = _vm->_bubbleBox->_bounds.bottom + responseYOff;
 	}
 
 	findNull();
@@ -917,14 +906,7 @@ void Scripts::cmdTexChoice() {
 			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == GType_MartianMemorandum) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
-				for (int i = 0; i < BTN_COUNT; i++) {
-					if (((_vm->getGameID() == GType_MartianMemorandum) && (x >= BTN_RANGES_v1[i][0]) && (x < BTN_RANGES_v1[i][1]))
-					||  ((_vm->getGameID() == GType_Amazon) && (x >= BTN_RANGES_v2[i][0]) && (x < BTN_RANGES_v2[i][1]))) {
-
-						choice = i;
-						break;
-					}
-				}
+				choice = _vm->_res->inButtonXRange(x);
 			} else {
 				_vm->_events->debounceLeft();
 				choice = _vm->_events->checkMouseBox1(responseCoords);
