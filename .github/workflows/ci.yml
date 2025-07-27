@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Call configure
         run: |
-          dists/emscripten/build.sh configure --enable-all-engines --disable-engines=hpl1 ${{ matrix.configFlags }}
+          dists/emscripten/build.sh configure --enable-all-engines ${{ matrix.configFlags }}
       - name: Build cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
