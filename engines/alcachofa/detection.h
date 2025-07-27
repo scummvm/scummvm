@@ -37,7 +37,8 @@ extern const PlainGameDescriptor alcachofaGames[];
 
 extern const ADGameDescription gameDescriptions[];
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_HIGH_QUALITY GUIO_GAMEOPTIONS1 // I should comment what this does, but I don't know
+#define GAMEOPTION_32BITS GUIO_GAMEOPTIONS2
 
 } // End of namespace Alcachofa
 

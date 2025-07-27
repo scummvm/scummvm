@@ -313,7 +313,7 @@ struct SayTextTask final : public Task {
 			if (!isSoundStillPlaying || g_engine->input().wasAnyMouseReleased())
 				_character->_isTalking = false;
 
-			if (true && // TODO: Add game option for subtitles
+			if (g_engine->config().subtitles() &&
 				process().isActiveForPlayer()) {
 				g_engine->drawQueue().add<TextDrawRequest>(
 					g_engine->globalUI().dialogFont(),

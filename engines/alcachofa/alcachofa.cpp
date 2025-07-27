@@ -213,4 +213,27 @@ Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {
 	return Common::kNoError;
 }
 
+Config::Config() {
+	loadFromScummVM();
+}
+
+void Config::loadFromScummVM() {
+	_musicVolume = (uint8)CLIP(ConfMan.getInt("music_volume"), 0, 255);
+	_speechVolume = (uint8)CLIP(ConfMan.getInt("speech_volume"), 0, 255);
+	_subtitles = ConfMan.getBool("subtitles");
+	_highQuality = ConfMan.getBool("high_quality");
+	_bits32 = ConfMan.getBool("32_bits");
+}
+
+void Config::saveToScummVM() {
+	ConfMan.setBool("subtitles", _subtitles);
+	ConfMan.setBool("high_quality", _highQuality);
+	ConfMan.setBool("32_bits", _bits32);
+	ConfMan.setInt("music_volume", _musicVolume);
+	ConfMan.setInt("speech_volume", _speechVolume);
+	ConfMan.setInt("sfx_volume", _speechVolume);
+	// ^ a bit unfortunate, that means if you change in-game it overrides.
+	// if you set it in ScummVMs dialog it sticks
+}
+
 } // End of namespace Alcachofa

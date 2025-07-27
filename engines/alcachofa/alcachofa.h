@@ -55,6 +55,29 @@ class Menu;
 class Game;
 struct AlcachofaGameDescription;
 
+class Config {
+public:
+	Config();
+
+	inline bool &subtitles() { return _subtitles; }
+	inline bool &highQuality() { return _highQuality; }
+	inline bool &bits32() { return _bits32; }
+	inline uint8 &musicVolume() { return _musicVolume; }
+	inline uint8 &speechVolume() { return _speechVolume; }
+
+	void loadFromScummVM();
+	void saveToScummVM();
+
+private:
+	bool
+		_subtitles = true,
+		_highQuality = true,
+		_bits32 = true;
+	uint8
+		_musicVolume = 255,
+		_speechVolume = 255;
+};
+
 class AlcachofaEngine : public Engine {
 private:
 	const ADGameDescription *_gameDescription;
@@ -79,6 +102,7 @@ public:
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
 	inline Game &game() { return *_game; }
+	inline Config &config() { return _config; }
 	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
 
 	void playVideo(int32 videoId);
@@ -143,6 +167,7 @@ private:
 	Input _input;
 	Sounds _sounds;
 	Scheduler _scheduler;
+	Config _config;
 };
 
 extern AlcachofaEngine *g_engine;

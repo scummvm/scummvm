@@ -920,7 +920,7 @@ void Script::updateCommonVariables() {
 		_scriptTimer = 0;
 
 	variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();
-	variable("textoson") = 1; // TODO: Add subtitle option
+	variable("textoson") = g_engine->config().subtitles() ? 1 : 0;
 	variable("modored") = 0; // this is signalling whether a network connection is established
 }
 

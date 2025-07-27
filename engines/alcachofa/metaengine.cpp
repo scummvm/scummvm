@@ -34,12 +34,23 @@ namespace Alcachofa {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_ORIGINAL_SAVELOAD, // TODO: Remove, this is not really possible
+		GAMEOPTION_HIGH_QUALITY,
 		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"original_menus",
-			false,
+			_s("High Quality"),
+			_s("TODO: Explain what this does"),
+			_s("high_quality"),
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_32BITS,
+		{
+			_s("32 Bits"),
+			_s("TODO: Also explain this, and implement it maybe"),
+			_s("32_bits"),
+			true,
 			0,
 			0
 		}
