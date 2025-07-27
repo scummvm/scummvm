@@ -340,7 +340,7 @@ void BubbleBox::doBox(int item, int box) {
 }
 
 void BubbleBox::setCursorPos(int posX, int posY) {
-	Common::Point newPt =  Common::Point(posX * 8, posY * 8 + _boxPStartY);
+	Common::Point newPt =  Common::Point(posX * 8, posY * 8 + _rowOff);
 	_vm->_screen->_printStart = _vm->_screen->_printOrg = newPt;
 	// This function (at 0x6803) calculates something from a lookup table, but
 	// never does anything with it.
@@ -372,7 +372,7 @@ void BubbleBox::displayBoxData() {
 		_vm->_events->hideCursor();
 
 		_vm->_screen->_orgX1 = _boxStartX;
-		_vm->_screen->_orgX2 = _boxEndX;
+		_vm->_screen->_orgX2 = _boxEndX + 1;
 		_vm->_screen->_orgY1 = _boxStartY;
 		_vm->_screen->_orgY2 = _boxEndY;
 		_vm->_screen->_lColor = 0xFA;
@@ -514,8 +514,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	int tmpX = 0;
 	int tmpY = 0;
 	if (_type != TYPE_2) {
+		// Draw the button background at the bottom
 		oldY = _vm->_screen->_orgY1;
-		--_vm->_screen->_orgY2;
+		//--_vm->_screen->_orgY2;
 		_vm->_screen->_orgY1 = _vm->_screen->_orgY2 - 8;
 		if (_type == TYPE_3)
 			_vm->_screen->_orgY1 -= 8;
@@ -597,23 +598,24 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->drawLine();
 	}
 
+	// Draw the box title
 	int displStrLen = _bubbleDisplStr.size();
 
 	_boxPStartX = _bounds.left / 8;
-	int newX = (_boxPStartX + _bounds.width() / 8 - displStrLen) / 2;
+	int newX = _boxPStartX + (_bounds.width() / 8 - displStrLen) / 2;
 
-	int _rowOff = _bounds.top / 8;
-	_boxPStartY = 1 - (_rowOff * 8 - _bounds.top);
-	if (_boxPStartY == 8) {
-		_boxPStartY = 0;
-		++_rowOff;
+	_boxPStartY = _bounds.top / 8;
+	_rowOff = 1 - (_boxPStartY * 8 - _bounds.top);
+	if (_rowOff == 8) {
+		_rowOff = 0;
+		++_boxPStartY;
 	}
 
-	retval_ = _boxPStartY;
+	retval_ = _rowOff;
 
-	setCursorPos(newX, _rowOff);
+	setCursorPos(newX, _boxPStartY);
 
-	_vm->_fonts._charFor._lo = 0xFF;
+	Font::_fontColors[1] = _vm->_fonts._charFor._lo = 0xFF;
 	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
 
 	if (_type == TYPE_2) {
