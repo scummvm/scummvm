@@ -61,8 +61,9 @@
 #include "common/timer.h"
 
 #include <winioctl.h>
-#if defined(__MINGW32__) && !defined(__MINGW64__)
+#if defined(__MINGW32_VERSION)
 // Classic MinGW uses non standard paths for DDK headers.
+// __MINGW32_VERSION is not defined by the not classic Ming-w64
 #include <ddk/ntddcdrm.h>
 #else
 #include <ntddcdrm.h>
