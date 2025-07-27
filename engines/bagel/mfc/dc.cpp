@@ -923,11 +923,6 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	if (pSrcDC) {
 		src = pSrcDC->impl()->getSurface();
 		CPoint srcOrg = src->getViewportOrg();
-
-		assert((srcRect.left - srcOrg.x) >= 0);
-		assert((srcRect.right - srcOrg.x) <= src->w);
-		assert((srcRect.top - srcOrg.y) >= 0);
-		assert((srcRect.bottom - srcOrg.y) <= src->h);
 	}
 
 	Gfx::Surface *dest = getSurface();

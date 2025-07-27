@@ -31,13 +31,10 @@ Surface::XIterator::XIterator(YIterator *rowIter) :
 
 Surface::XIterator &Surface::XIterator::operator=(int x) {
 	const CPoint org = _surface->getViewportOrg();
-	_x = MAX(x, org.x);
-	_xMax = org.x + _surface->w;
+	_x = x - org.x;
+	_xMax = _surface->w - org.x;
 
-	if ((_rowIter->_y < org.y) ||
-		(_rowIter->_y >= (org.y + _surface->h)))
-		_pixelP = nullptr;
-	else if (_x >= _xMax)
+	if (_x >= _xMax)
 		_pixelP = nullptr;
 	else
 		_pixelP = _surface->getBasePtr(_x, _rowIter->_y);
@@ -62,12 +59,12 @@ bool Surface::XIterator::operator<(int xEnd) const {
 Surface::YIterator::YIterator(Surface *surface) : _surface(surface) {
 	assert(surface && surface->format.bytesPerPixel == 1);
 	CPoint org = surface->getViewportOrg();
-	_yMax = org.y + surface->h;
+	_yMax = surface->h - org.y;
 }
 
 Surface::YIterator &Surface::YIterator::operator=(int y) {
 	CPoint org = _surface->getViewportOrg();
-	_y = MAX(y, org.y);
+	_y = y - org.y;
 	return *this;
 }
 
@@ -104,7 +101,7 @@ void Surface::setClipRect(const Common::Rect &r) {
 	_clipRect = r;
 
 	Common::Rect tmp = r;
-	tmp.translate(-_viewportOrg.x, -_viewportOrg.y);
+	tmp.translate(_viewportOrg.x, _viewportOrg.y);
 	_surface._clipRect = tmp;
 }
 
@@ -114,7 +111,7 @@ Common::Rect Surface::getClipRect() const {
 
 void Surface::resetClip() {
 	Common::Rect r(0, 0, _surface.w, _surface.h);
-	r.translate(_viewportOrg.x, _viewportOrg.y);
+	r.translate(-_viewportOrg.x, -_viewportOrg.y);
 	setClipRect(r);
 }
 
@@ -149,20 +146,16 @@ void Surface::offsetViewportOrg(int x, int y) {
 
 byte *Surface::getBasePtr(int x, int y) const {
 	assert(format.bytesPerPixel == 1);
-	assert(x >= _viewportOrg.x &&
-		y >= _viewportOrg.y &&
-		x < (_viewportOrg.x + this->w) &&
-		y < (_viewportOrg.y + this->h));
 
-	return (byte *)_surface.getBasePtr(
-		x - _viewportOrg.x,
-		y - _viewportOrg.y
-	);
+	x += _viewportOrg.x;
+	y += _viewportOrg.y;
+	assert(x >= 0 && y >= 0 && x < this->w && y < this->h);
+	return (byte *)_surface.getBasePtr(x, y);
 }
 
 void Surface::fillRect(const Common::Rect &r, uint color) {
 	Common::Rect tmp = r;
-	tmp.translate(-_viewportOrg.x, -_viewportOrg.y);
+	tmp.translate(_viewportOrg.x, _viewportOrg.y);
 	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
 
 	if (!tmp.isEmpty())
@@ -170,64 +163,58 @@ void Surface::fillRect(const Common::Rect &r, uint color) {
 }
 
 void Surface::frameRect(const Common::Rect &r, uint color) {
-	assert(r.left >= _viewportOrg.x &&
-		r.right <= (_viewportOrg.x + _surface.w));
-	assert(r.top >= _viewportOrg.y &&
-		r.bottom <= (_viewportOrg.y + _surface.h));
+	Common::Rect tmp = r;
+	tmp.translate(_viewportOrg.x, _viewportOrg.y);
+	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
 
+	if (!tmp.isEmpty())
 	_surface.frameRect(r, color);
 }
 
 void Surface::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled) {
-	assert(x0 >= _viewportOrg.x &&
-		x1 <= (_viewportOrg.x + _surface.w));
-	assert(y0 >= _viewportOrg.y &&
-		y1 <= (_viewportOrg.y + _surface.h));
-
-	x0 -= _viewportOrg.x;
-	x1 -= _viewportOrg.x;
-	y0 -= _viewportOrg.y;
-	y1 -= _viewportOrg.y;
+	x0 += _viewportOrg.x;
+	x1 += _viewportOrg.x;
+	y0 += _viewportOrg.y;
+	y1 += _viewportOrg.y;
+	assert(x0 >= 0 && y0 >= 0 && x1 <= _surface.w && y1 <= _surface.h);
 
 	_surface.drawEllipse(x0, y0, x1, y1, color, filled);
 }
 
 void Surface::drawLine(int x0, int y0, int x1, int y1, uint32 color) {
-	assert(x0 >= _viewportOrg.x &&
-		x1 <= (_viewportOrg.x + _surface.w));
-	assert(y0 >= _viewportOrg.y &&
-		y1 <= (_viewportOrg.y + _surface.h));
-
-	x0 -= _viewportOrg.x;
-	x1 -= _viewportOrg.x;
-	y0 -= _viewportOrg.y;
-	y1 -= _viewportOrg.y;
+	x0 += _viewportOrg.x;
+	x1 += _viewportOrg.x;
+	y0 += _viewportOrg.y;
+	y1 += _viewportOrg.y;
+	assert(x0 >= 0 && y0 >= 0 && x1 <= _surface.w && y1 <= _surface.h);
 
 	_surface.drawLine(x0, y0, x1, y1, color);
 }
 
 void Surface::hLine(int x0, int y, int x1, uint32 color) {
-	assert(x0 >= _viewportOrg.x &&
-		x1 <= (_viewportOrg.x + _surface.w));
-	assert(y >= _viewportOrg.y &&
-		y <= (_viewportOrg.y + _surface.h));
+	x0 += _viewportOrg.x;
+	x1 += _viewportOrg.x;
+	y += _viewportOrg.y;
+	assert(x0 >= 0 && y >= 0 && x1 <= _surface.w && y <= _surface.h);
 
 	_surface.hLine(x0, y, x1, color);
 }
 
 uint32 Surface::getPixel(int x, int y) {
-	assert(x >= _viewportOrg.x &&
-		x <= (_viewportOrg.x + _surface.w));
-	assert(y >= _viewportOrg.y &&
-		y <= (_viewportOrg.y + _surface.h));
-
+	x += _viewportOrg.x;
+	y += _viewportOrg.y;
+	assert(x >= 0 && y >= 0 && x <= _surface.w && y <= _surface.h);
 	assert(format.bytesPerPixel == 1);
+
 	return *(byte *)getBasePtr(x, y);
 }
 
 Graphics::ManagedSurface Surface::getSubArea(const Common::Rect &r) {
 	Common::Rect tmp = r;
-	tmp.translate(-_viewportOrg.x, -_viewportOrg.y);
+	tmp.translate(_viewportOrg.x, _viewportOrg.y);
+	assert(tmp.left >= 0 && tmp.top >= 0 &&
+		tmp.right <= _surface.w && tmp.bottom <= _surface.h);
+
 	return Graphics::ManagedSurface(_surface, tmp);
 }
 
