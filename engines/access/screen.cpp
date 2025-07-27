@@ -70,7 +70,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_endCycle = 0;
 	_fadeIn = false;
 
-	for (int i = 0; i < 768; ++i) {
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i) {
 		_rawPalette[i] = 0;
 		_savedPalettes[0][i] = 0;
 		_savedPalettes[1][i] = 0;
@@ -231,7 +231,7 @@ void Screen::setBufferScan() {
 
 void Screen::setScaleTable(int scale) {
 	int total = 0;
-	for (int idx = 0; idx < 256; ++idx) {
+	for (int idx = 0; idx < ARRAYSIZE(_scaleTable1); ++idx) {
 		_scaleTable1[idx] = total >> 8;
 		_scaleTable2[idx] = total & 0xff;
 		total += scale;
