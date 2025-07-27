@@ -255,23 +255,12 @@ void AmazonEngine::doEstablish(int screenId, int estabIndex) {
 	_screen->setIconPalette();
 	_screen->forceFadeIn();
 
-	if (getGameID() == GType_MartianMemorandum) {
-		_fonts._charSet._lo = 1;
-		_fonts._charSet._hi = 10;
-		_fonts._charFor._lo = 0xF7;
-		_fonts._charFor._hi = 0xFF;
-
-		_screen->_maxChars = 50;
-		_screen->_printOrg = _screen->_printStart = Common::Point(24, 18);
-	} else {
-		_fonts._charSet._lo = 1;
-		_fonts._charSet._hi = 10;
-		_fonts._charFor._lo = 29;
-		_fonts._charFor._hi = 32;
-
-		_screen->_maxChars = 37;
-		_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
-	}
+	_fonts._charSet._lo = 1;
+	_fonts._charSet._hi = 10;
+	_fonts._charFor._lo = 29;
+	_fonts._charFor._hi = 32;
+	_screen->_maxChars = 37;
+	_screen->_printOrg = _screen->_printStart = Common::Point(48, 35);
 
 	loadEstablish(estabIndex);
 	uint16 msgOffset;
