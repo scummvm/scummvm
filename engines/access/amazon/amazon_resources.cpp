@@ -26,6 +26,15 @@ namespace Access {
 
 namespace Amazon {
 
+static const int BTN_RANGES[6][2] = {
+	{ 0, 76 }, { 77, 154 }, { 155, 232 }, { 233, 276 }, { 0, 0 }, { 277, 319 }
+};
+
+static const int RMOUSE[10][2] = {
+	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
+	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
+};
+
 AmazonResources::~AmazonResources() {
 	delete _font3x5;
 	delete _font6x6;
@@ -93,6 +102,17 @@ const byte *AmazonResources::getCursor(int num) const {
 	return CURSORS[num].data();
 }
 
+int AmazonResources::getRMouse(int i, int j) const {
+	return RMOUSE[i][j];
+}
+
+int AmazonResources::inButtonXRange(int x) const {
+	for (int i = 0; i < ARRAYSIZE(BTN_RANGES); i++) {
+		if ((x >= BTN_RANGES[i][0]) && (x < BTN_RANGES[i][1]))
+			return i;
+	}
+	return -1;
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -521,11 +541,6 @@ const int CAST_END_OBJ1[4][4] = {
 	{ 2, 11, 1180, 10 },
 	{ 1, 154, 1180, 10 },
 	{ 3, 103, 1300, 10 }
-};
-
-const int RMOUSE[10][2] = {
-	{ 0, 35 }, { 0, 0 }, { 36, 70 }, { 71, 106 }, { 107, 141 },
-	{ 142, 177 }, { 178, 212 }, { 213, 248 }, { 249, 283 }, { 284, 318 }
 };
 
 

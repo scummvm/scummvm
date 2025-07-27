@@ -43,8 +43,6 @@ extern const int SIDEOFFD[];
 extern const byte CREDIT_DATA[];
 extern const byte ICON_PALETTE[];
 
-extern const int RMOUSE[10][2];
-
 extern byte HELP[];
 extern const char *const ASK_TBL[];
 extern const char *const TRAVDATA[];
@@ -69,6 +67,9 @@ public:
 	~MartianResources() override;
 
 	const byte *getCursor(int num) const override;
+	const char *getEgoName() const override { return "TEX"; }
+	int getRMouse(int i, int j) const override;
+	int inButtonXRange(int x) const override;
 };
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))

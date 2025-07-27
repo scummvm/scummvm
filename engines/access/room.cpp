@@ -40,21 +40,9 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_conFlag = false;
 	_selectCommand = -1;
 
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		for (int i = 0; i < 10; i++) {
-			_rMouse[i][0] = Amazon::RMOUSE[i][0];
-			_rMouse[i][1] = Amazon::RMOUSE[i][1];
-		}
-		break;
-	case GType_MartianMemorandum:
-		for (int i = 0; i < 10; i++) {
-			_rMouse[i][0] = Martian::RMOUSE[i][0];
-			_rMouse[i][1] = Martian::RMOUSE[i][1];
-		}
-		break;
-	default:
-		error("Game not supported");
+	for (int i = 0; i < 10; i++) {
+		_rMouse[i][0] = vm->_res->getRMouse(i, 0);
+		_rMouse[i][1] = vm->_res->getRMouse(i, 1);
 	}
 }
 
