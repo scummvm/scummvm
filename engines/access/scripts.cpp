@@ -180,7 +180,7 @@ void Scripts::clearWatch() {
 	_vm->_screen->_orgX1 = 128;
 	_vm->_screen->_orgY1 = 57;
 	_vm->_screen->_orgX2 = 228;
-	_vm->_screen->_orgY2 = 106;
+	_vm->_screen->_orgY2 = 106 + 1;
 	_vm->_screen->_lColor = 0;
 	_vm->_screen->drawRect();
 
@@ -192,6 +192,7 @@ void Scripts::printWatch() {
 	_vm->_fonts._charSet._hi = 2;
 	_vm->_fonts._charFor._lo = 2;
 	_vm->_fonts._charFor._hi = 255;
+	Font::_fontColors[3] = 2;
 
 	_vm->_screen->_maxChars = 19;
 	_vm->_screen->_printOrg = Common::Point(128, 58);
@@ -203,12 +204,10 @@ void Scripts::printWatch() {
 	int width = 0;
 	bool lastLine;
 	do {
-		if (_vm->getGameID() == kGameMartianMemorandum)
-			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
-		else
-			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars * 6, line, width);
+		lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
+
 		// Draw the text
-		_vm->_bubbleBox->printString(line);
+		_vm->_fonts._font2->drawString(_vm->_screen, line, _vm->_screen->_printOrg);
 
 		_vm->_screen->_printOrg.y += 6;
 		_vm->_screen->_printOrg.x = _vm->_screen->_printStart.x;
