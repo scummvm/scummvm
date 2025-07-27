@@ -271,7 +271,7 @@ int cLowLevelGraphicsSDL::GetCaps(eGraphicCaps type) const {
 		return 1; // gl 1.4
 
 	case eGraphicCaps_GL_MultiTexture:
-		return GLAD_GL_ARB_multitexture; // gl 1.4
+		return 1; // gl 1.2.1
 
 	default:
 		break;
