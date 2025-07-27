@@ -208,14 +208,14 @@ void MacVentureEngine::newGame() {
 	setNewGameState();
 }
 
-void MacVentureEngine::setInitialFlags() {
+void MacVentureEngine::setInitialFlags(GameState gameState) {
 	_paused = false;
 	_halted = false;
 	_cmdReady = false;
 	_haltedAtEnd = false;
 	_haltedInSelection = false;
 	_clickToContinue = true;
-	_gameState = kGameStateInit;
+	_gameState = gameState;
 	_destObject = 0;
 	_prepared = true;
 	_enginePaused = false;
@@ -234,6 +234,7 @@ void MacVentureEngine::reset() {
 }
 
 void MacVentureEngine::resetInternals() {
+	_gui->resetWindows();
 	_scriptEngine->reset();
 	_currentSelection.clear();
 	_objQueue.clear();
@@ -242,10 +243,6 @@ void MacVentureEngine::resetInternals() {
 
 void MacVentureEngine::resetGui() {
 	_gui->reloadInternals();
-	_gui->updateWindowInfo(kMainGameWindow, getParent(1), _world->getChildren(getParent(1), true));
-	// HACK! should update all inventories
-	_gui->ensureInventoryOpen(kInventoryStart, 1);
-	_gui->updateWindowInfo(kInventoryStart, 1, _world->getChildren(1, true));
 	updateControls();
 	updateExits();
 	refreshScreen();

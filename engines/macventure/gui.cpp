@@ -1328,6 +1328,16 @@ bool Gui::tryCloseWindowRec(WindowReference ref, bool runControl) {
 	return tryCloseWindow(ref);
 }
 
+void Gui::resetWindows() {
+	for (auto &invWin: _inventoryWindows) {
+		tryCloseWindow(invWin.ref);
+	}
+	// WORKAROUND: Set main game window data's objRef
+	// to zero, instead of destroying the window and its data.
+	WindowData &data = findWindowData(kMainGameWindow);
+	data.objRef = 0;
+}
+
 void Gui::highlightExitButton(ObjID objID) {
 	if (!_exitsData)
 		return;
