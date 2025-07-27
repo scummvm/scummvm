@@ -23,6 +23,7 @@
 #define BAGEL_METAGAME_GTL_DLLINIT_H
 
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {

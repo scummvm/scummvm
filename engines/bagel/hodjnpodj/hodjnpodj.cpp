@@ -30,6 +30,9 @@
 #include "bagel/hodjnpodj/console.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/metagame/frame/app.h"
+#include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
+#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -60,6 +63,11 @@ Common::Error HodjNPodjEngine::run() {
 
 	if (getGameId() == "mazeodoom") {
 		app.setStartupMinigame("mazedoom_demo");
+	} else if (ConfMan.getBool("metagame")) {
+		Metagame::CBfcMgr bfcMgr;
+		Metagame::Frame::InitBFCInfo(&bfcMgr);
+		Metagame::Gtl::RunMeta(nullptr, &bfcMgr, FALSE);
+		return Common::kNoError;
 	} else {
 		Common::String minigame = ConfMan.get("minigame");
 		if (!minigame.empty())

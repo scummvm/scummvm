@@ -32,12 +32,12 @@
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/metagame/frame/resource.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 namespace Frame {
-
 
 // Button Identifier codes (BIDs)
 #define IDC_ZOOM        888
@@ -50,11 +50,11 @@ namespace Frame {
 // Bitmap Identifiers
 #define MAINSCROLL  ".\\ART\\MLSCROLL.BMP"
 
-// Button positioning constants
+extern VOID InitBFCInfo(CBfcMgr *pBfcMgr);
 
 /////////////////////////////////////////////////////////////////////////////
 
-// CMainPokerWindow:
+// CHodjPodjWindow:
 // See game.cpp for the code to the member functions and the message map.
 //
 
