@@ -109,10 +109,10 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 
 Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *gd) const {
 	switch (gd->gameID) {
-	case Access::GType_Amazon:
+	case Access::kGameAmazon:
 		*engine = new Access::Amazon::AmazonEngine(syst, gd);
 		break;
-	case Access::GType_MartianMemorandum:
+	case Access::kGameMartianMemorandum:
 		*engine = new Access::Martian::MartianEngine(syst, gd);
 		break;
 	default:

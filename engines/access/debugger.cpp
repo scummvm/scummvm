@@ -44,7 +44,7 @@ static int strToInt(const char *s) {
 
 Debugger *Debugger::init(AccessEngine *vm) {
 	switch (vm->getGameID()) {
-	case GType_Amazon:
+	case kGameAmazon:
 		return new Amazon::AmazonDebugger(vm);
 	default:
 		return new Debugger(vm);

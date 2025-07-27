@@ -124,7 +124,7 @@ void Screen::setManPalette() {
 }
 
 void Screen::setIconPalette() {
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
 			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
 		}

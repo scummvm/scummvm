@@ -28,9 +28,9 @@
 namespace Access {
 
 Resources *Resources::init(AccessEngine *vm) {
-	if (vm->getGameID() == GType_Amazon)
+	if (vm->getGameID() == kGameAmazon)
 		return new Amazon::AmazonResources(vm);
-	else if (vm->getGameID() == GType_MartianMemorandum)
+	else if (vm->getGameID() == kGameMartianMemorandum)
 		return new Martian::MartianResources(vm);
 
 	error("Unknown game");

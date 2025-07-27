@@ -203,7 +203,7 @@ void Scripts::printWatch() {
 	int width = 0;
 	bool lastLine;
 	do {
-		if (_vm->getGameID() == GType_MartianMemorandum)
+		if (_vm->getGameID() == kGameMartianMemorandum)
 			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
 		else
 			lastLine = _vm->_fonts._font2->getLine(msg, _vm->_screen->_maxChars * 6, line, width);
@@ -330,7 +330,7 @@ void Scripts::cmdPrint_v1() {
 }
 
 void Scripts::printString(const Common::String &msg) {
-	if (_vm->getGameID() != GType_MartianMemorandum) {
+	if (_vm->getGameID() != kGameMartianMemorandum) {
 		_vm->_screen->_printOrg = Common::Point(20, 42);
 		_vm->_screen->_printStart = Common::Point(20, 42);
 		_vm->_timers[PRINT_TIMER]._timer = 50;
@@ -780,7 +780,7 @@ void Scripts::cmdSpecial() {
 
 		// WORKAROUND: This fixes scene establishment being re-shown
 		// when restoring savegames in rooms which have one
-		if (_vm->getGameID() == GType_Amazon && !_vm->isCD())
+		if (_vm->getGameID() == kGameAmazon && !_vm->isCD())
 			_vm->_establishTable[p2] = true;
 	}
 }
@@ -813,7 +813,7 @@ void Scripts::cmdCharSpeak() {
 void Scripts::cmdTexSpeak() {
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
-	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 23 : 20;
+	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 23 : 20;
 
 	byte v;
 	Common::String tmpStr = "";
@@ -834,7 +834,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_fonts._charSet._hi = 8;
 	_vm->_fonts._charFor._hi = 255;
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		_vm->_fonts._charFor._lo = 247;
 		_vm->_screen->_maxChars = 23;
 	} else {
@@ -856,7 +856,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->calcBubble(tmpStr);
 	_vm->_bubbleBox->printBubble(tmpStr);
 
-	const int responseYOff = (_vm->getGameID() == GType_MartianMemorandum) ? 20 : 11;
+	const int responseYOff = (_vm->getGameID() == kGameMartianMemorandum) ? 20 : 11;
 
 	Common::Array<Common::Rect> responseCoords;
 	responseCoords.push_back(_vm->_bubbleBox->_bounds);
@@ -903,7 +903,7 @@ void Scripts::cmdTexChoice() {
 
 		_vm->_bubbleBox->_bubbleDisplStr = _vm->_bubbleBox->_bubbleTitle;
 		if (_vm->_events->_leftButton) {
-			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == GType_MartianMemorandum) ? 23 : 22)) {
+			if (_vm->_events->_mouseRow >= ((_vm->getGameID() == kGameMartianMemorandum) ? 23 : 22)) {
 				_vm->_events->debounceLeft();
 				int x = _vm->_events->_mousePos.x;
 				choice = _vm->_res->inButtonXRange(x);
