@@ -25,7 +25,7 @@
 #include "graphics/surface.h"
 #include "hpl1/debug.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 namespace Hpl1 {
 
@@ -68,4 +68,4 @@ Common::ScopedPtr<Graphics::Surface> createGLViewportScreenshot() {
 
 } // End of namespace Hpl1
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL

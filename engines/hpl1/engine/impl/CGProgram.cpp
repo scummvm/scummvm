@@ -27,7 +27,7 @@
 
 #include "hpl1/engine/impl/CGProgram.h"
 
-#ifdef USE_OPENGL
+#ifdef HPL1_USE_OPENGL
 
 #include "hpl1/engine/impl/SDLTexture.h"
 #include "hpl1/engine/system/low_level_system.h"
@@ -38,7 +38,6 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "hpl1/debug.h"
-#include "hpl1/opengl.h"
 #include "math/matrix4.h"
 
 namespace hpl {
@@ -154,4 +153,4 @@ bool cCGProgram::SetMatrixf(const tString &asName, eGpuProgramMatrix mType,
 
 } // namespace hpl
 
-#endif // USE_OPENGL
+#endif // HPL1_USE_OPENGL
