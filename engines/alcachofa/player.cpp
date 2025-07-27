@@ -22,6 +22,7 @@
 #include "player.h"
 #include "script.h"
 #include "alcachofa.h"
+#include "menu.h"
 
 using namespace Common;
 
@@ -49,7 +50,7 @@ void Player::resetCursor() {
 }
 
 void Player::updateCursor() {
-	if (_isMenuOpen || !_isGameLoaded)
+	if (g_engine->menu().isOpen() || !_isGameLoaded)
 		_cursorFrameI = 0;
 	else if (_selectedObject == nullptr)
 		_cursorFrameI = !g_engine->input().isMouseLeftDown() || _pressedObject != nullptr ? 6 : 7;
@@ -298,7 +299,7 @@ void Player::setActiveCharacter(MainCharacterKind kind) {
 bool Player::isAllowedToOpenMenu() {
 	return
 		isGameLoaded() &&
-		!isMenuOpen() &&
+		!g_engine->menu().isOpen() &&
 		g_engine->sounds().musicSemaphore().isReleased() &&
 		!g_engine->script().variable("prohibirESC");
 }

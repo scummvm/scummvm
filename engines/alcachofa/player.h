@@ -39,7 +39,6 @@ public:
 	MainCharacter *inactiveCharacter() const;
 	FakeSemaphore &semaphoreFor(MainCharacterKind kind);
 
-	inline bool &isMenuOpen() { return _isMenuOpen; }
 	inline bool &isGameLoaded() { return _isGameLoaded; }
 
 	inline MainCharacterKind activeCharacterKind() const {
@@ -73,7 +72,6 @@ private:
 	Item *_heldItem = nullptr;
 	int32 _cursorFrameI = 0;
 	bool
-		_isMenuOpen = false,
 		_isGameLoaded = true,
 		_didLoadGlobalRooms = false;
 	Character *_lastDialogCharacters[kMaxLastDialogCharacters] = { nullptr };

@@ -23,6 +23,7 @@
 #include "rooms.h"
 #include "script.h"
 #include "global-ui.h"
+#include "menu.h"
 
 #include "common/file.h"
 
@@ -149,7 +150,7 @@ void Room::update() {
 		if (!updateInput())
 			return;
 	}
-	if (!g_engine->player().isMenuOpen() &&
+	if (!g_engine->menu().isOpen() &&
 		g_engine->player().currentRoom() != &g_engine->world().inventory())
 		world().globalRoom().updateObjects();
 	if (g_engine->player().currentRoom() == this)
@@ -183,7 +184,7 @@ bool Room::updateInput() {
 
 	bool canInteract = !player.activeCharacter()->isBusy();
 	// A complicated network condition can prevent interaction at this point
-	if (player.isMenuOpen() || !player.isGameLoaded())
+	if (g_engine->menu().isOpen() || !player.isGameLoaded())
 		canInteract = true;
 	if (canInteract) {
 		player.resetCursor();
@@ -197,7 +198,7 @@ bool Room::updateInput() {
 
 	if (player.currentRoom() == this) {
 		g_engine->globalUI().drawChangingButton();
-		g_engine->globalUI().updateOpeningMenu();
+		g_engine->menu().updateOpeningMenu();
 	}
 
 	return player.currentRoom() == this;

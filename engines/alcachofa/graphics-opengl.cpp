@@ -146,12 +146,11 @@ public:
 	virtual void begin() override {
 		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
+		GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
 		_currentLodBias = -1000.0f;
 		_currentTexture = nullptr;
 		_currentBlendMode = (BlendMode)-1;
-
-		GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+		_isFirstDrawCommand = true;
 	}
 
 	virtual void end() override {
@@ -292,6 +291,7 @@ public:
 			colors[2] *= colors[3];
 		}
 
+		checkFirstDrawCommand();
 		GL_CALL(glColor4fv(colors));
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, positions));
 		if (_currentTexture != nullptr)
@@ -309,6 +309,7 @@ public:
 		Span<Vector2d> points,
 		Color color
 	) override {
+		checkFirstDrawCommand();
 		setTexture(nullptr);
 		setBlendMode(BlendMode::Alpha);
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, points.data()));
@@ -334,6 +335,7 @@ public:
 		Span<Vector2d> points,
 		Color color
 	) override {
+		checkFirstDrawCommand();
 		setTexture(nullptr);
 		setBlendMode(BlendMode::Alpha);
 		GL_CALL(glVertexPointer(2, GL_FLOAT, 0, points.data()));
@@ -369,10 +371,21 @@ private:
 		GL_CALL(glLoadIdentity());
 	}
 
+	void checkFirstDrawCommand() {
+		// We delay clearing the screen. It is much easier for the game to switch to a
+		// framebuffer before 
+		if (!_isFirstDrawCommand)
+			return;
+		_isFirstDrawCommand = false;
+		GL_CALL(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
+	}
+
 	Point _resolution;
 	OpenGLTexture *_currentTexture = nullptr;
 	BlendMode _currentBlendMode = (BlendMode)-1;
 	float _currentLodBias = 0.0f;
+	bool _isFirstDrawCommand = false;
 };
 
 IRenderer *IRenderer::createOpenGLRenderer(Point resolution) {

@@ -20,6 +20,7 @@
  */
 
 #include "global-ui.h"
+#include "menu.h"
 #include "alcachofa.h"
 #include "script.h"
 
@@ -78,7 +79,7 @@ void GlobalUI::updateClosingInventory() {
 
 bool GlobalUI::updateOpeningInventory() {
 	static constexpr float kSpeed = 10 / 3.0f / 1000.0f;
-	if (g_engine->player().isMenuOpen() || !g_engine->player().isGameLoaded())
+	if (g_engine->menu().isOpen() || !g_engine->player().isGameLoaded())
 		return false;
 
 	if (_isOpeningInventory) {
@@ -123,7 +124,7 @@ bool GlobalUI::isHoveringChangeButton() const {
 
 bool GlobalUI::updateChangingCharacter() {
 	auto &player = g_engine->player();
-	if (player.isMenuOpen() ||
+	if (g_engine->menu().isOpen() ||
 		!player.isGameLoaded() ||
 		_isOpeningInventory)
 		return false;
@@ -160,7 +161,7 @@ bool GlobalUI::updateChangingCharacter() {
 
 void GlobalUI::drawChangingButton() {
 	auto &player = g_engine->player();
-	if (player.isMenuOpen() ||
+	if (g_engine->menu().isOpen() ||
 		!player.isGameLoaded() ||
 		!player.semaphore().isReleased() ||
 		_isOpeningInventory ||
@@ -233,7 +234,7 @@ Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs) 
 }
 
 void GlobalUI::drawScreenStates() {
-	if (g_engine->player().isMenuOpen())
+	if (g_engine->menu().isOpen())
 		return;
 
 	auto &drawQueue = g_engine->drawQueue();
@@ -245,31 +246,6 @@ void GlobalUI::drawScreenStates() {
 		drawQueue.add<BorderDrawRequest>(Rect(0, 0, width, borderWidth), kBlack);
 		drawQueue.add<BorderDrawRequest>(Rect(0, height - borderWidth, width, height), kBlack);
 	}
-}
-
-void GlobalUI::updateOpeningMenu() {
-	if (!_openMenuAtNextFrame) {
-		_openMenuAtNextFrame =
-			g_engine->input().wasMenuKeyPressed() &&
-			g_engine->player().isAllowedToOpenMenu();
-		return;
-	}
-	_openMenuAtNextFrame = false;
-
-	g_engine->sounds().pauseAll(true);
-	// TODO: Add game time behaviour on opening menu
-	g_engine->player().isMenuOpen() = true;
-	// TODO: Render thumbnail
-	g_engine->player().changeRoom("MENUPRINCIPAL", true);
-	// TODO: Check original read lastSaveFileFileId and read options.cfg, we do not need that right?
-
-	g_engine->player().heldItem() = nullptr;
-	g_engine->scheduler().backupContext();
-	g_engine->camera().backup(1);
-	g_engine->camera().setPosition(Math::Vector3d(
-		g_system->getWidth() / 2.0f, g_system->getHeight() / 2.0f, 0.0f));
-
-	// TODO: Load thumbnail into capture graphic object
 }
 
 }

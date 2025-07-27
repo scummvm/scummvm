@@ -51,6 +51,7 @@ class DrawQueue;
 class World;
 class Script;
 class GlobalUI;
+class Menu;
 class Game;
 struct AlcachofaGameDescription;
 
@@ -74,12 +75,14 @@ public:
 	inline World &world() { return *_world; }
 	inline Script &script() { return *_script; }
 	inline GlobalUI &globalUI() { return *_globalUI; }
+	inline Menu &menu() { return *_menu; }
 	inline Scheduler &scheduler() { return _scheduler; }
 	inline Console &console() { return *_console; }
 	inline Game &game() { return *_game; }
 	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
 
 	void playVideo(int32 videoId);
+	void fadeExit();
 	void setDebugMode(DebugMode debugMode, int32 param);
 
 	uint32 getFeatures() const;
@@ -134,6 +137,7 @@ private:
 	Common::ScopedPtr<Script> _script;
 	Common::ScopedPtr<Player> _player;
 	Common::ScopedPtr<GlobalUI> _globalUI;
+	Common::ScopedPtr<Menu> _menu;
 	Common::ScopedPtr<Game> _game;
 	Camera _camera;
 	Input _input;

@@ -2,24 +2,25 @@ MODULE := engines/alcachofa
 
 MODULE_OBJS = \
 	alcachofa.o \
-	camera.cpp \
-	common.cpp \
+	camera.o \
+	common.o \
 	console.o \
-	game.cpp \
-	game-objects.cpp \
-	general-objects.cpp \
-	global-ui.cpp \
-	graphics.cpp \
-	graphics-opengl.cpp \
-	input.cpp \
+	game.o \
+	game-objects.o \
+	general-objects.o \
+	global-ui.o \
+	graphics.o \
+	graphics-opengl.o \
+	input.o \
+	menu.o \
 	metaengine.o \
-	player.cpp \
-	rooms.cpp \
-	scheduler.cpp \
-	script.cpp \
-	shape.cpp \
-	sounds.cpp \
-	ui-objects.cpp \
+	player.o \
+	rooms.o \
+	scheduler.o \
+	script.o \
+	shape.o \
+	sounds.o \
+	ui-objects.o
 
 
 # This module can be built as a plugin

@@ -171,8 +171,8 @@ public:
 	virtual void onHoverStart();
 	virtual void onHoverEnd();
 	virtual void onClick() override;
-	virtual const char *typeName() const;
 	virtual void trigger();
+	virtual const char *typeName() const;
 
 private:
 	bool
@@ -209,6 +209,8 @@ public:
 	static constexpr const char *kClassName = "CBotonMenuPrincipal";
 	MainMenuButton(Room *room, Common::ReadStream &stream);
 
+	virtual void update() override;
+	virtual void trigger() override;
 	virtual const char *typeName() const;
 };
 
