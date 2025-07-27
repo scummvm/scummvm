@@ -1635,11 +1635,11 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 					}
 				}
 
-				// FIXME: castID is set incorrectly for D5+
-				Common::Path lingoPath(dumpScriptName(encodePathForDump(_macName).c_str(), scriptType, it->second->castID, "lingo"));
+				Common::String filename = encodePathForDump(_macName);
+				Common::Path lingoPath(dumpScriptName(filename.c_str(), scriptType, it->second->castID, "lingo"));
 
 				if (out.open(lingoPath, true)) {
-					Common::String decompiled = it->second->scriptText("\n", true);
+					Common::String decompiled = it->second->scriptText("\n", false);
 					out.writeString(decompiled);
 					out.flush();
 					out.close();
