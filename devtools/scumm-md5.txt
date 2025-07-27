@@ -88,6 +88,11 @@ maniac	Maniac Mansion
 	f0d294891b813d3dcc525b89bc318815	1988	ru	DOS	V2	V2	-	Fan translation?, sev
 	06865ea0fae1aeef2d6b96d8ae7ecc41	1988	ru	DOS	V2	V2	-	Fan translation	PRCA RuSCUMM 1.0
 	7c731228dc1cdc33ed426313d89d07e7	1988	he	DOS	V2	V2	-	Hebrew fan translation
+	
+	7f7595394bf236c3c803ad283b8535f7	1972	ca	DOS	V1	V1	-	Fan translation by Ce Trencada
+	bea8f1b2466375099948801380ae5560	1972	ca	DOS	V1	V1 Updated	-	Fan translation by Ce Trencada
+	210982c683b979d3cf42db3c84f20a0f	1988	ca	DOS	V2	V2	-	Fan translation by Ce Trencada
+	7a73651b127460c07e0bdf3631508152	1988	ca	DOS	V2	V2 Updated	-	Fan translation by Ce Trencada
 
 zak	Zak McKracken and the Alien Mindbenders
 	254fede2f15dbb32a23760d601b01816	1914	en	C64	V1	-	-
