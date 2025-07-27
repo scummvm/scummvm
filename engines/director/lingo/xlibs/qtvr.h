@@ -73,6 +73,9 @@ public:
 class QTVRXObject : public Object<QTVRXObject> {
 public:
 	QTVRXObject(ObjectType objType);
+	~QTVRXObject();
+
+	void close();
 
 	Common::Rect _rect;
 	Video::QuickTimeDecoder *_video = nullptr;
