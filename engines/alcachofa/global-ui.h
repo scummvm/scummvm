@@ -42,7 +42,6 @@ public:
 	bool updateOpeningInventory();
 	void updateClosingInventory();
 	void startClosingInventory();
-	void updateOpeningMenu();
 	void drawScreenStates(); // black borders and/or permanent fade
 
 private:
@@ -61,8 +60,7 @@ private:
 	bool
 		_isOpeningInventory = false,
 		_isClosingInventory = false,
-		_isPermanentFaded = false,
-		_openMenuAtNextFrame = false;
+		_isPermanentFaded = false;
 	uint32 _timeForInventory = 0;
 };
 

@@ -32,15 +32,19 @@
 #include "alcachofa.h"
 #include "console.h"
 #include "detection.h"
+#include "player.h"
 #include "rooms.h"
 #include "script.h"
 #include "global-ui.h"
+#include "menu.h"
 #include "debug.h"
 #include "game.h"
 
 using namespace Math;
 
 namespace Alcachofa {
+
+constexpr uint kDefaultFramerate = 100; // the original target framerate, not critical
 
 AlcachofaEngine *g_engine;
 
@@ -72,12 +76,13 @@ Common::Error AlcachofaEngine::run() {
 	_script.reset(new Script());
 	_player.reset(new Player());
 	_globalUI.reset(new GlobalUI());
+	_menu.reset(new Menu());
 
 	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
 	_scheduler.run();
 
 	Common::Event e;
-	Graphics::FrameLimiter limiter(g_system, 120);
+	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
 	while (!shouldQuit()) {
 		_input.nextFrame();
 		while (g_system->getEventManager()->pollEvent(e)) {
@@ -135,13 +140,43 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 			if (_input.handleEvent(e))
 				continue;
 		}
-		if (_input.wasAnyMouseReleased())
+		if (_input.wasAnyMouseReleased() || _input.wasMenuKeyPressed())
 			break;
 
 		g_system->updateScreen();
 		g_system->delayMillis(decoder.getTimeToNextFrame() / 2);
 	}
 	decoder.stop();
+}
+
+void AlcachofaEngine::fadeExit() {
+	constexpr uint kFadeOutDuration = 1000;
+	Event e;
+	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
+	uint32 startTime = g_system->getMillis();
+
+	_renderer->end(); // we were in a frame, let's exit
+	while (g_system->getMillis() - startTime < kFadeOutDuration && !shouldQuit()) {
+		_input.nextFrame();
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (_input.handleEvent(e))
+				continue;
+		}
+
+		_renderer->begin();
+		_drawQueue->clear();
+		float t = ((float)(g_system->getMillis() - startTime)) / kFadeOutDuration;
+		// TODO: Implement cross-fade and add to fadeExit
+		_drawQueue->add<FadeDrawRequest>(FadeType::ToBlack, t, -kForegroundOrderCount);
+		_drawQueue->draw();
+		_renderer->end();
+
+		limiter.delayBeforeSwap();
+		limiter.startFrame();
+	}
+
+	quitGame();
+	player().changeRoom("SALIR", false); // this skips some update steps along the way
 }
 
 void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
