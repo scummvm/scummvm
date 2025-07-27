@@ -213,6 +213,10 @@ void Sounds::stopVoice() {
 	}
 }
 
+void Sounds::pauseAll(bool paused) {
+	_mixer->pauseAll(paused);
+}
+
 bool Sounds::isAlive(SoundID id) {
 	Playback *playback = getPlaybackById(id);
 	return playback != nullptr && _mixer->isSoundHandleActive(playback->_handle);

@@ -162,9 +162,24 @@ public:
 	virtual ~MenuButton() override = default;
 
 	inline int32 actionId() const { return _actionId; }
+	inline bool &isInteractable() { return _isInteractable; }
+
+	virtual void draw() override;
+	virtual void update() override;
+	virtual void loadResources() override;
+	virtual void freeResources() override;
+	virtual void onHoverStart();
+	virtual void onHoverEnd();
+	virtual void onClick() override;
 	virtual const char *typeName() const;
+	virtual void trigger();
 
 private:
+	bool
+		_isInteractable = true,
+		_isClicked = false,
+		_isHovered = false,
+		_triggerNextFrame = false;
 	int32 _actionId;
 	Graphic
 		_graphicNormal,
