@@ -238,8 +238,8 @@ public:
 
 	// Fields used by MM
 	// TODO: Refactor
-	int _travel[60];
-	int _ask[40];
+	byte _travel[60];
+	byte _ask[40];
 	int _startTravelItem;
 	int _startTravelBox;
 	int _startAboutItem;
@@ -252,7 +252,7 @@ public:
 	byte _byte26CB5;
 	int _bcnt;
 	//byte *_tempList;
-	int _pictureTaken;
+	int16 _pictureTaken;
 	//
 
 	bool _vidEnd;

@@ -770,7 +770,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	return retval_;
 }
 
-void BubbleBox::getList(const char *const data[], const int *flags) {
+void BubbleBox::getList(const char *const data[], const byte *flags) {
 	int srcIdx = 0;
 	int destIdx = 0;
 	while (data[srcIdx]) {
