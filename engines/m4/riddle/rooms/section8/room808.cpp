@@ -75,7 +75,7 @@ void Room808::init() {
 	series_play("LIT URN ", 767, 0, -1, 5, -1, 100, 0, 0, 0, -1);
 	if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
 		if (_G(flags)[V095]) {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 1:
 				_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 6, 100, 0, 0);
 				break;
@@ -96,11 +96,11 @@ void Room808::init() {
 				break;
 			}
 		} else {
-			_808PosMach = series_show("808pos2", 1281, 0, -1, -1, _G(flags)[V094], 100, 0, 0);
+			_808PosMach = series_show("808pos2", 1281, 0, -1, -1, _G(flags)[kBridgeWheelPosition], 100, 0, 0);
 		}
 	} else {
 		if (_G(flags)[V095]) {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 1:
 				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 6, 100, 0, 0);
 				break;
@@ -121,7 +121,7 @@ void Room808::init() {
 				break;
 			}
 		} else {
-			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, _G(flags)[V094], 100, 0, 0);
+			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, _G(flags)[kBridgeWheelPosition], 100, 0, 0);
 		}
 	}
 
@@ -238,7 +238,7 @@ void Room808::pre_parser() {
 	}
 
 
-	if (doneFl || _G(flags)[V100])
+	if (doneFl || _G(flags)[kBridgeLocked])
 		return;
 
 	if (!getWalkPath(_G(my_walker), _G(player).walk_x, _G(player).walk_y))
@@ -254,11 +254,11 @@ void Room808::pre_parser() {
 	if (!check1Fl && !check2Fl)
 		return;
 
-	if (_G(flags)[V094] != 0 && _G(flags)[V094] != 4) {
+	if (_G(flags)[kBridgeWheelPosition] != 0 && _G(flags)[kBridgeWheelPosition] != 4) {
 		_G(player).resetWalk();
 
-	} else if ((inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V094] == 0) ||
-			(!inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V100] == 0)) {
+	} else if ((inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[kBridgeWheelPosition] == 0) ||
+			(!inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[kBridgeLocked] == 0)) {
 		intr_cancel_sentence();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		if (_G(flags)[V096] == 0) {
@@ -267,7 +267,7 @@ void Room808::pre_parser() {
 			ws_walk(_G(my_walker), 192, 163, nullptr, 10, 2, true);
 		}
 		_G(kernel).trigger_mode = KT_PREPARSE;
-	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[V094] == 4 && check1Fl) {
+	} else if (inv_object_in_scene("FARMER'S SHOVEL", 808) && _G(flags)[kBridgeWheelPosition] == 4 && check1Fl) {
 		intr_cancel_sentence();
 		_G(kernel).trigger_mode = KT_DAEMON;
 		ws_walk(_G(my_walker), 274, 142, nullptr, 8, 2, true);
@@ -355,7 +355,7 @@ void Room808::parser() {
 				break;
 
 			}
-		} else if (player_said("wheel") && _G(flags)[V100]) {
+		} else if (player_said("wheel") && _G(flags)[kBridgeLocked]) {
 			switch (_G(kernel).trigger) {
 			case -1: {
 				bool walkCheck = true;
@@ -421,7 +421,7 @@ void Room808::parser() {
 
 			case 5:
 				player_set_commands_allowed(false);
-				setBridgeHotspots(_G(flags)[V094], false);
+				setBridgeHotspots(_G(flags)[kBridgeWheelPosition], false);
 				ws_hide_walker(_G(my_walker));
 				terminateMachine(_808PosMach);
 				setPosMachInfo();
@@ -437,7 +437,7 @@ void Room808::parser() {
 
 			case 10:
 				player_set_commands_allowed(true);
-				setBridgeHotspots(_G(flags)[V094], true);
+				setBridgeHotspots(_G(flags)[kBridgeWheelPosition], true);
 				ws_unhide_walker(_G(my_walker));
 				ws_demand_facing(_G(my_walker), _dword1A1964_facing);
 
@@ -449,7 +449,7 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else if (player_said("crank") && inv_object_in_scene("crank", 808) && _G(flags)[V100]) {
+		} else if (player_said("crank") && inv_object_in_scene("crank", 808) && _G(flags)[kBridgeLocked]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -652,7 +652,7 @@ void Room808::parser() {
 		} else if ((player_said("FARMER'S SHOVEL") && inv_object_in_scene("FARMER'S SHOVEL", 808)) || player_said_any("FARMER'S SHOVEL ", "FARMER'S SHOVEL  ", "FARMER'S SHOVEL    ")) {
 			digi_play("808r31", 1, 255, -1, -1);
 		} else if (player_said("crank")) {
-			if (_G(flags)[V100]) {
+			if (_G(flags)[kBridgeLocked]) {
 				switch (_G(kernel).trigger) {
 				case -1:
 					if (!inv_object_in_scene("crank", 808)) {
@@ -698,7 +698,7 @@ void Room808::parser() {
 		break;
 
 	case 3:
-		if (_G(flags)[V097] == 0 && _G(flags)[V094] == 4 && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
+		if (_G(flags)[V097] == 0 && _G(flags)[kBridgeWheelPosition] == 4 && inv_object_in_scene("FARMER'S SHOVEL", 808)) {
 			conv_load("conv808a", 10, 10, 747);
 			conv_export_value_curr(_G(flags)[V098], 0);
 			conv_play(conv_get_handle());
@@ -757,7 +757,7 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else if (_G(flags)[V097] == 1 && inv_object_in_scene("crank", 808) && _G(flags)[V100] == 0) {
+		} else if (_G(flags)[V097] == 1 && inv_object_in_scene("crank", 808) && _G(flags)[kBridgeLocked] == 0) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				ws_turn_to_face(_G(my_walker), 1, 5);
@@ -786,10 +786,10 @@ void Room808::parser() {
 				if (_G(flags)[V098] == 0)
 					terminateMachine(_808HandleSpriteMach);
 
-				if (_G(flags)[V094] == 1 || _G(flags)[V094] == 2 || _G(flags)[V094] == 3) {
+				if (_G(flags)[kBridgeWheelPosition] == 1 || _G(flags)[kBridgeWheelPosition] == 2 || _G(flags)[kBridgeWheelPosition] == 3) {
 					series_load("808 bolt going in and out", -1, nullptr);
 					series_play("808 mei chen cranks handle", 1536, 0, 30, 5, 0, 100, 0, 0, 0, 14);
-				} else if (_G(flags)[V094] == 4 || (_G(flags)[V094] == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
+				} else if (_G(flags)[kBridgeWheelPosition] == 4 || (_G(flags)[kBridgeWheelPosition] == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
 					series_play("808 mei chen cranks handle", 1536, 0, 21, 5, 0, 100, 0, 0, 0, 12);
 				} else {
 					series_play("808 mei chen cranks handle", 1536, 0, 40, 5, 0, 100, 0, 0, 0, 7);
@@ -895,7 +895,7 @@ void Room808::parser() {
 
 			case 50:
 				player_set_commands_allowed(true);
-				_G(flags)[V100] = 1;
+				_G(flags)[kBridgeLocked] = 1;
 				_G(flags)[V276] = 0;
 				_G(flags)[V098] = 0;
 				hotspot_set_active("crank", true);
@@ -907,7 +907,7 @@ void Room808::parser() {
 			case 55:
 				player_set_commands_allowed(true);
 
-				if (_G(flags)[V094] == 4 || (_G(flags)[V094] == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
+				if (_G(flags)[kBridgeWheelPosition] == 4 || (_G(flags)[kBridgeWheelPosition] == 0 && inv_object_in_scene("FARMER'S SHOVEL", 808))) {
 					digi_play(_G(flags)[V279] ? "808r29" : "808r28", 1, 255, -1, -1);
 				}
 
@@ -924,7 +924,7 @@ void Room808::parser() {
 		} else {
 			switch (_G(kernel).trigger) {
 			case -1:
-				if (_G(flags)[V100] == 0) {
+				if (_G(flags)[kBridgeLocked] == 0) {
 					ws_turn_to_face(_G(my_walker), 1, 10);
 				} else {
 					ws_walk(_G(my_walker), 335, 121, nullptr, 10, 1, true);
@@ -987,7 +987,7 @@ void Room808::parser() {
 		if (player_said("west")) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				if (_G(flags)[V097] == 1 && _G(flags)[V100] == 0) {
+				if (_G(flags)[V097] == 1 && _G(flags)[kBridgeLocked] == 0) {
 					ws_walk(_G(my_walker), 67, 211, nullptr, 2, 7, false);
 				} else {
 					ws_walk(_G(my_walker), 67, 211, nullptr, 10, 7, false);
@@ -1043,7 +1043,7 @@ void Room808::parser() {
 			}
 
 
-		} else if (player_said("east") && _G(flags)[V100]) {
+		} else if (player_said("east") && _G(flags)[kBridgeLocked]) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				ws_walk(_G(my_walker), 480, 35, nullptr, 10, 2, true);
@@ -1074,7 +1074,7 @@ void Room808::parser() {
 		if (player_said("mei chen")) {
 			switch (_G(kernel).trigger) {
 			case -1:
-				if (_G(flags)[V100]) {
+				if (_G(flags)[kBridgeLocked]) {
 					digi_play("com122", 1, 255, -1, 997);
 				} else if (_G(flags)[V097] == 0) {
 					player_set_commands_allowed(false);
@@ -1084,7 +1084,7 @@ void Room808::parser() {
 					sendWSMessage_3840000(_mcTrekMach, 7);
 				} else if (_G(flags)[V097] == 1) {
 					if (inv_object_in_scene("FARMER'S SHOVEL", 808) &&
-						_G(flags)[V094] == 4)
+						_G(flags)[kBridgeWheelPosition] == 4)
 						ws_walk(_G(my_walker), 185, 156, nullptr, 11, 5);
 					else
 						digi_play("808r30", 1);
@@ -1158,7 +1158,7 @@ void Room808::parser() {
 			default:
 				break;
 			}
-		} else if (player_said("slot") && _G(flags)[V100] != 0) {
+		} else if (player_said("slot") && _G(flags)[kBridgeLocked] != 0) {
 			switch (_G(kernel).trigger) {
 			case -1:
 				player_set_commands_allowed(false);
@@ -1323,7 +1323,7 @@ void Room808::daemon() {
 		setBridgeHotspots(2, false);
 		setBridgeHotspots(3, false);
 		setBridgeHotspots(4, false);
-		setBridgeHotspots(_G(flags)[V094], true);
+		setBridgeHotspots(_G(flags)[kBridgeWheelPosition], true);
 		addMcHotspot(_G(flags)[V097]);
 
 		if (_G(flags)[V097] == 0) {
@@ -1375,7 +1375,7 @@ void Room808::daemon() {
 
 		if (inv_object_in_scene("farmer's shovel", 808)) {
 			series_play("808 RIP TEST BRIDGESHOVEL FAR", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
-		} else if (_G(flags)[V094] == 4) {
+		} else if (_G(flags)[kBridgeWheelPosition] == 4) {
 			series_play("808test3", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
 		} else {
 			series_play("808 RIP TEST BRIDGE", 1, 0, 7, 5, 0, 100, 0, 0, 0, -1);
@@ -1390,7 +1390,7 @@ void Room808::daemon() {
 
 		if (inv_object_in_scene("farmer's shovel", 808)) {
 			_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 0, 100, 0, 0);
-		} else if (_G(flags)[V094] == 4) {
+		} else if (_G(flags)[kBridgeWheelPosition] == 4) {
 			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 4, 100, 0, 0);
 		} else {
 			_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 0, 100, 0, 0);
@@ -1873,69 +1873,69 @@ void Room808::addMcHotspot(int32 val1) {
 void Room808::setPosMachInfo() {
 	if (_G(flags)[V095]) {
 		if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 1:
 				_posMachName = "808spn16";
 				_G(flags)[V095] = 0;
 				_posMachIndex = 0;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 0;
+				_G(flags)[kBridgeWheelPosition] = 0;
 				break;
 
 			case 2:
 				_posMachName = "808spn15";
 				_posMachIndex = 6;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 1;
+				_G(flags)[kBridgeWheelPosition] = 1;
 				break;
 
 			case 3:
 				_posMachName = "808spn14";
 				_posMachIndex = 4;
 				_posMachFrameNum = 17;
-				_G(flags)[V094] = 2;
+				_G(flags)[kBridgeWheelPosition] = 2;
 				break;
 
 			case 4:
 				_posMachName = "808spn13";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 3;
+				_G(flags)[kBridgeWheelPosition] = 3;
 				break;
 
 			default:
 				break;
 			}
 		} else {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 1:
 				_posMachName = "808spn08";
 
 				_G(flags)[V095] = 0;
 				_posMachIndex = 0;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 0;
+				_G(flags)[kBridgeWheelPosition] = 0;
 				break;
 
 			case 2:
 				_posMachName = "808spn07";
 				_posMachIndex = 6;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 1;
+				_G(flags)[kBridgeWheelPosition] = 1;
 				break;
 
 			case 3:
 				_posMachName = "808spn06";
 				_posMachIndex = 5;
 				_posMachFrameNum = 17;
-				_G(flags)[V094] = 2;
+				_G(flags)[kBridgeWheelPosition] = 2;
 				break;
 
 			case 4:
 				_posMachName = "808spn05";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 3;
+				_G(flags)[kBridgeWheelPosition] = 3;
 				break;
 
 			default:
@@ -1944,33 +1944,33 @@ void Room808::setPosMachInfo() {
 		}
 	} else {
 		if (inv_object_in_scene("FARMER'S SHOVEL", 808)) {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 0:
 				_posMachName = "808spn09";
 				_posMachIndex = 1;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 1;
+				_G(flags)[kBridgeWheelPosition] = 1;
 				break;
 
 			case 1:
 				_posMachName = "808spn10";
 				_posMachIndex = 2;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 2;
+				_G(flags)[kBridgeWheelPosition] = 2;
 				break;
 
 			case 2:
 				_posMachName = "808spn11";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 3;
+				_G(flags)[kBridgeWheelPosition] = 3;
 				break;
 
 			case 3:
 				_posMachName = "808spn12";
 				_posMachIndex = 5;
 				_posMachFrameNum = 10;
-				_G(flags)[V094] = 4;
+				_G(flags)[kBridgeWheelPosition] = 4;
 				_G(flags)[V095] = 1;
 				break;
 
@@ -1978,33 +1978,33 @@ void Room808::setPosMachInfo() {
 				break;
 			}
 		} else {
-			switch (_G(flags)[V094]) {
+			switch (_G(flags)[kBridgeWheelPosition]) {
 			case 0:
 				_posMachName = "808spn01";
 				_posMachIndex = 1;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 1;
+				_G(flags)[kBridgeWheelPosition] = 1;
 				break;
 
 			case 1:
 				_posMachName = "808spn02";
 				_posMachIndex = 2;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 2;
+				_G(flags)[kBridgeWheelPosition] = 2;
 				break;
 
 			case 2:
 				_posMachName = "808spn03";
 				_posMachIndex = 3;
 				_posMachFrameNum = 13;
-				_G(flags)[V094] = 3;
+				_G(flags)[kBridgeWheelPosition] = 3;
 				break;
 
 			case 3:
 				_posMachName = "808spn04";
 				_posMachIndex = 4;
 				_posMachFrameNum = 10;
-				_G(flags)[V094] = 4;
+				_G(flags)[kBridgeWheelPosition] = 4;
 				_G(flags)[V095] = 1;
 				break;
 
