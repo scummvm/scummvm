@@ -30,19 +30,6 @@ using namespace Common;
 
 namespace Alcachofa {
 
-enum class MainMenuAction : int32 {
-	ContinueGame = 0,
-	Save,
-	Load,
-	InternetMenu,
-	OptionsMenu,
-	Exit,
-	NextSave,
-	PrevSave,
-	NewGame,
-	AlsoExit // there seems to be no difference to Exit
-};
-
 const char *MenuButton::typeName() const { return "MenuButton"; }
 
 MenuButton::MenuButton(Room *room, ReadStream &stream)
@@ -135,6 +122,17 @@ OptionsMenuButton::OptionsMenuButton(Room *room, ReadStream &stream)
 	: MenuButton(room, stream) {
 }
 
+void OptionsMenuButton::update() {
+	MenuButton::update();
+	const auto action = (OptionsMenuAction)actionId();
+	if (action == OptionsMenuAction::MainMenu && g_engine->input().wasMenuKeyPressed())
+		onClick();
+}
+
+void OptionsMenuButton::trigger() {
+	g_engine->menu().triggerOptionsAction((OptionsMenuAction)actionId());
+}
+
 const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
 
 MainMenuButton::MainMenuButton(Room *room, ReadStream &stream)
@@ -150,40 +148,7 @@ void MainMenuButton::update() {
 }
 
 void MainMenuButton::trigger() {
-	switch ((MainMenuAction)actionId()) {
-	case MainMenuAction::ContinueGame:
-		g_engine->menu().continueGame();
-		break;
-	case MainMenuAction::Save:
-		warning("STUB: MainMenuAction Save");
-		break;
-	case MainMenuAction::Load:
-		warning("STUB: MainMenuAction Load");
-		break;
-	case MainMenuAction::InternetMenu:
-		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
-		break;
-	case MainMenuAction::OptionsMenu:
-		g_engine->menu().openOptionsMenu();
-		break;
-	case MainMenuAction::Exit:
-	case MainMenuAction::AlsoExit:
-		// implemented in AlcachofaEngine as it has its own event loop
-		g_engine->fadeExit();
-		break;
-	case MainMenuAction::NextSave:
-		warning("STUB: MainMenuAction NextSave");
-		break;
-	case MainMenuAction::PrevSave:
-		warning("STUB: MainMenuAction PrevSave");
-		break;
-	case MainMenuAction::NewGame:
-		g_engine->menu().newGame();
-		break;
-	default:
-		warning("Unknown main menu action: %d", actionId());
-		break;
-	}
+	g_engine->menu().triggerMainMenuAction((MainMenuAction)actionId());
 }
 
 const char *PushButton::typeName() const { return "PushButton"; }
@@ -222,24 +187,27 @@ CheckBox::CheckBox(Room *room, ReadStream &stream)
 	, _actionId(stream.readSint32LE()) {
 }
 
-void CheckBox::update() {
-	PhysicalObject::update();
+void CheckBox::draw() {
 	if (!isEnabled())
 		return;
 	Graphic &baseGraphic = _isChecked ? _graphicChecked : _graphicUnchecked;
 	baseGraphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(baseGraphic, true, BlendMode::AdditiveAlpha);
 
+	if (_isHovered) {
+		Graphic &hoverGraphic = _wasClicked ? _graphicClicked : _graphicHovered;
+		hoverGraphic.update();
+		g_engine->drawQueue().add<AnimationDrawRequest>(hoverGraphic, true, BlendMode::AdditiveAlpha);
+	}
+}
+
+void CheckBox::update() {
+	PhysicalObject::update();
 	if (_wasClicked) {
 		if (g_system->getMillis() - _clickTime > 500) {
 			_wasClicked = false;
 			trigger();
 		}
-	}
-	if (_isHovered) {
-		Graphic &hoverGraphic = _wasClicked ? _graphicClicked : _graphicHovered;
-		hoverGraphic.update();
-		g_engine->drawQueue().add<AnimationDrawRequest>(hoverGraphic, true, BlendMode::AdditiveAlpha);
 	}
 
 	// the original engine would stall the application as click delay.
@@ -278,7 +246,7 @@ void CheckBox::onClick() {
 }
 
 void CheckBox::trigger() {
-	debug("CheckBox %d", _actionId);
+	g_engine->menu().triggerOptionsAction((OptionsMenuAction)actionId());
 }
 
 const char *CheckBoxAutoAdjustNoise::typeName() const { return "CheckBoxAutoAdjustNoise"; }

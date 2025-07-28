@@ -28,17 +28,42 @@ namespace Alcachofa {
 
 class Room;
 
+enum class MainMenuAction : int32 {
+	ContinueGame = 0,
+	Save,
+	Load,
+	InternetMenu,
+	OptionsMenu,
+	Exit,
+	NextSave,
+	PrevSave,
+	NewGame,
+	AlsoExit // there seems to be no difference to Exit
+};
+
+enum class OptionsMenuAction : int32 {
+	SubtitlesOn = 0,
+	SubtitlesOff,
+	HighQuality,
+	LowQuality,
+	Bits32,
+	Bits16,
+	MainMenu
+};
+
 class Menu {
 public:
 	inline bool isOpen() const { return _isOpen; }
 
 	void updateOpeningMenu();
-	void continueGame();
-	void newGame();
+	void triggerMainMenuAction(MainMenuAction action);
 
 	void openOptionsMenu();
+	void triggerOptionsAction(OptionsMenuAction action);
 
 private:
+	void continueGame();
+	void continueMainMenu();
 	void setOptionsState();
 
 	bool
