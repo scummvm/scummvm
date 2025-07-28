@@ -32,9 +32,6 @@ const char *const directoryGlobs[] = {
 	"media",						// Gundam
 	"mvm",							// Master of the Elements
 	"datas",						// O!KAY! subscription from Domino Verlag
-	"data_k",
-	"data_1",
-	"data_2",						// JumpStart World
 	"numbers",						// JumpStart Learning Games
 	"blender",						// Blender CD-ROM magazines
 	"cd_data",						// Polis

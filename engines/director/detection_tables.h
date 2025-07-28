@@ -284,6 +284,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "jsworld2t",			"JumpStart World: Teacher Control Panel 2nd Grade" },
 	{ "jsworldk",			"JumpStart World: Kindergarten" },
 	{ "jsworldp",			"JumpStart World: Preschool" },
+	{ "jsworldpt",			"JumpStart World: Teacher Control Panel Preschool" },
 	{ "jumpaheadss2000at",  "Jump Ahead Starting School 2000: Assessment Test" },
 	{ "jumpaheadss2000wb",  "Jump Ahead Starting School 2000: Workbook" },
 	{ "karma",				"Karma: Curse of the 12 Caves" },
@@ -8263,7 +8264,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("egsnowboard", "", "wcsup.dll", "t:9baa7e1c5151d66d4f287a01f4aba790", 2196349, 600),
 	WINGAME1("egwendy", "", "wcsup.dll", "t:cf595fd98c2fd789217acbf97f03a724", 2037619, 600),
 
-	WINDEMO1_l("engl", "Demo", "ENGL.EXE", "a593079aecf5bd938ce75264cac24b2d", 13304811, Common::RU_RUS, 600),
+	WINDEMO1_l("engl", "Demo", "ENGL.EXE", "t:ec6f8faa1f530a09e1b2fb79fcb4ae9a", 13304811, Common::RU_RUS, 600),
 
 	// Essential Study Partner software
 	// Bundled with the textbook "Anatomy & Physiology: The Unity of Form and Function"
@@ -8474,39 +8475,45 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("jmmg", "", "Just Me and My Grandpa", "66f1a7078033867061b05f3789c6e5de", 1032378, 602),
 	WINGAME1("jmmg", "", "JMMG.EXE", "t:9801c1217842b39b25e42584cf5f8548", 1704089, 600),
 
-	WINGAME1("js123", "", "JSNUMS.EXE", "f78f95afb7457fd465be3691a3932b15", 1532801, 602),
+	// Both versions require installation
+	MACGAME1("js123", "", "Jumpstart Numbers", "rt:860a1e1c714ddaf6749796157f37b60e", 1032378, 602),
+	WINGAME1("js123", "", "JSNUMS.EXE",		   "t:c8be70ae2f6b4c1716b74503235f1524",  1532801, 602),
 
-	MACGAME1("jsabc", "", "JumpStart LG ABCs", "833281980d0b2e2ffdf900a0e818f5d8", 116032, 602),
-	WINGAME1("jsabc", "", "JSLG_ABC.exe", "518a98696fe1122e08410b0f157f21bf", 1588391, 602),
+	// Both versions require installation
+	MACGAME1("jsabc", "", "JumpStart LG ABCs", "r:833281980d0b2e2ffdf900a0e818f5d8",  115776, 602),
+	WINGAME1("jsabc", "", "JSLG_ABC.exe",	   "t:fd5a5c38b330ed40da8366e803f5a485", 1588391, 602),
 
-	MACGAME1("jslearn", "1997 D6 Demo", "JumpStart Previews", "9d08e05121dedcc5ee4c2a9495b78747", 987498, 600),
-	MACGAME1("jslearn", "1998 Demo", "JumpStart Previews", "9d08e05121dedcc5ee4c2a9495b78747", 987818, 602),
-	MACGAME1("jslearn", "1999 Demo", "JumpStart Previews", "fa259c68cd2594e863524ca7d18db67a", 115488, 602),
-	WINGAME1("jslearn", "1997 D6 Demo", "PREV32A.EXE", "a593079aecf5bd938ce75264cac24b2d", 1509011, 600),
-	WINGAME1("jslearn", "1998 Demo", "PREV32A.EXE", "518a98696fe1122e08410b0f157f21bf", 1513371, 602),
-	WINGAME1("jslearn", "1999 Demo", "PREV32A.EXE", "518a98696fe1122e08410b0f157f21bf", 1601517, 602),
+	MACGAME1("jslearn", "1997 D6 Demo", "JumpStart Previews", "rt:25d65b284a10e30d70a19ed1a9bdcc7e", 987242, 600),
+	MACGAME1("jslearn", "1998 Demo",	"JumpStart Previews", "rt:e88e1d4c0d25ceac46a47d36f832064a", 987562, 602),
+	MACGAME1("jslearn", "1999 Demo",	"JumpStart Previews", "rt:a2badd08a2afbcda695687f7e7ebcac0", 115232, 602),
+	WINGAME1("jslearn", "1997 D6 Demo", "PREV32A.EXE",		  "t:d4c87dc9829b40e3d0bf276a672c1925", 1509011, 600),
+	WINGAME1("jslearn", "1998 Demo",	"PREV32A.EXE",		  "t:27334a54f232b89a8147dd5f752f74be", 1513371, 602),
+	WINGAME1("jslearn", "1999 Demo",	"PREV32A.EXE",		  "t:d89b27fc6891ef101851ed32181f9405", 1601517, 602),
 
 	// Both versions need installation
 	MACGAME1("jsmusic", "", "JumpStart Music", "rt:e5ccbb7c2cbf4dfd3b0bf9cbfd8e9b67", 115776, 602),
 	WINGAME2("jsmusic", "", "MUSIC.EXE",   	   "t:2d6daf83052681952d135373beab62d5", 1532043,
-							"BAGSOUR.DIR", 	   "d:9201fca9054bd680ff8854d8bd4ef5f1", 9357704, 602),
+							"BAGSOUR.DIR", 	   "f:9201fca9054bd680ff8854d8bd4ef5f1", 9357704, 602),
 
-	MACGAME1("jsspanish", "", "JumpStart Spanish", "55d01cca925752c170ac1e9c01d1f87e", 1031646, 601),
-	WINGAME1("jsspanish", "", "JSSPAN.EXE", "ece1c7a090010965890840102978e693", 1511580, 601),
+	// Both versions require installation
+	MACGAME1("jsspanish", "", "JumpStart Spanish", "rt:162551d12809ce71325f605c03df26eb", 1031390, 601),
+	WINGAME1("jsspanish", "", "JSSPAN.EXE",		   "t:49baaa9e9abf238e8e24d8c37ad16318",  1511580, 601),
 
-	WINGAME1("jumpaheadss2000at", "", "ATEST.EXE", "a593079aecf5bd938ce75264cac24b2d", 1508221, 600),
-	WINGAME1("jumpaheadss2000wb", "", "WORKBOOK.EXE", "a593079aecf5bd938ce75264cac24b2d", 1731863, 600),
+	WINGAME1("jumpaheadss2000at", "", "TEST/ATEST.EXE",		   "t:fe6968aaa09f12a147ec8308035e036b", 1508221, 600),
+	WINGAME1("jumpaheadss2000wb", "", "WORKBOOK/WORKBOOK.EXE", "t:9de83189e0248c218862eda6940e4fc3", 1731863, 600),
 
 	// Mac filename decodes to 金沢城
 	MACGAME1_l("kanazawa", "", "xn--uisp89b590a", "r:615af206c4db984744d045f1d4705dd2", 1035232, Common::JA_JPN, 602),
 	WINGAME1_l("kanazawa", "", "KANAZAWA.EXE",	  "t:3e54b92d68a7e1bfaf4b92b37f4f9eea", 1896688, Common::JA_JPN, 600),
 
-	WINGAME1_l("kcd", "K15 2001", "V_Fi.exe", "518a98696fe1122e08410b0f157f21bf", 1704035, Common::FI_FIN, 602),
+	WINGAME1_l("kcd", "K15 2001", "V_Fi.exe", "t:2fa05adc6cbc2c46702d4992a82f932b", 1704035, Common::FI_FIN, 602),
+	
+	// Mac version requires installation
+	MACGAME1("kingandi", "", "The King and I Thinking Adv", "r:ef18d569c3cb7700367427cfc9150656",  115776, 602),
+	WINGAME1("kingandi", "", "King&I.exe",					"t:ed267a58821c0a586dab3d2b853971be", 1967220, 602),
 
-	WINGAME1("kingandi", "", "King&I.exe", "518a98696fe1122e08410b0f157f21bf", 1967220, 602),
-
-	WINGAME2_l("kontyngent99", "", "START.EXE",		"d:d62438566e44826960fc16c5c23dbe43", 1513041,
-								   "DANE/MAIN.DXR",	"d:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
+	WINGAME2_l("kontyngent99", "", "START.EXE",		"t:4bbdc40fcaaf25736b198ba8137d3b4d",  1513041,
+								   "DANE/MAIN.DXR",	"f:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
 
 	// Krakel Spektakel - Krakels ABC
 	// Mac version is D5
@@ -8516,7 +8523,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Published by Future Soft of Nasr City, Cairo
 	WINGAME1_l("ktaralarkam", "", "123.exe", "a593079aecf5bd938ce75264cac24b2d", 2748951, Common::AR_ARB, 600),
 
-	WINGAME1_l("kultapossu", "", "POSSU_95.EXE", "518a98696fe1122e08410b0f157f21bf", 1531081, Common::FI_FIN, 602),
+	WINGAME1_l("kultapossu", "", "POSSU_95.EXE", "t:d37aaaa849c30f511f9a80014764a94e", 1531081, Common::FI_FIN, 602),
 
 	WINDEMO1("landdesigner", "Demo", "CLD_DEMO.EXE", "518a98696fe1122e08410b0f157f21bf", 22576635, 602),
 
@@ -10529,20 +10536,24 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("informaticus", "", "Informaticus.exe", "t:45c105b1322aa8d61d715485f2224cfb", 2650986, Common::DE_DEU, 1010),
 
-	WINGAME2("jsworldp", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627915,
-									 "LevelData.utd",		"093b8127750b4762ede83231b3085a46", 81284, 1000),
-	WINGAME2("jsworldk", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627885,
-									 "LevelData.utd",		"961040b538e8e70affbc54d152de9207", 756700, 1000),
-	WINGAME2("jsworld1", "v1.0.4.0", "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627885,
-									 "LevelData.utd",		"b87a40b62d5f239f6424203bbb35cc4c", 767880, 1000),
-	WINGAME2("jsworld1", "v1.0.7.0", "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627885,
-									 "LevelData.utd",		"04e96ad6119b400c861c188a50d846df", 767904, 1000),
-	WINGAME2("jsworld1t", "",		 "TeacherPanel.exe",	"bcf64185ce848b7b70858d62945f48a8", 3142911,
-									 "TeacherHub.dcr",		"d6b0f959196e656d50c1f6cbf16e1041", 270405, 1000),
-	WINGAME2("jsworld2", "",		 "LearnGameLaunch.exe", "7c71b8b5f156d1ee56ca0f9624dec827", 4627885,
-									 "LevelData.utd",		"5b504423963c8c6a09713f8ba96e100f", 976888, 1000),
-	WINGAME2("jsworld2t", "",		 "TeacherPanel.exe",	"bcf64185ce848b7b70858d62945f48a8", 3142911,
-									 "TeacherHub.dcr",		"95a9c2e05fac3181cafc22da932dae2a", 270371, 1000),
+	// JumpStart World of Learning/3D Virtual World games, re-releases of JumpStart Advanced games
+	// Teacher versions available on disc and playable offline. Standard versions required an active membership on JumpStart.com
+	WINGAME2("jsworldp", "",		 "LearnGameLaunch.exe",  "7c71b8b5f156d1ee56ca0f9624dec827",   4627915,
+									 "Data/LevelData.utd",	 "093b8127750b4762ede83231b3085a46",     81284, 1000),
+	WINGAME2("jsworldpt", "",		 "TeacherPanel.exe",	 "t:473f57fe3a52cb158dfe681af446bc08", 3142911,
+									 "TeacherHub.dcr",		 "f:6ad1bfd0f67a7a0ac41064df4a6d756f",  187757, 1000),
+	WINGAME2("jsworldk", "",		 "LearnGameLaunch.exe",	 "7c71b8b5f156d1ee56ca0f9624dec827",   4627885,
+									 "Data_K/LevelData.utd", "961040b538e8e70affbc54d152de9207",    756700, 1000),
+	WINGAME2("jsworld1", "v1.0.4.0", "LearnGameLaunch.exe",	 "7c71b8b5f156d1ee56ca0f9624dec827",   4627885,
+									 "Data_1/LevelData.utd", "b87a40b62d5f239f6424203bbb35cc4c",    767880, 1000),
+	WINGAME2("jsworld1", "v1.0.7.0", "LearnGameLaunch.exe",  "7c71b8b5f156d1ee56ca0f9624dec827",   4627885,
+									 "Data_1/LevelData.utd", "04e96ad6119b400c861c188a50d846df",    767904, 1000),
+	WINGAME2("jsworld1t", "",		 "TeacherPanel.exe",	 "t:473f57fe3a52cb158dfe681af446bc08", 3142911,
+									 "TeacherHub.dcr",		 "f:d6b0f959196e656d50c1f6cbf16e1041",  270405, 1000),
+	WINGAME2("jsworld2", "",		 "LearnGameLaunch.exe",  "7c71b8b5f156d1ee56ca0f9624dec827",   4627885,
+									 "Data_2/LevelData.utd", "5b504423963c8c6a09713f8ba96e100f",    976888, 1000),
+	WINGAME2("jsworld2t", "",		 "TeacherPanel.exe",	 "t:473f57fe3a52cb158dfe681af446bc08", 3142911,
+									 "TeacherHub.dcr",		 "f:95a9c2e05fac3181cafc22da932dae2a",  270371, 1000),
 
 	// Original filename is Límit 0.exe
 	// Requires installation from D8 app limit0inici
