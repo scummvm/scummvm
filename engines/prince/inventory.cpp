@@ -678,7 +678,7 @@ void PrinceEngine::displayInventory() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
