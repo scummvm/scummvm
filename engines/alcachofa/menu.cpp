@@ -63,10 +63,43 @@ void Menu::continueGame() {
 	// TODO: Reset time on continueing game
 }
 
-void Menu::newGame() {
-	// this action might be unused just like the only room it would appear: MENUPRINCIPALINICIO
-	g_engine->player().isGameLoaded() = true;
-	g_engine->script().createProcess(MainCharacterKind::None, g_engine->world().initScriptName());
+void Menu::triggerMainMenuAction(MainMenuAction action) {
+	switch (action) {
+	case MainMenuAction::ContinueGame:
+		g_engine->menu().continueGame();
+		break;
+	case MainMenuAction::Save:
+		warning("STUB: MainMenuAction Save");
+		break;
+	case MainMenuAction::Load:
+		warning("STUB: MainMenuAction Load");
+		break;
+	case MainMenuAction::InternetMenu:
+		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
+		break;
+	case MainMenuAction::OptionsMenu:
+		g_engine->menu().openOptionsMenu();
+		break;
+	case MainMenuAction::Exit:
+	case MainMenuAction::AlsoExit:
+		// implemented in AlcachofaEngine as it has its own event loop
+		g_engine->fadeExit();
+		break;
+	case MainMenuAction::NextSave:
+		warning("STUB: MainMenuAction NextSave");
+		break;
+	case MainMenuAction::PrevSave:
+		warning("STUB: MainMenuAction PrevSave");
+		break;
+	case MainMenuAction::NewGame:
+		// this action might be unused just like the only room it would appear: MENUPRINCIPALINICIO
+		g_engine->player().isGameLoaded() = true;
+		g_engine->script().createProcess(MainCharacterKind::None, g_engine->world().initScriptName());
+		break;
+	default:
+		warning("Unknown main menu action: %d", (int32)action);
+		break;
+	}
 }
 
 void Menu::openOptionsMenu() {
@@ -102,6 +135,47 @@ void Menu::setOptionsState() {
 	checkHighQuality->isChecked() = config.highQuality();
 	checkLowQuality->isChecked() = !config.highQuality();
 	checkHighQuality->toggle(config.bits32());
+}
+
+void Menu::triggerOptionsAction(OptionsMenuAction action) {
+	Config &config = g_engine->config();
+	switch (action) {
+	case OptionsMenuAction::SubtitlesOn:
+		config.subtitles() = true;
+		break;
+	case OptionsMenuAction::SubtitlesOff:
+		config.subtitles() = false;
+		break;
+	case OptionsMenuAction::HighQuality:
+		config.highQuality() = true;
+		break;
+	case OptionsMenuAction::LowQuality:
+		config.highQuality() = false;
+		break;
+	case OptionsMenuAction::Bits32:
+		config.bits32() = true;
+		config.highQuality() = true;
+		break;
+	case OptionsMenuAction::Bits16:
+		config.bits32() = false;
+		break;
+	case OptionsMenuAction::MainMenu:
+		continueMainMenu();
+		break;
+	default:
+		warning("Unknown check box action: %d", (int32)action);
+	}
+	setOptionsState();
+}
+
+void Menu::continueMainMenu() {
+	g_engine->config().saveToScummVM();
+	g_engine->syncSoundSettings();
+	g_engine->player().changeRoom(
+		g_engine->player().isGameLoaded() ? "MENUPRINCIPAL" : "MENUPRINCIPALINICIO",
+		true
+	);
+	// TODO: Update menu state and thumbanil
 }
 
 }

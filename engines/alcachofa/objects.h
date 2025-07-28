@@ -189,6 +189,9 @@ private:
 		_graphicDisabled;
 };
 
+// some of the UI elements are only used for the multiplayer menus
+// so are currently not needed
+
 class InternetMenuButton final : public MenuButton {
 public:
 	static constexpr const char *kClassName = "CBotonMenuInternet";
@@ -202,6 +205,8 @@ public:
 	static constexpr const char *kClassName = "CBotonMenuOpciones";
 	OptionsMenuButton(Room *room, Common::ReadStream &stream);
 
+	virtual void update() override;
+	virtual void trigger() override;
 	virtual const char *typeName() const;
 };
 
@@ -223,7 +228,6 @@ public:
 	virtual const char *typeName() const;
 
 private:
-	// TODO: Reverse engineer PushButton
 	bool _alwaysVisible;
 	Graphic _graphic1, _graphic2;
 	int32 _actionId;
@@ -237,7 +241,6 @@ public:
 	virtual const char *typeName() const;
 
 private:
-	// TODO: Reverse engineer EditBox
 	int32 i1;
 	Common::Point p1;
 	Common::String _labelId;
@@ -255,7 +258,8 @@ public:
 	inline bool &isChecked() { return _isChecked; }
 	inline int32 actionId() const { return _actionId; }
 
-	virtual void update() override; // also takes the role of draw for some reason
+	virtual void draw() override;
+	virtual void update() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
 	virtual void onHoverStart() override;
@@ -295,9 +299,6 @@ private:
 		_graph2,
 		_graph3;
 };
-
-// the next UI elements are only used for the multiplayer menus
-// so are currently not needed
 
 class CheckBoxAutoAdjustNoise final : public CheckBox {
 public:
