@@ -629,8 +629,8 @@ bool AdActor::update() {
 	// or later but before Mar 21, 2013 (import into Git repo)
 	//
 	// default: stand animation
-	if (BaseEngine::instance().getTargetExecutable() < WME_1_9_2 &&
-	    BaseEngine::instance().getTargetExecutable() >= WME_LITE &&
+	if ((BaseEngine::instance().getTargetExecutable() < WME_1_9_2 ||
+	    BaseEngine::instance().getTargetExecutable() >= WME_LITE) &&
 	    !_currentSprite) {
 		if (_sprite) {
 			_currentSprite = _sprite;
