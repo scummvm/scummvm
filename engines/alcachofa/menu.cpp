@@ -69,4 +69,39 @@ void Menu::newGame() {
 	g_engine->script().createProcess(MainCharacterKind::None, g_engine->world().initScriptName());
 }
 
+void Menu::openOptionsMenu() {
+	setOptionsState();
+	g_engine->player().changeRoom("MENUOPCIONES", true);
+}
+
+void Menu::setOptionsState() {
+	Config &config = g_engine->config();
+	Room *optionsMenu = g_engine->world().getRoomByName("MENUOPCIONES");
+	scumm_assert(optionsMenu != nullptr);
+
+	// TODO: Set music/sound volume
+
+	if (!config.bits32())
+		config.highQuality() = false;
+	auto getCheckBox = [&] (const char *name) {
+		CheckBox *checkBox = dynamic_cast<CheckBox *>(optionsMenu->getObjectByName(name));
+		scumm_assert(checkBox != nullptr);
+		return checkBox;
+	};
+	CheckBox
+		*checkSubtitlesOn = getCheckBox("Boton ON"),
+		*checkSubtitlesOff = getCheckBox("Boton OFF"),
+		*check32Bits = getCheckBox("Boton 32 Bits"),
+		*check16Bits = getCheckBox("Boton 16 Bits"),
+		*checkHighQuality = getCheckBox("Boton Alta"),
+		*checkLowQuality = getCheckBox("Boton Baja");
+	checkSubtitlesOn->isChecked() = config.subtitles();
+	checkSubtitlesOff->isChecked() = !config.subtitles();
+	check32Bits->isChecked() = config.bits32();
+	check16Bits->isChecked() = !config.bits32();
+	checkHighQuality->isChecked() = config.highQuality();
+	checkLowQuality->isChecked() = !config.highQuality();
+	checkHighQuality->toggle(config.bits32());
+}
+
 }

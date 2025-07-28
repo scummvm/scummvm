@@ -125,6 +125,7 @@ public:
 	virtual ~ShapeObject() override = default;
 
 	inline int8 order() const { return _order; }
+	inline bool isSelected() const { return _isSelected; }
 
 	virtual void update() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
@@ -168,8 +169,8 @@ public:
 	virtual void update() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void onHoverStart();
-	virtual void onHoverEnd();
+	virtual void onHoverStart() override;
+	virtual void onHoverEnd() override;
 	virtual void onClick() override;
 	virtual void trigger();
 	virtual const char *typeName() const;
@@ -251,25 +252,30 @@ public:
 	CheckBox(Room *room, Common::ReadStream &stream);
 	virtual ~CheckBox() override = default;
 
+	inline bool &isChecked() { return _isChecked; }
+	inline int32 actionId() const { return _actionId; }
+
+	virtual void update() override; // also takes the role of draw for some reason
+	virtual void loadResources() override;
+	virtual void freeResources() override;
+	virtual void onHoverStart() override;
+	virtual void onHoverEnd() override;
+	virtual void onClick() override;
+	virtual void trigger();
 	virtual const char *typeName() const;
 
 private:
-	// TODO: Reverse engineer CheckBox
-	bool b1;
+	bool
+		_isChecked = false,
+		_wasClicked = false,
+		_isHovered = false;
 	Graphic
-		_graph1,
-		_graph2,
-		_graph3,
-		_graph4;
-	int32 _valueId;
-};
-
-class CheckBoxAutoAdjustNoise final : public CheckBox {
-public:
-	static constexpr const char *kClassName = "CCheckBoxAutoAjustarRuido";
-	CheckBoxAutoAdjustNoise(Room *room, Common::ReadStream &stream);
-
-	virtual const char *typeName() const;
+		_graphicUnchecked,
+		_graphicChecked,
+		_graphicHovered,
+		_graphicClicked;
+	int32 _actionId = 0;
+	uint32 _clickTime = 0;
 };
 
 class SlideButton final : public ObjectBase {
@@ -288,6 +294,17 @@ private:
 		_graph1,
 		_graph2,
 		_graph3;
+};
+
+// the next UI elements are only used for the multiplayer menus
+// so are currently not needed
+
+class CheckBoxAutoAdjustNoise final : public CheckBox {
+public:
+	static constexpr const char *kClassName = "CCheckBoxAutoAjustarRuido";
+	CheckBoxAutoAdjustNoise(Room *room, Common::ReadStream &stream);
+
+	virtual const char *typeName() const;
 };
 
 class IRCWindow final : public ObjectBase {
@@ -310,7 +327,6 @@ public:
 	virtual const char *typeName() const;
 
 private:
-	// TODO: Reverse engineer MessageBox
 	Graphic
 		_graph1,
 		_graph2,
