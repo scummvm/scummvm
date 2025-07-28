@@ -91,6 +91,13 @@ class OptionsMenu final : public Room {
 public:
 	static constexpr const char *kClassName = "CHabitacionMenuOpciones";
 	OptionsMenu(World *world, Common::SeekableReadStream &stream);
+
+	virtual bool updateInput() override;
+	virtual void loadResources() override;
+
+private:
+	ShapeObject *_lastSelectedObject = nullptr;
+	ObjectBase *_idleArm = nullptr;
 };
 
 class ConnectMenu final : public Room {

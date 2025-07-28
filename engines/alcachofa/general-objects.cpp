@@ -202,7 +202,7 @@ void ShapeObject::update() {
 	if (isEnabled())
 		updateSelection();
 	else {
-		_isSelected = false;
+		_isNewlySelected = false;
 		_wasSelected = false;
 	}
 }
@@ -239,12 +239,12 @@ void ShapeObject::onClick() {
 }
 
 void ShapeObject::markSelected() {
-	_isSelected = true;
+	_isNewlySelected = true;
 }
 
 void ShapeObject::updateSelection() {
-	if (_isSelected) {
-		_isSelected = false;
+	if (_isNewlySelected) {
+		_isNewlySelected = false;
 		if (_wasSelected) {
 			if (g_engine->input().wasAnyMouseReleased() && g_engine->player().selectedObject() == this)
 				onClick();

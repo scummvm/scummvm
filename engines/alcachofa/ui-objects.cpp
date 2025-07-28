@@ -47,7 +47,7 @@ void MenuButton::draw() {
 	Graphic &graphic =
 		!_isInteractable ? _graphicDisabled
 		: _isClicked ? _graphicClicked
-		: _isHovered ? _graphicHovered
+		: wasSelected() ? _graphicHovered
 		: _graphicNormal;
 	graphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(graphic, true, BlendMode::AdditiveAlpha);
@@ -87,15 +87,7 @@ void MenuButton::freeResources() {
 	_graphicDisabled.freeResources();
 }
 
-void MenuButton::onHoverStart() {
-	PhysicalObject::onHoverStart();
-	_isHovered = true;
-}
-
-void MenuButton::onHoverEnd() {
-	PhysicalObject::onHoverEnd();
-	_isHovered = false;
-}
+void MenuButton::onHoverUpdate() {}
 
 void MenuButton::onClick() {
 	if (_isInteractable) {
@@ -194,7 +186,7 @@ void CheckBox::draw() {
 	baseGraphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(baseGraphic, true, BlendMode::AdditiveAlpha);
 
-	if (_isHovered) {
+	if (wasSelected()) {
 		Graphic &hoverGraphic = _wasClicked ? _graphicClicked : _graphicHovered;
 		hoverGraphic.update();
 		g_engine->drawQueue().add<AnimationDrawRequest>(hoverGraphic, true, BlendMode::AdditiveAlpha);
@@ -216,7 +208,7 @@ void CheckBox::update() {
 }
 
 void CheckBox::loadResources() {
-	_wasClicked = _isHovered = false;
+	_wasClicked = false;
 	_graphicUnchecked.loadResources();
 	_graphicChecked.loadResources();
 	_graphicHovered.loadResources();
@@ -230,15 +222,7 @@ void CheckBox::freeResources() {
 	_graphicClicked.freeResources();
 }
 
-void CheckBox::onHoverStart() {
-	PhysicalObject::onHoverStart();
-	_isHovered = true;
-}
-
-void CheckBox::onHoverEnd() {
-	PhysicalObject::onHoverEnd();
-	_isHovered = false;
-}
+void CheckBox::onHoverUpdate() {}
 
 void CheckBox::onClick() {
 	_wasClicked = true;
