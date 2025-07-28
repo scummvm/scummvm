@@ -102,7 +102,7 @@ public:
 	void doBox(int item, int box);
 
 	int doBox_v1(int item, int box, int &btnSelected);
-	void getList(const char *const data[], const int *flags);
+	void getList(const char *const data[], const byte *flags);
 	void setCursorPos(int posX, int posY);
 	void printString(Common::String msg);
 };

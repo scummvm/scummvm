@@ -213,7 +213,7 @@ int InventoryManager::newDisplayInv() {
 int InventoryManager::displayInv() {
 	size_t invSize = _vm->_res->INVENTORY.size();
 
-	Common::Array<int> invNums(invSize + 1);
+	Common::Array<byte> invNums(invSize + 1);
 	Common::Array<const char *> invNames(invSize + 1);
 
 	for (size_t i = 0; i < invSize; i++) {

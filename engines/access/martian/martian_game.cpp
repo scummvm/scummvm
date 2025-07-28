@@ -350,6 +350,37 @@ void MartianEngine::dead(int deathId) {
 	_events->pollEvents();
 }
 
+void MartianEngine::synchronize(Common::Serializer &s) {
+	AccessEngine::synchronize(s);
+
+	for (int i = 0; i < ARRAYSIZE(_travel); i++) {
+		s.syncAsByte(_travel[i]);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_ask); i++) {
+		s.syncAsByte(_ask[i]);
+	}
+
+	s.syncAsSint16LE(_pictureTaken);
+
+	/*
+	TODO: Do any of these need to be synchronized here?
+	Mostly involved in modal dialogs.
+	_startTravelItem
+	_startTravelBox
+	_startAboutItem
+	_startAboutBox
+	_byte26CB5
+	_bcnt
+	_boxDataStart
+	_boxDataEnd
+	_boxSelectY
+	_boxSelectYOld
+	_numLines
+	*/
+}
+
+
 } // End of namespace Martian
 
 } // End of namespace Access

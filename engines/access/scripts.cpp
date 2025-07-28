@@ -546,7 +546,7 @@ void Scripts::cmdDispInv_v2() {
 
 void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
-	int val = _data->readByte();
+	byte val = _data->readByte();
 	_vm->_ask[idx] = val;
 	_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
@@ -591,7 +591,7 @@ void Scripts::cmdCheckTimer() {
 
 void Scripts::cmdSetTravel() {
 	int idx = _data->readByte();
-	int dest = _data->readByte();
+	byte dest = _data->readByte();
 	_vm->_travel[idx] = dest;
 	_vm->_startTravelItem = _vm->_startTravelBox = 0;
 }
@@ -751,7 +751,7 @@ void Scripts::cmdHelp_v1() {
 
 void Scripts::cmdCheckAbout() {
 	int idx = _data->readSint16LE();
-	int val = _data->readSint16LE();
+	int16 val = _data->readSint16LE();
 
 	if (_vm->_ask[idx] == val)
 		cmdGoto();
@@ -1045,7 +1045,7 @@ void Scripts::cmdPushLocation() {
 
 void Scripts::cmdCheckTravel() {
 	int idx = _data->readSint16LE();
-	int val = _data->readUint16LE();
+	uint16 val = _data->readUint16LE();
 
 	if (_vm->_travel[idx] == val)
 		cmdGoto();

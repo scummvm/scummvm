@@ -33,6 +33,7 @@ private:
 	bool _skipStart;
 	SpriteResource *_introObjects;
 	Common::MemoryReadStream *_creditsStream;
+
 	/**
 	 * Do the game introduction
 	 */
@@ -68,6 +69,11 @@ public:
 	void doSpecial5(int param1);
 	void showDeathText(Common::String msg);
 	void establish(int esatabIndex, int sub) override {};
+
+	/**
+	* Synchronize savegame data
+	*/
+	void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Martian
