@@ -125,7 +125,8 @@ public:
 	virtual ~ShapeObject() override = default;
 
 	inline int8 order() const { return _order; }
-	inline bool isSelected() const { return _isSelected; }
+	inline bool isNewlySelected() const { return _isNewlySelected; }
+	inline bool wasSelected() const { return _wasSelected; }
 
 	virtual void update() override;
 	virtual void serializeSave(Common::Serializer &serializer) override;
@@ -146,7 +147,7 @@ protected:
 private:
 	Shape _shape;
 	CursorType _cursorType;
-	bool _isSelected = false,
+	bool _isNewlySelected = false,
 		_wasSelected = false;
 };
 
@@ -169,8 +170,7 @@ public:
 	virtual void update() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void onHoverStart() override;
-	virtual void onHoverEnd() override;
+	virtual void onHoverUpdate() override;
 	virtual void onClick() override;
 	virtual void trigger();
 	virtual const char *typeName() const;
@@ -179,7 +179,6 @@ private:
 	bool
 		_isInteractable = true,
 		_isClicked = false,
-		_isHovered = false,
 		_triggerNextFrame = false;
 	int32 _actionId;
 	Graphic
@@ -262,8 +261,7 @@ public:
 	virtual void update() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void onHoverStart() override;
-	virtual void onHoverEnd() override;
+	virtual void onHoverUpdate() override;
 	virtual void onClick() override;
 	virtual void trigger();
 	virtual const char *typeName() const;
@@ -271,8 +269,7 @@ public:
 private:
 	bool
 		_isChecked = false,
-		_wasClicked = false,
-		_isHovered = false;
+		_wasClicked = false;
 	Graphic
 		_graphicUnchecked,
 		_graphicChecked,

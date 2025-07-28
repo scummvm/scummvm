@@ -332,6 +332,33 @@ OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
 
+bool OptionsMenu::updateInput() {
+	if (!Room::updateInput())
+		return false;
+
+	auto currentSelectedObject = g_engine->player().selectedObject();
+	if (currentSelectedObject == nullptr) {
+		if (_lastSelectedObject == nullptr) {
+			if (_idleArm != nullptr)
+				_idleArm->toggle(true);
+			return true;
+		}
+
+		_lastSelectedObject->markSelected();
+	}
+	else
+		_lastSelectedObject = currentSelectedObject;
+	if (_idleArm != nullptr)
+		_idleArm->toggle(false);
+	return true;
+}
+
+void OptionsMenu::loadResources() {
+	Room::loadResources();
+	_lastSelectedObject = nullptr;
+	_idleArm = getObjectByName("Brazo");
+}
+
 ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream)
 	: Room(world, stream, true) {
 }
