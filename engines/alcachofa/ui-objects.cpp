@@ -164,7 +164,7 @@ void MainMenuButton::trigger() {
 		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
 		break;
 	case MainMenuAction::OptionsMenu:
-		//g_engine->menu().openOptionsMenu();
+		g_engine->menu().openOptionsMenu();
 		break;
 	case MainMenuAction::Exit:
 	case MainMenuAction::AlsoExit:
@@ -214,12 +214,71 @@ const char *CheckBox::typeName() const { return "CheckBox"; }
 
 CheckBox::CheckBox(Room *room, ReadStream &stream)
 	: PhysicalObject(room, stream)
-	, b1(readBool(stream))
-	, _graph1(stream)
-	, _graph2(stream)
-	, _graph3(stream)
-	, _graph4(stream)
-	, _valueId(stream.readSint32LE()) {
+	, _isChecked(readBool(stream))
+	, _graphicUnchecked(stream)
+	, _graphicChecked(stream)
+	, _graphicHovered(stream)
+	, _graphicClicked(stream)
+	, _actionId(stream.readSint32LE()) {
+}
+
+void CheckBox::update() {
+	PhysicalObject::update();
+	if (!isEnabled())
+		return;
+	Graphic &baseGraphic = _isChecked ? _graphicChecked : _graphicUnchecked;
+	baseGraphic.update();
+	g_engine->drawQueue().add<AnimationDrawRequest>(baseGraphic, true, BlendMode::AdditiveAlpha);
+
+	if (_wasClicked) {
+		if (g_system->getMillis() - _clickTime > 500) {
+			_wasClicked = false;
+			trigger();
+		}
+	}
+	if (_isHovered) {
+		Graphic &hoverGraphic = _wasClicked ? _graphicClicked : _graphicHovered;
+		hoverGraphic.update();
+		g_engine->drawQueue().add<AnimationDrawRequest>(hoverGraphic, true, BlendMode::AdditiveAlpha);
+	}
+
+	// the original engine would stall the application as click delay.
+	// this would prevent bacterios arm in movie adventure being rendered twice for multiple checkboxes
+	// we can instead check the hovered state and prevent the arm (clicked/hovered graphic) being drawn
+}
+
+void CheckBox::loadResources() {
+	_wasClicked = _isHovered = false;
+	_graphicUnchecked.loadResources();
+	_graphicChecked.loadResources();
+	_graphicHovered.loadResources();
+	_graphicClicked.loadResources();
+}
+
+void CheckBox::freeResources() {
+	_graphicUnchecked.freeResources();
+	_graphicChecked.freeResources();
+	_graphicHovered.freeResources();
+	_graphicClicked.freeResources();
+}
+
+void CheckBox::onHoverStart() {
+	PhysicalObject::onHoverStart();
+	_isHovered = true;
+}
+
+void CheckBox::onHoverEnd() {
+	PhysicalObject::onHoverEnd();
+	_isHovered = false;
+}
+
+void CheckBox::onClick() {
+	_wasClicked = true;
+	_clickTime = g_system->getMillis();
+}
+
+void CheckBox::trigger() {
+	debug("CheckBox %d", _actionId);
 }
 
 const char *CheckBoxAutoAdjustNoise::typeName() const { return "CheckBoxAutoAdjustNoise"; }
