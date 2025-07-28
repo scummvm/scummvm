@@ -192,7 +192,7 @@ void Surface::frameRect(const Common::Rect &r, uint color) {
 	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
 
 	if (!tmp.isEmpty())
-	_surface.frameRect(r, color);
+		_surface.frameRect(r, color);
 }
 
 void Surface::drawEllipse(int x0, int y0, int x1, int y1, uint32 color, bool filled) {
