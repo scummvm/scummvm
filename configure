@@ -3264,7 +3264,7 @@ EOF
 		add_line_to_config_mk 'EMSCRIPTEN = 1'
 		_port_mk="backends/platform/sdl/emscripten/emscripten.mk"
 		append_var LDFLAGS "-s FORCE_FILESYSTEM"
-		append_var LDFLAGS "-s INITIAL_MEMORY=128MB -s TOTAL_STACK=32MB -s ALLOW_MEMORY_GROWTH=1"
+		append_var LDFLAGS "-s INITIAL_MEMORY=128MB -s STACK_SIZE=32MB -s ALLOW_MEMORY_GROWTH=1"
 		append_var LDFLAGS "-s ASYNCIFY=1 -s ASYNCIFY_STACK_SIZE=1048576"
 
 		if test "$_debug_build" = yes; then
