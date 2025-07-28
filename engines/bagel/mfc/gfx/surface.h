@@ -123,9 +123,7 @@ public:
 	const void *getPixels() const {
 		return _surface.getPixels();
 	}
-	void addDirtyRect(const Common::Rect &r) {
-		_surface.addDirtyRect(r);
-	}
+	void addDirtyRect(const Common::Rect &r);
 	void setPalette(const byte *colors, int start, int num) {
 		_surface.setPalette(colors, start, num);
 	}

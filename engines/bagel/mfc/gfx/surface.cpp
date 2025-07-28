@@ -123,10 +123,7 @@ void Surface::create(Graphics::ManagedSurface &surf, const Common::Rect &bounds)
 
 void Surface::setClipRect(const Common::Rect &r) {
 	_clipRect = r;
-
-	Common::Rect tmp = r;
-	tmp.translate(_viewportOrg.x, _viewportOrg.y);
-	_surface._clipRect = tmp;
+	_surface._clipRect = r;
 }
 
 Common::Rect Surface::getClipRect() const {
@@ -175,6 +172,14 @@ byte *Surface::getBasePtr(int x, int y) const {
 	y += _viewportOrg.y;
 	assert(x >= 0 && y >= 0 && x < this->w && y < this->h);
 	return (byte *)_surface.getBasePtr(x, y);
+}
+
+void Surface::addDirtyRect(const Common::Rect &r) {
+	Common::Rect tmp = r;
+	tmp.translate(_viewportOrg.x, _viewportOrg.y);
+	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
+
+	_surface.addDirtyRect(tmp);
 }
 
 void Surface::fillRect(const Common::Rect &r, uint color) {

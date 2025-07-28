@@ -158,8 +158,9 @@ void blit(Gfx::Surface *src, Gfx::Surface *dest,
 
 	blitInner(src, dest, srcRect, destPos, bgColor, mode);
 
-	dest->addDirtyRect(Common::Rect(destPos.x, destPos.y,
-		destPos.x + srcRect.width(), destPos.y + srcRect.height()));
+	Common::Rect dirtyRect(destPos.x, destPos.y,
+		destPos.x + srcRect.width(), destPos.y + srcRect.height());
+	dest->addDirtyRect(dirtyRect);
 }
 
 void stretchBlit(Gfx::Surface *src, Gfx::Surface *dest,
