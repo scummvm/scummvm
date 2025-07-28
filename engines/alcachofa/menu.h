@@ -36,11 +36,14 @@ public:
 	void continueGame();
 	void newGame();
 
+	void openOptionsMenu();
+
 private:
+	void setOptionsState();
+
 	bool
 		_isOpen = false,
 		_openAtNextFrame = false;
-
 	Room *_previousRoom = nullptr;
 };
 
