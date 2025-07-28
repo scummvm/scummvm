@@ -19,23 +19,13 @@
  *
  */
 
-#ifndef BACKENDS_PLATFORM_IOS7_IOS7_APP_DELEGATE_H
-#define BACKENDS_PLATFORM_IOS7_IOS7_APP_DELEGATE_H
+#ifndef BACKENDS_PLATFORM_IOS7_IOS7_SCENE_DELEGATE_H
+#define BACKENDS_PLATFORM_IOS7_IOS7_SCENE_DELEGATE_H
 
 #include <UIKit/UIKit.h>
 
-@class iPhoneView;
-
-
-@interface iOS7AppDelegate : NSObject<UIApplicationDelegate>
-
-+ (iOS7AppDelegate *)iOS7AppDelegate;
-+ (iPhoneView *)iPhoneView;
-
-#if TARGET_OS_IOS
-+ (UIInterfaceOrientation)currentOrientation;
-+ (void)setKeyWindow:(UIWindow *)window;
-#endif
+API_AVAILABLE(ios(13.0))
+@interface iOS7SceneDelegate : NSObject<UIWindowSceneDelegate>
 
 @end
 
