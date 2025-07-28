@@ -184,7 +184,7 @@ Common::Error MacVentureEngine::run() {
 					}
 				}
 
-				if (_gameState == kGameStateWinnig || _gameState == kGameStateLosing) {
+				if (_gameState == kGameStateWinning || _gameState == kGameStateLosing) {
 					endGame();
 				}
 			}
@@ -298,7 +298,7 @@ void MacVentureEngine::gameChanged() {
 
 void MacVentureEngine::winGame() {
 	_gui->showPrebuiltDialog(kWinGameDialog);
-	_gameState = kGameStateWinnig;
+	_gameState = kGameStateWinning;
 }
 
 void MacVentureEngine::loseGame() {

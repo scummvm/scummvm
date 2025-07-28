@@ -128,7 +128,7 @@ public:
 enum GameState {
 	kGameStateInit,
 	kGameStatePlaying,
-	kGameStateWinnig,
+	kGameStateWinning,
 	kGameStateLosing,
 	kGameStateQuitting
 };
