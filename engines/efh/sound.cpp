@@ -44,13 +44,13 @@ void EfhEngine::playNote(int frequencyIndex, int totalDelay) {
 	}
 }
 
-Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
+Common::CustomEventType EfhEngine::playSong(uint8 *buffer) {
 	debugC(3, kDebugEngine, "playSong");
 
 	_speaker = new Audio::PCSpeaker();
 	_speaker->init();
 
-	Common::KeyCode inputChar = Common::KEYCODE_INVALID;
+	Common::CustomEventType inputAction = kActionNone;
 	int totalDelay = 0;
 
 	int8 stopFl;
@@ -83,10 +83,10 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 
 		songDelay(10);
 		_system->getEventManager()->pollEvent(event);
-		if (event.type == Common::EVENT_KEYUP) {
-			inputChar = event.kbd.keycode;
+		if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+			inputAction = event.customType;
 			// Hack, sometimes there's a ghost event after the 2nd note
-			if (inputChar == Common::KEYCODE_ESCAPE || inputChar == Common::KEYCODE_RETURN)
+			if (inputAction == kActionSkipSong || inputAction == kActionSkipSongAndIntro)
 				stopFl = 0;
 		}
 	} while (stopFl != 0 && !shouldQuit());
@@ -94,7 +94,7 @@ Common::KeyCode EfhEngine::playSong(uint8 *buffer) {
 	delete _speaker;
 	_speaker = nullptr;
 
-	return inputChar;
+	return inputAction;
 }
 
 void EfhEngine::generateSound1(int lowFreq, int highFreq, int duration) {

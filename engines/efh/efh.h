@@ -266,7 +266,10 @@ enum TTSMenuRestriction {
 
 enum EFHAction {
 	kActionNone,
-	kActionExit,
+	kActionQuit,
+	kActionSkipVideo,
+	kActionSkipSong,
+	kActionSkipSongAndIntro,
 	kActionSave,
 	kActionLoad,
 	kActionMoveUp,
@@ -279,7 +282,135 @@ enum EFHAction {
 	kActionMoveDownRight,
 	kActionCharacter1Status,
 	kActionCharacter2Status,
-	kActionCharacter3Status
+	kActionCharacter3Status,
+	kActionYes,
+	kActionNo,
+	kActionCharacter1,
+	kActionCharacter2,
+	kActionCharacter3,
+	kActionCancelCharacterSelection,
+	kActionStartFight,
+	kActionLeave,
+	kActionStatus,
+	kActionTalk,
+	kActionAttack,
+	kActionDefend,
+	kActionHide,
+	kActionRun,
+	kActionTeamStatus,
+	kActionTerrain,
+	kActionEnemy1,
+	kActionEnemy2,
+	kActionEnemy3,
+	kActionEnemy4,
+	kActionEnemy5,
+	kActionCancelEnemySelection,
+	kActionreset,
+	kActionExitStatusMenu,
+	kActionActive,
+	kActionDrop,
+	kActionEquip,
+	kActionGive,
+	kActionInfo,
+	kActionPassive,
+	kActionTrade,
+	kActionUse,
+	kActionSelect,
+	kActionScrollDown,
+	kActionScrollUp,
+	kActionExitSubMenu,
+	kActionOption1,
+	kActionOption2,
+	kActionOption3,
+	kActionOption4,
+	kActionOption5,
+	kActionOption6,
+	kActionOption7,
+	kActionOption8,
+	kActionOption9,
+	kActionOption10,
+	kActionOption11,
+	kActionOption12,
+	kActionOption13,
+	kActionOption14,
+	kActionSound13,
+	kActionSound14,
+	kActionSound15,
+	kActionSound5,
+	kActionSound10,
+	kActionSound9,
+	kActionSound16,
+};
+
+struct EfhSelectionAction {
+	EFHAction _action;
+	int8 _id;
+};
+
+static const EfhSelectionAction _efhEnemySelectionCodes[] = {
+	{ kActionEnemy1, 0 },
+	{ kActionEnemy2, 1 },
+	{ kActionEnemy3, 2 },
+	{ kActionEnemy4, 3 },
+	{ kActionEnemy5, 4 },
+};
+
+static const EfhSelectionAction _efhTeamSelectionCodes[] = {
+	{ kActionCharacter1, 0 },
+	{ kActionCharacter2, 1 },
+	{ kActionCharacter3, 2 },
+};
+
+static const EfhSelectionAction _efhStatusMenuSubMenuCodes[] = {
+	{ kActionOption1, 0 },
+	{ kActionOption2, 1 },
+	{ kActionOption3, 2 },
+	{ kActionOption4, 3 },
+	{ kActionOption5, 4 },
+	{ kActionOption6, 5 },
+	{ kActionOption7, 6 },
+	{ kActionOption8, 7 },
+	{ kActionOption9, 8 },
+	{ kActionOption10, 9 },
+	{ kActionOption11, 10 },
+	{ kActionOption12, 11 },
+	{ kActionOption13, 12 },
+	{ kActionOption14, 13 },
+};
+
+enum EfhKeymapCode {
+	kKeymapDefault,
+	kKeymapMenu,
+	kKeymapSkipVideo,
+	kKeymapSkipSong,
+	kKeymapStatusMenu,
+	kKeymapStatusMenuNavigation,
+	kKeymapStatusMenuSubMenu,
+	kKeymapInteraction,
+	kKeymapFight,
+	kKeymapCharacterSelection,
+	kKeymapEnemySelection,
+	kKeymapDeathMenu,
+};
+
+struct EfhKeymap {
+	EfhKeymapCode _keymap;
+	Common::String _id;
+};
+
+static const EfhKeymap _efhKeymaps[] = {
+	{ kKeymapDefault, "efh-default" },
+	{ kKeymapMenu, "menu" },
+	{ kKeymapSkipVideo, "skip-video" },
+	{ kKeymapSkipSong, "skip-song" },
+	{ kKeymapStatusMenu, "status-menu" },
+	{ kKeymapStatusMenuNavigation, "status-menu-navigation" },
+	{ kKeymapStatusMenuSubMenu, "status-menu-submenu" },
+	{ kKeymapInteraction, "interaction" },
+	{ kKeymapFight, "fight" },
+	{ kKeymapCharacterSelection, "character-selection" },
+	{ kKeymapEnemySelection, "enemy-selection" },
+	{ kKeymapDeathMenu, "death-menu" },
 };
 
 class EfhEngine : public Engine {
@@ -316,7 +447,6 @@ private:
 	Common::Platform _platform;
 	int _loadSaveSlot;
 	bool _saveAuthorized;
-	Common::CustomEventType _customAction = kActionNone;
 
 	void initialize();
 	void playIntro();
@@ -515,7 +645,7 @@ private:
 	// Sound
 	void songDelay(int delay);
 	void playNote(int frequencyIndex, int totalDelay);
-	Common::KeyCode playSong(uint8 *buffer);
+	Common::CustomEventType playSong(uint8 *buffer);
 	void generateSound1(int lowFreq, int highFreq, int duration);
 	void generateSound2(int startFreq, int endFreq, int speed);
 	void generateSound3();
@@ -531,13 +661,14 @@ private:
 	void loadImageSet(int16 imageSetId, uint8 *buffer, uint8 **subFilesArray, uint8 *destBuffer);
 	uint32 uncompressBuffer(uint8 *compressedBuf, uint8 *destBuf);
 	int16 getRandom(int16 maxVal);
-	Common::KeyCode getLastCharAfterAnimCount(int16 delay, bool waitForTTS = true);
-	Common::KeyCode getInput(int16 delay);
-	Common::KeyCode waitForKey();
-	Common::KeyCode handleAndMapInput(bool animFl);
+	Common::CustomEventType getLastCharAfterAnimCount(int16 delay, bool waitForTTS = true);
+	Common::CustomEventType getInput(int16 delay);
+	Common::CustomEventType waitForKey();
+	Common::CustomEventType handleAndMapInput(bool animFl);
 	bool getValidationFromUser();
 	uint32 ROR(uint32 val, uint8 shiftVal);
 	Common::String getArticle(int pronoun);
+	void setKeymap(EfhKeymapCode keymapCode);
 
 	// Actions
 	void handleActionSave();
