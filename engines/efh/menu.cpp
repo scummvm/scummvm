@@ -21,6 +21,8 @@
 
 #include "efh/efh.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Efh {
 
 int16 EfhEngine::displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl, bool voiceText) {
@@ -141,21 +143,23 @@ bool EfhEngine::handleDeathMenu() {
 			displayFctFullScreen();
 	}
 
+	setKeymap(kKeymapDeathMenu);
+
 	for (bool found = false; !found && !shouldQuit();) {
-		Common::KeyCode input = waitForKey();
+		Common::CustomEventType input = waitForKey();
 		switch (input) {
-		case Common::KEYCODE_l:
+		case kActionLoad:
 			// If the user actually loads a savegame, it'll get _saveAuthorized from the savegame (always true) and will set 'found' to true.
 			// If 'found' remains false, it means the user cancelled the loading and still needs to take a decision
 			// Original is calling loadEfhGame() because there's only one savegame, so it's not ambiguous
 			loadGameDialog();
 			found = _saveAuthorized;
 			break;
-		case Common::KEYCODE_q:
+		case kActionQuit:
 			quitGame();
 			return true;
 			break;
-		case Common::KEYCODE_r:
+		case kActionreset:
 			loadEfhGame();
 			resetGame();
 			found = true;
@@ -168,6 +172,8 @@ bool EfhEngine::handleDeathMenu() {
 			break;
 		}
 	}
+
+	setKeymap(kKeymapDefault);
 
 	displayAnimFrames(0xFE, true);
 	return false;
@@ -419,7 +425,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 	buffer = "Name: " + buffer;
 	setTextPos(146, 27);
 	displayStringAtTextPos(buffer);
-	
+
 	sayText(buffer, kMenu);
 
 	if (_menuItemCounter <= 0) {
@@ -593,6 +599,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	_statusMenuActive = true;
 	_menuDepth = 0;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 	displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 
 	for (;;) {
@@ -601,47 +609,52 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		else
 			windowId = kEfhMenuEquip;
 
+		keymapper->disableAllGameKeymaps();
+		keymapper->getKeymap("status-menu-navigation")->setEnabled(true);
+		if (_menuDepth == 0)
+			keymapper->getKeymap("status-menu")->setEnabled(true);
+		else
+			keymapper->getKeymap("status-menu-submenu")->setEnabled(true);
 		do {
-			Common::KeyCode input = handleAndMapInput(false);
+			Common::CustomEventType input = handleAndMapInput(false);
 			if (_menuDepth == 0) {
 				switch (input) {
-				case Common::KEYCODE_a:
+				case kActionActive:
 					windowId = kEfhMenuActive;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_d:
+				case kActionDrop:
 					windowId = kEfhMenuDrop;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_e:
+				case kActionEquip:
 					windowId = kEfhMenuEquip;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_g:
+				case kActionGive:
 					windowId = kEfhMenuGive;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_i:
+				case kActionInfo:
 					windowId = kEfhMenuInfo;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_ESCAPE:
-				case Common::KEYCODE_l:
+				case kActionExitStatusMenu:
 					stopTextToSpeech();
 					windowId = kEfhMenuLeave;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_p:
+				case kActionPassive:
 					windowId = kEfhMenuPassive;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_t:
+				case kActionTrade:
 					windowId = kEfhMenuTrade;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
-				case Common::KEYCODE_u:
+				case kActionUse:
 					windowId = kEfhMenuUse;
-					input = Common::KEYCODE_RETURN;
+					input = kActionSelect;
 					break;
 				default:
 					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
@@ -653,17 +666,18 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				}
 			} else if (_menuDepth == 1) {
 				// in the sub-menus, only a list of selectable items is displayed
-				if (input >= Common::KEYCODE_a && input <= Common::KEYCODE_z) {
-					int16 var8 = input - Common::KEYCODE_a;
-					if (var8 < _menuItemCounter) {
-						curMenuLine = var8;
-						input = Common::KEYCODE_RETURN;
+				for (int i = 0; i < ARRAYSIZE(_efhStatusMenuSubMenuCodes); ++i) {
+					if (input == _efhStatusMenuSubMenuCodes[i]._action) {
+						if (_efhStatusMenuSubMenuCodes[i]._id < _menuItemCounter) {
+							curMenuLine = _efhStatusMenuSubMenuCodes[i]._id;
+							input = kActionSelect;
+						}
 					}
 				}
 			}
 
 			switch (input) {
-			case Common::KEYCODE_RETURN:
+			case kActionSelect:
 				// case 0xFA: Joystick button 1
 				if (_menuDepth == 0) {
 					menuId = windowId;
@@ -673,6 +687,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						_sayMenu = true;
 						_menuDepth = 1;
 						curMenuLine = 0;
+						keymapper->getKeymap("status-menu")->setEnabled(false);
+						keymapper->getKeymap("status-menu-submenu")->setEnabled(true);
 					}
 				} else if (_menuDepth == 1) {
 					if (_menuItemCounter == 0) {
@@ -681,27 +697,25 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						menuId = kEfhMenuInvalid;
 						_sayMenu = true;
 						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
+						keymapper->getKeymap("status-menu-submenu")->setEnabled(false);
+						keymapper->getKeymap("status-menu")->setEnabled(true);
 					} else {
 						selectedLine = curMenuLine;
 						selectionDoneFl = true;
 					}
 				}
 				break;
-			case Common::KEYCODE_ESCAPE:
+			case kActionExitSubMenu:
 				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = kEfhMenuInvalid;
 				stopTextToSpeech();
 				_sayMenu = true;
 				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
+				keymapper->getKeymap("status-menu-submenu")->setEnabled(false);
+				keymapper->getKeymap("status-menu")->setEnabled(true);
 				break;
-			case Common::KEYCODE_2:
-			case Common::KEYCODE_6:
-			// Added for ScummVM
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP2:
-			case Common::KEYCODE_KP6:
+			case kActionScrollDown:
 				// Original checks joystick axis: case 0xCC, 0xCF
 				if (_menuDepth == 0) {
 					if (++windowId > kEfhMenuLeave)
@@ -714,13 +728,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					}
 				}
 				break;
-			case Common::KEYCODE_4:
-			case Common::KEYCODE_8:
-			// Added for ScummVM
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP4:
-			case Common::KEYCODE_KP8:
+			case kActionScrollUp:
 				// Original checks joystick axis: case 0xC7, 0xCA
 				if (_menuDepth == 0) {
 					if (--windowId < kEfhMenuEquip)
@@ -740,6 +748,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 			prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 
 		} while (!selectionDoneFl && !shouldQuit()); // Loop until a menu entry is confirmed by the user by pressing the enter key
+
+		setKeymap(kKeymapDefault);
 
 		bool validationFl = true;
 
