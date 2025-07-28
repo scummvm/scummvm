@@ -243,8 +243,13 @@ void HypertextParser::drawAllText(const Common::Rect &textBounds, uint leftOffse
 			Common::String &line = wrappedLines[lineNumber];
 			horizontalOffset = 0;
 			newLineStart = false;
+
 			// Draw images
-			if (newlineTokens.front() <= totalCharsDrawn) {
+			if (newlineTokens.empty()) {
+				warning("HypertextParser::drawAllText():: newlineTokens list was empty at line %u out of %u wrapped lines", lineNumber+1, wrappedLines.size());
+			}
+
+			if (!newlineTokens.empty() && newlineTokens.front() <= totalCharsDrawn) {
 				newlineTokens.pop();
 				newLineStart = true;
 
