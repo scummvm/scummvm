@@ -244,12 +244,75 @@ const char *SlideButton::typeName() const { return "SlideButton"; }
 
 SlideButton::SlideButton(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
-	, i1(stream.readSint32LE())
-	, p1(Shape(stream).firstPoint())
-	, p2(Shape(stream).firstPoint())
-	, _graph1(stream)
-	, _graph2(stream)
-	, _graph3(stream) {
+	, _valueId(stream.readSint32LE())
+	, _minPos(Shape(stream).firstPoint())
+	, _maxPos(Shape(stream).firstPoint())
+	, _graphicIdle(stream)
+	, _graphicHovered(stream)
+	, _graphicClicked(stream) {
+}
+
+void SlideButton::draw() {
+	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
+	assert(optionsMenu != nullptr);
+
+	Graphic *activeGraphic;
+	if (optionsMenu->currentSlideButton() == this && g_engine->input().isMouseLeftDown())
+		activeGraphic = &_graphicClicked;
+	else
+		activeGraphic = isMouseOver() ? &_graphicHovered : &_graphicIdle;
+	activeGraphic->update();
+	g_engine->drawQueue().add<AnimationDrawRequest>(*activeGraphic, true, BlendMode::AdditiveAlpha);
+}
+
+void SlideButton::update() {
+	const auto mousePos = g_engine->input().mousePos2D();
+	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
+	assert(optionsMenu != nullptr);
+
+	if (optionsMenu->currentSlideButton() == this) {
+		if (!g_engine->input().isMouseLeftDown()) {
+			optionsMenu->currentSlideButton() = nullptr;
+			g_engine->menu().triggerOptionsValue((OptionsMenuValue)_valueId, _value);
+			update(); // to update the position
+		}
+		else {
+			int clippedMousePosY = CLIP(mousePos.y, _minPos.y, _maxPos.y);
+			_value = (_maxPos.y - clippedMousePosY) / (float)(_maxPos.y - _minPos.y);
+			_graphicClicked.topLeft() = Point((_minPos.x + _maxPos.x) / 2, clippedMousePosY);
+		}
+	}
+	else {
+		_graphicIdle.topLeft() = Point(
+			(_minPos.x + _maxPos.x) / 2,
+			(int16)(_maxPos.y - _value * (_maxPos.y - _minPos.y)));
+		if (!isMouseOver())
+			return;
+		_graphicHovered.topLeft() = _graphicIdle.topLeft();
+		if (g_engine->input().wasMouseLeftPressed())
+			optionsMenu->currentSlideButton() = this;
+		optionsMenu->clearLastSelectedObject();
+		g_engine->player().selectedObject() = nullptr;
+	}
+}
+
+void SlideButton::loadResources() {
+	_graphicIdle.loadResources();
+	_graphicHovered.loadResources();
+	_graphicClicked.loadResources();
+}
+
+void SlideButton::freeResources() {
+	_graphicIdle.freeResources();
+	_graphicHovered.freeResources();
+	_graphicClicked.freeResources();
+}
+
+bool SlideButton::isMouseOver() const {
+	const auto mousePos = g_engine->input().mousePos2D();
+	return
+		mousePos.x >= _minPos.x && mousePos.y >= _minPos.y &&
+		mousePos.x <= _maxPos.x && mousePos.y <= _maxPos.y;
 }
 
 const char *IRCWindow::typeName() const { return "IRCWindow"; }

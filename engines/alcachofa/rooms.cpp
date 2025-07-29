@@ -356,7 +356,12 @@ bool OptionsMenu::updateInput() {
 void OptionsMenu::loadResources() {
 	Room::loadResources();
 	_lastSelectedObject = nullptr;
+	_currentSlideButton = nullptr;
 	_idleArm = getObjectByName("Brazo");
+}
+
+void OptionsMenu::clearLastSelectedObject() {
+	_lastSelectedObject = nullptr;
 }
 
 ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream)

@@ -285,16 +285,24 @@ public:
 	SlideButton(Room *room, Common::ReadStream &stream);
 	virtual ~SlideButton() override = default;
 
+	inline float &value() { return _value; }
+
+	virtual void draw() override;
+	virtual void update() override;
+	virtual void loadResources() override;
+	virtual void freeResources() override;
 	virtual const char *typeName() const;
 
 private:
-	// TODO: Reverse engineer SlideButton
-	int32 i1;
-	Common::Point p1, p2;
+	bool isMouseOver() const;
+
+	float _value = 0;
+	int32 _valueId;
+	Common::Point _minPos, _maxPos;
 	Graphic
-		_graph1,
-		_graph2,
-		_graph3;
+		_graphicIdle,
+		_graphicHovered,
+		_graphicClicked;
 };
 
 class CheckBoxAutoAdjustNoise final : public CheckBox {
