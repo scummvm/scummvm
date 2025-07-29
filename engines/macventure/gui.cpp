@@ -91,8 +91,8 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	{ kMenuEdit,		"Paste",			kMenuActionPaste, 'V', false },
 	{ kMenuEdit,		"Clear",			kMenuActionClear, 'B', false },
 
-	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, false },
-	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, false },
+	{ kMenuSpecial,		"Clean Up",			kMenuActionCleanUp, 0, true },
+	{ kMenuSpecial,		"Mess Up",			kMenuActionMessUp, 0, true },
 
 	{ 0,				nullptr,				0, 0, false }
 };
@@ -116,6 +116,8 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_draggedObj.id = 0;
 	_draggedObj.pos = Common::Point(0, 0);
 	_dialog = nullptr;
+
+	_activeWinRef = kNoWindow;
 
 	_cursor = new Cursor(this);
 
@@ -293,7 +295,18 @@ const Graphics::Font &Gui::getCurrentFont() {
 }
 
 void Gui::bringToFront(WindowReference winID) {
-	_wm.setActiveWindow(findWindow(winID)->getId());
+	if (winID != kNoWindow) {
+		_wm.setActiveWindow(findWindow(winID)->getId());
+	}
+	_activeWinRef = winID;
+
+	Graphics::MacMenuItem *specialItem = _menu->getMenuItem("Special");
+
+	if (winID >= kInventoryStart && winID < 0x80) { // if inventory window
+		_wm.setMenuItemEnabled(specialItem, true);
+	} else {
+		_wm.setMenuItemEnabled(specialItem, false);
+	}
 }
 
 void Gui::setWindowTitle(WindowReference winID, const Common::String &string) {
@@ -1219,10 +1232,10 @@ void Gui::handleMenuAction(MenuAction action) {
 		warning("Unimplemented MacVenture Menu Action: Clear");
 		break;
 	case MacVenture::kMenuActionCleanUp:
-		warning("Unimplemented MacVenture Menu Action: Clean Up");
+		_engine->cleanUp(_activeWinRef);
 		break;
 	case MacVenture::kMenuActionMessUp:
-		warning("Unimplemented MacVenture Menu Action: Mess Up");
+		_engine->messUp(_activeWinRef);
 		break;
 	case MacVenture::kMenuActionCommand:
 		warning("Unimplemented MacVenture Menu Action: GENERIC");
@@ -1380,6 +1393,8 @@ bool Gui::processEvent(Common::Event &event) {
 
 bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kOutConsoleWindow);
+
 		if (_engine->needsClickToContinue()) {
 			_engine->selectControl(kClickToContinue);
 			return true;
@@ -1413,6 +1428,10 @@ bool Gui::processCommandEvents(WindowClick click, Common::Event &event) {
 }
 
 bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kMainGameWindow);
+	}
+
 	if (_engine->needsClickToContinue())
 		return true;
 
@@ -1420,6 +1439,10 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event &ev
 }
 
 bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kOutConsoleWindow);
+	}
+
 	if (_engine->needsClickToContinue())
 		return true;
 
@@ -1440,6 +1463,8 @@ bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event &event)
 		return true;
 
 	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kSelfWindow);
+
 		_engine->handleObjectSelect(1, kSelfWindow, false, false);
 	}
 	return true;
@@ -1447,6 +1472,8 @@ bool MacVenture::Gui::processSelfEvents(WindowClick click, Common::Event &event)
 
 bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kExitsWindow);
+
 		if (_engine->needsClickToContinue()) {
 			return true;
 		}
@@ -1477,6 +1504,10 @@ bool MacVenture::Gui::processExitsEvents(WindowClick click, Common::Event &event
 }
 
 bool MacVenture::Gui::processDiplomaEvents(WindowClick click, Common::Event &event) {
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(kDiplomaWindow);
+	}
+
 	if (_engine->needsClickToContinue())
 		return true;
 
@@ -1495,6 +1526,9 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 	if (_engine->needsClickToContinue())
 		return true;
 
+	if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(ref);
+	}
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
 		WindowData &data = findWindowData((WindowReference) ref);
 

@@ -182,6 +182,36 @@ struct QueuedSound {
 	ObjID reference;
 };
 
+struct Item {
+	ObjID id;
+	Common::Rect bounds;
+};
+
+class Layout {
+public:
+	void append(Item item) {
+		_items.push_back(item);
+		_width += 8 + item.bounds.width();
+	}
+
+	Item remove(uint index) {
+		Item out = _items.remove_at(index);
+		_width -= 8 + out.bounds.width();
+		return out;
+	}
+
+	Item at(uint index) {
+		return _items[index];
+	}
+
+	inline uint size() const { return _items.size(); }
+	inline int width() const { return _width; }
+
+private:
+	int _width = 8;
+	Common::Array<Item> _items;
+};
+
 class MacVentureEngine : public Engine {
 
 public:
@@ -231,6 +261,10 @@ public:
 	void printTexts();
 	void playSounds(bool pause);
 
+	Item removeOutlier(Layout &layout, bool flag, Common::Rect rect);
+	void cleanUp(WindowReference reference);
+	void messUp(WindowReference reference);
+	void moveItems(Common::Array<Item> &items, WindowReference reference);
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
 	void setDeltaPoint(Common::Point newPos);

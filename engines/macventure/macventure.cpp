@@ -637,6 +637,188 @@ void MacVentureEngine::playSounds(bool pause) {
 	}
 }
 
+Item MacVentureEngine::removeOutlier(Layout &layout, bool flag, Common::Rect rect) {
+	int max = flag ? 0x7fff : -0x8000;
+	bool first = true;
+	int outlier = -1;
+
+	for (int i = 0; i < (int)layout.size(); i++) {
+		Common::Rect childBounds = layout.at(i).bounds;
+		bool oob = (childBounds.bottom > rect.bottom || childBounds.top > rect.top);
+		if (flag)
+			oob = !oob;
+		if (first && oob) {
+			first = false;
+			max = flag ? 0x7fff : -0x8000;
+		}
+		if (first || oob) {
+			int center = childBounds.width() / 2 | 0;
+			bool over = false;
+			if (flag) {
+				over = (max >= center);
+			} else {
+				over = (max <= center);
+			}
+			if (over) {
+				outlier = i;
+				max = center;
+			}
+		}
+	}
+
+	return layout.remove(outlier);
+}
+
+void MacVentureEngine::cleanUp(WindowReference reference) {
+	const WindowData &data = _gui->getWindowData(reference);
+	Common::Rect windowBounds = _gui->findWindow(reference)->getInnerDimensions();
+	Common::Array<Item> items;
+
+	Layout onScreen, offScreen;
+	Layout line, overflow;
+
+	for (int i = data.children.size() - 1; i >= 0; i--) {
+		DrawableObject child = data.children[i];
+		Common::Rect childBounds = getObjBounds(child.obj);
+		if (childBounds.bottom > windowBounds.bottom || childBounds.top < windowBounds.top) {
+			offScreen.append(Item{child.obj, childBounds});
+		} else if (16 + childBounds.width() > windowBounds.width()) {
+			offScreen.append(Item{child.obj, childBounds});
+		} else {
+			onScreen.append(Item{child.obj, childBounds});
+		}
+	}
+
+	int y = windowBounds.top + 8;
+
+	while (onScreen.size() || offScreen.size()) {
+		int min = 0x7fff;
+		int minIdx = -1;
+		int height = 0;
+
+		// Find highest element onscreen
+		for (int i = onScreen.size() - 1; i >= 0; i--) {
+			Item child = onScreen.at(i);
+			if (child.bounds.top < min) {
+				min = child.bounds.top;
+				height = child.bounds.height();
+				minIdx = i;
+			}
+		}
+
+		if (minIdx != -1) {
+			// Remove it and put it on line
+			line.append(onScreen.remove(minIdx));
+			// along with all elements in same line
+			bool done;
+			do {
+				done = true;
+				for (int i = onScreen.size() - 1; i >= 0; i--) {
+					Item child = onScreen.at(i);
+					if (child.bounds.top < min + height) {
+						if (height < child.bounds.height()) {
+							done = false;
+							height = child.bounds.height();
+						}
+						line.append(onScreen.remove(i));
+					}
+				}
+			} while (!done);
+		}
+		// Line is too long? Put items back onscreen
+		while (line.size() && line.width() > windowBounds.width()) {
+			onScreen.append(removeOutlier(line, false, windowBounds));
+		}
+		// Find line height
+		height = 0;
+		for (int i = line.size() - 1; i >= 0; i--) {
+			Item child = line.at(i);
+			if (height < child.bounds.height())
+				height = child.bounds.height();
+		}
+		// While there's room, add offscreen items
+		while (offScreen.size() && line.width() < windowBounds.width()) {
+			Item outlier = removeOutlier(offScreen, true, windowBounds);
+
+			if (onScreen.size() && outlier.bounds.height() > height) {
+				overflow.append(outlier);
+			} else if (line.width() + 8 + outlier.bounds.width() <= windowBounds.width()) {
+				// Adjust line height
+				if (height < outlier.bounds.height())
+					height = outlier.bounds.height();
+				line.append(outlier);
+			} else {
+				overflow.append(outlier);
+			}
+		}
+		// Move all overflow back offscreen
+		while (overflow.size()) {
+			offScreen.append(overflow.remove(0));
+		}
+		// Is line empty? Put one offscreen item on there
+		if (!line.size() && offScreen.size()) {
+			Item offscreenItem = offScreen.remove(0);
+
+			if (height < offscreenItem.bounds.height())
+				height = offscreenItem.bounds.height();
+			line.append(offscreenItem);
+		}
+		int x = windowBounds.left + 8;
+		// Now add line to new positions
+		while (line.size()) {
+			Item outlier = removeOutlier(line, true, windowBounds);
+
+			Item toAdd;
+			toAdd.id = outlier.id;
+			toAdd.bounds = Common::Rect(Common::Point(x, y + (height - outlier.bounds.height()) / 2 | 0),
+										outlier.bounds.width(), outlier.bounds.height());
+			items.push_back(toAdd);
+
+			x += outlier.bounds.width() + 8;
+		}
+
+		y += height + 8;
+	}
+
+	moveItems(items, reference);
+}
+
+void MacVentureEngine::messUp(WindowReference reference) {
+	const WindowData &data = _gui->getWindowData(reference);
+	Common::Array<Item> items;
+
+	for (auto &child : data.children) {
+		Common::Point childMeasures = _gui->getObjMeasures(child.obj);
+		int scale = data.bounds.height() - childMeasures.y;
+		if (scale < 0)
+			scale = 0;
+		float f = randBetween(0, 10) / 10.0f;
+		int y = ((int)(f * scale) | 0) + data.bounds.top;
+
+		scale = data.bounds.width() - childMeasures.x;
+		if (scale < 0)
+			scale = 0;
+		f = randBetween(0, 10) / 10.0f;
+		int x = ((int)(f * scale) | 0) + data.bounds.left;
+
+		items.push_back(Item{child.obj, Common::Rect(Common::Point(x, y), childMeasures.x, childMeasures.y)});
+	}
+
+	moveItems(items, reference);
+}
+
+void MacVentureEngine::moveItems(Common::Array<Item> &items, WindowReference reference) {
+	for (auto &item : items) {
+		Common::Point pt = _gui->getObjMeasures(item.id);
+		if (pt.y != item.bounds.top || pt.x != item.bounds.left) {
+			_world->setObjAttr(item.id, kAttrPosX, item.bounds.left);
+			_world->setObjAttr(item.id, kAttrPosY, item.bounds.top);
+		}
+	}
+
+	updateWindow(reference);
+}
+
 void MacVentureEngine::updateControls() {
 	selectControl(kNoCommand);
 	_gui->clearControls();
