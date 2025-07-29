@@ -78,20 +78,7 @@ public:
 	};
 
 private:
-	class ClippedSurface : public Graphics::ManagedSurface {
-	public:
-		Common::Rect _clipRect;
-
-	public:
-		void addDirtyRect(const Common::Rect &r) override {
-			Common::Rect dirtyRect = r;
-			dirtyRect.clip(_clipRect);
-			Graphics::ManagedSurface::addDirtyRect(dirtyRect);
-		}
-	};
-
-private:
-	ClippedSurface _surface;
+	Graphics::ManagedSurface _surface;
 	Common::Rect _clipRect;
 	CPoint _viewportOrg;
 

@@ -28,8 +28,8 @@ namespace Gfx {
 Surface::XIterator::XIterator(YIterator *rowIter) :
 		_rowIter(rowIter), _surface(rowIter->_surface) {
 	const CPoint org = _surface->getViewportOrg();
-	_xMin = 0 - org.x;
-	_xMax = _surface->w - org.x;
+	_xMin = _surface->_clipRect.left - org.x;
+	_xMax = _surface->_clipRect.right - org.x;
 }
 
 Surface::XIterator &Surface::XIterator::operator=(int x) {
@@ -82,8 +82,8 @@ Surface::YIterator::YIterator(Surface *surface) : _surface(surface) {
 	assert(surface && surface->format.bytesPerPixel == 1);
 	CPoint org = surface->getViewportOrg();
 
-	_yMin = 0 - org.y;
-	_yMax = surface->h - org.y;
+	_yMin = surface->_clipRect.top - org.y;
+	_yMax = surface->_clipRect.bottom - org.y;
 }
 
 Surface::YIterator &Surface::YIterator::operator=(int y) {
@@ -123,7 +123,6 @@ void Surface::create(Graphics::ManagedSurface &surf, const Common::Rect &bounds)
 
 void Surface::setClipRect(const Common::Rect &r) {
 	_clipRect = r;
-	_surface._clipRect = r;
 }
 
 Common::Rect Surface::getClipRect() const {
@@ -131,9 +130,7 @@ Common::Rect Surface::getClipRect() const {
 }
 
 void Surface::resetClip() {
-	Common::Rect r(0, 0, _surface.w, _surface.h);
-	r.translate(-_viewportOrg.x, -_viewportOrg.y);
-	setClipRect(r);
+	setClipRect(Common::Rect(0, 0, _surface.w, _surface.h));
 }
 
 int Surface::intersectClipRect(const Common::Rect &r) {
@@ -177,7 +174,7 @@ byte *Surface::getBasePtr(int x, int y) const {
 void Surface::addDirtyRect(const Common::Rect &r) {
 	Common::Rect tmp = r;
 	tmp.translate(_viewportOrg.x, _viewportOrg.y);
-	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
+	tmp = tmp.findIntersectingRect(_clipRect);
 
 	_surface.addDirtyRect(tmp);
 }
@@ -185,7 +182,7 @@ void Surface::addDirtyRect(const Common::Rect &r) {
 void Surface::fillRect(const Common::Rect &r, uint color) {
 	Common::Rect tmp = r;
 	tmp.translate(_viewportOrg.x, _viewportOrg.y);
-	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
+	tmp = tmp.findIntersectingRect(_clipRect);
 
 	if (!tmp.isEmpty())
 		_surface.fillRect(tmp, color);
@@ -194,7 +191,7 @@ void Surface::fillRect(const Common::Rect &r, uint color) {
 void Surface::frameRect(const Common::Rect &r, uint color) {
 	Common::Rect tmp = r;
 	tmp.translate(_viewportOrg.x, _viewportOrg.y);
-	tmp = tmp.findIntersectingRect(Common::Rect(0, 0, _surface.w, _surface.h));
+	tmp = tmp.findIntersectingRect(_clipRect);
 
 	if (!tmp.isEmpty())
 		_surface.frameRect(r, color);
