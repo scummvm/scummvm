@@ -95,6 +95,7 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
+	bool executionContext = false;
 } ImGuiWindows;
 
 typedef struct ImGuiState {
@@ -214,6 +215,7 @@ void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script
 void showFuncList();
 void showScriptCasts();
 void showScripts();
+void showExecutionContext();
 
 extern ImGuiState *_state;
 
