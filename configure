@@ -5985,6 +5985,11 @@ if test "$_libmikmod" != no && test "$_libopenmpt" = no; then
 		LIBMIKMOD_LIBS=`$_libmikmodconfig --libs`
 		LIBMIKMOD_CFLAGS=`$_libmikmodconfig --cflags`
 
+		if test "$_host_os" = psp2 ; then
+			# On PSP2 -lpthread is needed
+			append_var LIBMIKMOD_LIBS "-lpthread"
+		fi
+
 		if test "$_libmikmod" = "auto"; then
 			_libmikmod=no
 
