@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-25 21:03+0000\n"
-"PO-Revision-Date: 2025-07-20 09:20+0000\n"
+"PO-Revision-Date: 2025-07-29 21:54+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6294,16 +6294,12 @@ msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
 #: engines/access/metaengine.cpp:196
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Move / Interact / Skip"
-msgstr "Movimento / Interazione / Salta dialogo"
+msgstr "Movimento / Interazione / Salta"
 
 #: engines/access/metaengine.cpp:208
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
-msgstr "Salta video"
+msgstr "Salta filmato"
 
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
@@ -7610,33 +7606,23 @@ msgid "Cutscene keymappings"
 msgstr "Mappatura comandi scene intermezzo"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main menu keymappings"
-msgstr "Mappature tasti menù"
+msgstr "Mappature tasti menù principale"
 
 #: engines/buried/metaengine.cpp:137
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Inventory keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappature tasti inventario"
 
 #: engines/buried/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select / Interact / Move"
 msgid "Select / Interact"
-msgstr "Selezione / Interazione / Movimento"
+msgstr "Selezione / Interazione"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "Controllo"
+msgstr "Tasto Control"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
 msgstr "Esci al menù principale"
 
@@ -7651,16 +7637,12 @@ msgid "Look down"
 msgstr "Guarda giù"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Esamina"
+msgstr "Guarda a sinistra"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Esamina"
+msgstr "Guarda a destra"
 
 #: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
@@ -7676,58 +7658,52 @@ msgstr "Movimento in avanti"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "Ripeti l'ultimo commento dell'IA"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "Biochip IA"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "Biochip vuoto"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "Biochip invisibilità"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
-#, fuzzy
-#| msgid "View evidence"
 msgid "Biochip evidence"
-msgstr "Mostra prove"
+msgstr "Biochip prove"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "Mostra file nascosti"
+msgstr "Biochip files"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "Biochip interfaccia"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "Biochip teletrasporto"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "Biochip traduttore"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Mostra suggerimenti"
+msgstr "Mostra punti"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
