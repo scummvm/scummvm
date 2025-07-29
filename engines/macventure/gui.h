@@ -129,6 +129,7 @@ public:
 	bool processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
+	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	const Graphics::Font& getCurrentFont();
 
@@ -175,6 +176,8 @@ private: // Attributes
 
 	Graphics::ManagedSurface _screen;
 	Graphics::MacWindowManager _wm;
+
+	WindowReference _activeWinRef;
 
 	Common::List<WindowData> *_windowData;
 	Common::Array<CommandButton> *_controlData;
@@ -243,7 +246,6 @@ private: // Methods
 	WindowReference findWindowAtPoint(Common::Point point);
 	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
-	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	// Utils
 	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref);
