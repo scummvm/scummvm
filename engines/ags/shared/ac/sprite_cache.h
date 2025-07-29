@@ -164,6 +164,7 @@ public:
 	void		DisposeAllFreeCached();
 	// Deletes all data and resets cache to the clear state
 	void        Reset();
+	void        Reset(std::vector<SpriteInfo> &sprInfos);
 	// Assigns new sprite for the given index; this sprite won't be auto disposed.
 	// *Deletes* the previous sprite if one was found at the same index.
 	// "flags" are SPF_* constants that define sprite's behavior in game.
@@ -227,7 +228,7 @@ private:
 	};
 
 	// Provided map of sprite infos, to fill in loaded sprite properties
-	std::vector<SpriteInfo> &_sprInfos;
+	std::vector<SpriteInfo> *_sprInfos;
 	// Array of sprite references
 	std::vector<SpriteData> _spriteData;
 	// Placeholder sprite, returned from operator[] for a non-existing sprite

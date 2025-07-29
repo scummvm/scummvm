@@ -407,7 +407,7 @@ void unload_game() {
 
 	// Reset all resource caches
 	// IMPORTANT: this is hard reset, including locked items
-	_GP(spriteset).Reset();
+	_GP(spriteset).Reset(_G(game)->SpriteInfos);
 }
 
 const char *Game_GetGlobalStrings(int index) {
