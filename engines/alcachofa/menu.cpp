@@ -112,7 +112,16 @@ void Menu::setOptionsState() {
 	Room *optionsMenu = g_engine->world().getRoomByName("MENUOPCIONES");
 	scumm_assert(optionsMenu != nullptr);
 
-	// TODO: Set music/sound volume
+	auto getSlideButton = [&] (const char *name) {
+		SlideButton *slideButton = dynamic_cast<SlideButton *>(optionsMenu->getObjectByName(name));
+		scumm_assert(slideButton != nullptr);
+		return slideButton;
+	};
+	SlideButton
+		*slideMusicVolume = getSlideButton("Slider Musica"),
+		*slideSpeechVolume = getSlideButton("Slider Sonido");
+	slideMusicVolume->value() = config.musicVolume() / 255.0f;
+	slideSpeechVolume->value() = config.speechVolume() / 255.0f;
 
 	if (!config.bits32())
 		config.highQuality() = false;
@@ -163,7 +172,24 @@ void Menu::triggerOptionsAction(OptionsMenuAction action) {
 		continueMainMenu();
 		break;
 	default:
-		warning("Unknown check box action: %d", (int32)action);
+		warning("Unknown options menu action: %d", (int32)action);
+		break;
+	}
+	setOptionsState();
+}
+
+void Menu::triggerOptionsValue(OptionsMenuValue valueId, float value) {
+	Config &config = g_engine->config();
+	switch (valueId) {
+	case OptionsMenuValue::Music:
+		config.musicVolume() = CLIP<uint8>((uint8)(value * 255), 0, 255);
+		break;
+	case OptionsMenuValue::Speech:
+		config.speechVolume() = CLIP<uint8>((uint8)(value * 255), 0, 255);
+		break;
+	default:
+		warning("Unknown options menu value: %d", (int32)valueId);
+		break;
 	}
 	setOptionsState();
 }

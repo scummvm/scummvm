@@ -95,9 +95,13 @@ public:
 	virtual bool updateInput() override;
 	virtual void loadResources() override;
 
+	void clearLastSelectedObject(); // to reset arm animation
+	inline SlideButton *&currentSlideButton() { return _currentSlideButton; }
+
 private:
 	ShapeObject *_lastSelectedObject = nullptr;
 	ObjectBase *_idleArm = nullptr;
+	SlideButton *_currentSlideButton;
 };
 
 class ConnectMenu final : public Room {

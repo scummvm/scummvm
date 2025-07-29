@@ -51,6 +51,11 @@ enum class OptionsMenuAction : int32 {
 	MainMenu
 };
 
+enum class OptionsMenuValue : int32 {
+	Music = 0,
+	Speech = 1
+};
+
 class Menu {
 public:
 	inline bool isOpen() const { return _isOpen; }
@@ -60,6 +65,7 @@ public:
 
 	void openOptionsMenu();
 	void triggerOptionsAction(OptionsMenuAction action);
+	void triggerOptionsValue(OptionsMenuValue valueId, float value);
 
 private:
 	void continueGame();
