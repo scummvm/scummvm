@@ -198,7 +198,8 @@ BOOL CDC::RectVisible(LPCRECT lpRect) const {
 int CDC::SelectClipRgn(CRgn *pRgn) {
 	// Custom clipping regions not supported in ScummVMM yet
 	assert(!pRgn);
-	return 2;	// SIMPLEREGION
+	impl()->getSurface()->resetClip();
+	return SIMPLEREGION;
 }
 
 int CDC::ExcludeClipRect(int x1, int y1, int x2, int y2) {
