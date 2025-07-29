@@ -115,6 +115,10 @@ public:
 	virtual byte getColor() { return _color; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
+
+#ifdef USE_TTS
+	virtual Common::U32String convertText(const Common::String &text, Common::Language language) const { return Common::U32String(text, _vm->getDialogCodePage()); }
+#endif
 };
 
 class CharsetRendererCommon : public CharsetRenderer {
@@ -281,6 +285,10 @@ public:
 
 	void setCurID(int32 id) override {}
 	int getCharWidth(uint16 chr) const override { return 8; }
+
+#ifdef USE_TTS
+	Common::U32String convertText(const Common::String &text, Common::Language language) const override;
+#endif
 };
 
 class CharsetRendererMac : public CharsetRendererCommon {

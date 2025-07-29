@@ -3156,6 +3156,15 @@ void ScummEngine_v5::o5_verbOps() {
 			loadPtrToResource(rtVerb, slot, nullptr);
 			if (slot == 0)
 				_res->nukeResource(rtVerb, slot);
+
+#ifdef USE_TTS
+			if (verb == 100 && vs->curmode == 1) {	// Sentence verb
+				_voiceNextString = true;
+			} else {
+				_voiceNextString = false;
+			}
+#endif
+
 			vs->type = kTextVerbType;
 			vs->imgindex = 0;
 			break;

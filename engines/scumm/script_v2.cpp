@@ -830,6 +830,7 @@ void ScummEngine_v2::o2_verbOps() {
 	int verb = fetchScriptByte();
 	int slot, state;
 
+	Common::TextToSpeechManager::Action ttsAction = Common::TextToSpeechManager::INTERRUPT;
 	switch (verb) {
 	case 0:		// SO_DELETE_VERBS
 		slot = getVarOrDirectByte(PARAM_1) + 1;
@@ -894,6 +895,13 @@ void ScummEngine_v2::o2_verbOps() {
 			vs->curRect.top = y;
 		}
 
+#ifdef USE_TTS
+		if (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) {
+			ttsAction = Common::TextToSpeechManager::QUEUE;
+			_voiceNextString = true;
+		}
+#endif
+
 		// FIXME: these keyboard map depends on the language of the game.
 		// E.g. a german keyboard has 'z' and 'y' swapped, while a french
 		// keyboard starts with "azerty", etc.
@@ -922,7 +930,7 @@ void ScummEngine_v2::o2_verbOps() {
 	}
 
 	// Force redraw of the modified verb slot
-	drawVerb(slot, 0);
+	drawVerb(slot, 0, ttsAction);
 	verbMouseOver(0);
 }
 

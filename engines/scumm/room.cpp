@@ -154,6 +154,15 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	_currentRoom = room;
 	VAR(VAR_ROOM) = room;
 
+#ifdef USE_TTS
+	if (_game.id == GID_PASS && _roomResource == 2 && room != _roomResource) {
+		for (uint index = 0; index < ARRAYSIZE(_passHelpButtons); ++index) {
+			_passHelpButtons[index].clear();
+		}
+		_voicePassHelpButtons = false;
+	}
+#endif
+
 	if (room >= 0x80 && _game.version < 7 && _game.heversion <= 71)
 		_roomResource = _resourceMapper[room & 0x7F];
 	else

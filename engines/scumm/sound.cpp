@@ -426,7 +426,12 @@ void Sound::processSfxQueues() {
 #endif
 		}
 
+#ifdef USE_TTS
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (finished && (!ConfMan.getBool("subtitles") || _vm->_talkDelay == 0) && (!ttsMan || !ttsMan->isSpeaking())) {
+#else
 		if (finished && (!ConfMan.getBool("subtitles") || _vm->_talkDelay == 0)) {
+#endif
 			if (!(_vm->_game.version == 8 && _vm->VAR(_vm->VAR_HAVE_MSG) == 0))
 				_vm->stopTalk();
 		}

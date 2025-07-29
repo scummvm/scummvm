@@ -3532,6 +3532,9 @@ void ScummEngine::actorTalk(const byte *msg) {
 	if (VAR_CHARCOUNT != 0xFF)
 		VAR(VAR_CHARCOUNT) = 0;
 	_haveActorSpeechMsg = true;
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
 	displayDialog();
 }
 
@@ -3589,6 +3592,9 @@ void ScummEngine::stopTalk() {
 		setTalkingActor(0);
 	}
 
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
 	_keepText = false;
 	if (_game.version >= 7) {
 #ifdef ENABLE_SCUMM_7_8
