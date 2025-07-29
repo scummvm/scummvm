@@ -225,6 +225,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gothos",				"Gothos" },
 	{ "grackon",			"Grackon's Curse" },
 	{ "grammarplaytime2",	"Grammar Playtime Vol.2: Asking Questions" },
+	{ "greveholm1",			"The Mystery at Greveholm" },
 	{ "gundam0079",			"Gundam 0079: The War for Earth" },
 	{ "guscarn",			"Gus Goes to the Kooky Carnival" },
 	{ "gusmuse",			"Gus Goes to the Megarific Museum" },
@@ -1524,7 +1525,9 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "brspel",				"BR spel" },
 	{ "djuphavsjakten",		"Djuphavsjakten" },
 	{ "ernie",				"Ernie: Broke in Bayonne" },  // aka Ernie: Pank i Bayonne
-	{ "femmyrordemo",		"Fem myror är fler än fyra elefanter - Demo" },	//10 games from parts 1 and 2
+	{ "femmyrorp1",			"Fem myror är fler än fyra elefanter - Första delen" },  // part 1
+	{ "femmyrorp2",			"Fem myror är fler än fyra elefanter - Andra delen" },  // part 2
+	{ "femmyrorhem",		"Fem myror är fler än fyra elefanter - Hemglass version" },  //10 games from parts 1 and 2
 	{ "garygadget2",		"Bygg båtar med Mulle Meck" },              // First game listed under English
 	{ "garygadget3",		"Bygg flygplan med Mulle Meck" },
 	{ "garygadget4",		"Bygg hus med Mulle Meck" },
@@ -7024,6 +7027,20 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on Disc Inferno from APC magazine (Australia), Dec 1999
 	WINDEMO1("greeneggs", "Demo", "seuss95.exe", "3460ad87d2ba57104e2810a77b53c220", 2555603, 500),
 
+	// Includes 10 languages
+	// Mac version requires installation
+	MACGAME1("greveholm1", "",	 "Greveholm FAT", "rt:5159ed59723edbcaca15cf2938c203a2", 719056, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:e7947bacf3e98de5a656bee4c5fbcde1", 719055, Common::FR_FRA, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:19b52e1257f63445dcc72c823b26fcdb", 719055, Common::DE_DEU, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:4f2aef91a87dff3cb6d961d0717c2465", 719055, Common::ES_ESP, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:b898e050b8cd479825f11dac1ab1e9eb", 719055, Common::IT_ITA, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:6e67dfd90444ea04b59ce6dd4db4c0ef", 719055, Common::NL_NLD, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:f0ab4e7d3e83673aa4f93a060ab79aaa", 719055, Common::DA_DNK, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:0bb2f4dc3c0e4c5b113967e09fd39f7a", 719056, Common::NB_NOR, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:19b52e1257f63445dcc72c823b26fcdb", 719055, Common::SV_SWE, 501),
+	MACGAME1_l("greveholm1", "", "Greveholm FAT", "rt:3179bc0f9932e8ccb80e2536e7c381bc", 719055, Common::FI_FIN, 501),
+	WINGAME1("greveholm1", "", "SETUP/GREVE32.EXE", "t:b584dc77011d2fe616c9afceded75198", 1519419, 501),
+
 	// Demo is from the covermount of Joystick (France) N°77 Dec 1996 (CD-ROM Collection N°19)
 	MACGAME1_l("guignols2", "", "Le Cauchemar de PPD", "r:f3817a8eca9efb143a23b76525dedfa9", 718125, Common::FR_FRA, 501),
 	WINGAME1_l("guignols2", "", "CPPD.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1465338, Common::FR_FRA, 501),
@@ -9275,11 +9292,17 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2("jewels1", "", "Jewels.exe",			"t:b362017d018a849198bd0a4f3c469e0a", 2023828,
 							"JOTO/intro.dxr",		"d:f5a9969070ef59b66aa4474bc8ef684e",	21136, 700),
 
-	// Fem myror är fler än fyra elefanter, Första & Andra delen + Hemglass demo
-	// BreakinBenny: Dedicated to the memory of Magnus Härenstam, Brasse Brännström and Eva Remaeus!
-	MACGAME1_l("femmyrordemo", "Hemglass Demo", "MEDIA/Fem myror 2", "r:0944b962ebb00f4b5d5149d220f8449b", 111222, Common::SV_SWE, 702),
-	WINGAME1_l("femmyrordemo", "Hemglass Demo", "MEDIA/femmyror.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2619547, Common::SV_SWE, 702),
+	// Title translates as "Five Ants are More than Four Elephants", based on TV show for children
+	MACGAME1_l("femmyrorp1", "", "MEDIA/Fem myror",	   "rt:d71a4bfa02911e8d80a2af0658632d84",  113486, Common::SV_SWE, 702),
+	WINGAME1_l("femmyrorp1", "", "MEDIA/femmyror.exe", "t:bf79978f3b5615dc2a649adfe495d5ed",  2616176, Common::SV_SWE, 702),
+	MACGAME2_l("femmyrorp2", "", "MEDIA/Fem myror 2",  "rt:9534124956366aac76e971245f2a268c",  113494,
+								 "MEDIA/drive.dxr",	   "d:6cf4e1a6243dfd14fa31eec46e0d5b1f",   813968, Common::SV_SWE, 702),
+	WINGAME2_l("femmyrorp2", "", "MEDIA/femmyror.exe", "t:43b50ede4f3dc75d44d1597e40a44465",  2619547,
+								 "MEDIA/drive.dxr",	   "f:6cf4e1a6243dfd14fa31eec46e0d5b1f",   813968, Common::SV_SWE, 702),
 
+	// Special Hemglass edition containing a selection of games from the full version
+	MACGAME1_l("femmyrorhem", "", "MEDIA/Fem myror 2",	"rt:0c1b651e859910726f8fd3dc62ae6fb3",  111222, Common::SV_SWE, 702),
+	WINGAME1_l("femmyrorhem", "", "MEDIA/femmyror.exe", "t:43b50ede4f3dc75d44d1597e40a44465",  2619547, Common::SV_SWE, 702),
 
 	// All of the installers also use Director
 	// Mac filename is Starta Jönssonligan
