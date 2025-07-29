@@ -351,5 +351,63 @@ void showFuncList() {
 	ImGui::End();
 }
 
+void showExecutionContext() {
+	if (!_state->_w.executionContext)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(360, 240), ImGuiCond_FirstUseEver);
+
+	Director::Lingo *lingo = g_director->getLingo();
+
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
+		if (ImGui::CollapsingHeader("Backtrace", ImGuiTreeNodeFlags_DefaultOpen)) {
+			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+		}
+
+		if (ImGui::CollapsingHeader("Scripts", ImGuiTreeNodeFlags_DefaultOpen)) {
+			updateCurrentScript();
+
+			if (_state->_functions._showScript) {
+				const char *currentScript = nullptr;
+
+				if (_state->_functions._current < _state->_functions._scripts.size()) {
+					currentScript = _state->_functions._scripts[_state->_functions._current].handlerName.c_str();
+				}
+
+				if (ImGui::BeginCombo("##handlers", currentScript)) {
+					for (uint i = 0; i < _state->_functions._scripts.size(); i++) {
+						auto &script = _state->_functions._scripts[i];
+						bool selected = i == _state->_functions._current;
+						if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
+							_state->_functions._current = i;
+						}
+					}
+					ImGui::EndCombo();
+				}
+
+				if (!_state->_functions._scripts[_state->_functions._current].oldAst) {
+					ImGui::SameLine(0, 20);
+					ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._showByteCode, true); // Lingo
+					ImGui::SetItemTooltip("Lingo");
+					ImGui::SameLine();
+
+					ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
+					ImGui::SetItemTooltip("Bytecode");
+				}
+
+				ImGui::Separator();
+				const ImVec2 childsize = ImGui::GetContentRegionAvail();
+				ImGui::BeginChild("##script", childsize);
+				ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
+				renderScript(script, _state->_functions._showByteCode);
+				ImGui::EndChild();
+			}
+		}
+	}
+	ImGui::End();
+
+}
+
 } // namespace DT
 } // namespace Director

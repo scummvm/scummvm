@@ -355,12 +355,12 @@ void onImGuiRender() {
 			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
 			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
 			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
-			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 			ImGui::MenuItem("Watched Vars", NULL, &_state->_w.watchedVars);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
+			ImGui::MenuItem("Execution Context", NULL, &_state->_w.executionContext);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
@@ -376,11 +376,10 @@ void onImGuiRender() {
 	}
 
 	showScriptCasts();
-	showScripts();
+	showExecutionContext();
 
 	showControlPanel();
 	showVars();
-	showCallStack();
 	showChannels();
 	showCast();
 	showFuncList();

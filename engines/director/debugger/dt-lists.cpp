@@ -29,19 +29,6 @@
 namespace Director {
 namespace DT {
 
-void showCallStack() {
-	if (!_state->_w.callStack)
-		return;
-
-	Director::Lingo *lingo = g_director->getLingo();
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("CallStack", &_state->_w.callStack)) {
-		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
-	}
-	ImGui::End();
-}
-
 static void cacheVars() {
 	// take a snapshot of the variables every 500 ms
 	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
