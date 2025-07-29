@@ -136,7 +136,7 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void createTextRenderer(GlyphRenderer_v7 *gr) override;
-	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags, bool ttsVoiceText = true, bool ttsIsSubtitle = false);
 	void drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags);
 	void drawBlastTexts() override;
 	void showMessageDialog(const byte *msg) override;
@@ -166,7 +166,7 @@ protected:
 	void setCursorTransparency(int a) override;
 	void setCursorFromImg(uint img, uint room, uint imgindex) override;
 
-	void drawVerb(int verb, int mode) override;
+	void drawVerb(int verb, int mode, Common::TextToSpeechManager::Action ttsAction = Common::TextToSpeechManager::INTERRUPT) override;
 
 	void pauseEngineIntern(bool pause) override;
 
@@ -175,10 +175,18 @@ protected:
 	struct BlastText : TextObject {
 		Common::Rect rect;
 		TextStyleFlags flags;
+#ifdef USE_TTS
+		bool voiceText;
+		bool isSubtitle;
+#endif
 
 		void clear() {
 			this->TextObject::clear();
 			rect = Common::Rect();
+#ifdef USE_TTS
+			voiceText = true;
+			isSubtitle = false;
+#endif
 		}
 	};
 

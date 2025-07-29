@@ -116,6 +116,19 @@ void ScummEngine_v0::verbDemoMode() {
 	for (i = 0; i < 6; i++) {
 		verbDrawDemoString(i);
 	}
+
+#ifdef USE_TTS
+	Common::String ttsMessage;
+	for (i = 0; i < 6; i++) {
+		ttsMessage += v0DemoStr[i].str;
+		ttsMessage += "\n";
+	}
+
+	if (_previousSaid != ttsMessage) {
+		sayText(ttsMessage);
+		_previousSaid = ttsMessage;
+	}
+#endif
 }
 
 void ScummEngine_v0::verbDrawDemoString(int VerbDemoNumber) {
@@ -528,8 +541,15 @@ void ScummEngine::handleMouseOver(bool updateInventory) {
 	if (_completeScreenRedraw) {
 		verbMouseOver(0);
 	} else {
-		if (_cursor.state > 0)
-			verbMouseOver(findVerbAtPos(_mouse.x, _mouse.y));
+		if (_cursor.state > 0) {
+			int verb = findVerbAtPos(_mouse.x, _mouse.y);
+			verbMouseOver(verb);
+#ifdef USE_TTS
+			if (verb == 0) {
+				_previousVerb = 0;
+			}
+#endif
+		}
 	}
 }
 
@@ -1012,7 +1032,7 @@ int ScummEngine::findVerbAtPos(int x, int y) const {
 }
 
 #ifdef ENABLE_SCUMM_7_8
-void ScummEngine_v7::drawVerb(int verb, int mode) {
+void ScummEngine_v7::drawVerb(int verb, int mode, Common::TextToSpeechManager::Action ttsAction) {
 	VerbSlot *vs;
 
 	if (!verb)
@@ -1088,7 +1108,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 			vs->curRect.right = vs->curRect.left + finalWidth;
 			vs->curRect.bottom += _verbLineSpacing;
 		} else {
-			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags);
+			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags, color == vs->hicolor);
 		}
 
 		vs->oldRect = vs->curRect;
@@ -1098,7 +1118,7 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 }
 #endif
 
-void ScummEngine::drawVerb(int verb, int mode) {
+void ScummEngine::drawVerb(int verb, int mode, Common::TextToSpeechManager::Action ttsAction) {
 	VerbSlot *vs;
 	bool tmp;
 	int pixelYOffset = (_game.platform == Common::kPlatformC64) ? (_game.id == GID_ZAK ? 2 : 1) : 0;
@@ -1144,8 +1164,21 @@ void ScummEngine::drawVerb(int verb, int mode) {
 		if (!msg)
 			return;
 
+#ifdef USE_TTS
+		// If _voiceNextString is true at this point, it's not a typical selected verb that's filtered with _previousVerb,
+		// so use the previously said text instead
+		if (_voiceNextString) {
+			_checkPreviousSaid = true;
+		}
+
+		if (_string[4].color == vs->hicolor && _previousVerb != verb) {
+			_voiceNextString = true;
+			_previousVerb = verb;
+		}
+#endif
+
 		tmp = _charset->_center;
-		drawString(4, msg);
+		drawString(4, msg, ttsAction);
 		_charset->_center = tmp;
 
 		if (isRtl)

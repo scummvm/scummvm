@@ -1523,6 +1523,14 @@ Common::Error ScummEngine::init() {
 	if (!ConfMan.hasKey("talkspeed", _targetName))
 		setTalkSpeed(_defaultTextSpeed);
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+#endif
+
 	_setupIsComplete = true;
 
 	syncSoundSettings();
@@ -2894,6 +2902,28 @@ void ScummEngine::scummLoop(int delta) {
 	_talkDelay -= delta;
 	if (_talkDelay < 0)
 		_talkDelay = 0;
+
+#ifdef USE_TTS
+	if (_game.id == GID_PASS && _roomResource == 2) {
+		int obj = findObject(_mouse.x, _mouse.y);
+		if (obj != 0) {
+			int adjustedObj = obj - 956;
+			if (adjustedObj >= 0 && adjustedObj < ARRAYSIZE(_passHelpButtons) && _previousSaid != _passHelpButtons[adjustedObj]) {
+				if (_voicePassHelpButtons) {
+					sayText(_passHelpButtons[adjustedObj], Common::TextToSpeechManager::INTERRUPT);
+				}
+				
+				_previousSaid = _passHelpButtons[adjustedObj];
+			}
+		} else {
+			_previousSaid.clear();
+		}
+
+		if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
+			stopTextToSpeech();
+		}
+	}
+#endif
 
 	// Record the current ego actor before any scripts (including input scripts)
 	// get a chance to run.

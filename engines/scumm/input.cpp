@@ -645,6 +645,10 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 					   ks.keycode != Common::KEYCODE_RALT    &&
 					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
 
+#ifdef USE_TTS
+			sayButtonText();
+#endif
+
 			if (validKey || leftBtnClicked || rightBtnClicked || (handleMouseWheel && _mouseWheelFlag))
 				return;
 
@@ -671,6 +675,10 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 			ks = _keyPressed;
 			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
 			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
+
+#ifdef USE_TTS
+			sayButtonText();
+#endif
 
 			if (shouldQuit())
 				return;
@@ -1003,6 +1011,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				int8 oldCursorState = _cursor.state;
 				_cursor.state = (_game.id == GID_MONKEY && _game.platform == Common::kPlatformMacintosh) ? 1 : 0;
 				CursorMan.showMouse(_cursor.state > 0);
+#ifdef USE_TTS
+				stopTextToSpeech();
+#endif
 				// "Game Paused.  Press SPACE to Continue."
 				if (_game.version > 4)
 					showBannerAndPause(0, -1, getGUIString(gsPause));
