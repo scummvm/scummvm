@@ -700,12 +700,12 @@ public:
 	/**
 	 * To discard some directories we know have no chance to be add-ons
 	 */
-	virtual bool dirCanBeGameAddOn(Common::FSDirectory dir) const;
+	virtual bool dirCanBeGameAddOn(const Common::FSDirectory &dir) const;
 
 	/**
 	 * To display a warning if a directory likely to be an add-on does not match anything
 	 */
-	virtual bool dirMustBeGameAddOn(Common::FSDirectory dir) const;
+	virtual bool dirMustBeGameAddOn(const Common::FSDirectory &dir) const;
 
 	/**
 	 * Update the add-ons targets associated with a base game (silently, unless some unsupported version is detected).

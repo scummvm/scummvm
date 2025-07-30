@@ -114,7 +114,7 @@ bool GobEngine::gameTypeHasAddOns() const {
 
 
 // Accelerator, to discard some directories we know have no chance to be add-ons
-bool GobEngine::dirCanBeGameAddOn(Common::FSDirectory dir) const {
+bool GobEngine::dirCanBeGameAddOn(const Common::FSDirectory &dir) const {
 	if (getGameType() == kGameTypeAdibou2)
 		return dir.hasFile("intro_ap.stk");
 
@@ -122,7 +122,7 @@ bool GobEngine::dirCanBeGameAddOn(Common::FSDirectory dir) const {
 }
 
 // To display a warning if a directory likely to be an add-on does not match anything
-bool GobEngine::dirMustBeGameAddOn(Common::FSDirectory dir) const {
+bool GobEngine::dirMustBeGameAddOn(const Common::FSDirectory &dir) const {
 	if (getGameType() == kGameTypeAdibou2)
 		return dir.hasFile("intro_ap.stk");
 

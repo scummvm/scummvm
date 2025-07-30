@@ -263,8 +263,8 @@ public:
 
 	GameType getGameType(const char *gameId) const;
 	bool gameTypeHasAddOns() const override;
-	bool dirCanBeGameAddOn(Common::FSDirectory dir) const override;
-	bool dirMustBeGameAddOn(Common::FSDirectory dir) const override;
+	bool dirCanBeGameAddOn(const Common::FSDirectory &dir) const override;
+	bool dirMustBeGameAddOn(const Common::FSDirectory &dir) const override;
 
 	/**
 	 * Used to obtain the game version as a fallback

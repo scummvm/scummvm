@@ -1142,11 +1142,11 @@ bool Engine::gameTypeHasAddOns() const {
 	return false;
 }
 
-bool Engine::dirCanBeGameAddOn(Common::FSDirectory) const {
+bool Engine::dirCanBeGameAddOn(const Common::FSDirectory &) const {
 	return true;
 }
 
-bool Engine::dirMustBeGameAddOn(Common::FSDirectory) const {
+bool Engine::dirMustBeGameAddOn(const Common::FSDirectory &) const {
 	return false;
 }
 
