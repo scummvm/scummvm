@@ -435,6 +435,14 @@ bool MacWindow::isInResizeButton(int x, int y) const {
 		bRight = _macBorder.getOffset().right;
 		bBottom = _macBorder.getOffset().bottom;
 	}
+	if (_macBorder.getOffset().resizeButtonTop > -1 && _macBorder.getOffset().resizeButtonHeight > 0) {
+		int resizeButtonTop = _macBorder.getOffset().resizeButtonTop;
+		int resizeHeight = _macBorder.getOffset().resizeButtonHeight;
+
+		if (bBottom != resizeButtonTop) {
+			return (x >= _innerDims.right && x < _innerDims.right + bRight && y >= _innerDims.bottom - resizeHeight && y < _innerDims.bottom);
+		}
+	}
 	return (x >= _innerDims.right && x < _innerDims.right + bRight && y >= _innerDims.bottom && y < _innerDims.bottom + bBottom);
 }
 
