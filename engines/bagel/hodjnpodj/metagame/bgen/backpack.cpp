@@ -103,7 +103,7 @@ static  int         nFirstSlot = 0;                 // first item in current inv
 BOOL CBackpack::SetupKeyboardHook(void) {
 	pBackpackDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPPACKHOOKPROC)GetProcAddress(hDLLInst, "BackpackHookProc");
+	lpfnKbdHook = &BackpackHookProc;
 	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
 		return (FALSE);
 
