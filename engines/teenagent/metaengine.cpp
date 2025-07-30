@@ -199,7 +199,7 @@ Common::KeymapArray TeenAgentMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SKIPDLG", _("Skip dialog"));
-	act->setCustomEngineActionEvent(kActionSkipDialog);
+	act->setCustomEngineActionEvent(kActionEventSkipDialog);
 	act->addDefaultInputMapping("MOUSE_LEFT");
 	act->addDefaultInputMapping("MOUSE_RIGHT");
 	act->addDefaultInputMapping("SPACE");
@@ -207,25 +207,25 @@ Common::KeymapArray TeenAgentMetaEngine::initKeymaps(const char *target) const {
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("CLOSEINV", _("Close inventory"));
-	act->setCustomEngineActionEvent(kActionCloseInventory);
+	act->setCustomEngineActionEvent(kActionEventCloseInventory);
 	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("TOGGLEINV", _("Toggle inventory"));
-	act->setCustomEngineActionEvent(kActionToggleInventory);
+	act->setCustomEngineActionEvent(kActionEventToggleInventory);
 	act->addDefaultInputMapping("RETURN");
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Common::Action("SKIPINTRO", _("Skip intro"));
-	act->setCustomEngineActionEvent(kActionSkipIntro);
+	act->setCustomEngineActionEvent(kActionEventSkipIntro);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
 	// I18N: Speeds up the game to twice its normal speed
 	act = new Common::Action("FASTMODE", _("Toggle fast mode"));
-	act->setCustomEngineActionEvent(kActionFastMode);
+	act->setCustomEngineActionEvent(kActionEventFastMode);
 	act->addDefaultInputMapping("C+f");
 	act->addDefaultInputMapping("JOY_UP");
 	engineKeyMap->addAction(act);

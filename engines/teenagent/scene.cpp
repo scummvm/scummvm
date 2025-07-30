@@ -483,7 +483,7 @@ bool Scene::processEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch (event.customType) {
-		case kActionSkipIntro:
+		case kActionEventSkipIntro:
 			if (intro) {
 				intro = false;
 				clearMessage();
@@ -500,7 +500,7 @@ bool Scene::processEvent(const Common::Event &event) {
 				return true;
 			}
 			break;
-		case kActionSkipDialog:
+		case kActionEventSkipDialog:
 			if (!message.empty() && messageFirstFrame == 0) {
 				_vm->stopTextToSpeech();
 				clearMessage();

@@ -655,7 +655,7 @@ Common::Error TeenAgentEngine::run() {
 			debug(5, "event");
 			switch (event.type) {
 			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-				if (event.customType == kActionFastMode) {
+				if (event.customType == kActionEventFastMode) {
 					_markDelay = _markDelay == 80 ? 40 : 80;
 					debug(5, "markDelay = %u", _markDelay);
 				}

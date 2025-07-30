@@ -254,11 +254,11 @@ bool Inventory::processEvent(const Common::Event &event) {
 		return true;
 
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		if (_active && event.customType == kActionCloseInventory) {
+		if (_active && event.customType == kActionEventCloseInventory) {
 			activate(false);
 			return true;
 		}
-		if (event.customType == kActionToggleInventory) {
+		if (event.customType == kActionEventToggleInventory) {
 			activate(!_active);
 			return true;
 		}
