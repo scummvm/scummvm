@@ -84,6 +84,8 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 	offsets.closeButtonTop = -1;
 	offsets.closeButtonLeft = -1;
 	offsets.closeButtonWidth = 0;
+	offsets.resizeButtonTop = -1;
+	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 0;
 	offsets.lowerScrollHeight = 0;
 
@@ -107,6 +109,9 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 		offsets.titleTop = 3;
 		offsets.titleBottom = 0;
 		offsets.titlePos = 25;
+
+		offsets.resizeButtonTop = 56;
+		offsets.resizeButtonHeight = 16;
 
 		offsets.upperScrollHeight = 20;
 		offsets.lowerScrollHeight = 20;
