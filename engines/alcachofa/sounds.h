@@ -29,28 +29,27 @@
 namespace Alcachofa {
 
 class Character;
+using ::Audio::SoundHandle;
 
-using SoundID = uint32;
-static constexpr SoundID kInvalidSoundID = 0;
 class Sounds {
 public:
 	Sounds();
 	~Sounds();
 
 	void update();
-	SoundID playVoice(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
-	SoundID playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
+	SoundHandle playVoice(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
+	SoundHandle playSFX(const Common::String &fileName, byte volume = Audio::Mixer::kMaxChannelVolume);
 	void stopAll();
 	void stopVoice();
 	void pauseAll(bool paused);
-	void fadeOut(SoundID id, uint32 duration);
+	void fadeOut(SoundHandle id, uint32 duration);
 	void fadeOutVoiceAndSFX(uint32 duration);
-	bool isAlive(SoundID id);
-	void setVolume(SoundID id, byte volume);
-	void setAppropriateVolume(SoundID id,
+	bool isAlive(SoundHandle id);
+	void setVolume(SoundHandle id, byte volume);
+	void setAppropriateVolume(SoundHandle id,
 		MainCharacterKind processCharacter,
 		Character *speakingCharacter);
-	bool isNoisy(SoundID id, float windowSize, float minDifferences); ///< used for lip-sync
+	bool isNoisy(SoundHandle id, float windowSize, float minDifferences); ///< used for lip-sync
 
 	void startMusic(int musicId);
 	void queueMusic(int musicId);
@@ -65,7 +64,6 @@ private:
 	struct Playback {;
 		void fadeOut(uint32 duration);
 
-		SoundID _id = 0;
 		Audio::SoundHandle _handle;
 		Audio::Mixer::SoundType _type = Audio::Mixer::SoundType::kPlainSoundType;
 		uint32 _fadeStart = 0,
@@ -73,25 +71,24 @@ private:
 		int _inputRate;
 		Common::Array<int16> _samples; ///< might not be filled, only voice samples are preloaded for lip-sync
 	};
-	Playback *getPlaybackById(SoundID id);
-	SoundID playSoundInternal(const char *fileName, byte volume, Audio::Mixer::SoundType type);
+	Playback *getPlaybackById(SoundHandle id);
+	SoundHandle playSoundInternal(const char *fileName, byte volume, Audio::Mixer::SoundType type);
 
 	Common::Array<Playback> _playbacks;
 	Audio::Mixer *_mixer;
-	SoundID _nextID = 1;
 
-	SoundID _musicSoundID = kInvalidSoundID; // we use another soundID to reuse fading
+	SoundHandle _musicSoundID = {}; // we use another soundID to reuse fading
 	bool _isMusicPlaying = false;
 	int _nextMusicID = -1;
 	FakeSemaphore _musicSemaphore;
 };
 
 struct PlaySoundTask final : public Task {
-	PlaySoundTask(Process &process, SoundID soundID);
+	PlaySoundTask(Process &process, SoundHandle soundHandle);
 	virtual TaskReturn run() override;
 	virtual void debugPrint() override;
 private:
-	SoundID _soundID;
+	SoundHandle _soundHandle;
 };
 
 struct WaitForMusicTask final : public Task {

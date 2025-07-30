@@ -301,15 +301,15 @@ struct SayTextTask final : public Task {
 		while (true) {
 			g_engine->player().addLastDialogCharacter(_character);
 
-			if (_soundId == kInvalidSoundID)
+			if (_soundHandle == SoundHandle {})
 			{
 				bool hasMortadeloVoice = g_engine->game().hasMortadeloVoice(_character);					
-				_soundId = g_engine->sounds().playVoice(
+				_soundHandle = g_engine->sounds().playVoice(
 					String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId),
 					0);
 			}
-			isSoundStillPlaying = g_engine->sounds().isAlive(_soundId);
-			g_engine->sounds().setAppropriateVolume(_soundId, process().character(), _character);
+			isSoundStillPlaying = g_engine->sounds().isAlive(_soundHandle);
+			g_engine->sounds().setAppropriateVolume(_soundHandle, process().character(), _character);
 			if (!isSoundStillPlaying || g_engine->input().wasAnyMouseReleased())
 				_character->_isTalking = false;
 
@@ -323,13 +323,13 @@ struct SayTextTask final : public Task {
 			}
 
 			if (!_character->_isTalking) {
-				g_engine->sounds().fadeOut(_soundId, 100);
+				g_engine->sounds().fadeOut(_soundHandle, 100);
 				TASK_WAIT(delay(200));
 				TASK_RETURN(0);
 			}
 
 			_character->isSpeaking() = !isSoundStillPlaying ||
-				g_engine->sounds().isNoisy(_soundId, 80.0f, 150.0f);
+				g_engine->sounds().isNoisy(_soundHandle, 80.0f, 150.0f);
 			TASK_YIELD;
 		}
 		TASK_END;
@@ -342,7 +342,7 @@ struct SayTextTask final : public Task {
 private:
 	Character *_character;
 	int32 _dialogId;
-	SoundID _soundId = kInvalidSoundID;
+	SoundHandle _soundHandle = {};
 };
 
 Task *Character::sayText(Process &process, int32 dialogId) {

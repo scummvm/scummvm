@@ -49,9 +49,9 @@ Sounds::~Sounds() {
 	_mixer->stopAll();
 }
 
-Sounds::Playback *Sounds::getPlaybackById(SoundID id) {
+Sounds::Playback *Sounds::getPlaybackById(SoundHandle id) {
 	auto itPlayback = find_if(_playbacks.begin(), _playbacks.end(),
-		[&] (const Playback &playback) { return playback._id == id; });
+		[&] (const Playback &playback) { return playback._handle == id; });
 	return itPlayback == _playbacks.end() ? nullptr : itPlayback;
 }
 
@@ -129,10 +129,10 @@ static AudioStream *openAudio(const char *fileName) {
 	return nullptr;
 }
 
-SoundID Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::SoundType type) {
+SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::SoundType type) {
 	AudioStream *stream = openAudio(fileName);
 	if (stream == nullptr)
-		return UINT32_MAX;
+		return {};
 
 	Array<int16> samples;
 	SeekableAudioStream *seekStream = dynamic_cast<SeekableAudioStream *>(stream);
@@ -179,20 +179,19 @@ SoundID Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::Soun
 
 	Playback playback;
 	_mixer->playStream(type, &playback._handle, stream, -1, volume);
-	playback._id = _nextID++;
 	playback._type = type;
 	playback._inputRate = stream->getRate();
 	playback._samples = std::move(samples);
 	_playbacks.push_back(std::move(playback));
-	return playback._id;
+	return playback._handle;
 }
 
-SoundID Sounds::playVoice(const String &fileName, byte volume) {
+SoundHandle Sounds::playVoice(const String &fileName, byte volume) {
 	debugC(1, kDebugSounds, "Play voice: %s at %d", fileName.c_str(), (int)volume);
 	return playSoundInternal(fileName.c_str(), volume, Mixer::kSpeechSoundType);
 }
 
-SoundID Sounds::playSFX(const String &fileName, byte volume) {
+SoundHandle Sounds::playSFX(const String &fileName, byte volume) {
 	debugC(1, kDebugSounds, "Play SFX: %s at %d", fileName.c_str(), (int)volume);
 	return playSoundInternal(fileName.c_str(), volume, Mixer::kSFXSoundType);
 }
@@ -217,18 +216,18 @@ void Sounds::pauseAll(bool paused) {
 	_mixer->pauseAll(paused);
 }
 
-bool Sounds::isAlive(SoundID id) {
+bool Sounds::isAlive(SoundHandle id) {
 	Playback *playback = getPlaybackById(id);
 	return playback != nullptr && _mixer->isSoundHandleActive(playback->_handle);
 }
 
-void Sounds::setVolume(SoundID id, byte volume) {
+void Sounds::setVolume(SoundHandle id, byte volume) {
 	Playback *playback = getPlaybackById(id);
 	if (playback != nullptr)
 		_mixer->setChannelVolume(playback->_handle, volume);
 }
 
-void Sounds::setAppropriateVolume(SoundID id,
+void Sounds::setAppropriateVolume(SoundHandle id,
 	MainCharacterKind processCharacterKind,
 	Character *speakingCharacter) {
 	static constexpr byte kAlmostMaxVolume = Mixer::kMaxChannelVolume * 9 / 10;
@@ -248,7 +247,7 @@ void Sounds::setAppropriateVolume(SoundID id,
 	setVolume(id, newVolume);
 }
 
-void Sounds::fadeOut(SoundID id, uint32 duration) {
+void Sounds::fadeOut(SoundHandle id, uint32 duration) {
 	Playback *playback = getPlaybackById(id);
 	if (playback != nullptr)
 		playback->fadeOut(duration);
@@ -261,7 +260,7 @@ void Sounds::fadeOutVoiceAndSFX(uint32 duration) {
 	}
 }
 
-bool Sounds::isNoisy(SoundID id, float windowSize, float minDifferences) {
+bool Sounds::isNoisy(SoundHandle id, float windowSize, float minDifferences) {
 	assert(windowSize > 0 && minDifferences > 0);
 	const Playback *playback = getPlaybackById(id);
 	if (playback == nullptr ||
@@ -334,16 +333,16 @@ Task *Sounds::waitForMusicToEnd(Process &process) {
 	return new WaitForMusicTask(process, std::move(lock));
 }
 
-PlaySoundTask::PlaySoundTask(Process &process, SoundID soundID)
+PlaySoundTask::PlaySoundTask(Process &process, SoundHandle SoundHandle)
 	: Task(process)
-	, _soundID(soundID) {
+	, _soundHandle(SoundHandle) {
 }
 
 TaskReturn PlaySoundTask::run() {
 	auto &sounds = g_engine->sounds();
-	if (sounds.isAlive(_soundID))
+	if (sounds.isAlive(_soundHandle))
 	{
-		sounds.setAppropriateVolume(_soundID, process().character(), nullptr);
+		sounds.setAppropriateVolume(_soundHandle, process().character(), nullptr);
 		return TaskReturn::yield();
 	}
 	else
@@ -351,7 +350,7 @@ TaskReturn PlaySoundTask::run() {
 }
 
 void PlaySoundTask::debugPrint() {
-	g_engine->console().debugPrintf("PlaySound %u\n", _soundID);
+	g_engine->console().debugPrintf("PlaySound %u\n", _soundHandle);
 }
 
 WaitForMusicTask::WaitForMusicTask(Process &process, FakeLock &&lock)
