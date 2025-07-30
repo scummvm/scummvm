@@ -23,7 +23,7 @@
 
 namespace Efh {
 
-int16 EfhEngine::displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl) {
+int16 EfhEngine::displayBoxWithText(const Common::String &str, int16 menuType, int16 displayOption, bool displayTeamWindowFl, bool voiceText) {
 	debugC(3, kDebugEngine, "displayBoxWithText %s %d %d %s", str.c_str(), menuType, displayOption, displayTeamWindowFl ? "True" : "False");
 
 	int16 retVal = 0xFF;
@@ -59,6 +59,20 @@ int16 EfhEngine::displayBoxWithText(const Common::String &str, int16 menuType, i
 		maxX = 320;
 		maxY = 200;
 		break;
+	}
+
+	if (voiceText) {
+		Common::String ttsMessage(str);
+
+		// Some messages have a ^ followed by a few numbers at the end
+		uint32 caretPosition = ttsMessage.find('^');
+		if (caretPosition != Common::String::npos) {
+			ttsMessage.erase(caretPosition, Common::String::npos);
+		}
+
+		ttsMessage.replace('|', '\n');
+
+		sayText(ttsMessage, kNoRestriction);
 	}
 
 	drawColoredRect(minX, minY, maxX, maxY, 0);
@@ -99,6 +113,11 @@ bool EfhEngine::handleDeathMenu() {
 	displayAnimFrames(20, true);
 	_imageSetSubFilesIdx = 213;
 	drawScreen();
+
+	sayText("Darkness prevails... death has taken you!", kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+	sayText("Load last saved game", kNoRestriction);
+	sayText("Restart from beginning", kNoRestriction);
+	sayText("Quit for now", kNoRestriction);
 
 	for (uint counter = 0; counter < 2; ++counter) {
 		clearBottomTextZone(0);
@@ -165,26 +184,31 @@ void EfhEngine::displayCombatMenu(int16 charId) {
 	displayStringAtTextPos("A");
 	setTextColorRed();
 	displayStringAtTextPos("ttack");
+	sayText("Attack", kMenu);
 	setTextPos(195, 79);
 	setTextColorWhite();
 	displayStringAtTextPos("H");
 	setTextColorRed();
 	displayStringAtTextPos("ide");
+	sayText("Hide", kMenu);
 	setTextPos(152, 88);
 	setTextColorWhite();
 	displayStringAtTextPos("D");
 	setTextColorRed();
 	displayStringAtTextPos("efend");
+	sayText("Defend", kMenu);
 	setTextPos(195, 88);
 	setTextColorWhite();
 	displayStringAtTextPos("R");
 	setTextColorRed();
 	displayStringAtTextPos("un");
+	sayText("Run", kMenu);
 	setTextPos(152, 97);
 	setTextColorWhite();
 	displayStringAtTextPos("S");
 	setTextColorRed();
 	displayStringAtTextPos("tatus");
+	sayText("Status", kMenu);
 }
 
 void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 minX, int16 maxX, int16 minY, const char *str) {
@@ -195,6 +219,11 @@ void EfhEngine::displayMenuItemString(int16 menuBoxId, int16 thisBoxId, int16 mi
 			setTextColorWhite();
 		else
 			setTextColorGrey();
+
+		if (_selectedMenuBox != thisBoxId) {
+			sayText(str, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+			_selectedMenuBox = thisBoxId;
+		}
 
 		Common::String buffer = Common::String::format("> %s <", str);
 		displayCenteredString(buffer, minX, maxX, minY);
@@ -275,33 +304,47 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 	setTextColorRed();
 	Common::String buffer1 = _npcBuf[npcId]._name;
 	setTextPos(146, 27);
-	displayStringAtTextPos("Name: ");
+	buffer1 = "Name: " + buffer1;
+	Common::String ttsMessage = buffer1;
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Level: %d", getXPLevel(_npcBuf[npcId]._xp));
+	ttsMessage += '\n' + buffer1;
 	setTextPos(146, 36);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("XP: %u", _npcBuf[npcId]._xp);
+	ttsMessage += '\n' + buffer1;
 	setTextPos(227, 36);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Speed: %d", _npcBuf[npcId]._speed);
+	ttsMessage += '\n' + buffer1;
 	setTextPos(146, 45);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Defense: %d", getEquipmentDefense(npcId));
+	ttsMessage += '\n' + buffer1;
 	setTextPos(146, 54);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Hit Points: %d", _npcBuf[npcId]._hitPoints);
+	ttsMessage += '\n' + buffer1;
 	setTextPos(146, 63);
 	displayStringAtTextPos(buffer1);
 	buffer1 = Common::String::format("Max HP: %d", _npcBuf[npcId]._maxHP);
+	ttsMessage += '\n' + buffer1;
 	setTextPos(227, 63);
 	displayStringAtTextPos(buffer1);
+
+	if (curMenuLine == -1) {
+		sayText(ttsMessage, kMenu);
+	}
+
 	displayCenteredString("Inventory", 144, 310, 72);
+	sayText("Inventory", kMenu);
 
 	if (_menuItemCounter == 0) {
 		if (curMenuLine != -1)
 			setTextColorWhite();
 
 		displayCenteredString("Nothing Carried", 144, 310, 117);
+		sayText("Nothing Carried", kMenu);
 		setTextColorRed();
 		return;
 	}
@@ -319,6 +362,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 			if (_npcBuf[npcId]._inventory[_menuStatItemArr[counter]].isEquipped()) {
 				setTextPos(146, textPosY);
 				displayCharAtTextPos('E');
+				sayText("E", kMenu);
 			}
 		}
 
@@ -329,12 +373,14 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 			buffer1 = Common::String::format("%c)", 'A' + counter);
 		}
 		displayStringAtTextPos(buffer1);
+		sayText(buffer1, kMenu);
 
 		if (itemId != 0x7FFF) {
 			setTextPos(168, textPosY);
 			buffer1 = Common::String::format("  %s", _items[itemId]._name);
 			displayStringAtTextPos(buffer1);
 			setTextPos(262, textPosY);
+			sayText(buffer1, kMenu);
 
 			if (_items[itemId]._defense > 0) {
 				int16 curHitPoints = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]]._curHitPoints;
@@ -343,6 +389,7 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
 					displayStringAtTextPos("Def");
+					sayText(buffer1 + " Defense", kMenu);
 				}
 			} else if (_items[itemId]._uses != 0x7F) {
 				int16 stat1 = _npcBuf[npcId]._inventory[_menuStatItemArr[counter]].getUsesLeft();
@@ -350,10 +397,13 @@ void EfhEngine::displayCharacterSummary(int16 curMenuLine, int16 npcId) {
 					buffer1 = Common::String::format("%d", stat1);
 					displayStringAtTextPos(buffer1);
 					setTextPos(286, textPosY);
-					if (stat1 == 1)
+					if (stat1 == 1) {
 						displayStringAtTextPos("Use");
-					else
+						sayText(buffer1 + " Use", kMenu);
+					} else {
 						displayStringAtTextPos("Uses");
+						sayText(buffer1 + " Uses", kMenu);
+					}
 				}
 			}
 		}
@@ -366,14 +416,20 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 
 	setTextColorRed();
 	Common::String buffer = _npcBuf[charId]._name;
+	buffer = "Name: " + buffer;
 	setTextPos(146, 27);
-	displayStringAtTextPos("Name: ");
 	displayStringAtTextPos(buffer);
+	
+	sayText(buffer, kMenu);
+
 	if (_menuItemCounter <= 0) {
 		if (curMenuLine != -1)
 			setTextColorWhite();
 		displayCenteredString("No Skills To Select", 144, 310, 96);
 		setTextColorRed();
+
+		sayText("No Skills To Select", kMenu);
+
 		return;
 	}
 
@@ -389,9 +445,11 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 		}
 
 		displayStringAtTextPos(buffer);
+		sayText(buffer, kMenu);
 		setTextPos(163, textPosY);
 		int16 scoreId = _menuStatItemArr[counter];
 		displayStringAtTextPos(kSkillArray[scoreId]);
+		sayText(kSkillArray[scoreId], kMenu);
 		if (scoreId < 15)
 			buffer = Common::String::format("%d", _npcBuf[charId]._activeScore[_menuStatItemArr[counter]]);
 		else if (scoreId < 26)
@@ -400,6 +458,7 @@ void EfhEngine::displayCharacterInformationOrSkills(int16 curMenuLine, int16 cha
 			buffer = Common::String::format("%d", _npcBuf[charId]._infoScore[_menuStatItemArr[counter] - 26]);
 		setTextPos(278, textPosY);
 		displayStringAtTextPos(buffer);
+		sayText(buffer, kMenu);
 		setTextColorRed();
 	}
 }
@@ -413,44 +472,56 @@ void EfhEngine::displayStatusMenuActions(int16 menuId, int16 curMenuLine, int16 
 	switch (menuId) {
 	case kEfhMenuEquip:
 		displayCenteredString("Select Item to Equip", 144, 310, 15);
+		sayText("Select Item to Equip", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case kEfhMenuUse:
 		displayCenteredString("Select Item to Use", 144, 310, 15);
+		sayText("Select Item to Use", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case kEfhMenuGive:
 		displayCenteredString("Select Item to Give", 144, 310, 15);
+		sayText("Select Item to Give", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case kEfhMenuTrade:
 		displayCenteredString("Select Item to Trade", 144, 310, 15);
+		sayText("Select Item to Trade", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case kEfhMenuDrop:
 		displayCenteredString("Select Item to Drop", 144, 310, 15);
+		sayText("Select Item to Drop", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	case kEfhMenuInfo:
 		displayCenteredString("Character Information", 144, 310, 15);
+		sayText("Character Information", kMenu);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case kEfhMenuPassive:
 		displayCenteredString("Passive Skills", 144, 310, 15);
+		sayText("Passive Skills", kMenu);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case kEfhMenuActive:
 		displayCenteredString("Active Skills", 144, 310, 15);
+		sayText("Active Skills", kMenu);
 		displayCharacterInformationOrSkills(curMenuLine, npcId);
 		break;
 	case kEfhMenuLeave:
 	case kEfhMenuInvalid:
 		displayCenteredString("Character Summary", 144, 310, 15);
+		sayText("Character Summary", kMenu);
 		displayCharacterSummary(curMenuLine, npcId);
 		break;
 	default:
 		break;
 	}
+
+	sayText("Escape Aborts", kMenu);
+	_sayMenu = false;
 }
 
 void EfhEngine::prepareStatusMenu(int16 windowId, int16 menuId, int16 curMenuLine, int16 charId, bool refreshFl) {
@@ -480,6 +551,7 @@ void EfhEngine::displayWindowAndStatusMenu(int16 charId, int16 windowId, int16 m
 int16 EfhEngine::displayStringInSmallWindowWithBorder(const Common::String &str, bool delayFl, int16 charId, int16 windowId, int16 menuId, int16 curMenuLine) {
 	debugC(3, kDebugEngine, "displayStringInSmallWindowWithBorder %s %s %d %d %d %d", str.c_str(), delayFl ? "True" : "False", charId, windowId, menuId, curMenuLine);
 
+	sayText(str, kNoRestriction);
 	int16 retVal = 0;
 
 	for (uint counter = 0; counter < 2; ++counter) {
@@ -514,6 +586,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 	int16 curMenuLine = -1;
 	bool selectionDoneFl = false;
 	bool var2 = false;
+	_selectedMenuBox = 0;
 
 	saveAnimImageSetId();
 
@@ -554,6 +627,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					break;
 				case Common::KEYCODE_ESCAPE:
 				case Common::KEYCODE_l:
+					stopTextToSpeech();
 					windowId = kEfhMenuLeave;
 					input = Common::KEYCODE_RETURN;
 					break;
@@ -572,6 +646,10 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				default:
 					debugC(9, kDebugEngine, "handleStatusMenu - unhandled keys");
 					break;
+				}
+
+				if (input == Common::KEYCODE_RETURN) {
+					_selectedMenuBox = -1;
 				}
 			} else if (_menuDepth == 1) {
 				// in the sub-menus, only a list of selectable items is displayed
@@ -592,6 +670,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (menuId >= kEfhMenuLeave)
 						selectionDoneFl = true;
 					else {
+						_sayMenu = true;
 						_menuDepth = 1;
 						curMenuLine = 0;
 					}
@@ -600,6 +679,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 						_menuDepth = 0;
 						curMenuLine = -1;
 						menuId = kEfhMenuInvalid;
+						_sayMenu = true;
 						prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 					} else {
 						selectedLine = curMenuLine;
@@ -611,6 +691,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				_menuDepth = 0;
 				curMenuLine = -1;
 				menuId = kEfhMenuInvalid;
+				stopTextToSpeech();
+				_sayMenu = true;
 				prepareStatusMenu(windowId, menuId, curMenuLine, charId, true);
 				break;
 			case Common::KEYCODE_2:
@@ -667,6 +749,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuEquip:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref; // CHECKME: Useless?
+			sayText(_items[itemId]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 			tryToggleEquipped(charId, objectId, windowId, menuId, curMenuLine);
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
@@ -677,6 +760,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuUse:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			sayText(_items[itemId]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 			if (gameMode == 2) {
 				restoreAnimImageSetId();
 				_statusMenuActive = false;
@@ -693,6 +777,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuGive:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			sayText(_items[itemId]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
+			_initiatedTalkByMenu = true;
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else {
@@ -700,6 +786,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					displayStringInSmallWindowWithBorder("Item is Equipped!  Give anyway?", false, charId, windowId, menuId, curMenuLine);
 					if (!getValidationFromUser())
 						validationFl = false;
+					stopTextToSpeech();
 					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 				}
 				if (validationFl) {
@@ -719,6 +806,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuTrade:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			sayText(_items[itemId]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 				break;
@@ -728,6 +816,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 				displayStringInSmallWindowWithBorder("Item is Equipped!  Trade anyway?", false, charId, windowId, menuId, curMenuLine);
 				if (!getValidationFromUser())
 					validationFl = false;
+				stopTextToSpeech();
 				displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 			}
 
@@ -738,6 +827,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					if (_teamChar[2]._id != -1) {
 						displayStringInSmallWindowWithBorder("Who will you give the item to?", false, charId, windowId, menuId, curMenuLine);
 						destCharId = selectOtherCharFromTeam();
+						stopTextToSpeech();
 						var2 = false;
 					} else if (_teamChar[1]._id == -1) {
 						destCharId = 0x1A;
@@ -752,6 +842,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 
 					if (destCharId != 0x1A && destCharId != 0x1B) {
 						givenFl = giveItemTo(_teamChar[destCharId]._id, objectId, charId);
+						sayText(_npcBuf[_teamChar[destCharId]._id]._name, kNoRestriction);
 						if (!givenFl) {
 							displayStringInSmallWindowWithBorder("That character cannot carry anymore!", false, charId, windowId, menuId, curMenuLine);
 							getLastCharAfterAnimCount(_guessAnimationAmount);
@@ -781,6 +872,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuDrop:
 			objectId = _menuStatItemArr[selectedLine];
 			itemId = _npcBuf[charId]._inventory[objectId]._ref;
+			sayText(_items[itemId]._name, kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 			if (hasObjectEquipped(charId, objectId) && isItemCursed(itemId)) {
 				displayStringInSmallWindowWithBorder("The item is cursed!  IT IS EVIL!!!!!!!!", true, charId, windowId, menuId, curMenuLine);
 			} else {
@@ -791,6 +883,8 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 					displayWindowAndStatusMenu(charId, windowId, menuId, curMenuLine);
 				}
 				if (validationFl) {
+					stopTextToSpeech();
+					_sayMenu = true;
 					removeObject(charId, objectId);
 					if (gameMode == 2) {
 						restoreAnimImageSetId();
@@ -808,7 +902,9 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		case kEfhMenuInfo:
 		case kEfhMenuPassive:
 		case kEfhMenuActive:
+			stopTextToSpeech();
 			objectId = _menuStatItemArr[selectedLine];
+			sayText(kSkillArray[objectId], kNoRestriction, Common::TextToSpeechManager::INTERRUPT);
 			if (gameMode == 2) {
 				displayStringInSmallWindowWithBorder("Not a Combat Option!", true, charId, windowId, menuId, curMenuLine);
 			} else if (handleInteractionText(_mapPosX, _mapPosY, charId, objectId, 4, -1)) {
@@ -823,6 +919,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		if (menuId != kEfhMenuLeave) {
 			selectionDoneFl = false;
 			_menuDepth = 0;
+			_sayMenu = true;
 			menuId = kEfhMenuInvalid;
 			selectedLine = -1;
 			curMenuLine = -1;
@@ -831,6 +928,7 @@ int16 EfhEngine::handleStatusMenu(int16 gameMode, int16 charId) {
 		if (menuId == kEfhMenuLeave) {
 			restoreAnimImageSetId();
 			_statusMenuActive = false;
+			_sayMenu = true;
 			return 0x7FFF;
 		}
 
