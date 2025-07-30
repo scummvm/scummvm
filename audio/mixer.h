@@ -50,6 +50,17 @@ class SoundHandle {
 	friend class Channel;
 	friend class MixerImpl;
 	uint32 _val = 0xffffffff;
+
+public:
+	/**
+	 * Determine whether two handles are the same.
+	 */
+	bool  operator==(const SoundHandle &h)    const { return _val == h._val; }
+
+	/**
+	 * Determine whether two handles are not the same.
+	 */
+	bool  operator!=(const SoundHandle &h)    const { return _val != h._val; }
 };
 
 /**
