@@ -183,20 +183,44 @@ void CDC::resetClipRect() {
 	dc->getSurface()->resetClip();
 }
 
-BOOL CDC::PtVisible(int x, int y) const {
-	error("TODO: CDC::PtVisible");
+BOOL CDC::PtVisible(int x, int y) {
+	Gfx::Surface *surface = impl()->getSurface();
+	Common::Rect clipRect = surface->getClipRect();
+
+	// Clip rect is in device co-ordinates, but the
+	// point is in logical units, so need to convert
+	POINT pts[2];
+	pts[0].x = clipRect.left;
+	pts[0].y = clipRect.top;
+	pts[1].x = clipRect.right;
+	pts[1].y = clipRect.bottom;
+	DPtoLP(pts, 2);
+
+	return Common::Rect(pts[0].x, pts[0].y, pts[1].x, pts[1].y).contains(x, y);
 }
 
-BOOL CDC::PtVisible(POINT point) const {
-	error("TODO: CDC::PtVisible");
+BOOL CDC::PtVisible(POINT point) {
+	return PtVisible(point.x, point.y);
 }
 
-BOOL CDC::RectVisible(LPCRECT lpRect) const {
-	error("TODO: CDC::RectVisible");
+BOOL CDC::RectVisible(LPCRECT lpRect) {
+	Gfx::Surface *surface = impl()->getSurface();
+	Common::Rect clipRect = surface->getClipRect();
+
+	// Clip rect is in device co-ordinates, but the
+	// point is in logical units, so need to convert
+	POINT pts[2];
+	pts[0].x = clipRect.left;
+	pts[0].y = clipRect.top;
+	pts[1].x = clipRect.right;
+	pts[1].y = clipRect.bottom;
+	DPtoLP(pts, 2);
+
+	return Common::Rect(pts[0].x, pts[0].y, pts[1].x, pts[1].y).intersects(*lpRect);
 }
 
 int CDC::SelectClipRgn(CRgn *pRgn) {
-	// Custom clipping regions not supported in ScummVMM yet
+	// Custom clipping regions not supported in ScummVM yet
 	assert(!pRgn);
 	impl()->getSurface()->resetClip();
 	return SIMPLEREGION;
@@ -230,7 +254,7 @@ int CDC::OffsetClipRgn(int x, int y) {
 }
 
 int CDC::OffsetClipRgn(SIZE size) {
-	error("TODO: CDC::OffsetClipRgn");
+	return impl()->getSurface()->offsetClipRect(size.cx, size.cy);
 }
 
 int CDC::SelectClipRgn(CRgn *pRgn, int nMode) {
@@ -265,6 +289,20 @@ BOOL CDC::DPtoLP(RECT *lpRect) {
 	lpRect->right += WINDOW_ORG.x - VIEWPORT_ORG.x;
 	lpRect->top += WINDOW_ORG.y - VIEWPORT_ORG.y;
 	lpRect->bottom += WINDOW_ORG.y - VIEWPORT_ORG.y;
+
+	return true;
+}
+
+BOOL CDC::LPtoDP(LPPOINT lpPoints, int nCount) {
+	// Currently we only support MM_TEXT mode,
+	// which has a 1 to 1 mapping, which simplifies matters
+	const CPoint WINDOW_ORG(0, 0);
+	const CPoint VIEWPORT_ORG = impl()->getSurface()->getViewportOrg();
+
+	for (; nCount > 0; --nCount, ++lpPoints) {
+		lpPoints->x += VIEWPORT_ORG.x - WINDOW_ORG.x;
+		lpPoints->y += VIEWPORT_ORG.y - WINDOW_ORG.y;
+	}
 
 	return true;
 }

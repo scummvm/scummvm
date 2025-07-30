@@ -838,9 +838,9 @@ public:
 	virtual int GetClipBox(LPRECT lpRect) const;
 	void setClipRect(const Common::Rect &r);
 	void resetClipRect();
-	virtual BOOL PtVisible(int x, int y) const;
-	BOOL PtVisible(POINT point) const;
-	virtual BOOL RectVisible(LPCRECT lpRect) const;
+	virtual BOOL PtVisible(int x, int y);
+	BOOL PtVisible(POINT point);
+	virtual BOOL RectVisible(LPCRECT lpRect);
 	int SelectClipRgn(CRgn *pRgn);
 	int ExcludeClipRect(int x1, int y1, int x2, int y2);
 	int ExcludeClipRect(LPCRECT lpRect);
@@ -854,6 +854,7 @@ public:
 	int SetROP2(int nDrawMode);
 	BOOL DPtoLP(LPPOINT lpPoints, int nCount = 1);
 	BOOL DPtoLP(RECT *lpRect);
+	BOOL LPtoDP(LPPOINT lpPoints, int nCount = 1);
 	BOOL LPtoDP(RECT *lpRect);
 	BOOL BitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 	            int xSrc, int ySrc, DWORD dwRop);
