@@ -18980,6 +18980,54 @@ static const uint16 qfg4PitRopeMagePatch2[] = {
 	PATCH_END
 };
 
+// WORKAROUND: Pathfinding algorithm difference
+//
+// Cave room 710 has an obstacle that is incompatible with our pathfinding
+//  algorithm in later floppy versions. This causes the script to get stuck
+//  when re-entering the cave from room 790, and prevents completing the game.
+//  For some reason, Sierra extended the obstacle's boundaries 300 units beyond
+//  the screen, but then reverted this change in the CD version.
+//
+// We work around this incompatibility by reverting the coordinates to their
+//  original 1.0 values, as Sierra did in the CD version.
+//
+// Applies to: English Floppy 1.1, German Floppy
+// Responsible method: rm710:init
+// Fixes bug: #16128
+static const uint16 qfg4CaveObstacleSignature[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x5e,                         // pushi 5e   [ x: 94 ]
+	0x38, SIG_UINT16(0xfed4),           // pushi fed4 [ y: -300 ]
+	0x38, SIG_UINT16(0x026b),           // pushi 026b [ x: 619 ]
+	0x38, SIG_UINT16(0xfed4),           // pushi fed4 [ y: -300 ]
+	0x38, SIG_UINT16(0x026b),           // pushi 026b [ x: 619 ]
+	0x38, SIG_UINT16(0x01e9),           // pushi 01e9 [ y: 489 ]
+	0x38, SIG_UINT16(0xfed4),           // pushi fed4 [ x: -300 ]
+	0x38, SIG_UINT16(0x01e9),           // pushi 01e9 [ y: 489 ]
+	0x38, SIG_UINT16(0xfed4),           // pushi fed4 [ x: -300 ]
+	0x3c,                               // dup        [ y: -300 ]
+	0x39, 0x14,                         // pushi 14   [ x: 20 ]
+	0x38, SIG_UINT16(0xfed4),           // pushi fed4 [ x: -300 ]
+	SIG_END
+};
+
+static const uint16 qfg4CaveObstaclePatch[] = {
+	0x39, 0x5e,                         // pushi 5e   [ x: 94 ]
+	0x76,                               // push0      [ y: 0 ]
+	0x38, PATCH_UINT16(0x013f),         // pushi 013f [ x: 319 ]
+	0x76,                               // push0      [ y: 0 ]
+	0x38, PATCH_UINT16(0x013f),         // pushi 013f [ x: 319 ]
+	0x38, PATCH_UINT16(0x00bd),         // pushi 00bd [ y: 189 ]
+	0x76,                               // push0      [ x: 0 ]
+	0x38, PATCH_UINT16(0x00bd),         // pushi 00bd [ y: 189 ]
+	0x76,                               // push0      [ x: 0 ]
+	0x76,                               // push0      [ y: 0 ]
+	0x39, 0x14,                         // pushi 14   [ x: 20 ]
+	0x76,                               // push0      [ y: 0 ]
+	0x33, 0x08,                         // jmp 08
+	PATCH_END
+};
+
 // WORKAROUND: Script needed, because of differences in our pathfinding
 // algorithm.
 // When entering forest room 557 from the east (563), hero is supposed to move
@@ -21658,6 +21706,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   710, "fix tentacle retraction for mage (1/2)",      1, qfg4PitRopeMageSignature1,     qfg4PitRopeMagePatch1 },
 	{  true,   710, "NRS: fix tentacle retraction for mage (1/2)", 1, qfg4PitRopeMageNrsSignature1,  qfg4PitRopeMageNrsPatch1 },
 	{  true,   710, "fix tentacle retraction for mage (2/2)",      1, qfg4PitRopeMageSignature2,     qfg4PitRopeMagePatch2 },
+	{  true,   710, "fix cave obstacle",                           1, qfg4CaveObstacleSignature,     qfg4CaveObstaclePatch },
 	{  true,   730, "fix ad avis timeout",                         1, qfg4AdAvisTimeoutSignature,    qfg4AdAvisTimeoutPatch },
 	{  true,   730, "Floppy: fix casting spells at ad avis",       1, qfg4AdAvisSpellsFloppySignature, qfg4AdAvisSpellsFloppyPatch },
 	{  true,   730, "CD: fix casting spells at ad avis",           2, qfg4AdAvisSpellsCDSignature,   qfg4AdAvisSpellsCDPatch },
