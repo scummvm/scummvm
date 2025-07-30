@@ -82,8 +82,8 @@ static void blitInner(Gfx::Surface *srcSurface,
 	byte dummy = 0;
 	byte *srcP, *destP;
 
-	for (ySrc = 0, yDest = destPos.y; ySrc < srcRect.height(); ++ySrc, ++yDest) {
-		for (xSrc = 0, xDest = destPos.x; xSrc < srcRect.width(); ++xSrc, ++xDest) {
+	for (ySrc = srcRect.top, yDest = destPos.y; ySrc < srcRect.bottom; ++ySrc, ++yDest) {
+		for (xSrc = srcRect.left, xDest = destPos.x; xSrc < srcRect.right; ++xSrc, ++xDest) {
 			srcP = xSrc;
 			destP = xDest;
 			if (!srcP)
