@@ -677,7 +677,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "learningcoreldraw3",	"Learning CorelDRAW 3" },
 	{ "laughingbird",		"The Laughing Bird Restaurant" },
 	{ "learninternet",		"Video Professor: Learn to Use the Internet" },
-	{ "learnworks2",		"Video Professor: Learn Works for Windows 95, Level 2" },
+	{ "learnworks95",		"Video Professor: Learn Works for Windows 95" },
 	{ "leonardo",			"Leonardo the Inventor" },
 	{ "lewisclark",			"Lewis & Clark Interactive Picture CD" },
 	{ "lifemysteries",		"Bob Winkle Solves Life's Greatest Mysteries" },
@@ -8542,12 +8542,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME1_l("kultapossu", "", "POSSU_95.EXE", "t:d37aaaa849c30f511f9a80014764a94e", 1531081, Common::FI_FIN, 602),
 
-	WINDEMO1("landdesigner", "Demo", "CLD_DEMO.EXE", "518a98696fe1122e08410b0f157f21bf", 22576635, 602),
+	WINDEMO1("landdesigner", "Demo", "CLD_DEMO.EXE", "t:67f373164279135f324159cef0dbe7ab", 22576635, 602),
 
-	WINGAME1("learninternet", "", "VIDPROF.EXE", "b0f3841f6e8005e519445b22de37749b", 2674733, 600),
-	WINGAME1("learnworks2", "v4.0", "Vidprof.exe", "b0f3841f6e8005e519445b22de37749b", 2854401, 600),
+	WINGAME1("learninternet", "Level 1", "VIDPROF.EXE", "t:35155cf771b63bfb14d3e735000e1b3b", 2674733, 600),
+	WINGAME1("learninternet", "Level 2", "VIDPROF.EXE", "t:445909596640143da4720c35581d950f", 3931425, 600),
+	WINGAME1("learninternet", "Level 3", "VIDPROF.EXE", "t:dd5259e473fe1194643fcdad944a6df4", 4070576, 600),
 
-	WINGAME1("letterrally", "1.0", "L_Rally.exe", "b0f3841f6e8005e519445b22de37749b", 3921651, 600),
+	// Covers Works for Windows 95 (Works 4.0)
+	WINGAME1("learnworks95", "Level 1", "Vidprof.exe", "t:b95f3937a7801711dfce12f1afd208f7", 4150042, 600),
+	WINGAME1("learnworks95", "Level 2", "Vidprof.exe", "t:978b4443be2a0cb57cdf741fff2c6e65", 2854401, 600),
+	WINGAME1("learnworks95", "Level 3", "Vidprof.exe", "t:5cc0985c788b62c2c4fb8fe36ec73cc4", 2807718, 600),
+
+	// Found on SoftDisk #42 and others
+	WINGAME1("letterrally", "1.0", "L_Rally.exe", "t:98d7cd3a20f0178ea2a3d5bd3d34de9c", 3921651, 600),
 
 	MACGAME2_l("loewe2", "", "MEDIA/MACSTART",			"rt:282d2d4d2959fbf698b2cdf238c7d588", 1033198,
 							 "MEDIA/DATA/BAUWAGEN.DXR", "d:56702894e84d310c5b7548b689953fbd",  8361884, Common::DE_DEU, 602),
@@ -8564,12 +8571,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("macos85", "Demo", "Mac OS 8.5 Demo", "49cc011560110af5e19d0cd1ee22b821", 1032397, 650),
 
-	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "b0f3841f6e8005e519445b22de37749b", 1317661, 600),
+	WINDEMO1("madtg", "1998 Demo", "MTGDSLID.EXE", "t:84c90c191a840f2419682fbb7dd2ef35", 1317661, 600),
 
 	WINGAME1t("mcdonaldland", "", "McLand.exe", "f15f57b8b90986d6b34f8bf3a5487dfb", 1501901, 602),
 
 	WINGAME2("meancity", "", "mc32.exe",	"t:746d26c4e79cf5c81f8aaf09709d8488", 1527265,
-							 "mcstart.dir", "d:a001723e6395e3b4557bdaa141dbf1d7",   28662, 602),
+							 "mcstart.dir", "f:a001723e6395e3b4557bdaa141dbf1d7",   28662, 602),
 
 	// Masters of the Elements
 	// Original Dutch game Meesters van Macht released in 1997
@@ -8600,7 +8607,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("melements", "", "MVM.EXE",             "t:d1c929615def3d55f47fbc2171864320", 2903578, Common::JA_JPN, 602),
 
 	WINGAME2("meetchuck", "", "HORSE.EXE",  "t:b0f3841f6e8005e519445b22de37749b", 1130649,
-	 						  "HPICTS.DXR", "d:60aba531fc0bf4897ba94413eb8ae24f", 7878094, 600),
+	 						  "HPICTS.DXR", "f:60aba531fc0bf4897ba94413eb8ae24f", 7878094, 600),
 
 	// Mac version requires installation, Install Microshaft, Vise 3.6 installer
 	WINGAME1t("microshaft", "", "MICRO32.EXE", "ae4c5d1b7e9c84a22cc32893a74469f6", 2121827, 600),
@@ -8611,7 +8618,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("mulanpresskit", "", "Disney's Mulan", "r:d16e0af2a86b6b04a8f9c86205c0d3d2", 1031482, 601),
 	WINGAME2("mulanpresskit", "", "MULAN.EXE",		"t:a3cd98724929fa943405ebd382be187a", 1828679,
-								  "MULAN.DXR",		"d:e18520a7a3976513084fbd18d83867bb", 38674290, 601),
+								  "MULAN.DXR",		"f:e18520a7a3976513084fbd18d83867bb", 38674290, 601),
 
 	MACGAME2_l("mumin1", "", "start", "1d9149b9745e35ef93ed4cdf08ec3af7", 1032405,
 							 "mum1dir/01DALEN.DXR", "c90f2bb4d9479eedc47b9742422448a4", 3679416, Common::FI_FIN, 650),
@@ -8619,10 +8626,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 							  "MUM1DIR/01DALEN.DXR", "1e9170db3f9bac48df2ffd329b96f32d", 3679416, Common::FI_FIN, 600),
 
 	WINGAME2("namegame", "1.0", "NTG.exe",  "t:2aa5ccbf04e39c786ce32630b5e63715", 3722937,
-								"GameData", "d:edf8e640357864e245f265b6843564e2",	 6140, 602),
+								"GameData", "f:edf8e640357864e245f265b6843564e2",	 6140, 602),
 
-	MACGAME1("netmarket", "", "netMarket", "ade290061bd8f78051a8e872a889855c", 1030738, 600),
-	WINGAME1("netmarket", "", "NETMKT32.EXE", "3cb7a28198b9b8acd58d6d0e74272531", 1514399, 600),
+	MACGAME1("netmarket", "", "netMarket",	  "rt:c56e040bd04ed7f01b8d68d355169ad1", 1030482, 600),
+	WINGAME1("netmarket", "", "NETMKT32.EXE", "t:5ac520f15ac4ead986d2efc6ee03bab6",  1514399, 600),
 
 	MACGAME1_l("ngeeva00pf", "", "EVA-00", "fd87b233709108cc1fb001523ce772f5", 1034175, Common::JA_JPN, 601),
 	WINGAME1t_l("ngeeva00pf", "", "EVA-00.exe", "78a827f7380c27c19f0035843437cf9a", 1520172, Common::JA_JPN, 600),
@@ -8662,24 +8669,27 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2_l("ngebrowser6", "", "BROWSER",			 "rt:827353d9a0fe8a0e75a320f4fe3d1bb7", 1035232,
 								  "ENGINE/ZSCR0102.Cxt", "d:d441072601c2875db554d8b34fa674a6",	  71224, Common::JA_JPN, 602),
 	WINGAME2_l("ngebrowser6", "", "BROWSE32.EXE",		 "t:8eacd473ed3df780afc16a0970691282",  1512498,
-								  "ENGINE/ZSCR0102.Cxt", "d:d441072601c2875db554d8b34fa674a6",	  71224, Common::JA_JPN, 602),
+								  "ENGINE/ZSCR0102.Cxt", "f:d441072601c2875db554d8b34fa674a6",	  71224, Common::JA_JPN, 602),
 	MACGAME2_l("ngebrowser7", "", "BROWSER",			 "rt:827353d9a0fe8a0e75a320f4fe3d1bb7", 1035296,
 								  "ENGINE/ZSCR0102.Cxt", "d:d0248fdf4d4726f7b2693dae9ad12004",	  71224, Common::JA_JPN, 602),
 	WINGAME2_l("ngebrowser7", "", "BROWSE32.EXE",		 "t:d6250fd82cb0d6eb7c0c3a02d61a289a",  1826827,
-								  "ENGINE/ZSCR0102.Cxt", "d:d0248fdf4d4726f7b2693dae9ad12004",	  71224, Common::JA_JPN, 602),
+								  "ENGINE/ZSCR0102.Cxt", "f:d0248fdf4d4726f7b2693dae9ad12004",	  71224, Common::JA_JPN, 602),
 
 	// Study guide from The Daily Telegraph
 	// Mac executable filename does indeed end in .exe
-	MACGAME1("nia4", "", "nia4.exe", "ee2cca33b022bed087aa3911f9ec78b1", 1032689, 650),
-	WINGAME1("nia4", "", "nia4w95.exe", "d62438566e44826960fc16c5c23dbe43", 1711499, 650),
+	MACGAME1("nia4", "", "nia4.exe",	"r:ee2cca33b022bed087aa3911f9ec78b1", 1032433, 650),
+	WINGAME1("nia4", "", "nia4w95.exe", "t:4a840e9c99e017a359f54a2fa9537cb6", 1711499, 650),
 
 	// Original Mac filename is Nikolai's Treats™
-	MACGAME1("nikolaitreats", "", "Nikolai's Treats", "ce0a3a5891a35b2dd2ab706e8e376baa", 1032717, 650),
+	// Mac version requires installation
+	MACGAME1("nikolaitreats", "", "xn--Nikolai's Treats-e79i", "r:ce0a3a5891a35b2dd2ab706e8e376baa", 1032461, 650),
+	WINGAME1("nikolaitreats", "", "treats95.exe",			   "t:5b5dcfaeceba356b99a102ecdf4ca360", 1917629, 650),
 
 	// Mac executable is originally Café
+	// Windows version requires installation
 	// Choice of French or English gameplay at start
-	MACGAME1("nightcafe", "", "Cafe", "e8fd8a7b24520e47344c2d9768a2479f", 1029193, 600),
-	WINGAME1("nightcafe", "", "Cafe95.exe", "a593079aecf5bd938ce75264cac24b2d", 1701222, 600),
+	MACGAME1("nightcafe", "", "CAFE/xn--Caf-dma", "r:e8fd8a7b24520e47344c2d9768a2479f", 1028937, 600),
+	WINGAME1("nightcafe", "", "Cafe95.exe",		  "t:7cd11dc368c3d8f5624cbff4795e7029", 1701222, 600),
 
 	MACGAME1_l("no", "#1", "NO#1", "4e6ee3e16e7e3860944a9fc21c348d48", 116326, Common::JA_JPN, 602),
 	MACGAME1_l("no", "#2", "NO#2", "4e6ee3e16e7e3860944a9fc21c348d48", 116326, Common::JA_JPN, 602),
@@ -8689,23 +8699,23 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// US name is Noddy: Playtime in Toyland
 	WINGAME2_l("noddyschool", "", "Noddy.exe", "t:9fb24b0387e35a38403fa96165c5e4c1", 1552898,
-								  "noddy.dxr", "d:8af199d3f81fe09cc2afa3dc83224915",   54727, Common::EN_GRB, 602),
+								  "noddy.dxr", "f:8af199d3f81fe09cc2afa3dc83224915",   54727, Common::EN_GRB, 602),
 	WINGAME2_l("noddyschool", "", "NODDY.EXE", "t:c667841126694505d14e3245ac66de44", 1556536,
-								  "NODDY.DXR", "d:5becdeaeb65aadb23d031411197fefed",   58353, Common::EN_USA, 602),
+								  "NODDY.DXR", "f:5becdeaeb65aadb23d031411197fefed",   58353, Common::EN_USA, 602),
 
 	WINGAME2_l("norgesjakten", "Windows 3",  "DATA/STARTW3.EXE",  "t:de6712e37479f952a52d3e64f172cd24", 1324086,
-											 "LOGOS.DXR",		  "d:03374db319b1eb2d1a6de1c0913b6c33",   43466, Common::NB_NOR, 600),
+											 "LOGOS.DXR",		  "f:03374db319b1eb2d1a6de1c0913b6c33",   43466, Common::NB_NOR, 600),
 
 	// Found on NY Knicks CDK from CDKNet LLC, Garden City, New York
 	// Extremely annoying, play with sound off
-	WINGAME2("nykshuffle", "", "KNICKS.EXE",  "d62438566e44826960fc16c5c23dbe43", 4229955,
-							   "CDKPLAY.KXE", "a3b34c0871dc2fd51eec5559b68f709d", 4, 650),
+	WINGAME2("nykshuffle", "", "KNICKS.EXE",  "t:c3df89f349df869748036d98a178f126", 4229955,
+							   "CDKPLAY.KXE", "f:a3b34c0871dc2fd51eec5559b68f709d",		  4, 650),
 
 	// Designed and produced by C-Squared Studios, Caldwell, New Jersey (1998)
 	MACGAME2("nyyankeesyb", "", "start-ppc",			  "rt:45073affabebe7387beebcc83d64de50", 114859,
 								"material/tradition.dxr", "d:05bc2cd75e7bd414d735d2fc91835989", 1206863, 650),
 	WINGAME2("nyyankeesyb", "", "START95.EXE",			  "t:f7e5f7ac8b37b90af48492c7d578aa38", 1544371,
-								"material/tradition.dxr", "d:05bc2cd75e7bd414d735d2fc91835989", 1206863, 650),
+								"material/tradition.dxr", "f:05bc2cd75e7bd414d735d2fc91835989", 1206863, 650),
 
 	// Found on covermount of CD-ROM Today (Brazil) Volume 4 Número 16
 	// Only a 16-bit executable is provided
