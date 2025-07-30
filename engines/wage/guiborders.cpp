@@ -287,6 +287,11 @@ void Gui::loadBorder(Graphics::MacWindow *target, const char *border[], uint hei
 	offsets.titleTop = 0;
 	offsets.titleBottom = 0;
 	offsets.dark = false;
+	offsets.closeButtonTop = -1;
+	offsets.closeButtonLeft = -1;
+	offsets.closeButtonWidth = 0;
+	offsets.resizeButtonTop = -1;
+	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 16;
 	offsets.lowerScrollHeight = 16;
 	offsets.titlePos = titlePos;
