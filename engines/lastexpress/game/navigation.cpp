@@ -61,12 +61,12 @@ void LogicManager::loadTrain(int cd) {
 			// fix-ups on it. Since this is not portable we use a more reliable
 			// system.
 
-			byte *trainDataRaw = (byte *)malloc(PAGE_SIZE * archive->size);
+			byte *trainDataRaw = (byte *)malloc(MEM_PAGE_SIZE * archive->size);
 			if (trainDataRaw) {
 				_engine->getArchiveManager()->readHPF(archive, trainDataRaw, archive->size);
 				_engine->getArchiveManager()->closeHPF(archive);
 
-				Common::SeekableReadStream *trainDataStream = new Common::MemoryReadStream(trainDataRaw, PAGE_SIZE * archive->size, DisposeAfterUse::YES);
+				Common::SeekableReadStream *trainDataStream = new Common::MemoryReadStream(trainDataRaw, MEM_PAGE_SIZE * archive->size, DisposeAfterUse::YES);
 
 				// First node
 				trainDataStream->read(_trainData[0].sceneFilename, sizeof(_trainData[0].sceneFilename));

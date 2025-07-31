@@ -118,7 +118,7 @@ HPF *GoldArchiveManager::openHPF(const char *filename) {
 
 	Common::strcpy_s(result->name, filename);
 	int64 archiveSize = archiveItem.get()->createReadStream()->size();
-	result->size = (uint16)((archiveSize / PAGE_SIZE) + ((archiveSize % PAGE_SIZE) > 0 ? 1 : 0));
+	result->size = (uint16)((archiveSize / MEM_PAGE_SIZE) + ((archiveSize % MEM_PAGE_SIZE) > 0 ? 1 : 0));
 	result->status |= kHPFFileIsLoaded;
 	result->currentPos = 0;
 	result->archiveName = archiveItem.get()->getPathInArchive().toString();
@@ -144,8 +144,8 @@ void GoldArchiveManager::readHPF(HPF *archive, void *dstBuf, uint32 size) {
 
 			Common::SeekableReadStream *readStream = archivePtr->createReadStream();
 
-			readStream->seek((archive->currentPos + archive->offset) * PAGE_SIZE, SEEK_SET);
-			readStream->read(dstBuf, effSize * PAGE_SIZE);
+			readStream->seek((archive->currentPos + archive->offset) * MEM_PAGE_SIZE, SEEK_SET);
+			readStream->read(dstBuf, effSize * MEM_PAGE_SIZE);
 
 			delete readStream;
 
@@ -193,10 +193,10 @@ int GoldArchiveManager::loadBG(const char *filename) {
 		// All these fields are 32-bit LE.
 
 		Image::JPEGDecoder *dec = new Image::JPEGDecoder();
-		byte *backgroundCompBuffer = (byte *)malloc(archive->size * PAGE_SIZE);
+		byte *backgroundCompBuffer = (byte *)malloc(archive->size * MEM_PAGE_SIZE);
 		assert(backgroundCompBuffer);
 		readHPF(archive, backgroundCompBuffer, archive->size);
-		Common::SeekableReadStream *seqDataStream = new Common::MemoryReadStream(backgroundCompBuffer, PAGE_SIZE * archive->size, DisposeAfterUse::YES);
+		Common::SeekableReadStream *seqDataStream = new Common::MemoryReadStream(backgroundCompBuffer, MEM_PAGE_SIZE * archive->size, DisposeAfterUse::YES);
 
 		_engine->getGraphicsManager()->_renderBox1.x = seqDataStream->readUint32LE();
 		_engine->getGraphicsManager()->_renderBox1.y = seqDataStream->readUint32LE();

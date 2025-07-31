@@ -388,7 +388,7 @@ int32 LastExpressEngine::readTGAIntoMemory(const char *filename, TGAHeader *tgaH
 	}
 
 	if (_doCredits) {
-		fileSize = archive->size * PAGE_SIZE;
+		fileSize = archive->size * MEM_PAGE_SIZE;
 
 		byte *tgaRawData = (byte *)malloc(fileSize);
 
