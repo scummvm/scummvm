@@ -30,6 +30,30 @@
 namespace MM {
 namespace Xeen {
 
+#ifdef USE_TTS
+
+static const uint8 kButtonCount = 3;
+
+static const char *selectButton[] = {
+	"Select",				// English
+	"O.K.",					// German
+	"S\202lectionner",		// French (not translated in-game)
+	"Seleccionar",			// Spanish (shown as "Selecc" in-game)
+	"\x82\xeb\xa1\xae\xe0",	// Russian (Выбор)
+	"\xbf\xef\xa9\x77"		// Chinese (選定)
+};
+
+static const char *exitButton[] = {
+	"Exit",					// English
+	"Ende",					// German
+	"Sortir",				// French (not translated in-game)
+	"ESC",					// Spanish
+	"\x82\xeb\xe5\xae\xa4",	// Russian (Выход)
+	"\xc2\xf7"				// Chinese (離)
+};
+
+#endif
+
 Character *SpellsDialog::show(XeenEngine *vm, ButtonContainer *priorDialog,
 		Character *c, SpellDialogMode mode) {
 	SpellsDialog *dlg = new SpellsDialog(vm);
@@ -59,6 +83,9 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 	int newSelection;
 	w.open();
 
+	bool voiceText = true;
+	bool resetButtons = false;
+
 	do {
 		if (!mode) {
 			if (!c->guildMember()) {
@@ -71,15 +98,16 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			Common::String title = Common::String::format(Res.BUY_SPELLS, c->_name.c_str());
 			Common::String msg = Common::String::format(Res.GUILD_OPTIONS,
 				title.c_str(), XeenEngine::printMil(party._gold).c_str());
-			windows[10].writeString(msg);
+			windows[10].writeString(msg, false);
 			priorDialog->drawButtons(&windows[10]);
 		}
 
 		_spells.clear();
 		const char *errorMsg = setSpellText(c, modeCopy);
+		Common::String ttsMessage;
 		w.writeString(Common::String::format(Res.SPELLS_FOR,
 			errorMsg == nullptr ? Res.SPELL_LINES_0_TO_9 : "",
-			c->_name.c_str()));
+			c->_name.c_str()), false, &ttsMessage);
 
 		// Setup and write out spell list
 		const char *names[10];
@@ -107,7 +135,27 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 			colors[9], names[9],
 			mode ? Res.SPELL_PTS : Res.GOLD,
 			mode ? c->_currentSp : party._gold
-		));
+		), false, &ttsMessage);
+
+		if (voiceText) {
+#ifdef USE_TTS
+			if (errorMsg == nullptr) {
+				speakText(ttsMessage, mode);
+			} else {
+				_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+				_buttonTexts.resize(10);
+				_buttonTexts.push_back(selectButton[_vm->_ttsLanguage]);
+				_buttonTexts.push_back(exitButton[_vm->_ttsLanguage]);
+			}
+#endif
+
+			voiceText = false;
+		}
+
+		if (resetButtons) {
+			resetButtonTexts(ttsMessage, mode);
+			resetButtons = false;
+		}
 
 		_scrollSprites.draw(0, 4, Common::Point(39, 26));
 		_scrollSprites.draw(0, 0, Common::Point(187, 26));
@@ -136,10 +184,10 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 					c = &party._activeParty[_buttonValue];
 					spells._lastCaster = _buttonValue;
 					intf.highlightChar(_buttonValue);
-
+					ttsMessage.clear();
 					if (_vm->_mode == MODE_INTERACTIVE7) {
 						windows[10].writeString(Common::String::format(Res.GUILD_OPTIONS,
-							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()));
+							XeenEngine::printMil(party._gold).c_str(), Res.GUILD_TEXT, c->_name.c_str()), false, &ttsMessage);
 					} else {
 						SpellsCategory category = c->getSpellsCategory();
 						int spellIndex = (c->_currentSpell == -1) ? SPELLS_PER_CLASS : c->_currentSpell;
@@ -148,9 +196,11 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 						windows[10].writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 							c->_name.c_str(), spells._spellNames[spellId].c_str(),
 							spells.calcSpellPoints(spellId, c->getCurrentLevel()),
-							Res.SPELL_GEM_COST[spellId], c->_currentSp));
+							Res.SPELL_GEM_COST[spellId], c->_currentSp), false, &ttsMessage);
 					}
 
+					voiceText = true;
+					_buttonTexts.clear();
 					if (priorDialog != nullptr)
 						priorDialog->drawButtons(&windows[0]);
 					windows[10].update();
@@ -194,6 +244,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 				if (mode) {
 					// Casting
 					selection = newSelection;
+					_vm->sayText(_buttonTexts[(selection - topIndex) % 10], Common::TextToSpeechManager::INTERRUPT);
 				} else {
 					// Guild spells dialog: Spells Info or Buy
 					const Common::String &spellName = spells._spellNames[spellId];
@@ -209,6 +260,7 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 							sound.stopSound();
 							intf._overallFrame = 0;
 							sound.playSound(ccNum ? "parrot2.voc" : "guild12.voc", 1);
+							resetButtons = true;
 						} else {
 							sound.playFX(21);
 						}
@@ -220,23 +272,29 @@ Character *SpellsDialog::execute(ButtonContainer *priorDialog, Character *c, int
 		case Common::KEYCODE_PAGEUP:
 		case Common::KEYCODE_KP9:
 			topIndex = MAX((int)topIndex - 10, 0);
+			resetButtons = true;
 			break;
 
 		case Common::KEYCODE_PAGEDOWN:
 		case Common::KEYCODE_KP3:
 			topIndex = MIN(topIndex + 10, (((int)_spells.size() - 1) / 10) * 10);
+			resetButtons = true;
 			break;
 
 		case Common::KEYCODE_UP:
 		case Common::KEYCODE_KP8:
-			if (topIndex > 0)
+			if (topIndex > 0) {
 				--topIndex;
+				resetButtons = true;
+			}
 			break;
 
 		case Common::KEYCODE_DOWN:
 		case Common::KEYCODE_KP2:
-			if (topIndex < ((int)_spells.size() - 10))
+			if (topIndex < ((int)_spells.size() - 10)) {
 				++topIndex;
+				resetButtons = true;
+			}
 			break;
 
 		default:
@@ -259,20 +317,20 @@ void SpellsDialog::loadButtons() {
 	_scrollSprites.load("scroll.icn");
 	addButton(Common::Rect(187, 26, 198, 36), Common::KEYCODE_UP, &_scrollSprites);
 	addButton(Common::Rect(187, 111, 198, 121), Common::KEYCODE_DOWN, &_scrollSprites);
-	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1);
-	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2);
-	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3);
-	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4);
-	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5);
-	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6);
-	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7);
-	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8);
-	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9);
-	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0);
-	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE);
+	addButton(Common::Rect(40, 28, 187, 36), Common::KEYCODE_1, nullptr, 0);
+	addButton(Common::Rect(40, 37, 187, 45), Common::KEYCODE_2, nullptr, 1);
+	addButton(Common::Rect(40, 46, 187, 54), Common::KEYCODE_3, nullptr, 2);
+	addButton(Common::Rect(40, 55, 187, 63), Common::KEYCODE_4, nullptr, 3);
+	addButton(Common::Rect(40, 64, 187, 72), Common::KEYCODE_5, nullptr, 4);
+	addButton(Common::Rect(40, 73, 187, 81), Common::KEYCODE_6, nullptr, 5);
+	addButton(Common::Rect(40, 82, 187, 90), Common::KEYCODE_7, nullptr, 6);
+	addButton(Common::Rect(40, 91, 187, 99), Common::KEYCODE_8, nullptr, 7);
+	addButton(Common::Rect(40, 100, 187, 108), Common::KEYCODE_9, nullptr, 8);
+	addButton(Common::Rect(40, 109, 187, 117), Common::KEYCODE_0, nullptr, 9);
+	addButton(Common::Rect(174, 123, 198, 133), Common::KEYCODE_ESCAPE, nullptr, 11);
 	addButton(Common::Rect(187, 35, 198, 73), Common::KEYCODE_PAGEUP);
 	addButton(Common::Rect(187, 74, 198, 112), Common::KEYCODE_PAGEDOWN);
-	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s);
+	addButton(Common::Rect(132, 123, 168, 133), Common::KEYCODE_s, nullptr, 10);
 	addPartyButtons(_vm);
 }
 
@@ -404,6 +462,51 @@ const char *SpellsDialog::setSpellText(Character *c, int mode) {
 	return _spells.empty() ? Res.SPELLS_LEARNED_ALL : nullptr;
 }
 
+void SpellsDialog::speakText(const Common::String &text, int mode) {
+	_vm->sayText(resetButtonTexts(text, mode));
+}
+
+Common::String SpellsDialog::resetButtonTexts(const Common::String &text, int mode) {
+	uint index = 0;
+
+	// Get the numbers 0 - 9
+	Common::String spellList[10];
+	for (uint8 i = 0; i < 10; ++i) {
+		spellList[i] = getNextTextSection(text, index);
+	}
+
+	// "Spells for" message
+	Common::String combinedText = getNextTextSection(text, index);
+
+	_buttonTexts.clear();
+	// Spell names and their costs
+	uint spellCount = MIN((uint)10, _spells.size());
+	for (uint i = 0; i < spellCount; ++i) {
+		spellList[i] += ": " + getNextTextSection(text, index, 2, ": ");
+		_buttonTexts.push_back(spellList[i]);
+		combinedText += spellList[i];
+	}
+
+	// Numbers for empty spells
+	for (uint i = spellCount; i < 10; ++i) {
+		_buttonTexts.push_back(spellList[i]);
+	}
+
+#ifdef USE_TTS
+	if (mode) {
+		_buttonTexts.push_back(selectButton[_vm->_ttsLanguage]);
+	} else {
+		_buttonTexts.push_back("");
+	}
+	_buttonTexts.push_back(exitButton[_vm->_ttsLanguage]);
+#endif
+
+	// Spell points/gold
+	combinedText += getNextTextSection(text, index);
+
+	return combinedText;
+}
+
 /*------------------------------------------------------------------------*/
 
 CastSpell::CastSpell(XeenEngine *vm) : ButtonContainer(vm) {
@@ -478,6 +581,9 @@ int CastSpell::execute(Character *&c) {
 
 	int spellId = -1;
 	bool redrawFlag = true;
+
+	_vm->stopTextToSpeech();
+
 	do {
 		if (redrawFlag) {
 			SpellsCategory category = c->getSpellsCategory();
@@ -487,9 +593,11 @@ int CastSpell::execute(Character *&c) {
 			int gemCost = Res.SPELL_GEM_COST[spellId];
 			int spCost = spells.calcSpellPoints(spellId, c->getCurrentLevel());
 
+			Common::String ttsMessage;
 			w.writeString(Common::String::format(Res.CAST_SPELL_DETAILS,
 				c->_name.c_str(), spells._spellNames[spellId].c_str(),
-				spCost, gemCost, c->_currentSp));
+				spCost, gemCost, c->_currentSp), false, &ttsMessage);
+			speakText(ttsMessage);
 			drawButtons(&windows[0]);
 			w.update();
 
@@ -547,11 +655,18 @@ int CastSpell::execute(Character *&c) {
 void CastSpell::loadButtons() {
 	_iconSprites.load("cast.icn");
 
-	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.DialogsSpells.KEY_CAST, &_iconSprites);
-	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.DialogsSpells.KEY_NEW, &_iconSprites);
+	addButton(Common::Rect(234, 108, 259, 128), Res.KeyConstants.DialogsSpells.KEY_CAST, &_iconSprites, 0);
+	addButton(Common::Rect(261, 108, 285, 128), Res.KeyConstants.DialogsSpells.KEY_NEW, &_iconSprites, 1);
 
-	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addButton(Common::Rect(288, 108, 312, 128), Common::KEYCODE_ESCAPE, &_iconSprites, 2);
 	addPartyButtons(_vm);
+}
+
+void CastSpell::speakText(const Common::String &text) {
+	uint index = 0;
+	Common::String buttonText = addNextTextToButtons(text, index, 3);
+	_vm->sayText(text.substr(index + 1), Common::TextToSpeechManager::INTERRUPT);
+	_vm->sayText(buttonText);
 }
 
 /*------------------------------------------------------------------------*/
@@ -654,16 +769,19 @@ int SelectElement::execute(int spellId) {
 	loadButtons();
 
 	w.open();
-	w.writeString(Res.WHICH_ELEMENT1);
+	Common::String ttsMessage;
+	w.writeString(Res.WHICH_ELEMENT1, false, &ttsMessage);
 	drawButtons(&windows[0]);
 	w.update();
+
+	speakText(ttsMessage);
 
 	while (result == 999) {
 		do {
 			events.updateGameCounter();
 			intf.draw3d(true, false);
 			w.frame();
-			w.writeString(Res.WHICH_ELEMENT2);
+			w.writeString(Res.WHICH_ELEMENT2, false);
 			drawButtons(&windows[0]);
 			w.update();
 
@@ -698,10 +816,16 @@ int SelectElement::execute(int spellId) {
 void SelectElement::loadButtons() {
 	_iconSprites.load("element.icn");
 
-	addButton(Common::Rect(60, 92, 84, 112),   Res.KeyConstants.DialogsSpells.KEY_FIRE, &_iconSprites);
-	addButton(Common::Rect(90, 92, 114, 112),  Res.KeyConstants.DialogsSpells.KEY_ELEC, &_iconSprites);
-	addButton(Common::Rect(120, 92, 144, 112), Res.KeyConstants.DialogsSpells.KEY_COLD, &_iconSprites);
-	addButton(Common::Rect(150, 92, 174, 112), Res.KeyConstants.DialogsSpells.KEY_ACID, &_iconSprites);
+	addButton(Common::Rect(60, 92, 84, 112),   Res.KeyConstants.DialogsSpells.KEY_FIRE, &_iconSprites, 0);
+	addButton(Common::Rect(90, 92, 114, 112),  Res.KeyConstants.DialogsSpells.KEY_ELEC, &_iconSprites, 1);
+	addButton(Common::Rect(120, 92, 144, 112), Res.KeyConstants.DialogsSpells.KEY_COLD, &_iconSprites, 2);
+	addButton(Common::Rect(150, 92, 174, 112), Res.KeyConstants.DialogsSpells.KEY_ACID, &_iconSprites, 3);
+}
+
+void SelectElement::speakText(const Common::String &text) {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+	_vm->sayText(addNextTextToButtons(text, index, 4));
 }
 
 /*------------------------------------------------------------------------*/
@@ -773,12 +897,15 @@ bool LloydsBeacon::execute() {
 	// Get the destination map name
 	Common::String mapName = Map::getMazeName(c._lloydMap, c._lloydSide);
 
+	Common::String ttsMessage;
 	// Display the dialog
 	w.open();
 	w.writeString(Common::String::format(Res.LLOYDS_BEACON, mapName.c_str(),
-		c._lloydPosition.x, c._lloydPosition.y));
+		c._lloydPosition.x, c._lloydPosition.y), true, &ttsMessage);
 	drawButtons(&w);
 	w.update();
+
+	speakText(ttsMessage);
 
 	bool result = true;
 	do {
@@ -829,8 +956,14 @@ bool LloydsBeacon::execute() {
 void LloydsBeacon::loadButtons() {
 	_iconSprites.load("lloyds.icn");
 
-	addButton(Common::Rect(281, 108, 305, 128), Res.KeyConstants.DialogsSpells.KEY_RETURN, &_iconSprites);
-	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsSpells.KEY_SET, &_iconSprites);
+	addButton(Common::Rect(281, 108, 305, 128), Res.KeyConstants.DialogsSpells.KEY_RETURN, &_iconSprites, 1);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsSpells.KEY_SET, &_iconSprites, 0);
+}
+
+void LloydsBeacon::speakText(const Common::String &text) {
+	uint index = 0;
+	getNextTextSection(text, index, 5);
+	addNextTextToButtons(text, index, 2);
 }
 
 /*------------------------------------------------------------------------*/
@@ -988,9 +1121,14 @@ void IdentifyMonster::execute() {
 
 	sound.playFX(20);
 	w.open();
+	Common::String ttsMessage;
 	w.writeString(Common::String::format(Res.IDENTIFY_MONSTERS,
-		monsterDesc[0].c_str(), monsterDesc[1].c_str(), monsterDesc[2].c_str()));
+		monsterDesc[0].c_str(), monsterDesc[1].c_str(), monsterDesc[2].c_str()), false, &ttsMessage);
 	w.update();
+
+#ifdef USE_TTS
+	speakText(ttsMessage);
+#endif
 
 	do {
 		events.updateGameCounter();
@@ -1004,6 +1142,27 @@ void IdentifyMonster::execute() {
 	w.close();
 }
 
+#ifdef USE_TTS
+
+void IdentifyMonster::speakText(const Common::String &text) const {
+	Common::String headers[5];
+	uint index = 0;
+	for (uint8 i = 0; i < 5; ++i) {
+		headers[i] = getNextTextSection(text, index);
+	}
+
+	Combat &combat = *_vm->_combat;
+	for (uint8 i = 0; i < 3; ++i) {
+		if (combat._attackMonsters[i] == -1)
+			continue;
+
+		for (int j = 0; j < 5; ++j) {
+			_vm->sayText(headers[j] + ": " + getNextTextSection(text, index));
+		}
+	}
+}
+
+#endif
 
 /*------------------------------------------------------------------------*/
 

@@ -73,6 +73,8 @@ private:
 		ItemCategory category, ItemsMode mode);
 
 	void itemToGold(Character &c, int itemIndex, ItemCategory category, ItemsMode mode);
+
+	void speakText(const Common::String &text, uint8 headerCount, uint8 lineCount);
 public:
 	static Character *show(XeenEngine *vm, Character *c, ItemsMode mode);
 };
@@ -83,9 +85,10 @@ private:
 	int _actionIndex;
 	InventoryItems &_items;
 
-	ItemSelectionDialog(XeenEngine *vm, int actionIndex, InventoryItems &items) : ButtonContainer(vm),
+	ItemSelectionDialog(XeenEngine *vm, int actionIndex, InventoryItems &items, const Common::StringArray &itemButtonTexts) : ButtonContainer(vm),
 			_actionIndex(actionIndex), _items(items) {
 		loadButtons();
+		_buttonTexts = itemButtonTexts;
 	}
 
 	/**
@@ -103,9 +106,10 @@ public:
 	 * Shows the dialog
 	 * @param actionIndex		Current action type
 	 * @param items				Currently active items category
+	 * @param itemButtonTexts	Text for each item button
 	 * @returns					Selected item index
 	 */
-	static int show(int actionIndex, InventoryItems &items);
+	static int show(int actionIndex, InventoryItems &items, const Common::StringArray &itemButtonTexts);
 };
 
 

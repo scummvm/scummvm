@@ -30,6 +30,10 @@
 namespace MM {
 namespace Xeen {
 
+static const uint8 kInformationCount = 20;
+static const uint8 kButtonCount = 4;
+static const uint8 kPartyGoldIndex = 7;
+
 void CharacterInfo::show(XeenEngine *vm, int charIndex) {
 	CharacterInfo *dlg = new CharacterInfo(vm);
 	dlg->execute(charIndex);
@@ -57,7 +61,9 @@ void CharacterInfo::execute(int charIndex) {
 	do {
 		if (redrawFlag) {
 			Common::String charDetails = loadCharacterDetails(*c);
-			w.writeString(Common::String::format(Res.CHARACTER_TEMPLATE, charDetails.c_str()));
+			Common::String ttsMessage;
+			w.writeString(Common::String::format(Res.CHARACTER_TEMPLATE, charDetails.c_str()), false, &ttsMessage);
+			speakText(ttsMessage);
 			w.drawList(_drawList, 24);
 			w.update();
 			redrawFlag = false;
@@ -103,6 +109,7 @@ void CharacterInfo::execute(int charIndex) {
 				showCursor(false);
 				--_cursorCell;
 				showCursor(true);
+				_vm->sayText(_buttonTexts[_buttons[_cursorCell]._ttsIndex], Common::TextToSpeechManager::INTERRUPT);
 			}
 			w.update();
 
@@ -112,6 +119,7 @@ void CharacterInfo::execute(int charIndex) {
 				showCursor(false);
 				++_cursorCell;
 				showCursor(true);
+				_vm->sayText(_buttonTexts[_buttons[_cursorCell]._ttsIndex], Common::TextToSpeechManager::INTERRUPT);
 			}
 			w.update();
 
@@ -121,6 +129,7 @@ void CharacterInfo::execute(int charIndex) {
 				showCursor(false);
 				_cursorCell -= 5;
 				showCursor(true);
+				_vm->sayText(_buttonTexts[_buttons[_cursorCell]._ttsIndex], Common::TextToSpeechManager::INTERRUPT);
 			}
 			w.update();
 
@@ -130,6 +139,7 @@ void CharacterInfo::execute(int charIndex) {
 				showCursor(false);
 				_cursorCell += 5;
 				showCursor(true);
+				_vm->sayText(_buttonTexts[_buttons[_cursorCell]._ttsIndex], Common::TextToSpeechManager::INTERRUPT);
 			}
 			w.update();
 
@@ -240,32 +250,32 @@ void CharacterInfo::loadDrawStructs() {
 }
 
 void CharacterInfo::addButtons() {
-	addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites);
-	addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites);
-	addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites);
-	addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites);
-	addButton(Common::Rect(10, 116, 34, 136), 1005, &_iconSprites);
-	addButton(Common::Rect(61, 24, 85, 44), 1006, &_iconSprites);
-	addButton(Common::Rect(61, 47, 85, 67), 1007, &_iconSprites);
-	addButton(Common::Rect(61, 70, 85, 90), 1008, &_iconSprites);
-	addButton(Common::Rect(61, 93, 85, 113), 1009, &_iconSprites);
-	addButton(Common::Rect(61, 116, 85, 136), 1010, &_iconSprites);
-	addButton(Common::Rect(112, 24, 136, 44), 1011, &_iconSprites);
-	addButton(Common::Rect(112, 47, 136, 67), 1012, &_iconSprites);
-	addButton(Common::Rect(112, 70, 136, 90), 1013, &_iconSprites);
-	addButton(Common::Rect(112, 93, 136, 113), 1014, &_iconSprites);
-	addButton(Common::Rect(112, 116, 136, 136), 1015, &_iconSprites);
-	addButton(Common::Rect(177, 24, 201, 44), 1016, &_iconSprites);
-	addButton(Common::Rect(177, 47, 201, 67), 1017, &_iconSprites);
-	addButton(Common::Rect(177, 70, 201, 90), 1018, &_iconSprites);
-	addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites);
-	addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites);
+	addButton(Common::Rect(10, 24, 34, 44), 1001, &_iconSprites, 4);
+	addButton(Common::Rect(10, 47, 34, 67), 1002, &_iconSprites, 8);
+	addButton(Common::Rect(10, 70, 34, 90), 1003, &_iconSprites, 12);
+	addButton(Common::Rect(10, 93, 34, 113), 1004, &_iconSprites, 16);
+	addButton(Common::Rect(10, 116, 34, 136), 1005, &_iconSprites, 20);
+	addButton(Common::Rect(61, 24, 85, 44), 1006, &_iconSprites, 5);
+	addButton(Common::Rect(61, 47, 85, 67), 1007, &_iconSprites, 9);
+	addButton(Common::Rect(61, 70, 85, 90), 1008, &_iconSprites, 13);
+	addButton(Common::Rect(61, 93, 85, 113), 1009, &_iconSprites, 17);
+	addButton(Common::Rect(61, 116, 85, 136), 1010, &_iconSprites, 21);
+	addButton(Common::Rect(112, 24, 136, 44), 1011, &_iconSprites, 6);
+	addButton(Common::Rect(112, 47, 136, 67), 1012, &_iconSprites, 10);
+	addButton(Common::Rect(112, 70, 136, 90), 1013, &_iconSprites, 14);
+	addButton(Common::Rect(112, 93, 136, 113), 1014, &_iconSprites, 18);
+	addButton(Common::Rect(112, 116, 136, 136), 1015, &_iconSprites, 22);
+	addButton(Common::Rect(177, 24, 201, 44), 1016, &_iconSprites, 7);
+	addButton(Common::Rect(177, 47, 201, 67), 1017, &_iconSprites, 11);
+	addButton(Common::Rect(177, 70, 201, 90), 1018, &_iconSprites, 15);
+	addButton(Common::Rect(177, 93, 201, 113), 1019, &_iconSprites, 19);
+	addButton(Common::Rect(177, 116, 201, 136), 1020, &_iconSprites, 23);
 
-	addButton(Common::Rect(285, 11, 309, 31), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites);
-	addButton(Common::Rect(285, 43, 309, 63), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites);
-	addButton(Common::Rect(285, 75, 309, 95), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites);
+	addButton(Common::Rect(285, 11, 309, 31), Res.KeyConstants.DialogsCharInfo.KEY_ITEM, &_iconSprites, 0);
+	addButton(Common::Rect(285, 43, 309, 63), Res.KeyConstants.DialogsCharInfo.KEY_QUICK, &_iconSprites, 1);
+	addButton(Common::Rect(285, 75, 309, 95), Res.KeyConstants.DialogsCharInfo.KEY_EXCHANGE, &_iconSprites, 2);
 
-	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites);
+	addButton(Common::Rect(285, 107, 309, 127), Common::KEYCODE_ESCAPE, &_iconSprites, 3);
 	addPartyButtons(_vm);
 }
 
@@ -370,6 +380,52 @@ const char *CharacterInfo::getFoodOnHandPlurals(int food) {
 		return Res.FOOD_ON_HAND[2];
 	}
 	return Res.FOOD_ON_HAND[0];
+}
+
+void CharacterInfo::speakText(const Common::String &text) {
+	uint index = 0;
+	uint statNameIndex = 0;
+
+	// Get the header for each piece of information
+	Common::String informationHeaders[kInformationCount];
+	for (uint i = 0; i < kInformationCount; ++i) {
+		if (i != kPartyGoldIndex) {
+			// Items in the rightmost column already have their full names, not abbreviations
+			if ((i + 1) % 4 != 0) {
+				// Replace abbreviations with their full versions
+				informationHeaders[i] = Res.STAT_NAMES[statNameIndex];
+				getNextTextSection(text, index);
+			} else {
+				informationHeaders[i] = getNextTextSection(text, index);
+			}
+		}
+
+		// The text is displayed in order from left to right, while the stat names in the STAT_NAMES array are ordered
+		// from top to bottom. Therefore, we need to set the stat name index to correspond to the STAT_NAMES array
+		statNameIndex += 5;
+		if (statNameIndex >= 20) {
+			statNameIndex -= 19;
+		}
+	}
+
+	// Get the text for the side buttons
+	Common::String sideButtonsText = addNextTextToButtons(text, index, kButtonCount);
+
+	// Party gold label (but not the value) sorts out of order and not with the rest of the information,
+	// so we need to move it to its correct place
+	informationHeaders[kPartyGoldIndex] = getNextTextSection(text, index);
+
+	// Character name
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+
+	// Each attribute
+	for (uint i = 0; i < kInformationCount; ++i) {
+		Common::String buttonText = informationHeaders[i] + ": " + getNextTextSection(text, index);
+		_vm->sayText(buttonText);
+		_buttonTexts.push_back(buttonText);
+	}
+
+	_vm->sayText(sideButtonsText);
 }
 
 bool CharacterInfo::expandStat(int attrib, const Character &c) {
@@ -620,6 +676,7 @@ bool CharacterInfo::expandStat(int attrib, const Character &c) {
 	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
 	events.clearEvents();
+	_vm->stopTextToSpeech();
 
 	w.close();
 	return false;

@@ -56,8 +56,11 @@ int WhoWill::execute(int message, int action, bool type) {
 		Res.WHO_ACTIONS[message], party._activeParty.size());
 
 	windows[36].open();
-	windows[36].writeString(msg);
+	Common::String ttsMessage;
+	windows[36].writeString(msg, false, &ttsMessage);
 	windows[36].update();
+
+	speakText(ttsMessage);
 
 	intf._face1State = map._headData[party._mazePosition.y][party._mazePosition.x]._left;
 	intf._face2State = map._headData[party._mazePosition.y][party._mazePosition.x]._right;
@@ -97,9 +100,17 @@ int WhoWill::execute(int message, int action, bool type) {
 		}
 	}
 
+	_vm->stopTextToSpeech();
 	intf._face1State = intf._face2State = 2;
 	windows[36].close();
 	return _buttonValue;
+}
+
+void WhoWill::speakText(const Common::String &text) const {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index));
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+	_vm->sayText(getNextTextSection(text, index));
 }
 
 } // End of namespace Xeen

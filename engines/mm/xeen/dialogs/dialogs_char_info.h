@@ -74,6 +74,8 @@ private:
 	*/
 	const char *getFoodOnHandPlurals(int food);
 
+	void speakText(const Common::String &text);
+
 	bool expandStat(int attrib, const Character &c);
 public:
 	static void show(XeenEngine *vm, int charIndex);

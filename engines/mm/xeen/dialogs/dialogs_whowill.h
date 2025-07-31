@@ -32,6 +32,8 @@ private:
 	WhoWill(XeenEngine *vm) : ButtonContainer(vm) {}
 
 	int execute(int message, int action, bool type);
+
+	void speakText(const Common::String &text) const;
 public:
 	static int show(XeenEngine *vm, int message, int action, bool type);
 };
