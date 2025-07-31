@@ -494,8 +494,19 @@ bool MacWindow::processEvent(Common::Event &event) {
 		}
 
 		if (_beingResized) {
-			resize(MAX(_borderWidth * 4, _dims.width()  + event.mouse.x - _draggedX),
-				   MAX(_borderWidth * 4, _dims.height() + event.mouse.y - _draggedY));
+			int minWidth = _borderWidth * 4;
+			int minHeight = minWidth;
+
+			uint32 flags = getBorderFlags();
+			if (_macBorder.hasBorder(flags) && _macBorder.hasOffsets()) {
+				minWidth = MAX(minWidth, _macBorder.getMinWidth(flags));
+				minHeight = MAX(minHeight, _macBorder.getMinHeight(flags));
+			}
+
+			resize(MAX(minWidth, _dims.width()  + event.mouse.x - _draggedX),
+				   MAX(minHeight, _dims.height() + event.mouse.y - _draggedY));
+
+			setTitle(_title);
 
 			_draggedX = event.mouse.x;
 			_draggedY = event.mouse.y;
