@@ -81,7 +81,6 @@ enum {
 };
 
 enum TEENAGENTActions {
-	kActionNone,
 	kActionSkipIntro,
 	kActionSkipDialog,
 	kActionCloseInventory,
