@@ -183,6 +183,8 @@ typedef struct ImGuiState {
 	ImGuiEx::ImGuiLogger *_logger = nullptr;
 } ImGuiState;
 
+extern ImGuiState *_state;
+
 // debugtools.cpp
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
 void setScriptToDisplay(const ImGuiScript &script);
@@ -216,8 +218,6 @@ void showFuncList();
 void showScriptCasts();
 void showScripts();
 void showExecutionContext();
-
-extern ImGuiState *_state;
 
 }
 

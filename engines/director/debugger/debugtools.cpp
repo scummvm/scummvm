@@ -223,6 +223,7 @@ void setScriptToDisplay(const ImGuiScript &script) {
 		_state->_functions._showScript = true;
 		return;
 	}
+
 	_state->_functions._scripts.push_back(script);
 	_state->_functions._current = index;
 	_state->_functions._showScript = true;

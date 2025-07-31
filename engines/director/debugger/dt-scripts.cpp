@@ -36,6 +36,8 @@
 namespace Director {
 namespace DT {
 
+Common::HashMap<Window *, ImGuiState *> _windowStates;
+
 static void renderCastScript(Symbol &sym) {
 	if (sym.type != HANDLER)
 		return;
@@ -353,28 +355,29 @@ void showFuncList() {
 }
 
 void showExecutionContext() {
+	updateCurrentScript();
 	if (!_state->_w.executionContext)
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(600, 500), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(750, 500), ImGuiCond_FirstUseEver);
 
 	Director::Lingo *lingo = g_director->getLingo();
 
 	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
-		const Common::Array<Window *> *windowList = g_director->getWindowList();
+		int windowID = 0;
 
-		ImGui::PushID(0);
+		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
 		ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
 		ImGui::Text("%s", g_director->getStage()->asString().c_str());
+		ImGui::Text("%s", g_director->getStage()->getCurrentMovie()->getMacName().c_str());
 
 		ImGui::SeparatorText("Backtrace");
 		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
 
 		ImGui::SeparatorText("Scripts");
-		updateCurrentScript();
 
 		if (_state->_functions._showScript) {
 			ImGui::BeginDisabled(_state->_functions._scripts.empty() || _state->_functions._current == 0);
@@ -431,28 +434,45 @@ void showExecutionContext() {
 		ImGui::EndChild();
 		ImGui::PopStyleColor();
 		ImGui::PopID();
-
-		int windowID = 1;
 		ImGui::SameLine();
 
+		windowID += 1;
+		const Common::Array<Window *> *windowList = g_director->getWindowList();
+
 		Window *mainWindow = g_director->getCurrentWindow();
+		ImGuiState *mainState = _state;
 
 		for (auto window : (*windowList)) {
+			ImGuiState *state = _windowStates.getValOrDefault(window, nullptr);
+
+			if (!state) {
+				state = new ImGuiState();
+				state->_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
+				state->_archive.memEdit.ReadOnly = true;
+				state->_logger = new ImGuiEx::ImGuiLogger();
+
+				_windowStates[window] = state;
+			}
+			_state = state;
+			debug("What is state: %p", (void *)_state);
+
 			g_director->setCurrentWindow(window);
 			g_lingo->switchStateFromWindow();
+
+			updateCurrentScript();
 
 			ImGui::PushID(windowID);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-			ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
+			ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX);
 
 			ImGui::Text("%s", window->asString().c_str());
+			ImGui::Text("%s", window->getFileName().c_str());
 
 			ImGui::SeparatorText("Backtrace");
 			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
 
 			ImGui::SeparatorText("Scripts");
-			updateCurrentScript();
 
 			if (_state->_functions._showScript) {
 				ImGui::BeginDisabled(_state->_functions._scripts.empty() || _state->_functions._current == 0);
@@ -500,6 +520,7 @@ void showExecutionContext() {
 
 				ImGui::Separator();
 				const ImVec2 childsize = ImGui::GetContentRegionAvail();
+
 				ImGui::BeginChild("##script", childsize);
 				ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
 				renderScript(script, _state->_functions._showByteCode);
@@ -513,11 +534,12 @@ void showExecutionContext() {
 			windowID++;
 		}
 
+		_state = mainState;
 		g_director->setCurrentWindow(mainWindow);
 		g_lingo->switchStateFromWindow();
 	}
-	ImGui::End();
 
+	ImGui::End();
 }
 
 } // namespace DT
