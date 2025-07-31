@@ -164,9 +164,8 @@ void ImageAsset::decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byt
 	uint p = 0;
 	for (uint y = 0; y < bitHeight; y++) {
 		for (uint x = 0; x < words; x++) {
-			v = stream.peekBits<32>();
+			v = stream.peekBits<16>();
 			stream.skip(16);
-			v >>= 16 - (stream.pos() % 8);
 			data[p] = (v >> 8) & 0xff; p++;
 			data[p] = v & 0xff; p++;
 		}
