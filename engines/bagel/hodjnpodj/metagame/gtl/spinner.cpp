@@ -370,7 +370,7 @@ BOOL CSpinner::Hide(void) {
  ************************************************************************/
 
 int CSpinner::Spin(void) {
-	int         n, i, j, nIdx;
+	int         i, j, nIdx;
 	CBitmap     *pBitmap = nullptr;
 	CPalette    *pPalette = nullptr;
 	CRect       srcRect, dstARect, dstBRect;
@@ -386,6 +386,7 @@ int CSpinner::Spin(void) {
 
 	pSound = new CSound();                              // create the spinner sound
 	(*pSound).initialize(m_pWnd, SPINNER_SOUND, SOUND_WAVE | SOUND_QUEUE | SOUND_BUFFERED | SOUND_ASYNCH | SOUND_NOTIFY | SOUND_LOOP);
+	(*pSound).play();                                   // start the spinner sound
 
 	if (!m_bVisible) {                                  // make it visible
 		bSuccess = Show(m_nX, m_nY);
@@ -404,30 +405,8 @@ int CSpinner::Spin(void) {
 	                 m_nY + SPINNER_SLOTB_DY,
 	                 m_nX + SPINNER_SLOTB_DX + SPINNER_SLOT_DDX,
 	                 m_nY + SPINNER_SLOTB_DY + SPINNER_SLOT_DDY);
-	// "spin" the spinner digits
+	// dispaly the spinner digits
 	pBitmap = FetchBitmap(m_pDC, &pPalette, (m_bHodj ? HODJ_SPINNER_NUMBERS_SPEC : PODJ_SPINNER_NUMBERS_SPEC));
-
-	(*pSound).play();                                   // start the spinner sound
-	if (pBitmap != nullptr) {
-		for (n = 0; n < SPINNER_CYCLE; n++) {
-			for (i = 0; i < 2; i++) {
-				srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-				bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstARect, (DWORD)SRCCOPY);
-				if (!bSuccess)
-					goto punt;
-				for (j = 0; j < 10; j++) {
-					if (HandleMessages())               // terminate if urgent message pending
-						goto punt;
-					srcRect.SetRect(j * SPINNER_SLOT_DDX, 0, (j + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
-					bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD)SRCCOPY);
-					if (!bSuccess)
-						goto punt;
-				}
-			}
-
-			app->pause();
-		}
-	}
 
 	i = nValue / 10;                                    // update spinner with actual value
 	srcRect.SetRect(i * SPINNER_SLOT_DDX, 0, (i + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
@@ -437,6 +416,8 @@ int CSpinner::Spin(void) {
 		srcRect.SetRect(j * SPINNER_SLOT_DDX, 0, (j + 1) * SPINNER_SLOT_DDX, SPINNER_SLOT_DDY);
 		bSuccess = BltBitmap(m_pDC, pPalette, pBitmap, &srcRect, &dstBRect, (DWORD) SRCCOPY);
 	}
+
+	app->pause();
 
 	if (pSound != nullptr) {                               // terminate the sound gracefully
 		(*pSound).stop();
