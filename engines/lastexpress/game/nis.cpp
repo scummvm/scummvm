@@ -153,7 +153,7 @@ void NISManager::loadSnd(int32 size) {
 }
 
 int NISManager::loadChunk(int32 size) {
-	int32 sizeToLoad = _totalStreamPages - ((_remainingStreamBytes + 2047) / PAGE_SIZE);
+	int32 sizeToLoad = _totalStreamPages - ((_remainingStreamBytes + 2047) / MEM_PAGE_SIZE);
 
 	if (!_archive || (_archive->status & 2) == 0)
 		return 0;
@@ -184,10 +184,10 @@ int NISManager::loadChunk(int32 size) {
 	if (sizeToLoad + _currentStreamPage >= _totalStreamPages)
 		sizeToLoad = _totalStreamPages - _currentStreamPage;
 
-	_engine->getArchiveManager()->readHPF(_archive, ((byte *)_backgroundSurface + (_currentStreamPage * PAGE_SIZE)), sizeToLoad);
+	_engine->getArchiveManager()->readHPF(_archive, ((byte *)_backgroundSurface + (_currentStreamPage * MEM_PAGE_SIZE)), sizeToLoad);
 
 	_currentStreamPage += sizeToLoad;
-	_remainingStreamBytes += sizeToLoad * PAGE_SIZE;
+	_remainingStreamBytes += sizeToLoad * MEM_PAGE_SIZE;
 
 	if (_currentStreamPage >= _totalStreamPages)
 		_currentStreamPage -= _totalStreamPages;
@@ -214,7 +214,7 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 	_currentStreamPage = 0;
 	_streamCurrentPosition = 0;
 	_remainingStreamBytes = 0;
-	_streamBufferSize = 1530 * PAGE_SIZE;
+	_streamBufferSize = 1530 * MEM_PAGE_SIZE;
 	_originalBackgroundSurface = _engine->getGraphicsManager()->_frontBuffer;
 	_totalBackgroundPages = 1530;
 	_totalStreamPages = 1530;
@@ -226,7 +226,7 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 		return false;
 	}
 
-	_engine->getMemoryManager()->lockSeqMem((_totalBackgroundPages - 300) * PAGE_SIZE);
+	_engine->getMemoryManager()->lockSeqMem((_totalBackgroundPages - 300) * MEM_PAGE_SIZE);
 	getStream((byte *)&_eventsCount, 4);
 
 	_eventsCount = READ_LE_INT32(&_eventsCount);
@@ -247,8 +247,8 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 	_waneSpriteByteStream = (byte *)((byte *)_backgroundSurface + _streamBufferSize);
 	_streamBufferSize -= 8 * _eventsCount;
 	_eventsByteStream = (byte *)((byte *)_backgroundSurface + _streamBufferSize);
-	_totalStreamPages = (_streamBufferSize / PAGE_SIZE);
-	_streamBufferSize = (_streamBufferSize / PAGE_SIZE) * PAGE_SIZE;
+	_totalStreamPages = (_streamBufferSize / MEM_PAGE_SIZE);
+	_streamBufferSize = (_streamBufferSize / MEM_PAGE_SIZE) * MEM_PAGE_SIZE;
 
 	chunkSizeRead = loadChunk(32);
 
@@ -267,7 +267,7 @@ bool NISManager::initNIS(const char *filename, int32 flags) {
 		if (!_events[4].eventSize)
 			break;
 
-		chunkSizeRead = loadChunk(32) * PAGE_SIZE;
+		chunkSizeRead = loadChunk(32) * MEM_PAGE_SIZE;
 
 		if (!chunkSizeRead)
 			break;
@@ -958,9 +958,9 @@ void NISManager::getNISSlot() {
 
 	slot->setCurrentBufferPtr(slot->getSoundBuffer());
 	slot->setDataStart(slot->getSoundBuffer());
-	slot->setDataEnd(slot->getSoundBuffer() + (44 * PAGE_SIZE));
+	slot->setDataEnd(slot->getSoundBuffer() + (44 * MEM_PAGE_SIZE));
 	slot->setCurrentDataPtr(slot->getDataStart() + 6);
-	slot->setSize(44 * PAGE_SIZE);
+	slot->setSize(44 * MEM_PAGE_SIZE);
 }
 
 Slot *NISManager::getChainedSound() {

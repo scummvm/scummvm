@@ -50,18 +50,18 @@ void MemoryManager::initMem() {
 	// | via allocMem                              |
 	// +-------------------------------------------+
 	//
-	// Each page weighs PAGE_SIZE bytes (0x800 = 2048 bytes = 2 KB).
+	// Each page weighs MEM_PAGE_SIZE bytes (0x800 = 2048 bytes = 2 KB).
 
-	_engine->_globalMemoryPool = (byte *)malloc(1800 * PAGE_SIZE);
-	memset(_engine->_globalMemoryPool, 0, 1800 * PAGE_SIZE);
+	_engine->_globalMemoryPool = (byte *)malloc(1800 * MEM_PAGE_SIZE);
+	memset(_engine->_globalMemoryPool, 0, 1800 * MEM_PAGE_SIZE);
 
 	_engine->getGraphicsManager()->_backBuffer = (PixMap *)malloc(640 * 480 * sizeof(PixMap));
 	_engine->getLogicManager()->_trainData = (Node *)malloc(2048 * sizeof(Node));
-	_engine->_cursorsMemoryPool = (byte *)malloc(49 * PAGE_SIZE);
+	_engine->_cursorsMemoryPool = (byte *)malloc(49 * MEM_PAGE_SIZE);
 	_engine->_characters = new Characters();
 	_engine->getSubtitleManager()->_font = new FontData();
 	_engine->getSubtitleManager()->_subtitlesData = (uint16 *)malloc(0x4400 * sizeof(uint16));
-	_engine->getGraphicsManager()->_backgroundCompBuffer = (byte *)malloc(8 * PAGE_SIZE);
+	_engine->getGraphicsManager()->_backgroundCompBuffer = (byte *)malloc(8 * MEM_PAGE_SIZE);
 	_engine->getLogicManager()->_items = (Item *)malloc(32 * sizeof(Item));
 	_engine->getLogicManager()->_doors = (Door *)malloc(128 * sizeof(Door));
 	_engine->getLogicManager()->_blockedViews = (int32 *)malloc(1000 * sizeof(int32));
@@ -91,14 +91,14 @@ void MemoryManager::initMem() {
 	_engine->getGraphicsManager()->_cursorsDataHeader = (CursorHeader *)_engine->_cursorsMemoryPool;
 	_engine->getGraphicsManager()->_iconsBitmapData = (PixMap *)(_engine->_cursorsMemoryPool + sizeof(CursorHeader) * kCursorMAX);
 	_engine->_soundMemoryPool = _engine->_globalMemoryPool;
-	_engine->getGraphicsManager()->_frontBuffer = (PixMap *)(_engine->_globalMemoryPool + (270 * PAGE_SIZE));
+	_engine->getGraphicsManager()->_frontBuffer = (PixMap *)(_engine->_globalMemoryPool + (270 * MEM_PAGE_SIZE));
 
-	_memoryPages[0].memPageSize = 1230 * PAGE_SIZE;
-	_memoryPages[0].memPagePtr = _engine->_globalMemoryPool + (570 * PAGE_SIZE);
+	_memoryPages[0].memPageSize = 1230 * MEM_PAGE_SIZE;
+	_memoryPages[0].memPagePtr = _engine->_globalMemoryPool + (570 * MEM_PAGE_SIZE);
 	_memoryPages[0].allocatedFlag = 0;
 
 	_nisSeqMemFlag = kMemoryFlagSeqFree | kMemoryFlagInit;
-	_nisSeqMemAvailForLocking = 1230 * PAGE_SIZE;
+	_nisSeqMemAvailForLocking = 1230 * MEM_PAGE_SIZE;
 }
 
 void *MemoryManager::allocMem(uint32 size, const char *name, int character) {
@@ -180,8 +180,8 @@ void MemoryManager::releaseMemory() {
 void MemoryManager::freeFX() {
 	if ((_nisSeqMemFlag & kMemoryFlagFXFree) == 0) {
 		_nisSeqMemFlag |= kMemoryFlagFXFree;
-		_memoryPages[_numAllocatedMemPages - 1].memPageSize += (300 * PAGE_SIZE);
-		_memoryPages[_numAllocatedMemPages - 1].memPagePtr = (byte *)_memoryPages[_numAllocatedMemPages - 1].memPagePtr - (300 * PAGE_SIZE);
+		_memoryPages[_numAllocatedMemPages - 1].memPageSize += (300 * MEM_PAGE_SIZE);
+		_memoryPages[_numAllocatedMemPages - 1].memPagePtr = (byte *)_memoryPages[_numAllocatedMemPages - 1].memPagePtr - (300 * MEM_PAGE_SIZE);
 		_nisSeqMemAvailForLocking += 614400;
 	}
 }
@@ -189,9 +189,9 @@ void MemoryManager::freeFX() {
 void MemoryManager::lockFX() {
 	if ((_nisSeqMemFlag & kMemoryFlagFXFree) != 0) {
 		_nisSeqMemFlag &= ~kMemoryFlagFXFree;
-		_memoryPages[_numAllocatedMemPages - 1].memPageSize -= (300 * PAGE_SIZE);
-		_memoryPages[_numAllocatedMemPages - 1].memPagePtr = (byte *)_memoryPages[_numAllocatedMemPages - 1].memPagePtr + (300 * PAGE_SIZE);
-		_nisSeqMemAvailForLocking -= (300 * PAGE_SIZE);
+		_memoryPages[_numAllocatedMemPages - 1].memPageSize -= (300 * MEM_PAGE_SIZE);
+		_memoryPages[_numAllocatedMemPages - 1].memPagePtr = (byte *)_memoryPages[_numAllocatedMemPages - 1].memPagePtr + (300 * MEM_PAGE_SIZE);
+		_nisSeqMemAvailForLocking -= (300 * MEM_PAGE_SIZE);
 	}
 }
 

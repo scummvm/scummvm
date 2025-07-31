@@ -110,7 +110,7 @@ void Subtitle::load() {
 		_engine->getArchiveManager()->readHPF(archive, _engine->getSubtitleManager()->_subtitlesData, archive->size);
 		_engine->getArchiveManager()->closeHPF(archive);
 
-		for (int i = 0; i < (archive->size * PAGE_SIZE) / 2; i++) {
+		for (int i = 0; i < (archive->size * MEM_PAGE_SIZE) / 2; i++) {
 			_engine->getSubtitleManager()->_subtitlesData[i] = READ_LE_UINT16(&_engine->getSubtitleManager()->_subtitlesData[i]);
 		}
 
@@ -194,13 +194,13 @@ void SubtitleManager::initSubtitles() {
 			_font->fontData = nullptr;
 		}
 
-		byte *fontData = (byte *)malloc(PAGE_SIZE * archive->size);
+		byte *fontData = (byte *)malloc(MEM_PAGE_SIZE * archive->size);
 
 		if (fontData) {
 			_engine->getArchiveManager()->readHPF(archive, fontData, archive->size);
 			_engine->getArchiveManager()->closeHPF(archive);
 
-			Common::MemoryReadStream *fontStream = new Common::MemoryReadStream(fontData, PAGE_SIZE * archive->size, DisposeAfterUse::YES);
+			Common::MemoryReadStream *fontStream = new Common::MemoryReadStream(fontData, MEM_PAGE_SIZE * archive->size, DisposeAfterUse::YES);
 
 			for (int i = 0; i < 16; i++) {
 				_font->palette[i] = fontStream->readUint16LE();
@@ -214,7 +214,7 @@ void SubtitleManager::initSubtitles() {
 				_font->charKerning[i] = fontStream->readByte();
 			}
 
-			uint32 sizeOfData = PAGE_SIZE * archive->size - (16 * sizeof(uint16) + 256 + 256);
+			uint32 sizeOfData = MEM_PAGE_SIZE * archive->size - (16 * sizeof(uint16) + 256 + 256);
 			_font->fontData = (byte *)malloc(sizeOfData);
 
 			assert(_font->fontData);

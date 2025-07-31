@@ -518,16 +518,16 @@ void Slot::devirtualize() {
 				_size = 0x16000;
 				_currentDataPtr = &_dataStart[chunkSize & 0x7FF];
 				_loadedBytes = chunkSize & 0xFFFF800;
-				diff = (_archive->size * PAGE_SIZE) - (chunkSize & 0xFFFF800);
+				diff = (_archive->size * MEM_PAGE_SIZE) - (chunkSize & 0xFFFF800);
 
 				if (diff <= 0x15800) {
-					pagesToRead = (diff + 2047) / PAGE_SIZE;
+					pagesToRead = (diff + 2047) / MEM_PAGE_SIZE;
 				} else {
 					pagesToRead = 43;
 					_statusFlags |= (kSoundFlagCyclicBuffer | kSoundFlagHasUnreadData);
 				}
 
-				_engine->getArchiveManager()->seekHPF(_archive, chunkSize / PAGE_SIZE);
+				_engine->getArchiveManager()->seekHPF(_archive, chunkSize / MEM_PAGE_SIZE);
 				_engine->getArchiveManager()->readHPF(_archive, _soundBuffer, pagesToRead);
 				if (_archive->size <= _archive->currentPos) {
 					_engine->getArchiveManager()->closeHPF(_archive);
@@ -536,8 +536,8 @@ void Slot::devirtualize() {
 					_loadedBytes = 4;
 				}
 
-				_loadedBytes += pagesToRead * PAGE_SIZE;
-				_currentBufferPtr = &_soundBuffer[pagesToRead * PAGE_SIZE];
+				_loadedBytes += pagesToRead * MEM_PAGE_SIZE;
+				_currentBufferPtr = &_soundBuffer[pagesToRead * MEM_PAGE_SIZE];
 				_statusFlags &= ~(kSoundFlagMute | kSoundFlagPaused | kSoundFlagPauseRequested);
 			} else {
 				for (i = _soundMan->_soundCache; i; i = i->_next) {
@@ -582,7 +582,7 @@ bool Slot::load(const char *filename) {
 					_dataEnd = _dataStart + 0x16000;
 				} else {
 					_engine->getArchiveManager()->readHPF(_archive, _soundBuffer, _archive->size);
-					_loadedBytes = _archive->size * PAGE_SIZE;
+					_loadedBytes = _archive->size * MEM_PAGE_SIZE;
 					_engine->getArchiveManager()->closeHPF(_archive);
 					_archive = nullptr;
 					_loadedBytes = 6;
@@ -598,7 +598,7 @@ bool Slot::load(const char *filename) {
 
 				return true;
 			} else {
-				_size = _archive->size * PAGE_SIZE;
+				_size = _archive->size * MEM_PAGE_SIZE;
 				if (_size > 0x16000)
 					_statusFlags |= (kSoundFlagCyclicBuffer | kSoundFlagHasUnreadData);
 
@@ -632,7 +632,7 @@ void Slot::stream() {
 					if (numPages > _size)
 						numPages = 0;
 
-					numBytes = numPages / PAGE_SIZE;
+					numBytes = numPages / MEM_PAGE_SIZE;
 
 					if (numBytes > 16) {
 						if (_archive->size - _archive->currentPos <= numBytes) {

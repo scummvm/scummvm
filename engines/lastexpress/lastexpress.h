@@ -514,7 +514,7 @@ typedef struct NisEvents {
 	}
 } NisEvents;
 
-#define PAGE_SIZE  0x800
+#define MEM_PAGE_SIZE  0x800
 
 #define DEMO_TIMEOUT 2700
 

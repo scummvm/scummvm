@@ -243,13 +243,13 @@ HPF *ArchiveManager::openHPF(const char *filename) {
 void ArchiveManager::readHD(void *dstBuf, int offset, uint32 size) {
 	if (_hdFilePointer && _hdFilePointer->isOpen()) {
 		if (offset != _hdFilePosition) {	
-			if (!_hdFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
+			if (!_hdFilePointer->seek(offset * MEM_PAGE_SIZE, SEEK_SET)) {
 				error("Error seeking in file \"%s\"", "HD cache file");
 			}
 		}
 
-		uint32 readSize = _hdFilePointer->read(dstBuf, size * PAGE_SIZE);
-		if (readSize != size * PAGE_SIZE) {
+		uint32 readSize = _hdFilePointer->read(dstBuf, size * MEM_PAGE_SIZE);
+		if (readSize != size * MEM_PAGE_SIZE) {
 			error("Error reading from file \"%s\"", "HD cache file");
 		}
 
@@ -260,13 +260,13 @@ void ArchiveManager::readHD(void *dstBuf, int offset, uint32 size) {
 void ArchiveManager::readCD(void *dstBuf, int offset, uint32 size) {
 	if (_cdFilePointer && _cdFilePointer->isOpen()) {
 		if (offset != _cdFilePosition) {
-			if (!_cdFilePointer->seek(offset * PAGE_SIZE, SEEK_SET)) {
+			if (!_cdFilePointer->seek(offset * MEM_PAGE_SIZE, SEEK_SET)) {
 				error("Error seeking in file \"%s\"", "CD cache file");
 			}
 		}
 
-		uint32 readSize = _cdFilePointer->read(dstBuf, size * PAGE_SIZE);
-		if (readSize != size * PAGE_SIZE) {
+		uint32 readSize = _cdFilePointer->read(dstBuf, size * MEM_PAGE_SIZE);
+		if (readSize != size * MEM_PAGE_SIZE) {
 			error("Error reading from file \"%s\"", "CD cache file");
 		}
 
@@ -448,7 +448,7 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 	if (!archive)
 		return nullptr;
 
-	byte *seqDataRaw = (byte *)_engine->getMemoryManager()->allocMem(PAGE_SIZE * archive->size, filename, character);
+	byte *seqDataRaw = (byte *)_engine->getMemoryManager()->allocMem(MEM_PAGE_SIZE * archive->size, filename, character);
 	if (!seqDataRaw)
 		return nullptr;
 
@@ -458,7 +458,7 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 		_engine->getSoundManager()->soundThread();
 		_engine->getSubtitleManager()->subThread();
 		readHPF(archive, seqDataRawCur, 8);
-		seqDataRawCur += (PAGE_SIZE * 8);
+		seqDataRawCur += (MEM_PAGE_SIZE * 8);
 	}
 
 	readHPF(archive, seqDataRawCur, i);
@@ -469,7 +469,7 @@ Seq *ArchiveManager::loadSeq(const char *filename, uint8 ticksToWaitUntilCycleRe
 	// Again, there is no such thing in the original...
 	seq->rawSeqData = seqDataRaw;
 
-	Common::SeekableReadStream *seqDataStream = new Common::MemoryReadStream(seqDataRaw, PAGE_SIZE * archive->size, DisposeAfterUse::NO);
+	Common::SeekableReadStream *seqDataStream = new Common::MemoryReadStream(seqDataRaw, MEM_PAGE_SIZE * archive->size, DisposeAfterUse::NO);
 
 	seq->numFrames = seqDataStream->readUint32LE();
 	seqDataStream->readUint32LE(); // Empty sprite pointer
