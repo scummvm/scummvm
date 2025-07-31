@@ -133,7 +133,7 @@ struct ScriptTimerTask : public Task {
 		TASK_BEGIN;
 		{
 			uint32 timeSinceTimer = g_engine->script()._scriptTimer == 0 ? 0
-				: (g_system->getMillis() - g_engine->script()._scriptTimer) / 1000;
+				: (g_engine->getMillis() - g_engine->script()._scriptTimer) / 1000;
 			if (_durationSec >= (int32)timeSinceTimer)
 				_result = g_engine->script().variable("SeHaPulsadoRaton") ? 0 : 2;
 			else
@@ -914,7 +914,7 @@ void Script::updateCommonVariables() {
 
 	if (variable("CalcularTiempoSinPulsarRaton")) {
 		if (_scriptTimer == 0)
-			_scriptTimer = g_system->getMillis();
+			_scriptTimer = g_engine->getMillis();
 	}
 	else
 		_scriptTimer = 0;

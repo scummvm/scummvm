@@ -62,7 +62,7 @@ GlobalUI::GlobalUI() {
 void GlobalUI::startClosingInventory() {
 	_isOpeningInventory = false;
 	_isClosingInventory = true;
-	_timeForInventory = g_system->getMillis();
+	_timeForInventory = g_engine->getMillis();
 	updateClosingInventory(); // prevents the first frame of closing to not render the inventory overlay
 }
 
@@ -70,7 +70,7 @@ void GlobalUI::updateClosingInventory() {
 	static constexpr uint32 kDuration = 300;
 	static constexpr float kSpeed = -10 / 3.0f / 1000.0f;
 
-	uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+	uint32 deltaTime = g_engine->getMillis() - _timeForInventory;
 	if (!_isClosingInventory || deltaTime >= kDuration)
 		_isClosingInventory = false;
 	else
@@ -83,7 +83,7 @@ bool GlobalUI::updateOpeningInventory() {
 		return false;
 
 	if (_isOpeningInventory) {
-		uint32 deltaTime = g_system->getMillis() - _timeForInventory;
+		uint32 deltaTime = g_engine->getMillis() - _timeForInventory;
 		if (deltaTime >= 1000) {
 			_isOpeningInventory = false;
 			g_engine->world().inventory().open();
@@ -97,7 +97,7 @@ bool GlobalUI::updateOpeningInventory() {
 	else if (openInventoryTriggerBounds().contains(g_engine->input().mousePos2D())) {
 		_isClosingInventory = false;
 		_isOpeningInventory = true;
-		_timeForInventory = g_system->getMillis();
+		_timeForInventory = g_engine->getMillis();
 		g_engine->player().activeCharacter()->stopWalking();
 		g_engine->world().inventory().updateItemsByActiveCharacter();
 		return true;
@@ -206,8 +206,8 @@ struct CenterBottomTextTask : public Task {
 		);
 
 		TASK_BEGIN;
-		_startTime = g_system->getMillis();
-		while (g_system->getMillis() - _startTime < _durationMs) {
+		_startTime = g_engine->getMillis();
+		while (g_engine->getMillis() - _startTime < _durationMs) {
 			if (process().isActiveForPlayer()) {
 				g_engine->drawQueue().add<TextDrawRequest>(
 					font, text, pos, -1, true, kWhite, 1);
@@ -218,8 +218,8 @@ struct CenterBottomTextTask : public Task {
 	}
 
 	void debugPrint() override {
-		uint32 remaining = g_system->getMillis() - _startTime <= _durationMs
-			? _durationMs - (g_system->getMillis() - _startTime)
+		uint32 remaining = g_engine->getMillis() - _startTime <= _durationMs
+			? _durationMs - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("CenterBottomText (%d) with %ums remaining\n", _dialogId, remaining);
 	}

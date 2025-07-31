@@ -62,14 +62,14 @@ DelayTask::DelayTask(Process &process, uint32 millis)
 
 TaskReturn DelayTask::run() {
 	TASK_BEGIN;
-	_endTime += g_system->getMillis();
-	while (g_system->getMillis() < _endTime)
+	_endTime += g_engine->getMillis();
+	while (g_engine->getMillis() < _endTime)
 		TASK_YIELD;
 	TASK_END;
 }
 
 void DelayTask::debugPrint() {
-	uint32 remaining = g_system->getMillis() <= _endTime ? _endTime - g_system->getMillis() : 0;
+	uint32 remaining = g_engine->getMillis() <= _endTime ? _endTime - g_engine->getMillis() : 0;
 	g_engine->getDebugger()->debugPrintf("Delay for further %ums\n", remaining);
 }
 

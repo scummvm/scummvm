@@ -51,7 +51,7 @@ void Camera::setRoomBounds(Point bgSize, int16 bgScale) {
 void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 	_cur._isFollowingTarget = target != nullptr;
 	_followTarget = target;
-	_lastUpdateTime = g_system->getMillis();
+	_lastUpdateTime = g_engine->getMillis();
 	_catchUp = catchUp;
 	if (target == nullptr)
 		_isChanging = false;
@@ -162,7 +162,7 @@ Point Camera::transform3Dto2D(Point p3d) const {
 
 void Camera::update() {
 	// original would be some smoothing of delta times, let's not.
-	uint32 now = g_system->getMillis();
+	uint32 now = g_engine->getMillis();
 	float deltaTime = (now - _lastUpdateTime) / 1000.0f;
 	deltaTime = MAX(0.001f, MIN(0.5f, deltaTime));
 	_lastUpdateTime = now;
@@ -239,9 +239,9 @@ struct CamLerpTask : public Task {
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
-		_startTime = g_system->getMillis();
-		while (g_system->getMillis() - _startTime < _duration) {
-			update(ease((g_system->getMillis() - _startTime) / (float)_duration, _easingType));
+		_startTime = g_engine->getMillis();
+		while (g_engine->getMillis() - _startTime < _duration) {
+			update(ease((g_engine->getMillis() - _startTime) / (float)_duration, _easingType));
 			_camera._isChanging = true;
 			TASK_YIELD;
 		}
@@ -250,8 +250,8 @@ struct CamLerpTask : public Task {
 	}
 
 	virtual void debugPrint() override {
-		uint32 remaining = g_system->getMillis() - _startTime <= _duration
-			? _duration - (g_system->getMillis() - _startTime)
+		uint32 remaining = g_engine->getMillis() - _startTime <= _duration
+			? _duration - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("%s camera with %ums remaining\n", taskName(), remaining);
 	}

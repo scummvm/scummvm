@@ -507,7 +507,7 @@ void Graphic::update() {
 	const uint32 totalDuration = _animation->totalDuration();
 	uint32 curTime = _isPaused
 		? _lastTime
-		: g_system->getMillis() - _lastTime;
+		: g_engine->getMillis() - _lastTime;
 	if (curTime > totalDuration) {
 		if (_isLooping && totalDuration > 0)
 			curTime %= totalDuration;
@@ -524,18 +524,18 @@ void Graphic::update() {
 void Graphic::start(bool isLooping) {
 	_isPaused = false;
 	_isLooping = isLooping;
-	_lastTime = g_system->getMillis();
+	_lastTime = g_engine->getMillis();
 }
 
 void Graphic::pause() {
 	_isPaused = true;
 	_isLooping = false;
-	_lastTime = g_system->getMillis() - _lastTime;
+	_lastTime = g_engine->getMillis() - _lastTime;
 }
 
 void Graphic::reset() {
 	_frameI = 0;
-	_lastTime = _isPaused ? 0 : g_system->getMillis();
+	_lastTime = _isPaused ? 0 : g_engine->getMillis();
 }
 
 void Graphic::setAnimation(const Common::String &fileName, AnimationFolder folder) {
@@ -782,9 +782,9 @@ struct FadeTask : public Task {
 		TASK_BEGIN;
 		if (_permanentFadeAction == PermanentFadeAction::UnsetFaded)
 			g_engine->globalUI().isPermanentFaded() = false;
-		_startTime = g_system->getMillis();
-		while (g_system->getMillis() - _startTime < _duration) {
-			draw((g_system->getMillis() - _startTime) / (float)_duration);
+		_startTime = g_engine->getMillis();
+		while (g_engine->getMillis() - _startTime < _duration) {
+			draw((g_engine->getMillis() - _startTime) / (float)_duration);
 			TASK_YIELD;
 		}
 		draw(1.0f); // so that during a loading lag the screen is completly black/white
@@ -794,8 +794,8 @@ struct FadeTask : public Task {
 	}
 
 	virtual void debugPrint() override {
-		uint32 remaining = g_system->getMillis() - _startTime <= _duration
-			? _duration - (g_system->getMillis() - _startTime)
+		uint32 remaining = g_engine->getMillis() - _startTime <= _duration
+			? _duration - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("Fade (%d) from %.2f to %.2f with %ums remaining\n", (int)_fadeType, _from, _to, remaining);
 	}

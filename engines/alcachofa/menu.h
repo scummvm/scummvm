@@ -75,6 +75,7 @@ private:
 	bool
 		_isOpen = false,
 		_openAtNextFrame = false;
+	uint32 _timeBeforeMenu = 0;
 	Room *_previousRoom = nullptr;
 };
 
