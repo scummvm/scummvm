@@ -184,6 +184,7 @@ typedef struct ImGuiState {
 } ImGuiState;
 
 extern ImGuiState *_state;
+extern Common::HashMap<Window *, ImGuiState *> _windowStates;
 
 // debugtools.cpp
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
@@ -195,6 +196,7 @@ Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed);
+ImGuiState *getWindowState(Window *window);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp

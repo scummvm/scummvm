@@ -162,12 +162,15 @@ void showScriptCasts() {
 }
 
 static void updateCurrentScript() {
-	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
+	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty) {
+		debug("Can't be here");
 		return;
+	}
 
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
-	if (callstack.empty())
+	if (callstack.empty()) {
 		return;
+	}
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
@@ -356,15 +359,39 @@ void showFuncList() {
 
 void showExecutionContext() {
 	updateCurrentScript();
-	if (!_state->_w.executionContext)
+
+	const Common::Array<Window *> *windowList = g_director->getWindowList();
+	if (!_state->_w.executionContext) {
+		// If the executionContext is turned off for this window, turn it off for all
+		getWindowState(g_director->getStage())->_w.executionContext = false;
+		for (auto window : *windowList) {
+			getWindowState(window)->_w.executionContext = false;
+		}
 		return;
+	}
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(750, 500), ImGuiCond_FirstUseEver);
 
 	Director::Lingo *lingo = g_director->getLingo();
 
+	Window *currentWindow = g_director->getCurrentWindow();
+	ImGuiState *currentState = _state;
+
+	_windowStates[currentWindow] = currentState;
+
 	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
+		Window *stage = g_director->getStage();
+		g_director->setCurrentWindow(g_director->getStage());
+		g_lingo->switchStateFromWindow();
+
+		_state = getWindowState(stage);
+		// Makes sure that the executionContext flag is on for all states
+		_state->_w.executionContext = true;
+
+		debug("What is state 1: _state: %p", (void *) _state);
+		updateCurrentScript();
+
 		int windowID = 0;
 
 		ImGui::PushID(windowID);
@@ -437,27 +464,16 @@ void showExecutionContext() {
 		ImGui::SameLine();
 
 		windowID += 1;
-		const Common::Array<Window *> *windowList = g_director->getWindowList();
-
-		Window *mainWindow = g_director->getCurrentWindow();
-		ImGuiState *mainState = _state;
 
 		for (auto window : (*windowList)) {
-			ImGuiState *state = _windowStates.getValOrDefault(window, nullptr);
-
-			if (!state) {
-				state = new ImGuiState();
-				state->_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
-				state->_archive.memEdit.ReadOnly = true;
-				state->_logger = new ImGuiEx::ImGuiLogger();
-
-				_windowStates[window] = state;
-			}
-			_state = state;
-			debug("What is state: %p", (void *)_state);
-
 			g_director->setCurrentWindow(window);
 			g_lingo->switchStateFromWindow();
+
+			_state = getWindowState(window);
+
+			// Have to make sure the executionContext flag is on for all windows
+			_state->_w.executionContext = true;
+			debug("What is state 2: _state: %p", (void *) _state);
 
 			updateCurrentScript();
 
@@ -517,7 +533,6 @@ void showExecutionContext() {
 					ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
 					ImGui::SetItemTooltip("Bytecode");
 				}
-
 				ImGui::Separator();
 				const ImVec2 childsize = ImGui::GetContentRegionAvail();
 
@@ -534,12 +549,13 @@ void showExecutionContext() {
 			windowID++;
 		}
 
-		_state = mainState;
-		g_director->setCurrentWindow(mainWindow);
-		g_lingo->switchStateFromWindow();
+		_state = currentState;
 	}
 
 	ImGui::End();
+
+	g_director->setCurrentWindow(currentWindow);
+	g_lingo->switchStateFromWindow();
 }
 
 } // namespace DT

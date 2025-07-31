@@ -218,6 +218,10 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 void setScriptToDisplay(const ImGuiScript &script) {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
+	debug("What is the state: %p", (void *)_state);
 	uint index = _state->_functions._scripts.size();
 	if (index && _state->_functions._scripts[index - 1] == script) {
 		_state->_functions._showScript = true;
@@ -406,6 +410,21 @@ void onImGuiCleanup() {
 
 int getSelectedChannel(){
 	return _state ? _state->_selectedChannel : -1;
+}
+
+ImGuiState *getWindowState(Window *window) {
+	ImGuiState *state = _windowStates.getValOrDefault(window, nullptr);
+
+	if (!state) {
+		state = new ImGuiState();
+		state->_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
+		state->_archive.memEdit.ReadOnly = true;
+		state->_logger = new ImGuiEx::ImGuiLogger();
+
+		_windowStates[window] = state;
+	}
+
+	return state;
 }
 
 } // namespace DT

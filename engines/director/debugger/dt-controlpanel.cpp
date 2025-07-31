@@ -84,12 +84,18 @@ static bool stepOutShouldPause() {
 }
 
 static void dgbStop() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kPause;
 	g_lingo->_exec._shouldPause = nullptr;
 	_state->_dbg._isScriptDirty = true;
 }
 
 static void dbgStepOver() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
@@ -98,6 +104,9 @@ static void dbgStepOver() {
 }
 
 static void dbgStepInto() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
@@ -106,6 +115,9 @@ static void dbgStepInto() {
 }
 
 static void dbgStepOut() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
