@@ -265,6 +265,9 @@ public:
 	void cleanUp(WindowReference reference);
 	void messUp(WindowReference reference);
 	void moveItems(Common::Array<Item> &items, WindowReference reference);
+
+	void unselectAll();
+	void selectObject(ObjID objID);
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
 	void setDeltaPoint(Common::Point newPos);
@@ -291,6 +294,7 @@ public:
 	Common::String getPrefixString(uint flag, ObjID obj);
 	Common::String getNoun(ObjID ndx);
 	ScriptEngine *getScriptEngine() const { return _scriptEngine; }
+	Common::Array<ObjID> &getSelectedObjects() { return _selectedObjs; }
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
@@ -324,8 +328,6 @@ private:
 	void updateControls();
 	void resetVars();
 
-	void unselectAll();
-	void selectObject(ObjID objID);
 	void unselectObject(ObjID objID);
 	void highlightExit(ObjID objID);
 	void selectPrimaryObject(ObjID objID);
@@ -390,6 +392,7 @@ private: // Attributes
 	ObjID _destObject;
 	ControlAction _selectedControl;
 	Common::Array<ObjID> _currentSelection;
+	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
 	Common::String _userInput;
 

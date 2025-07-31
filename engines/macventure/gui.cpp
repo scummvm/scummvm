@@ -113,8 +113,6 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 	_resourceManager = resman;
 	_windowData = nullptr;
 	_controlData = nullptr;
-	_draggedObj.id = 0;
-	_draggedObj.pos = Common::Point(0, 0);
 	_dialog = nullptr;
 
 	_activeWinRef = kNoWindow;
@@ -123,6 +121,11 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 
 	_consoleText = new ConsoleText(this);
 	_graphics = nullptr;
+
+	_lassoStart = Common::Point(0, 0);
+	_lassoEnd = Common::Point(0, 0);
+	_lassoBeingDrawn = false;
+	_lassoWinRef = WindowReference(0);
 
 	initGUI();
 }
@@ -193,7 +196,7 @@ void Gui::draw() {
 
 	_wm.draw();
 
-	drawDraggedObject();
+	drawDraggedObjects();
 	drawDialog();
 	// TODO: When window titles with custom borders are in MacGui, this should be used.
 	//drawWindowTitle(kMainGameWindow, _mainGameWindow->getWindowSurface());
@@ -677,6 +680,22 @@ void Gui::drawInventories() {
 		srf->fillRect(srf->getBounds(), kColorWhite);
 		drawObjectsInWindow(data, srf);
 
+		if (data.refcon == _lassoWinRef && _lassoBeingDrawn) {
+			Common::Point topLeft(_lassoStart);
+			topLeft.y -= 12;
+			Common::Point bottomRight(_lassoEnd);
+			bottomRight.y -= 12;
+			if (topLeft.x > bottomRight.x)
+				SWAP(topLeft.x, bottomRight.x);
+			if (topLeft.y > bottomRight.y)
+				SWAP(topLeft.y, bottomRight.y);
+			Common::Rect lassoRect(topLeft, bottomRight);
+
+			Graphics::MacPlotData plotData(srf, nullptr, &_wm.getBuiltinPatterns(), kPatternCheckers2, 0, 0, 1, kColorWhite, false);
+			Graphics::Primitives &primitives = _wm.getDrawPrimitives();
+			primitives.drawRect(lassoRect, kColorBlack, &plotData);
+		}
+
 		if (DebugMan.isDebugChannelEnabled(kMVDebugGUI)) {
 			Common::Rect innerDims = win->getInnerDimensions();
 			innerDims.translate(-innerDims.left, -innerDims.top);
@@ -744,7 +763,7 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 
 		if (_engine->isObjVisible(child)) {
 			if (_engine->isObjSelected(child) ||
-				child == _draggedObj.id) {
+				(_draggedObjects.size() && child == _draggedObjects[0].id)) {
 
 				_assets[child]->blitInto(
 					&composeSurface, pos.x, pos.y, kBlitOR);
@@ -765,52 +784,55 @@ void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surf
 	// TODO: Implement when MacGui supports titles in windows with custom borders.
 }
 
-void Gui::drawDraggedObject() {
-	if (_draggedObj.id != 0 &&
-		_engine->isObjVisible(_draggedObj.id)) {
-		ensureAssetLoaded(_draggedObj.id);
-		ImageAsset *asset = _assets[_draggedObj.id];
+void Gui::drawDraggedObjects() {
+	for (uint i = 0; i < _draggedObjects.size(); i++) {
+		if (_draggedObjects[i].id != 0 &&
+			_engine->isObjVisible(_draggedObjects[i].id)) {
+			ensureAssetLoaded(_draggedObjects[i].id);
+			ImageAsset *asset = _assets[_draggedObjects[i].id];
 
-		// In case of overflow from the right/top
-		uint w = asset->getWidth() + MIN((int16)0, _draggedObj.pos.x);
-		uint h = asset->getHeight() + MIN((int16)0, _draggedObj.pos.y);
+			// In case of overflow from the right/top
+			uint w = asset->getWidth() + MIN((int16)0, _draggedObjects[i].pos.x);
+			uint h = asset->getHeight() + MIN((int16)0, _draggedObjects[i].pos.y);
 
-		// In case of overflow from the bottom/left
-		if (_draggedObj.pos.x > 0 && _draggedObj.pos.x + w > kScreenWidth) {
-			w = kScreenWidth - _draggedObj.pos.x;
-		}
-		if (_draggedObj.pos.y > 0 && _draggedObj.pos.y + h > kScreenHeight) {
-			h = kScreenHeight - _draggedObj.pos.y;
-		}
+			// In case of overflow from the bottom/left
+			if (_draggedObjects[i].pos.x > 0 && _draggedObjects[i].pos.x + w > kScreenWidth) {
+				w = kScreenWidth - _draggedObjects[i].pos.x;
+			}
+			if (_draggedObjects[i].pos.y > 0 && _draggedObjects[i].pos.y + h > kScreenHeight) {
+				h = kScreenHeight - _draggedObjects[i].pos.y;
+			}
 
-		Common::Point target = _draggedObj.pos;
-		if (target.x < 0) {
-			target.x = 0;
-		}
-		if (target.y < 0) {
-			target.y = 0;
-		}
+			Common::Point target = _draggedObjects[i].pos;
+			if (target.x < 0) {
+				target.x = 0;
+			}
+			if (target.y < 0) {
+				target.y = 0;
+			}
 
-		_draggedSurface.create(w, h, _screen.format);
-		_draggedSurface.blitFrom(
-			_screen,
-			Common::Rect(
+			_draggedSurfaces[i].create(w, h, _screen.format);
+			_draggedSurfaces[i].blitFrom(
+				_screen,
+				Common::Rect(
+					target.x,
+					target.y,
+					target.x + _draggedSurfaces[i].w,
+					target.y + _draggedSurfaces[i].h),
+				Common::Point(0, 0));
+			asset->blitInto(&_draggedSurfaces[i], MIN((int16)0, _draggedObjects[i].pos.x), MIN((int16)0, _draggedObjects[i].pos.y), kBlitBIC);
+
+			g_system->copyRectToScreen(
+				_draggedSurfaces[i].getBasePtr(0, 0),
+				_draggedSurfaces[i].pitch,
 				target.x,
 				target.y,
-				target.x + _draggedSurface.w,
-				target.y + _draggedSurface.h),
-			Common::Point(0, 0));
-		asset->blitInto(&_draggedSurface, MIN((int16)0, _draggedObj.pos.x), MIN((int16)0, _draggedObj.pos.y), kBlitBIC);
-
-		g_system->copyRectToScreen(
-			_draggedSurface.getBasePtr(0, 0),
-			_draggedSurface.pitch,
-			target.x,
-			target.y,
-			_draggedSurface.w,
-			_draggedSurface.h
-		);
+				_draggedSurfaces[i].w,
+				_draggedSurfaces[i].h
+			);
+		}
 	}
+
 }
 
 void Gui::drawDialog() {
@@ -860,6 +882,11 @@ void Gui::updateWindow(WindowReference winID, bool containerOpen) {
 			warning("Unimplemented: update scroll");
 		}
 	}
+}
+
+void Gui::clearDraggedObjects() {
+	_draggedObjects.clear();
+	_draggedSurfaces.clear();
 }
 
 void Gui::clearExits() {
@@ -960,20 +987,22 @@ void Gui::createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::M
 		outerSurface->format);
 }
 
-void Gui::moveDraggedObject(Common::Point target) {
-	ensureAssetLoaded(_draggedObj.id);
-	_draggedObj.pos = target + _draggedObj.mouseOffset;
+void Gui::moveDraggedObjects(Common::Point target) {
+	for (auto &obj: _draggedObjects) {
+		ensureAssetLoaded(obj.id);
+		obj.pos = target + obj.mouseOffset;
 
-	// TODO FInd more elegant way of making pow2
-	_draggedObj.hasMoved = (_draggedObj.startPos.sqrDist(_draggedObj.pos) >= (kDragThreshold * kDragThreshold));
+		// TODO FInd more elegant way of making pow2
+		obj.hasMoved = (obj.startPos.sqrDist(obj.pos) >= (kDragThreshold * kDragThreshold));
 
-	debugC(4, kMVDebugGUI, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
-		_draggedObj.pos.x, _draggedObj.pos.y,
-		_draggedObj.mouseOffset.x, _draggedObj.mouseOffset.y,
-		_draggedObj.hasMoved,
-		_draggedObj.startPos.sqrDist(_draggedObj.pos),
-		kDragThreshold * kDragThreshold
-	);
+		debugC(4, kMVDebugGUI, "Dragged obj position: (%d, %d), mouse offset: (%d, %d), hasMoved: %d, dist: %d, threshold: %d",
+			obj.pos.x, obj.pos.y,
+			obj.mouseOffset.x, obj.mouseOffset.y,
+			obj.hasMoved,
+			obj.startPos.sqrDist(obj.pos),
+			kDragThreshold * kDragThreshold
+		);
+	}
 
 }
 
@@ -1082,7 +1111,7 @@ WindowReference Gui::findObjWindow(ObjID objID) {
 	return kNoWindow;
 }
 
-void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref) {
+void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref, bool shiftPressed, bool isDoubleClick) {
 	ObjID child = 0;
 	for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
 		if (canBeSelected((*it).obj, clickRect, ref)) {
@@ -1090,7 +1119,9 @@ void Gui::checkSelect(const WindowData &data, Common::Point pos, const Common::R
 		}
 	}
 	if (child != 0) {
-		selectDraggable(child, ref, pos);
+		if (!isDoubleClick)
+			selectDraggable(child, ref, pos);
+		_engine->handleObjectSelect(child, ref, shiftPressed, isDoubleClick);
 		bringToFront(ref);
 	}
 }
@@ -1115,35 +1146,52 @@ bool Gui::isRectInsideObject(Common::Rect target, ObjID obj) {
 }
 
 void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point click) {
-	if (_engine->isObjClickable(child) && _draggedObj.id == 0) {
-		_draggedObj.hasMoved = false;
-		_draggedObj.id = child;
-		_draggedObj.startWin = origin;
-		Common::Point localizedClick = click - getGlobalScrolledSurfacePosition(origin);
-		_draggedObj.mouseOffset = _engine->getObjPosition(child) - localizedClick;
-		_draggedObj.pos = click + _draggedObj.mouseOffset;
-		_draggedObj.startPos = _draggedObj.pos;
+	if (_engine->isObjClickable(child) && !_draggedObjects.size()) {
+		if (!_engine->getSelectedObjects().size()) {
+			_engine->getSelectedObjects().push_back(child);
+		}
+
+		for (auto &selObj: _engine->getSelectedObjects()) {
+			DraggedObj obj;
+			obj.hasMoved = false;
+			obj.id = selObj;
+			obj.startWin = origin;
+			Common::Point localizedClick = click - getGlobalScrolledSurfacePosition(origin);
+			obj.mouseOffset = _engine->getObjPosition(selObj) - localizedClick;
+			obj.pos = click + obj.mouseOffset;
+			obj.startPos = obj.pos;
+
+			_draggedObjects.push_back(obj);
+			_draggedSurfaces.push_back(Graphics::ManagedSurface());
+		}
+		_engine->getSelectedObjects().clear();
 	}
 }
 
 void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
-	if (_draggedObj.id != 0) {
-		WindowReference destinationWindow = findWindowAtPoint(_draggedObj.pos - _draggedObj.mouseOffset);
-		if (destinationWindow == kNoWindow) {
-			return;
-		}
-		if (_draggedObj.hasMoved) {
-			const WindowData &destinationWindowData = getWindowData(destinationWindow);
-			ObjID destObject = destinationWindowData.objRef;
-			Common::Point dropPosition = _draggedObj.pos - _draggedObj.startPos;
-			dropPosition = localizeTravelledDistance(dropPosition, _draggedObj.startWin, destinationWindow);
-			debugC(3, kMVDebugGUI, "Drop the object %d at obj %d, pos (%d, %d)", _draggedObj.id, destObject, dropPosition.x, dropPosition.y);
+	if (_draggedObjects.size()) {
+		for (auto &obj : _draggedObjects) {
+			if (obj.id != 0) {
+				WindowReference destinationWindow = findWindowAtPoint(obj.pos - obj.mouseOffset);
+				if (destinationWindow == kNoWindow) {
+					return;
+				}
+				if (obj.hasMoved) {
+					const WindowData &destinationWindowData = getWindowData(destinationWindow);
+					ObjID destObject = destinationWindowData.objRef;
+					Common::Point dropPosition = obj.pos - obj.startPos;
+					dropPosition = localizeTravelledDistance(dropPosition, obj.startWin, destinationWindow);
+					debugC(3, kMVDebugGUI, "Drop the object %d at obj %d, pos (%d, %d)", obj.id, destObject, dropPosition.x, dropPosition.y);
 
-			_engine->handleObjectDrop(_draggedObj.id, dropPosition, destObject);
+					_engine->handleObjectDrop(obj.id, dropPosition, destObject);
+				}
+				if (isDoubleClick)
+					_engine->handleObjectSelect(obj.id, destinationWindow, shiftPressed, isDoubleClick);
+				obj.id = 0;
+				obj.hasMoved = false;
+			}
 		}
-		_engine->handleObjectSelect(_draggedObj.id, destinationWindow, shiftPressed, isDoubleClick);
-		_draggedObj.id = 0;
-		_draggedObj.hasMoved = false;
+		clearDraggedObjects();
 	} else {
 		WindowReference destinationWindow = findWindowAtPoint(_cursor->getPos());
 		if (destinationWindow == kNoWindow) {
@@ -1381,8 +1429,8 @@ bool Gui::processEvent(Common::Event &event) {
 	}
 
 	if (event.type == Common::EVENT_MOUSEMOVE) {
-		if (_draggedObj.id != 0) {
-			moveDraggedObject(event.mouse);
+		if (_draggedObjects.size() && _draggedObjects[0].id != 0) {
+			moveDraggedObjects(event.mouse);
 		}
 		processed = true;
 	}
@@ -1526,11 +1574,25 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 	if (_engine->needsClickToContinue())
 		return true;
 
-	if (event.type == Common::EVENT_LBUTTONUP) {
-		bringToFront(ref);
-	}
+	if (click == kBorderResizeButton)
+		return true;
+
 	if (event.type == Common::EVENT_LBUTTONDOWN) {
-		WindowData &data = findWindowData((WindowReference) ref);
+		WindowData &data = findWindowData((WindowReference)ref);
+
+		if (click == kBorderInner && !_draggedObjects.size()) {
+			_engine->unselectAll();
+			_engine->getSelectedObjects().clear();
+
+			_lassoStart = event.mouse;
+			_lassoEnd = _lassoStart;
+			_lassoBeingDrawn = !_lassoBeingDrawn;
+			_lassoWinRef = ref;
+		} else {
+			_lassoBeingDrawn = false;
+			_lassoStart = _lassoEnd = {0, 0};
+			_lassoWinRef = WindowReference(0);
+		}
 
 		if (click == kBorderScrollUp) {
 			data.scrollPos.y = MAX(0, data.scrollPos.y - kScrollAmount);
@@ -1544,11 +1606,41 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 		if (click == kBorderScrollRight) {
 			data.scrollPos.x += kScrollAmount;
 		}
+	} else if (event.type == Common::EVENT_MOUSEMOVE) {
+		if (_lassoBeingDrawn)
+			_lassoEnd = event.mouse;
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		bringToFront(ref);
+
+		if (_lassoBeingDrawn && !_draggedObjects.size()) {
+			WindowData &data = findWindowData((WindowReference)ref);
+
+			Common::Point topLeft(_lassoStart);
+			Common::Point bottomRight(_lassoEnd);
+			if (topLeft.x > bottomRight.x)
+				SWAP(topLeft.x, bottomRight.x);
+			if (topLeft.y > bottomRight.y)
+				SWAP(topLeft.y, bottomRight.y);
+			Common::Rect lassoArea(topLeft, bottomRight);
+
+			Common::Array<ObjID> &selectedObjects = _engine->getSelectedObjects();
+			for (auto &obj : data.children) {
+				ObjID id = obj.obj;
+				Common::Rect bounds = _engine->getObjBounds(id);
+				if (lassoArea.intersects(bounds) || lassoArea.contains(bounds)) {
+					_engine->selectObject(id);
+					selectedObjects.push_back(id);
+				}
+			}
+		}
+
+		_lassoBeingDrawn = false;
+		_lassoStart = _lassoEnd = {0, 0};
 	}
 	return true;
 }
 
-void Gui::selectForDrag(Common::Point cursorPosition) {
+void Gui::select(Common::Point cursorPosition, bool shiftPressed, bool isDoubleClick) {
 	WindowReference ref = findWindowAtPoint(cursorPosition);
 	if (ref == kNoWindow) {
 		return;
@@ -1557,10 +1649,15 @@ void Gui::selectForDrag(Common::Point cursorPosition) {
 		return;
 
 	Graphics::MacWindow *win = findWindow(ref);
+
+	Common::Rect innerDims = win->getInnerDimensions();
+	if (!innerDims.contains(cursorPosition))
+		return;
+
 	WindowData &data = findWindowData((WindowReference)ref);
 
 	Common::Rect clickRect = calculateClickRect(cursorPosition + data.scrollPos, win->getInnerDimensions());
-	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref);
+	checkSelect(data, cursorPosition, clickRect, (WindowReference)ref, isDoubleClick, shiftPressed);
 }
 
 void Gui::handleSingleClick() {
