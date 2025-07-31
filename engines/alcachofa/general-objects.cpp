@@ -176,7 +176,7 @@ SpecialEffectObject::SpecialEffectObject(Room *room, ReadStream &stream)
 void SpecialEffectObject::draw() {
 	if (!isEnabled()) // TODO: Add high quality check
 		return;
-	const auto texOffset = g_system->getMillis() * 0.001f * _texShift;
+	const auto texOffset = g_engine->getMillis() * 0.001f * _texShift;
 	const BlendMode blendMode = _type == GraphicObjectType::Effect
 		? BlendMode::Additive
 		: BlendMode::AdditiveAlpha;

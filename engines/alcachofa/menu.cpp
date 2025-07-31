@@ -36,7 +36,7 @@ void Menu::updateOpeningMenu() {
 	_openAtNextFrame = false;
 
 	g_engine->sounds().pauseAll(true);
-	// TODO: Add game time behaviour on opening menu
+	_timeBeforeMenu = g_engine->getMillis();
 	_previousRoom = g_engine->player().currentRoom();
 	_isOpen = true;
 	// TODO: Render thumbnail
@@ -60,7 +60,7 @@ void Menu::continueGame() {
 	g_engine->sounds().pauseAll(false);
 	g_engine->camera().restore(1);
 	g_engine->scheduler().restoreContext();
-	// TODO: Reset time on continueing game
+	g_engine->setMillis(_timeBeforeMenu);
 }
 
 void Menu::triggerMainMenuAction(MainMenuAction action) {

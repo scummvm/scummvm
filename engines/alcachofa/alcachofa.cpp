@@ -77,6 +77,7 @@ Common::Error AlcachofaEngine::run() {
 	_player.reset(new Player());
 	_globalUI.reset(new GlobalUI());
 	_menu.reset(new Menu());
+	setMillis(0);
 
 	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
 	_scheduler.run();
@@ -200,6 +201,36 @@ void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
 	default: _debugHandler.reset(nullptr);
 	}
 	_input.toggleDebugInput(isDebugModeActive());
+}
+
+uint32 AlcachofaEngine::getMillis() const {
+	// Time is stored in savestate at various points e.g. to persist animation progress
+	// We wrap the system-provided time to offset it to the expected game-time
+	// This would also double as playtime
+	return g_system->getMillis() - _timeNegOffset + _timePosOffset;
+}
+
+void AlcachofaEngine::setMillis(uint32 newMillis) {
+	const uint32 sysMillis = g_system->getMillis();
+	if (newMillis > sysMillis) {
+		_timeNegOffset = 0;
+		_timePosOffset = newMillis - sysMillis;
+	}
+	else {
+		_timeNegOffset = sysMillis - newMillis;
+		_timePosOffset = 0;
+	}
+}
+
+void AlcachofaEngine::pauseEngineIntern(bool pause) {
+	// Audio::Mixer also implements recursive pausing,
+	// so ScummVM pausing and Menu pausing will not conflict
+	_sounds.pauseAll(pause);
+
+	if (pause)
+		_timeBeforePause = getMillis();
+	else
+		setMillis(_timeBeforePause);
 }
 
 Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {

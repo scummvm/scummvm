@@ -144,11 +144,11 @@ CursorType Door::cursorType() const {
 }
 
 void Door::onClick() {
-	if (g_system->getMillis() - _lastClickTime < 500 && g_engine->player().activeCharacter()->clearTargetIf(this))
+	if (g_engine->getMillis() - _lastClickTime < 500 && g_engine->player().activeCharacter()->clearTargetIf(this))
 		trigger(nullptr);
 	else {
 		InteractableObject::onClick();
-		_lastClickTime = g_system->getMillis();
+		_lastClickTime = g_engine->getMillis();
 	}
 }
 
@@ -422,11 +422,11 @@ struct LerpLodBiasTask final : public Task {
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
-		_startTime = g_system->getMillis();
+		_startTime = g_engine->getMillis();
 		_sourceLodBias = _character->lodBias();
-		while (g_system->getMillis() - _startTime < _durationMs) {
+		while (g_engine->getMillis() - _startTime < _durationMs) {
 			_character->lodBias() = _sourceLodBias + (_targetLodBias - _sourceLodBias) *
-				((g_system->getMillis() - _startTime) / (float)_durationMs);
+				((g_engine->getMillis() - _startTime) / (float)_durationMs);
 			TASK_YIELD;
 		}
 		_character->lodBias() = _targetLodBias;
@@ -434,8 +434,8 @@ struct LerpLodBiasTask final : public Task {
 	}
 
 	virtual void debugPrint() override {
-		uint32 remaining = g_system->getMillis() - _startTime <= _durationMs
-			? _durationMs - (g_system->getMillis() - _startTime)
+		uint32 remaining = g_engine->getMillis() - _startTime <= _durationMs
+			? _durationMs - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("Lerp lod bias of %s to %f with %ums remaining\n",
 			_character->name().c_str(), _targetLodBias, remaining);
@@ -584,7 +584,7 @@ void WalkingCharacter::updateWalkingAnimation() {
 
 	// this is very confusing. Let's see what it does
 	const int32 halfFrameCount = (int32)animation->frameCount() / 2;
-	int32 expectedFrame = (int32)(g_system->getMillis() - _graphicNormal.lastTime()) * 12 / 1000;
+	int32 expectedFrame = (int32)(g_engine->getMillis() - _graphicNormal.lastTime()) * 12 / 1000;
 	const bool isUnexpectedFrame = expectedFrame != _lastWalkAnimFrame;
 	int32 stepFrameFrom, stepFrameTo;
 	if (expectedFrame < halfFrameCount - 1) {
