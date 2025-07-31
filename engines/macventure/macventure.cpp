@@ -594,7 +594,7 @@ void MacVentureEngine::printTexts() {
 		_textQueue.remove_at(0);
 		switch (text.id) {
 		case kTextNumber:
-			_gui->printText(Common::String(text.asset));
+			_gui->printText(Common::String::format("%d", text.asset));
 			gameChanged();
 			break;
 		case kTextNewLine:
