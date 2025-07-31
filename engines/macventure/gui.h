@@ -134,7 +134,7 @@ public:
 	const Graphics::Font& getCurrentFont();
 
 	// Clicks
-	void selectForDrag(Common::Point cursorPosition);
+	void select(Common::Point cursorPosition, bool shiftPressed, bool isDoubleClick);
 	void handleSingleClick();
 	void handleDoubleClick();
 
@@ -146,6 +146,8 @@ public:
 
 	void addChild(WindowReference target, ObjID child);
 	void removeChild(WindowReference target, ObjID child);
+
+	void clearDraggedObjects();
 
 	void clearExits();
 	void unselectExits();
@@ -203,12 +205,17 @@ private: // Attributes
 	Container *_graphics;
 	Common::HashMap<ObjID, ImageAsset*> _assets;
 
-	Graphics::ManagedSurface _draggedSurface;
-	DraggedObj _draggedObj;
+	Common::Array<DraggedObj> _draggedObjects;
+	Common::Array<Graphics::ManagedSurface> _draggedSurfaces;
 
 	Cursor *_cursor;
 
 	ConsoleText *_consoleText;
+
+	WindowReference _lassoWinRef;
+	Common::Point _lassoStart;
+	Common::Point _lassoEnd;
+	bool _lassoBeingDrawn;
 
 private: // Methods
 
@@ -235,12 +242,12 @@ private: // Methods
 	void drawExitsWindow();
 	void drawConsoleWindow();
 
-	void drawDraggedObject();
+	void drawDraggedObjects();
 	void drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSurface *surface);
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 	void drawDialog();
 
-	void moveDraggedObject(Common::Point target);
+	void moveDraggedObjects(Common::Point target);
 
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
@@ -248,7 +255,7 @@ private: // Methods
 	WindowData& findWindowData(WindowReference reference);
 
 	// Utils
-	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref);
+	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref, bool shiftPressed, bool isDoubleClick);
 	bool canBeSelected(ObjID obj, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
 	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
