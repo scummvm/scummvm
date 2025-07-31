@@ -216,6 +216,9 @@ public:
 	bool shouldQuit() const {
 		return _quitFlag == QUIT_QUIT;
 	}
+	bool isQuitting() const {
+		return _quitFlag != QUIT_NONE;
+	}
 
 	void SetCapture(HWND hWnd);
 	void ReleaseCapture();

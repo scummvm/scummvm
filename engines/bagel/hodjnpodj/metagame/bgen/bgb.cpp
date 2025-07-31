@@ -740,6 +740,7 @@ ULONG Sqrt(ULONG x) {
 *
 *****************************************************************************/
 BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint cNewPosition) {
+	CWinApp *app = AfxGetApp();
 	CPoint cCurrentPosition = cOldPosition;
 	int iK ;                // loop variable
 	int iSegments ;         // # of segments
@@ -788,6 +789,8 @@ BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 		// delay 30 ms
 		if (!lpMetaGameStruct->m_bScrolling)
 			Sleep(30);
+		if (app->isQuitting())
+			break;
 	}
 
 	// turn off animation for this sprite

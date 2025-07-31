@@ -220,7 +220,7 @@ BOOL CGtlData::ProcessMove(CNode FAR *lpTargetNode)
 
 	// as long as the computer's on the move, then compute move and
 	// play it
-	while ((m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == FALSE) && (bExitMetaDLL == FALSE)) {
+	while (!AfxGetApp()->isQuitting() && (m_xpCurXodj != nullptr) && (m_xpCurXodj->m_bComputer) && (m_bGameOver == FALSE) && (bExitMetaDLL == FALSE)) {
 
 		if (((m_xpCurXodj->m_bHodj) && (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh)) ||
 		        ((m_xpCurXodj->m_bHodj == FALSE) && (lpMetaGameStruct->m_cPodj.m_bHaveMishMosh)))
@@ -266,6 +266,7 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlData::MoveCharToNode) ;
+	CWinApp *app = AfxGetApp();
 	int iError = 0 ;            // error code
 	CNode FAR * lpNode, *lpNextNode ;
 	CBgbObject FAR * lpChar ;
@@ -298,6 +299,8 @@ BOOL CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 	// path, and lpiShortPath[1] contains the total weight.
 	// The remaining array elements contain the path nodes.
 	for (iK = 3 ; _metaGame && !bDone && iK <= lpiShortPath[0] ; ++iK) {
+		if (app->isQuitting())
+			break;
 
 		lpNextNode = m_lpNodes + lpiShortPath[iK] ;
 		bDone = (m_xpCurXodj->m_iFurlongs < lpNextNode->m_iWeight) ;
