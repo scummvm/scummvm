@@ -196,7 +196,7 @@ void CheckBox::draw() {
 void CheckBox::update() {
 	PhysicalObject::update();
 	if (_wasClicked) {
-		if (g_system->getMillis() - _clickTime > 500) {
+		if (g_engine->getMillis() - _clickTime > 500) {
 			_wasClicked = false;
 			trigger();
 		}
@@ -226,7 +226,7 @@ void CheckBox::onHoverUpdate() {}
 
 void CheckBox::onClick() {
 	_wasClicked = true;
-	_clickTime = g_system->getMillis();
+	_clickTime = g_engine->getMillis();
 }
 
 void CheckBox::trigger() {

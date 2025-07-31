@@ -105,6 +105,9 @@ public:
 	inline Config &config() { return _config; }
 	inline bool isDebugModeActive() const { return _debugHandler != nullptr; }
 
+	uint32 getMillis() const;
+	void setMillis(uint32 newMillis);
+	virtual void pauseEngineIntern(bool pause);
 	void playVideo(int32 videoId);
 	void fadeExit();
 	void setDebugMode(DebugMode debugMode, int32 param);
@@ -168,6 +171,9 @@ private:
 	Sounds _sounds;
 	Scheduler _scheduler;
 	Config _config;
+
+	uint32 _timeNegOffset = 0, _timePosOffset = 0;
+	uint32 _timeBeforePause = 0;
 };
 
 extern AlcachofaEngine *g_engine;
