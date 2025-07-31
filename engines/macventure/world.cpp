@@ -208,11 +208,25 @@ void World::updateObj(ObjID objID) {
 }
 
 void World::captureChildren(ObjID objID) {
-	warning("Capture children unimplemented!");
+	Common::Array<ObjID> captured;
+	Common::Array<ObjID> children = getChildren(getObjAttr(objID, 0), true);
+
+	for (auto &child: children) {
+		if (objID < child && _engine->getOverlapPercent(child, objID) >= 40)
+			captured.push_back(child);
+	}
+	while (captured.size()) {
+		ObjID popped = captured.back();
+		captured.pop_back();
+		setObjAttr(popped, 0, objID);
+	}
 }
 
 void World::releaseChildren(ObjID objID) {
-	warning("Release children unimplemented!");
+	Common::Array<ObjID> children = getChildren(objID, 1);
+	ObjID parent = getObjAttr(objID, 0);
+	for (auto &child: children)
+		setObjAttr(child, 0, parent);
 }
 
 Common::String World::getText(ObjID objID, ObjID source, ObjID target) {
