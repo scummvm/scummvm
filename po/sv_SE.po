@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-25 21:03+0000\n"
-"PO-Revision-Date: 2025-07-16 06:39+0000\n"
+"PO-Revision-Date: 2025-07-31 20:35+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -858,7 +858,7 @@ msgstr "Starta e-postklient"
 
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
-msgstr ""
+msgstr "Detta spel inkluderar tillägg, välj den del som du vill kontrollera:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -1616,7 +1616,7 @@ msgstr "Spela~l~ternativ..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
-msgstr ""
+msgstr "Tillägg"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1244 gui/launcher.cpp:1446
@@ -3739,19 +3739,16 @@ msgid "Start anyway"
 msgstr "Starta ändå"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"VARNING: Spelet du är på väg att starta stöds inte ännu till fullo av "
-"ScummVM. Därför är det troligtvis instabilt och om du skapar spardata kan de "
-"möjligtvis vara inkompatibla med framtida versioner av ScummVM."
+"VARNING: Spelet du är på väg att starta innehåller tillägget \"%s\" som ännu "
+"inte stöds till fullo av ScummVM. Därför är det troligtvis instabilt och om "
+"du skapar spardata kan de möjligtvis vara inkompatibla med framtida "
+"versioner av ScummVM."
 
 #: engines/engine.cpp:852
 #, c-format
@@ -3760,6 +3757,9 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"Spelet ”%s” som du försöker lägga till är ett tillägg till ”%s” som inte kan "
+"köras separat. Kopiera tilläggets innehåll till en underkatalog till "
+"basspelet och starta själva basspelet."
 
 #: engines/engine.cpp:869
 msgid "This game is not supported."
@@ -3787,11 +3787,13 @@ msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
 msgstr ""
+"Katalogen ’%s’ ser ut som ett tillägg till spelet ’%s’, men ScummVM kunde "
+"inte hitta något matchande tillägg i den."
 
 #: engines/engine.cpp:1243
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
-msgstr ""
+msgstr "Katalogen ’%s’ matchar flera tillägg, välj ett."
 
 #: engines/game.cpp:199
 #, c-format
@@ -6232,16 +6234,12 @@ msgid "Default keymappings"
 msgstr "Standardtangentmappningar"
 
 #: engines/access/metaengine.cpp:196
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Move / Interact / Skip"
-msgstr "Flytta / Interagera / Hoppa över dialog"
+msgstr "Flytta / Interagera / Hoppa över"
 
 #: engines/access/metaengine.cpp:208
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
-msgstr "Hoppa över video"
+msgstr "Hoppa över film"
 
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
@@ -7528,35 +7526,25 @@ msgid "Cutscene keymappings"
 msgstr "Tangentmappningar för mellansekvens"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main menu keymappings"
-msgstr "Tangentmappningar för meny"
+msgstr "Kortkommandon för huvudmeny"
 
 #: engines/buried/metaengine.cpp:137
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Inventory keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Kortkommandon för inventarier"
 
 #: engines/buried/metaengine.cpp:141
-#, fuzzy
-#| msgid "Select / Interact / Move"
 msgid "Select / Interact"
-msgstr "Välj / Interagera / Flytta"
+msgstr "Välj / Interagera"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "Kontroll"
+msgstr "Control-tangent"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "Avsluta till menyn"
+msgstr "Avsluta till huvudmenyn"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7569,16 +7557,12 @@ msgid "Look down"
 msgstr "Titta ner"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Titta på"
+msgstr "Titta åt vänster"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Titta på"
+msgstr "Titta åt höger"
 
 #: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
@@ -7594,58 +7578,52 @@ msgstr "Flytta framåt"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "Spela upp senaste AI-kommentaren igen"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "Biochip AI"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "Biochip tom"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "Biochip cloak"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
-#, fuzzy
-#| msgid "View evidence"
 msgid "Biochip evidence"
-msgstr "Visa bevis"
+msgstr "Biochip bevis"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "Visa dolda filer"
+msgstr "Biochip filer"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "Biochip gränssnitt"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "Biochip hoppa"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "Biochip översätt"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Visa ledtrådar"
+msgstr "Visa punkter"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
