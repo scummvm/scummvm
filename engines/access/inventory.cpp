@@ -213,15 +213,17 @@ int InventoryManager::newDisplayInv() {
 int InventoryManager::displayInv() {
 	size_t invSize = _vm->_res->INVENTORY.size();
 
-	Common::Array<byte> invNums(invSize + 1);
+	Common::Array<byte> invFlags(invSize + 1);
 	Common::Array<const char *> invNames(invSize + 1);
 
+	// Only show items that are in the inventory, skip "used".
 	for (size_t i = 0; i < invSize; i++) {
-		invNums[i] = _inv[i]._value;
+		byte flag = (_inv[i]._value == ITEM_IN_INVENTORY) ? 1 : 0;
+		invFlags[i] = flag;
 		invNames[i] = _inv[i]._name.c_str();
 	}
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	_vm->_invBox->getList(invNames.data(), invNums.data());
+	_vm->_invBox->getList(invNames.data(), invFlags.data());
 
 	int btnSelected = 0;
 	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
