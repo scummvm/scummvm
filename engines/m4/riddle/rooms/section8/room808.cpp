@@ -106,7 +106,7 @@ void Room808::init() {
 				break;
 
 			case 2:
-				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 4, 100, 0, 0);
+				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 5, 100, 0, 0);
 				break;
 
 			case 3:
@@ -114,7 +114,7 @@ void Room808::init() {
 				break;
 
 			case 4:
-				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 5, 100, 0, 0);
+				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 4, 100, 0, 0);
 				break;
 
 			default:
@@ -163,7 +163,7 @@ void Room808::init() {
 			series_play("808rpup", 0, 0, 2, 5, 0, 100, 0, 0, 0, -1);
 		} else {
 			_G(flags)[V276] = 0;
-			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 345, 116, 5, Walker::player_walker_callback, "mc_trek");
+			_mcTrekMach = triggerMachineByHash_3000(8, 4, *S8_SHADOW_DIRS2, *S8_SHADOW_DIRS1, 345, 115, 5, Walker::player_walker_callback, "mc_trek");
 			series_play("808rpup", 0, 0, 4, 5, 0, 100, 0, 0, 0, -1);
 		}
 
