@@ -443,7 +443,10 @@ on exitFrame\r\
   go(1, \"C:\\PG_WORLD\\A_IN01\")\r\
 ";
 
-
+/*
+ * Mission Code: Millennium has some drive detection code which prevents the game from loading
+ * if it detects DESTINA.MLD is present "on the hard disk". Provide the same code without that check.
+ */
 const char *const mcmillenniumDriveDetectionFix = "\
 on initPaths\r\
   global PD, theCDPath, theHDPath, theVCAudioPath, theNotePath, proxPath\r\
@@ -468,6 +471,11 @@ on initPaths\r\
 end\r\
 ";
 
+/*
+ * Mission Code: Millennium has a bizarre method of checking the dimensions of the screen by
+ * measuring the stage position of a 512x384 movie and seeing if it matches 640x480.
+ * Even when forcing desktop mode this doesn't match up exactly, so patch it out.
+ */
 const char *const mcmillenniumResDetectionFix = "\
 on getRes\r\
 end\r\
@@ -513,6 +521,7 @@ struct ScriptHandlerPatch {
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix1},
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix2},
 	{"mcmillennium", nullptr, kPlatformWindows, "PC\\MILL.EXE", kMovieScript, 15, DEFAULT_CAST_LIB, &mcmillenniumResDetectionFix},
+	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:Mission Code Millennium", kMovieScript, 15, DEFAULT_CAST_LIB, &mcmillenniumResDetectionFix},
 	{"mcmillennium", nullptr, kPlatformWindows, "PC\\SHARED.DXR", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:SHARED.Dxr", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
