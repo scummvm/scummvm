@@ -52,6 +52,11 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 		savePath.joinInPlace("Savegames");
 		ConfMan.registerDefault("savepath", savePath);
 	}
+
+#elif defined(EMSCRIPTEN)
+	savePath = getenv("HOME");
+	savePath.joinInPlace("saves");
+	ConfMan.registerDefault("savepath", savePath);
 #else
 	const char *envVar;
 
