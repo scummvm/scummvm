@@ -172,6 +172,7 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/backpack.o \
 	hodjnpodj/metagame/bgen/bbt.o \
 	hodjnpodj/metagame/bgen/bdbg.o \
+	hodjnpodj/metagame/bgen/bfc.o \
 	hodjnpodj/metagame/bgen/bgb.o \
 	hodjnpodj/metagame/bgen/bgenut.o \
 	hodjnpodj/metagame/bgen/bsutl.o \

@@ -37,8 +37,6 @@ namespace Gtl {
 
 #define IDC_SAVE_BUSY 2030
 
-STATIC CHAR gszSaveGameFileName[256];
-
 STATIC CHAR szDescriptions[MAX_SAVEGAMES][40];
 STATIC CHAR *pszDesc[MAX_SAVEGAMES];
 
@@ -63,7 +61,6 @@ VOID       ConvertToSGI(CBfcMgr *, SAVEGAME_INFO *);
 *
 *  SAMPLE USAGE:
 *  errCode = SaveGame(psFileName, pBfcMgr, pWnd, pPalette);
-*  const CHAR *pszFileName;                 File to save into
 *  CBfMgr *pBfcMgr;                         SaveGame info
 *  CWnd *pWnd;                              Parent window to SaveGame dialog box
 *  CPalette *pPalette;                      Palette to use for dialog Bmp
@@ -72,15 +69,14 @@ VOID       ConvertToSGI(CBfcMgr *, SAVEGAME_INFO *);
 *  RETURNS:  BOOL = TRUE if the game was saved successfully
 *
 *****************************************************************************/
-BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+BOOL CALLBACK SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	CWinApp *pMyApp;
 	HCURSOR hCursor;
 	INT iGameNum, n;
 	BOOL bSaved;
 	ERROR_CODE errCode;
 
-	// validate input
-	assert(pszFileName != nullptr);
+	// Validate input
 	assert(pBfcMgr != nullptr);
 	assert(pWnd != nullptr);
 	assert(pPalette != nullptr);
@@ -95,16 +91,8 @@ BOOL CALLBACK SaveGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CP
 	// assume the save will work
 	bSaved = TRUE;
 
-	// keep track of the .SAV file name
-	//
-	Common::strcpy_s(gszSaveGameFileName, pBfcMgr->m_chHomePath);
-	n = strlen(gszSaveGameFileName);
-	if (gszSaveGameFileName[n - 1] != '\\')
-		Common::strcat_s(gszSaveGameFileName, "\\");
-	Common::strcat_s(gszSaveGameFileName, pszFileName);
-
 	// if .SAV file does not exist
-	//
+	const char *gszSaveGameFileName = "hodjpodj.sav";
 	if (!FileExists(gszSaveGameFileName)) {
 
 		// then create an empty save game file
@@ -332,6 +320,7 @@ ERROR_CODE SaveSlot(INT iGameNum, CBfcMgr *pBfcMgr) {
 *****************************************************************************/
 ERROR_CODE InitSaveGameFile(VOID) {
 	ERROR_CODE errCode = ERR_NONE;
+	SAVEGAME_INFO sgi;
 
 	#ifndef TODO
 	error("TODO: Init savegame");

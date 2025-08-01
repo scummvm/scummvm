@@ -33,7 +33,7 @@ namespace Gtl {
 
 typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
-BOOL CALLBACK SaveGame(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+BOOL CALLBACK SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
 } // namespace Gtl
 } // namespace Metagame

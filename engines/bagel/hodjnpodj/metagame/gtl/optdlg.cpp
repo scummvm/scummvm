@@ -37,8 +37,6 @@ namespace Gtl {
 
 extern HWND     ghwndParent;
 
-STATIC const CHAR *pszSaveGameFile = "HODJPODJ.SAV";
-
 /*****************************************************************
  *
  * CMetaOptDlg
@@ -112,10 +110,8 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
-
 		case IDC_SAVE_GAME:
-
-			SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
+			SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			ClearDialogImage();
 			EndDialog(0);
 			return (TRUE);
@@ -124,7 +120,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_pBfcMgr->m_bChanged) {
 				C2ButtonDialog dlg2Button(this, m_pPalette, "&Yes", "&No", "Would you like to", "save this game", "before leaving?");
 				if (dlg2Button.DoModal() == CBUTTON1)
-					SaveGame(pszSaveGameFile, m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
+					SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			}
 			ClearDialogImage();
 			EndDialog(1);
