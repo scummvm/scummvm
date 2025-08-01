@@ -45,13 +45,12 @@ Tasks:
 
 Options:
   -h, --help         print this help, then exit
-  --bundle-games=    comma-separated list of demos and freeware games to bundle. 
   -v, --verbose      print all commands run by the script
   --*                all other options are passed on to the configure script
-                     Note: --enable-a52, --enable-faad, --enable-fluidlite, --enable-fribidi,
-                     --enable-mad,  --enable-mpcdec, --enable-mpeg2, --enable-mikmod,
-                     --enable-retrowave, --enable-theoradec and --enable-vpx
-                     also download and build the required library before running configure or make.
+                     Note:  --enable-a52, --enable-faad, --enable-fluidlite, --enable-fribidi,
+                            --enable-mad, --enable-mpcdec, --enable-mpeg2, --enable-mikmod,
+                            --enable-retrowave, --enable-theoradec and --enable-vpx
+                            also download and build the required library
 "
 
 _fluidlite=false
@@ -173,16 +172,6 @@ if [[ $ret != 0 ]]; then
 
   cd "$DIST_FOLDER/emsdk-${EMSDK_VERSION}"
   ./emsdk activate ${EMSCRIPTEN_VERSION}
-
-  # install some required npm packages
-  source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
-  EMSDK_NPM=$(dirname $EMSDK_NODE)/npm
-  EMSDK_PYTHON="${EMSDK_PYTHON:-python3}"
-  export NODE_PATH=$(dirname $EMSDK_NODE)/../lib/node_modules/
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "puppeteer@13.5.1"
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "request@2.88.2"
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "node-static@0.7.11"
-
 fi
 
 source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
@@ -195,21 +184,9 @@ export NODE_PATH="$(dirname $EMSDK_NODE)/../lib/node_modules/"
 LIBS_FLAGS=""
 
 cd "$ROOT_FOLDER"
-#################################
-# Clean
-#################################
-if [[ "clean" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  emmake make clean || true
-  emmake make distclean || true
-  emcc --clear-ports --clear-cache
-  rm -rf ./build-emscripten/ || true
-  rm scummvm.debug.wasm || true
-  rm scummvm.wasm || true
-  rm scummvm.js || true
-fi
 
 #################################
-# Download + Install Libraries (if not part of Emscripten-Ports, these are handled by configure)
+# Download + Install Libraries (if not provided by Emscripten-Ports, those are handled by configure)
 #################################
 if [[ ! -d "$LIBS_FOLDER/build" ]]; then
   mkdir -p "$LIBS_FOLDER/build"
@@ -391,11 +368,9 @@ fi
 if [[ "make" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
   cd "${ROOT_FOLDER}"
   echo "Running make"
-  emmake make
+  num_cpus=$(nproc || grep -c ^processor /proc/cpuinfo || echo 1)
+  emmake make -j ${num_cpus}
 fi
-
-# The following steps copy stuff to build-emscripten:
-mkdir -p "${ROOT_FOLDER}/build-emscripten/"
 
 #################################
 # Bundle everything into a neat package
@@ -406,82 +381,23 @@ if [[ "dist" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
 fi
 
 #################################
-# Create Games & Testbed Data
-#################################
-if [[ "games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  cd "${ROOT_FOLDER}"
-  echo "Creating Games + Testbed Data"
-  mkdir -p "${ROOT_FOLDER}/build-emscripten/games/"
-
-  if [[ "testbed" =~ $(echo ^\(${_bundle_games// /|}\)$) ]]; then
-    _bundle_games="${_bundle_games//testbed/}"
-    rm -rf "${ROOT_FOLDER}/build-emscripten/games/testbed"
-    cd "${ROOT_FOLDER}/dists/engine-data"
-    ./create-testbed-data.sh
-    mv testbed "${ROOT_FOLDER}/build-emscripten/games/testbed"
-  fi
-
-  if [ -n "$_bundle_games" ]; then
-    echo "Fetching gmaes: $_bundle_games"
-    mkdir -p "${DIST_FOLDER}/games/"
-    cd "${DIST_FOLDER}/games/"
-    files=$("$EMSDK_NODE" --unhandled-rejections=strict --trace-warnings "$DIST_FOLDER/build-download_games.js" ${_bundle_games})
-    for dir in "${ROOT_FOLDER}/build-emscripten/games/"*/; do # cleanup games folder
-      if [ "$(basename ${dir%*/})" != "testbed" ]; then
-        rm -rf "$dir"
-      fi
-    done
-    for f in $files; do # unpack into games folder
-      echo "Unzipping $f ..."
-      unzip -q -n "$f" -d "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}"
-      # some zip files have weird permissions, this fixes that:
-      find "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}" -type d -exec chmod 0755 {} \;
-      find "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}" -type f -exec chmod 0644 {} \;
-    done
-  fi
-  cd "${ROOT_FOLDER}/build-emscripten/games/"
-  "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-fi
-#################################
-# Add icons
-#################################
-if [[ "icons" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  _icons_dir="${ROOT_FOLDER}/../scummvm-icons/"
-  if [[ -d "$_icons_dir" ]]; then
-    echo "Adding files from icons repository "
-    cd "${ROOT_FOLDER}/../scummvm-icons/"
-    cd "$_icons_dir"
-    "$EMSDK_PYTHON" gen-set.py
-    echo "add icons"
-    mkdir -p "${ROOT_FOLDER}/build-emscripten/data/gui-icons"
-    cp -r "$_icons_dir/icons" "${ROOT_FOLDER}/build-emscripten/data/gui-icons/"
-    echo "add xml"
-    cp -r "$_icons_dir/"*.xml "${ROOT_FOLDER}/build-emscripten/data/gui-icons/"
-    echo "update index"
-    cd "${ROOT_FOLDER}/build-emscripten/data/gui-icons"
-    "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-    cd "${ROOT_FOLDER}/build-emscripten/data"
-    "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-  else
-    echo "Icons repository not found"
-  fi
-fi
-
-#################################
-# Automatically detect games and create scummvm.ini file
-#################################
-if [[ "add-games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  cd "${ROOT_FOLDER}"
-  cp "$DIST_FOLDER/assets/scummvm.ini" "${ROOT_FOLDER}/build-emscripten/"
-  cd "${ROOT_FOLDER}/build-emscripten/"
-  "$EMSDK_NODE" "$DIST_FOLDER/build-add_games.js"
-fi
-
-#################################
 # Run Development Server
 #################################
 if [[ "run" =~ $(echo ^\(${TASKS}\)$) ]]; then
   echo "Run ScummVM"
   cd "${ROOT_FOLDER}/build-emscripten/"
   emrun --browser=chrome scummvm.html
+fi
+
+#################################
+# Clean
+#################################
+if [[ "clean" =~ $(echo ^\(${TASKS}\)$) ]]; then
+  emmake make clean || true
+  emmake make distclean || true
+  emcc --clear-ports --clear-cache
+  rm -rf ./build-emscripten/ || true
+  rm scummvm.debug.wasm || true
+  rm scummvm.wasm || true
+  rm scummvm.js || true
 fi
