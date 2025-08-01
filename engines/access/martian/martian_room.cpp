@@ -61,6 +61,7 @@ void MartianRoom::reloadRoom() {
 }
 
 void MartianRoom::reloadRoom1() {
+	// aka initScene
 	_selectCommand = -1;
 	_vm->_boxSelect = false; //-1
 	_vm->_player->_playerOff = false;

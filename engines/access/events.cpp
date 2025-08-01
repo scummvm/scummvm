@@ -344,7 +344,7 @@ Common::Point EventsManager::calcRawMouse() {
 	return pt;
 }
 
-int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
+int EventsManager::checkMouseBox1(const Common::Array<Common::Rect> &rects) {
 	for (uint16 i = 0; i < rects.size(); ++i) {
 		if (rects[i].left == -1)
 			return -1;

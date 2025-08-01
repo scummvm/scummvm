@@ -145,7 +145,7 @@ public:
 
 	Common::Point calcRawMouse();
 
-	int checkMouseBox1(Common::Array<Common::Rect> &rects);
+	int checkMouseBox1(const Common::Array<Common::Rect> &rects);
 
 	bool isKeyActionMousePressed();
 

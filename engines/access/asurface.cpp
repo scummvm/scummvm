@@ -245,6 +245,8 @@ void BaseSurface::moveBufferDown() {
 	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
+/* For compatibility with the original logic, true return means the
+   rect is *outside* the clip region. */
 bool BaseSurface::clip(Common::Rect &r) {
 	int skip;
 	_leftSkip = _rightSkip = 0;
