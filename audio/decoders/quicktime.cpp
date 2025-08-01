@@ -434,7 +434,7 @@ void QuickTimeAudioDecoder::QuickTimeAudioTrack::enterNewEdit(const Timestamp &p
 	// I really hope I never need to implement this :P
 	// But, I'll throw in this error just to make sure I catch anything with this...
 	if (_parentTrack->editList[_curEdit].mediaRate != 1)
-		error("Unhandled QuickTime audio rate change");
+		warning("QuickTimeAudioDecoder: Unhandled QuickTime audio rate change");
 
 	// Reinitialize the codec
 	((AudioSampleDesc *)_parentTrack->sampleDescs[0])->initCodec();
