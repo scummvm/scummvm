@@ -32,7 +32,8 @@ namespace Gtl {
 
 ///DEFS gtl.h
 
-extern CGtlFrame        *pMainWindow;
+extern CGtlFrame *pMainWindow;
+extern BOOL bExitMetaDLL;
 
 static CSingleDocTemplate *pSdiDocTemplate = nullptr;
 
@@ -223,7 +224,14 @@ int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 	RETURN(iRetval) ;
 }
 
+BOOL CGtlApp::OnIdle(LONG lCount) {
+	if (bExitMetaDLL) {
+		PostMessage(nullptr, WM_QUIT, 0, 0);
+		return false;
+	}
 
+	return true;
+}
 
 /////////////////////////////////////////////////////////////////////////////
 // CAboutDlg dialog used for App About

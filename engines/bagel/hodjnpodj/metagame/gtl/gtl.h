@@ -84,6 +84,7 @@ public:
 	//              display message box messages
 	virtual int DoMessageBox(LPCSTR lpszPrompt,
 	                         UINT nType, UINT nIDPrompt) ;
+	BOOL OnIdle(LONG lCount) override;
 };
 
 #if GTLMDI

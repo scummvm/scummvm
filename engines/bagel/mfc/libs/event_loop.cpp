@@ -342,12 +342,12 @@ BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
 	if (_quitFlag != QUIT_NONE)
 		return false;
-	if (!hWnd && WM_PARENTNOTIFY)
+	if (!hWnd && Msg == WM_PARENTNOTIFY)
 		// Hodj minigame launched directly without metagame,
 		// so we can ignore the WM_PARENTNOTIFY on closure
 		return false;
 
-	assert(hWnd && hWnd != (HWND)0xdddddddd);
+	assert((hWnd || Msg == WM_QUIT) && hWnd != (HWND)0xdddddddd);
 	_messages.push(MSG(hWnd, Msg, wParam, lParam));
 	return true;
 }
