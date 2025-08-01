@@ -186,7 +186,7 @@ Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->g
 Common::String DirectorEngine::getCurrentAbsolutePath() {
 	Common::String currentPath = getCurrentPath();
 	Common::String result;
-	result += (getPlatform() == Common::kPlatformWindows && _version >= 400) ? "C:\\" : "";
+	result += (getPlatform() == Common::kPlatformWindows && _version >= 400) ? "C:\\" : "@:";
 	result += convertPath(currentPath);
 	return result;
 }
