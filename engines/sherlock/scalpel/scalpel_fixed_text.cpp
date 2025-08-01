@@ -519,13 +519,13 @@ static const char *const fixedTextZH[] = {
 	// SH1: Settings
 	"E\xc2\xf7\xb6\x7d(E)", /* "離開"; "EExit" */
 	"M\xad\xb5\xbc\xd6\xb6\x7d(M)", /* "M音樂開"; "MMusic on" */
-	"M\xad\xb5\xbc\xd6\xc3\xf6(M)", /* "M音樂關"; "MMusic off" */	
+	"M\xad\xb5\xbc\xd6\xc3\xf6(M)", /* "M音樂關"; "MMusic off" */
 	"P\xa8\x76\xb9\xb3\xb6\x7d(P)", /* "P肖像開"; "PPortrait on" */
 	"P\xa8\x76\xb9\xb3\xc3\xf6(P)", /* "P肖像關"; "PPortrait off" */
 	"JJoystick off", // Not used in Chinese as this button is skipped
 	"NNew Font Style", // Not used in Chinese as only one font is available
 	"S\xad\xb5\xae\xc4\xb6\x7d(S)", /* "S音效開"; "SSound Effects on" */
-	"S\xad\xb5\xae\xc4\xc3\xf6(S)", /* "S音效關"; "SSound Effects off" */	
+	"S\xad\xb5\xae\xc4\xc3\xf6(S)", /* "S音效關"; "SSound Effects off" */
 	"W\xb5\xf8\xb5\xa1\xb7\xc6\xb1\xb2(W)", /* "W視窗滑捲"; "WWindow Slide Scroll" */
 	"W\xb5\xf8\xb5\xa1\xa8\x71\xa5\x58(W)", /* "W視窗秀出"; "WWindow Show" */
 	"C\xbd\xd5\xbe\xe3\xb7\x6e\xb1\xec(C)", /* "調整搖桿"; "CCalibrate Joystick" */
@@ -534,7 +534,7 @@ static const char *const fixedTextZH[] = {
 	"VVoices on", // Not used in Chinese as no voices are available
 	"VVoices off", // Not used in Chinese as no voices are available
 	"F\xb2\x48\xa5\x58\xc2\x49\xaa\xac(F)", /* "F淡出點狀"; "FFade by Pixel" */
-	"F\xb2\x48\xa5\x58\xaa\xbd\xb1\xb5(F)", /* "F淡出直接"; "FFade Directly" */	
+	"F\xb2\x48\xa5\x58\xaa\xbd\xb1\xb5(F)", /* "F淡出直接"; "FFade Directly" */
 	"K\xc1\xe4\xaa\xa9\xba\x43(K)", /* "K鍵版慢"; "KKey Pad Slow" */
 	"K\xc1\xe4\xaa\xa9\xa7\xd6(K)", /* "K鍵版快"; "KKey Pad Fast" */
 	// Load/Save
@@ -845,7 +845,7 @@ static const FixedTextActionEntry fixedTextZH_Actions[] = {
 
 // =========================================
 
-static const FixedTextLanguageEntry fixedTextLanguages[] = {
+const FixedTextLanguageEntry fixedTextLanguages[] = {
 	{ Common::DE_DEU,   fixedTextDE, fixedTextDE_Actions },
 	{ Common::ES_ESP,   fixedTextES, fixedTextES_Actions },
 	{ Common::EN_ANY,   fixedTextEN, fixedTextEN_Actions },
