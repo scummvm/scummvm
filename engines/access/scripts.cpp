@@ -649,6 +649,7 @@ void Scripts::cmdSaveRect() {
 	int y = _vm->_screen->_lastBoundsY;
 	int w = _vm->_screen->_lastBoundsW;
 	int h = _vm->_screen->_lastBoundsH;
+	assert(x >= 0 && y >= 0 && x < 320 && y < 200 && w > 0 && h > 0 && w <= 320 && h <= 200);
 	_vm->_newRects.push_back(Common::Rect(x, y, x + w, x + h));
 }
 

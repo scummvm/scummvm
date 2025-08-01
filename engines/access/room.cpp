@@ -80,12 +80,20 @@ void Room::clearCamera() {
 }
 
 void Room::takePicture() {
+	// aka specialFuncRoomNumber47
 	_vm->_events->pollEvents();
-	if (!_vm->_events->_leftButton)
+	if (!_vm->_events->_leftButton) {
+		// WORKAROUND: The original doesn't reset player move direction here
+		// because it handles mouse/keyboard differently, but we need to reset
+		// after mouse-up, otherwise the next click anywhere not on a button
+		// will repeat the previous move.
+		_vm->_player->_move = NONE;
 		return;
+	}
 
 	Common::Array<Common::Rect> pictureCoords;
 	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
+		// PICTURERANGE is min/max X, min/max Y
 		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
 			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
 	}
@@ -93,6 +101,7 @@ void Room::takePicture() {
 	int result = _vm->_events->checkMouseBox1(pictureCoords);
 
 	if (result == 4) {
+		// Take picture button
 		_vm->_events->debounceLeft();
 		if (_vm->_inventory->_inv[44]._value != ITEM_IN_INVENTORY) {
 			Common::String msg = "YOU HAVE NO MORE FILM.";
@@ -124,6 +133,7 @@ void Room::takePicture() {
 		clearCamera();
 		return;
 	} else if (result == 5) {
+		// Exit button
 		if (_vm->_flags[26] != 2) {
 			_vm->_video->closeVideo();
 			_vm->_video->_videoEnd = true;
@@ -418,7 +428,7 @@ void Room::buildColumn(int playX, int screenX) {
 		_playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
-	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight);
+	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight - _vm->_scrollRow);
 
 	for (int y = 0; y < h; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
@@ -439,10 +449,10 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_scrollCol;
+	const byte *pSrc = _playField + playY * _playFieldWidth + _vm->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
-	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth);
+	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth - _vm->_scrollCol);
 
 	for (int x = 0; x < w; ++x) {
 		byte *pTile = _tile + (*pSrc << 8);
