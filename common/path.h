@@ -395,6 +395,18 @@ public:
 	/** @overload */
 	Path &appendInPlace(const char *str, char separator = '/');
 
+	Path &operator+=(const Path &x) {
+		return appendInPlace(x);
+	}
+
+	Path &operator+=(const String &str) {
+		return appendInPlace(str);
+	}
+
+	Path &operator+=(const char *str) {
+		return appendInPlace(str);
+	}
+
 	/**
 	 * Returns this path with the given path appended (out-of-place).
 	 * Does not automatically add a directory separator.
@@ -462,6 +474,21 @@ public:
 		Path temp(*this);
 		temp.joinInPlace(str, separator);
 		return temp;
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const Path &x) const {
+		return join(x);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const String &str) const {
+		return join(str);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const char *str) const {
+		return join(str);
 	}
 
 	/**
