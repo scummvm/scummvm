@@ -59,7 +59,7 @@ namespace AGS {
 namespace Shared {
 
 SpriteCache::SpriteCache(std::vector<SpriteInfo> &sprInfos, const Callbacks &callbacks)
-	: _sprInfos(sprInfos), _maxCacheSize(DEFAULTCACHESIZE_KB * 1024u),
+	: _sprInfos(&sprInfos), _maxCacheSize(DEFAULTCACHESIZE_KB * 1024u),
 	  _cacheSize(0u), _lockedSize(0u) {
 	_callbacks.AdjustSize = (callbacks.AdjustSize) ? callbacks.AdjustSize : DummyAdjustSize;
 	_callbacks.InitSprite = (callbacks.InitSprite) ? callbacks.InitSprite : DummyInitSprite;
@@ -108,6 +108,11 @@ void SpriteCache::Reset() {
 	_lockedSize = 0;
 }
 
+void SpriteCache::Reset(std::vector<SpriteInfo> &sprInfos) {
+	Reset();
+	_sprInfos = &sprInfos;
+}
+
 bool SpriteCache::SetSprite(sprkey_t index, std::unique_ptr<Bitmap> image, int flags) {
 	if (index < 0 || EnlargeTo(index) != index) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: unable to use index %d", index);
@@ -122,7 +127,7 @@ bool SpriteCache::SetSprite(sprkey_t index, std::unique_ptr<Bitmap> image, int f
 	const int spf_flags = flags
 		| (SPF_HICOLOR * image->GetColorDepth() > 8)
 		| (SPF_TRUECOLOR * image->GetColorDepth() > 16);
-	_sprInfos[index] = SpriteInfo(image->GetWidth(), image->GetHeight(), spf_flags);
+	(*_sprInfos)[index] = SpriteInfo(image->GetWidth(), image->GetHeight(), spf_flags);
 	// Assign sprite with 0 size, as it will not be included into the cache size
 	_spriteData[index] = SpriteData(image.release(), 0, SPRCACHEFLAG_EXTERNAL | SPRCACHEFLAG_LOCKED);
 	SprCacheLog("SetSprite: (external) %d", index);
@@ -163,7 +168,7 @@ sprkey_t SpriteCache::EnlargeTo(sprkey_t topmost) {
 		return topmost;
 
 	size_t newsize = topmost + 1;
-	_sprInfos.resize(newsize);
+	_sprInfos->resize(newsize);
 	_spriteData.resize(newsize);
 	return topmost;
 }
@@ -178,7 +183,7 @@ sprkey_t SpriteCache::GetFreeIndex() {
 	for (size_t i = MIN_SPRITE_INDEX; i < _spriteData.size(); ++i) {
 		// slot empty
 		if (!DoesSpriteExist(i)) {
-			_sprInfos[i] = SpriteInfo();
+			(*_sprInfos)[i] = SpriteInfo();
 			_spriteData[i] = SpriteData();
 			return i;
 		}
@@ -214,7 +219,7 @@ bool SpriteCache::DoesSpriteExist(sprkey_t index) const {
 }
 
 Size SpriteCache::GetSpriteResolution(sprkey_t index) const {
-	return DoesSpriteExist(index) ? _sprInfos[index].GetResolution() : Size();
+	return DoesSpriteExist(index) ? (*_sprInfos)[index].GetResolution() : Size();
 }
 
 Bitmap *SpriteCache::operator[](sprkey_t index) {
@@ -375,7 +380,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 	}
 
 	// Let the external user convert this sprite's image for their needs
-	image = _callbacks.InitSprite(index, image, _sprInfos[index].Flags);
+	image = _callbacks.InitSprite(index, image, (*_sprInfos)[index].Flags);
 	if (!image) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Warn,
 					  "LoadSprite: failed to initialize sprite %d, remapping to placeholder", index);
@@ -384,8 +389,8 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 	}
 
 	// save the stored sprite info
-	_sprInfos[index].Width = image->GetWidth();
-	_sprInfos[index].Height = image->GetHeight();
+	(*_sprInfos)[index].Width = image->GetWidth();
+	(*_sprInfos)[index].Height = image->GetHeight();
 	// Clear up space before adding to cache
 	const size_t size = image->GetWidth() * image->GetHeight() * image->GetBPP();
 	FreeMem(size);
@@ -406,14 +411,14 @@ size_t SpriteCache::LoadSprite(sprkey_t index, bool lock) {
 
 void SpriteCache::RemapSpriteToPlaceholder(sprkey_t index) {
 	assert((index > 0) && ((size_t)index < _spriteData.size()));
-	_sprInfos[index] = SpriteInfo(_placeholder->GetWidth(), _placeholder->GetHeight(), _placeholder->GetColorDepth());
+	(*_sprInfos)[index] = SpriteInfo(_placeholder->GetWidth(), _placeholder->GetHeight(), _placeholder->GetColorDepth());
 	_spriteData[index].Flags |= SPRCACHEFLAG_ERROR;
 	SprCacheLog("RemapSpriteToPlaceholder: %d", index);
 }
 
 void SpriteCache::InitNullSprite(sprkey_t index) {
 	assert(index >= 0);
-	_sprInfos[index] = SpriteInfo();
+	(*_sprInfos)[index] = SpriteInfo();
 	_spriteData[index] = SpriteData();
 }
 
@@ -436,16 +441,16 @@ HError SpriteCache::InitFile(const String &filename, const String &sprindex_file
 
 	// Initialize sprite infos
 	size_t newsize = metrics.size();
-	_sprInfos.resize(newsize);
+	_sprInfos->resize(newsize);
 	_spriteData.resize(newsize);
 	_mru.clear();
 	for (size_t i = 0; i < metrics.size(); ++i) {
 		if (!metrics[i].IsNull()) {
 			// Existing sprite
 			_spriteData[i].Flags = SPRCACHEFLAG_ISASSET;
-			Size newsz = _callbacks.AdjustSize(Size(metrics[i].Width, metrics[i].Height), _sprInfos[i].Flags);
-			_sprInfos[i].Width = newsz.Width;
-			_sprInfos[i].Height = newsz.Height;
+			Size newsz = _callbacks.AdjustSize(Size(metrics[i].Width, metrics[i].Height), (*_sprInfos)[i].Flags);
+			(*_sprInfos)[i].Width = newsz.Width;
+			(*_sprInfos)[i].Height = newsz.Height;
 		} else {
 			// Mark as empty slot
 			InitNullSprite(i);
