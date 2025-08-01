@@ -57,5 +57,13 @@ void CDocManager::OnFileOpen() {
 	error("TODO: CDocManager::onFileOpen");
 }
 
+void CDocManager::CloseAllDocuments(BOOL bEndSession) {
+	for (auto it = m_templateList.begin(); it != m_templateList.end(); ++it) {
+		CDocTemplate *pTemplate = *it;
+		ASSERT_KINDOF(CDocTemplate, pTemplate);
+		pTemplate->CloseAllDocuments(bEndSession);
+	}
+}
+
 } // namespace MFC
 } // namespace Bagel

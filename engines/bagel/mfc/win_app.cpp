@@ -119,8 +119,8 @@ int CWinApp::Run() {
 
 	runEventLoop();
 
-	ExitInstance();
 	SaveAllModified();
+	ExitInstance();
 
 	return 0;
 }
@@ -198,7 +198,8 @@ void CWinApp::OnFileOpen() {
 }
 
 void CWinApp::CloseAllDocuments(BOOL bEndSession) {
-	error("TODO: CWinApp::CloseAllDocuments");
+	if (m_pDocManager != nullptr)
+		m_pDocManager->CloseAllDocuments(bEndSession);
 }
 
 UINT CWinApp::GetProfileInt(LPCSTR lpszSection,

@@ -1803,6 +1803,9 @@ public:
 
 	virtual void AddDocument(CDocument *pDoc);      // must override
 	virtual void RemoveDocument(CDocument *pDoc);   // must override
+	virtual void CloseAllDocuments(BOOL bEndSession);
+	virtual POSITION GetFirstDocPosition() const = 0;
+	virtual CDocument *GetNextDoc(POSITION &rPos) const = 0;
 
 	void LoadTemplate();
 };
@@ -1836,6 +1839,9 @@ public:
 	void AddDocument(CDocument *pDoc) override;
 
 	void SetDefaultTitle(CDocument *pDocument) override;
+
+	POSITION GetFirstDocPosition() const override;
+	CDocument *GetNextDoc(POSITION &rPos) const override;
 };
 
 typedef Libs::List<CDocTemplate *> CTemplateList;
@@ -1852,6 +1858,7 @@ public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void OnFileNew();
 	void OnFileOpen();
+	virtual void CloseAllDocuments(BOOL bEndSession);
 };
 
 /*============================================================================*/

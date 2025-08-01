@@ -64,9 +64,6 @@ public:
 	char m_cEndData ;
 
 	virtual BOOL InitInstance() override;
-	#if GTLDLL
-	virtual int ExitInstance() override;
-	#endif
 
 	CGtlApp();  // constructor
 	~CGtlApp(); // destructor

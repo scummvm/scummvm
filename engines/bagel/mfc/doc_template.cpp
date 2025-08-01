@@ -115,5 +115,14 @@ void CDocTemplate::LoadTemplate() {
 	// TODO: If needed, menus and accelerators
 }
 
+void CDocTemplate::CloseAllDocuments(BOOL) {
+	POSITION pos = GetFirstDocPosition();
+	while (pos != NULL)
+	{
+		CDocument *pDoc = GetNextDoc(pos);
+		pDoc->OnCloseDocument();
+	}
+}
+
 } // namespace MFC
 } // namespace Bagel

@@ -126,7 +126,7 @@ CDocument *CSingleDocTemplate::OpenDocumentFile(LPCSTR lpszPathName,
 }
 
 void CSingleDocTemplate::AddDocument(CDocument *pDoc) {
-	ASSERT(m_pOnlyDoc == NULL);     // one at a time please
+	ASSERT(m_pOnlyDoc == nullptr);     // one at a time please
 	ASSERT_VALID(pDoc);
 
 	CDocTemplate::AddDocument(pDoc);
@@ -135,6 +135,22 @@ void CSingleDocTemplate::AddDocument(CDocument *pDoc) {
 
 void CSingleDocTemplate::SetDefaultTitle(CDocument *pDocument) {
 	pDocument->SetTitle("Untitled");
+}
+
+POSITION CSingleDocTemplate::GetFirstDocPosition() const {
+	return (m_pOnlyDoc == nullptr) ? nullptr : (POSITION)true;
+}
+
+CDocument *CSingleDocTemplate::GetNextDoc(POSITION &rPos) const {
+	CDocument *pDoc = nullptr;
+	if (rPos) {
+		// First time through, return the single document
+		assert(m_pOnlyDoc != nullptr);
+		pDoc = m_pOnlyDoc;
+	}
+
+	rPos = nullptr;        // No more
+	return pDoc;
 }
 
 } // namespace MFC

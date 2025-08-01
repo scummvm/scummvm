@@ -155,23 +155,6 @@ void CGtlApp::CreateInstance(void) {
 	OnFileNew();
 }
 
-#if GTLDLL
-
-int CGtlApp::ExitInstance() {
-	/*
-	    if (pSdiDocTemplate != nullptr) {
-	        pSdiDocTemplate->CloseAllDocuments(TRUE);
-	        pSdiDocTemplate = nullptr;
-	    }
-	    if ( pMainWindow != nullptr )
-	        pMainWindow->DestroyWindow();
-	*/
-	// Don't call CWinApp::ExitInstance(); Because we would get the recent
-	// file list in HNPMETA.INI
-	return (0);
-}
-#endif /* GTLDLL */
-
 //* CGtlApp::CallOnFileNew --
 BOOL CGtlApp::CallOnFileNew(void)
 // returns: TRUE if error, FALSE otherwise
