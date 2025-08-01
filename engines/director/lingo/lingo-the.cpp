@@ -148,7 +148,7 @@ TheEntity entities[] = {					//	hasId  ver.	isFunction
 	{ kTheScummvmVersion,	"scummvmVersion",	false, 200, true }, // 					ScummVM only
 	{ kTheSearchCurrentFolder,"searchCurrentFolder",false,400, true },//			D4 f
 	{ kTheSearchPath,		"searchPath",		false, 400, true },	//			D4 f
-	{ kTheSearchPaths,		"searchPaths",		false, 500, false },	//				D5 p
+	{ kTheSearchPaths,		"searchPaths",		false, 400, false },	//			D4 p, documented in D5
 	{ kTheSelection,		"selection",		false, 200, true },	// D2 f
 	{ kTheSelEnd,			"selEnd",			false, 200, false },	// D2 p
 	{ kTheSelStart,			"selStart",			false, 200, false },	// D2 p
@@ -995,20 +995,32 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = _vm->getStage();
 		break;
 	case kTheStageBottom:
-		d = _vm->getCurrentWindow()->getSurface()->h;
+		{
+			Window *window = _vm->getCurrentWindow();
+			d = window->getInnerDimensions().bottom;
+		}
 		break;
 	case kTheStageColor:
 		// TODO: Provide proper reverse transform for non-indexed color
 		d = (int)g_director->transformColor(g_director->getCurrentWindow()->getStageColor());
 		break;
 	case kTheStageLeft:
-		d = 0;
+		{
+			Window *window = _vm->getCurrentWindow();
+			d = window->getInnerDimensions().left;
+		}
 		break;
 	case kTheStageRight:
-		d = _vm->getCurrentWindow()->getSurface()->w;
+		{
+			Window *window = _vm->getCurrentWindow();
+			d = window->getInnerDimensions().right;
+		}
 		break;
 	case kTheStageTop:
-		d = 0;
+		{
+			Window *window = _vm->getCurrentWindow();
+			d = window->getInnerDimensions().top;
+		}
 		break;
 	case kTheStillDown:
 		d = _vm->_wm->_mouseDown;

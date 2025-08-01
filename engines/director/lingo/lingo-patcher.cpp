@@ -443,6 +443,37 @@ on exitFrame\r\
   go(1, \"C:\\PG_WORLD\\A_IN01\")\r\
 ";
 
+
+const char *const mcmillenniumDriveDetectionFix = "\
+on initPaths\r\
+  global PD, theCDPath, theHDPath, theVCAudioPath, theNotePath, proxPath\r\
+  if the machineType = 256 then\r\
+    set PD to \"\\\"\r\
+  else\r\
+    set PD to \":\"\r\
+  end if\r\
+  if the machineType = 256 then\r\
+    set theCDPath to getAt(the searchPaths, 2)\r\
+  else\r\
+    if checkFileExists(the pathName & \"DESTINA.MLD\") = 1 then\r\
+      set theCDPath to the pathName\r\
+    else\
+      set theCDPath to \"Millennium:\"\r\
+    end if\r\
+  end if\r\
+  set theHDPath to the pathName\r\
+  set theVCAudioPath to theCDPath & \"AUDIO\" & PD & \"VIDCOM\" & PD\r\
+  set theNotePath to the pathName\r\
+  set proxPath to theCDPath & \"prox\" & PD\r\
+end\r\
+";
+
+const char *const mcmillenniumResDetectionFix = "\
+on getRes\r\
+end\r\
+";
+
+
 struct ScriptHandlerPatch {
 	const char *gameId;
 	const char *extra;
@@ -481,6 +512,9 @@ struct ScriptHandlerPatch {
 	{"gadgetpaf", nullptr, kPlatformWindows, "GADGET\\GADGET.EXE", kScoreScript, 9, DEFAULT_CAST_LIB, &gadgetPafDetectionFix9},
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kMovieScript, 4, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix1},
 	{"pinkgear", nullptr, kPlatformWindows, "GOTOPINK.EXE", kScoreScript, 6, DEFAULT_CAST_LIB, &pinkGearDriveDetectionFix2},
+	{"mcmillennium", nullptr, kPlatformWindows, "PC\\MILL.EXE", kMovieScript, 15, DEFAULT_CAST_LIB, &mcmillenniumResDetectionFix},
+	{"mcmillennium", nullptr, kPlatformWindows, "PC\\SHARED.DXR", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
+	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:SHARED.Dxr", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };

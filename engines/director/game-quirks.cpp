@@ -118,6 +118,7 @@ struct CachedFile {
 	{"finkletimes", Common::kPlatformWindows, "lernscor.txt", (const byte *)"", 0},
 	{"finkletimes", Common::kPlatformWindows, "namelist.txt", (const byte *)"", 0},
 	{"finkletimes", Common::kPlatformWindows, "userlist.txt", (const byte *)"", 0},
+	{"mcmillennium", Common::kPlatformWindows, "pc/players", (const byte *)"", 0},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
