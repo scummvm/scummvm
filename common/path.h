@@ -428,6 +428,16 @@ public:
 		return appendComponent(x.c_str());
 	}
 
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const char *str) const {
+		return appendComponent(str);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const String &x) const {
+		return appendComponent(x);
+	}
+
 	/**
 	 * Joins the given path to this path (in-place).
 	 * Automatically adds a directory separator.
