@@ -73,8 +73,8 @@ ScummVM relies heavily on Asyncify (see note above), and this comes with a quite
 *   Look into Stack Switching (emscripten-core/emscripten#16779) or multithreading as an alternative to Asyncify.
 
 ### Storage Integration
-*   BrowserFS seems abandoned and never did a stable 2.0.0 release. It's worth replacing it.  
-    * `scummvm_fs.js` is an early prototype for a custom FS which can be adopted for ScummVM specific needs, i.e.
+*  Settings can be persisted locally and assets can be loaded over HTTP, but more improvements could be possible:
+      * Use Range-Requests to download only parts of a file when not the whole file is not needed
       * Download all game assets in background once the game has started
       * Persist last game and last plugin for offline use
       * Pre-load assets asynchronously (not blocking) - i.e. rest of the data of a game which has been launched

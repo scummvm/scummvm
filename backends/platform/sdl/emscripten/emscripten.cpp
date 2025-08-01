@@ -28,6 +28,7 @@
 #include "backends/events/emscriptensdl/emscriptensdl-events.h"
 #include "backends/fs/emscripten/emscripten-fs-factory.h"
 #include "backends/mutex/null/null-mutex.h"
+#include "backends/fs/emscripten/emscripten-fs-factory.h"
 #include "backends/platform/sdl/emscripten/emscripten.h"
 #include "backends/timer/default/default-timer.h"
 #include "common/file.h"
@@ -87,6 +88,15 @@ void OSystem_Emscripten::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
+}
+
+void OSystem_Emscripten::init() {
+	// Initialze File System Factory
+	EmscriptenFilesystemFactory *fsFactory = new EmscriptenFilesystemFactory();
+	_fsFactory = fsFactory;
+
+	// Invoke parent implementation of this method
+	OSystem_SDL::init();
 }
 
 bool OSystem_Emscripten::hasFeature(Feature f) {
@@ -180,6 +190,15 @@ void OSystem_Emscripten::updateTimers() {
 
 Common::MutexInternal *OSystem_Emscripten::createMutex() {
 	return new NullMutexInternal();
+}
+
+void OSystem_Emscripten::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	// Add the global DATA_PATH (and some sub-folders) to the directory search list 
+	// Note: gui-icons folder is added in GuiManager::initIconsSet 
+	Common::FSNode dataNode(DATA_PATH);
+	if (dataNode.exists() && dataNode.isDirectory()) {
+		s.addDirectory(dataNode, priority, 2, false);
+	}
 }
 
 void OSystem_Emscripten::delayMillis(uint msecs) {

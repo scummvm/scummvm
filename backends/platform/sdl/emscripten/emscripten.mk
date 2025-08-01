@@ -3,6 +3,7 @@
 dist-emscripten: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p ./build-emscripten/data
 	mkdir -p ./build-emscripten/data/games
+	mkdir -p ./build-emscripten/data/gui-icons
 	mkdir -p ./build-emscripten/doc
 	cp $(EXECUTABLE) ./build-emscripten/
 	cp $(EXECUTABLE:html=wasm) ./build-emscripten/
