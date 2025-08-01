@@ -1881,7 +1881,7 @@ void LC::c_delete() {
 		case kChunkLine:
 			// when deleting the first item, include the delimiter after the item
 			// deleting another item, remove the delimiter in front
-			if (start == 0) {
+			if ((start == 0) || ((start > 0) && (text[start-1] == '\r'))) {
 				end++;
 			} else {
 				start--;
