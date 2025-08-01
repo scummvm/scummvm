@@ -51,12 +51,12 @@ CursorRef Cursor::getRef() {
 
 bool Cursor::operator==(const Cursor &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId == _cursorResId;
+		(LC::eqData(c._cursorResId, _cursorResId).asInt());
 }
 
 bool Cursor::operator==(const CursorRef &c) {
 	return _cursorType == c._cursorType &&
-			c._cursorResId == _cursorResId;
+			(LC::eqData(c._cursorResId, _cursorResId).asInt());
 }
 
 void Cursor::readFromCast(Datum cursorCasts) {
@@ -66,7 +66,6 @@ void Cursor::readFromCast(Datum cursorCasts) {
 	}
 	if (_cursorResId.type == ARRAY && LC::eqData(_cursorResId, cursorCasts).asInt())
 		return;
-
 
 	CastMemberID cursorId = cursorCasts.u.farr->arr[0].asMemberID();
 	CastMember *cursorCast = g_director->getCurrentMovie()->getCastMember(cursorId);
@@ -301,12 +300,12 @@ CursorRef::CursorRef() {
 
 bool CursorRef::operator==(const Cursor &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId == _cursorResId;
+		(LC::eqData(c._cursorResId, _cursorResId).asInt());
 }
 
 bool CursorRef::operator==(const CursorRef &c) {
 	return _cursorType == c._cursorType &&
-		c._cursorResId == _cursorResId;
+		(LC::eqData(c._cursorResId, _cursorResId).asInt());
 }
 
 } // End of namespace Director
