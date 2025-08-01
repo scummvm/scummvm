@@ -319,7 +319,7 @@ void Room808::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
-				terminateMachine(_808ChainMach);
+				terminateMachineAndNull(_808ChainMach);
 				series_play("808rp03", 256, 0, 5, 5, 0, 100, 0, 0, 0, 25);
 
 				break;
@@ -337,7 +337,7 @@ void Room808::parser() {
 				break;
 
 			case 20:
-				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
 				series_play("808rp03", 256, 2, 30, 5, 0, 100, 0, 0, 0, -1);
 
 				break;
@@ -380,7 +380,7 @@ void Room808::parser() {
 			case 10:
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
-				terminateMachine(_808PosMach);
+				terminateMachineAndNull(_808PosMach);
 				_808PosMach = series_play("808spn01", 1281, 16, 20, 5, 0, 100, 0, 0, 0, 13);
 
 				break;
@@ -390,7 +390,7 @@ void Room808::parser() {
 				break;
 
 			case 30:
-				terminateMachine(_808PosMach);
+				terminateMachineAndNull(_808PosMach);
 				series_play("808spn01", 0, 2, 40, 5, 0, 100, 0, 0, 0, 13);
 				digi_play("com078", 1, 255, -1, 997);
 
@@ -423,7 +423,7 @@ void Room808::parser() {
 				player_set_commands_allowed(false);
 				setBridgeHotspots(_G(flags)[kBridgeWheelPosition], false);
 				ws_hide_walker(_G(my_walker));
-				terminateMachine(_808PosMach);
+				terminateMachineAndNull(_808PosMach);
 				setPosMachInfo();
 				_808PosMach = series_stream(_posMachName, 5, 1281, 10);
 				series_stream_break_on_frame(_808PosMach, _posMachFrameNum, 7);
@@ -443,7 +443,7 @@ void Room808::parser() {
 
 				_808PosMach = series_show(inv_object_in_scene("FARMER'S SHOVEL", 808) ? "808pos2" : "808pos1", 1281, 0, -1, -1, _posMachIndex, 100, 0, 0);
 
-				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
 				break;
 
 			default:
@@ -622,7 +622,7 @@ void Room808::parser() {
 			case -1:
 				player_set_commands_allowed(false);
 				ws_hide_walker(_G(my_walker));
-				terminateMachine(_808PosMach);
+				terminateMachineAndNull(_808PosMach);
 				_808PosMach = series_show("808pos1", 1281, 0, -1, -1, 3, 100, 0, 0);
 				_808RipFallShovelNearSideMach = series_play("808rp07", 1, 18, 10, 5, 0, 100, 0, 0, 0, -1);
 				player_update_info(_G(my_walker), &_G(player_info));
@@ -639,8 +639,8 @@ void Room808::parser() {
 
 			case 20:
 				player_set_commands_allowed(true);
-				terminateMachine(_808RipFallShovelNearSideMach);
-				terminateMachine(_safariShadowMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_safariShadowMach);
 				ws_unhide_walker(_G(my_walker));
 				ws_demand_facing(_G(my_walker), 2);
 
@@ -673,7 +673,7 @@ void Room808::parser() {
 					break;
 
 				case 20:
-					terminateMachine(_808HandleSpriteMach);
+					terminateMachineAndNull(_808HandleSpriteMach);
 					setGlobals3(_ripMedReach1HandPos2Series, 17, 1);
 					sendWSMessage_3840000(_G(my_walker), 30);
 
@@ -784,7 +784,7 @@ void Room808::parser() {
 			case 20:
 				ws_hide_walker(_mcTrekMach);
 				if (_G(flags)[V098] == 0)
-					terminateMachine(_808HandleSpriteMach);
+					terminateMachineAndNull(_808HandleSpriteMach);
 
 				if (_G(flags)[kBridgeWheelPosition] == 1 || _G(flags)[kBridgeWheelPosition] == 2 || _G(flags)[kBridgeWheelPosition] == 3) {
 					series_load("808 bolt going in and out", -1, nullptr);
@@ -812,7 +812,7 @@ void Room808::parser() {
 				break;
 
 			case 26:
-				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
 				series_play("808 mei chen cranks handle", 1536, 2, 38, 5, 0, 100, 0, 0, 8, 29);
 				digi_play("808_s10", 2, 255, -1, -1);
 
@@ -820,7 +820,7 @@ void Room808::parser() {
 
 			case 30:
 				if (_G(flags)[V098] == 0) {
-					terminateMachine(_808HandleSpriteMach);
+					terminateMachineAndNull(_808HandleSpriteMach);
 				}
 
 				_808RipFallShovelNearSideMach = series_play("808 mei chen cranks handle", 1536, 16, 35, 5, 0, 100, 0, 0, 15, 47);
@@ -838,8 +838,8 @@ void Room808::parser() {
 				break;
 
 			case 37:
-				terminateMachine(_808RipFallShovelNearSideMach);
-				terminateMachine(_safariShadowMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_safariShadowMach);
 				series_play("808 mei chen cranks handle", 1536, 2, 38, 5, 0, 100, 0, 0, 8, 47);
 				series_play("808 bolt going in and out", 0, 2, -1, 15, 0, 100, 0, 0, 0, -1);
 				digi_play("808_s08", 2, 255, -1, -1);
@@ -865,7 +865,7 @@ void Room808::parser() {
 
 			case 40:
 				if (_G(flags)[V098] == 0) {
-					terminateMachine(_808HandleSpriteMach);
+					terminateMachineAndNull(_808HandleSpriteMach);
 				}
 
 				series_play("808 mei chen cranks handle", 1536, 0, 41, 5, 0, 100, 0, 0, 8, 42);
@@ -1218,11 +1218,11 @@ void Room808::parser() {
 			case 10:
 				player_set_commands_allowed(true);
 				hotspot_set_active("FARMER'S SHOVEL   ", true);
-				terminateMachine(_808PosMach);
+				terminateMachineAndNull(_808PosMach);
 				_808PosMach = series_show("808pos2", 1281, 0, -1, -1, 3, 100, 0, 0);
 				ws_unhide_walker(_G(my_walker));
 				ws_demand_facing(_G(my_walker), 2);
-				terminateMachine(_808RipFallShovelNearSideMach);
+				terminateMachineAndNull(_808RipFallShovelNearSideMach);
 				_G(flags)[V095] = 0;
 
 				break;
@@ -1370,7 +1370,7 @@ void Room808::daemon() {
 	case 6:
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		terminateMachine(_808PosMach);
+		terminateMachineAndNull(_808PosMach);
 		_G(flags)[V096] = 1;
 
 		if (inv_object_in_scene("farmer's shovel", 808)) {
@@ -1401,7 +1401,7 @@ void Room808::daemon() {
 	case 8:
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		terminateMachine(_808PosMach);
+		terminateMachineAndNull(_808PosMach);
 
 		digi_preload("808_s04", -1);
 		digi_preload("808_s02", -1);
@@ -1419,7 +1419,7 @@ void Room808::daemon() {
 	case 10:
 		player_set_commands_allowed(false);
 		ws_hide_walker(_G(my_walker));
-		terminateMachine(_808PosMach);
+		terminateMachineAndNull(_808PosMach);
 
 		digi_preload("808_s04", -1);
 		digi_preload("808_s02", -1);
