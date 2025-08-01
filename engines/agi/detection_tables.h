@@ -831,6 +831,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Space Quest 2 (Russian)
 	GAME_LPS("sq2", "", "ba21c8934caf28e3ba45ce7d1cd6b041", 423, Common::RU_RUS, 0x2917, GID_SQ2, Common::kPlatformDOS),
 
+	// Space Quest 2 (PC 3.5" / 5.25") 2.0F [AGI 2.936]; French Translation
+	GAME_LVFPN("sq2", "2.0F", "words.tok.extended", "b2efb603df643d8d93db0c6d51a54b5a", 19142, Common::FR_FRA, 0x2936, GF_EXTCHAR, GID_SQ2, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+
 	// Space Quest 2 (CoCo3 360k) [AGI 2.023]
 	// Unofficial port by Guillaume Major
 	GAME_PS("sq2", "", "12973d39b892dc9d280257fd271e9597", 768, 0x2440, GID_SQ2, Common::kPlatformCoCo3),
