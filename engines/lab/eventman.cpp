@@ -66,7 +66,7 @@ EventManager::EventManager(LabEngine *vm) : _vm(vm) {
 	_rightClick = false;
 	_buttonHit = false;
 	_mousePos = Common::Point(0, 0);
-	_keyPressed = Common::KEYCODE_INVALID;
+	_actionPressed = kActionNone;
 }
 
 void EventManager::initMouse() {
@@ -108,18 +108,21 @@ void EventManager::processInput() {
 		case Common::EVENT_MOUSEMOVE:
 			_mousePos = event.mouse;
 			break;
-		case Common::EVENT_KEYDOWN:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_LEFTBRACKET:
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			switch (event.customType) {
+			case kActionSoundLower:
 				_vm->changeVolume(-1);
 				break;
-			case Common::KEYCODE_RIGHTBRACKET:
+			case kActionSoundRaise:
 				_vm->changeVolume(1);
 				break;
 			default:
-				_keyPressed = event.kbd;
+				_actionPressed = event.customType;
 				break;
 			}
+			break;
+		case Common::EVENT_KEYDOWN:
+			_actionPressed = kActionQuitDialogNo; // Used for "Press any key to continue" scenarios as well.
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -142,7 +145,7 @@ IntuiMessage *EventManager::getMsg() {
 			_vm->_interface->handlePressedButton();
 			message._msgClass = kMessageButtonUp;
 			message._code = lastButtonHit->_buttonId;
-			message._qualifier = _keyPressed.flags;
+			message._qualifier = 0; // This does not seem to be used anywhere. Since qualifiers can be detected by keymapper anyways, this is set to 0.
 
 			return &message;
 		} else
@@ -153,21 +156,21 @@ IntuiMessage *EventManager::getMsg() {
 		message._mouse = _mousePos;
 		_leftClick = _rightClick = false;
 		return &message;
-	} else if (_keyPressed.keycode != Common::KEYCODE_INVALID) {
-		Button *curButton = _vm->_interface->checkNumButtonHit(_keyPressed.keycode);
+	} else if (_actionPressed != kActionNone) {
+		Button *curButton = _vm->_interface->checkNumButtonHit(_actionPressed);
 
 		if (curButton) {
 			message._msgClass = kMessageButtonUp;
 			message._code = curButton->_buttonId;
 		} else {
-			message._msgClass = kMessageRawKey;
-			message._code = _keyPressed.keycode;
+			message._msgClass = kMessageAction;
+			message._code = _actionPressed;
 		}
 
-		message._qualifier = _keyPressed.flags;
+		message._qualifier = 0; // This does not seem to be used anywhere. Since qualifiers can be detected by keymapper anyways, this is set to 0.
 		message._mouse = _mousePos;
 
-		_keyPressed.keycode = Common::KEYCODE_INVALID;
+		_actionPressed = kActionNone;
 
 		return &message;
 	} else
@@ -181,8 +184,8 @@ Common::Point EventManager::updateAndGetMousePos() {
 }
 
 void EventManager::simulateEvent() {
-	// Simulate an event by setting an unused key
-	_keyPressed = Common::KeyState(Common::KEYCODE_SEMICOLON);
+	// Simulate an event by setting an unused action.
+	_actionPressed = kActionDummy;
 }
 
 } // End of namespace Lab

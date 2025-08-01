@@ -41,6 +41,8 @@
 #include "lab/resource.h"
 #include "lab/utils.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Lab {
 
 /*---------------------------------------------------------------------------*/
@@ -77,9 +79,9 @@ void LabEngine::loadMapData() {
 	_imgPath = new Image(mapImages, this);
 	_imgBridge = new Image(mapImages, this);
 
-	_mapButtonList.push_back(_interface->createButton( 8,  _utils->vgaScaleY(105), 0, Common::KEYCODE_ESCAPE, new Image(mapImages, this), new Image(mapImages, this)));	// back
-	_mapButtonList.push_back(_interface->createButton( 55, _utils->vgaScaleY(105), 1, Common::KEYCODE_UP,     new Image(mapImages, this), new Image(mapImages, this)));	// up
-	_mapButtonList.push_back(_interface->createButton(101, _utils->vgaScaleY(105), 2, Common::KEYCODE_DOWN,   new Image(mapImages, this), new Image(mapImages, this)));	// down
+	_mapButtonList.push_back(_interface->createButton( 8,  _utils->vgaScaleY(105), 0, kActionMapExit, new Image(mapImages, this), new Image(mapImages, this)));	// back
+	_mapButtonList.push_back(_interface->createButton( 55, _utils->vgaScaleY(105), 1, kActionUpperFloor,     new Image(mapImages, this), new Image(mapImages, this)));	// up
+	_mapButtonList.push_back(_interface->createButton(101, _utils->vgaScaleY(105), 2, kActionLowerFloor,   new Image(mapImages, this), new Image(mapImages, this)));	// down
 
 	delete mapImages;
 
@@ -427,7 +429,7 @@ void LabEngine::processMap(uint16 curRoom) {
 			uint16 mouseX    = msg->_mouse.x;
 			uint16 mouseY    = msg->_mouse.y;
 
-			if ((msgClass == kMessageRightClick) || ((msgClass == kMessageRawKey) && (msgCode == Common::KEYCODE_ESCAPE)))
+			if ((msgClass == kMessageRightClick) || ((msgClass == kMessageAction) && (msgCode == kActionExit)))
 				return;
 
 			if (msgClass == kMessageButtonUp) {

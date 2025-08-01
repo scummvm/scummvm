@@ -46,14 +46,14 @@ Interface::Interface(LabEngine *vm) : _vm(vm) {
 	_hitButton = nullptr;
 }
 
-Button *Interface::createButton(uint16 x, uint16 y, uint16 id, Common::KeyCode key, Image *image, Image *altImage) {
+Button *Interface::createButton(uint16 x, uint16 y, uint16 id, Common::CustomEventType action, Image *image, Image *altImage) {
 	Button *button = new Button();
 
 	if (button) {
 		button->_x = _vm->_utils->vgaScaleX(x);
 		button->_y = y;
 		button->_buttonId = id;
-		button->_keyEquiv = key;
+		button->_actionEquiv = action;
 		button->_image = image;
 		button->_altImage = altImage;
 		button->_isEnabled = true;
@@ -91,9 +91,7 @@ void Interface::toggleButton(Button *button, uint16 disabledPenColor, bool enabl
 	button->_isEnabled = enable;
 }
 
-Button *Interface::checkNumButtonHit(Common::KeyCode key) {
-	uint16 gkey = key - '0';
-
+Button *Interface::checkNumButtonHit(Common::CustomEventType action) {
 	if (!_screenButtonList)
 		return nullptr;
 
@@ -101,7 +99,7 @@ Button *Interface::checkNumButtonHit(Common::KeyCode key) {
 		if (!button->_isEnabled)
 			continue;
 
-		if ((gkey - 1 == button->_buttonId) || (gkey == 0 && button->_buttonId == 9) || (button->_keyEquiv != Common::KEYCODE_INVALID && key == button->_keyEquiv)) {
+		if ((button->_actionEquiv != kActionNone && action == button->_actionEquiv)) {
 			button->_altImage->drawImage(button->_x, button->_y);
 			_vm->_system->delayMillis(80);
 			button->_image->drawImage(button->_x, button->_y);
