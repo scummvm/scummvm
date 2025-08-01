@@ -5149,6 +5149,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("mcmillennium", "Demo", "MILLDEMO.EXE", "t:028a149906ca490f8634e30c6b3c3957", 3630918, 404),
 
+	WINGAME1("mcmillennium", "", "PC/MILL.EXE", "t:0490abda5d8b53a2bd7c11cc7fb79232", 757828, 404),
+	MACGAME1("mcmillennium", "", "Mission Code Millennium/Mission Code Millennium", "r:cbce20666bfe47a9533331c6be1e6039", 285282, 404),
+
 	// Full game is not Director
 	WINDEMO1("mechwarrior2", "Demo", "MW2DEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
 	WINDEMO1("mechwarrior2", "Demo", "MW2DEMO.EXE", "b8c1516451471394eb1c45839f9f15df", 699305, 404),
@@ -8524,7 +8527,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("kanazawa", "", "KANAZAWA.EXE",	  "t:3e54b92d68a7e1bfaf4b92b37f4f9eea", 1896688, Common::JA_JPN, 600),
 
 	WINGAME1_l("kcd", "K15 2001", "V_Fi.exe", "t:2fa05adc6cbc2c46702d4992a82f932b", 1704035, Common::FI_FIN, 602),
-	
+
 	// Mac version requires installation
 	MACGAME1("kingandi", "", "The King and I Thinking Adv", "r:ef18d569c3cb7700367427cfc9150656",  115776, 602),
 	WINGAME1("kingandi", "", "King&I.exe",					"t:ed267a58821c0a586dab3d2b853971be", 1967220, 602),
