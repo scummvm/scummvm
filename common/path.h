@@ -396,6 +396,25 @@ public:
 	Path &appendInPlace(const char *str, char separator = '/');
 
 	/**
+	 * Appends the given path to this path (in-place).
+	 * Does not automatically add a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	Path &operator+=(const Path &x) {
+		return appendInPlace(x);
+	}
+
+	/** @overload */
+	Path &operator+=(const String &str) {
+		return appendInPlace(str);
+	}
+
+	/** @overload */
+	Path &operator+=(const char *str) {
+		return appendInPlace(str);
+	}
+
+	/**
 	 * Returns this path with the given path appended (out-of-place).
 	 * Does not automatically add a directory separator.
 	 */
@@ -443,6 +462,25 @@ public:
 	Path &joinInPlace(const char *str, char separator = '/');
 
 	/**
+	 * Joins the given path to this path (in-place).
+	 * Automatically adds a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	Path &operator/=(const Path &x) {
+		return joinInPlace(x);
+	}
+
+	/** @overload */
+	Path &operator/=(const String &str) {
+		return joinInPlace(str);
+	}
+
+	/** @overload */
+	Path &operator/=(const char *str) {
+		return joinInPlace(str);
+	}
+
+	/**
 	 * Returns this path joined with the given path (out-of-place).
 	 * Automatically adds a directory separator.
 	 */
@@ -462,6 +500,25 @@ public:
 		Path temp(*this);
 		temp.joinInPlace(str, separator);
 		return temp;
+	}
+
+	/**
+	 * Returns this path joined with the given path (out-of-place).
+	 * Automatically adds a directory separator.
+	 * For string based versions, expects / as a directory separator.
+	 */
+	WARN_UNUSED_RESULT Path operator/(const Path &x) const {
+		return join(x);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const String &str) const {
+		return join(str);
+	}
+
+	/** @overload */
+	WARN_UNUSED_RESULT Path operator/(const char *str) const {
+		return join(str);
 	}
 
 	/**
