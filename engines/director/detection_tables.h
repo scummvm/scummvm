@@ -5719,7 +5719,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("psych", "v2.0.1", "xn--psych -7z1c", "r:19a813e1699b06156fd9686be7a11d93", 284366, 404),
 
 	// 1995 Mac only release
-	MACGAME1("puppetmotel", "", "Puppet Motel", "r:8719de9c083aca942fc0e5c0a127b6dc", 641110, 404),
+	MACGAME1("puppetmotel", "", "Puppet Motel Folder/Puppet Motel", "r:8719de9c083aca942fc0e5c0a127b6dc", 641110, 404),
 
 	// Highlights Puzzlemania, a digital version of Highlights game books
 	MACGAME1("puzzlemania", "", "PUZZLEMANIA Power Mac", "r:f1d972d4bdf52e32b437d850e08aa3b5",  82888, 404),
