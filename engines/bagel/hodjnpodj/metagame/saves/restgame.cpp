@@ -26,13 +26,13 @@
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/metagame/bgen/item.h"
 #include "bagel/hodjnpodj/metagame/bgen/invent.h"
-#include "bagel/hodjnpodj/metagame/frame/restgame.h"
-#include "bagel/hodjnpodj/metagame/frame/restdlg.h"
+#include "bagel/hodjnpodj/metagame/saves/restgame.h"
+#include "bagel/hodjnpodj/metagame/saves/restdlg.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Frame {
+namespace Saves {
 
 STATIC CHAR *gpszSaveGameFileName;
 
@@ -57,70 +57,6 @@ BOOL       ValidateSGInfo(SAVEGAME_INFO *);
 ERROR_CODE ConvertFromSGI(CBfcMgr *, SAVEGAME_INFO *);
 
 VOID       WipeBFC(CBfcMgr *);
-
-
-/*****************************************************************************
-*
-*  RestoreGame      - Loads a Restore-Game dialog box
-*
-*  DESCRIPTION:     User can select which game they want to restore.
-*
-*  SAMPLE USAGE:
-*  errCode = RestoreGame(psFileName, pBfcMgr, pWnd, pPalette);
-*  const CHAR *pszFileName;                 File to restore from
-*  CBfMgr *pBfcMgr;                         SaveGame info
-*  CWnd *pWnd;                              Parent window to RestoreGame dialog box
-*  CPalette *pPalette;                      Palette to use for dialog Bmp
-*
-*  RETURNS:  ERROR_CODE = Error return code.
-*
-*****************************************************************************/
-BOOL CALLBACK RestoreGame(const CHAR *pszFileName, CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
-	INT iGameNum;
-	BOOL bRestored;
-
-	// validate input
-	assert(pszFileName != nullptr);
-	assert(pBfcMgr != nullptr);
-	assert(pWnd != nullptr);
-	assert(pPalette != nullptr);
-	assert(pErrCode != nullptr);
-
-	// assume no error
-	*pErrCode = ERR_NONE;
-
-	// assume Restore will work
-	bRestored = TRUE;
-
-	// keep track of the .SAV file name
-	gpszSaveGameFileName = (CHAR *)pszFileName;
-
-	if (FileExists(gpszSaveGameFileName)) {
-
-		*pErrCode = GetSaveGameDescriptions();
-
-		if (*pErrCode == ERR_NONE) {
-
-			//
-			// open the Restore Game dialog box
-			//
-			CRestoreDlg dlgRestore(pszDesc, pWnd, pPalette);
-
-			if ((iGameNum = dlgRestore.DoModal()) != -1) {
-
-				*pErrCode = RestoreSlot(iGameNum, pBfcMgr);
-			} else {
-				bRestored = FALSE;
-			}
-		}
-	}
-
-	if (*pErrCode != ERR_NONE) {
-		bRestored = FALSE;
-	}
-
-	return (bRestored);
-}
 
 
 ERROR_CODE GetSaveGameDescriptions() {
@@ -601,7 +537,7 @@ VOID WipeBFC(CBfcMgr *pBfcMgr) {
 	}
 }
 
-} // namespace Frame
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

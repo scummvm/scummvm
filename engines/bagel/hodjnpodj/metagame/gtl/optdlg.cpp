@@ -27,7 +27,7 @@
 #include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/metagame/gtl/resource.h"
 #include "bagel/hodjnpodj/metagame/gtl/optdlg.h"
-#include "bagel/hodjnpodj/metagame/gtl/savegame.h"
+#include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/bgen/c2btndlg.h"
 
 namespace Bagel {
@@ -111,7 +111,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
 		case IDC_SAVE_GAME:
-			SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
+			Saves::SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			ClearDialogImage();
 			EndDialog(0);
 			return (TRUE);
@@ -120,7 +120,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			if (m_pBfcMgr->m_bChanged) {
 				C2ButtonDialog dlg2Button(this, m_pPalette, "&Yes", "&No", "Would you like to", "save this game", "before leaving?");
 				if (dlg2Button.DoModal() == CBUTTON1)
-					SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
+					Saves::SaveGame(m_pBfcMgr, (CWnd *)this, m_pPalette, nullptr);
 			}
 			ClearDialogImage();
 			EndDialog(1);

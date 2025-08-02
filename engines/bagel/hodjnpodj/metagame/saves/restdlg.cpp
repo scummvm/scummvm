@@ -20,15 +20,15 @@
  */
 
 #include "bagel/afxwin.h"
-#include "bagel/hodjnpodj/metagame/frame/restdlg.h"
+#include "bagel/hodjnpodj/metagame/saves/restdlg.h"
 #include "bagel/hodjnpodj/metagame/frame/resource.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Frame {
+namespace Saves {
 
-STATIC const CHAR *gpszTitle = "Restore Game";
+static const char *gpszTitle = "Restore Game";
 
 CRestoreDlg::CRestoreDlg(CHAR *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 	: CBmpDialog(pWnd, pPalette, IDD_RESTORE, ".\\ART\\MLSCROLL.BMP", -1, -1, TRUE) {
@@ -200,7 +200,7 @@ BEGIN_MESSAGE_MAP(CRestoreDlg, CBmpDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-} // namespace Frame
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

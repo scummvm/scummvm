@@ -32,7 +32,7 @@
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
-#include "bagel/hodjnpodj/metagame/gtl/savegame.h"
+#include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
@@ -85,9 +85,9 @@ Graphics::Screen *HodjNPodjEngine::getScreen() const {
 }
 
 Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
-	Metagame::SAVEGAME_INFO savegameInfo;
+	Metagame::Saves::SAVEGAME_INFO savegameInfo;
 	if (s.isLoading())
-		Metagame::Gtl::ConvertToSGI(&_bfcMgr, &savegameInfo);
+		Metagame::Saves::ConvertToSGI(&_bfcMgr, &savegameInfo);
 
 	savegameInfo.sync(s);
 

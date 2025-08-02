@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BAGEL_METAGAME_FRAME_RESTDLG_H
-#define BAGEL_METAGAME_FRAME_RESTDLG_H
+#ifndef BAGEL_METAGAME_SAVES_SAVEDLG_H
+#define BAGEL_METAGAME_SAVES_SAVEDLG_H
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/text.h"
@@ -31,14 +31,15 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Frame {
+namespace Saves {
 
-class CRestoreDlg: public CBmpDialog {
+class CSaveDlg: public CBmpDialog {
 public:
-	CRestoreDlg(CHAR *[], CWnd *, CPalette *);
+	CSaveDlg(CHAR *[], CWnd *, CPalette *);
 
 protected:
-	void ClearDialogImage(void);
+	VOID ClearDialogImage(VOID);
+	VOID EditDescription(INT);
 
 	//{{AFX_MSG(COptions)
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
@@ -52,13 +53,15 @@ private:
 	BOOL OnInitDialog(void) override;
 
 	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
+	CEdit        *m_pSlotText[MAX_SAVEGAMES];
 	CColorButton *m_pQuitButton;
-	CText *m_pTxtRestore;
-	CHAR *m_pszDescriptions[MAX_SAVEGAMES];
-
+	CColorButton *m_pOkButton;
+	CText        *m_pTxtSave;
+	CHAR         *m_pszDescriptions[MAX_SAVEGAMES];
+	INT           m_nCurSlot;
 };
 
-} // namespace Frame
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

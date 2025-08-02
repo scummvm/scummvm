@@ -28,13 +28,14 @@
 #include "bagel/boflib/error.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/metagame/bgen/c1btndlg.h"
-#include "bagel/hodjnpodj/metagame/gtl/savegame.h"
-#include "bagel/hodjnpodj/metagame/gtl/savedlg.h"
+#include "bagel/hodjnpodj/metagame/saves/savegame.h"
+#include "bagel/hodjnpodj/metagame/saves/savedlg.h"
+#include "bagel/hodjnpodj/metagame/saves/restdlg.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Gtl {
+namespace Saves {
 
 #define IDC_SAVE_BUSY 2030
 
@@ -46,7 +47,7 @@ CHAR szDescBuf[40];
 // Local prototypes
 static ERROR_CODE GetSaveGameDescriptions(VOID);
 
-BOOL CALLBACK SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+BOOL SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	CWinApp *pMyApp;
 	HCURSOR hCursor;
 	INT iGameNum;
@@ -88,7 +89,8 @@ BOOL CALLBACK SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_C
 			// Do the actual save
 			Common::String desc = szDescriptions[iGameNum];
 			assert(iGameNum >= 0 && iGameNum < MAX_SAVEGAMES);
-			g_engine->saveGameState(iGameNum + 1, desc);
+			if (g_engine->saveGameState(iGameNum + 1, desc).getCode() != Common::kNoError)
+				*pErrCode = ERR_FOPEN;
 
 			// Change cursor back to arrow
 			hCursor = pMyApp->LoadStandardCursor(IDC_ARROW);
@@ -117,6 +119,43 @@ BOOL CALLBACK SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_C
 	}
 
 	return bSaved;
+}
+
+BOOL RestoreGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+	INT iGameNum;
+	BOOL bRestored;
+
+	// validate input
+	assert(pBfcMgr != nullptr);
+	assert(pWnd != nullptr);
+	assert(pPalette != nullptr);
+	assert(pErrCode != nullptr);
+
+	// Assume no error
+	*pErrCode = ERR_NONE;
+
+	// assume Restore will work
+	bRestored = TRUE;
+
+	*pErrCode = GetSaveGameDescriptions();
+
+	if (*pErrCode == ERR_NONE) {
+		// Open the Restore Game dialog box
+		CRestoreDlg dlgRestore(pszDesc, pWnd, pPalette);
+
+		if ((iGameNum = dlgRestore.DoModal()) != -1) {
+			if (g_engine->loadGameState(iGameNum + 1).getCode() != Common::kNoError)
+				*pErrCode = ERR_FOPEN;
+		} else {
+			bRestored = FALSE;
+		}
+	}
+
+	if (*pErrCode != ERR_NONE) {
+		bRestored = FALSE;
+	}
+
+	return bRestored;
 }
 
 VOID ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
@@ -278,7 +317,7 @@ static ERROR_CODE GetSaveGameDescriptions() {
 	return errCode;
 }
 
-} // namespace Gtl
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

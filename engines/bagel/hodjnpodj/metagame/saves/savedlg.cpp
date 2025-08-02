@@ -21,12 +21,12 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
-#include "bagel/hodjnpodj/metagame/gtl/savedlg.h"
+#include "bagel/hodjnpodj/metagame/saves/savedlg.h"
 
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Gtl {
+namespace Saves {
 
 #define IDC_SLOT1 2001
 #define IDC_SLOT2 2002
@@ -270,7 +270,7 @@ BEGIN_MESSAGE_MAP(CSaveDlg, CBmpDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-} // namespace Gtl
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

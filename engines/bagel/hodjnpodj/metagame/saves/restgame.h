@@ -28,13 +28,11 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Frame {
+namespace Saves {
 
 typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
-BOOL CALLBACK RestoreGame(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
-
-} // namespace Frame
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

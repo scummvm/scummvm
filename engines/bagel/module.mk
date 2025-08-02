@@ -172,7 +172,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/bgen/backpack.o \
 	hodjnpodj/metagame/bgen/bbt.o \
 	hodjnpodj/metagame/bgen/bdbg.o \
-	hodjnpodj/metagame/bgen/bfc.o \
 	hodjnpodj/metagame/bgen/bgb.o \
 	hodjnpodj/metagame/bgen/bgenut.o \
 	hodjnpodj/metagame/bgen/bsutl.o \
@@ -189,8 +188,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/frame/maindlg.o \
 	hodjnpodj/metagame/frame/movytmpl.o \
 	hodjnpodj/metagame/frame/msudlg.o \
-	hodjnpodj/metagame/frame/restdlg.o \
-	hodjnpodj/metagame/frame/restgame.o \
 	hodjnpodj/metagame/grand_tour/dllinit.o \
 	hodjnpodj/metagame/grand_tour/dialogs.o \
 	hodjnpodj/metagame/grand_tour/grand_tour.o \
@@ -215,10 +212,13 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/gtl/optdlg.o \
 	hodjnpodj/metagame/gtl/pawn.o \
 	hodjnpodj/metagame/gtl/rules.o \
-	hodjnpodj/metagame/gtl/savedlg.o \
-	hodjnpodj/metagame/gtl/savegame.o \
 	hodjnpodj/metagame/gtl/spinner.o \
 	hodjnpodj/metagame/gtl/store.o \
+	hodjnpodj/metagame/saves/savegame.o \
+	hodjnpodj/metagame/saves/savegame_info.o \
+	hodjnpodj/metagame/saves/restdlg.o \
+	hodjnpodj/metagame/saves/restgame.o \
+	hodjnpodj/metagame/saves/savedlg.o \
 	hodjnpodj/metagame/zoom/dllinit.o \
 	hodjnpodj/metagame/zoom/zoommap.o \
 	hodjnpodj/archeroids/dllinit.o \

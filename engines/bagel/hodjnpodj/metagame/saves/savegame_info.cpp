@@ -24,6 +24,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
+namespace Saves {
 
 void CLUE_ARRAY::sync(Common::Serializer &s) {
 	s.syncAsByte(bUsed);
@@ -103,6 +104,7 @@ void SAVEGAME_INFO::sync(Common::Serializer &s) {
 	s.syncAsByte(m_bNewMishMosh);
 }
 
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

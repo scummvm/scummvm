@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BAGEL_METAGAME_GTL_SOUND_H
-#define BAGEL_METAGAME_GTL_SOUND_H
+#ifndef BAGEL_METAGAME_SAVES_SAVEGAME_H
+#define BAGEL_METAGAME_SAVES_SAVEGAME_H
 
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/hnplibs/stdinc.h"
@@ -29,7 +29,7 @@
 namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
-namespace Gtl {
+namespace Saves {
 
 typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
@@ -46,9 +46,15 @@ extern void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo);
  * User can choose which slot they want to save a game into,
  * and can give a description of the saved game.
  */
-extern BOOL CALLBACK SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+extern BOOL SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
-} // namespace Gtl
+/**
+ * Shows a Restore-Game dialog box
+ * User can select which game they want to restore.
+**/
+extern BOOL RestoreGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
+
+} // namespace Saves
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

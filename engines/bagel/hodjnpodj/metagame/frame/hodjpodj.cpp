@@ -31,8 +31,8 @@
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/dialogs.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
-#include "bagel/hodjnpodj/metagame/frame/restgame.h"
-#include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/metagame/saves/restgame.h"
+#include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/gtstruct.h"
 #include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
@@ -40,6 +40,7 @@
 #include "bagel/hodjnpodj/metagame/zoom/dllinit.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/boflib/sound.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -2085,70 +2086,24 @@ void CHodjPodjWindow::HandleError(ERROR_CODE errCode) {
 *       ERROR_CODE = Error return code
 *
 ****************************************************************/
-BOOL CHodjPodjWindow::Restore(VOID) {
+BOOL CHodjPodjWindow::Restore() {
 	BOOL bSuccess;
 	ERROR_CODE errCode;
 
-	// assume no error
+	// Assume no error
 	errCode = ERR_NONE;
 
-	// assume Restore will work
+	// Assume Restore will work
 	bSuccess = TRUE;
 
-	// validate implicit input
-	assert(gpszSaveGameFile != nullptr);
+	// Validate implicit input
 	assert(gpszSaveDLL != nullptr);
 	assert(lpMetaGame != nullptr);
 	assert(pGamePalette != nullptr);
 
 	PositionAtHomePath();
 
-	#if SAVEDLL
-	LPSAVEFUNC lpfnRestore;
-	HINSTANCE hInst;
-
-	//
-	// Load the HNPSAVE.DLL and invode it's RestoreGame
-	//
-	hInst = LoadLibrary(gpszSaveDLL);
-
-	if (hInst > HINSTANCE_ERROR) {
-
-		lpfnRestore = (LPSAVEFUNC)GetProcAddress(hInst, "RestoreGame");
-		if (lpfnRestore != nullptr) {
-
-			// call RestoreGame()
-			bSuccess = lpfnRestore(gpszSaveGameFile, lpMetaGame, (CWnd *)this, pGamePalette, &errCode);
-
-			lpMetaGame->m_bScrolling = bScrollingEnabled;
-			lpMetaGame->m_bSlowCPU = bSlowCPU;
-			lpMetaGame->m_bLowMemory = bLowMemory;
-			lpMetaGame->m_bAnimations = ((bSlowCPU || bLowMemory) ? FALSE : bAnimationsEnabled);
-			lpMetaGame->m_dwFreeSpaceMargin = dwFreeSpaceMargin;
-			lpMetaGame->m_dwFreePhysicalMargin = dwFreePhysicalMargin;
-
-			if (bHomeWriteLocked)
-				lpMetaGame->m_nInstallationCode = INSTALL_NONE;
-			else
-				lpMetaGame->m_nInstallationCode = (bPathsDiffer ? INSTALL_BASIC : INSTALL_MINIMAL);
-
-			// maintain the correct home path info
-			Common::strcpy_s(lpMetaGame->m_chHomePath, chHomePath);
-			Common::strcpy_s(lpMetaGame->m_chCDPath, chCDPath);
-			Common::strcpy_s(lpMetaGame->m_chMiniPath, chMiniPath);
-
-		} else {
-			errCode = ERR_UNKNOWN;
-		}
-
-		FreeLibrary(hInst);
-
-	} else {
-		errCode = ERR_FFIND;
-	}
-
-	#else
-	bSuccess = RestoreGame(gpszSaveGameFile, lpMetaGame, (CWnd *)this, pGamePalette, &errCode);
+	bSuccess = Saves::RestoreGame(lpMetaGame, (CWnd *)this, pGamePalette, &errCode);
 
 	lpMetaGame->m_bScrolling = bScrollingEnabled;
 	lpMetaGame->m_bSlowCPU = bSlowCPU;
@@ -2166,8 +2121,6 @@ BOOL CHodjPodjWindow::Restore(VOID) {
 	Common::strcpy_s(lpMetaGame->m_chHomePath, chHomePath);
 	Common::strcpy_s(lpMetaGame->m_chCDPath, chCDPath);
 	Common::strcpy_s(lpMetaGame->m_chMiniPath, chMiniPath);
-
-	#endif
 
 	if (errCode != ERR_NONE) {
 		HandleError(errCode);
