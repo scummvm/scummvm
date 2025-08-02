@@ -29,7 +29,7 @@ shaders.dat            FILE    "gui/themes/shaders.dat"
 
 #include "dists/scummvm_rc_engine_data_core.rh"
 
-#ifdef USE_FLUIDSYNTH
+#if defined(USE_FLUIDSYNTH) || defined(USE_FLUIDLITE)
 Roland_SC-55.sf2       FILE    "dists/soundfonts/Roland_SC-55.sf2"
 #endif
 

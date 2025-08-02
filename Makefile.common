@@ -463,7 +463,7 @@ endif
 
 # Soundfonts
 DIST_FILES_SOUNDFONTS=
-ifdef USE_FLUIDSYNTH
+ifneq "$(or $(USE_FLUIDSYNTH),$(USE_FLUIDLITE))" ""
 DIST_FILES_SOUNDFONTS:=$(addprefix $(srcdir)/dists/soundfonts/,Roland_SC-55.sf2)
 DIST_FILES_DOCS+=$(addprefix $(srcdir)/dists/soundfonts/,COPYRIGHT.Roland_SC-55)
 endif
