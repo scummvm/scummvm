@@ -64,9 +64,11 @@ public:
 
 	CollisionTest isWithin(const Common::Rect &bbox, const Common::Point &pos, InkType ink) override;
 
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+	uint32 writeBITDResource(Common::SeekableWriteStream *writeStream, uint32 offset);
 
 	uint32 getCastDataSize() override;			// This is the size of the data in the 'CASt' resource
+	uint32 getBITDResourceSize();
 
 	Picture *_picture = nullptr;
 	Graphics::Surface *_ditheredImg;

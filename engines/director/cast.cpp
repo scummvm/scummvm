@@ -147,6 +147,12 @@ CastMember *Cast::getCastMember(int castId, bool load) {
 	} else if (result) {
 		_loadQueue.push_back(result);
 	}
+
+	if (result) {
+		debugC(4, kDebugSaving, "Returned castmember with castId: %d, type: %s", castId, castType2str(result->_type));
+	} else {
+		warning("No castmember with castId: %d, found for cast with libResourceID: %d", castId, _libResourceId);
+	}
 	return result;
 }
 
@@ -258,6 +264,13 @@ bool Cast::duplicateCastMember(CastMember *source, CastMemberInfo *info, int tar
 		_castsInfo[targetId] = newInfo;
 	}
 	setCastMember(targetId, target);
+
+	debugCN(7, kDebugSaving, "loaded cast: [");
+	for (auto it: (*_loadedCast)) {
+		debugCN(7, kDebugSaving, ((it._key == _castArrayStart) ? "%d:%d" : ", %d:%d"), it._key, it._value->getID());
+	}
+	debugC(7, kDebugSaving, "]");
+
 	if (info) {
 		rebuildCastNameCache();
 	}
@@ -434,50 +447,7 @@ bool Cast::loadConfig() {
 		_checksum = stream->readUint32();
 
 		//Calculation and verification of checksum
-		uint32 check = _len + 1;
-		check *= _fileVersion + 2;
-		check /= _checkRect.top + 3;
-		check *= _checkRect.left + 4;
-		check /= _checkRect.bottom + 5;
-		check *= _checkRect.right + 6;
-		check -= _castArrayStart + 7;
-		check *= _castArrayEnd + 8;
-		check -= (int8)_readRate + 9;
-		check -= _lightswitch + 10;
-
-		if (humanVer < 700)
-			check += _unk1 + 11;
-		else
-			warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
-
-		check *= _commentFont + 12;
-		check += _commentSize + 13;
-
-		if (humanVer < 800)
-			check *= (uint8)((_commentStyle >> 8) & 0xFF) + 14;
-		else
-			check *= _commentStyle + 14;
-
-		if (humanVer < 700)
-			check += _stageColor + 15;
-		else
-			check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
-
-
-		check += _bitdepth + 16;
-		check += _field17 + 17;
-		check *= _field18 + 18;
-		check += _field19 + 19;
-		check *= _version + 20;
-		check += _field21 + 21;
-		check += _field22 + 22;
-		check += _field23 + 23;
-		check += _field24 + 24;
-		check *= _field25 + 25;
-		check += _frameRate + 26;
-		check *= _platformID + 27;
-		check *= (_protection * 0xE06) + 0xFF450000u;
-		check ^= MKTAG('r', 'a', 'l', 'f');
+		uint32 check = computeChecksum();
 
 		if (check != _checksum)
 			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, _checksum);
@@ -518,74 +488,68 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
-    if (debugChannelSet(7, kDebugSaving)) {
-        // Adding +8 because the stream doesn't include the header and the entry for the size itself
-        uint32 configSize = stream->size() + 8;
-        byte *dumpData = (byte *)calloc(configSize, sizeof(byte));
-
-        Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, configSize);
-
-        saveConfig(writeStream, 0);
-        dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize);
-        delete writeStream;
-    }
-
 	delete stream;
 	return true;
 }
 
-void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
+void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 	if (_version < kFileVer400) {
 		error("Cast::saveConfig called on a pre-D4 Director movie");
 	}
 
 	writeStream->seek(offset);					// This will allow us to write cast config at any offset
+
+	uint32 configSize = getConfigSize();
+
+	writeStream->writeUint32LE(MKTAG('V', 'W', 'C', 'F'));
+	writeStream->writeUint32LE(configSize);
+
 	// These offsets are only for Director Version 4 to Director version 6
 	// offsets
-	writeStream->writeUint16LE(_len);			// 0    // This will change
-	writeStream->writeUint16LE(_fileVersion);	    // 2
+	writeStream->writeUint16BE(configSize);			// 0    // This will change
+	writeStream->writeUint16BE(_fileVersion);	    // 2
 
 	Movie::writeRect(writeStream, _checkRect);      // 4, 6, 8, 10
 
-	writeStream->writeUint16LE(_castArrayStart);    // 12
-	writeStream->writeUint16LE(_castArrayEnd);      // 14   // This will change
+	writeStream->writeUint16BE(_castArrayStart);    // 12
+	// This will change
+	writeStream->writeUint16BE(_castArrayStart + _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't')).size());      // 14
 
 	writeStream->writeByte(_readRate);              // 16
 	writeStream->writeByte(_lightswitch);           // 17
-	writeStream->writeSint16LE(_unk1);              // 18
+	writeStream->writeSint16BE(_unk1);              // 18
 
-	writeStream->writeUint16LE(_commentFont);       // 20
-	writeStream->writeUint16LE(_commentSize);       // 22
-	writeStream->writeUint16LE(_commentStyle);      // 24
-	writeStream->writeUint16LE(_stageColor);        // 26
+	writeStream->writeUint16BE(_commentFont);       // 20
+	writeStream->writeUint16BE(_commentSize);       // 22
+	writeStream->writeUint16BE(_commentStyle);      // 24
+	writeStream->writeUint16BE(_stageColor);        // 26
 
-	writeStream->writeUint16LE(_bitdepth);          // 28
+	writeStream->writeUint16BE(_bitdepth);          // 28
 
 	writeStream->writeByte(_field17);               // 29
 	writeStream->writeByte(_field18);               // 30
-	writeStream->writeSint32LE(_field19);           // 34
+	writeStream->writeSint32BE(_field19);           // 34
 
-	writeStream->writeUint16LE(_version);   		// 36
+	writeStream->writeUint16BE(_version);   		// 36
 
-	writeStream->writeUint16LE(_field21);           // 38
-	writeStream->writeUint32LE(_field22);           // 40
-	writeStream->writeUint32LE(_field23);           // 44
+	writeStream->writeUint16BE(_field21);           // 38
+	writeStream->writeUint32BE(_field22);           // 40
+	writeStream->writeUint32BE(_field23);           // 44
 
-	writeStream->writeSint32LE(_field24);           // 48
+	writeStream->writeSint32BE(_field24);           // 48
 	writeStream->writeSByte(_field25);              // 52
 	writeStream->writeSByte(_field26);              // 53
 
-	writeStream->writeSint16LE(_frameRate);         // 54
-	writeStream->writeUint16LE(_platform);          // 56
-	writeStream->writeSint16LE(_protection);        // 58
-	writeStream->writeSint32LE(_field29);           // 60
+	writeStream->writeSint16BE(_frameRate);         // 54
+	writeStream->writeUint16BE(_platformID);          // 56
+	writeStream->writeSint16BE(_protection);        // 58
+	writeStream->writeSint32BE(_field29);           // 60
 
-	// Currently a stub
 	uint32 checksum = computeChecksum();
-	writeStream->writeUint32LE(checksum);           // 64
+	writeStream->writeUint32BE(checksum);           // 64
 
 	if (_version >= kFileVer400 && _version < kFileVer500) {
-		writeStream->writeSint16LE(_field30);       // 68
+		writeStream->writeSint16BE(_field30);       // 68
 
 		// This loop isn't writing meaningful data currently
 		// But it is possible that this data might be needed
@@ -597,10 +561,37 @@ void Cast::saveConfig(Common::MemoryWriteStream *writeStream, uint32 offset) {
 			writeStream->writeByte(0);              // 68, 69, 70, 71, 72, 73, 74, 75
 		}
 
-		writeStream->writeSint16LE(_defaultPalette.castLib);    // 76
-		writeStream->writeSint16LE(_defaultPalette.member);     // 77
+		writeStream->writeSint16BE(_defaultPalette.castLib);    // 76
+		writeStream->writeSint16BE(_defaultPalette.member);     // 78
 	}
 
+	if (debugChannelSet(7, kDebugSaving)) {
+		// Adding +8 because the stream doesn't include the header and the entry for the size itself
+		byte *dumpData = (byte *)calloc(configSize + 8, sizeof(byte));
+
+		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, configSize + 8);
+
+		int64 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, configSize + 8);
+		writeStream->seek(currentPos);
+
+		dumpFile("ConfigData", 0, MKTAG('V', 'W', 'C', 'F'), dumpData, configSize + 8);
+		free(dumpData);
+		delete dumpStream;
+	}
+
+}
+
+uint32 Cast::getConfigSize() {
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		return 78; // 78 bytes of data in castConfig
+	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		return 80;	// 80 bytes of data in castConfig
+	}
+
+	warning("Cast::getConfigSize: Director version 6+ is not handled");
+	return 0;
 }
 
 void Cast::loadCast() {
@@ -791,65 +782,61 @@ void Cast::loadCast() {
 	}
 }
 
-void Cast::saveCast() {
+void Cast::saveCastData(Common::SeekableWriteStream *writeStream, Resource *res) {
 	// This offset is at which we will start writing our 'CASt' resources
 	// In the original file, all the 'CASt' resources don't necessarily appear side by side
-	// writeStream->seek(offset);
-
-	Common::Array<uint16> cast = _castArchive->getResourceIDList(MKTAG('C', 'A', 'S', 't'));
+	uint32 offset = res->offset;
+	writeStream->seek(offset);
 
 	// Okay, this is going to cause confusion
-	// In the director movie archive, each CASt resource is given an ID, Not sure how this ID is assigned
-	// but it is present in the keytable and is loaded while reading the keytable in RIFXArchive::readKeyTable();
-	// The castId on the other hand present in the Resource struct is assigned by ScummVM Director in RIFXArchive::readCast()
+	// In the director movie archive, each CASt resource is given an index, which is the number at which it appears in the mmap
+	// The _castId_ on the other hand present in the Resource struct is assigned by in RIFXArchive::readCast()
 	// It is basically the index at which it occurs in the CAS* resource
-	// So, RIFXArchive::getResourceDetail will return the list of IDs present in the keytable
-	// Whereas, in the _loadedCast, the key of these Cast members is given by castId
-	for (auto &it : cast) {
-	// I need to call this just because I need the id
-		Resource res = _castArchive->getResourceDetail(MKTAG('C', 'A', 'S', 't'), it);
-		uint16 id = res.castId + _castArrayStart;               // Never encountered _castArrayStart != 0 till now
-		uint32 castSize = 0;
+	// So, RIFXArchive::getResourceDetail will return the list of indexes of the 'CASt' resources in the mmap (read in the 'CAS*' resource)
+	// Whereas, in the _loadedCast, the key of these Cast members is given by _castId_
+	uint32 castSize = 0;
+	uint16 id = res->castId + _castArrayStart;
 
-		if (_loadedCast->contains(id)) {
-			CastMember *target = _loadedCast->getVal(id);
-			// To make it consistent with how the data is stored originally, getResourceSize returns
-			// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
-			castSize = target->getCastResourceSize() + 8;
-		} else {
-			// The size stored in the memory map (_resources array), as well as the resource itself is the size
-			// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
-			castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), it) + 8;
-		}
+	CastType type = kCastTypeAny;
 
-		debugC(5, kDebugSaving, "Cast::saveCast()::Saving 'CASt' resource, id: %d, size: %d", id, castSize);
-		byte *dumpData = (byte *)calloc(castSize, sizeof(byte));
+	if (_loadedCast->contains(id)) {
+		CastMember *target = _loadedCast->getVal(id);
+		// To make it consistent with how the data is stored originally, getResourceSize returns
+		// the size excluding 'CASt' header and the entry for size itself. Adding 8 to compensate for that
+		castSize = target->getCastResourceSize();
+		type = target->_type;
+		target->writeCAStResource(writeStream);
+	} else {
+		// The size stored in the memory map (_resources array), as well as the resource itself is the size
+		// excluding the 'CASt' header and the entry of size itself. Adding 8 to compensate for that
+		castSize = _castArchive->getResourceSize(MKTAG('C', 'A', 'S', 't'), res->index);
+		writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
+		Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), res->index);
+		uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
+		writeStream->writeUint32LE(size);
+		writeStream->writeStream(stream);
 
-		Common::SeekableMemoryWriteStream *writeStream = new Common::SeekableMemoryWriteStream(dumpData, castSize);
-		CastType type = kCastTypeAny;
-
-		if (!_loadedCast->contains(id)) {
-			writeStream->writeUint32LE(MKTAG('C', 'A', 'S', 't'));
-			Common::SeekableReadStreamEndian *stream = getResource(MKTAG('C', 'A', 'S', 't'), it);
-			uint32 size = stream->size();           // This is the size of the Resource without header and size entry itself
-			writeStream->writeUint32LE(size);
-			writeStream->writeStream(stream);
-
-			delete stream;
-		} else {
-			CastMember *target = _loadedCast->getVal(id);
-			type = target->_type;
-			target->writeCAStResource(writeStream, 0);
-			break;
-		}
-
-		dumpFile(castType2str(type), res.index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize);
-		delete writeStream;
+		delete stream;
 	}
 
+	debugC(5, kDebugSaving, "Cast::saveCastData()::Saving 'CASt' resource, id: %d, size: %d, type: %s", id, castSize, castType2str(type));
+
+	if (debugChannelSet(7, kDebugSaving)) {
+		byte *dumpData = (byte *)calloc(castSize + 8, sizeof(byte));
+		Common::SeekableMemoryWriteStream *dumpStream = new Common::SeekableMemoryWriteStream(dumpData, castSize + 8);
+
+		uint32 currentPos = writeStream->pos();
+		writeStream->seek(offset);
+		dumpStream->write(writeStream, castSize);
+		writeStream->seek(currentPos);
+
+		dumpFile(castType2str(type), res->index, MKTAG('C', 'A', 'S', 't'), dumpData, castSize + 8);
+		free(dumpData);
+		delete dumpStream;
+	}
 }
 
-void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) {
+void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId) {
 	// The structure of the CastMemberInfo is as follows:
 	// First some headers: offset, unknown and flags, and then a count of strings to be read
 	// (These strings contain properties of the cast member like filename, script attached to it, name, etc.)
@@ -885,28 +872,23 @@ void Cast::writeCastInfo(Common::MemoryWriteStream *writeStream, uint32 castId) 
 			break;
 
 		case 1:
-			castInfo.strings[0].data = (byte *)malloc(castInfo.strings[0].len);
-			memcpy(castInfo.strings[0].data, ci->script.c_str(), castInfo.strings[0].len);
+			castInfo.strings[0].writeString(ci->script, false);
 			break;
 
 		case 2:
-			castInfo.strings[1].data = (byte *)malloc(castInfo.strings[1].len);
-			memcpy(castInfo.strings[1].data, ci->name.c_str(), castInfo.strings[1].len);
+			castInfo.strings[1].writeString(ci->name);
 			break;
 
 		case 3:
-			castInfo.strings[2].data = (byte *)malloc(castInfo.strings[2].len);
-			memcpy(castInfo.strings[2].data, ci->directory.c_str(), castInfo.strings[2].len);
+			castInfo.strings[2].writeString(ci->directory);
 			break;
 
 		case 4:
-			castInfo.strings[3].data = (byte *)malloc(castInfo.strings[3].len);
-			memcpy(castInfo.strings[3].data, ci->fileName.c_str(), castInfo.strings[3].len);
+			castInfo.strings[3].writeString(ci->fileName);
 			break;
 
 		case 5:
-			castInfo.strings[4].data = (byte *)malloc(castInfo.strings[4].len);
-			memcpy(castInfo.strings[4].data, ci->type.c_str(), castInfo.strings[4].len);
+			castInfo.strings[4].writeString(ci->type);
 			break;
 
 		case 6:
@@ -1011,8 +993,55 @@ uint32 Cast::getCastInfoSize(uint32 castId) {
 }
 
 uint32 Cast::computeChecksum() {
-	warning("STUB::ConfigChunk::computeChecksum() is not implemented yet");
-	return 0;
+	uint humanVer = humanVersion(_version);
+
+	//Calculation and verification of checksum
+	uint32 check = _len + 1;
+	check *= _fileVersion + 2;
+	check /= _checkRect.top + 3;
+	check *= _checkRect.left + 4;
+	check /= _checkRect.bottom + 5;
+	check *= _checkRect.right + 6;
+	check -= _castArrayStart + 7;
+	check *= _castArrayEnd + 8;
+	check -= (int8)_readRate + 9;
+	check -= _lightswitch + 10;
+
+	if (humanVer < 700)
+		check += _unk1 + 11;
+	else
+		warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+
+	check *= _commentFont + 12;
+	check += _commentSize + 13;
+
+	if (humanVer < 800)
+		check *= (uint8)((_commentStyle >> 8) & 0xFF) + 14;
+	else
+		check *= _commentStyle + 14;
+
+	if (humanVer < 700)
+		check += _stageColor + 15;
+	else
+		check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+
+
+	check += _bitdepth + 16;
+	check += _field17 + 17;
+	check *= _field18 + 18;
+	check += _field19 + 19;
+	check *= _version + 20;
+	check += _field21 + 21;
+	check += _field22 + 22;
+	check += _field23 + 23;
+	check += _field24 + 24;
+	check *= _field25 + 25;
+	check += _frameRate + 26;
+	check *= _platformID + 27;
+	check *= (_protection * 0xE06) + 0xFF450000u;
+	check ^= MKTAG('r', 'a', 'l', 'f');
+
+	return check;
 }
 
 // The 'CASt' resource has strings containing information about the respective CastMember
@@ -1024,19 +1053,19 @@ uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
 		return 0;
 
 	case 1:
-		return ci->script.size();
+		return ci->script.size();		// not pascal string
 
 	case 2:
-		return ci->name.size();
+		return ci->name.size() ? ci->name.size() + 1 : 0;		// pascal string
 
 	case 3:
-		return ci->directory.size();
+		return ci->directory.size() ? ci->directory.size() + 1 : 0;		// pascal string
 
 	case 4:
-		return ci->fileName.size();
+		return ci->fileName.size() ? ci->fileName.size() + 1 : 0;		// pascal string
 
 	case 5:
-		return ci->type.size();
+		return ci->type.size() ? ci->type.size() + 1 : 0;			// pascal string
 
 	case 6:
 		// Need a better check to see if the script edit info is valid
@@ -1169,6 +1198,7 @@ PaletteV4 Cast::loadPalette(Common::SeekableReadStreamEndian &stream, int id) {
 			break;
 		}
 
+		// Ignoring the lower 8 bits of a 16-bit data
 		palette[3 * colorIndex] = stream.readByte();
 		stream.readByte();
 
@@ -1354,7 +1384,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		error("Cast::loadCastData: unsupported Director version (%d)", _version);
 	}
 
-	debug("Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
 		id, castType, castDataSize, castInfoSize, castInfoSize, unk1, unk2, unk3);
 
 	// read the cast member itself
@@ -1431,6 +1461,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 	if (target) {
 		target->_castDataSize = castDataSize;
 		target->_flags1 = flags1;
+		target->_index = res->index;
 		setCastMember(id, target);
 	}
 	if (castStream.eos()) {
@@ -1701,6 +1732,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (!_loadedCast->contains(id))
 		return;
 
+	if (debugChannelSet(7, kDebugLoading)) {
+		debug("Cast::loadingCastInfo: Loading cast info for castId: %d", id);
+		stream.hexdump(stream.size());
+	}
 	InfoEntries castInfo = Movie::loadInfoEntries(stream, _version);
 
 	CastMemberInfo *ci = new CastMemberInfo();

@@ -40,7 +40,7 @@ public:
 	bool setField(int field, const Datum &value) override;
 
 	uint32 getCastDataSize() override;
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 
 	Common::String formatInfo() override;
 };

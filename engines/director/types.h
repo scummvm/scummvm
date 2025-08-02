@@ -36,6 +36,7 @@ enum {
 };
 
 #define kQuirksCacheArchive "quirks"
+#define kSavedFilesArchive "saved"
 
 enum MovieFlag {
 	kMovieFlagRemapPalettesWhenNeeded =  (1 << 6),

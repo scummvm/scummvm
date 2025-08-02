@@ -59,7 +59,10 @@ public:
 	Common::Point getRegistrationOffset(int16 currentWidth, int16 currentHeight) override;
 
 	uint32 getCastDataSize() override;
-	void writeCastData(Common::MemoryWriteStream *writeStream) override;
+	void writeCastData(Common::SeekableWriteStream *writeStream) override;
+
+	void writeSCVWResource(Common::SeekableWriteStream *writeStream, uint32 offset);
+	uint32 getSCVWResourceSize();
 
 	bool _enableSound;
 	bool _looping;

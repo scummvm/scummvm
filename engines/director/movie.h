@@ -72,6 +72,7 @@ struct InfoEntry {
 	}
 
 	Common::String readString(bool pascal = true);
+	void writeString(Common::String string, bool pascal = true);
 };
 
 struct InfoEntries {
@@ -91,9 +92,9 @@ public:
 
 	static Common::Rect readRect(Common::ReadStreamEndian &stream);
 	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
-	static void saveInfoEntries(Common::MemoryWriteStream *writeStream, InfoEntries info);
+	static void saveInfoEntries(Common::SeekableWriteStream *writeStream, InfoEntries info);
 
-	static void writeRect(Common::MemoryWriteStream *writeStream, Common::Rect rect);
+	static void writeRect(Common::SeekableWriteStream *writeStream, Common::Rect rect);
 
 	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	bool loadArchive();
@@ -104,6 +105,7 @@ public:
 	DirectorEngine *getVM() const { return _vm; }
 	Cast *getCast() const { return _casts.getValOrDefault(DEFAULT_CAST_LIB, nullptr); }
 	Cast *getCast(CastMemberID memberID);
+	Cast *getCastByLibResourceID(int libresourceID);
 	Cast *getSharedCast() const { return _sharedCast; }
 	const Common::HashMap<int, Cast *> *getCasts() const { return &_casts; }
 	Score *getScore() const { return _score; }

@@ -140,7 +140,7 @@ uint32 TransitionCastMember::getCastDataSize() {
 	}
 }
 
-void TransitionCastMember::writeCastData(Common::MemoryWriteStream *writeStream) {
+void TransitionCastMember::writeCastData(Common::SeekableWriteStream *writeStream) {
 	if (_cast->_version >= kFileVer400 && _cast->_version < kFileVer600) {
 		writeStream->writeByte(0);
 		writeStream->writeByte(_chunkSize);

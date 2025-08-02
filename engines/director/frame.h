@@ -34,6 +34,7 @@ struct Surface;
 namespace Common {
 class ReadStreamEndian;
 class MemoryReadStreamEndian;
+class SeekableWriteStream;
 }
 
 namespace Director {
@@ -159,6 +160,7 @@ public:
 	Score *getScore() const { return _score; }
 
 	void readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size, uint16 version);
+	void writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 version);
 
 	void executeImmediateScripts();
 
@@ -174,9 +176,13 @@ private:
 	void readSpriteD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 
+	void writeMainChannelsD4(Common::SeekableWriteStream *writeStream);
+
 	void readChannelD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readSpriteD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void writeMainChannelsD5(Common::SeekableWriteStream *writeStream);
 
 	void readChannelD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
@@ -198,6 +204,9 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+
+void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite);
+void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite);
 
 } // End of namespace Director
 
