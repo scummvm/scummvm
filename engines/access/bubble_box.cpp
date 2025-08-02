@@ -62,9 +62,8 @@ void BubbleBox::load(Common::SeekableReadStream *stream) {
 
 void BubbleBox::clearBubbles() {
 	// Loop through the bubble list to restore the screen areas
-	for (uint i = 0; i < _bubbles.size(); ++i) {
+	for (Common::Rect r: _bubbles) {
 		_vm->_screen->_screenYOff = 0;
-		Common::Rect r = _bubbles[i];
 		r.left -= 2;
 		r.right = MIN(r.right, (int16)_vm->_screen->w);
 

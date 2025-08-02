@@ -65,28 +65,28 @@ bool Resources::load(Common::U32String &errorMessage) {
 	// Load in the index
 	uint count = f.readUint16LE();
 	_datIndex.resize(count);
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		_datIndex[idx]._gameId = f.readByte();
-		_datIndex[idx]._discType = f.readByte();
-		_datIndex[idx]._demoType = f.readByte();
+	for (auto &datEntry : _datIndex) {
+		datEntry._gameId = f.readByte();
+		datEntry._discType = f.readByte();
+		datEntry._demoType = f.readByte();
 
 		byte language = f.readByte();
 		switch (language) {
 		case 0:
-			_datIndex[idx]._language = (Common::Language)0;
+			datEntry._language = (Common::Language)0;
 			break;
 		case 5:
-			_datIndex[idx]._language = Common::EN_ANY;
+			datEntry._language = Common::EN_ANY;
 			break;
 		case 23:
-			_datIndex[idx]._language = Common::ES_ESP;
+			datEntry._language = Common::ES_ESP;
 			break;
 		default:
 			error("Unknown language");
 			break;
 		}
 
-		_datIndex[idx]._fileOffset = f.readUint32LE();
+		datEntry._fileOffset = f.readUint32LE();
 	}
 
 	// Load in the data for the game
@@ -151,8 +151,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 }
 
 uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Language language) {
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		DATEntry &de = _datIndex[idx];
+	for (const DATEntry &de : _datIndex) {
 		if (de._gameId == gameId && de._discType == discType &&
 			de._demoType == demoType && de._language == language)
 			return de._fileOffset;

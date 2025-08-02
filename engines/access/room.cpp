@@ -338,8 +338,8 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (uint i = 0; i < roomInfo._extraCells.size(); ++i)
-		_vm->_extraCells.push_back(roomInfo._extraCells[i]);
+	for (const auto extraCell : roomInfo._extraCells)
+		_vm->_extraCells.push_back(extraCell);
 
 	// Load sounds for the scene
 	_vm->_sound->loadSounds(roomInfo._sounds);
@@ -881,16 +881,14 @@ bool Room::codeWalls() {
 		}
 	}
 
-	for (uint i = 0; i < _jetFrame.size(); ++i) {
-		JetFrame &jf = _jetFrame[i];
+	for (const JetFrame &jf : _jetFrame) {
 		if (checkCode(jf._wallCode, jf._wallCodeOld) ||
 			checkCode(jf._wallCode1, jf._wallCode1Old))
 			return true;
 	}
 
 	// Copy the current wall calculations to the old properties
-	for (uint i = 0; i < _jetFrame.size(); ++i) {
-		JetFrame &jf = _jetFrame[i];
+	for (JetFrame &jf : _jetFrame) {
 		jf._wallCodeOld = jf._wallCode;
 		jf._wallCode1Old = jf._wallCode1;
 	}

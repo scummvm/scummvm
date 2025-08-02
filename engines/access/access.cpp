@@ -235,10 +235,11 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
-	for (uint i = 0; i < cells.size(); ++i) {
-		Resource *spriteData = _files->loadFile(cells[i]);
-		_objectsTable[cells[i]._cell] = new SpriteResource(this, spriteData);
+void AccessEngine::loadCells(const Common::Array<CellIdent> &cells) {
+	for (const auto &cell : cells) {
+		Resource *spriteData = _files->loadFile(cell);
+		assert(_objectsTable[cell._cell] == nullptr); // ensure no leaks
+		_objectsTable[cell._cell] = new SpriteResource(this, spriteData);
 		delete spriteData;
 	}
 }
@@ -419,8 +420,8 @@ void AccessEngine::plotList1() {
 
 void AccessEngine::copyBlocks() {
 	// Copy the block list from the previous frame
-	for (uint i = 0; i < _oldRects.size(); ++i) {
-		_screen->copyBlock(&_buffer2, _oldRects[i]);
+	for (const auto &rect : _oldRects) {
+		_screen->copyBlock(&_buffer2, rect);
 	}
 
 	copyRects();
@@ -428,9 +429,9 @@ void AccessEngine::copyBlocks() {
 
 void AccessEngine::copyRects() {
 	_oldRects.clear();
-	for (uint i = 0; i < _newRects.size(); ++i) {
-		_screen->copyBlock(&_buffer2, _newRects[i]);
-		_oldRects.push_back(_newRects[i]);
+	for (const auto &rect : _newRects) {
+		_screen->copyBlock(&_buffer2, rect);
+		_oldRects.push_back(rect);
 	}
 }
 

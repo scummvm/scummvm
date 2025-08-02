@@ -183,13 +183,14 @@ void VideoPlayer::copyVideo() {
 		r.right > 0 && r.right <= 320 && r.bottom > 0 && r.bottom <= 200);
 	_vm->_newRects.push_back(r);
 
+	// Draw the clipped video to the buffer
 	int vh = r.height();
 	int vw = r.width();
 	int destIdx = r.left + r.top * _vm->_buffer2.pitch;
 	int srcIdx = _vm->_screen->_leftSkip + _vm->_screen->_topSkip * _vm->_vidBuf.pitch;
 
-	assert (srcIdx >= 0);
-	assert (destIdx >= 0);
+	assert(srcIdx >= 0);
+	assert(destIdx >= 0);
 
 	const byte *srcP = (const byte *)_vm->_vidBuf.getPixels() + srcIdx;
 	byte *destP = (byte *)_vm->_buffer2.getPixels() + destIdx;

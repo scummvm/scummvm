@@ -48,8 +48,8 @@ SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 }
 
 SpriteResource::~SpriteResource() {
-	for (uint i = 0; i < _frames.size(); ++i)
-		delete _frames[i];
+	for (auto *frame : _frames)
+		delete frame;
 }
 
 SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {

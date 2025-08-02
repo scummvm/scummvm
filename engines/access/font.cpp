@@ -29,8 +29,8 @@ Font::Font(byte firstCharIndex) : _firstCharIndex(firstCharIndex), _bitWidth(0),
 }
 
 Font::~Font() {
-	for (uint i = 0; i < _chars.size(); ++i)
-		_chars[i].free();
+	for (auto &fontChar : _chars)
+		fontChar.free();
 }
 
 int Font::charWidth(char c) {
