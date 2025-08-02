@@ -86,7 +86,7 @@ Graphics::Screen *HodjNPodjEngine::getScreen() const {
 
 Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
 	Metagame::Saves::SAVEGAME_INFO savegameInfo;
-	if (s.isLoading())
+	if (s.isSaving())
 		Metagame::Saves::ConvertToSGI(&_bfcMgr, &savegameInfo);
 
 	savegameInfo.sync(s);
