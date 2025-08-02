@@ -1500,6 +1500,25 @@ enum MessageType{
 	kObjCombineErrorMsg,
 };
 
+// Number of resources in teenagent.dat file
+const byte kNumResources = 7;
+
+enum ResourceType {
+	kResDialogStacks = 0,
+	kResDialogs,
+	kResItems,
+	kResCredits,
+	kResSceneObjects,
+	kResMessages,
+	kResCombinations,
+};
+
+struct ResourceInfo {
+	byte _id;
+	uint32 _offset;
+	uint32 _size;
+};
+
 class Resources {
 public:
 	Resources();
@@ -1526,33 +1545,54 @@ public:
 	Font font7, font8;
 
 	//const byte *getDialog(uint16 dialogNum) { return eseg.ptr(dialogOffsets[dialogNum]); }
-	uint16 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
-	uint16 getCreditAddr(uint16 creditNum) { return creditsOffsets[creditNum]; }
-	uint16 getItemAddr(uint16 itemNum) { return itemOffsets[itemNum]; }
-	uint16 getMessageAddr(MessageType msgType) { return messageOffsets[msgType]; }
-	uint16 getCombinationAddr(uint16 msgNum) { return combinationOffsets[msgNum]; }
+	uint32 getDialogStartPos() { return _dialogsStartOffset; }
+	uint32 getDialogAddr(uint16 dialogNum) { return dialogOffsets[dialogNum]; }
+	uint32 getCreditAddr(uint16 creditNum) { return creditsOffsets[creditNum]; }
+	uint32 getItemAddr(uint16 itemNum) { return itemOffsets[itemNum]; }
+	uint32 getMessageAddr(MessageType msgType) { return messageOffsets[msgType]; }
+	uint32 getCombinationAddr(uint16 msgNum) { return combinationOffsets[msgNum]; }
 
-	// Artificial segments added to support multiple languages
+	uint16 sceneObjectsBlockSize() { return _sceneObjectsBlockSize; }
+	uint32 getSceneObjectsStartPos() { return _sceneObjectsStartOffset; }
+
+	uint16 getVoiceIndex(uint32 addr) {
+		if (_addrToVoiceIndx.contains(addr))
+			return _addrToVoiceIndx[addr];
+		return 0;
+	}
+	void setVoiceIndex(uint32 addr, uint16 index) { _addrToVoiceIndx[addr] = index; }
+
+	// Artificial segment that contains various
+	// string items (messages, dialogs, item names, etc.)
+	// Used to support multiple languages
 	Segment eseg;
-	Segment creditsSeg, itemsSeg, sceneObjectsSeg;
-	Segment messagesSeg;
-	Segment combinationsSeg;
 
 private:
-	void precomputeResourceOffsets(Segment &seg, Common::Array<uint16> &offsets, uint numTerminators = 2);
+	void precomputeAllOffsets(const Common::Array<ResourceInfo> &resourceInfos);
+	void precomputeResourceOffsets(const ResourceInfo &resInfo, Common::Array<uint32> &offsets, uint numTerminators = 2);
 
-	void precomputeDialogOffsets();
-	void precomputeCreditsOffsets();
-	void precomputeItemOffsets();
-	void precomputeMessageOffsets();
-	void precomputeCombinationOffsets();
+	void precomputeDialogOffsets(const ResourceInfo &resInfo);
+	void precomputeCreditsOffsets(const ResourceInfo &resInfo);
+	void precomputeItemOffsets(const ResourceInfo &resInfo);
+	void precomputeMessageOffsets(const ResourceInfo &resInfo);
+	void precomputeCombinationOffsets(const ResourceInfo &resInfo);
+
+	void precomputeVoiceIndices(const Common::Array<ResourceInfo> &resourceInfos);
+	bool isVoiceIndexEmpty(uint16 index);
 
 	void readDialogStacks(byte *src);
 
-	Common::Array<uint16> dialogOffsets;
-	Common::Array<uint16> creditsOffsets, itemOffsets;
-	Common::Array<uint16> messageOffsets;
-	Common::Array<uint16> combinationOffsets;
+	Common::Array<uint32> dialogOffsets;
+	Common::Array<uint32> creditsOffsets, itemOffsets;
+	Common::Array<uint32> messageOffsets;
+	Common::Array<uint32> combinationOffsets;
+
+	uint32 _sceneObjectsStartOffset;
+	uint32 _sceneObjectsBlockSize; // Needed to know how much to write to savefile
+
+	uint32 _dialogsStartOffset;
+
+	Common::HashMap<uint32, uint16> _addrToVoiceIndx;
 };
 
 } // End of namespace TeenAgent
