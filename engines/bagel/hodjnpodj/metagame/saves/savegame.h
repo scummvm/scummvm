@@ -52,7 +52,7 @@ extern BOOL SaveGame(CWnd *, CPalette *, ERROR_CODE *);
  * Shows a Restore-Game dialog box
  * User can select which game they want to restore.
 **/
-extern BOOL RestoreGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
+extern BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode);
 
 } // namespace Saves
 } // namespace Metagame

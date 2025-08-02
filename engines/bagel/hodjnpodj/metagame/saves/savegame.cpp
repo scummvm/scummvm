@@ -120,12 +120,11 @@ BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	return bSaved;
 }
 
-BOOL RestoreGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+BOOL RestoreGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	INT iGameNum;
 	BOOL bRestored;
 
-	// validate input
-	assert(pBfcMgr != nullptr);
+	// Validate input
 	assert(pWnd != nullptr);
 	assert(pPalette != nullptr);
 	assert(pErrCode != nullptr);
@@ -133,7 +132,7 @@ BOOL RestoreGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *p
 	// Assume no error
 	*pErrCode = ERR_NONE;
 
-	// assume Restore will work
+	// Assume Restore will work
 	bRestored = TRUE;
 
 	*pErrCode = GetSaveGameDescriptions();

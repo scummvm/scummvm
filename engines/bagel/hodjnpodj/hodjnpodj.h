@@ -67,6 +67,9 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
 		return true;
 	}
+	bool canSaveAutosaveCurrently() override {
+		return false;
+	}
 
 	/**
 	 * Uses a serializer to allow implementing savegame

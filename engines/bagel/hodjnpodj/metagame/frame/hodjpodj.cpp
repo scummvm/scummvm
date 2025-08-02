@@ -2098,12 +2098,11 @@ BOOL CHodjPodjWindow::Restore() {
 
 	// Validate implicit input
 	assert(gpszSaveDLL != nullptr);
-	assert(lpMetaGame != nullptr);
 	assert(pGamePalette != nullptr);
 
 	PositionAtHomePath();
 
-	bSuccess = Saves::RestoreGame(lpMetaGame, (CWnd *)this, pGamePalette, &errCode);
+	bSuccess = Saves::RestoreGame((CWnd *)this, pGamePalette, &errCode);
 
 	lpMetaGame->m_bScrolling = bScrollingEnabled;
 	lpMetaGame->m_bSlowCPU = bSlowCPU;

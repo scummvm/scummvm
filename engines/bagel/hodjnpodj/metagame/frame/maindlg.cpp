@@ -23,6 +23,7 @@
 #include "bagel/hodjnpodj/metagame/frame/resource.h"
 #include "bagel/hodjnpodj/metagame/frame/dialogs.h"
 #include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hodjnpodj.h"
 #include "bagel/boflib/misc.h"
 
 namespace Bagel {
@@ -236,9 +237,8 @@ BOOL CMainGameDlg::OnInitDialog() {
 	ASSERT(m_pRestoreButton != nullptr);
 	m_pRestoreButton->SetPalette(m_pPalette);
 	bSuccess = m_pRestoreButton->SetControl(IDC_RESTORE_GAME, this);
-	if (!FileExists(gpszSaveGameFile)) {
+	if (g_engine->listSaves().empty())
 		m_pRestoreButton->EnableWindow(FALSE);
-	}
 	ASSERT(bSuccess);
 
 	m_pGrandTourButton = new CColorButton();
