@@ -189,6 +189,7 @@ private:
 	typedef Common::Functor1Mem<Graphics::SegaRenderer*, void, TransitionManager_SCD> HINTFunc;
 	Common::Array<HINTFunc*> _hINTProcs;
 	const HINTFunc *_hINTHandler;
+	const HINTFunc *_hINTHandlerNext;
 
 	void setHINTHandler(uint8 num);
 
@@ -210,9 +211,10 @@ private:
 	void hIntHandler_videoPhoneCallEnd2(Graphics::SegaRenderer *sr);
 };
 
-TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0), _transitionStep(0),
-	_trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0), _lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0),
-		_lineScrollTimer5(0), _trs__DB(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0), _transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr) {
+TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : _gfxState(state), _hScrollTable(nullptr), _hScrollTableLen(0), _internalState(nullptr), _scrollType(0),
+	_transitionStep(0), _trsCommandExt(0), _trsCommand(0), _resetCommand(0), _nextStepExt(0), _nextStep(0), _lastStepExt(0), _lastStep(0), _lineScrollOpState(0), _lineScrollTimer1(0),
+		_lineScrollTimer2(0), _lineScrollTimer3(0), _lineScrollTimer4(0), _lineScrollTimer5(0), _trs__DB(0), _lineScrollOp(0), _restoreDlgTab(0), _transitionType(0), _transitionState(0),
+			_transitionState2(0), _tmpScrollOffset(0), _subPara(0), _useEngineScrollOffsets(false), _hINTHandler(nullptr), _hINTHandlerNext(nullptr) {
 	_internalState = new ScrollInternalState[4];
 	assert(_internalState);
 	_internalState[kVertA].setFactor(-1);
@@ -225,6 +227,7 @@ TransitionManager_SCD::TransitionManager_SCD(GraphicsEngine::GfxState &state) : 
 TransitionManager_SCD::~TransitionManager_SCD() {
 	delete[] _internalState;
 	delete[] _hScrollTable;
+	_hINTHandler = _hINTHandlerNext = nullptr;
 	for (Common::Array<TrsFunc*>::const_iterator i = _trsProcs.begin(); i != _trsProcs.end(); ++i)
 		delete *i;
 	for (Common::Array<HINTFunc*>::const_iterator i = _hINTProcs.begin(); i != _hINTProcs.end(); ++i)
@@ -412,6 +415,7 @@ void TransitionManager_SCD::processTransition() {
 	}
 	_result.hInt.enable = true;
 	_result.hInt.needUpdate = true;
+	_hINTHandler = _hINTHandlerNext;
 }
 
 void TransitionManager_SCD::resetVars(int groupFlags) {
@@ -1028,7 +1032,7 @@ void TransitionManager_SCD::textScreenTrsUpdate(int type, int hIntHandlerNo, int
 
 void TransitionManager_SCD::setHINTHandler(uint8 num) {
 	if (num < _hINTProcs.size())
-		_hINTHandler = _hINTProcs[num];
+		_hINTHandlerNext = _hINTProcs[num];
 	 else
 		error("%s(): Invalid HINT handler %d", __FUNCTION__, num);
 	if (num == 28)

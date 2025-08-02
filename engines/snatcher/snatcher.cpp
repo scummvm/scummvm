@@ -51,7 +51,7 @@ namespace Snatcher {
 
 SnatcherEngine::SnatcherEngine(OSystem *system, GameDescription &dsc) : Engine(system), _game(dsc), _fio(nullptr), _module(nullptr), _scd(nullptr), _gfx(nullptr), _snd(nullptr), _input(),
 	_scriptEngine(nullptr), _cmdQueue(nullptr), _aseq(nullptr), _lastKeys(0), _releaseKeys(0), _keyRepeat(false), _enableLightGun(false), _ui(nullptr), _gfxInfo(), _saveMan(nullptr), _reset(0),
-		_memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
+		_updateGameSettings(false), _memHandler(nullptr), _frameLen((100000 << 14) / (6000000 / 1001)), _realLightGunPos() {
 	assert(system);
 }
 
@@ -289,9 +289,13 @@ bool SnatcherEngine::start() {
 
 		_saveMan->handleSaveLoad(state);
 
+		if (_updateGameSettings) {
+			_updateGameSettings = false;
+			_saveMan->loadSettings(state.conf);
+		}
+
 		_gfx->nextFrame();
 		_snd->update();
-		delayUntil(nextFrame);
 
 		if (state.modPhaseTop == 5) {
 			playTimer += _frameLen;
@@ -302,6 +306,8 @@ bool SnatcherEngine::start() {
 		}
 		if (_reset)
 			--_reset;
+
+		delayUntil(nextFrame);
 	}
 
 	return true;
@@ -773,6 +779,10 @@ void SnatcherEngine::syncSoundSettings() {
 
 	_snd->setMusicVolume(volMusic);
 	_snd->setSoundEffectVolume(volSFX);
+}
+
+void SnatcherEngine::applyGameSettings() {
+	_updateGameSettings = true;
 }
 
 void SnatcherEngine::pauseEngineIntern(bool pause) {

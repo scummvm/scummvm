@@ -62,8 +62,6 @@ SceneModule *FIO::loadModule(int index) {
 }
 
 uint8 *FIO::fileData(int index, uint32 *fileSize) {
-	if (index > 60)
-		debug("%s(): loading file %s", __FUNCTION__, _resFileList[index]);
 	return (index >= 0 && index < _resFileListSize) ? fileData(_resFileList[index], fileSize) : nullptr;
 }
 

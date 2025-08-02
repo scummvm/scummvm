@@ -188,7 +188,8 @@ bool SaveLoadManager::readSaveHeader(Common::SeekableReadStream *saveFile, SaveH
 	header.td.tm_wday = saveFile->readUint32BE();
 
 	header.totalPlayTime = saveFile->readUint32BE();
-	//header.act = saveFile->readSint16BE();
+	//
+	header.act = //saveFile->readSint16BE();
 	header.saveCount = saveFile->readSint16BE();
 
 	return true;
@@ -212,7 +213,7 @@ void SaveLoadManager::loadState(int slot, GameState &state) {
 	state.modPhaseSub = in->readSint16BE();
 	state.modPhaseTop = in->readSint16BE();
 	state.prologue = in->readSint16BE();
-
+	//
 	uint16 tsize = 0;//in->readUint16BE();
 	if (tsize) {
 		uint8 *tmp = new uint8[tsize];
