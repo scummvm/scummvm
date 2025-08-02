@@ -52,6 +52,15 @@
 
 namespace Prince {
 
+enum PRINCEActions {
+	kActionNone,
+	kActionSave,
+	kActionLoad,
+	kActionZ,
+	kActionX,
+	kActionSkip,
+};
+
 struct SavegameHeader;
 
 class PrinceEngine;

@@ -522,8 +522,8 @@ void PrinceEngine::showLogo() {
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					if (event.customType == kActionSkip) {
 						stopSample(0);
 						return;
 					}
@@ -640,27 +640,27 @@ void PrinceEngine::setMobTranslationTexts() {
 }
 
 void PrinceEngine::keyHandler(Common::Event event) {
-	uint16 nChar = event.kbd.keycode;
+	uint16 nChar = event.customType;
 	switch (nChar) {
-	case Common::KEYCODE_F1:
+	case kActionSave:
 		if (canLoadGameStateCurrently())
 			scummVMSaveLoadDialog(false);
 		break;
-	case Common::KEYCODE_F2:
+	case kActionLoad:
 		if (canSaveGameStateCurrently())
 			scummVMSaveLoadDialog(true);
 		break;
-	case Common::KEYCODE_z:
+	case kActionZ:
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 1);
 		}
 		break;
-	case Common::KEYCODE_x:
+	case kActionX:
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 2);
 		}
 		break;
-	case Common::KEYCODE_ESCAPE:
+	case kActionSkip:
 		if (_intro) {
 			stopTextToSpeech();
 			_intro = false;
@@ -1216,7 +1216,7 @@ void PrinceEngine::dialogRun() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -1441,8 +1441,8 @@ void PrinceEngine::scrollCredits() {
 			Common::Event event;
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					if (event.customType == kActionSkip) {
 						blackPalette();
 						return;
 					}
@@ -1489,7 +1489,7 @@ void PrinceEngine::mainLoop() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
