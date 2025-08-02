@@ -302,11 +302,10 @@ void Room::freeResources() {
 		object->freeResources();
 }
 
-void Room::serializeSave(Serializer &serializer) {
-	serializer.syncAsSByte(_musicId);
+void Room::syncGame(Serializer &serializer) {
 	serializer.syncAsSByte(_activeFloorI);
 	for (auto *object : _objects)
-		object->serializeSave(serializer);
+		object->syncGame(serializer);
 }
 
 void Room::toggleActiveFloor() {
@@ -758,6 +757,11 @@ void World::loadDialogLines() {
 		_dialogLines.push_back(firstQuote + 1);
 		lineStart = lineEnd + 1;
 	}
+}
+
+void World::syncGame(Serializer &s) {
+	for (Room *room : _rooms)
+		room->syncGame(s);
 }
 
 }

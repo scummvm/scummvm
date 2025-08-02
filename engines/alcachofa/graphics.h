@@ -277,7 +277,7 @@ public:
 	void reset();
 	void setAnimation(const Common::String &fileName, AnimationFolder folder);
 	void setAnimation(Animation *animation); ///< no memory ownership is given, but for prerendering it has to be mutable
-	void serializeSave(Common::Serializer &serializer);
+	void syncGame(Common::Serializer &serializer);
 
 private:
 	friend class AnimationDrawRequest;

@@ -66,7 +66,7 @@ void ObjectBase::loadResources() {
 void ObjectBase::freeResources() {
 }
 
-void ObjectBase::serializeSave(Serializer &serializer) {
+void ObjectBase::syncGame(Serializer &serializer) {
 	serializer.syncAsByte(_isEnabled);
 }
 
@@ -120,9 +120,9 @@ void GraphicObject::freeResources() {
 	_graphic.freeResources();
 }
 
-void GraphicObject::serializeSave(Serializer &serializer) {
-	ObjectBase::serializeSave(serializer);
-	_graphic.serializeSave(serializer);
+void GraphicObject::syncGame(Serializer &serializer) {
+	ObjectBase::syncGame(serializer);
+	_graphic.syncGame(serializer);
 }
 
 Graphic *GraphicObject::graphic() {
@@ -207,8 +207,10 @@ void ShapeObject::update() {
 	}
 }
 
-void ShapeObject::serializeSave(Serializer &serializer) {
+void ShapeObject::syncGame(Serializer &serializer) {
 	serializer.syncAsSByte(_order);
+	_isNewlySelected = false;
+	_wasSelected = false;
 }
 
 Shape *ShapeObject::shape() {

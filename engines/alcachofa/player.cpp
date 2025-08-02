@@ -304,4 +304,46 @@ bool Player::isAllowedToOpenMenu() {
 		!g_engine->script().variable("prohibirESC");
 }
 
+void Player::syncGame(Serializer &s) {
+	auto characterKind = activeCharacterKind();
+	syncEnum(s, characterKind);
+	switch (characterKind) {
+	case MainCharacterKind::None:
+		_activeCharacter = nullptr;
+		break;
+	case MainCharacterKind::Mortadelo:
+	case MainCharacterKind::Filemon:
+		_activeCharacter = &g_engine->world().getMainCharacterByKind(characterKind);
+		break;
+	default:
+		error("Invalid character kind in savestate: %d", (int)characterKind);
+	}
+
+	FakeSemaphore::sync(s, _semaphore);
+
+	String roomName;
+	if (_roomBeforeInventory != nullptr)
+		roomName = _roomBeforeInventory->name();
+	s.syncString(roomName);
+	if (s.isLoading()) {
+		if (roomName.empty())
+			_roomBeforeInventory = nullptr;
+		else {
+			_roomBeforeInventory = g_engine->world().getRoomByName(roomName.c_str());
+			scumm_assert(_roomBeforeInventory != nullptr);
+		}
+	}
+
+	roomName = currentRoom()->name();
+	s.syncString(roomName);
+	if (s.isLoading()) {
+		_selectedObject = nullptr;
+		_pressedObject = nullptr;
+		_heldItem = nullptr;
+		_nextLastDialogCharacter = 0;
+		fill(_lastDialogCharacters, _lastDialogCharacters + kMaxLastDialogCharacters, nullptr);
+		changeRoom(roomName, true);
+	}
+}
+
 }

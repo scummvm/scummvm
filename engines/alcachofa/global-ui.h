@@ -43,6 +43,7 @@ public:
 	void updateClosingInventory();
 	void startClosingInventory();
 	void drawScreenStates(); // black borders and/or permanent fade
+	void syncGame(Common::Serializer &s);
 
 private:
 	Animation *activeAnimation() const;

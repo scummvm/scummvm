@@ -59,7 +59,7 @@ public:
 	virtual bool updateInput();
 	virtual void loadResources();
 	virtual void freeResources();
-	virtual void serializeSave(Common::Serializer &serializer);
+	virtual void syncGame(Common::Serializer &serializer);
 	ObjectBase *getObjectByName(const char *name) const;
 	void toggleActiveFloor();
 	void debugPrint(bool withObjects) const;
@@ -183,6 +183,7 @@ public:
 	const char *getDialogLine(int32 dialogId) const;
 
 	void toggleObject(MainCharacterKind character, const char *objName, bool isEnabled);
+	void syncGame(Common::Serializer &s);
 
 private:
 	bool loadWorldFile(const char *path);

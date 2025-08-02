@@ -51,6 +51,7 @@ public:
 	void setPosition(Math::Vector3d v);
 	void backup(uint slot);
 	void restore(uint slot);
+	void syncGame(Common::Serializer &s);
 
 	Task *lerpPos(Process &process,
 		Math::Vector2d targetPos,
@@ -95,6 +96,8 @@ private:
 		Math::Angle _rotation;
 		bool _isBraking = false;
 		bool _isFollowingTarget = false;
+
+		void syncGame(Common::Serializer &s);
 	};
 
 	static constexpr uint kStateBackupCount = 2;

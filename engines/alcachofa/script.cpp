@@ -98,6 +98,14 @@ Script::Script() {
 		_instructions.push_back(ScriptInstruction(file));
 }
 
+static void syncAsSint32LE(Serializer &s, int32 &value) {
+	s.syncAsSint32LE(value);
+}
+
+void Script::syncGame(Serializer &s) {
+	s.syncArray(_variables.data(), _variables.size(), syncAsSint32LE);
+}
+
 int32 Script::variable(const char *name) const {
 	uint32 index;
 	if (_variableNames.tryGetVal(name, index))

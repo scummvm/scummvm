@@ -58,6 +58,7 @@ public:
 	void stopLastDialogCharacters();
 	void setActiveCharacter(MainCharacterKind kind);
 	bool isAllowedToOpenMenu();
+	void syncGame(Common::Serializer &s);
 
 private:
 	static constexpr const int kMaxLastDialogCharacters = 4;
