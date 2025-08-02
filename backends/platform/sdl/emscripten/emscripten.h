@@ -36,11 +36,18 @@ public:
 #ifdef USE_OPENGL
 	GraphicsManagerType getDefaultGraphicsManager() const override;
 #endif
+	Common::MutexInternal *createMutex() override;
 	void exportFile(const Common::Path &filename);
+	void delayMillis(uint msecs) override;
+	void init() override;
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority) override;
 
 protected:
 	Common::Path getDefaultConfigFileName() override;
 	Common::Path getDefaultLogFileName() override;
+
+private:
+	void updateTimers();
 };
 
 #endif

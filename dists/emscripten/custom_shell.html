@@ -127,13 +127,6 @@
   <hr>
   <textarea class="emscripten" id="output" rows="8"></textarea>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js"
-    integrity="sha512-mz0EI+Ay1uIJP7rZEX8C/JlTAcHRIQ8Sny4vxmmj8MSzDJgG9NxxY2pUmOGv1lO7imFIFMyjjCzEXEywNgaUdQ=="
-    crossorigin="anonymous"></script>
-  <script type="module">
-    import { ScummvmFS } from './scummvm_fs.js'
-    window.ScummvmFS = ScummvmFS
-  </script>
   <script type='text/javascript'>
 
     var statusElement = document.getElementById('status');
@@ -144,141 +137,9 @@
       return "All downloads complete."
     }
 
-    function decodeInode(base64str) {
-      _readUInt16LE = function readUInt16LE(byteArray, offset) {
-        offset = offset >>> 0
-        return byteArray[offset] | (byteArray[offset + 1] << 8)
-      }
-      _readUInt32LE = function (byteArray, offset) {
-        return ((byteArray[offset]) |
-          (byteArray[offset + 1] << 8) |
-          (byteArray[offset + 2] << 16)) +
-          (byteArray[offset + 3] * 0x1000000)
-      }
-      var binary_string = window.atob(base64str);
-      var bytes = new Uint8Array(binary_string.length);
-      for (var i = 0; i < binary_string.length; i++) {
-        bytes[i] = binary_string.charCodeAt(i);
-      }
-      return {
-        'id': binary_string.substr(30),
-        'size': _readUInt32LE(bytes, 0),
-        'mode': _readUInt16LE(bytes, 4),
-        'atime': 0, // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-        'mtime': 0, // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-        'ctime': 0 // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-      }
-    }
-
-    function encodeInode(id, size, mode, atime, mtime, ctime) {
-      _writeUInt16LE = function (byteArray, value, offset) {
-        value = +value
-        offset = offset >>> 0
-        byteArray[offset] = (value & 0xff)
-        byteArray[offset + 1] = (value >>> 8)
-        return offset + 2
-      }
-      _writeUInt32LE = function (byteArray, value, offset) {
-        value = +value
-        offset = offset >>> 0
-        byteArray[offset + 3] = (value >>> 24)
-        byteArray[offset + 2] = (value >>> 16)
-        byteArray[offset + 1] = (value >>> 8)
-        byteArray[offset] = (value & 0xff)
-        return offset + 4
-      }
-      var bytes = new Uint8Array(30 + id.length);
-      _writeUInt32LE(bytes, size, 0);
-      _writeUInt16LE(bytes, mode, 4);
-      //buff.writeDoubleLE(this.atime, 6);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-      //buff.writeDoubleLE(this.mtime, 14);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-      //.writeDoubleLE(this.ctime, 22);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
-      for (var i = 0; i < id.length; i++) {
-        bytes[30 + i] = id.charCodeAt(i);
-      }
-      var binary_string = ""
-      for (var i = 0; i < bytes.length; i++) {
-        binary_string += String.fromCharCode(bytes[i]);
-      }
-      return btoa(binary_string)
-    }
-    function setupDefaultLocalData() {
-      if (localStorage.getItem("/") === null) {
-        return fetch("scummvm.ini").then((response) => {
-          return response.text().then(function (text) {
-            // default values, created by running scummvm with --add --recursive --path=/data/games
-            //var req = new XMLHttpRequest(); // a new request
-            //req.open("GET", , false);
-            //req.send(null);
-            ini_data = btoa(text)
-
-            folder_inode_id = "b3da6754-64c0-40f0-92ad-83b6ca6ffec9"
-            folder_inode = {
-              "id": folder_inode_id,
-              "size": 4096,
-              "mode": 16895
-            }
-            ini_inode_id = "1b4a97d1-4ce0-417f-985c-e0f22ca21aef"
-            ini_inode = {
-              "id": ini_inode_id,
-              "size": atob(ini_data).length,
-              "mode": 33206
-            }
-            folder_entry_id = "70879b79-8d58-400c-8143-332242320b34"
-            folder_listing = { "scummvm.ini": folder_entry_id }
-            defaultLocalStorage = {}
-            defaultLocalStorage["/"] = encodeInode(folder_inode['id'], folder_inode['size'], folder_inode['mode'], 0, 0, 0)
-            defaultLocalStorage[folder_inode_id] = btoa(JSON.stringify(folder_listing))
-            defaultLocalStorage[folder_entry_id] = encodeInode(ini_inode['id'], ini_inode['size'], ini_inode['mode'], 0, 0, 0)
-            defaultLocalStorage[ini_inode_id] = ini_data
-            for (key in defaultLocalStorage) {
-              localStorage.setItem(key, defaultLocalStorage[key]);
-            }
-          })
-        })
-      }
-      return Promise.resolve()
-    }
-
-    function setupLocalFilesystem() {
-      return setupDefaultLocalData().then(() => {
-        return new Promise((resolve, reject) => {
-          BrowserFS.FileSystem.LocalStorage.Create(function (err, lsfs) {
-            if (err) return reject(err)
-            BrowserFS.FileSystem.MountableFileSystem.Create({
-              '/': lsfs
-            }, function (err, mfs) {
-              if (err) return reject(err)
-              BrowserFS.initialize(mfs);
-              // BrowserFS is now ready to use!
-              var BFS = new BrowserFS.EmscriptenFS(void 0,void 0,{"EPERM": 1,"ENOENT": 2,"EINVAL": 22},void 0); // working around Emscripten stripping ERRNO_CODES in optimized builds
-              // Mount the file systems into Emscripten.
-              FS.mount(BFS, { root: '/' }, '/home/web_user');
-              return resolve()
-            })
-          })
-        });
-      });
-    }
-    function setupHTTPFilesystem(folder_name) {
-
-      FS.mkdir("/" + folder_name)
-      FS.mount(new ScummvmFS(FS, folder_name), {}, "/" + folder_name + "/");
-    }
-    function setupFilesystem() {
-      addRunDependency('scummvm-fs-setup');
-      setupLocalFilesystem().then(() => {
-
-        setupHTTPFilesystem("games")
-        setupHTTPFilesystem("data")
-
-        removeRunDependency('scummvm-fs-setup');
-
-      });
-    }
 
     var Module = {
-      preRun: [setupFilesystem],
+      preRun: [],
       postRun: [],
       print: (function () {
         var element = document.getElementById('output');
@@ -312,7 +173,6 @@
         return canvas;
       })(),
       setStatus: function (text) {
-        console.log((new Date()).toLocaleTimeString() + " " + text)
         if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
         if (text === Module.setStatus.last.text) return;
         var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
@@ -332,6 +192,7 @@
           progressElement.hidden = true;
         }
         if (text && text.length > 0) {
+          console.log((new Date()).toLocaleTimeString() + " " + text)
           text += "⚡️"
           statusElement.style.display = "block";
         } else {

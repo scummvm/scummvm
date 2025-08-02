@@ -1,8 +1,14 @@
+# use system python as fallback
+# if EMSDK_PYTHON is not set
+EMSDK_PYTHON ?= python3 
+
 
 # Special generic target for emscripten static file hosting bundle
 dist-emscripten: $(EXECUTABLE) $(PLUGINS)
+	mkdir -p ./build-emscripten/
 	mkdir -p ./build-emscripten/data
 	mkdir -p ./build-emscripten/data/games
+	mkdir -p ./build-emscripten/data/gui-icons
 	mkdir -p ./build-emscripten/doc
 	cp $(EXECUTABLE) ./build-emscripten/
 	cp $(EXECUTABLE:html=wasm) ./build-emscripten/
@@ -18,6 +24,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ./build-emscripten/data
 endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) ./build-emscripten/data
+endif
 ifdef DIST_FILES_SHADERS
 	mkdir -p ./build-emscripten/data/shaders
 	cp $(DIST_FILES_SHADERS) ./build-emscripten/data/shaders
@@ -26,7 +35,7 @@ ifeq ($(DYNAMIC_MODULES),1)
 	mkdir -p ./build-emscripten/data/plugins
 	@for i in $(PLUGINS); do cp $$i ./build-emscripten/data/plugins; done
 endif
-	$(EMSDK_NODE) "$(srcdir)/dists/emscripten/build-make_http_index.js" ./build-emscripten/data
+	$(EMSDK_PYTHON) "$(srcdir)/dists/emscripten/build-make_http_index.py" ./build-emscripten/data
 	cp "$(srcdir)/dists/emscripten/assets/"* ./build-emscripten/
 	cp "$(srcdir)/gui/themes/common-svg/logo.svg" ./build-emscripten/
 	cp "$(srcdir)/icons/scummvm.ico" ./build-emscripten/favicon.ico

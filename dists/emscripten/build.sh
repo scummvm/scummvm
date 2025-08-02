@@ -45,18 +45,26 @@ Tasks:
 
 Options:
   -h, --help         print this help, then exit
-  --bundle-games=    comma-separated list of demos and freeware games to bundle. 
   -v, --verbose      print all commands run by the script
   --*                all other options are passed on to the configure script
-                     Note: --enable-a52, --enable-faad, --enable-mad, --enable-mpeg2
-                     and --enable-theoradec also fetches and builds these dependencies
+                     Note:  --enable-a52, --enable-faad, --enable-fluidlite, --enable-fribidi,
+                            --enable-mad, --enable-mpcdec, --enable-mpeg2, --enable-mikmod,
+                            --enable-retrowave, --enable-theoradec and --enable-vpx
+                            also download and build the required library
 "
 
+_fluidlite=false
+_fribidi=false
 _liba52=false
 _libfaad=false
 _libmad=false
+_libmpcdec=false
 _libmpeg2=false
+_libmikmod=false
 _libtheoradec=false
+_libvpx=false
+_retrowave=false
+
 # parse inputs
 for i in "$@"; do
   case $i in
@@ -68,6 +76,14 @@ for i in "$@"; do
     _libfaad=true
     CONFIGURE_ARGS+=" $i"
     ;;
+  --enable-fluidlite)
+    _fluidlite=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-fribidi)
+    _fribidi=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
   --enable-mad)
     _libmad=true
     CONFIGURE_ARGS+=" $i"
@@ -76,8 +92,25 @@ for i in "$@"; do
     _libmpeg2=true
     CONFIGURE_ARGS+=" $i"
     ;;
+  --enable-mpcdec)       
+    _libmpcdec=true  
+    # We don't pass --enable-mpcdec as configure
+    # has to establish which API to use (old or new)
+    ;;
+  --enable-openmpt) 
+    _libopenmpt=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-retrowave)
+    _retrowave=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
   --enable-theoradec)
     _libtheoradec=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-vpx)
+    _libvpx=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --bundle-games=*)
@@ -139,16 +172,6 @@ if [[ $ret != 0 ]]; then
 
   cd "$DIST_FOLDER/emsdk-${EMSDK_VERSION}"
   ./emsdk activate ${EMSCRIPTEN_VERSION}
-
-  # install some required npm packages
-  source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
-  EMSDK_NPM=$(dirname $EMSDK_NODE)/npm
-  EMSDK_PYTHON="${EMSDK_PYTHON:-python3}"
-  export NODE_PATH=$(dirname $EMSDK_NODE)/../lib/node_modules/
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "puppeteer@13.5.1"
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "request@2.88.2"
-  "$EMSDK_NODE" "$EMSDK_NPM" -g install "node-static@0.7.11"
-
 fi
 
 source "$DIST_FOLDER/emsdk-$EMSDK_VERSION/emsdk_env.sh"
@@ -161,21 +184,9 @@ export NODE_PATH="$(dirname $EMSDK_NODE)/../lib/node_modules/"
 LIBS_FLAGS=""
 
 cd "$ROOT_FOLDER"
-#################################
-# Clean
-#################################
-if [[ "clean" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  emmake make clean || true
-  emmake make distclean || true
-  emcc --clear-ports --clear-cache
-  rm -rf ./build-emscripten/ || true
-  rm scummvm.debug.wasm || true
-  rm scummvm.wasm || true
-  rm scummvm.js || true
-fi
 
 #################################
-# Download + Install Libraries (if not part of Emscripten-Ports, these are handled by configure)
+# Download + Install Libraries (if not provided by Emscripten-Ports, those are handled by configure)
 #################################
 if [[ ! -d "$LIBS_FOLDER/build" ]]; then
   mkdir -p "$LIBS_FOLDER/build"
@@ -210,6 +221,34 @@ if [ "$_libfaad" = true ]; then
   LIBS_FLAGS="${LIBS_FLAGS} --with-faad-prefix=$LIBS_FOLDER/build"
 fi
 
+if [ "$_fluidlite" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libfluidlite.a" ]]; then
+    echo "building fluidlite-b0f187b"
+    cd "$LIBS_FOLDER"
+    wget -nc --content-disposition "https://github.com/divideconcept/FluidLite/archive/b0f187b404e393ee0a495b277154d55d7d03cbeb.tar.gz"
+    tar -xf FluidLite-b0f187b404e393ee0a495b277154d55d7d03cbeb.tar.gz
+    cd "$LIBS_FOLDER/FluidLite-b0f187b404e393ee0a495b277154d55d7d03cbeb/"
+    emcmake cmake -B "build/"   -DFLUIDLITE_BUILD_STATIC:BOOL="1"  -DCMAKE_INSTALL_PREFIX="$LIBS_FOLDER/build/" -DCMAKE_INSTALL_LIBDIR="lib"
+    cmake --build "build/"  
+    cmake --install "build/"  
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-fluidlite-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_fribidi" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libfribidi.a" ]]; then
+    echo "building fribidi-1.0.10"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://github.com/fribidi/fribidi/releases/download/v1.0.10/fribidi-1.0.10.tar.xz"
+    tar -xf fribidi-1.0.10.tar.xz
+    cd "$LIBS_FOLDER/fribidi-1.0.10/"
+    CFLAGS="-fPIC -Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/"
+    emmake make -j 5
+    emmake make install
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-fribidi-prefix=$LIBS_FOLDER/build"
+fi
+
 if [ "$_libmad" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libmad.a" ]]; then
     echo "building libmad-0.15.1b"
@@ -241,6 +280,47 @@ if [ "$_libmpeg2" = true ]; then
   LIBS_FLAGS="${LIBS_FLAGS} --with-mpeg2-prefix=$LIBS_FOLDER/build"
 fi
 
+if [ "$_libmpcdec" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libmpcdec.a" ]]; then
+    echo "building libmpcdec-1.2.6"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://files.musepack.net/source/libmpcdec-1.2.6.tar.bz2"
+    tar -xf libmpcdec-1.2.6.tar.bz2
+    cd "$LIBS_FOLDER/libmpcdec-1.2.6/"
+    CFLAGS="-Oz" emconfigure ./configure --host=wasm32-unknown-none --build=wasm32-unknown-none --prefix="$LIBS_FOLDER/build/" --with-pic --enable-fpm=no
+    emmake make -j 5
+    emmake make install 
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-mpcdec-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_libopenmpt" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libopenmpt.a" ]]; then
+    echo "building libopenmpt-0.7.13"
+    cd "$LIBS_FOLDER"
+    wget -nc "https://lib.openmpt.org/files/libopenmpt/src/libopenmpt-0.6.22+release.makefile.tar.gz"
+    tar -xf libopenmpt-0.6.22+release.makefile.tar.gz
+    cd "$LIBS_FOLDER/libopenmpt-0.6.22+release/"
+    CFLAGS="-fPIC -Oz" emmake make -j 5 CONFIG=emscripten EMSCRIPTEN_TARGET=wasm
+    emmake make install CONFIG=emscripten EMSCRIPTEN_TARGET=wasm PREFIX="$LIBS_FOLDER/build/"
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-openmpt-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_retrowave" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libRetroWave.a" ]]; then
+    echo "build libRetroWave-e6bf60e"
+    cd "$LIBS_FOLDER"
+    wget -nc --content-disposition "https://github.com/SudoMaker/RetroWave/archive/e6bf60eed2d2bd1deff688d645be71a32bbf05bb.tar.gz"
+    tar -xf RetroWave-e6bf60eed2d2bd1deff688d645be71a32bbf05bb.tar.gz
+    cd "$LIBS_FOLDER/RetroWave-e6bf60eed2d2bd1deff688d645be71a32bbf05bb/"
+    CFLAGS="-fPIC -s USE_ZLIB=1 -Oz"  emcmake cmake -B "build/" -DRETROWAVE_BUILD_PLAYER=0  -DCMAKE_INSTALL_PREFIX="$LIBS_FOLDER/build/" -DCMAKE_INSTALL_LIBDIR="lib"
+    cmake --build "build/"  
+    cmake --install "build/"  
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-retrowave-prefix=$LIBS_FOLDER/build"
+fi
+
 if [ "$_libtheoradec" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libtheora.a" ]]; then
     echo "build libtheora-1.1.1"
@@ -253,6 +333,20 @@ if [ "$_libtheoradec" = true ]; then
     emmake make install
   fi
   LIBS_FLAGS="${LIBS_FLAGS} --with-theoradec-prefix=$LIBS_FOLDER/build"
+fi
+
+if [ "$_libvpx" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libvpx.a" ]]; then
+    echo "build libvpx-1.15.0"
+    cd "$LIBS_FOLDER"
+    wget -nc --content-disposition "https://github.com/webmproject/libvpx/archive/refs/tags/v1.15.0.tar.gz"
+    tar -xf libvpx-1.15.0.tar.gz
+    cd "$LIBS_FOLDER/libvpx-1.15.0/"
+    CFLAGS="-fPIC -Oz" emconfigure ./configure --disable-vp8-encoder --target=generic-gnu --disable-vp9-encoder --prefix="$LIBS_FOLDER/build/"
+    emmake make -j 5
+    emmake make install
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-vpx-prefix=$LIBS_FOLDER/build"
 fi
 
 #################################
@@ -274,11 +368,9 @@ fi
 if [[ "make" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
   cd "${ROOT_FOLDER}"
   echo "Running make"
-  emmake make
+  num_cpus=$(nproc || grep -c ^processor /proc/cpuinfo || echo 1)
+  emmake make -j ${num_cpus}
 fi
-
-# The following steps copy stuff to build-emscripten:
-mkdir -p "${ROOT_FOLDER}/build-emscripten/"
 
 #################################
 # Bundle everything into a neat package
@@ -289,82 +381,23 @@ if [[ "dist" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; 
 fi
 
 #################################
-# Create Games & Testbed Data
-#################################
-if [[ "games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  cd "${ROOT_FOLDER}"
-  echo "Creating Games + Testbed Data"
-  mkdir -p "${ROOT_FOLDER}/build-emscripten/games/"
-
-  if [[ "testbed" =~ $(echo ^\(${_bundle_games// /|}\)$) ]]; then
-    _bundle_games="${_bundle_games//testbed/}"
-    rm -rf "${ROOT_FOLDER}/build-emscripten/games/testbed"
-    cd "${ROOT_FOLDER}/dists/engine-data"
-    ./create-testbed-data.sh
-    mv testbed "${ROOT_FOLDER}/build-emscripten/games/testbed"
-  fi
-
-  if [ -n "$_bundle_games" ]; then
-    echo "Fetching gmaes: $_bundle_games"
-    mkdir -p "${DIST_FOLDER}/games/"
-    cd "${DIST_FOLDER}/games/"
-    files=$("$EMSDK_NODE" --unhandled-rejections=strict --trace-warnings "$DIST_FOLDER/build-download_games.js" ${_bundle_games})
-    for dir in "${ROOT_FOLDER}/build-emscripten/games/"*/; do # cleanup games folder
-      if [ "$(basename ${dir%*/})" != "testbed" ]; then
-        rm -rf "$dir"
-      fi
-    done
-    for f in $files; do # unpack into games folder
-      echo "Unzipping $f ..."
-      unzip -q -n "$f" -d "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}"
-      # some zip files have weird permissions, this fixes that:
-      find "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}" -type d -exec chmod 0755 {} \;
-      find "${ROOT_FOLDER}/build-emscripten/games/${f%.zip}" -type f -exec chmod 0644 {} \;
-    done
-  fi
-  cd "${ROOT_FOLDER}/build-emscripten/games/"
-  "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-fi
-#################################
-# Add icons
-#################################
-if [[ "icons" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  _icons_dir="${ROOT_FOLDER}/../scummvm-icons/"
-  if [[ -d "$_icons_dir" ]]; then
-    echo "Adding files from icons repository "
-    cd "${ROOT_FOLDER}/../scummvm-icons/"
-    cd "$_icons_dir"
-    "$EMSDK_PYTHON" gen-set.py
-    echo "add icons"
-    mkdir -p "${ROOT_FOLDER}/build-emscripten/data/gui-icons"
-    cp -r "$_icons_dir/icons" "${ROOT_FOLDER}/build-emscripten/data/gui-icons/"
-    echo "add xml"
-    cp -r "$_icons_dir/"*.xml "${ROOT_FOLDER}/build-emscripten/data/gui-icons/"
-    echo "update index"
-    cd "${ROOT_FOLDER}/build-emscripten/data/gui-icons"
-    "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-    cd "${ROOT_FOLDER}/build-emscripten/data"
-    "$EMSDK_NODE" "$DIST_FOLDER/build-make_http_index.js" >index.json
-  else
-    echo "Icons repository not found"
-  fi
-fi
-
-#################################
-# Automatically detect games and create scummvm.ini file
-#################################
-if [[ "add-games" =~ $(echo ^\(${TASKS}\)$) || "build" =~ $(echo ^\(${TASKS}\)$) ]]; then
-  cd "${ROOT_FOLDER}"
-  cp "$DIST_FOLDER/assets/scummvm.ini" "${ROOT_FOLDER}/build-emscripten/"
-  cd "${ROOT_FOLDER}/build-emscripten/"
-  "$EMSDK_NODE" "$DIST_FOLDER/build-add_games.js"
-fi
-
-#################################
 # Run Development Server
 #################################
 if [[ "run" =~ $(echo ^\(${TASKS}\)$) ]]; then
   echo "Run ScummVM"
   cd "${ROOT_FOLDER}/build-emscripten/"
   emrun --browser=chrome scummvm.html
+fi
+
+#################################
+# Clean
+#################################
+if [[ "clean" =~ $(echo ^\(${TASKS}\)$) ]]; then
+  emmake make clean || true
+  emmake make distclean || true
+  emcc --clear-ports --clear-cache
+  rm -rf ./build-emscripten/ || true
+  rm scummvm.debug.wasm || true
+  rm scummvm.wasm || true
+  rm scummvm.js || true
 fi

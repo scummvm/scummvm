@@ -1166,14 +1166,6 @@ void GrimEngine::mainLoop() {
 			uint32 delayTime = _speedLimitMs - diffTime;
 			g_system->delayMillis(delayTime);
 		}
-#if defined(__EMSCRIPTEN__)
-		else {
-			// If SDL_HINT_EMSCRIPTEN_ASYNCIFY is enabled, SDL pauses the application and gives
-			// back control to the browser automatically by calling emscripten_sleep via SDL_Delay.
-			// Without this the page would completely lock up.
-			g_system->delayMillis(0);
-		}
-#endif
 	}
 }
 

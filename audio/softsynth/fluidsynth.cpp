@@ -353,11 +353,14 @@ int MidiDriver_FluidSynth::open() {
 		return MERR_DEVICE_NOT_AVAILABLE;
 	}
 
-#if defined(ANDROID_BACKEND) && defined(FS_HAS_STREAM_SUPPORT)
+#if (defined(EMSCRIPTEN) || defined(ANDROID_BACKEND)) && defined(FS_HAS_STREAM_SUPPORT)
 	// In Android, when using SAF we need to wrap IO to make it work
 	// We can only do this with FluidSynth 2.0
-	if (!isUsingInMemorySoundFontData &&
-			AndroidFilesystemFactory::instance().hasSAF()) {
+	if (!isUsingInMemorySoundFontData 
+#if defined(ANDROID_BACKEND)
+		&& AndroidFilesystemFactory::instance().hasSAF()
+#endif
+		) {
 		Common::FSNode fsnode(getSoundFontPath());
 		_engineSoundFontData = fsnode.createReadStream();
 		isUsingInMemorySoundFontData = _engineSoundFontData != nullptr;

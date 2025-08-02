@@ -12,21 +12,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: emscripten
+          - name: emscripten
             configFlags: --enable-gif --enable-jpeg --enable-ogg --enable-png --enable-vorbis --enable-zlib --enable-freetype2
-          - platform: emscripten
-            configFlags: --enable-gif --enable-jpeg --enable-ogg --enable-png --enable-vorbis --enable-zlib  --enable-freetype2 --enable-a52 --enable-faad --enable-mad --enable-mpeg2 --enable-mpeg2 --enable-theoradec
+          - name: emscripten (extra libs)
+            configFlags: --enable-gif --enable-jpeg --enable-ogg --enable-png --enable-vorbis --enable-zlib  --enable-freetype2 --enable-a52 --enable-faad --enable-fluidlite --enable-fribidi --enable-mad --enable-mpcdec --enable-mpeg2 --enable-mpeg2 --enable-mikmod --enable-retrowave --enable-theoradec --enable-vpx
     steps:
       - uses: actions/checkout@v4
-      - name: Call configure
-        run: |
-          dists/emscripten/build.sh configure --enable-all-engines ${{ matrix.configFlags }}
       - name: Build cache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.platform }}
           max-size: 1G
           create-symlink: true
+      - name: Restore libs cache
+        uses: actions/cache/restore@v4
+        with:
+          key: ${{ matrix.configFlags }}
+          path: |
+            dists/emscripten/libs/
+      - name: Call configure
+        run: |
+          CXX='ccache emcc' dists/emscripten/build.sh configure --enable-all-engines ${{ matrix.configFlags }}
+      - name: Save libs cache
+        uses: actions/cache/save@v4
+        with:
+          key: ${{ matrix.configFlags }}
+          path: |
+            dists/emscripten/libs/
       - name: Build scummvm
         run: |
           dists/emscripten/build.sh make 

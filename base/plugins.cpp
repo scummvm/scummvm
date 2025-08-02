@@ -132,6 +132,10 @@ public:
 		#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)
 		#endif
+
+		#ifdef EMSCRIPTEN
+		LINK_PLUGIN(WEBMIDI)
+		#endif
 		#ifdef USE_MT32EMU
 		LINK_PLUGIN(MT32)
 		#endif
