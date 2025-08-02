@@ -25,6 +25,7 @@
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/shared/gfx/allegro_bitmap.h"
 #include "ags/shared/script/cc_common.h"
+#include "graphics/palette.h"
 #include "image/png.h"
 
 namespace AGS {
@@ -230,11 +231,11 @@ bool AGSConsole::Cmd_dumpSprite(int argc, const char **argv) {
 	if (df.open(pngFile)) {
 		byte *palette = nullptr;
 		if (sprite->GetColorDepth() == 8) {
-			palette = new byte[256 * 3];
-			for (int c = 0, i = 0 ; c < 256 ; ++c, i += 3) {
-				palette[i] = _G(current_palette)[c].r * 255 / 63;
-				palette[i + 1] = _G(current_palette)[c].g * 255 / 63;
-				palette[i + 2] = _G(current_palette)[c].b * 255 / 63;
+			palette = new byte[Graphics::PALETTE_SIZE];
+			for (int c = 0, i = 0 ; c < Graphics::PALETTE_COUNT ; ++c, i += 3) {
+				palette[i] = PALETTE_6BIT_TO_8BIT(_G(current_palette)[c].r);
+				palette[i + 1] = PALETTE_6BIT_TO_8BIT(_G(current_palette)[c].g);
+				palette[i + 2] = PALETTE_6BIT_TO_8BIT(_G(current_palette)[c].b);
 			}
 		}
 		Image::writePNG(df, sprite->GetAllegroBitmap()->getSurface().rawSurface(), palette);
