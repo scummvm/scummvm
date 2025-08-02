@@ -59,7 +59,7 @@ void MartianScripts::cmdSpecial0() {
 			_vm->_sound->playSound(4);
 			do {
 				_vm->_events->pollEvents();
-			} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+			} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 			//
 			// TODO:
 			//
@@ -80,7 +80,7 @@ void MartianScripts::cmdSpecial0() {
 	_vm->_sound->playSound(4);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 	_vm->_midi->stopSong();
 	_vm->_midi->freeMusic();
 	warning("TODO: Pop Midi");
@@ -203,7 +203,7 @@ void MartianScripts::cmdSpecial7() {
 
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_game->_numAnimTimers = 0;
 	_vm->_animation->freeAnimationData();
@@ -270,7 +270,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(0);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_events->_vbCount = 80;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
@@ -279,7 +279,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(1);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_events->_vbCount = 80;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
@@ -288,7 +288,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(2);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_sound->freeSounds();
 

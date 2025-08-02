@@ -66,7 +66,6 @@ private:
 	bool isSoundQueued(int soundId) const;
 public:
 	Common::Array<SoundEntry> _soundTable;
-	bool _playingSound;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
