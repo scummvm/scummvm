@@ -7500,7 +7500,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("petepilotti2", "", "Pete Pilotti", "rt:6eec77ef9ebd74d3c500162939240539",  705445, Common::FI_FIN, 500),
 	WINGAME1_l("petepilotti2", "", "ALOITA95.EXE", "t:deac65743764402a2a81b955fa0b0d07",  1410713, Common::FI_FIN, 500),
 
-	WINGAME1_l("pettson1", "", "PETT32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1430755, Common::SV_SWE, 501),
+	WINGAME1_l("pettson1", "", "ANNAT/PETT32.EXE", "t:99186d8de1156cabce545f66f413f9d0", 1430755, Common::SV_SWE, 501),
 
 	// From Japanese Star Trek: Borg DVD (2000)
 	WINGAME1_l("picarddossier", "DVD", "OMNIBORG.EXE",	"t:312801acbcbedcb6825414dad03538e8", 1501528, Common::JA_JPN, 501),
@@ -8609,7 +8609,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("melements", "", "Masters of Elements", "r:d1d1ee07987a38fd726f152a52d96114", 1035232, Common::JA_JPN, 602),
 	WINGAME1_l("melements", "", "MVM.EXE",             "t:d1c929615def3d55f47fbc2171864320", 2903578, Common::JA_JPN, 602),
 
-	WINGAME2("meetchuck", "", "HORSE.EXE",  "t:b0f3841f6e8005e519445b22de37749b", 1130649,
+	WINGAME2("meetchuck", "", "HORSE.EXE",  "t:3b89ce3f051a7907173a3aba2c21ec6c", 1130649,
 	 						  "HPICTS.DXR", "f:60aba531fc0bf4897ba94413eb8ae24f", 7878094, 600),
 
 	// Mac version requires installation, Install Microshaft, Vise 3.6 installer
@@ -8722,7 +8722,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Found on covermount of CD-ROM Today (Brazil) Volume 4 Número 16
 	// Only a 16-bit executable is provided
-	WINGAME1_l("objetivo", "", "OBETIVO.EXE", "b0f3841f6e8005e519445b22de37749b", 11660888, Common::PT_BRA, 600),
+	WINGAME1_l("objetivo", "", "OBETIVO.EXE", "t:affcf2c150bfae98dff1157fc418fbd0", 11660888, Common::PT_BRA, 600),
 
 	// O!Kay is a monthly magazine for German students in grades 1 to 4 to learn English.
 	// If ordered, every three months a CD-ROM is included with unique educational games.
@@ -8760,41 +8760,44 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2_l("pelitcd2000", "", "PELIT.EXE",	   "t:7be5a7141a379872f92808d394b79421", 1512657,
 								  "DATA/MAIN.DXR", "t:55e78270243ff4c98c680864bb056308", 58250, Common::FI_FIN, 601),
 
+	// Pettersson und Findus (Deu) / Gubben og Katten i Snekkerbua (Nor)
 	WINGAME1_l("pettson1", "",  "ANNAT/PETT16.EXE", "t:952b4ae03dac79cb5cf3fdeed1c194ea", 1154257, Common::DE_DEU, 600),
 	WINGAME1t_l("pettson1", "", "GUBBEN.EXE",		"9ee9a4d1112db68a3a64f26d043518a3",   1341473, Common::NB_NOR, 600),
 
-	WINGAME2_l("pettson2", "", "START32.EXE", "518a98696fe1122e08410b0f157f21bf", 1723219,
-							   "START.DXR",	  "18d333b1b9b02d76b35a07252046d295", 37384, Common::SV_SWE, 602),
-	WINGAME2t_l("pettson2", "", "START32.EXE", "28eec06adcc3671e6bc67c27c58976d1", 2986791,
-	           "Pinnspel.dxr", "c1e66de74590ba3ad88ea1650b8cfd80", 5085428, Common::DE_DEU, 602),
+	// Neues von Pettersson und Findus (Deu)
+	WINGAME2_l("pettson2", "", "P2DATA/START/START32.EXE", "t:355056d0da41f5cb75c7d609d70fdca3", 1723219,
+							   "P2MEDIA/START.DXR",		   "t:9bbe6783add080ec1815324643e4ad9e",   37384, Common::SV_SWE, 602),
+	WINGAME2_l("pettson2", "", "START32.EXE",			   "t:28eec06adcc3671e6bc67c27c58976d1", 2986791,
+	        				   "P2MEDIA/Pinnspel.dxr",	   "t:c1e66de74590ba3ad88ea1650b8cfd80", 5085428, Common::DE_DEU, 602),
 
 	// German version is D7
-	MACGAME1_l("pettsonjk", "", "Starta kalendern",		 "98f39f06e78cc7d3e20b498d30f737b6", 1029165, Common::SV_SWE, 600),
-	MACGAME1_l("pettsonjk", "", "Pesosen joulukalenteri", "3aaab7a6b2cbcc767f839bd6d8d3dd26", 1032582, Common::FI_FIN, 602),
-	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE", "a593079aecf5bd938ce75264cac24b2d", 1702396, Common::SV_SWE, 600),
-	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE", "518a98696fe1122e08410b0f157f21bf", 1738188, Common::FI_FIN, 602),
+	// Viiru ja Pesosen: Joulukalenteri (Fin)
+	MACGAME1_l("pettsonjk", "", "Starta kalendern",		  "r:98f39f06e78cc7d3e20b498d30f737b6", 1028909, Common::SV_SWE, 600),
+	MACGAME1_l("pettsonjk", "", "Pesosen joulukalenteri", "r:3aaab7a6b2cbcc767f839bd6d8d3dd26", 1032326, Common::FI_FIN, 602),
+	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE",			  "t:edd2cf4247f1c2cab22b29fe05bedf27", 1702396, Common::SV_SWE, 600),
+	WINGAME1_l("pettsonjk", "", "PETWIN95.EXE",			  "t:830555760679ed109ad15a23f00a8675", 1738188, Common::FI_FIN, 602),
 
 	// Global Software Products catalogue # 1282B (1999) and 1282C (Favourites, 2006)
 	WINGAME2("pingu1", "1282B", "PINGU.EXE",	"d62438566e44826960fc16c5c23dbe43", 1570152,
 								"BBCLOGO.DXR",	"0af3596b90ae5ee1fcd14c4a84d72c5f", 1516128, 650),
 	WINGAME2("pingu1", "1282C", "Pingu.exe",	"t:9c45cf40937389a60376270df0727459", 1999206,
-								"BBCTitle.dxr", "d:9f155fe1076e954eb864dda06c03e0f7",  491626, 650),
+								"BBCTitle.dxr", "f:9f155fe1076e954eb864dda06c03e0f7",  491626, 650),
 	// Pingu: La collection de tout-petits
 	// French version by Hachette Multimédia
 	// Uninstaller is also Director
 	// MACGAME1("pingu1", "", "Supprimer Pingu", "5c4cee7e93b3ee1dbc7ce29e8e26ecd7", 1032759, Common::FR_FRA, 601),
 	MACGAME1_l("pingu1", "", "Pingu",		 "r:5c4cee7e93b3ee1dbc7ce29e8e26ecd7", 1032759, Common::FR_FRA, 601),
 	WINGAME2_l("pingu1", "", "PINGU.EXE",	 "t:92bec8aaa2eb0534fcaa8926550af7e6", 2210575,
-							 "PINTITLE.DXR", "d:407aee858eb8b3a55565dc04a374651d",  499574, Common::FR_FRA, 602),
+							 "PINTITLE.DXR", "f:407aee858eb8b3a55565dc04a374651d",  499574, Common::FR_FRA, 602),
 
 	WINGAME1t("pinguss", "Screen Saver Selector, 1282C", "SetSaver.exe", "0f21f1be9dd5342dba28168ab3841378", 2736484, 602),
 	WINGAME1t("pinguss", "Screen Saver Player, 1282C", "Pingu_ss.exe", "75ef68e4bb5b6d0cc4f2bd194dccd1d1", 1513419, 602),
 	MACGAME1_l("pinguss", "Screen Saver Selector", "xn--Slecteur d'crans Pingu-b8bk",			   "rt:c977d118bfd65b7beabc44af4aac9a7a", 1032759, Common::FR_FRA, 601),
 	MACGAME1_l("pinguss", "Screen Saver Player",   "Pingu Prefs/xn--Economiseur d'cran Pingu-ofc", "rt:7b38fd04932cc5ca8db18a92d5a8b242", 1178261, Common::FR_FRA, 601),
 	WINGAME2_l("pinguss", "Screen Saver Selector", "SETSAVER.EXE",		  "t:38009fd3ab76cfa53e042cfa237a1e0e", 2960627,
-												   "PINGUPRF/SHSSCR.DXR", "d:48afb3b65659332913a23d07e86f9e0a",  415482, Common::FR_FRA, 602),
+												   "PINGUPRF/SHSSCR.DXR", "f:48afb3b65659332913a23d07e86f9e0a",  415482, Common::FR_FRA, 602),
 	WINGAME2_l("pinguss", "Screen Saver Player", "PINGU_SS.EXE",		"t:580c32dab238a74b0b301c30d0eebbd4", 1710441,
-												 "PINGUPRF/SHSSCR.DXR", "d:48afb3b65659332913a23d07e86f9e0a",  415482, Common::FR_FRA, 602),
+												 "PINGUPRF/SHSSCR.DXR", "f:48afb3b65659332913a23d07e86f9e0a",  415482, Common::FR_FRA, 602),
 
 	// Mac version requires installation, BBC Pingu and Friends Installer, Vise 5.5.2 installer
 	// Windows version identical to GSP 1283B (Double the Fun, 2007)
@@ -8807,13 +8810,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("pinkgear2", "", "PINK GEAR/Go To PINK GEAR.exe", "45871c12eb944f09f50ee742113a1e2d", 2215164, Common::JA_JPN, 602),
 
 	WINGAME2_l("plcd", "Nº11 1998", "submarine.exe",			  "t:83e7d7702df8b8886c33c049484ac15a", 1700379,
-									"Submarine-CD#11/CDruss.dxr", "d:86db6ce61440025890a575d00e07a2cc",  361456, Common::RU_RUS, 600),
-	WINGAME2_l("plcd", "Nº12 1998", "Start.exe",	 "d62438566e44826960fc16c5c23dbe43", 1919710,
-									"Mainmenu.dxr",	 "23c87266e4b249d6cb25c09c50ae0666", 10447472, Common::RU_RUS, 650),
+									"Submarine-CD#11/CDruss.dxr", "f:86db6ce61440025890a575d00e07a2cc",  361456, Common::RU_RUS, 600),
+	WINGAME2_l("plcd", "Nº12 1998", "Start.exe",	  "t:42917cade6be174fe3d242fee9574941",  1919710,
+									"DATA/3DNow.dxr", "f:e6c0769ca2408d990ecc4913fecdaf4e", 7791766, Common::RU_RUS, 650),
 
 	// DVD-ROM content from Planetary Traveler movie
 	WINGAME2("planetrav", "", "PCDVD.EXE",		   "t:34fb9c7fbc896756464fb0d43af39c15", 2345815,
-	 						  "Z_ISO960/BILL.DXR", "d:10ad8258ce3407ab2ff5ea153bd14a6c", 1539510, 600),
+	 						  "Z_ISO960/BILL.DXR", "f:10ad8258ce3407ab2ff5ea153bd14a6c", 1539510, 600),
 
 	// Projectors on the installation disc for Swedish, Norwegian, Danish, Finnish
 	// Windows version requires installation, INSTDATA/*/INSTALL.EXE, Vise installer, renames files per VIS.CFG
@@ -8828,12 +8831,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("poohlearn", "", "Learning Demos",	   "r:83b232d2d02d9238e481019eb93e7194",	2510, 650),
 	WINGAME2("poohlearn", "", "demos.exe",		   "t:0400d8f799f482204ef276e7086e88ce", 2313191,
-							  "kinder/kinder.dir", "d:85dade01df6ad19b30673d2c7b67cdf1", 1439570, 650),
+							  "kinder/kinder.dir", "f:85dade01df6ad19b30673d2c7b67cdf1", 1439570, 650),
 
 	// Mac demo is from Disney Interactive Learning Sampler CD
 	// Mac installer uses Director 7.0.2
-	MACDEMO1("poohp", "D6 Demo", "PSchool.Mac", "e0eb86f93a9fba6ea6c4141eed29d923", 116023, 650),
-	WINDEMO1("poohp", "D6 Demo", "PSchool.exe", "d62438566e44826960fc16c5c23dbe43", 1501560, 650),
+	MACDEMO1("poohp", "D6 Demo", "PSchool.Mac", "r:e0eb86f93a9fba6ea6c4141eed29d923",  115767, 650),
+	WINDEMO1("poohp", "D6 Demo", "PSchool.exe", "t:09cdee15bdb62b465750ccd4d0d0825b", 1501560, 650),
 
 	MACGAME1_l("poporon", "", " PoPoRon", "68a0694e294e201c167feff1953eb8ce", 118587, Common::JA_JPN, 601),
 	WINGAME1t_l("poporon", "", "POPORON.EXE", "37c0c99d35e762a2f44ef93732bc9337", 1799789, Common::JA_JPN, 601),
@@ -8848,17 +8851,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("requiem", "", "Requiem",	 "r:996eca6a1e73c99493ea7e553f2e0db6", 1030510, Common::SV_SWE, 601),
 	WINGAME2_l("requiem", "", "Requiem.exe", "t:bdd6110d880b41f29b8e98f9c4406eb6", 1515454,
-							  "shared.cxt",	 "d:ba83f08d73fff192b3e3affeb533cfaa", 9218580, Common::SV_SWE, 601),
+							  "shared.cxt",	 "f:ba83f08d73fff192b3e3affeb533cfaa", 9218580, Common::SV_SWE, 601),
 
 	// American Revolutionary War
-	MACGAME2("revwar", "", "BEGIN",		   "2806e0d1bac713be5677a62b425d3c98", 1030361,
-						   "mainmenu.dxr", "9343ddc8818f99929eeb1067b8329707", 5592862, 650),
-	WINGAME2("revwar", "", "BEGIN.exe",	   "d62438566e44826960fc16c5c23dbe43", 1514063,
-						   "mainmenu.dxr", "1b6c62ffd84ac53fce242a8f0a4cc337", 5839626, 650),
+	MACGAME2("revwar", "", "BEGIN",		   "r:2806e0d1bac713be5677a62b425d3c98", 1030105,
+						   "mainmenu.dxr", "d:2d510e08cde65ef21e585d0f909e27c4", 5592734, 650),
+	WINGAME2("revwar", "", "BEGIN.exe",	   "t:69fa06ac285ff3a3374fe114edbcda65", 1514063,
+						   "mainmenu.dxr", "f:1b6c62ffd84ac53fce242a8f0a4cc337", 5839626, 650),
 
 	// Edison: Bio-Mania
-	WINGAME2_l("robidoc", "", "start.exe", "518a98696fe1122e08410b0f157f21bf", 1518949,
-							  "Bio.exe", "55180c6a904d1b35c6ae60cab1f84949", 188408, Common::NL_NLD, 600),
+	MACGAME2_l("robidoc", "", "START",					 "rt:722ecd8f5f670a13337428040862f776", 1030114,
+							  "files_IS_FIA/arch_1.dxr", "d:acc1eecded8425370e8cc6baa4b8653b",  8950996, Common::NL_NLD, 602),
+	WINGAME2_l("robidoc", "", "start.exe",				 "t:7411b9c15704327230df91c75973b2db",  1518949,
+							  "files_IS_FIA/arch_1.dxr", "f:acc1eecded8425370e8cc6baa4b8653b",  8950996, Common::NL_NLD, 602),
 
 	// Requires installation, Setup.exe/Setup, Installer VISE Lite 3.6
 	MACGAME1("rockettmilkss", "", "xn--Rockett's got milk-cba45j", "r:b0b0e36586489ca6070d20feeff52fa5", 1194536, 600),
@@ -10007,8 +10012,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("pettson2", "", "pettstart.exe",   "518a98696fe1122e08410b0f157f21bf", 1534912, Common::NL_NLD, 851),
 	MACGAME1_l("pettson2", "", "Spelen",	   "124ee629902a66fe1fb20b18ae4a1788", 3924112, Common::NL_NLD, 851),
 
-	MACGAME1_l("pettson3", "",	   "Pettson3",	   "4ea5fc09f79eee6dded94dc40f303779", 211841, Common::SV_SWE, 800),
-	WINGAME1_l("pettson3", "",	   "Pettson3.exe", "1c753fb8361ba617ae6142fcdd12d3d5", 2443868, Common::SV_SWE, 800),
+	MACGAME1_l("pettson3", "", "Pettson3",			"r:4ea5fc09f79eee6dded94dc40f303779", 211585, Common::SV_SWE, 800),
+	WINGAME1_l("pettson3", "", "DATA/Pettson3.exe", "t:8898435508b004985892da112ced373b", 2443868, Common::SV_SWE, 800),
 
 	WINGAME1t_l("pettson4", "", "Findus4.exe", "34a951dd3b5e4e9aad58798d3eee8a69", 2253756, Common::DE_DEU, 800),
 

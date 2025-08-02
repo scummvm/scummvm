@@ -36,10 +36,6 @@ const char *const directoryGlobs[] = {
 	"blender",						// Blender CD-ROM magazines
 	"cd_data",						// Polis
 	"ojo2000",						// Abrapalabra
-	"p2data",
-	"p2media",
-	"p3media",
-	"annat",						// Pettson & Findus
 	"bb",							// Blinky Bill
 	"fctdata",
 	"fct",					   		// Felix the Cat
