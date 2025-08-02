@@ -1814,7 +1814,6 @@ void CHodjPodjWindow::ReleaseResources(void) {
 	assert(lpMetaGame != nullptr);
 	if (lpMetaGame != nullptr) {
 		FreeBFCInfo(lpMetaGame);
-		delete lpMetaGame;
 		lpMetaGame = nullptr;
 	}
 
