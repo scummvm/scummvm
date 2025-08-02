@@ -47,6 +47,8 @@
 namespace Bagel {
 namespace MFC {
 
+constexpr uint32 DEFAULT_MODAL_RESULT = MKTAG('S', 'C', 'V', 'M');
+
 class CBitmap;
 class CCmdTarget;
 class CCmdUI;
@@ -1307,7 +1309,7 @@ public:
 	CWnd *m_pParentWnd = nullptr;
 	int m_nClassStyle = 0;
 	int m_nStyle = 0;
-	int m_nModalResult = -1;
+	int _modalResult = DEFAULT_MODAL_RESULT;
 	bool _hasFocus = false;
 	CString _windowText;
 	Common::Rect _windowRect;

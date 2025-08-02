@@ -35,7 +35,7 @@ void EventLoop::runEventLoop() {
 
 	while (!shouldQuit() && !_activeWindows.empty()) {
 		CWnd *activeWin = GetActiveWindow();
-		if (activeWin->m_nModalResult != -1)
+		if (activeWin->_modalResult != DEFAULT_MODAL_RESULT)
 			break;
 
 		if (!GetMessage(msg))
@@ -110,7 +110,7 @@ void EventLoop::checkMessages() {
 				closeMsg.hwnd = wnd->m_hWnd;
 
 				if (d) {
-					d->m_nModalResult = -999;
+					d->_modalResult = -999;
 					closeMsg.message = WM_NULL;
 				} else {
 					closeMsg.message = WM_CLOSE;

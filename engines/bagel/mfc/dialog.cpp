@@ -127,7 +127,7 @@ int CDialog::DoModal() {
 	if (oldFocus && AfxGetApp()->GetActiveWindow() == oldWin)
 		oldFocus->SetFocus();
 
-	return m_nModalResult;
+	return _modalResult;
 }
 
 BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
@@ -155,7 +155,7 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		lpDialogTemplate = (LPDLGTEMPLATE)GlobalLock(hTemplate);
 
 	// setup for modal loop and creation
-	m_nModalResult = -1;
+	_modalResult = DEFAULT_MODAL_RESULT;
 	m_nFlags |= WF_CONTINUEMODAL;
 
 	// Create modeless dialog
@@ -255,7 +255,7 @@ void CDialog::DDV_MinMaxInt(CDataExchange *pDX,
 }
 
 void CDialog::EndDialog(int nResult) {
-	m_nModalResult = nResult;
+	_modalResult = nResult;
 }
 
 BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {
