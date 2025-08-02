@@ -21,6 +21,7 @@
 
 #include "common/memstream.h"
 #include "common/system.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
@@ -29,8 +30,6 @@
 #include "chewy/mcga_graphics.h"
 
 namespace Chewy {
-
-#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 
 McgaGraphics::McgaGraphics() {
 }
@@ -48,7 +47,7 @@ void setScummVMPalette(const byte *palette, uint start, uint count) {
 	byte *dest = &tempPal[0];
 
 	for (uint i = 0; i < count * 3; ++i, ++palette, ++dest)
-		*dest = VGA_COLOR_TRANS(*palette);
+		*dest = PALETTE_6BIT_TO_8BIT(*palette);
 
 	g_system->getPaletteManager()->setPalette(tempPal, start, count);
 }
