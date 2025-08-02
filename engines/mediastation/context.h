@@ -28,7 +28,7 @@
 #include "graphics/palette.h"
 
 #include "mediastation/datafile.h"
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/function.h"
 
 namespace MediaStation {
@@ -66,7 +66,7 @@ public:
 	Graphics::Palette *_palette = nullptr;
 	Screen *_screenAsset = nullptr;
 
-	Asset *getAssetById(uint assetId);
+	Asset *getAssetById(uint actorId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
@@ -78,9 +78,9 @@ private:
 	uint _fileNumber = 0;
 	Common::String _contextName;
 
-	Common::HashMap<uint, Asset *> _assets;
+	Common::HashMap<uint, Asset *> _actors;
 	Common::HashMap<uint, Function *> _functions;
-	Common::HashMap<uint, Asset *> _assetsByChunkReference;
+	Common::HashMap<uint, Asset *> _actorsByChunkReference;
 	Common::HashMap<uint, ScriptValue *> _variables;
 
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);

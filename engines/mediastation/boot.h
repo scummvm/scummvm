@@ -65,7 +65,7 @@ public:
 	ScreenDeclaration(Chunk &chunk);
 	ScreenDeclaration() {};
 
-	uint _assetId = 0;
+	uint _actorId = 0;
 	uint _screenId = 0;
 
 private:
@@ -116,7 +116,7 @@ public:
 	SubfileDeclaration(Chunk &chunk);
 	SubfileDeclaration() {};
 
-	uint _assetId = 0;
+	uint _actorId = 0;
 	uint _fileId = 0;
 	uint _startOffsetInFile = 0;
 

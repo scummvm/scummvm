@@ -1,20 +1,20 @@
 MODULE := engines/mediastation
 
 MODULE_OBJS = \
-	asset.o \
-	assets/canvas.o \
-	assets/document.o \
-	assets/font.o \
-	assets/hotspot.o \
-	assets/image.o \
-	assets/movie.o \
-	assets/palette.o \
-	assets/path.o \
-	assets/screen.o \
-	assets/sound.o \
-	assets/sprite.o \
-	assets/text.o \
-	assets/timer.o \
+	actor.o \
+	actors/canvas.o \
+	actors/document.o \
+	actors/font.o \
+	actors/hotspot.o \
+	actors/image.o \
+	actors/movie.o \
+	actors/palette.o \
+	actors/path.o \
+	actors/screen.o \
+	actors/sound.o \
+	actors/sprite.o \
+	actors/text.o \
+	actors/timer.o \
 	audio.o \
 	bitmap.o \
 	boot.o \

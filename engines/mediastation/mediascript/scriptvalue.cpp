@@ -59,8 +59,8 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 	}
 
 	case kScriptValueTypeAssetId: {
-		uint assetId = stream->readTypedUint16();
-		setToAssetId(assetId);
+		uint actorId = stream->readTypedUint16();
+		setToAssetId(actorId);
 		break;
 	}
 
@@ -163,14 +163,14 @@ uint ScriptValue::asParamToken() const {
 	}
 }
 
-void ScriptValue::setToAssetId(uint assetId) {
+void ScriptValue::setToAssetId(uint actorId) {
 	_type = kScriptValueTypeAssetId;
-	_u.assetId = assetId;
+	_u.actorId = actorId;
 }
 
 uint ScriptValue::asAssetId() const {
 	if (_type == kScriptValueTypeAssetId) {
-		return _u.assetId;
+		return _u.actorId;
 	} else {
 		issueValueMismatchWarning(kScriptValueTypeAssetId);
 		return 0;

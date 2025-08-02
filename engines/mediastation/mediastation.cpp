@@ -26,12 +26,12 @@
 #include "mediastation/detection.h"
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
-#include "mediastation/asset.h"
-#include "mediastation/assets/document.h"
-#include "mediastation/assets/movie.h"
-#include "mediastation/assets/screen.h"
-#include "mediastation/assets/palette.h"
-#include "mediastation/assets/hotspot.h"
+#include "mediastation/actor.h"
+#include "mediastation/actors/document.h"
+#include "mediastation/actors/movie.h"
+#include "mediastation/actors/screen.h"
+#include "mediastation/actors/palette.h"
+#include "mediastation/actors/hotspot.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -68,13 +68,13 @@ MediaStationEngine::~MediaStationEngine() {
 	_loadedContexts.clear();
 
 	// Delete the document actor. The rest are deleted from their contexts.
-	delete _assets[0];
+	delete _actors[0];
 }
 
-Asset *MediaStationEngine::getAssetById(uint assetId) {
-	for (auto asset : _assets) {
-		if (asset->id() == assetId) {
-			return asset;
+Asset *MediaStationEngine::getAssetById(uint actorId) {
+	for (auto actor : _actors) {
+		if (actor->id() == actorId) {
+			return actor;
 		}
 	}
 	return nullptr;
@@ -82,9 +82,9 @@ Asset *MediaStationEngine::getAssetById(uint assetId) {
 
 Asset *MediaStationEngine::getAssetByChunkReference(uint chunkReference) {
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
-		Asset *asset = it->_value->getAssetByChunkReference(chunkReference);
-		if (asset != nullptr) {
-			return asset;
+		Asset *actor = it->_value->getAssetByChunkReference(chunkReference);
+		if (actor != nullptr) {
+			return actor;
 		}
 	}
 	return nullptr;
@@ -150,7 +150,7 @@ Common::Error MediaStationEngine::run() {
 	_cursor->showCursor();
 
 	Document *document = new Document;
-	_assets.push_back(document);
+	_actors.push_back(document);
 
 	if (ConfMan.hasKey("entry_context")) {
 		// For development purposes, we can choose to start at an arbitrary context
@@ -182,8 +182,8 @@ Common::Error MediaStationEngine::run() {
 		}
 
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
-		for (Asset *asset : _assets) {
-			asset->process();
+		for (Asset *actor : _actors) {
+			actor->process();
 
 			if (_needsHotspotRefresh) {
 				refreshActiveHotspot();
@@ -263,11 +263,11 @@ void MediaStationEngine::setCursor(uint id) {
 }
 
 void MediaStationEngine::refreshActiveHotspot() {
-	Asset *asset = findAssetToAcceptMouseEvents();
-	if (asset != nullptr && asset->type() != kAssetTypeHotspot) {
+	Asset *actor = findAssetToAcceptMouseEvents();
+	if (actor != nullptr && actor->type() != kAssetTypeHotspot) {
 		return;
 	}
-	Hotspot *hotspot = static_cast<Hotspot *>(asset);
+	Hotspot *hotspot = static_cast<Hotspot *>(actor);
 	if (hotspot != _currentHotspot) {
 		if (_currentHotspot != nullptr) {
 			_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
@@ -292,9 +292,9 @@ void MediaStationEngine::refreshActiveHotspot() {
 
 void MediaStationEngine::draw() {
 	if (!_dirtyRects.empty()) {
-		for (Asset *asset : _spatialEntities) {
-			if (asset->isSpatialActor()) {
-				SpatialEntity *entity = static_cast<SpatialEntity *>(asset);
+		for (Asset *actor : _spatialEntities) {
+			if (actor->isSpatialActor()) {
+				SpatialEntity *entity = static_cast<SpatialEntity *>(actor);
 				if (entity->isVisible()) {
 					entity->draw(_dirtyRects);
 				}
@@ -320,8 +320,8 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 
 	// Get the file ID.
 	const SubfileDeclaration &subfileDeclaration = _boot->_subfileDeclarations.getVal(contextId);
-	// There are other assets in a subfile too, so we need to make sure we're
-	// referencing the screen asset, at the start of the file.
+	// There are other actors in a subfile too, so we need to make sure we're
+	// referencing the screen actor, at the start of the file.
 	if (subfileDeclaration._startOffsetInFile != 16) {
 		warning("MediaStationEngine::loadContext(): Requested ID wasn't for a context.");
 		return nullptr;
@@ -349,14 +349,14 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	return context;
 }
 
-void MediaStationEngine::registerAsset(Asset *assetToAdd) {
-	if (getAssetById(assetToAdd->id())) {
-		error("Asset with ID 0x%d was already defined in this title", assetToAdd->id());
+void MediaStationEngine::registerAsset(Asset *actorToAdd) {
+	if (getAssetById(actorToAdd->id())) {
+		error("Asset with ID 0x%d was already defined in this title", actorToAdd->id());
 	}
 
-	_assets.push_back(assetToAdd);
-	if (assetToAdd->isSpatialActor()) {
-		_spatialEntities.insert(static_cast<SpatialEntity *>(assetToAdd));
+	_actors.push_back(actorToAdd);
+	if (actorToAdd->isSpatialActor()) {
+		_spatialEntities.insert(static_cast<SpatialEntity *>(actorToAdd));
 	}
 }
 
@@ -403,18 +403,18 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 		}
 	}
 
-	for (auto it = _assets.begin(); it != _assets.end();) {
-		uint assetContextId = (*it)->contextId();
-		if (assetContextId == contextId) {
-			it = _assets.erase(it);
+	for (auto it = _actors.begin(); it != _actors.end();) {
+		uint actorContextId = (*it)->contextId();
+		if (actorContextId == contextId) {
+			it = _actors.erase(it);
 		} else {
 			++it;
 		}
 	}
 
 	for (auto it = _spatialEntities.begin(); it != _spatialEntities.end();) {
-		uint assetContextId = (*it)->contextId();
-		if (assetContextId == contextId) {
+		uint actorContextId = (*it)->contextId();
+		if (actorContextId == contextId) {
 			it = _spatialEntities.erase(it);
 		} else {
 			++it;
@@ -428,17 +428,17 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 Asset *MediaStationEngine::findAssetToAcceptMouseEvents() {
 	Asset *intersectingAsset = nullptr;
 	// The z-indices seem to be reversed, so the highest z-index number is
-	// actually the lowest asset.
+	// actually the lowest actor.
 	int lowestZIndex = INT_MAX;
 
-	for (Asset *asset : _assets) {
-		if (asset->type() == kAssetTypeHotspot) {
-			Hotspot *hotspot = static_cast<Hotspot *>(asset);
+	for (Asset *actor : _actors) {
+		if (actor->type() == kAssetTypeHotspot) {
+			Hotspot *hotspot = static_cast<Hotspot *>(actor);
 			debugC(5, kDebugGraphics, "findAssetToAcceptMouseEvents(): Hotspot %d (z-index %d)", hotspot->id(), hotspot->zIndex());
 			if (hotspot->isActive() && hotspot->isInside(_mousePos)) {
 				if (hotspot->zIndex() < lowestZIndex) {
 					lowestZIndex = hotspot->zIndex();
-					intersectingAsset = asset;
+					intersectingAsset = actor;
 				}
 			}
 		}

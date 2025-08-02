@@ -19,32 +19,25 @@
  *
  */
 
-#ifndef MEDIASTATION_HOTSPOT_H
-#define MEDIASTATION_HOTSPOT_H
+#ifndef MEDIASTATION_SCREEN_H
+#define MEDIASTATION_SCREEN_H
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Hotspot : public SpatialEntity {
+// A Screen holds actor data and processes event handlers for a Context.
+// The original separated them this way - there is a ContextParameters section,
+// then a Screen actor header.
+class Screen : public Asset {
 public:
-	Hotspot() : SpatialEntity(kAssetTypeHotspot) {};
-	virtual ~Hotspot() { _mouseActiveArea.clear(); }
-
-	bool isInside(const Common::Point &pointToCheck);
-	virtual bool isVisible() const override { return false; }
-	bool isActive() const { return _isActive; }
+	Screen() : Asset(kAssetTypeScreen) {};
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 	uint _cursorResourceId = 0;
-	Common::Array<Common::Point> _mouseActiveArea;
-
-private:
-	bool _isActive = false;
 };
 
 } // End of namespace MediaStation

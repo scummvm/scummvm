@@ -22,7 +22,7 @@
 #include "mediastation/mediastation.h"
 #include "mediastation/debugchannels.h"
 
-#include "mediastation/assets/timer.h"
+#include "mediastation/actors/timer.h"
 
 namespace MediaStation {
 

@@ -19,30 +19,39 @@
  *
  */
 
-#include "mediastation/assets/canvas.h"
+#ifndef MEDIASTATION_FONT_H
+#define MEDIASTATION_FONT_H
+
+#include "mediastation/actor.h"
+#include "mediastation/bitmap.h"
+#include "mediastation/datafile.h"
+#include "mediastation/mediascript/scriptvalue.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
-	switch (paramType) {
-	case kAssetHeaderStartup:
-		_isVisible = static_cast<bool>(chunk.readTypedByte());
-		break;
+class FontGlyph : public Bitmap {
+public:
+	FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header);
+	uint _asciiCode = 0;
 
-	default:
-		SpatialEntity::readParameter(chunk, paramType);
-	}
-}
+private:
+	int _unk1 = 0;
+	int _unk2 = 0;
+};
 
-ScriptValue Canvas::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	switch (methodId) {
-	case kClearToPaletteMethod: {
-		error("Canvas::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
-	}
+class Font : public Asset {
+public:
+	Font() : Asset(kAssetTypeFont) {};
+	~Font();
 
-	default:
-		return SpatialEntity::callMethod(methodId, args);
-	}
-}
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readChunk(Chunk &chunk) override;
+
+private:
+	Common::HashMap<uint, FontGlyph *> _glyphs;
+};
 
 } // End of namespace MediaStation
+
+#endif

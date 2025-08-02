@@ -24,7 +24,7 @@
 
 #include "common/array.h"
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/audio.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"

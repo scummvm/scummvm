@@ -19,23 +19,20 @@
  *
  */
 
-#ifndef MEDIASTATION_CANVAS_H
-#define MEDIASTATION_CANVAS_H
-
-#include "mediastation/asset.h"
-#include "mediastation/mediascript/scriptvalue.h"
-#include "mediastation/mediascript/scriptconstants.h"
+#include "mediastation/actors/screen.h"
+#include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
-class Canvas : public SpatialEntity {
-public:
-	Canvas() : SpatialEntity(kAssetTypeCanvas) {};
+void Screen::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderCursorResourceId:
+		_cursorResourceId = chunk.readTypedUint16();
+		break;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-};
+	default:
+		Asset::readParameter(chunk, paramType);
+	}
+}
 
 } // End of namespace MediaStation
-
-#endif

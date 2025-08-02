@@ -19,20 +19,25 @@
  *
  */
 
-#include "mediastation/assets/screen.h"
-#include "mediastation/debugchannels.h"
+#ifndef MEDIASTATION_DOCUMENT_H
+#define MEDIASTATION_DOCUMENT_H
+
+#include "mediastation/actor.h"
+#include "mediastation/mediascript/scriptvalue.h"
+#include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-void Screen::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
-	switch (paramType) {
-	case kAssetHeaderCursorResourceId:
-		_cursorResourceId = chunk.readTypedUint16();
-		break;
+class Document : public Asset {
+public:
+	Document() : Asset(kAssetTypeDocument) { _id = 1; };
 
-	default:
-		Asset::readParameter(chunk, paramType);
-	}
-}
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+private:
+	void processBranch(Common::Array<ScriptValue> &args);
+};
 
 } // End of namespace MediaStation
+
+#endif

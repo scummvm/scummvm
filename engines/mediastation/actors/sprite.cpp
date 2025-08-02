@@ -19,7 +19,7 @@
  *
  */
 
-#include "mediastation/assets/sprite.h"
+#include "mediastation/actors/sprite.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediastation.h"
 
@@ -61,9 +61,9 @@ uint32 SpriteFrame::index() {
 }
 
 Sprite::~Sprite() {
-	// If we're just referencing another asset's frames,
+	// If we're just referencing another actor's frames,
 	// don't delete those frames.
-	if (_assetReference == 0) {
+	if (_actorReference == 0) {
 		for (SpriteFrame *frame : _frames) {
 			delete frame;
 		}

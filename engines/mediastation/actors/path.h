@@ -19,40 +19,41 @@
  *
  */
 
-#ifndef MEDIASTATION_IMAGE_H
-#define MEDIASTATION_IMAGE_H
+#ifndef MEDIASTATION_PATH_H
+#define MEDIASTATION_PATH_H
 
-#include "mediastation/asset.h"
-#include "mediastation/datafile.h"
-#include "mediastation/bitmap.h"
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Image : public SpatialEntity {
-friend class Context;
-
+class Path : public Asset {
 public:
-	Image() : SpatialEntity(kAssetTypeImage) {};
-	virtual ~Image() override;
+	Path() : Asset(kAssetTypePath) {};
 
-	virtual void readChunk(Chunk &chunk) override;
+	virtual void process() override;
+
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
-	virtual void invalidateLocalBounds() override;
-	virtual Common::Rect getBbox() const override;
 
 private:
-	Bitmap *_bitmap = nullptr;
-	uint _loadType = 0;
-	int _xOffset = 0;
-	int _yOffset = 0;
+	double _percentComplete = 0.0;
+	uint _totalSteps = 0;
+	uint _currentStep = 0;
+	uint _nextPathStepTime = 0;
+	uint _stepDurationInMilliseconds = 0;
+	bool _isPlaying = false;
 
-	// Script method implementations.
-	void spatialShow();
-	void spatialHide();
+	Common::Point _startPoint;
+	Common::Point _endPoint;
+	uint32 _stepRate = 0;
+	uint32 _duration = 0;
+
+	// Method implementations.
+	void timePlay();
+	void setDuration(uint durationInMilliseconds);
+	double percentComplete();
 };
 
 } // End of namespace MediaStation

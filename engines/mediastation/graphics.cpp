@@ -23,7 +23,7 @@
 #include "common/util.h"
 #include "engines/util.h"
 
-#include "mediastation/assets/palette.h"
+#include "mediastation/actors/palette.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/dissolvepatterns.h"
@@ -448,38 +448,38 @@ void VideoDisplayManager::_colorShiftCurrentPalette(uint startIndex, uint shiftA
 }
 
 void VideoDisplayManager::_fadeToPaletteObject(uint paletteId, double fadeTime, uint startIndex, uint colorCount) {
-	Asset *asset = _vm->getAssetById(paletteId);
-	if (asset == nullptr) {
+	Asset *actor = _vm->getAssetById(paletteId);
+	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (asset->type() != kAssetTypePalette) {
+	} else if (actor->type() != kAssetTypePalette) {
 		error("Asset %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *palette = static_cast<Palette *>(asset)->_palette;
+	Graphics::Palette *palette = static_cast<Palette *>(actor)->_palette;
 	_fadeToPalette(fadeTime, *palette, startIndex, colorCount);
 }
 
 void VideoDisplayManager::_setToPaletteObject(uint paletteId, uint startIndex, uint colorCount) {
-	Asset *asset = _vm->getAssetById(paletteId);
-	if (asset == nullptr) {
+	Asset *actor = _vm->getAssetById(paletteId);
+	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (asset->type() != kAssetTypePalette) {
+	} else if (actor->type() != kAssetTypePalette) {
 		error("Asset %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *palette = static_cast<Palette *>(asset)->_palette;
+	Graphics::Palette *palette = static_cast<Palette *>(actor)->_palette;
 	_setPalette(*palette, startIndex, colorCount);
 }
 
 void VideoDisplayManager::_setPercentToPaletteObject(double percent, uint paletteId, uint startIndex, uint colorCount) {
-	Asset *asset = _vm->getAssetById(paletteId);
-	if (asset == nullptr) {
+	Asset *actor = _vm->getAssetById(paletteId);
+	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (asset->type() != kAssetTypePalette) {
+	} else if (actor->type() != kAssetTypePalette) {
 		error("Asset %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *targetPalette = static_cast<Palette *>(asset)->_palette;
+	Graphics::Palette *targetPalette = static_cast<Palette *>(actor)->_palette;
 	_setToPercentPalette(percent, *_registeredPalette, *targetPalette, startIndex, colorCount);
 }
 

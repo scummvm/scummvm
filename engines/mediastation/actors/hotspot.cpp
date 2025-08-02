@@ -19,7 +19,7 @@
  *
  */
 
-#include "mediastation/assets/hotspot.h"
+#include "mediastation/actors/hotspot.h"
 #include "mediastation/mediastation.h"
 
 namespace MediaStation {

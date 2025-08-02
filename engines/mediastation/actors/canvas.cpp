@@ -19,41 +19,30 @@
  *
  */
 
-#include "mediastation/mediastation.h"
-#include "mediastation/assets/document.h"
+#include "mediastation/actors/canvas.h"
 
 namespace MediaStation {
 
-ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
-	ScriptValue returnValue;
-
-	switch (methodId) {
-	case kBranchToScreenMethod:
-		processBranch(args);
-		return returnValue;
-
-	case kReleaseContextMethod: {
-		assert(args.size() == 1);
-		uint32 contextId = args[0].asAssetId();
-		g_engine->scheduleContextRelease(contextId);
-		return returnValue;
-	}
+void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+	switch (paramType) {
+	case kAssetHeaderStartup:
+		_isVisible = static_cast<bool>(chunk.readTypedByte());
+		break;
 
 	default:
-		return Asset::callMethod(methodId, args);
+		SpatialEntity::readParameter(chunk, paramType);
 	}
 }
 
-void Document::processBranch(Common::Array<ScriptValue> &args) {
-	assert(args.size() >= 1);
-	uint contextId = args[0].asAssetId();
-	if (args.size() > 1) {
-		bool disableUpdates = static_cast<bool>(args[1].asParamToken());
-		if (disableUpdates)
-			warning("processBranch: disableUpdates parameter not handled yet");
+ScriptValue Canvas::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	switch (methodId) {
+	case kClearToPaletteMethod: {
+		error("Canvas::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
 	}
 
-	g_engine->scheduleScreenBranch(contextId);
+	default:
+		return SpatialEntity::callMethod(methodId, args);
+	}
 }
 
 } // End of namespace MediaStation

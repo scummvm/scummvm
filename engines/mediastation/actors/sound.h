@@ -19,37 +19,38 @@
  *
  */
 
-#ifndef MEDIASTATION_FONT_H
-#define MEDIASTATION_FONT_H
+#ifndef MEDIASTATION_ASSETS_SOUND_H
+#define MEDIASTATION_ASSETS_SOUND_H
 
-#include "mediastation/asset.h"
-#include "mediastation/bitmap.h"
+#include "mediastation/actor.h"
+#include "mediastation/audio.h"
 #include "mediastation/datafile.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class FontGlyph : public Bitmap {
+class Sound : public Asset {
 public:
-	FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header);
-	uint _asciiCode = 0;
-
-private:
-	int _unk1 = 0;
-	int _unk2 = 0;
-};
-
-class Font : public Asset {
-public:
-	Font() : Asset(kAssetTypeFont) {};
-	~Font();
+	Sound() : Asset(kAssetTypeSound) {};
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-	virtual void readChunk(Chunk &chunk) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual void process() override;
+
+	virtual void readChunk(Chunk &chunk) override { _sequence.readChunk(chunk); }
+	virtual void readSubfile(Subfile &subFile, Chunk &chunk) override;
 
 private:
-	Common::HashMap<uint, FontGlyph *> _glyphs;
+	uint _loadType = 0;
+	bool _hasOwnSubfile = false;
+	bool _isPlaying = false;
+	uint _chunkCount = 0;
+	AudioSequence _sequence;
+
+	// Script method implementations
+	void timePlay();
+	void timeStop();
 };
 
 } // End of namespace MediaStation

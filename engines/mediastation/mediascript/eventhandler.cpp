@@ -33,18 +33,18 @@ EventHandler::EventHandler(Chunk &chunk) {
 	_code = new CodeChunk(chunk);
 }
 
-ScriptValue EventHandler::execute(uint assetId) {
-	// TODO: The assetId is only passed in for debug visibility, there should be
+ScriptValue EventHandler::execute(uint actorId) {
+	// TODO: The actorId is only passed in for debug visibility, there should be
 	// a better way to handle that.
-	Common::String assetAndType = Common::String::format("(asset %d) (type = %s)", assetId, eventTypeToStr(_type));
+	Common::String actorAndType = Common::String::format("(actor %d) (type = %s)", actorId, eventTypeToStr(_type));
 	Common::String argValue = getDebugHeader();
-	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s %s **********", assetAndType.c_str(), argValue.c_str());
+	debugC(5, kDebugScript, "\n********** EVENT HANDLER %s %s **********", actorAndType.c_str(), argValue.c_str());
 
 	// The only argument that can be provided to an
 	// event handler is the _argumentValue.
 	ScriptValue returnValue = _code->execute();
 
-	debugC(5, kDebugScript, "********** END EVENT HANDLER %s %s **********", assetAndType.c_str(), argValue.c_str());
+	debugC(5, kDebugScript, "********** END EVENT HANDLER %s %s **********", actorAndType.c_str(), argValue.c_str());
 	return returnValue;
 }
 

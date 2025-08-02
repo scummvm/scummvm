@@ -20,7 +20,7 @@
  */
 
 #include "mediastation/mediastation.h"
-#include "mediastation/assets/movie.h"
+#include "mediastation/actors/movie.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
@@ -90,11 +90,11 @@ Movie::~Movie() {
 void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	switch (paramType) {
 	case kAssetHeaderAssetId: {
-		// We already have this asset's ID, so we will just verify it is the same
+		// We already have this actor's ID, so we will just verify it is the same
 		// as the ID we have already read.
 		uint32 duplicateAssetId = chunk.readTypedUint16();
 		if (duplicateAssetId != _id) {
-			warning("Duplicate asset ID %d does not match original ID %d", duplicateAssetId, _id);
+			warning("Duplicate actor ID %d does not match original ID %d", duplicateAssetId, _id);
 		}
 		break;
 	}

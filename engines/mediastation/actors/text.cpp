@@ -19,7 +19,7 @@
  *
  */
 
-#include "mediastation/assets/text.h"
+#include "mediastation/actors/text.h"
 
 namespace MediaStation {
 

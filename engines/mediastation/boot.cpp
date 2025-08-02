@@ -73,7 +73,7 @@ ScreenDeclaration::ScreenDeclaration(Chunk &chunk) {
 	if (kScreenDeclarationAssetId != sectionType) {
 		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
-	_assetId = chunk.readTypedUint16();
+	_actorId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
 	if (kScreenDeclarationScreenId != sectionType) {
@@ -116,12 +116,12 @@ FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
 
 #pragma region SubfileDeclaration
 SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
-	// Read the asset ID.
+	// Read the actor ID.
 	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationAssetId != sectionType) {
 		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
-	_assetId = chunk.readTypedUint16();
+	_actorId = chunk.readTypedUint16();
 
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
@@ -219,7 +219,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 			uint flag = chunk.readTypedUint16();
 			while (flag != 0) {
 				ScreenDeclaration screenDeclaration = ScreenDeclaration(chunk);
-				_screenDeclarations.setVal(screenDeclaration._assetId, screenDeclaration);
+				_screenDeclarations.setVal(screenDeclaration._actorId, screenDeclaration);
 				flag = chunk.readTypedUint16();
 			}
 			break;
@@ -239,7 +239,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 			uint flag = chunk.readTypedUint16();
 			while (flag != 0) {
 				SubfileDeclaration subfileDeclaration = SubfileDeclaration(chunk);
-				_subfileDeclarations.setVal(subfileDeclaration._assetId, subfileDeclaration);
+				_subfileDeclarations.setVal(subfileDeclaration._actorId, subfileDeclaration);
 				flag = chunk.readTypedUint16();
 			}
 			break;

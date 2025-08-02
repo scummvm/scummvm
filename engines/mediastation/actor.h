@@ -135,8 +135,8 @@ public:
 	virtual void initFromParameterStream(Chunk &chunk);
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType);
 
-	// These are not pure virtual so if an asset doesn't read any chunks or
-	// subfiles it doesn't need to just implement these with an error message.
+	// These are not pure virtual so if an actor doesnʻt read any chunks or
+	// subfiles it doesnʻt need to just implement these with an error message.
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
@@ -151,7 +151,7 @@ public:
 	void setContextId(uint id) { _contextId = id; }
 
 	uint32 _chunkReference = 0;
-	uint _assetReference = 0;
+	uint _actorReference = 0;
 
 protected:
 	AssetType _type = kAssetTypeEmpty;

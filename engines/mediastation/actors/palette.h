@@ -19,27 +19,25 @@
  *
  */
 
-#ifndef MEDIASTATION_TIMER_H
-#define MEDIASTATION_TIMER_H
+#ifndef MEDIASTATION_PALETTE_H
+#define MEDIASTATION_PALETTE_H
 
-#include "mediastation/asset.h"
+#include "graphics/palette.h"
+
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Timer : public Asset {
+class Palette : public Asset {
 public:
-	Timer() : Asset(kAssetTypeTimer) {};
+	Palette() : Asset(kAssetTypePalette) {};
+	virtual ~Palette() override;
 
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void process() override;
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 
-private:
-	bool _isPlaying = false;
-
-	void timePlay();
-	void timeStop();
+	Graphics::Palette *_palette = nullptr;
 };
 
 } // End of namespace MediaStation

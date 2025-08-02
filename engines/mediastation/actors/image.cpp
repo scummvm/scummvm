@@ -20,14 +20,14 @@
  */
 
 #include "mediastation/mediastation.h"
-#include "mediastation/assets/image.h"
+#include "mediastation/actors/image.h"
 #include "mediastation/debugchannels.h"
 
 namespace MediaStation {
 
 Image::~Image() {
-	if (_assetReference == 0) {
-		// If we're just referencing another asset's bitmap,
+	if (_actorReference == 0) {
+		// If we're just referencing another actor's bitmap,
 		// don't delete that bitmap.
 		delete _bitmap;
 	}

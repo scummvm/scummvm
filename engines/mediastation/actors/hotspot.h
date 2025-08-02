@@ -19,41 +19,32 @@
  *
  */
 
-#ifndef MEDIASTATION_PATH_H
-#define MEDIASTATION_PATH_H
+#ifndef MEDIASTATION_HOTSPOT_H
+#define MEDIASTATION_HOTSPOT_H
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Path : public Asset {
+class Hotspot : public SpatialEntity {
 public:
-	Path() : Asset(kAssetTypePath) {};
+	Hotspot() : SpatialEntity(kAssetTypeHotspot) {};
+	virtual ~Hotspot() { _mouseActiveArea.clear(); }
 
-	virtual void process() override;
+	bool isInside(const Common::Point &pointToCheck);
+	virtual bool isVisible() const override { return false; }
+	bool isActive() const { return _isActive; }
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
+	uint _cursorResourceId = 0;
+	Common::Array<Common::Point> _mouseActiveArea;
+
 private:
-	double _percentComplete = 0.0;
-	uint _totalSteps = 0;
-	uint _currentStep = 0;
-	uint _nextPathStepTime = 0;
-	uint _stepDurationInMilliseconds = 0;
-	bool _isPlaying = false;
-
-	Common::Point _startPoint;
-	Common::Point _endPoint;
-	uint32 _stepRate = 0;
-	uint32 _duration = 0;
-
-	// Method implementations.
-	void timePlay();
-	void setDuration(uint durationInMilliseconds);
-	double percentComplete();
+	bool _isActive = false;
 };
 
 } // End of namespace MediaStation

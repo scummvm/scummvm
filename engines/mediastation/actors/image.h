@@ -19,25 +19,40 @@
  *
  */
 
-#ifndef MEDIASTATION_PALETTE_H
-#define MEDIASTATION_PALETTE_H
+#ifndef MEDIASTATION_IMAGE_H
+#define MEDIASTATION_IMAGE_H
 
-#include "graphics/palette.h"
-
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
+#include "mediastation/datafile.h"
+#include "mediastation/bitmap.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Palette : public Asset {
+class Image : public SpatialEntity {
+friend class Context;
+
 public:
-	Palette() : Asset(kAssetTypePalette) {};
-	virtual ~Palette() override;
+	Image() : SpatialEntity(kAssetTypeImage) {};
+	virtual ~Image() override;
 
+	virtual void readChunk(Chunk &chunk) override;
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
+	virtual void invalidateLocalBounds() override;
+	virtual Common::Rect getBbox() const override;
 
-	Graphics::Palette *_palette = nullptr;
+private:
+	Bitmap *_bitmap = nullptr;
+	uint _loadType = 0;
+	int _xOffset = 0;
+	int _yOffset = 0;
+
+	// Script method implementations.
+	void spatialShow();
+	void spatialHide();
 };
 
 } // End of namespace MediaStation

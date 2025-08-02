@@ -19,23 +19,56 @@
  *
  */
 
-#ifndef MEDIASTATION_DOCUMENT_H
-#define MEDIASTATION_DOCUMENT_H
+#ifndef MEDIASTATION_TEXT_H
+#define MEDIASTATION_TEXT_H
 
-#include "mediastation/asset.h"
+#include "common/str.h"
+
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-class Document : public Asset {
-public:
-	Document() : Asset(kAssetTypeDocument) { _id = 1; };
+enum TextJustification {
+	kTextJustificationLeft = 0x25c,
+	kTextJustificationRight = 0x25d,
+	kTextJustificationCenter = 0x25e
+};
 
+enum TextPosition {
+	kTextPositionMiddle = 0x25e,
+	kTextPositionTop = 0x260,
+	kTextPositionBotom = 0x261
+};
+
+struct CharacterClass {
+	uint firstAsciiCode = 0;
+	uint lastAsciiCode = 0;
+};
+
+class Text : public SpatialEntity {
+public:
+	Text() : SpatialEntity(kAssetTypeText) {};
+
+	virtual bool isVisible() const override { return _isVisible; }
+	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
-	void processBranch(Common::Array<ScriptValue> &args);
+	bool _editable = false;
+	uint _loadType = 0;
+	bool _isVisible = false;
+	Common::String _text;
+	uint _maxTextLength = 0;
+	uint _fontAssetId = 0;
+	TextJustification _justification;
+	TextPosition _position;
+	Common::Array<CharacterClass> _acceptedInput;
+
+	// Method implementations.
+	Common::String text() const;
+	void setText(Common::String text);
 };
 
 } // End of namespace MediaStation

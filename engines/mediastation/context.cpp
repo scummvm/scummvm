@@ -25,18 +25,18 @@
 
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/collection.h"
-#include "mediastation/assets/canvas.h"
-#include "mediastation/assets/palette.h"
-#include "mediastation/assets/image.h"
-#include "mediastation/assets/path.h"
-#include "mediastation/assets/sound.h"
-#include "mediastation/assets/movie.h"
-#include "mediastation/assets/sprite.h"
-#include "mediastation/assets/hotspot.h"
-#include "mediastation/assets/timer.h"
-#include "mediastation/assets/screen.h"
-#include "mediastation/assets/font.h"
-#include "mediastation/assets/text.h"
+#include "mediastation/actors/canvas.h"
+#include "mediastation/actors/palette.h"
+#include "mediastation/actors/image.h"
+#include "mediastation/actors/path.h"
+#include "mediastation/actors/sound.h"
+#include "mediastation/actors/movie.h"
+#include "mediastation/actors/sprite.h"
+#include "mediastation/actors/hotspot.h"
+#include "mediastation/actors/timer.h"
+#include "mediastation/actors/screen.h"
+#include "mediastation/actors/font.h"
+#include "mediastation/actors/text.h"
 
 namespace MediaStation {
 
@@ -68,35 +68,35 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 		}
 	}
 
-	// Read assets in the rest of the subfiles.
+	// Read actors in the rest of the subfiles.
 	for (uint i = 1; i < _subfileCount; i++) {
 		subfile = getNextSubfile();
 		readAssetFromLaterSubfile(subfile);
 	}
 
 	// Some sprites and images don't have any image data themselves, they just
-	// reference the same image data in another asset. So we need to check for
+	// reference the same image data in another actor. So we need to check for
 	// these and create the appropriate references.
-	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
-		Asset *asset = it->_value;
-		uint referencedAssetId = asset->_assetReference;
+	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
+		Asset *actor = it->_value;
+		uint referencedAssetId = actor->_actorReference;
 		if (referencedAssetId != 0) {
-			switch (asset->type()) {
+			switch (actor->type()) {
 			case kAssetTypeImage: {
-				Image *image = static_cast<Image *>(asset);
+				Image *image = static_cast<Image *>(actor);
 				Image *referencedImage = static_cast<Image *>(getAssetById(referencedAssetId));
 				if (referencedImage == nullptr) {
-					error("Context::Context(): Asset %d references non-existent asset %d", asset->id(), referencedAssetId);
+					error("Context::Context(): Asset %d references non-existent actor %d", actor->id(), referencedAssetId);
 				}
 				image->_bitmap = referencedImage->_bitmap;
 				break;
 			}
 
 			case kAssetTypeSprite: {
-				Sprite *sprite = static_cast<Sprite *>(asset);
+				Sprite *sprite = static_cast<Sprite *>(actor);
 				Sprite *referencedSprite = static_cast<Sprite *>(getAssetById(referencedAssetId));
 				if (referencedSprite == nullptr) {
-					error("Context::Context(): Asset %d references non-existent asset %d", asset->id(), referencedAssetId);
+					error("Context::Context(): Asset %d references non-existent actor %d", actor->id(), referencedAssetId);
 				}
 				sprite->_frames = referencedSprite->_frames;
 				sprite->_clips = referencedSprite->_clips;
@@ -104,7 +104,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 			}
 
 			default:
-				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", asset->type());
+				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", actor->type());
 			}
 		}
 	}
@@ -114,12 +114,12 @@ Context::~Context() {
 	delete _palette;
 	_palette = nullptr;
 
-	for (auto it = _assets.begin(); it != _assets.end(); ++it) {
+	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
 		delete it->_value;
 	}
-	_assets.clear();
-	// The same asset pointers are in here, so don't delete again.
-	_assetsByChunkReference.clear();
+	_actors.clear();
+	// The same actor pointers are in here, so don't delete again.
+	_actorsByChunkReference.clear();
 
 	for (auto it = _functions.begin(); it != _functions.end(); ++it) {
 		delete it->_value;
@@ -132,12 +132,12 @@ Context::~Context() {
 	_variables.clear();
 }
 
-Asset *Context::getAssetById(uint assetId) {
-	return _assets.getValOrDefault(assetId);
+Asset *Context::getAssetById(uint actorId) {
+	return _actors.getValOrDefault(actorId);
 }
 
 Asset *Context::getAssetByChunkReference(uint chunkReference) {
-	return _assetsByChunkReference.getValOrDefault(chunkReference);
+	return _actorsByChunkReference.getValOrDefault(chunkReference);
 }
 
 Function *Context::getFunctionById(uint functionId) {
@@ -199,64 +199,64 @@ Asset *Context::readCreateAssetData(Chunk &chunk) {
 	uint id = chunk.readTypedUint16();
 	debugC(4, kDebugLoading, "_type = 0x%x, _id = 0x%x", static_cast<uint>(type), id);
 
-	Asset *asset = nullptr;
+	Asset *actor = nullptr;
 	switch (type) {
 	case kAssetTypeImage:
-		asset = new Image();
+		actor = new Image();
 		break;
 
 	case kAssetTypeMovie:
-		asset = new Movie();
+		actor = new Movie();
 		break;
 
 	case kAssetTypeSound:
-		asset = new Sound();
+		actor = new Sound();
 		break;
 
 	case kAssetTypePalette:
-		asset = new Palette();
+		actor = new Palette();
 		break;
 
 	case kAssetTypePath:
-		asset = new Path();
+		actor = new Path();
 		break;
 
 	case kAssetTypeTimer:
-		asset = new Timer();
+		actor = new Timer();
 		break;
 
 	case kAssetTypeHotspot:
-		asset = new Hotspot();
+		actor = new Hotspot();
 		break;
 
 	case kAssetTypeSprite:
-		asset = new Sprite();
+		actor = new Sprite();
 		break;
 
 	case kAssetTypeCanvas:
-		asset = new Canvas();
+		actor = new Canvas();
 		break;
 
 	case kAssetTypeScreen:
-		asset = new Screen();
-		_screenAsset = static_cast<Screen *>(asset);
+		actor = new Screen();
+		_screenAsset = static_cast<Screen *>(actor);
 		break;
 
 	case kAssetTypeFont:
-		asset = new Font();
+		actor = new Font();
 		break;
 
 	case kAssetTypeText:
-		asset = new Text();
+		actor = new Text();
 		break;
 
 	default:
-		error("No class for asset type 0x%x (@0x%llx)", static_cast<uint>(type), static_cast<long long int>(chunk.pos()));
+		error("No class for actor type 0x%x (@0x%llx)", static_cast<uint>(type), static_cast<long long int>(chunk.pos()));
 	}
-	asset->setId(id);
-	asset->setContextId(contextId);
-	asset->initFromParameterStream(chunk);
-	return asset;
+	actor->setId(id);
+	actor->setContextId(contextId);
+	actor->initFromParameterStream(chunk);
+	return actor;
 }
 
 void Context::readCreateVariableData(Chunk &chunk) {
@@ -311,38 +311,38 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 
 void Context::readAssetInFirstSubfile(Chunk &chunk) {
 	if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
-		warning("Context::readAssetInFirstSubfile(): Skippping \"igod\" asset link chunk");
+		warning("Context::readAssetInFirstSubfile(): Skippping \"igod\" actor link chunk");
 		chunk.skip(chunk.bytesRemaining());
 		return;
 	}
 
-	// TODO: Make sure this is not an asset link.
-	Asset *asset = getAssetByChunkReference(chunk._id);
-	if (asset == nullptr) {
+	// TODO: Make sure this is not an actor link.
+	Asset *actor = getAssetByChunkReference(chunk._id);
+	if (actor == nullptr) {
 		// We should only need to look in the global scope when there is an
 		// install cache (INSTALL.CXT).
-		asset = g_engine->getAssetByChunkReference(chunk._id);
-		if (asset == nullptr) {
+		actor = g_engine->getAssetByChunkReference(chunk._id);
+		if (actor == nullptr) {
 			error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got asset with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(asset->type()), static_cast<long long int>(chunk.pos()));
-	asset->readChunk(chunk);
+	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got actor with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(actor->type()), static_cast<long long int>(chunk.pos()));
+	actor->readChunk(chunk);
 }
 
 void Context::readAssetFromLaterSubfile(Subfile &subfile) {
 	Chunk chunk = subfile.nextChunk();
-	Asset *asset = getAssetByChunkReference(chunk._id);
-	if (asset == nullptr) {
+	Asset *actor = getAssetByChunkReference(chunk._id);
+	if (actor == nullptr) {
 		// We should only need to look in the global scope when there is an
 		// install cache (INSTALL.CXT).
-		asset = g_engine->getAssetByChunkReference(chunk._id);
-		if (asset == nullptr) {
+		actor = g_engine->getAssetByChunkReference(chunk._id);
+		if (actor == nullptr) {
 			error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got asset with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), asset->type(), static_cast<long long int>(chunk.pos()));
-	asset->readSubfile(subfile, chunk);
+	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got actor with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), actor->type(), static_cast<long long int>(chunk.pos()));
+	actor->readSubfile(subfile, chunk);
 }
 
 bool Context::readHeaderSection(Chunk &chunk) {
@@ -379,26 +379,26 @@ bool Context::readHeaderSection(Chunk &chunk) {
 	}
 
 	case kContextAssetHeaderSection: {
-		Asset *asset = readCreateAssetData(chunk);
-		_assets.setVal(asset->id(), asset);
-		g_engine->registerAsset(asset);
-		if (asset->_chunkReference != 0) {
-			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing asset with chunk ID \"%s\" (0x%x)", tag2str(asset->_chunkReference), asset->_chunkReference);
-			_assetsByChunkReference.setVal(asset->_chunkReference, asset);
+		Asset *actor = readCreateAssetData(chunk);
+		_actors.setVal(actor->id(), actor);
+		g_engine->registerAsset(actor);
+		if (actor->_chunkReference != 0) {
+			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing actor with chunk ID \"%s\" (0x%x)", tag2str(actor->_chunkReference), actor->_chunkReference);
+			_actorsByChunkReference.setVal(actor->_chunkReference, actor);
 		}
 
-		if (asset->type() == kAssetTypeMovie) {
-			Movie *movie = static_cast<Movie *>(asset);
+		if (actor->type() == kAssetTypeMovie) {
+			Movie *movie = static_cast<Movie *>(actor);
 			if (movie->_audioChunkReference != 0) {
-				_assetsByChunkReference.setVal(movie->_audioChunkReference, asset);
+				_actorsByChunkReference.setVal(movie->_audioChunkReference, actor);
 			}
 			if (movie->_animationChunkReference != 0) {
-				_assetsByChunkReference.setVal(movie->_animationChunkReference, asset);
+				_actorsByChunkReference.setVal(movie->_animationChunkReference, actor);
 			}
 		}
 		// TODO: This datum only appears sometimes.
 		uint unk2 = chunk.readTypedUint16();
-		debugC(5, kDebugLoading, "Context::readHeaderSection(): Got unknown value at end of asset header section 0x%x", unk2);
+		debugC(5, kDebugLoading, "Context::readHeaderSection(): Got unknown value at end of actor header section 0x%x", unk2);
 		break;
 	}
 

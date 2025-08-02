@@ -19,7 +19,7 @@
  *
  */
 
-#include "mediastation/assets/path.h"
+#include "mediastation/actors/path.h"
 #include "mediastation/mediastation.h"
 #include "mediastation/debugchannels.h"
 

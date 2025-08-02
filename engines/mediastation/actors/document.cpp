@@ -19,40 +19,41 @@
  *
  */
 
-#ifndef MEDIASTATION_ASSETS_SOUND_H
-#define MEDIASTATION_ASSETS_SOUND_H
-
-#include "mediastation/asset.h"
-#include "mediastation/audio.h"
-#include "mediastation/datafile.h"
-#include "mediastation/mediascript/scriptvalue.h"
-#include "mediastation/mediascript/scriptconstants.h"
+#include "mediastation/mediastation.h"
+#include "mediastation/actors/document.h"
 
 namespace MediaStation {
 
-class Sound : public Asset {
-public:
-	Sound() : Asset(kAssetTypeSound) {};
+ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+	ScriptValue returnValue;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void process() override;
+	switch (methodId) {
+	case kBranchToScreenMethod:
+		processBranch(args);
+		return returnValue;
 
-	virtual void readChunk(Chunk &chunk) override { _sequence.readChunk(chunk); }
-	virtual void readSubfile(Subfile &subFile, Chunk &chunk) override;
+	case kReleaseContextMethod: {
+		assert(args.size() == 1);
+		uint32 contextId = args[0].asAssetId();
+		g_engine->scheduleContextRelease(contextId);
+		return returnValue;
+	}
 
-private:
-	uint _loadType = 0;
-	bool _hasOwnSubfile = false;
-	bool _isPlaying = false;
-	uint _chunkCount = 0;
-	AudioSequence _sequence;
+	default:
+		return Asset::callMethod(methodId, args);
+	}
+}
 
-	// Script method implementations
-	void timePlay();
-	void timeStop();
-};
+void Document::processBranch(Common::Array<ScriptValue> &args) {
+	assert(args.size() >= 1);
+	uint contextId = args[0].asAssetId();
+	if (args.size() > 1) {
+		bool disableUpdates = static_cast<bool>(args[1].asParamToken());
+		if (disableUpdates)
+			warning("processBranch: disableUpdates parameter not handled yet");
+	}
+
+	g_engine->scheduleScreenBranch(contextId);
+}
 
 } // End of namespace MediaStation
-
-#endif

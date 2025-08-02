@@ -35,7 +35,7 @@ public:
 	EventHandler(Chunk &chunk);
 	~EventHandler();
 
-	ScriptValue execute(uint assetId);
+	ScriptValue execute(uint actorId);
 	Common::String getDebugHeader();
 	EventType _type;
 	ScriptValue _argumentValue;

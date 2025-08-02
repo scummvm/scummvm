@@ -19,46 +19,29 @@
  *
  */
 
+#include "mediastation/mediastation.h"
+#include "mediastation/actors/palette.h"
 #include "mediastation/debugchannels.h"
-#include "mediastation/assets/font.h"
 
 namespace MediaStation {
 
-FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapHeader *header) : Bitmap(chunk, header) {
-	_asciiCode = asciiCode;
-	_unk1 = unk1;
-	_unk2 = unk2;
+Palette::~Palette() {
+	delete _palette;
+	_palette = nullptr;
 }
 
-Font::~Font() {
-	for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
-		delete it->_value;
-	}
-	_glyphs.clear();
-}
-
-void Font::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void Palette::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderChunkReference:
-		_chunkReference = chunk.readTypedChunkReference();
+	case kAssetHeaderPalette: {
+		byte *buffer = new byte[Graphics::PALETTE_SIZE];
+		chunk.read(buffer, Graphics::PALETTE_SIZE);
+		_palette = new Graphics::Palette(buffer, Graphics::PALETTE_COUNT, DisposeAfterUse::YES);
 		break;
+	}
 
 	default:
 		Asset::readParameter(chunk, paramType);
 	}
-}
-
-void Font::readChunk(Chunk &chunk) {
-	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
-	uint asciiCode = chunk.readTypedUint16();
-	int unk1 = chunk.readTypedUint16();
-	int unk2 = chunk.readTypedUint16();
-	BitmapHeader *header = new BitmapHeader(chunk);
-	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
-	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
-		error("Font::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
-	}
-	_glyphs.setVal(asciiCode, glyph);
 }
 
 } // End of namespace MediaStation

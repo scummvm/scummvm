@@ -146,8 +146,8 @@ void Collection::send(const Common::Array<ScriptValue> &args) {
 	BuiltInMethod methodToSend = static_cast<BuiltInMethod>(args[0].asMethodId());
 	Common::Array<ScriptValue> sendArgs;
 	for (const ScriptValue &item : *this) {
-		uint assetId = item.asAssetId();
-		Asset *targetAsset = g_engine->getAssetById(assetId);
+		uint actorId = item.asAssetId();
+		Asset *targetAsset = g_engine->getAssetById(actorId);
 		if (targetAsset != nullptr) {
 			targetAsset->callMethod(methodToSend, argsToSend);
 		}

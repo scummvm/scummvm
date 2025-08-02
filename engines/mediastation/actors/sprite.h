@@ -25,7 +25,7 @@
 #include "common/rect.h"
 #include "common/array.h"
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/datafile.h"
 #include "mediastation/bitmap.h"
 #include "mediastation/mediascript/scriptvalue.h"

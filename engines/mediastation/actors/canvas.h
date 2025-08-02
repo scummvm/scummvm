@@ -19,25 +19,21 @@
  *
  */
 
-#ifndef MEDIASTATION_SCREEN_H
-#define MEDIASTATION_SCREEN_H
+#ifndef MEDIASTATION_CANVAS_H
+#define MEDIASTATION_CANVAS_H
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/mediascript/scriptvalue.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
 
-// A Screen holds asset data and processes event handlers for a Context.
-// The original separated them this way - there is a ContextParameters section,
-// then a Screen asset header.
-class Screen : public Asset {
+class Canvas : public SpatialEntity {
 public:
-	Screen() : Asset(kAssetTypeScreen) {};
+	Canvas() : SpatialEntity(kAssetTypeCanvas) {};
 
 	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
-
-	uint _cursorResourceId = 0;
+	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };
 
 } // End of namespace MediaStation

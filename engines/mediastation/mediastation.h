@@ -39,7 +39,7 @@
 #include "mediastation/datafile.h"
 #include "mediastation/boot.h"
 #include "mediastation/context.h"
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/cursors.h"
 #include "mediastation/graphics.h"
 
@@ -82,11 +82,11 @@ public:
 	void addDirtyRect(const Common::Rect &rect) { _dirtyRects.push_back(rect); }
 	void draw();
 
-	void registerAsset(Asset *assetToAdd);
+	void registerAsset(Asset *actorToAdd);
 	void scheduleScreenBranch(uint screenId);
 	void scheduleContextRelease(uint contextId);
 
-	Asset *getAssetById(uint assetId);
+	Asset *getAssetById(uint actorId);
 	Asset *getAssetByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
@@ -117,7 +117,7 @@ private:
 	VideoDisplayManager *_displayManager = nullptr;
 
 	Boot *_boot = nullptr;
-	Common::Array<Asset *> _assets;
+	Common::Array<Asset *> _actors;
 	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _spatialEntities;
 	Common::HashMap<uint, Context *> _loadedContexts;
 	Asset *_currentHotspot = nullptr;

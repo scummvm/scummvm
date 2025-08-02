@@ -55,7 +55,7 @@ public:
 	void setToParamToken(uint paramToken);
 	uint asParamToken() const;
 
-	void setToAssetId(uint assetId);
+	void setToAssetId(uint actorId);
 	uint asAssetId() const;
 
 	void setToString(const Common::String &string);
@@ -94,7 +94,7 @@ private:
 		double d = 0;
 		bool b;
 		uint paramToken;
-		uint assetId;
+		uint actorId;
 		uint functionId;
 		BuiltInMethod methodId;
 	} _u;

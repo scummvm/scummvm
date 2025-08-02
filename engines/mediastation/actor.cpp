@@ -21,7 +21,7 @@
 
 #include "common/util.h"
 
-#include "mediastation/asset.h"
+#include "mediastation/actor.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
 #include "mediastation/mediastation.h"
@@ -69,7 +69,7 @@ void Asset::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 
 	default:
-		error("Got unimplemented asset parameter 0x%x", static_cast<uint>(paramType));
+		error("Got unimplemented actor parameter 0x%x", static_cast<uint>(paramType));
 	}
 }
 
@@ -78,11 +78,11 @@ ScriptValue Asset::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 }
 
 void Asset::readChunk(Chunk &chunk) {
-	error("Asset::readChunk(): Chunk reading for asset type 0x%x is not implemented", static_cast<uint>(_type));
+	error("Asset::readChunk(): Chunk reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
 void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("Asset::readSubfile(): Subfile reading for asset type 0x%x is not implemented", static_cast<uint>(_type));
+	error("Asset::readSubfile(): Subfile reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
 void Asset::processTimeEventHandlers() {
@@ -115,12 +115,12 @@ void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg)
 		}
 
 		if (arg == argToCheck) {
-			debugC(5, kDebugScript, "Executing handler for event type %s on asset %d", eventTypeToStr(eventType), _id);
+			debugC(5, kDebugScript, "Executing handler for event type %s on actor %d", eventTypeToStr(eventType), _id);
 			eventHandler->execute(_id);
 			return;
 		}
 	}
-	debugC(5, kDebugScript, "No event handler for event type %s on asset %d", eventTypeToStr(eventType), _id);
+	debugC(5, kDebugScript, "No event handler for event type %s on actor %d", eventTypeToStr(eventType), _id);
 }
 
 void Asset::runEventHandlerIfExists(EventType eventType) {
@@ -242,7 +242,7 @@ void SpatialEntity::readParameter(Chunk &chunk, AssetHeaderSectionType paramType
 		break;
 
 	case kAssetHeaderAssetReference:
-		_assetReference = chunk.readTypedUint16();
+		_actorReference = chunk.readTypedUint16();
 		break;
 
 	default:
