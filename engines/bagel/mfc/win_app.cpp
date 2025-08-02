@@ -29,6 +29,7 @@
 #include "bagel/mfc/win_hand.h"
 #include "bagel/mfc/gfx/cursor.h"
 #include "bagel/mfc/libs/events.h"
+#include "engines/engine.h"
 
 namespace Bagel {
 namespace MFC {
@@ -68,8 +69,8 @@ CWinApp::~CWinApp() {
 	m_pmapHGDIOBJ = nullptr;
 
 	_activeApp = _priorWinApp;
-	if (_activeApp)
-		_activeApp->_quitFlag = _quitFlag;
+	if (_activeApp && Engine::shouldQuit())
+		_activeApp->_quitFlag = QUIT_QUITTING;
 }
 
 BOOL CWinApp::InitApplication() {
