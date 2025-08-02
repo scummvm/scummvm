@@ -27,6 +27,7 @@
 
 #include "common/file.h"
 #include "graphics/surface.h"
+#include "graphics/palette.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -218,7 +219,7 @@ const byte *U4PaletteLoader::loadVgaPalette() {
 		pal.read(_vgaPalette, 256 * 3);
 
 		for (int i = 0; i < 256 * 3; i++) {
-			_vgaPalette[i] = _vgaPalette[i] * 255 / 63;
+			_vgaPalette[i] = PALETTE_6BIT_TO_8BIT(_vgaPalette[i]);
 		}
 	}
 
