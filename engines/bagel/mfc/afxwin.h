@@ -1670,6 +1670,7 @@ public:
 
 	afx_msg void OnPaint();
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnKillFocus(CWnd *pNewWnd);
 	afx_msg void OnTimer(UINT_PTR nTimerId);

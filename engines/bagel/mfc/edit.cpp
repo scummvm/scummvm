@@ -31,6 +31,7 @@ IMPLEMENT_DYNAMIC(CEdit, CWnd)
 BEGIN_MESSAGE_MAP(CEdit, CWnd)
 ON_WM_PAINT()
 ON_WM_KEYDOWN()
+ON_WM_CHAR()
 ON_WM_SETFOCUS()
 ON_WM_KILLFOCUS()
 ON_WM_TIMER()
@@ -101,12 +102,7 @@ void CEdit::OnPaint() {
 }
 
 void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	if (Common::isPrint(nChar)) {
-		if (_maxLength != 0 && _windowText.size() == _maxLength)
-			return;
-
-		_windowText += (char)nChar;
-	} else if (nChar == Common::KEYCODE_BACKSPACE ||
+	if (nChar == Common::KEYCODE_BACKSPACE ||
 			nChar == Common::KEYCODE_DELETE) {
 		if (!_windowText.empty()) {
 			_windowText.deleteLastChar();
@@ -114,6 +110,15 @@ void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 
 	Invalidate();
+}
+
+void CEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+	if (Common::isPrint(nChar)) {
+		if (_maxLength == 0 || _windowText.size() < _maxLength) {
+			_windowText += (char)nChar;
+			Invalidate();
+		}
+	}
 }
 
 void CEdit::OnSetFocus(CWnd *pOldWnd) {
