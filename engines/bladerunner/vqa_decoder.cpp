@@ -32,6 +32,8 @@
 
 #include "audio/decoders/raw.h"
 
+#include "graphics/blit.h"
+
 #include "common/array.h"
 #include "common/util.h"
 #include "common/memstream.h"
@@ -1101,34 +1103,63 @@ void VQADecoder::VQAVideoTrack::VPTRWriteBlock(Graphics::Surface *surface, unsig
 	uint32 intermDiv = 0;
 	uint32 dst_x = 0;
 	uint32 dst_y = 0;
-	uint16 vqaColor = 0;
-	uint8 a, r, g, b;
+
+	// Alpha component is inversed, set srcFormat to XRGB1555 to ignore it
+	// Instead we manually transform alpha values into a mask
+	Graphics::PixelFormat srcFormat = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+	const uint16 *src_p = (const uint16 *)block_src;
+	uint8 *mask = nullptr;
+
+#ifdef SCUMM_BIG_ENDIAN
+	// Swap bytes to big endian as the source is little endian
+	uint16 *swapSrc = (uint16 *)malloc(2 * _blockW * _blockH);
+	if (!swapSrc) {
+		warning("Not enough memory for VPTRWriteBlock");
+		return;
+	}
+
+	for (uint x = 0; x < _blockW * _blockH; ++x) {
+		swapSrc[x] = SWAP_BYTES_16(src_p[x]);
+	}
+
+	src_p = swapSrc;
+#endif
+
+	if (alpha) {
+		mask = (uint8 *)malloc(_blockW * _blockH);
+		if (!mask) {
+			warning("Not enough memory for VPTRWriteBlock");
+			return;
+		}
+		// Create mask using alpha values
+		for (uint x = 0; x < _blockW * _blockH; ++x) {
+			// Extract alpha value
+			// We XOR it with 1 to invert and get an actual alpha value
+			mask[x] = (byte)(READ_UINT16(src_p + x) >> 15) ^ 0x01;
+		}
+	}
 
 	for (uint i = count; i != 0; --i) {
-		// aux variable to avoid duplicate division and a modulo operation
 		intermDiv = (dstBlock + count - i) / blocks_per_line; // start of current blocks line
 		dst_x = ((dstBlock + count - i) - intermDiv * blocks_per_line) * _blockW + _offsetX;
 		dst_y = intermDiv * _blockH + _offsetY;
 
-		const uint8 *src_p = block_src;
-
-		for (uint y = _blockH; y != 0; --y) {
-			for (uint x = _blockW; x != 0; --x) {
-				vqaColor = READ_LE_UINT16(src_p);
-				src_p += 2;
-
-				getGameDataColor(vqaColor, a, r, g, b);
-
-				if (!(alpha && a)) {
-					// CLIP() is too slow and it is not needed.
-					// void* dstPtr = surface->getBasePtr(CLIP(dst_x + x, (uint32)0, (uint32)(surface->w - 1)), CLIP(dst_y + y, (uint32)0, (uint32)(surface->h - 1)));
-					void* dstPtr = surface->getBasePtr(dst_x + _blockW - x, dst_y + _blockH - y);
-					// Ignore the alpha in the output as it is inversed in the input
-					drawPixel(*surface, dstPtr, surface->format.RGBToColor(r, g, b));
-				}
-			}
+		uint8* dstPtr = (uint8 *)surface->getBasePtr(dst_x, dst_y);
+		if (alpha) {
+			// Use mask to blit
+			Graphics::crossMaskBlit(dstPtr, (const byte *)src_p, (const byte *)mask, surface->pitch, _blockW * 2, _blockW, _blockW, _blockH, surface->format, srcFormat);
+		} else {
+			Graphics::crossBlit(dstPtr, (const byte *)src_p, surface->pitch, _blockW * 2, _blockW, _blockH, surface->format, srcFormat);
 		}
 	}
+
+#ifdef SCUMM_BIG_ENDIAN
+	if (swapSrc)
+		free(swapSrc);
+#endif
+
+	if (mask)
+		free(mask);
 }
 
 bool VQADecoder::VQAVideoTrack::decodeFrame(Graphics::Surface *surface) {
