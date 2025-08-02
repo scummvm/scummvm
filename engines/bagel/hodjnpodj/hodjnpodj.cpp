@@ -92,7 +92,7 @@ Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
 	savegameInfo.sync(s);
 
 	if (s.isLoading()) {
-		if (ValidateSGInfo(&savegameInfo) != ERR_NONE)
+		if (!ValidateSGInfo(&savegameInfo))
 			return Common::kReadingFailed;
 
 		if (ConvertFromSGI(&_bfcMgr, &savegameInfo) != ERR_NONE)
