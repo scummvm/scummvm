@@ -103,6 +103,8 @@ struct FakeLock {
 	~FakeLock();
 	void operator = (FakeLock &&other) noexcept;
 	void release();
+	
+	inline bool isReleased() const { return _semaphore == nullptr; }
 private:
 	FakeSemaphore *_semaphore = nullptr;
 };

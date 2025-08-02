@@ -55,16 +55,42 @@ Task *Task::delay(uint32 millis) {
 	return new DelayTask(process(), millis);
 }
 
+void Task::syncGame(Serializer &s) {
+	s.syncAsUint32LE(_stage);
+}
+
+void Task::syncObjectAsString(Serializer &s, ObjectBase *&object, bool optional) {
+	String objectName, roomName;
+	if (object != nullptr) {
+		roomName = object->room()->name();
+		objectName = object->name();
+	}
+	s.syncString(roomName);
+	s.syncString(objectName);
+	if (s.isSaving())
+		return;
+	Room *room = g_engine->world().getRoomByName(roomName.c_str());
+	object = room == nullptr ? nullptr : room->getObjectByName(objectName.c_str());
+	if ((object == nullptr && !optional) || !roomName.empty() || !objectName.empty())
+		error("Invalid object name \"%s\" in room \"%s\" in savestate for task %s",
+			objectName.c_str(), roomName.c_str(), taskName());
+}
+
 DelayTask::DelayTask(Process &process, uint32 millis)
 	: Task(process)
 	, _endTime(millis) {
+}
+
+DelayTask::DelayTask(Process &process, Serializer &s)
+	: Task(process) {
+	syncGame(s);
 }
 
 TaskReturn DelayTask::run() {
 	TASK_BEGIN;
 	_endTime += g_engine->getMillis();
 	while (g_engine->getMillis() < _endTime)
-		TASK_YIELD;
+		TASK_YIELD(1);
 	TASK_END;
 }
 
@@ -73,10 +99,21 @@ void DelayTask::debugPrint() {
 	g_engine->getDebugger()->debugPrintf("Delay for further %ums\n", remaining);
 }
 
+void DelayTask::syncGame(Serializer &s) {
+	Task::syncGame(s);
+	s.syncAsUint32LE(_endTime);
+}
+
+DECLARE_TASK(DelayTask);
+
 Process::Process(ProcessId pid, MainCharacterKind characterKind)
 	: _pid(pid)
 	, _character(characterKind)
 	, _name("Unnamed process") {
+}
+
+Process::Process(Serializer &s) {
+	syncGame(s);
 }
 
 Process::~Process() {
@@ -122,6 +159,42 @@ void Process::debugPrint() {
 	for (uint i = 0; i < _tasks.size(); i++) {
 		debugger->debugPrintf("    %u: ", i);
 		_tasks[i]->debugPrint();
+	}
+}
+
+#define DEFINE_TASK(TaskName) \
+	extern Task *constructTask_##TaskName(Process &process, Serializer &s);
+#include "tasks.h"
+
+static Task *readTask(Process &process, Serializer &s) {
+	assert(s.isLoading());
+	String taskName;
+	s.syncString(taskName);
+
+#define DEFINE_TASK(TaskName) \
+	if (taskName == #TaskName) \
+		return constructTask_##TaskName(process, s);
+#include "tasks.h"
+
+	error("Invalid task type in savestate: %s", taskName.c_str());
+}
+
+void Process::syncGame(Serializer &s) {
+	s.syncAsUint32LE(_pid);
+	syncEnum(s, _character);
+	s.syncString(_name);
+	s.syncAsSint32LE(_lastReturnValue);
+
+	uint count = _tasks.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading()) {
+		assert(_tasks.empty());
+		for (uint i = 0; i < count; i++)
+			_tasks.push(readTask(*this, s));
+	}
+	else {
+		for (uint i = 0; i < count; i++)
+			_tasks[i]->syncGame(s);
 	}
 }
 
@@ -250,6 +323,34 @@ void Scheduler::debugPrint() {
 
 	if (!didPrintSomething)
 		console.debugPrintf("No processes running or backed up\n");
+}
+
+void Scheduler::prepareSyncGame(Serializer &s) {
+	if (s.isLoading()) {
+		killAllProcesses();
+		killProcessesForIn(MainCharacterKind::None, _backupProcesses, 0);
+	}
+}
+
+void Scheduler::syncGame(Serializer &s) {
+	assert(_currentProcessI == UINT_MAX); // let's not sync during ::run
+	assert(s.isSaving() || _backupProcesses.empty());
+
+	// we only sync the backupProcesses as these are the ones pertaining to the gameplay
+	// the other arrays would be used for the menu
+
+	s.syncAsUint32LE(_nextPid);
+	uint32 count = _backupProcesses.size();
+	s.syncAsUint32LE(count);
+	if (s.isLoading()) {
+		_backupProcesses.reserve(count);
+		for (uint32 i = 0; i < count; i++)
+			_backupProcesses.push_back(new Process(s));
+	}
+	else {
+		for (Process *process : _backupProcesses)
+			process->syncGame(s);
+	}
 }
 
 }

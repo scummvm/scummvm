@@ -329,13 +329,20 @@ void Sounds::setMusicToRoom(int roomMusicId) {
 }
 
 Task *Sounds::waitForMusicToEnd(Process &process) {
-	FakeLock lock(_musicSemaphore);
-	return new WaitForMusicTask(process, std::move(lock));
+	return new WaitForMusicTask(process);
 }
 
 PlaySoundTask::PlaySoundTask(Process &process, SoundHandle SoundHandle)
 	: Task(process)
 	, _soundHandle(SoundHandle) {
+}
+
+PlaySoundTask::PlaySoundTask(Process &process, Serializer &s)
+	: Task(process)
+	, _soundHandle({}) {
+	// playing sounds are not persisted in the savestates,
+	// this task will stop at the next frame
+	syncGame(s);
 }
 
 TaskReturn PlaySoundTask::run() {
@@ -353,9 +360,17 @@ void PlaySoundTask::debugPrint() {
 	g_engine->console().debugPrintf("PlaySound %u\n", _soundHandle);
 }
 
-WaitForMusicTask::WaitForMusicTask(Process &process, FakeLock &&lock)
+DECLARE_TASK(PlaySoundTask);
+
+WaitForMusicTask::WaitForMusicTask(Process &process)
 	: Task(process)
-	, _lock(std::move(lock)) {}
+	, _lock(g_engine->sounds().musicSemaphore()) {}
+
+WaitForMusicTask::WaitForMusicTask(Process &process, Serializer &s)
+	: Task(process)
+	, _lock(g_engine->sounds().musicSemaphore()) {
+	syncGame(s);
+}
 
 TaskReturn WaitForMusicTask::run() {
 	g_engine->sounds().queueMusic(-1);
@@ -367,5 +382,7 @@ TaskReturn WaitForMusicTask::run() {
 void WaitForMusicTask::debugPrint() {
 	g_engine->console().debugPrintf("WaitForMusic\n");
 }
+
+DECLARE_TASK(WaitForMusicTask);
 
 }

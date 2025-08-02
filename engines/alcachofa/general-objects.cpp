@@ -135,15 +135,20 @@ struct AnimateTask : public Task {
 		, _object(object) {
 		assert(_object != nullptr);
 		_graphic = object->graphic();
-		assert(_graphic != nullptr);
+		scumm_assert(_graphic != nullptr);
 		_duration = _graphic->animation().totalDuration();
+	}
+
+	AnimateTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
 	}
 
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		_object->toggle(true);
 		_graphic->start(false);
-		TASK_WAIT(delay(_duration));
+		TASK_WAIT(1, delay(_duration));
 		_object->toggle(false);
 		TASK_END;
 	}
@@ -152,11 +157,23 @@ struct AnimateTask : public Task {
 		g_engine->getDebugger()->debugPrintf("Animate \"%s\" for %ums", _object->name().c_str(), _duration);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		s.syncAsUint32LE(_duration);
+		syncObjectAsString(s, _object);
+		_graphic = _object->graphic();
+		scumm_assert(_graphic != nullptr);
+
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	GraphicObject *_object;
 	Graphic *_graphic;
 	uint32 _duration;
 };
+DECLARE_TASK(AnimateTask);
 
 Task *GraphicObject::animate(Process &process) {
 	return new AnimateTask(process, this);

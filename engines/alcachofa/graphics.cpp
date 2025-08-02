@@ -778,6 +778,11 @@ struct FadeTask : public Task {
 		, _permanentFadeAction(permanentFadeAction) {
 	}
 
+	FadeTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		if (_permanentFadeAction == PermanentFadeAction::UnsetFaded)
@@ -785,7 +790,7 @@ struct FadeTask : public Task {
 		_startTime = g_engine->getMillis();
 		while (g_engine->getMillis() - _startTime < _duration) {
 			draw((g_engine->getMillis() - _startTime) / (float)_duration);
-			TASK_YIELD;
+			TASK_YIELD(1);
 		}
 		draw(1.0f); // so that during a loading lag the screen is completly black/white
 		if (_permanentFadeAction == PermanentFadeAction::SetFaded)
@@ -800,6 +805,20 @@ struct FadeTask : public Task {
 		g_engine->console().debugPrintf("Fade (%d) from %.2f to %.2f with %ums remaining\n", (int)_fadeType, _from, _to, remaining);
 	}
 
+	void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncEnum(s, _fadeType);
+		syncEnum(s, _easingType);
+		syncEnum(s, _permanentFadeAction);
+		s.syncAsFloatLE(_from);
+		s.syncAsFloatLE(_to);
+		s.syncAsUint32LE(_startTime);
+		s.syncAsUint32LE(_duration);
+		s.syncAsSByte(_order);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	void draw(float t) {
 		g_engine->drawQueue().add<FadeDrawRequest>(_fadeType, _from + (_to - _from) * ease(t, _easingType), _order);
@@ -812,6 +831,7 @@ private:
 	int8 _order;
 	PermanentFadeAction _permanentFadeAction;
 };
+DECLARE_TASK(FadeTask);
 
 Task *fade(Process &process, FadeType fadeType,
 	float from, float to,

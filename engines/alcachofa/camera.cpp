@@ -285,7 +285,7 @@ void Camera::syncGame(Serializer &s) {
 }
 
 struct CamLerpTask : public Task {
-	CamLerpTask(Process &process, uint32 duration, EasingType easingType)
+	CamLerpTask(Process &process, uint32 duration = 0, EasingType easingType = EasingType::Linear)
 		: Task(process)
 		, _camera(g_engine->camera())
 		, _duration(duration)
@@ -297,7 +297,7 @@ struct CamLerpTask : public Task {
 		while (g_engine->getMillis() - _startTime < _duration) {
 			update(ease((g_engine->getMillis() - _startTime) / (float)_duration, _easingType));
 			_camera._isChanging = true;
-			TASK_YIELD;
+			TASK_YIELD(1);
 		}
 		update(1.0f);
 		TASK_END;
@@ -310,8 +310,14 @@ struct CamLerpTask : public Task {
 		g_engine->console().debugPrintf("%s camera with %ums remaining\n", taskName(), remaining);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		s.syncAsUint32LE(_startTime);
+		s.syncAsUint32LE(_duration);
+		syncEnum(s, _easingType);
+	}
+
 protected:
-	virtual const char *taskName() const = 0;
 	virtual void update(float t) = 0;
 
 	Camera &_camera;
@@ -325,17 +331,27 @@ struct CamLerpPosTask final : public CamLerpTask {
 		, _fromPos(_camera._appliedCenter)
 		, _deltaPos(targetPos - _camera._appliedCenter) {}
 
-protected:
-	virtual const char *taskName() const {
-		return "Lerp pos of";
+	CamLerpPosTask(Process &process, Serializer &s)
+		: CamLerpTask(process) {
+		syncGame(s);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		CamLerpTask::syncGame(s);
+		syncVector(s, _fromPos);
+		syncVector(s, _deltaPos);
+	}
+
+	virtual const char *taskName() const override;
+
+protected:
 	virtual void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * t);
 	}
 
 	Vector3d _fromPos, _deltaPos;
 };
+DECLARE_TASK(CamLerpPosTask);
 
 struct CamLerpScaleTask final : public CamLerpTask {
 	CamLerpScaleTask(Process &process, float targetScale, int32 duration, EasingType easingType)
@@ -343,17 +359,27 @@ struct CamLerpScaleTask final : public CamLerpTask {
 		, _fromScale(_camera._cur._scale)
 		, _deltaScale(targetScale - _camera._cur._scale) {}
 
-protected:
-	virtual const char *taskName() const {
-		return "Lerp scale of";
+	CamLerpScaleTask(Process &process, Serializer &s)
+		: CamLerpTask(process) {
+		syncGame(s);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		CamLerpTask::syncGame(s);
+		s.syncAsFloatLE(_fromScale);
+		s.syncAsFloatLE(_deltaScale);
+	}
+
+	virtual const char *taskName() const override;
+
+protected:
 	virtual void update(float t) override {
 		_camera._cur._scale = _fromScale + _deltaScale * t;
 	}
 
 	float _fromScale, _deltaScale;
 };
+DECLARE_TASK(CamLerpScaleTask);
 
 struct CamLerpPosScaleTask final : public CamLerpTask {
 	CamLerpPosScaleTask(Process &process,
@@ -368,11 +394,24 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 		, _moveEasingType(moveEasingType)
 		, _scaleEasingType(scaleEasingType) {}
 
-protected:
-	virtual const char *taskName() const {
-		return "Lerp pos and scale of";
+	CamLerpPosScaleTask(Process &process, Serializer &s)
+		: CamLerpTask(process) {
+		syncGame(s);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		CamLerpTask::syncGame(s);
+		syncVector(s, _fromPos);
+		syncVector(s, _deltaPos);
+		s.syncAsFloatLE(_fromScale);
+		s.syncAsFloatLE(_deltaScale);
+		syncEnum(s, _moveEasingType);
+		syncEnum(s, _scaleEasingType);
+	}
+
+	virtual const char *taskName() const override;
+
+protected:
 	virtual void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * ease(t, _moveEasingType));
 		_camera._cur._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
@@ -382,6 +421,7 @@ protected:
 	float _fromScale, _deltaScale;
 	EasingType _moveEasingType, _scaleEasingType;
 };
+DECLARE_TASK(CamLerpPosScaleTask);
 
 struct CamLerpRotationTask final : public CamLerpTask {
 	CamLerpRotationTask(Process &process, float targetRotation, int32 duration, EasingType easingType)
@@ -389,17 +429,33 @@ struct CamLerpRotationTask final : public CamLerpTask {
 		, _fromRotation(_camera._cur._rotation.getDegrees())
 		, _deltaRotation(targetRotation - _camera._cur._rotation.getDegrees()) {}
 
-protected:
-	virtual const char *taskName() const {
-		return "Lerp rotation of";
+	CamLerpRotationTask(Process &process, Serializer &s)
+		: CamLerpTask(process) {
+		syncGame(s);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		CamLerpTask::syncGame(s);
+		s.syncAsFloatLE(_fromRotation);
+		s.syncAsFloatLE(_deltaRotation);
+	}
+
+	virtual const char *taskName() const override;
+
+protected:
 	virtual void update(float t) override {
 		_camera._cur._rotation = Angle(_fromRotation + _deltaRotation * t);
 	}
 
 	float _fromRotation, _deltaRotation;
 };
+DECLARE_TASK(CamLerpRotationTask);
+
+static void syncVector(Serializer &s, Vector2d &v) {
+	float *data = v.getData();
+	s.syncAsFloatLE(data[0]);
+	s.syncAsFloatLE(data[1]);
+}
 
 struct CamShakeTask final : public CamLerpTask {
 	CamShakeTask(Process &process, Vector2d amplitude, Vector2d frequency, int32 duration)
@@ -407,11 +463,20 @@ struct CamShakeTask final : public CamLerpTask {
 		, _amplitude(amplitude)
 		, _frequency(frequency) { }
 
-protected:
-	virtual const char *taskName() const {
-		return "Shake";
+	CamShakeTask(Process &process, Serializer &s)
+		: CamLerpTask(process) {
+		syncGame(s);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		CamLerpTask::syncGame(s);
+		syncVector(s, _amplitude);
+		syncVector(s, _frequency);
+	}
+
+	virtual const char *taskName() const override;
+
+protected:
 	virtual void update(float t) override {
 		const Vector2d phase = _frequency * t * (float)M_PI * 2.0f;
 		const float amplTimeFactor = 1.0f / expf(t * 5.0f); // a curve starting at 1, depreciating towards 0 
@@ -422,13 +487,19 @@ protected:
 	}
 
 	Vector2d _amplitude, _frequency;
-
 };
+DECLARE_TASK(CamShakeTask);
 
 struct CamWaitToStopTask final : public Task {
 	CamWaitToStopTask(Process &process)
 		: Task(process)
 		, _camera(g_engine->camera()) {}
+
+	CamWaitToStopTask(Process &process, Serializer &s)
+		: Task(process)
+		, _camera(g_engine->camera()) {
+		syncGame(s);
+	}
 
 	virtual TaskReturn run() override {
 		return _camera._isChanging
@@ -440,9 +511,12 @@ struct CamWaitToStopTask final : public Task {
 		g_engine->console().debugPrintf("Wait for camera to stop moving\n");
 	}
 
+	virtual const char *taskName() const override;
+
 private:
 	Camera &_camera;
 };
+DECLARE_TASK(CamWaitToStopTask);
 
 struct CamSetInactiveAttributeTask final : public Task {
 	enum Attribute {
@@ -457,6 +531,12 @@ struct CamSetInactiveAttributeTask final : public Task {
 		, _attribute(attribute)
 		, _value(value)
 		, _delay(delay) {}
+
+	CamSetInactiveAttributeTask(Process &process, Serializer &s)
+		: Task(process)
+		, _camera(g_engine->camera()) {
+		syncGame(s);
+	}
 
 	virtual TaskReturn run() override {
 		if (_delay > 0) {
@@ -488,12 +568,22 @@ struct CamSetInactiveAttributeTask final : public Task {
 		g_engine->console().debugPrintf("Set inactive camera %s to %f after %dms\n", attributeName, _value, _delay);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncEnum(s, _attribute);
+		s.syncAsFloatLE(_value);
+		s.syncAsSint32LE(_delay);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	Camera &_camera;
 	Attribute _attribute;
 	float _value;
 	int32 _delay;
 };
+DECLARE_TASK(CamSetInactiveAttributeTask);
 
 Task *Camera::lerpPos(Process &process,
 					  Vector2d targetPos,

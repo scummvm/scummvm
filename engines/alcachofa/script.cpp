@@ -137,6 +137,11 @@ struct ScriptTimerTask : public Task {
 		, _durationSec(durationSec) {
 	}
 
+	ScriptTimerTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		{
@@ -148,7 +153,7 @@ struct ScriptTimerTask : public Task {
 				_result = 1;
 			g_engine->player().drawCursor();
 		}
-		TASK_YIELD; // Wait a frame to not produce an endless loop
+		TASK_YIELD(1); // Wait a frame to not produce an endless loop
 		TASK_RETURN(_result);
 		TASK_END;
 	}
@@ -157,10 +162,19 @@ struct ScriptTimerTask : public Task {
 		g_engine->getDebugger()->debugPrintf("Check input timer for %dsecs", _durationSec);
 	}
 
+	void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		s.syncAsSint32LE(_durationSec);
+		s.syncAsSint32LE(_result);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	int32 _durationSec;
 	int32 _result = 1;
 };
+DECLARE_TASK(ScriptTimerTask);
 
 enum class StackEntryType {
 	Number,
@@ -172,6 +186,15 @@ enum class StackEntryType {
 struct StackEntry {
 	StackEntry(StackEntryType type, int32 number) : _type(type), _number(number) {}
 	StackEntry(StackEntryType type, uint32 index) : _type(type), _index(index) {}
+	StackEntry(Serializer &s) { syncGame(s); }
+
+	void syncGame(Serializer &s) {
+		syncEnum(s, _type);
+		if (_type == StackEntryType::Number)
+			s.syncAsSint32LE(_number);
+		else
+			s.syncAsUint32LE(_index);
+	}
 
 	StackEntryType _type;
 	union {
@@ -201,6 +224,12 @@ struct ScriptTask : public Task {
 			_stack.push(forkParent._stack[i]);
 		pushNumber(1); // this task is the forked one
 		debugC(SCRIPT_DEBUG_LVL_TASKS, kDebugScript, "%u: Script fork from %u at %u", process.pid(), forkParent.process().pid(), _pc);
+	}
+
+	ScriptTask(Process &process, Serializer &s)
+		: Task(process)
+		, _script(g_engine->script()) {
+		syncGame(s);
 	}
 
 	virtual TaskReturn run() override {
@@ -341,6 +370,33 @@ struct ScriptTask : public Task {
 	virtual void debugPrint() {
 		g_engine->getDebugger()->debugPrintf("\"%s\" at %u\n", _name.c_str(), _pc);
 	}
+
+	void syncGame(Serializer &s) override {
+		assert(s.isSaving() || (_lock.isReleased() && _stack.empty()));
+
+		s.syncString(_name);
+		s.syncAsUint32LE(_pc);
+		s.syncAsByte(_returnsFromKernelCall);
+		s.syncAsByte(_isFirstExecution);
+
+		uint count = _stack.size();
+		s.syncAsUint32LE(count);
+		if (s.isLoading()) {
+			for (uint i = 0; i < count; i++)
+				_stack.push(StackEntry(s));
+		}
+		else {
+			for (uint i = 0; i < count; i++)
+				_stack[i].syncGame(s);
+		}
+
+		bool hasLock = !_lock.isReleased();
+		s.syncAsByte(hasLock);
+		if (hasLock)
+			_lock = FakeLock(g_engine->player().semaphoreFor(process().character()));
+	}
+
+	virtual const char *taskName() const override;
 
 private:
 	void setCharacterVariables() {
@@ -894,6 +950,7 @@ private:
 	bool _isFirstExecution = true;
 	FakeLock _lock;
 };
+DECLARE_TASK(ScriptTask);
 
 Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, ScriptFlags flags) {
 	return createProcess(character, behavior + '/' + action, flags);
@@ -910,7 +967,7 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 	}
 	FakeLock lock;
 	if (!(flags & ScriptFlags::IsBackground))
-		new (&lock) FakeLock(g_engine->player().semaphoreFor(character));
+		lock = FakeLock(g_engine->player().semaphoreFor(character));
 	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset, Common::move(lock));
 	process->name() = procedure;
 	return process;
