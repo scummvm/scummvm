@@ -242,18 +242,20 @@ Common::Error AlcachofaEngine::syncGame(Serializer &s) {
 		setMillis(millis);
 
 	/* Some notes about the order:
-	 * 1. The scheduler should come first due to our FakeSemaphore
+	 * 1. The scheduler should prepare due to our FakeSemaphores
 	 *    By destructing all previous processes we also release all locks and
 	 *    can assert that the semaphores are released on loading.
-	 * 2. The player should come last as it changes the room
+	 * 2. The player should come late as it changes the room
+	 * 3. With the room current, the tasks can now better find the referenced objects
 	 */
 
-	//scheduler().syncGame(s);
+	scheduler().prepareSyncGame(s);
 	world().syncGame(s);
 	camera().syncGame(s);
 	script().syncGame(s);
 	globalUI().syncGame(s);
 	player().syncGame(s);
+	scheduler().syncGame(s);
 
 	if (s.isLoading()) {
 		sounds().stopAll();

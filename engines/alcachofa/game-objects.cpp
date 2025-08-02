@@ -292,6 +292,11 @@ struct SayTextTask final : public Task {
 		, _dialogId(dialogId) {
 	}
 
+	SayTextTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		bool isSoundStillPlaying;
 
@@ -324,13 +329,13 @@ struct SayTextTask final : public Task {
 
 			if (!_character->_isTalking) {
 				g_engine->sounds().fadeOut(_soundHandle, 100);
-				TASK_WAIT(delay(200));
+				TASK_WAIT(1, delay(200));
 				TASK_RETURN(0);
 			}
 
 			_character->isSpeaking() = !isSoundStillPlaying ||
 				g_engine->sounds().isNoisy(_soundHandle, 80.0f, 150.0f);
-			TASK_YIELD;
+			TASK_YIELD(2);
 		}
 		TASK_END;
 	}
@@ -339,11 +344,20 @@ struct SayTextTask final : public Task {
 		g_engine->console().debugPrintf("SayText %s, %d\n", _character->name().c_str(), _dialogId);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncObjectAsString(s, _character);
+		s.syncAsSint32LE(_dialogId);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	Character *_character;
 	int32 _dialogId;
 	SoundHandle _soundHandle = {};
 };
+DECLARE_TASK(SayTextTask);
 
 Task *Character::sayText(Process &process, int32 dialogId) {
 	return new SayTextTask(process, this, dialogId);
@@ -376,10 +390,15 @@ struct AnimateCharacterTask final : public Task {
 		scumm_assert(_graphic != nullptr);
 	}
 
+	AnimateCharacterTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		while (_character->_curAnimateObject != nullptr)
-			TASK_YIELD;
+			TASK_YIELD(1);
 
 		_character->_curAnimateObject = _animateObject;
 		_graphic->start(false);
@@ -387,7 +406,7 @@ struct AnimateCharacterTask final : public Task {
 			_graphic->update();
 		do
 		{
-			TASK_YIELD;
+			TASK_YIELD(2);
 			if (process().isActiveForPlayer() && g_engine->input().wasAnyMouseReleased())
 				_graphic->pause();
 		} while (!_graphic->isPaused());
@@ -401,11 +420,22 @@ struct AnimateCharacterTask final : public Task {
 		g_engine->console().debugPrintf("AnimateCharacter %s, %s\n", _character->name().c_str(), _animateObject->name().c_str());
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncObjectAsString(s, _character);
+		syncObjectAsString(s, _animateObject);
+		_graphic = _animateObject->graphic();
+		scumm_assert(_graphic != nullptr);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	Character *_character;
 	ObjectBase *_animateObject;
 	Graphic *_graphic;
 };
+DECLARE_TASK(AnimateCharacterTask);
 
 Task *Character::animate(Process &process, ObjectBase *animateObject) {
 	assert(animateObject != nullptr);
@@ -420,6 +450,11 @@ struct LerpLodBiasTask final : public Task {
 		, _durationMs(durationMs) {
 	}
 
+	LerpLodBiasTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		_startTime = g_engine->getMillis();
@@ -427,7 +462,7 @@ struct LerpLodBiasTask final : public Task {
 		while (g_engine->getMillis() - _startTime < _durationMs) {
 			_character->lodBias() = _sourceLodBias + (_targetLodBias - _sourceLodBias) *
 				((g_engine->getMillis() - _startTime) / (float)_durationMs);
-			TASK_YIELD;
+			TASK_YIELD(1);
 		}
 		_character->lodBias() = _targetLodBias;
 		TASK_END;
@@ -441,11 +476,23 @@ struct LerpLodBiasTask final : public Task {
 			_character->name().c_str(), _targetLodBias, remaining);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncObjectAsString(s, _character);
+		s.syncAsFloatLE(_sourceLodBias);
+		s.syncAsFloatLE(_targetLodBias);
+		s.syncAsUint32LE(_startTime);
+		s.syncAsUint32LE(_durationMs);
+	}
+
+	virtual const char *taskName() const override;
+
 private:
 	Character *_character;
 	float _sourceLodBias = 0, _targetLodBias;
 	uint32 _startTime = 0, _durationMs;
 };
+DECLARE_TASK(LerpLodBiasTask);
 
 Task *Character::lerpLodBias(Process &process, float targetLodBias, int32 durationMs) {
 	return new LerpLodBiasTask(process, this, targetLodBias, durationMs);
@@ -729,26 +776,38 @@ void WalkingCharacter::syncGame(Serializer &serializer) {
 }
 
 struct ArriveTask : public Task {
-	ArriveTask(Process &process, const WalkingCharacter &character)
+	ArriveTask(Process &process, const WalkingCharacter *character)
 		: Task(process)
 		, _character(character) {
 	}
 
+	ArriveTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);		
+	}
+
 	virtual TaskReturn run() override {
-		return _character.isWalking()
+		return _character->isWalking()
 			? TaskReturn::yield()
 			: TaskReturn::finish(1);
 	}
 
 	virtual void debugPrint() override {
-		g_engine->getDebugger()->debugPrintf("Wait for %s to arrive", _character.name().c_str());
+		g_engine->getDebugger()->debugPrintf("Wait for %s to arrive", _character->name().c_str());
 	}
+
+	virtual void syncGame(Serializer &s) override {
+		syncObjectAsString(s, _character);
+	}
+
+	virtual const char *taskName() const override;
 private:
-	const WalkingCharacter &_character;
+	const WalkingCharacter *_character;
 };
+DECLARE_TASK(ArriveTask);
 
 Task *WalkingCharacter::waitForArrival(Process &process) {
-	return new ArriveTask(process, *this);
+	return new ArriveTask(process, this);
 }
 
 const char *MainCharacter::typeName() const { return "MainCharacter"; }
@@ -983,11 +1042,17 @@ struct DialogMenuTask : public Task {
 		, _character(character) {
 	}
 
+	DialogMenuTask(Process &process, Serializer &s)
+		: Task(process)
+		, _input(g_engine->input()) {
+		syncGame(s);
+	}
+
 	virtual TaskReturn run() override {
 		TASK_BEGIN;
 		layoutLines();
 		while (true) {
-			TASK_YIELD;
+			TASK_YIELD(1);
 			if (g_engine->player().activeCharacter() != _character)
 				continue;
 			g_engine->globalUI().updateChangingCharacter();
@@ -996,8 +1061,8 @@ struct DialogMenuTask : public Task {
 
 			_clickedLineI = updateLines();
 			if (_clickedLineI != UINT_MAX) {
-				TASK_YIELD;
-				TASK_WAIT(_character->sayText(process(), _character->_dialogLines[_clickedLineI]._dialogId));
+				TASK_YIELD(2);
+				TASK_WAIT(3, _character->sayText(process(), _character->_dialogLines[_clickedLineI]._dialogId));
 				int32 returnValue = _character->_dialogLines[_clickedLineI]._returnValue;
 				_character->_dialogLines.clear();
 				TASK_RETURN(returnValue);
@@ -1010,6 +1075,14 @@ struct DialogMenuTask : public Task {
 		g_engine->console().debugPrintf("DialogMenu for %s with %u lines\n",
 			_character->name().c_str(), _character->_dialogLines.size());
 	}
+
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		syncObjectAsString(s, _character);
+		s.syncAsUint32LE(_clickedLineI);
+	}
+
+	virtual const char *taskName() const override;
 
 private:
 	static constexpr int kTextXOffset = 5;
@@ -1055,6 +1128,7 @@ private:
 	MainCharacter *_character;
 	uint _clickedLineI = UINT_MAX;
 };
+DECLARE_TASK(DialogMenuTask);
 
 void MainCharacter::addDialogLine(int32 dialogId) {
 	assert(dialogId >= 0);
