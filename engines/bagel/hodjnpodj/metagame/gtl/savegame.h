@@ -33,7 +33,20 @@ namespace Gtl {
 
 typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
-BOOL CALLBACK SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+/**
+ * Converts a CBfcMgr to a SAVEGAME_INFO
+ * @param pBfcMgr		Meta Game info to be converted
+ * @param pSaveGameInfo	Storage for record info
+ * @return				error return code.
+ */
+extern void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo);
+
+/**
+ * Shows a Save-Game dialog box
+ * User can choose which slot they want to save a game into,
+ * and can give a description of the saved game.
+ */
+extern BOOL CALLBACK SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
 
 } // namespace Gtl
 } // namespace Metagame

@@ -32,6 +32,7 @@
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+#include "bagel/hodjnpodj/metagame/gtl/savegame.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
@@ -64,9 +65,9 @@ Common::Error HodjNPodjEngine::run() {
 	if (getGameId() == "mazeodoom") {
 		app.setStartupMinigame("mazedoom_demo");
 	} else if (ConfMan.getBool("metagame")) {
-		Metagame::CBfcMgr bfcMgr;
-		Metagame::Frame::InitBFCInfo(&bfcMgr);
-		Metagame::Gtl::RunMeta(nullptr, &bfcMgr, FALSE);
+		Metagame::Frame::InitBFCInfo(&_bfcMgr);
+		Metagame::Gtl::RunMeta(nullptr, &_bfcMgr, FALSE);
+
 		return Common::kNoError;
 	} else {
 		Common::String minigame = ConfMan.get("minigame");
@@ -84,12 +85,11 @@ Graphics::Screen *HodjNPodjEngine::getScreen() const {
 }
 
 Common::Error HodjNPodjEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+	Metagame::SAVEGAME_INFO savegameInfo;
+	if (s.isLoading())
+		Metagame::Gtl::ConvertToSGI(&_bfcMgr, &savegameInfo);
+
+	savegameInfo.sync(s);
 
 	return Common::kNoError;
 }

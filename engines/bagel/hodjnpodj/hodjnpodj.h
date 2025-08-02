@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "bagel/bagel.h"
+#include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -38,6 +39,7 @@ protected:
 
 public:
 	Common::String _gameId;
+	Metagame::CBfcMgr _bfcMgr;
 
 public:
 	HodjNPodjEngine(OSystem *syst, const ADGameDescription *gameDesc);

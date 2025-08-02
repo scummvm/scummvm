@@ -127,7 +127,7 @@ static  BOOL        bReturnToZoom = FALSE;
 static  BOOL        bReturnToMeta = FALSE;
 static  BOOL        bReturnToGrandTour = FALSE;
 
-CBfcMgr             *lpMetaGame = nullptr;
+CBfcMgr             *lpMetaGame;
 const char          *pszTest = "Corruption Test";
 
 LPGAMESTRUCT        lpGameStruct = nullptr;
@@ -307,7 +307,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 
 	UpdateDLLRouting();
 
-	lpMetaGame = new CBfcMgr;                       // only allocate this once
+	lpMetaGame = &g_engine->_bfcMgr;
 
 	// Check for skipping intro
 	if (ConfMan.getBool("skip_intro")) {

@@ -50,6 +50,8 @@ namespace Frame {
 // Bitmap Identifiers
 #define MAINSCROLL  ".\\ART\\MLSCROLL.BMP"
 
+extern CBfcMgr *lpMetaGame;
+
 extern VOID InitBFCInfo(CBfcMgr *pBfcMgr);
 
 /////////////////////////////////////////////////////////////////////////////
