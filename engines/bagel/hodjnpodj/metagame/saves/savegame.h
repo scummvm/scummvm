@@ -46,7 +46,7 @@ extern void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo);
  * User can choose which slot they want to save a game into,
  * and can give a description of the saved game.
  */
-extern BOOL SaveGame(CBfcMgr *, CWnd *, CPalette *, ERROR_CODE *);
+extern BOOL SaveGame(CWnd *, CPalette *, ERROR_CODE *);
 
 /**
  * Shows a Restore-Game dialog box

@@ -47,13 +47,12 @@ CHAR szDescBuf[40];
 // Local prototypes
 static ERROR_CODE GetSaveGameDescriptions(VOID);
 
-BOOL SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
+BOOL SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {
 	CWinApp *pMyApp;
 	HCURSOR hCursor;
 	INT iGameNum;
 	BOOL bSaved;
 	ERROR_CODE errCode;
-	assert(pBfcMgr == &g_engine->_bfcMgr);
 
 	// Validate input
 	assert(pWnd != nullptr);
@@ -109,7 +108,7 @@ BOOL SaveGame(CBfcMgr *pBfcMgr, CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErr
 	}
 
 	if (bSaved) {
-		pBfcMgr->m_bChanged = FALSE;
+		g_engine->_bfcMgr.m_bChanged = FALSE;
 
 		// Show this dialog box 10% of the time
 		if (ProbableTrue(10)) {

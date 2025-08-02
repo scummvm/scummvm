@@ -79,9 +79,7 @@ CSaveDlg::CSaveDlg(CHAR *pszDescriptions[], CWnd *pWnd, CPalette *pPalette)
 
 BOOL CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (HIWORD(lParam) == BN_CLICKED) {
-
 		switch (wParam) {
-
 		case IDC_SLOT1:
 		case IDC_SLOT2:
 		case IDC_SLOT3:
@@ -104,6 +102,7 @@ BOOL CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			return (TRUE);
 		}
 	}
+
 	return (CBmpDialog::OnCommand(wParam, lParam));
 }
 
