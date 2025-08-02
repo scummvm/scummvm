@@ -26,6 +26,7 @@
 #include "sherlock/tattoo/tattoo_screen.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/palette.h"
 
 namespace Sherlock {
 
@@ -368,7 +369,7 @@ int Screen::fadeRead(Common::SeekableReadStream &stream, byte *buf, int totalSiz
 
 void Screen::translatePalette(byte palette[Graphics::PALETTE_SIZE]) {
 	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
-		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
+		palette[idx] = PALETTE_6BIT_TO_8BIT(palette[idx]);
 }
 
 } // End of namespace Sherlock
