@@ -78,11 +78,11 @@ CharEntry::CharEntry() {
 
 CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 	// Setup character list
-	for (uint idx = 0; idx < _vm->_res->CHARTBL.size(); ++idx) {
-		if (_vm->_res->CHARTBL[idx].size() == 0)
+	for (const auto &charEntry: _vm->_res->CHARTBL) {
+		if (charEntry.size() == 0)
 			_charTable.push_back(CharEntry());
 		else
-			_charTable.push_back(CharEntry(&_vm->_res->CHARTBL[idx][0], _vm));
+			_charTable.push_back(CharEntry(charEntry.data(), _vm));
 	}
 
 	_charFlag = 0;
@@ -142,8 +142,8 @@ void CharManager::loadChar(int charId) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (uint i = 0; i < ce._extraCells.size(); ++i)
-		_vm->_extraCells.push_back(ce._extraCells[i]);
+	for (const auto &extraCell : ce._extraCells)
+		_vm->_extraCells.push_back(extraCell);
 }
 
 void CharManager::charMenu() {

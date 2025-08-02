@@ -78,7 +78,7 @@ public:
 	bool isSFXPlaying();
 
 	Resource *loadSound(int fileNum, int subfile);
-	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
+	void loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds);
 
 	void stopSound();
 	void freeSounds();

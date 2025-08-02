@@ -46,8 +46,8 @@ SoundManager::~SoundManager() {
 void SoundManager::clearSounds() {
 	debugC(1, kDebugSound, "clearSounds()");
 
-	for (uint i = 0; i < _soundTable.size(); ++i)
-		delete _soundTable[i]._res;
+	for (auto &sound : _soundTable)
+		delete sound._res;
 
 	_soundTable.clear();
 
@@ -186,14 +186,14 @@ bool SoundManager::isSFXPlaying() {
 	return _mixer->isSoundHandleActive(*_effectsHandle);
 }
 
-void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
+void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds) {
 	debugC(1, kDebugSound, "loadSounds");
 
 	clearSounds();
 
-	for (uint i = 0; i < sounds.size(); ++i) {
-		Resource *sound = loadSound(sounds[i]._fileNum, sounds[i]._subfile);
-		_soundTable.push_back(SoundEntry(sound, sounds[i]._priority));
+	for (const auto &sound : sounds) {
+		Resource *soundRes = loadSound(sound._fileNum, sound._subfile);
+		_soundTable.push_back(SoundEntry(soundRes, sound._priority));
 	}
 }
 

@@ -42,8 +42,8 @@ AnimationResource::AnimationResource(AccessEngine *vm, Resource *res) {
 }
 
 AnimationResource::~AnimationResource() {
-	for (int i = 0; i < (int)_animations.size(); ++i)
-		delete _animations[i];
+	for (auto *animation : _animations)
+		delete animation;
 }
 
 /*------------------------------------------------------------------------*/
@@ -80,8 +80,8 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 	while ((ofs = stream->readUint16LE()) != 0)
 		frameOffsets.push_back(ofs);
 
-	for (int i = 0; i < (int)frameOffsets.size(); i++) {
-		stream->seek(startOfs + frameOffsets[i]);
+	for (uint16 frameOffset : frameOffsets) {
+		stream->seek(startOfs + frameOffset);
 
 		AnimationFrame *frame = new AnimationFrame(stream, startOfs);
 		_frames.push_back(frame);
@@ -89,8 +89,8 @@ Animation::Animation(AccessEngine *vm, Common::SeekableReadStream *stream) : Man
 }
 
 Animation::~Animation() {
-	for (uint i = 0; i < _frames.size(); ++i)
-		delete _frames[i];
+	for (auto *frame : _frames)
+		delete frame;
 }
 
 typedef void(Animation::*AnimationMethodPtr)();
@@ -228,8 +228,7 @@ void Animation::setFrame1(AnimationFrame *frame) {
 	_vm->_animation->_base.y = frame->_baseY;
 
 	// Loop to add image draw requests for the parts of the frame
-	for (uint i = 0; i < frame->_parts.size(); ++i) {
-		AnimationFramePart *part = frame->_parts[i];
+	for (const AnimationFramePart *part: frame->_parts) {
 		ImageEntry ie;
 
 		// Set the flags
@@ -269,8 +268,8 @@ AnimationFrame::AnimationFrame(Common::SeekableReadStream *stream, int startOffs
 }
 
 AnimationFrame::~AnimationFrame() {
-	for (int i = 0; i < (int)_parts.size(); ++i)
-		delete _parts[i];
+	for (auto *part : _parts)
+		delete part;
 }
 
 /*------------------------------------------------------------------------*/
@@ -342,9 +341,9 @@ void AnimationManager::animate(int animId) {
 }
 
 void AnimationManager::updateTimers() {
-	for (uint idx = 0; idx < _animationTimers.size(); ++idx) {
-		if (_animationTimers[idx]->_countdownTicks > 0)
-			_animationTimers[idx]->_countdownTicks--;
+	for (auto *timer : _animationTimers) {
+		if (timer->_countdownTicks > 0)
+			timer->_countdownTicks--;
 	}
 }
 

@@ -284,7 +284,7 @@ public:
 
 	const SpriteResource *getIcons();
 
-	void loadCells(Common::Array<CellIdent> &cells);
+	void loadCells(const Common::Array<CellIdent> &cells);
 
 	/**
 	* Free the sprites list
