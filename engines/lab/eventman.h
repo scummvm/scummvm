@@ -39,7 +39,7 @@ class Image;
 
 struct IntuiMessage {
 	MessageClass _msgClass;
-	uint16 _code; // KeyCode or Button Id
+	uint16 _code; // Action or Button Id
 	uint16 _qualifier;
 	Common::Point _mouse;
 };
@@ -53,7 +53,7 @@ private:
 	bool _buttonHit;
 
 	Common::Point _mousePos;
-	Common::KeyState _keyPressed;
+	Common::CustomEventType _actionPressed;
 
 public:
 	EventManager (LabEngine *vm);

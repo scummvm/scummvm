@@ -130,9 +130,9 @@ void LabEngine::loadJournalData() {
 	_journalTextTitle = _resource->getText("Lab:Rooms/jt");
 
 	Common::File *journalFile = _resource->openDataFile("P:JImage");
-	_journalButtonList.push_back(_interface->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  Common::KEYCODE_LEFT,  new Image(journalFile, this), new Image(journalFile, this)));	// back
-	_journalButtonList.push_back(_interface->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  Common::KEYCODE_RIGHT, new Image(journalFile, this), new Image(journalFile, this)));	// forward
-	_journalButtonList.push_back(_interface->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, Common::KEYCODE_ESCAPE, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
+	_journalButtonList.push_back(_interface->createButton( 80, _utils->vgaScaleY(162) + _utils->svgaCord(1), 0,  kActionJournalBack,  new Image(journalFile, this), new Image(journalFile, this)));	// back
+	_journalButtonList.push_back(_interface->createButton(194, _utils->vgaScaleY(162) + _utils->svgaCord(1), 2,  kActionJournalForward, new Image(journalFile, this), new Image(journalFile, this)));	// forward
+	_journalButtonList.push_back(_interface->createButton(144, _utils->vgaScaleY(164) - _utils->svgaCord(1), 1, kActionJournalExit, new Image(journalFile, this), new Image(journalFile, this)));	// cancel
 	delete journalFile;
 
 	_anim->_noPalChange = true;
@@ -239,7 +239,7 @@ void LabEngine::processJournal() {
 		MessageClass msgClass  = msg->_msgClass;
 
 		if ((msgClass == kMessageRightClick) ||
-			((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+			((msgClass == kMessageAction) && (msg->_code == kActionExit)))
 			return;
 		else if (msgClass == kMessageButtonUp) {
 			uint16 buttonId  = msg->_code;
@@ -383,7 +383,7 @@ void LabEngine::processMonitor(const Common::String &ntext, TextFont *monitorFon
 		MessageClass msgClass  = msg->_msgClass;
 
 		if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+				((msgClass == kMessageAction) && (msg->_code == kActionExit)))
 			return;
 
 		if (msgClass == kMessageLeftClick) {

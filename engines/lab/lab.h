@@ -113,7 +113,46 @@ enum MessageClass {
 	kMessageLeftClick,
 	kMessageRightClick,
 	kMessageButtonUp,
-	kMessageRawKey
+	kMessageAction
+};
+
+enum LABActions {
+	kActionNone,
+	kActionQuit,
+	kActionSkipIntro,
+	kActionSoundRaise,
+	kActionSoundLower,
+	kActionInteract,
+	kActionTake,
+	kActionMove,
+	kActionOpen,
+	kActionClose,
+	kActionLook,
+	kActionInv,
+	kActionForward,
+	kActionLeft,
+	kActionRight,
+	kActionMap,
+	kActionFocusOnNextInteractiveItem,
+	kActionExit,
+	kActionMainDisplay,
+	kActionSaveLoad,
+	kActionUse,
+	kActionInvLook,
+	kActionPrev,
+	kActionNext,
+	kActionDropBreadcrumb,
+	kActionFollowBreadcrumbs,
+	kActionRunWhileFollowingBreadcrumbs,
+	kActionMapExit,
+	kActionUpperFloor,
+	kActionLowerFloor,
+	kActionQuitDialogYes,
+	kActionQuitDialogNo,
+	kActionJournalBack,
+	kActionJournalExit,
+	kActionJournalForward,
+	kActionDummy,
 };
 
 class LabEngine : public Engine {

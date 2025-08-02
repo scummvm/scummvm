@@ -29,6 +29,8 @@
 #include "lab/processroom.h"
 #include "lab/resource.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Lab {
 
 Console::Console(LabEngine *vm) : GUI::Debugger(), _vm(vm) {
@@ -56,6 +58,12 @@ bool Console::Cmd_Scene(int argc, const char **argv) {
 	_vm->_followingCrumbs = false;
 	_vm->_event->simulateEvent();
 	_vm->_graphics->_longWinInFront = false;
+
+	Common::Keymapper *keymapper = _vm->_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("lab-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("exit")->setEnabled(true);
 
 	return false;
 }
