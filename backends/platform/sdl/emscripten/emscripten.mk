@@ -18,6 +18,9 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ./build-emscripten/data
 endif
+ifdef DIST_FILES_SOUNDFONTS
+	cp $(DIST_FILES_SOUNDFONTS) ./build-emscripten/data
+endif
 ifdef DIST_FILES_SHADERS
 	mkdir -p ./build-emscripten/data/shaders
 	cp $(DIST_FILES_SHADERS) ./build-emscripten/data/shaders

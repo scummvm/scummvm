@@ -52,12 +52,14 @@ Options:
                      --enable-theoradec and --enable-vpx also download and build the dependency
 "
 
+_fluidlite=false
 _liba52=false
 _libfaad=false
 _libmad=false
 _libmpeg2=false
 _libtheoradec=false
 _libvpx=false
+
 # parse inputs
 for i in "$@"; do
   case $i in
@@ -67,6 +69,10 @@ for i in "$@"; do
     ;;
   --enable-faad)
     _libfaad=true
+    CONFIGURE_ARGS+=" $i"
+    ;;
+  --enable-fluidlite)
+    _fluidlite=true
     CONFIGURE_ARGS+=" $i"
     ;;
   --enable-mad)
@@ -214,6 +220,21 @@ if [ "$_libfaad" = true ]; then
   fi
   LIBS_FLAGS="${LIBS_FLAGS} --with-faad-prefix=$LIBS_FOLDER/build"
 fi
+
+if [ "$_fluidlite" = true ]; then
+  if [[ ! -f "$LIBS_FOLDER/build/lib/libfluidlite.a" ]]; then
+    echo "building fluidlite-b0f187b"
+    cd "$LIBS_FOLDER"
+    wget -nc --content-disposition "https://github.com/divideconcept/FluidLite/archive/b0f187b404e393ee0a495b277154d55d7d03cbeb.tar.gz"
+    tar -xf FluidLite-b0f187b404e393ee0a495b277154d55d7d03cbeb.tar.gz
+    cd "$LIBS_FOLDER/FluidLite-b0f187b404e393ee0a495b277154d55d7d03cbeb/"
+    emcmake cmake -B "build/"   -DFLUIDLITE_BUILD_STATIC:BOOL="1"  -DCMAKE_INSTALL_PREFIX="$LIBS_FOLDER/build/" -DCMAKE_INSTALL_LIBDIR="lib"
+    cmake --build "build/"  
+    cmake --install "build/"  
+  fi
+  LIBS_FLAGS="${LIBS_FLAGS} --with-fluidlite-prefix=$LIBS_FOLDER/build"
+fi
+
 
 if [ "$_libmad" = true ]; then
   if [[ ! -f "$LIBS_FOLDER/build/lib/libmad.a" ]]; then
