@@ -31,7 +31,6 @@
 
 namespace Sherlock {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 #define BG_GREYSCALE_RANGE_END 229
 #define BLACK 0
 

@@ -24,6 +24,7 @@
 #include "sherlock/sherlock.h"
 #include "common/debug.h"
 #include "common/memstream.h"
+#include "graphics/palette.h"
 
 namespace Sherlock {
 
@@ -192,7 +193,7 @@ void ImageFile::loadPalette(Common::SeekableReadStream &stream) {
 		// Found palette, so read it in
 		stream.seek(8, SEEK_CUR); // Skip over the rest of the signature text "VGA palette"
 		for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
-			_palette[idx] = VGA_COLOR_TRANS(stream.readByte());
+			_palette[idx] = PALETTE_6BIT_TO_8BIT(stream.readByte());
 	} else {
 		// Not a palette, so rewind to start of frame data for normal frame processing
 		stream.seek(-8, SEEK_CUR);

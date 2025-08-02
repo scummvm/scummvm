@@ -21,6 +21,7 @@
 
 #include "common/scummsys.h"
 #include "engines/util.h"
+#include "graphics/palette.h"
 #include "graphics/paletteman.h"
 #include "mads/mads.h"
 #include "mads/msurface.h"
@@ -28,12 +29,10 @@
 
 namespace MADS {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
 void RGB6::load(Common::SeekableReadStream *f) {
-	r = VGA_COLOR_TRANS(f->readByte());
-	g = VGA_COLOR_TRANS(f->readByte());
-	b = VGA_COLOR_TRANS(f->readByte());
+	r = PALETTE_6BIT_TO_8BIT(f->readByte());
+	g = PALETTE_6BIT_TO_8BIT(f->readByte());
+	b = PALETTE_6BIT_TO_8BIT(f->readByte());
 	_palIndex = f->readByte();
 	_u2 = f->readByte();
 	_flags = f->readByte();
@@ -408,7 +407,7 @@ Fader::Fader(MADSEngine *vm)
 	// to work directly with 8-bit RGB values rather than 6-bit RGB values
 	Common::fill(&_rgb64Map[0], &_rgb64Map[PALETTE_COUNT], 0);
 	for (int i = 0; i < 64; ++i)
-		_rgb64Map[VGA_COLOR_TRANS(i)] = i;
+		_rgb64Map[PALETTE_6BIT_TO_8BIT(i)] = i;
 	byte v = 0;
 	for (int i = 0; i < PALETTE_COUNT; ++i) {
 		if (_rgb64Map[i])
@@ -475,7 +474,7 @@ void Fader::fadeOut(byte palette[PALETTE_SIZE], byte *paletteMap,
 
 					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
 						signs[palCtr][colorCtr];
-					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
+					palette[palCtr * 3 + colorCtr] = PALETTE_6BIT_TO_8BIT(rgb63);
 				}
 			}
 		}
@@ -535,7 +534,7 @@ void Fader::fadeIn(byte palette[PALETTE_SIZE], byte destPalette[PALETTE_SIZE],
 
 					byte rgb63 = _rgb64Map[palette[palCtr * 3 + colorCtr]] +
 						signs[palCtr][colorCtr];
-					palette[palCtr * 3 + colorCtr] = VGA_COLOR_TRANS(rgb63);
+					palette[palCtr * 3 + colorCtr] = PALETTE_6BIT_TO_8BIT(rgb63);
 				}
 			}
 		}
@@ -616,7 +615,7 @@ void Fader::mapToGreyRamp(byte palette[PALETTE_SIZE], int baseColor, int numColo
 			} else {
 				intensity = _colorValues[color];
 			}
-			*palP++ = VGA_COLOR_TRANS(intensity);
+			*palP++ = PALETTE_6BIT_TO_8BIT(intensity);
 		}
 	}
 }
@@ -711,9 +710,9 @@ Palette::Palette(MADSEngine *vm) : Fader(vm), _paletteUsage(vm) {
 }
 
 void Palette::setEntry(byte palIndex, byte r, byte g, byte b) {
-	_mainPalette[palIndex * 3] = VGA_COLOR_TRANS(r);
-	_mainPalette[palIndex * 3 + 1] = VGA_COLOR_TRANS(g);
-	_mainPalette[palIndex * 3 + 2] = VGA_COLOR_TRANS(b);
+	_mainPalette[palIndex * 3] = PALETTE_6BIT_TO_8BIT(r);
+	_mainPalette[palIndex * 3 + 1] = PALETTE_6BIT_TO_8BIT(g);
+	_mainPalette[palIndex * 3 + 2] = PALETTE_6BIT_TO_8BIT(b);
 
 	setPalette((const byte *)&_mainPalette[palIndex * 3], palIndex, 1);
 }
@@ -841,10 +840,10 @@ void Palette::initVGAPalette(byte *palette) {
 }
 
 void Palette::setLowRange() {
-	_mainPalette[0] = _mainPalette[1] = _mainPalette[2] = VGA_COLOR_TRANS(0);
-	_mainPalette[3] = _mainPalette[4] = _mainPalette[5] = VGA_COLOR_TRANS(0x15);
-	_mainPalette[6] = _mainPalette[7] = _mainPalette[8] = VGA_COLOR_TRANS(0x2A);
-	_mainPalette[9] = _mainPalette[10] = _mainPalette[11] = VGA_COLOR_TRANS(0x3F);
+	_mainPalette[0] = _mainPalette[1] = _mainPalette[2] = PALETTE_6BIT_TO_8BIT(0);
+	_mainPalette[3] = _mainPalette[4] = _mainPalette[5] = PALETTE_6BIT_TO_8BIT(0x15);
+	_mainPalette[6] = _mainPalette[7] = _mainPalette[8] = PALETTE_6BIT_TO_8BIT(0x2A);
+	_mainPalette[9] = _mainPalette[10] = _mainPalette[11] = PALETTE_6BIT_TO_8BIT(0x3F);
 	_vm->_palette->setPalette(_mainPalette, 0, 4);
 }
 

@@ -25,14 +25,13 @@
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/paletteman.h"
+#include "graphics/palette.h"
 #include "access/access.h"
 #include "access/screen.h"
 #include "access/resources.h"
 #include "access/martian/martian_resources.h"
 
 namespace Access {
-
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
 
 ScreenSave::ScreenSave(){
 	_clipWidth = _clipHeight = 0;
@@ -120,14 +119,14 @@ void Screen::setInitialPalettte() {
 
 void Screen::setManPalette() {
 	for (int i = 0; i < 0x42; i++) {
-		_rawPalette[672 + i] = VGA_COLOR_TRANS(_manPal[i]);
+		_rawPalette[672 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 	}
 }
 
 void Screen::setIconPalette() {
 	if (_vm->getGameID() == GType_MartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
-			_rawPalette[741 + i] = VGA_COLOR_TRANS(Martian::ICON_PALETTE[i]);
+			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
 		}
 	}
 }
@@ -146,7 +145,7 @@ void Screen::setPalette() {
 void Screen::loadRawPalette(Common::SeekableReadStream *stream) {
 	stream->read(&_rawPalette[0], Graphics::PALETTE_SIZE);
 	for (byte *p = &_rawPalette[0]; p < &_rawPalette[Graphics::PALETTE_SIZE]; ++p)
-		*p = VGA_COLOR_TRANS(*p);
+		*p = PALETTE_6BIT_TO_8BIT(*p);
 }
 
 void Screen::updatePalette() {

@@ -33,8 +33,6 @@ namespace Shared {
 
 namespace Gfx {
 
-#define VGA_COLOR_TRANS(x) ((x) * 255 / 63)
-
 
 /**
  * Base class for an on-screen cursor. Currently used for text cursor display
