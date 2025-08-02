@@ -26,6 +26,7 @@
 #include "sherlock/scalpel/scalpel_screen.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/tattoo/tattoo_journal.h"
+#include "graphics/palette.h"
 
 namespace Sherlock {
 
@@ -241,7 +242,7 @@ void ScalpelJournal::drawFrame() {
 
 	// Translate the palette for display
 	for (int idx = 0; idx < Graphics::PALETTE_SIZE; ++idx)
-		palette[idx] = VGA_COLOR_TRANS(palette[idx]);
+		palette[idx] = PALETTE_6BIT_TO_8BIT(palette[idx]);
 
 	// Set the palette and print the title
 	screen.setPalette(palette);
