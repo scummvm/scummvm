@@ -226,9 +226,10 @@ HWND CWnd::GetSafeHwnd() const {
 }
 
 void CWnd::ShowWindow(int nCmdShow) {
-	assert(nCmdShow == SW_SHOWNORMAL || nCmdShow == SW_HIDE);
+	assert(nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL ||
+		nCmdShow == SW_HIDE);
 
-	if (nCmdShow == SW_SHOWNORMAL)
+	if (nCmdShow == SW_SHOW || nCmdShow == SW_SHOWNORMAL)
 		m_nStyle |= WS_VISIBLE;
 	else
 		m_nStyle &= ~WS_VISIBLE;
