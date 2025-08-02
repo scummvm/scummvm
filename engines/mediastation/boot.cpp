@@ -70,7 +70,7 @@ ContextDeclarationSectionType ContextDeclaration::getSectionType(Chunk &chunk) {
 ScreenDeclaration::ScreenDeclaration(Chunk &chunk) {
 	// Make sure this declaration isn't empty.
 	ScreenDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kScreenDeclarationAssetId != sectionType) {
+	if (kScreenDeclarationActorId != sectionType) {
 		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
 	_actorId = chunk.readTypedUint16();
@@ -118,7 +118,7 @@ FileDeclarationSectionType FileDeclaration::getSectionType(Chunk &chunk) {
 SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the actor ID.
 	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
-	if (kSubfileDeclarationAssetId != sectionType) {
+	if (kSubfileDeclarationActorId != sectionType) {
 		error("Got unexpected section type %d", static_cast<uint>(sectionType));
 	}
 	_actorId = chunk.readTypedUint16();

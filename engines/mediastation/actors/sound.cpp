@@ -25,41 +25,41 @@
 
 namespace MediaStation {
 
-void Sound::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void SoundActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderAssetId: {
+	case kActorHeaderActorId: {
 		// We already have this actor's ID, so we will just verify it is the same
 		// as the ID we have already read.
-		uint32 duplicateAssetId = chunk.readTypedUint16();
-		if (duplicateAssetId != _id) {
-			warning("Duplicate actor ID %d does not match original ID %d", duplicateAssetId, _id);
+		uint32 duplicateActorId = chunk.readTypedUint16();
+		if (duplicateActorId != _id) {
+			warning("Duplicate actor ID %d does not match original ID %d", duplicateActorId, _id);
 		}
 		break;
 	}
 
-	case kAssetHeaderChunkReference:
+	case kActorHeaderChunkReference:
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderHasOwnSubfile:
+	case kActorHeaderHasOwnSubfile:
 		_hasOwnSubfile = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderSoundInfo:
+	case kActorHeaderSoundInfo:
 		_chunkCount = chunk.readTypedUint16();
 		_sequence.readParameters(chunk);
 		break;
 
-	case kAssetHeaderMovieLoadType:
+	case kActorHeaderMovieLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 
-void Sound::process() {
+void SoundActor::process() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -72,7 +72,7 @@ void Sound::process() {
 	}
 }
 
-ScriptValue Sound::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue SoundActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -97,11 +97,11 @@ ScriptValue Sound::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 
 	default:
-		return Asset::callMethod(methodId, args);
+		return Actor::callMethod(methodId, args);
 	}
 }
 
-void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
+void SoundActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 	uint32 expectedChunkId = chunk._id;
 
 	debugC(5, kDebugLoading, "Sound::readSubfile(): Reading %d chunks", _chunkCount);
@@ -116,7 +116,7 @@ void Sound::readSubfile(Subfile &subfile, Chunk &chunk) {
 	}
 }
 
-void Sound::timePlay() {
+void SoundActor::timePlay() {
 	if (_isPlaying) {
 		return;
 	}
@@ -134,7 +134,7 @@ void Sound::timePlay() {
 	runEventHandlerIfExists(kSoundBeginEvent);
 }
 
-void Sound::timeStop() {
+void SoundActor::timeStop() {
 	if (!_isPlaying) {
 		return;
 	}

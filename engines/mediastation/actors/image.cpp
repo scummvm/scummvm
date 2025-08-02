@@ -25,7 +25,7 @@
 
 namespace MediaStation {
 
-Image::~Image() {
+ImageActor::~ImageActor() {
 	if (_actorReference == 0) {
 		// If we're just referencing another actor's bitmap,
 		// don't delete that bitmap.
@@ -34,25 +34,25 @@ Image::~Image() {
 	_bitmap = nullptr;
 }
 
-void Image::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void ImageActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderChunkReference:
+	case kActorHeaderChunkReference:
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderLoadType:
+	case kActorHeaderLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderX:
+	case kActorHeaderX:
 		_xOffset = chunk.readTypedUint16();
 		break;
 
-	case kAssetHeaderY:
+	case kActorHeaderY:
 		_yOffset = chunk.readTypedUint16();
 		break;
 
@@ -61,7 +61,7 @@ void Image::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue ImageActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 	switch (methodId) {
 	case kSpatialShowMethod: {
@@ -81,34 +81,34 @@ ScriptValue Image::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 }
 
-void Image::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void ImageActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	if (_isVisible) {
 		Common::Point origin = getBbox().origin();
 		g_engine->getDisplayManager()->imageBlit(origin, _bitmap, _dissolveFactor, dirtyRegion);
 	}
 }
 
-void Image::invalidateLocalBounds() {
+void ImageActor::invalidateLocalBounds() {
 	g_engine->addDirtyRect(getBbox());
 }
 
-void Image::spatialShow() {
+void ImageActor::spatialShow() {
 	_isVisible = true;
 	invalidateLocalBounds();
 }
 
-void Image::spatialHide() {
+void ImageActor::spatialHide() {
 	_isVisible = false;
 	invalidateLocalBounds();
 }
 
-Common::Rect Image::getBbox() const {
+Common::Rect ImageActor::getBbox() const {
 	Common::Point origin(_xOffset + _boundingBox.left, _yOffset + _boundingBox.top);
 	Common::Rect bbox(origin, _bitmap->width(), _bitmap->height());
 	return bbox;
 }
 
-void Image::readChunk(Chunk &chunk) {
+void ImageActor::readChunk(Chunk &chunk) {
 	BitmapHeader *bitmapHeader = new BitmapHeader(chunk);
 	_bitmap = new Bitmap(chunk, bitmapHeader);
 }

@@ -46,7 +46,7 @@
 namespace MediaStation {
 
 struct MediaStationGameDescription;
-class Hotspot;
+class HotspotActor;
 class Bitmap;
 
 // Most Media Station titles follow this file structure from the root directory
@@ -82,12 +82,12 @@ public:
 	void addDirtyRect(const Common::Rect &rect) { _dirtyRects.push_back(rect); }
 	void draw();
 
-	void registerAsset(Asset *actorToAdd);
+	void registerActor(Actor *actorToAdd);
 	void scheduleScreenBranch(uint screenId);
 	void scheduleContextRelease(uint contextId);
 
-	Asset *getAssetById(uint actorId);
-	Asset *getAssetByChunkReference(uint chunkReference);
+	Actor *getActorById(uint actorId);
+	Actor *getActorByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
@@ -117,19 +117,19 @@ private:
 	VideoDisplayManager *_displayManager = nullptr;
 
 	Boot *_boot = nullptr;
-	Common::Array<Asset *> _actors;
+	Common::Array<Actor *> _actors;
 	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _spatialEntities;
 	Common::HashMap<uint, Context *> _loadedContexts;
-	Asset *_currentHotspot = nullptr;
+	Actor *_currentHotspot = nullptr;
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
 
 	void doBranchToScreen();
 	Context *loadContext(uint32 contextId);
 	void releaseContext(uint32 contextId);
-	Asset *findAssetToAcceptMouseEvents();
+	Actor *findActorToAcceptMouseEvents();
 
-	static int compareAssetByZIndex(const SpatialEntity *a, const SpatialEntity *b);
+	static int compareActorByZIndex(const SpatialEntity *a, const SpatialEntity *b);
 };
 
 extern MediaStationEngine *g_engine;

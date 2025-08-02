@@ -40,12 +40,12 @@ private:
 	int _unk2 = 0;
 };
 
-class Font : public Asset {
+class FontActor : public Actor {
 public:
-	Font() : Asset(kAssetTypeFont) {};
-	~Font();
+	FontActor() : Actor(kActorTypeFont) {};
+	~FontActor();
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual void readChunk(Chunk &chunk) override;
 
 private:

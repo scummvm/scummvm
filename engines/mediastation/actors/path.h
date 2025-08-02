@@ -28,13 +28,13 @@
 
 namespace MediaStation {
 
-class Path : public Asset {
+class PathActor : public Actor {
 public:
-	Path() : Asset(kAssetTypePath) {};
+	PathActor() : Actor(kActorTypePath) {};
 
 	virtual void process() override;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:

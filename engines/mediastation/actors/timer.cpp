@@ -26,7 +26,7 @@
 
 namespace MediaStation {
 
-ScriptValue Timer::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue TimerActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -49,11 +49,11 @@ ScriptValue Timer::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 
 	default:
-		return Asset::callMethod(methodId, args);
+		return Actor::callMethod(methodId, args);
 	}
 }
 
-void Timer::timePlay() {
+void TimerActor::timePlay() {
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
@@ -75,7 +75,7 @@ void Timer::timePlay() {
 	debugC(5, kDebugScript, "Timer::timePlay(): Now playing for %d ms", _duration);
 }
 
-void Timer::timeStop() {
+void TimerActor::timeStop() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -85,7 +85,7 @@ void Timer::timeStop() {
 	_lastProcessedTime = 0;
 }
 
-void Timer::process() {
+void TimerActor::process() {
 	if (_isPlaying) {
 		processTimeEventHandlers();
 	}

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MEDIASTATION_ASSET_H
-#define MEDIASTATION_ASSET_H
+#ifndef MEDIASTATION_ACTOR_H
+#define MEDIASTATION_ACTOR_H
 
 #include "common/keyboard.h"
 
@@ -31,98 +31,98 @@
 
 namespace MediaStation {
 
-enum AssetType {
-	kAssetTypeEmpty = 0x0000,
-	kAssetTypeScreen = 0x0001, // SCR
-	kAssetTypeStage = 0x0002, // STG
-	kAssetTypePath = 0x0004, // PTH
-	kAssetTypeSound = 0x0005, // SND
-	kAssetTypeTimer = 0x0006, // TMR
-	kAssetTypeImage = 0x0007, // IMG
-	kAssetTypeHotspot = 0x000b, // HSP
-	kAssetTypeSprite = 0x000e, // SPR
-	kAssetTypeLKZazu = 0x000f,
-	kAssetTypeLKConstellations = 0x0010,
-	kAssetTypeDocument = 0x0011,
-	kAssetTypeImageSet = 0x001d,
-	kAssetTypeCursor = 0x000c, // CSR
-	kAssetTypePrinter = 0x0019, // PRT
-	kAssetTypeMovie = 0x0016, // MOV
-	kAssetTypePalette = 0x0017,
-	kAssetTypeText = 0x001a, // TXT
-	kAssetTypeFont = 0x001b, // FON
-	kAssetTypeCamera = 0x001c, // CAM
-	kAssetTypeCanvas = 0x001e, // CVS
-	kAssetTypeXsnd = 0x001f,
-	kAssetTypeXsndMidi = 0x0020,
-	kAssetTypeRecorder = 0x0021,
-	kAssetTypeFunction = 0x0069 // FUN
+enum ActorType {
+	kActorTypeEmpty = 0x0000,
+	kActorTypeScreen = 0x0001, // SCR
+	kActorTypeStage = 0x0002, // STG
+	kActorTypePath = 0x0004, // PTH
+	kActorTypeSound = 0x0005, // SND
+	kActorTypeTimer = 0x0006, // TMR
+	kActorTypeImage = 0x0007, // IMG
+	kActorTypeHotspot = 0x000b, // HSP
+	kActorTypeSprite = 0x000e, // SPR
+	kActorTypeLKZazu = 0x000f,
+	kActorTypeLKConstellations = 0x0010,
+	kActorTypeDocument = 0x0011,
+	kActorTypeImageSet = 0x001d,
+	kActorTypeCursor = 0x000c, // CSR
+	kActorTypePrinter = 0x0019, // PRT
+	kActorTypeMovie = 0x0016, // MOV
+	kActorTypePalette = 0x0017,
+	kActorTypeText = 0x001a, // TXT
+	kActorTypeFont = 0x001b, // FON
+	kActorTypeCamera = 0x001c, // CAM
+	kActorTypeCanvas = 0x001e, // CVS
+	kActorTypeXsnd = 0x001f,
+	kActorTypeXsndMidi = 0x0020,
+	kActorTypeRecorder = 0x0021,
+	kActorTypeFunction = 0x0069 // FUN
 };
 
-enum AssetHeaderSectionType {
-	kAssetHeaderEmptySection = 0x0000,
-	kAssetHeaderEventHandler = 0x0017,
-	kAssetHeaderStageId = 0x0019,
-	kAssetHeaderAssetId = 0x001a,
-	kAssetHeaderChunkReference = 0x001b,
-	kAssetHeaderMovieAnimationChunkReference = 0x06a4,
-	kAssetHeaderMovieAudioChunkReference = 0x06a5,
-	kAssetHeaderAssetReference = 0x077b,
-	kAssetHeaderBoundingBox = 0x001c,
-	kAssetHeaderMouseActiveArea = 0x001d,
-	kAssetHeaderZIndex = 0x001e,
-	kAssetHeaderStartup = 0x001f,
-	kAssetHeaderTransparency = 0x0020,
-	kAssetHeaderHasOwnSubfile = 0x0021,
-	kAssetHeaderCursorResourceId = 0x0022,
-	kAssetHeaderFrameRate = 0x0024,
-	kAssetHeaderLoadType = 0x0032,
-	kAssetHeaderSoundInfo = 0x0033,
-	kAssetHeaderMovieLoadType = 0x0037,
-	kAssetHeaderSpriteChunkCount = 0x03e8,
-	kAssetHeaderPalette = 0x05aa,
-	kAssetHeaderDissolveFactor = 0x05dc,
-	kAssetHeaderGetOffstageEvents = 0x05dd,
-	kAssetHeaderX = 0x05de,
-	kAssetHeaderY = 0x05df,
+enum ActorHeaderSectionType {
+	kActorHeaderEmptySection = 0x0000,
+	kActorHeaderEventHandler = 0x0017,
+	kActorHeaderStageId = 0x0019,
+	kActorHeaderActorId = 0x001a,
+	kActorHeaderChunkReference = 0x001b,
+	kActorHeaderMovieAnimationChunkReference = 0x06a4,
+	kActorHeaderMovieAudioChunkReference = 0x06a5,
+	kActorHeaderActorReference = 0x077b,
+	kActorHeaderBoundingBox = 0x001c,
+	kActorHeaderMouseActiveArea = 0x001d,
+	kActorHeaderZIndex = 0x001e,
+	kActorHeaderStartup = 0x001f,
+	kActorHeaderTransparency = 0x0020,
+	kActorHeaderHasOwnSubfile = 0x0021,
+	kActorHeaderCursorResourceId = 0x0022,
+	kActorHeaderFrameRate = 0x0024,
+	kActorHeaderLoadType = 0x0032,
+	kActorHeaderSoundInfo = 0x0033,
+	kActorHeaderMovieLoadType = 0x0037,
+	kActorHeaderSpriteChunkCount = 0x03e8,
+	kActorHeaderPalette = 0x05aa,
+	kActorHeaderDissolveFactor = 0x05dc,
+	kActorHeaderGetOffstageEvents = 0x05dd,
+	kActorHeaderX = 0x05de,
+	kActorHeaderY = 0x05df,
 
 	// PATH FIELDS.
-	kAssetHeaderStartPoint = 0x060e,
-	kAssetHeaderEndPoint = 0x060f,
-	kAssetHeaderPathTotalSteps = 0x0610,
-	kAssetHeaderStepRate = 0x0611,
-	kAssetHeaderDuration = 0x0612,
+	kActorHeaderStartPoint = 0x060e,
+	kActorHeaderEndPoint = 0x060f,
+	kActorHeaderPathTotalSteps = 0x0610,
+	kActorHeaderStepRate = 0x0611,
+	kActorHeaderDuration = 0x0612,
 
 	// CAMERA FIELDS.
-	kAssetHeaderViewportOrigin = 0x076f,
-	kAssetHeaderLensOpen = 0x0770,
+	kActorHeaderViewportOrigin = 0x076f,
+	kActorHeaderLensOpen = 0x0770,
 
 	// STAGE FIELDS.
-	kAssetHeaderStageUnk1 = 0x0771,
-	kAssetHeaderCylindricalX = 0x0772,
-	kAssetHeaderCylindricalY = 0x0773,
-	kAssetHeaderAssetName = 0x0bb8,
+	kActorHeaderStageUnk1 = 0x0771,
+	kActorHeaderCylindricalX = 0x0772,
+	kActorHeaderCylindricalY = 0x0773,
+	kActorHeaderActorName = 0x0bb8,
 
 	// TEXT FIELDS.
-	kAssetHeaderEditable = 0x03eb,
-	kAssetHeaderFontId = 0x0258,
-	kAssetHeaderInitialText = 0x0259,
-	kAssetHeaderTextMaxLength = 0x25a,
-	kAssetHeaderTextJustification = 0x025b,
-	kAssetHeaderTextPosition = 0x25f,
-	kAssetHeaderTextUnk1 = 0x262,
-	kAssetHeaderTextUnk2 = 0x263,
-	kAssetHeaderTextCharacterClass = 0x0266,
+	kActorHeaderEditable = 0x03eb,
+	kActorHeaderFontId = 0x0258,
+	kActorHeaderInitialText = 0x0259,
+	kActorHeaderTextMaxLength = 0x25a,
+	kActorHeaderTextJustification = 0x025b,
+	kActorHeaderTextPosition = 0x25f,
+	kActorHeaderTextUnk1 = 0x262,
+	kActorHeaderTextUnk2 = 0x263,
+	kActorHeaderTextCharacterClass = 0x0266,
 
 	// SPRITE FIELDS.
-	kAssetHeaderSpriteClip = 0x03e9,
-	kAssetHeaderCurrentSpriteClip = 0x03ea
+	kActorHeaderSpriteClip = 0x03e9,
+	kActorHeaderCurrentSpriteClip = 0x03ea
 };
 
-class Asset {
+class Actor {
 public:
-	Asset(AssetType type) : _type(type) {};
-	virtual ~Asset();
+	Actor(ActorType type) : _type(type) {};
+	virtual ~Actor();
 
 	// Does any needed frame drawing, audio playing, event handlers, etc.
 	virtual void process() { return; }
@@ -133,7 +133,7 @@ public:
 	virtual bool isSpatialActor() const { return false; }
 
 	virtual void initFromParameterStream(Chunk &chunk);
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType);
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType);
 
 	// These are not pure virtual so if an actor doesnʻt read any chunks or
 	// subfiles it doesnʻt need to just implement these with an error message.
@@ -144,7 +144,7 @@ public:
 	void runEventHandlerIfExists(EventType eventType, const ScriptValue &arg);
 	void runEventHandlerIfExists(EventType eventType);
 
-	AssetType type() const { return _type; }
+	ActorType type() const { return _type; }
 	uint id() const { return _id; }
 	uint contextId() const { return _contextId; }
 	void setId(uint id) { _id = id; }
@@ -154,7 +154,7 @@ public:
 	uint _actorReference = 0;
 
 protected:
-	AssetType _type = kAssetTypeEmpty;
+	ActorType _type = kActorTypeEmpty;
 	uint _id = 0;
 	uint _contextId = 0;
 
@@ -164,13 +164,13 @@ protected:
 	Common::HashMap<uint, Common::Array<EventHandler *> > _eventHandlers;
 };
 
-class SpatialEntity : public Asset {
+class SpatialEntity : public Actor {
 public:
-	SpatialEntity(AssetType type) : Asset(type) {};
+	SpatialEntity(ActorType type) : Actor(type) {};
 
 	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) { return; }
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 
 	virtual bool isSpatialActor() const override { return true; }
 	virtual bool isVisible() const { return _isVisible; }

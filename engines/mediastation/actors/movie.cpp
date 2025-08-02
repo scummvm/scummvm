@@ -75,7 +75,7 @@ MovieFrameImage::~MovieFrameImage() {
 	// we don't need to delete that here.
 }
 
-Movie::~Movie() {
+StreamMovieActor::~StreamMovieActor() {
 	for (MovieFrame *frame : _frames) {
 		delete frame;
 	}
@@ -87,47 +87,47 @@ Movie::~Movie() {
 	_images.clear();
 }
 
-void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderAssetId: {
+	case kActorHeaderActorId: {
 		// We already have this actor's ID, so we will just verify it is the same
 		// as the ID we have already read.
-		uint32 duplicateAssetId = chunk.readTypedUint16();
-		if (duplicateAssetId != _id) {
-			warning("Duplicate actor ID %d does not match original ID %d", duplicateAssetId, _id);
+		uint32 duplicateActorId = chunk.readTypedUint16();
+		if (duplicateActorId != _id) {
+			warning("Duplicate actor ID %d does not match original ID %d", duplicateActorId, _id);
 		}
 		break;
 	}
 
-	case kAssetHeaderMovieLoadType:
+	case kActorHeaderMovieLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderChunkReference:
+	case kActorHeaderChunkReference:
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderHasOwnSubfile: {
+	case kActorHeaderHasOwnSubfile: {
 		bool hasOwnSubfile = static_cast<bool>(chunk.readTypedByte());
 		if (!hasOwnSubfile) {
-			error("Movie doesn't have a subfile");
+			error("StreamMovieActor doesn't have a subfile");
 		}
 		break;
 	}
 
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderMovieAudioChunkReference:
+	case kActorHeaderMovieAudioChunkReference:
 		_audioChunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderMovieAnimationChunkReference:
+	case kActorHeaderMovieAnimationChunkReference:
 		_animationChunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderSoundInfo:
+	case kActorHeaderSoundInfo:
 		_audioChunkCount = chunk.readTypedUint16();
 		_audioSequence.readParameters(chunk);
 		break;
@@ -137,7 +137,7 @@ void Movie::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue StreamMovieActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -191,7 +191,7 @@ ScriptValue Movie::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 	}
 }
 
-void Movie::timePlay() {
+void StreamMovieActor::timePlay() {
 	// TODO: Play movies one chunk at a time, which more directly approximates
 	// the original's reading from the CD one chunk at a time.
 	if (_isPlaying) {
@@ -208,7 +208,7 @@ void Movie::timePlay() {
 	process();
 }
 
-void Movie::timeStop() {
+void StreamMovieActor::timeStop() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -228,7 +228,7 @@ void Movie::timeStop() {
 	runEventHandlerIfExists(kMovieStoppedEvent);
 }
 
-void Movie::process() {
+void StreamMovieActor::process() {
 	if (_isVisible) {
 		if (_isPlaying) {
 			processTimeEventHandlers();
@@ -237,20 +237,20 @@ void Movie::process() {
 	}
 }
 
-void Movie::setVisibility(bool visibility) {
+void StreamMovieActor::setVisibility(bool visibility) {
 	if (visibility != _isVisible) {
 		_isVisible = visibility;
 		invalidateLocalBounds();
 	}
 }
 
-void Movie::updateFrameState() {
+void StreamMovieActor::updateFrameState() {
 	uint movieTime = 0;
 	if (_isPlaying) {
 		uint currentTime = g_system->getMillis();
 		movieTime = currentTime - _startTime;
 	}
-	debugC(5, kDebugGraphics, "Movie::updateFrameState (%d): Starting update (movie time: %d)", _id, movieTime);
+	debugC(5, kDebugGraphics, "StreamMovieActor::updateFrameState (%d): Starting update (movie time: %d)", _id, movieTime);
 
 	// This complexity is necessary becuase movies can have more than one frame
 	// showing at the same time - for instance, a movie background and an
@@ -307,7 +307,7 @@ void Movie::updateFrameState() {
 	}
 }
 
-void Movie::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void StreamMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	for (MovieFrame *frame : _framesOnScreen) {
 		Common::Rect bbox = getFrameBoundingBox(frame);
 
@@ -333,13 +333,13 @@ void Movie::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	}
 }
 
-Common::Rect Movie::getFrameBoundingBox(MovieFrame *frame) {
+Common::Rect StreamMovieActor::getFrameBoundingBox(MovieFrame *frame) {
 	Common::Point origin = _boundingBox.origin() + frame->leftTop;
 	Common::Rect bbox = Common::Rect(origin, frame->image->width(), frame->image->height());
 	return bbox;
 }
 
-void Movie::readChunk(Chunk &chunk) {
+void StreamMovieActor::readChunk(Chunk &chunk) {
 	// Individual chunks are "stills" and are stored in the first subfile.
 	uint sectionType = chunk.readTypedUint16();
 	switch ((MovieSectionType)sectionType) {
@@ -357,20 +357,20 @@ void Movie::readChunk(Chunk &chunk) {
 	_hasStill = true;
 }
 
-void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
+void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 	uint expectedRootSectionType = chunk.readTypedUint16();
-	debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
 	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
 		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
 	}
 	uint chunkCount = chunk.readTypedUint16();
 	double unk1 = chunk.readTypedDouble();
-	debugC(5, kDebugLoading, "Movie::readSubfile(): chunkCount = 0x%x, unk1 = %f (@0x%llx)", chunkCount, unk1, static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): chunkCount = 0x%x, unk1 = %f (@0x%llx)", chunkCount, unk1, static_cast<long long int>(chunk.pos()));
 
 	Common::Array<uint> chunkLengths;
 	for (uint i = 0; i < chunkCount; i++) {
 		uint chunkLength = chunk.readTypedUint32();
-		debugC(5, kDebugLoading, "Movie::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): chunkLength = 0x%x (@0x%llx)", chunkLength, static_cast<long long int>(chunk.pos()));
 		chunkLengths.push_back(chunkLength);
 	}
 
@@ -380,14 +380,14 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		chunk = subfile.nextChunk();
 
 		// READ ALL THE FRAMES IN THIS CHUNK.
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAnimationChunk = (chunk._id == _animationChunkReference);
 		if (!isAnimationChunk) {
-			warning("Movie::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+			warning("StreamMovieActor::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 		while (isAnimationChunk) {
 			uint sectionType = chunk.readTypedUint16();
-			debugC(5, kDebugLoading, "Movie::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+			debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			switch (MovieSectionType(sectionType)) {
 			case kMovieImageDataSection:
 				readImageData(chunk);
@@ -398,7 +398,7 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 
 			default:
-				error("Movie::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+				error("StreamMovieActor::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			}
 
 			chunk = subfile.nextChunk();
@@ -406,24 +406,24 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 		}
 
 		// READ THE AUDIO.
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading audio chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAudioChunk = (chunk._id == _audioChunkReference);
 		if (isAudioChunk) {
 			_audioSequence.readChunk(chunk);
 			chunk = subfile.nextChunk();
 		} else {
-			debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+			debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) No audio chunk to read. (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 
-		debugC(5, kDebugLoading, "Movie::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading header chunk... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isHeaderChunk = (chunk._id == _chunkReference);
 		if (isHeaderChunk) {
 			if (chunk._length != 0x04) {
-				error("Movie::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk._length, static_cast<long long int>(chunk.pos()));
+				error("StreamMovieActor::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk._length, static_cast<long long int>(chunk.pos()));
 			}
 			chunk.skip(chunk._length);
 		} else {
-			error("Movie::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
+			error("StreamMovieActor::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 	}
 
@@ -438,11 +438,11 @@ void Movie::readSubfile(Subfile &subfile, Chunk &chunk) {
 	}
 }
 
-void Movie::invalidateRect(const Common::Rect &rect) {
+void StreamMovieActor::invalidateRect(const Common::Rect &rect) {
 	g_engine->addDirtyRect(rect);
 }
 
-void Movie::decompressIntoAuxImage(MovieFrame *frame) {
+void StreamMovieActor::decompressIntoAuxImage(MovieFrame *frame) {
 	const Common::Point origin(0, 0);
 	Common::Rect test = Common::Rect(frame->keyframeImage->width(), frame->keyframeImage->height());
 	Common::Array<Common::Rect> allDirty(1);
@@ -452,13 +452,13 @@ void Movie::decompressIntoAuxImage(MovieFrame *frame) {
 	g_engine->getDisplayManager()->imageBlit(origin, frame->keyframeImage, 1.0, allDirty, &frame->keyframeImage->_image);
 }
 
-void Movie::readImageData(Chunk &chunk) {
+void StreamMovieActor::readImageData(Chunk &chunk) {
 	MovieFrameHeader *header = new MovieFrameHeader(chunk);
 	MovieFrameImage *frame = new MovieFrameImage(chunk, header);
 	_images.push_back(frame);
 }
 
-void Movie::readFrameData(Chunk &chunk) {
+void StreamMovieActor::readFrameData(Chunk &chunk) {
 	uint frameDataToRead = chunk.readTypedUint16();
 	for (uint i = 0; i < frameDataToRead; i++) {
 		MovieFrame *frame = new MovieFrame(chunk);
@@ -486,7 +486,7 @@ void Movie::readFrameData(Chunk &chunk) {
 	}
 }
 
-int Movie::compareFramesByZIndex(const MovieFrame *a, const MovieFrame *b) {
+int StreamMovieActor::compareFramesByZIndex(const MovieFrame *a, const MovieFrame *b) {
 	if (b->zIndex > a->zIndex) {
 		return 1;
 	} else if (a->zIndex > b->zIndex) {

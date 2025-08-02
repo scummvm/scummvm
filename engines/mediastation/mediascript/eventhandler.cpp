@@ -61,8 +61,8 @@ Common::String EventHandler::getDebugHeader() {
 	case kScriptValueTypeFloat:
 		return Common::String::format("(float = %f)", _argumentValue.asFloat());
 
-	case kScriptValueTypeAssetId:
-		return Common::String::format("(context = %d)", _argumentValue.asAssetId());
+	case kScriptValueTypeActorId:
+		return Common::String::format("(context = %d)", _argumentValue.asActorId());
 
 	case kScriptValueTypeTime:
 		return Common::String::format("(time = %f)", _argumentValue.asTime());

@@ -30,15 +30,15 @@
 
 namespace MediaStation {
 
-class Image : public SpatialEntity {
+class ImageActor : public SpatialEntity {
 friend class Context;
 
 public:
-	Image() : SpatialEntity(kAssetTypeImage) {};
-	virtual ~Image() override;
+	ImageActor() : SpatialEntity(kActorTypeImage) {};
+	virtual ~ImageActor() override;
 
 	virtual void readChunk(Chunk &chunk) override;
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
 	virtual void invalidateLocalBounds() override;

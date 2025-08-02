@@ -232,10 +232,10 @@ ScriptValue CodeChunk::evaluateValue() {
 		return returnValue;
 	}
 
-	case kOperandTypeAssetId: {
+	case kOperandTypeActorId: {
 		uint actorId = _bytecode->readTypedUint16();
 		debugC(5, kDebugScript, "%d ", actorId);
-		returnValue.setToAssetId(actorId);
+		returnValue.setToActorId(actorId);
 		return returnValue;
 	}
 
@@ -512,20 +512,20 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 
 	ScriptValue returnValue;
 	switch (target.getType()) {
-	case kScriptValueTypeAssetId: {
-		if (target.asAssetId() == 0) {
+	case kScriptValueTypeActorId: {
+		if (target.asActorId() == 0) {
 			// It seems to be valid to call a method on a null actor ID, in
 			// which case nothing happens. Still issue warning for traceability.
 			warning("Attempt to call method on a null actor ID");
 			return returnValue;
 		} else {
 			// This is a regular actor that we can process directly.
-			uint actorId = target.asAssetId();
-			Asset *targetAsset = g_engine->getAssetById(actorId);
-			if (targetAsset == nullptr) {
-				error("Attempt to call method on actor ID %d, which isn't loaded", target.asAssetId());
+			uint actorId = target.asActorId();
+			Actor *targetActor = g_engine->getActorById(actorId);
+			if (targetActor == nullptr) {
+				error("Attempt to call method on actor ID %d, which isn't loaded", target.asActorId());
 			}
-			returnValue = targetAsset->callMethod(method, args);
+			returnValue = targetActor->callMethod(method, args);
 			return returnValue;
 		}
 	}

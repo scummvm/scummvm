@@ -30,33 +30,33 @@ FontGlyph::FontGlyph(Chunk &chunk, uint asciiCode, uint unk1, uint unk2, BitmapH
 	_unk2 = unk2;
 }
 
-Font::~Font() {
+FontActor::~FontActor() {
 	for (auto it = _glyphs.begin(); it != _glyphs.end(); ++it) {
 		delete it->_value;
 	}
 	_glyphs.clear();
 }
 
-void Font::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void FontActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderChunkReference:
+	case kActorHeaderChunkReference:
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 
-void Font::readChunk(Chunk &chunk) {
-	debugC(5, kDebugLoading, "Font::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
+void FontActor::readChunk(Chunk &chunk) {
+	debugC(5, kDebugLoading, "FontActor::readChunk(): Reading font glyph (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	uint asciiCode = chunk.readTypedUint16();
 	int unk1 = chunk.readTypedUint16();
 	int unk2 = chunk.readTypedUint16();
 	BitmapHeader *header = new BitmapHeader(chunk);
 	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
 	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
-		error("Font::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
+		error("FontActor::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
 	}
 	_glyphs.setVal(asciiCode, glyph);
 }

@@ -25,14 +25,14 @@
 
 namespace MediaStation {
 
-Palette::~Palette() {
+PaletteActor::~PaletteActor() {
 	delete _palette;
 	_palette = nullptr;
 }
 
-void Palette::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void PaletteActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderPalette: {
+	case kActorHeaderPalette: {
 		byte *buffer = new byte[Graphics::PALETTE_SIZE];
 		chunk.read(buffer, Graphics::PALETTE_SIZE);
 		_palette = new Graphics::Palette(buffer, Graphics::PALETTE_COUNT, DisposeAfterUse::YES);
@@ -40,7 +40,7 @@ void Palette::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 

@@ -329,8 +329,8 @@ const char *operandTypeToStr(OperandType type) {
 		return "String";
 	case kOperandTypeParamToken:
 		return "DollarSignVariable";
-	case kOperandTypeAssetId:
-		return "AssetId";
+	case kOperandTypeActorId:
+		return "ActorId";
 	case kOperandTypeTime:
 		return "Time";
 	case kOperandTypeVariable:
@@ -358,8 +358,8 @@ const char *scriptValueTypeToStr(ScriptValueType type) {
 		return "Time";
 	case kScriptValueTypeParamToken:
 		return "Int";
-	case kScriptValueTypeAssetId:
-		return "AssetId";
+	case kScriptValueTypeActorId:
+		return "ActorId";
 	case kScriptValueTypeString:
 		return "String";
 	case kScriptValueTypeCollection:

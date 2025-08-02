@@ -47,13 +47,13 @@ enum ContextSectionType {
 	kContextParametersSection = 0x000e,
 	kContextPaletteSection = 0x05aa,
 	kContextUnkAtEndSection = 0x0010,
-	kContextAssetHeaderSection = 0x0011,
+	kContextActorHeaderSection = 0x0011,
 	kContextPoohSection = 0x057a,
-	kContextAssetLinkSection = 0x0013,
+	kContextActorLinkSection = 0x0013,
 	kContextFunctionSection = 0x0031
 };
 
-class Screen;
+class ScreenActor;
 
 class Context : public Datafile {
 public:
@@ -64,10 +64,10 @@ public:
 	uint32 _subfileCount;
 	uint32 _fileSize;
 	Graphics::Palette *_palette = nullptr;
-	Screen *_screenAsset = nullptr;
+	ScreenActor *_screenActor = nullptr;
 
-	Asset *getAssetById(uint actorId);
-	Asset *getAssetByChunkReference(uint chunkReference);
+	Actor *getActorById(uint actorId);
+	Actor *getActorByChunkReference(uint chunkReference);
 	Function *getFunctionById(uint functionId);
 	ScriptValue *getVariable(uint variableId);
 
@@ -78,9 +78,9 @@ private:
 	uint _fileNumber = 0;
 	Common::String _contextName;
 
-	Common::HashMap<uint, Asset *> _actors;
+	Common::HashMap<uint, Actor *> _actors;
 	Common::HashMap<uint, Function *> _functions;
-	Common::HashMap<uint, Asset *> _actorsByChunkReference;
+	Common::HashMap<uint, Actor *> _actorsByChunkReference;
 	Common::HashMap<uint, ScriptValue *> _variables;
 
 	void readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk);
@@ -88,11 +88,11 @@ private:
 
 	bool readHeaderSection(Chunk &chunk);
 	void readCreateContextData(Chunk &chunk);
-	Asset *readCreateAssetData(Chunk &chunk);
+	Actor *readCreateActorData(Chunk &chunk);
 	void readCreateVariableData(Chunk &chunk);
 
-	void readAssetInFirstSubfile(Chunk &chunk);
-	void readAssetFromLaterSubfile(Subfile &subfile);
+	void readActorInFirstSubfile(Chunk &chunk);
+	void readActorFromLaterSubfile(Subfile &subfile);
 };
 
 } // End of namespace MediaStation

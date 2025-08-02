@@ -28,16 +28,16 @@
 
 namespace MediaStation {
 
-class Hotspot : public SpatialEntity {
+class HotspotActor : public SpatialEntity {
 public:
-	Hotspot() : SpatialEntity(kAssetTypeHotspot) {};
-	virtual ~Hotspot() { _mouseActiveArea.clear(); }
+	HotspotActor() : SpatialEntity(kActorTypeHotspot) {};
+	virtual ~HotspotActor() { _mouseActiveArea.clear(); }
 
 	bool isInside(const Common::Point &pointToCheck);
 	virtual bool isVisible() const override { return false; }
 	bool isActive() const { return _isActive; }
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 	uint _cursorResourceId = 0;

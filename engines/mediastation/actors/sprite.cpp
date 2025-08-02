@@ -60,7 +60,7 @@ uint32 SpriteFrame::index() {
 	return _bitmapHeader->_index;
 }
 
-Sprite::~Sprite() {
+SpriteMovieActor::~SpriteMovieActor() {
 	// If we're just referencing another actor's frames,
 	// don't delete those frames.
 	if (_actorReference == 0) {
@@ -71,25 +71,25 @@ Sprite::~Sprite() {
 	_frames.clear();
 }
 
-void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void SpriteMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderChunkReference:
+	case kActorHeaderChunkReference:
 		_chunkReference = chunk.readTypedChunkReference();
 		break;
 
-	case kAssetHeaderFrameRate:
+	case kActorHeaderFrameRate:
 		_frameRate = static_cast<uint32>(chunk.readTypedDouble());
 		break;
 
-	case kAssetHeaderLoadType:
+	case kActorHeaderLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderSpriteChunkCount: {
+	case kActorHeaderSpriteChunkCount: {
 		_frameCount = chunk.readTypedUint16();
 
 		// Set the default clip.
@@ -102,7 +102,7 @@ void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
-	case kAssetHeaderSpriteClip: {
+	case kActorHeaderSpriteClip: {
 		SpriteClip spriteClip;
 		spriteClip.id = chunk.readTypedUint16();
 		spriteClip.firstFrameIndex = chunk.readTypedUint16();
@@ -111,7 +111,7 @@ void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
-	case kAssetHeaderCurrentSpriteClip: {
+	case kActorHeaderCurrentSpriteClip: {
 		uint clipId = chunk.readTypedUint16();
 		setCurrentClip(clipId);
 		break;
@@ -122,7 +122,7 @@ void Sprite::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue SpriteMovieActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -212,7 +212,7 @@ ScriptValue Sprite::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue
 	}
 }
 
-bool Sprite::activateNextFrame() {
+bool SpriteMovieActor::activateNextFrame() {
 	if (_currentFrameIndex < _activeClip.lastFrameIndex) {
 		_currentFrameIndex++;
 		dirtyIfVisible();
@@ -221,7 +221,7 @@ bool Sprite::activateNextFrame() {
 	return false;
 }
 
-bool Sprite::activatePreviousFrame() {
+bool SpriteMovieActor::activatePreviousFrame() {
 	if (_currentFrameIndex > _activeClip.firstFrameIndex) {
 		_currentFrameIndex--;
 		dirtyIfVisible();
@@ -230,20 +230,20 @@ bool Sprite::activatePreviousFrame() {
 	return false;
 }
 
-void Sprite::dirtyIfVisible() {
+void SpriteMovieActor::dirtyIfVisible() {
 	if (_isVisible) {
 		invalidateLocalBounds();
 	}
 }
 
-void Sprite::setVisibility(bool visibility) {
+void SpriteMovieActor::setVisibility(bool visibility) {
 	if (_isVisible != visibility) {
 		_isVisible = visibility;
 		invalidateLocalBounds();
 	}
 }
 
-void Sprite::play() {
+void SpriteMovieActor::play() {
 	_isPlaying = true;
 	_startTime = g_system->getMillis();
 	_lastProcessedTime = 0;
@@ -252,12 +252,12 @@ void Sprite::play() {
 	scheduleNextFrame();
 }
 
-void Sprite::stop() {
+void SpriteMovieActor::stop() {
 	_nextFrameTime = 0;
 	_isPlaying = false;
 }
 
-void Sprite::setCurrentClip(uint clipId) {
+void SpriteMovieActor::setCurrentClip(uint clipId) {
 	if (_activeClip.id != clipId) {
 		if (_clips.contains(clipId)) {
 			_activeClip = _clips.getVal(clipId);
@@ -270,26 +270,26 @@ void Sprite::setCurrentClip(uint clipId) {
 	setCurrentFrameToInitial();
 }
 
-void Sprite::setCurrentFrameToInitial() {
+void SpriteMovieActor::setCurrentFrameToInitial() {
 	if (_currentFrameIndex != _activeClip.firstFrameIndex) {
 		_currentFrameIndex = _activeClip.firstFrameIndex;
 		dirtyIfVisible();
 	}
 }
 
-void Sprite::setCurrentFrameToFinal() {
+void SpriteMovieActor::setCurrentFrameToFinal() {
 	if (_currentFrameIndex != _activeClip.lastFrameIndex) {
 		_currentFrameIndex = _activeClip.lastFrameIndex;
 		dirtyIfVisible();
 	}
 }
 
-void Sprite::process() {
+void SpriteMovieActor::process() {
 	updateFrameState();
 	// Sprites don't have time event handlers, separate timers do time handling.
 }
 
-void Sprite::readChunk(Chunk &chunk) {
+void SpriteMovieActor::readChunk(Chunk &chunk) {
 	// Reads one frame from the sprite.
 	debugC(5, kDebugLoading, "Sprite::readFrame(): Reading sprite frame (@0x%llx)", static_cast<long long int>(chunk.pos()));
 	SpriteFrameHeader *header = new SpriteFrameHeader(chunk);
@@ -303,7 +303,7 @@ void Sprite::readChunk(Chunk &chunk) {
 	});
 }
 
-void Sprite::scheduleNextFrame() {
+void SpriteMovieActor::scheduleNextFrame() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -315,12 +315,12 @@ void Sprite::scheduleNextFrame() {
 	}
 }
 
-void Sprite::scheduleNextTimerEvent() {
+void SpriteMovieActor::scheduleNextTimerEvent() {
 	uint frameDuration = 1000 / _frameRate;
 	_nextFrameTime += frameDuration;
 }
 
-void Sprite::updateFrameState() {
+void SpriteMovieActor::updateFrameState() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -333,7 +333,7 @@ void Sprite::updateFrameState() {
 	}
 }
 
-void Sprite::timerEvent() {
+void SpriteMovieActor::timerEvent() {
 	if (!_isPlaying) {
 		error("Attempt to activate sprite frame when sprite is not playing");
 		return;
@@ -348,7 +348,7 @@ void Sprite::timerEvent() {
 	}
 }
 
-void Sprite::postMovieEndEventIfNecessary() {
+void SpriteMovieActor::postMovieEndEventIfNecessary() {
 	if (_currentFrameIndex != _activeClip.lastFrameIndex) {
 		return;
 	}
@@ -362,7 +362,7 @@ void Sprite::postMovieEndEventIfNecessary() {
 	runEventHandlerIfExists(kSpriteMovieEndEvent, value);
 }
 
-void Sprite::draw(const Common::Array<Common::Rect> &dirtyRegion) {
+void SpriteMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 	SpriteFrame *activeFrame = _frames[_currentFrameIndex];
 	if (_isVisible) {
 		Common::Rect frameBbox = activeFrame->boundingBox();

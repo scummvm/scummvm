@@ -28,9 +28,9 @@
 
 namespace MediaStation {
 
-class Timer : public Asset {
+class TimerActor : public Actor {
 public:
-	Timer() : Asset(kAssetTypeTimer) {};
+	TimerActor() : Actor(kActorTypeTimer) {};
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;

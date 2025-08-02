@@ -62,7 +62,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 
 	chunk = subfile._currentChunk;
 	while (!subfile.atEnd()) {
-		readAssetInFirstSubfile(chunk);
+		readActorInFirstSubfile(chunk);
 		if (!subfile.atEnd()) {
 			chunk = subfile.nextChunk();
 		}
@@ -71,32 +71,32 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 	// Read actors in the rest of the subfiles.
 	for (uint i = 1; i < _subfileCount; i++) {
 		subfile = getNextSubfile();
-		readAssetFromLaterSubfile(subfile);
+		readActorFromLaterSubfile(subfile);
 	}
 
 	// Some sprites and images don't have any image data themselves, they just
 	// reference the same image data in another actor. So we need to check for
 	// these and create the appropriate references.
 	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
-		Asset *actor = it->_value;
-		uint referencedAssetId = actor->_actorReference;
-		if (referencedAssetId != 0) {
+		Actor *actor = it->_value;
+		uint referencedActorId = actor->_actorReference;
+		if (referencedActorId != 0) {
 			switch (actor->type()) {
-			case kAssetTypeImage: {
-				Image *image = static_cast<Image *>(actor);
-				Image *referencedImage = static_cast<Image *>(getAssetById(referencedAssetId));
+			case kActorTypeImage: {
+				ImageActor *image = static_cast<ImageActor *>(actor);
+				ImageActor *referencedImage = static_cast<ImageActor *>(getActorById(referencedActorId));
 				if (referencedImage == nullptr) {
-					error("Context::Context(): Asset %d references non-existent actor %d", actor->id(), referencedAssetId);
+					error("Context::Context(): Actor %d references non-existent actor %d", actor->id(), referencedActorId);
 				}
 				image->_bitmap = referencedImage->_bitmap;
 				break;
 			}
 
-			case kAssetTypeSprite: {
-				Sprite *sprite = static_cast<Sprite *>(actor);
-				Sprite *referencedSprite = static_cast<Sprite *>(getAssetById(referencedAssetId));
+			case kActorTypeSprite: {
+				SpriteMovieActor *sprite = static_cast<SpriteMovieActor *>(actor);
+				SpriteMovieActor *referencedSprite = static_cast<SpriteMovieActor *>(getActorById(referencedActorId));
 				if (referencedSprite == nullptr) {
-					error("Context::Context(): Asset %d references non-existent actor %d", actor->id(), referencedAssetId);
+					error("Context::Context(): Actor %d references non-existent actor %d", actor->id(), referencedActorId);
 				}
 				sprite->_frames = referencedSprite->_frames;
 				sprite->_clips = referencedSprite->_clips;
@@ -104,7 +104,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 			}
 
 			default:
-				error("Context::Context(): Asset type %d referenced, but reference not implemented yet", actor->type());
+				error("Context::Context(): Actor type %d referenced, but reference not implemented yet", actor->type());
 			}
 		}
 	}
@@ -132,11 +132,11 @@ Context::~Context() {
 	_variables.clear();
 }
 
-Asset *Context::getAssetById(uint actorId) {
+Actor *Context::getActorById(uint actorId) {
 	return _actors.getValOrDefault(actorId);
 }
 
-Asset *Context::getAssetByChunkReference(uint chunkReference) {
+Actor *Context::getActorByChunkReference(uint chunkReference) {
 	return _actorsByChunkReference.getValOrDefault(chunkReference);
 }
 
@@ -193,61 +193,61 @@ void Context::readCreateContextData(Chunk &chunk) {
 	}
 }
 
-Asset *Context::readCreateAssetData(Chunk &chunk) {
+Actor *Context::readCreateActorData(Chunk &chunk) {
 	uint contextId = chunk.readTypedUint16();
-	AssetType type = static_cast<AssetType>(chunk.readTypedUint16());
+	ActorType type = static_cast<ActorType>(chunk.readTypedUint16());
 	uint id = chunk.readTypedUint16();
 	debugC(4, kDebugLoading, "_type = 0x%x, _id = 0x%x", static_cast<uint>(type), id);
 
-	Asset *actor = nullptr;
+	Actor *actor = nullptr;
 	switch (type) {
-	case kAssetTypeImage:
-		actor = new Image();
+	case kActorTypeImage:
+		actor = new ImageActor();
 		break;
 
-	case kAssetTypeMovie:
-		actor = new Movie();
+	case kActorTypeMovie:
+		actor = new StreamMovieActor();
 		break;
 
-	case kAssetTypeSound:
-		actor = new Sound();
+	case kActorTypeSound:
+		actor = new SoundActor();
 		break;
 
-	case kAssetTypePalette:
-		actor = new Palette();
+	case kActorTypePalette:
+		actor = new PaletteActor();
 		break;
 
-	case kAssetTypePath:
-		actor = new Path();
+	case kActorTypePath:
+		actor = new PathActor();
 		break;
 
-	case kAssetTypeTimer:
-		actor = new Timer();
+	case kActorTypeTimer:
+		actor = new TimerActor();
 		break;
 
-	case kAssetTypeHotspot:
-		actor = new Hotspot();
+	case kActorTypeHotspot:
+		actor = new HotspotActor();
 		break;
 
-	case kAssetTypeSprite:
-		actor = new Sprite();
+	case kActorTypeSprite:
+		actor = new SpriteMovieActor();
 		break;
 
-	case kAssetTypeCanvas:
-		actor = new Canvas();
+	case kActorTypeCanvas:
+		actor = new CanvasActor();
 		break;
 
-	case kAssetTypeScreen:
-		actor = new Screen();
-		_screenAsset = static_cast<Screen *>(actor);
+	case kActorTypeScreen:
+		actor = new ScreenActor();
+		_screenActor = static_cast<ScreenActor *>(actor);
 		break;
 
-	case kAssetTypeFont:
-		actor = new Font();
+	case kActorTypeFont:
+		actor = new FontActor();
 		break;
 
-	case kAssetTypeText:
-		actor = new Text();
+	case kActorTypeText:
+		actor = new TextActor();
 		break;
 
 	default:
@@ -309,39 +309,39 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): Finished reading sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
 }
 
-void Context::readAssetInFirstSubfile(Chunk &chunk) {
+void Context::readActorInFirstSubfile(Chunk &chunk) {
 	if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
-		warning("Context::readAssetInFirstSubfile(): Skippping \"igod\" actor link chunk");
+		warning("Context::readActorInFirstSubfile(): Skippping \"igod\" actor link chunk");
 		chunk.skip(chunk.bytesRemaining());
 		return;
 	}
 
 	// TODO: Make sure this is not an actor link.
-	Asset *actor = getAssetByChunkReference(chunk._id);
+	Actor *actor = getActorByChunkReference(chunk._id);
 	if (actor == nullptr) {
 		// We should only need to look in the global scope when there is an
 		// install cache (INSTALL.CXT).
-		actor = g_engine->getAssetByChunkReference(chunk._id);
+		actor = g_engine->getActorByChunkReference(chunk._id);
 		if (actor == nullptr) {
-			error("Context::readAssetInFirstSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+			error("Context::readActorInFirstSubfile(): Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetInFirstSubfile(): Got actor with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(actor->type()), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "\nContext::readActorInFirstSubfile(): Got actor with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(actor->type()), static_cast<long long int>(chunk.pos()));
 	actor->readChunk(chunk);
 }
 
-void Context::readAssetFromLaterSubfile(Subfile &subfile) {
+void Context::readActorFromLaterSubfile(Subfile &subfile) {
 	Chunk chunk = subfile.nextChunk();
-	Asset *actor = getAssetByChunkReference(chunk._id);
+	Actor *actor = getActorByChunkReference(chunk._id);
 	if (actor == nullptr) {
 		// We should only need to look in the global scope when there is an
 		// install cache (INSTALL.CXT).
-		actor = g_engine->getAssetByChunkReference(chunk._id);
+		actor = g_engine->getActorByChunkReference(chunk._id);
 		if (actor == nullptr) {
-			error("Context::readAssetFromLaterSubfile(): Asset for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+			error("Context::readActorFromLaterSubfile(): Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
-	debugC(5, kDebugLoading, "\nContext::readAssetFromLaterSubfile(): Got actor with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), actor->type(), static_cast<long long int>(chunk.pos()));
+	debugC(5, kDebugLoading, "\nContext::readActorFromLaterSubfile(): Got actor with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), actor->type(), static_cast<long long int>(chunk.pos()));
 	actor->readSubfile(subfile, chunk);
 }
 
@@ -354,8 +354,8 @@ bool Context::readHeaderSection(Chunk &chunk) {
 		break;
 	}
 
-	case kContextAssetLinkSection: {
-		warning("Context::readHeaderSection(): ASSET_LINK not implemented yet");
+	case kContextActorLinkSection: {
+		warning("Context::readHeaderSection(): ACTOR_LINK not implemented yet");
 		chunk.skip(chunk.bytesRemaining());
 		break;
 	}
@@ -378,17 +378,17 @@ bool Context::readHeaderSection(Chunk &chunk) {
 		break;
 	}
 
-	case kContextAssetHeaderSection: {
-		Asset *actor = readCreateAssetData(chunk);
+	case kContextActorHeaderSection: {
+		Actor *actor = readCreateActorData(chunk);
 		_actors.setVal(actor->id(), actor);
-		g_engine->registerAsset(actor);
+		g_engine->registerActor(actor);
 		if (actor->_chunkReference != 0) {
 			debugC(5, kDebugLoading, "Context::readHeaderSection(): Storing actor with chunk ID \"%s\" (0x%x)", tag2str(actor->_chunkReference), actor->_chunkReference);
 			_actorsByChunkReference.setVal(actor->_chunkReference, actor);
 		}
 
-		if (actor->type() == kAssetTypeMovie) {
-			Movie *movie = static_cast<Movie *>(actor);
+		if (actor->type() == kActorTypeMovie) {
+			StreamMovieActor *movie = static_cast<StreamMovieActor *>(actor);
 			if (movie->_audioChunkReference != 0) {
 				_actorsByChunkReference.setVal(movie->_audioChunkReference, actor);
 			}

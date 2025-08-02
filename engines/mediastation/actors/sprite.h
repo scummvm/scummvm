@@ -64,17 +64,17 @@ private:
 
 // Sprites are somewhat like movies, but they strictly show one frame at a time
 // and don't have sound. They are intended for background/recurrent animations.
-class Sprite : public SpatialEntity {
+class SpriteMovieActor : public SpatialEntity {
 friend class Context;
 
 public:
-	Sprite() : SpatialEntity(kAssetTypeSprite) {};
-	~Sprite();
+	SpriteMovieActor() : SpatialEntity(kActorTypeSprite) {};
+	~SpriteMovieActor();
 
 	virtual void process() override;
 	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) override;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 	virtual bool isVisible() const override { return _isVisible; }

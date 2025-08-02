@@ -24,14 +24,14 @@
 
 namespace MediaStation {
 
-void Screen::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void ScreenActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderCursorResourceId:
+	case kActorHeaderCursorResourceId:
 		_cursorResourceId = chunk.readTypedUint16();
 		break;
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 

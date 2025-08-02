@@ -25,17 +25,17 @@
 
 namespace MediaStation {
 
-void Path::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void PathActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderStartPoint:
+	case kActorHeaderStartPoint:
 		_startPoint = chunk.readTypedPoint();
 		break;
 
-	case kAssetHeaderEndPoint:
+	case kActorHeaderEndPoint:
 		_endPoint = chunk.readTypedPoint();
 		break;
 
-	case kAssetHeaderStepRate: {
+	case kActorHeaderStepRate: {
 		double _stepRateFloat = chunk.readTypedDouble();
 		// This should always be an integer anyway,
 		// so we'll cast away any fractional part.
@@ -43,22 +43,22 @@ void Path::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
-	case kAssetHeaderDuration:
+	case kActorHeaderDuration:
 		// These are stored in the file as fractional seconds,
 		// but we want milliseconds.
 		_duration = static_cast<uint32>(chunk.readTypedTime() * 1000);
 		break;
 
-	case kAssetHeaderPathTotalSteps:
+	case kActorHeaderPathTotalSteps:
 		_totalSteps = chunk.readTypedUint16();
 		break;
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 
-ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue PathActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -88,11 +88,11 @@ ScriptValue Path::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	}
 
 	default:
-		return Asset::callMethod(methodId, args);
+		return Actor::callMethod(methodId, args);
 	}
 }
 
-void Path::timePlay() {
+void PathActor::timePlay() {
 	if (_isPlaying) {
 		return;
 	}
@@ -116,7 +116,7 @@ void Path::timePlay() {
 	debugC(5, kDebugScript, "Path::timePlay(): No PathStart event handler");
 }
 
-void Path::process() {
+void PathActor::process() {
 	if (!_isPlaying) {
 		return;
 	}
@@ -151,13 +151,13 @@ void Path::process() {
 	}
 }
 
-void Path::setDuration(uint durationInMilliseconds) {
+void PathActor::setDuration(uint durationInMilliseconds) {
 	// TODO: Do we need to save the original duration?
 	debugC(5, kDebugScript, "Path::setDuration(): Setting duration to %d ms", durationInMilliseconds);
 	_duration = durationInMilliseconds;
 }
 
-double Path::percentComplete() {
+double PathActor::percentComplete() {
 	debugC(5, kDebugScript, "Path::percentComplete(): Returning percent complete %f%%", _percentComplete * 100);
 	return _percentComplete;
 }

@@ -28,9 +28,9 @@
 
 namespace MediaStation {
 
-class Document : public Asset {
+class DocumentActor : public Actor {
 public:
-	Document() : Asset(kAssetTypeDocument) { _id = 1; };
+	DocumentActor() : Actor(kActorTypeDocument) { _id = 1; };
 
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 

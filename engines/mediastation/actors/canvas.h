@@ -28,11 +28,11 @@
 
 namespace MediaStation {
 
-class Canvas : public SpatialEntity {
+class CanvasActor : public SpatialEntity {
 public:
-	Canvas() : SpatialEntity(kAssetTypeCanvas) {};
+	CanvasActor() : SpatialEntity(kActorTypeCanvas) {};
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 };
 

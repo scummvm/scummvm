@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MEDIASTATION_ASSETS_SOUND_H
-#define MEDIASTATION_ASSETS_SOUND_H
+#ifndef MEDIASTATION_ACTORS_SOUND_H
+#define MEDIASTATION_ACTORS_SOUND_H
 
 #include "mediastation/actor.h"
 #include "mediastation/audio.h"
@@ -30,11 +30,11 @@
 
 namespace MediaStation {
 
-class Sound : public Asset {
+class SoundActor : public Actor {
 public:
-	Sound() : Asset(kAssetTypeSound) {};
+	SoundActor() : Actor(kActorTypeSound) {};
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 

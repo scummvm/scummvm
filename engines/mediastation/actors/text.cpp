@@ -23,41 +23,41 @@
 
 namespace MediaStation {
 
-void Text::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void TextActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderEditable:
+	case kActorHeaderEditable:
 		_editable = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderLoadType:
+	case kActorHeaderLoadType:
 		_loadType = chunk.readTypedByte();
 		break;
 
-	case kAssetHeaderFontId:
-		_fontAssetId = chunk.readTypedUint16();
+	case kActorHeaderFontId:
+		_fontActorId = chunk.readTypedUint16();
 		break;
 
-	case kAssetHeaderTextMaxLength:
+	case kActorHeaderTextMaxLength:
 		_maxTextLength = chunk.readTypedUint16();
 		break;
 
-	case kAssetHeaderInitialText:
+	case kActorHeaderInitialText:
 		_text = chunk.readTypedString();
 		break;
 
-	case kAssetHeaderTextJustification:
+	case kActorHeaderTextJustification:
 		_justification = static_cast<TextJustification>(chunk.readTypedUint16());
 		break;
 
-	case kAssetHeaderTextPosition:
+	case kActorHeaderTextPosition:
 		_position = static_cast<TextPosition>(chunk.readTypedUint16());
 		break;
 
-	case kAssetHeaderTextCharacterClass: {
+	case kActorHeaderTextCharacterClass: {
 		CharacterClass characterClass;
 		characterClass.firstAsciiCode = chunk.readTypedUint16();
 		characterClass.lastAsciiCode = chunk.readTypedUint16();
@@ -70,7 +70,7 @@ void Text::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue TextActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -103,11 +103,11 @@ ScriptValue Text::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> 
 	}
 }
 
-Common::String Text::text() const {
+Common::String TextActor::text() const {
 	return _text;
 }
 
-void Text::setText(Common::String text) {
+void TextActor::setText(Common::String text) {
 	error("Text::setText(): Setting text not implemented yet");
 }
 

@@ -224,7 +224,7 @@ void VideoDisplayManager::fadeToPaletteObject(Common::Array<ScriptValue> &args) 
 	uint colorCount = DEFAULT_PALETTE_TRANSITION_COLOR_COUNT;
 
 	if (args.size() >= 2) {
-		paletteId = args[1].asAssetId();
+		paletteId = args[1].asActorId();
 	} else {
 		warning("fadeToPaletteObject: Too few script args");
 		return;
@@ -246,7 +246,7 @@ void VideoDisplayManager::setToPaletteObject(Common::Array<ScriptValue> &args) {
 	uint colorCount = DEFAULT_PALETTE_TRANSITION_COLOR_COUNT;
 
 	if (args.size() >= 2) {
-		paletteId = args[1].asAssetId();
+		paletteId = args[1].asActorId();
 	} else {
 		warning("fadeToPaletteObject: Too few script args");
 		return;
@@ -267,7 +267,7 @@ void VideoDisplayManager::setToPercentOfPaletteObject(Common::Array<ScriptValue>
 
 	if (args.size() >= 3) {
 		percent = args[1].asFloat();
-		paletteId = args[2].asAssetId();
+		paletteId = args[2].asActorId();
 	} else {
 		error("fadeToPaletteObject: Too few script args");
 		return;
@@ -448,38 +448,38 @@ void VideoDisplayManager::_colorShiftCurrentPalette(uint startIndex, uint shiftA
 }
 
 void VideoDisplayManager::_fadeToPaletteObject(uint paletteId, double fadeTime, uint startIndex, uint colorCount) {
-	Asset *actor = _vm->getAssetById(paletteId);
+	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (actor->type() != kAssetTypePalette) {
-		error("Asset %d is not a palette", paletteId);
+	} else if (actor->type() != kActorTypePalette) {
+		error("Actor %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *palette = static_cast<Palette *>(actor)->_palette;
+	Graphics::Palette *palette = static_cast<PaletteActor *>(actor)->_palette;
 	_fadeToPalette(fadeTime, *palette, startIndex, colorCount);
 }
 
 void VideoDisplayManager::_setToPaletteObject(uint paletteId, uint startIndex, uint colorCount) {
-	Asset *actor = _vm->getAssetById(paletteId);
+	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (actor->type() != kAssetTypePalette) {
-		error("Asset %d is not a palette", paletteId);
+	} else if (actor->type() != kActorTypePalette) {
+		error("Actor %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *palette = static_cast<Palette *>(actor)->_palette;
+	Graphics::Palette *palette = static_cast<PaletteActor *>(actor)->_palette;
 	_setPalette(*palette, startIndex, colorCount);
 }
 
 void VideoDisplayManager::_setPercentToPaletteObject(double percent, uint paletteId, uint startIndex, uint colorCount) {
-	Asset *actor = _vm->getAssetById(paletteId);
+	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
 		error("Got null target palette");
-	} else if (actor->type() != kAssetTypePalette) {
-		error("Asset %d is not a palette", paletteId);
+	} else if (actor->type() != kActorTypePalette) {
+		error("Actor %d is not a palette", paletteId);
 	}
 
-	Graphics::Palette *targetPalette = static_cast<Palette *>(actor)->_palette;
+	Graphics::Palette *targetPalette = static_cast<PaletteActor *>(actor)->_palette;
 	_setToPercentPalette(percent, *_registeredPalette, *targetPalette, startIndex, colorCount);
 }
 

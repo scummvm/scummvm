@@ -28,7 +28,7 @@
 
 namespace MediaStation {
 
-Asset::~Asset() {
+Actor::~Actor() {
 	for (auto it = _eventHandlers.begin(); it != _eventHandlers.end(); ++it) {
 		Common::Array<EventHandler *> &handlersForType = it->_value;
 		for (EventHandler *handler : handlersForType) {
@@ -39,10 +39,10 @@ Asset::~Asset() {
 	_eventHandlers.clear();
 }
 
-void Asset::initFromParameterStream(Chunk &chunk) {
-	AssetHeaderSectionType paramType = kAssetHeaderEmptySection;
+void Actor::initFromParameterStream(Chunk &chunk) {
+	ActorHeaderSectionType paramType = kActorHeaderEmptySection;
 	while (true) {
-		paramType = static_cast<AssetHeaderSectionType>(chunk.readTypedUint16());
+		paramType = static_cast<ActorHeaderSectionType>(chunk.readTypedUint16());
 		if (paramType == 0) {
 			break;
 		} else {
@@ -51,16 +51,16 @@ void Asset::initFromParameterStream(Chunk &chunk) {
 	}
 }
 
-void Asset::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderEventHandler: {
+	case kActorHeaderEventHandler: {
 		EventHandler *eventHandler = new EventHandler(chunk);
 		Common::Array<EventHandler *> &eventHandlersForType = _eventHandlers.getOrCreateVal(eventHandler->_type);
 
 		// This is not a hashmap because we don't want to have to hash ScriptValues.
 		for (EventHandler *existingEventHandler : eventHandlersForType) {
 			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
-				error("AssetHeader::readSection(): Event handler for %s (%s) already exists",
+				error("ActorHeader::readSection(): Event handler for %s (%s) already exists",
 					  eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
 			}
 		}
@@ -73,19 +73,19 @@ void Asset::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Asset::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	error("Got unimplemented method call %d (%s)", static_cast<uint>(methodId), builtInMethodToStr(methodId));
 }
 
-void Asset::readChunk(Chunk &chunk) {
-	error("Asset::readChunk(): Chunk reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
+void Actor::readChunk(Chunk &chunk) {
+	error("Actor::readChunk(): Chunk reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
-void Asset::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("Asset::readSubfile(): Subfile reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
+void Actor::readSubfile(Subfile &subfile, Chunk &chunk) {
+	error("Actor::readSubfile(): Subfile reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
 }
 
-void Asset::processTimeEventHandlers() {
+void Actor::processTimeEventHandlers() {
 	// TODO: Replace with a queue.
 	uint currentTime = g_system->getMillis();
 	const Common::Array<EventHandler *> &_timeHandlers = _eventHandlers.getValOrDefault(kTimerEvent);
@@ -96,14 +96,14 @@ void Asset::processTimeEventHandlers() {
 		bool timeEventAlreadyProcessed = timeEventInMilliseconds < _lastProcessedTime;
 		bool timeEventNeedsToBeProcessed = timeEventInMilliseconds <= currentTime - _startTime;
 		if (!timeEventAlreadyProcessed && timeEventNeedsToBeProcessed) {
-			debugC(5, kDebugScript, "Asset::processTimeEventHandlers(): Running On Time handler for time %d ms", timeEventInMilliseconds);
+			debugC(5, kDebugScript, "Actor::processTimeEventHandlers(): Running On Time handler for time %d ms", timeEventInMilliseconds);
 			timeEvent->execute(_id);
 		}
 	}
 	_lastProcessedTime = currentTime - _startTime;
 }
 
-void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg) {
+void Actor::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg) {
 	const Common::Array<EventHandler *> &eventHandlers = _eventHandlers.getValOrDefault(eventType);
 	for (EventHandler *eventHandler : eventHandlers) {
 		const ScriptValue &argToCheck = eventHandler->_argumentValue;
@@ -123,7 +123,7 @@ void Asset::runEventHandlerIfExists(EventType eventType, const ScriptValue &arg)
 	debugC(5, kDebugScript, "No event handler for event type %s on actor %d", eventTypeToStr(eventType), _id);
 }
 
-void Asset::runEventHandlerIfExists(EventType eventType) {
+void Actor::runEventHandlerIfExists(EventType eventType) {
 	ScriptValue scriptValue;
 	runEventHandlerIfExists(eventType, scriptValue);
 }
@@ -214,39 +214,39 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 		break;
 
 	default:
-		Asset::callMethod(methodId, args);
+		Actor::callMethod(methodId, args);
 	}
 	return returnValue;
 }
 
-void SpatialEntity::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderBoundingBox:
+	case kActorHeaderBoundingBox:
 		_boundingBox = chunk.readTypedRect();
 		break;
 
-	case kAssetHeaderDissolveFactor:
+	case kActorHeaderDissolveFactor:
 		_dissolveFactor = chunk.readTypedDouble();
 		break;
 
-	case kAssetHeaderZIndex:
+	case kActorHeaderZIndex:
 		_zIndex = chunk.readTypedGraphicUnit();
 		break;
 
-	case kAssetHeaderTransparency:
+	case kActorHeaderTransparency:
 		_hasTransparency = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderStageId:
+	case kActorHeaderStageId:
 		_stageId = chunk.readTypedUint16();
 		break;
 
-	case kAssetHeaderAssetReference:
+	case kActorHeaderActorReference:
 		_actorReference = chunk.readTypedUint16();
 		break;
 
 	default:
-		Asset::readParameter(chunk, paramType);
+		Actor::readParameter(chunk, paramType);
 	}
 }
 
@@ -310,7 +310,7 @@ void SpatialEntity::invalidateLocalBounds() {
 }
 
 void SpatialEntity::invalidateLocalZIndex() {
-	warning("STUB: Asset::invalidateLocalZIndex()");
+	warning("STUB: Actor::invalidateLocalZIndex()");
 }
 
 } // End of namespace MediaStation

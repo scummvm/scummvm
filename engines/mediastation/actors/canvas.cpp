@@ -23,9 +23,9 @@
 
 namespace MediaStation {
 
-void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void CanvasActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isVisible = static_cast<bool>(chunk.readTypedByte());
 		break;
 
@@ -34,10 +34,10 @@ void Canvas::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-ScriptValue Canvas::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue CanvasActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kClearToPaletteMethod: {
-		error("Canvas::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
+		error("CanvasActor::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
 	}
 
 	default:

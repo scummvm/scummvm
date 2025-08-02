@@ -30,12 +30,12 @@
 
 namespace MediaStation {
 
-class Palette : public Asset {
+class PaletteActor : public Actor {
 public:
-	Palette() : Asset(kAssetTypePalette) {};
-	virtual ~Palette() override;
+	PaletteActor() : Actor(kActorTypePalette) {};
+	virtual ~PaletteActor() override;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 
 	Graphics::Palette *_palette = nullptr;
 };

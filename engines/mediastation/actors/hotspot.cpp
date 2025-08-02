@@ -24,9 +24,9 @@
 
 namespace MediaStation {
 
-void Hotspot::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
+void HotspotActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	switch (paramType) {
-	case kAssetHeaderMouseActiveArea: {
+	case kActorHeaderMouseActiveArea: {
 		uint16 total_points = chunk.readTypedUint16();
 		for (int i = 0; i < total_points; i++) {
 			Common::Point point = chunk.readTypedPoint();
@@ -35,15 +35,15 @@ void Hotspot::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 		break;
 	}
 
-	case kAssetHeaderStartup:
+	case kActorHeaderStartup:
 		_isActive = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kAssetHeaderCursorResourceId:
+	case kActorHeaderCursorResourceId:
 		_cursorResourceId = chunk.readTypedUint16();
 		break;
 
-	case kAssetHeaderGetOffstageEvents:
+	case kActorHeaderGetOffstageEvents:
 		_getOffstageEvents = static_cast<bool>(chunk.readTypedByte());
 		break;
 
@@ -52,7 +52,7 @@ void Hotspot::readParameter(Chunk &chunk, AssetHeaderSectionType paramType) {
 	}
 }
 
-bool Hotspot::isInside(const Common::Point &pointToCheck) {
+bool HotspotActor::isInside(const Common::Point &pointToCheck) {
 	// No sense checking the polygon if we're not even in the bbox.
 	if (!_boundingBox.contains(pointToCheck)) {
 		return false;
@@ -90,7 +90,7 @@ bool Hotspot::isInside(const Common::Point &pointToCheck) {
 	return ((rcross % 2) == 1);
 }
 
-ScriptValue Hotspot::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue HotspotActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {

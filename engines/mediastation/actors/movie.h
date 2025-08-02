@@ -82,15 +82,15 @@ struct MovieFrame {
 	MovieFrameImage *keyframeImage = nullptr;
 };
 
-class Movie : public SpatialEntity {
+class StreamMovieActor : public SpatialEntity {
 public:
-	Movie() : _framesOnScreen(Movie::compareFramesByZIndex), SpatialEntity(kAssetTypeMovie) {}
-	virtual ~Movie() override;
+	StreamMovieActor() : _framesOnScreen(StreamMovieActor::compareFramesByZIndex), SpatialEntity(kActorTypeMovie) {}
+	virtual ~StreamMovieActor() override;
 
 	virtual void readChunk(Chunk &chunk) override;
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk) override;
 
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void process() override;
 

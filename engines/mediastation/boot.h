@@ -56,7 +56,7 @@ private:
 
 enum ScreenDeclarationSectionType {
 	kScreenDeclarationEmpty = 0x0000,
-	kScreenDeclarationAssetId = 0x0009,
+	kScreenDeclarationActorId = 0x0009,
 	kScreenDeclarationScreenId = 0x0004
 };
 
@@ -106,7 +106,7 @@ private:
 
 enum SubfileDeclarationSectionType {
 	kSubfileDeclarationEmptySection = 0x0000,
-	kSubfileDeclarationAssetId = 0x002a,
+	kSubfileDeclarationActorId = 0x002a,
 	kSubfileDeclarationFileId = 0x002b,
 	kSubfileDeclarationStartOffset = 0x002c
 };

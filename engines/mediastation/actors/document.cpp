@@ -24,7 +24,7 @@
 
 namespace MediaStation {
 
-ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
+ScriptValue DocumentActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	ScriptValue returnValue;
 
 	switch (methodId) {
@@ -34,19 +34,19 @@ ScriptValue Document::callMethod(BuiltInMethod methodId, Common::Array<ScriptVal
 
 	case kReleaseContextMethod: {
 		assert(args.size() == 1);
-		uint32 contextId = args[0].asAssetId();
+		uint32 contextId = args[0].asActorId();
 		g_engine->scheduleContextRelease(contextId);
 		return returnValue;
 	}
 
 	default:
-		return Asset::callMethod(methodId, args);
+		return Actor::callMethod(methodId, args);
 	}
 }
 
-void Document::processBranch(Common::Array<ScriptValue> &args) {
+void DocumentActor::processBranch(Common::Array<ScriptValue> &args) {
 	assert(args.size() >= 1);
-	uint contextId = args[0].asAssetId();
+	uint contextId = args[0].asActorId();
 	if (args.size() > 1) {
 		bool disableUpdates = static_cast<bool>(args[1].asParamToken());
 		if (disableUpdates)

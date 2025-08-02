@@ -47,12 +47,12 @@ struct CharacterClass {
 	uint lastAsciiCode = 0;
 };
 
-class Text : public SpatialEntity {
+class TextActor : public SpatialEntity {
 public:
-	Text() : SpatialEntity(kAssetTypeText) {};
+	TextActor() : SpatialEntity(kActorTypeText) {};
 
 	virtual bool isVisible() const override { return _isVisible; }
-	virtual void readParameter(Chunk &chunk, AssetHeaderSectionType paramType) override;
+	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 
 private:
@@ -61,7 +61,7 @@ private:
 	bool _isVisible = false;
 	Common::String _text;
 	uint _maxTextLength = 0;
-	uint _fontAssetId = 0;
+	uint _fontActorId = 0;
 	TextJustification _justification;
 	TextPosition _position;
 	Common::Array<CharacterClass> _acceptedInput;
