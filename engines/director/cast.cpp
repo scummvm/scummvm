@@ -1626,20 +1626,22 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		if (ConfMan.getBool("dump_scripts")) {
 			for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
 				Common::DumpFile out;
-				ScriptType scriptType = kMovieScript;
+				ScriptType scriptType = kNoneScript;
 
 				if (_loadedCast->contains(it->second->castID)) {
 					CastMember *member = _loadedCast->getVal(it->second->castID);
 					if (member && member->_type == kCastLingoScript) {
 						scriptType = ((ScriptCastMember *)member)->_scriptType;
+					} else {
+						scriptType = kCastScript;
 					}
 				}
 
-				// FIXME: castID is set incorrectly for D5+
-				Common::Path lingoPath(dumpScriptName(encodePathForDump(_macName).c_str(), scriptType, it->second->castID, "lingo"));
+				Common::String filename = encodePathForDump(_macName);
+				Common::Path lingoPath(dumpScriptName(filename.c_str(), scriptType, it->second->castID, "lingo"));
 
 				if (out.open(lingoPath, true)) {
-					Common::String decompiled = it->second->scriptText("\n", true);
+					Common::String decompiled = it->second->scriptText("\n", false);
 					out.writeString(decompiled);
 					out.flush();
 					out.close();
