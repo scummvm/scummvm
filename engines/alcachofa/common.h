@@ -88,6 +88,8 @@ struct FakeSemaphore {
 
 	inline bool isReleased() const { return _counter == 0; }
 	inline uint counter() const { return _counter; }
+
+	static void sync(Common::Serializer &s, FakeSemaphore &semaphore);
 private:
 	friend struct FakeLock;
 	uint _counter = 0;

@@ -230,6 +230,60 @@ void Camera::updateFollowing(float deltaTime) {
 	}
 }
 
+static void syncMatrix(Serializer &s, Matrix4 &m) {
+	float *data = m.getData();
+	for (int i = 0; i < 16; i++)
+		s.syncAsFloatLE(data[i]);
+}
+
+static void syncVector(Serializer &s, Vector3d &v) {
+	s.syncAsFloatLE(v.x());
+	s.syncAsFloatLE(v.y());
+	s.syncAsFloatLE(v.z());
+}
+
+void Camera::State::syncGame(Serializer &s) {
+	syncVector(s, _usedCenter);
+	s.syncAsFloatLE(_scale);
+	s.syncAsFloatLE(_speed);
+	s.syncAsFloatLE(_maxSpeedFactor);
+	float rotationDegs = _rotation.getDegrees();
+	s.syncAsFloatLE(rotationDegs);
+	_rotation.setDegrees(rotationDegs);
+	s.syncAsByte(_isBraking);
+	s.syncAsByte(_isFollowingTarget);
+}
+
+void Camera::syncGame(Serializer &s) {
+	syncMatrix(s, _mat3Dto2D);
+	syncMatrix(s, _mat2Dto3D);
+	syncVector(s, _appliedCenter);
+	s.syncAsUint32LE(_lastUpdateTime);
+	s.syncAsByte(_isChanging);
+	_cur.syncGame(s);
+	for (uint i = 0; i < kStateBackupCount; i++)
+		_backups[i].syncGame(s);
+
+	// originally the follow object is also searched for before changing the room
+	// so that would practically mean only the main characters could be reasonably found
+	// instead we fall back to global search
+	String name;
+	if (_followTarget != nullptr)
+		name = _followTarget->name();
+	s.syncString(name);
+	if (s.isLoading()) {
+		if (name.empty())
+			_followTarget = nullptr;
+		else {
+			_followTarget = dynamic_cast<WalkingCharacter *>(g_engine->world().getObjectByName(name.c_str()));
+			if (_followTarget == nullptr)
+				_followTarget = dynamic_cast<WalkingCharacter *>(g_engine->world().getObjectByNameFromAnyRoom(name.c_str()));
+			if (_followTarget == nullptr)
+				warning("Camera follow target from savestate was not found: %s", name.c_str());
+		}
+	}
+}
+
 struct CamLerpTask : public Task {
 	CamLerpTask(Process &process, uint32 duration, EasingType easingType)
 		: Task(process)

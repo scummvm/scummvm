@@ -51,7 +51,7 @@ public:
 	virtual void update();
 	virtual void loadResources();
 	virtual void freeResources();
-	virtual void serializeSave(Common::Serializer &serializer);
+	virtual void syncGame(Common::Serializer &serializer);
 	virtual Graphic *graphic();
 	virtual Shape *shape();
 	virtual const char *typeName() const;
@@ -91,7 +91,7 @@ public:
 	virtual void draw() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void syncGame(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
 	virtual const char *typeName() const;
 
@@ -129,7 +129,7 @@ public:
 	inline bool wasSelected() const { return _wasSelected; }
 
 	virtual void update() override;
-	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void syncGame(Common::Serializer &serializer) override;
 	virtual Shape *shape() override;
 	virtual CursorType cursorType() const;
 	virtual void onHoverStart();
@@ -423,7 +423,7 @@ public:
 	virtual void drawDebug() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void syncGame(Common::Serializer &serializer) override;
 	virtual Graphic *graphic() override;
 	virtual void onClick() override;
 	virtual void trigger(const char *action) override;
@@ -470,7 +470,7 @@ public:
 	virtual void drawDebug() override;
 	virtual void loadResources() override;
 	virtual void freeResources() override;
-	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void syncGame(Common::Serializer &serializer) override;
 	virtual void walkTo(
 		Common::Point target,
 		Direction endDirection = Direction::Invalid,
@@ -538,7 +538,7 @@ public:
 
 	virtual void update() override;
 	virtual void draw() override;
-	virtual void serializeSave(Common::Serializer &serializer) override;
+	virtual void syncGame(Common::Serializer &serializer) override;
 	virtual const char *typeName() const;
 	virtual void walkTo(
 		Common::Point target,

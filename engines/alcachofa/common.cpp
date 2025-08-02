@@ -42,6 +42,16 @@ FakeSemaphore::~FakeSemaphore() {
 	assert(_counter == 0);
 }
 
+void FakeSemaphore::sync(Serializer &s, FakeSemaphore &semaphore) {
+	// if we are still holding locks during loading these locks will
+	// try to decrease the counter which will fail, let's find this out already here
+	assert(s.isSaving() || semaphore.isReleased());
+
+	uint semaphoreCounter = semaphore.counter();
+	s.syncAsSint32LE(semaphoreCounter);
+	semaphore = FakeSemaphore(semaphoreCounter);
+}
+
 FakeLock::FakeLock() : _semaphore(nullptr) {}
 
 FakeLock::FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
