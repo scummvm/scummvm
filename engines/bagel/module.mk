@@ -217,7 +217,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/saves/savegame.o \
 	hodjnpodj/metagame/saves/savegame_info.o \
 	hodjnpodj/metagame/saves/restdlg.o \
-	hodjnpodj/metagame/saves/restgame.o \
 	hodjnpodj/metagame/saves/savedlg.o \
 	hodjnpodj/metagame/zoom/dllinit.o \
 	hodjnpodj/metagame/zoom/zoommap.o \

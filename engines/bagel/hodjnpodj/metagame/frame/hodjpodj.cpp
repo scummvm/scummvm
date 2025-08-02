@@ -31,7 +31,6 @@
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/dialogs.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
-#include "bagel/hodjnpodj/metagame/saves/restgame.h"
 #include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/dllinit.h"
 #include "bagel/hodjnpodj/metagame/grand_tour/gtstruct.h"
