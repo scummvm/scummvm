@@ -106,8 +106,9 @@ static void renderScript(ImGuiScript &script, bool showByteCode) {
 		return;
 	}
 
-	if (!script.root)
+	if (!script.root) {
 		return;
+	}
 
 	renderScriptAST(script, showByteCode);
 	_state->_dbg._isScriptDirty = false;
@@ -163,7 +164,6 @@ void showScriptCasts() {
 
 static void updateCurrentScript() {
 	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty) {
-		debug("Can't be here");
 		return;
 	}
 
@@ -172,9 +172,15 @@ static void updateCurrentScript() {
 		return;
 	}
 
+	debug("callstack:");
+	for (auto k : callstack) {
+		debug("%d", k->sp.ctx->_id);
+	}
+
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
 	Director::Movie *movie = g_director->getCurrentMovie();
+	debug("What is the current movie: %s", movie->getMacName().c_str());
 	ScriptContext *scriptContext = head->sp.ctx;
 	int castLibID = movie->getCast()->_castLibID;
 	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
@@ -389,7 +395,6 @@ void showExecutionContext() {
 		// Makes sure that the executionContext flag is on for all states
 		_state->_w.executionContext = true;
 
-		debug("What is state 1: _state: %p", (void *) _state);
 		updateCurrentScript();
 
 		int windowID = 0;

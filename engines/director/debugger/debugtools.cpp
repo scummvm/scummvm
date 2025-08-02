@@ -62,7 +62,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 }
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	const Director::Movie *movie = g_director->getCurrentMovie();
+	const Director::Movie *movie = g_director->getCurrentMovie();;
 	for (const auto it : *movie->getCasts()) {
 		const Cast *cast = it._value;
 		const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
@@ -221,7 +221,6 @@ void setScriptToDisplay(const ImGuiScript &script) {
 	Window *window = g_director->getCurrentWindow();
 	_state = getWindowState(window);
 
-	debug("What is the state: %p", (void *)_state);
 	uint index = _state->_functions._scripts.size();
 	if (index && _state->_functions._scripts[index - 1] == script) {
 		_state->_functions._showScript = true;
