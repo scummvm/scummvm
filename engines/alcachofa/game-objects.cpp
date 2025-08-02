@@ -233,24 +233,15 @@ void Character::freeResources() {
 	_graphicTalking.freeResources();
 }
 
-void Character::serializeSave(Serializer &serializer) {
-	ShapeObject::serializeSave(serializer);
+void Character::syncGame(Serializer &serializer) {
+	ShapeObject::syncGame(serializer);
 	serializer.syncAsByte(_isTalking);
 	serializer.syncAsSint32LE(_curDialogId);
-	_graphicNormal.serializeSave(serializer);
-	_graphicTalking.serializeSave(serializer);
+	_graphicNormal.syncGame(serializer);
+	_graphicTalking.syncGame(serializer);
 	syncObjectAsString(serializer, _curAnimateObject);
 	syncObjectAsString(serializer, _curTalkingObject);
 	serializer.syncAsFloatLE(_lodBias);
-}
-
-Graphic *Character::graphic() {
-	Graphic *activeGraphic = graphicOf(_curAnimateObject);
-	if (activeGraphic == nullptr && (_isTalking || g_engine->world().somebodyUsing(this)))
-		activeGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
-	if (activeGraphic == nullptr)
-		activeGraphic = &_graphicNormal;
-	return activeGraphic;
 }
 
 void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) {
@@ -272,6 +263,15 @@ void Character::syncObjectAsString(Serializer &serializer, ObjectBase *&object) 
 					name.c_str(), this->name().c_str(), room()->name().c_str());
 		}
 	}
+}
+
+Graphic *Character::graphic() {
+	Graphic *activeGraphic = graphicOf(_curAnimateObject);
+	if (activeGraphic == nullptr && (_isTalking || g_engine->world().somebodyUsing(this)))
+		activeGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
+	if (activeGraphic == nullptr)
+		activeGraphic = &_graphicNormal;
+	return activeGraphic;
 }
 
 void Character::onClick() {
@@ -717,8 +717,8 @@ void WalkingCharacter::freeResources() {
 	}
 }
 
-void WalkingCharacter::serializeSave(Serializer &serializer) {
-	Character::serializeSave(serializer);
+void WalkingCharacter::syncGame(Serializer &serializer) {
+	Character::syncGame(serializer);
 	serializer.syncAsSint32LE(_lastWalkAnimFrame);
 	serializer.syncAsSint32LE(_walkedDistance);
 	syncPoint(serializer, _sourcePos);
@@ -880,7 +880,7 @@ void syncDialogMenuLine(Serializer &serializer, DialogMenuLine &line) {
 	serializer.syncAsSint32LE(line._returnValue);
 }
 
-void MainCharacter::serializeSave(Serializer &serializer) {
+void MainCharacter::syncGame(Serializer &serializer) {
 	String roomName = room()->name();
 	serializer.syncString(roomName);
 	if (serializer.isLoading()) {
@@ -890,10 +890,8 @@ void MainCharacter::serializeSave(Serializer &serializer) {
 			error("Invalid room name \"%s\" saved for \"%s\"", roomName.c_str(), name().c_str());
 	}
 
-	Character::serializeSave(serializer);
-	uint semaphoreCounter = _semaphore.counter();
-	serializer.syncAsSint32LE(semaphoreCounter);
-	_semaphore = FakeSemaphore(semaphoreCounter);
+	WalkingCharacter::syncGame(serializer);
+	FakeSemaphore::sync(serializer, _semaphore);
 	syncArray(serializer, _dialogLines, syncDialogMenuLine);
 	syncObjectAsString(serializer, _currentlyUsingObject);
 

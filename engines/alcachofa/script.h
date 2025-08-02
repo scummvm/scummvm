@@ -156,6 +156,7 @@ class Script {
 public:
 	Script();
 
+	void syncGame(Common::Serializer &s);
 	void updateCommonVariables();
 	int32 variable(const char *name) const;
 	int32 &variable(const char *name);

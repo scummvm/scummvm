@@ -55,6 +55,10 @@ class Menu;
 class Game;
 struct AlcachofaGameDescription;
 
+enum class SaveVersion : Common::Serializer::Version {
+	Initial = 0
+};
+
 class Config {
 public:
 	Config();
@@ -140,12 +144,7 @@ public:
 		return true;
 	}
 
-	/**
-	 * Uses a serializer to allow implementing savegame
-	 * loading and saving using a single method
-	 */
 	Common::Error syncGame(Common::Serializer &s);
-
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);
 		return syncGame(s);

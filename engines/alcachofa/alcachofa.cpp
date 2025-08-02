@@ -233,13 +233,32 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 		setMillis(_timeBeforePause);
 }
 
-Common::Error AlcachofaEngine::syncGame(Common::Serializer &s) {
-	// The Serializer has methods isLoading() and isSaving()
-	// if you need to specific steps; for example setting
-	// an array size after reading it's length, whereas
-	// for saving it would write the existing array's length
-	int dummy = 0;
-	s.syncAsUint32LE(dummy);
+Common::Error AlcachofaEngine::syncGame(Serializer &s) {
+	s.syncVersion((Serializer::Version)SaveVersion::Initial);
+
+	uint32 millis = getMillis();
+	s.syncAsUint32LE(millis);
+	if (s.isLoading())
+		setMillis(millis);
+
+	/* Some notes about the order:
+	 * 1. The scheduler should come first due to our FakeSemaphore
+	 *    By destructing all previous processes we also release all locks and
+	 *    can assert that the semaphores are released on loading.
+	 * 2. The player should come last as it changes the room
+	 */
+
+	//scheduler().syncGame(s);
+	world().syncGame(s);
+	camera().syncGame(s);
+	script().syncGame(s);
+	globalUI().syncGame(s);
+	player().syncGame(s);
+
+	if (s.isLoading()) {
+		sounds().stopAll();
+		sounds().setMusicToRoom(player().currentRoom()->musicID());
+	}
 
 	return Common::kNoError;
 }

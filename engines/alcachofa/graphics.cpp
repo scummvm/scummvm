@@ -547,7 +547,7 @@ void Graphic::setAnimation(Animation *animation) {
 	_animation = animation;
 }
 
-void Graphic::serializeSave(Serializer &serializer) {
+void Graphic::syncGame(Serializer &serializer) {
 	syncPoint(serializer, _topLeft);
 	serializer.syncAsSint16LE(_scale);
 	serializer.syncAsUint32LE(_lastTime);

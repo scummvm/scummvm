@@ -94,7 +94,7 @@ void Game::unknownFadeType(int fadeType) {
 }
 
 void Game::unknownSerializedObject(const char *object, const char *owner, const char *room) {
-	// potentially game-breaking for _currentlyUsingObject but should otherwise be just a graphical bug
+	// potentially game-breaking for _currentlyUsingObject but might otherwise be just a graphical bug
 	_message("Invalid object name \"%s\" saved for \"%s\" in \"%s\"", object, owner, room);
 }
 

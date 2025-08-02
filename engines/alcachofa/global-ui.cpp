@@ -248,4 +248,8 @@ void GlobalUI::drawScreenStates() {
 	}
 }
 
+void GlobalUI::syncGame(Serializer &s) {
+	s.syncAsByte(_isPermanentFaded);
+}
+
 }
