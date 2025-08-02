@@ -1062,60 +1062,70 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 
 	// No compression for now
 	// pixels.size() == bytes needed
-	Common::Array<byte> pixels;
-	pixels.resize(_pitch * _picture->_surface.h);  // for <= 8bpp
+	Graphics::Surface pixels;
+	Graphics::PixelFormat format;
+
+	if (_bitsPerPixel >> 3) {
+		format.bytesPerPixel = _bitsPerPixel >> 3;
+		pixels.create(_picture->_surface.w, _picture->_surface.h, format);
+	} else {
+		format.bytesPerPixel = 1;
+		pixels.create(_pitch, _picture->_surface.h, format);
+	}
+
 	offset = 0;
 
-	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(pixels.size() / _picture->_surface.h)) {
+	if (_bitsPerPixel == 8 && _picture->_surface.w < (int)(_pitch * _picture->_surface.h / _picture->_surface.h)) {
 		offset = (_pitch - _picture->_surface.w) % 2;
 	}
 
 	debugC(5, kDebugSaving, "BitmapCastMember::writeBITDResource: Saving 'BITD' Resource: bitsPerPixel: %d, castId: %d", _bitsPerPixel, _castId);
 	for (int y = 0; y < _picture->_surface.h; y++) {
+		byte *ptr = (byte *)pixels.getBasePtr(0, y);
+
 		for (int x = 0; x < _picture->_surface.w;) {
 			uint32 color = 0;
-			int startX = x;
 
 			switch (_bitsPerPixel) {
 			case 1:
 				for (int c = 0; c < 8 && x < _picture->_surface.w; c++, x++) {
 					color += (*((byte *)_picture->_surface.getBasePtr(x, y))) & (1 << (7 - c));
 				}
-				pixels[(y * _pitch) + (startX >> 3)] = color;
+				*ptr = color; ptr++;
 				break;
 
 			case 2:
 				for (int c = 0; c < 4 && x < _picture->_surface.w; c++, x++) {
 					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0x3) << (2 * (3 - c));
 				}
-				pixels[(y * _pitch) + (startX >> 2)] = color;
+				*ptr = color; ptr++;
 				break;
 
 			case 4:
 				for (int c = 0; c < 2 && x < _picture->_surface.w; c++, x++) {
 					color += (*((byte *)_picture->_surface.getBasePtr(x, y)) & 0xF) << (4 * (1 - c));
 				}
-				pixels[(y * _pitch) + (startX >> 1)] = color;
+				*ptr = color; ptr++;
 				break;
 
 			case 8:
-				pixels[(y * _picture->_surface.w) + x + (y * offset)] = *((byte *)_picture->_surface.getBasePtr(x, y));
-				x++;
+				*(ptr + (y * offset)) = *((byte *)_picture->_surface.getBasePtr(x, y));
+				ptr++; x++;
 				break;
 
 			case 16:
 				color = *((uint16 *)_picture->_surface.getBasePtr(x, y));
-				pixels[(y * _picture->_surface.w * 2) + x * 2] = color >> 8;
-				pixels[(y * _picture->_surface.w * 2) + x * 2 + 1] = color & 0xFF;
+				*ptr = color >> 8; ptr++;
+				*ptr = color & 0xFF; ptr++;
 				x++;
 				break;
 
 			case 32:
-				color = *((uint32 *)(_picture->_surface.getBasePtr(x, y)));
-				// only storing RGB, no alpha
-				pixels[(y * _picture->_surface.w * 4) + x * 4 + 1] = (color >> 16) & 0xFF;
-				pixels[(y * _picture->_surface.w * 4) + x * 4 + 2] = (color >> 8) & 0xFF;
-				pixels[(y * _picture->_surface.w * 4) + x * 4 + 3] = color & 0xFF;
+				color = *((uint32 *)_picture->_surface.getBasePtr(x, y));
+				ptr++;		// Ignore the Alpha value
+				*ptr = (color >> 16) & 0xFF; ptr++;
+				*ptr = (color >> 8) & 0xFF; ptr++;
+				*ptr = color & 0xFF; ptr++;
 				x++;
 				break;
 
@@ -1126,10 +1136,10 @@ uint32 BitmapCastMember::writeBITDResource(Common::SeekableWriteStream *writeStr
 		}
 	}
 
-	writeStream->write(pixels.data(), pixels.size());
+	writeStream->write(pixels.getPixels(), _picture->_surface.h * _pitch);
 
 	if (debugChannelSet(7, kDebugSaving)) {
-		dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), pixels.data(), pixels.size());
+		dumpFile("BitmapData", _castId, MKTAG('B', 'I', 'T', 'D'), (byte *)pixels.getPixels(), _picture->_surface.h * _pitch);
 	}
 	return 0;
 }
