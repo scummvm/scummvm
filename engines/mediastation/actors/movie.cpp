@@ -94,7 +94,7 @@ void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 		// as the ID we have already read.
 		uint32 duplicateActorId = chunk.readTypedUint16();
 		if (duplicateActorId != _id) {
-			warning("Duplicate actor ID %d does not match original ID %d", duplicateActorId, _id);
+			warning("%s: Duplicate actor ID %d does not match original ID %d", __func__, duplicateActorId, _id);
 		}
 		break;
 	}
@@ -110,7 +110,7 @@ void StreamMovieActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramT
 	case kActorHeaderHasOwnSubfile: {
 		bool hasOwnSubfile = static_cast<bool>(chunk.readTypedByte());
 		if (!hasOwnSubfile) {
-			error("StreamMovieActor doesn't have a subfile");
+			error("%s: StreamMovieActor doesn't have a subfile", __func__);
 		}
 		break;
 	}
@@ -328,7 +328,7 @@ void StreamMovieActor::draw(const Common::Array<Common::Rect> &dirtyRegion) {
 			break;
 
 		default:
-			error("Got unknown movie frame blit type: %d", frame->blitType);
+			error("%s: Got unknown movie frame blit type: %d", __func__, frame->blitType);
 		}
 	}
 }
@@ -352,7 +352,7 @@ void StreamMovieActor::readChunk(Chunk &chunk) {
 		break;
 
 	default:
-		error("Unknown movie still section type");
+		error("%s: Unknown movie still section type", __func__);
 	}
 	_hasStill = true;
 }
@@ -361,7 +361,7 @@ void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 	uint expectedRootSectionType = chunk.readTypedUint16();
 	debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(expectedRootSectionType), static_cast<long long int>(chunk.pos()));
 	if (kMovieRootSection != (MovieSectionType)expectedRootSectionType) {
-		error("Expected ROOT section type, got 0x%x", expectedRootSectionType);
+		error("%s: Expected ROOT section type, got 0x%x", __func__, expectedRootSectionType);
 	}
 	uint chunkCount = chunk.readTypedUint16();
 	double unk1 = chunk.readTypedDouble();
@@ -383,7 +383,7 @@ void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 		debugC(5, kDebugLoading, "StreamMovieActor::readSubfile(): (Frameset %d of %d) Reading animation chunks... (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
 		bool isAnimationChunk = (chunk._id == _animationChunkReference);
 		if (!isAnimationChunk) {
-			warning("StreamMovieActor::readSubfile(): (Frameset %d of %d) No animation chunks found (@0x%llx)", i, chunkCount, static_cast<long long int>(chunk.pos()));
+			warning("%s: (Frameset %d of %d) No animation chunks found (@0x%llx)", __func__, i, chunkCount, static_cast<long long int>(chunk.pos()));
 		}
 		while (isAnimationChunk) {
 			uint sectionType = chunk.readTypedUint16();
@@ -398,7 +398,7 @@ void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 				break;
 
 			default:
-				error("StreamMovieActor::readSubfile(): Unknown movie animation section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+				error("%s: Unknown movie animation section type 0x%x (@0x%llx)", __func__, static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 			}
 
 			chunk = subfile.nextChunk();
@@ -419,11 +419,11 @@ void StreamMovieActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 		bool isHeaderChunk = (chunk._id == _chunkReference);
 		if (isHeaderChunk) {
 			if (chunk._length != 0x04) {
-				error("StreamMovieActor::readSubfile(): Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", chunk._length, static_cast<long long int>(chunk.pos()));
+				error("%s: Expected movie header chunk of size 0x04, got 0x%x (@0x%llx)", __func__, chunk._length, static_cast<long long int>(chunk.pos()));
 			}
 			chunk.skip(chunk._length);
 		} else {
-			error("StreamMovieActor::readSubfile(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
+			error("%s: Expected header chunk, got %s (@0x%llx)", __func__, tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 	}
 

@@ -35,7 +35,7 @@ BitmapHeader::BitmapHeader(Chunk &chunk) {
 
 Bitmap::Bitmap(Chunk &chunk, BitmapHeader *bitmapHeader) : _bitmapHeader(bitmapHeader) {
 	if (stride() < width()) {
-		warning("Bitmap: Got stride less than width");
+		warning("%s: Got stride less than width", __func__);
 	}
 
 	_unk1 = chunk.readUint16LE();

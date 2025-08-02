@@ -27,7 +27,7 @@ namespace MediaStation {
 void ParameterReadStream::readAndVerifyType(DatumType type) {
 	DatumType actualType = static_cast<DatumType>(readUint16LE());
 	if (actualType != type) {
-		error("Expected datum type %d, got %d (@0x%llx)", type, actualType, static_cast<long long int>(pos()));
+		error("%s: Expected datum type %d, got %d (@0x%llx)", __func__, type, actualType, static_cast<long long int>(pos()));
 	}
 }
 
@@ -146,7 +146,7 @@ Chunk::Chunk(Common::SeekableReadStream *stream) : _parentStream(stream) {
 	_dataEndOffset = _dataStartOffset + _length;
 	debugC(5, kDebugLoading, "Chunk::Chunk(): Got chunk with ID \"%s\" and size 0x%x", tag2str(_id), _length);
 	if (_length == 0)
-		error("Encountered a zero-length chunk. This usually indicates corrupted data - maybe a CD-ROM read error.");
+		error("%s: Encountered a zero-length chunk. This usually indicates corrupted data - maybe a CD-ROM read error.", __func__);
 }
 
 uint32 Chunk::bytesRemaining() {
@@ -156,7 +156,7 @@ uint32 Chunk::bytesRemaining() {
 uint32 Chunk::read(void *dataPtr, uint32 dataSize) {
 	if (pos() > _dataEndOffset) {
 		uint overrun = pos() - _dataEndOffset;
-		error("Attempted to read 0x%x bytes at a location 0x%x bytes past end of chunk (@0x%llx)", dataSize, overrun, static_cast<long long int>(pos()));
+		error("%s: Attempted to read 0x%x bytes at a location 0x%x bytes past end of chunk (@0x%llx)", __func__, dataSize, overrun, static_cast<long long int>(pos()));
 	} else {
 		return _parentStream->read(dataPtr, dataSize);
 	}
@@ -182,7 +182,7 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 	debugC(5, kDebugLoading, "\n*** Subfile::Subfile(): Got new subfile (@0x%llx) ***", static_cast<long long int>(_stream->pos()));
 	_rootChunk = nextChunk();
 	if (_rootChunk._id != MKTAG('R', 'I', 'F', 'F'))
-		error("Subfile::Subfile(): Expected \"RIFF\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
+		error("%s: Expected \"RIFF\" chunk, got %s (@0x%llx)", __func__, tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_stream->skip(4); // IMTS
 
 	// Read the RATE chunk.
@@ -191,14 +191,14 @@ Subfile::Subfile(Common::SeekableReadStream *stream) : _stream(stream) {
 	// TODO: Figure out what this actually is.
 	Chunk rateChunk = nextChunk();
 	if (rateChunk._id != MKTAG('r', 'a', 't', 'e'))
-		error("Subfile::Subfile(): Expected \"rate\" chunk, got %s (@0x%llx)", tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
+		error("%s: Expected \"rate\" chunk, got %s (@0x%llx)", __func__, tag2str(_rootChunk._id), static_cast<long long int>(_stream->pos()));
 	_rate = _stream->readUint32LE();
 
 	// Queue up the first data chunk.
 	// First, we need to read past the LIST chunk.
 	nextChunk();
 	if (_stream->readUint32BE() != MKTAG('d', 'a', 't', 'a'))
-		error("Subfile::Subfile(): Expected \"data\" as first bytes of subfile, got %s @0x%llx)", tag2str(rateChunk._id), static_cast<long long int>(_stream->pos()));
+		error("%s: Expected \"data\" as first bytes of subfile, got %s @0x%llx)", __func__, tag2str(rateChunk._id), static_cast<long long int>(_stream->pos()));
 }
 
 Chunk Subfile::nextChunk() {
@@ -217,7 +217,7 @@ bool Subfile::atEnd() {
 
 Datafile::Datafile(const Common::Path &path) {
 	if (!open(path)) {
-		error("Datafile::Datafile(): Failed to open %s", path.toString().c_str());
+		error("%s: Failed to open %s", __func__, path.toString().c_str());
 	}
 }
 

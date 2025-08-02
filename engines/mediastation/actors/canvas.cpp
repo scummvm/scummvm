@@ -37,7 +37,7 @@ void CanvasActor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) 
 ScriptValue CanvasActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
 	switch (methodId) {
 	case kClearToPaletteMethod: {
-		error("CanvasActor::callMethod(): BuiltInFunction::clearToPalette is not implemented yet");
+		error("%s: clearToPalette is not implemented yet", __func__);
 	}
 
 	default:

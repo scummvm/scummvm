@@ -98,9 +98,9 @@ void PathActor::timePlay() {
 	}
 
 	if (_duration == 0) {
-		warning("Path::timePlay(): Got zero duration");
+		warning("%s: Got zero duration", __func__);
 	} else if (_stepRate == 0) {
-		error("Path::timePlay(): Got zero step rate");
+		error("%s: Got zero step rate", __func__);
 	}
 
 	_isPlaying = true;

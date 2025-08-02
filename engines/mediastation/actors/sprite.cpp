@@ -263,7 +263,7 @@ void SpriteMovieActor::setCurrentClip(uint clipId) {
 			_activeClip = _clips.getVal(clipId);
 		} else {
 			_activeClip.id = clipId;
-			warning("Sprite clip %d not found in sprite %d", clipId, _id);
+			warning("%s: Sprite clip %d not found in sprite %d", __func__, clipId, _id);
 		}
 	}
 
@@ -335,7 +335,7 @@ void SpriteMovieActor::updateFrameState() {
 
 void SpriteMovieActor::timerEvent() {
 	if (!_isPlaying) {
-		error("Attempt to activate sprite frame when sprite is not playing");
+		error("%s: Attempt to activate sprite frame when sprite is not playing", __func__);
 		return;
 	}
 

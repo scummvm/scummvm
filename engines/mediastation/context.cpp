@@ -43,7 +43,7 @@ namespace MediaStation {
 Context::Context(const Common::Path &path) : Datafile(path) {
 	uint32 signature = _handle->readUint32BE();
 	if (signature != MKTAG('I', 'I', '\0', '\0')) {
-		error("Context::Context(): Wrong signature for file %s: 0x%08x", _name.c_str(), signature);
+		error("%s: Wrong signature for file %s: 0x%08x", __func__, _name.c_str(), signature);
 	}
 
 	_unk1 = _handle->readUint32LE();
@@ -86,7 +86,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 				ImageActor *image = static_cast<ImageActor *>(actor);
 				ImageActor *referencedImage = static_cast<ImageActor *>(getActorById(referencedActorId));
 				if (referencedImage == nullptr) {
-					error("Context::Context(): Actor %d references non-existent actor %d", actor->id(), referencedActorId);
+					error("%s: Actor %d references non-existent actor %d", __func__, actor->id(), referencedActorId);
 				}
 				image->_bitmap = referencedImage->_bitmap;
 				break;
@@ -96,7 +96,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 				SpriteMovieActor *sprite = static_cast<SpriteMovieActor *>(actor);
 				SpriteMovieActor *referencedSprite = static_cast<SpriteMovieActor *>(getActorById(referencedActorId));
 				if (referencedSprite == nullptr) {
-					error("Context::Context(): Actor %d references non-existent actor %d", actor->id(), referencedActorId);
+					error("%s: Actor %d references non-existent actor %d", __func__, actor->id(), referencedActorId);
 				}
 				sprite->_frames = referencedSprite->_frames;
 				sprite->_clips = referencedSprite->_clips;
@@ -104,7 +104,7 @@ Context::Context(const Common::Path &path) : Datafile(path) {
 			}
 
 			default:
-				error("Context::Context(): Actor type %d referenced, but reference not implemented yet", actor->type());
+				error("%s: Actor type %d referenced, but reference not implemented yet", __func__, actor->type());
 			}
 		}
 	}
@@ -158,19 +158,19 @@ void Context::readCreateContextData(Chunk &chunk) {
 		case kContextParametersName: {
 			uint repeatedFileNumber = chunk.readTypedUint16();
 			if (repeatedFileNumber != _fileNumber) {
-				warning("ContextParameters::ContextParameters(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
+				warning("%s: Repeated file number didn't match: %d != %d", __func__, repeatedFileNumber, _fileNumber);
 			}
 			_contextName = chunk.readTypedString();
 
 			uint endingFlag = chunk.readTypedUint16();
 			if (endingFlag != 0) {
-				warning("ContextParameters::ContextParameters(): Got non-zero ending flag 0x%x", endingFlag);
+				warning("%s: Got non-zero ending flag 0x%x", __func__, endingFlag);
 			}
 			break;
 		}
 
 		case kContextParametersFileNumber: {
-			error("ContextParameters::ContextParameters(): Section type FILE_NUMBER not implemented yet");
+			error("%s: Section type FILE_NUMBER not implemented yet", __func__);
 			break;
 		}
 
@@ -186,7 +186,7 @@ void Context::readCreateContextData(Chunk &chunk) {
 		}
 
 		default:
-			error("ContextParameters::ContextParameters(): Unknown section type 0x%x", static_cast<uint>(sectionType));
+			error("%s: Unknown section type 0x%x", __func__, static_cast<uint>(sectionType));
 		}
 
 		sectionType = static_cast<ContextParametersSectionType>(chunk.readTypedUint16());
@@ -251,7 +251,7 @@ Actor *Context::readCreateActorData(Chunk &chunk) {
 		break;
 
 	default:
-		error("No class for actor type 0x%x (@0x%llx)", static_cast<uint>(type), static_cast<long long int>(chunk.pos()));
+		error("%s: No class for actor type 0x%x (@0x%llx)", __func__, static_cast<uint>(type), static_cast<long long int>(chunk.pos()));
 	}
 	actor->setId(id);
 	actor->setContextId(contextId);
@@ -262,12 +262,12 @@ Actor *Context::readCreateActorData(Chunk &chunk) {
 void Context::readCreateVariableData(Chunk &chunk) {
 	uint repeatedFileNumber = chunk.readTypedUint16();
 	if (repeatedFileNumber != _fileNumber) {
-		warning("Context::readCreateVariableData(): Repeated file number didn't match: %d != %d", repeatedFileNumber, _fileNumber);
+		warning("%s: Repeated file number didn't match: %d != %d", __func__, repeatedFileNumber, _fileNumber);
 	}
 
 	uint id = chunk.readTypedUint16();
 	if (g_engine->getVariable(id) != nullptr) {
-		error("Global variable %d already exists", id);
+		error("%s: Global variable %d already exists", __func__, id);
 	}
 
 	ScriptValue *value = new ScriptValue(&chunk);
@@ -277,13 +277,13 @@ void Context::readCreateVariableData(Chunk &chunk) {
 }
 
 void Context::readOldStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
-	error("Context::readOldStyleHeaderSections(): Not implemented yet");
+	error("%s: Not implemented yet", __func__);
 }
 
 void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 	bool moreSectionsToRead = (chunk._id == MKTAG('i', 'g', 'o', 'd'));
 	if (!moreSectionsToRead) {
-		warning("Context::readNewStyleHeaderSections(): Got no header sections (@0x%llx)", static_cast<long long int>(chunk.pos()));
+		warning("%s: Got no header sections (@0x%llx)", __func__, static_cast<long long int>(chunk.pos()));
 	}
 
 	while (moreSectionsToRead) {
@@ -293,7 +293,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 		debugC(5, kDebugLoading, "Context::readNewStyleHeaderSections(): sectionType = 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 		bool chunkIsHeader = (sectionType == 0x000d);
 		if (!chunkIsHeader) {
-			error("Context::readNewStyleHeaderSections(): Expected header chunk, got %s (@0x%llx)", tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
+			error("%s: Expected header chunk, got %s (@0x%llx)", __func__, tag2str(chunk._id), static_cast<long long int>(chunk.pos()));
 		}
 
 		// Read this header section.
@@ -311,7 +311,7 @@ void Context::readNewStyleHeaderSections(Subfile &subfile, Chunk &chunk) {
 
 void Context::readActorInFirstSubfile(Chunk &chunk) {
 	if (chunk._id == MKTAG('i', 'g', 'o', 'd')) {
-		warning("Context::readActorInFirstSubfile(): Skippping \"igod\" actor link chunk");
+		warning("%s: Skippping \"igod\" actor link chunk", __func__);
 		chunk.skip(chunk.bytesRemaining());
 		return;
 	}
@@ -323,7 +323,7 @@ void Context::readActorInFirstSubfile(Chunk &chunk) {
 		// install cache (INSTALL.CXT).
 		actor = g_engine->getActorByChunkReference(chunk._id);
 		if (actor == nullptr) {
-			error("Context::readActorInFirstSubfile(): Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+			error("%s: Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", __func__, tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
 	debugC(5, kDebugLoading, "\nContext::readActorInFirstSubfile(): Got actor with chunk ID %s in first subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), static_cast<uint>(actor->type()), static_cast<long long int>(chunk.pos()));
@@ -338,7 +338,7 @@ void Context::readActorFromLaterSubfile(Subfile &subfile) {
 		// install cache (INSTALL.CXT).
 		actor = g_engine->getActorByChunkReference(chunk._id);
 		if (actor == nullptr) {
-			error("Context::readActorFromLaterSubfile(): Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
+			error("%s: Actor for chunk \"%s\" (0x%x) does not exist or has not been read yet in this title. (@0x%llx)", __func__, tag2str(chunk._id), chunk._id, static_cast<long long int>(chunk.pos()));
 		}
 	}
 	debugC(5, kDebugLoading, "\nContext::readActorFromLaterSubfile(): Got actor with chunk ID %s in later subfile (type: 0x%x) (@0x%llx)", tag2str(chunk._id), actor->type(), static_cast<long long int>(chunk.pos()));
@@ -355,14 +355,14 @@ bool Context::readHeaderSection(Chunk &chunk) {
 	}
 
 	case kContextActorLinkSection: {
-		warning("Context::readHeaderSection(): ACTOR_LINK not implemented yet");
+		warning("%s: ACTOR_LINK not implemented yet", __func__);
 		chunk.skip(chunk.bytesRemaining());
 		break;
 	}
 
 	case kContextPaletteSection: {
 		if (_palette != nullptr) {
-			error("Context::readHeaderSection(): Got multiple palettes (@0x%llx)", static_cast<long long int>(chunk.pos()));
+			error("%s: Got multiple palettes (@0x%llx)", __func__, static_cast<long long int>(chunk.pos()));
 		}
 
 		byte *buffer = new byte[Graphics::PALETTE_SIZE];
@@ -373,7 +373,7 @@ bool Context::readHeaderSection(Chunk &chunk) {
 		// This is likely just an ending flag that we expect to be zero.
 		uint endingFlag = chunk.readTypedUint16();
 		if (endingFlag != 0) {
-			warning("Context::readHeaderSection(): Got non-zero ending flag 0x%x", endingFlag);
+			warning("%s: Got non-zero ending flag 0x%x", __func__, endingFlag);
 		}
 		break;
 	}
@@ -408,7 +408,7 @@ bool Context::readHeaderSection(Chunk &chunk) {
 		if (!g_engine->isFirstGenerationEngine()) {
 			uint endingFlag = chunk.readTypedUint16();
 			if (endingFlag != 0) {
-				warning("Context::readHeaderSection(): Got non-zero ending flag 0x%x in function section", endingFlag);
+				warning("%s: Got non-zero ending flag 0x%x in function section", __func__, endingFlag);
 			}
 		}
 		break;
@@ -422,17 +422,17 @@ bool Context::readHeaderSection(Chunk &chunk) {
 	}
 
 	case kContextEmptySection: {
-		error("Context::readHeaderSection(): EMPTY Not implemented yet");
+		error("%s: EMPTY Not implemented yet", __func__);
 		break;
 	}
 
 	case kContextPoohSection: {
-		error("Context::readHeaderSection(): POOH Not implemented yet");
+		error("%s: POOH Not implemented yet", __func__);
 		break;
 	}
 
 	default:
-		error("Context::readHeaderSection(): Unknown section type 0x%x (@0x%llx)", static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
+		error("%s: Unknown section type 0x%x (@0x%llx)", __func__, static_cast<uint>(sectionType), static_cast<long long int>(chunk.pos()));
 	}
 
 	return true;

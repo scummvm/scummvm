@@ -73,12 +73,12 @@ void AudioSequence::readChunk(Chunk &chunk) {
 	case 4: // IMA ADPCM-encoded
 		// TODO: The interface here is different. We can't pass in the
 		// buffers directly. We have to make a stream first.
-		warning("ADPCM decoding not implemented yet");
+		warning("%s: ADPCM decoding not implemented yet", __func__);
 		chunk.skip(chunk.bytesRemaining());
 		break;
 
 	default:
-		error("Unknown audio encoding 0x%x", static_cast<uint>(_bitsPerSample));
+		error("%s: Unknown audio encoding 0x%x", __func__, static_cast<uint>(_bitsPerSample));
 	}
 	_streams.push_back(stream);
 	debugC(5, kDebugLoading, "Finished reading audio chunk (@0x%llx)", static_cast<long long int>(chunk.pos()));

@@ -119,7 +119,7 @@ ScriptValue Collection::callMethod(BuiltInMethod method, Common::Array<ScriptVal
 		break;
 
 	default:
-		error("Attempt to call unimplemented method %s (%d)", builtInMethodToStr(method), static_cast<uint>(method));
+		error("%s: Attempt to call unimplemented method %s (%d)", __func__, builtInMethodToStr(method), static_cast<uint>(method));
 	}
 	return returnValue;
 }
@@ -131,7 +131,7 @@ void Collection::apply(const Common::Array<ScriptValue> &args) {
 	for (const ScriptValue &item : *this) {
 		argsToApply[0] = item;
 		// TODO: Need to create and call FunctionManager.
-		warning("Applying function %d not implemented", functionId);
+		warning("%s: Applying function %d not implemented", __func__, functionId);
 	}
 }
 

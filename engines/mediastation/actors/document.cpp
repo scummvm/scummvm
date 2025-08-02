@@ -50,7 +50,7 @@ void DocumentActor::processBranch(Common::Array<ScriptValue> &args) {
 	if (args.size() > 1) {
 		bool disableUpdates = static_cast<bool>(args[1].asParamToken());
 		if (disableUpdates)
-			warning("processBranch: disableUpdates parameter not handled yet");
+			warning("%s: disableUpdates parameter not handled yet", __func__);
 	}
 
 	g_engine->scheduleScreenBranch(contextId);

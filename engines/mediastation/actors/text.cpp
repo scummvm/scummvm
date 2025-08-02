@@ -76,25 +76,25 @@ ScriptValue TextActor::callMethod(BuiltInMethod methodId, Common::Array<ScriptVa
 	switch (methodId) {
 	case kTextMethod: {
 		assert(args.empty());
-		error("Text::callMethod(): Text() method not implemented yet");
+		error("%s: Text() method not implemented yet", __func__);
 	}
 
 	case kSetTextMethod: {
 		assert(args.size() == 1);
-		error("Text::callMethod(): getText() method not implemented yet");
+		error("%s: getText() method not implemented yet", __func__);
 	}
 
 	case kSpatialShowMethod: {
 		assert(args.empty());
 		_isVisible = true;
-		warning("Text::callMethod(): spatialShow method not implemented yet");
+		warning("%s: spatialShow method not implemented yet", __func__);
 		return returnValue;
 	}
 
 	case kSpatialHideMethod: {
 		assert(args.empty());
 		_isVisible = false;
-		warning("Text::callMethod(): spatialHide method not implemented yet");
+		warning("%s: spatialHide method not implemented yet", __func__);
 		return returnValue;
 	}
 
@@ -108,7 +108,7 @@ Common::String TextActor::text() const {
 }
 
 void TextActor::setText(Common::String text) {
-	error("Text::setText(): Setting text not implemented yet");
+	error("%s: Setting text not implemented yet", __func__);
 }
 
 } // End of namespace MediaStation

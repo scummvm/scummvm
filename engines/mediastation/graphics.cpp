@@ -45,7 +45,7 @@ VideoDisplayManager::~VideoDisplayManager() {
 
 void VideoDisplayManager::effectTransition(Common::Array<ScriptValue> &args) {
 	if (args.empty()) {
-		warning("effectTransition: Script args cannot be empty");
+		warning("%s: Script args cannot be empty", __func__);
 		return;
 	}
 
@@ -100,7 +100,7 @@ void VideoDisplayManager::effectTransition(Common::Array<ScriptValue> &args) {
 		break;
 
 	default:
-		warning("effectTransition: Got unknown transition type %d", static_cast<uint>(transitionType));
+		warning("%s: Got unknown transition type %d", __func__, static_cast<uint>(transitionType));
 	}
 }
 
@@ -190,7 +190,7 @@ void VideoDisplayManager::fadeToColor(Common::Array<ScriptValue> &args) {
 
 void VideoDisplayManager::setToColor(Common::Array<ScriptValue> &args) {
 	if (args.size() < 6) {
-		error("setToColor: Too few script args");
+		error("%s: Too few script args", __func__);
 	}
 
 	byte r = static_cast<byte>(args[1].asFloat());
@@ -204,7 +204,7 @@ void VideoDisplayManager::setToColor(Common::Array<ScriptValue> &args) {
 
 void VideoDisplayManager::setToPercentOfPalette(Common::Array<ScriptValue> &args) {
 	if (args.size() < 7) {
-		error("setToPercentOfPalette: Too few script args");
+		error("%s: Too few script args", __func__);
 	}
 
 	double percent = args[1].asFloat();
@@ -226,7 +226,7 @@ void VideoDisplayManager::fadeToPaletteObject(Common::Array<ScriptValue> &args) 
 	if (args.size() >= 2) {
 		paletteId = args[1].asActorId();
 	} else {
-		warning("fadeToPaletteObject: Too few script args");
+		warning("%s: Too few script args", __func__);
 		return;
 	}
 	if (args.size() >= 3) {
@@ -248,7 +248,7 @@ void VideoDisplayManager::setToPaletteObject(Common::Array<ScriptValue> &args) {
 	if (args.size() >= 2) {
 		paletteId = args[1].asActorId();
 	} else {
-		warning("fadeToPaletteObject: Too few script args");
+		warning("%s: Too few script args", __func__);
 		return;
 	}
 	if (args.size() >= 4) {
@@ -269,7 +269,7 @@ void VideoDisplayManager::setToPercentOfPaletteObject(Common::Array<ScriptValue>
 		percent = args[1].asFloat();
 		paletteId = args[2].asActorId();
 	} else {
-		error("fadeToPaletteObject: Too few script args");
+		error("%s: Too few script args", __func__);
 		return;
 	}
 	if (args.size() >= 5) {
@@ -282,7 +282,7 @@ void VideoDisplayManager::setToPercentOfPaletteObject(Common::Array<ScriptValue>
 
 void VideoDisplayManager::colorShiftCurrentPalette(Common::Array<ScriptValue> &args) {
 	if (args.size() < 4) {
-		warning("colorShiftCurrentPalette: Too few script args");
+		warning("%s: Too few script args", __func__);
 		return;
 	}
 
@@ -294,7 +294,7 @@ void VideoDisplayManager::colorShiftCurrentPalette(Common::Array<ScriptValue> &a
 }
 
 void VideoDisplayManager::circleOut(Common::Array<ScriptValue> &args) {
-	warning("STUB: circleOut");
+	warning("%s: STUB", __func__);
 }
 
 void VideoDisplayManager::_setPalette(Graphics::Palette &palette, uint startIndex, uint colorCount) {
@@ -356,7 +356,7 @@ void VideoDisplayManager::_setPercentToColor(double percent, byte r, byte g, byt
 
 void VideoDisplayManager::_setToPercentPalette(double percent, Graphics::Palette &currentPalette, Graphics::Palette &targetPalette, uint startIndex, uint colorCount) {
 	if (percent < 0.0 || percent > 1.0) {
-		warning("_setToPercentPalette: Got invalid palette percent value %f", percent);
+		warning("%s: Got invalid palette percent value %f", __func__, percent);
 		percent = CLIP<double>(percent, 0.0, 1.0);
 	}
 
@@ -381,7 +381,7 @@ void VideoDisplayManager::_setToPercentPalette(double percent, Graphics::Palette
 void VideoDisplayManager::_fadeToPalette(double fadeTime, Graphics::Palette &targetPalette, uint startIndex, uint colorCount) {
 	if (fadeTime <= 0.0) {
 		// Set the fade time to something reasonable so we can continue.
-		warning("_fadeToPalette: Got invalid fade time %f", fadeTime);
+		warning("%s: Got invalid fade time %f", __func__, fadeTime);
 		fadeTime = 0.1;
 	}
 
@@ -450,9 +450,9 @@ void VideoDisplayManager::_colorShiftCurrentPalette(uint startIndex, uint shiftA
 void VideoDisplayManager::_fadeToPaletteObject(uint paletteId, double fadeTime, uint startIndex, uint colorCount) {
 	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
-		error("Got null target palette");
+		error("%s: Got null target palette", __func__);
 	} else if (actor->type() != kActorTypePalette) {
-		error("Actor %d is not a palette", paletteId);
+		error("%s: Actor %d is not a palette", __func__, paletteId);
 	}
 
 	Graphics::Palette *palette = static_cast<PaletteActor *>(actor)->_palette;
@@ -462,9 +462,9 @@ void VideoDisplayManager::_fadeToPaletteObject(uint paletteId, double fadeTime, 
 void VideoDisplayManager::_setToPaletteObject(uint paletteId, uint startIndex, uint colorCount) {
 	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
-		error("Got null target palette");
+		error("%s: Got null target palette", __func__);
 	} else if (actor->type() != kActorTypePalette) {
-		error("Actor %d is not a palette", paletteId);
+		error("%s: Actor %d is not a palette", __func__, paletteId);
 	}
 
 	Graphics::Palette *palette = static_cast<PaletteActor *>(actor)->_palette;
@@ -474,9 +474,9 @@ void VideoDisplayManager::_setToPaletteObject(uint paletteId, uint startIndex, u
 void VideoDisplayManager::_setPercentToPaletteObject(double percent, uint paletteId, uint startIndex, uint colorCount) {
 	Actor *actor = _vm->getActorById(paletteId);
 	if (actor == nullptr) {
-		error("Got null target palette");
+		error("%s: Got null target palette", __func__);
 	} else if (actor->type() != kActorTypePalette) {
-		error("Actor %d is not a palette", paletteId);
+		error("%s: Actor %d is not a palette", __func__, paletteId);
 	}
 
 	Graphics::Palette *targetPalette = static_cast<PaletteActor *>(actor)->_palette;
@@ -512,12 +512,12 @@ void VideoDisplayManager::imageBlit(
 		break;
 
 	default:
-		error("imageBlit: Got unknown bitmap compression type %d",
+		error("%s: Got unknown bitmap compression type %d", __func__,
 			static_cast<uint>(sourceImage->getCompressionType()));
 	}
 
 	if (dissolveFactor > 1.0 || dissolveFactor < 0.0) {
-		warning("imageBlit: Got out-of-range dissolve factor: %f", dissolveFactor);
+		warning("%s: Got out-of-range dissolve factor: %f", __func__, dissolveFactor);
 		CLIP(dissolveFactor, 0.0, 1.0);
 	} else if (dissolveFactor == 0.0) {
 		// If the image is fully transparent, there is nothing to draw, so we can return now.
@@ -552,7 +552,7 @@ void VideoDisplayManager::imageBlit(
 	case kCccBlit | kClipEnabled:
 	case kCccTransparentBlit | kClipEnabled:
 		// CCC blitting is unimplemented for now because few, if any, titles actually use it.
-		error("imageBlit: CCC blitting not implemented yet");
+		error("%s: CCC blitting not implemented yet", __func__);
 		break;
 
 	case kPartialDissolve | kClipEnabled:
@@ -566,7 +566,7 @@ void VideoDisplayManager::imageBlit(
 		break;
 
 	default:
-		error("imageBlit: Got invalid blit mode: 0x%x", blitFlags);
+		error("%s: Got invalid blit mode: 0x%x", __func__, blitFlags);
 	}
 }
 
@@ -656,7 +656,7 @@ void VideoDisplayManager::dissolveBlit1Rect(
 		break;
 
 	default:
-		error("dissolveBlit1Rect: Unsupported compression type for dissolve blit: %d",
+		error("%s: Unsupported compression type for dissolve blit: %d", __func__,
 			static_cast<uint>(source->getCompressionType()));
 	}
 
@@ -686,11 +686,11 @@ void VideoDisplayManager::dissolveBlit1Rect(
 						if (destXInBounds && destYInBounds) {
 							dest->setPixel(destPos.x, destPos.y, sourcePixel);
 						} else {
-							warning("dissolveBlit1Rect: Dest out of bounds");
+							warning("%s: Dest out of bounds", __func__);
 						}
 					}
 				} else {
-					warning("dissolveBlit1Rect: Source out of bounds");
+					warning("%s: Source out of bounds", __func__);
 				}
 			}
 		}
@@ -706,10 +706,10 @@ void VideoDisplayManager::imageDeltaBlit(
 	const Common::Array<Common::Rect> &dirtyRegion) {
 
 	if (deltaFrame->getCompressionType() != kRle8BitmapCompression) {
-		error("imageDeltaBlit: Unsupported delta frame compression type for delta blit: %d",
-			static_cast<uint>(keyFrame->getCompressionType()));
+		error("%s: Unsupported delta frame compression type for delta blit: %d",
+			__func__, static_cast<uint>(keyFrame->getCompressionType()));
 	} else if (dissolveFactor != 1.0) {
-		warning("imageDeltaBlit: Delta blit does not support dissolving");
+		warning("%s: Delta blit does not support dissolving", __func__);
 	}
 
 	switch (keyFrame->getCompressionType()) {
@@ -723,8 +723,8 @@ void VideoDisplayManager::imageDeltaBlit(
 		break;
 
 	default:
-		error("imageDeltaBlit: Unsupported keyframe image type for delta blit: %d",
-			static_cast<uint>(deltaFrame->getCompressionType()));
+		error("%s: Unsupported keyframe image type for delta blit: %d",
+			__func__, static_cast<uint>(deltaFrame->getCompressionType()));
 	}
 }
 
@@ -780,7 +780,7 @@ void VideoDisplayManager::deltaRleBlit1Rect(
 	// compressed. However, real titles don't seem to use it, instead
 	// decompressing the keyframe separately and then passng it in.
 	// So this is left unimplemented until it's actually needed.
-	warning("STUB: deltaRleBlit1Rect");
+	warning("STUB: %s", __func__);
 }
 
 Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
@@ -841,7 +841,7 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 							byte *destPtr = static_cast<byte *>(dest.getBasePtr(destPos.x, destPos.y));
 							memcpy(destPtr, srcPtr, xToCopy);
 						} else {
-							warning("decompressRle8Bitmap: Keyframe copy (multi-line) exceeds bounds");
+							warning("%s: Keyframe copy (multi-line) exceeds bounds", __func__);
 						}
 					}
 
@@ -855,7 +855,7 @@ Graphics::ManagedSurface VideoDisplayManager::decompressRle8Bitmap(
 						byte *destPtr = static_cast<byte *>(dest.getBasePtr(sourcePos.x, sourcePos.y));
 						memcpy(destPtr, srcPtr, xToCopy);
 					} else {
-						warning("decompressRle8Bitmap: Keyframe copy (same line) exceeds bounds");
+						warning("%s: Keyframe copy (same line) exceeds bounds", __func__);
 					}
 
 					sourcePos += Common::Point(xToCopy, yToCopy);

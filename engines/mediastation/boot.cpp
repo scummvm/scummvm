@@ -29,13 +29,13 @@ ContextDeclaration::ContextDeclaration(Chunk &chunk) {
 	// Read the file number.
 	ContextDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kContextDeclarationContextId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_contextId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
 	if (kContextDeclarationStreamId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_streamId = chunk.readTypedUint16();
 
@@ -71,13 +71,13 @@ ScreenDeclaration::ScreenDeclaration(Chunk &chunk) {
 	// Make sure this declaration isn't empty.
 	ScreenDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kScreenDeclarationActorId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_actorId = chunk.readTypedUint16();
 
 	sectionType = getSectionType(chunk);
 	if (kScreenDeclarationScreenId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_screenId = chunk.readTypedUint16();
 }
@@ -92,14 +92,14 @@ FileDeclaration::FileDeclaration(Chunk &chunk) {
 	// Read the file ID.
 	FileDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_id = chunk.readTypedUint16();
 
 	// Read the intended file location.
 	sectionType = getSectionType(chunk);
 	if (kFileDeclarationFileNameAndType != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_intendedLocation = static_cast<IntendedFileLocation>(chunk.readTypedUint16());
 
@@ -119,21 +119,21 @@ SubfileDeclaration::SubfileDeclaration(Chunk &chunk) {
 	// Read the actor ID.
 	SubfileDeclarationSectionType sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationActorId != sectionType) {
-		error("Got unexpected section type %d", static_cast<uint>(sectionType));
+		error("%s: Got unexpected section type %d", __func__, static_cast<uint>(sectionType));
 	}
 	_actorId = chunk.readTypedUint16();
 
 	// Read the file ID.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationFileId != sectionType) {
-		error("SubfileDeclaration(): Expected section type FILE_ID, got 0x%x", static_cast<uint>(sectionType));
+		error("%s: Expected section type FILE_ID, got 0x%x", __func__, static_cast<uint>(sectionType));
 	}
 	_fileId = chunk.readTypedUint16();
 
 	// Read the start offset from the absolute start of the file.
 	sectionType = getSectionType(chunk);
 	if (kSubfileDeclarationStartOffset != sectionType) {
-		error("SubfileDeclaration(): Expected section type START_OFFSET, got 0x%x", static_cast<uint>(sectionType));
+		error("%s: Expected section type START_OFFSET, got 0x%x", __func__, static_cast<uint>(sectionType));
 	}
 	_startOffsetInFile = chunk.readTypedUint32();
 }
@@ -200,7 +200,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 				EngineResourceDeclaration resourceDeclaration = EngineResourceDeclaration(resourceName, resourceId);
 				_engineResourceDeclarations.setVal(resourceId, resourceDeclaration);
 			} else {
-				error("Boot::Boot(): Got section type 0x%x when expecting ENGINE_RESOURCE_ID", static_cast<uint>(sectionType));
+				error("%s: Got section type 0x%x when expecting ENGINE_RESOURCE_ID", __func__, static_cast<uint>(sectionType));
 			}
 			break;
 		}
@@ -284,7 +284,7 @@ Boot::Boot(const Common::Path &path) : Datafile(path) {
 		}
 
 		default:
-			warning("Boot::Boot(): Unknown section type %d", static_cast<uint>(sectionType));
+			warning("%s: Unknown section type %d", __func__, static_cast<uint>(sectionType));
 		}
 
 		sectionType = getSectionType(chunk);

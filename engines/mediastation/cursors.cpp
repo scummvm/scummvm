@@ -59,21 +59,21 @@ WindowsCursorManager::~WindowsCursorManager() {
 
 void WindowsCursorManager::loadCursors(const Common::Path &appName) {
 	if (appName.empty()) {
-		error("WindowsCursorManager::loadCursors(): No executable to load cursors from");
+		error("%s: No executable to load cursors from", __func__);
 	} else if (!Common::File::exists(appName)) {
-		error("WindowsCursorManager::loadCursors(): Executable %s doesn't exist", appName.toString().c_str());
+		error("%s: Executable %s doesn't exist", __func__, appName.toString().c_str());
 	}
 
 	Common::WinResources *exe = Common::WinResources::createFromEXE(appName);
 	if (!exe->loadFromEXE(appName)) {
-		error("WindowsCursorManager::loadCursors(): Could not load resources from executable %s", appName.toString().c_str());
+		error("%s: Could not load resources from executable %s", __func__, appName.toString().c_str());
 	}
 
 	const Common::Array<Common::WinResourceID> cursorGroups = exe->getIDList(Common::kWinGroupCursor);
 	for (Common::WinResourceID cursorGroup : cursorGroups) {
 		Common::String resourceString = cursorGroup.getString();
 		if (resourceString.empty()) {
-			warning("WindowsCursorManager::loadCursors(): Got Windows cursor group with no string ID");
+			warning("%s: Got Windows cursor group with no string ID", __func__);
 			continue;
 		}
 		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, cursorGroup);
@@ -88,20 +88,20 @@ void WindowsCursorManager::setCursor(const Common::String &name) {
 		Graphics::Cursor *cursor = group->cursors[0].cursor;
 		CursorMan.replaceCursor(cursor);
 	} else {
-		error("WindowsCursorManager::setCursor(): Reqested Windows cursor %s not found", name.c_str());
+		error("%s: Reqested Windows cursor %s not found", __func__, name.c_str());
 	}
 }
 
 MacCursorManager::MacCursorManager(const Common::Path &appName) {
 	if (appName.empty()) {
-		error("MacCursorManager::loadCursors(): No file to load cursors from");
+		error("%s: No file to load cursors from", __func__);
 	} else if (!Common::File::exists(appName)) {
-		error("MacCursorManager::loadCursors(): File %s doesn't exist", appName.toString().c_str());
+		error("%s: File %s doesn't exist", __func__, appName.toString().c_str());
 	}
 
 	_resFork = new Common::MacResManager();
 	if (!_resFork->open(appName) || !_resFork->hasResFork()) {
-		error("MacCursorManager::loadCursors(): Could not load resource fork from %s", appName.toString().c_str());
+		error("%s: Could not load resource fork from %s", __func__, appName.toString().c_str());
 	}
 }
 
@@ -120,12 +120,12 @@ void MacCursorManager::setCursor(const Common::String &name) {
 
 	// Make sure we got a resource.
 	if (stream == nullptr) {
-		error("MacCursorManager::setCursor(): Reqested Mac cursor %s not found", name.c_str());
+		error("%s: Reqested Mac cursor %s not found", __func__, name.c_str());
 	}
 
 	Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 	if (!macCursor->readFromStream(*stream)) {
-		error("MacCursorManager::setCursor(): Error parsing cursor %s from stream", name.c_str());
+		error("%s: Error parsing cursor %s from stream", __func__, name.c_str());
 	}
 	CursorMan.replaceCursor(macCursor);
 

@@ -128,7 +128,7 @@ const char *MediaStationEngine::getAppName() const {
 
 bool MediaStationEngine::isFirstGenerationEngine() {
 	if (_boot == nullptr) {
-		error("Attempted to get engine version before BOOT.STM was read");
+		error("%s: Attempted to get engine version before BOOT.STM was read", __func__);
 	} else {
 		return (_boot->_versionInfo.major == 0);
 	}
@@ -145,7 +145,7 @@ Common::Error MediaStationEngine::run() {
 	} else if (getPlatform() == Common::kPlatformMacintosh) {
 		_cursor = new MacCursorManager(getAppName());
 	} else {
-		error("MediaStationEngine::run(): Attempted to use unsupported platform %s", Common::getPlatformDescription(getPlatform()));
+		error("%s: Attempted to use unsupported platform %s", __func__, Common::getPlatformDescription(getPlatform()));
 	}
 	_cursor->showCursor();
 
@@ -156,7 +156,7 @@ Common::Error MediaStationEngine::run() {
 		// For development purposes, we can choose to start at an arbitrary context
 		// in this title. This might not work in all cases.
 		uint entryContextId = ConfMan.get("entry_context").asUint64();
-		warning("Starting at user-requested context %d", entryContextId);
+		warning("%s: Starting at user-requested context %d", __func__, entryContextId);
 		_requestedScreenBranchId = entryContextId;
 	} else {
 		_requestedScreenBranchId = _boot->_entryContextId;
@@ -241,7 +241,7 @@ void MediaStationEngine::processEvents() {
 		case Common::EVENT_RBUTTONDOWN: {
 			// We are using the right button as a quick exit since the Media
 			// Station engine doesn't seem to use the right button itself.
-			warning("EVENT_RBUTTONDOWN: Quitting for development purposes");
+			warning("%s: EVENT_RBUTTONDOWN: Quitting for development purposes", __func__);
 			quitGame();
 			break;
 		}
@@ -309,12 +309,12 @@ void MediaStationEngine::draw() {
 
 Context *MediaStationEngine::loadContext(uint32 contextId) {
 	if (_boot == nullptr) {
-		error("Cannot load contexts before BOOT.STM is read");
+		error("%s: Cannot load contexts before BOOT.STM is read", __func__);
 	}
 
 	debugC(5, kDebugLoading, "MediaStationEngine::loadContext(): Loading context %d", contextId);
 	if (_loadedContexts.contains(contextId)) {
-		warning("MediaStationEngine::loadContext(): Context %d already loaded, returning existing context", contextId);
+		warning("%s: Context %d already loaded, returning existing context", __func__, contextId);
 		return _loadedContexts.getVal(contextId);
 	}
 
@@ -323,7 +323,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 	// There are other actors in a subfile too, so we need to make sure we're
 	// referencing the screen actor, at the start of the file.
 	if (subfileDeclaration._startOffsetInFile != 16) {
-		warning("MediaStationEngine::loadContext(): Requested ID wasn't for a context.");
+		warning("%s: Requested ID wasn't for a context.", __func__);
 		return nullptr;
 	}
 	uint fileId = subfileDeclaration._fileId;
@@ -351,7 +351,7 @@ Context *MediaStationEngine::loadContext(uint32 contextId) {
 
 void MediaStationEngine::registerActor(Actor *actorToAdd) {
 	if (getActorById(actorToAdd->id())) {
-		error("Actor with ID 0x%d was already defined in this title", actorToAdd->id());
+		error("%s: Actor with ID 0x%d was already defined in this title", __func__, actorToAdd->id());
 	}
 
 	_actors.push_back(actorToAdd);
@@ -389,7 +389,7 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 	debugC(5, kDebugScript, "MediaStationEngine::releaseContext(): Releasing context %d", contextId);
 	Context *context = _loadedContexts.getValOrDefault(contextId);
 	if (context == nullptr) {
-		error("MediaStationEngine::releaseContext(): Attempted to unload context %d that is not currently loaded", contextId);
+		error("%s: Attempted to unload context %d that is not currently loaded", __func__, contextId);
 	}
 
 	// Make sure nothing is still using this context.
@@ -461,18 +461,18 @@ ScriptValue MediaStationEngine::callBuiltInFunction(BuiltInFunction function, Co
 	case kDrawingFunction: {
 		// Not entirely sure what this function does, but it seems like a way to
 		// call into some drawing functions built into the IBM/Crayola executable.
-		warning("MediaStationEngine::callBuiltInFunction(): Built-in drawing function not implemented");
+		warning("%s: Built-in drawing function not implemented", __func__);
 		return returnValue;
 	}
 
 	case kUnk1Function: {
-		warning("MediaStationEngine::callBuiltInFunction(): Function 10 not implemented");
+		warning("%s: Function 10 not implemented", __func__);
 		returnValue.setToFloat(1.0);
 		return returnValue;
 	}
 
 	default:
-		error("MediaStationEngine::callBuiltInFunction(): Got unknown built-in function %s (%d)", builtInFunctionToStr(function), static_cast<uint>(function));
+		error("%s: Got unknown built-in function %s (%d)", __func__, builtInFunctionToStr(function), static_cast<uint>(function));
 	}
 }
 

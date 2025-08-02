@@ -40,7 +40,7 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 	case kScriptValueTypeBool: {
 		uint rawValue = stream->readTypedByte();
 		if (rawValue != 0 && rawValue != 1) {
-			error("Got invalid literal bool value %d", rawValue);
+			error("%s: Got invalid literal bool value %d", __func__, rawValue);
 		}
 		setToBool(rawValue);
 		break;
@@ -95,7 +95,7 @@ ScriptValue::ScriptValue(ParameterReadStream *stream) {
 	}
 
 	default:
-		error("Got unknown script value type %s", scriptValueTypeToStr(_type));
+		error("%s: Got unknown script value type %s", __func__, scriptValueTypeToStr(_type));
 	}
 }
 
@@ -234,7 +234,7 @@ BuiltInMethod ScriptValue::asMethodId() const {
 
 bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &rhs) {
 	if (lhs.getType() != rhs.getType()) {
-		error("Attempt to compare mismatched types %s and %s", scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
+		error("%s: Attempt to compare mismatched types %s and %s", __func__, scriptValueTypeToStr(lhs.getType()), scriptValueTypeToStr(rhs.getType()));
 	}
 
 	switch (lhs.getType()) {
@@ -278,7 +278,7 @@ bool ScriptValue::compare(Opcode op, const ScriptValue &lhs, const ScriptValue &
 		break;
 
 	default:
-		error("Got unknown script value type %d", lhs.getType());
+		error("%s: Got unknown script value type %d", __func__, lhs.getType());
 	}
 }
 
@@ -292,7 +292,7 @@ bool ScriptValue::compareEmptyValues(Opcode op) {
 		return false;
 
 	default:
-		error("Got invalid empty value operation %s", opcodeToStr(op));
+		error("%s: Got invalid empty value operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -317,7 +317,7 @@ bool ScriptValue::compareStrings(Opcode op, const Common::String &left, const Co
 		return (left >= right);
 
 	default:
-		error("Got invalid string operation %s", opcodeToStr(op));
+		error("%s: Got invalid string operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -330,7 +330,7 @@ bool ScriptValue::compare(Opcode op, uint left, uint right) {
 		return (left != right);
 
 	default:
-		error("Got invalid param token operation %s", opcodeToStr(op));
+		error("%s: Got invalid param token operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -343,7 +343,7 @@ bool ScriptValue::compare(Opcode op, bool left, bool right) {
 		return (left != right);
 
 	default:
-		error("Got invalid bool operation %s", opcodeToStr(op));
+		error("%s: Got invalid bool operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -368,7 +368,7 @@ bool ScriptValue::compare(Opcode op, double left, double right) {
 		return (left >= right);
 
 	default:
-		error("Got invalid float operation %s", opcodeToStr(op));
+		error("%s: Got invalid float operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -381,7 +381,7 @@ bool ScriptValue::compare(Opcode op, Common::SharedPtr<Collection> left, Common:
 		return (left != right);
 
 	default:
-		error("Got invalid collection operation %s", opcodeToStr(op));
+		error("%s: Got invalid collection operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -396,7 +396,7 @@ ScriptValue ScriptValue::evalMathOperation(Opcode op, const ScriptValue &left, c
 		} else if (right.getType() == kScriptValueTypeFloat) {
 			result = binaryMathOperation(op, left.asFloat(), right.asFloat());
 		} else {
-			error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+			error("%s: Attempted to do math operation on unsupported value type %s", __func__, scriptValueTypeToStr(right.getType()));
 		}
 		returnValue.setToFloat(result);
 		break;
@@ -408,7 +408,7 @@ ScriptValue ScriptValue::evalMathOperation(Opcode op, const ScriptValue &left, c
 		} else if (right.getType() == kScriptValueTypeFloat) {
 			result = binaryMathOperation(op, left.asTime(), right.asFloat());
 		} else {
-			error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+			error("%s: Attempted to do math operation on unsupported value type %s", __func__, scriptValueTypeToStr(right.getType()));
 		}
 		returnValue.setToFloat(result);
 		break;
@@ -420,7 +420,7 @@ ScriptValue ScriptValue::evalMathOperation(Opcode op, const ScriptValue &left, c
 	}
 
 	default:
-		error("Attempted to do math operation on unsupported value type %s", scriptValueTypeToStr(right.getType()));
+		error("%s: Attempted to do math operation on unsupported value type %s", __func__, scriptValueTypeToStr(right.getType()));
 	}
 
 	return returnValue;
@@ -441,18 +441,18 @@ double ScriptValue::binaryMathOperation(Opcode op, double left, double right) {
 		if (right != 0.0) {
 			return left / right;
 		} else {
-			error("Division by zero");
+			error("%s: Division by zero", __func__);
 		}
 
 	case kOpcodeModulo:
 		if (right != 0.0) {
 			return fmod(left, right);
 		} else {
-			error("Division by zero");
+			error("%s: Division by zero", __func__);
 		}
 
 	default:
-		error("Got unvalid binary math operation %s", opcodeToStr(op));
+		error("%s: Got unvalid binary math operation %s", __func__, opcodeToStr(op));
 	}
 }
 
@@ -482,7 +482,7 @@ bool ScriptValue::operator>=(const ScriptValue &other) const {
 
 bool ScriptValue::operator||(const ScriptValue &other) const {
 	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
-		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
+		error("%s: Expected bools for binary comparison, got %s and %s", __func__, scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
 
 	return asBool() || other.asBool();
@@ -490,7 +490,7 @@ bool ScriptValue::operator||(const ScriptValue &other) const {
 
 bool ScriptValue::operator^(const ScriptValue &other) const {
 	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
-		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
+		error("%s: Expected bools for binary comparison, got %s and %s", __func__, scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
 
 	return asBool() ^ other.asBool();
@@ -498,7 +498,7 @@ bool ScriptValue::operator^(const ScriptValue &other) const {
 
 bool ScriptValue::operator&&(const ScriptValue &other) const {
 	if (getType() != kScriptValueTypeBool || other.getType() != kScriptValueTypeBool) {
-		error("Expected bools for binary comparison, got %s and %s", scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
+		error("%s: Expected bools for binary comparison, got %s and %s", __func__, scriptValueTypeToStr(getType()), scriptValueTypeToStr(other.getType()));
 	}
 
 	return asBool() && other.asBool();
@@ -536,7 +536,7 @@ ScriptValue ScriptValue::operator-() const {
 		break;
 
 	default:
-		error("Attempted to negate type %s", scriptValueTypeToStr(getType()));
+		error("%s: Attempted to negate type %s", __func__, scriptValueTypeToStr(getType()));
 	}
 	return returnValue;
 }
@@ -545,7 +545,7 @@ void ScriptValue::issueValueMismatchWarning(ScriptValueType expectedType) const 
 	// The original just blithely returns 0 (or equivalent) when you call a
 	// getter for the wrong type (for instance, calling asFloat() on a bool),
 	// but for debugging purposes we'll issue a warning.
-	warning("Script value type mismatch: Expected %s, got %s", scriptValueTypeToStr(expectedType), scriptValueTypeToStr(_type));
+	warning("%s: Script value type mismatch: Expected %s, got %s", __func__, scriptValueTypeToStr(expectedType), scriptValueTypeToStr(_type));
 }
 
 } // End of namespace MediaStation

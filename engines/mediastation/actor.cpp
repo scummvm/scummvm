@@ -60,7 +60,7 @@ void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 		// This is not a hashmap because we don't want to have to hash ScriptValues.
 		for (EventHandler *existingEventHandler : eventHandlersForType) {
 			if (existingEventHandler->_argumentValue == eventHandler->_argumentValue) {
-				error("ActorHeader::readSection(): Event handler for %s (%s) already exists",
+				error("%s: Event handler for %s (%s) already exists", __func__,
 					  eventTypeToStr(eventHandler->_type), eventHandler->getDebugHeader().c_str());
 			}
 		}
@@ -78,11 +78,11 @@ ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue>
 }
 
 void Actor::readChunk(Chunk &chunk) {
-	error("Actor::readChunk(): Chunk reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
+	error("%s: Chunk reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
 }
 
 void Actor::readSubfile(Subfile &subfile, Chunk &chunk) {
-	error("Actor::readSubfile(): Subfile reading for actor type 0x%x is not implemented", static_cast<uint>(_type));
+	error("%s: Subfile reading for actor type 0x%x is not implemented", __func__, static_cast<uint>(_type));
 }
 
 void Actor::processTimeEventHandlers() {
@@ -310,7 +310,7 @@ void SpatialEntity::invalidateLocalBounds() {
 }
 
 void SpatialEntity::invalidateLocalZIndex() {
-	warning("STUB: Actor::invalidateLocalZIndex()");
+	warning("STUB: %s", __func__);
 }
 
 } // End of namespace MediaStation

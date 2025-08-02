@@ -56,7 +56,7 @@ void FontActor::readChunk(Chunk &chunk) {
 	BitmapHeader *header = new BitmapHeader(chunk);
 	FontGlyph *glyph = new FontGlyph(chunk, asciiCode, unk1, unk2, header);
 	if (_glyphs.getValOrDefault(asciiCode) != nullptr) {
-		error("FontActor::readChunk(): Glyph for ASCII code 0x%x already exists", asciiCode);
+		error("%s: Glyph for ASCII code 0x%x already exists", __func__, asciiCode);
 	}
 	_glyphs.setVal(asciiCode, glyph);
 }

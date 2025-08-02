@@ -49,7 +49,7 @@ ScriptValue CodeChunk::executeNextBlock() {
 	if (!_returnImmediately) {
 		uint bytesRead = _bytecode->pos() - startingPos;
 		if (bytesRead != blockSize) {
-			error("Expected to have read %d script bytes, actually read %d", blockSize, bytesRead);
+			error("%s: Expected to have read %d script bytes, actually read %d", __func__, blockSize, bytesRead);
 		}
 	}
 	return returnValue;
@@ -102,7 +102,7 @@ ScriptValue CodeChunk::evaluateExpression(ExpressionType expressionType) {
 		break;
 
 	default:
-		error("Got unimplemented expression type %s (%d)",
+		error("%s: Got unimplemented expression type %s (%d)", __func__,
 			expressionTypeToStr(expressionType), static_cast<uint>(expressionType));
 	}
 	return returnValue;
@@ -180,7 +180,7 @@ ScriptValue CodeChunk::evaluateOperation() {
 		break;
 
 	default:
-		error("Got unimplemented opcode %s (%d)", opcodeToStr(opcode), static_cast<uint>(opcode));
+		error("%s: Got unimplemented opcode %s (%d)", __func__, opcodeToStr(opcode), static_cast<uint>(opcode));
 	}
 	return returnValue;
 }
@@ -194,7 +194,7 @@ ScriptValue CodeChunk::evaluateValue() {
 	case kOperandTypeBool: {
 		int b = _bytecode->readTypedByte();
 		if (b != 0 && b != 1) {
-			error("Got invalid literal bool value %d", b);
+			error("%s: Got invalid literal bool value %d", __func__, b);
 		}
 		debugC(5, kDebugScript, "%d ", b);
 		returnValue.setToBool(b == 1 ? true : false);
@@ -266,7 +266,7 @@ ScriptValue CodeChunk::evaluateValue() {
 	}
 
 	default:
-		error("Got unknown ScriptValue type %s (%d)", operandTypeToStr(operandType), static_cast<uint>(operandType));
+		error("%s: Got unknown ScriptValue type %s (%d)", __func__, operandTypeToStr(operandType), static_cast<uint>(operandType));
 	}
 }
 
@@ -285,7 +285,7 @@ ScriptValue *CodeChunk::readAndReturnVariable() {
 	case kVariableScopeGlobal: {
 		ScriptValue *variable = g_engine->getVariable(id);
 		if (variable == nullptr) {
-			error("Global variable %d doesn't exist", id);
+			error("%s: Global variable %d doesn't exist", __func__, id);
 		}
 		return variable;
 	}
@@ -304,13 +304,13 @@ ScriptValue *CodeChunk::readAndReturnVariable() {
 	case kVariableScopeParameter: {
 		uint index = id - 1;
 		if (_args == nullptr) {
-			error("Requested a parameter in a code chunk that has no parameters");
+			error("%s: Requested a parameter in a code chunk that has no parameters", __func__);
 		}
 		return &_args->operator[](index);
 	}
 
 	default:
-		error("Got unknown variable scope %s (%d)", variableScopeToStr(scope), static_cast<uint>(scope));
+		error("%s: Got unknown variable scope %s (%d)", __func__, variableScopeToStr(scope), static_cast<uint>(scope));
 	}
 }
 
@@ -318,7 +318,7 @@ void CodeChunk::evaluateIf() {
 	debugCN(5, kDebugScript, "\n    condition: ");
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
-		error("evaluateIf: Expected bool condition, got %s", scriptValueTypeToStr(condition.getType()));
+		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
@@ -332,7 +332,7 @@ void CodeChunk::evaluateIfElse() {
 	debugCN(5, kDebugScript, "\n    condition: ");
 	ScriptValue condition = evaluateExpression();
 	if (condition.getType() != kScriptValueTypeBool) {
-		error("evaluateIfElse: Expected bool condition, got %s", scriptValueTypeToStr(condition.getType()));
+		error("%s: Expected bool condition, got %s", __func__, scriptValueTypeToStr(condition.getType()));
 	}
 
 	if (condition.asBool()) {
@@ -352,14 +352,14 @@ ScriptValue CodeChunk::evaluateAssign() {
 	ScriptValue value = evaluateExpression();
 
 	if (value.getType() == kScriptValueTypeEmpty) {
-		error("Attempt to assign an empty value to a variable");
+		error("%s: Attempt to assign an empty value to a variable", __func__);
 	}
 
 	if (targetVariable != nullptr) {
 		*targetVariable = value;
 		return value;
 	} else {
-		error("Attempt to assign to null variable");
+		error("%s: Attempt to assign to null variable", __func__);
 	}
 }
 
@@ -428,7 +428,7 @@ ScriptValue CodeChunk::evaluateBinaryOperation(Opcode op) {
 		break;
 
 	default:
-		error("Got unknown binary operation opcode %s", opcodeToStr(op));
+		error("%s: Got unknown binary operation opcode %s", __func__, opcodeToStr(op));
 	}
 	return returnValue;
 }
@@ -516,14 +516,14 @@ ScriptValue CodeChunk::evaluateMethodCall(BuiltInMethod method, uint paramCount)
 		if (target.asActorId() == 0) {
 			// It seems to be valid to call a method on a null actor ID, in
 			// which case nothing happens. Still issue warning for traceability.
-			warning("Attempt to call method on a null actor ID");
+			warning("%s: Attempt to call method on a null actor ID", __func__);
 			return returnValue;
 		} else {
 			// This is a regular actor that we can process directly.
 			uint actorId = target.asActorId();
 			Actor *targetActor = g_engine->getActorById(actorId);
 			if (targetActor == nullptr) {
-				error("Attempt to call method on actor ID %d, which isn't loaded", target.asActorId());
+				error("%s: Attempt to call method on actor ID %d, which isn't loaded", __func__, target.asActorId());
 			}
 			returnValue = targetActor->callMethod(method, args);
 			return returnValue;

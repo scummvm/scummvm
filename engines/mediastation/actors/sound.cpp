@@ -110,7 +110,7 @@ void SoundActor::readSubfile(Subfile &subfile, Chunk &chunk) {
 		debugC(5, kDebugLoading, "Sound::readSubfile(): Reading chunk %d of %d", i, _chunkCount);
 		chunk = subfile.nextChunk();
 		if (chunk._id != expectedChunkId) {
-			error("Sound::readSubfile(): Expected chunk %s, got %s", tag2str(expectedChunkId), tag2str(chunk._id));
+			error("%s: Expected chunk %s, got %s", __func__, tag2str(expectedChunkId), tag2str(chunk._id));
 		}
 		readChunk(chunk);
 	}
@@ -122,7 +122,7 @@ void SoundActor::timePlay() {
 	}
 
 	if (_sequence.isEmpty()) {
-		warning("Sound::timePlay(): Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet");
+		warning("%s: Sound has no contents, probably because the sound is in INSTALL.CXT and isn't loaded yet", __func__);
 		_isPlaying = false;
 		return;
 	}
