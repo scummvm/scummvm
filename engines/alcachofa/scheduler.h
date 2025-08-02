@@ -26,12 +26,30 @@
 
 #include "common/stack.h"
 #include "common/str.h"
+#include "common/type_traits.h"
 
 namespace Alcachofa {
 
+/* Tasks are generally written as coroutines however the common coroutines
+ * cannot be used for two reasons:
+ * 1. The scheduler is too limited in managing when to run what coroutines
+ *    E.g. for the inventory/menu we need to pause a set of coroutines and
+ *    continue them later on
+ * 2. We need to save and load the state of coroutines
+ *    For this we either write the state machine ourselves or we use
+ *    the following careful macros where the state ID is explicitly written
+ *    This way it is stable and if it has to change we can migrate
+ *    savestates upon loading.
+ *
+ * Tasks are usually private, so in order to load them they:
+ *   - need a constructor MyPrivateTask(Process &, Serializer &)
+ *   - need call the macro DECLARE_TASK(MyPrivateTask)
+ *   - they have to listed in tasks.h
+ */
+
 struct Task;
 class Process;
-
+class ObjectBase;
 
 enum class TaskReturnType {
 	Yield,
@@ -68,25 +86,51 @@ struct Task {
 	virtual ~Task() = default;
 	virtual TaskReturn run() = 0;
 	virtual void debugPrint() = 0;
+	virtual void syncGame(Common::Serializer &s);
+	virtual const char *taskName() const = 0; // implemented by DECLARE_TASK
 
 	inline Process &process() const { return _process; }
 
 protected:
 	Task *delay(uint32 millis);
 
-	uint32 _line = 0;
+	void syncObjectAsString(Common::Serializer &s, ObjectBase *&object, bool optional = false);
+	template<class TObject>
+	void syncObjectAsString(Common::Serializer &s, TObject *&object, bool optional = false) {
+		// We could add is_const and therefore true_type, false_type, integral_constant 
+		// or we could just use const_cast and promise that we won't modify
+		ObjectBase *base = const_cast<Common::remove_const_t<TObject> *>(object);
+		syncObjectAsString(s, base, optional);
+		object = dynamic_cast<TObject*>(base);
+		if (object == nullptr && base != nullptr)
+			error("Unexpected type of object %s in savestate for task %s (got a %s)",
+				base->name().c_str(), taskName(), base->typeName());
+	}
+
+	uint32 _stage = 0;
 private:
 	Process &_process;
 };
 
 struct DelayTask : public Task {
 	DelayTask(Process &process, uint32 millis);
+	DelayTask(Process &process, Common::Serializer &s);
 	virtual TaskReturn run() override;
 	virtual void debugPrint() override;
+	virtual void syncGame(Common::Serializer &s) override;
+	virtual const char *taskName() const override;
 
 private:
 	uint32 _endTime;
 };
+
+#define DECLARE_TASK(TaskName) \
+	extern Task *constructTask_##TaskName(Process &process, Serializer &s) { \
+		return new TaskName(process, s); \
+	} \
+	const char *TaskName::taskName() const { \
+		return #TaskName; \
+	}
 
 // TODO: This probably should be scummvm common
 #if __cplusplus >= 201703L
@@ -96,8 +140,7 @@ private:
 #endif
 
 #define TASK_BEGIN \
-	enum { TASK_COUNTER_BASE = __COUNTER__ }; \
-	switch(_line) { \
+	switch(_stage) { \
 	case 0:; \
 
 #define TASK_END \
@@ -106,28 +149,28 @@ private:
 	default: assert(false && "Invalid line in task"); \
 	} return TaskReturn::finish(0)
 
-#define TASK_INTERNAL_BREAK(ret) \
+#define TASK_INTERNAL_BREAK(stage, ret) \
 	do { \
-		enum { TASK_COUNTER = __COUNTER__ - TASK_COUNTER_BASE }; \
-		_line = TASK_COUNTER; \
+		_stage = stage; \
 		return ret; \
 		TASK_BREAK_FALLTHROUGH \
-		case TASK_COUNTER:; \
+		case stage:; \
 	} while(0)
 
-#define TASK_YIELD TASK_INTERNAL_BREAK(TaskReturn::yield())
-#define TASK_WAIT(task) TASK_INTERNAL_BREAK(TaskReturn::waitFor(task))
+#define TASK_YIELD(stage) TASK_INTERNAL_BREAK((stage), TaskReturn::yield())
+#define TASK_WAIT(stage, task) TASK_INTERNAL_BREAK((stage), TaskReturn::waitFor(task))
 
 #define TASK_RETURN(value) \
 	do { \
 		return TaskReturn::finish(value); \
-		_line = UINT_MAX; \
+		_stage = UINT_MAX; \
 	} while(0)
 
-using ProcessId = uint;
+using ProcessId = uint32;
 class Process {
 public:
 	Process(ProcessId pid, MainCharacterKind characterKind);
+	Process(Common::Serializer &s);
 	~Process();
 
 	inline ProcessId pid() const { return _pid; }
@@ -139,6 +182,7 @@ public:
 
 	TaskReturnType run();
 	void debugPrint();
+	void syncGame(Common::Serializer &s);
 
 private:
 	friend class Scheduler;
@@ -161,6 +205,8 @@ public:
 	void killProcessByName(const Common::String &name);
 	bool hasProcessWithName(const Common::String &name);
 	void debugPrint();
+	void prepareSyncGame(Common::Serializer &s);
+	void syncGame(Common::Serializer &s);
 
 	template<typename TTask, typename... TaskArgs>
 	Process *createProcess(MainCharacterKind character, TaskArgs&&... args) {

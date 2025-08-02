@@ -197,6 +197,11 @@ struct CenterBottomTextTask : public Task {
 		, _durationMs(durationMs) {
 	}
 
+	CenterBottomTextTask(Process &process, Serializer &s)
+		: Task(process) {
+		syncGame(s);
+	}
+
 	TaskReturn run() override {
 		Font &font = g_engine->globalUI().dialogFont();
 		const char *text = g_engine->world().getDialogLine(_dialogId);
@@ -212,22 +217,32 @@ struct CenterBottomTextTask : public Task {
 				g_engine->drawQueue().add<TextDrawRequest>(
 					font, text, pos, -1, true, kWhite, 1);
 			}
-			TASK_YIELD;
+			TASK_YIELD(1);
 		}
 		TASK_END;
 	}
 
-	void debugPrint() override {
+	virtual void debugPrint() override {
 		uint32 remaining = g_engine->getMillis() - _startTime <= _durationMs
 			? _durationMs - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("CenterBottomText (%d) with %ums remaining\n", _dialogId, remaining);
 	}
 
+	virtual void syncGame(Serializer &s) override {
+		Task::syncGame(s);
+		s.syncAsSint32LE(_dialogId);
+		s.syncAsUint32LE(_startTime);
+		s.syncAsUint32LE(_durationMs);
+	} 
+
+	virtual const char *taskName() const override;
+
 private:
 	int32 _dialogId;
 	uint32 _startTime = 0, _durationMs;
 };
+DECLARE_TASK(CenterBottomTextTask);
 
 Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs) {
 	return new CenterBottomTextTask(process, dialogId, durationMs);

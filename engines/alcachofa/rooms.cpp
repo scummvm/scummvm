@@ -558,6 +558,9 @@ MainCharacter &World::getOtherMainCharacterByKind(MainCharacterKind kind) const 
 }
 
 Room *World::getRoomByName(const char *name) const {
+	assert(name != nullptr);
+	if (*name == '\0')
+		return nullptr;
 	for (auto *room : _rooms) {
 		if (room->name().equalsIgnoreCase(name))
 			return room;
@@ -593,6 +596,9 @@ ObjectBase *World::getObjectByName(MainCharacterKind character, const char *name
 }
 
 ObjectBase *World::getObjectByNameFromAnyRoom(const char *name) const {
+	assert(name != nullptr);
+	if (*name == '\0')
+		return nullptr;
 	for (auto *room : _rooms) {
 		ObjectBase *result = room->getObjectByName(name);
 		if (result != nullptr)

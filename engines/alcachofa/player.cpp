@@ -199,33 +199,25 @@ struct DoorTask : public Task {
 		, _player(g_engine->player())
 		, _targetObject(nullptr)
 		, _targetDirection(Direction::Invalid) {
-		_targetRoom = g_engine->world().getRoomByName(door->targetRoom().c_str());
-		if (_targetRoom == nullptr) {
-			g_engine->game().unknownDoorTargetRoom(door->targetRoom());
-			return;
-		}
-
-		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(door->targetObject().c_str()));
-		if (_targetObject == nullptr) {
-			g_engine->game().unknownDoorTargetDoor(door->targetRoom(), door->targetObject());
-			return;
-		}
-		_targetDirection = door->characterDirection();
-
+		findTarget();
 		process.name() = String::format("Door to %s %s", _targetRoom->name().c_str(), _targetObject->name().c_str());
 	}
 
-	virtual TaskReturn run() {
-		FakeLock musicLock;
+	DoorTask(Process &process, Serializer &s)
+		: Task(process)
+		, _player(g_engine->player()) {
+		syncGame(s);
+	}
 
+	virtual TaskReturn run() {
 		TASK_BEGIN;
 		if (_targetRoom == nullptr || _targetObject == nullptr)
 			return TaskReturn::finish(1);
 
-		musicLock = FakeLock(g_engine->sounds().musicSemaphore());
+		_musicLock = FakeLock(g_engine->sounds().musicSemaphore());
 		if (g_engine->sounds().musicID() != _targetRoom->musicID())
 			g_engine->sounds().fadeMusic();
-		TASK_WAIT(fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
+		TASK_WAIT(1, fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
 		_player.changeRoom(_targetRoom->name(), true);
 
 		if (_targetRoom->fixedCameraOnEntering())
@@ -238,12 +230,12 @@ struct DoorTask : public Task {
 		}
 
 		g_engine->sounds().setMusicToRoom(_targetRoom->musicID());
-		musicLock.release();
+		_musicLock.release();
 
 		if (g_engine->script().createProcess(_character->kind(), "ENTRAR_" + _targetRoom->name(), ScriptFlags::AllowMissing))
-			TASK_YIELD;
+			TASK_YIELD(2);
 		else
-			TASK_WAIT(fade(process(), FadeType::ToBlack, 1, 0, 500, EasingType::Out, -5));
+			TASK_WAIT(3, fade(process(), FadeType::ToBlack, 1, 0, 500, EasingType::Out, -5));
 		TASK_END;
 	}
 
@@ -251,8 +243,41 @@ struct DoorTask : public Task {
 		g_engine->console().debugPrintf("%s\n", process().name().c_str());
 	}
 
+	void syncGame(Serializer &s) override {
+		assert(s.isSaving() || (_lock.isReleased() && _musicLock.isReleased()));
+
+		Task::syncGame(s);
+		syncObjectAsString(s, _sourceDoor);
+		syncObjectAsString(s, _character);
+		bool hasMusicLock = !_musicLock.isReleased();
+		s.syncAsByte(hasMusicLock);
+		if (s.isLoading() && hasMusicLock)
+			_musicLock = FakeLock(g_engine->sounds().musicSemaphore());
+		
+		_lock = FakeLock(_character->semaphore());
+		findTarget();
+	}
+
+	virtual const char *taskName() const override;
+
 private:
-	FakeLock _lock;
+	void findTarget() {
+		_targetRoom = g_engine->world().getRoomByName(_sourceDoor->targetRoom().c_str());
+		if (_targetRoom == nullptr) {
+			g_engine->game().unknownDoorTargetRoom(_sourceDoor->targetRoom());
+			return;
+		}
+
+		_targetObject = dynamic_cast<InteractableObject *>(_targetRoom->getObjectByName(_sourceDoor->targetObject().c_str()));
+		if (_targetObject == nullptr) {
+			g_engine->game().unknownDoorTargetDoor(_sourceDoor->targetRoom(), _sourceDoor->targetObject());
+			return;
+		}
+
+		_targetDirection = _sourceDoor->characterDirection();
+	}
+
+	FakeLock _lock, _musicLock;
 	const Door *_sourceDoor;
 	const InteractableObject *_targetObject;
 	Direction _targetDirection;
@@ -260,6 +285,7 @@ private:
 	MainCharacter *_character;
 	Player &_player;
 };
+DECLARE_TASK(DoorTask);
 
 void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
