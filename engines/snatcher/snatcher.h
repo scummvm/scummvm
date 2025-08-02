@@ -80,6 +80,8 @@ private:
 
 	// ConfigManager sync
 	void syncSoundSettings() override;
+	void applyGameSettings() override;
+	bool _updateGameSettings;
 
 	// GMM, Save, Load
 	void pauseEngineIntern(bool pause) override;
