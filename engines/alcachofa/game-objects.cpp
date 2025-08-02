@@ -297,7 +297,7 @@ struct SayTextTask final : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		bool isSoundStillPlaying;
 
 		TASK_BEGIN;
@@ -340,11 +340,11 @@ struct SayTextTask final : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->console().debugPrintf("SayText %s, %d\n", _character->name().c_str(), _dialogId);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		syncObjectAsString(s, _character);
 		s.syncAsSint32LE(_dialogId);
@@ -395,7 +395,7 @@ struct AnimateCharacterTask final : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		while (_character->_curAnimateObject != nullptr)
 			TASK_YIELD(1);
@@ -416,11 +416,11 @@ struct AnimateCharacterTask final : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->console().debugPrintf("AnimateCharacter %s, %s\n", _character->name().c_str(), _animateObject->name().c_str());
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		syncObjectAsString(s, _character);
 		syncObjectAsString(s, _animateObject);
@@ -455,7 +455,7 @@ struct LerpLodBiasTask final : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		_startTime = g_engine->getMillis();
 		_sourceLodBias = _character->lodBias();
@@ -468,7 +468,7 @@ struct LerpLodBiasTask final : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		uint32 remaining = g_engine->getMillis() - _startTime <= _durationMs
 			? _durationMs - (g_engine->getMillis() - _startTime)
 			: 0;
@@ -476,7 +476,7 @@ struct LerpLodBiasTask final : public Task {
 			_character->name().c_str(), _targetLodBias, remaining);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		syncObjectAsString(s, _character);
 		s.syncAsFloatLE(_sourceLodBias);
@@ -786,17 +786,17 @@ struct ArriveTask : public Task {
 		syncGame(s);		
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		return _character->isWalking()
 			? TaskReturn::yield()
 			: TaskReturn::finish(1);
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->getDebugger()->debugPrintf("Wait for %s to arrive", _character->name().c_str());
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		syncObjectAsString(s, _character);
 	}
 
@@ -1048,7 +1048,7 @@ struct DialogMenuTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		layoutLines();
 		while (true) {
@@ -1071,12 +1071,12 @@ struct DialogMenuTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->console().debugPrintf("DialogMenu for %s with %u lines\n",
 			_character->name().c_str(), _character->_dialogLines.size());
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		syncObjectAsString(s, _character);
 		s.syncAsUint32LE(_clickedLineI);

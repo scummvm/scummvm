@@ -142,7 +142,7 @@ struct ScriptTimerTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		{
 			uint32 timeSinceTimer = g_engine->script()._scriptTimer == 0 ? 0
@@ -158,7 +158,7 @@ struct ScriptTimerTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->getDebugger()->debugPrintf("Check input timer for %dsecs", _durationSec);
 	}
 
@@ -232,7 +232,7 @@ struct ScriptTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		if (_isFirstExecution || _returnsFromKernelCall)
 			setCharacterVariables();
 		if (_returnsFromKernelCall) {

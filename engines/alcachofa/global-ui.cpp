@@ -222,14 +222,14 @@ struct CenterBottomTextTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		uint32 remaining = g_engine->getMillis() - _startTime <= _durationMs
 			? _durationMs - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("CenterBottomText (%d) with %ums remaining\n", _dialogId, remaining);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		s.syncAsSint32LE(_dialogId);
 		s.syncAsUint32LE(_startTime);
