@@ -41,6 +41,9 @@ typedef BOOL (CALLBACK *LPSAVEFUNC)(const CHAR *, CBfcMgr *, CWnd *, CPalette *,
  */
 extern void ConvertToSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo);
 
+extern BOOL ValidateSGInfo(SAVEGAME_INFO *);
+extern ERROR_CODE ConvertFromSGI(CBfcMgr *, SAVEGAME_INFO *);
+
 /**
  * Shows a Save-Game dialog box
  * User can choose which slot they want to save a game into,
