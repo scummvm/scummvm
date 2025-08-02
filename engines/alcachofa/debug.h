@@ -40,7 +40,7 @@ class ClosestFloorPointDebugHandler final : public IDebugHandler {
 public:
 	ClosestFloorPointDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() override {
+	void update() override {
 		auto mousePos2D = g_engine->input().debugInput().mousePos2D();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
 		auto floor = g_engine->player().currentRoom()->activeFloor();
@@ -63,7 +63,7 @@ class FloorIntersectionsDebugHandler final : public IDebugHandler {
 public:
 	FloorIntersectionsDebugHandler(int32 polygonI) : _polygonI(polygonI) {}
 
-	virtual void update() override {
+	void update() override {
 		auto floor = g_engine->player().currentRoom()->activeFloor();
 		auto renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
 		if (floor == nullptr || renderer == nullptr) {
@@ -118,7 +118,7 @@ class TeleportCharacterDebugHandler final : public IDebugHandler {
 public:
 	TeleportCharacterDebugHandler(int32 kindI) : _kind((MainCharacterKind)kindI) {}
 
-	virtual void update() override {
+	void update() override {
 		g_engine->drawQueue().clear();
 		g_engine->player().drawCursor(true);
 		g_engine->drawQueue().draw();
@@ -189,7 +189,7 @@ public:
 		return nullptr;
 	}
 
-	virtual void update() override {
+	void update() override {
 		auto &input = g_engine->input().debugInput();
 		if (input.wasMouseRightPressed()) {
 			g_engine->setDebugMode(DebugMode::None, 0);

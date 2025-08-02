@@ -27,17 +27,17 @@ using namespace Common;
 namespace Alcachofa {
 
 class GameMovieAdventure : public Game {
-	virtual bool doesRoomHaveBackground(const Room *room) override {
+	bool doesRoomHaveBackground(const Room *room) override {
 		return !room->name().equalsIgnoreCase("Global") &&
 			!room->name().equalsIgnoreCase("HABITACION_NEGRA");
 	}
 
-	virtual void invalidDialogLine(uint index) override {
+	void invalidDialogLine(uint index) override {
 		if (index != 4542)
 			Game::invalidDialogLine(index);
 	}
 
-	virtual bool shouldCharacterTrigger(const Character *character, const char *action) override {
+	bool shouldCharacterTrigger(const Character *character, const char *action) override {
 		// An original hack to check that bed sheet is used on the other main character only in the correct room
 		// There *is* another script variable (es_casa_freddy) that should check this
 		// but, I guess, Alcachofa Soft found a corner case where this does not work?
@@ -57,12 +57,12 @@ class GameMovieAdventure : public Game {
 		return Game::shouldTriggerDoor(door);
 	}
 
-	virtual bool hasMortadeloVoice(const Character *character) override {
+	bool hasMortadeloVoice(const Character *character) override {
 		return Game::hasMortadeloVoice(character) ||
 			character->name().equalsIgnoreCase("MORTADELO_TREN"); // an original hard-coded special case
 	}
 
-	virtual void missingAnimation(const String &fileName) override {
+	void missingAnimation(const String &fileName) override {
 		static const char *exemptions[] = {
 			"ANIMACION.AN0",
 			"DESPACHO_SUPER2_OL_SOMBRAS2.AN0",
@@ -82,13 +82,13 @@ class GameMovieAdventure : public Game {
 		Game::missingAnimation(fileName);
 	}
 
-	virtual void unknownAnimateObject(const char *name) override {
+	void unknownAnimateObject(const char *name) override {
 		if (!scumm_stricmp("EXPLOSION DISFRAZ", name))
 			return;
 		Game::unknownAnimateObject(name);
 	}
 
-	virtual PointObject *unknownGoPutTarget(const Process &process, const char *action, const char *name) override {
+	PointObject *unknownGoPutTarget(const Process &process, const char *action, const char *name) override {
 		if (scumm_stricmp(action, "put"))
 			return Game::unknownGoPutTarget(process, action, name);
 
@@ -117,20 +117,20 @@ class GameMovieAdventure : public Game {
 		return Game::unknownGoPutTarget(process, action, name);
 	}
 
-	virtual void unknownSayTextCharacter(const char *name, int32 dialogId) override {
+	void unknownSayTextCharacter(const char *name, int32 dialogId) override {
 		if (!scumm_stricmp(name, "OFELIA") && dialogId == 3737)
 			return;
 		Game::unknownSayTextCharacter(name, dialogId);
 	}
 
-	virtual void unknownAnimateCharacterObject(const char *name) override {
+	void unknownAnimateCharacterObject(const char *name) override {
 		if (!scumm_stricmp(name, "COGE F DCH") || // original bug in MOTEL_ENTRADA
 			!scumm_stricmp(name, "CHIQUITO_IZQ"))
 			return;
 		Game::unknownAnimateCharacterObject(name);
 	}
 
-	virtual void missingSound(const String &fileName) override {
+	void missingSound(const String &fileName) override {
 		if (fileName == "CHAS" || fileName == "517")
 			return;
 		Game::missingSound(fileName);

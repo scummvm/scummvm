@@ -322,7 +322,7 @@ public:
 		int8 order
 	);
 
-	virtual void draw() override;
+	void draw() override;
 
 private:
 	bool _is3D;
@@ -344,7 +344,7 @@ public:
 		Math::Vector2d texOffset,
 		BlendMode blendMode);
 
-	virtual void draw() override;
+	void draw() override;
 
 private:
 	Animation *_animation;
@@ -368,7 +368,7 @@ public:
 		int8 order);
 
 	inline Common::Point size() const { return { (int16)_width, (int16)_height }; }
-	virtual void draw() override;
+	void draw() override;
 
 private:
 	static constexpr uint kMaxLines = 12;
@@ -399,7 +399,7 @@ class FadeDrawRequest : public IDrawRequest {
 public:
 	FadeDrawRequest(FadeType type, float value, int8 order);
 
-	virtual void draw() override;
+	void draw() override;
 
 private:
 	FadeType _type;
@@ -416,7 +416,7 @@ class BorderDrawRequest : public IDrawRequest {
 public:
 	BorderDrawRequest(Common::Rect rect, Color color);
 
-	virtual void draw() override;
+	void draw() override;
 
 private:
 	Common::Rect _rect;

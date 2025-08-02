@@ -783,7 +783,7 @@ struct FadeTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		if (_permanentFadeAction == PermanentFadeAction::UnsetFaded)
 			g_engine->globalUI().isPermanentFaded() = false;
@@ -798,7 +798,7 @@ struct FadeTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		uint32 remaining = g_engine->getMillis() - _startTime <= _duration
 			? _duration - (g_engine->getMillis() - _startTime)
 			: 0;

@@ -144,7 +144,7 @@ struct AnimateTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		_object->toggle(true);
 		_graphic->start(false);
@@ -153,11 +153,11 @@ struct AnimateTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->getDebugger()->debugPrintf("Animate \"%s\" for %ums", _object->name().c_str(), _duration);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		s.syncAsUint32LE(_duration);
 		syncObjectAsString(s, _object);

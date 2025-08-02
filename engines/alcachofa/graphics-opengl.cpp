@@ -79,7 +79,7 @@ public:
 		setMirrorWrap(false);
 	}
 
-	virtual ~OpenGLTexture() override {
+	~OpenGLTexture() override {
 		if (_handle != 0)
 			GL_CALL(glDeleteTextures(1, &_handle));
 	}
@@ -138,12 +138,12 @@ public:
 		}
 	}
 
-	virtual ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override {
+	ScopedPtr<ITexture> createTexture(int32 w, int32 h, bool withMipmaps) override {
 		assert(w >= 0 && h >= 0);
 		return ScopedPtr<ITexture>(new OpenGLTexture(w, h, withMipmaps));
 	}
 
-	virtual void begin() override {
+	void begin() override {
 		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
@@ -153,12 +153,12 @@ public:
 		_isFirstDrawCommand = true;
 	}
 
-	virtual void end() override {
+	void end() override {
 		GL_CALL(glFlush());
 		g_system->updateScreen();
 	}
 
-	virtual void setTexture(ITexture *texture) override {
+	void setTexture(ITexture *texture) override {
 		if (texture == _currentTexture)
 			return;
 		else if (texture == nullptr) {
@@ -178,7 +178,7 @@ public:
 		}
 	}
 
-	virtual void setBlendMode(BlendMode blendMode) override {
+	void setBlendMode(BlendMode blendMode) override {
 		if (blendMode == _currentBlendMode)
 			return;
 		// first the blend func
@@ -246,7 +246,7 @@ public:
 		_currentBlendMode = blendMode;
 	}
 
-	virtual void setLodBias(float lodBias) override {
+	void setLodBias(float lodBias) override {
 		if (abs(_currentLodBias - lodBias) < epsilon)
 			return;
 		GL_CALL(glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, lodBias));

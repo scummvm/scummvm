@@ -115,9 +115,9 @@ private:
 struct DelayTask : public Task {
 	DelayTask(Process &process, uint32 millis);
 	DelayTask(Process &process, Common::Serializer &s);
-	virtual TaskReturn run() override;
-	virtual void debugPrint() override;
-	virtual void syncGame(Common::Serializer &s) override;
+	TaskReturn run() override;
+	void debugPrint() override;
+	void syncGame(Common::Serializer &s) override;
 	virtual const char *taskName() const override;
 
 private:
