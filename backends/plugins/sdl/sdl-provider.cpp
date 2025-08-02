@@ -32,10 +32,19 @@
 
 class SDLPlugin : public DynamicPlugin {
 protected:
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+	SDL_SharedObject *_dlHandle;
+#else
 	void *_dlHandle;
+#endif
 
 	virtual VoidFunc findSymbol(const char *symbol) {
-		void *func = SDL_LoadFunction(_dlHandle, symbol);
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FunctionPointer func;
+#else
+		void *func ;
+#endif
+		func = SDL_LoadFunction(_dlHandle, symbol);
 		if (!func)
 			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.toString(Common::Path::kNativeSeparator).c_str(), SDL_GetError());
 

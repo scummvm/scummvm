@@ -3275,9 +3275,21 @@ EOF
 			append_var LDFLAGS "-O3"
 		fi
 
-		# activate emscripten-ports
-		if test "$_sdl" != no; then # we enable SDL2 by default
-			append_var LDFLAGS "-s USE_SDL=2 "
+		# enable SDL3 and set it up correctly
+		if test "$_dynamic_modules" = "yes" ; then
+			embuilder build sdl3 --pic 
+		else
+			embuilder build sdl3
+		fi
+		_pkg_config=yes
+		PKG_CONFIG_LIBDIR="$EMSDK/upstream/emscripten/cache/sysroot/local/lib/pkgconfig:$EMSDK/upstream/emscripten/cache/sysroot/lib/pkgconfig"
+		_sdlconfig="pkg-config sdl3"
+		_sdlversion=`$_sdlconfig --modversion`
+		append_var SDL_CFLAGS "`$_sdlconfig --cflags | sed 's/[[:space:]]*-Dmain=SDL_main//g'`"
+		if test "$_static_build" = yes ; then
+			append_var SDL_LIBS "`$_sdlconfig --static-libs`"
+		else
+			append_var SDL_LIBS "`$_sdlconfig --libs`"
 		fi
 
 		# We explicitly disable optional libraries if not enabled. "auto" would depend
@@ -3630,7 +3642,7 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		wasm*-emscripten)
-			_backend="sdl"
+			_backend="emscripten"
 			# Disable cloud and SDL_Net as this is handled in the browser
 			_cloud=no
 			_sdlnet=no
@@ -4122,6 +4134,10 @@ case $_backend in
 		;;
 	ds)
 		append_var INCLUDES '-I$(srcdir)/backends/platform/ds'
+		;;
+	emscripten)
+		_sdl=yes
+		append_var MODULES "backends/platform/sdl"
 		;;
 	ios7)
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
@@ -4658,7 +4674,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	3ds | android | dc | ds | ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
+	3ds | android | dc | ds | emscripten |ios7 | kolibrios | maemo | null | opendingux | miyoomini | miyoo | openpandora | psp | psp2 | sailfish | samsungtv | sdl | switch | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -4694,7 +4710,7 @@ esac
 # Enable Event Recorder only for backends that support it
 #
 case $_backend in
-	sdl)
+	sdl | emscripten)
 		;;
 	*)
 		_eventrec=no
@@ -6499,6 +6515,11 @@ if test "$_opengl_mode" != none ; then
 			_opengl_mode=gles2
 			_opengl_glad=yes
 			;;
+		emscripten)
+			_opengl_mode=gles2
+			_opengl_glad=no # https://github.com/Dav1dde/glad-web/issues/12
+			append_var OPENGL_LIBS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
+			;;
 		ios7)
 			_opengl_mode=gles2
 			_opengl_glad=yes
@@ -6526,11 +6547,6 @@ if test "$_opengl_mode" != none ; then
 					case $_host_os in
 						darwin*)
 							_opengl_mode=gl
-							;;
-						emscripten)
-							_opengl_mode=gles2
-							_opengl_glad=no # https://github.com/Dav1dde/glad-web/issues/12
-							append_var OPENGL_LIBS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
 							;;
 						*)
 							# As SDL2 supports everything, let the user choose if he wants to
@@ -6935,7 +6951,7 @@ echocheck "ImGui"
 if test "$_imgui" != no ; then
 	if test "$_freetype2" = yes ; then
 		case $_backend in
-			sdl | sailfish)
+			sdl | sailfish | emscripten)
 				if test "$_sdlMajorVersionNumber" -ge 3 ; then
 					cat > $TMPC << EOF
 #include <SDL3/SDL.h>
