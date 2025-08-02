@@ -291,7 +291,7 @@ struct CamLerpTask : public Task {
 		, _duration(duration)
 		, _easingType(easingType) {}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		_startTime = g_engine->getMillis();
 		while (g_engine->getMillis() - _startTime < _duration) {
@@ -303,14 +303,14 @@ struct CamLerpTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		uint32 remaining = g_engine->getMillis() - _startTime <= _duration
 			? _duration - (g_engine->getMillis() - _startTime)
 			: 0;
 		g_engine->console().debugPrintf("%s camera with %ums remaining\n", taskName(), remaining);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		s.syncAsUint32LE(_startTime);
 		s.syncAsUint32LE(_duration);
@@ -336,7 +336,7 @@ struct CamLerpPosTask final : public CamLerpTask {
 		syncGame(s);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		CamLerpTask::syncGame(s);
 		syncVector(s, _fromPos);
 		syncVector(s, _deltaPos);
@@ -345,7 +345,7 @@ struct CamLerpPosTask final : public CamLerpTask {
 	virtual const char *taskName() const override;
 
 protected:
-	virtual void update(float t) override {
+	void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * t);
 	}
 
@@ -364,7 +364,7 @@ struct CamLerpScaleTask final : public CamLerpTask {
 		syncGame(s);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		CamLerpTask::syncGame(s);
 		s.syncAsFloatLE(_fromScale);
 		s.syncAsFloatLE(_deltaScale);
@@ -373,7 +373,7 @@ struct CamLerpScaleTask final : public CamLerpTask {
 	virtual const char *taskName() const override;
 
 protected:
-	virtual void update(float t) override {
+	void update(float t) override {
 		_camera._cur._scale = _fromScale + _deltaScale * t;
 	}
 
@@ -399,7 +399,7 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 		syncGame(s);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		CamLerpTask::syncGame(s);
 		syncVector(s, _fromPos);
 		syncVector(s, _deltaPos);
@@ -412,7 +412,7 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 	virtual const char *taskName() const override;
 
 protected:
-	virtual void update(float t) override {
+	void update(float t) override {
 		_camera.setPosition(_fromPos + _deltaPos * ease(t, _moveEasingType));
 		_camera._cur._scale = _fromScale + _deltaScale * ease(t, _scaleEasingType);
 	}
@@ -434,7 +434,7 @@ struct CamLerpRotationTask final : public CamLerpTask {
 		syncGame(s);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		CamLerpTask::syncGame(s);
 		s.syncAsFloatLE(_fromRotation);
 		s.syncAsFloatLE(_deltaRotation);
@@ -443,7 +443,7 @@ struct CamLerpRotationTask final : public CamLerpTask {
 	virtual const char *taskName() const override;
 
 protected:
-	virtual void update(float t) override {
+	void update(float t) override {
 		_camera._cur._rotation = Angle(_fromRotation + _deltaRotation * t);
 	}
 
@@ -468,7 +468,7 @@ struct CamShakeTask final : public CamLerpTask {
 		syncGame(s);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		CamLerpTask::syncGame(s);
 		syncVector(s, _amplitude);
 		syncVector(s, _frequency);
@@ -477,7 +477,7 @@ struct CamShakeTask final : public CamLerpTask {
 	virtual const char *taskName() const override;
 
 protected:
-	virtual void update(float t) override {
+	void update(float t) override {
 		const Vector2d phase = _frequency * t * (float)M_PI * 2.0f;
 		const float amplTimeFactor = 1.0f / expf(t * 5.0f); // a curve starting at 1, depreciating towards 0 
 		_camera.shake() = {
@@ -501,13 +501,13 @@ struct CamWaitToStopTask final : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		return _camera._isChanging
 			? TaskReturn::yield()
 			: TaskReturn::finish(1);
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		g_engine->console().debugPrintf("Wait for camera to stop moving\n");
 	}
 
@@ -538,7 +538,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() override {
+	TaskReturn run() override {
 		if (_delay > 0) {
 			uint32 delay = (uint32)_delay;
 			_delay = 0;
@@ -557,7 +557,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 		return TaskReturn::finish(0);
 	}
 
-	virtual void debugPrint() override {
+	void debugPrint() override {
 		const char *attributeName;
 		switch (_attribute) {
 		case kPosZ: attributeName = "PosZ"; break;
@@ -568,7 +568,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 		g_engine->console().debugPrintf("Set inactive camera %s to %f after %dms\n", attributeName, _value, _delay);
 	}
 
-	virtual void syncGame(Serializer &s) override {
+	void syncGame(Serializer &s) override {
 		Task::syncGame(s);
 		syncEnum(s, _attribute);
 		s.syncAsFloatLE(_value);

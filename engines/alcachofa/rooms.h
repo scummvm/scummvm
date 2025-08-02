@@ -92,8 +92,8 @@ public:
 	static constexpr const char *kClassName = "CHabitacionMenuOpciones";
 	OptionsMenu(World *world, Common::SeekableReadStream &stream);
 
-	virtual bool updateInput() override;
-	virtual void loadResources() override;
+	bool updateInput() override;
+	void loadResources() override;
 
 	void clearLastSelectedObject(); // to reset arm animation
 	inline SlideButton *&currentSlideButton() { return _currentSlideButton; }
@@ -120,9 +120,9 @@ class Inventory final : public Room {
 public:
 	static constexpr const char *kClassName = "CInventario";
 	Inventory(World *world, Common::SeekableReadStream &stream);
-	virtual ~Inventory() override;
+	~Inventory() override;
 
-	virtual bool updateInput() override;
+	bool updateInput() override;
 
 	void initItems();
 	void updateItemsByActiveCharacter();

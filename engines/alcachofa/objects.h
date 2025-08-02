@@ -86,13 +86,13 @@ class GraphicObject : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CObjetoGrafico";
 	GraphicObject(Room *room, Common::ReadStream &stream);
-	virtual ~GraphicObject() override = default;
+	~GraphicObject() override = default;
 
-	virtual void draw() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
-	virtual void syncGame(Common::Serializer &serializer) override;
-	virtual Graphic *graphic() override;
+	void draw() override;
+	void loadResources() override;
+	void freeResources() override;
+	void syncGame(Common::Serializer &serializer) override;
+	Graphic *graphic() override;
 	virtual const char *typeName() const;
 
 	Task *animate(Process &process);
@@ -110,7 +110,7 @@ public:
 	static constexpr const char *kClassName = "CObjetoGraficoMuare";
 	SpecialEffectObject(Room *room, Common::ReadStream &stream);
 
-	virtual void draw() override;
+	void draw() override;
 	virtual const char *typeName() const;
 
 private:
@@ -122,15 +122,15 @@ private:
 class ShapeObject : public ObjectBase {
 public:
 	ShapeObject(Room *room, Common::ReadStream &stream);
-	virtual ~ShapeObject() override = default;
+	~ShapeObject() override = default;
 
 	inline int8 order() const { return _order; }
 	inline bool isNewlySelected() const { return _isNewlySelected; }
 	inline bool wasSelected() const { return _wasSelected; }
 
-	virtual void update() override;
-	virtual void syncGame(Common::Serializer &serializer) override;
-	virtual Shape *shape() override;
+	void update() override;
+	void syncGame(Common::Serializer &serializer) override;
+	Shape *shape() override;
 	virtual CursorType cursorType() const;
 	virtual void onHoverStart();
 	virtual void onHoverEnd();
@@ -161,17 +161,17 @@ class MenuButton : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CBotonMenu";
 	MenuButton(Room *room, Common::ReadStream &stream);
-	virtual ~MenuButton() override = default;
+	~MenuButton() override = default;
 
 	inline int32 actionId() const { return _actionId; }
 	inline bool &isInteractable() { return _isInteractable; }
 
-	virtual void draw() override;
-	virtual void update() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
-	virtual void onHoverUpdate() override;
-	virtual void onClick() override;
+	void draw() override;
+	void update() override;
+	void loadResources() override;
+	void freeResources() override;
+	void onHoverUpdate() override;
+	void onClick() override;
 	virtual void trigger();
 	virtual const char *typeName() const;
 
@@ -204,8 +204,8 @@ public:
 	static constexpr const char *kClassName = "CBotonMenuOpciones";
 	OptionsMenuButton(Room *room, Common::ReadStream &stream);
 
-	virtual void update() override;
-	virtual void trigger() override;
+	void update() override;
+	void trigger() override;
 	virtual const char *typeName() const;
 };
 
@@ -214,8 +214,8 @@ public:
 	static constexpr const char *kClassName = "CBotonMenuPrincipal";
 	MainMenuButton(Room *room, Common::ReadStream &stream);
 
-	virtual void update() override;
-	virtual void trigger() override;
+	void update() override;
+	void trigger() override;
 	virtual const char *typeName() const;
 };
 
@@ -252,17 +252,17 @@ class CheckBox : public PhysicalObject {
 public:
 	static constexpr const char *kClassName = "CCheckBox";
 	CheckBox(Room *room, Common::ReadStream &stream);
-	virtual ~CheckBox() override = default;
+	~CheckBox() override = default;
 
 	inline bool &isChecked() { return _isChecked; }
 	inline int32 actionId() const { return _actionId; }
 
-	virtual void draw() override;
-	virtual void update() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
-	virtual void onHoverUpdate() override;
-	virtual void onClick() override;
+	void draw() override;
+	void update() override;
+	void loadResources() override;
+	void freeResources() override;
+	void onHoverUpdate() override;
+	void onClick() override;
 	virtual void trigger();
 	virtual const char *typeName() const;
 
@@ -283,14 +283,14 @@ class SlideButton final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CSlideButton";
 	SlideButton(Room *room, Common::ReadStream &stream);
-	virtual ~SlideButton() override = default;
+	~SlideButton() override = default;
 
 	inline float &value() { return _value; }
 
-	virtual void draw() override;
-	virtual void update() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
+	void draw() override;
+	void update() override;
+	void loadResources() override;
+	void freeResources() override;
 	virtual const char *typeName() const;
 
 private:
@@ -328,7 +328,7 @@ class MessageBox final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CMessageBox";
 	MessageBox(Room *room, Common::ReadStream &stream);
-	virtual ~MessageBox() override = default;
+	~MessageBox() override = default;
 
 	virtual const char *typeName() const;
 
@@ -355,7 +355,7 @@ public:
 	Item(Room *room, Common::ReadStream &stream);
 	Item(const Item &other);
 
-	virtual void draw() override;
+	void draw() override;
 	virtual const char *typeName() const;
 	void trigger();
 };
@@ -380,12 +380,12 @@ class InteractableObject : public PhysicalObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CObjetoTipico";
 	InteractableObject(Room *room, Common::ReadStream &stream);
-	virtual ~InteractableObject() override = default;
+	~InteractableObject() override = default;
 
-	virtual void drawDebug() override;
-	virtual void onClick() override;
-	virtual void trigger(const char *action) override;
-	virtual void toggle(bool isEnabled) override;
+	void drawDebug() override;
+	void onClick() override;
+	void trigger(const char *action) override;
+	void toggle(bool isEnabled) override;
 	virtual const char *typeName() const;
 
 private:
@@ -402,8 +402,8 @@ public:
 	inline Direction characterDirection() const { return _characterDirection; }
 
 	virtual CursorType cursorType() const override;
-	virtual void onClick() override;
-	virtual void trigger(const char *action) override;
+	void onClick() override;
+	void trigger(const char *action) override;
 	virtual const char *typeName() const;
 
 private:
@@ -416,17 +416,17 @@ class Character : public ShapeObject, public ITriggerableObject {
 public:
 	static constexpr const char *kClassName = "CPersonaje";
 	Character(Room *room, Common::ReadStream &stream);
-	virtual ~Character() override = default;
+	~Character() override = default;
 
-	virtual void update() override;
-	virtual void draw() override;
-	virtual void drawDebug() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
-	virtual void syncGame(Common::Serializer &serializer) override;
-	virtual Graphic *graphic() override;
-	virtual void onClick() override;
-	virtual void trigger(const char *action) override;
+	void update() override;
+	void draw() override;
+	void drawDebug() override;
+	void loadResources() override;
+	void freeResources() override;
+	void syncGame(Common::Serializer &serializer) override;
+	Graphic *graphic() override;
+	void onClick() override;
+	void trigger(const char *action) override;
 	virtual const char *typeName() const;
 
 	Task *sayText(Process &process, int32 dialogId);
@@ -459,18 +459,18 @@ class WalkingCharacter : public Character {
 public:
 	static constexpr const char *kClassName = "CPersonajeAnda";
 	WalkingCharacter(Room *room, Common::ReadStream &stream);
-	virtual ~WalkingCharacter() override = default;
+	~WalkingCharacter() override = default;
 
 	inline bool isWalking() const { return _isWalking; }
 	inline Common::Point position() const { return _currentPos; }
 	inline float stepSizeFactor() const { return _stepSizeFactor; }
 
-	virtual void update() override;
-	virtual void draw() override;
-	virtual void drawDebug() override;
-	virtual void loadResources() override;
-	virtual void freeResources() override;
-	virtual void syncGame(Common::Serializer &serializer) override;
+	void update() override;
+	void draw() override;
+	void drawDebug() override;
+	void loadResources() override;
+	void freeResources() override;
+	void syncGame(Common::Serializer &serializer) override;
 	virtual void walkTo(
 		Common::Point target,
 		Direction endDirection = Direction::Invalid,
@@ -526,7 +526,7 @@ class MainCharacter final : public WalkingCharacter {
 public:
 	static constexpr const char *kClassName = "CPersonajePrincipal";
 	MainCharacter(Room *room, Common::ReadStream &stream);
-	virtual ~MainCharacter() override;
+	~MainCharacter() override;
 
 	inline MainCharacterKind kind() const { return _kind; }
 	inline ObjectBase *&currentlyUsing() { return _currentlyUsingObject; }
@@ -536,9 +536,9 @@ public:
 	inline FakeSemaphore &semaphore() { return _semaphore; }
 	bool isBusy() const;
 
-	virtual void update() override;
-	virtual void draw() override;
-	virtual void syncGame(Common::Serializer &serializer) override;
+	void update() override;
+	void draw() override;
+	void syncGame(Common::Serializer &serializer) override;
 	virtual const char *typeName() const;
 	virtual void walkTo(
 		Common::Point target,
@@ -557,7 +557,7 @@ public:
 	void resetUsingObjectAndDialogMenu();
 
 protected:
-	virtual void onArrived() override;
+	void onArrived() override;
 
 private:
 	friend class Inventory;
@@ -586,11 +586,11 @@ class FloorColor final : public ObjectBase {
 public:
 	static constexpr const char *kClassName = "CSueloColor";
 	FloorColor(Room *room, Common::ReadStream &stream);
-	virtual ~FloorColor() override = default;
+	~FloorColor() override = default;
 
-	virtual void update() override;
-	virtual void drawDebug() override;
-	virtual Shape *shape() override;
+	void update() override;
+	void drawDebug() override;
+	Shape *shape() override;
 	virtual const char *typeName() const;
 
 private:
