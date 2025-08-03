@@ -138,9 +138,11 @@ public:
 	};
 
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
+		// TODO: Implement
 		return true;
 	}
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
+		// TODO: Implement
 		return true;
 	}
 
@@ -155,6 +157,8 @@ public:
 	}
 
 private:
+	bool tryLoadFromLauncher();
+
 	Console *_console = new Console();
 	Common::ScopedPtr<IDebugHandler> _debugHandler;
 	Common::ScopedPtr<IRenderer> _renderer;

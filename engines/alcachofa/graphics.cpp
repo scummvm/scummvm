@@ -824,12 +824,12 @@ private:
 		g_engine->drawQueue().add<FadeDrawRequest>(_fadeType, _from + (_to - _from) * ease(t, _easingType), _order);
 	}
 
-	FadeType _fadeType;
-	float _from, _to;
-	uint32 _startTime = 0, _duration;
-	EasingType _easingType;
-	int8 _order;
-	PermanentFadeAction _permanentFadeAction;
+	FadeType _fadeType = {};
+	float _from = 0, _to = 0;
+	uint32 _startTime = 0, _duration = 0;
+	EasingType _easingType = {};
+	int8 _order = 0;
+	PermanentFadeAction _permanentFadeAction = {};
 };
 DECLARE_TASK(FadeTask);
 

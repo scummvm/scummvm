@@ -34,6 +34,7 @@ const DebugChannelDef AlcachofaMetaEngineDetection::debugFlagList[] = {
 	{ Alcachofa::kDebugScript, "Script", "Enable debug script dump" },
 	{ Alcachofa::kDebugGameplay, "Gameplay", "Gameplay-related tracing" },
 	{ Alcachofa::kDebugSounds, "Sounds", "Sound- and Music-related tracing" },
+	{ Alcachofa::kDebugSemaphores, "Semaphores", "Tracing operations on semaphores" },
 	DEBUG_CHANNEL_END
 };
 

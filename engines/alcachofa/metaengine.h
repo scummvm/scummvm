@@ -49,6 +49,8 @@ public:
 
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
+	void getSavegameThumbnail(Graphics::Surface &thumb) override;
+
 	
 };
 

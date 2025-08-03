@@ -169,9 +169,9 @@ struct AnimateTask : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	GraphicObject *_object;
-	Graphic *_graphic;
-	uint32 _duration;
+	GraphicObject *_object = nullptr;
+	Graphic *_graphic = nullptr;
+	uint32 _duration = 0;
 };
 DECLARE_TASK(AnimateTask);
 
