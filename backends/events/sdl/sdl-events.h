@@ -236,7 +236,11 @@ protected:
 	};
 
 	struct TouchFinger {
+#if SDL_VERSION_ATLEAST(3, 0, 0)
+		SDL_FingerID id = 0; // 0: no touch
+#else 
 		int id = -1; // -1: no touch
+#endif
 		uint32 timeLastDown = 0;
 		int lastX = 0; // last known screen coordinates
 		int lastY = 0; // last known screen coordinates
