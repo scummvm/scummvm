@@ -41,9 +41,6 @@ void EventLoop::runEventLoop() {
 		if (!GetMessage(msg))
 			break;
 
-		if (msg.message == WM_QUIT)
-			break;
-
 		if (msg.message != WM_NULL && !PreTranslateMessage(&msg)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -76,10 +73,16 @@ void EventLoop::checkMessages() {
 	if (_activeWindows.empty())
 		return;
 
-	if (_quitFlag != QUIT_NONE) {
+	if (isQuitting()) {
+		// If for some reason the previous messages added in handleQuit
+		// didn't close all the windows, keep closing the remaining top window
 		if (_messages.empty() && !_activeWindows.empty())
 			_messages.push(MSG(_activeWindows.top()->m_hWnd, WM_CLOSE, 0, 0));
+
+		if (_activeWindows.empty())
+			_quitFlag = QUIT_QUIT;
 		return;
+
 	} else if (_messages.empty() && _idleCtr >= 0) {
 		if (!OnIdle(_idleCtr))
 			// OnIdle returning false means disabling permanently
@@ -95,29 +98,6 @@ void EventLoop::checkMessages() {
 		setMessageWnd(ev, hWnd);
 		MSG msg = ev;
 		msg.hwnd = hWnd;
-
-		if (msg.message == WM_QUIT) {
-			_quitFlag = QUIT_QUITTING;
-			msg.hwnd = nullptr;
-
-			// For a shutdown, flag any open dialogs with
-			// a modal result so they close, and a WM_CLOSE
-			// to any non-dialogs
-			auto wnds = GetActiveWindow()->GetSafeParents(true);
-			for (auto wnd : wnds) {
-				CDialog *d = dynamic_cast<CDialog *>(wnd);
-				MSG closeMsg;
-				closeMsg.hwnd = wnd->m_hWnd;
-
-				if (d) {
-					d->_modalResult = -999;
-					closeMsg.message = WM_NULL;
-				} else {
-					closeMsg.message = WM_CLOSE;
-				}
-				_messages.push(closeMsg);
-			}
-		}
 
 		if (msg.message == WM_MOUSEMOVE &&
 				priorMsg.message == WM_MOUSEMOVE) {
@@ -190,12 +170,7 @@ bool EventLoop::GetMessage(MSG &msg) {
 		msg.message = WM_NULL;
 	}
 
-	if (msg.message == WM_QUIT) {
-		_quitFlag = QUIT_QUIT;
-		return false;
-	}
-
-	return true;
+	return _quitFlag != QUIT_QUIT;
 }
 
 void EventLoop::setMessageWnd(Common::Event &ev, HWND &hWnd) {
@@ -340,7 +315,7 @@ BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
 
 BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam) {
-	if (_quitFlag != QUIT_NONE)
+	if (isQuitting())
 		return false;
 	if (!hWnd && Msg == WM_PARENTNOTIFY)
 		// Hodj minigame launched directly without metagame,
@@ -366,12 +341,37 @@ void EventLoop::TranslateMessage(LPMSG lpMsg) {
 void EventLoop::DispatchMessage(LPMSG lpMsg) {
 	CWnd *wnd = CWnd::FromHandle(lpMsg->hwnd);
 
-	if (lpMsg->message == WM_QUIT)
-		_quitFlag = QUIT_QUIT;
+	if (lpMsg->message == WM_QUIT) {
+		lpMsg->hwnd = nullptr;
+		handleQuit();
+	}
 
 	if (wnd) {
 		wnd->SendMessage(lpMsg->message,
 			lpMsg->wParam, lpMsg->lParam);
+	}
+}
+
+void EventLoop::handleQuit() {
+	_quitFlag = QUIT_QUITTING;
+
+	// For a shutdown, flag any open dialogs with
+	// a modal result so they close, and a WM_CLOSE
+	// to any non-dialogs
+	auto wnds = GetActiveWindow()->GetSafeParents(true);
+	for (auto wnd : wnds) {
+		CDialog *d = dynamic_cast<CDialog *>(wnd);
+		MSG closeMsg;
+		closeMsg.hwnd = wnd->m_hWnd;
+
+		if (d) {
+			d->_modalResult = -999;
+			closeMsg.message = WM_NULL;
+		} else {
+			closeMsg.message = WM_CLOSE;
+		}
+
+		_messages.push(closeMsg);
 	}
 }
 

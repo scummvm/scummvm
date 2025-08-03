@@ -154,6 +154,8 @@ private:
 	 */
 	void checkForFrameUpdate();
 
+	void handleQuit();
+
 public:
 	EventLoop() {}
 
