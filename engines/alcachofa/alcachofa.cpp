@@ -52,7 +52,8 @@ AlcachofaEngine *g_engine;
 AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst)
 	, _gameDescription(gameDesc)
-	, _randomSource("Alcachofa") {
+	, _randomSource("Alcachofa")
+	, _eventLoopSemaphore("engine") {
 	g_engine = this;
 }
 
@@ -118,6 +119,7 @@ Common::Error AlcachofaEngine::run() {
 }
 
 void AlcachofaEngine::playVideo(int32 videoId) {
+	FakeLock lock(_eventLoopSemaphore);
 	Video::MPEGPSDecoder decoder;
 	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
 		error("Could not find video %d", videoId);
@@ -156,6 +158,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 
 void AlcachofaEngine::fadeExit() {
 	constexpr uint kFadeOutDuration = 1000;
+	FakeLock lock(_eventLoopSemaphore);
 	Event e;
 	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
 	uint32 startTime = g_system->getMillis();
@@ -235,6 +238,14 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 		_timeBeforePause = getMillis();
 	else
 		setMillis(_timeBeforePause);
+}
+
+bool AlcachofaEngine::canLoadGameStateCurrently(U32String *msg) {
+	if (!_eventLoopSemaphore.isReleased())
+		return false;
+	return
+		(menu().isOpen() && menu().interactionSemaphore().isReleased()) ||
+		player().isAllowedToOpenMenu();
 }
 
 Common::Error AlcachofaEngine::syncGame(Serializer &s) {
