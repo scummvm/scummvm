@@ -805,7 +805,7 @@ int Room::calcLR(int yp) {
 	int yv = (yp - screen._orgY1) * (screen._orgX2 - screen._orgX1);
 	int yd = screen._orgY2 - screen._orgY1;
 
-	int rem = (yv % yd) << 1;
+	int rem = (yv % yd) * 2;
 	yv /= yd;
 	if (rem >= yd || rem < 0)
 		++yv;
@@ -819,7 +819,7 @@ int Room::calcUD(int xp) {
 	int xv = (xp - screen._orgX1) * (screen._orgY2 - screen._orgY1);
 	int xd = screen._orgX2 - screen._orgX1;
 
-	int rem = (xv % xd) << 1;
+	int rem = (xv % xd) * 2;
 	xv /= xd;
 	if (rem >= xd || rem < 0)
 		++xv;
