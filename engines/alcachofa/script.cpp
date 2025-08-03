@@ -393,7 +393,7 @@ struct ScriptTask : public Task {
 		bool hasLock = !_lock.isReleased();
 		s.syncAsByte(hasLock);
 		if (s.isLoading() && hasLock)
-			_lock = FakeLock(g_engine->player().semaphoreFor(process().character()));
+			_lock = FakeLock("script", g_engine->player().semaphoreFor(process().character()));
 	}
 
 	virtual const char *taskName() const override;
@@ -593,7 +593,7 @@ private:
 			}
 			process().character() = MainCharacterKind::None;
 			assert(player.semaphore().isReleased());
-			_lock = { player.semaphore() };
+			_lock = FakeLock("script", player.semaphore());
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeRoom:
@@ -967,7 +967,7 @@ Process *Script::createProcess(MainCharacterKind character, const String &proced
 	}
 	FakeLock lock;
 	if (!(flags & ScriptFlags::IsBackground))
-		lock = FakeLock(g_engine->player().semaphoreFor(character));
+		lock = FakeLock("script", g_engine->player().semaphoreFor(character));
 	Process *process = g_engine->scheduler().createProcess<ScriptTask>(character, procedure, offset, Common::move(lock));
 	process->name() = procedure;
 	return process;
