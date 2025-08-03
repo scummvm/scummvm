@@ -20,6 +20,7 @@
  */
 
 #include "common.h"
+#include "detection.h"
 
 using namespace Common;
 using namespace Math;
@@ -36,7 +37,9 @@ float ease(float t, EasingType type) {
 	}
 }
 
-FakeSemaphore::FakeSemaphore(uint initialCount) : _counter(initialCount) {}
+FakeSemaphore::FakeSemaphore(const char *name, uint initialCount)
+	: _name(name)
+	, _counter(initialCount) {}
 
 FakeSemaphore::~FakeSemaphore() {
 	assert(_counter == 0);
@@ -46,21 +49,23 @@ void FakeSemaphore::sync(Serializer &s, FakeSemaphore &semaphore) {
 	// if we are still holding locks during loading these locks will
 	// try to decrease the counter which will fail, let's find this out already here
 	assert(s.isSaving() || semaphore.isReleased());
+	(void)(s, semaphore);
 
-	uint semaphoreCounter = semaphore.counter();
-	s.syncAsSint32LE(semaphoreCounter);
-	semaphore = FakeSemaphore(semaphoreCounter);
+	// We should not actually serialize the counter, just make sure it is empty
+	// When the locks are loaded, they will increase the counter themselves
 }
 
 FakeLock::FakeLock() : _semaphore(nullptr) {}
 
 FakeLock::FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
 	_semaphore->_counter++;
+	debugC(kDebugSemaphores, "Lock ctor %s to %u", _semaphore->_name, _semaphore->_counter);
 }
 
 FakeLock::FakeLock(const FakeLock &other) : _semaphore(other._semaphore) {
 	assert(_semaphore != nullptr);
 	_semaphore->_counter++;
+	debugC(kDebugSemaphores, "Lock copy %s to %u", _semaphore->_name, _semaphore->_counter);
 }
 
 FakeLock::FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
@@ -80,6 +85,7 @@ void FakeLock::release() {
 	if (_semaphore == nullptr)
 		return;
 	assert(_semaphore->_counter > 0);
+	debugC(kDebugSemaphores, "Lock dtor %s to %u", _semaphore->_name, _semaphore->_counter - 1);
 	_semaphore->_counter--;
 	_semaphore = nullptr;
 }

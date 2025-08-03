@@ -377,7 +377,7 @@ protected:
 		_camera._cur._scale = _fromScale + _deltaScale * t;
 	}
 
-	float _fromScale, _deltaScale;
+	float _fromScale = 0, _deltaScale = 0;
 };
 DECLARE_TASK(CamLerpScaleTask);
 
@@ -418,8 +418,8 @@ protected:
 	}
 
 	Vector3d _fromPos, _deltaPos;
-	float _fromScale, _deltaScale;
-	EasingType _moveEasingType, _scaleEasingType;
+	float _fromScale = 0, _deltaScale = 0;
+	EasingType _moveEasingType = {}, _scaleEasingType = {};
 };
 DECLARE_TASK(CamLerpPosScaleTask);
 
@@ -447,7 +447,7 @@ protected:
 		_camera._cur._rotation = Angle(_fromRotation + _deltaRotation * t);
 	}
 
-	float _fromRotation, _deltaRotation;
+	float _fromRotation = 0, _deltaRotation = 0;
 };
 DECLARE_TASK(CamLerpRotationTask);
 
@@ -579,9 +579,9 @@ struct CamSetInactiveAttributeTask final : public Task {
 
 private:
 	Camera &_camera;
-	Attribute _attribute;
-	float _value;
-	int32 _delay;
+	Attribute _attribute = {};
+	float _value = 0;
+	int32 _delay = 0;
 };
 DECLARE_TASK(CamSetInactiveAttributeTask);
 

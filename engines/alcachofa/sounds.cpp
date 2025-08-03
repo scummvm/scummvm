@@ -41,7 +41,9 @@ void Sounds::Playback::fadeOut(uint32 duration) {
 	_fadeDuration = MAX<uint32>(duration, 1);
 }
 
-Sounds::Sounds() : _mixer(g_system->getMixer()) {
+Sounds::Sounds()
+	: _mixer(g_system->getMixer())
+	, _musicSemaphore("music") {
 	assert(_mixer != nullptr);
 }
 

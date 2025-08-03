@@ -26,6 +26,12 @@
 
 namespace Alcachofa {
 
+void Menu::resetAfterLoad() {
+	_isOpen = false;
+	_openAtNextFrame = false;
+	_previousRoom = nullptr;
+}
+
 void Menu::updateOpeningMenu() {
 	if (!_openAtNextFrame) {
 		_openAtNextFrame =
@@ -36,7 +42,7 @@ void Menu::updateOpeningMenu() {
 	_openAtNextFrame = false;
 
 	g_engine->sounds().pauseAll(true);
-	_timeBeforeMenu = g_engine->getMillis();
+	_millisBeforeMenu = g_engine->getMillis();
 	_previousRoom = g_engine->player().currentRoom();
 	_isOpen = true;
 	// TODO: Render thumbnail
@@ -60,7 +66,7 @@ void Menu::continueGame() {
 	g_engine->sounds().pauseAll(false);
 	g_engine->camera().restore(1);
 	g_engine->scheduler().restoreContext();
-	g_engine->setMillis(_timeBeforeMenu);
+	g_engine->setMillis(_millisBeforeMenu);
 }
 
 void Menu::triggerMainMenuAction(MainMenuAction action) {

@@ -83,7 +83,7 @@ static constexpr const Color kDebugLightBlue = { 80, 80, 255, 190 };
  * It is used as a safer option for a simple "isBusy" counter
  */
 struct FakeSemaphore {
-	FakeSemaphore(uint initialCount = 0);
+	FakeSemaphore(const char *name, uint initialCount = 0);
 	~FakeSemaphore();
 
 	inline bool isReleased() const { return _counter == 0; }
@@ -92,6 +92,7 @@ struct FakeSemaphore {
 	static void sync(Common::Serializer &s, FakeSemaphore &semaphore);
 private:
 	friend struct FakeLock;
+	const char *const _name;
 	uint _counter = 0;
 };
 

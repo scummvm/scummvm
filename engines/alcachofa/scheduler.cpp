@@ -23,6 +23,7 @@
 
 #include "common/system.h"
 #include "alcachofa.h"
+#include "menu.h"
 
 using namespace Common;
 
@@ -59,7 +60,7 @@ void Task::syncGame(Serializer &s) {
 	s.syncAsUint32LE(_stage);
 }
 
-void Task::syncObjectAsString(Serializer &s, ObjectBase *&object, bool optional) {
+void Task::syncObjectAsString(Serializer &s, ObjectBase *&object, bool optional) const {
 	String objectName, roomName;
 	if (object != nullptr) {
 		roomName = object->room()->name();
@@ -71,7 +72,9 @@ void Task::syncObjectAsString(Serializer &s, ObjectBase *&object, bool optional)
 		return;
 	Room *room = g_engine->world().getRoomByName(roomName.c_str());
 	object = room == nullptr ? nullptr : room->getObjectByName(objectName.c_str());
-	if ((object == nullptr && !optional) || !roomName.empty() || !objectName.empty())
+	if (object == nullptr) // main characters are not linked by the room they are in
+		object = g_engine->world().globalRoom().getObjectByName(objectName.c_str());
+	if (object == nullptr && !optional)
 		error("Invalid object name \"%s\" in room \"%s\" in savestate for task %s",
 			objectName.c_str(), roomName.c_str(), taskName());
 }
@@ -193,8 +196,12 @@ void Process::syncGame(Serializer &s) {
 			_tasks.push(readTask(*this, s));
 	}
 	else {
-		for (uint i = 0; i < count; i++)
+		String taskName;
+		for (uint i = 0; i < count; i++) {
+			taskName = _tasks[i]->taskName();
+			s.syncString(taskName);
 			_tasks[i]->syncGame(s);
+		}
 	}
 }
 
@@ -336,19 +343,23 @@ void Scheduler::syncGame(Serializer &s) {
 	assert(_currentProcessI == UINT_MAX); // let's not sync during ::run
 	assert(s.isSaving() || _backupProcesses.empty());
 
+	Common::Array<Process *> *processes = s.isSaving() && g_engine->menu().isOpen()
+		? &_backupProcesses
+		: &processesToRunNext();
+
 	// we only sync the backupProcesses as these are the ones pertaining to the gameplay
 	// the other arrays would be used for the menu
 
 	s.syncAsUint32LE(_nextPid);
-	uint32 count = _backupProcesses.size();
+	uint32 count = processes->size();
 	s.syncAsUint32LE(count);
 	if (s.isLoading()) {
-		_backupProcesses.reserve(count);
+		processes->reserve(count);
 		for (uint32 i = 0; i < count; i++)
-			_backupProcesses.push_back(new Process(s));
+			processes->push_back(new Process(s));
 	}
 	else {
-		for (Process *process : _backupProcesses)
+		for (Process *process : *processes)
 			process->syncGame(s);
 	}
 }

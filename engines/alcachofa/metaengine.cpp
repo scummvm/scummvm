@@ -28,6 +28,7 @@
 #include "alcachofa/alcachofa.h"
 
 using namespace Common;
+using namespace Graphics;
 using namespace Alcachofa;
 
 namespace Alcachofa {
@@ -102,6 +103,11 @@ KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);
+}
+
+void AlcachofaMetaEngine::getSavegameThumbnail(Surface &surf) {
+	// TODO: Implement
+	surf.create(160, 120, PixelFormat::createFormatRGBA32());
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ALCACHOFA)
