@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 21:03+0000\n"
+"POT-Creation-Date: 2025-08-03 23:02+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4172,7 +4172,7 @@ msgstr ""
 "προσδιορίσετε ένα από τη γραφική διεπαφή χρήστη (ΓΔΧ ή αλλιώς GUI) του "
 "ScummVM στο tab \"MIDI\". Η μουσική θα απενεργοποιηθεί."
 
-#: audio/softsynth/fluidsynth.cpp:498
+#: audio/softsynth/fluidsynth.cpp:501
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
@@ -8964,7 +8964,7 @@ msgstr "Γρήγορη Έξοδος από το Δωμάτιο"
 msgid "Examine / Look"
 msgstr "Εξέτασε/Κοίτα"
 
-#: engines/grim/grim.cpp:1394
+#: engines/grim/grim.cpp:1386
 msgid "Error: the game could not be saved."
 msgstr "Σφάλμα: αδυναμία αποθήκευσης του παιχνιδιού."
 

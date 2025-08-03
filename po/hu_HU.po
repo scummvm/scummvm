@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 21:03+0000\n"
+"POT-Creation-Date: 2025-08-03 23:02+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4072,7 +4072,7 @@ msgstr ""
 "A FluidSynth-hez szükséges a 'soundfont' beállítás is. Kérjük állítsa be a "
 "ScummVM felület MIDI fülén. Zene kikapcsolva."
 
-#: audio/softsynth/fluidsynth.cpp:498
+#: audio/softsynth/fluidsynth.cpp:501
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
@@ -8800,7 +8800,7 @@ msgstr "Gyors szoba elhagyás"
 msgid "Examine / Look"
 msgstr "Vizsgál/Néz"
 
-#: engines/grim/grim.cpp:1394
+#: engines/grim/grim.cpp:1386
 msgid "Error: the game could not be saved."
 msgstr "Hiba: a játékot nem sikerült menteni."
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 21:03+0000\n"
+"POT-Creation-Date: 2025-08-03 23:02+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4067,7 +4067,7 @@ msgstr ""
 "FluidSynth вимагає налаштування 'soundfont'. Будь-ласка, вкажіть її у "
 "ScummVM GUI на вкладці MIDI. Музику виключено."
 
-#: audio/softsynth/fluidsynth.cpp:498
+#: audio/softsynth/fluidsynth.cpp:501
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr "FluidSynth: Не вдалося завантажити SoundFont '%s'. Музику виключено."
@@ -8791,7 +8791,7 @@ msgstr "Швидко вийти з кімнати"
 msgid "Examine / Look"
 msgstr "Розглянути/Дивитись"
 
-#: engines/grim/grim.cpp:1394
+#: engines/grim/grim.cpp:1386
 msgid "Error: the game could not be saved."
 msgstr "Помилка: гру не вдалося зберегти."
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-07-25 21:03+0000\n"
+"POT-Creation-Date: 2025-08-03 23:02+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -3760,7 +3760,7 @@ msgid ""
 "on MIDI tab. Music is off."
 msgstr ""
 
-#: audio/softsynth/fluidsynth.cpp:498
+#: audio/softsynth/fluidsynth.cpp:501
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
 msgstr ""
@@ -7845,7 +7845,7 @@ msgstr ""
 msgid "Examine / Look"
 msgstr ""
 
-#: engines/grim/grim.cpp:1394
+#: engines/grim/grim.cpp:1386
 msgid "Error: the game could not be saved."
 msgstr ""
 
