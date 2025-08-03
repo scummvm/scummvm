@@ -3818,7 +3818,7 @@ void LB::b_scummvmassertequal(int nargs) {
 	}
 
 	if (!result) {
-		warning("BUILDBOT: LB::b_scummvmassertequals: %s is not equal %s at line %d", d1.asString().c_str(), d2.asString().c_str(), line.asInt());
+		warning("BUILDBOT: LB::b_scummvmassertequal: %s is not equal %s at line %d", formatStringForDump(d1.asString()).c_str(), formatStringForDump(d2.asString()).c_str(), line.asInt());
 	}
 	if (debugChannelSet(-1, kDebugLingoStrict)) {
 		assert(result == 1);
