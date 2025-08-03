@@ -20,13 +20,18 @@
  */
 
 #include "alcachofa.h"
+#include "metaengine.h"
 #include "menu.h"
 #include "player.h"
 #include "script.h"
 
+using namespace Common;
+
 namespace Alcachofa {
 
-Menu::Menu() : _interactionSemaphore("menu") {}
+Menu::Menu()
+	: _interactionSemaphore("menu")
+	, _saveFileMgr(g_system->getSavefileManager()) {}
 
 void Menu::resetAfterLoad() {
 	_isOpen = false;
@@ -49,15 +54,30 @@ void Menu::updateOpeningMenu() {
 	_isOpen = true;
 	// TODO: Render thumbnail
 	g_engine->player().changeRoom("MENUPRINCIPAL", true);
-	// TODO: Check original read lastSaveFileFileId and read options.cfg, we do not need that right?
+	_savefiles = _saveFileMgr->listSavefiles(g_engine->getSaveStatePattern());
+	sort(_savefiles.begin(), _savefiles.end()); // the pattern ensures that the last file has the greatest slot
+	_selectedSavefileI = _savefiles.size();
+	updateSelectedSavefile();
 
 	g_engine->player().heldItem() = nullptr;
 	g_engine->scheduler().backupContext();
 	g_engine->camera().backup(1);
 	g_engine->camera().setPosition(Math::Vector3d(
 		g_system->getWidth() / 2.0f, g_system->getHeight() / 2.0f, 0.0f));
+}
 
-	// TODO: Load thumbnail into capture graphic object
+void Menu::updateSelectedSavefile() {
+	auto getButton = [] (const char *name) {
+		MenuButton *button = dynamic_cast<MenuButton *>(g_engine->player().currentRoom()->getObjectByName(name));
+		scumm_assert(button != nullptr);
+		return button;
+	};
+
+	getButton("CARGAR")->isInteractable() = _selectedSavefileI < _savefiles.size();
+	getButton("ANTERIOR")->toggle(_selectedSavefileI > 0);
+	getButton("SIGUIENTE")->toggle(_selectedSavefileI < _savefiles.size());
+
+	// TODO: Update thumbnail animation
 }
 
 void Menu::continueGame() {
@@ -79,9 +99,14 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 	case MainMenuAction::Save:
 		warning("STUB: MainMenuAction Save");
 		break;
-	case MainMenuAction::Load:
-		warning("STUB: MainMenuAction Load");
-		break;
+	case MainMenuAction::Load: {
+		// we are in some update loop, let's load next frame upon event handling
+		// that should be safer
+		Event ev;
+		ev.type = EVENT_CUSTOM_ENGINE_ACTION_START;
+		ev.customType = (CustomEventType)EventAction::LoadFromMenu;
+		g_system->getEventManager()->pushEvent(ev);
+	}break;
 	case MainMenuAction::InternetMenu:
 		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
 		break;
@@ -94,10 +119,16 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 		g_engine->fadeExit();
 		break;
 	case MainMenuAction::NextSave:
-		warning("STUB: MainMenuAction NextSave");
+		if (_selectedSavefileI < _savefiles.size()) {
+			_selectedSavefileI++;
+			updateSelectedSavefile();
+		}
 		break;
 	case MainMenuAction::PrevSave:
-		warning("STUB: MainMenuAction PrevSave");
+		if (_selectedSavefileI > 0) {
+			_selectedSavefileI--;
+			updateSelectedSavefile();
+		}
 		break;
 	case MainMenuAction::NewGame:
 		// this action might be unused just like the only room it would appear: MENUPRINCIPALINICIO
@@ -108,6 +139,12 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 		warning("Unknown main menu action: %d", (int32)action);
 		break;
 	}
+}
+
+void Menu::triggerLoad() {
+	auto *savefile = _saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]);
+	g_engine->loadGameStream(savefile);
+	delete savefile;
 }
 
 void Menu::openOptionsMenu() {
