@@ -98,7 +98,7 @@ private:
 
 struct FakeLock {
 	FakeLock();
-	FakeLock(FakeSemaphore &semaphore);
+	FakeLock(const char *name, FakeSemaphore &semaphore);
 	FakeLock(const FakeLock &other);
 	FakeLock(FakeLock &&other) noexcept;
 	~FakeLock();
@@ -107,6 +107,9 @@ struct FakeLock {
 	
 	inline bool isReleased() const { return _semaphore == nullptr; }
 private:
+	void debug(const char *action);
+
+	const char *_name = "<uninitialized>";
 	FakeSemaphore *_semaphore = nullptr;
 };
 

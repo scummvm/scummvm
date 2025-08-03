@@ -215,7 +215,7 @@ struct DoorTask : public Task {
 		if (_targetRoom == nullptr || _targetObject == nullptr)
 			return TaskReturn::finish(1);
 
-		_musicLock = FakeLock(g_engine->sounds().musicSemaphore());
+		_musicLock = FakeLock("door-music", g_engine->sounds().musicSemaphore());
 		if (g_engine->sounds().musicID() != _targetRoom->musicID())
 			g_engine->sounds().fadeMusic();
 		TASK_WAIT(1, fade(process(), FadeType::ToBlack, 0, 1, 500, EasingType::Out, -5));
@@ -253,9 +253,9 @@ struct DoorTask : public Task {
 		bool hasMusicLock = !_musicLock.isReleased();
 		s.syncAsByte(hasMusicLock);
 		if (s.isLoading() && hasMusicLock)
-			_musicLock = FakeLock(g_engine->sounds().musicSemaphore());
+			_musicLock = FakeLock("door-music", g_engine->sounds().musicSemaphore());
 		
-		_lock = FakeLock(_character->semaphore());
+		_lock = FakeLock("door", _character->semaphore());
 		findTarget();
 	}
 
@@ -292,7 +292,7 @@ void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
 
 	if (g_engine->game().shouldTriggerDoor(door)) {
-		FakeLock lock(_activeCharacter->semaphore());
+		FakeLock lock("door", _activeCharacter->semaphore());
 		g_engine->scheduler().createProcess<DoorTask>(activeCharacterKind(), door, move(lock));
 	}
 }
