@@ -123,7 +123,7 @@ Common::Error AlcachofaEngine::run() {
 }
 
 void AlcachofaEngine::playVideo(int32 videoId) {
-	FakeLock lock(_eventLoopSemaphore);
+	FakeLock lock("playVideo", _eventLoopSemaphore);
 	Video::MPEGPSDecoder decoder;
 	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
 		error("Could not find video %d", videoId);
@@ -162,7 +162,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 
 void AlcachofaEngine::fadeExit() {
 	constexpr uint kFadeOutDuration = 1000;
-	FakeLock lock(_eventLoopSemaphore);
+	FakeLock lock("fadeExit", _eventLoopSemaphore);
 	Event e;
 	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
 	uint32 startTime = g_system->getMillis();

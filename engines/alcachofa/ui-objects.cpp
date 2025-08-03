@@ -92,7 +92,7 @@ void MenuButton::onHoverUpdate() {}
 
 void MenuButton::onClick() {
 	if (_isInteractable && _interactionLock.isReleased()) {
-		_interactionLock = g_engine->menu().interactionSemaphore();
+		_interactionLock = FakeLock("button", g_engine->menu().interactionSemaphore());
 		_isClicked = true;
 		_triggerNextFrame = false;
 		_graphicClicked.start(false);

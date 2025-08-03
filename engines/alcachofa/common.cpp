@@ -55,21 +55,30 @@ void FakeSemaphore::sync(Serializer &s, FakeSemaphore &semaphore) {
 	// When the locks are loaded, they will increase the counter themselves
 }
 
-FakeLock::FakeLock() : _semaphore(nullptr) {}
+FakeLock::FakeLock() {}
 
-FakeLock::FakeLock(FakeSemaphore &semaphore) : _semaphore(&semaphore) {
+FakeLock::FakeLock(const char *name, FakeSemaphore &semaphore)
+	: _name(name)
+	, _semaphore(&semaphore) {
 	_semaphore->_counter++;
-	debugC(kDebugSemaphores, "Lock ctor %s to %u", _semaphore->_name, _semaphore->_counter);
+	debug("ctor");
 }
 
-FakeLock::FakeLock(const FakeLock &other) : _semaphore(other._semaphore) {
+FakeLock::FakeLock(const FakeLock &other)
+	: _name(other._name)
+	, _semaphore(other._semaphore) {
 	assert(_semaphore != nullptr);
 	_semaphore->_counter++;
-	debugC(kDebugSemaphores, "Lock copy %s to %u", _semaphore->_name, _semaphore->_counter);
+	debug("copy");
 }
 
-FakeLock::FakeLock(FakeLock &&other) noexcept : _semaphore(other._semaphore) {
+FakeLock::FakeLock(FakeLock &&other) noexcept
+	: _name(other._name)
+	, _semaphore(other._semaphore) {
+	other._name = "<moved>";
 	other._semaphore = nullptr;
+	if (_semaphore != nullptr)
+		debug("move-ctor");
 }
 
 FakeLock::~FakeLock() {
@@ -77,17 +86,29 @@ FakeLock::~FakeLock() {
 }
 
 void FakeLock::operator= (FakeLock &&other) noexcept {
+	release();
+	_name = other._name;
 	_semaphore = other._semaphore;
+	other._name = "<moved>";
 	other._semaphore = nullptr;
+	debug("move-assign");
 }
 
 void FakeLock::release() {
 	if (_semaphore == nullptr)
 		return;
 	assert(_semaphore->_counter > 0);
-	debugC(kDebugSemaphores, "Lock dtor %s to %u", _semaphore->_name, _semaphore->_counter - 1);
 	_semaphore->_counter--;
+	debug("release");
 	_semaphore = nullptr;
+}
+
+void FakeLock::debug(const char *action) {
+	const char *myName = _name == nullptr ? "<null>" : _name;
+	if (_semaphore == nullptr)
+		debugC(kDebugSemaphores, "Lock %s %s nullptr", myName, action);
+	else
+		debugC(kDebugSemaphores, "Lock %s %s %s at %u", myName, action, _semaphore->_name, _semaphore->_counter);
 }
 
 Vector3d as3D(const Vector2d &v) {

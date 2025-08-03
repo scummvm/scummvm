@@ -366,11 +366,11 @@ DECLARE_TASK(PlaySoundTask);
 
 WaitForMusicTask::WaitForMusicTask(Process &process)
 	: Task(process)
-	, _lock(g_engine->sounds().musicSemaphore()) {}
+	, _lock("wait-for-music", g_engine->sounds().musicSemaphore()) { }
 
 WaitForMusicTask::WaitForMusicTask(Process &process, Serializer &s)
 	: Task(process)
-	, _lock(g_engine->sounds().musicSemaphore()) {
+	, _lock("wait-for-music", g_engine->sounds().musicSemaphore()) {
 	syncGame(s);
 }
 
