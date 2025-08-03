@@ -171,7 +171,7 @@ struct ScriptTimerTask : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	int32 _durationSec;
+	int32 _durationSec = 0;
 	int32 _result = 1;
 };
 DECLARE_TASK(ScriptTimerTask);
@@ -392,7 +392,7 @@ struct ScriptTask : public Task {
 
 		bool hasLock = !_lock.isReleased();
 		s.syncAsByte(hasLock);
-		if (hasLock)
+		if (s.isLoading() && hasLock)
 			_lock = FakeLock(g_engine->player().semaphoreFor(process().character()));
 	}
 
@@ -945,7 +945,7 @@ private:
 	Script &_script;
 	Stack<StackEntry> _stack;
 	String _name;
-	uint32 _pc;
+	uint32 _pc = 0;
 	bool _returnsFromKernelCall = false;
 	bool _isFirstExecution = true;
 	FakeLock _lock;

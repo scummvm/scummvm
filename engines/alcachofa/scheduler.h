@@ -94,11 +94,11 @@ struct Task {
 protected:
 	Task *delay(uint32 millis);
 
-	void syncObjectAsString(Common::Serializer &s, ObjectBase *&object, bool optional = false);
+	void syncObjectAsString(Common::Serializer &s, ObjectBase *&object, bool optional = false) const;
 	template<class TObject>
-	void syncObjectAsString(Common::Serializer &s, TObject *&object, bool optional = false) {
+	void syncObjectAsString(Common::Serializer &s, TObject *&object, bool optional = false) const {
 		// We could add is_const and therefore true_type, false_type, integral_constant 
-		// or we could just use const_cast and promise that we won't modify
+		// or we could just use const_cast and promise that we won't modify the object itself
 		ObjectBase *base = const_cast<Common::remove_const_t<TObject> *>(object);
 		syncObjectAsString(s, base, optional);
 		object = dynamic_cast<TObject*>(base);
@@ -121,7 +121,7 @@ struct DelayTask : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	uint32 _endTime;
+	uint32 _endTime = 0;
 };
 
 #define DECLARE_TASK(TaskName) \

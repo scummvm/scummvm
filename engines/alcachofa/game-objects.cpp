@@ -353,8 +353,8 @@ struct SayTextTask final : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	Character *_character;
-	int32 _dialogId;
+	Character *_character = nullptr;
+	int32 _dialogId = 0;
 	SoundHandle _soundHandle = {};
 };
 DECLARE_TASK(SayTextTask);
@@ -431,9 +431,9 @@ struct AnimateCharacterTask final : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	Character *_character;
-	ObjectBase *_animateObject;
-	Graphic *_graphic;
+	Character *_character = nullptr;
+	ObjectBase *_animateObject = nullptr;
+	Graphic *_graphic = nullptr;
 };
 DECLARE_TASK(AnimateCharacterTask);
 
@@ -488,9 +488,9 @@ struct LerpLodBiasTask final : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	Character *_character;
-	float _sourceLodBias = 0, _targetLodBias;
-	uint32 _startTime = 0, _durationMs;
+	Character *_character = nullptr;
+	float _sourceLodBias = 0, _targetLodBias = 0;
+	uint32 _startTime = 0, _durationMs = 0;
 };
 DECLARE_TASK(LerpLodBiasTask);
 
@@ -802,7 +802,7 @@ struct ArriveTask : public Task {
 
 	virtual const char *taskName() const override;
 private:
-	const WalkingCharacter *_character;
+	const WalkingCharacter *_character = nullptr;
 };
 DECLARE_TASK(ArriveTask);
 
@@ -813,7 +813,8 @@ Task *WalkingCharacter::waitForArrival(Process &process) {
 const char *MainCharacter::typeName() const { return "MainCharacter"; }
 
 MainCharacter::MainCharacter(Room *room, ReadStream &stream)
-	: WalkingCharacter(room, stream) {
+	: WalkingCharacter(room, stream)
+	, _semaphore(name().firstChar() == 'M' ? "mortadelo" : "filemon") {
 	stream.readByte(); // unused byte
 	_order = 100;
 
@@ -1125,7 +1126,7 @@ private:
 	}
 
 	Input &_input;
-	MainCharacter *_character;
+	MainCharacter *_character = nullptr;
 	uint _clickedLineI = UINT_MAX;
 };
 DECLARE_TASK(DialogMenuTask);

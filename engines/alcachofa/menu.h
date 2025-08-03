@@ -59,7 +59,10 @@ enum class OptionsMenuValue : int32 {
 class Menu {
 public:
 	inline bool isOpen() const { return _isOpen; }
+	inline uint32 millisBeforeMenu() const { return _millisBeforeMenu; }
+	inline Room *previousRoom() { return _previousRoom; }
 
+	void resetAfterLoad();
 	void updateOpeningMenu();
 	void triggerMainMenuAction(MainMenuAction action);
 
@@ -75,7 +78,7 @@ private:
 	bool
 		_isOpen = false,
 		_openAtNextFrame = false;
-	uint32 _timeBeforeMenu = 0;
+	uint32 _millisBeforeMenu = 0;
 	Room *_previousRoom = nullptr;
 };
 

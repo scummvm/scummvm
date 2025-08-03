@@ -23,6 +23,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -79,8 +80,11 @@ Common::Error AlcachofaEngine::run() {
 	_menu.reset(new Menu());
 	setMillis(0);
 
-	_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
-	_scheduler.run();
+	if (!tryLoadFromLauncher()) {
+		_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
+		_scheduler.run();
+		// we run once to set the initial room, otherwise we could run into currentRoom == nullptr
+	}
 
 	Common::Event e;
 	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
@@ -236,7 +240,9 @@ void AlcachofaEngine::pauseEngineIntern(bool pause) {
 Common::Error AlcachofaEngine::syncGame(Serializer &s) {
 	s.syncVersion((Serializer::Version)SaveVersion::Initial);
 
-	uint32 millis = getMillis();
+	uint32 millis = menu().isOpen()
+		? menu().millisBeforeMenu()
+		: getMillis();
 	s.syncAsUint32LE(millis);
 	if (s.isLoading())
 		setMillis(millis);
@@ -247,6 +253,7 @@ Common::Error AlcachofaEngine::syncGame(Serializer &s) {
 	 *    can assert that the semaphores are released on loading.
 	 * 2. The player should come late as it changes the room
 	 * 3. With the room current, the tasks can now better find the referenced objects
+	 * 4. Redundant: The world has to be synced before the tasks to reset the semaphores to 0
 	 */
 
 	scheduler().prepareSyncGame(s);
@@ -258,11 +265,25 @@ Common::Error AlcachofaEngine::syncGame(Serializer &s) {
 	scheduler().syncGame(s);
 
 	if (s.isLoading()) {
+		menu().resetAfterLoad();
 		sounds().stopAll();
 		sounds().setMusicToRoom(player().currentRoom()->musicID());
 	}
 
 	return Common::kNoError;
+}
+
+bool AlcachofaEngine::tryLoadFromLauncher() {
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (!ConfMan.hasKey("save_slot") || saveSlot < 0)
+		return false;
+	auto *saveFileMgr = g_system->getSavefileManager();
+	auto *saveFile = saveFileMgr->openForLoading(getSaveStateName(saveSlot));
+	if (saveFile == nullptr)
+		return false;
+	bool result = loadGameStream(saveFile).getCode() == kNoError;
+	delete saveFile;
+	return result;
 }
 
 Config::Config() {
@@ -284,6 +305,7 @@ void Config::saveToScummVM() {
 	ConfMan.setInt("music_volume", _musicVolume);
 	ConfMan.setInt("speech_volume", _speechVolume);
 	ConfMan.setInt("sfx_volume", _speechVolume);
+	ConfMan.flushToDisk();
 	// ^ a bit unfortunate, that means if you change in-game it overrides.
 	// if you set it in ScummVMs dialog it sticks
 }

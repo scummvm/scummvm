@@ -29,7 +29,8 @@ using namespace Common;
 namespace Alcachofa {
 
 Player::Player()
-	: _activeCharacter(&g_engine->world().mortadelo()) {
+	: _activeCharacter(&g_engine->world().mortadelo())
+	, _semaphore("player") {
 	const auto &cursorPath = g_engine->world().getGlobalAnimationName(GlobalAnimationKind::Cursor);
 	_cursorAnimation.reset(new Animation(cursorPath));
 	_cursorAnimation->load();
@@ -153,7 +154,7 @@ MainCharacter *Player::inactiveCharacter() const {
 }
 
 FakeSemaphore &Player::semaphoreFor(MainCharacterKind kind) {
-	static FakeSemaphore dummySemaphore;
+	static FakeSemaphore dummySemaphore("dummy");
 	switch (kind) {
 	case MainCharacterKind::None: return _semaphore;
 	case MainCharacterKind::Mortadelo: return g_engine->world().mortadelo().semaphore();
@@ -278,11 +279,11 @@ private:
 	}
 
 	FakeLock _lock, _musicLock;
-	const Door *_sourceDoor;
-	const InteractableObject *_targetObject;
-	Direction _targetDirection;
-	Room *_targetRoom;
-	MainCharacter *_character;
+	const Door *_sourceDoor = nullptr;
+	const InteractableObject *_targetObject = nullptr;
+	Direction _targetDirection = {};
+	Room *_targetRoom = nullptr;
+	MainCharacter *_character = nullptr;
 	Player &_player;
 };
 DECLARE_TASK(DoorTask);
@@ -346,27 +347,22 @@ void Player::syncGame(Serializer &s) {
 	}
 
 	FakeSemaphore::sync(s, _semaphore);
-
+	
 	String roomName;
-	if (_roomBeforeInventory != nullptr)
-		roomName = _roomBeforeInventory->name();
-	s.syncString(roomName);
-	if (s.isLoading()) {
-		if (roomName.empty())
-			_roomBeforeInventory = nullptr;
-		else {
-			_roomBeforeInventory = g_engine->world().getRoomByName(roomName.c_str());
-			scumm_assert(_roomBeforeInventory != nullptr);
-		}
+	if (s.isSaving()) {
+		roomName =
+			g_engine->menu().isOpen() ? g_engine->menu().previousRoom()->name() // save from in-game menu
+			: _roomBeforeInventory != nullptr ? _roomBeforeInventory->name() // save from ScummVM while in inventory
+			: currentRoom()->name(); // save from ScumnmVM global menu or autosave in normal gameplay
 	}
-
-	roomName = currentRoom()->name();
 	s.syncString(roomName);
 	if (s.isLoading()) {
 		_selectedObject = nullptr;
 		_pressedObject = nullptr;
 		_heldItem = nullptr;
 		_nextLastDialogCharacter = 0;
+		_isGameLoaded = true;
+		_roomBeforeInventory = nullptr;
 		fill(_lastDialogCharacters, _lastDialogCharacters + kMaxLastDialogCharacters, nullptr);
 		changeRoom(roomName, true);
 	}

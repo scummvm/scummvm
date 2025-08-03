@@ -239,8 +239,8 @@ struct CenterBottomTextTask : public Task {
 	virtual const char *taskName() const override;
 
 private:
-	int32 _dialogId;
-	uint32 _startTime = 0, _durationMs;
+	int32 _dialogId = 0;
+	uint32 _startTime = 0, _durationMs = 0;
 };
 DECLARE_TASK(CenterBottomTextTask);
 
