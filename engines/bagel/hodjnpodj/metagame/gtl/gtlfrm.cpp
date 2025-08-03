@@ -69,9 +69,7 @@ BEGIN_MESSAGE_MAP(CGtlFrame, MFC_FRAME)
 	//{{AFX_MSG_MAP(CGtlFrame)
 	ON_WM_CREATE()
 	ON_WM_ERASEBKGND()
-#if GTLDLL
 	ON_WM_DESTROY()
-#endif
 
 #ifdef NODEEDIT
 	ON_UPDATE_COMMAND_UI(ID_VIEW_STATUS_BAR, OnUpdateViewStatusBar)
@@ -112,13 +110,6 @@ CGtlFrame::CGtlFrame() {
 
 CGtlFrame::~CGtlFrame() {
 	TRACEDESTRUCTOR(CGtlFrame) ;
-
-	#if !GTLDLL
-	if (m_lpBfcMgr) {
-		delete m_lpBfcMgr ;
-		m_lpBfcMgr = nullptr ;
-	}
-	#endif
 }
 
 //* CGtlFrame::NewFrame -- set pointer to interface manager in frame
@@ -140,9 +131,8 @@ BOOL CGtlFrame::NewFrame(CBfcMgr *lpBfcMgr)
 	RETURN(iError != 0) ;
 }
 
-#if GTLDLL
 void CGtlFrame::OnDestroy() {
-	int iReturnValue = -1 ;
+	int iReturnValue = -1;
 
 	if (m_lpBfcMgr && m_lpBfcMgr->m_iFunctionCode > 0
 	        && m_lpBfcMgr->m_iFunctionCode != MG_DLLX_QUIT)
@@ -150,11 +140,12 @@ void CGtlFrame::OnDestroy() {
 
 	lpMetaGameStruct->m_bRestart = TRUE;
 
+	pMainWindow->PostMessage(WM_PARENTNOTIFY, WM_DESTROY, iReturnValue);
 	pMainWindow = nullptr;
+
 
 	CFrameWnd::OnDestroy();
 }
-#endif
 
 int CGtlFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	if (MFC_FRAME::OnCreate(lpCreateStruct) == -1)

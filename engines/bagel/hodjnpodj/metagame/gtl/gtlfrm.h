@@ -74,9 +74,7 @@ public:
 protected:
 	//{{AFX_MSG(CGtlFrame)
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	#if GTLDLL
 	afx_msg void OnDestroy();
-	#endif
 	afx_msg void OnUpdateViewStatusBar(CCmdUI *pCmdUI);
 	afx_msg void OnViewInfoDlg();
 	afx_msg void OnViewCtlDlg();
