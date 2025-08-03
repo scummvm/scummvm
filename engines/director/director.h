@@ -301,6 +301,7 @@ public:
 	TimeDate _forceDate;
 	uint32 _loadSlowdownFactor;
 	uint32 _loadSlowdownCooldownTime;
+	int _fileIOType;
 
 private:
 	byte _currentPalette[768];
