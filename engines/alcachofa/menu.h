@@ -76,6 +76,7 @@ public:
 	void triggerOptionsValue(OptionsMenuValue valueId, float value);
 
 private:
+	void triggerSave();
 	void updateSelectedSavefile();
 	void continueGame();
 	void continueMainMenu();
@@ -89,6 +90,7 @@ private:
 		_selectedSavefileI = 0;
 	Room *_previousRoom = nullptr;
 	FakeSemaphore _interactionSemaphore; // to prevent ScummVM loading during button clicks
+	Common::String _selectedSavefileDescription = "<unset>";
 	Common::Array<Common::String> _savefiles;
 	Common::SaveFileManager *_saveFileMgr;
 };

@@ -68,6 +68,12 @@ void Menu::updateOpeningMenu() {
 		g_system->getWidth() / 2.0f, g_system->getHeight() / 2.0f, 0.0f));
 }
 
+static int parseSavestateSlot(const String &filename) {
+	if (filename.size() < 5) // minimal name would be "t.###"
+		return 1;
+	return atoi(filename.c_str() + filename.size() - 3);
+}
+
 void Menu::updateSelectedSavefile() {
 	auto getButton = [] (const char *name) {
 		MenuButton *button = dynamic_cast<MenuButton *>(g_engine->player().currentRoom()->getObjectByName(name));
@@ -75,11 +81,24 @@ void Menu::updateSelectedSavefile() {
 		return button;
 	};
 
-	getButton("CARGAR")->isInteractable() = _selectedSavefileI < _savefiles.size();
+	bool isOldSavefile = _selectedSavefileI < _savefiles.size();
+	getButton("CARGAR")->isInteractable() = isOldSavefile;
 	getButton("ANTERIOR")->toggle(_selectedSavefileI > 0);
-	getButton("SIGUIENTE")->toggle(_selectedSavefileI < _savefiles.size());
+	getButton("SIGUIENTE")->toggle(isOldSavefile);
 
-	// TODO: Update thumbnail animation
+	if (isOldSavefile) {
+		ExtendedSavegameHeader header;
+		auto savefile = ScopedPtr<InSaveFile>(
+			_saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]));
+		if (savefile != nullptr &&
+			g_engine->getMetaEngine()->readSavegameHeader(savefile.get(), &header, false))
+			_selectedSavefileDescription = header.description;
+		else // Fallback to generated description
+			_selectedSavefileDescription = String::format("Savestate %d",
+				parseSavestateSlot(_savefiles[_selectedSavefileI]));
+	}
+
+	// TODO: Update thumbnail animation;
 }
 
 void Menu::continueGame() {
@@ -99,7 +118,7 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 		g_engine->menu().continueGame();
 		break;
 	case MainMenuAction::Save:
-		warning("STUB: MainMenuAction Save");
+		triggerSave();
 		break;
 	case MainMenuAction::Load: {
 		// we are in some update loop, let's load next frame upon event handling
@@ -148,6 +167,34 @@ void Menu::triggerLoad() {
 	auto *savefile = _saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]);
 	g_engine->loadGameStream(savefile);
 	delete savefile;
+}
+
+void Menu::triggerSave() {
+	String fileName, desc;
+	if (_selectedSavefileI < _savefiles.size()) {
+		fileName = _savefiles[_selectedSavefileI]; // overwrite a previous save
+		desc = _selectedSavefileDescription;
+	}
+	else {
+		// for a new savefile we figure out the next slot index
+		int nextSlot = _savefiles.empty()
+			? 1 // start at one to keep autosave alone
+			: parseSavestateSlot(_savefiles.back()) + 1;
+		fileName = g_engine->getSaveStateName(nextSlot);
+		desc = String::format("Savestate %d", nextSlot);
+		_savefiles.push_back(fileName);
+	}
+
+	auto savefile = ScopedPtr<OutSaveFile>(_saveFileMgr->openForSaving(fileName));
+	if (savefile == nullptr) {
+		GUI::MessageDialog dialog("Could not open savefile");
+		dialog.runModal();
+		return;
+	}
+	if (g_engine->saveGameStream(savefile.get()).getCode() == kNoError)
+		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), desc, false);
+
+	updateSelectedSavefile();
 }
 
 void Menu::openOptionsMenu() {
