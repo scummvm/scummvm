@@ -186,6 +186,7 @@ private:
 		_graphicHovered,
 		_graphicClicked,
 		_graphicDisabled;
+	FakeLock _interactionLock;
 };
 
 // some of the UI elements are only used for the multiplayer menus

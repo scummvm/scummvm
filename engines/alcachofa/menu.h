@@ -58,9 +58,12 @@ enum class OptionsMenuValue : int32 {
 
 class Menu {
 public:
+	Menu();
+
 	inline bool isOpen() const { return _isOpen; }
 	inline uint32 millisBeforeMenu() const { return _millisBeforeMenu; }
 	inline Room *previousRoom() { return _previousRoom; }
+	inline FakeSemaphore &interactionSemaphore() { return _interactionSemaphore; }
 
 	void resetAfterLoad();
 	void updateOpeningMenu();
@@ -80,6 +83,7 @@ private:
 		_openAtNextFrame = false;
 	uint32 _millisBeforeMenu = 0;
 	Room *_previousRoom = nullptr;
+	FakeSemaphore _interactionSemaphore; // to prevent ScummVM loading during button clicks
 };
 
 }

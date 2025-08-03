@@ -68,6 +68,7 @@ void MenuButton::update() {
 		return;
 	}
 
+	_interactionLock.release();
 	_triggerNextFrame = false;
 	_isClicked = false;
 	trigger();
@@ -90,7 +91,8 @@ void MenuButton::freeResources() {
 void MenuButton::onHoverUpdate() {}
 
 void MenuButton::onClick() {
-	if (_isInteractable) {
+	if (_isInteractable && _interactionLock.isReleased()) {
+		_interactionLock = g_engine->menu().interactionSemaphore();
 		_isClicked = true;
 		_triggerNextFrame = false;
 		_graphicClicked.start(false);

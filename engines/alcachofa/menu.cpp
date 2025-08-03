@@ -26,6 +26,8 @@
 
 namespace Alcachofa {
 
+Menu::Menu() : _interactionSemaphore("menu") {}
+
 void Menu::resetAfterLoad() {
 	_isOpen = false;
 	_openAtNextFrame = false;

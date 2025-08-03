@@ -137,13 +137,9 @@ public:
 			(f == kSupportsReturnToLauncher);
 	};
 
-	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override {
-		// TODO: Implement
-		return true;
-	}
+	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override {
-		// TODO: Implement
-		return true;
+		return canLoadGameStateCurrently(msg);
 	}
 
 	Common::Error syncGame(Common::Serializer &s);
@@ -175,6 +171,7 @@ private:
 	Scheduler _scheduler;
 	Config _config;
 
+	FakeSemaphore _eventLoopSemaphore; // for special states like playVideo and fadeExit
 	uint32 _timeNegOffset = 0, _timePosOffset = 0;
 	uint32 _timeBeforePause = 0;
 };
