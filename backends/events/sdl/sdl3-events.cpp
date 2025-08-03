@@ -359,7 +359,7 @@ void SdlEventSource::preprocessFingerDown(SDL_Event *event) {
 	// make sure each finger is not reported down multiple times
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_touchPanels[port]._finger[i].id == id) {
-			_touchPanels[port]._finger[i].id = -1;
+			_touchPanels[port]._finger[i].id = 0;
 		}
 	}
 
@@ -367,9 +367,9 @@ void SdlEventSource::preprocessFingerDown(SDL_Event *event) {
 	// or a long tap (drag)
 	// we also need the last coordinates for each finger to keep track of dragging
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_touchPanels[port]._finger[i].id == -1) {
+		if (_touchPanels[port]._finger[i].id == 0) {
 			_touchPanels[port]._finger[i].id = id;
-			_touchPanels[port]._finger[i].timeLastDown = event->tfinger.timestamp;
+			_touchPanels[port]._finger[i].timeLastDown = SDL_NS_TO_MS(event->tfinger.timestamp);
 			_touchPanels[port]._finger[i].lastDownX = event->tfinger.x;
 			_touchPanels[port]._finger[i].lastDownY = event->tfinger.y;
 			_touchPanels[port]._finger[i].lastX = x;
@@ -414,7 +414,7 @@ bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
 	// find out how many fingers were down before this event
 	int numFingersDown = 0;
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_touchPanels[port]._finger[i].id >= 0) {
+		if (_touchPanels[port]._finger[i].id != 0) {
 			numFingersDown++;
 		}
 	}
@@ -424,9 +424,9 @@ bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
 
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 		if (_touchPanels[port]._finger[i].id == id) {
-			_touchPanels[port]._finger[i].id = -1;
+			_touchPanels[port]._finger[i].id = 0;
 			if (!_touchPanels[port]._multiFingerDragging) {
-				if ((event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown) <= MAX_TAP_TIME && !_touchPanels[port]._tapMade) {
+				if ((SDL_NS_TO_MS(event->tfinger.timestamp) - _touchPanels[port]._finger[i].timeLastDown) <= MAX_TAP_TIME && !_touchPanels[port]._tapMade) {
 					// short (<MAX_TAP_TIME ms) tap is interpreted as right/left mouse click depending on # fingers already down
 					// but only if the finger hasn't moved since it was pressed down by more than MAX_TAP_MOTION_DISTANCE pixels
 					Common::Point touchscreenSize = getTouchscreenSize();
@@ -443,12 +443,12 @@ bool SdlEventSource::preprocessFingerUp(SDL_Event *event, Common::Event *ev) {
 							if (numFingersDown == 2) {
 								simulatedButton = SDL_BUTTON_RIGHT;
 								// need to raise the button later
-								_touchPanels[port]._simulatedClickStartTime[1] = event->tfinger.timestamp;
+								_touchPanels[port]._simulatedClickStartTime[1] = SDL_NS_TO_MS(event->tfinger.timestamp);
 								_touchPanels[port]._tapMade = true;
 							} else if (numFingersDown == 1) {
 								simulatedButton = SDL_BUTTON_LEFT;
 								// need to raise the button later
-								_touchPanels[port]._simulatedClickStartTime[0] = event->tfinger.timestamp;
+								_touchPanels[port]._simulatedClickStartTime[0] = SDL_NS_TO_MS(event->tfinger.timestamp);
 								if (!isTouchPortTouchpadMode(port)) {
 									convertTouchXYToGameXY(event->tfinger.x, event->tfinger.y, &x, &y);
 								}
@@ -497,7 +497,7 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 	// find out how many fingers were down before this event
 	int numFingersDown = 0;
 	for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-		if (_touchPanels[port]._finger[i].id >= 0) {
+		if (_touchPanels[port]._finger[i].id != 0) {
 			numFingersDown++;
 		}
 	}
@@ -544,8 +544,8 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 				// only start a multi-finger drag if at least two fingers have been down long enough
 				int numFingersDownLong = 0;
 				for (int i = 0; i < MAX_NUM_FINGERS; i++) {
-					if (_touchPanels[port]._finger[i].id >= 0) {
-						if (event->tfinger.timestamp - _touchPanels[port]._finger[i].timeLastDown > MAX_TAP_TIME) {
+					if (_touchPanels[port]._finger[i].id != 0) {
+						if (SDL_NS_TO_MS(event->tfinger.timestamp) - _touchPanels[port]._finger[i].timeLastDown > MAX_TAP_TIME) {
 							numFingersDownLong++;
 						}
 					}
@@ -560,7 +560,7 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 							if (_touchPanels[port]._finger[i].id == id) {
 								Uint32 earliestTime = _touchPanels[port]._finger[i].timeLastDown;
 								for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-									if (_touchPanels[port]._finger[j].id >= 0 && (i != j) ) {
+									if (_touchPanels[port]._finger[j].id != 0 && (i != j) ) {
 										if (_touchPanels[port]._finger[j].timeLastDown < earliestTime) {
 											mouseDownX = _touchPanels[port]._finger[j].lastX;
 											mouseDownY = _touchPanels[port]._finger[j].lastY;
@@ -596,7 +596,7 @@ void SdlEventSource::preprocessFingerMotion(SDL_Event *event) {
 			for (int i = 0; i < MAX_NUM_FINGERS; i++) {
 				if (_touchPanels[port]._finger[i].id == id) {
 					for (int j = 0; j < MAX_NUM_FINGERS; j++) {
-						if (_touchPanels[port]._finger[j].id >= 0 && (i != j) ) {
+						if (_touchPanels[port]._finger[j].id != 0 && (i != j) ) {
 							if (_touchPanels[port]._finger[j].timeLastDown < _touchPanels[port]._finger[i].timeLastDown) {
 								updatePointer = false;
 							}
