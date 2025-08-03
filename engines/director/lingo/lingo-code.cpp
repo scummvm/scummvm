@@ -1156,6 +1156,9 @@ Datum LC::chunkRef(ChunkType type, int startChunk, int endChunk, const Datum &sr
 	Datum res;
 	res.u.cref = new ChunkReference(src, type, startChunk, endChunk, exprStartIdx, exprEndIdx);
 	res.type = CHUNKREF;
+	if (debugChannelSet(5, kDebugLingoExec)) {
+		debugC(5, kDebugLingoExec, "LC::chunkRef: type: %d, startChunk: %d, endChunk: %d, exprStartIdx: %d, exprEndIdx: %d -> %s", type, startChunk, endChunk, exprStartIdx, exprEndIdx, res.asString(true).c_str());
+	}
 	return res;
 }
 
@@ -1844,10 +1847,15 @@ void LC::c_delete() {
 	Datum field;
 	int start, end;
 	if (d.type == CHUNKREF) {
+		// bail out if the chunk is invalid
+		if (d.u.cref->start == -1)
+			return;
 		start = d.u.cref->start;
 		end = d.u.cref->end;
 		field = d.u.cref->source;
 		while (field.type == CHUNKREF) {
+			if (field.u.cref->start == -1)
+				return;
 			start += field.u.cref->start;
 			end += field.u.cref->start;
 			field = field.u.cref->source;
@@ -1879,12 +1887,19 @@ void LC::c_delete() {
 			break;
 		case kChunkItem:
 		case kChunkLine:
-			// when deleting the first item, include the delimiter after the item
-			// deleting another item, remove the delimiter in front
-			if ((start == 0) || ((start > 0) && (text[start-1] == '\r'))) {
-				end++;
-			} else {
-				start--;
+			{
+				Common::u32char_type_t split = (d.u.cref->type == kChunkItem) ? g_lingo->_itemDelimiter : '\r';
+				bool isFirstItem = (start == 0) || ((start > 0) && (text[start-1] != split));
+				bool isLastItem = (end == ((int)text.size())) || ((end < ((int)text.size())) && (text[end] != split));
+				if (isFirstItem && isLastItem) {
+					// if the target is a whole line, change nothing
+				} else if (isFirstItem) {
+					// when deleting the first item, include the delimiter after the item
+					end++;
+				} else {
+					// deleting another item, remove the delimiter in front
+					start--;
+				}
 			}
 			break;
 		}
