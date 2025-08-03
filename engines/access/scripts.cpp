@@ -1055,11 +1055,12 @@ void Scripts::cmdCheckTravel() {
 }
 
 void Scripts::cmdBlock() {
-	error("TODO: cmdBlock");
-	/*int val1 = */_data->readSint16LE();
-	/*int val2 = */_data->readUint16LE();
-	/*int val3 = */_data->readSint16LE();
-	/*int val4 = */_data->readUint16LE();
+	int x = _data->readSint16LE();
+	int y = _data->readUint16LE();
+	int w = _data->readSint16LE();
+	int h = _data->readUint16LE();
+
+	_vm->_screen->blitFrom(_vm->_buffer2, Common::Rect(x, y, x + w, y + h), Common::Point(x, y));
 }
 
 void Scripts::cmdPlayerOff() {
