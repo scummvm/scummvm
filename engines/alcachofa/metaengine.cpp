@@ -97,7 +97,7 @@ KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
 	keymap->addAction(act);
 
 	act = new Action("MENU", _("Menu"));
-	act->setCustomEngineActionEvent((CustomEventType)InputAction::Menu);
+	act->setCustomEngineActionEvent((CustomEventType)EventAction::InputMenu);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_START");
 	keymap->addAction(act);

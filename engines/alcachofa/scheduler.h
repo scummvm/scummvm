@@ -132,7 +132,6 @@ private:
 		return #TaskName; \
 	}
 
-// TODO: This probably should be scummvm common
 #if __cplusplus >= 201703L
 #define TASK_BREAK_FALLTHROUGH [[fallthrough]];
 #else

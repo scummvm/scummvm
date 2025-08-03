@@ -26,8 +26,9 @@
 
 namespace Alcachofa {
 
-enum class InputAction {
-	Menu
+enum class EventAction {
+	LoadFromMenu,
+	InputMenu
 };
 
 }

@@ -31,6 +31,7 @@
 #include "video/mpegps_decoder.h"
 
 #include "alcachofa.h"
+#include "metaengine.h"
 #include "console.h"
 #include "detection.h"
 #include "player.h"
@@ -94,6 +95,9 @@ Common::Error AlcachofaEngine::run() {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (_input.handleEvent(e))
 				continue;
+			if (e.type == EVENT_CUSTOM_ENGINE_ACTION_START &&
+				e.customType == (CustomEventType)EventAction::LoadFromMenu)
+				menu().triggerLoad();
 		}
 
 		_sounds.update();
@@ -246,6 +250,10 @@ bool AlcachofaEngine::canLoadGameStateCurrently(U32String *msg) {
 	return
 		(menu().isOpen() && menu().interactionSemaphore().isReleased()) ||
 		player().isAllowedToOpenMenu();
+}
+
+Common::String AlcachofaEngine::getSaveStatePattern() {
+	return getMetaEngine()->getSavegameFilePattern(_targetName.c_str());
 }
 
 Common::Error AlcachofaEngine::syncGame(Serializer &s) {

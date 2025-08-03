@@ -142,6 +142,7 @@ public:
 		return canLoadGameStateCurrently(msg);
 	}
 
+	Common::String getSaveStatePattern();
 	Common::Error syncGame(Common::Serializer &s);
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
 		Common::Serializer s(nullptr, stream);

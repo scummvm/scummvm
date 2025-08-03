@@ -70,8 +70,8 @@ bool Input::handleEvent(const Common::Event &event) {
 		updateMousePos3D();
 		return true;
 	case EVENT_CUSTOM_ENGINE_ACTION_START:
-		switch ((InputAction)event.customType) {
-		case InputAction::Menu:
+		switch ((EventAction)event.customType) {
+		case EventAction::InputMenu:
 			_wasMenuKeyPressed = true;
 			return true;
 		}
