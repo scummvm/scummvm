@@ -198,7 +198,6 @@ void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
 
 // dt-lists.cpp
-void showCallStack();
 void showVars();
 void showWatchedVars();
 void showBreakpointList();
@@ -214,7 +213,6 @@ void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script
 // dt-scripts.cpp
 void showFuncList();
 void showScriptCasts();
-void showScripts();
 void showExecutionContext();
 
 extern ImGuiState *_state;
