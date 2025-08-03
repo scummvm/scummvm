@@ -19,6 +19,8 @@
  *
  */
 
+#include "gui/message.h"
+
 #include "alcachofa.h"
 #include "metaengine.h"
 #include "menu.h"
@@ -107,9 +109,10 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 		ev.customType = (CustomEventType)EventAction::LoadFromMenu;
 		g_system->getEventManager()->pushEvent(ev);
 	}break;
-	case MainMenuAction::InternetMenu:
-		g_system->messageBox(LogMessageType::kWarning, "Multiplayer is not implemented in this ScummVM version.");
-		break;
+	case MainMenuAction::InternetMenu: {
+		GUI::MessageDialog dialog("Multiplayer is not implemented in this ScummVM version.");
+		dialog.runModal();
+	}break;
 	case MainMenuAction::OptionsMenu:
 		g_engine->menu().openOptionsMenu();
 		break;
