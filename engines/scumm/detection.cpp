@@ -141,7 +141,7 @@ static int compareTreeNodes(const void *a, const void *b) {
 
  void ScummMetaEngineDetection::dumpDetectionEntries() const {
 #if 0
-	// Sort all entrues by gameid, as they are sorted by md5
+	// Sort all entries by gameid, as they are sorted by md5
 	Common::SortedArray<EntryPos *> gameIDs(compareTreeNodes);
 	for (int i = 0; md5table[i].gameid != 0; ++i)
 		gameIDs.insert(new EntryPos(md5table[i].gameid , i));
