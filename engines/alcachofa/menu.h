@@ -23,6 +23,7 @@
 #define MENU_H
 
 #include "common/scummsys.h"
+#include "common/savefile.h"
 
 namespace Alcachofa {
 
@@ -68,12 +69,14 @@ public:
 	void resetAfterLoad();
 	void updateOpeningMenu();
 	void triggerMainMenuAction(MainMenuAction action);
+	void triggerLoad();
 
 	void openOptionsMenu();
 	void triggerOptionsAction(OptionsMenuAction action);
 	void triggerOptionsValue(OptionsMenuValue valueId, float value);
 
 private:
+	void updateSelectedSavefile();
 	void continueGame();
 	void continueMainMenu();
 	void setOptionsState();
@@ -81,9 +84,13 @@ private:
 	bool
 		_isOpen = false,
 		_openAtNextFrame = false;
-	uint32 _millisBeforeMenu = 0;
+	uint32
+		_millisBeforeMenu = 0,
+		_selectedSavefileI = 0;
 	Room *_previousRoom = nullptr;
 	FakeSemaphore _interactionSemaphore; // to prevent ScummVM loading during button clicks
+	Common::Array<Common::String> _savefiles;
+	Common::SaveFileManager *_saveFileMgr;
 };
 
 }
