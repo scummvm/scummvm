@@ -302,7 +302,7 @@ void onImGuiInit() {
 	icons_config.GlyphOffset = {0, 4};
 
 	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
-	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
+	io.FontDefault = ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 
