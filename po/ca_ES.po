@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-07-25 21:03+0000\n"
-"PO-Revision-Date: 2025-07-22 06:36+0000\n"
+"PO-Revision-Date: 2025-08-03 11:18+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -5834,10 +5834,8 @@ msgid "Move / Interact / Skip"
 msgstr "Mou / Interactua / Omet"
 
 #: engines/access/metaengine.cpp:208
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
-msgstr "Omet el vídeo"
+msgstr "Omet la pel·lícula"
 
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
@@ -7130,35 +7128,25 @@ msgid "Cutscene keymappings"
 msgstr "Assignació de tecles de les escena cinemàtiques"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main menu keymappings"
-msgstr "Assignacions del menú"
+msgstr "Assignacions del menú principal"
 
 #: engines/buried/metaengine.cpp:137
-#, fuzzy
-#| msgid "Index keymappings"
 msgid "Inventory keymappings"
-msgstr "Assignació de tecles de l'índex"
+msgstr "Assignació de tecles de l'inventari"
 
 #: engines/buried/metaengine.cpp:141
-#, fuzzy
-#| msgid "Interact Mode"
 msgid "Select / Interact"
-msgstr "Mode d'interacció"
+msgstr "Selecciona / Interactua"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "Control"
+msgstr "Tecla Control"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "Surt al menú"
+msgstr "Surt al menú principal"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7171,16 +7159,12 @@ msgid "Look down"
 msgstr "Mira avall"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "Mira"
+msgstr "Mira a l'esquerra"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "Mira"
+msgstr "Mira a la dreta"
 
 #: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
@@ -7220,10 +7204,8 @@ msgstr ""
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "Mostra els fitxers ocults"
+msgstr "Fitxers del Biochip"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
@@ -7242,10 +7224,8 @@ msgstr ""
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "Mostra suggeriments"
+msgstr "Mostra els punts"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
