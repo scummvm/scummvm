@@ -35,7 +35,6 @@
 #include "common/memstream.h"
 #include "common/translation.h"
 
-#include "audio/mididrv.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 #include "graphics/paletteman.h"
@@ -171,9 +170,17 @@ void ToonEngine::init() {
 	_audioManager->loadAudioPack(2, "GENERIC.SEI", "GENERIC.SEL");
 
 
-	// Query the selected music device (defaults to MT_AUTO device).
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto"));
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
+	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
+	_noMusicDriver = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
+
+	if (_noMusicDriver) {
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
+	}
 
 	syncSoundSettings();
 
