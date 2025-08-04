@@ -334,6 +334,7 @@ typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)(void);
 		const AFX_MSGMAP *theClass::GetThisMessageMap() { \
 			typedef theClass ThisClass;                        \
 			typedef baseClass TheBaseClass;                    \
+			{ ThisClass *dummy; (void)dummy; }              \
 			static const AFX_MSGMAP_ENTRY _messageEntries[] =  \
 			{
 
