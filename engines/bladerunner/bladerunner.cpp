@@ -95,7 +95,6 @@
 #include "engines/advancedDetector.h"
 
 #include "graphics/thumbnail.h"
-#include "audio/mididrv.h"
 
 namespace BladeRunner {
 
@@ -617,18 +616,17 @@ bool BladeRunnerEngine::startup(bool hasSavegames) {
 
 	_ambientSounds = new AmbientSounds(this);
 
-	// Query the selected music device (defaults to MT_AUTO device).
+	// Get the selected "music device" (defaults to MT_AUTO device)
+	// as set from Audio > Music Device dropdown setting, which commonly is for MIDI driver selection.
+	// Since this engine does not use MIDI, but the setting is still available from the "Global Options... > Audio"
+	// and the specific game options (Game Options... > Audio), we respect only the option "No Music" to avoid end user confusion.
+	// All other options for this dropdown will result in music playing and are treated as irrelevant.
 	Common::String selDevStr = ConfMan.hasKey("music_driver") ? ConfMan.get("music_driver") : Common::String("auto");
-	MidiDriver::DeviceHandle dev = MidiDriver::getDeviceHandle(selDevStr.empty() ? Common::String("auto") : selDevStr);
-	//
-	// We just respect the "No Music" choice (or an invalid choice)
-	//
-	// We're lenient with all the invalid/ irrelevant choices in the Audio Driver dropdown
-	// TODO Ideally these controls (OptionsDialog::addAudioControls()) ie. "Music Device" and "Adlib Emulator"
-	//      should not appear in games like Blade Runner, since they are largely irrelevant
-	//      and may cause confusion when combined/ conflicting with the global settings
-	//      which are by default applied, if the user does not explicitly override them.
-	_noMusicDriver = (MidiDriver::getMusicType(dev) == MT_NULL || MidiDriver::getMusicType(dev) == MT_INVALID);
+	_noMusicDriver = (selDevStr.compareToIgnoreCase(Common::String("null")) == 0);
+
+	if (_noMusicDriver) {
+		warning("AUDIO: MUSIC IS FORCED TO OFF (BY THE MIDI DRIVER SETTING - music_driver was set to \"null\")");
+	}
 
 	// BLADE.INI was read here, but it was replaced by ScummVM configuration
 	//
