@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-04 13:22+0000\n"
+"POT-Creation-Date: 2025-08-04 14:57+0000\n"
 "PO-Revision-Date: 2025-06-16 11:46+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -321,7 +321,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:318
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
 msgstr "Ναι"
 
@@ -334,7 +334,7 @@ msgstr "Ναι"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:319
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
 msgstr "Όχι"
 
@@ -3632,7 +3632,7 @@ msgstr "Επισ~τ~ρ. σε Πλοηγητή"
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1248
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
+#: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3820
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:47
 msgid "Save game:"
@@ -3657,7 +3657,7 @@ msgstr "Αποθήκευση παιχνιδιού:"
 #: engines/sherlock/scalpel/scalpel.cpp:1248
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
-#: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
+#: engines/toon/toon.cpp:3820 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
 #: engines/zvision/file/save_manager.cpp:47 engines/zvision/metaengine.cpp:282
 msgid "Save"
@@ -6566,7 +6566,7 @@ msgstr "Περπάτησε"
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:146
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5425
 #: engines/ultima/ultima8/ultima8.cpp:193
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -6576,7 +6576,7 @@ msgstr "Αδυναμία εύρεσης του αρχείου παιχνιδιο
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:163 engines/tony/tony.cpp:200
-#: engines/toon/toon.cpp:5431
+#: engines/toon/toon.cpp:5438
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστραμμένο."
@@ -6584,7 +6584,7 @@ msgstr "Το αρχειο παιχνιδιού '%s' είναι κατεστρα�
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:986
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5442
+#: engines/toon/toon.cpp:5449
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -6821,7 +6821,7 @@ msgstr "Αυτό το παιχνίδι δεν υποστηρίζει απόθή�
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
 #: engines/zvision/file/save_manager.cpp:60
 msgid "Restore game:"
 msgstr "Επαναφορά παιχνιδιού:"
@@ -6841,7 +6841,7 @@ msgstr "Επαναφορά παιχνιδιού:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
 #: engines/zvision/file/save_manager.cpp:60 engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "Επαναφορά"
@@ -13713,31 +13713,31 @@ msgstr "Σίγαση ομιλίας"
 msgid "Mute sound effects"
 msgstr "Σίγαση ηχητικών εφέ"
 
-#: engines/toon/toon.cpp:273
+#: engines/toon/toon.cpp:280
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "Έγινε αποθήκευση παιχνιδιού στη θυρίδα #%d "
 
-#: engines/toon/toon.cpp:277
+#: engines/toon/toon.cpp:284
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "Αδυναμία γρήγορης αποθήκευσης στη θυρίδα #%d"
 
-#: engines/toon/toon.cpp:290
+#: engines/toon/toon.cpp:297
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "Το αποθηκευμένη παιχνίδι #%d φορτώθηκε γρήγορα"
 
-#: engines/toon/toon.cpp:294
+#: engines/toon/toon.cpp:301
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "Αδυναμία γρήγορης φόρτωσης του αποθηκευμένου παιχνιδιού #%d"
 
-#: engines/toon/toon.cpp:1543
+#: engines/toon/toon.cpp:1550
 msgid "Are you sure you want to exit?"
 msgstr "Σίγουρα επιθυμείτε έξοδο από το παιχνίδι;"
 
-#: engines/toon/toon.cpp:1953
+#: engines/toon/toon.cpp:1960
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού '%s'."

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-04 13:22+0000\n"
+"POT-Creation-Date: 2025-08-04 14:57+0000\n"
 "PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -318,7 +318,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:318
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
 msgstr "예"
 
@@ -331,7 +331,7 @@ msgstr "예"
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
-#: engines/toon/toon.cpp:1543 engines/zvision/zvision.cpp:319
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
 msgstr "아니오"
 
@@ -3490,7 +3490,7 @@ msgstr "런처로 돌아가기(~R~)"
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1248
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
-#: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3813
+#: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3820
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:47
 msgid "Save game:"
@@ -3515,7 +3515,7 @@ msgstr "게임 저장:"
 #: engines/sherlock/scalpel/scalpel.cpp:1248
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
-#: engines/toon/toon.cpp:3813 engines/trecision/saveload.cpp:67
+#: engines/toon/toon.cpp:3820 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
 #: engines/zvision/file/save_manager.cpp:47 engines/zvision/metaengine.cpp:282
 msgid "Save"
@@ -6315,7 +6315,7 @@ msgstr "걷기"
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:146
-#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5418
+#: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5425
 #: engines/ultima/ultima8/ultima8.cpp:193
 #, c-format
 msgid "Unable to locate the '%s' engine data file."
@@ -6325,7 +6325,7 @@ msgstr "'%s' 엔진 데이터 파일을 찾을 수 없습니다."
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:163 engines/tony/tony.cpp:200
-#: engines/toon/toon.cpp:5431
+#: engines/toon/toon.cpp:5438
 #, c-format
 msgid "The '%s' engine data file is corrupt."
 msgstr "'%s' 엔진 데이터 파일이 손상되었습니다."
@@ -6333,7 +6333,7 @@ msgstr "'%s' 엔진 데이터 파일이 손상되었습니다."
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:986
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
-#: engines/toon/toon.cpp:5442
+#: engines/toon/toon.cpp:5449
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d.%d but got "
@@ -6563,7 +6563,7 @@ msgstr "이 게임은 저장을 지원하지 않음"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
 #: engines/zvision/file/save_manager.cpp:60
 msgid "Restore game:"
 msgstr "게임 복원:"
@@ -6583,7 +6583,7 @@ msgstr "게임 복원:"
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3907
+#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
 #: engines/zvision/file/save_manager.cpp:60 engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "복원"
@@ -12870,31 +12870,31 @@ msgstr "말 음소거"
 msgid "Mute sound effects"
 msgstr "사운드 효과 음소거"
 
-#: engines/toon/toon.cpp:273
+#: engines/toon/toon.cpp:280
 #, c-format
 msgid "Saved game in slot #%d "
 msgstr "슬롯 #%d에 게임 저장됨 "
 
-#: engines/toon/toon.cpp:277
+#: engines/toon/toon.cpp:284
 #, c-format
 msgid "Could not quick save into slot #%d"
 msgstr "슬롯 #%d에 빠른 저장하지 못함"
 
-#: engines/toon/toon.cpp:290
+#: engines/toon/toon.cpp:297
 #, c-format
 msgid "Saved game #%d quick loaded"
 msgstr "저장된 게임 #%d 빠르게 불러옴"
 
-#: engines/toon/toon.cpp:294
+#: engines/toon/toon.cpp:301
 #, c-format
 msgid "Could not quick load the saved game #%d"
 msgstr "저장된 게임 #%d 빠르게 불러올 수 없음"
 
-#: engines/toon/toon.cpp:1543
+#: engines/toon/toon.cpp:1550
 msgid "Are you sure you want to exit?"
 msgstr "정말 종료하겠습니까?"
 
-#: engines/toon/toon.cpp:1953
+#: engines/toon/toon.cpp:1960
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "'%s' 데이터 파일을 찾을 수 없습니다."
