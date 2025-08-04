@@ -43,7 +43,7 @@ public:
 	void handleWheelDown();
 	void handleSpaceKey();
 	void handleAsciiKey(char key);
-	void handleKeyDown(Common::KeyCode keyCode);
+	void handleKeyDown(Common::CustomEventType action);
 	void handleEscapeKey();
 	void initKeySlotsPuzzle();
 	void initMemoryPuzzle();
