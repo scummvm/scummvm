@@ -28,7 +28,7 @@ namespace MFC {
 
 BOOL CString::LoadString(UINT nID) {
 	char szTemp[256];
-	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, _countof(szTemp));
+	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, sizeof(szTemp));
 	if (nLen == 0)
 		return FALSE;
 
