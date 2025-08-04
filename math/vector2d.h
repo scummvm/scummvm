@@ -27,6 +27,8 @@
 
 namespace Math {
 
+typedef Matrix<2, 1> Vector2d;
+
 template<>
 class Matrix<2, 1> : public MatrixType<2, 1> {
 public:
@@ -45,8 +47,6 @@ public:
 
 	Vector3d toVector3d() const;
 };
-
-typedef Matrix<2, 1> Vector2d;
 
 }
 
