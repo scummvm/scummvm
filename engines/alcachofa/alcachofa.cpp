@@ -53,7 +53,6 @@ AlcachofaEngine *g_engine;
 AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	: Engine(syst)
 	, _gameDescription(gameDesc)
-	, _randomSource("Alcachofa")
 	, _eventLoopSemaphore("engine") {
 	g_engine = this;
 }
