@@ -355,6 +355,7 @@ void BubbleBox::displayBoxData() {
 	_rowOff = 2;
 	_vm->_fonts._charFor._lo = 0xF7;
 	_vm->_fonts._charFor._hi = 0xFF;
+	Font::_fontColors[3] = 247;
 
 	if (_tempList[0].size() == 0)
 		return;
