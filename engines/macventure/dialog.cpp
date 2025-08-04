@@ -29,11 +29,87 @@
 
 #include "common/system.h"
 
+#include "graphics/macgui/mactext.h"
+
 #include "macventure/dialog.h"
 #include "macventure/gui.h"
 
 namespace MacVenture {
 
+
+Dialog::Dialog(Gui *gui, Common::MacResManager *resourceManager, uint16 resID) {
+	_gui = gui;
+
+	Common::SeekableReadStream *stream = resourceManager->getResource(MKTAG('D', 'L', 'O', 'G'), resID);
+
+	_bounds.top = stream->readUint16BE();
+	_bounds.left = stream->readUint16BE();
+	_bounds.bottom = stream->readUint16BE();
+	_bounds.right = stream->readUint16BE();
+
+	stream->readUint16BE(); // def
+
+	stream->readByte(); // vis?
+	stream->readByte(); // padding
+	stream->readByte(); // close
+	stream->readByte(); // padding
+	stream->readUint32BE(); // refcon
+
+	uint16 itemList = stream->readUint16BE();
+	byte titleLength = stream->readByte();
+	char *str = new char[titleLength + 1];
+	if (titleLength > 0) {
+		stream->read(str, titleLength);
+	}
+	str[titleLength] = '\0';
+	delete[] str;
+	str = nullptr;
+	delete stream;
+
+	stream = resourceManager->getResource(MKTAG('D', 'I', 'T', 'L'), itemList);
+	uint numItems = stream->readUint16BE() + 1;
+	for (uint i = 0; i < numItems; i++) {
+		stream->readUint32BE(); // reserved
+		PrebuiltDialogElement element;
+		element.action = kDANone;
+		element.top = stream->readUint16BE();
+		element.left = stream->readUint16BE();
+		element.height = stream->readUint16BE() - element.top;
+		element.width = stream->readUint16BE() - element.left;
+		element.type = (PrebuiltElementType)stream->readByte();
+
+		titleLength = stream->readByte();
+		if (titleLength > 0) {
+			str = new char[titleLength + 1];
+			stream->read(str, titleLength);
+			str[titleLength] = '\0';
+			element.title = str;
+		}
+		if (titleLength & 1)
+			stream->readByte(); // align
+		switch (element.type & 0x7f) {
+		case 4:
+			element.type = kDEButton;
+			addPrebuiltElement(element);
+			break;
+		case 8:
+			element.type = kDEPlainText;
+			addPrebuiltElement(element);
+			break;
+		case 0x10:
+			element.type = kDETextInput;
+			addPrebuiltElement(element);
+			break;
+		default:
+			break;
+		}
+		if (str) {
+			delete[] str;
+			str = nullptr;
+		}
+	}
+	delete stream;
+}
 
 Dialog::Dialog(Gui *gui, Common::Point pos, uint width, uint height) :
 	_gui(gui), _bounds(Common::Rect(pos.x, pos.y, pos.x + width, pos.y + height)) {}
@@ -83,6 +159,10 @@ void Dialog::handleDialogAction(DialogElement *trigger, DialogAction action) {
 	}
 }
 
+Graphics::MacWindowManager *Dialog::getMacWindowManager() const {
+	return _gui->getMacWindowManager();
+}
+
 const Graphics::Font &Dialog::getFont() {
 	return _gui->getCurrentFont();
 }
@@ -100,12 +180,12 @@ void Dialog::addButton(Common::String title, MacVenture::DialogAction action, Co
 	_elements.push_back(new DialogButton(this, title, action, position, width, height));
 }
 
-void Dialog::addText(Common::String content, Common::Point position) {
-	_elements.push_back(new DialogPlainText(this, content, position));
+void Dialog::addText(Common::String content, Common::Point position, int width, int height, Graphics::TextAlign alignment) {
+	_elements.push_back(new DialogPlainText(this, content, position, width, height));
 }
 
-void Dialog::addTextInput(Common::Point position, int width, int height) {
-	_elements.push_back(new DialogTextInput(this, _gui, position, width, height));
+void Dialog::addTextInput(Common::Point position, int width, int height, Graphics::TextAlign alignment) {
+	_elements.push_back(new DialogTextInput(this, _gui, position, width, height, alignment));
 }
 
 void Dialog::draw() {
@@ -132,6 +212,15 @@ void Dialog::setUserInput(Common::String content) {
 	_userInput = content;
 }
 
+DialogElement *Dialog::getElement(Common::String elementID) {
+	for (auto &el : _elements) {
+		if (el->getText() == elementID) {
+			return el;
+		}
+	}
+	return nullptr;
+}
+
 void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element, const Common::String &title) {
 	Common::Point position(element.left, element.top);
 	switch(element.type) {
@@ -140,9 +229,9 @@ void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element
 		break;
 	case kDEPlainText:
 		if (title.size())
-			addText(title, position);
+			addText(title, position, element.width, element.height);
 		else
-			addText(element.title, position);
+			addText(element.title, position, element.width, element.height);
 		break;
 	case kDETextInput:
 		addTextInput(position, element.width, element.height);
@@ -154,7 +243,7 @@ void Dialog::addPrebuiltElement(const MacVenture::PrebuiltDialogElement &element
 
 // Dialog Element
 
-DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height) :
+DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height, Graphics::TextAlign alignment) :
 	_text(title), _action(action) {
 	if (width == 0) {
 		width = dialog->getFont().getStringWidth(title);
@@ -163,6 +252,9 @@ DialogElement::DialogElement(Dialog *dialog, Common::String title, DialogAction 
 		height = dialog->getFont().getFontHeight();
 	}
 	_bounds = Common::Rect(position.x, position.y, position.x + width, position.y + height);
+
+	Graphics::MacWindowManager *wm = dialog->getMacWindowManager();
+	_macText = new Graphics::MacText(Common::U32String(_text), wm, &dialog->getFont(), kColorBlack, kColorWhite, width, alignment);
 }
 
 bool DialogElement::processEvent(MacVenture::Dialog *dialog, Common::Event event) {
@@ -184,7 +276,7 @@ const Common::String &DialogElement::doGetText() {
 // CONCRETE DIALOG ELEMENTS
 
 DialogButton::DialogButton(Dialog *dialog, Common::String title, DialogAction action, Common::Point position, uint width, uint height):
-	DialogElement(dialog, title, action, position, width, height) {}
+	DialogElement(dialog, title, action, position, width, height, Graphics::kTextAlignCenter) {}
 
 bool DialogButton::doProcessEvent(MacVenture::Dialog *dialog, Common::Event event) {
 	Common::Point mouse = event.mouse;
@@ -207,8 +299,8 @@ void DialogButton::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &
 		&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
 }
 
-DialogPlainText::DialogPlainText(Dialog *dialog, Common::String content, Common::Point position) :
-	DialogElement(dialog, content, kDANone, position, 0, 0) { }
+DialogPlainText::DialogPlainText(Dialog *dialog, Common::String content, Common::Point position, int width, int height, Graphics::TextAlign alignment) :
+	DialogElement(dialog, content, kDANone, position, width, height, alignment) { }
 
 DialogPlainText::~DialogPlainText() {}
 
@@ -218,15 +310,13 @@ bool DialogPlainText::doProcessEvent(MacVenture::Dialog *dialog, Common::Event e
 
 void DialogPlainText::doDraw(MacVenture::Dialog *dialog, Graphics::ManagedSurface &target) {
 	// Draw contents
-	dialog->getFont().drawString(
-		&target, _text, _bounds.left, _bounds.top, _bounds.width(), kColorBlack, Graphics::kTextAlignCenter);
-
+	_macText->drawToPoint(&target, Common::Point(_bounds.left, _bounds.top));
 }
 
 static void cursorTimerHandler(void *refCon);
 
-DialogTextInput::DialogTextInput(Dialog *dialog, Gui *gui, Common::Point position, uint width, uint height) :
-	DialogElement(dialog, "", kDANone, position, width, height), _gui(gui) {
+DialogTextInput::DialogTextInput(Dialog *dialog, Gui *gui, Common::Point position, uint width, uint height, Graphics::TextAlign alignment) :
+	DialogElement(dialog, "", kDANone, position, width, height, alignment), _gui(gui) {
 	_cursorPos = Common::Point(_bounds.left + 4, _bounds.top + _gui->getCurrentFont().getFontHeight() - 14);
 	_cursorState = false;
 	_cursorDirty = true;

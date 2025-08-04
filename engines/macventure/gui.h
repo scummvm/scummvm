@@ -101,6 +101,8 @@ public:
 	void drawMenu();
 	void drawTitle();
 
+	void loadDiploma();
+
 	void clearControls();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
@@ -111,6 +113,7 @@ public:
 	bool tryCloseWindow(WindowReference winID);
 	bool tryCloseWindowRec(WindowReference winID, bool runControl = false);
 	void resetWindows(); // Close and destroy inventory and main game windows
+	void closeAllWindows();
 
 	void highlightExitButton(ObjID objID);
 
@@ -131,6 +134,7 @@ public:
 	const WindowData& getWindowData(WindowReference reference);
 	Graphics::MacWindow *findWindow(WindowReference reference);
 
+	Graphics::MacWindowManager *getMacWindowManager() { return &_wm; }
 	const Graphics::Font& getCurrentFont();
 
 	// Clicks
@@ -204,6 +208,7 @@ private: // Attributes
 
 	Container *_graphics;
 	Common::HashMap<ObjID, ImageAsset*> _assets;
+	ImageAsset *_diplomaImage;
 
 	Common::Array<DraggedObj> _draggedObjects;
 	Common::Array<Graphics::ManagedSurface> _draggedSurfaces;
@@ -236,6 +241,7 @@ private: // Methods
 	// Drawers
 	void drawWindows();
 	void drawCommandsWindow();
+	void drawDiplomaWindow();
 	void drawMainGameWindow();
 	void drawSelfWindow();
 	void drawInventories();
