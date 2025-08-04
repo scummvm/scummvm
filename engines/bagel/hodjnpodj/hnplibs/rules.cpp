@@ -59,7 +59,7 @@ namespace HodjNPodj {
 #define MORE_TEXT_LENGTH    8                       // # characters in "more" indicator string
 #define TEXT_NEWLINE        '\\'                    // character that indicates enforced line break
 
-LRESULT FAR PASCAL PrefHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+LRESULT PrefHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
 static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
 static  HHOOK       hKbdHook = nullptr;                // handle for hook procedure
 
@@ -214,11 +214,11 @@ void CRules::RemoveKeyboardHook(void) {
 
 #if BUILD_FOR_DLL
 extern "C"
-LRESULT FAR PASCAL KeyboardHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT KeyboardHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)                                   // required to punt to next hook
 		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
 #else
-LRESULT FAR PASCAL PrefHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)                                   // required to punt to next hook
 		return (CallNextHookEx((HHOOK) pKbdHook, code, wParam, lParam));
 #endif

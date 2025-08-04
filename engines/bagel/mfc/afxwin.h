@@ -1344,7 +1344,7 @@ public:
 	BOOL CreateEx(DWORD dwExStyle, LPCTSTR lpszClassName,
 		LPCTSTR lpszWindowName, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight,
-		HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam = nullptr);
+		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam = nullptr);
 	BOOL CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, DWORD dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,

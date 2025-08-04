@@ -63,16 +63,16 @@ namespace Gtl {
 
 #if BUILD_FOR_DLL
 
-	LRESULT FAR PASCAL KeyboardHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+	LRESULT KeyboardHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
 
-	typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WORD, LONG);
+	typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WPARAM, LPARAM);
 	extern  HINSTANCE   hDLLInst;
 	extern  HINSTANCE   hExeInst;
 	static  FPKBDHOOKPROC   lpfnKbdHook = nullptr;         // pointer to hook procedure
 
 #else
 
-	LRESULT FAR PASCAL PrefHookProc(int, WORD, LONG);   // keyboard hook procedure definition
+	LRESULT PrefHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
 	static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
 
 #endif
@@ -215,11 +215,11 @@ void CRules::RemoveKeyboardHook(void) {
 
 #if BUILD_FOR_DLL
 extern "C"
-LRESULT FAR PASCAL KeyboardHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT KeyboardHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)                                   // required to punt to next hook
 		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
 #else
-LRESULT FAR PASCAL PrefHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)                                   // required to punt to next hook
 		return (CallNextHookEx((HHOOK) pKbdHook, code, wParam, lParam));
 #endif

@@ -42,14 +42,12 @@ namespace Gtl {
 
 extern CBfcMgr *lpMetaGameStruct;
 
-extern "C" {
-	LRESULT FAR PASCAL NotebookHookProc(int, WORD, LONG); // keyboard hook procedure definition
-}
+LRESULT NotebookHookProc(int, WPARAM, LPARAM); // keyboard hook procedure definition
 
 extern  HINSTANCE   hDLLInst;
 extern  HINSTANCE   hExeInst;
 
-typedef LRESULT(FAR PASCAL *FPNOTEHOOKPROC)(int, WORD, LONG);
+typedef LRESULT(*FPNOTEHOOKPROC)(int, WPARAM, LPARAM);
 
 static  FPNOTEHOOKPROC  lpfnKbdHook = nullptr;         // pointer to hook procedure
 
@@ -135,8 +133,7 @@ void CNotebook::RemoveKeyboardHook(void) {
 }
 
 
-extern "C"
-LRESULT FAR PASCAL NotebookHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT NotebookHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	CDC *pDC = nullptr;
 
 	if (code < 0)                                       // required to punt to next hook

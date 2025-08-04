@@ -133,13 +133,13 @@ BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 		LPVOID lpParam /* = NULL */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-		pParentWnd->GetSafeHwnd(), (HMENU)nID, lpParam);
+		pParentWnd->GetSafeHwnd(), nID, lpParam);
 }
 
 BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, DWORD dwStyle,
 		int x, int y, int nWidth, int nHeight,
-		HWND hWndParent, HMENU nIDorHMenu, LPVOID lpParam) {
+		HWND hWndParent, LPARAM nIDorHMenu, LPVOID lpParam) {
 	// Set up create structure
 	CREATESTRUCT cs;
 	cs.x = x;

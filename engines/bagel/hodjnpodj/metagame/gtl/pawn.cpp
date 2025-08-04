@@ -51,13 +51,13 @@ extern CBfcMgr      *lpMetaGameStruct;
 
 
 extern "C" {
-	LRESULT FAR PASCAL PawnHookProc(int, WORD, LONG); // keyboard hook procedure definition
+	LRESULT PawnHookProc(int, WPARAM, LPARAM); // keyboard hook procedure definition
 }
 
 extern  HINSTANCE   hDLLInst;
 extern  HINSTANCE   hExeInst;
 
-typedef LRESULT(FAR PASCAL *FPPAWNHOOKPROC)(int, WORD, LONG);
+typedef LRESULT(FAR PASCAL *FPPAWNHOOKPROC)(int, WPARAM, LPARAM);
 
 static  FPPAWNHOOKPROC  lpfnKbdHook = nullptr;         // pointer to hook procedure
 
@@ -137,7 +137,7 @@ void CPawnShop::RemoveKeyboardHook(void) {
 
 
 extern "C"
-LRESULT FAR PASCAL PawnHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT PawnHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	CDC *pDC = nullptr;
 
 	if (code < 0)                                       // required to punt to next hook

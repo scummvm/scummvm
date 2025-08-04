@@ -133,8 +133,8 @@ BOOL CFrameWnd::Create(LPCSTR lpszClassName,
 
 	if (!CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 			rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
-			pParentWnd ? pParentWnd->GetSafeHwnd() : nullptr,
-			hMenu, pContext)) {
+			pParentWnd ? pParentWnd->GetSafeHwnd() : 0,
+			(LPARAM)hMenu, pContext)) {
 		warning("failed to create CFrameWnd.");
 
 		if (hMenu != nullptr)

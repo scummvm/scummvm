@@ -44,12 +44,12 @@ namespace Gtl {
 
 extern CBfcMgr *lpMetaGameStruct;
 
-LRESULT FAR PASCAL BackpackHookProc(int, WORD, LONG); // keyboard hook procedure definition
+LRESULT BackpackHookProc(int, WPARAM, LPARAM); // keyboard hook procedure definition
 
 extern  HINSTANCE   hDLLInst;
 extern  HINSTANCE   hExeInst;
 
-typedef LRESULT(FAR PASCAL *FPPACKHOOKPROC)(int, WORD, LONG);
+typedef LRESULT(*FPPACKHOOKPROC)(int, WPARAM, LPARAM);
 
 static  FPPACKHOOKPROC  lpfnKbdHook = nullptr;         // pointer to hook procedure
 
@@ -125,7 +125,7 @@ void CBackpack::RemoveKeyboardHook(void) {
 }
 
 
-LRESULT FAR PASCAL BackpackHookProc(int code, WORD wParam, LONG lParam) {
+LRESULT BackpackHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	CDC *pDC = nullptr;
 
 	if (code < 0)                                       // required to punt to next hook
