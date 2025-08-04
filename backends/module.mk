@@ -99,6 +99,7 @@ MODULE_OBJS += \
 	midi/webmidi.o 
 ifdef USE_CLOUD
 MODULE_OBJS += \
+	fs/emscripten/cloud-fs.o \
 	networking/http/connectionmanager.o \
 	networking/http/httpjsonrequest.o \
 	networking/http/httprequest.o \
