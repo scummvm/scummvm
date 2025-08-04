@@ -73,7 +73,9 @@ enum {
 enum {
 	kGlobalSettingsID = 0x80,
 	kDiplomaGeometryID = 0x81,
-	kTextHuffmanTableID = 0x83
+	kTextHuffmanTableID = 0x83,
+	kDialogBoxTextID = 0x84,
+	kDialogBoxDiplomaID = 0x87
 };
 
 enum {
@@ -279,6 +281,7 @@ public:
 	Common::String getUserInput();
 
 	// Data retrieval
+	Common::Path getDiplomaFileName();
 	Common::Path getStartGameFileName();
 	bool isPaused();
 	bool needsClickToContinue();
@@ -295,6 +298,7 @@ public:
 	Common::String getNoun(ObjID ndx);
 	ScriptEngine *getScriptEngine() const { return _scriptEngine; }
 	Common::Array<ObjID> &getSelectedObjects() { return _selectedObjs; }
+	GameState getGameState() const { return _gameState; }
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);

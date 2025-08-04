@@ -117,11 +117,11 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 }
 
 bool MacVentureEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _gameState != kGameStateWinning;
 }
 
 bool MacVentureEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _gameState != kGameStateWinning;
 }
 
 } // End of namespace MacVenture

@@ -121,6 +121,8 @@ Gui::Gui(MacVentureEngine *engine, Common::MacResManager *resman) {
 
 	_consoleText = new ConsoleText(this);
 	_graphics = nullptr;
+	_diplomaImage = nullptr;
+	_diplomaWindow = nullptr;
 
 	_lassoStart = Common::Point(0, 0);
 	_lassoEnd = Common::Point(0, 0);
@@ -472,12 +474,45 @@ void Gui::loadGraphics() {
 	_graphics = new Container(_engine->getFilePath(kGraphicPathID));
 }
 
+void Gui::loadDiploma() {
+	// Dialog
+	closeDialog();
+	_dialog = new Dialog(this, _resourceManager, kDialogBoxDiplomaID);
+	DialogElement *quitButton = _dialog->getElement("Quit");
+	quitButton->setAction(kDAQuit);
+
+	// Image
+	Common::Path diplomaFilePath = _engine->getDiplomaFileName();
+	_resourceManager->open(diplomaFilePath);
+	Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
+
+	if (!_diplomaImage) {
+		_diplomaImage = new ImageAsset(stream);
+	}
+
+	// Diploma Window
+	closeAllWindows();
+	_diplomaWindow = _wm.addWindow(false, false, false);
+	Common::Rect bounds = getWindowData(kDiplomaWindow).bounds;
+	BorderBounds bbs = borderBounds(findWindowData(kDiplomaWindow).type);
+	loadBorders(_diplomaWindow, findWindowData(kDiplomaWindow).type);
+	_diplomaWindow->resizeInner(bounds.width(), bounds.height());
+	_diplomaWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
+	_diplomaWindow->setActive(true);
+	_diplomaWindow->setCallback(diplomaWindowCallback, this);
+}
+
 void Gui::clearAssets() {
 	Common::HashMap<ObjID, ImageAsset*>::const_iterator it = _assets.begin();
 	for (; it != _assets.end(); it++) {
 		delete it->_value;
 	}
 	_assets.clear();
+
+	if (_diplomaImage) {
+		delete _diplomaImage;
+		_diplomaImage = nullptr;
+	}
 }
 
 bool Gui::loadMenus() {
@@ -599,13 +634,16 @@ bool Gui::loadControls() {
 }
 
 void Gui::drawWindows() {
-
-	drawCommandsWindow();
-	drawMainGameWindow();
-	drawSelfWindow();
-	drawInventories();
-	drawExitsWindow();
-	drawConsoleWindow();
+	if (_engine->getGameState() == kGameStateWinning) {
+		drawDiplomaWindow();
+	} else {
+		drawCommandsWindow();
+		drawMainGameWindow();
+		drawSelfWindow();
+		drawInventories();
+		drawExitsWindow();
+		drawConsoleWindow();
+	}
 
 }
 
@@ -630,6 +668,18 @@ void Gui::drawCommandsWindow() {
 				button.draw(*_controlsWindow->getWindowSurface());
 		}
 	}
+}
+
+void Gui::drawDiplomaWindow() {
+	_diplomaWindow->setDirty(true);
+
+	_diplomaImage->blitInto(
+		_diplomaWindow->getWindowSurface(),
+		0,
+		0,
+		kBlitDirect);
+
+	findWindow(kDiplomaWindow)->setDirty(true);
 }
 
 void Gui::drawMainGameWindow() {
@@ -965,11 +1015,13 @@ void Gui::getTextFromUser(Common::String &title) {
 }
 
 void Gui::loadGame() {
-	_engine->scummVMSaveLoadDialog(false);
+	if (g_engine->canLoadGameStateCurrently())
+		_engine->scummVMSaveLoadDialog(false);
 }
 
 void Gui::saveGame() {
-	_engine->scummVMSaveLoadDialog(true);
+	if (g_engine->canSaveAutosaveCurrently())
+		_engine->scummVMSaveLoadDialog(true);
 }
 
 void Gui::newGame() {
@@ -1397,6 +1449,17 @@ void Gui::resetWindows() {
 	// to zero, instead of destroying the window and its data.
 	WindowData &data = findWindowData(kMainGameWindow);
 	data.objRef = 0;
+}
+
+void Gui::closeAllWindows() {
+	resetWindows();
+	_mainGameWindow->setVisible(false);
+	_exitsWindow->setVisible(false);
+	_outConsoleWindow->setVisible(false);
+	_selfWindow->setVisible(false);
+	_controlsWindow->setVisible(false);
+	if (_diplomaWindow)
+		_diplomaWindow->setVisible(false);
 }
 
 void Gui::highlightExitButton(ObjID objID) {

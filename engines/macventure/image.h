@@ -63,6 +63,7 @@ struct PPICHuff {
 class ImageAsset {
 public:
 	ImageAsset(ObjID original, Container *container);
+	ImageAsset(Common::SeekableReadStream *stream);
 	~ImageAsset();
 
 	void blitInto(Graphics::ManagedSurface *target, int x, int y, BlitMode mode);
@@ -74,6 +75,7 @@ public:
 	int getHeight();
 
 private:
+	void decodePPIC(Common::SeekableReadStream *baseStream, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 	void decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 
 	void decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);

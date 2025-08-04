@@ -184,7 +184,7 @@ Common::Error MacVentureEngine::run() {
 					}
 				}
 
-				if (_gameState == kGameStateWinning || _gameState == kGameStateLosing) {
+				if (_gameState == kGameStateLosing) {
 					endGame();
 				}
 			}
@@ -297,7 +297,8 @@ void MacVentureEngine::gameChanged() {
 }
 
 void MacVentureEngine::winGame() {
-	_gui->showPrebuiltDialog(kWinGameDialog);
+	_paused = true;
+	_gui->loadDiploma();
 	_gameState = kGameStateWinning;
 }
 
@@ -441,6 +442,24 @@ Common::String MacVentureEngine::getUserInput() {
 	return _userInput;
 }
 
+Common::Path MacVentureEngine::getDiplomaFileName() {
+	Common::SeekableReadStream *res;
+	res = _resourceManager->getResource(MKTAG('S', 'T', 'R', ' '), kDiplomaFilenameID);
+	if (!res)
+		return "";
+
+	byte length = res->readByte();
+	char *fileName = new char[length + 1];
+	res->read(fileName, length);
+	fileName[length] = '\0';
+
+	Common::U32String result(fileName, Common::kMacRoman);
+
+	delete[] fileName;
+	delete res;
+
+	return Common::Path(result);
+}
 
 Common::Path MacVentureEngine::getStartGameFileName() {
 	Common::SeekableReadStream *res;
