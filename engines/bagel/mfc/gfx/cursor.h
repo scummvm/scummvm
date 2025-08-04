@@ -85,7 +85,7 @@ public:
 
 class Cursors {
 private:
-	Libs::Resources &_resources;
+	//Libs::Resources &_resources;
 	typedef Common::HashMap<LPCSTR, Cursor *,
 	        ResourceString_Hash, ResourceString_EqualTo> CursorHash;
 	CursorHash _cursors;

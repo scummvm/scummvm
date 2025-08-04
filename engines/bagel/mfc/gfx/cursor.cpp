@@ -79,7 +79,7 @@ static const byte CURSOR_PALETTE[9] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0
 
 /*--------------------------------------------*/
 
-Cursors::Cursors(Libs::Resources &res) : _resources(res) {
+Cursors::Cursors(Libs::Resources &res) /* : _resources(res) */ {
 	_cursors[IDC_ARROW] = new Cursor(ARROW_CURSOR);
 	_cursors[IDC_WAIT] =  new Cursor(HOURGLASS_CURSOR);
 

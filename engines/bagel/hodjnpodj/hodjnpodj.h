@@ -31,7 +31,7 @@ namespace HodjNPodj {
 
 class HodjNPodjEngine : public BagelEngine {
 private:
-	CBofSound *_backgroundMidi = nullptr;
+	//CBofSound *_backgroundMidi = nullptr;
 
 protected:
 	// Engine APIs

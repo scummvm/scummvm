@@ -85,7 +85,7 @@ public:
 
 private:
 	CPalette    *m_pPalette;
-	BOOL        m_bSharedPalette;
+	//BOOL        m_bSharedPalette;
 
 private:
 	/**

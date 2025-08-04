@@ -961,7 +961,7 @@ void CDC::Impl::bitBlt(int x, int y, int nWidth, int nHeight, CDC *pSrcDC,
 
 	if (pSrcDC) {
 		src = pSrcDC->impl()->getSurface();
-		CPoint srcOrg = src->getViewportOrg();
+		//CPoint srcOrg = src->getViewportOrg();
 	}
 
 	Gfx::Surface *dest = getSurface();

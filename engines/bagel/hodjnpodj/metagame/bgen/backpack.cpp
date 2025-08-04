@@ -69,9 +69,8 @@ static  CRect       BackpackRect;                   // x/y (left/right) and dx/d
 static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
 ScrollBotRect;                  // area spanned by lower scroll curl
 
-static  CDC *pBackpackDC = nullptr;            // device context for the backpack bitmap
-static  CBitmap *pBackpackBitmap = nullptr,        // bitmap for an entirely blank backpack
-*pBackpackBitmapOld = nullptr;     // bitmap previously mapped to the backpack context
+//static  CDC *pBackpackDC = nullptr;            // device context for the backpack bitmap
+static  CBitmap *pBackpackBitmap = nullptr;        // bitmap for an entirely blank backpack
 
 static  CBitmap *pBackgroundBitmap = nullptr;
 static  CPalette *pBackgroundPalette = nullptr;
@@ -85,7 +84,7 @@ static  CText *pItemText = nullptr;              // item information field
 static  CText *pTitleText = nullptr;             // title information field
 
 static  CFont *pFont = nullptr;                  // font to use for displaying backpack text
-static  char        chPathName[128];                // buffer to hold path name of the backpack file
+//static  char        chPathName[128];                // buffer to hold path name of the backpack file
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
@@ -575,7 +574,7 @@ int CBackpack::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
-	CPalette *pPalOld;
+	//CPalette *pPalOld;
 	CRect       myRect;
 
 	pBackpackBitmap = FetchBitmap(pDC, nullptr, BACKPACK_SPEC);
@@ -588,7 +587,7 @@ BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	//pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
 	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&

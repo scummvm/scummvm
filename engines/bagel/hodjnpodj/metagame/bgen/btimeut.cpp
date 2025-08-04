@@ -27,9 +27,6 @@ namespace HodjNPodj {
 namespace Metagame {
 
 ///DEFS btimeut.h
-static void CALLBACK DelayMsCallback(HWND,
-                                     UINT, UINT, DWORD);
-
 BOOL bTimeDelayPassed = TRUE ;
 
 void CALLBACK DelayMsCallback(HWND /* hWnd */,

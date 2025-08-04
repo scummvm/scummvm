@@ -33,7 +33,7 @@ Surface::XIterator::XIterator(YIterator *rowIter) :
 }
 
 Surface::XIterator &Surface::XIterator::operator=(int x) {
-	const CPoint org = _surface->getViewportOrg();
+	//const CPoint org = _surface->getViewportOrg();
 	_x = x;
 	int y = _rowIter->_y;
 

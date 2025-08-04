@@ -102,7 +102,7 @@ class Fonts {
 		~FontEntry();
 	};
 private:
-	Libs::Resources &_res;
+	//Libs::Resources &_res;
 	Common::Array<const char *> _fontResources;
 	Common::List<FontEntry> _fonts;
 
@@ -112,7 +112,7 @@ private:
 	}
 
 public:
-	Fonts(Libs::Resources &res) : _res(res) {}
+	Fonts(Libs::Resources &res) /*: _res(res) */ {}
 	~Fonts();
 
 	int addFontResource(const char *filename);

@@ -1036,7 +1036,7 @@ const CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
 // bPodj -- Hodj if FALSE, Podj if TRUE
 // returns: pointer to clue table entry
 {
-	int iError = 0 ;            // error code
+	//int iError = 0 ;            // error code
 	const CClueTable * xpClueTable = bHodj ? cHodjClueTable : cPodjClueTable ;
 	const CClueTable * xpClueEntry = nullptr ;   // return value
 	int iK ;    // loop variable
@@ -1048,7 +1048,7 @@ const CClueTable *CMgStatic::FindClue(BOOL bHodj, int iClue)
 	if (iK == iClue && xpClueTable[iK].m_iCluePicCode)
 		xpClueEntry = &xpClueTable[iK] ;
 	else {
-		iError = 100 ;          // invalid index iClue
+		//iError = 100 ;          // invalid index iClue
 		goto cleanup ;
 	}
 

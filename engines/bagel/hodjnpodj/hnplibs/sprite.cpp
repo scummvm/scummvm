@@ -2209,9 +2209,9 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	           *pBitmap2Old = nullptr;                        // bitmap previously mapped to context 2
 	BYTE    *chPixels = nullptr;                           // buffer for holding pixel values
 	int     dx, dy,                                     // dimensions of context bitmaps
-	        i, j, n;
+	        i, j;
 	size_t  stN;
-	DWORD   dwN, dwBytes;                               // delta sizes of work area's bitmap
+	//DWORD   dwN, dwByte;                               // delta sizes of work area's bitmap
 	BITMAP  cBitmapData;
 	int     bx, by, bdx, bdy;
 
@@ -2225,7 +2225,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	dx = unionRect.right - unionRect.left;              // ... contains the bitmap area where the sprite was
 	dy = unionRect.bottom - unionRect.top;              // ... and the bitmap area where it will be next
 
-	dwN = stN = n = ((dx + 15) >> 3) * dy;              // calculate the amount of memory that a bitmap mask
+	//dwN = stN = n = ((dx + 15) >> 3) * dy;              // calculate the amount of memory that a bitmap mask
 	chPixels = (BYTE *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
 	if (!chPixels)
 		return (FALSE);
@@ -2266,7 +2266,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 					(void)(*cDC1).BitBlt(0, 0, dx, dy, cDC2, 0, 0, SRCAND); // logically AND the masks together
 					(void)(*cDC1).SelectObject(pBitmap1Old);            // ... leaving bits set where they overlap
 					pBitmap1Old = nullptr;
-					dwBytes = (*pBitmap1).GetBitmapBits(dwN, chPixels); // fetch the image we created
+					//dwBytes = (*pBitmap1).GetBitmapBits(dwN, chPixels); // fetch the image we created
 					(*pBitmap1).GetObject(sizeof(BITMAP), &cBitmapData); // .. get the scanline length
 					bSuccess = FALSE;
 					for (i = 0; i < cBitmapData.bmHeight; i++) {        // ... and look for a byte that is nonzero

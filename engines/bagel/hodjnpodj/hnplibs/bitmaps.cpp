@@ -626,7 +626,7 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const in
 		else {
 			cxDIB = (int) DIBWidth(hDIB);
 			cyDIB = (int) DIBHeight(hDIB);
-				
+
 			rcDIB.top = rcDIB.left = 0;
 			rcDIB.right = cxDIB;
 			rcDIB.bottom = cyDIB;
@@ -1068,7 +1068,7 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 	BOOL     bSuccess = FALSE;
 	unsigned long   seed;
 	unsigned long   value, maxvalue;
-	unsigned long   x, y, i;
+	unsigned long   x, y;
 	unsigned long   fill,
 	         mask = (BIT16 | BIT15 | BIT2 | BIT0);
 	unsigned long   tmp, cnt, shft;
@@ -1099,7 +1099,7 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 	maxvalue = height / nBlockSize * width;
 	seed = SEQ - 1;
 
-	for (i = 0, value = seed; ; i++) {
+	for (value = seed; ;) {
 		fill = 0L;
 		tmp = (value & mask);
 		shft = BIT0;
@@ -1181,7 +1181,7 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 	BOOL     bSuccess = FALSE;
 	unsigned long   seed;
 	unsigned long   value, maxvalue;
-	unsigned long   x, y, i;
+	unsigned long   x, y;
 	unsigned long   fill,
 	         mask = (BIT16 | BIT15 | BIT2 | BIT0);
 	unsigned long   tmp, cnt, shft;
@@ -1203,7 +1203,7 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 	maxvalue = height / nBlockSize * width;
 	seed = SEQ - 1;
 
-	for (i = 0, value = seed; ; i++) {
+	for (value = seed; ;) {
 		fill = 0L;
 		tmp = (value & mask);
 		shft = BIT0;
