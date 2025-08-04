@@ -34,6 +34,7 @@ namespace Gtl {
 
 extern CGtlFrame *pMainWindow;
 extern BOOL bExitMetaDLL;
+extern BOOL st_bExitDll;
 
 static CSingleDocTemplate *pSdiDocTemplate = nullptr;
 
@@ -60,6 +61,7 @@ END_MESSAGE_MAP()
 CGtlApp::CGtlApp() {
 	// Place all significant initialization in InitInstance
 	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
+	bExitMetaDLL = st_bExitDll = false;
 }
 
 CGtlApp::~CGtlApp() {
