@@ -1020,6 +1020,7 @@ void CHodjPodjWindow::FreeCurrentDLL(void) {
 
 BOOL CHodjPodjWindow::LoadMetaDLL(void) {
 	FreeCurrentDLL();
+	dllLoaded = true;
 	Metagame::Gtl::RunMeta(m_hWnd, lpMetaGame, FALSE);
 
 	bReturnToMeta = TRUE;
@@ -1634,7 +1635,6 @@ void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
 
 	switch (msg) {
 	case WM_DESTROY:
-
 		if (bReturnToMeta && (lpMetaGame != nullptr)) {
 			bSoundEffectsEnabled = (*lpMetaGame).m_stGameStruct.bSoundEffectsEnabled;
 			bMusicEnabled = (*lpMetaGame).m_stGameStruct.bMusicEnabled;
@@ -1692,6 +1692,9 @@ void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
 		}
 
 		UpdateWindow();
+		break;
+
+	default:
 		break;
 	}
 
