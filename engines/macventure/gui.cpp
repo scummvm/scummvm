@@ -805,6 +805,17 @@ void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSur
 		pos -= targetData.scrollPos;
 		ensureAssetLoaded(child);
 
+		uint flag = 0;
+		bool off = !_engine->isObjVisible(child);
+		if (flag || !off || !_engine->isObjClickable(child)) {
+			mode = kBlitBIC;
+			if (off || flag) {
+				mode = kBlitXOR;
+			} else if (!off && _engine->isObjSelected(child)) {
+				mode = kBlitOR;
+			}
+		}
+
 		_assets[child]->blitInto(
 			&composeSurface,
 			pos.x,
