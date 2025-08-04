@@ -1858,6 +1858,7 @@ protected:
 	CTemplateList m_templateList;
 
 public:
+	virtual ~CDocManager() {}
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void OnFileNew();
 	void OnFileOpen();

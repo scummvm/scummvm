@@ -138,7 +138,7 @@ private:
 	bool mousePosToClient(CWnd *wnd, POINT &pt);
 
 	/**
-	 * Trigger any pending timers 
+	 * Trigger any pending timers
 	 */
 	void triggerTimers();
 
@@ -158,6 +158,7 @@ private:
 
 public:
 	EventLoop() {}
+	virtual ~EventLoop() {}
 
 	void runEventLoop();
 	void SetActiveWindow(CWnd *wnd);
