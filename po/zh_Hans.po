@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-03 23:02+0000\n"
+"POT-Creation-Date: 2025-08-04 13:22+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -7037,15 +7037,15 @@ msgstr "退出"
 msgid "Open inventory"
 msgstr "打开物品栏"
 
-#: engines/bladerunner/bladerunner.cpp:396
+#: engines/bladerunner/bladerunner.cpp:395
 msgid "Failed to initialize resources"
 msgstr "资源初始化失败"
 
-#: engines/bladerunner/bladerunner.cpp:1168
+#: engines/bladerunner/bladerunner.cpp:1166
 msgid "A required game resource was not found"
 msgstr "找不到必需的游戏资源"
 
-#: engines/bladerunner/bladerunner.cpp:2755
+#: engines/bladerunner/bladerunner.cpp:2753
 msgid ""
 "WARNING: This game was saved in Restored Cut Content mode, but you are "
 "playing in Original Content mode. The mode will be adjusted to Restored Cut "
@@ -7054,7 +7054,7 @@ msgstr ""
 "警告：此游戏以“恢复移除的内容”模式保存，但你正使用“原作内容”模式游玩。在完全"
 "退出游戏前，模式将更改为“恢复移除的内容”模式。"
 
-#: engines/bladerunner/bladerunner.cpp:2757
+#: engines/bladerunner/bladerunner.cpp:2755
 msgid ""
 "WARNING: This game was saved in Original Content mode, but you are playing "
 "in Restored Cut Content mode. The mode will be adjusted to Original Content "
@@ -7063,7 +7063,7 @@ msgstr ""
 "警告：此游戏以“原作内容”模式保存，但你正使用“恢复移除的内容”模式游玩。在完全"
 "退出游戏前，模式将更改为“原作内容”模式。"
 
-#: engines/bladerunner/bladerunner.cpp:2759
+#: engines/bladerunner/bladerunner.cpp:2757
 msgid "Continue"
 msgstr "继续"
 
