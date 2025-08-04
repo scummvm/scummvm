@@ -13,6 +13,7 @@ MODULE_OBJS = \
 	actors/screen.o \
 	actors/sound.o \
 	actors/sprite.o \
+	actors/stage.o \
 	actors/text.o \
 	actors/timer.o \
 	audio.o \

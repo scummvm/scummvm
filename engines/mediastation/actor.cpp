@@ -22,6 +22,7 @@
 #include "common/util.h"
 
 #include "mediastation/actor.h"
+#include "mediastation/actors/stage.h"
 #include "mediastation/debugchannels.h"
 #include "mediastation/mediascript/scriptconstants.h"
 #include "mediastation/mediastation.h"
@@ -71,6 +72,13 @@ void Actor::readParameter(Chunk &chunk, ActorHeaderSectionType paramType) {
 	default:
 		error("Got unimplemented actor parameter 0x%x", static_cast<uint>(paramType));
 	}
+}
+
+void Actor::loadIsComplete() {
+	if (_loadIsComplete) {
+		warning("%s: Called more than once for actor %d", __func__, _id);
+	}
+	_loadIsComplete = true;
 }
 
 ScriptValue Actor::callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) {
@@ -185,12 +193,14 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 		break;
 
 	case kGetCenterXMethod: {
+		assert(args.empty());
 		int centerX = _boundingBox.left + (_boundingBox.width() / 2);
 		returnValue.setToFloat(centerX);
 		break;
 	}
 
 	case kGetCenterYMethod: {
+		assert(args.empty());
 		int centerY = _boundingBox.top + (_boundingBox.height() / 2);
 		returnValue.setToFloat(centerY);
 		break;
@@ -211,6 +221,46 @@ ScriptValue SpatialEntity::callMethod(BuiltInMethod methodId, Common::Array<Scri
 	case kIsVisibleMethod:
 		assert(args.empty());
 		returnValue.setToBool(isVisible());
+		break;
+
+	case kSetMousePositionMethod: {
+		assert(args.size() == 2);
+		int16 x = static_cast<int16>(args[0].asFloat());
+		int16 y = static_cast<int16>(args[1].asFloat());
+		setMousePosition(x, y);
+		break;
+	}
+
+	case kGetXScaleMethod1:
+	case kGetXScaleMethod2:
+		assert(args.empty());
+		returnValue.setToFloat(_scaleX);
+		break;
+
+	case kSetScaleMethod:
+		assert(args.size() == 1);
+		invalidateLocalBounds();
+		_scaleX = _scaleY = args[0].asFloat();
+		invalidateLocalBounds();
+		break;
+
+	case kSetXScaleMethod:
+		assert(args.size() == 1);
+		invalidateLocalBounds();
+		_scaleX = args[0].asFloat();
+		invalidateLocalBounds();
+		break;
+
+	case kGetYScaleMethod:
+		assert(args.empty());
+		returnValue.setToFloat(_scaleY);
+		break;
+
+	case kSetYScaleMethod:
+		assert(args.size() == 1);
+		invalidateLocalBounds();
+		_scaleY = args[0].asFloat();
+		invalidateLocalBounds();
 		break;
 
 	default:
@@ -237,7 +287,7 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 		_hasTransparency = static_cast<bool>(chunk.readTypedByte());
 		break;
 
-	case kActorHeaderStageId:
+	case kActorHeaderChildActorId:
 		_stageId = chunk.readTypedUint16();
 		break;
 
@@ -245,9 +295,42 @@ void SpatialEntity::readParameter(Chunk &chunk, ActorHeaderSectionType paramType
 		_actorReference = chunk.readTypedUint16();
 		break;
 
+	case kActorHeaderScaleXAndY:
+		_scaleX = _scaleY = chunk.readTypedDouble();
+		break;
+
+	case kActorHeaderScaleX:
+		_scaleX = chunk.readTypedDouble();
+		break;
+
+	case kActorHeaderScaleY:
+		_scaleY = chunk.readTypedDouble();
+		break;
+
 	default:
 		Actor::readParameter(chunk, paramType);
 	}
+}
+
+void SpatialEntity::loadIsComplete() {
+	Actor::loadIsComplete();
+	Actor *pendingParentStageActor = g_engine->getActorById(_stageId);
+	if (pendingParentStageActor == nullptr) {
+		error("%s: Actor %d doesn't exist", __func__, _stageId);
+	} else if (pendingParentStageActor->type() != kActorTypeStage) {
+		error("%s: Requested parent stage %d is not a stage", __func__, _stageId);
+	}
+	StageActor *pendingParentStage = static_cast<StageActor *>(pendingParentStageActor);
+	pendingParentStage->addChildSpatialEntity(this);
+}
+
+void SpatialEntity::invalidateMouse() {
+	// TODO: Invalidate the mouse properly when we have custom events.
+	// For now, we simulate the mouse update event with a mouse moved event.
+	Common::Event mouseEvent;
+	mouseEvent.type = Common::EVENT_MOUSEMOVE;
+	mouseEvent.mouse = g_system->getEventManager()->getMousePos();
+	g_system->getEventManager()->pushEvent(mouseEvent);
 }
 
 void SpatialEntity::moveTo(int16 x, int16 y) {
@@ -263,6 +346,9 @@ void SpatialEntity::moveTo(int16 x, int16 y) {
 	_boundingBox.moveTo(dest);
 	if (isVisible()) {
 		invalidateLocalBounds();
+	}
+	if (interactsWithMouse()) {
+		invalidateMouse();
 	}
 }
 
@@ -285,6 +371,9 @@ void SpatialEntity::setBounds(const Common::Rect &bounds) {
 	if (isVisible()) {
 		invalidateLocalBounds();
 	}
+	if (interactsWithMouse()) {
+		invalidateMouse();
+	}
 }
 
 void SpatialEntity::setZIndex(int zIndex) {
@@ -295,6 +384,15 @@ void SpatialEntity::setZIndex(int zIndex) {
 
 	_zIndex = zIndex;
 	invalidateLocalZIndex();
+	if (interactsWithMouse()) {
+		invalidateMouse();
+	}
+}
+
+void SpatialEntity::setMousePosition(int16 x, int16 y) {
+	if (_parentStage) {
+		_parentStage->setMousePosition(x, y);
+	}
 }
 
 void SpatialEntity::setDissolveFactor(double dissolveFactor) {

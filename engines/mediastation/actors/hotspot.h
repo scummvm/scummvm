@@ -36,9 +36,25 @@ public:
 	bool isInside(const Common::Point &pointToCheck);
 	virtual bool isVisible() const override { return false; }
 	bool isActive() const { return _isActive; }
+	virtual bool interactsWithMouse() const override { return isActive(); }
 
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
+
+	virtual uint16 findActorToAcceptMouseEvents(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		bool inBounds) override;
+
+	void activate();
+	void deactivate();
+
+	virtual void mouseDownEvent(const Common::Event &event) override;
+	virtual void mouseUpEvent(const Common::Event &event) override;
+	virtual void mouseEnteredEvent(const Common::Event &event) override;
+	virtual void mouseExitedEvent(const Common::Event &event) override;
+	virtual void mouseMovedEvent(const Common::Event &event) override;
 
 	uint _cursorResourceId = 0;
 	Common::Array<Common::Point> _mouseActiveArea;

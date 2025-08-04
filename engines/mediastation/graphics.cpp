@@ -33,7 +33,7 @@
 namespace MediaStation {
 
 VideoDisplayManager::VideoDisplayManager(MediaStationEngine *vm) : _vm(vm) {
-	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
+	initGraphics(MediaStationEngine::SCREEN_WIDTH, MediaStationEngine::SCREEN_HEIGHT);
 	_screen = new Graphics::Screen();
 }
 
@@ -49,11 +49,11 @@ bool VideoDisplayManager::attemptToReadFromStream(Chunk &chunk, uint sectionType
 	bool handledParam = true;
 	switch (sectionType) {
 	case kVideoDisplayManagerUpdateDirty:
-		// TODO: Call RT_DisplayUpdateManager::performUpdateDirty();
+		performUpdateDirty();
 		break;
 
 	case kVideoDisplayManagerUpdateAll:
-		// TODO: Call RT_DisplayUpdateManager::performUpdateAll();
+		performUpdateAll();
 		break;
 
 	case kVideoDisplayManagerEffectTransition:
@@ -160,6 +160,14 @@ void VideoDisplayManager::doTransitionOnSync() {
 		effectTransition(_scheduledTransitionOnSync);
 		_scheduledTransitionOnSync.clear();
 	}
+}
+
+void VideoDisplayManager::performUpdateDirty() {
+	g_engine->draw();
+}
+
+void VideoDisplayManager::performUpdateAll() {
+	g_engine->draw(false);
 }
 
 void VideoDisplayManager::fadeToBlack(Common::Array<ScriptValue> &args) {

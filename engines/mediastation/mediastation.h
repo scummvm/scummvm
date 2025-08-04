@@ -44,11 +44,13 @@
 #include "mediastation/cursors.h"
 #include "mediastation/graphics.h"
 #include "mediastation/mediascript/function.h"
+#include "mediastation/actors/stage.h"
 
 namespace MediaStation {
 
 struct MediaStationGameDescription;
 class HotspotActor;
+class RootStage;
 class Bitmap;
 
 // Most Media Station titles follow this file structure from the root directory
@@ -80,31 +82,42 @@ public:
 
 	bool isFirstGenerationEngine();
 	void processEvents();
-	void refreshActiveHotspot();
-	void addDirtyRect(const Common::Rect &rect) { _dirtyRects.push_back(rect); }
-	void draw();
+	void addDirtyRect(const Common::Rect &rect);
+	void draw(bool dirtyOnly = true);
 
 	void registerActor(Actor *actorToAdd);
+	void destroyActor(uint actorId);
+
 	void scheduleScreenBranch(uint screenId);
 	void scheduleContextRelease(uint contextId);
 	void readUnrecognizedFromStream(Chunk &chunk, uint sectionType);
 	void releaseContext(uint32 contextId);
 
 	Actor *getActorById(uint actorId);
+	SpatialEntity *getSpatialEntityById(uint spatialEntityId);
 	Actor *getActorByChunkReference(uint chunkReference);
 	ScriptValue *getVariable(uint variableId);
 	VideoDisplayManager *getDisplayManager() { return _displayManager; }
 	CursorManager *getCursorManager() { return _cursorManager; }
 	FunctionManager *getFunctionManager() { return _functionManager; }
+	RootStage *getRootStage() { return _stageDirector->getRootStage(); }
 
 	Common::Array<ParameterClient *> _parameterClients;
+
+	SpatialEntity *getMouseInsideHotspot() { return _mouseInsideHotspot; }
+	void setMouseInsideHotspot(SpatialEntity *entity) { _mouseInsideHotspot = entity; }
+	void clearMouseInsideHotspot() { _mouseInsideHotspot = nullptr; }
+
+	SpatialEntity *getMouseDownHotspot() { return _mouseDownHotspot; }
+	void setMouseDownHotspot(SpatialEntity *entity) { _mouseDownHotspot = entity; }
+	void clearMouseDownHotspot() { _mouseDownHotspot = nullptr; }
 
 	Common::RandomSource _randomSource;
 
 	Context *_currentContext = nullptr;
 
-	Common::Point _mousePos;
-	bool _needsHotspotRefresh = false;
+	static const uint SCREEN_WIDTH = 640;
+	static const uint SCREEN_HEIGHT = 480;
 
 protected:
 	Common::Error run() override;
@@ -113,19 +126,19 @@ private:
 	Common::Event _event;
 	Common::FSNode _gameDataDir;
 	const ADGameDescription *_gameDescription;
-	Common::Array<Common::Rect> _dirtyRects;
 
 	VideoDisplayManager *_displayManager = nullptr;
 	CursorManager *_cursorManager = nullptr;
 	FunctionManager *_functionManager = nullptr;
 	Document *_document = nullptr;
 	DeviceOwner *_deviceOwner = nullptr;
+	StageDirector *_stageDirector = nullptr;
 
 	Boot *_boot = nullptr;
-	Common::Array<Actor *> _actors;
-	Common::SortedArray<SpatialEntity *, const SpatialEntity *> _spatialEntities;
+	Common::HashMap<uint, Actor *> _actors;
 	Common::HashMap<uint, Context *> _loadedContexts;
-	Actor *_currentHotspot = nullptr;
+	SpatialEntity *_mouseInsideHotspot = nullptr;
+	SpatialEntity *_mouseDownHotspot = nullptr;
 	uint _requestedScreenBranchId = 0;
 	Common::Array<uint> _requestedContextReleaseId;
 
@@ -134,12 +147,10 @@ private:
 	void initFunctionManager();
 	void initDocument();
 	void initDeviceOwner();
+	void initStageDirector();
 
 	void doBranchToScreen();
 	Context *loadContext(uint32 contextId);
-	Actor *findActorToAcceptMouseEvents();
-
-	static int compareActorByZIndex(const SpatialEntity *a, const SpatialEntity *b);
 };
 
 extern MediaStationEngine *g_engine;

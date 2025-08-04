@@ -112,8 +112,19 @@ enum BuiltInMethod {
 	kGetMouseXOffsetMethod = 0x108,
 	kGetMouseYOffsetMethod = 0x109,
 	kIsVisibleMethod = 0x10D,
+	kSetMousePositionMethod = 0x129,
+	// It isn't clear what the difference is meant to be
+	// between these two, as the code looks the same for both.
+	kGetXScaleMethod1 = 0x16E,
+	kGetXScaleMethod2 = 0x17E,
+	kSetScaleMethod = 0x16F,
+	kSetXScaleMethod = 0x17F,
+	kGetYScaleMethod = 0x180,
+	kSetYScaleMethod = 0x181,
 
 	// HOTSPOT METHODS.
+	// NOTE: IDs 0xD2 and 0xD3 seem to be double-assigned
+	// between two hotspot methods and two stage methods.
 	kMouseActivateMethod = 0xD2,
 	kMouseDeactivateMethod = 0xD3,
 	kTriggerAbsXPositionMethod = 0x141,
@@ -128,8 +139,15 @@ enum BuiltInMethod {
 	kGetCurrentClipIdMethod = 0xF0,
 
 	// STAGE METHODS.
+	// NOTE: IDs 0xD2 and 0xD3 seem to be double-assigned
+	// between two hotspot methods and two stage methods.
+	kAddActorToStageMethod = 0xD2,
+	kRemoveActorFromStageMethod = 0xD3,
 	kSetWorldSpaceExtentMethod = 0x16B,
 	kSetBoundsMethod = 0x11F,
+	kStageSetSizeMethod = 0x16B,
+	kStageGetWidthMethod = 0x16C,
+	kStageGetHeightMethod = 0x16D,
 
 	// CAMERA METHODS.
 	kStopPanMethod = 0x15E,

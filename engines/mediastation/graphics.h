@@ -100,10 +100,10 @@ public:
 	void setTransitionOnSync(Common::Array<ScriptValue> &args) { _scheduledTransitionOnSync = args; }
 	void doTransitionOnSync();
 
-private:
-	static const uint SCREEN_WIDTH = 640;
-	static const uint SCREEN_HEIGHT = 480;
+	void performUpdateDirty();
+	void performUpdateAll();
 
+private:
 	MediaStationEngine *_vm = nullptr;
 	Graphics::Screen *_screen = nullptr;
 	Graphics::Palette *_registeredPalette = nullptr;

@@ -22,6 +22,7 @@
 #ifndef MEDIASTATION_ACTOR_H
 #define MEDIASTATION_ACTOR_H
 
+#include "common/events.h"
 #include "common/keyboard.h"
 
 #include "mediastation/datafile.h"
@@ -62,7 +63,7 @@ enum ActorType {
 enum ActorHeaderSectionType {
 	kActorHeaderEmptySection = 0x0000,
 	kActorHeaderEventHandler = 0x0017,
-	kActorHeaderStageId = 0x0019,
+	kActorHeaderChildActorId = 0x0019,
 	kActorHeaderActorId = 0x001a,
 	kActorHeaderChunkReference = 0x001b,
 	kActorHeaderMovieAnimationChunkReference = 0x06a4,
@@ -85,6 +86,11 @@ enum ActorHeaderSectionType {
 	kActorHeaderGetOffstageEvents = 0x05dd,
 	kActorHeaderX = 0x05de,
 	kActorHeaderY = 0x05df,
+	kActorHeaderScaleXAndY = 0x77a,
+	kActorHeaderScaleX = 0x77c,
+	kActorHeaderScaleY = 0x77d,
+	kActorHeaderUnk0 = 0x7d0,
+	kActorHeaderActorName = 0x0bb8,
 
 	// PATH FIELDS.
 	kActorHeaderStartPoint = 0x060e,
@@ -98,10 +104,9 @@ enum ActorHeaderSectionType {
 	kActorHeaderLensOpen = 0x0770,
 
 	// STAGE FIELDS.
-	kActorHeaderStageUnk1 = 0x0771,
+	kActorHeaderStageSize = 0x0771,
 	kActorHeaderCylindricalX = 0x0772,
 	kActorHeaderCylindricalY = 0x0773,
-	kActorHeaderActorName = 0x0bb8,
 
 	// TEXT FIELDS.
 	kActorHeaderEditable = 0x03eb,
@@ -119,6 +124,34 @@ enum ActorHeaderSectionType {
 	kActorHeaderCurrentSpriteClip = 0x03ea
 };
 
+class SpatialEntity;
+
+struct MouseActorState {
+	SpatialEntity *keyDown = nullptr;
+	// There is no key up event.
+	SpatialEntity *mouseDown = nullptr;
+	SpatialEntity *mouseUp = nullptr;
+	SpatialEntity *mouseMoved = nullptr;
+	SpatialEntity *mouseExit = nullptr;
+	SpatialEntity *mouseEnter = nullptr;
+	SpatialEntity *mouseOutOfFocus = nullptr;
+};
+
+enum MouseEventFlag {
+	kNoFlag = 0x00,
+	kMouseDownFlag = 0x01,
+	kMouseUpFlag = 0x02,
+	kMouseMovedFlag = 0x04,
+	kMouseExitFlag = 0x10,
+	kMouseEnterFlag = 0x08,
+	kMouseUnk1Flag = 0x20,
+	kMouseOutOfFocusFlag = 0x40,
+	kKeyDownFlag = 0x80,
+	// There is no key up event.
+};
+
+class StageActor;
+
 class Actor {
 public:
 	Actor(ActorType type) : _type(type) {};
@@ -134,10 +167,10 @@ public:
 
 	virtual void initFromParameterStream(Chunk &chunk);
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType);
-	virtual void loadIsComplete() { _loadIsComplete = true; };
+	virtual void loadIsComplete();
 
-	// These are not pure virtual so if an actor doesnʻt read any chunks or
-	// subfiles it doesnʻt need to just implement these with an error message.
+	// These are not pure virtual so if an actor doesn't read any chunks or
+	// subfiles it doesn't need to just implement these with an error message.
 	virtual void readChunk(Chunk &chunk);
 	virtual void readSubfile(Subfile &subfile, Chunk &chunk);
 
@@ -173,28 +206,59 @@ public:
 	virtual void draw(const Common::Array<Common::Rect> &dirtyRegion) { return; }
 	virtual ScriptValue callMethod(BuiltInMethod methodId, Common::Array<ScriptValue> &args) override;
 	virtual void readParameter(Chunk &chunk, ActorHeaderSectionType paramType) override;
+	virtual void loadIsComplete() override;
 
 	virtual bool isSpatialActor() const override { return true; }
 	virtual bool isVisible() const { return _isVisible; }
 	virtual Common::Rect getBbox() const { return _boundingBox; }
 	int zIndex() const { return _zIndex; }
 
+	virtual void invalidateMouse();
+	virtual bool interactsWithMouse() const { return false; }
+
+	virtual uint16 findActorToAcceptMouseEvents(
+		const Common::Point &point,
+		uint16 eventMask,
+		MouseActorState &state,
+		bool inBounds) { return kNoFlag; }
+	virtual uint16 findActorToAcceptKeyboardEvents(
+		uint16 asciiCode,
+		uint16 eventMask,
+		MouseActorState &state) { return kNoFlag; }
+
+	virtual void mouseDownEvent(const Common::Event &event) { return; }
+	virtual void mouseUpEvent(const Common::Event &event) { return; }
+	virtual void mouseEnteredEvent(const Common::Event &event) { return; }
+	virtual void mouseExitedEvent(const Common::Event &event) { return; }
+	virtual void mouseMovedEvent(const Common::Event &event) { return; }
+	virtual void mouseOutOfFocusEvent(const Common::Event &event) { return; }
+	virtual void keyboardEvent(const Common::Event &event) { return; }
+
+	void setParentStage(StageActor *parentStage) { _parentStage = parentStage; }
+	void setToNoParentStage() { _parentStage = nullptr; }
+	StageActor *getParentStage() const { return _parentStage; }
+
+	virtual void invalidateLocalBounds();
+
 protected:
 	uint _stageId = 0;
 	int _zIndex = 0;
 	double _dissolveFactor = 0.0;
+	double _scaleX = 0.0;
+	double _scaleY = 0.0;
 	Common::Rect _boundingBox;
 	bool _isVisible = false;
 	bool _hasTransparency = false;
 	bool _getOffstageEvents = false;
+	StageActor *_parentStage = nullptr;
 
 	void moveTo(int16 x, int16 y);
 	void moveToCentered(int16 x, int16 y);
 	void setBounds(const Common::Rect &bounds);
 	void setZIndex(int zIndex);
+	virtual void setMousePosition(int16 x, int16 y);
 
 	virtual void setDissolveFactor(double dissolveFactor);
-	virtual void invalidateLocalBounds();
 	virtual void invalidateLocalZIndex();
 };
 

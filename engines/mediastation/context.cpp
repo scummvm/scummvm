@@ -149,9 +149,7 @@ void Context::readDestroyContextData(Chunk &chunk) {
 
 void Context::readDestroyActorData(Chunk &chunk) {
 	uint actorId = chunk.readTypedUint16();
-	// TODO: This really can't be done until we have this reading be part of the
-	// engine class, as it was in the original.
-	warning("%s: STUB: destroyActor %d", __func__, actorId);
+	g_engine->destroyActor(actorId);
 }
 
 void Context::readActorLoadComplete(Chunk &chunk) {

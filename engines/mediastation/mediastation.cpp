@@ -32,6 +32,7 @@
 #include "mediastation/actors/screen.h"
 #include "mediastation/actors/palette.h"
 #include "mediastation/actors/hotspot.h"
+#include "mediastation/actors/stage.h"
 #include "mediastation/mediascript/scriptconstants.h"
 
 namespace MediaStation {
@@ -40,8 +41,7 @@ MediaStationEngine *g_engine;
 
 MediaStationEngine::MediaStationEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 	_gameDescription(gameDesc),
-	_randomSource("MediaStation"),
-	_spatialEntities(MediaStationEngine::compareActorByZIndex) {
+	_randomSource("MediaStation") {
 	g_engine = this;
 
 	_gameDataDir = Common::FSNode(ConfMan.getPath("path"));
@@ -71,20 +71,32 @@ MediaStationEngine::~MediaStationEngine() {
 	delete _boot;
 	_boot = nullptr;
 
+	delete _stageDirector;
+	_stageDirector = nullptr;
+
 	for (auto it = _loadedContexts.begin(); it != _loadedContexts.end(); ++it) {
 		delete it->_value;
 	}
 	_loadedContexts.clear();
 
-	// Delete the document actor. The rest are deleted from their contexts.
-	delete _actors[0];
+	// Only delete the document actor.
+	// The root stage is deleted from stage director, and
+	// the other actors are deleted from their contexts.
+	delete _actors.getVal(1);
+	_actors.clear();
 }
 
 Actor *MediaStationEngine::getActorById(uint actorId) {
-	for (auto actor : _actors) {
-		if (actor->id() == actorId) {
-			return actor;
+	return _actors.getValOrDefault(actorId);
+}
+
+SpatialEntity *MediaStationEngine::getSpatialEntityById(uint spatialEntityId){
+	Actor *actor = getActorById(spatialEntityId);
+	if (actor != nullptr) {
+		if (!actor->isSpatialActor()) {
+			error("%s: Actor %d is not a spatial actor", __func__, spatialEntityId);
 		}
+		return static_cast<SpatialEntity *>(actor);
 	}
 	return nullptr;
 }
@@ -133,12 +145,17 @@ bool MediaStationEngine::isFirstGenerationEngine() {
 	}
 }
 
+void MediaStationEngine::addDirtyRect(const Common::Rect &rect) {
+	getRootStage()->invalidateRect(rect);
+}
+
 Common::Error MediaStationEngine::run() {
 	initDisplayManager();
 	initCursorManager();
 	initFunctionManager();
 	initDocument();
 	initDeviceOwner();
+	initStageDirector();
 
 	Common::Path bootStmFilepath = Common::Path("BOOT.STM");
 	_boot = new Boot(bootStmFilepath);
@@ -173,13 +190,8 @@ Common::Error MediaStationEngine::run() {
 		}
 
 		debugC(5, kDebugGraphics, "***** START SCREEN UPDATE ***");
-		for (Actor *actor : _actors) {
-			actor->process();
-
-			if (_needsHotspotRefresh) {
-				refreshActiveHotspot();
-				_needsHotspotRefresh = false;
-			}
+		for (auto it = _actors.begin(); it != _actors.end(); ++it) {
+			it->_value->process();
 		}
 		draw();
 		debugC(5, kDebugGraphics, "***** END SCREEN UPDATE ***");
@@ -217,12 +229,16 @@ void MediaStationEngine::initDocument() {
 	_parameterClients.push_back(_document);
 
 	DocumentActor *documentActor = new DocumentActor;
-	_actors.push_back(documentActor);
+	registerActor(documentActor);
 }
 
 void MediaStationEngine::initDeviceOwner() {
 	_deviceOwner = new DeviceOwner();
 	_parameterClients.push_back(_deviceOwner);
+}
+
+void MediaStationEngine::initStageDirector() {
+	_stageDirector = new StageDirector;
 }
 
 void MediaStationEngine::processEvents() {
@@ -232,92 +248,46 @@ void MediaStationEngine::processEvents() {
 		debugC(9, kDebugEvents, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 
 		switch (_event.type) {
-		case Common::EVENT_QUIT: {
-			// TODO: Do any necessary clean-up.
-			return;
-		}
-
-		case Common::EVENT_MOUSEMOVE: {
-			_mousePos = g_system->getEventManager()->getMousePos();
-			_needsHotspotRefresh = true;
+		case Common::EVENT_MOUSEMOVE:
+			_stageDirector->handleMouseMovedEvent(_event);
 			break;
-		}
 
-		case Common::EVENT_KEYDOWN: {
-			// Even though this is a keydown event, we need to look at the mouse position.
-			Actor *hotspot = findActorToAcceptMouseEvents();
-			if (hotspot != nullptr) {
-				debugC(1, kDebugEvents, "EVENT_KEYDOWN (%d): Sent to hotspot %d", _event.kbd.ascii, hotspot->id());
-				ScriptValue keyCode;
-				keyCode.setToFloat(_event.kbd.ascii);
-				hotspot->runEventHandlerIfExists(kKeyDownEvent, keyCode);
-			}
+		case Common::EVENT_KEYDOWN:
+			_stageDirector->handleKeyboardEvent(_event);
 			break;
-		}
 
-		case Common::EVENT_LBUTTONDOWN: {
-			Actor *hotspot = findActorToAcceptMouseEvents();
-			if (hotspot != nullptr) {
-				debugC(1, kDebugEvents, "EVENT_LBUTTONDOWN (%d, %d): Sent to hotspot %d", _mousePos.x, _mousePos.y, hotspot->id());
-				hotspot->runEventHandlerIfExists(kMouseDownEvent);
-			}
+		case Common::EVENT_LBUTTONDOWN:
+			_stageDirector->handleMouseDownEvent(_event);
 			break;
-		}
 
-		case Common::EVENT_RBUTTONDOWN: {
+		case Common::EVENT_LBUTTONUP:
+			_stageDirector->handleMouseUpEvent(_event);
+			break;
+
+		case Common::EVENT_FOCUS_LOST:
+			_stageDirector->handleMouseOutOfFocusEvent(_event);
+			break;
+
+		case Common::EVENT_RBUTTONDOWN:
 			// We are using the right button as a quick exit since the Media
 			// Station engine doesn't seem to use the right button itself.
 			warning("%s: EVENT_RBUTTONDOWN: Quitting for development purposes", __func__);
 			quitGame();
 			break;
-		}
 
 		default:
+			// Avoid warnings about unimplemented cases by having an explicit
+			// default case.
 			break;
 		}
 	}
 }
 
-void MediaStationEngine::refreshActiveHotspot() {
-	Actor *actor = findActorToAcceptMouseEvents();
-	if (actor != nullptr && actor->type() != kActorTypeHotspot) {
-		return;
-	}
-	HotspotActor *hotspot = static_cast<HotspotActor *>(actor);
-	if (hotspot != _currentHotspot) {
-		if (_currentHotspot != nullptr) {
-			_currentHotspot->runEventHandlerIfExists(kMouseExitedEvent);
-			debugC(5, kDebugEvents, "refreshActiveHotspot(): (%d, %d): Exited hotspot %d", _mousePos.x, _mousePos.y, _currentHotspot->id());
-		}
-		_currentHotspot = hotspot;
-		if (hotspot != nullptr) {
-			debugC(5, kDebugEvents, "refreshActiveHotspot(): (%d, %d): Entered hotspot %d", _mousePos.x, _mousePos.y, hotspot->id());
-			_cursorManager->setAsTemporary(hotspot->_cursorResourceId);
-			hotspot->runEventHandlerIfExists(kMouseEnteredEvent);
-		} else {
-			// There is no hotspot, so set the default cursor for this screen instead.
-			_cursorManager->unsetTemporary();
-		}
-	}
-
-	if (hotspot != nullptr) {
-		debugC(5, kDebugEvents, "refreshActiveHotspot(): (%d, %d): Sent to hotspot %d", _mousePos.x, _mousePos.y, hotspot->id());
-		hotspot->runEventHandlerIfExists(kMouseMovedEvent);
-	}
-}
-
-void MediaStationEngine::draw() {
-	if (!_dirtyRects.empty()) {
-		for (Actor *actor : _spatialEntities) {
-			if (actor->isSpatialActor()) {
-				SpatialEntity *entity = static_cast<SpatialEntity *>(actor);
-				if (entity->isVisible()) {
-					entity->draw(_dirtyRects);
-				}
-			}
-		}
-
-		_dirtyRects.clear();
+void MediaStationEngine::draw(bool dirtyOnly) {
+	if (dirtyOnly) {
+		_stageDirector->drawDirtyRegion();
+	} else {
+		_stageDirector->drawAll();
 	}
 	_displayManager->updateScreen();
 	_displayManager->doTransitionOnSync();
@@ -369,10 +339,16 @@ void MediaStationEngine::registerActor(Actor *actorToAdd) {
 	if (getActorById(actorToAdd->id())) {
 		error("%s: Actor with ID 0x%d was already defined in this title", __func__, actorToAdd->id());
 	}
+	_actors.setVal(actorToAdd->id(), actorToAdd);
+}
 
-	_actors.push_back(actorToAdd);
-	if (actorToAdd->isSpatialActor()) {
-		_spatialEntities.insert(static_cast<SpatialEntity *>(actorToAdd));
+void MediaStationEngine::destroyActor(uint actorId) {
+	Actor *actorToDestroy = getActorById(actorId);
+	if (actorToDestroy) {
+		_actors.erase(actorId);
+		// The actor will actually be deleted when the context is destroyed.
+	} else {
+		warning("%s: Actor %d is not currently loaded", __func__, actorId);
 	}
 }
 
@@ -391,7 +367,6 @@ void MediaStationEngine::doBranchToScreen() {
 	}
 
 	_currentContext = loadContext(_requestedScreenBranchId);
-	_currentHotspot = nullptr;
 
 	if (_currentContext->_screenActor != nullptr) {
 		_currentContext->_screenActor->runEventHandlerIfExists(kEntryEvent);
@@ -418,61 +393,27 @@ void MediaStationEngine::releaseContext(uint32 contextId) {
 		}
 	}
 
-	for (auto it = _actors.begin(); it != _actors.end();) {
-		uint actorContextId = (*it)->contextId();
+	// Collect actors to remove first, then delete them.
+	// This is necessary because calling erase on a hashmap invalidates
+	// the iterators, so collecting them all first makes more sense.
+	Common::Array<uint> actorsToRemove;
+	for (auto it = _actors.begin(); it != _actors.end(); ++it) {
+		uint actorContextId = it->_value->contextId();
 		if (actorContextId == contextId) {
-			it = _actors.erase(it);
-		} else {
-			++it;
+			actorsToRemove.push_back(it->_key);
 		}
 	}
 
-	for (auto it = _spatialEntities.begin(); it != _spatialEntities.end();) {
-		uint actorContextId = (*it)->contextId();
-		if (actorContextId == contextId) {
-			it = _spatialEntities.erase(it);
-		} else {
-			++it;
-		}
+	// Now remove the collected actors.
+	for (uint actorId : actorsToRemove) {
+		_actors.erase(actorId);
 	}
 
+	getRootStage()->deleteChildrenFromContextId(contextId);
 	_functionManager->deleteFunctionsForContext(contextId);
 
 	delete context;
 	_loadedContexts.erase(contextId);
-}
-
-Actor *MediaStationEngine::findActorToAcceptMouseEvents() {
-	Actor *intersectingActor = nullptr;
-	// The z-indices seem to be reversed, so the highest z-index number is
-	// actually the lowest actor.
-	int lowestZIndex = INT_MAX;
-
-	for (Actor *actor : _actors) {
-		if (actor->type() == kActorTypeHotspot) {
-			HotspotActor *hotspot = static_cast<HotspotActor *>(actor);
-			debugC(5, kDebugGraphics, "findActorToAcceptMouseEvents(): Hotspot %d (z-index %d)", hotspot->id(), hotspot->zIndex());
-			if (hotspot->isActive() && hotspot->isInside(_mousePos)) {
-				if (hotspot->zIndex() < lowestZIndex) {
-					lowestZIndex = hotspot->zIndex();
-					intersectingActor = actor;
-				}
-			}
-		}
-	}
-	return intersectingActor;
-}
-
-int MediaStationEngine::compareActorByZIndex(const SpatialEntity *a, const SpatialEntity *b) {
-	int diff = b->zIndex() - a->zIndex();
-	if (diff < 0)
-		return -1; // a should come before b
-	else if (diff > 0)
-		return 1; // b should come before a
-	else {
-		// If z-indices are equal, compare pointers for stable sort
-		return (a < b) ? -1 : 1;
-	}
 }
 
 void MediaStationEngine::readUnrecognizedFromStream(Chunk &chunk, uint sectionType) {
