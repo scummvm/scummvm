@@ -83,9 +83,6 @@ private:
 };
 
 class AlcachofaEngine : public Engine {
-private:
-	const ADGameDescription *_gameDescription;
-	Common::RandomSource _randomSource;
 protected:
 	// Engine APIs
 	Common::Error run() override;
@@ -117,18 +114,7 @@ public:
 	void setDebugMode(DebugMode debugMode, int32 param);
 
 	uint32 getFeatures() const;
-
-	/**
-	 * Returns the game Id
-	 */
 	Common::String getGameId() const;
-
-	/**
-	 * Gets a random number
-	 */
-	uint32 getRandomNumber(uint maxNum) {
-		return _randomSource.getRandomNumber(maxNum);
-	}
 
 	bool hasFeature(EngineFeature f) const override {
 		return
@@ -156,6 +142,7 @@ public:
 private:
 	bool tryLoadFromLauncher();
 
+	const ADGameDescription *_gameDescription;
 	Console *_console = new Console();
 	Common::ScopedPtr<IDebugHandler> _debugHandler;
 	Common::ScopedPtr<IRenderer> _renderer;
