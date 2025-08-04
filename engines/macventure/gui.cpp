@@ -711,10 +711,9 @@ void Gui::drawMainGameWindow() {
 }
 
 void Gui::drawSelfWindow() {
-	drawObjectsInWindow(getWindowData(kSelfWindow), _selfWindow->getWindowSurface());
-	if (_engine->isObjSelected(1)) {
-		invertWindowColors(kSelfWindow);
-	}
+	Graphics::ManagedSurface *srf = _selfWindow->getWindowSurface();
+	srf->fillRect(Common::Rect(0, 0, srf->w, srf->h), kColorWhite);
+	drawObjectsInWindow(getWindowData(kSelfWindow), srf);
 	findWindow(kSelfWindow)->setDirty(true);
 }
 
