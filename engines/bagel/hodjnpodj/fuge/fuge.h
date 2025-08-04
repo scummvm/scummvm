@@ -85,7 +85,7 @@ protected:
 	VOID        OnSysChar(UINT, UINT, UINT);
 	VOID        OnSysKeyDown(UINT, UINT, UINT);
 	VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL);
+	VOID        OnActivate(UINT, CWnd *, BOOL) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	VOID        OnSoundNotify(CSound *);

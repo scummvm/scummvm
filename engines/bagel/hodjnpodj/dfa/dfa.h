@@ -177,7 +177,7 @@ protected:
 	afx_msg void OnSysKeyDown(UINT, UINT, UINT);
 	afx_msg void OnKeyDown(UINT, UINT, UINT);
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized) override;
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
 	//}}AFX_MSG

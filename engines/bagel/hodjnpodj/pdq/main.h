@@ -61,7 +61,7 @@ protected:
 	void OnSysKeyDown(UINT, UINT, UINT);
 	void OnMouseMove(UINT, CPoint);
 	void OnLButtonDown(UINT, CPoint);
-	void OnActivate(UINT, CWnd *, BOOL);
+	void OnActivate(UINT, CWnd *, BOOL) override;
 	void OnSetFocus(CWnd *);
 	void OnClose(void);
 	LRESULT OnMCINotify(WPARAM, LPARAM);

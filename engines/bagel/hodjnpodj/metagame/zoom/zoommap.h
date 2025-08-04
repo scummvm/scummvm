@@ -75,7 +75,7 @@ protected:
 	afx_msg void OnMouseMove(UINT, CPoint);
 	afx_msg void OnKeyDown(UINT, UINT, UINT);
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized);
+	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized) override;
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

@@ -89,7 +89,7 @@ public:
 private:
 	//- OnChangedViewList -- called by MFC when a view is
 	//      added or deleted
-	virtual VOID OnChangedViewList(void) ;
+	virtual VOID OnChangedViewList(void) override;
 
 public:
 	//- FixChecks -- fix dialog box check marks

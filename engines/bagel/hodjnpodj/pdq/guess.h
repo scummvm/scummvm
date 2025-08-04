@@ -47,7 +47,7 @@ protected:
 	void OnTimer(UINT_PTR);
 	void OnPaint(VOID);
 	void OnSetFocus(CWnd *);
-	void OnActivate(UINT, CWnd *, BOOL);
+	void OnActivate(UINT, CWnd *, BOOL) override;
 	BOOL OnEraseBkgnd(CDC *);
 
 	DECLARE_MESSAGE_MAP()

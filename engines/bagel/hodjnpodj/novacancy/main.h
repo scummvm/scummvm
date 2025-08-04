@@ -61,7 +61,7 @@ protected:
 	VOID        OnSysChar(UINT, UINT, UINT);
 	virtual  VOID        OnSysKeyDown(UINT, UINT, UINT);
 	virtual VOID        OnKeyDown(UINT, UINT, UINT);
-	VOID        OnActivate(UINT, CWnd *, BOOL);
+	VOID        OnActivate(UINT, CWnd *, BOOL) override;
 	VOID        OnClose(VOID);
 	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
 	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);

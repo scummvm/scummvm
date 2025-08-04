@@ -89,7 +89,7 @@ protected:
 	VOID OnTimer(UINT_PTR);
 	VOID OnClose(void);
 	LONG OnJoyStick(UINT, LONG);
-	VOID OnActivate(UINT, CWnd *, BOOL);
+	VOID OnActivate(UINT, CWnd *, BOOL) override;
 	VOID OnLButtonDown(UINT, CPoint);
 	VOID OnRButtonUp(UINT, CPoint);
 	VOID OnMouseMove(UINT, CPoint);
