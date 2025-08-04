@@ -199,7 +199,7 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	getBaseUnits(base_unit_x, base_unit_y);
 
 	// Set up the overall window
-	RECT bounds(
+	RECT bounds = RectToRECT(
 		SafeMulDiv(_header._x, base_unit_x, 4),
 		SafeMulDiv(_header._y, base_unit_y, 8),
 		SafeMulDiv(_header._x + _header._w, base_unit_x, 4),
@@ -243,7 +243,7 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 		int y2 = SafeMulDiv(item._y + item._h, base_unit_y, 8);
 
 		// Set up control
-		bounds = RECT(x1, y1, x2, y2);
+		bounds = RectToRECT(x1, y1, x2, y2);
 		ctl->Create(item._className.c_str(),
 			item._title.c_str(),
 			item._style | WS_VISIBLE | WS_TABSTOP,

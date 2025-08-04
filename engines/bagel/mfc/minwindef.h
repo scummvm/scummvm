@@ -186,18 +186,11 @@ typedef struct tagPOINTS {
 } POINTS, *PPOINTS, *LPPOINTS;
 
 typedef struct tagRECT {
-	LONG    left = 0;
-	LONG    top = 0;
-	LONG    right = 0;
-	LONG    bottom = 0;
+	LONG    left;
+	LONG    top;
+	LONG    right;
+	LONG    bottom;
 
-	tagRECT() {}
-	tagRECT(LONG x1, LONG y1, LONG x2, LONG y2) :
-		left(x1), top(y1), right(x2), bottom(y2) {
-	}
-	tagRECT(const Common::Rect &r) :
-		left(r.left), top(r.top), right(r.right), bottom(r.bottom) {
-	}
 	operator Common::Rect() const {
 		return Common::Rect(left, top, right, bottom);
 	}
@@ -210,8 +203,27 @@ typedef struct tagRECT {
 		return r.contains(pt.x, pt.y);
 	}
 } RECT, *PRECT, NEAR *NPRECT, FAR *LPRECT;
-
 typedef const RECT FAR *LPCRECT;
+
+inline Common::Rect RECTtoRect(const RECT &src) {
+	return src;
+}
+inline RECT RectToRECT(const Common::Rect &src) {
+	RECT dest;
+	dest.left = src.left;
+	dest.top = src.top;
+	dest.right = src.right;
+	dest.bottom = src.bottom;
+	return dest;
+}
+inline RECT RectToRECT(int x1, int y1, int x2, int y2) {
+	RECT dest;
+	dest.left = x1;
+	dest.top = y1;
+	dest.right = x2;
+	dest.bottom = y2;
+	return dest;
+}
 
 typedef struct _FILETIME {
 	DWORD dwLowDateTime;

@@ -167,7 +167,7 @@ CPoint CDC::OffsetViewportOrg(int nWidth, int nHeight) {
 
 int CDC::GetClipBox(LPRECT lpRect) const {
 	Common::Rect rect = impl()->getSurface()->getClipRect();
-	*lpRect = rect;
+	*lpRect = RectToRECT(rect);
 	return rect.isEmpty() ? NULLREGION : SIMPLEREGION;
 }
 

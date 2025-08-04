@@ -110,7 +110,10 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 	_windowText = lpszWindowName;
 
 	// Get the screen area
-	RECT screenRect(0, 0, cs.cx, cs.cy);
+	RECT screenRect;
+	screenRect.left = screenRect.top = 0;
+	screenRect.right = cs.cx;
+	screenRect.bottom = cs.cy;
 	ClientToScreen(&screenRect);
 
 	// Get the class details
@@ -160,7 +163,10 @@ BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 	_windowText = lpszWindowName;
 
 	// Get the screen area
-	RECT screenRect(0, 0, cs.cx, cs.cy);
+	RECT screenRect;
+	screenRect.left = screenRect.top = 0;
+	screenRect.right = cs.cx;
+	screenRect.bottom = cs.cy;
 	ClientToScreen(&screenRect);
 
 	// Get the class details
@@ -392,7 +398,10 @@ CDC *CWnd::GetDC() {
 		hDC->Attach(_hBrush);
 		hDC->selectPalette(_hPalette);
 
-		RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+		RECT screenRect;
+		screenRect.left = screenRect.top = 0;
+		screenRect.right = _windowRect.width();
+		screenRect.bottom = _windowRect.height();
 		ClientToScreen(&screenRect);
 		hDC->setScreenRect(screenRect);
 
@@ -771,12 +780,15 @@ BOOL CWnd::InvalidateRect(LPCRECT lpRect, BOOL bErase) {
 }
 
 void CWnd::GetWindowRect(LPRECT lpRect) const {
-	*lpRect = _windowRect;
+	lpRect->left = _windowRect.left;
+	lpRect->top = _windowRect.top;
+	lpRect->right = _windowRect.right;
+	lpRect->bottom = _windowRect.bottom;
 }
 
 BOOL CWnd::GetUpdateRect(LPRECT lpRect, BOOL bErase) {
 	if (lpRect)
-		*lpRect = _updateRect;
+		*lpRect = RectToRECT(_updateRect);
 	_updateErase = bErase;
 
 	return IsWindowDirty();
@@ -836,7 +848,10 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 
 	if (_pDC) {
 		// Get the screen area
-		RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+		RECT screenRect;
+		screenRect.left = screenRect.top = 0;
+		screenRect.right = _windowRect.width();
+		screenRect.bottom = _windowRect.height();
 		ClientToScreen(&screenRect);
 		_pDC->impl()->setScreenRect(screenRect);
 	}
@@ -845,7 +860,12 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 	// change their relative position, but doing so will
 	// cause their screen surface area to be updated
 	for (auto &ctl : _children) {
-		RECT ctlRect = ctl._value->_windowRect;
+		const Common::Rect &r = ctl._value->_windowRect;
+		RECT ctlRect;
+		ctlRect.left = r.left;
+		ctlRect.top = r.top;
+		ctlRect.right = r.right;
+		ctlRect.bottom = r.bottom;
 		ctl._value->MoveWindow(&ctlRect, false);
 	}
 
@@ -854,7 +874,11 @@ void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {
 }
 
 void CWnd::MoveWindow(int x, int y, int nWidth, int nHeight, BOOL bRepaint) {
-	const RECT r(x, y, x + nWidth, y + nHeight);
+	RECT r;
+	r.left = x;
+	r.top = y;
+	r.right = x + nWidth;
+	r.bottom = y + nHeight;
 	MoveWindow(&r, bRepaint);
 }
 
@@ -863,7 +887,7 @@ HDC CWnd::BeginPaint(LPPAINTSTRUCT lpPaint) {
 
 	lpPaint->hdc = dc->m_hDC;
 	lpPaint->fErase = _updateErase;
-	lpPaint->rcPaint = _updateRect;
+	lpPaint->rcPaint = RectToRECT(_updateRect);
 	lpPaint->fRestore = false;
 	lpPaint->fIncUpdate = false;
 	Common::fill(lpPaint->rgbReserved,
@@ -974,7 +998,7 @@ BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
 	m_nStyle = oldControl->m_nStyle;
 	_hFont = oldControl->_hFont;
 
-	RECT screenRect(0, 0, _windowRect.width(), _windowRect.height());
+	RECT screenRect = RectToRECT(0, 0, _windowRect.width(), _windowRect.height());
 	ClientToScreen(&screenRect);
 
 	// Copy over the settings	
