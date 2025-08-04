@@ -32,6 +32,7 @@ namespace Metagame {
 namespace Gtl {
 
 CGtlApp *theApp;
+CWinApp *priorApp;
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 HWND        ghwndParent;
@@ -78,6 +79,7 @@ BOOL            bJustReturned = FALSE;
 HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	ghwndParent = hParentWnd;
 	lpMetaGameStruct = lpBfcMgr;
+	priorApp = AfxGetApp();
 
 	theApp = new CGtlApp();
 	theApp->addResources("hnpmeta.dll");

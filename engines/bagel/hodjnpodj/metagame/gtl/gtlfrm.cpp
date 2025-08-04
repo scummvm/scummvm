@@ -38,23 +38,14 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-extern BOOL     bExitMetaDLL;
-extern BOOL     st_bExitDll;
+extern BOOL bExitMetaDLL;
+extern BOOL st_bExitDll;
 
-extern CBgbMgr  *gpBgbMgr;
-
-#if GTLDLL
-	extern HWND     ghwndParent;
-	CGtlFrame       *pMainWindow = nullptr;
-	extern CBfcMgr  *lpMetaGameStruct;
-
-#else
-	#define ITEMS_IN_PAWN_SHOP 12
-	CGtlFrame       *pMainWindow = nullptr;
-	CBfcMgr             *lpMetaGameStruct = nullptr;
-#endif
-
-
+extern CBgbMgr *gpBgbMgr;
+extern HWND ghwndParent;
+extern CWinApp *priorApp;
+extern CBfcMgr *lpMetaGameStruct;
+CGtlFrame *pMainWindow = nullptr;
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlFrame
@@ -140,9 +131,8 @@ void CGtlFrame::OnDestroy() {
 
 	lpMetaGameStruct->m_bRestart = TRUE;
 
-	pMainWindow->PostMessage(WM_PARENTNOTIFY, WM_DESTROY, iReturnValue);
+	priorApp->PostMessage(ghwndParent, WM_PARENTNOTIFY, WM_DESTROY, iReturnValue);
 	pMainWindow = nullptr;
-
 
 	CFrameWnd::OnDestroy();
 }
