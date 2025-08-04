@@ -249,17 +249,22 @@ void Scripts::executeCommand(int commandIndex) {
 }
 
 void Scripts::cmdObject() {
+	debugC(1, kDebugScripts, "cmdObject()");
 	_vm->_bubbleBox->load(_data);
 }
 
 void Scripts::cmdEndObject() {
+	const char *msg;
 	if (_vm->getLanguage() == Common::ES_ESP)
-		printString(ESP_GENERAL_MESSAGES[_vm->_room->_selectCommand]);
+		msg = ESP_GENERAL_MESSAGES[_vm->_room->_selectCommand];
 	else
-		printString(GENERAL_MESSAGES[_vm->_room->_selectCommand]);
+		msg = GENERAL_MESSAGES[_vm->_room->_selectCommand];
+	debugC(1, kDebugScripts, "cmdEndObject(msg=\"%s\")", msg);
+	printString(msg);
 }
 
 void Scripts::cmdJumpLook() {
+	debugC(1, kDebugScripts, "cmdJumpLook(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 0)
 		cmdGoto();
 	else
@@ -267,6 +272,7 @@ void Scripts::cmdJumpLook() {
 }
 
 void Scripts::cmdJumpHelp() {
+	debugC(1, kDebugScripts, "cmdJumpHelp(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 8)
 		cmdGoto();
 	else
@@ -274,6 +280,7 @@ void Scripts::cmdJumpHelp() {
 }
 
 void Scripts::cmdJumpGet() {
+	debugC(1, kDebugScripts, "cmdJumpGet(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 3)
 		cmdGoto();
 	else
@@ -281,6 +288,7 @@ void Scripts::cmdJumpGet() {
 }
 
 void Scripts::cmdJumpMove() {
+	debugC(1, kDebugScripts, "cmdJumpMove(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 2)
 		cmdGoto();
 	else
@@ -288,6 +296,7 @@ void Scripts::cmdJumpMove() {
 }
 
 void Scripts::cmdJumpUse() {
+	debugC(1, kDebugScripts, "cmdJumpUse(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 4)
 		cmdGoto();
 	else
@@ -295,6 +304,7 @@ void Scripts::cmdJumpUse() {
 }
 
 void Scripts::cmdJumpTalk() {
+	debugC(1, kDebugScripts, "cmdJumpTalk(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 6)
 		cmdGoto();
 	else
@@ -302,6 +312,7 @@ void Scripts::cmdJumpTalk() {
 }
 
 void Scripts::cmdNull() {
+	debugC(1, kDebugScripts, "cmdNull()");
 }
 
 #define PRINT_TIMER 25
@@ -309,6 +320,7 @@ void Scripts::cmdNull() {
 void Scripts::cmdPrint_v2() {
 	// Get a text line for display
 	Common::String msg = readString();
+	debugC(1, kDebugScripts, "cmdPrint_v2(msg=\"%s\")", msg.c_str());
 	printString(msg);
 }
 
@@ -325,6 +337,7 @@ void Scripts::doCmdPrint_v1(const Common::String &msg) {
 
 void Scripts::cmdPrint_v1() {
 	Common::String msg = readString();
+	debugC(1, kDebugScripts, "cmdPrint_v1(msg=\"%s\")", msg.c_str());
 	doCmdPrint_v1(msg);
 }
 
@@ -360,18 +373,21 @@ Common::String Scripts::readString() {
 }
 
 void Scripts::cmdRetPos() {
+	debugC(1, kDebugScripts, "cmdRetPos()");
 	_endFlag = true;
 	_returnCode = 0;
 }
 
 void Scripts::cmdAnim() {
 	int animId = _data->readByte();
+	debugC(1, kDebugScripts, "cmdAnim(animId=%d)", animId);
 	_vm->_animation->animate(animId);
 }
 
 void Scripts::cmdSetFlag() {
 	int flagNum = _data->readByte();
 	byte flagVal = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetFlag(flagNum=%d, flagVal=%d)", flagNum, flagVal);
 	assert(flagNum < 256);
 
 	_vm->_flags[flagNum] = flagVal;
@@ -380,6 +396,7 @@ void Scripts::cmdSetFlag() {
 void Scripts::cmdCheckFlag() {
 	int flagNum = _data->readUint16LE();
 	int flagVal = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdCheckFlag(flagNum=%d, flagVal=%d)", flagNum, flagVal);
 	assert(flagNum < 256);
 
 	if (_vm->_flags[flagNum] == flagVal)
@@ -390,17 +407,19 @@ void Scripts::cmdCheckFlag() {
 
 void Scripts::cmdGoto() {
 	_sequence = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdGoto(sequence=%d)", _sequence);
 	searchForSequence();
 }
 
 void Scripts::cmdAddScore() {
+	debugC(1, kDebugScripts, "cmdAddScore()");
 	_data->skip(1);
 }
 
 void Scripts::cmdSetInventory() {
 	int itemId = _data->readByte();
 	int itemVal = _data->readByte();
-
+	debugC(1, kDebugScripts, "cmdSetInventory(itemId=%d, itemVal=%d)", itemId, itemVal);
 	(*_vm->_inventory)[itemId] = itemVal;
 	_vm->_inventory->_startInvItem = 0;
 	_vm->_inventory->_startInvBox = 0;
@@ -410,7 +429,7 @@ void Scripts::cmdSetInventory() {
 void Scripts::cmdCheckInventory() {
 	int itemId = _data->readUint16LE();
 	int itemVal = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdCheckInventory(itemId=%d, itemVal=%d)", itemId, itemVal);
 	if ((*_vm->_inventory)[itemId] == itemVal)
 		cmdGoto();
 	else
@@ -418,8 +437,11 @@ void Scripts::cmdCheckInventory() {
 }
 
 void Scripts::cmdSetTex() {
+	int xStart = _data->readSint16LE();
+	int yStart = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdSetTex(xStart=%d, yStart=%d)", xStart, yStart);
 	_vm->_player->_playerDirection = RIGHT;
-	int posX = _data->readSint16LE() - (_vm->_player->_playerOffset.x / 2);
+	int posX = xStart - (_vm->_player->_playerOffset.x / 2);
 	if (posX <= _vm->_player->_rawPlayer.x)
 		_vm->_player->_playerDirection = LEFT;
 
@@ -428,7 +450,7 @@ void Scripts::cmdSetTex() {
 	bool scrlTemp = _vm->_player->_scrollFlag;
 
 	_vm->_player->_playerDirection = UP;
-	int posY = _data->readSint16LE();
+	int posY = yStart;
 	if (posY <= _vm->_player->_rawPlayer.y)
 		_vm->_player->_playerDirection = DOWN;
 
@@ -450,6 +472,7 @@ void Scripts::cmdSetTex() {
 
 void Scripts::cmdNewRoom() {
 	int roomNumber = _data->readByte();
+	debugC(1, kDebugScripts, "cmdNewRoom(roomNumber=%d)", roomNumber);
 	if (roomNumber != CURRENT_ROOM)
 		_vm->_player->_roomNumber = roomNumber;
 
@@ -478,6 +501,7 @@ void Scripts::converse1(int val) {
 
 void Scripts::cmdConverse() {
 	int val = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdConverse(val=%d)", val);
 	converse1(val);
 }
 
@@ -486,6 +510,7 @@ void Scripts::cmdCheckFrame() {
 	Animation *anim = _vm->_animation->findAnimation(id);
 
 	int frame = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdCheckFrame(id=%d, frame=%d)", id, frame);
 	if (anim->_frameNumber == frame)
 		cmdGoto();
 	else
@@ -495,7 +520,7 @@ void Scripts::cmdCheckFrame() {
 void Scripts::cmdCheckAnim() {
 	int id = _data->readUint16LE();
 	Animation *anim = _vm->_animation->findAnimation(id);
-
+	debugC(1, kDebugScripts, "cmdCheckAnim(id=%d)", id);
 	if (anim->_currentLoopCount == -1)
 		cmdGoto();
 	else
@@ -504,10 +529,12 @@ void Scripts::cmdCheckAnim() {
 
 void Scripts::cmdSnd() {
 	int id = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSnd(id=%d)", id);
 	_vm->_sound->playSound(id);
 }
 
 void Scripts::cmdRetNeg() {
+	debugC(1, kDebugScripts, "cmdRetNeg()");
 	_endFlag = true;
 	_returnCode = -1;
 }
@@ -517,6 +544,7 @@ void Scripts::cmdCheckLoc() {
 	int minY = _data->readUint16LE();
 	int maxX = _data->readUint16LE();
 	int maxY = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdCheckLoc(minX=%d, minY=%d, maxX=%d, maxY=%d)", minX, minY, maxX, maxY);
 
 	int curX = _vm->_player->_rawPlayer.x + _vm->_player->_playerOffset.x;
 	int curY = _vm->_player->_rawPlayer.y;
@@ -529,6 +557,7 @@ void Scripts::cmdCheckLoc() {
 
 void Scripts::cmdSetAnim() {
 	int animId = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetAnim(animId=%d)", animId);
 	Animation *anim = _vm->_animation->setAnimation(animId);
 
 	if (anim)
@@ -536,10 +565,12 @@ void Scripts::cmdSetAnim() {
 }
 
 void Scripts::cmdDispInv_v1() {
+	debugC(1, kDebugScripts, "cmdDispInv_v1()");
 	_vm->_inventory->displayInv();
 }
 
 void Scripts::cmdDispInv_v2() {
+	debugC(1, kDebugScripts, "cmdDispInv_v2()");
 	_vm->_inventory->newDisplayInv();
 	_vm->_events->forceSetCursor(CURSOR_ARROW);
 }
@@ -547,6 +578,7 @@ void Scripts::cmdDispInv_v2() {
 void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	byte val = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetAbout(idx=%d, val=%d)", idx, val);
 	_vm->_ask[idx] = val;
 	_vm->_startAboutBox = _vm->_startAboutItem = 0;
 }
@@ -554,7 +586,7 @@ void Scripts::cmdSetAbout() {
 void Scripts::cmdSetTimer() {
 	int idx = _data->readUint16LE();
 	int val = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdSetTimer(idx=%d, val=%d)", idx, val);
 	++_vm->_timers[idx]._flag;
 	_vm->_timers[idx]._timer = val;
 	_vm->_timers[idx]._initTm = val;
@@ -565,6 +597,7 @@ void Scripts::cmdSetTimer() {
 
 void Scripts::cmdCheckTimer() {
 	int idx = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdCheckTimer(idx=%d)", idx);
 
 	_vm->_canSaveLoad = true;
 	_vm->_events->pollEvents();
@@ -592,11 +625,13 @@ void Scripts::cmdCheckTimer() {
 void Scripts::cmdSetTravel() {
 	int idx = _data->readByte();
 	byte dest = _data->readByte();
+	debugC(1, kDebugScripts, "cmdSetTravel(idx=%d, dest=%d)", idx, dest);
 	_vm->_travel[idx] = dest;
 	_vm->_startTravelItem = _vm->_startTravelBox = 0;
 }
 
 void Scripts::cmdJumpGoto() {
+	debugC(1, kDebugScripts, "cmdJumpGoto(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 5)
 		cmdGoto();
 	else
@@ -609,11 +644,12 @@ void Scripts::cmdSetVideo() {
 	pt.y = _data->readSint16LE();
 	int cellIndex = _data->readUint16LE();
 	int rate = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdSetVideo(x=%d, y=%d, cellIndex=%d, rate=%d)", pt.x, pt.y, cellIndex, rate);
 	_vm->_video->setVideo(_vm->_screen, pt, _vm->_extraCells[cellIndex]._vid, rate);
 }
 
 void Scripts::cmdPlayVideo() {
+	debugC(1, kDebugScripts, "cmdPlayVideo()");
 	_vm->_video->playVideo();
 }
 
@@ -624,27 +660,33 @@ void Scripts::cmdPlotImage() {
 	int destY = _data->readUint16LE();
 	int objId = _data->readUint16LE();
 	int imgId = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdPlotImage(destX=%d, destY=%d, objId=%d, imgId=%d)", destX, destY, objId, imgId);
 	_vm->_screen->plotImage(_vm->_objectsTable[objId], imgId, Common::Point(destX, destY));
 }
 
 void Scripts::cmdSetDisplay() {
+	debugC(1, kDebugScripts, "cmdSetDisplay()");
 	_vm->_screen->setDisplayScan();
 	_vm->_current = _vm->_screen;
 }
 
 void Scripts::cmdSetBuffer() {
+	debugC(1, kDebugScripts, "cmdSetBuffer()");
 	_vm->_current = &_vm->_buffer2;
 }
 
 void Scripts::cmdSetScroll() {
-	_vm->_scrollCol = _data->readUint16LE();
-	_vm->_scrollRow = _data->readUint16LE();
+	int scrollCol = _data->readUint16LE();
+	int scrollRow = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdSetScroll(scrollCol=%d, scrollRow=%d)", scrollCol, scrollRow);
+	_vm->_scrollCol = scrollCol;
+	_vm->_scrollRow = scrollRow;
 	_vm->_scrollX = 0;
 	_vm->_scrollY = 0;
 }
 
 void Scripts::cmdSaveRect() {
+	debugC(1, kDebugScripts, "cmdSaveRect()");
 	int x = _vm->_screen->_lastBoundsX;
 	int y = _vm->_screen->_lastBoundsY;
 	int w = _vm->_screen->_lastBoundsW;
@@ -654,6 +696,7 @@ void Scripts::cmdSaveRect() {
 }
 
 void Scripts::cmdVideoEnded() {
+	debugC(1, kDebugScripts, "cmdVideoEnded()");
 	_vm->_events->pollEventsAndWait();
 
 	if (_vm->_video->_videoEnd) {
@@ -664,24 +707,29 @@ void Scripts::cmdVideoEnded() {
 }
 
 void Scripts::cmdSetBufVid() {
-	_vm->_vidX = _data->readUint16LE();
-	_vm->_vidY = _data->readUint16LE();
+	int vidX = _data->readUint16LE();
+	int vidY = _data->readUint16LE();
 	int idx = _data->readUint16LE();
 	int rate = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdSetBufVid(vidX=%d, vidY=%d, idx=%d, rate=%d)", vidX, vidY, idx, rate);
+	_vm->_vidX = vidX;
+	_vm->_vidY = vidY;
 	_vm->_video->setVideo(&_vm->_vidBuf, Common::Point(0, 0), FileIdent(_vm->_extraCells[idx]._vid._fileNum, _vm->_extraCells[idx]._vid._subfile), rate);
 }
 
 void Scripts::cmdPlayBufVid() {
+	debugC(1, kDebugScripts, "cmdPlayBufVid()");
 	_vm->_video->playVideo();
 	_vm->_video->copyVideo();
 }
 
 void Scripts::cmdRemoveLast() {
+	debugC(1, kDebugScripts, "cmdRemoveLast()");
 	--_vm->_numAnimTimers;
 }
 
 void Scripts::cmdDoTravel() {
+	debugC(1, kDebugScripts, "cmdDoTravel()");
 	while (true) {
 		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->_travel);
 		int btnSelected = 0;
@@ -723,6 +771,7 @@ void Scripts::cmdDoTravel() {
 }
 
 void Scripts::cmdHelp_v1() {
+	debugC(1, kDebugScripts, "cmdHelp_v1()");
 	int idx = 0;
 	for (int i = 0; i < 40; i++) {
 		byte c = _data->readByte();
@@ -753,7 +802,7 @@ void Scripts::cmdHelp_v1() {
 void Scripts::cmdCheckAbout() {
 	int idx = _data->readSint16LE();
 	int16 val = _data->readSint16LE();
-
+	debugC(1, kDebugScripts, "cmdCheckAbout(idx=%d, val=%d)", idx, val);
 	if (_vm->_ask[idx] == val)
 		cmdGoto();
 	else
@@ -764,6 +813,7 @@ void Scripts::cmdSpecial() {
 	_specialFunction = _data->readUint16LE();
 	int p1 = _data->readUint16LE();
 	int p2 = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdSpecial(specialFunction=%d, p1=%d, p2=%d)", _specialFunction, p1, p2);
 
 	if (_specialFunction == 1 || _vm->getGameID() == kGameMartianMemorandum) {
 		if (_vm->getGameID() == kGameAmazon && _vm->_establishTable[p2])
@@ -789,15 +839,18 @@ void Scripts::cmdSetCycle() {
 	int startCycle = _data->readUint16LE();
 	int endCycle = _data->readUint16LE();
 	int timer = _data->readUint16LE();
+	debugC(1, kDebugScripts, "cmdSetCycle(startCycle=%d, endCycle=%d, timer=%d)", startCycle, endCycle, timer);
 	_vm->_screen->setPaletteCycle(startCycle, endCycle, timer);
 }
 
 void Scripts::cmdCycle() {
+	debugC(1, kDebugScripts, "cmdCycle()");
 	if (_vm->_startup == -1)
 		_vm->_screen->cyclePaletteForward();
 }
 
 void Scripts::cmdCharSpeak() {
+	debugC(1, kDebugScripts, "cmdCharSpeak()");
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
 
@@ -811,6 +864,7 @@ void Scripts::cmdCharSpeak() {
 }
 
 void Scripts::cmdTexSpeak() {
+	debugC(1, kDebugScripts, "cmdTexSpeak()");
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
 	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 23 : 20;
@@ -827,6 +881,7 @@ void Scripts::cmdTexSpeak() {
 }
 
 void Scripts::cmdTexChoice() {
+	debugC(1, kDebugScripts, "cmdTexChoice()");
 
 	_vm->_oldRects.clear();
 	_choiceStart = _data->pos() - 1;
@@ -920,6 +975,7 @@ void Scripts::cmdTexChoice() {
 
 void Scripts::cmdWait() {
 	int time = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdWait(time=%d)", time);
 	_vm->_timers[3]._timer = time;
 	_vm->_timers[3]._initTm = time;
 	_vm->_timers[3]._flag++;
@@ -940,6 +996,7 @@ void Scripts::cmdWait() {
 void Scripts::cmdSetConPos() {
 	int x = _data->readSint16LE();
 	int y = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdSetConPos(x=%d, y=%d)", x, y);
 	_charsOrg = Common::Point(x, y);
 
 	x = _data->readSint16LE();
@@ -948,7 +1005,9 @@ void Scripts::cmdSetConPos() {
 }
 
 void Scripts::cmdCheckVFrame() {
-	if (_vm->_video->_videoFrame == _data->readSint16LE())
+	int vframe = _data->readSint16LE();
+	debugC(1, kDebugScripts, "cmdCheckVFrame(vframe=%d)", vframe);
+	if (_vm->_video->_videoFrame == vframe)
 		cmdGoto();
 	else
 		_data->skip(2);
@@ -956,7 +1015,7 @@ void Scripts::cmdCheckVFrame() {
 
 void Scripts::cmdJumpChoice() {
 	int val = (_data->readUint16LE() & 0xFF);
-
+	debugC(1, kDebugScripts, "cmdJumpChoice(val=%d, choice=%d)", val, _choice);
 	if (val == _choice) {
 		_sequence = _data->readUint16LE();
 		searchForSequence();
@@ -965,22 +1024,25 @@ void Scripts::cmdJumpChoice() {
 }
 
 void Scripts::cmdReturnChoice() {
+	debugC(1, kDebugScripts, "cmdReturnChoice()");
 	_data->seek(_choiceStart);
 }
 
 void Scripts::cmdClearBlock() {
+	debugC(1, kDebugScripts, "cmdClearBlock()");
 	_vm->_screen->restoreBlock();
 }
 
 void Scripts::cmdLoadSound() {
 	int idx = _data->readSint16LE();
-
+	debugC(1, kDebugScripts, "cmdLoadSound(idx=%d)", idx);
 	_vm->_sound->_soundTable.clear();
 	Resource *sound = _vm->_files->loadFile(_vm->_extraCells[idx]._vidSound);
 	_vm->_sound->_soundTable.push_back(SoundEntry(sound, 1));
 }
 
 void Scripts::cmdFreeSound() {
+	debugC(1, kDebugScripts, "cmdFreeSound()");
 	SoundManager &sound = *_vm->_sound;
 
 	if (sound._soundTable.size() > 0 && sound._soundTable[0]._res) {
@@ -998,6 +1060,7 @@ void Scripts::cmdFreeSound() {
 }
 
 void Scripts::cmdSetVideoSound() {
+	debugC(1, kDebugScripts, "cmdSetVideoSound()");
 	uint32 startPos = _data->pos();
 	_data->skip(4);
 	cmdLoadSound();
@@ -1009,6 +1072,7 @@ void Scripts::cmdSetVideoSound() {
 }
 
 void Scripts::cmdPlayVideoSound() {
+	debugC(1, kDebugScripts, "cmdPlayVideoSound()");
 	_vm->_video->playVideo();
 	if (_vm->_video->_soundFrame == _vm->_video->_videoFrame &&
 			!_vm->_video->_soundFlag) {
@@ -1020,20 +1084,20 @@ void Scripts::cmdPlayVideoSound() {
 }
 
 void Scripts::cmdPrintWatch() {
+	debugC(1, kDebugScripts, "cmdPrintWatch()");
 	printWatch();
 	findNull();
 }
 
 void Scripts::cmdDispAbout() {
+	debugC(1, kDebugScripts, "cmdDispAbout()");
 	_vm->_travelBox->getList(Martian::ASK_TBL, _vm->_ask);
 	int btnSelected = 0;
 	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
 	_vm->_startAboutItem = _vm->_boxDataStart;
 	_vm->_startAboutBox = _vm->_boxSelectY;
-
 	if (boxX == -1)
 		btnSelected = 2;
-
 	if (btnSelected == 2)
 		_vm->_useItem = -1;
 	else
@@ -1041,13 +1105,14 @@ void Scripts::cmdDispAbout() {
 }
 
 void Scripts::cmdPushLocation() {
+	debugC(1, kDebugScripts, "cmdPushLocation()");
 	_choiceStart = _data->pos() - 1;
 }
 
 void Scripts::cmdCheckTravel() {
 	int idx = _data->readSint16LE();
 	uint16 val = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdCheckTravel(idx=%d, val=%d)", idx, val);
 	if (_vm->_travel[idx] == val)
 		cmdGoto();
 	else
@@ -1059,28 +1124,33 @@ void Scripts::cmdBlock() {
 	int y = _data->readUint16LE();
 	int w = _data->readSint16LE();
 	int h = _data->readUint16LE();
-
+	debugC(1, kDebugScripts, "cmdBlock(x=%d, y=%d, w=%d, h=%d)", x, y, w, h);
 	_vm->_screen->blitFrom(_vm->_buffer2, Common::Rect(x, y, x + w, y + h), Common::Point(x, y));
 }
 
 void Scripts::cmdPlayerOff() {
+	debugC(1, kDebugScripts, "cmdPlayerOff()");
 	_vm->_player->_playerOff = true;
 }
 
 void Scripts::cmdPlayerOn() {
+	debugC(1, kDebugScripts, "cmdPlayerOn()");
 	_vm->_player->_playerOff = false;
 }
 
 void Scripts::cmdDead() {
 	int deathId = _data->readByte();
+	debugC(1, kDebugScripts, "cmdDead(deathId=%d)", deathId);
 	_vm->dead(deathId);
 }
 
 void Scripts::cmdFadeOut() {
+	debugC(1, kDebugScripts, "cmdFadeOut()");
 	_vm->_screen->forceFadeOut();
 }
 
 void Scripts::cmdEndVideo() {
+	debugC(1, kDebugScripts, "cmdEndVideo()");
 	_vm->_video->closeVideo();
 	_vm->_video->_videoEnd = true;
 }
