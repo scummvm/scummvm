@@ -8883,8 +8883,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("sakuratoasobo", "", "xn--l8jzar8a3c0gsd",		 "rt:bba895923670cea79e41f2e66dc1842a", 117942, Common::JA_JPN, 602),
 	WINGAME1_l("sakuratoasobo", "", "xn--.exe-u53czcwb1d3ewj9e", "t:69ab70efaba6232fa32debf569b413ac", 1982850, Common::JA_JPN, 650),
 
-	WINGAME2_l("samson", "", "start.exe", "a593079aecf5bd938ce75264cac24b2d", 1919963,
-							 "GOSCHOT.DXR", "045e8b0091317831da84596f807779cd", 161404, Common::NL_NLD, 600),
+	MACGAME2_l("samson", "", "Start",		"r:f94f39ddfb10709fe030d273e2d81a4e",  114772,
+							 "GOSCHOT.DXR", "d:045e8b0091317831da84596f807779cd",  161404, Common::NL_NLD, 600),
+	WINGAME2_l("samson", "", "start.exe",	"t:1d636e5658425d7a0cdd2492f1a55ba2", 1919963,
+							 "GOSCHOT.DXR", "f:045e8b0091317831da84596f807779cd",  161404, Common::NL_NLD, 600),
 
 	MACGAME1("secretwriters", "", "Secret Writer's Society", "1b0e3f44bd18e81164b424a268e4fdf7", 1028926, 600),
 	WINGAME1t("secretwriters", "", "WRITING.EXE", "48c8c31df289713b629af6a4c4e519fb", 1508719, 600),
@@ -8905,15 +8907,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// From "The Official 007 Multimedia Screen Saver Collection Vol. 1"
 	WINGAME2("ss007", "", "007.exe", "t:b81fd67eca21e29d2e1e81a00522faab", 4971852,
-						  "007.scr", "d:6dbf8fef5257a3f45c747c5ebefa79ee",  446592, 650),
+						  "007.scr", "f:6dbf8fef5257a3f45c747c5ebefa79ee",  446592, 650),
 
-	MACGAME1("ssgbi", "", "GBI Screen Saver", "9c9907925c1bf80a71ae27f423925725", 1130762, 601),
+	MACGAME1("ssgbi", "", "GBI Screen Saver", "r:9c9907925c1bf80a71ae27f423925725", 1130506, 601),
 
 	// Part of "Lee Pipes Press Kit"
 	// Both versions require installation
-	MACGAME1("ssleepipes", "", "pipes",		"dc48a185cfddce0d48a199fd25e328ac", 94195, 650),
-	WINGAME2("ssleepipes", "", "pipes.exe", 			  "a593079aecf5bd938ce75264cac24b2d", 1545446,
-							   "pipes_data/episode1.dxr", "45b6a2d7952903bd554c82c0a0d6044a", 2809574, 600),
+	MACGAME1("ssleepipes", "", "pipes",					  "r:dc48a185cfddce0d48a199fd25e328ac",   93939, 650),
+	WINGAME2("ssleepipes", "", "pipes.exe", 			  "t:5d9400a013739fec9ddc37ba1adfa4ae", 1545446,
+							   "pipes_data/episode1.dxr", "f:45b6a2d7952903bd554c82c0a0d6044a", 2809574, 600),
 
 	// Screen savers found on Let's Play with "Sakura" activity CD
 	// Mac versions are D5
@@ -8923,7 +8925,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("ssyukito", "",	 "SCR/Yukito.exe",	 "t:190198bc50a486c70458497daded8e51", 5003908, Common::JA_JPN, 650),
 
 	// Mac version is D5
-	WINGAME1("ssrevwar", "", "Revwar.exe", "d62438566e44826960fc16c5c23dbe43", 21088827, 650),
+	WINGAME1("ssrevwar", "", "Revwar.exe", "t:d9d72e1918e61e62cddfd7bf4bd8cb65", 21088827, 650),
 
 	MACGAME1_l("startover", "", "START OVER", "a9351ab8f542c648b3e7db3957d5c102", 118562, Common::JA_JPN, 602),
 	WINGAME1t_l("startover", "", "START OVER.EXE", "5b3c75060e6c0ec4fd463ae5fcf68e23", 1733326, Common::JA_JPN, 602),
@@ -8941,15 +8943,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Part of the Super Tutor series sold through Homeworkhelp.com
 	// Found in the Middle School Advantage 2001 bundle and High Achiever Grammar from PC Treasures
 	WINGAME2("supertutorgram", "v1.0", "GRAMMAR.EXE", "t:fda7b633747e5c04d0841db5d2a3dc16", 1853673,
-									   "UNIT.DXR",	  "d:86afc72b6c8a4675406fd1074e587e19",  247156, 600),
+									   "UNIT.DXR",	  "f:86afc72b6c8a4675406fd1074e587e19",  247156, 600),
 
-	WINDEMO1_l("tchaik", "Demo", "TCHAIK.EXE", "a593079aecf5bd938ce75264cac24b2d", 15780729, Common::RU_RUS, 600),
+	WINDEMO1_l("tchaik", "Demo", "TCHAIK.EXE", "t:243088a44663ca65120dcbac4755bb1f", 15780729, Common::RU_RUS, 600),
 
 	WINGAME1("technik", "Exe 1", "Technik/Exe1/Techni00.exe", "t:5d018dbf7eb8157bb344aeebece996a1", 1615559, 650),
 	WINGAME1("technik", "Exe 2", "Technik/Exe2/Techni00.exe", "t:8f9433ba36b08f5333280c9dbea11a8e", 1617988, 650),
 
 	WINGAME2("thesims", "", "maxis.exe",	 "t:a6734b7a04d0c3d8a64796fb314ce576",  1915533,
-							"dir/sims1.dir", "d:8c6ccc894cce347ddec675ebe56505c0", 11132824, 650),
+							"dir/sims1.dir", "f:8c6ccc894cce347ddec675ebe56505c0", 11132824, 650),
 
 	WINGAME1_l("tiefsee", "", "Tiefsee.exe", "t:c932fbb3da13e4fdecd49f877531e422", 1508764, Common::DE_DEU, 650),
 
@@ -8957,19 +8959,19 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME2f_l("tivolafall1998", "Sampler", "Start",        "r:d549c6d331cf1c6354f1f2b93b34c0f4", 1026645,
 											 "Selector.dxr", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
 	WINGAME2f_l("tivolafall1998", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
-											 "SELECTOR.DXR", "d:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
+											 "SELECTOR.DXR", "f:a2a7e250ea2b6e16467662454bd90381", 8035090, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Spring 1999, released in Germany
 	MACGAME2f_l("tivolaspring1999", "Sampler", "Start",        "r:34be958e28922244011f9f0be46c5b57", 1030506,
 											   "Selector.dxr", "d:85d85c2e1c2d74166548f222cc77918f", 10601412, Common::DE_DEU, 601, GF_32BPP),
 	WINGAME2f_l("tivolaspring1999", "Sampler", "START16.EXE",  "t:a7fbc5507e75ea320562965671db3e0d", 1396929,
-											   "SELECTOR.DXR", "d:89408b76c6835b4e813f375371ebfd1b", 10979868, Common::DE_DEU, 601, GF_32BPP),
+											   "SELECTOR.DXR", "f:89408b76c6835b4e813f375371ebfd1b", 10979868, Common::DE_DEU, 601, GF_32BPP),
 
 	// Tivola demo/sampler disc, Summer 2000, released in Germany
 	MACGAME2_l("tivolasummer2000", "Sampler", "Start",       "r:4f9ad1f256e6840067f44a1c9ad80233", 1031458,
 											  "Intro.dxr",   "d:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
 	WINGAME2_l("tivolasummer2000", "Sampler", "START32.EXE", "t:6e942f3ee581d326d0a5bd41bc29e220", 1675134,
-											  "INTRO.DXR",   "d:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
+											  "INTRO.DXR",   "f:a9c22c2247353e17cc6385eb9cbcb014", 1169358, Common::DE_DEU, 650),
 
 	// Ein Fall für TKKG: Tödliche Schokolade (bilingual DE/EN)
 	MACGAME2("tkkg2", "", "TKKG start", "7ce3e3594ca71914e50806cf934ac714", 1032378,
@@ -8977,7 +8979,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("tkkg2", "", "TKKG2_95.EX_", "913a935918698c299c30b96b6b696ba2", 1705034, 602),
 	// Dutch numbering is different from German originals
 	// Een zaak voor TKKG 2: dodelijke chocolade (bilingual NL/EN)
-	WINGAME1_l("tkkg2", "", "Tkkg2_95.exe", "518a98696fe1122e08410b0f157f21bf", 1705034, Common::NL_NLD, 602),
+	WINGAME1_l("tkkg2", "", "Tkkg2_95.exe", "t:913a935918698c299c30b96b6b696ba2", 1705034, Common::NL_NLD, 602),
 
 	// Ein Fall für TKKG: Der Schatz der Maya (bilingual DE/EN)
 	MACGAME2("tkkg3", "", "TKKG start", "017b653021b4e4896e6a50cc5fedb24c", 1032378,
@@ -8986,15 +8988,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Een zaak voor TKKG 1: De schat van de Maya's (bilingual NL/EN) (Demo)
 	WINDEMO2t_l("tkkg3", "Demo", "start.exe", "e39e34d0866c08539cb557af3a45c00e", 1289732,
 								 "DEMO_00.dxr", "d3793c1016aea64ebabeeca7c4e3a65d", 2488656, Common::NL_NLD, 602),
-	MACDEMO2_l("tkkg3", "", "start", "b0b0e36586489ca6070d20feeff52fa5", 1026645,
-							"DEMO_00.DXR", "1ea80b7d22a6db7ce669a988812f0d64", 2488656, Common::NL_NLD, 606),
+	MACDEMO2_l("tkkg3", "Demo",	 "start",		"b0b0e36586489ca6070d20feeff52fa5", 1026645,
+								 "DEMO_00.DXR", "1ea80b7d22a6db7ce669a988812f0d64", 2488656, Common::NL_NLD, 606),
 
 	// Ein Fall für TKKG: Das Rätsel der Villa Drachenkralle (bilingual DE/EN)
 	MACGAME2("tkkg4", "", "TKKG start", "b21aa60a64051a4f3873b1500444aa3b", 1032378,
 						  "SCORE.DXR",  "26a12f39d812059982637f153dad58a8", 1162642, 602),
 	WINGAME1t("tkkg4", "", "TKKG4_95.EX_", "8d61eba98b5da877fe293e97cf0fcadd", 1513570, 602),
 	// Een zaak voor TKKG 5: het raadsel van villa Drakenklauw (bilingual NL/EN)
-	WINGAME1_l("tkkg4", "", "tkkg4_95.exe", "518a98696fe1122e08410b0f157f21bf", 1513570, Common::NL_NLD, 602),
+	WINGAME1_l("tkkg4", "", "tkkg4_95.exe", "t:8d61eba98b5da877fe293e97cf0fcadd", 1513570, Common::NL_NLD, 602),
 
 	// Ein Fall für TKKG: Verrat an TKKG (bilingual DE/EN)
 	MACGAME2("tkkg5", "", "TKKG Start", "cf534db714fe9bd4c6059755094f9bed", 1037002,
@@ -9017,8 +9019,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t("traitorsgate", "DVD", "TGstart.exe", "4c2e7bffa671bc537ff8e93fd51d4139", 2072959, 650),
 	WINGAME1("traitorsgate", "", "TRG001.EXE", "b762d2cc3f7db2a6446135917fe92496", 2072959, 650),
 
-	MACGAME1("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
-	WINGAME1("trekpedia98", "", "ENCY98.EXE", "35f1550747fcf691283b0f2486144e2b", 1707566, 600),
+	// Mac folder name is Star Trek™ Encyclopedia
+	MACGAME1("trekpedia98", "", "xn--Star Trek Encyclopedia-b40n/Ency98 Player", "rt:10b030b001d21bdd8e1a494692038cc8", 1091550, 600),
+	WINGAME1("trekpedia98", "", "ENCY98/ENCY98.EXE",							 "t:11284eb01d25ce2942d3013f6ad568f6",  1707566, 600),
 
 	MACGAME1("trekship", "", "Starship Creator/Starship Creator", "f26885badb07dcf3a79defda517d4ddb", 1055900, 650),
 	MACGAME1("trekship", "Mission Watcher", "Starship Creator/ShipMain/Mission Watcher", "ce8cd9917c9ba9d454d8ed71478a1486", 113475, 650),
@@ -9036,11 +9039,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("tripitaka", "", "TRPTK_32.EXE", "t:f6ae72181e7ed6adc415b9833a121a9d", 1514121, Common::JA_JPN, 602),
 
 	// Overview of Tutti's Magical Stories series
-	WINGAME1_l("tutti", "", "TUTTI.EXE", "a593079aecf5bd938ce75264cac24b2d", 14715583, Common::RU_RUS, 600),
+	WINGAME1_l("tutti", "", "TUTTI.EXE", "t:6d23d9a630f0d4bd7739ebf1176a7126", 14715583, Common::RU_RUS, 600),
 
 	// Promotional item produced by Chester Square, London
 	WINGAME2("twine", "", "bond.exe",		 "t:4ad4145cb6f893abb245bf23fb5566fc", 14288637,
-						  "John Smiths.avi", "d:8a301f6efce484c26245c3b37d406e5a", 24573396, 650),
+						  "John Smiths.avi", "f:8a301f6efce484c26245c3b37d406e5a", 24573396, 650),
 
 	// Original filename is '海釣り三昧'
 	MACGAME1_l("ukiukiitsudemo", "", "xn--nbkx10ghrq4vg9p1c", "a00a1a1ccf38e246513d66ce47c52bdb", 1033359, Common::JA_JPN, 601),
@@ -9048,15 +9051,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Japanese texts with partial English dubbing
 	WINGAME2_l("void", "", "VOID.exe",	  "t:49ca40f52b2fb46ae11080d34d27301d", 1701070,
-						   "void/op.dxr", "d:3afa212a3281a1cd1db4e14145f72a16", 4266264, Common::JA_JPN, 602),
+						   "void/op.dxr", "f:3afa212a3281a1cd1db4e14145f72a16", 4266264, Common::JA_JPN, 602),
 
 	// Launcher included in european version of the game, contains instructions, lore and credits
-	WINGAME1("voyeur2", "Launcher", "voyeur2.exe", "e7bccfe54354d08a9d2d0e181f66406b", 2003432, 602),
+	WINGAME1("voyeur2", "Launcher", "voyeur2.exe", "t:81d4d38fd82f032aae1265808a3bced7", 2003432, 602),
 
 	WINGAME1_l("wettlauf", "", "wettlauf.exe", "t:6b5334344ed80c9f990be997059290e1", 1523209, Common::DE_DEU, 650),
 
 	// CD check projector uses Win95 GUI mockup to ask your drive speed then launch game
-	WINGAME1("wiggles1", "", "WIGGLES.EXE", "d62438566e44826960fc16c5c23dbe43", 1862279, 650),
+	WINGAME2("wiggles1", "", "WIGGLES.EXE",			"t:b8209def01e1160ddfb5359f0929f36a", 1862279,
+							 "WIGGLES/ANT/ANT.DXR", "f:8b7acd3dff901e13a6942611ac3ca12d", 3096456, 650),
 
 	WINGAME2t("willywabbitmandarin", "Game Disk",	 "STARTUP.EXE", "d735e4792bbc43ae5d10b71977d4cc41", 1161525,
 													 "WWCHIN1.INI", "2941898460e56153a07e458798fd9b6c",		 55, 602),
@@ -9064,9 +9068,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 													 "WWCHIN2.INI", "a043f72966075bbc434acebf9e0e489d",		  48, 602),
 
 	// Found on Disc Inferno from APC magazine (Australia), Dec 1999
-	MACGAME1("wonkatrivia", "v1.0", "wonkatriviaPPC.prj", "c2f8ae6c5a7b8f9aab5597f7de517443", 113731, 650),
+	MACGAME1("wonkatrivia", "v1.0", "wonkatriviaPPC.prj", "r:c2f8ae6c5a7b8f9aab5597f7de517443", 113475, 650),
 
-	WINGAME1("worldnet", "", "EGUIDE95.EXE", "518a98696fe1122e08410b0f157f21bf", 2876414, 602),
+	WINGAME2("worldnet", "", "EGUIDE95.EXE", "t:82bb237935a100bbebd0ffbd2b227f78", 2876414,
+							 "E-GUIDE.DXR",	 "f:06fca10bebc5c9fe04a126cec4035ede", 1195326, 602),
 
 	WINDEMO2t("xfiles", "CD Demo", "X-Files.exe", "44a15040c26429c13411859d6fd03bbf", 1527961,
 								   "INTRO.DXR",   "8de2b376be89ec9611d489a8a90bb2c9", 1844200, 600),
@@ -9082,12 +9087,12 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME2t("xfua", "", "X-FILES.EXE", "44a15040c26429c13411859d6fd03bbf", 1719387,
 						  "LAUNCH.DXR",	 "e44000f96f5e329da90d25779cb14995", 30096, 602),
 
-	MACGAME1_l("xtown1", "", "GIFTET", "7a36d53490a07ddc212b65cad9ed11f3", 116103, Common::SV_SWE, 650),
-	WINGAME1t_l("xtown1", "", "GIFTET.EXE", "dd8c395cb1b40eee169f022b16a1c0bd", 1521398, Common::SV_SWE, 600),
+	MACGAME1_l("xtown1", "", "CROSSTOWN GIFTET/GIFTET", "rt:0ea199b26ecce9d8563e7d9b4cf97ba8", 116103, Common::SV_SWE, 650),
+	WINGAME1_l("xtown1", "", "XTOWN1/GIFTET.EXE",		"t:dd8c395cb1b40eee169f022b16a1c0bd", 1521398, Common::SV_SWE, 600),
 
 	// Original Mac filename is 妖怪図鑑2
-	MACGAME1_l("yokai400", "", "xn--2-we0by4fq4jlr4e", "d14bf1f7a413df29a04b8fbc7a0fe81f", 1033551, Common::JA_JPN, 601),
-	WINGAME1_l("yokai400", "", "YOUKAI2.EXE", "3703e9ea28aed0c647b73a1b49a51d65", 1512615, Common::JA_JPN, 601),
+	MACGAME1_l("yokai400", "", "xn--2-we0by4fq4jlr4e", "r:d14bf1f7a413df29a04b8fbc7a0fe81f", 1033295, Common::JA_JPN, 601),
+	WINGAME1_l("yokai400", "", "YOUKAI2.EXE",		   "t:f43e37dd62ff37b9ac4734f45e105c93", 1512615, Common::JA_JPN, 601),
 
 //////////////////////////////////////////////////
 //
