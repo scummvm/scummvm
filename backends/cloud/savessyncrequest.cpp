@@ -82,6 +82,15 @@ void SavesSyncRequest::directoryListedCallback(const Storage::ListDirectoryRespo
 		return;
 
 	if (response.request) _date = response.request->date();
+	if (_date.empty()) {
+		// This is from SaveLoadChooser::createDefaultSaveDescription
+		TimeDate curTime;
+		g_system->getTimeAndDate(curTime);
+		curTime.tm_year += 1900; // fixup year
+		curTime.tm_mon++;        // fixup month
+		_date = Common::String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+		debug(9, "SavesSyncRequest: using local time as fallback: %s", _date.c_str());
+	}
 
 	Common::HashMap<Common::String, bool> localFileNotAvailableInCloud;
 	for (auto &timestamp : _localFilesTimestamps) {
@@ -470,6 +479,7 @@ void SavesSyncRequest::finishSync(bool success) {
 	Request::finishSuccess();
 
 	//update last successful sync date
+	debug(9, "SavesSyncRequest: last successful sync date: %s", _date.c_str());
 	CloudMan.setStorageLastSync(CloudMan.getStorageIndex(), _date);
 
 	if (_boolCallback)
