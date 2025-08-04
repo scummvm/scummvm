@@ -441,9 +441,12 @@ TestExitStatus CloudTests::testDownloading() {
 		return kTestSkipped;
 	}
 
-	const Common::Path &path = ConfMan.getPath("path");
-	Common::FSDirectory gameRoot(path);
-	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_file.txt");
+	Common::FSNode testDirectory(ConfMan.getPath("path"));
+	if (!testDirectory.isWritable()) {
+		// redirect to savepath if game-data directory is not writable.
+		testDirectory = Common::FSNode(ConfMan.getPath("savepath"));
+	}
+	Common::FSNode node = testDirectory.getChild("downloaded_file.txt");
 	Common::Path filepath = node.getPath();
 	if (CloudMan.getCurrentStorage()->download(
 			Common::String(getRemoteTestPath()) + "/testfile.txt",
@@ -488,9 +491,12 @@ TestExitStatus CloudTests::testFolderDownloading() {
 		return kTestSkipped;
 	}
 
-	const Common::Path &path = ConfMan.getPath("path");
-	Common::FSDirectory gameRoot(path);
-	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
+	Common::FSNode testDirectory(ConfMan.getPath("path"));
+	if (!testDirectory.isWritable()) {
+		// redirect to savepath if game-data directory is not writable.
+		testDirectory = Common::FSNode(ConfMan.getPath("savepath"));
+	}
+	Common::FSNode node = testDirectory.getChild("downloaded_directory");
 	Common::Path filepath = node.getPath();
 	if (CloudMan.downloadFolder(
 			getRemoteTestPath(),
@@ -535,10 +541,6 @@ TestExitStatus CloudTests::testSavesSync() {
 		return kTestSkipped;
 	}
 
-	Common::Path path = ConfMan.getPath("path");
-	Common::FSDirectory gameRoot(path);
-	Common::FSNode node = gameRoot.getFSNode().getChild("downloaded_directory");
-	Common::Path filepath = node.getPath();
 	if (CloudMan.syncSaves(
 			new Common::GlobalFunctionCallback<const Cloud::Storage::BoolResponse &>(&savesSyncedCallback),
 			new Common::GlobalFunctionCallback<const Networking::ErrorResponse &>(&errorCallback)
