@@ -606,7 +606,7 @@ extern byte tipoefectofundido;
  */
 extern byte iframe, iframe2;
 
-extern long sizepantalla;
+extern long screenSize;
 
 /**
  * Depth of screenobjects
@@ -637,7 +637,7 @@ extern byte *characterDirtyRect;
 /**
  * Stores a copy of the background bitmap
  */
-extern byte *handpantalla;
+extern byte *screenHandle;
 
 extern uint currentRoomNumber;
 

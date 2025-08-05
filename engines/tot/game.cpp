@@ -64,7 +64,7 @@ void newGame() {
 		initializeObjectFile();
 		loadPalette("DEFAULT");
 		loadScreenData(1);
-		effect(13, false, background);
+		screenTransition(13, false, background);
 		mask();
 		posicioninv = 0;
 		drawBackpack();
@@ -116,7 +116,7 @@ int engine_start() {
 }
 
 int startGame() {
-	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	switch (gamePart) {
 	case 1:
 		playMidiFile("PRIMERA", true);
@@ -126,7 +126,7 @@ int startGame() {
 		break;
 	}
 	contadorpc2 = contadorpc;
-	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	inGame = true;
 
 	Common::Event e;
@@ -152,6 +152,21 @@ int startGame() {
 				changeGameSpeed(e);
 
 				switch (e.kbd.keycode) {
+
+				case Common::KEYCODE_UP:
+					playMidiFile("INTRODUC", true);
+					break;
+				case Common::KEYCODE_DOWN:
+					playMidiFile("PRIMERA", true);
+					break;
+				case Common::KEYCODE_LEFT:
+					playMidiFile("SEGUNDA", true);
+					// saveLoad();
+					break;
+				case Common::KEYCODE_RIGHT:
+					playMidiFile("CREDITOS", true);
+					// saveLoad();
+					break;
 
 				case Common::KEYCODE_ESCAPE:
 					escapePressed = true;
@@ -429,10 +444,10 @@ int startGame() {
 			continuarpartida = false;
 			g_engine->saveAutosaveIfEnabled();
 			totalFadeOut(0);
-			lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 			clear();
 			playMidiFile("INTRODUC", true);
-			restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 			initialMenu(true);
 			verifyCopyProtection2();
 
@@ -446,7 +461,7 @@ int startGame() {
 				contadorpc = contadorpc2;
 				desactivagrabar = false;
 			}
-			lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 			switch (gamePart) {
 			case 1:
 				playMidiFile("PRIMERA", true);
@@ -455,7 +470,7 @@ int startGame() {
 				playMidiFile("SEGUNDA", true);
 				break;
 			}
-			restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 		}
 
 		switch (gamePart) {
@@ -471,9 +486,9 @@ int startGame() {
 				freeScreenObjects();
 				g_engine->_mouseManager->hide();
 				partialFadeOut(234);
-				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 				playMidiFile("CREDITOS", true);
-				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 				if (contadorpc2 > 43)
 					showError(274);
 				sacrificeScene();
@@ -486,10 +501,10 @@ int startGame() {
 				trayec[indicetray].x = characterPosX;
 				trayec[indicetray].y = characterPosY;
 				loadScreenData(20);
-				lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 				playMidiFile("SEGUNDA", true);
-				restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				effect(1, false, background);
+				fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				screenTransition(1, false, background);
 				mask();
 				posicioninv = 0;
 				drawBackpack();
@@ -577,7 +592,7 @@ void sceneChange() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
@@ -587,7 +602,7 @@ void sceneChange() {
 			autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			cargatele();
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
 		oldxrejilla = 0;
@@ -605,12 +620,12 @@ void sceneChange() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			effect(tipoefectofundido, true, NULL);
+			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 			stopVoc();
 			autoPlayVoc("CALDERA", 6433, 15386);
 			setSfxVolume(volumenfxizquierdo, 0);
-			effect(tipoefectofundido, false, background);
+			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -650,7 +665,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		iframe = 0;
 		indicetray = 0;
 		characterPosX = currentRoomData->doors[indicepuertas].posxsalida - rectificacionx;
@@ -658,7 +673,7 @@ void sceneChange() {
 		trayec[indicetray].x = characterPosX;
 		trayec[indicetray].y = characterPosY;
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		g_engine->_mouseManager->show();
 
 		oldxrejilla = 0;
@@ -677,9 +692,9 @@ void sceneChange() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			effect(tipoefectofundido, true, NULL);
+			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-			effect(tipoefectofundido, false, background);
+			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -738,9 +753,9 @@ void sceneChange() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			effect(tipoefectofundido, true, NULL);
+			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-			effect(tipoefectofundido, false, background);
+			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -770,7 +785,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (libro[0] == true && currentRoomData->animationFlag == true)
@@ -778,7 +793,7 @@ void sceneChange() {
 		if (contadorpc > 89)
 			showError(274);
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
 		oldxrejilla = 0;
@@ -797,9 +812,9 @@ void sceneChange() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			effect(tipoefectofundido, true, NULL);
+			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-			effect(tipoefectofundido, false, background);
+			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -830,9 +845,9 @@ void sceneChange() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			effect(tipoefectofundido, true, NULL);
+			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-			effect(tipoefectofundido, false, background);
+			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
 			oldyrejilla = 0;
@@ -862,7 +877,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[0][hornacina[0][3]]) {
@@ -884,7 +899,7 @@ void sceneChange() {
 		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
 		if (currentRoomData->codigo == 4)
 			loadVoc("GOTA", 140972, 1029);
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
 		oldxrejilla = 0;
@@ -902,7 +917,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[1][hornacina[1][3]]) {
@@ -947,7 +962,7 @@ void sceneChange() {
 				}
 			assembleScreen();
 		}
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		if ((rojo_capturado == false) && (trampa_puesta == false))
 			runaroundRed();
 		contadorpc = contadorpc2;
@@ -970,7 +985,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		effect(tipoefectofundido, true, NULL);
+		screenTransition(tipoefectofundido, true, NULL);
 		stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
@@ -984,7 +999,7 @@ void sceneChange() {
 			autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
-		effect(tipoefectofundido, false, background);
+		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
 		oldxrejilla = 0;

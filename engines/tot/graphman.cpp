@@ -33,7 +33,7 @@ namespace Tot {
 GraphicsManager::GraphicsManager() {
 	for (int i = 0; i < 256; i++)
 		for (int j = 0; j < 256; j++)
-			datosfundido[i][j] = i / (j + 1);
+			fadeData[i][j] = i / (j + 1);
 
 	Common::File exeFile;
 	if (!exeFile.open(Common::Path("TOT.EXE"))) {

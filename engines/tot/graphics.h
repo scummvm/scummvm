@@ -37,7 +37,7 @@ void putImg(uint coordx, uint coordy, byte *image, bool transparency = false);
 void putShape(uint coordx, uint coordy, byte *image);
 void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image);
 void loadPalette(Common::String image);
-void effect(byte effectNumber, bool fadeToBlack, byte *screen);
+void screenTransition(byte effectNumber, bool fadeToBlack, byte *screen);
 void turnLightOn();
 void totalFadeOut(byte red);
 void partialFadeOut(byte numCol);
@@ -50,9 +50,9 @@ void changeRGBBlock(byte initialColor, uint numColors, byte *rgb);
 void processingActive();
 void rectangle(int x1, int y1, int x2, int y2, byte color);
 void rectangle(uint x1, uint y1, uint x2, uint y2, byte color);
-void handPantallaToBackground();
+void screenHandleToBackground();
 void copyPalette(palette from, palette to);
-void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int sizeanimado);
+void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
 } // End of namespace Tot
 
 #endif

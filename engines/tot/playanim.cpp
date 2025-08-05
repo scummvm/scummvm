@@ -209,7 +209,7 @@ byte tipoefectofundido;
 
 byte iframe, iframe2;
 
-long sizepantalla;
+long screenSize;
 
 datosobj depthMap[numobjetosconv];
 
@@ -223,7 +223,7 @@ byte *background;
 
 byte *characterDirtyRect;
 
-byte *handpantalla;
+byte *screenHandle;
 
 uint currentRoomNumber;
 
@@ -731,8 +731,8 @@ void clearVars() {
 	if(background != NULL) {
 		free(background);
 	}
-	if(handpantalla != NULL) {
-		free(handpantalla);
+	if(screenHandle != NULL) {
+		free(screenHandle);
 	}
 	if(conversationData != NULL) {
 		free(conversationData);
