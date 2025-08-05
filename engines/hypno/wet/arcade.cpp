@@ -220,6 +220,13 @@ void WetEngine::findNextSegment(ArcadeShooting *arc) {
 						MVideo video(arc->hitBoss1Video, Common::Point(0, 0), false, true, false);
 						disableCursor();
 						runIntro(video);
+						loadPalette(_currentPalette);
+						_background->decoder->pauseVideo(false);
+						drawPlayer();
+						updateScreen(*_background);
+						drawScreen();
+						// TODO: there is still a annoying delay here that shows a screen with light blue background
+
 					} else if (_arcadeMode == "Y3")
 						_skipLevel = true;
 				} else {
