@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -122,10 +121,7 @@ void BoxTokenRefresher::finishError(const Networking::ErrorResponse &error, Netw
 
 void BoxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
-	curl_slist_free_all(_headersList);
-	_headersList = nullptr;
-	for (uint32 i = 0; i < headers.size(); ++i)
-		HttpJsonRequest::addHeader(headers[i]);
+	HttpJsonRequest::setHeaders(headers);
 }
 
 void BoxTokenRefresher::addHeader(const Common::String  &header) {

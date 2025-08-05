@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/http/connectionmanager.h"
 #include "backends/networking/http/networkreadstream.h"
 #include "backends/networking/http/sessionrequest.h"
@@ -73,12 +72,12 @@ bool SessionRequest::reuseStream() {
 	}
 
 	if (_bytesBuffer)
-		return _stream->reuse(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
+		return _stream->reuse(_url.c_str(), &_headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true);
 
 	if (!_formFields.empty() || !_formFiles.empty())
-		return _stream->reuse(_url.c_str(), _headersList, _formFields, _formFiles);
+		return _stream->reuse(_url.c_str(), &_headersList, _formFields, _formFiles);
 
-	return _stream->reuse(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch);
+	return _stream->reuse(_url.c_str(), &_headersList, _postFields, _uploading, _usingPatch);
 }
 
 char *SessionRequest::getPreparedContents() {

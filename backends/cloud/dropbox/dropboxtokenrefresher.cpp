@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -109,10 +108,8 @@ void DropboxTokenRefresher::finishError(const Networking::ErrorResponse &error, 
 
 void DropboxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
 	_headers = headers;
-	curl_slist_free_all(_headersList);
-	_headersList = nullptr;
-	for (uint32 i = 0; i < headers.size(); ++i)
-		HttpJsonRequest::addHeader(headers[i]);
+	// Clear existing headers and add new ones
+	HttpRequest::setHeaders(headers);
 }
 
 void DropboxTokenRefresher::addHeader(const Common::String &header) {
