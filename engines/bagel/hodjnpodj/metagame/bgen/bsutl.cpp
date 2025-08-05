@@ -927,12 +927,10 @@ cleanup:
 }
 
 //* CBsuSet::PointLogical -- convert device point to logical coords
-CRPoint CBsuSet::PointLogical(CPoint cPoint)
+CRPoint CBsuSet::PointLogical(CPoint cPoint) {
 // cPoint -- point in device coordinates
 // returns: relocatable point
-{
 	JXENTER(CBsuSet::PointLogical);
-	int iError = 0;        // error code
 	CRect cScrollRegion;   // scrolled region of window
 	CRPoint crPoint(cPoint, FALSE);    // return value
 	CDC *xpDc = nullptr;
@@ -940,7 +938,7 @@ CRPoint CBsuSet::PointLogical(CPoint cPoint)
 	CBsuBar *xpHBar = nullptr, *xpVBar = nullptr;
 
 	if (GetWindowBars(xpHBar, xpVBar)) {
-		iError = 100;
+		//iError = 100;
 		goto cleanup;
 	}
 
@@ -949,7 +947,7 @@ CRPoint CBsuSet::PointLogical(CPoint cPoint)
 	if ((crPoint.m_bRelocatable = cScrollRegion.PtInRect(cPoint)) != FALSE) {
 
 		if (!xpDc && ((xpDc = m_xpWnd->GetDC()) == nullptr)) {
-			iError = 101;  // can't allocate device context
+			//iError = 101;  // can't allocate device context
 			goto cleanup;
 		}
 

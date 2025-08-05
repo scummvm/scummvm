@@ -66,9 +66,9 @@ PlaceRect;                      // bounding rectangle for place bitmap
 static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
 ScrollBotRect;                  // area spanned by lower scroll curl
 
-static  CDC *pNotebookDC = nullptr;            // device context for the notebook bitmap
-static  CBitmap *pNotebookBitmap = nullptr,        // bitmap for an entirely blank notebook
-*pNotebookBitmapOld = nullptr;     // bitmap previously mapped to the notebook context
+//static  CDC *pNotebookDC = nullptr;            // device context for the notebook bitmap
+static  CBitmap *pNotebookBitmap = nullptr;        // bitmap for an entirely blank notebook
+//*pNotebookBitmapOld = nullptr;     // bitmap previously mapped to the notebook context
 
 static  CBitmap *pBackgroundBitmap = nullptr;
 static  CPalette *pBackgroundPalette = nullptr;
@@ -87,17 +87,17 @@ static  const char *lpsPersonSoundSpec = nullptr;     // spec for person sound f
 static  const char *lpsPlaceSoundSpec = nullptr;      // spec for place sound file
 
 static  CFont *pNoteFont = nullptr;              // font to use for displaying notebook text
-static  char        chPathName[128];                // buffer to hold path name of the notebook file
-static  CFile *pInfoFile = nullptr;              // the notebook file
-static  DWORD       nInfoFileSize = 0;              // size of notebook file
-static  BOOL        bInfoEOF = FALSE;               // whether end-of-file has been reached
+//static  char        chPathName[128];                // buffer to hold path name of the notebook file
+//static  CFile *pInfoFile = nullptr;              // the notebook file
+//static  DWORD       nInfoFileSize = 0;              // size of notebook file
+//static  BOOL        bInfoEOF = FALSE;               // whether end-of-file has been reached
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
-static  int         nNotebook_DX, nNotebook_DY;     // size of useable notebook background
-static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
-static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
-static  int         nFirstSlot = 0;                 // first item in current inventory page
+//static  int         nNotebook_DX, nNotebook_DY;     // size of useable notebook background
+//static  int         nItem_DDX, nItem_DDY;           // space separation between inventory items
+//static  int         nItemsPerColumn, nItemsPerRow;  // span of items that fit on the background
+//static  int         nFirstSlot = 0;                 // first item in current inventory page
 
 static  CNote *pNoteList = nullptr;              // pointer to notebook note list
 static  CNote *pKeyNote = nullptr;               // single note to be shown
@@ -642,7 +642,7 @@ int CNotebook::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
-	CPalette *pPalOld;
+	//CPalette *pPalOld;
 	CRect       myRect;
 
 	pNotebookBitmap = FetchBitmap(pDC, nullptr, NOTEBOOK_SPEC); // fetch the notebook's bitmap
@@ -655,7 +655,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE); // create an offscreen bitmap that
+	(*pDC).SelectPalette(pBackgroundPalette, FALSE); // create an offscreen bitmap that
 	(void)(*pDC).RealizePalette();                           // ... we can use to construct note
 	// ... entries to avoid flashes
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&

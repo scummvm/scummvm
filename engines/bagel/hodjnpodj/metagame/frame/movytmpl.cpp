@@ -37,7 +37,7 @@ namespace Frame {
 
 #pragma warning(disable: 4706)
 
-static int      videoID;
+//static int      videoID;
 static BOOL     bPaintScroll;
 
 BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,

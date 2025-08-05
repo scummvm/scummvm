@@ -104,7 +104,7 @@ int                     nWaveVolume;
 const CHAR *gpszSaveDLL = "HNPSAVE.DLL";
 const CHAR *gpszSaveGameFile = "HODJPODJ.SAV";
 
-static  BOOL        bScreenSaver;
+//static  BOOL        bScreenSaver;
 
 static  CPalette    *pGamePalette = nullptr;
 static  RECT        MainRect;                           // screen area spanned by the game window
@@ -117,9 +117,9 @@ static  char        chProfilePath[PATHSPECSIZE];
 char                    chHomePath[PATHSPECSIZE];
 char                    chMiniPath[PATHSPECSIZE];
 char                    chCDPath[PATHSPECSIZE];
-static  int         nHomeDrive = -1;
-static  int         nMiniDrive = -1;
-static  int         nCDDrive = -1;
+//static  int         nHomeDrive = -1;
+//static  int         nMiniDrive = -1;
+//static  int         nCDDrive = -1;
 
 static  BOOL        bActiveWindow = FALSE;
 

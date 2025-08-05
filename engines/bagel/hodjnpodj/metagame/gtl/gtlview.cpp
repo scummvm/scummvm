@@ -133,7 +133,7 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 
 	JXENTER(CGtlView::OnUpdate) ;
 	CGtlHint * xpcGtlHint = (CGtlHint *)xpHint ;
-	BOOL bDone = FALSE ;    // TRUE when hint is fully identified
+	//BOOL bDone = FALSE ;    // TRUE when hint is fully identified
 
 	TRACE("Enter OnUpdate\n");
 
@@ -150,13 +150,13 @@ void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
 	case HINT_UPDATE_RECT:
 		if (xpHint) {
 			xpGtlData->Draw(this, &xpcGtlHint->cHintRect);
-			bDone = TRUE ;
+			//bDone = TRUE ;
 		}
 		break ;
 
 	case HINT_UPDATE_FULL:
 		xpGtlData->Draw(this, nullptr);
-		bDone = TRUE ;
+		//bDone = TRUE ;
 		break ;
 
 	case HINT_INIT_METAGAME:

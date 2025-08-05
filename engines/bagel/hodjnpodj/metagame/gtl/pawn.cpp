@@ -71,9 +71,9 @@ static  CRect       PawnRect;                       // x/y (left/right) and dx/d
 static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
         ScrollBotRect;                  // area spanned by lower scroll curl
 
-static  CDC         *pPawnDC = nullptr;                // device context for the pawn bitmap
-static  CBitmap     *pPawnBitmap = nullptr,            // bitmap for an entirely blank pawn
-                     *pPawnBitmapOld = nullptr;         // bitmap previously mapped to the pawn context
+//static  CDC         *pPawnDC = nullptr;                // device context for the pawn bitmap
+static  CBitmap     *pPawnBitmap = nullptr;            // bitmap for an entirely blank pawn
+//                     *pPawnBitmapOld = nullptr;         // bitmap previously mapped to the pawn context
 
 static  CBitmap     *pBackgroundBitmap = nullptr;
 static  CPalette    *pBackgroundPalette = nullptr;
@@ -88,7 +88,7 @@ static  CText       *pItemCost = nullptr;              // item cost field
 static  CText       *pTitleText = nullptr;             // title information field
 
 static  CFont       *pFont = nullptr;                  // font to use for displaying pawn text
-static  char        chPathName[128];                // buffer to hold path name of the pawn file
+//static  char        chPathName[128];                // buffer to hold path name of the pawn file
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed
@@ -613,7 +613,7 @@ int CPawnShop::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 BOOL CPawnShop::CreateWorkAreas(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
-	CPalette    *pPalOld;
+	//CPalette    *pPalOld;
 	CRect       myRect;
 
 	pPawnBitmap = FetchBitmap(pDC, nullptr, PAWN_SPEC);
@@ -626,7 +626,7 @@ BOOL CPawnShop::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	(*pDC).SelectPalette(pBackgroundPalette, FALSE);
 	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&

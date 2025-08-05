@@ -288,7 +288,7 @@ BOOL CGtlData::InitProblem(void)
 	int iObjectClues[MAX_CLUES], iSecondaryClues[MAX_CLUES],
 	    iMishMoshClues[MAX_CLUES], iMoneyClues[MAX_CLUES] ;
 	int iObjectCount, iSecondaryCount, iMishMoshCount, iMoneyCount ;
-	int iMoneyClue = 0 ;        // number of chosen money clue
+	//int iMoneyClue = 0 ;        // number of chosen money clue
 	const CClueTable * xpClueTable, *xpClueEntry ;
 
 	for (xpXodj = m_xpXodjChain ; xpXodj ; xpXodj = xpXodj->m_xpXodjNext) {
@@ -376,8 +376,8 @@ BOOL CGtlData::InitProblem(void)
 			goto cleanup ;
 		}
 
-		iMoneyClue = iMoneyClues[m_cGenUtil.RandomInteger(1,
-		                         iMoneyCount) - 1] ;
+		//iMoneyClue = iMoneyClues[m_cGenUtil.RandomInteger(1,
+		//                         iMoneyCount) - 1] ;
 
 		// if money clue is option
 		// add a money clue to the list of objects
@@ -776,7 +776,7 @@ BOOL CGtlData::SwitchPlayers(void)
 	CNode *pNode;
 	char szBuf[80];
 	BOOL bExitDll = FALSE ; // if TRUE, exit from DLL
-	int iFurlongs ; // number of furlongs to move
+	//int iFurlongs ; // number of furlongs to move
 	int iSpecialCode;
 	int iLocFunctionCode;
 	BOOL bSpinner, bAgain;
@@ -971,7 +971,7 @@ BOOL CGtlData::SwitchPlayers(void)
 	}
 
 	m_xpCurXodj->m_nTurns--;
-	iFurlongs = m_xpCurXodj->m_iFurlongs = 0;
+	m_xpCurXodj->m_iFurlongs = 0;
 	SetFurlongs(m_xpCurXodj);
 	if (bSpinner) {
 		InitInterface(MG_DLLX_SPINNER, bExitDll) ;
@@ -1737,7 +1737,7 @@ BOOL CGtlData::ReturnFromInterface(void)
 	int iCount ;
 	CGtlFrame * xpGtlFrame = m_xpcGtlDoc->m_xpGtlFrame ;
 	CBfcMgr FAR * lpBfcMgr ;
-	CNode FAR * lpNode ;
+	//CNode FAR * lpNode ;
 	int iFunctionCode ;
 
 	if ((xpGtlFrame == nullptr) || ((lpBfcMgr = xpGtlFrame->m_lpBfcMgr) == nullptr)) {
@@ -1778,7 +1778,7 @@ BOOL CGtlData::ReturnFromInterface(void)
 
 				xpXodj->m_bComputer = lpCodj->m_bComputer ;
 				xpXodj->m_iCharNode = lpCodj->m_iNode ;
-				lpNode = m_lpNodes + xpXodj->m_iCharNode ;
+				//lpNode = m_lpNodes + xpXodj->m_iCharNode ;
 
 				// list of clue numbers for clues given by winning mini-game
 				xpXodj->m_iWinInfoWon = lpCodj->m_iWinInfoWon ;
@@ -2915,7 +2915,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int &iLocF
 // returns: TRUE if eligible, FALSE otherwise
 {
 	JXENTER(CGtlData::DetermineEligibility) ;
-	int iError = 0 ;        // error code
+	//int iError = 0 ;        // error code
 	const CLocTable * xpLocEntry ;    // location table entry
 	BOOL bEligibility = FALSE ; // return value
 	int iSoundCode = -1;
@@ -2924,7 +2924,7 @@ BOOL CGtlData::DetermineEligibility(CXodj *xpXodj, int iLocationCode, int &iLocF
 	CSound *pSound;
 
 	if ((xpLocEntry = CMgStatic::FindLoc(iLocationCode)) == nullptr) {
-		iError = 100 ;
+		//iError = 100 ;
 		goto cleanup ;
 	}
 

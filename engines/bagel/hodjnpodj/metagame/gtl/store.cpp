@@ -517,6 +517,8 @@ void CGeneralStore::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 	pArtSpec = (*pItem).GetArtSpec();
 	if (pArtSpec != nullptr)
 		bSuccess = PaintMaskedDIB(pDC, pBackgroundPalette, pArtSpec, nX, nY, STORE_BITMAP_DX, STORE_BITMAP_DY);
+
+	(void)bSuccess; // suppress unused variable warning
 }
 
 
@@ -601,7 +603,7 @@ int CGeneralStore::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 
 BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
-	CPalette    *pPalOld;
+	//CPalette    *pPalOld;
 	CRect       myRect;
 
 	pStoreBitmap = FetchBitmap(pDC, nullptr, STORE_SPEC);
@@ -614,7 +616,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	(*pDC).SelectPalette(pBackgroundPalette, FALSE);
 	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&

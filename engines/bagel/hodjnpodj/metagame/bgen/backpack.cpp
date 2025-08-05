@@ -587,7 +587,7 @@ BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 	else
 		pBackgroundBitmap = nullptr;
 
-	//pPalOld = (*pDC).SelectPalette(pBackgroundPalette, FALSE);
+	(*pDC).SelectPalette(pBackgroundPalette, FALSE);
 	(void)(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&

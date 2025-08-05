@@ -100,15 +100,14 @@ BOOL CGtlData::SetMetaGame(BOOL bOn)
 }
 
 //* CGtlData::InitMetaGame -- init or release sprites for Meta Game
-BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit)
+BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 // xpGtlView -- view window (only for init)
 // bInit -- initialize if TRUE, release if FALSE
 // returns: TRUE if error, FALSE otherwise
-{
 	JXENTER(CGtlData::InitMetaGame) ;
 	int iError = 0 ;            // error code
 	CXodj * xpXodj ;            // character block pointer
-	BOOL bCenter = FALSE ;      // flag: centered
+	//BOOL bCenter = FALSE ;      // flag: centered
 	CNode FAR *lpNode = nullptr;
 	BOOL bNodeFound ;
 	int iN ;                    // loop variable
@@ -151,7 +150,7 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit)
 					// invalidate char's rectangle
 					//if (!bCenter)
 					//xpGtlView->m_cViewBsuSet.EdgeToCenter(xpXodj->m_lpcCharSprite->m_crPosition) ;
-					bCenter = TRUE ;
+					//bCenter = TRUE ;
 				}
 			}
 		//ReturnFromInterface() ;
@@ -884,15 +883,15 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	CPoint      cStartPoint, cTargetPoint, cThisPoint;
 	CRect       cBoundingRect;
 	int iDistanceDX, iDistanceDY;
-	uint32 stStartTime, stEndTime ;   // current time
-	long lTimeDiff ;            // time difference
+	//uint32 stStartTime, stEndTime ;   // current time
+	//long lTimeDiff ;            // time difference
 
 	struct DIST FAR * lpDist = new FAR struct DIST[m_iNodes] ;
 
 	cStartPoint = NodeToPoint(lpNode1, nullptr) ;
 	cTargetPoint = NodeToPoint(lpNode2, nullptr) ;
 
-	stStartTime = g_system->getMillis();    // save current time
+	//stStartTime = g_system->getMillis();    // save current time
 
 	iDistanceDX = abs(cStartPoint.x - cTargetPoint.x);
 	iDistanceDY = abs(cStartPoint.y - cTargetPoint.y);
@@ -1025,8 +1024,8 @@ done:
 
 	lpiPath[0] += 1;
 
-	stEndTime = g_system->getMillis();  // get ending time
-	lTimeDiff = stEndTime - stStartTime;
+	//stEndTime = g_system->getMillis();  // get ending time
+	//lTimeDiff = stEndTime - stStartTime;
 
 cleanup:
 
