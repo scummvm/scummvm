@@ -96,6 +96,7 @@ enum FilePathID {
 	kSoundPathID = 8
 };
 
+const uint kMaxConsoleTextLength = 200000;
 
 class GlobalSettings {
 public:
@@ -300,6 +301,9 @@ public:
 	Common::Array<ObjID> &getSelectedObjects() { return _selectedObjs; }
 	GameState getGameState() const { return _gameState; }
 
+	Common::String getConsoleText() const;
+	void setConsoleText(const Common::String &text);
+
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
 	bool isObjVisible(ObjID objID);
@@ -400,6 +404,7 @@ private: // Attributes
 	Common::Point _deltaPoint;
 	Common::String _userInput;
 
+	Common::String _currentConsoleText;
 };
 
 

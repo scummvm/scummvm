@@ -81,7 +81,7 @@ public:
 	const AttributeGroup *getGroup(uint32 groupID);
 	const Common::String &getText();
 
-	void saveInto(Common::OutSaveFile *file);
+	void saveInto(MacVentureEngine *engine, Common::OutSaveFile *file);
 
 private:
 	void loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *res);

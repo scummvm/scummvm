@@ -294,11 +294,12 @@ void World::loadGameFrom(Common::InSaveFile *file) {
 		delete _saveGame;
 	}
 	_saveGame = new SaveGame(_engine, file);
+	_engine->setConsoleText(_saveGame->getText());
 	calculateObjectRelations();
 }
 
 void World::saveGameInto(Common::OutSaveFile *file) {
-	_saveGame->saveInto(file);
+	_saveGame->saveInto(_engine, file);
 }
 
 // SaveGame
@@ -344,7 +345,7 @@ const Common::String &SaveGame::getText() {
 	return _text;
 }
 
-void SaveGame::saveInto(Common::OutSaveFile *file) {
+void SaveGame::saveInto(MacVentureEngine *engine, Common::OutSaveFile *file) {
 	warning("Saving the game not yet tested!");
 	// Save attibutes
 	Common::Array<AttributeGroup>::const_iterator itg;
@@ -360,9 +361,9 @@ void SaveGame::saveInto(Common::OutSaveFile *file) {
 		file->writeUint16BE((*global));
 	}
 	// Save text
-	// TODO: Insert text from GUI console
-	_text = "Hello";
-	file->write(_text.c_str(), _text.size());
+	_text = engine->getConsoleText();
+	file->writeString(_text);
+	file->writeByte(0);
 }
 
 void SaveGame::loadGroups(MacVentureEngine *engine, Common::SeekableReadStream *res) {
@@ -385,8 +386,7 @@ void SaveGame::loadGlobals(MacVentureEngine *engine, Common::SeekableReadStream 
 }
 
 void SaveGame::loadText(MacVentureEngine *engine, Common::SeekableReadStream *res) {
-	// TODO: Load console text. For now, the GUI doesn't even look at this.
-	_text = "Placeholder Console Text";
+	_text = res->readString();
 }
 
 

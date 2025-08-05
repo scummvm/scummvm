@@ -157,6 +157,9 @@ public:
 	void unselectExits();
 	void updateExit(ObjID id);
 
+	Common::String getConsoleText() const;
+	void setConsoleText(const Common::String &text);
+
 	void printText(const Common::String &text);
 
 	//Dialog interactions
@@ -191,7 +194,7 @@ private: // Attributes
 
 	Graphics::MacWindow *_controlsWindow;
 	Graphics::MacWindow *_mainGameWindow;
-	Graphics::MacWindow *_outConsoleWindow;
+	Graphics::MacTextWindow *_outConsoleWindow;
 	Graphics::MacWindow *_selfWindow;
 	Graphics::MacWindow *_exitsWindow;
 	Graphics::MacWindow *_diplomaWindow;

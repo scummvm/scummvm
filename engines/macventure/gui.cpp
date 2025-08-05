@@ -33,6 +33,7 @@
 #include "common/debug.h"
 #include "image/bmp.h"
 #include "graphics/macgui/macfontmanager.h"
+#include "graphics/macgui/mactextwindow.h"
 
 #include "macventure/gui.h"
 #include "macventure/dialog.h"
@@ -251,11 +252,14 @@ void Gui::initWindows() {
 	_mainGameWindow->setCallback(mainGameWindowCallback, this);
 
 	// In-game Output Console
-	_outConsoleWindow = _wm.addWindow(true, true, false);
-
 	bounds = getWindowData(kOutConsoleWindow).bounds;
 	bbs = borderBounds(findWindowData(kOutConsoleWindow).type);
+	_outConsoleWindow = _wm.addTextWindow(&getCurrentFont(), kColorBlack, kColorWhite,
+										  bounds.width() - bbs.rightScrollbarWidth, Graphics::kTextAlignLeft, _menu, false);
+	_outConsoleWindow->enableScrollbar(true);
+	_outConsoleWindow->setEditable(false);
 	loadBorders(_outConsoleWindow, findWindowData(kOutConsoleWindow).type);
+	_outConsoleWindow->setDimensions(bounds);
 	_outConsoleWindow->resizeInner(bounds.width() - bbs.rightScrollbarWidth, bounds.height() - bbs.bottomScrollbarHeight);
 	_outConsoleWindow->move(bounds.left - bbs.leftOffset, bounds.top - bbs.topOffset);
 	_outConsoleWindow->setActive(false);
@@ -776,9 +780,6 @@ void Gui::drawExitsWindow() {
 
 void Gui::drawConsoleWindow() {
 
-	Graphics::ManagedSurface *srf = _outConsoleWindow->getWindowSurface();
-	BorderBounds bounds = borderBounds(getWindowData(kOutConsoleWindow).type);
-	_consoleText->renderInto(srf, bounds, kConsoleLeftOffset);
 }
 
 void Gui::drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSurface *surface) {
@@ -994,9 +995,25 @@ void Gui::updateExit(ObjID obj) {
 	}
 }
 
+Common::String Gui::getConsoleText() const {
+	return Common::String(_outConsoleWindow->getTextChunk(0, 0, -1, -1));
+}
+
+void Gui::setConsoleText(const Common::String &text) {
+	_outConsoleWindow->clearText();
+
+	_outConsoleWindow->setEditable(true);
+	_outConsoleWindow->appendText(text);
+	_outConsoleWindow->setEditable(false);
+}
+
 void Gui::printText(const Common::String &text) {
 	debugC(1, kMVDebugGUI, "Print Text: %s", text.c_str());
-	_consoleText->printLine(text, _outConsoleWindow->getInnerDimensions().width());
+	// WORKAROUND: Make sure newly added line is visible by
+	// making the window editable for the moment
+	_outConsoleWindow->setEditable(true);
+	_outConsoleWindow->appendText(text + '\n');
+	_outConsoleWindow->setEditable(false);
 }
 
 void Gui::showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title) {
@@ -1562,6 +1579,9 @@ bool MacVenture::Gui::processMainGameEvents(WindowClick click, Common::Event &ev
 bool MacVenture::Gui::processOutConsoleEvents(WindowClick click, Common::Event &event) {
 	if (event.type == Common::EVENT_LBUTTONUP) {
 		bringToFront(kOutConsoleWindow);
+		if (click == kBorderResizeButton) {
+			_outConsoleWindow->setDimensions(_outConsoleWindow->getDimensions());
+		}
 	}
 
 	if (_engine->needsClickToContinue())
