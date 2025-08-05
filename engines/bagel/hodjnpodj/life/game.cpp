@@ -251,7 +251,7 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	                   EVOLVE_BUTTON_OFFSET_Y,
 	                   (GAME_WIDTH >> 1) + (EVOLVE_BUTTON_WIDTH >> 1) - EVOLVE_BUTTON_OFFSET_X,
 	                   EVOLVE_BUTTON_HEIGHT + EVOLVE_BUTTON_OFFSET_Y);
-	pEvolveButton = new CColorButton;
+	pEvolveButton = new CColorButton();
 	if (pEvolveButton != nullptr) {
 		(*pEvolveButton).Create("Evolve", BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | BS_OWNERDRAW,
 		                        EvolveRect, this, IDC_EVOLVE);

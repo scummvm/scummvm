@@ -112,7 +112,7 @@ BOOL CTurnDialog::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	m_pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
+	m_pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(m_pOKButton != nullptr);
 	(*m_pOKButton).SetPalette(m_pPalette);        // set the palette to use
 	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
@@ -162,7 +162,7 @@ void CTurnDialog::OnCancel() {
 
 BOOL CTurnDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return (TRUE);
+	return TRUE;
 }
 
 void CTurnDialog::ClearDialogImage(void) {

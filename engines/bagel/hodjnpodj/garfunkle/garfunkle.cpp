@@ -504,7 +504,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
 				PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
-				return (FALSE);
+				return FALSE;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -513,7 +513,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	ReleaseDC(pDC);
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -993,14 +993,14 @@ BOOL CMainWindow::GetNewSequence(const char *pszFileName) {
 
 	ifstream IFStream(pszFileName);
 	if (IFStream.fail()) {
-		return (FALSE);
+		return FALSE;
 	}
 	while (!IFStream.eof()) {
 		IFStream.getline(note, sizeof(note));
 		nNote = atoi(note);
 		add_note_to_series(nNote);
 	}
-	return (TRUE);
+	return TRUE;
 }//end GetNewSequence()
 
 BOOL CMainWindow::GetNewSequence(int nLength) {
@@ -1008,7 +1008,7 @@ BOOL CMainWindow::GetNewSequence(int nLength) {
 	for (i = nLength; i > 0; --i) {
 		add_note_to_series(brand() % m_nNumButtons);
 	}
-	return (TRUE);
+	return TRUE;
 }//end GetNewSequence()
 
 void CMainWindow::ActivateButtons(UINT nNumActive, BOOL bState) {
@@ -1109,7 +1109,7 @@ BOOL CMainWindow::wait_awhile(int nHundSecs) {                      // Given tim
 
 	}                                   // spin yer wheels 'til nSecs pass
 
-	return (TRUE);
+	return TRUE;
 }//end wait_awhile()
 
 void CMainWindow::OnClose() {

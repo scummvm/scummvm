@@ -460,11 +460,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -1513,7 +1513,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 	for (k = 1; k < Count + 1; k++) {
 		switch (k) {
 		case 1:
-			if (DiceSum < 10) if (m_iDoorStatus[DiceSum] == OPEN) return (TRUE);
+			if (DiceSum < 10) if (m_iDoorStatus[DiceSum] == OPEN) return TRUE;
 			break;
 
 		case 2:
@@ -1522,7 +1522,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 				for (i2 = i1 + 1; i2 < Count; i2++) {
 					sum = temp;
 					sum += s[i2];
-					if (sum == DiceSum) return (TRUE);
+					if (sum == DiceSum) return TRUE;
 				}
 			}
 			break;
@@ -1536,7 +1536,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 					for (i1 = i2 + 1; i1 < Count; i1++) {
 						sum = temp2;
 						sum += s[i1];
-						if (sum == DiceSum) return (TRUE);
+						if (sum == DiceSum) return TRUE;
 					}
 				}
 			}
@@ -1554,7 +1554,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 						for (i1 = i2 + 1; i1 < Count; i1++) {
 							sum = temp2;
 							sum += s[i1];
-							if (sum == DiceSum) return (TRUE);
+							if (sum == DiceSum) return TRUE;
 						}
 					}
 				}
@@ -1579,7 +1579,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 							for (i1 = i2 + 1; i1 < Count; i1++) {
 								sum = temp2;
 								sum += s[i1];
-								if (sum == DiceSum) return (TRUE);
+								if (sum == DiceSum) return TRUE;
 							}
 						}
 					}
@@ -1607,7 +1607,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 								for (i1 = i2 + 1; i1 < Count; i1++) {
 									sum = temp2;
 									sum += s[i1];
-									if (sum == DiceSum) return (TRUE);
+									if (sum == DiceSum) return TRUE;
 								}
 							}
 						}
@@ -1637,7 +1637,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 									for (i1 = i2 + 1; i1 < Count; i1++) {
 										sum = temp2;
 										sum += s[i1];
-										if (sum == DiceSum) return (TRUE);
+										if (sum == DiceSum) return TRUE;
 									}
 								}
 							}
@@ -1673,7 +1673,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 											for (i1 = i2 + 1; i1 < Count; i1++) {
 												sum = temp2;
 												sum += s[i1];
-												if (sum == DiceSum) return (TRUE);
+												if (sum == DiceSum) return TRUE;
 											}
 										}
 									}
@@ -1712,7 +1712,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 											for (i1 = i2 + 1; i1 < Count; i1++) {
 												sum = temp2;
 												sum += s[i1];
-												if (sum == DiceSum) return (TRUE);
+												if (sum == DiceSum) return TRUE;
 											}
 										}
 									}
@@ -1727,7 +1727,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 			break;
 		} //end switch(count)
 	}//end for -k
-	return (FALSE);    //Undoable by default.
+	return FALSE;    //Undoable by default.
 }
 #pragma warning(default: 4135)
 

@@ -190,17 +190,17 @@ BOOL CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 	m_pWork = new CBitmap();                    // create a bitmap to serve as our
 	if ((m_pWork == nullptr) ||                    // ... work area as we output text
 	        !(*m_pWork).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return (FALSE);
+		return FALSE;
 
 	m_pBackground = new CBitmap();              // create a bitmap to hold the
 	if ((m_pBackground == nullptr) ||              // ... background we overwrite
 	        !(*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-		return (FALSE);
+		return FALSE;
 
 	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (TRUE);                              // return status
+	return TRUE;                              // return status
 }
 
 
@@ -346,7 +346,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	}
 
 	if (!SetupContexts(pDC))                        // setup the device contexts and map in
-		return (FALSE);                             // ... the various bitmaps
+		return FALSE;                             // ... the various bitmaps
 
 	if (!m_bHaveBackground) {
 		(void)(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
@@ -436,7 +436,7 @@ BOOL CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -462,31 +462,31 @@ BOOL CText::SetupContexts(CDC *pDC) {
 		m_pWorkDC = new CDC();
 		if ((m_pWorkDC == nullptr) ||
 		        !(*m_pWorkDC).CreateCompatibleDC(pDC))
-			return (FALSE);
+			return FALSE;
 		if (m_pPalette != nullptr) {
 			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pWorkDC).RealizePalette();
 		}
 		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
 		if (m_pWorkOld == nullptr)
-			return (FALSE);
+			return FALSE;
 	}
 
 	if (m_pBackgroundDC == nullptr) {
 		m_pBackgroundDC = new CDC();
 		if ((m_pBackgroundDC == nullptr) ||
 		        !(*m_pBackgroundDC).CreateCompatibleDC(pDC))
-			return (FALSE);
+			return FALSE;
 		if (m_pPalette != nullptr) {
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
 		if (m_pBackgroundOld == nullptr)
-			return (FALSE);
+			return FALSE;
 	}
 
-	return (TRUE);
+	return TRUE;
 }
 
 

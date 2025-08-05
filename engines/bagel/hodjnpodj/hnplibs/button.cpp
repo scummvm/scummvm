@@ -94,7 +94,7 @@ CBmpButton::~CBmpButton() {
  ************************************************************************/
 
 BOOL CBmpButton::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -176,7 +176,7 @@ BOOL CBmpButton::SetControl(UINT nID, CWnd * pParent) {
 	if (!CBitmapButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -237,7 +237,7 @@ BOOL CBmpButton::LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelec
 	HBITMAP     hBitmap = nullptr;
 
 	if (pBase == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	if (pPalette == nullptr)
 		m_pPalette = nullptr;
@@ -655,7 +655,7 @@ CMaskedButton::~CMaskedButton() {
  ************************************************************************/
 
 BOOL CMaskedButton::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -814,7 +814,7 @@ CColorButton::~CColorButton() {
  ************************************************************************/
 
 BOOL CColorButton::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -889,7 +889,7 @@ BOOL CColorButton::SetControl(UINT nID, CWnd * pParent) {
 	if (!CColorButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1120,7 +1120,7 @@ CCheckButton::~CCheckButton() {
  ************************************************************************/
 
 BOOL CCheckButton::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -1193,7 +1193,7 @@ BOOL CCheckButton::SetControl(UINT nID, CWnd * pParent) {
 	if (!CCheckButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1480,7 +1480,7 @@ CRadioButton::~CRadioButton() {
  ************************************************************************/
 
 BOOL CRadioButton::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -1554,7 +1554,7 @@ BOOL CRadioButton::SetControl(UINT nID, CWnd * pParent) {
 		return FALSE;
 	SetButtonStyle(BS_OWNERDRAW, FALSE);
 
-	return (TRUE);
+	return TRUE;
 }
 
 

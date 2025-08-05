@@ -219,7 +219,7 @@ BOOL CMainMenu::OnInitDialog() {
 
 
 BOOL CMainMenu::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

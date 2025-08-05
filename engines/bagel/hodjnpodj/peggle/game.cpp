@@ -439,7 +439,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			case IDC_QUIT:
 				PostMessage(WM_CLOSE, 0, 0);
-				return (FALSE);
+				return FALSE;
 
 			default:
 				(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
@@ -468,7 +468,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 

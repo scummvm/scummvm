@@ -112,13 +112,13 @@ BOOL CNotebook::SetupKeyboardHook(void) {
 
 	lpfnKbdHook = (FPNOTEHOOKPROC)GetProcAddress(hDLLInst, "NotebookHookProc");
 	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return (FALSE);
+		return FALSE;
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return (FALSE);
+		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -140,7 +140,7 @@ LRESULT NotebookHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK)lpfnKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
-		return (FALSE);
+		return FALSE;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -186,10 +186,10 @@ LRESULT NotebookHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CNotebook::UpdateNote(pDC);
 		(*pNotebookDialog).ReleaseDC(pDC);
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -336,7 +336,7 @@ BOOL CNotebook::OnInitDialog() {
 	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
-	pOKButton = new CColorButton;                               // build a color OKAY button to let us exit
+	pOKButton = new CColorButton();                               // build a color OKAY button to let us exit
 	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pBackgroundPalette);                // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int)GetDefID(), this); // tie to the dialog control
@@ -352,7 +352,7 @@ BOOL CNotebook::OnInitDialog() {
 
 	bFirstTime = TRUE;
 
-	return (TRUE);                                              // return TRUE  unless focused on a control
+	return TRUE;                                              // return TRUE  unless focused on a control
 }
 
 
@@ -583,7 +583,7 @@ void CNotebook::ShowClue(CNote *pNote) {
 
 
 BOOL CNotebook::OnEraseBkgnd(CDC *) {
-	return (TRUE);                                                  // do not automatically erase background to white
+	return TRUE;                                                  // do not automatically erase background to white
 }
 
 
@@ -647,7 +647,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 
 	pNotebookBitmap = FetchBitmap(pDC, nullptr, NOTEBOOK_SPEC); // fetch the notebook's bitmap
 	if (pNotebookBitmap == nullptr)                            // ... and punt if not successful
-		return (FALSE);
+		return FALSE;
 	// get the background bitmap
 	if ((GetFreeSpace(0) >= (unsigned long)500000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)400000))
@@ -701,7 +701,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 		pTitleText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 	*/
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -795,9 +795,9 @@ void CNotebook::OnLButtonDown(UINT nFlags, CPoint point) {
 
 BOOL CNotebook::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return (TRUE);
+		return TRUE;
 	else
-		return (FALSE);
+		return FALSE;
 }
 
 

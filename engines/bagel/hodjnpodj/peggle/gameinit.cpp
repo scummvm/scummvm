@@ -455,7 +455,7 @@ myLOGPALETTE myPalette = {0x300, 256, {
 			hPalMem = LocalAlloc(LMEM_FIXED, sizeof(LOGPALETTE) + PalSize * sizeof(PALETTEENTRY));
 			if (!hPalMem) {
 				Warning("Unable to allocate color palette memory");
-				return (false);
+				return FALSE;
 			}
 
 			pLogPal = (NPLOGPALETTE) LocalLock(hPalMem);
@@ -479,10 +479,10 @@ myLOGPALETTE myPalette = {0x300, 256, {
 			myPalette = CreatePalette((LPLOGPALETTE)pLogPal);
 			if (!myPalette) {
 				Warning("Unable to create color palette");
-				return (false);
+				return FALSE;
 			}
 
-			return (true);
+			return TRUE;
 		}
 		#endif
 

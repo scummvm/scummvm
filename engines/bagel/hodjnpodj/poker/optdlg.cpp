@@ -190,7 +190,7 @@ BOOL COptionsDlg::OnInitDialog(void) {
 	else
 		SetDlgItemText(ID_TOGGLESOUND, "Sound On");
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -226,7 +226,7 @@ void COptionsDlg::SetInitialOptions(BOOL bDisableSets, BOOL bSoundOn) {
 }
 
 BOOL COptionsDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 void COptionsDlg::OnDestroy() {

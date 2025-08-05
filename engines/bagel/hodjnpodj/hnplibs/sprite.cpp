@@ -240,7 +240,7 @@ BOOL CSprite::SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap) {
 	m_pBackdrop = pBitmap;                                  // save the new bitmap
 	m_pBackdropPalette = pPalette;                          // ... and palette
 	m_bHaveBackdrop = TRUE;                                 // indicate we have a backdrop
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -296,10 +296,10 @@ BOOL CSprite::RefreshBackdrop(CDC *pDC, CPalette *pPalette) {
 	CPalette    *pPalOld = nullptr;
 
 	if (m_bHaveBackdrop == FALSE)                   // punt if no backdrop art
-		return (FALSE);
+		return FALSE;
 
 	if (GetBackdropDC(pDC) == nullptr)                 // setup backdrop context
-		return (FALSE);
+		return FALSE;
 
 	if (pPalette != nullptr) {                         // map in our palette
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
@@ -383,7 +383,7 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
 		if (m_bVisible) {
 			if (m_bRetainContexts) {
 				if (!SetupImage(pDC))
-					return (FALSE);
+					return FALSE;
 				(void) SetupMask(pDC);
 				(*pSprite).m_pImageDC = m_pImageDC;
 				(*pSprite).m_pImageOld = m_pImageOld;
@@ -425,16 +425,16 @@ BOOL CSprite::DuplicateSprite(CDC *pDC, CSprite *pSprite) {
 				(*pSprite).m_pMask = m_pMask;
 				if (m_pPalette)
 					(void)(*pDC).SelectPalette(pPalOld, FALSE);
-				return (TRUE);
+				return TRUE;
 			}
 		} else
-			return (TRUE);
+			return TRUE;
 	}
 
 	if (m_pPalette)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -528,7 +528,7 @@ BOOL CSprite::LoadSprite(CDC *pDC, const char *pszPathName) {
 	if (myDib != nullptr)                                  // lastly delete the DIB itself
 		delete myDib;
 
-	return (FALSE);                                     // return failure
+	return FALSE;                                     // return failure
 }
 
 
@@ -555,7 +555,7 @@ BOOL CSprite::LoadSprite(CBitmap *pBitmap, CPalette *pPalette) {
 	BITMAP  cBitmapData;
 
 	if (pBitmap == nullptr)                                // punt if no bitmap
-		return (FALSE);
+		return FALSE;
 
 	ClearImage();                                       // clear out any/all existing bitmaps, palettes,
 	ClearMask();                                        // ... and device contexts
@@ -574,7 +574,7 @@ BOOL CSprite::LoadSprite(CBitmap *pBitmap, CPalette *pPalette) {
 	m_nCelCount = 0;
 	m_bVisible = TRUE;
 
-	return (TRUE);                                     // return success
+	return TRUE;                                     // return success
 }
 
 
@@ -677,7 +677,7 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 				m_nCelCount = 0;
 				delete myDib;                           // discard the DIB
 				myDib = nullptr;
-				return (TRUE);                          // return success
+				return TRUE;                          // return success
 			}
 		}
 	}
@@ -697,7 +697,7 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const char *pszName) {
 	if (myDib != nullptr)                                  // lastly delete the DIB itself
 		delete myDib;
 
-	return (FALSE);                                     // return failure
+	return FALSE;                                     // return failure
 }
 
 
@@ -729,9 +729,9 @@ BOOL CSprite::LoadCels(CDC *pDC, const char *pszPathName, const int nCels) {
 	        SetupCels(nCels))                                       // ... sprite image, then set specifics
 		if (nOldCelCount == 0)                                  // if there wasn't a previous cel strip
 			m_bAnimated = TRUE;                                 // ... then set for initially animated
-	return (TRUE);
+	return TRUE;
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -761,9 +761,9 @@ BOOL CSprite::LoadCels(CBitmap *pBitmap, const int nCels, CPalette *pPalette) {
 	        SetupCels(nCels))                                       // ... sprite image, then set specifics
 		if (nOldCelCount == 0)                                  // if there wasn't a previous cel strip
 			m_bAnimated = TRUE;                                 // ... then set for initially animated
-	return (TRUE);
+	return TRUE;
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -825,9 +825,9 @@ BOOL CSprite::LoadResourceCels(CDC *pDC, const char *pszName, const int nCels) {
 	        SetupCels(nCels))                                       // ... sprite image, then set specifics
 		if (nOldCelCount == 0)                                  // if there wasn't a previous cel strip
 			m_bAnimated = TRUE;                                 // ... then set for initially animated
-	return (TRUE);
+	return TRUE;
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -857,10 +857,10 @@ BOOL CSprite::SetupCels(const int nCels) {
 		m_cRect.right = m_cRect.left + m_cSize.cx;              // reset sprite rectangular bounds
 		m_cRect.bottom = m_cRect.top + m_cSize.cy;              // ... based on cel dimensions
 		m_cImageRect.SetRect(0, 0, m_cSize.cx, m_cSize.cy);     // set bounds for first cel in strip
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -900,7 +900,7 @@ BOOL CSprite::SetPalette(CPalette *pPalette) {
 	m_pPalette = pPalette;                                  // set the new palette
 
 	if (m_pImageDC == nullptr)                                 // done if no context to map it into
-		return (TRUE);
+		return TRUE;
 
 	m_pPalImageOld = (*m_pImageDC).SelectPalette(m_pPalette, FALSE); // map in the new palette and then
 	(void)(*m_pImageDC).RealizePalette();                           // ... tell the system to use it
@@ -908,11 +908,11 @@ BOOL CSprite::SetPalette(CPalette *pPalette) {
 	if (m_pImage != nullptr) {
 		m_pImageOld = (*m_pImageDC).SelectObject(m_pImage);     // map in our image bitmap if it exists
 		if (m_pImageOld == nullptr)
-			return (FALSE);
+			return FALSE;
 	}
 
 	if (m_pBackgroundDC == nullptr)                            // done if no background context
-		return (TRUE);
+		return TRUE;
 
 	m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE); // map in the new palette and then
 	(void)(*m_pBackgroundDC).RealizePalette();                          // ... tell the system to use it
@@ -920,10 +920,10 @@ BOOL CSprite::SetPalette(CPalette *pPalette) {
 	if (m_pBackground != nullptr) {
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);      // map in our background
 		if (m_pBackgroundOld == nullptr)
-			return (FALSE);
+			return FALSE;
 	}
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -950,11 +950,11 @@ BOOL CSprite::SetPalette(CPalette *pPalette) {
 BOOL CSprite::SharePalette(CPalette *pPalette) {
 	if (SetPalette(pPalette)) {                         // load a new palette into our sprite
 		m_bSharedPalette = TRUE;                        // ... and mark it as a shared resource
-		return (TRUE);
+		return TRUE;
 	}                                  // ... whioh means it continues to exist
 	// ... when this sprite is later destroyed
 	m_pPalette = nullptr;                                  // not able to do that so ensure the
-	return (FALSE);                                     // ... pointer is nulled
+	return FALSE;                                     // ... pointer is nulled
 }
 
 
@@ -995,11 +995,11 @@ BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 
 	if (!m_bVisible) {                              // just place it if invisible
 		SetPosition(x, y);
-		return (TRUE);
+		return TRUE;
 	}
 
 	if (pDC == nullptr)                                // punt if no device context for the sprite
-		return (FALSE);
+		return FALSE;
 
 	if (m_bAnimated && m_nCelCount)                 // advance to the next cel in the strip
 		UpdateCel();
@@ -1023,13 +1023,13 @@ BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 			if (m_bHaveBackdrop || (m_pBackground != nullptr)) {
 				bSuccess = RefreshBackground(pDC);  // If it isn't close, just restore its background
 				if (!bSuccess)
-					return (FALSE);
+					return FALSE;
 			}
 			SetPosition(x, y);                      // formally set the sprites new location
 			if (!m_bHaveBackdrop && m_bRetainBackground) {
 				bSuccess = SaveBackground(pDC);     // save the background art of its new location
 				if (!bSuccess)
-					return (FALSE);
+					return FALSE;
 			}
 			bSuccess = UpdateSprite(pDC);           // paint the sprite in its new location
 		}
@@ -1094,15 +1094,15 @@ BOOL CSprite::UpdateSprite(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
 
 	if (!m_bVisible)                                        // punt if not visible
-		return (TRUE);
+		return TRUE;
 
 	if (pDC == nullptr)                                        // verify we have the necessary device contexts
-		return (FALSE);
+		return FALSE;
 
 	if (!m_bHaveBackdrop && m_bRetainBackground &&          // if we don't have a bitmap backdrop, and if
 	        (m_pBackgroundDC == nullptr)) {                        // ... we move and are painting for the first time
 		if (!SaveBackground(pDC))                           // ... and then load it with the proper image
-			return (FALSE);
+			return FALSE;
 	}
 
 	if (m_pPalette != nullptr) {
@@ -1163,10 +1163,10 @@ BOOL CSprite::DoSpritePainting(CDC * pDC, CPoint cPoint) {
 	BOOL        bSuccess = FALSE;                       // success/failure
 
 	if (!m_bVisible)                                    // punt if not visible
-		return (TRUE);
+		return TRUE;
 
 	if (pDC == nullptr)                                    // punt if we don't have contexts
-		return (FALSE);
+		return FALSE;
 
 	if (SetupImage(pDC) &&                              // put the image and mask bitmaps into
 	        SetupMask(pDC)) {                               // ... device contexts
@@ -1261,7 +1261,7 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 	int     dx, dy;                                     // delta sizes of work area's bitmap
 
 	if (pDC == nullptr)                                    // punt if no sprite device context
-		return (FALSE);
+		return FALSE;
 
 	if (m_pPalette != nullptr) {                               // if there is a palette
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... select it into the context
@@ -1276,10 +1276,10 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 
 	pBitmap = new CBitmap();                            // create an offscreen bitmap where we do all the
 	if (pBitmap == nullptr)                                // ... work; first create a bitmap for the enclosing
-		return (FALSE);                                 // ... rectangle, and if that fails, then punt
+		return FALSE;                                 // ... rectangle, and if that fails, then punt
 	if (!(*pBitmap).CreateCompatibleBitmap(pDC, dx, dy)) {
 		delete pBitmap;
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (workDC.CreateCompatibleDC(pDC)) {               // setup the work area context
@@ -1403,7 +1403,7 @@ punt:
 	if (pPalOld != nullptr)                                    // map out the palette from the output context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -1432,7 +1432,7 @@ BOOL CSprite::DoOverlapPainting(CDC *pDC, CRect *myRect) {
 	BOOL        bSuccess = FALSE;
 
 	if (pDC == nullptr)                                        // punt if no context
-		return (FALSE);
+		return FALSE;
 
 	if (m_pPalette != nullptr) {                               // if there is a palette
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... select it into the context
@@ -1469,14 +1469,14 @@ BOOL CSprite::RefreshBackground(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
 
 	if (!m_bVisible)                                        // punt if not visible
-		return (TRUE);
+		return TRUE;
 
 	if (pDC == nullptr)                                        // punt if no sprite device context
-		return (FALSE);
+		return FALSE;
 
 	if (!m_bHaveBackdrop &&
 	        m_pBackground == nullptr)                              // done if no saved background
-		return (TRUE);
+		return TRUE;
 
 	if (m_pPalette != nullptr) {                               // map a palette to the destination context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);  // ... if available
@@ -1532,16 +1532,16 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
 	BOOL        bSuccess = FALSE;
 
 	if (m_bHaveBackdrop || !m_bRetainBackground)        // not valid to save background with backdrop
-		return (FALSE);                                 // ... or if not retaining same
+		return FALSE;                                 // ... or if not retaining same
 
 	if (!m_bVisible)                                    // punt if not visible
-		return (TRUE);
+		return TRUE;
 
 	if (pDC == nullptr)                                    // punt if no output context
-		return (FALSE);
+		return FALSE;
 
 	if (!CreateBackground(pDC))                         // create background context
-		return (FALSE);
+		return FALSE;
 
 	if (m_pPalette != nullptr) {                           // map a palette to the destination context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, FALSE);
@@ -1708,10 +1708,10 @@ BOOL CSprite::ReconstructBackground(CDC *pDC, CRect *myRect) {
 
 	pBitmap = new CBitmap();                            // create a bitmap to contain our work area
 	if (pBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 	if (!(*pBitmap).CreateCompatibleBitmap(pDC, dx, dy)) {
 		delete pBitmap;
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (workDC.CreateCompatibleDC(pDC)) {               // create a device context to contain our
@@ -1978,7 +1978,7 @@ paint_sprite:
 			workDC.DeleteDC();
 			(*pBitmap).DeleteObject();
 			delete pBitmap;
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
@@ -1997,7 +1997,7 @@ punt:
 	if (pPalOld != nullptr)                                // map out the palette from the output context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2024,11 +2024,11 @@ BOOL CSprite::EraseSprites(CDC *pDC) {
 
 	while (pSprite != nullptr) {
 		if (!(*pSprite).EraseSprite(pDC))
-			return (FALSE);
+			return FALSE;
 		pSprite = (*pSprite).m_pNext;
 	}
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -2049,15 +2049,15 @@ BOOL CSprite::EraseSprites(CDC *pDC) {
 
 BOOL CSprite::EraseSprite(CDC *pDC) {
 	if (!m_bVisible)                                        // punt if not visible
-		return (TRUE);
+		return TRUE;
 
 	if (RefreshBackground(pDC)) {                           // repaint the background
 		ClearBackground();                                  // clear the background art
 		m_bPositioned = FALSE;                              // no longer has a real position
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2085,7 +2085,7 @@ BOOL CSprite::TestInterception(CDC *pDC, CSprite * pTestSprite, CPoint *pPoint) 
 	        overlapRect;                                // area of overlap between rectangles
 
 	if (!m_bIntercepts || !(*pTestSprite).m_bIntercepts)    // punt if no interception allowed
-		return (FALSE);
+		return FALSE;
 
 	myRect = m_cRect;                                   // acquire the rectangle for base sprite
 
@@ -2095,11 +2095,11 @@ BOOL CSprite::TestInterception(CDC *pDC, CSprite * pTestSprite, CPoint *pPoint) 
 			if (!m_bMasked ||                           // ... and if that succeeds, see if we
 			        !(*pTestSprite).m_bMasked ||            // ... and if that succeeds, see if we
 			        SpritesOverlap(pDC, pTestSprite, pPoint))   // ... have image masks that overlap
-				return (TRUE);                          // got a simple or complex overlap
+				return TRUE;                          // got a simple or complex overlap
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2128,7 +2128,7 @@ CSprite *CSprite::Interception(CRect *newRect, CSprite * pTestSprite) {
 	        overlapRect;                                // area of overlap between rectangles
 
 	if (!m_bIntercepts)                                 // punt if interceptions not allowed
-		return (FALSE);
+		return FALSE;
 
 	pSprite = pTestSprite;                              // get first sprite to be tested
 	myRect = *newRect;                                  // acquire the rectangle for base sprite
@@ -2216,10 +2216,10 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	int     bx, by, bdx, bdy;
 
 	if (!m_bVisible || !(*pSprite).m_bVisible)          // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if (pDC == nullptr)                                    // punt if no output context
-		return (FALSE);
+		return FALSE;
 
 	unionRect.UnionRect(m_cRect, (*pSprite).m_cRect);   // calculate the smallest enclosing rectangle that
 	dx = unionRect.right - unionRect.left;              // ... contains the bitmap area where the sprite was
@@ -2228,7 +2228,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	//dwN = stN = n = ((dx + 15) >> 3) * dy;              // calculate the amount of memory that a bitmap mask
 	chPixels = (BYTE *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
 	if (!chPixels)
-		return (FALSE);
+		return FALSE;
 
 	cDC1 = new CDC();                                   // get objects for the offscreen bitmaps
 	cDC2 = new CDC();                                   // ... i.e. for the contexts and bitmaps themselves
@@ -2337,9 +2337,9 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 BOOL CSprite::Touching(CPoint myPoint) {
 	if (m_bIntercepts &&                                // ignoring sprites that don't intercept
 	        m_cRect.PtInRect(myPoint))                      // see if the point is in the sprite's rectangle
-		return (TRUE);                                  // ... and if so, return success
+		return TRUE;                                  // ... and if so, return success
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2501,15 +2501,15 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 	CSize   mySize;
 
 	if (!m_bVisible)                                    // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if (m_pMask != nullptr)                                // done if already have a mask
-		return (TRUE);
+		return TRUE;
 
 	if (!m_bMasked ||                                   // fail if not masked or, no image from
 	        (m_pImage == nullptr) ||                           // ... which to obtain a mask, or no
 	        (pDC == nullptr))                                  // ... output context
-		return (FALSE);
+		return FALSE;
 
 	if (m_pImageDC != nullptr)                             // see if contexts already exist
 		bHaveImageContext = TRUE;
@@ -2554,7 +2554,7 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 					ReleaseImageContext();
 				if (!bHaveMaskContext)
 					ReleaseMaskContext();
-				return (TRUE);
+				return TRUE;
 			}
 		}
 	}
@@ -2569,7 +2569,7 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 		m_pMask = nullptr;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2590,22 +2590,22 @@ BOOL CSprite::CreateMask(CDC *pDC) {
 
 BOOL CSprite::CreateBackground(CDC *pDC) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
-		return (FALSE);
+		return FALSE;
 
 	if (m_pBackground != nullptr)                          // done if already have a background
-		return (TRUE);
+		return TRUE;
 
 	if (pDC != nullptr) {                                  // create an object to hold things
 		m_pBackground = new CBitmap();
 		if (m_pBackground != nullptr) {                    // create the background bitmap
 			if ((*m_pBackground).CreateCompatibleBitmap(pDC, m_cSize.cx, m_cSize.cy))
-				return (TRUE);
+				return TRUE;
 			delete m_pBackground;                       // tear things down if we failed
 			m_pBackground = nullptr;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2628,7 +2628,7 @@ BOOL CSprite::SetupImage(CDC * pDC) {
 	BOOL    bHaveContext = FALSE;                       // whether we already have a context
 
 	if (!m_bVisible)                                    // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if ((m_pImage != nullptr) &&                           // punt if no image bitmap
 	        (pDC != nullptr)) {                                // ... or no output context
@@ -2640,14 +2640,14 @@ BOOL CSprite::SetupImage(CDC * pDC) {
 			if (m_pImageOld == nullptr)                    // ... then map in the bitmap
 				m_pImageOld = (*m_pImageDC).SelectObject(m_pImage);
 			if (m_pImageOld != nullptr)
-				return (TRUE);
+				return TRUE;
 		}
 
 		if (!bHaveContext)                              // release context if we didn't
 			ReleaseImageContext();                      // ... have it already
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2670,7 +2670,7 @@ BOOL CSprite::SetupBackground(CDC * pDC) {
 	BOOL    bHaveContext = FALSE;                       // whether there is already a context
 
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
-		return (FALSE);
+		return FALSE;
 
 	if ((m_pBackground != nullptr) &&                      // verify there is a background bitmap
 	        (pDC != nullptr)) {                                // ... and an output context
@@ -2682,14 +2682,14 @@ BOOL CSprite::SetupBackground(CDC * pDC) {
 			if (m_pBackgroundOld == nullptr)               // ... and map in the bitmap
 				m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
 			if (m_pBackgroundOld != nullptr)
-				return (TRUE);
+				return TRUE;
 		}
 
 		if (!bHaveContext)                              // release context if we didn't
 			ReleaseBackgroundContext();                 // ... have it already
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2712,7 +2712,7 @@ BOOL CSprite::SetupMask(CDC * pDC) {
 	BOOL    bHaveContext = FALSE;                       // whether we have a context
 
 	if (!m_bVisible)                                    // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if (m_bMasked &&                                    // verify we have a bitmap
 	        (pDC != nullptr)) {                                // ... and an output context
@@ -2725,14 +2725,14 @@ BOOL CSprite::SetupMask(CDC * pDC) {
 			if (m_pMaskOld == nullptr)                     // map bitmap into context
 				m_pMaskOld = (*m_pMaskDC).SelectObject(m_pMask);
 			if (m_pMaskOld != nullptr)
-				return (TRUE);
+				return TRUE;
 		}
 
 		if (!bHaveContext)                              // release context if we didn't
 			ReleaseMaskContext();                       // ... already have it
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2752,7 +2752,7 @@ BOOL CSprite::SetupMask(CDC * pDC) {
 
 BOOL CSprite::CreateImageContext(CDC * pDC) {
 	if (!m_bVisible)                                    // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if (pDC != nullptr) {                                  // verify output context
 		if (m_pImageDC == nullptr) {                       // if we don't already have
@@ -2764,14 +2764,14 @@ BOOL CSprite::CreateImageContext(CDC * pDC) {
 			m_pPalImageOld = (*m_pImageDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pImageDC).RealizePalette();
 		}
-		return (TRUE);
+		return TRUE;
 	}
 
 Error:
 
 	ReleaseImageContext();                              // failed, so release the context
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2791,7 +2791,7 @@ Error:
 
 BOOL CSprite::CreateBackgroundContext(CDC * pDC) {
 	if (!m_bVisible || m_bHaveBackdrop)                 // punt if not visible or have backdrop
-		return (FALSE);
+		return FALSE;
 
 	if (pDC != nullptr) {                                  // verify the output context
 		if (m_pBackgroundDC == nullptr) {                  // if we don't have a context
@@ -2803,14 +2803,14 @@ BOOL CSprite::CreateBackgroundContext(CDC * pDC) {
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, FALSE);
 			(void)(*m_pBackgroundDC).RealizePalette();
 		}
-		return (TRUE);
+		return TRUE;
 	}
 
 Error:
 
 	ReleaseBackgroundContext();                         // failed, so release the context
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2830,20 +2830,20 @@ Error:
 
 BOOL CSprite::CreateMaskContext(CDC * pDC) {
 	if (!m_bVisible)                                    // punt if not visible
-		return (FALSE);
+		return FALSE;
 
 	if (m_bMasked &&                                    // verify it is a masked sprite
 	        (pDC != nullptr)) {                                // ... and we have an output context
 		if (m_pMaskDC != nullptr)                          // done if already have a context
-			return (TRUE);
+			return TRUE;
 		m_pMaskDC = new CDC();                          // create an object for the context
 		if ((m_pMaskDC != nullptr) &&                      // ... then create the context itself
 		        (*m_pMaskDC).CreateCompatibleDC(pDC))
-			return (TRUE);
+			return TRUE;
 		ReleaseMaskContext();
 	}                          // release the context if we failed
 
-	return (FALSE);
+	return FALSE;
 }
 
 

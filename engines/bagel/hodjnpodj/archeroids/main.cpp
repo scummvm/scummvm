@@ -1082,11 +1082,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			// resume timer
 			//GameResume();
 
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 CSprite *CMainWindow::NewLife(INT iLifeIndex) {
@@ -2040,7 +2040,7 @@ BOOL CMainWindow::MainLoop() {
 			// Handle badguy movement.
 			//
 			if (MoveBadGuys(pDC))
-				return (TRUE);
+				return TRUE;
 
 			if (!m_bNewGame) {
 				while (m_nMoveArrows < ARROW_MOVES_PER_CYCLE)
@@ -2055,12 +2055,12 @@ BOOL CMainWindow::MainLoop() {
 			if (m_nBadGuySpeed > 0) {
 				while (GetTickCount() < t1 + (20 + m_nBadGuys * 20)) {
 					if (CheckMessages())
-						return (TRUE);
+						return TRUE;
 				}
 			}
 		}
 	}
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -2124,7 +2124,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 						if (pSprite->TestInterception(pDC, m_pHodj)) {
 							DestroyBadArrow(pList);
 							LoseLife(pDC, TRUE);
-							return (TRUE);
+							return TRUE;
 						}
 					}
 				}
@@ -2235,7 +2235,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 									} else {
 										PlayNextWave();
 									}
-									return (TRUE);
+									return TRUE;
 								}
 								break;
 							}
@@ -2252,7 +2252,7 @@ BOOL CMainWindow::MoveArrows(CDC *pDC) {
 		// go to next in list
 		pList = pNext;
 	}
-	return (FALSE);
+	return FALSE;
 }
 
 BOOL CMainWindow::CheckMessages(VOID) {
@@ -2374,10 +2374,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 					}
 
 					if (CheckMessages())
-						return (TRUE);
+						return TRUE;
 
 					if (m_bNewGame)
-						return (FALSE);
+						return FALSE;
 
 					if (n > 0) {
 						if ((i % n) == n - 1) {
@@ -2455,10 +2455,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 					}
 
 					if (CheckMessages())
-						return (TRUE);
+						return TRUE;
 
 					if (m_bNewGame)
-						return (FALSE);
+						return FALSE;
 
 					if (n > 0) {
 						if ((i % n) == n - 1) {
@@ -2539,10 +2539,10 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 					}
 
 					if (CheckMessages())
-						return (TRUE);
+						return TRUE;
 
 					if (m_bNewGame)
-						return (FALSE);
+						return FALSE;
 
 					if (n > 0) {
 						if ((i % n) == n - 1) {
@@ -2568,7 +2568,7 @@ BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
 		}
 		PruneDeadBadGuys();
 	}
-	return (FALSE);
+	return FALSE;
 }
 
 

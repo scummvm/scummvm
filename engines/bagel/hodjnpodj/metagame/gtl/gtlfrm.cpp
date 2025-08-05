@@ -391,7 +391,7 @@ BOOL CGtlFrame::ShowClue(CPalette *pPalette, CNote *pNote) {
 	CNotebook dlgNoteBook((CWnd *)this, pPalette, nullptr, pNote);
 	dlgNoteBook.DoModal();
 	SetupCursor();
-	return (FALSE);
+	return FALSE;
 }
 
 //* CGtlFrame::GetCurrentDocAndView -- get last focused doc/view
@@ -630,7 +630,7 @@ void CGtlFrame::OnCallOpen() {
 }
 
 BOOL CGtlFrame::OnEraseBkgnd(CDC *) {
-	return (TRUE);
+	return TRUE;
 }
 
 #ifdef NODEEDIT

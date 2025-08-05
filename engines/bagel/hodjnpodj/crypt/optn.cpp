@@ -347,7 +347,7 @@ void COptn::OnPaint() {
 }
 
 BOOL COptn::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 void COptn::OnOK() {

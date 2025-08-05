@@ -54,7 +54,7 @@ BOOL CGuessDlg::OnInitDialog(void) {
 
 	SetTimer(10, 50, nullptr);
 
-	return (TRUE);
+	return TRUE;
 }
 
 void CGuessDlg::OnTimer(UINT_PTR nEventID) {
@@ -95,7 +95,7 @@ void CGuessDlg::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 }
 
 BOOL CGuessDlg::OnEraseBkgnd(CDC *) {
-	return (TRUE);
+	return TRUE;
 }
 
 BEGIN_MESSAGE_MAP(CGuessDlg, CBmpDialog)

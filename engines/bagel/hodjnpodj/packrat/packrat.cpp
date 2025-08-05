@@ -2788,7 +2788,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			if (bContinue == FALSE) {
 				m_bSuspend = TRUE;
-				return (TRUE);
+				return TRUE;
 			}
 
 			if (bFirstTimer) {
@@ -2801,7 +2801,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 // if the Hols buttons are hit then set then accordingly
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 void CMainPackRatWindow::OnMouseMove(UINT nFlags, CPoint point) {

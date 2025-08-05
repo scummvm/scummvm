@@ -269,13 +269,13 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 
 	if (bThereAreGamesToBePlayed == FALSE) {
 
-		pScoresLeaveButton = new CColorButton;
+		pScoresLeaveButton = new CColorButton();
 		ASSERT(pScoresLeaveButton);
 		bSuccess = pScoresLeaveButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresLeaveRect, this, IDC_LEAVE);
 		ASSERT(bSuccess);
 		pScoresLeaveButton->SetPalette(pGamePalette);
 
-		pScoresResetButton = new CColorButton;
+		pScoresResetButton = new CColorButton();
 		ASSERT(pScoresResetButton);
 		bSuccess = pScoresResetButton->Create("Reset Scores", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, ScoresResetRect, this, IDC_RESET_SCORES);
 		ASSERT(bSuccess);
@@ -343,25 +343,25 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 		//  }
 	} else {
 		// create buttons
-		pPlayButton = new CColorButton;
+		pPlayButton = new CColorButton();
 		ASSERT(pPlayButton);
 		bSuccess = pPlayButton->Create("Play", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, PlayRect, this, IDC_PLAY);
 		ASSERT(bSuccess);
 		pPlayButton->SetPalette(pGamePalette);
 
-		pSaveButton = new CColorButton;
+		pSaveButton = new CColorButton();
 		ASSERT(pSaveButton);
 		bSuccess = pSaveButton->Create("Save", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, SaveRect, this, IDC_SAVE);
 		ASSERT(bSuccess);
 		pSaveButton->SetPalette(pGamePalette);
 
-		pRestoreButton = new CColorButton;
+		pRestoreButton = new CColorButton();
 		ASSERT(pRestoreButton);
 		bSuccess = pRestoreButton->Create("Restore", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, RestoreRect, this, IDC_RESTORE);
 		ASSERT(bSuccess);
 		pRestoreButton->SetPalette(pGamePalette);
 
-		pLeaveButton = new CColorButton;
+		pLeaveButton = new CColorButton();
 		ASSERT(pLeaveButton);
 		bSuccess = pLeaveButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, LeaveRect, this, IDC_LEAVE);
 		ASSERT(bSuccess);
@@ -433,13 +433,13 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 		ASSERT(bSuccess);
 		pGRButton->SetPalette(pGamePalette);
 
-		pAudioButton = new CColorButton;
+		pAudioButton = new CColorButton();
 		ASSERT(pAudioButton);
 		bSuccess = pAudioButton->Create("Audio Settings", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, AudioRect, this, IDC_AUDIO);
 		ASSERT(bSuccess);
 		pAudioButton->SetPalette(pGamePalette);
 
-		pTop10Button = new CColorButton;
+		pTop10Button = new CColorButton();
 		ASSERT(pTop10Button);
 		bSuccess = pTop10Button->Create("Top 10 List", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, Top10Rect, this, IDC_TOP10);
 		ASSERT(bSuccess);
@@ -1036,7 +1036,7 @@ BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 void CMainGTWindow::OnLButtonDown(UINT nFlags, CPoint point) {

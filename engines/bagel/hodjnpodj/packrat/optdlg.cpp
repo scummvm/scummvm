@@ -212,7 +212,7 @@ BOOL CPackRatOptDlg::OnInitDialog() {
 	bSuccess = pPRCancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************

@@ -255,7 +255,7 @@ BOOL CUserWonDlg::OnInitDialog(void) {
 	bSuccess = pOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 void CUserWonDlg::OnDestroy() {

@@ -1653,7 +1653,7 @@ BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
 			for (k = 0; k < j; k++) {
 				GlobalFree(hMoveArr[k]);
 			}
-		return (TRUE);          //for error.
+		return TRUE;          //for error.
 	}
 
 	pMoveArr[0] = (MOVE*) GlobalLock(hMoveArr[0]);
@@ -1664,7 +1664,7 @@ BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
 	pOrigMove = pMoveArr[0];
 
 	cFinalID = ExtendedStaticEvaluation(pMoveArr[0], pOrigMove, 0, 0);
-	return (FALSE);
+	return FALSE;
 
 }
 

@@ -190,7 +190,7 @@ void CMessageBox::OnCancel() {
 
 BOOL CMessageBox::OnEraseBkgnd(CDC *pDC) {
 	// Prevents refreshing of background
-	return (TRUE);
+	return TRUE;
 }
 
 } // namespace HodjNPodj

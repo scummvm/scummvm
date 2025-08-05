@@ -168,7 +168,7 @@ BOOL CRules::SetupKeyboardHook() {
 
 	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
 	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return (FALSE);
+		return FALSE;
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
 	#else
@@ -180,15 +180,15 @@ BOOL CRules::SetupKeyboardHook() {
 
 	pKbdHook = MakeProcInstance((FARPROC) PrefHookProc, hInst);
 	if (pKbdHook == nullptr)                           // setup pointer to our procedure
-		return (FALSE);
+		return FALSE;
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) pKbdHook, hInst, GetCurrentTask());
 	#endif
 
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return (FALSE);
+		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -225,7 +225,7 @@ LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 #endif
 
 	if (lParam & 0xA0000000)                        // ignore ALT and key release
-		return (FALSE);
+		return FALSE;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -234,25 +234,25 @@ LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		case VK_PRIOR:                              // go to previous page of text
 			if (nHelpPage > 0)
 				(*pRulesDialog).UpdateScroll(nHelpPage - 1);
-			return (TRUE);
+			return TRUE;
 		case VK_DOWN:                               // go to next page of text
 		case VK_NUMPAD2:
 		case VK_NEXT:
 			if (!bHelpEOF)
 				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
-			return (TRUE);
+			return TRUE;
 		case VK_HOME:                               // go to first page of text
 			if (nHelpPage > 0)
 				(*pRulesDialog).UpdateScroll(0);
-			return (TRUE);
+			return TRUE;
 		case VK_END:                                // go to last page of text
 			while (!bHelpEOF) {
 				(*pRulesDialog).UpdateScroll(nHelpPage + 1);
 			}
-			return (TRUE);
+			return TRUE;
 		}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -379,7 +379,7 @@ BOOL CRules::OnInitDialog() {
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
 	#if COLOR_BUTTONS
-	pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
+	pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pScrollPalette);        // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
@@ -393,7 +393,7 @@ BOOL CRules::OnInitDialog() {
 
 	first_time = TRUE;
 
-	return (TRUE);                                  // return TRUE  unless focused on a control
+	return TRUE;                                  // return TRUE  unless focused on a control
 }
 
 
@@ -460,7 +460,7 @@ void CRules::OnPaint() {
 
 
 BOOL CRules::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);                                      // do not automatically erase background to white
+	return TRUE;                                      // do not automatically erase background to white
 }
 
 
@@ -1228,7 +1228,7 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopBitmap == nullptr) ||
 	        (pScrollMidBitmap == nullptr) ||
 	        (pScrollBotBitmap == nullptr))
-		return (FALSE);
+		return FALSE;
 
 	pScrollTopDC = SetupCompatibleContext(pDC, pScrollTopBitmap, pScrollTopBitmapOld, pScrollPalette, pScrollTopPalOld);
 	pScrollMidDC = SetupCompatibleContext(pDC, pScrollMidBitmap, pScrollMidBitmapOld, pScrollPalette, pScrollMidPalOld);
@@ -1236,27 +1236,27 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopDC == nullptr) ||
 	        (pScrollMidDC == nullptr) ||
 	        (pScrollBotDC == nullptr))
-		return (FALSE);
+		return FALSE;
 
 	pScrollBitmap = new CBitmap();
 	if (pScrollBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 	bSuccess = (*pScrollBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
-		return (FALSE);
+		return FALSE;
 	pScrollDC = SetupCompatibleContext(pDC, pScrollBitmap, pScrollBitmapOld, pScrollPalette, pScrollPalOld);
 	if (pScrollDC == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	pBackgroundBitmap = new CBitmap();
 	if (pBackgroundBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 	bSuccess = (*pBackgroundBitmap).CreateCompatibleBitmap(pDC, ScrollRect.right, ScrollRect.bottom);
 	if (!bSuccess)
-		return (FALSE);
+		return FALSE;
 	pBackgroundDC = SetupCompatibleContext(pDC, pBackgroundBitmap, pBackgroundBitmapOld, pScrollPalette, pBackgroundPalOld);
 	if (pBackgroundDC == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	WorkRect.UnionRect(&ScrollTopRect, &ScrollMidRect);
 	WorkRect.UnionRect(&WorkRect, &ScrollBotRect);
@@ -1264,13 +1264,13 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 
 	pWorkBitmap = new CBitmap();
 	if (pWorkBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 	bSuccess = (*pWorkBitmap).CreateCompatibleBitmap(pDC, WorkRect.right, WorkRect.bottom);
 	if (!bSuccess)
-		return (FALSE);
+		return FALSE;
 	pWorkDC = SetupCompatibleContext(pDC, pWorkBitmap, pWorkBitmapOld, pScrollPalette, pWorkPalOld);
 	if (pWorkDC == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	pScrollTopMask = new CBitmap();
 	pScrollMidMask = new CBitmap();
@@ -1278,16 +1278,16 @@ BOOL CRules::CreateWorkAreas(CDC *pDC) {
 	if ((pScrollTopMask == nullptr) ||
 	        (pScrollMidMask == nullptr) ||
 	        (pScrollBotMask == nullptr))
-		return (FALSE);
+		return FALSE;
 	pScrollTopMaskDC = SetupMask(pDC, pScrollTopDC, pScrollTopMask, pScrollTopMaskOld, &ScrollTopRect);
 	pScrollMidMaskDC = SetupMask(pDC, pScrollMidDC, pScrollMidMask, pScrollMidMaskOld, &ScrollMidRect);
 	pScrollBotMaskDC = SetupMask(pDC, pScrollBotDC, pScrollBotMask, pScrollBotMaskOld, &ScrollBotRect);
 	if ((pScrollTopMaskDC == nullptr) ||
 	        (pScrollMidMaskDC == nullptr) ||
 	        (pScrollBotMaskDC == nullptr))
-		return (FALSE);
+		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1471,9 +1471,9 @@ void CRules::OnMouseMove(UINT nFlags, CPoint point) {
 
 BOOL CRules::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return (TRUE);
+		return TRUE;
 	else
-		return (FALSE);
+		return FALSE;
 }
 
 

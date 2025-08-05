@@ -185,12 +185,12 @@ BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_lpMetaGameStruct->m_iGameTime = m_nGameTime;
 			ClearDialogImage();
 			EndDialog(1);
-			return (TRUE);
+			return TRUE;
 
 		case IDC_CANCEL_PLAY:
 			ClearDialogImage();
 			EndDialog(0);
-			return (TRUE);
+			return TRUE;
 		}
 	}
 

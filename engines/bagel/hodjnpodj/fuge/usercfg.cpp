@@ -104,11 +104,11 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			m_bSave = TRUE;
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		/*
 		* reset params to default
@@ -340,7 +340,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 
 	PutDlgData();
 
-	return (TRUE);
+	return TRUE;
 }
 
 void CUserCfgDlg::OnPaint(void) {
@@ -380,7 +380,7 @@ VOID CUserCfgDlg::UpdateOptions(VOID) {
 }
 
 BOOL CUserCfgDlg::OnEraseBkgnd(CDC *) {
-	return (TRUE);
+	return TRUE;
 }
 
 

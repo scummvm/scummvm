@@ -306,11 +306,11 @@ BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 	assert(pSaveGameInfo->m_bUsed);
 
 	if (pSaveGameInfo->m_lBoffoGameID != BOFFO_GAME_ID) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (pSaveGameInfo->m_nFixedRecordSize != sizeof(SAVEGAME_INFO))
-		return (FALSE);
+		return FALSE;
 
 	/*if (pSaveGameInfo->m_stPlayerInfo[0].m_lCrowns < 0)
 		return(FALSE);
@@ -327,14 +327,14 @@ BOOL ValidateSGInfo(SAVEGAME_INFO *pSaveGameInfo) {
 
 		// not a valid game type
 	default:
-		return (FALSE);
+		return FALSE;
 	}
 
 	if (pSaveGameInfo->m_iMishMoshLoc < MG_LOC_BASE || pSaveGameInfo->m_iMishMoshLoc > MG_LOC_MAX) {
-		return (FALSE);
+		return FALSE;
 	}
 
-	return (TRUE);
+	return TRUE;
 }
 
 ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {

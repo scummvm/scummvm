@@ -104,13 +104,13 @@ BOOL CBackpack::SetupKeyboardHook(void) {
 
 	lpfnKbdHook = &BackpackHookProc;
 	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return (FALSE);
+		return FALSE;
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return (FALSE);
+		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -132,7 +132,7 @@ LRESULT BackpackHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK)lpfnKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
-		return (FALSE);
+		return FALSE;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -170,10 +170,10 @@ LRESULT BackpackHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CBackpack::UpdatePage(pDC);
 		(*pBackpackDialog).ReleaseDC(pDC);
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -312,7 +312,7 @@ BOOL CBackpack::OnInitDialog() {
 	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
-	pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
+	pOKButton = new CColorButton();                   // build a color QUIT button to let us exit
 	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pBackgroundPalette);        // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int)GetDefID(), this); // tie to the dialog control
@@ -326,7 +326,7 @@ BOOL CBackpack::OnInitDialog() {
 	bFirstTime = TRUE;
 	nFirstSlot = 0;
 
-	return (TRUE);                                              // return TRUE  unless focused on a control
+	return TRUE;                                              // return TRUE  unless focused on a control
 }
 
 
@@ -515,7 +515,7 @@ void CBackpack::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 
 
 BOOL CBackpack::OnEraseBkgnd(CDC *) {
-	return (TRUE);                                                  // do not automatically erase background to white
+	return TRUE;                                                  // do not automatically erase background to white
 }
 
 
@@ -579,7 +579,7 @@ BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 
 	pBackpackBitmap = FetchBitmap(pDC, nullptr, BACKPACK_SPEC);
 	if (pBackpackBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	if ((GetFreeSpace(0) >= (unsigned long)500000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)400000))
@@ -632,7 +632,7 @@ BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 		BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DDY + BACKPACK_TITLEZONE_DY);
 	pTitleText = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -798,9 +798,9 @@ int CBackpack::SelectedItem(CPoint point) {
 
 BOOL CBackpack::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return (TRUE);
+		return TRUE;
 	else
-		return (FALSE);
+		return FALSE;
 }
 
 

@@ -170,7 +170,7 @@ BOOL COptnDlg::OnInitDialog() {
 
 
 BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -210,7 +210,7 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return (TRUE);
+	return TRUE;
 
 } // end OnCommand
 

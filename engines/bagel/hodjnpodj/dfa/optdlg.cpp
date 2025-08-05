@@ -208,7 +208,7 @@ BOOL CDFAOptDlg::OnInitDialog() {
 	bSuccess = pDFACancelButton->SetControl(IDC_MINI_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -465,7 +465,7 @@ void CDFAOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 }
 
 BOOL CDFAOptDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 void CDFAOptDlg::OnDestroy() {

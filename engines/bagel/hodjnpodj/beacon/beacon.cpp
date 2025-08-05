@@ -501,7 +501,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
 				PostMessage(WM_CLOSE, 0, 0);         // Post a program exit
 				ReleaseDC(pDC);
-				return (FALSE);
+				return FALSE;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -529,7 +529,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 	ReleaseDC(pDC);
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1049,15 +1049,15 @@ BOOL CMainWindow::CompareColors(CDC *pDC, CPoint point) {
 		m_nRemoved++;
 		square = PointToGrid(point);
 		PictureGrid[square.x][square.y] = FALSE;
-		return (TRUE);
+		return TRUE;
 	}
 
 	index = (*pGamePalette).GetNearestPaletteIndex(test);        // get the nearest index of test color
 	if (((index < BUTTON_ENTRY) && (index >= START_ENTRY))       // if it's in the beam area
 	        && (index != nSlice))                               // and doesn't match the beam's index
-		return (FALSE);  //TRUE );                                           //
+		return FALSE;  //TRUE );                                           //
 
-	return (FALSE);
+	return FALSE;
 } // end CompareColors
 
 
@@ -1091,10 +1091,10 @@ BOOL CMainWindow::UnderLighthouse(CPoint point) {
 	        (point.x <= (SIDE_BORDER + ART_WIDTH / 2 + START_OFFSET_X))) {
 		if ((point.y >= (TOP_BORDER + ART_HEIGHT / 2 - START_OFFSET_Y)) &&
 		        (point.y <= (TOP_BORDER + ART_HEIGHT / 2 + (START_HEIGHT - START_OFFSET_Y)))) {
-			return (TRUE);
+			return TRUE;
 		}
 	}
-	return (FALSE);
+	return FALSE;
 } // end CompareColors
 
 
@@ -1213,7 +1213,7 @@ BOOL CMainWindow::LoadArtWork(CDC *pDC) {
 	ifstream inFile;
 	inFile.open(DATA_FILE);                                  // open the data store
 	if (inFile.fail()) {
-		return (FALSE);
+		return FALSE;
 	}
 	inFile.getline(chNumEntries, sizeof(chNumEntries));     // read number of names in file
 	nNumEntries = atoi(chNumEntries);
@@ -1233,7 +1233,7 @@ BOOL CMainWindow::LoadArtWork(CDC *pDC) {
 	pSourceDoc = new CDibDoc();
 	ASSERT(pSourceDoc != nullptr);
 	if (pSourceDoc == nullptr) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	char bufName[MAX_FILE_LENGTH + 10];
@@ -1321,7 +1321,7 @@ BOOL CMainWindow::LoadArtWork(CDC *pDC) {
 	delete pSourceDoc;
 	pSourceDoc = nullptr;
 
-	return (TRUE);
+	return TRUE;
 
 } // end LoadArtWork()
 

@@ -534,7 +534,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				Common::sprintf_s(szMsg, "File error.  Check %s.", CRYPT_TXT_FILE);
 				MessageBox(szMsg);
 				PostMessage(WM_CLOSE, 0, 0);
-				return (FALSE);
+				return FALSE;
 			}
 
 			KillTimer(STAT_TIMER_ID);
@@ -593,7 +593,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			case IDC_OPTIONS_QUIT:
 				PostMessage(WM_CLOSE, 0, 0);
-				return (FALSE);
+				return FALSE;
 
 			} //end switch(ComDlg.DoModal())
 			if ((m_lpGameStruct->bMusicEnabled == FALSE) && (pGameSound != nullptr)) {
@@ -616,7 +616,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************

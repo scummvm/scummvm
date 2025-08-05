@@ -328,7 +328,7 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 
 	if ((GetID() != MG_OBJ_HODJ_NOTEBOOK) &&            // punt if not using notebook
 	        (GetID() != MG_OBJ_PODJ_NOTEBOOK))
-		return (FALSE);
+		return FALSE;
 
 	pNote = new CNote(nID, nClue, nRepeat, nPerson, nPlace);    // create the note object
 	if (pNote != nullptr) {                            // ... and add it to the list

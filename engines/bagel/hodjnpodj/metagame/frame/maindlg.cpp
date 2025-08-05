@@ -124,7 +124,7 @@ BOOL CMainGameDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_QUIT_GAME:
 			ClearDialogImage();
 			EndDialog((int)wParam);
-			return (TRUE);
+			return TRUE;
 		}
 	}
 	return (CBmpDialog::OnCommand(wParam, lParam));
@@ -383,7 +383,7 @@ BOOL CMainGameDlg::OnInitDialog() {
 
 	#endif
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************

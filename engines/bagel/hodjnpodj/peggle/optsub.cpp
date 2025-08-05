@@ -213,7 +213,7 @@ BOOL COptions::OnInitDialog(void) {
 	}
 	#endif
 
-	return (TRUE);  // return TRUE  unless focused on a control
+	return TRUE;  // return TRUE  unless focused on a control
 }
 
 
@@ -274,7 +274,7 @@ if (!bMinimized)
 */
 
 BOOL COptions::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

@@ -862,7 +862,7 @@ BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	CGtlView    * xpGtlFocusView, *xpGtlMouseView ;
 
 	if (Encounters[nID].m_lpszWavEFile == nullptr)                         // punt if no spec
-		return (FALSE);
+		return FALSE;
 
 	pFrame->GetCurrentDocAndView(xpGtlDoc, xpGtlFocusView, xpGtlMouseView) ;
 
@@ -870,14 +870,14 @@ BOOL PlayEncounter(CWnd *pWnd, int nID) {
 	                        SOUND_WAVE | SOUND_QUEUE | SOUND_ASYNCH | SOUND_AUTODELETE);       //...wave format, which deletes
 
 	if (pNarration == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	(*pNarration).setDrivePath(lpMetaGameStruct->m_chCDPath);
 	(*pNarration).play();                                           //...play the narration
 	if (nID < MG_TRAP_COUNT)                                            // For Booby Traps:
 		CSound::waitWaveSounds();
 
-	return (TRUE);
+	return TRUE;
 }
 
 

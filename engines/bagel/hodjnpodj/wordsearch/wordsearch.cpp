@@ -892,7 +892,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	}
 
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {

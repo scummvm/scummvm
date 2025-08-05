@@ -66,12 +66,12 @@ BOOL CRestoreDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_RSLOT6:
 			ClearDialogImage();
 			EndDialog((int)wParam - IDC_RSLOT1);
-			return (TRUE);
+			return TRUE;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(-1);
-			return (TRUE);
+			return TRUE;
 		}
 	}
 	return (CBmpDialog::OnCommand(wParam, lParam));
@@ -131,7 +131,7 @@ BOOL CRestoreDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 

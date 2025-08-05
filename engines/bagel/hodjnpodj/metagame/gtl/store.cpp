@@ -110,13 +110,13 @@ BOOL CGeneralStore::SetupKeyboardHook(void) {
 
 	lpfnKbdHook = (FPSTOREHOOKPROC)GetProcAddress(hDLLInst, "StoreHookProc");
 	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return (FALSE);
+		return FALSE;
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
-		return (FALSE);
+		return FALSE;
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -139,7 +139,7 @@ LRESULT StoreHookProc(int code, WPARAM wParam, LPARAM lParam) {
 		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
-		return (FALSE);
+		return FALSE;
 
 	if (bActiveWindow)
 		switch (wParam) {                               // process only the keys we are looking for
@@ -177,10 +177,10 @@ LRESULT StoreHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr) {                                  // update the inventory page if required
 		CGeneralStore::UpdatePage(pDC);
 		(*pStoreDialog).ReleaseDC(pDC);
-		return (TRUE);
+		return TRUE;
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -324,7 +324,7 @@ BOOL CGeneralStore::OnInitDialog() {
 	(*pButton).MoveWindow(x, y, dx, dy);                        // reposition the button
 	OkayRect.SetRect(x, y, x + dx, y + dy);
 
-	pOKButton = new CColorButton;                               // build a color QUIT button to let us exit
+	pOKButton = new CColorButton();                               // build a color QUIT button to let us exit
 	ASSERT(pOKButton != nullptr);
 	(*pOKButton).SetPalette(pBackgroundPalette);                // set the palette to use
 	bSuccess = (*pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
@@ -343,7 +343,7 @@ BOOL CGeneralStore::OnInitDialog() {
 	else
 		bPlayingHodj = FALSE;
 
-	return (TRUE);                                              // return TRUE  unless focused on a control
+	return TRUE;                                              // return TRUE  unless focused on a control
 }
 
 
@@ -542,7 +542,7 @@ void CGeneralStore::UpdateCrowns(CDC *pDC) {
 
 
 BOOL CGeneralStore::OnEraseBkgnd(CDC *) {
-	return (TRUE);                                                  // do not automatically erase background to white
+	return TRUE;                                                  // do not automatically erase background to white
 }
 
 
@@ -606,7 +606,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 
 	pStoreBitmap = FetchBitmap(pDC, nullptr, STORE_SPEC);
 	if (pStoreBitmap == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	if ((GetFreeSpace(0) >= (unsigned long) 500000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 400000))
@@ -670,7 +670,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 	               STORE_DY - STORE_BORDER_DY - STORE_COSTZONE_DY + STORE_COSTZONE_DDY + STORE_COSTZONE_DDDY);
 	pItemCost = new CText(pDC, pBackgroundPalette, &myRect, JUSTIFY_CENTER);
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -845,9 +845,9 @@ int CGeneralStore::SelectedItem(CPoint point) {
 
 BOOL CGeneralStore::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return (TRUE);
+		return TRUE;
 	else
-		return (FALSE);
+		return FALSE;
 }
 
 

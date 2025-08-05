@@ -517,9 +517,9 @@ BOOL CHodjPodjWindow::SetupNewMeta() {
 	nMetaSetupReturn = cMetaSetupDlg.DoModal();
 
 	if (nMetaSetupReturn == 0)
-		return (FALSE);
+		return FALSE;
 	else
-		return (TRUE);
+		return TRUE;
 }
 
 void CHodjPodjWindow::PlayMovie(const int nMovieId, const char *pszMovie, BOOL bScroll) {
@@ -631,11 +631,11 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			else
 				PostMessage(WM_COMMAND, IDC_MAINDLG);
 
-			return (TRUE);
+			return TRUE;
 
 		case IDC_PLAY_MINI:
 			PostMessage(WM_COMMAND, IDC_ZOOM);
-			return (TRUE);
+			return TRUE;
 
 		case IDC_RESTORE_GAME:
 			StopBackgroundMidi();
@@ -645,7 +645,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			else
 				PostMessage(WM_COMMAND, IDC_MAINDLG);
 
-			return (TRUE);
+			return TRUE;
 
 		case IDC_GRAND_TOUR:
 			PostMessage(WM_COMMAND, IDC_GRANDTOUR);
@@ -659,7 +659,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_QUIT_GAME:
 			StopBackgroundMidi();
 			PostMessage(WM_CLOSE);
-			return (TRUE);
+			return TRUE;
 
 		default:
 			PostMessage(WM_COMMAND, IDC_MAINDLG);
@@ -720,7 +720,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	if (pDC != nullptr)
 		ReleaseDC(pDC);
 
-	return (TRUE);
+	return TRUE;
 }
 
 

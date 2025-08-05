@@ -457,7 +457,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 					pGameInfo->lScore = 0;
 				PostMessage(WM_CLOSE, 0, 0);            // and post a program exit
 				ReleaseDC(pDC);
-				return (FALSE);
+				return FALSE;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -483,7 +483,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	} // end if
 
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 

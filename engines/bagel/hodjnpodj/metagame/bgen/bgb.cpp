@@ -214,7 +214,7 @@ BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName) {
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -546,7 +546,7 @@ BOOL CBgbMgr::SetPosition(CBgbObject *pBgbObject, CRPoint crPosition) {
 
 	pBgbObject->m_crPosition = crPosition;
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -601,7 +601,7 @@ BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pCli
 				CacheLoadObject(pBgbObject);
 
 				if (!pBgbObject->m_bLoaded)
-					return (TRUE);
+					return TRUE;
 
 				// then clear it's background
 				((CSprite *)pBgbObject->m_pObject)->ClearBackground();
@@ -639,7 +639,7 @@ BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pCli
 					CacheLoadObject(pBgbObject);
 
 					if (!pBgbObject->m_bLoaded)
-						return (TRUE);
+						return TRUE;
 
 					// paint it
 					((CSprite *)pBgbObject->m_pObject)->PaintSprite(m_xpDc, pBgbObject->m_crPosition.x, pBgbObject->m_crPosition.y);
@@ -655,7 +655,7 @@ BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pCli
 			CacheLoadObject(pBgbObject);
 
 			if (!pBgbObject->m_bLoaded)
-				return (TRUE);
+				return TRUE;
 
 			if (pBgbObject->m_bMasked) {
 
@@ -687,7 +687,7 @@ BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pCli
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -750,7 +750,7 @@ BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 	CacheLoadObject(pBgbSprite);
 
 	if (!pBgbSprite->m_bLoaded)
-		return (TRUE);
+		return TRUE;
 
 	// turn on animation for this sprite
 	((CSprite *)pBgbSprite->m_pObject)->SetAnimated(TRUE);
@@ -796,7 +796,7 @@ BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 	// turn off animation for this sprite
 	((CSprite *)pBgbSprite->m_pObject)->SetAnimated(FALSE);
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -844,7 +844,7 @@ BOOL CBgbMgr::ReInitDc(void)
 {
 	InitDc(m_xpcView, m_xpBsuSet);
 
-	return (FALSE);
+	return FALSE;
 }
 
 //* CBgbMgr::AdjustLockCount --
@@ -858,7 +858,7 @@ BOOL CBgbMgr::AdjustLockCount(int iIncr)
 	else
 		m_iLockCount = 0;
 
-	return (FALSE);
+	return FALSE;
 }
 
 //* CBgbMgr::SetBrush -- set brush attributes in current device context
@@ -1001,7 +1001,7 @@ BOOL CBgbMgr::ClearBitmapObject(CBgbObject *pBgbObject) {
 	// object no longer initialized
 	pBgbObject->m_bInit = FALSE;
 
-	return (FALSE);
+	return FALSE;
 }
 
 //* CBgbMgr::ReleaseResources -- release all resources at termination

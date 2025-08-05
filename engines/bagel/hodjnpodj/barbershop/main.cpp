@@ -419,7 +419,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			//
 			m_bInMenu = FALSE;
 			GameResume();
-			return (TRUE);
+			return TRUE;
 		} // end case
 
 		case IDC_OPTIONS_NEWGAME:
@@ -429,7 +429,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return (FALSE);
+	return FALSE;
 }
 
 

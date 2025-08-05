@@ -459,11 +459,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			GameResumeTimer();
 
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 void CMainWindow::PlayGame() {

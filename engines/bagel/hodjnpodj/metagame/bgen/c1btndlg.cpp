@@ -220,7 +220,7 @@ void C1ButtonDialog::OnCancel() {
 
 BOOL C1ButtonDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return (TRUE);
+	return TRUE;
 }
 
 } // namespace Metagame

@@ -235,7 +235,7 @@ void CLongDialog::OnCancel() {
 
 BOOL CLongDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return (TRUE);
+	return TRUE;
 }
 
 } // namespace WordSearch

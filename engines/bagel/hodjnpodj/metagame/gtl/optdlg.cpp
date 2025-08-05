@@ -114,7 +114,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			Saves::SaveGame((CWnd *)this, m_pPalette, nullptr);
 			ClearDialogImage();
 			EndDialog(0);
-			return (TRUE);
+			return TRUE;
 
 		case IDC_LEAVE_GAME:
 			if (m_pBfcMgr->m_bChanged) {
@@ -124,19 +124,19 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			}
 			ClearDialogImage();
 			EndDialog(1);
-			return (TRUE);
+			return TRUE;
 
 		case IDC_OPTIONS: {
 			CAudioCfgDlg dlgAudioCfg(this, m_pPalette, IDD_AUDIOCFG);
 			m_bMusic = GetPrivateProfileInt("Meta", "Music", TRUE, "HODJPODJ.INI");
 			m_bSoundFX = GetPrivateProfileInt("Meta", "SoundEffects", TRUE, "HODJPODJ.INI");
 		}
-		return (TRUE);
+		return TRUE;
 
 		case IDC_RULES: {
 			CRules RulesDlg(this, "metarule.txt", m_pPalette, nullptr);
 			(void) RulesDlg.DoModal();
-			return (TRUE);
+			return TRUE;
 		}
 
 		case IDC_CONTINUE:
@@ -145,7 +145,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_pBfcMgr->m_bScrolling = m_bScrolling;
 			ClearDialogImage();
 			EndDialog(0);
-			return (TRUE);
+			return TRUE;
 		}
 	}
 	return (CBmpDialog::OnCommand(wParam, lParam));
@@ -272,7 +272,7 @@ BOOL CMetaOptDlg::OnInitDialog() {
 	ASSERT(bSuccess);
 //    m_pRulesGameButton->EnableWindow(FALSE);
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************

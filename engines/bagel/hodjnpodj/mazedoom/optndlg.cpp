@@ -169,7 +169,7 @@ BOOL COptnDlg::OnInitDialog() {
 
 
 BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

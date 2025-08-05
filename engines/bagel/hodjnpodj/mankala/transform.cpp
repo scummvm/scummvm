@@ -80,7 +80,7 @@ BOOL graph(HWND hWndParent, HGLOBAL hglbX, HGLOBAL hglbY, int len) {
 		if (minID != 2) {
 			wChildID = 1;  //smallest child ID
 		} else {
-			return (FALSE);
+			return FALSE;
 		}
 	}// end if maxID
 

@@ -104,12 +104,12 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_bShouldSave = TRUE;
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return (FALSE);
+			return FALSE;
 
 		case ID_CANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return (FALSE);
+			return FALSE;
 
 		/*
 		* reset params to default
@@ -356,7 +356,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	}
 
 
-	return (TRUE);
+	return TRUE;
 }
 
 void CUserCfgDlg::OnPaint(void) {

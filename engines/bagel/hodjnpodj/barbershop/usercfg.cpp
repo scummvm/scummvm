@@ -78,7 +78,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	} // end if
 
 	ReleaseDC(pDC);
-	return (TRUE);
+	return TRUE;
 }
 
 void CUserCfgDlg::OnPaint(void) {

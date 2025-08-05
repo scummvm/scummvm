@@ -1027,7 +1027,7 @@ BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette* pPalette, int nBlockSiz
 
 	if ((pDC == nullptr) ||
 	        (pDIB == nullptr))
-		return (FALSE);
+		return FALSE;
 
 	hDIB = (*pDIB).GetHDIB();
 	pBitmap = ConvertDIB(pDC, hDIB, pPalette);
@@ -1076,7 +1076,7 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 
 	if ((pDC == nullptr) ||
 	        (pBitmap == nullptr))
-		return (FALSE);
+		return FALSE;
 
 	if (pPalette != nullptr) {
 		pOldPal = (*pDC).SelectPalette(pPalette, FALSE);
@@ -1188,7 +1188,7 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 	unsigned long   width, height;
 
 	if (pDC == nullptr)
-		return (FALSE);
+		return FALSE;
 
 	if (pPalette != nullptr) {
 		pOldPal = (*pDC).SelectPalette(pPalette, FALSE);

@@ -86,11 +86,11 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			SaveIniSettings();
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		case ID_MUSIC:
 			m_bMusic = !m_bMusic;
@@ -225,7 +225,7 @@ BOOL CAudioCfgDlg::OnInitDialog(void) {
 	if (!CSound::SoundVolumeAvailable() && !CSound::MidiVolumeAvailable())
 		m_pScrollBar1->EnableWindow(FALSE);
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -254,7 +254,7 @@ VOID CAudioCfgDlg::UpdateOptions(VOID) {
 
 
 BOOL CAudioCfgDlg::OnEraseBkgnd(CDC *) {
-	return (TRUE);
+	return TRUE;
 }
 
 

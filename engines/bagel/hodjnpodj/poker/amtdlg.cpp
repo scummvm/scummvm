@@ -168,7 +168,7 @@ BOOL CSetAmountDlg::OnInitDialog(void) {
 	bSuccess = pCancelButton->SetControl(ID_CANCEL, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -418,7 +418,7 @@ void CSetAmountDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 }
 
 BOOL CSetAmountDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 void CSetAmountDlg::ClearDialogImage(void) {

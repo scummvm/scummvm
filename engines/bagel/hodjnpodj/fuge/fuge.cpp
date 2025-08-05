@@ -790,11 +790,11 @@ BOOL CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 

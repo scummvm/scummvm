@@ -28,10 +28,17 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
+BEGIN_MESSAGE_MAP(CItemDialog, CBmpDialog)
+	//{{AFX_MSG_MAP(CItemDialog)
+	ON_WM_PAINT()
+	ON_WM_ERASEBKGND()
+	ON_WM_DESTROY()
+	//}}AFX_MSG_MAP
+END_MESSAGE_MAP()
+
 CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL bHodj, BOOL bGain, long lAmount)
 	: CBmpDialog(pParent, pPalette, IDD_ITEMMOVE, ".\\art\\msscroll.bmp") {
 	// Initialize all members
-	//
 	m_pPalette = pPalette;
 	m_pItem = pItem;
 	m_bHodj = bHodj;
@@ -42,10 +49,6 @@ CItemDialog::CItemDialog(CWnd* pParent, CPalette *pPalette, CItem *pItem, BOOL b
 	m_pTextDescription = nullptr;
 
 	DoModal();
-
-	//{{AFX_DATA_INIT(CItemDialog)
-	// NOTE: the ClassWizard will add member initialization here
-	//}}AFX_DATA_INIT
 }
 
 void CItemDialog::ClearDialogImage() {
@@ -76,21 +79,9 @@ void CItemDialog::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
-void CItemDialog::DoDataExchange(CDataExchange* pDX) {
+void CItemDialog::DoDataExchange(CDataExchange *pDX) {
 	CBmpDialog::DoDataExchange(pDX);
-	//{{AFX_DATA_MAP(CItemDialog)
-	// NOTE: the ClassWizard will add DDX and DDV calls here
-	//}}AFX_DATA_MAP
 }
-
-BEGIN_MESSAGE_MAP(CItemDialog, CBmpDialog)
-	//{{AFX_MSG_MAP(CItemDialog)
-	ON_WM_PAINT()
-	ON_WM_ERASEBKGND()
-	ON_WM_DESTROY()
-	//}}AFX_MSG_MAP
-END_MESSAGE_MAP()
-
 
 /////////////////////////////////////////////////////////////////////////////
 // CItemDialog message handlers
@@ -117,7 +108,7 @@ BOOL CItemDialog::OnInitDialog() {
 
 	if ((m_pTextMessage = new CText()) != nullptr) {
 		bSuccess = (*m_pTextMessage).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
-		ASSERT(bSuccess);   // initialize the text objext
+		ASSERT(bSuccess);   // Initialize the text objext
 	}
 
 	nText_row_offset += ITEMDLG2_ROW_OFFSET;
@@ -130,18 +121,19 @@ BOOL CItemDialog::OnInitDialog() {
 
 	if ((m_pTextDescription = new CText()) != nullptr) {
 		bSuccess = (*m_pTextDescription).SetupText(pDC, m_pPalette, &textRect, JUSTIFY_CENTER);
-		ASSERT(bSuccess);   // initialize the text objext
+		ASSERT(bSuccess);   // Initialize the text objext
 	}
 
 	ReleaseDC(pDC);
 
-	m_pOKButton = new CColorButton;                   // build a color QUIT button to let us exit
+	// build a color OK button to let us exit
+	m_pOKButton = new CColorButton();
 	ASSERT(m_pOKButton != nullptr);
-	(*m_pOKButton).SetPalette(m_pPalette);        // set the palette to use
-	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // tie to the dialog control
+	(*m_pOKButton).SetPalette(m_pPalette);
+	bSuccess = (*m_pOKButton).SetControl((int) GetDefID(), this); // Tie to the dialog control
 	ASSERT(bSuccess);
 
-	return TRUE;  // return TRUE  unless you set the focus to a control
+	return TRUE;
 }
 
 void CItemDialog::OnPaint() {
@@ -151,7 +143,6 @@ void CItemDialog::OnPaint() {
 	int     i = 0;
 
 	CBmpDialog::OnPaint();
-	// Do not call CDialog::OnPaint() for painting messages
 
 	pDC = GetDC();
 
@@ -168,8 +159,8 @@ void CItemDialog::OnPaint() {
 	ASSERT(bSuccess);
 
 	PaintMaskedDIB(pDC, m_pPalette, (*m_pItem).GetArtSpec(),
-	               (ITEMDLG_DX - ITEMDLG_BITMAP_DX / 2), (ITEMDLG_DY - ITEMDLG_BITMAP_DY),
-	               ITEMDLG_BITMAP_DX, ITEMDLG_BITMAP_DY);
+	    (ITEMDLG_DX - ITEMDLG_BITMAP_DX / 2), (ITEMDLG_DY - ITEMDLG_BITMAP_DY),
+	    ITEMDLG_BITMAP_DX, ITEMDLG_BITMAP_DY);
 
 	ReleaseDC(pDC);
 }
@@ -186,7 +177,7 @@ void CItemDialog::OnCancel() {
 
 BOOL CItemDialog::OnEraseBkgnd(CDC *) {
 	// Prevents refreshing of background
-	return (TRUE);
+	return TRUE;
 }
 
 } // namespace Gtl

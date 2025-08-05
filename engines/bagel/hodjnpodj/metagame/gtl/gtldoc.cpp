@@ -145,7 +145,7 @@ BOOL CGtlDoc::OnSaveDocument(const char *xpszPathName) {
 	m_xpGtlData->Decompile(xpszPathName) ;
 	#endif
 
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -155,7 +155,7 @@ BOOL CGtlDoc::DoOnFileSaveAs(void)
 {
 	CDocument::OnFileSaveAs() ;
 
-	return (FALSE);
+	return FALSE;
 }
 
 

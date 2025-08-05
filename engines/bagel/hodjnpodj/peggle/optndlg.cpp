@@ -185,7 +185,7 @@ void COptnDlg::OnDestroy(void) {
 
 
 BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

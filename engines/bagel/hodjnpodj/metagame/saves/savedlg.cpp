@@ -87,19 +87,19 @@ BOOL CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_SLOT5:
 		case IDC_SLOT6:
 			EditDescription((int)wParam - IDC_SLOT1);
-			return (TRUE);
+			return TRUE;
 
 		case IDOK:
 			m_pSlotText[m_nCurSlot]->GetWindowText(szDescBuf, MAX_BUTTON_TEXT);
 			ClearDialogImage();
 			assert(m_nCurSlot != -1);
 			EndDialog(m_nCurSlot);
-			return (TRUE);
+			return TRUE;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(-1);
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
@@ -210,7 +210,7 @@ BOOL CSaveDlg::OnInitDialog(void) {
 		ReleaseDC(pDC);
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 

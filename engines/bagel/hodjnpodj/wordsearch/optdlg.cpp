@@ -320,7 +320,7 @@ BOOL CWSOptDlg::OnInitDialog() {
 	bSuccess = pWordForwardButton->SetControl(IDC_MINI_BWTOGGLE, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************

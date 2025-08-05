@@ -171,12 +171,12 @@ BOOL CBmpDialog::OnInitDialog() {
 
 	ReleaseDC(pDC);
 
-	return (TRUE);  // return TRUE  unless focused on a control
+	return TRUE;  // return TRUE  unless focused on a control
 }
 
 
 BOOL CBmpDialog::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

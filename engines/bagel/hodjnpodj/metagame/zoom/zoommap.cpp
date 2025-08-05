@@ -194,7 +194,7 @@ CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) {
 	ReleaseDC(pDC);
 
 	if (bShowExit) {
-		pReturnButton = new CColorButton;
+		pReturnButton = new CColorButton();
 		ASSERT(pReturnButton);
 		bSuccess = pReturnButton->Create("Main Menu", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, rLeaveRect, this, IDC_LEAVE);
 		ASSERT(bSuccess);
@@ -337,7 +337,7 @@ BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 	(*this).SetFocus();                         // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 void CMainZoomWindow::OnLButtonDown(UINT nFlags, CPoint point) {

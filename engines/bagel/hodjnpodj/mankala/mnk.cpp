@@ -396,7 +396,7 @@ BOOL CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	EM("Leaving OnCommand");
 	#endif
 
-	return (TRUE) ;
+	return TRUE ;
 }
 
 
@@ -1258,7 +1258,7 @@ BOOL ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	default:
 		break;
 	}//end switch(msg)
-	return (FALSE);
+	return FALSE;
 }
 
 BOOL CMove::SetBackToOriginal(HWND hwndDlg) {

@@ -126,7 +126,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	LoadIniSettings();
 
 	PutDlgData();
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -158,12 +158,12 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_bSave = TRUE;
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return (FALSE);
+			return FALSE;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return (FALSE);
+			return FALSE;
 
 		case ID_PLAYER:
 			m_bUserGoesFirst = TRUE;

@@ -313,7 +313,7 @@ BOOL CSpinner::Show(int nX, int nY) {
 	BOOL    bSuccess = FALSE;
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
-		return (FALSE);
+		return FALSE;
 
 	m_nX = nX;
 	m_nY = nY;
@@ -343,7 +343,7 @@ BOOL CSpinner::Hide(void) {
 	BOOL    bSuccess = FALSE;
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
-		return (FALSE);
+		return FALSE;
 
 	if (m_bVisible) {                                   // if visible ...
 		bSuccess = (*m_pSprite).EraseSprite(m_pDC);     // ... just erase the sprite
@@ -459,24 +459,24 @@ BOOL CSpinner::HandleMessages(void) {
 
 	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return (TRUE);
+			return TRUE;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 	if (PeekMessage(&msg, nullptr, WM_KEYLAST + 1, WM_MOUSEMOVE, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return (TRUE);
+			return TRUE;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 	if (PeekMessage(&msg, nullptr, WM_PARENTNOTIFY, 0xFFFF, PM_REMOVE)) {
 		if (msg.message == WM_CLOSE || msg.message == WM_QUIT)
-			return (TRUE);
+			return TRUE;
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 

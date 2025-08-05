@@ -214,12 +214,12 @@ BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			ClearDialogImage();
 			EndDialog(IDOK);
-			return (FALSE);
+			return FALSE;
 
 		case IDCANCEL:
 			ClearDialogImage();
 			EndDialog(IDCANCEL);
-			return (FALSE);
+			return FALSE;
 
 		default:
 			break;

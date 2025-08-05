@@ -521,7 +521,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			case IDC_OPTIONS_QUIT:                      // Quit button was clicked
 				PostMessage(WM_CLOSE, 0, 0);         // and post a program exit
 				ReleaseDC(pDC);
-				return (FALSE);
+				return FALSE;
 
 			} //end switch(ComDlg.DoModal())
 
@@ -549,7 +549,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		ReleaseDC(pDC);
 	} // end if
 	(*this).SetFocus();                     // Reset focus back to the main window
-	return (TRUE);
+	return TRUE;
 }
 
 
@@ -1312,7 +1312,7 @@ BOOL CMainWindow::LoadArtWork() {
 	ifstream inFile;
 	inFile.open(DATA_FILE);                                  // open the data store
 	if (inFile.fail()) {
-		return (FALSE);
+		return FALSE;
 	}
 	inFile.getline(chNumEntries, sizeof(chNumEntries));     // read number of names in file
 	nNumEntries = atoi(chNumEntries);
@@ -1350,7 +1350,7 @@ BOOL CMainWindow::LoadArtWork() {
 	pSourceDoc = new CDibDoc();
 	ASSERT(pSourceDoc != nullptr);
 	if (pSourceDoc == nullptr) {
-		return (FALSE);
+		return FALSE;
 	}
 
 	Common::sprintf_s(bufName, ".\\art\\%s", ArtName);
@@ -1450,7 +1450,7 @@ BOOL CMainWindow::LoadArtWork() {
 		} //end for r
 	} //end for r
 
-	return (TRUE);
+	return TRUE;
 
 } // end LoadArtWork()
 

@@ -174,7 +174,7 @@ BOOL CMsgDlg::OnInitDialog() {
 	bSuccess = pMsgOKButton->SetControl(IDOK, this);
 	ASSERT(bSuccess);
 
-	return (TRUE);
+	return TRUE;
 }
 
 

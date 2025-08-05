@@ -194,13 +194,13 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		} // end switch
 	} // end if
 
-	return (TRUE);
+	return TRUE;
 
 } // end OnCommand
 
 
 BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 

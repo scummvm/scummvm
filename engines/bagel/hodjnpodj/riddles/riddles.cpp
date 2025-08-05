@@ -526,11 +526,11 @@ BOOL CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				GameResume();
 			}
 
-			return (TRUE);
+			return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 
@@ -1324,11 +1324,11 @@ BOOL CRiddlesWindow::CheckUserGuess(const CHAR *pszGuess) {
 		if (m_pRiddle->answers[i][0] != '\0') {
 
 			if (StrCompare(m_pRiddle->answers[i], pszGuess, strlen(m_pRiddle->answers[i])))
-				return (TRUE);
+				return TRUE;
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 VOID CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {

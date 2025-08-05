@@ -127,11 +127,11 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDOK:
 			m_bSave = TRUE;
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		case IDCANCEL:
 			PostMessage(WM_CLOSE, 0, 0);
-			return (FALSE);
+			return FALSE;
 
 		/*
 		* reset params to default
@@ -323,7 +323,7 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 		m_nDifficultyLevel = LEVEL_DEF;
 
 	PutDlgData();
-	return (TRUE);
+	return TRUE;
 }
 
 

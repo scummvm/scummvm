@@ -947,7 +947,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 			GameResume();
 
-			return (TRUE);
+			return TRUE;
 
 		case COMPUTERS_TURN:
 
@@ -1030,7 +1030,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (FALSE);
+	return FALSE;
 }
 
 VOID CBFishWindow::PlaceTurnHarpoons(VOID) {

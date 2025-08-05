@@ -174,7 +174,7 @@ BOOL CSetPayoffsDlg::OnInitDialog(void) {
 	}
 
 //	SetDefID( ID_POPO );
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -242,7 +242,7 @@ BOOL CSetPayoffsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 	}
-	return (TRUE);
+	return TRUE;
 }
 
 /*****************************************************************
@@ -560,7 +560,7 @@ void CSetPayoffsDlg::OnDestroy() {
 }
 
 BOOL CSetPayoffsDlg::OnEraseBkgnd(CDC *pDC) {
-	return (TRUE);
+	return TRUE;
 }
 
 void CSetPayoffsDlg::ClearDialogImage(void) {

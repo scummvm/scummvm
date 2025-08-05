@@ -497,7 +497,7 @@ BOOL CGtlView::CheckSize(void)
 // CGtlView message handlers
 
 BOOL CGtlView::OnEraseBkgnd(CDC *) {
-	return (TRUE) ; // this tells MFC that the background has been erased
+	return TRUE ; // this tells MFC that the background has been erased
 }
 
 void CGtlView::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
@@ -936,9 +936,9 @@ void CGtlView::OnTimer(UINT_PTR nEventID) {
 
 BOOL CGtlView::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
-		return (TRUE);
+		return TRUE;
 	else
-		return (FALSE);
+		return FALSE;
 }
 
 } // namespace Gtl
