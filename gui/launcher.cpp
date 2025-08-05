@@ -55,7 +55,7 @@
 #include "engines/advancedDetector.h"
 
 #include "graphics/cursorman.h"
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #endif
 #if defined(USE_DLC)
@@ -400,7 +400,7 @@ void LauncherDialog::addGame() {
 
 		if (_browser->runModal() > 0) {
 			// User made his choice...
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 			Common::Path selectedDirectory = _browser->getResult().getPath();
 			Common::Path bannedDirectory = CloudMan.getDownloadLocalDirectory();
 			selectedDirectory.removeTrailingSeparators();

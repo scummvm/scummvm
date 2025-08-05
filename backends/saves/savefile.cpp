@@ -22,7 +22,7 @@
 #include "common/util.h"
 #include "common/savefile.h"
 #include "common/str.h"
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #endif
 
@@ -32,7 +32,7 @@ OutSaveFile::OutSaveFile(WriteStream *w): _wrapped(w) {}
 
 OutSaveFile::~OutSaveFile() {
 	delete _wrapped;
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	CloudMan.syncSaves();
 #endif
 }

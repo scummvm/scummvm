@@ -108,11 +108,12 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	GUI::AboutDialog aboutDialog;
 	handleSimpleDialog(aboutDialog, "aboutDialog" + suffix, surf);
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard" + suffix, surf);
-
+#endif
+#ifdef USE_LIBCURL
 	// RemoteBrowserDialog
 	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
 	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog" + suffix, surf);
