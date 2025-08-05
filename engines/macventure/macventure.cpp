@@ -613,15 +613,16 @@ void MacVentureEngine::printTexts() {
 		_textQueue.remove_at(0);
 		switch (text.id) {
 		case kTextNumber:
-			_gui->printText(Common::String::format("%d", text.asset));
+			_currentConsoleText += Common::String::format("%d", text.asset);
 			gameChanged();
 			break;
 		case kTextNewLine:
-			_gui->printText(Common::String(""));
+			_gui->printText(_currentConsoleText);
+			_currentConsoleText.clear();
 			gameChanged();
 			break;
 		case kTextPlain:
-			_gui->printText(_world->getText(text.asset, text.source, text.destination));
+			_currentConsoleText += _world->getText(text.asset, text.source, text.destination);
 			gameChanged();
 			break;
 		default:
@@ -918,6 +919,18 @@ Common::String MacVentureEngine::getPrefixString(uint flag, ObjID obj) {
 
 Common::String MacVentureEngine::getNoun(ObjID ndx) {
 	return _decodingIndirectArticles->getString(ndx);
+}
+
+Common::String MacVentureEngine::getConsoleText() const {
+	Common::String consoleText = _gui->getConsoleText();
+	if (consoleText.size() > kMaxConsoleTextLength) {
+		consoleText = consoleText.substr(consoleText.size() - kMaxConsoleTextLength);
+	}
+	return consoleText;
+}
+
+void MacVentureEngine::setConsoleText(const Common::String &text) {
+	_gui->setConsoleText(text);
 }
 
 void MacVentureEngine::highlightExit(ObjID objID) {
