@@ -113,8 +113,8 @@ Graphics::BorderOffsets borderOffsets(MVWindowType type) {
 		offsets.resizeButtonTop = 56;
 		offsets.resizeButtonHeight = 16;
 
-		offsets.upperScrollHeight = 20;
-		offsets.lowerScrollHeight = 20;
+		offsets.upperScrollHeight = 16;
+		offsets.lowerScrollHeight = 16;
 		break;
 	case MacVenture::kZoomNoGrow:
 		offsets.titleTop = 0;
