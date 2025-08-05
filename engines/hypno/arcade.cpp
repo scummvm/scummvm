@@ -520,7 +520,7 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 				} else if (frame > 0 && frame >= (int)(it->lastFrame)) {
 					skipVideo(*it->video);
 					shootsToRemove.push_back(i);
-				} else if (it->video->decoder->needsUpdate() && needsUpdate) {
+				} else if (it->video->decoder->needsUpdate() || needsUpdate) {
 					updateScreen(*it->video);
 				}
 			} else if (!it->video && it->bodyFrames.size() > 0) {
@@ -747,7 +747,7 @@ bool HypnoEngine::shoot(const Common::Point &mousePos, ArcadeShooting *arc, bool
 			setRButtonUp(false);
 			return false;
 		}
-		
+
 		return clickedSecondaryShoot(mousePos);
 	} else {
 		drawShoot(mousePos);
