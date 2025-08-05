@@ -122,6 +122,9 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 	// Only check for key when there is not already one set by scripts
 	if (vm->getVar(VM_VAR_KEY)) {
 		state->testResult = true;
+#ifdef USE_TTS
+		vm->stopTextToSpeech(false);
+#endif
 		return;
 	}
 	// we are not really an inner loop, but we stop processAGIEvents() from doing regular cycle work by setting it up
@@ -132,6 +135,9 @@ void condHaveKey(AgiGame *state, AgiEngine *vm, uint8 *p) {
 		debugC(5, kDebugLevelInput, "keypress = %02x", key);
 		vm->setVar(VM_VAR_KEY, key);
 		state->testResult = true;
+#ifdef USE_TTS
+		vm->stopTextToSpeech(false);
+#endif
 		return;
 	}
 	state->testResult = false;
@@ -278,6 +284,11 @@ bool AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 }
 
 bool AgiEngine::testController(uint8 cont) {
+#ifdef USE_TTS
+	if (_game.controllerOccurred[cont]) {
+		stopTextToSpeech(false);
+	}
+#endif
 	return _game.controllerOccurred[cont];
 }
 

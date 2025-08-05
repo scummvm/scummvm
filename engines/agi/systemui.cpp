@@ -260,6 +260,9 @@ bool SystemUI::askForCommand(Common::String &commandText) {
 	bool previousEditState = _text->inputGetEditStatus();
 	byte previousEditCursor = _text->inputGetCursorChar();
 
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 	_text->drawMessageBox(_textEnterCommand, 0, 36, true);
 
 	_text->inputEditOn();
@@ -284,7 +287,7 @@ bool SystemUI::askForCommand(Common::String &commandText) {
 		_text->inputEditOff();
 	}
 
-	_text->closeWindow();
+	_text->closeWindow(false);
 
 	if (!_text->stringWasEntered()) {
 		// User cancelled? exit now
@@ -454,6 +457,9 @@ int16 SystemUI::askForSavedGameSlot(const char *slotListText) {
 	_text->drawMessageBox(slotListText, messageBoxHeight, 34, true);
 
 	drawSavedGameSlots();
+#ifdef USE_TTS
+	_vm->_queueNextText = true;
+#endif
 	drawSavedGameSlotSelector(true);
 
 	_vm->cycleInnerLoopActive(CYCLE_INNERLOOP_SYSTEMUI_SELECTSAVEDGAMESLOT);
@@ -783,6 +789,15 @@ void SystemUI::drawSavedGameSlotSelector(bool active) {
 	}
 	if (active) {
 		_text->displayTextInsideWindow(arrow, windowRow, column);
+
+#ifdef USE_TTS
+		if (_vm->_queueNextText) {
+			_vm->sayText(_savedGameArray[_savedGameSelectedSlotNr].displayText, Common::TextToSpeechManager::QUEUE);
+			_vm->_queueNextText = false;
+		} else {
+			_vm->sayText(_savedGameArray[_savedGameSelectedSlotNr].displayText, Common::TextToSpeechManager::INTERRUPT);
+		}
+#endif
 	} else {
 		_text->displayTextInsideWindow(" ", windowRow, column);
 	}
