@@ -27,6 +27,9 @@
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif // USE_SDL_NET
 
+#ifdef EMSCRIPTEN
+#include "backends/platform/sdl/emscripten/emscripten.h"
+#endif
 #include "common/formats/json.h"
 #include "common/file.h"
 #include "common/memstream.h"
@@ -93,6 +96,17 @@ CloudConnectionWizard::~CloudConnectionWizard() {
 
 	delete _callback;
 }
+
+#ifdef EMSCRIPTEN
+// allow browser to pass in JSON tokens
+void CloudConnectionWizard::emscriptenCloudConnectionCallback(const Common::String *message ){
+	showStep(Step::MANUAL_MODE_STEP_2);
+	if (!message->empty()) {
+		_codeBox->setEditString(*message);
+	}
+	manualModeConnect();
+}
+#endif 
 
 void CloudConnectionWizard::showStep(Step newStep) {
 	if (newStep == _currentStep)
@@ -318,6 +332,10 @@ void CloudConnectionWizard::hideStepQuickModeSuccess() {
 // manual mode
 
 void CloudConnectionWizard::showStepManualMode1() {
+#ifdef EMSCRIPTEN
+	OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+	emscripten_g_system->setCloudConnectionCallback(new Common::Callback<CloudConnectionWizard, const Common::String *>(this, &CloudConnectionWizard::emscriptenCloudConnectionCallback));
+#endif
 	_headlineLabel->setLabel(_("Manual Mode: Step 1"));
 	showContainer("ConnectionWizard_ManualModeStep1");
 #ifdef USE_SDL_NET
@@ -364,12 +382,19 @@ void CloudConnectionWizard::showStepManualMode2() {
 
 	_label0 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line1", _("Copy the JSON code from the browser here and press Next:"));
 	_codeBox = new EditTextWidget(_container, "ConnectionWizard_ManualModeStep2.CodeBox", Common::U32String(), Common::U32String(), 0, 0, ThemeEngine::kFontStyleConsole);
+#ifndef EMSCRIPTEN
 	_button0 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.PasteButton", _("Paste"), _("Paste code from clipboard"), kCloudConnectionWizardPasteCodeCmd);
 	_button1 = new ButtonWidget(_container, "ConnectionWizard_ManualModeStep2.LoadButton", _("Load"), _("Load code from file"), kCloudConnectionWizardLoadCodeCmd);
+#endif
 	_label1 = new StaticTextWidget(_container, "ConnectionWizard_ManualModeStep2.Line2", Common::U32String());
+
 }
 
 void CloudConnectionWizard::hideStepManualMode2() {
+#ifdef EMSCRIPTEN
+	OSystem_Emscripten *emscripten_g_system = dynamic_cast<OSystem_Emscripten*>(g_system);
+	emscripten_g_system->setCloudConnectionCallback(nullptr);
+#endif
 	hideContainer();
 	_closeButton->setEnabled(true);
 	hideBackButton();

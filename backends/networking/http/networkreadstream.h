@@ -27,16 +27,31 @@
 #include "common/stream.h"
 #include "common/str.h"
 #include "common/hashmap.h"
+#include "common/array.h"
 #include "common/hash-str.h"
 
+#ifdef USE_LIBCURL
 typedef void CURL;
+#endif
+#ifdef EMSCRIPTEN
+struct emscripten_fetch_attr_t;
+struct emscripten_fetch_t;
+#endif
 
 namespace Networking {
 typedef Common::Array<Common::String> RequestHeaders;
-
+	
 class NetworkReadStream : public Common::ReadStream {
+#ifdef USE_LIBCURL
 	CURL *_easy;
 	struct curl_slist *_headersSlist;  // Track the curl headers list for cleanup
+#endif
+#ifdef EMSCRIPTEN
+	emscripten_fetch_attr_t *_emscripten_fetch_attr;
+	emscripten_fetch_t *_emscripten_fetch;
+	const char *_emscripten_fetch_url = nullptr;
+	char **_emscripten_request_headers;
+#endif
 	Common::MemoryReadWriteStream _backingStream;
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;
@@ -51,9 +66,14 @@ class NetworkReadStream : public Common::ReadStream {
 	uint64 _progressDownloaded, _progressTotal;
 
 	void resetStream();
+#ifdef USE_LIBCURL
 	static struct curl_slist *requestHeadersToSlist(const RequestHeaders *headersList);
 	void initCurl(const char *url, RequestHeaders *headersList);
 	bool reuseCurl(const char *url, RequestHeaders *headersList);
+#endif
+#ifdef EMSCRIPTEN
+	void initEmscripten(const char *url, RequestHeaders *headersList);
+#endif
 	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
 
@@ -73,10 +93,19 @@ class NetworkReadStream : public Common::ReadStream {
 	*/
 	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
+#ifdef USE_LIBCURL
 	static size_t curlDataCallback(char *d, size_t n, size_t l, void *p);
 	static size_t curlReadDataCallback(char *d, size_t n, size_t l, void *p);
 	static size_t curlHeadersCallback(char *d, size_t n, size_t l, void *p);
 	static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
+#endif 
+#ifdef EMSCRIPTEN
+	static void emscriptenOnSuccess(emscripten_fetch_t *fetch);
+	static void emscriptenOnError(emscripten_fetch_t *fetch);
+	static void emscriptenOnProgress(emscripten_fetch_t *fetch);
+	static void emscriptenOnReadyStateChange(emscripten_fetch_t *fetch);
+	void emscriptenDownloadFinished(bool success);
+#endif
 public:
 	/** Send <postFields>, using POST by default. */
 	NetworkReadStream(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
