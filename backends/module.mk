@@ -79,16 +79,16 @@ endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	networking/curl/connectionmanager.o \
-	networking/curl/networkreadstream.o \
-	networking/curl/curlrequest.o \
-	networking/curl/curljsonrequest.o \
-	networking/curl/postrequest.o \
-	networking/curl/request.o \
-	networking/curl/session.o \
-	networking/curl/sessionrequest.o \
-	networking/curl/socket.o \
-	networking/curl/url.o
+	networking/http/connectionmanager.o \
+	networking/http/networkreadstream.o \
+	networking/http/httprequest.o \
+	networking/http/httpjsonrequest.o \
+	networking/http/postrequest.o \
+	networking/http/request.o \
+	networking/http/session.o \
+	networking/http/sessionrequest.o \
+	networking/http/socket.o \
+	networking/http/url.o
 endif
 
 ifdef EMSCRIPTEN

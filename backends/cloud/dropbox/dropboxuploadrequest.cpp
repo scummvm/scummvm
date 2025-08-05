@@ -24,9 +24,9 @@
 #include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 
 namespace Cloud {
@@ -110,7 +110,7 @@ void DropboxUploadRequest::uploadNextPart() {
 	Common::JSONValue value(jsonRequestParameters);
 	Networking::JsonCallback callback = new Common::Callback<DropboxUploadRequest, const Networking::JsonResponse &>(this, &DropboxUploadRequest::partUploadedCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxUploadRequest, const Networking::ErrorResponse &>(this, &DropboxUploadRequest::partUploadedErrorCallback);
-	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/octet-stream");
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
@@ -128,7 +128,7 @@ void DropboxUploadRequest::partUploadedCallback(const Networking::JsonResponse &
 		return;
 
 	Networking::ErrorResponse error(this, false, true, "", -1);
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
@@ -147,7 +147,7 @@ void DropboxUploadRequest::partUploadedCallback(const Networking::JsonResponse &
 		//debug(9, "%s", json->stringify(true).c_str());
 
 		if (object.contains("error") || object.contains("error_summary")) {
-			if (Networking::CurlJsonRequest::jsonContainsString(object, "error_summary", "DropboxUploadRequest")) {
+			if (Networking::HttpJsonRequest::jsonContainsString(object, "error_summary", "DropboxUploadRequest")) {
 				warning("Dropbox returned error: %s", object.getVal("error_summary")->asString().c_str());
 			}
 			error.response = json->stringify(true);
@@ -156,9 +156,9 @@ void DropboxUploadRequest::partUploadedCallback(const Networking::JsonResponse &
 			return;
 		}
 
-		if (Networking::CurlJsonRequest::jsonContainsString(object, "path_lower", "DropboxUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsString(object, "server_modified", "DropboxUploadRequest") &&
-			Networking::CurlJsonRequest::jsonContainsIntegerNumber(object, "size", "DropboxUploadRequest")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(object, "path_lower", "DropboxUploadRequest") &&
+			Networking::HttpJsonRequest::jsonContainsString(object, "server_modified", "DropboxUploadRequest") &&
+			Networking::HttpJsonRequest::jsonContainsIntegerNumber(object, "size", "DropboxUploadRequest")) {
 			//finished
 			Common::String path = object.getVal("path_lower")->asString();
 			uint32 size = object.getVal("size")->asIntegerNumber();
@@ -168,7 +168,7 @@ void DropboxUploadRequest::partUploadedCallback(const Networking::JsonResponse &
 		}
 
 		if (_sessionId == "") {
-			if (Networking::CurlJsonRequest::jsonContainsString(object, "session_id", "DropboxUploadRequest"))
+			if (Networking::HttpJsonRequest::jsonContainsString(object, "session_id", "DropboxUploadRequest"))
 				_sessionId = object.getVal("session_id")->asString();
 			needsFinishRequest = true;
 		}

@@ -22,24 +22,24 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <curl/curl.h>
-#include "backends/networking/curl/curlrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/httprequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/textconsole.h"
 
 namespace Networking {
 
-CurlRequest::CurlRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url):
+HttpRequest::HttpRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url):
 	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
 	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
-CurlRequest::~CurlRequest() {
+HttpRequest::~HttpRequest() {
 	curl_slist_free_all(_headersList);
 	delete _stream;
 	delete[] _bytesBuffer;
 }
 
-NetworkReadStream *CurlRequest::makeStream() {
+NetworkReadStream *HttpRequest::makeStream() {
 	if (_bytesBuffer)
 		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 	if (!_formFields.empty() || !_formFiles.empty())
@@ -47,12 +47,12 @@ NetworkReadStream *CurlRequest::makeStream() {
 	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 }
 
-void CurlRequest::handle() {
+void HttpRequest::handle() {
 	if (!_stream) _stream = makeStream();
 
 	if (_stream && _stream->eos()) {
 		if (_stream->httpResponseCode() != 200) {
-			warning("CurlRequest: HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
+			warning("HttpRequest: HTTP response code is not 200 OK (it's %ld)", _stream->httpResponseCode());
 			ErrorResponse error(this, false, true, "HTTP response code is not 200 OK", _stream->httpResponseCode());
 			finishError(error);
 			return;
@@ -62,14 +62,14 @@ void CurlRequest::handle() {
 	}
 }
 
-void CurlRequest::restart() {
+void HttpRequest::restart() {
 	if (_stream)
 		delete _stream;
 	_stream = nullptr;
 	//with no stream available next handle() will create another one
 }
 
-Common::String CurlRequest::date() const {
+Common::String HttpRequest::date() const {
 	if (_stream) {
 		Common::HashMap<Common::String, Common::String> headers = _stream->responseHeadersMap();
 		if (headers.contains("date"))
@@ -78,23 +78,23 @@ Common::String CurlRequest::date() const {
 	return "";
 }
 
-void CurlRequest::setHeaders(const Common::Array<Common::String> &headers) {
+void HttpRequest::setHeaders(const Common::Array<Common::String> &headers) {
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
 	for (uint32 i = 0; i < headers.size(); ++i)
 		addHeader(headers[i]);
 }
 
-void CurlRequest::addHeader(const Common::String &header) {
+void HttpRequest::addHeader(const Common::String &header) {
 	_headersList = curl_slist_append(_headersList, header.c_str());
 }
 
-void CurlRequest::addPostField(const Common::String &keyValuePair) {
+void HttpRequest::addPostField(const Common::String &keyValuePair) {
 	if (_bytesBuffer)
-		warning("CurlRequest: added POST fields would be ignored, because there is buffer present");
+		warning("HttpRequest: added POST fields would be ignored, because there is buffer present");
 
 	if (!_formFields.empty() || !_formFiles.empty())
-		warning("CurlRequest: added POST fields would be ignored, because there are form fields/files present");
+		warning("HttpRequest: added POST fields would be ignored, because there are form fields/files present");
 
 	if (_postFields == "")
 		_postFields = keyValuePair;
@@ -102,29 +102,29 @@ void CurlRequest::addPostField(const Common::String &keyValuePair) {
 		_postFields += "&" + keyValuePair;
 }
 
-void CurlRequest::addFormField(const Common::String &name, const Common::String &value) {
+void HttpRequest::addFormField(const Common::String &name, const Common::String &value) {
 	if (_bytesBuffer)
-		warning("CurlRequest: added POST form fields would be ignored, because there is buffer present");
+		warning("HttpRequest: added POST form fields would be ignored, because there is buffer present");
 
 	if (_formFields.contains(name))
-		warning("CurlRequest: form field '%s' already had a value", name.c_str());
+		warning("HttpRequest: form field '%s' already had a value", name.c_str());
 
 	_formFields[name] = value;
 }
 
-void CurlRequest::addFormFile(const Common::String &name, const Common::Path &filename) {
+void HttpRequest::addFormFile(const Common::String &name, const Common::Path &filename) {
 	if (_bytesBuffer)
-		warning("CurlRequest: added POST form files would be ignored, because there is buffer present");
+		warning("HttpRequest: added POST form files would be ignored, because there is buffer present");
 
 	if (_formFields.contains(name))
-		warning("CurlRequest: form file field '%s' already had a value", name.c_str());
+		warning("HttpRequest: form file field '%s' already had a value", name.c_str());
 
 	_formFiles[name] = filename;
 }
 
-void CurlRequest::setBuffer(byte *buffer, uint32 size) {
+void HttpRequest::setBuffer(byte *buffer, uint32 size) {
 	if (_postFields != "")
-		warning("CurlRequest: added POST fields would be ignored, because buffer added");
+		warning("HttpRequest: added POST fields would be ignored, because buffer added");
 
 	if (_bytesBuffer)
 		delete[] _bytesBuffer;
@@ -133,21 +133,21 @@ void CurlRequest::setBuffer(byte *buffer, uint32 size) {
 	_bytesBufferSize = size;
 }
 
-void CurlRequest::usePut() { _uploading = true; }
+void HttpRequest::usePut() { _uploading = true; }
 
-void CurlRequest::usePatch() { _usingPatch = true; }
+void HttpRequest::usePatch() { _usingPatch = true; }
 
-void CurlRequest::connectionKeepAlive(long idle, long interval) {
+void HttpRequest::connectionKeepAlive(long idle, long interval) {
 	_keepAlive = true;
 	_keepAliveIdle = idle;
 	_keepAliveInterval = interval;
 }
 
-void CurlRequest::connectionClose() {
+void HttpRequest::connectionClose() {
 	_keepAlive = false;
 }
 
-NetworkReadStreamResponse CurlRequest::execute() {
+NetworkReadStreamResponse HttpRequest::execute() {
 	if (!_stream) {
 		_stream = makeStream();
 		ConnMan.addRequest(this);
@@ -156,9 +156,9 @@ NetworkReadStreamResponse CurlRequest::execute() {
 	return NetworkReadStreamResponse(this, _stream);
 }
 
-const NetworkReadStream *CurlRequest::getNetworkReadStream() const { return _stream; }
+const NetworkReadStream *HttpRequest::getNetworkReadStream() const { return _stream; }
 
-void CurlRequest::wait(int spinlockDelay) {
+void HttpRequest::wait(int spinlockDelay) {
 	while (state() == Networking::PROCESSING) {
 		g_system->delayMillis(spinlockDelay);
 	}

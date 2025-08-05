@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_SESSION_H
-#define BACKENDS_NETWORKING_CURL_SESSION_H
+#ifndef BACKENDS_NETWORKING_HTTP_SESSION_H
+#define BACKENDS_NETWORKING_HTTP_SESSION_H
 
-#include "backends/networking/curl/sessionrequest.h"
+#include "backends/networking/http/sessionrequest.h"
 
 namespace Networking {
 

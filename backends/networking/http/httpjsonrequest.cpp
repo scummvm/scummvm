@@ -22,31 +22,31 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <curl/curl.h>
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
 
 namespace Networking {
 
-CurlJsonRequest::CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, const Common::String &url) :
-	CurlRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
-	_buffer(new byte[CURL_JSON_REQUEST_BUFFER_SIZE]) {}
+HttpJsonRequest::HttpJsonRequest(JsonCallback cb, ErrorCallback ecb, const Common::String &url) :
+	HttpRequest(nullptr, ecb, url), _jsonCallback(cb), _contentsStream(DisposeAfterUse::YES),
+	_buffer(new byte[HTTP_JSON_REQUEST_BUFFER_SIZE]) {}
 
-CurlJsonRequest::~CurlJsonRequest() {
+HttpJsonRequest::~HttpJsonRequest() {
 	delete _jsonCallback;
 	delete[] _buffer;
 }
 
-void CurlJsonRequest::handle() {
+void HttpJsonRequest::handle() {
 	if (!_stream) _stream = makeStream();
 
 	if (_stream) {
-		uint32 readBytes = _stream->read(_buffer, CURL_JSON_REQUEST_BUFFER_SIZE);
+		uint32 readBytes = _stream->read(_buffer, HTTP_JSON_REQUEST_BUFFER_SIZE);
 		if (readBytes != 0)
 			if (_contentsStream.write(_buffer, readBytes) != readBytes)
-				warning("CurlJsonRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
+				warning("HttpJsonRequest: unable to write all the bytes into MemoryWriteStreamDynamic");
 
 		if (_stream->eos()) {
 			char *contents = Common::JSON::zeroTerminateContents(_contentsStream);
@@ -63,7 +63,7 @@ void CurlJsonRequest::handle() {
 	}
 }
 
-void CurlJsonRequest::restart() {
+void HttpJsonRequest::restart() {
 	if (_stream)
 		delete _stream;
 	_stream = nullptr;
@@ -71,7 +71,7 @@ void CurlJsonRequest::restart() {
 	//with no stream available next handle() will create another one
 }
 
-void CurlJsonRequest::finishJson(const Common::JSONValue *json) {
+void HttpJsonRequest::finishJson(const Common::JSONValue *json) {
 	Request::finishSuccess();
 	if (_jsonCallback)
 		(*_jsonCallback)(JsonResponse(this, json)); //potential memory leak, free it in your callbacks!
@@ -79,7 +79,7 @@ void CurlJsonRequest::finishJson(const Common::JSONValue *json) {
 		delete json;
 }
 
-bool CurlJsonRequest::jsonIsObject(const Common::JSONValue *item, const char *warningPrefix) {
+bool HttpJsonRequest::jsonIsObject(const Common::JSONValue *item, const char *warningPrefix) {
 	if (item == nullptr) {
 		warning("%s: passed item is NULL", warningPrefix);
 		return false;
@@ -92,7 +92,7 @@ bool CurlJsonRequest::jsonIsObject(const Common::JSONValue *item, const char *wa
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsObject(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsObject(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;
@@ -109,7 +109,7 @@ bool CurlJsonRequest::jsonContainsObject(const Common::JSONObject &item, const c
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsString(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsString(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;
@@ -126,7 +126,7 @@ bool CurlJsonRequest::jsonContainsString(const Common::JSONObject &item, const c
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;
@@ -143,7 +143,7 @@ bool CurlJsonRequest::jsonContainsIntegerNumber(const Common::JSONObject &item, 
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsArray(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsArray(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;
@@ -160,7 +160,7 @@ bool CurlJsonRequest::jsonContainsArray(const Common::JSONObject &item, const ch
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsStringOrIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsStringOrIntegerNumber(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;
@@ -177,7 +177,7 @@ bool CurlJsonRequest::jsonContainsStringOrIntegerNumber(const Common::JSONObject
 	return false;
 }
 
-bool CurlJsonRequest::jsonContainsAttribute(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
+bool HttpJsonRequest::jsonContainsAttribute(const Common::JSONObject &item, const char *key, const char *warningPrefix, bool isOptional) {
 	if (!item.contains(key)) {
 		if (isOptional) {
 			return true;

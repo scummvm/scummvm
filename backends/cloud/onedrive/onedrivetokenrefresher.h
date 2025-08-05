@@ -23,14 +23,14 @@
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVETOKENREFRESHER_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace OneDrive {
 
 class OneDriveStorage;
 
-class OneDriveTokenRefresher: public Networking::CurlJsonRequest {
+class OneDriveTokenRefresher: public Networking::HttpJsonRequest {
 	OneDriveStorage *_parentStorage;
 	Common::Array<Common::String> _headers;
 

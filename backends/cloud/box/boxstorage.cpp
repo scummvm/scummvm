@@ -27,9 +27,9 @@
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/box/boxuploadrequest.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
@@ -80,7 +80,7 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, const Netw
 		return;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage::infoInnerCallback")) {
+	if (!Networking::HttpJsonRequest::jsonIsObject(json, "BoxStorage::infoInnerCallback")) {
 		delete json;
 		delete outerCallback;
 		return;
@@ -94,19 +94,19 @@ void BoxStorage::infoInnerCallback(StorageInfoCallback outerCallback, const Netw
 	// can check that "type": "user"
 	// there is also "max_upload_size", "phone" and "avatar_url"
 
-	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "id", "BoxStorage::infoInnerCallback"))
+	if (Networking::HttpJsonRequest::jsonContainsString(jsonInfo, "id", "BoxStorage::infoInnerCallback"))
 		uid = jsonInfo.getVal("id")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "name", "BoxStorage::infoInnerCallback"))
+	if (Networking::HttpJsonRequest::jsonContainsString(jsonInfo, "name", "BoxStorage::infoInnerCallback"))
 		displayName = jsonInfo.getVal("name")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsString(jsonInfo, "login", "BoxStorage::infoInnerCallback"))
+	if (Networking::HttpJsonRequest::jsonContainsString(jsonInfo, "login", "BoxStorage::infoInnerCallback"))
 		email = jsonInfo.getVal("login")->asString();
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_amount", "BoxStorage::infoInnerCallback"))
+	if (Networking::HttpJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_amount", "BoxStorage::infoInnerCallback"))
 		quotaAllocated = jsonInfo.getVal("space_amount")->asIntegerNumber();
 
-	if (Networking::CurlJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_used", "BoxStorage::infoInnerCallback"))
+	if (Networking::HttpJsonRequest::jsonContainsIntegerNumber(jsonInfo, "space_used", "BoxStorage::infoInnerCallback"))
 		quotaUsed = jsonInfo.getVal("space_used")->asIntegerNumber();
 
 	Common::String username = email;
@@ -139,7 +139,7 @@ void BoxStorage::createDirectoryInnerCallback(BoolCallback outerCallback, const 
 	}
 
 	if (outerCallback) {
-		if (Networking::CurlJsonRequest::jsonIsObject(json, "BoxStorage::createDirectoryInnerCallback")) {
+		if (Networking::HttpJsonRequest::jsonIsObject(json, "BoxStorage::createDirectoryInnerCallback")) {
 			Common::JSONObject jsonInfo = json->asObject();
 			(*outerCallback)(BoolResponse(nullptr, jsonInfo.contains("id")));
 		} else {
@@ -157,7 +157,7 @@ Networking::Request *BoxStorage::createDirectoryWithParentId(const Common::Strin
 
 	Common::String url = BOX_API_FOLDERS;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, const BoolResponse &, const Networking::JsonResponse &>(this, &BoxStorage::createDirectoryInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
 	request->addHeader("Content-Type: application/json");
 
@@ -208,7 +208,7 @@ Networking::Request *BoxStorage::streamFileById(const Common::String &id, Networ
 
 Networking::Request *BoxStorage::info(StorageInfoCallback callback, Networking::ErrorCallback errorCallback) {
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<BoxStorage, const StorageInfoResponse &, const Networking::JsonResponse &>(this, &BoxStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, BOX_API_USERS_ME);
+	Networking::HttpJsonRequest *request = new BoxTokenRefresher(this, innerCallback, errorCallback, BOX_API_USERS_ME);
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
 }

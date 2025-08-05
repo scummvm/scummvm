@@ -23,14 +23,14 @@
 #define BACKENDS_CLOUD_BOX_BOXTOKENREFRESHER_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace Box {
 
 class BoxStorage;
 
-class BoxTokenRefresher: public Networking::CurlJsonRequest {
+class BoxTokenRefresher: public Networking::HttpJsonRequest {
 	BoxStorage *_parentStorage;
 	Common::Array<Common::String> _headers;
 

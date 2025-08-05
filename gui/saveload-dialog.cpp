@@ -24,7 +24,7 @@
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/savessyncrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #endif
 
 #include "common/translation.h"

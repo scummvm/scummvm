@@ -34,7 +34,7 @@
 
 #include "gui/gui-manager.h"
 
-#include "backends/networking/curl/sessionrequest.h"
+#include "backends/networking/http/sessionrequest.h"
 #include "backends/dlc/scummvmcloud.h"
 #include "backends/dlc/dlcmanager.h"
 #include "backends/dlc/dlcdesc.h"
@@ -54,7 +54,7 @@ void ScummVMCloud::jsonCallbackGetAllDLCs(const Networking::JsonResponse &respon
 	if (result.contains("entries")) {
 		Common::JSONArray items = result.getVal("entries")->asArray();
 		for (uint32 i = 0; i < items.size(); ++i) {
-			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "ScummVMCloud")) continue;
+			if (!Networking::HttpJsonRequest::jsonIsObject(items[i], "ScummVMCloud")) continue;
 			Common::JSONObject item = items[i]->asObject();
 
 			DLC::DLCDesc *dlc = new DLC::DLCDesc();
@@ -89,7 +89,7 @@ void ScummVMCloud::getAllDLCs() {
 	Common::String url("https://scummvm-dlcs-default-rtdb.firebaseio.com/dlcs.json"); // temporary mock api
 	Networking::JsonCallback callback = new Common::Callback<ScummVMCloud, const Networking::JsonResponse &>(this, &ScummVMCloud::jsonCallbackGetAllDLCs);
 	Networking::ErrorCallback failureCallback = new Common::Callback<ScummVMCloud, const Networking::ErrorResponse &>(this, &ScummVMCloud::errorCallbackGetAllDLCs);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(
+	Networking::HttpJsonRequest *request = new Networking::HttpJsonRequest(
 		callback, failureCallback, url);
 
 	request->execute();

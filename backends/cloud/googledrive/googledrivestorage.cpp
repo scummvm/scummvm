@@ -27,9 +27,9 @@
 #include "backends/cloud/googledrive/googledrivetokenrefresher.h"
 #include "backends/cloud/googledrive/googledrivelistdirectorybyidrequest.h"
 #include "backends/cloud/googledrive/googledriveuploadrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
@@ -81,7 +81,7 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, co
 		return;
 	}
 
-	if (!Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage::infoInnerCallback")) {
+	if (!Networking::HttpJsonRequest::jsonIsObject(json, "GoogleDriveStorage::infoInnerCallback")) {
 		delete json;
 		delete outerCallback;
 		return;
@@ -92,30 +92,30 @@ void GoogleDriveStorage::infoInnerCallback(StorageInfoCallback outerCallback, co
 	Common::String uid, displayName, email;
 	uint64 quotaUsed = 0, quotaAllocated = 0;
 
-	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "user", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
+	if (Networking::HttpJsonRequest::jsonContainsAttribute(jsonInfo, "user", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::HttpJsonRequest::jsonIsObject(jsonInfo.getVal("user"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"me":true, "kind":"drive#user","photoLink": "",
 		//"displayName":"Alexander Tkachev","emailAddress":"alexander@tkachov.ru","permissionId":""
 		Common::JSONObject user = jsonInfo.getVal("user")->asObject();
-		if (Networking::CurlJsonRequest::jsonContainsString(user, "permissionId", "GoogleDriveStorage::infoInnerCallback"))
+		if (Networking::HttpJsonRequest::jsonContainsString(user, "permissionId", "GoogleDriveStorage::infoInnerCallback"))
 			uid = user.getVal("permissionId")->asString(); //not sure it's user's id, but who cares anyway?
-		if (Networking::CurlJsonRequest::jsonContainsString(user, "displayName", "GoogleDriveStorage::infoInnerCallback"))
+		if (Networking::HttpJsonRequest::jsonContainsString(user, "displayName", "GoogleDriveStorage::infoInnerCallback"))
 			displayName = user.getVal("displayName")->asString();
-		if (Networking::CurlJsonRequest::jsonContainsString(user, "emailAddress", "GoogleDriveStorage::infoInnerCallback"))
+		if (Networking::HttpJsonRequest::jsonContainsString(user, "emailAddress", "GoogleDriveStorage::infoInnerCallback"))
 			email = user.getVal("emailAddress")->asString();
 	}
 
-	if (Networking::CurlJsonRequest::jsonContainsAttribute(jsonInfo, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
-		Networking::CurlJsonRequest::jsonIsObject(jsonInfo.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
+	if (Networking::HttpJsonRequest::jsonContainsAttribute(jsonInfo, "storageQuota", "GoogleDriveStorage::infoInnerCallback") &&
+		Networking::HttpJsonRequest::jsonIsObject(jsonInfo.getVal("storageQuota"), "GoogleDriveStorage::infoInnerCallback")) {
 		//"usageInDrive":"6332462","limit":"18253611008","usage":"6332462","usageInDriveTrash":"0"
 		Common::JSONObject storageQuota = jsonInfo.getVal("storageQuota")->asObject();
 
-		if (Networking::CurlJsonRequest::jsonContainsString(storageQuota, "usage", "GoogleDriveStorage::infoInnerCallback")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(storageQuota, "usage", "GoogleDriveStorage::infoInnerCallback")) {
 			Common::String usage = storageQuota.getVal("usage")->asString();
 			quotaUsed = usage.asUint64();
 		}
 
-		if (Networking::CurlJsonRequest::jsonContainsString(storageQuota, "limit", "GoogleDriveStorage::infoInnerCallback")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(storageQuota, "limit", "GoogleDriveStorage::infoInnerCallback")) {
 			Common::String limit = storageQuota.getVal("limit")->asString();
 			quotaAllocated = limit.asUint64();
 		}
@@ -140,7 +140,7 @@ void GoogleDriveStorage::createDirectoryInnerCallback(BoolCallback outerCallback
 	}
 
 	if (outerCallback) {
-		if (Networking::CurlJsonRequest::jsonIsObject(json, "GoogleDriveStorage::createDirectoryInnerCallback")) {
+		if (Networking::HttpJsonRequest::jsonIsObject(json, "GoogleDriveStorage::createDirectoryInnerCallback")) {
 			Common::JSONObject jsonInfo = json->asObject();
 			(*outerCallback)(BoolResponse(nullptr, jsonInfo.contains("id")));
 		} else {
@@ -192,7 +192,7 @@ Networking::Request *GoogleDriveStorage::createDirectoryWithParentId(const Commo
 
 	Common::String url = GOOGLEDRIVE_API_FILES;
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, const BoolResponse &, const Networking::JsonResponse &>(this, &GoogleDriveStorage::createDirectoryInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + accessToken());
 	request->addHeader("Content-Type: application/json");
 
@@ -214,7 +214,7 @@ Networking::Request *GoogleDriveStorage::info(StorageInfoCallback callback, Netw
 	if (!callback)
 		callback = new Common::Callback<GoogleDriveStorage, const StorageInfoResponse &>(this, &GoogleDriveStorage::printInfo);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<GoogleDriveStorage, const StorageInfoResponse &, const Networking::JsonResponse &>(this, &GoogleDriveStorage::infoInnerCallback, callback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, GOOGLEDRIVE_API_ABOUT);
+	Networking::HttpJsonRequest *request = new GoogleDriveTokenRefresher(this, innerCallback, errorCallback, GOOGLEDRIVE_API_ABOUT);
 	request->addHeader("Authorization: Bearer " + _token);
 	return addRequest(request);
 }

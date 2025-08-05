@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_ID_IDSTORAGE_H
 
 #include "backends/cloud/basestorage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 /*
  * Id::IdStorage is a special base class, which is created

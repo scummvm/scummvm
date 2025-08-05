@@ -22,8 +22,8 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <curl/curl.h>
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/debug.h"
 #include "common/fs.h"
 #include "common/system.h"

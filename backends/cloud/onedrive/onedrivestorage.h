@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_ONEDRIVE_ONEDRIVESTORAGE_H
 
 #include "backends/cloud/basestorage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace OneDrive {

@@ -23,14 +23,14 @@
 #define BACKENDS_CLOUD_DROPBOX_DROPBOXTOKENREFRESHER_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {
 
 class DropboxStorage;
 
-class DropboxTokenRefresher: public Networking::CurlJsonRequest {
+class DropboxTokenRefresher: public Networking::HttpJsonRequest {
 	DropboxStorage *_parentStorage;
 	Common::Array<Common::String> _headers;
 

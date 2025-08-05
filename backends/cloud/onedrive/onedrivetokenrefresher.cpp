@@ -24,7 +24,7 @@
 #include <curl/curl.h>
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
 
@@ -32,7 +32,7 @@ namespace Cloud {
 namespace OneDrive {
 
 OneDriveTokenRefresher::OneDriveTokenRefresher(OneDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url):
-	CurlJsonRequest(callback, ecb, url), _parentStorage(parent) {}
+	HttpJsonRequest(callback, ecb, url), _parentStorage(parent) {}
 
 OneDriveTokenRefresher::~OneDriveTokenRefresher() {}
 
@@ -59,7 +59,7 @@ void OneDriveTokenRefresher::tokenRefreshed(const Storage::BoolResponse &respons
 void OneDriveTokenRefresher::finishJson(const Common::JSONValue *json) {
 	if (!json) {
 		//that's probably not an error (200 OK)
-		CurlJsonRequest::finishJson(nullptr);
+		HttpJsonRequest::finishJson(nullptr);
 		return;
 	}
 
@@ -111,7 +111,7 @@ void OneDriveTokenRefresher::finishJson(const Common::JSONValue *json) {
 	}
 
 	//notify user of success
-	CurlJsonRequest::finishJson(json);
+	HttpJsonRequest::finishJson(json);
 }
 
 void OneDriveTokenRefresher::finishError(const Networking::ErrorResponse &error, Networking::RequestState state) {
@@ -147,12 +147,12 @@ void OneDriveTokenRefresher::setHeaders(const Common::Array<Common::String> &hea
 	curl_slist_free_all(_headersList);
 	_headersList = nullptr;
 	for (uint32 i = 0; i < headers.size(); ++i)
-		CurlJsonRequest::addHeader(headers[i]);
+		HttpJsonRequest::addHeader(headers[i]);
 }
 
 void OneDriveTokenRefresher::addHeader(const Common::String &header) {
 	_headers.push_back(header);
-	CurlJsonRequest::addHeader(header);
+	HttpJsonRequest::addHeader(header);
 }
 
 } // End of namespace OneDrive

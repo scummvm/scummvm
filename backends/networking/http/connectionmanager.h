@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
-#define BACKENDS_NETWORKING_CURL_CONNECTIONMANAGER_H
+#ifndef BACKENDS_NETWORKING_HTTP_CONNECTIONMANAGER_H
+#define BACKENDS_NETWORKING_HTTP_CONNECTIONMANAGER_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/str.h"
 #include "common/singleton.h"
 #include "common/hashmap.h"

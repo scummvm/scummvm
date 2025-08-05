@@ -23,8 +23,8 @@
 #define CURL_DISABLE_DEPRECATION
 
 #include <curl/curl.h>
-#include "backends/networking/curl/networkreadstream.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
 #include "base/version.h"
 #include "common/debug.h"
 
