@@ -2225,7 +2225,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 	dx = unionRect.right - unionRect.left;              // ... contains the bitmap area where the sprite was
 	dy = unionRect.bottom - unionRect.top;              // ... and the bitmap area where it will be next
 
-	//dwN = stN = n = ((dx + 15) >> 3) * dy;              // calculate the amount of memory that a bitmap mask
+	stN = ((dx + 15) >> 3) * dy;                    // calculate the amount of memory that a bitmap mask
 	chPixels = (BYTE *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
 	if (!chPixels)
 		return FALSE;
