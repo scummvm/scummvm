@@ -44,7 +44,7 @@ class CFileException;
 #define IMPLEMENT_RUNTIMECLASS(class_name, base_class_name, wSchema, pfnNew) \
 	const CRuntimeClass class_name::class##class_name = { \
 		#class_name, sizeof(class class_name), wSchema, pfnNew, \
-			RUNTIME_CLASS(base_class_name), nullptr }; \
+			RUNTIME_CLASS(base_class_name) }; \
 	const CRuntimeClass* class_name::GetRuntimeClass() const \
 	{ return RUNTIME_CLASS(class_name); }
 
@@ -62,19 +62,12 @@ class CFileException;
 #define ASSERT_VALID(X) ((X) != nullptr)
 
 struct CRuntimeClass {
-	// Attributes
-	const char *m_lpszClassName = nullptr;
-	int m_nObjectSize = 0;
-	UINT m_wSchema = 0;
-	CObject *(*m_pfnCreateObject)() = nullptr;
-	const CRuntimeClass *m_pBaseClass = nullptr;
+	const char *m_lpszClassName;
+	int m_nObjectSize;
+	UINT m_wSchema;
+	CObject *(*m_pfnCreateObject)();
+	const CRuntimeClass *m_pBaseClass;
 
-	// CRuntimeClass objects linked together in simple list
-	const CRuntimeClass *m_pNextClass = nullptr;       // linked list of registered classes
-
-	CRuntimeClass(const char *m_lpszClassName_, int m_nObjectSize_, UINT m_wSchema_,
-		CObject *(*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
-		const CRuntimeClass *m_pNextClass_);
 	CObject *CreateObject() const;
 	bool IsDerivedFrom(const CRuntimeClass *pBaseClass) const;
 };

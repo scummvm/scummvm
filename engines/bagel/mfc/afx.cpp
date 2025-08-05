@@ -25,17 +25,6 @@
 namespace Bagel {
 namespace MFC {
 
-CRuntimeClass::CRuntimeClass(const char *m_lpszClassName_, int m_nObjectSize_, UINT m_wSchema_,
-	CObject *(*m_pfnCreateObject_)(), const CRuntimeClass *m_pBaseClass_,
-	const CRuntimeClass *m_pNextClass_) {
-	m_lpszClassName = m_lpszClassName_;
-	m_nObjectSize = m_nObjectSize_;
-	m_wSchema = m_wSchema_;
-	m_pfnCreateObject = m_pfnCreateObject_;
-	m_pBaseClass = m_pBaseClass_;
-	m_pNextClass = m_pNextClass_;
-}
-
 CObject *CRuntimeClass::CreateObject() const {
 	return m_pfnCreateObject();
 }
