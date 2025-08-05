@@ -183,8 +183,8 @@ SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::
 	_mixer->playStream(type, &playback._handle, stream, -1, volume);
 	playback._type = type;
 	playback._inputRate = stream->getRate();
-	playback._samples = std::move(samples);
-	_playbacks.push_back(std::move(playback));
+	playback._samples = Common::move(samples);
+	_playbacks.push_back(Common::move(playback));
 	return playback._handle;
 }
 
