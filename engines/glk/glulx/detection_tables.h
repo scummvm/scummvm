@@ -1008,6 +1008,18 @@ const PlainGameDescriptor GLULXE_GAME_LIST[] = {
 	// Spring Thing 2024 - New Game Plus
 	{ "stc24_timemachi24",  "The Time Machine (by Bill Maya)" },                                        //      Entrant
 
+	// Spring Thing 2025 - Main Festival
+	{ "stc25_cutsky",       "Cut the Sky" },                                                            // Best in Show
+	{ "stc25_espresso",     "Espresso Moka" },                                                          //      Entrant
+	{ "stc25_hellride",     "Hell Ride" },                                                              //      Entrant
+	{ "stc25_retool",       "Retool Looter" },                                                          //      Entrant
+	{ "stc25_terranova",    "Terra Nova" },                                                             //      Entrant
+
+	// Spring Thing 2025 - Back Garden
+	{ "stc25_anpama",       "anpa ma" },                                                                //      Entrant
+	{ "stc25_marbles",      "Marbles, D, and the Sinister Spotlight" },                                 //      Entrant
+	{ "stc25_portrait",     "Portrait with Wolf" },                                                     //      Entrant
+
 	// Text Adventure Literacy Jam 2024
 	{ "luluasteroid",       "Lulu and the Asteroid of 100% Guaranteed Doom" },                          //      Entrant
 	{ "thewolf",            "The Wolf" },                                                               //      Entrant
@@ -2662,6 +2674,18 @@ const GlkDetectionEntry GLULXE_GAMES[] = {
 
 	// Spring Thing 2024 - New Game Plus
 	DT_ENTRY1("stc24_timemachi24", "240329", "d8442e3f28c2812f611ee91dc2434f27", 23123096),
+
+	// Spring Thing 2025 - Main Festival
+	DT_ENTRY1("stc25_cutsky", "250502", "c963db666f36f5a33a166c37bd0e60bb", 1717218),
+	DT_ENTRY1("stc25_espresso", "250420", "20c8042a1e2c6ad5e9829001b0b463d1", 1334456),
+	DT_ENTRY1("stc25_hellride", "250512", "678833dc752453a409100194ce1833c7", 33177990),
+	DT_ENTRY1("stc25_retool", "25????", "2c5c997e7482a1fc4cc32a62a7f66588", 3896676),
+	DT_ENTRY1("stc25_terranova", "250328", "eaa465356be3549446c14588a58060a0", 1150370),
+
+	// Spring Thing 2025 - Back Garden
+	DT_ENTRY1("stc25_anpama", "250329", "322a3fb78e2751c6779acbff74a7655c", 1352138),
+	DT_ENTRY1("stc25_marbles", "250403", "16d9711703ffef410c2991e069dfd589", 10341546),
+	DT_ENTRY1("stc25_portrait", "250424", "3e84f0ced2640e4862c2503f30aa4e4b", 8076938),
 
 	// Text Adventure Literacy Jam 2024
 	DT_ENTRY1("luluasteroid", "240430", "2edb05f1d13150655941fb255f5921e0", 23246980),
