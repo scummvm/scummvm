@@ -62,12 +62,17 @@ void showVars() {
 				keyBuffer.push_back(it._key);
 			}
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+			uint32 id = 0;
 			for (auto &i : keyBuffer) {
+				ImGui::PushID(id);
 				Datum &val = _state->_vars._globals.getVal(i);
 				bool changed = !_state->_vars._prevGlobals.contains(i) || !(_state->_vars._globals.getVal(i) == _state->_vars._prevGlobals.getVal(i));
 				displayVariable(i, changed);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				ImGui::PopID();
+				id += 1;
 			}
 			keyBuffer.clear();
 		}
@@ -77,12 +82,17 @@ void showVars() {
 					keyBuffer.push_back(it._key);
 				}
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					ImGui::PushID(id);
 					Datum &val = _state->_vars._locals.getVal(i);
 					bool changed = !_state->_vars._prevLocals.contains(i) || !(_state->_vars._locals.getVal(i) == _state->_vars._prevLocals.getVal(i));
 					displayVariable(i, changed);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					ImGui::PopID();
+					id += 1;
 				}
 				keyBuffer.clear();
 			} else {
@@ -96,11 +106,16 @@ void showVars() {
 					keyBuffer.push_back(script->getPropAt(i));
 				}
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					ImGui::PushID(id);
 					Datum val = script->getProp(i);
 					displayVariable(i, false);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					ImGui::PopID();
+					id += 1;
 				}
 				keyBuffer.clear();
 			} else {
