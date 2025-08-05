@@ -32,7 +32,6 @@ class DropboxStorage;
 
 class DropboxTokenRefresher: public Networking::HttpJsonRequest {
 	DropboxStorage *_parentStorage;
-	Common::Array<Common::String> _headers;
 
 	void tokenRefreshed(const Storage::BoolResponse &response);
 
@@ -41,9 +40,6 @@ class DropboxTokenRefresher: public Networking::HttpJsonRequest {
 public:
 	DropboxTokenRefresher(DropboxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	~DropboxTokenRefresher() override;
-
-	void setHeaders(const Common::Array<Common::String> &headers) override;
-	void addHeader(const Common::String &header) override;
 };
 
 } // End of namespace Dropbox

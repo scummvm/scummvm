@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/cloud/id/idstorage.h"
 #include "backends/cloud/id/idcreatedirectoryrequest.h"
 #include "backends/cloud/id/iddownloadrequest.h"

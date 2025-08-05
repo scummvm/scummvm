@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxinforequest.h"

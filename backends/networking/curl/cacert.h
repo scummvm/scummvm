@@ -18,30 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef BACKENDS_NETWORKING_CURL_CACERT_H
+#define BACKENDS_NETWORKING_CURL_CACERT_H
 
-#ifndef BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
-#define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
+#include "common/str.h"
 
-#include "backends/cloud/storage.h"
-#include "backends/networking/http/httpjsonrequest.h"
+namespace Networking {
 
-namespace Cloud {
-namespace GoogleDrive {
+/** Return the path to the CA certificates bundle. */
+Common::String getCaCertPath();
 
-class GoogleDriveStorage;
-
-class GoogleDriveTokenRefresher: public Networking::HttpJsonRequest {
-	GoogleDriveStorage *_parentStorage;
-
-	void tokenRefreshed(const Storage::BoolResponse &response);
-
-	void finishJson(const Common::JSONValue *json) override;
-public:
-	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	~GoogleDriveTokenRefresher() override;
-};
-
-} // End of namespace GoogleDrive
-} // End of namespace Cloud
+}
 
 #endif

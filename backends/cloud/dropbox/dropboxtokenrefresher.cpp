@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -44,12 +42,11 @@ void DropboxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response
 	}
 
 	//update headers: first change header with token, then pass those to request
-	for (uint32 i = 0; i < _headers.size(); ++i) {
-		if (_headers[i].contains("Authorization")) {
-			_headers[i] = "Authorization: Bearer " + _parentStorage->accessToken();
+	for (uint32 i = 0; i < _headersList.size(); ++i) {
+		if (_headersList[i].contains("Authorization")) {
+			_headersList[i] = "Authorization: Bearer " + _parentStorage->accessToken();
 		}
 	}
-	setHeaders(_headers);
 
 	//successfully received refreshed token, can restart the original request now
 	retry(0);
@@ -104,17 +101,6 @@ void DropboxTokenRefresher::finishError(const Networking::ErrorResponse &error, 
 	}
 
 	Request::finishError(error);
-}
-
-void DropboxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
-	_headers = headers;
-	// Clear existing headers and add new ones
-	HttpRequest::setHeaders(headers);
-}
-
-void DropboxTokenRefresher::addHeader(const Common::String &header) {
-	_headers.push_back(header);
-	HttpJsonRequest::addHeader(header);
 }
 
 } // End of namespace Dropbox

@@ -19,29 +19,24 @@
  *
  */
 
-#ifndef BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
-#define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
+#ifndef BACKENDS_NETWORKING_HTTP_EMSCRIPTEN_CONNECTIONMANAGEREMSCRIPTEN_H
+#define BACKENDS_NETWORKING_HTTP_EMSCRIPTEN_CONNECTIONMANAGEREMSCRIPTEN_H
 
-#include "backends/cloud/storage.h"
-#include "backends/networking/http/httpjsonrequest.h"
+#ifdef EMSCRIPTEN
 
-namespace Cloud {
-namespace GoogleDrive {
+#include "backends/networking/http/connectionmanager.h"
 
-class GoogleDriveStorage;
+namespace Networking {
 
-class GoogleDriveTokenRefresher: public Networking::HttpJsonRequest {
-	GoogleDriveStorage *_parentStorage;
+class ConnectionManagerEmscripten : public ConnectionManager {
 
-	void tokenRefreshed(const Storage::BoolResponse &response);
-
-	void finishJson(const Common::JSONValue *json) override;
 public:
-	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	~GoogleDriveTokenRefresher() override;
+	void processTransfers() override;
+	Common::String urlEncode(const Common::String &s) const override;
 };
 
-} // End of namespace GoogleDrive
-} // End of namespace Cloud
+} // End of namespace Networking
+
+#endif // EMSCRIPTEN
 
 #endif
