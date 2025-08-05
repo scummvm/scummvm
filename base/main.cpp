@@ -74,7 +74,7 @@
 
 #ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
 #endif

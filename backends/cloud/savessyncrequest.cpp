@@ -23,7 +23,7 @@
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/downloadrequest.h"
 #include "backends/cloud/id/iddownloadrequest.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 #include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -206,7 +206,7 @@ void SavesSyncRequest::directoryListedErrorCallback(const Networking::ErrorRespo
 				// OneDrive-related error:
 				if (object.contains("error") && object.getVal("error")->isObject()) {
 					Common::JSONObject errorNode = object.getVal("error")->asObject();
-					if (Networking::CurlJsonRequest::jsonContainsString(errorNode, "code", "SavesSyncRequest")) {
+					if (Networking::HttpJsonRequest::jsonContainsString(errorNode, "code", "SavesSyncRequest")) {
 						Common::String code = errorNode.getVal("code")->asString();
 						if (code == "itemNotFound") {
 							irrecoverable = false;

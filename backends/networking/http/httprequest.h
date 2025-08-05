@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_CURLREQUEST_H
-#define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_HTTPREQUEST_H
+#define BACKENDS_NETWORKING_HTTP_HTTPREQUEST_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/path.h"
 #include "common/str.h"
 #include "common/array.h"
@@ -38,7 +38,7 @@ class NetworkReadStream;
 typedef Response<NetworkReadStream *> NetworkReadStreamResponse;
 typedef Common::BaseCallback<const NetworkReadStreamResponse &> *NetworkReadStreamCallback;
 
-class CurlRequest: public Request {
+class HttpRequest: public Request {
 protected:
 	Common::String _url;
 	NetworkReadStream *_stream;
@@ -56,8 +56,8 @@ protected:
 	NetworkReadStream *makeStream();
 
 public:
-	CurlRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url);
-	~CurlRequest() override;
+	HttpRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url);
+	~HttpRequest() override;
 
 	void handle() override;
 	void restart() override;

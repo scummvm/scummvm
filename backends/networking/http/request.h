@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_REQUEST_H
-#define BACKENDS_NETWORKING_CURL_REQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_REQUEST_H
+#define BACKENDS_NETWORKING_HTTP_REQUEST_H
 
 #include "common/callback.h"
 #include "common/scummsys.h"

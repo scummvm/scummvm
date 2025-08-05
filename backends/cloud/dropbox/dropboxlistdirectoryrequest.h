@@ -23,9 +23,9 @@
 #define BACKENDS_CLOUD_DROPBOX_DROPBOXLISTDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/callback.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {

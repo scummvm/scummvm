@@ -22,9 +22,9 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include <curl/curl.h>
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/networkreadstream.h"
-#include "backends/networking/curl/sessionrequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/networkreadstream.h"
+#include "backends/networking/http/sessionrequest.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/formats/json.h"
@@ -32,8 +32,8 @@
 namespace Networking {
 
 SessionRequest::SessionRequest(const Common::String &url, const Common::Path &localFile, DataCallback cb, ErrorCallback ecb, bool binary):
-	CurlRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
-	_buffer(new byte[CURL_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr), _localFile(nullptr),
+	HttpRequest(cb, ecb, url), _contentsStream(DisposeAfterUse::YES),
+	_buffer(new byte[HTTP_SESSION_REQUEST_BUFFER_SIZE]), _text(nullptr), _localFile(nullptr),
 	_started(false), _complete(false), _success(false), _binary(binary) {
 
 	openLocalFile(localFile);
@@ -99,7 +99,7 @@ char *SessionRequest::getPreparedContents() {
 void SessionRequest::finishError(const ErrorResponse &error, RequestState state) {
 	_complete = true;
 	_success = false;
-	CurlRequest::finishError(error, PAUSED);
+	HttpRequest::finishError(error, PAUSED);
 }
 
 void SessionRequest::finishSuccess() {
@@ -164,7 +164,7 @@ void SessionRequest::handle() {
 			finishError(error);
 			return;
 		}
-		uint32 readBytes = _stream->read(_buffer, CURL_SESSION_REQUEST_BUFFER_SIZE);
+		uint32 readBytes = _stream->read(_buffer, HTTP_SESSION_REQUEST_BUFFER_SIZE);
 		if (readBytes != 0) {
 			if (!_localFile) {
 				if (_contentsStream.write(_buffer, readBytes) != readBytes)

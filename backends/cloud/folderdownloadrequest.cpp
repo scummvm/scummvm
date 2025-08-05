@@ -24,7 +24,7 @@
 #include "backends/cloud/id/iddownloadrequest.h"
 #include "common/debug.h"
 #include "gui/downloaddialog.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #include "cloudmanager.h"
 
 namespace Cloud {

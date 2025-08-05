@@ -19,10 +19,10 @@
  *
  */
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "gui/downloadpacksdialog.h"
 #include "gui/downloaddialog.h"
-#include "backends/networking/curl/session.h"
+#include "backends/networking/http/session.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
 #include "common/util.h"

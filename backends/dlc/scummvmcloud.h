@@ -26,8 +26,8 @@
 #include "common/queue.h"
 
 #include "backends/dlc/store.h"
-#include "backends/networking/curl/request.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/request.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Networking {
 class SessionRequest;

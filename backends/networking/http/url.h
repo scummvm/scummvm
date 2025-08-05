@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_NETWORKING_CURL_URL_H
-#define BACKENDS_NETWORKING_CURL_URL_H
+#ifndef BACKENDS_NETWORKING_HTTP_URL_H
+#define BACKENDS_NETWORKING_HTTP_URL_H
 
 typedef struct Curl_URL CURLU;
 

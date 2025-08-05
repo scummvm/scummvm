@@ -20,7 +20,7 @@
  */
 
 #include "backends/cloud/downloadrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #include "common/textconsole.h"
 
 namespace Cloud {

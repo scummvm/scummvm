@@ -24,7 +24,7 @@
 
 #include "backends/networking/sdl_net/handlers/basehandler.h"
 #include "backends/networking/sdl_net/client.h"
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/memstream.h"
 
 namespace Networking {
