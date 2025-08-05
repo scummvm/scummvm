@@ -194,7 +194,7 @@ BOOL CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (CBmpDialog::OnCommand(wParam, lParam));
+	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
 void CMetaSetupDlg::OnCancel(void) {

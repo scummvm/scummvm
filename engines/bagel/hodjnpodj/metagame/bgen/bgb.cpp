@@ -718,7 +718,7 @@ ULONG Sqrt(ULONG x) {
 			break;
 	}
 
-	return (num);
+	return num;
 }
 
 

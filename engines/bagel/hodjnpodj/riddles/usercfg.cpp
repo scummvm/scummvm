@@ -151,7 +151,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (CDialog::OnCommand(wParam, lParam));
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {

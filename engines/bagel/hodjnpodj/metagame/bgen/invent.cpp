@@ -296,7 +296,7 @@ CItem *CInventory::FetchItem(int nIdx) {
 
 	if ((nIdx >= m_nItemCount) ||                   // punt if the index is invalid
 	        (nIdx < 0))
-		return (nullptr);
+		return nullptr;
 
 	pItem = m_pEquipment;                           // get head of equipment list
 	for (i = 0; pItem != nullptr; i++) {               // scan through the list
@@ -305,7 +305,7 @@ CItem *CInventory::FetchItem(int nIdx) {
 		pItem = (*pItem).m_pNext;
 	}
 
-	return (pItem);                                 // return what we found
+	return pItem;                                   // return what we found
 }
 
 
@@ -333,7 +333,7 @@ CItem *CInventory::FindItem(int nID) {
 		pItem = (*pItem).m_pNext;
 	}
 
-	return (pItem);                                 // return what we found
+	return pItem;                                   // return what we found
 }
 
 

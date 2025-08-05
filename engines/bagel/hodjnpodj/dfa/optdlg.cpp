@@ -128,7 +128,8 @@ BOOL CDFAOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			return 1;
 		}
 	}
-	return (CDialog::OnCommand(wParam, lParam));
+
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 void CDFAOptDlg::OnCancel(void) {

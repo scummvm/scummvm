@@ -71,7 +71,7 @@ public:
 
 // methods
 	static CBdbgMgr FAR *GetPointer(void) {
-		return (lpBdbgMgr) ;
+		return lpBdbgMgr;
 	}
 
 	CBdbgMgr(void) ;

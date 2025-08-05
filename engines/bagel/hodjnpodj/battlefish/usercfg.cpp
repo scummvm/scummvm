@@ -192,7 +192,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (CBmpDialog::OnCommand(wParam, lParam));
+	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
 VOID CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {

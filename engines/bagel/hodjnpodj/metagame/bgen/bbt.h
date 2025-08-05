@@ -85,9 +85,9 @@ public:
 			&m_cEndData - &m_cStartData);
 		m_iBbtId = iId;
 	}
-	BOOL PtInButton(CRPoint crPoint) {
-		return (m_lpcBgbObject1 ?
-			m_lpcBgbObject1->GetRect().PtInRect(crPoint) : FALSE);
+	BOOL PtInButton(const CRPoint &crPoint) const {
+		return m_lpcBgbObject1 ?
+			m_lpcBgbObject1->GetRect().PtInRect(crPoint) : FALSE;
 	}
 };
 

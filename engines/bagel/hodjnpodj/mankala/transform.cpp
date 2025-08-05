@@ -160,7 +160,7 @@ LRESULT GraphWndProc(HWND hWnd, UINT  msg, WPARAM wParam, LPARAM lParam) {
 	default:
 		break;
 	}
-	return (DefWindowProc(hWnd, msg, wParam, lParam));
+	return DefWindowProc(hWnd, msg, wParam, lParam);
 	#else
 	error("TODO: What the heck is this other monstrosity");
 	#endif

@@ -138,7 +138,7 @@ CPalette *CDibDoc::DetachPalette() {
 
 	pMyPalette = m_palDIB;
 	m_palDIB = nullptr;
-	return (pMyPalette);
+	return pMyPalette;
 }
 
 

@@ -124,7 +124,7 @@ BOOL COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 	}
-	return (CDialog::OnCommand(wParam, lParam));
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 /*****************************************************************

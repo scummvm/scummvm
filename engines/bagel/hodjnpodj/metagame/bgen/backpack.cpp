@@ -129,7 +129,7 @@ LRESULT BackpackHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	CDC *pDC = nullptr;
 
 	if (code < 0)                                       // required to punt to next hook
-		return (CallNextHookEx((HHOOK)lpfnKbdHook, code, wParam, lParam));
+		return CallNextHookEx((HHOOK)lpfnKbdHook, code, wParam, lParam);
 
 	if (lParam & 0xA0000000)                            // ignore ALT and key release
 		return FALSE;
@@ -792,7 +792,7 @@ int CBackpack::SelectedItem(CPoint point) {
 			i = (row * nItemsPerRow) + col;
 	}
 
-	return (i);
+	return i;
 }
 
 

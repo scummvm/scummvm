@@ -1770,7 +1770,7 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 
 
 			iNextID = ((iPit == (NUMPITS - 1)) && !iFreeTurn) ? -1 : (pMove->cMoveID + 1);  //returns the Next ID.
-			if (iNextID == -1) return (-1);
+			if (iNextID == -1) return -1;
 
 		}
 

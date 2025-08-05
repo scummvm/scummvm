@@ -226,7 +226,7 @@ BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (CBmpDialog::OnCommand(wParam, lParam));
+	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
 void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {

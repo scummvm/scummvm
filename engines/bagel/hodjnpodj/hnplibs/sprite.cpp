@@ -346,7 +346,7 @@ CSprite *CSprite::DuplicateSprite(CDC *pDC) {
 	        DuplicateSprite(pDC, pSprite))
 		return (pSprite);
 
-	return (nullptr);                                          // return failure
+	return nullptr;                                          // return failure
 }
 
 
@@ -2143,7 +2143,7 @@ CSprite *CSprite::Interception(CRect *newRect, CSprite * pTestSprite) {
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite in chain for testing
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -2177,7 +2177,7 @@ CSprite *CSprite::Interception(CDC *pDC, CSprite * pTestSprite) {
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite in chain for testing
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -2371,7 +2371,7 @@ CSprite *CSprite::Touched(CPoint myPoint, CSprite *pSprite) {
 		pSprite = (*pSprite).m_pNext;
 	}                  // fetch next sprite for testing
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -3120,7 +3120,7 @@ CDC *CSprite::GetBackdropDC(CDC *pDC) {
 	if (!(*m_pBackdropDC).CreateCompatibleDC(pDC)) {
 		delete m_pBackdropDC;
 		m_pBackdropDC = nullptr;
-		return (nullptr);
+		return nullptr;
 	}
 
 	if (m_pBackdropPalette != nullptr) {                       // map in the palette if present
@@ -3128,7 +3128,7 @@ CDC *CSprite::GetBackdropDC(CDC *pDC) {
 		if (m_pBackdropPalOld == nullptr) {                     // punt if not successful
 			delete m_pBackdropDC;
 			m_pBackdropDC = nullptr;
-			return (nullptr);
+			return nullptr;
 		}
 		(void)(*m_pBackdropDC).RealizePalette();            // make the system use the palette
 	}
@@ -3141,7 +3141,7 @@ CDC *CSprite::GetBackdropDC(CDC *pDC) {
 			delete m_pBackdropDC;
 			m_pBackdropDC = nullptr;
 		}
-		return (nullptr);
+		return nullptr;
 	}
 
 	return (m_pBackdropDC);                                 // send back the context

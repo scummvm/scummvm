@@ -1211,7 +1211,7 @@ BOOL ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg) {
 	case WM_INITDIALOG:
 		lTotalStones = lParam * NUMPITS * 2;
-		return (gpcMove->SetBackToOriginal(hDlg));
+		return gpcMove->SetBackToOriginal(hDlg);
 	case WM_COMMAND:
 		switch (wParam) {
 		case IDOK:

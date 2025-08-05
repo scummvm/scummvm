@@ -319,7 +319,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 	if (pPal != nullptr)
 		SelectPalette(hDC, hOldPal, FALSE);
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPalette, HDIB hDib) {

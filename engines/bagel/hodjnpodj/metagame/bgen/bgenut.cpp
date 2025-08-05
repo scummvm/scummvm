@@ -52,7 +52,7 @@ int CGenUtil::RandomInteger(int iLow, int iHigh) {
 	}
 
 	JXELEAVE(CGenUtil::RandomInteger);
-	return (iRetval);
+	return iRetval;
 }
 
 

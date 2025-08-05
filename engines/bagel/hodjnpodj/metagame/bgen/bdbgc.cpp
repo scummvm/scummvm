@@ -378,7 +378,7 @@ int kybrd(void) {
 int kybrdz(void) {
 	kybupq() ;      /* update queue */
 	if (kybqsz == 0) return (0) ;
-	return (kybrd()) ;
+	return kybrd();
 }
 
 //* kybord -- o/s keyboard read -- returns char or scan code + 1000
@@ -521,7 +521,7 @@ int ifcspf(char * ds, char * cs, ...)
 	}
 	*ds = '\0';
 
-	return (ds - q);
+	return ds - q;
 }
 
 /** ifcfmt -- generated formatted print string **/
@@ -678,7 +678,7 @@ dec:
 		#endif /* FLOAT_PT */
 
 	default:
-		return (NULL);
+		return NULL;
 	}
 
 	if (p != NULL) {
@@ -700,7 +700,7 @@ dec:
 				ds[i++] = *p++;
 		}
 		*flen = i;
-		return (cs + 1);
+		return cs + 1;
 	}
 
 	#ifdef FLOAT_PT     /* floating point code doesn't work */
@@ -780,7 +780,7 @@ dec:
 	if (lj == 1 && mfw > i)
 		for (mfw -= i; --mfw >= 0; i++) *ds++ = fill;
 	*flen = i;
-	return (cs + 1);
+	return cs + 1;
 	#endif /* FLOAT_PT */
 }
 

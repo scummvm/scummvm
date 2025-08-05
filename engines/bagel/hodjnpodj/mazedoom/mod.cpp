@@ -1713,11 +1713,10 @@ leftwall:
 
 donewall:
 	if (num_candidates == 0)
-		return (-1);
+		return -1;
 	if (num_candidates == 1)
-		return (candidates[0]);
-	return (candidates[ brand() % (num_candidates) ]);
-
+		return candidates[0];
+	return candidates[brand() % (num_candidates)];
 }
 
 
@@ -1725,7 +1724,7 @@ int backup() {                                                /* back up a move 
 	_sqNum--;
 	_curSqX = _moveList[_sqNum].x;
 	_curSqY = _moveList[_sqNum].y;
-	return (_sqNum);
+	return _sqNum;
 }
 
 

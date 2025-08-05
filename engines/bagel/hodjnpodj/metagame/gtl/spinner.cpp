@@ -380,7 +380,7 @@ int CSpinner::Spin(void) {
 	CWinApp *app = AfxGetApp();
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
-		return (-1);
+		return -1;
 
 	CSound::waitWaveSounds();
 
@@ -437,7 +437,7 @@ punt:
 	if (bSuccess)                                      // return value if all went well
 		return (nValue);
 
-	return (-1);
+	return -1;
 }
 
 

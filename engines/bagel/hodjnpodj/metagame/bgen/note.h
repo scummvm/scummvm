@@ -85,7 +85,7 @@ public:
 		        (m_nClueID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nClueID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 
 	const char *GetPersonArtSpec(void) {
@@ -93,7 +93,7 @@ public:
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPersonID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 
 	const char *GetPlaceArtSpec(void) {
@@ -101,7 +101,7 @@ public:
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPlaceID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 
 	const char *GetDescription(void) {
@@ -109,7 +109,7 @@ public:
 		        (m_nID < NOTE_COUNT))
 			return (m_pNoteText[m_nID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 
 	const char *GetPersonSoundSpec(void) {
@@ -117,7 +117,7 @@ public:
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPersonID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 
 	const char *GetPlaceSoundSpec(void) {
@@ -125,7 +125,7 @@ public:
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPlaceID]);
 		else
-			return (nullptr);
+			return nullptr;
 	}
 	#endif
 

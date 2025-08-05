@@ -54,7 +54,7 @@ colony &colony::operator=(const colony& c) {
 			this->grid[i][j] = c.grid[i][j];
 	this->m_nColony_count = c.m_nColony_count;
 
-	return (*this);
+	return *this;
 }
 
 bool colony::operator==(const colony& c) {
@@ -71,7 +71,7 @@ bool colony::operator==(const colony& c) {
 }
 
 bool colony::operator!=(const colony& c) {
-	return (!(*this == c));
+	return !(*this == c);
 }
 
 void colony::evolve(colony clny) {

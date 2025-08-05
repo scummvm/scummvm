@@ -1051,7 +1051,7 @@ CVector CFugeWindow::BallOnPaddle(VOID) {
 	// this vector was relative to center so now make it a real point
 	vBall += gvCenter;
 
-	return (vBall);
+	return vBall;
 }
 
 

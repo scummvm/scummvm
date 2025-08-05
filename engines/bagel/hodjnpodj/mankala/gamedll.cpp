@@ -104,7 +104,7 @@ HWND FAR PASCAL RunMank(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	hDLLInst = nullptr;
 	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 
-	return ((HWND)nullptr);
+	return (HWND)nullptr;
 	#endif
 }
 

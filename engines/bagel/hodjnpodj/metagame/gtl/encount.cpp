@@ -832,7 +832,7 @@ int FindEncounter(BOOL bHodj, int nPlayerSector, long lCrowns, int nItems,
 	}
 
 	// return unusable value
-	return (-1);
+	return -1;
 }
 
 /*****************************************************************

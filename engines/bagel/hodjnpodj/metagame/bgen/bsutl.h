@@ -199,14 +199,13 @@ public:
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	BOOL IfRelocatable(void) {
-		return (m_bRelocatable != 0);
+	BOOL IfRelocatable(void) const {
+		return m_bRelocatable != 0;
 	}
 
-	CRPoint Offset(CPoint cPt) {
-		return (CRPoint(x + cPt.x, y + cPt.y, m_bRelocatable));
+	CRPoint Offset(const CPoint &cPt) const {
+		return CRPoint(x + cPt.x, y + cPt.y, m_bRelocatable);
 	}
-
 };
 
 // CRRect -- relocatable rectangle
@@ -231,13 +230,13 @@ public:
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	BOOL IfRelocatable(void) {
-		return (m_bRelocatable != 0);
+	BOOL IfRelocatable(void) const {
+		return m_bRelocatable != 0;
 	}
 
-	BOOL PtInRect(CRPoint crPoint) {
-		return (EQV(m_bRelocatable, crPoint.m_bRelocatable)
-			&& CRect::PtInRect(crPoint));
+	BOOL PtInRect(const CRPoint &crPoint) {
+		return EQV(m_bRelocatable, crPoint.m_bRelocatable)
+			&& CRect::PtInRect(crPoint);
 	}
 };
 

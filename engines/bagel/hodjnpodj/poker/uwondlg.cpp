@@ -105,7 +105,7 @@ BOOL CUserWonDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			return 1;
 		}
 	}
-	return (CDialog::OnCommand(wParam, lParam));
+	return CDialog::OnCommand(wParam, lParam);
 }
 
 void CUserWonDlg::OnOK(void) {

@@ -152,13 +152,13 @@ public:
 	int  CharToIndex(char chChar);
 
 	inline  char GetCharType(int nTypeCode) {
-		return ((char)(nTypeCode & CHAR_TYPE));
+		return (char)(nTypeCode & CHAR_TYPE);
 	}
 	inline  int  SetLimboTypeOn(int nTypeCode) {
-		return (nTypeCode | LIMBO_TYPE);
+		return nTypeCode | LIMBO_TYPE;
 	}
 	inline  int  SetLimboTypeOff(int nTypeCode) {
-		return (nTypeCode &  ~LIMBO_TYPE);
+		return nTypeCode &  ~LIMBO_TYPE;
 	}
 
 	CSprite *m_cDisplayLetters;

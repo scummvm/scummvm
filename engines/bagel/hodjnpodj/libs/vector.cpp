@@ -97,7 +97,7 @@ double CVector::AngleBetween(const VECTOR &rhs) {
 
 
 double CVector::DotProduct(const VECTOR &rhs) const {
-	return ((x * rhs.x) + (y * rhs.y));
+	return (x * rhs.x) + (y * rhs.y);
 }
 
 void CVector::Reflect(const VECTOR &vMirror) {

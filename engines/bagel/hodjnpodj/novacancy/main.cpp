@@ -1446,7 +1446,7 @@ short CMainWindow::LegalizeMove(short  j) {
 
 		if ((DoorSum += (BYTE)j) > DiceSum) {
 			DoorSum -= (BYTE)j;                                     // disallow clicking on such a door so as to exceed door sum.
-			return (-1);
+			return -1;
 		} else {
 			if (DoorSum == DiceSum)    ReadyForDiceClick = 1;
 			if (!j) ++m_cDoorCount;                         //0-th door should not affect door count
@@ -1456,7 +1456,7 @@ short CMainWindow::LegalizeMove(short  j) {
 		DoorSum -= (BYTE)j;
 		if (DoorSum > DiceSum) {
 			DoorSum += (BYTE)j;
-			return (-1);
+			return -1;
 		}
 		if (DoorSum == DiceSum)    ReadyForDiceClick = 1;
 		if (!j) --m_cDoorCount;                              //0-th door should not affect door count

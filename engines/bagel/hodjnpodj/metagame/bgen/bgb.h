@@ -100,8 +100,8 @@ public:
 	VOID ResumeAnimations(VOID) {
 		m_bAnimationsPaused = FALSE;
 	}
-	BOOL AnimationsActive(VOID) {
-		return (!m_bAnimationsPaused);
+	BOOL AnimationsActive(VOID) const {
+		return !m_bAnimationsPaused;
 	}
 
 	VOID CacheLoadObject(CBgbObject *);
@@ -151,10 +151,10 @@ public:
 	}
 
 	CRRect GetRect() {
-		return (CRRect(m_crPosition, m_cSize));
+		return CRRect(m_crPosition, m_cSize);
 	}
 	BOOL IfRelocatable() {
-		return (m_crPosition.m_bRelocatable);
+		return m_crPosition.m_bRelocatable;
 	}
 };
 

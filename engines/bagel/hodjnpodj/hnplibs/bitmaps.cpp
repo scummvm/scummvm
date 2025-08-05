@@ -72,7 +72,7 @@ CBitmap *FetchScreenBitmap(CDC *pDC, CPalette *pPalette, const int x, const int 
 		delete pWorkDC;
 	}
 
-	return (pWork);
+	return pWork;
 }
 
 CBitmap *FetchBitmap(CDC *pDC, CPalette **pPalette, const char *pszPathName) {
@@ -113,7 +113,7 @@ CBitmap *FetchBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName) {
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName) {
@@ -136,7 +136,7 @@ CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const char *pszName)
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
@@ -162,7 +162,7 @@ CBitmap *FetchResourceBitmap(CDC *pDC, CPalette **pPalette, const int nResID) {
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int x, const int y, const int dx, const int dy) {
@@ -229,7 +229,7 @@ CBitmap *ExtractBitmap(CDC *pDC, CBitmap *pBitmap, CPalette *pPalette, const int
 		delete pBaseDC;
 	}
 
-	return (pWork);
+	return pWork;
 }
 
 
@@ -1261,7 +1261,7 @@ CSize GetBitmapSize(CBitmap *pBitmap) {
 	(*pBitmap).GetObject(sizeof(BITMAP), &cBitmapData);
 	mySize.cx = cBitmapData.bmWidth;
 	mySize.cy = cBitmapData.bmHeight;
-	return (mySize);
+	return mySize;
 }
 
 } // namespace HodjNPodj

@@ -1143,7 +1143,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	bSuccess = (*pHelpFile).Open(chPathName, CFile::modeRead | CFile::typeBinary, nullptr);
 	ASSERT(bSuccess);
 	if (!bSuccess)
-		return (-1);
+		return -1;
 	nHelpFileSize = (*pHelpFile).GetLength();
 
 	AddFontResource("msserif.fon");
@@ -1193,7 +1193,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	ScrollRect.SetRect(0, 0, dxDIB, dyDIB);
 
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
-		return (-1);
+		return -1;
 
 	return 0;
 }
@@ -1297,7 +1297,7 @@ CDC *CRules::SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMas
 		}
 	}
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -1320,7 +1320,7 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap,
 			return (pNewDC);
 	}
 
-	return (nullptr);
+	return nullptr;
 }
 
 
@@ -1406,7 +1406,7 @@ CBitmap *CRules::CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalet
 
 	pBitmap = ConvertDIB(pDC, hDIB, pPalette);
 
-	return (pBitmap);
+	return pBitmap;
 }
 
 

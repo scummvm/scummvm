@@ -148,7 +148,7 @@ BOOL CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 			return TRUE;
 		}
 	}
-	return (CBmpDialog::OnCommand(wParam, lParam));
+	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
 

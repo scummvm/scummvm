@@ -1382,7 +1382,7 @@ LRESULT CCheckButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
  ************************************************************************/
 
 LRESULT CCheckButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
-	return (m_bCheckState);                         // return the current state value
+	return m_bCheckState;                         // return the current state value
 }
 
 
@@ -1761,7 +1761,7 @@ LRESULT CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
  ************************************************************************/
 
 LRESULT CRadioButton::OnGetCheck(WPARAM wParam, LPARAM lParam) {
-	return (m_bCheckState);                         // return the current state value
+	return m_bCheckState;                         // return the current state value
 }
 
 

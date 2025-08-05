@@ -51,7 +51,7 @@ int CGenUtil::RandomInteger(int iLow, int iHigh)
 			iRetval = iLow ;
 	}
 	JXELEAVE(CGenUtil::RandomInteger) ;
-	return (iRetval) ;
+	return iRetval;
 }
 
 //* CGenUtil::RandomEvent -- return TRUE with specified probability
@@ -65,7 +65,7 @@ BOOL CGenUtil::RandomEvent(int iNum, int iDenom)
 
 	bRetval = (iNum >= 1 + (brand() % iDenom)) ;
 	JXELEAVE(CGenUtil::RandomEvent) ;
-	return (bRetval) ;
+	return bRetval;
 }
 
 
