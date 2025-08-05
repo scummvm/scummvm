@@ -62,13 +62,13 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 }
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	const Director::Movie *movie = g_director->getCurrentMovie();
-	for (const auto it : *movie->getCasts()) {
-		const Cast *cast = it._value;
-		const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
-		if (handler)
-			return handler;
-	}
+	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
+	if (handler)
+		return handler;
+
 	return getHandler(movie->getSharedCast(), id, handlerId);
 }
 
