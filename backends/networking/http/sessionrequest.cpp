@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/networking/http/connectionmanager.h"
 #include "backends/networking/http/networkreadstream.h"
 #include "backends/networking/http/sessionrequest.h"
@@ -186,7 +184,7 @@ void SessionRequest::handle() {
 
 		if (_stream->eos()) {
 			if (_stream->hasError()) {
-				ErrorResponse error(this, false, true, Common::String::format("TLS stream response code is not CURLE_OK OK: %s", _stream->getError()), _stream->getErrorCode());
+				ErrorResponse error(this, false, true, Common::String::format("Stream is in error: %s", _stream->getError()), -1);
 				finishError(error);
 				return;
 			}

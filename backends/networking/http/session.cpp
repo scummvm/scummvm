@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/networking/http/session.h"
 
 namespace Networking {
