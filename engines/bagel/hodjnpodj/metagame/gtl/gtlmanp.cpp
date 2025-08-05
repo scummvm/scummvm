@@ -158,23 +158,6 @@ BOOL CGtlData::AcceptClick(CGtlView * xpGtlView, CPoint cClickPoint, int iClickT
 				iButtonId = m_cBbtMgr.AcceptClick(crClickPoint, iClickType);
 		break ;
 
-		#ifdef BAGEL_DEBUG
-	case CLICK_LDOUBLE:
-		break ;
-
-	case CLICK_RDOWN:
-		break ;
-
-	case CLICK_RMOVE:
-		break ;
-
-	case CLICK_RDOUBLE:
-		break ;
-
-	case CLICK_UMOVE:
-		break ;
-		#endif
-
 	case CLICK_RUP:
 
 		#ifdef NODEEDIT

@@ -68,11 +68,6 @@ HWND ghParentWnd;
 HWND FAR PASCAL RunGarf(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	CMainWindow *pMain;
 
-	#ifdef BAGEL_DEBUG
-//  lpGameInfo->bPlayingMetagame = TRUE;
-//  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
-	#endif
-
 	pGameInfo = lpGameInfo;
 
 	// invoke your game here by creating a pGame for your main window

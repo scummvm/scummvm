@@ -242,21 +242,6 @@ CNote::CNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 CNote::~CNote() {
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CNote diagnostics
-
-#ifdef BAGEL_DEBUG
-void CNote::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CNote::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

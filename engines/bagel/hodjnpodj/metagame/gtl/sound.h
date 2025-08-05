@@ -187,12 +187,6 @@ private:
 	static  BOOL    m_bWaveVolume;  // whether wave volume can be set
 	static  BOOL    m_bMidiVolume;  // whether midi volume can be set
 	static  CWnd    *m_pMainWnd;    // window for message processing
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 } // namespace Gtl

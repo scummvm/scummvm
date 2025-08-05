@@ -34,10 +34,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Crypt {
 
-//#ifndef BAGEL_DEBUG
-//#error This source file must be compiled with BAGEL_DEBUG defined
-//#endif
-
 HINSTANCE   hDLLInst;
 HINSTANCE   hExeInst;
 
@@ -76,19 +72,12 @@ HCURSOR         hGameCursor;
  ****************************************************************/
 
 HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
-
-//  lpGameInfo->bPlayingMetagame = TRUE;
-// if the pointer has garbage in it, the clean it out
+	// if the pointer has garbage in it, the clean it out
 	if (pMainGameWnd != nullptr) {
 		pMainGameWnd = nullptr;
 	}
 
-	#ifdef BAGEL_DEBUG
-//  lpGameInfo->bPlayingMetagame = FALSE;
-//  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
-	#endif
-
-// create a my poker window and show it
+	// create a my poker window and show it
 	pMainGameWnd = new CMainWindow(hParentWnd, lpGameInfo);
 	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
 
@@ -96,10 +85,11 @@ HWND FAR PASCAL RunCrypt(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
 	pMainGameWnd->UpdateWindow();
 	pMainGameWnd->SetActiveWindow();
-// return the handle to this window
+
+	// return the handle to this window
 	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
 	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
-//  MFC::PostMessage( pMainGameWnd->m_hWnd, WM_COMMAND, IDC_SCROLL, BN_CLICKED );
+
 	return pMainGameWnd->m_hWnd;
 }
 

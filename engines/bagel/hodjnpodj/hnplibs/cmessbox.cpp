@@ -29,12 +29,6 @@
 namespace Bagel {
 namespace HodjNPodj {
 
-
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 static  CColorButton *pOKButton = nullptr;                     // OKAY button on scroll
 
 CMessageBox::CMessageBox(CWnd* pParent, CPalette *pPalette, const char *msg1, const char *msg2, const int dx, const int dy)

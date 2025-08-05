@@ -27,12 +27,6 @@ namespace HodjNPodj {
 
 extern  CPalette    *pGamePalette;
 
-
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 IMPLEMENT_DYNCREATE(CBmpButton, CBitmapButton)
 
 
@@ -571,21 +565,6 @@ BEGIN_MESSAGE_MAP(CBmpButton, CBitmapButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CBmpButton diagnostics
-
-#ifdef BAGEL_DEBUG
-void CBmpButton::AssertValid() const {
-	CBitmapButton::AssertValid();
-}
-
-void CBmpButton::Dump(CDumpContext& dc) const {
-	CBitmapButton::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 /////////////////////////////////////////////////////////////////////////////
 
 IMPLEMENT_DYNCREATE(CMaskedButton, CBmpButton)
@@ -731,21 +710,6 @@ BEGIN_MESSAGE_MAP(CMaskedButton, CBmpButton)
 	ON_WM_DRAWITEM()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CMaskedButton diagnostics
-
-#ifdef BAGEL_DEBUG
-void CMaskedButton::AssertValid() const {
-	CBmpButton::AssertValid();
-}
-
-void CMaskedButton::Dump(CDumpContext& dc) const {
-	CBmpButton::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -1038,23 +1002,7 @@ BEGIN_MESSAGE_MAP(CColorButton, CButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
-// CColorButton diagnostics
-
-#ifdef BAGEL_DEBUG
-void CColorButton::AssertValid() const {
-	CButton::AssertValid();
-}
-
-void CColorButton::Dump(CDumpContext& dc) const {
-	CButton::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-
 
 
 IMPLEMENT_DYNCREATE(CCheckButton, CButton)
@@ -1398,23 +1346,7 @@ BEGIN_MESSAGE_MAP(CCheckButton, CButton)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-
 /////////////////////////////////////////////////////////////////////////////
-// CCheckButton diagnostics
-
-#ifdef BAGEL_DEBUG
-void CCheckButton::AssertValid() const {
-	CButton::AssertValid();
-}
-
-void CCheckButton::Dump(CDumpContext& dc) const {
-	CButton::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
-
 
 
 IMPLEMENT_DYNCREATE(CRadioButton, CButton)
@@ -1776,20 +1708,6 @@ BEGIN_MESSAGE_MAP(CRadioButton, CButton)
 	ON_MESSAGE(BM_GETCHECK, CRadioButton::OnGetCheck)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-/////////////////////////////////////////////////////////////////////////////
-// CRadioButton diagnostics
-
-#ifdef BAGEL_DEBUG
-void CRadioButton::AssertValid() const {
-	CButton::AssertValid();
-}
-
-void CRadioButton::Dump(CDumpContext& dc) const {
-	CButton::Dump(dc);
-}
-#endif
-
 
 } // namespace HodjNPodj
 } // namespace Bagel

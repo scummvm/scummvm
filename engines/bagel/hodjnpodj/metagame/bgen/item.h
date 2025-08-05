@@ -121,12 +121,6 @@ private:
 	static int  m_nValue[MG_OBJ_COUNT];             // value of each item
 	#endif
 	static char m_chTextBuffer[ITEM_BUFFER_LENGTH + 1];     // place to construct item names
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 } // namespace Metagame

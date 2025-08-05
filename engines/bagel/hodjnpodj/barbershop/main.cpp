@@ -137,7 +137,7 @@ CMainWindow::CMainWindow(VOID) {
 	// Center our window on the screen
 	//
 	tmpRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-	#ifndef BAGEL_DEBUG
+
 	if ((pDC = GetDC()) != nullptr) {
 		tmpRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1;
 		tmpRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
@@ -147,7 +147,6 @@ CMainWindow::CMainWindow(VOID) {
 	} else {
 		errCode = ERR_UNKNOWN;
 	}
-	#endif
 
 	// Create the window as a POPUP so no boarders, title, or menu are present;
 	// this is because the game's background art will fill the entire 640x480 area.

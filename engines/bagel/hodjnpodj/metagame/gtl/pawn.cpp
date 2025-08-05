@@ -34,11 +34,6 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 #define TEXT_MORE_DX        120                     // offset of "more" indicator from right margin
 #define TEXT_MORE_DY        5                       // offset of "more" indicator bottom of scroll
 #define MORE_TEXT_BLURB     "[ More ]"              // actual text to display for "more" indicator

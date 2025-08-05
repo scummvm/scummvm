@@ -64,11 +64,6 @@ public:
 	int         m_nReturnCode;
 
 	virtual ~CGtlFrame();
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 
 // Generated message map functions
 protected:

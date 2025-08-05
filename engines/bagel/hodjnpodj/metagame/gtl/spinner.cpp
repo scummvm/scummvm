@@ -479,21 +479,6 @@ BOOL CSpinner::HandleMessages(void) {
 	return FALSE;
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CSpinner diagnostics
-
-#ifdef BAGEL_DEBUG
-void CSpinner::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CSpinner::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace Gtl
 } // namespace Metagame
 } // namespace HodjNPodj

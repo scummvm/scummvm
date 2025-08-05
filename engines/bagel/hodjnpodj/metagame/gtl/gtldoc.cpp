@@ -114,11 +114,6 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 	if (xpszPathName && *xpszPathName)
 		m_xpGtlData->Compile(xpszPathName) ;
 
-	#ifdef BAGEL_DEBUG
-	if (CBdbgMgr::GetPointer()->m_iDebugValues[1])
-		dbgtrc = TRUE ; // turn on tracing
-	#endif
-
 	m_xpGtlData->m_bStartMetaGame = xpGtlApp->m_bStartMetaGame ;
 	UpdateAllViews(nullptr, 0L, nullptr) ;
 
@@ -169,19 +164,6 @@ void CGtlDoc::Serialize(CArchive& ar) {
 		// TODO: add loading code here
 	}
 }
-
-/////////////////////////////////////////////////////////////////////////////
-// CGtlDoc diagnostics
-
-#ifdef BAGEL_DEBUG
-void CGtlDoc::AssertValid() const {
-	CDocument::AssertValid();
-}
-
-void CGtlDoc::Dump(CDumpContext& dc) const {
-	CDocument::Dump(dc);
-}
-#endif //BAGEL_DEBUG
 
 /////////////////////////////////////////////////////////////////////////////
 // CGtlDoc commands

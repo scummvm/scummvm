@@ -76,9 +76,7 @@ BOOL CMnkWindow::StartGame(void)
 
 	if (!gbTurnSoundsOff && pGameParams->bSoundEffectsEnabled)
 		if (!sndPlaySound(YOUGO3, SND_SYNC)) {
-			#ifdef  BAGEL_DEBUG
 			MessageBox("Can't Play Wave Sound");
-			#endif
 		}
 
 

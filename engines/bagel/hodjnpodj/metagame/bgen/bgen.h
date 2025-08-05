@@ -29,10 +29,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Metagame {
 
-#ifdef BAGEL_DEBUG
-	#define JX_DEBUG
-#endif
-
 // the following are machine-independent definitions of the
 // largest positive signed and and unsigned integers and longs
 #define MAXPOSINT ((int)(((unsigned int)-1) >> 1))

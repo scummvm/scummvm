@@ -405,13 +405,7 @@ CBFishWindow::CBFishWindow(VOID) {
 		// only continue if there was no error
 		//
 		if (errCode == ERR_NONE) {
-
-			#ifdef  BAGEL_DEBUG
-			pGameParams->bMusicEnabled = TRUE;
-			#endif  //BAGEL_DEBUG
-
 			// Start the BFish soundtrack
-			//
 			if (pGameParams->bMusicEnabled) {
 				if ((m_pSoundTrack = new CSound) != nullptr) {
 					m_pSoundTrack->initialize(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);

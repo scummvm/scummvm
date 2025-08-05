@@ -64,26 +64,23 @@ CPalette        *pTestPalette = nullptr;
  ****************************************************************/
 HWND FAR PASCAL RunDFA(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 
-// if the pointer has garbage in it, the clean it out
+	// if the pointer has garbage in it, the clean it out
 	if (pMainGameWnd != nullptr) {
 		pMainGameWnd = nullptr;
 	}
-	#ifdef BAGEL_DEBUG
-//  lpGameInfo->bPlayingMetagame = TRUE;
-//  lpGameInfo->bMusicEnabled = FALSE;
-//  lpGameInfo->nSkillLevel = SKILLLEVEL_LOW;
-	#endif
 
-// create a my poker window and show it
+	// create a my poker window and show it
 	pMainGameWnd = new CMainDFAWindow(hParentWnd, lpGameInfo);
 	pMainGameWnd->ShowWindow(SW_SHOWNORMAL);
 	pMainGameWnd->UpdateWindow();
 	pMainGameWnd->SetActiveWindow();
-// return the handle to this window
+
+	// return the handle to this window
 	hDLLInst = (HINSTANCE)GetWindowWord(pMainGameWnd->m_hWnd, GWW_HINSTANCE);
 	hExeInst = (HINSTANCE)GetWindowWord(hParentWnd, GWW_HINSTANCE);
 	if (!lpGameInfo->bPlayingMetagame)
 		MFC::PostMessage(pMainGameWnd->m_hWnd, WM_COMMAND, IDC_OPTION, BN_CLICKED);
+
 	return pMainGameWnd->m_hWnd;
 }
 

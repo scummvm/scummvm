@@ -35,12 +35,7 @@ typedef Graphics::ManagedSurface *HDIB;
 #define PALVERSION   0x300
 
 /* DIB Macros*/
-
-#ifdef BAGEL_DEBUG
-	#define IS_WIN30_DIB(lpbi)      ((*(LPDWORD)(lpbi)) == sizeof(BITMAPINFOHEADER))
-#else
-	#define IS_WIN30_DIB(lpbi)      ( TRUE )
-#endif
+#define IS_WIN30_DIB(lpbi)      ( TRUE )
 
 #define RECTWIDTH(lpRect)       ((lpRect)->right - (lpRect)->left)
 #define RECTHEIGHT(lpRect)      ((lpRect)->bottom - (lpRect)->top)

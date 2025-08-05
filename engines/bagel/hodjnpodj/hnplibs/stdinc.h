@@ -31,15 +31,6 @@ namespace HodjNPodj {
 #define BOF_DEBUG 1
 
 /*
-* Accept Microsofts new debug macro
-*/
-#ifdef BAGEL_DEBUG
-	#ifndef DEBUG
-		#define DEBUG 1
-	#endif
-#endif
-
-/*
 * Math Function Macros
 */
 #define isodd(x) ((x)&1)                    /* Returns 1 if number is odd  */

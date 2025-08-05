@@ -82,12 +82,6 @@ private:
 	int     m_nY;               // y location of sprite
 	BOOL    m_bVisible;         // whether spinner is visible
 	BOOL    m_bHodj;            // which character is active
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 } // namespace Gtl

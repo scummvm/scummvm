@@ -178,10 +178,6 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	MainRect.right = MainRect.left + GAME_WIDTH;    // determine where to place the game window
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;   // ... so it is centered on the screen
 
-	#ifdef BAGEL_DEBUG
-	MainRect.SetRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-	#endif
-
 	pDC->SelectPalette(pOldPal, FALSE);             // replace old palette
 	ReleaseDC(pDC);                                 // release our window context
 

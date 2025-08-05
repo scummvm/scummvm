@@ -315,11 +315,8 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 
 	ShowWindow(SW_SHOWNORMAL);
 	UpdateWindow();
-//#ifndef BAGEL_DEBUG
-//SetWindowPos( &wndTopMost, 0, 0, 0, 0, SWP_NOMOVE|SWP_NOSIZE );
-//#endif
-// create buttons
 
+	// create buttons
 	pOptionButton = new CBmpButton;         // create the Options button
 	ASSERT(pOptionButton);
 	OptionRect.SetRect(OPTION_LEFT,

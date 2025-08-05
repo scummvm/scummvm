@@ -403,11 +403,6 @@ void CGtlView::OnDraw(CDC *xpDc) {
 	JXENTER(CGtlView::OnDraw) ;
 	CGtlDoc* xpDoc = GetDocument();
 
-	#ifdef BAGEL_DEBUG
-	if (xpDoc == nullptr)
-		MessageBox("No Document!!!");
-	#endif
-
 	#if NEWSCROLL
 //    m_cViewBsuSet.PrepareDc(xpDc) ;
 	xpDc->SetViewportOrg(0, 0) ;
@@ -423,38 +418,6 @@ void CGtlView::OnDraw(CDC *xpDc) {
 	JXELEAVE(CGtlView::OnDraw) ;
 	RETURN_VOID ;
 }
-
-
-/////////////////////////////////////////////////////////////////////////////
-// CGtlView diagnostics
-
-#ifdef BAGEL_DEBUG
-void CGtlView::AssertValid() const {
-	JXENTER(CGtlView::AssertValid) ;
-	int iError = 0 ;
-
-	CView::AssertValid();
-	JXELEAVE(CGtlView::AssertValid) ;
-}
-
-void CGtlView::Dump(CDumpContext& dc) const {
-	JXENTER(CGtlView::Dump) ;
-	int iError = 0 ;
-	CView::Dump(dc);
-	JXELEAVE(CGtlView::Dump) ;
-}
-
-CGtlDoc *CGtlView::GetDocument() { // non-debug version is inline
-	JXENTER(CGtlView::GetDocument) ;
-	int iError = 0 ;
-	if (m_pDocument)
-		ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CGtlDoc)));
-	;
-	JXELEAVE(CGtlView::GetDocument) ;
-	return (CGtlDoc*)m_pDocument;
-}
-#endif //BAGEL_DEBUG
-
 
 #ifdef NODEEDIT
 //* CGtlView::CheckSize -- check window size, adjust if necessary
@@ -600,29 +563,6 @@ void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		ptAdjustedEdge = m_cViewBsuSet.PointLogical(ptEdge);
 		m_cViewBsuSet.EdgeToCenter(ptAdjustedEdge);
 		break;
-
-		#ifdef BAGEL_DEBUG
-	case VK_F9:
-		xpDoc->m_xpGtlData->GainRandomItem(xpDoc->m_xpGtlData->m_xpCurXodj);
-		break;
-
-	case VK_F10: {
-		int iNode;
-		iNode = xpDoc->m_xpGtlData->m_xpCurXodj->m_iCharNode;
-		xpDoc->m_xpGtlData->m_xpCurXodj->m_iCharNode = xpDoc->m_xpGtlData->FindNodeId("Amphi");
-		xpDoc->m_xpGtlData->DivulgeInformation(xpDoc->m_xpGtlData->m_xpCurXodj, FALSE);
-		xpDoc->m_xpGtlData->m_xpCurXodj->m_iCharNode = iNode;
-		break;
-	}
-
-	case VK_F11:
-		xpDoc->m_xpGtlData->GainMoney(xpDoc->m_xpGtlData->m_xpCurXodj, 10);
-		break;
-
-	case VK_F12:
-		::ShowMemoryInfo("Memory status follows...", "Debug Information");
-		break;
-		#endif
 
 	default:
 		break;

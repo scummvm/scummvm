@@ -28,12 +28,6 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
-
 CTurnDialog::CTurnDialog(CWnd* pParent, CPalette *pPalette, BOOL bHodj, BOOL bGain, BOOL bTurn)
 	: CBmpDialog(pParent, pPalette, IDD_TURNDLG, ".\\art\\msscroll.bmp") {
 	// Initialize all members

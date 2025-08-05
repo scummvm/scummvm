@@ -2154,55 +2154,6 @@ BOOL CGtlData::DumpGameStatus(int iOptionFlags)
 	JXENTER(CGtlData::DumpGameStatus) ;
 	int iError = 0 ;        // error code
 
-	#ifdef BAGEL_DEBUG
-
-	char szMsg[120] ;
-	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-	BOOL bDumpGamePlay = FALSE ;
-	CLocTable * xpLoc ;     // location of Mish/Mosh, etc.
-	CClueTable * xpClue ;   // pointer to clue table entry
-	CXodj * xpXodj ;        // character block pointer
-	LPSTR lpStr ;       // output string
-	int iClue, iObject, iK ;
-
-	if (xpGtlApp->m_bDumpGamePlay) {
-
-		// dump problem statement?
-		//
-		if (iOptionFlags & DUMPSTAT_PROBLEM) {
-			CBdbgMgr::OutputWithTime("\nMeta Game Problem Statement -- %s\n");
-			xpLoc = CMgStatic::FindLoc(m_iMishMoshLoc);
-			Common::sprintf_s(szMsg, "  Mish/Mosh in location %Fs.\n", xpLoc ? (LPSTR)xpLoc->m_lpszName : (LPSTR)"[None]");
-			JXOutputDebugString(szMsg);
-		}
-
-		for (xpXodj = m_xpXodjChain ; xpXodj ; xpXodj = xpXodj->m_xpXodjNext) {
-
-			if ((iOptionFlags & DUMPSTAT_BOTH) || ((iOptionFlags & DUMPSTAT_CURRENT) && xpXodj == m_xpCurXodj)) {
-
-				Common::sprintf_s(szMsg, "  Character: %s %s:\n", xpXodj->m_szName, (xpXodj == m_xpCurXodj) ? " (Current)" : "");
-				JXOutputDebugString(szMsg);
-
-				Common::sprintf_s(szMsg, "    You need %d objects and %d crowns to win Mish and Mosh:\n", xpXodj->m_iRequiredObjectsCount, xpXodj->m_iRequiredMoney);
-				JXOutputDebugString(szMsg) ;
-
-				for (iK = 0 ; iK < xpXodj->m_iRequiredObjectsCount ; ++iK) {
-
-					JXOutputDebugString(iK ? ", " : "      ") ;
-					iObject = xpXodj->m_iRequiredObjectsTable[iK] ;
-					JXOutputDebugString(CItem::GetDescription(iObject, 1)) ;
-					if (GetGameObjectCount(xpXodj, iObject))
-						JXOutputDebugString("************") ;
-				}
-				JXOutputDebugString("\n") ;
-
-				if (GetGameObjectCount(xpXodj, MG_OBJ_MISH))
-					JXOutputDebugString("    You have Mish and Mosh!\n") ;
-			}
-		}
-	}
-	#endif
-
 // cleanup:
 
 	JXELEAVE(CGtlData::DumpGameStatus) ;

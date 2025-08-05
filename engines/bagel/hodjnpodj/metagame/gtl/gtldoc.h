@@ -56,10 +56,6 @@ public:
 public:
 	virtual ~CGtlDoc();
 	virtual void Serialize(CArchive &ar);   // overridden for document i/o
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext &dc) const;
-	#endif
 
 protected:
 	virtual BOOL OnNewDocument() override;

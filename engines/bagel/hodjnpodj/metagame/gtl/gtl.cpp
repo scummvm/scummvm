@@ -65,9 +65,6 @@ CGtlApp::CGtlApp() {
 }
 
 CGtlApp::~CGtlApp() {
-	#ifdef BAGEL_DEBUG
-	m_cBdbgMgr.ReportTraceObjects() ;
-	#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -106,30 +103,6 @@ BOOL CGtlApp::InitInstance() {
 	m_iY = (GetSystemMetrics(SM_CYSCREEN) - m_iHeight) / 2 ;
 
 	Common::strcpy_s(m_szFilename, "META.GTL");
-
-	#ifdef BAGEL_DEBUG
-
-	XPSTR xpszFile = "jxdebug.ini", xpszSect = "meta";
-
-	m_cBdbgMgr.DebugInit(xpszFile, xpszSect) ;
-
-	m_bTitle = m_cBdbgMgr.GetDebugInt("title") ;
-	m_iHeight = m_cBdbgMgr.GetDebugInt("height", GAME_HEIGHT) ;
-	m_iWidth = m_cBdbgMgr.GetDebugInt("width", GAME_WIDTH) ;
-
-	m_iX = (GetSystemMetrics(SM_CXSCREEN) - m_iWidth) / 2 ;
-	m_iY = (GetSystemMetrics(SM_CYSCREEN) - m_iHeight) / 2 ;
-
-	m_iX = m_cBdbgMgr.GetDebugInt("x", m_iX) ;
-	m_iY = m_cBdbgMgr.GetDebugInt("y", m_iY) ;
-
-	m_bShowNodes = m_cBdbgMgr.GetDebugInt("shownodes") ;
-	m_bDumpGamePlay = m_cBdbgMgr.GetDebugInt("dumpgameplay") ;
-	m_bPaintBackground = m_cBdbgMgr.GetDebugInt("paintbackground") ;
-	m_bStartMetaGame = m_cBdbgMgr.GetDebugInt("startmetagame", 1) ; // dft on
-
-	m_cBdbgMgr.GetDebugString("filename", m_szFilename, sizeof(m_szFilename), "meta.gtl") ;
-	#endif
 
 	#ifdef NODEEDIT
 	m_bControlDialog = m_cBdbgMgr.GetDebugInt("controldialog") ;
@@ -211,16 +184,6 @@ int CGtlApp::DoMessageBox(LPCSTR lpszPrompt, UINT nType, UINT nIDPrompt)
 {
 	JXENTER(CGtlApp::DoMessageBox) ;
 	int iRetval = IDOK ;                // return value
-
-	#ifdef BAGEL_DEBUG
-	if (lpszPrompt && lpszPrompt[0] == '~')
-		m_cBdbgMgr.DebugMessageBox(lpszPrompt, nType, nIDPrompt) ;
-
-	else
-		iRetval = CWinApp::DoMessageBox(lpszPrompt, nType, nIDPrompt) ;
-
-// cleanup:
-	#endif
 
 	JXELEAVE(CGtlApp::DoMessageBox) ;
 	RETURN(iRetval) ;

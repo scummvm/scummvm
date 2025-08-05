@@ -89,11 +89,6 @@ CMainWindow::CMainWindow(VOID) {
 	EM("In Constructor");
 	#endif
 
-	/*
-	#ifdef BAGEL_DEBUG
-	gSleepTime=GetPrivateProfileInt("Sleep","Doze",20,"animate.ini");
-	#endif
-	*/
 	// assume no error
 	errCode = ERR_NONE;
 	MFC::SetCursor(LoadCursor(nullptr, IDC_WAIT));     //hourglass cursor (wait!)

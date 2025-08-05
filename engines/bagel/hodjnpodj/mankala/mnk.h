@@ -215,13 +215,6 @@ public:
 	CMove() {
 		Zero();    // constructor
 	}
-	#ifdef BAGEL_DEBUG
-	BOOL SetBackToOriginal(HWND);       //this is public:
-	void RearrangeConfiguration(HWND, int, long, BOOL); //THIS IS public:
-	void ReConfig(HWND,  long); //THIS IS public:
-	inline void SetPlayer(int);             //THIS IS public
-	#endif
-
 } ;
 
 // CPit -- class for pit (as well as home bin and hand)

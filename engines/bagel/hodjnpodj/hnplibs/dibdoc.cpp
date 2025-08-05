@@ -234,19 +234,5 @@ void CDibDoc::ReplaceHDIB(HDIB hDIB) {
 	m_hDIB = hDIB;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CDibDoc diagnostics
-
-#ifdef BAGEL_DEBUG
-void CDibDoc::AssertValid() const {
-	CDocument::AssertValid();
-}
-
-void CDibDoc::Dump(CDumpContext &dc) const {
-	CDocument::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -67,27 +67,6 @@ namespace Mankala {
 #define IDC_USTRENGTH                   1026
 #define IDC_USCRSHELL                   1027
 
-#ifdef BAGEL_DEBUG
-
-	#define IDC_EDIT_HUMAN0                 1028
-	#define IDC_EDIT_HUMAN1                 1029
-	#define IDC_EDIT_HUMAN2                 1030
-	#define IDC_EDIT_HUMAN3                 1031
-	#define IDC_EDIT_HUMAN4                 1032
-	#define IDC_EDIT_HUMAN5                 1033
-	#define IDC_HOME_HUMAN                  1034
-	#define IDC_HOME_CRAB                   1035
-	#define IDC_HUMAN                       1036
-	#define IDC_CRAB                        1037
-	#define IDC_EDIT_CRAB0                  1038
-	#define IDC_EDIT_CRAB1                  1039
-	#define IDC_EDIT_CRAB2                  1040
-	#define IDC_EDIT_CRAB3                  1041
-	#define IDC_EDIT_CRAB4                  1042
-	#define IDC_EDIT_CRAB5                  1043
-
-#endif
-
 } // namespace Mankala
 } // namespace HodjNPodj
 } // namespace Bagel

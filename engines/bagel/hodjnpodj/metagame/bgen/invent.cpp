@@ -336,21 +336,6 @@ CItem *CInventory::FindItem(int nID) {
 	return pItem;                                   // return what we found
 }
 
-
-////////////////////////////////////////////////////////////////////////////
-// CInventory diagnostics
-
-#ifdef BAGEL_DEBUG
-void CInventory::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CInventory::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

@@ -28,11 +28,6 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
 CMapDialog::CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT PodjLoc)
 	: CBmpDialog(pParent, pPalette, IDD_ZOOMMAP, ".\\art\\minimap.bmp", 0, 0, FALSE) {
 	// Initialize all members

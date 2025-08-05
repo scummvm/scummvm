@@ -156,21 +156,6 @@ void CNote::FlushNoteList(void) {
 	}
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CNote diagnostics
-
-#ifdef BAGEL_DEBUG
-void CNote::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CNote::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace Garfunkle
 } // namespace HodjNPodj
 } // namespace Bagel

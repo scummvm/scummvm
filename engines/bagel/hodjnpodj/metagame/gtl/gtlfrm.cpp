@@ -147,20 +147,6 @@ int CGtlFrame::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 /////////////////////////////////////////////////////////////////////////////
-// CGtlFrame diagnostics
-
-#ifdef BAGEL_DEBUG
-void CGtlFrame::AssertValid() const {
-	MFC_FRAME::AssertValid();
-}
-
-void CGtlFrame::Dump(CDumpContext& dc) const {
-	MFC_FRAME::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
-/////////////////////////////////////////////////////////////////////////////
 // CGtlFrame message handlers
 
 #ifdef NODEEDIT

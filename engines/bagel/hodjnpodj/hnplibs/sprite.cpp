@@ -3177,20 +3177,5 @@ void CSprite::ReleaseBackdropDC(void) {
 	}
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-// CSprite diagnostics
-
-#ifdef BAGEL_DEBUG
-void CSprite::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CSprite::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-#endif
-
-
 } // namespace HodjNPodj
 } // namespace Bagel

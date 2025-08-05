@@ -886,26 +886,11 @@ LPINT CGtlData::FindShortestPath(CNode FAR * lpNode1,
 	int iDistanceDX, iDistanceDY;
 	uint32 stStartTime, stEndTime ;   // current time
 	long lTimeDiff ;            // time difference
-	#ifdef BAGEL_DEBUG
-	char szMsg[150] ;
-	#endif
 
 	struct DIST FAR * lpDist = new FAR struct DIST[m_iNodes] ;
 
 	cStartPoint = NodeToPoint(lpNode1, nullptr) ;
 	cTargetPoint = NodeToPoint(lpNode2, nullptr) ;
-
-	#ifdef BAGEL_DEBUG
-	// if debug5 is 1, then FindShortestPath dumps debugging information
-	if (CBdbgMgr::GetPointer()->m_iDebugValues[5]) {
-		Common::sprintf_s(szMsg, "Finding shortest path from node #%d "
-		                  "(%d,%d) to node #%d (%d,%d).\n",
-		                  iStartNode, iTargetNode,
-		                  cStartPoint.x, cStartPoint.y,
-		                  cTargetPoint.x, cTargetPoint.y) ;
-		JXOutputDebugString(szMsg) ;
-	}
-	#endif
 
 	stStartTime = g_system->getMillis();    // save current time
 
@@ -1042,49 +1027,6 @@ done:
 
 	stEndTime = g_system->getMillis();  // get ending time
 	lTimeDiff = stEndTime - stStartTime;
-
-	#ifdef BAGEL_DEBUG
-	// if debug5 is 1, then FindShortestPath dumps debugging information
-	if (CBdbgMgr::GetPointer()->m_iDebugValues[5]) {
-		_snprintf(szMsg, sizeof(szMsg),
-		          "   Shortest path found in %ld milliseconds: "
-		          "number nodes = %d, "
-		          "weighted distance = %d:\n        ",
-		          lTimeDiff,
-		          iLength, lpDist[iTargetNode].m_iDistance) ;
-		JXOutputDebugString(szMsg) ;
-
-		for (iK = 3 ; iK <= lpiPath[0] ; ++iK) {
-			if (iK == 3)
-				szMsg[0] = 0 ;
-
-			else if (iK % 12)
-				Common::strcpy_s(szMsg, ", ") ;
-
-			else
-				Common::strcpy_s(szMsg, ",\n            ") ;
-
-			itoa(lpiPath[iK], szMsg + strlen(szMsg), 10) ;
-			JXOutputDebugString(szMsg) ;
-		}
-		JXOutputDebugString("\n") ;
-
-	}
-
-	/*
-	    {               // ****** debugging
-	        struct DIST lpxDist[600] ;
-	        int lpxPath[600], iK = 0 ;
-	        for (iK = 0 ; iK < m_iNodes ; ++iK)
-	            lpxDist[iK] = lpDist[iK] ;
-
-	        for (iK = 0 ; iK < lpiPath[0] + 1 ; ++iK)
-	            lpxPath[iK] = lpiPath[iK] ;
-
-	        iK = 0 ;
-	    }
-	*/
-	#endif  // BAGEL_DEBUG
 
 cleanup:
 

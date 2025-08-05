@@ -543,16 +543,7 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 
 
 void WINAPI ShowMemoryInfo(const char *chMessage, const char *chTitle) {
-	#ifdef BAGEL_DEBUG
-	char    buf[256];
-
-	MessageBox(nullptr, chMessage, chTitle, MB_ICONEXCLAMATION);
-	Common::sprintf_s(buf, "Free Memory = %ld\nLargest Memory Block = %ld",
-	                  GetFreeSpace(0), GlobalCompact(0));
-	MessageBox(nullptr, buf, "Internal Status", MB_ICONINFORMATION);
-	//  Common::sprintf_s(buf,"Largest Memory Block = %ld",GlobalCompact(0));
-	//  MessageBox(nullptr,buf,"Internal Problem",MB_ICONINFORMATION);
-	#endif
+	// No implementation
 }
 
 } // namespace HodjNPodj

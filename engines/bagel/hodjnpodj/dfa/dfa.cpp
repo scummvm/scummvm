@@ -164,9 +164,7 @@ CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
 	// this is because the game's background art will fill the entire 640x40 area.
 	Create(WndClass, "Boffo Games - Dam Furry Animals", WS_POPUP, MainRect, nullptr, 0);
 
-	#ifndef BAGEL_DEBUG
 	ClipCursor(&MainRect);
-	#endif
 
 	//
 	// create button
@@ -1039,9 +1037,7 @@ void CMainDFAWindow::OnClose() {
 	CRect   rctFillRect(0, 0, 640, 480);
 	CBrush  Brush(RGB(0, 0, 0));
 
-	#ifndef BAGEL_DEBUG
 	ClipCursor(nullptr);
-	#endif
 
 	pDC->FillRect(&rctFillRect, &Brush);
 	ReleaseDC(pDC);

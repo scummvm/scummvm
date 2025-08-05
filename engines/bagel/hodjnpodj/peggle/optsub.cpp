@@ -31,13 +31,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Peggle {
 
-
-#ifdef BAGEL_DEBUG
-	#undef THIS_FILE
-	static char BASED_CODE THIS_FILE[] = __FILE__;
-#endif
-
-
 extern  LPGAMESTRUCT    pGameInfo;
 
 extern  CBmpButton  *m_pTriButton;

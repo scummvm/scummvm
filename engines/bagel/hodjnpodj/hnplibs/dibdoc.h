@@ -62,11 +62,6 @@ private:
 	CPalette *m_palDIB = nullptr;
 	CSize m_sizeDoc;
 
-	#ifdef BAGEL_DEBUG
-	void AssertValid() const override;
-	void Dump(CDumpContext &dc) const override;
-	#endif
-
 protected:
 	//{{AFX_MSG(CDibDoc)
 	//}}AFX_MSG

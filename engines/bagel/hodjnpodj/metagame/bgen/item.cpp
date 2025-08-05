@@ -371,20 +371,6 @@ BOOL CItem::AddNote(CNote *pNote) {
 	return bSuccess;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CItem diagnostics
-
-#ifdef BAGEL_DEBUG
-void CItem::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CItem::Dump(CDumpContext& dc) const {
-	CObject::Dump(dc);
-}
-
-#endif //BAGEL_DEBUG
-
 } // namespace Metagame
 } // namespace HodjNPodj
 } // namespace Bagel

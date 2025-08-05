@@ -103,12 +103,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -140,12 +134,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -185,12 +173,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -232,12 +214,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -279,12 +255,6 @@ private:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 } // namespace HodjNPodj

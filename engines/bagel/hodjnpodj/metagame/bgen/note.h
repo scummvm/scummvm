@@ -158,12 +158,6 @@ private:
 	static const char *m_pNoteSoundPath[NOTE_ICON_COUNT]; // sound file specifications for each note
 	static const char *m_pNoteBitmapPath[NOTE_ICON_COUNT];// bitmap file specifications for each note
 	#endif
-
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 };
 
 } // namespace Metagame

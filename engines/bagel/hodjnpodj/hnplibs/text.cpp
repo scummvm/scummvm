@@ -534,18 +534,5 @@ void CText::ReleaseContexts(void) {
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////
-// CText diagnostics
-
-#ifdef BAGEL_DEBUG
-void CText::AssertValid() const {
-	CObject::AssertValid();
-}
-
-void CText::Dump(CDumpContext &dc) const {
-	CObject::Dump(dc);
-}
-#endif
-
 } // namespace HodjNPodj
 } // namespace Bagel

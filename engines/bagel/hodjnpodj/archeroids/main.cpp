@@ -422,13 +422,6 @@ CMainWindow::CMainWindow() {
 
 		EndWaitCursor();
 
-
-
-		#ifdef BAGEL_DEBUG
-		pGameParams->bSoundEffectsEnabled = TRUE;
-		pGameParams->bMusicEnabled = TRUE;
-		#endif
-
 		if (pGameParams->bMusicEnabled) {
 			m_pSoundTrack = new CSound(this, MID_SOUNDTRACK, SOUND_MIDI | SOUND_LOOP | SOUND_DONT_LOOP_TO_END);
 			assert(m_pSoundTrack != nullptr);

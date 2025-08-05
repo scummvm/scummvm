@@ -77,10 +77,6 @@ LPGAMESTRUCT    pGameInfo;
 HWND FAR PASCAL RunPeggle(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	pGameInfo = lpGameInfo;
 
-//#ifdef BAGEL_DEBUG
-//  (*pGameInfo).bPlayingMetagame = TRUE;
-//#endif
-
 // if the pointer has garbage in it, the clean it out
 	if (pcwndPeggle != nullptr) {
 		pcwndPeggle = nullptr;

@@ -145,9 +145,6 @@ CMainWindow::CMainWindow() {
 	MainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1;
 	MainRect.right = MainRect.left + GAME_WIDTH;
 	MainRect.bottom = MainRect.top + GAME_HEIGHT;
-	#ifdef BAGEL_DEBUG
-	MainRect.SetRect(0, 0, 640, 480);
-	#endif //DEBUG
 
 	ReleaseDC(pDC);
 

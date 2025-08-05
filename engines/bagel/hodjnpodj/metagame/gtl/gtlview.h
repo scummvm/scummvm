@@ -85,11 +85,6 @@ protected:
 public:
 	virtual ~CGtlView();
 
-	#ifdef BAGEL_DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
-	#endif
-
 	void FlushInputEvents(void);
 
 
@@ -122,11 +117,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 };
 
-#ifndef BAGEL_DEBUG  // debug version in gtlview.cpp
 inline CGtlDoc *CGtlView::GetDocument() {
 	return (CGtlDoc*)m_pDocument;
 }
-#endif
 
 } // namespace Gtl
 } // namespace Metagame

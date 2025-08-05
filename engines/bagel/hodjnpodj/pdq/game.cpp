@@ -1260,36 +1260,6 @@ INT NumLinkedSprites(VOID) {
 	return (i);
 }
 
-#ifdef BAGEL_DEBUG
-VOID SelfTest(VOID) {
-	PHRASES cPhrase;
-	INT i, n;
-	ERROR_CODE errCode;
-
-	ErrorLog("DEBUG.LOG", "SelfTest...");
-
-	n = (INT)(FileLength(DATA_FILE) / sizeof(PHRASES));
-
-	for (i = 0; i < n; i++) {
-
-		ifstream inFile;
-		inFile.open(DATA_FILE, ios::binary);                // open the data store
-
-		inFile.seekg(i * sizeof(PHRASES));                  // seek to the phrase we want
-
-		inFile.read((CHAR *)&cPhrase, sizeof(PHRASES));    // load that phrase
-		if (inFile.gcount() != sizeof(PHRASES))
-			errCode = ERR_FREAD;
-		inFile.close();                                     // close the data store
-
-		ErrorLog("DEBUG.LOG", "Testing Phrase %d", i);
-		if ((errCode = ValidatePhrase(&cPhrase)) != ERR_NONE) {
-			ErrorLog("DEBUG.LOG", "Phrase %d has problems", i);
-		}
-	}
-}
-#endif
-
 } // namespace PDQ
 } // namespace HodjNPodj
 } // namespace Bagel

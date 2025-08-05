@@ -27,10 +27,6 @@
 #include "bagel/hodjnpodj/mankala/mnk.h"
 #include "bagel/hodjnpodj/mankala/resource.h"
 
-#ifdef BAGEL_DEBUG
-	#include "bagel/hodjnpodj/mankala/transform.h"
-#endif
-
 namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
@@ -41,15 +37,6 @@ namespace Mankala {
 
 LPGAMESTRUCT pGameParams;
 extern HWND ghParentWnd;
-
-#ifdef BAGEL_DEBUG
-	BOOL ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
-	inline void FlushMouseMessages(HWND);
-
-	static CMove *gpcMove,
-	*gpcStoreMove;
-#endif
-///DEFS mnk.h
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -183,12 +170,10 @@ CMnkWindow::CMnkWindow(void) {
 		m_cMainRect.SetRect(300, 300, 300 + GAME_WIDTH, 300 + GAME_HEIGHT);
 		#endif
 
-		#ifndef BAGEL_DEBUG
 		m_cMainRect.left = (pDC->GetDeviceCaps(HORZRES) - GAME_WIDTH) >> 1 ;
 		m_cMainRect.top = (pDC->GetDeviceCaps(VERTRES) - GAME_HEIGHT) >> 1 ;
 		m_cMainRect.right = m_cMainRect.left + GAME_WIDTH ;
 		m_cMainRect.bottom = m_cMainRect.top + GAME_HEIGHT ;
-		#endif
 
 		// Create the window as a POPUP so that no borders, title, or menu are
 		// present ; this is because the game's background art will fill the
@@ -201,9 +186,6 @@ CMnkWindow::CMnkWindow(void) {
 		ReleaseDC(pDC);
 		pDC = nullptr ;        // zero out context pointer
 	} else {
-		#ifdef BAGEL_DEBUG
-		MFC::MessageBox(nullptr, "Cannot acquire device context. Abnormal Program Termination", "Error", MB_ICONSTOP) ;
-		#endif
 		return;
 	}
 	if (!Create(xpszWndClass, "Boffo Games -- Mankala", WSTYLE,
@@ -451,64 +433,11 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		if ((iRVal = cRulesDlg.DoModal()) == -1)
 			MessageBox("The Mankala Rules Text File Can't Be Opened", "Error Opening File");
 		m_bRulesActive = FALSE;
+	} else if (nChar == VK_F2) {
+		OptionsDialog();
+	} else {
+		CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
-
-	else if (nChar == VK_F2)
-		OptionsDialog() ;
-	/*
-	else if (nChar == VK_F12){
-	    gbTurnSoundsOff=!gbTurnSoundsOff; //F12 is pressed, toggle sounds ON/OFF.
-	    WritePrivateProfileString("Mankala","MuteCrab",gbTurnSoundsOff?"1":"0",INI_FILENAME);
-	}*/
-	else if (nChar == VK_F8) {
-		#ifdef BAGEL_DEBUG
-		HWND hWnd;
-		HINSTANCE hInst;
-		int u,
-		    i,
-		    j ;
-
-		if (hWnd = GetSafeHwnd()) {
-			hInst = (HINSTANCE)GetWindowWord(hWnd, GWW_HINSTANCE);
-
-			if ((gpcMove = new CMove) && (gpcStoreMove = new CMove)) {
-				memcpy(gpcMove, &m_cCurrentMove, sizeof(CMove));
-				memcpy(gpcStoreMove, &m_cCurrentMove, sizeof(CMove));
-				u = MFC::DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_RESET_PITS_DLG), hWnd, (DLGPROC)ResetPitsDlgProc, (LPARAM)m_iStartStones);
-				if (u) {
-					memcpy(&m_cCurrentMove, gpcMove, sizeof(CMove));
-					for (i = 0; i < 2; i++) {
-						for (j = 0; j < NUMPITS + 2; j++) {
-							m_xpcPits[i][j]->m_iNumStones = m_cCurrentMove.m_iNumStones[i][j];
-							AdjustPitDisplay(m_xpcPits[i][j], TRUE);
-						}
-					}
-				}//end if u
-				if (gpcMove) delete gpcMove;
-				if (gpcStoreMove) delete gpcStoreMove;
-			}
-		}
-		#endif  //_debug
-	}/*else if(nChar==VK_F9){
-        #ifdef BAGEL_DEBUG
-        double* v, *J;
-        HGLOBAL hglbV=GlobalAlloc(GHND,sizeof(double)* NUMPITS);
-        HGLOBAL hglbJ=GlobalAlloc(GHND,sizeof(double)* NUMPITS);
-
-        J=(double*) GlobalLock(hglbJ);
-        for(int j=0; j<NUMPITS; J[ j ]= ++j);
-        GlobalUnlock(hglbJ);
-
-        v=(double*) GlobalLock(hglbV);
-        if(!dft(v, m_cCurrentMove.m_iNumStones[1]+2, NUMPITS)){
-            GlobalUnlock(hglbV);
-            graph(m_hWnd, hglbV, hglbJ,  NUMPITS);
-        }else{
-            GlobalUnlock(hglbV);
-        }
-        #endif
-    }  */
-	else CFrameWnd ::OnKeyDown(nChar, nRepCnt, nFlags);
 
 	#ifdef _MACROS
 	EM("Leaving OnKeyDown");
@@ -555,15 +484,6 @@ void CMnkWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	// terminate game on ALT-Q
 	if ((nChar == 'q') && (nFlags & 0x2000))
 		PostMessage(WM_CLOSE, 0, 0) ; // same as clicking QUIT button
-	#ifdef BAGEL_DEBUG
-	else if ((nChar == 'd') && (nFlags & 0x2000)) {
-		BOOL bStartGame = m_bStartGame ;
-
-		DebugDialog() ;
-		if (bStartGame && !m_bStartGame)
-			StartGame() ;
-	}
-	#endif
 	else
 		CFrameWnd ::OnSysChar(nChar, nRepCnt, nFlags) ; // default action
 
@@ -1199,186 +1119,6 @@ BEGIN_MESSAGE_MAP(CMnkWindow, CFrameWnd)
 	ON_MESSAGE(MM_WOM_DONE, CMnkWindow::OnMMIONotify)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
-
-#ifdef BAGEL_DEBUG
-BOOL ResetPitsDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam) {
-
-	static long lTotalStones;
-
-	if (!gpcMove)
-		MFC::EndDialog(hDlg, 0);
-
-	switch (msg) {
-	case WM_INITDIALOG:
-		lTotalStones = lParam * NUMPITS * 2;
-		return gpcMove->SetBackToOriginal(hDlg);
-	case WM_COMMAND:
-		switch (wParam) {
-		case IDOK:
-			EndDialog(hDlg, 1);
-			break;
-		case IDCANCEL:
-			EndDialog(hDlg, 0);
-			break;
-		case IDAPPLY:
-			gpcMove->ReConfig(hDlg, lTotalStones);
-			break;
-			/*
-			case IDC_EDIT_HUMAN0:
-			case IDC_EDIT_HUMAN1:
-			case IDC_EDIT_HUMAN2:
-			case IDC_EDIT_HUMAN3:
-			case IDC_EDIT_HUMAN4:
-			case IDC_EDIT_HUMAN5:
-			                        gpcMove->RearrangeConfiguration(hDlg, (int)(wParam-IDC_EDIT_HUMAN0), (long)lTotalStones*NUMPITS*2 , 0);
-			                        break;
-			case IDC_EDIT_CRAB0:
-			case IDC_EDIT_CRAB1:
-			case IDC_EDIT_CRAB2:
-			case IDC_EDIT_CRAB3:
-			case IDC_EDIT_CRAB4:
-			case IDC_EDIT_CRAB5:
-			                        gpcMove->RearrangeConfiguration(hDlg,(int)( wParam-IDC_EDIT_CRAB0), lTotalStones*NUMPITS*2 , 1);
-			*/
-			break;
-		case IDC_CRAB:
-		case IDC_HUMAN:
-			MFC::CheckRadioButton(hDlg, IDC_HUMAN, IDC_CRAB, wParam);
-			gpcMove->SetPlayer(wParam - IDC_HUMAN);
-			break;
-
-		case IDRESET:
-			memcpy(gpcMove, gpcStoreMove, sizeof(CMove));
-			gpcMove->SetBackToOriginal(hDlg);
-			break;
-
-		default:
-			break;
-		}//end switch(wparam)
-	default:
-		break;
-	}//end switch(msg)
-	return FALSE;
-}
-
-BOOL CMove::SetBackToOriginal(HWND hwndDlg) {
-	short i;
-	Common::String tempStr;
-	HWND hwndItem;
-
-	SetDlgItemInt(hwndDlg, IDC_HOME_HUMAN, m_iNumStones[0][2 + HOMEINDEX], TRUE);
-	SetDlgItemInt(hwndDlg, IDC_HOME_CRAB, m_iNumStones[1][2 + HOMEINDEX], TRUE);
-
-	for (i = 0; i < NUMPITS; i++) {
-		tempStr = Common::String::format("%d", m_iNumStones[1][i + 2]);
-		hwndItem = MFC::GetDlgItem(hwndDlg, IDC_EDIT_CRAB0 + i);
-		if (MFC::IsWindow(hwndItem))
-			MFC::SetWindowText(hwndItem, tempStr.c_str());
-
-		tempStr = Common::String::format("%d", m_iNumStones[0][i + 2]);
-		hwndItem = MFC::GetDlgItem(hwndDlg, IDC_EDIT_HUMAN0 + i);
-		if (MFC::IsWindow(hwndItem))
-			MFC::SetWindowText(hwndItem, tempStr.c_str());
-	}
-
-	MFC::CheckRadioButton(hwndDlg, IDC_HUMAN, IDC_CRAB, m_iPlayer + IDC_HUMAN);
-
-	return TRUE;
-}
-
-void CMove::ReConfig(HWND hwndDialog, long lTotalStartStones) {
-	int Sum,
-	    iPlayer,
-	    iPit;
-	HWND hwndItem;
-	NPSTR npszItemText;
-	HLOCAL hlocItemText;
-	Common::String tempStr;
-
-	hlocItemText = (HLOCAL)MFC::LocalAlloc(GHND, 10);
-	npszItemText = (NPSTR)MFC::LocalLock(hlocItemText);
-
-
-
-	/* Sum up all Stones not including hand or home bins , set NumStones*/
-	for (iPlayer = 0, Sum = 0; iPlayer < 2; iPlayer++) {
-		for (iPit = 0; iPit < NUMPITS; iPit++) {
-			if (MFC::IsWindow(hwndItem = MFC::GetDlgItem(hwndDialog, iPit + (iPlayer ? IDC_EDIT_CRAB0 : IDC_EDIT_HUMAN0)))) {
-				if (MFC::GetWindowText(hwndItem, npszItemText, 10))
-					gpcMove->m_iNumStones[iPlayer][iPit + 2] = atoi(npszItemText);
-			}//end if(MFC::IsWindow(...))
-
-			Sum += gpcMove->m_iNumStones[iPlayer][iPit + 2];
-
-		}
-	}
-	if ((Sum -= gpcMove->m_iNumStones[1][2 + HOMEINDEX]) < 0) {
-		MFC::MessageBox(hwndDialog, "You are exceeding Total Allowable Stones", "", MB_OK);
-	} else {
-		gpcMove->m_iNumStones[0][2 + HOMEINDEX] = lTotalStartStones - Sum;
-		tempStr = Common::String::format("%d",
-		                                 gpcMove->m_iNumStones[0][2 + HOMEINDEX]);
-		hwndItem = MFC::GetDlgItem(hwndDialog, IDC_HOME_HUMAN);
-		MFC::SetWindowText(hwndItem, tempStr.c_str());
-	}
-
-	MFC::LocalUnlock(hlocItemText);
-	MFC::LocalFree(hlocItemText);
-}
-
-void CMove::RearrangeConfiguration(HWND hDlg, int iThePit, long lTotalStartStones, BOOL b) {
-	int Sum,
-	    iPlayer,
-	    iPit;
-	HWND hwndItem;
-	NPSTR npszItemText;
-	HLOCAL hlocItemText;
-
-	hlocItemText = (HLOCAL)MFC::LocalAlloc(GHND, 10);
-	npszItemText = (NPSTR)MFC::LocalLock(hlocItemText);
-
-	if (MFC::IsWindow(hwndItem = MFC::GetDlgItem(hDlg, iThePit + b ? IDC_EDIT_CRAB0 : IDC_EDIT_HUMAN0))) {
-		if (MFC::GetWindowText(hwndItem, (LPSTR)npszItemText, 10))
-			gpcMove->m_iNumStones[1][iThePit + 2] = atoi(npszItemText);
-
-		/* Sum up all Stones not including hand or home bins */
-		for (iPlayer = 0, Sum = 0; iPlayer < 2; iPlayer++) {
-			for (iPit = 0; iPit < NUMPITS; iPit++) {
-				Sum += gpcMove->m_iNumStones[iPlayer][iPit + 2];
-			}
-		}
-		gpcMove->m_iNumStones[0][2 + HOMEINDEX] = lTotalStartStones - Sum - gpcMove->m_iNumStones[1][2 + HOMEINDEX];
-	}
-
-	MFC::LocalUnlock(hlocItemText);
-	MFC::LocalFree(hlocItemText);
-}
-
-
-inline void CMove::SetPlayer(int iPlayer) {
-	m_iPlayer = iPlayer;
-}
-void ObjSizes(void) {
-	EM("CMOVE");
-	DMint(sizeof CMove);
-	EM("CMnk");
-	DMint(sizeof CMnk);
-	EM("CMnkWindow");
-	DMint(sizeof CMnkWindow);
-	EM("CBmpTable");
-	DMint(sizeof CBmpTable);
-	EM("CBmpObject");
-	DMint(sizeof CBmpObject);
-	EM("CPit");
-	DMint(sizeof CPit);
-	EM("CFileHeader");
-	DMint(sizeof CFileHeader);
-	EM("CMnkApp");
-	DMint(sizeof CMnkApp);
-	EM("CPitWnd");
-	DMint(sizeof CPitWnd);
-}
-#endif
 
 } // namespace Mankala
 } // namespace HodjNPodj

@@ -682,22 +682,6 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 		}
 	}
 
-	#ifdef BAGEL_DEBUG
-	{
-		char    cTemp[128];
-
-		Common::strcpy_s(cTemp, xpStratTemp[0]->m_lpNode->m_szLabel);
-		Common::strcat_s(cTemp, " : ");
-		Common::strcat_s(cTemp, xpStratTemp[1]->m_lpNode->m_szLabel);
-		Common::strcat_s(cTemp, " : ");
-		Common::strcat_s(cTemp, xpStratTemp[2]->m_lpNode->m_szLabel);
-
-//	wsprintf( cTemp, "%s : %s : %s", xpStratTemp[0].m_lpNode->m_szLabel, xpStratTemp[1].m_lpNode->m_szLabel, xpStratTemp[2].m_lpNode->m_szLabel);
-		MessageBox(nullptr, cTemp, xpStrategyInfo->xpTargetLocInfo->m_lpNode->m_szLabel, MB_OK);
-	}
-	#endif
-
-
 //cleanup:
 
 	JXELEAVE(CGtlData::FindTopLocations) ;
@@ -706,89 +690,9 @@ BOOL CGtlData::FindTopLocations(CXodj * xpXodj)
 
 
 //* CGtlData::DumpBestMoveData -- dump data used in best move computation
-BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj)
-// xpXodj -- char for whom data is being dumped
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CGtlData::DumpBestMoveData) ;
-	int iError = 0 ;            // error code
-	#ifdef BAGEL_DEBUG
-	int iK ;            // loop variable
-	CStrategyInfo * xpStrategyInfo = xpXodj->m_xpStrategyInfo ;
-	CStratLocInfo * xpStratLocInfo ;
-	const CLocTable * xpLoc ; // pointer to location table entry
-	char szMsg[150] ;
-	CGtlApp * xpGtlApp = (CGtlApp *)AfxGetApp() ; // get application
-
-	if (xpGtlApp->m_bDumpGamePlay) {
-
-		Common::sprintf_s(szMsg, "\n  %s strategy tables:\n", xpXodj->m_szName) ;
-		JXOutputDebugString(szMsg) ;
-
-		// For each eligible location, adjust weight by distance
-		for (iK = 0 ; iK < MG_LOC_MAX ; ++iK) {
-
-			xpStratLocInfo = &xpStrategyInfo->m_cStratLocInfo[iK] ;
-
-			xpLoc = CMgStatic::FindLoc(xpStratLocInfo->m_iLocCode) ;
-
-			if (xpStratLocInfo->m_iValueCode) {
-				_snprintf(szMsg, sizeof(szMsg),
-				          "        Location %d = %s = node #%d: "
-				          "Eligibility:%s, "
-				          "Dist:%d, Weight:%d, Adjusted:%d.\n",
-
-				          iK, xpLoc->m_lpszName,
-				          xpStratLocInfo->m_lpNode ?
-				          xpStratLocInfo->m_lpNode - m_lpNodes : -1,
-				          xpStratLocInfo->m_iValueCode ? "TRUE" : "FALSE",
-				          xpStratLocInfo->m_iDistance,
-				          xpStratLocInfo->m_iWeight,
-				          xpStratLocInfo->m_iAdjustedWeight) ;
-
-				JXOutputDebugString(szMsg) ;
-			}
-		}
-
-		Common::sprintf_s(szMsg, "%d locations close to max adjusted "
-		                         " weight of %d:\n",
-		                  xpStrategyInfo->m_iTopLocCount,
-		                  xpStrategyInfo->m_iMaxAdjustedWeight) ;
-		JXOutputDebugString(szMsg) ;
-
-		for (iK = 0 ; iK < xpStrategyInfo->m_iTopLocCount ; ++iK) {
-			xpStratLocInfo = &xpStrategyInfo->m_cStratLocInfo[
-			                     xpStrategyInfo->m_iTopLocTable[iK]] ;
-			xpLoc = CMgStatic::FindLoc(xpStratLocInfo->m_iLocCode) ;
-
-			if (xpLoc) {
-				_snprintf(szMsg, sizeof(szMsg),
-				          "        Location %d = %s = node #%d: "
-				          "Eligibility:%s, "
-				          "Dist:%d, Weight:%d, Adjusted:%d.%s\n",
-
-				          iK, xpLoc->m_lpszName,
-				          xpStratLocInfo->m_lpNode ?
-				          xpStratLocInfo->m_lpNode - m_lpNodes : -1,
-				          xpStratLocInfo->m_iValueCode ? "TRUE" : "FALSE",
-				          xpStratLocInfo->m_iDistance,
-				          xpStratLocInfo->m_iWeight,
-				          xpStratLocInfo->m_iAdjustedWeight,
-				          (xpStratLocInfo->m_iLocCode
-				           == xpXodj->m_iTargetLocation)
-				          ? " (Selected target)" : "") ;
-			} else
-				Common::sprintf_s(szMsg, "Invalid location code %d.\n",
-				                  xpStratLocInfo->m_iLocCode) ;
-
-			JXOutputDebugString(szMsg) ;
-		}
-	}
-
-// cleanup:
-	#endif
-	JXELEAVE(CGtlData::DumpBestMoveData) ;
-	RETURN(iError != 0) ;
+BOOL CGtlData::DumpBestMoveData(CXodj *xpXodj) {
+	// No implementation
+	return FALSE;
 }
 
 } // namespace Gtl
