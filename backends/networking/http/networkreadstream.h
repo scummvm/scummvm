@@ -30,12 +30,13 @@
 #include "common/hash-str.h"
 
 typedef void CURL;
-struct curl_slist;
 
 namespace Networking {
+typedef Common::Array<Common::String> RequestHeaders;
 
 class NetworkReadStream : public Common::ReadStream {
 	CURL *_easy;
+	struct curl_slist *_headersSlist;  // Track the curl headers list for cleanup
 	Common::MemoryReadWriteStream _backingStream;
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;
@@ -50,8 +51,9 @@ class NetworkReadStream : public Common::ReadStream {
 	uint64 _progressDownloaded, _progressTotal;
 
 	void resetStream();
-	void initCurl(const char *url, curl_slist *headersList);
-	bool reuseCurl(const char *url, curl_slist *headersList);
+	static struct curl_slist *requestHeadersToSlist(const RequestHeaders *headersList);
+	void initCurl(const char *url, RequestHeaders *headersList);
+	bool reuseCurl(const char *url, RequestHeaders *headersList);
 	void setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post);
 	void setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles);
 
@@ -77,26 +79,26 @@ class NetworkReadStream : public Common::ReadStream {
 	static int curlProgressCallbackOlder(void *p, double dltotal, double dlnow, double ultotal, double ulnow);
 public:
 	/** Send <postFields>, using POST by default. */
-	NetworkReadStream(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
+	NetworkReadStream(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	/** Send <formFields>, <formFiles>, using POST multipart/form. */
 	NetworkReadStream(
-	    const char *url, curl_slist *headersList,
+	    const char *url, RequestHeaders *headersList,
 	    const Common::HashMap<Common::String, Common::String> &formFields,
 	    const Common::HashMap<Common::String, Common::Path> &formFiles,
 		bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	/** Send <buffer>, using POST by default. */
-	NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
+	NetworkReadStream(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true, bool keepAlive = false, long keepAliveIdle = 120, long keepAliveInterval = 60);
 	~NetworkReadStream() override;
 
 	/** Send <postFields>, using POST by default. */
-	bool reuse(const char *url, curl_slist *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false);
+	bool reuse(const char *url, RequestHeaders *headersList, const Common::String &postFields, bool uploading = false, bool usingPatch = false);
 	/** Send <formFields>, <formFiles>, using POST multipart/form. */
 	bool reuse(
-		const char *url, curl_slist *headersList,
+		const char *url, RequestHeaders *headersList,
 		const Common::HashMap<Common::String, Common::String> &formFields,
 		const Common::HashMap<Common::String, Common::Path> &formFiles);
 	/** Send <buffer>, using POST by default. */
-	bool reuse(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
+	bool reuse(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true);
 
 	/**
 	 * Returns true if a read failed because the stream end has been reached.

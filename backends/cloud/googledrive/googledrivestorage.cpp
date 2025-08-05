@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/googledrive/googledrivetokenrefresher.h"
@@ -168,7 +167,8 @@ Networking::Request *GoogleDriveStorage::streamFileById(const Common::String &id
 	if (callback) {
 		Common::String url = Common::String::format(GOOGLEDRIVE_API_FILES_ALT_MEDIA, ConnMan.urlEncode(id).c_str());
 		Common::String header = "Authorization: Bearer " + _token;
-		curl_slist *headersList = curl_slist_append(nullptr, header.c_str());
+		Networking::RequestHeaders *headersList = new Networking::RequestHeaders();
+		headersList->push_back(header);
 		Networking::NetworkReadStream *stream = new Networking::NetworkReadStream(url.c_str(), headersList, "");
 		(*callback)(Networking::NetworkReadStreamResponse(nullptr, stream));
 	}

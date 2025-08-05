@@ -26,12 +26,13 @@
 #include "common/path.h"
 #include "common/str.h"
 #include "common/array.h"
+#include "common/list.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-struct curl_slist;
-
 namespace Networking {
+
+typedef Common::Array<Common::String> RequestHeaders;
 
 class NetworkReadStream;
 
@@ -42,7 +43,7 @@ class HttpRequest: public Request {
 protected:
 	Common::String _url;
 	NetworkReadStream *_stream;
-	curl_slist *_headersList;
+	RequestHeaders _headersList;
 	Common::String _postFields;
 	Common::HashMap<Common::String, Common::String> _formFields;
 	Common::HashMap<Common::String, Common::Path> _formFiles;

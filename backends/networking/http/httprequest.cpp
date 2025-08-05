@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/http/httprequest.h"
 #include "backends/networking/http/connectionmanager.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -30,21 +29,20 @@
 namespace Networking {
 
 HttpRequest::HttpRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url):
-	Request(cb, ecb), _url(url), _stream(nullptr), _headersList(nullptr), _bytesBuffer(nullptr),
+	Request(cb, ecb), _url(url), _stream(nullptr), _bytesBuffer(nullptr),
 	_bytesBufferSize(0), _uploading(false), _usingPatch(false), _keepAlive(false), _keepAliveIdle(120), _keepAliveInterval(60) {}
 
 HttpRequest::~HttpRequest() {
-	curl_slist_free_all(_headersList);
 	delete _stream;
 	delete[] _bytesBuffer;
 }
 
 NetworkReadStream *HttpRequest::makeStream() {
 	if (_bytesBuffer)
-		return new NetworkReadStream(_url.c_str(), _headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+		return new NetworkReadStream(_url.c_str(), &_headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 	if (!_formFields.empty() || !_formFiles.empty())
-		return new NetworkReadStream(_url.c_str(), _headersList, _formFields, _formFiles, _keepAlive, _keepAliveIdle, _keepAliveInterval);
-	return new NetworkReadStream(_url.c_str(), _headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+		return new NetworkReadStream(_url.c_str(), &_headersList, _formFields, _formFiles, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+	return new NetworkReadStream(_url.c_str(), &_headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 }
 
 void HttpRequest::handle() {
@@ -79,14 +77,13 @@ Common::String HttpRequest::date() const {
 }
 
 void HttpRequest::setHeaders(const Common::Array<Common::String> &headers) {
-	curl_slist_free_all(_headersList);
-	_headersList = nullptr;
+	_headersList.clear();
 	for (uint32 i = 0; i < headers.size(); ++i)
 		addHeader(headers[i]);
 }
 
 void HttpRequest::addHeader(const Common::String &header) {
-	_headersList = curl_slist_append(_headersList, header.c_str());
+	_headersList.push_back(header);
 }
 
 void HttpRequest::addPostField(const Common::String &keyValuePair) {
