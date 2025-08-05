@@ -305,11 +305,15 @@ void showExecutionContext() {
 		ImGui::PushID(0);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-		ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
+		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
 		ImGui::Text("%s", g_director->getStage()->asString().c_str());
 
 		ImGui::SeparatorText("Backtrace");
+		ImVec2 childSize = ImGui::GetContentRegionAvail();
+		childSize.y /= 3;
+		ImGui::BeginChild("##backtrace", childSize);
 		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+		ImGui::EndChild();
 
 		ImGui::SeparatorText("Scripts");
 		updateCurrentScript();
@@ -387,7 +391,11 @@ void showExecutionContext() {
 			ImGui::Text("%s", window->asString().c_str());
 
 			ImGui::SeparatorText("Backtrace");
+			ImVec2 childsize = ImGui::GetContentRegionAvail();
+			childsize.y /= 3;
+			ImGui::BeginChild("##backtrace", childsize);
 			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+			ImGui::EndChild();
 
 			ImGui::SeparatorText("Scripts");
 			updateCurrentScript();
