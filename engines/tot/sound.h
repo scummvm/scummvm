@@ -28,8 +28,8 @@ namespace Tot {
 void initSound();
 void setSfxVolume(byte voll, byte volr);
 void setMidiVolume(byte voll, byte volr);
-void lowerMidiVolume(byte voll, byte volr);
-void restoreMidiVolume(byte voll, byte volr);
+void fadeOutMusic(byte voll, byte volr);
+void fadeInMusic(byte voll, byte volr);
 void setMasterVolume(byte voll, byte volr);
 void loadVoc(Common::String vocFile, int32 startPos, uint vocSize);
 void autoPlayVoc(Common::String vocFile, int32 startPos, uint vocSize);

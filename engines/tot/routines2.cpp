@@ -38,9 +38,9 @@
 namespace Tot {
 
 void loadScreenMemory() {
-	sizepantalla = 65520;
-	background = (byte *)malloc(sizepantalla);
-	handpantalla = (byte *)malloc(sizepantalla);
+	screenSize = 65520;
+	background = (byte *)malloc(screenSize);
+	screenHandle = (byte *)malloc(screenSize);
 }
 
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
@@ -279,9 +279,9 @@ void loadScreen() {
 	Common::File fichcp;
 	palette palcp;
 
-	sizepantalla = currentRoomData->tamimagenpantalla;
-	readBitmap(currentRoomData->puntimagenpantalla, background, sizepantalla, 316);
-	Common::copy(background, background + sizepantalla, handpantalla);
+	screenSize = currentRoomData->tamimagenpantalla;
+	readBitmap(currentRoomData->puntimagenpantalla, background, screenSize, 316);
+	Common::copy(background, background + screenSize, screenHandle);
 	switch (gamePart) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
@@ -1673,10 +1673,10 @@ void credits() {
 
 	g_engine->_mouseManager->hide();
 	totalFadeOut(0);
-	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	cleardevice();
 	playMidiFile("CREDITOS", true);
-	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	drawCreditsScreen(fondopp, sizefondo2, fondo2);
 
 	salirpitando = false;
@@ -1747,10 +1747,10 @@ void credits() {
 Lsalida:
 	delay(1000);
 	totalFadeOut(0);
-	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	cleardevice();
 	playMidiFile("INTRODUC", true);
-	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	g_engine->_mouseManager->show();
 	free(fondopp);
 	free(fondo2);
@@ -2469,9 +2469,9 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 
-	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	playMidiFile("SACRIFIC", true);
-	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	clear();
 
 	outtextxy(10, 31, messages[23], 254);
@@ -2748,9 +2748,9 @@ void ending() {
 	if(g_engine->shouldQuit()) {
 		return;
 	}
-	lowerMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	playMidiFile("SACRIFIC", true);
-	restoreMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
 	drawFlc(0, 0, offsets[30], 12, 9, 26, true, false, false, pulsada_salida);
 	if(pulsada_salida){
 		return;
@@ -2844,7 +2844,7 @@ void disableSecondAnimation() {
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	currentRoomData->animationFlag = false;
 	freeAnimation();
-	handPantallaToBackground();
+	screenHandleToBackground();
 	assembleScreen();
 }
 

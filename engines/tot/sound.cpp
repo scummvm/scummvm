@@ -27,7 +27,7 @@
 
 namespace Tot {
 
-byte *midmusica;
+byte *currentMidi;
 
 void stopVoc() {
 	g_engine->_sound->stopVoc();
@@ -53,8 +53,7 @@ void setMidiVolume(byte voll, byte volr) {
 	g_engine->_sound->setMusicVolume(volume);
 }
 
-void lowerMidiVolume(byte voll, byte volr) {
-
+void fadeOutMusic(byte voll, byte volr) {
 	byte volpaso = (voll + volr) / 2;
 	for (int ivol = volpaso; ivol >= 0; ivol--) {
 		setMidiVolume(ivol, ivol);
@@ -62,7 +61,7 @@ void lowerMidiVolume(byte voll, byte volr) {
 	}
 }
 
-void restoreMidiVolume(byte voll, byte volr) {
+void fadeInMusic(byte voll, byte volr) {
 	byte ivol, volpaso;
 
 	volpaso = (voll + volr) / 2;
@@ -75,12 +74,12 @@ void restoreMidiVolume(byte voll, byte volr) {
 void setMasterVolume(byte voll, byte volr) {
 }
 
-void loadVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
-	g_engine->_sound->loadVoc(vocfile, posinicio, tamvocleer);
+void loadVoc(Common::String vocFile, int32 startPos, uint vocSize) {
+	g_engine->_sound->loadVoc(vocFile, startPos, vocSize);
 }
 
-void autoPlayVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
-	g_engine->_sound->loadVoc(vocfile, posinicio, tamvocleer);
+void autoPlayVoc(Common::String vocFile, int32 startPos, uint vocSize) {
+	g_engine->_sound->loadVoc(vocFile, startPos, vocSize);
 	g_engine->_sound->autoPlayVoc();
 }
 
@@ -88,22 +87,22 @@ void pitavocmem() {
 	g_engine->_sound->playVoc();
 }
 
-void playVoc(Common::String vocfile, int32 posinicio, uint tamvocleer) {
-	loadVoc(vocfile, posinicio, tamvocleer);
+void playVoc(Common::String vocFile, int32 startPos, uint vocSize) {
+	loadVoc(vocFile, startPos, vocSize);
 	pitavocmem();
 }
 
 void playMidiFile(Common::String nomfich, bool loop) {
 
-	Common::File ficheromus;
-	if (!ficheromus.open(Common::Path(nomfich + ".MUS"))) {
+	Common::File musicFile;
+	if (!musicFile.open(Common::Path(nomfich + ".MUS"))) {
 		showError(267);
 	}
-	midmusica = (byte *)malloc(ficheromus.size());
-	ficheromus.read(midmusica, ficheromus.size());
+	currentMidi = (byte *)malloc(musicFile.size());
+	musicFile.read(currentMidi, musicFile.size());
 
-	g_engine->_sound->playMidi(midmusica, ficheromus.size(), true);
-	ficheromus.close();
+	g_engine->_sound->playMidi(currentMidi, musicFile.size(), true);
+	musicFile.close();
 }
 
 void initSound() {

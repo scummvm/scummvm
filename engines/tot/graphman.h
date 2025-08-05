@@ -55,7 +55,7 @@ public:
 	Graphics::Font *_bios;
 
 private:
-	signed char datosfundido[256][256];
+	signed char fadeData[256][256];
 };
 
 } // End of namespace Tot
