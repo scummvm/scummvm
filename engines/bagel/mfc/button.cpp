@@ -163,7 +163,7 @@ void CButton::OnPushBoxPaint() {
 
 void CButton::OnOwnerDrawPaint() {
 	// Prepare the draw item struct
-	DRAWITEMSTRUCT dis = { 0 };
+	DRAWITEMSTRUCT dis = { 0, 0, 0, 0, 0, 0, 0, { 0, 0, 0, 0 }, 0 };
 	dis.CtlType = ODT_BUTTON;
 	dis.CtlID = GetDlgCtrlID();
 	dis.itemID = 0;
