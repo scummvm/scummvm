@@ -943,6 +943,7 @@ private:
 		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(varName)) {
 			const Datum &val = g_lingo->_globalvars.getVal(varName);
 			ImGui::BeginTooltip();
+			ImGui::Text("%s", varName.c_str());
 			ImGui::Text("Click to add to watches.");
 			Common::String s = val.asString(true);
 			s.wordWrap(150);
