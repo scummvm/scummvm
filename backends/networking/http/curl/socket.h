@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef BACKENDS_NETWORKING_HTTP_SOCKET_H
-#define BACKENDS_NETWORKING_HTTP_SOCKET_H
+#ifndef BACKENDS_NETWORKING_CURL_SOCKET_H
+#define BACKENDS_NETWORKING_CURL_SOCKET_H
 
 typedef void CURL;
 #ifdef WIN32

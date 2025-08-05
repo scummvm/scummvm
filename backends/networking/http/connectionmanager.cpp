@@ -21,7 +21,6 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include <curl/curl.h>
 #include "backends/networking/http/connectionmanager.h"
 #include "backends/networking/http/networkreadstream.h"
 #include "common/debug.h"
@@ -29,6 +28,12 @@
 #include "common/system.h"
 #include "common/timer.h"
 
+#if defined(USE_LIBCURL)
+#include <curl/curl.h>
+#endif
+#if defined(EMSCRIPTEN)
+#include <emscripten.h>
+#endif
 #if defined(ANDROID_BACKEND)
 #include "backends/platform/android/jni-android.h"
 #endif
@@ -42,8 +47,10 @@ DECLARE_SINGLETON(Networking::ConnectionManager);
 namespace Networking {
 
 ConnectionManager::ConnectionManager(): _multi(nullptr), _timerStarted(false), _frame(0) {
+#ifdef USE_LIBCURL
 	curl_global_init(CURL_GLOBAL_ALL);
 	_multi = curl_multi_init();
+#endif
 }
 
 ConnectionManager::~ConnectionManager() {
@@ -81,15 +88,19 @@ ConnectionManager::~ConnectionManager() {
 	_requests.clear();
 
 	//cleanup
+#ifdef USE_LIBCURL
 	curl_multi_cleanup(_multi);
 	curl_global_cleanup();
 	_multi = nullptr;
+#endif
 	_handleMutex.unlock();
 }
 
+#ifdef USE_LIBCURL
 void ConnectionManager::registerEasyHandle(CURL *easy) const {
 	curl_multi_add_handle(_multi, easy);
 }
+#endif
 
 Request *ConnectionManager::addRequest(Request *request, RequestCallback callback) {
 	_addedRequestsMutex.lock();
@@ -101,6 +112,9 @@ Request *ConnectionManager::addRequest(Request *request, RequestCallback callbac
 }
 
 Common::String ConnectionManager::urlEncode(const Common::String &s) const {
+	Common::String result = "";
+	debug(5, "ConnectionManager::urlEncode(%s)", s.c_str());
+#ifdef USE_LIBCURL
 	if (!_multi)
 		return "";
 #if LIBCURL_VERSION_NUM >= 0x070F04
@@ -109,11 +123,22 @@ Common::String ConnectionManager::urlEncode(const Common::String &s) const {
 	char *output = curl_escape(s.c_str(), s.size());
 #endif
 	if (output) {
-		Common::String result = output;
+		result = output;
 		curl_free(output);
-		return result;
 	}
-	return "";
+#elif defined(EMSCRIPTEN)
+	const char *input = s.c_str();
+	result = (char*) EM_ASM_PTR({
+		var jsString = encodeURIComponent(UTF8ToString($0));
+		var size = lengthBytesUTF8(jsString) + 1;
+		var ret = Module._malloc(size);
+		stringToUTF8Array(jsString, HEAP8, ret, size);
+		return ret;
+	}, input);
+#endif
+	debug(5, "ConnectionManager::urlEncode(%s) = %s", s.c_str(), result.c_str());
+		
+	return result;
 }
 
 uint32 ConnectionManager::getCloudRequestsPeriodInMicroseconds() {
@@ -227,6 +252,7 @@ void ConnectionManager::interateRequests() {
 }
 
 void ConnectionManager::processTransfers() {
+#ifdef USE_LIBCURL
 	if (!_multi) return;
 
 	//check libcurl's transfers and notify requests of messages from queue (transfer completion or failure)
@@ -250,6 +276,7 @@ void ConnectionManager::processTransfers() {
 			warning("Unknown libcurl message type %d", curlMsg->msg);
 		}
 	}
+#endif 
 }
 
 } // End of namespace Cloud

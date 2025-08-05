@@ -91,12 +91,14 @@ public:
 	ConnectionManager();
 	~ConnectionManager() override;
 
+#ifdef USE_LIBCURL
 	/**
 	 * All libcurl transfers are going through this ConnectionManager.
 	 * So, if you want to start any libcurl transfer, you must create
 	 * an easy handle and register it using this method.
 	 */
 	void registerEasyHandle(CURL *easy) const;
+#endif
 
 	/**
 	 * Use this method to add new Request into manager's queue.

@@ -124,6 +124,10 @@ class CloudConnectionWizard : public Dialog {
 	void manualModeConnect();
 	void manualModeStorageConnectionCallback(const Networking::ErrorResponse &response);
 
+#ifdef EMSCRIPTEN
+	void emscriptenCloudConnectionCallback(const Common::String *message);
+#endif
+
 public:
 	CloudConnectionWizard();
 	~CloudConnectionWizard() override;

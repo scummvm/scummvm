@@ -3644,12 +3644,15 @@ if test -n "$_host"; then
 			;;
 		wasm*-emscripten)
 			_backend="emscripten"
-			# Disable cloud and SDL_Net as this is handled in the browser
-			_cloud=no
-			_sdlnet=no
-			_libcurl=no
-			_curl=no
-			_enet=no
+			_enet=no    # Disable ENet (no sockets in the browser)
+			_sdlnet=no  # Disable SDL_Net (no sockets in the browser)
+			_libcurl=no # Emscripten backend uses emscripten_fetch not libcurl
+			_curl=no # Disable cloud unless it's manually enabled
+			if test "$_cloud" != yes; then
+				_cloud=no
+			else
+				append_var LDFLAGS "-sFETCH"
+			fi
 			_seq_midi=no
 			_timidity=no
 			_sndio=no
@@ -6101,6 +6104,10 @@ else
 	fi
 	if test "$_libcurl" = "yes"; then
 		if test "$_cloud" = "yes"; then echo_n ", "; fi
+		_cloud=yes
+		echo_n "servers"
+	fi
+	if test "$_host_os" = "emscripten"; then
 		_cloud=yes
 		echo_n "servers"
 	fi

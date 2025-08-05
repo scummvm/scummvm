@@ -80,15 +80,15 @@ endif
 ifdef USE_LIBCURL
 MODULE_OBJS += \
 	networking/http/connectionmanager.o \
-	networking/http/networkreadstream.o \
-	networking/http/httprequest.o \
+	networking/http/curl/networkreadstream-curl.o \
+	networking/http/curl/socket.o \
+	networking/http/curl/url.o \
 	networking/http/httpjsonrequest.o \
+	networking/http/httprequest.o \
 	networking/http/postrequest.o \
 	networking/http/request.o \
 	networking/http/session.o \
-	networking/http/sessionrequest.o \
-	networking/http/socket.o \
-	networking/http/url.o
+	networking/http/sessionrequest.o 
 endif
 
 ifdef EMSCRIPTEN
@@ -97,6 +97,17 @@ MODULE_OBJS += \
 	fs/emscripten/emscripten-posix-fs.o \
 	fs/emscripten/http-fs.o \
 	midi/webmidi.o 
+ifdef USE_CLOUD
+MODULE_OBJS += \
+	networking/http/connectionmanager.o \
+	networking/http/httpjsonrequest.o \
+	networking/http/httprequest.o \
+	networking/http/postrequest.o \
+	networking/http/request.o \
+	networking/http/session.o \
+	networking/http/sessionrequest.o \
+	networking/http/emscripten/networkreadstream-emscripten.o 
+endif
 ifdef USE_TTS
 MODULE_OBJS += \
 	text-to-speech/emscripten/emscripten-text-to-speech.o
