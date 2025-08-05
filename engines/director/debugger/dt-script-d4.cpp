@@ -1008,7 +1008,7 @@ private:
 					ImGui::Text(",");
 					ImGui::SameLine();
 				}
-				ImGui::TextColored(_state->_colors._var_color, "%s", _script.globalNames[i].c_str());
+				renderVar(_script.globalNames[i]);
 				ImGui::SameLine();
 			}
 		}
