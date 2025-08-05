@@ -32,7 +32,6 @@ class BoxStorage;
 
 class BoxTokenRefresher: public Networking::HttpJsonRequest {
 	BoxStorage *_parentStorage;
-	Common::Array<Common::String> _headers;
 
 	void tokenRefreshed(const Storage::BoolResponse &response);
 
@@ -41,9 +40,6 @@ class BoxTokenRefresher: public Networking::HttpJsonRequest {
 public:
 	BoxTokenRefresher(BoxStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
 	~BoxTokenRefresher() override;
-
-	void setHeaders(const Common::Array<Common::String> &headers) override;
-	void addHeader(const Common::String &header) override;
 };
 
 } // End of namespace Box

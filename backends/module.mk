@@ -62,7 +62,15 @@ MODULE_OBJS += \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \
 	cloud/onedrive/onedrivelistdirectoryrequest.o \
-	cloud/onedrive/onedriveuploadrequest.o
+	cloud/onedrive/onedriveuploadrequest.o \
+	networking/http/connectionmanager.o \
+	networking/http/networkreadstream.o \
+	networking/http/httpjsonrequest.o \
+	networking/http/httprequest.o \
+	networking/http/postrequest.o \
+	networking/http/request.o \
+	networking/http/session.o \
+	networking/http/sessionrequest.o
 endif
 
 ifdef USE_SCUMMVMDLC
@@ -79,16 +87,14 @@ endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	networking/http/connectionmanager.o \
-	networking/http/curl/networkreadstream-curl.o \
-	networking/http/curl/socket.o \
-	networking/http/curl/url.o \
-	networking/http/httpjsonrequest.o \
-	networking/http/httprequest.o \
-	networking/http/postrequest.o \
-	networking/http/request.o \
-	networking/http/session.o \
-	networking/http/sessionrequest.o 
+	networking/curl/cacert.o \
+	networking/curl/socket.o \
+	networking/curl/url.o
+ifdef USE_CLOUD
+MODULE_OBJS += \
+	networking/http/curl/connectionmanager-curl.o \
+	networking/http/curl/networkreadstream-curl.o
+endif
 endif
 
 ifdef EMSCRIPTEN
@@ -100,20 +106,15 @@ MODULE_OBJS += \
 ifdef USE_CLOUD
 MODULE_OBJS += \
 	fs/emscripten/cloud-fs.o \
-	networking/http/connectionmanager.o \
-	networking/http/httpjsonrequest.o \
-	networking/http/httprequest.o \
-	networking/http/postrequest.o \
-	networking/http/request.o \
-	networking/http/session.o \
-	networking/http/sessionrequest.o \
-	networking/http/emscripten/networkreadstream-emscripten.o 
+	networking/http/emscripten/connectionmanager-emscripten.o \
+	networking/http/emscripten/networkreadstream-emscripten.o
 endif
 ifdef USE_TTS
 MODULE_OBJS += \
 	text-to-speech/emscripten/emscripten-text-to-speech.o
 endif
 endif
+
 ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/client.o \

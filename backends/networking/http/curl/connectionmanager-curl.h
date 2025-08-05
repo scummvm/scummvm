@@ -19,29 +19,39 @@
  *
  */
 
-#ifndef BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
-#define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
+#ifndef BACKENDS_NETWORKING_HTTP_CURL_CONNECTIONMANAGERCURL_H
+#define BACKENDS_NETWORKING_HTTP_CURL_CONNECTIONMANAGERCURL_H
 
-#include "backends/cloud/storage.h"
-#include "backends/networking/http/httpjsonrequest.h"
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-namespace Cloud {
-namespace GoogleDrive {
+#include "backends/networking/http/connectionmanager.h"
 
-class GoogleDriveStorage;
+#include <curl/curl.h>
 
-class GoogleDriveTokenRefresher: public Networking::HttpJsonRequest {
-	GoogleDriveStorage *_parentStorage;
+namespace Networking {
 
-	void tokenRefreshed(const Storage::BoolResponse &response);
+class ConnectionManagerCurl : public ConnectionManager {
+private:
+	CURLM *_multi;
 
-	void finishJson(const Common::JSONValue *json) override;
+	void processTransfers() override;
+
 public:
-	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	~GoogleDriveTokenRefresher() override;
+	ConnectionManagerCurl();
+	~ConnectionManagerCurl() override;
+
+	/**
+	 * All libcurl transfers are going through this ConnectionManager.
+	 * So, if you want to start any libcurl transfer, you must create
+	 * an easy handle and register it using this method.
+	 */
+	void registerEasyHandle(CURL *easy) const;
+
+	/** Return URL-encoded version of given string. */
+	Common::String urlEncode(const Common::String &s) const override;
+
 };
 
-} // End of namespace GoogleDrive
-} // End of namespace Cloud
+} // End of namespace Networking
 
 #endif

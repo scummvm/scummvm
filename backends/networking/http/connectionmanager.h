@@ -23,27 +23,21 @@
 #define BACKENDS_NETWORKING_HTTP_CONNECTIONMANAGER_H
 
 #include "backends/networking/http/request.h"
-#include "common/str.h"
-#include "common/singleton.h"
 #include "common/hashmap.h"
 #include "common/mutex.h"
-
-typedef void CURL;
-typedef void CURLM;
-struct curl_slist;
+#include "common/singleton.h"
+#include "common/str.h"
 
 namespace Networking {
 
-class NetworkReadStream;
-
-class ConnectionManager : public Common::Singleton<ConnectionManager> {
+class ConnectionManager : public Common::Singleton<Networking::ConnectionManager> {
 	static const uint32 FRAMES_PER_SECOND = 100;
 	static const uint32 TIMER_INTERVAL = 1000000 / FRAMES_PER_SECOND;
-	static const uint32 CLOUD_PERIOD = 1; //every frame
-	static const uint32 CURL_PERIOD = 1; //every frame
+	static const uint32 ITERATION_PERIOD = 1;                       // every frame
+	static const uint32 PROCESSING_PERIOD = 1;                        // every frame
 	static const uint32 DEBUG_PRINT_PERIOD = FRAMES_PER_SECOND; // once per second
 
-	friend void connectionsThread(void *); //calls handle()
+	friend void connectionsThread(void *); // calls handle()
 
 	typedef Common::BaseCallback<Request *> *RequestCallback;
 
@@ -71,10 +65,9 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 		Request *request;
 		RequestCallback onDeleteCallback;
 
-		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr): request(rq), onDeleteCallback(cb) {}
+		RequestWithCallback(Request *rq = nullptr, RequestCallback cb = nullptr) : request(rq), onDeleteCallback(cb) {}
 	};
 
-	CURLM *_multi;
 	bool _timerStarted;
 	Common::Array<RequestWithCallback> _requests, _addedRequests;
 	Common::Mutex _handleMutex, _addedRequestsMutex;
@@ -83,22 +76,13 @@ class ConnectionManager : public Common::Singleton<ConnectionManager> {
 	void startTimer(int interval = TIMER_INTERVAL);
 	void stopTimer();
 	void handle();
-	void interateRequests();
-	void processTransfers();
+	void iterateRequests();
+	virtual void processTransfers() = 0;
 	bool hasAddedRequests();
 
 public:
 	ConnectionManager();
-	~ConnectionManager() override;
-
-#ifdef USE_LIBCURL
-	/**
-	 * All libcurl transfers are going through this ConnectionManager.
-	 * So, if you want to start any libcurl transfer, you must create
-	 * an easy handle and register it using this method.
-	 */
-	void registerEasyHandle(CURL *easy) const;
-#endif
+	~ConnectionManager();
 
 	/**
 	 * Use this method to add new Request into manager's queue.
@@ -116,17 +100,19 @@ public:
 	Request *addRequest(Request *request, RequestCallback callback = nullptr);
 
 	/** Return URL-encoded version of given string. */
-	Common::String urlEncode(const Common::String &s) const;
+	virtual Common::String urlEncode(const Common::String &s) const = 0;
 
 	static uint32 getCloudRequestsPeriodInMicroseconds();
-
-	/** Return the path to the CA certificates bundle. */
-	static Common::String getCaCertPath();
 };
 
 /** Shortcut for accessing the connection manager. */
-#define ConnMan     Networking::ConnectionManager::instance()
+#define ConnMan Networking::ConnectionManager::instance()
 
 } // End of namespace Networking
+
+namespace Common {
+template<>
+Networking::ConnectionManager *Singleton<Networking::ConnectionManager>::makeInstance();
+} // End of namespace Common
 
 #endif

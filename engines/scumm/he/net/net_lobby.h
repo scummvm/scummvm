@@ -22,8 +22,8 @@
 #ifndef SCUMM_HE_NET_LOBBY_H
 #define SCUMM_HE_NET_LOBBY_H
 
-#include "backends/networking/http/curl/socket.h"
-#include "backends/networking/http/curl/url.h"
+#include "backends/networking/curl/socket.h"
+#include "backends/networking/curl/url.h"
 #include "common/formats/json.h"
 
 #include "scumm/he/net/net_main.h"

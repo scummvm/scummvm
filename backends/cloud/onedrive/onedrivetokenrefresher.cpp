@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/cloud/onedrive/onedrivetokenrefresher.h"
 #include "backends/cloud/onedrive/onedrivestorage.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -44,12 +42,11 @@ void OneDriveTokenRefresher::tokenRefreshed(const Storage::BoolResponse &respons
 	}
 
 	//update headers: first change header with token, then pass those to request
-	for (uint32 i = 0; i < _headers.size(); ++i) {
-		if (_headers[i].contains("Authorization")) {
-			_headers[i] = "Authorization: bearer " + _parentStorage->accessToken();
+	for (uint32 i = 0; i < _headersList.size(); ++i) {
+		if (_headersList[i].contains("Authorization")) {
+			_headersList[i] = "Authorization: bearer " + _parentStorage->accessToken();
 		}
 	}
-	setHeaders(_headers);
 
 	//successfully received refreshed token, can restart the original request now
 	retry(0);
@@ -139,16 +136,6 @@ void OneDriveTokenRefresher::finishError(const Networking::ErrorResponse &error,
 void OneDriveTokenRefresher::finishErrorIrrecoverable(const Networking::ErrorResponse &error, Networking::RequestState state) {
 	// don't try to fix JSON as this is irrecoverable version
 	Request::finishError(error, state); // call closest base class's method
-}
-
-void OneDriveTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
-	_headers = headers;
-	HttpJsonRequest::setHeaders(headers);
-}
-
-void OneDriveTokenRefresher::addHeader(const Common::String &header) {
-	_headers.push_back(header);
-	HttpJsonRequest::addHeader(header);
 }
 
 } // End of namespace OneDrive

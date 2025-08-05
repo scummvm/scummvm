@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/cloud/box/boxtokenrefresher.h"
 #include "backends/cloud/box/boxstorage.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -44,12 +42,11 @@ void BoxTokenRefresher::tokenRefreshed(const Storage::BoolResponse &response) {
 	}
 
 	//update headers: first change header with token, then pass those to request
-	for (uint32 i = 0; i < _headers.size(); ++i) {
-		if (_headers[i].contains("Authorization")) {
-			_headers[i] = "Authorization: Bearer " + _parentStorage->accessToken();
+	for (uint32 i = 0; i < _headersList.size(); ++i) {
+		if (_headersList[i].contains("Authorization")) {
+			_headersList[i] = "Authorization: Bearer " + _parentStorage->accessToken();
 		}
 	}
-	setHeaders(_headers);
 
 	//successfully received refreshed token, can restart the original request now
 	retry(0);
@@ -117,16 +114,6 @@ void BoxTokenRefresher::finishError(const Networking::ErrorResponse &error, Netw
 	// but TokenRefresher is there to refresh token when it's invalid only
 
 	Request::finishError(error);
-}
-
-void BoxTokenRefresher::setHeaders(const Common::Array<Common::String> &headers) {
-	_headers = headers;
-	HttpJsonRequest::setHeaders(headers);
-}
-
-void BoxTokenRefresher::addHeader(const Common::String  &header) {
-	_headers.push_back(header);
-	HttpJsonRequest::addHeader(header);
 }
 
 } // End of namespace Box

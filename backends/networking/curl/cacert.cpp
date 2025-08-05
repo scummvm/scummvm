@@ -19,29 +19,43 @@
  *
  */
 
-#ifndef BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
-#define BACKENDS_CLOUD_GOOGLEDRIVE_GOOGLEDRIVETOKENREFRESHER_H
-
-#include "backends/cloud/storage.h"
-#include "backends/networking/http/httpjsonrequest.h"
-
-namespace Cloud {
-namespace GoogleDrive {
-
-class GoogleDriveStorage;
-
-class GoogleDriveTokenRefresher: public Networking::HttpJsonRequest {
-	GoogleDriveStorage *_parentStorage;
-
-	void tokenRefreshed(const Storage::BoolResponse &response);
-
-	void finishJson(const Common::JSONValue *json) override;
-public:
-	GoogleDriveTokenRefresher(GoogleDriveStorage *parent, Networking::JsonCallback callback, Networking::ErrorCallback ecb, const char *url);
-	~GoogleDriveTokenRefresher() override;
-};
-
-} // End of namespace GoogleDrive
-} // End of namespace Cloud
-
+#if defined(ANDROID_BACKEND)
+#include "backends/platform/android/jni-android.h"
 #endif
+
+#include "backends/networking/curl/cacert.h"
+
+#include "common/fs.h"
+
+namespace Networking {
+
+Common::String getCaCertPath() {
+#if defined(ANDROID_BACKEND)
+	// cacert path must exist on filesystem and be reachable by standard open syscall
+	// Lets use ScummVM internal directory
+	Common::String assetsPath = JNI::getScummVMAssetsPath();
+	return assetsPath + "/cacert.pem";
+#elif defined(DATA_PATH)
+	static enum {
+		kNotInitialized,
+		kFileNotFound,
+		kFileExists
+	} state = kNotInitialized;
+
+	if (state == kNotInitialized) {
+		Common::FSNode node(DATA_PATH "/cacert.pem");
+		state = node.exists() ? kFileExists : kFileNotFound;
+	}
+
+	if (state == kFileExists) {
+		return DATA_PATH "/cacert.pem";
+	} else {
+		return "";
+	}
+#else
+	return "";
+#endif
+}
+
+
+} // End of namespace Networking

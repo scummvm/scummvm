@@ -19,8 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
 #include "backends/networking/http/httprequest.h"
 #include "backends/networking/http/connectionmanager.h"
 #include "backends/networking/http/networkreadstream.h"
@@ -39,10 +37,10 @@ HttpRequest::~HttpRequest() {
 
 NetworkReadStream *HttpRequest::makeStream() {
 	if (_bytesBuffer)
-		return new NetworkReadStream(_url.c_str(), &_headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+		return NetworkReadStream::make(_url.c_str(), &_headersList, _bytesBuffer, _bytesBufferSize, _uploading, _usingPatch, true, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 	if (!_formFields.empty() || !_formFiles.empty())
-		return new NetworkReadStream(_url.c_str(), &_headersList, _formFields, _formFiles, _keepAlive, _keepAliveIdle, _keepAliveInterval);
-	return new NetworkReadStream(_url.c_str(), &_headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+		return NetworkReadStream::make(_url.c_str(), &_headersList, _formFields, _formFiles, _keepAlive, _keepAliveIdle, _keepAliveInterval);
+	return NetworkReadStream::make(_url.c_str(), &_headersList, _postFields, _uploading, _usingPatch, _keepAlive, _keepAliveIdle, _keepAliveInterval);
 }
 
 void HttpRequest::handle() {
@@ -77,9 +75,7 @@ Common::String HttpRequest::date() const {
 }
 
 void HttpRequest::setHeaders(const Common::Array<Common::String> &headers) {
-	_headersList.clear();
-	for (uint32 i = 0; i < headers.size(); ++i)
-		addHeader(headers[i]);
+	_headersList = headers;
 }
 
 void HttpRequest::addHeader(const Common::String &header) {

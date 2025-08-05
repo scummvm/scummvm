@@ -21,7 +21,9 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 #include <curl/curl.h>
-#include "backends/networking/http/curl/url.h"
+
+#include "backends/networking/curl/url.h"
+
 #include "common/debug.h"
 #include "common/textconsole.h"
 
