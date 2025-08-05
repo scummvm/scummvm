@@ -166,6 +166,7 @@ static void updateCurrentScript() {
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	if (callstack.empty())
 		return;
+	}
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
