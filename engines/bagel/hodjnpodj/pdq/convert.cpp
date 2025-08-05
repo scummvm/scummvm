@@ -178,7 +178,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 } // namespace PDQ

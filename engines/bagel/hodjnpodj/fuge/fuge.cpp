@@ -613,7 +613,7 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(VOID) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 VOID CFugeWindow::ReleaseMasterSprites(VOID) {
@@ -896,7 +896,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(INT nNewSize) {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -984,7 +984,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(VOID) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -2457,7 +2457,7 @@ LONG CFugeWindow::OnJoyStick(UINT wParam, LONG lParam) {
 		PaintPaddle(FALSE);
 	}
 
-	return (0);
+	return 0;
 }
 
 
@@ -2768,7 +2768,7 @@ LRESULT CFugeWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 
-	return (0);
+	return 0;
 }
 
 
@@ -2779,7 +2779,7 @@ LRESULT CFugeWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
 
-	return (0);
+	return 0;
 }
 
 

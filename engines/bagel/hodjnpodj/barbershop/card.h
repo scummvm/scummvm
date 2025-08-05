@@ -77,26 +77,26 @@ public:     // functions
 	CCard();
 	~CCard();
 
-	int     GetValue();
-	int     GetPip() {
-		return (m_nPip);
+	int GetValue() const;
+	int GetPip() const {
+		return m_nPip;
 	}
-	BOOL    IsFace() {
-		return (m_nPip >= CUST_CARD);
+	BOOL IsFace() const {
+		return m_nPip >= CUST_CARD;
 	}
-	BOOL    IsCustomer() {
-		return (m_nPip == CUST_CARD);
+	BOOL IsCustomer() const {
+		return m_nPip == CUST_CARD;
 	}
-	BOOL    IsBarber() {
-		return (m_nPip == BARB_CARD);
+	BOOL IsBarber() const {
+		return m_nPip == BARB_CARD;
 	}
-	BOOL    IsManicurist() {
-		return (m_nPip == MANI_CARD);
+	BOOL IsManicurist() {
+		return m_nPip == MANI_CARD;
 	}
-	BOOL    operator==(int nValue) {
-		return (nValue == GetValue());
+	BOOL operator==(int nValue) const {
+		return nValue == GetValue();
 	}
-	CCard   &operator=(const CCard &);
+	CCard &operator=(const CCard &);
 
 public:     // vars
 	CCard   *m_pPrevCard;

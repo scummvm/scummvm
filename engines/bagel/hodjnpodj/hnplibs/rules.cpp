@@ -1195,7 +1195,7 @@ int CRules::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
 		return (-1);
 
-	return (0);
+	return 0;
 }
 
 
@@ -1393,7 +1393,7 @@ BOOL CRules::PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc) {
 
 	bSuccess = PaintDIB((*pDC).m_hDC, myRect, hDIB, myRect, pScrollPalette);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 

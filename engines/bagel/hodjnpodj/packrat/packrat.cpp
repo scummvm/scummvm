@@ -3599,7 +3599,7 @@ LRESULT CMainPackRatWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -3609,7 +3609,7 @@ LRESULT CMainPackRatWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainPackRatWindow::OnSoundNotify(CSound *pSound) {

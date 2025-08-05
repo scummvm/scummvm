@@ -114,7 +114,7 @@ int COptn::TimeToIndex(int nTime) {
 	***********************************/
 	for (nLow = 0; nLow < TIME_TABLE ; nLow++) {
 		if (m_nTimeIndex[nLow] == nTime)
-			return ((int) nLow);
+			return (int)nLow;
 	}
 
 	return FALSE;

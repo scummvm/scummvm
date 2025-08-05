@@ -316,10 +316,10 @@ void dbgcnp(char * caller, char * name)
 
 #ifndef JXKEYBOARD
 int kybtst(void) {
-	return (0);
+	return 0;
 }
 int kybrd(void) {
-	return (0);
+	return 0;
 }
 
 #else

@@ -522,7 +522,7 @@ ERROR_CODE ConvertFromSGI(CBfcMgr *pBfcMgr, SAVEGAME_INFO *pSaveGameInfo) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 /**

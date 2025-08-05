@@ -186,7 +186,7 @@ BOOL CSpinner::Initialize(CWnd *pWnd, CDC *pDC, int nX, int nY, BOOL bHodj) {
 		}
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -322,7 +322,7 @@ BOOL CSpinner::Show(int nX, int nY) {
 
 	if (bSuccess)
 		m_bVisible = TRUE;
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -352,7 +352,7 @@ BOOL CSpinner::Hide(void) {
 	} else
 		bSuccess = TRUE;
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 

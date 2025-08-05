@@ -321,7 +321,7 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 		delete pWorkDC;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -506,7 +506,7 @@ BOOL BltMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrc
 		delete pMaskDC;
 	}
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -587,7 +587,7 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 		delete pWorkDC;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -638,7 +638,7 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, const char *pszPathName, const in
 		}
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -675,7 +675,7 @@ BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, const char *pszPathName, const
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -715,7 +715,7 @@ BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const int nResID, const i
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -753,7 +753,7 @@ BOOL PaintMaskedResource(CDC *pDC, CPalette *pPalette, const char *pszName, cons
 	if (pDIB != nullptr)
 		delete pDIB;
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -797,7 +797,7 @@ BOOL PaintMaskedDIB(CDC *pDC, CPalette *pPalette, CDibDoc *pDIB, const int x, co
 		delete pBitmap;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -987,7 +987,7 @@ BOOL PaintMaskedBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int
 		delete pMaskDC;
 	}
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -1037,7 +1037,7 @@ BOOL PaintBlockEffect(CDC *pDC, CDibDoc *pDIB, CPalette* pPalette, int nBlockSiz
 	if (pBitmap != nullptr)
 		delete pBitmap;
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1152,7 +1152,7 @@ clean_up:
 	if (pOldPal != nullptr)
 		(void)(*pDC).SelectPalette(pOldPal, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1236,7 +1236,7 @@ BOOL PaintBlockEffect(CDC *pDC, COLORREF rgbColor, CPalette* pPalette, int nBloc
 	if (pOldPal != nullptr)
 		(void)(*pDC).SelectPalette(pOldPal, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 

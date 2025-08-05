@@ -1185,7 +1185,7 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -1195,7 +1195,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainWindow::OnSoundNotify(CSound *pSound) {

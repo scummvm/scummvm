@@ -417,7 +417,7 @@ try_again:
 		#endif
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -468,7 +468,7 @@ BOOL CSound::PlaySndSound(void) {
 			delete this;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1005,7 +1005,7 @@ BOOL CSound::MidiLoopPlaySegment(DWORD dwLoopFrom, DWORD dwLoopTo, DWORD dwBegin
 
 	bSuccess = Play(dwBegin, TimeFmt);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1040,7 +1040,7 @@ BOOL CSound::PauseSounds(void) {
 		pSound = (*pSound).m_pNext;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1088,7 +1088,7 @@ BOOL CSound::Pause(void) {
 	if (bSuccess == TRUE)
 		m_bPaused = TRUE;
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 /*************************************************************************
@@ -1160,7 +1160,7 @@ BOOL CSound::ResumeSounds(void) {
 		pSound = (*pSound).m_pNext;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1210,7 +1210,7 @@ BOOL CSound::Resume(void) {
 	if (bSuccess == TRUE)
 		m_bPaused = FALSE;
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1247,7 +1247,7 @@ BOOL CSound::StopSounds(void) {
 //        (void) mciSendCommand(MCI_ALL_DEVICE_ID, MCI_CLOSE, MCI_WAIT, NULL);
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1281,7 +1281,7 @@ BOOL CSound::StopWaveSounds(void) {
 		pSound = pNextSound;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1316,7 +1316,7 @@ BOOL CSound::StopMidiSounds(void) {
 		pSound = pNextSound;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1386,7 +1386,7 @@ BOOL CSound::Stop(void) {
 	m_bError = !bSuccess;
 	if (!m_bError)
 		m_dwErrorCode = 0;
-	return (bSuccess);
+	return bSuccess;
 }
 
 

@@ -1128,9 +1128,8 @@ BOOL CMainWindow::InPictureSquare(CPoint point) {
 
 	Grid = PointToGrid(point);
 
-	return (PictureGrid[Grid.x][Grid.y]);
-
-} // end CompareColors
+	return PictureGrid[Grid.x][Grid.y];
+}
 
 
 /*****************************************************************
@@ -1166,9 +1165,8 @@ CPoint CMainWindow::PointToGrid(CPoint point) {
 	New.x = (int) New.x / GRID_WIDTH;       // Get the grid space coord's
 	New.y = (int) New.y / GRID_HEIGHT;
 
-	return (New);                            // Return the coord's
-
-} // end CompareColors
+	return New;                             // Return the coord's
+}
 
 
 /*****************************************************************
@@ -1724,7 +1722,7 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -1734,7 +1732,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainWindow::OnSoundNotify(CSound *pSound) {

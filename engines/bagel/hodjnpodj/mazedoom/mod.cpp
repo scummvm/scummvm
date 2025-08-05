@@ -1450,7 +1450,7 @@ CPoint GetRandomPoint(BOOL bRight) {
 		}
 	} // end while
 
-	return (point);
+	return point;
 
 } // end GetRandomPoint
 
@@ -1760,7 +1760,7 @@ CPoint ScreenToTile(CPoint pointScreen) {
 	point.x = (pointScreen.x - SIDE_BORDER) / SQ_SIZE_X;
 	point.y = (pointScreen.y - TOP_BORDER + SQ_SIZE_Y / 2) / SQ_SIZE_Y;
 
-	return (point);
+	return point;
 }
 
 /*****************************************************************
@@ -1918,7 +1918,7 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -1928,7 +1928,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainWindow::OnSoundNotify(CSound *pSound) {

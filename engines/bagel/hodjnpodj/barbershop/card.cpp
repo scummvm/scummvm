@@ -72,11 +72,11 @@ CCard::CCard(suit enSuit, int nPip) {
 CCard::~CCard() {
 }
 
-int CCard::GetValue() {
+int CCard::GetValue() const {
 	if (m_enSuit == manicurist) {    // Is Joker suit?
 		return m_nPip;              // return it's special pip
 	} else {
-		return (m_nPip + (m_enSuit * PIPS));
+		return m_nPip + (m_enSuit * PIPS);
 	}
 }
 
@@ -91,7 +91,7 @@ CCard &CCard::operator=(const CCard& cCard) {
 	m_pSprite   = cCard.m_pSprite;
 	m_cOrigin   = cCard.m_cOrigin;
 
-	return (*this);
+	return *this;
 }
 
 } // namespace Barbershop

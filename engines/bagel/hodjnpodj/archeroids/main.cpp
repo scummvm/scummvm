@@ -750,7 +750,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(VOID) {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 VOID CMainWindow::ReleaseMasterSprites(VOID) {
@@ -912,7 +912,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(VOID) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1017,7 +1017,7 @@ ERROR_CODE CMainWindow::RepaintSpriteList(CDC *pDC) {
 			pSprite = pSprite->GetNextSprite();
 		}
 	}
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1113,7 +1113,7 @@ CSprite *CMainWindow::NewLife(INT iLifeIndex) {
 		ReleaseDC(pDC);
 	}
 
-	return (pSprite);
+	return pSprite;
 }
 
 
@@ -1136,7 +1136,7 @@ ERROR_CODE CMainWindow::CreateLives() {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1185,7 +1185,7 @@ ERROR_CODE CMainWindow::CreateGoodGuy() {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1268,7 +1268,7 @@ ERROR_CODE CMainWindow::CreateHay() {
 		ReleaseDC(pDC);
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CMainWindow::CreateBurningHay(CPoint point) {
@@ -1314,7 +1314,7 @@ ERROR_CODE CMainWindow::CreateBurningHay(CPoint point) {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1447,7 +1447,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 
 	HandleError(errCode);
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1468,7 +1468,7 @@ POINT CMainWindow::GetLeftMostBadGuy(VOID) {
 		pList = pList->getNext();
 	}
 
-	return (ptBest);
+	return ptBest;
 }
 
 
@@ -1597,7 +1597,7 @@ ERROR_CODE CMainWindow::CreateGoodArrow() {
 
 	HandleError(errCode);
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1674,7 +1674,7 @@ ERROR_CODE CMainWindow::CreateBadGuys() {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -2286,7 +2286,7 @@ BOOL CMainWindow::CheckMessages(VOID) {
 		}
 	}
 
-	return (bEndTask);
+	return bEndTask;
 }
 
 BOOL CMainWindow::MoveBadGuys(CDC *pDC) {
@@ -3199,7 +3199,7 @@ LONG CMainWindow::OnJoyStick(UINT wParam, LONG lParam) {
 		}
 	}
 
-	return (0);
+	return 0;
 }
 
 VOID CMainWindow::GamePause(VOID) {
@@ -3280,7 +3280,7 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -3290,7 +3290,7 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainWindow::OnSoundNotify(CSound *) {

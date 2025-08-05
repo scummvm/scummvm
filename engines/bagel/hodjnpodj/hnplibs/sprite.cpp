@@ -313,7 +313,7 @@ BOOL CSprite::RefreshBackdrop(CDC *pDC, CPalette *pPalette) {
 
 	ReleaseBackdropDC();                            // release backdrop context resources
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -606,7 +606,7 @@ BOOL CSprite::LoadResourceSprite(CDC *pDC, const int resId) {
 	Common::sprintf_s(chResID, "#%d", resId);
 	bSuccess = LoadResourceSprite(pDC, chResID);
 
-	return (bSuccess);                                     // return failure
+	return bSuccess;                                     // return failure
 }
 
 
@@ -793,7 +793,7 @@ BOOL CSprite::LoadResourceCels(CDC *pDC, const int resId, const int nCels) {
 	Common::sprintf_s(chResID, "#%d", resId);
 	bSuccess = LoadResourceCels(pDC, chResID, nCels);
 
-	return (bSuccess);                                     // return failure
+	return bSuccess;                                     // return failure
 }
 
 
@@ -1040,7 +1040,7 @@ BOOL CSprite::PaintSprite(CDC *pDC, const int x, const int y) {
 		SetPosition(x, y);                          // now establish the sprite's new position
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1131,7 +1131,7 @@ BOOL CSprite::UpdateSprite(CDC *pDC) {
 	if (m_pPalette != nullptr)                                 // map back the previous palette if needed
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1221,7 +1221,7 @@ punt:
 		ReleaseMaskContext();
 	}
 
-	return (bSuccess);                                  // return success or failure
+	return bSuccess;                                  // return success or failure
 }
 
 
@@ -1383,7 +1383,7 @@ BOOL CSprite::DoOptimizedPainting(CDC *pDC, CRect *pDstRect) {
 				workDC.DeleteDC();
 				(*pBitmap).DeleteObject();
 				delete pBitmap;
-				return (bSuccess);
+				return bSuccess;
 			}
 		}
 	}
@@ -1444,7 +1444,7 @@ BOOL CSprite::DoOverlapPainting(CDC *pDC, CRect *myRect) {
 	if (m_pPalette != nullptr)                                 // map out the palette
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1507,7 +1507,7 @@ BOOL CSprite::RefreshBackground(CDC *pDC) {
 	m_bPositioned = FALSE;                                  // no real position now
 	m_nZPosition = m_nZOrder;                               // reset z ordering
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1558,7 +1558,7 @@ BOOL CSprite::SaveBackground(CDC *pDC) {
 	if (m_pPalette != nullptr)                             // map out palette from destination context
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -2316,7 +2316,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint * pPoint) {
 		delete cDC2;
 	}
 
-	return (bSuccess);                                  // return success/failure
+	return bSuccess;                                  // return success/failure
 }
 
 
@@ -2476,7 +2476,7 @@ BOOL CSprite::CropImage(CDC *pDC, CRect *pRect) {
 		ReleaseMaskContext();
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 

@@ -393,7 +393,7 @@ BOOL CPaintGram::IsAlphaChar(char chChar) {
  *
  ****************************************************************/
 BOOL CPaintGram::IsSymbolChar(char chChar) {
-	return (SymbToIndex(chChar) != FALSE);
+	return SymbToIndex(chChar) != FALSE;
 }
 
 /*****************************************************************
@@ -569,7 +569,7 @@ char CPaintGram::IndexToChar(int nIndex) {
 	if (chSym != FALSE) {
 		return (chSym);
 	} else {
-		return ((char) nIndex + ASCII_OFFSET);
+		return (char)nIndex + ASCII_OFFSET;
 	}
 }
 
@@ -604,7 +604,7 @@ int CPaintGram::CharToIndex(char chChar) {
 	if (nSym != FALSE) {
 		return nSym;
 	} else {
-		return ((int) toupper(chChar) - ASCII_OFFSET);
+		return (int)toupper(chChar) - ASCII_OFFSET;
 	}
 }
 
@@ -936,7 +936,7 @@ int CPaintGram::CenterGramVert(CCryptRecord *pRec) {
 
 	nEstimate *= m_nGramLineSpacing + m_nStandardCharHeight;
 
-	return ((int)(m_cGramRegion.Height() - nEstimate) >> 1);
+	return (int)(m_cGramRegion.Height() - nEstimate) >> 1;
 }
 
 /*****************************************************************

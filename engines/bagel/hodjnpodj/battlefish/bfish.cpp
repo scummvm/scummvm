@@ -651,7 +651,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(VOID) {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -855,7 +855,7 @@ ERROR_CODE CBFishWindow::RepaintSpriteList(CDC *pDC) {
 		pSprite = pSprite->GetNextSprite();
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1667,7 +1667,7 @@ INT CBFishWindow::GetUserGridIndex(CPoint point) {
 
 	// this method will not work if GRID_ROWS or GRID_COLS is greater then 10
 
-	return (nGridIndex);
+	return nGridIndex;
 }
 
 
@@ -1686,7 +1686,7 @@ INT CBFishWindow::GetFishIndex(CSprite *pSprite) {
 
 	assert(nIndex != -1);
 
-	return (nIndex);
+	return nIndex;
 }
 
 
@@ -2091,7 +2091,7 @@ BOOL CBFishWindow::OkToPlaceFish(INT nFishIndex, CPoint point, BOOL bRotated) {
 		}
 	}
 
-	return (bOk);
+	return bOk;
 }
 
 VOID CBFishWindow::PlaceFish(INT nFishIndex, CPoint point) {
@@ -2173,7 +2173,7 @@ CPoint CBFishWindow::SnapToGrid(CPoint point) {
 
 	point = gLeftGrid[iMin][jMin];
 
-	return (point);
+	return point;
 }
 
 /*****************************************************************
@@ -2537,7 +2537,7 @@ INT CBFishWindow::SelectRandomTarget(VOID) {
 	assert(nRow >= 0 && nRow < GRID_ROWS);
 	assert(nCol >= 0 && nCol < GRID_COLS);
 
-	return ((nRow * GRID_ROWS) + nCol);
+	return (nRow * GRID_ROWS) + nCol;
 }
 
 
@@ -2567,7 +2567,7 @@ INT CBFishWindow::SelectBurningTarget(VOID) {
 	if (!bFound)
 		nGridIndex = SelectBestFitTarget();
 
-	return (nGridIndex);
+	return nGridIndex;
 }
 
 INT CBFishWindow::SelectBestFitTarget(VOID) {
@@ -2607,7 +2607,7 @@ INT CBFishWindow::SelectBestFitTarget(VOID) {
 
 	} while (!FishFits(nFishIndex, nRow, nCol));
 
-	return (nGridIndex);
+	return nGridIndex;
 }
 
 BOOL CBFishWindow::FishFits(INT nFishIndex, INT row, INT col) {
@@ -2670,7 +2670,7 @@ BOOL CBFishWindow::FishFits(INT nFishIndex, INT row, INT col) {
 			break;
 	}
 
-	return (bFound);
+	return bFound;
 }
 
 
@@ -2725,7 +2725,7 @@ INT CBFishWindow::GetNeighbors(INT nRow, INT nCol) {
 	assert(n >= 0 && n <= 8);
 
 	// return number of neighbors found for this square
-	return (n);
+	return n;
 }
 
 
@@ -2770,7 +2770,7 @@ INT CBFishWindow::FindTarget(INT nLastHitRow, INT nLastHitCol) {
 	// Grid Index can only be 0..63
 	assert((nGridIndex >= 0) && (nGridIndex < (GRID_ROWS * GRID_COLS)));
 
-	return (nGridIndex);
+	return nGridIndex;
 }
 
 
@@ -2854,7 +2854,7 @@ INT CBFishWindow::FindNeighborTarget(INT nLastHitRow, INT nLastHitCol) {
 
 	} while (m_nUserGrid[nRow][nCol] & SHOT);
 
-	return ((nRow * GRID_ROWS) + nCol);
+	return (nRow * GRID_ROWS) + nCol;
 }
 
 #if 1
@@ -3021,7 +3021,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
 	// this square could not have already been shot
 	assert((m_nUserGrid[rowTmp][colTmp] & SHOT) == EMPTY);
 
-	return ((rowTmp * GRID_ROWS) + colTmp);
+	return (rowTmp * GRID_ROWS) + colTmp;
 }
 #else
 
@@ -3183,7 +3183,7 @@ INT CBFishWindow::FindMatch(INT nLastHitRow, INT nLastHitCol) {
 	// this square could not have already been shot
 	assert((m_nUserGrid[rowTmp][colTmp] & SHOT) == EMPTY);
 
-	return ((rowTmp * GRID_ROWS) + colTmp);
+	return (rowTmp * GRID_ROWS) + colTmp;
 }
 #endif
 
@@ -3316,7 +3316,7 @@ VOID CBFishWindow::CreateHarpoon(CPoint point) {
 
 
 INT CBFishWindow::IndexToId(INT nFishIndex) {
-	return (2 << nFishIndex);
+	return 2 << nFishIndex;
 }
 
 
@@ -3331,7 +3331,7 @@ INT CBFishWindow::IdToIndex(INT nId) {
 		i++;
 	}
 
-	return (i);
+	return i;
 }
 
 
@@ -3372,7 +3372,7 @@ INT CBFishWindow::GetEnemyGridIndex(CPoint point) {
 		}
 	}
 
-	return (nIndex);
+	return nIndex;
 }
 
 
@@ -3701,7 +3701,7 @@ LRESULT CBFishWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -3711,7 +3711,7 @@ LRESULT CBFishWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CBFishWindow::OnSoundNotify(CSound *) {

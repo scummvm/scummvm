@@ -211,7 +211,7 @@ BOOL CBmpButton::AutoLoad(UINT nID, CWnd * pParent) {
 	if (bSuccess)
 		CBitmapButton::SizeToContent();                     // resize button to its content
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -1363,7 +1363,7 @@ LRESULT CCheckButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
 	InvalidateRect(&controlRect, FALSE);
 	UpdateWindow();
 
-	return (0);
+	return 0;
 }
 
 
@@ -1742,7 +1742,7 @@ LRESULT CRadioButton::OnSetCheck(WPARAM wParam, LPARAM lParam) {
 		}
 	}
 
-	return (0);
+	return 0;
 }
 
 

@@ -76,28 +76,28 @@ class CCryptRecord;
 class CPaintGram {
 private:    // functions
 	inline  int  SetHiLiteTypeOn(int nTypeCode) {
-		return (nTypeCode | HILITE_TYPE);
+		return nTypeCode | HILITE_TYPE;
 	}
 	inline  int  SetHiLiteTypeOff(int nTypeCode) {
-		return (nTypeCode  & ~HILITE_TYPE);
+		return nTypeCode  & ~HILITE_TYPE;
 	}
 	inline  int  SetAlphaType(int nTypeCode) {
-		return (nTypeCode | ALPHA_TYPE);
+		return nTypeCode | ALPHA_TYPE;
 	}
 	inline  int  SetGramType(int nTypeCode) {
-		return (nTypeCode | GRAM_TYPE);
+		return nTypeCode | GRAM_TYPE;
 	}
 	inline  int  SetUsedTypeOn(int nTypeCode) {
-		return (nTypeCode | USED_TYPE);
+		return nTypeCode | USED_TYPE;
 	}
 	inline  int  SetUsedTypeOff(int nTypeCode) {
-		return (nTypeCode &  ~USED_TYPE);
+		return nTypeCode &  ~USED_TYPE;
 	}
 	inline  int  SetRevealTypeOn(int nTypeCode) {
-		return (nTypeCode | REVEAL_TYPE);
+		return nTypeCode | REVEAL_TYPE;
 	}
 	inline  int  SetRevealTypeOff(int nTypeCode) {
-		return (nTypeCode &  ~REVEAL_TYPE);
+		return nTypeCode &  ~REVEAL_TYPE;
 	}
 
 private:    // vars

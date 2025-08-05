@@ -393,7 +393,7 @@ ERROR_CODE CRiddlesWindow::LoadMasterSprites(VOID) {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -759,7 +759,7 @@ ERROR_CODE CRiddlesWindow::LoadRiddle() {
 		errCode = ERR_FFIND;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
@@ -816,7 +816,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 		} while (0);
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -864,7 +864,7 @@ ERROR_CODE CRiddlesWindow::BuildSpriteList(VOID) {
 		y += LETTERSIZE_Y + LETTERSPACING_Y;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -923,7 +923,7 @@ ERROR_CODE CRiddlesWindow::DisplayLine(const CHAR *pszText, INT nChars, INT x, I
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 INT CRiddlesWindow::CharToIndex(CHAR c) {
@@ -1071,7 +1071,7 @@ ERROR_CODE CRiddlesWindow::RepaintSpriteList() {
 		errCode = ERR_MEMORY;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -1558,7 +1558,7 @@ LRESULT CRiddlesWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -1568,7 +1568,7 @@ LRESULT CRiddlesWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CRiddlesWindow::OnSoundNotify(CSound *) {

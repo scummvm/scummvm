@@ -1379,14 +1379,14 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMCIStopped(wParam, lParam);
-	return (0L);
+	return 0;
 }
 
 LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
 
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
-	return (0L);
+	return 0;
 }
 
 

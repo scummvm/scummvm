@@ -96,7 +96,7 @@ CCard *CStack::Pop() {
 		m_nSize         = 0;
 	}
 
-	return (pReturnCard);
+	return pReturnCard;
 }
 
 void CStack::Unlink(CCard *pCard) {

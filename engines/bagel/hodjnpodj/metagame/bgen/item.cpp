@@ -339,7 +339,7 @@ BOOL CItem::AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace) {
 		bSuccess = TRUE;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -368,7 +368,7 @@ BOOL CItem::AddNote(CNote *pNote) {
 		bSuccess = TRUE;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 /////////////////////////////////////////////////////////////////////////////

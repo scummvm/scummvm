@@ -246,7 +246,7 @@ BOOL CText::RestoreBackground(CDC *pDC) {
 	if (m_pPalette != nullptr)
 		(void)(*pDC).SelectPalette(pPalOld, FALSE);
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -275,7 +275,7 @@ BOOL CText::DisplayString(CDC *pDC, const char *pszText, const int nSize, const 
 
 	m_cTextColor = crColor;
 	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, FALSE);
-	return (bSuccess);
+	return bSuccess;
 }
 
 
@@ -308,7 +308,7 @@ BOOL CText::DisplayShadowedString(CDC *pDC, const char *pszText, const int nSize
 	m_nShadow_DX = nDX;
 	m_nShadow_DY = nDY;
 	bSuccess = DisplayText(pDC, pszText, nSize, nWeight, TRUE);
-	return (bSuccess);
+	return bSuccess;
 }
 
 

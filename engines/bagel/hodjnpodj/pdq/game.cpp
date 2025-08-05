@@ -236,7 +236,7 @@ ERROR_CODE LoadNewPhrase(VOID) {
 		errCode = ERR_FFIND;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -379,7 +379,7 @@ ERROR_CODE BuildSpriteList(CDC *pDC) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -519,7 +519,7 @@ ERROR_CODE RecalcDisplay(CDC *pDC) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 ERROR_CODE RepaintSpriteList(CDC *pDC) {
@@ -548,7 +548,7 @@ ERROR_CODE RepaintSpriteList(CDC *pDC) {
 			pSprite = pSprite->GetNextSprite();
 		}
 	}
-	return (errCode);
+	return errCode;
 }
 
 INT GetIndex(CSprite *pSprite) {
@@ -631,7 +631,7 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -664,7 +664,7 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 		CSprite::FlushSpriteChain();
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -772,7 +772,7 @@ ERROR_CODE GameStartTimer() {
 			errCode = ERR_UNKNOWN;
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 VOID GamePauseTimer() {
@@ -811,7 +811,7 @@ ERROR_CODE StartGame(CDC *pDC) {
 		RecalcDisplay(pDC);
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 
@@ -849,7 +849,7 @@ ERROR_CODE EndGame(CDC *pDC) {
 		CleanScreen(pDC);
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 VOID WinGame() {
@@ -1213,7 +1213,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 		}
 	}
 
-	return (errCode);
+	return errCode;
 }
 
 

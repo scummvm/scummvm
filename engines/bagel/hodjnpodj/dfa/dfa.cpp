@@ -1199,7 +1199,7 @@ LRESULT CMainDFAWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMCIStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 
@@ -1209,7 +1209,7 @@ LRESULT CMainDFAWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	pSound = CSound::OnMMIOStopped(wParam, lParam);
 	if (pSound != nullptr)
 		OnSoundNotify(pSound);
-	return (0L);
+	return 0;
 }
 
 void CMainDFAWindow::OnSoundNotify(CSound *pSound) {
@@ -1253,7 +1253,7 @@ BOOL CMainDFAWindow::LoadBeaverSounds(VOID) {
 		} else bSuccess = FALSE;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 
 } // end LoadBeaverSounds
 

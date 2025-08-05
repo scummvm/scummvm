@@ -863,7 +863,7 @@ void CHodjPodjWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 LRESULT CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	(void) CSound::OnMCIStopped(wParam, lParam);
-	return (0L);
+	return 0;
 }
 
 
@@ -2127,7 +2127,7 @@ BOOL CHodjPodjWindow::Restore() {
 		bSuccess = FALSE;
 	}
 
-	return (bSuccess);
+	return bSuccess;
 }
 
 

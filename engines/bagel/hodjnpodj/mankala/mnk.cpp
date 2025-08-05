@@ -1158,7 +1158,7 @@ LRESULT CMnkWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	#ifdef _MACROS
 	EM("OnMCINotify");
 	#endif
-	return (0L);
+	return 0;
 }
 
 LRESULT CMnkWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
@@ -1170,7 +1170,7 @@ LRESULT CMnkWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 	EM("OnMMIONotify");
 	#endif
 
-	return (0L);
+	return 0;
 }
 
 // CMnkWindow message map:

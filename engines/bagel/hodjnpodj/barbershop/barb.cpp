@@ -676,7 +676,7 @@ BOOL CBarber::IsInRect(CRect cStk, CRect cCrd) {
 	cStk.InflateRect(5, 5);
 
 	bTL = inter.IntersectRect(cStk, cCrd);
-	return (bTL);
+	return bTL;
 }
 
 /*****************************************************************
@@ -752,7 +752,7 @@ BOOL CBarber::IsGameOver(CWnd *pWnd) {
  *
  ****************************************************************/
 BOOL CBarber::IsNewBack(int nCardBack) {
-	return (m_cPnt->IsNewBack(nCardBack));
+	return m_cPnt->IsNewBack(nCardBack);
 }
 
 /*****************************************************************
@@ -794,7 +794,7 @@ void CBarber::ChangeBack(CDC* pDC, int nCardBack) {
  *
  ****************************************************************/
 int CBarber::Score() {
-	return (m_cBrd->GetStack(fnd)->Size());
+	return m_cBrd->GetStack(fnd)->Size();
 }
 
 } // namespace Barbershop
