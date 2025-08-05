@@ -172,15 +172,9 @@ static void updateCurrentScript() {
 		return;
 	}
 
-	debug("callstack:");
-	for (auto k : callstack) {
-		debug("%d", k->sp.ctx->_id);
-	}
-
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
 	Director::Movie *movie = g_director->getCurrentMovie();
-	debug("What is the current movie: %s", movie->getMacName().c_str());
 	ScriptContext *scriptContext = head->sp.ctx;
 	int castLibID = movie->getCast()->_castLibID;
 	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
