@@ -36,7 +36,7 @@ void DoPendingEvents() ;
 class CTimeUtil {
 
 	char m_cStartData ;
-	BOOL m_bTimeDelayPassed ;   // flag: DelayMs function time expired
+	//BOOL m_bTimeDelayPassed ;   // flag: DelayMs function time expired
 
 
 	char m_cEndData ;

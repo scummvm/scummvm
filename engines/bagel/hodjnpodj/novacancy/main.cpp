@@ -1188,7 +1188,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 ***********************************************************************************************************************************
 */
 LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 	#ifdef _MCI_TEST
 	EM("On MCI Notify #1");
 	_recursion_count++;
@@ -1198,7 +1198,7 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	if(_recursion_count>12) m_psndBkgndMusic->stop();       //arrest having the sound stuck.
 	else
 	*/
-	pSound = CSound::OnMCIStopped(wParam, lParam);
+	CSound::OnMCIStopped(wParam, lParam);
 
 	#ifdef _MCI_TEST
 	EM("On MCI Notify #2");
@@ -1208,13 +1208,13 @@ LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 
 	#ifdef _MACROS
 	EM("On MMIO Notify");
 	#endif
 
-	pSound = CSound::OnMMIOStopped(wParam, lParam);
+	CSound::OnMMIOStopped(wParam, lParam);
 	//if (pSound != nullptr)
 	//  OnSoundNotify(pSound);
 	return 0;

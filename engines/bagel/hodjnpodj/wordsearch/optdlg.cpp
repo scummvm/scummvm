@@ -469,11 +469,11 @@ void CWSOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;
-	int     nJunk = 0;
+	//int     nJunk = 0;
 	char    cDisplay[64];
 	CString strTime = "Time Limit:  ";
 
-	nJunk = pScrollBar->GetDlgCtrlID();
+	//nJunk = pScrollBar->GetDlgCtrlID();
 
 // first set the range of the scoll bar
 	if (pScrollBar->GetDlgCtrlID() == IDC_GAMETIME)

@@ -1071,24 +1071,17 @@ inline void FlushMouseMessages(HWND hWnd) {
 
 
 LRESULT CMnkWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	CSound* pSnd;
+	//CSound* pSnd;
 
-	pSnd = CSound::OnMCIStopped(wParam, lParam);
+	CSound::OnMCIStopped(wParam, lParam);
 
-	#ifdef _MACROS
-	EM("OnMCINotify");
-	#endif
 	return 0;
 }
 
 LRESULT CMnkWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
-	CSound* pSnd;
+	//CSound* pSnd;
 
-	pSnd = CSound::OnMMIOStopped(wParam, lParam);
-
-	#ifdef _MACROS
-	EM("OnMMIONotify");
-	#endif
+	CSound::OnMMIOStopped(wParam, lParam);
 
 	return 0;
 }

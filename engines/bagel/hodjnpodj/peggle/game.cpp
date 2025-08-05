@@ -60,10 +60,10 @@ static CSound   *pGameSound = nullptr;                 // Game theme song
 // Board Selection stuff
 BOOL bRandomBoard = FALSE;
 char BoardSelected = CROSS ;
-static char MaxPegs[2][4] = {
-	{CROSS, CROSS_PLUS, TRIANGLE,   TRIANGLE_PLUS},
-	{32,    36,         14,         20},
-} ;
+//static char MaxPegs[2][4] = {
+//	{CROSS, CROSS_PLUS, TRIANGLE,   TRIANGLE_PLUS},
+//	{32,    36,         14,         20},
+//} ;
 char fState [GRID_SIZE][GRID_SIZE];
 const char *BoardSpec[BOARD_COUNT] = {
 	".\\ART\\CROSS.BMP",

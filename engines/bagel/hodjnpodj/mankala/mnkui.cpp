@@ -529,8 +529,8 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 	BOOL bFound = FALSE ;       // found pit clicked on
 	CBmpObject * xpcBmpObject ;     // bitmap object clicked on
 	CPitWnd * xpcPit = nullptr;     // pit clicked on
-	CMove * xpcMove = &m_cCurrentMove ; // current move/position
-	BOOL    bPlayerSwitched;
+	CMove *xpcMove = &m_cCurrentMove ; // current move/position
+	//BOOL    bPlayerSwitched;
 	MSG msg;
 
 
@@ -540,7 +540,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 	while (MFC::PeekMessage(&msg, m_hWnd, WM_MOUSEFIRST, WM_MOUSELAST, PM_REMOVE)); //flush out pending mouse clicks
 
 	bActive = TRUE ;
-	bPlayerSwitched = FALSE;
+	//bPlayerSwitched = FALSE;
 
 	if (CRect(m_cBmpScroll.m_cPosition,
 	          m_cBmpScroll.m_cSize).PtInRect(cClickPoint)) {

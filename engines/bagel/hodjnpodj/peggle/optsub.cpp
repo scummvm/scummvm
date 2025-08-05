@@ -206,6 +206,8 @@ BOOL COptions::OnInitDialog(void) {
 	}
 	#endif
 
+	(void)bSuccess;  // suppress unused variable warning
+
 	return TRUE;  // return TRUE  unless focused on a control
 }
 

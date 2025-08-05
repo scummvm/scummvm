@@ -352,11 +352,11 @@ struct FIVE {
 class CFileHeader {
 	friend class CMnk ;
 
-	char m_szText[80] ;     // descriptive text
-	int m_iHeaderSize ;     // size of header (# bytes)
-	int m_iVersion ;        // version number
-	int m_iTableStones ;    // # stones in stored best win table
-	long m_lTableSize ; // length of stored best win table
+	//char m_szText[80] ;     // descriptive text
+	//int m_iHeaderSize ;     // size of header (# bytes)
+	//int m_iVersion ;        // version number
+	//int m_iTableStones ;    // # stones in stored best win table
+	//long m_lTableSize ; // length of stored best win table
 } ;
 
 // class CMnkData -- mankala data - this class used for move analysis
@@ -365,7 +365,7 @@ typedef class FAR CMnkData {
 //    friend class CMnkWindow ;
 
 	char m_cStartData ;
-	CFileHeader m_cFileHeader ; // file header for data file
+//	CFileHeader m_cFileHeader ; // file header for data file
 	long m_NX[MAXTABLESTONES + 1][TOTALPITS + 1],
 	     m_NA[MAXTABLESTONES + 1][TOTALPITS + 1] ;
 	// NX[s,p] contains the number of arrangements of

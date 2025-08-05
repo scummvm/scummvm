@@ -295,6 +295,8 @@ void CPaint::Refresh(CDC *pDC, CBoard *pBoard) {
 		pCard = pCard->m_pNextCard;
 		nCardPos++;
 	}
+
+	(void)nCardPos; // avoid unused variable warning
 }
 
 CCard *CPaint::IsOnCard(CPoint cPoint) {

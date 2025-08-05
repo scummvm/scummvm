@@ -400,14 +400,14 @@ void CMainWindow::DisplayStats(CDC *pDC) {
 
 void CMainWindow::RefreshStats() {
 	CDC         *pDC;
-	BOOL        bSuccess;
+	//BOOL        bSuccess;
 
 	pDC = GetDC();
 
 	if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {                // Game is timed
 		if (m_pHourGlass != nullptr) {
 			(*m_pHourGlass).ClearBackground();                  // ... background and repaint its image, thus
-			bSuccess = (*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
+			(*m_pHourGlass).RefreshSprite(pDC);      // ... restoring the image but forcing it to
 		}
 	}
 	if (m_cCryptograms->bIsGameOver == TRUE) {

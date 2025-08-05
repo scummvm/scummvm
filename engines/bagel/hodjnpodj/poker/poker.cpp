@@ -76,7 +76,7 @@ CBmpButton      *pOptionButton = nullptr;      // Option button object for getti
 CRect   MainRect;                           // screen area spanned by the game window
 
 // gtb
-static BOOL bIgnoreButtonClick = FALSE;
+//static BOOL bIgnoreButtonClick = FALSE;
 int roundOfPlay;
 
 CSprite             *apCard[5];             // Bitmap buttons for displaying the cards
@@ -668,7 +668,7 @@ void CMainPokerWindow::SplashScreen() {
 
 	int cxDIB = (int) DIBWidth(hDIB);
 	int cyDIB = (int) DIBHeight(hDIB);
-	
+
 	rcDIB.top = rcDIB.left = 0;             // setup the source rectangle from which
 	rcDIB.right = cxDIB;                // ... we'll do the painting
 	rcDIB.bottom = cyDIB;

@@ -1376,16 +1376,16 @@ void CMainWindow::RefreshStats() {
 }
 
 LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 
-	pSound = CSound::OnMCIStopped(wParam, lParam);
+	CSound::OnMCIStopped(wParam, lParam);
 	return 0;
 }
 
 LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 
-	pSound = CSound::OnMMIOStopped(wParam, lParam);
+	CSound::OnMMIOStopped(wParam, lParam);
 	return 0;
 }
 

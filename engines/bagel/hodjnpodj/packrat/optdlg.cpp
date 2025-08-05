@@ -327,10 +327,10 @@ void CPackRatOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;
-	int     nJunk = 0;
+	//int     nJunk = 0;
 	char    cDisplay[5];
 
-	nJunk = pScrollBar->GetDlgCtrlID();
+	//nJunk = pScrollBar->GetDlgCtrlID();
 
 // first set the range of the scoll bar
 	switch (pScrollBar->GetDlgCtrlID()) {

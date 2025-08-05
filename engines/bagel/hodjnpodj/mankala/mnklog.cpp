@@ -106,7 +106,7 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	CPit * xpcHandPit = m_xpcPits[iPlayer][HANDINDEX + 2] ; // hand pit
 	CPit * xpcHomePit = m_xpcPits[iPlayer][HOMEINDEX + 2] ; // home bin
 	CPit * xpcPit ; // target pit
-	BOOL B;
+//	BOOL B;
 	MSG msg;
 
 	//_asm int 3;                    //to track GPf
@@ -225,9 +225,9 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 		}
 
 		if (!xpcMove->m_bFreeTurn)
-			B = sndPlaySound(iPlayer ? IGO3 : YOUGO3, SND_SYNC);
+			sndPlaySound(iPlayer ? IGO3 : YOUGO3, SND_SYNC);
 		else
-			B = sndPlaySound(iPlayer ? IGOAGAIN : GOAGAIN, SND_SYNC);
+			sndPlaySound(iPlayer ? IGOAGAIN : GOAGAIN, SND_SYNC);
 
 
 	}
@@ -1059,14 +1059,14 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 	BOOL bFree[NUMPITS], bCapture[NUMPITS] ;
 	int iPit ;      // loop variable
 	//int iMaxValue = BESTWINUNDEF ;  // computing maximum value
-	CPit * xpcPit ; // pit being processed
+	//CPit * xpcPit ; // pit being processed
 	int iPlayer = xpcMove->m_iPlayer ;  // current player
 
 	xpcMove->m_bHasCapture = xpcMove->m_bHasFree = FALSE ;
 
 	for (iPit = 0 ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
-		xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
+//		xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
 		if ((iNumStones = xpcMove->m_iNumStones[iPlayer][iPit + 2]))
 			// get number of stones and test
 			++iNumMoves ;   // it's a legal move
@@ -1141,7 +1141,7 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 	BOOL bAFreePitExists,
 	     bACaptureExists,
 	     bDoFreePitFirst;
-	CPit * xpcPit ; // pit being processed
+	//CPit * xpcPit ; // pit being processed
 
 
 	/*INITIALIZE*/
@@ -1153,7 +1153,7 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 
 	for (iPit = 0, bAFreePitExists = FALSE, bACaptureExists = FALSE ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
-		xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
+		//xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
 
 
 		if ((iNumStones = xpcMove->m_iNumStones[iPlayer][iPit + 2]))
@@ -1249,7 +1249,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	int iFree,
 	    iCapture,
 	    maxCapture,
-	    maxFree,
+//	    maxFree,
 	    maxThreat,
 	    minThreat;
 	int iPit = 0,
@@ -1286,7 +1286,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	     bConclusive,
 	     bSaveable,
 	     bUnSaveable;
-	CPit * xpcPit ; // pit being processed
+//	CPit * xpcPit ; // pit being processed
 
 
 	/*INITIALIZE*/
@@ -1305,7 +1305,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 	minThreat = 0;
 	ThreatCount = 0;
 	iMaxStones = 0;
-	maxFree = 0;
+//	maxFree = 0;
 	maxTotalBenefit = 0;
 	bNearClustered = FALSE;
 
@@ -1387,7 +1387,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 
 	for (iPit = 0, bAFreePitExists = FALSE, bACaptureExists = FALSE ; iPit < NUMPITS ; ++iPit) {
 		xpcMove->m_iValues[iPit] = BESTWINUNDEF ;  // no value yet
-		xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
+		//xpcPit = m_xpcPits[iPlayer][iPit + 2] ; // pt to pit object
 
 
 		if ((iNumStones = xpcMove->m_iNumStones[iPlayer][iPit + 2]))
@@ -1644,7 +1644,7 @@ BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
 	MOVE* pMoveArr[MAXMOVES],
 	      *pOrigMove;
 	HGLOBAL hMoveArr[MAXMOVES];
-	char cFinalID;
+//	char cFinalID;
 	short int   j,
 	      k;
 
@@ -1663,7 +1663,7 @@ BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
 
 	pOrigMove = pMoveArr[0];
 
-	cFinalID = ExtendedStaticEvaluation(pMoveArr[0], pOrigMove, 0, 0);
+	ExtendedStaticEvaluation(pMoveArr[0], pOrigMove, 0, 0);
 	return FALSE;
 
 }
@@ -1675,8 +1675,8 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 	DMaddr(pMove);
 	#endif
 	BOOL bWrapsAroundOnTop,
-	     bWrapsAroundBehind,
-	     bWrapsAroundAhead;
+	     bWrapsAroundBehind;
+//	     bWrapsAroundAhead;
 
 	int iError = 0,        // error code
 	    iNumMoves = 0,     // number of legal moves
@@ -1717,7 +1717,7 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 			break;
 		}
 
-		bWrapsAroundAhead = iNumStones > (2 * NUMPITS + 1);
+		//bWrapsAroundAhead = iNumStones > (2 * NUMPITS + 1);
 		bWrapsAroundOnTop = iNumStones == (2 * NUMPITS + 1);
 		bWrapsAroundBehind = (iNumStones < (2 * NUMPITS + 1)) && (iNumStones > (iPit + NUMPITS));
 
@@ -1777,11 +1777,8 @@ int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char 
 
 	}//end -for (iPit)
 
+	(void)iNumMoves;
 
-// cleanup:
-	#ifdef _MACROS
-	EM("Returning from ExtendedStaticEvaluation");
-	#endif
 	RETURN(iError != 0) ;
 }
 /*

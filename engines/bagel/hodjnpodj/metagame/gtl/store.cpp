@@ -72,9 +72,9 @@ static  CRect       StoreRect;                      // x/y (left/right) and dx/d
 static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
         ScrollBotRect;                  // area spanned by lower scroll curl
 
-static  CDC         *pStoreDC = nullptr;               // device context for the store bitmap
-static  CBitmap     *pStoreBitmap = nullptr,           // bitmap for an entirely blank store
-                     *pStoreBitmapOld = nullptr;        // bitmap previously mapped to the store context
+//static  CDC         *pStoreDC = nullptr;               // device context for the store bitmap
+static  CBitmap     *pStoreBitmap = nullptr;           // bitmap for an entirely blank store
+//                     *pStoreBitmapOld = nullptr;        // bitmap previously mapped to the store context
 
 static  CBitmap     *pBackgroundBitmap = nullptr;
 static  CPalette    *pBackgroundPalette = nullptr;
@@ -89,7 +89,7 @@ static  CText       *pItemCost = nullptr;              // item cost field
 static  CText       *pTitleText = nullptr;             // title information field
 
 static  CFont       *pFont = nullptr;                  // font to use for displaying store text
-static  char        chPathName[128];                // buffer to hold path name of the store file
+//static  char        chPathName[128];                // buffer to hold path name of the store file
 
 static  BOOL        bActiveWindow = FALSE;          // whether our window is active
 static  BOOL        bFirstTime = TRUE;              // flag for first time information is displayed

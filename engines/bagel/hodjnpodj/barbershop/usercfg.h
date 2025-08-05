@@ -78,7 +78,7 @@ protected:
 	void MyFocusRect(CDC*, CRect, int nDrawMode, COLORREF);
 
 private:
-	UINT            m_nTimeLimit;       //
+//	UINT            m_nTimeLimit;       //
 	BOOL            m_bSave;            // True if should save theses values
 	CRect           m_cRectCardBack1;
 	CRect           m_cRectCardBack2;

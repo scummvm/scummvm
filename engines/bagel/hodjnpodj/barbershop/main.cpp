@@ -508,9 +508,9 @@ VOID CMainWindow::OnTimer(UINT_PTR nEvent) {
 
 	// continue as long as there is a currently active non-paused game
 	//
-	if (m_bGameActive && !m_bPause) {
-		nEvent = 0x00;          // bull shit code rids warnings
-	}
+	//if (m_bGameActive && !m_bPause) {
+	//	nEvent = 0x00;          // bull shit code rids warnings
+	//}
 }
 
 
@@ -523,7 +523,7 @@ VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 		m_pBarb->OnMouseMove(pDC, point);
 		ReleaseDC(pDC);
 	}
-	nFlags = 0x00;
+	//nFlags = 0x00;
 }
 
 
@@ -750,7 +750,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 		} // end if
 	} // end if
 
-	nFlags  = 0x00;             // bull shit code to get rid of warning messages
+	//nFlags  = 0x00;             // bull shit code to get rid of warning messages
 	point   = CPoint(0, 0);
 }
 
@@ -871,18 +871,18 @@ void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 
 
 LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 
-	pSound = CSound::OnMCIStopped(wParam, lParam);
+	CSound::OnMCIStopped(wParam, lParam);
 //      if (pSound != nullptr)
 //          OnSoundNotify(pSound);
 	return 0;
 }
 
 LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
-	CSound  *pSound;
+	//CSound  *pSound;
 
-	pSound = CSound::OnMMIOStopped(wParam, lParam);
+	CSound::OnMMIOStopped(wParam, lParam);
 	//if (pSound != nullptr)
 	//  OnSoundNotify(pSound);
 	return 0;
