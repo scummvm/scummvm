@@ -315,7 +315,7 @@ void showExecutionContext() {
 	}
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(750, 500), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(500, 750), ImGuiCond_FirstUseEver);
 
 	Director::Lingo *lingo = g_director->getLingo();
 
@@ -324,7 +324,7 @@ void showExecutionContext() {
 
 	_windowStates[currentWindow] = currentState;
 
-	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
 		Window *stage = g_director->getStage();
 		g_director->setCurrentWindow(g_director->getStage());
 		g_lingo->switchStateFromWindow();
@@ -340,12 +340,16 @@ void showExecutionContext() {
 		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-		ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
+		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
 		ImGui::Text("%s", g_director->getStage()->asString().c_str());
 		ImGui::Text("%s", g_director->getStage()->getCurrentMovie()->getMacName().c_str());
 
 		ImGui::SeparatorText("Backtrace");
+		ImVec2 childSize = ImGui::GetContentRegionAvail();
+		childSize.y /= 3;
+		ImGui::BeginChild("##backtrace", childSize);
 		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+		ImGui::EndChild();
 
 		ImGui::SeparatorText("Scripts");
 
@@ -423,13 +427,17 @@ void showExecutionContext() {
 			ImGui::PushID(windowID);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-			ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX);
+			ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f), ImGuiChildFlags_AutoResizeX);
 
 			ImGui::Text("%s", window->asString().c_str());
 			ImGui::Text("%s", window->getFileName().c_str());
 
 			ImGui::SeparatorText("Backtrace");
+			ImVec2 childsize = ImGui::GetContentRegionAvail();
+			childsize.y /= 3;
+			ImGui::BeginChild("##backtrace", childsize);
 			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+			ImGui::EndChild();
 
 			ImGui::SeparatorText("Scripts");
 
@@ -477,7 +485,7 @@ void showExecutionContext() {
 					ImGui::SetItemTooltip("Bytecode");
 				}
 				ImGui::Separator();
-				const ImVec2 childsize = ImGui::GetContentRegionAvail();
+				childsize = ImGui::GetContentRegionAvail();
 
 				ImGui::BeginChild("##script", childsize);
 				ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
