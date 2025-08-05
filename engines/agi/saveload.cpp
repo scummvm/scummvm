@@ -746,7 +746,7 @@ int AgiEngine::loadGame(const Common::String &fileName, bool checkId) {
 	_sprites->drawAllSpriteLists();
 	_picture->showPictureWithTransition();
 	_game.pictureShown = true;
-	_text->statusDraw();
+	_text->statusDraw(true, true);
 	_text->promptRedraw();
 
 	// copy everything over (we should probably only copy over the remaining parts of the screen w/o play screen

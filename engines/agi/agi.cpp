@@ -470,6 +470,13 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_artificialDelayCurrentRoom = 0;
 	_artificialDelayCurrentPicture = 0;
+
+#ifdef USE_TTS
+	_previousDisplayRow = -1;
+	_queueNextText = false;
+	_voiceClock = true;
+	_replaceDisplayNewlines = true;
+#endif
 }
 
 void AgiEngine::initialize() {
@@ -547,6 +554,26 @@ void AgiEngine::initialize() {
 	
 	// finally set up actual VM opcodes, because we should now have figured out the right AGI version
 	setupOpCodes(getVersion());
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+
+	switch (getLanguage()) {
+	case Common::HE_ISR:
+		_ttsEncoding = Common::CodePage::kWindows1255;
+		break;
+	case Common::RU_RUS:
+		_ttsEncoding = Common::CodePage::kDos866;
+		break;
+	default:
+		_ttsEncoding = Common::CodePage::kDos850;
+		break;
+	}
+#endif
 }
 
 bool AgiEngine::promptIsEnabled() {
@@ -614,6 +641,41 @@ void AgiEngine::syncSoundSettings() {
 
 	applyVolumeToMixer();
 }
+
+#ifdef USE_TTS
+
+void AgiEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action, bool checkPreviousSaid) {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && (!checkPreviousSaid || _previousSaid != text)) {
+		Common::String ttsMessage = text;
+
+		if (_replaceDisplayNewlines) {
+			ttsMessage.replace('\n', ' ');
+		}
+		
+		ttsMessage.replace('<', ' ');
+		ttsMessage.replace('=', ' ');
+		ttsMan->say(ttsMessage, action, _ttsEncoding);
+		_previousSaid = text;
+	}
+}
+
+void AgiEngine::stopTextToSpeech(bool clearPreviousSaid) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+
+		if (clearPreviousSaid) {
+			_previousSaid.clear();
+		}
+	}
+}
+
+#endif
 
 // WORKAROUND:
 // Sometimes Sierra printed some text on the screen and did a room change immediately afterwards expecting the
@@ -733,6 +795,20 @@ void AgiEngine::artificialDelayTrigger_NewRoom(int16 newRoomNr) {
 			_game.nonBlockingTextShown = false;
 		}
 	}
+
+#ifdef USE_TTS
+	// Delay room changes until TTS is done speaking, which helps TTS keep up with the text on screen
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while (ttsMan && ttsMan->isSpeaking()) {
+		int key = doPollKeyboard();
+
+		if (key != 0) {
+			break;
+		}
+
+		wait(10);
+	}
+#endif
 
 	_artificialDelayCurrentRoom = newRoomNr;
 }
