@@ -34,5 +34,4 @@ class PrintingManager;
 Common::PrintingManager *createWin32PrintingManager();
 
 #endif
-
 #endif

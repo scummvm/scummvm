@@ -19,6 +19,7 @@
  *
  */
 
+#ifdef USE_PRINTING
 #ifdef WIN32
 
 #define WIN32_LEAN_AND_MEAN
@@ -144,4 +145,5 @@ Common::PrintingManager *createWin32PrintingManager() {
 	return new Win32PrintingManager();
 }
 
+#endif
 #endif
