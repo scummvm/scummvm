@@ -2181,7 +2181,6 @@ void Ant::doAnt() {
 						idx = antHandleRight(idx, buf);
 				} else {
 					// Handle movement based on keyboard keys
-					buf = Amazon::PITWALK;
 					if (_vm->_player->_move == UP)
 						idx = antHandleStab(idx, buf);
 					else if (_vm->_player->_move == LEFT)
