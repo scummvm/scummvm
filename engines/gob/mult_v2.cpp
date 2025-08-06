@@ -705,7 +705,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
 	} else {
 		if (animObj.videoSlot > 0) {
-			if (_vm->getGameType() == kGameTypeAdibou2) {
+			if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 				int expectedFrame = _vm->_vidPlayer->getExpectedFrameFromCurrentTime(animObj.videoSlot - 1);
 				if (expectedFrame >= 0 &&
 					expectedFrame < animData.frame) {
@@ -752,7 +752,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 
 	if (animData.animType != 8) {
 		animData.frame++;
-		if (_vm->getGameType() == kGameTypeAdibou2
+		if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4)
 			&&
 			animData.animation < 0
 			&&

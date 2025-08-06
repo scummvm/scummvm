@@ -100,7 +100,7 @@ void Util::processInput(bool scroll) {
 	int16 x = 0, y = 0;
 	bool hasMove = false;
 
-	if (_vm->getGameType() != kGameTypeAdibou2)
+	if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
 		_vm->_vidPlayer->updateLive();
 
 	while (eventMan->pollEvent(event)) {

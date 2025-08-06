@@ -651,7 +651,7 @@ void Scenery::updateAnimObjectVideo(int16 layer, int16 frame, int16 animation, i
 	Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
 
 	if ((obj.videoSlot == 0) || !_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			if (!(flags & 4))
 				_toRedrawLeft = -12345;
 
@@ -1052,9 +1052,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	int16 destX;
 	int16 destY;
 
-	if ((animation < 0) &&
-	    ((_vm->getGameType() == kGameTypeWoodruff) ||
-	     (_vm->getGameType() == kGameTypeAdibou2))) {
+	if (animation < 0 &&
+	    (_vm->getGameType() == kGameTypeWoodruff ||
+	     _vm->getGameType() == kGameTypeAdibou2 ||
+	     _vm->getGameType() == kGameTypeAdi4)) {
 		// Object video
 
 		updateAnimObjectVideo(layer, frame, animation, flags, drawDeltaX, drawDeltaY, doDraw);
@@ -1062,7 +1063,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 	}
 
 
-	if ((_vm->getGameType() == kGameTypeAdibou2) && animation >= 0) {
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) && animation >= 0) {
 		_toRedrawRight = 1000;
 		_toRedrawBottom = 1000;
 		_toRedrawLeft = 1000;

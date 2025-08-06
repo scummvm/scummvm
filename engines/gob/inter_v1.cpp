@@ -1292,7 +1292,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[0].blue  = 0;
 		}
 
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			_vm->_draw->_vgaPalette[0].red = 0;
 			_vm->_draw->_vgaPalette[0].green = 0;
 			_vm->_draw->_vgaPalette[0].blue = 0;
@@ -1313,7 +1313,7 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 	}
 
 	if (!_vm->_draw->_applyPal) {
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			if (_vm->_global->_pPaletteDesc)
 				_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			else
@@ -1372,11 +1372,13 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case -1:
-		if (_vm->getGameType() != kGameTypeAdibou2)
+		if (_vm->getGameType() != kGameTypeAdibou2 && _vm->getGameType() != kGameTypeAdi4)
 			break;
 		// fall through
 	case 1:
-		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
+		if (_vm->getGameType() != kGameTypeFascination &&
+				_vm->getGameType() != kGameTypeAdibou2 &&
+				_vm->getGameType() != kGameTypeAdi4)
 			_vm->_util->forceMouseUp(true);
 
 		// FIXME This is a hack to fix an issue with "text" tool in Adibou2 paint game.
@@ -1385,11 +1387,9 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		// the key buffer, and the loop continues.
 		// Strangely in the original game it seems that the event is always caught by the
 		// second keyFunc.
-		if (_vm->getGameType() == kGameTypeAdibou2
-			&&
-			(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955)
-			&&
-			_vm->isCurrentTot("palette.tot"))
+		if (_vm->getGameType() == kGameTypeAdibou2 &&
+				(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955) &&
+				_vm->isCurrentTot("palette.tot"))
 			break;
 
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
@@ -1411,7 +1411,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			_vm->_util->delay(cmd);
 			_noBusyWait = true;
 		} else {
-			if (_vm->getGameType() == kGameTypeAdibou2) {
+			if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 				// The engine calls updateLive() every 100ms while waiting there
 				while (cmd > 100) {
 					_vm->_vidPlayer->updateLive();

@@ -548,7 +548,7 @@ void Hotspots::leave(uint16 index) {
 
 	if (spot.funcLeave != 0) {
 		Script *curScript = _vm->_game->_script;
-		if (_vm->getGameType() == kGameTypeAdibou2) {
+		if (_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) {
 			_vm->_game->_script = spot.scriptFuncLeave;
 		}
 		call(spot.funcLeave);
@@ -737,7 +737,7 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 		_currentIndex = 0;
 	}
 
-	if (_vm->getGameType() == kGameTypeAdibou2 &&
+	if ((_vm->getGameType() == kGameTypeAdibou2 || _vm->getGameType() == kGameTypeAdi4) &&
 			_currentKey != 0 &&
 			(_hotspots[_currentIndex].id != _currentId ||
 			_hotspots[_currentIndex].key != _currentKey)) {
