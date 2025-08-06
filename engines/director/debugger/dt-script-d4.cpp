@@ -916,6 +916,7 @@ private:
 			return;
 		case LingoDec::kDatumPropList: {
 			ImGui::Text("[");
+			ImGui::SameLine();
 			if (datum.l.size() == 0) {
 				ImGui::Text(":");
 				ImGui::SameLine();
