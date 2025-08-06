@@ -115,7 +115,7 @@ static void renderScript(ImGuiScript &script, bool showByteCode) {
 }
 
 static bool showScriptCast(CastMemberID &id) {
-	Common::String wName("Script ");
+	Common::String wName("Script ");;
 	wName += id.asString();
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
@@ -428,7 +428,6 @@ void showExecutionContext() {
 
 			// Have to make sure the executionContext flag is on for all windows
 			_state->_w.executionContext = true;
-			debug("What is state 2: _state: %p", (void *) _state);
 
 			updateCurrentScript();
 
