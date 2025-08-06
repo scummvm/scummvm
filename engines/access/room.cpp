@@ -36,7 +36,6 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_playFieldWidth = _playFieldHeight = 0;
 	_matrixSize = 0;
 	_tile = nullptr;
-	_selectCommand = 0;
 	_conFlag = false;
 	_selectCommand = -1;
 
