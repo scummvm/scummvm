@@ -488,7 +488,8 @@ void MD5Check::init() {
 			if (g_grim->getGameLanguage() != Common::EN_ANY 
 				&& g_grim->getGameLanguage() != Common::ZH_CHN 
 				&& g_grim->getGameLanguage() != Common::RU_RUS
-				&& g_grim->getGameLanguage() != Common::KO_KOR) {
+				&& g_grim->getGameLanguage() != Common::KO_KOR
+				&& g_grim->getGameLanguage() != Common::PL_POL) {
 				MD5SUM("local.lab", local)
 			}
 			if (g_grim->getGameLanguage() == Common::ZH_CHN) {
