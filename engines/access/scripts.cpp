@@ -800,7 +800,6 @@ void Scripts::cmdDoTravel() {
 				_vm->_room->_function = FN_CLEAR1;
 				if (_vm->_res->ROOMTBL[idx]._travelPos.x == -1) {
 					// For x == -1, the y value is a script Id, not a co-ordinate
-					_vm->_player->_roomNumber = idx;
 					_vm->_room->_conFlag = true;
 					_vm->_scripts->converse1(_vm->_res->ROOMTBL[idx]._travelPos.y);
 					return;
