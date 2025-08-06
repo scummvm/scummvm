@@ -122,7 +122,7 @@ private:
 
 	/**
 	 * A cache for the ICONS.LZ sprite data
-     */
+	 */
 	SpriteResource *_icons;
 
 	/**

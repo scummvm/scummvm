@@ -68,6 +68,10 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("scene", WRAP_METHOD(Debugger, Cmd_LoadScene));
 	registerCmd("cheat", WRAP_METHOD(Debugger, Cmd_Cheat));
 	registerCmd("playmovie", WRAP_METHOD(Debugger, Cmd_PlayMovie));
+	registerCmd("dumpscript", WRAP_METHOD(Debugger, Cmd_DumpScript));
+	registerCmd("timers", WRAP_METHOD(Debugger, Cmd_Timers));
+	registerCmd("getflag", WRAP_METHOD(Debugger, Cmd_GetFlag));
+	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
 }
 
 Debugger::~Debugger() {
@@ -134,6 +138,96 @@ bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
 	_playMovieFile = filename;
 
 	return cmdExit(0, nullptr);
+}
+
+bool Debugger::Cmd_DumpScript(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <path>\n", argv[0]);
+		debugPrintf("Dumps the currently loaded script to the given path\n");
+		return true;
+	}
+
+	Common::SeekableReadStream *data = _vm->_scripts->_data;
+	if (!data) {
+		debugPrintf("No script loaded\n");
+		return true;
+	}
+
+	const Common::Path outpath = Common::Path(argv[1]);
+
+	Common::DumpFile dumpFile;
+
+	dumpFile.open(outpath);
+	if (!dumpFile.isOpen()) {
+		debugPrintf("Couldn't open %s\n", argv[1]);
+		return true;
+	}
+
+	int64 oldpos = data->pos();
+	data->seek(0);
+
+	dumpFile.writeStream(data);
+	dumpFile.close();
+
+	data->seek(oldpos);
+	return true;
+}
+
+bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
+	if (argc != 2) {
+		debugPrintf("Usage: %s <flag number>\n", argv[0]);
+		debugPrintf("Prints the value of the given flag\n");
+		return true;
+	}
+
+	int flagNum = strToInt(argv[1]);
+	if (flagNum < 0 || flagNum >= 256) {
+		debugPrintf("Invalid flag number\n");
+		return true;
+	}
+
+	debugPrintf("Flag %d: %d\n", flagNum, _vm->_flags[flagNum]);
+	return true;
+}
+
+bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s <flag number> <flag value>\n", argv[0]);
+		debugPrintf("Sets the given flag to the given value\n");
+		return true;
+	}
+
+	int flagNum = strToInt(argv[1]);
+	if (flagNum < 0 || flagNum >= 256) {
+		debugPrintf("Invalid flag number\n");
+		return true;
+	}
+
+	int flagVal = strToInt(argv[2]);
+	if (flagVal < 0 || flagVal >= 256) {
+		debugPrintf("Invalid flag val, must be byte\n");
+		return true;
+	}
+	_vm->_flags[flagNum] = flagVal;
+
+	debugPrintf("Flag %d set to %d\n", flagNum, flagVal);
+	return true;
+}
+
+bool Debugger::Cmd_Timers(int argc, const char **argv) {
+	if (argc != 1) {
+		debugPrintf("Usage: %s\n", argv[0]);
+		debugPrintf("Prints the current timers\n");
+		return true;
+	}
+
+	debugPrintf("Timers:\n");
+	for (uint i = 0; i < _vm->_timers.size(); ++i) {
+		const TimerEntry te = _vm->_timers[i];
+		debugPrintf("%d: init: %d timer: %d flag: %d\n", i, te._initTm, te._timer, te._flag);
+	}
+
+	return true;
 }
 
 /*------------------------------------------------------------------------*/
