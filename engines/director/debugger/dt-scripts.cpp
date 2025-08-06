@@ -366,8 +366,25 @@ void showExecutionContext() {
 			ImGui::Separator();
 			const ImVec2 childsize = ImGui::GetContentRegionAvail();
 			ImGui::BeginChild("##script", childsize);
-			ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
-			renderScript(script, _state->_functions._showByteCode);
+			ImGuiScript &current = _state->_functions._scripts[_state->_functions._current];
+
+			// Get all the handlers from the script
+			ScriptContext* context = getScriptContext(current.id);
+			Movie *movie = g_director->getCurrentMovie();
+
+			if (!context || context->_functionHandlers.size() == 1) {
+				renderScript(current, _state->_functions._showByteCode);
+			} else {
+				for (auto &functionHandler : context->_functionHandlers) {
+					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+					script.moviePath = movie->getArchive()->getPathName().toString();
+					script.handlerName = getHandlerName(functionHandler._value);
+					renderScript(script, _state->_functions._showByteCode);
+					ImGui::NewLine();
+				}
+			}
+
 			ImGui::EndChild();
 		}
 
@@ -448,8 +465,25 @@ void showExecutionContext() {
 				ImGui::Separator();
 				const ImVec2 childsize = ImGui::GetContentRegionAvail();
 				ImGui::BeginChild("##script", childsize);
-				ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
-				renderScript(script, _state->_functions._showByteCode);
+				ImGuiScript &current = _state->_functions._scripts[_state->_functions._current];
+
+				// Get all the handlers from the script
+				ScriptContext* context = getScriptContext(current.id);
+				Movie *movie = g_director->getCurrentMovie();
+
+				if (!context || context->_functionHandlers.size() == 1) {
+					renderScript(current, _state->_functions._showByteCode);
+				} else {
+					for (auto &functionHandler : context->_functionHandlers) {
+						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+						script.moviePath = movie->getArchive()->getPathName().toString();
+						script.handlerName = getHandlerName(functionHandler._value);
+						renderScript(script, _state->_functions._showByteCode);
+						ImGui::NewLine();
+					}
+				}
+
 				ImGui::EndChild();
 			}
 
