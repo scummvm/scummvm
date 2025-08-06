@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-06 10:44+0000\n"
+"POT-Creation-Date: 2025-08-06 12:26+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -8799,7 +8799,7 @@ msgstr "Помилка: гру не вдалося зберегти."
 msgid "Input text"
 msgstr "Введіть текст"
 
-#: engines/grim/md5check.cpp:610
+#: engines/grim/md5check.cpp:611
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8814,7 +8814,7 @@ msgstr ""
 "(тобто, DVD або коробка):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:619
+#: engines/grim/md5check.cpp:620
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

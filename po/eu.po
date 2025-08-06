@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-06 10:44+0000\n"
+"POT-Creation-Date: 2025-08-06 12:26+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -8591,7 +8591,7 @@ msgstr "ezin izan da bideo-modua aldatu."
 msgid "Input text"
 msgstr "Sarrrera"
 
-#: engines/grim/md5check.cpp:610
+#: engines/grim/md5check.cpp:611
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8601,7 +8601,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/grim/md5check.cpp:619
+#: engines/grim/md5check.cpp:620
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

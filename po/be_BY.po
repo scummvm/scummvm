@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-06 10:44+0000\n"
+"POT-Creation-Date: 2025-08-06 12:26+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -8574,7 +8574,7 @@ msgstr "відэарэжым не можа быць зменены."
 msgid "Input text"
 msgstr "Увод"
 
-#: engines/grim/md5check.cpp:610
+#: engines/grim/md5check.cpp:611
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8584,7 +8584,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/grim/md5check.cpp:619
+#: engines/grim/md5check.cpp:620
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

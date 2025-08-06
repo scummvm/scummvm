@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-06 10:44+0000\n"
+"POT-Creation-Date: 2025-08-06 12:26+0000\n"
 "PO-Revision-Date: 2025-07-29 12:36+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -8745,7 +8745,7 @@ msgstr "Erreur : la partie n'a pas été sauvegardée."
 msgid "Input text"
 msgstr "Texte saisi"
 
-#: engines/grim/md5check.cpp:610
+#: engines/grim/md5check.cpp:611
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8760,7 +8760,7 @@ msgstr ""
 "description de votre version du jeu (par exemple version CD ou DVD) :\n"
 "%s"
 
-#: engines/grim/md5check.cpp:619
+#: engines/grim/md5check.cpp:620
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
