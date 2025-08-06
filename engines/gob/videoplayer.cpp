@@ -691,7 +691,7 @@ bool VideoPlayer::playFrame(int slot, Properties &properties) {
 	}
 
 	const Graphics::Surface *surface = video->decoder->decodeNextFrame();
-	if (surface != nullptr && video->decoder->isPaletted() && video->surface && video->surface->getBPP() > 1) {
+	if (surface != nullptr && surface->w > 0 && surface->h > 0 && video->decoder->isPaletted() && video->surface && video->surface->getBPP() > 1) {
 		int16 x = 0;
 		int16 y = 0;
 		int16 width = 0;
