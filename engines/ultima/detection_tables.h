@@ -127,6 +127,36 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	{
+		// Ultima IV - Quest of the Avatar + French patch
+		{
+			"ultima4",
+			"Fanmade",
+			AD_ENTRY1s("britain.ult", "61b8f1f415e1bfb459ab3831eabd4899", 1280),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA4
+		},
+		GAME_ULTIMA4,
+		0
+	},
+
+	{
+		// Ultima IV - Quest of the Avatar + French patch
+		{
+			"ultima4_enh",
+			"Fanmade",
+			AD_ENTRY1s("britain.ult", "61b8f1f415e1bfb459ab3831eabd4899", 1280),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_ULTIMA4
+		},
+		GAME_ULTIMA4,
+		GF_VGA_ENHANCED
+	},
+
 	// GOG Ultima VI
 	ENTRY_ULTIMA6("converse.a", "5065716423ef1389e3f7b4946d815c26", 162615,
 				Common::EN_ANY,
