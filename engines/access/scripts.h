@@ -38,6 +38,8 @@ class Scripts;
 typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts : public Manager {
+	friend class Debugger;
+
 private:
 	int _specialFunction;
 
