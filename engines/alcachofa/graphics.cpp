@@ -334,20 +334,32 @@ void Animation::prerenderFrame(int32 frameI) {
 	_renderedPremultiplyAlpha = _premultiplyAlpha;
 }
 
+void Animation::outputRect2D(int32 frameI, float scale, Vector2d &topLeft, Vector2d &size) const {
+	auto bounds = frameBounds(frameI);
+	topLeft += as2D(totalFrameOffset(frameI)) * scale;
+	size = Vector2d(bounds.width(), bounds.height()) * scale;
+}
+
 void Animation::draw2D(int32 frameI, Vector2d topLeft, float scale, BlendMode blendMode, Color color) {
 	prerenderFrame(frameI);
 	auto bounds = frameBounds(frameI);
 	Vector2d texMin(0, 0);
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
-	Vector2d size(bounds.width(), bounds.height());
-	topLeft += as2D(totalFrameOffset(frameI)) * scale;
-	size *= scale;
+	Vector2d size;
+	outputRect2D(frameI, scale, topLeft, size);
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());
 	renderer.setBlendMode(blendMode);
 	renderer.quad(topLeft, size, color, Angle(), texMin, texMax);
+}
+
+void Animation::outputRect3D(int32 frameI, float scale, Vector3d &topLeft, Vector2d &size) const {
+	auto bounds = frameBounds(frameI);
+	topLeft += as3D(totalFrameOffset(frameI)) * scale;
+	topLeft = g_engine->camera().transform3Dto2D(topLeft);
+	size = Vector2d(bounds.width(), bounds.height()) * scale * topLeft.z();
 }
 
 void Animation::draw3D(int32 frameI, Vector3d topLeft, float scale, BlendMode blendMode, Color color) {
@@ -356,11 +368,9 @@ void Animation::draw3D(int32 frameI, Vector3d topLeft, float scale, BlendMode bl
 	Vector2d texMin(0, 0);
 	Vector2d texMax((float)bounds.width() / _renderedSurface.w, (float)bounds.height() / _renderedSurface.h);
 
-	topLeft += as3D(totalFrameOffset(frameI)) * scale;
-	topLeft = g_engine->camera().transform3Dto2D(topLeft);
+	Vector2d size;
+	outputRect3D(frameI, scale, topLeft, size);
 	const auto rotation = -g_engine->camera().rotation();
-	Vector2d size(bounds.width(), bounds.height());
-	size *= scale * topLeft.z();
 
 	auto &renderer = g_engine->renderer();
 	renderer.setTexture(_renderedTexture.get());

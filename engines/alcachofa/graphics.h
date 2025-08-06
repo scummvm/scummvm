@@ -195,22 +195,26 @@ public:
 	int32 frameAtTime(uint32 time) const;
 	int32 imageIndex(int32 frameI, int32 spriteI) const;
 	using AnimationBase::imageSize;
+	void outputRect2D(int32 frameI, float scale, Math::Vector2d &topLeft, Math::Vector2d &size) const;
+	void outputRect3D(int32 frameI, float scale, Math::Vector3d &topLeft, Math::Vector2d &size) const;
+
+	void overrideTexture(const Graphics::ManagedSurface &surface);
 
 	void draw2D(
 		int32 frameI,
-		Math::Vector2d center,
+		Math::Vector2d topLeft,
 		float scale,
 		BlendMode blendMode,
 		Color color);
 	void draw3D(
 		int32 frameI,
-		Math::Vector3d center,
+		Math::Vector3d topLeft,
 		float scale,
 		BlendMode blendMode,
 		Color color);
 	void drawEffect(
 		int32 frameI,
-		Math::Vector3d center,
+		Math::Vector3d topLeft,
 		Math::Vector2d tiling,
 		Math::Vector2d texOffset,
 		BlendMode blendMode);

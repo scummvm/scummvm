@@ -41,6 +41,7 @@ public:
 	Console();
 	~Console() override;
 
+	inline bool showGraphics() const { return _showGraphics; }
 	inline bool showInteractables() const { return _showInteractables; }
 	inline bool showCharacters() const { return _showCharacters; }
 	inline bool showFloor() const { return _showFloor; }
@@ -60,6 +61,7 @@ private:
 	bool cmdTeleport(int argc, const char **args);
 	bool cmdToggleRoomFloor(int argc, const char **args);
 
+	bool _showGraphics = false;
 	bool _showInteractables = false;
 	bool _showCharacters = false;
 	bool _showFloor = false;
