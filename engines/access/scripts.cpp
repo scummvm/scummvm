@@ -419,7 +419,12 @@ void Scripts::cmdCheckFlag() {
 	debugCN(1, kDebugScripts, "cmdCheckFlag(flagNum=%d, flagVal=%d)", flagNum, flagVal);
 	assert(flagNum < 256);
 
-	if (_vm->_flags[flagNum] == flagVal) {
+	//
+	// Although this opcode takes an int16, only the byte value (AL) is compared
+	// to flags in both MM and Amazon. This is important as some scripts compare
+	// against 255 to check for -1, so we need to make the casting the same.
+	//
+	if ((byte)_vm->_flags[flagNum] == (byte)flagVal) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
