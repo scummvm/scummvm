@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-04 14:57+0000\n"
+"POT-Creation-Date: 2025-08-06 10:44+0000\n"
 "PO-Revision-Date: 2025-05-30 21:26+0000\n"
 "Last-Translator: SkiffPL <skiff@windowslive.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -8787,7 +8787,7 @@ msgstr "Błąd: nie udało się utworzyć zapisu stanu gry."
 msgid "Input text"
 msgstr "Wprowadź tekst"
 
-#: engines/grim/md5check.cpp:609
+#: engines/grim/md5check.cpp:610
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8802,7 +8802,7 @@ msgstr ""
 "jewelcase):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:618
+#: engines/grim/md5check.cpp:619
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-04 14:57+0000\n"
+"POT-Creation-Date: 2025-08-06 10:44+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -8665,7 +8665,7 @@ msgstr "خطأ: لا يمكن حفظ اللعبة."
 msgid "Input text"
 msgstr "أدخل نصآ"
 
-#: engines/grim/md5check.cpp:609
+#: engines/grim/md5check.cpp:610
 #, c-format
 msgid ""
 "The game data file %s may be corrupted.\n"
@@ -8680,7 +8680,7 @@ msgstr ""
 "box أو jewelcase):\n"
 "%s"
 
-#: engines/grim/md5check.cpp:618
+#: engines/grim/md5check.cpp:619
 #, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
