@@ -497,6 +497,19 @@ static const GrimGameDescription gameDescriptions[] = {
 		GType_MONKEY4
 	},
 	{
+		// Escape from Monkey Island Polish fanmade
+		{
+			"monkey4",
+			"Fanmade",
+			AD_ENTRY1s("artAll.m4b", "451332012f4d947ef12da4f7d7f0e560", 18751712),
+			Common::PL_POL,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_GRIME
+		},
+		GType_MONKEY4
+	},
+	{
 		// Escape from Monkey Island English (Mac)
 		{
 			"monkey4",
