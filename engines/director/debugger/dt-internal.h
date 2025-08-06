@@ -84,7 +84,6 @@ typedef struct ImGuiScript {
 
 typedef struct ImGuiWindows {
 	bool controlPanel = true;
-	bool callStack = false;
 	bool vars = false;
 	bool channels = false;
 	bool cast = false;
@@ -216,7 +215,9 @@ void showFuncList();
 void showScriptCasts();
 void showExecutionContext();
 
-extern ImGuiState *_state;
+// dt-save-state.cpp
+void saveCurrentState();
+void loadSavedState();
 
 }
 

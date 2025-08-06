@@ -376,8 +376,10 @@ void onImGuiRender() {
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
+				saveCurrentState();
 			}
 			if (ImGui::MenuItem("Load state")) {
+				loadSavedState();
 			}
 			ImGui::Separator();
 			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
