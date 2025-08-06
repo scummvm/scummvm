@@ -28,6 +28,7 @@
 #include "common/system.h"
 
 using namespace Common;
+using namespace Math;
 
 namespace Alcachofa {
 
@@ -110,6 +111,34 @@ void GraphicObject::draw() {
 	const bool is3D = room() != &g_engine->world().inventory();
 	_graphic.update();
 	g_engine->drawQueue().add<AnimationDrawRequest>(_graphic, is3D, blendMode);
+}
+
+void GraphicObject::drawDebug() {
+	auto *renderer = dynamic_cast<IDebugRenderer *>(&g_engine->renderer());
+	if (!isEnabled() || !_graphic.hasAnimation() || !g_engine->console().showGraphics() || renderer == nullptr)
+		return;
+
+	const bool is3D = room() != &g_engine->world().inventory();
+	Vector2d topLeft(as2D(_graphic.topLeft()));
+	float scale = _graphic.scale() * _graphic.depthScale() * kInvBaseScale;
+	Vector2d size;
+	if (is3D) {
+		Vector3d topLeftTmp = as3D(topLeft);
+		topLeftTmp.z() = _graphic.scale();
+		_graphic.animation().outputRect3D(_graphic.frameI(), scale, topLeftTmp, size);
+		topLeft = as2D(topLeftTmp);
+	}
+	else
+		_graphic.animation().outputRect2D(_graphic.frameI(), scale, topLeft, size);
+
+	Vector2d points[] = {
+		topLeft,
+		topLeft + Vector2d(size.getX(), 0.0f),
+		topLeft + Vector2d(size.getX(), size.getY()),
+		topLeft + Vector2d(0.0f, size.getY()),
+		topLeft
+	};
+	renderer->debugPolyline({ points, 5 }, kDebugGreen);
 }
 
 void GraphicObject::loadResources() {

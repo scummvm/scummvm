@@ -28,6 +28,7 @@ using namespace Common;
 namespace Alcachofa {
 
 Console::Console() : GUI::Debugger() {
+	registerVar("showGraphics", &_showGraphics);
 	registerVar("showInteractables", &_showInteractables);
 	registerVar("showCharacters", &_showCharacters);
 	registerVar("showFloorShape", &_showFloor);
@@ -53,6 +54,7 @@ Console::~Console() {
 bool Console::isAnyDebugDrawingOn() const {
 	return
 		g_engine->isDebugModeActive() ||
+		_showGraphics ||
 		_showInteractables ||
 		_showCharacters ||
 		_showFloor ||
