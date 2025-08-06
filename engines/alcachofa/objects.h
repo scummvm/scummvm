@@ -89,6 +89,7 @@ public:
 	~GraphicObject() override = default;
 
 	void draw() override;
+	void drawDebug() override;
 	void loadResources() override;
 	void freeResources() override;
 	void syncGame(Common::Serializer &serializer) override;
