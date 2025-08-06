@@ -19,6 +19,8 @@
  *
  */
 
+#ifdef USE_PRINTING
+
 #include "printman.h"
 
 namespace Common {
@@ -26,3 +28,5 @@ namespace Common {
 PrintingManager::~PrintingManager() {}
 
 } // End of namespace Common
+
+#endif
