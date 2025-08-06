@@ -98,7 +98,8 @@ Common::String HandlerUtils::readEverythingFromStream(Common::SeekableReadStream
 }
 
 Common::SeekableReadStream *HandlerUtils::makeResponseStreamFromString(const Common::String &response) {
-	byte *data = new byte[response.size()];
+	byte *data = (byte *)malloc(response.size());
+	assert(data);
 	memcpy(data, response.c_str(), response.size());
 	return new Common::MemoryReadStream(data, response.size(), DisposeAfterUse::YES);
 }
