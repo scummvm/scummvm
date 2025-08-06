@@ -112,7 +112,7 @@ static void renderScript(ImGuiScript &script, bool showByteCode) {
 }
 
 static bool showScriptCast(CastMemberID &id) {
-	Common::String wName("Script ");
+	Common::String wName("Script ");;
 	wName += id.asString();
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
