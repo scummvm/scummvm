@@ -490,8 +490,6 @@ void showExecutionContext() {
 			ImGui::EndChild();
 			ImGui::PopStyleColor();
 			ImGui::PopID();
-
-			windowID++;
 		}
 
 		g_director->setCurrentWindow(mainWindow);
