@@ -47,6 +47,7 @@ EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
 	_vbCount = 0;
 	_keyCode = Common::KEYCODE_INVALID;
 	_priorTimerTime = 0;
+	_action = kActionNone;
 }
 
 EventsManager::~EventsManager() {
