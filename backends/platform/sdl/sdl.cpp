@@ -54,7 +54,7 @@
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 #include "graphics/opengl/context.h"
 #endif
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#if defined(USE_SCUMMVMDLC)
 #include "backends/dlc/scummvmcloud.h"
 #endif
 #include "graphics/cursorman.h"
@@ -105,7 +105,7 @@ OSystem_SDL::OSystem_SDL()
 	_eventSource(nullptr),
 	_eventSourceWrapper(nullptr),
 	_window(nullptr) {
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#if defined(USE_SCUMMVMDLC)
 	_dlcStore = new DLC::ScummVMCloud::ScummVMCloud();
 #endif
 }
@@ -225,7 +225,7 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureOpenGLForGame) return _oglType != OpenGL::kContextNone && OpenGLContext.type != OpenGL::kContextGLES;
 	if (f == kFeatureShadersForGame) return _supportsShaders;
 #endif
-#if defined(USE_SCUMMVMDLC) && defined(USE_LIBCURL)
+#if defined(USE_SCUMMVMDLC)
 	if (f == kFeatureDLC) return true;
 #endif
 #if SDL_VERSION_ATLEAST(3, 0, 0)
