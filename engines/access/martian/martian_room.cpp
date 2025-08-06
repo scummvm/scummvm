@@ -95,7 +95,7 @@ void MartianRoom::reloadRoom1() {
 void MartianRoom::roomSet() {
 	// aka runScriptInitScript
 	_vm->_numAnimTimers = 0;
-	_vm->_scripts->_sequence = 1000;
+	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
 

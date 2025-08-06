@@ -80,6 +80,10 @@ byte *Resource::data() {
 	return _data;
 }
 
+ const char *Resource::getFileName() const {
+		return _file.getName();
+}
+
 /*------------------------------------------------------------------------*/
 
 FileManager::FileManager(AccessEngine *vm) : _vm(vm) {

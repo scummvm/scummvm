@@ -64,6 +64,8 @@ public:
 	Resource(byte *data, int size);
 	~Resource();
 	byte *data();
+
+	const char *getFileName() const;
 };
 
 class FileManager {
