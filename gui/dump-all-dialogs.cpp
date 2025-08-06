@@ -112,12 +112,13 @@ void dumpDialogs(const Common::String &message, const Common::String &lang) {
 	// CloudConnectingWizard
 	GUI::CloudConnectionWizard cloudConnectingWizard;
 	handleSimpleDialog(cloudConnectingWizard, "cloudConnectingWizard" + suffix, surf);
-#endif
-#ifdef USE_LIBCURL
+
 	// RemoteBrowserDialog
 	GUI::RemoteBrowserDialog remoteBrowserDialog(_("Select directory with game data"));
 	handleSimpleDialog(remoteBrowserDialog, "remoteBrowserDialog" + suffix, surf);
+#endif
 
+#ifdef USE_HTTP
 	// DownloadIconPacksDialog
 	GUI::DownloadPacksDialog downloadIconPacksDialog(_("icon packs"), "LIST", "gui-icons*.dat");
 	handleSimpleDialog(downloadIconPacksDialog, "downloadIconPacksDialog" + suffix, surf);

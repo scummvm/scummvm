@@ -285,7 +285,7 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	// GUI: Check integrity button
 	if (ConfMan.hasKey("enable_integrity_checking", Common::ConfigManager::kApplicationDomain))
 		new ButtonWidget(tab, "GameOptions_Paths.Checkintegrity", _("Check Integrity"), _("Perform integrity check for all game files"), kCmdCheckIntegrity);
@@ -619,7 +619,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				error.runModal();
 				return;
 			}
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#if defined(USE_CLOUD)
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();
 #endif
@@ -637,7 +637,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		_savePathWidget->setLabel(Common::Path());
 		break;
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kCmdCheckIntegrity: {
 		IntegrityDialog wizard("http://gamesdb.sev.zone/validate", _domain);
 		wizard.runModal();

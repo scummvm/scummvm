@@ -55,7 +55,7 @@ MODULE_OBJS += \
 	remotebrowser.o
 endif
 
-ifdef USE_LIBCURL
+ifdef USE_HTTP
 MODULE_OBJS += \
 	downloadpacksdialog.o \
 	integrity-dialog.o

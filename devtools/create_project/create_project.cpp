@@ -1185,6 +1185,7 @@ const Feature s_features[] = {
 	{"opengl_game_classic",               "USE_OPENGL_GAME", false, true,  "OpenGL support (classic) in 3d games" },
 	{"opengl_game_shaders",            "USE_OPENGL_SHADERS", false, true,  "OpenGL support (shaders) in 3d games" },
 	{            "taskbar",                   "USE_TASKBAR", false, true,  "Taskbar integration support" },
+	{               "http",                      "USE_HTTP", false, true,  "HTTP client support" },
 	{              "cloud",                     "USE_CLOUD", false, true,  "Cloud integration support" },
 	{               "enet",                      "USE_ENET", false, true,  "ENet networking support" },
 	{        "translation",               "USE_TRANSLATION", false, true,  "Translation support" },
@@ -1295,6 +1296,17 @@ static void fixupFeatures(ProjectType projectType, BuildSetup &setup) {
 	// OpenMPT and Mikmod can not be enabled simultaneously
 	if (getFeatureBuildState("openmpt", setup.features)) {
 		setFeatureBuildState("mikmod", setup.features, false);
+	}
+
+	// Only libcurl provides an HTTP client for now
+	// (or Emscripten but it's not supported by create_project)
+	if (!getFeatureBuildState("libcurl", setup.features)) {
+		setFeatureBuildState("http", setup.features, false);
+	}
+
+	// Without an HTTP client there is no cloud feature
+	if (!getFeatureBuildState("http", setup.features)) {
+		setFeatureBuildState("cloud", setup.features, false);
 	}
 
 	// These features depend on OpenGL

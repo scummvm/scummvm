@@ -62,7 +62,7 @@
 #include "gui/downloaddialog.h"
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 #include "gui/downloadpacksdialog.h"
 #endif
 
@@ -1690,7 +1690,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
 #endif
 
@@ -2715,7 +2715,7 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"),  _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
 #endif
 }
@@ -3248,7 +3248,7 @@ void GlobalOptionsDialog::apply() {
 }
 
 void GlobalOptionsDialog::close() {
-#if defined(USE_CLOUD) && defined(USE_SDL_NET)
+#if defined(USE_SDL_NET)
 	if (LocalServer.isRunning()) {
 		LocalServer.stop();
 	}
@@ -3329,7 +3329,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kChooseRootDirCmd: {
 		BrowserDialog browser(_("Select directory for Files Manager /root/"), true);
@@ -3344,7 +3343,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kUpdateIconsCmd: {
 		DownloadPacksDialog dia(_("icon packs"), "LIST", "gui-icons*.dat");
 		dia.runModal();
@@ -3355,7 +3354,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kUpdateShadersCmd: {
 		DownloadPacksDialog dia(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
 		dia.runModal();
@@ -3363,7 +3362,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(Common::Path());
 		break;
@@ -3511,6 +3509,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		sendCommand(kSetPositionCmd, 0);
 		break;
 	}
+#endif // USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRunServerCmd: {
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
@@ -3540,7 +3539,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();

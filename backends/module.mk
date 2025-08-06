@@ -27,6 +27,17 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
 
+ifdef USE_HTTP
+MODULE_OBJS += \
+	networking/http/connectionmanager.o \
+	networking/http/networkreadstream.o \
+	networking/http/httpjsonrequest.o \
+	networking/http/httprequest.o \
+	networking/http/postrequest.o \
+	networking/http/request.o \
+	networking/http/session.o \
+	networking/http/sessionrequest.o
+
 ifdef USE_CLOUD
 MODULE_OBJS += \
 	cloud/basestorage.o \
@@ -62,19 +73,10 @@ MODULE_OBJS += \
 	cloud/onedrive/onedrivecreatedirectoryrequest.o \
 	cloud/onedrive/onedrivetokenrefresher.o \
 	cloud/onedrive/onedrivelistdirectoryrequest.o \
-	cloud/onedrive/onedriveuploadrequest.o \
-	networking/http/connectionmanager.o \
-	networking/http/networkreadstream.o \
-	networking/http/httpjsonrequest.o \
-	networking/http/httprequest.o \
-	networking/http/postrequest.o \
-	networking/http/request.o \
-	networking/http/session.o \
-	networking/http/sessionrequest.o
+	cloud/onedrive/onedriveuploadrequest.o
 endif
 
 ifdef USE_SCUMMVMDLC
-ifdef USE_LIBCURL
 MODULE_OBJS += \
 	dlc/scummvmcloud.o
 endif
@@ -90,7 +92,7 @@ MODULE_OBJS += \
 	networking/curl/cacert.o \
 	networking/curl/socket.o \
 	networking/curl/url.o
-ifdef USE_CLOUD
+ifdef USE_HTTP
 MODULE_OBJS += \
 	networking/http/curl/connectionmanager-curl.o \
 	networking/http/curl/networkreadstream-curl.o
@@ -105,7 +107,10 @@ MODULE_OBJS += \
 	midi/webmidi.o 
 ifdef USE_CLOUD
 MODULE_OBJS += \
-	fs/emscripten/cloud-fs.o \
+	fs/emscripten/cloud-fs.o
+endif
+ifdef USE_HTTP
+MODULE_OBJS += \
 	networking/http/emscripten/connectionmanager-emscripten.o \
 	networking/http/emscripten/networkreadstream-emscripten.o
 endif
@@ -132,10 +137,8 @@ MODULE_OBJS += \
 	networking/sdl_net/localwebserver.o \
 	networking/sdl_net/reader.o \
 	networking/sdl_net/uploadfileclienthandler.o
-endif
 
 ifdef USE_CLOUD
-ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/handlers/connectcloudhandler.o
 endif
