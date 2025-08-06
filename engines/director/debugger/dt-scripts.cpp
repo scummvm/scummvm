@@ -330,7 +330,6 @@ void showExecutionContext() {
 		updateCurrentScript();
 
 		int windowID = 0;
-
 		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
@@ -421,8 +420,6 @@ void showExecutionContext() {
 		ImGui::PopID();
 		ImGui::SameLine();
 
-		windowID += 1;
-
 		for (auto window : (*windowList)) {
 			g_director->setCurrentWindow(window);
 			g_lingo->switchStateFromWindow();
@@ -435,6 +432,7 @@ void showExecutionContext() {
 
 			updateCurrentScript();
 
+			windowID++;
 			ImGui::PushID(windowID);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
@@ -524,8 +522,6 @@ void showExecutionContext() {
 			ImGui::EndChild();
 			ImGui::PopStyleColor();
 			ImGui::PopID();
-
-			windowID++;
 		}
 
 		_state = currentState;
