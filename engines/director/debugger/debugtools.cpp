@@ -106,6 +106,18 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 	return result;
 }
 
+ScriptContext *getScriptContext(CastMemberID id) {
+	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	if (!cast) {
+		return nullptr;
+	}
+
+	ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
+	return ctx;
+}
+
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {

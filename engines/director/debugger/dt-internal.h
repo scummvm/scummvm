@@ -188,6 +188,7 @@ extern Common::HashMap<Window *, ImGuiState *> _windowStates;
 
 // debugtools.cpp
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
+ScriptContext *getScriptContext(CastMemberID id);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
 void displayScriptRef(CastMemberID &scriptId);
