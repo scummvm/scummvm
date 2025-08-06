@@ -84,6 +84,7 @@ std::string MSVCProvider::getLibraryFromFeature(const char *feature, const Build
 		{   "updates", "WinSparkle.lib",            nullptr,           kSDLVersionAny, nullptr                                           },
 		{       "tts", nullptr,                     nullptr,           kSDLVersionAny, "sapi.lib"                                        },
 		{    "opengl", nullptr,                     nullptr,           kSDLVersionAny, nullptr                                           },
+		{  "printing", nullptr,                     nullptr,           kSDLVersionAny, "Msimg32.lib"                                     },
 		{      "enet", nullptr,                     nullptr,           kSDLVersionAny, "winmm.lib ws2_32.lib"                            }
 	};
 

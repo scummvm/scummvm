@@ -186,6 +186,7 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 _dialogs=auto
+_printing=yes
 _tts=auto
 _gtk=auto
 _fribidi=auto
@@ -319,6 +320,7 @@ add_feature png "PNG" "_png"
 add_feature vorbis "Vorbis file support" "_vorbis _tremor"
 add_feature zlib "zlib" "_zlib"
 add_feature test_cxx11 "Test C++11" "_test_cxx11"
+add_feature printing "Printing" "_printing"
 
 # Components are features which may be disabled if unused by the engines
 add_component enet "ENet" "_enet" "USE_ENET"
@@ -1371,6 +1373,8 @@ for ac_option in $@; do
 	--disable-vkeybd)            _vkeybd=no              ;;
 	--enable-eventrecorder)      _eventrec=yes           ;;
 	--disable-eventrecorder)     _eventrec=no            ;;
+	--enable-printing)           _printing=yes           ;;
+	--disable-printing)          _printing=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
 	--enable-ext-sse2)           _ext_sse2=yes           ;;
@@ -7083,6 +7087,17 @@ else
 	esac
 fi
 define_in_config_if_yes $_taskbar 'USE_TASKBAR'
+
+#
+# Check whether to build printing support
+#
+echo_n "Building system printing support... "
+case $_host_os in
+mingw*)
+	echo "win32"
+	append_var LIBS '-lMsimg32'
+esac
+define_in_config_if_yes $_printing 'USE_PRINTING'
 
 #
 # Check whether to build system dialogs support
