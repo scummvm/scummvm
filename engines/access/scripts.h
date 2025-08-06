@@ -33,6 +33,7 @@ class Scripts;
 
 #define SCRIPT_START_BYTE 0xE0
 #define ROOM_SCRIPT 2000
+#define INIT_ROOM_SCRIPT 1000
 
 typedef void(Scripts::*ScriptMethodPtr)();
 
