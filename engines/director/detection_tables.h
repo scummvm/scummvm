@@ -4185,6 +4185,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Demo is found on Pantsylvania CD
 	MACGAME1("elroybug", "", "Elroy Goes Bugzerk", "r:ea646eccc9a53f44ce082459d4809a06", 520674, 400),
 	WINGAME1("elroybug", "", "BUGZERK.EXE", "t:3be9fa389257a608ff21e09074355fa5", 1593811, 400),
+	MACGAME1("elroybug", "1.0", "Elroy Goes Bugzerk", "r:cbce20666bfe47a9533331c6be1e6039", 321438, 404),
+	WINGAME1("elroybug", "1.0", "BUGZERK.EXE", "t:7fcb09d5dcc8096cd7ffa1fd618e5500", 1561075, 404),
 	MACDEMO1("elroybug", "Demo", "Elroy Goes Bugzerk Demo", "bcd3c718db258701496b3c5bcb827ef2", 498394, 404),
 	WINDEMO1("elroybug", "Demo", "ELRYDEMO.EXE", "cb2d86ea52d81d12d1fe8eadfb4a118c", 2438763, 404),
 
