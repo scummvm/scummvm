@@ -129,10 +129,10 @@ uint codigoobjmochila;
 uint kaka;
 
 uint oldposx, oldposy;
-uint volumenfxderecho, volumenfxizquierdo;
+uint rightSfxVol, leftSfxVol;
 uint segpasoicono;
 uint ofspasoicono;
-uint volumenmelodiaderecho, volumenmelodiaizquierdo;
+uint musicVolRight, musicVolLeft;
 
 int elemento1, elemento2;
 
@@ -179,7 +179,7 @@ byte rejamascaramovto[10][10];
 
 byte rejamascararaton[10][10];
 
-bool completadalista1, completadalista2,
+bool list1Complete, list2Complete,
 	lista1, lista2;
 
 bool primera[maxpersonajes],
@@ -383,10 +383,10 @@ void resetGameState() {
 
 	animacion2 = false;
 	secuencia.profundidad = 0;
-	volumenfxderecho = 6;
-	volumenfxizquierdo = 6;
-	volumenmelodiaderecho = 3;
-	volumenmelodiaizquierdo = 3;
+	rightSfxVol = 6;
+	leftSfxVol = 6;
+	musicVolRight = 3;
+	musicVolLeft = 3;
 
 	pintaractivo = true;
 	desactivagrabar = false;
@@ -395,8 +395,8 @@ void resetGameState() {
 	lista1 = false;
 	lista2 = false;
 
-	completadalista1 = false;
-	completadalista2 = false;
+	list1Complete = false;
+	list2Complete = false;
 
 	movidapaleta = 0;
 	gamePart = 1;

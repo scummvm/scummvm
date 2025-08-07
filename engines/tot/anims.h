@@ -23,8 +23,6 @@
 
 #include "common/scummsys.h"
 
-#include "tot/sound.h"
-
 namespace Tot {
 
 void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,

@@ -27,7 +27,6 @@
 #include "tot/playanim.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
-#include "tot/sound.h"
 #include "tot/texts.h"
 #include "tot/tot.h"
 #include "tot/util.h"
@@ -84,11 +83,11 @@ int engine_start() {
 	loadCharAnimation();
 	loadObjects();
 
-	setMidiVolume(0, 0);
-	playMidiFile("SILENT", false);
+	g_engine->_sound->setMidiVolume(0, 0);
+	g_engine->_sound->playMidi("SILENT", false);
 
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
-	playMidiFile("SILENT", true);
+	g_engine->_sound->playMidi("SILENT", true);
 
 	totalFadeOut(0);
 	clear();
@@ -96,8 +95,8 @@ int engine_start() {
 	loadPalette("DEFAULT");
 	loadScreenMemory();
 	initialLogo();
-	playMidiFile("INTRODUC", true);
-	setMidiVolume(3, 3);
+	g_engine->_sound->playMidi("INTRODUC", true);
+	g_engine->_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
 	initialMenu(hechaprimeravez);
@@ -115,17 +114,17 @@ int engine_start() {
 }
 
 int startGame() {
-	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	switch (gamePart) {
 	case 1:
-		playMidiFile("PRIMERA", true);
+		g_engine->_sound->playMidi("PRIMERA", true);
 		break;
 	case 2:
-		playMidiFile("SEGUNDA", true);
+		g_engine->_sound->playMidi("SEGUNDA", true);
 		break;
 	}
 	contadorpc2 = contadorpc;
-	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	inGame = true;
 
 	Common::Event e;
@@ -151,21 +150,6 @@ int startGame() {
 				changeGameSpeed(e);
 
 				switch (e.kbd.keycode) {
-
-				case Common::KEYCODE_UP:
-					playMidiFile("INTRODUC", true);
-					break;
-				case Common::KEYCODE_DOWN:
-					playMidiFile("PRIMERA", true);
-					break;
-				case Common::KEYCODE_LEFT:
-					playMidiFile("SEGUNDA", true);
-					// saveLoad();
-					break;
-				case Common::KEYCODE_RIGHT:
-					playMidiFile("CREDITOS", true);
-					// saveLoad();
-					break;
 
 				case Common::KEYCODE_ESCAPE:
 					escapePressed = true;
@@ -443,10 +427,10 @@ int startGame() {
 			continuarpartida = false;
 			g_engine->saveAutosaveIfEnabled();
 			totalFadeOut(0);
-			fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 			clear();
-			playMidiFile("INTRODUC", true);
-			fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			g_engine->_sound->playMidi("INTRODUC", true);
+			g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 			initialMenu(true);
 			verifyCopyProtection2();
 
@@ -460,23 +444,23 @@ int startGame() {
 				contadorpc = contadorpc2;
 				desactivagrabar = false;
 			}
-			fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 			switch (gamePart) {
 			case 1:
-				playMidiFile("PRIMERA", true);
+				g_engine->_sound->playMidi("PRIMERA", true);
 				break;
 			case 2:
-				playMidiFile("SEGUNDA", true);
+				g_engine->_sound->playMidi("SEGUNDA", true);
 				break;
 			}
-			fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+			g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 		}
 
 		switch (gamePart) {
 		case 1:
-			if (completadalista1 && completadalista2) {
-				completadalista1 = false;
-				completadalista2 = false;
+			if (list1Complete && list2Complete) {
+				list1Complete = false;
+				list2Complete = false;
 				contadorpc = contadorpc2;
 				gamePart = 2;
 				iframe = 0;
@@ -485,9 +469,9 @@ int startGame() {
 				freeScreenObjects();
 				g_engine->_mouseManager->hide();
 				partialFadeOut(234);
-				fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				playMidiFile("CREDITOS", true);
-				fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+				g_engine->_sound->playMidi("CREDITOS", true);
+				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 				if (contadorpc2 > 43)
 					showError(274);
 				sacrificeScene();
@@ -500,9 +484,9 @@ int startGame() {
 				trayec[indicetray].x = characterPosX;
 				trayec[indicetray].y = characterPosY;
 				loadScreenData(20);
-				fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
-				playMidiFile("SEGUNDA", true);
-				fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+				g_engine->_sound->playMidi("SEGUNDA", true);
+				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 				screenTransition(1, false, background);
 				mask();
 				posicioninv = 0;
@@ -576,7 +560,7 @@ void sceneChange() {
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	saveRoomData(currentRoomData, rooms);
 	// verifyCopyProtection();
-	// setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+	g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 
 	switch (currentRoomData->doors[indicepuertas].pantallaquecarga) {
 	case 2: {
@@ -592,13 +576,13 @@ void sceneChange() {
 		g_engine->_mouseManager->hide();
 
 		screenTransition(tipoefectofundido, true, NULL);
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
 			showError(274);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (teleencendida)
-			autoPlayVoc("PARASITO", 355778, 20129);
+			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			cargatele();
 		screenTransition(tipoefectofundido, false, background);
@@ -621,9 +605,9 @@ void sceneChange() {
 			g_engine->_mouseManager->hide();
 			screenTransition(tipoefectofundido, true, NULL);
 			loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
-			stopVoc();
-			autoPlayVoc("CALDERA", 6433, 15386);
-			setSfxVolume(volumenfxizquierdo, 0);
+			g_engine->_sound->stopVoc();
+			g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
+			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
 			screenTransition(tipoefectofundido, false, background);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
@@ -631,13 +615,13 @@ void sceneChange() {
 			checkMouseGrid();
 		} else {
 
-			zonaactual = currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)];
+			zonaactual = currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
 			zonadestino = 21;
 			goToObject(zonaactual, zonadestino);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			setSfxVolume(volumenfxizquierdo, 0);
+			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
 			loadScrollData(currentRoomData->doors[indicepuertas].pantallaquecarga, true, 22, -2);
 			g_engine->_mouseManager->show();
 			oldxrejilla = 0;
@@ -652,7 +636,7 @@ void sceneChange() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		loadScrollData(currentRoomData->doors[indicepuertas].pantallaquecarga, false, 22, 2);
 		g_engine->_mouseManager->show();
 		oldxrejilla = 0;
@@ -785,13 +769,13 @@ void sceneChange() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(tipoefectofundido, true, NULL);
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (libro[0] == true && currentRoomData->animationFlag == true)
 			disableSecondAnimation();
 		if (contadorpc > 89)
 			showError(274);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
@@ -877,7 +861,7 @@ void sceneChange() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(tipoefectofundido, true, NULL);
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0:
@@ -895,9 +879,9 @@ void sceneChange() {
 		}
 		if (contadorpc > 89)
 			showError(274);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (currentRoomData->codigo == 4)
-			loadVoc("GOTA", 140972, 1029);
+			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 		screenTransition(tipoefectofundido, false, background);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
@@ -917,7 +901,7 @@ void sceneChange() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(tipoefectofundido, true, NULL);
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0:
@@ -938,7 +922,7 @@ void sceneChange() {
 		}
 		if (contadorpc > 89)
 			showError(274);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (trampa_puesta) {
 			currentRoomData->animationFlag = true;
 			loadAnimation(currentRoomData->nombremovto);
@@ -985,17 +969,17 @@ void sceneChange() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(tipoefectofundido, true, NULL);
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[indicepuertas].pantallaquecarga);
 		if (contadorpc > 89)
 			showError(274);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		switch (currentRoomData->codigo) {
 		case 4:
-			loadVoc("GOTA", 140972, 1029);
+			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 			break;
 		case 23:
-			autoPlayVoc("FUENTE", 0, 0);
+			g_engine->_sound->autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
 		screenTransition(tipoefectofundido, false, background);

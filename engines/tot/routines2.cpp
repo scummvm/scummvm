@@ -354,7 +354,8 @@ void freeScreenObjects() {
 void freeAnimation() {
 	if (animacion2) {
 		animacion2 = false;
-		free(pasoanimado);
+		if(pasoanimado)
+			free(pasoanimado);
 		pasoanimado = NULL;
 	}
 }
@@ -721,7 +722,7 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	outtextxyBios(30, 140, messages[54], 15);
 	outtextxyBios(30, 160, messages[55], 15);
 	delay(1500);
-	playVoc("PORTAZO", 434988, 932);
+	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	// putShape(270, 161, (byte *)sello);
 	putShape(270, 159, sello);
 	free(sello);
@@ -1673,10 +1674,10 @@ void credits() {
 
 	g_engine->_mouseManager->hide();
 	totalFadeOut(0);
-	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	cleardevice();
-	playMidiFile("CREDITOS", true);
-	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->playMidi("CREDITOS", true);
+	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	drawCreditsScreen(fondopp, sizefondo2, fondo2);
 
 	salirpitando = false;
@@ -1747,10 +1748,10 @@ void credits() {
 Lsalida:
 	delay(1000);
 	totalFadeOut(0);
-	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	cleardevice();
-	playMidiFile("INTRODUC", true);
-	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->playMidi("INTRODUC", true);
+	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	g_engine->_mouseManager->show();
 	free(fondopp);
 	free(fondo2);
@@ -1905,7 +1906,7 @@ void initialLogo() {
 void initialMenu(bool fundido) {
 	bool kklogica = false;
 	bool opcionvalida = false;
-	stopVoc();
+	g_engine->_sound->stopVoc();
 
 	long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][1] : flcOffsets[1][1];
 
@@ -2230,8 +2231,8 @@ void soundControls() {
 	getImg(86, 31, 234, 44, sliderBackground1);
 	getImg(86, 76, 234, 89, sliderBackground2);
 
-	volumenfx = round(((volumenfxderecho + volumenfxizquierdo) / 2) * 20);
-	volumenmelodia = round(((volumenmelodiaderecho + volumenmelodiaizquierdo) / 2) * 20);
+	volumenfx = round(((rightSfxVol + leftSfxVol) / 2) * 20);
+	volumenmelodia = round(((musicVolRight + musicVolLeft) / 2) * 20);
 	putImg(volumenfx + 86, 31, slider);
 	putImg(volumenmelodia + 86, 76, slider);
 
@@ -2290,9 +2291,9 @@ void soundControls() {
 						volumenfx = xfade - 86;
 
 						debug("volumefx=%d", volumenfx);
-						volumenfxderecho = round((float)volumenfx / 20);
-						volumenfxizquierdo = round((float)volumenfx / 20);
-						setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+						rightSfxVol = round((float)volumenfx / 20);
+						leftSfxVol = round((float)volumenfx / 20);
+						g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 					}
 					g_engine->_screen->update();
 				} while (!mouseReleased);
@@ -2320,9 +2321,9 @@ void soundControls() {
 						putImg(86, 76, sliderBackground2);
 						putImg(xfade, 76, slider);
 						volumenmelodia = xfade - 86;
-						volumenmelodiaderecho = round((float)(volumenmelodia) / 20);
-						volumenmelodiaizquierdo = round((float)(volumenmelodia) / 20);
-						setMidiVolume(volumenmelodiaizquierdo, volumenmelodiaderecho);
+						musicVolRight = round((float)(volumenmelodia) / 20);
+						musicVolLeft = round((float)(volumenmelodia) / 20);
+						g_engine->_sound->setMidiVolume(musicVolLeft, musicVolRight);
 					}
 					g_engine->_screen->update();
 				} while (!mouseReleased);
@@ -2363,7 +2364,7 @@ void sacrificeScene() {
 
 	const long *offsets = (isSpanish) ? flcOffsets[0] : flcOffsets[1];
 
-	stopVoc();
+	g_engine->_sound->stopVoc();
 	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
 
@@ -2457,21 +2458,21 @@ void sacrificeScene() {
 	// We dont have the width and height here in the byte buffer
 	drawScreen(background, false);
 	partialFadeIn(234);
-	stopVoc();
+	g_engine->_sound->stopVoc();
 
 	if (g_engine->shouldQuit())
 		return;
 
 	drawFlc(0, 0, offsets[17], 0, 9, 19, false, false, true, pulsada_salida);
 	totalFadeOut(128);
-	stopVoc();
+	g_engine->_sound->stopVoc();
 	delay(1000);
 	if (g_engine->shouldQuit())
 		return;
 
-	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
-	playMidiFile("SACRIFIC", true);
-	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
+	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+	g_engine->_sound->playMidi("SACRIFIC", true);
+	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	clear();
 
 	outtextxy(10, 31, messages[23], 254);
@@ -2530,7 +2531,7 @@ void sacrificeScene() {
 	redFadeIn(palaux);
 
 	drawFlc(112, 57, offsets[18], 33, 9, 20, true, false, true, pulsada_salida);
-	autoPlayVoc("REZOS", 0, 0);
+	g_engine->_sound->autoPlayVoc("REZOS", 0, 0);
 	if (g_engine->shouldQuit())
 		return;
 
@@ -2540,7 +2541,7 @@ void sacrificeScene() {
 		return;
 
 	totalFadeOut(128);
-	stopVoc();
+	g_engine->_sound->stopVoc();
 	clear();
 
 	outtextxy(10, 21, messages[26], 254);
@@ -2722,7 +2723,7 @@ void sacrificeScene() {
 
 void ending() {
 	saveAllowed = false;
-	bool pulsada_salida;
+	bool exitRequested;
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
@@ -2748,19 +2749,19 @@ void ending() {
 	if(g_engine->shouldQuit()) {
 		return;
 	}
-	fadeOutMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
-	playMidiFile("SACRIFIC", true);
-	fadeInMusic(volumenmelodiaizquierdo, volumenmelodiaderecho);
-	drawFlc(0, 0, offsets[30], 12, 9, 26, true, false, false, pulsada_salida);
-	if(pulsada_salida){
+	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+	g_engine->_sound->playMidi("SACRIFIC", true);
+	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
+	drawFlc(0, 0, offsets[30], 12, 9, 26, true, false, false, exitRequested);
+	if(exitRequested){
 		return;
 	}
-	drawFlc(0, 0, offsets[31], 0, 9, 0, false, false, false, pulsada_salida);
-	if(pulsada_salida){
+	drawFlc(0, 0, offsets[31], 0, 9, 0, false, false, false, exitRequested);
+	if(exitRequested){
 		return;
 	}
 	delay(1000);
-	playVoc("NOOO", 0, 0);
+	g_engine->_sound->playVoc("NOOO", 0, 0);
 	delay(3000);
 	saveAllowed = true;
 }

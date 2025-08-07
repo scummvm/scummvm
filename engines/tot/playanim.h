@@ -476,10 +476,10 @@ extern uint kaka;
  * Auxiliary vars for grid update
  */
 extern uint oldposx, oldposy;
-extern uint volumenfxderecho, volumenfxizquierdo;
+extern uint rightSfxVol, leftSfxVol;
 extern uint segpasoicono;
 extern uint ofspasoicono;
-extern uint volumenmelodiaderecho, volumenmelodiaizquierdo;
+extern uint musicVolRight, musicVolLeft;
 
 /**
  * Amplitude of movement
@@ -563,8 +563,8 @@ extern byte rejamascaramovto[10][10];
  */
 extern byte rejamascararaton[10][10];
 
-extern bool completadalista1,
-	completadalista2,
+extern bool list1Complete,
+	list2Complete,
 	lista1, // whether we've been given list 1
 	lista2; // whether we've been given list 2
 

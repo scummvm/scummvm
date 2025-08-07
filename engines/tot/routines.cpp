@@ -474,7 +474,7 @@ void animatedSequence(uint numSequence) {
 		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		for (indicerep = 1; indicerep <= 3; indicerep++) {
-			playVoc("POZO", 180395, 6034);
+			g_engine->_sound->playVoc("POZO", 180395, 6034);
 			indiceani = 0;
 			do {
 				emptyLoop();
@@ -517,7 +517,7 @@ void animatedSequence(uint numSequence) {
 		animationFile.readByte();
 		animptr = (byte *)malloc(tamsecani);
 		for (indicerep = 1; indicerep <= 3; indicerep++) {
-			playVoc("POZO", 180395, 6034);
+			g_engine->_sound->playVoc("POZO", 180395, 6034);
 			indiceani = 0;
 			do {
 				emptyLoop();
@@ -543,7 +543,7 @@ void animatedSequence(uint numSequence) {
 			animationFile.seek(4);
 			// seek(ficherosecuenciaanimada, 4);
 		}
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		free(animptr);
 		animationFile.close();
 		characterPosX = guadaxframe;
@@ -735,11 +735,11 @@ void animatedSequence(uint numSequence) {
 				drawScreen(background);
 				indiceani += 1;
 				if (indiceani == 8)
-					playVoc("PUFF", 191183, 18001);
+					g_engine->_sound->playVoc("PUFF", 191183, 18001);
 			}
 		} while (indiceani != numframessec && !g_engine->shouldQuit());
 		animationFile.close();
-		stopVoc();
+		g_engine->_sound->stopVoc();
 		screenObjects[6] = NULL;
 		currentRoomData->animationFlag = true;
 	} break;
@@ -1222,7 +1222,7 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 		if (currentRoomData->animationFlag && tocapintar2) {
 			if (peteractivo && (Random(100) == 1) && !g_engine->_sound->isVocPlaying() && caramelos[0] == false) {
 				debug("Playing tos");
-				playVoc("TOS", 258006, 14044);
+				g_engine->_sound->playVoc("TOS", 258006, 14044);
 			}
 			if (indicetray2 >= currentRoomData->longtray2)
 				indicetray2 = 1;
@@ -1330,7 +1330,7 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 			else
 				movidapaleta += 1;
 			if (currentRoomData->codigo == 4 && movidapaleta == 4)
-				pitavocmem();
+				g_engine->_sound->playVoc();
 			updatePalette(movidapaleta);
 		} else {
 			saltospal += 1;
@@ -1470,9 +1470,8 @@ void animateBat() {
 		freeAnimation();
 	}
 	loadBat();
-	stopVoc();
-	loadVoc("MURCIEL", 160848, 4474);
-	pitavocmem();
+	g_engine->_sound->stopVoc();
+	g_engine->_sound->playVoc("MURCIEL", 160848, 4474);
 	itrayseg = 0;
 	longtrayseg = 87;
 	iframe2 = 0;
@@ -1494,7 +1493,7 @@ void animateBat() {
 			sprites(true);
 			tocapintar = false;
 			if (itrayseg % 24 == 0)
-				pitavocmem();
+				g_engine->_sound->playVoc();
 			if (saltospal >= 4) {
 				saltospal = 0;
 				if (movidapaleta > 6)
@@ -1509,7 +1508,7 @@ void animateBat() {
 		g_system->delayMillis(10);
 	} while (!salir_del_bucle && !g_engine->shouldQuit());
 
-	stopVoc();
+	g_engine->_sound->stopVoc();
 	freeAnimation();
 	if (currentRoomData->animationFlag) {
 		anchoanimado = anchoaniseg;
@@ -1746,7 +1745,7 @@ void pickupScreenObject() {
 							assembleScreen();
 							drawScreen(background);
 							animatePickup2(3, 1);
-							playVoc("PLATAF", 375907, 14724);
+							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							currentRoomData->bitmapasociados[1].tambitmap = 892;
 							currentRoomData->bitmapasociados[1].coordx = 66;
 							currentRoomData->bitmapasociados[1].coordy = 35;
@@ -1812,7 +1811,7 @@ void pickupScreenObject() {
 							assembleScreen();
 							drawScreen(background);
 							animatePickup2(0, 1);
-							playVoc("PLATAF", 375907, 14724);
+							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							currentRoomData->bitmapasociados[0].tambitmap = 892;
 							currentRoomData->bitmapasociados[0].coordx = 217;
 							currentRoomData->bitmapasociados[0].coordy = 48;
@@ -2175,7 +2174,7 @@ void useScreenObject() {
 			case 153: { // oil with well
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				playVoc("BLUP", 330921, 3858);
+				g_engine->_sound->playVoc("BLUP", 330921, 3858);
 				animateGive(3, 1);
 				animatePickup2(3, 1);
 				g_engine->_mouseManager->show();
@@ -2202,7 +2201,7 @@ void useScreenObject() {
 						}
 						if (aciertoslista == 5) {
 							lista1 = false;
-							completadalista1 = true;
+							list1Complete = true;
 							assignText();
 							hypertext(1018, 255, 0, kaka, false);
 							hypertext(kaka, 253, 249, kaka, true);
@@ -2254,7 +2253,7 @@ void useScreenObject() {
 						}
 						if (aciertoslista == 5) {
 							lista2 = false;
-							completadalista2 = true;
+							list2Complete = true;
 							assignText();
 							hypertext(1020, 255, 0, kaka, false);
 							hypertext(kaka, 253, 249, kaka, true);
@@ -2573,7 +2572,7 @@ void useScreenObject() {
 			} break;
 			case 201: {
 				drawText(regobj.useTextRef);
-				playVoc("GALLO", 94965, 46007);
+				g_engine->_sound->playVoc("GALLO", 94965, 46007);
 				g_engine->_mouseManager->hide();
 				animatedSequence(5);
 				replaceBackpack(indicemochila, 423);
@@ -2587,7 +2586,7 @@ void useScreenObject() {
 			case 219: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				playVoc("TAZA", 223698, 29066);
+				g_engine->_sound->playVoc("TAZA", 223698, 29066);
 				animateGive(3, 2);
 				do {
 					g_engine->_chrono->updateChrono();
@@ -2662,7 +2661,7 @@ void useScreenObject() {
 
 				g_engine->_mouseManager->hide();
 				animatePickup1(2, 0);
-				playVoc("TIJERAS", 252764, 5242);
+				g_engine->_sound->playVoc("TIJERAS", 252764, 5242);
 				g_engine->_sound->waitForSoundEnd();
 				animatePickup2(2, 0);
 				drawBackpack();
@@ -2671,7 +2670,7 @@ void useScreenObject() {
 			case 227: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				playVoc("ALACENA", 319112, 11809);
+				g_engine->_sound->playVoc("ALACENA", 319112, 11809);
 				animatePickup1(0, 2);
 				g_engine->_sound->waitForSoundEnd();
 				animateOpen2(0, 2);
@@ -2684,7 +2683,7 @@ void useScreenObject() {
 			case 274: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				playVoc("CINCEL", 334779, 19490);
+				g_engine->_sound->playVoc("CINCEL", 334779, 19490);
 				animatePickup1(direccionmovimiento, 2);
 				g_engine->_sound->waitForSoundEnd();
 				animateOpen2(direccionmovimiento, 2);
@@ -2695,10 +2694,10 @@ void useScreenObject() {
 			case 416: {
 				updateItem(regobj.code);
 				g_engine->_mouseManager->hide();
-				playVoc("PUERTA", 186429, 4754);
+				g_engine->_sound->playVoc("PUERTA", 186429, 4754);
 				animatePickup1(0, 1);
 				animateOpen2(0, 1);
-				loadVoc("GOTA", 140972, 1029);
+				g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 				g_engine->_mouseManager->show();
 				drawText(regobj.useTextRef);
 				currentRoomData->doors[2].abiertacerrada = 0;
@@ -2706,7 +2705,7 @@ void useScreenObject() {
 			case 446: {
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				playVoc("TAZA", 223698, 29066);
+				g_engine->_sound->playVoc("TAZA", 223698, 29066);
 				animateGive(0, 2);
 				g_engine->_sound->waitForSoundEnd();
 				animatePickup2(0, 2);
@@ -2717,7 +2716,7 @@ void useScreenObject() {
 			case 507: {
 				g_engine->_mouseManager->hide();
 				animatePickup1(0, 1);
-				playVoc("MAQUINA", 153470, 7378);
+				g_engine->_sound->playVoc("MAQUINA", 153470, 7378);
 				animateOpen2(0, 1);
 				updateInventory(indicemochila);
 				drawBackpack();
@@ -2727,7 +2726,7 @@ void useScreenObject() {
 			case 549: {
 				updateItem(regobj.code);
 				g_engine->_mouseManager->hide();
-				playVoc("PUERTA", 186429, 4754);
+				g_engine->_sound->playVoc("PUERTA", 186429, 4754);
 				animatePickup1(1, 1);
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
@@ -2792,7 +2791,7 @@ void useScreenObject() {
 							updateInventory(indicemochila);
 							drawBackpack();
 							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
-							playVoc("PLATAF", 375907, 14724);
+							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
 								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
@@ -2887,7 +2886,7 @@ void useScreenObject() {
 							updateInventory(indicemochila);
 							drawBackpack();
 							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
-							playVoc("PLATAF", 375907, 14724);
+							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
 								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
@@ -3028,7 +3027,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 14);
 				g_engine->_mouseManager->hide();
-				playVoc("PUFF", 191183, 18001);
+				g_engine->_sound->playVoc("PUFF", 191183, 18001);
 				// Animate to scythe
 				debug("Start anim!");
 				drawFlc(180, 60, offset, 0, 9, 0, false, false, true, basurillalog);
@@ -3081,9 +3080,6 @@ void useScreenObject() {
 
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
-				debug("-------------------------------------");
-				debug("USING RING WITH PEDESTAL");
-				debug("-------------------------------------");
 				animateGive(3, 1);
 				loadItem(86, 55, 92, 1591272, 8);
 				screenHandleToBackground();
@@ -3093,7 +3089,7 @@ void useScreenObject() {
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 10);
 				g_engine->_mouseManager->hide();
-				playVoc("PUFF", 191183, 18001);
+				g_engine->_sound->playVoc("PUFF", 191183, 18001);
 				drawFlc(0, 47, offset, 0, 9, 0, false, false, true, basurillalog);
 
 				currentRoomData->bitmapasociados[3].puntbitmap = 1591272;
@@ -3177,7 +3173,7 @@ void useScreenObject() {
 				pulsay = 71 - 7;
 				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 3);
 				g_engine->_mouseManager->hide();
-				playVoc("AFILAR", 0, 6433);
+				g_engine->_sound->playVoc("AFILAR", 0, 6433);
 				drawFlc(160, 15, offset, 0, 9, 23, false, false, true, basurillalog);
 				replaceBackpack(indicemochila, 715);
 				drawBackpack();
@@ -3272,7 +3268,7 @@ void useScreenObject() {
 					drawText(regobj.useTextRef);
 					g_engine->_mouseManager->hide();
 					animatePickup1(0, 1);
-					playVoc("TIZA", 390631, 18774);
+					g_engine->_sound->playVoc("TIZA", 390631, 18774);
 					{
 						RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
 
@@ -3288,7 +3284,7 @@ void useScreenObject() {
 					drawScreen(background);
 
 					g_engine->_sound->waitForSoundEnd();
-					playVoc("PUFF", 191183, 18001);
+					g_engine->_sound->playVoc("PUFF", 191183, 18001);
 					animateOpen2(0, 1);
 					drawFlc(180, 50, offset, 0, 9, 22, false, false, true, basurillalog);
 					salirdeljuego = true;
@@ -3353,13 +3349,13 @@ void useScreenObject() {
 					animateOpen2(0, 1);
 					teleencendida = !(teleencendida);
 					if (teleencendida) {
-						playVoc("CLICK", 27742, 2458);
+						g_engine->_sound->playVoc("CLICK", 27742, 2458);
 						g_engine->_sound->waitForSoundEnd();
 						currentRoomData->paletteAnimationFlag = true;
-						autoPlayVoc("PARASITO", 355778, 20129);
+						g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 					} else {
-						stopVoc();
-						playVoc("CLICK", 27742, 2458);
+						g_engine->_sound->stopVoc();
+						g_engine->_sound->playVoc("CLICK", 27742, 2458);
 						currentRoomData->paletteAnimationFlag = false;
 						for (indicex = 195; indicex <= 200; indicex++) {
 							pal[indicex * 3 + 0] = 2 << 2;
@@ -3372,14 +3368,14 @@ void useScreenObject() {
 				} break;
 				case 347: {
 					drawText(regobj.useTextRef);
-					stopVoc();
-					playVoc("CLICK", 27742, 2458);
+					g_engine->_sound->stopVoc();
+					g_engine->_sound->playVoc("CLICK", 27742, 2458);
 					g_engine->_mouseManager->hide();
 					animatePickup1(0, 0);
 					delay(100);
 					animateOpen2(0, 0);
-					stopVoc();
-					autoPlayVoc("CALDERA", 6433, 15386);
+					g_engine->_sound->stopVoc();
+					g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 					turnLightOn();
 					g_engine->_mouseManager->show();
 					currentRoomData->puntpaleta = 1536;
@@ -3388,8 +3384,8 @@ void useScreenObject() {
 				} break;
 				case 359: {
 					drawText(regobj.useTextRef);
-					stopVoc();
-					playVoc("CARBON", 21819, 5923);
+					g_engine->_sound->stopVoc();
+					g_engine->_sound->playVoc("CARBON", 21819, 5923);
 					g_engine->_mouseManager->hide();
 					animatePickup1(0, 0);
 					delay(100);
@@ -3400,20 +3396,20 @@ void useScreenObject() {
 					currentRoomData->indexadoobjetos[16]->objectName = getObjectName(2);
 					currentRoomData->indexadoobjetos[1]->indicefichero = 347;
 					currentRoomData->indexadoobjetos[1]->objectName = getObjectName(3);
-					stopVoc();
-					autoPlayVoc("CALDERA", 6433, 15386);
+					g_engine->_sound->stopVoc();
+					g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
 				case 682: {
 					long offsetWithJar = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][28] : flcOffsets[1][28];
 					long offsetNoJar = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][29] : flcOffsets[1][29];
 
 					g_engine->_mouseManager->hide();
-					playVoc("CLICK", 27742, 2458);
+					g_engine->_sound->playVoc("CLICK", 27742, 2458);
 					animatePickup1(0, 1);
 
 					g_engine->_sound->waitForSoundEnd();
 					animateOpen2(0, 1);
-					playVoc("FUEGO", 72598, 9789);
+					g_engine->_sound->playVoc("FUEGO", 72598, 9789);
 					if (vasijapuesta) {
 						drawFlc(108, 0, offsetWithJar, 0, 9, 0, false, false, true, basurillalog);
 						{
@@ -4033,10 +4029,10 @@ void saveGameToRegister() {
 	regpartida.longtray = longtray;
 	regpartida.indicetray = indicetray;
 	regpartida.codigoobjmochila = codigoobjmochila;
-	regpartida.volumenfxderecho = volumenfxderecho;
-	regpartida.volumenfxizquierdo = volumenfxizquierdo;
-	regpartida.volumenmelodiaderecho = volumenmelodiaderecho;
-	regpartida.volumenmelodiaizquierdo = volumenmelodiaizquierdo;
+	regpartida.volumenfxderecho = rightSfxVol;
+	regpartida.volumenfxizquierdo = leftSfxVol;
+	regpartida.volumenmelodiaderecho = musicVolRight;
+	regpartida.volumenmelodiaizquierdo = musicVolLeft;
 	regpartida.oldxrejilla = oldxrejilla;
 	regpartida.oldyrejilla = oldyrejilla;
 	regpartida.animadoprofundidad = animado.profundidad;
@@ -4060,8 +4056,8 @@ void saveGameToRegister() {
 	regpartida.sello_quitado = sello_quitado;
 	regpartida.lista1 = lista1;
 	regpartida.lista2 = lista2;
-	regpartida.completadalista1 = completadalista1;
-	regpartida.completadalista2 = completadalista2;
+	regpartida.completadalista1 = list1Complete;
+	regpartida.completadalista2 = list2Complete;
 	regpartida.vasijapuesta = vasijapuesta;
 	regpartida.guadagna = guadagna;
 	regpartida.tridente = tridente;
@@ -4130,10 +4126,10 @@ void loadGame(regispartida game) {
 	longtray = game.longtray;
 	indicetray = game.indicetray;
 	codigoobjmochila = game.codigoobjmochila;
-	volumenfxderecho = game.volumenfxderecho;
-	volumenfxizquierdo = game.volumenfxizquierdo;
-	volumenmelodiaderecho = game.volumenmelodiaderecho;
-	volumenmelodiaizquierdo = game.volumenmelodiaizquierdo;
+	rightSfxVol = game.volumenfxderecho;
+	leftSfxVol = game.volumenfxizquierdo;
+	musicVolRight = game.volumenmelodiaderecho;
+	musicVolLeft = game.volumenmelodiaizquierdo;
 	oldxrejilla = game.oldxrejilla;
 	oldyrejilla = game.oldyrejilla;
 	animado.profundidad = game.animadoprofundidad;
@@ -4161,8 +4157,8 @@ void loadGame(regispartida game) {
 	sello_quitado = game.sello_quitado;
 	lista1 = game.lista1;
 	lista2 = game.lista2;
-	completadalista1 = game.completadalista1;
-	completadalista2 = game.completadalista2;
+	list1Complete = game.completadalista1;
+	list2Complete = game.completadalista2;
 	vasijapuesta = game.vasijapuesta;
 	guadagna = game.guadagna;
 	if (contadorpc > 24)
@@ -4224,22 +4220,22 @@ void loadGame(regispartida game) {
 	switch (currentRoomData->codigo) {
 	case 2: {
 		if (teleencendida)
-			autoPlayVoc("PARASITO", 355778, 20129);
+			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			cargatele();
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 	} break;
 	case 4: {
-		loadVoc("GOTA", 140972, 1029);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->loadVoc("GOTA", 140972, 1029);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 	} break;
 	case 5: {
-		setSfxVolume(volumenfxizquierdo, 0);
-		autoPlayVoc("CALDERA", 6433, 15386);
+		g_engine->_sound->setSfxVolume(leftSfxVol, 0);
+		g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 	} break;
 	case 6: {
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
-		autoPlayVoc("CALDERA", 6433, 15386);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
+		g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 	} break;
 	case 17: {
 		if (libro[0] == true && currentRoomData->animationFlag)
@@ -4262,8 +4258,8 @@ void loadGame(regispartida game) {
 		}
 	} break;
 	case 23: {
-		autoPlayVoc("Fuente", 0, 0);
-		setSfxVolume(volumenfxizquierdo, volumenfxderecho);
+		g_engine->_sound->autoPlayVoc("Fuente", 0, 0);
+		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 	} break;
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
@@ -4877,7 +4873,7 @@ void hypertext(
 					else
 						movidapaleta += 1;
 					if (currentRoomData->codigo == 4 && movidapaleta == 4)
-						pitavocmem();
+						g_engine->_sound->playVoc();
 					updatePalette(movidapaleta);
 				} else
 					saltospal += 1;
@@ -4928,7 +4924,7 @@ void wcScene() {
 	outtextxy(50, 90, messages[48], 248);
 	delay(1000);
 
-	playVoc("WATER", 272050, 47062);
+	g_engine->_sound->playVoc("WATER", 272050, 47062);
 	bar(50, 90, 200, 100, 0);
 	delay(4000);
 
