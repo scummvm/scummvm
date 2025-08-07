@@ -7,6 +7,9 @@
 
 namespace Tot {
 
+// Enforces a small delay when text reveal is supposed to happen
+const int enforcedTextAnimDelay = 0;
+
 void showError(int code) {
 	switch (code) {
 	case 1:
@@ -368,10 +371,6 @@ void delay(uint16 ms) {
 	g_engine->_chrono->delay(ms);
 }
 
-void sound(uint16 frequency, int ms) {
-	g_engine->_sound->beep(frequency, ms);
-}
-
 /*
 Allows you to modify palette entries for the IBM
 8514 and the VGA drivers.
@@ -388,8 +387,36 @@ void setRGBPalette(int color, int r, int g, int b) {
 	g_system->getPaletteManager()->setPalette(palbuf, 0, 256);
 }
 
+void littText(int x, int y, Common::String text, byte color, Graphics::TextAlign align) {
+	littText(x, y, text.c_str(), color, align);
+}
+
+void littText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
+	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
+	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
+	// TODO: Investigate why this is needed
+	y = y + 2;
+	g_engine->_graphics->littText(text, x, y, color, align, yAligned);
+}
+
+void euroText(int x, int y, Common::String text, byte color, Graphics::TextAlign align) {
+	euroText(x, y, text.c_str(), color, align);
+}
+
+void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
+	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
+	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
+	// TODO: Investigate why this is needed
+	y = y + 2;
+	g_engine->_graphics->euroText(text, x, y, color, align, yAligned);
+}
+
 void outtextxy(int x, int y, Common::String text, byte color, bool euro, Graphics::TextAlign align) {
-	outtextxy(x, y, text.c_str(), color, euro, align);
+	if (euro) {
+		euroText(x, y, text.c_str(), color, align);
+	} else {
+		littText(x, y, text.c_str(), color, align);
+	}
 }
 
 void outtextxy(int x, int y, char const *text, byte color, bool euro, Graphics::TextAlign align) {
@@ -404,19 +431,22 @@ void outtextxy(int x, int y, char const *text, byte color, bool euro, Graphics::
 	}
 }
 
-void outtextxyBios(int x, int y, Common::String text, byte color) {
+void biosText(int x, int y, Common::String text, byte color) {
 	g_engine->_graphics->biosText(text, x, y, color);
-}
-
-void cleardevice(void) {
-	g_engine->_screen->clear();
-	g_engine->_screen->update();
 }
 
 unsigned int imagesize(int x, int y, int x2, int y2) {
 	int w = x2 - x + 1;
 	int h = y2 - y + 1;
 	return 4 + (w * h);
+}
+
+void rectangle(int x1, int y1, int x2, int y2, byte color) {
+	g_engine->_screen->drawLine(x1, y1, x2, y1, color);
+	g_engine->_screen->drawLine(x2, y1, x2, y2, color);
+	g_engine->_screen->drawLine(x1, y2, x2, y2, color);
+	g_engine->_screen->drawLine(x1, y1, x1, y2, color);
+	g_engine->_screen->addDirtyRect(Common::Rect(x1, y1, x2, y2));
 }
 
 void bar(int x1, int y1, int x2, int y2, byte color) {

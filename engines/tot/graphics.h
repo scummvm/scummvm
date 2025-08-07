@@ -27,15 +27,10 @@
 namespace Tot {
 
 void initGraph();
-void getVirtualImg(uint getcoordx1, uint getcoordy1, uint getcoordx2, uint getcoordy2, byte *backgroundScreen, byte *image);
-void putVirtualImg(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image);
-void clear();
 void drawFullScreen(byte *screen);
 void copyFromScreen(byte *&screen);
 void drawScreen(byte *screen, bool offsetSize = true);
-void putImg(uint coordx, uint coordy, byte *image, bool transparency = false);
-void putShape(uint coordx, uint coordy, byte *image);
-void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image);
+
 void loadPalette(Common::String image);
 void screenTransition(byte effectNumber, bool fadeToBlack, byte *screen);
 void turnLightOn();
@@ -47,10 +42,7 @@ void partialFadeIn(byte numCol);
 void updatePalette(byte paletteIndex);
 void changePalette(palette fromPalette, palette toPalette);
 void changeRGBBlock(byte initialColor, uint numColors, byte *rgb);
-void processingActive();
-void rectangle(int x1, int y1, int x2, int y2, byte color);
-void rectangle(uint x1, uint y1, uint x2, uint y2, byte color);
-void screenHandleToBackground();
+void restoreBackground();
 void copyPalette(palette from, palette to);
 void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
 } // End of namespace Tot

@@ -32,6 +32,7 @@
 namespace Tot {
 
 void drawText(uint number);
+void processingActive();
 void runaroundRed();
 void sprites(bool drawCharacter);
 void loadScreenData(uint screenNumber);
@@ -49,7 +50,7 @@ void handleAction(byte posinv);
 void loadObjects();
 void obtainName(Common::String &playerName);
 void loadScrollData(uint screenNumber, bool scrollder, uint poshor, int correction);
-void loadGame(regispartida game);
+void loadGame(SavedGame game);
 void saveGameToRegister();
 void saveLoad();
 void calculateRoute(byte zona1, byte zona2, bool extraCorrection = false, bool zonavedada = false);
@@ -63,7 +64,7 @@ void updateSecondaryAnimationDepth();
 void updateMainCharacterDepth();
 void actionLineText(Common::String actionLine);
 void initializeObjectFile();
-void saveItem(InvItemRegister object, Common::SeekableWriteStream *objectDataStream);
+void saveItem(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
 
 regismht readVerbRegister(uint numRegister);
 regismht readVerbRegister();

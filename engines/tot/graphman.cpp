@@ -35,6 +35,7 @@ GraphicsManager::GraphicsManager() {
 		for (int j = 0; j < 256; j++)
 			fadeData[i][j] = i / (j + 1);
 
+	// loads fonts
 	Common::File exeFile;
 	if (!exeFile.open(Common::Path("TOT.EXE"))) {
 		error("Could not open executable file!");
@@ -60,7 +61,7 @@ GraphicsManager::~GraphicsManager() {
 	delete(_bios);
 }
 
-void GraphicsManager::restoreBackground(uint x, uint y, uint x2, uint y2) {
+void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {
 	for (int j = y; j < y2; j++) {
 		for (int i = x; i < x2; i++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
@@ -76,7 +77,7 @@ void GraphicsManager::clear() {
 }
 
 void GraphicsManager::clearActionLine() {
-	restoreBackground(0, 140, 319, 149);
+	restoreBackgroundArea(0, 140, 319, 149);
 }
 
 void GraphicsManager::writeActionLine(const Common::String &str) {
@@ -93,13 +94,106 @@ void GraphicsManager::fixPalette(byte *palette, uint num) {
 	}
 }
 
-void GraphicsManager::getPalette(byte *palette) {
-	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+void GraphicsManager::getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image) {
+
+	uint16 width = coordx2 - coordx1;
+	uint16 height = coordy2 - coordy1;
+
+	WRITE_LE_UINT16(image, width);
+	WRITE_LE_UINT16(image + 2, height);
+
+	width++;
+	height++;
+
+	for (int j = 0; j < width; j++) {
+		for (int i = 0; i < height; i++) {
+			int idx = 4 + i * width + j;
+			*(image + idx) = *(byte *)g_engine->_screen->getBasePtr(coordx1 + j, coordy1 + i);
+		}
+	}
 }
+
+void GraphicsManager::putShape(uint coordx, uint coordy, byte *image) {
+	putImg(coordx, coordy, image, true);
+}
+
+void GraphicsManager::putImg(uint coordx, uint coordy, byte *image, bool transparency) {
+	uint16 w, h;
+
+	w = READ_LE_UINT16(image);
+	h = READ_LE_UINT16(image + 2);
+
+	w++;
+	h++;
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+			int index = 4 + (j * w + i);
+			if (!transparency || image[index] != 0) {
+				*(byte *)g_engine->_screen->getBasePtr(coordx + i, coordy + j) = image[index];
+			}
+		}
+	}
+	g_engine->_screen->addDirtyRect(Common::Rect(coordx, coordy, coordx + w, coordy + h));
+}
+
 byte *GraphicsManager::getPalette() {
 	byte *palette = (byte *)malloc(768);
-	getPalette(palette);
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
 	return palette;
+}
+
+
+// Copies the rectangle delimited by getCoord** from backgroundScreen into image
+void GraphicsManager::getImageArea(
+	uint getcoordx1,        // xframe
+	uint getcoordy1,        // yframe
+	uint getcoordx2,        // xframe + framewidth
+	uint getcoordy2,        // yframe + frameheight
+	byte *backgroundScreen,
+	byte *image
+) {
+	uint16 w = getcoordx2 - getcoordx1;
+	uint16 h = getcoordy2 - getcoordy1;
+
+	WRITE_UINT16(image, w);
+	WRITE_UINT16(image + 2, h);
+	w++;
+	h++;
+	int posAbs = 4 + getcoordx1 + (getcoordy1 * 320);
+
+	int sourcePtr = 0;
+	byte *destPtr = 4 + image; // Start writing after width and height
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			*destPtr++ = backgroundScreen[posAbs + sourcePtr++];
+		}
+		sourcePtr += (320 - w); // Move to the beginning of the next row in backgroundScreen
+	}
+}
+
+// puts an image into a buffer in the given position, asuming 320 width
+void GraphicsManager::putImageArea(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image) {
+	uint16 w, h;
+
+	w = READ_LE_UINT16(image);
+	h = READ_LE_UINT16(image + 2);
+
+	w++;
+	h++;
+	int posAbs = 4 + putcoordx + (putcoordy * 320);
+
+	int sourcePtr = 0;
+	byte *destPtr = 4 + image; // Start writing after width and height
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			// if(destPtr > 0)
+			backgroundScreen[posAbs + sourcePtr++] = *destPtr++;
+		}
+		sourcePtr += (320 - w); // Move to the beginning of the next row in PantFondo
+	}
 }
 
 // Debug function just to print a palette on the screen

@@ -651,7 +651,7 @@ static const char *const animMessages[2][290] = {
 }
 };
 
-static const char *const fullScreenMessages[2][58] = {
+static const char *const fullScreenMessages[2][59] = {
 	// Spanish
     {
 	// intro
@@ -717,16 +717,17 @@ static const char *const fullScreenMessages[2][58] = {
     "... AAAHHHHH!! ...",
     // Diploma
     // 49
-    "CERTIFICADO N\xA7:",
-    "Yo, Jacob, el Gran Maestre ",
-    "de la Hermandad de Sek Umh Nejl",
-    "certifico que: ",
-    "me ha liberado de las Cavernas",
-    "Eternas, por lo cual le estar\x82 ",
-    "por siempre agradecido."
-	// 57
-	"him back!  If you  achieve  this your  body will",
-	"  live once more."
+     "CERTIFICATE No:",
+    "I, Jacob, the Great Master",
+    "of the Sek Umh Fraternity",
+    "certify that: ",
+    "has liberated me from the",
+    "Eternal Caverns, and I shall be",
+    "greatful to him forever.",
+	// 56
+	"  him back!  If you  achieve  this your  body will",
+	"  live once more.",
+	"PROCESANDO......"
 	},
 
 	// English
@@ -805,7 +806,8 @@ static const char *const fullScreenMessages[2][58] = {
     "greatful to him forever.",
 	// 56
 	"  him back!  If you  achieve  this your  body will",
-	"  live once more."
+	"  live once more.",
+	"PROCESSING......"
 	},
 };
 

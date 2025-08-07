@@ -34,17 +34,17 @@ Common::MemorySeekableReadWriteStream *conversationData;
 Common::MemorySeekableReadWriteStream *rooms;
 Common::MemorySeekableReadWriteStream *invItemData;
 
-byte iraton;
+byte mouseMaskIndex;
 
-uint xraton, yraton;
+uint mouseX, mouseY;
 
-uint pulsax, pulsay;
+uint mouseClickX, mouseClickY;
 
 uint npraton2, npraton;
 
 uint oldxrejilla, oldyrejilla;
 
-regispartida regpartida;
+SavedGame regpartida;
 
 bool sello_quitado;
 
@@ -81,7 +81,7 @@ bool pintaractivo;
 
 bool animacion2;
 
-palette movimientopal;
+palette palAnimSlice;
 
 palette pal;
 
@@ -146,7 +146,7 @@ Common::String oldobjmochila, objetomochila;
 
 Common::String nombreficherofoto;
 
-Common::String nombrepersonaje;
+Common::String characterName;
 
 // Text decryption key
 Common::String decryptionKey;
@@ -155,7 +155,7 @@ uint hornacina[2][4];
 
 RoomFileRegister *currentRoomData;
 
-InvItemRegister regobj;
+ScreenObject regobj;
 
 route mainRoute;
 
@@ -182,18 +182,18 @@ byte rejamascararaton[10][10];
 bool list1Complete, list2Complete,
 	lista1, lista2;
 
-bool primera[maxpersonajes],
-	lprimera[maxpersonajes],
-	cprimera[maxpersonajes],
-	libro[maxpersonajes],
-	caramelos[maxpersonajes];
+bool primera[characterCount],
+	lprimera[characterCount],
+	cprimera[characterCount],
+	libro[characterCount],
+	caramelos[characterCount];
 
 bool cavernas[5];
 
 uint16 firstList[5], secondList[5];
 
-regsecuencia secuencia;
-reganimado animado;
+CharacterAnim secuencia;
+SecondaryAnim animado;
 uint sizeframe,
 	segpasoframe,
 	ofspasoframe,
@@ -203,27 +203,27 @@ uint sizeframe,
 	segfondo,
 	offfondo;
 
-byte fotogramamax2;
+byte maxSecondaryAnimationFrames;
 
-byte tipoefectofundido;
+byte transitionEffect;
 
 byte iframe, iframe2;
 
 long screenSize;
 
-datosobj depthMap[numobjetosconv];
+ObjectInfo depthMap[numScreenOverlays];
 
-byte *screenObjects[numobjetosconv];
+byte *screenObjects[numScreenOverlays];
 
-byte *pasoframe;
+byte *curCharacterAnimationFrame;
 
-byte *pasoanimado;
+byte *curSecondaryAnimationFrame;
 
-byte *background;
+byte *sceneBackground;
 
 byte *characterDirtyRect;
 
-byte *screenHandle;
+byte *backgroundCopy;
 
 uint currentRoomNumber;
 
@@ -235,7 +235,7 @@ void clearObj() {
 	byte indpasolimpiador1, indpasolimpiador2;
 
 	regobj.code = 0;
-	regobj.altura = 0;
+	regobj.height = 0;
 	regobj.name = "";
 	regobj.lookAtTextRef = 0;
 	regobj.beforeUseTextRef = 0;
@@ -243,22 +243,22 @@ void clearObj() {
 	regobj.pickTextRef = 0;
 	regobj.useTextRef = 0;
 	regobj.habla = 0;
-	regobj.abrir = false;
-	regobj.cerrar = false;
+	regobj.openable = false;
+	regobj.closeable = false;
 	for (indpasolimpiador1 = 0; indpasolimpiador1 <= 7; indpasolimpiador1++)
-		regobj.usar[indpasolimpiador1] = 0;
-	regobj.coger = false;
-	regobj.usarcon = 0;
-	regobj.reemplazarpor = 0;
-	regobj.profundidad = 0;
-	regobj.punterobitmap = 0;
-	regobj.tambitmap = 0;
-	regobj.punteroframesgiro = 0;
-	regobj.punteropaletagiro = 0;
-	regobj.xparche = 0;
-	regobj.yparche = 0;
-	regobj.puntparche = 0;
-	regobj.tamparche = 0;
+		regobj.used[indpasolimpiador1] = 0;
+	regobj.pickupable = false;
+	regobj.useWith = 0;
+	regobj.replaceWith = 0;
+	regobj.depth = 0;
+	regobj.bitmapPointer = 0;
+	regobj.bitmapSize = 0;
+	regobj.rotatingObjectAnimation = 0;
+	regobj.rotatingObjectPalette = 0;
+	regobj.dropOverlayX = 0;
+	regobj.dropOverlayY = 0;
+	regobj.dropOverlay = 0;
+	regobj.dropOverlaySize = 0;
 	regobj.objectIconBitmap = 0;
 	regobj.xrej1 = 0;
 	regobj.yrej1 = 0;
@@ -266,8 +266,8 @@ void clearObj() {
 	regobj.yrej2 = 0;
 	for (indpasolimpiador1 = 0; indpasolimpiador1 < 10; indpasolimpiador1++) {
 		for (indpasolimpiador2 = 0; indpasolimpiador2 < 10; indpasolimpiador2++) {
-			regobj.parcherejapantalla[indpasolimpiador1][indpasolimpiador2] = 0;
-			regobj.parcherejaraton[indpasolimpiador1][indpasolimpiador2] = 0;
+			regobj.walkAreasPatch[indpasolimpiador1][indpasolimpiador2] = 0;
+			regobj.mouseGridPatch[indpasolimpiador1][indpasolimpiador2] = 0;
 		}
 	}
 	contadorpc2 = contadorpc;
@@ -382,7 +382,7 @@ void resetGameState() {
 	cavernas[4] = false;
 
 	animacion2 = false;
-	secuencia.profundidad = 0;
+	secuencia.depth = 0;
 	rightSfxVol = 6;
 	leftSfxVol = 6;
 	musicVolRight = 3;
@@ -698,14 +698,14 @@ void initPlayAnim() {
 	// encriptado[252] = encripcod1;
 	// encriptado[253] = '\63';
 	tocapintar = false;
-	for (int i = 0; i < numobjetosconv; i++) {
+	for (int i = 0; i < numScreenOverlays; i++) {
 		screenObjects[i] = NULL;
 	}
-	xraton = 160;
-	yraton = 100;
-	pulsax = xraton;
-	pulsay = yraton;
-	iraton = 1;
+	mouseX = 160;
+	mouseY = 100;
+	mouseClickX = mouseX;
+	mouseClickY = mouseY;
+	mouseMaskIndex = 1;
 
 	resetGameState();
 	firstList[0] = 222;
@@ -728,11 +728,11 @@ void initPlayAnim() {
 }
 
 void clearVars() {
-	if(background != NULL) {
-		free(background);
+	if(sceneBackground != NULL) {
+		free(sceneBackground);
 	}
-	if(screenHandle != NULL) {
-		free(screenHandle);
+	if(backgroundCopy != NULL) {
+		free(backgroundCopy);
 	}
 	if(conversationData != NULL) {
 		free(conversationData);
@@ -743,7 +743,7 @@ void clearVars() {
 	if(invItemData != NULL) {
 		free(invItemData);
 	}
-	for(int i = 0; i < numobjetosconv; i++) {
+	for(int i = 0; i < numScreenOverlays; i++) {
 		if(screenObjects[i] != NULL) {
 			free(screenObjects[i]);
 		}
@@ -763,8 +763,8 @@ void clearVars() {
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < secAnimationFrameCount; j++) {
-			if(animado.dib[i][j] != NULL){
-				free(animado.dib[i][j]);
+			if(animado.bitmap[i][j] != NULL){
+				free(animado.bitmap[i][j]);
 			}
 		}
 	}

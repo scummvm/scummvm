@@ -46,39 +46,39 @@ bool primeravuelta;
 
 void drawText(uint xfrase, uint yfrase, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte colorfrase, byte colorborde) {
 
-	outtextxy(xfrase, (yfrase + 3), str1, colorborde);
-	outtextxy(xfrase, (yfrase + 13), str2, colorborde);
-	outtextxy(xfrase, (yfrase + 23), str3, colorborde);
-	outtextxy(xfrase, (yfrase + 33), str4, colorborde);
-	outtextxy(xfrase, (yfrase + 43), str5, colorborde);
+	littText(xfrase, (yfrase + 3), str1, colorborde);
+	littText(xfrase, (yfrase + 13), str2, colorborde);
+	littText(xfrase, (yfrase + 23), str3, colorborde);
+	littText(xfrase, (yfrase + 33), str4, colorborde);
+	littText(xfrase, (yfrase + 43), str5, colorborde);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	outtextxy(xfrase, (yfrase + 1), str1, colorborde);
-	outtextxy(xfrase, (yfrase + 11), str2, colorborde);
-	outtextxy(xfrase, (yfrase + 21), str3, colorborde);
-	outtextxy(xfrase, (yfrase + 31), str4, colorborde);
-	outtextxy(xfrase, (yfrase + 41), str5, colorborde);
+	littText(xfrase, (yfrase + 1), str1, colorborde);
+	littText(xfrase, (yfrase + 11), str2, colorborde);
+	littText(xfrase, (yfrase + 21), str3, colorborde);
+	littText(xfrase, (yfrase + 31), str4, colorborde);
+	littText(xfrase, (yfrase + 41), str5, colorborde);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	outtextxy(xfrase + 1, (yfrase + 2), str1, colorborde);
-	outtextxy(xfrase + 1, (yfrase + 12), str2, colorborde);
-	outtextxy(xfrase + 1, (yfrase + 22), str3, colorborde);
-	outtextxy(xfrase + 1, (yfrase + 32), str4, colorborde);
-	outtextxy(xfrase + 1, (yfrase + 42), str5, colorborde);
+	littText(xfrase + 1, (yfrase + 2), str1, colorborde);
+	littText(xfrase + 1, (yfrase + 12), str2, colorborde);
+	littText(xfrase + 1, (yfrase + 22), str3, colorborde);
+	littText(xfrase + 1, (yfrase + 32), str4, colorborde);
+	littText(xfrase + 1, (yfrase + 42), str5, colorborde);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	outtextxy(xfrase - 1, (yfrase + 2), str1, colorborde);
-	outtextxy(xfrase - 1, (yfrase + 12), str2, colorborde);
-	outtextxy(xfrase - 1, (yfrase + 22), str3, colorborde);
-	outtextxy(xfrase - 1, (yfrase + 32), str4, colorborde);
-	outtextxy(xfrase - 1, (yfrase + 42), str5, colorborde);
+	littText(xfrase - 1, (yfrase + 2), str1, colorborde);
+	littText(xfrase - 1, (yfrase + 12), str2, colorborde);
+	littText(xfrase - 1, (yfrase + 22), str3, colorborde);
+	littText(xfrase - 1, (yfrase + 32), str4, colorborde);
+	littText(xfrase - 1, (yfrase + 42), str5, colorborde);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	outtextxy(xfrase, (yfrase + 2), str1, colorfrase);
-	outtextxy(xfrase, (yfrase + 12), str2, colorfrase);
-	outtextxy(xfrase, (yfrase + 22), str3, colorfrase);
-	outtextxy(xfrase, (yfrase + 32), str4, colorfrase);
-	outtextxy(xfrase, (yfrase + 42), str5, colorfrase);
+	littText(xfrase, (yfrase + 2), str1, colorfrase);
+	littText(xfrase, (yfrase + 12), str2, colorfrase);
+	littText(xfrase, (yfrase + 22), str3, colorfrase);
+	littText(xfrase, (yfrase + 32), str4, colorfrase);
+	littText(xfrase, (yfrase + 42), str5, colorfrase);
 	g_engine->_screen->update();
 }
 
@@ -332,7 +332,7 @@ void handleFlcEvent(byte numero_del_evento) {
 			g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 			break;
 		case 60:
-			getImg(0, 0, 319, 29, punterofondofrase);
+			g_engine->_graphics->getImg(0, 0, 319, 29, punterofondofrase);
 			break;
 		}
 		break;
@@ -352,7 +352,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[104],
 				255, 249);
 			delay(3500);
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[105],
 				messages[106],
@@ -364,7 +364,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 6:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[110],
 				messages[111],
@@ -374,7 +374,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				255, 249);
 		}
 		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[275],
 				messages[276],
@@ -386,7 +386,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 7:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[115],
 				messages[116],
@@ -398,7 +398,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 8:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[120],
 				messages[121],
@@ -408,7 +408,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				255, 249);
 		}
 		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[280],
 				messages[281],
@@ -420,7 +420,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 9:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[125],
 				messages[126],
@@ -432,7 +432,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 10:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[130],
 				messages[131],
@@ -444,7 +444,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 11:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[135],
 				messages[136],
@@ -456,7 +456,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 12:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[140],
 				messages[141],
@@ -468,7 +468,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 13:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[145],
 				messages[146],
@@ -480,7 +480,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 14:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[150],
 				messages[151],
@@ -490,7 +490,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				255, 249);
 		}
 		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[285],
 				messages[286],
@@ -502,7 +502,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 15:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[155],
 				messages[156],
@@ -514,7 +514,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 16:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[160],
 				messages[161],
@@ -527,7 +527,7 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 17:
 		switch (framecontador) {
 		case 1:
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			break;
 		case 17:
 			delay(500);
@@ -539,7 +539,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 18:
 		if ((numerovuelta == 1) && (framecontador == 3)) {
-			putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			drawText(5, 1,
 				messages[165],
 				messages[166],
@@ -564,7 +564,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 1:
 			switch (framecontador) {
 			case 1:
-				getImg(0, 0, 319, 69, punterofondofrase);
+				g_engine->_graphics->getImg(0, 0, 319, 69, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -580,7 +580,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 3:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -596,7 +596,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 6:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -612,7 +612,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 9:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -628,7 +628,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 12:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -644,7 +644,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 15:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -660,7 +660,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 18:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -676,7 +676,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 21:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -692,7 +692,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 24:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -708,7 +708,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 27:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -724,7 +724,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 30:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -739,7 +739,7 @@ void handleFlcEvent(byte numero_del_evento) {
 			break;
 		case 33:
 			if (framecontador == 17)
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 			break;
 		}
 		break;
@@ -780,7 +780,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 1:
 			switch (framecontador) {
 			case 2:
-				getImg(0, 0, 319, 69, punterofondofrase);
+				g_engine->_graphics->getImg(0, 0, 319, 69, punterofondofrase);
 				break;
 			case 3:
 				drawText(65, 1,
@@ -796,7 +796,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 2:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -812,7 +812,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 5:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -828,7 +828,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		case 8:
 			switch (framecontador) {
 			case 1:
-				putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, punterofondofrase);
 				break;
 			case 2:
 				drawText(65, 1,

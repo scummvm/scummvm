@@ -35,6 +35,31 @@ void drawText(uint numero) {
 	verb.close();
 }
 
+
+void processingActive() {
+	const char *msg = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0][58] : fullScreenMessages[0][58];
+
+	setRGBPalette(255, 63, 63, 63);
+	littText(121, 72, msg, 0);
+	g_engine->_screen->update();
+	delay(enforcedTextAnimDelay);
+	littText(120, 71, msg, 0);
+	g_engine->_screen->update();
+	delay(enforcedTextAnimDelay);
+	littText(119, 72, msg, 0);
+	g_engine->_screen->update();
+	delay(enforcedTextAnimDelay);
+	littText(120, 73, msg, 0);
+	g_engine->_screen->update();
+	delay(enforcedTextAnimDelay);
+	littText(120, 72, msg, 255);
+	g_engine->_screen->update();
+
+	// enforce a delay for now so it's visible
+	g_system->delayMillis(200);
+}
+
+
 void runaroundRed() {
 	const uint trayseg[91][2] = {
 	 		 {204,  47}, {204,  49}, {203,  51}, {203,  53}, {201,  55}, {199, 57}, {197,  59}, {195,  61},
@@ -73,16 +98,16 @@ void runaroundRed() {
 			animado.posy = trayseg[itrayseg][1] - 42;
 			if (itrayseg >= 0 && itrayseg <= 8) {
 				animado.dir = 2;
-				animado.profundidad = 1;
+				animado.depth = 1;
 			} else if (itrayseg >= 9 && itrayseg <= 33) {
 				animado.dir = 2;
-				animado.profundidad = 14;
+				animado.depth = 14;
 			} else if (itrayseg >= 34 && itrayseg <= 63) {
 				animado.dir = 1;
-				animado.profundidad = 14;
+				animado.depth = 14;
 			} else {
 				animado.dir = 0;
-				animado.profundidad = 3;
+				animado.depth = 3;
 			}
 
 			tocapintar2 = true;
@@ -101,30 +126,30 @@ void runaroundRed() {
 		}
 	} while (!exitLoop && !g_engine->shouldQuit());
 	freeAnimation();
-	screenHandleToBackground();
+	restoreBackground();
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 }
 
 void updateMovementCells() {
 	uint j1arm, j2arm;
 	byte i1arm, i2arm;
 
-	j1arm = (currentRoomData->tray2[indicetray2 - 1].x / factorx) + 1;
-	j2arm = (currentRoomData->tray2[indicetray2 - 1].y / factory) + 1;
+	j1arm = (currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x / xGridCount) + 1;
+	j2arm = (currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y / yGridCount) + 1;
 	if ((oldposx != j1arm) || (oldposy != j2arm)) {
 
 		for (i1arm = 0; i1arm < maxrejax; i1arm++)
 			for (i2arm = 0; i2arm < maxrejay; i2arm++) {
-				currentRoomData->rejapantalla[oldposx + i1arm][oldposy + i2arm] = rejafondomovto[i1arm][i2arm];
+				currentRoomData->walkAreasGrid[oldposx + i1arm][oldposy + i2arm] = rejafondomovto[i1arm][i2arm];
 				currentRoomData->mouseGrid[oldposx + i1arm][oldposy + i2arm] = rejafondoraton[i1arm][i2arm];
 			}
 
 		for (i1arm = 0; i1arm < maxrejax; i1arm++)
 			for (i2arm = 0; i2arm < maxrejay; i2arm++) {
-				rejafondomovto[i1arm][i2arm] = currentRoomData->rejapantalla[j1arm + i1arm][j2arm + i2arm];
+				rejafondomovto[i1arm][i2arm] = currentRoomData->walkAreasGrid[j1arm + i1arm][j2arm + i2arm];
 				if (rejamascaramovto[i1arm][i2arm] > 0)
-					currentRoomData->rejapantalla[j1arm + i1arm][j2arm + i2arm] = rejamascaramovto[i1arm][i2arm];
+					currentRoomData->walkAreasGrid[j1arm + i1arm][j2arm + i2arm] = rejamascaramovto[i1arm][i2arm];
 
 				rejafondoraton[i1arm][i2arm] = currentRoomData->mouseGrid[j1arm + i1arm][j2arm + i2arm];
 				if (rejamascararaton[i1arm][i2arm] > 0)
@@ -157,7 +182,7 @@ static void assembleBackground() {
 	// XMStoPointer(ptr(segfondo, (offfondo + 4)), handpantalla, 4, (sizepantalla - longint(4)));
 
 	// copies the entire clean background in handpantalla back into fondo
-	screenHandleToBackground();
+	restoreBackground();
 
 	posabs = 4 + posfondoy * 320 + posfondox;
 	// debug("posabs = %d, posfondox = %d, posfondoy=%d", posabs, posfondox, posfondoy);
@@ -174,7 +199,7 @@ static void assembleBackground() {
 		for (int i = 0; i < w; i++) {
 			int pos = posabs + j * 320 + i;
 			int destPos = 4 + (j * w + i);
-			characterDirtyRect[destPos] = background[pos];
+			characterDirtyRect[destPos] = sceneBackground[pos];
 		}
 	}
 }
@@ -246,13 +271,13 @@ void drawMainCharacter() {
 
 	bool debug = false;
 	if (debug) {
-		screenTransition(13, false, background);
+		screenTransition(13, false, sceneBackground);
 	}
 
 	uint16 tempW;
 	uint16 tempH;
-	tempW = READ_LE_UINT16(pasoframe);
-	tempH = READ_LE_UINT16(pasoframe + 2);
+	tempW = READ_LE_UINT16(curCharacterAnimationFrame);
+	tempH = READ_LE_UINT16(curCharacterAnimationFrame + 2);
 	tempW += 6;
 	tempH += 6;
 
@@ -263,15 +288,15 @@ void drawMainCharacter() {
 
 	assembleBackground();
 	indice = 0;
-	while (indice != nivelesdeprof) {
+	while (indice != depthLevelCount) {
 
 		overlayObject();
-		if (secuencia.profundidad == indice)
-			assembleImage(pasoframe, characterPosX, characterPosY);
+		if (secuencia.depth == indice)
+			assembleImage(curCharacterAnimationFrame, characterPosX, characterPosY);
 		indice += 1;
 	}
 
-	putImg(posfondox, posfondoy, characterDirtyRect);
+	g_engine->_graphics->putImg(posfondox, posfondoy, characterDirtyRect);
 
 	if (debug) {
 		// draw background dirty area
@@ -291,25 +316,25 @@ void drawMainCharacter() {
 
 void sprites(bool pintapersonaje) {
 	// grabs the current frame from the walk cycle
-	pasoframe = secuencia.bitmap[direccionmovimiento][iframe];
+	curCharacterAnimationFrame = secuencia.bitmap[direccionmovimiento][iframe];
 
 	posfondox = characterPosX - 3;
 	posfondoy = characterPosY - 3;
 	if (animacion2) {
-		if (currentRoomData->longtray2 > 1) {
+		if (currentRoomData->secondaryTrajectoryLength > 1) {
 			updateMovementCells();
 		}
 		if (tocapintar2) {
 			if (peteractivo && !g_engine->_sound->isVocPlaying()) {
 				iframe2 = 0;
 			}
-			pasoanimado = animado.dib[animado.dir][iframe2];
+			curSecondaryAnimationFrame = animado.bitmap[animado.dir][iframe2];
 		}
-		uint16 pasoframeW = READ_LE_UINT16(pasoframe);
-		uint16 pasoframeH = READ_LE_UINT16(pasoframe + 2);
+		uint16 pasoframeW = READ_LE_UINT16(curCharacterAnimationFrame);
+		uint16 pasoframeH = READ_LE_UINT16(curCharacterAnimationFrame + 2);
 
-		uint16 pasoanimadoW = READ_LE_UINT16(pasoanimado);
-		uint16 pasoanimadoH = READ_LE_UINT16(pasoanimado + 2);
+		uint16 pasoanimadoW = READ_LE_UINT16(curSecondaryAnimationFrame);
+		uint16 pasoanimadoH = READ_LE_UINT16(curSecondaryAnimationFrame + 2);
 
 		if (
 			((animado.posx < (characterPosX + pasoframeW) + 4) &&
@@ -348,15 +373,15 @@ void sprites(bool pintapersonaje) {
 
 			assembleBackground(); // {Montar el Sprite Total}
 			indice = 0;
-			while (indice != nivelesdeprof) {
+			while (indice != depthLevelCount) {
 				overlayObject();
-				if (animado.profundidad == indice)
-					assembleImage(pasoanimado, animado.posx, animado.posy);
-				if (secuencia.profundidad == indice)
-					assembleImage(pasoframe, characterPosX, characterPosY);
+				if (animado.depth == indice)
+					assembleImage(curSecondaryAnimationFrame, animado.posx, animado.posy);
+				if (secuencia.depth == indice)
+					assembleImage(curCharacterAnimationFrame, characterPosX, characterPosY);
 				indice += 1;
 			}
-			putImg(posfondox, posfondoy, characterDirtyRect);
+			g_engine->_graphics->putImg(posfondox, posfondoy, characterDirtyRect);
 		} else { // character and animation are in different parts of the screen
 
 			if (pintapersonaje) {
@@ -366,8 +391,8 @@ void sprites(bool pintapersonaje) {
 			posfondox = animado.posx - 3;
 			posfondoy = animado.posy - 3;
 
-			pasoanimadoW = READ_LE_UINT16(pasoanimado) + 6;
-			pasoanimadoH = READ_LE_UINT16(pasoanimado + 2) + 6;
+			pasoanimadoW = READ_LE_UINT16(curSecondaryAnimationFrame) + 6;
+			pasoanimadoH = READ_LE_UINT16(curSecondaryAnimationFrame + 2) + 6;
 
 			if (posfondoy + pasoanimadoH > 140) {
 				pasoanimadoH -= (posfondoy + pasoanimadoH) - 140 + 1;
@@ -383,13 +408,13 @@ void sprites(bool pintapersonaje) {
 
 			assembleBackground();
 			indice = 0;
-			while (indice != nivelesdeprof) {
+			while (indice != depthLevelCount) {
 				overlayObject();
-				if (animado.profundidad == indice)
-					assembleImage(pasoanimado, animado.posx, animado.posy);
+				if (animado.depth == indice)
+					assembleImage(curSecondaryAnimationFrame, animado.posx, animado.posy);
 				indice += 1;
 			}
-			putImg(posfondox, posfondoy, characterDirtyRect);
+			g_engine->_graphics->putImg(posfondox, posfondoy, characterDirtyRect);
 		}
 	} else if (pintapersonaje) {
 		drawMainCharacter();
@@ -480,20 +505,20 @@ void animatedSequence(uint numSequence) {
 				emptyLoop();
 				tocapintar = false;
 				if (tocapintar2) {
-					if (indicetray2 >= currentRoomData->longtray2)
+					if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-					animado.dir = currentRoomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+					animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+					animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
 						iframe2++;
 					sprites(false);
 					animationFile.read(animptr, tamsecani);
-					putImg(animx, animy, animptr);
+					g_engine->_graphics->putImg(animx, animy, animptr);
 					indiceani += 1;
 				}
 			} while (indiceani != numframessec && !g_engine->shouldQuit());
@@ -523,20 +548,20 @@ void animatedSequence(uint numSequence) {
 				emptyLoop();
 				tocapintar = false;
 				if (tocapintar2) {
-					if (indicetray2 >= currentRoomData->longtray2)
+					if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-					animado.dir = currentRoomData->dir2[indicetray2 - 1];
+					animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+					animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+					animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
 						iframe2++;
 					sprites(false);
 					animationFile.read(animptr, tamsecani);
-					putImg(animx, animy, animptr);
+					g_engine->_graphics->putImg(animx, animy, animptr);
 					indiceani += 1;
 				}
 			} while (indiceani != numframessec && !g_engine->shouldQuit());
@@ -566,20 +591,20 @@ void animatedSequence(uint numSequence) {
 			emptyLoop();
 			tocapintar = false;
 			if (tocapintar2) {
-				if (indicetray2 >= currentRoomData->longtray2)
+				if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 					indicetray2 = 1;
 				else
 					indicetray2 += 1;
-				animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-				animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-				animado.dir = currentRoomData->dir2[indicetray2 - 1];
+				animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+				animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+				animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
 				if (iframe2 >= secondaryAnimationFrameCount - 1)
 					iframe2 = 0;
 				else
 					iframe2++;
 				sprites(false);
 				animationFile.read(animptr, tamsecani);
-				putImg(animx, animy, animptr);
+				g_engine->_graphics->putImg(animx, animy, animptr);
 				indiceani += 1;
 			}
 		} while (indiceani != numframessec && !g_engine->shouldQuit());
@@ -618,19 +643,19 @@ void animatedSequence(uint numSequence) {
 				updatePalette(movidapaleta);
 			} else
 				saltospal += 1;
-			putShape(animx, animy, animptr);
+			g_engine->_graphics->putShape(animx, animy, animptr);
 		}
-		screenObjects[regobj.profundidad - 1] = NULL;
-		screenHandleToBackground();
-		indiceani = secuencia.profundidad;
-		secuencia.profundidad = 30;
+		screenObjects[regobj.depth - 1] = NULL;
+		restoreBackground();
+		indiceani = secuencia.depth;
+		secuencia.depth = 30;
 		screenObjects[13] = animptr;
 		depthMap[13].posx = animx;
 		depthMap[13].posy = animy;
 		assembleScreen();
-		drawScreen(background);
+		drawScreen(sceneBackground);
 		screenObjects[13] = NULL;
-		secuencia.profundidad = indiceani;
+		secuencia.depth = indiceani;
 		drawBackpack();
 		for (indiceani = 32; indiceani <= numframessec; indiceani++) {
 			animationFile.read(animptr, tamsecani);
@@ -645,7 +670,7 @@ void animatedSequence(uint numSequence) {
 				updatePalette(movidapaleta);
 			} else
 				saltospal += 1;
-			putImg(animx, animy, animptr);
+			g_engine->_graphics->putImg(animx, animy, animptr);
 			if (g_engine->shouldQuit()) {
 				break;
 			}
@@ -668,27 +693,27 @@ void animatedSequence(uint numSequence) {
 			animationFile.read(animptr, tamsecani);
 			emptyLoop();
 			tocapintar = false;
-			putShape(animx, animy, animptr);
+			g_engine->_graphics->putShape(animx, animy, animptr);
 			if (g_engine->shouldQuit()) {
 				break;
 			}
 		}
-		indiceani = secuencia.profundidad;
-		secuencia.profundidad = 30;
+		indiceani = secuencia.depth;
+		secuencia.depth = 30;
 		screenObjects[12] = animptr;
 		depthMap[12].posx = animx;
 		depthMap[12].posy = animy;
 		disableSecondAnimation();
 		screenObjects[12] = NULL;
-		secuencia.profundidad = indiceani;
-		drawScreen(background);
+		secuencia.depth = indiceani;
+		drawScreen(sceneBackground);
 		for (indiceani = 9; indiceani <= numframessec; indiceani++) {
 			animationFile.read(animptr, tamsecani);
 			emptyLoop();
 			tocapintar = false;
 			emptyLoop();
 			tocapintar = false;
-			putShape(animx, animy, animptr);
+			g_engine->_graphics->putShape(animx, animy, animptr);
 			if (g_engine->shouldQuit()) {
 				break;
 			}
@@ -728,11 +753,11 @@ void animatedSequence(uint numSequence) {
 				saltospal += 1;
 			if (tocapintar2) {
 				animationFile.read(screenObjects[6], tamsecani);
-				Common::copy(screenObjects[6], screenObjects[6] + tamsecani, background + 44900);
+				Common::copy(screenObjects[6], screenObjects[6] + tamsecani, sceneBackground + 44900);
 				// blockread(ficherosecuenciaanimada, objetos[7], tamsecani);
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				indiceani += 1;
 				if (indiceani == 8)
 					g_engine->_sound->playVoc("PUFF", 191183, 18001);
@@ -748,11 +773,11 @@ void animatedSequence(uint numSequence) {
 
 DoorRegistry readRegPuertas(Common::SeekableReadStream *screenDataFile) {
 	DoorRegistry doorMetadata;
-	doorMetadata.pantallaquecarga = screenDataFile->readUint16LE();
-	doorMetadata.posxsalida = screenDataFile->readUint16LE();
-	doorMetadata.posysalida = screenDataFile->readUint16LE();
-	doorMetadata.abiertacerrada = screenDataFile->readByte();
-	doorMetadata.codigopuerta = screenDataFile->readByte();
+	doorMetadata.nextScene = screenDataFile->readUint16LE();
+	doorMetadata.exitPosX = screenDataFile->readUint16LE();
+	doorMetadata.exitPosY = screenDataFile->readUint16LE();
+	doorMetadata.openclosed = screenDataFile->readByte();
+	doorMetadata.doorcode = screenDataFile->readByte();
 
 	return doorMetadata;
 }
@@ -766,17 +791,17 @@ Common::Point readPunto(Common::SeekableReadStream *screenDataFile) {
 
 RoomBitmapRegister readBitmapAux(Common::SeekableReadStream *screenDataFile) {
 	RoomBitmapRegister bitmapMetadata = RoomBitmapRegister();
-	bitmapMetadata.puntbitmap = screenDataFile->readSint32LE();
-	bitmapMetadata.tambitmap = screenDataFile->readUint16LE();
+	bitmapMetadata.bitmapPointer = screenDataFile->readSint32LE();
+	bitmapMetadata.bitmapSize = screenDataFile->readUint16LE();
 	bitmapMetadata.coordx = screenDataFile->readUint16LE();
 	bitmapMetadata.coordy = screenDataFile->readUint16LE();
-	bitmapMetadata.profund = screenDataFile->readUint16LE();
+	bitmapMetadata.depth = screenDataFile->readUint16LE();
 	return bitmapMetadata;
 }
 
 RoomObjectListEntry *readRegIndexadoObjetos(Common::SeekableReadStream *screenDataFile) {
 	RoomObjectListEntry *objectMetadata = new RoomObjectListEntry();
-	objectMetadata->indicefichero = screenDataFile->readUint16LE();
+	objectMetadata->fileIndex = screenDataFile->readUint16LE();
 	objectMetadata->objectName = screenDataFile->readPascalString();
 
 	screenDataFile->skip(20 - objectMetadata->objectName.size());
@@ -786,10 +811,10 @@ RoomObjectListEntry *readRegIndexadoObjetos(Common::SeekableReadStream *screenDa
 
 RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile) {
 	RoomFileRegister *screenData = new RoomFileRegister();
-	screenData->codigo = screenDataFile->readUint16LE();
-	screenData->puntimagenpantalla = screenDataFile->readUint32LE();
-	screenData->tamimagenpantalla = screenDataFile->readUint16LE();
-	screenDataFile->read(screenData->rejapantalla, 40 * 28);
+	screenData->code = screenDataFile->readUint16LE();
+	screenData->roomImagePointer = screenDataFile->readUint32LE();
+	screenData->roomImageSize = screenDataFile->readUint16LE();
+	screenDataFile->read(screenData->walkAreasGrid, 40 * 28);
 	screenDataFile->read(screenData->mouseGrid, 40 * 28);
 	// read puntos
 	for (int i = 0; i < 9; i++) {
@@ -804,22 +829,22 @@ RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile)
 		screenData->doors[i] = readRegPuertas(screenDataFile);
 	}
 	for (int i = 0; i < 15; i++) {
-		screenData->bitmapasociados[i] = readBitmapAux(screenDataFile);
+		screenData->screenLayers[i] = readBitmapAux(screenDataFile);
 	}
 	for (int i = 0; i < 51; i++) {
-		screenData->indexadoobjetos[i] = readRegIndexadoObjetos(screenDataFile);
+		screenData->screenObjectIndex[i] = readRegIndexadoObjetos(screenDataFile);
 	}
 
 	screenData->animationFlag = screenDataFile->readByte();
-	screenData->nombremovto = screenDataFile->readPascalString();
-	screenDataFile->skip(8 - screenData->nombremovto.size());
+	screenData->animationName = screenDataFile->readPascalString();
+	screenDataFile->skip(8 - screenData->animationName.size());
 	screenData->paletteAnimationFlag = screenDataFile->readByte();
-	screenData->puntpaleta = screenDataFile->readUint16LE();
+	screenData->palettePointer = screenDataFile->readUint16LE();
 	for (int i = 0; i < 300; i++) {
-		screenData->tray2[i] = readPunto(screenDataFile);
+		screenData->secondaryAnimTrajectory[i] = readPunto(screenDataFile);
 	}
-	screenDataFile->read(screenData->dir2, 600);
-	screenData->longtray2 = screenDataFile->readUint16LE();
+	screenDataFile->read(screenData->secondaryAnimDirections, 600);
+	screenData->secondaryTrajectoryLength = screenDataFile->readUint16LE();
 	return screenData;
 }
 
@@ -832,27 +857,27 @@ void loadScreenData(uint screenNumber) {
 	currentRoomData = readScreenDataFile(rooms);
 	loadScreen();
 	for (int i = 0; i < 15; i++) {
-		RoomBitmapRegister &bitmap = currentRoomData->bitmapasociados[i];
-		if (bitmap.tambitmap > 0) {
-			loadItem(bitmap.coordx, bitmap.coordy, bitmap.tambitmap, bitmap.puntbitmap, bitmap.profund);
+		RoomBitmapRegister &bitmap = currentRoomData->screenLayers[i];
+		if (bitmap.bitmapSize > 0) {
+			loadItem(bitmap.coordx, bitmap.coordy, bitmap.bitmapSize, bitmap.bitmapPointer, bitmap.depth);
 		}
 	}
-	if (currentRoomData->animationFlag && currentRoomData->codigo != 24) {
-		loadAnimation(currentRoomData->nombremovto);
+	if (currentRoomData->animationFlag && currentRoomData->code != 24) {
+		loadAnimation(currentRoomData->animationName);
 		iframe2 = 0;
 		indicetray2 = 1;
-		animado.dir = currentRoomData->dir2[indicetray2 - 1];
-		animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-		animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-		if (currentRoomData->nombremovto == "FUENTE01")
-			animado.profundidad = 0;
+		animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+		animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+		animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+		if (currentRoomData->animationName == "FUENTE01")
+			animado.depth = 0;
 		else {
 			updateSecondaryAnimationDepth();
 		}
 		for (int i = 0; i < maxrejax; i++)
 			for (int j = 0; j < maxrejay; j++) {
 				if (rejamascaramovto[i][j] > 0)
-					currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
+					currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 				if (rejamascararaton[i][j] > 0)
 					currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 			}
@@ -940,7 +965,7 @@ void lookInventoryObject(byte numeroobjeto) {
 	g_engine->_mouseManager->hide();
 	copyPalette(pal, paletaseg);
 	readItemRegister(mobj[numeroobjeto].code);
-	getImg(0, 0, 319, 139, background);
+	g_engine->_graphics->getImg(0, 0, 319, 139, sceneBackground);
 	partialFadeOut(234);
 	bar(0, 0, 319, 139, 0);
 	for (yaux = 1; yaux <= 12; yaux++)
@@ -960,13 +985,13 @@ void lookInventoryObject(byte numeroobjeto) {
 
 	drawMenu(4);
 
-	if (regobj.usar[0] != 9) {
+	if (regobj.used[0] != 9) {
 		if (regobj.beforeUseTextRef != 0) {
 			assignText();
 			reghpt = readVerbRegister(regobj.beforeUseTextRef);
-			cadenadescripcion = reghpt.cadenatext;
-			for (yaux = 0; yaux < reghpt.cadenatext.size(); yaux++)
-				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.cadenatext[yaux], yaux);
+			cadenadescripcion = reghpt.text;
+			for (yaux = 0; yaux < reghpt.text.size(); yaux++)
+				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.text[yaux], yaux);
 			hipercadena(cadenadescripcion, 60, 15, 33, 255, 0);
 			verb.close();
 		} else {
@@ -978,9 +1003,9 @@ void lookInventoryObject(byte numeroobjeto) {
 		if (regobj.afterUseTextRef != 0) {
 			assignText();
 			reghpt = readVerbRegister(regobj.afterUseTextRef);
-			cadenadescripcion = reghpt.cadenatext;
-			for (yaux = 0; yaux < reghpt.cadenatext.size(); yaux++)
-				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.cadenatext[yaux], yaux);
+			cadenadescripcion = reghpt.text;
+			for (yaux = 0; yaux < reghpt.text.size(); yaux++)
+				cadenadescripcion.setChar(decryptionKey[yaux] ^ reghpt.text[yaux], yaux);
 			hipercadena(cadenadescripcion, 60, 15, 33, 255, 0);
 			verb.close();
 		} else {
@@ -989,12 +1014,12 @@ void lookInventoryObject(byte numeroobjeto) {
 		}
 	}
 
-	drawFlc(125, 70, regobj.punteroframesgiro, 60000, 9, 0, false, true, true, kkaux);
+	drawFlc(125, 70, regobj.rotatingObjectAnimation, 60000, 9, 0, false, true, true, kkaux);
 
 	screenTransition(3, true, NULL);
 	partialFadeOut(234);
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 	copyPalette(paletaseg, pal);
 	partialFadeIn(234);
 	g_engine->_mouseManager->show();
@@ -1006,7 +1031,7 @@ void useInventoryObjectWithInventoryObject(uint numobj1, uint numobj2) {
 	debug("Reading item register %d", numobj1);
 	readItemRegister(invItemData, numobj1, regobj);
 	// verifyCopyProtection2();
-	if (regobj.usar[0] != 1 || regobj.usarcon != numobj2) {
+	if (regobj.used[0] != 1 || regobj.useWith != numobj2) {
 		drawText(Random(11) + 1022);
 		return;
 	}
@@ -1025,17 +1050,17 @@ void useInventoryObjectWithInventoryObject(uint numobj1, uint numobj2) {
 	indobj2 = indicemochila;
 	kaka = regobj.useTextRef;
 
-	if (regobj.reemplazarpor == 0) {
+	if (regobj.replaceWith == 0) {
 		readItemRegister(invItemData, numobj1, regobj);
-		regobj.usar[0] = 9;
+		regobj.used[0] = 9;
 		saveItemRegister(regobj, invItemData);
 
 		readItemRegister(invItemData, numobj2, regobj);
-		regobj.usar[0] = 9;
+		regobj.used[0] = 9;
 		saveItemRegister(regobj, invItemData);
 
 	} else {
-		readItemRegister(invItemData, regobj.reemplazarpor, regobj);
+		readItemRegister(invItemData, regobj.replaceWith, regobj);
 		mobj[indobj1].bitmapIndex = regobj.objectIconBitmap;
 		mobj[indobj1].code = regobj.code;
 		mobj[indobj1].objectName = regobj.name;
@@ -1068,32 +1093,32 @@ void calculateRoute(byte zona1, byte zona2, bool extraCorrection, bool zonavedad
 		pasos += 1;
 		point = currentRoomData->trajectories[zona1 - 1][zona2 - 1][pasos - 1];
 
-		if (point.x < (rectificacionx + 3))
+		if (point.x < (characterCorrectionX + 3))
 			mainRoute[pasos].x = 3;
 		else
-			mainRoute[pasos].x = point.x - rectificacionx;
-		if (point.y < (rectificaciony + 3))
+			mainRoute[pasos].x = point.x - characterCorrectionX;
+		if (point.y < (characerCorrectionY + 3))
 			mainRoute[pasos].y = 3;
 		else
-			mainRoute[pasos].y = point.y - rectificaciony;
+			mainRoute[pasos].y = point.y - characerCorrectionY;
 
 	} while (point.y != 9999 && pasos != 5);
 
 	if (zona2 < 10) {
 		if (point.y == 9999) {
-			mainRoute[pasos].x = xframe2 - rectificacionx;
-			mainRoute[pasos].y = yframe2 - rectificaciony;
+			mainRoute[pasos].x = xframe2 - characterCorrectionX;
+			mainRoute[pasos].y = yframe2 - characerCorrectionY;
 		} else {
-			mainRoute[6].x = xframe2 - rectificacionx;
-			mainRoute[6].y = yframe2 - rectificaciony;
+			mainRoute[6].x = xframe2 - characterCorrectionX;
+			mainRoute[6].y = yframe2 - characerCorrectionY;
 			pasos = 6;
 		}
 	} else {
-		if ((mainRoute[pasos].y + rectificaciony) == 9999) {
+		if ((mainRoute[pasos].y + characerCorrectionY) == 9999) {
 			pasos -= 1;
 		}
 		if (extraCorrection) {
-			switch (currentRoomData->codigo) {
+			switch (currentRoomData->code) {
 			case 5:
 				if (zona2 == 27)
 					pasos += 1;
@@ -1123,21 +1148,21 @@ void goToObject(byte zona1, byte zona2) {
 	contadorpc2 = contadorpc;
 
 	for (int indicepaso = 0; indicepaso < 5; indicepaso++) {
-		if (currentRoomData->doors[indicepaso].codigopuerta == zona2) {
+		if (currentRoomData->doors[indicepaso].doorcode == zona2) {
 			zonavedada = true;
 			break;
 		}
 	}
 
-	if (currentRoomData->codigo == 21 && currentRoomData->animationFlag) {
+	if (currentRoomData->code == 21 && currentRoomData->animationFlag) {
 		if ((zona2 >= 1 && zona2 <= 5) ||
 			(zona2 >= 9 && zona2 <= 13) ||
 			(zona2 >= 18 && zona2 <= 21) ||
 			zona2 == 24 || zona2 == 25) {
 
 			zonadestino = 7;
-			pulsax = 232;
-			pulsay = 75;
+			mouseClickX = 232;
+			mouseClickY = 75;
 			zona2 = 7;
 		}
 		if (zona2 == 24) {
@@ -1145,8 +1170,8 @@ void goToObject(byte zona1, byte zona2) {
 		}
 	}
 	if (zona1 < 10) {
-		xframe2 = pulsax + 7;
-		yframe2 = pulsay + 7;
+		xframe2 = mouseClickX + 7;
+		yframe2 = mouseClickY + 7;
 
 		g_engine->_mouseManager->hide();
 		calculateRoute(zona1, zona2, true, zonavedada);
@@ -1170,49 +1195,49 @@ void goToObject(byte zona1, byte zona2) {
 void updateSecondaryAnimationDepth() {
 	uint animadoposition = animado.posy + altoanimado - 1;
 	if (animadoposition >= 0 && animadoposition <= 56) {
-		animado.profundidad = 0;
+		animado.depth = 0;
 	} else if (animadoposition >= 57 && animadoposition <= 66) {
-		animado.profundidad = 1;
+		animado.depth = 1;
 	} else if (animadoposition >= 65 && animadoposition <= 74) {
-		animado.profundidad = 2;
+		animado.depth = 2;
 	} else if (animadoposition >= 73 && animadoposition <= 82) {
-		animado.profundidad = 3;
+		animado.depth = 3;
 	} else if (animadoposition >= 81 && animadoposition <= 90) {
-		animado.profundidad = 4;
+		animado.depth = 4;
 	} else if (animadoposition >= 89 && animadoposition <= 98) {
-		animado.profundidad = 5;
+		animado.depth = 5;
 	} else if (animadoposition >= 97 && animadoposition <= 106) {
-		animado.profundidad = 6;
+		animado.depth = 6;
 	} else if (animadoposition >= 105 && animadoposition <= 114) {
-		animado.profundidad = 7;
+		animado.depth = 7;
 	} else if (animadoposition >= 113 && animadoposition <= 122) {
-		animado.profundidad = 8;
+		animado.depth = 8;
 	} else if (animadoposition >= 121 && animadoposition <= 140) {
-		animado.profundidad = 9;
+		animado.depth = 9;
 	}
 }
 
 void updateMainCharacterDepth() {
 	if (characterPosY >= 0 && characterPosY <= 7) {
-		secuencia.profundidad = 0;
+		secuencia.depth = 0;
 	} else if (characterPosY >= 8 && characterPosY <= 17) {
-		secuencia.profundidad = 1;
+		secuencia.depth = 1;
 	} else if (characterPosY >= 18 && characterPosY <= 25) {
-		secuencia.profundidad = 2;
+		secuencia.depth = 2;
 	} else if (characterPosY >= 26 && characterPosY <= 33) {
-		secuencia.profundidad = 3;
+		secuencia.depth = 3;
 	} else if (characterPosY >= 34 && characterPosY <= 41) {
-		secuencia.profundidad = 4;
+		secuencia.depth = 4;
 	} else if (characterPosY >= 42 && characterPosY <= 49) {
-		secuencia.profundidad = 5;
+		secuencia.depth = 5;
 	} else if (characterPosY >= 50 && characterPosY <= 57) {
-		secuencia.profundidad = 6;
+		secuencia.depth = 6;
 	} else if (characterPosY >= 58 && characterPosY <= 65) {
-		secuencia.profundidad = 7;
+		secuencia.depth = 7;
 	} else if (characterPosY >= 66 && characterPosY <= 73) {
-		secuencia.profundidad = 8;
+		secuencia.depth = 8;
 	} else if (characterPosY >= 74 && characterPosY <= 139) {
-		secuencia.profundidad = 9;
+		secuencia.depth = 9;
 	}
 }
 
@@ -1224,7 +1249,7 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 				debug("Playing tos");
 				g_engine->_sound->playVoc("TOS", 258006, 14044);
 			}
-			if (indicetray2 >= currentRoomData->longtray2)
+			if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 				indicetray2 = 1;
 			else
 				indicetray2 += 1;
@@ -1232,15 +1257,15 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 				iframe2 = 0;
 			else
 				iframe2++;
-			animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-			animado.dir = currentRoomData->dir2[indicetray2 - 1];
-			switch (currentRoomData->codigo) {
+			animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+			animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+			animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+			switch (currentRoomData->code) {
 			case 23:
-				animado.profundidad = 0;
+				animado.depth = 0;
 				break;
 			case 24:
-				animado.profundidad = 14;
+				animado.depth = 14;
 				break;
 			default:
 				updateSecondaryAnimationDepth();
@@ -1278,8 +1303,8 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 			} else if (indicetray >= longtray) {
 				xframe2 = 0;
 				if (!cambiopantalla) {
-					elemento1 = (xraton + 7) - (characterPosX + rectificacionx);
-					elemento2 = (yraton + 7) - (characterPosY + rectificaciony);
+					elemento1 = (mouseX + 7) - (characterPosX + characterCorrectionX);
+					elemento2 = (mouseY + 7) - (characterPosY + characerCorrectionY);
 					if (abs(elemento2) > (abs(elemento1) + 20)) {
 						if (elemento2 < 0)
 							direccionmovimiento = 0;
@@ -1299,8 +1324,8 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 		} else {
 			iframe = 0;
 			if (zonavedada == false && !cambiopantalla) {
-				elemento1 = (xraton + 7) - (characterPosX + rectificacionx);
-				elemento2 = (yraton + 7) - (characterPosY + rectificaciony);
+				elemento1 = (mouseX + 7) - (characterPosX + characterCorrectionX);
+				elemento2 = (mouseY + 7) - (characterPosY + characerCorrectionY);
 				if (abs(elemento2) > (abs(elemento1) + 20)) {
 					if (elemento2 < 0)
 						direccionmovimiento = 0;
@@ -1329,7 +1354,7 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 				movidapaleta = 0;
 			else
 				movidapaleta += 1;
-			if (currentRoomData->codigo == 4 && movidapaleta == 4)
+			if (currentRoomData->code == 4 && movidapaleta == 4)
 				g_engine->_sound->playVoc();
 			updatePalette(movidapaleta);
 		} else {
@@ -1339,7 +1364,7 @@ void advanceAnimations(bool zonavedada, bool animateMouse) {
 }
 
 void actionLineText(Common::String actionLine) {
-	outtextxy(160, 144, actionLine, 255, true, Graphics::kTextAlignCenter);
+	euroText(160, 144, actionLine, 255, Graphics::kTextAlignCenter);
 }
 
 void animateGive(uint cogedir, uint cogealt) {
@@ -1465,7 +1490,7 @@ void animateBat() {
 		yseg = animado.posy;
 		anchoaniseg = anchoanimado;
 		altoaniseg = altoanimado;
-		profseg = animado.profundidad;
+		profseg = animado.depth;
 		dirseg = animado.dir;
 		freeAnimation();
 	}
@@ -1475,7 +1500,7 @@ void animateBat() {
 	itrayseg = 0;
 	longtrayseg = 87;
 	iframe2 = 0;
-	animado.profundidad = 14;
+	animado.depth = 14;
 	do {
 		g_engine->_chrono->updateChrono();
 		if (tocapintar) {
@@ -1514,23 +1539,23 @@ void animateBat() {
 		anchoanimado = anchoaniseg;
 		altoanimado = altoaniseg;
 		setRoomTrajectories(altoanimado, anchoanimado, RESTORE, false);
-		loadAnimation(currentRoomData->nombremovto);
+		loadAnimation(currentRoomData->animationName);
 		iframe2 = iframe2seg;
 		animado.posx = xseg;
 		animado.posy = yseg;
-		animado.profundidad = profseg;
+		animado.depth = profseg;
 		animado.dir = dirseg;
 	}
-	screenHandleToBackground();
+	restoreBackground();
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 }
 
 void updateVideo() {
-	readBitmap(regobj.puntparche, screenObjects[regobj.profundidad - 1], regobj.tamparche, 319);
-	screenHandleToBackground();
+	readBitmap(regobj.dropOverlay, screenObjects[regobj.depth - 1], regobj.dropOverlaySize, 319);
+	restoreBackground();
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 }
 
 void nicheAnimation(byte direccionhn, int32 bitmap) {
@@ -1538,7 +1563,7 @@ void nicheAnimation(byte direccionhn, int32 bitmap) {
 	int incrementohn;
 
 	// Room with Red
-	if (currentRoomData->codigo == 24) {
+	if (currentRoomData->code == 24) {
 		screenObjects[1] = (byte *)malloc(3660);
 		readBitmap(1382874, screenObjects[1], 3652, 319);
 		uint16 object1Width = READ_LE_UINT16(screenObjects[1]);
@@ -1553,17 +1578,17 @@ void nicheAnimation(byte direccionhn, int32 bitmap) {
 	case 0: {
 		posdibhn = 44904;
 		incrementohn = 1;
-		Common::copy(screenObjects[0], screenObjects[0] + 892, background + 44900);
+		Common::copy(screenObjects[0], screenObjects[0] + 892, sceneBackground + 44900);
 		readBitmap(bitmap, screenObjects[0], 892, 319);
-		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, background + 44900 + 892);
+		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, sceneBackground + 44900 + 892);
 	} break;
 	case 1: { // object slides to reveal empty stand
 		posdibhn = 892 + 44900;
 		incrementohn = -1;
 		// Reads the empty alcove into a non-visible part of fondo
-		readBitmap(bitmap, background + 44900, 892, 319);
+		readBitmap(bitmap, sceneBackground + 44900, 892, 319);
 		// Copies whatever is currently on the alcove in a non-visible part of fondo contiguous with the above
-		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, background + 44900 + 892);
+		Common::copy(screenObjects[0] + 4, screenObjects[0] + 4 + 888, sceneBackground + 44900 + 892);
 		// We now have in consecutive pixels the empty stand and the object
 
 	} break;
@@ -1572,25 +1597,25 @@ void nicheAnimation(byte direccionhn, int32 bitmap) {
 	uint16 alcoveHeight = READ_LE_UINT16(screenObjects[0] + 2);
 
 	// Set the height to double to animate 2 images of the same height moving up/down
-	*(background + 44900 + 2) = (alcoveHeight * 2) + 1;
+	*(sceneBackground + 44900 + 2) = (alcoveHeight * 2) + 1;
 
-	screenHandleToBackground();
+	restoreBackground();
 
 	for (indicehn = 1; indicehn <= alcoveHeight; indicehn++) {
 
 		posdibhn = posdibhn + (incrementohn * (alcoveWidth + 1));
-		Common::copy(background + posdibhn, background + posdibhn + 888, screenObjects[0] + 4);
+		Common::copy(sceneBackground + posdibhn, sceneBackground + posdibhn + 888, screenObjects[0] + 4);
 		assembleScreen();
-		drawScreen(background);
+		drawScreen(sceneBackground);
 		g_engine->_screen->update();
 	}
 	readBitmap(bitmap, screenObjects[0], 892, 319);
 
-	screenHandleToBackground();
+	restoreBackground();
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 
-	if (currentRoomData->codigo == 24) {
+	if (currentRoomData->code == 24) {
 		free(screenObjects[1]);
 		screenObjects[1] = NULL;
 	}
@@ -1600,17 +1625,17 @@ void pickupScreenObject() {
 	byte indicemochila, indicex, indicey;
 	uint screenObject;
 
-	uint mouseX = (pulsax + 7) / factorx;
-	uint mouseY = (pulsay + 7) / factory;
-	screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	uint mouseX = (mouseClickX + 7) / xGridCount;
+	uint mouseY = (mouseClickY + 7) / yGridCount;
+	screenObject = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex;
 	if (screenObject == 0)
 		return;
 	readItemRegister(screenObject);
 	goToObject(
-		currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-		currentRoomData->rejapantalla[mouseX][mouseY]);
+		currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
+		currentRoomData->walkAreasGrid[mouseX][mouseY]);
 	verifyCopyProtection();
-	if (regobj.coger) {
+	if (regobj.pickupable) {
 		g_engine->_mouseManager->hide();
 		switch (regobj.code) {
 		case 521: { // Corridor lamp
@@ -1637,7 +1662,7 @@ void pickupScreenObject() {
 			vasijapuesta = false;
 		} break;
 		}
-		switch (regobj.altura) {
+		switch (regobj.height) {
 		case 0: { // Pick up above
 			switch (regobj.code) {
 			case 590: { // Ectoplasm
@@ -1646,10 +1671,10 @@ void pickupScreenObject() {
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 0);
-				screenObjects[regobj.profundidad - 1] = NULL;
-				screenHandleToBackground();
+				screenObjects[regobj.depth - 1] = NULL;
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(direccionmovimiento, 0);
 			}
 			}
@@ -1662,7 +1687,7 @@ void pickupScreenObject() {
 			} break;
 			case 223: { // table cloths
 				animatePickup1(0, 1);
-				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
+				currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex = regobj.replaceWith;
 				updateVideo();
 				animatePickup2(0, 1);
 			} break;
@@ -1686,90 +1711,90 @@ void pickupScreenObject() {
 			case 521: { // Puts plaster and key on the floor
 				animatePickup1(0, 1);
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[1];
 
-					with.puntbitmap = 775611;
-					with.tambitmap = 36;
+					with.bitmapPointer = 775611;
+					with.bitmapSize = 36;
 					with.coordx = 80;
 					with.coordy = 56;
-					with.profund = 2;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 2;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[2];
 
-					with.puntbitmap = 730743;
-					with.tambitmap = 64;
+					with.bitmapPointer = 730743;
+					with.bitmapSize = 64;
 					with.coordx = 76;
 					with.coordy = 62;
-					with.profund = 1;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 1;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				screenObjects[regobj.profundidad - 1] = NULL;
-				screenHandleToBackground();
+				screenObjects[regobj.depth - 1] = NULL;
+				restoreBackground();
 
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(0, 1);
 			} break;
 			case 562: { // alcove
-				switch (currentRoomData->codigo) {
+				switch (currentRoomData->code) {
 				case 20: { // First scene with alcove
 					if (hornacina[0][hornacina[0][3]] > 0) {
 						// Possibly
 						if (hornacina[0][3] == 2 || hornacina[0][hornacina[0][3]] == 563) {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
 							hornacina[0][hornacina[0][3]] = 0;
-							currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+							currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 							animatePickup1(3, 1);
-							readBitmap(1190768, screenObjects[regobj.profundidad - 1], 892, 319);
-							currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
-							currentRoomData->bitmapasociados[1].tambitmap = 892;
-							currentRoomData->bitmapasociados[1].coordx = 66;
-							currentRoomData->bitmapasociados[1].coordy = 35;
-							currentRoomData->bitmapasociados[1].profund = 1;
-							screenHandleToBackground();
+							readBitmap(1190768, screenObjects[regobj.depth - 1], 892, 319);
+							currentRoomData->screenLayers[1].bitmapPointer = 1190768;
+							currentRoomData->screenLayers[1].bitmapSize = 892;
+							currentRoomData->screenLayers[1].coordx = 66;
+							currentRoomData->screenLayers[1].coordy = 35;
+							currentRoomData->screenLayers[1].depth = 1;
+							restoreBackground();
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animatePickup2(3, 1);
 						} else {
 							readItemRegister(hornacina[0][hornacina[0][3]]);
 							hornacina[0][hornacina[0][3]] = 0;
 							hornacina[0][3] += 1;
 							hornacina[1][3] -= 1;
-							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[9]->objectName = "                    ";
 							animatePickup1(3, 1);
-							readBitmap(1190768, screenObjects[regobj.profundidad - 1],
+							readBitmap(1190768, screenObjects[regobj.depth - 1],
 									   892, 319);
-							screenHandleToBackground();
+							restoreBackground();
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animatePickup2(3, 1);
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
-							currentRoomData->bitmapasociados[1].tambitmap = 892;
-							currentRoomData->bitmapasociados[1].coordx = 66;
-							currentRoomData->bitmapasociados[1].coordy = 35;
-							currentRoomData->bitmapasociados[1].profund = 1;
+							currentRoomData->screenLayers[1].bitmapSize = 892;
+							currentRoomData->screenLayers[1].coordx = 66;
+							currentRoomData->screenLayers[1].coordy = 35;
+							currentRoomData->screenLayers[1].depth = 1;
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 								nicheAnimation(0, 1190768);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
+								currentRoomData->screenLayers[1].bitmapPointer = 1190768;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
 								nicheAnimation(0, 1182652);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->screenLayers[1].bitmapPointer = 1182652;
 							} break;
 							case 563: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
 								nicheAnimation(0, 1186044);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
+								currentRoomData->screenLayers[1].bitmapPointer = 1186044;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 								nicheAnimation(0, 1181760);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->screenLayers[1].bitmapPointer = 1181760;
 							} break;
 							}
 							updateAltScreen(24);
@@ -1787,60 +1812,60 @@ void pickupScreenObject() {
 						if (hornacina[1][3] == 2) {
 							readItemRegister(hornacina[1][2]);
 							hornacina[1][2] = 0;
-							currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+							currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 							animatePickup1(0, 1);
-							readBitmap(1399610, screenObjects[regobj.profundidad - 1], 892, 319);
-							currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
-							currentRoomData->bitmapasociados[0].tambitmap = 892;
-							currentRoomData->bitmapasociados[0].coordx = 217;
-							currentRoomData->bitmapasociados[0].coordy = 48;
-							currentRoomData->bitmapasociados[0].profund = 1;
-							screenHandleToBackground();
+							readBitmap(1399610, screenObjects[regobj.depth - 1], 892, 319);
+							currentRoomData->screenLayers[0].bitmapPointer = 1399610;
+							currentRoomData->screenLayers[0].bitmapSize = 892;
+							currentRoomData->screenLayers[0].coordx = 217;
+							currentRoomData->screenLayers[0].coordy = 48;
+							currentRoomData->screenLayers[0].depth = 1;
+							restoreBackground();
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animatePickup2(0, 1);
 						} else {
 							readItemRegister(hornacina[1][hornacina[1][3]]);
 							hornacina[1][hornacina[1][3]] = 622;
 							hornacina[1][3] += 1;
 							hornacina[0][3] -= 1;
-							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[8]->objectName = "                    ";
 							animatePickup1(0, 1);
 							readBitmap(1399610, screenObjects[0], 892, 319);
-							screenHandleToBackground();
+							restoreBackground();
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animatePickup2(0, 1);
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
-							currentRoomData->bitmapasociados[0].tambitmap = 892;
-							currentRoomData->bitmapasociados[0].coordx = 217;
-							currentRoomData->bitmapasociados[0].coordy = 48;
-							currentRoomData->bitmapasociados[0].profund = 1;
+							currentRoomData->screenLayers[0].bitmapSize = 892;
+							currentRoomData->screenLayers[0].coordx = 217;
+							currentRoomData->screenLayers[0].coordy = 48;
+							currentRoomData->screenLayers[0].depth = 1;
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 								nicheAnimation(0, 1399610);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
+								currentRoomData->screenLayers[0].bitmapPointer = 1399610;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
 								nicheAnimation(0, 1381982);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
 								nicheAnimation(0, 1381090);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381090;
 							} break;
 							case 622: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
 								nicheAnimation(0, 1400502);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
+								currentRoomData->screenLayers[0].bitmapPointer = 1400502;
 							} break;
 							case 623: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
 								nicheAnimation(0, 1398718);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
+								currentRoomData->screenLayers[0].bitmapPointer = 1398718;
 							} break;
 							}
 							updateAltScreen(20);
@@ -1857,27 +1882,27 @@ void pickupScreenObject() {
 			case 624: { // red devil
 				animatePickup1(2, 1);
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[3];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[3];
 
-					with.puntbitmap = 0;
-					with.tambitmap = 0;
+					with.bitmapPointer = 0;
+					with.bitmapSize = 0;
 					with.coordx = 0;
 					with.coordy = 0;
-					with.profund = 0;
+					with.depth = 0;
 				}
 				screenObjects[3] = NULL;
 				disableSecondAnimation();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(2, 1);
 				rojo_capturado = true;
 				trampa_puesta = false;
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 1);
-				screenObjects[regobj.profundidad - 1] = NULL;
-				screenHandleToBackground();
+				screenObjects[regobj.depth - 1] = NULL;
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(direccionmovimiento, 1);
 			}
 			}
@@ -1886,17 +1911,17 @@ void pickupScreenObject() {
 			switch (regobj.code) {
 			case 216: { // chisel
 				animatePickup1(0, 2);
-				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
+				currentRoomData->screenObjectIndex[currentRoomData->mouseGrid
 													 [mouseX][mouseY]]
-					->indicefichero = regobj.reemplazarpor;
+					->fileIndex = regobj.replaceWith;
 				updateVideo();
 				animatePickup2(0, 2);
 			} break;
 			case 295: { // candles
 				animatePickup1(3, 2);
-				currentRoomData->indexadoobjetos[currentRoomData->mouseGrid
+				currentRoomData->screenObjectIndex[currentRoomData->mouseGrid
 													 [mouseX][mouseY]]
-					->indicefichero = regobj.reemplazarpor;
+					->fileIndex = regobj.replaceWith;
 				updateVideo();
 				animatePickup2(3, 2);
 			} break;
@@ -1910,37 +1935,37 @@ void pickupScreenObject() {
 			} break;
 			case 659: { // spider web, puts bird and ring on the floor
 				animatePickup1(3, 2);
-				screenObjects[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.depth - 1] = NULL;
 				{ // bird
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[2];
 
-					with.puntbitmap = 1545924;
-					with.tambitmap = 172;
+					with.bitmapPointer = 1545924;
+					with.bitmapSize = 172;
 					with.coordx = 38;
 					with.coordy = 58;
-					with.profund = 1;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 1;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{ // ring
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[1];
 
-					with.puntbitmap = 1591272;
-					with.tambitmap = 92;
+					with.bitmapPointer = 1591272;
+					with.bitmapSize = 92;
 					with.coordx = 50;
 					with.coordy = 58;
-					with.profund = 3;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 3;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(3, 2);
 			} break;
 			default: {
 				animatePickup1(direccionmovimiento, 2);
-				screenObjects[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.depth - 1] = NULL;
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(direccionmovimiento, 2);
 			}
 			}
@@ -1966,43 +1991,43 @@ void pickupScreenObject() {
 		if (regobj.code != 624)
 			for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 				for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-					currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-					currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+					currentRoomData->walkAreasGrid[indicex][indicey] = regobj.walkAreasPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
+					currentRoomData->mouseGrid[indicex][indicey] = regobj.mouseGridPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
 				}
 		switch (regobj.code) {
 		case 216: { // chisel
-			currentRoomData->bitmapasociados[5].puntbitmap = 517485;
-			currentRoomData->bitmapasociados[5].tambitmap = 964;
-			currentRoomData->bitmapasociados[5].coordx = 223;
-			currentRoomData->bitmapasociados[5].coordy = 34;
-			currentRoomData->bitmapasociados[5].profund = 1;
+			currentRoomData->screenLayers[5].bitmapPointer = 517485;
+			currentRoomData->screenLayers[5].bitmapSize = 964;
+			currentRoomData->screenLayers[5].coordx = 223;
+			currentRoomData->screenLayers[5].coordy = 34;
+			currentRoomData->screenLayers[5].depth = 1;
 		} break;
 		case 218:; // necronomicon
 			break;
 		case 223: { // table cloth
-			currentRoomData->bitmapasociados[6].puntbitmap = 436752;
-			currentRoomData->bitmapasociados[6].tambitmap = 1372;
-			currentRoomData->bitmapasociados[6].coordx = 174;
-			currentRoomData->bitmapasociados[6].coordy = 32;
-			currentRoomData->bitmapasociados[6].profund = 1;
+			currentRoomData->screenLayers[6].bitmapPointer = 436752;
+			currentRoomData->screenLayers[6].bitmapSize = 1372;
+			currentRoomData->screenLayers[6].coordx = 174;
+			currentRoomData->screenLayers[6].coordy = 32;
+			currentRoomData->screenLayers[6].depth = 1;
 		} break;
 		case 295: { // candles
-			currentRoomData->bitmapasociados[3].puntbitmap = 1130756;
-			currentRoomData->bitmapasociados[3].tambitmap = 1764;
-			currentRoomData->bitmapasociados[3].coordx = 100;
-			currentRoomData->bitmapasociados[3].coordy = 28;
-			currentRoomData->bitmapasociados[3].profund = 1;
+			currentRoomData->screenLayers[3].bitmapPointer = 1130756;
+			currentRoomData->screenLayers[3].bitmapSize = 1764;
+			currentRoomData->screenLayers[3].coordx = 100;
+			currentRoomData->screenLayers[3].coordy = 28;
+			currentRoomData->screenLayers[3].depth = 1;
 		} break;
 		case 308:; // mistletoe
 			break;
 		case 362:; // charcoal
 			break;
 		case 402: {
-			currentRoomData->bitmapasociados[5].puntbitmap = 68130;
-			currentRoomData->bitmapasociados[5].tambitmap = 2564;
-			currentRoomData->bitmapasociados[5].coordx = 148;
-			currentRoomData->bitmapasociados[5].coordy = 49;
-			currentRoomData->bitmapasociados[5].profund = 7;
+			currentRoomData->screenLayers[5].bitmapPointer = 68130;
+			currentRoomData->screenLayers[5].bitmapSize = 2564;
+			currentRoomData->screenLayers[5].coordx = 148;
+			currentRoomData->screenLayers[5].coordy = 49;
+			currentRoomData->screenLayers[5].depth = 7;
 		} break;
 		case 479:; // scissors
 			break;
@@ -2016,13 +2041,13 @@ void pickupScreenObject() {
 			break;
 		default: {
 			for (indicex = 0; indicex < 15; indicex++)
-				if (currentRoomData->bitmapasociados[indicex].puntbitmap ==
-					regobj.punterobitmap) {
-					currentRoomData->bitmapasociados[indicex].puntbitmap = 0;
-					currentRoomData->bitmapasociados[indicex].tambitmap = 0;
-					currentRoomData->bitmapasociados[indicex].coordx = 0;
-					currentRoomData->bitmapasociados[indicex].coordy = 0;
-					currentRoomData->bitmapasociados[indicex].profund = 0;
+				if (currentRoomData->screenLayers[indicex].bitmapPointer ==
+					regobj.bitmapPointer) {
+					currentRoomData->screenLayers[indicex].bitmapPointer = 0;
+					currentRoomData->screenLayers[indicex].bitmapSize = 0;
+					currentRoomData->screenLayers[indicex].coordx = 0;
+					currentRoomData->screenLayers[indicex].coordy = 0;
+					currentRoomData->screenLayers[indicex].depth = 0;
 				}
 		}
 		}
@@ -2063,29 +2088,29 @@ void replaceBackpack(byte indicador1, uint indicador2) {
 	contadorpc = contadorpc2;
 }
 
-void dropObjectInScreen(InvItemRegister regobjsustituto) {
+void dropObjectInScreen(ScreenObject replacementObject) {
 	byte indicepaso, indicex, indicey;
 
-	if (regobjsustituto.tambitmap > 0) {
+	if (replacementObject.bitmapSize > 0) {
 		indicepaso = 0;
-		while (!(currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) || indicepaso == 15) {
+		while (!(currentRoomData->screenLayers[indicepaso].bitmapSize == 0) || indicepaso == 15) {
 			indicepaso++;
 		}
-		if (currentRoomData->bitmapasociados[indicepaso].tambitmap == 0) {
+		if (currentRoomData->screenLayers[indicepaso].bitmapSize == 0) {
 			{
-				RoomBitmapRegister &with = currentRoomData->bitmapasociados[indicepaso];
+				RoomBitmapRegister &with = currentRoomData->screenLayers[indicepaso];
 
-				with.puntbitmap = regobjsustituto.punterobitmap;
-				with.tambitmap = regobjsustituto.tambitmap;
-				with.coordx = regobjsustituto.xparche;
-				with.coordy = regobjsustituto.yparche;
-				with.profund = regobjsustituto.profundidad;
-				loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+				with.bitmapPointer = replacementObject.bitmapPointer;
+				with.bitmapSize = replacementObject.bitmapSize;
+				with.coordx = replacementObject.dropOverlayX;
+				with.coordy = replacementObject.dropOverlayY;
+				with.depth = replacementObject.depth;
+				loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 			}
-			for (indicey = regobjsustituto.yrej1; indicey <= regobjsustituto.yrej2; indicey++)
-				for (indicex = regobjsustituto.xrej1; indicex <= regobjsustituto.xrej2; indicex++) {
-					currentRoomData->rejapantalla[indicex][indicey] = regobjsustituto.parcherejapantalla[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
-					currentRoomData->mouseGrid[indicex][indicey] = regobjsustituto.parcherejaraton[indicex - regobjsustituto.xrej1][indicey - regobjsustituto.yrej1];
+			for (indicey = replacementObject.yrej1; indicey <= replacementObject.yrej2; indicey++)
+				for (indicex = replacementObject.xrej1; indicex <= replacementObject.xrej2; indicex++) {
+					currentRoomData->walkAreasGrid[indicex][indicey] = replacementObject.walkAreasPatch[indicex - replacementObject.xrej1][indicey - replacementObject.yrej1];
+					currentRoomData->mouseGrid[indicex][indicey] = replacementObject.mouseGridPatch[indicex - replacementObject.xrej1][indicey - replacementObject.yrej1];
 				}
 		} else
 			showError(264);
@@ -2097,9 +2122,9 @@ void useScreenObject() {
 		indicex, indicey;
 	bool controlarlista, basurillalog;
 
-	uint mouseX = (pulsax + 7) / factorx;
-	uint mouseY = (pulsay + 7) / factory;
-	uint screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	uint mouseX = (mouseClickX + 7) / xGridCount;
+	uint mouseY = (mouseClickY + 7) / yGridCount;
+	uint screenObject = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex;
 
 	if (objetomochila != "") {
 		indicemochila = 0;
@@ -2110,11 +2135,11 @@ void useScreenObject() {
 		readItemRegister(mobj[indicemochila].code);
 
 		goToObject(
-			currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			currentRoomData->rejapantalla[mouseX][mouseY]);
+			currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
+			currentRoomData->walkAreasGrid[mouseX][mouseY]);
 
-		if (regobj.usarcon == screenObject && screenObject > 0 && regobj.usar[0] == 5) {
-			switch (regobj.usarcon) {
+		if (regobj.useWith == screenObject && screenObject > 0 && regobj.used[0] == 5) {
+			switch (regobj.useWith) {
 			case 30: { // corn with rooster
 				drawText(regobj.useTextRef);
 				g_engine->_mouseManager->hide();
@@ -2123,20 +2148,20 @@ void useScreenObject() {
 				animatePickup2(1, 2);
 
 				updateItem(regobj.code);
-				currentRoomData->indexadoobjetos[27]->indicefichero = 201;
+				currentRoomData->screenObjectIndex[27]->fileIndex = 201;
 				do {
 					g_engine->_chrono->updateChrono();
 					if (iframe2 >= secondaryAnimationFrameCount - 1)
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= currentRoomData->longtray2)
+					if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = currentRoomData->dir2[indicetray2 - 1];
-					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+					animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+					animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 					emptyLoop2();
@@ -2146,26 +2171,26 @@ void useScreenObject() {
 
 				for (indlista = 0; indlista < maxrejax; indlista++)
 					for (indmoch = 0; indmoch < maxrejay; indmoch++) {
-						currentRoomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejafondomovto[indlista][indmoch];
+						currentRoomData->walkAreasGrid[oldposx + indlista][oldposy + indmoch] = rejafondomovto[indlista][indmoch];
 						currentRoomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejafondoraton[indlista][indmoch];
 					}
 
 				freeAnimation();
-				animado.posx = currentRoomData->tray2[indicetray2 - 1].x + 8;
-				animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-				currentRoomData->nombremovto = "GALLOPIC";
-				currentRoomData->dir2[299] = 201;
+				animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x + 8;
+				animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+				currentRoomData->animationName = "GALLOPIC";
+				currentRoomData->secondaryAnimDirections[299] = 201;
 				loadAnimation("GALLOPIC");
-				currentRoomData->dir2[0] = 0;
-				currentRoomData->tray2[0].x = animado.posx;
-				currentRoomData->tray2[0].y = animado.posy;
+				currentRoomData->secondaryAnimDirections[0] = 0;
+				currentRoomData->secondaryAnimTrajectory[0].x = animado.posx;
+				currentRoomData->secondaryAnimTrajectory[0].y = animado.posy;
 				indicetray2 = 1;
-				currentRoomData->longtray2 = 1;
+				currentRoomData->secondaryTrajectoryLength = 1;
 
 				for (indlista = 0; indlista < maxrejax; indlista++)
 					for (indmoch = 0; indmoch < maxrejay; indmoch++) {
 						if (rejamascaramovto[indlista][indmoch] > 0)
-							currentRoomData->rejapantalla[oldposx + indlista][oldposy + indmoch] = rejamascaramovto[indlista][indmoch];
+							currentRoomData->walkAreasGrid[oldposx + indlista][oldposy + indmoch] = rejamascaramovto[indlista][indmoch];
 						if (rejamascararaton[indlista][indmoch] > 0)
 							currentRoomData->mouseGrid[oldposx + indlista][oldposy + indmoch] = rejamascararaton[indlista][indmoch];
 					}
@@ -2179,7 +2204,7 @@ void useScreenObject() {
 				animatePickup2(3, 1);
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
-				currentRoomData->indexadoobjetos[21]->indicefichero = 154;
+				currentRoomData->screenObjectIndex[21]->fileIndex = 154;
 			} break;
 			case 157: { // giving something to john
 				controlarlista = false;
@@ -2313,7 +2338,7 @@ void useScreenObject() {
 					updateInventory(indicemochila);
 					drawBackpack();
 					g_engine->_mouseManager->show();
-					for (kaka = 0; kaka < maxpersonajes; kaka++)
+					for (kaka = 0; kaka < characterCount; kaka++)
 						libro[kaka] = true;
 					lprimera[0] = true;
 				} break;
@@ -2332,7 +2357,7 @@ void useScreenObject() {
 				updateInventory(indicemochila);
 				drawBackpack();
 				g_engine->_mouseManager->show();
-				for (kaka = 0; kaka < maxpersonajes; kaka++) {
+				for (kaka = 0; kaka < characterCount; kaka++) {
 					caramelos[kaka] = true;
 					cprimera[kaka] = true;
 				}
@@ -2357,14 +2382,14 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-							with.puntbitmap = 1545820;
-							with.tambitmap = 104;
+							with.bitmapPointer = 1545820;
+							with.bitmapSize = 104;
 							with.coordx = 120;
 							with.coordy = 55;
-							with.profund = 1;
-							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+							with.depth = 1;
+							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
@@ -2402,14 +2427,14 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-							with.puntbitmap = 1545820;
-							with.tambitmap = 104;
+							with.bitmapPointer = 1545820;
+							with.bitmapSize = 104;
 							with.coordx = 120;
 							with.coordy = 55;
-							with.profund = 1;
-							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+							with.depth = 1;
+							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
@@ -2447,14 +2472,14 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-							with.puntbitmap = 1545820;
-							with.tambitmap = 104;
+							with.bitmapPointer = 1545820;
+							with.bitmapSize = 104;
 							with.coordx = 120;
 							with.coordy = 55;
-							with.profund = 1;
-							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+							with.depth = 1;
+							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
@@ -2492,14 +2517,14 @@ void useScreenObject() {
 						drawBackpack();
 						disableSecondAnimation();
 						{
-							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-							with.puntbitmap = 1545820;
-							with.tambitmap = 104;
+							with.bitmapPointer = 1545820;
+							with.bitmapSize = 104;
 							with.coordx = 120;
 							with.coordy = 55;
-							with.profund = 1;
-							loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+							with.depth = 1;
+							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						currentRoomData->mouseGrid[15][12] = 7;
 						g_engine->_mouseManager->show();
@@ -2529,18 +2554,18 @@ void useScreenObject() {
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= currentRoomData->longtray2)
+					if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = currentRoomData->dir2[indicetray2 - 1];
-					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+					animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+					animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 					emptyLoop2();
 					sprites(true);
-				} while (!(indicetray2 == (currentRoomData->longtray2 / 2)));
+				} while (!(indicetray2 == (currentRoomData->secondaryTrajectoryLength / 2)));
 
 				animateGive(3, 2);
 				updateInventory(indicemochila);
@@ -2553,21 +2578,21 @@ void useScreenObject() {
 						iframe2 = 0;
 					else
 						iframe2++;
-					if (indicetray2 >= currentRoomData->longtray2)
+					if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 						indicetray2 = 1;
 					else
 						indicetray2 += 1;
-					animado.dir = currentRoomData->dir2[indicetray2 - 1];
-					animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-					animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
+					animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+					animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+					animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
 					emptyLoop();
 					tocapintar = false;
 
 					emptyLoop2();
 					sprites(true);
-				} while (indicetray2 != currentRoomData->longtray2);
+				} while (indicetray2 != currentRoomData->secondaryTrajectoryLength);
 				disableSecondAnimation();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 			} break;
 			case 201: {
@@ -2608,7 +2633,7 @@ void useScreenObject() {
 				animateOpen2(3, 2);
 				updateItem(regobj.code);
 				disableSecondAnimation();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				drawText(2652);
 				g_engine->_mouseManager->hide();
@@ -2621,13 +2646,13 @@ void useScreenObject() {
 				currentRoomData->mouseGrid[9][10] = 1;
 				currentRoomData->mouseGrid[10][10] = 1;
 				for (indicex = 0; indicex < 15; indicex++)
-					if (currentRoomData->bitmapasociados[indicex].puntbitmap ==
-						regobj.punterobitmap) {
-						currentRoomData->bitmapasociados[indicex].puntbitmap = 0;
-						currentRoomData->bitmapasociados[indicex].tambitmap = 0;
-						currentRoomData->bitmapasociados[indicex].coordx = 0;
-						currentRoomData->bitmapasociados[indicex].coordy = 0;
-						currentRoomData->bitmapasociados[indicex].profund = 0;
+					if (currentRoomData->screenLayers[indicex].bitmapPointer ==
+						regobj.bitmapPointer) {
+						currentRoomData->screenLayers[indicex].bitmapPointer = 0;
+						currentRoomData->screenLayers[indicex].bitmapSize = 0;
+						currentRoomData->screenLayers[indicex].coordx = 0;
+						currentRoomData->screenLayers[indicex].coordy = 0;
+						currentRoomData->screenLayers[indicex].depth = 0;
 					}
 				indicemochila = 0;
 				while (mobj[indicemochila].code != 0) {
@@ -2645,7 +2670,7 @@ void useScreenObject() {
 			} break;
 			case 221: {
 				drawText(regobj.useTextRef);
-				regobj.usar[0] = 9;
+				regobj.used[0] = 9;
 				indicemochila = 0;
 				while (mobj[indicemochila].code != 0) {
 					indicemochila += 1;
@@ -2700,7 +2725,7 @@ void useScreenObject() {
 				g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 				g_engine->_mouseManager->show();
 				drawText(regobj.useTextRef);
-				currentRoomData->doors[2].abiertacerrada = 0;
+				currentRoomData->doors[2].openclosed = 0;
 			} break;
 			case 446: {
 				drawText(regobj.useTextRef);
@@ -2731,10 +2756,10 @@ void useScreenObject() {
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
 				drawText(regobj.useTextRef);
-				currentRoomData->doors[0].abiertacerrada = 0;
+				currentRoomData->doors[0].openclosed = 0;
 			} break;
 			case 562: { // put any object in the alcoves
-				switch (currentRoomData->codigo) {
+				switch (currentRoomData->code) {
 				case 20: {
 					if (hornacina[0][hornacina[0][3]] == 0) {
 
@@ -2742,28 +2767,28 @@ void useScreenObject() {
 							hornacina[0][0] = regobj.code;
 							drawText(regobj.useTextRef);
 							g_engine->_mouseManager->hide();
-							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[9]->objectName = "                    ";
 							animateGive(3, 1);
 							switch (hornacina[0][0]) {
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
 								readBitmap(1182652, screenObjects[0], 892, 319);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->screenLayers[1].bitmapPointer = 1182652;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 								readBitmap(1181760, screenObjects[0], 892, 319);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->screenLayers[1].bitmapPointer = 1181760;
 							} break;
 							}
-							currentRoomData->bitmapasociados[1].tambitmap = 892;
-							currentRoomData->bitmapasociados[1].coordx = 66;
-							currentRoomData->bitmapasociados[1].coordy = 35;
-							currentRoomData->bitmapasociados[1].profund = 1;
-							screenHandleToBackground();
+							currentRoomData->screenLayers[1].bitmapSize = 892;
+							currentRoomData->screenLayers[1].coordx = 66;
+							currentRoomData->screenLayers[1].coordy = 35;
+							currentRoomData->screenLayers[1].depth = 1;
+							restoreBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2784,40 +2809,40 @@ void useScreenObject() {
 								readBitmap(1181760, screenObjects[0], 892, 319);
 								break;
 							}
-							screenHandleToBackground();
+							restoreBackground();
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
-							currentRoomData->indexadoobjetos[9]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[9]->objectName = "                    ";
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[0][hornacina[0][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 								nicheAnimation(1, 1190768);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
+								currentRoomData->screenLayers[1].bitmapPointer = 1190768;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
 								nicheAnimation(1, 1182652);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
+								currentRoomData->screenLayers[1].bitmapPointer = 1182652;
 							} break;
 							case 563: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
 								nicheAnimation(1, 1186044);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
+								currentRoomData->screenLayers[1].bitmapPointer = 1186044;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 								nicheAnimation(1, 1181760);
-								currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
+								currentRoomData->screenLayers[1].bitmapPointer = 1181760;
 							} break;
 							}
-							currentRoomData->bitmapasociados[1].tambitmap = 892;
-							currentRoomData->bitmapasociados[1].coordx = 66;
-							currentRoomData->bitmapasociados[1].coordy = 35;
-							currentRoomData->bitmapasociados[1].profund = 1;
+							currentRoomData->screenLayers[1].bitmapSize = 892;
+							currentRoomData->screenLayers[1].coordx = 66;
+							currentRoomData->screenLayers[1].coordy = 35;
+							currentRoomData->screenLayers[1].depth = 1;
 							g_engine->_mouseManager->show();
 							updateAltScreen(24);
 						}
@@ -2833,28 +2858,28 @@ void useScreenObject() {
 							hornacina[1][0] = regobj.code;
 							drawText(regobj.useTextRef);
 							g_engine->_mouseManager->hide();
-							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[8]->objectName = "                    ";
 							animateGive(0, 1);
 							switch (hornacina[1][0]) {
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
 								readBitmap(1381982, screenObjects[0], 892, 319);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
 								readBitmap(1381090, screenObjects[0], 892, 319);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381090;
 							} break;
 							}
-							currentRoomData->bitmapasociados[0].tambitmap = 892;
-							currentRoomData->bitmapasociados[0].coordx = 217;
-							currentRoomData->bitmapasociados[0].coordy = 48;
-							currentRoomData->bitmapasociados[0].profund = 1;
-							screenHandleToBackground();
+							currentRoomData->screenLayers[0].bitmapSize = 892;
+							currentRoomData->screenLayers[0].coordx = 217;
+							currentRoomData->screenLayers[0].coordy = 48;
+							currentRoomData->screenLayers[0].depth = 1;
+							restoreBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
@@ -2870,54 +2895,54 @@ void useScreenObject() {
 
 							switch (regobj.code) {
 							case 561:
-								readBitmap(1381982, screenObjects[regobj.profundidad - 1],
+								readBitmap(1381982, screenObjects[regobj.depth - 1],
 										   892, 319);
 								break;
 							case 615:
-								readBitmap(1381090, screenObjects[regobj.profundidad - 1],
+								readBitmap(1381090, screenObjects[regobj.depth - 1],
 										   892, 319);
 								break;
 							}
-							screenHandleToBackground();
+							restoreBackground();
 							// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4, (sizepantalla - int32(4)));
 							assembleScreen();
-							drawScreen(background);
+							drawScreen(sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(indicemochila);
 							drawBackpack();
-							currentRoomData->indexadoobjetos[8]->objectName = "                    ";
+							currentRoomData->screenObjectIndex[8]->objectName = "                    ";
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							switch (hornacina[1][hornacina[1][3]]) {
 							case 0: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 								nicheAnimation(1, 1399610);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
+								currentRoomData->screenLayers[0].bitmapPointer = 1399610;
 							} break;
 							case 561: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
 								nicheAnimation(1, 1381982);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381982;
 							} break;
 							case 615: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
 								nicheAnimation(1, 1381090);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
+								currentRoomData->screenLayers[0].bitmapPointer = 1381090;
 							} break;
 							case 622: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
 								nicheAnimation(1, 1400502);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
+								currentRoomData->screenLayers[0].bitmapPointer = 1400502;
 							} break;
 							case 623: {
-								currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
+								currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
 								nicheAnimation(1, 1398718);
-								currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
+								currentRoomData->screenLayers[0].bitmapPointer = 1398718;
 							} break;
 							}
-							currentRoomData->bitmapasociados[0].tambitmap = 892;
-							currentRoomData->bitmapasociados[0].coordx = 217;
-							currentRoomData->bitmapasociados[0].coordy = 48;
-							currentRoomData->bitmapasociados[0].profund = 1;
+							currentRoomData->screenLayers[0].bitmapSize = 892;
+							currentRoomData->screenLayers[0].coordx = 217;
+							currentRoomData->screenLayers[0].coordy = 48;
+							currentRoomData->screenLayers[0].depth = 1;
 							g_engine->_mouseManager->show();
 							updateAltScreen(20);
 						}
@@ -2936,45 +2961,45 @@ void useScreenObject() {
 				drawFlc(140, 34, offset, 0, 9, 24, false, false, true, basurillalog);
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
-				currentRoomData->indexadoobjetos[7]->indicefichero = 716;
+				currentRoomData->screenObjectIndex[7]->fileIndex = 716;
 				currentRoomData->mouseGrid[19][9] = 14;
 				currentRoomData->mouseGrid[22][16] = 15;
 				for (indlista = 21; indlista <= 22; indlista++)
 					for (indmoch = 17; indmoch <= 20; indmoch++)
 						currentRoomData->mouseGrid[indlista][indmoch] = 17;
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-					with.puntbitmap = 1243652;
-					with.tambitmap = 2718;
+					with.bitmapPointer = 1243652;
+					with.bitmapSize = 2718;
 					with.coordx = 127;
 					with.coordy = 36;
-					with.profund = 6;
+					with.depth = 6;
 				}
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[1];
 
-					with.puntbitmap = 1240474;
-					with.tambitmap = 344;
+					with.bitmapPointer = 1240474;
+					with.bitmapSize = 344;
 					with.coordx = 168;
 					with.coordy = 83;
-					with.profund = 12;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 12;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[2];
 
-					with.puntbitmap = 1240818;
-					with.tambitmap = 116;
+					with.bitmapPointer = 1240818;
+					with.bitmapSize = 116;
 					with.coordx = 177;
 					with.coordy = 82;
-					with.profund = 1;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 1;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				readBitmap(1243652, screenObjects[5], 2718, 319);
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 			} break;
 			case 594: {
 				drawText(regobj.useTextRef);
@@ -2987,24 +3012,24 @@ void useScreenObject() {
 			} break;
 			case 608: {
 				drawText(regobj.useTextRef);
-				goToObject(currentRoomData->rejapantalla[mouseX][mouseY], 26);
+				goToObject(currentRoomData->walkAreasGrid[mouseX][mouseY], 26);
 				g_engine->_mouseManager->hide();
 				animateGive(2, 2);
 				animateOpen2(2, 2);
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[3];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[3];
 
-					with.puntbitmap = 1546096;
-					with.tambitmap = 372;
+					with.bitmapPointer = 1546096;
+					with.bitmapSize = 372;
 					with.coordx = 208;
 					with.coordy = 105;
-					with.profund = 4;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 4;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				screenHandleToBackground();
+				restoreBackground();
 				// XMStoPointer(ptr(segfondo, (offfondo + 4)), _handpantalla, 4,(sizepantalla - int32(4)));
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				updateInventory(indicemochila);
 				drawBackpack();
 				trampa_puesta = true;
@@ -3018,14 +3043,14 @@ void useScreenObject() {
 
 				// Show feather on pedestal
 				loadItem(187, 70, 104, 1545820, 8);
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_screen->update();
 
 				animateOpen2(direccionmovimiento, 1);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 14);
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 14);
 				g_engine->_mouseManager->hide();
 				g_engine->_sound->playVoc("PUFF", 191183, 18001);
 				// Animate to scythe
@@ -3033,38 +3058,38 @@ void useScreenObject() {
 				drawFlc(180, 60, offset, 0, 9, 0, false, false, true, basurillalog);
 				debug("End Anim!");
 				// load Scythe
-				currentRoomData->bitmapasociados[2].puntbitmap = 1545820;
-				currentRoomData->bitmapasociados[2].tambitmap = 104;
-				currentRoomData->bitmapasociados[2].coordx = 277;
-				currentRoomData->bitmapasociados[2].coordy = 104;
-				currentRoomData->bitmapasociados[2].profund = 1;
+				currentRoomData->screenLayers[2].bitmapPointer = 1545820;
+				currentRoomData->screenLayers[2].bitmapSize = 104;
+				currentRoomData->screenLayers[2].coordx = 277;
+				currentRoomData->screenLayers[2].coordy = 104;
+				currentRoomData->screenLayers[2].depth = 1;
 				depthMap[0].posy = 104;
 				readBitmap(1545820, screenObjects[0], 104, 319);
 
-				currentRoomData->bitmapasociados[4].puntbitmap = 1447508;
-				currentRoomData->bitmapasociados[4].tambitmap = 464;
-				currentRoomData->bitmapasociados[4].coordx = 186;
-				currentRoomData->bitmapasociados[4].coordy = 64;
-				currentRoomData->bitmapasociados[4].profund = 8;
+				currentRoomData->screenLayers[4].bitmapPointer = 1447508;
+				currentRoomData->screenLayers[4].bitmapSize = 464;
+				currentRoomData->screenLayers[4].coordx = 186;
+				currentRoomData->screenLayers[4].coordy = 64;
+				currentRoomData->screenLayers[4].depth = 8;
 				loadItem(186, 63, 464, 1447508, 8);
 
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 18);
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 18);
 				g_engine->_mouseManager->hide();
 				animatePickup1(1, 1);
 				replaceBackpack(indicemochila, 638);
-				currentRoomData->bitmapasociados[4].puntbitmap = 0;
-				currentRoomData->bitmapasociados[4].tambitmap = 0;
-				currentRoomData->bitmapasociados[4].coordx = 0;
-				currentRoomData->bitmapasociados[4].coordy = 0;
-				currentRoomData->bitmapasociados[4].profund = 0;
+				currentRoomData->screenLayers[4].bitmapPointer = 0;
+				currentRoomData->screenLayers[4].bitmapSize = 0;
+				currentRoomData->screenLayers[4].coordx = 0;
+				currentRoomData->screenLayers[4].coordy = 0;
+				currentRoomData->screenLayers[4].depth = 0;
 				screenObjects[7] = NULL;
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(1, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3082,47 +3107,47 @@ void useScreenObject() {
 				g_engine->_mouseManager->hide();
 				animateGive(3, 1);
 				loadItem(86, 55, 92, 1591272, 8);
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animateOpen2(3, 1);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 10);
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 10);
 				g_engine->_mouseManager->hide();
 				g_engine->_sound->playVoc("PUFF", 191183, 18001);
 				drawFlc(0, 47, offset, 0, 9, 0, false, false, true, basurillalog);
 
-				currentRoomData->bitmapasociados[3].puntbitmap = 1591272;
-				currentRoomData->bitmapasociados[3].tambitmap = 92;
-				currentRoomData->bitmapasociados[3].coordx = 18;
-				currentRoomData->bitmapasociados[3].coordy = 60;
-				currentRoomData->bitmapasociados[3].profund = 3;
+				currentRoomData->screenLayers[3].bitmapPointer = 1591272;
+				currentRoomData->screenLayers[3].bitmapSize = 92;
+				currentRoomData->screenLayers[3].coordx = 18;
+				currentRoomData->screenLayers[3].coordy = 60;
+				currentRoomData->screenLayers[3].depth = 3;
 				depthMap[2].posx = 18;
 				depthMap[2].posy = 60;
 				readBitmap(1591272, screenObjects[2], 92, 319);
 
-				currentRoomData->bitmapasociados[4].puntbitmap = 1746554;
-				currentRoomData->bitmapasociados[4].tambitmap = 384;
-				currentRoomData->bitmapasociados[4].coordx = 82;
-				currentRoomData->bitmapasociados[4].coordy = 53;
-				currentRoomData->bitmapasociados[4].profund = 8;
+				currentRoomData->screenLayers[4].bitmapPointer = 1746554;
+				currentRoomData->screenLayers[4].bitmapSize = 384;
+				currentRoomData->screenLayers[4].coordx = 82;
+				currentRoomData->screenLayers[4].coordy = 53;
+				currentRoomData->screenLayers[4].depth = 8;
 				loadItem(82, 53, 384, 1746554, 8);
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 15);
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 15);
 				g_engine->_mouseManager->hide();
 				animatePickup1(3, 1);
 				replaceBackpack(indicemochila, 637);
-				currentRoomData->bitmapasociados[4].puntbitmap = 0;
-				currentRoomData->bitmapasociados[4].tambitmap = 0;
-				currentRoomData->bitmapasociados[4].coordx = 0;
-				currentRoomData->bitmapasociados[4].coordy = 0;
-				currentRoomData->bitmapasociados[4].profund = 0;
+				currentRoomData->screenLayers[4].bitmapPointer = 0;
+				currentRoomData->screenLayers[4].bitmapSize = 0;
+				currentRoomData->screenLayers[4].coordx = 0;
+				currentRoomData->screenLayers[4].coordy = 0;
+				currentRoomData->screenLayers[4].depth = 0;
 				screenObjects[7] = NULL;
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animatePickup2(3, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3136,24 +3161,24 @@ void useScreenObject() {
 			case 643: { // Urn with altar
 				long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][23] : flcOffsets[1][23];
 
-				if (currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory] != 5)
+				if (currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount] != 5)
 					drawText(regobj.useTextRef);
-				pulsax = 149 - 7;
-				pulsay = 126 - 7;
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 5);
+				mouseClickX = 149 - 7;
+				mouseClickY = 126 - 7;
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 5);
 				g_engine->_mouseManager->hide();
 				updateInventory(indicemochila);
 				drawBackpack();
 				drawFlc(133, 0, offset, 0, 9, 22, false, false, true, basurillalog);
 				{
-					RoomBitmapRegister &with = currentRoomData->bitmapasociados[2];
+					RoomBitmapRegister &with = currentRoomData->screenLayers[2];
 
-					with.puntbitmap = 1744230;
-					with.tambitmap = 824;
+					with.bitmapPointer = 1744230;
+					with.bitmapSize = 824;
 					with.coordx = 147;
 					with.coordy = 38;
-					with.profund = 9;
-					loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+					with.depth = 9;
+					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				updateAltScreen(31);
 				for (indlista = 18; indlista <= 20; indlista++)
@@ -3169,9 +3194,9 @@ void useScreenObject() {
 				long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][24] : flcOffsets[1][24];
 
 				drawText(regobj.useTextRef);
-				pulsax = 178 - 7;
-				pulsay = 71 - 7;
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 3);
+				mouseClickX = 178 - 7;
+				mouseClickY = 71 - 7;
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 3);
 				g_engine->_mouseManager->hide();
 				g_engine->_sound->playVoc("AFILAR", 0, 6433);
 				drawFlc(160, 15, offset, 0, 9, 23, false, false, true, basurillalog);
@@ -3187,9 +3212,9 @@ void useScreenObject() {
 				animateGive(1, 1);
 				updateInventory(indicemochila);
 				dropObjectInScreen(regobj);
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				drawBackpack();
 				animateOpen2(1, 1);
 				for (indlista = 19; indlista <= 21; indlista++)
@@ -3201,16 +3226,16 @@ void useScreenObject() {
 				long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][25] : flcOffsets[1][25];
 
 				drawText(regobj.useTextRef);
-				pulsax = 124 - 7;
-				pulsay = 133 - 7;
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 9);
+				mouseClickX = 124 - 7;
+				mouseClickY = 133 - 7;
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 9);
 				g_engine->_mouseManager->hide();
 				drawFlc(110, 79, offset, 0, 9, 0, false, false, true, basurillalog);
 				replaceBackpack(indicemochila, 701);
 				drawBackpack();
-				screenHandleToBackground();
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				for (indlista = 18; indlista <= 20; indlista++)
 					currentRoomData->mouseGrid[indlista][26] = 10;
@@ -3220,16 +3245,16 @@ void useScreenObject() {
 			case 700: { // Trident
 				long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][26] : flcOffsets[1][26];
 				drawText(regobj.useTextRef);
-				pulsax = 224 - 7;
-				pulsay = 91 - 7;
-				goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], 7);
+				mouseClickX = 224 - 7;
+				mouseClickY = 91 - 7;
+				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 7);
 				g_engine->_mouseManager->hide();
 				drawFlc(208, 0, offset, 0, 9, 21, false, false, true, basurillalog);
-				currentRoomData->bitmapasociados[0].puntbitmap = 0;
-				currentRoomData->bitmapasociados[0].tambitmap = 0;
-				currentRoomData->bitmapasociados[0].coordx = 0;
-				currentRoomData->bitmapasociados[0].coordy = 0;
-				currentRoomData->bitmapasociados[0].profund = 0;
+				currentRoomData->screenLayers[0].bitmapPointer = 0;
+				currentRoomData->screenLayers[0].bitmapSize = 0;
+				currentRoomData->screenLayers[0].coordx = 0;
+				currentRoomData->screenLayers[0].coordy = 0;
+				currentRoomData->screenLayers[0].depth = 0;
 				screenObjects[2] = NULL;
 				for (indmoch = 6; indmoch <= 9; indmoch++)
 					currentRoomData->mouseGrid[26][indmoch] = 3;
@@ -3257,7 +3282,7 @@ void useScreenObject() {
 					currentRoomData->mouseGrid[35][indmoch] = 4;
 				for (indmoch = 9; indmoch <= 11; indmoch++)
 					currentRoomData->mouseGrid[35][indmoch] = 7;
-				currentRoomData->doors[1].abiertacerrada = 1;
+				currentRoomData->doors[1].openclosed = 1;
 				g_engine->_mouseManager->show();
 				updateItem(regobj.code);
 			} break;
@@ -3270,18 +3295,18 @@ void useScreenObject() {
 					animatePickup1(0, 1);
 					g_engine->_sound->playVoc("TIZA", 390631, 18774);
 					{
-						RoomBitmapRegister &with = currentRoomData->bitmapasociados[1];
+						RoomBitmapRegister &with = currentRoomData->screenLayers[1];
 
-						with.puntbitmap = 1745054;
-						with.tambitmap = 1500;
+						with.bitmapPointer = 1745054;
+						with.bitmapSize = 1500;
 						with.coordx = 39;
 						with.coordy = 16;
-						with.profund = 1;
-						loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+						with.depth = 1;
+						loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 					}
-					screenHandleToBackground();
+					restoreBackground();
 					assembleScreen();
-					drawScreen(background);
+					drawScreen(sceneBackground);
 
 					g_engine->_sound->waitForSoundEnd();
 					g_engine->_sound->playVoc("PUFF", 191183, 18001);
@@ -3293,7 +3318,7 @@ void useScreenObject() {
 			} break;
 			}
 		} else {
-			goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[mouseX][mouseY]);
+			goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], currentRoomData->walkAreasGrid[mouseX][mouseY]);
 			if (regobj.code == 536 || regobj.code == 220)
 				drawText(Random(6) + 1033);
 			else
@@ -3302,8 +3327,8 @@ void useScreenObject() {
 	} else {
 		if (screenObject > 0) {
 			readItemRegister(screenObject);
-			goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory], currentRoomData->rejapantalla[mouseX][mouseY]);
-			switch (regobj.usar[0]) {
+			goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], currentRoomData->walkAreasGrid[mouseX][mouseY]);
+			switch (regobj.used[0]) {
 			case 0: {
 				if (regobj.useTextRef > 0)
 					drawText(regobj.useTextRef);
@@ -3320,7 +3345,7 @@ void useScreenObject() {
 					g_engine->_mouseManager->show();
 				} break;
 				case 154: {
-					regobj.usar[0] = 9;
+					regobj.used[0] = 9;
 					if (regobj.beforeUseTextRef > 0)
 						drawText(regobj.beforeUseTextRef);
 					g_engine->_mouseManager->hide();
@@ -3378,9 +3403,9 @@ void useScreenObject() {
 					g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 					turnLightOn();
 					g_engine->_mouseManager->show();
-					currentRoomData->puntpaleta = 1536;
-					currentRoomData->indexadoobjetos[1]->indicefichero = 424;
-					currentRoomData->doors[1].abiertacerrada = 1;
+					currentRoomData->palettePointer = 1536;
+					currentRoomData->screenObjectIndex[1]->fileIndex = 424;
+					currentRoomData->doors[1].openclosed = 1;
 				} break;
 				case 359: {
 					drawText(regobj.useTextRef);
@@ -3392,10 +3417,10 @@ void useScreenObject() {
 					animateOpen2(0, 0);
 					g_engine->_mouseManager->show();
 					updateItem(regobj.code);
-					currentRoomData->indexadoobjetos[16]->indicefichero = 362;
-					currentRoomData->indexadoobjetos[16]->objectName = getObjectName(2);
-					currentRoomData->indexadoobjetos[1]->indicefichero = 347;
-					currentRoomData->indexadoobjetos[1]->objectName = getObjectName(3);
+					currentRoomData->screenObjectIndex[16]->fileIndex = 362;
+					currentRoomData->screenObjectIndex[16]->objectName = getObjectName(2);
+					currentRoomData->screenObjectIndex[1]->fileIndex = 347;
+					currentRoomData->screenObjectIndex[1]->objectName = getObjectName(3);
 					g_engine->_sound->stopVoc();
 					g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
@@ -3413,13 +3438,13 @@ void useScreenObject() {
 					if (vasijapuesta) {
 						drawFlc(108, 0, offsetWithJar, 0, 9, 0, false, false, true, basurillalog);
 						{
-							RoomBitmapRegister &with = currentRoomData->bitmapasociados[0];
+							RoomBitmapRegister &with = currentRoomData->screenLayers[0];
 
-							with.puntbitmap = 1636796;
-							with.tambitmap = 628;
+							with.bitmapPointer = 1636796;
+							with.bitmapSize = 628;
 							with.coordx = 153;
 							with.coordy = 48;
-							with.profund = 1;
+							with.depth = 1;
 						}
 						for (indlista = 19; indlista <= 21; indlista++)
 							for (indmoch = 10; indmoch <= 13; indmoch++)
@@ -3447,18 +3472,18 @@ void openScreenObject() {
 	byte indicex, indicey;
 	bool sueltapegote;
 
-	uint mouseX = (pulsax + 7) / factorx;
-	uint mouseY = (pulsay + 7) / factory;
-	uint screenObject = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero;
+	uint mouseX = (mouseClickX + 7) / xGridCount;
+	uint mouseY = (mouseClickY + 7) / yGridCount;
+	uint screenObject = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex;
 	if (screenObject == 0)
 		return;
 
 	readItemRegister(screenObject);
-	debug("Read screen object = %s, with code = %d, depth=%d", regobj.name.c_str(), regobj.code, regobj.profundidad);
-	goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			   currentRoomData->rejapantalla[mouseX][mouseY]);
+	debug("Read screen object = %s, with code = %d, depth=%d", regobj.name.c_str(), regobj.code, regobj.depth);
+	goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
+			   currentRoomData->walkAreasGrid[mouseX][mouseY]);
 
-	if (regobj.abrir == false) {
+	if (regobj.openable == false) {
 		drawText(Random(9) + 1059);
 		return;
 	} else {
@@ -3473,26 +3498,26 @@ void openScreenObject() {
 				sueltapegote = true;
 			break;
 		case 415:
-			if (currentRoomData->doors[2].abiertacerrada == 2)
+			if (currentRoomData->doors[2].openclosed == 2)
 				sueltapegote = true;
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(0, 1);
-				screenObjects[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.depth - 1] = NULL;
 				indicey = 0;
-				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 15) {
+				while (currentRoomData->screenLayers[indicey].depth != regobj.depth && indicey != 15) {
 					indicey++;
 				}
-				debug("changing bitmap at %d, with depth = %d", indicey, currentRoomData->bitmapasociados[indicey].profund);
-				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
-				currentRoomData->bitmapasociados[indicey].tambitmap = 0;
-				currentRoomData->bitmapasociados[indicey].coordx = 0;
-				currentRoomData->bitmapasociados[indicey].coordy = 0;
-				currentRoomData->bitmapasociados[indicey].profund = 0;
-				currentRoomData->doors[2].abiertacerrada = 1;
-				screenHandleToBackground();
+				debug("changing bitmap at %d, with depth = %d", indicey, currentRoomData->screenLayers[indicey].depth);
+				currentRoomData->screenLayers[indicey].bitmapPointer = 0;
+				currentRoomData->screenLayers[indicey].bitmapSize = 0;
+				currentRoomData->screenLayers[indicey].coordx = 0;
+				currentRoomData->screenLayers[indicey].coordy = 0;
+				currentRoomData->screenLayers[indicey].depth = 0;
+				currentRoomData->doors[2].openclosed = 1;
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animateOpen2(0, 1);
 				g_engine->_mouseManager->show();
 				for (indicey = 0; indicey <= 12; indicey++)
@@ -3509,25 +3534,25 @@ void openScreenObject() {
 			}
 			break;
 		case 548:
-			if (currentRoomData->doors[0].abiertacerrada == 2)
+			if (currentRoomData->doors[0].openclosed == 2)
 				sueltapegote = true;
 			else {
 				g_engine->_mouseManager->hide();
 				animatePickup1(1, 1);
-				screenObjects[regobj.profundidad - 1] = NULL;
+				screenObjects[regobj.depth - 1] = NULL;
 				indicey = 0;
-				while (currentRoomData->bitmapasociados[indicey].profund != regobj.profundidad && indicey != 14) {
+				while (currentRoomData->screenLayers[indicey].depth != regobj.depth && indicey != 14) {
 					indicey++;
 				}
-				currentRoomData->bitmapasociados[indicey].puntbitmap = 0;
-				currentRoomData->bitmapasociados[indicey].tambitmap = 0;
-				currentRoomData->bitmapasociados[indicey].coordx = 0;
-				currentRoomData->bitmapasociados[indicey].coordy = 0;
-				currentRoomData->bitmapasociados[indicey].profund = 0;
-				currentRoomData->doors[0].abiertacerrada = 1;
-				screenHandleToBackground();
+				currentRoomData->screenLayers[indicey].bitmapPointer = 0;
+				currentRoomData->screenLayers[indicey].bitmapSize = 0;
+				currentRoomData->screenLayers[indicey].coordx = 0;
+				currentRoomData->screenLayers[indicey].coordy = 0;
+				currentRoomData->screenLayers[indicey].depth = 0;
+				currentRoomData->doors[0].openclosed = 1;
+				restoreBackground();
 				assembleScreen();
-				drawScreen(background);
+				drawScreen(sceneBackground);
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
 				indicex = 30;
@@ -3560,9 +3585,9 @@ void openScreenObject() {
 			drawText(Random(9) + 1059);
 			return;
 		}
-		currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[mouseX][mouseY]]->indicefichero = regobj.reemplazarpor;
+		currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex = regobj.replaceWith;
 		g_engine->_mouseManager->hide();
-		switch (regobj.altura) {
+		switch (regobj.height) {
 		case 0: {
 			animatePickup1(direccionmovimiento, 0);
 			updateVideo();
@@ -3582,13 +3607,13 @@ void openScreenObject() {
 		g_engine->_mouseManager->show();
 		for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 			for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-				currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-				currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->walkAreasGrid[indicex][indicey] = regobj.walkAreasPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->mouseGrid[indicex][indicey] = regobj.mouseGridPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
 			}
 		for (indicex = 0; indicex < 15; indicex++)
-			if (currentRoomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
-				currentRoomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
-				currentRoomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
+			if (currentRoomData->screenLayers[indicex].bitmapPointer == regobj.bitmapPointer) {
+				currentRoomData->screenLayers[indicex].bitmapPointer = regobj.dropOverlay;
+				currentRoomData->screenLayers[indicex].bitmapSize = regobj.dropOverlaySize;
 			}
 		numeroaccion = 0;
 	}
@@ -3602,16 +3627,16 @@ void closeScreenObject() {
 	bool sueltapegote;
 	uint objeto_de_la_pantalla;
 
-	x_del_raton = ((pulsax + 7) / factorx);
-	y_del_raton = ((pulsay + 7) / factory);
-	objeto_de_la_pantalla = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
+	x_del_raton = ((mouseClickX + 7) / xGridCount);
+	y_del_raton = ((mouseClickY + 7) / yGridCount);
+	objeto_de_la_pantalla = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->fileIndex;
 	if (objeto_de_la_pantalla == 0)
 		return;
 	// verifyCopyProtection2();
 	readItemRegister(objeto_de_la_pantalla);
-	goToObject(currentRoomData->rejapantalla[((characterPosX + rectificacionx) / factorx)][((characterPosY + rectificaciony) / factory)],
-			   currentRoomData->rejapantalla[x_del_raton][y_del_raton]);
-	if (regobj.cerrar == false) {
+	goToObject(currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)],
+			   currentRoomData->walkAreasGrid[x_del_raton][y_del_raton]);
+	if (regobj.closeable == false) {
 		drawText((Random(10) + 1068));
 		return;
 	} else {
@@ -3632,9 +3657,9 @@ void closeScreenObject() {
 			drawText(Random(10) + 1068);
 			return;
 		}
-		currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero = regobj.reemplazarpor;
+		currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->fileIndex = regobj.replaceWith;
 		g_engine->_mouseManager->hide();
-		switch (regobj.altura) {
+		switch (regobj.height) {
 		case 0: {
 			animatePickup1(direccionmovimiento, 0);
 			updateVideo();
@@ -3654,13 +3679,13 @@ void closeScreenObject() {
 		g_engine->_mouseManager->show();
 		for (indicey = regobj.yrej1; indicey <= regobj.yrej2; indicey++)
 			for (indicex = regobj.xrej1; indicex <= regobj.xrej2; indicex++) {
-				currentRoomData->rejapantalla[indicex][indicey] = regobj.parcherejapantalla[indicex - regobj.xrej1][indicey - regobj.yrej1];
-				currentRoomData->mouseGrid[indicex][indicey] = regobj.parcherejaraton[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->walkAreasGrid[indicex][indicey] = regobj.walkAreasPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
+				currentRoomData->mouseGrid[indicex][indicey] = regobj.mouseGridPatch[indicex - regobj.xrej1][indicey - regobj.yrej1];
 			}
 		for (indicex = 0; indicex < 15; indicex++)
-			if (currentRoomData->bitmapasociados[indicex].puntbitmap == regobj.punterobitmap) {
-				currentRoomData->bitmapasociados[indicex].puntbitmap = regobj.puntparche;
-				currentRoomData->bitmapasociados[indicex].tambitmap = regobj.tamparche;
+			if (currentRoomData->screenLayers[indicex].bitmapPointer == regobj.bitmapPointer) {
+				currentRoomData->screenLayers[indicex].bitmapPointer = regobj.dropOverlay;
+				currentRoomData->screenLayers[indicex].bitmapSize = regobj.dropOverlaySize;
 			}
 		numeroaccion = 0;
 	}
@@ -3795,8 +3820,8 @@ void loadObjects() {
 	if (!ficheroobj.isOpen())
 		showError(312);
 	for (int i = 0; i < inventoryIconCount; i++) {
-		mochilaxms[i] = (byte *)malloc(sizeicono);
-		ficheroobj.read(mochilaxms[i], sizeicono);
+		mochilaxms[i] = (byte *)malloc(inventoryIconSize);
+		ficheroobj.read(mochilaxms[i], inventoryIconSize);
 	}
 	if (contadorpc > 65)
 		showError(274);
@@ -3816,13 +3841,13 @@ void obtainName(Common::String &nombrejugador) {
 
 	tamfondonom = imagesize(84, 34, 235, 80);
 	puntfondonom = (byte *)malloc(tamfondonom);
-	getImg(84, 34, 235, 80, puntfondonom);
+	g_engine->_graphics->getImg(84, 34, 235, 80, puntfondonom);
 	drawMenu(8);
 	g_engine->_screen->update();
 	Common::String paso;
 	readAlphaGraph(paso, 8, 125, 62, 252);
 	nombrejugador = paso.c_str();
-	putImg(84, 34, puntfondonom);
+	g_engine->_graphics->putImg(84, 34, puntfondonom);
 	g_engine->_screen->update();
 	free(puntfondonom);
 }
@@ -3830,18 +3855,18 @@ void obtainName(Common::String &nombrejugador) {
 void loadScrollData(uint numpantalla, bool scrollder,
 					uint poshor, int correccionscroll);
 
-static byte *fondsprite;
+static byte *spriteBackground;
 
 /**
- * Blits image1 over image2 on the 0 pixels of image2
+ * Blits srcImage over dstImage on the zeroed pixels of dstImage
  */
-static void montaimagenvir(byte *image1, byte *image2) { // Near;
-	uint16 w = READ_LE_UINT16(image2) + 1;
-	uint16 h = READ_LE_UINT16(image2 + 2) + 1;
+static void blit(byte *srcImage, byte *dstImage) { // Near;
+	uint16 w = READ_LE_UINT16(dstImage) + 1;
+	uint16 h = READ_LE_UINT16(dstImage + 2) + 1;
 
 	uint size = w * h;
-	byte *dst = image2 + 4;
-	byte *src = image1 + 4;
+	byte *dst = dstImage + 4;
+	byte *src = srcImage + 4;
 	for (int i = 0; i < size; i++) {
 		if (dst[i] == 0) {
 			dst[i] = src[i];
@@ -3859,7 +3884,7 @@ static void getScreen(byte *bg) {
 
 static void scrollRight(uint &horizontalPos) {
 
-	int characterPos = 25 + (320 - (characterPosX + rectificacionx * 2));
+	int characterPos = 25 + (320 - (characterPosX + characterCorrectionX * 2));
 	// We scroll 4 by 4 pixels so we divide by 4 to find out the number of necessary steps
 	uint stepCount = (320 - horizontalPos) >> 2;
 	byte *assembledCharacterFrame = (byte *)malloc(sizeframe);
@@ -3867,12 +3892,12 @@ static void scrollRight(uint &horizontalPos) {
 	size_t numBytes = 44796;
 	for (int i = 0; i < stepCount; i++) {
 		// move everything to the left
-		memmove(background + 4, background + 8, numBytes);
+		memmove(sceneBackground + 4, sceneBackground + 8, numBytes);
 
 		horizontalPos += 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				background[320 + k * 320 + j] = screenHandle[horizontalPos + k * 320 + j];
+				sceneBackground[320 + k * 320 + j] = backgroundCopy[horizontalPos + k * 320 + j];
 			}
 		}
 		if (characterPos > 0) {
@@ -3884,26 +3909,26 @@ static void scrollRight(uint &horizontalPos) {
 
 			characterPosX -= 2;
 
-			pasoframe = secuencia.bitmap[1][iframe];
+			curCharacterAnimationFrame = secuencia.bitmap[1][iframe];
 			// We need to copy the original frame as to not replace its black background for after
 			// the scroll ends. Original code would copy from XMS memory.
-			Common::copy(pasoframe, pasoframe + sizeframe, assembledCharacterFrame);
+			Common::copy(curCharacterAnimationFrame, curCharacterAnimationFrame + sizeframe, assembledCharacterFrame);
 
 			// puts the original captured background back in the background for next iteration
-			putVirtualImg(characterPosX - 2, characterPosY, background, fondsprite);
+			g_engine->_graphics->putImageArea(characterPosX - 2, characterPosY, sceneBackground, spriteBackground);
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 			// Grabs current area surrounding character (which might contain parts of A and B)
-			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
+			g_engine->_graphics->getImageArea(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, sceneBackground, spriteBackground);
 			// blits over the character sprite, only on black pixels
-			montaimagenvir(fondsprite, assembledCharacterFrame);
+			blit(spriteBackground, assembledCharacterFrame);
 			// puts it back in the background (character + piece of background)
-			putVirtualImg(characterPosX, characterPosY, background, assembledCharacterFrame);
+			g_engine->_graphics->putImageArea(characterPosX, characterPosY, sceneBackground, assembledCharacterFrame);
 		} else
 			characterPosX -= 4;
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(background);
+		drawScreen(sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3920,13 +3945,13 @@ static void scrollLeft(uint &poshor) {
 	for (int i = numpasos; i >= 1; i--) {
 		for (int j = numBytes; j > 0; j--) {
 			// move the previous background to the right
-			background[j + 4] = background[j];
+			sceneBackground[j + 4] = sceneBackground[j];
 		}
 
 		poshor -= 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				background[4 + k * 320 + j] = screenHandle[4 + poshor + k * 320 + j];
+				sceneBackground[4 + k * 320 + j] = backgroundCopy[4 + poshor + k * 320 + j];
 			}
 		}
 
@@ -3939,23 +3964,23 @@ static void scrollLeft(uint &poshor) {
 
 			characterPosX += 2;
 
-			pasoframe = secuencia.bitmap[3][iframe];
-			Common::copy(pasoframe, pasoframe + sizeframe, assembledCharacterFrame);
+			curCharacterAnimationFrame = secuencia.bitmap[3][iframe];
+			Common::copy(curCharacterAnimationFrame, curCharacterAnimationFrame + sizeframe, assembledCharacterFrame);
 
-			putVirtualImg(characterPosX + 2, characterPosY, background, fondsprite);
+			g_engine->_graphics->putImageArea(characterPosX + 2, characterPosY, sceneBackground, spriteBackground);
 
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 
-			getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
-			montaimagenvir(fondsprite, assembledCharacterFrame);
-			putVirtualImg(characterPosX, characterPosY, background, assembledCharacterFrame);
+			g_engine->_graphics->getImageArea(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, sceneBackground, spriteBackground);
+			blit(spriteBackground, assembledCharacterFrame);
+			g_engine->_graphics->putImageArea(characterPosX, characterPosY, sceneBackground, assembledCharacterFrame);
 		} else
 			characterPosX += 4;
 
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(background);
+		drawScreen(sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3967,15 +3992,15 @@ static void scrollLeft(uint &poshor) {
 void loadScrollData(uint numpantalla, bool scrollder, uint poshor, int correccionscroll) {
 	uint indicecarga;
 
-	screenHandleToBackground();
+	restoreBackground();
 	// Fondo now contains background A, handpantalla contains background A
 
-	uint pasoframeW = READ_LE_UINT16(pasoframe);
-	uint pasoframeH = READ_LE_UINT16(pasoframe + 2);
+	uint pasoframeW = READ_LE_UINT16(curCharacterAnimationFrame);
+	uint pasoframeH = READ_LE_UINT16(curCharacterAnimationFrame + 2);
 	debug("characterPos=%d,%d, size=%d,%d", characterPosX, characterPosY, pasoframeW, pasoframeH);
 	/* Copy the area with the player from previous scren*/
-	fondsprite = (byte *)malloc(4 + (pasoframeW + 8) * (pasoframeH + 8));
-	getVirtualImg(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, background, fondsprite);
+	spriteBackground = (byte *)malloc(4 + (pasoframeW + 8) * (pasoframeH + 8));
+	g_engine->_graphics->getImageArea(characterPosX, characterPosY, characterPosX + pasoframeW, characterPosY + pasoframeH, sceneBackground, spriteBackground);
 
 	// Start screen 2
 	Common::File fichpanta;
@@ -3987,9 +4012,9 @@ void loadScrollData(uint numpantalla, bool scrollder, uint poshor, int correccio
 	// Fondo now contains background B, handpantalla contains background B
 	for (indicecarga = 0; indicecarga < 15; indicecarga++) {
 		{
-			RoomBitmapRegister &with = currentRoomData->bitmapasociados[indicecarga];
-			if (with.tambitmap > 0)
-				loadItem(with.coordx, with.coordy, with.tambitmap, with.puntbitmap, with.profund);
+			RoomBitmapRegister &with = currentRoomData->screenLayers[indicecarga];
+			if (with.bitmapSize > 0)
+				loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 		}
 	}
 	// assembles the screen objects into fondo
@@ -3997,27 +4022,27 @@ void loadScrollData(uint numpantalla, bool scrollder, uint poshor, int correccio
 	// Fondo contains background B + objects, handpantalla contains plain background B
 
 	// Copies the contents of fondo into handpantalla
-	Common::copy(background, background + 44804, screenHandle);
+	Common::copy(sceneBackground, sceneBackground + 44804, backgroundCopy);
 	// Fondo contains background B + objects, handpantalla contains background B + objects
 
 	movidapaleta = 0;
-	getScreen(background);
+	getScreen(sceneBackground);
 	// Fondo now contains full background A again, handpantalla contains background B + objects
 
-	drawScreen(background);
+	drawScreen(sceneBackground);
 	if (scrollder)
 		scrollRight(poshor);
 	else
 		scrollLeft(poshor);
 
 	// After scroll is done, handpantalla will now contain the resulting fondo (background B + objects)
-	Common::copy(screenHandle, screenHandle + 44804, background);
+	Common::copy(backgroundCopy, backgroundCopy + 44804, sceneBackground);
 
 	characterPosX += correccionscroll;
 
 	assembleScreen();
-	drawScreen(background);
-	free(fondsprite);
+	drawScreen(sceneBackground);
+	free(spriteBackground);
 	loadScreen();
 	trayec[indicetray].x = characterPosX;
 	trayec[indicetray].y = characterPosY;
@@ -4025,7 +4050,7 @@ void loadScrollData(uint numpantalla, bool scrollder, uint poshor, int correccio
 
 void saveGameToRegister() {
 	uint indiaux;
-	regpartida.numeropantalla = currentRoomData->codigo;
+	regpartida.numeropantalla = currentRoomData->code;
 	regpartida.longtray = longtray;
 	regpartida.indicetray = indicetray;
 	regpartida.codigoobjmochila = codigoobjmochila;
@@ -4035,7 +4060,7 @@ void saveGameToRegister() {
 	regpartida.volumenmelodiaizquierdo = musicVolLeft;
 	regpartida.oldxrejilla = oldxrejilla;
 	regpartida.oldyrejilla = oldyrejilla;
-	regpartida.animadoprofundidad = animado.profundidad;
+	regpartida.animadoprofundidad = animado.depth;
 	regpartida.animadodir = animado.dir;
 	regpartida.animadoposx = animado.posx;
 	regpartida.animadoposy = animado.posy;
@@ -4086,7 +4111,7 @@ void saveGameToRegister() {
 
 	regpartida.oldobjmochila = oldobjmochila;
 	regpartida.objetomochila = objetomochila;
-	regpartida.nombrepersonaje = nombrepersonaje;
+	regpartida.nombrepersonaje = characterName;
 
 	for (int i = 0; i < routePointCount; i++) {
 		regpartida.mainRoute[i].x = mainRoute[i].x;
@@ -4098,7 +4123,7 @@ void saveGameToRegister() {
 		regpartida.trayec[indiaux].y = trayec[indiaux].y;
 	}
 
-	for (indiaux = 0; indiaux < maxpersonajes; indiaux++) {
+	for (indiaux = 0; indiaux < characterCount; indiaux++) {
 		regpartida.primera[indiaux] = primera[indiaux];
 		regpartida.lprimera[indiaux] = lprimera[indiaux];
 		regpartida.cprimera[indiaux] = cprimera[indiaux];
@@ -4116,12 +4141,12 @@ void saveGameToRegister() {
 	}
 }
 
-void loadGame(regispartida game) {
+void loadGame(SavedGame game) {
 	freeAnimation();
 	freeScreenObjects();
 
 	uint indiaux, indiaux2;
-	tipoefectofundido = Random(15) + 1;
+	transitionEffect = Random(15) + 1;
 
 	longtray = game.longtray;
 	indicetray = game.indicetray;
@@ -4132,7 +4157,7 @@ void loadGame(regispartida game) {
 	musicVolLeft = game.volumenmelodiaizquierdo;
 	oldxrejilla = game.oldxrejilla;
 	oldyrejilla = game.oldyrejilla;
-	animado.profundidad = game.animadoprofundidad;
+	animado.depth = game.animadoprofundidad;
 	animado.dir = game.animadodir;
 	animado.posx = game.animadoposx;
 	animado.posy = game.animadoposy;
@@ -4186,7 +4211,7 @@ void loadGame(regispartida game) {
 	yframe2 = game.yframe2;
 	oldobjmochila = game.oldobjmochila;
 	objetomochila = game.objetomochila;
-	nombrepersonaje = game.nombrepersonaje;
+	characterName = game.nombrepersonaje;
 	for (int i = 0; i < routePointCount; i++) {
 		mainRoute[i].x = game.mainRoute[i].x;
 		mainRoute[i].y = game.mainRoute[i].y;
@@ -4195,7 +4220,7 @@ void loadGame(regispartida game) {
 		trayec[indiaux].x = game.trayec[indiaux].x;
 		trayec[indiaux].y = game.trayec[indiaux].y;
 	}
-	for (indiaux = 0; indiaux < maxpersonajes; indiaux++) {
+	for (indiaux = 0; indiaux < characterCount; indiaux++) {
 		primera[indiaux] = game.primera[indiaux];
 		lprimera[indiaux] = game.lprimera[indiaux];
 		cprimera[indiaux] = game.cprimera[indiaux];
@@ -4213,11 +4238,11 @@ void loadGame(regispartida game) {
 	}
 
 	totalFadeOut(0);
-	cleardevice();
+	g_engine->_screen->clear();
 	loadPalette("DEFAULT");
 	loadScreenData(game.numeropantalla);
 
-	switch (currentRoomData->codigo) {
+	switch (currentRoomData->code) {
 	case 2: {
 		if (teleencendida)
 			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
@@ -4244,16 +4269,16 @@ void loadGame(regispartida game) {
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
 			break;
 		case 563:
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 			break;
 		}
 	} break;
@@ -4264,37 +4289,37 @@ void loadGame(regispartida game) {
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0:
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
 			break;
 		case 615:
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
 			break;
 		case 622:
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
 			break;
 		case 623:
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
 			break;
 		}
 		if (trampa_puesta) {
 			currentRoomData->animationFlag = true;
-			loadAnimation(currentRoomData->nombremovto);
+			loadAnimation(currentRoomData->animationName);
 			iframe2 = 0;
 			indicetray2 = 1;
-			currentRoomData->tray2[indicetray2 - 1].x = 214 - 15;
-			currentRoomData->tray2[indicetray2 - 1].y = 115 - 42;
-			animado.dir = currentRoomData->dir2[indicetray2 - 1];
-			animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-			animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-			animado.profundidad = 14;
+			currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x = 214 - 15;
+			currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y = 115 - 42;
+			animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
+			animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+			animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+			animado.depth = 14;
 
 			for (indiaux = 0; indiaux < maxrejax; indiaux++)
 				for (indiaux2 = 0; indiaux2 < maxrejay; indiaux2++) {
 					if (rejamascaramovto[indiaux][indiaux2] > 0)
-						currentRoomData->rejapantalla[oldposx + indiaux][oldposy + indiaux2] = rejamascaramovto[indiaux][indiaux2];
+						currentRoomData->walkAreasGrid[oldposx + indiaux][oldposy + indiaux2] = rejamascaramovto[indiaux][indiaux2];
 					if (rejamascararaton[indiaux][indiaux2] > 0)
 						currentRoomData->mouseGrid[oldposx + indiaux][oldposy + indiaux2] = rejamascararaton[indiaux][indiaux2];
 				}
@@ -4306,9 +4331,9 @@ void loadGame(regispartida game) {
 	mask();
 	posicioninv = 0;
 	drawBackpack();
-	if (rojo_capturado == false && currentRoomData->codigo == 24 && trampa_puesta == false)
+	if (rojo_capturado == false && currentRoomData->code == 24 && trampa_puesta == false)
 		runaroundRed();
-	screenTransition(tipoefectofundido, false, background);
+	screenTransition(transitionEffect, false, sceneBackground);
 }
 
 struct indicepart {
@@ -4320,7 +4345,7 @@ void seleccionaPartida(indicepart regindfich, int numSeleccion) {
 	g_engine->_mouseManager->hide();
 	for (int i = 0; i < 6; i++) {
 		int color = i == numSeleccion ? 255 : 253;
-		outtextxy(65, 29, regindfich.listapartidas[i], color);
+		littText(65, 29, regindfich.listapartidas[i], color);
 	}
 	g_engine->_mouseManager->show();
 }
@@ -4353,13 +4378,13 @@ void saveLoad() {
 		}
 	}
 	salirmenufunciones = false;
-	oldxraton = xraton;
-	oldyraton = yraton;
+	oldxraton = mouseX;
+	oldyraton = mouseY;
 	g_engine->_mouseManager->hide();
 
 	tamfondmenu = imagesize(50, 10, 270, 120);
 	puntfondmenu = (byte *)malloc(tamfondmenu);
-	getImg(50, 10, 270, 120, puntfondmenu);
+	g_engine->_graphics->getImg(50, 10, 270, 120, puntfondmenu);
 
 	for (int i = 0; i < 6; i++) {
 		uint textY = i + 1;
@@ -4370,23 +4395,22 @@ void saveLoad() {
 		bar(61, 15, 122, 23, 253);
 		bar(201, 15, 259, 23, 253);
 	}
-	// setcolor(253);
-	outtextxy(65, 29, regindfich.listapartidas[0], 253);
-	outtextxy(65, 44, regindfich.listapartidas[1], 253);
-	outtextxy(65, 59, regindfich.listapartidas[2], 253);
-	outtextxy(65, 74, regindfich.listapartidas[3], 253);
-	outtextxy(65, 89, regindfich.listapartidas[4], 253);
-	outtextxy(65, 104, regindfich.listapartidas[5], 253);
+	littText(65, 29, regindfich.listapartidas[0], 253);
+	littText(65, 44, regindfich.listapartidas[1], 253);
+	littText(65, 59, regindfich.listapartidas[2], 253);
+	littText(65, 74, regindfich.listapartidas[3], 253);
+	littText(65, 89, regindfich.listapartidas[4], 253);
+	littText(65, 104, regindfich.listapartidas[5], 253);
 	if (contadorpc2 > 17)
 		showError(274);
-	xraton = 150;
-	yraton = 60;
+	mouseX = 150;
+	mouseY = 60;
 	// iraton = 1;
 	partidaselecc = 0;
 	modificada = false;
 	nombrepartida = "";
 	g_engine->_mouseManager->setMouseArea(Common::Rect(55, 13, 250, 105));
-	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(1, mouseX, mouseY);
 	do {
 		Common::Event e;
 		bool mouseClicked = false;
@@ -4399,14 +4423,14 @@ void saveLoad() {
 			while (g_system->getEventManager()->pollEvent(e)) {
 				if (isMouseEvent(e)) {
 					g_engine->_mouseManager->setMousePos(e.mouse);
-					xraton = e.mouse.x;
-					yraton = e.mouse.y;
+					mouseX = e.mouse.x;
+					mouseY = e.mouse.y;
 				}
 
 				if (e.type == Common::EVENT_LBUTTONUP || e.type == Common::EVENT_RBUTTONUP) {
 					mouseClicked = true;
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
+					mouseClickX = e.mouse.x;
+					mouseClickY = e.mouse.y;
 				} else if (e.type == Common::EVENT_KEYUP) {
 					keyPressed = true;
 				}
@@ -4417,31 +4441,31 @@ void saveLoad() {
 		} while (!keyPressed && !mouseClicked && !g_engine->shouldQuit());
 
 		if (mouseClicked) {
-			if (pulsay >= 13 && pulsay <= 16) {
-				if (pulsax >= 54 && pulsax <= 124) {
+			if (mouseClickY >= 13 && mouseClickY <= 16) {
+				if (mouseClickX >= 54 && mouseClickX <= 124) {
 					if (partidaselecc > 0 && !desactivagrabar && (nombrepartida != Common::String("DISPONIBLE ") + (char)(partidaselecc + 48)) && (nombrepartida != "")) {
 						// saveGame(partidaselecc);
 						fichindice.close();
-						putImg(50, 10, puntfondmenu);
+						g_engine->_graphics->putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
 						partidaselecc = 0;
 					} else {
-						sound(100, 300);
+						g_engine->_sound->beep(100, 300);
 					}
-				} else if (pulsax >= 130 && pulsax <= 194) {
+				} else if (mouseClickX >= 130 && mouseClickX <= 194) {
 					if ((partidaselecc > 0) && !((modificada))) {
 
 						if (regindfich.listapartidas[partidaselecc] != (Common::String("DISPONIBLE ") + (char)(partidaselecc + 48))) {
 							g_engine->_mouseManager->hide();
-							putImg(50, 10, puntfondmenu);
+							g_engine->_graphics->putImg(50, 10, puntfondmenu);
 							free(puntfondmenu);
 							if (!desactivagrabar) {
 								freeAnimation();
 								freeScreenObjects();
 							}
 							// loadGame(partidaselecc);
-							xraton = oldxraton;
-							yraton = oldyraton;
+							mouseX = oldxraton;
+							mouseY = oldyraton;
 
 							g_engine->_mouseManager->show();
 							g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
@@ -4449,65 +4473,65 @@ void saveLoad() {
 							partidaselecc = 0;
 							return;
 						} else {
-							sound(100, 300);
+							g_engine->_sound->beep(100, 300);
 						}
 					} else {
-						sound(100, 300);
+						g_engine->_sound->beep(100, 300);
 						g_engine->_mouseManager->hide();
 						bar(61, 31, 259, 39, 251);
-						outtextxy(65, 29, regindfich.listapartidas[1], 253);
+						littText(65, 29, regindfich.listapartidas[1], 253);
 						bar(61, 46, 259, 54, 251);
-						outtextxy(65, 44, regindfich.listapartidas[2], 253);
+						littText(65, 44, regindfich.listapartidas[2], 253);
 						bar(61, 61, 259, 69, 251);
-						outtextxy(65, 59, regindfich.listapartidas[3], 253);
+						littText(65, 59, regindfich.listapartidas[3], 253);
 						bar(61, 76, 259, 84, 251);
-						outtextxy(65, 74, regindfich.listapartidas[4], 253);
+						littText(65, 74, regindfich.listapartidas[4], 253);
 						bar(61, 91, 259, 99, 251);
-						outtextxy(65, 89, regindfich.listapartidas[5], 253);
+						littText(65, 89, regindfich.listapartidas[5], 253);
 						bar(61, 106, 259, 114, 251);
-						outtextxy(65, 104, regindfich.listapartidas[6], 253);
+						littText(65, 104, regindfich.listapartidas[6], 253);
 						g_engine->_mouseManager->show();
 					}
-				} else if (pulsax >= 200 && pulsax <= 250) {
+				} else if (mouseClickX >= 200 && mouseClickX <= 250) {
 					if (inGame && !desactivagrabar) {
-						putImg(50, 10, puntfondmenu);
+						g_engine->_graphics->putImg(50, 10, puntfondmenu);
 						salirmenufunciones = true;
 						partidaselecc = 0;
 					} else {
-						sound(100, 300);
+						g_engine->_sound->beep(100, 300);
 					}
 				}
-			} else if (pulsay >= 24 && pulsay <= 32) {
+			} else if (mouseClickY >= 24 && mouseClickY <= 32) {
 				partidaselecc = 0;
 				modificada = false;
 				ytext = 29;
 				seleccionaPartida(regindfich, 0);
 				nombrepartida = regindfich.listapartidas[0];
-			} else if (pulsay >= 39 && pulsay <= 47) {
+			} else if (mouseClickY >= 39 && mouseClickY <= 47) {
 				partidaselecc = 1;
 				modificada = false;
 				ytext = 44;
 				seleccionaPartida(regindfich, 1);
 				nombrepartida = regindfich.listapartidas[1];
-			} else if (pulsay >= 54 && pulsay <= 62) {
+			} else if (mouseClickY >= 54 && mouseClickY <= 62) {
 				partidaselecc = 2;
 				modificada = false;
 				ytext = 59;
 				seleccionaPartida(regindfich, 2);
 				nombrepartida = regindfich.listapartidas[2];
-			} else if (pulsay >= 69 && pulsay <= 77) {
+			} else if (mouseClickY >= 69 && mouseClickY <= 77) {
 				partidaselecc = 3;
 				modificada = false;
 				ytext = 74;
 				seleccionaPartida(regindfich, 3);
 				nombrepartida = regindfich.listapartidas[3];
-			} else if (pulsay >= 84 && pulsay <= 92) {
+			} else if (mouseClickY >= 84 && mouseClickY <= 92) {
 				partidaselecc = 4;
 				modificada = false;
 				ytext = 89;
 				seleccionaPartida(regindfich, 4);
 				nombrepartida = regindfich.listapartidas[4];
-			} else if (pulsay >= 99 && pulsay <= 107) {
+			} else if (mouseClickY >= 99 && mouseClickY <= 107) {
 				partidaselecc = 5;
 				modificada = false;
 				ytext = 0;
@@ -4516,16 +4540,16 @@ void saveLoad() {
 			}
 		}
 
-		if (partidaselecc > 0 && keypressed()) {
+		if (partidaselecc > 0 /*&& keypressed()*/) {
 			g_engine->_mouseManager->hide();
 			readAlphaGraphSmall(nombrepartida, 30, 65, ytext, 251, 254);
 			modificada = true;
 			g_engine->_mouseManager->show();
 		}
 	} while (!salirmenufunciones && !g_engine->shouldQuit());
-	xraton = oldxraton;
-	yraton = oldyraton;
-	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
+	mouseX = oldxraton;
+	mouseY = oldyraton;
+	g_engine->_mouseManager->setMousePos(mouseMaskIndex, mouseX, mouseY);
 	free(puntfondmenu);
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
@@ -4553,9 +4577,9 @@ void loadTalkAnimations() {
 	}
 	fichcani.close();
 
-	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
+	if ((currentRoomData->animationName != "PETER") && (currentRoomData->animationName != "ARZCAEL")) {
 		iframe2 = 0;
-		free(pasoanimado);
+		free(curSecondaryAnimationFrame);
 		bool result;
 		switch (regobj.habla) {
 		case 1:
@@ -4565,7 +4589,7 @@ void loadTalkAnimations() {
 			result = fichcani.open("ALFRED.SEC");
 			break;
 		default:
-			result = fichcani.open(Common::Path(currentRoomData->nombremovto + Common::String(".SEC")));
+			result = fichcani.open(Common::Path(currentRoomData->animationName + Common::String(".SEC")));
 		}
 
 		if (!result)
@@ -4574,7 +4598,7 @@ void loadTalkAnimations() {
 		secondaryAnimationFrameCount = fichcani.readByte();
 		numerodir = fichcani.readByte();
 
-		pasoanimado = (byte *)malloc(sizeanimado);
+		curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
 		if (numerodir != 0) {
 			secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 			for (int i = 0; i <= 3; i++) {
@@ -4601,14 +4625,14 @@ void unloadTalkAnimations() {
 	}
 	fichcani.close();
 
-	if ((currentRoomData->nombremovto != "PETER") && (currentRoomData->nombremovto != "ARZCAEL")) {
-		if (!fichcani.open(Common::Path(currentRoomData->nombremovto + ".DAT"))) {
+	if ((currentRoomData->animationName != "PETER") && (currentRoomData->animationName != "ARZCAEL")) {
+		if (!fichcani.open(Common::Path(currentRoomData->animationName + ".DAT"))) {
 			showError(265);
 		}
 		sizeanimado = fichcani.readUint16LE();
 		secondaryAnimationFrameCount = fichcani.readByte();
 		numerodir = fichcani.readByte();
-		pasoanimado = (byte *)malloc(sizeanimado);
+		curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
 		if (numerodir != 0) {
 
 			secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
@@ -4633,11 +4657,11 @@ regismht readVerbRegister() {
 	// the pascal string.
 	byte size = verb.readByte();
 	verb.seek(-1, SEEK_CUR);
-	regmht.cadenatext = verb.readPascalString(false);
+	regmht.text = verb.readPascalString(false);
 	verb.skip(255 - size);
-	regmht.encadenado = verb.readByte();
-	regmht.respuesta = verb.readUint16LE();
-	regmht.punteronil = verb.readSint32LE();
+	regmht.continued = verb.readByte();
+	regmht.response = verb.readUint16LE();
+	regmht.pointer = verb.readSint32LE();
 	return regmht;
 }
 
@@ -4658,7 +4682,7 @@ void hypertext(
 	byte *fondotextht;
 	byte matrizsaltosht[15];
 	g_engine->_mouseManager->hide();
-	switch (currentRoomData->codigo) {
+	switch (currentRoomData->code) {
 	case 2: { // Leisure room
 		xht = 10;
 		yht = 2;
@@ -4734,37 +4758,37 @@ void hypertext(
 
 		insertarnombre = 0;
 
-		for (int i = 0; i < regmht.cadenatext.size(); i++) {
-			regmht.cadenatext.setChar(decryptionKey[i] ^ regmht.cadenatext[i], i);
-			if (regmht.cadenatext[i] == '@')
+		for (int i = 0; i < regmht.text.size(); i++) {
+			regmht.text.setChar(decryptionKey[i] ^ regmht.text[i], i);
+			if (regmht.text[i] == '@')
 				insertarnombre = i;
 		}
 
 		if (insertarnombre > 0) {
-			regmht.cadenatext.deleteChar(insertarnombre);
-			regmht.cadenatext.insertString(nombrepersonaje, insertarnombre);
+			regmht.text.deleteChar(insertarnombre);
+			regmht.text.insertString(characterName, insertarnombre);
 		}
 
-		if (regmht.cadenatext.size() < anchoht) {
-			tamfondoht = imagesize(xht - 1, yht - 1, xht + (regmht.cadenatext.size() * 8) + 2, yht + 13);
+		if (regmht.text.size() < anchoht) {
+			tamfondoht = imagesize(xht - 1, yht - 1, xht + (regmht.text.size() * 8) + 2, yht + 13);
 			fondotextht = (byte *)malloc(tamfondoht);
 
-			getImg(xht - 1, yht - 1, xht + (regmht.cadenatext.size() * 8) + 2, yht + 13, fondotextht);
+			g_engine->_graphics->getImg(xht - 1, yht - 1, xht + (regmht.text.size() * 8) + 2, yht + 13, fondotextht);
 
-			outtextxy(xht - 1, yht, regmht.cadenatext, colorsombraht);
+			littText(xht - 1, yht, regmht.text, colorsombraht);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
-			outtextxy(xht + 1, yht, regmht.cadenatext, colorsombraht);
+			littText(xht + 1, yht, regmht.text, colorsombraht);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
-			outtextxy(xht, yht - 1, regmht.cadenatext, colorsombraht);
+			littText(xht, yht - 1, regmht.text, colorsombraht);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
-			outtextxy(xht, yht + 1, regmht.cadenatext, colorsombraht);
+			littText(xht, yht + 1, regmht.text, colorsombraht);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
 
-			outtextxy(xht, yht, regmht.cadenatext, colortextoht);
+			littText(xht, yht, regmht.text, colortextoht);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
 		} else {
@@ -4779,35 +4803,35 @@ void hypertext(
 				iteracionesht += 1;
 				do {
 					iht -= 1;
-				} while (regmht.cadenatext[iht] != ' ');
+				} while (regmht.text[iht] != ' ');
 				matrizsaltosht[iteracionesht] = iht + 1;
-			} while (iht + 1 <= regmht.cadenatext.size() - anchoht);
+			} while (iht + 1 <= regmht.text.size() - anchoht);
 
 			iteracionesht += 1;
-			matrizsaltosht[iteracionesht] = regmht.cadenatext.size();
+			matrizsaltosht[iteracionesht] = regmht.text.size();
 
 			// Grab patch of background behind where the text will be, to paste it back later
 			tamfondoht = imagesize(xht - 1, yht - 1, xht + (anchoht * 8) + 2, yht + iteracionesht * 13);
 			fondotextht = (byte *)malloc(tamfondoht);
-			getImg(xht - 1, yht - 1, xht + (anchoht * 8) + 2, yht + iteracionesht * 13, fondotextht);
+			g_engine->_graphics->getImg(xht - 1, yht - 1, xht + (anchoht * 8) + 2, yht + iteracionesht * 13, fondotextht);
 
 			for (lineaht = 1; lineaht <= iteracionesht; lineaht++) {
 
-				Common::String lineString = Common::String(regmht.cadenatext.c_str() + matrizsaltosht[lineaht - 1], regmht.cadenatext.c_str() + matrizsaltosht[lineaht]);
+				Common::String lineString = Common::String(regmht.text.c_str() + matrizsaltosht[lineaht - 1], regmht.text.c_str() + matrizsaltosht[lineaht]);
 
-				outtextxy(xht + 1, yht + ((lineaht - 1) * 11), lineString, colorsombraht);
+				littText(xht + 1, yht + ((lineaht - 1) * 11), lineString, colorsombraht);
 				g_engine->_screen->update();
 				delay(enforcedTextAnimDelay);
-				outtextxy(xht - 1, yht + ((lineaht - 1) * 11), lineString, colorsombraht);
+				littText(xht - 1, yht + ((lineaht - 1) * 11), lineString, colorsombraht);
 				g_engine->_screen->update();
 				delay(enforcedTextAnimDelay);
-				outtextxy(xht, yht + ((lineaht - 1) * 11) + 1, lineString, colorsombraht);
+				littText(xht, yht + ((lineaht - 1) * 11) + 1, lineString, colorsombraht);
 				g_engine->_screen->update();
 				delay(enforcedTextAnimDelay);
-				outtextxy(xht, yht + ((lineaht - 1) * 11) - 1, lineString, colorsombraht);
+				littText(xht, yht + ((lineaht - 1) * 11) - 1, lineString, colorsombraht);
 				g_engine->_screen->update();
 				delay(enforcedTextAnimDelay);
-				outtextxy(xht, yht + ((lineaht - 1) * 11), lineString, colortextoht);
+				littText(xht, yht + ((lineaht - 1) * 11), lineString, colortextoht);
 				g_engine->_screen->update();
 				delay(enforcedTextAnimDelay);
 			}
@@ -4852,13 +4876,13 @@ void hypertext(
 						sprites(true);
 						direccionmovimiento = direccionmovimientopaso;
 					} else {
-						if (indicetray2 >= currentRoomData->longtray2)
+						if (indicetray2 >= currentRoomData->secondaryTrajectoryLength)
 							indicetray2 = 1;
 						else
 							indicetray2 += 1;
-						animado.posx = currentRoomData->tray2[indicetray2 - 1].x;
-						animado.posy = currentRoomData->tray2[indicetray2 - 1].y;
-						animado.dir = currentRoomData->dir2[indicetray2 - 1];
+						animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
+						animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
+						animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
 						if (iframe2 >= secondaryAnimationFrameCount - 1)
 							iframe2 = 0;
 						else
@@ -4872,7 +4896,7 @@ void hypertext(
 						movidapaleta = 0;
 					else
 						movidapaleta += 1;
-					if (currentRoomData->codigo == 4 && movidapaleta == 4)
+					if (currentRoomData->code == 4 && movidapaleta == 4)
 						g_engine->_sound->playVoc();
 					updatePalette(movidapaleta);
 				} else
@@ -4880,20 +4904,20 @@ void hypertext(
 			}
 			g_engine->_screen->update();
 			g_system->delayMillis(10);
-		} while (indiceaniconversa <= (regmht.cadenatext.size() * 4) && !mouseClicked && !g_engine->shouldQuit());
+		} while (indiceaniconversa <= (regmht.text.size() * 4) && !mouseClicked && !g_engine->shouldQuit());
 
-		putImg(xht - 1, yht - 1, fondotextht);
+		g_engine->_graphics->putImg(xht - 1, yht - 1, fondotextht);
 		free(fondotextht);
 
 		g_system->delayMillis(10);
-	} while (regmht.encadenado && !g_engine->shouldQuit());
-	numresp = regmht.respuesta;
+	} while (regmht.continued && !g_engine->shouldQuit());
+	numresp = regmht.response;
 	g_engine->_mouseManager->show();
 }
 
 void wcScene() {
 	palette palwater;
-	zonaactual = currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
+	zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
 	goToObject(zonaactual, zonadestino);
 
 	copyPalette(pal, palwater);
@@ -4903,37 +4927,37 @@ void wcScene() {
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 
-	outtextxy(10, 20, messages[45], 253);
+	littText(10, 20, messages[45], 253);
 	delay(1000);
 
 	bar(10, 20, 150, 30, 0);
 	delay(2000);
 
-	outtextxy(100, 50, messages[46], 255);
+	littText(100, 50, messages[46], 255);
 	delay(1000);
 
 	bar(100, 50, 250, 60, 0);
 	delay(2000);
 
-	outtextxy(30, 110, messages[47], 253);
+	littText(30, 110, messages[47], 253);
 	delay(1000);
 
 	bar(30, 110, 210, 120, 0);
 	delay(3000);
 
-	outtextxy(50, 90, messages[48], 248);
+	littText(50, 90, messages[48], 248);
 	delay(1000);
 
 	g_engine->_sound->playVoc("WATER", 272050, 47062);
 	bar(50, 90, 200, 100, 0);
 	delay(4000);
 
-	characterPosX = 76 - rectificacionx;
-	characterPosY = 78 - rectificaciony;
+	characterPosX = 76 - characterCorrectionX;
+	characterPosY = 78 - characerCorrectionY;
 	copyPalette(palwater, pal);
-	screenHandleToBackground();
+	restoreBackground();
 	assembleScreen();
-	drawScreen(background);
+	drawScreen(sceneBackground);
 	partialFadeIn(234);
 	xframe2 = 0;
 	indicetray = 0;
@@ -4962,11 +4986,11 @@ void readConversationFile(Common::String f) {
 }
 
 void saveDoorMetadata(DoorRegistry doors, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeUint16LE(doors.pantallaquecarga);
-	screenDataStream->writeUint16LE(doors.posxsalida);
-	screenDataStream->writeUint16LE(doors.posysalida);
-	screenDataStream->writeByte(doors.abiertacerrada);
-	screenDataStream->writeByte(doors.codigopuerta);
+	screenDataStream->writeUint16LE(doors.nextScene);
+	screenDataStream->writeUint16LE(doors.exitPosX);
+	screenDataStream->writeUint16LE(doors.exitPosY);
+	screenDataStream->writeByte(doors.openclosed);
+	screenDataStream->writeByte(doors.doorcode);
 }
 
 void savePoint(Common::Point point, Common::SeekableWriteStream *screenDataStream) {
@@ -4975,16 +4999,16 @@ void savePoint(Common::Point point, Common::SeekableWriteStream *screenDataStrea
 }
 
 void saveBitmapRegister(RoomBitmapRegister bitmap, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeSint32LE(bitmap.puntbitmap);
-	screenDataStream->writeUint16LE(bitmap.tambitmap);
+	screenDataStream->writeSint32LE(bitmap.bitmapPointer);
+	screenDataStream->writeUint16LE(bitmap.bitmapSize);
 	screenDataStream->writeUint16LE(bitmap.coordx);
 	screenDataStream->writeUint16LE(bitmap.coordy);
-	screenDataStream->writeUint16LE(bitmap.profund);
+	screenDataStream->writeUint16LE(bitmap.depth);
 }
 
 void saveRoomObjectList(RoomObjectListEntry objectList, Common::SeekableWriteStream *screenDataStream) {
 
-	screenDataStream->writeUint16LE(objectList.indicefichero);
+	screenDataStream->writeUint16LE(objectList.fileIndex);
 	screenDataStream->writeByte(objectList.objectName.size());
 	int paddingSize = 20 - objectList.objectName.size();
 	if (paddingSize < 20) {
@@ -5003,10 +5027,10 @@ void saveRoomObjectList(RoomObjectListEntry objectList, Common::SeekableWriteStr
 }
 
 void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeUint16LE(room->codigo);
-	screenDataStream->writeUint32LE(room->puntimagenpantalla);
-	screenDataStream->writeUint16LE(room->tamimagenpantalla);
-	screenDataStream->write(room->rejapantalla, 40 * 28);
+	screenDataStream->writeUint16LE(room->code);
+	screenDataStream->writeUint32LE(room->roomImagePointer);
+	screenDataStream->writeUint16LE(room->roomImageSize);
+	screenDataStream->write(room->walkAreasGrid, 40 * 28);
 	screenDataStream->write(room->mouseGrid, 40 * 28);
 
 	// read puntos
@@ -5022,16 +5046,16 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 		saveDoorMetadata(room->doors[i], screenDataStream);
 	}
 	for (int i = 0; i < 15; i++) {
-		saveBitmapRegister(room->bitmapasociados[i], screenDataStream);
+		saveBitmapRegister(room->screenLayers[i], screenDataStream);
 	}
 	for (int i = 0; i < 51; i++) {
-		saveRoomObjectList(*room->indexadoobjetos[i], screenDataStream);
+		saveRoomObjectList(*room->screenObjectIndex[i], screenDataStream);
 	}
 	screenDataStream->writeByte(room->animationFlag);
 
-	screenDataStream->writeByte(room->nombremovto.size());
-	screenDataStream->writeString(room->nombremovto);
-	int paddingSize = 8 - room->nombremovto.size();
+	screenDataStream->writeByte(room->animationName.size());
+	screenDataStream->writeString(room->animationName);
+	int paddingSize = 8 - room->animationName.size();
 	if (paddingSize > 0) {
 		char *padding = (char *)malloc(paddingSize);
 		for (int i = 0; i < paddingSize; i++) {
@@ -5043,16 +5067,16 @@ void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStr
 		free(padding);
 	}
 	screenDataStream->writeByte(room->paletteAnimationFlag);
-	screenDataStream->writeUint16LE(room->puntpaleta);
+	screenDataStream->writeUint16LE(room->palettePointer);
 	for (int i = 0; i < 300; i++) {
-		savePoint(room->tray2[i], screenDataStream);
+		savePoint(room->secondaryAnimTrajectory[i], screenDataStream);
 	}
-	screenDataStream->write(room->dir2, 600);
-	screenDataStream->writeUint16LE(room->longtray2);
+	screenDataStream->write(room->secondaryAnimDirections, 600);
+	screenDataStream->writeUint16LE(room->secondaryTrajectoryLength);
 }
 
 void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream) {
-	rooms->seek(room->codigo * roomRegSize, SEEK_SET);
+	rooms->seek(room->code * roomRegSize, SEEK_SET);
 	saveRoom(room, stream);
 }
 
@@ -5071,13 +5095,13 @@ void initializeObjectFile() {
 	objFile.close();
 }
 
-void saveItem(InvItemRegister object, Common::SeekableWriteStream *objectDataStream) {
+void saveItem(ScreenObject object, Common::SeekableWriteStream *objectDataStream) {
 	objectDataStream->writeUint16LE(object.code);
-	objectDataStream->writeByte(object.altura);
+	objectDataStream->writeByte(object.height);
 
 	objectDataStream->writeByte(object.name.size());
 	objectDataStream->writeString(object.name);
-	int paddingSize = longitudnombreobjeto - object.name.size();
+	int paddingSize = objectNameLength - object.name.size();
 	if (paddingSize > 0) {
 		char *padding = (char *)malloc(paddingSize);
 		for (int i = 0; i < paddingSize; i++) {
@@ -5095,24 +5119,24 @@ void saveItem(InvItemRegister object, Common::SeekableWriteStream *objectDataStr
 	objectDataStream->writeUint16LE(object.useTextRef);
 
 	objectDataStream->writeByte(object.habla);
-	objectDataStream->writeByte(object.abrir);
-	objectDataStream->writeByte(object.cerrar);
+	objectDataStream->writeByte(object.openable);
+	objectDataStream->writeByte(object.closeable);
 
-	objectDataStream->write(object.usar, 8);
+	objectDataStream->write(object.used, 8);
 
-	objectDataStream->writeByte(object.coger);
+	objectDataStream->writeByte(object.pickupable);
 
-	objectDataStream->writeUint16LE(object.usarcon);
-	objectDataStream->writeUint16LE(object.reemplazarpor);
-	objectDataStream->writeByte(object.profundidad);
-	objectDataStream->writeUint32LE(object.punterobitmap);
-	objectDataStream->writeUint16LE(object.tambitmap);
-	objectDataStream->writeUint16LE(object.punteroframesgiro);
-	objectDataStream->writeUint16LE(object.punteropaletagiro);
-	objectDataStream->writeUint16LE(object.xparche);
-	objectDataStream->writeUint16LE(object.yparche);
-	objectDataStream->writeUint32LE(object.puntparche);
-	objectDataStream->writeUint16LE(object.tamparche);
+	objectDataStream->writeUint16LE(object.useWith);
+	objectDataStream->writeUint16LE(object.replaceWith);
+	objectDataStream->writeByte(object.depth);
+	objectDataStream->writeUint32LE(object.bitmapPointer);
+	objectDataStream->writeUint16LE(object.bitmapSize);
+	objectDataStream->writeUint16LE(object.rotatingObjectAnimation);
+	objectDataStream->writeUint16LE(object.rotatingObjectPalette);
+	objectDataStream->writeUint16LE(object.dropOverlayX);
+	objectDataStream->writeUint16LE(object.dropOverlayY);
+	objectDataStream->writeUint32LE(object.dropOverlay);
+	objectDataStream->writeUint16LE(object.dropOverlaySize);
 	objectDataStream->writeUint16LE(object.objectIconBitmap);
 
 	objectDataStream->writeByte(object.xrej1);
@@ -5120,11 +5144,11 @@ void saveItem(InvItemRegister object, Common::SeekableWriteStream *objectDataStr
 	objectDataStream->writeByte(object.xrej2);
 	objectDataStream->writeByte(object.yrej2);
 
-	objectDataStream->write(object.parcherejapantalla, 100);
-	objectDataStream->write(object.parcherejaraton, 100);
+	objectDataStream->write(object.walkAreasPatch, 100);
+	objectDataStream->write(object.mouseGridPatch, 100);
 }
 
-void saveItemRegister(InvItemRegister object, Common::SeekableWriteStream *stream) {
+void saveItemRegister(ScreenObject object, Common::SeekableWriteStream *stream) {
 	invItemData->seek(object.code * itemRegSize, SEEK_SET);
 	saveItem(object, stream);
 }
