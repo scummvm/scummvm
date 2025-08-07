@@ -3813,6 +3813,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 #define UNSUPPORTED_GAME_ENTRY_EN(ID, FILENAME, MD5, SIZE) \
 	UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE, Common::EN_ANY, 0)
 
+#define UNSUPPORTED_GAME_ENTRY_LANG(ID, FILENAME, MD5, SIZE, LANG) \
+	UNSUPPORTED_ENTRY(ID, FILENAME, MD5, SIZE, LANG, 0)
+
 #define TESTING_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM) \
 	DETECTION_ENTRY(ID, FILENAME, MD5, SIZE, LANG, PLATFORM, ADGF_TESTING, 0)
 
@@ -4242,8 +4245,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25439808),  //v1.0
 	UNSUPPORTED_GAME_ENTRY_EN("razorsinthenight", "Razors.exe", "0500aacb6c176d47ac0f8158f055db83", 25442827),  //v2.0
 
-	// using unsupported ags_Maya, ags_FileDel plugins
-	UNSUPPORTED_GAME_ENTRY_EN("officeolympics", "Oo.exe", "465f972675db2da6040518221af5b0ba", 30378663),
+	// using ags_Maya plugin, partially implemented
+	UNSUPPORTED_GAME_ENTRY_LANG("officeolympics", "Oo.exe", "465f972675db2da6040518221af5b0ba", 30378663, Common::IT_ITA),
 
 	// using unsupported agsEngine plugin
 	UNSUPPORTED_DEMO_ENTRY_EN("spacesim", "space_3d.exe", "8538afa638531020f79df88aec0fb797", 1667537),
@@ -5014,6 +5017,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37722884),
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37725830),
 	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37729146),
+	DETECTION_ENTRY_GUIO("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895485662, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),
 	DETECTION_ENTRY_GUIO("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573, Common::EN_ANY, "Steam", GUIO2(GUIO_NOLANG, GAMEOPTION_NO_SAVELOAD), ADGF_NO_FLAGS, 0),
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905499047, 0),  // v1.00.1
 	GAME_ENTRY_PLUGIN_GOG_NOAUTOSAVE("rosewater", "Rosewater.ags", "9748c2a388a93061a1a480127493acb2", 3905515500, 0),  // v1.02.0
@@ -5238,6 +5242,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_PLUGIN_GOG_EN_NOAUTOSAVE("unavowed", "ac2game.dat", "f311000c476689a6e77d25f002f412db", 1617832596, 0), // Mac v2.0.0 (GOG v2.6)
 	GAME_ENTRY_EN_STEAM("unlikelyprometheus", "The Unlikely Prometheus.exe", "a370a1db43a1d376d09e43469abba1d1", 129124983),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1072879555),
+	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1074262526),
 	GAME_ENTRY_EN_STEAM("untilihaveyou", "until i have you.exe", "cda1d7e36993dd55ba5513c1c43e5b2b", 1089857773),
 	GAME_ENTRY_EN_STEAM("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51472537),
 	GAME_ENTRY_EN("waitingfortheloop", "waitingfortheloop.exe", "0241777c2537fc5d077c05cde10bfa9f", 51273604),
