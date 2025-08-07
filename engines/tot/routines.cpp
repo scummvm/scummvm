@@ -4389,8 +4389,8 @@ void saveLoad() {
 	partidaselecc = 0;
 	modificada = false;
 	nombrepartida = "";
-	setMouseArea(55, 13, 250, 105);
-	setMousePos(1, xraton, yraton);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(55, 13, 250, 105));
+	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
 	do {
 		Common::Event e;
 		bool mouseClicked = false;
@@ -4448,7 +4448,7 @@ void saveLoad() {
 							yraton = oldyraton;
 
 							g_engine->_mouseManager->show();
-							setMouseArea(0, 0, 305, 185);
+							g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 							salirmenufunciones = true;
 							partidaselecc = 0;
 							return;
@@ -4529,9 +4529,9 @@ void saveLoad() {
 	} while (!salirmenufunciones && !g_engine->shouldQuit());
 	xraton = oldxraton;
 	yraton = oldyraton;
-	setMousePos(iraton, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
 	free(puntfondmenu);
-	setMouseArea(0, 0, 305, 185);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 /**

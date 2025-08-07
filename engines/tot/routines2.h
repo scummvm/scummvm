@@ -23,7 +23,6 @@
 
 #include "tot/anims.h"
 #include "tot/graphics.h"
-#include "tot/mouse.h"
 #include "tot/playanim.h"
 #include "tot/sound.h"
 #include "tot/util.h"

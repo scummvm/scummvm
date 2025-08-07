@@ -38,7 +38,7 @@ public:
 	MouseManager();
 	~MouseManager();
 	void drawMask(int idx);
-	void warpMouse(int mask, int x, int y);
+	void setMousePos(int mask, int x, int y);
 	void setMask(int maskNum);
 	void animateMouseIfNeeded();
 	void hide();

@@ -24,7 +24,6 @@
 
 #include "tot/dialog.h"
 #include "tot/graphics.h"
-#include "tot/mouse.h"
 #include "tot/playanim.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
@@ -88,7 +87,7 @@ int engine_start() {
 	setMidiVolume(0, 0);
 	playMidiFile("SILENT", false);
 
-	setMouseArea(0, 0, 305, 185);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 	playMidiFile("SILENT", true);
 
 	totalFadeOut(0);
@@ -100,7 +99,7 @@ int engine_start() {
 	playMidiFile("INTRODUC", true);
 	setMidiVolume(3, 3);
 	firstIntroduction();
-	setMousePos(1, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
 	initialMenu(hechaprimeravez);
 	if (partidanueva && !g_engine->shouldQuit()) {
 		newGame();

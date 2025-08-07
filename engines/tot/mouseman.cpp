@@ -78,7 +78,7 @@ void MouseManager::printPos(int x, int y, int screenPosX, int screenPosY) {
 	g_engine->_graphics->euroText(Common::String::format("MousePos: %d, %d", x + 7, y + 7), screenPosX, screenPosY, Graphics::kTextAlignLeft);
 }
 
-void MouseManager::warpMouse(int mask, int x, int y) {
+void MouseManager::setMousePos(int mask, int x, int y) {
 	setMouseMask(_currentMouseMask);
 	g_system->warpMouse(x, y);
 }

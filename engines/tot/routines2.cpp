@@ -1918,7 +1918,7 @@ void initialMenu(bool fundido) {
 	xraton = 160;
 	yraton = 95;
 	iraton = 1;
-	setMousePos(iraton, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
 	Common::Event e;
 	do {
 		g_engine->_chrono->updateChrono();
@@ -2132,8 +2132,8 @@ void exitToDOS() {
 	yraton = 90;
 	iraton = 1;
 
-	setMouseArea(115, 80, 190, 100);
-	setMousePos(iraton, xraton, yraton);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(115, 80, 190, 100));
+	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
 	Common::Event e;
 	const char hotKeyYes = hotKeyFor(YES);
 	const char hotKeyNo = hotKeyFor(NO);
@@ -2178,7 +2178,7 @@ void exitToDOS() {
 	iraton = oldiraton;
 	g_engine->_mouseManager->show();
 	free(puntfondcontroles);
-	setMouseArea(0, 0, 305, 185);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 void soundControls() {
@@ -2209,7 +2209,7 @@ void soundControls() {
 	yraton = 60;
 	iraton = 1;
 
-	setMouseArea(55, 13, 250, 105);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(55, 13, 250, 105));
 
 	for (ytext = 1; ytext <= 6; ytext++)
 		buttonBorder(120 - (ytext * 10), 80 - (ytext * 10), 200 + (ytext * 10), 60 + (ytext * 10), 251, 251, 251, 251, 0, 0, "");
@@ -2235,7 +2235,7 @@ void soundControls() {
 	putImg(volumenfx + 86, 31, slider);
 	putImg(volumenmelodia + 86, 76, slider);
 
-	setMousePos(1, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
 	bool keyPressed = false;
 	bool mouseClicked = false;
 	Common::Event e;
@@ -2341,7 +2341,7 @@ void soundControls() {
 	xraton = oldxraton;
 	yraton = oldyraton;
 	iraton = oldiraton;
-	setMousePos(iraton, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
 	free(puntfondcontroles);
 	free(slider);
 	free(sliderBackground1);
@@ -2350,7 +2350,7 @@ void soundControls() {
 	if (contadorpc > 7)
 		showError(274);
 
-	setMouseArea(0, 0, 305, 185);
+	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 void sacrificeScene() {

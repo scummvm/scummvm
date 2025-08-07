@@ -34,7 +34,6 @@
 #include "tot/detection.h"
 #include "tot/font/bgifont.h"
 #include "tot/graphman.h"
-#include "tot/mouse.h"
 #include "tot/playanim.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"

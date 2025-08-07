@@ -25,7 +25,6 @@
 
 #include "tot/anims.h"
 #include "tot/graphics.h"
-#include "tot/mouse.h"
 #include "tot/playanim.h"
 #include "tot/routines2.h"
 #include "tot/sound.h"

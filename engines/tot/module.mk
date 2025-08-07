@@ -8,7 +8,6 @@ MODULE_OBJS = \
 	util.o \
 	playanim.o \
 	graphics.o \
-	mouse.o \
 	sound.o \
 	anims.o \
 	routines2.o \
