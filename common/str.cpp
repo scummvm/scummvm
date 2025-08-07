@@ -840,33 +840,37 @@ String percentEncodeString(const String &src) {
 // TODO: Rename this to Common::strcasecmp
 int scumm_stricmp(const char *s1, const char *s2) {
 	byte l1, l2;
+	int result;
 	do {
-		// Don't use ++ inside tolower, in case the macro uses its
-		// arguments more than once.
 		l1 = (byte)*s1++;
-		l1 = tolower(l1);
 		l2 = (byte)*s2++;
-		l2 = tolower(l2);
-	} while (l1 == l2 && l1 != 0);
-	return l1 - l2;
+
+		result = l1 - l2;
+		if (result) {
+			result = tolower(l1) - tolower(l2);
+		}
+	} while (!result && l1 != 0);
+	return result;
 }
 
 // Portable implementation of strnicmp / strncasecmp / strncmpi.
 // TODO: Rename this to Common::strncasecmp
 int scumm_strnicmp(const char *s1, const char *s2, uint n) {
 	byte l1, l2;
+	int result;
 	do {
 		if (n-- == 0)
 			return 0; // no difference found so far -> signal equality
 
-		// Don't use ++ inside tolower, in case the macro uses its
-		// arguments more than once.
 		l1 = (byte)*s1++;
-		l1 = tolower(l1);
 		l2 = (byte)*s2++;
-		l2 = tolower(l2);
-	} while (l1 == l2 && l1 != 0);
-	return l1 - l2;
+
+		result = l1 - l2;
+		if (result) {
+			result = tolower(l1) - tolower(l2);
+		}
+	} while (!result && l1 != 0);
+	return result;
 }
 
 const char *scumm_skipArticle(const char *s1) {
