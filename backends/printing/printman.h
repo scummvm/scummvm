@@ -32,11 +32,20 @@ class PrintingManager {
 public:
 	virtual ~PrintingManager();
 
-	virtual void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) = 0;
+	PrintingManager() {
+		_jobName = "ScummVM";
+	}
 
 	void printImage(const Graphics::ManagedSurface &surf) {
-		printImage("ScummVM", surf);
+		doPrint(surf);
 	}
+
+	void setJobName(const Common::String &jobName) { _jobName = jobName; }
+
+protected:
+	virtual void doPrint(const Graphics::ManagedSurface &surf) = 0;
+
+	Common::String _jobName;
 };
 } // End of namespace Common
 
