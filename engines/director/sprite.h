@@ -65,7 +65,7 @@ public:
 
 	void reset();
 
-	void updateEditable();
+	bool getEditable();
 
 	bool respondsToMouse();
 	bool isActive();

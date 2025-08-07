@@ -61,9 +61,6 @@ Channel::Channel(Score *sc, Sprite *sp, int priority) {
 
 	_visible = true;
 	_dirty = true;
-
-	if (_sprite)
-		_sprite->updateEditable();
 }
 
 Channel::Channel(const Channel &channel) {
@@ -451,7 +448,6 @@ void Channel::setClean(Sprite *nextSprite, bool partial) {
 	// for the dirty puppet sprites, we will always replaceWidget since previousCastId is 0, but we shouldn't replace the widget of there are only position changing
 	// e.g. we won't want a puppet editable text sprite changing because that will cause the loss of text.
 	if (replace) {
-		_sprite->updateEditable();
 		replaceWidget(previousCastId, dimsChanged || spriteTypeChanged);
 	}
 
@@ -488,8 +484,7 @@ void Channel::updateTextCast() {
 	if (!_sprite->_cast || _sprite->_cast->_type != kCastText)
 		return;
 
-	_sprite->updateEditable();
-	setEditable(_sprite->_editable);
+	setEditable(_sprite->getEditable());
 
 	if (_widget) {
 		Graphics::MacText *textWidget = (Graphics::MacText *)_widget;
