@@ -332,6 +332,9 @@ void Score::startPlay() {
 
 	updateSprites(kRenderForceUpdate, true);
 
+	_soundManager->disablePuppetSound(1);
+	_soundManager->disablePuppetSound(2);
+
 	if (_vm->getVersion() >= 300)
 		_movie->processEvent(kEventStartMovie);
 }
