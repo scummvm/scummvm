@@ -331,11 +331,11 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 		}
 		widget = createWindowOrWidget(bbox, dims, macFont);
 		if (_textType != kTextTypeScrolling) {
-			((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable);
+			((Graphics::MacText *)widget)->setEditable(channel->_sprite->_editable || _editable);
 		}
 
 		// since we disable the ability of setActive in setEdtiable, then we need to set active widget manually
-		if (channel->_sprite->_editable) {
+		if (channel->_sprite->_editable || _editable) {
 			Graphics::MacWidget *activeWidget = g_director->_wm->getActiveWidget();
 			if (activeWidget == nullptr || !activeWidget->isEditable())
 				g_director->_wm->setActiveWidget(widget);

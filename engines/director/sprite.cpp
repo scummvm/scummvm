@@ -290,12 +290,11 @@ uint32 Sprite::getForeColor() {
 	}
 }
 
-void Sprite::updateEditable() {
+bool Sprite::getEditable() {
 	if (!_cast)
-		return;
+		return _editable;
 
-	if (!_puppet)
-		_editable = _editable || _cast->isEditable();
+	return _editable || _cast->isEditable();
 }
 
 bool Sprite::respondsToMouse() {
