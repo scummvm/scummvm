@@ -27,10 +27,9 @@
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
-#include "common/substream.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 
-#include "soundman.h"
 #include "tot/soundman.h"
 #include "tot/tot.h"
 #include "tot/util.h"
@@ -38,7 +37,6 @@
 namespace Tot {
 
 SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
-
 
 	_midiPlayer = new MidiPlayer();
 	_midiPlayer->open();
@@ -50,18 +48,23 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, 100);
 }
 SoundManager::~SoundManager() {
-	// delete _musicPlayer;
-	if(_midiPlayer)
+	if (_midiPlayer)
 		delete _midiPlayer;
 	free(_lastSrcStream);
 	free(_audioStream);
 }
 
-void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
+void SoundManager::init() {
+	setMidiVolume(3, 3);
+	playMidi("SILENT", false);
+	setSfxVolume(6, 6);
+}
+
+void SoundManager::loadVoc(Common::String vocFile, long startPos, int16 size) {
 	Common::File vocResource;
 
 	if (size == 0) {
-		if (!vocResource.open(Common::Path(fileName + ".VOC"))) {
+		if (!vocResource.open(Common::Path(vocFile + ".VOC"))) {
 			showError(266);
 		}
 
@@ -71,12 +74,14 @@ void SoundManager::loadVoc(Common::String fileName, long offset, int16 size) {
 		if (!vocResource.open("EFECTOS.DAT")) {
 			showError(266);
 		}
-		vocResource.seek(offset);
+		vocResource.seek(startPos);
 		_lastSrcStream = vocResource.readStream((uint32)size);
 	}
 	_audioStream = Audio::makeVOCStream(_lastSrcStream, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
 }
-void SoundManager::autoPlayVoc() {
+
+void SoundManager::autoPlayVoc(Common::String vocFile, int32 startPos, int16 vocSize) {
+	loadVoc(vocFile, startPos, vocSize);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, Audio::makeLoopingAudioStream(_audioStream, 0), kSfxId, 255U, 0, DisposeAfterUse::NO);
 }
 
@@ -84,6 +89,11 @@ void SoundManager::playVoc() {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, _audioStream, kSfxId, 255U, 0, DisposeAfterUse::NO);
 	_lastSrcStream->seek(0);
 	_audioStream->rewind();
+}
+
+void SoundManager::playVoc(Common::String vocFile, int32 startPos, uint vocSize) {
+	loadVoc(vocFile, startPos, vocSize);
+	playVoc();
 }
 
 void SoundManager::stopVoc() {
@@ -101,18 +111,19 @@ bool SoundManager::isVocPlaying() {
 	return _mixer->isSoundIDActive(kSfxId);
 }
 
-void SoundManager::playMidi(const char *fileName, bool loop) {
+void SoundManager::playMidi(Common::String fileName, bool loop) {
 	Common::File musicFile;
-	debug("Opening music file %s", fileName);
-	musicFile.open(fileName);
+	debug("Opening music file %s", fileName.c_str());
+	musicFile.open(Common::Path(fileName + ".MUS"));
 	if (!musicFile.isOpen()) {
 		showError(267);
 		return;
 	}
-	_midiPlayer->load(&musicFile, musicFile.size());
-	_midiPlayer->setLoop(loop);
-	_midiPlayer->play(0);
-
+	byte *curMidi = (byte *)malloc(musicFile.size());
+	musicFile.read(curMidi, musicFile.size());
+	playMidi(curMidi, musicFile.size(), loop);
+	musicFile.close();
+	free(curMidi);
 }
 
 void SoundManager::playMidi(byte *data, int size, bool loop) {
@@ -138,8 +149,48 @@ void SoundManager::beep(int32 frequency, int32 ms) {
 					   true);
 }
 
-void SoundManager::setSfxVolume(int volume) {
-	debug("Setting sfx volume to =%d", volume);
+void SoundManager::setSfxVolume(byte voll, byte volr) {
+
+	if (voll == volr) {
+		int volume = (voll) / (float)7 * 255;
+		setSfxVolume(volume);
+		setSfxBalance(true, true);
+	} else {
+		if (voll == 0) {
+			setSfxBalance(false, true);
+		} else {
+			setSfxBalance(true, false);
+		}
+	}
+}
+
+void SoundManager::setMidiVolume(byte voll, byte volr) {
+	int volume = (voll) / (float)7 * 255;
+	setMusicVolume(volume);
+}
+
+void SoundManager::fadeOutMusic(byte voll, byte volr) {
+	byte stepVol = (voll + volr) / 2;
+	for (int ivol = stepVol; ivol >= 0; ivol--) {
+		setMidiVolume(ivol, ivol);
+		delay(10);
+	}
+}
+
+void SoundManager::fadeInMusic(byte voll, byte volr) {
+	byte ivol, stepVol;
+
+	stepVol = (voll + volr) / 2;
+	for (ivol = 0; ivol <= stepVol; ivol++) {
+		setMidiVolume(ivol, ivol);
+		delay(10);
+	}
+}
+
+void SoundManager::setMasterVolume(byte voll, byte volr) {
+}
+
+void SoundManager::setSfxVolume(byte volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 	ConfMan.setInt("sfx_volume", volume);
 	ConfMan.flushToDisk();
@@ -150,9 +201,7 @@ void SoundManager::setSfxBalance(bool left, bool right) {
 	_mixer->setChannelBalance(_soundHandle, balance);
 }
 
-void SoundManager::setMusicVolume(int volume) {
-
-	// debug("Setting music volume to =%d", volume);
+void SoundManager::setMusicVolume(byte volume) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
 	ConfMan.setInt("music_volume", volume);
 	ConfMan.flushToDisk();

@@ -93,8 +93,8 @@ bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
 
 
 bool TotConsole::cmdJumpToPart2(int argc, const char **argv) {
-	completadalista1 = true;
-	completadalista2 = true;
+	list1Complete = true;
+	list2Complete = true;
 	debugPrintf("Moving on to part 2 of the game");
 	return true;
 }

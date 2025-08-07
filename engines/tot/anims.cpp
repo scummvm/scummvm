@@ -270,7 +270,7 @@ void handleFlcEvent(byte numero_del_evento) {
 			clearTvText();
 		} break;
 		case 7:
-			playVoc("MANDO", 142001, 11469);
+			g_engine->_sound->playVoc("MANDO", 142001, 11469);
 			break;
 		case 20:
 			drawCharacterText(messages[60], messages[61], messages[62], messages[63], messages[64]);
@@ -323,13 +323,13 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 3:
 		switch (framecontador) {
 		case 15:
-			playVoc("FRENAZO", 165322, 15073);
+			g_engine->_sound->playVoc("FRENAZO", 165322, 15073);
 			break;
 		case 26:
 			delay(1000);
 			break;
 		case 43:
-			playVoc("PORTAZO", 434988, 932);
+			g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 			break;
 		case 60:
 			getImg(0, 0, 319, 29, punterofondofrase);
@@ -338,7 +338,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 4:
 		if (framecontador == 3)
-			playVoc("TIMBRAZO", 423775, 11213);
+			g_engine->_sound->playVoc("TIMBRAZO", 423775, 11213);
 		break;
 	case 5:
 		if ((numerovuelta == 1) && (framecontador == 2)) {
@@ -533,7 +533,7 @@ void handleFlcEvent(byte numero_del_evento) {
 			delay(500);
 			break;
 		case 18:
-			playVoc("ACELERON", 30200, 42398);
+			g_engine->_sound->playVoc("ACELERON", 30200, 42398);
 			break;
 		}
 		break;
@@ -746,34 +746,34 @@ void handleFlcEvent(byte numero_del_evento) {
 	case 21:
 		switch (framecontador) {
 		case 1:
-			playVoc("TRIDEN", 409405, 14370);
+			g_engine->_sound->playVoc("TRIDEN", 409405, 14370);
 			break;
 		case 5:
-			playVoc("PUFF", 191183, 18001);
+			g_engine->_sound->playVoc("PUFF", 191183, 18001);
 			break;
 		}
 		break;
 	case 22:
 		if (framecontador == 24)
-			playVoc("PUFF", 191183, 18001);
+			g_engine->_sound->playVoc("PUFF", 191183, 18001);
 		break;
 	case 23:
 		switch (framecontador) {
 		case 8:
-			playVoc("AFILAR", 0, 6433);
+			g_engine->_sound->playVoc("AFILAR", 0, 6433);
 			break;
 		case 18:
-			pitavocmem();
+			g_engine->_sound->playVoc();
 			break;
 		}
 		break;
 	case 24:
 		if (framecontador == 8)
-			playVoc("DECAPITA", 354269, 1509);
+			g_engine->_sound->playVoc("DECAPITA", 354269, 1509);
 		break;
 	case 25:
 		if (framecontador == 97)
-			playVoc("PUFF2", 209184, 14514);
+			g_engine->_sound->playVoc("PUFF2", 209184, 14514);
 		break;
 	case 26:
 		switch (numerovuelta) {
@@ -845,7 +845,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		break;
 	case 27:
 		if (framecontador == 148)
-			playVoc("DECAPITA", 354269, 1509);
+			g_engine->_sound->playVoc("DECAPITA", 354269, 1509);
 		break;
 	}
 }

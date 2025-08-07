@@ -38,21 +38,30 @@ class SoundManager {
 public:
 	SoundManager(Audio::Mixer *mixer);
 	~SoundManager();
-	void loadVoc(Common::String fileName, long posinicio, int16 tamvocleer);
-	void autoPlayVoc();
+
+	void init();
+	void loadVoc(Common::String vocFile, long startPos, int16 vocSize);
+	void autoPlayVoc(Common::String vocFile, int32 startPos, int16 vocSize);
+	void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
 	void playVoc();
 	void stopVoc();
 	bool isVocPlaying();
-	void playMidi(const char *fileName, bool loop);
+	void playMidi(Common::String fileName, bool loop);
 	void playMidi(byte *data, int size, bool loop);
 	void toggleMusic();
 	void beep(int32 frequency, int32 ms);
 	void waitForSoundEnd();
-	void setSfxVolume(int volume);
-	void setMusicVolume(int volume);
+	void setSfxVolume(byte leftVol, byte rightVol);
+	void setMidiVolume(byte leftVol, byte rightVol);
+	void fadeOutMusic(byte leftVol, byte rightVol);
+	void fadeInMusic(byte leftVol, byte rightVol);
+	void setMasterVolume(byte leftVol, byte rightVol);
 	void setSfxBalance(bool left, bool right);
 
 private:
+	void setSfxVolume(byte volume);
+	void setMusicVolume(byte volume);
+
 	Audio::SoundHandle _soundHandle;
 	Audio::SoundHandle _speakerHandle;
 	Audio::Mixer *_mixer;

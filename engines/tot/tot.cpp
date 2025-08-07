@@ -81,7 +81,7 @@ Common::Error TotEngine::run() {
 	// _room = new RoomManager();
 	_mouseManager = new MouseManager();
 
-	initSound();
+	_sound->init();
 	initGraph();
 	initPlayAnim();
 
