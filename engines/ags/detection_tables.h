@@ -4248,9 +4248,6 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	// using ags_Maya plugin, partially implemented
 	UNSUPPORTED_GAME_ENTRY_LANG("officeolympics", "Oo.exe", "465f972675db2da6040518221af5b0ba", 30378663, Common::IT_ITA),
 
-	// using unsupported agsEngine plugin
-	UNSUPPORTED_DEMO_ENTRY_EN("spacesim", "space_3d.exe", "8538afa638531020f79df88aec0fb797", 1667537),
-
 	// using unsupported ags_sockets plugin
 	UNSUPPORTED_GAME_ENTRY_EN("starshiplight", "strship1.exe", "7971a7c02d414dc8cb33b6ec36080b91", 32805168),  // Beta
 	UNSUPPORTED_GAME_ENTRY_EN("starshiplight", "strship1.ags", "9dca4b575740e300af265aa9ec234f71", 30308128),
@@ -4267,6 +4264,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("questblackdiamond", "qftbd.exe", "ba27688a81119b49a550f3bbd8d6d003", 632435),
 	UNSUPPORTED_DEMO_ENTRY_EN("smgilbert", "s&m2_demo_ENG.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4141303),
 	UNSUPPORTED_DEMO_ENTRY_LANG("smgilbert", "s&m2_demo.exe", "c87aa6377abc18c1a1b2968ae6db08eb", 4268861, Common::IT_ITA),
+	UNSUPPORTED_DEMO_ENTRY_EN("spacesim", "space_3d.exe", "8538afa638531020f79df88aec0fb797", 1667537),
 	UNSUPPORTED_GAME_ENTRY_EN("tomhanksaway", "Tom Hanks Away.exe", "e88fd6a23a5e498d7b0d50e3bb914085", 1589035),
 	UNSUPPORTED_GAME_ENTRY_EN("whowantstoliveforever", "WWtLF.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 6917937),
 	// Even with AGS interpreter hacked to specify plugin, errors on loading room107
