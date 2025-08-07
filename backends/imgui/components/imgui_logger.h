@@ -62,6 +62,7 @@ public:
 	void addLog(const char *fmt, ...) IM_FMTARGS(2);
 	void drawColorOptions();
 	void draw(const char *title, bool *p_open);
+	ImVector<char *> getItems() { return _items; }
 };
 
 } // namespace ImGuiEx
