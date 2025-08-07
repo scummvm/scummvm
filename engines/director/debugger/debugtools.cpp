@@ -176,7 +176,7 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
-void displayVariable(const Common::String &name, bool changed) {
+void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
 	ImU32 var_color = ImGui::GetColorU32(_state->_colors._var_ref);
 	ImU32 color;
 
@@ -201,8 +201,11 @@ void displayVariable(const Common::String &name, bool changed) {
 		}
 	}
 
-	if (changed)
+	if (changed) {
 		var_color = ImGui::GetColorU32(_state->_colors._var_ref_changed);
+	} else if (outOfScope) {
+		var_color = ImGui::GetColorU32(_state->_colors._var_ref_out_of_scope);
+	}
 
 	if (color == ImGui::GetColorU32(_state->_colors._bp_color_disabled) && ImGui::IsItemHovered()) {
 		color = ImGui::GetColorU32(_state->_colors._bp_color_hover);

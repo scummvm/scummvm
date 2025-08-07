@@ -140,7 +140,11 @@ void showWatchedVars() {
 			name.type = VARREF;
 			Datum val = g_lingo->varFetch(name, true);
 
-			displayVariable(v._key, false);
+			bool outOfScope = false;
+			if (val.type == VOID) {
+				outOfScope = true;
+			}
+			displayVariable(v._key, false, outOfScope);
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
