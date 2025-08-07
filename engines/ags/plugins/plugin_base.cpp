@@ -38,6 +38,7 @@
 #include "ags/plugins/ags_galaxy_steam/ags_wadjeteye_steam.h"
 #include "ags/plugins/ags_galaxy_steam/ags_galaxy_steam.h"
 #include "ags/plugins/ags_joy/ags_joy.h"
+#include "ags/plugins/ags_maya/ags_maya.h"
 #include "ags/plugins/ags_nickenstien_gfx/ags_nickenstien_gfx.h"
 #include "ags/plugins/ags_pal_render/ags_pal_render.h"
 #include "ags/plugins/ags_parallax/ags_parallax.h"
@@ -122,6 +123,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("AGSJoy"))
 		return new AGSJoy::AGSJoy();
+
+	if (fname.equalsIgnoreCase("AGS_Maya"))
+		return new AGSMaya::AGSMaya();
 
 	if (fname.equalsIgnoreCase("AGSPalRender"))
 		return new AGSPalRender::AGSPalRender();
