@@ -1515,6 +1515,17 @@ void Score::screenShot() {
 #endif // USE_PNG
 }
 
+uint16 Score::getSpriteIDOfActiveWidget() {
+	Graphics::MacWidget *active = g_director->_wm->getActiveWidget();
+	if (!active)
+		return 0;
+	for (int i = _channels.size() - 1; i >= 0; i--) {
+		if (active == _channels[i]->_widget)
+			return i;
+	}
+	return 0;
+}
+
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
 	for (int i = _channels.size() - 1; i >= 0; i--) {
 		CollisionTest test = _channels[i]->isMouseIn(pos);

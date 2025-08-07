@@ -256,11 +256,12 @@ bool Movie::processEvent(Common::Event &event) {
 		if (_timeOutKeyDown)
 			_lastTimeOut = _lastEventTime;
 
-		queueInputEvent(kEventKeyDown);
+		queueInputEvent(kEventKeyDown, sc->getSpriteIDOfActiveWidget());
 		g_director->loadSlowdownCooloff();
 		return true;
 
 	case Common::EVENT_KEYUP:
+		queueInputEvent(kEventKeyUp, sc->getSpriteIDOfActiveWidget());
 		_keyFlags = event.kbd.flags;
 		return true;
 
