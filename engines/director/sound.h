@@ -201,6 +201,7 @@ public:
 
 	bool isChannelPuppet(int soundChannel);
 	void setPuppetSound(SoundID soundId, int soundChannel);
+	void disablePuppetSound(int soundChannel);
 	void playPuppetSound(int soundChannel);
 
 	bool getSoundEnabled() { return _enable; }

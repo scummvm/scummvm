@@ -577,6 +577,13 @@ void DirectorSound::setPuppetSound(SoundID soundId, int soundChannel) {
 	}
 }
 
+void DirectorSound::disablePuppetSound(int soundChannel) {
+	if (!assertChannel(soundChannel))
+		return;
+
+	_channels[soundChannel]->puppet = SoundID();
+}
+
 void DirectorSound::playPuppetSound(int soundChannel) {
 	if (!assertChannel(soundChannel))
 		return;
