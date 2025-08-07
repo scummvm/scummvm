@@ -19,6 +19,7 @@
  *
  */
 
+#include "backends/imgui/imgui_utils.h"
 #include "common/formats/json.h"
 #include "common/memstream.h"
 #include "common/savefile.h"
@@ -31,6 +32,10 @@ namespace Director {
 namespace DT {
 
 Common::String savedStateFileName = Common::String("ImGuiSaveState.json");
+const char *WINDOW_LIST[] = {
+	"Archive", "Breakpoints", "Vars", "Watched Vars", "Score", "Control Panel",
+	"Execution Context", "Functions", "Channels", "Cast", "Settings"
+};
 
 // What are the things that need saving?
 // 1) Window Positions
@@ -41,6 +46,32 @@ void saveCurrentState() {
 	Common::JSONObject json = Common::JSONObject();
 
 	// Whether windows are open or not
+	long long int openFlags = getWindowFlags();
+	json["Windows"] = new Common::JSONValue(openFlags);
+
+	// Save the JSON
+	Common::JSONValue save(json);
+	debug("ImGui::Saved state: %s", save.stringify().c_str());
+
+	Common::OutSaveFile *stream = g_engine->getSaveFileManager()->openForSaving(savedStateFileName);
+
+	if (stream) {
+		stream->writeString(save.stringify());
+		stream->finalize();
+		debug("ImGui::SaveCurrentState: Saved the current ImGui State @%s", savedStateFileName.c_str());
+	} else {
+		debug("ImGui::SaveCurrentState: Failed to open the file %s for saving", savedStateFileName.c_str());
+	}
+
+	// Clean up everything
+	{
+		delete stream;
+		delete json["Windows"];
+		delete json["Window Positions"];
+	}
+}
+
+long long int getWindowFlags() {
 	long long int openFlags = 0;
 	openFlags += (_state->_w.archive) ? 1 : 0;
 	openFlags += (_state->_w.bpList) ? 1 << 1 : 0;
@@ -55,32 +86,34 @@ void saveCurrentState() {
 	openFlags += (_state->_w.vars) ? 1 << 10 : 0;
 	openFlags += (_state->_w.watchedVars) ? 1 << 11 : 0;
 
-	json["Windows"] = new Common::JSONValue(openFlags);
-	Common::JSONValue save(json);
-
-	debug("ImGui::saved state: %s", save.stringify().c_str());
-
-	Common::OutSaveFile *stream = g_engine->getSaveFileManager()->openForSaving(savedStateFileName);
-	stream->writeString(save.stringify());
-
-	if (stream) {
-		stream->flush();
-		debugC(-1, kDebugImGui, "Saved the current ImGui State @%s", savedStateFileName.c_str());
-	}
-
-	delete stream;
+	return openFlags;
 }
 
 void loadSavedState() {
 	Common::InSaveFile *savedState = g_engine->getSaveFileManager()->openForLoading(savedStateFileName);
+
+	if (!savedState) {
+		debug("ImGui::loadSavedState(): Failed to open saved state file: %s", savedStateFileName.c_str());
+		return;
+	}
+
 	char *data = (char *)malloc(savedState->size());
 	savedState->read(data, savedState->size());
 
 	Common::JSONValue *saved = Common::JSON::parse(data);
-	debug("ImGui::loaded state: %s", saved->stringify().c_str());
+
+	if (!saved) {
+		debug("ImGui:: Bad JSON: Failed to parse the Saved state");
+		return;
+	}
+
+	debug("ImGui::loaded state: %s", saved->stringify(true).c_str());
 
 	long long int openFlags = saved->asObject()["Windows"]->asIntegerNumber();
+	setWindowFlags(openFlags);
+}
 
+void setWindowFlags(long long int openFlags) {
 	_state->_w.archive = (openFlags & 1) ? true : false;
 	_state->_w.bpList = (openFlags & 1 << 1) ? true : false;
 	_state->_w.cast = (openFlags & 1 << 2) ? true : false;
