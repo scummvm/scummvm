@@ -49,6 +49,10 @@ void saveCurrentState() {
 	long long int openFlags = getWindowFlags();
 	json["Windows"] = new Common::JSONValue(openFlags);
 
+	// Window Settings
+	const char *windowSettings = ImGui::SaveIniSettingsToMemory();
+	json["Window Settings"] = new Common::JSONValue(windowSettings);
+
 	// Save the JSON
 	Common::JSONValue save(json);
 	debug("ImGui::Saved state: %s", save.stringify().c_str());
@@ -64,11 +68,7 @@ void saveCurrentState() {
 	}
 
 	// Clean up everything
-	{
-		delete stream;
-		delete json["Windows"];
-		delete json["Window Positions"];
-	}
+	delete stream;
 }
 
 long long int getWindowFlags() {
@@ -109,8 +109,13 @@ void loadSavedState() {
 
 	debug("ImGui::loaded state: %s", saved->stringify(true).c_str());
 
+	// Load open/closed window flags
 	long long int openFlags = saved->asObject()["Windows"]->asIntegerNumber();
 	setWindowFlags(openFlags);
+
+	// Load window settings
+	const char *windowSettings = saved->asObject()["Window Settings"]->asString().c_str();
+	ImGui::LoadIniSettingsFromMemory(windowSettings);
 }
 
 void setWindowFlags(long long int openFlags) {
