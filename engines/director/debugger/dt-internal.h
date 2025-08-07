@@ -218,6 +218,8 @@ void showExecutionContext();
 // dt-save-state.cpp
 void saveCurrentState();
 void loadSavedState();
+long long int getWindowFlags();
+void setWindowFlags(long long int openFlags);
 
 }
 
