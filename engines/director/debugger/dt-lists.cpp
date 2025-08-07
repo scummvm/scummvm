@@ -135,6 +135,7 @@ void showWatchedVars() {
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Watched Vars", &_state->_w.watchedVars)) {
+		int id = -1;
 		for (auto &v : _state->_variables) {
 			Datum name(v._key);
 			name.type = VARREF;
@@ -144,7 +145,12 @@ void showWatchedVars() {
 			if (val.type == VOID) {
 				outOfScope = true;
 			}
+
+			id += 1;
+			ImGui::PushID(id);
 			displayVariable(v._key, false, outOfScope);
+			ImGui::PopID();
+
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}
