@@ -325,6 +325,7 @@ MODULE_OBJS = \
 	plugins/ags_creditz/ags_creditz1.o \
 	plugins/ags_creditz/ags_creditz2.o \
 	plugins/ags_creditz/drawing.o \
+	plugins/ags_filedel/ags_filedel.o \
 	plugins/ags_fire/ags_fire.o \
 	plugins/ags_flashlight/ags_flashlight.o \
 	plugins/ags_flashlight/gfx.o \

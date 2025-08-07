@@ -32,6 +32,7 @@
 #include "ags/plugins/ags_controller/ags_controller_arcnor.h"
 #include "ags/plugins/ags_creditz/ags_creditz1.h"
 #include "ags/plugins/ags_creditz/ags_creditz2.h"
+#include "ags/plugins/ags_filedel/ags_filedel.h"
 #include "ags/plugins/ags_fire/ags_fire.h"
 #include "ags/plugins/ags_flashlight/ags_flashlight.h"
 #include "ags/plugins/ags_galaxy_steam/ags_wadjeteye_steam.h"
@@ -109,6 +110,9 @@ Plugins::PluginBase *pluginOpen(const char *filename) {
 
 	if (fname.equalsIgnoreCase("ags_d3d") || fname.equalsIgnoreCase("ags_spritevideo"))
 		return new AGSSpriteVideo::AGSSpriteVideo();
+
+	if (fname.equalsIgnoreCase("AGS_FileDel"))
+		return new AGSFileDel::AGSFileDel();
 
 	if (fname.equalsIgnoreCase("AGS_Fire"))
 		return new AGSFire::AGSFire();
