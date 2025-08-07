@@ -35,7 +35,7 @@ class Win32PrintingManager : public Common::PrintingManager {
 public:
 	virtual ~Win32PrintingManager();
 
-	void printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) override;
+	void doPrint(const Graphics::ManagedSurface &surf) override;
 
 private:
 	HDC createDefaultPrinterContext();
@@ -46,7 +46,7 @@ private:
 
 Win32PrintingManager::~Win32PrintingManager() {}
 
-void Win32PrintingManager::printImage(const Common::String &jobName, const Graphics::ManagedSurface &surf) {
+void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 
 	HDC hdcPrint = createDefaultPrinterContext();
 
@@ -58,7 +58,7 @@ void Win32PrintingManager::printImage(const Common::String &jobName, const Graph
 		return;
 	}
 
-	Escape(hdcPrint, STARTDOC, jobName.size(), jobName.c_str(), NULL);
+	Escape(hdcPrint, STARTDOC, _jobName.size(), _jobName.c_str(), NULL);
 
 	SelectObject(hdcImg, bitmap);
 
