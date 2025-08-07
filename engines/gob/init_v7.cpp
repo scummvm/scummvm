@@ -56,9 +56,25 @@ void Init_v7::initGame() {
 	gameDataDir.getChildren(subdirs, Common::FSNode::kListDirectoriesOnly);
 	for (const Common::FSNode &subdirNode : subdirs) {
 		Common::FSDirectory subdir(subdirNode);
-		if (subdir.hasFile("intro_ap.stk")) {
-			debugC(1, kDebugFileIO, "Found Adibou/Adi application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
+		if (_vm->getGameType() == kGameTypeAdibou2 && subdir.hasFile("intro_ap.stk")) {
+			debugC(1, kDebugFileIO, "Found Adibou application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
 			SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
+		} else if (_vm->getGameType() == kGameTypeAdi4) {
+			// Look for any "DESC*.ADI" file
+			Common::FSList fileNodes;
+			subdirNode.getChildren(fileNodes, Common::FSNode::kListFilesOnly);
+			bool foundDescFile = false;
+			for (const Common::FSNode &fileNode : fileNodes) {
+				if (fileNode.getName().hasPrefixIgnoreCase("DESC") && fileNode.getName().hasSuffixIgnoreCase(".ADI")) {
+					debugC(1, kDebugFileIO, "Found Adi 4 application subdirectory \"%s\", adding it to the search path", subdir.getFSNode().getName().c_str());
+					SearchMan.addSubDirectoryMatching(gameDataDir, subdir.getFSNode().getName(), 0, 4, true);
+					foundDescFile = true;
+					break;
+				}
+			}
+
+			if (foundDescFile)
+				break;
 		}
 	}
 
