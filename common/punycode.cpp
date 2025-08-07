@@ -133,7 +133,7 @@ String punycode_encode(const U32String &src) {
 	String dst = "xn--";
 
 	if (!srclen)
-		return src;
+		return String();
 
 	for (si = 0; si < srclen; si++) {
 		if (src[si] < 128) {
@@ -155,8 +155,8 @@ String punycode_encode(const U32String &src) {
 			src[2] == '-' && src[3] == '-')
 			return dst + '-';
 
-
-		return src;
+		// We already did the job converting to ASCII, don't do it again
+		return dst.substr(4);
 	}
 
 	// If we have any ASCII characters, add '-' to separate them from
@@ -377,15 +377,16 @@ String punycode_encodefilename(const U32String &src) {
 	U32String dst;
 
 	for (uint i = 0; i < src.size(); i++) {
-		if (src[i] == 0x81) {	// In case we have our escape character present
-			dst += 0x81;
-			dst += 0x79;
+		U32String::value_type c = src[i];
+		if (c == 0x81) {	// In case we have our escape character present
+			const U32String::value_type tmp[] = { 0x81, 0x79 };
+			dst.append(tmp, tmp + 2);
 		// Encode special symbols and non-printables
-		} else if ((src[i] < 0x80 && strchr(SPECIAL_SYMBOLS, (byte)src[i])) || src[i] < 0x20) {
-			dst += 0x81;
-			dst += src[i] + 0x80;
+		} else if (c < 0x20 || (c < 0x80 && strchr(SPECIAL_SYMBOLS, (byte)c))) {
+			const U32String::value_type tmp[] = { 0x81, c + 0x80 };
+			dst.append(tmp, tmp + 2);
 		} else {
-			dst += src[i];
+			dst.append(1, c);
 		}
 	}
 
