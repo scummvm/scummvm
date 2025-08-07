@@ -53,6 +53,15 @@ void saveCurrentState() {
 	const char *windowSettings = ImGui::SaveIniSettingsToMemory();
 	json["Window Settings"] = new Common::JSONValue(windowSettings);
 
+	// Current Log
+	ImVector<char *> currentLog = _state->_logger->getItems();
+	Common::JSONArray log;
+
+	for (auto iter : currentLog) {
+		log.push_back(new Common::JSONValue(iter));
+	}
+	json["Log"] = new Common::JSONValue(log);
+
 	// Save the JSON
 	Common::JSONValue save(json);
 	debug("ImGui::Saved state: %s", save.stringify().c_str());
@@ -116,6 +125,23 @@ void loadSavedState() {
 	// Load window settings
 	const char *windowSettings = saved->asObject()["Window Settings"]->asString().c_str();
 	ImGui::LoadIniSettingsFromMemory(windowSettings);
+
+	// Load the log
+	Common::JSONArray log = saved->asObject()["Log"]->asArray();
+
+	if (debugChannelSet(7, kDebugImGui)) {
+		debugC(7, kDebugImGui, "Loading log: \n");
+		for (auto iter: log) {
+			debugC(7, kDebugImGui, "%s", iter->asString().c_str());
+		}
+	}
+
+	_state->_logger->clear();
+	for (auto iter : log) {
+		_state->_logger->addLog(iter->asString().c_str());
+	}
+
+	free(data);
 }
 
 void setWindowFlags(long long int openFlags) {
