@@ -109,6 +109,7 @@ public:
 	int getCurrentLabelNumber();
 	int getNextLabelNumber(int referenceFrame);
 
+	uint16 getSpriteIDOfActiveWidget();
 	uint16 getSpriteIDFromPos(Common::Point pos);
 	uint16 getMouseSpriteIDFromPos(Common::Point pos);
 	uint16 getActiveSpriteIDFromPos(Common::Point pos);

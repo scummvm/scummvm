@@ -408,6 +408,11 @@ void Movie::queueEvent(Common::Queue<LingoEvent> &queue, LEvent event, int targe
 			// As per above, by default this will pass through to any subsequent handlers,
 			// unless the script calls "dontPassEvent".
 			queue.push(LingoEvent(event, eventId, kPrimaryHandler, true, pos));
+
+			// Key up and key down events can be sent to the channel with an active widget
+			if ((event == kEventKeyUp) || (event == kEventKeyDown)) {
+				channelId = targetId;
+			}
 		}
 		break;
 	case kEventMenuCallback:
