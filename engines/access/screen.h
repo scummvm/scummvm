@@ -62,7 +62,6 @@ private:
 	int _startCycle;
 	int _cycleStart;
 	int _endCycle;
-	Common::List<Common::Rect> _dirtyRects;
 
 	void updatePalette();
 public:
