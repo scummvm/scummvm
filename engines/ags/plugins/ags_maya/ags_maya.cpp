@@ -67,8 +67,8 @@ void AGSMaya::FDiv(ScriptMethodParams &params) {
 	PARAMS2(int, value1, int, value2);
 
 	if (value2) {
-		float division, decimals;
-		division = value1 / (float)value2;
+		double division, decimals;
+		division = value1 / (double)value2;
 		modf(division, &decimals);
 		params._result = floor(division) * 1000 + decimals * 1000;
 	} else {
