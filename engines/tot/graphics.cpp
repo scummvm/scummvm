@@ -35,96 +35,6 @@ namespace Tot {
 signed char fadeData[256][256];
 int ipal, jpal;
 
-void rectangle(int x1, int y1, int x2, int y2, byte color) {
-	g_engine->_screen->drawLine(x1, y1, x2, y1, color);
-	g_engine->_screen->drawLine(x2, y1, x2, y2, color);
-	g_engine->_screen->drawLine(x1, y2, x2, y2, color);
-	g_engine->_screen->drawLine(x1, y1, x1, y2, color);
-	g_engine->_screen->addDirtyRect(Common::Rect(x1, y1, x2, y2));
-}
-
-void rectangle(uint x1, uint y1, uint x2, uint y2, byte color) {
-	g_engine->_screen->drawLine(x1, y1, x2, y1, color);
-	g_engine->_screen->drawLine(x2, y1, x2, y2, color);
-	g_engine->_screen->drawLine(x1, y2, x2, y2, color);
-	g_engine->_screen->drawLine(x1, y1, x1, y2, color);
-	g_engine->_screen->addDirtyRect(Common::Rect(x1, y1, x2, y2));
-}
-
-// Copies the rectangle delimited by getCoord** from backgroundScreen into image
-void getVirtualImg(
-	uint getcoordx1,        // xframe
-	uint getcoordy1,        // yframe
-	uint getcoordx2,        // xframe + framewidth
-	uint getcoordy2,        // yframe + frameheight
-	byte *backgroundScreen,
-	byte *image
-) {
-	uint16 w = getcoordx2 - getcoordx1;
-	uint16 h = getcoordy2 - getcoordy1;
-
-	WRITE_UINT16(image, w);
-	WRITE_UINT16(image + 2, h);
-	w++;
-	h++;
-	int posAbs = 4 + getcoordx1 + (getcoordy1 * 320);
-
-	int sourcePtr = 0;
-	byte *destPtr = 4 + image; // Start writing after width and height
-
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
-			*destPtr++ = backgroundScreen[posAbs + sourcePtr++];
-		}
-		sourcePtr += (320 - w); // Move to the beginning of the next row in PantFondo
-	}
-}
-// puts an image into a buffer in the given position, asuming 320 width
-void putVirtualImg(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image) {
-	uint16 w, h;
-
-	w = READ_LE_UINT16(image);
-	h = READ_LE_UINT16(image + 2);
-
-	w++;
-	h++;
-	int posAbs = 4 + putcoordx + (putcoordy * 320);
-
-	int sourcePtr = 0;
-	byte *destPtr = 4 + image; // Start writing after width and height
-
-	for (int i = 0; i < h; i++) {
-		for (int j = 0; j < w; j++) {
-			// if(destPtr > 0)
-			backgroundScreen[posAbs + sourcePtr++] = *destPtr++;
-		}
-		sourcePtr += (320 - w); // Move to the beginning of the next row in PantFondo
-	}
-}
-
-void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image) {
-
-	uint16 width = coordx2 - coordx1;
-	uint16 height = coordy2 - coordy1;
-
-	WRITE_LE_UINT16(image, width);
-	WRITE_LE_UINT16(image + 2, height);
-
-	width++;
-	height++;
-
-	for (int j = 0; j < width; j++) {
-		for (int i = 0; i < height; i++) {
-			int idx = 4 + i * width + j;
-			*(image + idx) = *(byte *)g_engine->_screen->getBasePtr(coordx1 + j, coordy1 + i);
-		}
-	}
-}
-
-void putShape(uint coordx, uint coordy, byte *image) {
-	putImg(coordx, coordy, image, true);
-}
-
 void drawFullScreen(byte *screen) {
 	Common::copy(screen, screen + 64000, (byte *)g_engine->_screen->getPixels());
 }
@@ -142,29 +52,6 @@ void drawScreen(byte *screen, bool offsetSize) {
 		}
 	}
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
-}
-
-void putImg(uint coordx, uint coordy, byte *image, bool transparency) {
-	uint16 w, h;
-
-	w = READ_LE_UINT16(image);
-	h = READ_LE_UINT16(image + 2);
-
-	w++;
-	h++;
-	for (int i = 0; i < w; i++) {
-		for (int j = 0; j < h; j++) {
-			int index = 4 + (j * w + i);
-			if (!transparency || image[index] != 0) {
-				*(byte *)g_engine->_screen->getBasePtr(coordx + i, coordy + j) = image[index];
-			}
-		}
-	}
-	g_engine->_screen->addDirtyRect(Common::Rect(coordx, coordy, coordx + w, coordy + h));
-}
-
-void clear() {
-	g_engine->_screen->clear();
 }
 
 void loadPalette(Common::String paletteName) {
@@ -186,6 +73,7 @@ void updateSceneAreaIfNeeded(int speed = 1) {
 		g_engine->_screen->update();
 	}
 }
+
 void screenTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 
 	int i1, i2, i3, j1, j2, j3;
@@ -746,9 +634,9 @@ void updatePalette(byte paletteIndex) {
 	switch (gamePart) {
 	case 1: {
 		for (ipal = 0; ipal <= 5; ipal++) {
-			pal[(ipal + 195) * 3 + 0] = movimientopal[(paletteIndex * 6 + ipal) * 3 + 0];
-			pal[(ipal + 195) * 3 + 1] = movimientopal[(paletteIndex * 6 + ipal) * 3 + 1];
-			pal[(ipal + 195) * 3 + 2] = movimientopal[(paletteIndex * 6 + ipal) * 3 + 2];
+			pal[(ipal + 195) * 3 + 0] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 0];
+			pal[(ipal + 195) * 3 + 1] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 1];
+			pal[(ipal + 195) * 3 + 2] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 2];
 		}
 		changeRGBBlock(195, 6, &pal[195 * 3 + 0]);
 	} break;
@@ -792,36 +680,14 @@ void updatePalette(byte paletteIndex) {
 	}
 }
 
-void processingActive() {
-
-	setRGBPalette(255, 63, 63, 63);
-	outtextxy(121, 72, "PROCESANDO......", 0);
-	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	outtextxy(120, 71, "PROCESANDO......", 0);
-	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	outtextxy(119, 72, "PROCESANDO......", 0);
-	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	outtextxy(120, 73, "PROCESANDO......", 0);
-	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	outtextxy(120, 72, "PROCESANDO......", 255);
-	g_engine->_screen->update();
-
-	// enforce a delay for now so it's visible
-	g_system->delayMillis(200);
-}
-
 void initGraph() {
 	for (int i = 0; i < 256; i++)
 		for (int j = 0; j < 256; j++)
 			fadeData[i][j] = i / (j + 1);
 }
 
-void screenHandleToBackground() {
-	Common::copy(screenHandle + 4, screenHandle + screenSize, background + 4);
+void restoreBackground() {
+	Common::copy(backgroundCopy + 4, backgroundCopy + screenSize, sceneBackground + 4);
 }
 
 void copyPalette(palette from, palette to) {
@@ -831,7 +697,7 @@ void copyPalette(palette from, palette to) {
 void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize) {
 	buf = (byte *)malloc(animSize);
 	stream->read(buf, animSize);
-	Common::copy(buf, buf + animSize, pasoanimado);
+	Common::copy(buf, buf + animSize, curSecondaryAnimationFrame);
 }
 
 } // End of namespace Tot

@@ -74,7 +74,7 @@ void MouseManager::setMousePos(Common::Point p) {
 }
 
 void MouseManager::printPos(int x, int y, int screenPosX, int screenPosY) {
-	g_engine->_graphics->restoreBackground(screenPosX, screenPosY, screenPosX + 100, screenPosY + 10);
+	g_engine->_graphics->restoreBackgroundArea(screenPosX, screenPosY, screenPosX + 100, screenPosY + 10);
 	g_engine->_graphics->euroText(Common::String::format("MousePos: %d, %d", x + 7, y + 7), screenPosX, screenPosY, Graphics::kTextAlignLeft);
 }
 

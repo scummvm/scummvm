@@ -356,10 +356,10 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 	g_engine->_mouseManager->hide();
 
 	drawMenu(5);
-	outtextxy(6, 151, matrizconversa[1], 255, true);
-	outtextxy(6, 162, matrizconversa[2], 255, true);
-	outtextxy(6, 173, matrizconversa[3], 255, true);
-	outtextxy(6, 184, matrizconversa[4], 255, true);
+	euroText(6, 151, matrizconversa[1], 255);
+	euroText(6, 162, matrizconversa[2], 255);
+	euroText(6, 173, matrizconversa[3], 255);
+	euroText(6, 184, matrizconversa[4], 255);
 	g_engine->_mouseManager->show();
 	Common::Event e;
 	do {
@@ -372,12 +372,12 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 			while (g_system->getEventManager()->pollEvent(e)) {
 				if (e.type == Common::EVENT_LBUTTONUP) {
 					lMouseClicked = true;
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
+					mouseClickX = e.mouse.x;
+					mouseClickY = e.mouse.y;
 				} else if (e.type == Common::EVENT_RBUTTONUP) {
 					rMouseClicked = true;
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
+					mouseClickX = e.mouse.x;
+					mouseClickY = e.mouse.y;
 				}
 			}
 
@@ -397,42 +397,42 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 		} while (!lMouseClicked && !rMouseClicked && !g_engine->shouldQuit());
 
 		if (lMouseClicked) {
-			if (pulsay < 143)
+			if (mouseClickY < 143)
 				convselec = 0;
 			else {
-				if (pulsax >= 0 && pulsax <= 280) {
-					if (pulsay >= 143 && pulsay <= 155) {
+				if (mouseClickX >= 0 && mouseClickX <= 280) {
+					if (mouseClickY >= 143 && mouseClickY <= 155) {
 						convselec = primeraconv;
-					} else if (pulsay >= 156 && pulsay <= 166) {
+					} else if (mouseClickY >= 156 && mouseClickY <= 166) {
 						convselec = primeraconv + 1;
-					} else if (pulsay >= 167 && pulsay <= 177) {
+					} else if (mouseClickY >= 167 && mouseClickY <= 177) {
 						convselec = primeraconv + 2;
-					} else if (pulsay >= 178 && pulsay <= 186) {
+					} else if (mouseClickY >= 178 && mouseClickY <= 186) {
 						convselec = primeraconv + 3;
 					}
-				} else if (pulsax >= 281 && pulsax <= 319) {
-					if (pulsay >= 143 && pulsay <= 165) {
+				} else if (mouseClickX >= 281 && mouseClickX <= 319) {
+					if (mouseClickY >= 143 && mouseClickY <= 165) {
 						if (primeraconv > 1) {
 							convselec = 0;
 							primeraconv -= 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
-							outtextxy(6, 151, matrizconversa[primeraconv], 255, true);
-							outtextxy(6, 162, matrizconversa[primeraconv + 1], 255, true);
-							outtextxy(6, 173, matrizconversa[primeraconv + 2], 255, true);
-							outtextxy(6, 184, matrizconversa[primeraconv + 3], 255, true);
+							euroText(6, 151, matrizconversa[primeraconv], 255);
+							euroText(6, 162, matrizconversa[primeraconv + 1], 255);
+							euroText(6, 173, matrizconversa[primeraconv + 2], 255);
+							euroText(6, 184, matrizconversa[primeraconv + 3], 255);
 							g_engine->_mouseManager->show();
 						}
-					} else if (pulsay >= 167 && pulsay <= 186) {
+					} else if (mouseClickY >= 167 && mouseClickY <= 186) {
 						if (primeraconv < 12) {
 							convselec = 0;
 							primeraconv += 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
-							outtextxy(6, 151, matrizconversa[primeraconv], 255, true);
-							outtextxy(6, 162, matrizconversa[primeraconv + 1], 255, true);
-							outtextxy(6, 173, matrizconversa[primeraconv + 2], 255, true);
-							outtextxy(6, 184, matrizconversa[primeraconv + 3], 255, true);
+							euroText(6, 151, matrizconversa[primeraconv], 255);
+							euroText(6, 162, matrizconversa[primeraconv + 1], 255);
+							euroText(6, 173, matrizconversa[primeraconv + 2], 255);
+							euroText(6, 184, matrizconversa[primeraconv + 3], 255);
 							g_engine->_mouseManager->show();
 						}
 					}
@@ -478,7 +478,7 @@ void talk(byte person) {
 			conversationIndex += 1;
 			pasoh = readVerbRegister();
 			insertarnombre = 0;
-			matrizconversa[conversationIndex] = decrypt(pasoh.cadenatext);
+			matrizconversa[conversationIndex] = decrypt(pasoh.text);
 
 			for (int i = 0; i < matrizconversa[conversationIndex].size(); i++) {
 				if (matrizconversa[conversationIndex][i] == '@')
@@ -486,7 +486,7 @@ void talk(byte person) {
 			}
 			if (insertarnombre > 0) {
 				matrizconversa[conversationIndex].deleteChar(insertarnombre);
-				matrizconversa[conversationIndex].insertString(nombrepersonaje, insertarnombre);
+				matrizconversa[conversationIndex].insertString(characterName, insertarnombre);
 			}
 			if (matrizconversa[conversationIndex].size() > 45) {
 				auxilcadena = 45;
@@ -519,8 +519,8 @@ void talk(byte person) {
 				while (mobj[indicemochila].code != 0) {
 					indicemochila += 1;
 				}
-				mobj[indicemochila].bitmapIndex = indicelista1;
-				mobj[indicemochila].code = codigolista1;
+				mobj[indicemochila].bitmapIndex = list1Index;
+				mobj[indicemochila].code = list1code;
 				mobj[indicemochila].objectName = getObjectName(0);
 			} break;
 			case 25: {
@@ -529,8 +529,8 @@ void talk(byte person) {
 				while (mobj[indicemochila].code != 0) {
 					indicemochila += 1;
 				}
-				mobj[indicemochila].bitmapIndex = indicelista2;
-				mobj[indicemochila].code = codigolista2;
+				mobj[indicemochila].bitmapIndex = list2Index;
+				mobj[indicemochila].code = list2code;
 				mobj[indicemochila].objectName = getObjectName(1);
 			} break;
 			}
@@ -570,16 +570,16 @@ void talk(byte person) {
 }
 
 void talkScreenObject() {
-	int x_del_raton = (pulsax + 7) / factorx;
-	int y_del_raton = (pulsay + 7) / factory;
-	uint objeto_de_la_pantalla = currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->indicefichero;
+	int x_del_raton = (mouseClickX + 7) / xGridCount;
+	int y_del_raton = (mouseClickY + 7) / yGridCount;
+	uint objeto_de_la_pantalla = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->fileIndex;
 	if (objeto_de_la_pantalla == 0)
 		return;
 
 	// verifyCopyProtection2();
 	readItemRegister(objeto_de_la_pantalla);
-	goToObject(currentRoomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory],
-			   currentRoomData->rejapantalla[x_del_raton][y_del_raton]);
+	goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
+			   currentRoomData->walkAreasGrid[x_del_raton][y_del_raton]);
 
 	if (regobj.habla > 0) {
 		talk(regobj.habla);

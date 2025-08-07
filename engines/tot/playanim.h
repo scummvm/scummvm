@@ -33,23 +33,19 @@ const int verbRegSize = 263;
 const int roomRegSize = 10856;
 const int itemRegSize = 279;
 
-// Enforces a small delay when text reveal is supposed to happen
-const int enforcedTextAnimDelay = 0;
-
-const int indicelista1 = 19;
-const int indicelista2 = 20;
-const int codigolista1 = 149;
-const int codigolista2 = 150;
-const int memoriaminima = 130000;
+const int list1Index = 19;
+const int list2Index = 20;
+const int list1code = 149;
+const int list2code = 150;
 /**
  * Num of icons in the inventory
  */
 const int inventoryIconCount = 34;
-const int numobjetosconv = 15;
+const int numScreenOverlays = 15;
 /**
  * Num of depth levels
  */
-const int nivelesdeprof = 15;
+const int depthLevelCount = 15;
 /**
  * Num of frames of the main character in a single direction
  */
@@ -59,38 +55,29 @@ const int walkFrameCount = 16;
  */
 const int secAnimationFrameCount = 50;
 /**
- * Screen size
- */
-const int tampan = 320 * 140;
-/**
  * X factor of the screen grid
  * This results in 320/8 = 40 quadrants.
  */
-const int factorx = 8;
+const int xGridCount = 8;
 /**
  * Y factor of the screen grid
  * This results in 140/5 = 28 quadrants.
  */
-const int factory = 5;
+const int yGridCount = 5;
 /**
- * Adjustment of feet on frame 49
+ * Y offset of feet within character sprite (for adjustment of path finding)
  */
-const int rectificaciony = 49;
+const int characerCorrectionY = 49;
 /**
- * Adjustment of feet on frame 28
+ * X offset of feet within character sprite (for adjustment of path finding)
  */
-const int rectificacionx = 14;
-const int longitudnombreobjeto = 20;
-const int maxpersonajes = 9;
-/**
- * Num of reserved colors at the end of the game's palette
- */
-const int coloresreservados = 28;
+const int characterCorrectionX = 14;
+const int objectNameLength = 20;
+const int characterCount = 9;
 /**
  * Size of an inventory icon (39x26)
  */
-const int sizeicono = 1018;
-const int tamcarahablando = 7206;
+const int inventoryIconSize = 1018;
 /**
  * Number of points in a
  */
@@ -101,18 +88,18 @@ const int routePointCount = 7;
  */
 typedef Common::Point route[routePointCount];
 
-struct datosobj {
-	uint16 codigo, posx, posy, posx2, posy2;
+struct ObjectInfo {
+	uint16 code, posx, posy, posx2, posy2;
 };
 
-struct regsecuencia {
-	uint16 profundidad;
+struct CharacterAnim {
+	uint16 depth;
 	byte *bitmap[4][walkFrameCount + 30]; // 30 = 3 actions * 10 frames each
 };
 
-struct reganimado {
-	uint16 profundidad, dir, posx, posy;
-	byte *dib[4][secAnimationFrameCount];
+struct SecondaryAnim {
+	uint16 depth, dir, posx, posy;
+	byte *bitmap[4][secAnimationFrameCount];
 };
 
 struct reginventario {
@@ -125,73 +112,71 @@ struct reginventario {
  * Hypertext struct
  */
 struct regismht {
-	Common::String cadenatext; // string
-	bool encadenado;        // true if the next entry is a continuation of this one
-	uint16 respuesta;          // entry number of reply
-	int32 punteronil;
+	Common::String  text; // string
+	bool 			continued;  // true if the next entry is a continuation of this one
+	uint16 			response;   // entry number of reply
+	int32 			pointer;
 };
 
-struct InvItemRegister {
+struct ScreenObject {
 	/**
 	 * registry number
 	 */
 	uint16 code;
-	byte altura;             /* 0 top 1 middle 2 bottom*/
-	Common::String name;     /*name for mouseover*/
-	uint16 lookAtTextRef;    /* Registro al mirar el objeto en pantalla */
-	uint16 beforeUseTextRef; /* Registro antes de usar el objeto en mochila */
-	uint16 afterUseTextRef;  /* Registro despues de usar el objeto en mochila */
-	uint16 pickTextRef;      /* Registro al coger el objeto */
-	uint16 useTextRef;       /* Registro al usar el objeto */
-	byte habla;              /* number of character to respond */
-	bool abrir;           /* true if it can be opened */
-	bool cerrar;          /* true if it can be closed*/
-	byte usar[8];
-	bool coger;
-	uint16 usarcon,
-		reemplazarpor; /*Numero del objeto por el que se reemplaza en el
-			   caso de que se utilize con un objeto de la mochila
-			   y haya que cambiarlo por otro.*/
-	byte profundidad;
-	uint32 punterobitmap; /*Puntero al fichero de bitmap para el
-						 objeto que se suelta en la pantalla*/
-	uint16 tambitmap;
-	uint32 punteroframesgiro; /*Puntero al fichero de
-							bitmap para el objeto girando*/
-	uint16 punteropaletagiro, /*Puntero al fichero de paletas para
-					  la imagen girando*/
-		xparche, yparche;
-	uint32 puntparche;
-	uint16 tamparche, objectIconBitmap;
-	byte xrej1, yrej1, xrej2, yrej2;
+	byte height;             /* 0 top 1 middle 2 bottom, determines character anim on use/pick*/
+	Common::String name;     /* name for mouseover*/
+	uint16 lookAtTextRef;    /* Text reference when looking at object */
+	uint16 beforeUseTextRef; /* Text reference before using object */
+	uint16 afterUseTextRef;  /* Text reference after using object */
+	uint16 pickTextRef;      /* Text reference when picking up object */
+	uint16 useTextRef;       /* Text reference when using object */
+	byte habla;              /* whether the object talks or not */
+	bool openable;           /* true if it can be opened */
+	bool closeable;          /* true if it can be closed*/
+	byte used[8];			 /* flags (one per original savegame) on whether the object has been used */
+	bool pickupable;
+	uint16 useWith,
+		replaceWith; /* Code of the object it should be replaced with in case a replacement is due.*/
+	byte depth;
+	uint32 bitmapPointer; /* reference to the objects bitmap in the bitmap resource file */
+	uint16 bitmapSize;
+	uint32 rotatingObjectAnimation; /* Pointer to the FLC animation of the rotatin object */
+	uint16 rotatingObjectPalette; /* Pointer to the palette of the above FLC animation*/
+	uint16 dropOverlayX, dropOverlayY; /* coords when the object requires placing an overlay on the screen */
+	uint32 dropOverlay; /* pointer to such overlay */
+	uint16 dropOverlaySize;
+	uint16 objectIconBitmap; /* Icon on the inventory */
 
-	byte parcherejapantalla[10][10];
-	byte parcherejaraton[10][10];
+	byte xrej1, yrej1, xrej2, yrej2; /* position of patches below*/
+
+	byte walkAreasPatch[10][10]; /* patch on the scene's walking area (e.g. object prevents character from walking */
+	byte mouseGridPatch[10][10]; /* patch on the mouse grid area (i.e. selectable area of the object */
 };
 
 struct DoorRegistry {
-	uint16 pantallaquecarga,
-		posxsalida, posysalida; /*Coordenadas x e y de salida del
-						 personaje en la siguiente pantalla*/
-	byte abiertacerrada, codigopuerta;
+	uint16 	nextScene,
+			exitPosX,
+			exitPosY;
+	byte	openclosed,
+			doorcode;
 };
 
 struct RoomObjectListEntry {
-	uint16 indicefichero;
+	uint16 fileIndex;
 	Common::String objectName;
 };
 
 struct RoomBitmapRegister {
-	int32 puntbitmap;
-	uint16 tambitmap;
-	uint16 coordx, coordy, profund;
+	int32 bitmapPointer;
+	uint16 bitmapSize;
+	uint16 coordx, coordy, depth;
 };
 
 struct RoomFileRegister {
-	uint16 codigo;
-	int32 puntimagenpantalla;
-	uint16 tamimagenpantalla;
-	byte rejapantalla[40][28]; /* movement grid */
+	uint16 code;
+	int32 roomImagePointer;
+	uint16 roomImageSize;
+	byte walkAreasGrid[40][28]; /* movement grid */
 	byte mouseGrid[40][28];    /* mousegrid with index to indexadoObjetos */
 	/**
 	 * This is a preset matrix of trajectories from different areas of the game.action
@@ -209,18 +194,18 @@ struct RoomFileRegister {
 	 */
 	Common::Point trajectories[9][30][5];
 	DoorRegistry doors[5]; /* doors in the room */
-	RoomBitmapRegister bitmapasociados[15];
-	RoomObjectListEntry *indexadoobjetos[51] = {NULL}; /* includes name of objects for mouseover + index to object file*/
-	bool animationFlag;                             /* true if there is a secondary animation */
-	Common::String nombremovto;                        /* name of the secondary animation, 8 chars*/
-	bool paletteAnimationFlag;                      /* true if there exist palette animation */
-	uint16 puntpaleta;                                 /* points to the screen palette */
-	Common::Point tray2[300];                          /* trajectory of the secondary animation */
-	uint16 dir2[300];                                  /* directions of the secondary trajectory. Pos 300 reflects object code. */
-	uint16 longtray2;                                  /* longitude of the trajectory of the secondary animation */
+	RoomBitmapRegister screenLayers[15];
+	RoomObjectListEntry *screenObjectIndex[51] = {NULL}; 	/* includes name of objects for mouseover + index to object file*/
+	bool animationFlag;										/* true if there is a secondary animation */
+	Common::String animationName;							/* name of the secondary animation, 8 chars*/
+	bool paletteAnimationFlag;								/* true if there exist palette animation */
+	uint16 palettePointer;									/* points to the screen palette */
+	Common::Point secondaryAnimTrajectory[300];				/* trajectory of the secondary animation */
+	uint16 secondaryAnimDirections[300];					/* directions of the secondary trajectory. Pos 300 reflects object code. */
+	uint16 secondaryTrajectoryLength;						/* length of the trajectory of the secondary animation */
 };
 
-struct regispartida {
+struct SavedGame {
 	uint numeropantalla,
 		longtray,
 		indicetray,
@@ -277,11 +262,11 @@ struct regispartida {
 	route mainRoute;
 	uint16 firstList[5], secondList[5];
 	Common::Point trayec[300];
-	bool primera[maxpersonajes],
-		lprimera[maxpersonajes],
-		cprimera[maxpersonajes],
-		libro[maxpersonajes],
-		caramelos[maxpersonajes];
+	bool primera[characterCount],
+		lprimera[characterCount],
+		cprimera[characterCount],
+		libro[characterCount],
+		caramelos[characterCount];
 
 	bool cavernas[5];
 	uint hornacina[2][4];
@@ -295,15 +280,15 @@ extern Common::MemorySeekableReadWriteStream *invItemData;
 /**
  * Frame index of the mouse mask
  */
-extern byte iraton;
+extern byte mouseMaskIndex;
 /**
  * Coords of the mouse sprite
  */
-extern uint xraton, yraton;
+extern uint mouseX, mouseY;
 /**
  * Coords of mouse clicks
  */
-extern uint pulsax, pulsay;
+extern uint mouseClickX, mouseClickY;
 /**
  * Mouse clicks for both buttons
  */
@@ -314,7 +299,7 @@ extern uint npraton2, npraton;
  */
 extern uint oldxrejilla, oldyrejilla;
 
-extern regispartida regpartida;
+extern SavedGame regpartida;
 
 extern bool sello_quitado;
 
@@ -375,7 +360,7 @@ extern bool animacion2;
 /**
  * 54 color palette slice.
  */
-extern palette movimientopal;
+extern palette palAnimSlice;
 /**
  * General palette
  */
@@ -506,7 +491,7 @@ extern Common::String nombreficherofoto;
 /**
  * Name of player
  */
-extern Common::String nombrepersonaje;
+extern Common::String characterName;
 
 extern Common::String decryptionKey;
 
@@ -514,7 +499,7 @@ extern uint hornacina[2][4];
 
 extern RoomFileRegister *currentRoomData;
 
-extern InvItemRegister regobj;
+extern ScreenObject regobj;
 /**
  * New movement to execute.
  */
@@ -568,11 +553,11 @@ extern bool list1Complete,
 	lista1, // whether we've been given list 1
 	lista2; // whether we've been given list 2
 
-extern bool primera[maxpersonajes],
-	lprimera[maxpersonajes],
-	cprimera[maxpersonajes],
-	libro[maxpersonajes],
-	caramelos[maxpersonajes];
+extern bool primera[characterCount],
+	lprimera[characterCount],
+	cprimera[characterCount],
+	libro[characterCount],
+	caramelos[characterCount];
 
 extern bool cavernas[5];
 /**
@@ -583,24 +568,17 @@ extern uint16 firstList[5],
 /**
  * Animation sequence
  */
-extern regsecuencia secuencia;
-extern reganimado animado;
-extern uint sizeframe,
-	segpasoframe,
-	ofspasoframe,
-	sizeanimado,
-	segpasoanimado,
-	ofspasoanimado,
-	segfondo,
-	offfondo;
+extern CharacterAnim secuencia;
+extern SecondaryAnim animado;
+extern uint sizeframe, sizeanimado;
 /**
  * Max num of loaded frames for secondary animation
  */
-extern byte fotogramamax2;
+extern byte maxSecondaryAnimationFrames;
 /**
  * Index of fade effect for room change
  */
-extern byte tipoefectofundido;
+extern byte transitionEffect;
 /**
  * Frame number for the animations
  */
@@ -611,24 +589,24 @@ extern long screenSize;
 /**
  * Depth of screenobjects
  */
-extern datosobj depthMap[numobjetosconv];
+extern ObjectInfo depthMap[numScreenOverlays];
 /**
  * Bitmaps of screenobjects
  */
-extern byte *screenObjects[numobjetosconv];
+extern byte *screenObjects[numScreenOverlays];
 /**
  * Current frame of main character
  */
-extern byte *pasoframe;
+extern byte *curCharacterAnimationFrame;
 /**
  * Current frame of secondary animation
  */
-extern byte *pasoanimado;
+extern byte *curSecondaryAnimationFrame;
 
 /**
  * Pointer storing the screen as it displays on the game
  */
-extern byte *background;
+extern byte *sceneBackground;
 
 /**
  * Dirty patch of screen to repaint on every frame
@@ -637,7 +615,7 @@ extern byte *characterDirtyRect;
 /**
  * Stores a copy of the background bitmap
  */
-extern byte *screenHandle;
+extern byte *backgroundCopy;
 
 extern uint currentRoomNumber;
 

@@ -34,7 +34,7 @@ namespace Tot {
 
 #define SAVEGAME_CURRENT_VERSION 1
 
-bool syncGeneralData(Common::Serializer &s, regispartida &game) {
+bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	uint32 startBytes = s.bytesSynced();
 	// Uint16
 	s.syncAsUint16LE(game.numeropantalla);
@@ -113,7 +113,7 @@ bool syncGeneralData(Common::Serializer &s, regispartida &game) {
 		s.syncAsSint16LE(game.trayec[i].y);
 	}
 
-	for (int indiaux = 0; indiaux < maxpersonajes; indiaux++) {
+	for (int indiaux = 0; indiaux < characterCount; indiaux++) {
 		// interleave them just to avoid creating many loops
 		s.syncAsByte(game.primera[indiaux]);
 		s.syncAsByte(game.lprimera[indiaux]);
@@ -219,7 +219,7 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 	return true;
 }
 
-Common::Error syncSaveData(Common::Serializer &ser, regispartida &game) {
+Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
 	if (!syncGeneralData(ser, game)) {
 		warning("Error while synchronizing general data");
 		return Common::kUnknownError;
@@ -244,10 +244,10 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 
 	if (s.isLoading()) {
 		debug("Loading game!!");
-		regispartida loadedGame;
+		SavedGame loadedGame;
 		// Means we are loading from before the game has started
 		// if(rooms == nullptr) {
-		clear();
+		g_engine->_graphics->clear();
 		processingActive();
 
 		loadCharAnimation();
@@ -257,7 +257,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		loadScreenMemory();
 
 		totalFadeOut(0);
-		clear();
+		g_engine->_graphics->clear();
 		processingActive();
 		initializeScreenFile();
 		initializeObjectFile();

@@ -36,19 +36,29 @@ public:
 	~GraphicsManager();
 
 	void printPalette();
-
 	void fixPalette(byte *palette, uint num = 768);
-	void getPalette(byte *palette);
 	byte *getPalette();
 	void setPalette(byte palette[768], uint num = 256);
 
-	void restoreBackground(uint x, uint y, uint x2, uint y2);
+	void restoreBackgroundArea(uint x, uint y, uint x2, uint y2);
+
+
+	void putImg(uint coordx, uint coordy, byte *image, bool transparency = false);
+	void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image);
+	void putShape(uint coordx, uint coordy, byte *image);
+	void putImageArea(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image);
+	void getImageArea(uint getcoordx1, uint getcoordy1, uint getcoordx2, uint getcoordy2, byte *backgroundScreen, byte *image);
+
+
 	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
 	void biosText(const Common::String &str, int x, int y, uint32 color);
+
 	void clear();
+
 	void clearActionLine();
 	void writeActionLine(const Common::String &str);
+
 	void printColor(int x, int y, int color);
 	Graphics::BgiFont _litt;
 	Graphics::BgiFont _euro;

@@ -39,13 +39,13 @@ namespace Tot {
 
 void loadScreenMemory() {
 	screenSize = 65520;
-	background = (byte *)malloc(screenSize);
-	screenHandle = (byte *)malloc(screenSize);
+	sceneBackground = (byte *)malloc(screenSize);
+	backgroundCopy = (byte *)malloc(screenSize);
 }
 
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
 	for (int j = 0; j < secondaryAnimationFrameCount; j++) {
-		loadAnimationIntoBuffer(stream, animado.dib[direction][j], sizeanimado);
+		loadAnimationIntoBuffer(stream, animado.bitmap[direction][j], sizeanimado);
 	}
 }
 
@@ -66,7 +66,7 @@ void loadAnimation(Common::String animacion) {
 	sizeanimado = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
 	numerodir = fichcani.readByte();
-	pasoanimado = (byte *)malloc(sizeanimado);
+	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
 	if (numerodir != 0) {
 
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
@@ -78,13 +78,13 @@ void loadAnimation(Common::String animacion) {
 	}
 
 	fichcani.close();
-	debug("Read all frames! longtray2=%d", currentRoomData->longtray2);
-	anchoanimado = READ_LE_UINT16(animado.dib[0][1]) + 1;
-	altoanimado = READ_LE_UINT16(animado.dib[0][1] + 2) + 1;
+	debug("Read all frames! longtray2=%d", currentRoomData->secondaryTrajectoryLength);
+	anchoanimado = READ_LE_UINT16(animado.bitmap[0][1]) + 1;
+	altoanimado = READ_LE_UINT16(animado.bitmap[0][1] + 2) + 1;
 
 	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM, false);
 
-	readItemRegister(currentRoomData->dir2[299]);
+	readItemRegister(currentRoomData->secondaryAnimDirections[299]);
 	maxrejax = (regobj.xrej2 - regobj.xrej1 + 1);
 	maxrejay = (regobj.yrej2 - regobj.yrej1 + 1);
 	oldposx = regobj.xrej1 + 1;
@@ -100,9 +100,9 @@ void loadAnimation(Common::String animacion) {
 
 	for (int i = 0; i < maxrejax; i++)
 		for (int j = 0; j < maxrejay; j++) {
-			rejamascaramovto[i][j] = regobj.parcherejapantalla[i][j];
-			rejamascararaton[i][j] = regobj.parcherejaraton[i][j];
-			rejafondomovto[i][j] = currentRoomData->rejapantalla[oldposx + i][oldposy + j];
+			rejamascaramovto[i][j] = regobj.walkAreasPatch[i][j];
+			rejamascararaton[i][j] = regobj.mouseGridPatch[i][j];
+			rejafondomovto[i][j] = currentRoomData->walkAreasGrid[oldposx + i][oldposy + j];
 			rejafondoraton[i][j] = currentRoomData->mouseGrid[oldposx + i][oldposy + j];
 		}
 	iframe2 = 0;
@@ -119,7 +119,7 @@ void updateAltScreen(byte otherScreenNumber) {
 	uint i22;
 	uint i11;
 
-	byte currentScreen = currentRoomData->codigo;
+	byte currentScreen = currentRoomData->code;
 
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 
@@ -134,54 +134,54 @@ void updateAltScreen(byte otherScreenNumber) {
 	case 20: {
 		switch (hornacina[0][hornacina[0][3]]) {
 		case 0: {
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(4);
-			currentRoomData->bitmapasociados[1].puntbitmap = 1190768;
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
+			currentRoomData->screenLayers[1].bitmapPointer = 1190768;
 		} break;
 		case 561: {
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(5);
-			currentRoomData->bitmapasociados[1].puntbitmap = 1182652;
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
+			currentRoomData->screenLayers[1].bitmapPointer = 1182652;
 		} break;
 		case 563: {
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(6);
-			currentRoomData->bitmapasociados[1].puntbitmap = 1186044;
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
+			currentRoomData->screenLayers[1].bitmapPointer = 1186044;
 		} break;
 		case 615: {
-			currentRoomData->indexadoobjetos[9]->objectName = getObjectName(7);
-			currentRoomData->bitmapasociados[1].puntbitmap = 1181760;
+			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
+			currentRoomData->screenLayers[1].bitmapPointer = 1181760;
 		} break;
 		}
-		currentRoomData->bitmapasociados[1].tambitmap = 892;
-		currentRoomData->bitmapasociados[1].coordx = 66;
-		currentRoomData->bitmapasociados[1].coordy = 35;
-		currentRoomData->bitmapasociados[1].profund = 1;
+		currentRoomData->screenLayers[1].bitmapSize = 892;
+		currentRoomData->screenLayers[1].coordx = 66;
+		currentRoomData->screenLayers[1].coordy = 35;
+		currentRoomData->screenLayers[1].depth = 1;
 	} break;
 	case 24: {
 		switch (hornacina[1][hornacina[1][3]]) {
 		case 0: {
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(4);
-			currentRoomData->bitmapasociados[0].puntbitmap = 1399610;
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
+			currentRoomData->screenLayers[0].bitmapPointer = 1399610;
 		} break;
 		case 561: {
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(5);
-			currentRoomData->bitmapasociados[0].puntbitmap = 1381982;
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
+			currentRoomData->screenLayers[0].bitmapPointer = 1381982;
 		} break;
 		case 615: {
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(7);
-			currentRoomData->bitmapasociados[0].puntbitmap = 1381090;
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
+			currentRoomData->screenLayers[0].bitmapPointer = 1381090;
 		} break;
 		case 622: {
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(8);
-			currentRoomData->bitmapasociados[0].puntbitmap = 1400502;
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
+			currentRoomData->screenLayers[0].bitmapPointer = 1400502;
 		} break;
 		case 623: {
-			currentRoomData->indexadoobjetos[8]->objectName = getObjectName(9);
-			currentRoomData->bitmapasociados[0].puntbitmap = 1398718;
+			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
+			currentRoomData->screenLayers[0].bitmapPointer = 1398718;
 		} break;
 		}
-		currentRoomData->bitmapasociados[0].tambitmap = 892;
-		currentRoomData->bitmapasociados[0].coordx = 217;
-		currentRoomData->bitmapasociados[0].coordy = 48;
-		currentRoomData->bitmapasociados[0].profund = 1;
+		currentRoomData->screenLayers[0].bitmapSize = 892;
+		currentRoomData->screenLayers[0].coordx = 217;
+		currentRoomData->screenLayers[0].coordy = 48;
+		currentRoomData->screenLayers[0].depth = 1;
 	} break;
 	case 31: {
 		for (i11 = 23; i11 <= 25; i11++)
@@ -191,11 +191,11 @@ void updateAltScreen(byte otherScreenNumber) {
 			for (i22 = 10; i22 <= 11; i22++)
 				currentRoomData->mouseGrid[i11][i22] = 3;
 
-		currentRoomData->bitmapasociados[0].tambitmap = 0;
-		currentRoomData->bitmapasociados[0].puntbitmap = 0;
-		currentRoomData->bitmapasociados[0].coordx = 0;
-		currentRoomData->bitmapasociados[0].coordy = 0;
-		currentRoomData->bitmapasociados[0].profund = 0;
+		currentRoomData->screenLayers[0].bitmapSize = 0;
+		currentRoomData->screenLayers[0].bitmapPointer = 0;
+		currentRoomData->screenLayers[0].coordx = 0;
+		currentRoomData->screenLayers[0].coordy = 0;
+		currentRoomData->screenLayers[0].depth = 0;
 	} break;
 	}
 
@@ -258,12 +258,12 @@ void cargatele() {
 	if (!fichct.open("PALETAS.DAT")) {
 		showError(310);
 	}
-	fichct.seek(currentRoomData->puntpaleta + 603);
-	fichct.read(movimientopal, 144);
+	fichct.seek(currentRoomData->palettePointer + 603);
+	fichct.read(palAnimSlice, 144);
 	for (int i = 0; i <= 48; i++) {
-		movimientopal[i * 3 + 0] = movimientopal[i * 3 + 0] << 2;
-		movimientopal[i * 3 + 1] = movimientopal[i * 3 + 1] << 2;
-		movimientopal[i * 3 + 2] = movimientopal[i * 3 + 2] << 2;
+		palAnimSlice[i * 3 + 0] = palAnimSlice[i * 3 + 0] << 2;
+		palAnimSlice[i * 3 + 1] = palAnimSlice[i * 3 + 1] << 2;
+		palAnimSlice[i * 3 + 2] = palAnimSlice[i * 3 + 2] << 2;
 	}
 
 	fichct.close();
@@ -279,22 +279,22 @@ void loadScreen() {
 	Common::File fichcp;
 	palette palcp;
 
-	screenSize = currentRoomData->tamimagenpantalla;
-	readBitmap(currentRoomData->puntimagenpantalla, background, screenSize, 316);
-	Common::copy(background, background + screenSize, screenHandle);
+	screenSize = currentRoomData->roomImageSize;
+	readBitmap(currentRoomData->roomImagePointer, sceneBackground, screenSize, 316);
+	Common::copy(sceneBackground, sceneBackground + screenSize, backgroundCopy);
 	switch (gamePart) {
 	case 1: {
 		if (!fichcp.open("PALETAS.DAT")) {
 			showError(310);
 		}
-		fichcp.seek(currentRoomData->puntpaleta);
+		fichcp.seek(currentRoomData->palettePointer);
 		fichcp.read(palcp, 603);
 		if (currentRoomData->paletteAnimationFlag) {
-			fichcp.read(movimientopal, 144);
+			fichcp.read(palAnimSlice, 144);
 			for (int i = 0; i <= 48; i++) {
-				movimientopal[i * 3 + 0] = movimientopal[i * 3 + 0] << 2;
-				movimientopal[i * 3 + 1] = movimientopal[i * 3 + 1] << 2;
-				movimientopal[i * 3 + 2] = movimientopal[i * 3 + 2] << 2;
+				palAnimSlice[i * 3 + 0] = palAnimSlice[i * 3 + 0] << 2;
+				palAnimSlice[i * 3 + 1] = palAnimSlice[i * 3 + 1] << 2;
+				palAnimSlice[i * 3 + 2] = palAnimSlice[i * 3 + 2] << 2;
 			}
 		}
 		fichcp.close();
@@ -338,7 +338,7 @@ void loadCharAnimation() {
 void freeScreenObjects() {
 	uint indicecarga;
 
-	for (indicecarga = 0; indicecarga < numobjetosconv; indicecarga++) {
+	for (indicecarga = 0; indicecarga < numScreenOverlays; indicecarga++) {
 		if (screenObjects[indicecarga] != NULL)
 			free(screenObjects[indicecarga]);
 		screenObjects[indicecarga] = NULL;
@@ -354,9 +354,9 @@ void freeScreenObjects() {
 void freeAnimation() {
 	if (animacion2) {
 		animacion2 = false;
-		if(pasoanimado)
-			free(pasoanimado);
-		pasoanimado = NULL;
+		if(curSecondaryAnimationFrame)
+			free(curSecondaryAnimationFrame);
+		curSecondaryAnimationFrame = NULL;
 	}
 }
 
@@ -439,20 +439,20 @@ void readBitmap(int32 posbm, byte *puntbm, uint tambm, uint errorbm) {
 }
 
 void updateItem(uint itemPosition) {
-	regobj.usar[0] = 9;
+	regobj.used[0] = 9;
 	invItemData->seek(itemPosition);
 	saveItemRegister(regobj, invItemData);
 }
 
-void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, InvItemRegister &thisRegObj) {
+void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, ScreenObject &thisRegObj) {
 	stream->seek(itemPos * itemRegSize);
 	clearObj();
 	thisRegObj.code = stream->readUint16LE();
-	thisRegObj.altura = stream->readByte();
+	thisRegObj.height = stream->readByte();
 
 	thisRegObj.name = stream->readPascalString();
 
-	stream->skip(longitudnombreobjeto - thisRegObj.name.size());
+	stream->skip(objectNameLength - thisRegObj.name.size());
 
 	thisRegObj.lookAtTextRef = stream->readUint16LE();
 	thisRegObj.beforeUseTextRef = stream->readUint16LE();
@@ -460,30 +460,30 @@ void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, InvItemR
 	thisRegObj.pickTextRef = stream->readUint16LE();
 	thisRegObj.useTextRef = stream->readUint16LE();
 	thisRegObj.habla = stream->readByte();
-	thisRegObj.abrir = stream->readByte();
-	thisRegObj.cerrar = stream->readByte();
+	thisRegObj.openable = stream->readByte();
+	thisRegObj.closeable = stream->readByte();
 
-	stream->read(thisRegObj.usar, 8);
+	stream->read(thisRegObj.used, 8);
 
-	thisRegObj.coger = stream->readByte();
-	thisRegObj.usarcon = stream->readUint16LE();
-	thisRegObj.reemplazarpor = stream->readUint16LE();
-	thisRegObj.profundidad = stream->readByte();
-	thisRegObj.punterobitmap = stream->readUint32LE();
-	thisRegObj.tambitmap = stream->readUint16LE();
-	thisRegObj.punteroframesgiro = stream->readUint32LE();
-	thisRegObj.punteropaletagiro = stream->readUint16LE();
-	thisRegObj.xparche = stream->readUint16LE();
-	thisRegObj.yparche = stream->readUint16LE();
-	thisRegObj.puntparche = stream->readUint32LE();
-	thisRegObj.tamparche = stream->readUint16LE();
+	thisRegObj.pickupable = stream->readByte();
+	thisRegObj.useWith = stream->readUint16LE();
+	thisRegObj.replaceWith = stream->readUint16LE();
+	thisRegObj.depth = stream->readByte();
+	thisRegObj.bitmapPointer = stream->readUint32LE();
+	thisRegObj.bitmapSize = stream->readUint16LE();
+	thisRegObj.rotatingObjectAnimation = stream->readUint32LE();
+	thisRegObj.rotatingObjectPalette = stream->readUint16LE();
+	thisRegObj.dropOverlayX = stream->readUint16LE();
+	thisRegObj.dropOverlayY = stream->readUint16LE();
+	thisRegObj.dropOverlay = stream->readUint32LE();
+	thisRegObj.dropOverlaySize = stream->readUint16LE();
 	thisRegObj.objectIconBitmap = stream->readUint16LE();
 	thisRegObj.xrej1 = stream->readByte();
 	thisRegObj.yrej1 = stream->readByte();
 	thisRegObj.xrej2 = stream->readByte();
 	thisRegObj.yrej2 = stream->readByte();
-	stream->read(thisRegObj.parcherejapantalla, 100);
-	stream->read(thisRegObj.parcherejaraton, 100);
+	stream->read(thisRegObj.walkAreasPatch, 100);
+	stream->read(thisRegObj.mouseGridPatch, 100);
 }
 
 void readItemRegister(uint itemPosition) {
@@ -499,7 +499,7 @@ void drawLookAtItem(RoomObjectListEntry obj) {
 
 void putIcon(uint posiconx, uint posicony, uint numicon) {
 	// substract 1 to account for 1-based indices
-	putImg(posiconx, posicony, mochilaxms[mobj[numicon].bitmapIndex - 1]);
+	g_engine->_graphics->putImg(posiconx, posicony, mochilaxms[mobj[numicon].bitmapIndex - 1]);
 }
 
 void drawBackpack() {
@@ -641,7 +641,7 @@ void drawMenu(byte nummenu) {
 	punteromenu = (byte *)malloc(tampunteromenu);
 	menuFile.seek(posicionmenu);
 	menuFile.read(punteromenu, tampunteromenu);
-	putImg(xmenu, ymenu, punteromenu);
+	g_engine->_graphics->putImg(xmenu, ymenu, punteromenu);
 	free(punteromenu);
 	menuFile.close();
 }
@@ -680,7 +680,7 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 		fich.read(pal, 768);
 		fich.read(pantalla, size);
 		fich.close();
-		putShape(10, 20, pantalla);
+		g_engine->_graphics->putShape(10, 20, pantalla);
 		free(pantalla);
 	}
 	for (int i = 16; i <= 255; i++) {
@@ -702,29 +702,29 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	clave.append(passArray, passArray + 10);
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
-	outtextxyBios(91, 16, messages[49] + clave, 255);
-	outtextxyBios(90, 15,  messages[49] + clave, 13);
+	biosText(91, 16, messages[49] + clave, 255);
+	biosText(90, 15,  messages[49] + clave, 13);
 
-	outtextxyBios(81, 61,  messages[50], 0);
-	outtextxyBios(61, 81,  messages[51], 0);
-	outtextxyBios(31, 101, messages[52] + nombrepersonaje, 0);
-	outtextxyBios(31, 121, messages[53], 0);
-	outtextxyBios(31, 141, messages[54], 0);
-	outtextxyBios(31, 161, messages[55], 0);
+	biosText(81, 61,  messages[50], 0);
+	biosText(61, 81,  messages[51], 0);
+	biosText(31, 101, messages[52] + characterName, 0);
+	biosText(31, 121, messages[53], 0);
+	biosText(31, 141, messages[54], 0);
+	biosText(31, 161, messages[55], 0);
 
-	outtextxyBios(80, 60,  messages[50], 15);
-	outtextxyBios(60, 80,  messages[51], 15);
-	outtextxyBios(30, 100, messages[52], 15);
+	biosText(80, 60,  messages[50], 15);
+	biosText(60, 80,  messages[51], 15);
+	biosText(30, 100, messages[52], 15);
 
-	outtextxyBios(150, 100, nombrepersonaje, 13);
+	biosText(150, 100, characterName, 13);
 
-	outtextxyBios(30, 120, messages[53], 15);
-	outtextxyBios(30, 140, messages[54], 15);
-	outtextxyBios(30, 160, messages[55], 15);
+	biosText(30, 120, messages[53], 15);
+	biosText(30, 140, messages[54], 15);
+	biosText(30, 160, messages[55], 15);
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	// putShape(270, 161, (byte *)sello);
-	putShape(270, 159, sello);
+	g_engine->_graphics->putShape(270, 159, sello);
 	free(sello);
 }
 
@@ -791,39 +791,39 @@ void checkMouseGrid() {
 	Common::String objmochila;
 	if (contadorpc2 > 120)
 		showError(274);
-	if (yraton >= 0 && yraton <= 131) {
-		xrejilla = (xraton + 7) / factorx;
-		yrejilla = (yraton + 7) / factory;
+	if (mouseY >= 0 && mouseY <= 131) {
+		xrejilla = (mouseX + 7) / xGridCount;
+		yrejilla = (mouseY + 7) / yGridCount;
 		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldxrejilla][oldyrejilla] || oldobjmochila != "") {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (numeroaccion) {
 			case 0:
-				actionLine = getActionLineText(0) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 1:
-				actionLine = getActionLineText(1) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(1) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 2:
-				actionLine = getActionLineText(2) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(2) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 3:
-				actionLine = getActionLineText(3) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(3) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 4:
 				if (objetomochila != "")
-					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				else
-					actionLine = getActionLineText(4) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 5:
-				actionLine = getActionLineText(5) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(5) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 6:
-				actionLine = getActionLineText(6) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(6) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			default:
-				actionLine = getActionLineText(0) + currentRoomData->indexadoobjetos[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
@@ -832,7 +832,7 @@ void checkMouseGrid() {
 		}
 		oldnumeroacc = 253;
 		oldobjmochila = "";
-	} else if (yraton >= 132 && yraton <= 165) {
+	} else if (mouseY >= 132 && mouseY <= 165) {
 		if (numeroaccion != oldnumeroacc) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
@@ -869,18 +869,18 @@ void checkMouseGrid() {
 			oldxrejilla = 0;
 			oldyrejilla = 0;
 		}
-	} else if (yraton >= 166 && yraton <= 199) {
-		if (xraton >= 26 && xraton <= 65) {
+	} else if (mouseY >= 166 && mouseY <= 199) {
+		if (mouseX >= 26 && mouseX <= 65) {
 			objmochila = mobj[posicioninv].objectName;
-		} else if (xraton >= 70 && xraton <= 108) {
+		} else if (mouseX >= 70 && mouseX <= 108) {
 			objmochila = mobj[posicioninv + 1].objectName;
-		} else if (xraton >= 113 && xraton <= 151) {
+		} else if (mouseX >= 113 && mouseX <= 151) {
 			objmochila = mobj[posicioninv + 2].objectName;
-		} else if (xraton >= 156 && xraton <= 194) {
+		} else if (mouseX >= 156 && mouseX <= 194) {
 			objmochila = mobj[posicioninv + 3].objectName;
-		} else if (xraton >= 199 && xraton <= 237) {
+		} else if (mouseX >= 199 && mouseX <= 237) {
 			objmochila = mobj[posicioninv + 4].objectName;
-		} else if (xraton >= 242 && xraton <= 280) {
+		} else if (mouseX >= 242 && mouseX <= 280) {
 			objmochila = mobj[posicioninv + 5].objectName;
 		} else {
 			objmochila = ' ';
@@ -912,7 +912,7 @@ void checkMouseGrid() {
 				actionLine = getActionLineText(6) + objmochila;
 				break;
 			default:
-				outtextxy(160, 144, objmochila, 255, true, Graphics::kTextAlignCenter);
+				euroText(160, 144, objmochila, 255, Graphics::kTextAlignCenter);
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
@@ -928,7 +928,7 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 	int pun = 1;
 	bar(posx, posy - 2, posx + long_ * 8, posy + 8, colorbarra);
 
-	outtextxyBios(posx, posy, "_", 0);
+	biosText(posx, posy, "_", 0);
 
 	Common::Event e;
 	bool done = false;
@@ -947,26 +947,26 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 				}
 				// Max 8 chars
 				if (pun > long_ && asciiCode != 8) {
-					sound(750, 60);
+					g_engine->_sound->beep(750, 60);
 					bar((posx + (dato.size()) * 8), (posy - 2), (posx + (dato.size() + 1) * 8), (posy + 8), 0);
 				} else if (asciiCode == 8 && pun > 1) { // delete
 					dato = dato.substr(0, dato.size() - 1);
 					bar(posx, (posy - 2), (posx + long_ * 8), (posy + 8), colorbarra);
-					outtextxyBios(posx, posy, dato.c_str(), 0);
-					outtextxyBios((posx + (dato.size()) * 8), posy, "_", 0);
+					biosText(posx, posy, dato.c_str(), 0);
+					biosText((posx + (dato.size()) * 8), posy, "_", 0);
 					pun -= 1;
 				} else if (
 					(asciiCode < 97 || asciiCode > 122) &&
 					(asciiCode < 65 || asciiCode > 90) &&
 					(asciiCode < 32 || asciiCode > 57) &&
 					(asciiCode < 164 || asciiCode > 165)) {
-					sound(1200, 60);
+					g_engine->_sound->beep(1200, 60);
 				} else {
 					pun += 1;
 					dato = dato + (char)e.kbd.ascii;
 					bar(posx, (posy - 2), (posx + long_ * 8), (posy + 8), colorbarra);
-					outtextxyBios(posx, posy, dato.c_str(), 0);
-					outtextxyBios((posx + (dato.size()) * 8), posy, "_", 0);
+					biosText(posx, posy, dato.c_str(), 0);
+					biosText((posx + (dato.size()) * 8), posy, "_", 0);
 				}
 			}
 		}
@@ -981,7 +981,7 @@ void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, by
 	bool borracursor;
 	bar(posx, posy + 2, posx + long_ * 6, posy + 9, colorbarra);
 
-	outtextxyBios(posx, posy, "-", colortexto);
+	biosText(posx, posy, "-", colortexto);
 	Common::Event e;
 	bool done = false;
 
@@ -999,24 +999,24 @@ void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, by
 				}
 
 				if (pun > long_ && asciiCode != 8) {
-					sound(750, 60);
+					g_engine->_sound->beep(750, 60);
 					bar((posx + (dato.size()) * 6), (posy + 2), (posx + (dato.size() + 1) * 6), (posy + 9), colorbarra);
 				} else if (asciiCode == 8 && pun > 1) {
 					dato = dato.substr(0, dato.size() - 1);
 					bar(posx, (posy + 2), (posx + long_ * 6), (posy + 9), colorbarra);
-					outtextxyBios(posx, posy, dato, colortexto);
-					outtextxyBios((posx + (dato.size()) * 6), posy, "-", colortexto);
+					biosText(posx, posy, dato, colortexto);
+					biosText((posx + (dato.size()) * 6), posy, "-", colortexto);
 					pun -= 1;
 					borracursor = true;
 				} else if ((asciiCode < '\40') || (asciiCode > '\373')) {
-					sound(1200, 60);
+					g_engine->_sound->beep(1200, 60);
 					borracursor = false;
 				} else {
 					pun += 1;
 					dato = dato + (char)e.kbd.ascii;
 					bar(posx, (posy + 2), (posx + long_ * 6), (posy + 9), colorbarra);
-					outtextxy(posx, posy, dato, colortexto);
-					outtextxy((posx + (dato.size()) * 6), posy, "-", colortexto);
+					littText(posx, posy, dato, colortexto);
+					littText((posx + (dato.size()) * 6), posy, "-", colortexto);
 					borracursor = true;
 				}
 				// car = readkey();
@@ -1044,10 +1044,10 @@ void hipercadena(
 	byte matrizsaltoshc[10];
 
 	if (cadenatextnueva.size() < anchohc) {
-		outtextxy((xhcnueva + 1), (yhcnueva + 1), cadenatextnueva, colorsombrahc, true);
+		euroText((xhcnueva + 1), (yhcnueva + 1), cadenatextnueva, colorsombrahc);
 		g_engine->_screen->update();
 		delay(enforcedTextAnimDelay);
-		outtextxy(xhcnueva, yhcnueva, cadenatextnueva, colortextohc, true);
+		euroText(xhcnueva, yhcnueva, cadenatextnueva, colortextohc);
 		g_engine->_screen->update();
 		delay(enforcedTextAnimDelay);
 	} else {
@@ -1068,10 +1068,10 @@ void hipercadena(
 
 		for (lineahc = 1; lineahc <= iteracioneshc; lineahc++) {
 			Common::String lineString = cadenatextnueva.substr(matrizsaltoshc[lineahc - 1], matrizsaltoshc[lineahc] - matrizsaltoshc[lineahc - 1]);
-			outtextxy((xhcnueva + 1), (yhcnueva + ((lineahc - 1) * 11) + 1), lineString, colorsombrahc, true);
+			euroText((xhcnueva + 1), (yhcnueva + ((lineahc - 1) * 11) + 1), lineString, colorsombrahc);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
-			outtextxy(xhcnueva, (yhcnueva + ((lineahc - 1) * 11)), lineString, colortextohc, true);
+			euroText(xhcnueva, (yhcnueva + ((lineahc - 1) * 11)), lineString, colortextohc);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
 		}
@@ -1445,7 +1445,7 @@ void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
 
 	// Screen is now fondopp so fondo2 contains a 320x60 crop of fondopp
 	fondo2 = (byte *)malloc(sizefondo2);
-	getImg(0, 0, 319, 59, fondo2);
+	g_engine->_graphics->getImg(0, 0, 319, 59, fondo2);
 
 	for (int i = 0; i <= 255; i++) {
 		palnegro[i * 3 + 0] = 0;
@@ -1563,7 +1563,7 @@ void scrollCredit(
 		showError(270);
 	}
 	fich.seek(posicion);
-	fich.read(background, tam);
+	fich.read(sceneBackground, tam);
 	fich.read(pal2, 768);
 	fich.close();
 
@@ -1589,7 +1589,7 @@ void scrollCredit(
 				keyPressed = true;
 			}
 		}
-		putCreditsImg(85, i, background, fondopp, !withFade);
+		putCreditsImg(85, i, sceneBackground, fondopp, !withFade);
 		if (keyPressed) {
 			salirpitando = true;
 			break;
@@ -1675,7 +1675,7 @@ void credits() {
 	g_engine->_mouseManager->hide();
 	totalFadeOut(0);
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
-	cleardevice();
+	g_engine->_screen->clear();
 	g_engine->_sound->playMidi("CREDITOS", true);
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	drawCreditsScreen(fondopp, sizefondo2, fondo2);
@@ -1708,7 +1708,7 @@ void credits() {
 	removeTitle(fondo2);
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
-	putImg(0, 0, fondo2);
+	g_engine->_graphics->putImg(0, 0, fondo2);
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
 	copyFromScreen(fondopp);
@@ -1738,7 +1738,7 @@ void credits() {
 	removeTitle(fondo2);
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
-	putImg(0, 0, fondo2);
+	g_engine->_graphics->putImg(0, 0, fondo2);
 	if (keyPressed() || salirpitando)
 		goto Lsalida;
 	copyFromScreen(fondopp);
@@ -1749,7 +1749,7 @@ Lsalida:
 	delay(1000);
 	totalFadeOut(0);
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
-	cleardevice();
+	g_engine->_screen->clear();
 	g_engine->_sound->playMidi("INTRODUC", true);
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	g_engine->_mouseManager->show();
@@ -1770,7 +1770,7 @@ void introduction() {
 
 	if (contadorpc > 6)
 		showError(270);
-	cleardevice();
+	g_engine->_screen->clear();
 	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
@@ -1778,25 +1778,25 @@ void introduction() {
 	if (pulsada_salida)
 		goto Lsalirpres;
 	totalFadeOut(0);
-	cleardevice();
+	g_engine->_screen->clear();
 	if(isSpanish) {
-		outtextxy(25,  20, messages[0], 253);
-		outtextxy(25,  35, messages[1], 253);
-		outtextxy(25,  50, messages[2], 253);
-		outtextxy(25,  65, messages[3], 253);
-		outtextxy(25,  80, messages[4], 253);
-		outtextxy(25,  95, messages[5], 253);
-		outtextxy(25, 120, messages[6], 253);
-		outtextxy(25, 140, messages[7], 253);
-		outtextxy(25, 155, messages[8], 253);
+		littText(25,  20, messages[0], 253);
+		littText(25,  35, messages[1], 253);
+		littText(25,  50, messages[2], 253);
+		littText(25,  65, messages[3], 253);
+		littText(25,  80, messages[4], 253);
+		littText(25,  95, messages[5], 253);
+		littText(25, 120, messages[6], 253);
+		littText(25, 140, messages[7], 253);
+		littText(25, 155, messages[8], 253);
 	}
 	else {
-		outtextxy(25,  35, messages[0], 253);
-		outtextxy(25,  55, messages[1], 253);
-		outtextxy(25,  75, messages[2], 253);
-		outtextxy(25,  95, messages[3], 253);
-		outtextxy(25, 115, messages[4], 253);
-		outtextxy(25, 135, messages[5], 253);
+		littText(25,  35, messages[0], 253);
+		littText(25,  55, messages[1], 253);
+		littText(25,  75, messages[2], 253);
+		littText(25,  95, messages[3], 253);
+		littText(25, 115, messages[4], 253);
+		littText(25, 135, messages[5], 253);
 	}
 	if(g_engine->shouldQuit()){
 		return;
@@ -1821,7 +1821,7 @@ void introduction() {
 	} while (contadorvueltas < 180 && !g_engine->shouldQuit());
 
 	totalFadeOut(0);
-	cleardevice();
+	g_engine->_screen->clear();
 	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, pulsada_salida);
 	if (pulsada_salida)
 		goto Lsalirpres;
@@ -1883,7 +1883,7 @@ void introduction() {
 Lsalirpres:
 	debug("Exiting intro!");
 	totalFadeOut(0);
-	cleardevice();
+	g_engine->_screen->clear();
 	g_engine->_mouseManager->show();
 }
 
@@ -1916,10 +1916,10 @@ void initialMenu(bool fundido) {
 		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, kklogica);
 	if (contadorpc2 > 10)
 		showError(274);
-	xraton = 160;
-	yraton = 95;
-	iraton = 1;
-	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
+	mouseX = 160;
+	mouseY = 95;
+	mouseMaskIndex = 1;
+	g_engine->_mouseManager->setMousePos(mouseMaskIndex, mouseX, mouseY);
 	Common::Event e;
 	do {
 		g_engine->_chrono->updateChrono();
@@ -1948,7 +1948,7 @@ void initialMenu(bool fundido) {
 				} else if (y > 140 && y < 155) {
 					if (x > 173 && x < 292) {
 						totalFadeOut(0);
-						cleardevice();
+						g_engine->_screen->clear();
 						introduction();
 						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
 					} else if (x >= 18 && x <= 145) {
@@ -1973,136 +1973,8 @@ void initialMenu(bool fundido) {
 	} while (!opcionvalida && !g_engine->shouldQuit());
 }
 
-void saveTemporaryGame() {
-	// uint indiaux;
-	// byte zonasitio, i1, i2;
-
-	// assign(partida, "GAME07.SAV");
-	// rewrite(partida);
-	// regpartida.indicetray = indicetray;
-	// zonasitio = roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
-	// if (zonasitio > 9) {
-	// 	do {
-	// 		indicetray -= 1;
-	// 		characterPosX = trayec[indicetray].x;
-	// 		characterPosY = trayec[indicetray].y;
-	// 		zonasitio = roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
-	// 	} while (!((indicetray == 1) || (zonasitio < 10)));
-	// }
-	// if (zonasitio < 10) {
-	// 	regpartida.xframe = characterPosX;
-	// 	regpartida.yframe = characterPosY;
-	// } else {
-	// 	indicetray = regpartida.indicetray;
-	// 	do {
-	// 		indicetray += 1;
-	// 		characterPosX = trayec[indicetray].x;
-	// 		characterPosY = trayec[indicetray].y;
-	// 		zonasitio = roomData->rejapantalla[(characterPosX + rectificacionx) / factorx][(characterPosY + rectificaciony) / factory];
-	// 	} while (!((zonasitio < 10) || (indicetray == longtray)));
-	// 	if (zonasitio < 10) {
-	// 		regpartida.xframe = characterPosX;
-	// 		regpartida.yframe = characterPosY;
-	// 	} else
-	// 		error("saveTemporaryGame(): error saving! (275)");
-	// }
-	// regpartida.numeropantalla = roomData->codigo;
-	// regpartida.longtray = longtray;
-	// regpartida.indicetray = indicetray;
-	// regpartida.codigoobjmochila = codigoobjmochila;
-	// regpartida.volumenfxderecho = volumenfxderecho;
-	// regpartida.volumenfxizquierdo = volumenfxizquierdo;
-	// regpartida.volumenmelodiaderecho = volumenmelodiaderecho;
-	// regpartida.volumenmelodiaizquierdo = volumenmelodiaizquierdo;
-	// regpartida.oldxrejilla = oldxrejilla;
-	// regpartida.oldyrejilla = oldyrejilla;
-	// regpartida.animadoprofundidad = animado.profundidad;
-	// regpartida.animadodir = animado.dir;
-	// regpartida.animadoposx = animado.posx;
-	// regpartida.animadoposy = animado.posy;
-	// regpartida.animadoiframe2 = iframe2;
-	// regpartida.zonaactual = zonaactual;
-	// regpartida.zonadestino = zonadestino;
-	// regpartida.oldzonadestino = oldzonadestino;
-	// regpartida.posicioninv = posicioninv;
-	// regpartida.numeroaccion = numeroaccion;
-	// regpartida.oldnumeroacc = oldnumeroacc;
-	// regpartida.pasos = pasos;
-	// regpartida.indicepuertas = indicepuertas;
-	// regpartida.direccionmovimiento = direccionmovimiento;
-	// regpartida.iframe = iframe;
-	// regpartida.parte_del_juego = parte_del_juego;
-	// regpartida.manual_torno = manual_torno;
-	// regpartida.sello_quitado = sello_quitado;
-	// regpartida.lista1 = lista1;
-	// regpartida.lista2 = lista2;
-	// regpartida.completadalista1 = completadalista1;
-	// regpartida.completadalista2 = completadalista2;
-	// regpartida.vasijapuesta = vasijapuesta;
-	// regpartida.guadagna = guadagna;
-	// regpartida.tridente = tridente;
-	// regpartida.torno = torno;
-	// regpartida.barro = barro;
-	// regpartida.diablillo_verde = diablillo_verde;
-	// regpartida.rojo_capturado = rojo_capturado;
-	// regpartida.alacena_abierta = alacena_abierta;
-	// regpartida.baul_abierto = baul_abierto;
-	// regpartida.teleencendida = teleencendida;
-	// regpartida.trampa_puesta = trampa_puesta;
-	// for (indiaux = 0; indiaux < inventoryIconCount; indiaux++) {
-	// 	regpartida.mobj[indiaux].bitmapIndex = mobj[indiaux].bitmapIndex;
-	// 	regpartida.mobj[indiaux].code = mobj[indiaux].code;
-	// 	regpartida.mobj[indiaux].objectName = mobj[indiaux].objectName;
-	// }
-	// regpartida.elemento1 = elemento1;
-	// regpartida.elemento2 = elemento2;
-	// regpartida.xframe = characterPosX;
-	// regpartida.yframe = characterPosY;
-	// regpartida.xframe2 = xframe2;
-	// regpartida.yframe2 = yframe2;
-	// regpartida.oldobjmochila = oldobjmochila;
-	// regpartida.objetomochila = objetomochila;
-	// regpartida.nombrepersonaje = nombrepersonaje;
-	// for(int i = 0; i < routePointCount; i++) {
-	// 	regpartida.mainRoute[i].x = mainRoute[i].x;
-	// 	regpartida.mainRoute[i].y = mainRoute[i].y;
-	// }
-	// for (indiaux = 0; indiaux < 300; indiaux++) {
-	// 	regpartida.trayec[indiaux].x = trayec[indiaux].x;
-	// 	regpartida.trayec[indiaux].y = trayec[indiaux].y;
-	// }
-	// for (indiaux = 0; indiaux < maxpersonajes; indiaux++) {
-	// 	regpartida.primera[indiaux] = primera[indiaux];
-	// 	regpartida.lprimera[indiaux] = lprimera[indiaux];
-	// 	regpartida.cprimera[indiaux] = cprimera[indiaux];
-	// 	regpartida.libro[indiaux] = libro[indiaux];
-	// 	regpartida.caramelos[indiaux] = caramelos[indiaux];
-	// }
-
-	// for (indiaux = 0; indiaux < 5; indiaux++) {
-	// 	regpartida.cavernas[indiaux] = cavernas[indiaux];
-	// 	regpartida.firstList[indiaux] = firstList[indiaux];
-	// 	regpartida.secondList[indiaux] = secondList[indiaux];
-	// }
-	// for (indiaux = 0; indiaux < 4; indiaux++) {
-	// 	regpartida.hornacina[0][indiaux] = hornacina[0][indiaux];
-	// 	regpartida.hornacina[1][indiaux] = hornacina[1][indiaux];
-	// }
-	// partida << regpartida;
-	// close(partida);
-	// setRoomTrajectories(altoanimado, anchoanimado, true);
-
-	// // assign(fichpanta, "PANTALLA.DAT");
-	// // /*$I-*/ reset(fichpanta); /*$I+*/
-	// // if (ioresult != 0)
-	// // 	error("saveTemporaryGame(): error saving ioresult! (320)");
-	// // seek(fichpanta, ((datospantalla.codigo * 8) + 7));
-	// // fichpanta << datospantalla;
-	// // close(fichpanta);
-}
-
 void exitGame() {
-	clear();
+	g_engine->_graphics->clear();
 	g_system->quit();
 }
 
@@ -2120,21 +1992,21 @@ void exitToDOS() {
 	// textsettingstype oldstyle;
 	char chpasosalida;
 
-	oldxraton = xraton;
-	oldyraton = yraton;
-	oldiraton = iraton;
+	oldxraton = mouseX;
+	oldyraton = mouseY;
+	oldiraton = mouseMaskIndex;
 	g_engine->_mouseManager->hide();
 	tamfondcontroles = imagesize(58, 48, 262, 120);
 	byte *puntfondcontroles = (byte *)malloc(tamfondcontroles);
-	getImg(58, 48, 262, 120, puntfondcontroles);
+	g_engine->_graphics->getImg(58, 48, 262, 120, puntfondcontroles);
 
 	drawMenu(7);
-	xraton = 160;
-	yraton = 90;
-	iraton = 1;
+	mouseX = 160;
+	mouseY = 90;
+	mouseMaskIndex = 1;
 
 	g_engine->_mouseManager->setMouseArea(Common::Rect(115, 80, 190, 100));
-	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(mouseMaskIndex, mouseX, mouseY);
 	Common::Event e;
 	const char hotKeyYes = hotKeyFor(YES);
 	const char hotKeyNo = hotKeyFor(NO);
@@ -2173,10 +2045,10 @@ void exitToDOS() {
 		g_engine->_screen->update();
 	} while (chpasosalida != '\33' && !g_engine->shouldQuit());
 	debug("finished exitToDos");
-	putImg(58, 48, puntfondcontroles);
-	xraton = oldxraton;
-	yraton = oldyraton;
-	iraton = oldiraton;
+	g_engine->_graphics->putImg(58, 48, puntfondcontroles);
+	mouseX = oldxraton;
+	mouseY = oldyraton;
+	mouseMaskIndex = oldiraton;
 	g_engine->_mouseManager->show();
 	free(puntfondcontroles);
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
@@ -2197,18 +2069,18 @@ void soundControls() {
 	bool salirmenucontroles;
 
 	salirmenucontroles = false;
-	oldxraton = xraton;
-	oldyraton = yraton;
-	oldiraton = iraton;
+	oldxraton = mouseX;
+	oldyraton = mouseY;
+	oldiraton = mouseMaskIndex;
 	g_engine->_mouseManager->hide();
 
 	tamfondcontroles = imagesize(50, 10, 270, 120);
 	byte *puntfondcontroles = (byte *)malloc(tamfondcontroles);
-	getImg(50, 10, 270, 120, puntfondcontroles);
+	g_engine->_graphics->getImg(50, 10, 270, 120, puntfondcontroles);
 
-	xraton = 150;
-	yraton = 60;
-	iraton = 1;
+	mouseX = 150;
+	mouseY = 60;
+	mouseMaskIndex = 1;
 
 	g_engine->_mouseManager->setMouseArea(Common::Rect(55, 13, 250, 105));
 
@@ -2221,22 +2093,22 @@ void soundControls() {
 
 	sliderSize = imagesize(86, 31, 94, 44);
 	byte *slider = (byte *)malloc(sliderSize);
-	getImg(86, 31, 94, 44, slider);
+	g_engine->_graphics->getImg(86, 31, 94, 44, slider);
 
 	drawMenu(3);
 	sliderBgSize = imagesize(86, 31, 234, 44);
 
 	byte *sliderBackground1 = (byte *)malloc(sliderBgSize);
 	byte *sliderBackground2 = (byte *)malloc(sliderBgSize);
-	getImg(86, 31, 234, 44, sliderBackground1);
-	getImg(86, 76, 234, 89, sliderBackground2);
+	g_engine->_graphics->getImg(86, 31, 234, 44, sliderBackground1);
+	g_engine->_graphics->getImg(86, 76, 234, 89, sliderBackground2);
 
 	volumenfx = round(((rightSfxVol + leftSfxVol) / 2) * 20);
 	volumenmelodia = round(((musicVolRight + musicVolLeft) / 2) * 20);
-	putImg(volumenfx + 86, 31, slider);
-	putImg(volumenmelodia + 86, 76, slider);
+	g_engine->_graphics->putImg(volumenfx + 86, 31, slider);
+	g_engine->_graphics->putImg(volumenmelodia + 86, 76, slider);
 
-	g_engine->_mouseManager->setMousePos(1, xraton, yraton);
+	g_engine->_mouseManager->setMousePos(1, mouseX, mouseY);
 	bool keyPressed = false;
 	bool mouseClicked = false;
 	Common::Event e;
@@ -2251,8 +2123,8 @@ void soundControls() {
 				}
 				if (e.type == Common::EVENT_LBUTTONDOWN) {
 					mouseClicked = true;
-					pulsax = e.mouse.x;
-					pulsay = e.mouse.y;
+					mouseClickX = e.mouse.x;
+					mouseClickY = e.mouse.y;
 				}
 			}
 			g_engine->_screen->update();
@@ -2264,7 +2136,7 @@ void soundControls() {
 			salirmenucontroles = true;
 		}
 		if (mouseClicked) {
-			if (pulsay >= 22 && pulsay <= 37) {
+			if (mouseClickY >= 22 && mouseClickY <= 37) {
 				g_engine->_mouseManager->hide();
 				xfade = 86 + volumenfx;
 				bool mouseReleased = false;
@@ -2285,8 +2157,8 @@ void soundControls() {
 					}
 
 					if (oldxfade != xfade) {
-						putImg(86, 31, sliderBackground1);
-						putImg(xfade, 31, slider);
+						g_engine->_graphics->putImg(86, 31, sliderBackground1);
+						g_engine->_graphics->putImg(xfade, 31, slider);
 						// This yields a volume between 0 and 140
 						volumenfx = xfade - 86;
 
@@ -2299,7 +2171,7 @@ void soundControls() {
 				} while (!mouseReleased);
 
 				g_engine->_mouseManager->show();
-			} else if (pulsay >= 67 && pulsay <= 82) {
+			} else if (mouseClickY >= 67 && mouseClickY <= 82) {
 				g_engine->_mouseManager->hide();
 				xfade = 86 + volumenmelodia;
 				bool mouseReleased = false;
@@ -2318,8 +2190,8 @@ void soundControls() {
 					}
 
 					if (oldxfade != xfade) {
-						putImg(86, 76, sliderBackground2);
-						putImg(xfade, 76, slider);
+						g_engine->_graphics->putImg(86, 76, sliderBackground2);
+						g_engine->_graphics->putImg(xfade, 76, slider);
 						volumenmelodia = xfade - 86;
 						musicVolRight = round((float)(volumenmelodia) / 20);
 						musicVolLeft = round((float)(volumenmelodia) / 20);
@@ -2329,7 +2201,7 @@ void soundControls() {
 				} while (!mouseReleased);
 
 				g_engine->_mouseManager->show();
-			} else if (pulsay >= 97 && pulsay <= 107) {
+			} else if (mouseClickY >= 97 && mouseClickY <= 107) {
 				salirmenucontroles = true;
 			}
 			mouseClicked = false;
@@ -2338,11 +2210,11 @@ void soundControls() {
 		g_engine->_screen->update();
 	} while (!salirmenucontroles && !g_engine->shouldQuit());
 
-	putImg(50, 10, puntfondcontroles);
-	xraton = oldxraton;
-	yraton = oldyraton;
-	iraton = oldiraton;
-	g_engine->_mouseManager->setMousePos(iraton, xraton, yraton);
+	g_engine->_graphics->putImg(50, 10, puntfondcontroles);
+	mouseX = oldxraton;
+	mouseY = oldyraton;
+	mouseMaskIndex = oldiraton;
+	g_engine->_mouseManager->setMousePos(mouseMaskIndex, mouseX, mouseY);
 	free(puntfondcontroles);
 	free(slider);
 	free(sliderBackground1);
@@ -2371,17 +2243,17 @@ void sacrificeScene() {
 	bar(0, 139, 319, 149, 0);
 	bar(10, 10, 310, 120, 0);
 	if (isSpanish) {
-		outtextxy(10, 10, messages[9], 200);
-		outtextxy(10, 30, messages[10], 200);
-		outtextxy(10, 50, messages[11], 200);
-		outtextxy(10, 70, messages[12], 200);
-		outtextxy(10, 90, messages[13], 200);
+		littText(10, 10, messages[9], 200);
+		littText(10, 30, messages[10], 200);
+		littText(10, 50, messages[11], 200);
+		littText(10, 70, messages[12], 200);
+		littText(10, 90, messages[13], 200);
 	} else {
-		outtextxy(10, 20, messages[9], 200);
-		outtextxy(10, 40, messages[10], 200);
-		outtextxy(10, 60, messages[11], 200);
-		outtextxy(10, 80, messages[12], 200);
-		outtextxy(10, 100, messages[13], 200);
+		littText(10, 20, messages[9], 200);
+		littText(10, 40, messages[10], 200);
+		littText(10, 60, messages[11], 200);
+		littText(10, 80, messages[12], 200);
+		littText(10, 100, messages[13], 200);
 	}
 
 	for (int i = 0; i <= 28; i++)
@@ -2396,16 +2268,16 @@ void sacrificeScene() {
 
 	bar(10, 10, 310, 120, 0);
 	if (isSpanish) {
-		outtextxy(10, 10, messages[14], 200);
-		outtextxy(10, 30, messages[15], 200);
-		outtextxy(10, 50, messages[16], 200);
-		outtextxy(10, 70, messages[17], 200);
-		outtextxy(10, 90, messages[18], 200);
+		littText(10, 10, messages[14], 200);
+		littText(10, 30, messages[15], 200);
+		littText(10, 50, messages[16], 200);
+		littText(10, 70, messages[17], 200);
+		littText(10, 90, messages[18], 200);
 	} else {
-		outtextxy(10, 20, messages[14], 200);
-		outtextxy(10, 40, messages[15], 200);
-		outtextxy(10, 60, messages[16], 200);
-		outtextxy(10, 80, messages[17], 200);
+		littText(10, 20, messages[14], 200);
+		littText(10, 40, messages[15], 200);
+		littText(10, 60, messages[16], 200);
+		littText(10, 80, messages[17], 200);
 	}
 
 	for (int i = 0; i <= 28; i++)
@@ -2419,14 +2291,14 @@ void sacrificeScene() {
 
 	bar(10, 10, 310, 120, 0);
 	if (isSpanish) {
-		outtextxy(10, 10, messages[19], 200);
-		outtextxy(10, 50, messages[20], 200);
-		outtextxy(10, 70, messages[21], 200);
-		outtextxy(10, 90, messages[22], 200);
+		littText(10, 10, messages[19], 200);
+		littText(10, 50, messages[20], 200);
+		littText(10, 70, messages[21], 200);
+		littText(10, 90, messages[22], 200);
 	} else {
-		outtextxy(10, 30, messages[19], 200);
-		outtextxy(10, 60, messages[20], 200);
-		outtextxy(10, 80, messages[21], 200);
+		littText(10, 30, messages[19], 200);
+		littText(10, 60, messages[20], 200);
+		littText(10, 80, messages[21], 200);
 	}
 
 	for (int i = 0; i <= 28; i++)
@@ -2443,7 +2315,7 @@ void sacrificeScene() {
 		showError(318);
 	}
 	fich.read(palaux, 768);
-	fich.read(background, 44800);
+	fich.read(sceneBackground, 44800);
 	fich.close();
 
 	pal[0] = 0;
@@ -2456,7 +2328,7 @@ void sacrificeScene() {
 	}
 
 	// We dont have the width and height here in the byte buffer
-	drawScreen(background, false);
+	drawScreen(sceneBackground, false);
 	partialFadeIn(234);
 	g_engine->_sound->stopVoc();
 
@@ -2473,26 +2345,26 @@ void sacrificeScene() {
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	g_engine->_sound->playMidi("SACRIFIC", true);
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-	clear();
+	g_engine->_graphics->clear();
 
-	outtextxy(10, 31, messages[23], 254);
-	outtextxy(10, 29, messages[23], 254);
-	outtextxy(11, 30, messages[23], 254);
-	outtextxy(9, 30, messages[23], 254);
+	littText(10, 31, messages[23], 254);
+	littText(10, 29, messages[23], 254);
+	littText(11, 30, messages[23], 254);
+	littText(9, 30, messages[23], 254);
 
-	outtextxy(10, 51, messages[24], 254);
-	outtextxy(10, 49, messages[24], 254);
-	outtextxy(11, 50, messages[24], 254);
-	outtextxy(9, 50, messages[24], 254);
+	littText(10, 51, messages[24], 254);
+	littText(10, 49, messages[24], 254);
+	littText(11, 50, messages[24], 254);
+	littText(9, 50, messages[24], 254);
 
-	outtextxy(10, 71, messages[25], 254);
-	outtextxy(10, 69, messages[25], 254);
-	outtextxy(11, 70, messages[25], 254);
-	outtextxy(9, 70, messages[25], 254);
+	littText(10, 71, messages[25], 254);
+	littText(10, 69, messages[25], 254);
+	littText(11, 70, messages[25], 254);
+	littText(9, 70, messages[25], 254);
 
-	outtextxy(10, 30, messages[23], 255);
-	outtextxy(10, 50, messages[24], 255);
-	outtextxy(10, 70, messages[25], 255);
+	littText(10, 30, messages[23], 255);
+	littText(10, 50, messages[24], 255);
+	littText(10, 70, messages[25], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2520,9 +2392,9 @@ void sacrificeScene() {
 		palaux[i * 3 + 2] = palaux[i * 3 + 2] << 2;
 	}
 
-	fich.read(background, 64000);
+	fich.read(sceneBackground, 64000);
 	fich.close();
-	drawFullScreen(background);
+	drawFullScreen(sceneBackground);
 
 	palaux[0] = 0;
 	palaux[1] = 0;
@@ -2542,66 +2414,66 @@ void sacrificeScene() {
 
 	totalFadeOut(128);
 	g_engine->_sound->stopVoc();
-	clear();
+	g_engine->_graphics->clear();
 
-	outtextxy(10, 21, messages[26], 254);
-	outtextxy(10, 19, messages[26], 254);
-	outtextxy(11, 20, messages[26], 254);
-	outtextxy(9, 20,  messages[26], 254);
+	littText(10, 21, messages[26], 254);
+	littText(10, 19, messages[26], 254);
+	littText(11, 20, messages[26], 254);
+	littText(9, 20,  messages[26], 254);
 
-	outtextxy(10, 41, messages[27], 254);
-	outtextxy(10, 39, messages[27], 254);
-	outtextxy(11, 40, messages[27], 254);
-	outtextxy(9, 40,  messages[27], 254);
+	littText(10, 41, messages[27], 254);
+	littText(10, 39, messages[27], 254);
+	littText(11, 40, messages[27], 254);
+	littText(9, 40,  messages[27], 254);
 
-	outtextxy(10, 61, messages[28], 254);
-	outtextxy(10, 59, messages[28], 254);
-	outtextxy(11, 60, messages[28], 254);
-	outtextxy(9, 60,  messages[28], 254);
+	littText(10, 61, messages[28], 254);
+	littText(10, 59, messages[28], 254);
+	littText(11, 60, messages[28], 254);
+	littText(9, 60,  messages[28], 254);
 
-	outtextxy(10, 81, messages[29], 254);
-	outtextxy(10, 79, messages[29], 254);
-	outtextxy(11, 80, messages[29], 254);
-	outtextxy(9, 80,  messages[29], 254);
+	littText(10, 81, messages[29], 254);
+	littText(10, 79, messages[29], 254);
+	littText(11, 80, messages[29], 254);
+	littText(9, 80,  messages[29], 254);
 
-	outtextxy(10, 101, messages[30], 254);
-	outtextxy(10, 99,  messages[30], 254);
-	outtextxy(11, 100, messages[30], 254);
-	outtextxy(9, 100,  messages[30], 254);
+	littText(10, 101, messages[30], 254);
+	littText(10, 99,  messages[30], 254);
+	littText(11, 100, messages[30], 254);
+	littText(9, 100,  messages[30], 254);
 
-	outtextxy(10, 121, messages[31], 254);
-	outtextxy(10, 119, messages[31], 254);
-	outtextxy(11, 120, messages[31], 254);
-	outtextxy(9, 120,  messages[31], 254);
+	littText(10, 121, messages[31], 254);
+	littText(10, 119, messages[31], 254);
+	littText(11, 120, messages[31], 254);
+	littText(9, 120,  messages[31], 254);
 
-	outtextxy(10, 141, messages[32], 254);
-	outtextxy(10, 139, messages[32], 254);
-	outtextxy(11, 140, messages[32], 254);
-	outtextxy(9, 140,  messages[32], 254);
+	littText(10, 141, messages[32], 254);
+	littText(10, 139, messages[32], 254);
+	littText(11, 140, messages[32], 254);
+	littText(9, 140,  messages[32], 254);
 
 	if (!isSpanish) {
-		outtextxy(10, 161, messages[56], 254);
-		outtextxy(10, 159, messages[56], 254);
-		outtextxy(11, 160, messages[56], 254);
-		outtextxy(9, 160,  messages[56], 254);
+		littText(10, 161, messages[56], 254);
+		littText(10, 159, messages[56], 254);
+		littText(11, 160, messages[56], 254);
+		littText(9, 160,  messages[56], 254);
 
-		outtextxy(10, 181, messages[57], 254);
-		outtextxy(10, 179, messages[57], 254);
-		outtextxy(11, 180, messages[57], 254);
-		outtextxy(9,  180,  messages[57], 254);
+		littText(10, 181, messages[57], 254);
+		littText(10, 179, messages[57], 254);
+		littText(11, 180, messages[57], 254);
+		littText(9,  180,  messages[57], 254);
 	}
 
-	outtextxy(10, 20, messages[26], 255);
-	outtextxy(10, 40, messages[27], 255);
-	outtextxy(10, 60, messages[28], 255);
-	outtextxy(10, 80, messages[29], 255);
-	outtextxy(10, 100, messages[30], 255);
-	outtextxy(10, 120, messages[31], 255);
-	outtextxy(10, 140, messages[32], 255);
+	littText(10, 20, messages[26], 255);
+	littText(10, 40, messages[27], 255);
+	littText(10, 60, messages[28], 255);
+	littText(10, 80, messages[29], 255);
+	littText(10, 100, messages[30], 255);
+	littText(10, 120, messages[31], 255);
+	littText(10, 140, messages[32], 255);
 
 	if (!isSpanish) {
-		outtextxy(10, 160, messages[56], 255);
-		outtextxy(10, 180, messages[57], 255);
+		littText(10, 160, messages[56], 255);
+		littText(10, 180, messages[57], 255);
 	}
 
 	for (int i = 0; i <= 31; i++) {
@@ -2620,52 +2492,52 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 
-	clear();
+	g_engine->_graphics->clear();
 
-	outtextxy(10, 21, messages[33], 254);
-	outtextxy(10, 19, messages[33], 254);
-	outtextxy(11, 20, messages[33], 254);
-	outtextxy(9, 20, messages[33], 254);
+	littText(10, 21, messages[33], 254);
+	littText(10, 19, messages[33], 254);
+	littText(11, 20, messages[33], 254);
+	littText(9, 20, messages[33], 254);
 
-	outtextxy(10, 41, messages[34], 254);
-	outtextxy(10, 39, messages[34], 254);
-	outtextxy(11, 40, messages[34], 254);
-	outtextxy(9, 40, messages[34], 254);
+	littText(10, 41, messages[34], 254);
+	littText(10, 39, messages[34], 254);
+	littText(11, 40, messages[34], 254);
+	littText(9, 40, messages[34], 254);
 
-	outtextxy(10, 61, messages[35], 254);
-	outtextxy(10, 59, messages[35], 254);
-	outtextxy(11, 60, messages[35], 254);
-	outtextxy(9, 60, messages[35], 254);
+	littText(10, 61, messages[35], 254);
+	littText(10, 59, messages[35], 254);
+	littText(11, 60, messages[35], 254);
+	littText(9, 60, messages[35], 254);
 	if (isSpanish) {
-		outtextxy(10, 81, messages[36], 254);
-		outtextxy(10, 79, messages[36], 254);
-		outtextxy(11, 80, messages[36], 254);
-		outtextxy(9, 80, messages[36], 254);
+		littText(10, 81, messages[36], 254);
+		littText(10, 79, messages[36], 254);
+		littText(11, 80, messages[36], 254);
+		littText(9, 80, messages[36], 254);
 
-		outtextxy(10, 101, messages[37], 254);
-		outtextxy(10, 99, messages[37], 254);
-		outtextxy(11, 100, messages[37], 254);
-		outtextxy(9, 100, messages[37], 254);
+		littText(10, 101, messages[37], 254);
+		littText(10, 99, messages[37], 254);
+		littText(11, 100, messages[37], 254);
+		littText(9, 100, messages[37], 254);
 
-		outtextxy(10, 121, messages[38], 254);
-		outtextxy(10, 119, messages[38], 254);
-		outtextxy(11, 120, messages[38], 254);
-		outtextxy(9, 120, messages[38], 254);
+		littText(10, 121, messages[38], 254);
+		littText(10, 119, messages[38], 254);
+		littText(11, 120, messages[38], 254);
+		littText(9, 120, messages[38], 254);
 
-		outtextxy(10, 141, messages[39], 254);
-		outtextxy(10, 139, messages[39], 254);
-		outtextxy(11, 140, messages[39], 254);
-		outtextxy(9, 140, messages[39], 254);
+		littText(10, 141, messages[39], 254);
+		littText(10, 139, messages[39], 254);
+		littText(11, 140, messages[39], 254);
+		littText(9, 140, messages[39], 254);
 	}
 
-	outtextxy(10, 20, messages[33], 255);
-	outtextxy(10, 40, messages[34], 255);
-	outtextxy(10, 60, messages[35], 255);
+	littText(10, 20, messages[33], 255);
+	littText(10, 40, messages[34], 255);
+	littText(10, 60, messages[35], 255);
 	if (isSpanish) {
-		outtextxy(10, 80, messages[36], 255);
-		outtextxy(10, 100, messages[37], 255);
-		outtextxy(10, 120, messages[38], 255);
-		outtextxy(10, 140, messages[39], 255);
+		littText(10, 80, messages[36], 255);
+		littText(10, 100, messages[37], 255);
+		littText(10, 120, messages[38], 255);
+		littText(10, 140, messages[39], 255);
 	}
 
 	for (int i = 0; i < 32; i++) {
@@ -2683,26 +2555,26 @@ void sacrificeScene() {
 	delay(2000);
 	if (g_engine->shouldQuit())
 		return;
-	clear();
+	g_engine->_graphics->clear();
 
-	outtextxy(10, 61, messages[40], 254);
-	outtextxy(10, 59, messages[40], 254);
-	outtextxy(11, 60, messages[40], 254);
-	outtextxy(9, 60, messages[40], 254);
+	littText(10, 61, messages[40], 254);
+	littText(10, 59, messages[40], 254);
+	littText(11, 60, messages[40], 254);
+	littText(9, 60, messages[40], 254);
 
-	outtextxy(10, 81, messages[41], 254);
-	outtextxy(10, 79, messages[41], 254);
-	outtextxy(11, 80, messages[41], 254);
-	outtextxy(9, 80, messages[41], 254);
+	littText(10, 81, messages[41], 254);
+	littText(10, 79, messages[41], 254);
+	littText(11, 80, messages[41], 254);
+	littText(9, 80, messages[41], 254);
 
-	outtextxy(10, 101, messages[42], 254);
-	outtextxy(10, 99, messages[42], 254);
-	outtextxy(11, 100, messages[42], 254);
-	outtextxy(9, 100, messages[42], 254);
+	littText(10, 101, messages[42], 254);
+	littText(10, 99, messages[42], 254);
+	littText(11, 100, messages[42], 254);
+	littText(9, 100, messages[42], 254);
 
-	outtextxy(10, 60, messages[40], 255);
-	outtextxy(10, 80, messages[41], 255);
-	outtextxy(10, 100, messages[42], 255);
+	littText(10, 60, messages[40], 255);
+	littText(10, 80, messages[41], 255);
+	littText(10, 100, messages[42], 255);
 
 	for (int i = 0; i < 32; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
@@ -2728,24 +2600,24 @@ void ending() {
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 
-	outtextxy(10, 41, messages[43], 249);
-	outtextxy(10, 39, messages[43], 249);
-	outtextxy(11, 40, messages[43], 249);
-	outtextxy(9, 40,  messages[43], 249);
+	littText(10, 41, messages[43], 249);
+	littText(10, 39, messages[43], 249);
+	littText(11, 40, messages[43], 249);
+	littText(9, 40,  messages[43], 249);
 
-	outtextxy(10, 61, messages[44], 249);
-	outtextxy(10, 59, messages[44], 249);
-	outtextxy(11, 60, messages[44], 249);
-	outtextxy(9, 60,  messages[44], 249);
+	littText(10, 61, messages[44], 249);
+	littText(10, 59, messages[44], 249);
+	littText(11, 60, messages[44], 249);
+	littText(9, 60,  messages[44], 249);
 
-	outtextxy(10, 40, messages[43], 253);
-	outtextxy(10, 60, messages[44], 253);
+	littText(10, 40, messages[43], 253);
+	littText(10, 60, messages[44], 253);
 	if(g_engine->shouldQuit()) {
 		return;
 	}
 	delay(4000);
 	totalFadeOut(0);
-	clear();
+	g_engine->_graphics->clear();
 	if(g_engine->shouldQuit()) {
 		return;
 	}
@@ -2776,7 +2648,7 @@ void loadBat() {
 	sizeanimado = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
 	numerodir = fichcani.readByte();
-	pasoanimado = (byte *)malloc(sizeanimado);
+	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
 	loadAnimationForDirection(&fichcani, 0);
 	fichcani.close();
 }
@@ -2791,7 +2663,7 @@ void loadDevil() {
 	sizeanimado = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
 	numerodir = fichcani.readByte();
-	pasoanimado = (byte *)malloc(sizeanimado);
+	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
 	if (numerodir != 0) {
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {
@@ -2807,7 +2679,7 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 	w = READ_LE_UINT16(image);
 	h = READ_LE_UINT16(image + 2);
 
-	wFondo = READ_LE_UINT16(background);
+	wFondo = READ_LE_UINT16(sceneBackground);
 
 	wFondo++;
 	w++;
@@ -2816,7 +2688,7 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 		for (int j = 0; j < h; j++) {
 			int color = image[4 + j * w + i];
 			if (color != 0) {
-				background[4 + (coordy + j) * wFondo + (coordx + i)] = color;
+				sceneBackground[4 + (coordy + j) * wFondo + (coordx + i)] = color;
 			}
 		}
 	}
@@ -2828,15 +2700,15 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
  */
 void assembleScreen(bool scroll) {
 
-	for (int indice = 0; indice < nivelesdeprof; indice++) {
+	for (int indice = 0; indice < depthLevelCount; indice++) {
 		if (screenObjects[indice] != NULL) {
 			assembleCompleteBackground(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
-		if (!scroll && secuencia.profundidad == indice) {
+		if (!scroll && secuencia.depth == indice) {
 			assembleCompleteBackground(secuencia.bitmap[direccionmovimiento][iframe], characterPosX, characterPosY);
 		}
-		if (!scroll && currentRoomData->animationFlag && animado.profundidad == indice) {
-			assembleCompleteBackground(pasoanimado, animado.posx, animado.posy);
+		if (!scroll && currentRoomData->animationFlag && animado.depth == indice) {
+			assembleCompleteBackground(curSecondaryAnimationFrame, animado.posx, animado.posy);
 		}
 	}
 }
@@ -2845,7 +2717,7 @@ void disableSecondAnimation() {
 	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
 	currentRoomData->animationFlag = false;
 	freeAnimation();
-	screenHandleToBackground();
+	restoreBackground();
 	assembleScreen();
 }
 
@@ -2855,13 +2727,13 @@ void drawMouseGrid(RoomFileRegister *screen) {
 		for (int j = 0; j < 27; j++) {
 			int color = screen->mouseGrid[i][j];
 			if (color != 0) {
-				int startX = i * factorx + 7;
-				int startY = j * factory;
-				for (int i2 = 0; i2 < factorx; i2 += 2) {
-					for (int j2 = 0; j2 < factory; j2++) {
+				int startX = i * xGridCount + 7;
+				int startY = j * yGridCount;
+				for (int i2 = 0; i2 < xGridCount; i2 += 2) {
+					for (int j2 = 0; j2 < yGridCount; j2++) {
 						int absPixel = startY + j2;
 						int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-						if (offsetX < startX + factorx && color != 0) {
+						if (offsetX < startX + xGridCount && color != 0) {
 							*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 						}
 					}
@@ -2875,15 +2747,15 @@ void drawMouseGrid(RoomFileRegister *screen) {
 void drawScreenGrid(RoomFileRegister *screen) {
 	for (int i = 0; i < 39; i++) {
 		for (int j = 0; j < 27; j++) {
-			int color = screen->rejapantalla[i][j];
+			int color = screen->walkAreasGrid[i][j];
 			if (color != 0) {
-				int startX = i * factorx + 7;
-				int startY = j * factory;
-				for (int i2 = 0; i2 < factorx; i2 += 2) {
-					for (int j2 = 0; j2 < factory; j2++) {
+				int startX = i * xGridCount + 7;
+				int startY = j * yGridCount;
+				for (int i2 = 0; i2 < xGridCount; i2 += 2) {
+					for (int j2 = 0; j2 < yGridCount; j2++) {
 						int absPixel = startY + j2;
 						int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-						if (offsetX < startX + factorx && color != 0) {
+						if (offsetX < startX + xGridCount && color != 0) {
 							*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 						}
 					}
@@ -2921,7 +2793,7 @@ void drawX(int x, int y, byte color) {
 
 void drawCharacterPosition() {
 	drawX(characterPosX, characterPosY, 210);
-	drawX(characterPosX + rectificacionx, characterPosY + rectificaciony, 218);
+	drawX(characterPosX + characterCorrectionX, characterPosY + characerCorrectionY, 218);
 }
 
 void drawRect(byte color, int x, int y, int x2, int y2) {
@@ -2929,20 +2801,20 @@ void drawRect(byte color, int x, int y, int x2, int y2) {
 }
 
 void printPos(int x, int y, int screenPosX, int screenPosY, const char *label) {
-	g_engine->_graphics->restoreBackground(screenPosX, screenPosY, screenPosX + 100, screenPosY + 10);
+	g_engine->_graphics->restoreBackgroundArea(screenPosX, screenPosY, screenPosX + 100, screenPosY + 10);
 	g_engine->_graphics->euroText(Common::String::format("%s: %d, %d", label, x, y), screenPosX, screenPosY, Graphics::kTextAlignLeft);
 }
 
 void drawGrid() {
-	int horizontal = 320 / factorx;
-	int vertical = 140 / factory;
+	int horizontal = 320 / xGridCount;
+	int vertical = 140 / yGridCount;
 	for (int i = 0; i < horizontal; i++) {
-		int startX = i * factorx;
+		int startX = i * xGridCount;
 		g_engine->_screen->drawLine(startX, 0, startX, 140, 200);
 	}
 
 	for (int j = 0; j < vertical; j++) {
-		int startY = j * factory;
+		int startY = j * yGridCount;
 		g_engine->_screen->drawLine(0, startY, 320, startY, 200);
 	}
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
@@ -2951,25 +2823,25 @@ void drawGrid() {
 void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_OP op, bool fixGrids) {
 	// add to restore the room, subtract to adjust before loading the screen
 
-	if (currentRoomData->animationFlag && currentRoomData->nombremovto != "QQQQQQQQ") {
-		for (int i = 0; i < currentRoomData->longtray2; i++) {
+	if (currentRoomData->animationFlag && currentRoomData->animationName != "QQQQQQQQ") {
+		for (int i = 0; i < currentRoomData->secondaryTrajectoryLength; i++) {
 			if (op == RESTORE) {
-				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x + (animationWidth >> 1);
-				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y + animationHeight;
+				currentRoomData->secondaryAnimTrajectory[i].x = currentRoomData->secondaryAnimTrajectory[i].x + (animationWidth >> 1);
+				currentRoomData->secondaryAnimTrajectory[i].y = currentRoomData->secondaryAnimTrajectory[i].y + animationHeight;
 			} else {
-				currentRoomData->tray2[i].x = currentRoomData->tray2[i].x - (animationWidth >> 1);
-				currentRoomData->tray2[i].y = currentRoomData->tray2[i].y - animationHeight;
+				currentRoomData->secondaryAnimTrajectory[i].x = currentRoomData->secondaryAnimTrajectory[i].x - (animationWidth >> 1);
+				currentRoomData->secondaryAnimTrajectory[i].y = currentRoomData->secondaryAnimTrajectory[i].y - animationHeight;
 			}
 		}
 		if (fixGrids) {
 			for (int i = 0; i < maxrejax; i++) {
 				for (int j = 0; j < maxrejay; j++) {
 					if (op == RESTORE) {
-						currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejafondomovto[i][j];
+						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejafondomovto[i][j];
 						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejafondoraton[i][j];
 					} else {
 						if (rejamascaramovto[i][j] > 0)
-							currentRoomData->rejapantalla[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
+							currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
 						if (rejamascararaton[i][j] > 0)
 							currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
 					}

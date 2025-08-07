@@ -12,27 +12,28 @@
 
 namespace Tot {
 
+extern const int enforcedTextAnimDelay;
+
 void showError(int code);
 
 // Delays a specified number of milliseconds.
 void delay(uint16 ms);
 
-// Starts the internal speaker with given frequency. The speaker continues until explicitly turned off by a call to NoSound.
-void sound(uint16 frequency, int length);
-
 int engine_start();
 
 void setRGBPalette(int color, int r, int g, int b);
 
-void outtextxy(int x, int y, char const *text, byte color, bool euro = false, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void littText(int x, int y, Common::String text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void littText(int x, int y, char const *text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
-void outtextxy(int x, int y, Common::String text, byte color, bool euro = false, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void euroText(int x, int y, Common::String text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
-void outtextxyBios(int x, int y, Common::String text, byte color);
-
-void cleardevice(void);
+void biosText(int x, int y, Common::String text, byte color);
 
 unsigned int imagesize(int x, int y, int x2, int y2);
+
+void rectangle(int x1, int y1, int x2, int y2, byte color);
 
 void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, byte color);
 
@@ -47,11 +48,6 @@ void emptyLoop2();
 void waitForKey();
 
 void changeGameSpeed(Common::Event e);
-
-inline int keypressed() {
-	warning("Stub keypressed!");
-	return 0;
-}
 
 inline bool odd(long i) { return i % 2 != 0; }
 
