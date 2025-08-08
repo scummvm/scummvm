@@ -173,6 +173,7 @@ void AlcachofaEngine::fadeExit() {
 	Graphics::FrameLimiter limiter(g_system, kDefaultFramerate, false);
 	uint32 startTime = g_system->getMillis();
 
+	Room *room = g_engine->player().currentRoom();
 	_renderer->end(); // we were in a frame, let's exit
 	while (g_system->getMillis() - startTime < kFadeOutDuration && !shouldQuit()) {
 		_input.nextFrame();
@@ -184,12 +185,14 @@ void AlcachofaEngine::fadeExit() {
 		_renderer->begin();
 		_drawQueue->clear();
 		float t = ((float)(g_system->getMillis() - startTime)) / kFadeOutDuration;
-		// TODO: Implement cross-fade and add to fadeExit
+		if (room != nullptr)
+			room->draw();
 		_drawQueue->add<FadeDrawRequest>(FadeType::ToBlack, t, -kForegroundOrderCount);
 		_drawQueue->draw();
 		_renderer->end();
 
 		limiter.delayBeforeSwap();
+		g_system->updateScreen();
 		limiter.startFrame();
 	}
 
