@@ -402,8 +402,12 @@ bool Inventory::updateInput() {
 			-1, true, kWhite, -kForegroundOrderCount + 1);
 	}
 
+	const bool userWantsToCloseInventory =
+		closeInventoryTriggerBounds().contains(input.mousePos2D()) ||
+		input.wasMenuKeyPressed() ||
+		input.wasInventoryKeyPressed();
 	if (!player.activeCharacter()->isBusy() &&
-		closeInventoryTriggerBounds().contains(input.mousePos2D()))
+		userWantsToCloseInventory)
 		close();
 
 	if (!player.activeCharacter()->isBusy() &&

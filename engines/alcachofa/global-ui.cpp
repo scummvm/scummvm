@@ -31,7 +31,7 @@ namespace Alcachofa {
 // originally the inventory only reacts to exactly top-left/bottom-right which is fine in
 // fullscreen when you just slam the mouse cursor into the corner.
 // In any other scenario this is cumbersome so I expand this area.
-// And it is still pretty bad, especially in windowed mode so I should add key-based controls for it
+// And it is still pretty bad, especially in windowed mode so there is a key to open/close as well
 static constexpr int16 kInventoryTriggerSize = 10;
 
 Rect openInventoryTriggerBounds() {
@@ -82,6 +82,10 @@ bool GlobalUI::updateOpeningInventory() {
 	if (g_engine->menu().isOpen() || !g_engine->player().isGameLoaded())
 		return false;
 
+	const bool userWantsToOpenInventory =
+		openInventoryTriggerBounds().contains(g_engine->input().mousePos2D()) ||
+		g_engine->input().wasInventoryKeyPressed();
+
 	if (_isOpeningInventory) {
 		uint32 deltaTime = g_engine->getMillis() - _timeForInventory;
 		if (deltaTime >= 1000) {
@@ -94,7 +98,7 @@ bool GlobalUI::updateOpeningInventory() {
 		}
 		return true;
 	}
-	else if (openInventoryTriggerBounds().contains(g_engine->input().mousePos2D())) {
+	else if (userWantsToOpenInventory) {
 		_isClosingInventory = false;
 		_isOpeningInventory = true;
 		_timeForInventory = g_engine->getMillis();

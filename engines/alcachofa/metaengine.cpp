@@ -38,7 +38,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_HIGH_QUALITY,
 		{
 			_s("High Quality"),
-			_s("TODO: Explain what this does"),
+			_s("Toggles some optional graphical effects"),
 			_s("high_quality"),
 			true,
 			0,
@@ -49,7 +49,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_32BITS,
 		{
 			_s("32 Bits"),
-			_s("TODO: Also explain this, and implement it maybe"),
+			_s("Uses 32bit textures instead of 16bit ones (currently not implemented)"),
 			_s("32_bits"),
 			true,
 			0,
@@ -100,6 +100,12 @@ KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
 	act->setCustomEngineActionEvent((CustomEventType)EventAction::InputMenu);
 	act->addDefaultInputMapping("ESCAPE");
 	act->addDefaultInputMapping("JOY_START");
+	keymap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent((CustomEventType)EventAction::InputInventory);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_B");
 	keymap->addAction(act);
 
 	return Keymap::arrayOf(keymap);

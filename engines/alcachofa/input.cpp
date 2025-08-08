@@ -36,6 +36,7 @@ void Input::nextFrame() {
 	_wasMouseLeftReleased = false;
 	_wasMouseRightReleased = false;
 	_wasMenuKeyPressed = false;
+	_wasInventoryKeyPressed = false;
 	updateMousePos3D(); // camera transformation might have changed
 }
 
@@ -73,6 +74,9 @@ bool Input::handleEvent(const Common::Event &event) {
 		switch ((EventAction)event.customType) {
 		case EventAction::InputMenu:
 			_wasMenuKeyPressed = true;
+			return true;
+		case EventAction::InputInventory:
+			_wasInventoryKeyPressed = true;
 			return true;
 		}
 	}
