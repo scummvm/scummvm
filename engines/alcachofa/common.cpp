@@ -150,7 +150,6 @@ String readVarString(ReadStream &stream) {
 	if (length == 0)
 		return Common::String();
 
-	// TODO: Being able to resize a string would avoid the double-allocation :/
 	char *buffer = new char[length];
 	if (buffer == nullptr)
 		error("Out of memory in readVarString");
