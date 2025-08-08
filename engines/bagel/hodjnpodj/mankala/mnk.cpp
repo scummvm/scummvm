@@ -40,6 +40,24 @@ extern HWND ghParentWnd;
 
 /////////////////////////////////////////////////////////////////////////////
 
+
+
+char m_szText[80];		// descriptive text
+int m_iHeaderSize;		// size of header (# bytes)
+int m_iVersion;			// version number
+int m_iTableStones;		// # stones in stored best win table
+long m_lTableSize;		// length of stored best win table
+
+void CFileHeader::sync(Common::Serializer &s) {
+	s.syncBytes((byte *)m_szText, 80);
+	s.syncAsUint16LE(m_iHeaderSize);
+	s.syncAsUint16LE(m_iVersion);
+	s.syncAsUint16LE(m_iTableStones);
+	s.syncAsUint32LE(m_lTableSize);
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
 // theMnkApp:
 // Just creating this application object runs the whole application.
 //

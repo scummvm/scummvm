@@ -431,11 +431,8 @@ BOOL CMnk::CountConfigurations(void)
 	RETURN(iError != 0) ;
 }
 
-
 //* CMnk::PopulateTable -- compute values for best win table
-BOOL CMnk::PopulateTable(void)
-// returns: TRUE if error, FALSE otherwise
-{
+BOOL CMnk::PopulateTable() {
 	JXENTER(CMnk::PopulateTable) ;
 	int iError = 0 ;        // error code
 	long lConfigIndex ;     // loop variable
@@ -472,21 +469,9 @@ cleanup:
 	RETURN(iError != 0) ;
 }
 
-//* CMnk::WriteTableFile -- write out file with best win table
-BOOL CMnk::WriteTableFile(void)
-// returns: TRUE if error, FALSE otherwise
-{
-	int iError = 0;        // error code
-
-	JXENTER(CMnk::WriteTableFile) ;
-
-	#ifdef TODO
-	BYTE sBuffer[512] ;     // i/o buffer
-	int iFileHandle = 0 ;
-	unsigned int iCount, iCountReturn ;
-	long lTotalCount ;      // total # bytes left to write
-	BYTE * hpData ;    // pointer into data block
-	BYTE * xpBuffer ;       // pointer into buffer
+BOOL CMnk::WriteTableFile() {
+	int iError = 0;			// error code
+	JXENTER(CMnk::WriteTableFile);
 
 	Common::strcpy_s(m_lpCMnkData->m_cFileHeader.m_szText,
 	                 "Mankala data file, version 1.0, "
@@ -496,137 +481,55 @@ BOOL CMnk::WriteTableFile(void)
 	m_lpCMnkData->m_cFileHeader.m_iTableStones = m_iTableStones ;
 	m_lpCMnkData->m_cFileHeader.m_lTableSize = m_lTableSize ;
 
-	if ((iFileHandle = _open("mankala.dat",
-	                         _O_RDWR | _O_CREAT, _S_IREAD | _S_IWRITE)) == -1) {
-		iError = 100 ;      // can't create file
-		goto cleanup ;
+	Common::WriteStream *ws = g_system->getSavefileManager()->openForSaving("mankala.dat");
+	if (ws) {
+		Common::Serializer s(nullptr, ws);
+		m_lpCMnkData->m_cFileHeader.sync(s);
+	} else {
+		// Can't create file
+		iError = 100;
 	}
 
-	_fmemcpy(sBuffer, &m_lpCMnkData->m_cFileHeader,
-	         m_lpCMnkData->m_cFileHeader.m_iHeaderSize) ;
-
-	if ((iCountReturn = _write(iFileHandle, sBuffer,
-	                           m_lpCMnkData->m_cFileHeader.m_iHeaderSize)
-	                    != m_lpCMnkData->m_cFileHeader.m_iHeaderSize)) {
-		iError = 101 ;      // error writing header
-		goto cleanup ;
-	}
-
-	lTotalCount = m_lpCMnkData->m_cFileHeader.m_lTableSize ;
-	// total number of bytes to be written
-	hpData = m_lpCMnkData->m_hpcBestWin ;   // point to beginning
-	// of table
-
-	while (lTotalCount > 0) {
-		if (lTotalCount > sizeof(sBuffer))
-			iCount = sizeof(sBuffer) ;
-		else
-			iCount = (unsigned int)lTotalCount ;
-
-		xpBuffer = sBuffer ;
-		for (iCountReturn = iCount ; iCountReturn-- > 0 ;)
-			*xpBuffer++ = *hpData++ ;
-
-		if ((iCountReturn = _write(iFileHandle, sBuffer, iCount)
-		                    != (int)iCount)) {
-			iError = 102 ;      // write error
-			goto cleanup ;
-		}
-
-		lTotalCount -= iCount ;
-	}
-
-cleanup:
-	if (iFileHandle > 0)
-		_close(iFileHandle) ;
-	#else
-	error("TODO: CMnk::WriteTableFile");
-	#endif
+	ws->finalize();
+	delete ws;
 
 	JXELEAVE(CMnk::WriteTableFile) ;
-	RETURN(iError != 0) ;
+	RETURN iError != 0;
 }
 
-//* CMnk::ReadTableFile -- read file with best win table
-BOOL CMnk::ReadTableFile(void)
-// returns: TRUE if error, FALSE otherwise
-{
+BOOL CMnk::ReadTableFile() {
 	JXENTER(CMnk::ReadTableFile) ;
 	int iError = 0 ;        // error code
-	#ifdef TODO
-	BYTE sBuffer[512] ;     // i/o buffer
-	int iFileHandle = 0 ;
-	int bob;
-	unsigned int iCount, iCountReturn ;
 	long lTotalCount ;      // total # bytes left to read
-	BYTE * hpData ;    // pointer into data block
-	BYTE * xpBuffer ;       // pointer into buffer
+	BYTE *hpData;			// pointer into data block
 
+	Common::SeekableReadStream *rs = g_system->getSavefileManager()->openForLoading("mankala.dat");
+	if (rs) {
+		Common::Serializer s(rs, nullptr);
+		m_lpCMnkData->m_cFileHeader.sync(s);
 
-	if ((iFileHandle = _open("mankala.dat", _O_RDONLY)) == -1) {
-		iError = 100 ;      // can't open file
-		goto cleanup ;
-	}
+		if (m_lpCMnkData->m_cFileHeader.m_iVersion != 100) {
+			iError = 102;      // invalid file header;
+		} else {
+			if (m_iTableStones > m_lpCMnkData->m_cFileHeader.m_iTableStones)
+				m_iTableStones = m_lpCMnkData->m_cFileHeader.m_iTableStones;
 
-	if ((iCountReturn = _read(iFileHandle, sBuffer,
-	                          sizeof(CFileHeader))) != sizeof(CFileHeader)) {
-		iError = 101 ;      // error reading header
-		goto cleanup ;
-	}
+			if (m_lTableSize > m_lpCMnkData->m_cFileHeader.m_lTableSize)
+				m_lTableSize = m_lpCMnkData->m_cFileHeader.m_lTableSize;
 
-	_fmemcpy(&m_lpCMnkData->m_cFileHeader, sBuffer, sizeof(CFileHeader)) ;
-
-	if (m_lpCMnkData->m_cFileHeader.m_iHeaderSize
-	        != sizeof(CFileHeader)
-	        || m_lpCMnkData->m_cFileHeader.m_iVersion != 100) {
-		iError = 102 ;      // invalid file header ;
-		goto cleanup ;
-	}
-
-	if (m_iTableStones > m_lpCMnkData->m_cFileHeader.m_iTableStones)
-		m_iTableStones = m_lpCMnkData->m_cFileHeader.m_iTableStones ;
-
-	if (m_lTableSize > m_lpCMnkData->m_cFileHeader.m_lTableSize)
-		m_lTableSize = m_lpCMnkData->m_cFileHeader.m_lTableSize ;
-
-	lTotalCount = m_lTableSize ;
-	// total number of bytes to be read
-	hpData = m_lpCMnkData->m_hpcBestWin ;   // point to beginning
-	// of table
-
-	while (lTotalCount > 0) {
-		if (lTotalCount > sizeof(sBuffer))
-			iCount = sizeof(sBuffer) ;
-		else
-			iCount = (unsigned int)lTotalCount ;
-
-		bob = _read(iFileHandle, sBuffer, iCount);
-		if (bob < 0) {
-			iError = 103 ;      // read error
-			goto cleanup ;
+			lTotalCount = m_lTableSize;
+			// total number of bytes to be read
+			hpData = m_lpCMnkData->m_hpcBestWin;   // point to beginning
+			// of table
 		}
-		iCountReturn = (UINT)bob;
-
-		if (iCountReturn != iCount) {
-			iError = 104 ;      // read error
-			goto cleanup ;
-		}
-
-		xpBuffer = sBuffer ;
-		for (iCountReturn = iCount ; iCountReturn-- > 0 ;)
-			*hpData++ = *xpBuffer++ ;
-
-		lTotalCount -= iCount ;
+	} else {
+		iError = 100;      // can't open file
 	}
 
-cleanup:
-	if (iFileHandle > 0)
-		_close(iFileHandle) ;
-	#else
-	error("TODO: CMnk::ReadTableFile");
-	#endif
-	JXELEAVE(CMnk::ReadTableFile) ;
-	RETURN(iError != 0) ;
+	delete rs;
+
+	JXELEAVE(CMnk::ReadTableFile);
+	RETURN(iError != 0);
 }
 
 //* CMnk::MapConfiguration -- map a configuration to its integer index,

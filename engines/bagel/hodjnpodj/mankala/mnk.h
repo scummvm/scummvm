@@ -22,6 +22,7 @@
 #ifndef HODJNPODJ_MANKALA_MNK_H
 #define HODJNPODJ_MANKALA_MNK_H
 
+#include "common/serializer.h"
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/hnplibs/dibdoc.h"
 #include "bagel/hodjnpodj/hnplibs/sprite.h"
@@ -236,6 +237,7 @@ public:
 
 // CMnk -- Mankala game class
 class CMnk {
+private:
 	friend class CMnkWindow ;
 	CGenUtil m_cGenUtil ;       // general utility object
 	CTimeUtil m_cTimeUtil ;     // time utility object
@@ -276,8 +278,20 @@ class CMnk {
 
 	char m_cEndData ;
 
+private:
+	/**
+	 * Read save file with best win table
+	 * @returns		TRUE if error, FALSE otherwise
+	 */
+	BOOL ReadTableFile();
 
-// methods
+	/**
+	 * Write out save file with best win table
+	 * @returns		TRUE if error, FALSE otherwise
+	 */
+	BOOL WriteTableFile();
+
+public:
 	CMnk() {
 		memset((char *)&m_cStartData, 0,
 		       (size_t)((char *)&m_cEndData - (char *)&m_cStartData)) ;
@@ -298,10 +312,6 @@ private: BOOL InitData(BOOL bInit PDFT(TRUE)) ;
 	BOOL CountConfigurations(void) ;
 //- PopulateTable -- compute values for best win table
 private: BOOL PopulateTable(void) ;
-//- WriteTableFile -- write out file with best win table
-private: BOOL WriteTableFile(void) ;
-//- ReadTableFile -- read file with best win table
-private: BOOL ReadTableFile(void) ;
 //- MapConfiguration -- map a configuration to its integer index,
 //		store configuration index into Move object
 	BOOL MapConfiguration(CMove * xpcMove) ;
@@ -350,14 +360,16 @@ struct FIVE {
 
 // CFileHeader -- file header for data file
 class CFileHeader {
-	friend class CMnk ;
+	friend class CMnk;
 
-	//char m_szText[80] ;     // descriptive text
-	//int m_iHeaderSize ;     // size of header (# bytes)
-	//int m_iVersion ;        // version number
-	//int m_iTableStones ;    // # stones in stored best win table
-	//long m_lTableSize ; // length of stored best win table
-} ;
+	char m_szText[80];		// descriptive text
+	int m_iHeaderSize;		// size of header (# bytes)
+	int m_iVersion;			// version number
+	int m_iTableStones;		// # stones in stored best win table
+	long m_lTableSize ;		// length of stored best win table
+
+	void sync(Common::Serializer &s);
+};
 
 // class CMnkData -- mankala data - this class used for move analysis
 typedef class FAR CMnkData {
@@ -365,7 +377,7 @@ typedef class FAR CMnkData {
 //    friend class CMnkWindow ;
 
 	char m_cStartData ;
-//	CFileHeader m_cFileHeader ; // file header for data file
+	CFileHeader m_cFileHeader ; // file header for data file
 	long m_NX[MAXTABLESTONES + 1][TOTALPITS + 1],
 	     m_NA[MAXTABLESTONES + 1][TOTALPITS + 1] ;
 	// NX[s,p] contains the number of arrangements of
