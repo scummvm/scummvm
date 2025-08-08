@@ -342,7 +342,7 @@ struct CamLerpPosTask final : public CamLerpTask {
 		syncVector(s, _deltaPos);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 protected:
 	void update(float t) override {
@@ -370,7 +370,7 @@ struct CamLerpScaleTask final : public CamLerpTask {
 		s.syncAsFloatLE(_deltaScale);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 protected:
 	void update(float t) override {
@@ -409,7 +409,7 @@ struct CamLerpPosScaleTask final : public CamLerpTask {
 		syncEnum(s, _scaleEasingType);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 protected:
 	void update(float t) override {
@@ -440,7 +440,7 @@ struct CamLerpRotationTask final : public CamLerpTask {
 		s.syncAsFloatLE(_deltaRotation);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 protected:
 	void update(float t) override {
@@ -474,7 +474,7 @@ struct CamShakeTask final : public CamLerpTask {
 		syncVector(s, _frequency);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 protected:
 	void update(float t) override {
@@ -511,7 +511,7 @@ struct CamWaitToStopTask final : public Task {
 		g_engine->console().debugPrintf("Wait for camera to stop moving\n");
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	Camera &_camera;
@@ -575,7 +575,7 @@ struct CamSetInactiveAttributeTask final : public Task {
 		s.syncAsSint32LE(_delay);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	Camera &_camera;

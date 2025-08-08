@@ -195,7 +195,7 @@ struct AnimateTask : public Task {
 
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	GraphicObject *_object = nullptr;

@@ -88,7 +88,7 @@ struct PlaySoundTask final : public Task {
 	PlaySoundTask(Process &process, Common::Serializer &s);
 	TaskReturn run() override;
 	void debugPrint() override;
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 private:
 	SoundHandle _soundHandle;
 };
@@ -98,7 +98,7 @@ struct WaitForMusicTask final : public Task {
 	WaitForMusicTask(Process &process, Common::Serializer &s);
 	TaskReturn run() override;
 	void debugPrint() override;
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 private:
 	FakeLock _lock;
 };

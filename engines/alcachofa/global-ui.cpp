@@ -240,7 +240,7 @@ struct CenterBottomTextTask : public Task {
 		s.syncAsUint32LE(_durationMs);
 	} 
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	int32 _dialogId = 0;

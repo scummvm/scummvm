@@ -210,7 +210,7 @@ struct DoorTask : public Task {
 		syncGame(s);
 	}
 
-	virtual TaskReturn run() {
+	TaskReturn run() override {
 		TASK_BEGIN;
 		if (_targetRoom == nullptr || _targetObject == nullptr)
 			return TaskReturn::finish(1);
@@ -240,7 +240,7 @@ struct DoorTask : public Task {
 		TASK_END;
 	}
 
-	virtual void debugPrint() {
+	void debugPrint() override {
 		g_engine->console().debugPrintf("%s\n", process().name().c_str());
 	}
 
@@ -259,7 +259,7 @@ struct DoorTask : public Task {
 		findTarget();
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	void findTarget() {

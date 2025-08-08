@@ -168,7 +168,7 @@ struct ScriptTimerTask : public Task {
 		s.syncAsSint32LE(_result);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	int32 _durationSec = 0;
@@ -367,7 +367,7 @@ struct ScriptTask : public Task {
 		}
 	}
 
-	virtual void debugPrint() {
+	void debugPrint() override {
 		g_engine->getDebugger()->debugPrintf("\"%s\" at %u\n", _name.c_str(), _pc);
 	}
 
@@ -396,7 +396,7 @@ struct ScriptTask : public Task {
 			_lock = FakeLock("script", g_engine->player().semaphoreFor(process().character()));
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	void setCharacterVariables() {
