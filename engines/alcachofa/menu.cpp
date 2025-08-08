@@ -127,7 +127,7 @@ void Menu::updateSelectedSavefile() {
 	}
 	else {
 		_selectedThumbnail.copyFrom(_bigThumbnail);
-		//convertToGrayscale(_selectedThumbnail);
+		convertToGrayscale(_selectedThumbnail);
 	}
 
 	ObjectBase *captureObject = g_engine->player().currentRoom()->getObjectByName("Capture");

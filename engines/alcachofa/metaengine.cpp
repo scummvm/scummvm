@@ -106,10 +106,15 @@ KeymapArray AlcachofaMetaEngine::initKeymaps(const char *target) const {
 }
 
 void AlcachofaMetaEngine::getSavegameThumbnail(Surface &surf) {
-	if (Alcachofa::g_engine == nullptr)
-		surf.create(160, 120, PixelFormat::createFormatRGBA32());
-	else
-		Alcachofa::g_engine->getSavegameThumbnail(surf);
+	if (Alcachofa::g_engine != nullptr) {
+		Surface bigThumbnail;
+		Alcachofa::g_engine->getSavegameThumbnail(bigThumbnail);
+		if (bigThumbnail.getPixels() != nullptr) {
+			surf = *bigThumbnail.scale(kSmallThumbnailWidth, kSmallThumbnailHeight, true);
+			bigThumbnail.free();
+		}
+	}
+	// if not, ScummVM will output an appropriate warning
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ALCACHOFA)
