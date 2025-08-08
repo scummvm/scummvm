@@ -91,23 +91,6 @@ int CStats::ResetGame() {
 	m_nCountDown    = m_nTime;
 	m_nScore        = 0;
 
-	#ifdef REVEAL
-	/************************************************************
-	* Need to find a new crytogram for use.                     *
-	* Want to determine if we have seen all of the cyrptograms. *
-	************************************************************/
-	for (i = 0, chResetUsedGram = SEEN; i < CRYPT_RECS; i++) {   // Scan entire used list looking for one unused slot
-		if (m_chIsUsedGram[i] == NOT_SEEN) {                         // Is this an unused slot?
-			chResetUsedGram = NOT_SEEN;                             // Yes - break out of here
-			break;
-		}
-	}
-
-	if (chResetUsedGram == SEEN)                                     // Have we seen all cryptograms?
-		for (i = 0; i < CRYPT_RECS; i++)                             // Yes - reset list
-			m_chIsUsedGram[i] = NOT_SEEN;
-	#endif
-
 	do {                                                            // Get random unused cryptogram
 		nID = brand() % CRYPT_RECS;
 	} while (m_nIsUsedGram == nID);

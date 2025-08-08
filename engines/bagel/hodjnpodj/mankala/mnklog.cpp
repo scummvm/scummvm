@@ -28,10 +28,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-#ifdef _MACROS
-	extern int _recursion_count;
-#endif
-
 extern LPGAMESTRUCT pGameParams;        // declared in mnk.cpp.
 
 BOOL gbTurnSoundsOff;         // used by mnkui.cpp too.
@@ -88,11 +84,6 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnk::Move) ;
-	#ifdef _MACROS
-	EM("in Move() with formal parameters");
-	DMaddr(xpcSowPit);
-	DMaddr(xpcMove);
-	#endif
 
 	int iError = 0 ;        // error code
 	int iNumStones ;        // number of stones to be sowed
@@ -123,12 +114,6 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 
 	xpcMove->m_xpcPit = xpcSowPit ; // save ptr to pit being sowed
 	xpcMove->m_bFreeTurn = xpcMove->m_bCapture = FALSE ;        //reset FreeTurn, Capture indicators.
-
-	#ifdef _MACROS
-	EMLoc(1);
-	DMaddr(xpcMove);
-	if (xpcMove) DMaddr(xpcMove->m_xpcPit);
-	#endif
 
 	if (xpcMove->m_bRealMove && m_bDumpMoves)
 		DumpPosition(xpcMove) ;
@@ -275,11 +260,6 @@ BOOL CMnk::Move(CPit * xpcSowPit, CMove * xpcMove)
 	#endif
 
 cleanup:
-	#ifdef _MACROS
-	//DMaddr(CMnkWindow::m_xpGamePalette);
-	EM("returning from Move()");
-	#endif
-
 	JXELEAVE(CMnk::Move) ;
 	RETURN(iError != 0) ;
 }
@@ -800,11 +780,7 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnk::SearchMove) ;
-	#ifdef _MACROS
-	EM("Entered SearchMove With formal parameters:");
-	DMaddr(xpcMove);
-	DMint(iMove);
-	#endif
+
 	int iError = 0 ;        // error code
 	//BOOL bDone = FALSE ;    // flag: evaluations done
 	//int iNumMoves = 0 ;     // number of legal moves
@@ -840,9 +816,6 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 		break;
 
 	case LEV_EVAL:      // evaluate statically
-		#ifdef _MACROS
-		EM("Calling DefensiveStaticEvaluation");
-		#endif
 		DefensiveStaticEvaluation(xpcMove) ;
 		break ;
 
@@ -866,10 +839,8 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 			switch (m_eLevel[iPlayer])  // switch based on type of
 				// move generation algorithm
 			{
-			case LEV_RANDOM:    // random choice
-				#ifdef _MACROS
-				EM("Doing LEV_RANDOM");
-				#endif
+			case LEV_RANDOM:
+				// Random choice
 				xpcMove->m_iValues[iPit] = 1 ;
 				break ;
 			case LEV_LOWEST:
@@ -919,9 +890,6 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 
 
 cleanup:
-	#ifdef _MACROS
-	EM("Exiting SearchMove");
-	#endif
 	JXELEAVE(CMnk::SearchMove) ;
 	RETURN(iError != 0) ;
 }
@@ -933,12 +901,6 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnk::Minimax) ;
-	#ifdef _MACROS
-	static char _string[30];
-
-	::Common::sprintf_s(_string, "In Minimax; recursion #%d", _recursion_count++);
-	EM(_string);
-	#endif
 
 	int iError = 0 ;        // error code
 	int iPlayer = xpcMove->m_iPlayer ;  // player moving
@@ -1035,9 +997,6 @@ BOOL CMnk::Minimax(CMove * xpcMove, int iDepth)
 	xpcMove->m_iBestMove = iBestMove ;      // and best move
 
 // cleanup:
-	#ifdef _MACROS
-	EM("Exiting Minimax");
-	#endif
 	JXELEAVE(CMnk::Minimax) ;
 	RETURN(iError != 0) ;
 }
@@ -1049,10 +1008,7 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnk::StaticEvaluation) ;
-	#ifdef _MACROS
-	EM("In StaticEvaluation with formal parameter: (CMove*)");
-	DMaddr(xpcMove);
-	#endif
+
 	int iError = 0 ;        // error code
 	int iNumMoves = 0 ;     // number of legal moves
 	int iNumStones ;        // number of stones in pit
@@ -1103,9 +1059,6 @@ BOOL CMnk::StaticEvaluation(CMove * xpcMove)
 	xpcMove->m_iNumMoves = iNumMoves ;  // store # legal moves
 
 // cleanup:
-	#ifdef _MACROS
-	EM("Returning from StaticEvaluation");
-	#endif
 	JXELEAVE(CMnk::StaticEvaluation) ;
 	RETURN(iError != 0) ;
 }
@@ -1121,10 +1074,7 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 */
 {
 	JXENTER(CMnk::StaticEvaluation) ;
-	#ifdef _MACROS
-	EM("In the new StaticEvaluation with formal parameter: (CMove*)");
-	DMaddr(xpcMove);
-	#endif
+
 	int iError = 0 ;        // error code
 	int iNumMoves = 0 ;     // number of legal moves
 	int iNumStones ;        // number of stones in pit
@@ -1215,9 +1165,6 @@ BOOL CMnk::AggressiveStaticEvaluation(CMove * xpcMove)
 
 
 // cleanup:
-	#ifdef _MACROS
-	EM("Returning from the new StaticEvaluation");
-	#endif
 	JXELEAVE(CMnk::AggressiveStaticEvaluation) ;
 	RETURN(iError != 0) ;
 }
@@ -1232,10 +1179,7 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 */
 {
 	JXENTER(CMnk::DefensiveStaticEvaluation) ;
-	#ifdef _MACROS
-	EM("In the new StaticEvaluation with formal parameter: (CMove*)");
-	DMaddr(xpcMove);
-	#endif
+
 	int iError = 0 ;        // error code
 	int iNumMoves = 0 ;     // number of legal moves
 	int iNumStones,        // number of stones in pit
@@ -1625,9 +1569,6 @@ BOOL CMnk::DefensiveStaticEvaluation(CMove * xpcMove)
 
 
 cleanup:
-	#ifdef _MACROS
-	EM("Returning from DefensiveStaticEvaluation");
-	#endif
 	JXELEAVE(CMnk::DefensiveStaticEvaluation) ;
 	RETURN(iError != 0) ;
 }
@@ -1635,12 +1576,7 @@ cleanup:
 
 */
 
-BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
-
-	#ifdef _MACROS
-	EM("In TreeAlgo with formal parameter: (CMove*)");
-	DMaddr(xpcMove);
-	#endif
+BOOL  CMnk::TreeAlgo(CMove *xpcMove) {
 	MOVE* pMoveArr[MAXMOVES],
 	      *pOrigMove;
 	HGLOBAL hMoveArr[MAXMOVES];
@@ -1669,11 +1605,7 @@ BOOL  CMnk:: TreeAlgo(CMove* xpcMove) {
 }
 
 
-int CMnk::ExtendedStaticEvaluation(MOVE* pMove, MOVE* pParentMove,  signed char cID, int iPlayer) {
-	#ifdef _MACROS
-	EM("In ExtendedStaticEvaluation with formal parameter: (MOVE*)");
-	DMaddr(pMove);
-	#endif
+int CMnk::ExtendedStaticEvaluation(MOVE *pMove, MOVE *pParentMove,  signed char cID, int iPlayer) {
 	BOOL bWrapsAroundOnTop,
 	     bWrapsAroundBehind;
 //	     bWrapsAroundAhead;

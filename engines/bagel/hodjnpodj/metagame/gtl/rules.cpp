@@ -30,12 +30,7 @@ namespace HodjNPodj {
 namespace Metagame {
 namespace Gtl {
 
-#ifdef _WINDLL
-	#define BUILD_FOR_DLL       TRUE
-#else
-	#define BUILD_FOR_DLL       FALSE
-#endif
-
+#define BUILD_FOR_DLL       FALSE
 #define COLOR_BUTTONS       TRUE
 
 #define SCROLL_PIECES       6                       // number of mid-scroll segments

@@ -278,15 +278,6 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		} // end for
 
 		for (j = fnd; j < stock; j++) {
-			#ifdef REVEAL
-			if (pBoard->GetStack((loc) j)->Top() == nullptr)
-				if (tab <= j && j < stock) {     // empty slots r valid moves
-					return FALSE;
-				} else {
-					continue;
-				}
-			#endif
-
 			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == TRUE)
 				return FALSE;
 		} // end for
@@ -308,11 +299,6 @@ BOOL CLogic::IsGameOver(CBoard *pBoard) {
 		} // end for
 
 		for (j = fnd; j < stock; j++) {
-			#ifdef REVEAL
-			if (pBoard->GetStack((loc) j)->Top() == nullptr)
-				continue;
-			#endif
-
 			if (IsMoveOk(pCard, pBoard->GetStack((loc) j)) == TRUE)
 				return FALSE;
 		} // end for

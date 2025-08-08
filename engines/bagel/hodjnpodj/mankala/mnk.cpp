@@ -249,32 +249,13 @@ CMnkWindow::CMnkWindow(void) {
 	AllocatePits() ;        // allocate pit objects
 	//CMnk::InitData() ;      // initialize data tables
 
-	#ifdef _MACROS
-	//always play music in test mode.
-	if (m_pSound)
-		if (!m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC))
-			MessageBox("Unable to Play Background Music", "Internal Error");
-	#else
 	//otherwise test for flag before playing music.
 	if (pGameParams->bMusicEnabled && m_pSound) {
-		//#if 0
 		if (!(m_pSound->midiLoopPlaySegment(1004L, 34040L, 1004L, FMT_MILLISEC)))
 			MFC::MessageBox("Unable to Play Background Music", "Internal Error");
-		//#endif
 	}
-	#endif
-
-//    //srand((unsigned) time(nullptr)) ;  // seed the random number generator
 
 	MFC::SetCursor(hOldCursor);
-
-//    ASSERT(SetTimer(SPRITE_TIMER,SPRITE_INTERVAL,nullptr)) ;
-	// set the interval timer for movement
-	#ifdef _MACROS
-	EM("///////////////////////////////////////////////////////////////////////////////////////////");
-	EM("Leaving Constructor");
-	#endif
-
 }
 
 //* CMnkWindow::~CMnkWindow -- Mankala window destructor function
@@ -374,10 +355,6 @@ BOOL CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			break;
 		}
 
-	#ifdef _MACROS
-	EM("Leaving OnCommand");
-	#endif
-
 	return TRUE ;
 }
 
@@ -419,11 +396,6 @@ void CMnkWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	// TODO: Add your message handler code here and/or call default
-	#ifdef _MACROS
-	EM("Entering OnKeyDown");
-	#endif
-
 	int iRVal;
 
 	if (nChar == VK_F1) {
@@ -438,10 +410,6 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	} else {
 		CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 	}
-
-	#ifdef _MACROS
-	EM("Leaving OnKeyDown");
-	#endif
 }
 
 
@@ -475,22 +443,11 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  ****************************************************************/
 
 void CMnkWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	// TODO: Add your message handler code here and/or call default
-
-	#ifdef _MACROS
-	EM("Entering OnSysChar");
-	#endif
-
 	// terminate game on ALT-Q
 	if ((nChar == 'q') && (nFlags & 0x2000))
 		PostMessage(WM_CLOSE, 0, 0) ; // same as clicking QUIT button
 	else
 		CFrameWnd ::OnSysChar(nChar, nRepCnt, nFlags) ; // default action
-
-	#ifdef _MACROS
-	EM("Entering OnSysChar");
-	#endif
-
 }
 
 
@@ -532,9 +489,6 @@ void CMnkWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  ****************************************************************/
 
 void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
-	#ifdef _MACROS
-	EM("Entering MouseMove");
-	#endif
 	MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	static int dxCursor = GetSystemMetrics(SM_CXCURSOR);        //cursor size.
@@ -602,12 +556,6 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
 
 	CFrameWnd ::OnMouseMove(nFlags, point) ;    // default action
-	/*
-	#ifdef _MACROS
-	    EM("End MouseMove");
-	#endif
-	*/
-
 }
 
 
@@ -634,11 +582,6 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	//const RECT Chair={273,103,351,180};
 	const RECT Wheel = {427, 75, 500, 146};
 
-
-	#ifdef _MACROS
-	EM("OnLBDn");
-	#endif
-
 	/*Delete any cText objects upon Mouse Click */
 	if (m_pText) {
 		pDC = GetDC();
@@ -664,9 +607,6 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 			rectTemp.SetRect(Globe.left, Globe.top, Globe.right, Globe.bottom);
 			if (rectTemp.PtInRect(point)) {
-				#ifdef _MACROS3
-				EM("Clicked On Globe");
-				#endif
 				CSound::waitWaveSounds();
 				sndPlaySound(nullptr, 0);
 				if ((pDC = GetDC())) {
@@ -674,10 +614,6 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 						hOldCur = MFC::SetCursor(hHourGlassCursor);
 
 						if (pSpriteGlobe->LoadCels(pDC, GLOBE_SPRITE, 25)) {
-
-							#ifdef _MACROS3
-							EM("New pSpriteGlobe Cells loaded");
-							#endif
 							pSpriteGlobe->SetCel(-1);
 							pSpriteGlobe->LinkSprite();
 
@@ -695,9 +631,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 							}
 							pSpriteGlobe->EraseSprite(pDC);
 							pSpriteGlobe->UnlinkSprite();
-							#ifdef _MACROS3
-							EM("pGlobeSprite Unloaded");
-							#endif
+
 							MFC::SetCursor(hOldCur);
 						} else {
 							MFC::SetCursor(hOldCur);
@@ -777,20 +711,12 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 			}// end else .... rectTemp block.
 		}//END if   pGameParams->bsoundEffectsEnabled
 	} // end else .
-	#ifdef _MACROS
-	EM("exiting OnLBDn");
-	#endif
 }
 
 
 void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
 	CDC *pDC = nullptr;
-
-	#ifdef _MACROS
-	EM("OnLBUp");
-	#endif
-
 
 	/*Delete any cText objects upon Mouse Click */
 	if (m_pText) {
@@ -838,9 +764,6 @@ void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
 
 	}
-	#ifdef _MACROS
-	EM("exiting OnLBUp");
-	#endif
 }
 
 

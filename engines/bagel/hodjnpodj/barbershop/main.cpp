@@ -434,20 +434,10 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 VOID CMainWindow::GamePause(VOID) {
 	m_bPause = TRUE;
-	#ifdef PAUSESOUND
-	if (pGameParams->bMusicEnabled != FALSE) {
-		m_pMIDISound->Pause();
-	}
-	#endif
 }
 
 VOID CMainWindow::GameResume(VOID) {
 	m_bPause = FALSE;
-	#ifdef PAUSESOUND
-	if (pGameParams->bMusicEnabled != FALSE) {
-		m_pMIDISound->Resume();
-	}
-	#endif
 }
 
 VOID CMainWindow::PlayGame() {

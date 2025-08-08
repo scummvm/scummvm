@@ -91,24 +91,6 @@ COptn::~COptn() {
 int COptn::TimeToIndex(int nTime) {
 	int nLow;
 
-	#ifdef REVEAL
-	int nMid;
-	int nTmp;
-	/****************************************
-	* Seaches ordered array in log(n) time. *
-	****************************************/
-	for (nMid = (int)(TIME_TABLE / 2) + ((TIME_TABLE / 2) % 2), nLow = 0; TRUE ;) {
-		if (m_nTimeIndex[nMid] == nTime)
-			return ((int) nMid);
-		if (m_nTimeIndex[nMid] > nTime) {
-			nMid -= (int)((nMid - nLow) / 2) + ((nMid - nLow) % 2);
-		} else {
-			nTmp = nLow;
-			nLow = nMid;
-			nMid += (int)((nMid - nTmp) / 2) + ((nMid - nLow) % 2);
-		}
-	}
-	#else
 	/***********************************
 	* Seaches ordered array in n time. *
 	***********************************/
@@ -118,7 +100,6 @@ int COptn::TimeToIndex(int nTime) {
 	}
 
 	return FALSE;
-	#endif
 }
 
 void COptn::DoDataExchange(CDataExchange* pDX) {

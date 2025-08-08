@@ -104,9 +104,7 @@ public:
 		shareDenyRead = (int)0x00030,
 		shareDenyNone = (int)0x00040,
 		modeNoInherit = (int)0x00080,
-		#ifdef _UNICODE
 		typeUnicode = (int)0x00400, // used in derived classes (e.g. CStdioFile) only
-		#endif
 		modeCreate = (int)0x01000,
 		modeNoTruncate = (int)0x02000,
 		typeText = (int)0x04000, // used in derived classes (e.g. CStdioFile) only

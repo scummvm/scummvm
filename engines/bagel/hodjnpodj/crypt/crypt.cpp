@@ -335,14 +335,6 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
 	m_cPaintGram->UsedOff(pDC, nGramCode);                      // Turn used code off on old char since it's not being used anymore
 	m_cPaintGram->UsedOn(pDC, nAlphaCode);                      // Turn used code on new char now appearing in cryptogram
 
-	#ifdef REVEAL                                               // To maintain hilited char after replace, uncomment this code....
-	if (m_cPaintGram->IsGramType(nHiLiteCode) == TRUE) {
-		m_cPaintGram->HiLiteOn(pDC, m_cPaintGram->GetCharType(nAlphaCode));
-	} else {
-		m_cPaintGram->HiLiteOn(pDC, nAlphaCode);
-	}
-	#endif
-
 	return IsSolved();
 }
 
@@ -464,14 +456,6 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, UINT nChar) {
 	m_cPaintGram->HiLiteOff(pDC);                               // Turn hilite off
 	m_cPaintGram->UsedOff(pDC, nGramCode);                      // Turn used code off on old char since it's not being used anymore
 	m_cPaintGram->UsedOn(pDC, nAlphaCode);                      // Turn used code on new char now appearing in cryptogram
-
-	#ifdef REVEAL                                               // To maintain hilited char after replace, uncomment this code....
-	if (m_cPaintGram->IsGramType(nHiLiteCode) == TRUE) {
-		m_cPaintGram->HiLiteOn(pDC, m_cPaintGram->GetCharType(nAlphaCode));
-	} else {
-		m_cPaintGram->HiLiteOn(pDC, nAlphaCode);
-	}
-	#endif
 
 	return IsSolved();
 }

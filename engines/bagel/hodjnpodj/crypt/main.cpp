@@ -452,12 +452,6 @@ void CMainWindow::GameLose() {
 	CMessageBox GameOverDlg((CWnd *)this, pGamePalette,
 	                        "Time's up!", buf,  -1, 30);
 
-	#ifdef REVEAL
-	m_cCryptograms->SolveCryptogram(pDC);
-	m_cCryptograms->DrawSource(pDC);
-	Sleep(PAUSE_TIME);                       // Leave some time for player to see author
-	#endif
-
 	ReleaseDC(pDC);
 }
 

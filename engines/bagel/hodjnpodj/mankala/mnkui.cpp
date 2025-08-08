@@ -30,11 +30,6 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Mankala {
 
-#ifdef _MACROS
-	int _recursion_count;       //used to track recursion, also used by mnklog.cpp
-#endif
-#undef _MACROS2
-
 extern  BOOL gbTurnSoundsOff;
 extern LPGAMESTRUCT pGameParams;
 
@@ -47,14 +42,6 @@ BOOL CMnkWindow::StartGame(void)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnkWindow::StartGame) ;
-	#ifdef _MACROS
-	EM("**************************************");
-	EM("\nStarting New Game at ");
-	_recursion_count = 0;
-	static char tt[9];
-	EMTime(tt);
-	DMaddr(m_xpGamePalette);
-	#endif
 
 	int iError = 0 ;        // error code
 	gCount = 0;             // this count keeps track of the # of turns of each player so far,
@@ -79,11 +66,6 @@ BOOL CMnkWindow::StartGame(void)
 			MessageBox("Can't Play Wave Sound");
 		}
 
-
-
-	#ifdef _MACROS
-	EM("Leaving StartGame()");
-	#endif
 	JXELEAVE(CMnkWindow::StartGame) ;
 	RETURN(iError != 0) ;
 }
@@ -96,25 +78,14 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CMnkWindow::PaintBitmapObject) ;
-	/*
-	#ifdef _MACROS
-	    EM("In PaintBitmapObject");
-	#endif
-	*/
+
 	int iError = 0 ;        // error code
 	BOOL bNew = !xpcBmpObject->m_bInit ;    // needs to be initialized
 	CRect cBmpRect, cDestRect ; // bitmap/destination rectangles
-//    BOOL bMasked = TRUE ; // for now, we assume all paints
-//              // are masked
-
 	CDC *pDC ;
 
 	pDC = GetDC();
 
-	#ifdef _MACROS2
-	EM("GetDC() from within PaintBitmapObject");
-	DMaddr(pDC->m_hDC);
-	#endif
 	MSG msg;
 	if (MFC::PeekMessage(&msg, nullptr, MM_MCINOTIFY, MM_MCINOTIFY, PM_REMOVE)) {
 		MFC::TranslateMessage(&msg);
@@ -171,11 +142,6 @@ BOOL CMnkWindow::PaintBitmapObject(CBmpObject * xpcBmpObject,
 				// current background image
 			}
 		} else if (xpcBmpObject->m_bMasked) {
-			/*
-			#ifdef _MACROS
-			    DMaddr(m_xpGamePalette);
-			#endif
-			*/
 			PaintMaskedDIB(pDC, m_xpGamePalette,
 			               xpcBmpObject->m_xpDibDoc,
 			               xpcBmpObject->m_cPosition.x,
@@ -198,16 +164,6 @@ cleanup:
 		pDC = nullptr;
 	}
 
-	#ifdef _MACROS2
-	EM("ReleaseDc() within PaintBitmapObject");
-	DMaddr(pDC->m_hDC);
-	#endif
-	/*
-	#ifdef _MACROS
-	    DMaddr(m_xpGamePalette);
-	    EM("Leaving paintBitmapObject");
-	#endif
-	*/
 	JXELEAVE(CMnkWindow::PaintBitmapObject) ;
 	RETURN(iError != 0) ;
 }
@@ -296,10 +252,6 @@ BOOL CMnkWindow::InitBitmapFilename(CBmpObject * xpcBmpObject)
 
 
 	CDC *pDC = GetDC();
-	#ifdef _MACROS2
-	EM("GetDC() from within InitBitmapFilename");
-	DMaddr(pDC->m_hDC);
-	#endif
 
 	static class CBmpTable cBmpTable[] = {
 		{BMT_MAIN, -1, 1, "mankala.bmp", FALSE, FALSE},
@@ -395,16 +347,7 @@ cleanup:
 		ReleaseDC(pDC);
 		pDC = nullptr;
 	}
-	#ifdef _MACROS2
-	EM("ReleaseDc() within InitBitmapFilename");
-	DMaddr(pDC->m_hDC);
-	#endif
-	/*
-	    #ifdef _MACROS
-	        DMaddr(m_xpGamePalette);
-	        EM("Leaving initbitmapfilename");
-	    #endif
-	 */
+
 	JXELEAVE(CMnkWindow::InitBitmapFilename) ;
 	RETURN(iError != 0) ;
 }
@@ -503,12 +446,6 @@ BOOL CMnkWindow::SetBitmapCoordinates(
 	xpcBmpObject->m_cPosition = CPoint(iX, iY) ;
 
 cleanup:
-	/*
-	#ifdef _MACROS
-	    DMaddr(m_xpGamePalette);
-	    EM("Leaving SetBitmapCoordinates");
-	#endif
-	*/
 	JXELEAVE(CMnkWindow::SetBitmapCoordinates) ;
 	RETURN(iError != 0) ;
 }
@@ -558,14 +495,6 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 				bFound = TRUE ;
 		}
 
-		#ifdef _MACROS
-		if (bFound) {
-			EM("Calling Move #1 with parameters : ");
-			DMaddr(xpcPit);
-			DMaddr(m_xpGamePalette);
-		}
-		#endif
-
 		if (bFound) {
 			if (CMnk::Move((CPit *)xpcPit))
 				// if found, make the move, test for error
@@ -593,11 +522,6 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 		{
 			xpcPit = m_xpcPits[xpcMove->m_iPlayer][iPit + 2] ; // pt to pit object
 
-			#ifdef _MACROS
-			EM("Calling Move #2 with parameters : ");
-			DMaddr(xpcPit);
-			#endif
-
 			if (((CMnk *)this)->Move((CPit *)xpcPit))
 				// make the move, test for error
 			{
@@ -613,17 +537,7 @@ BOOL CMnkWindow::AcceptClick(CPoint cClickPoint)
 cleanup:
 	bActive = FALSE ;
 
-exit:          /*
-    #ifdef _MACROS
-    DMaddr(m_xpcGameActive");
-    #endif
-
-    #ifdef _MACROS
-    DMaddr(m_xpGamePalette);
-    EM("returning from AcceptClick()");
-    #endif
-    */
-
+exit:
 	JXELEAVE(CMnkWindow::AcceptClick) ;
 	RETURN(iError != 0) ;
 }
@@ -644,16 +558,6 @@ BOOL CMnkWindow::MoveStoneDisplay(CPitWnd * xpcFromPit,
 	int iK ;        // loop variable
 	CDC *pDC = GetDC();
 
-	#ifdef _MACROS2
-	EM("GetDC() from within MoveStoneDisplay");
-	DMaddr(pDC->m_hDC);
-	#endif
-	/*
-	if(pDC){
-	 m_xpOldPalette=pDC->SelectPalette(m_xpGamePalette, FALSE);
-	 pDC->RealizePalette();
-	}
-	         */
 	if ((xpcStone = xpcFromPit->m_xpcStoneChain))   // get last
 		// stone from pit stone chain, if any
 	{
@@ -739,16 +643,7 @@ cleanup:
 		ReleaseDC(pDC);
 		pDC = nullptr;
 	}
-	#ifdef _MACROS2
-	EM("ReleaseDC() from within MoveStoneDisplay");
-	DMaddr(pDC->m_hDC);
-	#endif
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving MoveStoneDisplay");
-	#endif
-	*/
+
 	JXELEAVE(CMnkWindow::MoveStoneDisplay) ;
 	RETURN(iError != 0) ;
 }
@@ -790,12 +685,7 @@ BOOL CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
 		PaintBitmapObject(xpcBmpObject) ;
 		xpcPit->m_iDispStones = iDispStones ;
 	}
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving AdjustPitDisplay");
-	#endif
-	*/
+
 	JXELEAVE(CMnkWindow::AdjustPitDisplay) ;
 	RETURN(iError != 0) ;
 }
@@ -836,13 +726,6 @@ VOID CMnkWindow::PaintScreen(void)
 		}
 	m_iBmpSign = 0 ;
 	SetCrabSign() ;
-	/*
-	#ifdef _MACROS
-	    DMaddr(m_xpGamePalette);
-	    EM("Leaving PaintScreen");
-	#endif
-	*/
-
 
 	JXELEAVE(CMnkWindow::PaintScreen) ;
 }
@@ -884,12 +767,6 @@ BOOL CMnkWindow::AllocatePits(void)
 		}
 
 cleanup:
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving AllocatePits");
-	#endif
-	*/
 	JXELEAVE(CMnkWindow::AllocatePits) ;
 	RETURN(iError != 0) ;
 }
@@ -904,11 +781,6 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 	int iBmpSign ;      // SBT_xxxx -- sign to display
 	NPSTR npszHumanScore, npszCrabScore;
 	HLOCAL hlocHumanScore, hlocCrabScore;
-
-	#ifdef _MACROS
-	EM("Entering SetCrabSign");
-	DMaddr(m_xpGamePalette);
-	#endif
 
 	if (m_bStartGame) {
 		iBmpSign = 0 ;
@@ -1011,11 +883,6 @@ BOOL CMnkWindow::SetCrabSign(BOOL bPaint)
 		}  // end if pGameParams->bPlayingMetagame.
 	} // end if m_bGameOver.
 
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving SetCrabSign");
-	#endif
-
 	JXELEAVE(CMnkWindow::SetCrabSign) ;
 	RETURN(iError != 0) ;
 }
@@ -1063,12 +930,6 @@ BOOL CMnkWindow::FreePitResources(BOOL bDelete)
 			// unlink it from sprite chain
 			delete xpcNextStone ;       // delete stone sprite
 		}
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving FreePitResources");
-	#endif
-	  */
 
 	JXELEAVE(CMnkWindow::FreePitResources) ;
 	RETURN(iError != 0) ;
@@ -1082,12 +943,7 @@ BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 	JXENTER(CMnkWindow::ClearBitmapObject) ;
 	int iError = 0 ;        // error code
 	HDIB hDib ;
-	/*
-	#ifdef _MACROS
-	    EM("Entering ClearBitmapObject");
-	    DMaddr(m_xpGamePalette);
-	#endif
-	*/
+
 	if (xpcBmpObject->m_xpcSprite) { // if there's a sprite
 		delete xpcBmpObject->m_xpcSprite ;  // free it
 		xpcBmpObject->m_xpcSprite = nullptr ;  // no more pointer
@@ -1105,12 +961,6 @@ BOOL CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 	}
 	xpcBmpObject->m_bInit = FALSE ; // object no longer initialized
 
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving ClearBitmapObject");
-	#endif
-	*/
 	JXELEAVE(CMnkWindow::ClearBitmapObject) ;
 	RETURN(iError != 0) ;
 }
@@ -1140,12 +990,6 @@ void CMnkWindow::ReleaseResources(void) {
 		delete m_pSound;
 		m_pSound = nullptr;
 	}
-	/*
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving ReleaseResources");
-	#endif
-	*/
 }
 
 
@@ -1215,12 +1059,6 @@ BOOL FAR PASCAL CMnkWindow::UserDialog(void)
 		m_eLevel[0] = m_eLevel[1] = (enum_Level)cMnkUsr.m_iUStrength ;
 	}
 
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving UserDialog");
-	#endif
-
-
 	JXELEAVE(CMnkWindow::UserDialog) ;
 	RETURN(iError != 0) ;
 }
@@ -1243,10 +1081,6 @@ BOOL CMnkWindow::OptionsDialog(void) {
 	int iError = 0 ;        // error code
 
 	CDC *pDC = nullptr ;
-	#ifdef _MACROS2
-	EM("GetDC() from within OptionsDialog");
-	DMaddr(pDC->m_hDC);
-	#endif
 
 	if (!m_bInMenu) {   // prevent recursion
 		m_bInMenu = TRUE ;  // in the options menu now
@@ -1301,18 +1135,7 @@ BOOL CMnkWindow::OptionsDialog(void) {
 		m_bInMenu = FALSE ;
 	}
 
-
 	/* cleanup */
-	#ifdef _MACROS2
-	EM("ReleaseDC() from within OptionsDialog");
-	DMaddr(pDC->m_hDC);
-	#endif
-
-	#ifdef _MACROS
-	DMaddr(m_xpGamePalette);
-	EM("Leaving OptionsDialog");
-	#endif
-
 	JXELEAVE(CMnkWindow::OptionsDialog) ;
 	RETURN(iError != 0) ;
 }

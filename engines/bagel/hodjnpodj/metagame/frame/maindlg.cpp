@@ -35,9 +35,6 @@ extern  BOOL    bMetaLoaded;
 
 extern const CHAR *gpszSaveGameFile;
 
-#ifdef BMP_BUTTONS
-	BOOL    bDestroyBmp = TRUE;
-#endif
 /*****************************************************************
  *
  * CMainGameDlg
@@ -74,11 +71,6 @@ CMainGameDlg::CMainGameDlg(CWnd *pParent, CPalette *pPalette)
 	m_pGrandTourButton = nullptr;
 	m_pRestartMovieButton = nullptr;
 	m_pQuitButton = nullptr;
-	#ifdef BMP_BUTTONS
-	m_pButtonsBmp = nullptr;
-	m_pButtonPalette = pPalette;
-	bDestroyBmp = TRUE;
-	#endif
 }
 
 /*****************************************************************
@@ -204,17 +196,6 @@ void CMainGameDlg::ClearDialogImage(void) {
 
 BOOL CMainGameDlg::OnInitDialog() {
 	BOOL    bSuccess;
-	#ifdef BMP_BUTTONS
-	CBitmap *pUp = nullptr;
-	CBitmap *pDn = nullptr;
-	CBitmap *pFcs = nullptr;
-	CBitmap *pDs = nullptr;
-	int     nTop = 0;
-	int     nLeft = 0;
-	int     nWidth = 270;
-	int     nHeight = 34;
-	CDC     *pDC;
-	#endif
 
 	CBmpDialog::OnInitDialog();
 
@@ -430,15 +411,6 @@ void CMainGameDlg::OnPaint(void) {
 }
 
 void CMainGameDlg::OnDestroy() {
-	#ifdef BMP_BUTTONS
-
-	if ((m_pButtonsBmp != nullptr) && (bDestroyBmp)) {
-		delete m_pButtonsBmp;
-		m_pButtonsBmp = nullptr;
-	}
-
-	#endif
-
 	if (m_pPlayMetaButton != nullptr) {
 		delete m_pPlayMetaButton;
 		m_pPlayMetaButton = nullptr;

@@ -129,12 +129,9 @@ typedef unsigned long ULONG ;
 #define CTRLKEY(ch) ((ch)+CCH_CTRLKEY)
 #define SHFTKEY(ch) ((ch)+CCH_SHFTKEY)
 
-
-#ifdef __cplusplus
 inline BOOL EQV(BOOL b1, BOOL b2) {
 	return (b1 != 0) == (b2 != 0);
 }
-#endif  /* __cplusplus */
 
 } // namespace Metagame
 } // namespace HodjNPodj

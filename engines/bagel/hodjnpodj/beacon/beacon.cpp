@@ -191,13 +191,6 @@ CMainWindow::CMainWindow() {
 	pOldPal2 = pArtDC->SelectPalette(pGamePalette, FALSE);
 	pArtDC->RealizePalette();
 
-
-//BUTTON WAS HERE
-	#ifdef  BACKDROP
-	PaintBitmap(pBackDC, pGamePalette, pBorderBitmap, 0, 0);     //SplashScreen to back
-	DrawBeams(pBackDC);                                          //DrawBeams to back
-	#endif
-
 	PaintBitmap(pArtDC, pGamePalette, pBorderBitmap, 0, 0);      //SplashScreen to art bitmap
 	pBorderBitmap->DeleteObject();
 	delete pBorderBitmap;
@@ -298,17 +291,6 @@ void CMainWindow::OnPaint() {
 
 
 	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pArtDC, 0, 0, SRCCOPY);
-
-	/* OLD VERSION:
-	    pBeaconBitmap = FetchResourceBitmap( pDC, nullptr, IDB_BEACON_BMP );
-
-	    PaintMaskedBitmap( pDC, pGamePalette, pBeaconBitmap,
-	                        SIDE_BORDER + (ART_WIDTH/2) - LTHOUSE_OFFSET_X,
-	                        TOP_BORDER + (ART_HEIGHT/2) - LTHOUSE_OFFSET_Y);
-	*/
-	#ifdef  BACKDROP
-	pDC->BitBlt(0, 0, GAME_WIDTH, GAME_HEIGHT, pBackDC, 0, 0, SRCCOPY);
-	#endif
 
 	Common::sprintf_s(msg, "Score: %.0f %%", m_Score);
 	(*m_pScoreTxt).DisplayString(pDC, msg, 16, FW_BOLD, OPTIONS_COLOR);

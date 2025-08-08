@@ -25,10 +25,6 @@
 #include "bagel/hodjnpodj/packrat/dialogs.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
 
-#ifdef SHOW_SCORE
-	#include "bagel/hodjnpodj/hnplibs/text.h"
-#endif
-
 namespace Bagel {
 namespace HodjNPodj {
 namespace Packrat {
@@ -336,15 +332,6 @@ CRect   ptScore(MainRect.left + 10, MainRect.top + 10,
 int     nExtraLives;
 BOOL    bInLoop;
 BOOL    bBALLOONShown;
-
-#ifdef SHOW_SCORE
-	CText   *pScore = nullptr;
-	CRect   rScoreRect(17, 448, 307, 463);
-	CText   *pObjsLeft = nullptr;
-	CRect   rObjsLeftRect(353, 448, 623, 463);
-	CText   *pCounter = nullptr;
-	CRect   rCounterRect(100, 448, 350, 463);
-#endif
 
 /*****************************************************************
  *
@@ -701,13 +688,6 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		pLivesSprite[nLoop1] = pLiveSprite->DuplicateSprite(pDC);
 	}
 
-	#ifdef SHOW_SCORE
-	pScore = new CText(pDC, pGamePalette, &rScoreRect, JUSTIFY_LEFT);
-	pObjsLeft = new CText(pDC, pGamePalette, &rObjsLeftRect, JUSTIFY_RIGHT);
-	pCounter = new CText(pDC, pGamePalette, &rCounterRect, JUSTIFY_RIGHT);
-	#endif
-
-// pDC->SelectPalette( pOldPalette, FALSE );
 	ReleaseDC(pDC);                                   // release our window context
 
 	m_ptCurrPLocInGrid.x = 0;
@@ -827,9 +807,6 @@ void CMainPackRatWindow::SetMaze() {
 	int     nLoop1;
 	CBitmap *pTempBmp = nullptr;
 	BOOL    bTestBmp;
-	#ifdef DYNAMIC_OBJ_COUNT
-	int     nLoop;
-	#endif
 
 	SetLevel();
 
@@ -906,16 +883,8 @@ void CMainPackRatWindow::SetMaze() {
 	ASSERT(bTestBmp);
 	pTempBmp = nullptr;
 
-//  CSprite::RefreshBackdrop( pDC, pGamePalette );
 	m_anMazeArray = (int *) &anCurrentMaze[0];
-	#ifdef DYNAMIC_OBJ_COUNT
-	m_nNumberOfObjectsLeft = 0;
-	for (nLoop = 0; nLoop < 999; nLoop++) {
-		if (m_anMazeArray[nLoop] > 0) {
-			m_nNumberOfObjectsLeft++;
-		}
-	}
-	#endif
+
 	anSuperObj[0] = FALSE;
 	anSuperObj[1] = FALSE;
 	anSuperObj[2] = FALSE;
@@ -1833,10 +1802,6 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 			return;
 		}
 	}
-
-	#ifdef MOVEONEONLY
-	m_nPDirection = 0;
-	#endif
 
 	if (CheckMessages() == TRUE) {
 		PostMessage(WM_CLOSE);
@@ -3041,48 +3006,11 @@ void CMainPackRatWindow::MainLoop() {
 	CDC         *pDC = nullptr;
 	POINT       ptLive;
 	BOOL        bRedrawLives = FALSE;
-	#ifdef SHOW_SCORE
-	int nCounter = 0;
-	#endif
 
 	pTempSprite = new CSprite;
 
 	(*this).SetFocus();
 	while (bEndGame == FALSE) {
-
-		#ifdef SHOW_SCORE
-		{
-			char    cTempText[100];
-			CDC     *pDC1 = GetDC();
-			int     nObjsInMaze = 0;
-			int     nLoop = 0;
-
-			Common::sprintf_s(cTempText, "Score : %li", m_lScore);
-			pScore->DisplayString(pDC1, cTempText, 12, FW_BOLD, (COLORREF)RGB(0, 255, 255));
-			Common::sprintf_s(cTempText, "Objects Left : %i", m_nNumberOfObjectsLeft);
-			pObjsLeft->DisplayString(pDC1, cTempText, 12, FW_BOLD, (COLORREF)RGB(0, 255, 255));
-
-//	nCounter++;
-//	if ( nCounter > 100 ) {
-			for (nLoop = 0; nLoop < 999; nLoop++) {
-				if (m_anMazeArray[nLoop] > 0) {
-					nObjsInMaze++;
-				}
-			}
-
-			if ((nObjsInMaze != m_nNumberOfObjectsLeft) && (m_nNumberOfObjectsLeft != -1)) {
-				Common::sprintf_s(cTempText, "%i", nObjsInMaze);
-				MessageBox("Go Find Gordon Now!!!", "cTempText");
-			}
-
-//		nCounter = 0;
-//	}
-//	pCounter->DisplayString( pDC1, " ", 12, FW_BOLD, (COLORREF)RGB( 0, 255, 255 ));
-			ReleaseDC(pDC1);
-
-		}
-		#endif
-
 		if (m_bSuspend == FALSE) {
 			if ((nEatTurtle <= (EATTURTLE - (4 * m_nGameLevel))) && (bEatTurtle)) {
 				bEatTurtle = TRUE;
@@ -3417,18 +3345,6 @@ void CMainPackRatWindow::OnDestroy() {
 
 void CMainPackRatWindow::ReleaseResources(void) {
 	int nLoop1;
-
-	#ifdef SHOW_SCORE
-	if (pScore != nullptr)
-		delete pScore;
-
-	if (pObjsLeft != nullptr)
-		delete pObjsLeft;
-
-	if (pCounter != nullptr)
-		delete pCounter;
-
-	#endif
 
 	delete pBalloonSprite;
 	pBalloonSprite = nullptr;

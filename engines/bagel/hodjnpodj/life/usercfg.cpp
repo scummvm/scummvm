@@ -47,12 +47,6 @@ CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
 	m_DisplayRounds     = "";
 	m_DisplaySpeed      = "";
 	m_DisplayVillages   = "";
-
-	#ifdef REVEAL
-	nSpeedTemp          = GetPrivateProfileInt(INI_SECTION, "Speed", SPEED_DEF, INI_FNAME);
-	nTurnCounterTemp    = GetPrivateProfileInt(INI_SECTION, "Rounds", ROUNDS_DEF, INI_FNAME);
-	nLifeTemp           = GetPrivateProfileInt(INI_SECTION, "Villages", VILLAGES_DEF, INI_FNAME);
-	#endif
 }
 
 void CUserCfgDlg::DoDataExchange(CDataExchange* pDX) {

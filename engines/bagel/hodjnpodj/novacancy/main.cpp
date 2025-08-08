@@ -62,12 +62,6 @@ LPGAMESTRUCT pGameParams;
 static CString gWndClass;
 const char *INI_SECTION = "No Vacancy";
 
-#ifdef _MCI_TEST
-	#define _MACROS
-	int _recursion_count = 0;   //also used by sound.cpp
-#endif
-
-
 static int gnLDieLeftFinal,    // final positions of dice.
        gnLDieTopFinal,
        gnRDieTopFinal,
@@ -83,11 +77,6 @@ CMainWindow::CMainWindow(VOID) {
 	BOOL bSuccess;
 	short i;
 	char szMapFile[256];
-
-
-	#ifdef _MACROS
-	EM("In Constructor");
-	#endif
 
 	// assume no error
 	errCode = ERR_NONE;
@@ -115,10 +104,6 @@ CMainWindow::CMainWindow(VOID) {
 	m_cUnDoableThrows = 0;          //  no undoable throw has been registered yet.
 	m_bDiceJustThrown = FALSE;      // dice haven't been thrown yet
 	m_bOneDieCase = FALSE;          // always start w/ two dice on floor.
-
-	#ifdef _MCITEST
-	_recursion_count = 0;
-	#endif
 
 	// Set the coordinates for the "Start New Game" button
 	//
@@ -257,15 +242,8 @@ CMainWindow::CMainWindow(VOID) {
 }
 
 VOID CMainWindow::HandleError(ERROR_CODE errCode) {
-	//
 	// Exit this application on fatal errors
-	//
-	#ifdef _MACROS
-	EM("Handle Error");
-	#endif
-
 	if (errCode != ERR_NONE) {
-
 		// pause the current game (if any)
 		GamePause();
 
@@ -284,10 +262,6 @@ VOID CMainWindow::HandleError(ERROR_CODE errCode) {
 VOID CMainWindow::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
-	#ifdef _MACROS
-	EM("On Paint");
-	#endif
-
 	Invalidate(FALSE);
 	BeginPaint(&lpPaint);
 
@@ -300,10 +274,6 @@ VOID CMainWindow::PaintScreen() {
 	CDibDoc myDoc;
 	CRect   rcDest;
 	char szMapFile[256];
-
-	#ifdef _MACROS
-	EM("Paint Screen");
-	#endif
 
 	/*nish adds*/
 	CRect   rcDoor,
@@ -388,11 +358,6 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	                       pGameParams->bSoundEffectsEnabled ? GetStringFromResource(IDS_RULES_WAV) : nullptr,
 	                       pGameParams);           //DLL CHNG.
 
-	#ifdef _MACROS
-	EM("On Command");
-	#endif
-
-
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
 		//
@@ -464,19 +429,11 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 
 VOID CMainWindow::GamePause(VOID) {
-	#ifdef _MACROS
-	EM("On Game Pause");
-	#endif
-
 	m_bPause = TRUE;
 };
 
 
 VOID CMainWindow::GameResume(VOID) {
-	#ifdef _MACROS
-	EM("Game Resume");
-	#endif
-
 	m_bPause = FALSE;
 };
 
@@ -501,11 +458,6 @@ VOID CMainWindow::PlayGame() {
 
 
 	TRACE("Starting New Game...");
-
-	#ifdef _MCI_TEST
-	EM("Playing A New Game...");
-	#endif
-
 
 	// reset all game parameters
 	//
@@ -622,14 +574,7 @@ VOID CMainWindow::PlayGame() {
 
 
 VOID CMainWindow::GameReset(VOID) {
-	#ifdef _MACROS
-	EM("Game Reset");
-	#endif
-
 	m_bGameActive = FALSE;                      // there is no currently active game
-	#ifdef _MCITEST
-	_recursion_count = 0;
-	#endif
 
 	for (short i = 0; i < 10; i++) {
 		m_bDoorBmpLoaded[i] = FALSE;
@@ -677,15 +622,8 @@ VOID CMainWindow::GameReset(VOID) {
 *
 ***********************************************************************************************************************************
 */
-VOID CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
-
+VOID CMainWindow::OnMouseMove(UINT, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
-	#ifdef _MCITEST
-	_recursion_count = 0;
-	#endif
-	//reset recursion count of midi music loop
-	(void)point;
-	(void)nFlags;
 }
 
 
@@ -742,13 +680,6 @@ VOID CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	const int iMaxScore = 45; //1+2+3+4+5+6+7+8+9       to be used for score computation.
 	ERROR_CODE errCode = ERR_NONE;
 
-	#ifdef _MACROS
-	EM("On Left Button down");
-	#endif
-
-	#ifdef _MCITEST
-	_recursion_count = 0;
-	#endif
 	//reset recursion count of midi music loop
 
 	// User clicked on the Title - NewGame button
@@ -1127,11 +1058,6 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	            yy;
 	CDC* pDC;
 
-	#ifdef _MACROS
-	EM("On Right Button down");
-	#endif
-
-
 	/*
 	    Restores (Undoes) m_iDoorStatus to that just prior to rolling of dice
 	*/
@@ -1188,35 +1114,12 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 ***********************************************************************************************************************************
 */
 LRESULT CMainWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	//CSound  *pSound;
-	#ifdef _MCI_TEST
-	EM("On MCI Notify #1");
-	_recursion_count++;
-	#endif
-
-	/*
-	if(_recursion_count>12) m_psndBkgndMusic->stop();       //arrest having the sound stuck.
-	else
-	*/
 	CSound::OnMCIStopped(wParam, lParam);
-
-	#ifdef _MCI_TEST
-	EM("On MCI Notify #2");
-	#endif
-
 	return 0;
 }
 
 LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
-	//CSound  *pSound;
-
-	#ifdef _MACROS
-	EM("On MMIO Notify");
-	#endif
-
 	CSound::OnMMIOStopped(wParam, lParam);
-	//if (pSound != nullptr)
-	//  OnSoundNotify(pSound);
 	return 0;
 }
 
@@ -1249,9 +1152,6 @@ LRESULT CMainWindow::OnMMIONotify(WPARAM wParam, LPARAM lParam) {
 VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
 	CDC *pDC;
 
-	#ifdef _MACROS
-	EM("DeleteSprite");
-	#endif
 	// can't delete a null pointer
 	assert(pSprite != nullptr);
 
@@ -1268,12 +1168,7 @@ VOID CMainWindow::DeleteSprite(CSprite *pSprite) {
 
 
 void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	#ifdef _MACROS
-	EM("On SysChar");
-	#endif
-
-	// terminate app on ALT_Q
-	//
+	// Terminate app on ALT_Q
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
 
 		PostMessage(WM_CLOSE, 0, 0);
@@ -1289,10 +1184,6 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	#ifdef _MACROS
-	EM("On SysKeyDown");
-	#endif
-
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -1310,10 +1201,6 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	#ifdef _MACROS
-	EM("On Key down");
-	#endif
-
 	// Handle keyboard input
 	//
 
@@ -1358,12 +1245,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
-	#ifdef _MACROS
-	EM("On Activate");
-	#endif
-
 	if (!bMinimized) {
-
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
@@ -1421,10 +1303,6 @@ short CMainWindow::LegalizeMove(short  j) {
 	*   LegalizeMove keeps track of the number of open doors.
 	***********************************************************************************************************************************
 	*/
-	#ifdef _MACROS
-	EM("On LegalizeMove");
-	#endif
-
 	static BYTE DoorSum,
 	       DiceSum;
 	short int ReadyForDiceClick = 0;
@@ -1490,9 +1368,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 	*   n/a
 	****************************************************************************************************************
 	*/
-	#ifdef _MACROS
-	EM("Is Throw Doable");
-	#endif
+
 #pragma warning(disable: 4135)
 	BYTE s[9];                                                       //Open doors.
 	BYTE Count,                                               //# of open doors.
@@ -1731,10 +1607,6 @@ VOID CMainWindow::OnClose() {
 	CBrush cbrBlack;
 	CRect crectSplashScr;
 	CDC *pDC;
-
-	#ifdef _MCI_TEST
-	EM("On Close down");
-	#endif
 
 	/*
 	    if playing meta game then (re)compute score should the user choose to quit before end of play.

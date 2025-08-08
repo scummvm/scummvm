@@ -1365,13 +1365,6 @@ void CMainWindow::RefreshStats() {
 	// Update visual calendar
 	(*m_cLife).DisplayMonth(nCountDown, pDC);
 
-	#ifdef TIME_BOX_ON      // don't want this cause calendar shows same info
-	// Time box
-	Common::sprintf_s(buf, "%d", nCountDown);
-	bAssertCheck = m_cLife->pTime->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
-	ASSERT(bAssertCheck);   // paint the text
-	#endif
-
 	ReleaseDC(pDC);
 }
 

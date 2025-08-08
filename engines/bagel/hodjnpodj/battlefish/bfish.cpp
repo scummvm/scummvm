@@ -3511,43 +3511,10 @@ void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 	break;
 
-	//
-	// Bring up the options menu
-	//
 	case VK_F2:
+		// Bring up the options menu
 		SendMessage(WM_COMMAND, IDC_MENU, BN_CLICKED);
 		break;
-
-		#ifdef DEBUG
-	case VK_F3:
-
-		INT i, j;
-
-		//
-		// Print user grid to show where fish were placed
-		//
-		TRACE("User Grid:\n");
-		for (i = 0; i < GRID_ROWS; i++) {
-			for (j = 0; j < GRID_COLS; j++) {
-				TRACE("%02d ", m_nUserGrid[i][j]);
-			}
-			TRACE("\n");
-		}
-		TRACE("\n");
-
-		//
-		// Print enemy grid to show where fish were placed
-		//
-		TRACE("Enemy Grid:\n");
-		for (i = 0; i < GRID_ROWS; i++) {
-			for (j = 0; j < GRID_COLS; j++) {
-				TRACE("%02d ", m_nEnemyGrid[i][j]);
-			}
-			TRACE("\n");
-		}
-		TRACE("\n");
-		break;
-		#endif
 
 	default:
 		CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);

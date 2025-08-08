@@ -87,11 +87,6 @@ ERROR_CODE  ValidatePhrase(PHRASES *);
 VOID        UpdateScore(UINT, UINT, UINT, UINT);
 INT         NumLinkedSprites(VOID);
 
-#ifdef DEBUG
-VOID        ValidateParser(VOID);
-static PHRASES testPhrase[] = {"the therapist", {4, 7, 8, 12, 5, 11, 6, 1, 2, 9, 10, 3}};
-#endif
-
 #define TIMER_ID        50
 #define START_X_ODD     318
 #define START_X_EVEN    334
@@ -613,13 +608,7 @@ ERROR_CODE InitGame(HWND hWnd, CDC *pDC) {
 		if ((errCode = LoadNewPhrase()) == ERR_NONE) {
 
 			if ((errCode = BuildSpriteList(pDC)) == ERR_NONE) {
-
-				#ifdef DEBUG
-				ValidateParser();
-				#endif
-
-				// remove category name from screen
-				//
+				// Remove category name from screen
 				if (gGameCfg.bShowNames)
 					gMain->EraseCategory();
 
@@ -1007,113 +996,9 @@ VOID SaveGameCfg() {
 *  returns   match/unmatch condition (True if users guess matches the phrase)
 *
 **/
-#if 0
-bool CheckUserGuess(const CHAR *guess) {
-	CHAR *p, *r, tmpPhrase[MAX_PLENGTH_S + 1];
-	CHAR *s, tmpGuess[MAX_PLENGTH_S + 1];
-	INT i, n, inc;
-	bool winStatus;
-
-	winStatus = FALSE;
-
-	if (curPhrase != nullptr) {
-
-		/* can't access null pointers */
-		assert(guess != nullptr);
-
-		/* make sure that we are not going to blow the stack */
-		assert(strlen(curPhrase->text) < (MAX_PLENGTH_S + 1));
-
-		memset(tmpPhrase, 0, MAX_PLENGTH_S + 1);
-		memset(tmpGuess, 0, MAX_PLENGTH_S + 1);
-
-		#if 0
-		/* for debugging only */
-		GameStopTimer();
-		#endif
-
-		if (*guess && (strlen(guess) < MAX_PLENGTH_S + 1)) {
-
-			assert(strlen(guess) < (MAX_PLENGTH_S + 1));
-
-			/*
-			* strip out spaces and store results into local buffers
-			*/
-			StrCpyStripChar(r = p = tmpPhrase, curPhrase->text, ' ');
-			StrCpyStripChar(s = tmpGuess, guess, ' ');
-
-			StrStripChar(s, 39);            // strip out any apostrophes
-
-			strcat(p, "   ");
-			strcat(s, "   ");
-
-			/*
-			* compare the 2 strings, if we get a "THE", "A", or "AN" (case sensative)
-			* then do a special compare
-			*/
-			n = strlen(p);
-
-			winStatus = TRUE;
-
-			i = 0;
-			while (i++ < n) {
-
-				if ((*p == 'T') || (*p == 'A')) {
-					inc = 3;
-					if (*p == 'A') {
-						inc = 1;
-						if (*(p + 1) == 'N') {
-							inc = 2;
-						}
-					}
-					r = p;
-
-					if (toupper(*p) != toupper(*s)) {
-						p += inc;
-						i += inc;
-					} else {
-						r = p + inc;
-						i += inc;
-					}
-				}
-
-				if ((toupper(*p) != toupper(*s)) && (toupper(*r) != toupper(*s))) {
-					winStatus = FALSE;
-					break;
-				}
-				p++;
-				s++;
-				r++;
-			}
-		}
-	}
-
-	return (winStatus);
-}
-#else
 bool CheckUserGuess(const CHAR *guess) {
 	return (StrCompare(curPhrase->text, guess, MAX_PLENGTH_S + 1));
 }
-#endif
-
-#ifdef DEBUG
-VOID ValidateParser() {
-	#if 0
-	if (!CheckUserGuess("THE THERAPIST"))
-		MessageBox(nullptr, "THE THERAPIST", "Failed", MB_OK);
-
-	if (!CheckUserGuess("THETHERAPIST"))
-		MessageBox(nullptr, "THETHERAPIST", "Failed", MB_OK);
-
-	if (!CheckUserGuess("THERAPIST"))
-		MessageBox(nullptr, "THERAPIST", "Failed", MB_OK);
-
-	if (CheckUserGuess("THERAPISTER"))
-		MessageBox(nullptr, "THERAPISTER", "Worked", MB_OK);
-	#endif
-}
-#endif
-
 
 /**
 *  name      StrLenNoSpaces - gets the length of a string after stripping
@@ -1159,12 +1044,8 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 	errCode  = ERR_NONE;
 
 	if ((n = strlen(phrase->text)) > MAX_PLENGTH_S) {
-		#ifdef DEBUG
-		ErrorLog("DEBUG.LOG", "Phrase too Long: strlen(%s)=%d > %d", phrase->text, n, MAX_PLENGTH_S);
-		#endif
 		errCode = ERR_FTYPE;
 	} else {
-
 		for (i = 0; i < n; i++) {
 
 			c = phrase->text[i];
@@ -1174,9 +1055,6 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 			* valid chars are are '\0', ' ' or a letter
 			*/
 			if ((c != 0) && (c != 32) && !Common::isAlpha(c)) {
-				#ifdef DEBUG
-				ErrorLog("DEBUG.LOG", "Invalid Char in (%s) %c", phrase->text, c);
-				#endif
 				errCode = ERR_FTYPE;
 				break;
 			}
@@ -1188,9 +1066,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 		if (errCode == ERR_NONE) {
 
 			if ((n = StrLenNoSpaces(phrase->text)) > MAX_PLENGTH) {
-				#ifdef DEBUG
-				ErrorLog("DEBUG.LOG", "StrLenNoSpace(%s)=%d > %d", phrase->text, n, MAX_PLENGTH);
-				#endif
+	
 				errCode = ERR_FTYPE;
 			} else {
 
@@ -1201,9 +1077,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 					order = (INT)phrase->order[i] - 1;
 
 					if ((order >= n) || (order < 0) || bList[order]) {
-						#ifdef DEBUG
-						ErrorLog("DEBUG.LOG", "Invalid Indexing in %s: %d", phrase->text, order);
-						#endif
+
 						errCode = ERR_FTYPE;
 						break;
 					}
