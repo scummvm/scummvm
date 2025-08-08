@@ -35,6 +35,8 @@
 #include "queen/resource.h"
 #include "queen/sound.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Queen {
 
 Journal::Journal(QueenEngine *vm)
@@ -63,12 +65,19 @@ void Journal::use() {
 	update();
 	_vm->display()->palFadeIn(ROOM_JOURNAL);
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("journal")->setEnabled(true);
+
 	_quitMode = QM_LOOP;
 	while (_quitMode == QM_LOOP) {
 		Common::Event event;
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				handleAction(event.customType);
+				break;
 			case Common::EVENT_KEYDOWN:
 				handleKeyDown(event.kbd.ascii, event.kbd.keycode);
 				break;
@@ -91,6 +100,9 @@ void Journal::use() {
 		_system->delayMillis(20);
 		_system->updateScreen();
 	}
+
+	keymapper->getKeymap("journal")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	_vm->writeOptionSettings();
 
@@ -227,14 +239,28 @@ void Journal::handleKeyDown(uint16 ascii, int keycode) {
 	case PM_INFO_BOX:
 		break;
 	case PM_YES_NO:
-		if (keycode == Common::KEYCODE_ESCAPE) {
-			exitYesNoPanelMode();
-		} else if (_textField.enabled) {
+		if (_textField.enabled) {
 			updateTextField(ascii, keycode);
 		}
 		break;
 	case PM_NORMAL:
-		if (keycode == Common::KEYCODE_ESCAPE) {
+		break;
+	default:
+		break;
+	}
+}
+
+void Journal::handleAction(Common::CustomEventType action) {
+	switch (_panelMode) {
+	case PM_INFO_BOX:
+		break;
+	case PM_YES_NO:
+		if (action == kActionCloseJournal) {
+			exitYesNoPanelMode();
+		}
+		break;
+	case PM_NORMAL:
+		if (action == kActionCloseJournal) {
 			_quitMode = QM_CONTINUE;
 		}
 		break;
