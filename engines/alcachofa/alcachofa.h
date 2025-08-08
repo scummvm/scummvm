@@ -130,7 +130,7 @@ public:
 
 	uint32 getMillis() const;
 	void setMillis(uint32 newMillis);
-	virtual void pauseEngineIntern(bool pause);
+	void pauseEngineIntern(bool pause) override;
 	void playVideo(int32 videoId);
 	void fadeExit();
 	void setDebugMode(DebugMode debugMode, int32 param);

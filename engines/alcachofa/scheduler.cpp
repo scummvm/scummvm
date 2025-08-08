@@ -79,6 +79,12 @@ void Task::syncObjectAsString(Serializer &s, ObjectBase *&object, bool optional)
 			objectName.c_str(), roomName.c_str(), taskName());
 }
 
+void Task::errorForUnexpectedObjectType(const ObjectBase *base) const {
+	// Implemented as separate function in order to access ObjectBase methods
+	error("Unexpected type of object %s in savestate for task %s (got a %s)",
+		base->name().c_str(), taskName(), base->typeName());
+}
+
 DelayTask::DelayTask(Process &process, uint32 millis)
 	: Task(process)
 	, _endTime(millis) {

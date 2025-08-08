@@ -469,7 +469,7 @@ private:
 	static constexpr const uint kMaxDrawRequestsPerOrder = 50;
 	IRenderer *const _renderer;
 	BumpAllocator _allocator;
-	IDrawRequest *_requestsPerOrder[kOrderCount][kMaxDrawRequestsPerOrder] = { 0 };
+	IDrawRequest *_requestsPerOrder[kOrderCount][kMaxDrawRequestsPerOrder] = { { 0 } };
 	uint8 _requestsPerOrderCount[kOrderCount] = { 0 };
 	float _lodBiasPerOrder[kOrderCount] = { 0 };
 };

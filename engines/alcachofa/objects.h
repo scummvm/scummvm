@@ -365,6 +365,7 @@ public:
 class ITriggerableObject {
 public:
 	ITriggerableObject(Common::ReadStream &stream);
+	virtual ~ITriggerableObject() = default;
 
 	inline Direction interactionDirection() const { return _interactionDirection; }
 	inline Common::Point interactionPoint() const { return _interactionPoint; }
