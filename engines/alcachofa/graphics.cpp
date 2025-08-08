@@ -864,7 +864,7 @@ private:
 	int8 _order = 0;
 	PermanentFadeAction _permanentFadeAction = {};
 };
-DECLARE_TASK(FadeTask);
+DECLARE_TASK(FadeTask)
 
 Task *fade(Process &process, FadeType fadeType,
 	float from, float to,

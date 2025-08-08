@@ -174,7 +174,7 @@ private:
 	int32 _durationSec = 0;
 	int32 _result = 1;
 };
-DECLARE_TASK(ScriptTimerTask);
+DECLARE_TASK(ScriptTimerTask)
 
 enum class StackEntryType {
 	Number,
@@ -950,7 +950,7 @@ private:
 	bool _isFirstExecution = true;
 	FakeLock _lock;
 };
-DECLARE_TASK(ScriptTask);
+DECLARE_TASK(ScriptTask)
 
 Process *Script::createProcess(MainCharacterKind character, const String &behavior, const String &action, ScriptFlags flags) {
 	return createProcess(character, behavior + '/' + action, flags);
