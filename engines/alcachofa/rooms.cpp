@@ -113,7 +113,7 @@ Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
 			stream.seek(objectEnd, SEEK_SET);
 		}
 		else if (stream.pos() > objectEnd) // this is probably not recoverable
-			error("Read past the object data (%u > %dll) in room %s", objectEnd, stream.pos(), _name.c_str());
+			error("Read past the object data (%u > %lld) in room %s", objectEnd, stream.pos(), _name.c_str());
 
 		if (object != nullptr)
 			_objects.push_back(object);
@@ -388,8 +388,8 @@ bool Inventory::updateInput() {
 		player.drawCursor(0);
 
 	if (hoveredItem != nullptr && !player.activeCharacter()->isBusy()) {
-		if (input.wasMouseLeftPressed() && player.heldItem() == nullptr ||
-			input.wasMouseLeftReleased() && player.heldItem() != nullptr ||
+		if ((input.wasMouseLeftPressed() && player.heldItem() == nullptr) ||
+			(input.wasMouseLeftReleased() && player.heldItem() != nullptr) ||
 			input.wasMouseRightReleased()) {
 			hoveredItem->trigger();
 			player.pressedObject() = nullptr;

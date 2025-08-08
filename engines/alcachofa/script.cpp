@@ -597,11 +597,11 @@ private:
 			return TaskReturn::finish(1);
 		}
 		case ScriptKernelTask::ChangeRoom:
-			if (strcmpi(getStringArg(0), "SALIR") == 0) {
+			if (scumm_stricmp(getStringArg(0), "SALIR") == 0) {
 				g_engine->quitGame();
 				g_engine->player().changeRoom("SALIR", true);
 			}
-			else if (strcmpi(getStringArg(0), "MENUPRINCIPALINICIO") == 0)
+			else if (scumm_stricmp(getStringArg(0), "MENUPRINCIPALINICIO") == 0)
 				warning("STUB: change room to MenuPrincipalInicio special case");
 			else {
 				auto targetRoom = g_engine->world().getRoomByName(getStringArg(0));

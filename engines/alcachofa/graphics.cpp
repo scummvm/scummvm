@@ -212,7 +212,7 @@ void AnimationBase::fullBlend(const ManagedSurface &source, ManagedSurface &dest
 	assert(offsetX >= 0 && offsetX + source.w <= destination.w);
 	assert(offsetY >= 0 && offsetY + source.h <= destination.h);
 
-	const byte *sourceLine = (byte *)source.getPixels();
+	const byte *sourceLine = (const byte *)source.getPixels();
 	byte *destinationLine = (byte *)destination.getPixels() + offsetY * destination.pitch + offsetX * 4;
 	for (int y = 0; y < source.h; y++) {
 		const byte *sourcePixel = sourceLine;
@@ -624,6 +624,7 @@ AnimationDrawRequest::AnimationDrawRequest(Animation *animation, int32 frameI, V
 }
 
 void AnimationDrawRequest::draw() {
+	g_engine->renderer().setLodBias(_lodBias);
 	if (_is3D)
 		_animation->draw3D(_frameI, _topLeft, _scale * kInvBaseScale, _blendMode, _color);
 	else
