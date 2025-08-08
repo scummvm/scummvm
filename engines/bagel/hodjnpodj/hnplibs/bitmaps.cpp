@@ -279,34 +279,27 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 			if ((((*pSrcRect).right - (*pSrcRect).left) != ((*pDstRect).right - (*pDstRect).left)) ||
 			        (((*pSrcRect).bottom - (*pSrcRect).top) != ((*pDstRect).bottom - (*pDstRect).top))) {
 				(*pDC).SetStretchBltMode(STRETCH_DELETESCANS);
-				if (GetDeviceCaps((*pDC).m_hDC, RASTERCAPS) & RC_STRETCHBLT)
-					bSuccess = (*pDC).StretchBlt((*pDstRect).left,
-					                             (*pDstRect).top,
-					                             (*pDstRect).right - (*pDstRect).left,
-					                             (*pDstRect).bottom - (*pDstRect).top,
-					                             pWorkDC,
-					                             (*pSrcRect).left,
-					                             (*pSrcRect).top,
-					                             (*pSrcRect).right - (*pSrcRect).left,
-					                             (*pSrcRect).bottom - (*pSrcRect).top,
-					                             dwMode);
-				else {
-					hDib = (HDIB) BitmapToDIB((HBITMAP)(*pBitmap).m_hObject, (HPALETTE)(*pPalette).m_hObject);
-					if (hDib != nullptr) {
-						bSuccess = PaintDIB((*pDC).m_hDC, pDstRect, (HDIB) hDib, pSrcRect, pPalette);
-						GlobalFree(hDib);
-					} else
-						bSuccess = FALSE;
-				}
-			} else
+				assert(GetDeviceCaps((*pDC).m_hDC, RASTERCAPS) & RC_STRETCHBLT);
+				bSuccess = (*pDC).StretchBlt((*pDstRect).left,
+					(*pDstRect).top,
+					(*pDstRect).right - (*pDstRect).left,
+					(*pDstRect).bottom - (*pDstRect).top,
+					pWorkDC,
+					(*pSrcRect).left,
+					(*pSrcRect).top,
+					(*pSrcRect).right - (*pSrcRect).left,
+					(*pSrcRect).bottom - (*pSrcRect).top,
+					dwMode);
+			} else {
 				bSuccess = (*pDC).BitBlt((*pDstRect).left,
-				                         (*pDstRect).top,
-				                         (*pSrcRect).right - (*pSrcRect).left,
-				                         (*pSrcRect).bottom - (*pSrcRect).top,
-				                         pWorkDC,
-				                         (*pSrcRect).left,
-				                         (*pSrcRect).top,
-				                         dwMode);
+					(*pDstRect).top,
+					(*pSrcRect).right - (*pSrcRect).left,
+					(*pSrcRect).bottom - (*pSrcRect).top,
+					pWorkDC,
+					(*pSrcRect).left,
+					(*pSrcRect).top,
+					dwMode);
+			}
 		}
 	}
 
@@ -559,20 +552,11 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 			if ((dx != 0) && (dy != 0) &&
 			        ((dx != cBitmapData.bmWidth) || (dy != cBitmapData.bmHeight))) {
 				(*pDC).SetStretchBltMode(STRETCH_DELETESCANS);
-				if (GetDeviceCaps((*pDC).m_hDC, RASTERCAPS) & RC_STRETCHBLT)
-					bSuccess = (*pDC).StretchBlt(x, y, dx, dy, pWorkDC, 0, 0, cBitmapData.bmWidth, cBitmapData.bmHeight, SRCCOPY);
-				else {
-					hDib = (HDIB) BitmapToDIB((HBITMAP)(*pBitmap).m_hObject, (HPALETTE)(*pPalette).m_hObject);
-					if (hDib != nullptr) {
-						DstRect.SetRect(x, y, x + dx, y + dy);
-						SrcRect.SetRect(0, 0, cBitmapData.bmWidth, cBitmapData.bmHeight);
-						bSuccess = PaintDIB((*pDC).m_hDC, &DstRect, (HDIB) hDib, &SrcRect, pPalette);
-						GlobalFree(hDib);
-					} else
-						bSuccess = FALSE;
-				}
-			} else
+				assert(GetDeviceCaps((*pDC).m_hDC, RASTERCAPS) & RC_STRETCHBLT);
+				bSuccess = (*pDC).StretchBlt(x, y, dx, dy, pWorkDC, 0, 0, cBitmapData.bmWidth, cBitmapData.bmHeight, SRCCOPY);
+			} else {
 				bSuccess = (*pDC).BitBlt(x, y, cBitmapData.bmWidth, cBitmapData.bmHeight, pWorkDC, 0, 0, SRCCOPY);
+			}
 		}
 	}
 

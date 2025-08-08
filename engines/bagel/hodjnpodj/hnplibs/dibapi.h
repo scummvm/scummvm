@@ -145,7 +145,6 @@ extern HDIB ReadDIBFile(CFile &file);
  */
 extern HDIB ReadDIBResource(const char *pszPathName);
 
-HANDLE    BitmapToDIB(HBITMAP hBitmap, HPALETTE hPal);
 void      InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
                                        DWORD dwWidth,
                                        DWORD dwHeight,
