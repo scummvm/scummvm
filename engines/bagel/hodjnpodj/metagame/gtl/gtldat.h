@@ -139,6 +139,8 @@ inline long LSQ(CPoint p1, CPoint p2) {
 #define DUMPSTAT_BOTH    0x2000
 #define DUMPSTAT_EVERYTHING 0xFFFF
 
+class CGtlView;
+
 class CMemDC {
 public:
 	CMemDC(VOID);
@@ -199,9 +201,6 @@ class CMap {
  */
 class CNode {
 public:
-	#ifdef NODEEDIT
-	char m_szSector[MAX_LABEL_LENGTH] = { 0 }; // node sector
-	#endif
 	char m_szLabel[MAX_LABEL_LENGTH] = { 0 };  // node label
 	int m_iLinks[MAX_LINKS_PER_NODE] = { 0 };   // up to 10 links per node
 	int m_iLocationCode = 0;			// MG_LOC_xxxx to specify location

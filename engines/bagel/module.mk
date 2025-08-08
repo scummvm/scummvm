@@ -199,7 +199,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/gtl/gtl.o \
 	hodjnpodj/metagame/gtl/gtlcmp.o \
 	hodjnpodj/metagame/gtl/gtlcpl.o \
-	hodjnpodj/metagame/gtl/gtldcp.o \
 	hodjnpodj/metagame/gtl/gtldoc.o \
 	hodjnpodj/metagame/gtl/gtlfrm.o \
 	hodjnpodj/metagame/gtl/gtllex.o \
@@ -208,7 +207,6 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/gtl/gtlmve.o \
 	hodjnpodj/metagame/gtl/gtlui.o \
 	hodjnpodj/metagame/gtl/gtlview.o \
-	hodjnpodj/metagame/gtl/infdlg.o \
 	hodjnpodj/metagame/gtl/optdlg.o \
 	hodjnpodj/metagame/gtl/pawn.o \
 	hodjnpodj/metagame/gtl/rules.o \

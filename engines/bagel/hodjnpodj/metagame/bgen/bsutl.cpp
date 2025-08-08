@@ -99,9 +99,6 @@ BOOL CBsuSet::InitWndBsuSet(CWnd *xpWnd, BOOL bScrollView, BOOL bScrollBars, CBs
 	m_xpWnd = xpWnd;
 	m_bScrollView = bScrollView;
 	m_bScrollBars = bScrollBars;
-#ifdef NODEEDIT
-	m_iScrollCount = 1;
-#endif
 
 	xpHBar->m_iBarType = BSCT_HORZ;
 	xpVBar->m_iBarType = BSCT_VERT;
@@ -121,9 +118,7 @@ BOOL CBsuSet::InitWndBsuSet(CWnd *xpWnd, BOOL bScrollView, BOOL bScrollBars, CBs
 
 		if (!xpWnd)
 			m_xpWnd = xpLinkSet->m_xpWnd;
-#ifdef NODEEDIT
-		m_iScrollCount = m_xpSetLink->m_iScrollCount;
-#endif
+
 	} else {
 		m_bPrimary = TRUE;
 	}
@@ -133,67 +128,6 @@ cleanup:
 	JXELEAVE(CBsuSet::InitWndBsuSet);
 	RETURN(iError != 0);
 }
-
-#ifdef NODEEDIT
-//* CBsuSet::InitDlgBsuSet -- initialize bsu set for dialog box
-BOOL CBsuSet::InitDlgBsuSet(CDialog *xpDlg, CBsuSet *xpLinkSet)
-// m_xpDlg -- dialog box for which scroll bar set is to be initialized
-// xpLinkSet -- bsu set for 2nd set of scroll bars
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CBsuSet::InitDlgBsuSet);
-	int iError = 0;        // error code
-
-	m_xpDlg = xpDlg;
-
-	m_iScrollCount = 1;
-
-	if (xpLinkSet) {
-		xpLinkSet->m_xpSetLink = this;
-		m_xpSetLink = xpLinkSet;
-		m_iScrollCount = m_xpSetLink->m_iScrollCount;
-	} else
-		m_bPrimary = TRUE;
-
-	// cleanup:
-
-	JXELEAVE(CBsuSet::InitDlgBsuSet);
-	RETURN(iError != 0);
-}
-
-
-//* CBsuSet::AddBarToSet -- add scroll bar to scroll bar set
-BOOL CBsuSet::AddBarToSet(int iId, int iWndScrollCode, int iBarType)
-// iId -- id code of scroll bar control
-// iWndScrollCode -- SB_HORZ or SB_VERT
-// iBarType -- BSCT_xxxx ; if 0, match to iWndScrollCode
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CBsuSet::AddBarToSet);
-	int iError = 0;        // error code
-
-	CBsuBar *xpBar = new CBsuBar;
-
-	if (!xpBar) {
-		iError = 100;
-		goto cleanup;
-	}
-
-	xpBar->m_xpNextBar = m_xpBarChain;
-	m_xpBarChain = xpBar;
-	xpBar->m_iId = iId;
-
-	xpBar->m_iWndScrollCode = iWndScrollCode;
-
-	if ((xpBar->m_iBarType = iBarType) == nullptr)
-		xpBar->m_iBarType = (iWndScrollCode == SB_HORZ) ? BSCT_HORZ : (iWndScrollCode == SB_VERT) ? BSCT_VERT : BSCT_GEN;
-
-cleanup:
-
-	JXELEAVE(CBsuSet::AddBarToSet);
-	RETURN(iError != 0);
-}
-#endif
 
 //* CBsuSet::PrepareWndBsuSet -- prepare window scroll bar set
 //		by filling in the device fields
@@ -315,68 +249,6 @@ exit:
 	JXELEAVE(CBsuSet::UpdateWndDeviceExtents);
 	RETURN(iError != 0);
 }
-
-#ifdef NODEEDIT
-
-//* CBsuSet::LinkWndBsuSet -- link window/dialog bsu sets
-BOOL CBsuSet::LinkWndBsuSet(void)
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CBsuSet::LinkWndBsuSet);
-	int iError = 0;        // error code
-	int iCount;        // loop variable
-	CBsuSet *xpDlgSet = this;
-	CBsuSet *xpWndSet = m_xpSetLink;  // bsu set for window
-	CBsuBar *xpWHBar = nullptr, *xpWVBar = nullptr;
-	CBsuBar *xpDHBar = nullptr, *xpDVBar = nullptr;
-	CBsuBar *xpDBar, *xpWBar;
-	CScrollBar *xpScrollBar;
-
-	// test for reversal in arguments
-	if (xpWndSet->m_xpDlg && xpDlgSet->m_xpWnd)
-		xpDlgSet = xpWndSet, xpWndSet = this;
-
-	if (!xpWndSet->m_xpWnd || !xpDlgSet->m_xpDlg) {
-		iError = 100;
-		goto cleanup;
-	}
-
-	if (((iError = xpDlgSet->GetWindowBars(xpDHBar, xpDVBar)) != 0) || ((iError = xpWndSet->GetWindowBars(xpWHBar, xpWVBar)) != 0))
-		goto cleanup;
-
-	xpDlgSet->m_xpWnd = xpWndSet->m_xpWnd;
-
-	for (iCount = 0, xpDBar = xpDHBar, xpWBar = xpWHBar; iCount++ < 2; xpDBar = xpDVBar, xpWBar = xpWVBar) {
-		xpDBar->m_iDocSize = xpWBar->m_iDocSize;
-		xpDBar->m_iWndSize = xpWBar->m_iWndSize;
-
-		xpDBar->m_iMargin1 = xpWBar->m_iMargin1;
-		xpDBar->m_iMargin2 = xpWBar->m_iMargin2;
-
-		xpDBar->m_iMin = xpWBar->m_iMin;
-		//xpDBar->m_iMax = xpWBar->m_iMax ;
-		xpDBar->m_iPosition = xpWBar->m_iPosition;
-
-		if ((xpDBar->m_iMax = xpDBar->m_iDocSize - xpDBar->m_iWndSize + xpDBar->m_iMargin1 + xpDBar->m_iMargin2) < 0)
-			xpDBar->m_iMax = 0;
-
-		if ((xpScrollBar = (CScrollBar *)m_xpDlg->GetDlgItem(xpDBar->m_iId)) != nullptr) {
-
-			xpScrollBar->SetScrollRange(xpDBar->m_iMin, xpDBar->m_iMax, TRUE);
-			xpScrollBar->SetScrollPos(xpDBar->m_iPosition);
-		}
-
-		if (xpDBar->m_lpiVariable)
-			*xpDBar->m_lpiVariable = xpDBar->m_iPosition;
-	}
-
-cleanup:
-
-	JXELEAVE(CBsuSet::LinkWndBsuSet);
-	RETURN(iError != 0);
-}
-
-#endif
 
 //* CBsuSet::PrepareDc -- replace OnPrepareDC -- set the viewport and
 //	the clip rectangle to the specified region
@@ -654,29 +526,19 @@ BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition, BOOL bScrollWindow)
 #if 1
 		//xpDc->ScrollDC(cOldScrollPosition.x - cScrollPosition.x,cOldScrollPosition.y - cScrollPosition.y,&cScrollRegion, &cScrollRegion, nullptr, &cUncoverRect);
 
-#ifdef NODEEDIT
-		++m_iScrollCount;  // increment scroll count
-
-		if (m_xpSetLink)
-			++m_xpSetLink->m_iScrollCount;
-#endif
 		//xpDc->LPtoDP(&cUncoverRect) ;
 		//m_xpWnd->InvalidateRect(&cUncoverRect) ;
 
 #else   // do x and y scrolling separately so repaint will be faster
 		xpDc->ScrollDC(cOldScrollPosition.x - cScrollPosition.x, 0, &cScrollRegion, &cScrollRegion, nullptr, &cUncoverRect);
-#ifdef NODEEDIT
-		++m_iScrollCount;  // increment scroll count
-#endif
+
 		//xpDc->LPtoDP(&cUncoverRect) ;
 		//m_xpWnd->InvalidateRect(&cUncoverRect) ;
 		m_xpWnd->InvalidateRect(&cHPaintRect);
 		m_xpWnd->UpdateWindow();   // update between scrolls
 
 		xpDc->ScrollDC(0, cOldScrollPosition.y - cScrollPosition.y, &cScrollRegion, &cScrollRegion, nullptr, &cUncoverRect);
-#ifdef NODEEDIT
-		++m_iScrollCount;  // increment scroll count
-#endif
+
 		//xpDc->LPtoDP(&cUncoverRect) ;
 		//m_xpWnd->InvalidateRect(&cUncoverRect) ;
 		m_xpWnd->InvalidateRect(&cVPaintRect);
@@ -717,9 +579,7 @@ BOOL CBsuSet::ScrollWindowToPoint(CPoint cScrollPosition, BOOL bScrollWindow)
 #if 0
 		xpDc->LPtoDP(&cHPaintRect);
 		xpDc->LPtoDP(&cVPaintRect);
-#ifdef NODEEDIT
-		++m_iScrollCount;  // increment scroll count
-#endif
+
 		m_xpWnd->InvalidateRect(&cHPaintRect);
 		m_xpWnd->UpdateWindow();   // update between scrolls
 
@@ -962,41 +822,6 @@ cleanup:
 	JXELEAVE(CBsuSet::PointLogical);
 	RETURN(crPoint);
 }
-
-#ifdef NODEEDIT
-
-//* CBsuSet::GetInfo -- get information about scroll set
-BOOL CBsuSet::GetInfo(CBsuInfo *xpBsuInfo)
-// xpBsuInfo -- information block where data is to be stored
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CBsuSet::GetInfo);
-	int iError = 0;        // error code
-
-	memset(&xpBsuInfo->m_cStartData, 0, &xpBsuInfo->m_cEndData - &xpBsuInfo->m_cStartData);
-
-	CBsuBar *xpHBar = nullptr, *xpVBar = nullptr;
-
-	if (GetWindowBars(xpHBar, xpVBar)) {
-		iError = 100;
-		goto cleanup;
-	}
-
-	xpBsuInfo->m_cWndSize = CSize(xpHBar->m_iWndSize, xpVBar->m_iWndSize);
-	xpBsuInfo->m_cTotalSize = CSize(xpHBar->m_iDocSize, xpVBar->m_iDocSize);
-	xpBsuInfo->m_cDevWndSize = CSize(xpHBar->m_iDevWndSize, xpVBar->m_iDevWndSize);
-
-	xpBsuInfo->m_cScrollRangeRect = CRect(xpHBar->m_iMin, xpVBar->m_iMin, xpHBar->m_iMax, xpVBar->m_iMax);
-	xpBsuInfo->m_cScrollPosition = CPoint(xpHBar->m_iPosition, xpVBar->m_iPosition);
-#ifdef NODEEDIT
-	xpBsuInfo->m_iScrollCount = m_iScrollCount;
-#endif
-cleanup:
-
-	JXELEAVE(CBsuSet::GetInfo);
-	RETURN(iError != 0);
-}
-#endif
 
 } // namespace Gtl
 } // namespace Metagame

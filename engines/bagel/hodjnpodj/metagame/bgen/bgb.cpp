@@ -1052,10 +1052,6 @@ void CBgbMgr::DoAnimations(void) {
 	CBgbObject *pBgbObject;
 	CLList *pList;
 
-	#ifdef NODEEDIT
-	return;
-	#endif
-
 	// if animations are ON and not paused
 	//
 	if (lpMetaGameStruct->m_bAnimations && !m_bAnimationsPaused) {

@@ -76,18 +76,6 @@ BOOL CGtlDoc::OnNewDocument() {
 
 //* CGtlDoc::DeleteContents() --
 void CGtlDoc::DeleteContents() {
-	if (m_xpcInfDlg)
-		m_xpcInfDlg->DestroyWindow() ;
-
-	if (m_xpcCtlDlg)
-		m_xpcCtlDlg->DestroyWindow() ;
-
-	if (m_xpcNodeDlg)
-		m_xpcNodeDlg->DestroyWindow() ;
-
-	if (m_xpcMenuDlg)
-		m_xpcMenuDlg->DestroyWindow() ;
-
 	if (m_xpGtlData)
 		delete m_xpGtlData ;
 
@@ -116,13 +104,6 @@ void CGtlDoc::InitDocument(const char *xpszPathName)
 
 	m_xpGtlData->m_bStartMetaGame = xpGtlApp->m_bStartMetaGame ;
 	UpdateAllViews(nullptr, 0L, nullptr) ;
-
-	#ifdef NODEEDIT
-	if (xpGtlApp->m_bMenuDialog && m_xpGtlFrame)
-		m_xpGtlFrame->ShowMenuDialog() ;
-	if (xpGtlApp->m_bControlDialog && m_xpGtlFrame)
-		m_xpGtlFrame->ShowControlDialog() ;
-	#endif
 }
 
 //* CGtlDoc::OnOpenDocument --
@@ -136,10 +117,6 @@ BOOL CGtlDoc::OnOpenDocument(const char *xpszPathName) {
 
 //* CGtlDoc::OnSaveDocument --
 BOOL CGtlDoc::OnSaveDocument(const char *xpszPathName) {
-	#ifdef NODEEDIT
-	m_xpGtlData->Decompile(xpszPathName) ;
-	#endif
-
 	return TRUE;
 }
 
@@ -207,25 +184,8 @@ VOID CGtlDoc::OnChangedViewList() {
 }
 
 //* CGtlDoc::FixChecks -- fix dialog box check marks
-BOOL CGtlDoc::FixChecks(void)
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CGtlDoc::FixChecks) ;
-	int iError = 0 ;        // error code
-
-	if (m_xpGtlFrame && m_xpGtlFrame->GetMenu()) {
-
-		CMenu *menu = CMenu::FromHandle(m_xpGtlFrame->GetMenu());
-		menu->CheckMenuItem(ID_VIEW_INFO_DLG, m_xpcInfDlg ? MF_CHECKED : MF_UNCHECKED);
-		menu->CheckMenuItem(ID_VIEW_CTL_DLG, m_xpcCtlDlg ? MF_CHECKED : MF_UNCHECKED);
-		menu->CheckMenuItem(ID_VIEW_NODE_DLG, m_xpcNodeDlg ? MF_CHECKED : MF_UNCHECKED);
-		menu->CheckMenuItem(ID_VIEW_MENU_DLG, m_xpcMenuDlg ? MF_CHECKED : MF_UNCHECKED);
-	}
-
-// cleanup:
-
-	JXELEAVE(CGtlDoc::FixChecks) ;
-	RETURN(iError != 0) ;
+BOOL CGtlDoc::FixChecks() {
+	return FALSE;
 }
 
 } // namespace Gtl

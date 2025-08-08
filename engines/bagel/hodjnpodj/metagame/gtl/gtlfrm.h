@@ -23,7 +23,6 @@
 #define BAGEL_METAGAME_GTL_GTLFRM_H
 
 #include "bagel/hodjnpodj/metagame/gtl/gtl.h"
-#include "bagel/hodjnpodj/metagame/gtl/infdlg.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
 #include "bagel/hodjnpodj/metagame/bgen/note.h"
 

@@ -153,11 +153,6 @@ BOOL CGtlData::InitMetaGame(CGtlView *xpGtlView, BOOL bInit) {
 					//bCenter = TRUE ;
 				}
 			}
-		//ReturnFromInterface() ;
-		#ifdef NODEEDIT
-		ModifySelectNode() ;    // deselect any node
-		SelectLink() ;          // deselect any link
-		#endif
 
 		// Centered screen around current player
 		//

@@ -38,10 +38,6 @@ protected: // create from serialization only
 public:
 	char m_cStartData ;
 	class CGtlData *m_xpGtlData ;   // data pointer
-	class CInfDlg *m_xpcInfDlg ;    // modeless information dialog
-	class CCtlDlg *m_xpcCtlDlg ;    // modeless control dialog
-	class CNodeDlg *m_xpcNodeDlg ;  // modeless node dialog
-	class CMenuDlg *m_xpcMenuDlg ;  // modeless menu dialog
 	class CGtlView *m_xpcLastFocusView ;    // last view with focus
 	class CGtlView *m_xpcLastMouseView ;    // last view touched by mouse
 

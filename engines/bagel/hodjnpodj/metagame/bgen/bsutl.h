@@ -76,9 +76,7 @@ public:
 	BOOL m_bInUpdateBars;  // prevent UpdateBars recursion
 	CDialog *m_xpDlg;      // dialog to be updated
 	CWnd *m_xpWnd;     // window to be scrolled
-#ifdef NODEEDIT
-	int m_iScrollCount;    // # of times scrolled
-#endif
+
 	BOOL m_bDebugMessages;
 	BOOL m_bPrimary;   // primary in linked sets
 	BOOL m_bScrollView;    // window uses CScrollView
@@ -92,11 +90,6 @@ public:
 		memset(&m_cStartData, 0,
 			&m_cEndData - &m_cStartData);
 	}
-#ifdef NODEEDIT
-	int GetScrollCount(void) {
-		return (m_iScrollCount);
-	}
-#endif
 
 	~CBsuSet(void);
 	//- InitWndBsuSet -- initialize bsu set for a window
@@ -176,9 +169,7 @@ public:
 	CSize m_cDevWndSize, cDevTotalSize;
 	CRect m_cScrollRangeRect;
 	CPoint m_cScrollPosition;
-#ifdef NODEEDIT
-	int m_iScrollCount;
-#endif
+
 	char m_cEndData;
 };
 

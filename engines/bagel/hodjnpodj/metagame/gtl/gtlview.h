@@ -72,11 +72,6 @@ private:
 	//- OnInitialUpdate --
 	void OnInitialUpdate(void);
 
-	#ifdef NODEEDIT
-	//- CheckSize -- check window size, adjust if necessary
-	BOOL CheckSize(void);
-	#endif
-
 protected:
 	//- PreCreateWindow -- change view window style
 	BOOL PreCreateWindow(CREATESTRUCT& cCs) override;

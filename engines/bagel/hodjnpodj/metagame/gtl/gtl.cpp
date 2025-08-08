@@ -104,14 +104,6 @@ BOOL CGtlApp::InitInstance() {
 
 	Common::strcpy_s(m_szFilename, "META.GTL");
 
-	#ifdef NODEEDIT
-	m_bControlDialog = m_cBdbgMgr.GetDebugInt("controldialog") ;
-	m_bMenuDialog = m_cBdbgMgr.GetDebugInt("menudialog") ;
-	m_bNodeDialog = m_cBdbgMgr.GetDebugInt("nodedialog") ;
-	m_bInfoDialog = m_cBdbgMgr.GetDebugInt("infodialog") ;
-	//m_bStartMetaGame = FALSE;
-	#endif
-
 	m_iNumOpens = 0;
 
 	return TRUE;

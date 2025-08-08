@@ -25,7 +25,6 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtldoc.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
-#include "bagel/hodjnpodj/metagame/gtl/infdlg.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 
 namespace Bagel {
@@ -50,22 +49,6 @@ IMPLEMENT_DYNCREATE(CGtlView, MFC_VIEW)
 
 BEGIN_MESSAGE_MAP(CGtlView, MFC_VIEW)
 	//{{AFX_MSG_MAP(CGtlView)
-
-// those functions not used in game shoule be put into here and
-// then ifdef'd out
-#ifdef NODEEDIT
-	ON_WM_HSCROLL()
-	ON_WM_VSCROLL()
-	ON_WM_MOUSEMOVE()
-	ON_WM_LBUTTONDBLCLK()
-	ON_WM_RBUTTONDBLCLK()
-	ON_WM_RBUTTONDOWN()
-	ON_WM_SETFOCUS()
-	ON_WM_SIZE()
-	ON_WM_KEYUP()
-	ON_COMMAND(ID_FILE_PRINT, MFC_VIEW::OnFilePrint)
-	ON_COMMAND(ID_FILE_PRINT_PREVIEW, MFC_VIEW::OnFilePrintPreview)
-#endif
 	ON_WM_KEYDOWN()
 	ON_WM_SYSKEYDOWN()
 	ON_WM_LBUTTONDOWN()
@@ -121,9 +104,6 @@ cleanup:
 	JXELEAVE(CGtlView::OnCreate) ;
 	return (iRetval) ;
 }
-
-
-#ifndef NODEEDIT
 
 //* CGtlView::OnUpdate -- called when document changes to update view
 void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
@@ -196,111 +176,6 @@ cleanup:
 	JXELEAVE(CGtlView::OnUpdate) ;
 	RETURN_VOID ;
 }
-
-#else
-
-//* CGtlView::OnUpdate -- called when document changes to update view
-void CGtlView::OnUpdate(CView *xpSender, LPARAM lHint, CObject *xpHint)
-// returns: void
-{
-//    dbgtrc = TRUE ;   // debugging code
-
-	JXENTER(CGtlView::OnUpdate) ;
-	int iError = 0 ;        // error code
-	CGtlHint * xpcGtlHint = (CGtlHint *)xpHint ;
-	BOOL bDone = FALSE ;    // TRUE when hint is fully identified
-
-	// The document has informed this view that some data has changed.
-	CGtlDoc* xpDoc = GetDocument() ;
-	CGtlData * xpGtlData = xpDoc->m_xpGtlData ;
-
-	if (!xpGtlData || this == xpSender)
-		// sending to all views but current one
-		goto cleanup ;      // just exit
-
-	switch (lHint) {
-	case HINT_UPDATE_RECT:
-		if (xpHint) {
-//      CClientDC cDc(this) ;
-			#if NEWSCROLL
-//      m_cViewBsuSet.PrepareDc(&cDc) ;
-			#else
-			OnPrepareDC(&cDc) ;
-			#endif
-
-//*****     cDc.LPtoDP(&xpcGtlHint->cHintRect) ;
-			if (xpcGtlHint->m_bWmPaint) {
-				InvalidateRect(&xpcGtlHint->cHintRect) ;
-				UpdateWindow() ;
-			} else      // direct paint
-				if (!xpGtlData->m_bInhibitDraw)
-					xpGtlData->Draw(this, &xpcGtlHint->cHintRect) ;
-
-			bDone = TRUE ;
-		}
-		break ;
-
-	case HINT_UPDATE_FULL:
-		Invalidate(TRUE) ;
-		bDone = TRUE ;
-		break ;
-
-	case HINT_INIT_METAGAME:
-		if (xpDoc->m_xpGtlData) {
-//      xpDoc->m_xpGtlData->Draw(this, nullptr) ;
-			InvalidateRect(nullptr) ;
-			UpdateWindow() ;
-			xpDoc->m_xpGtlData->InitMetaGame(this), bDone = TRUE ;
-
-			// start the animations
-			SetTimer(TIMER_ID, 100, nullptr);
-		}
-		break ;
-
-	case HINT_SIZE:     // change in size of document
-		if (xpDoc->m_xpGtlData)
-			xpDoc->m_xpGtlData->m_bChangeSize = TRUE ;
-		// make sure this flag is processed
-		// for all views
-		break ;
-
-	default:
-		break ;
-	}
-
-	if (!bDone)
-		Invalidate(TRUE) ;
-
-	if (xpDoc->m_xpGtlData)
-		xpDoc->m_xpGtlData->SpecifyUpdate(this) ;
-
-//  if (lHint || xpHint)
-//  {
-//  if (xpHint->IsKindOf(RUNTIME_CLASS(CStroke)))
-//  {
-//      // The hint is that a stroke as been added (or changed).
-//      // So, invalidate its rectangle.
-//      CStroke* pStroke = (CStroke*)xpHint;
-//      CClientDC dc(this);
-//      OnPrepareDC(&dc);
-//      CRect rectInvalid = pStroke->GetBoundingRect();
-//      dc.LPtoDP(&rectInvalid);
-//      InvalidateRect(&rectInvalid);
-//      return;
-//  }
-//  }
-
-	if (xpGtlData->m_bStartMetaGame) {
-		UpdateWindow() ;
-		xpGtlData->SetMetaGame(TRUE) ;
-	}
-
-cleanup:
-
-	JXELEAVE(CGtlView::OnUpdate) ;
-	RETURN_VOID ;
-}
-#endif
 
 //  A view's OnInitialUpdate() overrideable function is called immediately
 //  after the frame window is created, and the view within the frame
@@ -419,43 +294,6 @@ void CGtlView::OnDraw(CDC *xpDc) {
 	RETURN_VOID ;
 }
 
-#ifdef NODEEDIT
-//* CGtlView::CheckSize -- check window size, adjust if necessary
-BOOL CGtlView::CheckSize(void)
-// returns: TRUE if error, FALSE otherwise
-{
-	JXENTER(CGtlView::CheckSize) ;
-	int iError = 0 ;        // error code
-	static BOOL bSkipFix = TRUE ;   // for debugging
-
-	WINDOWPLACEMENT stWp ;
-
-	stWp.length = sizeof(stWp) ;
-
-	if (GetDocument()) {
-		GetWindowPlacement(&stWp) ;
-		if (stWp.showCmd == SW_SHOWNORMAL &&
-		        (stWp.rcNormalPosition.right
-		         < stWp.rcNormalPosition.left + 20
-		         || stWp.rcNormalPosition.bottom
-		         < stWp.rcNormalPosition.top + 20)) {
-			stWp.rcNormalPosition.right
-			    = stWp.rcNormalPosition.left + 200 ;
-			stWp.rcNormalPosition.bottom
-			    = stWp.rcNormalPosition.top + 200 ;
-			if (!bSkipFix)
-				((CWnd *)this)->SetWindowPlacement(&stWp) ;
-		}
-	}
-
-// cleanup:
-
-	JXELEAVE(CGtlView::CheckSize) ;
-	RETURN(iError != 0) ;
-}
-#endif
-
-
 /////////////////////////////////////////////////////////////////////////////
 // CGtlView message handlers
 
@@ -572,120 +410,6 @@ void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	JXELEAVE(CGtlView::OnKeyDown) ;
 }
 
-
-#ifdef NODEEDIT
-void CGtlView::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {
-	JXENTER(CGtlView::OnKeyUp) ;
-	int iError = 0 ;
-	CGtlDoc* xpDoc = GetDocument() ;
-	BOOL bShiftKey ;        // shift key status
-	int iMoveAmount = 1 ;   // amount to move cursor
-	POINT stPoint ;     // current cursor position
-
-	CClientDC cDc(this) ;   // client device context
-	CDC * xpDc = &cDc ;
-
-	#if NEWSCROLL
-	m_cViewBsuSet.PrepareDc(xpDc) ;
-	#else
-	OnPrepareDC(xpDc) ;
-	#endif
-
-
-//    CPoint cCurrentPosition = xpDc->GetCurrentPosition() ;
-//    CPoint cCurrentPosition = m_cCurrentPosition ;
-//                  // get current mouse position
-
-	::GetCursorPos(&stPoint) ;  // get current cursor position on screen
-
-	bShiftKey = ::GetKeyState(VK_SHIFT) < 0 ;
-	if (bShiftKey)
-		iMoveAmount = 10 ;
-
-	switch (nChar) {
-
-	case VK_LEFT:
-		::SetCursorPos(stPoint.x - iMoveAmount, stPoint.y) ;
-		break ;
-
-	case VK_RIGHT:
-		::SetCursorPos(stPoint.x + iMoveAmount, stPoint.y) ;
-		break ;
-
-	case VK_UP:
-		::SetCursorPos(stPoint.x, stPoint.y - iMoveAmount) ;
-		break ;
-
-	case VK_DOWN:
-		::SetCursorPos(stPoint.x, stPoint.y + iMoveAmount) ;
-		break ;
-
-	case VK_SPACE:  // space down is identical to left button down
-		xpDoc->m_xpGtlData->AcceptClick(this, m_cCurrentPosition, CLICK_LUP) ;
-		break ;
-
-	case VK_ADD:    // keypad plus same as double click
-		xpDoc->m_xpGtlData->AcceptClick(this, m_cCurrentPosition, CLICK_LDOUBLE) ;
-		break ;
-
-	case VK_DELETE:     // delete key
-		xpDoc->m_xpGtlData->AcceptDeleteKey(this) ;
-		break ;
-
-	default:
-		break ;
-	}
-	// TODO: Add your message handler code here and/or call default
-
-	CView::OnKeyUp(nChar, nRepCnt, nFlags);
-	JXELEAVE(CGtlView::OnKeyUp) ;
-}
-
-void CGtlView::OnMouseMove(UINT nFlags, CPoint cMousePoint) {
-	int iError = 0 ;
-
-	m_cCurrentPosition = cMousePoint ;
-	// save current mouse position
-
-
-	CGtlDoc* xpDoc = GetDocument() ;
-
-	if (xpDoc)
-		xpDoc->m_xpcLastMouseView = this ;
-
-	if (m_xpFrame)
-		m_xpFrame->m_xpcLastMouseView = this ;
-
-
-//  UpdateDialogs() ;
-
-	// TODO: Add your message handler code here and/or call default
-
-	if (nFlags & MK_LBUTTON)
-		xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_LMOVE);
-
-	else if (nFlags & MK_RBUTTON)
-		xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_RMOVE);
-
-	else
-		xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_UMOVE);
-
-	CView::OnMouseMove(nFlags, cMousePoint);
-}
-
-void CGtlView::OnLButtonDblClk(UINT nFlags, CPoint cMousePoint) {
-	JXENTER(CGtlView::OnLButtonDblClk) ;
-	int iError = 0 ;
-	// TODO: Add your message handler code here and/or call default
-	CGtlDoc* xpDoc = GetDocument() ;
-	xpDoc->m_xpGtlData->AcceptClick(this,
-	                                cMousePoint, CLICK_LDOUBLE) ;
-
-	CView::OnLButtonDblClk(nFlags, cMousePoint);
-	JXELEAVE(CGtlView::OnLButtonDblClk) ;
-}
-#endif
-
 void CGtlView::OnLButtonDown(UINT nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
@@ -706,26 +430,6 @@ void CGtlView::OnLButtonUp(UINT nFlags, CPoint cMousePoint) {
 		CView::OnLButtonUp(nFlags, cMousePoint);
 }
 
-#ifdef NODEEDIT
-void CGtlView::OnRButtonDblClk(UINT nFlags, CPoint cMousePoint) {
-	JXENTER(CGtlView::OnRButtonDblClk) ;
-	int iError = 0 ;
-
-	HWND hParentWnd = ::GetParent(m_hWnd) ;
-	DWORD dwStyle = ::GetWindowLong(hParentWnd, GWL_STYLE) ;
-
-	dwStyle |= WS_CLIPCHILDREN ;
-	::SetWindowLong(hParentWnd, GWL_STYLE, dwStyle) ;
-
-	// TODO: Add your message handler code here and/or call default
-	CGtlDoc* xpDoc = GetDocument() ;
-	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_RDOUBLE) ;
-
-	CView::OnRButtonDblClk(nFlags, cMousePoint);
-	JXELEAVE(CGtlView::OnRButtonDblClk) ;
-}
-#endif
-
 void CGtlView::OnRButtonDown(UINT nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_RDOWN) ;
@@ -739,84 +443,6 @@ void CGtlView::OnRButtonUp(UINT nFlags, CPoint cMousePoint) {
 
 	CView::OnRButtonUp(nFlags, cMousePoint);
 }
-
-#ifdef NODEEDIT
-
-void CGtlView::OnSize(UINT nType, int cx, int cy) {
-	JXENTER(CGtlView::OnSize) ;
-	int iError = 0 ;
-	CGtlDoc* xpDoc = GetDocument() ;
-
-	if (m_bBsuInit && xpDoc->m_xpGtlData) {
-		xpDoc->m_xpGtlData->m_bChangeSize = TRUE ;
-		xpDoc->m_xpGtlData->SpecifyUpdate(this) ;
-	}
-
-	UpdateDialogs();
-
-	CView::OnSize(nType, cx, cy);
-
-	// TODO: Add your message handler code here
-
-	JXELEAVE(CGtlView::OnSize) ;
-}
-
-
-void CGtlView::OnSetFocus(CWnd *pOldWnd) {
-	CGtlDoc* xpDoc = GetDocument() ;
-
-	if (xpDoc) {
-		xpDoc->m_xpcLastFocusView = this ;
-		xpDoc->FixChecks() ;
-	}
-
-	if (m_xpFrame)
-		m_xpFrame->m_xpcLastFocusView = this ;
-
-	UpdateDialogs() ;
-
-	CView::OnSetFocus(pOldWnd);
-}
-
-
-void CGtlView::UpdateDialogs(void) {
-	JXENTER(CGtlView::UpdateDialogs) ;
-	int iError = 0 ;
-	CGtlDoc* xpDoc = GetDocument() ;
-
-	if (xpDoc->m_xpGtlData)
-		xpDoc->m_xpGtlData->UpdateDialogs(FALSE) ;
-
-	JXELEAVE(CGtlView::UpdateDialogs) ;
-}
-
-void CGtlView::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
-	JXENTER(CGtlView::OnHScroll) ;
-	int iError = 0 ;
-	// TODO: Add your message handler code here and/or call default
-
-	#if NEWSCROLL
-	m_cViewBsuSet.OnScroll(nSBCode, nPos, pScrollBar, BSCT_HORZ) ;
-	#else
-	MFC_VIEW::OnHScroll(nSBCode, nPos, pScrollBar);
-	#endif
-	JXELEAVE(CGtlView::OnHScroll) ;
-}
-
-void CGtlView::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
-	JXENTER(CGtlView::OnVScroll) ;
-	int iError = 0 ;
-	// TODO: Add your message handler code here and/or call default
-	#if NEWSCROLL
-	m_cViewBsuSet.OnScroll(nSBCode, nPos, pScrollBar, BSCT_VERT) ;
-	#else
-
-	MFC_VIEW::OnVScroll(nSBCode, nPos, pScrollBar);
-	#endif
-	JXELEAVE(CGtlView::OnVScroll) ;
-}
-#endif
-
 
 LRESULT CGtlView::OnMCINotify(WPARAM wParam, LPARAM lParam) {
 	CSound  *pSound;
