@@ -313,17 +313,18 @@ static constexpr uint32 kNoThumbnailMagicValue = 0xBADBAD;
 
 bool AlcachofaEngine::syncThumbnail(MySerializer &s, Graphics::ManagedSurface *thumbnail) {
 	if (s.isLoading()) {
-		Graphics::Surface *readThumbnail = nullptr;
-		if (Graphics::loadThumbnail(s.readStream(), readThumbnail, thumbnail == nullptr) && readThumbnail != nullptr) {
+		auto prevPosition = s.readStream().pos();
+		Image::PNGDecoder pngDecoder;
+		if (pngDecoder.loadStream(s.readStream()) && pngDecoder.getSurface () != nullptr) {
 			if (thumbnail != nullptr) {
 				thumbnail->free();
-				*thumbnail->surfacePtr() = *readThumbnail;
+				thumbnail->copyFrom(*pngDecoder.getSurface());
 			}
 		}
 		else {
 			// If we do not get a thumbnail, maybe we get at least the marker that there is no thumbnail
-			uint32 magicValue = 0;
-			s.syncAsUint32LE(magicValue);
+			s.readStream().seek(prevPosition, SEEK_SET);
+			uint32 magicValue = s.readStream().readUint32LE();
 			if (magicValue != kNoThumbnailMagicValue)
 				return false; // the savegame is not valid
 			else // this is not an error, just a pity
@@ -333,11 +334,10 @@ bool AlcachofaEngine::syncThumbnail(MySerializer &s, Graphics::ManagedSurface *t
 	else {
 		if (thumbnail == nullptr ||
 			thumbnail->getPixels() == nullptr ||
-			!Graphics::saveThumbnail(s.writeStream(), *thumbnail)) {
+			!Image::writePNG(s.writeStream(), *thumbnail)) {
 			// We were not able to get a thumbnail, save a value that denotes that situation
 			warning("Could not save in-game thumbnail");
-			uint32 magicValue = kNoThumbnailMagicValue;
-			s.syncAsUint32LE(magicValue);
+			s.writeStream().writeUint32LE(kNoThumbnailMagicValue);
 		}
 	}
 	return true;
