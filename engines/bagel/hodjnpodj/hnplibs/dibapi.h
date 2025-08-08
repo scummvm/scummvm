@@ -121,15 +121,6 @@ extern HBITMAP DIBtoBitmap(HDC hDC, HPALETTE hPal, HDIB hDib);
 extern CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal);
 
 /**
- * Saves the specified DIB into the specified CFile.
- * The CFile is opened and closed by the caller.
- * @param hDib		Handle to the dib to save
- * @param file		Open CFile used to save DIB
- * @return			TRUE if successful, else FALSE or CFileException
- */
-extern BOOL SaveDIB(HDIB hDib, CFile &file);
-
-/**
  * Reads in the specified DIB file into a global chunk of memory.
  * @param file		Bitmap file to read
  * @return			A handle to a dib (hDIB) if successful.

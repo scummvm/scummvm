@@ -195,36 +195,8 @@ BOOL CDibDoc::OpenDocument(const char *pszPathName) {
 
 
 BOOL CDibDoc::SaveDocument(const char *pszPathName) {
-	CFile file;
-	CFileException fe;
-
-	if (!file.Open(pszPathName, CFile::modeCreate |
-	               CFile::modeReadWrite | CFile::shareExclusive, &fe)) {
-		ReportSaveLoadException(pszPathName, &fe,
-		                        TRUE, AFX_IDP_INVALID_FILENAME);
-		return FALSE;
-	}
-
-	// replace calls to Serialize with SaveDIB function
-	BOOL bSuccess = FALSE;
-	TRY {
-		//      BeginWaitCursor();
-		bSuccess = SaveDIB(m_hDIB, file);
-		file.Close();
-	}
-	CATCH(CException, eSave) {
-		file.Abort(); // will not throw an exception
-		//      EndWaitCursor();
-		ReportSaveLoadException(pszPathName, eSave,
-		                        TRUE, AFX_IDP_FAILED_TO_SAVE_DOC);
-		return FALSE;
-	}
-	END_CATCH
-
-	//  EndWaitCursor();
-	SetModifiedFlag(FALSE);     // back to unmodified
-
-	return bSuccess;
+	// No implementation
+	return TRUE;
 }
 
 void CDibDoc::ReplaceHDIB(HDIB hDIB) {
