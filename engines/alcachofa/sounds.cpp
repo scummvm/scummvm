@@ -359,7 +359,8 @@ TaskReturn PlaySoundTask::run() {
 }
 
 void PlaySoundTask::debugPrint() {
-	g_engine->console().debugPrintf("PlaySound %u\n", _soundHandle);
+	// unfortunately SoundHandle is not castable to something we could display here safely
+	g_engine->console().debugPrintf("PlaySound\n");
 }
 
 DECLARE_TASK(PlaySoundTask)
