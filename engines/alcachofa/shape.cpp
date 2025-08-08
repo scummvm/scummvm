@@ -30,16 +30,14 @@ static int sideOfLine(Point a, Point b, Point q) {
 	return (b.x - a.x) * (q.y - a.y) - (b.y - a.y) * (q.x - a.x);
 }
 
+static bool lineIntersects(Point a1, Point b1, Point a2, Point b2) {
+	return (sideOfLine(a1, b1, a2) > 0) != (sideOfLine(a1, b1, b2) > 0); 
+}
+
 static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
 	// as there are a number of special cases to consider,
 	// this method is a direct translation of the original engine
-	const auto sideOfLine = [](Point a, Point b, const Point q) {
-		return Alcachofa::sideOfLine(a, b, q) > 0;
-	};
-	const auto lineIntersects = [&](Point a1, Point b1, Point a2, Point b2) {
-		return sideOfLine(a1, b1, a2) != sideOfLine(a1, b1, b2);
-	};
-
+	// rather than using common Math:: code
 	if (a2.x > b2.x) {
 		if (a1.x > b1.x)
 			return lineIntersects(b1, a1, b2, a2) && lineIntersects(b2, a2, b1, a1);
@@ -250,9 +248,9 @@ Color FloorColorPolygon::colorAt(Point query) const {
 Shape::Shape() {}
 
 Shape::Shape(ReadStream &stream) {
-	auto complexity = stream.readByte();
+	byte complexity = stream.readByte();
 	uint8 pointsPerPolygon;
-	if (complexity < 0 || complexity > 3)
+	if (complexity > 3)
 		error("Invalid shape complexity %d", complexity);
 	else if (complexity == 3)
 		pointsPerPolygon = 0; // read in per polygon
@@ -346,10 +344,10 @@ PathFindingShape::PathFindingShape(ReadStream &stream) {
 	_pointDepths.reserve(polygonCount * kPointsPerPolygon);
 
 	for (int i = 0; i < polygonCount; i++) {
-		for (int j = 0; j < kPointsPerPolygon; j++)
+		for (uint j = 0; j < kPointsPerPolygon; j++)
 			_points.push_back(readPoint(stream));
 		_polygonOrders.push_back(stream.readSByte());
-		for (int j = 0; j < kPointsPerPolygon; j++)
+		for (uint j = 0; j < kPointsPerPolygon; j++)
 			_pointDepths.push_back(stream.readByte());
 
 		uint pointCount = addPolygon(kPointsPerPolygon);
@@ -636,16 +634,16 @@ FloorColorShape::FloorColorShape(ReadStream &stream) {
 	_pointColors.reserve(polygonCount * kPointsPerPolygon);
 
 	for (int i = 0; i < polygonCount; i++) {
-		for (int j = 0; j < kPointsPerPolygon; j++)
+		for (uint j = 0; j < kPointsPerPolygon; j++)
 			_points.push_back(readPoint(stream));
 
 		// For the colors the alpha channel is not used so we store the brightness into it instead
 		// Brightness is store 0-100, but we can scale it up here
 		int firstColorI = _pointColors.size();
 		_pointColors.resize(_pointColors.size() + kPointsPerPolygon);
-		for (int j = 0; j < kPointsPerPolygon; j++)
+		for (uint j = 0; j < kPointsPerPolygon; j++)
 			_pointColors[firstColorI + j].a = (uint8)MIN(255, stream.readByte() * 255 / 100);
-		for (int j = 0; j < kPointsPerPolygon; j++) {
+		for (uint j = 0; j < kPointsPerPolygon; j++) {
 			_pointColors[firstColorI + j].r = stream.readByte();
 			_pointColors[firstColorI + j].g = stream.readByte();
 			_pointColors[firstColorI + j].b = stream.readByte();
