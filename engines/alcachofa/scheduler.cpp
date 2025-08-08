@@ -113,7 +113,7 @@ void DelayTask::syncGame(Serializer &s) {
 	s.syncAsUint32LE(_endTime);
 }
 
-DECLARE_TASK(DelayTask);
+DECLARE_TASK(DelayTask)
 
 Process::Process(ProcessId pid, MainCharacterKind characterKind)
 	: _pid(pid)

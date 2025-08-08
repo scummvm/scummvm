@@ -286,7 +286,7 @@ private:
 	MainCharacter *_character = nullptr;
 	Player &_player;
 };
-DECLARE_TASK(DoorTask);
+DECLARE_TASK(DoorTask)
 
 void Player::triggerDoor(const Door *door) {
 	_heldItem = nullptr;
