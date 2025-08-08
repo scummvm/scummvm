@@ -819,33 +819,16 @@ void CHodjPodjWindow::BlackScreen(void) {
 
 void CHodjPodjWindow::OnActivate(UINT nState, CWnd *, BOOL) {
 	switch (nState) {
-
 	case WA_INACTIVE:
 		bActiveWindow = FALSE;
 		break;
 
 	case WA_ACTIVE:
 	case WA_CLICKACTIVE:
-		#ifdef TODO
-		if ((pMovie != nullptr) && (pMovie->pDum->m_hWnd != nullptr)) {
-			SetFocus(pMovie->pDum->m_hWnd);
-			break;
-		} else {
-			if ((pMovie != nullptr) && (pMovie->hWndDum != nullptr)) {
-				SetFocus(pMovie->hWndDum);
-				break;
-			}
-		}
+		bActiveWindow = TRUE;
+		break;
 
-		if (hwndGame != nullptr)
-			::SetActiveWindow(hwndGame);
-		else {
-			bActiveWindow = TRUE;
-			bUpdateNeeded = GetUpdateRect(nullptr, FALSE);
-			if (bUpdateNeeded)
-				InvalidateRect(nullptr, FALSE);
-		}
-		#endif
+	default:
 		break;
 	}
 }
