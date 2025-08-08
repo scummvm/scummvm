@@ -28,6 +28,8 @@
 #include "engines/util.h"
 #include "graphics/paletteman.h"
 #include "graphics/framelimiter.h"
+#include "graphics/thumbnail.h"
+#include "image/png.h"
 #include "video/mpegps_decoder.h"
 
 #include "alcachofa.h"
@@ -114,7 +116,12 @@ Common::Error AlcachofaEngine::run() {
 
 		// Delay for a bit. All events loops should have a delay
 		// to prevent the system being unduly loaded
-		limiter.delayBeforeSwap();
+		if (!_renderer->hasOutput()) {
+			limiter.delayBeforeSwap();
+			g_system->updateScreen();
+		}
+		// else we just rendered to some surface and will use it in the next frame
+		// no need to update the screen or wait 
 		limiter.startFrame();
 	}
 
@@ -143,6 +150,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 			_renderer->setTexture(texture.get());
 			_renderer->quad({}, { (float)g_system->getWidth(), (float)g_system->getHeight() });
 			_renderer->end();
+			g_system->updateScreen();
 		}
 
 		_input.nextFrame();
@@ -153,8 +161,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 		if (_input.wasAnyMouseReleased() || _input.wasMenuKeyPressed())
 			break;
 
-		g_system->updateScreen();
-		g_system->delayMillis(decoder.getTimeToNextFrame() / 2);
+		g_system->delayMillis(decoder.getTimeToNextFrame());
 	}
 	decoder.stop();
 }
@@ -255,8 +262,19 @@ Common::String AlcachofaEngine::getSaveStatePattern() {
 	return getMetaEngine()->getSavegameFilePattern(_targetName.c_str());
 }
 
-Common::Error AlcachofaEngine::syncGame(Serializer &s) {
-	s.syncVersion((Serializer::Version)SaveVersion::Initial);
+Common::Error AlcachofaEngine::syncGame(MySerializer &s) {
+	if (!s.syncVersion((Serializer::Version)kCurrentSaveVersion))
+		return { kUnknownError, "Gamestate version is higher than expected" };
+
+	Graphics::ManagedSurface *thumbnail = nullptr;
+	if (s.isSaving()) {
+		thumbnail = new Graphics::ManagedSurface();
+		getSavegameThumbnail(*thumbnail->surfacePtr());
+	}
+	if (!syncThumbnail(s, thumbnail))
+		return { kUnknownError, "Could not read thumbnail" };
+	if (thumbnail != nullptr)
+		delete thumbnail;
 
 	uint32 millis = menu().isOpen()
 		? menu().millisBeforeMenu()
@@ -289,6 +307,65 @@ Common::Error AlcachofaEngine::syncGame(Serializer &s) {
 	}
 
 	return Common::kNoError;
+}
+
+static constexpr uint32 kNoThumbnailMagicValue = 0xBADBAD;
+
+bool AlcachofaEngine::syncThumbnail(MySerializer &s, Graphics::ManagedSurface *thumbnail) {
+	if (s.isLoading()) {
+		Graphics::Surface *readThumbnail = nullptr;
+		if (Graphics::loadThumbnail(s.readStream(), readThumbnail, thumbnail == nullptr) && readThumbnail != nullptr) {
+			if (thumbnail != nullptr) {
+				thumbnail->free();
+				*thumbnail->surfacePtr() = *readThumbnail;
+			}
+		}
+		else {
+			// If we do not get a thumbnail, maybe we get at least the marker that there is no thumbnail
+			uint32 magicValue = 0;
+			s.syncAsUint32LE(magicValue);
+			if (magicValue != kNoThumbnailMagicValue)
+				return false; // the savegame is not valid
+			else // this is not an error, just a pity
+				warning("No thumbnail stored in in-game savestate");
+		}
+	}
+	else {
+		if (thumbnail == nullptr ||
+			thumbnail->getPixels() == nullptr ||
+			!Graphics::saveThumbnail(s.writeStream(), *thumbnail)) {
+			// We were not able to get a thumbnail, save a value that denotes that situation
+			warning("Could not save in-game thumbnail");
+			uint32 magicValue = kNoThumbnailMagicValue;
+			s.syncAsUint32LE(magicValue);
+		}
+	}
+	return true;
+}
+
+void AlcachofaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
+	thumbnail.free();
+
+	auto *bigThumbnail = g_engine->menu().getBigThumbnail();
+	if (bigThumbnail != nullptr) {
+		// we still have a one from the in-game menu opening, reuse that
+		thumbnail.copyFrom(*bigThumbnail);
+		return;
+	}
+
+	// otherwise we have to rerender
+	thumbnail.create(kBigThumbnailWidth, kBigThumbnailHeight, Graphics::PixelFormat::createFormatRGBA32());
+	if (g_engine->player().currentRoom() == nullptr)
+		return; // but without a room we would render only black anyway
+
+	g_engine->drawQueue().clear();
+	g_engine->renderer().begin();
+	g_engine->renderer().setOutput(thumbnail);
+	g_engine->player().currentRoom()->draw();
+	g_engine->drawQueue().draw();
+	g_engine->renderer().end();
+
+	// we should be within the event loop. as such it is quite safe to mess with the drawQueue or renderer
 }
 
 bool AlcachofaEngine::tryLoadFromLauncher() {

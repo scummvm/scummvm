@@ -20,6 +20,7 @@
  */
 
 #include "graphics.h"
+#include "detection.h"
 
 #include "common/system.h"
 #include "engines/util.h"
@@ -124,7 +125,8 @@ class OpenGLRenderer : public IDebugRenderer {
 public:
 	OpenGLRenderer(Point resolution)
 		: _resolution(resolution) {
-		initViewportAndMatrices();
+		setViewportToScreen();
+
 		GL_CALL(glDisable(GL_LIGHTING));
 		GL_CALL(glDisable(GL_DEPTH_TEST));
 		GL_CALL(glDisable(GL_SCISSOR_TEST));
@@ -147,6 +149,8 @@ public:
 		GL_CALL(glEnableClientState(GL_VERTEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_INDEX_ARRAY));
 		GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+		setViewportToScreen();
+		_currentOutput = nullptr;
 		_currentLodBias = -1000.0f;
 		_currentTexture = nullptr;
 		_currentBlendMode = (BlendMode)-1;
@@ -155,7 +159,20 @@ public:
 
 	void end() override {
 		GL_CALL(glFlush());
-		g_system->updateScreen();
+
+		if (_currentOutput != nullptr) {
+			g_system->presentBuffer();
+			auto format = getOpenGLFormatOf(_currentOutput->format);
+			GL_CALL(glReadPixels(
+				0,
+				0,
+				_outputSize.x,
+				_outputSize.y,
+				format._format,
+				format._type,
+				_currentOutput->getPixels()
+			));
+		}
 	}
 
 	void setTexture(ITexture *texture) override {
@@ -251,6 +268,37 @@ public:
 			return;
 		GL_CALL(glTexEnvf(GL_TEXTURE_FILTER_CONTROL, GL_TEXTURE_LOD_BIAS, lodBias));
 		_currentLodBias = lodBias;
+	}
+
+	void setOutput(Surface &output) override {
+		assert(_isFirstDrawCommand);
+		setViewportToRect(output.w, output.h);
+		_currentOutput = &output;
+
+		// just debug warnings as it will only produce a graphical glitch while
+		// there is some chance the resolution could change from here to ::end
+		// and this is per-frame so maybe don't spam the console with the same message
+
+		if (output.w > g_system->getWidth() || output.h > g_system->getHeight())
+			debugC(0, kDebugGraphics, "Output is larger than screen, output will be cropped (%d, %d) > (%d, %d)",
+				output.w, output.h, g_system->getWidth(), g_system->getHeight());
+
+		auto format = getOpenGLFormatOf(output.format);
+		if (format._format == GL_NONE) {
+			auto formatString = output.format.toString();
+			debugC(0, kDebugGraphics, "Cannot use pixelformat of given output surface: %s", formatString.c_str());
+			_currentOutput = nullptr;
+		}
+
+		if (output.pitch != output.format.bytesPerPixel * output.w) {
+			// Maybe there would be a way with glPixelStore
+			debugC(0, kDebugGraphics, "Incompatible output surface pitch");
+			_currentOutput = nullptr;
+		}
+	}
+
+	bool hasOutput() const override {
+		return _currentOutput != nullptr;
 	}
 
 	virtual void quad(
@@ -353,7 +401,18 @@ public:
 	}
 
 private:
-	void initViewportAndMatrices() {
+	void setMatrices(bool flipped) {
+		float bottom = flipped ? _resolution.y : 0.0f;
+		float top = flipped ? 0.0f : _resolution.y;
+
+		GL_CALL(glMatrixMode(GL_PROJECTION));
+		GL_CALL(glLoadIdentity());
+		GL_CALL(glOrtho(0.0f, _resolution.x, bottom, top, -1.0f, 1.0f));
+		GL_CALL(glMatrixMode(GL_MODELVIEW));
+		GL_CALL(glLoadIdentity());
+	}
+
+	void setViewportToScreen() {
 		int32 screenWidth = g_system->getWidth();
 		int32 screenHeight = g_system->getHeight();
 		Rect viewport(
@@ -364,16 +423,19 @@ private:
 			(screenHeight - viewport.height()) / 2);
 
 		GL_CALL(glViewport(viewport.left, viewport.top, viewport.width(), viewport.height()));
-		GL_CALL(glMatrixMode(GL_PROJECTION));
-		GL_CALL(glLoadIdentity());
-		GL_CALL(glOrtho(0.0f, _resolution.x, _resolution.y, 0.0f, -1.0f, 1.0f));
-		GL_CALL(glMatrixMode(GL_MODELVIEW));
-		GL_CALL(glLoadIdentity());
+		setMatrices(true);
+	}
+
+	void setViewportToRect(int16 outputWidth, int16 outputHeight) {
+		_outputSize.x = MIN(outputWidth, g_system->getWidth());
+		_outputSize.y = MIN(outputHeight, g_system->getHeight());
+		GL_CALL(glViewport(0, 0, _outputSize.x, _outputSize.y));
+		setMatrices(false);
 	}
 
 	void checkFirstDrawCommand() {
-		// We delay clearing the screen. It is much easier for the game to switch to a
-		// framebuffer before 
+		// We delay clearing the screen. It is much easier for the game
+		// to switch to a framebuffer before
 		if (!_isFirstDrawCommand)
 			return;
 		_isFirstDrawCommand = false;
@@ -381,7 +443,8 @@ private:
 		GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 	}
 
-	Point _resolution;
+	Point _resolution, _outputSize;
+	Surface *_currentOutput = nullptr;
 	OpenGLTexture *_currentTexture = nullptr;
 	BlendMode _currentBlendMode = (BlendMode)-1;
 	float _currentLodBias = 0.0f;

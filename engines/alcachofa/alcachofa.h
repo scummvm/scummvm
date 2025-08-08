@@ -55,8 +55,30 @@ class Menu;
 class Game;
 struct AlcachofaGameDescription;
 
+constexpr int16 kSmallThumbnailWidth = 160; // for ScummVM
+constexpr int16 kSmallThumbnailHeight = 120;
+static constexpr int16 kBigThumbnailWidth = 341; // for in-game
+static constexpr int16 kBigThumbnailHeight = 256;
+
+
 enum class SaveVersion : Common::Serializer::Version {
 	Initial = 0
+};
+static constexpr SaveVersion kCurrentSaveVersion = SaveVersion::Initial;
+
+class MySerializer : public Common::Serializer {
+public:
+	using Common::Serializer::Serializer;
+
+	Common::SeekableReadStream &readStream() {
+		assert(isLoading() && _loadStream != nullptr);
+		return *_loadStream;
+	}
+
+	Common::WriteStream &writeStream() {
+		assert(isSaving() && _saveStream != nullptr);
+		return *_saveStream;
+	}
 };
 
 class Config {
@@ -129,15 +151,19 @@ public:
 	}
 
 	Common::String getSaveStatePattern();
-	Common::Error syncGame(Common::Serializer &s);
+	Common::Error syncGame(MySerializer &s);
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
-		Common::Serializer s(nullptr, stream);
+		assert(stream != nullptr);
+		MySerializer s(nullptr, stream);
 		return syncGame(s);
 	}
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
-		Common::Serializer s(stream, nullptr);
+		assert(stream != nullptr);
+		MySerializer s(stream, nullptr);
 		return syncGame(s);
 	}
+	bool syncThumbnail(MySerializer &s, Graphics::ManagedSurface *thumbnail);
+	void getSavegameThumbnail(Graphics::Surface &thumbnail);
 
 private:
 	bool tryLoadFromLauncher();
