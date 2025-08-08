@@ -362,7 +362,7 @@ void PlaySoundTask::debugPrint() {
 	g_engine->console().debugPrintf("PlaySound %u\n", _soundHandle);
 }
 
-DECLARE_TASK(PlaySoundTask);
+DECLARE_TASK(PlaySoundTask)
 
 WaitForMusicTask::WaitForMusicTask(Process &process)
 	: Task(process)
@@ -385,6 +385,6 @@ void WaitForMusicTask::debugPrint() {
 	g_engine->console().debugPrintf("WaitForMusic\n");
 }
 
-DECLARE_TASK(WaitForMusicTask);
+DECLARE_TASK(WaitForMusicTask)
 
 }

@@ -202,7 +202,7 @@ private:
 	Graphic *_graphic = nullptr;
 	uint32 _duration = 0;
 };
-DECLARE_TASK(AnimateTask);
+DECLARE_TASK(AnimateTask)
 
 Task *GraphicObject::animate(Process &process) {
 	return new AnimateTask(process, this);

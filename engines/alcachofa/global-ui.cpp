@@ -246,7 +246,7 @@ private:
 	int32 _dialogId = 0;
 	uint32 _startTime = 0, _durationMs = 0;
 };
-DECLARE_TASK(CenterBottomTextTask);
+DECLARE_TASK(CenterBottomTextTask)
 
 Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs) {
 	return new CenterBottomTextTask(process, dialogId, durationMs);

@@ -357,7 +357,7 @@ private:
 	int32 _dialogId = 0;
 	SoundHandle _soundHandle = {};
 };
-DECLARE_TASK(SayTextTask);
+DECLARE_TASK(SayTextTask)
 
 Task *Character::sayText(Process &process, int32 dialogId) {
 	return new SayTextTask(process, this, dialogId);
@@ -435,7 +435,7 @@ private:
 	ObjectBase *_animateObject = nullptr;
 	Graphic *_graphic = nullptr;
 };
-DECLARE_TASK(AnimateCharacterTask);
+DECLARE_TASK(AnimateCharacterTask)
 
 Task *Character::animate(Process &process, ObjectBase *animateObject) {
 	assert(animateObject != nullptr);
@@ -492,7 +492,7 @@ private:
 	float _sourceLodBias = 0, _targetLodBias = 0;
 	uint32 _startTime = 0, _durationMs = 0;
 };
-DECLARE_TASK(LerpLodBiasTask);
+DECLARE_TASK(LerpLodBiasTask)
 
 Task *Character::lerpLodBias(Process &process, float targetLodBias, int32 durationMs) {
 	return new LerpLodBiasTask(process, this, targetLodBias, durationMs);
@@ -804,7 +804,7 @@ struct ArriveTask : public Task {
 private:
 	const WalkingCharacter *_character = nullptr;
 };
-DECLARE_TASK(ArriveTask);
+DECLARE_TASK(ArriveTask)
 
 Task *WalkingCharacter::waitForArrival(Process &process) {
 	return new ArriveTask(process, this);
@@ -1129,7 +1129,7 @@ private:
 	MainCharacter *_character = nullptr;
 	uint _clickedLineI = UINT_MAX;
 };
-DECLARE_TASK(DialogMenuTask);
+DECLARE_TASK(DialogMenuTask)
 
 void MainCharacter::addDialogLine(int32 dialogId) {
 	assert(dialogId >= 0);

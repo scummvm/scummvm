@@ -351,7 +351,7 @@ protected:
 
 	Vector3d _fromPos, _deltaPos;
 };
-DECLARE_TASK(CamLerpPosTask);
+DECLARE_TASK(CamLerpPosTask)
 
 struct CamLerpScaleTask final : public CamLerpTask {
 	CamLerpScaleTask(Process &process, float targetScale, int32 duration, EasingType easingType)
@@ -379,7 +379,7 @@ protected:
 
 	float _fromScale = 0, _deltaScale = 0;
 };
-DECLARE_TASK(CamLerpScaleTask);
+DECLARE_TASK(CamLerpScaleTask)
 
 struct CamLerpPosScaleTask final : public CamLerpTask {
 	CamLerpPosScaleTask(Process &process,
@@ -421,7 +421,7 @@ protected:
 	float _fromScale = 0, _deltaScale = 0;
 	EasingType _moveEasingType = {}, _scaleEasingType = {};
 };
-DECLARE_TASK(CamLerpPosScaleTask);
+DECLARE_TASK(CamLerpPosScaleTask)
 
 struct CamLerpRotationTask final : public CamLerpTask {
 	CamLerpRotationTask(Process &process, float targetRotation, int32 duration, EasingType easingType)
@@ -449,7 +449,7 @@ protected:
 
 	float _fromRotation = 0, _deltaRotation = 0;
 };
-DECLARE_TASK(CamLerpRotationTask);
+DECLARE_TASK(CamLerpRotationTask)
 
 static void syncVector(Serializer &s, Vector2d &v) {
 	float *data = v.getData();
@@ -488,7 +488,7 @@ protected:
 
 	Vector2d _amplitude, _frequency;
 };
-DECLARE_TASK(CamShakeTask);
+DECLARE_TASK(CamShakeTask)
 
 struct CamWaitToStopTask final : public Task {
 	CamWaitToStopTask(Process &process)
@@ -516,7 +516,7 @@ struct CamWaitToStopTask final : public Task {
 private:
 	Camera &_camera;
 };
-DECLARE_TASK(CamWaitToStopTask);
+DECLARE_TASK(CamWaitToStopTask)
 
 struct CamSetInactiveAttributeTask final : public Task {
 	enum Attribute {
@@ -583,7 +583,7 @@ private:
 	float _value = 0;
 	int32 _delay = 0;
 };
-DECLARE_TASK(CamSetInactiveAttributeTask);
+DECLARE_TASK(CamSetInactiveAttributeTask)
 
 Task *Camera::lerpPos(Process &process,
 					  Vector2d targetPos,
