@@ -61,7 +61,7 @@ public:
 	inline FakeSemaphore &musicSemaphore() { return _musicSemaphore; }
 
 private:
-	struct Playback {;
+	struct Playback {
 		void fadeOut(uint32 duration);
 
 		Audio::SoundHandle _handle;

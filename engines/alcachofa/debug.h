@@ -93,7 +93,6 @@ private:
 
 	void drawIntersectionsFor(const Polygon &polygon, IDebugRenderer *renderer) {
 		auto &camera = g_engine->camera();
-		auto mousePos2D = g_engine->input().debugInput().mousePos2D();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
 		for (uint i = 0; i < polygon._points.size(); i++)
 		{

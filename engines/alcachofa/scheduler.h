@@ -103,12 +103,13 @@ protected:
 		syncObjectAsString(s, base, optional);
 		object = dynamic_cast<TObject*>(base);
 		if (object == nullptr && base != nullptr)
-			error("Unexpected type of object %s in savestate for task %s (got a %s)",
-				base->name().c_str(), taskName(), base->typeName());
+			errorForUnexpectedObjectType(base);
 	}
 
 	uint32 _stage = 0;
 private:
+	void errorForUnexpectedObjectType(const ObjectBase *base) const;
+
 	Process &_process;
 };
 
@@ -132,19 +133,12 @@ private:
 		return #TaskName; \
 	}
 
-#if __cplusplus >= 201703L
-#define TASK_BREAK_FALLTHROUGH [[fallthrough]];
-#else
-#define TASK_BREAK_FALLTHROUGH
-#endif
-
 #define TASK_BEGIN \
 	switch(_stage) { \
 	case 0:; \
 
 #define TASK_END \
 	TASK_RETURN(0); \
-	TASK_BREAK_FALLTHROUGH \
 	default: assert(false && "Invalid line in task"); \
 	} return TaskReturn::finish(0)
 
@@ -152,7 +146,6 @@ private:
 	do { \
 		_stage = stage; \
 		return ret; \
-		TASK_BREAK_FALLTHROUGH \
 		case stage:; \
 	} while(0)
 
@@ -161,8 +154,8 @@ private:
 
 #define TASK_RETURN(value) \
 	do { \
-		return TaskReturn::finish(value); \
 		_stage = UINT_MAX; \
+		return TaskReturn::finish(value); \
 	} while(0)
 
 using ProcessId = uint32;
