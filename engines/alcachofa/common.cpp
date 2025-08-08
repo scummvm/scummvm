@@ -49,7 +49,8 @@ void FakeSemaphore::sync(Serializer &s, FakeSemaphore &semaphore) {
 	// if we are still holding locks during loading these locks will
 	// try to decrease the counter which will fail, let's find this out already here
 	assert(s.isSaving() || semaphore.isReleased());
-	(void)(s, semaphore);
+	(void)s;
+	(void)semaphore;
 
 	// We should not actually serialize the counter, just make sure it is empty
 	// When the locks are loaded, they will increase the counter themselves
