@@ -2461,6 +2461,9 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 	case 27:
 		// Used in readdemo
 		break;
+	case 32:
+		// Used by MegaCat Studios for rich presence in Backyard games
+		break;
 	case 42:
 		_wiz->_useWizClipRect = true;
 		_wiz->_wizClipRect.left = args[1];
