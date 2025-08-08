@@ -69,7 +69,7 @@ public:
 
 	inline Common::Point &position() { return _pos; }
 	inline Common::Point position() const { return _pos; }
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	Common::Point _pos;
@@ -94,7 +94,7 @@ public:
 	void freeResources() override;
 	void syncGame(Common::Serializer &serializer) override;
 	Graphic *graphic() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 	Task *animate(Process &process);
 
@@ -112,7 +112,7 @@ public:
 	SpecialEffectObject(Room *room, Common::ReadStream &stream);
 
 	void draw() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	static constexpr const float kShiftSpeed = 1 / 256.0f;
@@ -137,7 +137,7 @@ public:
 	virtual void onHoverEnd();
 	virtual void onHoverUpdate();
 	virtual void onClick();
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 	void markSelected();
 
 protected:
@@ -155,7 +155,7 @@ private:
 class PhysicalObject : public ShapeObject {
 public:
 	PhysicalObject(Room *room, Common::ReadStream &stream);
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class MenuButton : public PhysicalObject {
@@ -174,7 +174,7 @@ public:
 	void onHoverUpdate() override;
 	void onClick() override;
 	virtual void trigger();
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	bool
@@ -198,7 +198,7 @@ public:
 	static constexpr const char *kClassName = "CBotonMenuInternet";
 	InternetMenuButton(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class OptionsMenuButton final : public MenuButton {
@@ -208,7 +208,7 @@ public:
 
 	void update() override;
 	void trigger() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class MainMenuButton final : public MenuButton {
@@ -218,7 +218,7 @@ public:
 
 	void update() override;
 	void trigger() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class PushButton final : public PhysicalObject {
@@ -226,7 +226,7 @@ public:
 	static constexpr const char *kClassName = "CPushButton";
 	PushButton(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	bool _alwaysVisible;
@@ -239,7 +239,7 @@ public:
 	static constexpr const char *kClassName = "CEditBox";
 	EditBox(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	int32 i1;
@@ -266,7 +266,7 @@ public:
 	void onHoverUpdate() override;
 	void onClick() override;
 	virtual void trigger();
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	bool
@@ -293,7 +293,7 @@ public:
 	void update() override;
 	void loadResources() override;
 	void freeResources() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	bool isMouseOver() const;
@@ -312,7 +312,7 @@ public:
 	static constexpr const char *kClassName = "CCheckBoxAutoAjustarRuido";
 	CheckBoxAutoAdjustNoise(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class IRCWindow final : public ObjectBase {
@@ -320,7 +320,7 @@ public:
 	static constexpr const char *kClassName = "CVentanaIRC";
 	IRCWindow(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	Common::Point _p1, _p2;
@@ -332,7 +332,7 @@ public:
 	MessageBox(Room *room, Common::ReadStream &stream);
 	~MessageBox() override = default;
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	Graphic
@@ -348,7 +348,7 @@ public:
 	static constexpr const char *kClassName = "CVuMeter";
 	VoiceMeter(Room *room, Common::ReadStream &stream);
 
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class Item : public GraphicObject {
@@ -358,7 +358,7 @@ public:
 	Item(const Item &other);
 
 	void draw() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 	void trigger();
 };
 
@@ -388,7 +388,7 @@ public:
 	void onClick() override;
 	void trigger(const char *action) override;
 	void toggle(bool isEnabled) override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	Common::String _relatedObject;
@@ -406,7 +406,7 @@ public:
 	virtual CursorType cursorType() const override;
 	void onClick() override;
 	void trigger(const char *action) override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	Common::String _targetRoom, _targetObject;
@@ -429,7 +429,7 @@ public:
 	Graphic *graphic() override;
 	void onClick() override;
 	void trigger(const char *action) override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 	Task *sayText(Process &process, int32 dialogId);
 	void resetTalking();
@@ -480,7 +480,7 @@ public:
 		const char *activateAction = nullptr);
 	void stopWalking(Direction direction = Direction::Invalid);
 	void setPosition(Common::Point target);
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 	Task *waitForArrival(Process &process);
 
@@ -541,7 +541,7 @@ public:
 	void update() override;
 	void draw() override;
 	void syncGame(Common::Serializer &serializer) override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 	virtual void walkTo(
 		Common::Point target,
 		Direction endDirection = Direction::Invalid,
@@ -581,7 +581,7 @@ private:
 class Background final : public GraphicObject {
 public:
 	Background(Room *room, const Common::String &animationFileName, int16 scale);
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 };
 
 class FloorColor final : public ObjectBase {
@@ -593,7 +593,7 @@ public:
 	void update() override;
 	void drawDebug() override;
 	Shape *shape() override;
-	virtual const char *typeName() const;
+	const char *typeName() const override;
 
 private:
 	FloorColorShape _shape;
