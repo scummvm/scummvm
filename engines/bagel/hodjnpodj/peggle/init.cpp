@@ -24,7 +24,7 @@
 #include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
 #include "bagel/hodjnpodj/peggle/resource.h"
-#include "bagel/hodjnpodj/peggle/dllinit.h"
+#include "bagel/hodjnpodj/peggle/init.h"
 #include "bagel/hodjnpodj/peggle/game.h"
 
 namespace Bagel {

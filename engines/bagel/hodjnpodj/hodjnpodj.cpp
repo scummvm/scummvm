@@ -31,7 +31,7 @@
 #include "bagel/hodjnpodj/globals.h"
 #include "bagel/hodjnpodj/metagame/frame/app.h"
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
-#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+#include "bagel/hodjnpodj/metagame/gtl/init.h"
 #include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 

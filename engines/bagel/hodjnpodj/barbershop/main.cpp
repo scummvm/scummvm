@@ -29,7 +29,7 @@
 #include "bagel/boflib/misc.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
 #include "bagel/boflib/error.h"
-#include "bagel/hodjnpodj/barbershop/gamedll.h"
+#include "bagel/hodjnpodj/barbershop/init.h"
 #include "bagel/hodjnpodj/barbershop/main.h"
 #include "bagel/hodjnpodj/barbershop/undo.h"
 #include "bagel/hodjnpodj/barbershop/usercfg.h"

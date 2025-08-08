@@ -24,7 +24,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtl.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
-#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+#include "bagel/hodjnpodj/metagame/gtl/init.h"
 
 namespace Bagel {
 namespace HodjNPodj {

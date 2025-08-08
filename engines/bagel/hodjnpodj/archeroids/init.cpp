@@ -21,7 +21,7 @@
 
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/hnplibs/gamedll.h"
-#include "bagel/hodjnpodj/archeroids/dllinit.h"
+#include "bagel/hodjnpodj/archeroids/init.h"
 #include "bagel/hodjnpodj/archeroids/main.h"
 
 namespace Bagel {

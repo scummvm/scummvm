@@ -188,13 +188,13 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/frame/maindlg.o \
 	hodjnpodj/metagame/frame/movytmpl.o \
 	hodjnpodj/metagame/frame/msudlg.o \
-	hodjnpodj/metagame/grand_tour/dllinit.o \
+	hodjnpodj/metagame/grand_tour/init.o \
 	hodjnpodj/metagame/grand_tour/dialogs.o \
 	hodjnpodj/metagame/grand_tour/grand_tour.o \
+	hodjnpodj/metagame/gtl/init.o \
 	hodjnpodj/metagame/gtl/citemdlg.o \
 	hodjnpodj/metagame/gtl/cmapdlg.o \
 	hodjnpodj/metagame/gtl/cturndlg.o \
-	hodjnpodj/metagame/gtl/dllinit.o \
 	hodjnpodj/metagame/gtl/encount.o \
 	hodjnpodj/metagame/gtl/gtl.o \
 	hodjnpodj/metagame/gtl/gtlcmp.o \
@@ -216,20 +216,20 @@ MODULE_OBJS = \
 	hodjnpodj/metagame/saves/savegame_info.o \
 	hodjnpodj/metagame/saves/restdlg.o \
 	hodjnpodj/metagame/saves/savedlg.o \
-	hodjnpodj/metagame/zoom/dllinit.o \
+	hodjnpodj/metagame/zoom/init.o \
 	hodjnpodj/metagame/zoom/zoommap.o \
-	hodjnpodj/archeroids/dllinit.o \
+	hodjnpodj/archeroids/init.o \
 	hodjnpodj/archeroids/main.o \
-	hodjnpodj/artparts/gamedll.o \
+	hodjnpodj/artparts/init.o \
 	hodjnpodj/artparts/artparts.o \
 	hodjnpodj/artparts/optndlg.o \
 	hodjnpodj/archeroids/usercfg.o \
 	hodjnpodj/barbershop/animate.o \
+	hodjnpodj/barbershop/init.o \
 	hodjnpodj/barbershop/barb.o \
 	hodjnpodj/barbershop/board.o \
 	hodjnpodj/barbershop/card.o \
 	hodjnpodj/barbershop/deck.o \
-	hodjnpodj/barbershop/gamedll.o \
 	hodjnpodj/barbershop/jay.o \
 	hodjnpodj/barbershop/logic.o \
 	hodjnpodj/barbershop/main.o \
@@ -238,76 +238,76 @@ MODULE_OBJS = \
 	hodjnpodj/barbershop/stats.o \
 	hodjnpodj/barbershop/undo.o \
 	hodjnpodj/barbershop/usercfg.o \
-	hodjnpodj/battlefish/gamedll.o \
+	hodjnpodj/battlefish/init.o \
 	hodjnpodj/battlefish/bfish.o \
 	hodjnpodj/battlefish/usercfg.o \
-	hodjnpodj/beacon/gamedll.o \
+	hodjnpodj/beacon/init.o \
 	hodjnpodj/beacon/beacon.o \
 	hodjnpodj/beacon/optndlg.o \
-	hodjnpodj/crypt/dllinit.o \
+	hodjnpodj/crypt/init.o \
 	hodjnpodj/crypt/crypt.o \
 	hodjnpodj/crypt/main.o \
 	hodjnpodj/crypt/optn.o \
 	hodjnpodj/crypt/pnt_gram.o \
 	hodjnpodj/crypt/rec.o \
 	hodjnpodj/crypt/stats.o \
-	hodjnpodj/dfa/dllinit.o \
+	hodjnpodj/dfa/init.o \
 	hodjnpodj/dfa/dfa.o \
 	hodjnpodj/dfa/msgdlg.o \
 	hodjnpodj/dfa/optdlg.o \
-	hodjnpodj/fuge/gamedll.o \
+	hodjnpodj/fuge/init.o \
 	hodjnpodj/fuge/fuge.o \
 	hodjnpodj/fuge/usercfg.o \
-	hodjnpodj/garfunkle/gamedll.o \
+	hodjnpodj/garfunkle/init.o \
 	hodjnpodj/garfunkle/garfunkle.o \
 	hodjnpodj/garfunkle/note.o \
 	hodjnpodj/garfunkle/optndlg.o \
-	hodjnpodj/life/dllinit.o \
+	hodjnpodj/life/init.o \
 	hodjnpodj/life/game.o \
 	hodjnpodj/life/grid.o \
 	hodjnpodj/life/life.o \
 	hodjnpodj/life/usercfg.o \
+	hodjnpodj/mankala/init.o \
 	hodjnpodj/mankala/bgenut.o \
 	hodjnpodj/mankala/btimeut.o \
-	hodjnpodj/mankala/gamedll.o \
 	hodjnpodj/mankala/mnk.o \
 	hodjnpodj/mankala/mnklog.o \
 	hodjnpodj/mankala/mnkopt.o \
 	hodjnpodj/mankala/mnkui.o \
 	hodjnpodj/mankala/transform.o \
-	hodjnpodj/mazedoom/gamedll.o \
+	hodjnpodj/mazedoom/init.o \
 	hodjnpodj/mazedoom/mod.o \
 	hodjnpodj/mazedoom/optndlg.o \
-	hodjnpodj/novacancy/gamedll.o \
+	hodjnpodj/novacancy/init.o \
 	hodjnpodj/novacancy/main.o \
-	hodjnpodj/packrat/dllinit.o \
+	hodjnpodj/packrat/init.o \
 	hodjnpodj/packrat/msgdlg.o \
 	hodjnpodj/packrat/optdlg.o \
 	hodjnpodj/packrat/packrat.o \
-	hodjnpodj/pdq/gamedll.o \
+	hodjnpodj/pdq/init.o \
 	hodjnpodj/pdq/game.o \
 	hodjnpodj/pdq/guess.o \
 	hodjnpodj/pdq/main.o \
 	hodjnpodj/pdq/usercfg.o \
-	hodjnpodj/peggle/dllinit.o \
+	hodjnpodj/peggle/init.o \
 	hodjnpodj/peggle/game.o \
 	hodjnpodj/peggle/gameinit.o \
 	hodjnpodj/peggle/options.o \
 	hodjnpodj/peggle/optndlg.o \
 	hodjnpodj/peggle/optsub.o \
+	hodjnpodj/poker/init.o \
 	hodjnpodj/poker/amtdlg.o \
 	hodjnpodj/poker/c1btndlg.o \
-	hodjnpodj/poker/dllinit.o \
 	hodjnpodj/poker/optdlg.o \
 	hodjnpodj/poker/poffsdlg.o \
 	hodjnpodj/poker/poker.o \
 	hodjnpodj/poker/uwondlg.o \
-	hodjnpodj/riddles/gamedll.o \
+	hodjnpodj/riddles/init.o \
 	hodjnpodj/riddles/riddles.o \
 	hodjnpodj/riddles/usercfg.o \
+	hodjnpodj/wordsearch/init.o \
 	hodjnpodj/wordsearch/c1btndlg.o \
 	hodjnpodj/wordsearch/clongdlg.o \
-	hodjnpodj/wordsearch/dllinit.o \
 	hodjnpodj/wordsearch/msgdlg.o \
 	hodjnpodj/wordsearch/optdlg.o \
 	hodjnpodj/wordsearch/wordlist.o \

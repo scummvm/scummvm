@@ -21,7 +21,7 @@
 
 #include "bagel/hodjnpodj/metagame/gtl/gtl.h"
 #include "bagel/hodjnpodj/metagame/bgen/stdafx.h"
-#include "bagel/hodjnpodj/metagame/gtl/dllinit.h"
+#include "bagel/hodjnpodj/metagame/gtl/init.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtldoc.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"

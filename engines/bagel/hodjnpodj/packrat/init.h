@@ -22,7 +22,7 @@
 #ifndef HODJNPODJ_PACKRAT_DIALOGS_H
 #define HODJNPODJ_PACKRAT_DIALOGS_H
 
-#include "bagel/hodjnpodj/packrat/dllinit.h"
+#include "bagel/hodjnpodj/packrat/init.h"
 
 namespace Bagel {
 namespace HodjNPodj {
