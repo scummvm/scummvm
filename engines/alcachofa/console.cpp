@@ -183,9 +183,9 @@ bool Console::cmdItem(int argc, const char **args) {
 	const char *itemName = args[1];
 	if (argc == 3) {
 		itemName = args[2];
-		if (strcmpi(args[1], "mortadelo") == 0 || strcmpi(args[1], "m") == 0)
+		if (scumm_stricmp(args[1], "mortadelo") == 0 || scumm_stricmp(args[1], "m") == 0)
 			active = &mortadelo;
-		else if (strcmpi(args[1], "filemon") == 0 || strcmpi(args[1], "f") == 0)
+		else if (scumm_stricmp(args[1], "filemon") == 0 || scumm_stricmp(args[1], "f") == 0)
 			active = &filemon;
 		else {
 			debugPrintf("Invalid character name \"%s\", has to be either \"mortadelo\" or \"filemon\"\n", args[1]);
