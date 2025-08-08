@@ -152,6 +152,8 @@ void Inter_v7::setupOpcodesFunc() {
 void Inter_v7::setupOpcodesGob() {
 	Inter_Playtoons::setupOpcodesGob();
 
+	OPCODEGOB(407, o7_xorDeobfuscate);
+	OPCODEGOB(408, o7_xorObfuscate);
 	OPCODEGOB(420, o7_ansiToOEM);
 	OPCODEGOB(421, o7_oemToANSI);
 	OPCODEGOB(512, o7_setDBStringEncoding);
@@ -1960,6 +1962,37 @@ Common::String Inter_v7::ansiToOEM(Common::String string) {
 
 Common::String Inter_v7::oemToANSI(Common::String string) {
 	return string.decode(Common::kDos850).encode(Common::kWindows1252);
+}
+
+void Inter_v7::xorObfuscate(byte *str, int len) {
+	if (len <= 1)
+		return;
+
+	for (int i = len - 1; i >= 1; --i)
+		str[i] = str[i] ^ str[i - 1];
+}
+
+void Inter_v7::xorDeobfuscate(byte *str, int len) {
+	if (len <= 1)
+		return;
+
+	for (int i = 1; i < len; ++i)
+		str[i] = str[i] ^ str[i - 1];
+}
+
+
+void Inter_v7::o7_xorDeobfuscate(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	uint16 size = _vm->_game->_script->readUint16();
+	byte *data = _vm->_inter->_variables->getAddressVar8(varIndex);
+	xorDeobfuscate(data, size);
+}
+
+void Inter_v7::o7_xorObfuscate(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	byte *data = _vm->_inter->_variables->getAddressVar8(varIndex);
+	uint16 size = _vm->_game->_script->readUint16();
+	xorObfuscate(data, size);
 }
 
 void Inter_v7::o7_ansiToOEM(OpGobParams &params) {
