@@ -78,6 +78,8 @@ bool Input::handleEvent(const Common::Event &event) {
 		case EventAction::InputInventory:
 			_wasInventoryKeyPressed = true;
 			return true;
+		default:
+			return false;
 		}
 	}
 	default:

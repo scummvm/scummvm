@@ -50,7 +50,7 @@ class GameMovieAdventure : public Game {
 		return Game::shouldCharacterTrigger(character, action);
 	}
 
-	virtual bool shouldTriggerDoor(const Door *door) {
+	bool shouldTriggerDoor(const Door *door) override {
 		// An invalid door target, the character will go to the door and then ignore it (also in original engine)
 		if (door->targetRoom() == "LABERINTO" && door->targetObject() == "a_LABERINTO_desde_LABERINTO_2")
 			return false;

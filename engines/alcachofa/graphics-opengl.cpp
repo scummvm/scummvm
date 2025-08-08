@@ -85,7 +85,7 @@ public:
 			GL_CALL(glDeleteTextures(1, &_handle));
 	}
 
-	virtual void update(const Surface &surface) {
+	void update(const Surface &surface) override {
 		OpenGLFormat format = getOpenGLFormatOf(surface.format);
 		assert(surface.w == size().x && surface.h == size().y);
 		assert(format.isValid());
@@ -301,7 +301,7 @@ public:
 		return _currentOutput != nullptr;
 	}
 
-	virtual void quad(
+	void quad(
 		Vector2d topLeft,
 		Vector2d size,
 		Color color,
@@ -353,7 +353,7 @@ public:
 #endif
 	}
 
-	virtual void debugPolygon(
+	void debugPolygon(
 		Span<Vector2d> points,
 		Color color
 	) override {
@@ -379,7 +379,7 @@ public:
 			GL_CALL(glDrawArrays(GL_POINTS, 0, points.size()));
 	}
 
-	virtual void debugPolyline(
+	void debugPolyline(
 		Span<Vector2d> points,
 		Color color
 	) override {
