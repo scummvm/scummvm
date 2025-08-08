@@ -75,9 +75,15 @@ public:
 	void triggerOptionsAction(OptionsMenuAction action);
 	void triggerOptionsValue(OptionsMenuValue valueId, float value);
 
+	// if we do still have a big thumbnail, any autosaves, ScummVM-saves, ingame-saves
+	// do not have to render themselves, they can just reuse the one we have.
+	// as such - may return nullptr
+	const Graphics::Surface *getBigThumbnail() const;
+
 private:
 	void triggerSave();
 	void updateSelectedSavefile();
+	bool tryReadOldSavefile();
 	void continueGame();
 	void continueMainMenu();
 	void setOptionsState();
@@ -92,6 +98,9 @@ private:
 	FakeSemaphore _interactionSemaphore; // to prevent ScummVM loading during button clicks
 	Common::String _selectedSavefileDescription = "<unset>";
 	Common::Array<Common::String> _savefiles;
+	Graphics::ManagedSurface
+		_bigThumbnail, // big because it is for the in-game menu, not for ScummVM
+		_selectedThumbnail;
 	Common::SaveFileManager *_saveFileMgr;
 };
 

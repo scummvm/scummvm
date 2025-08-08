@@ -20,6 +20,7 @@
  */
 
 #include "gui/message.h"
+#include "graphics/thumbnail.h"
 
 #include "alcachofa.h"
 #include "metaengine.h"
@@ -28,8 +29,36 @@
 #include "script.h"
 
 using namespace Common;
+using namespace Graphics;
 
 namespace Alcachofa {
+	
+static void createThumbnail(ManagedSurface &surface) {
+	surface.create(kBigThumbnailWidth, kBigThumbnailHeight, PixelFormat::createFormatRGBA32());
+}
+
+static void convertToGrayscale(ManagedSurface &surface) {
+	assert(!surface.empty());
+	assert(surface.format == PixelFormat::createFormatRGBA32());
+	uint32 rgbMask = ~(uint32(0xff) << surface.format.aShift);
+
+	for (int y = 0; y < surface.h; y++) {
+		union {
+			uint32 *pixel;
+			uint8 *components;
+		};
+		pixel = (uint32 *)surface.getBasePtr(0, y);
+		for (int x = 0; x < surface.w; x++, pixel++) {
+			*pixel &= rgbMask;
+			byte gray = (components[0] + components[1] + components[2] + components[3]) / 3;
+			*pixel =
+				(uint32(gray) << surface.format.rShift) |
+				(uint32(gray) << surface.format.gShift) |
+				(uint32(gray) << surface.format.bShift) |
+				(uint32(0xff) << surface.format.aShift);
+		}
+	}
+}
 
 Menu::Menu()
 	: _interactionSemaphore("menu")
@@ -39,13 +68,17 @@ void Menu::resetAfterLoad() {
 	_isOpen = false;
 	_openAtNextFrame = false;
 	_previousRoom = nullptr;
+	_bigThumbnail.free();
+	_selectedThumbnail.free();
 }
 
 void Menu::updateOpeningMenu() {
 	if (!_openAtNextFrame) {
-		_openAtNextFrame =
-			g_engine->input().wasMenuKeyPressed() &&
-			g_engine->player().isAllowedToOpenMenu();
+		if (g_engine->input().wasMenuKeyPressed() && g_engine->player().isAllowedToOpenMenu()) {
+			_openAtNextFrame = true;
+			createThumbnail(_bigThumbnail);
+			g_engine->renderer().setOutput(*_bigThumbnail.surfacePtr());
+		}
 		return;
 	}
 	_openAtNextFrame = false;
@@ -54,7 +87,6 @@ void Menu::updateOpeningMenu() {
 	_millisBeforeMenu = g_engine->getMillis();
 	_previousRoom = g_engine->player().currentRoom();
 	_isOpen = true;
-	// TODO: Render thumbnail
 	g_engine->player().changeRoom("MENUPRINCIPAL", true);
 	_savefiles = _saveFileMgr->listSavefiles(g_engine->getSaveStatePattern());
 	sort(_savefiles.begin(), _savefiles.end()); // the pattern ensures that the last file has the greatest slot
@@ -87,23 +119,48 @@ void Menu::updateSelectedSavefile() {
 	getButton("SIGUIENTE")->toggle(isOldSavefile);
 
 	if (isOldSavefile) {
-		ExtendedSavegameHeader header;
-		auto savefile = ScopedPtr<InSaveFile>(
-			_saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]));
-		if (savefile != nullptr &&
-			g_engine->getMetaEngine()->readSavegameHeader(savefile.get(), &header, false))
-			_selectedSavefileDescription = header.description;
-		else // Fallback to generated description
+		if (!tryReadOldSavefile()) {
 			_selectedSavefileDescription = String::format("Savestate %d",
 				parseSavestateSlot(_savefiles[_selectedSavefileI]));
+			createThumbnail(_selectedThumbnail);
+		}
+	}
+	else {
+		_selectedThumbnail.copyFrom(_bigThumbnail);
+		//convertToGrayscale(_selectedThumbnail);
 	}
 
-	// TODO: Update thumbnail animation;
+	ObjectBase *captureObject = g_engine->player().currentRoom()->getObjectByName("Capture");
+	scumm_assert(captureObject);
+	Graphic *captureGraphic = captureObject->graphic();
+	scumm_assert(captureGraphic);
+	captureGraphic->animation().overrideTexture(_selectedThumbnail);
+}
+
+bool Menu::tryReadOldSavefile() {
+	auto savefile = ScopedPtr<InSaveFile>(
+		_saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]));
+	if (savefile == nullptr)
+		return false;
+
+	ExtendedSavegameHeader header;
+	if (!g_engine->getMetaEngine()->readSavegameHeader(savefile.get(), &header, false))
+		return false;
+	_selectedSavefileDescription = header.description;
+
+	MySerializer serializer(savefile.get(), nullptr);
+	if (!serializer.syncVersion((Serializer::Version)kCurrentSaveVersion) ||
+		!g_engine->syncThumbnail(serializer, &_selectedThumbnail))
+		return false;
+
+	return true;
 }
 
 void Menu::continueGame() {
 	assert(_previousRoom != nullptr);
 	_isOpen = false;
+	_bigThumbnail.free();
+	_selectedThumbnail.free();
 	g_engine->input().nextFrame(); // presumably to clear all was* flags
 	g_engine->player().changeRoom(_previousRoom->name(), true);
 	g_engine->sounds().pauseAll(false);
@@ -165,8 +222,13 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 
 void Menu::triggerLoad() {
 	auto *savefile = _saveFileMgr->openForLoading(_savefiles[_selectedSavefileI]);
-	g_engine->loadGameStream(savefile);
+	auto result = g_engine->loadGameStream(savefile);
 	delete savefile;
+	if (result.getCode() != kNoError) {
+		GUI::MessageDialog dialog(result.getTranslatedDesc());
+		dialog.runModal();
+		return;
+	}
 }
 
 void Menu::triggerSave() {
@@ -182,19 +244,23 @@ void Menu::triggerSave() {
 			: parseSavestateSlot(_savefiles.back()) + 1;
 		fileName = g_engine->getSaveStateName(nextSlot);
 		desc = String::format("Savestate %d", nextSlot);
-		_savefiles.push_back(fileName);
 	}
 
+	Error error(kNoError);
 	auto savefile = ScopedPtr<OutSaveFile>(_saveFileMgr->openForSaving(fileName));
-	if (savefile == nullptr) {
-		GUI::MessageDialog dialog("Could not open savefile");
-		dialog.runModal();
-		return;
-	}
-	if (g_engine->saveGameStream(savefile.get()).getCode() == kNoError)
+	if (savefile == nullptr)
+		error = Error(kReadingFailed);
+	else
+		error = g_engine->saveGameStream(savefile.get());
+	if (error.getCode() == kNoError) {
 		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), desc, false);
-
-	updateSelectedSavefile();
+		_savefiles.push_back(fileName);
+		updateSelectedSavefile();
+	}
+	else {
+		GUI::MessageDialog dialog(error.getTranslatedDesc());
+		dialog.runModal();
+	}
 }
 
 void Menu::openOptionsMenu() {
@@ -296,7 +362,12 @@ void Menu::continueMainMenu() {
 		g_engine->player().isGameLoaded() ? "MENUPRINCIPAL" : "MENUPRINCIPALINICIO",
 		true
 	);
-	// TODO: Update menu state and thumbanil
+
+	updateSelectedSavefile();
+}
+
+const Graphics::Surface *Menu::getBigThumbnail() const {
+	return _bigThumbnail.empty() ? nullptr : &_bigThumbnail.rawSurface();
 }
 
 }
