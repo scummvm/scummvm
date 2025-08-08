@@ -404,7 +404,7 @@ public:
 	inline const Common::String &targetObject() const { return _targetObject; }
 	inline Direction characterDirection() const { return _characterDirection; }
 
-	virtual CursorType cursorType() const override;
+	CursorType cursorType() const override;
 	void onClick() override;
 	void trigger(const char *action) override;
 	const char *typeName() const override;
@@ -543,7 +543,7 @@ public:
 	void draw() override;
 	void syncGame(Common::Serializer &serializer) override;
 	const char *typeName() const override;
-	virtual void walkTo(
+	void walkTo(
 		Common::Point target,
 		Direction endDirection = Direction::Invalid,
 		ITriggerableObject *activateObject = nullptr,

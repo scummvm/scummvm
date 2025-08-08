@@ -119,7 +119,7 @@ struct DelayTask : public Task {
 	TaskReturn run() override;
 	void debugPrint() override;
 	void syncGame(Common::Serializer &s) override;
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	uint32 _endTime = 0;

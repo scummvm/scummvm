@@ -850,7 +850,7 @@ struct FadeTask : public Task {
 		s.syncAsSByte(_order);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	void draw(float t) {

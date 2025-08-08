@@ -350,7 +350,7 @@ struct SayTextTask final : public Task {
 		s.syncAsSint32LE(_dialogId);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	Character *_character = nullptr;
@@ -428,7 +428,7 @@ struct AnimateCharacterTask final : public Task {
 		scumm_assert(_graphic != nullptr);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	Character *_character = nullptr;
@@ -485,7 +485,7 @@ struct LerpLodBiasTask final : public Task {
 		s.syncAsUint32LE(_durationMs);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	Character *_character = nullptr;
@@ -800,7 +800,7 @@ struct ArriveTask : public Task {
 		syncObjectAsString(s, _character);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 private:
 	const WalkingCharacter *_character = nullptr;
 };
@@ -1083,7 +1083,7 @@ struct DialogMenuTask : public Task {
 		s.syncAsUint32LE(_clickedLineI);
 	}
 
-	virtual const char *taskName() const override;
+	const char *taskName() const override;
 
 private:
 	static constexpr int kTextXOffset = 5;
