@@ -243,10 +243,13 @@ void Animation::load() {
 	if (_isLoaded)
 		return;
 	AnimationBase::load();
-	const bool withMipmaps = _folder != AnimationFolder::Backgrounds;
 	Rect maxBounds = maxFrameBounds();
 	_renderedSurface.create(maxBounds.width(), maxBounds.height(), BlendBlit::getSupportedPixelFormat());
-	_renderedTexture = g_engine->renderer().createTexture(maxBounds.width(), maxBounds.height(), withMipmaps);
+	_renderedTexture = g_engine->renderer().createTexture(maxBounds.width(), maxBounds.height(), true);
+
+	// We always create mipmaps, even for the backgrounds that usually do not scale much,
+	// the exception to this is the thumbnails for the savestates.
+	// If we need to reduce graphics memory usage in the future, we can change it right here
 }
 
 void Animation::freeImages() {
@@ -309,6 +312,25 @@ int32 Animation::frameAtTime(uint32 time) const {
 		time -= _frames[i]._duration;
 	}
 	return -1;
+}
+
+void Animation::overrideTexture(const ManagedSurface &surface) {
+	// In order to really use the overridden surface we have to override all
+	// values used for calculating the output size
+	_renderedFrameI = 0;
+	_renderedPremultiplyAlpha = _premultiplyAlpha;
+	_renderedSurface.free();
+	_renderedSurface.w = surface.w;
+	_renderedSurface.h = surface.h;
+	_images[0]->free();
+	_images[0]->w = surface.w;
+	_images[0]->h = surface.h;
+
+	if (_renderedTexture->size() != Point(surface.w, surface.h)) {
+		_renderedTexture = Common::move(
+			g_engine->renderer().createTexture(surface.w, surface.h, false));
+	}
+	_renderedTexture->update(surface);
 }
 
 void Animation::prerenderFrame(int32 frameI) {

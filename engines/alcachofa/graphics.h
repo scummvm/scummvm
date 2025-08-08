@@ -81,6 +81,8 @@ public:
 	virtual void setTexture(ITexture *texture) = 0;
 	virtual void setBlendMode(BlendMode blendMode) = 0;
 	virtual void setLodBias(float lodBias) = 0;
+	virtual void setOutput(Graphics::Surface &surface) = 0;
+	virtual bool hasOutput() const = 0;
 	virtual void quad(
 		Math::Vector2d topLeft,
 		Math::Vector2d size,
