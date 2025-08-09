@@ -39,6 +39,16 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
+	{
+		"mort_phil_adventura_de_cine",
+		"Clever & Smart - A Movie Adventure",
+		AD_ENTRY1s("Textos/Objetos.nkr", "8dce25494470209d4882bf12f1a5ea42", 19208),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE | ADGF_DEMO,
+		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
+	},
+
 
 	// The "english" version is just the spanish version with english subtitles...
 	{

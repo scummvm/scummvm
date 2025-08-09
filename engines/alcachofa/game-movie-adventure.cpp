@@ -28,6 +28,14 @@ using namespace Common;
 namespace Alcachofa {
 
 class GameMovieAdventure : public Game {
+	void onLoadedGameFiles() override {
+		// this notifies the script whether we are a demo
+		if (g_engine->world().loadedMapCount() == 2)
+			g_engine->script().variable("EsJuegoCompleto") = 2;
+		else if (g_engine->world().loadedMapCount() == 3) // I don't know this demo
+			g_engine->script().variable("EsJuegoCompleto") = 1;
+	}
+
 	bool doesRoomHaveBackground(const Room *room) override {
 		return !room->name().equalsIgnoreCase("Global") &&
 			!room->name().equalsIgnoreCase("HABITACION_NEGRA");
@@ -78,13 +86,35 @@ class GameMovieAdventure : public Game {
 			"MONITOR___OL_EFECTO_FONDO.AN0",
 			nullptr
 		};
-		for (const char **exemption = exemptions; *exemption != nullptr; exemption++) {
-			if (fileName.equalsIgnoreCase(*exemption)) {
-				debugC(1, kDebugGraphics, "Animation exemption triggered: %s", fileName.c_str());
-				return;
+
+		// these only happen in the german demo
+		static const char *demoExemptions[] = {
+			"TROZO_1.AN0",
+			"TROZO_2.AN0",
+			"TROZO_3.AN0",
+			"TROZO_4.AN0",
+			"TROZO_5.AN0",
+			"TROZO_6.AN0",
+			"NOTA_CINE_NEGRO.AN0",
+			"PP_JOHN_WAYNE_2.AN0",
+			"ARQUEOLOGO_ESTATICO_TIA.AN0",
+			"ARQUEOLOGO_HABLANDO_TIA.AN0",
+			nullptr
+		};
+
+		const auto isInExemptions = [&] (const char *const *const list) {
+			for (const char *const *exemption = list; *exemption != nullptr; exemption++) {
+				if (fileName.equalsIgnoreCase(*exemption))
+					return true;
 			}
-		}
-		Game::missingAnimation(fileName);
+			return false;
+		};
+
+		if (isInExemptions(exemptions) ||
+			((g_engine->gameDescription().flags & ADGF_DEMO) && isInExemptions(demoExemptions)))
+			debugC(1, kDebugGraphics, "Animation exemption triggered: %s", fileName.c_str());
+		else
+			Game::missingAnimation(fileName);
 	}
 
 	void unknownAnimateObject(const char *name) override {
@@ -138,13 +168,23 @@ class GameMovieAdventure : public Game {
 	void missingSound(const String &fileName) override {
 		if (fileName == "CHAS" || fileName == "517")
 			return;
+		if ((g_engine->gameDescription().flags & ADGF_DEMO) && (
+			fileName == "M4996" ||
+			fileName == "T40"))
+			return;
 		Game::missingSound(fileName);
+	}
+
+	bool isKnownBadVideo(int32 videoId) override {
+		return
+			(videoId == 3 && (g_engine->gameDescription().flags & ADGF_DEMO)) || // problem with MPEG PS decoding
+			Game::isKnownBadVideo(videoId);
 	}
 
 	void invalidVideo(int32 videoId, const char *context) override {
 		// for the one, known AVI problem, let's not block development
 		if (videoId == 1 && g_engine->gameDescription().language != DE_DEU)
-			warning("Could not play video %d (%s) (known problem with AVI decoder)", videoId, context);
+			warning("Could not play video %d (%s) (WMV not supported)", videoId, context);
 		else
 			Game::invalidVideo(videoId, context);
 	}
