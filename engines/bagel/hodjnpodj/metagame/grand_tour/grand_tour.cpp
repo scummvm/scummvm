@@ -1845,74 +1845,37 @@ void CMainGTWindow::OnDestroy() {
  *
  ****************************************************************/
 
+#define DEL(X) delete X; X = nullptr
+
 void CMainGTWindow::ReleaseResources(void) {
+	DEL(pText);
 
-	if (pText != nullptr)
-		delete pText;
+	DEL(pScoresResetButton);
+	DEL(pScoresLeaveButton);
+	DEL(pPlayButton);
+	DEL(pSaveButton);
+	DEL(pRestoreButton);
+	DEL(pLeaveButton);
 
-	if (pScoresResetButton != nullptr)
-		delete pScoresResetButton;
+	DEL(pHSHButton);
+	DEL(pHSMButton);
+	DEL(pHSLButton);
+	DEL(pHSNPButton);
+	DEL(pPSHButton);
+	DEL(pPSMButton);
+	DEL(pPSLButton);
+	DEL(pPSNPButton);
+	DEL(pGAButton);
+	DEL(pGGButton);
+	DEL(pGRButton);
 
-	if (pScoresLeaveButton != nullptr)
-		delete pScoresLeaveButton;
-
-	if (pPlayButton != nullptr)
-		delete pPlayButton;
-
-	if (pSaveButton != nullptr)
-		delete pSaveButton;
-
-	if (pRestoreButton != nullptr)
-		delete pRestoreButton;
-
-	if (pLeaveButton != nullptr)
-		delete pLeaveButton;
-
-	if (pHSHButton != nullptr)
-		delete pHSHButton;
-
-	if (pHSMButton != nullptr)
-		delete pHSMButton;
-
-	if (pHSLButton != nullptr)
-		delete pHSLButton;
-
-	if (pHSNPButton != nullptr)
-		delete pHSNPButton;
-
-	if (pPSHButton != nullptr)
-		delete pPSHButton;
-
-	if (pPSMButton != nullptr)
-		delete pPSMButton;
-
-	if (pPSLButton != nullptr)
-		delete pPSLButton;
-
-	if (pPSNPButton != nullptr)
-		delete pPSNPButton;
-
-	if (pGAButton != nullptr)
-		delete pGAButton;
-
-	if (pGGButton != nullptr)
-		delete pGGButton;
-
-	if (pGRButton != nullptr)
-		delete pGRButton;
-
-	if (pAudioButton != nullptr)
-		delete pAudioButton;
-
-	if (pTop10Button != nullptr)
-		delete pTop10Button;
-
-	if (pSplashScreen != nullptr)
-		delete pSplashScreen;
+	DEL(pAudioButton);
+	DEL(pTop10Button);
+	DEL(pSplashScreen);
 
 	if (pGamePalette != nullptr) {
 		pGamePalette->DeleteObject();         // release the game color palette
-		delete pGamePalette;
+		DEL(pGamePalette);	
 	}
 }
 
