@@ -26,88 +26,82 @@
 
 namespace Tot {
 
-void initTree(Tree &a, nodeElement dato) {
+void initTree(Tree &a, nodeElement data) {
 	a = new treeDef;
-	a->element = dato;
+	a->element = data;
 	a->parent = NULL;
 	a->sibling = NULL;
 	a->child = NULL;
 }
 
-bool root(Tree nodo) {
-	bool raiz_result;
-	if (nodo->parent == NULL)
-		raiz_result = true;
+bool isRoot(Tree node) {
+	bool root;
+	if (node->parent == NULL)
+		root = true;
 	else
-		raiz_result = false;
-	return raiz_result;
+		root = false;
+	return root;
 }
 
-Tree rightSibling(Tree nodo) {
-	Tree hermanoder_result;
-	hermanoder_result = nodo->sibling;
-	return hermanoder_result;
+Tree rightSibling(Tree node) {
+	Tree rightSibling;
+	rightSibling = node->sibling;
+	return rightSibling;
 }
 
-Tree parent(Tree nodo) {
-	Tree padre_result;
-	padre_result = nodo->parent;
-	return padre_result;
+Tree parent(Tree node) {
+	Tree parent;
+	parent = node->parent;
+	return parent;
 }
 
-Tree leftChild(Tree nodo) {
-	Tree hijoizq_result;
-	hijoizq_result = nodo->child;
-	return hijoizq_result;
+Tree leftChild(Tree node) {
+	Tree leftChild;
+	leftChild = node->child;
+	return leftChild;
 }
 
-int depth(Tree nodo) {
-	Tree auxiliar;
-	int contador;
-
-	int profundidad_result;
-	contador = 0;
-	auxiliar = nodo;
-	while (auxiliar->parent != NULL) {
-		contador += 1;
-		auxiliar = parent(auxiliar);
+int depth(Tree node) {
+	Tree aux;
+	int depthCount = 0;
+	aux = node;
+	while (aux->parent != NULL) {
+		depthCount += 1;
+		aux = parent(aux);
 	}
-	profundidad_result = contador;
-	return profundidad_result;
+	return depthCount;
 }
 
-void expandNode(Tree &nodo, nodeElement dato) {
-	Tree auxiliar;
+void expandNode(Tree &node, nodeElement data) {
+	Tree aux = node;
+	if (aux->child != NULL) {
 
-	auxiliar = nodo;
-	if (auxiliar->child != NULL) {
-
-		auxiliar = leftChild(auxiliar);
-		while (auxiliar->sibling != NULL)
-			auxiliar = rightSibling(auxiliar);
+		aux = leftChild(aux);
+		while (aux->sibling != NULL)
+			aux = rightSibling(aux);
 		;
-		auxiliar->sibling = new treeDef;
-		auxiliar = auxiliar->sibling;
-		auxiliar->element = dato;
-		auxiliar->sibling = NULL;
-		auxiliar->child = NULL;
-		auxiliar->parent = nodo;
+		aux->sibling = new treeDef;
+		aux = aux->sibling;
+		aux->element = data;
+		aux->sibling = NULL;
+		aux->child = NULL;
+		aux->parent = node;
 	} else {
 
-		auxiliar->child = new treeDef;
-		auxiliar = auxiliar->child;
-		auxiliar->element = dato;
-		auxiliar->sibling = NULL;
-		auxiliar->child = NULL;
-		auxiliar->parent = nodo;
+		aux->child = new treeDef;
+		aux = aux->child;
+		aux->element = data;
+		aux->sibling = NULL;
+		aux->child = NULL;
+		aux->parent = node;
 	}
 }
 
-void preOrder(Tree a, Common::String &cadena) {
+void preOrder(Tree a, Common::String &encodedString) {
 	if (a != NULL) {
-		cadena = Common::String::format("%s%d%cN%d@", cadena.c_str(), a->element.index, a->element.dicho, depth(a));
-		preOrder(leftChild(a), cadena);
-		preOrder(rightSibling(a), cadena);
+		encodedString = Common::String::format("%s%d%cN%d@", encodedString.c_str(), a->element.index, a->element.spoken, depth(a));
+		preOrder(leftChild(a), encodedString);
+		preOrder(rightSibling(a), encodedString);
 	}
 }
 
@@ -129,89 +123,78 @@ void saveExpression(Common::SeekableWriteStream *s, Common::String expression) {
 
 const int chatRegSize = 256;
 
-void saveConversations(Common::SeekableWriteStream *s, Tree a, uint sitio) {
-
+void saveConversations(Common::SeekableWriteStream *s, Tree a, uint offset) {
 	Common::String expression = "";
 	preOrder(a, expression);
-	debug("Pos-Expression=%s", expression.c_str());
-	debug("saving in position = %d", sitio);
-	s->seek(sitio * chatRegSize, SEEK_SET);
+	s->seek(offset * chatRegSize, SEEK_SET);
 	saveExpression(s, expression);
 }
 
-void readTree(Common::SeekableReadStream &stream, Tree &a, uint lugar) {
+void readTree(Common::SeekableReadStream &stream, Tree &a, uint position) {
 
-	const nodeElement vacio = {'0', 0};
-	nodeElement dato;
+	const nodeElement empty = {'0', 0};
+	nodeElement data;
 
-	Common::String strInd, exppaso;
-	Tree arbolaux;
-	byte posicion,
+	Common::String strInd, tmpExpression;
+	byte level;
+	Common::String levelAsString;
 
-		nivel,
-		nivelact;
+	stream.seek(chatRegSize * position);
 
-	Common::String nivelstr;
-
-	stream.seek(chatRegSize * lugar);
-
-	Common::String expresion;
-	expresion = stream.readPascalString();
-	debug("Pre-Expression=%s", expresion.c_str());
-
-	initTree(a, vacio);
-	arbolaux = a;
-	posicion = 0;
-	nivelact = 0;
+	Common::String expresion = stream.readPascalString();
+	initTree(a, empty);
+	Tree aux = a;
+	byte pos = 0;
+	byte currentLevel = 0;
 	do {
 
-		exppaso = "";
+		tmpExpression = "";
 		do {
-			exppaso = exppaso + expresion[posicion];
-		} while (expresion[posicion++] != '@');
-		dato.dicho = '0';
-		dato.index = 0;
+			tmpExpression = tmpExpression + expresion[pos];
+		} while (expresion[pos++] != '@');
+		data.spoken = '0';
+		data.index = 0;
 
-		int nIndex = exppaso.find('N');
-		strInd = exppaso.substr(0, nIndex - 1);
+		int nIndex = tmpExpression.find('N');
+		strInd = tmpExpression.substr(0, nIndex - 1);
 
-		dato.dicho = exppaso[nIndex - 1];
-		dato.index = atoi(strInd.c_str());
+		data.spoken = tmpExpression[nIndex - 1];
+		data.index = atoi(strInd.c_str());
 
-		nivelstr = "";
-		nivelstr = exppaso.substr(nIndex + 1, exppaso.size() - nIndex - 2);
-		nivel = atoi(nivelstr.c_str());
+		levelAsString = "";
+		levelAsString = tmpExpression.substr(nIndex + 1, tmpExpression.size() - nIndex - 2);
+		level = atoi(levelAsString.c_str());
 
-		if (nivel == 0)
-			arbolaux->element = dato;
-		else if (nivel == (nivelact + 1))
-			expandNode(arbolaux, dato);
-		else if (nivel > (nivelact + 1)) {
-			arbolaux = leftChild(arbolaux);
-			nivelact += 1;
-			while (rightSibling(arbolaux) != NULL)
-				arbolaux = rightSibling(arbolaux);
-			expandNode(arbolaux, dato);
+		if (level == 0)
+			aux->element = data;
+		else if (level == (currentLevel + 1))
+			expandNode(aux, data);
+		else if (level > (currentLevel + 1)) {
+			aux = leftChild(aux);
+			currentLevel += 1;
+			while (rightSibling(aux) != NULL)
+				aux = rightSibling(aux);
+			expandNode(aux, data);
 		} else {
 			do {
-				nivelact -= 1;
-				arbolaux = parent(arbolaux);
-			} while (!(nivelact < nivel));
-			expandNode(arbolaux, dato);
+				currentLevel -= 1;
+				aux = parent(aux);
+			} while (!(currentLevel < level));
+			expandNode(aux, data);
 		}
 
-	} while (posicion != expresion.size());
+	} while (pos != expresion.size());
 }
 
-void readTree(Common::String f, Tree &a, uint lugar) {
+void readTree(Common::String f, Tree &a, uint offset) {
 
-	Common::File fichero;
+	Common::File treeFile;
 	debug("Filename = %s", f.c_str());
-	if (!fichero.open(Common::Path(f))) {
+	if (!treeFile.open(Common::Path(f))) {
 		showError(314);
 	}
-	readTree(fichero, a, lugar);
-	fichero.close();
+	readTree(treeFile, a, offset);
+	treeFile.close();
 }
 
 } // End of namespace Tot

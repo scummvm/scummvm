@@ -28,7 +28,7 @@ namespace Tot {
 /**
  * Flags for animations
  */
-extern bool tocapintar, tocapintar2, tocapintareffect;
+extern bool timeToDraw, timeToDraw2, timeToDrawEffect;
 
 // Set to 30 for ease of dev
 const int kFrameMs = 20;

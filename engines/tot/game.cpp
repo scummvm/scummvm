@@ -24,7 +24,7 @@
 
 #include "tot/dialog.h"
 #include "tot/graphics.h"
-#include "tot/playanim.h"
+#include "tot/mouse.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
 #include "tot/texts.h"
@@ -47,7 +47,7 @@ void newGame() {
 	if (!g_engine->shouldQuit()) {
 		totalFadeOut(0);
 		g_engine->_graphics->clear();
-		processingActive();
+		displayLoading();
 		freeInventory();
 		loadObjects();
 		resetGameState();
@@ -78,7 +78,7 @@ int engine_start() {
 		return startGame();
 	}
 	g_engine->_graphics->clear();
-	processingActive();
+	displayLoading();
 
 	loadCharAnimation();
 	loadObjects();
@@ -123,7 +123,7 @@ int startGame() {
 		g_engine->_sound->playMidi("SEGUNDA", true);
 		break;
 	}
-	contadorpc2 = contadorpc;
+	cpCounter2 = cpCounter;
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	inGame = true;
 
@@ -202,7 +202,7 @@ int startGame() {
 				if (mouseClickY > 0 && mouseClickY < 131) {
 					switch (actionCode) {
 					case 0: // go to
-						contadorpc2 = contadorpc;
+						cpCounter2 = cpCounter;
 						// gets the zone where the character is now standing. Zone is calculated using xframe,yframe plus some adjustments to get the center of the feet
 						currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
 						if (currentZone < 10) {
@@ -255,14 +255,14 @@ int startGame() {
 					case 1: // talk
 						roomChange = false;
 						actionCode = 0;
-						talkScreenObject();
-						contadorpc2 = contadorpc;
+						talkToSceneObject();
+						cpCounter2 = cpCounter;
 						break;
 					case 2: // pick up
 						roomChange = false;
 						actionCode = 0;
 						pickupScreenObject();
-						contadorpc = contadorpc2;
+						cpCounter = cpCounter2;
 						break;
 					case 3: // look at
 						roomChange = false;
@@ -299,7 +299,7 @@ int startGame() {
 						roomChange = false;
 						actionCode = 0;
 						useScreenObject();
-						contadorpc = contadorpc2;
+						cpCounter = cpCounter2;
 						break;
 					case 5: // open
 						roomChange = false;
@@ -310,7 +310,7 @@ int startGame() {
 						roomChange = false;
 						actionCode = 0;
 						closeScreenObject();
-						contadorpc = contadorpc2;
+						cpCounter = cpCounter2;
 					} break;
 					}
 				} else if (mouseClickY > 148 && mouseClickY < 158) {
@@ -341,7 +341,7 @@ int startGame() {
 					} else {
 						actionCode = 0;
 						action();
-						contadorpc2 = contadorpc;
+						cpCounter2 = cpCounter;
 					}
 				} else if (mouseClickY > 166 && mouseClickY < 199) {
 					if (mouseClickX >= 3 && mouseClickX <= 19) {
@@ -378,7 +378,7 @@ int startGame() {
 				mouseClickY = e.mouse.y;
 				destinationStepX = (mouseClickX + 7) / xGridCount;
 				destinationStepY = (mouseClickY + 7) / yGridCount;
-				contadorpc2 = contadorpc;
+				cpCounter2 = cpCounter;
 				if (destinationStepY < 28) {
 					RoomObjectListEntry obj = *currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]];
 					if (obj.fileIndex > 0) {
@@ -422,7 +422,7 @@ int startGame() {
 		if (escapePressed && xframe2 == 0) {
 			freeAnimation();
 			freeScreenObjects();
-			contadorpc2 = contadorpc;
+			cpCounter2 = cpCounter;
 			startNewGame = false;
 			continueGame = false;
 			g_engine->saveAutosaveIfEnabled();
@@ -441,7 +441,7 @@ int startGame() {
 			else {
 				isSavingDisabled = true;
 				g_engine->openMainMenuDialog();
-				contadorpc = contadorpc2;
+				cpCounter = cpCounter2;
 				isSavingDisabled = false;
 			}
 			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
@@ -461,7 +461,7 @@ int startGame() {
 			if (list1Complete && list2Complete) {
 				list1Complete = false;
 				list2Complete = false;
-				contadorpc = contadorpc2;
+				cpCounter = cpCounter2;
 				gamePart = 2;
 				iframe = 0;
 				freeInventory();
@@ -472,7 +472,7 @@ int startGame() {
 				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 				g_engine->_sound->playMidi("CREDITOS", true);
 				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-				if (contadorpc2 > 43)
+				if (cpCounter2 > 43)
 					showError(274);
 				sacrificeScene();
 				g_engine->_graphics->clear();
@@ -518,11 +518,11 @@ int startGame() {
 
 			if (g_engine->_drawObjectAreas) {
 				for (int i = 0; i < depthLevelCount; i++) {
-					if (screenObjects[i] != NULL) {
+					if (screenLayers[i] != NULL) {
 						if (true) {
 							// debug
-							uint16 w = READ_LE_UINT16(screenObjects[i]);
-							uint16 h = READ_LE_UINT16(screenObjects[i] + 2);
+							uint16 w = READ_LE_UINT16(screenLayers[i]);
+							uint16 h = READ_LE_UINT16(screenLayers[i] + 2);
 							Common::Rect r = Common::Rect(depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
 							drawRect(180, depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
 
@@ -556,7 +556,7 @@ int startGame() {
 
 void sceneChange() {
 	roomChange = false;
-	contadorpc = contadorpc2;
+	cpCounter = cpCounter2;
 	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 	saveRoomData(currentRoomData, rooms);
 	// verifyCopyProtection();
@@ -578,15 +578,15 @@ void sceneChange() {
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		if (contadorpc > 89)
+		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (isTVOn)
 			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
-			cargatele();
+			loadTV();
 		screenTransition(transitionEffect, false, sceneBackground);
-		contadorpc = contadorpc2;
+		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
 		oldGridY = 0;
@@ -773,11 +773,11 @@ void sceneChange() {
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (bookTopic[0] == true && currentRoomData->animationFlag == true)
 			disableSecondAnimation();
-		if (contadorpc > 89)
+		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		screenTransition(transitionEffect, false, sceneBackground);
-		contadorpc = contadorpc2;
+		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
 		oldGridY = 0;
@@ -877,13 +877,13 @@ void sceneChange() {
 			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 			break;
 		}
-		if (contadorpc > 89)
+		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (currentRoomData->code == 4)
 			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 		screenTransition(transitionEffect, false, sceneBackground);
-		contadorpc = contadorpc2;
+		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
 		oldGridY = 0;
@@ -920,7 +920,7 @@ void sceneChange() {
 			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
 			break;
 		}
-		if (contadorpc > 89)
+		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (isTrapSet) {
@@ -948,7 +948,7 @@ void sceneChange() {
 		screenTransition(transitionEffect, false, sceneBackground);
 		if ((isRedDevilCaptured == false) && (isTrapSet == false))
 			runaroundRed();
-		contadorpc = contadorpc2;
+		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
 		oldGridY = 0;
@@ -971,7 +971,7 @@ void sceneChange() {
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		if (contadorpc > 89)
+		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		switch (currentRoomData->code) {
@@ -983,7 +983,7 @@ void sceneChange() {
 			break;
 		}
 		screenTransition(transitionEffect, false, sceneBackground);
-		contadorpc = contadorpc2;
+		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
 		oldGridY = 0;

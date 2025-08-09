@@ -49,35 +49,35 @@ void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction
 	}
 }
 
-void loadAnimation(Common::String animacion) {
+void loadAnimation(Common::String animationName) {
 	debug("Loading animation!");
-	Common::File fichcani;
+	Common::File animFile;
 
-	if (animacion == "PETER")
+	if (animationName == "PETER")
 		isPeterCoughing = true;
 	else
 		isPeterCoughing = false;
 
 	isSecondaryAnimationEnabled = true;
-	if (!fichcani.open(Common::Path(animacion + ".DAT"))) {
+	if (!animFile.open(Common::Path(animationName + ".DAT"))) {
 		showError(265);
 	}
 
-	secondaryAnimFrameSize = fichcani.readUint16LE();
-	secondaryAnimationFrameCount = fichcani.readByte();
-	secondaryAnimDirCount = fichcani.readByte();
+	secondaryAnimFrameSize = animFile.readUint16LE();
+	secondaryAnimationFrameCount = animFile.readByte();
+	secondaryAnimDirCount = animFile.readByte();
 	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
 	if (secondaryAnimDirCount != 0) {
 
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {
-			loadAnimationForDirection(&fichcani, i);
+			loadAnimationForDirection(&animFile, i);
 		}
 	} else {
-		loadAnimationForDirection(&fichcani, 0);
+		loadAnimationForDirection(&animFile, 0);
 	}
 
-	fichcani.close();
+	animFile.close();
 	debug("Read all frames! longtray2=%d", currentRoomData->secondaryTrajectoryLength);
 	secondaryAnimWidth = READ_LE_UINT16(secondaryAnimation.bitmap[0][1]) + 1;
 	secondaryAnimHeight = READ_LE_UINT16(secondaryAnimation.bitmap[0][1] + 2) + 1;
@@ -209,50 +209,11 @@ void updateAltScreen(byte otherScreenNumber) {
 	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM);
 }
 
-struct regzxc {
-	byte cabecera[258];
-	char cadena[8];
-	byte relleno[327];
-	byte masrelleno[5268];
-};
-
 void verifyCopyProtection() {
-	// regzxc regiszxc;
-	// varying_string<8> rombioszxc, cadenaauxzxc, cadenarefzxc;
-	// byte indicezxc;
-
-	// Common::File fichzxc;
-	// if(!fichzxc.open("MCGA.TWK")){
-	// 	error("verifyCopyProtection(): ioresult (273)");
-	// }
-
-	// fichzxc.read(regiszxc.cabecera, 258);
-	// fichzxc.read(regiszxc.cadena, 8);
-	// fichzxc.read(regiszxc.relleno, 327);
-	// fichzxc.read(regiszxc.masrelleno, 5268);
-
-	// fichzxc.close();
-	// rombioszxc = "";
-	// rombioszxc[0] = '\0';
-	// cadenaauxzxc[0] = '\0';
-	// for (indicezxc = 0; indicezxc <= 7; indicezxc ++)
-	// 	rombioszxc = rombioszxc + chr(mem[0xf000 * 1337 + (0xfff5+indicezxc)]);
-	// cadenaauxzxc = regiszxc.cadena;
-	// for (indicezxc = 1; indicezxc <= 8; indicezxc ++)
-	// 	cadenaauxzxc[indicezxc] = chr((ord(regiszxc.cadena[indicezxc])
-	// 	                               ^ ord(rombioszxc[indicezxc])));
-	// indicezxc = 17 * 10;
-	// cadenarefzxc = string(chr(indicezxc + 10)) + chr(indicezxc + 11) + chr(indicezxc + 12)
-	//                + chr(indicezxc + 13) + chr(indicezxc + 14) + chr(indicezxc + 15)
-	//                + chr(indicezxc + 16) + chr(indicezxc + 17);
-	// cadenarefzxc[0] = '\10';
-	// if (cadenaauxzxc != cadenarefzxc) {
-	// 	contadorpc += 1;
-	// 	contadorpc2 += 1;
-	// }
+	//TODO: Copy protection
 }
 
-void cargatele() {
+void loadTV() {
 
 	Common::File fichct;
 	if (!fichct.open("PALETAS.DAT")) {
@@ -276,7 +237,7 @@ void cargatele() {
 }
 
 void loadScreen() {
-	Common::File fichcp;
+	Common::File paletteFile;
 	palette palcp;
 
 	screenSize = currentRoomData->roomImageSize;
@@ -284,20 +245,20 @@ void loadScreen() {
 	Common::copy(sceneBackground, sceneBackground + screenSize, backgroundCopy);
 	switch (gamePart) {
 	case 1: {
-		if (!fichcp.open("PALETAS.DAT")) {
+		if (!paletteFile.open("PALETAS.DAT")) {
 			showError(310);
 		}
-		fichcp.seek(currentRoomData->palettePointer);
-		fichcp.read(palcp, 603);
+		paletteFile.seek(currentRoomData->palettePointer);
+		paletteFile.read(palcp, 603);
 		if (currentRoomData->paletteAnimationFlag) {
-			fichcp.read(palAnimSlice, 144);
+			paletteFile.read(palAnimSlice, 144);
 			for (int i = 0; i <= 48; i++) {
 				palAnimSlice[i * 3 + 0] = palAnimSlice[i * 3 + 0] << 2;
 				palAnimSlice[i * 3 + 1] = palAnimSlice[i * 3 + 1] << 2;
 				palAnimSlice[i * 3 + 2] = palAnimSlice[i * 3 + 2] << 2;
 			}
 		}
-		fichcp.close();
+		paletteFile.close();
 		for (int i = 1; i <= 200; i++) {
 			pal[i * 3 + 0] = palcp[i * 3 + 0] << 2;
 			pal[i * 3 + 1] = palcp[i * 3 + 1] << 2;
@@ -314,7 +275,7 @@ void loadScreen() {
 
 void loadCharAnimation() {
 	Common::File characterFile;
-	contadorpc = contadorpc2;
+	cpCounter = cpCounter2;
 	if (!characterFile.open("PERSONAJ.SPT"))
 		showError(265);
 
@@ -336,19 +297,11 @@ void loadCharAnimation() {
 }
 
 void freeScreenObjects() {
-	uint indicecarga;
-
-	for (indicecarga = 0; indicecarga < numScreenOverlays; indicecarga++) {
-		if (screenObjects[indicecarga] != NULL)
-			free(screenObjects[indicecarga]);
-		screenObjects[indicecarga] = NULL;
+	for (int i = 0; i < numScreenOverlays; i++) {
+		if (screenLayers[i] != NULL)
+			free(screenLayers[i]);
+		screenLayers[i] = NULL;
 	}
-
-	// if (liberadormem != nil) {
-	// release(liberadormem);
-	// liberadormem = nil;
-	// }
-	// verifyCopyProtection2();
 }
 
 void freeAnimation() {
@@ -362,80 +315,48 @@ void freeAnimation() {
 
 void freeInventory() {
 	for (int i = 0; i < inventoryIconCount; i++) {
-		free(mochilaxms[i]);
+		free(inventoryIconBitmaps[i]);
 	}
 }
 
-// struct regas {
-// 	array<1, 258, byte> cabecera;
-// 	varying_string<8> cadena;
-// 	array<1, 327, byte> relleno;
-// 	array<1, 5268, byte> masrelleno;
-// };
-
 void verifyCopyProtection2() {
-	// file<regas> fichas;
-	// regas regisas;
-	// varying_string<8> rombiosas, cadenaauxas, cadenarefas;
-	// byte indiceas;
-
-	// rombiosas = "";
-	// rombiosas[0] = '\0';
-	// reset(fichas);
-	// if (ioresult != 0)
-	// 	error("verifyCopyProtection2(): ioresult (273)");
-	// fichas >> regisas;
-	// close(fichas);
-	// cadenaauxas[0] = '\0';
-	// cadenaauxas = regisas.cadena;
-	// for (indiceas = 0; indiceas <= 7; indiceas++)
-	// 	rombiosas = rombiosas + chr(mem[0xf000 * 1337 + (0xfff5 + indiceas)]);
-	// for (indiceas = 1; indiceas <= 8; indiceas++)
-	// 	cadenaauxas[indiceas] = chr((ord(regisas.cadena[indiceas]) ^ ord(rombiosas[indiceas])));
-	// indiceas = 18 * 10;
-	// cadenarefas = string(chr(indiceas)) + chr(indiceas + 1) + chr(indiceas + 2) + chr(indiceas + 3) +
-	// 			  chr(indiceas + 4) + chr(indiceas + 5) + chr(indiceas + 6) + chr(indiceas + 7);
-	// cadenarefas[0] = '\10';
-	// if (cadenaauxas != cadenarefas) {
-	// 	contadorpc2 += 1;
-	// 	contadorpc += 1;
-	// }
+	// TODO:
 }
-void loadItemWithFixedDepth(uint coordx, uint coordy, uint tamdibujo, int32 dibujo, uint prof) {
-	screenObjects[prof] = (byte *)malloc(tamdibujo);
-	readBitmap(dibujo, screenObjects[prof], tamdibujo, 319);
+void loadItemWithFixedDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
+	screenLayers[depth] = (byte *)malloc(bitmapSize);
+	readBitmap(bitmapIndex, screenLayers[depth], bitmapSize, 319);
 
 	uint16 w, h;
-	w = READ_LE_UINT16(screenObjects[prof]);
-	h = READ_LE_UINT16(screenObjects[prof] + 2);
-	depthMap[prof].posx = coordx;
-	depthMap[prof].posy = coordy;
-	depthMap[prof].posx2 = coordx + w + 1;
-	depthMap[prof].posy2 = coordy + h + 1;
+	w = READ_LE_UINT16(screenLayers[depth]);
+	h = READ_LE_UINT16(screenLayers[depth] + 2);
+	depthMap[depth].posx = coordx;
+	depthMap[depth].posy = coordy;
+	depthMap[depth].posx2 = coordx + w + 1;
+	depthMap[depth].posy2 = coordy + h + 1;
 }
 
-void loadItem(uint coordx, uint coordy, uint tamdibujo, int32 dibujo, uint prof) {
-	loadItemWithFixedDepth(coordx, coordy, tamdibujo, dibujo, prof - 1);
+void loadItem(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
+	loadItemWithFixedDepth(coordx, coordy, bitmapSize, bitmapIndex, depth - 1);
 }
 
-void updateInventory(byte indicador) {
-	for (int ind_mo = indicador; ind_mo < (inventoryIconCount - 1); ind_mo++) {
-		mobj[ind_mo].bitmapIndex = mobj[ind_mo + 1].bitmapIndex;
-		mobj[ind_mo].code = mobj[ind_mo + 1].code;
-		mobj[ind_mo].objectName = mobj[ind_mo + 1].objectName;
+void updateInventory(byte index) {
+	for (int i = index; i < (inventoryIconCount - 1); i++) {
+		mobj[i].bitmapIndex = mobj[i + 1].bitmapIndex;
+		mobj[i].code = mobj[i + 1].code;
+		mobj[i].objectName = mobj[i + 1].objectName;
 	}
 	// verifyCopyProtection();
 }
 
-void readBitmap(int32 posbm, byte *puntbm, uint tambm, uint errorbm) {
-	Common::File fichbitmap;
-	if (!fichbitmap.open("BITMAPS.DAT")) {
-		showError(errorbm);
+void readBitmap(int32 bitmapPosition, byte *buf, uint bitmapSize, uint error) {
+	Common::File bitmapFile;
+	if (!bitmapFile.open("BITMAPS.DAT")) {
+		showError(error);
 	}
-	fichbitmap.seek(posbm);
-	fichbitmap.read(puntbm, tambm);
+	bitmapFile.seek(bitmapPosition);
+	bitmapFile.read(buf, bitmapSize);
 
-	fichbitmap.close();
+	bitmapFile.close();
 }
 
 void updateItem(uint itemPosition) {
@@ -459,7 +380,7 @@ void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, ScreenOb
 	thisRegObj.afterUseTextRef = stream->readUint16LE();
 	thisRegObj.pickTextRef = stream->readUint16LE();
 	thisRegObj.useTextRef = stream->readUint16LE();
-	thisRegObj.habla = stream->readByte();
+	thisRegObj.speaking = stream->readByte();
 	thisRegObj.openable = stream->readByte();
 	thisRegObj.closeable = stream->readByte();
 
@@ -497,9 +418,9 @@ void drawLookAtItem(RoomObjectListEntry obj) {
 	g_engine->_mouseManager->show();
 }
 
-void putIcon(uint posiconx, uint posicony, uint numicon) {
+void putIcon(uint iconPosX, uint iconPosY, uint iconNum) {
 	// substract 1 to account for 1-based indices
-	g_engine->_graphics->putImg(posiconx, posicony, mochilaxms[mobj[numicon].bitmapIndex - 1]);
+	g_engine->_graphics->putImg(iconPosX, iconPosY, inventoryIconBitmaps[mobj[iconNum].bitmapIndex - 1]);
 }
 
 void drawBackpack() {
@@ -539,8 +460,8 @@ void turnOffRight() {
 	line(311, 190, 292, 190, 255);
 }
 
-void inventory(byte direccion, byte tope) {
-	switch (direccion) {
+void inventory(byte dir, byte max) {
+	switch (dir) {
 	case 0:
 		if (inventoryPosition > 0) {
 			inventoryPosition -= 1;
@@ -548,7 +469,7 @@ void inventory(byte direccion, byte tope) {
 		}
 		break;
 	case 1:
-		if (inventoryPosition < (tope - 6)) {
+		if (inventoryPosition < (max - 6)) {
 			inventoryPosition += 1;
 			drawBackpack();
 		}
@@ -564,15 +485,15 @@ void inventory(byte direccion, byte tope) {
 	else
 		turnOffRight();
 	g_engine->_mouseManager->show();
-	if (contadorpc > 145)
+	if (cpCounter > 145)
 		showError(274);
 }
 
 void mask() {
-	byte ytextaux;
-	buttonBorder(0, 140, 319, 149, 0, 0, 0, 0, 0, 0, "");
-	for (ytextaux = 1; ytextaux <= 25; ytextaux++)
-		buttonBorder(0, (175 - ytextaux), 319, (174 + ytextaux), 251, 251, 251, 251, 0, 0, "");
+
+	buttonBorder(0, 140, 319, 149, 0, 0, 0, 0, 0);
+	for (int i = 1; i <= 25; i++)
+		buttonBorder(0, (175 - i), 319, (174 + i), 251, 251, 251, 251, 0);
 	drawMenu(1);
 	// verifyCopyProtection();
 	if (inventoryPosition > 1)
@@ -585,21 +506,21 @@ void mask() {
 		turnOffRight();
 }
 
-void drawMenu(byte nummenu) {
-	byte *punteromenu;
-	uint tampunteromenu;
+void drawMenu(byte menuNumber) {
+	byte *bitmap;
+	uint menuSize;
 	byte xmenu, ymenu;
-	long posicionmenu;
+	long menuOffset;
 
 	Common::File menuFile;
 	if (!menuFile.open("MENUS.DAT")) {
 		showError(258);
 	}
 
-	posicionmenu = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[nummenu - 1][0] : menuOffsets_EN[nummenu - 1][0];
-	tampunteromenu = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[nummenu - 1][1] : menuOffsets_EN[nummenu - 1][1];
+	menuOffset = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[menuNumber - 1][0] : menuOffsets_EN[menuNumber - 1][0];
+	menuSize = g_engine->_lang == Common::ES_ESP ? menuOffsets_ES[menuNumber - 1][1] : menuOffsets_EN[menuNumber - 1][1];
 
-	switch (nummenu) {
+	switch (menuNumber) {
 	case 1: {
 		xmenu = 0;
 		ymenu = 150;
@@ -613,13 +534,13 @@ void drawMenu(byte nummenu) {
 		ymenu = 10;
 	} break;
 	case 4: {
-		if (contadorpc2 > 20)
+		if (cpCounter2 > 20)
 			showError(274);
 		xmenu = 50;
 		ymenu = 10;
 	} break;
 	case 5: {
-		if (contadorpc > 23)
+		if (cpCounter > 23)
 			showError(274);
 		xmenu = 0;
 		ymenu = 150;
@@ -638,58 +559,58 @@ void drawMenu(byte nummenu) {
 	} break;
 	}
 
-	punteromenu = (byte *)malloc(tampunteromenu);
-	menuFile.seek(posicionmenu);
-	menuFile.read(punteromenu, tampunteromenu);
-	g_engine->_graphics->putImg(xmenu, ymenu, punteromenu);
-	free(punteromenu);
+	bitmap = (byte *)malloc(menuSize);
+	menuFile.seek(menuOffset);
+	menuFile.read(bitmap, menuSize);
+	g_engine->_graphics->putImg(xmenu, ymenu, bitmap);
+	free(bitmap);
 	menuFile.close();
 }
 
-void generateDiploma(Common::String &nombrefoto);
+void generateDiploma(Common::String &photoName);
 
-static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
-	palette palauxlocal;
-	byte *pantalla;
+static void loadDiploma(Common::String &photoName, Common::String &key) {
+	palette auxPal;
+	byte *screen;
 	uint size;
-	byte *sello;
+	byte *stamp;
 
-	Common::File fich;
-	if (!fich.open("DIPLOMA.PAN")) {
+	Common::File dipFile;
+	if (!dipFile.open("DIPLOMA.PAN")) {
 		showError(318);
 	}
 
-	fich.read(palauxlocal, 768);
+	dipFile.read(auxPal, 768);
 
-	pantalla = (byte *)malloc(64000);
-	fich.read(pantalla, 64000);
-	fich.close();
+	screen = (byte *)malloc(64000);
+	dipFile.read(screen, 64000);
+	dipFile.close();
 
-	if (!fich.open(Common::Path("DIPLOMA/SELLO.BMP")))
+	if (!dipFile.open(Common::Path("DIPLOMA/SELLO.BMP")))
 		showError(271);
-	sello = (byte *)malloc(2054);
-	fich.read(sello, 2054);
-	fich.close();
-	drawFullScreen(pantalla);
+	stamp = (byte *)malloc(2054);
+	dipFile.read(stamp, 2054);
+	dipFile.close();
+	drawFullScreen(screen);
 
-	free(pantalla);
+	free(screen);
 
-	if (fich.open(Common::Path("DIPLOMA/" + nombrefoto + ".FOT"))) {
-		size = fich.size() - 768;
-		pantalla = (byte *)malloc(size);
-		fich.read(pal, 768);
-		fich.read(pantalla, size);
-		fich.close();
-		g_engine->_graphics->putShape(10, 20, pantalla);
-		free(pantalla);
+	if (dipFile.open(Common::Path("DIPLOMA/" + photoName + ".FOT"))) {
+		size = dipFile.size() - 768;
+		screen = (byte *)malloc(size);
+		dipFile.read(pal, 768);
+		dipFile.read(screen, size);
+		dipFile.close();
+		g_engine->_graphics->putShape(10, 20, screen);
+		free(screen);
 	}
 	for (int i = 16; i <= 255; i++) {
-		palauxlocal[i * 3 + 0] = pal[i * 3 + 0];
-		palauxlocal[i * 3 + 1] = pal[i * 3 + 1];
-		palauxlocal[i * 3 + 2] = pal[i * 3 + 2];
+		auxPal[i * 3 + 0] = pal[i * 3 + 0];
+		auxPal[i * 3 + 1] = pal[i * 3 + 1];
+		auxPal[i * 3 + 2] = pal[i * 3 + 2];
 	}
 
-	copyPalette(palauxlocal, pal);
+	copyPalette(auxPal, pal);
 	g_engine->_graphics->fixPalette(pal, 768);
 	g_engine->_graphics->setPalette(pal);
 	g_engine->_screen->markAllDirty();
@@ -699,11 +620,11 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	for (int i = 0; i < 10; i++)
 		passArray[i] = (char)(Random(10) + 48);
 
-	clave.append(passArray, passArray + 10);
+	key.append(passArray, passArray + 10);
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
-	biosText(91, 16, messages[49] + clave, 255);
-	biosText(90, 15,  messages[49] + clave, 13);
+	biosText(91, 16, messages[49] + key, 255);
+	biosText(90, 15,  messages[49] + key, 13);
 
 	biosText(81, 61,  messages[50], 0);
 	biosText(61, 81,  messages[51], 0);
@@ -724,23 +645,23 @@ static void loadDiploma(Common::String &nombrefoto, Common::String &clave) {
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	// putShape(270, 161, (byte *)sello);
-	g_engine->_graphics->putShape(270, 159, sello);
-	free(sello);
+	g_engine->_graphics->putShape(270, 159, stamp);
+	free(stamp);
 }
 
-static void saveDiploma(Common::String &nombrefoto, Common::String &clave) {
-	byte *panta;
-	Common::DumpFile fich;
+static void saveDiploma(Common::String &photoName, Common::String &key) {
+	byte *screen;
+	Common::DumpFile outDip;
 
 	Common::Path path;
-	if (nombrefoto != "")
-		path = Common::Path("DIPLOMA/" + nombrefoto + ".DIP");
+	if (photoName != "")
+		path = Common::Path("DIPLOMA/" + photoName + ".DIP");
 	else
 		path = Common::Path("DIPLOMA/DEFAULT.DIP");
 
-	fich.open(path, true);
+	outDip.open(path, true);
 	debug("Path: %s", path.toString().c_str());
-	if (!fich.isOpen()) {
+	if (!outDip.isOpen()) {
 		error("Could not open output file!");
 	}
 
@@ -750,27 +671,27 @@ static void saveDiploma(Common::String &nombrefoto, Common::String &clave) {
 	for (int i = 0; i < 768; i++) {
 		palBuf[i] = palBuf[i] >> 2;
 	}
-	char fixedClave[10];
-	fixedClave[0] = 10;
+	char fixedKey[10];
+	fixedKey[0] = 10;
 	for (int i = 1; i < 10; i++) {
-		fixedClave[i] = clave[i - 1];
+		fixedKey[i] = key[i - 1];
 	}
-	fich.write(palBuf, 768);
-	fich.write(fixedClave, 10);
-	panta = (byte *)malloc(64000);
-	copyFromScreen(panta);
-	fich.write(panta, 64000);
-	fich.finalize();
-	fich.close();
-	free(panta);
+	outDip.write(palBuf, 768);
+	outDip.write(fixedKey, 10);
+	screen = (byte *)malloc(64000);
+	copyFromScreen(screen);
+	outDip.write(screen, 64000);
+	outDip.finalize();
+	outDip.close();
+	free(screen);
 }
 
-void generateDiploma(Common::String &nombrefoto) {
-	Common::String clave;
+void generateDiploma(Common::String &photoName) {
+	Common::String key;
 
-	nombrefoto.toUppercase();
+	photoName.toUppercase();
 	totalFadeOut(0);
-	loadDiploma(nombrefoto, clave);
+	loadDiploma(photoName, key);
 
 	Common::Event e;
 	bool keyPressed = false;
@@ -783,52 +704,52 @@ void generateDiploma(Common::String &nombrefoto) {
 		}
 		g_system->delayMillis(10);
 	} while (!keyPressed && !g_engine->shouldQuit());
-	saveDiploma(nombrefoto, clave);
+	saveDiploma(photoName, key);
 }
 
 void checkMouseGrid() {
-	uint xrejilla, yrejilla;
-	Common::String objmochila;
-	if (contadorpc2 > 120)
+	uint xGrid, yGrid;
+	Common::String invObject;
+	if (cpCounter2 > 120)
 		showError(274);
 	if (mouseY >= 0 && mouseY <= 131) {
-		xrejilla = (mouseX + 7) / xGridCount;
-		yrejilla = (mouseY + 7) / yGridCount;
-		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldGridX][oldGridY] || oldInventoryObjectName != "") {
+		xGrid = (mouseX + 7) / xGridCount;
+		yGrid = (mouseY + 7) / yGridCount;
+		if (currentRoomData->mouseGrid[xGrid][yGrid] != currentRoomData->mouseGrid[oldGridX][oldGridY] || oldInventoryObjectName != "") {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (actionCode) {
 			case 0:
-				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 1:
-				actionLine = getActionLineText(1) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(1) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 2:
-				actionLine = getActionLineText(2) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(2) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 3:
-				actionLine = getActionLineText(3) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(3) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 4:
 				if (inventoryObjectName != "")
-					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				else
-					actionLine = getActionLineText(4) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+					actionLine = getActionLineText(4) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 5:
-				actionLine = getActionLineText(5) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(5) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			case 6:
-				actionLine = getActionLineText(6) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(6) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 				break;
 			default:
-				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xGrid][yGrid]]->objectName;
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
-			oldGridX = xrejilla;
-			oldGridY = yrejilla;
+			oldGridX = xGrid;
+			oldGridY = yGrid;
 		}
 		oldActionCode = 253;
 		oldInventoryObjectName = "";
@@ -871,52 +792,52 @@ void checkMouseGrid() {
 		}
 	} else if (mouseY >= 166 && mouseY <= 199) {
 		if (mouseX >= 26 && mouseX <= 65) {
-			objmochila = mobj[inventoryPosition].objectName;
+			invObject = mobj[inventoryPosition].objectName;
 		} else if (mouseX >= 70 && mouseX <= 108) {
-			objmochila = mobj[inventoryPosition + 1].objectName;
+			invObject = mobj[inventoryPosition + 1].objectName;
 		} else if (mouseX >= 113 && mouseX <= 151) {
-			objmochila = mobj[inventoryPosition + 2].objectName;
+			invObject = mobj[inventoryPosition + 2].objectName;
 		} else if (mouseX >= 156 && mouseX <= 194) {
-			objmochila = mobj[inventoryPosition + 3].objectName;
+			invObject = mobj[inventoryPosition + 3].objectName;
 		} else if (mouseX >= 199 && mouseX <= 237) {
-			objmochila = mobj[inventoryPosition + 4].objectName;
+			invObject = mobj[inventoryPosition + 4].objectName;
 		} else if (mouseX >= 242 && mouseX <= 280) {
-			objmochila = mobj[inventoryPosition + 5].objectName;
+			invObject = mobj[inventoryPosition + 5].objectName;
 		} else {
-			objmochila = ' ';
+			invObject = ' ';
 		}
 
-		if (objmochila != oldInventoryObjectName || oldGridX != 0) {
+		if (invObject != oldInventoryObjectName || oldGridX != 0) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (actionCode) {
 			case 1:
-				actionLine = getActionLineText(1) + objmochila;
+				actionLine = getActionLineText(1) + invObject;
 				break;
 			case 2:
-				actionLine = getActionLineText(2) + objmochila;
+				actionLine = getActionLineText(2) + invObject;
 				break;
 			case 3:
-				actionLine = getActionLineText(3) + objmochila;
+				actionLine = getActionLineText(3) + invObject;
 				break;
 			case 4:
 				if (inventoryObjectName == "")
-					actionLine = getActionLineText(4) + objmochila;
+					actionLine = getActionLineText(4) + invObject;
 				else
-					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + objmochila;
+					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + invObject;
 				break;
 			case 5:
-				actionLine = getActionLineText(5) + objmochila;
+				actionLine = getActionLineText(5) + invObject;
 				break;
 			case 6:
-				actionLine = getActionLineText(6) + objmochila;
+				actionLine = getActionLineText(6) + invObject;
 				break;
 			default:
-				euroText(160, 144, objmochila, 255, Graphics::kTextAlignCenter);
+				euroText(160, 144, invObject, 255, Graphics::kTextAlignCenter);
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
-			oldInventoryObjectName = objmochila;
+			oldInventoryObjectName = invObject;
 		}
 		oldActionCode = 255;
 		oldGridX = 0;
@@ -924,9 +845,9 @@ void checkMouseGrid() {
 	}
 }
 
-void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte colorbarra) {
+void readAlphaGraph(Common::String &output, int length, int posx, int posy, byte barColor) {
 	int pun = 1;
-	bar(posx, posy - 2, posx + long_ * 8, posy + 8, colorbarra);
+	bar(posx, posy - 2, posx + length * 8, posy + 8, barColor);
 
 	biosText(posx, posy, "_", 0);
 
@@ -940,20 +861,20 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 				int asciiCode = e.kbd.ascii;
 				// ENTER key
 				if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_KP_ENTER) {
-					if (dato.size() > 0) {
+					if (output.size() > 0) {
 						done = true;
 						continue;
 					}
 				}
 				// Max 8 chars
-				if (pun > long_ && asciiCode != 8) {
+				if (pun > length && asciiCode != 8) {
 					g_engine->_sound->beep(750, 60);
-					bar((posx + (dato.size()) * 8), (posy - 2), (posx + (dato.size() + 1) * 8), (posy + 8), 0);
+					bar((posx + (output.size()) * 8), (posy - 2), (posx + (output.size() + 1) * 8), (posy + 8), 0);
 				} else if (asciiCode == 8 && pun > 1) { // delete
-					dato = dato.substr(0, dato.size() - 1);
-					bar(posx, (posy - 2), (posx + long_ * 8), (posy + 8), colorbarra);
-					biosText(posx, posy, dato.c_str(), 0);
-					biosText((posx + (dato.size()) * 8), posy, "_", 0);
+					output = output.substr(0, output.size() - 1);
+					bar(posx, (posy - 2), (posx + length * 8), (posy + 8), barColor);
+					biosText(posx, posy, output.c_str(), 0);
+					biosText((posx + (output.size()) * 8), posy, "_", 0);
 					pun -= 1;
 				} else if (
 					(asciiCode < 97 || asciiCode > 122) &&
@@ -963,10 +884,10 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 					g_engine->_sound->beep(1200, 60);
 				} else {
 					pun += 1;
-					dato = dato + (char)e.kbd.ascii;
-					bar(posx, (posy - 2), (posx + long_ * 8), (posy + 8), colorbarra);
-					biosText(posx, posy, dato.c_str(), 0);
-					biosText((posx + (dato.size()) * 8), posy, "_", 0);
+					output = output + (char)e.kbd.ascii;
+					bar(posx, (posy - 2), (posx + length * 8), (posy + 8), barColor);
+					biosText(posx, posy, output.c_str(), 0);
+					biosText((posx + (output.size()) * 8), posy, "_", 0);
 				}
 			}
 		}
@@ -975,13 +896,13 @@ void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte co
 	}
 }
 
-void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, byte colorbarra,
-						 byte colortexto) {
+void readAlphaGraphSmall(Common::String &output, int length, int posx, int posy, byte barColor,
+						 byte textColor) {
 	int pun = 1;
 	bool borracursor;
-	bar(posx, posy + 2, posx + long_ * 6, posy + 9, colorbarra);
+	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
 
-	biosText(posx, posy, "-", colortexto);
+	biosText(posx, posy, "-", textColor);
 	Common::Event e;
 	bool done = false;
 
@@ -992,20 +913,20 @@ void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, by
 				int asciiCode = e.kbd.ascii;
 				// ENTER key
 				if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_KP_ENTER) {
-					if (dato.size() > 0) {
+					if (output.size() > 0) {
 						done = true;
 						continue;
 					}
 				}
 
-				if (pun > long_ && asciiCode != 8) {
+				if (pun > length && asciiCode != 8) {
 					g_engine->_sound->beep(750, 60);
-					bar((posx + (dato.size()) * 6), (posy + 2), (posx + (dato.size() + 1) * 6), (posy + 9), colorbarra);
+					bar((posx + (output.size()) * 6), (posy + 2), (posx + (output.size() + 1) * 6), (posy + 9), barColor);
 				} else if (asciiCode == 8 && pun > 1) {
-					dato = dato.substr(0, dato.size() - 1);
-					bar(posx, (posy + 2), (posx + long_ * 6), (posy + 9), colorbarra);
-					biosText(posx, posy, dato, colortexto);
-					biosText((posx + (dato.size()) * 6), posy, "-", colortexto);
+					output = output.substr(0, output.size() - 1);
+					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
+					biosText(posx, posy, output, textColor);
+					biosText((posx + (output.size()) * 6), posy, "-", textColor);
 					pun -= 1;
 					borracursor = true;
 				} else if ((asciiCode < '\40') || (asciiCode > '\373')) {
@@ -1013,10 +934,10 @@ void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, by
 					borracursor = false;
 				} else {
 					pun += 1;
-					dato = dato + (char)e.kbd.ascii;
-					bar(posx, (posy + 2), (posx + long_ * 6), (posy + 9), colorbarra);
-					littText(posx, posy, dato, colortexto);
-					littText((posx + (dato.size()) * 6), posy, "-", colortexto);
+					output = output + (char)e.kbd.ascii;
+					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
+					littText(posx, posy, output, textColor);
+					littText((posx + (output.size()) * 6), posy, "-", textColor);
 					borracursor = true;
 				}
 				// car = readkey();
@@ -1029,49 +950,49 @@ void readAlphaGraphSmall(Common::String &dato, int long_, int posx, int posy, by
 	}
 
 	if (borracursor)
-		bar(posx + (dato.size()) * 6, posy + 2, (posx + (dato.size()) * 6) + 6, posy + 9, colorbarra);
+		bar(posx + (output.size()) * 6, posy + 2, (posx + (output.size()) * 6) + 6, posy + 9, barColor);
 }
 
-void hipercadena(
-	Common::String cadenatextnueva,
-	uint xhcnueva,
-	uint yhcnueva,
-	byte anchohc,
-	byte colortextohc,
-	byte colorsombrahc) {
-	Common::String cadenasalhc;
-	byte ihc, iteracioneshc, lineahc;
-	byte matrizsaltoshc[10];
+void hyperText(
+	Common::String textString,
+	uint xpos,
+	uint ypos,
+	byte maxWidth,
+	byte textColor,
+	byte shadowColor) {
 
-	if (cadenatextnueva.size() < anchohc) {
-		euroText((xhcnueva + 1), (yhcnueva + 1), cadenatextnueva, colorsombrahc);
+	byte ihc, lineCounter;
+	byte newLineMatrix[10];
+
+	if (textString.size() < maxWidth) {
+		euroText((xpos + 1), (ypos + 1), textString, shadowColor);
 		g_engine->_screen->update();
 		delay(enforcedTextAnimDelay);
-		euroText(xhcnueva, yhcnueva, cadenatextnueva, colortextohc);
+		euroText(xpos, ypos, textString, textColor);
 		g_engine->_screen->update();
 		delay(enforcedTextAnimDelay);
 	} else {
 		ihc = 0;
-		iteracioneshc = 0;
-		matrizsaltoshc[0] = 0;
+		lineCounter = 0;
+		newLineMatrix[0] = 0;
 		do {
-			ihc += anchohc + 1;
-			iteracioneshc += 1;
+			ihc += maxWidth + 1;
+			lineCounter += 1;
 			do {
 				ihc -= 1;
-			} while (cadenatextnueva[ihc] != ' ');
-			matrizsaltoshc[iteracioneshc] = ihc + 1;
-		} while (ihc + 1 <= cadenatextnueva.size() - anchohc);
+			} while (textString[ihc] != ' ');
+			newLineMatrix[lineCounter] = ihc + 1;
+		} while (ihc + 1 <= textString.size() - maxWidth);
 
-		iteracioneshc += 1;
-		matrizsaltoshc[iteracioneshc] = cadenatextnueva.size();
+		lineCounter += 1;
+		newLineMatrix[lineCounter] = textString.size();
 
-		for (lineahc = 1; lineahc <= iteracioneshc; lineahc++) {
-			Common::String lineString = cadenatextnueva.substr(matrizsaltoshc[lineahc - 1], matrizsaltoshc[lineahc] - matrizsaltoshc[lineahc - 1]);
-			euroText((xhcnueva + 1), (yhcnueva + ((lineahc - 1) * 11) + 1), lineString, colorsombrahc);
+		for (byte line = 1; line <= lineCounter; line++) {
+			Common::String lineString = textString.substr(newLineMatrix[line - 1], newLineMatrix[line] - newLineMatrix[line - 1]);
+			euroText((xpos + 1), (ypos + ((line - 1) * 11) + 1), lineString, shadowColor);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
-			euroText(xhcnueva, (yhcnueva + ((lineahc - 1) * 11)), lineString, colortextohc);
+			euroText(xpos, (ypos + ((line - 1) * 11)), lineString, textColor);
 			g_engine->_screen->update();
 			delay(enforcedTextAnimDelay);
 		}
@@ -1079,8 +1000,7 @@ void hipercadena(
 }
 
 void buttonBorder(uint x1, uint y1, uint x2, uint y2,
-				  byte color1, byte color2, byte color3, byte color4, byte color5, uint xtexto,
-				  Common::String nombrepartidasalida) {
+				  byte color1, byte color2, byte color3, byte color4, byte color5) {
 
 	bar(x1, y1, x2, y2, color4);
 	line(x1, y1, x1, y2, color1);
@@ -1092,441 +1012,118 @@ void buttonBorder(uint x1, uint y1, uint x2, uint y2,
 	putpixel(x2, y1, color3);
 	putpixel(x1, y2, color3);
 
-	// outtextxy(xtexto, (y1 - 1), nombrepartidasalida, color5);
 	g_engine->_screen->addDirtyRect(Common::Rect(
 		x1, y1, x2, y2));
 	g_engine->_screen->update();
 }
 
-void copyProtection();
-
-// static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, bool bandera) {
-// 	g_engine->_mouseManager->hide();
-
-// 	byte color = bandera ? 249 : 255;
-
-// 	line(xx1, yy1, (xx2 - 1), yy1, color);
-// 	line(xx1, yy1, xx1, (yy2 - 1), color);
-// 	color = bandera ? 255 : 249;
-// 	line((xx1 + 1), yy2, xx2, yy2, color);
-// 	line(xx2, (yy1 + 1), xx2, yy2, color);
-// 	g_engine->_mouseManager->show();
-// }
-
 void copyProtection() {
-	// const int retardopitido = 100;
-	// byte *puntfondprotec;
-	// uint xfade, oldxfade, ypaso, tamfondprotec, claveaccesointroducida,
-	// 	palabraclaveacceso, oldxraton, oldyraton;
-	// byte filanum, columnanum, posicioncursor, intentos, ytext, oldiraton,
-	// 	oldcolorprotec;
-	// // textsettingstype oldstyle;
-	// bool salirprotec;
-	// char chaux;
-	// varying_string<5> clavetecleada, filastr, columnastr;
-	// int _error;
-	// int32 claveaccesoendisco, xorprot1, xorprot2;
-	// file<int32> fichclave;
-
-	// assign(fichclave, "MCGA.DRV");
-	// /*$I-*/ reset(fichclave); /*$I+*/
-	// if (ioresult != 0)
-	// 	error("copyProtection(): ioresult (260)");
-	// clavetecleada = "      ";
-	// filanum = Random(95) + 1;
-	// columnanum = Random(38) + 1;
-	// clavetecleada[0] = '\0';
-	// seek(fichclave, 1);
-	// xorprot1 = 6543736;
-	// fichclave >> xorprot1;
-	// xorprot2 = 9873254;
-	// seek(fichclave, (((filanum - 1) * 38) + columnanum + 1));
-	// fichclave >> xorprot2;
-	// claveaccesointroducida = 0;
-	// fichclave >> claveaccesoendisco;
-	// palabraclaveacceso = (uint)((claveaccesoendisco ^ xorprot1) - xorprot2);
-	// salirprotec = false;
-	// oldxraton = xraton;
-	// close(fichclave);
-	// oldyraton = yraton;
-	// oldiraton = iraton;
-	// drawMouseBackground(xraton, yraton);
-	// // oldcolorprotec = getcolor();
-	// // gettextsettings(oldstyle);
-	// tamfondprotec = imagesize(50, 10, 270, 120);
-	// puntfondprotec = (byte *)malloc(tamfondprotec);
-	// getImg(50, 10, 270, 120, puntfondprotec);
-	// // settextstyle(peque2, horizdir, 4);
-	// xraton = 150;
-	// yraton = 60;
-	// iraton = 1;
-	// setMouseArea(55, 13, 250, 105);
-	// clearMouseAndKeyboard(npraton, npraton2);
-	// if ((npraton > 0) || (npraton2 > 0))
-	// 	error("copyProtection(): npraton (281)");
-	// for (ytext = 1; ytext <= 6; ytext++)
-	// 	buttonBorder((120 - (ytext * 10)), (80 - (ytext * 10)), (200 + (ytext * 10)),
-	// 				 (60 + (ytext * 10)), 251, 251, 251, 251, 0, 0, "");
-	// str(filanum, filastr);
-	// str(columnanum, columnastr);
-	// drawMenu(6);
-	// outtextxy(65, 15, string("Mira en la fila ") + filastr + " y columna " + columnastr, 255);
-	// posicioncursor = 0;
-	// intentos = 0;
-	// setMousePos(1, xraton, yraton);
-	// do {
-	// 	do {
-	// 		if (tocapintar) {
-	// 			drawMouseBackground(xraton, yraton);
-	// 			drawMouseMask(iraton, xraton, yraton);
-	// 			if (iraton > 7)
-	// 				iraton = 1;
-	// 			else
-	// 				iraton += 1;
-	// 			tocapintar = false;
-	// 		}
-	// 		getMouseClickCoords(0, npraton, pulsax, pulsay);
-	// 	} while (!(npraton > 0));
-	// 	pulsax += 7;
-	// 	pulsay += 7;
-	// 	if ((pulsax > 59 && pulsax < 180) && (pulsay > 28 && pulsay < 119))
-
-	// 		switch (pulsay) {
-	// 		case 29 ... 58:
-	// 			switch (pulsax) {
-	// 			case 60 ... 89:
-	// 				if (posicioncursor < 50) {
-	// 					sound(200);
-	// 					buttonPress(60, 29, 89, 58, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "0", 255);
-	// 					clavetecleada = clavetecleada + '0';
-	// 					buttonPress(60, 29, 89, 58, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 90 ... 119:
-	// 				if (posicioncursor < 50) {
-	// 					sound(250);
-	// 					buttonPress(90, 29, 119, 58, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "1", 255);
-	// 					clavetecleada = clavetecleada + '1';
-	// 					buttonPress(90, 29, 119, 58, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 120 ... 149:
-	// 				if (posicioncursor < 50) {
-	// 					sound(300);
-	// 					buttonPress(120, 29, 149, 58, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "2", 255);
-	// 					clavetecleada = clavetecleada + '2';
-	// 					buttonPress(120, 29, 149, 58, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 150 ... 179:
-	// 				if (posicioncursor < 50) {
-	// 					sound(350);
-	// 					buttonPress(150, 29, 179, 58, true);
-	// 					delay(retardopitido);
-
-	// 					outtextxy((205 + posicioncursor), 44, "3", 255);
-	// 					clavetecleada = clavetecleada + '3';
-	// 					buttonPress(150, 29, 179, 58, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			}
-	// 			break;
-	// 		case 59 ... 88:
-	// 			switch (pulsax) {
-	// 			case 60 ... 89:
-	// 				if (posicioncursor < 50) {
-	// 					sound(400);
-	// 					buttonPress(60, 59, 89, 88, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "4", 255);
-	// 					clavetecleada = clavetecleada + '4';
-	// 					buttonPress(60, 59, 89, 88, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 90 ... 119:
-	// 				if (posicioncursor < 50) {
-	// 					sound(450);
-	// 					buttonPress(90, 59, 119, 88, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "5", 255);
-	// 					clavetecleada = clavetecleada + '5';
-	// 					buttonPress(90, 59, 119, 88, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 120 ... 149:
-	// 				if (posicioncursor < 50) {
-	// 					sound(500);
-	// 					buttonPress(120, 59, 149, 88, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "6", 255);
-	// 					clavetecleada = clavetecleada + '6';
-	// 					buttonPress(120, 59, 149, 88, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 150 ... 179:
-	// 				if (posicioncursor < 50) {
-	// 					sound(550);
-	// 					buttonPress(150, 59, 179, 88, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "7", 255);
-	// 					clavetecleada = clavetecleada + '7';
-	// 					buttonPress(150, 59, 179, 88, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			}
-	// 			break;
-	// 		case 89 ... 118:
-	// 			switch (pulsax) {
-	// 			case 60 ... 89:
-	// 				if (posicioncursor < 50) {
-	// 					sound(600);
-	// 					buttonPress(60, 89, 89, 118, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "8", 255);
-	// 					clavetecleada = clavetecleada + '8';
-	// 					buttonPress(60, 89, 89, 118, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 90 ... 119:
-	// 				if (posicioncursor < 50) {
-	// 					sound(650);
-	// 					buttonPress(90, 89, 119, 118, true);
-	// 					delay(retardopitido);
-	// 					outtextxy((205 + posicioncursor), 44, "9", 255);
-	// 					clavetecleada = clavetecleada + '9';
-	// 					buttonPress(90, 89, 119, 118, false);
-	// 					posicioncursor += 10;
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 120 ... 149:
-	// 				if (posicioncursor > 0) {
-	// 					sound(700);
-	// 					buttonPress(120, 89, 149, 118, true);
-	// 					delay(retardopitido);
-	// 					posicioncursor -= 10;
-	// 					outtextxy((205 + posicioncursor), 44, "�", 250);
-	// 					clavetecleada = copy(clavetecleada, 1,
-	// 										 (length(clavetecleada) - 1));
-	// 					buttonPress(120, 89, 149, 118, false);
-	// 					nosound;
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			case 150 ... 179:
-	// 				if (posicioncursor > 39) {
-	// 					sound(750);
-	// 					buttonPress(150, 89, 179, 118, true);
-	// 					delay(retardopitido);
-	// 					val(clavetecleada, claveaccesointroducida, _error);
-	// 					buttonPress(150, 89, 179, 118, false);
-	// 					nosound;
-	// 					if ((_error == 0) && (intentos < 3)) {
-	// 						if (claveaccesointroducida == palabraclaveacceso)
-	// 							salirprotec = true;
-	// 						else {
-	// 							intentos += 1;
-	// 							sound(60);
-	// 							delay(700);
-	// 							nosound;
-	// 						}
-	// 					}
-	// 					if (intentos >= 3)
-	// 						error("copyProtection(): too many attempts! (259)");
-	// 				} else {
-	// 					sound(70);
-	// 					delay(250);
-	// 					nosound;
-	// 				}
-	// 				break;
-	// 			}
-	// 			break;
-	// 		}
-	// 	clearMouseAndKeyboard(npraton, npraton2);
-	// 	if ((npraton > 0) || (npraton2 > 0))
-	// 		error("copyProtection(): npraton! (282)");
-	// } while (!salirprotec);
-	// putImg(50, 10, puntfondprotec);
-	// xraton = oldxraton;
-	// yraton = oldyraton;
-	// iraton = oldiraton;
-	// setMousePos(iraton, xraton, yraton);
-	// if (contadorpc > 8)
-	// 	error("copyProtection(): contadorpc! (274)");
-	// freemem(puntfondprotec, tamfondprotec);
-	// setMouseArea(0, 0, 305, 185);
+	//todo
 }
 
 void credits();
 
-void drawCreditsScreen(byte *&fondopp, uint &sizefondo2, byte *&fondo2) {
-	palette palpaso, palnegro;
+void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) {
+	palette intermediatePalette, darkPalette;
 
-	Common::File fichpp;
+	Common::File ppFile;
 
-	if (!fichpp.open("DIPLOMA.PAN")) {
+	if (!ppFile.open("DIPLOMA.PAN")) {
 		showError(315);
 	}
-	fondopp = (byte *)malloc(64000);
-	fichpp.read(palpaso, 768);
-	fichpp.read(fondopp, 64000);
-	fichpp.close();
+	backgroundPointer = (byte *)malloc(64000);
+	ppFile.read(intermediatePalette, 768);
+	ppFile.read(backgroundPointer, 64000);
+	ppFile.close();
 
-	drawFullScreen(fondopp);
+	drawFullScreen(backgroundPointer);
 
-	sizefondo2 = imagesize(0, 0, 319, 59);
+	sizeAuxBG = imagesize(0, 0, 319, 59);
 
-	// Screen is now fondopp so fondo2 contains a 320x60 crop of fondopp
-	fondo2 = (byte *)malloc(sizefondo2);
-	g_engine->_graphics->getImg(0, 0, 319, 59, fondo2);
+	// Screen is now backgroundPointer so auxBG contains a 320x60 crop of backgroundPointer
+	auxBG = (byte *)malloc(sizeAuxBG);
+	g_engine->_graphics->getImg(0, 0, 319, 59, auxBG);
 
 	for (int i = 0; i <= 255; i++) {
-		palnegro[i * 3 + 0] = 0;
-		palnegro[i * 3 + 1] = 0;
-		palnegro[i * 3 + 2] = 0;
+		darkPalette[i * 3 + 0] = 0;
+		darkPalette[i * 3 + 1] = 0;
+		darkPalette[i * 3 + 2] = 0;
 		// Adjust for 6-bit DAC color
-		palpaso[i * 3 + 0] = palpaso[i * 3 + 0] << 2;
-		palpaso[i * 3 + 1] = palpaso[i * 3 + 1] << 2;
-		palpaso[i * 3 + 2] = palpaso[i * 3 + 2] << 2;
+		intermediatePalette[i * 3 + 0] = intermediatePalette[i * 3 + 0] << 2;
+		intermediatePalette[i * 3 + 1] = intermediatePalette[i * 3 + 1] << 2;
+		intermediatePalette[i * 3 + 2] = intermediatePalette[i * 3 + 2] << 2;
 	}
 
-	changePalette(palnegro, palpaso);
-	copyPalette(palpaso, pal);
-	if (contadorpc2 > 9)
+	changePalette(darkPalette, intermediatePalette);
+	copyPalette(intermediatePalette, pal);
+	if (cpCounter2 > 9)
 		showError(274);
 }
 
-void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, bool direct) {
+void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 
-	uint16 wImagen1, hImagen1;
-	uint auxhor;
-	uint incremento, incremento2;
-	byte *paso;
+	uint16 wImg1, hImg1;
+	uint horizontalAux;
+	uint inc, inc2;
+	byte *step;
 
-	wImagen1 = READ_LE_UINT16(imagen1);
-	hImagen1 = READ_LE_UINT16(imagen1 + 2);
+	wImg1 = READ_LE_UINT16(img1);
+	hImg1 = READ_LE_UINT16(img1 + 2);
 
-	paso = (byte *)malloc((wImagen1 + 1) * (hImagen1 + 1) + 4);
+	step = (byte *)malloc((wImg1 + 1) * (hImg1 + 1) + 4);
 
-	auxhor = wImagen1 + 1;
-	foo = hImagen1 + y;
+	horizontalAux = wImg1 + 1;
+	foo = hImg1 + y;
 
 	// makes sure that if the image is at the bottom of the screen we chop the bottom part
 	for (int i = foo; i >= 200; i--)
-		hImagen1 -= 1;
+		hImg1 -= 1;
 
-	hImagen1++;
+	hImg1++;
 
-	// Copies the crop in the background corresponding to the current credit window in imagen1
-	for (int i = 0; i < hImagen1; i++) {
-		byte *src = imagen2 + (320 * (y + i)) + x;
-		byte *dst = paso + 4 + (auxhor * i);
-		Common::copy(src, src + auxhor, dst);
+	// Copies the crop in the background corresponding to the current credit window in img1
+	for (int i = 0; i < hImg1; i++) {
+		byte *src = img2 + (320 * (y + i)) + x;
+		byte *dst = step + 4 + (horizontalAux * i);
+		Common::copy(src, src + horizontalAux, dst);
 	}
 
-	for (int kk = 0; kk < hImagen1; kk++) {
-		incremento2 = (kk * wImagen1) + 4;
+	for (int kk = 0; kk < hImg1; kk++) {
+		inc2 = (kk * wImg1) + 4;
 		foo = kk + y;
-		for (int jj = 0; jj <= wImagen1; jj++) {
-			incremento = incremento2 + jj;
-			if ((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && foo >= 66 && foo <= 192)) {
-				paso[incremento] = imagen1[incremento];
-			} else if (imagen1[incremento] > 16) {
+		for (int jj = 0; jj <= wImg1; jj++) {
+			inc = inc2 + jj;
+			if ((direct && img1[inc] > 0) || (img1[inc] > 16 && foo >= 66 && foo <= 192)) {
+				step[inc] = img1[inc];
+			} else if (img1[inc] > 16) {
 				switch (foo) {
 				case 59:
 				case 199:
-					paso[incremento] = imagen1[incremento] + 210;
+					step[inc] = img1[inc] + 210;
 					break;
 				case 60:
 				case 198:
-					paso[incremento] = imagen1[incremento] + 180;
+					step[inc] = img1[inc] + 180;
 					break;
 				case 61:
 				case 197:
-					paso[incremento] = imagen1[incremento] + 150;
+					step[inc] = img1[inc] + 150;
 					break;
 				case 62:
 				case 196:
-					paso[incremento] = imagen1[incremento] + 120;
+					step[inc] = img1[inc] + 120;
 					break;
 				case 63:
 				case 195:
-					paso[incremento] = imagen1[incremento] + 90;
+					step[inc] = img1[inc] + 90;
 					break;
 				case 64:
 				case 194:
-					paso[incremento] = imagen1[incremento] + 60;
+					step[inc] = img1[inc] + 60;
 					break;
 				case 65:
 				case 193:
-					paso[incremento] = imagen1[incremento] + 30;
+					step[inc] = img1[inc] + 30;
 					break;
 				}
 			}
@@ -1536,36 +1133,36 @@ void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, bool direct) {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_system->delayMillis(10);
-	} while (!tocapintar && !g_engine->shouldQuit());
-	tocapintar = false;
+	} while (!timeToDraw && !g_engine->shouldQuit());
+	timeToDraw = false;
 
 	// Copies the credit window directly to the screen
-	for (int i = 0; i < hImagen1; i++) {
-		byte *src = paso + 4 + (auxhor * i);
+	for (int i = 0; i < hImg1; i++) {
+		byte *src = step + 4 + (horizontalAux * i);
 		byte *dst = ((byte *)g_engine->_screen->getPixels()) + (320 * (y + i)) + x;
-		Common::copy(src, src + auxhor, dst);
+		Common::copy(src, src + horizontalAux, dst);
 	}
-	g_engine->_screen->addDirtyRect(Common::Rect(x, y, x + wImagen1 + 1, y + hImagen1 + 1));
-	free(paso);
+	g_engine->_screen->addDirtyRect(Common::Rect(x, y, x + wImg1 + 1, y + hImg1 + 1));
+	free(step);
 }
 
 void scrollCredit(
-	int32 posicion,
-	uint tam,
+	int32 position,
+	uint size,
 	palette &pal2,
-	byte *&fondopp,
-	bool &salirpitando,
+	byte *&background,
+	bool &exit,
 	int minHeight,
 	bool withFade,
 	bool refresh) {
-	Common::File fich;
-	if (!fich.open("CREDITOS.DAT")) {
+	Common::File creditFile;
+	if (!creditFile.open("CREDITOS.DAT")) {
 		showError(270);
 	}
-	fich.seek(posicion);
-	fich.read(sceneBackground, tam);
-	fich.read(pal2, 768);
-	fich.close();
+	creditFile.seek(position);
+	creditFile.read(sceneBackground, size);
+	creditFile.read(pal2, 768);
+	creditFile.close();
 
 	for (int i = 16; i <= 255; i++) {
 		// Adjust for 6-bit DAC
@@ -1589,9 +1186,9 @@ void scrollCredit(
 				keyPressed = true;
 			}
 		}
-		putCreditsImg(85, i, sceneBackground, fondopp, !withFade);
+		putCreditsImg(85, i, sceneBackground, background, !withFade);
 		if (keyPressed) {
-			salirpitando = true;
+			exit = true;
 			break;
 		}
 		g_engine->_screen->update();
@@ -1600,28 +1197,28 @@ void scrollCredit(
 			break;
 	}
 	if (refresh) {
-		copyFromScreen(fondopp);
+		copyFromScreen(background);
 	}
 }
 
 void scrollSingleCredit(
-	int32 posicion,
-	uint tam,
+	int32 pos,
+	uint size,
 	palette &pal2,
-	byte *&fondopp,
-	bool &salirpitando) {
+	byte *&background,
+	bool &exit) {
 	scrollCredit(
-		posicion,
-		tam,
+		pos,
+		size,
 		pal2,
-		fondopp,
-		salirpitando,
+		background,
+		exit,
 		8,
 		true,
 		false);
 }
 
-void removeTitle(byte *&fondo2) {
+void removeTitle(byte *&background2) {
 	uint i2, j2;
 	Common::Event e;
 	for (int i1 = 1; i1 <= 15000; i1++) {
@@ -1629,11 +1226,11 @@ void removeTitle(byte *&fondo2) {
 		}
 		i2 = Random(318);
 		j2 = Random(58);
-		byte *src = fondo2 + 4 + (j2 * 320) + i2;
+		byte *src = background2 + 4 + (j2 * 320) + i2;
 		byte *dest = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
 		Common::copy(src, src + 2, dest);
 
-		byte *src2 = fondo2 + 4 + ((j2 + 1) * 320) + i2;
+		byte *src2 = background2 + 4 + ((j2 + 1) * 320) + i2;
 		byte *dest2 = ((byte *)g_engine->_screen->getPixels()) + ((j2 + 1) * 320) + i2;
 
 		Common::copy(src2, src2 + 2, dest2);
@@ -1641,7 +1238,7 @@ void removeTitle(byte *&fondo2) {
 		i2 = Random(320);
 		j2 = Random(60);
 
-		byte *src3 = fondo2 + 4 + (j2 * 320) + i2;
+		byte *src3 = background2 + 4 + (j2 * 320) + i2;
 		byte *dest3 = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
 		Common::copy(src3, src3 + 1, dest3);
 		if (i1 % 200 == 0) {
@@ -1665,12 +1262,11 @@ inline bool keyPressed() {
 void credits() {
 	saveAllowed = true;
 	debug("Credits");
-	// 	byte ii;
 	palette pal2;
-	byte *fondopp;
-	byte *fondo2;
-	uint sizefondo2;
-	bool salirpitando;
+	byte *background;
+	byte *background2;
+	uint sizeBg2;
+	bool exit;
 
 	g_engine->_mouseManager->hide();
 	totalFadeOut(0);
@@ -1678,73 +1274,73 @@ void credits() {
 	g_engine->_screen->clear();
 	g_engine->_sound->playMidi("CREDITOS", true);
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-	drawCreditsScreen(fondopp, sizefondo2, fondo2);
+	drawCreditsScreen(background, sizeBg2, background2);
 
-	salirpitando = false;
+	exit = false;
 
-	if (keyPressed() || salirpitando)
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollCredit(0, 8004, pal2, fondopp, salirpitando, 10, false, true);
-	if (keyPressed() || salirpitando)
+	scrollCredit(0, 8004, pal2, background, exit, 10, false, true);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(8772, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(8772, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(17544, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(17544, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(26316, 7504, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(26316, 7504, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(34588, 7504, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(34588, 7504, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(42860, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(42860, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(51632, 7504, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(51632, 7504, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	removeTitle(fondo2);
-	if (keyPressed() || salirpitando)
+	removeTitle(background2);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	g_engine->_graphics->putImg(0, 0, fondo2);
-	if (keyPressed() || salirpitando)
+	g_engine->_graphics->putImg(0, 0, background2);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	copyFromScreen(fondopp);
-	if (keyPressed() || salirpitando)
+	copyFromScreen(background);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollCredit(59904, 8004, pal2, fondopp, salirpitando, 10, false, true);
-	if (keyPressed() || salirpitando)
+	scrollCredit(59904, 8004, pal2, background, exit, 10, false, true);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(68676, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(68676, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(77448, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(77448, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(86220, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(86220, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(94992, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(94992, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(103764, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(103764, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollSingleCredit(112536, 8004, pal2, fondopp, salirpitando);
-	if (keyPressed() || salirpitando)
+	scrollSingleCredit(112536, 8004, pal2, background, exit);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	removeTitle(fondo2);
-	if (keyPressed() || salirpitando)
+	removeTitle(background2);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	g_engine->_graphics->putImg(0, 0, fondo2);
-	if (keyPressed() || salirpitando)
+	g_engine->_graphics->putImg(0, 0, background2);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	copyFromScreen(fondopp);
-	if (keyPressed() || salirpitando)
+	copyFromScreen(background);
+	if (keyPressed() || exit)
 		goto Lsalida;
-	scrollCredit(121308, 8004, pal2, fondopp, salirpitando, 80, false, true);
+	scrollCredit(121308, 8004, pal2, background, exit, 80, false, true);
 Lsalida:
 	delay(1000);
 	totalFadeOut(0);
@@ -1753,29 +1349,29 @@ Lsalida:
 	g_engine->_sound->playMidi("INTRODUC", true);
 	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 	g_engine->_mouseManager->show();
-	free(fondopp);
-	free(fondo2);
+	free(background);
+	free(background2);
 }
 
 void introduction() {
 	saveAllowed = false;
 	g_engine->_mouseManager->hide();
-	bool pulsada_salida;
-	uint contadorvueltas;
+	bool exitPressed;
+	uint loopCount;
 	bool isSpanish = g_engine->_lang == Common::ES_ESP;
 	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
 	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
-	pulsada_salida = false;
+	exitPressed = false;
 	totalFadeOut(0);
 
-	if (contadorpc > 6)
+	if (cpCounter > 6)
 		showError(270);
 	g_engine->_screen->clear();
-	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(136, 53, offsets[2], 136, 9, 1, true, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
 	totalFadeOut(0);
 	g_engine->_screen->clear();
@@ -1804,7 +1400,7 @@ void introduction() {
 	totalFadeIn(0, "DEFAULT");
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
-	contadorvueltas = 0;
+	loopCount = 0;
 
 	do {
 		g_engine->_chrono->updateChrono();
@@ -1814,70 +1410,70 @@ void introduction() {
 			goto Lsalirpres;
 		}
 
-		if (tocapintar) {
-			contadorvueltas += 1;
+		if (timeToDraw) {
+			loopCount += 1;
 		}
 		g_system->delayMillis(10);
-	} while (contadorvueltas < 180 && !g_engine->shouldQuit());
+	} while (loopCount < 180 && !g_engine->shouldQuit());
 
 	totalFadeOut(0);
 	g_engine->_screen->clear();
-	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[5], 2, 9, 4, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[5], 2, 9, 4, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[6], 3, 9, 5, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[6], 3, 9, 5, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[7], 0, 9, 0, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[7], 0, 9, 0, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[8], isSpanish? 4:8, 9, 6, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[8], isSpanish? 4:8, 9, 6, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[9], 3, 9, 7, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[9], 3, 9, 7, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[8], isSpanish? 3:8, 9, 8, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[8], isSpanish? 3:8, 9, 8, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(110, 30, offsets[9], 2, 9, 9, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(110, 30, offsets[9], 2, 9, 9, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(0, 0, offsets[10], 0, 9, 0, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(0, 0, offsets[10], 0, 9, 0, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(235, 100, offsets[11], 3, 9, 10, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(235, 100, offsets[11], 3, 9, 10, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(150, 40, offsets[12], 0, 9, 11, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(150, 40, offsets[12], 0, 9, 11, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(235, 100, offsets[11], 3, 9, 12, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(235, 100, offsets[11], 3, 9, 12, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(150, 40, offsets[12], isSpanish? 0:2, 9, 13, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(150, 40, offsets[12], isSpanish? 0:2, 9, 13, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(235, 100, offsets[11], isSpanish? 3:8, 9, 14, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(235, 100, offsets[11], isSpanish? 3:8, 9, 14, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(150, 40, offsets[12], 0, 9, 15, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(150, 40, offsets[12], 0, 9, 15, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(173, 98, offsets[13], 0, 9, 0, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(173, 98, offsets[13], 0, 9, 0, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(224, 100, offsets[14], 2, 9, 16, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(224, 100, offsets[14], 2, 9, 16, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(0, 0, offsets[15], 0, 18, 17, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(0, 0, offsets[15], 0, 18, 17, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
-	drawFlc(150, 40, offsets[16], 0, 9, 18, false, true, false, pulsada_salida);
-	if (pulsada_salida)
+	drawFlc(150, 40, offsets[16], 0, 9, 18, false, true, false, exitPressed);
+	if (exitPressed)
 		goto Lsalirpres;
 	delay(1000);
 Lsalirpres:
@@ -1897,24 +1493,24 @@ void firstIntroduction() {
 }
 
 void initialLogo() {
-	bool basurillalogica = false;
+	bool foobar = false;
 	long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][0] : flcOffsets[1][0];
-	drawFlc(0, 0, offset, 0, 18, 25, false, false, false, basurillalogica);
+	drawFlc(0, 0, offset, 0, 18, 25, false, false, false, foobar);
 	delay(1000);
 }
 
-void initialMenu(bool fundido) {
-	bool kklogica = false;
-	bool opcionvalida = false;
+void initialMenu(bool fade) {
+	bool bar = false;
+	bool validOption = false;
 	g_engine->_sound->stopVoc();
 
 	long offset = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0][1] : flcOffsets[1][1];
 
-	if (fundido)
-		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
+	if (fade)
+		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 	else
-		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, kklogica);
-	if (contadorpc2 > 10)
+		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, bar);
+	if (cpCounter2 > 10)
 		showError(274);
 	mouseX = 160;
 	mouseY = 95;
@@ -1940,27 +1536,27 @@ void initialMenu(bool fundido) {
 					if (x > 46 && x < 145) {
 						startNewGame = true;
 						continueGame = false;
-						opcionvalida = true;
+						validOption = true;
 					} else if (x > 173 && x < 267) {
 						credits();
-						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 					}
 				} else if (y > 140 && y < 155) {
 					if (x > 173 && x < 292) {
 						totalFadeOut(0);
 						g_engine->_screen->clear();
 						introduction();
-						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
+						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 					} else if (x >= 18 && x <= 145) {
 						debug("Load");
 						startNewGame = false;
 						continueGame = false;
-						opcionvalida = true;
+						validOption = true;
 					}
 				} else if (y > 174 && y < 190) {
 					if (x > 20 && x < 145) {
 						startNewGame = false;
-						opcionvalida = true;
+						validOption = true;
 						continueGame = true;
 					} else if (x > 173 && y < 288) {
 						exitToDOS();
@@ -1970,7 +1566,7 @@ void initialMenu(bool fundido) {
 		}
 		g_engine->_screen->update();
 		g_system->delayMillis(10);
-	} while (!opcionvalida && !g_engine->shouldQuit());
+	} while (!validOption && !g_engine->shouldQuit());
 }
 
 void exitGame() {
@@ -1987,18 +1583,17 @@ void clearGame() {
 
 void exitToDOS() {
 	debug("Exit to dos!");
-	uint oldxraton, oldyraton, tamfondcontroles;
-	byte oldiraton;
-	// textsettingstype oldstyle;
-	char chpasosalida;
+	uint oldMousePosX, oldMousePosY, dialogSize;
+	byte oldMouseMask;
+	char exitChar;
 
-	oldxraton = mouseX;
-	oldyraton = mouseY;
-	oldiraton = mouseMaskIndex;
+	oldMousePosX = mouseX;
+	oldMousePosY = mouseY;
+	oldMouseMask = mouseMaskIndex;
 	g_engine->_mouseManager->hide();
-	tamfondcontroles = imagesize(58, 48, 262, 120);
-	byte *puntfondcontroles = (byte *)malloc(tamfondcontroles);
-	g_engine->_graphics->getImg(58, 48, 262, 120, puntfondcontroles);
+	dialogSize = imagesize(58, 48, 262, 120);
+	byte *dialogBackground = (byte *)malloc(dialogSize);
+	g_engine->_graphics->getImg(58, 48, 262, 120, dialogBackground);
 
 	drawMenu(7);
 	mouseX = 160;
@@ -2010,7 +1605,7 @@ void exitToDOS() {
 	Common::Event e;
 	const char hotKeyYes = hotKeyFor(YES);
 	const char hotKeyNo = hotKeyFor(NO);
-	chpasosalida = '@';
+	exitChar = '@';
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_mouseManager->animateMouseIfNeeded();
@@ -2021,62 +1616,60 @@ void exitToDOS() {
 			}
 			if (e.type == Common::EVENT_KEYDOWN) {
 				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					chpasosalida = '\33';
+					exitChar = '\33';
 				} else if (e.kbd.keycode == hotKeyYes) {
 					debug("would exit game now");
-					free(puntfondcontroles);
-					// CLEAR MEMORY!!
+					free(dialogBackground);
 					exitGame();
-					// exit game
 				} else if (e.kbd.keycode == hotKeyNo) {
-					chpasosalida = '\33';
+					exitChar = '\33';
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				uint x = e.mouse.x;
 				if (x < 145) {
-					free(puntfondcontroles);
-					// exit game
+					free(dialogBackground);
 					g_system->quit();
 				} else if (x > 160) {
-					chpasosalida = '\33';
+					exitChar = '\33';
 				}
 			}
 		}
 		g_engine->_screen->update();
-	} while (chpasosalida != '\33' && !g_engine->shouldQuit());
+	} while (exitChar != '\33' && !g_engine->shouldQuit());
 	debug("finished exitToDos");
-	g_engine->_graphics->putImg(58, 48, puntfondcontroles);
-	mouseX = oldxraton;
-	mouseY = oldyraton;
-	mouseMaskIndex = oldiraton;
+	g_engine->_graphics->putImg(58, 48, dialogBackground);
+	mouseX = oldMousePosX;
+	mouseY = oldMousePosY;
+	mouseMaskIndex = oldMouseMask;
 	g_engine->_mouseManager->show();
-	free(puntfondcontroles);
+	free(dialogBackground);
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 void soundControls() {
-	uint oldxraton,
-		oldyraton,
-		tamfondcontroles,
+	uint oldMouseX,
+		oldMouseY,
+		soundControlsSize,
 		sliderSize,
 		sliderBgSize,
-		volumenfx,
-		volumenmelodia,
+		sfxVol,
+		musicVol,
 		xfade,
 		oldxfade;
 
-	byte ytext, oldiraton;
-	bool salirmenucontroles;
+	byte ytext, oldMouseMask;
+	bool exitSoundControls;
 
-	salirmenucontroles = false;
-	oldxraton = mouseX;
-	oldyraton = mouseY;
-	oldiraton = mouseMaskIndex;
+	exitSoundControls = false;
+	oldMouseX = mouseX;
+	oldMouseY = mouseY;
+	oldMouseMask = mouseMaskIndex;
 	g_engine->_mouseManager->hide();
 
-	tamfondcontroles = imagesize(50, 10, 270, 120);
-	byte *puntfondcontroles = (byte *)malloc(tamfondcontroles);
-	g_engine->_graphics->getImg(50, 10, 270, 120, puntfondcontroles);
+	soundControlsSize = imagesize(50, 10, 270, 120);
+	//What was on the screen before blitting sound controls
+	byte *soundControlsBackground = (byte *)malloc(soundControlsSize);
+	g_engine->_graphics->getImg(50, 10, 270, 120, soundControlsBackground);
 
 	mouseX = 150;
 	mouseY = 60;
@@ -2085,9 +1678,9 @@ void soundControls() {
 	g_engine->_mouseManager->setMouseArea(Common::Rect(55, 13, 250, 105));
 
 	for (ytext = 1; ytext <= 6; ytext++)
-		buttonBorder(120 - (ytext * 10), 80 - (ytext * 10), 200 + (ytext * 10), 60 + (ytext * 10), 251, 251, 251, 251, 0, 0, "");
+		buttonBorder(120 - (ytext * 10), 80 - (ytext * 10), 200 + (ytext * 10), 60 + (ytext * 10), 251, 251, 251, 251, 0);
 
-	buttonBorder(86, 31, 94, 44, 0, 0, 0, 0, 0, 0, "");
+	buttonBorder(86, 31, 94, 44, 0, 0, 0, 0, 0);
 
 	line(90, 31, 90, 44, 255);
 
@@ -2103,10 +1696,10 @@ void soundControls() {
 	g_engine->_graphics->getImg(86, 31, 234, 44, sliderBackground1);
 	g_engine->_graphics->getImg(86, 76, 234, 89, sliderBackground2);
 
-	volumenfx = round(((rightSfxVol + leftSfxVol) / 2) * 20);
-	volumenmelodia = round(((musicVolRight + musicVolLeft) / 2) * 20);
-	g_engine->_graphics->putImg(volumenfx + 86, 31, slider);
-	g_engine->_graphics->putImg(volumenmelodia + 86, 76, slider);
+	sfxVol = round(((rightSfxVol + leftSfxVol) / 2) * 20);
+	musicVol = round(((musicVolRight + musicVolLeft) / 2) * 20);
+	g_engine->_graphics->putImg(sfxVol + 86, 31, slider);
+	g_engine->_graphics->putImg(musicVol + 86, 76, slider);
 
 	g_engine->_mouseManager->setMousePos(1, mouseX, mouseY);
 	bool keyPressed = false;
@@ -2133,12 +1726,12 @@ void soundControls() {
 		g_engine->_chrono->updateChrono();
 		g_engine->_mouseManager->animateMouseIfNeeded();
 		if (keyPressed) {
-			salirmenucontroles = true;
+			exitSoundControls = true;
 		}
 		if (mouseClicked) {
 			if (mouseClickY >= 22 && mouseClickY <= 37) {
 				g_engine->_mouseManager->hide();
-				xfade = 86 + volumenfx;
+				xfade = 86 + sfxVol;
 				bool mouseReleased = false;
 				do {
 
@@ -2160,11 +1753,11 @@ void soundControls() {
 						g_engine->_graphics->putImg(86, 31, sliderBackground1);
 						g_engine->_graphics->putImg(xfade, 31, slider);
 						// This yields a volume between 0 and 140
-						volumenfx = xfade - 86;
+						sfxVol = xfade - 86;
 
-						debug("volumefx=%d", volumenfx);
-						rightSfxVol = round((float)volumenfx / 20);
-						leftSfxVol = round((float)volumenfx / 20);
+						debug("volumefx=%d", sfxVol);
+						rightSfxVol = round((float)sfxVol / 20);
+						leftSfxVol = round((float)sfxVol / 20);
 						g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 					}
 					g_engine->_screen->update();
@@ -2173,7 +1766,7 @@ void soundControls() {
 				g_engine->_mouseManager->show();
 			} else if (mouseClickY >= 67 && mouseClickY <= 82) {
 				g_engine->_mouseManager->hide();
-				xfade = 86 + volumenmelodia;
+				xfade = 86 + musicVol;
 				bool mouseReleased = false;
 				do {
 					while (g_system->getEventManager()->pollEvent(e)) {
@@ -2192,9 +1785,9 @@ void soundControls() {
 					if (oldxfade != xfade) {
 						g_engine->_graphics->putImg(86, 76, sliderBackground2);
 						g_engine->_graphics->putImg(xfade, 76, slider);
-						volumenmelodia = xfade - 86;
-						musicVolRight = round((float)(volumenmelodia) / 20);
-						musicVolLeft = round((float)(volumenmelodia) / 20);
+						musicVol = xfade - 86;
+						musicVolRight = round((float)(musicVol) / 20);
+						musicVolLeft = round((float)(musicVol) / 20);
 						g_engine->_sound->setMidiVolume(musicVolLeft, musicVolRight);
 					}
 					g_engine->_screen->update();
@@ -2202,25 +1795,25 @@ void soundControls() {
 
 				g_engine->_mouseManager->show();
 			} else if (mouseClickY >= 97 && mouseClickY <= 107) {
-				salirmenucontroles = true;
+				exitSoundControls = true;
 			}
 			mouseClicked = false;
 		}
 		g_system->delayMillis(10);
 		g_engine->_screen->update();
-	} while (!salirmenucontroles && !g_engine->shouldQuit());
+	} while (!exitSoundControls && !g_engine->shouldQuit());
 
-	g_engine->_graphics->putImg(50, 10, puntfondcontroles);
-	mouseX = oldxraton;
-	mouseY = oldyraton;
-	mouseMaskIndex = oldiraton;
+	g_engine->_graphics->putImg(50, 10, soundControlsBackground);
+	mouseX = oldMouseX;
+	mouseY = oldMouseY;
+	mouseMaskIndex = oldMouseMask;
 	g_engine->_mouseManager->setMousePos(mouseMaskIndex, mouseX, mouseY);
-	free(puntfondcontroles);
+	free(soundControlsBackground);
 	free(slider);
 	free(sliderBackground1);
 	free(sliderBackground2);
 
-	if (contadorpc > 7)
+	if (cpCounter > 7)
 		showError(274);
 
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
@@ -2230,14 +1823,14 @@ void sacrificeScene() {
 	saveAllowed = false;
 	palette palaux;
 
-	Common::File fich;
+	Common::File file;
 	bool isSpanish = (g_engine->_lang == Common::ES_ESP);
 	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
 
 	const long *offsets = (isSpanish) ? flcOffsets[0] : flcOffsets[1];
 
 	g_engine->_sound->stopVoc();
-	bool pulsada_salida = currentRoomData->paletteAnimationFlag;
+	bool exitPressed = currentRoomData->paletteAnimationFlag;
 	currentRoomData->paletteAnimationFlag = false;
 
 	bar(0, 139, 319, 149, 0);
@@ -2311,12 +1904,12 @@ void sacrificeScene() {
 		setRGBPalette(200, i * 2, i * 2, i * 2);
 	bar(10, 10, 310, 120, 0);
 
-	if (!fich.open("SALONREC.PAN")) {
+	if (!file.open("SALONREC.PAN")) {
 		showError(318);
 	}
-	fich.read(palaux, 768);
-	fich.read(sceneBackground, 44800);
-	fich.close();
+	file.read(palaux, 768);
+	file.read(sceneBackground, 44800);
+	file.close();
 
 	pal[0] = 0;
 	pal[1] = 0;
@@ -2335,7 +1928,7 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 
-	drawFlc(0, 0, offsets[17], 0, 9, 19, false, false, true, pulsada_salida);
+	drawFlc(0, 0, offsets[17], 0, 9, 19, false, false, true, exitPressed);
 	totalFadeOut(128);
 	g_engine->_sound->stopVoc();
 	delay(1000);
@@ -2381,10 +1974,10 @@ void sacrificeScene() {
 	}
 	delay(2000);
 
-	if (!fich.open("SACRIFIC.PAN")) {
+	if (!file.open("SACRIFIC.PAN")) {
 		showError(318);
 	}
-	fich.read(palaux, 768);
+	file.read(palaux, 768);
 
 	for (int i = 0; i < 256; i++) {
 		palaux[i * 3 + 0] = palaux[i * 3 + 0] << 2;
@@ -2392,8 +1985,8 @@ void sacrificeScene() {
 		palaux[i * 3 + 2] = palaux[i * 3 + 2] << 2;
 	}
 
-	fich.read(sceneBackground, 64000);
-	fich.close();
+	file.read(sceneBackground, 64000);
+	file.close();
 	drawFullScreen(sceneBackground);
 
 	palaux[0] = 0;
@@ -2402,12 +1995,12 @@ void sacrificeScene() {
 
 	redFadeIn(palaux);
 
-	drawFlc(112, 57, offsets[18], 33, 9, 20, true, false, true, pulsada_salida);
+	drawFlc(112, 57, offsets[18], 33, 9, 20, true, false, true, exitPressed);
 	g_engine->_sound->autoPlayVoc("REZOS", 0, 0);
 	if (g_engine->shouldQuit())
 		return;
 
-	drawFlc(42, 30, offsets[19], 0, 9, 27, false, false, false, pulsada_salida);
+	drawFlc(42, 30, offsets[19], 0, 9, 27, false, false, false, exitPressed);
 
 	if (g_engine->shouldQuit())
 		return;
@@ -2589,7 +2182,7 @@ void sacrificeScene() {
 	}
 	delay(2000);
 	totalFadeOut(0);
-	currentRoomData->paletteAnimationFlag = pulsada_salida;
+	currentRoomData->paletteAnimationFlag = exitPressed;
 	saveAllowed = true;
 }
 
@@ -2639,38 +2232,38 @@ void ending() {
 }
 
 void loadBat() {
-	Common::File fichcani;
+	Common::File animFile;
 
 	isSecondaryAnimationEnabled = true;
-	if (!fichcani.open("MURCIE.DAT")) {
+	if (!animFile.open("MURCIE.DAT")) {
 		showError(265);
 	}
-	secondaryAnimFrameSize = fichcani.readUint16LE();
-	secondaryAnimationFrameCount = fichcani.readByte();
-	secondaryAnimDirCount = fichcani.readByte();
+	secondaryAnimFrameSize = animFile.readUint16LE();
+	secondaryAnimationFrameCount = animFile.readByte();
+	secondaryAnimDirCount = animFile.readByte();
 	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
-	loadAnimationForDirection(&fichcani, 0);
-	fichcani.close();
+	loadAnimationForDirection(&animFile, 0);
+	animFile.close();
 }
 
 void loadDevil() {
-	Common::File fichcani;
+	Common::File animFile;
 
 	isSecondaryAnimationEnabled = true;
-	if (!fichcani.open("ROJOMOV.DAT")) {
+	if (!animFile.open("ROJOMOV.DAT")) {
 		showError(265);
 	}
-	secondaryAnimFrameSize = fichcani.readUint16LE();
-	secondaryAnimationFrameCount = fichcani.readByte();
-	secondaryAnimDirCount = fichcani.readByte();
+	secondaryAnimFrameSize = animFile.readUint16LE();
+	secondaryAnimationFrameCount = animFile.readByte();
+	secondaryAnimDirCount = animFile.readByte();
 	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
 	if (secondaryAnimDirCount != 0) {
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {
-			loadAnimationForDirection(&fichcani, i);
+			loadAnimationForDirection(&animFile, i);
 		}
 	}
-	fichcani.close();
+	animFile.close();
 }
 
 void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
@@ -2701,11 +2294,11 @@ void assembleCompleteBackground(byte *image, uint coordx, uint coordy) {
 void assembleScreen(bool scroll) {
 
 	for (int indice = 0; indice < depthLevelCount; indice++) {
-		if (screenObjects[indice] != NULL) {
-			assembleCompleteBackground(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
+		if (screenLayers[indice] != NULL) {
+			assembleCompleteBackground(screenLayers[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
 		if (!scroll && mainCharAnimation.depth == indice) {
-			assembleCompleteBackground(mainCharAnimation.bitmap[characterFacingDir][iframe], characterPosX, characterPosY);
+			assembleCompleteBackground(mainCharAnimation.bitmap[charFacingDirection][iframe], characterPosX, characterPosY);
 		}
 		if (!scroll && currentRoomData->animationFlag && secondaryAnimation.depth == indice) {
 			assembleCompleteBackground(curSecondaryAnimationFrame, secondaryAnimation.posx, secondaryAnimation.posy);

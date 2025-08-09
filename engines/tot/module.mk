@@ -6,7 +6,7 @@ MODULE_OBJS = \
 	metaengine.o \
 	forest.o \
 	util.o \
-	playanim.o \
+	vars.o \
 	graphics.o \
 	anims.o \
 	routines2.o \
@@ -16,9 +16,9 @@ MODULE_OBJS = \
 	font/bgifont.o \
 	font/biosfont.o \
 	decoder/TotFlicDecoder.o \
-	soundman.o \
+	sound.o \
 	graphman.o \
-	mouseman.o \
+	mouse.o \
 	chrono.o \
 	saveload.o \
 	midi.o

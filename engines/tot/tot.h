@@ -38,8 +38,8 @@
 #include "tot/chrono.h"
 #include "tot/detection.h"
 #include "tot/graphman.h"
-#include "tot/mouseman.h"
-#include "tot/soundman.h"
+#include "tot/mouse.h"
+#include "tot/sound.h"
 
 namespace Tot {
 

@@ -5,10 +5,10 @@
 #include "common/events.h"
 #include "common/language.h"
 #include "common/scummsys.h"
-
 #include "graphics/font.h"
-#include "engines/tot/texts.h"
-#include "engines/tot/tot.h"
+
+#include "tot/texts.h"
+#include "tot/tot.h"
 
 namespace Tot {
 

@@ -23,7 +23,7 @@
 
 #include "tot/anims.h"
 #include "tot/graphics.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/util.h"
 
 namespace Tot {
@@ -41,7 +41,7 @@ void assignText();
 void updateAltScreen(byte altScreenNumber);
 void verifyCopyProtection();
 void verifyCopyProtection2();
-void cargatele();
+void loadTV();
 void loadScreen();
 void loadCharAnimation();
 void freeScreenObjects();
@@ -68,8 +68,8 @@ void introduction();
 void firstIntroduction();
 void readAlphaGraph(Common::String &dato, int long_, int posx, int posy, byte colorbarra);
 void readAlphaGraphSmall(Common::String &data, int long_, int posx, int posy, byte colorbarra, byte textColor);
-void hipercadena(Common::String cadenatextnueva, uint xhcnueva, uint yhcnueva, byte anchohc, byte colortextohc, byte colorsombrahc);
-void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5, uint xtexto, Common::String outputGameName);
+void hyperText(Common::String cadenatextnueva, uint xhcnueva, uint yhcnueva, byte anchohc, byte colortextohc, byte colorsombrahc);
+void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5);
 void copyProtection();
 void initialLogo();
 void initialMenu(bool fade);

@@ -485,14 +485,14 @@ void emptyLoop() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!tocapintar && !g_engine->shouldQuit());
+	} while (!timeToDraw && !g_engine->shouldQuit());
 }
 
 void emptyLoop2() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!tocapintar2);
+	} while (!timeToDraw2);
 }
 
 void waitForKey() {

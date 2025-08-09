@@ -1,4 +1,3 @@
-#include "mouseman.h"
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -24,7 +23,7 @@
 #include "common/system.h"
 #include "graphics/cursorman.h"
 
-#include "tot/mouseman.h"
+#include "tot/mouse.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 
@@ -43,7 +42,7 @@ void MouseManager::drawMask(int idx) {
 }
 
 void MouseManager::animateMouseIfNeeded() {
-	if (tocapintar) {
+	if (timeToDraw) {
 		setMouseMask(_currentMouseMask);
 		if (_currentMouseMask < 7) {
 			// sync this with frame time

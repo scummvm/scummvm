@@ -30,7 +30,7 @@
 namespace Tot {
 
 struct nodeElement {
-	char dicho;
+	char spoken;
 	uint index;
 };
 
@@ -43,7 +43,7 @@ struct treeDef {
 
 void initTree(Tree& a, nodeElement data);
 
-bool root(Tree node);
+bool isRoot(Tree node);
 
 Tree rightSibling(Tree node);
 

@@ -23,7 +23,7 @@
 #include "common/textconsole.h"
 
 #include "tot/chrono.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 
 namespace Tot {
 
@@ -87,9 +87,9 @@ palette pal;
 
 InventoryEntry mobj[inventoryIconCount];
 
-byte *mochilaxms[inventoryIconCount];
+byte *inventoryIconBitmaps[inventoryIconCount];
 
-byte saltospal;
+byte palAnimStep;
 
 byte inventoryPosition;
 
@@ -109,11 +109,11 @@ byte secondaryAnimationFrameCount;
 
 byte secondaryAnimDirCount;
 
-byte contadorpc, contadorpc2;
+byte cpCounter, cpCounter2;
 
 byte destinationStepX, destinationStepY;
 
-byte characterFacingDir;
+byte charFacingDirection;
 
 uint secondaryAnimWidth, secondaryAnimHeight;
 
@@ -199,7 +199,7 @@ long screenSize;
 
 ObjectInfo depthMap[numScreenOverlays];
 
-byte *screenObjects[numScreenOverlays];
+byte *screenLayers[numScreenOverlays];
 
 byte *curCharacterAnimationFrame;
 
@@ -227,7 +227,7 @@ void clearObj() {
 	regobj.afterUseTextRef = 0;
 	regobj.pickTextRef = 0;
 	regobj.useTextRef = 0;
-	regobj.habla = 0;
+	regobj.speaking = 0;
 	regobj.openable = false;
 	regobj.closeable = false;
 	for (int i = 0; i <= 7; i++)
@@ -255,7 +255,7 @@ void clearObj() {
 			regobj.mouseGridPatch[i][j] = 0;
 		}
 	}
-	contadorpc2 = contadorpc;
+	cpCounter2 = cpCounter;
 }
 
 void clearScreenData() {
@@ -310,7 +310,7 @@ void resetGameState() {
 	currentZone = 1;
 	targetZone = 1;
 	oldTargetZone = 0;
-	characterFacingDir = 1;
+	charFacingDirection = 1;
 	firstTimeTopicA[0] = true;
 	firstTimeTopicA[1] = true;
 	firstTimeTopicA[2] = true;
@@ -400,7 +400,7 @@ void resetGameState() {
 
 	isTVOn = false;
 	isTrapSet = false;
-	saltospal = 0;
+	palAnimStep = 0;
 
 	niche[0][0] = 563;
 	niche[0][1] = 561;
@@ -682,9 +682,9 @@ void initPlayAnim() {
 	// encriptado[251] = encripcod1;
 	// encriptado[252] = encripcod1;
 	// encriptado[253] = '\63';
-	tocapintar = false;
+	timeToDraw = false;
 	for (int i = 0; i < numScreenOverlays; i++) {
-		screenObjects[i] = NULL;
+		screenLayers[i] = NULL;
 	}
 	mouseX = 160;
 	mouseY = 100;
@@ -704,8 +704,8 @@ void initPlayAnim() {
 	secondList[2] = 308;
 	secondList[3] = 362;
 	secondList[4] = 537;
-	contadorpc = 0;
-	contadorpc2 = 0;
+	cpCounter = 0;
+	cpCounter2 = 0;
 	continueGame = true;
 	firstTimeDone = false;
 	isIntroSeen = false;
@@ -729,13 +729,13 @@ void clearVars() {
 		free(invItemData);
 	}
 	for(int i = 0; i < numScreenOverlays; i++) {
-		if(screenObjects[i] != NULL) {
-			free(screenObjects[i]);
+		if(screenLayers[i] != NULL) {
+			free(screenLayers[i]);
 		}
 	}
 	for(int i = 0; i < inventoryIconCount; i++) {
-		if(mochilaxms[i] != NULL) {
-			free(mochilaxms[i]);
+		if(inventoryIconBitmaps[i] != NULL) {
+			free(inventoryIconBitmaps[i]);
 		}
 	}
 	for(int i = 0; i < 4; i++) {

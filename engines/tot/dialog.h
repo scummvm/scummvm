@@ -28,19 +28,19 @@
 
 namespace Tot {
 
-typedef struct lista *plista;
+typedef struct list *listP;
 
-struct lista {
-	uint elemento;
-	plista siguiente;
+struct list {
+	uint item;
+	listP next;
 };
 
 extern byte conversationIndex;
-extern plista l1, l;
+extern listP l1, l;
 extern Tree ar, auxTree, step;
 extern bool endOfConversation;
 
-void talkScreenObject();
+void talkToSceneObject();
 
 } // End of namespace Tot
 

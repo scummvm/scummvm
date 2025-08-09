@@ -26,7 +26,7 @@
 #include "gui/message.h"
 
 #include "tot/forest.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/routines.h"
 #include "tot/tot.h"
 
@@ -248,7 +248,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		// Means we are loading from before the game has started
 		// if(rooms == nullptr) {
 		g_engine->_graphics->clear();
-		processingActive();
+		displayLoading();
 
 		loadCharAnimation();
 		loadObjects();
@@ -258,7 +258,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 
 		totalFadeOut(0);
 		g_engine->_graphics->clear();
-		processingActive();
+		displayLoading();
 		initializeScreenFile();
 		initializeObjectFile();
 		readConversationFile(Common::String("CONVERSA.TRE"));

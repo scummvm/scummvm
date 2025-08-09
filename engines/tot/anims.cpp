@@ -30,66 +30,66 @@
 #include "tot/anims.h"
 #include "tot/decoder/TotFlicDecoder.h"
 #include "tot/graphics.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/texts.h"
 #include "tot/tot.h"
 
 namespace Tot {
 
-const int sizefrase = 320 * 70 + 4;
+const int textAreaSize = 320 * 70 + 4;
 
-int32 posflicfile;
-uint numerovuelta, posrelfli;
-byte *punterofondofrase = (byte *)malloc(sizefrase);
-byte framecontador;
-bool primeravuelta;
+int32 flicFilePos;
+uint loopNumber, flicRelativePos;
+byte *textAreaBackground = (byte *)malloc(textAreaSize);
+byte frameCount;
+bool firstLoop;
 
-void drawText(uint xfrase, uint yfrase, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte colorfrase, byte colorborde) {
+void drawText(uint x, uint y, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte textColor, byte borderColor) {
 
-	littText(xfrase, (yfrase + 3), str1, colorborde);
-	littText(xfrase, (yfrase + 13), str2, colorborde);
-	littText(xfrase, (yfrase + 23), str3, colorborde);
-	littText(xfrase, (yfrase + 33), str4, colorborde);
-	littText(xfrase, (yfrase + 43), str5, colorborde);
+	littText(x, (y + 3), str1, borderColor);
+	littText(x, (y + 13), str2, borderColor);
+	littText(x, (y + 23), str3, borderColor);
+	littText(x, (y + 33), str4, borderColor);
+	littText(x, (y + 43), str5, borderColor);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	littText(xfrase, (yfrase + 1), str1, colorborde);
-	littText(xfrase, (yfrase + 11), str2, colorborde);
-	littText(xfrase, (yfrase + 21), str3, colorborde);
-	littText(xfrase, (yfrase + 31), str4, colorborde);
-	littText(xfrase, (yfrase + 41), str5, colorborde);
+	littText(x, (y + 1), str1, borderColor);
+	littText(x, (y + 11), str2, borderColor);
+	littText(x, (y + 21), str3, borderColor);
+	littText(x, (y + 31), str4, borderColor);
+	littText(x, (y + 41), str5, borderColor);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	littText(xfrase + 1, (yfrase + 2), str1, colorborde);
-	littText(xfrase + 1, (yfrase + 12), str2, colorborde);
-	littText(xfrase + 1, (yfrase + 22), str3, colorborde);
-	littText(xfrase + 1, (yfrase + 32), str4, colorborde);
-	littText(xfrase + 1, (yfrase + 42), str5, colorborde);
+	littText(x + 1, (y + 2), str1, borderColor);
+	littText(x + 1, (y + 12), str2, borderColor);
+	littText(x + 1, (y + 22), str3, borderColor);
+	littText(x + 1, (y + 32), str4, borderColor);
+	littText(x + 1, (y + 42), str5, borderColor);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	littText(xfrase - 1, (yfrase + 2), str1, colorborde);
-	littText(xfrase - 1, (yfrase + 12), str2, colorborde);
-	littText(xfrase - 1, (yfrase + 22), str3, colorborde);
-	littText(xfrase - 1, (yfrase + 32), str4, colorborde);
-	littText(xfrase - 1, (yfrase + 42), str5, colorborde);
+	littText(x - 1, (y + 2), str1, borderColor);
+	littText(x - 1, (y + 12), str2, borderColor);
+	littText(x - 1, (y + 22), str3, borderColor);
+	littText(x - 1, (y + 32), str4, borderColor);
+	littText(x - 1, (y + 42), str5, borderColor);
 	g_engine->_screen->update();
 	delay(enforcedTextAnimDelay);
-	littText(xfrase, (yfrase + 2), str1, colorfrase);
-	littText(xfrase, (yfrase + 12), str2, colorfrase);
-	littText(xfrase, (yfrase + 22), str3, colorfrase);
-	littText(xfrase, (yfrase + 32), str4, colorfrase);
-	littText(xfrase, (yfrase + 42), str5, colorfrase);
+	littText(x, (y + 2), str1, textColor);
+	littText(x, (y + 12), str2, textColor);
+	littText(x, (y + 22), str3, textColor);
+	littText(x, (y + 32), str4, textColor);
+	littText(x, (y + 42), str5, textColor);
 	g_engine->_screen->update();
 }
 
-void removeText(uint xfrase1, uint yfrase1, uint xfrase2, uint yfrase2, byte colorrelleno) {
+void removeText(uint xTextLine1, uint yTextLine1, uint xTextLine2, uint yTextLine2, byte fillColor) {
 
-	for (int j = yfrase1; j < yfrase2 + 1; j++) {
-		for (int i = xfrase1; i < xfrase2 + 1; i++) {
+	for (int j = yTextLine1; j < yTextLine2 + 1; j++) {
+		for (int i = xTextLine1; i < xTextLine2 + 1; i++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
 		}
 	}
-	g_engine->_screen->addDirtyRect(Common::Rect(xfrase1, yfrase1, xfrase2, yfrase2));
+	g_engine->_screen->addDirtyRect(Common::Rect(xTextLine1, yTextLine1, xTextLine2, yTextLine2));
 }
 
 void drawTvText(Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5) {
@@ -107,20 +107,20 @@ void clearCharacterText() {
 	removeText(2, 100, 134, 199, 0);
 }
 
-void handleFlcEvent(byte numero_del_evento) {
+void handleFlcEvent(byte eventNumber) {
 
 	const char *const *messages = g_engine->_lang == Common::ES_ESP ? animMessages[0] : animMessages[1];
 	bool isSpanish = g_engine->_lang == Common::ES_ESP;
 	bool isEnglish = !isSpanish;
-	switch (numero_del_evento) {
+	switch (eventNumber) {
 	case 0:
-		if (contadorpc > 103)
+		if (cpCounter > 103)
 			showError(274);
 		break;
 	case 1:
-		if (framecontador == 3)
+		if (frameCount == 3)
 
-			switch (numerovuelta) {
+			switch (loopNumber) {
 			case 2:
 				drawTvText(messages[0], messages[1], messages[2], messages[3], messages[4]);
 				break;
@@ -264,7 +264,7 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 		break;
 	case 2:
-		switch (framecontador) {
+		switch (frameCount) {
 		case 1: {
 			clearCharacterText();
 			clearTvText();
@@ -321,7 +321,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 3:
-		switch (framecontador) {
+		switch (frameCount) {
 		case 15:
 			g_engine->_sound->playVoc("FRENAZO", 165322, 15073);
 			break;
@@ -332,16 +332,16 @@ void handleFlcEvent(byte numero_del_evento) {
 			g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 			break;
 		case 60:
-			g_engine->_graphics->getImg(0, 0, 319, 29, punterofondofrase);
+			g_engine->_graphics->getImg(0, 0, 319, 29, textAreaBackground);
 			break;
 		}
 		break;
 	case 4:
-		if (framecontador == 3)
+		if (frameCount == 3)
 			g_engine->_sound->playVoc("TIMBRAZO", 423775, 11213);
 		break;
 	case 5:
-		if ((numerovuelta == 1) && (framecontador == 2)) {
+		if ((loopNumber == 1) && (frameCount == 2)) {
 
 			delay(2000);
 			drawText(5, 1,
@@ -352,7 +352,7 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[104],
 				255, 249);
 			delay(3500);
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[105],
 				messages[106],
@@ -363,8 +363,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 6:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[110],
 				messages[111],
@@ -373,8 +373,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[114],
 				255, 249);
 		}
-		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		else if ((loopNumber == 5) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[275],
 				messages[276],
@@ -385,8 +385,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 7:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[115],
 				messages[116],
@@ -397,8 +397,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 8:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[120],
 				messages[121],
@@ -407,8 +407,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[124],
 				255, 249);
 		}
-		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		else if ((loopNumber == 5) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[280],
 				messages[281],
@@ -419,8 +419,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 9:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[125],
 				messages[126],
@@ -431,8 +431,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 10:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[130],
 				messages[131],
@@ -443,8 +443,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 11:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[135],
 				messages[136],
@@ -455,8 +455,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 12:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[140],
 				messages[141],
@@ -467,8 +467,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 13:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[145],
 				messages[146],
@@ -479,8 +479,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 14:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[150],
 				messages[151],
@@ -489,8 +489,8 @@ void handleFlcEvent(byte numero_del_evento) {
 				messages[154],
 				255, 249);
 		}
-		else if ((numerovuelta == 5) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		else if ((loopNumber == 5) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[285],
 				messages[286],
@@ -501,8 +501,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 15:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[155],
 				messages[156],
@@ -513,8 +513,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 16:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[160],
 				messages[161],
@@ -525,9 +525,9 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 17:
-		switch (framecontador) {
+		switch (frameCount) {
 		case 1:
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			break;
 		case 17:
 			delay(500);
@@ -538,8 +538,8 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 18:
-		if ((numerovuelta == 1) && (framecontador == 3)) {
-			g_engine->_graphics->putImg(0, 0, punterofondofrase);
+		if ((loopNumber == 1) && (frameCount == 3)) {
+			g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			drawText(5, 1,
 				messages[165],
 				messages[166],
@@ -550,7 +550,7 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 19:
-		if (framecontador == 1)
+		if (frameCount == 1)
 			drawText(5, 121,
 				messages[170],
 				messages[171],
@@ -560,11 +560,11 @@ void handleFlcEvent(byte numero_del_evento) {
 			 	253, 249);
 		break;
 	case 20:
-		switch (numerovuelta) {
+		switch (loopNumber) {
 		case 1:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->getImg(0, 0, 319, 69, punterofondofrase);
+				g_engine->_graphics->getImg(0, 0, 319, 69, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -578,9 +578,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 3:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -594,9 +594,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 6:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -610,9 +610,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 9:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -626,9 +626,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 12:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -642,9 +642,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 15:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -658,9 +658,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 18:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -674,9 +674,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 21:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -690,9 +690,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 24:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -706,9 +706,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 27:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -722,9 +722,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 30:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -738,13 +738,13 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 33:
-			if (framecontador == 17)
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+			if (frameCount == 17)
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 			break;
 		}
 		break;
 	case 21:
-		switch (framecontador) {
+		switch (frameCount) {
 		case 1:
 			g_engine->_sound->playVoc("TRIDEN", 409405, 14370);
 			break;
@@ -754,11 +754,11 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 22:
-		if (framecontador == 24)
+		if (frameCount == 24)
 			g_engine->_sound->playVoc("PUFF", 191183, 18001);
 		break;
 	case 23:
-		switch (framecontador) {
+		switch (frameCount) {
 		case 8:
 			g_engine->_sound->playVoc("AFILAR", 0, 6433);
 			break;
@@ -768,19 +768,19 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 24:
-		if (framecontador == 8)
+		if (frameCount == 8)
 			g_engine->_sound->playVoc("DECAPITA", 354269, 1509);
 		break;
 	case 25:
-		if (framecontador == 97)
+		if (frameCount == 97)
 			g_engine->_sound->playVoc("PUFF2", 209184, 14514);
 		break;
 	case 26:
-		switch (numerovuelta) {
+		switch (loopNumber) {
 		case 1:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 2:
-				g_engine->_graphics->getImg(0, 0, 319, 69, punterofondofrase);
+				g_engine->_graphics->getImg(0, 0, 319, 69, textAreaBackground);
 				break;
 			case 3:
 				drawText(65, 1,
@@ -794,9 +794,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 2:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -810,9 +810,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 5:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -826,9 +826,9 @@ void handleFlcEvent(byte numero_del_evento) {
 			}
 			break;
 		case 8:
-			switch (framecontador) {
+			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, punterofondofrase);
+				g_engine->_graphics->putImg(0, 0, textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -844,32 +844,31 @@ void handleFlcEvent(byte numero_del_evento) {
 		}
 		break;
 	case 27:
-		if (framecontador == 148)
+		if (frameCount == 148)
 			g_engine->_sound->playVoc("DECAPITA", 354269, 1509);
 		break;
 	}
 }
 
-void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
-			 byte veloc, byte numevento, bool palcompleta, bool permitesalida,
+void drawFlc(uint x, uint y, int32 fliOffset, uint loop,
+			 byte speed, byte eventNumber, bool fullPalette, bool isSkipAllowed,
 			 bool doscientos, bool &salidaflis);
 
-static void exitProcedure(bool &salir_bucle, bool &permitesalida) {
+static void exitProcedure(bool &exitLoop, bool &isSkipAllowed) {
 
-	salir_bucle = false;
-	if (permitesalida) {
+	exitLoop = false;
+	if (isSkipAllowed) {
 		Common::Event e;
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN || (e.type == Common::EVENT_LBUTTONUP)) {
-				salir_bucle = true;
-				debug("Exiting from exitProcedure!");
+				exitLoop = true;
 			}
 		}
 	}
 }
 
-static fliheader readHeader(Common::File *file) {
-	fliheader headerfile;
+static FliHeader readHeader(Common::File *file) {
+	FliHeader headerfile;
 
 	headerfile.size = file->readSint32LE();
 	headerfile.magic = file->readSint16LE();
@@ -886,11 +885,9 @@ static fliheader readHeader(Common::File *file) {
 	file->read(headerfile.updator, 4);
 	headerfile.aspectx = file->readSint16LE();
 	headerfile.aspecty = file->readSint16LE();
-	// Note: probably shouldnt just harcode 2 here
 	file->read(headerfile.reserved2, 19 * 2);
 	headerfile.ofsframe1 = file->readSint32LE();
 	headerfile.ofsframe2 = file->readSint32LE();
-	// Note: probably shouldnt just harcode 2 here
 	file->read(headerfile.reserved2, 20 * 2);
 	return headerfile;
 }
@@ -911,17 +908,17 @@ void blit(const Graphics::Surface *src, Common::Rect bounds) {
 
 static void loadFlc(
 	uint &loop,
-	bool &permitesalida,
-	bool &salidaflis,
-	byte &numevento,
-	bool &palcompleta,
-	bool &doscientos,
-	byte &veloc,
-	uint &flicx,
-	uint &flicy) {
+	bool &isSkipAllowed,
+	bool &exitAnim,
+	byte &eventNumber,
+	bool &fullPalette,
+	bool &limitPaletteTo200,
+	byte &speed,
+	uint &x,
+	uint &y) {
 
-	framecontador = 0;
-	numerovuelta = 0;
+	frameCount = 0;
+	loopNumber = 0;
 
 	Common::File animationsFile;
 	Common::String fileName;
@@ -933,13 +930,13 @@ static void loadFlc(
 	if (!animationsFile.open(Common::Path(fileName))) {
 		showError(272);
 	}
-	animationsFile.seek(posflicfile, SEEK_SET);
+	animationsFile.seek(flicFilePos, SEEK_SET);
 	// Need to read header to get the total size of the FLIC file.
-	fliheader header = readHeader(&animationsFile);
+	FliHeader header = readHeader(&animationsFile);
 	Common::SeekableSubReadStream *thisFlic = new Common::SeekableSubReadStream(
 		&animationsFile,
-		posflicfile,
-		posflicfile + header.size);
+		flicFilePos,
+		flicFilePos + header.size);
 
 	TotFlicDecoder flic = TotFlicDecoder();
 
@@ -947,20 +944,20 @@ static void loadFlc(
 	flic.start();
 
 	do {
-		exitProcedure(salidaflis, permitesalida);
-		numerovuelta++;
+		exitProcedure(exitAnim, isSkipAllowed);
+		loopNumber++;
 		do {
 			g_engine->_chrono->updateChrono();
-			exitProcedure(salidaflis, permitesalida);
-			if (salidaflis) {
-				goto Lsalir_proc;
+			exitProcedure(exitAnim, isSkipAllowed);
+			if (exitAnim) {
+				goto Lexit_proc;
 			}
-			if (tocapintar) {
-				framecontador++;
-				handleFlcEvent(numevento);
+			if (timeToDraw) {
+				frameCount++;
+				handleFlcEvent(eventNumber);
 				const Graphics::Surface *frame = flic.decodeNextFrame();
 				if (frame) {
-					Common::Rect boundingBox = Common::Rect(flicx, flicy, flicx + flic.getWidth() + 1, flicy + flic.getHeight() + 1);
+					Common::Rect boundingBox = Common::Rect(x, y, x + flic.getWidth() + 1, y + flic.getHeight() + 1);
 					blit(frame, boundingBox);
 					if (flic.hasDirtyPalette()) {
 						byte *palette = (byte *)flic.getPalette();
@@ -968,10 +965,10 @@ static void loadFlc(
 						palette[0] = 0;
 						palette[1] = 0;
 						palette[2] = 0;
-						if (palcompleta) {
+						if (fullPalette) {
 							changePalette(g_engine->_graphics->getPalette(), palette);
 							copyPalette(palette, pal);
-						} else if (doscientos) {
+						} else if (limitPaletteTo200) {
 							g_engine->_graphics->setPalette(palette, 200);
 							for (int i = 0; i <= 200; i++) {
 								if(gamePart == 2 && !shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
@@ -988,15 +985,15 @@ static void loadFlc(
 						}
 					}
 					// Make sure we also update the palette animations! Esp. for part 2
-					if (currentRoomData != NULL && (currentRoomData->paletteAnimationFlag) && (saltospal >= 4) && !shouldQuitGame) {
-						saltospal = 0;
+					if (currentRoomData != NULL && (currentRoomData->paletteAnimationFlag) && (palAnimStep >= 4) && !shouldQuitGame) {
+						palAnimStep = 0;
 						if (isPaletteAnimEnabled > 6)
 							isPaletteAnimEnabled = 0;
 						else isPaletteAnimEnabled += 1;
 						updatePalette(isPaletteAnimEnabled);
-					} else saltospal += 1;
+					} else palAnimStep += 1;
 
-					tocapintar = false;
+					timeToDraw = false;
 				} else {
 					break;
 				}
@@ -1008,35 +1005,35 @@ static void loadFlc(
 			if (flic.isRewindable()) {
 				flic.rewind();
 			}
-			framecontador = 0;
-			primeravuelta = false;
+			frameCount = 0;
+			firstLoop = false;
 		}
-	} while (numerovuelta <= loop && !g_engine->shouldQuit());
+	} while (loopNumber <= loop && !g_engine->shouldQuit());
 	flic.stop();
-Lsalir_proc:
+Lexit_proc:
 	animationsFile.close();
 }
 
 void drawFlc(
-	uint flicx,
-	uint flicy,
-	int32 posicionfli,
+	uint x,
+	uint y,
+	int32 offset,
 	uint loop,
-	byte veloc,
-	byte numevento,
-	bool palcompleta,
-	bool permitesalida,
-	bool doscientos,
-	bool &salidaflis) {
+	byte speed,
+	byte numEvent,
+	bool fullPalette,
+	bool skipAllowed,
+	bool limitPaletteTo200,
+	bool &exitAnim) {
 
-	primeravuelta = true;
-	posflicfile = posicionfli;
-	posrelfli = flicx + flicy * 320;
-	loadFlc(loop, permitesalida, salidaflis, numevento, palcompleta, doscientos, veloc, flicx, flicy);
-	debug("Salida flis: %d", salidaflis);
+	firstLoop = true;
+	flicFilePos = offset;
+	flicRelativePos = x + y * 320;
+	loadFlc(loop, skipAllowed, exitAnim, numEvent, fullPalette, limitPaletteTo200, speed, x, y);
+	debug("Salida flis: %d", exitAnim);
 }
 
 void clearAnims() {
-	free(punterofondofrase);
+	free(textAreaBackground);
 }
 } // End of namespace Tot

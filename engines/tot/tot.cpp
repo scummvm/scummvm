@@ -34,10 +34,10 @@
 #include "tot/detection.h"
 #include "tot/font/bgifont.h"
 #include "tot/graphman.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
-#include "tot/soundman.h"
+#include "tot/sound.h"
 #include "tot/tot.h"
 
 namespace Tot {
