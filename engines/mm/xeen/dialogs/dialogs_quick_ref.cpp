@@ -27,6 +27,9 @@
 namespace MM {
 namespace Xeen {
 
+static const uint8 kUpperHeaderCount = 8;
+static const uint8 kLowerHeaderCount = 3;
+
 void QuickReferenceDialog::show(XeenEngine *vm) {
 	QuickReferenceDialog *dlg = new QuickReferenceDialog(vm);
 	dlg->execute();
@@ -59,8 +62,9 @@ void QuickReferenceDialog::execute() {
 	Common::String lines[8];
 
 	events.setCursor(0);
-	for (uint idx = 0; idx < (combat._globalCombat == 2 ? combat._combatParty.size() :
-			party._activeParty.size()); ++idx) {
+
+	uint partySize = combat._globalCombat == 2 ? combat._combatParty.size() : party._activeParty.size();
+	for (uint idx = 0; idx < partySize; ++idx) {
 		Character &c = combat._globalCombat == 2 ? *combat._combatParty[idx] :
 			party._activeParty[idx];
 		const char **tmpConditions = c._sex == FEMALE ? (const char **)Res.CONDITION_NAMES_F : (const char **)Res.CONDITION_NAMES_M;
@@ -92,19 +96,57 @@ void QuickReferenceDialog::execute() {
 	if (!windowOpen)
 		w.open();
 
+	Common::String ttsMessage;
+
 	// Turn off reduced font mode and then print everything
 	w.writeString("\1");
-	w.writeString(msg);
+	w.writeString(msg, false, &ttsMessage);
 	w.update();
+
+	voiceText(ttsMessage, partySize);
 
 	// Wait for a key/mouse press
 	events.clearEvents();
 	while (!_vm->shouldExit() && !events.isKeyMousePressed())
 		events.pollEventsAndWait();
+	_vm->stopTextToSpeech();
 	events.clearEvents();
 
 	if (!windowOpen)
 		w.close();
+}
+
+void QuickReferenceDialog::voiceText(const Common::String &text, uint partySize) const {
+	uint index = 0;
+
+	// "Quick reference chart"
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+
+	// Split the header descriptors ("Name", "Cond", etc.) into an array
+	// If we voice everything as originally ordered, the context isn't clear (i.e. "Name, Class, Level, ..."
+	// will be voiced as one piece, which may make it difficult to match each field with the corresponding info of
+	// each party member)
+	Common::String headers[kUpperHeaderCount];
+	for (uint8 i = 0; i < kUpperHeaderCount; ++i) {
+		headers[i] = getNextTextSection(text, index);
+	}
+
+	// Voice each party member's description
+	for (uint i = 0; i < partySize; ++i) {
+		for (uint8 j = 0; j < kUpperHeaderCount; ++j) {
+			_vm->sayText(headers[j] + ": " + getNextTextSection(text, index));
+		}
+	}
+
+	// Split the gold/gems/food descriptors into an array
+	for (uint8 i = 0; i < kLowerHeaderCount; ++i) {
+		headers[i] = getNextTextSection(text, index);
+	}
+
+	// Voice the gold/gems/food amounts
+	for (uint8 i = 0; i < kLowerHeaderCount; ++i) {
+		_vm->sayText(headers[i] + ": " + getNextTextSection(text, index));
+	}
 }
 
 } // End of namespace Xeen

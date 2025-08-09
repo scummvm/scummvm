@@ -70,6 +70,9 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 	windows[29].open();
 	windows[30].open();
 
+	Common::String buttonsText;
+	uint buttonTextCount = 0;
+
 	enum { REDRAW_NONE, REDRAW_TEXT, REDRAW_FULL } redrawFlag = REDRAW_FULL;
 	for (;;) {
 		if (redrawFlag == REDRAW_FULL) {
@@ -91,7 +94,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 				msg = Common::String::format(Res.ITEMS_DIALOG_TEXT2, Res.BTN_GOLD);
 			}
 
-			windows[29].writeString(msg);
+			buttonsText.clear();
+			windows[29].writeString(msg, false, &buttonsText);
 
 			Common::fill(&arr[0], &arr[40], 0);
 			itemIndex = -1;
@@ -101,6 +105,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 		if (mode != priorMode) {
 			// Set up the buttons for the dialog
 			loadButtons(mode, c, category);
+			setButtonTexts(buttonsText);
+			buttonTextCount = _buttonTexts.size();
 			priorMode = mode;
 			drawButtons(&windows[0]);
 		}
@@ -176,9 +182,14 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					break;
 				}
 			}
+			uint8 lineCount = lines.size();
+			// Make space for spells
+			_buttonTexts.resize(lines.size() + buttonTextCount - 1);
 			while (lines.size() < INV_ITEMS_TOTAL)
 				lines.push_back("");
 
+			Common::String ttsMessage;
+			uint8 headerCount = 0;
 			// Draw out overall text and the list of items
 			switch (mode) {
 			case ITEMMODE_CHAR_INFO:
@@ -190,7 +201,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
-				));
+				), false, &ttsMessage);
+				headerCount = category == CATEGORY_MISC ? 2 : 1;
 				break;
 
 			case ITEMMODE_BUY:
@@ -199,7 +211,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
-				));
+				), false, &ttsMessage);
+				headerCount = 3;
 				break;
 
 			case ITEMMODE_SELL:
@@ -214,7 +227,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
-				));
+				), false, &ttsMessage);
+				headerCount = 2;
 				break;
 
 			case ITEMMODE_3:
@@ -224,11 +238,19 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 					lines[0].c_str(), lines[1].c_str(), lines[2].c_str(), lines[3].c_str(),
 					lines[4].c_str(), lines[5].c_str(), lines[6].c_str(), lines[7].c_str(),
 					lines[8].c_str()
-					));
+					), false, &ttsMessage);
+				headerCount = 2;
 				break;
 
 			default:
 				break;
+			}
+
+			if (lines[0] == Res.NO_ITEMS_AVAILABLE) {
+				uint index = 0;
+				_vm->sayText(getNextTextSection(ttsMessage, index, headerCount + 1));
+			} else {
+				speakText(ttsMessage, headerCount, lineCount);
 			}
 
 			// Draw the glyphs for the items
@@ -278,6 +300,8 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 			continue;
 		}
 
+		_vm->sayText(buttonsText);
+
 		// Wait for a selection
 		_buttonValue = 0;
 		while (!_vm->shouldExit() && !_buttonValue) {
@@ -307,6 +331,7 @@ Character *ItemsDialog::execute(Character *c, ItemsMode mode) {
 
 				if (_buttonValue < (int)(_vm->_mode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
 					// Character number is valid
+					_vm->stopTextToSpeech();
 					redrawFlag = REDRAW_FULL;
 					Character *newChar = _vm->_mode == MODE_COMBAT ? combat._combatParty[_buttonValue] : &party._activeParty[_buttonValue];
 
@@ -477,43 +502,43 @@ void ItemsDialog::loadButtons(ItemsMode mode, Character *&c, ItemCategory catego
 	clearButtons();
 	if (mode == ITEMMODE_ENCHANT || mode == ITEMMODE_RECHARGE || mode == ITEMMODE_TO_GOLD) {
 		// Enchant button list
-		addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites);
-		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites);
-		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_ENCHANT, &_iconSprites);
-		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_USE, &_iconSprites);
-		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
-		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
-		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
-		addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4);
-		addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5);
-		addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6);
-		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7);
-		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
-		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
+		addButton(Common::Rect(12, 109, 36, 129),   Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites, 0);
+		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites, 1);
+		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites, 2);
+		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites, 3);
+		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_ENCHANT, &_iconSprites, 4);
+		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites, 5);
+		addButton(Common::Rect(148, 109, 172, 129), Res.KeyConstants.DialogsItems.KEY_USE, &_iconSprites, 6);
+		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1, nullptr, 7);
+		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2, nullptr, 8);
+		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3, nullptr, 9);
+		addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4, nullptr, 10);
+		addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5, nullptr, 11);
+		addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6, nullptr, 12);
+		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7, nullptr, 13);
+		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8, nullptr, 14);
+		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9, nullptr, 15);
 	} else {
 		bool flag = mode == ITEMMODE_BUY || mode == ITEMMODE_SELL || mode == ITEMMODE_IDENTIFY
 			|| mode == ITEMMODE_REPAIR;
-		addButton(Common::Rect(12, 109, 36, 129), Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites);
-		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites);
-		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites);
-		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites);
-		addButton(Common::Rect(148, 109, 172, 129), flag ? Res.KeyConstants.DialogsItems.KEY_BUY : Res.KeyConstants.DialogsItems.KEY_EQUIP, &_iconSprites);
-		addButton(Common::Rect(182, 109, 206, 129), flag ? Res.KeyConstants.DialogsItems.KEY_SELL : Res.KeyConstants.DialogsItems.KEY_REM, &_iconSprites);
-		addButton(Common::Rect(216, 109, 240, 129), flag ? Res.KeyConstants.DialogsItems.KEY_IDENTIFY : Res.KeyConstants.DialogsItems.KEY_DISC, &_iconSprites);
-		addButton(Common::Rect(250, 109, 274, 129), flag ? Res.KeyConstants.DialogsItems.KEY_FIX : Res.KeyConstants.DialogsItems.KEY_QUEST, &_iconSprites);
-		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites);
-		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
-		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
-		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
-		addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4);
-		addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5);
-		addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6);
-		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7);
-		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
-		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
+		addButton(Common::Rect(12, 109, 36, 129), Res.KeyConstants.DialogsItems.KEY_WEAPONS, &_iconSprites, 0);
+		addButton(Common::Rect(46, 109, 70, 129), Res.KeyConstants.DialogsItems.KEY_ARMOR, &_iconSprites, 1);
+		addButton(Common::Rect(80, 109, 104, 129), Res.KeyConstants.DialogsItems.KEY_ACCESSORY, &_iconSprites, 2);
+		addButton(Common::Rect(114, 109, 138, 129), Res.KeyConstants.DialogsItems.KEY_MISC, &_iconSprites, 3);
+		addButton(Common::Rect(148, 109, 172, 129), flag ? Res.KeyConstants.DialogsItems.KEY_BUY : Res.KeyConstants.DialogsItems.KEY_EQUIP, &_iconSprites, 4);
+		addButton(Common::Rect(182, 109, 206, 129), flag ? Res.KeyConstants.DialogsItems.KEY_SELL : Res.KeyConstants.DialogsItems.KEY_REM, &_iconSprites, 5);
+		addButton(Common::Rect(216, 109, 240, 129), flag ? Res.KeyConstants.DialogsItems.KEY_IDENTIFY : Res.KeyConstants.DialogsItems.KEY_DISC, &_iconSprites, 6);
+		addButton(Common::Rect(250, 109, 274, 129), flag ? Res.KeyConstants.DialogsItems.KEY_FIX : Res.KeyConstants.DialogsItems.KEY_QUEST, &_iconSprites, 7);
+		addButton(Common::Rect(284, 109, 308, 129), Common::KEYCODE_ESCAPE, &_iconSprites, 8);
+		addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1, nullptr, 9);
+		addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2, nullptr, 10);
+		addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3, nullptr, 11);
+		addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4, nullptr, 12);
+		addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5, nullptr, 13);
+		addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6, nullptr, 14);
+		addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7, nullptr, 15);
+		addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8, nullptr, 16);
+		addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9, nullptr, 17);
 		addPartyButtons(_vm);
 	}
 
@@ -743,8 +768,21 @@ int ItemsDialog::doItemOptions(Character &c, int actionIndex, int itemIndex, Ite
 		// Inventory is empty
 		return category == CATEGORY_MISC ? 0 : 2;
 
-	if (itemIndex < 0 || itemIndex > 8)
-		itemIndex = ItemSelectionDialog::show(actionIndex, items);
+	if (itemIndex < 0 || itemIndex > 8) {
+		// Populate item button texts. Text for items starts at keycode 1 and ends at keycode 9
+		Common::StringArray itemButtonTexts;
+		for (uint i = 0; i < _buttons.size(); ++i) {
+			if (_buttons[i]._value == Common::KeyCode::KEYCODE_1) {
+				if (_buttons[i]._ttsIndex >= _buttonTexts.size()) {
+					break;
+				}
+
+				itemButtonTexts.assign(_buttonTexts.begin() + _buttons[i]._ttsIndex, _buttonTexts.end());
+				break;
+			}
+		}
+		itemIndex = ItemSelectionDialog::show(actionIndex, items, itemButtonTexts);
+	}
 
 	if (itemIndex != -1) {
 		XeenItem &item = items[itemIndex];
@@ -979,10 +1017,37 @@ void ItemsDialog::itemToGold(Character &c, int itemIndex, ItemCategory category,
 	}
 }
 
+void ItemsDialog::speakText(const Common::String &text, uint8 headerCount, uint8 lineCount) {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index, headerCount));
+
+	uint startingIndex = 0;
+
+	for (uint i = 0; i < _buttonTexts.size(); ++i) {
+		if (_buttonTexts[i].empty()) {
+			startingIndex = i;
+			break;
+		}
+	}
+
+	// In some cases, each item has 3 fields: number, name, and cost. In others, it only has the number and name
+	// This generally corresponds to the number of fields in the header (i.e. "Weapons for Character" and "Cost"
+	// versus just "Weapons for Character")
+	uint fieldsPerSection = (headerCount >= 2 || g_vm->_extOptions._showItemCosts) ? 3 : 2;
+	for (uint i = 0; i < lineCount; ++i) {
+		Common::String itemInfo = getNextTextSection(text, index, fieldsPerSection, ", ");
+		_vm->sayText(itemInfo);
+		
+		if (startingIndex != 0 && i + startingIndex < _buttonTexts.size()) {
+			_buttonTexts[i + startingIndex] = itemInfo;
+		}
+	}
+}
+
 /*------------------------------------------------------------------------*/
 
-int ItemSelectionDialog::show(int actionIndex, InventoryItems &items) {
-	ItemSelectionDialog *dlg = new ItemSelectionDialog(g_vm, actionIndex, items);
+int ItemSelectionDialog::show(int actionIndex, InventoryItems &items, const Common::StringArray &itemButtonTexts) {
+	ItemSelectionDialog *dlg = new ItemSelectionDialog(g_vm, actionIndex, items, itemButtonTexts);
 	int result = dlg->execute();
 	delete dlg;
 
@@ -992,15 +1057,15 @@ int ItemSelectionDialog::show(int actionIndex, InventoryItems &items) {
 void ItemSelectionDialog::loadButtons() {
 	_icons.load("esc.icn");
 	addButton(Common::Rect(235, 111, 259, 131), Common::KEYCODE_ESCAPE, &_icons);
-	addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1);
-	addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2);
-	addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3);
-	addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4);
-	addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5);
-	addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6);
-	addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7);
-	addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8);
-	addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9);
+	addButton(Common::Rect(8, 20, 263, 28), Common::KEYCODE_1, nullptr, 0);
+	addButton(Common::Rect(8, 29, 263, 37), Common::KEYCODE_2, nullptr, 1);
+	addButton(Common::Rect(8, 38, 263, 46), Common::KEYCODE_3, nullptr, 2);
+	addButton(Common::Rect(8, 47, 263, 55), Common::KEYCODE_4, nullptr, 3);
+	addButton(Common::Rect(8, 56, 263, 64), Common::KEYCODE_5, nullptr, 4);
+	addButton(Common::Rect(8, 65, 263, 73), Common::KEYCODE_6, nullptr, 5);
+	addButton(Common::Rect(8, 74, 263, 82), Common::KEYCODE_7, nullptr, 6);
+	addButton(Common::Rect(8, 83, 263, 91), Common::KEYCODE_8, nullptr, 7);
+	addButton(Common::Rect(8, 92, 263, 100), Common::KEYCODE_9, nullptr, 8);
 }
 
 int ItemSelectionDialog::execute() {
@@ -1012,6 +1077,10 @@ int ItemSelectionDialog::execute() {
 	w.writeString(Common::String::format(Res.WHICH_ITEM, Res.ITEM_ACTIONS[_actionIndex]));
 	_icons.draw(0, 0, Common::Point(235, 111));
 	w.update();
+
+	for (uint i = 0; i < _buttonTexts.size(); ++i) {
+		_vm->sayText(_buttonTexts[i]);
+	}
 
 	int itemIndex = -1;
 	while (!_vm->shouldExit()) {

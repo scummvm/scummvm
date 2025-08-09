@@ -45,14 +45,21 @@ void QuickFight::execute() {
 	Windows &windows = *_vm->_windows;
 	Window &w = windows[10];
 	w.open();
+	bool voiceText = true;
 
 	do {
 		// Draw the dialog text and buttons
 		Common::String msg = Common::String::format(Res.QUICK_FIGHT_TEXT,
 			_currentChar->_name.c_str(),
 			Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption]);
-		w.writeString(msg);
+		Common::String ttsMessage;
+		w.writeString(msg, voiceText, &ttsMessage);
 		drawButtons(&w);
+
+		if (voiceText) {
+			setUpButtons(ttsMessage);
+			voiceText = false;
+		}
 
 		// Wait for selection
 		_buttonValue = 0;
@@ -76,11 +83,13 @@ void QuickFight::execute() {
 			if (charIdx < (int)combat._combatParty.size()) {
 				// Highlight new character
 				_currentChar = &party._activeParty[charIdx];
+				_vm->sayText(_currentChar->_name + ": " + Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption], Common::TextToSpeechManager::INTERRUPT);	
 				intf.highlightChar(charIdx);
 			}
 		} else if (Common::KEYCODE_n == _buttonValue || 
 				   Res.KeyConstants.DialogsQuickFight.KEY_NEXT == _buttonValue) {
 			_currentChar->_quickOption = (QuickAction)(((int)_currentChar->_quickOption + 1) % 4);
+			_vm->sayText(Res.QUICK_FIGHT_OPTIONS[_currentChar->_quickOption], Common::TextToSpeechManager::INTERRUPT);
 		}
 	} while (_buttonValue != Common::KEYCODE_RETURN && _buttonValue != Common::KEYCODE_ESCAPE);
 
@@ -90,9 +99,17 @@ void QuickFight::execute() {
 
 void QuickFight::loadButtons() {
 	_icons.load("train.icn");
-	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons);
+	addButton(Common::Rect(281, 108, 305, 128), Common::KEYCODE_ESCAPE, &_icons, 1);
 
-	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons);
+	addButton(Common::Rect(242, 108, 266, 128), Res.KeyConstants.DialogsQuickFight.KEY_NEXT, &_icons, 0);
+}
+
+void QuickFight::setUpButtons(const Common::String &text) {
+	if (_buttonTexts.empty()) {
+		uint index = 0;
+		getNextTextSection(text, index, 5);
+		addNextTextToButtons(text, index, 2);
+	}
 }
 
 } // End of namespace Xeen

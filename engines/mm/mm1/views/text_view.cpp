@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/text-to-speech.h"
+
 #include "mm/mm1/globals.h"
 #include "mm/mm1/gfx/gfx.h"
 #include "mm/mm1/views/text_view.h"
@@ -59,6 +61,11 @@ void TextView::writeChar(int x, int y, unsigned char c) {
 }
 
 void TextView::writeString(const Common::String &str) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(str, Common::CodePage::kDos850);
+	}
+
 	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
 		writeChar(*s);
 

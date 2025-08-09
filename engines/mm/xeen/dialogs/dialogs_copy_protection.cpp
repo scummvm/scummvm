@@ -52,8 +52,11 @@ bool CopyProtection::execute() {
 		protEntry._pageNum, protEntry._lineNum, protEntry._wordNum);
 
 	w.open();
-	w.writeString(msg);
+	Common::String ttsMessage;
+	w.writeString(msg, false, &ttsMessage);
 	w.update();
+
+	speakText(ttsMessage);
 
 	for (int tryNum = 0; tryNum < 3 && !_vm->shouldExit(); ++tryNum) {
 		line.clear();
@@ -95,6 +98,14 @@ void CopyProtection::loadEntries() {
 
 		_entries.push_back(pe);
 	}
+}
+
+void CopyProtection::speakText(const Common::String &text) const {
+	uint index = 0;
+	_vm->sayText(getNextTextSection(text, index), Common::TextToSpeechManager::INTERRUPT);
+	// Combine the directions so they're spoken cleanly as one sentence
+	_vm->sayText(getNextTextSection(text, index, 2, " "));
+	_vm->sayText(text.substr(index));
 }
 
 } // End of namespace Xeen

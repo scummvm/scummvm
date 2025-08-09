@@ -52,6 +52,12 @@ private:
 	 * Load the copy protection entries
 	 */
 	void loadEntries();
+
+	/**
+	 * Voices text with TTS
+	 * @param text	Text to voice
+	 */
+	void speakText(const Common::String &text) const;
 public:
 	/**
 	 * Show the dialog

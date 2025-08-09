@@ -41,6 +41,7 @@ private:
 	DrawStruct _faceDrawStructs[4];
 	Common::String _partyDetails;
 	Common::Array<int> _charList;
+	uint8 _faceCount;
 
 	/**
 	 * Constructor
@@ -80,6 +81,8 @@ private:
 	void startingCharChanged(int firstDisplayChar);
 
 	int selectCharacter(bool isDelete, int firstDisplayChar);
+
+	void speakText(const Common::String &text, bool isCharacterCreation);
 public:
 	/**
 	 * Show the Party dialog

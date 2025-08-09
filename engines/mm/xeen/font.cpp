@@ -109,9 +109,15 @@ bool FontSurface::isSpace(char c) {
 	return (c & 0x7f) == ' ';
 }
 
-const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds) {
+const char *FontSurface::writeString(const Common::String &s, const Common::Rect &bounds, bool voiceText, Common::String *ttsMessage) {
 	_displayString = s.c_str();
 	assert(_fontData);
+
+	bool deleteTTSMessage = false;
+	if (!ttsMessage) {
+		ttsMessage = new Common::String();
+		deleteTTSMessage = true;
+	}
 
 	for (;;) {
 		const char *msgStartP = _displayString;
@@ -198,10 +204,12 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 
 			if (c == ' ') {
 				_writePos.x += _fontReduced ? 3 : 4;
+				*ttsMessage += ' ';
 			} else if (c == '\r') {
 				fillRect(bounds, _bgColor);
 				addDirtyRect(bounds);
 				_writePos = Common::Point(bounds.left, bounds.top);
+				*ttsMessage += '\n';
 			} else if (c == 1) {
 				// Turn off reduced font mode
 				_fontReduced = false;
@@ -231,6 +239,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 			} else if (c == 6) {
 				// Non-breakable space
 				writeChar(' ', bounds);
+				*ttsMessage += ' ';
 			} else if (c == 7) {
 				// Set text background color
 				int bgColor = fontAtoi();
@@ -270,7 +279,10 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				// Skip x position
 				int xAmount = fontAtoi();
 				_writePos.x = MIN(bounds.left + xAmount, (int)bounds.right);
+				*ttsMessage += '\n';
 			} else if (c == 10) {
+				*ttsMessage += '\n';
+
 				// Newline
 				if (newLine(bounds))
 					return _displayString;
@@ -278,6 +290,7 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				// Set y position
 				int yp = fontAtoi();
 				_writePos.y = MIN(bounds.top + yp, (int)bounds.bottom);
+				*ttsMessage += '\n';
 			} else if (c == 12) {
 				// Set text colors
 				int idx = fontAtoi(2);
@@ -286,13 +299,16 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 				setTextColor(idx);
 			} else if (Common::RU_RUS == lang && (c & 0x80)) {
 				writeChar(c, bounds);
+				*ttsMessage += c;
 			} else if (c < ' ') {
 				// End of string or invalid command
 				_displayString = nullptr;
+				*ttsMessage += '\n';
 				break;
 			} else {
 				// Standard character - write it out
 				writeChar(c, bounds);
+				*ttsMessage += c;
 			}
 		}
 
@@ -301,6 +317,15 @@ const char *FontSurface::writeString(const Common::String &s, const Common::Rect
 		if ( _displayString > displayEnd && _fontJustify != JUSTIFY_RIGHT && _msgWraps
 				&& newLine(bounds))
 			break;
+	}
+
+	if (voiceText) {
+		g_vm->sayText(*ttsMessage);
+	}
+
+	if (deleteTTSMessage) {
+		delete ttsMessage;
+		ttsMessage = nullptr;
 	}
 
 	return _displayString;

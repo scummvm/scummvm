@@ -37,6 +37,8 @@ private:
 	void execute();
 
 	void protectionText();
+
+	void speakText(const Common::String &text) const;
 public:
 	static void show(XeenEngine *vm);
 };

@@ -23,6 +23,19 @@
 #include "mm/xeen/resources.h"
 #include "mm/xeen/xeen.h"
 
+#ifdef USE_TTS
+
+static const char *difficultyButtonsText[] = {
+	"Adventurer\nWarrior",													// English
+	"Abenteurer\nK\204mpfer",												// German
+	"Aventurier\nGuerrier",													// French
+	"Aventurero\nGuerrero",													// Spanish
+	"\x80\xa2\xa0\xad\xe2\xee\xe0\xa8\xe1\n\x82\xae\xa8\xad",				// Russian (Авантюрис, Воин)
+	"\xab\x5f\xc0\x49\xbc\xd2\xa6\xa1\n\xbe\xd4\xa4\x68\xbc\xd2\xa6\xa1"	// Chinese (冒險模式, 戰士模式)
+};
+
+#endif
+
 namespace MM {
 namespace Xeen {
 
@@ -36,6 +49,9 @@ int DifficultyDialog::show(XeenEngine *vm) {
 
 DifficultyDialog::DifficultyDialog(XeenEngine *vm) : ButtonContainer(vm) {
 	loadButtons();
+#ifdef USE_TTS
+	setButtonTexts(difficultyButtonsText[_vm->_ttsLanguage]);
+#endif
 }
 
 int DifficultyDialog::execute() {
@@ -44,6 +60,7 @@ int DifficultyDialog::execute() {
 
 	Window &w = windows[6];
 	w.open();
+	_vm->stopTextToSpeech();
 	w.writeString(Res.DIFFICULTY_TEXT);
 	drawButtons(&w);
 
@@ -69,8 +86,8 @@ int DifficultyDialog::execute() {
 void DifficultyDialog::loadButtons() {
 	_sprites.load("choice.icn");
 
-	addButton(Common::Rect(68, 167, 158, 187),  Res.KeyConstants.DialogsDifficulty.KEY_ADVENTURER, &_sprites);
-	addButton(Common::Rect(166, 167, 256, 187), Res.KeyConstants.DialogsDifficulty.KEY_WARRIOR, &_sprites);
+	addButton(Common::Rect(68, 167, 158, 187),  Res.KeyConstants.DialogsDifficulty.KEY_ADVENTURER, &_sprites, 0);
+	addButton(Common::Rect(166, 167, 256, 187), Res.KeyConstants.DialogsDifficulty.KEY_WARRIOR, &_sprites, 1);
 }
 
 } // End of namespace Xeen

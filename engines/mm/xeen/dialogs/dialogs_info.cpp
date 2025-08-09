@@ -64,20 +64,42 @@ void InfoDialog::execute() {
 	Window &w = windows[28];
 	w.setBounds(Common::Rect(88, 20, 248, 112 + (_lines.empty() ? 0 : _lines.size() * 9 + 13)));
 	w.open();
-	w.writeString(details);
+	Common::String ttsMessage;
+	w.writeString(details, false, &ttsMessage);
+	_vm->stopTextToSpeech();
+	speakText(ttsMessage);
 
 	do {
 		events.updateGameCounter();
 		intf.draw3d(false, false);
 		w.frame();
-		w.writeString(details);
+		w.writeString(details, false);
 		w.update();
 
 		events.wait(1);
 	} while (!_vm->shouldExit() && !events.isKeyMousePressed());
 
+	_vm->stopTextToSpeech();
+
 	events.clearEvents();
 	w.close();
+}
+
+void InfoDialog::speakText(const Common::String &text) const {
+	uint index = 0;
+
+	_vm->sayText(getNextTextSection(text, index, 3));
+
+	Common::String timeInfo[3];
+	// Time, day, and year headers
+	for (uint i = 0; i < 3; ++i) {
+		timeInfo[i] = getNextTextSection(text, index);
+	}
+
+	// Time, day, and year numbers
+	for (uint i = 0; i < 3; ++i) {
+		_vm->sayText(timeInfo[i] + ": " + getNextTextSection(text, index));
+	}
 }
 
 void InfoDialog::protectionText() {

@@ -37,6 +37,8 @@ private:
 	const char *getDaysPlurals(int val);
 
 	void execute();
+
+	void voiceText(const Common::String &text, uint partySize) const;
 public:
 	static void show(XeenEngine *vm);
 };
