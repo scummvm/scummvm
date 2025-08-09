@@ -1616,6 +1616,10 @@ void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
 	BOOL        bMainDlg = TRUE;
 	LPARAM      nGameReturn;
 
+	// Ignore messages during app shutdown
+	if (AfxGetApp()->isQuitting())
+		return;
+
 	switch (msg) {
 	case WM_DESTROY:
 		if (bReturnToMeta && (lpMetaGame != nullptr)) {
