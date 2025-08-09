@@ -26,19 +26,23 @@
 #include "common/str.h"
 #include "graphics/managed_surface.h"
 
+namespace GUI {
+class PrintingDialog;
+}
+
 namespace Common {
 
 class PrintingManager {
 public:
+	friend class GUI::PrintingDialog;
+
 	virtual ~PrintingManager();
 
 	PrintingManager() {
 		_jobName = "ScummVM";
 	}
 
-	void printImage(const Graphics::ManagedSurface &surf) {
-		doPrint(surf);
-	}
+	void printImage(const Graphics::ManagedSurface &surf);
 
 	void setJobName(const Common::String &jobName) { _jobName = jobName; }
 

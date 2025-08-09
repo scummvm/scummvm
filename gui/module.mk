@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	object.o \
 	options.o \
 	predictivedialog.o \
+	printing-dialog.o \
 	saveload.o \
 	saveload-dialog.o \
 	shaderbrowser-dialog.o \

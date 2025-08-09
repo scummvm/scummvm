@@ -19,22 +19,34 @@
  *
  */
 
-#ifdef USE_PRINTING
+#if defined(USE_PRINTING)
 
-#include "printman.h"
+#include "common/translation.h"
+#include "common/system.h"
 
-#include "dialogs.h"
+#include "backends/printing/printman.h"
+
 #include "gui/printing-dialog.h"
+#include "gui/widget.h"
 
-namespace Common {
+namespace GUI {
 
-PrintingManager::~PrintingManager() {}
-
-void PrintingManager::printImage(const Graphics::ManagedSurface &surf) {
-	GUI::PrintingDialog dialog(surf);
-	dialog.runModal();
+PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
+	: Dialog("PrintingDialog"), _surface(surface) {
+	_printButton = new GUI::ButtonWidget(this, "PrintingDialog.Print", _("Print"), Common::U32String(), kCmdPrint);
 }
 
-} // End of namespace Common
+void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kCmdPrint:
+		g_system->getPrintingManager()->doPrint(_surface);
+		close();
+		break;
+	default:
+		Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
+} // End of namespace GUI
 
 #endif
