@@ -36,6 +36,7 @@ void Room493::preload() {
 }
 
 void Room493::init() {
+	interface_hide();
 	player_set_commands_allowed(false);
 	AddSystemHotkey(KEY_ESCAPE, escape_key_pressed);
 	RemoveSystemHotkey(303);
@@ -196,7 +197,7 @@ void Room493::escape_key_pressed(void *, void *) {
 	disable_player_commands_and_fade_init(910);
 }
 
-void Room493::setTrigger(int trigger) {
+void Room493::setTrigger(int16 trigger) {
 	series_set_frame_rate(_credits, 30000);
 	kernel_timing_trigger(900, trigger);
 }

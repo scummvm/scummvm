@@ -34,7 +34,7 @@ private:
 	int _panning = 0;
 
 	static void escape_key_pressed(void *, void *);
-	void setTrigger(int trigger);
+	void setTrigger(int16 trigger);
 	void crunch();
 
 public:
