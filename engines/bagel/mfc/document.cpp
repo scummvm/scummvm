@@ -123,14 +123,14 @@ bool CDocument::SaveModified() {
 }
 
 void CDocument::OnCloseDocument() {
-#ifdef TODO
 	// Destroy all frames viewing this document
 	// the last destroy may destroy us
 	BOOL bAutoDelete = m_bAutoDelete;
 	m_bAutoDelete = FALSE;  // don't destroy document while closing views
-	while (!m_viewList.IsEmpty()) {
+
+	while (!m_viewList.empty()) {
 		// get frame attached to the view
-		CView *pView = (CView *)m_viewList.GetHead();
+		CView *pView = (CView *)m_viewList.begin();
 		ASSERT_VALID(pView);
 		CFrameWnd *pFrame = pView->GetParentFrame();
 		ASSERT_VALID(pFrame);
@@ -148,7 +148,6 @@ void CDocument::OnCloseDocument() {
 	// delete the document if necessary
 	if (m_bAutoDelete)
 		delete this;
-#endif
 }
 
 void CDocument::OnChangedViewList() {
@@ -161,9 +160,6 @@ void CDocument::OnChangedViewList() {
 
 	// update the frame counts as needed
 	UpdateFrameCounts();
-}
-
-void CDocument::UpdateFrameCounts() {
 }
 
 } // namespace MFC

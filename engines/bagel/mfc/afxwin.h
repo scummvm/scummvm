@@ -1055,7 +1055,8 @@ public:
 	virtual void OnFileSaveAs() {}
 	virtual void OnCloseDocument();
 	virtual void OnChangedViewList();
-	void UpdateFrameCounts();
+	virtual void PreCloseFrame(CFrameWnd *pFrame) {}
+	virtual void UpdateFrameCounts() {}
 
 	DECLARE_MESSAGE_MAP()
 };
