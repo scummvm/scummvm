@@ -19,22 +19,34 @@
  *
  */
 
-#ifdef USE_PRINTING
+#if defined(USE_PRINTING)
 
-#include "printman.h"
+#ifndef GUI_PRINTING_DIALOGS_H
+#define GUI_PRINTING_DIALOGS_H
 
-#include "dialogs.h"
-#include "gui/printing-dialog.h"
+#include "gui/dialog.h"
 
-namespace Common {
+namespace GUI {
+class ButtonWidget;
 
-PrintingManager::~PrintingManager() {}
+class PrintingDialog : public GUI::Dialog {
+public:
+	enum {
+		kCmdPrint = 'PRNT',
+	};
 
-void PrintingManager::printImage(const Graphics::ManagedSurface &surf) {
-	GUI::PrintingDialog dialog(surf);
-	dialog.runModal();
-}
+	PrintingDialog(const Graphics::ManagedSurface &surface);
 
-} // End of namespace Common
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
+
+private:
+	const Graphics::ManagedSurface &_surface;
+
+	GUI::ButtonWidget *_printButton;
+};
+
+} // End of namespace GUI
+
+#endif
 
 #endif

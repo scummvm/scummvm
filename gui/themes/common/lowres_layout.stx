@@ -2696,4 +2696,12 @@
 		</layout>
 	</dialog>
 
+	<dialog name = 'PrintingDialog' overlays = 'screen_center' shading = 'dim'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'Print'
+					type = 'Button'
+			/>
+		</layout>
+	</dialog>
+
 </layout_info>
