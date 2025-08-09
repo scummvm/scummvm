@@ -40,6 +40,7 @@ static const PlainGameDescriptor sludgeGames[] = {
 	{ "nsc",			"Nathan's Second Chance" },
 	{ "atw",			"Above The Waves" },
 	{ "leptonsquest",	"Lepton's Quest" },
+	{ "otto",			"Otto Experiment" },
 	{ 0, 0 }
 };
 
@@ -163,6 +164,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 	GAME1l("leptonsquest", "", "game.slg", "763d4020dcd55a4af4c01664f79584da", 71233234, Common::EN_ANY, Common::kPlatformWindows, 0),
 	GAME1l("leptonsquest", "", "Gamedata.slg", "763d4020dcd55a4af4c01664f79584da", 71233239, Common::EN_ANY, Common::kPlatformMacintosh, 0),
 	GAME1l("leptonsquest", "", "LeptonsQuest.slg", "763d4020dcd55a4af4c01664f79584da", 71233239, Common::EN_ANY, Common::kPlatformLinux, 0),
+
+	GAME1("otto", "", "gamedata", "c93b1bd849cdb6a23fb8eb389f5c1955", 154427),
 
 	{ AD_TABLE_END_MARKER, 0 }
 };
