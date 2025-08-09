@@ -61,7 +61,6 @@ void MartianRoom::reloadRoom() {
 }
 
 void MartianRoom::reloadRoom1() {
-	// aka initScene
 	_selectCommand = -1;
 	_vm->_boxSelect = false; //-1
 	_vm->_player->_playerOff = false;
@@ -70,7 +69,7 @@ void MartianRoom::reloadRoom1() {
 	_vm->_events->hideCursor();
 	_vm->_screen->clearScreen();
 	_vm->_events->showCursor();
-	roomSet();
+	roomInit();
 	_vm->_player->load();
 
 	if (_vm->_player->_roomNumber != 47)
@@ -92,12 +91,8 @@ void MartianRoom::reloadRoom1() {
 	_vm->_events->clearEvents();
 }
 
-void MartianRoom::roomSet() {
-	// aka runScriptInitScript
-	_vm->_numAnimTimers = 0;
-	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
-	_vm->_scripts->searchForSequence();
-	_vm->_scripts->executeScript();
+void MartianRoom::roomInit() {
+	Room::roomInit();
 
 	for (int i = 0; i < 30; i++)
 		_vm->_flags[200 + i] = 0;
