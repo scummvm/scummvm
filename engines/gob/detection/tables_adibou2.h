@@ -383,7 +383,6 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-
 {
 	{
 		"adibou2sciences",
@@ -391,6 +390,20 @@
 		AD_ENTRY2s("intro_ap.stk", "b630020cb8b6bc6f4b98876647ad418d", 3460620,
 				   "FICHES.ITK", "2a704840f883b908f444f5215ab05e72", 52092928),
 		EN_GRB,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adibou2sciences",
+		"", // "Natur & Technik"
+		AD_ENTRY2s("intro_ap.stk", "404731e0108a43197ad408bda216a76e", 3162292,
+				   "FICHES.ITK", "c301766d759d9ac8d7362558cc7a20c8", 51316736),
+		DE_DEU,
 		kPlatformWindows,
 		ADGF_ADDON,
 		GUIO0()
