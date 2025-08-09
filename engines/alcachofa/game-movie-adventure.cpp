@@ -33,11 +33,6 @@ class GameMovieAdventure : public Game {
 			!room->name().equalsIgnoreCase("HABITACION_NEGRA");
 	}
 
-	void invalidDialogLine(uint index) override {
-		if (index != 4542)
-			Game::invalidDialogLine(index);
-	}
-
 	bool shouldCharacterTrigger(const Character *character, const char *action) override {
 		// An original hack to check that bed sheet is used on the other main character only in the correct room
 		// There *is* another script variable (es_casa_freddy) that should check this
