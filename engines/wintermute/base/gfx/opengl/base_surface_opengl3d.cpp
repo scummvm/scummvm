@@ -35,7 +35,7 @@
 namespace Wintermute {
 
 BaseSurfaceOpenGL3D::BaseSurfaceOpenGL3D(BaseGame *game, BaseRenderer3D *renderer)
-	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _texWidth(0), _texHeight(0), _pixelOpReady(false) {
+	: BaseSurface(game), _tex(0), _renderer(renderer), _imageData(nullptr), _maskData(nullptr), _texWidth(0), _texHeight(0), _pixelOpReady(false), _surfaceModified(false) {
 }
 
 BaseSurfaceOpenGL3D::~BaseSurfaceOpenGL3D() {
@@ -68,6 +68,7 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 	}
 
 	_valid = false;
+	_surfaceModified = false;
 	return true;
 }
 
@@ -269,7 +270,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 }
 
 bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a) {
-	if (!_pixelOpReady) {
+	if (!_pixelOpReady || !_valid) {
 		return false;
 	}
 
@@ -283,11 +284,13 @@ bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a)
 
 	_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, r, g, b));
 
+	_surfaceModified = true;
+
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) const {
-	if (!_pixelOpReady) {
+	if (!_pixelOpReady || !_valid) {
 		return false;
 	}
 
@@ -317,6 +320,13 @@ bool BaseSurfaceOpenGL3D::startPixelOp() {
 
 bool BaseSurfaceOpenGL3D::endPixelOp() {
 	_pixelOpReady = false;
+	if (_surfaceModified) {
+		glBindTexture(GL_TEXTURE_2D, _tex);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _texWidth, _texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _width, _height, GL_RGBA, GL_UNSIGNED_BYTE, _imageData->getPixels());
+		glBindTexture(GL_TEXTURE_2D, 0);
+		_surfaceModified = false;
+	}
 	return true;
 }
 

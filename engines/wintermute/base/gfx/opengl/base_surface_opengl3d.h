@@ -77,6 +77,7 @@ private:
 	uint _texWidth;
 	uint _texHeight;
 	bool _pixelOpReady;
+	bool _surfaceModified;
 
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 };
