@@ -466,12 +466,12 @@ void PathFindingShape::initializeFloydWarshall() {
 	for (const auto &linkPolygon : _linkIndices) {
 		for (uint i = 0; i < 2 * kPointsPerPolygon; i++) {
 			LinkIndex linkFrom = linkPolygon._points[i / 2];
-			int32 linkFromI = i % 2 ? linkFrom.second : linkFrom.first;
+			int32 linkFromI = (i % 2) ? linkFrom.second : linkFrom.first;
 			if (linkFromI < 0)
 				continue;
 			for (uint j = i + 1; j < 2 * kPointsPerPolygon; j++) {
 				LinkIndex linkTo = linkPolygon._points[j / 2];
-				int32 linkToI = j % 2 ? linkTo.second : linkTo.first;
+				int32 linkToI = (j % 2) ? linkTo.second : linkTo.first;
 				if (linkToI >= 0) {
 					const int32 linkFromFullI = linkFromI * _linkPoints.size() + linkToI;
 					const int32 linkToFullI = linkToI * _linkPoints.size() + linkFromI;
@@ -571,14 +571,14 @@ void PathFindingShape::floydWarshallPath(
 	const auto &toIndices = _linkIndices[toContaining];
 	for (uint i = 0; i < 2 * kPointsPerPolygon; i++) {
 		const auto &curFromPoint = fromIndices._points[i / 2];
-		int32 curFromLink = i % 2 ? curFromPoint.second : curFromPoint.first;
+		int32 curFromLink = (i % 2) ? curFromPoint.second : curFromPoint.first;
 		if (curFromLink < 0)
 			continue;
 		uint curFromDistance = (uint)sqrtf(from.sqrDist(_linkPoints[curFromLink]) + 0.5f);
 
 		for (uint j = 0; j < 2 * kPointsPerPolygon; j++) {
 			const auto &curToPoint = toIndices._points[j / 2];
-			int32 curToLink = j % 2 ? curToPoint.second : curToPoint.first;
+			int32 curToLink = (j % 2) ? curToPoint.second : curToPoint.first;
 			if (curToLink < 0)
 				continue;
 			uint totalDistance =
