@@ -22,18 +22,41 @@
 namespace Alcachofa {
 
 const PlainGameDescriptor alcachofaGames[] = {
-	{ "mort_phil_adventura_de_cine", "Mort&Phil: A movie adventure" },
+	{ "mort_phil_adventura_de_cine", "Mort & Phil: A Movie Adventure" },
 	{ 0, 0 }
 };
 
 const ADGameDescription gameDescriptions[] = {
+	//
+	// A Movie Adventure
+	//
 	{
 		"mort_phil_adventura_de_cine",
-		nullptr,
+		"Clever & Smart - A Movie Adventure",
 		AD_ENTRY1s("Textos/Objetos.nkr", "a2b1deff5ca7187f2ebf7f2ab20747e9", 17606),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
+	},
+
+	// The "english" version is just the spanish version with english subtitles...
+	{
+		"mort_phil_adventura_de_cine",
+		u8"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
+		AD_ENTRY1s("Textos/Objetos.nkr", "ad3cb78ad7a51cfe63ee6f84768c7e66", 15895),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
+		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
+	},
+	{
+		"mort_phil_adventura_de_cine",
+		u8"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
+		AD_ENTRY1s("Textos/Objetos.nkr", "93331e4cc8d2f8f8a0007bfb5140dff5", 16403),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE | ADGF_USEEXTRAASTITLE,
 		GUIO2(GAMEOPTION_32BITS, GAMEOPTION_HIGH_QUALITY)
 	},
 
