@@ -242,6 +242,9 @@ protected:
 	GUI::CheckboxWidget *createGammaCorrectionCheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createSegaShadowModeCheckbox(GuiObject *boss, const Common::String &name);
 	GUI::CheckboxWidget *createCopyProtectionCheckbox(GuiObject *boss, const Common::String &name);
+#ifdef USE_TTS
+	GUI::CheckboxWidget *createEnableTTSCheckbox(GuiObject *boss, const Common::String &name);
+#endif
 	void updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value);
 
 	Common::Array<GUI::CheckboxWidget *> _enhancementsCheckboxes;
@@ -294,6 +297,9 @@ private:
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableCopyProtectionCheckbox = nullptr;
+#ifdef USE_TTS
+	GUI::CheckboxWidget *_enableTTSCheckbox = nullptr;
+#endif
 
 	GUI::SliderWidget *_overtureTicksSlider = nullptr;
 	GUI::StaticTextWidget *_overtureTicksValue = nullptr;
@@ -322,6 +328,9 @@ private:
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableGammaCorrectionCheckbox = nullptr;
 	GUI::CheckboxWidget *_enableCopyProtectionCheckbox = nullptr;
+#ifdef USE_TTS
+	GUI::CheckboxWidget *_enableTTSCheckbox = nullptr;
+#endif
 	GUI::SliderWidget *_sndQualitySlider = nullptr;
 	GUI::StaticTextWidget *_sndQualityValue = nullptr;
 	int _quality = 0;
@@ -347,6 +356,9 @@ private:
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
+#ifdef USE_TTS
+	GUI::CheckboxWidget *_enableTTSCheckbox = nullptr;
+#endif
 
 	GUI::SliderWidget *_playbackAdjustmentSlider = nullptr;
 	GUI::StaticTextWidget *_playbackAdjustmentValue = nullptr;
@@ -376,6 +388,9 @@ private:
 
 	GUI::CheckboxWidget *_enableOriginalGUICheckbox = nullptr;
 	GUI::CheckboxWidget *_enableSegaShadowModeCheckbox = nullptr;
+#ifdef USE_TTS
+	GUI::CheckboxWidget *_enableTTSCheckbox = nullptr;
+#endif
 
 	GUI::SliderWidget *_introAdjustmentSlider = nullptr;
 	GUI::StaticTextWidget *_introAdjustmentValue = nullptr;

@@ -107,6 +107,9 @@ void ScummEngine::printString(int m, const byte *msg) {
 		actorTalk(msg);
 		break;
 	case 1:
+#ifdef USE_TTS
+		_voiceNextString = true;
+#endif
 		drawString(1, msg);
 		break;
 	case 2:
@@ -167,6 +170,78 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	}
 
 }
+
+#ifdef USE_TTS
+
+void ScummEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		// Some games, like Loom, may display strings of only characters (such as underscores) that make for awkward voicing.
+		// Before voicing text, make sure it has either an alphanumeric character or a non-ASCII character (for languages
+		// like Russian or Hebrew that may only have non-ASCII characters)
+		for (uint i = 0; i < text.size(); ++i) {
+			if (Common::isAlnum(text[i]) || !Common::isAscii(text[i])) {
+				Common::String ttsMessage = text;
+				ttsMessage.replace('^', ' ');
+
+				Common::String copyrightReplacement;
+				Common::String toReplace = "=";
+
+				switch (getDialogCodePage()) {
+				case Common::kDos850:
+					copyrightReplacement = "\xb8";
+					break;
+				case Common::kWindows1252:
+				case Common::kWindows1255:
+					copyrightReplacement = "\xa9";
+					break;
+				default:
+					// Replace what would be the copyright symbol with a space for encodings that don't have it
+					copyrightReplacement = "\x20";
+					break;
+				}
+
+				// Loom uses a unique code for the copyright symbol, which also seems to include the 1 that comes after it
+				if (_game.id == GID_LOOM) {
+					toReplace = "\x3e\x2a";
+					copyrightReplacement += " 1";
+				}
+
+				Common::replace(ttsMessage, toReplace, copyrightReplacement);
+				Common::replace(ttsMessage, "\x1c", copyrightReplacement);
+
+				ttsMan->say(_charset->convertText(ttsMessage, _language), action);
+				return;
+			}
+		}
+	}
+}
+
+void ScummEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+void ScummEngine::sayButtonText() {
+	int hoveredControl = getInternalGUIControlFromCoordinates(_mouse.x, _mouse.y);
+	if (hoveredControl != -1 && _previousControl != hoveredControl) {
+		if (!_internalGUIControls[hoveredControl].alternateTTSLabel.empty()) {
+			sayText(_internalGUIControls[hoveredControl].alternateTTSLabel, Common::TextToSpeechManager::INTERRUPT);
+		} else {
+			sayText(_internalGUIControls[hoveredControl].label, Common::TextToSpeechManager::INTERRUPT);
+		}
+	}
+
+	_previousControl = hoveredControl;
+}
+
+#endif
 
 #pragma mark -
 #pragma mark --- Core message/subtitle code ---
@@ -909,6 +984,9 @@ void ScummEngine_v2::drawSentence() {
 	}
 
 	byte string[80];
+#ifdef USE_TTS
+	Common::String oldSentence = _sentenceBuf;
+#endif
 	const char *ptr = _sentenceBuf.c_str();
 	int i = 0, len = 0;
 
@@ -942,6 +1020,12 @@ void ScummEngine_v2::drawSentence() {
 		sentenceline.right = _virtscr[kVerbVirtScreen].w - 1 + pixelXOffset;
 	}
 	restoreBackground(sentenceline);
+
+#ifdef USE_TTS
+	if (oldSentence != _sentenceBuf) {
+		_voiceNextString = true;
+	}
+#endif
 
 	drawString(2, (byte *)string);
 }
@@ -1025,7 +1109,12 @@ void ScummEngine::displayDialog() {
 		memcpy(&_charset->_str, &_curStringRect, sizeof(Common::Rect));
 #endif
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (_talkDelay || (ttsMan && ttsMan->isSpeaking()))
+#else
 	if (_talkDelay)
+#endif
 		return;
 
 	if ((_game.version <= 6 && _haveMsg == 1) ||
@@ -1129,6 +1218,9 @@ void ScummEngine::displayDialog() {
 	bool createTextBox = (_macGui && _game.id == GID_INDY3);
 	bool drawTextBox = false;
 
+#ifdef USE_TTS
+	Common::String ttsMessage;
+#endif
 	while (handleNextCharsetCode(a, &c)) {
 		if (c == 0) {
 			// End of text reached, set _haveMsg accordingly
@@ -1139,6 +1231,9 @@ void ScummEngine::displayDialog() {
 		}
 
 		if (c == 13) {
+#ifdef USE_TTS
+			ttsMessage += ' ';
+#endif
 			if (!newLine())
 				break;
 			continue;
@@ -1187,6 +1282,9 @@ void ScummEngine::displayDialog() {
 		if (_game.version <= 3) {
 			_charset->printChar(c, false);
 			_msgCount += 1;
+#ifdef USE_TTS
+			ttsMessage += c;
+#endif
 		} else {
 			if (_game.features & GF_16BIT_COLOR) {
 				// HE games which use sprites for subtitles
@@ -1199,6 +1297,9 @@ void ScummEngine::displayDialog() {
 				// of this message -> don't print it.
 			} else {
 				_charset->printChar(c, false);
+#ifdef USE_TTS
+				ttsMessage += c;
+#endif
 			}
 		}
 		_nextLeft = _charset->_left;
@@ -1211,6 +1312,14 @@ void ScummEngine::displayDialog() {
 			_talkDelay += (int)VAR(VAR_CHARINC);
 		}
 	}
+
+#ifdef USE_TTS
+	if (!_mixer->isSoundHandleActive(*_sound->_talkChannelHandle) && 
+		(_game.heversion < 60 || !_sound->isSoundInUse(HSND_TALKIE_SLOT)) && 
+		!_sound->pollCD()) {
+		sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+	}
+#endif
 
 	if (drawTextBox)
 		mac_drawIndy3TextBox();
@@ -1242,7 +1351,7 @@ int ScummEngine::countNumberOfWaits() {
 	return numWaits;
 }
 
-void ScummEngine::drawString(int a, const byte *msg) {
+void ScummEngine::drawString(int a, const byte *msg, Common::TextToSpeechManager::Action ttsAction) {
 	byte buf[270];
 	byte *space;
 	int i, c;
@@ -1266,6 +1375,49 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	_charset->setColor(_string[a].color);
 	_charset->_disableOffsX = _charset->_firstChar = true;
 	_charset->setCurID(_string[a].charset);
+
+#ifdef USE_TTS
+	bool bypassTalkDelay = false;
+
+	// Help menu, which uses objects for buttons
+	if (_game.id == GID_PASS && _roomResource == 2) {
+		for (uint8 index = 0; index < ARRAYSIZE(_passHelpButtons); ++index) {
+			if (_passHelpButtons[index].empty()) {
+				_voiceNextString = false;
+				int obj = findObject(_charset->_left, _charset->_top);
+
+				if (obj != 0) {
+					int adjustedObj = obj - 956;
+					if (adjustedObj >= 0 && adjustedObj < ARRAYSIZE(_passHelpButtons)) {
+						_passHelpButtons[adjustedObj] = (const char *)buf;
+					}
+				}
+				break;
+			}
+		}
+
+		if (_voiceNextString) {
+			bypassTalkDelay = true;
+		}
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (_voiceNextString && (getTalkingActor() == 0xFF || getTalkingActor() == 0) && 
+		(!_talkDelay || bypassTalkDelay || (ttsMan && !ttsMan->isSpeaking()) || ttsAction == Common::TextToSpeechManager::QUEUE)) {
+		const char *message = (const char *)buf;
+		if (!_checkPreviousSaid || scumm_stricmp(message, _previousSaid.c_str()) != 0) {
+			sayText(message, ttsAction);
+
+			if (!bypassTalkDelay) {
+				_previousSaid = message;
+			}
+		}
+
+		_voicePassHelpButtons = true;
+		_checkPreviousSaid = false;
+		_voiceNextString = false;
+	}
+#endif
 
 	VirtScreen *vs = findVirtScreen(_charset->_top);
 	bool shadowModeFlag = (vs && vs->number == kMainVirtScreen);

@@ -1204,6 +1204,27 @@ GUI::CheckboxWidget *ScummOptionsContainerWidget::createCopyProtectionCheckbox(G
 	);
 }
 
+#ifdef USE_TTS
+
+GUI::CheckboxWidget *ScummOptionsContainerWidget::createEnableTTSCheckbox(GuiObject *boss, const Common::String &name) {
+	// Set a "tts_enabled" bool specifically for this domain, since otherwise, the game options will take the "tts_enabled" bool
+	// from global options (i.e. when games using this checkbox are added for the first time, they don't check the default domain, 
+	// and instead try to get from the game's specific domain, but the "tts_enabled" bool doesn't exist in that domain yet, so it
+	// pulls from the app domain instead. Therefore, if the user has TTS enabled for the ScummVM domain, the TTS game option 
+	// will default to enabled. This doesn't match the behavior of other games, which always default TTS to false, so make sure 
+	// TTS defaults to false by adding the bool manually here)
+	if (!ConfMan.hasKey("tts_enabled", _domain)) {
+		ConfMan.setBool("tts_enabled", false, _domain);
+	}
+
+	return new GUI::CheckboxWidget(boss, name,
+		_("Enable Text to Speech"),
+		_("Use TTS to read text in the game (if TTS is available)")
+	);
+}
+
+#endif
+
 void ScummOptionsContainerWidget::updateAdjustmentSlider(GUI::SliderWidget *slider, GUI::StaticTextWidget *value) {
 	int adjustment = slider->getValue();
 	const char *sign = "";
@@ -1334,6 +1355,9 @@ LoomEgaGameOptionsWidget::LoomEgaGameOptionsWidget(GuiObject *boss, const Common
 	createEnhancementsWidget(widgetsBoss(), "LoomEgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableOriginalGUI");
 	_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableCopyProtection");
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "LoomEgaGameOptionsDialog.EnableTTS");
+#endif
 }
 
 void LoomEgaGameOptionsWidget::load() {
@@ -1349,6 +1373,9 @@ void LoomEgaGameOptionsWidget::load() {
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
 	_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool LoomEgaGameOptionsWidget::save() {
@@ -1357,6 +1384,9 @@ bool LoomEgaGameOptionsWidget::save() {
 	ConfMan.setInt("loom_overture_ticks", _overtureTicksSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
 	ConfMan.setBool("copy_protection", _enableCopyProtectionCheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
@@ -1368,6 +1398,11 @@ void LoomEgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 				.addPadding(0, 0, 10, 0)
 				.addWidget("EnableOriginalGUI", "Checkbox")
 				.addWidget("EnableCopyProtection", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 		.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1418,6 +1453,10 @@ MacGameOptionsWidget::MacGameOptionsWidget(GuiObject *boss, const Common::String
 
 	if (gameId == GID_MONKEY || gameId == GID_MONKEY2 || (gameId == GID_INDY4 && extra == "Floppy"))
 		_enableCopyProtectionCheckbox = createCopyProtectionCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableCopyProtection");
+
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "MacGameOptionsWidget.EnableTTS");
+#endif
 }
 
 void MacGameOptionsWidget::load() {
@@ -1442,6 +1481,10 @@ void MacGameOptionsWidget::load() {
 
 	if (_enableCopyProtectionCheckbox)
 		_enableCopyProtectionCheckbox->setState(ConfMan.getBool("copy_protection", _domain));
+
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool MacGameOptionsWidget::save() {
@@ -1452,6 +1495,10 @@ bool MacGameOptionsWidget::save() {
 
 	if (_enableCopyProtectionCheckbox)
 		ConfMan.setBool("copy_protection", _enableCopyProtectionCheckbox->getState(), _domain);
+
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 
 	return res;
 }
@@ -1467,6 +1514,10 @@ void MacGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::S
 
 	if (_enableCopyProtectionCheckbox)
 		layouts.addWidget("EnableCopyProtection", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
 
 	addEnhancementsLayout(layouts)
 			.closeLayout()
@@ -1532,6 +1583,9 @@ LoomVgaGameOptionsWidget::LoomVgaGameOptionsWidget(GuiObject *boss, const Common
 
 	createEnhancementsWidget(widgetsBoss(), "LoomVgaGameOptionsDialog");
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableOriginalGUI");
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "LoomVgaGameOptionsDialog.EnableTTS");
+#endif
 }
 
 void LoomVgaGameOptionsWidget::load() {
@@ -1546,12 +1600,18 @@ void LoomVgaGameOptionsWidget::load() {
 	updatePlaybackAdjustmentValue();
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool LoomVgaGameOptionsWidget::save() {
 	ScummOptionsContainerWidget::save();
 	ConfMan.setInt("loom_playback_adjustment", _playbackAdjustmentSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
@@ -1562,6 +1622,11 @@ void LoomVgaGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Commo
 			.addLayout(GUI::ThemeLayout::kLayoutVertical, 4)
 				.addPadding(0, 0, 10, 0)
 				.addWidget("EnableOriginalGUI", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
+
 	addEnhancementsLayout(layouts)
 			.closeLayout()
 			.addLayout(GUI::ThemeLayout::kLayoutHorizontal, 12)
@@ -1597,6 +1662,10 @@ MI1CdGameOptionsWidget::MI1CdGameOptionsWidget(GuiObject *boss, const Common::St
 	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", _domain));
 
 	_enableOriginalGUICheckbox = createOriginalGUICheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableOriginalGUI");
+
+#ifdef USE_TTS
+	_enableTTSCheckbox = createEnableTTSCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableTTS");
+#endif
 
 	if (platform == Common::kPlatformSegaCD)
 		_enableSegaShadowModeCheckbox = createSegaShadowModeCheckbox(widgetsBoss(), "MI1CdGameOptionsDialog.EnableSegaShadowMode");
@@ -1651,6 +1720,9 @@ void MI1CdGameOptionsWidget::load() {
 	updateOutlookAdjustmentValue();
 
 	_enableOriginalGUICheckbox->setState(ConfMan.getBool("original_gui", _domain));
+#ifdef USE_TTS
+	_enableTTSCheckbox->setState(ConfMan.getBool("tts_enabled", _domain));
+#endif
 }
 
 bool MI1CdGameOptionsWidget::save() {
@@ -1662,6 +1734,9 @@ bool MI1CdGameOptionsWidget::save() {
 	ConfMan.setInt("mi1_intro_adjustment", _introAdjustmentSlider->getValue(), _domain);
 	ConfMan.setInt("mi1_outlook_adjustment", _outlookAdjustmentSlider->getValue(), _domain);
 	ConfMan.setBool("original_gui", _enableOriginalGUICheckbox->getState(), _domain);
+#ifdef USE_TTS
+	ConfMan.setBool("tts_enabled", _enableTTSCheckbox->getState(), _domain);
+#endif
 	return true;
 }
 
@@ -1677,6 +1752,10 @@ void MI1CdGameOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common:
 
 	if (platform == Common::kPlatformSegaCD)
 		layouts.addWidget("EnableSegaShadowMode", "Checkbox");
+
+#ifdef USE_TTS
+	layouts.addWidget("EnableTTS", "Checkbox");
+#endif
 
 	addEnhancementsLayout(layouts)
 			.closeLayout()

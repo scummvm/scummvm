@@ -35,6 +35,7 @@
 #include "common/rendermode.h"
 #include "common/str.h"
 #include "common/textconsole.h"
+#include "common/text-to-speech.h"
 #include "graphics/surface.h"
 #include "graphics/sjis.h"
 #include "graphics/palette.h"
@@ -476,6 +477,9 @@ struct InternalGUIControl {
 	int highlightedFillColor;
 	bool centerText;
 	Common::String label;
+#ifdef USE_TTS
+	Common::String alternateTTSLabel;
+#endif
 	bool doubleLinesFlag;
 };
 
@@ -1219,7 +1223,7 @@ protected:
 
 	void verbMouseOver(int verb);
 	int findVerbAtPos(int x, int y) const;
-	virtual void drawVerb(int verb, int mode);
+	virtual void drawVerb(int verb, int mode, Common::TextToSpeechManager::Action ttsAction = Common::TextToSpeechManager::INTERRUPT);
 	virtual void runInputScript(int clickArea, int val, int mode);
 	void restoreVerbBG(int verb);
 	void drawVerbBitmap(int verb, int x, int y);
@@ -1627,6 +1631,16 @@ protected:
 
 	Localizer *_localizer = nullptr;
 
+#ifdef USE_TTS
+	bool _voiceNextString = false;
+	bool _checkPreviousSaid = false;
+	bool _voicePassHelpButtons = false;
+	int _previousVerb = -1;
+	int _previousControl = -1;
+	Common::String _previousSaid;
+	Common::String _passHelpButtons[6];
+#endif
+
 	void restoreCharsetBg();
 	void clearCharsetMask();
 	void clearTextSurface();
@@ -1640,11 +1654,17 @@ protected:
 	virtual void displayDialog();
 	int countNumberOfWaits(); // For SE speech support, from disasm
 	bool newLine();
-	void drawString(int a, const byte *msg);
+	void drawString(int a, const byte *msg, Common::TextToSpeechManager::Action ttsAction = Common::TextToSpeechManager::QUEUE);
 	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;
 	void wrapSegaCDText();
 	void debugMessage(const byte *msg);
 	virtual void showMessageDialog(const byte *msg);
+	
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::QUEUE) const;
+	void stopTextToSpeech() const;
+	void sayButtonText();
+#endif
 
 	virtual int convertMessageToString(const byte *msg, byte *dst, int dstSize);
 	int convertIntMessage(byte *dst, int dstSize, int var);

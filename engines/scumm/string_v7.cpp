@@ -412,7 +412,7 @@ void ScummEngine_v7::createTextRenderer(GlyphRenderer_v7 *gr) {
 #pragma mark --- V7 blast text queue code ---
 #pragma mark -
 
-void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags) {
+void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags, bool ttsVoiceText, bool ttsIsSubtitle) {
 	assert(_blastTextQueuePos + 1 <= ARRAYSIZE(_blastTextQueue));
 
 	if (_useCJKMode) {
@@ -427,8 +427,14 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	convertMessageToString(text, bt.text, sizeof(bt.text));
 
 	// The original DIG interpreter expressly checks for " " strings here. And the game also sends these quite frequently...
-	if (!bt.text[0] || (bt.text[0] == (byte)' ' && !bt.text[1]))
+	if (!bt.text[0] || (bt.text[0] == (byte)' ' && !bt.text[1])) {
+#ifdef USE_TTS
+		if (getTalkingActor() == 0xFF || getTalkingActor() == 0) {
+			_previousSaid.clear();
+		}
+#endif
 		return;
+	}
 
 	_blastTextQueuePos++;
 	bt.xpos = x;
@@ -436,6 +442,10 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.color = color;
 	bt.charset = charset;
 	bt.flags = flags;
+#ifdef USE_TTS
+	bt.voiceText = ttsVoiceText;
+	bt.isSubtitle = ttsIsSubtitle;
+#endif
 }
 
 void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags) {
@@ -461,6 +471,10 @@ void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRec
 void ScummEngine_v7::drawBlastTexts() {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
+#ifdef USE_TTS
+	Common::String ttsMessage;
+	Common::String ttsSubtitles;
+#endif
 	for (int i = 0; i < _blastTextQueuePos; i++) {
 		BlastText &bt = _blastTextQueue[i];
 
@@ -486,15 +500,49 @@ void ScummEngine_v7::drawBlastTexts() {
 			}
 
 			_textV7->drawStringWrap((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.flags);
+#ifdef USE_TTS
+			if (bt.voiceText) {
+				if (bt.isSubtitle) {
+					ttsSubtitles += " ";
+					ttsSubtitles += (const char *)bt.text;
+				} else {
+					ttsMessage += " ";
+					ttsMessage += (const char *)bt.text;
+				}
+			}
+#endif
 		} else {
 			bt.rect = _defaultTextClipRect;
 			_textV7->drawString((const char*)bt.text, (byte*)vs->getPixels(0, _screenTop), bt.rect, bt.xpos, bt.ypos, vs->pitch, bt.color, bt.flags);
+			
+#ifdef USE_TTS
+			if (bt.voiceText) {
+				if (bt.isSubtitle) {
+					ttsSubtitles += " ";
+					ttsSubtitles += (const char *)bt.text;
+				} else {
+					ttsMessage += " ";
+					ttsMessage += (const char *)bt.text;
+				}
+			}
+#endif
 		}
 
 		bt.rect.top += _screenTop;
 		bt.rect.bottom += _screenTop;
 		markRectAsDirty(vs->number, bt.rect);
 	}
+
+#ifdef USE_TTS
+	if (!ttsSubtitles.empty()) {
+		ttsMessage = ttsSubtitles;
+	}
+
+	if (_previousSaid != ttsMessage) {
+		sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+		_previousSaid = ttsMessage;
+	}
+#endif
 }
 
 void ScummEngine_v7::removeBlastTexts() {
@@ -565,13 +613,13 @@ void ScummEngine_v7::processSubtitleQueue() {
 			continue;
 		if (usingOldSystem) {
 			if (st->center || VAR(VAR_VOICE_MODE)) {
-				enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)0);
+				enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)0, (st->actorSpeechMsg || ConfMan.getBool("speech_mute") || VAR(VAR_VOICE_MODE) == 2), true);
 			}
 		} else {
 			int flags = st->wrap ? kStyleWordWrap : 0;
 			if (st->center)
 				flags |= kStyleAlignCenter;
-			enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)flags);
+			enqueueText(st->text, st->xpos, st->ypos, st->color, st->charset, (TextStyleFlags)flags, (st->actorSpeechMsg || ConfMan.getBool("speech_mute") || VAR(VAR_VOICE_MODE) == 2), true);
 		}
 	}
 }
@@ -662,7 +710,12 @@ void ScummEngine_v7::displayDialog() {
 		_charset->setCurID(_string[0].charset);
 	}
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (_talkDelay || (ttsMan && ttsMan->isSpeaking()))
+#else
 	if (_talkDelay)
+#endif
 		return;
 
 	if ((!usingOldSystem && VAR(VAR_HAVE_MSG)) || (usingOldSystem && _haveMsg != 1)) {

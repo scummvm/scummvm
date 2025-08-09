@@ -480,6 +480,9 @@ void ScummEngine_v0::drawSentenceLine() {
 			}
 			_sentenceBuf += Common::String::format("%-13s", actorName);
 		}
+#ifdef USE_TTS
+		_voiceNextString = true;
+#endif
 		flushSentenceLine();
 		return;
 	}
@@ -490,6 +493,9 @@ void ScummEngine_v0::drawSentenceLine() {
 
 	char *verbName = (char *)getResourceAddress(rtVerb, _activeVerb);
 	assert(verbName);
+#ifdef USE_TTS
+	Common::String oldSentence = _sentenceBuf;
+#endif
 	_sentenceBuf = verbName;
 
 	if (_activeObject) {
@@ -506,6 +512,12 @@ void ScummEngine_v0::drawSentenceLine() {
 				drawSentenceObject(_activeObject2);
 		}
 	}
+
+#ifdef USE_TTS
+	if (oldSentence != _sentenceBuf) {
+		_voiceNextString = true;
+	}
+#endif
 
 	flushSentenceLine();
 }
