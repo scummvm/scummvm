@@ -304,10 +304,28 @@ void MusicManager::midiPlay() {
 
 	stop();
 
-	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M')) {
-		warning("midiPlay() Unexpected signature");
+	uint32 magic = READ_BE_UINT32(_music->data());
+	if (magic == MKTAG('B', 'E', 'm', 'd')) {
+		warning("TODO: Implement Martian Memorandum style MIDI parsing");
 		_isPlaying = false;
-	} else {
+
+		if (_music->_size <= 16)
+			error("midiPlay() wrong BEmd music resource size");
+
+		/*uint16 unk1 = */ READ_LE_UINT32(_music->data() + 4);  // Normally 0xC0?
+		uint16 secondBlockOffset = READ_LE_UINT16(_music->data() + 6);
+		if (secondBlockOffset < 16 || secondBlockOffset >= _music->_size)
+			error("midiPlay() bad second block offset in BEmd file");
+		/*uint16 unk2 =*/ READ_LE_UINT16(_music->data() + 8);
+		//byte *midiDataBlock1 = _music->data() + 16;
+		//byte *midiDataBlock2 = _music->data() + secondBlockOffset;
+		/*
+		Common::DumpFile dumpfile;
+		dumpfile.open("/tmp/access_music_dump.bin");
+		dumpfile.write(_music->data(), _music->_size);
+		dumpfile.close();
+		*/
+	} else if (magic == MKTAG('F', 'O', 'R', 'M')) {
 		_parser = MidiParser::createParser_XMIDI();
 
 		if (!_parser->loadMusic(_music->data(), _music->_size))
@@ -324,6 +342,9 @@ void MusicManager::midiPlay() {
 
 		setVolume(127);
 		_isPlaying = true;
+	} else {
+		warning("midiPlay() Unexpected signature 0x%08x, expected 'FORM'", magic);
+		_isPlaying = false;
 	}
 }
 
