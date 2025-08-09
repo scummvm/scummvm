@@ -94,6 +94,17 @@ void EventLoop::checkMessages() {
 	Libs::Event ev;
 
 	while (pollEvents(ev)) {
+		// Handle custom keybinding actions mapping back to keys
+		if (_keybindProc) {
+			if (ev.type == Common::EVENT_CUSTOM_BACKEND_ACTION_START) {
+				ev.type = Common::EVENT_KEYDOWN;
+				ev.kbd.keycode = _keybindProc(ev.customType);
+			} else if (ev.type == Common::EVENT_CUSTOM_BACKEND_ACTION_END) {
+				ev.type = Common::EVENT_KEYUP;
+				ev.kbd.keycode = _keybindProc(ev.customType);
+			}
+		}
+
 		HWND hWnd = nullptr;
 		setMessageWnd(ev, hWnd);
 		MSG msg = ev;

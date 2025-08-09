@@ -52,7 +52,6 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 namespace HodjNPodj {
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
-	#ifdef TODO
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
@@ -63,9 +62,24 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_PAGEDOWN, "PAGEDOWN", _s("Page Down"), "PAGEDOWN", "KP3", "JOY_RIGHT"},
 	{ KEYBIND_HOME, "HOME", _s("Home"), "HOME", "KP7", "JOY_RIGHT"},
 	{ KEYBIND_END, "END", _s("End"), "END", "KP2", "JOY_RIGHT"},
-	#endif
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
+
+Common::KeyCode KeybindToKeycode(int key) {
+	switch (key) {
+	case KEYBIND_SELECT: return Common::KEYCODE_SPACE;
+	case KEYBIND_ESCAPE: return Common::KEYCODE_ESCAPE;
+	case KEYBIND_UP: return Common::KEYCODE_UP;
+	case KEYBIND_DOWN: return Common::KEYCODE_DOWN;
+	case KEYBIND_LEFT: return Common::KEYCODE_LEFT;
+	case KEYBIND_RIGHT: return Common::KEYCODE_RIGHT;
+	case KEYBIND_PAGEUP: return Common::KEYCODE_PAGEUP;
+	case KEYBIND_PAGEDOWN: return Common::KEYCODE_PAGEDOWN;
+	case KEYBIND_HOME: return Common::KEYCODE_HOME;
+	case KEYBIND_END: return Common::KEYCODE_END;
+	default: return Common::KEYCODE_INVALID;
+	}
+}
 
 } // namespace HodjNPodj
 

@@ -25,6 +25,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
 #include "bagel/hodjnpodj/metagame/gtl/init.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -86,6 +87,7 @@ HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, BOOL bMetaLoaded) {
 	theApp->addFontResource("msserif.fon");
 	theApp->InitApplication();
 	theApp->InitInstance();
+	theApp->setKeybinder(KeybindToKeycode);
 
 	#if RETAIN_META_DLL
 	if (bMetaLoaded) {

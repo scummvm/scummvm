@@ -34,6 +34,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/init.h"
 #include "bagel/hodjnpodj/metagame/saves/savegame.h"
 #include "bagel/hodjnpodj/metagame/bgen/bfc.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -61,6 +62,7 @@ Common::Error HodjNPodjEngine::run() {
 	Metagame::Frame::CTheApp app;
 	app.InitApplication();
 	app.InitInstance();
+	app.setKeybinder(KeybindToKeycode);
 
 	if (getGameId() == "mazeodoom") {
 		app.setStartupMinigame("mazedoom_demo");

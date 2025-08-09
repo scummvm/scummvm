@@ -54,7 +54,7 @@ Event::operator MSG() const {
 
 	// For mouse events, set the position
 	if (type >= Common::EVENT_MOUSEMOVE &&
-	        type <= Common::EVENT_MBUTTONUP) {
+		type <= Common::EVENT_MBUTTONUP) {
 		_mouseX = mouse.x;
 		_mouseY = mouse.y;
 
@@ -87,7 +87,7 @@ Event::operator MSG() const {
 	}
 
 	if (type == Common::EVENT_KEYDOWN ||
-	        type == Common::EVENT_KEYUP) {
+		type == Common::EVENT_KEYUP) {
 		// Update flags
 		if (kbd.flags & Common::KBD_CTRL)
 			_flags |= MK_CONTROL;

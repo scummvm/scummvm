@@ -40,6 +40,8 @@ typedef void(*TimerProc)(
 	DWORD dwTime     // system time when the callback was called (in milliseconds)
 );
 
+typedef Common::KeyCode(*KeybindProc)(int key);
+
 class WndList : public Common::List<CWnd *> {
 public:
 	bool contains(CWnd *wnd) const {
@@ -95,6 +97,7 @@ private:
 	uint _joystickButtons = 0;
 	HOOKPROC _kbdHookProc = nullptr;
 	int _idleCtr = 0;
+	KeybindProc _keybindProc = nullptr;
 
 protected:
 	enum QuitFlag {
@@ -264,6 +267,10 @@ public:
 
 	virtual BOOL OnIdle(LONG lCount) {
 		return false;
+	}
+
+	void setKeybinder(KeybindProc proc) {
+		_keybindProc = proc;
 	}
 };
 

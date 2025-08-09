@@ -26,13 +26,17 @@
 #include "engines/advancedDetector.h"
 
 namespace Bagel {
+namespace HodjNPodj {
+extern Common::KeyCode KeybindToKeycode(int key);
+} // namespace HodjNPodj
+
 enum KeybindingAction {
 	KEYBIND_NONE, KEYBIND_WAIT, KEYBIND_CHEAT714,
 	KEYBIND_UP, KEYBIND_DOWN, KEYBIND_LEFT, KEYBIND_RIGHT,
 	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_PAGEUP,
 	KEYBIND_PAGEDOWN, KEYBIND_HOME, KEYBIND_END
 };
-}
+} // namespace Bagel
 
 class BagelMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
