@@ -808,12 +808,18 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 			if (pressedBreak ||
 				_vm->_game->_mouseButtons == properties.breakKey) {
 				properties.canceled = true;
+#ifdef USE_TTS
+				_vm->stopTextToSpeech();
+#endif
 				return;
 			}
 
 			if (properties.breakKey == 4) {
 				if (_vm->_game->_mouseButtons == kMouseButtonsRight || key == kKeyEscape) {
 					properties.canceled = true;
+#ifdef USE_TTS
+					_vm->stopTextToSpeech();
+#endif
 					return;
 				}
 
@@ -824,6 +830,9 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 					_vm->_game->_forwardedKeyFromVideo = key;
 					_vm->_game->_forwardedMouseButtonsFromVideo = _vm->_game->_mouseButtons;
 					properties.canceled = true;
+#ifdef USE_TTS
+					_vm->stopTextToSpeech();
+#endif
 					return;
 				}
 			}
@@ -844,6 +853,9 @@ void VideoPlayer::checkAbort(Video &video, Properties &properties) {
 				// Seek to the last frame. Some scripts depend on that.
 				video.decoder->seek(properties.endFrame + 1, SEEK_SET, true);
 				properties.canceled = true;
+#ifdef USE_TTS
+				_vm->stopTextToSpeech();
+#endif
 			}
 		}
 	}

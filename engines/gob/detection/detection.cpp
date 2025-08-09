@@ -87,7 +87,7 @@ private:
 GobMetaEngineDetection::GobMetaEngineDetection() :
 	AdvancedMetaEngineDetection(Gob::gameDescriptions, gobGames) {
 
-	_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
+	_guiOptions = GUIO2(GUIO_NOLAUNCHLOAD, GAMEOPTION_TTS);
 }
 
 ADDetectedGame GobMetaEngineDetection::fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra) const {
