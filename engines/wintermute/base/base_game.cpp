@@ -1285,11 +1285,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// PlayVideo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayVideo") == 0) {
-		_gameRef->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
-
 		stack->correctParams(6);
 		const char *filename = stack->pop()->getString();
-		warning("PlayVideo: %s - not implemented yet", filename);
 		ScValue *valType = stack->pop();
 		int type;
 		if (valType->isNULL()) {
