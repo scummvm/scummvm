@@ -242,7 +242,7 @@
 // -- Add-ons : Geographie --
 {
 	{
-		"adi4geographie",
+		"adi4geo",
 		"", // Geographie
 		AD_ENTRY2s("INTROGEO.STK", "d86d0f53818dd285bebff25925627b8c", 3170680,
 				   "INTROGEO.ITK", "5daacbf8840f811e48b99e1d92933873", 20084736),
@@ -256,7 +256,7 @@
 },
 {
 	{
-		"adi4geographie",
+		"adi4geo",
 		"", // Erdkunde
 		AD_ENTRY2s("INTROGEO.STK", "f01ffe9366df86a7ea5ed425b41081ba", 3284478,
 				   "INTROGEO.ITK", "998bb8e759d5b8b4e7aa22d6030f2dad", 22046720),
