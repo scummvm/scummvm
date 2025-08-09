@@ -720,6 +720,59 @@ bool BaseSubFrame::setSurfaceSimple() {
 	}
 }
 
+bool BaseSubFrame::startPixelOperations() {
+	if (_surface)
+		return _surface->startPixelOp();
+	else
+		return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSubFrame::endPixelOperations() {
+	if (_surface)
+		return _surface->endPixelOp();
+	else
+		return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+uint32 BaseSubFrame::getPixel(int32 x, int32 y) {
+	if (_surface) {
+		byte r, g, b, a;
+		_surface->getPixel(x, y, &r, &g, &b, &a);
+		return BYTETORGBA(r, g, b, a);
+	} else
+		return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseSubFrame::putPixel(int32 x, int32 y, uint32 pixel) {
+	if (_surface) {
+		byte r = RGBCOLGetR(pixel);
+		byte g = RGBCOLGetG(pixel);
+		byte b = RGBCOLGetB(pixel);
+		byte a = RGBCOLGetA(pixel);
+		return _surface->putPixel(x, y, r, g, b, a);
+	} else
+		return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+int32 BaseSubFrame::getWidth() {
+	if (_surface)
+		return _surface->getWidth();
+	else
+		return 0;
+}
+
+//////////////////////////////////////////////////////////////////////////
+int32 BaseSubFrame::getHeight() {
+	if (_surface)
+		return _surface->getHeight();
+	else
+		return 0;
+}
+
 Common::String BaseSubFrame::debuggerToString() const {
 	return Common::String::format("%p: BaseSubFrame \"%s\" - Mirror:(%d, %d), Hotspot:(%d, %d), ", (const void *)this, getName(), _mirrorX, _mirrorY, _hotspotX, _hotspotY);
 }

@@ -87,6 +87,13 @@ public:
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
 
+	bool startPixelOperations();
+	bool endPixelOperations();
+	uint32 getPixel(int32 x, int32 y);
+	bool putPixel(int32 x, int32 y, uint32 pixel);
+	int32 getWidth();
+	int32 getHeight();
+
 };
 
 } // End of namespace Wintermute
