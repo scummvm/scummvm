@@ -220,7 +220,7 @@ struct CenterBottomTextTask : public Task {
 		while (g_engine->getMillis() - _startTime < _durationMs) {
 			if (process().isActiveForPlayer()) {
 				g_engine->drawQueue().add<TextDrawRequest>(
-					font, text, pos, -1, true, kWhite, 1);
+					font, text, pos, -1, true, kWhite, -kForegroundOrderCount + 1);
 			}
 			TASK_YIELD(1);
 		}
