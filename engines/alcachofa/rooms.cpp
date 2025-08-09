@@ -724,6 +724,18 @@ static void loadEncryptedFile(const char *path, Array<char> &output) {
 	output.back() = '\0'; // one for good measure and a zero-terminator
 }
 
+static char *trimLeading(char *start, char *end) {
+	while (start < end && isSpace(*start))
+		start++;
+	return start;
+}
+
+static char *skipWord(char *start, char *end) {
+	while (start < end && !isSpace(*start))
+		start++;
+	return start;
+}
+
 static char *trimTrailing(char *start, char *end) {
 	while (start < end && isSpace(end[-1]))
 		end--;
@@ -739,32 +751,52 @@ void World::loadLocalizedNames() {
 		if (keyEnd == lineStart || keyEnd == lineEnd || keyEnd + 1 == lineEnd)
 			error("Invalid localized name line separator");
 		char *valueEnd = trimTrailing(keyEnd + 1, lineEnd);
-		if (valueEnd == keyEnd + 1)
-			error("Invalid localized name value");
 
 		*keyEnd = 0;
 		*valueEnd = 0;
+		if (valueEnd == keyEnd + 1) {
+			// happens in the english version of Movie Adventure
+			warning("Empty localized name for %s", lineStart);
+		}
+
 		_localizedNames[lineStart] = keyEnd + 1;
 		lineStart = lineEnd + 1;
 	}
 }
 
 void World::loadDialogLines() {
+	/* This "encrypted" file contains lines in any of the following formats:
+	 * Name 123, "This is the dialog line"\r\n
+	 * Name 123, "This is the dialog line\r\n
+	 *     Name     123   This is the dialog line    \r\n
+	 *
+	 * - The ID does not have to be correct, it is ignored by the original engine. 
+	 * - We only need the dialog line and insert null-terminators where appropriate.
+	 */
 	loadEncryptedFile("Textos/DIALOGOS.nkr", _dialogChunk);
-	char *lineStart = _dialogChunk.begin(), *fileEnd = _dialogChunk.end();
+	char *lineStart = _dialogChunk.begin(), *fileEnd = _dialogChunk.end() - 1;
 	while (lineStart < fileEnd) {
 		char *lineEnd = find(lineStart, fileEnd, '\n');
-		char *firstQuote = find(lineStart, lineEnd, '\"');
-		char *secondQuote = firstQuote == lineEnd ? lineEnd : find(firstQuote + 1, lineEnd, '\"');
 
-		if (firstQuote == lineEnd || secondQuote == lineEnd) {
+		char *cursor = trimLeading(lineStart, lineEnd); // space before the name
+		cursor = skipWord(cursor, lineEnd); // the name
+		cursor = trimLeading(cursor, lineEnd); // space between dialog id
+		cursor = skipWord(cursor, lineEnd); // the dialog id
+		cursor = trimLeading(cursor, lineEnd); // space between id and line
+		char *dialogLineEnd = trimTrailing(cursor, lineEnd);
+		if (*cursor == '\"')
+			cursor++;
+		if (dialogLineEnd > cursor && dialogLineEnd[-1] == '\"')
+			dialogLineEnd--;
+
+		if (cursor >= dialogLineEnd) {
 			g_engine->game().invalidDialogLine(_dialogLines.size());
-			firstQuote = lineStart; // store an empty string
-			secondQuote = lineStart + 1;
+			cursor = lineStart; // store an empty string
+			dialogLineEnd = lineStart + 1;
 		}
 
-		*secondQuote = 0;
-		_dialogLines.push_back(firstQuote + 1);
+		*dialogLineEnd = 0;
+		_dialogLines.push_back(cursor);
 		lineStart = lineEnd + 1;
 	}
 }
