@@ -63,6 +63,11 @@ struct BorderOffsets {
 	int titleBottom;
 	bool dark;
 	int titlePos;
+	int closeButtonTop;
+	int closeButtonLeft;
+	int closeButtonWidth;
+	int resizeButtonTop;
+	int resizeButtonHeight;
 	int upperScrollHeight;
 	int lowerScrollHeight;
 };

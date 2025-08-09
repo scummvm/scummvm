@@ -101,6 +101,8 @@ public:
 	void drawMenu();
 	void drawTitle();
 
+	void loadDiploma();
+
 	void clearControls();
 	bool processEvent(Common::Event &event);
 	void handleMenuAction(MenuAction action);
@@ -109,6 +111,11 @@ public:
 
 	WindowReference createInventoryWindow(ObjID objRef);
 	bool tryCloseWindow(WindowReference winID);
+	bool tryCloseWindowRec(WindowReference winID, bool runControl = false);
+	void resetWindows(); // Close and destroy inventory and main game windows
+	void closeAllWindows();
+
+	void highlightExitButton(ObjID objID);
 
 	Common::Point getObjMeasures(ObjID obj);
 
@@ -122,14 +129,16 @@ public:
 	bool processSelfEvents(WindowClick click, Common::Event &event);
 	bool processExitsEvents(WindowClick click, Common::Event &event);
 	bool processDiplomaEvents(WindowClick click, Common::Event &event);
-	bool processInventoryEvents(WindowClick click, Common::Event &event);
+	bool processInventoryEvents(WindowReference ref, WindowClick click, Common::Event &event);
 
 	const WindowData& getWindowData(WindowReference reference);
+	Graphics::MacWindow *findWindow(WindowReference reference);
 
+	Graphics::MacWindowManager *getMacWindowManager() { return &_wm; }
 	const Graphics::Font& getCurrentFont();
 
 	// Clicks
-	void selectForDrag(Common::Point cursorPosition);
+	void select(Common::Point cursorPosition, bool shiftPressed, bool isDoubleClick);
 	void handleSingleClick();
 	void handleDoubleClick();
 
@@ -142,17 +151,22 @@ public:
 	void addChild(WindowReference target, ObjID child);
 	void removeChild(WindowReference target, ObjID child);
 
+	void clearDraggedObjects();
+
 	void clearExits();
 	void unselectExits();
 	void updateExit(ObjID id);
 
+	Common::String getConsoleText() const;
+	void setConsoleText(const Common::String &text);
+
 	void printText(const Common::String &text);
 
 	//Dialog interactions
-	void showPrebuiltDialog(PrebuiltDialogs type);
+	void showPrebuiltDialog(PrebuiltDialogs type, const Common::String &title = "");
 	bool isDialogOpen();
 
-	void getTextFromUser();
+	void getTextFromUser(Common::String &title);
 	void setTextInput(const Common::String &str);
 	void closeDialog();
 
@@ -172,29 +186,44 @@ private: // Attributes
 	Graphics::ManagedSurface _screen;
 	Graphics::MacWindowManager _wm;
 
+	WindowReference _activeWinRef;
+
 	Common::List<WindowData> *_windowData;
 	Common::Array<CommandButton> *_controlData;
 	Common::Array<CommandButton> *_exitsData;
 
 	Graphics::MacWindow *_controlsWindow;
 	Graphics::MacWindow *_mainGameWindow;
-	Graphics::MacWindow *_outConsoleWindow;
+	Graphics::MacTextWindow *_outConsoleWindow;
 	Graphics::MacWindow *_selfWindow;
 	Graphics::MacWindow *_exitsWindow;
 	Graphics::MacWindow *_diplomaWindow;
-	Common::Array<Graphics::MacWindow*> _inventoryWindows;
+
+	struct InventoryWindowData {
+		Graphics::MacWindow *win;
+		WindowReference ref;
+	};
+	Common::Array<InventoryWindowData> _inventoryWindows;
+	Common::HashMap<ObjID, WindowReference> _objToInvRef;
+
 	Graphics::MacMenu *_menu;
 	Dialog *_dialog;
 
 	Container *_graphics;
 	Common::HashMap<ObjID, ImageAsset*> _assets;
+	ImageAsset *_diplomaImage;
 
-	Graphics::ManagedSurface _draggedSurface;
-	DraggedObj _draggedObj;
+	Common::Array<DraggedObj> _draggedObjects;
+	Common::Array<Graphics::ManagedSurface> _draggedSurfaces;
 
 	Cursor *_cursor;
 
 	ConsoleText *_consoleText;
+
+	WindowReference _lassoWinRef;
+	Common::Point _lassoStart;
+	Common::Point _lassoEnd;
+	bool _lassoBeingDrawn;
 
 private: // Methods
 
@@ -215,27 +244,27 @@ private: // Methods
 	// Drawers
 	void drawWindows();
 	void drawCommandsWindow();
+	void drawDiplomaWindow();
 	void drawMainGameWindow();
 	void drawSelfWindow();
 	void drawInventories();
 	void drawExitsWindow();
 	void drawConsoleWindow();
 
-	void drawDraggedObject();
+	void drawDraggedObjects();
 	void drawObjectsInWindow(const WindowData &targetData, Graphics::ManagedSurface *surface);
 	void drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surface);
 	void drawDialog();
 
-	void moveDraggedObject(Common::Point target);
+	void moveDraggedObjects(Common::Point target);
 
 	// Finders
 	WindowReference findWindowAtPoint(Common::Point point);
 	Common::Point getGlobalScrolledSurfacePosition(WindowReference reference);
 	WindowData& findWindowData(WindowReference reference);
-	Graphics::MacWindow *findWindow(WindowReference reference);
 
 	// Utils
-	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref);
+	void checkSelect(const WindowData &data, Common::Point pos, const Common::Rect &clickRect, WindowReference ref, bool shiftPressed, bool isDoubleClick);
 	bool canBeSelected(ObjID obj, const Common::Rect &clickRect, WindowReference ref);
 	bool isRectInsideObject(Common::Rect target, ObjID obj);
 	void selectDraggable(ObjID child, WindowReference origin, Common::Point startPos);
@@ -246,6 +275,11 @@ private: // Methods
 
 	void ensureAssetLoaded(ObjID obj);
 
+};
+
+struct InventoryCallbackStruct {
+	Gui *gui;
+	WindowReference ref;
 };
 
 enum ClickState {

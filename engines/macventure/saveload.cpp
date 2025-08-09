@@ -48,10 +48,17 @@ Common::Error MacVentureEngine::loadGameState(int slot) {
 
 	_world->loadGameFrom(saveFile);
 	reset();
+	setInitialFlags(kGameStatePlaying);
+	_world->setObjAttr(_world->getObjAttr(1, kAttrParentObject), kAttrContainerOpen, true);
 
 	ExtendedSavegameHeader header;
 	if (MetaEngine::readSavegameHeader(saveFile, &header))
 		setTotalPlayTime(header.playtime);
+
+	// Set description as window name for console window
+	if (header.description.size()) {
+		_gui->setWindowTitle(kOutConsoleWindow, header.description);
+	}
 
 	res = Common::kNoError;
 
@@ -110,11 +117,11 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 }
 
 bool MacVentureEngine::canLoadGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _gameState != kGameStateWinning;
 }
 
 bool MacVentureEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return true;
+	return _gameState != kGameStateWinning;
 }
 
 } // End of namespace MacVenture

@@ -73,7 +73,9 @@ enum {
 enum {
 	kGlobalSettingsID = 0x80,
 	kDiplomaGeometryID = 0x81,
-	kTextHuffmanTableID = 0x83
+	kTextHuffmanTableID = 0x83,
+	kDialogBoxTextID = 0x84,
+	kDialogBoxDiplomaID = 0x87
 };
 
 enum {
@@ -94,6 +96,7 @@ enum FilePathID {
 	kSoundPathID = 8
 };
 
+const uint kMaxConsoleTextLength = 200000;
 
 class GlobalSettings {
 public:
@@ -128,7 +131,7 @@ public:
 enum GameState {
 	kGameStateInit,
 	kGameStatePlaying,
-	kGameStateWinnig,
+	kGameStateWinning,
 	kGameStateLosing,
 	kGameStateQuitting
 };
@@ -182,6 +185,36 @@ struct QueuedSound {
 	ObjID reference;
 };
 
+struct Item {
+	ObjID id;
+	Common::Rect bounds;
+};
+
+class Layout {
+public:
+	void append(Item item) {
+		_items.push_back(item);
+		_width += 8 + item.bounds.width();
+	}
+
+	Item remove(uint index) {
+		Item out = _items.remove_at(index);
+		_width -= 8 + out.bounds.width();
+		return out;
+	}
+
+	Item at(uint index) {
+		return _items[index];
+	}
+
+	inline uint size() const { return _items.size(); }
+	inline int width() const { return _width; }
+
+private:
+	int _width = 8;
+	Common::Array<Item> _items;
+};
+
 class MacVentureEngine : public Engine {
 
 public:
@@ -198,7 +231,7 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 	void newGame();
-	void setInitialFlags();
+	void setInitialFlags(GameState gameState = kGameStateInit);
 	void setNewGameState();
 
 	void reset();
@@ -231,10 +264,17 @@ public:
 	void printTexts();
 	void playSounds(bool pause);
 
+	Item removeOutlier(Layout &layout, bool flag, Common::Rect rect);
+	void cleanUp(WindowReference reference);
+	void messUp(WindowReference reference);
+	void moveItems(Common::Array<Item> &items, WindowReference reference);
+
+	void unselectAll();
+	void selectObject(ObjID objID);
 	void handleObjectSelect(ObjID objID, WindowReference win, bool shiftPressed, bool isDoubleClick);
 	void handleObjectDrop(ObjID objID, Common::Point delta, ObjID newParent);
 	void setDeltaPoint(Common::Point newPos);
-	void focusObjWin(ObjID objID);
+	void focusObjectWindow(ObjID objID);
 	void updateWindow(WindowReference winID);
 
 	bool showTextEntry(ObjID text, ObjID srcObj, ObjID destObj);
@@ -242,6 +282,7 @@ public:
 	Common::String getUserInput();
 
 	// Data retrieval
+	Common::Path getDiplomaFileName();
 	Common::Path getStartGameFileName();
 	bool isPaused();
 	bool needsClickToContinue();
@@ -256,6 +297,12 @@ public:
 	uint getPrefixNdx(ObjID obj);
 	Common::String getPrefixString(uint flag, ObjID obj);
 	Common::String getNoun(ObjID ndx);
+	ScriptEngine *getScriptEngine() const { return _scriptEngine; }
+	Common::Array<ObjID> &getSelectedObjects() { return _selectedObjs; }
+	GameState getGameState() const { return _gameState; }
+
+	Common::String getConsoleText() const;
+	void setConsoleText(const Common::String &text);
 
 	// Attributes consult
 	Common::Point getObjPosition(ObjID objID);
@@ -289,15 +336,12 @@ private:
 	void updateControls();
 	void resetVars();
 
-	void unselectAll();
-	void selectObject(ObjID objID);
 	void unselectObject(ObjID objID);
 	void highlightExit(ObjID objID);
 	void selectPrimaryObject(ObjID objID);
 	void updateExits();
 
 	// Object queue methods
-	void focusObjectWindow(ObjID objID);
 	void openObject(ObjID objID);
 	void closeObject(ObjID objID);
 	void checkObject(QueuedObject objID);
@@ -345,6 +389,7 @@ private: // Attributes
 	bool _haltedAtEnd, _haltedInSelection;
 	bool _gameChanged;
 	bool _clickToContinue;
+	bool _enginePaused;
 
 	Common::Array<QueuedObject> _objQueue;
 	Common::Array<QueuedObject> _inQueue;
@@ -355,9 +400,11 @@ private: // Attributes
 	ObjID _destObject;
 	ControlAction _selectedControl;
 	Common::Array<ObjID> _currentSelection;
+	Common::Array<ObjID> _selectedObjs;
 	Common::Point _deltaPoint;
 	Common::String _userInput;
 
+	Common::String _currentConsoleText;
 };
 
 

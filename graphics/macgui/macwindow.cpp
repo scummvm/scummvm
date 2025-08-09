@@ -418,6 +418,13 @@ bool MacWindow::isInCloseButton(int x, int y) const {
 		bLeft = _macBorder.getOffset().left;
 		bTop = _macBorder.getOffset().top;
 	}
+	if (_macBorder.getOffset().closeButtonTop > -1 && _macBorder.getOffset().closeButtonLeft > -1 &&
+		_macBorder.getOffset().closeButtonWidth > 0) {
+		int closeButtonTop = _macBorder.getOffset().closeButtonTop;
+		int closeButtonLeft = _macBorder.getOffset().closeButtonLeft;
+		int closeWidth = _macBorder.getOffset().closeButtonWidth;
+		return (x >= _innerDims.left + closeButtonLeft && x < _innerDims.left + closeButtonLeft + closeWidth && y >= _innerDims.top - closeButtonTop && y < _innerDims.top - closeButtonTop + closeWidth);
+	}
 	return (x >= _innerDims.left - bLeft && x < _innerDims.left && y >= _innerDims.top - bTop && y < _innerDims.top);
 }
 
@@ -427,6 +434,14 @@ bool MacWindow::isInResizeButton(int x, int y) const {
 	if (_macBorder.hasOffsets()) {
 		bRight = _macBorder.getOffset().right;
 		bBottom = _macBorder.getOffset().bottom;
+	}
+	if (_macBorder.getOffset().resizeButtonTop > -1 && _macBorder.getOffset().resizeButtonHeight > 0) {
+		int resizeButtonTop = _macBorder.getOffset().resizeButtonTop;
+		int resizeHeight = _macBorder.getOffset().resizeButtonHeight;
+
+		if (bBottom != resizeButtonTop) {
+			return (x >= _innerDims.right && x < _innerDims.right + bRight && y >= _innerDims.bottom - resizeHeight && y < _innerDims.bottom);
+		}
 	}
 	return (x >= _innerDims.right && x < _innerDims.right + bRight && y >= _innerDims.bottom && y < _innerDims.bottom + bBottom);
 }

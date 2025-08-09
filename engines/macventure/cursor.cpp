@@ -91,10 +91,11 @@ void Cursor::executeStateIn() {
 	switch (_state) {
 	case kCursorSCStart:
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
-		_gui->selectForDrag(_pos);
+		_gui->select(_pos, false, false);
 		break;
 	case kCursorDCStart:
 		g_system->getTimerManager()->installTimerProc(&cursorTimerHandler, 300000, this, "macVentureCursor");
+		_gui->select(_pos, false, true);
 		break;
 	case kCursorSCSink:
 		_gui->handleSingleClick();
