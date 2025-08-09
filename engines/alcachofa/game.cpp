@@ -79,6 +79,8 @@ bool Game::shouldTriggerDoor(const Door *door) {
 	return true;
 }
 
+void Game::onUserChangedCharacter() { }
+
 bool Game::hasMortadeloVoice(const Character *character) {
 	return character == &g_engine->world().mortadelo();
 }

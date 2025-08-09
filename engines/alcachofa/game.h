@@ -61,6 +61,7 @@ public:
 	virtual bool shouldCharacterTrigger(const Character *character, const char *action);
 	virtual bool shouldTriggerDoor(const Door *door);
 	virtual bool hasMortadeloVoice(const Character *character);
+	virtual void onUserChangedCharacter();
 
 	virtual void unknownCamSetInactiveAttribute(int attribute);
 	virtual void unknownFadeType(int fadeType);

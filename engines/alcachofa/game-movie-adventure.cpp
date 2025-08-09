@@ -21,6 +21,7 @@
 
 #include "alcachofa.h"
 #include "game.h"
+#include "script.h"
 
 using namespace Common;
 
@@ -55,6 +56,15 @@ class GameMovieAdventure : public Game {
 		if (door->targetRoom() == "LABERINTO" && door->targetObject() == "a_LABERINTO_desde_LABERINTO_2")
 			return false;
 		return Game::shouldTriggerDoor(door);
+	}
+
+	void onUserChangedCharacter() override {
+		// An original bug in room POBLADO_INDIO if filemon is bound and mortadelo enters the room
+		// the door A_PUENTE which was disabled is reenabled to allow mortadelo leaving
+		// However if the user now changes character, the door is still enabled and filemon can
+		// enter a ghost state walking through a couple rooms and softlocking.
+		if (g_engine->player().currentRoom()->name().equalsIgnoreCase("POBLADO_INDIO"))
+			g_engine->script().createProcess(g_engine->player().activeCharacterKind(), "ENTRAR_POBLADO_INDIO");
 	}
 
 	bool hasMortadeloVoice(const Character *character) override {
