@@ -105,6 +105,7 @@ MODULE_OBJS := \
 	ext/scene_achievements.o \
 	ext/wme_3fstatistics.o \
 	ext/wme_commandlinehelper.o \
+	ext/wme_displacement.o \
 	ext/wme_galaxy.o \
 	ext/wme_steam.o \
 	ext/wme_windowmode.o \

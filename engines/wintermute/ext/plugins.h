@@ -43,6 +43,7 @@ BaseScriptable *makeSXSample(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXVlink(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXBlackAndWhite(BaseGame *inGame, ScStack *stack);
 BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack);
+BaseScriptable *makeSXDisplacement(BaseGame *inGame, ScStack *stack);
 
 bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, char *name) {
 	ScValue *thisObj;
@@ -102,6 +103,18 @@ bool EmulatePluginCall(BaseGame *inGame, ScStack *stack, ScStack *thisStack, cha
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSXSample(inGame, stack));
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Displacement plugin (from wme_displacement.dll for "Beyond the Threshold" game)
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Displacement") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXDisplacement(inGame, stack));
 
 		stack->pushNULL();
 		return STATUS_OK;
