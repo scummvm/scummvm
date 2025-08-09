@@ -140,6 +140,14 @@ class GameMovieAdventure : public Game {
 			return;
 		Game::missingSound(fileName);
 	}
+
+	void invalidVideo(int32 videoId, const char *context) override {
+		// for the one, known AVI problem, let's not block development
+		if (videoId == 1 && g_engine->gameDescription().language != DE_DEU)
+			warning("Could not play video %d (%s) (known problem with AVI decoder)", videoId, context);
+		else
+			Game::invalidVideo(videoId, context);
+	}
 };
 
 Game *Game::createForMovieAdventure() {

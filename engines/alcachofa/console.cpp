@@ -19,6 +19,10 @@
  *
  */
 
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+#include "gui/console.h"
+#endif
+
 #include "console.h"
 #include "script.h"
 #include "alcachofa.h"
@@ -46,6 +50,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("debugMode", WRAP_METHOD(Console, cmdDebugMode));
 	registerCmd("tp", WRAP_METHOD(Console, cmdTeleport));
 	registerCmd("toggleRoomFloor", WRAP_METHOD(Console, cmdToggleRoomFloor));
+	registerCmd("playVideo", WRAP_METHOD(Console, cmdPlayVideo));
 }
 
 Console::~Console() {
@@ -223,12 +228,10 @@ bool Console::cmdDebugMode(int argc, const char **args) {
 	}
 
 	int32 param = -1;
-	if (argc > 2)
-	{
+	if (argc > 2) {
 		char *end = nullptr;
 		param = (int32)strtol(args[2], &end, 10);
-		if (end == nullptr || *end != '\0')
-		{
+		if (end == nullptr || *end != '\0') {
 			debugPrintf("Debug mode parameter can only be integers");
 			return true;
 		}
@@ -240,9 +243,8 @@ bool Console::cmdDebugMode(int argc, const char **args) {
 }
 
 bool Console::cmdTeleport(int argc, const char **args) {
-	if (argc < 1 || argc > 2)
-	{
-		debugPrintf("usagge: tp [<character>]\n");
+	if (argc < 1 || argc > 2) {
+		debugPrintf("usage: tp [<character>]\n");
 		debugPrintf("characters:\n");
 		debugPrintf("  0 - Both\n");
 		debugPrintf("  1 - Mortadelo\n");
@@ -250,13 +252,11 @@ bool Console::cmdTeleport(int argc, const char **args) {
 	}
 
 	int32 param = 0;
-	if (argc > 1)
-	{
+	if (argc > 1) {
 		char *end = nullptr;
 		param = (int32)strtol(args[1], &end, 10);
-		if (end == nullptr || *end != '\0')
-		{
-			debugPrintf("Character kind can only be integer\n");
+		if (end == nullptr || *end != '\0') {
+			debugPrintf("Character kind can only be an integer\n");
 			return true;
 		}
 	}
@@ -267,14 +267,36 @@ bool Console::cmdTeleport(int argc, const char **args) {
 
 bool Console::cmdToggleRoomFloor(int argc, const char **args) {
 	auto room = g_engine->player().currentRoom();
-	if (room == nullptr)
-	{
+	if (room == nullptr) {
 		debugPrintf("No room is active");
 		return true;
 	}
 
 	room->toggleActiveFloor();
 	return false;
+}
+
+bool Console::cmdPlayVideo(int argc, const char **args) {
+	if (argc == 2) {
+		char *end = nullptr;
+		int32 videoId = (int32)strtol(args[1], &end, 10);
+		if (end == nullptr || *end != '\0') {
+			debugPrintf("Video ID can only be an integer\n");
+			return true;
+		}
+		
+#ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
+		// we have to close the console *now* to properly see the video
+		_debuggerDialog->close();
+		g_system->clearOverlay();
+#endif
+
+		g_engine->playVideo(videoId);
+		return false;
+	}
+	else
+		debugPrintf("usage: playVideo <id>\n");
+	return true;
 }
 
 } // End of namespace Alcachofa

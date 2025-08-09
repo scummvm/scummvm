@@ -60,6 +60,7 @@ private:
 	bool cmdDebugMode(int argc, const char **args);
 	bool cmdTeleport(int argc, const char **args);
 	bool cmdToggleRoomFloor(int argc, const char **args);
+	bool cmdPlayVideo(int argc, const char **args);
 
 	bool _showGraphics = false;
 	bool _showInteractables = false;

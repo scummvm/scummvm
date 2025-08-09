@@ -112,6 +112,7 @@ public:
 	AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AlcachofaEngine() override;
 
+	inline const ADGameDescription &gameDescription() const { return *_gameDescription; }
 	inline IRenderer &renderer() { return *_renderer; }
 	inline DrawQueue &drawQueue() { return *_drawQueue; }
 	inline Camera &camera() { return _camera; }
