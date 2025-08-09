@@ -71,13 +71,22 @@ public:
 		}
 		return _height;
 	}
+	bool putPixel(int x, int y, byte r, byte g, byte b, byte a) override {
+		if (!_pixelOpReady) {
+			return STATUS_FAILED;
+		}
+		if (_surface) {
+			_surface->setPixel(x, y, _surface->format.ARGBToColor(a, r, g, b));
+			return STATUS_OK;
+		}
+		return STATUS_FAILED;
+	}
 	bool getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) const override {
 		if (!_pixelOpReady) {
 			return STATUS_FAILED;
 		}
 		if (_surface) {
-			uint32 pixel = _surface->getPixel(x, y);
-			_surface->format.colorToARGB(pixel, *a, *r, *g, *b);
+			_surface->format.colorToARGB(_surface->getPixel(x, y), *a, *r, *g, *b);
 			return STATUS_OK;
 		}
 		return STATUS_FAILED;

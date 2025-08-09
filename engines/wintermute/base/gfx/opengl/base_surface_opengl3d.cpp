@@ -268,6 +268,24 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 	return true;
 }
 
+bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a) {
+	if (!_pixelOpReady) {
+		return false;
+	}
+
+	if (x < 0 || y < 0 || x >= _width || y >= _height) {
+		return false;
+	}
+
+	if (_imageData == nullptr) {
+		return false;
+	}
+
+	_imageData->setPixel(x, y, _imageData->format.ARGBToColor(a, r, g, b));
+
+	return true;
+}
+
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) const {
 	if (!_pixelOpReady) {
 		return false;
