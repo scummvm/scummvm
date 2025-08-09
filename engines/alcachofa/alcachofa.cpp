@@ -84,6 +84,7 @@ Common::Error AlcachofaEngine::run() {
 	_globalUI.reset(new GlobalUI());
 	_menu.reset(new Menu());
 	setMillis(0);
+	game().onLoadedGameFiles();
 
 	if (!tryLoadFromLauncher()) {
 		_script->createProcess(MainCharacterKind::None, "CREDITOS_INICIALES");
@@ -131,6 +132,11 @@ Common::Error AlcachofaEngine::run() {
 }
 
 void AlcachofaEngine::playVideo(int32 videoId) {
+	if (game().isKnownBadVideo(videoId)) {
+		warning("Skipping known bad video %d", videoId);
+		return;
+	}
+
 	// Video files are either MPEG PS or AVI
 	FakeLock lock("playVideo", _eventLoopSemaphore);
 	File *file = new File();

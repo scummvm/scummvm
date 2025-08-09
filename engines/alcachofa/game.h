@@ -48,6 +48,8 @@ public:
 	Game();
 	virtual ~Game() = default;
 
+	virtual void onLoadedGameFiles();
+
 	virtual bool doesRoomHaveBackground(const Room *room);
 	virtual void unknownRoomObject(const Common::String &type);
 	virtual void unknownRoomType(const Common::String &type);
@@ -87,6 +89,7 @@ public:
 	virtual void invalidSNDFormat(uint format, uint channels, uint freq, uint bps);
 	virtual void notEnoughRoomDataRead(const char *path, int64 filePos, int64 objectEnd);
 	virtual void notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd);
+	virtual bool isKnownBadVideo(int32 videoId);
 	virtual void invalidVideo(int32 videoId, const char *context);
 
 	static Game *createForMovieAdventure();
