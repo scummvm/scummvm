@@ -195,7 +195,7 @@ void AgiEngine::interpretCycle() {
 	screenObjEgo->direction = getVar(VM_VAR_EGO_DIRECTION);
 
 	if (getVar(VM_VAR_SCORE) != oldScore || getFlag(VM_FLAG_SOUND_ON) != oldSound)
-		_game._vm->_text->statusDraw();
+		_game._vm->_text->statusDraw(getVar(VM_VAR_SCORE) != oldScore, getFlag(VM_FLAG_SOUND_ON) != oldSound);
 
 	setVar(VM_VAR_BORDER_TOUCH_OBJECT, 0);
 	setVar(VM_VAR_BORDER_CODE, 0);
