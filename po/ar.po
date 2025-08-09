@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-09 16:30+0000\n"
+"POT-Creation-Date: 2025-08-09 19:03+0000\n"
 "PO-Revision-Date: 2023-03-26 11:16+0000\n"
 "Last-Translator: Malek Bellasfar <bellasfarmalek450@gmail.com>\n"
 "Language-Team: Arabic <https://translations.scummvm.org/projects/scummvm/"
@@ -6184,7 +6184,7 @@ msgstr "يمشي"
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:959
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
-#: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:146
+#: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:312
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5425
 #: engines/ultima/ultima8/ultima8.cpp:193
 #, c-format
@@ -6194,7 +6194,7 @@ msgstr "غير قادر على تحديد موقع ملف بيانات المح�
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:975
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
-#: engines/teenagent/resources.cpp:163 engines/tony/tony.cpp:200
+#: engines/teenagent/resources.cpp:329 engines/tony/tony.cpp:200
 #: engines/toon/toon.cpp:5438
 #, c-format
 msgid "The '%s' engine data file is corrupt."
@@ -12855,7 +12855,7 @@ msgstr "يوصى باستخدام \"game.exe\" للحصول على مربعات 
 msgid "Unable to locate the text for %s language in engine data file."
 msgstr "غير قادر على تحديد موقع النص للغة%s في ملف بيانات المحرك."
 
-#: engines/supernova/supernova.cpp:479 engines/teenagent/resources.cpp:172
+#: engines/supernova/supernova.cpp:479 engines/teenagent/resources.cpp:338
 #, c-format
 msgid ""
 "Incorrect version of the '%s' engine data file found. Expected %d but got %d."
