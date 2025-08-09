@@ -43,11 +43,11 @@ IMPLEMENT_PERSISTENT(VideoTheoraPlayer, false)
 
 //////////////////////////////////////////////////////////////////////////
 VideoTheoraPlayer::VideoTheoraPlayer(BaseGame *inGame) : BaseClass(inGame) {
-	SetDefaults();
+	setDefaults();
 }
 
 //////////////////////////////////////////////////////////////////////////
-void VideoTheoraPlayer::SetDefaults() {
+void VideoTheoraPlayer::setDefaults() {
 
 	_filename = "";
 	_startTime = 0;
@@ -437,7 +437,7 @@ bool VideoTheoraPlayer::persist(BasePersistenceManager *persistMgr) {
 		_savedPos = getMovieTime() * 1000;
 		_savedState = _state;
 	} else {
-		SetDefaults();
+		setDefaults();
 	}
 
 	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));

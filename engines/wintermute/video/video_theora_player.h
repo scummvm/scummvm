@@ -135,7 +135,7 @@ private:
 	bool _foundSubtitles;
 
 	// helpers
-	void SetDefaults();
+	void setDefaults();
 };
 
 } // End of namespace Wintermute
