@@ -986,6 +986,10 @@ Common::String getFileNameFromModal(bool save, const Common::String &suggested, 
 	if (ext) {
 		mask += ".";
 		mask += ext;
+
+		if (strncmp(ext, "txt", 3) != 0) {
+			mask += ".txt";
+		}
 	}
 	GUI::FileBrowserDialog browser(title.c_str(), "txt", save ? GUI::kFBModeSave : GUI::kFBModeLoad, mask.c_str(), suggested.c_str());
 	if (browser.runModal() <= 0) {

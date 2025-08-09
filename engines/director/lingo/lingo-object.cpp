@@ -98,6 +98,7 @@
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movieidxxobj.h"
 #include "director/lingo/xlibs/movutils.h"
+#include "director/lingo/xlibs/msfile.h"
 #include "director/lingo/xlibs/mystisle.h"
 #include "director/lingo/xlibs/openbleedwindowxcmd.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
@@ -295,6 +296,7 @@ static const struct XLibProto {
 	XLIBDEF(MoveMouseXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovieIdxXObj,		kXObj,			400),	// D4
 	XLIBDEF(MovUtilsXObj,		kXObj,			400),	// D4
+	XLIBDEF(MSFile,             kXObj,          400),   // D4
 	XLIBDEF(MystIsleXObj,			kXObj,					400),	// D4
 	XLIBDEF(OpenBleedWindowXCMD,kXObj,			300),	// D3
 	XLIBDEF(OpenURLXtra,			kXtraObj,					500),	// D5
