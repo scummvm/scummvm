@@ -29,19 +29,6 @@
 namespace Director {
 namespace DT {
 
-void showCallStack() {
-	if (!_state->_w.callStack)
-		return;
-
-	Director::Lingo *lingo = g_director->getLingo();
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(120, 120), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("CallStack", &_state->_w.callStack)) {
-		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
-	}
-	ImGui::End();
-}
-
 static void cacheVars() {
 	// take a snapshot of the variables every 500 ms
 	if ((g_director->getTotalPlayTime() - _state->_vars._lastTimeRefreshed) > 500) {
@@ -75,12 +62,17 @@ void showVars() {
 				keyBuffer.push_back(it._key);
 			}
 			Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+			uint32 id = 0;
 			for (auto &i : keyBuffer) {
+				ImGui::PushID(id);
 				Datum &val = _state->_vars._globals.getVal(i);
 				bool changed = !_state->_vars._prevGlobals.contains(i) || !(_state->_vars._globals.getVal(i) == _state->_vars._prevGlobals.getVal(i));
 				displayVariable(i, changed);
 				ImGui::SameLine();
 				ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+				ImGui::PopID();
+				id += 1;
 			}
 			keyBuffer.clear();
 		}
@@ -90,12 +82,17 @@ void showVars() {
 					keyBuffer.push_back(it._key);
 				}
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					ImGui::PushID(id);
 					Datum &val = _state->_vars._locals.getVal(i);
 					bool changed = !_state->_vars._prevLocals.contains(i) || !(_state->_vars._locals.getVal(i) == _state->_vars._prevLocals.getVal(i));
 					displayVariable(i, changed);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					ImGui::PopID();
+					id += 1;
 				}
 				keyBuffer.clear();
 			} else {
@@ -109,11 +106,16 @@ void showVars() {
 					keyBuffer.push_back(script->getPropAt(i));
 				}
 				Common::sort(keyBuffer.begin(), keyBuffer.end());
+
+				uint32 id = 0;
 				for (auto &i : keyBuffer) {
+					ImGui::PushID(id);
 					Datum val = script->getProp(i);
 					displayVariable(i, false);
 					ImGui::SameLine();
 					ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
+					ImGui::PopID();
+					id += 1;
 				}
 				keyBuffer.clear();
 			} else {
@@ -133,12 +135,22 @@ void showWatchedVars() {
 	ImGui::SetNextWindowPos(ImVec2(20, 20), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 250), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Watched Vars", &_state->_w.watchedVars)) {
+		int id = -1;
 		for (auto &v : _state->_variables) {
 			Datum name(v._key);
 			name.type = VARREF;
 			Datum val = g_lingo->varFetch(name, true);
 
-			displayVariable(v._key, false);
+			bool outOfScope = false;
+			if (val.type == VOID) {
+				outOfScope = true;
+			}
+
+			id += 1;
+			ImGui::PushID(id);
+			displayVariable(v._key, false, outOfScope);
+			ImGui::PopID();
+
 			ImGui::SameLine();
 			ImGui::Text(" - [%s] %s", val.type2str(), formatStringForDump(val.asString(true)).c_str());
 		}

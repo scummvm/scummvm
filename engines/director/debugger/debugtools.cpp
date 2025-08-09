@@ -51,7 +51,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 	for (auto p : cast->_lingodec->scripts) {
 		if ((p.second->castID & 0xFFFF) != id.member)
 			continue;
-		;
+
 		for (const LingoDec::Handler &handler : p.second->handlers) {
 			if (handler.name == handlerId) {
 				return &handler;
@@ -62,13 +62,13 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 }
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	const Director::Movie *movie = g_director->getCurrentMovie();
-	for (const auto it : *movie->getCasts()) {
-		const Cast *cast = it._value;
-		const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
-		if (handler)
-			return handler;
-	}
+	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
+	if (handler)
+		return handler;
+
 	return getHandler(movie->getSharedCast(), id, handlerId);
 }
 
@@ -104,6 +104,18 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 
 	result.isMethod = script->isFactory();
 	return result;
+}
+
+ScriptContext *getScriptContext(CastMemberID id) {
+	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	if (!cast) {
+		return nullptr;
+	}
+
+	ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
+	return ctx;
 }
 
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
@@ -164,7 +176,7 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
-void displayVariable(const Common::String &name, bool changed) {
+void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
 	ImU32 var_color = ImGui::GetColorU32(_state->_colors._var_ref);
 	ImU32 color;
 
@@ -189,8 +201,11 @@ void displayVariable(const Common::String &name, bool changed) {
 		}
 	}
 
-	if (changed)
+	if (changed) {
 		var_color = ImGui::GetColorU32(_state->_colors._var_ref_changed);
+	} else if (outOfScope) {
+		var_color = ImGui::GetColorU32(_state->_colors._var_ref_out_of_scope);
+	}
 
 	if (color == ImGui::GetColorU32(_state->_colors._bp_color_disabled) && ImGui::IsItemHovered()) {
 		color = ImGui::GetColorU32(_state->_colors._bp_color_hover);
@@ -218,11 +233,15 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 void setScriptToDisplay(const ImGuiScript &script) {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	uint index = _state->_functions._scripts.size();
 	if (index && _state->_functions._scripts[index - 1] == script) {
 		_state->_functions._showScript = true;
 		return;
 	}
+
 	_state->_functions._scripts.push_back(script);
 	_state->_functions._current = index;
 	_state->_functions._showScript = true;
@@ -302,7 +321,7 @@ void onImGuiInit() {
 	icons_config.GlyphOffset = {0, 4};
 
 	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
-	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
+	io.FontDefault = ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 
@@ -355,17 +374,19 @@ void onImGuiRender() {
 			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
 			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
 			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
-			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 			ImGui::MenuItem("Watched Vars", NULL, &_state->_w.watchedVars);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
+			ImGui::MenuItem("Execution Context", NULL, &_state->_w.executionContext);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
+				saveCurrentState();
 			}
 			if (ImGui::MenuItem("Load state")) {
+				loadSavedState();
 			}
 			ImGui::Separator();
 			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
@@ -376,11 +397,10 @@ void onImGuiRender() {
 	}
 
 	showScriptCasts();
-	showScripts();
+	showExecutionContext();
 
 	showControlPanel();
 	showVars();
-	showCallStack();
 	showChannels();
 	showCast();
 	showFuncList();
@@ -406,6 +426,21 @@ void onImGuiCleanup() {
 
 int getSelectedChannel(){
 	return _state ? _state->_selectedChannel : -1;
+}
+
+ImGuiState *getWindowState(Window *window) {
+	ImGuiState *state = _windowStates.getValOrDefault(window, nullptr);
+
+	if (!state) {
+		state = new ImGuiState();
+		state->_tinyFont = ImGui::addTTFFontFromArchive("LiberationSans-Regular.ttf", 10.0f, nullptr, nullptr);
+		state->_archive.memEdit.ReadOnly = true;
+		state->_logger = new ImGuiEx::ImGuiLogger();
+
+		_windowStates[window] = state;
+	}
+
+	return state;
 }
 
 } // namespace DT

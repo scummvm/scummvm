@@ -916,6 +916,7 @@ private:
 			return;
 		case LingoDec::kDatumPropList: {
 			ImGui::Text("[");
+			ImGui::SameLine();
 			if (datum.l.size() == 0) {
 				ImGui::Text(":");
 				ImGui::SameLine();
@@ -943,6 +944,7 @@ private:
 		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(varName)) {
 			const Datum &val = g_lingo->_globalvars.getVal(varName);
 			ImGui::BeginTooltip();
+			ImGui::Text("%s", varName.c_str());
 			ImGui::Text("Click to add to watches.");
 			Common::String s = val.asString(true);
 			s.wordWrap(150);
@@ -1008,7 +1010,7 @@ private:
 					ImGui::Text(",");
 					ImGui::SameLine();
 				}
-				ImGui::TextColored(_state->_colors._var_color, "%s", _script.globalNames[i].c_str());
+				renderVar(_script.globalNames[i]);
 				ImGui::SameLine();
 			}
 		}
@@ -1132,7 +1134,11 @@ private:
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
+		// Need to give a new id for each button
+		ImGui::PushID(_renderLineID);
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::PopID();
+		_renderLineID++;
 
 		// click on breakpoint column?
 		if (ImGui::IsItemClicked(0)) {
@@ -1211,6 +1217,7 @@ private:
 	int _indent = 0;
 	bool _currentStatementDisplayed = false;
 	bool _isScriptInDebug = false;
+	int _renderLineID = 0;
 };
 
 void renderScriptAST(ImGuiScript &script, bool showByteCode) {

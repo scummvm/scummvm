@@ -84,7 +84,6 @@ typedef struct ImGuiScript {
 
 typedef struct ImGuiWindows {
 	bool controlPanel = true;
-	bool callStack = false;
 	bool vars = false;
 	bool channels = false;
 	bool cast = false;
@@ -95,6 +94,7 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
+	bool executionContext = false;
 } ImGuiWindows;
 
 typedef struct ImGuiState {
@@ -137,6 +137,7 @@ typedef struct ImGuiState {
 		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
+		ImVec4 _var_ref_out_of_scope = ImColor(IM_COL32(0xFF, 0x00, 0xFF, 0xFF));
 	} _colors;
 
 	struct {
@@ -182,8 +183,12 @@ typedef struct ImGuiState {
 	ImGuiEx::ImGuiLogger *_logger = nullptr;
 } ImGuiState;
 
+extern ImGuiState *_state;
+extern Common::HashMap<Window *, ImGuiState *> _windowStates;
+
 // debugtools.cpp
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
+ScriptContext *getScriptContext(CastMemberID id);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
 void displayScriptRef(CastMemberID &scriptId);
@@ -191,13 +196,13 @@ ImGuiImage getImageID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
-void displayVariable(const Common::String &name, bool changed);
+void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
+ImGuiState *getWindowState(Window *window);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
 
 // dt-lists.cpp
-void showCallStack();
 void showVars();
 void showWatchedVars();
 void showBreakpointList();
@@ -213,9 +218,13 @@ void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script
 // dt-scripts.cpp
 void showFuncList();
 void showScriptCasts();
-void showScripts();
+void showExecutionContext();
 
-extern ImGuiState *_state;
+// dt-save-state.cpp
+void saveCurrentState();
+void loadSavedState();
+long long int getWindowFlags();
+void setWindowFlags(long long int openFlags);
 
 }
 

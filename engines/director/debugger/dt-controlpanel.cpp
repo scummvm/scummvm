@@ -84,12 +84,18 @@ static bool stepOutShouldPause() {
 }
 
 static void dgbStop() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kPause;
 	g_lingo->_exec._shouldPause = nullptr;
 	_state->_dbg._isScriptDirty = true;
 }
 
 static void dbgStepOver() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
@@ -98,6 +104,9 @@ static void dbgStepOver() {
 }
 
 static void dbgStepInto() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
@@ -106,6 +115,9 @@ static void dbgStepInto() {
 }
 
 static void dbgStepOut() {
+	Window *window = g_director->getCurrentWindow();
+	_state = getWindowState(window);
+
 	g_lingo->_exec._state = kRunning;
 	_state->_dbg._lastLinePC = getLineFromPC();
 	_state->_dbg._callstackSize = g_lingo->_state->callstack.size();
@@ -114,14 +126,28 @@ static void dbgStepOut() {
 }
 
 void showControlPanel() {
-	if (!_state->_w.controlPanel)
+	if (!_state->_w.controlPanel) {
+		const Common::Array<Window *> *windowList = g_director->getWindowList();
+
+		// If the executionContext is turned off for this window, turn it off for all
+		getWindowState(g_director->getStage())->_w.controlPanel = false;
+		for (auto window : *windowList) {
+			getWindowState(window)->_w.controlPanel = false;
+		}
 		return;
+	}
 
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
+		Window *window = g_director->getCurrentWindow();
+		g_lingo->switchStateFromWindow();
+		_state = getWindowState(window);
+
+		_state->_w.controlPanel = true;
+
 		Movie *movie = g_director->getCurrentMovie();
 		Score *score = movie->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
