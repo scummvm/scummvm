@@ -549,10 +549,10 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 			events.wait(1);
 			scene.doBgAnim();
 
-			if (events.kbHit()) {
-				Common::KeyState keyState = events.getKey();
+			if (events.actionHit()) {
+				Common::CustomEventType action = events.getAction();
 
-				if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+				if (action == kActionTattooSkipProlog && vm._runningProlog) {
 					vm.setFlags(-76);
 					vm.setFlags(396);
 					scene._goToScene = 1;
@@ -593,10 +593,10 @@ void TattooPerson::walkToCoords(const Point32 &destPos, int destDir) {
 				}
 			}
 
-			if (events.kbHit()) {
-				Common::KeyState keyState = events.getKey();
+			if (events.actionHit()) {
+				Common::CustomEventType action = events.getAction();
 
-				if (keyState.keycode == Common::KEYCODE_ESCAPE && vm._runningProlog) {
+				if (action == kActionTattooSkipProlog && vm._runningProlog) {
 					vm.setFlags(-76);
 					vm.setFlags(396);
 					scene._goToScene = 1;

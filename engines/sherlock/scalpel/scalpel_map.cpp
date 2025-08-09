@@ -26,6 +26,8 @@
 #include "sherlock/screen.h"
 #include "sherlock/sherlock.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Sherlock {
 
 namespace Scalpel {
@@ -185,6 +187,10 @@ int ScalpelMap::show() {
 	saveTopLine();
 	_placesShown = true;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	keymapper->getKeymap("scalpel-map")->setEnabled(true);
+
 	// Keep looping until either a location is picked, or the game is ended
 	while (!_vm->shouldQuit() && !exitFlag) {
 		events.pollEventsAndWait();
@@ -195,12 +201,12 @@ int ScalpelMap::show() {
 			screen.slamArea(screen._currentScroll.x, screen._currentScroll.y, SHERLOCK_SCREEN_WIDTH, SHERLOCK_SCREEN_WIDTH);
 		}
 
-		// Keyboard handling
-		if (events.kbHit()) {
-			Common::KeyState keyState = events.getKey();
+		// Action handling
+		if (events.actionHit()) {
+			Common::CustomEventType action = events.getAction();
 
-			if (keyState.keycode == Common::KEYCODE_RETURN || keyState.keycode == Common::KEYCODE_SPACE) {
-				// Both space and enter simulate a mouse release
+			if (action == kActionScalpelMapSelect) {
+				// this action simulates a mouse release
 				events._pressed = false;
 				events._released = true;
 				events._oldButtons = 0;
@@ -296,6 +302,11 @@ int ScalpelMap::show() {
 		// Wait for a frame
 		events.wait(1);
 	}
+
+	keymapper->getKeymap("scalpel-map")->setEnabled(false);
+	keymapper->getKeymap("sherlock-default")->setEnabled(true);
+	keymapper->getKeymap("scalpel")->setEnabled(true);
+	keymapper->getKeymap("scalpel-quit")->setEnabled(true);
 
 	freeSprites();
 	_overPos = people[HOLMES]._position;
