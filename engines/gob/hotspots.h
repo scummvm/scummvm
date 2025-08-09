@@ -106,6 +106,17 @@ public:
 	/** implementation of oPlaytoons_F_1B code*/
 	void oPlaytoons_F_1B();
 
+#ifdef USE_TTS
+	bool hoveringOverHotspot() const;
+	void addHotspotText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf);
+	void voiceUnassignedHotspots();
+	void voiceHotspotText(int16 x, int16 y);
+	void clearHotspotText();
+	void clearUnassignedHotspotText();
+	void clearPreviousSaid();
+	void adjustHotspotTextRect(uint16 oldLeft, uint16 oldTop, uint16 oldRight, uint16 oldBottom, uint16 newX, uint16 newY, int16 surf);
+#endif
+
 private:
 	struct Hotspot {
 		uint16  id;
@@ -157,6 +168,16 @@ private:
 		void enable ();
 	};
 
+#ifdef USE_TTS
+	struct HotspotTTSText {
+		Common::String str;
+		Common::Rect rect;
+		int16 hotspot;
+		bool voiced;
+		int16 surf;
+	};
+#endif
+
 	struct StackEntry {
 		bool     shouldPush;
 		Hotspot *hotspots;
@@ -188,6 +209,13 @@ private:
 	uint16 _currentId;
 	uint16 _currentX;
 	uint16 _currentY;
+
+#ifdef USE_TTS
+	Common::String _previousSaid;
+	int16 _currentHotspotTextIndex;
+	bool _hotspotSpokenLast;
+	Common::Array<HotspotTTSText> _hotspotText;
+#endif
 
 	/** Add a hotspot, returning the new index. */
 	uint16 add(const Hotspot &hotspot);
@@ -278,6 +306,11 @@ private:
 
 	/** Go through all inputs we manage and redraw their texts. */
 	void updateAllTexts(const InputDesc *inputs) const;
+
+#ifdef USE_TTS
+	void expandHotspotText(uint16 spotID);
+	void removeHotspotText(uint16 spotID);
+#endif
 };
 
 } // End of namespace Gob

@@ -180,6 +180,7 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 	if (_frame == -1)
 		playMultInit();
 
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	do {
 		stop = true;
 
@@ -209,13 +210,19 @@ void Mult::playMult(int16 startFrame, int16 endFrame, char checkEscape,
 		if (_vm->_sound->blasterPlayingSound())
 			stop = false;
 
-		_vm->_util->processInput();
-		if (checkEscape && (_vm->_util->checkKey() == kKeyEscape))
-			stop = true;
+		do {
+			_vm->_util->processInput();
+			if (checkEscape && (_vm->_util->checkKey() == kKeyEscape))
+				stop = true;
+
+			_vm->_util->waitEndFrame();
+		} while (!stop && stopNoClear && ttsMan && ttsMan->isSpeaking());
 
 		_frame++;
-		_vm->_util->waitEndFrame();
 	} while (!stop && !stopNoClear && !_vm->shouldQuit());
+#ifdef USE_TTS
+	_vm->stopTextToSpeech();
+#endif
 
 	if (!stopNoClear) {
 		if (_animDataAllocated) {

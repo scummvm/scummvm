@@ -40,6 +40,7 @@
 
 #include "gob/gob.h"
 #include "gob/global.h"
+#include "gob/hotspots.h"
 #include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/game.h"
@@ -140,6 +141,10 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst), _rnd("gob") {
 			muteMusic ? 0 : ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
+
+#ifdef USE_TTS
+	_weenVoiceNotepad = true;
+#endif
 
 	_console = new GobConsole(this);
 	setDebugger(_console);
@@ -384,6 +389,35 @@ Common::Error GobEngine::run() {
 	}
 	_global->_languageWanted = _global->_language;
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
+
+	switch (_language) {
+	case Common::HU_HUN:
+		_ttsEncoding = Common::CodePage::kWindows1250;
+		break;
+	case Common::KO_KOR:
+		_ttsEncoding = Common::CodePage::kWindows949;
+		break;
+	case Common::HE_ISR:
+		_ttsEncoding = Common::CodePage::kDos862;
+		break;
+	case Common::JA_JPN:
+		_ttsEncoding = Common::CodePage::kWindows932;
+		break;
+	case Common::RU_RUS:
+		_ttsEncoding = Common::CodePage::kWindows1251;
+		break;
+	default:
+		_ttsEncoding = Common::CodePage::kDos850;
+		break;
+	}
+#endif
+
 	_init->initGame();
 
 	return Common::kNoError;
@@ -426,6 +460,29 @@ void GobEngine::pauseGame() {
 
 	pauseEngineIntern(false);
 }
+
+#ifdef USE_TTS
+
+void GobEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) const {
+	if (text.empty()) {
+		return;
+	}
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action, _ttsEncoding);
+	}
+}
+
+void GobEngine::stopTextToSpeech() const {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+		_game->_hotspots->clearPreviousSaid();
+	}
+}
+
+#endif
 
 Common::Error GobEngine::initGameParts() {
 	_resourceSizeWorkaround = false;

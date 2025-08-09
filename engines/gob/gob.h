@@ -30,6 +30,7 @@
 
 #include "common/random.h"
 #include "common/system.h"
+#include "common/text-to-speech.h"
 
 #include "graphics/pixelformat.h"
 
@@ -227,11 +228,21 @@ public:
 	VideoPlayer *_vidPlayer;
 	PreGob *_preGob;
 
+#ifdef USE_TTS
+	bool _weenVoiceNotepad;
+	Common::CodePage _ttsEncoding;
+#endif
+
 	const char *getLangDesc(int16 language) const;
 	void validateLanguage();
 	void validateVideoMode(int16 videoMode);
 
 	void pauseGame();
+
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT) const;
+	void stopTextToSpeech() const;
+#endif
 
 	EndiannessMethod getEndiannessMethod() const;
 	Endianness getEndianness() const;

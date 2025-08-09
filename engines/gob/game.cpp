@@ -685,6 +685,13 @@ void Game::playTot(int32 function) {
 			_vm->_inter->_terminate = 2;
 	}
 
+#ifdef USE_TTS
+	if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
+		_vm->_weenVoiceNotepad = true;
+		_vm->_game->_hotspots->clearHotspotText();
+	}
+#endif
+
 	_curTotFile = oldTotFile;
 
 	_vm->_inter->_nestLevel         = oldNestLevel;
@@ -755,6 +762,10 @@ void Game::capturePop(char doDraw) {
 		_vm->_draw->_needAdjust = 10;
 		_vm->_draw->spriteOperation(DRAW_BLITSURF);
 		_vm->_draw->_needAdjust = savedNeedAdjust;
+
+#ifdef USE_TTS
+		_hotspots->clearHotspotText();
+#endif
 	}
 	_vm->_draw->freeSprite(Draw::kCaptureSurface + _captureCount);
 }
