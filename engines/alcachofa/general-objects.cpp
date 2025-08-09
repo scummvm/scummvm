@@ -254,6 +254,7 @@ void ShapeObject::update() {
 }
 
 void ShapeObject::syncGame(Serializer &serializer) {
+	ObjectBase::syncGame(serializer);
 	serializer.syncAsSByte(_order);
 	_isNewlySelected = false;
 	_wasSelected = false;
