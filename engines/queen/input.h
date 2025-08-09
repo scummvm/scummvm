@@ -31,6 +31,11 @@ class OSystem;
 
 namespace Queen {
 
+struct verbAction {
+	Verb _verb;
+	Common::CustomEventType _action;
+};
+
 class Input {
 public:
 
@@ -121,7 +126,7 @@ private:
 	bool _quickLoad;
 
 	//! set by delay();
-	Common::KeyCode _inKey;
+	Common::CustomEventType _inKey;
 
 	//! set by delay();
 	int _mouseButton;
@@ -129,14 +134,8 @@ private:
 	//! user idle time
 	uint32 _idleTime;
 
-	//! command keys for current language
-	const char *_currentCommandKeys;
-
-	//! command keys for all languages
-	static const char *const _commandKeys[];
-
-	//! verbs matching the command keys
-	static const Verb _verbKeys[];
+	//! verbs matching the actions
+	static const verbAction _verbActions[];
 };
 
 } // End of namespace Queen
