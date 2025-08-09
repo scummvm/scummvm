@@ -31,6 +31,8 @@
 
 #include "engines/savestate.h"
 
+#include "backends/keymapper/keymapper.h"
+
 #if defined(USE_FREETYPE2)
 #include "graphics/font.h"
 #include "graphics/fonts/ttf.h"
@@ -502,7 +504,7 @@ uint32 CreditsScene::handleMessage(int messageNum, const MessageParam &param, En
 		leaveScene(0);
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_ESCAPE && _canAbort)
+		if (param.asInteger() == kActionSkipFull && _canAbort)
 			leaveScene(0);
 		break;
 	case NM_MOUSE_HIDE:
@@ -974,6 +976,10 @@ GameStateMenu::GameStateMenu(NeverhoodEngine *vm, Module *parentModule, Savegame
 		return;
 	}
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game")->setEnabled(false);
+	keymapper->getKeymap("save-management")->setEnabled(true);
+
 	setBackground(backgroundFileHash);
 	setPalette(backgroundFileHash);
 	insertScreenMouse(mouseFileHash, mouseRect);
@@ -1031,6 +1037,7 @@ void GameStateMenu::performAction() {
 
 uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, Entity *sender) {
 	Scene::handleMessage(messageNum, param, sender);
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	switch (messageNum) {
 	case 0x000A:
 		if (!_textEditWidget->isReadOnly()) {
@@ -1039,11 +1046,15 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		}
 		break;
 	case 0x000B:
-		if (param.asInteger() == Common::KEYCODE_RETURN)
+		if (param.asInteger() == kActionConfirm) {
 			performAction();
-		else if (param.asInteger() == Common::KEYCODE_ESCAPE)
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (param.asInteger() == kActionPause) {
 			leaveScene(1);
-		else if (!_textEditWidget->isReadOnly()) {
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
+		} else if (!_textEditWidget->isReadOnly()) {
 			sendMessage(_textEditWidget, 0x000B, param.asInteger());
 			setCurrWidget(_textEditWidget);
 		}
@@ -1053,9 +1064,13 @@ uint32 GameStateMenu::handleMessage(int messageNum, const MessageParam &param, E
 		switch (param.asInteger()) {
 		case 0:
 			performAction();
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 1:
 			leaveScene(1);
+			keymapper->getKeymap("save-management")->setEnabled(false);
+			keymapper->getKeymap("game")->setEnabled(true);
 			break;
 		case 2:
 			_listBox->pageUp();

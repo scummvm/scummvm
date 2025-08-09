@@ -191,6 +191,11 @@ void NeverhoodEngine::mainLoop() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_gameModule->handleKeyDown(event.customType);
+				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				break;
 			case Common::EVENT_KEYDOWN:
 				_gameModule->handleKeyDown(event.kbd.keycode);
 				_gameModule->handleAsciiKey(event.kbd.ascii);

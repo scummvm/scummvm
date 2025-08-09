@@ -38,6 +38,15 @@ struct ADGameDescription;
 
 namespace Neverhood {
 
+enum NEVERHOODActions {
+	kActionNone,
+	kActionPause,
+	kActionQuit,
+	kActionSkipPartial,
+	kActionSkipFull,
+	kActionConfirm,
+};
+
 class GameModule;
 class GameVars;
 class ResourceMan;
