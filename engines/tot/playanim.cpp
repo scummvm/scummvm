@@ -42,99 +42,91 @@ uint mouseClickX, mouseClickY;
 
 uint npraton2, npraton;
 
-uint oldxrejilla, oldyrejilla;
+uint oldGridX, oldGridY;
 
-SavedGame regpartida;
+SavedGame savedGame;
 
-bool sello_quitado;
+bool isSealRemoved;
 
-bool cambiopantalla;
-bool teleencendida,
-	vasijapuesta,
-	guadagna,
-	tridente,
-	torno,
-	barro,
-	diablillo_verde,
-	rojo_capturado,
-	manual_torno,
-	alacena_abierta,
-	baul_abierto,
-	trampa_puesta,
-	peteractivo;
+bool roomChange;
+bool isTVOn,
+	isVasePlaced,
+	isScytheTaken,
+	isTridentTaken,
+	isPottersWheelDelivered,
+	isMudDelivered,
+	isGreenDevilDelivered,
+	isRedDevilCaptured,
+	isPottersManualDelivered,
+	isCupboardOpen,
+	isChestOpen,
+	isTrapSet,
+	isPeterCoughing;
 
 bool inGame;
 
-bool hechaprimeravez;
+bool firstTimeDone;
 
-bool introSeen;
+bool isIntroSeen;
 
-bool salirdeljuego;
+bool shouldQuitGame;
 
-bool partidanueva;
+bool startNewGame;
 
-bool continuarpartida;
+bool continueGame;
 
-bool desactivagrabar;
+bool isSavingDisabled;
 
-bool pintaractivo;
+bool isDrawingEnabled;
 
-bool animacion2;
+bool isSecondaryAnimationEnabled;
 
 palette palAnimSlice;
 
 palette pal;
 
-reginventario mobj[inventoryIconCount];
+InventoryEntry mobj[inventoryIconCount];
 
 byte *mochilaxms[inventoryIconCount];
 
 byte saltospal;
 
-byte posicioninv;
+byte inventoryPosition;
 
-byte numeroaccion;
+byte actionCode;
 
-byte oldnumeroacc;
+byte oldActionCode;
 
-byte pasos;
+byte steps;
 
-byte indicepuertas;
+byte doorIndex;
 
-byte movidapaleta;
-
-byte rejillaquetoca;
+byte isPaletteAnimEnabled;
 
 byte gamePart;
-byte encripcod1;
 
 byte secondaryAnimationFrameCount;
 
-byte numerodir;
+byte secondaryAnimDirCount;
 
 byte contadorpc, contadorpc2;
 
-byte indaux1, indaux2;
+byte destinationStepX, destinationStepY;
 
-byte destinox_paso, destinoy_paso;
+byte characterFacingDir;
 
-byte direccionmovimiento;
+uint secondaryAnimWidth, secondaryAnimHeight;
 
-uint anchoanimado, altoanimado;
+uint backpackObjectCode;
 
-uint tiempo;
-
-uint codigoobjmochila;
-
-uint kaka;
+uint foo;
 
 uint oldposx, oldposy;
 uint rightSfxVol, leftSfxVol;
-uint segpasoicono;
-uint ofspasoicono;
+
 uint musicVolRight, musicVolLeft;
 
-int elemento1, elemento2;
+int element1, element2;
 
 int characterPosX, characterPosY;
 
@@ -142,16 +134,16 @@ int xframe2, yframe2;
 
 Common::File verb;
 
-Common::String oldobjmochila, objetomochila;
+Common::String oldInventoryObjectName, inventoryObjectName;
 
-Common::String nombreficherofoto;
+Common::String photoFileName;
 
 Common::String characterName;
 
 // Text decryption key
 Common::String decryptionKey;
 
-uint hornacina[2][4];
+uint niche[2][4];
 
 RoomFileRegister *currentRoomData;
 
@@ -159,49 +151,43 @@ ScreenObject regobj;
 
 route mainRoute;
 
-Common::Point trayec[300];
+Common::Point trajectory[300];
 
-uint longtray;
+uint trajectoryLength;
 
-uint indicetray;
+uint currentTrajectoryIndex;
 
-uint indicetray2;
+uint currentSecondaryTrajectoryIndex;
 
-byte zonaactual, zonadestino, oldzonadestino;
+byte currentZone, targetZone, oldTargetZone;
 
-byte maxrejax, maxrejay;
+byte maxXGrid, maxYGrid;
 
-byte rejafondomovto[10][10];
+byte movementGridForSecondaryAnim[10][10];
 
-byte rejafondoraton[10][10];
+byte mouseGridForSecondaryAnim[10][10];
 
-byte rejamascaramovto[10][10];
+byte maskGridSecondaryAnim[10][10];
 
-byte rejamascararaton[10][10];
+byte maskMouseSecondaryAnim[10][10];
 
 bool list1Complete, list2Complete,
-	lista1, lista2;
+	obtainedList1, obtainedList2;
 
-bool primera[characterCount],
-	lprimera[characterCount],
-	cprimera[characterCount],
-	libro[characterCount],
-	caramelos[characterCount];
+bool firstTimeTopicA[characterCount],
+	firstTimeTopicB[characterCount],
+	firstTimeTopicC[characterCount],
+	bookTopic[characterCount],
+	mintTopic[characterCount];
 
-bool cavernas[5];
+bool caves[5];
 
 uint16 firstList[5], secondList[5];
 
-CharacterAnim secuencia;
-SecondaryAnim animado;
-uint sizeframe,
-	segpasoframe,
-	ofspasoframe,
-	sizeanimado,
-	segpasoanimado,
-	ofspasoanimado,
-	segfondo,
-	offfondo;
+CharacterAnim mainCharAnimation;
+SecondaryAnim secondaryAnimation;
+uint mainCharFrameSize,
+	secondaryAnimFrameSize;
 
 byte maxSecondaryAnimationFrames;
 
@@ -232,7 +218,6 @@ bool isLoadingFromLauncher;
 bool saveAllowed = true;
 
 void clearObj() {
-	byte indpasolimpiador1, indpasolimpiador2;
 
 	regobj.code = 0;
 	regobj.height = 0;
@@ -245,8 +230,8 @@ void clearObj() {
 	regobj.habla = 0;
 	regobj.openable = false;
 	regobj.closeable = false;
-	for (indpasolimpiador1 = 0; indpasolimpiador1 <= 7; indpasolimpiador1++)
-		regobj.used[indpasolimpiador1] = 0;
+	for (int i = 0; i <= 7; i++)
+		regobj.used[i] = 0;
 	regobj.pickupable = false;
 	regobj.useWith = 0;
 	regobj.replaceWith = 0;
@@ -264,10 +249,10 @@ void clearObj() {
 	regobj.yrej1 = 0;
 	regobj.xrej2 = 0;
 	regobj.yrej2 = 0;
-	for (indpasolimpiador1 = 0; indpasolimpiador1 < 10; indpasolimpiador1++) {
-		for (indpasolimpiador2 = 0; indpasolimpiador2 < 10; indpasolimpiador2++) {
-			regobj.walkAreasPatch[indpasolimpiador1][indpasolimpiador2] = 0;
-			regobj.mouseGridPatch[indpasolimpiador1][indpasolimpiador2] = 0;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			regobj.walkAreasPatch[i][j] = 0;
+			regobj.mouseGridPatch[i][j] = 0;
 		}
 	}
 	contadorpc2 = contadorpc;
@@ -318,117 +303,117 @@ void resetGameState() {
 	characterPosX = 160;
 	characterPosY = 80;
 	iframe = 0;
-	trayec[0].x = characterPosX;
-	trayec[0].y = characterPosY;
+	trajectory[0].x = characterPosX;
+	trajectory[0].y = characterPosY;
 	xframe2 = 0;
 	yframe2 = 1;
-	zonaactual = 1;
-	zonadestino = 1;
-	oldzonadestino = 0;
-	direccionmovimiento = 1;
-	primera[0] = true;
-	primera[1] = true;
-	primera[2] = true;
-	primera[3] = true;
-	primera[4] = true;
-	primera[5] = true;
-	primera[6] = true;
-	primera[7] = true;
-	primera[8] = true;
-	lprimera[0] = false;
-	lprimera[1] = false;
-	lprimera[2] = false;
-	lprimera[3] = false;
-	lprimera[4] = false;
-	lprimera[5] = false;
-	lprimera[6] = false;
-	lprimera[7] = false;
-	lprimera[8] = false;
+	currentZone = 1;
+	targetZone = 1;
+	oldTargetZone = 0;
+	characterFacingDir = 1;
+	firstTimeTopicA[0] = true;
+	firstTimeTopicA[1] = true;
+	firstTimeTopicA[2] = true;
+	firstTimeTopicA[3] = true;
+	firstTimeTopicA[4] = true;
+	firstTimeTopicA[5] = true;
+	firstTimeTopicA[6] = true;
+	firstTimeTopicA[7] = true;
+	firstTimeTopicA[8] = true;
+	firstTimeTopicB[0] = false;
+	firstTimeTopicB[1] = false;
+	firstTimeTopicB[2] = false;
+	firstTimeTopicB[3] = false;
+	firstTimeTopicB[4] = false;
+	firstTimeTopicB[5] = false;
+	firstTimeTopicB[6] = false;
+	firstTimeTopicB[7] = false;
+	firstTimeTopicB[8] = false;
 
-	cprimera[0] = false;
-	cprimera[1] = false;
-	cprimera[2] = false;
-	cprimera[3] = false;
-	cprimera[4] = false;
-	cprimera[5] = false;
-	cprimera[6] = false;
-	cprimera[7] = false;
-	cprimera[8] = false;
+	firstTimeTopicC[0] = false;
+	firstTimeTopicC[1] = false;
+	firstTimeTopicC[2] = false;
+	firstTimeTopicC[3] = false;
+	firstTimeTopicC[4] = false;
+	firstTimeTopicC[5] = false;
+	firstTimeTopicC[6] = false;
+	firstTimeTopicC[7] = false;
+	firstTimeTopicC[8] = false;
 
-	libro[0] = false;
-	libro[1] = false;
-	libro[2] = false;
-	libro[3] = false;
-	libro[4] = false;
-	libro[5] = false;
-	libro[6] = false;
-	libro[7] = false;
-	libro[8] = false;
+	bookTopic[0] = false;
+	bookTopic[1] = false;
+	bookTopic[2] = false;
+	bookTopic[3] = false;
+	bookTopic[4] = false;
+	bookTopic[5] = false;
+	bookTopic[6] = false;
+	bookTopic[7] = false;
+	bookTopic[8] = false;
 
-	caramelos[0] = false;
-	caramelos[1] = false;
-	caramelos[2] = false;
-	caramelos[3] = false;
-	caramelos[4] = false;
-	caramelos[5] = false;
-	caramelos[6] = false;
-	caramelos[7] = false;
-	caramelos[8] = false;
+	mintTopic[0] = false;
+	mintTopic[1] = false;
+	mintTopic[2] = false;
+	mintTopic[3] = false;
+	mintTopic[4] = false;
+	mintTopic[5] = false;
+	mintTopic[6] = false;
+	mintTopic[7] = false;
+	mintTopic[8] = false;
 
-	cavernas[0] = false;
-	cavernas[1] = false;
-	cavernas[2] = false;
-	cavernas[3] = false;
-	cavernas[4] = false;
+	caves[0] = false;
+	caves[1] = false;
+	caves[2] = false;
+	caves[3] = false;
+	caves[4] = false;
 
-	animacion2 = false;
-	secuencia.depth = 0;
+	isSecondaryAnimationEnabled = false;
+	mainCharAnimation.depth = 0;
 	rightSfxVol = 6;
 	leftSfxVol = 6;
 	musicVolRight = 3;
 	musicVolLeft = 3;
 
-	pintaractivo = true;
-	desactivagrabar = false;
-	partidanueva = false;
-	salirdeljuego = false;
-	lista1 = false;
-	lista2 = false;
+	isDrawingEnabled = true;
+	isSavingDisabled = false;
+	startNewGame = false;
+	shouldQuitGame = false;
+	obtainedList1 = false;
+	obtainedList2 = false;
 
 	list1Complete = false;
 	list2Complete = false;
 
-	movidapaleta = 0;
+	isPaletteAnimEnabled = 0;
 	gamePart = 1;
 
-	vasijapuesta = false;
-	guadagna = false;
-	tridente = false;
-	torno = false;
-	barro = false;
-	sello_quitado = false;
+	isVasePlaced = false;
+	isScytheTaken = false;
+	isTridentTaken = false;
+	isPottersWheelDelivered = false;
+	isMudDelivered = false;
+	isSealRemoved = false;
 
-	diablillo_verde = false;
-	rojo_capturado = false;
-	alacena_abierta = false;
-	baul_abierto = false;
+	isGreenDevilDelivered = false;
+	isRedDevilCaptured = false;
+	isCupboardOpen = false;
+	isChestOpen = false;
 
-	teleencendida = false;
-	trampa_puesta = false;
+	isTVOn = false;
+	isTrapSet = false;
 	saltospal = 0;
 
-	hornacina[0][0] = 563;
-	hornacina[0][1] = 561;
-	hornacina[0][2] = 0;
-	hornacina[0][3] = 2;
+	niche[0][0] = 563;
+	niche[0][1] = 561;
+	niche[0][2] = 0;
+	niche[0][3] = 2;
 
-	hornacina[1][0] = 615;
-	hornacina[1][1] = 622;
-	hornacina[1][2] = 623;
-	hornacina[1][3] = 0;
+	niche[1][0] = 615;
+	niche[1][1] = 622;
+	niche[1][2] = 623;
+	niche[1][3] = 0;
 
-	indicetray = 0;
-	posicioninv = 0;
+	currentTrajectoryIndex = 0;
+	inventoryPosition = 0;
 }
 
 void initPlayAnim() {
@@ -721,9 +706,9 @@ void initPlayAnim() {
 	secondList[4] = 537;
 	contadorpc = 0;
 	contadorpc2 = 0;
-	continuarpartida = true;
-	hechaprimeravez = false;
-	introSeen = false;
+	continueGame = true;
+	firstTimeDone = false;
+	isIntroSeen = false;
 	inGame = false;
 }
 
@@ -755,16 +740,16 @@ void clearVars() {
 	}
 	for(int i = 0; i < 4; i++) {
 		for(int j = 0; j < walkFrameCount + 30; j++) {
-			if(secuencia.bitmap[i][j] != NULL) {
-				free(secuencia.bitmap[i][j]);
+			if(mainCharAnimation.bitmap[i][j] != NULL) {
+				free(mainCharAnimation.bitmap[i][j]);
 			}
 		}
 	}
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < secAnimationFrameCount; j++) {
-			if(animado.bitmap[i][j] != NULL){
-				free(animado.bitmap[i][j]);
+			if(secondaryAnimation.bitmap[i][j] != NULL){
+				free(secondaryAnimation.bitmap[i][j]);
 			}
 		}
 	}

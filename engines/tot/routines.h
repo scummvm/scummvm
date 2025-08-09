@@ -66,8 +66,8 @@ void actionLineText(Common::String actionLine);
 void initializeObjectFile();
 void saveItem(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
 
-regismht readVerbRegister(uint numRegister);
-regismht readVerbRegister();
+TextEntry readVerbRegister(uint numRegister);
+TextEntry readVerbRegister();
 
 void readConversationFile(Common::String f);
 void printHornacinas();

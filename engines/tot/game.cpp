@@ -64,7 +64,7 @@ void newGame() {
 		loadScreenData(1);
 		screenTransition(13, false, sceneBackground);
 		mask();
-		posicioninv = 0;
+		inventoryPosition = 0;
 		drawBackpack();
 		iframe = 0;
 		g_engine->_mouseManager->show();
@@ -99,15 +99,15 @@ int engine_start() {
 	g_engine->_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	g_engine->_mouseManager->setMousePos(1, mouseX, mouseY);
-	initialMenu(hechaprimeravez);
-	if (partidanueva && !g_engine->shouldQuit()) {
+	initialMenu(firstTimeDone);
+	if (startNewGame && !g_engine->shouldQuit()) {
 		newGame();
-	} else if (continuarpartida && !g_engine->shouldQuit()) {
+	} else if (continueGame && !g_engine->shouldQuit()) {
 		loadTemporaryGame();
 	} else {
-		desactivagrabar = true;
+		isSavingDisabled = true;
 		g_engine->openMainMenuDialog();
-		desactivagrabar = false;
+		isSavingDisabled = false;
 	}
 
 	return startGame();
@@ -135,7 +135,7 @@ int startGame() {
 	const char hotKeyLook = hotKeyFor(LOOKAT);
 	const char hotKeyUse = hotKeyFor(USE);
 
-	while (!salirdeljuego && !g_engine->shouldQuit()) {
+	while (!shouldQuitGame && !g_engine->shouldQuit()) {
 		bool escapePressed = false;
 		g_engine->_chrono->updateChrono();
 		g_engine->_mouseManager->animateMouseIfNeeded();
@@ -163,60 +163,60 @@ int startGame() {
 					break;
 				default:
 					if (e.kbd.keycode == hotKeyOpen) {
-						numeroaccion = 5;
+						actionCode = 5;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyClose) {
-						numeroaccion = 6;
+						actionCode = 6;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyPickup) {
-						numeroaccion = 2;
+						actionCode = 2;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyTalk) {
-						numeroaccion = 1;
+						actionCode = 1;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyLook) {
-						numeroaccion = 3;
+						actionCode = 3;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyUse) {
-						numeroaccion = 4;
+						actionCode = 4;
 						action();
-						oldxrejilla = 0;
-						oldyrejilla = 0;
+						oldGridX = 0;
+						oldGridY = 0;
 					} else {
-						numeroaccion = 0; // go to
+						actionCode = 0; // go to
 					}
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
 				mouseClickX = e.mouse.x;
 				mouseClickY = e.mouse.y;
 				if (mouseClickY > 0 && mouseClickY < 131) {
-					switch (numeroaccion) {
+					switch (actionCode) {
 					case 0: // go to
 						contadorpc2 = contadorpc;
-						// gets the area where the character is now standing. Area is calculated using xframe,yframe plus some adjustments to get the center of the feet
-						zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-						if (zonaactual < 10) {
+						// gets the zone where the character is now standing. Zone is calculated using xframe,yframe plus some adjustments to get the center of the feet
+						currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+						if (currentZone < 10) {
 							xframe2 = mouseClickX + 7;
 							yframe2 = mouseClickY + 7;
-							// obtains the target area from the clicked coordinates
-							zonadestino = currentRoomData->walkAreasGrid[xframe2 / xGridCount][yframe2 / yGridCount];
+							// obtains the target zone from the clicked coordinates
+							targetZone = currentRoomData->walkAreasGrid[xframe2 / xGridCount][yframe2 / yGridCount];
 							if (currentRoomData->code == 21 && currentRoomData->animationFlag) {
-								if ((zonadestino >= 1 && zonadestino <= 5) ||
-									(zonadestino >= 9 && zonadestino <= 13) ||
-									(zonadestino >= 18 && zonadestino <= 21) ||
-									zonadestino == 24 || zonadestino == 25) {
+								if ((targetZone >= 1 && targetZone <= 5) ||
+									(targetZone >= 9 && targetZone <= 13) ||
+									(targetZone >= 18 && targetZone <= 21) ||
+									targetZone == 24 || targetZone == 25) {
 
-									zonadestino = 7;
+									targetZone = 7;
 									mouseClickX = 232;
 									mouseClickY = 75;
 
@@ -225,121 +225,121 @@ int startGame() {
 								}
 							}
 
-							if (oldzonadestino != zonadestino || zonadestino < 10) {
-								oldzonadestino = zonadestino;
+							if (oldTargetZone != targetZone || targetZone < 10) {
+								oldTargetZone = targetZone;
 								// Resets the entire route
-								calculateRoute(zonaactual, zonadestino);
+								calculateRoute(currentZone, targetZone);
 
-								indicepuertas = 0;
-								cambiopantalla = false;
+								doorIndex = 0;
+								roomChange = false;
 
-								for (indicepuertas = 0; indicepuertas < 5; indicepuertas++) {
-									if (currentRoomData->doors[indicepuertas].doorcode == zonadestino) {
+								for (doorIndex = 0; doorIndex < 5; doorIndex++) {
+									if (currentRoomData->doors[doorIndex].doorcode == targetZone) {
 
-										if (currentRoomData->doors[indicepuertas].openclosed == 1) {
-											cambiopantalla = true;
+										if (currentRoomData->doors[doorIndex].openclosed == 1) {
+											roomChange = true;
 											break;
-										} else if ((currentRoomData->code == 5 && zonadestino == 27) || (currentRoomData->code == 6 && zonadestino == 21)) {
+										} else if ((currentRoomData->code == 5 && targetZone == 27) || (currentRoomData->code == 6 && targetZone == 21)) {
 											;
 										} else {
-											pasos -= 1;
+											steps -= 1;
 										}
 									}
 								}
 								// Sets xframe2 again due to the substraction when closed doors
-								xframe2 = pasos;
+								xframe2 = steps;
 							} else
 								xframe2 = 0;
 						}
 						break;
 					case 1: // talk
-						cambiopantalla = false;
-						numeroaccion = 0;
+						roomChange = false;
+						actionCode = 0;
 						talkScreenObject();
 						contadorpc2 = contadorpc;
 						break;
 					case 2: // pick up
-						cambiopantalla = false;
-						numeroaccion = 0;
+						roomChange = false;
+						actionCode = 0;
 						pickupScreenObject();
 						contadorpc = contadorpc2;
 						break;
 					case 3: // look at
-						cambiopantalla = false;
-						destinox_paso = (mouseClickX + 7) / xGridCount;
-						destinoy_paso = (mouseClickY + 7) / yGridCount;
-						if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->fileIndex > 0) {
+						roomChange = false;
+						destinationStepX = (mouseClickX + 7) / xGridCount;
+						destinationStepY = (mouseClickY + 7) / yGridCount;
+						if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex > 0) {
 							goToObject(
 								currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
-								currentRoomData->walkAreasGrid[destinox_paso][destinoy_paso]);
-							if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->fileIndex == 562)
+								currentRoomData->walkAreasGrid[destinationStepX][destinationStepY]);
+							if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex == 562)
 
 								switch (currentRoomData->code) {
 								case 20:
-									if (hornacina[0][hornacina[0][3]] > 0)
-										readItemRegister(hornacina[0][hornacina[0][3]]);
+									if (niche[0][niche[0][3]] > 0)
+										readItemRegister(niche[0][niche[0][3]]);
 									else
 										readItemRegister(562);
 									break;
 								case 24:
-									if (hornacina[1][hornacina[1][3]] > 0)
-										readItemRegister(hornacina[1][hornacina[1][3]]);
+									if (niche[1][niche[1][3]] > 0)
+										readItemRegister(niche[1][niche[1][3]]);
 									else
 										readItemRegister(562);
 									break;
 								}
 							else
-								readItemRegister(currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]]->fileIndex);
+								readItemRegister(currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex);
 							if (regobj.lookAtTextRef > 0)
 								drawText(regobj.lookAtTextRef);
-							numeroaccion = 0;
+							actionCode = 0;
 						}
 						break;
 					case 4: // use
-						cambiopantalla = false;
-						numeroaccion = 0;
+						roomChange = false;
+						actionCode = 0;
 						useScreenObject();
 						contadorpc = contadorpc2;
 						break;
 					case 5: // open
-						cambiopantalla = false;
-						numeroaccion = 0;
+						roomChange = false;
+						actionCode = 0;
 						openScreenObject();
 						break;
 					case 6: { // close
-						cambiopantalla = false;
-						numeroaccion = 0;
+						roomChange = false;
+						actionCode = 0;
 						closeScreenObject();
 						contadorpc = contadorpc2;
 					} break;
 					}
 				} else if (mouseClickY > 148 && mouseClickY < 158) {
 					if (mouseClickX >= 3 && mouseClickX <= 53) {
-						numeroaccion = 1;
+						actionCode = 1;
 						action();
 						break;
 					} else if (mouseClickX >= 58 && mouseClickX <= 103) {
-						numeroaccion = 2;
+						actionCode = 2;
 						action();
 						break;
 					} else if (mouseClickX >= 108 && mouseClickX <= 153) {
-						numeroaccion = 3;
+						actionCode = 3;
 						action();
 						break;
 					} else if (mouseClickX >= 158 && mouseClickX <= 198) {
-						numeroaccion = 4;
+						actionCode = 4;
 						action();
 						break;
 					} else if (mouseClickX >= 203 && mouseClickX <= 248) {
-						numeroaccion = 5;
+						actionCode = 5;
 						action();
 						break;
 					} else if (mouseClickX >= 253 && mouseClickX <= 311) {
-						numeroaccion = 6;
+						actionCode = 6;
 						action();
 						break;
 					} else {
-						numeroaccion = 0;
+						actionCode = 0;
 						action();
 						contadorpc2 = contadorpc;
 					}
@@ -348,55 +348,55 @@ int startGame() {
 						inventory(0, 33);
 						break;
 					} else if (mouseClickX >= 26 && mouseClickX <= 65) {
-						handleAction(posicioninv);
+						handleAction(inventoryPosition);
 						break;
 					} else if (mouseClickX >= 70 && mouseClickX <= 108) {
-						handleAction(posicioninv + 1);
+						handleAction(inventoryPosition + 1);
 						break;
 					} else if (mouseClickX >= 113 && mouseClickX <= 151) {
-						handleAction(posicioninv + 2);
+						handleAction(inventoryPosition + 2);
 						break;
 					} else if (mouseClickX >= 156 && mouseClickX <= 194) {
-						handleAction(posicioninv + 3);
+						handleAction(inventoryPosition + 3);
 						break;
 					} else if (mouseClickX >= 199 && mouseClickX <= 237) {
-						handleAction(posicioninv + 4);
+						handleAction(inventoryPosition + 4);
 						break;
 					} else if (mouseClickX >= 242 && mouseClickX <= 280) {
-						handleAction(posicioninv + 5);
+						handleAction(inventoryPosition + 5);
 						break;
 					} else if (mouseClickX >= 290 && mouseClickX <= 311) {
 						inventory(1, 33);
 						break;
 					} else {
-						numeroaccion = 0;
+						actionCode = 0;
 						action();
 					}
 				}
 			} else if (e.type == Common::EVENT_RBUTTONUP) {
 				mouseClickX = e.mouse.x;
 				mouseClickY = e.mouse.y;
-				destinox_paso = (mouseClickX + 7) / xGridCount;
-				destinoy_paso = (mouseClickY + 7) / yGridCount;
+				destinationStepX = (mouseClickX + 7) / xGridCount;
+				destinationStepY = (mouseClickY + 7) / yGridCount;
 				contadorpc2 = contadorpc;
-				if (destinoy_paso < 28) {
-					RoomObjectListEntry obj = *currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinox_paso][destinoy_paso]];
+				if (destinationStepY < 28) {
+					RoomObjectListEntry obj = *currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]];
 					if (obj.fileIndex > 0) {
 
 						drawLookAtItem(obj);
-						goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], currentRoomData->walkAreasGrid[destinox_paso][destinoy_paso]);
+						goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], currentRoomData->walkAreasGrid[destinationStepX][destinationStepY]);
 						if (obj.fileIndex == 562)
 
 							switch (currentRoomData->code) {
 							case 20:
-								if (hornacina[0][hornacina[0][3]] > 0)
-									readItemRegister(hornacina[0][hornacina[0][3]]);
+								if (niche[0][niche[0][3]] > 0)
+									readItemRegister(niche[0][niche[0][3]]);
 								else
 									readItemRegister(562);
 								break;
 							case 24:
-								if (hornacina[1][hornacina[1][3]] > 0)
-									readItemRegister(hornacina[1][hornacina[1][3]]);
+								if (niche[1][niche[1][3]] > 0)
+									readItemRegister(niche[1][niche[1][3]]);
 								else
 									readItemRegister(562);
 								break;
@@ -405,7 +405,7 @@ int startGame() {
 							readItemRegister(obj.fileIndex);
 						if (regobj.lookAtTextRef > 0)
 							drawText(regobj.lookAtTextRef);
-						numeroaccion = 0;
+						actionCode = 0;
 					}
 				}
 			}
@@ -415,7 +415,7 @@ int startGame() {
 		advanceAnimations(false, true);
 
 		// Scene changes
-		if (xframe2 == 0 && cambiopantalla) {
+		if (xframe2 == 0 && roomChange) {
 			sceneChange();
 		}
 
@@ -423,8 +423,8 @@ int startGame() {
 			freeAnimation();
 			freeScreenObjects();
 			contadorpc2 = contadorpc;
-			partidanueva = false;
-			continuarpartida = false;
+			startNewGame = false;
+			continueGame = false;
 			g_engine->saveAutosaveIfEnabled();
 			totalFadeOut(0);
 			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
@@ -434,15 +434,15 @@ int startGame() {
 			initialMenu(true);
 			verifyCopyProtection2();
 
-			if (partidanueva && !g_engine->shouldQuit()) {
+			if (startNewGame && !g_engine->shouldQuit()) {
 				newGame();
-			} else if (continuarpartida && !g_engine->shouldQuit())
+			} else if (continueGame && !g_engine->shouldQuit())
 				loadTemporaryGame();
 			else {
-				desactivagrabar = true;
+				isSavingDisabled = true;
 				g_engine->openMainMenuDialog();
 				contadorpc = contadorpc2;
-				desactivagrabar = false;
+				isSavingDisabled = false;
 			}
 			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 			switch (gamePart) {
@@ -478,24 +478,24 @@ int startGame() {
 				g_engine->_graphics->clear();
 				loadObjects();
 				loadPalette("SEGUNDA");
-				indicetray = 0;
+				currentTrajectoryIndex = 0;
 				characterPosX = 160;
 				characterPosY = 60;
-				trayec[indicetray].x = characterPosX;
-				trayec[indicetray].y = characterPosY;
+				trajectory[currentTrajectoryIndex].x = characterPosX;
+				trajectory[currentTrajectoryIndex].y = characterPosY;
 				loadScreenData(20);
 				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 				g_engine->_sound->playMidi("SEGUNDA", true);
 				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
 				screenTransition(1, false, sceneBackground);
 				mask();
-				posicioninv = 0;
+				inventoryPosition = 0;
 				drawBackpack();
 				g_engine->_mouseManager->show();
 
-				primera[8] = true;
-				oldxrejilla = 0;
-				oldyrejilla = 0;
+				firstTimeTopicA[8] = true;
+				oldGridX = 0;
+				oldGridY = 0;
 				checkMouseGrid();
 			}
 			break;
@@ -517,16 +517,16 @@ int startGame() {
 			}
 
 			if (g_engine->_drawObjectAreas) {
-				for (int indice = 0; indice < depthLevelCount; indice++) {
-					if (screenObjects[indice] != NULL) {
+				for (int i = 0; i < depthLevelCount; i++) {
+					if (screenObjects[i] != NULL) {
 						if (true) {
 							// debug
-							uint16 w = READ_LE_UINT16(screenObjects[indice]);
-							uint16 h = READ_LE_UINT16(screenObjects[indice] + 2);
-							Common::Rect r = Common::Rect(depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
-							drawRect(180, depthMap[indice].posx, depthMap[indice].posy, depthMap[indice].posx + w, depthMap[indice].posy + h);
+							uint16 w = READ_LE_UINT16(screenObjects[i]);
+							uint16 h = READ_LE_UINT16(screenObjects[i] + 2);
+							Common::Rect r = Common::Rect(depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
+							drawRect(180, depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
 
-							littText(r.left, r.top, Common::String().format("%d", indice), 0);
+							littText(r.left, r.top, Common::String().format("%d", i), 0);
 						}
 					}
 				}
@@ -543,10 +543,10 @@ int startGame() {
 		ending();
 	}
 	if (!g_engine->shouldQuit()) {
-		obtainName(nombreficherofoto);
+		obtainName(photoFileName);
 	}
 	if (!g_engine->shouldQuit()) {
-		generateDiploma(nombreficherofoto);
+		generateDiploma(photoFileName);
 	}
 	if (!g_engine->shouldQuit()) {
 		credits();
@@ -555,92 +555,92 @@ int startGame() {
 }
 
 void sceneChange() {
-	cambiopantalla = false;
+	roomChange = false;
 	contadorpc = contadorpc2;
-	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
+	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 	saveRoomData(currentRoomData, rooms);
 	// verifyCopyProtection();
 	g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 
-	switch (currentRoomData->doors[indicepuertas].nextScene) {
+	switch (currentRoomData->doors[doorIndex].nextScene) {
 	case 2: {
 		transitionEffect = Random(15) + 1;
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (contadorpc > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		if (teleencendida)
+		if (isTVOn)
 			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			cargatele();
 		screenTransition(transitionEffect, false, sceneBackground);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 	} break;
 	case 5: {
 		if (currentRoomData->code != 6) {
 			transitionEffect = Random(15) + 1;
 			iframe = 0;
-			indicetray = 0;
-			characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY + 15;
-			trayec[indicetray].x = characterPosX;
-			trayec[indicetray].y = characterPosY;
+			currentTrajectoryIndex = 0;
+			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY + 15;
+			trajectory[currentTrajectoryIndex].x = characterPosX;
+			trajectory[currentTrajectoryIndex].y = characterPosY;
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			screenTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			g_engine->_sound->stopVoc();
 			g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
 			screenTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			zonadestino = 21;
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+			targetZone = 21;
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, true, 22, -2);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 22, -2);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 6: {
-		zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-		zonadestino = 27;
-		goToObject(zonaactual, zonadestino);
+		currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+		targetZone = 27;
+		goToObject(currentZone, targetZone);
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		loadScrollData(currentRoomData->doors[indicepuertas].nextScene, false, 22, 2);
+		loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 22, 2);
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 9: {
@@ -650,76 +650,76 @@ void sceneChange() {
 		g_engine->_mouseManager->hide();
 		screenTransition(transitionEffect, true, NULL);
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		screenTransition(transitionEffect, false, sceneBackground);
 		g_engine->_mouseManager->show();
 
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 12: {
 		if (currentRoomData->code != 13) {
 			transitionEffect = Random(15) + 1;
 			iframe = 0;
-			indicetray = 0;
-			characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-			trayec[indicetray].x = characterPosX;
-			trayec[indicetray].y = characterPosY;
+			currentTrajectoryIndex = 0;
+			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+			trajectory[currentTrajectoryIndex].x = characterPosX;
+			trajectory[currentTrajectoryIndex].y = characterPosY;
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			screenTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			screenTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			g_engine->_mouseManager->show();
 		} else {
 
-			zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, false, 64, 0);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 64, 0);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 13: {
 		switch (currentRoomData->code) {
 		case 12: {
-			zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, true, 64, 0);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 64, 0);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} break;
 		case 14: {
-			zonaactual = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, false, 56, 0);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 56, 0);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} break;
 		}
@@ -728,50 +728,50 @@ void sceneChange() {
 		if (currentRoomData->code != 13) {
 			transitionEffect = Random(15) + 1;
 			iframe = 0;
-			indicetray = 0;
-			characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-			trayec[indicetray].x = characterPosX;
-			trayec[indicetray].y = characterPosY;
+			currentTrajectoryIndex = 0;
+			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+			trajectory[currentTrajectoryIndex].x = characterPosX;
+			trajectory[currentTrajectoryIndex].y = characterPosY;
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			screenTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			screenTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			zonaactual = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, true, 56, 0);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 56, 0);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 17: {
 		transitionEffect = Random(15) + 1;
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
-		if (libro[0] == true && currentRoomData->animationFlag == true)
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
+		if (bookTopic[0] == true && currentRoomData->animationFlag == true)
 			disableSecondAnimation();
 		if (contadorpc > 89)
 			showError(274);
@@ -779,40 +779,40 @@ void sceneChange() {
 		screenTransition(transitionEffect, false, sceneBackground);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 18: {
 		if (currentRoomData->code != 19) {
 			transitionEffect = Random(15) + 1;
 			iframe = 0;
-			indicetray = 0;
-			characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-			trayec[indicetray].x = characterPosX;
-			trayec[indicetray].y = characterPosY;
+			currentTrajectoryIndex = 0;
+			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+			trajectory[currentTrajectoryIndex].x = characterPosX;
+			trajectory[currentTrajectoryIndex].y = characterPosY;
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			screenTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			screenTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			zonaactual = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, true, 131, -1);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 131, -1);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -820,50 +820,50 @@ void sceneChange() {
 		if (currentRoomData->code != 18) {
 			transitionEffect = Random(15) + 1;
 			iframe = 0;
-			indicetray = 0;
-			characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-			trayec[indicetray].x = characterPosX;
-			trayec[indicetray].y = characterPosY;
+			currentTrajectoryIndex = 0;
+			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+			trajectory[currentTrajectoryIndex].x = characterPosX;
+			trajectory[currentTrajectoryIndex].y = characterPosY;
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
 			screenTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			screenTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			zonaactual = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(zonaactual, zonadestino);
+			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
+			goToObject(currentZone, targetZone);
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[indicepuertas].nextScene, false, 131, 1);
+			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 131, 1);
 			g_engine->_mouseManager->show();
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldGridX = 0;
+			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 20: {
 		transitionEffect = Random(15) + 1;
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
-		switch (hornacina[0][hornacina[0][3]]) {
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
+		switch (niche[0][niche[0][3]]) {
 		case 0:
 			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 			break;
@@ -885,25 +885,25 @@ void sceneChange() {
 		screenTransition(transitionEffect, false, sceneBackground);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 24: {
 		transitionEffect = Random(15) + 1;
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
-		switch (hornacina[1][hornacina[1][3]]) {
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
+		switch (niche[1][niche[1][3]]) {
 		case 0:
 			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 			break;
@@ -923,35 +923,35 @@ void sceneChange() {
 		if (contadorpc > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		if (trampa_puesta) {
+		if (isTrapSet) {
 			currentRoomData->animationFlag = true;
 			loadAnimation(currentRoomData->animationName);
 			iframe2 = 0;
-			indicetray2 = 1;
-			currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x = 214 - 15;
-			currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y = 115 - 42;
-			animado.dir = currentRoomData->secondaryAnimDirections[indicetray2 - 1];
-			animado.posx = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].x;
-			animado.posy = currentRoomData->secondaryAnimTrajectory[indicetray2 - 1].y;
-			animado.depth = 14;
+			currentSecondaryTrajectoryIndex = 1;
+			currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].x = 214 - 15;
+			currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].y = 115 - 42;
+			secondaryAnimation.dir = currentRoomData->secondaryAnimDirections[currentSecondaryTrajectoryIndex - 1];
+			secondaryAnimation.posx = currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].x;
+			secondaryAnimation.posy = currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].y;
+			secondaryAnimation.depth = 14;
 
-			for (int i = 0; i < maxrejax; i++)
-				for (int j = 0; j < maxrejay; j++) {
-					if (rejamascaramovto[i][j] > 0) {
-						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
+			for (int i = 0; i < maxXGrid; i++)
+				for (int j = 0; j < maxYGrid; j++) {
+					if (maskGridSecondaryAnim[i][j] > 0) {
+						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = maskGridSecondaryAnim[i][j];
 					}
-					if (rejamascararaton[i][j] > 0)
-						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
+					if (maskMouseSecondaryAnim[i][j] > 0)
+						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = maskMouseSecondaryAnim[i][j];
 				}
 			assembleScreen();
 		}
 		screenTransition(transitionEffect, false, sceneBackground);
-		if ((rojo_capturado == false) && (trampa_puesta == false))
+		if ((isRedDevilCaptured == false) && (isTrapSet == false))
 			runaroundRed();
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 255:
@@ -960,17 +960,17 @@ void sceneChange() {
 	default: {
 		transitionEffect = Random(15) + 1;
 		iframe = 0;
-		indicetray = 0;
-		characterPosX = currentRoomData->doors[indicepuertas].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[indicepuertas].exitPosY - characerCorrectionY;
-		trayec[indicetray].x = characterPosX;
-		trayec[indicetray].y = characterPosY;
+		currentTrajectoryIndex = 0;
+		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
+		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
+		trajectory[currentTrajectoryIndex].x = characterPosX;
+		trajectory[currentTrajectoryIndex].y = characterPosY;
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 		screenTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[indicepuertas].nextScene);
+		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (contadorpc > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
@@ -985,11 +985,11 @@ void sceneChange() {
 		screenTransition(transitionEffect, false, sceneBackground);
 		contadorpc = contadorpc2;
 		g_engine->_mouseManager->show();
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldGridX = 0;
+		oldGridY = 0;
 		checkMouseGrid();
 	}
 	}
-	oldzonadestino = 0;
+	oldTargetZone = 0;
 }
 } // end of namespace Tot

@@ -90,21 +90,21 @@ void findDialogLine(byte persona) {
 			step = NULL;
 		} break;
 		case '3':
-			if (libro[0] && (persona == 3)) {
+			if (bookTopic[0] && (persona == 3)) {
 				decir = false;
 				subida = true;
 			} else
 				decir = true;
 			break;
 		case '4':
-			if (primera[persona - 1]) {
+			if (firstTimeTopicA[persona - 1]) {
 				decir = false;
 				subida = true;
 			} else
 				decir = true;
 			break;
 		case '5':
-			if (libro[persona - 1] && lprimera[persona - 1])
+			if (bookTopic[persona - 1] && firstTimeTopicB[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -112,7 +112,7 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case '6':
-			if (libro[persona - 1] && !lprimera[persona - 1])
+			if (bookTopic[persona - 1] && !firstTimeTopicB[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -120,10 +120,10 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case '7':
-			if (libro[persona - 1]) {
+			if (bookTopic[persona - 1]) {
 				decir = false;
 				subida = true;
-			} else if (!primera[persona - 1])
+			} else if (!firstTimeTopicA[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -131,7 +131,7 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case '8':
-			if (caramelos[persona - 1] && cprimera[persona - 1])
+			if (mintTopic[persona - 1] && firstTimeTopicC[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -139,7 +139,7 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case '9':
-			if (caramelos[persona - 1] && !cprimera[persona - 1])
+			if (mintTopic[persona - 1] && !firstTimeTopicC[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -147,7 +147,7 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case 'A':
-			if (!caramelos[persona - 1] && !primera[persona - 1])
+			if (!mintTopic[persona - 1] && !firstTimeTopicA[persona - 1])
 				decir = true;
 			else {
 				decir = false;
@@ -155,43 +155,43 @@ void findDialogLine(byte persona) {
 			}
 			break;
 		case 'B':
-			if (cavernas[0] && !primera[8])
+			if (caves[0] && !firstTimeTopicA[8])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'C':
-			if (cavernas[1] && !primera[8])
+			if (caves[1] && !firstTimeTopicA[8])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'D':
-			if ((cavernas[0] && cavernas[1]) && !primera[8])
+			if ((caves[0] && caves[1]) && !firstTimeTopicA[8])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'E':
-			if ((cavernas[0] && !cavernas[2]) && !primera[8])
+			if ((caves[0] && !caves[2]) && !firstTimeTopicA[8])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'F':
-			if (!cavernas[3])
+			if (!caves[3])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'G':
-			if (!cavernas[4])
+			if (!caves[4])
 				decir = true;
 			else
 				decir = false;
 			break;
 		case 'I':
-			if (!sello_quitado)
+			if (!isSealRemoved)
 				decir = true;
 			else
 				decir = false;
@@ -206,10 +206,10 @@ void findDialogLine(byte persona) {
 					borde = true;
 					switch (persona) {
 					case 1:
-						if (primera[persona - 1]) {
+						if (firstTimeTopicA[persona - 1]) {
 							l1->elemento = 12;
 							adelanta = true;
-						} else if (libro[persona - 1]) {
+						} else if (bookTopic[persona - 1]) {
 							adelanta = true;
 							l1->elemento = 33;
 						} else {
@@ -218,7 +218,7 @@ void findDialogLine(byte persona) {
 						}
 						break;
 					case 3:
-						if (primera[persona - 1]) {
+						if (firstTimeTopicA[persona - 1]) {
 							l1->elemento = 103;
 							adelanta = true;
 						} else {
@@ -384,11 +384,11 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 			if (tocapintar) {
 				if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
 					saltospal = 0;
-					if (movidapaleta > 6)
-						movidapaleta = 0;
+					if (isPaletteAnimEnabled > 6)
+						isPaletteAnimEnabled = 0;
 					else
-						movidapaleta += 1;
-					updatePalette(movidapaleta);
+						isPaletteAnimEnabled += 1;
+					updatePalette(isPaletteAnimEnabled);
 				} else
 					saltospal += 1;
 			}
@@ -452,7 +452,7 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 void talk(byte person) {
 	debug("Talking to persona: %d", person);
 	uint pasorespuesta, nuevonodo;
-	regismht pasoh;
+	TextEntry pasoh;
 	byte auxilcadena, insertarnombre, indicemochila;
 
 	Common::String matrizconversa[16];
@@ -514,7 +514,7 @@ void talk(byte person) {
 				hypertext(nuevonodo, 255, 0, pasorespuesta, true);
 			switch (nuevonodo) {
 			case 9: {
-				lista1 = true;
+				obtainedList1 = true;
 				indicemochila = 0;
 				while (mobj[indicemochila].code != 0) {
 					indicemochila += 1;
@@ -524,7 +524,7 @@ void talk(byte person) {
 				mobj[indicemochila].objectName = getObjectName(0);
 			} break;
 			case 25: {
-				lista2 = true;
+				obtainedList2 = true;
 				indicemochila = 0;
 				while (mobj[indicemochila].code != 0) {
 					indicemochila += 1;
@@ -559,14 +559,14 @@ void talk(byte person) {
 
 	// release(marca);
 	if (person < 5) {
-		if (primera[person - 1])
-			primera[person - 1] = false;
-		if (lprimera[person - 1])
-			lprimera[person - 1] = false;
-		if (cprimera[person - 1])
-			cprimera[person - 1] = false;
+		if (firstTimeTopicA[person - 1])
+			firstTimeTopicA[person - 1] = false;
+		if (firstTimeTopicB[person - 1])
+			firstTimeTopicB[person - 1] = false;
+		if (firstTimeTopicC[person - 1])
+			firstTimeTopicC[person - 1] = false;
 	} else if (person == 8)
-		primera[8] = false;
+		firstTimeTopicA[8] = false;
 }
 
 void talkScreenObject() {
@@ -585,7 +585,7 @@ void talkScreenObject() {
 		talk(regobj.habla);
 	} else {
 		assignText();
-		hypertext((Random(10) + 1039), 255, 0, kaka, false);
+		hypertext((Random(10) + 1039), 255, 0, foo, false);
 		verb.close();
 		if (contadorpc > 198)
 			showError(274);

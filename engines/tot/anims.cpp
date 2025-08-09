@@ -974,7 +974,7 @@ static void loadFlc(
 						} else if (doscientos) {
 							g_engine->_graphics->setPalette(palette, 200);
 							for (int i = 0; i <= 200; i++) {
-								if(gamePart == 2 && !salirdeljuego && (i == 131 || i == 134 || i == 143 || i == 187)) {
+								if(gamePart == 2 && !shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
 									continue;
 								}
 								pal[i * 3 + 0] = palette[i * 3 + 0];
@@ -988,12 +988,12 @@ static void loadFlc(
 						}
 					}
 					// Make sure we also update the palette animations! Esp. for part 2
-					if (currentRoomData != NULL && (currentRoomData->paletteAnimationFlag) && (saltospal >= 4) && !salirdeljuego) {
+					if (currentRoomData != NULL && (currentRoomData->paletteAnimationFlag) && (saltospal >= 4) && !shouldQuitGame) {
 						saltospal = 0;
-						if (movidapaleta > 6)
-							movidapaleta = 0;
-						else movidapaleta += 1;
-						updatePalette(movidapaleta);
+						if (isPaletteAnimEnabled > 6)
+							isPaletteAnimEnabled = 0;
+						else isPaletteAnimEnabled += 1;
+						updatePalette(isPaletteAnimEnabled);
 					} else saltospal += 1;
 
 					tocapintar = false;
