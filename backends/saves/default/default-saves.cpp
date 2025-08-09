@@ -21,7 +21,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #endif
 #include "common/file.h"
@@ -40,7 +40,7 @@
 
 #include <errno.h>	// for removeSavefile()
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 const char *const DefaultSaveFileManager::TIMESTAMPS_FILENAME = "timestamps";
 #endif
 
@@ -144,7 +144,7 @@ Common::OutSaveFile *DefaultSaveFileManager::openForSaving(const Common::String 
 		}
 	}
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	// Update file's timestamp
 	Common::HashMap<Common::String, uint32> timestamps = loadTimestamps();
 	timestamps[filename] = INVALID_TIMESTAMP;
@@ -181,7 +181,7 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	if (getError().getCode() != Common::kNoError)
 		return false;
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	// Update file's timestamp
 	Common::HashMap<Common::String, uint32> timestamps = loadTimestamps();
 	Common::HashMap<Common::String, uint32>::iterator it = timestamps.find(filename);
@@ -257,7 +257,7 @@ void DefaultSaveFileManager::assureCached(const Common::Path &savePathName) {
 	// Check that path exists and is usable.
 	checkPath(Common::FSNode(savePathName));
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	if (!files.empty()) updateSavefilesList(files); //makes this cache invalid
 	else _lockedFiles = files;
@@ -298,7 +298,7 @@ void DefaultSaveFileManager::assureCached(const Common::Path &savePathName) {
 	_cachedDirectory = savePathName;
 }
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 
 Common::HashMap<Common::String, uint32> DefaultSaveFileManager::loadTimestamps() {
 	Common::HashMap<Common::String, uint32> timestamps;
@@ -384,7 +384,7 @@ void DefaultSaveFileManager::saveTimestamps(Common::HashMap<Common::String, uint
 	f.close();
 }
 
-#endif // ifdef USE_LIBCURL
+#endif // ifdef USE_CLOUD
 
 Common::Path DefaultSaveFileManager::concatWithSavesPath(Common::String name) {
 	DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());

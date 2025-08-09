@@ -19,7 +19,7 @@
  *
  */
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 
 namespace Networking {
 

@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_BASE_STORAGE_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 

@@ -57,14 +57,12 @@
 #include "widgets/edittext.h"
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
 #include "gui/cloudconnectionwizard.h"
 #include "gui/downloaddialog.h"
 #endif
-#endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 #include "gui/downloadpacksdialog.h"
 #endif
 
@@ -1692,7 +1690,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	_updateShadersButton = new ButtonWidget(boss, prefix + "UpdateShadersButton", _("Download Shaders"), _("Check on the scummvm.org website for updates of shader packs"), kUpdateShadersCmd);
 #endif
 
@@ -2194,7 +2192,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_updatesPopUp = nullptr;
 #endif
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	_selectedStorageIndex = CloudMan.getStorageIndex();
 	_storagePopUpDesc = nullptr;
 	_storagePopUp = nullptr;
@@ -2217,7 +2214,6 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_storageWizardNotConnectedHint = nullptr;
 	_storageWizardConnectButton = nullptr;
 	_redrawCloudTab = false;
-#endif
 #endif
 
 #ifdef USE_SDL_NET
@@ -2375,7 +2371,6 @@ void GlobalOptionsDialog::build() {
 	addMiscControls(miscContainer, "GlobalOptions_Misc_Container.", g_gui.useLowResGUI());
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	//
 	// 8) The Cloud tab (remote storages)
 	//
@@ -2390,7 +2385,6 @@ void GlobalOptionsDialog::build() {
 	setTarget(container);
 
 	addCloudControls(container, "GlobalOptions_Cloud_Container.", g_gui.useLowResGUI());
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
@@ -2721,7 +2715,7 @@ void GlobalOptionsDialog::addGUIControls(GuiObject *boss, const Common::String &
 		_useSystemDialogsCheckbox->setState(ConfMan.getBool("gui_browser_native", _domain));
 	}
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	new ButtonWidget(boss, prefix + "UpdateIconsButton", _("Download Icons"),  _("Check on the scummvm.org website for updates of icon packs"), kUpdateIconsCmd);
 #endif
 }
@@ -2791,7 +2785,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 }
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String &prefix, bool lowres) {
 	_storagePopUpDesc = new StaticTextWidget(boss, prefix + "StoragePopupDesc", _("Active storage:"), _("Active cloud storage"));
 	_storagePopUp = new PopUpWidget(boss, prefix + "StoragePopup", Common::U32String(), kStoragePopUpCmd);
@@ -2841,7 +2834,6 @@ void GlobalOptionsDialog::addCloudControls(GuiObject *boss, const Common::String
 
 	setupCloudTab();
 }
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
@@ -3084,7 +3076,6 @@ void GlobalOptionsDialog::apply() {
 #endif // USE_UPDATES
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	if (CloudMan.getStorageIndex() != _selectedStorageIndex) {
 		if (!CloudMan.switchStorage(_selectedStorageIndex)) {
 			bool anotherStorageIsWorking = CloudMan.isWorking();
@@ -3097,7 +3088,6 @@ void GlobalOptionsDialog::apply() {
 			dialog.runModal();
 		}
 	}
-#endif // USE_LIBCURL
 #endif
 
 #ifdef USE_SDL_NET
@@ -3258,7 +3248,7 @@ void GlobalOptionsDialog::apply() {
 }
 
 void GlobalOptionsDialog::close() {
-#if defined(USE_CLOUD) && defined(USE_SDL_NET)
+#if defined(USE_SDL_NET)
 	if (LocalServer.isRunning()) {
 		LocalServer.stop();
 	}
@@ -3339,7 +3329,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	case kChooseRootDirCmd: {
 		BrowserDialog browser(_("Select directory for Files Manager /root/"), true);
@@ -3354,7 +3343,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kUpdateIconsCmd: {
 		DownloadPacksDialog dia(_("icon packs"), "LIST", "gui-icons*.dat");
 		dia.runModal();
@@ -3365,7 +3354,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#ifdef USE_LIBCURL
+#ifdef USE_HTTP
 	case kUpdateShadersCmd: {
 		DownloadPacksDialog dia(_("shader packs"), "LIST-SHADERS", "shaders*.dat");
 		dia.runModal();
@@ -3373,7 +3362,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 
-#endif
 	case kThemePathClearCmd:
 		_themePath->setLabel(Common::Path());
 		break;
@@ -3457,7 +3445,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	case kCloudTabContainerReflowCmd: {
 		setupCloudTab();
 		break;
@@ -3522,7 +3509,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		sendCommand(kSetPositionCmd, 0);
 		break;
 	}
-#endif // USE_LIBCURL
+#endif // USE_CLOUD
 #ifdef USE_SDL_NET
 	case kRunServerCmd: {
 #ifdef NETWORKING_LOCALWEBSERVER_ENABLE_PORT_OVERRIDE
@@ -3552,7 +3539,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif // USE_SDL_NET
-#endif // USE_CLOUD
 #ifdef USE_FLUIDSYNTH
 	case kFluidSynthSettingsCmd:
 		_fluidSynthSettingsDialog->runModal();
@@ -3572,12 +3558,10 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 void GlobalOptionsDialog::handleTickle() {
 	OptionsDialog::handleTickle();
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	if (_redrawCloudTab) {
 		reflowLayout(); // recalculates scrollbar as well
 		_redrawCloudTab = false;
 	}
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
@@ -3642,9 +3626,7 @@ void GlobalOptionsDialog::reflowLayout() {
 
 	OptionsDialog::reflowLayout();
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 	setupCloudTab();
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
@@ -3653,7 +3635,6 @@ void GlobalOptionsDialog::reflowLayout() {
 }
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 void GlobalOptionsDialog::setupCloudTab() {
 	_selectedStorageIndex = (_storagePopUp ? _storagePopUp->getSelectedTag() : (uint32)Cloud::kStorageNoneId);
 
@@ -3785,7 +3766,6 @@ void GlobalOptionsDialog::shiftWidget(Widget *widget, const char *widgetName, in
 
 	widget->setPos(x + xOffset, y + yOffset);
 }
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 #ifdef USE_SDL_NET
@@ -3843,7 +3823,6 @@ void GlobalOptionsDialog::reflowNetworkTabLayout() {
 #endif // USE_SDL_NET
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 void GlobalOptionsDialog::storageSavesSyncedCallback(const Cloud::Storage::BoolResponse &response) {
 	_redrawCloudTab = true;
 }
@@ -3855,7 +3834,6 @@ void GlobalOptionsDialog::storageErrorCallback(const Networking::ErrorResponse &
 	if (!response.interrupted)
 		g_system->displayMessageOnOSD(_("Request failed.\nCheck your Internet connection."));
 }
-#endif // USE_LIBCURL
 #endif // USE_CLOUD
 
 bool OptionsDialog::testGraphicsSettings() {

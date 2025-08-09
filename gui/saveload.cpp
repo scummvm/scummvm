@@ -87,7 +87,7 @@ int SaveLoadChooser::runModalWithMetaEngineAndTarget(const MetaEngine *engine, c
 	if (!_impl)
 		return -1;
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	_impl->runSaveSync(ConfMan.hasKey("savepath", target));
 #endif
 

@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_SESSIONREQUEST_H
-#define BACKENDS_NETWORKING_CURL_SESSIONREQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_SESSIONREQUEST_H
+#define BACKENDS_NETWORKING_HTTP_SESSIONREQUEST_H
 
-#include "backends/networking/curl/curlrequest.h"
+#include "backends/networking/http/httprequest.h"
 #include "common/memstream.h"
 
 namespace Common {
@@ -33,7 +33,7 @@ class Path;
 
 namespace Networking {
 
-#define CURL_SESSION_REQUEST_BUFFER_SIZE 512 * 1024
+#define HTTP_SESSION_REQUEST_BUFFER_SIZE 512 * 1024
 
 struct SessionFileResponse {
 	byte *buffer;
@@ -47,7 +47,7 @@ struct SessionFileResponse {
  * @return Returns SessionFileResponse in the callback
  */
 
-class SessionRequest: public CurlRequest {
+class SessionRequest: public HttpRequest {
 protected:
 	Common::MemoryWriteStreamDynamic _contentsStream;
 	byte *_buffer;

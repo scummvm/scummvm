@@ -23,9 +23,9 @@
 #include "backends/cloud/googledrive/googledrivestorage.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 #include "googledrivetokenrefresher.h"
 
@@ -66,7 +66,7 @@ void GoogleDriveListDirectoryByIdRequest::makeRequest(const Common::String &page
 
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, const Networking::JsonResponse &>(this, &GoogleDriveListDirectoryByIdRequest::responseCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveListDirectoryByIdRequest, const Networking::ErrorResponse &>(this, &GoogleDriveListDirectoryByIdRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
+	Networking::HttpJsonRequest *request = new GoogleDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	_workingRequest = ConnMan.addRequest(request);
 }
@@ -81,7 +81,7 @@ void GoogleDriveListDirectoryByIdRequest::responseCallback(const Networking::Jso
 		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "GoogleDriveListDirectoryByIdRequest::responseCallback");
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 

@@ -29,7 +29,7 @@
 
 namespace GUI {
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 class SaveLoadChooserDialog;
 
 class SaveLoadCloudSyncProgressDialog : public Dialog { //protected?
@@ -83,7 +83,7 @@ public:
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	virtual void runSaveSync(bool hasSavepathOverride);
 #endif
 
@@ -134,7 +134,7 @@ protected:
 	ButtonWidget *createSwitchButton(const Common::String &name, const Common::U32String &desc, const Common::U32String &tooltip, const char *image, uint32 cmd = 0);
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	int _pollFrame;
 	bool _didUpdateAfterSync;
 

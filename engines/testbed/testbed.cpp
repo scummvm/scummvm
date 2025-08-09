@@ -174,7 +174,7 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new SpeechTestSuite();
 	testsuiteList.push_back(ts);
 #endif
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	// Cloud
 	ts = new CloudTestSuite();
 	testsuiteList.push_back(ts);

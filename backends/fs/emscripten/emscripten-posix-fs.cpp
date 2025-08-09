@@ -29,6 +29,11 @@
 #include "backends/fs/posix/posix-iostream.h"
 #include "common/system.h"
 
+#ifdef USE_CLOUD
+#include "backends/cloud/cloudmanager.h"
+#include "backends/fs/emscripten/cloud-fs.h"
+#endif
+
 AbstractFSNode *EmscriptenPOSIXFilesystemNode::makeNode(const Common::String &path) const {
 	return g_system->getFilesystemFactory()->makeFileNodePath(path);
 }
@@ -42,6 +47,12 @@ bool EmscriptenPOSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode
 		HTTPFilesystemNode *data_entry = new HTTPFilesystemNode(DATA_PATH);
 		myList.push_back(data_entry);
 
+#ifdef USE_CLOUD
+		if (CloudMan.isStorageEnabled()) {
+			CloudFilesystemNode *cloud_entry = new CloudFilesystemNode(CLOUD_FS_PATH);
+			myList.push_back(cloud_entry);
+		}
+#endif
 	}
 	return POSIXFilesystemNode::getChildren(myList, mode, hidden);
 }

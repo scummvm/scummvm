@@ -21,10 +21,10 @@
 
 #include "gui/saveload-dialog.h"
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 #include "backends/cloud/cloudmanager.h"
 #include "backends/cloud/savessyncrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #endif
 
 #include "common/translation.h"
@@ -43,7 +43,7 @@ namespace GUI {
 
 #define SCALEVALUE(val) ((val) * g_gui.getScaleFactor())
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 
 enum {
 	kCancelSyncCmd = 'PDCS',
@@ -178,7 +178,7 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(const Common::String &dialogName, c
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	, _pollFrame(0), _didUpdateAfterSync(true)
 #endif
 	{
@@ -194,7 +194,7 @@ SaveLoadChooserDialog::SaveLoadChooserDialog(int x, int y, int w, int h, const b
 #ifndef DISABLE_SAVELOADCHOOSER_GRID
 	, _listButton(nullptr), _gridButton(nullptr)
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	, _pollFrame(0), _didUpdateAfterSync(true)
 #endif
 	{
@@ -259,7 +259,7 @@ void SaveLoadChooserDialog::handleCommand(CommandSender *sender, uint32 cmd, uin
 	return Dialog::handleCommand(sender, cmd, data);
 }
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 	if (!CloudMan.isSyncing()) {
 		if (hasSavepathOverride) {
@@ -272,7 +272,7 @@ void SaveLoadChooserDialog::runSaveSync(bool hasSavepathOverride) {
 #endif
 
 void SaveLoadChooserDialog::handleTickle() {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	if (!_dialogWasShown && CloudMan.isSyncing()) {
 		Common::Array<Common::String> files = CloudMan.getSyncingFiles();
 		if (!files.empty()) {
@@ -317,7 +317,7 @@ void SaveLoadChooserDialog::reflowLayout() {
 }
 
 void SaveLoadChooserDialog::updateSaveList(bool external) {
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	Common::Array<Common::String> files = CloudMan.getSyncingFiles(); //returns empty array if not syncing
 	g_system->getSavefileManager()->updateSavefilesList(files);
 #endif
@@ -328,7 +328,7 @@ void SaveLoadChooserDialog::listSaves() {
 	if (!_metaEngine) return; //very strange
 	_saveList = _metaEngine->listSaves(_target.c_str(), _saveMode);
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	//if there is Cloud support, add currently synced files as "locked" saves in the list
 	if (_metaEngine->hasFeature(MetaEngine::kSimpleSavesNames)) {
 		Common::String pattern = _target + ".###";
@@ -401,7 +401,7 @@ ButtonWidget *SaveLoadChooserDialog::createSwitchButton(const Common::String &na
 }
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 void SaveLoadChooserDialog::pollCloudMan() {
 	_pollFrame = (_pollFrame + 1) % 60;
 	if (_pollFrame != 1)

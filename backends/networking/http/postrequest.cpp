@@ -19,10 +19,10 @@
  *
  */
 
-#include "backends/networking/curl/postrequest.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/postrequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 
 namespace Networking {
@@ -62,7 +62,7 @@ void PostRequest::start() {
 
 	Networking::JsonCallback innerCallback = new Common::Callback<PostRequest, const Networking::JsonResponse &>(this, &PostRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<PostRequest, const Networking::ErrorResponse &>(this, &PostRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorResponseCallback, _url);
+	Networking::HttpJsonRequest *request = new Networking::HttpJsonRequest(innerCallback, errorResponseCallback, _url);
 
 	if (_postData && _jsonData) {
 		warning("Error, both data and JSON present while calling %s", _url.c_str());
@@ -92,7 +92,7 @@ void PostRequest::responseCallback(const Networking::JsonResponse &response) {
 	if (response.request) _date = response.request->date();
 
 	Networking::ErrorResponse error(this, "PostRequest::responseCallback: unknown error");
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 

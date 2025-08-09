@@ -19,17 +19,14 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include <curl/curl.h>
 #include "backends/cloud/dropbox/dropboxstorage.h"
 #include "backends/cloud/dropbox/dropboxcreatedirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxinforequest.h"
 #include "backends/cloud/dropbox/dropboxlistdirectoryrequest.h"
 #include "backends/cloud/dropbox/dropboxuploadrequest.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
@@ -83,7 +80,7 @@ Networking::Request *DropboxStorage::streamFileById(const Common::String &path, 
 	jsonRequestParameters.setVal("path", new Common::JSONValue(path));
 	Common::JSONValue value(jsonRequestParameters);
 
-	Networking::CurlRequest *request = new Networking::CurlRequest(nullptr, nullptr, DROPBOX_API_FILES_DOWNLOAD); //TODO: is it OK to pass no callbacks?
+	Networking::HttpRequest *request = new Networking::HttpRequest(nullptr, nullptr, DROPBOX_API_FILES_DOWNLOAD); //TODO: is it OK to pass no callbacks?
 	request->addHeader("Authorization: Bearer " + _token);
 	request->addHeader("Dropbox-API-Arg: " + Common::JSON::stringify(&value));
 	request->addHeader("Content-Type: "); //required to be empty (as we do POST, it's usually app/form-url-encoded)

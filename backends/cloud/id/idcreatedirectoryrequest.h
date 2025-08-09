@@ -23,7 +23,7 @@
 #define BACKENDS_CLOUD_ID_IDCREATEDIRECTORYREQUEST_H
 
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/callback.h"
 
 namespace Cloud {

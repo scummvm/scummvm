@@ -19,36 +19,43 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_SESSION_H
-#define BACKENDS_NETWORKING_CURL_SESSION_H
+#if defined(ANDROID_BACKEND)
+#include "backends/platform/android/jni-android.h"
+#endif
 
-#include "backends/networking/curl/sessionrequest.h"
+#include "backends/networking/curl/cacert.h"
+
+#include "common/fs.h"
 
 namespace Networking {
 
-class Session {
-protected:
-	Common::String _prefix;
-	SessionRequest *_request;
+Common::String getCaCertPath() {
+#if defined(ANDROID_BACKEND)
+	// cacert path must exist on filesystem and be reachable by standard open syscall
+	// Lets use ScummVM internal directory
+	Common::String assetsPath = JNI::getScummVMAssetsPath();
+	return assetsPath + "/cacert.pem";
+#elif defined(DATA_PATH)
+	static enum {
+		kNotInitialized,
+		kFileNotFound,
+		kFileExists
+	} state = kNotInitialized;
 
-public:
-	Session(const Common::String &prefix = Common::String());
-	~Session();
+	if (state == kNotInitialized) {
+		Common::FSNode node(DATA_PATH "/cacert.pem");
+		state = node.exists() ? kFileExists : kFileNotFound;
+	}
 
-	SessionRequest *get(const Common::String &url, const Common::Path &localFile, DataCallback cb = nullptr, ErrorCallback ecb = nullptr, bool binary = false);
-	/**
-	 * @brief Gracefully close the session
-	 *
-	 */
-	void close();
+	if (state == kFileExists) {
+		return DATA_PATH "/cacert.pem";
+	} else {
+		return "";
+	}
+#else
+	return "";
+#endif
+}
 
-	/**
-	 * @brief Abort session and remove unfinished downloads if they go to local file
-	 *
-	 */
-	void abortRequest();
-};
 
 } // End of namespace Networking
-
-#endif

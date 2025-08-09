@@ -598,7 +598,8 @@ ifeq ($(this_lib_available), yes)
 	LDFLAGS += $(this_lib_flags)
 	INCLUDES += $(sharedlibs_this_lib_includes)
 	USE_LIBCURL := 1
-	DEFINES += -DUSE_CLOUD -DUSE_LIBCURL
+	USE_HTTP := 1
+	DEFINES += -DUSE_CLOUD -DUSE_LIBCURL -DUSE_HTTP
 else
 $(info System libcurl not available, dropping cloud feature.)
 endif

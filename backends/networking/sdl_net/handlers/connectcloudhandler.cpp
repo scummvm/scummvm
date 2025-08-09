@@ -22,7 +22,7 @@
 #include "backends/networking/sdl_net/handlers/connectcloudhandler.h"
 #include "backends/fs/fs-factory.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 #include "backends/networking/sdl_net/getclienthandler.h"
 #include "backends/networking/sdl_net/handlerutils.h"
 #include "backends/networking/sdl_net/localwebserver.h"

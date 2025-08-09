@@ -24,8 +24,8 @@
 
 #include "backends/cloud/storagefile.h"
 #include "backends/cloud/storageinfo.h"
-#include "backends/networking/curl/request.h"
-#include "backends/networking/curl/curlrequest.h"
+#include "backends/networking/http/request.h"
+#include "backends/networking/http/httprequest.h"
 #include "common/array.h"
 #include "common/callback.h"
 #include "common/mutex.h"

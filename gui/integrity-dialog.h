@@ -22,7 +22,7 @@
 #ifndef GUI_INTEGRITY_DIALOG_H
 #define GUI_INTEGRITY_DIALOG_H
 
-#include "backends/networking/curl/postrequest.h"
+#include "backends/networking/http/postrequest.h"
 
 #include "common/array.h"
 #include "common/formats/json.h"

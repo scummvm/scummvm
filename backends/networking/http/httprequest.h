@@ -19,30 +19,31 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_CURLREQUEST_H
-#define BACKENDS_NETWORKING_CURL_CURLREQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_HTTPREQUEST_H
+#define BACKENDS_NETWORKING_HTTP_HTTPREQUEST_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/path.h"
 #include "common/str.h"
 #include "common/array.h"
+#include "common/list.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
 
-struct curl_slist;
-
 namespace Networking {
+
+typedef Common::Array<Common::String> RequestHeaders;
 
 class NetworkReadStream;
 
 typedef Response<NetworkReadStream *> NetworkReadStreamResponse;
 typedef Common::BaseCallback<const NetworkReadStreamResponse &> *NetworkReadStreamCallback;
 
-class CurlRequest: public Request {
+class HttpRequest: public Request {
 protected:
 	Common::String _url;
 	NetworkReadStream *_stream;
-	curl_slist *_headersList;
+	RequestHeaders _headersList;
 	Common::String _postFields;
 	Common::HashMap<Common::String, Common::String> _formFields;
 	Common::HashMap<Common::String, Common::Path> _formFiles;
@@ -56,8 +57,8 @@ protected:
 	NetworkReadStream *makeStream();
 
 public:
-	CurlRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url);
-	~CurlRequest() override;
+	HttpRequest(DataCallback cb, ErrorCallback ecb, const Common::String &url);
+	~HttpRequest() override;
 
 	void handle() override;
 	void restart() override;

@@ -19,9 +19,7 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_ALLOW_ALL
-
-#include "backends/networking/curl/session.h"
+#include "backends/networking/http/session.h"
 
 namespace Networking {
 

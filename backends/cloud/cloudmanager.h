@@ -24,7 +24,7 @@
 
 #include "backends/cloud/storage.h"
 #include "backends/cloud/cloudicon.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 #include "common/array.h"
 #include "common/singleton.h"

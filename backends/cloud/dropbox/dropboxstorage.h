@@ -24,7 +24,7 @@
 
 #include "backends/cloud/basestorage.h"
 #include "common/callback.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Cloud {
 namespace Dropbox {

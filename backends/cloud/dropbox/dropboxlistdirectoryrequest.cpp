@@ -24,9 +24,9 @@
 #include "backends/cloud/dropbox/dropboxtokenrefresher.h"
 #include "backends/cloud/iso8601.h"
 #include "backends/cloud/storage.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
-#include "backends/networking/curl/networkreadstream.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
+#include "backends/networking/http/networkreadstream.h"
 #include "common/formats/json.h"
 #include "common/debug.h"
 
@@ -58,7 +58,7 @@ void DropboxListDirectoryRequest::start() {
 
 	Networking::JsonCallback callback = new Common::Callback<DropboxListDirectoryRequest, const Networking::JsonResponse &>(this, &DropboxListDirectoryRequest::responseCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<DropboxListDirectoryRequest, const Networking::ErrorResponse &>(this, &DropboxListDirectoryRequest::errorCallback);
-	Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, DROPBOX_API_LIST_FOLDER);
+	Networking::HttpJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, DROPBOX_API_LIST_FOLDER);
 	request->addHeader("Authorization: Bearer " + _storage->accessToken());
 	request->addHeader("Content-Type: application/json");
 
@@ -86,7 +86,7 @@ void DropboxListDirectoryRequest::responseCallback(const Networking::JsonRespons
 		_date = response.request->date();
 
 	Networking::ErrorResponse error(this, "DropboxListDirectoryRequest::responseCallback: unknown error");
-	const Networking::CurlJsonRequest *rq = (const Networking::CurlJsonRequest *)response.request;
+	const Networking::HttpJsonRequest *rq = (const Networking::HttpJsonRequest *)response.request;
 	if (rq && rq->getNetworkReadStream())
 		error.httpResponseCode = rq->getNetworkReadStream()->httpResponseCode();
 
@@ -131,23 +131,23 @@ void DropboxListDirectoryRequest::responseCallback(const Networking::JsonRespons
 
 		Common::JSONArray items = responseObject.getVal("entries")->asArray();
 		for (uint32 i = 0; i < items.size(); ++i) {
-			if (!Networking::CurlJsonRequest::jsonIsObject(items[i], "DropboxListDirectoryRequest"))
+			if (!Networking::HttpJsonRequest::jsonIsObject(items[i], "DropboxListDirectoryRequest"))
 				continue;
 
 			Common::JSONObject item = items[i]->asObject();
 
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, "path_lower", "DropboxListDirectoryRequest"))
+			if (!Networking::HttpJsonRequest::jsonContainsString(item, "path_lower", "DropboxListDirectoryRequest"))
 				continue;
-			if (!Networking::CurlJsonRequest::jsonContainsString(item, ".tag", "DropboxListDirectoryRequest"))
+			if (!Networking::HttpJsonRequest::jsonContainsString(item, ".tag", "DropboxListDirectoryRequest"))
 				continue;
 
 			Common::String path = item.getVal("path_lower")->asString();
 			bool isDirectory = (item.getVal(".tag")->asString() == "folder");
 			uint32 size = 0, timestamp = 0;
 			if (!isDirectory) {
-				if (!Networking::CurlJsonRequest::jsonContainsString(item, "server_modified", "DropboxListDirectoryRequest"))
+				if (!Networking::HttpJsonRequest::jsonContainsString(item, "server_modified", "DropboxListDirectoryRequest"))
 					continue;
-				if (!Networking::CurlJsonRequest::jsonContainsIntegerNumber(item, "size", "DropboxListDirectoryRequest"))
+				if (!Networking::HttpJsonRequest::jsonContainsIntegerNumber(item, "size", "DropboxListDirectoryRequest"))
 					continue;
 
 				size = item.getVal("size")->asIntegerNumber();
@@ -172,7 +172,7 @@ void DropboxListDirectoryRequest::responseCallback(const Networking::JsonRespons
 	}
 
 	if (hasMore) {
-		if (!Networking::CurlJsonRequest::jsonContainsString(responseObject, "cursor", "DropboxListDirectoryRequest")) {
+		if (!Networking::HttpJsonRequest::jsonContainsString(responseObject, "cursor", "DropboxListDirectoryRequest")) {
 			error.response = "\"has_more\" found, but \"cursor\" is not (or it's not a string)!";
 			finishError(error);
 			delete json;
@@ -181,7 +181,7 @@ void DropboxListDirectoryRequest::responseCallback(const Networking::JsonRespons
 
 		Networking::JsonCallback callback = new Common::Callback<DropboxListDirectoryRequest, const Networking::JsonResponse &>(this, &DropboxListDirectoryRequest::responseCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<DropboxListDirectoryRequest, const Networking::ErrorResponse &>(this, &DropboxListDirectoryRequest::errorCallback);
-		Networking::CurlJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, DROPBOX_API_LIST_FOLDER_CONTINUE);
+		Networking::HttpJsonRequest *request = new DropboxTokenRefresher(_storage, callback, failureCallback, DROPBOX_API_LIST_FOLDER_CONTINUE);
 		request->addHeader("Authorization: Bearer " + _storage->accessToken());
 		request->addHeader("Content-Type: application/json");
 

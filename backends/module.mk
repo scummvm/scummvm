@@ -27,8 +27,18 @@ MODULE_OBJS := \
 	saves/default/default-saves.o \
 	timer/default/default-timer.o
 
+ifdef USE_HTTP
+MODULE_OBJS += \
+	networking/http/connectionmanager.o \
+	networking/http/networkreadstream.o \
+	networking/http/httpjsonrequest.o \
+	networking/http/httprequest.o \
+	networking/http/postrequest.o \
+	networking/http/request.o \
+	networking/http/session.o \
+	networking/http/sessionrequest.o
+
 ifdef USE_CLOUD
-ifdef USE_LIBCURL
 MODULE_OBJS += \
 	cloud/basestorage.o \
 	cloud/cloudicon.o \
@@ -65,10 +75,8 @@ MODULE_OBJS += \
 	cloud/onedrive/onedrivelistdirectoryrequest.o \
 	cloud/onedrive/onedriveuploadrequest.o
 endif
-endif
 
 ifdef USE_SCUMMVMDLC
-ifdef USE_LIBCURL
 MODULE_OBJS += \
 	dlc/scummvmcloud.o
 endif
@@ -81,16 +89,14 @@ endif
 
 ifdef USE_LIBCURL
 MODULE_OBJS += \
-	networking/curl/connectionmanager.o \
-	networking/curl/networkreadstream.o \
-	networking/curl/curlrequest.o \
-	networking/curl/curljsonrequest.o \
-	networking/curl/postrequest.o \
-	networking/curl/request.o \
-	networking/curl/session.o \
-	networking/curl/sessionrequest.o \
+	networking/curl/cacert.o \
 	networking/curl/socket.o \
 	networking/curl/url.o
+ifdef USE_HTTP
+MODULE_OBJS += \
+	networking/http/curl/connectionmanager-curl.o \
+	networking/http/curl/networkreadstream-curl.o
+endif
 endif
 
 ifdef EMSCRIPTEN
@@ -99,11 +105,21 @@ MODULE_OBJS += \
 	fs/emscripten/emscripten-posix-fs.o \
 	fs/emscripten/http-fs.o \
 	midi/webmidi.o 
+ifdef USE_CLOUD
+MODULE_OBJS += \
+	fs/emscripten/cloud-fs.o
+endif
+ifdef USE_HTTP
+MODULE_OBJS += \
+	networking/http/emscripten/connectionmanager-emscripten.o \
+	networking/http/emscripten/networkreadstream-emscripten.o
+endif
 ifdef USE_TTS
 MODULE_OBJS += \
 	text-to-speech/emscripten/emscripten-text-to-speech.o
 endif
 endif
+
 ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/client.o \
@@ -121,14 +137,10 @@ MODULE_OBJS += \
 	networking/sdl_net/localwebserver.o \
 	networking/sdl_net/reader.o \
 	networking/sdl_net/uploadfileclienthandler.o
-endif
 
 ifdef USE_CLOUD
-ifdef USE_LIBCURL
-ifdef USE_SDL_NET
 MODULE_OBJS += \
 	networking/sdl_net/handlers/connectcloudhandler.o
-endif
 endif
 endif
 

@@ -73,13 +73,11 @@
 #include "backends/keymapper/keymapper.h"
 
 #ifdef USE_CLOUD
-#ifdef USE_LIBCURL
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/connectionmanager.h"
+#include "backends/networking/http/connectionmanager.h"
 #endif
 #ifdef USE_SDL_NET
 #include "backends/networking/sdl_net/localwebserver.h"
-#endif
 #endif
 
 #if defined(__DC__)
@@ -696,7 +694,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	}
 #endif
 
-#if defined(USE_CLOUD) && defined(USE_LIBCURL)
+#ifdef USE_CLOUD
 	CloudMan.init();
 	CloudMan.syncSaves();
 #endif
@@ -889,15 +887,13 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			launcherDialog();
 		}
 	}
-#ifdef USE_CLOUD
 #ifdef USE_SDL_NET
 	Networking::LocalWebserver::destroy();
 #endif
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 	Networking::ConnectionManager::destroy();
 	//I think it's important to destroy it after ConnectionManager
 	Cloud::CloudManager::destroy();
-#endif
 #endif
 	PluginManager::destroy();
 	GUI::GuiManager::destroy();

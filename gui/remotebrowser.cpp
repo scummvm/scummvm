@@ -28,7 +28,7 @@
 #include "common/algorithm.h"
 
 #include "common/translation.h"
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "backends/cloud/storage.h"
 #include "backends/cloud/cloudmanager.h"
 #include "gui/message.h"

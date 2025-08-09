@@ -19,11 +19,11 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_POSTREQUEST_H
-#define BACKENDS_NETWORKING_CURL_POSTREQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_POSTREQUEST_H
+#define BACKENDS_NETWORKING_HTTP_POSTREQUEST_H
 
-#include "backends/networking/curl/request.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/request.h"
+#include "backends/networking/http/httpjsonrequest.h"
 
 namespace Networking {
 

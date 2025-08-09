@@ -21,8 +21,8 @@
 
 #include "backends/cloud/basestorage.h"
 #include "backends/cloud/cloudmanager.h"
-#include "backends/networking/curl/connectionmanager.h"
-#include "backends/networking/curl/curljsonrequest.h"
+#include "backends/networking/http/connectionmanager.h"
+#include "backends/networking/http/httpjsonrequest.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/formats/json.h"
@@ -43,7 +43,7 @@ void BaseStorage::getAccessToken(const Common::String &code, Networking::ErrorCa
 	Networking::ErrorCallback errorCallback = new Common::CallbackBridge<BaseStorage, const Networking::ErrorResponse &, const Networking::ErrorResponse &>(this, &BaseStorage::codeFlowFailed, callback);
 
 	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/token/%s", cloudProvider().c_str(), code.c_str());
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
+	Networking::HttpJsonRequest *request = new Networking::HttpJsonRequest(innerCallback, errorCallback, url);
 
 	addRequest(request);
 }
@@ -68,7 +68,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, const Net
 	Common::JSONObject result;
 	if (success) {
 		result = json->asObject();
-		if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::codeFlowComplete")) {
+		if (!Networking::HttpJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::codeFlowComplete")) {
 			warning("BaseStorage: bad response, no 'error' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
@@ -78,7 +78,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, const Net
 
 	if (success && result.getVal("error")->asBool()) {
 		Common::String errorMessage = "{error: true}, message is missing";
-		if (Networking::CurlJsonRequest::jsonContainsString(result, "message", "BaseStorage::codeFlowComplete")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(result, "message", "BaseStorage::codeFlowComplete")) {
 			errorMessage = result.getVal("message")->asString();
 		}
 		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
@@ -86,7 +86,7 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, const Net
 		callbackMessage = errorMessage;
 	}
 
-	if (success && !Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
+	if (success && !Networking::HttpJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::codeFlowComplete")) {
 		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
 		success = false;
@@ -97,8 +97,8 @@ void BaseStorage::codeFlowComplete(Networking::ErrorCallback callback, const Net
 	bool requiresRefreshToken = needsRefreshToken();
 	if (success) {
 		oauth = result.getVal("oauth")->asObject();
-		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
-			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
+		if (!Networking::HttpJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::codeFlowComplete") ||
+			!Networking::HttpJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::codeFlowComplete", !requiresRefreshToken)) {
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
@@ -145,7 +145,7 @@ void BaseStorage::refreshAccessToken(BoolCallback callback, Networking::ErrorCal
 		errorCallback = getErrorPrintingCallback();
 
 	Common::String url = Common::String::format("https://cloud.scummvm.org/%s/refresh", cloudProvider().c_str());
-	Networking::CurlJsonRequest *request = new Networking::CurlJsonRequest(innerCallback, errorCallback, url);
+	Networking::HttpJsonRequest *request = new Networking::HttpJsonRequest(innerCallback, errorCallback, url);
 	request->addHeader("X-ScummVM-Refresh-Token: " + _refreshToken);
 	addRequest(request);
 }
@@ -167,7 +167,7 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, const Networking::JsonRe
 	Common::JSONObject result;
 	if (success) {
 		result = json->asObject();
-		if (!Networking::CurlJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::tokenRefreshed")) {
+		if (!Networking::HttpJsonRequest::jsonContainsAttribute(result, "error", "BaseStorage::tokenRefreshed")) {
 			warning("BaseStorage: bad response, no 'error' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;
@@ -176,14 +176,14 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, const Networking::JsonRe
 
 	if (success && result.getVal("error")->asBool()) {
 		Common::String errorMessage = "{error: true}, message is missing";
-		if (Networking::CurlJsonRequest::jsonContainsString(result, "message", "BaseStorage::tokenRefreshed")) {
+		if (Networking::HttpJsonRequest::jsonContainsString(result, "message", "BaseStorage::tokenRefreshed")) {
 			errorMessage = result.getVal("message")->asString();
 		}
 		warning("BaseStorage: response says error occurred: %s", errorMessage.c_str());
 		success = false;
 	}
 
-	if (success && !Networking::CurlJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::tokenRefreshed")) {
+	if (success && !Networking::HttpJsonRequest::jsonContainsObject(result, "oauth", "BaseStorage::tokenRefreshed")) {
 		warning("BaseStorage: bad response, no 'oauth' attribute passed");
 		debug(9, "%s", json->stringify(true).c_str());
 		success = false;
@@ -193,8 +193,8 @@ void BaseStorage::tokenRefreshed(BoolCallback callback, const Networking::JsonRe
 	bool requiresRefreshToken = !canReuseRefreshToken();
 	if (success) {
 		oauth = result.getVal("oauth")->asObject();
-		if (!Networking::CurlJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
-			!Networking::CurlJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
+		if (!Networking::HttpJsonRequest::jsonContainsString(oauth, "access_token", "BaseStorage::tokenRefreshed") ||
+			!Networking::HttpJsonRequest::jsonContainsString(oauth, "refresh_token", "BaseStorage::tokenRefreshed", !requiresRefreshToken)) {
 			warning("BaseStorage: bad response, no 'access_token' or 'refresh_token' attribute passed");
 			debug(9, "%s", json->stringify(true).c_str());
 			success = false;

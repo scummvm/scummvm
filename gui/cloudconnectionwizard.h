@@ -22,7 +22,7 @@
 #ifndef GUI_CLOUDCONNECTIONWIZARD_H
 #define GUI_CLOUDCONNECTIONWIZARD_H
 
-#include "backends/networking/curl/request.h"
+#include "backends/networking/http/request.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "gui/dialog.h"
@@ -123,6 +123,10 @@ class CloudConnectionWizard : public Dialog {
 	void storageConnectionCallback(const Networking::ErrorResponse &response);
 	void manualModeConnect();
 	void manualModeStorageConnectionCallback(const Networking::ErrorResponse &response);
+
+#ifdef EMSCRIPTEN
+	void emscriptenCloudConnectionCallback(const Common::String *message);
+#endif
 
 public:
 	CloudConnectionWizard();

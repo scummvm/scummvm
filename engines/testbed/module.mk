@@ -18,10 +18,8 @@ MODULE_OBJS := \
 	video.o
 
 ifdef USE_CLOUD
-ifdef USE_LIBCURL
 MODULE_OBJS += \
 	cloud.o
-endif
 endif
 
 ifdef USE_SDL_NET

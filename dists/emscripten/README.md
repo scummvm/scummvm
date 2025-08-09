@@ -79,9 +79,11 @@ ScummVM relies heavily on Asyncify (see note above), and this comes with a quite
       * Persist last game and last plugin for offline use
       * Pre-load assets asynchronously (not blocking) - i.e. rest of the data of a game which has been launched
       * Loading indicators (doesn't work with the current synchronous/blocking filesystem)
-*   Add support for save games (and game data?) on personal cloud storage (Dropbox, Google Drive).
-
 Emscripten is currently re-doing their filesystem code, which could help address some of the above issues ( emscripten-core/emscripten#15041 ).
+* Locally persisted file system for saved games and settings using the Browser IndexedDB. (using [Emscripten IDBFS](https://emscripten.org/docs/api_reference/Filesystem-API.html#filesystem-api-idbfs))
+* Cloud storage (Dropbox, Google Drive etc.) is exposed as a special folder on the file system. Only read access is implemented, but saved games can be synchronized via the regular cloud sync feature
+* Screenshots and Logfiles are automatically downloaded after creation
+* All other data is stored in memory and removed on reload (incl. temporarily stored logfiles and screenshots)
 
 ### UI Integration
 *   Build a nice webpage around the canvas.

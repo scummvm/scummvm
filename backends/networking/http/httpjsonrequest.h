@@ -19,10 +19,10 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
-#define BACKENDS_NETWORKING_CURL_CURLJSONREQUEST_H
+#ifndef BACKENDS_NETWORKING_HTTP_HTTPJSONREQUEST_H
+#define BACKENDS_NETWORKING_HTTP_HTTPJSONREQUEST_H
 
-#include "backends/networking/curl/curlrequest.h"
+#include "backends/networking/http/httprequest.h"
 #include "common/memstream.h"
 #include "common/formats/json.h"
 
@@ -32,9 +32,9 @@ typedef Response<const Common::JSONValue *> JsonResponse;
 typedef Common::BaseCallback<const JsonResponse &> *JsonCallback;
 typedef Common::BaseCallback<const Common::JSONValue *> *JSONValueCallback;
 
-#define CURL_JSON_REQUEST_BUFFER_SIZE 512 * 1024
+#define HTTP_JSON_REQUEST_BUFFER_SIZE 512 * 1024
 
-class CurlJsonRequest: public CurlRequest {
+class HttpJsonRequest: public HttpRequest {
 protected:
 	JsonCallback _jsonCallback;
 	Common::MemoryWriteStreamDynamic _contentsStream;
@@ -44,8 +44,8 @@ protected:
 	virtual void finishJson(const Common::JSONValue *json);
 
 public:
-	CurlJsonRequest(JsonCallback cb, ErrorCallback ecb, const Common::String &url);
-	~CurlJsonRequest() override;
+	HttpJsonRequest(JsonCallback cb, ErrorCallback ecb, const Common::String &url);
+	~HttpJsonRequest() override;
 
 	void handle() override;
 	void restart() override;

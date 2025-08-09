@@ -64,7 +64,7 @@ bool FilesBaseHandler::urlToPath(Common::String &url, Common::Path &path, Common
 		baseUrl = "/saves/";
 
 		// determine savepath (prefix to remove)
-#ifdef USE_LIBCURL
+#ifdef USE_CLOUD
 		DefaultSaveFileManager *manager = dynamic_cast<DefaultSaveFileManager *>(g_system->getSavefileManager());
 		basePath = (manager ? manager->concatWithSavesPath("") : ConfMan.getPath("savepath"));
 #else
