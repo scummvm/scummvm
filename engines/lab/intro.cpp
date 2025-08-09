@@ -63,7 +63,7 @@ void Intro::introEatMessages() {
 			return;
 
 		if ((msg->_msgClass == kMessageRightClick)
-		 || ((msg->_msgClass == kMessageRawKey) && (msg->_code == Common::KEYCODE_ESCAPE)))
+		 || ((msg->_msgClass == kMessageAction) && (msg->_code == kActionSkipIntro)))
 			_quitIntro = true;
 	}
 }
@@ -148,7 +148,7 @@ void Intro::doPictText(const Common::String &filename, bool isScreen) {
 			uint16 code = msg->_code;
 
 			if ((msgClass == kMessageRightClick) ||
-				((msgClass == kMessageRawKey) && (code == Common::KEYCODE_ESCAPE))) {
+				((msgClass == kMessageAction) && (code == kActionSkipIntro))) {
 				_quitIntro = true;
 
 				if (isScreen)
