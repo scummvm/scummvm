@@ -25,6 +25,10 @@
 #include "prince/prince.h"
 #include "prince/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Prince {
 
 #ifdef USE_TTS
@@ -108,6 +112,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	bool removeSaveState(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool PrinceMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -213,6 +218,61 @@ bool PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const Prince::PrinceGameDescription *desc) const {
 	*engine = new Prince::PrinceEngine(syst,desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray PrinceMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Prince;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "prince-default", _("Default keymappings"));
+
+	Common::Action *act;
+
+	act = new Common::Action(kStandardActionLeftClick, _("Move / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action(kStandardActionRightClick, _("Open interaction menu"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Common::Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F1");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F2");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	// I18N: This refers to the Z key on a keyboard.
+	act = new Action("Z", _("Z key")); // TODO: Rename this action to better reflect its use in the prison cell minigame near the end of the game.
+	act->setCustomEngineActionEvent(kActionZ);
+	act->addDefaultInputMapping("z");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	// I18N: This refers to the X key on a keyboard.
+	act = new Action("X", _("X key")); // TODO: Rename this action to better reflect its use in the prison cell minigame near the end of the game.
+	act->setCustomEngineActionEvent(kActionX);
+	act->addDefaultInputMapping("x");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRINCE)

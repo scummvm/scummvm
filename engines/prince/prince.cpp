@@ -522,8 +522,8 @@ void PrinceEngine::showLogo() {
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
 				switch (event.type) {
-				case Common::EVENT_KEYDOWN:
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+					if (event.customType == kActionSkip) {
 						stopSample(0);
 						return;
 					}
@@ -640,27 +640,27 @@ void PrinceEngine::setMobTranslationTexts() {
 }
 
 void PrinceEngine::keyHandler(Common::Event event) {
-	uint16 nChar = event.kbd.keycode;
+	uint16 nChar = event.customType;
 	switch (nChar) {
-	case Common::KEYCODE_F1:
+	case kActionSave:
 		if (canLoadGameStateCurrently())
 			scummVMSaveLoadDialog(false);
 		break;
-	case Common::KEYCODE_F2:
+	case kActionLoad:
 		if (canSaveGameStateCurrently())
 			scummVMSaveLoadDialog(true);
 		break;
-	case Common::KEYCODE_z:
+	case kActionZ: // This refers to the "z" key on the keyboard. It is used to play a prison escape mini-game near the end of the game.
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 1);
 		}
 		break;
-	case Common::KEYCODE_x:
+	case kActionX: // This refers to the "x" key on the keyboard. It is used to play a prison escape mini-game near the end of the game.
 		if (_flags->getFlagValue(Flags::POWERENABLED)) {
 			_flags->setFlagValue(Flags::MBFLAG, 2);
 		}
 		break;
-	case Common::KEYCODE_ESCAPE:
+	case kActionSkip:
 		if (_intro) {
 			stopTextToSpeech();
 			_intro = false;
@@ -829,7 +829,7 @@ void PrinceEngine::showTexts(Graphics::Surface *screen) {
 
 		text._time--;
 		if (!text._time) {
-			if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_speech") || 
+			if (ttsMan != nullptr && (ConfMan.getBool("tts_enabled_speech") ||
 				ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_missing_voice")) && ttsMan->isSpeaking()) {
 				text._time = 1;
 				continue;
@@ -843,9 +843,9 @@ void PrinceEngine::sayText(const Common::String &text, bool isSpeech, Common::Te
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	// Only voice subtitles if either this is a version with no voices or the speech volume is muted (the English/Spanish
 	// translations still have dubs in different languages, so don't voice the subtitles unless the dub is muted)
-	bool speak = (!isSpeech && ConfMan.getBool("tts_enabled_objects")) || 
-				 (isSpeech && ConfMan.getBool("tts_enabled_speech") && 
-				 (getFeatures() & GF_NOVOICES || ConfMan.getInt("speech_volume") == 0 || ConfMan.getBool("subtitles"))); 
+	bool speak = (!isSpeech && ConfMan.getBool("tts_enabled_objects")) ||
+				 (isSpeech && ConfMan.getBool("tts_enabled_speech") &&
+				 (getFeatures() & GF_NOVOICES || ConfMan.getInt("speech_volume") == 0 || ConfMan.getBool("subtitles")));
 	if (ttsMan != nullptr && speak) {
 		Common::String ttsText(text);
 		// Some emotive text has a < at the front, which causes the entire text to not be voiced by the TTS system
@@ -893,7 +893,7 @@ Common::U32String PrinceEngine::convertText(const Common::String &text) const {
 	int i = 0;
 	for (const byte *b = bytes; *b; ++b) {
 		bool inTable = checkConversionTable(b, i, convertedBytes, conversionTable);
-		
+
 		if (_credits && !inTable) {
 			if (*b == 0x2a) {	// * in credits
 				convertedBytes[i] = 0x20;
@@ -950,7 +950,7 @@ void PrinceEngine::setTTSVoice(uint8 textColor) const {
 			// there may be different characters with the same text colors in different locations, and rarely
 			// different characters with the same text colors in the same location. Using the location number and/or
 			// mob index differentiates characters in these cases
-			if (characterVoiceData[i].textColor == textColor && 
+			if (characterVoiceData[i].textColor == textColor &&
 				(characterVoiceData[i].locationNumber == 0 || characterVoiceData[i].locationNumber == _locationNr) &&
 				(characterVoiceData[i].mobIndex == -1 || characterVoiceData[i].mobIndex == _dialogMob)) {
 				id = i;
@@ -1216,7 +1216,7 @@ void PrinceEngine::dialogRun() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -1441,8 +1441,8 @@ void PrinceEngine::scrollCredits() {
 			Common::Event event;
 			Common::EventManager *eventMan = _system->getEventManager();
 			while (eventMan->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START) {
+					if (event.customType == kActionSkip) {
 						blackPalette();
 						return;
 					}
@@ -1489,7 +1489,7 @@ void PrinceEngine::mainLoop() {
 		Common::EventManager *eventMan = _system->getEventManager();
 		while (eventMan->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				keyHandler(event);
 				break;
 			case Common::EVENT_LBUTTONDOWN:
