@@ -193,4 +193,8 @@ void Game::notEnoughObjectDataRead(const char *room, int64 filePos, int64 object
 	_message("Did not read enough data (%dll < %dll) for an object in room %s", filePos, objectEnd, room);
 }
 
+void Game::invalidVideo(int32 videoId, const char *context) {
+	_message("Could not play video %d (%s)", videoId, context);
+}
+
 }

@@ -30,6 +30,7 @@
 #include "graphics/framelimiter.h"
 #include "graphics/thumbnail.h"
 #include "image/png.h"
+#include "video/avi_decoder.h"
 #include "video/mpegps_decoder.h"
 
 #include "alcachofa.h"
@@ -56,6 +57,7 @@ AlcachofaEngine::AlcachofaEngine(OSystem *syst, const ADGameDescription *gameDes
 	: Engine(syst)
 	, _gameDescription(gameDesc)
 	, _eventLoopSemaphore("engine") {
+	assert(gameDesc != nullptr);
 	g_engine = this;
 }
 
@@ -129,19 +131,37 @@ Common::Error AlcachofaEngine::run() {
 }
 
 void AlcachofaEngine::playVideo(int32 videoId) {
+	// Video files are either MPEG PS or AVI
 	FakeLock lock("playVideo", _eventLoopSemaphore);
-	Video::MPEGPSDecoder decoder;
-	if (!decoder.loadFile(Common::Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1))))
-		error("Could not find video %d", videoId);
-	_sounds.stopAll();
-	auto texture = _renderer->createTexture(decoder.getWidth(), decoder.getHeight(), false);
-	decoder.start();
+	File *file = new File();
+	if (!file->open(Path(Common::String::format("Data/DATA%02d.BIN", videoId + 1)))) {
+		game().invalidVideo(videoId, "open file");
+		return;
+	}
+	char magic[4];
+	if (file->read(magic, sizeof(magic)) != sizeof(magic) || !file->seek(0)) {
+		delete file;
+		game().invalidVideo(videoId, "read magic");
+		return;
+	}
+	ScopedPtr<Video::VideoDecoder> decoder;
+	if (memcmp(magic, "RIFF", sizeof(magic)) == 0)
+		decoder.reset(new Video::AVIDecoder());
+	else
+		decoder.reset(new Video::MPEGPSDecoder());
+	if (!decoder->loadStream(file)) {
+		game().invalidVideo(videoId, "decode video");
+		return;
+	}
 
+	_sounds.stopAll();
+	auto texture = _renderer->createTexture(decoder->getWidth(), decoder->getHeight(), false);
 	Common::Event e;
-	while (!decoder.endOfVideo() && !shouldQuit()) {
-		if (decoder.needsUpdate())
+	decoder->start();
+	while (!decoder->endOfVideo() && !shouldQuit()) {
+		if (decoder->needsUpdate())
 		{
-			auto surface = decoder.decodeNextFrame();
+			auto surface = decoder->decodeNextFrame();
 			if (surface)
 				texture->update(*surface);
 			_renderer->begin();
@@ -161,9 +181,9 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 		if (_input.wasAnyMouseReleased() || _input.wasMenuKeyPressed())
 			break;
 
-		g_system->delayMillis(decoder.getTimeToNextFrame());
+		g_system->delayMillis(decoder->getTimeToNextFrame());
 	}
-	decoder.stop();
+	decoder->stop();
 }
 
 void AlcachofaEngine::fadeExit() {
