@@ -64,6 +64,7 @@ protected:
 	void cmdObject();
 	void cmdEndObject();
 	void cmdJumpLook();
+	void cmdJumpOpen();
 	void cmdJumpHelp();
 	void cmdJumpGet();
 	void cmdJumpMove();
