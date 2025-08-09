@@ -62,6 +62,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Lure:
    - Added Russian version support to lure.dat.
 
+MADE:
+  - Added Text-to-Speech support.
+
  MM:
    - Fixed protection from elements spell.
 
