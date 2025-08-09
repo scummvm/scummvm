@@ -149,6 +149,7 @@ bool GlobalUI::updateChangingCharacter() {
 	g_engine->camera().setFollow(player.activeCharacter());
 	g_engine->camera().restore(0);
 	player.changeRoom(player.activeCharacter()->room()->name(), false);
+	g_engine->game().onUserChangedCharacter();
 
 	int32 characterJingle = g_engine->script().variable(
 		player.activeCharacterKind() == MainCharacterKind::Mortadelo
