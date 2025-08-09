@@ -91,7 +91,7 @@ void Menu::updateOpeningMenu() {
 	_savefiles = _saveFileMgr->listSavefiles(g_engine->getSaveStatePattern());
 	sort(_savefiles.begin(), _savefiles.end()); // the pattern ensures that the last file has the greatest slot
 	_selectedSavefileI = _savefiles.size();
-	updateSelectedSavefile();
+	updateSelectedSavefile(false);
 
 	g_engine->player().heldItem() = nullptr;
 	g_engine->scheduler().backupContext();
@@ -106,7 +106,7 @@ static int parseSavestateSlot(const String &filename) {
 	return atoi(filename.c_str() + filename.size() - 3);
 }
 
-void Menu::updateSelectedSavefile() {
+void Menu::updateSelectedSavefile(bool hasJustSaved) {
 	auto getButton = [] (const char *name) {
 		MenuButton *button = dynamic_cast<MenuButton *>(g_engine->player().currentRoom()->getObjectByName(name));
 		scumm_assert(button != nullptr);
@@ -118,7 +118,11 @@ void Menu::updateSelectedSavefile() {
 	getButton("ANTERIOR")->toggle(_selectedSavefileI > 0);
 	getButton("SIGUIENTE")->toggle(isOldSavefile);
 
-	if (isOldSavefile) {
+	if (hasJustSaved) {
+		// we just saved in-game so we also still have the correct thumbnail in memory
+		_selectedThumbnail.copyFrom(_bigThumbnail);
+	}
+	else if (isOldSavefile) {
 		if (!tryReadOldSavefile()) {
 			_selectedSavefileDescription = String::format("Savestate %d",
 				parseSavestateSlot(_savefiles[_selectedSavefileI]));
@@ -126,6 +130,7 @@ void Menu::updateSelectedSavefile() {
 		}
 	}
 	else {
+		// the unsaved gamestate is shown as grayscale
 		_selectedThumbnail.copyFrom(_bigThumbnail);
 		convertToGrayscale(_selectedThumbnail);
 	}
@@ -200,13 +205,13 @@ void Menu::triggerMainMenuAction(MainMenuAction action) {
 	case MainMenuAction::NextSave:
 		if (_selectedSavefileI < _savefiles.size()) {
 			_selectedSavefileI++;
-			updateSelectedSavefile();
+			updateSelectedSavefile(false);
 		}
 		break;
 	case MainMenuAction::PrevSave:
 		if (_selectedSavefileI > 0) {
 			_selectedSavefileI--;
-			updateSelectedSavefile();
+			updateSelectedSavefile(false);
 		}
 		break;
 	case MainMenuAction::NewGame:
@@ -232,10 +237,9 @@ void Menu::triggerLoad() {
 }
 
 void Menu::triggerSave() {
-	String fileName, desc;
+	String fileName;
 	if (_selectedSavefileI < _savefiles.size()) {
 		fileName = _savefiles[_selectedSavefileI]; // overwrite a previous save
-		desc = _selectedSavefileDescription;
 	}
 	else {
 		// for a new savefile we figure out the next slot index
@@ -243,7 +247,7 @@ void Menu::triggerSave() {
 			? 1 // start at one to keep autosave alone
 			: parseSavestateSlot(_savefiles.back()) + 1;
 		fileName = g_engine->getSaveStateName(nextSlot);
-		desc = String::format("Savestate %d", nextSlot);
+		_selectedSavefileDescription = String::format("Savestate %d", nextSlot);
 	}
 
 	Error error(kNoError);
@@ -253,9 +257,9 @@ void Menu::triggerSave() {
 	else
 		error = g_engine->saveGameStream(savefile.get());
 	if (error.getCode() == kNoError) {
-		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), desc, false);
+		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), _selectedSavefileDescription, false);
 		_savefiles.push_back(fileName);
-		updateSelectedSavefile();
+		updateSelectedSavefile(true);
 	}
 	else {
 		GUI::MessageDialog dialog(error.getTranslatedDesc());
@@ -363,7 +367,7 @@ void Menu::continueMainMenu() {
 		true
 	);
 
-	updateSelectedSavefile();
+	updateSelectedSavefile(false);
 }
 
 const Graphics::Surface *Menu::getBigThumbnail() const {

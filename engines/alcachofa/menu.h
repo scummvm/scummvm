@@ -82,7 +82,7 @@ public:
 
 private:
 	void triggerSave();
-	void updateSelectedSavefile();
+	void updateSelectedSavefile(bool hasJustSaved);
 	bool tryReadOldSavefile();
 	void continueGame();
 	void continueMainMenu();
