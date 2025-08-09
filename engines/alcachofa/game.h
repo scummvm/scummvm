@@ -87,6 +87,7 @@ public:
 	virtual void invalidSNDFormat(uint format, uint channels, uint freq, uint bps);
 	virtual void notEnoughRoomDataRead(const char *path, int64 filePos, int64 objectEnd);
 	virtual void notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd);
+	virtual void invalidVideo(int32 videoId, const char *context);
 
 	static Game *createForMovieAdventure();
 
