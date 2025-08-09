@@ -36,6 +36,8 @@ Game::Game()
 {
 }
 
+void Game::onLoadedGameFiles() {}
+
 bool Game::doesRoomHaveBackground(const Room *room) {
 	return true;
 }
@@ -191,6 +193,10 @@ void Game::notEnoughRoomDataRead(const char *path, int64 filePos, int64 roomEnd)
 
 void Game::notEnoughObjectDataRead(const char *room, int64 filePos, int64 objectEnd) {
 	_message("Did not read enough data (%dll < %dll) for an object in room %s", filePos, objectEnd, room);
+}
+
+bool Game::isKnownBadVideo(int32 videoId) {
+	return false;
 }
 
 void Game::invalidVideo(int32 videoId, const char *context) {
