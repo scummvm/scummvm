@@ -267,9 +267,9 @@ void Player::walkUp() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
-		//	warning("TODO: walkUp - si = 0?");
+		// TODO: Implement step sounds also for Amazon? (_frame == 17 || _frame == 21))
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
+			_vm->_sound->playSound(0);
 
 		if (++_frame > _upWalkMax)
 			_frame = _upWalkMin;
@@ -297,9 +297,9 @@ void Player::walkDown() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
-		//	warning("TODO: walkDown - si = 0?");
+		// TODO: Implement step sounds also for Amazon? (_frame == 10 || _frame == 14)
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
+			_vm->_sound->playSound(0);
 
 		if (++_frame > _downWalkMax)
 			_frame = _downWalkMin;
@@ -338,9 +338,9 @@ void Player::walkLeft() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkLeft - si = 0?");
+		// TODO: Implement step sounds also for Amazon? (_frame == 1 || _frame == 5)
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _sideWalkMax)
 			_frame = _sideWalkMin;
@@ -378,6 +378,10 @@ void Player::walkRight() {
 		_rawPlayer.x = _rawXTemp;
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
+
+		// TODO: Implement step sounds also for Amazon
+		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
 
 		// Useless check removed
 		if (_frame > _sideWalkMax)
@@ -746,8 +750,9 @@ bool Player::scrollUp(int forcedAmount) {
 		_scrollAmount = forcedAmount;
 
 	if ((_vm->_scrollRow + _vm->_screen->_vWindowHeight) >=
-			_vm->_room->_playFieldHeight)
+			_vm->_room->_playFieldHeight) {
 		return true;
+	}
 
 	_scrollFlag = true;
 	_vm->_scrollY = _vm->_scrollY + _scrollAmount;
@@ -844,7 +849,7 @@ bool Player::scrollRight(int forcedAmount) {
 		do {
 			_vm->_scrollX += TILE_WIDTH;
 			if (--_vm->_scrollCol < 0) {
-				_scrollEnd = true;
+				_scrollEnd = 1;
 				_vm->_scrollX = 0;
 				_vm->_scrollCol = 0;
 				return true;
