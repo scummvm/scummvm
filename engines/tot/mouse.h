@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef TOT_MOUSEMAN_H
-#define TOT_MOUSEMAN_H
+#ifndef TOT_MOUSE_H
+#define TOT_MOUSE_H
 
 #include "common/rect.h"
 #include "common/scummsys.h"

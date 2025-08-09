@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef TOT_SOUNDMAN_H
-#define TOT_SOUNDMAN_H
+#ifndef TOT_SOUND_H
+#define TOT_SOUND_H
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
@@ -29,7 +29,7 @@
 #include "audio/mixer.h"
 #include "common/file.h"
 
-#include "engines/tot/midi.h"
+#include "tot/midi.h"
 
 namespace Tot {
 const int kSfxId = 1;

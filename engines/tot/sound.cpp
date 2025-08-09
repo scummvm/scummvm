@@ -30,7 +30,7 @@
 #include "common/memstream.h"
 #include "common/substream.h"
 
-#include "tot/soundman.h"
+#include "tot/sound.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 

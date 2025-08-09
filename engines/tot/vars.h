@@ -18,8 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#ifndef TOT_PLAYANIM_H
-#define TOT_PLAYANIM_H
+#ifndef TOT_VARS_H
+#define TOT_VARS_H
 
 #include "common/file.h"
 #include "common/memstream.h"
@@ -130,7 +130,7 @@ struct ScreenObject {
 	uint16 afterUseTextRef;  /* Text reference after using object */
 	uint16 pickTextRef;      /* Text reference when picking up object */
 	uint16 useTextRef;       /* Text reference when using object */
-	byte habla;              /* whether the object talks or not */
+	byte speaking;              /* whether the object talks or not */
 	bool openable;           /* true if it can be opened */
 	bool closeable;          /* true if it can be closed*/
 	byte used[8];			 /* flags (one per original savegame) on whether the object has been used */
@@ -374,12 +374,12 @@ extern InventoryEntry mobj[inventoryIconCount];
 /**
  * Keeps an array of all inventory icon bitmaps
  */
-extern byte *mochilaxms[inventoryIconCount];
+extern byte *inventoryIconBitmaps[inventoryIconCount];
 
 /**
  * Delay of palette animation
  */
-extern byte saltospal;
+extern byte palAnimStep;
 /**
  * Position within inventory
  */
@@ -419,7 +419,7 @@ extern byte secondaryAnimDirCount;
 /**
  * Data protection control
  */
-extern byte contadorpc, contadorpc2;
+extern byte cpCounter, cpCounter2;
 /**
  * Coordinates of target step
  */
@@ -431,7 +431,7 @@ extern byte destinationStepX, destinationStepY;
  * 2: downwards
  * 3: left
  */
-extern byte characterFacingDir;
+extern byte charFacingDirection;
 
 /**
  * Width and height of secondary animation
@@ -580,7 +580,7 @@ extern ObjectInfo depthMap[numScreenOverlays];
 /**
  * Bitmaps of screenobjects
  */
-extern byte *screenObjects[numScreenOverlays];
+extern byte *screenLayers[numScreenOverlays];
 /**
  * Current frame of main character
  */

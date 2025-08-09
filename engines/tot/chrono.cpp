@@ -26,9 +26,9 @@
 
 namespace Tot {
 
-bool tocapintar = false;
-bool tocapintar2 = false;
-bool tocapintareffect = false;
+bool timeToDraw = false;
+bool timeToDraw2 = false;
+bool timeToDrawEffect = false;
 
 ChronoManager::ChronoManager(/* args */) : _lastTick(0), _lastDoubleTick(0) {
 }
@@ -40,17 +40,17 @@ void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
 	if ((currentTime - _lastTick) >= kFrameMs / _speedMultiplier) {
-		tocapintar = true;
+		timeToDraw = true;
 		tocapintarTick++;
 		if (tocapintarTick == kDoubleFrameMultiplier) {
 			tocapintarTick = 0;
-			tocapintar2 = true;
+			timeToDraw2 = true;
 		} else {
-			tocapintar2 = false;
+			timeToDraw2 = false;
 		}
 		_lastTick = currentTime;
 	} else {
-		tocapintar = false;
+		timeToDraw = false;
 	}
 }
 

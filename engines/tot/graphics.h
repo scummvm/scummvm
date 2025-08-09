@@ -21,8 +21,8 @@
 #ifndef TOT_GRAPHICS_H
 #define TOT_GRAPHICS_H
 
-#include "playanim.h"
-#include "util.h"
+#include "engines/tot/vars.h"
+#include "engines/tot/util.h"
 
 namespace Tot {
 

@@ -25,21 +25,21 @@
 
 #include "tot/anims.h"
 #include "tot/graphics.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/routines2.h"
 #include "tot/util.h"
 
 namespace Tot {
 
 void drawText(uint number);
-void processingActive();
+void displayLoading();
 void runaroundRed();
 void sprites(bool drawCharacter);
 void loadScreenData(uint screenNumber);
 RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
 void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream);
 void calculateTrajectory(uint finalx, uint finaly);
-void lookInventoryObject(byte objectNumber);
+void lookAtObject(byte objectNumber);
 void useInventoryObjectWithInventoryObject(uint objectNo1, uint objectNo2);
 void pickupScreenObject();
 void useScreenObject();
@@ -70,7 +70,7 @@ TextEntry readVerbRegister(uint numRegister);
 TextEntry readVerbRegister();
 
 void readConversationFile(Common::String f);
-void printHornacinas();
+void printNiches();
 
 } // End of namespace Tot
 

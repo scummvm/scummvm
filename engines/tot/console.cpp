@@ -20,7 +20,7 @@
  */
 
 #include "tot/console.h"
-#include "tot/playanim.h"
+#include "tot/vars.h"
 #include "tot/routines.h"
 
 namespace Tot {

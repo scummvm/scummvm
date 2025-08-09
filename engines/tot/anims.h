@@ -33,7 +33,7 @@ void clearAnims();
 /**
  * Header of an Autodesk Animator FLIC file.
  */
-struct fliheader {
+struct FliHeader {
 	int32 size; // file size
 	uint magic, // format id
 		frames, // number of animation frames

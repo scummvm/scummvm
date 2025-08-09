@@ -88,8 +88,8 @@ void screenTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 			drawScreen(scene);
 		}
 	} else {
-		contadorpc2 = contadorpc;
-		if (contadorpc > 145)
+		cpCounter2 = cpCounter;
+		if (cpCounter > 145)
 			showError(274);
 		debug("Effect %d, pasaraanegro=%d", effectNumber, fadeToBlack);
 		if (fadeToBlack)

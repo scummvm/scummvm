@@ -26,7 +26,7 @@
 
 #include "tot/chrono.h"
 #include "tot/dialog.h"
-#include "tot/playanim.h"
+#include "tot/mouse.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
 #include "tot/texts.h"
@@ -36,243 +36,243 @@ namespace Tot {
 
 byte conversationIndex;
 
-plista l1, l;
+listP l1, l;
 Tree ar, auxTree, step;
 
 bool endOfConversation;
 
-Common::String decrypt(Common::String tEncriptado) {
-	for (int i = 0; i < tEncriptado.size(); i++) {
-		tEncriptado.setChar(decryptionKey[i] ^ (char)tEncriptado[i], i);
+Common::String decrypt(Common::String encryptedText) {
+	for (int i = 0; i < encryptedText.size(); i++) {
+		encryptedText.setChar(decryptionKey[i] ^ (char)encryptedText[i], i);
 	}
-	return tEncriptado;
+	return encryptedText;
 }
 
-void findDialogLine(byte persona);
+void findDialogLine(byte characterIndex);
 
-static void findDownwards(Tree paso, bool &desciende) {
-	if (paso != NULL) {
-		if (paso->element.dicho != '1') {
-			desciende = true;
+static void findDownwards(Tree curTree, bool &descend) {
+	if (curTree != NULL) {
+		if (curTree->element.spoken != '1') {
+			descend = true;
 			return;
 		} else {
-			findDownwards(leftChild(paso), desciende);
-			findDownwards(rightSibling(paso), desciende);
+			findDownwards(leftChild(curTree), descend);
+			findDownwards(rightSibling(curTree), descend);
 		}
 	}
 }
 
-void findDialogLine(byte persona) {
-	bool hecho, decir, subida, desciende, borde, adelanta;
+void findDialogLine(byte characterIndex) {
+	bool speak, ascend, descend, border, forward;
 
 	auxTree = ar;
 	auxTree = auxTree->child;
-	hecho = false;
-	l = new lista;
-	l->siguiente = NULL;
+	bool done = false;
+	l = new list;
+	l->next = NULL;
 	l1 = l;
-	borde = false;
-	subida = false;
+	border = false;
+	ascend = false;
 	do {
-		switch (auxTree->element.dicho) {
+		switch (auxTree->element.spoken) {
 		case '0':
 		case '2':
 		case 'H':
-			decir = true;
+			speak = true;
 			break;
 		case '1': {
-			decir = false;
+			speak = false;
 			step = auxTree->child;
-			desciende = false;
-			findDownwards(step, desciende);
-			if (!(desciende))
-				subida = true;
+			descend = false;
+			findDownwards(step, descend);
+			if (!(descend))
+				ascend = true;
 			step = NULL;
 		} break;
 		case '3':
-			if (bookTopic[0] && (persona == 3)) {
-				decir = false;
-				subida = true;
+			if (bookTopic[0] && (characterIndex == 3)) {
+				speak = false;
+				ascend = true;
 			} else
-				decir = true;
+				speak = true;
 			break;
 		case '4':
-			if (firstTimeTopicA[persona - 1]) {
-				decir = false;
-				subida = true;
+			if (firstTimeTopicA[characterIndex - 1]) {
+				speak = false;
+				ascend = true;
 			} else
-				decir = true;
+				speak = true;
 			break;
 		case '5':
-			if (bookTopic[persona - 1] && firstTimeTopicB[persona - 1])
-				decir = true;
+			if (bookTopic[characterIndex - 1] && firstTimeTopicB[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case '6':
-			if (bookTopic[persona - 1] && !firstTimeTopicB[persona - 1])
-				decir = true;
+			if (bookTopic[characterIndex - 1] && !firstTimeTopicB[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case '7':
-			if (bookTopic[persona - 1]) {
-				decir = false;
-				subida = true;
-			} else if (!firstTimeTopicA[persona - 1])
-				decir = true;
+			if (bookTopic[characterIndex - 1]) {
+				speak = false;
+				ascend = true;
+			} else if (!firstTimeTopicA[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case '8':
-			if (mintTopic[persona - 1] && firstTimeTopicC[persona - 1])
-				decir = true;
+			if (mintTopic[characterIndex - 1] && firstTimeTopicC[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case '9':
-			if (mintTopic[persona - 1] && !firstTimeTopicC[persona - 1])
-				decir = true;
+			if (mintTopic[characterIndex - 1] && !firstTimeTopicC[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case 'A':
-			if (!mintTopic[persona - 1] && !firstTimeTopicA[persona - 1])
-				decir = true;
+			if (!mintTopic[characterIndex - 1] && !firstTimeTopicA[characterIndex - 1])
+				speak = true;
 			else {
-				decir = false;
-				subida = true;
+				speak = false;
+				ascend = true;
 			}
 			break;
 		case 'B':
 			if (caves[0] && !firstTimeTopicA[8])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'C':
 			if (caves[1] && !firstTimeTopicA[8])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'D':
 			if ((caves[0] && caves[1]) && !firstTimeTopicA[8])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'E':
 			if ((caves[0] && !caves[2]) && !firstTimeTopicA[8])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'F':
 			if (!caves[3])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'G':
 			if (!caves[4])
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'I':
 			if (!isSealRemoved)
-				decir = true;
+				speak = true;
 			else
-				decir = false;
+				speak = false;
 			break;
 		case 'Z':
-			decir = false;
+			speak = false;
 			break;
 		}
-		if (decir) {
-			if (auxTree->element.dicho == '2')
-				if (!borde) {
-					borde = true;
-					switch (persona) {
+		if (speak) {
+			if (auxTree->element.spoken == '2')
+				if (!border) {
+					border = true;
+					switch (characterIndex) {
 					case 1:
-						if (firstTimeTopicA[persona - 1]) {
-							l1->elemento = 12;
-							adelanta = true;
-						} else if (bookTopic[persona - 1]) {
-							adelanta = true;
-							l1->elemento = 33;
+						if (firstTimeTopicA[characterIndex - 1]) {
+							l1->item = 12;
+							forward = true;
+						} else if (bookTopic[characterIndex - 1]) {
+							forward = true;
+							l1->item = 33;
 						} else {
-							l1->elemento = 21;
-							adelanta = true;
+							l1->item = 21;
+							forward = true;
 						}
 						break;
 					case 3:
-						if (firstTimeTopicA[persona - 1]) {
-							l1->elemento = 103;
-							adelanta = true;
+						if (firstTimeTopicA[characterIndex - 1]) {
+							l1->item = 103;
+							forward = true;
 						} else {
-							l1->elemento = 112;
-							adelanta = true;
+							l1->item = 112;
+							forward = true;
 						}
 						break;
 					default: {
-						l1->elemento = auxTree->element.index;
-						adelanta = true;
+						l1->item = auxTree->element.index;
+						forward = true;
 					}
 					}
 				} else {
 					;
 				}
 			else {
-				l1->elemento = auxTree->element.index;
-				adelanta = true;
+				l1->item = auxTree->element.index;
+				forward = true;
 			}
-			if (adelanta) {
-				adelanta = false;
-				l1->siguiente = new lista;
-				l1 = l1->siguiente;
-				l1->siguiente = NULL;
+			if (forward) {
+				forward = false;
+				l1->next = new list;
+				l1 = l1->next;
+				l1->next = NULL;
 			}
 			if (rightSibling(auxTree) != NULL)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
-					if (!root(parent(auxTree)))
+					if (!isRoot(parent(auxTree)))
 						auxTree = parent(auxTree);
 					else
 						break;
-				} while (!(auxTree->element.dicho == '1' && rightSibling(auxTree) != NULL));
+				} while (!(auxTree->element.spoken == '1' && rightSibling(auxTree) != NULL));
 				if (rightSibling(auxTree) != NULL)
 					auxTree = rightSibling(auxTree);
 				else
-					hecho = true;
+					done = true;
 			}
-		} else if (subida) {
-			subida = false;
+		} else if (ascend) {
+			ascend = false;
 			if (rightSibling(auxTree) != NULL)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
-					if (!root(parent(auxTree)))
+					if (!isRoot(parent(auxTree)))
 						auxTree = parent(auxTree);
 					else
 						break;
-				} while (!((auxTree->element.dicho == '1') && (rightSibling(auxTree) != NULL)));
+				} while (!((auxTree->element.spoken == '1') && (rightSibling(auxTree) != NULL)));
 				if (rightSibling(auxTree) != NULL)
 					auxTree = rightSibling(auxTree);
 				else
-					hecho = true;
+					done = true;
 			}
 		} else if (leftChild(auxTree) != NULL)
 			auxTree = leftChild(auxTree);
@@ -285,32 +285,31 @@ void findDialogLine(byte persona) {
 			else {
 				do {
 					auxTree = parent(auxTree);
-				} while (!(root(auxTree) || rightSibling(auxTree) != NULL));
-				if (root(auxTree))
-					hecho = true;
+				} while (!(isRoot(auxTree) || rightSibling(auxTree) != NULL));
+				if (isRoot(auxTree))
+					done = true;
 				else
 					auxTree = rightSibling(auxTree);
 			}
 		}
-	} while (!hecho);
+	} while (!done);
 	auxTree = NULL;
 	step = NULL;
 	l1 = NULL;
 }
 
-void modifyTree(uint nodonew) {
-	bool encontrado;
+void modifyTree(uint node) {
 
-	encontrado = false;
+	bool found = false;
 	auxTree = ar->child;
 	do {
-		if (auxTree->element.index == nodonew) {
+		if (auxTree->element.index == node) {
 
-			if ((auxTree->element.dicho != '2') && (auxTree->element.dicho != 'H'))
-				auxTree->element.dicho = '1';
-			else if (auxTree->element.dicho != 'H')
-				auxTree->element.dicho = 'Z';
-			encontrado = true;
+			if ((auxTree->element.spoken != '2') && (auxTree->element.spoken != 'H'))
+				auxTree->element.spoken = '1';
+			else if (auxTree->element.spoken != 'H')
+				auxTree->element.spoken = 'Z';
+			found = true;
 		} else {
 			if (leftChild(auxTree) != NULL)
 				auxTree = leftChild(auxTree);
@@ -323,43 +322,43 @@ void modifyTree(uint nodonew) {
 				auxTree = rightSibling(auxTree);
 			}
 		}
-	} while (!encontrado);
+	} while (!found);
 }
 
 void drawTalkMenu() {
-	byte ytextaux;
+	byte auxTextY;
 	g_engine->_mouseManager->hide();
-	for (ytextaux = 25; ytextaux >= 1; ytextaux--)
-		rectangle(0, 175 - ytextaux, 319, 174 + ytextaux, 0);
-	for (ytextaux = 1; ytextaux <= 25; ytextaux++)
-		buttonBorder(0, 175 - ytextaux, 319, 174 + ytextaux, 253, 253, 253, 253, 0, 0, "");
+	for (auxTextY = 25; auxTextY >= 1; auxTextY--)
+		rectangle(0, 175 - auxTextY, 319, 174 + auxTextY, 0);
+	for (auxTextY = 1; auxTextY <= 25; auxTextY++)
+		buttonBorder(0, 175 - auxTextY, 319, 174 + auxTextY, 253, 253, 253, 253, 0);
 	drawMenu(5);
 	g_engine->_mouseManager->show();
 }
 
-void fixTree(Tree paso) {
-	if (paso != NULL) {
-		if (paso->element.dicho == 'Z')
-			paso->element.dicho = '2';
+void fixTree(Tree tree) {
+	if (tree != NULL) {
+		if (tree->element.spoken == 'Z')
+			tree->element.spoken = '2';
 		else {
-			fixTree(leftChild(paso));
-			fixTree(rightSibling(paso));
+			fixTree(leftChild(tree));
+			fixTree(rightSibling(tree));
 		}
 	}
 }
 
-void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
-	byte primeraconv, buscanodo, convselec;
+void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
+	byte firstChat, convselec;
 
-	primeraconv = 1;
+	firstChat = 1;
 	convselec = 0;
 	g_engine->_mouseManager->hide();
 
 	drawMenu(5);
-	euroText(6, 151, matrizconversa[1], 255);
-	euroText(6, 162, matrizconversa[2], 255);
-	euroText(6, 173, matrizconversa[3], 255);
-	euroText(6, 184, matrizconversa[4], 255);
+	euroText(6, 151, conversationMatrix[1], 255);
+	euroText(6, 162, conversationMatrix[2], 255);
+	euroText(6, 173, conversationMatrix[3], 255);
+	euroText(6, 184, conversationMatrix[4], 255);
 	g_engine->_mouseManager->show();
 	Common::Event e;
 	do {
@@ -381,16 +380,16 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 				}
 			}
 
-			if (tocapintar) {
-				if (currentRoomData->paletteAnimationFlag && saltospal >= 4) {
-					saltospal = 0;
+			if (timeToDraw) {
+				if (currentRoomData->paletteAnimationFlag && palAnimStep >= 4) {
+					palAnimStep = 0;
 					if (isPaletteAnimEnabled > 6)
 						isPaletteAnimEnabled = 0;
 					else
 						isPaletteAnimEnabled += 1;
 					updatePalette(isPaletteAnimEnabled);
 				} else
-					saltospal += 1;
+					palAnimStep += 1;
 			}
 			g_system->delayMillis(10);
 			g_engine->_screen->update();
@@ -402,37 +401,37 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 			else {
 				if (mouseClickX >= 0 && mouseClickX <= 280) {
 					if (mouseClickY >= 143 && mouseClickY <= 155) {
-						convselec = primeraconv;
+						convselec = firstChat;
 					} else if (mouseClickY >= 156 && mouseClickY <= 166) {
-						convselec = primeraconv + 1;
+						convselec = firstChat + 1;
 					} else if (mouseClickY >= 167 && mouseClickY <= 177) {
-						convselec = primeraconv + 2;
+						convselec = firstChat + 2;
 					} else if (mouseClickY >= 178 && mouseClickY <= 186) {
-						convselec = primeraconv + 3;
+						convselec = firstChat + 3;
 					}
 				} else if (mouseClickX >= 281 && mouseClickX <= 319) {
 					if (mouseClickY >= 143 && mouseClickY <= 165) {
-						if (primeraconv > 1) {
+						if (firstChat > 1) {
 							convselec = 0;
-							primeraconv -= 1;
+							firstChat -= 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
-							euroText(6, 151, matrizconversa[primeraconv], 255);
-							euroText(6, 162, matrizconversa[primeraconv + 1], 255);
-							euroText(6, 173, matrizconversa[primeraconv + 2], 255);
-							euroText(6, 184, matrizconversa[primeraconv + 3], 255);
+							euroText(6, 151, conversationMatrix[firstChat], 255);
+							euroText(6, 162, conversationMatrix[firstChat + 1], 255);
+							euroText(6, 173, conversationMatrix[firstChat + 2], 255);
+							euroText(6, 184, conversationMatrix[firstChat + 3], 255);
 							g_engine->_mouseManager->show();
 						}
 					} else if (mouseClickY >= 167 && mouseClickY <= 186) {
-						if (primeraconv < 12) {
+						if (firstChat < 12) {
 							convselec = 0;
-							primeraconv += 1;
+							firstChat += 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
-							euroText(6, 151, matrizconversa[primeraconv], 255);
-							euroText(6, 162, matrizconversa[primeraconv + 1], 255);
-							euroText(6, 173, matrizconversa[primeraconv + 2], 255);
-							euroText(6, 184, matrizconversa[primeraconv + 3], 255);
+							euroText(6, 151, conversationMatrix[firstChat], 255);
+							euroText(6, 162, conversationMatrix[firstChat + 1], 255);
+							euroText(6, 173, conversationMatrix[firstChat + 2], 255);
+							euroText(6, 184, conversationMatrix[firstChat + 3], 255);
 							g_engine->_mouseManager->show();
 						}
 					}
@@ -444,94 +443,94 @@ void showDialogLine(Common::String matrizconversa[16], uint &charlaelegida) {
 
 	if (convselec == conversationIndex)
 		endOfConversation = true;
-	for (buscanodo = 1; buscanodo <= (convselec - 1); buscanodo++)
-		l1 = l1->siguiente;
-	charlaelegida = l1->elemento;
+	for (int i = 1; i <= (convselec - 1); i++)
+		l1 = l1->next;
+	choosenTopic = l1->item;
 }
 
-void talk(byte person) {
-	debug("Talking to persona: %d", person);
-	uint pasorespuesta, nuevonodo;
-	TextEntry pasoh;
-	byte auxilcadena, insertarnombre, indicemochila;
+void talk(byte characterIndex) {
+	debug("Talking to person: %d", characterIndex);
+	uint response, newNode;
+	TextEntry text;
+	byte stringAux, insertName, invIndex;
 
-	Common::String matrizconversa[16];
+	Common::String conversationMatrix[16];
 	drawTalkMenu();
 	endOfConversation = false;
 	assignText();
 	// The original game makes a copy of the file upon starting a new game. .007 is the current game (the game
 	// that resumes when clicking "continue game" in the main menu. Part of the savegame data is this 007
 	// conversation file which marks conversatino topics as already gone through or not.
-	readTree(*conversationData, ar, person - 1);
+	readTree(*conversationData, ar, characterIndex - 1);
 	loadTalkAnimations();
 	do {
 
 		for (int i = 0; i < 16; i++) {
-			matrizconversa[i] = "";
+			conversationMatrix[i] = "";
 		}
 
-		findDialogLine(person);
+		findDialogLine(characterIndex);
 		conversationIndex = 0;
 		l1 = l;
 		do {
-			verb.seek(verbRegSize * l1->elemento);
+			verb.seek(verbRegSize * l1->item);
 			conversationIndex += 1;
-			pasoh = readVerbRegister();
-			insertarnombre = 0;
-			matrizconversa[conversationIndex] = decrypt(pasoh.text);
+			text = readVerbRegister();
+			insertName = 0;
+			conversationMatrix[conversationIndex] = decrypt(text.text);
 
-			for (int i = 0; i < matrizconversa[conversationIndex].size(); i++) {
-				if (matrizconversa[conversationIndex][i] == '@')
-					insertarnombre = i;
+			for (int i = 0; i < conversationMatrix[conversationIndex].size(); i++) {
+				if (conversationMatrix[conversationIndex][i] == '@')
+					insertName = i;
 			}
-			if (insertarnombre > 0) {
-				matrizconversa[conversationIndex].deleteChar(insertarnombre);
-				matrizconversa[conversationIndex].insertString(characterName, insertarnombre);
+			if (insertName > 0) {
+				conversationMatrix[conversationIndex].deleteChar(insertName);
+				conversationMatrix[conversationIndex].insertString(characterName, insertName);
 			}
-			if (matrizconversa[conversationIndex].size() > 45) {
-				auxilcadena = 45;
+			if (conversationMatrix[conversationIndex].size() > 45) {
+				stringAux = 45;
 				do {
-					auxilcadena -= 1;
-				} while (matrizconversa[conversationIndex][auxilcadena] != ' ');
-				matrizconversa[conversationIndex] = matrizconversa[conversationIndex].substr(0, auxilcadena);
-				matrizconversa[conversationIndex].insertString(" ...", auxilcadena);
+					stringAux -= 1;
+				} while (conversationMatrix[conversationIndex][stringAux] != ' ');
+				conversationMatrix[conversationIndex] = conversationMatrix[conversationIndex].substr(0, stringAux);
+				conversationMatrix[conversationIndex].insertString(" ...", stringAux);
 			}
-			l1 = l1->siguiente;
-		} while ((l1->siguiente != NULL) && (l1 != NULL) && !g_engine->shouldQuit());
+			l1 = l1->next;
+		} while ((l1->next != NULL) && (l1 != NULL) && !g_engine->shouldQuit());
 		l1 = l;
-		showDialogLine(matrizconversa, nuevonodo);
+		showDialogLine(conversationMatrix, newNode);
 		delete l;
-		hypertext(nuevonodo, 255, 0, pasorespuesta, true);
-		auxilcadena = 0;
-		modifyTree(nuevonodo);
+		hypertext(newNode, 255, 0, response, true);
+		stringAux = 0;
+		modifyTree(newNode);
 		// 	verifyCopyProtection();
-		while (pasorespuesta > 0 && !g_engine->shouldQuit()) {
-			nuevonodo = pasorespuesta;
-			auxilcadena += 1;
-			if (odd(auxilcadena))
-				hypertext(nuevonodo, 253, 249, pasorespuesta, true);
+		while (response > 0 && !g_engine->shouldQuit()) {
+			newNode = response;
+			stringAux += 1;
+			if (odd(stringAux))
+				hypertext(newNode, 253, 249, response, true);
 			else
-				hypertext(nuevonodo, 255, 0, pasorespuesta, true);
-			switch (nuevonodo) {
+				hypertext(newNode, 255, 0, response, true);
+			switch (newNode) {
 			case 9: {
 				obtainedList1 = true;
-				indicemochila = 0;
-				while (mobj[indicemochila].code != 0) {
-					indicemochila += 1;
+				invIndex = 0;
+				while (mobj[invIndex].code != 0) {
+					invIndex += 1;
 				}
-				mobj[indicemochila].bitmapIndex = list1Index;
-				mobj[indicemochila].code = list1code;
-				mobj[indicemochila].objectName = getObjectName(0);
+				mobj[invIndex].bitmapIndex = list1Index;
+				mobj[invIndex].code = list1code;
+				mobj[invIndex].objectName = getObjectName(0);
 			} break;
 			case 25: {
 				obtainedList2 = true;
-				indicemochila = 0;
-				while (mobj[indicemochila].code != 0) {
-					indicemochila += 1;
+				invIndex = 0;
+				while (mobj[invIndex].code != 0) {
+					invIndex += 1;
 				}
-				mobj[indicemochila].bitmapIndex = list2Index;
-				mobj[indicemochila].code = list2code;
-				mobj[indicemochila].objectName = getObjectName(1);
+				mobj[invIndex].bitmapIndex = list2Index;
+				mobj[invIndex].code = list2code;
+				mobj[invIndex].objectName = getObjectName(1);
 			} break;
 			}
 		}
@@ -541,7 +540,7 @@ void talk(byte person) {
 	unloadTalkAnimations();
 	step = ar;
 	fixTree(step);
-	saveConversations(conversationData, ar, person - 1);
+	saveConversations(conversationData, ar, characterIndex - 1);
 
 	verb.close();
 	if (g_engine->shouldQuit()) {
@@ -557,37 +556,36 @@ void talk(byte person) {
 	drawBackpack();
 	g_engine->_mouseManager->show();
 
-	// release(marca);
-	if (person < 5) {
-		if (firstTimeTopicA[person - 1])
-			firstTimeTopicA[person - 1] = false;
-		if (firstTimeTopicB[person - 1])
-			firstTimeTopicB[person - 1] = false;
-		if (firstTimeTopicC[person - 1])
-			firstTimeTopicC[person - 1] = false;
-	} else if (person == 8)
+	if (characterIndex < 5) {
+		if (firstTimeTopicA[characterIndex - 1])
+			firstTimeTopicA[characterIndex - 1] = false;
+		if (firstTimeTopicB[characterIndex - 1])
+			firstTimeTopicB[characterIndex - 1] = false;
+		if (firstTimeTopicC[characterIndex - 1])
+			firstTimeTopicC[characterIndex - 1] = false;
+	} else if (characterIndex == 8)
 		firstTimeTopicA[8] = false;
 }
 
-void talkScreenObject() {
-	int x_del_raton = (mouseClickX + 7) / xGridCount;
-	int y_del_raton = (mouseClickY + 7) / yGridCount;
-	uint objeto_de_la_pantalla = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[x_del_raton][y_del_raton]]->fileIndex;
-	if (objeto_de_la_pantalla == 0)
+void talkToSceneObject() {
+	int mouseX = (mouseClickX + 7) / xGridCount;
+	int mouseY = (mouseClickY + 7) / yGridCount;
+	uint sceneObject = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex;
+	if (sceneObject == 0)
 		return;
 
 	// verifyCopyProtection2();
-	readItemRegister(objeto_de_la_pantalla);
+	readItemRegister(sceneObject);
 	goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
-			   currentRoomData->walkAreasGrid[x_del_raton][y_del_raton]);
+			   currentRoomData->walkAreasGrid[mouseX][mouseY]);
 
-	if (regobj.habla > 0) {
-		talk(regobj.habla);
+	if (regobj.speaking > 0) {
+		talk(regobj.speaking);
 	} else {
 		assignText();
 		hypertext((Random(10) + 1039), 255, 0, foo, false);
 		verb.close();
-		if (contadorpc > 198)
+		if (cpCounter > 198)
 			showError(274);
 	}
 }
