@@ -106,6 +106,8 @@ protected:
 
 	void clearCamera();
 
+	virtual void roomInit();
+
 	virtual void reloadRoom() = 0;
 
 	virtual void reloadRoom1() = 0;

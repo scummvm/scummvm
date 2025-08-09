@@ -157,6 +157,10 @@ void Room::takePicture() {
 void Room::doRoom() {
 	bool reloadFlag = false;
 
+	// Noctropolis doesn't have an icon bar at the bottom, so never set arrow cursor
+	int mouseCursorArrowYThreshold = (_vm->getGameID() == kGameMartianMemorandum) ? 184 :
+		((_vm->getGameID() == kGameAmazon) ? 177 : 1000);
+
 	while (!_vm->shouldQuit()) {
 		if (!reloadFlag) {
 			_vm->_images.clear();
@@ -213,6 +217,9 @@ void Room::doRoom() {
 			}
 
 			if (_vm->_player->_scrollFlag) {
+				// TODO: Refactor a bit - the first 8 lines here are identical
+				// in both branches, but for now maintain original logic for
+				// ease of RE comparison
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = FN_NONE;
@@ -224,13 +231,18 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 					_vm->copyRects();
+
+					if (_vm->_events->_mousePos.y < mouseCursorArrowYThreshold)
+						_vm->_events->setCursor(_vm->_events->_normalMouse);
+					else
+						_vm->_events->setCursor(CURSOR_ARROW);
+
 					_vm->copyBF2Vid();
 				}
 			} else {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = FN_NONE;
-
 				roomLoop();
 				if (_vm->shouldQuitOrRestart())
 					return;
@@ -241,8 +253,7 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
-						((_vm->getGameID() == kGameAmazon) && (_vm->_events->_mousePos.y < 177)))
+					if (_vm->_events->_mousePos.y < mouseCursorArrowYThreshold)
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
@@ -252,6 +263,13 @@ void Room::doRoom() {
 			}
 		}
 	}
+}
+
+void Room::roomInit() {
+	_vm->_numAnimTimers = 0;
+	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
+	_vm->_scripts->searchForSequence();
+	_vm->_scripts->executeScript();
 }
 
 void Room::clearRoom() {
@@ -377,8 +395,8 @@ void Room::setupRoom() {
 		_vm->_scrollRow = 0;
 	} else {
 		_vm->_scrollY = _vm->_player->_rawPlayer.y -
-			(_vm->_player->_rawPlayer.y / 16) * 16;
-		int yc = MAX((_vm->_player->_rawPlayer.y >> 4) -
+			(_vm->_player->_rawPlayer.y / TILE_HEIGHT) * TILE_HEIGHT;
+		int yc = MAX((_vm->_player->_rawPlayer.y / TILE_HEIGHT) -
 			(screen._vWindowHeight / 2), 0);
 		_vm->_scrollRow = yc;
 

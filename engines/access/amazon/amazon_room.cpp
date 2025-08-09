@@ -90,7 +90,7 @@ void AmazonRoom::reloadRoom1() {
 
 	_vm->_screen->fadeOut();
 	_vm->_screen->clearScreen();
-	roomSet();
+	roomInit();
 
 	if (_roomFlag != 1 && (_vm->_player->_roomNumber != 61 || !_antOutFlag)) {
 		_vm->_player->load();
@@ -133,13 +133,6 @@ void AmazonRoom::setupRoom() {
 		_vm->_scrollRow = 1;
 		_vm->_scrollY = 0;
 	}
-}
-
-void AmazonRoom::roomSet() {
-	_vm->_numAnimTimers = 0;
-	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
-	_vm->_scripts->searchForSequence();
-	_vm->_scripts->executeScript();
 }
 
 void AmazonRoom::roomMenu() {

@@ -237,7 +237,7 @@ int Scripts::executeScript() {
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
 			_data->skip(2);
 
-		if (_data->eos()) {
+		if (_data->eos())
 			error("Hit end of script data");
 
 		if (_scriptCommand < 0x80)
