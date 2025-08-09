@@ -45,7 +45,7 @@ void loadScreenMemory() {
 
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
 	for (int j = 0; j < secondaryAnimationFrameCount; j++) {
-		loadAnimationIntoBuffer(stream, animado.bitmap[direction][j], sizeanimado);
+		loadAnimationIntoBuffer(stream, secondaryAnimation.bitmap[direction][j], secondaryAnimFrameSize);
 	}
 }
 
@@ -54,20 +54,20 @@ void loadAnimation(Common::String animacion) {
 	Common::File fichcani;
 
 	if (animacion == "PETER")
-		peteractivo = true;
+		isPeterCoughing = true;
 	else
-		peteractivo = false;
+		isPeterCoughing = false;
 
-	animacion2 = true;
+	isSecondaryAnimationEnabled = true;
 	if (!fichcani.open(Common::Path(animacion + ".DAT"))) {
 		showError(265);
 	}
 
-	sizeanimado = fichcani.readUint16LE();
+	secondaryAnimFrameSize = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
-	numerodir = fichcani.readByte();
-	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
-	if (numerodir != 0) {
+	secondaryAnimDirCount = fichcani.readByte();
+	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
+	if (secondaryAnimDirCount != 0) {
 
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {
@@ -79,31 +79,31 @@ void loadAnimation(Common::String animacion) {
 
 	fichcani.close();
 	debug("Read all frames! longtray2=%d", currentRoomData->secondaryTrajectoryLength);
-	anchoanimado = READ_LE_UINT16(animado.bitmap[0][1]) + 1;
-	altoanimado = READ_LE_UINT16(animado.bitmap[0][1] + 2) + 1;
+	secondaryAnimWidth = READ_LE_UINT16(secondaryAnimation.bitmap[0][1]) + 1;
+	secondaryAnimHeight = READ_LE_UINT16(secondaryAnimation.bitmap[0][1] + 2) + 1;
 
-	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM, false);
+	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM, false);
 
 	readItemRegister(currentRoomData->secondaryAnimDirections[299]);
-	maxrejax = (regobj.xrej2 - regobj.xrej1 + 1);
-	maxrejay = (regobj.yrej2 - regobj.yrej1 + 1);
+	maxXGrid = (regobj.xrej2 - regobj.xrej1 + 1);
+	maxYGrid = (regobj.yrej2 - regobj.yrej1 + 1);
 	oldposx = regobj.xrej1 + 1;
 	oldposy = regobj.yrej1 + 1;
 
 	for (int i = 0; i < 10; i++)
 		for (int j = 0; j < 10; j++) {
-			rejamascaramovto[i][j] = 0;
-			rejamascararaton[i][j] = 0;
-			rejafondomovto[i][j] = 0;
-			rejafondoraton[i][j] = 0;
+			maskGridSecondaryAnim[i][j] = 0;
+			maskMouseSecondaryAnim[i][j] = 0;
+			movementGridForSecondaryAnim[i][j] = 0;
+			mouseGridForSecondaryAnim[i][j] = 0;
 		}
 
-	for (int i = 0; i < maxrejax; i++)
-		for (int j = 0; j < maxrejay; j++) {
-			rejamascaramovto[i][j] = regobj.walkAreasPatch[i][j];
-			rejamascararaton[i][j] = regobj.mouseGridPatch[i][j];
-			rejafondomovto[i][j] = currentRoomData->walkAreasGrid[oldposx + i][oldposy + j];
-			rejafondoraton[i][j] = currentRoomData->mouseGrid[oldposx + i][oldposy + j];
+	for (int i = 0; i < maxXGrid; i++)
+		for (int j = 0; j < maxYGrid; j++) {
+			maskGridSecondaryAnim[i][j] = regobj.walkAreasPatch[i][j];
+			maskMouseSecondaryAnim[i][j] = regobj.mouseGridPatch[i][j];
+			movementGridForSecondaryAnim[i][j] = currentRoomData->walkAreasGrid[oldposx + i][oldposy + j];
+			mouseGridForSecondaryAnim[i][j] = currentRoomData->mouseGrid[oldposx + i][oldposy + j];
 		}
 	iframe2 = 0;
 	debug("Finished loading animation!");
@@ -121,7 +121,7 @@ void updateAltScreen(byte otherScreenNumber) {
 
 	byte currentScreen = currentRoomData->code;
 
-	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
+	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 
 	// Save current room
 	saveRoomData(currentRoomData, rooms);
@@ -132,7 +132,7 @@ void updateAltScreen(byte otherScreenNumber) {
 
 	switch (otherScreenNumber) {
 	case 20: {
-		switch (hornacina[0][hornacina[0][3]]) {
+		switch (niche[0][niche[0][3]]) {
 		case 0: {
 			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 			currentRoomData->screenLayers[1].bitmapPointer = 1190768;
@@ -156,7 +156,7 @@ void updateAltScreen(byte otherScreenNumber) {
 		currentRoomData->screenLayers[1].depth = 1;
 	} break;
 	case 24: {
-		switch (hornacina[1][hornacina[1][3]]) {
+		switch (niche[1][niche[1][3]]) {
 		case 0: {
 			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 			currentRoomData->screenLayers[0].bitmapPointer = 1399610;
@@ -206,7 +206,7 @@ void updateAltScreen(byte otherScreenNumber) {
 	rooms->seek(currentScreen * roomRegSize, SEEK_SET);
 	currentRoomData = readScreenDataFile(rooms);
 
-	setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
+	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM);
 }
 
 struct regzxc {
@@ -318,19 +318,19 @@ void loadCharAnimation() {
 	if (!characterFile.open("PERSONAJ.SPT"))
 		showError(265);
 
-	sizeframe = characterFile.readUint16LE();
+	mainCharFrameSize = characterFile.readUint16LE();
 
 	verifyCopyProtection();
 
 	for (int i = 0; i <= 3; i++)
 		for (int j = 0; j < walkFrameCount; j++) {
-			secuencia.bitmap[i][j] = (byte *)malloc(sizeframe);
-			characterFile.read(secuencia.bitmap[i][j], sizeframe);
+			mainCharAnimation.bitmap[i][j] = (byte *)malloc(mainCharFrameSize);
+			characterFile.read(mainCharAnimation.bitmap[i][j], mainCharFrameSize);
 		}
 	for (int i = 0; i < 4; i++)
 		for (int j = walkFrameCount; j < (walkFrameCount + 10 * 3); j++) {
-			secuencia.bitmap[i][j] = (byte *)malloc(sizeframe);
-			characterFile.read(secuencia.bitmap[i][j], sizeframe);
+			mainCharAnimation.bitmap[i][j] = (byte *)malloc(mainCharFrameSize);
+			characterFile.read(mainCharAnimation.bitmap[i][j], mainCharFrameSize);
 		}
 	characterFile.close();
 }
@@ -352,8 +352,8 @@ void freeScreenObjects() {
 }
 
 void freeAnimation() {
-	if (animacion2) {
-		animacion2 = false;
+	if (isSecondaryAnimationEnabled) {
+		isSecondaryAnimationEnabled = false;
 		if(curSecondaryAnimationFrame)
 			free(curSecondaryAnimationFrame);
 		curSecondaryAnimationFrame = NULL;
@@ -503,12 +503,12 @@ void putIcon(uint posiconx, uint posicony, uint numicon) {
 }
 
 void drawBackpack() {
-	putIcon(34, 169, posicioninv);
-	putIcon(77, 169, posicioninv + 1);
-	putIcon(120, 169, posicioninv + 2);
-	putIcon(163, 169, posicioninv + 3);
-	putIcon(206, 169, posicioninv + 4);
-	putIcon(249, 169, posicioninv + 5);
+	putIcon(34, 169, inventoryPosition);
+	putIcon(77, 169, inventoryPosition + 1);
+	putIcon(120, 169, inventoryPosition + 2);
+	putIcon(163, 169, inventoryPosition + 3);
+	putIcon(206, 169, inventoryPosition + 4);
+	putIcon(249, 169, inventoryPosition + 5);
 }
 
 void lightUpLeft() {
@@ -542,24 +542,24 @@ void turnOffRight() {
 void inventory(byte direccion, byte tope) {
 	switch (direccion) {
 	case 0:
-		if (posicioninv > 0) {
-			posicioninv -= 1;
+		if (inventoryPosition > 0) {
+			inventoryPosition -= 1;
 			drawBackpack();
 		}
 		break;
 	case 1:
-		if (posicioninv < (tope - 6)) {
-			posicioninv += 1;
+		if (inventoryPosition < (tope - 6)) {
+			inventoryPosition += 1;
 			drawBackpack();
 		}
 		break;
 	}
 	g_engine->_mouseManager->hide();
-	if (posicioninv > 0)
+	if (inventoryPosition > 0)
 		lightUpLeft();
 	else
 		turnOffLeft();
-	if (mobj[posicioninv + 6].code > 0)
+	if (mobj[inventoryPosition + 6].code > 0)
 		lightUpRight();
 	else
 		turnOffRight();
@@ -575,11 +575,11 @@ void mask() {
 		buttonBorder(0, (175 - ytextaux), 319, (174 + ytextaux), 251, 251, 251, 251, 0, 0, "");
 	drawMenu(1);
 	// verifyCopyProtection();
-	if (posicioninv > 1)
+	if (inventoryPosition > 1)
 		lightUpLeft();
 	else
 		turnOffLeft();
-	if (mobj[posicioninv + 6].code > 0)
+	if (mobj[inventoryPosition + 6].code > 0)
 		lightUpRight();
 	else
 		turnOffRight();
@@ -794,10 +794,10 @@ void checkMouseGrid() {
 	if (mouseY >= 0 && mouseY <= 131) {
 		xrejilla = (mouseX + 7) / xGridCount;
 		yrejilla = (mouseY + 7) / yGridCount;
-		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldxrejilla][oldyrejilla] || oldobjmochila != "") {
+		if (currentRoomData->mouseGrid[xrejilla][yrejilla] != currentRoomData->mouseGrid[oldGridX][oldGridY] || oldInventoryObjectName != "") {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
-			switch (numeroaccion) {
+			switch (actionCode) {
 			case 0:
 				actionLine = getActionLineText(0) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
@@ -811,8 +811,8 @@ void checkMouseGrid() {
 				actionLine = getActionLineText(3) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
 			case 4:
-				if (objetomochila != "")
-					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
+				if (inventoryObjectName != "")
+					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				else
 					actionLine = getActionLineText(4) + currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[xrejilla][yrejilla]]->objectName;
 				break;
@@ -827,16 +827,16 @@ void checkMouseGrid() {
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
-			oldxrejilla = xrejilla;
-			oldyrejilla = yrejilla;
+			oldGridX = xrejilla;
+			oldGridY = yrejilla;
 		}
-		oldnumeroacc = 253;
-		oldobjmochila = "";
+		oldActionCode = 253;
+		oldInventoryObjectName = "";
 	} else if (mouseY >= 132 && mouseY <= 165) {
-		if (numeroaccion != oldnumeroacc) {
+		if (actionCode != oldActionCode) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
-			switch (numeroaccion) {
+			switch (actionCode) {
 			case 0:
 				actionLine = getActionLineText(0);
 				break;
@@ -850,8 +850,8 @@ void checkMouseGrid() {
 				actionLine = getActionLineText(3);
 				break;
 			case 4:
-				if (objetomochila != "")
-					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7);
+				if (inventoryObjectName != "")
+					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7);
 				else
 					actionLine = getActionLineText(4);
 				break;
@@ -864,32 +864,32 @@ void checkMouseGrid() {
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
-			oldnumeroacc = numeroaccion;
-			oldobjmochila = "";
-			oldxrejilla = 0;
-			oldyrejilla = 0;
+			oldActionCode = actionCode;
+			oldInventoryObjectName = "";
+			oldGridX = 0;
+			oldGridY = 0;
 		}
 	} else if (mouseY >= 166 && mouseY <= 199) {
 		if (mouseX >= 26 && mouseX <= 65) {
-			objmochila = mobj[posicioninv].objectName;
+			objmochila = mobj[inventoryPosition].objectName;
 		} else if (mouseX >= 70 && mouseX <= 108) {
-			objmochila = mobj[posicioninv + 1].objectName;
+			objmochila = mobj[inventoryPosition + 1].objectName;
 		} else if (mouseX >= 113 && mouseX <= 151) {
-			objmochila = mobj[posicioninv + 2].objectName;
+			objmochila = mobj[inventoryPosition + 2].objectName;
 		} else if (mouseX >= 156 && mouseX <= 194) {
-			objmochila = mobj[posicioninv + 3].objectName;
+			objmochila = mobj[inventoryPosition + 3].objectName;
 		} else if (mouseX >= 199 && mouseX <= 237) {
-			objmochila = mobj[posicioninv + 4].objectName;
+			objmochila = mobj[inventoryPosition + 4].objectName;
 		} else if (mouseX >= 242 && mouseX <= 280) {
-			objmochila = mobj[posicioninv + 5].objectName;
+			objmochila = mobj[inventoryPosition + 5].objectName;
 		} else {
 			objmochila = ' ';
 		}
 
-		if (objmochila != oldobjmochila || oldxrejilla != 0) {
+		if (objmochila != oldInventoryObjectName || oldGridX != 0) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
-			switch (numeroaccion) {
+			switch (actionCode) {
 			case 1:
 				actionLine = getActionLineText(1) + objmochila;
 				break;
@@ -900,10 +900,10 @@ void checkMouseGrid() {
 				actionLine = getActionLineText(3) + objmochila;
 				break;
 			case 4:
-				if (objetomochila == "")
+				if (inventoryObjectName == "")
 					actionLine = getActionLineText(4) + objmochila;
 				else
-					actionLine = getActionLineText(4) + objetomochila + getActionLineText(7) + objmochila;
+					actionLine = getActionLineText(4) + inventoryObjectName + getActionLineText(7) + objmochila;
 				break;
 			case 5:
 				actionLine = getActionLineText(5) + objmochila;
@@ -916,11 +916,11 @@ void checkMouseGrid() {
 			}
 			actionLineText(actionLine);
 			g_engine->_mouseManager->show();
-			oldobjmochila = objmochila;
+			oldInventoryObjectName = objmochila;
 		}
-		oldnumeroacc = 255;
-		oldxrejilla = 0;
-		oldyrejilla = 0;
+		oldActionCode = 255;
+		oldGridX = 0;
+		oldGridY = 0;
 	}
 }
 
@@ -1476,10 +1476,10 @@ void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, bool direct) {
 	paso = (byte *)malloc((wImagen1 + 1) * (hImagen1 + 1) + 4);
 
 	auxhor = wImagen1 + 1;
-	kaka = hImagen1 + y;
+	foo = hImagen1 + y;
 
 	// makes sure that if the image is at the bottom of the screen we chop the bottom part
-	for (int i = kaka; i >= 200; i--)
+	for (int i = foo; i >= 200; i--)
 		hImagen1 -= 1;
 
 	hImagen1++;
@@ -1493,13 +1493,13 @@ void putCreditsImg(uint x, uint y, byte *imagen1, byte *imagen2, bool direct) {
 
 	for (int kk = 0; kk < hImagen1; kk++) {
 		incremento2 = (kk * wImagen1) + 4;
-		kaka = kk + y;
+		foo = kk + y;
 		for (int jj = 0; jj <= wImagen1; jj++) {
 			incremento = incremento2 + jj;
-			if ((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && kaka >= 66 && kaka <= 192)) {
+			if ((direct && imagen1[incremento] > 0) || (imagen1[incremento] > 16 && foo >= 66 && foo <= 192)) {
 				paso[incremento] = imagen1[incremento];
 			} else if (imagen1[incremento] > 16) {
-				switch (kaka) {
+				switch (foo) {
 				case 59:
 				case 199:
 					paso[incremento] = imagen1[incremento] + 210;
@@ -1888,9 +1888,9 @@ Lsalirpres:
 }
 
 void firstIntroduction() {
-	if (!hechaprimeravez && !introSeen) {
+	if (!firstTimeDone && !isIntroSeen) {
 		introduction();
-		hechaprimeravez = true;
+		firstTimeDone = true;
 		ConfMan.setBool("introSeen", true);
 		ConfMan.flushToDisk();
 	}
@@ -1938,8 +1938,8 @@ void initialMenu(bool fundido) {
 				uint y = e.mouse.y + 7;
 				if (y > 105 && y < 120) {
 					if (x > 46 && x < 145) {
-						partidanueva = true;
-						continuarpartida = false;
+						startNewGame = true;
+						continueGame = false;
 						opcionvalida = true;
 					} else if (x > 173 && x < 267) {
 						credits();
@@ -1953,15 +1953,15 @@ void initialMenu(bool fundido) {
 						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, kklogica);
 					} else if (x >= 18 && x <= 145) {
 						debug("Load");
-						partidanueva = false;
-						continuarpartida = false;
+						startNewGame = false;
+						continueGame = false;
 						opcionvalida = true;
 					}
 				} else if (y > 174 && y < 190) {
 					if (x > 20 && x < 145) {
-						partidanueva = false;
+						startNewGame = false;
 						opcionvalida = true;
-						continuarpartida = true;
+						continueGame = true;
 					} else if (x > 173 && y < 288) {
 						exitToDOS();
 					}
@@ -2641,14 +2641,14 @@ void ending() {
 void loadBat() {
 	Common::File fichcani;
 
-	animacion2 = true;
+	isSecondaryAnimationEnabled = true;
 	if (!fichcani.open("MURCIE.DAT")) {
 		showError(265);
 	}
-	sizeanimado = fichcani.readUint16LE();
+	secondaryAnimFrameSize = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
-	numerodir = fichcani.readByte();
-	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
+	secondaryAnimDirCount = fichcani.readByte();
+	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
 	loadAnimationForDirection(&fichcani, 0);
 	fichcani.close();
 }
@@ -2656,15 +2656,15 @@ void loadBat() {
 void loadDevil() {
 	Common::File fichcani;
 
-	animacion2 = true;
+	isSecondaryAnimationEnabled = true;
 	if (!fichcani.open("ROJOMOV.DAT")) {
 		showError(265);
 	}
-	sizeanimado = fichcani.readUint16LE();
+	secondaryAnimFrameSize = fichcani.readUint16LE();
 	secondaryAnimationFrameCount = fichcani.readByte();
-	numerodir = fichcani.readByte();
-	curSecondaryAnimationFrame = (byte *)malloc(sizeanimado);
-	if (numerodir != 0) {
+	secondaryAnimDirCount = fichcani.readByte();
+	curSecondaryAnimationFrame = (byte *)malloc(secondaryAnimFrameSize);
+	if (secondaryAnimDirCount != 0) {
 		secondaryAnimationFrameCount = secondaryAnimationFrameCount / 4;
 		for (int i = 0; i <= 3; i++) {
 			loadAnimationForDirection(&fichcani, i);
@@ -2704,17 +2704,17 @@ void assembleScreen(bool scroll) {
 		if (screenObjects[indice] != NULL) {
 			assembleCompleteBackground(screenObjects[indice], depthMap[indice].posx, depthMap[indice].posy);
 		}
-		if (!scroll && secuencia.depth == indice) {
-			assembleCompleteBackground(secuencia.bitmap[direccionmovimiento][iframe], characterPosX, characterPosY);
+		if (!scroll && mainCharAnimation.depth == indice) {
+			assembleCompleteBackground(mainCharAnimation.bitmap[characterFacingDir][iframe], characterPosX, characterPosY);
 		}
-		if (!scroll && currentRoomData->animationFlag && animado.depth == indice) {
-			assembleCompleteBackground(curSecondaryAnimationFrame, animado.posx, animado.posy);
+		if (!scroll && currentRoomData->animationFlag && secondaryAnimation.depth == indice) {
+			assembleCompleteBackground(curSecondaryAnimationFrame, secondaryAnimation.posx, secondaryAnimation.posy);
 		}
 	}
 }
 
 void disableSecondAnimation() {
-	setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
+	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 	currentRoomData->animationFlag = false;
 	freeAnimation();
 	restoreBackground();
@@ -2834,16 +2834,16 @@ void setRoomTrajectories(int animationHeight, int animationWidth, TRAJECTORIES_O
 			}
 		}
 		if (fixGrids) {
-			for (int i = 0; i < maxrejax; i++) {
-				for (int j = 0; j < maxrejay; j++) {
+			for (int i = 0; i < maxXGrid; i++) {
+				for (int j = 0; j < maxYGrid; j++) {
 					if (op == RESTORE) {
-						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejafondomovto[i][j];
-						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejafondoraton[i][j];
+						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = movementGridForSecondaryAnim[i][j];
+						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = mouseGridForSecondaryAnim[i][j];
 					} else {
-						if (rejamascaramovto[i][j] > 0)
-							currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = rejamascaramovto[i][j];
-						if (rejamascararaton[i][j] > 0)
-							currentRoomData->mouseGrid[oldposx + i][oldposy + j] = rejamascararaton[i][j];
+						if (maskGridSecondaryAnim[i][j] > 0)
+							currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = maskGridSecondaryAnim[i][j];
+						if (maskMouseSecondaryAnim[i][j] > 0)
+							currentRoomData->mouseGrid[oldposx + i][oldposy + j] = maskMouseSecondaryAnim[i][j];
 					}
 				}
 			}

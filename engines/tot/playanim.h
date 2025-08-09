@@ -102,7 +102,7 @@ struct SecondaryAnim {
 	byte *bitmap[4][secAnimationFrameCount];
 };
 
-struct reginventario {
+struct InventoryEntry {
 	uint16 bitmapIndex;
 	uint16 code;
 	Common::String objectName;
@@ -111,7 +111,7 @@ struct reginventario {
 /**
  * Hypertext struct
  */
-struct regismht {
+struct TextEntry {
 	Common::String  text; // string
 	bool 			continued;  // true if the next entry is a continuation of this one
 	uint16 			response;   // entry number of reply
@@ -206,70 +206,71 @@ struct RoomFileRegister {
 };
 
 struct SavedGame {
-	uint numeropantalla,
-		longtray,
-		indicetray,
-		codigoobjmochila,
-		volumenfxderecho,
-		volumenfxizquierdo,
-		volumenmelodiaderecho,
-		volumenmelodiaizquierdo,
-		oldxrejilla,
-		oldyrejilla,
-		animadoprofundidad,
-		animadodir,
-		animadoposx,
-		animadoposy,
-		animadoiframe2;
-	byte zonaactual,
-		zonadestino,
-		oldzonadestino,
-		posicioninv,
-		numeroaccion,
-		oldnumeroacc,
-		pasos,
-		indicepuertas,
-		direccionmovimiento,
+	uint roomCode,
+		trajectoryLength,
+		currentTrajectoryIndex,
+		backpackObjectCode,
+		rightSfxVol,
+		leftSfxVol,
+		musicVolRight,
+		musicVolLeft,
+		oldGridX,
+		oldGridY,
+		secAnimDepth,
+		secAnimDir,
+		secAnimX,
+		secAnimY,
+		secAnimIFrame;
+	byte currentZone,
+		targetZone,
+		oldTargetZone,
+		inventoryPosition,
+		actionCode,
+		oldActionCode,
+		steps,
+		doorIndex,
+		characterFacingDir,
 		iframe,
-		parte_del_juego;
-	bool sello_quitado,
-		manual_torno,
-		lista1,
-		lista2,
-		completadalista1,
-		completadalista2,
-		vasijapuesta,
-		guadagna,
-		tridente,
-		torno,
-		barro,
-		diablillo_verde,
-		alacena_abierta,
-		baul_abierto,
-		teleencendida,
-		trampa_puesta,
-		rojo_capturado;
-	reginventario mobj[inventoryIconCount];
-	int elemento1,
-		elemento2,
-		xframe,
-		yframe,
+		gamePart;
+	bool isSealRemoved,
+		isPottersManualDelivered,
+		obtainedList1,
+		obtainedList2,
+		list1Complete,
+		list2Complete,
+		isVasePlaced,
+		isScytheTaken,
+		isTridentTaken,
+		isPottersWheelDelivered,
+		isMudDelivered,
+		isGreenDevilDelivered,
+		isCupboardOpen,
+		isChestOpen,
+		isTVOn,
+		isTrapSet,
+		isRedDevilCaptured;
+	InventoryEntry mobj[inventoryIconCount];
+	int element1,
+		element2,
+		characterPosX,
+		characterPosY,
 		xframe2,
 		yframe2;
-	Common::String oldobjmochila,
-		objetomochila;
-	Common::String nombrepersonaje;
+	Common::String oldInventoryObjectName,
+		objetomoinventoryObjectNamehila;
+	Common::String characterName;
 	route mainRoute;
 	uint16 firstList[5], secondList[5];
-	Common::Point trayec[300];
-	bool primera[characterCount],
-		lprimera[characterCount],
-		cprimera[characterCount],
-		libro[characterCount],
-		caramelos[characterCount];
+	Common::Point trajectory[300];
+	// Conversation topic unlocks
+	bool firstTimeTopicA[characterCount],
+		firstTimeTopicB[characterCount],
+		firstTimeTopicC[characterCount],
+		bookTopic[characterCount],
+		mintTopic[characterCount];
 
-	bool cavernas[5];
-	uint hornacina[2][4];
+	bool caves[5];
+	uint niche[2][4];
 };
 
 typedef byte palette[768];
@@ -297,29 +298,29 @@ extern uint npraton2, npraton;
 /**
  * Previous positions of the mouse within the screen grid
  */
-extern uint oldxrejilla, oldyrejilla;
+extern uint oldGridX, oldGridY;
 
-extern SavedGame regpartida;
+extern SavedGame savedGame;
 
-extern bool sello_quitado;
+extern bool isSealRemoved;
 
 /**
  * Flag to enable screen/room change
  */
-extern bool cambiopantalla;
-extern bool teleencendida,
-	vasijapuesta,
-	guadagna,
-	tridente,
-	torno,
-	barro,
-	diablillo_verde,
-	rojo_capturado,
-	manual_torno,
-	alacena_abierta,
-	baul_abierto,
-	trampa_puesta,
-	peteractivo;
+extern bool roomChange;
+extern bool isTVOn,
+	isVasePlaced,
+	isScytheTaken,
+	isTridentTaken,
+	isPottersWheelDelivered,
+	isMudDelivered,
+	isGreenDevilDelivered,
+	isRedDevilCaptured,
+	isPottersManualDelivered,
+	isCupboardOpen,
+	isChestOpen,
+	isTrapSet,
+	isPeterCoughing;
 
 /**
  * Flag for temporary savegame
@@ -328,35 +329,35 @@ extern bool inGame;
 /**
  * Flag for first time run of the game.
  */
-extern bool hechaprimeravez;
+extern bool firstTimeDone;
 
 
-extern bool introSeen;
+extern bool isIntroSeen;
 
 /**
  * Flag to exit program.
  */
-extern bool salirdeljuego;
+extern bool shouldQuitGame;
 /**
  * Flag to initialize game
  */
-extern bool partidanueva;
+extern bool startNewGame;
 /**
  * Flag to resume game
  */
-extern bool continuarpartida;
+extern bool continueGame;
 /**
  * Flag to load a game upon start.
  */
-extern bool desactivagrabar;
+extern bool isSavingDisabled;
 /**
  * true if sprites should be drawn
  */
-extern bool pintaractivo;
+extern bool isDrawingEnabled;
 /**
  * Flag for secondary animation
  */
-extern bool animacion2;
+extern bool isSecondaryAnimationEnabled;
 /**
  * 54 color palette slice.
  */
@@ -369,7 +370,7 @@ extern palette pal;
 /**
  * These are the icons currnetly in the inventory
  */
-extern reginventario mobj[inventoryIconCount];
+extern InventoryEntry mobj[inventoryIconCount];
 /**
  * Keeps an array of all inventory icon bitmaps
  */
@@ -382,36 +383,31 @@ extern byte saltospal;
 /**
  * Position within inventory
  */
-extern byte posicioninv;
+extern byte inventoryPosition;
 /**
  * Currently selected action.
  */
-extern byte numeroaccion;
+extern byte actionCode;
 /**
  * Previously selected action.
  */
-extern byte oldnumeroacc;
+extern byte oldActionCode;
 /**
  * Number of trajectory changes
  */
-extern byte pasos;
+extern byte steps;
 /**
  * index of currently selected door.
  */
-extern byte indicepuertas;
+extern byte doorIndex;
 /**
  * Aux for palette animation
  */
-extern byte movidapaleta;
-/**
- * Index of patch for grid within XMS
- */
-extern byte rejillaquetoca;
+extern byte isPaletteAnimEnabled;
 /**
  * 1 first part, 2 second part
  */
 extern byte gamePart;
-extern byte encripcod1;
 /**
  * Number of frames of secondary animation
  */
@@ -419,19 +415,15 @@ extern byte secondaryAnimationFrameCount;
 /**
  * Number of directions of the secondary animation
  */
-extern byte numerodir;
+extern byte secondaryAnimDirCount;
 /**
  * Data protection control
  */
 extern byte contadorpc, contadorpc2;
 /**
- * Auxiliary indices
- */
-extern byte indaux1, indaux2;
-/**
  * Coordinates of target step
  */
-extern byte destinox_paso, destinoy_paso;
+extern byte destinationStepX, destinationStepY;
 /**
  * Current character facing direction
  * 0: upwards
@@ -439,37 +431,31 @@ extern byte destinox_paso, destinoy_paso;
  * 2: downwards
  * 3: left
  */
-extern byte direccionmovimiento;
+extern byte characterFacingDir;
 
 /**
  * Width and height of secondary animation
  */
-extern uint anchoanimado, altoanimado;
-/**
- * Time window between candle decrease
- */
-extern uint tiempo;
+extern uint secondaryAnimWidth, secondaryAnimHeight;
 /**
  * Code of selected object in the backpack
  */
-extern uint codigoobjmochila;
+extern uint backpackObjectCode;
 /**
  * Foo
  */
-extern uint kaka;
+extern uint foo;
 /**
  * Auxiliary vars for grid update
  */
 extern uint oldposx, oldposy;
 extern uint rightSfxVol, leftSfxVol;
-extern uint segpasoicono;
-extern uint ofspasoicono;
 extern uint musicVolRight, musicVolLeft;
 
 /**
  * Amplitude of movement
  */
-extern int elemento1, elemento2;
+extern int element1, element2;
 /**
  * Current position of the main character
  */
@@ -485,9 +471,9 @@ extern Common::File verb;
 /**
  * Auxiliary vars with current inventory object name.
  */
-extern Common::String oldobjmochila, objetomochila;
+extern Common::String oldInventoryObjectName, inventoryObjectName;
 
-extern Common::String nombreficherofoto;
+extern Common::String photoFileName;
 /**
  * Name of player
  */
@@ -495,7 +481,7 @@ extern Common::String characterName;
 
 extern Common::String decryptionKey;
 
-extern uint hornacina[2][4];
+extern uint niche[2][4];
 
 extern RoomFileRegister *currentRoomData;
 
@@ -507,59 +493,59 @@ extern route mainRoute;
 /**
  * Matrix of positions for a trajectory between two points
  */
-extern Common::Point trayec[300];
+extern Common::Point trajectory[300];
 
 /**
  * Longitude of the trajectory matrix.
  */
-extern uint longtray;
+extern uint trajectoryLength;
 /**
  * Position within the trajectory matrix
  */
-extern uint indicetray;
+extern uint currentTrajectoryIndex;
 /**
  * Position within the trajectory matrix for secondary animation
  */
-extern uint indicetray2;
+extern uint currentSecondaryTrajectoryIndex;
 /**
  * Screen areas
  */
-extern byte zonaactual, zonadestino, oldzonadestino;
+extern byte currentZone, targetZone, oldTargetZone;
 /**
  * Amplitude of grid slices
  */
-extern byte maxrejax, maxrejay;
+extern byte maxXGrid, maxYGrid;
 
 /**
  * capture of movement grid of secondary animation
  */
-extern byte rejafondomovto[10][10];
+extern byte movementGridForSecondaryAnim[10][10];
 /**
  * capture of mouse grid of secondary animation
  */
-extern byte rejafondoraton[10][10];
+extern byte mouseGridForSecondaryAnim[10][10];
 /**
  * movement mask for grid of secondary animation
  */
-extern byte rejamascaramovto[10][10];
+extern byte maskGridSecondaryAnim[10][10];
 
 /**
  * mouse mask for grid of secondary animation
  */
-extern byte rejamascararaton[10][10];
+extern byte maskMouseSecondaryAnim[10][10];
 
 extern bool list1Complete,
 	list2Complete,
-	lista1, // whether we've been given list 1
-	lista2; // whether we've been given list 2
+	obtainedList1, // whether we've been given list 1
+	obtainedList2; // whether we've been given list 2
 
-extern bool primera[characterCount],
-	lprimera[characterCount],
-	cprimera[characterCount],
-	libro[characterCount],
-	caramelos[characterCount];
+extern bool firstTimeTopicA[characterCount],
+	firstTimeTopicB[characterCount],
+	firstTimeTopicC[characterCount],
+	bookTopic[characterCount],
+	mintTopic[characterCount];
 
-extern bool cavernas[5];
+extern bool caves[5];
 /**
  * First and second lists of objects to retrieve in the game
  */
@@ -568,9 +554,10 @@ extern uint16 firstList[5],
 /**
  * Animation sequence
  */
-extern CharacterAnim secuencia;
-extern SecondaryAnim animado;
-extern uint sizeframe, sizeanimado;
+extern CharacterAnim mainCharAnimation;
+extern uint mainCharFrameSize;
+extern SecondaryAnim secondaryAnimation;
+extern uint secondaryAnimFrameSize;
 /**
  * Max num of loaded frames for secondary animation
  */

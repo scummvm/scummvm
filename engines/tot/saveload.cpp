@@ -37,52 +37,52 @@ namespace Tot {
 bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	uint32 startBytes = s.bytesSynced();
 	// Uint16
-	s.syncAsUint16LE(game.numeropantalla);
-	s.syncAsUint16LE(game.longtray);
-	s.syncAsUint16LE(game.indicetray);
-	s.syncAsUint16LE(game.codigoobjmochila);
-	s.syncAsUint16LE(game.volumenfxderecho);
-	s.syncAsUint16LE(game.volumenfxizquierdo);
-	s.syncAsUint16LE(game.volumenmelodiaderecho);
-	s.syncAsUint16LE(game.volumenmelodiaizquierdo);
-	s.syncAsUint16LE(game.oldxrejilla);
-	s.syncAsUint16LE(game.oldyrejilla);
-	s.syncAsUint16LE(game.animadoprofundidad);
-	s.syncAsUint16LE(game.animadodir);
-	s.syncAsUint16LE(game.animadoposx);
-	s.syncAsUint16LE(game.animadoposy);
-	s.syncAsUint16LE(game.animadoiframe2);
+	s.syncAsUint16LE(game.roomCode);
+	s.syncAsUint16LE(game.trajectoryLength);
+	s.syncAsUint16LE(game.currentTrajectoryIndex);
+	s.syncAsUint16LE(game.backpackObjectCode);
+	s.syncAsUint16LE(game.rightSfxVol);
+	s.syncAsUint16LE(game.leftSfxVol);
+	s.syncAsUint16LE(game.musicVolRight);
+	s.syncAsUint16LE(game.musicVolLeft);
+	s.syncAsUint16LE(game.oldGridX);
+	s.syncAsUint16LE(game.oldGridY);
+	s.syncAsUint16LE(game.secAnimDepth);
+	s.syncAsUint16LE(game.secAnimDir);
+	s.syncAsUint16LE(game.secAnimX);
+	s.syncAsUint16LE(game.secAnimY);
+	s.syncAsUint16LE(game.secAnimIFrame);
 	// Bytes
-	s.syncAsByte(game.zonaactual);
-	s.syncAsByte(game.zonadestino);
-	s.syncAsByte(game.oldzonadestino);
-	s.syncAsByte(game.posicioninv);
-	s.syncAsByte(game.numeroaccion);
-	s.syncAsByte(game.oldnumeroacc);
-	s.syncAsByte(game.pasos);
-	s.syncAsByte(game.indicepuertas);
-	s.syncAsByte(game.direccionmovimiento);
+	s.syncAsByte(game.currentZone);
+	s.syncAsByte(game.targetZone);
+	s.syncAsByte(game.oldTargetZone);
+	s.syncAsByte(game.inventoryPosition);
+	s.syncAsByte(game.actionCode);
+	s.syncAsByte(game.oldActionCode);
+	s.syncAsByte(game.steps);
+	s.syncAsByte(game.doorIndex);
+	s.syncAsByte(game.characterFacingDir);
 	s.syncAsByte(game.iframe);
-	s.syncAsByte(game.parte_del_juego);
+	s.syncAsByte(game.gamePart);
 
 	// Booleans
-	s.syncAsByte(game.sello_quitado);
-	s.syncAsByte(game.lista1);
-	s.syncAsByte(game.lista2);
-	s.syncAsByte(game.completadalista1);
-	s.syncAsByte(game.completadalista2);
-	s.syncAsByte(game.vasijapuesta);
-	s.syncAsByte(game.guadagna);
-	s.syncAsByte(game.tridente);
-	s.syncAsByte(game.torno);
-	s.syncAsByte(game.barro);
-	s.syncAsByte(game.diablillo_verde);
-	s.syncAsByte(game.rojo_capturado);
-	s.syncAsByte(game.manual_torno);
-	s.syncAsByte(game.alacena_abierta);
-	s.syncAsByte(game.baul_abierto);
-	s.syncAsByte(game.teleencendida);
-	s.syncAsByte(game.trampa_puesta);
+	s.syncAsByte(game.isSealRemoved);
+	s.syncAsByte(game.obtainedList1);
+	s.syncAsByte(game.obtainedList2);
+	s.syncAsByte(game.list1Complete);
+	s.syncAsByte(game.list2Complete);
+	s.syncAsByte(game.isVasePlaced);
+	s.syncAsByte(game.isScytheTaken);
+	s.syncAsByte(game.isTridentTaken);
+	s.syncAsByte(game.isPottersWheelDelivered);
+	s.syncAsByte(game.isMudDelivered);
+	s.syncAsByte(game.isGreenDevilDelivered);
+	s.syncAsByte(game.isRedDevilCaptured);
+	s.syncAsByte(game.isPottersManualDelivered);
+	s.syncAsByte(game.isCupboardOpen);
+	s.syncAsByte(game.isChestOpen);
+	s.syncAsByte(game.isTVOn);
+	s.syncAsByte(game.isTrapSet);
 
 	for (int i = 0; i < inventoryIconCount; i++) {
 		s.syncAsUint16LE(game.mobj[i].bitmapIndex);
@@ -91,17 +91,17 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	}
 
 	// integers
-	s.syncAsSint32LE(game.elemento1);
-	s.syncAsSint32LE(game.elemento2);
-	s.syncAsSint32LE(game.xframe);
-	s.syncAsSint32LE(game.yframe);
+	s.syncAsSint32LE(game.element1);
+	s.syncAsSint32LE(game.element2);
+	s.syncAsSint32LE(game.characterPosX);
+	s.syncAsSint32LE(game.characterPosY);
 	s.syncAsSint32LE(game.xframe2);
 	s.syncAsSint32LE(game.yframe2);
 
 	// Strings
-	s.syncString(game.oldobjmochila);
-	s.syncString(game.objetomochila);
-	s.syncString(game.nombrepersonaje);
+	s.syncString(game.oldInventoryObjectName);
+	s.syncString(game.objetomoinventoryObjectNamehila);
+	s.syncString(game.characterName);
 
 	for (int i = 0; i < routePointCount; i++) {
 		s.syncAsSint16LE(game.mainRoute[i].x);
@@ -109,28 +109,28 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	}
 
 	for (int i = 0; i < 300; i++) {
-		s.syncAsSint16LE(game.trayec[i].x);
-		s.syncAsSint16LE(game.trayec[i].y);
+		s.syncAsSint16LE(game.trajectory[i].x);
+		s.syncAsSint16LE(game.trajectory[i].y);
 	}
 
 	for (int indiaux = 0; indiaux < characterCount; indiaux++) {
 		// interleave them just to avoid creating many loops
-		s.syncAsByte(game.primera[indiaux]);
-		s.syncAsByte(game.lprimera[indiaux]);
-		s.syncAsByte(game.cprimera[indiaux]);
-		s.syncAsByte(game.libro[indiaux]);
-		s.syncAsByte(game.caramelos[indiaux]);
+		s.syncAsByte(game.firstTimeTopicA[indiaux]);
+		s.syncAsByte(game.firstTimeTopicB[indiaux]);
+		s.syncAsByte(game.firstTimeTopicC[indiaux]);
+		s.syncAsByte(game.bookTopic[indiaux]);
+		s.syncAsByte(game.mintTopic[indiaux]);
 	}
 
 	for (int indiaux = 0; indiaux < 5; indiaux++) {
-		s.syncAsByte(game.cavernas[indiaux]);
+		s.syncAsByte(game.caves[indiaux]);
 		s.syncAsUint16LE(game.firstList[indiaux]);
 		s.syncAsUint16LE(game.secondList[indiaux]);
 	}
 
 	for (int indiaux = 0; indiaux < 4; indiaux++) {
-		s.syncAsUint16LE(game.hornacina[0][indiaux]);
-		s.syncAsUint16LE(game.hornacina[1][indiaux]);
+		s.syncAsUint16LE(game.niche[0][indiaux]);
+		s.syncAsUint16LE(game.niche[1][indiaux]);
 	}
 
 	uint32 newBytes = s.bytesSynced();
@@ -143,12 +143,12 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 	if (s.isSaving()) {
 
 		// Restore trajectory
-		setRoomTrajectories(altoanimado, anchoanimado, RESTORE);
+		setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 		// Make sure to save any unsaved changes in the room
 		saveRoomData(currentRoomData, rooms);
 
 		// Do not fix screen grids, they will be fixed differently below
-		setRoomTrajectories(altoanimado, anchoanimado, SET_WITH_ANIM);
+		setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM);
 
 		int size = roomStream->size();
 		byte *roomBuf = (byte *)malloc(size);
@@ -267,7 +267,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		loadGame(loadedGame);
 	} else {
 		saveGameToRegister();
-		result = syncSaveData(s, regpartida);
+		result = syncSaveData(s, savedGame);
 	}
 	return result;
 }
