@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-09 19:03+0000\n"
+"POT-Creation-Date: 2025-08-09 19:09+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -3762,7 +3762,7 @@ msgstr ""
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
 #: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
-#: engines/efh/metaengine.cpp:207 engines/groovie/metaengine.cpp:205
+#: engines/efh/metaengine.cpp:234 engines/groovie/metaengine.cpp:205
 #: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
 #: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
@@ -3797,7 +3797,7 @@ msgstr "Midtklikk"
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
 #: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
-#: engines/efh/metaengine.cpp:213 engines/groovie/metaengine.cpp:211
+#: engines/efh/metaengine.cpp:240 engines/groovie/metaengine.cpp:211
 #: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
 #: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:368
 #: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
@@ -5974,7 +5974,7 @@ msgstr "Hopp over linje"
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
-#: engines/efh/metaengine.cpp:231 engines/hdb/metaengine.cpp:213
+#: engines/efh/metaengine.cpp:258 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 #: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:53
 #, fuzzy
@@ -5984,7 +5984,7 @@ msgstr "Beveg Bakover"
 #. I18N: Move Actor to downwards direction
 #: engines/access/metaengine.cpp:221 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
-#: engines/efh/metaengine.cpp:237 engines/hdb/metaengine.cpp:219
+#: engines/efh/metaengine.cpp:264 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 #: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:54
 #, fuzzy
@@ -5995,7 +5995,7 @@ msgstr "Skli til Høyre"
 #. I18N: Move actor left during fight
 #: engines/access/metaengine.cpp:228 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
-#: engines/efh/metaengine.cpp:243 engines/hdb/metaengine.cpp:225
+#: engines/efh/metaengine.cpp:270 engines/hdb/metaengine.cpp:225
 #: engines/kyra/engine/eobcommon.cpp:371 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
@@ -6008,7 +6008,7 @@ msgstr "Skli til Venstre"
 #. I18N: Move actor right during fight
 #: engines/access/metaengine.cpp:235 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
-#: engines/efh/metaengine.cpp:249 engines/hdb/metaengine.cpp:231
+#: engines/efh/metaengine.cpp:276 engines/hdb/metaengine.cpp:231
 #: engines/kyra/engine/eobcommon.cpp:372 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
@@ -6019,28 +6019,28 @@ msgstr "Skli til Høyre"
 
 #. I18N: Move Actor to top-left direction
 #: engines/access/metaengine.cpp:242 engines/cine/metaengine.cpp:405
-#: engines/efh/metaengine.cpp:255
+#: engines/efh/metaengine.cpp:282
 #, fuzzy
 msgid "Move up-left"
 msgstr "Skli til Venstre"
 
 #. I18N: Move Actor to top-right direction
 #: engines/access/metaengine.cpp:247 engines/cine/metaengine.cpp:411
-#: engines/efh/metaengine.cpp:260
+#: engines/efh/metaengine.cpp:287
 #, fuzzy
 msgid "Move up-right"
 msgstr "Skli til Høyre"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/access/metaengine.cpp:252 engines/cine/metaengine.cpp:417
-#: engines/efh/metaengine.cpp:265
+#: engines/efh/metaengine.cpp:292
 #, fuzzy
 msgid "Move down-left"
 msgstr "Skli til Høyre"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/access/metaengine.cpp:257 engines/cine/metaengine.cpp:423
-#: engines/efh/metaengine.cpp:270
+#: engines/efh/metaengine.cpp:297
 #, fuzzy
 msgid "Move down-right"
 msgstr "Skli til Høyre"
@@ -6190,19 +6190,21 @@ msgstr ""
 
 #: engines/adl/metaengine.cpp:117 engines/cge/metaengine.cpp:56
 #: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
-#: engines/drascula/metaengine.cpp:51 engines/glk/metaengine.cpp:193
-#: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
-#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
-#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
+#: engines/drascula/metaengine.cpp:51 engines/efh/metaengine.cpp:44
+#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
+#: engines/made/metaengine.cpp:51 engines/mortevielle/metaengine.cpp:37
+#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
+#: engines/wage/metaengine.cpp:51
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "Tekst og Tale:"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
-#: engines/drascula/metaengine.cpp:52 engines/made/metaengine.cpp:52
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
+#: engines/drascula/metaengine.cpp:52 engines/efh/metaengine.cpp:45
+#: engines/made/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
+#: engines/teenagent/metaengine.cpp:50
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Nytt CD-lyd istaden for spellyd, om den er tilgjengeleg"
@@ -6474,7 +6476,7 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/buried/metaengine.cpp:136 engines/cine/metaengine.cpp:271
 #: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
-#: engines/efh/metaengine.cpp:203 engines/hopkins/metaengine.cpp:207
+#: engines/efh/metaengine.cpp:230 engines/hopkins/metaengine.cpp:207
 #: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
 #: engines/mads/metaengine.cpp:275 engines/sludge/keymapper_tables.h:33
@@ -7156,7 +7158,7 @@ msgstr "Veksle muslåsing"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/buried/metaengine.cpp:179
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/dgds/metaengine.cpp:75 engines/efh/metaengine.cpp:219
+#: engines/dgds/metaengine.cpp:75 engines/efh/metaengine.cpp:246
 #: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
@@ -7181,7 +7183,7 @@ msgstr "Lagra spel:"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/buried/metaengine.cpp:184
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
-#: engines/dgds/metaengine.cpp:74 engines/efh/metaengine.cpp:225
+#: engines/dgds/metaengine.cpp:74 engines/efh/metaengine.cpp:252
 #: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
@@ -8000,19 +8002,19 @@ msgstr ""
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
-#: engines/efh/metaengine.cpp:275
+#: engines/efh/metaengine.cpp:302
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 1 status"
 msgstr "Syn karakterportrettar"
 
-#: engines/efh/metaengine.cpp:280
+#: engines/efh/metaengine.cpp:307
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 2 status"
 msgstr "Syn karakterportrettar"
 
-#: engines/efh/metaengine.cpp:285
+#: engines/efh/metaengine.cpp:312
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 3 status"
