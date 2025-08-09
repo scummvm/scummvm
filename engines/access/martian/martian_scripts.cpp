@@ -86,7 +86,10 @@ void MartianScripts::cmdSpecial0() {
 	warning("TODO: Pop Midi");
 }
 
-void MartianScripts::cmdSpecial1(int param1) {
+void MartianScripts::cmdSpecial1(int param1, int param2) {
+	//
+	// Special 1 is a scene transition with some explanatory text
+	//
 	_vm->_events->hideCursor();
 
 	if (param1 != -1) {
@@ -96,6 +99,42 @@ void MartianScripts::cmdSpecial1(int param1) {
 
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
+	_vm->_events->showCursor();
+
+	_vm->_fonts._charSet._hi = 10;
+	Font::_fontColors[1] = 0xf7;
+	Font::_fontColors[2] = 0xff;
+
+	_vm->_screen->_maxChars = 50;
+	_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(24, 18);
+
+	// TODO: Original has a small delay here.
+
+	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
+	/*
+	Common::DumpFile dump;
+	dump.open("/tmp/etext.dat.decomp");
+	dump.writeStream(notesRes->_stream);
+	dump.close();
+	*/
+
+	notesRes->_stream->seek(2 * param2);
+	uint16 msgOffset = notesRes->_stream->readUint16LE();
+	if (msgOffset == 0 || msgOffset >= notesRes->_stream->size()) {
+		error("MartianScripts::cmdSpecial1: Invalid message offset %d for msg %d", msgOffset, param2);
+	}
+
+	notesRes->_stream->seek(msgOffset);
+
+	Common::String msg = notesRes->_stream->readString();
+	_game->showDeathText(msg);
+
+	_vm->_events->hideCursor();
+	if (param2 != 0x3f) {
+		_vm->_screen->forceFadeOut();
+		_vm->_screen->clearScreen();
+	}
+
 	_vm->_events->showCursor();
 }
 
@@ -142,10 +181,7 @@ void MartianScripts::cmdSpecial6() {
 	notesRes->_stream->seek(72);
 
 	// Read the message
-	Common::String msg = "";
-	byte c;
-	while ((c = (char)notesRes->_stream->readByte()) != '\0')
-		msg += c;
+	Common::String msg = notesRes->_stream->readString();
 
 	//display the message
 	_game->showDeathText(msg);
@@ -316,7 +352,7 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		cmdSpecial0();
 		break;
 	case 1:
-		cmdSpecial1(param1);
+		cmdSpecial1(param1, param2);
 		break;
 	case 2:
 		warning("TODO: cmdSpecial2");
