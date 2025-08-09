@@ -50,7 +50,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[0] = &Scripts::cmdObject;
 	COMMAND_LIST[1] = &Scripts::cmdEndObject;
 	COMMAND_LIST[2] = &Scripts::cmdJumpLook;
-	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
+	COMMAND_LIST[3] = &Scripts::cmdJumpOpen;
 	COMMAND_LIST[4] = &Scripts::cmdJumpGet;
 	COMMAND_LIST[5] = &Scripts::cmdJumpMove;
 	COMMAND_LIST[6] = &Scripts::cmdJumpUse;
@@ -124,6 +124,7 @@ void Scripts::setOpcodes() {
 }
 
 void Scripts::setOpcodes_v2() {
+	COMMAND_LIST[3] = &Scripts::cmdJumpHelp;
 	COMMAND_LIST[9] = &Scripts::cmdPrint_v2;
 	COMMAND_LIST[15] = &Scripts::cmdSetInventory;
 	COMMAND_LIST[28] = &Scripts::cmdDispInv_v2;
@@ -236,6 +237,9 @@ int Scripts::executeScript() {
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
 			_data->skip(2);
 
+		if (_data->eos()) {
+			error("Hit end of script data");
+
 		if (_scriptCommand < 0x80)
 			error("Unexpected opcode value %d", _scriptCommand);
 
@@ -269,6 +273,17 @@ void Scripts::cmdEndObject() {
 void Scripts::cmdJumpLook() {
 	debugCN(1, kDebugScripts, "cmdJumpLook(selectCommand=%d)", _vm->_room->_selectCommand);
 	if (_vm->_room->_selectCommand == 0) {
+		debugC(1, kDebugScripts, " -> True");
+		cmdGoto();
+	} else {
+		debugC(1, kDebugScripts, " -> False");
+		_data->skip(2);
+	}
+}
+
+void Scripts::cmdJumpOpen() {
+	debugCN(1, kDebugScripts, "cmdJumpOpen(selectCommand=%d)", _vm->_room->_selectCommand);
+	if (_vm->_room->_selectCommand == 1) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
