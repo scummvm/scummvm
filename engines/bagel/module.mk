@@ -274,7 +274,6 @@ MODULE_OBJS = \
 	hodjnpodj/mankala/mnklog.o \
 	hodjnpodj/mankala/mnkopt.o \
 	hodjnpodj/mankala/mnkui.o \
-	hodjnpodj/mankala/transform.o \
 	hodjnpodj/mazedoom/init.o \
 	hodjnpodj/mazedoom/mod.o \
 	hodjnpodj/mazedoom/optndlg.o \
