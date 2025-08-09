@@ -115,6 +115,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      New teenagent.dat file is generated.
    - Added keymapper support.
    - Added Text-to-Speech support.
+   - Added support for Polish CD version with voice-over.
 
  Tetraedge:
    - Added keymapper support.
