@@ -347,6 +347,16 @@ void BubbleBox::setCursorPos(int posX, int posY) {
 }
 
 void BubbleBox::printString(Common::String msg) {
+
+	if (_vm->_fonts._charSet._hi & 2) {
+		// Draw a shadow for the text
+		Common::Point shadowPt = _vm->_screen->_printOrg + Common::Point(1, 1);
+		byte oldcol = Font::_fontColors[3];
+		Font::_fontColors[3] = 0;
+		_vm->_fonts._font1->drawString(_vm->_screen, msg, shadowPt);
+		Font::_fontColors[3] = oldcol;
+	}
+
 	_vm->_fonts._font1->drawString(_vm->_screen, msg, _vm->_screen->_printOrg);
 }
 
