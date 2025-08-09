@@ -89,11 +89,10 @@
 	#include <assert.h>
 	#include <ctype.h>
 
-	// The C++11 standard removed the C99 requirement that some <inttypes.h>
-	// features should only be available when the following macros are defined.
-	// But on some systems (such as RISC OS or macOS < 10.7), the system headers
-	// are not necessarily up to date with this change. So, continue defining
-	// them, in order to avoid build failures on some environments.
+	// In C99, the following macros were necessary to get some <inttypes.h>
+	// features we want. The C++11 standard removed this requirement, but in
+	// practice, some systems (such as RISC OS or macOS < 10.7) are not fully
+	// compliant, and still require the old defines.
 	#define __STDC_CONSTANT_MACROS
 	#define __STDC_FORMAT_MACROS
 	#define __STDC_LIMIT_MACROS
@@ -110,6 +109,7 @@
 	#endif
 
 	#include <limits.h>
+
 	// MSVC does not define M_PI, M_SQRT2 and other math defines by default.
 	// _USE_MATH_DEFINES must be defined in order to have these defined, thus
 	// we enable it here. For more information, check:

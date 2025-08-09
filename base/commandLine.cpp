@@ -54,6 +54,8 @@
 #include "backends/platform/sdl/sdl-sys.h"
 #endif
 
+#include <errno.h> // For strtol result check
+
 namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
@@ -551,12 +553,12 @@ bool ensureAccessibleDirectoryForPathOption(Common::FSNode &node,
 	if (!option) usage("Option '%s' requires an argument", argv[isLongCmd ? i : i-1]);
 
 // Use this for options which have a required integer value
-// (we don't check ERANGE because WinCE doesn't support errno, so we're stuck just rejecting LONG_MAX/LONG_MIN..)
 #define DO_OPTION_INT(shortCmd, longCmd) \
 	DO_OPTION(shortCmd, longCmd) \
 	char *endptr; \
+	errno = 0; \
 	long int retval = strtol(option, &endptr, 0); \
-	if (*endptr != '\0' || retval == LONG_MAX || retval == LONG_MIN) \
+	if (*endptr != '\0' || (errno == ERANGE && (retval == LONG_MAX || retval == LONG_MIN))) \
 		usage("--%s: Invalid number '%s'", longCmd, option);
 
 // Use this for boolean options; this distinguishes between "-x" and "-X",

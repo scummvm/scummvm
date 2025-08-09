@@ -176,28 +176,28 @@ bool RawStream<bytesPerSample, isUnsigned, isLE>::seek(const Timestamp &where) {
 #pragma mark --- Raw stream factories ---
 #pragma mark -
 
-/* In the following, we use preprocessor / macro tricks to simplify the code
- * which instantiates the input streams. We used to use template functions for
- * this, but MSVC6 / EVC 3-4 (used for WinCE builds) are extremely buggy when it
- * comes to this feature of C++... so as a compromise we use macros to cut down
- * on the (source) code duplication a bit.
- * So while normally macro tricks are said to make maintenance harder, in this
- * particular case it should actually help it :-)
+/**
+ * The following templated function is a helper to simplify the public makeRawStream function
  */
-
-#define MAKE_RAW_STREAM(UNSIGNED) \
-		if (bytesPerSample == 3) { \
-			if (isLE) \
-				return new RawStream<3, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream); \
-			else  \
-				return new RawStream<3, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream); \
-		} else if (bytesPerSample == 2) { \
-			if (isLE) \
-				return new RawStream<2, UNSIGNED, true>(rate, isStereo, disposeAfterUse, stream); \
-			else  \
-				return new RawStream<2, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream); \
-		} else \
-			return new RawStream<1, UNSIGNED, false>(rate, isStereo, disposeAfterUse, stream)
+template <bool isUnsigned>
+static FORCEINLINE SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream, int rate, bool isStereo, DisposeAfterUse::Flag disposeAfterUse, bool isLE, int bytesPerSample) {
+	switch (bytesPerSample) {
+	case 3:
+		if (isLE) {
+			return new RawStream<3, isUnsigned, true>(rate, isStereo, disposeAfterUse, stream);
+		} else {
+			return new RawStream<3, isUnsigned, false>(rate, isStereo, disposeAfterUse, stream);
+		}
+	case 2:
+		if (isLE) {
+			return new RawStream<2, isUnsigned, true>(rate, isStereo, disposeAfterUse, stream);
+		} else {
+			return new RawStream<2, isUnsigned, false>(rate, isStereo, disposeAfterUse, stream);
+		}
+	default:
+		return new RawStream<1, isUnsigned, false>(rate, isStereo, disposeAfterUse, stream);
+	}
+}
 
 SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 								   int rate, byte flags,
@@ -210,9 +210,9 @@ SeekableAudioStream *makeRawStream(Common::SeekableReadStream *stream,
 	assert(stream->size() % (bytesPerSample * (isStereo ? 2 : 1)) == 0);
 
 	if (isUnsigned) {
-		MAKE_RAW_STREAM(true);
+		return makeRawStream<true>(stream, rate, isStereo, disposeAfterUse, isLE, bytesPerSample);
 	} else {
-		MAKE_RAW_STREAM(false);
+		return makeRawStream<false>(stream, rate, isStereo, disposeAfterUse, isLE, bytesPerSample);
 	}
 }
 

@@ -36,11 +36,7 @@
 #include "audio/audiostream.h"
 
 #ifdef USE_TREMOR
-#ifdef USE_TREMOLO
-#include <tremolo/ivorbisfile.h>
-#else
 #include <tremor/ivorbisfile.h>
-#endif
 #else
 #define OV_EXCLUDE_STATIC_CALLBACKS
 #include <vorbis/vorbisfile.h>
