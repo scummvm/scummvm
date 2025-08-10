@@ -5309,7 +5309,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("muppetkidsbegin", "", "BEGSNDS.EXE", "t:5c3116c2a6c3b176c1f24dc190fbbbfc", 1817047, Common::IT_ITA, 404),
 
 	// Italian individual title is Lettere
-	WINGAME1t_l("muppetkidsletters", "", "LETTERS.EXE", "t:618e8bb2e15f342b664bc0efd3cbe9db", 1735083, Common::IT_ITA, 404),
+	WINGAME2_l("muppetkidsletters", "", "LETTERS.EXE", "t:618e8bb2e15f342b664bc0efd3cbe9db", 1735083,
+										"LT03.DIR",	   "f:2e31da85926f6fe208abf223e6b67230",  196586, Common::IT_ITA, 404),
 
 	// Italian individual title is Uguale e diverso
 	WINGAME1t_l("muppetkidssamediff", "", "SAMEDIFF.EXE", "t:d8a0ba7e5ff3464921539924bee07daa", 2140235, Common::IT_ITA, 404),
