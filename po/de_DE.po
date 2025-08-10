@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 11:10+0000\n"
+"POT-Creation-Date: 2025-08-10 11:20+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -60,10 +60,11 @@ msgstr "Verfügbare Spiele-Engines:"
 #: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
-#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
-#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
-#: engines/supernova/metaengine.cpp:341 engines/twp/metaengine.cpp:179
+#: engines/queen/metaengine.cpp:264 engines/saga/metaengine.cpp:374
+#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
+#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
+#: engines/scumm/help.cpp:212 engines/supernova/metaengine.cpp:341
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Schließen"
 
@@ -2644,7 +2645,7 @@ msgstr ""
 "\n"
 "Und weitere..."
 
-#: gui/options.cpp:2975 engines/engine.cpp:655
+#: gui/options.cpp:2975 engines/engine.cpp:655 engines/queen/metaengine.cpp:269
 #: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr "Verschieben"
@@ -6278,14 +6279,14 @@ msgstr "Suche nach Aktualisierungen..."
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
 #: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/prince/metaengine.cpp:227 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:185
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Standard-Tastenbelegungen"
 
@@ -6378,14 +6379,14 @@ msgstr "Schau"
 #. I18N: Combat command in Might & Magic 1
 #: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:136
 #: engines/cine/metaengine.cpp:342 engines/hdb/metaengine.cpp:237
-#: engines/mm/mm1/metaengine.cpp:81 engines/saga/metaengine.cpp:379
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:227
-#: engines/scumm/help.cpp:253 engines/sky/metaengine.cpp:95
-#: engines/sludge/keymapper_tables.h:333 engines/supernova/metaengine.cpp:356
-#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
-#: engines/ultima/ultima4/metaengine.cpp:71
+#: engines/mm/mm1/metaengine.cpp:81 engines/queen/metaengine.cpp:294
+#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
+#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
+#: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
+#: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6825,11 +6826,11 @@ msgstr "AGOS"
 #: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
 #: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
-#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
 msgstr "Spiele-Tastenbelegungen"
 
@@ -7125,17 +7126,18 @@ msgid "Show version"
 msgstr "Version anzeigen"
 
 #: engines/asylum/metaengine.cpp:120 engines/crab/input/input.cpp:271
-#: engines/sludge/keymapper_tables.h:308 engines/sludge/keymapper_tables.h:404
-#: engines/sludge/keymapper_tables.h:471 engines/sludge/keymapper_tables.h:502
-#: engines/ultima/nuvie/metaengine.cpp:90
+#: engines/queen/metaengine.cpp:253 engines/sludge/keymapper_tables.h:308
+#: engines/sludge/keymapper_tables.h:404 engines/sludge/keymapper_tables.h:471
+#: engines/sludge/keymapper_tables.h:502 engines/ultima/nuvie/metaengine.cpp:90
 #: engines/wintermute/keymapper_tables.h:950
 msgid "Quick load"
 msgstr "Schnellladen"
 
 #: engines/asylum/metaengine.cpp:125 engines/crab/input/input.cpp:266
-#: engines/sludge/keymapper_tables.h:64 engines/sludge/keymapper_tables.h:303
-#: engines/sludge/keymapper_tables.h:410 engines/sludge/keymapper_tables.h:465
-#: engines/sludge/keymapper_tables.h:496 engines/ultima/nuvie/metaengine.cpp:89
+#: engines/queen/metaengine.cpp:247 engines/sludge/keymapper_tables.h:64
+#: engines/sludge/keymapper_tables.h:303 engines/sludge/keymapper_tables.h:410
+#: engines/sludge/keymapper_tables.h:465 engines/sludge/keymapper_tables.h:496
+#: engines/ultima/nuvie/metaengine.cpp:89
 #: engines/ultima/ultima8/metaengine.cpp:44
 #: engines/wintermute/keymapper_tables.h:930
 msgid "Quick save"
@@ -10595,12 +10597,12 @@ msgid "Pause menu keymappings"
 msgstr "Spiele-Tastenbelegungen"
 
 #: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
-#: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
-#: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
-#: engines/sludge/keymapper_tables.h:231 engines/sludge/keymapper_tables.h:250
-#: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
-#: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
-#: engines/sludge/keymapper_tables.h:529
+#: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
+#: engines/sludge/keymapper_tables.h:132 engines/sludge/keymapper_tables.h:175
+#: engines/sludge/keymapper_tables.h:211 engines/sludge/keymapper_tables.h:231
+#: engines/sludge/keymapper_tables.h:250 engines/sludge/keymapper_tables.h:275
+#: engines/sludge/keymapper_tables.h:386 engines/sludge/keymapper_tables.h:446
+#: engines/sludge/keymapper_tables.h:478 engines/sludge/keymapper_tables.h:529
 #, fuzzy
 #| msgid "Move / Select"
 msgid "Move / Interact"
@@ -10792,21 +10794,137 @@ msgstr ""
 "Verwende diese Option, wenn das Backend keine Darstellung in 32bpp "
 "ermöglichst oder wenn Du Grafikfehler untersuchen möchtest"
 
-#: engines/queen/metaengine.cpp:36
+#: engines/queen/metaengine.cpp:41
 msgid "Alternative intro"
 msgstr "Alternativer Vorspann"
 
-#: engines/queen/metaengine.cpp:37
+#: engines/queen/metaengine.cpp:42
 msgid "Use an alternative game intro (CD version only)"
 msgstr "Verwendet einen alternativen Vorspann (nur bei CD-Version)"
 
-#: engines/queen/metaengine.cpp:47
+#: engines/queen/metaengine.cpp:52
 msgid "Improved font"
 msgstr "Verbesserte Schriftart"
 
-#: engines/queen/metaengine.cpp:48
+#: engines/queen/metaengine.cpp:53
 msgid "Use an easier to read custom font"
 msgstr "Verwende eine Schriftart, die leichter zu lesen ist"
+
+#: engines/queen/metaengine.cpp:148
+#, fuzzy
+#| msgid "Game keymappings"
+msgid "Journal keymappings"
+msgstr "Spiele-Tastenbelegungen"
+
+#: engines/queen/metaengine.cpp:186
+msgid "Move / Skip / Use default action with inventory item"
+msgstr ""
+
+#. I18N: Speeds up the game to twice its normal speed
+#: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:227
+#: engines/touche/metaengine.cpp:167
+msgid "Toggle fast mode"
+msgstr "Schnellen Modus umschalten"
+
+#: engines/queen/metaengine.cpp:198 engines/twp/metaengine.cpp:176
+#, fuzzy
+#| msgid "Skip Text"
+msgid "Skip text"
+msgstr "Text überspringen"
+
+#: engines/queen/metaengine.cpp:203
+#, fuzzy
+#| msgid "Scroll up in inventory"
+msgid "Scroll inventory up"
+msgstr "Im Inventar nach oben scrollen"
+
+#: engines/queen/metaengine.cpp:209
+#, fuzzy
+#| msgid "Scroll list down"
+msgid "Scroll inventory down"
+msgstr "Liste runterblättern"
+
+#: engines/queen/metaengine.cpp:215
+#, fuzzy
+#| msgid "Inventory"
+msgid "inventory item 1"
+msgstr "Inventar"
+
+#: engines/queen/metaengine.cpp:220
+#, fuzzy
+#| msgid "Inventory"
+msgid "inventory item 2"
+msgstr "Inventar"
+
+#: engines/queen/metaengine.cpp:225
+#, fuzzy
+#| msgid "Inventory"
+msgid "inventory item 3"
+msgstr "Inventar"
+
+#: engines/queen/metaengine.cpp:230
+#, fuzzy
+#| msgid "Inventory"
+msgid "inventory item 4"
+msgstr "Inventar"
+
+#: engines/queen/metaengine.cpp:235
+#, fuzzy
+#| msgid "Skip dialogue"
+msgid "Skip cutaway / dialog"
+msgstr "Dialog überspringen"
+
+#: engines/queen/metaengine.cpp:240
+#, fuzzy
+#| msgid "Show journal"
+msgid "Use journal"
+msgstr "Journal anzeigen"
+
+#: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
+#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
+#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
+#: engines/scumm/help.cpp:211 engines/supernova/metaengine.cpp:336
+#: engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "Öffne"
+
+#: engines/queen/metaengine.cpp:274 engines/saga/metaengine.cpp:384
+#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
+#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:200
+#: engines/scumm/help.cpp:210 engines/supernova/metaengine.cpp:366
+#: engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "Gib"
+
+#: engines/queen/metaengine.cpp:279 engines/saga/metaengine.cpp:354
+#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:214
+#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "Schau an"
+
+#: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
+#: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
+#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:230 engines/sludge/keymapper_tables.h:318
+#: engines/twp/metaengine.cpp:181 engines/wintermute/keymapper_tables.h:134
+#: engines/wintermute/keymapper_tables.h:1546
+msgid "Pick up"
+msgstr "Nimm"
+
+#: engines/queen/metaengine.cpp:289 engines/saga/metaengine.cpp:364
+#: engines/scumm/help.cpp:199 engines/scumm/help.cpp:215
+#: engines/scumm/help.cpp:251 engines/sludge/keymapper_tables.h:323
+#: engines/twp/metaengine.cpp:183 engines/wintermute/keymapper_tables.h:128
+#: engines/wintermute/keymapper_tables.h:1558
+msgid "Talk to"
+msgstr "Rede mit"
+
+#: engines/queen/metaengine.cpp:299
+#, fuzzy
+#| msgid "Show journal"
+msgid "Close journal"
+msgstr "Journal anzeigen"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -10897,44 +11015,6 @@ msgstr "Dialog anzeigen"
 #: engines/tinsel/metaengine.cpp:288 engines/wintermute/keymapper_tables.h:1540
 msgid "Walk to"
 msgstr "Gehe zu"
-
-#: engines/saga/metaengine.cpp:354 engines/scumm/help.cpp:202
-#: engines/scumm/help.cpp:214 engines/twp/metaengine.cpp:182
-#: engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "Schau an"
-
-#: engines/saga/metaengine.cpp:359 engines/scumm/help.cpp:144
-#: engines/scumm/help.cpp:169 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:230
-#: engines/sludge/keymapper_tables.h:318 engines/twp/metaengine.cpp:181
-#: engines/wintermute/keymapper_tables.h:134
-#: engines/wintermute/keymapper_tables.h:1546
-msgid "Pick up"
-msgstr "Nimm"
-
-#: engines/saga/metaengine.cpp:364 engines/scumm/help.cpp:199
-#: engines/scumm/help.cpp:215 engines/scumm/help.cpp:251
-#: engines/sludge/keymapper_tables.h:323 engines/twp/metaengine.cpp:183
-#: engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1558
-msgid "Talk to"
-msgstr "Rede mit"
-
-#: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
-#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
-#: engines/supernova/metaengine.cpp:336 engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "Öffne"
-
-#: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
-#: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
-#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:210
-#: engines/supernova/metaengine.cpp:366 engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "Gib"
 
 #: engines/saga/metaengine.cpp:389 engines/scumm/help.cpp:122
 #: engines/scumm/help.cpp:137 engines/scumm/help.cpp:162
@@ -13354,11 +13434,6 @@ msgstr "Inventar-/IQ-Punkt-Anzeige umschalten"
 msgid "Skip intro"
 msgstr "Intro überspringen"
 
-#. I18N: Speeds up the game to twice its normal speed
-#: engines/teenagent/metaengine.cpp:227 engines/touche/metaengine.cpp:167
-msgid "Toggle fast mode"
-msgstr "Schnellen Modus umschalten"
-
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
 msgstr "Korrigiere Video-Seitenverhältnis"
@@ -14118,12 +14193,6 @@ msgstr "Wähle nächsten Akteur"
 #| msgid "Select Previous Actor"
 msgid "Select previous actor"
 msgstr "Wähle vorherigen Akteur"
-
-#: engines/twp/metaengine.cpp:176
-#, fuzzy
-#| msgid "Skip Text"
-msgid "Skip text"
-msgstr "Text überspringen"
 
 #: engines/twp/metaengine.cpp:177
 msgid "Show hotspots"
