@@ -7,7 +7,7 @@
 #include "common/scummsys.h"
 #include "graphics/font.h"
 
-#include "tot/texts.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {

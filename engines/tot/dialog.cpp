@@ -29,7 +29,7 @@
 #include "tot/mouse.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
-#include "tot/texts.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {

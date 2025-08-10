@@ -31,7 +31,7 @@
 #include "tot/decoder/TotFlicDecoder.h"
 #include "tot/graphics.h"
 #include "tot/vars.h"
-#include "tot/texts.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {

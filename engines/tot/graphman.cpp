@@ -25,7 +25,7 @@
 
 #include "tot/font/biosfont.h"
 #include "tot/graphman.h"
-#include "tot/offsets.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {
