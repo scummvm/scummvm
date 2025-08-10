@@ -461,6 +461,7 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
+	_player->freeSprites();
 }
 
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
