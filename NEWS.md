@@ -68,6 +68,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  MM:
    - Fixed protection from elements spell.
+   - Added Text-to-Speech support.
 
  NANCY:
    - Added support for ScummVM's save/load screens.
