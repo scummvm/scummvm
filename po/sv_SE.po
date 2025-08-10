@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-09 19:09+0000\n"
+"POT-Creation-Date: 2025-08-10 08:07+0000\n"
 "PO-Revision-Date: 2025-07-31 20:35+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -3295,7 +3295,8 @@ msgstr "Grafisk äventyrsspelmotor"
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
 #: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
-#: engines/mohawk/riven_stacks/aspit.cpp:454 engines/saga/metaengine.cpp:449
+#: engines/mohawk/riven_stacks/aspit.cpp:454
+#: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
 #: engines/sludge/keymapper_tables.h:95 engines/sludge/keymapper_tables.h:144
 #: engines/sludge/keymapper_tables.h:223 engines/sludge/keymapper_tables.h:343
@@ -3520,7 +3521,7 @@ msgstr "Åte~r~vänd till spelstartaren"
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:731
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
-#: engines/nancy/state/loadsave.cpp:107 engines/neverhood/menumodule.cpp:923
+#: engines/nancy/state/loadsave.cpp:107 engines/neverhood/menumodule.cpp:925
 #: engines/pegasus/pegasus.cpp:407 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
 #: engines/sherlock/scalpel/scalpel.cpp:1248
@@ -3543,7 +3544,7 @@ msgstr "Spara spelet:"
 #: engines/lab/savegame.cpp:242 engines/mads/nebular/dialogs_nebular.cpp:358
 #: engines/mm/xeen/saves.cpp:280 engines/mtropolis/saveload.cpp:76
 #: engines/nancy/state/loadsave.cpp:107 engines/nancy/state/loadsave.cpp:154
-#: engines/neverhood/menumodule.cpp:923 engines/parallaction/metaengine.cpp:157
+#: engines/neverhood/menumodule.cpp:925 engines/parallaction/metaengine.cpp:157
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
@@ -6222,14 +6223,14 @@ msgstr "Leta efter uppdateringar..."
 #: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
-#: engines/playground3d/metaengine.cpp:51 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:185
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Standardtangentmappningar"
 
@@ -6627,7 +6628,7 @@ msgstr "Detta spel har inte stöd för sparning"
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:741 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
-#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
+#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:938
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -6647,7 +6648,7 @@ msgstr "Återställ spel:"
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:741
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:257
 #: engines/mads/nebular/dialogs_nebular.cpp:385
-#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:936
+#: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:938
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
 #: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
 #: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
@@ -6758,11 +6759,12 @@ msgstr "Huvudsakliga för AGOS"
 #: engines/efh/metaengine.cpp:230 engines/hopkins/metaengine.cpp:207
 #: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
-#: engines/mads/metaengine.cpp:275 engines/sludge/keymapper_tables.h:33
-#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
-#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
-#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
+#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
 msgstr "Tangentmappningar för spel"
 
@@ -10261,6 +10263,52 @@ msgstr "NHC-ersättning:"
 msgid "<original>"
 msgstr "<original>"
 
+#: engines/neverhood/metaengine.cpp:187
+#, fuzzy
+#| msgid "Main menu keymappings"
+msgid "Save file management menus keymappings"
+msgstr "Kortkommandon för huvudmeny"
+
+#: engines/neverhood/metaengine.cpp:188
+#, fuzzy
+#| msgid "Main menu keymappings"
+msgid "Pause menu keymappings"
+msgstr "Kortkommandon för huvudmeny"
+
+#: engines/neverhood/metaengine.cpp:192 engines/sludge/keymapper_tables.h:83
+#: engines/sludge/keymapper_tables.h:132 engines/sludge/keymapper_tables.h:175
+#: engines/sludge/keymapper_tables.h:211 engines/sludge/keymapper_tables.h:231
+#: engines/sludge/keymapper_tables.h:250 engines/sludge/keymapper_tables.h:275
+#: engines/sludge/keymapper_tables.h:386 engines/sludge/keymapper_tables.h:446
+#: engines/sludge/keymapper_tables.h:478 engines/sludge/keymapper_tables.h:529
+msgid "Move / Interact"
+msgstr "Flytta / Interagera"
+
+#: engines/neverhood/metaengine.cpp:206
+#, fuzzy
+#| msgid "Pause / Skip cutscene"
+msgid "Pause / Exit menu"
+msgstr "Pausa / Hoppa över mellansekvens"
+
+#. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
+#: engines/neverhood/metaengine.cpp:214
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip section of cutscene"
+msgstr "Hoppa över mellansekvens"
+
+#. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
+#: engines/neverhood/metaengine.cpp:221
+msgid "Skip entire scene (works only in some scenes)"
+msgstr ""
+
+#. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
+#: engines/neverhood/metaengine.cpp:228
+#, fuzzy
+#| msgid "Create a new saved game"
+msgid "Confirm the selected save / new save name"
+msgstr "Skapa ett nytt sparat spel"
+
 #: engines/parallaction/saveload.cpp:129
 #, c-format
 msgid ""
@@ -12337,15 +12385,6 @@ msgstr "Snabba upp dialog"
 #: engines/sludge/keymapper_tables.h:76 engines/sludge/keymapper_tables.h:298
 msgid "Slow down dialog"
 msgstr "Sakta ner dialog"
-
-#: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
-#: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
-#: engines/sludge/keymapper_tables.h:231 engines/sludge/keymapper_tables.h:250
-#: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
-#: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
-#: engines/sludge/keymapper_tables.h:529
-msgid "Move / Interact"
-msgstr "Flytta / Interagera"
 
 #: engines/sludge/keymapper_tables.h:101 engines/sludge/keymapper_tables.h:150
 msgid "Load auto save"
