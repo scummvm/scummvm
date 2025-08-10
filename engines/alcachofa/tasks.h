@@ -31,16 +31,16 @@
 #define DEFINE_TASK(TaskName)
 #endif
 
-DEFINE_TASK(CamLerpPosTask);
-DEFINE_TASK(CamLerpScaleTask);
-DEFINE_TASK(CamLerpPosScaleTask);
-DEFINE_TASK(CamLerpRotationTask);
-DEFINE_TASK(CamShakeTask);
-DEFINE_TASK(CamWaitToStopTask);
-DEFINE_TASK(CamSetInactiveAttributeTask);
-DEFINE_TASK(SayTextTask);
-DEFINE_TASK(AnimateCharacterTask);
-DEFINE_TASK(LerpLodBiasTask);
+DEFINE_TASK(CamLerpPosTask)
+DEFINE_TASK(CamLerpScaleTask)
+DEFINE_TASK(CamLerpPosScaleTask)
+DEFINE_TASK(CamLerpRotationTask)
+DEFINE_TASK(CamShakeTask)
+DEFINE_TASK(CamWaitToStopTask)
+DEFINE_TASK(CamSetInactiveAttributeTask)
+DEFINE_TASK(SayTextTask)
+DEFINE_TASK(AnimateCharacterTask)
+DEFINE_TASK(LerpLodBiasTask)
 DEFINE_TASK(ArriveTask)
 DEFINE_TASK(DialogMenuTask)
 DEFINE_TASK(AnimateTask)
