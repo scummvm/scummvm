@@ -174,10 +174,12 @@ public:
 
 	void setMusic(byte id);
 
-	void sayText(const Common::String &text);
+	void sayText(const Common::String &text, bool isSubtitle = false);
 	void stopTextToSpeech();
 	void setTTSVoice(CharacterID characterID) const;
-	Common::U32String convertCyrillic(const Common::String &text) const;
+#ifdef USE_TTS
+	Common::U32String convertText(const Common::String &text) const;
+#endif
 
 	Common::String _previousSaid;
 	uint16 _previousVoiceId;

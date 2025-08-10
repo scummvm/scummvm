@@ -860,7 +860,7 @@ bool Scene::render(bool tickGame, bool tickMark, uint32 messageDelta) {
 						ttsMessage.replace(endOfItemName, 1, "\n");
 					}
 				}
-				_vm->sayText(ttsMessage);
+				_vm->sayText(ttsMessage, true);
 				_vm->playVoiceNow(&_vm->res->voices, _voiceId);
 			}
 		}
