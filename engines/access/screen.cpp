@@ -31,6 +31,17 @@
 #include "access/resources.h"
 #include "access/martian/martian_resources.h"
 
+
+// for frame contents debugging
+//#define DEBUG_FRAME_DUMP 1
+
+#ifdef DEBUG_FRAME_DUMP
+#include "graphics/paletteman.h"
+#include "image/png.h"
+#include "common/path.h"
+#include "common/file.h"
+#endif
+
 namespace Access {
 
 ScreenSave::ScreenSave(){
@@ -118,12 +129,14 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::setManPalette() {
+	// Player palette is colors 224~246
 	for (int i = 0; i < 0x42; i++) {
 		_rawPalette[672 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 	}
 }
 
 void Screen::setIconPalette() {
+	// Icon palette is colors 247~255
 	if (_vm->getGameID() == kGameMartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
 			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
@@ -131,10 +144,17 @@ void Screen::setIconPalette() {
 	}
 }
 
-void Screen::loadPalette(int fileNum, int subfile) {
+void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
-	const byte *palette = res->data();
-	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	const byte *palette = res->data() + srcOffset;
+
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < _numColors * 3; i++)
+			_rawPalette[_startColor * 3 + i] = PALETTE_6BIT_TO_8BIT(palette[i]);
+	} else {
+		// TODO: is this right for Amaazon?  Surely it should be converted?  Maybe never used..
+		Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	}
 	delete res;
 }
 
@@ -332,6 +352,17 @@ void Screen::cyclePaletteBackwards() {
 
 void Screen::flashPalette(int count) {
 	// No implementation needed in ScummVM
+}
+
+void Screen::dump(const char *fname) const {
+#ifdef DEBUG_FRAME_DUMP
+	/* For debugging, dump the frame contents.. */
+	::Common::DumpFile outf;
+	uint32 now = g_system->getMillis();
+	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));
+	::Image::writePNG(outf, *this, _rawPalette);
+	outf.close();
+#endif
 }
 
 } // End of namespace Access

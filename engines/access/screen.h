@@ -133,7 +133,7 @@ public:
 	 */
 	void setManPalette();
 
-	void loadPalette(int fileNum, int subfile);
+	void loadPalette(int fileNum, int subfile, int srcOffset = 0);
 
 	void setPalette();
 
@@ -171,6 +171,8 @@ public:
 	void cyclePaletteForward();
 
 	void cyclePaletteBackwards();
+
+	void dump(const char *fname) const;
 };
 
 } // End of namespace Access

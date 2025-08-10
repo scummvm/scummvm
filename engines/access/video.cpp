@@ -121,6 +121,9 @@ void VideoPlayer::playVideo() {
 	byte *pLine = _startCoord;
 	uint32 frameEnd = _videoData->_stream->pos() + _frameSize;
 
+	if (frameEnd > _videoData->_stream->size())
+		error("VideoPlayer::playVideo: Frame end %d > stream size %d", frameEnd, (int)_videoData->_stream->size());
+
 	while ((uint32)_videoData->_stream->pos() < frameEnd) {
 		int count = _videoData->_stream->readByte();
 
@@ -160,6 +163,8 @@ void VideoPlayer::playVideo() {
 	// If the video is playing on the screen surface, add a dirty rect
 	if (_vidSurface == _vm->_screen)
 		_vm->_screen->markAllDirty();
+
+	_vm->_screen->dump("vidframe");
 
 	getFrame();
 	if (++_videoFrame == _frameCount) {
