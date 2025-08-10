@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef ALCACHOFA_CAMERA_H
+#define ALCACHOFA_CAMERA_H
 
 #include "common.h"
 #include "math/matrix4.h"
@@ -119,4 +119,4 @@ private:
 
 }
 
-#endif // CAMERA_H
+#endif // ALCACHOFA_CAMERA_H

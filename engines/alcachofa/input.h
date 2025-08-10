@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef ALCACHOFA_INPUT_H
+#define ALCACHOFA_INPUT_H
 
 #include "common/events.h"
 #include "common/ptr.h"
@@ -68,4 +68,4 @@ private:
 
 }
 
-#endif // INPUT_H
+#endif // ALCACHOFA_INPUT_H

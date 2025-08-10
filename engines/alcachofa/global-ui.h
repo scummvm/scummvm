@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GLOBAL_UI_H
-#define GLOBAL_UI_H
+#ifndef ALCACHOFA_GLOBAL_UI_H
+#define ALCACHOFA_GLOBAL_UI_H
 
 #include "objects.h"
 
@@ -70,4 +70,4 @@ Task *showCenterBottomText(Process &process, int32 dialogId, uint32 durationMs);
 }
 
 
-#endif // GLOBAL_UI_H
+#endif // ALCACHOFA_GLOBAL_UI_H

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef ALCACHOFA_COMMON_H
+#define ALCACHOFA_COMMON_H
 
 #include "common/scummsys.h"
 #include "common/rect.h"

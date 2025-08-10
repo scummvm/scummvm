@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GAME_H
-#define GAME_H
+#ifndef ALCACHOFA_GAME_H
+#define ALCACHOFA_GAME_H
 
 #include "common/textconsole.h"
 #include "common/file.h"
@@ -99,4 +99,4 @@ public:
 
 }
 
-#endif // GAME_H
+#endif // ALCACHOFA_GAME_H

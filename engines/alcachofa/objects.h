@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef OBJECTS_H
-#define OBJECTS_H
+#ifndef ALCACHOFA_OBJECTS_H
+#define ALCACHOFA_OBJECTS_H
 
 #include "shape.h"
 #include "graphics.h"
@@ -602,4 +602,4 @@ private:
 
 }
 
-#endif // OBJECTS_H
+#endif // ALCACHOFA_OBJECTS_H

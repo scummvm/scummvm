@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef ROOMS_H
-#define ROOMS_H
+#ifndef ALCACHOFA_ROOMS_H
+#define ALCACHOFA_ROOMS_H
 
 #include "objects.h"
 
@@ -211,4 +211,4 @@ private:
 
 }
 
-#endif // ROOMS_H
+#endif // ALCACHOFA_ROOMS_H
