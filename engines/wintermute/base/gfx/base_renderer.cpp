@@ -87,6 +87,98 @@ void BaseRenderer::initLoop() {
 	deleteRectList();
 }
 
+//////////////////////////////////////////////////////////////////////
+BaseObject *BaseRenderer::getObjectAt(int x, int y) {
+	Point32 point;
+	point.x = x;
+	point.y = y;
+
+	for (int32 i = (int32)_rectList.getSize() - 1; i >= 0; i--) {
+		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
+			if (_rectList[i]->_precise) {
+				// frame
+				if (_rectList[i]->_frame) {
+					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
+					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
+
+					if (_rectList[i]->_frame->_mirrorX) {
+						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
+						xx = width - xx;
+					}
+
+					if (_rectList[i]->_frame->_mirrorY) {
+						int height = _rectList[i]->_frame->getRect().bottom - _rectList[i]->_frame->getRect().top;
+						yy = height - yy;
+					}
+
+					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) {
+						return _rectList[i]->_owner;
+					}
+				}
+
+#ifdef ENABLE_WME3D
+				if (_rectList[i]->_xmodel) {
+					if (!_rectList[i]->_xmodel->isTransparentAt(x, y)) {
+						return _rectList[i]->_owner;
+					}
+				}
+#endif
+				// region
+				else if (_rectList[i]->_region) {
+					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) {
+						return _rectList[i]->_owner;
+					}
+				}
+			} else {
+				return _rectList[i]->_owner;
+			}
+		}
+	}
+
+	return (BaseObject *)nullptr;
+}
+
+//////////////////////////////////////////////////////////////////////////
+void BaseRenderer::deleteRectList() {
+	for (uint32 i = 0; i < _rectList.getSize(); i++) {
+		delete _rectList[i];
+	}
+	_rectList.removeAll();
+}
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
+	return STATUS_FAILED;
+}
+
+//////////////////////////////////////////////////////////////////////
+void BaseRenderer::onWindowChange() {
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::windowedBlt() {
+	return STATUS_FAILED;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::setup2D(bool Force) {
+	return STATUS_FAILED;
+}
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
+	return STATUS_FAILED;
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseRenderer::fillRect(int x, int y, int w, int h, uint32 color) {
+	return STATUS_FAILED;
+}
+
+//////////////////////////////////////////////////////////////////////////
 void BaseRenderer::initIndicator() {
 	if (_indicatorY == -1) {
 		_indicatorY = _height - _indicatorHeight;
@@ -183,101 +275,11 @@ void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_loadImageY));
 }
 
-//////////////////////////////////////////////////////////////////////
-BaseObject *BaseRenderer::getObjectAt(int x, int y) {
-	Point32 point;
-	point.x = x;
-	point.y = y;
-
-	for (int i = _rectList.getSize() - 1; i >= 0; i--) {
-		if (BasePlatform::ptInRect(&_rectList[i]->_rect, point)) {
-			if (_rectList[i]->_precise) {
-				// frame
-				if (_rectList[i]->_frame) {
-					int xx = (int)((_rectList[i]->_frame->getRect().left + x - _rectList[i]->_rect.left + _rectList[i]->_offsetX) / (float)((float)_rectList[i]->_zoomX / (float)100));
-					int yy = (int)((_rectList[i]->_frame->getRect().top  + y - _rectList[i]->_rect.top  + _rectList[i]->_offsetY) / (float)((float)_rectList[i]->_zoomY / (float)100));
-
-					if (_rectList[i]->_frame->_mirrorX) {
-						int width = _rectList[i]->_frame->getRect().right - _rectList[i]->_frame->getRect().left;
-						xx = width - xx;
-					}
-
-					if (_rectList[i]->_frame->_mirrorY) {
-						int height = _rectList[i]->_frame->getRect().bottom - _rectList[i]->_frame->getRect().top;
-						yy = height - yy;
-					}
-
-					if (!_rectList[i]->_frame->_surface->isTransparentAt(xx, yy)) {
-						return _rectList[i]->_owner;
-					}
-				}
-
-#ifdef ENABLE_WME3D
-				if (_rectList[i]->_xmodel) {
-					if (!_rectList[i]->_xmodel->isTransparentAt(x, y)) {
-						return _rectList[i]->_owner;
-					}
-				}
-#endif
-				// region
-				else if (_rectList[i]->_region) {
-					if (_rectList[i]->_region->pointInRegion(x + _rectList[i]->_offsetX, y + _rectList[i]->_offsetY)) {
-						return _rectList[i]->_owner;
-					}
-				}
-			} else {
-				return _rectList[i]->_owner;
-			}
-		}
-	}
-
-	return (BaseObject *)nullptr;
-}
-
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderer::deleteRectList() {
-	for (uint32 i = 0; i < _rectList.getSize(); i++) {
-		delete _rectList[i];
-	}
-	_rectList.removeAll();
-}
-
-//////////////////////////////////////////////////////////////////////
-bool BaseRenderer::initRenderer(int width, int height, bool windowed) {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////
-void BaseRenderer::onWindowChange() {
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::windowedBlt() {
-	return STATUS_FAILED;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setup2D(bool Force) {
-	return STATUS_FAILED;
-}
-
-#ifdef ENABLE_WME3D
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::setup3D(Camera3D *camera, bool force) {
-	return STATUS_FAILED;
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseRenderer::fillRect(int x, int y, int w, int h, uint32 color) {
-	return STATUS_FAILED;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setViewport(int left, int top, int right, int bottom) {
 	return STATUS_FAILED;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::setScreenViewport() {
