@@ -359,7 +359,7 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	}
 
 	if (_mainLayer) {
-		for (int i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
+		for (int32 i = (int32)_mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->isBlocked()) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->isBlocked()) {
@@ -2966,7 +2966,7 @@ bool AdScene::sortRotLevels() {
 	bool changed;
 	do {
 		changed = false;
-		for (uint32 i = 0; i < _rotLevels.getSize() - 1; i++) {
+		for (int32 i = 0; i < (int32)_rotLevels.getSize() - 1; i++) {
 			if (_rotLevels[i]->_posX > _rotLevels[i + 1]->_posX) {
 				AdRotLevel *rl = _rotLevels[i];
 				_rotLevels[i] = _rotLevels[i + 1];
@@ -2983,14 +2983,14 @@ bool AdScene::sortRotLevels() {
 
 
 //////////////////////////////////////////////////////////////////////////
-float AdScene::getScaleAt(int Y) {
+float AdScene::getScaleAt(int y) {
 	AdScaleLevel *prev = nullptr;
 	AdScaleLevel *next = nullptr;
 
 	for (uint32 i = 0; i < _scaleLevels.getSize(); i++) {
 		/* AdScaleLevel *xxx = _scaleLevels[i];*/
 		/* int j = _scaleLevels.size(); */
-		if (_scaleLevels[i]->_posY < Y) {
+		if (_scaleLevels[i]->_posY < y) {
 			prev = _scaleLevels[i];
 		} else {
 			next = _scaleLevels[i];
@@ -3004,9 +3004,9 @@ float AdScene::getScaleAt(int Y) {
 
 	int delta_y = next->_posY - prev->_posY;
 	float delta_scale = next->getScale() - prev->getScale();
-	Y -= prev->_posY;
+	y -= prev->_posY;
 
-	float percent = (float)Y / ((float)delta_y / 100.0f);
+	float percent = (float)y / ((float)delta_y / 100.0f);
 	return prev->getScale() + delta_scale / 100 * percent;
 }
 
@@ -3617,7 +3617,7 @@ BaseObject *AdScene::getNextAccessObject(BaseObject *currObject) {
 		if (currObject != nullptr) {
 			for (uint32 i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
-					if (i < objects.getSize() - 1) {
+					if (i < (int32)objects.getSize() - 1) {
 						return objects[i + 1];
 					} else {
 						break;
@@ -3639,7 +3639,7 @@ BaseObject *AdScene::getPrevAccessObject(BaseObject *currObject) {
 		return nullptr;
 	} else {
 		if (currObject != nullptr) {
-			for (int i = objects.getSize() - 1; i >= 0; i--) {
+			for (int32 i = (int32)objects.getSize() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) {
 						return objects[i - 1];
