@@ -52,6 +52,24 @@
 
 namespace TeenAgent {
 
+#ifdef USE_TTS
+
+static const uint16 polishConversionTable[] = {
+	0x23, 0xc499, 0x24, 0xc59b, 0x25, 0xc582, 0x2a, 0xc3b3, 0x2b, 0xc484, 0x3b, 0xc583,
+	0x3c, 0xc5bc, 0x3d, 0xc584, 0x3e, 0xc5ba, 0x40, 0xc485, 0x5b, 0xc498, 0x5c, 0xc486,
+	0x5d, 0xc581, 0x5e, 0xc487, 0x7b, 0xc393, 0x7c, 0xc59a, 0x7d, 0xc5bb, 0x7e, 0xc5b9,
+	0
+};
+
+static const uint16 czechConversionTable[] = {
+	0x23, 0xc3a1, 0x24, 0xc48d, 0x25, 0xc48f, 0x2a, 0xc3a9, 0x2b, 0xc49b, 0x3b, 0xc3ad,
+	0x3c, 0xc588, 0x3d, 0xc3b3, 0x3e, 0xc599, 0x40, 0xc5a1, 0x5b, 0xc5a5, 0x5c, 0xc3ba,
+	0x5d, 0xc5af, 0x5e, 0xc3bd, 0x7b, 0xc5be, 0x7c, 0xc48c, 0x7d, 0xc598, 0x7e, 0xc5bd,
+	0
+};
+
+#endif
+
 TeenAgentEngine *g_engine = nullptr;
 
 TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd)
@@ -600,16 +618,8 @@ Common::Error TeenAgentEngine::run() {
 
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
 	if (ttsMan != nullptr) {
-		// Currently, the Polish and Czech versions have all text in English
-		// Therefore, the TTS language should be English to match the text
-		// The Polish CD/Floppy versions also have no working voiceover, so they need full TTS
-		if (_gameDescription->language == Common::PL_POL || _gameDescription->language == Common::CS_CZE) {
-			ttsMan->setLanguage("en");
-		} else {
-			ttsMan->setLanguage(ConfMan.get("language"));
-		}
-		
-		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech"));
 	}
 
 	// Initialize CD audio
@@ -1164,23 +1174,26 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 	}
 }
 
-void TeenAgentEngine::sayText(const Common::String &text) {
+void TeenAgentEngine::sayText(const Common::String &text, bool isSubtitle) {
+#ifdef USE_TTS
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	bool voice = (!isSubtitle && ConfMan.getBool("tts_enabled_objects")) || (isSubtitle && ConfMan.getBool("tts_enabled_speech"));
 	// _previousSaid is used to prevent the TTS from looping when sayText calls are inside loops
-	if (ttsMan && ConfMan.getBool("tts_enabled") && _previousSaid != text) {
-		if (_gameDescription->language == Common::RU_RUS) {
-			ttsMan->say(convertCyrillic(text));
+	if (ttsMan && voice && _previousSaid != text) {
+		if (_gameDescription->language != Common::EN_ANY) {
+			ttsMan->say(convertText(text));
 		} else {
 			ttsMan->say(text, Common::CodePage::kDos850);
 		}
 
 		_previousSaid = text;
 	}
+#endif
 }
 
 void TeenAgentEngine::stopTextToSpeech() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+	if (ttsMan && (ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech")) && ttsMan->isSpeaking()) {
 		ttsMan->stop();
 		_previousSaid.clear();
 	}
@@ -1188,7 +1201,7 @@ void TeenAgentEngine::stopTextToSpeech() {
 
 void TeenAgentEngine::setTTSVoice(CharacterID characterID) const {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+	if (ttsMan && (ConfMan.getBool("tts_enabled_objects") || ConfMan.getBool("tts_enabled_speech"))) {
 		Common::Array<int> voices;
 		int pitch = 0;
 		Common::TTSVoice::Gender gender;
@@ -1223,41 +1236,82 @@ void TeenAgentEngine::setTTSVoice(CharacterID characterID) const {
 	}
 }
 
-Common::U32String TeenAgentEngine::convertCyrillic(const Common::String &text) const {
+#ifdef USE_TTS
+
+Common::U32String TeenAgentEngine::convertText(const Common::String &text) const {
 	const byte *bytes = (const byte *)text.c_str();
-	byte *convertedBytes = new byte[text.size() * 2 + 1];
+	byte *convertedBytes = new byte[text.size() * 3 + 1];
+	const uint16 *conversionTable = nullptr;
+
+	if (_gameDescription->language == Common::PL_POL) {
+		conversionTable = polishConversionTable;
+	} else if (_gameDescription->language == Common::CS_CZE) {
+		conversionTable = czechConversionTable;
+	}
 
 	int i = 0;
 	for (const byte *b = bytes; *b; ++b) {
-		if (*b == 0x26) {	// & needs to be converted to и
-			convertedBytes[i] = 0xd0;
-			convertedBytes[i + 1] = 0xb8;
-			i += 2;
-			continue;
-		}
-
-		if (*b == 0x3e) {	// For ё
-			convertedBytes[i] = 0xd1;
-			convertedBytes[i + 1] = 0x91;
-			i += 2;
-			continue;
-		}
-
-		if (*b > 0x3f) {
-			int translated = *b;
-
-			if (*b > 0x70) {
-				translated += 0xd10f;
-			} else {
-				translated += 0xd04f;
+		if (_gameDescription->language == Common::RU_RUS) {
+			if (*b == 0x26) {	// & needs to be converted to и
+				convertedBytes[i] = 0xd0;
+				convertedBytes[i + 1] = 0xb8;
+				i += 2;
+				continue;
 			}
 
-			convertedBytes[i] = (translated >> 8) & 0xff;
-			convertedBytes[i + 1] = translated & 0xff;
-			i += 2;
+			if (*b == 0x3e) {	// For ё
+				convertedBytes[i] = 0xd1;
+				convertedBytes[i + 1] = 0x91;
+				i += 2;
+				continue;
+			}
+
+			if (*b > 0x3f) {
+				int translated = *b;
+
+				if (*b > 0x70) {
+					translated += 0xd10f;
+				} else {
+					translated += 0xd04f;
+				}
+
+				convertedBytes[i] = (translated >> 8) & 0xff;
+				convertedBytes[i + 1] = translated & 0xff;
+				i += 2;
+			} else {
+				convertedBytes[i] = *b;
+				i++;
+			}
 		} else {
-			convertedBytes[i] = *b;
-			i++;
+			if (*b == 0x60) {	// TM
+				convertedBytes[i] = 0xe2;
+				convertedBytes[i + 1] = 0x84;
+				convertedBytes[i + 2] = 0xa2;
+				i += 3;
+				continue;
+			}
+
+			if (*b == 0x80) {	// %
+				convertedBytes[i] = 0x25;
+				i++;
+				continue;
+			}
+
+			bool inTable = false;
+			for (uint j = 0; conversionTable[j]; j += 2) {
+				if (*b == conversionTable[j]) {
+					convertedBytes[i] = (conversionTable[j + 1] >> 8) & 0xff;
+					convertedBytes[i + 1] = conversionTable[j + 1] & 0xff;
+					i += 2;
+					inTable = true;
+					break;
+				}
+			}
+
+			if (!inTable) {
+				convertedBytes[i] = *b;
+				i++;
+			}
 		}
 	}
 
@@ -1268,5 +1322,7 @@ Common::U32String TeenAgentEngine::convertCyrillic(const Common::String &text) c
 
 	return result;
 }
+
+#endif
 
 } // End of namespace TeenAgent

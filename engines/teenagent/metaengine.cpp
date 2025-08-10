@@ -44,11 +44,23 @@ enum {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
-		GAMEOPTION_TTS,
+		GAMEOPTION_TTS_OBJECTS,
 		{
-			_s("Enable Text to Speech"),
-			_s("Use TTS to read text in the game (if TTS is available)"),
-			"tts_enabled",
+			_s("Enable Text to Speech for Objects and Options"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled_objects",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_SPEECH,
+		{
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
 			false,
 			0,
 			0
