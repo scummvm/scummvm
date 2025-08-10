@@ -2698,6 +2698,11 @@
 
 	<dialog name = 'PrintingDialog' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'SaveAsImage'
+					type = 'Checkbox'
+					width = '140'
+			/>
+			<space/>
 			<widget name = 'Print'
 					type = 'Button'
 			/>

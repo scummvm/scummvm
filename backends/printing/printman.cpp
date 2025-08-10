@@ -21,10 +21,22 @@
 
 #ifdef USE_PRINTING
 
+#include "common/config-manager.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
+
+#include "graphics/paletteman.h"
+
 #include "printman.h"
 
-#include "dialogs.h"
 #include "gui/printing-dialog.h"
+
+#ifdef USE_PNG
+#include "image/png.h"
+#else
+#include "image/bmp.h"
+#endif
 
 namespace Common {
 
@@ -33,6 +45,47 @@ PrintingManager::~PrintingManager() {}
 void PrintingManager::printImage(const Graphics::ManagedSurface &surf) {
 	GUI::PrintingDialog dialog(surf);
 	dialog.runModal();
+}
+
+void PrintingManager::saveAsImage(const Graphics::ManagedSurface &surf, const Common::String &fileName) {
+	Common::String saveName = fileName;
+	Common::String currentTarget = ConfMan.getActiveDomainName();
+
+#ifdef USE_PNG
+	const char *extension = "png";
+#else
+	const char *extension = "bmp";
+#endif
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+
+	if (!saveName.size()) {
+		for (uint n = 0; ; n++) {
+			saveName = Common::String::format("%s-%s-%05d.%s", currentTarget.c_str(), "printout", n, extension);
+
+			if (!saveFileMan->listSavefiles(saveName).size()) {
+				break;
+			}
+		}
+	}
+
+	Common::OutSaveFile *saveFile = saveFileMan->openForSaving(saveName, false);
+	if (!saveFile) {
+		warning("PrintingManager::saveAsImage: Could not open file to save");
+		return;
+	}
+
+	byte palette[256 * 3];
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+
+#ifdef USE_PNG
+	Image::writePNG(*saveFile, surf, palette);
+#else
+	Image::writeBMP(*saveFile, surf, palette);
+#endif
+
+	saveFile->finalize();
+	delete saveFile;
 }
 
 } // End of namespace Common
