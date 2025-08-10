@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 11:20+0000\n"
+"POT-Creation-Date: 2025-08-10 20:38+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -6560,18 +6560,18 @@ msgstr "Bruk den rutete pekeren fra senere Apple II-modeller"
 #: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
 #: engines/drascula/metaengine.cpp:51 engines/efh/metaengine.cpp:44
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
-#: engines/made/metaengine.cpp:51 engines/mortevielle/metaengine.cpp:37
-#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
-#: engines/wage/metaengine.cpp:51
+#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
+#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
+#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Aktiver tekst og tale"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
 #: engines/drascula/metaengine.cpp:52 engines/efh/metaengine.cpp:45
-#: engines/made/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
-#: engines/teenagent/metaengine.cpp:50
+#: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 "Bruk tekst til tale til å lese teksten i spillet (hvis tekst til tale er "
@@ -10044,7 +10044,7 @@ msgstr "Might and Magic 1"
 msgid "Might and Magic 1 - Cheats"
 msgstr "Might and Magic 1 - Juksefunksjoner"
 
-#: engines/mm/mm1/mm1.cpp:56
+#: engines/mm/mm1/mm1.cpp:57
 msgid ""
 "You cannot run the game directly from the Graphics Overhaul Mod. Instead, it "
 "will automatically be available if you detect the original game and select "
@@ -10054,7 +10054,7 @@ msgstr ""
 "automatisk bli tilgjengelig hvis du detekterer originalspillet og velger "
 "Enhanced mode."
 
-#: engines/mm/mm1/mm1.cpp:108
+#: engines/mm/mm1/mm1.cpp:117
 msgid ""
 "In order to run in Enhanced mode,  please copy xeen.cc from a copy of World "
 "of Xeen\n"

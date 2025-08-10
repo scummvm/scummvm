@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 11:20+0000\n"
+"POT-Creation-Date: 2025-08-10 20:38+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -6324,18 +6324,18 @@ msgstr "使用较新 Apple II 机型中的方格光标"
 #: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
 #: engines/drascula/metaengine.cpp:51 engines/efh/metaengine.cpp:44
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
-#: engines/made/metaengine.cpp:51 engines/mortevielle/metaengine.cpp:37
-#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/teenagent/metaengine.cpp:49
-#: engines/wage/metaengine.cpp:51
+#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
+#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
+#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "启用文本转语音"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
 #: engines/drascula/metaengine.cpp:52 engines/efh/metaengine.cpp:45
-#: engines/made/metaengine.cpp:52 engines/mortevielle/metaengine.cpp:38
-#: engines/teenagent/metaengine.cpp:50
+#: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
+#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "在游戏内使用 TTS 读出文本（如果可用）"
 
@@ -9705,7 +9705,7 @@ msgstr "Might and Magic 1"
 msgid "Might and Magic 1 - Cheats"
 msgstr "Might and Magic 1 - 作弊"
 
-#: engines/mm/mm1/mm1.cpp:56
+#: engines/mm/mm1/mm1.cpp:57
 msgid ""
 "You cannot run the game directly from the Graphics Overhaul Mod. Instead, it "
 "will automatically be available if you detect the original game and select "
@@ -9714,7 +9714,7 @@ msgstr ""
 "你无法直接从 Graphics Overhaul 模组运行游戏。如果你检测原游戏并选择增强模式，"
 "此模组将自动可用。"
 
-#: engines/mm/mm1/mm1.cpp:108
+#: engines/mm/mm1/mm1.cpp:117
 msgid ""
 "In order to run in Enhanced mode,  please copy xeen.cc from a copy of World "
 "of Xeen\n"
