@@ -90,6 +90,15 @@ enum {
 	GF_COMPRESSED = 1 << 0,
 };
 
+enum PINKActions {
+	kActionNone,
+	kActionSkipWalk,
+	kActionSkipWalkAndCancelInteraction,
+	kActionSkipSequence,
+	kActionSkipSubSequence,
+	kActionRestartSequence,
+};
+
 extern Graphics::PaletteLookup *g_paletteLookup;
 
 class PinkEngine : public Engine {
