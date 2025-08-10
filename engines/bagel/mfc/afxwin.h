@@ -1369,7 +1369,7 @@ public:
 	BOOL RedrawWindow(
 	    LPCRECT lpRectUpdate = nullptr,
 	    CRgn *prgnUpdate = nullptr,
-	    UINT flags = RDW_INVALIDATE | RDW_UPDATENOW
+	    UINT flags = RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN
 	);
 	void SetActiveWindow();
 	void SetFocus();
@@ -1409,11 +1409,13 @@ public:
 	void GetWindowRect(LPRECT lpRect) const;
 	BOOL GetUpdateRect(LPRECT lpRect, BOOL bErase = FALSE);
 	BOOL GetClientRect(LPRECT lpRect) const;
+	RECT GetClientRect() const;
 	bool PointInClientRect(const POINT &pt) const;
 	void ClientToScreen(LPPOINT lpPoint) const;
 	void ClientToScreen(LPRECT lpRect) const;
 	void ScreenToClient(LPPOINT lpPoint) const;
 	void ScreenToClient(LPRECT lpRect) const;
+	RECT GetWindowRectInParentCoords() const;
 
 	void MoveWindow(LPCRECT lpRect, BOOL bRepaint = true);
 	void MoveWindow(int x, int y, int nWidth, int nHeight,

@@ -269,6 +269,7 @@ void CWnd::UpdateWindow() {
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
 	CRgn *prgnUpdate, UINT flags) {
+
 	if (flags & RDW_INVALIDATE) {
 		// Invalidate the region or rectangle
 		if (prgnUpdate != nullptr) {
@@ -287,7 +288,29 @@ BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
 		}
 	}
 
-	if (flags & RDW_UPDATENOW) {
+	Common::Rect r1(10, 10, 50, 50);
+	Common::Rect r2(30, 30, 100, 100);
+	if (r1.intersects(r2)) {
+		debug("Wibbly");
+	}
+
+	// Step 2: Invalidate overlapping children
+	if (flags & RDW_ALLCHILDREN) {
+		RECT rcUpdate = lpRectUpdate ? *lpRectUpdate : GetClientRect();
+
+		for (auto &node : _children) {
+			CWnd *pChild = node._value;
+			if (pChild->IsWindowVisible()) {
+				RECT rcChild = pChild->GetWindowRectInParentCoords();
+
+				if (RectsIntersect(rcUpdate, rcChild)) {
+					pChild->Invalidate();
+				}
+			}
+		}
+	}
+
+	if (flags & (RDW_UPDATENOW | RDW_ERASENOW)) {
 		// Send WM_PAINT immediately
 		UpdateWindow();
 	}
@@ -804,6 +827,12 @@ BOOL CWnd::GetClientRect(LPRECT lpRect) const {
 	return true;
 }
 
+RECT CWnd::GetClientRect() const {
+	RECT r;
+	GetClientRect(&r);
+	return r;
+}
+
 bool CWnd::PointInClientRect(const POINT &pt) const {
 	RECT clientRect;
 	GetClientRect(&clientRect);
@@ -841,6 +870,20 @@ void CWnd::ScreenToClient(LPRECT lpRect) const {
 		lpRect->right -= wnd->_windowRect.left;
 		lpRect->bottom -= wnd->_windowRect.top;
 	}
+}
+
+
+RECT CWnd::GetWindowRectInParentCoords() const {
+	RECT rc;
+	GetWindowRect(&rc);
+
+	// Convert to parent's client coordinates
+	CWnd *pParent = GetParent();
+	if (pParent != nullptr) {
+		pParent->ScreenToClient(&rc);
+	}
+
+	return rc;
 }
 
 void CWnd::MoveWindow(LPCRECT lpRect, BOOL bRepaint) {

@@ -225,6 +225,10 @@ inline RECT RectToRECT(int x1, int y1, int x2, int y2) {
 	return dest;
 }
 
+inline bool RectsIntersect(const RECT &r1, const RECT &r2) {
+	return RECTtoRect(r1).intersects(RECTtoRect(r2));
+}
+
 typedef struct _FILETIME {
 	DWORD dwLowDateTime;
 	DWORD dwHighDateTime;

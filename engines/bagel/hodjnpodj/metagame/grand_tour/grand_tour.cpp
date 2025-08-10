@@ -910,8 +910,14 @@ void CMainGTWindow::SplashScreen() {
  *
  ****************************************************************/
 BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
-	CRect   cRect1(SCROLL_LEFT + 50, PSNP_TOP + S_HEIGHT + 1, SCROLL_LEFT + 500, G_TOP - 21);
-	CRect   cRect2(SCROLL_LEFT + 50, G_TOP + 23, SCROLL_LEFT + 500, F_TOP - 26);
+	// Redraw rect for Hodj/Podj difficulties
+	const RECT r11 = pHSHButton->GetWindowRectInParentCoords();
+	const RECT r12 = pPSNPButton->GetWindowRectInParentCoords();
+	const CRect cRect1(r11.left, r11.top, r12.right, r12.bottom);
+	// Redraw rect for Game Order and everything below it
+	const RECT r21 = pGAButton->GetWindowRectInParentCoords();
+	const RECT r22 = pLeaveButton->GetWindowRectInParentCoords();
+	const CRect cRect2(r21.left, r21.top, r22.right, r22.bottom);
 
 	if (HIWORD(lParam) == BN_CLICKED) {
 		switch (wParam) {
