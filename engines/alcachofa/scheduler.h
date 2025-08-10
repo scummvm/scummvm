@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCHEDULER_H
-#define SCHEDULER_H
+#ifndef ALCACHOFA_SCHEDULER_H
+#define ALCACHOFA_SCHEDULER_H
 
 #include "common.h"
 
@@ -222,4 +222,4 @@ private:
 
 }
 
-#endif // SCHEDULER_H
+#endif // ALCACHOFA_SCHEDULER_H

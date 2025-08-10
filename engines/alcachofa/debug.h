@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef DEBUG_H
-#define DEBUG_H
+#ifndef ALCACHOFA_DEBUG_H
+#define ALCACHOFA_DEBUG_H
 
 #include "alcachofa.h"
 
@@ -231,4 +231,4 @@ public:
 
 }
 
-#endif // DEBUG_H
+#endif // ALCACHOFA_DEBUG_H

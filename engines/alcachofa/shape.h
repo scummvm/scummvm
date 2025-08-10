@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SHAPE_H
-#define SHAPE_H
+#ifndef ALCACHOFA_SHAPE_H
+#define ALCACHOFA_SHAPE_H
 
 #include "common/stream.h"
 #include "common/array.h"
@@ -255,4 +255,4 @@ private:
 
 }
 
-#endif // SHAPE_H
+#endif // ALCACHOFA_SHAPE_H

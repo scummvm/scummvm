@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef ALCACHOFA_GRAPHICS_H
+#define ALCACHOFA_GRAPHICS_H
 
 #include "common/ptr.h"
 #include "common/stream.h"
@@ -476,4 +476,4 @@ private:
 
 }
 
-#endif
+#endif // ALCACHOFA_ENGINE_H
