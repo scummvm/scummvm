@@ -49,7 +49,7 @@ bool VideoPlayer::setDefaults() {
 	_playing = false;
 
 	_aviDecoder = nullptr;
-	
+
 	_playPosX = _playPosY = 0;
 	_playZoom = 0.0f;
 
@@ -93,7 +93,7 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	cleanup();
 
 	if (BaseEngine::instance().getGameId() == "sof1" ||
-		BaseEngine::instance().getGameId() == "sof2") {
+	    BaseEngine::instance().getGameId() == "sof2") {
 		warning("PlayVideo: %s - Xvid support not implemented yet", filename.c_str());
 		return STATUS_FAILED;
 	}

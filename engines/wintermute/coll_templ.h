@@ -39,7 +39,7 @@ template<class TYPE>
 inline void dcConstructElements(TYPE *pElements, uint32 nCount) {
 	// first do bit-wise zero initialization
 	memset((void *)pElements, 0, nCount * sizeof(TYPE));
-	
+
 	// then call the constructor(s)
 	for (; nCount--; pElements++)
 		::new((void *)pElements) TYPE;
@@ -69,48 +69,48 @@ class BaseArrayBase {
 public:
 	// Construction
 	BaseArrayBase();
-	
+
 	// Attributes
 	uint32 getSize() const;
 	uint32 getUpperBound() const;
 	void setSize(uint32 nNewSize, uint32 nGrowBy = (uint32)-1);
-	
+
 	// Operations
 	// Clean up
 	void freeExtra();
 	void removeAll();
-	
+
 	// Accessing elements
 	TYPE getAt(uint32 nIndex) const;
 	void setAt(uint32 nIndex, TYPE newElement);
 	TYPE& elementAt(uint32 nIndex);
-	
+
 	// Direct Access to the element data (may return NULL)
 	const TYPE *getData() const;
 	TYPE *getData();
-	
+
 	// Potentially growing the array
 	void setAtGrow(uint32 nIndex, TYPE newElement);
 	uint32 add(TYPE newElement);
 	uint32 append(const BaseArrayBase &src);
 	void copy(const BaseArrayBase &src);
-	
+
 	// overloaded operator helpers
 	TYPE operator[](uint32 nIndex) const;
 	TYPE &operator[](uint32 nIndex);
-	
+
 	// Operations that move elements around
 	void insertAt(uint32 nIndex, TYPE newElement, uint32 nCount = 1);
 	void removeAt(uint32 nIndex, uint32 nCount = 1);
 	void insertAt(uint32 nStartIndex, BaseArrayBase *pNewArray);
-	
+
 	// Implementation
 protected:
 	TYPE *_pData;   // the actual array of data
 	uint32 _nSize;     // # of elements (upperBound - 1)
 	uint32 _nMaxSize;  // max allocated
 	uint32 _nGrowBy;   // grow amount
-	
+
 public:
 	~BaseArrayBase();
 };
@@ -198,7 +198,7 @@ template<class TYPE>
 void BaseArrayBase<TYPE>::setSize(uint32 nNewSize, uint32 nGrowBy) {
 	if (nGrowBy != (uint32)-1)
 		_nGrowBy = nGrowBy;  // set new size
-	
+
 	if (nNewSize == 0) {
 		// shrink to nothing
 		if (_pData != nullptr) {
@@ -236,15 +236,15 @@ void BaseArrayBase<TYPE>::setSize(uint32 nNewSize, uint32 nGrowBy) {
 			nNewMax = _nMaxSize + numGrowBy;  // granularity
 		else
 			nNewMax = nNewSize;  // no slush
-		
+
 		TYPE *pNewData = (TYPE *) new byte[nNewMax * sizeof(TYPE)];
-		
+
 		// copy new data from old
 		memcpy(pNewData, _pData, _nSize * sizeof(TYPE));
-		
+
 		// construct remaining elements
 		dcConstructElements<TYPE>(&pNewData[_nSize], nNewSize - _nSize);
-		
+
 		// get rid of old stuff (note: no destructors called)
 		delete[] (byte *)_pData;
 		_pData = pNewData;
@@ -315,7 +315,7 @@ void BaseArrayBase<TYPE>::insertAt(uint32 nIndex, TYPE newElement, uint32 nCount
 		// re-init slots we copied from
 		dcConstructElements<TYPE>(&_pData[nIndex], nCount);
 	}
-	
+
 	// insert new value in the gap
 	while (nCount--)
 		_pData[nIndex++] = newElement;
