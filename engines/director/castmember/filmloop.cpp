@@ -104,25 +104,27 @@ bool FilmLoopCastMember::isModified() {
 	return false;
 }
 
-Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, Channel *channel) {
+Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
 	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(), bbox.height() ? bbox.height() : _initialRect.height());
 
 	_subchannels.clear();
 
-	if (channel->_filmLoopFrame >= _frames.size()) {
-		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", channel->_filmLoopFrame, _frames.size());
+	if (frame >= _frames.size()) {
+		warning("FilmLoopCastMember::getSubChannels(): Film loop frame %d requested, only %d available", frame, _frames.size());
 		return &_subchannels;
 	}
 
 	// get the list of sprite IDs for this frame
 	Common::Array<int> spriteIds;
-	for (auto &iter : _frames[channel->_filmLoopFrame].sprites) {
-		spriteIds.push_back(iter._key);
+	for (auto &iter : _frames[frame].sprites) {
+		// channels 0 and 1 are used for audio
+		if (iter._key >= 2)
+			spriteIds.push_back(iter._key);
 	}
 	Common::sort(spriteIds.begin(), spriteIds.end());
 
 	debugC(5, kDebugImages, "FilmLoopCastMember::getSubChannels(): castId: %d, frame: %d, count: %d, initRect: %d,%d %dx%d, bbox: %d,%d %dx%d",
-			_castId, channel->_filmLoopFrame, spriteIds.size(),
+			_castId, frame, spriteIds.size(),
 			_initialRect.left + _initialRect.width()/2,
 			_initialRect.top + _initialRect.height()/2,
 			_initialRect.width(), _initialRect.height(),
@@ -132,7 +134,7 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 
 	// copy the sprites in order to the list
 	for (auto &iter : spriteIds) {
-		Sprite src = _frames[channel->_filmLoopFrame].sprites[iter];
+		Sprite src = _frames[frame].sprites[iter];
 		if (!src._cast)
 			continue;
 		// translate sprite relative to the global bounding box
@@ -170,6 +172,30 @@ Common::Array<Channel> *FilmLoopCastMember::getSubChannels(Common::Rect &bbox, C
 	}
 
 	return &_subchannels;
+}
+
+CastMemberID FilmLoopCastMember::getSubChannelSound1(uint frame) {
+	if (frame >= _frames.size()) {
+		warning("FilmLoopCastMember::getSubChannelSound1(): Film loop frame %d requested, only %d available", frame, _frames.size());
+		return CastMemberID();
+	}
+
+	if (_frames[frame].sprites.contains(0)) {
+		return _frames[frame].sprites[0]._castId;
+	}
+	return CastMemberID();
+}
+
+CastMemberID FilmLoopCastMember::getSubChannelSound2(uint frame) {
+	if (frame >= _frames.size()) {
+		warning("FilmLoopCastMember::getSubChannelSound2(): Film loop frame %d requested, only %d available", frame, _frames.size());
+		return CastMemberID();
+	}
+
+	if (_frames[frame].sprites.contains(1)) {
+		return _frames[frame].sprites[1]._castId;
+	}
+	return CastMemberID();
 }
 
 void FilmLoopCastMember::loadFilmLoopDataD2(Common::SeekableReadStreamEndian &stream) {
