@@ -212,22 +212,22 @@ Common::KeymapArray QueenMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("JOY_DOWN");
 	gameKeymap->addAction(act);
 
-	act = new Action("INVITEM1", _("inventory item 1"));
+	act = new Action("INVITEM1", _("Inventory item 1"));
 	act->setCustomEngineActionEvent(kActionInvSlot1);
 	act->addDefaultInputMapping("1");
 	gameKeymap->addAction(act);
 
-	act = new Action("INVITEM2", _("inventory item 2"));
+	act = new Action("INVITEM2", _("Inventory item 2"));
 	act->setCustomEngineActionEvent(kActionInvSlot2);
 	act->addDefaultInputMapping("2");
 	gameKeymap->addAction(act);
 
-	act = new Action("INVITEM3", _("inventory item 3"));
+	act = new Action("INVITEM3", _("Inventory item 3"));
 	act->setCustomEngineActionEvent(kActionInvSlot3);
 	act->addDefaultInputMapping("3");
 	gameKeymap->addAction(act);
 
-	act = new Action("INVITEM4", _("inventory item 4"));
+	act = new Action("INVITEM4", _("Inventory item 4"));
 	act->setCustomEngineActionEvent(kActionInvSlot4);
 	act->addDefaultInputMapping("4");
 	gameKeymap->addAction(act);
