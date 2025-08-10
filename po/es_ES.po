@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-10 08:07+0000\n"
-"PO-Revision-Date: 2025-07-21 19:36+0000\n"
+"PO-Revision-Date: 2025-08-10 09:10+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -10402,16 +10402,12 @@ msgid "<original>"
 msgstr "<original>"
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Save file management menus keymappings"
-msgstr "Asignaciones del menú principal"
+msgstr "Asignaciones de los menús de archivos guardados"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Pause menu keymappings"
-msgstr "Asignaciones del menú principal"
+msgstr "Asignaciones del menú de pausa"
 
 #: engines/neverhood/metaengine.cpp:192 engines/sludge/keymapper_tables.h:83
 #: engines/sludge/keymapper_tables.h:132 engines/sludge/keymapper_tables.h:175
@@ -10423,29 +10419,23 @@ msgid "Move / Interact"
 msgstr "Mover/Interactuar"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Pause / Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "Pausar/Omitir escena"
+msgstr "Pausar/Salir de menú"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "Omitir escena"
+msgstr "Omitir parte de escena"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "Omitir escena entera (solo en algunos casos)"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "Guarda una nueva partida"
+msgstr "Confirmar partida seleccionada/nombre nuevo de partida"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
