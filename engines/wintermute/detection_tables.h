@@ -1036,17 +1036,17 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Face Noir (English Demo)
 	WME_WINENTRY("facenoir", "Demo",
 		WME_ENTRY2s("data.dcp", "545a87636e2f8762d2765d99fddc3806", 289889447,
-					"data2.dcp", "bb3c7bd14526006b7abd9db4982c8cfd", 197898807), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"data2.dcp", "bb3c7bd14526006b7abd9db4982c8cfd", 197898807), Common::EN_ANY, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// Face Noir (German Demo)
 	WME_WINENTRY("facenoir", "Demo",
 		WME_ENTRY2s("data.dcp", "dbf0f4545cc31f8bea82387229abe266", 259084466,
-					"data2.dcp", "b8bb3b1b5ae3bce3c132cb34c11056fe", 55447397), Common::DE_DEU, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"data2.dcp", "b8bb3b1b5ae3bce3c132cb34c11056fe", 55447397), Common::DE_DEU, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// Face Noir (Polish Demo)
 	WME_WINENTRY("facenoir", "Demo",
 		WME_ENTRY2s("data.dcp", "8add477c70ffa712a81db4af5fcaa0e1", 293911404,
-					"data2.dcp", "1874aa7d51121cc43e78f71dbe9c41b7", 197953641), Common::PL_POL, ADGF_UNSTABLE | ADGF_DEMO | GF_3D, WME_1_9_1),
+					"data2.dcp", "1874aa7d51121cc43e78f71dbe9c41b7", 197953641), Common::PL_POL, ADGF_DEMO | GF_3D, WME_1_9_1),
 
 	// Finding Hope (English)
 	WME_WINENTRY("findinghope", "",
