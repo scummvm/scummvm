@@ -34,14 +34,20 @@ namespace GUI {
 PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 	: Dialog("PrintingDialog"), _surface(surface) {
 	_printButton = new GUI::ButtonWidget(this, "PrintingDialog.Print", _("Print"), Common::U32String(), kCmdPrint);
+	_saveAsImageCheckbox = new GUI::CheckboxWidget(this, "PrintingDialog.SaveAsImage", _("Save as image"));
 }
 
 void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
-	case kCmdPrint:
-		g_system->getPrintingManager()->doPrint(_surface);
+	case kCmdPrint: {
+		Common::PrintingManager *printMan = g_system->getPrintingManager();
+		if (_saveAsImageCheckbox->getState()) {
+			printMan->saveAsImage(_surface);
+		}
+		printMan->doPrint(_surface);
 		close();
 		break;
+	}
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}

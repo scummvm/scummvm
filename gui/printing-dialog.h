@@ -28,6 +28,7 @@
 
 namespace GUI {
 class ButtonWidget;
+class CheckboxWidget;
 
 class PrintingDialog : public GUI::Dialog {
 public:
@@ -43,6 +44,7 @@ private:
 	const Graphics::ManagedSurface &_surface;
 
 	GUI::ButtonWidget *_printButton;
+	GUI::CheckboxWidget *_saveAsImageCheckbox;
 };
 
 } // End of namespace GUI
