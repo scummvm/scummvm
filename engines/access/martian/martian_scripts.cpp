@@ -101,41 +101,7 @@ void MartianScripts::cmdSpecial1(int param1, int param2) {
 	_vm->_screen->forceFadeIn();
 	_vm->_events->showCursor();
 
-	_vm->_fonts._charSet._hi = 10;
-	Font::_fontColors[1] = 0xf7;
-	Font::_fontColors[2] = 0xff;
-
-	_vm->_screen->_maxChars = 50;
-	_vm->_screen->_printOrg = _vm->_screen->_printStart = Common::Point(24, 18);
-
-	// TODO: Original has a small delay here.
-
-	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
-	/*
-	Common::DumpFile dump;
-	dump.open("/tmp/etext.dat.decomp");
-	dump.writeStream(notesRes->_stream);
-	dump.close();
-	*/
-
-	notesRes->_stream->seek(2 * param2);
-	uint16 msgOffset = notesRes->_stream->readUint16LE();
-	if (msgOffset == 0 || msgOffset >= notesRes->_stream->size()) {
-		error("MartianScripts::cmdSpecial1: Invalid message offset %d for msg %d", msgOffset, param2);
-	}
-
-	notesRes->_stream->seek(msgOffset);
-
-	Common::String msg = notesRes->_stream->readString();
-	_game->showDeathText(msg);
-
-	_vm->_events->hideCursor();
-	if (param2 != 0x3f) {
-		_vm->_screen->forceFadeOut();
-		_vm->_screen->clearScreen();
-	}
-
-	_vm->_events->showCursor();
+	_vm->establish(0, param2);
 }
 
 void MartianScripts::cmdSpecial3() {
@@ -184,7 +150,7 @@ void MartianScripts::cmdSpecial6() {
 	Common::String msg = notesRes->_stream->readString();
 
 	//display the message
-	_game->showDeathText(msg);
+	_game->showExpositionText(msg);
 
 	delete notesRes;
 	delete _vm->_objectsTable[0];
@@ -269,7 +235,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_screen->_printStart = Common::Point(24, 18);
 
 	// Display death message
-	_game->showDeathText(Common::String(SPEC7MESSAGE));
+	_game->showExpositionText(Common::String(SPEC7MESSAGE));
 
 	_vm->_events->showCursor();
 	_vm->_screen->copyBuffer(&_vm->_buffer1);

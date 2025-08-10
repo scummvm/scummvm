@@ -298,7 +298,7 @@ void MartianEngine::setupGame() {
 	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 }
 
-void MartianEngine::showDeathText(Common::String msg) {
+void MartianEngine::showExpositionText(Common::String msg) {
 	Common::String line = "";
 	int width = 0;
 	bool lastLine;
@@ -339,7 +339,7 @@ void MartianEngine::dead(int deathId) {
 	_screen->_printStart = Common::Point(24, 18);
 
 	// Display death message
-	showDeathText(_deaths[deathId]._msg);
+	showExpositionText(_deaths[deathId]._msg);
 
 	_screen->forceFadeOut();
 	_room->clearRoom();
@@ -348,6 +348,37 @@ void MartianEngine::dead(int deathId) {
 	// The original was jumping to the restart label in main
 	_restartFl = true;
 	_events->pollEvents();
+}
+
+void MartianEngine::establish(int esatabIndex, int sub) {
+	_fonts._charSet._hi = 10;
+	Font::_fontColors[1] = 0xf7;
+	Font::_fontColors[2] = 0xff;
+
+	_screen->_maxChars = 50;
+	_screen->_printOrg = _screen->_printStart = Common::Point(24, 18);
+
+	// TODO: Original has a small delay here.
+
+	Resource *notesRes = _files->loadFile("ETEXT.DAT");
+	notesRes->_stream->seek(2 * sub);
+	uint16 msgOffset = notesRes->_stream->readUint16LE();
+	if (msgOffset == 0 || msgOffset >= notesRes->_stream->size()) {
+		error("MartianEngine::establish: Invalid message offset %d for msg %d", msgOffset, sub);
+	}
+
+	notesRes->_stream->seek(msgOffset);
+
+	Common::String msg = notesRes->_stream->readString();
+	showExpositionText(msg);
+
+	_events->hideCursor();
+	if (sub != 0x3f) {
+		_screen->forceFadeOut();
+		_screen->clearScreen();
+	}
+
+	_events->showCursor();
 }
 
 void MartianEngine::synchronize(Common::Serializer &s) {

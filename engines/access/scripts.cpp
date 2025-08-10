@@ -537,6 +537,7 @@ void Scripts::converse1(int val) {
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
+	// TODO? also set SHORT_1950_88a9 = 0 here?
 	_sequence = 0;
 	searchForSequence();
 
@@ -804,22 +805,22 @@ void Scripts::cmdDoTravel() {
 			btnSelected = 2;
 
 		if (btnSelected != 2) {
-			int idx = _vm->_travelBox->_tempListIdx[boxX];
-			if (Martian::_byte1EEB5[idx] != _vm->_byte26CB5) {
-				_vm->_bubbleBox->_bubbleTitle = "_travel";
+			int newRoomNum = _vm->_travelBox->_tempListIdx[boxX];
+			if (Martian::CAN_TRAVEL_MATRIX[newRoomNum] != _vm->_flags[171]) {
+				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
 				_vm->_bubbleBox->printString(_vm->_res->CANT_GET_THERE);
 				continue;
 			}
-			if (_vm->_player->_roomNumber != idx) {
-				_vm->_player->_roomNumber = idx;
+			if (_vm->_player->_roomNumber != newRoomNum) {
+				_vm->_player->_roomNumber = newRoomNum;
 				_vm->_room->_function = FN_CLEAR1;
-				if (_vm->_res->ROOMTBL[idx]._travelPos.x == -1) {
+				if (_vm->_res->ROOMTBL[newRoomNum]._travelPos.x == -1) {
 					// For x == -1, the y value is a script Id, not a co-ordinate
 					_vm->_room->_conFlag = true;
-					_vm->_scripts->converse1(_vm->_res->ROOMTBL[idx]._travelPos.y);
+					_vm->_scripts->converse1(_vm->_res->ROOMTBL[newRoomNum]._travelPos.y);
 					return;
 				}
-				_vm->_player->_rawPlayer = _vm->_res->ROOMTBL[idx]._travelPos;
+				_vm->_player->_rawPlayer = _vm->_res->ROOMTBL[newRoomNum]._travelPos;
 				cmdRetPos();
 				return;
 			}

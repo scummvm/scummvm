@@ -49,7 +49,7 @@ extern const char *const TRAVDATA[];
 
 extern const char *const SPEC7MESSAGE;
 
-extern const byte _byte1EEB5[];
+extern const byte CAN_TRAVEL_MATRIX[];
 extern const int PICTURERANGE[][2];
 
 class MartianResources : public Resources {

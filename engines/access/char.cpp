@@ -89,11 +89,12 @@ CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 }
 
 void CharManager::loadChar(int charId) {
-	CharEntry &ce = _charTable[charId];
+	const CharEntry &ce = _charTable[charId];
 	_charFlag = ce._charFlag;
 
+	// Amazon calls "establish" before loading the screen, but MM does it after.
 	_vm->_establishFlag = false;
-	if (ce._estabIndex != -1) {
+	if (_vm->getGameID() == kGameAmazon && ce._estabIndex != -1) {
 		_vm->_establishFlag = true;
 		if (!_vm->_establishTable[ce._estabIndex]) {
 			_vm->_establishTable[ce._estabIndex] = true;
@@ -114,6 +115,15 @@ void CharManager::loadChar(int charId) {
 	_vm->_buffer2.blitFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();
 
+	if (_vm->getGameID() == kGameMartianMemorandum && ce._estabIndex != -1) {
+		_vm->_establishFlag = true;
+		if (!_vm->_establishTable[ce._estabIndex]) {
+			_vm->_establishTable[ce._estabIndex] = true;
+			_vm->establish(0, ce._estabIndex);
+			_vm->_screen->blitFrom(_vm->_buffer1);
+		}
+	}
+
 	if (_charFlag != 2 && _charFlag != 3) {
 		charMenu();
 	}
@@ -121,7 +131,8 @@ void CharManager::loadChar(int charId) {
 	_vm->_screen->_startColor = ce._startColor;
 	_vm->_screen->_numColors = ce._numColors;
 	if (ce._paletteFile._fileNum != -1) {
-		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile);
+		int srcOffset = (_vm->getGameID() == kGameMartianMemorandum ? ce._startColor * 3 : 0);
+		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile, srcOffset);
 	}
 	_vm->_screen->setIconPalette();
 	_vm->_screen->setPalette();
