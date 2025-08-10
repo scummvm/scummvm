@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 08:07+0000\n"
+"POT-Creation-Date: 2025-08-10 11:10+0000\n"
 "PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3862,7 +3862,7 @@ msgstr "게임 메뉴"
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
 #: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:140
 #: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/wintermute/keymapper_tables.h:220
+#: engines/prince/metaengine.cpp:269 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -6157,13 +6157,14 @@ msgstr "업데이트 확인 중..."
 #: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
 #: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/prince/metaengine.cpp:227 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:185
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "기본 키맵핑"
 
@@ -7347,13 +7348,13 @@ msgstr "단서 개인 정보 보호 전환"
 #: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:181
 #: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
-#: engines/saga/metaengine.cpp:442 engines/sludge/keymapper_tables.h:107
-#: engines/sludge/keymapper_tables.h:156 engines/stark/metaengine.cpp:208
-#: engines/tetraedge/metaengine.cpp:110 engines/titanic/metaengine.cpp:199
-#: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
-#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
-#: engines/ultima/ultima8/metaengine.cpp:45 engines/vcruise/metaengine.cpp:175
-#: engines/wintermute/keymapper_tables.h:920
+#: engines/prince/metaengine.cpp:243 engines/saga/metaengine.cpp:442
+#: engines/sludge/keymapper_tables.h:107 engines/sludge/keymapper_tables.h:156
+#: engines/stark/metaengine.cpp:208 engines/tetraedge/metaengine.cpp:110
+#: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
+#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
+#: engines/tsage/metaengine.cpp:242 engines/ultima/ultima8/metaengine.cpp:45
+#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "게임 저장"
 
@@ -7371,10 +7372,10 @@ msgstr "게임 저장"
 #: engines/hopkins/metaengine.cpp:242 engines/made/metaengine.cpp:187
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/pegasus/pegasus.cpp:2831
-#: engines/saga/metaengine.cpp:432 engines/stark/metaengine.cpp:213
-#: engines/tetraedge/metaengine.cpp:104 engines/titanic/metaengine.cpp:205
-#: engines/toltecs/metaengine.cpp:240 engines/toon/metaengine.cpp:118
-#: engines/trecision/metaengine.cpp:175
+#: engines/prince/metaengine.cpp:249 engines/saga/metaengine.cpp:432
+#: engines/stark/metaengine.cpp:213 engines/tetraedge/metaengine.cpp:104
+#: engines/titanic/metaengine.cpp:205 engines/toltecs/metaengine.cpp:240
+#: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
 #: engines/ultima/ultima8/metaengine.cpp:46 engines/vcruise/metaengine.cpp:180
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
@@ -7682,14 +7683,14 @@ msgid "DEBUG: Access to locations 1-24"
 msgstr "디버그: 위치 1-24에 대한 접속"
 
 #: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
-#: engines/prince/metaengine.cpp:36
+#: engines/prince/metaengine.cpp:40
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "개체 및 옵션에 대한 TTS 활성화"
 
 #: engines/cge2/metaengine.cpp:60 engines/draci/metaengine.cpp:45
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
-#: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:37
+#: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
 #: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
 #: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
 #: engines/wage/metaengine.cpp:52
@@ -7697,12 +7698,12 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS가 가능한 경우)"
 
 #: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
-#: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:48
+#: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:52
 msgid "Enable Text to Speech for Subtitles"
 msgstr "자막에 TTS를 활성화"
 
 #: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
-#: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:49
+#: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:53
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "TTS를 사용하여 자막 읽기 (TTS가 가능한 경우)"
 
@@ -8007,13 +8008,13 @@ msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
 "게임이 실제 색상 그래픽 모드로 설계되지 않았더라도 실제 색상 그래픽 모드 사용"
 
-#: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:60
+#: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 #, fuzzy
 #| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
 msgstr "자막에 TTS를 활성화"
 
-#: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:61
+#: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:65
 #, fuzzy
 #| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
@@ -10173,12 +10174,13 @@ msgstr "메뉴 키매핑"
 msgid "Pause menu keymappings"
 msgstr "메뉴 키매핑"
 
-#: engines/neverhood/metaengine.cpp:192 engines/sludge/keymapper_tables.h:83
-#: engines/sludge/keymapper_tables.h:132 engines/sludge/keymapper_tables.h:175
-#: engines/sludge/keymapper_tables.h:211 engines/sludge/keymapper_tables.h:231
-#: engines/sludge/keymapper_tables.h:250 engines/sludge/keymapper_tables.h:275
-#: engines/sludge/keymapper_tables.h:386 engines/sludge/keymapper_tables.h:446
-#: engines/sludge/keymapper_tables.h:478 engines/sludge/keymapper_tables.h:529
+#: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
+#: engines/sludge/keymapper_tables.h:83 engines/sludge/keymapper_tables.h:132
+#: engines/sludge/keymapper_tables.h:175 engines/sludge/keymapper_tables.h:211
+#: engines/sludge/keymapper_tables.h:231 engines/sludge/keymapper_tables.h:250
+#: engines/sludge/keymapper_tables.h:275 engines/sludge/keymapper_tables.h:386
+#: engines/sludge/keymapper_tables.h:446 engines/sludge/keymapper_tables.h:478
+#: engines/sludge/keymapper_tables.h:529
 msgid "Move / Interact"
 msgstr "이동 / 소통"
 
@@ -10320,6 +10322,26 @@ msgstr "가위 활성화/비활성화"
 #: engines/plumbers/metaengine.cpp:51
 msgid "3DO Plumbers requires RGB support."
 msgstr "3DO Plumbers에는 RGB 지원이 필요합니다."
+
+#: engines/prince/metaengine.cpp:237
+#, fuzzy
+#| msgid "Open main menu"
+msgid "Open interaction menu"
+msgstr "메인 메뉴 열기"
+
+#. I18N: This refers to the Z key on a keyboard.
+#: engines/prince/metaengine.cpp:256
+#, fuzzy
+#| msgid "End key"
+msgid "Z key"
+msgstr "엔드 키"
+
+#. I18N: This refers to the X key on a keyboard.
+#: engines/prince/metaengine.cpp:263
+#, fuzzy
+#| msgid "End key"
+msgid "X key"
+msgstr "엔드 키"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
