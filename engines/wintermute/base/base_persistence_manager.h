@@ -101,7 +101,6 @@ public:
 	bool transferVector3d(const char *name, DXVector3 *val);
 	bool transferVector4d(const char *name, DXVector4 *val);
 	bool transferMatrix4(const char *name, DXMatrix *val);
-	bool transferAngle(const char *name, float *val);
 	BasePersistenceManager(const Common::String &savePrefix = "", bool deleteSingleton = false);
 	virtual ~BasePersistenceManager();
 	bool checkVersion(byte  verMajor, byte verMinor, byte verBuild);

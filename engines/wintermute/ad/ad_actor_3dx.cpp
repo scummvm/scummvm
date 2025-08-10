@@ -2281,7 +2281,7 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER(_path3D));
 	persistMgr->transferPtr(TMEMBER(_path2D));
-	persistMgr->transferAngle(TMEMBER(_targetAngle));
+	persistMgr->transferFloat(TMEMBER(_targetAngle));
 	persistMgr->transferVector3d(TMEMBER(_targetPoint3D));
 	persistMgr->transferPtr(TMEMBER(_targetPoint2D));
 	persistMgr->transferBool(TMEMBER(_turningLeft));

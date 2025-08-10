@@ -915,25 +915,6 @@ bool BasePersistenceManager::transferMatrix4(const char *name, DXMatrix *val) {
 	}
 }
 
-bool BasePersistenceManager::transferAngle(const char *name, float *val) {
-	if (_saving) {
-		putFloat(*val);
-
-		if (_saveStream->err()) {
-			return STATUS_FAILED;
-		}
-	} else {
-		*val = getFloat();
-
-		if (_loadStream->err()) {
-			return STATUS_FAILED;
-		}
-	}
-
-	return STATUS_OK;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 // generic pointer
 
