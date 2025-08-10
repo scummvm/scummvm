@@ -77,6 +77,7 @@ public:
 		}
 		if (_surface) {
 			_surface->setPixel(x, y, _surface->format.ARGBToColor(a, r, g, b));
+			_surfaceModified = true;
 			return STATUS_OK;
 		}
 		return STATUS_FAILED;
@@ -100,6 +101,7 @@ private:
 	void writeAlpha(Graphics::Surface *surface, const Graphics::Surface *mask);
 
 	bool _pixelOpReady;
+	bool _surfaceModified;
 	float _rotation;
 	Graphics::AlphaType _alphaType;
 	Graphics::Surface *_alphaMask;

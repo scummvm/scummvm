@@ -270,7 +270,7 @@ bool BaseSurfaceOpenGL3D::putSurface(const Graphics::Surface &surface, bool hasA
 }
 
 bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a) {
-	if (!_pixelOpReady || !_valid) {
+	if (!_pixelOpReady) {
 		return false;
 	}
 
@@ -290,7 +290,7 @@ bool BaseSurfaceOpenGL3D::putPixel(int x, int y, byte r, byte g, byte b, byte a)
 }
 
 bool BaseSurfaceOpenGL3D::getPixel(int x, int y, byte *r, byte *g, byte *b, byte *a) const {
-	if (!_pixelOpReady || !_valid) {
+	if (!_pixelOpReady) {
 		return false;
 	}
 

@@ -54,6 +54,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 	_alphaType = Graphics::ALPHA_FULL;
 	_alphaMaskType = Graphics::ALPHA_OPAQUE;
 	_rotation = 0;
+	_surfaceModified = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -274,6 +275,11 @@ bool BaseSurfaceOSystem::startPixelOp() {
 bool BaseSurfaceOSystem::endPixelOp() {
 	_lastUsedTime = _gameRef->getLiveTimer()->getTime();
 	_pixelOpReady = false;
+	if (_surfaceModified) {
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+		renderer->invalidateTicketsFromSurface(this);
+		_surfaceModified = false;
+	}
 	return STATUS_OK;
 }
 
