@@ -117,7 +117,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 				}
 
 #ifdef ENABLE_WME3D
-				if (_rectList[i]->_xmodel) {
+				else if (_rectList[i]->_xmodel) {
 					if (!_rectList[i]->_xmodel->isTransparentAt(x, y)) {
 						return _rectList[i]->_owner;
 					}
