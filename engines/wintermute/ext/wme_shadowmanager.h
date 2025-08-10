@@ -40,7 +40,7 @@ public:
 	const char *scToString() override;
 	SXShadowManager(BaseGame *inGame, ScStack *stack);
 	~SXShadowManager() override;
-	
+
 private:
 	static void callback(void *eventData1, void *eventData2);
 	void update();

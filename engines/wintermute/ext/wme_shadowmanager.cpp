@@ -44,7 +44,7 @@ BaseScriptable *makeSXShadowManager(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
-	
+
 	PluginEventEntry event;
 	event._type = WME_EVENT_UPDATE;
 	event._callback = callback;
