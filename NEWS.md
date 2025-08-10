@@ -74,6 +74,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a crash while reading files from the Zip disk in Secret of the
      Scarlet Hand.
 
+ Neverhood:
+   - Added keymapper support.
+
  NGI:
    - Added keymapper support.
 
@@ -85,6 +88,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Prince:
    - Added Text-to-Speech support.
+   - Added keymapper support.
 
  SCI:
    - Fixed the palette in SLATER Mac.
