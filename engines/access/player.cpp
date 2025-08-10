@@ -267,8 +267,9 @@ void Player::walkUp() {
 
 		calcManScale();
 
-		// TODO: Implement step sounds also for Amazon? (_frame == 17 || _frame == 21))
 		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 8 || _frame == 12))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _upWalkMax)
@@ -299,6 +300,8 @@ void Player::walkDown() {
 
 		// TODO: Implement step sounds also for Amazon? (_frame == 10 || _frame == 14)
 		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
 			_vm->_sound->playSound(0);
 
 		if (++_frame > _downWalkMax)
@@ -338,8 +341,9 @@ void Player::walkLeft() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		// TODO: Implement step sounds also for Amazon? (_frame == 1 || _frame == 5)
 		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		if (_frame > _sideWalkMax)
@@ -379,8 +383,9 @@ void Player::walkRight() {
 		_rawPlayerLow.x = _rawTempL;
 		++_frame;
 
-		// TODO: Implement step sounds also for Amazon
 		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 7 || _frame == 3))
+			_vm->_sound->playSound(0);
+		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
 			_vm->_sound->playSound(0);
 
 		// Useless check removed
@@ -431,9 +436,8 @@ void Player::walkUpLeft() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkUpLeft - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -482,9 +486,8 @@ void Player::walkDownLeft() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkDownLeft - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagDownWalkMax)
 			_frame = _diagDownWalkMin;
@@ -533,9 +536,8 @@ void Player::walkUpRight() {
 		++_frame;
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkUpRight - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		if (_frame > _diagUpWalkMax)
 			_frame = _diagUpWalkMin;
@@ -583,9 +585,8 @@ void Player::walkDownRight() {
 
 		calcManScale();
 
-		// This code looks totally useless as 'si' is unconditionally set in plotCom1
-		//if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
-		//	warning("TODO: walkDownRight - si = 0?");
+		if (_vm->_currentMan != 3 && (_frame == 1 || _frame == 5))
+			_vm->_sound->playSound(0);
 
 		++_frame;
 		if (_frame > _diagDownWalkMax)
