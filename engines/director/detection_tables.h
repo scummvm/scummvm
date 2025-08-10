@@ -1535,6 +1535,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "historia",			"Svensk historia: från asatro till frihetskrig år 800-1500" },
 	{ "jonssonligan1",		"Jönssonligan: Jakten på Mjölner" },
 	{ "jonssonligan2",		"Jönssonligan går på djupet" },
+	{ "konrad",				"Konrad & Nobelmysteriet" },
 	{ "kosmopolska",		"Kosmopolska" },
 	{ "krakeldamm",			"Krakels ABC: Den galna dammsugaren/Mera Krakel" },
 	{ "mumin1",				"Kurragömma med Mumintrollen" },
@@ -8533,6 +8534,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Mac version requires installation
 	MACGAME1("kingandi", "", "The King and I Thinking Adv", "r:ef18d569c3cb7700367427cfc9150656",  115776, 602),
 	WINGAME1("kingandi", "", "King&I.exe",					"t:ed267a58821c0a586dab3d2b853971be", 1967220, 602),
+
+	// Both versions require installation
+	MACGAME1_l("konrad", "", "Konrad",		  "rt:16ea9e5551f7606b14dcc7418d162545", 1031418, Common::SV_SWE, 601),
+	WINGAME2_l("konrad", "", "Start32.exe",	  "t:929e2931ffbfa6235cc861dcc0482695",  1511552,
+							 "MEDIA/X10.DXR", "f:9d1955cef4f98336a29590f242ad6321",    81104, Common::SV_SWE, 601),
 
 	WINGAME2_l("kontyngent99", "", "START.EXE",		"t:4bbdc40fcaaf25736b198ba8137d3b4d",  1513041,
 								   "DANE/MAIN.DXR",	"f:98b4f7339e1f8f6628035e6317f78912", 21043440, Common::PL_POL, 650),
