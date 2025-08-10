@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MENU_H
-#define MENU_H
+#ifndef ALCACHOFA_MENU_H
+#define ALCACHOFA_MENU_H
 
 #include "common/scummsys.h"
 #include "common/savefile.h"
@@ -106,4 +106,4 @@ private:
 
 }
 
-#endif // MENU_H
+#endif // ALCACHOFA_MENU_H

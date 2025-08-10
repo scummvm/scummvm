@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef ALCACHOFA_PLAYER_H
+#define ALCACHOFA_PLAYER_H
 
 #include "rooms.h"
 
@@ -81,4 +81,4 @@ private:
 
 }
 
-#endif // PLAYER_H
+#endif // ALCACHOFA_PLAYER_H

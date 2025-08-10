@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCRIPT_DEBUG_H
-#define SCRIPT_DEBUG_H
+#ifndef ALCACHOFA_SCRIPT_DEBUG_H
+#define ALCACHOFA_SCRIPT_DEBUG_H
 
 namespace Alcachofa {
 
@@ -127,4 +127,4 @@ static const char *const KernelCallNames[] = {
 
 }
 
-#endif // SCRIPT_DEBUG_H
+#endif // ALCACHOFA_SCRIPT_DEBUG_H

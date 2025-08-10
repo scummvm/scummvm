@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef ALCACHOFA_SCRIPT_H
+#define ALCACHOFA_SCRIPT_H
 
 #include "common.h"
 
@@ -190,4 +190,4 @@ private:
 
 }
 
-#endif // SCRIPT_H
+#endif // ALCACHOFA_SCRIPT_H
