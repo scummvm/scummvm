@@ -133,7 +133,7 @@ const char *const SPEC7MESSAGE = {
 	"FAREWELL...'"
 };
 
-const byte _byte1EEB5[] = {
+const byte CAN_TRAVEL_MATRIX[] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	0, 0, 0, 0, 0, 0, 0, 1, 1, 1,
 	1, 1, 1, 1, 1, 1, 1, 1, 1, 1,

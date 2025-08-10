@@ -67,8 +67,8 @@ public:
 	~MartianEngine() override;
 
 	void doSpecial5(int param1);
-	void showDeathText(Common::String msg);
-	void establish(int esatabIndex, int sub) override {};
+	void showExpositionText(Common::String msg);
+	void establish(int esatabIndex, int sub) override;
 
 	/**
 	* Synchronize savegame data
