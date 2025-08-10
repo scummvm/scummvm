@@ -1171,7 +1171,7 @@ protected:
 		return false;
 	}
 	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus) {}
+	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnSize(UINT nType, int cx, int cy) {}
 	afx_msg void OnTCard(UINT idAction, DWORD dwActionData) {}
 	afx_msg void OnSessionChange(UINT nSessionState, UINT nId) {}
@@ -1398,7 +1398,7 @@ public:
 	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
 	void SendMessageToDescendants(UINT message,
-		WPARAM wParam, LPARAM lParam,
+		WPARAM wParam = 0, LPARAM lParam = 0,
 		bool bDeep = true, bool bOnlyPerm = false);
 	static void SendMessageToDescendants(HWND hWnd, UINT message,
 		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm);

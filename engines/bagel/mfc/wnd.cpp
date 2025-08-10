@@ -37,6 +37,7 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_DRAWITEM()
 	ON_WM_SETFONT()
 	ON_WM_SETCURSOR()
+	ON_WM_SHOWWINDOW()
 END_MESSAGE_MAP()
 
 CWnd *CWnd::FromHandlePermanent(HWND hWnd) {
@@ -241,7 +242,7 @@ void CWnd::ShowWindow(int nCmdShow) {
 		m_nStyle &= ~WS_VISIBLE;
 
 	Invalidate(false);
-	SendMessage(WM_SHOWWINDOW);
+	SendMessage(WM_SHOWWINDOW, (m_nStyle & WS_VISIBLE) != 0);
 }
 
 BOOL CWnd::EnableWindow(BOOL bEnable) {
@@ -1154,6 +1155,16 @@ void CWnd::SetFont(CFont *pFont, BOOL bRedraw) {
 
 void CWnd::pause() {
 	AfxGetApp()->pause();
+}
+
+void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {
+	if (bShow) {
+		// Invalidate this window
+		Invalidate();
+
+		// Invalidate all descendants
+		SendMessageToDescendants(WM_PAINT);
+	}
 }
 
 } // namespace MFC
