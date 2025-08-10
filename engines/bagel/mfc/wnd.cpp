@@ -1164,8 +1164,13 @@ void CWnd::SendMessageToDescendants(UINT message,
 	// "permanent", hence the original bPermanent
 	// param is meaningless
 	Common::Queue<CWnd *> queue;
-	queue.push(this);
 
+	// Add immediate children
+	for (auto &node : _children)
+		queue.push(node._value);
+
+	// Iterate through handling each child, and adding
+	// in any child they have if doing a deep send
 	while (!queue.empty()) {
 		CWnd *wnd = queue.pop();
 
@@ -1206,7 +1211,7 @@ void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {
 		Invalidate();
 
 		// Invalidate all descendants
-		SendMessageToDescendants(WM_PAINT);
+		SendMessageToDescendants(WM_SETREDRAW, TRUE);
 	}
 }
 
