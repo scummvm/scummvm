@@ -25,6 +25,12 @@
 
 #include "pink/pink.h"
 
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Pink {
 
 Common::Language PinkEngine::getLanguage() const {
@@ -47,6 +53,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool PinkMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -106,6 +113,70 @@ SaveStateDescriptor PinkMetaEngine::querySaveMetaInfos(const char *target, int s
 Common::Error PinkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Pink::PinkEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray PinkMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Pink;
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "pink-default", "Default keymappings");
+
+	Action *act;
+
+	String gameId = ConfMan.get("gameid", target);
+
+	act = new Action(kStandardActionLeftClick, _("Interact / Select"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	if (gameId == "peril") {
+		// I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
+		act = new Action(kStandardActionRightClick, _("Cancel interaction"));
+		act->setRightClickEvent();
+		act->addDefaultInputMapping("MOUSE_RIGHT");
+		act->addDefaultInputMapping("JOY_B");
+		engineKeyMap->addAction(act);
+	}
+
+	// I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
+	act = new Action("SKIPWALK", _("Skip walk"));
+	act->setCustomEngineActionEvent(kActionSkipWalk);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	// I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
+	act = new Action("SKIPWALKANDCANCEL", _("Skip walk and cancel interaction"));
+	act->setCustomEngineActionEvent(kActionSkipWalkAndCancelInteraction);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	// I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
+	act = new Action("SKIPSEQUENCE", _("Skip sequence"));
+	act->setCustomEngineActionEvent(kActionSkipSequence);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeyMap->addAction(act);
+
+	// I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
+	act = new Action("SKIPSUBSEQUENCE", _("Skip sub-sequence"));
+	act->setCustomEngineActionEvent(kActionSkipSubSequence);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("RIGHT");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeyMap->addAction(act);
+
+	// I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
+	act = new Action("RESTARTSEQUENCE", _("Restart sequence"));
+	act->setCustomEngineActionEvent(kActionRestartSequence);
+	act->addDefaultInputMapping("LEFT");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeyMap->addAction(act);
+
+	return Keymap::arrayOf(engineKeyMap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PINK)

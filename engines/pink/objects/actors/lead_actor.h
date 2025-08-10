@@ -22,6 +22,7 @@
 #ifndef PINK_LEAD_ACTOR_H
 #define PINK_LEAD_ACTOR_H
 
+#include "common/events.h"
 #include "common/rect.h"
 #include "common/keyboard.h"
 
@@ -67,7 +68,7 @@ public:
 
 	void loadPDA(const Common::String &pageName);
 
-	void onKeyboardButtonClick(Common::KeyCode code);
+	void onActionClick(Common::CustomEventType action);
 	void onLeftButtonClick(Common::Point point);
 	void onLeftButtonUp();
 	virtual void onRightButtonClick(Common::Point point);
