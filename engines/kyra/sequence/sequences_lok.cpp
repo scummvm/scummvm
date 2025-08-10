@@ -1003,7 +1003,7 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int makeFlaskEmpty, int f
 		delayWithTicks(7);
 	}
 
-	if (makeFlaskEmpty)
+	if (makeFlaskEmpty && (_flags.platform != Common::kPlatformAmiga))
 		_screen->setPaletteIndex(0xFE, 30, 30, 30);
 
 	for (int i = 131; i >= 123; --i) {
