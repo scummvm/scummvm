@@ -28,10 +28,9 @@
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
 
-#include "tot/offsets.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
-#include "tot/texts.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 
