@@ -311,7 +311,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	createLights();
 
 	if (_lights.getSize() > 0) {
-		setActiveLight(0);
+		setActiveLight((int32)0);
 	}
 
 	delete loader;
