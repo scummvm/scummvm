@@ -157,7 +157,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Grey Tower", "02d0bb7a8c278d3789616129d47f15c1", 397248), // v1.5.2
 	FANGAMEN("Haunted House", "The haunted house 1.4", "655ff082160909beb83b99979cdfc2c6", 107959),
 	FANGAMEN("Haunted House", "Haunted House 1.5", "5e34e9fa13f4c90876f10a40ea1d1c79", 177244),
-	FANGAMEN("Haunted University", "Haunted University v2.04", "d9511905bb908a0c3ea13c996e053aec", 1674435),
+	FANGAMEN("Haunted University", "Haunted U. v2.04", "d9511905bb908a0c3ea13c996e053aec", 1674435),
 	FANGAME("Hollywood  Starbound", "34499b3935f4c019c05e77ade28aa527", 633717),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "c9b3c75814fc6b14feae044157bef252", 231713),
 	FANGAMEN("The Hotel Caper", "The Hotel Caper V1.0", "4658ece81a6f211a828e747125482f48", 231713), // alt version
