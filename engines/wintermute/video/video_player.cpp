@@ -60,7 +60,7 @@ bool VideoPlayer::setDefaults() {
 
 	_filename.clear();
 
-	_subtitler = new VideoSubtitler(_gameRef);
+	_subtitler = nullptr;
 	_foundSubtitles = false;
 
 	return STATUS_OK;
@@ -69,14 +69,14 @@ bool VideoPlayer::setDefaults() {
 //////////////////////////////////////////////////////////////////////////
 VideoPlayer::~VideoPlayer() {
 	cleanup();
-	delete _subtitler;
-	_subtitler = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::cleanup() {
 	_playing = false;
 
+	delete _subtitler;
+	_subtitler = nullptr;
 	if (_aviDecoder) {
 		_aviDecoder->close();
 	}
@@ -109,6 +109,7 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	_aviDecoder = new Video::AVIDecoder();
 	_aviDecoder->loadStream(file);
 
+	_subtitler = new VideoSubtitler(_gameRef);
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
 
 	if (!_aviDecoder->isVideoLoaded()) {
