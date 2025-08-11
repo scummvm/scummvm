@@ -23,6 +23,7 @@
 #include "engines/engine.h"
 #include "bagel/mfc/afxwin.h"
 #include "bagel/mfc/libs/event_loop.h"
+#include "bagel/mfc/winnt.h"
 
 namespace Bagel {
 namespace MFC {
@@ -72,8 +73,11 @@ void EventLoop::PopActiveWindow() {
 	_activeWindows.top()->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, 0), 0);
 	_activeWindows.pop();
 
-	if (!_activeWindows.empty())
-		_activeWindows.top()->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, 0), 0);
+	if (!_activeWindows.empty()) {
+		CWnd *wnd = _activeWindows.top();
+		wnd->RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_ALLCHILDREN);
+		wnd->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, 0), 0);
+	}
 }
 
 void EventLoop::checkMessages() {

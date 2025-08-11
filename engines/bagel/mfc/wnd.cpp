@@ -289,12 +289,6 @@ BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
 		}
 	}
 
-	Common::Rect r1(10, 10, 50, 50);
-	Common::Rect r2(30, 30, 100, 100);
-	if (r1.intersects(r2)) {
-		debug("Wibbly");
-	}
-
 	// Step 2: Invalidate overlapping children
 	if (flags & RDW_ALLCHILDREN) {
 		RECT rcUpdate = lpRectUpdate ? *lpRectUpdate : GetClientRect();
@@ -333,7 +327,7 @@ CWnd *CWnd::GetFocus() const {
 
 void CWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (nState != WA_INACTIVE) {
-		// We're becoming active — ensure we repaint
+		// We're becoming active - ensure we repaint
 		Invalidate();
 	}
 }
