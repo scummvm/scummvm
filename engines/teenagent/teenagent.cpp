@@ -1121,6 +1121,10 @@ void TeenAgentEngine::playSoundNow(Pack *pack, uint32 id) {
 }
 
 void TeenAgentEngine::playVoiceNow(Pack *pack, uint32 id) {
+	// Only the Polish version has voices
+	if (_gameDescription->language != Common::PL_POL)
+		return;
+
 	uint size = pack->getSize(id);
 	if (size == 0) {
 		warning("skipping invalid sound %u", id);
@@ -1133,7 +1137,7 @@ void TeenAgentEngine::playVoiceNow(Pack *pack, uint32 id) {
 		debug(3, "playing %u samples...", size);
 
 		Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_voiceHandle, stream);
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_voiceHandle, stream);
 		_previousVoiceId = id;
 	}
 }
