@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2025-03-07 00:18+0000\n"
 "Last-Translator: Hovánszki Tamás <gahex68379@lofiey.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -10788,25 +10788,25 @@ msgstr "Lista lefelé görgetése"
 #: engines/queen/metaengine.cpp:215
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 1"
+msgid "Inventory item 1"
 msgstr "Felszerelés"
 
 #: engines/queen/metaengine.cpp:220
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 2"
+msgid "Inventory item 2"
 msgstr "Felszerelés"
 
 #: engines/queen/metaengine.cpp:225
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 3"
+msgid "Inventory item 3"
 msgstr "Felszerelés"
 
 #: engines/queen/metaengine.cpp:230
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 4"
+msgid "Inventory item 4"
 msgstr "Felszerelés"
 
 #: engines/queen/metaengine.cpp:235

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -10603,25 +10603,25 @@ msgstr "Scroll lijst naar beneden"
 #: engines/queen/metaengine.cpp:215
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 1"
+msgid "Inventory item 1"
 msgstr "Inventaris"
 
 #: engines/queen/metaengine.cpp:220
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 2"
+msgid "Inventory item 2"
 msgstr "Inventaris"
 
 #: engines/queen/metaengine.cpp:225
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 3"
+msgid "Inventory item 3"
 msgstr "Inventaris"
 
 #: engines/queen/metaengine.cpp:230
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 4"
+msgid "Inventory item 4"
 msgstr "Inventaris"
 
 #: engines/queen/metaengine.cpp:235

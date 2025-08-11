@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -10120,20 +10120,24 @@ msgid "Scroll inventory down"
 msgstr "Aşağı"
 
 #: engines/queen/metaengine.cpp:215
-msgid "inventory item 1"
-msgstr ""
+#, fuzzy
+msgid "Inventory item 1"
+msgstr "A~y~arlar..."
 
 #: engines/queen/metaengine.cpp:220
-msgid "inventory item 2"
-msgstr ""
+#, fuzzy
+msgid "Inventory item 2"
+msgstr "A~y~arlar..."
 
 #: engines/queen/metaengine.cpp:225
-msgid "inventory item 3"
-msgstr ""
+#, fuzzy
+msgid "Inventory item 3"
+msgstr "A~y~arlar..."
 
 #: engines/queen/metaengine.cpp:230
-msgid "inventory item 4"
-msgstr ""
+#, fuzzy
+msgid "Inventory item 4"
+msgstr "A~y~arlar..."
 
 #: engines/queen/metaengine.cpp:235
 #, fuzzy

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2025-07-13 07:36+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -9610,25 +9610,25 @@ msgstr "სიის ჩამოხვევა"
 #: engines/queen/metaengine.cpp:215
 #, fuzzy
 #| msgid "Use inventory item"
-msgid "inventory item 1"
+msgid "Inventory item 1"
 msgstr "ინვენტარის ნივთის გამოყენება"
 
 #: engines/queen/metaengine.cpp:220
 #, fuzzy
 #| msgid "Use inventory item"
-msgid "inventory item 2"
+msgid "Inventory item 2"
 msgstr "ინვენტარის ნივთის გამოყენება"
 
 #: engines/queen/metaengine.cpp:225
 #, fuzzy
 #| msgid "Use inventory item"
-msgid "inventory item 3"
+msgid "Inventory item 3"
 msgstr "ინვენტარის ნივთის გამოყენება"
 
 #: engines/queen/metaengine.cpp:230
 #, fuzzy
 #| msgid "Use inventory item"
-msgid "inventory item 4"
+msgid "Inventory item 4"
 msgstr "ინვენტარის ნივთის გამოყენება"
 
 #: engines/queen/metaengine.cpp:235

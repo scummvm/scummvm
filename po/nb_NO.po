@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -10861,25 +10861,25 @@ msgstr "Bla liste ned"
 #: engines/queen/metaengine.cpp:215
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 1"
+msgid "Inventory item 1"
 msgstr "Utstyrsliste"
 
 #: engines/queen/metaengine.cpp:220
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 2"
+msgid "Inventory item 2"
 msgstr "Utstyrsliste"
 
 #: engines/queen/metaengine.cpp:225
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 3"
+msgid "Inventory item 3"
 msgstr "Utstyrsliste"
 
 #: engines/queen/metaengine.cpp:230
 #, fuzzy
 #| msgid "Inventory"
-msgid "inventory item 4"
+msgid "Inventory item 4"
 msgstr "Utstyrsliste"
 
 #: engines/queen/metaengine.cpp:235

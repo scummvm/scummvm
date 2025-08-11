@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-10 20:38+0000\n"
+"POT-Creation-Date: 2025-08-11 19:49+0000\n"
 "PO-Revision-Date: 2025-08-11 14:36+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -10645,19 +10645,27 @@ msgid "Scroll inventory down"
 msgstr "Faire défiler l'inventaire vers le bas"
 
 #: engines/queen/metaengine.cpp:215
-msgid "inventory item 1"
+#, fuzzy
+#| msgid "inventory item 1"
+msgid "Inventory item 1"
 msgstr "Item d'inventaire 1"
 
 #: engines/queen/metaengine.cpp:220
-msgid "inventory item 2"
+#, fuzzy
+#| msgid "inventory item 2"
+msgid "Inventory item 2"
 msgstr "Item d'inventaire 2"
 
 #: engines/queen/metaengine.cpp:225
-msgid "inventory item 3"
+#, fuzzy
+#| msgid "inventory item 3"
+msgid "Inventory item 3"
 msgstr "Item d'inventaire 3"
 
 #: engines/queen/metaengine.cpp:230
-msgid "inventory item 4"
+#, fuzzy
+#| msgid "inventory item 4"
+msgid "Inventory item 4"
 msgstr "Item d'inventaire 4"
 
 #: engines/queen/metaengine.cpp:235
