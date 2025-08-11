@@ -221,6 +221,8 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 	m_pgtGTStruct->bPlayFX = m_pgtGTStruct->stMiniGame.bSoundEffectsEnabled;
 	m_pgtGTStruct->bPlayMusic = m_pgtGTStruct->stMiniGame.bMusicEnabled;
 
+	AfxGetApp()->addResources("hnpgt.dll");
+
 	AdjustScore();
 
 	// set the seed for the random number generator
@@ -543,6 +545,10 @@ CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStru
 	(*this).SetFocus();
 
 	EndWaitCursor();
+}
+
+CMainGTWindow::~CMainGTWindow() {
+	AfxGetApp()->removeResources("hnpgt.dll");
 }
 
 /*****************************************************************

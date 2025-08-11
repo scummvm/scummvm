@@ -90,6 +90,7 @@ private:
 
 public:
 	CMainGTWindow(HWND, LPGRANDTRSTRUCT);
+	~CMainGTWindow();
 
 	void SplashScreen(void);
 	void AdjustScore(void);
