@@ -39,6 +39,7 @@ namespace Wage {
 
 static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
+	FANGAME("Ray's World Template", "r:28be556dd85b5c0b28f5ac20793ba542", 38264),
 
 	// Render Tests
 	//FANGAME("Shape Test", "7466edab34a853707343c26eb362b8c1", 38194),
@@ -88,6 +89,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Carbon Copy The Game", "Carbon Copy", "dd1f8eb1fe741cfb0df8827ecb04e584", 518580), // alt version
 	FANGAME("Castle of Ert", "069daab46729291a615e9ee3528008ff", 198699),
 	FANGAME("Castle of Ert", "31a832c2be51e622fb2c586803dadf9e", 198699), // alt version
+	FANGAME("Castle of Ert", "289d1f944d7c30b257587a7a49579d0f", 198713), // alt version
 	FANGAME("Castle of Ert", "ecadcdd9bdee68aeb32507932857db30", 198727), // alt version, v1.0
 	FANGAMEN("Castle of Ert", "Castle of Ert V1.2", "bc1c119b4a95ea6891a6e22c35e6c2d8", 201984),
 	FANGAMEN("City Adventure", "City Adventure 1.1", "0c9415ea525ffeedb346f7a62ebe6cd3", 285789),
@@ -126,6 +128,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Escape!", "xn--Escape!-z46c", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
 	FANGAMEN("Escape!", "xn--Escape!-lha", "63378d6b032d4337b7e74759337eceaa", 64805), // Original file name " Escape!", alt version
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 49849),
+	FANGAME("Escape from School!", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // alt version
 	FANGAMEN("Escape from School!", "xn--Escape from School!-3g6k", "fcc581e52d1fc8ea4603d7c953fa935a", 49863), // Original file name "Escape from School!†", alt version
 	FANGAME("Escape From Saecvrom", "ab401f96ca0755bf5fb849f71cc47d83", 588982),
 	FANGAME("Everyman 1", "97d78e22493245636f84ad8db732305c", 335449),
@@ -251,6 +254,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Quest for T-Rex", "f1edd78817e5a72fb7d85879f168fc8c", 592328), // alt version
 	FANGAME("Quest for T-Rex", "31ef93ae4ee7b48e3720b977dcf480c3", 592314), // alt version
 	FANGAME("Quest for T-Rex", "90d5ac734a3944480bdeb4a89524db41", 591728), // alt version
+	FANGAME("Quest for T-Rex", "1ff85bc2ca98e016bc4809ba4499b58b", 595989), // alt version
 	FANGAMEN("Quest for T-Rex", "Quest for T-Rex 1.2", "edd1164eccad3eaa23b3636000b5a047", 593924),
 	FANGAMEN("Quest for the Dark Sword", "xn--Quest for the Dark Sword-3r4o", "d98c3879ff20ca7e835e3a630c2c74ef", 572320), // original file name "Quest for the Dark Sword™"
 	FANGAMEN("Quester: The Forbidden Lands", "Quester (Demo)", "r:5f0b06526d3a951121333953f559da3f", 254868),
@@ -281,6 +285,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
 	FANGAMEN("Space Adventure", "SpaceAdventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // alt version
 	FANGAME("Space Adventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // identical to the above, different file name
+	FANGAME("SpaceAdventure (Demo)", "r:6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // identical to the above, different file name
 	FANGAMEN("SparGate", "SparGate- vNC.1", "a7a7bfc1825011c2df8b7a03b57fcac9", 611991),
 	FANGAMEN("Spear of Destiny", "xn--SpearOfDestiny-ef3h", "ac00a26f04f83b47c278cc1d226f48df", 333409), // Original file name "SpearOfDestiny†"
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333409), // same version, normal file name
