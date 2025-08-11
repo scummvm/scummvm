@@ -100,7 +100,6 @@ static void renderCastScript(Symbol &sym) {
 static void renderScript(ImGuiScript &script, bool showByteCode) {
 	if (script.oldAst) {
 		renderOldScriptAST(script, showByteCode);
-		_state->_dbg._isScriptDirty = false;
 		return;
 	}
 
@@ -108,11 +107,10 @@ static void renderScript(ImGuiScript &script, bool showByteCode) {
 		return;
 
 	renderScriptAST(script, showByteCode);
-	_state->_dbg._isScriptDirty = false;
 }
 
 static bool showScriptCast(CastMemberID &id) {
-	Common::String wName("Script ");;
+	Common::String wName("Script ");
 	wName += id.asString();
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
@@ -166,7 +164,6 @@ static void updateCurrentScript() {
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	if (callstack.empty())
 		return;
-	}
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
@@ -296,18 +293,23 @@ void showExecutionContext() {
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(600, 500), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(500, 750), ImGuiCond_FirstUseEver);
 
 	Director::Lingo *lingo = g_director->getLingo();
 
-	if (ImGui::Begin("Execution Context", &_state->_w.executionContext)) {
-		const Common::Array<Window *> *windowList = g_director->getWindowList();
+	Window *currentWindow = g_director->getCurrentWindow();
 
-		ImGui::PushID(0);
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
+		Window *stage = g_director->getStage();
+		g_director->setCurrentWindow(stage);
+
+		int windowID = 0;
+		ImGui::PushID(windowID);
 		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
 		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
-		ImGui::Text("%s", g_director->getStage()->asString().c_str());
+		ImGui::Text("%s", stage->asString().c_str());
+		ImGui::Text("%s", stage->getCurrentMovie()->getMacName().c_str());
 
 		ImGui::SeparatorText("Backtrace");
 		ImVec2 childSize = ImGui::GetContentRegionAvail();
@@ -317,6 +319,8 @@ void showExecutionContext() {
 		ImGui::EndChild();
 
 		ImGui::SeparatorText("Scripts");
+
+		g_lingo->switchStateFromWindow();
 		updateCurrentScript();
 
 		if (_state->_functions._showScript) {
@@ -364,8 +368,8 @@ void showExecutionContext() {
 			}
 
 			ImGui::Separator();
-			const ImVec2 childsize = ImGui::GetContentRegionAvail();
-			ImGui::BeginChild("##script", childsize);
+			childSize = ImGui::GetContentRegionAvail();
+			ImGui::BeginChild("##script", childSize);
 			ImGuiScript &current = _state->_functions._scripts[_state->_functions._current];
 
 			// Get all the handlers from the script
@@ -392,30 +396,32 @@ void showExecutionContext() {
 		ImGui::PopStyleColor();
 		ImGui::PopID();
 
-		int windowID = 1;
 		ImGui::SameLine();
 
-		Window *mainWindow = g_director->getCurrentWindow();
+		const Common::Array<Window *> *windowList = g_director->getWindowList();
 
 		for (auto window : (*windowList)) {
 			g_director->setCurrentWindow(window);
-			g_lingo->switchStateFromWindow();
 
+			windowID += 1;
 			ImGui::PushID(windowID);
 			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
 
-			ImGui::BeginChild("Window##", ImVec2(350.0f, 450.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
+			ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
 
 			ImGui::Text("%s", window->asString().c_str());
+			ImGui::Text("%s", window->getCurrentMovie()->getMacName().c_str());
 
 			ImGui::SeparatorText("Backtrace");
-			ImVec2 childsize = ImGui::GetContentRegionAvail();
-			childsize.y /= 3;
-			ImGui::BeginChild("##backtrace", childsize);
+			childSize = ImGui::GetContentRegionAvail();
+			childSize.y /= 3;
+			ImGui::BeginChild("##backtrace", childSize);
 			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
 			ImGui::EndChild();
 
 			ImGui::SeparatorText("Scripts");
+
+			g_lingo->switchStateFromWindow();
 			updateCurrentScript();
 
 			if (_state->_functions._showScript) {
@@ -463,8 +469,8 @@ void showExecutionContext() {
 				}
 
 				ImGui::Separator();
-				const ImVec2 childsize = ImGui::GetContentRegionAvail();
-				ImGui::BeginChild("##script", childsize);
+				childSize = ImGui::GetContentRegionAvail();
+				ImGui::BeginChild("##script", childSize);
 				ImGuiScript &current = _state->_functions._scripts[_state->_functions._current];
 
 				// Get all the handlers from the script
@@ -491,12 +497,13 @@ void showExecutionContext() {
 			ImGui::PopStyleColor();
 			ImGui::PopID();
 		}
-
-		g_director->setCurrentWindow(mainWindow);
-		g_lingo->switchStateFromWindow();
+		// Mark the scripts not dirty after all the scripts have been rendered
+		_state->_dbg._isScriptDirty = false;
 	}
 	ImGui::End();
 
+	g_director->setCurrentWindow(currentWindow);
+	g_lingo->switchStateFromWindow();
 }
 
 } // namespace DT
