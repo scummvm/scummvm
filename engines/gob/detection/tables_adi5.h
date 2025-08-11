@@ -125,4 +125,64 @@
 	"adi5.stk", "adi5.obc", 0
 },
 
+// -- Add-ons : Language --
+{
+	{
+		"adi5language",
+		"", // Deutsch (Klasse 7+8)
+		AD_ENTRY2s("FR12.ITK", "2f084125fa605a138a77ef7990eb2258", 27226086,
+				   "FR13.ITK", "68a8c910f581f5ece90d1decf45bc09f", 17725973),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+{
+	{
+		"adi5language",
+		"", // Français Math CE1
+		AD_ENTRY2s("fr06.itk", "5ad5150e8e0f5d2d2867669ecc5ed3be", 10449682,
+				   "fr07.itk", "75daf1e48bf06ad28f3446662fb25253", 58580849),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+{
+	{
+		"adi5language",
+		"", // Français Math CM1
+		AD_ENTRY2s("fr08.itk", "0daba190b67c2404fbdfb3aed3f82b4f", 53645106,
+				   "fr09.itk", "0c4f77aa52e76163f25ce4abbf5d4788", 41428906),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
+// -- Add-ons : English --
+{
+	{
+		"adi5anglais",
+		"", // Englisch (Klasse 5)
+		AD_ENTRY2s("EN07.ITK", "c7a89adebc67ad587e98e5a237ff679a", 95252930,
+				   "EN11.ITK", "18cd5b3d9e405cccf27202ca28e1a68f", 54165516),
+		DE_DEU,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSUPPORTED,
+		GUIO0()
+	},
+	kFeatures800x600,
+	0, 0, 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADI5_H

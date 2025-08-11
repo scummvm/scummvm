@@ -76,6 +76,8 @@ static const PlainGameDescriptor gobGames[] = {
 	{"adi4mathlanguage", "ADI 4 Math & Language"},
 	{"adi4euro", "ADI 4 Euro"},
 	{"adi5", "ADI 5"},
+	{"adi5language", "ADI 5 Language"},
+	{"adi5anglais", "ADI 5 Anglais"},
 	{"adibou1", "Adibou 1"},
 	{"adibou1read45", "Adibou 1 Read 4-5 years"},
 	{"adibou1count45", "Adibou 1 Count 4-5 years"},
