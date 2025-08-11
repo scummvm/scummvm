@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-11 19:49+0000\n"
+"POT-Creation-Date: 2025-08-11 22:51+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -1015,7 +1015,7 @@ msgstr "GUI"
 #: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
 #: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
-#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:195
+#: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
 #: engines/ultima/ultima4/metaengine.cpp:144 engines/voyeur/metaengine.cpp:192
 msgid "Interact"
@@ -6284,7 +6284,7 @@ msgstr "Проверить обновления..."
 #: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
 #: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
 #: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:185 engines/tetraedge/metaengine.cpp:86
+#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
 #: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
 #: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
 #: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
@@ -6513,7 +6513,7 @@ msgstr "Используйте курсор-шахматку из более п�
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
 #: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
-#: engines/teenagent/metaengine.cpp:49 engines/wage/metaengine.cpp:51
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Включить текст-в-речь"
 
@@ -6521,7 +6521,7 @@ msgstr "Включить текст-в-речь"
 #: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
 #: engines/drascula/metaengine.cpp:52 engines/efh/metaengine.cpp:45
 #: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
-#: engines/mortevielle/metaengine.cpp:38 engines/teenagent/metaengine.cpp:50
+#: engines/mortevielle/metaengine.cpp:38
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Использовать TTS для чтения игровых текстов вслух (если TTS доступна)"
 
@@ -7430,7 +7430,7 @@ msgstr "Пропустить заставку"
 #: engines/sludge/keymapper_tables.h:138 engines/sludge/keymapper_tables.h:194
 #: engines/sludge/keymapper_tables.h:268 engines/sludge/keymapper_tables.h:392
 #: engines/sludge/keymapper_tables.h:452 engines/sludge/keymapper_tables.h:484
-#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:201
+#: engines/sludge/keymapper_tables.h:535 engines/teenagent/metaengine.cpp:213
 #: engines/tetraedge/metaengine.cpp:98 engines/toltecs/metaengine.cpp:228
 #: engines/touche/metaengine.cpp:141
 #, fuzzy
@@ -7895,7 +7895,7 @@ msgid "DEBUG: Access to locations 1-24"
 msgstr "ОТЛАДКА: Доступ к локациям 1-24"
 
 #: engines/cge2/metaengine.cpp:59 engines/draci/metaengine.cpp:44
-#: engines/prince/metaengine.cpp:40
+#: engines/prince/metaengine.cpp:40 engines/teenagent/metaengine.cpp:49
 msgid "Enable Text to Speech for Objects and Options"
 msgstr "Включить озвучку текста для объектов и опций"
 
@@ -7904,18 +7904,20 @@ msgstr "Включить озвучку текста для объектов и 
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
 #: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
 #: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
-#: engines/supernova/metaengine.cpp:54 engines/twine/metaengine.cpp:145
-#: engines/wage/metaengine.cpp:52
+#: engines/supernova/metaengine.cpp:54 engines/teenagent/metaengine.cpp:50
+#: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Использовать TTS для чтения описаний вслух (если TTS доступна)"
 
 #: engines/cge2/metaengine.cpp:71 engines/draci/metaengine.cpp:56
 #: engines/dreamweb/metaengine.cpp:85 engines/prince/metaengine.cpp:52
+#: engines/teenagent/metaengine.cpp:61
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Включить озвучку текста субтритров"
 
 #: engines/cge2/metaengine.cpp:72 engines/draci/metaengine.cpp:57
 #: engines/dreamweb/metaengine.cpp:86 engines/prince/metaengine.cpp:53
+#: engines/teenagent/metaengine.cpp:62
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Использовать TTS для чтения субтитров вслух (если TTS доступна)"
 
@@ -10757,7 +10759,7 @@ msgid "Move / Skip / Use default action with inventory item"
 msgstr ""
 
 #. I18N: Speeds up the game to twice its normal speed
-#: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:227
+#: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
 #: engines/touche/metaengine.cpp:167
 msgid "Toggle fast mode"
 msgstr "Переключить быстрый режим"
@@ -13299,25 +13301,25 @@ msgstr ""
 msgid "Reveal all interactive hotspots (hold the key)"
 msgstr ""
 
-#: engines/teenagent/metaengine.cpp:189
+#: engines/teenagent/metaengine.cpp:201
 #, fuzzy
 #| msgid "Inventory"
 msgid "Move / Examine"
 msgstr "Инвентарь"
 
-#: engines/teenagent/metaengine.cpp:209
+#: engines/teenagent/metaengine.cpp:221
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Close inventory"
 msgstr "Открыть/закрыть инвентарь"
 
-#: engines/teenagent/metaengine.cpp:214
+#: engines/teenagent/metaengine.cpp:226
 #, fuzzy
 #| msgid "Toggle Inventory/IQ Points display"
 msgid "Toggle inventory"
 msgstr "Переключить показ инвентаря/очков IQ"
 
-#: engines/teenagent/metaengine.cpp:220 engines/toon/metaengine.cpp:98
+#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
 #: engines/voyeur/metaengine.cpp:235
 msgid "Skip intro"
 msgstr "Пропустить вступление"
