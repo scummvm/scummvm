@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-10 20:38+0000\n"
-"PO-Revision-Date: 2025-07-31 20:35+0000\n"
+"PO-Revision-Date: 2025-08-11 07:47+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -7956,7 +7956,7 @@ msgstr "Ställ in"
 
 #: engines/crab/input/input.cpp:246
 msgid "Journal"
-msgstr "Journal"
+msgstr "Dagbok"
 
 #: engines/crab/input/input.cpp:256
 msgid "Traits"
@@ -10267,16 +10267,12 @@ msgid "<original>"
 msgstr "<original>"
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Save file management menus keymappings"
-msgstr "Kortkommandon för huvudmeny"
+msgstr "Kortkommandon för filhanteringsmeny"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Pause menu keymappings"
-msgstr "Kortkommandon för huvudmeny"
+msgstr "Kortkommandon för pausmeny"
 
 #: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
 #: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
@@ -10289,29 +10285,23 @@ msgid "Move / Interact"
 msgstr "Flytta / Interagera"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Pause / Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "Pausa / Hoppa över mellansekvens"
+msgstr "Pausa / Avsluta meny"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "Hoppa över mellansekvens"
+msgstr "Hoppa över del av mellansekvens"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "Hoppa över hela sekvensen (fungerar endast i vissa scener)"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "Skapa ett nytt sparat spel"
+msgstr "Bekräfta vald sparning / nytt sparat namn"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -10429,24 +10419,18 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "3DO Plumbers kräver RGB-stöd."
 
 #: engines/prince/metaengine.cpp:237
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open interaction menu"
-msgstr "Öppna huvudmenyn"
+msgstr "Öppna interaktionsmenyn"
 
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
-#, fuzzy
-#| msgid "End key"
 msgid "Z key"
-msgstr "Sluttangent"
+msgstr "Z-tangent"
 
 #. I18N: This refers to the X key on a keyboard.
 #: engines/prince/metaengine.cpp:263
-#, fuzzy
-#| msgid "End key"
 msgid "X key"
-msgstr "Sluttangent"
+msgstr "X-tangent"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
@@ -10475,14 +10459,12 @@ msgid "Use an easier to read custom font"
 msgstr "Använd ett anpassat typsnitt som är enklare att läsa"
 
 #: engines/queen/metaengine.cpp:148
-#, fuzzy
-#| msgid "Computer keymappings"
 msgid "Journal keymappings"
-msgstr "Tangentmappningar för dator"
+msgstr "Tangentmappningar för dagbok"
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
-msgstr ""
+msgstr "Flytta / Hoppa över / Använd standardåtgärd med inventarieobjekt"
 
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:227
@@ -10495,52 +10477,36 @@ msgid "Skip text"
 msgstr "Hoppa över text"
 
 #: engines/queen/metaengine.cpp:203
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll inventory up"
-msgstr "Rulla uppåt i översikten"
+msgstr "Rulla uppåt i inventarier"
 
 #: engines/queen/metaengine.cpp:209
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll inventory down"
-msgstr "Bläddra listan nedåt"
+msgstr "Rulla nedåt i inventarier"
 
 #: engines/queen/metaengine.cpp:215
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "inventory item 1"
-msgstr "Använd inventarieobjekt"
+msgstr "inventarieobjekt 1"
 
 #: engines/queen/metaengine.cpp:220
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "inventory item 2"
-msgstr "Använd inventarieobjekt"
+msgstr "inventarieobjekt 2"
 
 #: engines/queen/metaengine.cpp:225
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "inventory item 3"
-msgstr "Använd inventarieobjekt"
+msgstr "inventarieobjekt 3"
 
 #: engines/queen/metaengine.cpp:230
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "inventory item 4"
-msgstr "Använd inventarieobjekt"
+msgstr "inventarieobjekt 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip cutaway / dialog"
-msgstr "Hoppa över dialog"
+msgstr "Hoppa över scen / dialog"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "Visa journal"
+msgstr "Använd dagbok"
 
 #: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
@@ -10583,10 +10549,8 @@ msgid "Talk to"
 msgstr "Tala med"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "Visa journal"
+msgstr "Stäng dagbok"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -15152,7 +15116,7 @@ msgstr "Zooma in"
 #: engines/wintermute/keymapper_tables.h:1751
 #: engines/wintermute/keymapper_tables.h:1957
 msgid "Show journal"
-msgstr "Visa journal"
+msgstr "Visa dagbok"
 
 #. I18N: Displays a debug interface with Bezier curves
 #: engines/wintermute/keymapper_tables.h:1884
