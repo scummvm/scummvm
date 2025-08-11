@@ -193,7 +193,7 @@ ImGuiImage getImageID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
-void displayVariable(const Common::String &name, bool changed);
+ImVec4 convertColor(uint32 color);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
@@ -222,8 +222,10 @@ void loadSavedState();
 long long int getWindowFlags();
 void setWindowFlags(long long int openFlags);
 
-}
+extern ImGuiState *_state;
 
-}
+} // End of namespace DT
+
+} // End of namespace Director
 
 #endif
