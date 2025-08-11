@@ -202,6 +202,13 @@ public:
 	 * @param wm See BaseMacWindow.
 	 */
 	MacWindow(int id, bool scrollable, bool resizable, bool editable, MacWindowManager *wm);
+
+	/**
+	 * Copy constructor for MacWindow
+	 * Needs defining because ManagedSurface has a deprecated default copy constructor
+	 * @param source Source window to copy from
+	 */
+	MacWindow(const MacWindow &source);
 	virtual ~MacWindow() {}
 
 	/**
