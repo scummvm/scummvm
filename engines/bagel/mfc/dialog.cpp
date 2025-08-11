@@ -108,9 +108,7 @@ int CDialog::DoModal() {
 
 	if (CreateDlgIndirect(lpDialogTemplate,
 			this /*m_pParentWnd*/, hInst)) {
-		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, false), 0);
 		AfxGetApp()->doModal(this);
-		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
 	}
 
 	// Finish the dialog

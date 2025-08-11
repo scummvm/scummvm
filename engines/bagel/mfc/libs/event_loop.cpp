@@ -60,11 +60,20 @@ void EventLoop::SetActiveWindow(CWnd *wnd) {
 	// Note: Currently we don't supportly multiple
 	// open windows at the same time. Each new window
 	// is effectively a dialog on top of previous ones
+
+	if (!_activeWindows.empty())
+		_activeWindows.top()->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, 0), 0);
+
 	_activeWindows.push(wnd);
+	wnd->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, 0), 0);
 }
 
 void EventLoop::PopActiveWindow() {
+	_activeWindows.top()->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, 0), 0);
 	_activeWindows.pop();
+
+	if (!_activeWindows.empty())
+		_activeWindows.top()->SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_ACTIVE, 0), 0);
 }
 
 void EventLoop::checkMessages() {

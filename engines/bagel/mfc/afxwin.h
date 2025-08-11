@@ -1114,8 +1114,7 @@ protected:
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 		return false;
 	}
-	virtual void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
-	}
+	virtual void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
 
 	virtual LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;

@@ -175,7 +175,7 @@ public:
 		SetActiveWindow(wnd);
 		runEventLoop();
 		if (GetActiveWindow() == wnd)
-			_activeWindows.pop();
+			PopActiveWindow();
 	}
 
 	/**

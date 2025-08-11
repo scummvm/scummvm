@@ -32,6 +32,7 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CWnd, CCmdTarget)
 BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
+	ON_WM_ACTIVATE()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
 	ON_WM_DRAWITEM()
@@ -328,6 +329,13 @@ void CWnd::SetFocus() {
 
 CWnd *CWnd::GetFocus() const {
 	return AfxGetApp()->GetFocus();
+}
+
+void CWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+	if (nState != WA_INACTIVE) {
+		// We're becoming active — ensure we repaint
+		Invalidate();
+	}
 }
 
 void CWnd::OnClose() {
