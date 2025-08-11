@@ -794,6 +794,7 @@ protected:
 	void o7_setDBStringEncoding(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);
 	void o7_getFreeDiskSpace(OpGobParams &params);
+	void o7_dummy(OpGobParams &params);
 
 private:
 	INIConfig _inis;

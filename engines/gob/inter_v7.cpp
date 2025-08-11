@@ -159,6 +159,8 @@ void Inter_v7::setupOpcodesGob() {
 	OPCODEGOB(512, o7_setDBStringEncoding);
 	OPCODEGOB(513, o7_gob0x201);
 	OPCODEGOB(600, o7_getFreeDiskSpace);
+
+	OPCODEGOB(782, o7_dummy);
 }
 
 void Inter_v7::o7_draw0x0C() {
@@ -2036,6 +2038,10 @@ void Inter_v7::o7_getFreeDiskSpace(OpGobParams &params) {
 	// Those copies are a no-op in ScummVM, so we just return a value high enough to make the game scripts happy.
 	uint16 varIndex = _vm->_game->_script->readUint16();
 	WRITE_VAR(varIndex, 1000000000); // HACK
+}
+
+void Inter_v7::o7_dummy(OpGobParams &params) {
+	_vm->_game->_script->skip(4);
 }
 
 
