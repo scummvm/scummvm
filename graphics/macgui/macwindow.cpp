@@ -78,6 +78,40 @@ MacWindow::MacWindow(int id, bool scrollable, bool resizable, bool editable, Mac
 	_mode = 0;
 }
 
+MacWindow::MacWindow(const MacWindow &source) :
+	BaseMacWindow(source),
+
+	_borderIsDirty(source._borderIsDirty),
+	_innerDims(source._innerDims),
+	_dirtyRects(source._dirtyRects),
+	_hasScrollBar(source._hasScrollBar),
+	_mode(source._mode),
+
+	_macBorder(source._macBorder),
+	_pattern(source._pattern),
+	_hasPattern(source._hasPattern),
+	_scrollable(source._scrollable),
+	_resizable(source._resizable),
+	_closeable(source._closeable),
+	_isTitleVisible(source._isTitleVisible),
+	_borderWidth(source._borderWidth),
+
+	_beingDragged(source._beingDragged),
+	_beingResized(source._beingResized),
+	_draggedX(source._draggedX),
+	_draggedY(source._draggedY),
+	_highlightedPart(source._highlightedPart),
+
+	_title(source._title),
+	_shadowedTitle(source._shadowedTitle),
+	_borderType(source._borderType) {
+
+	// The copy constructor of ManagedSurface is deprecated
+	// Need to use copyFrom
+	_borderSurface.copyFrom(source._borderSurface);
+
+}
+
 void MacWindow::disableBorder() {
 	_macBorder.disableBorder();
 }
