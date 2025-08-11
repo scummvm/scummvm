@@ -286,4 +286,50 @@
 	0, 0, 0
 },
 
+// -- Add-ons : "Anglais" (English for non-native speakers) --
+{
+	{
+		"adi4anglais",
+		"",
+		AD_ENTRY2s("A71RAN.STK", "1c16f54d71ed3d2fa49fe4d8ff4884ae", 100144,
+				   "ADIA71.STK", "9cc17a7ccbf157c1742387ce133205fd", 21661580),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// -- Add-ons : "Math & Language" --
+{
+	{
+		"adi4mathlanguage",
+		"", // Français Math CE2
+		AD_ENTRY2s("ADIF91.STK", "f5e4d0e38e96cb9ea3fdb122548a7775", 19707056,
+				   "ADIM91.STK", "2f839dffcded30680456d0e881f16f31", 27322360),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+{
+	{
+		"adi4mathlanguage",
+		"", // Français Math CM2
+		AD_ENTRY2s("ADIF71.STK", "a0dc766e42025271df54f4e705e530e5", 13668920,
+				   "ADIM71.STK", "d093bf3b38c668d9f89ae1118b2dfc95", 21544420),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 #endif // GOB_DETECTION_TABLES_ADI4_H
