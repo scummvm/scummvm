@@ -45,8 +45,8 @@ public:
 
 	void addResponse(const AdResponse* response);
 	bool handleResponse(const AdResponse *response);
-	bool handleResponseNum(uint32 num);
-	int32 getIdForResponseNum(uint32 num) const;
+	bool handleResponseNum(int32 num);
+	int32 getIdForResponseNum(int32 num) const;
 	void setLastResponseText(const char *text, const char *textOrig);
 	const char *getLastResponseText() const;
 	const char *getLastResponseTextOrig() const;
@@ -75,7 +75,7 @@ public:
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 
 	UIWindow *getResponseWindow();
-	uint32 getNumResponses() const;
+	int32 getNumResponses() const;
 private:
 	int32 _spacing;
 	int32 _scrollOffset;

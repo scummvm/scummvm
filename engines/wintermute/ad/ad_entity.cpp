@@ -860,12 +860,12 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
+		for (int32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
 			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.getSize(); j++) {
+			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					// found source layer and index, looking for target node
-					for (uint32 k = 0; k < layer->_nodes.getSize(); k++) {
+					for (int32 k = 0; k < layer->_nodes.getSize(); k++) {
 						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->getName(), nodeName) == 0) {
 							// update target index, depending on method name and comparison of index values
 							if (j < k && strcmp(name, "SetBeforeEntity") == 0) {
@@ -877,7 +877,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 							// shift layer nodes array between source and target
 							int32 delta = j <= k ? 1 : -1;
 							AdSceneNode *tmp = layer->_nodes[j];
-							for (int32 x = j; x != (int32)k; x += delta) {
+							for (int32 x = j; x != k; x += delta) {
 								layer->_nodes[x] = layer->_nodes[x + delta];
 							}
 							layer->_nodes[k] = tmp;
@@ -903,9 +903,9 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "GetLayer") == 0 || strcmp(name, "GetIndex") == 0) {
 		stack->correctParams(0);
 
-		for (uint32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
+		for (int32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
 			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
-			for (uint32 j = 0; j < layer->_nodes.getSize(); j++) {
+			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					if (strcmp(name, "GetLayer") == 0) {
 						stack->pushNative(layer, true);
@@ -1168,7 +1168,7 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent + 2, "HINT_Y=%d\n", _hintY);
 #endif
 
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 

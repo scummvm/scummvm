@@ -43,13 +43,13 @@ AnimationSet::AnimationSet(BaseGame *inGame, XModel *model) : BaseNamedObject(in
 //////////////////////////////////////////////////////////////////////////
 AnimationSet::~AnimationSet() {
 	// remove child animations
-	for (uint32 i = 0; i < _animations.getSize(); i++) {
+	for (int32 i = 0; i < _animations.getSize(); i++) {
 		delete _animations[i];
 	}
 	_animations.removeAll();
 
 	// remove events
-	for (uint32 i = 0; i < _events.getSize(); i++) {
+	for (int32 i = 0; i < _events.getSize(); i++) {
 		delete _events[i];
 	}
 	_events.removeAll();
@@ -57,7 +57,7 @@ AnimationSet::~AnimationSet() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AnimationSet::findBones(FrameNode *rootFrame) {
-	for (uint32 i = 0; i < _animations.getSize(); i++) {
+	for (int32 i = 0; i < _animations.getSize(); i++) {
 		_animations[i]->findBone(rootFrame);
 	}
 	return true;
@@ -102,7 +102,7 @@ bool AnimationSet::addEvent(AnimationEvent *event) {
 //////////////////////////////////////////////////////////////////////////
 bool AnimationSet::update(int slot, uint32 localTime, float lerpValue) {
 	bool res;
-	for (uint32 i = 0; i < _animations.getSize(); i++) {
+	for (int32 i = 0; i < _animations.getSize(); i++) {
 		res = _animations[i]->update(slot, localTime * ((float)_model->_ticksPerSecond / 1000.0f), lerpValue);
 		if (!res) {
 			return res;
@@ -118,7 +118,7 @@ int AnimationSet::getFrameTime() {
 	}
 
 	_frameTime = 0;
-	for (uint32 i = 0; i < _animations.getSize(); i++) {
+	for (int32 i = 0; i < _animations.getSize(); i++) {
 		int frameTime = _animations[i]->getFrameTime();
 		if (_frameTime == 0) {
 			_frameTime = frameTime / ((float)_model->_ticksPerSecond / 1000.0f);
@@ -136,7 +136,7 @@ uint32 AnimationSet::getTotalTime() {
 	}
 
 	_totalTime = 0;
-	for (uint32 i = 0; i < _animations.getSize(); i++) {
+	for (int32 i = 0; i < _animations.getSize(); i++) {
 		_totalTime = MAX((float)_totalTime, _animations[i]->getTotalTime() / ((float)_model->_ticksPerSecond / 1000.0f));
 	}
 	return _totalTime;
@@ -149,7 +149,7 @@ bool AnimationSet::onFrameChanged(int currentFrame, int prevFrame) {
 	}
 
 	if (prevFrame > currentFrame) {
-		for (uint32 i = 0; i < _events.getSize(); i++) {
+		for (int32 i = 0; i < _events.getSize(); i++) {
 			if (_events[i]->_frame > prevFrame) {
 				_model->_owner->applyEvent(_events[i]->_eventName);
 			}
@@ -157,7 +157,7 @@ bool AnimationSet::onFrameChanged(int currentFrame, int prevFrame) {
 		prevFrame = -1;
 	}
 
-	for (uint32 i = 0; i < _events.getSize(); i++) {
+	for (int32 i = 0; i < _events.getSize(); i++) {
 		if (_events[i]->_frame > prevFrame && _events[i]->_frame <= currentFrame) {
 			_model->_owner->applyEvent(_events[i]->_eventName);
 		}

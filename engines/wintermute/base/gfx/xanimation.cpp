@@ -44,17 +44,17 @@ Animation::Animation(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 Animation::~Animation() {
-	for (uint32 i = 0; i < _posKeys.getSize(); i++) {
+	for (int32 i = 0; i < _posKeys.getSize(); i++) {
 		delete _posKeys[i];
 	}
 	_posKeys.removeAll();
 
-	for (uint32 i = 0; i < _rotKeys.getSize(); i++) {
+	for (int32 i = 0; i < _rotKeys.getSize(); i++) {
 		delete _rotKeys[i];
 	}
 	_rotKeys.removeAll();
 
-	for (uint32 i = 0; i < _scaleKeys.getSize(); i++) {
+	for (int32 i = 0; i < _scaleKeys.getSize(); i++) {
 		delete _scaleKeys[i];
 	}
 	_scaleKeys.removeAll();
@@ -268,7 +268,7 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys between which the time is currently in
-		for (uint32 key = 0; key < _scaleKeys.getSize(); key++) {
+		for (int32 key = 0; key < _scaleKeys.getSize(); key++) {
 			if (_scaleKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 
@@ -303,7 +303,7 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the current time value
-		for (uint32 key = 0; key < _rotKeys.getSize(); key++) {
+		for (int32 key = 0; key < _rotKeys.getSize(); key++) {
 			if (_rotKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -348,7 +348,7 @@ bool Animation::update(int slot, uint32 localTime, float animLerpValue) {
 		keyIndex1 = keyIndex2 = 0;
 
 		// get the two keys surrounding the time value
-		for (uint32 key = 0; key < _posKeys.getSize(); key++) {
+		for (int32 key = 0; key < _posKeys.getSize(); key++) {
 			if (_posKeys[key]->_time > localTime) {
 				keyIndex2 = key;
 				if (key > 0) {
@@ -389,7 +389,7 @@ int Animation::getFrameTime() {
 
 	// get the shortest frame time
 	prevTime = 0;
-	for (uint32 i = 0; i < _rotKeys.getSize(); i++) {
+	for (int32 i = 0; i < _rotKeys.getSize(); i++) {
 		if (frameTime == 0 || _rotKeys[i]->_time - prevTime < frameTime)
 			frameTime = _rotKeys[i]->_time - prevTime;
 
@@ -397,7 +397,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _posKeys.getSize(); i++) {
+	for (int32 i = 0; i < _posKeys.getSize(); i++) {
 		if (frameTime == 0 || _posKeys[i]->_time - prevTime < frameTime)
 			frameTime = _posKeys[i]->_time - prevTime;
 
@@ -405,7 +405,7 @@ int Animation::getFrameTime() {
 	}
 
 	prevTime = 0;
-	for (uint32 i = 0; i < _scaleKeys.getSize(); i++) {
+	for (int32 i = 0; i < _scaleKeys.getSize(); i++) {
 		if (frameTime == 0 || _scaleKeys[i]->_time - prevTime < frameTime)
 			frameTime = _scaleKeys[i]->_time - prevTime;
 

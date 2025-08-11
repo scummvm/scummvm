@@ -43,7 +43,7 @@ ScStack::ScStack(BaseGame *inGame) : BaseClass(inGame) {
 ScStack::~ScStack() {
 	//_gameRef->LOG(0, "STAT: Stack size: %d, SP=%d", _values.size(), _sP);
 
-	for (uint32 i = 0; i < _values.getSize(); i++) {
+	for (int32 i = 0; i < _values.getSize(); i++) {
 		delete _values[i];
 	}
 	_values.removeAll();
@@ -65,7 +65,7 @@ ScValue *ScStack::pop() {
 void ScStack::push(ScValue *val) {
 	_sP++;
 
-	if (_sP < (int32)_values.getSize()) {
+	if (_sP < _values.getSize()) {
 		_values[_sP]->cleanup();
 		_values[_sP]->copy(val);
 	} else {
@@ -80,7 +80,7 @@ void ScStack::push(ScValue *val) {
 ScValue *ScStack::getPushValue() {
 	_sP++;
 
-	if (_sP >= (int32)_values.getSize()) {
+	if (_sP >= _values.getSize()) {
 		ScValue *val = new ScValue(_gameRef);
 		_values.add(val);
 	}
@@ -92,7 +92,7 @@ ScValue *ScStack::getPushValue() {
 
 //////////////////////////////////////////////////////////////////////////
 ScValue *ScStack::getTop() {
-	if (_sP < 0 || _sP >= (int32)_values.getSize()) {
+	if (_sP < 0 || _sP >= _values.getSize()) {
 		return nullptr;
 	} else {
 		return _values[_sP];
@@ -132,7 +132,7 @@ void ScStack::correctParams(uint32 expectedParams) {
 			nuParams++;
 			_sP++;
 
-			if ((int32)_values.getSize() > _sP + 1) {
+			if (_values.getSize() > _sP + 1) {
 				delete _values[_values.getSize() - 1];
 				_values.removeAt(_values.getSize() - 1);
 			}

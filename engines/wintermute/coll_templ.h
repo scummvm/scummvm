@@ -36,7 +36,7 @@ namespace Wintermute {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-inline void dcConstructElements(TYPE *pElements, uint32 nCount) {
+inline void dcConstructElements(TYPE *pElements, int32 nCount) {
 	// first do bit-wise zero initialization
 	memset((void *)pElements, 0, nCount * sizeof(TYPE));
 
@@ -47,7 +47,7 @@ inline void dcConstructElements(TYPE *pElements, uint32 nCount) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-inline void dcDestructElements(TYPE *pElements, uint32 nCount) {
+inline void dcDestructElements(TYPE *pElements, int32 nCount) {
 	// call the destructor(s)
 	for (; nCount--; pElements++)
 		pElements->~TYPE();
@@ -55,7 +55,7 @@ inline void dcDestructElements(TYPE *pElements, uint32 nCount) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-inline void dcCopyElements(TYPE *pDest, const TYPE *pSrc, uint32 nCount) {
+inline void dcCopyElements(TYPE *pDest, const TYPE *pSrc, int32 nCount) {
 	// default is element-copy using assignment
 	while (nCount--)
 		*pDest++ = *pSrc++;
@@ -71,9 +71,9 @@ public:
 	BaseArrayBase();
 
 	// Attributes
-	uint32 getSize() const;
-	uint32 getUpperBound() const;
-	void setSize(uint32 nNewSize, uint32 nGrowBy = (uint32)-1);
+	int32 getSize() const;
+	int32 getUpperBound() const;
+	void setSize(int32 nNewSize, int32 nGrowBy = -1);
 
 	// Operations
 	// Clean up
@@ -81,35 +81,35 @@ public:
 	void removeAll();
 
 	// Accessing elements
-	TYPE getAt(uint32 nIndex) const;
-	void setAt(uint32 nIndex, TYPE newElement);
-	TYPE& elementAt(uint32 nIndex);
+	TYPE getAt(int32 nIndex) const;
+	void setAt(int32 nIndex, TYPE newElement);
+	TYPE& elementAt(int32 nIndex);
 
 	// Direct Access to the element data (may return NULL)
 	const TYPE *getData() const;
 	TYPE *getData();
 
 	// Potentially growing the array
-	void setAtGrow(uint32 nIndex, TYPE newElement);
-	uint32 add(TYPE newElement);
-	uint32 append(const BaseArrayBase &src);
+	void setAtGrow(int32 nIndex, TYPE newElement);
+	int32 add(TYPE newElement);
+	int32 append(const BaseArrayBase &src);
 	void copy(const BaseArrayBase &src);
 
 	// overloaded operator helpers
-	TYPE operator[](uint32 nIndex) const;
-	TYPE &operator[](uint32 nIndex);
+	TYPE operator[](int32 nIndex) const;
+	TYPE &operator[](int32 nIndex);
 
 	// Operations that move elements around
-	void insertAt(uint32 nIndex, TYPE newElement, uint32 nCount = 1);
-	void removeAt(uint32 nIndex, uint32 nCount = 1);
-	void insertAt(uint32 nStartIndex, BaseArrayBase *pNewArray);
+	void insertAt(int32 nIndex, TYPE newElement, int32 nCount = 1);
+	void removeAt(int32 nIndex, int32 nCount = 1);
+	void insertAt(int32 nStartIndex, BaseArrayBase *pNewArray);
 
 	// Implementation
 protected:
 	TYPE *_pData;   // the actual array of data
-	uint32 _nSize;     // # of elements (upperBound - 1)
-	uint32 _nMaxSize;  // max allocated
-	uint32 _nGrowBy;   // grow amount
+	int32 _nSize;     // # of elements (upperBound - 1)
+	int32 _nMaxSize;  // max allocated
+	int32 _nGrowBy;   // grow amount
 
 public:
 	~BaseArrayBase();
@@ -119,32 +119,32 @@ public:
 // CBArray<TYPE> inline functions
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-inline uint32 BaseArrayBase<TYPE>::getSize() const {
+inline int32 BaseArrayBase<TYPE>::getSize() const {
 	return _nSize;
 }
 
 template<class TYPE>
-inline uint32 BaseArrayBase<TYPE>::getUpperBound() const {
+inline int32 BaseArrayBase<TYPE>::getUpperBound() const {
 	return _nSize - 1;
 }
 
 template<class TYPE>
 inline void BaseArrayBase<TYPE>::removeAll() {
-	setSize(0, (uint32)-1);
+	setSize(0, -1);
 }
 
 template<class TYPE>
-inline TYPE BaseArrayBase<TYPE>::getAt(uint32 nIndex) const {
+inline TYPE BaseArrayBase<TYPE>::getAt(int32 nIndex) const {
 	return _pData[nIndex];
 }
 
 template<class TYPE>
-inline void BaseArrayBase<TYPE>::setAt(uint32 nIndex, TYPE newElement) {
+inline void BaseArrayBase<TYPE>::setAt(int32 nIndex, TYPE newElement) {
 	_pData[nIndex] = newElement;
 }
 
 template<class TYPE>
-inline TYPE &BaseArrayBase<TYPE>::elementAt(uint32 nIndex) {
+inline TYPE &BaseArrayBase<TYPE>::elementAt(int32 nIndex) {
 	return _pData[nIndex];
 }
 
@@ -159,19 +159,19 @@ inline TYPE *BaseArrayBase<TYPE>::getData() {
 }
 
 template<class TYPE>
-inline uint32 BaseArrayBase<TYPE>::add(TYPE newElement) {
-	uint32 nIndex = _nSize;
+inline int32 BaseArrayBase<TYPE>::add(TYPE newElement) {
+	int32 nIndex = _nSize;
 	setAtGrow(nIndex, newElement);
 	return nIndex;
 }
 
 template<class TYPE>
-inline TYPE BaseArrayBase<TYPE>::operator[](uint32 nIndex) const {
+inline TYPE BaseArrayBase<TYPE>::operator[](int32 nIndex) const {
 	return getAt(nIndex);
 }
 
 template<class TYPE>
-inline TYPE &BaseArrayBase<TYPE>::operator[](uint32 nIndex) {
+inline TYPE &BaseArrayBase<TYPE>::operator[](int32 nIndex) {
 	return elementAt(nIndex);
 }
 
@@ -195,8 +195,8 @@ BaseArrayBase<TYPE>::~BaseArrayBase() {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-void BaseArrayBase<TYPE>::setSize(uint32 nNewSize, uint32 nGrowBy) {
-	if (nGrowBy != (uint32)-1)
+void BaseArrayBase<TYPE>::setSize(int32 nNewSize, int32 nGrowBy) {
+	if (nGrowBy != -1)
 		_nGrowBy = nGrowBy;  // set new size
 
 	if (nNewSize == 0) {
@@ -224,7 +224,7 @@ void BaseArrayBase<TYPE>::setSize(uint32 nNewSize, uint32 nGrowBy) {
 		_nSize = nNewSize;
 	} else {
 		// otherwise, grow array
-		uint32 numGrowBy = _nGrowBy;
+		int32 numGrowBy = _nGrowBy;
 		if (numGrowBy == 0) {
 			// heuristically determine growth when nGrowBy == 0
 			//  (this avoids heap fragmentation in many situations)
@@ -255,8 +255,8 @@ void BaseArrayBase<TYPE>::setSize(uint32 nNewSize, uint32 nGrowBy) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-uint32 BaseArrayBase<TYPE>::append(const BaseArrayBase &src) {
-	uint32 nOldSize = _nSize;
+int32 BaseArrayBase<TYPE>::append(const BaseArrayBase &src) {
+	int32 nOldSize = _nSize;
 	setSize(_nSize + src._nSize);
 	dcCopyElements<TYPE>(_pData + nOldSize, src._pData, src._nSize);
 	return nOldSize;
@@ -280,7 +280,7 @@ void BaseArrayBase<TYPE>::freeExtra() {
 			// copy new data from old
 			memcpy(pNewData, _pData, _nSize * sizeof(TYPE));
 		}
-		
+
 		// get rid of old stuff (note: no destructors called)
 		delete[] (byte *)_pData;
 		_pData = pNewData;
@@ -290,7 +290,7 @@ void BaseArrayBase<TYPE>::freeExtra() {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-void BaseArrayBase<TYPE>::setAtGrow(uint32 nIndex, TYPE newElement) {
+void BaseArrayBase<TYPE>::setAtGrow(int32 nIndex, TYPE newElement) {
 	if (nIndex >= _nSize)
 		setSize(nIndex + 1, -1);
 	_pData[nIndex] = newElement;
@@ -298,20 +298,20 @@ void BaseArrayBase<TYPE>::setAtGrow(uint32 nIndex, TYPE newElement) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-void BaseArrayBase<TYPE>::insertAt(uint32 nIndex, TYPE newElement, uint32 nCount /*=1*/) {
+void BaseArrayBase<TYPE>::insertAt(int32 nIndex, TYPE newElement, int32 nCount /*=1*/) {
 	if (nIndex >= _nSize) {
 		// adding after the end of the array
 		setSize(nIndex + nCount, -1);   // grow so nIndex is valid
 	} else {
 		// inserting in the middle of the array
-		uint32 nOldSize = _nSize;
+		int32 nOldSize = _nSize;
 		setSize(_nSize + nCount, -1);  // grow it to new size
 		// destroy intial data before copying over it
 		dcDestructElements<TYPE>(&_pData[nOldSize], nCount);
 		// shift old data up to fill gap
 		memmove(&_pData[nIndex + nCount], &_pData[nIndex],
 				(nOldSize - nIndex) * sizeof(TYPE));
-		
+
 		// re-init slots we copied from
 		dcConstructElements<TYPE>(&_pData[nIndex], nCount);
 	}
@@ -323,9 +323,9 @@ void BaseArrayBase<TYPE>::insertAt(uint32 nIndex, TYPE newElement, uint32 nCount
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-void BaseArrayBase<TYPE>::removeAt(uint32 nIndex, uint32 nCount) {
+void BaseArrayBase<TYPE>::removeAt(int32 nIndex, int32 nCount) {
 	// just remove a range
-	uint32 nMoveCount = _nSize - (nIndex + nCount);
+	int32 nMoveCount = _nSize - (nIndex + nCount);
 	dcDestructElements<TYPE>(&_pData[nIndex], nCount);
 	if (nMoveCount)
 		memmove(&_pData[nIndex], &_pData[nIndex + nCount], nMoveCount * sizeof(TYPE));
@@ -334,10 +334,10 @@ void BaseArrayBase<TYPE>::removeAt(uint32 nIndex, uint32 nCount) {
 
 /////////////////////////////////////////////////////////////////////////////
 template<class TYPE>
-void BaseArrayBase<TYPE>::insertAt(uint32 nStartIndex, BaseArrayBase *pNewArray) {
+void BaseArrayBase<TYPE>::insertAt(int32 nStartIndex, BaseArrayBase *pNewArray) {
 	if (pNewArray->getSize() > 0) {
 		InsertAt(nStartIndex, pNewArray->getAt(0), pNewArray->getSize());
-		for (uint32 i = 0; i < pNewArray->getSize(); i++)
+		for (int32 i = 0; i < pNewArray->getSize(); i++)
 			setAt(nStartIndex + i, pNewArray->getAt(i));
 	}
 }
@@ -347,17 +347,17 @@ template<class TYPE>
 class BaseArray : public BaseArrayBase<TYPE> {
 public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		uint32 i, j;
+		int32 i, j;
 		if (persistMgr->getIsSaving()) {
 			j = BaseArray::getSize();
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				TYPE obj = BaseArray::getAt(i);
 				persistMgr->transferPtr("", &obj);
 			}
 		} else {
 			BaseArray::setSize(0, -1);
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				TYPE obj = nullptr;
 				persistMgr->transferPtr("", &obj);
@@ -373,17 +373,17 @@ template <>
 class BaseArray<char *> : public BaseArrayBase<char *> {
 public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		uint32 i, j;
+		int32 i, j;
 		if (persistMgr->getIsSaving()) {
 			j = getSize();
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				char *obj = getAt(i);
 				persistMgr->transferCharPtr("", &obj);
 			}
 		} else {
 			setSize(0, -1);
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				char *obj = nullptr;
 				persistMgr->transferCharPtr("", &obj);
@@ -399,17 +399,17 @@ template <>
 class BaseArray<const char *> : public BaseArrayBase<const char *> {
 public:
 	bool persist(BasePersistenceManager *persistMgr) {
-		uint32 i, j;
+		int32 i, j;
 		if (persistMgr->getIsSaving()) {
 			j = getSize();
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				const char * obj = getAt(i);
 				persistMgr->transferConstChar("", &obj);
 			}
 		} else {
 			setSize(0, -1);
-			persistMgr->transferUint32("ArraySize", &j);
+			persistMgr->transferSint32("ArraySize", &j);
 			for (i = 0; i < j; i++) {
 				const char * obj;
 				persistMgr->transferConstChar("", &obj);

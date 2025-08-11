@@ -49,7 +49,7 @@ BaseFontStorage::~BaseFontStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::cleanup(bool warn) {
-	for (uint32 i = 0; i < _fonts.getSize(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		if (warn) {
 			_gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
 		}
@@ -62,7 +62,7 @@ bool BaseFontStorage::cleanup(bool warn) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::initLoop() {
-	for (uint32 i = 0; i < _fonts.getSize(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		_fonts[i]->initLoop();
 	}
 	return STATUS_OK;
@@ -74,7 +74,7 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 		return nullptr;
 	}
 
-	for (uint32 i = 0; i < _fonts.getSize(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		if (scumm_stricmp(_fonts[i]->getFilename(), filename.c_str()) == 0) {
 			_fonts[i]->_refCount++;
 			return _fonts[i];
@@ -110,7 +110,7 @@ bool BaseFontStorage::removeFont(BaseFont *font) {
 		return STATUS_FAILED;
 	}
 
-	for (uint32 i = 0; i < _fonts.getSize(); i++) {
+	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		if (_fonts[i] == font) {
 			_fonts[i]->_refCount--;
 			if (_fonts[i]->_refCount <= 0) {

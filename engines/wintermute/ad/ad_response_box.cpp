@@ -96,13 +96,13 @@ AdResponseBox::~AdResponseBox() {
 	_waitingScript = nullptr;
 }
 
-uint32 AdResponseBox::getNumResponses() const {
+int32 AdResponseBox::getNumResponses() const {
 	return _responses.getSize();
 }
 
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearResponses() {
-	for (uint32 i = 0; i < _responses.getSize(); i++) {
+	for (int32 i = 0; i < _responses.getSize(); i++) {
 		delete _responses[i];
 	}
 	_responses.removeAll();
@@ -111,7 +111,7 @@ void AdResponseBox::clearResponses() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdResponseBox::clearButtons() {
-	for (uint32 i = 0; i < _respButtons.getSize(); i++) {
+	for (int32 i = 0; i < _respButtons.getSize(); i++) {
 		delete _respButtons[i];
 	}
 	_respButtons.removeAll();
@@ -120,7 +120,7 @@ void AdResponseBox::clearButtons() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
-	for (uint32 i = 0; i < _respButtons.getSize(); i++) {
+	for (int32 i = 0; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->setImage(nullptr);
 		_respButtons[i]->_cursor = nullptr;
 		_respButtons[i]->setFont(nullptr);
@@ -137,7 +137,7 @@ bool AdResponseBox::createButtons() {
 	clearButtons();
 
 	_scrollOffset = 0;
-	for (uint32 i = 0; i < _responses.getSize(); i++) {
+	for (int32 i = 0; i < _responses.getSize(); i++) {
 		UIButton *btn = new UIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
@@ -379,7 +379,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_window) {
-		for (uint32 i = 0; i < _window->_widgets.getSize(); i++) {
+		for (int32 i = 0; i < _window->_widgets.getSize(); i++) {
 			if (!_window->_widgets[i]->getListener()) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}
@@ -473,7 +473,7 @@ bool AdResponseBox::display() {
 	// shift down if needed
 	if (!_horizontal) {
 		int32 totalHeight = 0;
-		for (i = 0; i < (int32) _respButtons.getSize(); i++) {
+		for (i = 0; i < _respButtons.getSize(); i++) {
 			totalHeight += (_respButtons[i]->getHeight() + _spacing);
 		}
 		totalHeight -= _spacing;
@@ -500,7 +500,7 @@ bool AdResponseBox::display() {
 
 	// prepare response buttons
 	bool scrollNeeded = false;
-	for (i = _scrollOffset; i < (int32)_respButtons.getSize(); i++) {
+	for (i = _scrollOffset; i < _respButtons.getSize(); i++) {
 
 #ifdef ENABLE_FOXTAIL
 		// FoxTail's "HORIZONTAL=TRUE" display boxes are actual 2x3 display boxes
@@ -558,7 +558,7 @@ bool AdResponseBox::display() {
 
 
 	// display response buttons
-	for (i = _scrollOffset; i < (int32)_respButtons.getSize(); i++) {
+	for (i = _scrollOffset; i < _respButtons.getSize(); i++) {
 		_respButtons[i]->display();
 	}
 
@@ -628,7 +628,7 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 bool AdResponseBox::weedResponses() {
 	AdGame *adGame = (AdGame *)_gameRef;
 
-	for (int32 i = 0; i < (int32)_responses.getSize(); i++) {
+	for (int32 i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
 		case RESPONSE_ONCE:
 			if (adGame->branchResponseUsed(_responses[i]->getID())) {
@@ -676,12 +676,12 @@ void AdResponseBox::addResponse(const AdResponse *response) {
 	_responses.add(response);
 }
 
-int32 AdResponseBox::getIdForResponseNum(uint32 num) const {
+int32 AdResponseBox::getIdForResponseNum(int32 num) const {
 	assert(num < _responses.getSize());
 	return _responses[num]->getID();
 }
 
-bool AdResponseBox::handleResponseNum(uint32 num) {
+bool AdResponseBox::handleResponseNum(int32 num) {
 	return handleResponse(_responses[num]);
 }
 
@@ -716,7 +716,7 @@ BaseObject *AdResponseBox::getNextAccessObject(BaseObject *currObject) {
 		return nullptr;
 	} else {
 		if (currObject != nullptr) {
-			for (uint32 i = 0; i < objects.getSize(); i++) {
+			for (int32 i = 0; i < objects.getSize(); i++) {
 				if (objects[i] == currObject) {
 					if (i < objects.getSize() - 1) {
 						return objects[i + 1];
@@ -740,7 +740,7 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 		return nullptr;
 	} else {
 		if (currObject != nullptr) {
-			for (int i = objects.getSize() - 1; i >= 0; i--) {
+			for (int32 i = objects.getSize() - 1; i >= 0; i--) {
 				if (objects[i] == currObject) {
 					if (i > 0) {
 						return objects[i - 1];
@@ -757,7 +757,7 @@ BaseObject *AdResponseBox::getPrevAccessObject(BaseObject *currObject) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::getObjects(BaseArray<UIObject *> &objects, bool interactiveOnly) {
-	for (uint32 i = 0; i < _respButtons.getSize(); i++) {
+	for (int32 i = 0; i < _respButtons.getSize(); i++) {
 		objects.add(_respButtons[i]);
 	}
 	if (_window) {

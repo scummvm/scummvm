@@ -250,7 +250,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
 
-			uint32 i;
+			int32 i;
 			bool found = false;
 			ScValue *val = stack->pop();
 			// find directly
@@ -276,7 +276,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			if (found) {
 				bool done = false;
-				for (uint32 j = 0; j < win->_widgets.getSize(); j++) {
+				for (int32 j = 0; j < win->_widgets.getSize(); j++) {
 					if (win->_widgets[j] == this) {
 						if (strcmp(name, "MoveAfter") == 0) {
 							i++;
@@ -315,7 +315,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
+			for (int32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.removeAt(i);
 					win->_widgets.insertAt(0, this);
@@ -338,7 +338,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
+			for (int32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					win->_widgets.removeAt(i);
 					win->_widgets.add(this);
@@ -440,7 +440,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
-			for (uint32 i = 0; i < win->_widgets.getSize(); i++) {
+			for (int32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
 					if (name == "NextSibling") {
 						if (i < win->_widgets.getSize() - 1) {

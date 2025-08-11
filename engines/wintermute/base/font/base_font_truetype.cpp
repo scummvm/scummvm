@@ -67,7 +67,7 @@ BaseFontTT::BaseFontTT(BaseGame *inGame) : BaseFont(inGame) {
 BaseFontTT::~BaseFontTT() {
 	clearCache();
 
-	for (uint32 i = 0; i < _layers.getSize(); i++) {
+	for (int32 i = 0; i < _layers.getSize(); i++) {
 		delete _layers[i];
 	}
 	_layers.removeAll();
@@ -211,7 +211,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	if (surface) {
 		Rect32 rc;
 		rc.setRect(0, 0, surface->getWidth(), surface->getHeight());
-		for (uint32 i = 0; i < _layers.getSize(); i++) {
+		for (int32 i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;
 			uint32 origForceAlpha = renderer->_forceAlphaColor;
 			if (renderer->_forceAlphaColor != 0) {

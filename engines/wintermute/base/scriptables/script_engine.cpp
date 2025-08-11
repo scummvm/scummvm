@@ -99,7 +99,7 @@ ScEngine::~ScEngine() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::cleanup() {
-	for (int32 i = 0; i < (int32)_scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_thread && _scripts[i]->_owner) {
 			_scripts[i]->_owner->removeScript(_scripts[i]);
 		}
@@ -185,7 +185,7 @@ ScScript *ScEngine::runScript(const char *filename, BaseScriptHolder *owner) {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::isRunningScript(const char *filename) {
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (strcmp(_scripts[i]->_filename, filename) == 0) {
 			return true;
 		}
@@ -277,7 +277,7 @@ bool ScEngine::tick() {
 
 
 	// resolve waiting scripts
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 
 		switch (_scripts[i]->_state) {
 		case SCRIPT_WAITING: {
@@ -341,7 +341,7 @@ bool ScEngine::tick() {
 
 
 	// execute scripts
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 
 		// skip paused scripts
 		if (_scripts[i]->_state == SCRIPT_PAUSED) {
@@ -390,7 +390,7 @@ bool ScEngine::tickUnbreakable() {
 	ScScript *oldScript = _currentScript;
 
 	// execute unbreakable scripts
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (!_scripts[i]->_unbreakable) {
 			continue;
 		}
@@ -414,7 +414,7 @@ bool ScEngine::tickUnbreakable() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::removeFinishedScripts() {
 	// remove finished scripts
-	for (int32 i = 0; i < (int32)_scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR) {
 			if (!_scripts[i]->_thread && _scripts[i]->_owner) {
 				_scripts[i]->_owner->removeScript(_scripts[i]);
@@ -433,7 +433,7 @@ bool ScEngine::removeFinishedScripts() {
 int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 	int numRunning = 0, numWaiting = 0, numPersistent = 0, numTotal = 0;
 
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_FINISHED) {
 			continue;
 		}
@@ -492,7 +492,7 @@ bool ScEngine::emptyScriptCache() {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resetObject(BaseObject *Object) {
 	// terminate all scripts waiting for this object
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING && _scripts[i]->_waitObject == Object) {
 			if (!_gameRef->_compatKillMethodThreads) {
 				resetScript(_scripts[i]);
@@ -508,7 +508,7 @@ bool ScEngine::resetObject(BaseObject *Object) {
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resetScript(ScScript *script) {
 	// terminate all scripts waiting for this script
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_state == SCRIPT_WAITING_SCRIPT && _scripts[i]->_waitScript == script) {
 			_scripts[i]->finish();
 		}
@@ -533,7 +533,7 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScEngine::editorCleanup() {
-	for (int32 i = 0; i < (int32)_scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i]->_owner == nullptr && (_scripts[i]->_state == SCRIPT_FINISHED || _scripts[i]->_state == SCRIPT_ERROR)) {
 			delete _scripts[i];
 			_scripts.removeAt(i);
@@ -545,7 +545,7 @@ void ScEngine::editorCleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::pauseAll() {
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] != _currentScript) {
 			_scripts[i]->pause();
 		}
@@ -557,7 +557,7 @@ bool ScEngine::pauseAll() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::resumeAll() {
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->resume();
 	}
 
@@ -567,7 +567,7 @@ bool ScEngine::resumeAll() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScEngine::isValidScript(ScScript *script) {
-	for (uint32 i = 0; i < _scripts.getSize(); i++) {
+	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		if (_scripts[i] == script) {
 			return true;
 		}

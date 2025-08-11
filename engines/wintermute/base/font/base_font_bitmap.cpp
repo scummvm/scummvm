@@ -573,8 +573,8 @@ bool BaseFontBitmap::getWidths() {
 	BaseSurface *surf = nullptr;
 
 	if (_sprite) {
-		if (_widthsFrame >= 0 && _widthsFrame < (int32)_sprite->_frames.getSize()) {
-			if (_sprite->_frames[_widthsFrame] && (int32)_sprite->_frames[_widthsFrame]->_subframes.getSize() > 0) {
+		if (_widthsFrame >= 0 && _widthsFrame < _sprite->_frames.getSize()) {
+			if (_sprite->_frames[_widthsFrame] && _sprite->_frames[_widthsFrame]->_subframes.getSize() > 0) {
 				surf = _sprite->_frames[_widthsFrame]->_subframes[0]->_surface;
 			}
 		}

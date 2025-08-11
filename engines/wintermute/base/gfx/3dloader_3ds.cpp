@@ -60,7 +60,7 @@ Loader3DS::Loader3DS(BaseGame *inGame) : BaseNamedObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 Loader3DS::~Loader3DS() {
-	for (size_t i = 0; i < _objects.getSize(); i++)
+	for (int32 i = 0; i < _objects.getSize(); i++)
 		delete _objects[i];
 	_objects.removeAll();
 }
@@ -313,7 +313,7 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 
 						// inject this roll value to the camera
 						if (key == 0) {
-							for (uint32 index = 0; index < _objects.getSize(); index++) {
+							for (int32 index = 0; index < _objects.getSize(); index++) {
 								if (_objects[index]->_type == OBJ_3DS_CAMERA && _objects[index]->_name.compareToIgnoreCase(keyframerObject) == 0) {
 									_objects[index]->_cameraBank = cameraRoll;
 									break;
@@ -341,10 +341,10 @@ bool Loader3DS::parseFile(const Common::String &filename) {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-uint Loader3DS::getNumMeshes() {
-	int ret = 0;
+int32 Loader3DS::getNumMeshes() {
+	int32 ret = 0;
 
-	for (uint32 i = 0; i < _objects.getSize(); i++)
+	for (int32 i = 0; i < _objects.getSize(); i++)
 		if (_objects[i]->_type == OBJ_3DS_MESH)
 			ret++;
 
@@ -354,9 +354,9 @@ uint Loader3DS::getNumMeshes() {
 
 //////////////////////////////////////////////////////////////////////////
 Common::String Loader3DS::getMeshName(int index) {
-	int pos = -1;
+	int32 pos = -1;
 
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_MESH)
 			pos++;
 		if (pos == index)
@@ -372,7 +372,7 @@ bool Loader3DS::loadMesh(int index, Mesh3DS *mesh) {
 		return false;
 
 	int pos = -1;
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_MESH)
 			pos++;
 		if (pos == index){
@@ -409,10 +409,10 @@ bool Loader3DS::loadMesh(int index, Mesh3DS *mesh) {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-uint Loader3DS::getNumLights() {
+int32 Loader3DS::getNumLights() {
 	int ret = 0;
 
-	for (uint32 i = 0; i < _objects.getSize(); i++)
+	for (int32 i = 0; i < _objects.getSize(); i++)
 		if (_objects[i]->_type == OBJ_3DS_LIGHT)
 			ret++;
 
@@ -424,7 +424,7 @@ uint Loader3DS::getNumLights() {
 Common::String Loader3DS::getLightName(int index) {
 	int pos = -1;
 
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_LIGHT)
 			pos++;
 		if (pos == index)
@@ -440,7 +440,7 @@ bool Loader3DS::loadLight(int index, Light3D *light) {
 		return false;
 
 	int pos = -1;
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_LIGHT) {
 			pos++;
 			if (pos == index) {
@@ -461,10 +461,10 @@ bool Loader3DS::loadLight(int index, Light3D *light) {
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-uint Loader3DS::getNumCameras() {
-	int ret = 0;
+int32 Loader3DS::getNumCameras() {
+	int32 ret = 0;
 
-	for (uint32 i = 0; i < _objects.getSize(); i++)
+	for (int32 i = 0; i < _objects.getSize(); i++)
 		if (_objects[i]->_type == OBJ_3DS_CAMERA)
 			ret++;
 
@@ -474,8 +474,8 @@ uint Loader3DS::getNumCameras() {
 
 //////////////////////////////////////////////////////////////////////////
 Common::String Loader3DS::getCameraName(int index) {
-	int pos = -1;
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	int32 pos = -1;
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_CAMERA)
 			pos++;
 		if (pos == index)
@@ -491,7 +491,7 @@ bool Loader3DS::loadCamera(int index, Camera3D *camera) {
 		false;
 
 	int pos = -1;
-	for (uint32 i = 0; i < _objects.getSize(); i++) {
+	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJ_3DS_CAMERA)
 			pos++;
 		if (pos == index) {

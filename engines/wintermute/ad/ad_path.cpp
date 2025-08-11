@@ -47,7 +47,7 @@ AdPath::~AdPath() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdPath::reset() {
-	for (uint32 i = 0; i < _points.getSize(); i++) {
+	for (int32 i = 0; i < _points.getSize(); i++) {
 		delete _points[i];
 	}
 
@@ -71,7 +71,7 @@ BasePoint *AdPath::getFirst() {
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getNext() {
 	_currIndex++;
-	if (_currIndex < (int32)_points.getSize()) {
+	if (_currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;
@@ -81,7 +81,7 @@ BasePoint *AdPath::getNext() {
 
 //////////////////////////////////////////////////////////////////////////
 BasePoint *AdPath::getCurrent() {
-	if (_currIndex >= 0 && _currIndex < (int32)_points.getSize()) {
+	if (_currIndex >= 0 && _currIndex < _points.getSize()) {
 		return _points[_currIndex];
 	} else {
 		return nullptr;

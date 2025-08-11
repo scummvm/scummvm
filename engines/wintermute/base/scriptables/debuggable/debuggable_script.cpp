@@ -38,7 +38,7 @@ DebuggableScript::DebuggableScript(BaseGame *inGame, DebuggableScEngine *engine)
 }
 
 DebuggableScript::~DebuggableScript() {
-	for (uint i = 0; i < _watchInstances.getSize(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		delete _watchInstances[i];
 	}
 	_engine->_watches.unsubscribe(this);
@@ -56,7 +56,7 @@ void DebuggableScript::postInstHook(uint32 inst) {
 		}
 	}
 
-	for (uint i = 0; i < _watchInstances.getSize(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		this->_watchInstances[i]->evaluate();
 	}
 
@@ -125,7 +125,7 @@ Common::String DebuggableScript::dbgGetFilename() const {
 
 void DebuggableScript::updateWatches() {
 	// We drop obsolete watches
-	for (uint i = 0; i < _watchInstances.getSize(); i++) {
+	for (int32 i = 0; i < _watchInstances.getSize(); i++) {
 		Watch *findMe = _watchInstances[i]->_watch;
 		if (Common::find(_engine->_watches.begin(), _engine->_watches.end(), findMe) == _engine->_watches.end()) {
 			// Not found on engine-wide list, must have been removed from watches. Must remove it from local list.

@@ -52,7 +52,7 @@ BaseSurfaceStorage::~BaseSurfaceStorage() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::cleanup(bool warn) {
-	for (uint32 i = 0; i < _surfaces.getSize(); i++) {
+	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		if (warn) {
 			BaseEngine::LOG(0, "BaseSurfaceStorage warning: purging surface '%s', usage:%d", _surfaces[i]->getFileName(), _surfaces[i]->_referenceCount);
 		}
@@ -69,7 +69,7 @@ bool BaseSurfaceStorage::initLoop() {
 	if (_gameRef->_smartCache && _gameRef->getLiveTimer()->getTime() - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
 		_lastCleanupTime = _gameRef->getLiveTimer()->getTime();
 		sortSurfaces();
-		for (uint32 i = 0; i < _surfaces.getSize(); i++) {
+		for (int32 i = 0; i < _surfaces.getSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) {
 				break;
 			}
@@ -86,7 +86,7 @@ bool BaseSurfaceStorage::initLoop() {
 
 //////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
-	for (uint32 i = 0; i < _surfaces.getSize(); i++) {
+	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		if (_surfaces[i] == surface) {
 			_surfaces[i]->_referenceCount--;
 			if (_surfaces[i]->_referenceCount <= 0) {
@@ -102,7 +102,7 @@ bool BaseSurfaceStorage::removeSurface(BaseSurface *surface) {
 
 //////////////////////////////////////////////////////////////////////
 BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
-	for (uint32 i = 0; i < _surfaces.getSize(); i++) {
+	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		if (scumm_stricmp(_surfaces[i]->getFileName(), filename.c_str()) == 0) {
 			_surfaces[i]->_referenceCount++;
 			return _surfaces[i];
@@ -141,7 +141,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 //////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::restoreAll() {
 	bool ret;
-	for (uint32 i = 0; i < _surfaces.getSize(); i++) {
+	for (int32 i = 0; i < _surfaces.getSize(); i++) {
 		ret = _surfaces[i]->restore();
 		if (ret != STATUS_OK) {
 			BaseEngine::LOG(0, "BaseSurfaceStorage::RestoreAll failed");

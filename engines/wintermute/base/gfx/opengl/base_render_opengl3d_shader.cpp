@@ -906,21 +906,21 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	for (uint i = 0; i < planes.getSize(); i++) {
+	for (int32 i = 0; i < planes.getSize(); i++) {
 		if (planes[i]->_active) {
 			planes[i]->_mesh->render(true);
 		}
 	}
 
 	// render blocks
-	for (uint i = 0; i < blocks.getSize(); i++) {
+	for (int32 i = 0; i < blocks.getSize(); i++) {
 		if (blocks[i]->_active) {
 			blocks[i]->_mesh->render(true);
 		}
 	}
 
 	// render generic objects
-	for (uint i = 0; i < generics.getSize(); i++) {
+	for (int32 i = 0; i < generics.getSize(); i++) {
 		if (generics[i]->_active) {
 			generics[i]->_mesh->render(true);
 		}
@@ -941,8 +941,8 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 
 		setup2D();
 
-		for (uint i = 0; i < geom->_waypointGroups.getSize(); i++) {
-			for (uint j = 0; j < geom->_waypointGroups[i]->_points.getSize(); j++) {
+		for (int32 i = 0; i < geom->_waypointGroups.getSize(); i++) {
+			for (int32 j = 0; j < geom->_waypointGroups[i]->_points.getSize(); j++) {
 				DXVec3Project(&vec2d, geom->_waypointGroups[i]->_points[j], &vport, &projMat, &viewMat, &worldMat);
 				geom->_wptMarker->display(vec2d._x + scene->getOffsetLeft() - _drawOffsetX, vec2d._y + scene->getOffsetTop() - _drawOffsetY);
 			}
@@ -974,21 +974,21 @@ void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane 
 	glFrontFace(GL_CW); // WME DX have CCW
 
 	// render blocks
-	for (uint i = 0; i < blocks.getSize(); i++) {
+	for (int32 i = 0; i < blocks.getSize(); i++) {
 		if (blocks[i]->_active && blocks[i]->_receiveShadows) {
 			blocks[i]->_mesh->render();
 		}
 	}
 
 	// render walk planes
-	for (uint i = 0; i < planes.getSize(); i++) {
+	for (int32 i = 0; i < planes.getSize(); i++) {
 		if (planes[i]->_active && planes[i]->_receiveShadows) {
 			planes[i]->_mesh->render();
 		}
 	}
 
 	// render generic objects
-	for (uint i = 0; i < generics.getSize(); i++) {
+	for (int32 i = 0; i < generics.getSize(); i++) {
 		if (generics[i]->_active && generics[i]->_receiveShadows) {
 			generics[i]->_mesh->render();
 		}

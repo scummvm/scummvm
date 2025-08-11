@@ -74,11 +74,11 @@ public:
 	Common::String getLightName(int index);
 	Common::String getMeshName(int index);
 	bool loadCamera(int index, Camera3D *camera);
-	uint getNumCameras();
+	int32 getNumCameras();
 	bool loadLight(int index, Light3D *light);
-	uint getNumLights();
+	int32 getNumLights();
 	bool loadMesh(int index, Mesh3DS *mesh);
-	uint getNumMeshes();
+	int32 getNumMeshes();
 	bool parseFile(const Common::String &filename);
 	Common::String _filename;
 	Loader3DS(BaseGame *inGame);

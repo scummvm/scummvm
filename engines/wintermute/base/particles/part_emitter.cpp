@@ -94,18 +94,18 @@ PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject
 
 //////////////////////////////////////////////////////////////////////////
 PartEmitter::~PartEmitter() {
-	for (uint32 i = 0; i < _particles.getSize(); i++) {
+	for (int32 i = 0; i < _particles.getSize(); i++) {
 		delete _particles[i];
 	}
 	_particles.removeAll();
 
-	for (uint32 i = 0; i < _forces.getSize(); i++) {
+	for (int32 i = 0; i < _forces.getSize(); i++) {
 		delete _forces[i];
 	}
 	_forces.removeAll();
 
 
-	for (uint32 i = 0; i < _sprites.getSize(); i++) {
+	for (int32 i = 0; i < _sprites.getSize(); i++) {
 		delete[] _sprites[i];
 	}
 	_sprites.removeAll();
@@ -121,7 +121,7 @@ bool PartEmitter::addSprite(const char *filename) {
 	}
 
 	// do we already have the file?
-	for (uint32 i = 0; i < _sprites.getSize(); i++) {
+	for (int32 i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			return STATUS_OK;
 		}
@@ -143,7 +143,7 @@ bool PartEmitter::addSprite(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeSprite(const char *filename) {
-	for (uint32 i = 0; i < _sprites.getSize(); i++) {
+	for (int32 i = 0; i < _sprites.getSize(); i++) {
 		if (scumm_stricmp(filename, _sprites[i]) == 0) {
 			delete[] _sprites[i];
 			_sprites.removeAt(i);
@@ -188,7 +188,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	}
 
 	float angle = BaseUtils::randomAngle(_angle1, _angle2);
-	int spriteIndex = BaseUtils::randomInt(0, _sprites.getSize() - 1);
+	int32 spriteIndex = BaseUtils::randomInt(0, _sprites.getSize() - 1);
 
 	float rotation = BaseUtils::randomAngle(_rotation1, _rotation2);
 	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
@@ -258,7 +258,7 @@ bool PartEmitter::update() {
 bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 	int numLive = 0;
 
-	for (uint32 i = 0; i < _particles.getSize(); i++) {
+	for (int32 i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->update(this, currentTime, timerDelta);
 
 		if (!_particles[i]->_isDead) {
@@ -280,8 +280,8 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 
 			int toGen = MIN(_genAmount, _maxParticles - numLive);
 			while (toGen > 0) {
-				int firstDeadIndex = -1;
-				for (uint32 i = 0; i < _particles.getSize(); i++) {
+				int32 firstDeadIndex = -1;
+				for (int32 i = 0; i < _particles.getSize(); i++) {
 					if (_particles[i]->_isDead) {
 						firstDeadIndex = i;
 						break;
@@ -322,7 +322,7 @@ bool PartEmitter::display(BaseRegion *region) {
 		BaseEngine::getRenderer()->startSpriteBatch();
 	}
 
-	for (uint32 i = 0; i < _particles.getSize(); i++) {
+	for (int32 i = 0; i < _particles.getSize(); i++) {
 		if (region != nullptr && _useRegion) {
 			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
 				continue;
@@ -341,7 +341,7 @@ bool PartEmitter::display(BaseRegion *region) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::start() {
-	for (uint32 i = 0; i < _particles.getSize(); i++) {
+	for (int32 i = 0; i < _particles.getSize(); i++) {
 		_particles[i]->_isDead = true;
 	}
 	_running = true;
@@ -406,7 +406,7 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	PartForce *force = nullptr;
 
-	for (uint32 i = 0; i < _forces.getSize(); i++) {
+	for (int32 i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			force = _forces[i];
 			break;
@@ -444,7 +444,7 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeForce(const Common::String &name) {
-	for (uint32 i = 0; i < _forces.getSize(); i++) {
+	for (int32 i = 0; i < _forces.getSize(); i++) {
 		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
 			delete _forces[i];
 			_forces.removeAt(i);
@@ -525,7 +525,7 @@ bool PartEmitter::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	else if (strcmp(name, "Stop") == 0) {
 		stack->correctParams(0);
 
-		for (uint32 i = 0; i < _particles.getSize(); i++) {
+		for (int32 i = 0; i < _particles.getSize(); i++) {
 			delete _particles[i];
 		}
 		_particles.removeAll();
@@ -788,7 +788,7 @@ ScValue *PartEmitter::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumLiveParticles") {
 		int numAlive = 0;
-		for (uint32 i = 0; i < _particles.getSize(); i++) {
+		for (int32 i = 0; i < _particles.getSize(); i++) {
 			if (_particles[i] && !_particles[i]->_isDead) {
 				numAlive++;
 			}
@@ -1223,7 +1223,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving()) {
 		numForces = _forces.getSize();
 		persistMgr->transferUint32(TMEMBER(numForces));
-		for (uint32 i = 0; i < _forces.getSize(); i++) {
+		for (int32 i = 0; i < _forces.getSize(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
@@ -1239,7 +1239,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.getSize();
 		persistMgr->transferUint32(TMEMBER(numParticles));
-		for (uint32 i = 0; i < _particles.getSize(); i++) {
+		for (int32 i = 0; i < _particles.getSize(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {

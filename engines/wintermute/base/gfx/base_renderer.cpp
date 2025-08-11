@@ -140,7 +140,7 @@ BaseObject *BaseRenderer::getObjectAt(int x, int y) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseRenderer::deleteRectList() {
-	for (uint32 i = 0; i < _rectList.getSize(); i++) {
+	for (int32 i = 0; i < _rectList.getSize(); i++) {
 		delete _rectList[i];
 	}
 	_rectList.removeAll();

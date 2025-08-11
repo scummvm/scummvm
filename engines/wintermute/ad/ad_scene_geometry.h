@@ -99,7 +99,7 @@ public:
 	int32 _activeCamera;
 
 	bool setActiveLight(char *light);
-	bool setActiveLight(int light);
+	bool setActiveLight(int32 light);
 	int32 _activeLight;
 
 	void cleanup();
