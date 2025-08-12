@@ -162,14 +162,30 @@ void DataIO::unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 si
 }
 
 void DataIO::unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size) {
-	byte *tmpBuf = new byte[4114];
+	byte *tmpBuf = new byte[4370]; // 4096 + (256 + 18) = 4096 + (max string length)
 	assert(tmpBuf);
 
 	uint32 counter = size;
 
-	for (int i = 0; i < 4078; i++)
-		tmpBuf[i] = 0x20;
-	uint16 tmpIndex = 4078;
+	uint16 magic1 = src.readUint16LE();
+	uint16 magic2 = src.readUint16LE();
+
+	int16 tmpIndex, extendedLenCmd;
+	if ((magic1 == 0x1234) && (magic2 == 0x5678)) {
+		// Extended format allowing to copy larger strings
+		// from the window (up to 256 + 18 = 274 bytes).
+		extendedLenCmd = 18;
+		tmpIndex = 273;
+	} else {
+		// Standard format allowing to copy short strings
+		// (up to 18 bytes) from the window.
+		extendedLenCmd = 100; // Cannot be matched
+		tmpIndex = 4078;
+		src.seek(-4, SEEK_CUR);
+	}
+
+	memset(tmpBuf, 0x20, tmpIndex); // Fill initial window with spaces
+
 
 	uint16 cmd = 0;
 	while (1) {
@@ -193,7 +209,10 @@ void DataIO::unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 siz
 			byte tmp2 = src.readByte();
 
 			int16 off = tmp1 | ((tmp2 & 0xF0) << 4);
-			byte  len =         (tmp2 & 0x0F) + 3;
+			int16 len =         (tmp2 & 0x0F) + 3;
+
+			if (len == extendedLenCmd)
+				len = src.readByte() + 18;
 
 			for (int i = 0; i < len; i++) {
 				*dest++ = tmpBuf[(off + i) % 4096];
