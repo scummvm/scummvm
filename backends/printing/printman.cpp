@@ -42,6 +42,14 @@ namespace Common {
 
 PrintingManager::~PrintingManager() {}
 
+StringArray PrintingManager::listPrinterNames() const {
+	return StringArray();
+}
+
+Common::String PrintingManager::getDefaultPrinterName() const {
+	return Common::String();
+}
+
 void PrintingManager::printImage(const Graphics::ManagedSurface &surf) {
 	GUI::PrintingDialog dialog(surf);
 	dialog.runModal();

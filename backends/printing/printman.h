@@ -24,6 +24,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "graphics/managed_surface.h"
 
 namespace GUI {
@@ -51,7 +52,14 @@ public:
 protected:
 	virtual void doPrint(const Graphics::ManagedSurface &surf) = 0;
 
+	virtual Common::StringArray listPrinterNames() const;
+
+	virtual Common::String getDefaultPrinterName() const;
+
+	void setPrinterName(const Common::String &printerName) { _printerName = printerName; }
+
 	Common::String _jobName;
+	Common::String _printerName;
 };
 } // End of namespace Common
 

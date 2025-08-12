@@ -28,6 +28,7 @@
 
 #include "gui/printing-dialog.h"
 #include "gui/widget.h"
+#include "gui/widgets/popup.h"
 
 namespace GUI {
 
@@ -35,6 +36,27 @@ PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 	: Dialog("PrintingDialog"), _surface(surface) {
 	_printButton = new GUI::ButtonWidget(this, "PrintingDialog.Print", _("Print"), Common::U32String(), kCmdPrint);
 	_saveAsImageCheckbox = new GUI::CheckboxWidget(this, "PrintingDialog.SaveAsImage", _("Save as image"));
+
+	_printersListPopUp = new GUI::PopUpWidget(this, "PrintingDialog.PrintersList", Common::U32String(), kCmdSelectPrinterName);
+	Common::PrintingManager *printMan = g_system->getPrintingManager();
+	Common::StringArray printerNames = printMan->listPrinterNames();
+
+	Common::String defaultPrinterName = printMan->getDefaultPrinterName();
+	uint32 defaultPrinterId = 0;
+	uint32 tag = 0;
+
+	for (auto &name : printerNames) {
+		_printersListPopUp->appendEntry(name, tag);
+		_tagToPrinterName[tag] = name;
+
+		if (name == defaultPrinterName)
+			defaultPrinterId = tag;
+
+		tag++;
+	}
+
+	_printersListPopUp->setSelectedTag(defaultPrinterId);
+	g_system->getPrintingManager()->setPrinterName(_tagToPrinterName[defaultPrinterId]);
 }
 
 void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -48,6 +70,9 @@ void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 		close();
 		break;
 	}
+	case kCmdSelectPrinterName:
+		g_system->getPrintingManager()->setPrinterName(_tagToPrinterName[data]);
+		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
 	}
