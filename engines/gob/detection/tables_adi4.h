@@ -239,11 +239,82 @@
 	0, 0, 0
 },
 
-// -- Add-ons : Geographie --
+
+// -- Add-ons : "Math & Language" --
+// 8-9 years
+{
+	{
+		"adi4mathlanguage89",
+		"", // Français Maths CE2
+		AD_ENTRY2s("ADIF91.STK", "f5e4d0e38e96cb9ea3fdb122548a7775", 19707056,
+				   "ADIM91.STK", "2f839dffcded30680456d0e881f16f31", 27322360),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 9-10 years
+
+// 10-11 years
+{
+	{
+		"adi4mathlanguage1011",
+		"", // Français Maths CM2
+		AD_ENTRY2s("ADIF71.STK", "a0dc766e42025271df54f4e705e530e5", 13668920,
+				   "ADIM71.STK", "d093bf3b38c668d9f89ae1118b2dfc95", 21544420),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 11-12 years
+
+// 12-13 years
+
+// 13-14 years
+
+// 14-15 years
+
+// -- Add-ons : "Anglais" (English for non-native speakers) --
+// 7-9 years
+
+// 9-11 years
+{
+	{
+		"adi4anglais911",
+		"",
+		AD_ENTRY2s("A71RAN.STK", "1c16f54d71ed3d2fa49fe4d8ff4884ae", 100144,
+				   "ADIA71.STK", "9cc17a7ccbf157c1742387ce133205fd", 21661580),
+		FR_FRA,
+		kPlatformWindows,
+		ADGF_ADDON | ADGF_UNSTABLE,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
+// 11-12 years
+
+// 12-13 years
+
+// 13-14 years
+
+// 14-15 years
+
+// -- Add-ons : Geography --
 {
 	{
 		"adi4geo",
-		"", // Geographie
+		"", // Géographie
 		AD_ENTRY2s("INTROGEO.STK", "d86d0f53818dd285bebff25925627b8c", 3170680,
 				   "INTROGEO.ITK", "5daacbf8840f811e48b99e1d92933873", 20084736),
 		FR_FRA,
@@ -254,6 +325,7 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+
 {
 	{
 		"adi4geo",
@@ -269,6 +341,7 @@
 	0, 0, 0
 },
 
+// -- Add-ons : Sciences --
 
 // -- Add-ons : Euro --
 {
@@ -278,52 +351,6 @@
 		AD_ENTRY2s("EURO.STK", "7dac3823570036c6eda57cc2c872aa59", 681944,
 				   "EURO.ITK", "09629a0aa35a00f68211f6429bd43e9f", 25409536),
 		DE_DEU,
-		kPlatformWindows,
-		ADGF_ADDON | ADGF_UNSTABLE,
-		GUIO0()
-	},
-	kFeatures640x480,
-	0, 0, 0
-},
-
-// -- Add-ons : "Anglais" (English for non-native speakers) --
-{
-	{
-		"adi4anglais",
-		"",
-		AD_ENTRY2s("A71RAN.STK", "1c16f54d71ed3d2fa49fe4d8ff4884ae", 100144,
-				   "ADIA71.STK", "9cc17a7ccbf157c1742387ce133205fd", 21661580),
-		FR_FRA,
-		kPlatformWindows,
-		ADGF_ADDON | ADGF_UNSTABLE,
-		GUIO0()
-	},
-	kFeatures640x480,
-	0, 0, 0
-},
-
-// -- Add-ons : "Math & Language" --
-{
-	{
-		"adi4mathlanguage",
-		"", // Français Math CE2
-		AD_ENTRY2s("ADIF91.STK", "f5e4d0e38e96cb9ea3fdb122548a7775", 19707056,
-				   "ADIM91.STK", "2f839dffcded30680456d0e881f16f31", 27322360),
-		FR_FRA,
-		kPlatformWindows,
-		ADGF_ADDON | ADGF_UNSTABLE,
-		GUIO0()
-	},
-	kFeatures640x480,
-	0, 0, 0
-},
-{
-	{
-		"adi4mathlanguage",
-		"", // Français Math CM2
-		AD_ENTRY2s("ADIF71.STK", "a0dc766e42025271df54f4e705e530e5", 13668920,
-				   "ADIM71.STK", "d093bf3b38c668d9f89ae1118b2dfc95", 21544420),
-		FR_FRA,
 		kPlatformWindows,
 		ADGF_ADDON | ADGF_UNSTABLE,
 		GUIO0()
