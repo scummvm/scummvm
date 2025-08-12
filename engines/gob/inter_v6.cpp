@@ -252,7 +252,7 @@ void Inter_v6::o6_loadCursor(OpFuncParams &params) {
 			index * _vm->_draw->_cursorWidth + _vm->_draw->_cursorWidth - 1,
 			_vm->_draw->_cursorHeight - 1, 0);
 
-	_vm->_video->drawPackedSprite(resource->getData(),
+	_vm->_video->drawPackedSprite(resource->getData(), resource->getSize(),
 			resource->getWidth(), resource->getHeight(),
 			index * _vm->_draw->_cursorWidth, 0, 0, *_vm->_draw->_cursorSprites);
 	_vm->_draw->_cursorAnimLow[index] = 0;
