@@ -430,9 +430,6 @@ bool AdActor3DX::display() {
 		_partEmitter->display();
 	}
 
-	// this functionality appearently was removed in either WME lite
-	// or in the ScummVM port. It might have been replaced as well
-	// not sure what to do about it right now
 	// accessibility
 	//	if (_gameRef->_accessMgr->GetActiveObject() == this) {
 	//		_gameRef->_accessMgr->SetHintRect(&_xmodel->m_BoundingRect);
@@ -1597,7 +1594,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 		AdObject *obj = (AdObject *)val->getNative();
 
-		if (!obj || obj->getType() != OBJECT_ENTITY) {
+		if (!obj || obj->_type != OBJECT_ENTITY) {
 			script->runtimeError("actor.%s method accepts an entity reference only", name);
 			stack->pushNULL();
 			return true;

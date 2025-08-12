@@ -53,18 +53,16 @@ AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdTalkNode::~AdTalkNode() {
 	delete[] _spriteFilename;
-	delete _sprite;
-	delete[] _spriteSetFilename;
-	delete _spriteSet;
-	delete _comment;
 	_spriteFilename = nullptr;
+	delete _sprite;
 	_sprite = nullptr;
+	delete[] _spriteSetFilename;
 	_spriteSetFilename = nullptr;
+	delete _spriteSet;
 	_spriteSet = nullptr;
+	delete _comment;
 	_comment = nullptr;
 }
-
-
 
 TOKEN_DEF_START
 TOKEN_DEF(ACTION)

@@ -117,8 +117,8 @@ public:
 	bool sortRotLevels();
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 #ifdef ENABLE_WME3D
-	AdSceneGeometry *_geom;
 	bool _showGeometry;
+	AdSceneGeometry *_geom;
 #endif
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
@@ -205,7 +205,6 @@ private:
 
 	int32 _offsetTop;
 	int32 _offsetLeft;
-
 };
 
 } // End of namespace Wintermute

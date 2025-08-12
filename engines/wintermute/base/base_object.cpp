@@ -143,8 +143,8 @@ bool BaseObject::cleanup() {
 
 	if (!_sharedCursors) {
 		delete _cursor;
-		delete _activeCursor;
 		_cursor = nullptr;
+		delete _activeCursor;
 		_activeCursor = nullptr;
 	}
 	delete _sFX;
@@ -170,18 +170,18 @@ bool BaseObject::cleanup() {
 	_sFXType = SFX_NONE;
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
+	//SAFE_DELETE_ARRAY(m_AccessCaption);
+
 	return STATUS_OK;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setCaption(const char *caption, int caseVal) {
-	if (caseVal == 0) {
+	if (caseVal == 0)
 		caseVal = 1;
-	}
-	if (caseVal < 1 || caseVal > 7) {
+	if (caseVal < 1 || caseVal > 7)
 		return;
-	}
 
 	delete[] _caption[caseVal - 1];
 	size_t captionSize = strlen(caption) + 1;
@@ -193,14 +193,12 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseObject::getCaption(int caseVal) {
-	if (caseVal == 0) {
+	if (caseVal == 0)
 		caseVal = 1;
-	}
-	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr) {
+	if (caseVal < 1 || caseVal > 7 || _caption[caseVal - 1] == nullptr)
 		return "";
-	} else {
+	else
 		return _caption[caseVal - 1];
-	}
 }
 
 
@@ -834,7 +832,10 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AccCaption") {
-		_scValue->setNULL();
+/*		if (m_AccessCaption)
+			m_ScValue->SetString(m_AccessCaption);
+		else*/
+			_scValue->setNULL();
 		return _scValue;
 	} else {
 		return BaseScriptHolder::scGetProperty(name);
@@ -1027,6 +1028,11 @@ bool BaseObject::scSetProperty(const char *name, ScValue *value) {
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccCaption") == 0) {
+		/*if (Value->IsNULL()) {
+			SAFE_DELETE_ARRAY(m_AccessCaption);
+		} else {
+			CBUtils::SetString(&m_AccessCaption, Value->GetString());
+		}*/
 		return STATUS_OK;
 	} else {
 		return BaseScriptHolder::scSetProperty(name, value);
@@ -1141,6 +1147,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 #endif
 
 	persistMgr->transferSint32(TMEMBER_INT(_blendMode));
+	//persistMgr->Transfer(TMEMBER(m_AccessCaption));
 
 	return STATUS_OK;
 }

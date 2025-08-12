@@ -36,14 +36,11 @@ namespace Wintermute {
 class AdResponseContext : public BaseClass {
 public:
 	void setContext(const char *context);
-	const char *getContext() const { return _context; }
 	int32 _id;
-
+	char *_context;
 	DECLARE_PERSISTENT(AdResponseContext, BaseClass)
 	AdResponseContext(BaseGame *inGame);
 	~AdResponseContext() override;
-private:
-	char *_context;
 };
 
 } // End of namespace Wintermute

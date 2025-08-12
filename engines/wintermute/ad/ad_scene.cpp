@@ -328,9 +328,9 @@ float AdScene::getZoomAt(int x, int y) {
 	if (_mainLayer) {
 		for (int32 i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->isBlocked() && node->_region->pointInRegion(x, y)) {
-				if (node->_region->getZoom() != 0) {
-					ret = node->_region->getZoom();
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_blocked && node->_region->pointInRegion(x, y)) {
+				if (node->_region->_zoom != 0) {
+					ret = node->_region->_zoom;
 					found = true;
 					break;
 				}
@@ -361,9 +361,9 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	if (_mainLayer) {
 		for (int32 i = (int32)_mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->isBlocked()) && node->_region->pointInRegion(x, y)) {
-				if (!node->_region->isBlocked()) {
-					ret = node->_region->getAlpha();
+			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
+				if (!node->_region->_blocked) {
+					ret = node->_region->_alpha;
 				}
 				break;
 			}
@@ -406,8 +406,8 @@ bool AdScene::isBlockedAt(int x, int y, bool checkFreeObjects, BaseObject *reque
 			    break;
 			}
 			*/
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
-				if (node->_region->isBlocked()) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
+				if (node->_region->_blocked) {
 					ret = true;
 					break;
 				} else {
@@ -446,8 +446,8 @@ bool AdScene::isWalkableAt(int x, int y, bool checkFreeObjects, BaseObject *requ
 	if (_mainLayer) {
 		for (int32 i = 0; i < _mainLayer->_nodes.getSize(); i++) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
-			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->hasDecoration() && node->_region->pointInRegion(x, y)) {
-				if (node->_region->isBlocked()) {
+			if (node->_type == OBJECT_REGION && node->_region->_active && !node->_region->_decoration && node->_region->pointInRegion(x, y)) {
+				if (node->_region->_blocked) {
 					ret = false;
 					break;
 				} else {
@@ -1045,9 +1045,8 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			_geom->dropWaypoints();
 		}
 
-		Camera3D *activeCamera = _geom->getActiveCamera();
-		if (activeCamera != nullptr) {
-			_gameRef->_renderer->setup3D(activeCamera);
+		if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+			_gameRef->_renderer->setup3D(_geom->_cameras[_geom->_activeCamera]);
 			_gameRef->_renderer->setScreenViewport();
 			_geom->render(false);
 		}
@@ -1250,10 +1249,10 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				break;
 
 			case OBJECT_REGION: {
-				if (node->_region->isBlocked()) {
+				if (node->_region->_blocked) {
 					break;
 				}
-				if (node->_region->hasDecoration()) {
+				if (node->_region->_decoration) {
 					break;
 				}
 
@@ -1331,9 +1330,9 @@ bool AdScene::display3DContent(DXMatrix &viewMat, DXMatrix &projMat) {
 		for (int32 k = 0; k < _layers[j]->_nodes.getSize(); k++) {
 			AdSceneNode *node = _layers[j]->_nodes[k];
 			if (node->_type == OBJECT_REGION) {
-				if (node->_region->isBlocked())
+				if (node->_region->_blocked)
 					continue;
-				if (node->_region->hasDecoration())
+				if (node->_region->_decoration)
 					continue;
 
 				displayRegionContent(node->_region, true);
@@ -1370,9 +1369,8 @@ bool AdScene::updateFreeObjects() {
 
 #ifdef ENABLE_WME3D
 		if (adGame->_objects[i]->_is3D && _geom) {
-			Camera3D *activeCamera = _geom->getActiveCamera();
-			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
+			if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+				_gameRef->_renderer->setup3D(_geom->_cameras[_geom->_activeCamera], !is3DSet);
 				is3DSet = true;
 			}
 		}
@@ -1388,9 +1386,8 @@ bool AdScene::updateFreeObjects() {
 		}
 #ifdef ENABLE_WME3D
 		if (_objects[i]->_is3D && _geom) {
-			Camera3D *activeCamera = _geom->getActiveCamera();
-			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera, !is3DSet);
+			if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+				_gameRef->_renderer->setup3D(_geom->_cameras[_geom->_activeCamera], !is3DSet);
 				is3DSet = true;
 			}
 		}
@@ -1447,9 +1444,8 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 		_gameRef->_renderer->setup2D();
 #else
 		if (objects[i]->_is3D && _geom) {
-			Camera3D *activeCamera = _geom->getActiveCamera();
-			if (activeCamera != nullptr) {
-				_gameRef->_renderer->setup3D(activeCamera);
+			if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+				_gameRef->_renderer->setup3D(_geom->_cameras[_geom->_activeCamera]);
 			}
 		} else {
 			_gameRef->_renderer->setup2D();
@@ -1525,9 +1521,8 @@ bool AdScene::displayRegionContentOld(AdRegion *region) {
 			_gameRef->_renderer->setup2D();
 #else
 			if (obj->_is3D && _geom) {
-				Camera3D *activeCamera = _geom->getActiveCamera();
-				if (activeCamera != nullptr) {
-					_gameRef->_renderer->setup3D(activeCamera);
+				if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+					_gameRef->_renderer->setup3D(_geom->_cameras[_geom->_activeCamera]);
 				}
 			} else {
 				_gameRef->_renderer->setup2D();
@@ -1863,7 +1858,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			for (int32 i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 				AdSceneNode *node = _mainLayer->_nodes[i];
 				if (node->_type == OBJECT_REGION && node->_region->_active && node->_region->pointInRegion(x, y)) {
-					if (node->_region->hasDecoration() && !includeDecors) {
+					if (node->_region->_decoration && !includeDecors) {
 						continue;
 					}
 
@@ -2115,9 +2110,12 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		stack->correctParams(1);
 
 		int32 index = stack->pop()->getInt();
-
-		if (_geom && index >= 0 && index < _geom->_lights.getSize()) {
-			stack->pushString(_geom->_lights[index]->getName());
+        if (_geom ) {
+			if (index >= 0 && index < _geom->_lights.getSize()) {
+				stack->pushString(_geom->_lights[index]->getName());
+			} else {
+				stack->pushNULL();
+			}
 		} else {
 			stack->pushNULL();
 		}
@@ -2595,10 +2593,10 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	// NumLights
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "NumLights") {
-		if (_geom) {
-			_scValue->setInt(_geom->_lights.getSize());
-		} else {
+		if (!_geom) {
 			_scValue->setInt(0);
+		} else {
+			_scValue->setInt(_geom->_lights.getSize());
 		}
 
 		return _scValue;
@@ -2792,7 +2790,7 @@ bool AdScene::removeObject(AdObject *object) {
 bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SCENE {\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	if (_persistentState) {
@@ -2807,10 +2805,8 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	if (_geom) {
 		if (_geom->getFilename())
 			buffer->putTextIndent(indent + 2, "GEOMETRY=\"%s\"\n", _geom->getFilename());
-
-		Camera3D *activeCamera = _geom->getActiveCamera();
-		if (activeCamera != nullptr) {
-			buffer->putTextIndent(indent + 2, "CAMERA=\"%s\"\n", activeCamera->getName());
+		if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+			buffer->putTextIndent(indent + 2, "CAMERA=\"%s\"\n", _geom->_cameras[_geom->_activeCamera]->_name);
 		}
 
 		if (_fov >= 0.0f)
@@ -2923,7 +2919,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	// free entities
 	buffer->putTextIndent(indent + 2, "; ----- free entities\n");
 	for (int32 i = 0; i < _objects.getSize(); i++) {
-		if (_objects[i]->getType() == OBJECT_ENTITY) {
+		if (_objects[i]->_type == OBJECT_ENTITY) {
 			_objects[i]->saveAsText(buffer, indent + 2);
 
 		}
@@ -3003,11 +2999,11 @@ float AdScene::getScaleAt(int y) {
 	}
 
 	int delta_y = next->_posY - prev->_posY;
-	float delta_scale = next->getScale() - prev->getScale();
+	float delta_scale = next->_scale - prev->_scale;
 	y -= prev->_posY;
 
 	float percent = (float)y / ((float)delta_y / 100.0f);
-	return prev->getScale() + delta_scale / 100 * percent;
+	return prev->_scale + delta_scale / 100 * percent;
 }
 
 
@@ -3117,11 +3113,8 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::afterLoad() {
 #ifdef ENABLE_WME3D
-	if (_geom) {
-		int32 activeCamera = _geom->_activeCamera;
-		if (activeCamera >= 0 && activeCamera < _geom->_cameras.getSize()) {
-			_geom->setActiveCamera(activeCamera, _fov, _nearClipPlane, _farClipPlane);
-		}
+	if (_geom && _geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
+		_geom->setActiveCamera(_geom->_activeCamera, _fov, _nearClipPlane, _farClipPlane);
 	}
 #endif
 	return STATUS_OK;
@@ -3410,7 +3403,7 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 
 	// free entities
 	for (int32 i = 0; i < _objects.getSize(); i++) {
-		if (_objects[i]->getType() == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
+		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
 			return _objects[i];
 		}
 	}
@@ -3494,7 +3487,7 @@ bool AdScene::persistState(bool saving) {
 		if (!_objects[i]->_saveState) {
 			continue;
 		}
-		if (_objects[i]->getType() == OBJECT_ENTITY) {
+		if (_objects[i]->_type == OBJECT_ENTITY) {
 			nodeState = state->getNodeState(_objects[i]->getName(), saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
@@ -3541,11 +3534,11 @@ float AdScene::getRotationAt(int x, int y) {
 	}
 
 	int delta_x = next->_posX - prev->_posX;
-	float delta_rot = next->getRotation() - prev->getRotation();
+	float delta_rot = next->_rotation - prev->_rotation;
 	x -= prev->_posX;
 
 	float percent = (float)x / ((float)delta_x / 100.0f);
-	return prev->getRotation() + delta_rot / 100 * percent;
+	return prev->_rotation + delta_rot / 100 * percent;
 }
 
 
@@ -3565,7 +3558,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	}
 
 	for (int32 i = 0; i < _objects.getSize(); i++) {
-		if (_objects[i]->getType() == OBJECT_ENTITY) {
+		if (_objects[i]->_type == OBJECT_ENTITY) {
 			AdEntity *ent = (AdEntity *)_objects[i];
 			if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
 				ent->_active = show;

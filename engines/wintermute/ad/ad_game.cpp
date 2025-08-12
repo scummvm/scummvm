@@ -1664,7 +1664,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 		if (_scene && _scene->getSceneObjects(objects, true)) {
 			for (int32 i = 0; i < objects.getSize(); i++) {
 				BaseRegion *region;
-				if (objects[i]->getType() != OBJECT_ENTITY ||
+				if (objects[i]->_type != OBJECT_ENTITY ||
 					!objects[i]->_active ||
 					!objects[i]->_registrable ||
 					(!(region = ((AdEntity *)objects[i])->_region))
@@ -1826,7 +1826,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	}
 
 	for (int32 i = 0; i < _sceneStates.getSize(); i++) {
-		if (scumm_stricmp(_sceneStates[i]->getFilename(), filenameCor) == 0) {
+		if (scumm_stricmp(_sceneStates[i]->_filename, filenameCor) == 0) {
 			delete[] filenameCor;
 			return _sceneStates[i];
 		}
@@ -1971,7 +1971,7 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::clearBranchResponses(char *name) {
 	for (int32 i = 0; i < _responsesBranch.getSize(); i++) {
-		if (scumm_stricmp(name, _responsesBranch[i]->getContext()) == 0) {
+		if (scumm_stricmp(name, _responsesBranch[i]->_context) == 0) {
 			delete _responsesBranch[i];
 			_responsesBranch.removeAt(i);
 			i--;
@@ -1999,7 +1999,7 @@ bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
 	for (int32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
+			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->_context) == 0)) {
 				return true;
 			}
 		}
@@ -2027,7 +2027,7 @@ bool AdGame::gameResponseUsed(int id) const {
 	for (int32 i = 0; i < _responsesGame.getSize(); i++) {
 		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
-			if ((context == nullptr && respContext->getContext() == nullptr) || ((context != nullptr && respContext->getContext() != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->getContext()) == 0))) {
+			if ((context == nullptr && respContext->_context == nullptr) || ((context != nullptr && respContext->_context != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->_context) == 0))) {
 				return true;
 			}
 		}
@@ -2042,7 +2042,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (int32 i = 0; i < _responsesGame.getSize(); i++) {
 		if (_responsesGame[i]->_id == id) {
-			if ((context == nullptr && _responsesGame[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesGame[i]->getContext()) == 0)) {
+			if ((context == nullptr && _responsesGame[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesGame[i]->_context) == 0)) {
 				delete _responsesGame[i];
 				_responsesGame.removeAt(i);
 				break;
@@ -2052,7 +2052,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (int32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
-			if ((context == nullptr && _responsesBranch[i]->getContext() == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->getContext()) == 0)) {
+			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->_context) == 0)) {
 				delete _responsesBranch[i];
 				_responsesBranch.removeAt(i);
 				break;

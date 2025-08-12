@@ -47,10 +47,6 @@ AdScaleLevel::~AdScaleLevel() {
 
 }
 
-float AdScaleLevel::getScale() const {
-	return _scale;
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool AdScaleLevel::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);

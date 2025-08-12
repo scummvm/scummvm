@@ -70,10 +70,10 @@ AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdItem::~AdItem() {
 	delete _spriteHover;
-	delete _cursorNormal;
-	delete _cursorHover;
 	_spriteHover = nullptr;
+	delete _cursorNormal;
 	_cursorNormal = nullptr;
+	delete _cursorHover;
 	_cursorHover = nullptr;
 
 	delete[] _amountString;

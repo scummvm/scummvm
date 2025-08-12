@@ -859,7 +859,7 @@ bool AdObject::setFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 int32 AdObject::getHeight() {
-	if (!_currentSprite || (int32)_currentSprite->_frames.getSize() <= _currentSprite->_currentFrame) {
+	if (!_currentSprite || _currentSprite->_frames.getSize() <= _currentSprite->_currentFrame) {
 		return 0;
 	} else {
 		BaseFrame *frame = _currentSprite->_frames[_currentSprite->_currentFrame];
@@ -874,10 +874,6 @@ int32 AdObject::getHeight() {
 		}
 		return ret;
 	}
-}
-
-TObjectType AdObject::getType() const {
-	return _type;
 }
 
 //////////////////////////////////////////////////////////////////////////

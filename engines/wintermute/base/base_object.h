@@ -47,9 +47,33 @@ class ScScript;
 class XModel;
 
 class BaseObject : public BaseScriptHolder {
-protected:
+public:
+	char *_accessCaption;
+	//virtual char *GetAccessCaption();
+
+	Graphics::TSpriteBlendMode _blendMode;
+#ifdef ENABLE_WME3D
+	virtual bool renderModel();
+#endif
+	virtual bool afterMove();
+	float _relativeRotate;
+	bool _rotateValid;
+	float _rotate;
+	void setSoundEvent(const char *eventName);
+	bool _rotatable;
+	uint32 _alphaColor;
+	float _scale;
+	float _scaleX;
+	float _scaleY;
+	float _relativeScale;
+	virtual bool isReady();
+	virtual bool getExtendedFlag(const char *flagName);
+	virtual bool resetSoundPan();
+	virtual bool updateSounds();
+	bool updateOneSound(BaseSound *sound);
 	bool _autoSoundPanning;
 	uint32 _sFXStart;
+	int32 _sFXVolume;
 	bool setSFXTime(uint32 time);
 	bool setSFXVolume(int volume);
 	bool resumeSFX();
@@ -57,40 +81,12 @@ protected:
 	bool stopSFX(bool deleteSound = true);
 	bool playSFX(const char *filename, bool looping = false, bool playNow = true, const char *eventName = nullptr, uint32 loopStart = 0);
 	BaseSound *_sFX;
+
 	TSFXType _sFXType;
 	float _sFXParam1;
 	float _sFXParam2;
 	float _sFXParam3;
 	float _sFXParam4;
-	float _relativeRotate;
-	bool _rotateValid;
-	float _rotate;
-	void setSoundEvent(const char *eventName);
-	bool _rotatable;
-	float _scaleX;
-	float _scaleY;
-	float _relativeScale;
-	bool _editorSelected;
-	bool _editorAlwaysRegister;
-	bool _ready;
-	Rect32 _rect;
-	bool _rectSet;
-	int32 _iD;
-	char *_soundEvent;
-public:
-	Graphics::TSpriteBlendMode _blendMode;
-#ifdef ENABLE_WME3D
-	virtual bool renderModel();
-#endif
-	virtual bool afterMove();
-	float _scale;
-	uint32 _alphaColor;
-	virtual bool isReady();
-	virtual bool getExtendedFlag(const char *flagName);
-	virtual bool resetSoundPan();
-	virtual bool updateSounds();
-	bool updateOneSound(BaseSound *sound);
-	int32 _sFXVolume;
 
 	virtual bool handleMouseWheel(int32 delta);
 	virtual bool handleMouse(TMouseEvent event, TMouseButton button);
@@ -101,7 +97,8 @@ public:
 	bool cleanup();
 	const char *getCaption(int caseVal = 1);
 	void setCaption(const char *caption, int caseVal = 1);
-
+	bool _editorSelected;
+	bool _editorAlwaysRegister;
 	bool _editorOnly;
 	bool _is3D;
 
@@ -112,18 +109,22 @@ public:
 	BaseSprite *_activeCursor;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	bool listen(BaseScriptHolder *param1, uint32 param2) override;
-
-	bool _movable;
+	bool _ready;
+	bool _registrable;
 	bool _zoomable;
 	bool _shadowable;
-	int32 _posY;
-	int32 _posX;
-	bool _registrable;
-	char *_caption[7];
-	bool _saveState;
-
+	Rect32 _rect;
+	bool _rectSet;
+	int32 _iD;
+	bool _movable;
 	BaseObject(BaseGame *inGame);
 	~BaseObject() override;
+	char *_caption[7];
+	char *_soundEvent;
+	int32 _posY;
+	int32 _posX;
+	bool _saveState;
+
 	// base
 	virtual bool update()  {
 		return STATUS_FAILED;

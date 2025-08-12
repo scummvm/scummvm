@@ -73,14 +73,14 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdSentence::~AdSentence() {
 	delete _sound;
-	delete[] _text;
-	delete[] _stances;
-	delete[] _tempStance;
-	delete _talkDef;
 	_sound = nullptr;
+	delete[] _text;
 	_text = nullptr;
+	delete[] _stances;
 	_stances = nullptr;
+	delete[] _tempStance;
 	_tempStance = nullptr;
+	delete _talkDef;
 	_talkDef = nullptr;
 
 	_currentSprite = nullptr; // ref only

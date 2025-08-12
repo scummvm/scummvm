@@ -70,13 +70,11 @@ public:
 	AdSentence(BaseGame *inGame);
 	~AdSentence() override;
 	AdTalkDef *_talkDef;
-
 	bool canSkip();
 
 private:
 	char *_tempStance;
 	char *getStance(int stance);
-
 };
 
 } // End of namespace Wintermute

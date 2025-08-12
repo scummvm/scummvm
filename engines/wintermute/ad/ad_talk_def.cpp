@@ -57,13 +57,13 @@ AdTalkDef::~AdTalkDef() {
 	_nodes.removeAll();
 
 	delete[] _defaultSpriteFilename;
-	delete _defaultSprite;
 	_defaultSpriteFilename = nullptr;
+	delete _defaultSprite;
 	_defaultSprite = nullptr;
 
 	delete[] _defaultSpriteSetFilename;
-	delete _defaultSpriteSet;
 	_defaultSpriteSetFilename = nullptr;
+	delete _defaultSpriteSet;
 	_defaultSpriteSet = nullptr;
 }
 
@@ -181,8 +181,8 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 	}
 
 	delete _defaultSprite;
-	delete _defaultSpriteSet;
 	_defaultSprite = nullptr;
+	delete _defaultSpriteSet;
 	_defaultSpriteSet = nullptr;
 
 	if (_defaultSpriteFilename) {

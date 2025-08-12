@@ -55,10 +55,10 @@ AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdNodeState::~AdNodeState() {
 	delete[] _name;
-	delete[] _filename;
-	delete[] _cursor;
 	_name = nullptr;
+	delete[] _filename;
 	_filename = nullptr;
+	delete[] _cursor;
 	_cursor = nullptr;
 	for (int i = 0; i < 7; i++) {
 		delete[] _caption[i];
@@ -110,12 +110,10 @@ bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCaption(const char *caption, int caseVal) {
-	if (caseVal == 0) {
+	if (caseVal == 0)
 		caseVal = 1;
-	}
-	if (caseVal < 1 || caseVal > 7) {
+	if (caseVal < 1 || caseVal > 7)
 		return;
-	}
 
 	delete[] _caption[caseVal - 1];
 	size_t captionSize = strlen(caption) + 1;

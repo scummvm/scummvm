@@ -45,7 +45,6 @@ public:
 	TObjectType _type;
 	AdSceneNode(BaseGame *inGame);
 	~AdSceneNode() override;
-
 };
 
 }

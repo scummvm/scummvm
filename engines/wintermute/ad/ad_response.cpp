@@ -49,14 +49,14 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
 	delete[] _text;
-	delete[] _textOrig;
-	delete _icon;
-	delete _iconHover;
-	delete _iconPressed;
 	_text = nullptr;
+	delete[] _textOrig;
 	_textOrig = nullptr;
+	delete _icon;
 	_icon = nullptr;
+	delete _iconHover;
 	_iconHover = nullptr;
+	delete _iconPressed;
 	_iconPressed = nullptr;
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
