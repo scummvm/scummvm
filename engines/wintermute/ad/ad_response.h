@@ -42,29 +42,16 @@ public:
 	bool setIconHover(const char *filename);
 	bool setIconPressed(const char *filename);
 	void setText(const char *text);
-	void setID(int32 id);
-	BaseSprite *getIcon() const;
-	BaseSprite *getIconHover() const;
-	BaseSprite *getIconPressed() const;
-	BaseFont *getFont() const;
-	int32 getID() const;
-
-	const char *getText() const;
-	const char *getTextOrig() const;
-
-	AdResponse(BaseGame *inGame);
-	~AdResponse() override;
-	TResponseType _responseType;
-private:
+	int32 _iD;
 	BaseSprite *_icon;
 	BaseSprite *_iconHover;
 	BaseSprite *_iconPressed;
 	BaseFont *_font;
-
-	int32 _iD;
-
 	char *_text;
 	char *_textOrig;
+	AdResponse(BaseGame *inGame);
+	~AdResponse() override;
+	TResponseType _responseType;
 };
 
 } // End of namespace Wintermute

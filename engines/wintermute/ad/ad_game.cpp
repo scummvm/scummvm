@@ -577,13 +577,9 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_responseBox) {
 			AdResponse *res = new AdResponse(_gameRef);
 			if (res) {
-				res->setID(id);
-
-				char *expandedText = new char[strlen(text) + 1];
-				Common::strlcpy(expandedText, text, strlen(text) + 1);
-				expandStringByStringTable(&expandedText);
-				res->setText(expandedText);
-				delete[] expandedText;
+				res->_iD = id;
+				res->setText(text);
+				expandStringByStringTable(&res->_text);
 
 				if (!val1->isNULL()) {
 					res->setIcon(val1->getString());
@@ -604,7 +600,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 					res->_responseType = RESPONSE_ONCE_GAME;
 				}
 
-				_responseBox->addResponse(res);
+				_responseBox->_responses.add(res);
 			}
 		} else {
 			script->runtimeError("Game.AddResponse: response box is not defined");
@@ -646,15 +642,15 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		if (_responseBox) {
 			_responseBox->weedResponses();
 
-			if (_responseBox->getNumResponses() == 0) {
+			if (_responseBox->_responses.getSize() == 0) {
 				stack->pushNULL();
 				return STATUS_OK;
 			}
 
 
-			if (_responseBox->getNumResponses() == 1 && autoSelectLast) {
-				stack->pushInt(_responseBox->getIdForResponseNum(0));
-				_responseBox->handleResponseNum(0);
+			if (_responseBox->_responses.getSize() == 1 && autoSelectLast) {
+				stack->pushInt(_responseBox->_responses[0]->_iD);
+				_responseBox->handleResponse(_responseBox->_responses[0]);
 				_responseBox->clearResponses();
 				return STATUS_OK;
 			}
@@ -679,7 +675,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(0);
 		if (_responseBox) {
 			_responseBox->weedResponses();
-			stack->pushInt(_responseBox->getNumResponses());
+			stack->pushInt(_responseBox->_responses.getSize());
 		} else {
 			script->runtimeError("Game.GetNumResponses: response box is not defined");
 			stack->pushNULL();
@@ -816,8 +812,8 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetResponsesWindow") == 0 || strcmp(name, "GetResponseWindow") == 0) {
 		stack->correctParams(0);
-		if (_responseBox && _responseBox->getResponseWindow()) {
-			stack->pushNative(_responseBox->getResponseWindow(), true);
+		if (_responseBox && _responseBox->_window) {
+			stack->pushNative(_responseBox->_window, true);
 		} else {
 			stack->pushNULL();
 		}
@@ -1058,10 +1054,10 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	// LastResponse (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "LastResponse") {
-		if (!_responseBox || !_responseBox->getLastResponseText()) {
+		if (!_responseBox || !_responseBox->_lastResponseText) {
 			_scValue->setString("");
 		} else {
-			_scValue->setString(_responseBox->getLastResponseText());
+			_scValue->setString(_responseBox->_lastResponseText);
 		}
 		return _scValue;
 	}
@@ -1070,10 +1066,10 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	// LastResponseOrig (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "LastResponseOrig") {
-		if (!_responseBox || !_responseBox->getLastResponseTextOrig()) {
+		if (!_responseBox || !_responseBox->_lastResponseTextOrig) {
 			_scValue->setString("");
 		} else {
-			_scValue->setString(_responseBox->getLastResponseTextOrig());
+			_scValue->setString(_responseBox->_lastResponseTextOrig);
 		}
 		return _scValue;
 	}
