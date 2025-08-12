@@ -828,7 +828,7 @@ String percentEncodeString(const String &src) {
 			c == '~' || c == '-' || c == '.' || c == '_')
 			res += c;
 		else
-			res += Common::String::format("%%%02X", c);
+			res += Common::String::format("%%%02X", (unsigned char)c);
 	}
 
 	return res;
