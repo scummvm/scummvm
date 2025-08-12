@@ -72,7 +72,7 @@ void OneDriveUploadRequest::uploadNextPart() {
 	const uint32 UPLOAD_PER_ONE_REQUEST = 10 * 1024 * 1024;
 
 	if (_uploadUrl == "" && (uint32)_contentsStream->size() > UPLOAD_PER_ONE_REQUEST) {
-		Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD, ConnMan.urlEncode(_savePath).c_str()); //folder must exist
+		Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_UPLOAD, Common::percentEncodeString(_savePath).c_str()); //folder must exist
 		Networking::JsonCallback callback = new Common::Callback<OneDriveUploadRequest, const Networking::JsonResponse &>(this, &OneDriveUploadRequest::partUploadedCallback);
 		Networking::ErrorCallback failureCallback = new Common::Callback<OneDriveUploadRequest, const Networking::ErrorResponse &>(this, &OneDriveUploadRequest::partUploadedErrorCallback);
 		Networking::HttpJsonRequest *request = new OneDriveTokenRefresher(_storage, callback, failureCallback, url.c_str());
@@ -84,7 +84,7 @@ void OneDriveUploadRequest::uploadNextPart() {
 
 	Common::String url;
 	if (_uploadUrl == "") {
-		url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CONTENT, ConnMan.urlEncode(_savePath).c_str());
+		url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CONTENT, Common::percentEncodeString(_savePath).c_str());
 	} else {
 		url = _uploadUrl;
 	}

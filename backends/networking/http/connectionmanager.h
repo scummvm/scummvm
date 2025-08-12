@@ -99,9 +99,6 @@ public:
 	 */
 	Request *addRequest(Request *request, RequestCallback callback = nullptr);
 
-	/** Return URL-encoded version of given string. */
-	virtual Common::String urlEncode(const Common::String &s) const = 0;
-
 	static uint32 getCloudRequestsPeriodInMicroseconds();
 };
 

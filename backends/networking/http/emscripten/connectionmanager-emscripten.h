@@ -32,7 +32,6 @@ class ConnectionManagerEmscripten : public ConnectionManager {
 
 public:
 	void processTransfers() override;
-	Common::String urlEncode(const Common::String &s) const override;
 };
 
 } // End of namespace Networking

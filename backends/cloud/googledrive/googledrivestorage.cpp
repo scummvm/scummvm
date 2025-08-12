@@ -163,7 +163,7 @@ Networking::Request *GoogleDriveStorage::upload(const Common::String &path, Comm
 
 Networking::Request *GoogleDriveStorage::streamFileById(const Common::String &id, Networking::NetworkReadStreamCallback callback, Networking::ErrorCallback errorCallback) {
 	if (callback) {
-		Common::String url = Common::String::format(GOOGLEDRIVE_API_FILES_ALT_MEDIA, ConnMan.urlEncode(id).c_str());
+		Common::String url = Common::String::format(GOOGLEDRIVE_API_FILES_ALT_MEDIA, Common::percentEncodeString(id).c_str());
 		Common::String header = "Authorization: Bearer " + _token;
 		Networking::RequestHeaders *headersList = new Networking::RequestHeaders();
 		headersList->push_back(header);

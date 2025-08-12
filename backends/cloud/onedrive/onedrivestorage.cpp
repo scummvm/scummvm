@@ -170,7 +170,7 @@ Networking::Request *OneDriveStorage::upload(const Common::String &path, Common:
 
 Networking::Request *OneDriveStorage::streamFileById(const Common::String &path, Networking::NetworkReadStreamCallback outerCallback, Networking::ErrorCallback errorCallback) {
 	debug(9, "OneDrive: `download \"%s\"`", path.c_str());
-	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + ConnMan.urlEncode(path);
+	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT_ID + Common::percentEncodeString(path);
 	Networking::JsonCallback innerCallback = new Common::CallbackBridge<OneDriveStorage, const Networking::NetworkReadStreamResponse &, const Networking::JsonResponse &>(this, &OneDriveStorage::fileInfoCallback, outerCallback);
 	Networking::HttpJsonRequest *request = new OneDriveTokenRefresher(this, innerCallback, errorCallback, url.c_str());
 	request->addHeader("Authorization: bearer " + _token);

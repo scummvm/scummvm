@@ -68,7 +68,7 @@ void OneDriveCreateDirectoryRequest::start() {
 
 	Common::String url = ONEDRIVE_API_SPECIAL_APPROOT;
 	if (parent != "")
-		url += ":/" + ConnMan.urlEncode(parent) + ":";
+		url += ":/" + Common::percentEncodeString(parent) + ":";
 	url += "/children";
 	Networking::JsonCallback innerCallback = new Common::Callback<OneDriveCreateDirectoryRequest, const Networking::JsonResponse &>(this, &OneDriveCreateDirectoryRequest::responseCallback);
 	Networking::ErrorCallback errorResponseCallback = new Common::Callback<OneDriveCreateDirectoryRequest, const Networking::ErrorResponse &>(this, &OneDriveCreateDirectoryRequest::errorCallback);
