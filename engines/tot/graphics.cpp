@@ -74,7 +74,7 @@ void updateSceneAreaIfNeeded(int speed = 1) {
 	}
 }
 
-void screenTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
+void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 
 	int i1, i2, i3, j1, j2, j3;
 	bool enabled = false;
@@ -425,10 +425,8 @@ void screenTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 					byte *src1 = scene + 4 + (j2 * 320) + i2;
 					byte *src2 = scene + 4 + ((j2 + 1) * 320) + i2;
 					Common::copy(src1, src1 + 2, screenBuf + j2 * 320 + i2);
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (j2 * 320) + i2)),  ptr(0xa000, ((j2 * 320) + i2)), 2);
 
 					Common::copy(src2, src2 + 2, screenBuf + (j2 + 1) * 320 + i2);
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + ((j2 + 1) * 320) + i2)), ptr(0xa000, (((j2 + 1) * 320) + i2)), 2);
 					i2 = Random(320);
 					j2 = Random(140);
 
@@ -436,7 +434,6 @@ void screenTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 					Common::copy(src3, src3 + 1, screenBuf + (j2 * 320) + i2);
 
 					updateSceneAreaIfNeeded();
-					// move(ptr(seg(pantalla2), (ofs(pantalla2) + 4 + (j2 * 320) + i2)),  ptr(0xa000, ((j2 * 320) + i2)), 1);
 				}
 				drawScreen(scene);
 			} break;
@@ -529,7 +526,6 @@ void turnLightOn() {
 			intermediate[3 * i + 0] = pal[3 * i + 0];
 			intermediate[3 * i + 1] = pal[3 * i + 1];
 			intermediate[3 * i + 2] = pal[3 * i + 2];
-			// }
 		} else {
 			intermediate[3 * i + 0] = intermediate[3 * i + 0] << 2;
 			intermediate[3 * i + 1] = intermediate[3 * i + 1] << 2;

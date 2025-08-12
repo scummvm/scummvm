@@ -12,7 +12,7 @@
 
 namespace Tot {
 
-extern const int enforcedTextAnimDelay;
+extern const int kEnforcedTextAnimDelay;
 
 void showError(int code);
 

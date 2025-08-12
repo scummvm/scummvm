@@ -24,7 +24,6 @@
 #include "common/scummsys.h"
 
 #include "tot/forest.h"
-#include "tot/util.h"
 
 namespace Tot {
 

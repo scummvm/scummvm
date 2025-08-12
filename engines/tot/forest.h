@@ -21,11 +21,7 @@
 #ifndef TOT_FOREST_H
 #define TOT_FOREST_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
-#include "common/stream.h"
-
-#include "util.h"
+#include "tot/util.h"
 
 namespace Tot {
 
@@ -41,7 +37,7 @@ struct treeDef {
 	Tree parent, sibling, child;
 };
 
-void initTree(Tree& a, nodeElement data);
+void initTree(Tree &a, nodeElement data);
 
 bool isRoot(Tree node);
 
@@ -53,15 +49,14 @@ Tree leftChild(Tree node);
 
 int depth(Tree node);
 
-void expandNode(Tree& node, nodeElement data);
+void expandNode(Tree &node, nodeElement data);
 
-void preOrder(Tree a, Common::String& string_);
+void preOrder(Tree a, Common::String &string_);
 
 void saveConversations(Common::SeekableWriteStream *s, Tree a, uint location);
 
-void readTree(Common::SeekableReadStream &f, Tree& a, uint location);
-void readTree(Common::String f, Tree& a, uint location);
+void readTree(Common::SeekableReadStream &f, Tree &a, uint location);
+void readTree(Common::String f, Tree &a, uint location);
 
 } // End of namespace Tot
 #endif
-

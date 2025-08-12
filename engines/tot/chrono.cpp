@@ -21,13 +21,14 @@
 
 #include "common/system.h"
 
+#include "chrono.h"
 #include "tot/chrono.h"
 #include "tot/tot.h"
 
 namespace Tot {
 
-bool timeToDraw = false;
-bool timeToDraw2 = false;
+bool gameTick = false;
+bool gameTickHalfSpeed = false;
 bool timeToDrawEffect = false;
 
 ChronoManager::ChronoManager(/* args */) : _lastTick(0), _lastDoubleTick(0) {
@@ -39,18 +40,18 @@ ChronoManager::~ChronoManager() {
 void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
-	if ((currentTime - _lastTick) >= kFrameMs / _speedMultiplier) {
-		timeToDraw = true;
-		tocapintarTick++;
-		if (tocapintarTick == kDoubleFrameMultiplier) {
-			tocapintarTick = 0;
-			timeToDraw2 = true;
+	if ((currentTime - _lastTick) >= kTickMs / _speedMultiplier) {
+		gameTick = true;
+		_tickCount++;
+		if (_tickCount == kHalfTickMultiplier) {
+			_tickCount = 0;
+			gameTickHalfSpeed = true;
 		} else {
-			timeToDraw2 = false;
+			gameTickHalfSpeed = false;
 		}
 		_lastTick = currentTime;
 	} else {
-		timeToDraw = false;
+		gameTick = false;
 	}
 }
 
@@ -64,13 +65,20 @@ bool ChronoManager::shouldPaintEffect(int speed) {
 		return false;
 }
 
-void Tot::ChronoManager::delay(int ms) {
-	if (ms > 10) {
-		debug("Starting delay of %d", ms);
-	}
+void ChronoManager::changeSpeed() {
+	if (_speedMultiplier == 1)
+		g_engine->_chrono->_speedMultiplier = 4;
+	else
+		g_engine->_chrono->_speedMultiplier = 1;
+}
+
+void ChronoManager::delay(int ms) {
 	uint32 delayStart = g_system->getMillis();
 	Common::Event e;
 	ms = ms / _speedMultiplier;
+	if (ms > 10) {
+		debug("Starting delay of %d", ms);
+	}
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}

@@ -42,7 +42,7 @@ void MouseManager::drawMask(int idx) {
 }
 
 void MouseManager::animateMouseIfNeeded() {
-	if (timeToDraw) {
+	if (gameTick) {
 		setMouseMask(_currentMouseMask);
 		if (_currentMouseMask < 7) {
 			// sync this with frame time
@@ -93,7 +93,6 @@ void MouseManager::loadMasks() {
 	for (int i = 0; i < numMouseMasks; i++) {
 		_mouseMasks[i].width = mouseMaskFile.readUint16LE();
 		_mouseMasks[i].height = mouseMaskFile.readUint16LE();
-		// mouseMaskFile.readUint16LE();
 		_mouseMasks[i].mask = (byte *)malloc(mouseMaskSize - 4);
 		mouseMaskFile.read(_mouseMasks[i].mask, mouseMaskSize - 4);
 	}

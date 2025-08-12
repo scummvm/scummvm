@@ -58,7 +58,7 @@ void saveTemporaryGame();
 void drawLookAtItem(RoomObjectListEntry obj);
 void putIcon(uint posX, uint posY, uint iconNumber);
 void drawBackpack();
-void inventory(byte direction, byte limit);
+void drawInventory(byte direction, byte limit);
 void mask();
 void drawMenu(byte menuNumber);
 void generateDiploma(Common::String &photoName);

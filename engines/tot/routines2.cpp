@@ -22,11 +22,13 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/savefile.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "graphics/fonts/dosfont.h"
 #include "graphics/paletteman.h"
 #include "graphics/surface.h"
+#include "image/png.h"
 
 #include "tot/routines.h"
 #include "tot/routines2.h"
@@ -84,10 +86,10 @@ void loadAnimation(Common::String animationName) {
 	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM, false);
 
 	readItemRegister(currentRoomData->secondaryAnimDirections[299]);
-	maxXGrid = (regobj.xrej2 - regobj.xrej1 + 1);
-	maxYGrid = (regobj.yrej2 - regobj.yrej1 + 1);
-	oldposx = regobj.xrej1 + 1;
-	oldposy = regobj.yrej1 + 1;
+	maxXGrid = (regobj.xgrid2 - regobj.xgrid1 + 1);
+	maxYGrid = (regobj.ygrid2 - regobj.ygrid1 + 1);
+	oldposx = regobj.xgrid1 + 1;
+	oldposy = regobj.ygrid1 + 1;
 
 	for (int i = 0; i < 10; i++)
 		for (int j = 0; j < 10; j++) {
@@ -340,9 +342,9 @@ void loadItem(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint
 
 void updateInventory(byte index) {
 	for (int i = index; i < (inventoryIconCount - 1); i++) {
-		mobj[i].bitmapIndex = mobj[i + 1].bitmapIndex;
-		mobj[i].code = mobj[i + 1].code;
-		mobj[i].objectName = mobj[i + 1].objectName;
+		inventory[i].bitmapIndex = inventory[i + 1].bitmapIndex;
+		inventory[i].code = inventory[i + 1].code;
+		inventory[i].objectName = inventory[i + 1].objectName;
 	}
 	// verifyCopyProtection();
 }
@@ -398,10 +400,10 @@ void readItemRegister(Common::SeekableReadStream *stream, uint itemPos, ScreenOb
 	thisRegObj.dropOverlay = stream->readUint32LE();
 	thisRegObj.dropOverlaySize = stream->readUint16LE();
 	thisRegObj.objectIconBitmap = stream->readUint16LE();
-	thisRegObj.xrej1 = stream->readByte();
-	thisRegObj.yrej1 = stream->readByte();
-	thisRegObj.xrej2 = stream->readByte();
-	thisRegObj.yrej2 = stream->readByte();
+	thisRegObj.xgrid1 = stream->readByte();
+	thisRegObj.ygrid1 = stream->readByte();
+	thisRegObj.xgrid2 = stream->readByte();
+	thisRegObj.ygrid2 = stream->readByte();
 	stream->read(thisRegObj.walkAreasPatch, 100);
 	stream->read(thisRegObj.mouseGridPatch, 100);
 }
@@ -419,7 +421,7 @@ void drawLookAtItem(RoomObjectListEntry obj) {
 
 void putIcon(uint iconPosX, uint iconPosY, uint iconNum) {
 	// substract 1 to account for 1-based indices
-	g_engine->_graphics->putImg(iconPosX, iconPosY, inventoryIconBitmaps[mobj[iconNum].bitmapIndex - 1]);
+	g_engine->_graphics->putImg(iconPosX, iconPosY, inventoryIconBitmaps[inventory[iconNum].bitmapIndex - 1]);
 }
 
 void drawBackpack() {
@@ -459,7 +461,7 @@ void turnOffRight() {
 	line(311, 190, 292, 190, 255);
 }
 
-void inventory(byte dir, byte max) {
+void drawInventory(byte dir, byte max) {
 	switch (dir) {
 	case 0:
 		if (inventoryPosition > 0) {
@@ -479,7 +481,7 @@ void inventory(byte dir, byte max) {
 		lightUpLeft();
 	else
 		turnOffLeft();
-	if (mobj[inventoryPosition + 6].code > 0)
+	if (inventory[inventoryPosition + 6].code > 0)
 		lightUpRight();
 	else
 		turnOffRight();
@@ -499,7 +501,7 @@ void mask() {
 		lightUpLeft();
 	else
 		turnOffLeft();
-	if (mobj[inventoryPosition + 6].code > 0)
+	if (inventory[inventoryPosition + 6].code > 0)
 		lightUpRight();
 	else
 		turnOffRight();
@@ -643,51 +645,28 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	biosText(30, 160, messages[55], 15);
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
-	// putShape(270, 161, (byte *)sello);
 	g_engine->_graphics->putShape(270, 159, stamp);
 	free(stamp);
 }
 
 static void saveDiploma(Common::String &photoName, Common::String &key) {
-	byte *screen;
-	Common::DumpFile outDip;
-
-	Common::Path path;
+	Common::String name;
 	if (photoName != "")
-		path = Common::Path("DIPLOMA/" + photoName + ".DIP");
+		name = "tot-diploma-" + photoName + ".png";
 	else
-		path = Common::Path("DIPLOMA/DEFAULT.DIP");
-
-	outDip.open(path, true);
-	debug("Path: %s", path.toString().c_str());
-	if (!outDip.isOpen()) {
-		error("Could not open output file!");
-	}
-
-	palette palCopy;
-	copyPalette(pal, palCopy);
-	byte *palBuf = palCopy;
-	for (int i = 0; i < 768; i++) {
-		palBuf[i] = palBuf[i] >> 2;
-	}
-	char fixedKey[10];
-	fixedKey[0] = 10;
-	for (int i = 1; i < 10; i++) {
-		fixedKey[i] = key[i - 1];
-	}
-	outDip.write(palBuf, 768);
-	outDip.write(fixedKey, 10);
-	screen = (byte *)malloc(64000);
-	copyFromScreen(screen);
-	outDip.write(screen, 64000);
-	outDip.finalize();
-	outDip.close();
-	free(screen);
+		"tot-diploma-default.png";
+	Common::OutSaveFile *thumbnail = g_engine->getSaveFileManager()->openForSaving(name);
+	Graphics::Surface *surface = g_system->lockScreen();
+	assert(surface);
+	Image::writePNG(*thumbnail, *surface, g_engine->_graphics->getPalette());
+	g_system->unlockScreen();
+	thumbnail->finalize();
+	delete thumbnail;
 }
 
 void generateDiploma(Common::String &photoName) {
 	Common::String key;
-
+	g_engine->_mouseManager->hide();
 	photoName.toUppercase();
 	totalFadeOut(0);
 	loadDiploma(photoName, key);
@@ -704,6 +683,7 @@ void generateDiploma(Common::String &photoName) {
 		g_system->delayMillis(10);
 	} while (!keyPressed && !g_engine->shouldQuit());
 	saveDiploma(photoName, key);
+	g_engine->_mouseManager->show();
 }
 
 void checkMouseGrid() {
@@ -791,17 +771,17 @@ void checkMouseGrid() {
 		}
 	} else if (mouseY >= 166 && mouseY <= 199) {
 		if (mouseX >= 26 && mouseX <= 65) {
-			invObject = mobj[inventoryPosition].objectName;
+			invObject = inventory[inventoryPosition].objectName;
 		} else if (mouseX >= 70 && mouseX <= 108) {
-			invObject = mobj[inventoryPosition + 1].objectName;
+			invObject = inventory[inventoryPosition + 1].objectName;
 		} else if (mouseX >= 113 && mouseX <= 151) {
-			invObject = mobj[inventoryPosition + 2].objectName;
+			invObject = inventory[inventoryPosition + 2].objectName;
 		} else if (mouseX >= 156 && mouseX <= 194) {
-			invObject = mobj[inventoryPosition + 3].objectName;
+			invObject = inventory[inventoryPosition + 3].objectName;
 		} else if (mouseX >= 199 && mouseX <= 237) {
-			invObject = mobj[inventoryPosition + 4].objectName;
+			invObject = inventory[inventoryPosition + 4].objectName;
 		} else if (mouseX >= 242 && mouseX <= 280) {
-			invObject = mobj[inventoryPosition + 5].objectName;
+			invObject = inventory[inventoryPosition + 5].objectName;
 		} else {
 			invObject = ' ';
 		}
@@ -939,8 +919,6 @@ void readAlphaGraphSmall(Common::String &output, int length, int posx, int posy,
 					littText((posx + (output.size()) * 6), posy, "-", textColor);
 					borracursor = true;
 				}
-				// car = readkey();
-				// car = upcase(car);
 			}
 		}
 
@@ -966,10 +944,10 @@ void hyperText(
 	if (textString.size() < maxWidth) {
 		euroText((xpos + 1), (ypos + 1), textString, shadowColor);
 		g_engine->_screen->update();
-		delay(enforcedTextAnimDelay);
+		delay(kEnforcedTextAnimDelay);
 		euroText(xpos, ypos, textString, textColor);
 		g_engine->_screen->update();
-		delay(enforcedTextAnimDelay);
+		delay(kEnforcedTextAnimDelay);
 	} else {
 		ihc = 0;
 		lineCounter = 0;
@@ -990,10 +968,10 @@ void hyperText(
 			Common::String lineString = textString.substr(newLineMatrix[line - 1], newLineMatrix[line] - newLineMatrix[line - 1]);
 			euroText((xpos + 1), (ypos + ((line - 1) * 11) + 1), lineString, shadowColor);
 			g_engine->_screen->update();
-			delay(enforcedTextAnimDelay);
+			delay(kEnforcedTextAnimDelay);
 			euroText(xpos, (ypos + ((line - 1) * 11)), lineString, textColor);
 			g_engine->_screen->update();
-			delay(enforcedTextAnimDelay);
+			delay(kEnforcedTextAnimDelay);
 		}
 	}
 }
@@ -1132,8 +1110,8 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_system->delayMillis(10);
-	} while (!timeToDraw && !g_engine->shouldQuit());
-	timeToDraw = false;
+	} while (!gameTick && !g_engine->shouldQuit());
+	gameTick = false;
 
 	// Copies the credit window directly to the screen
 	for (int i = 0; i < hImg1; i++) {
@@ -1259,6 +1237,8 @@ inline bool keyPressed() {
 }
 
 void credits() {
+	Common::String n = "Gabriel";
+	generateDiploma(n);
 	saveAllowed = true;
 	debug("Credits");
 	palette pal2;
@@ -1278,69 +1258,69 @@ void credits() {
 	exit = false;
 
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollCredit(0, 8004, pal2, background, exit, 10, false, true);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(8772, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(17544, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(26316, 7504, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(34588, 7504, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(42860, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(51632, 7504, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	removeTitle(background2);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	g_engine->_graphics->putImg(0, 0, background2);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	copyFromScreen(background);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollCredit(59904, 8004, pal2, background, exit, 10, false, true);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(68676, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(77448, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(86220, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(94992, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(103764, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollSingleCredit(112536, 8004, pal2, background, exit);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	removeTitle(background2);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	g_engine->_graphics->putImg(0, 0, background2);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	copyFromScreen(background);
 	if (keyPressed() || exit)
-		goto Lsalida;
+		goto Lexit;
 	scrollCredit(121308, 8004, pal2, background, exit, 80, false, true);
-Lsalida:
+Lexit:
 	delay(1000);
 	totalFadeOut(0);
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
@@ -1409,7 +1389,7 @@ void introduction() {
 			goto Lsalirpres;
 		}
 
-		if (timeToDraw) {
+		if (gameTick) {
 			loopCount += 1;
 		}
 		g_system->delayMillis(10);

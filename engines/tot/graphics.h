@@ -32,7 +32,7 @@ void copyFromScreen(byte *&screen);
 void drawScreen(byte *screen, bool offsetSize = true);
 
 void loadPalette(Common::String image);
-void screenTransition(byte effectNumber, bool fadeToBlack, byte *screen);
+void sceneTransition(byte effectNumber, bool fadeToBlack, byte *screen);
 void turnLightOn();
 void totalFadeOut(byte red);
 void partialFadeOut(byte numCol);

@@ -19,9 +19,6 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/file.h"
-
 #include "tot/forest.h"
 
 namespace Tot {

@@ -28,12 +28,11 @@ namespace Tot {
 /**
  * Flags for animations
  */
-extern bool timeToDraw, timeToDraw2, timeToDrawEffect;
+extern bool gameTick, gameTickHalfSpeed, timeToDrawEffect;
 
-// Set to 30 for ease of dev
-const int kFrameMs = 20;
-// const int kFrameMs = 50;
-const int kDoubleFrameMultiplier = 3;
+// const int kTickMs = 20;
+const int kTickMs = 50;
+const int kHalfTickMultiplier = 2;
 const int kFrameEffectMs = 10;
 
 class ChronoManager {
@@ -41,16 +40,17 @@ private:
 	uint32 _lastTick = 0;
 	uint32 _lastTickEffect = 0;
 	uint32 _lastDoubleTick = 0;
-	byte tocapintarTick = 0;
+	byte _tickCount = 0;
 	uint32 _lastEffectRender = 0;
+	byte _speedMultiplier = 1;
 
 public:
-	ChronoManager(/* args */);
+	ChronoManager();
 	~ChronoManager();
 	void updateChrono();
 	void delay(int ms);
 	bool shouldPaintEffect(int speed);
-	byte _speedMultiplier = 1;
+	void changeSpeed();
 };
 
 } // End of namespace Tot

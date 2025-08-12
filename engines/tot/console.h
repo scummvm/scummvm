@@ -39,6 +39,7 @@ private:
 	bool cmdShowGameGrid(int argc, const char **argv);
 	bool cmdShowObjectAreas(int argc, const char **argv);
 	bool cmdClearLayers(int argc, const char **argv);
+
 public:
 	TotConsole(TotEngine *engine);
 	~TotConsole() override;
