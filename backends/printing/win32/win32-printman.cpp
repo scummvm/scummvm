@@ -27,6 +27,8 @@
 #include <winspool.h>
 
 #include "backends/printing/printman.h"
+#include "backends/platform/sdl/win32/win32_wrapper.h"
+
 #include "win32-printman.h"
 #include "common/ustr.h"
 
@@ -36,6 +38,10 @@ public:
 	virtual ~Win32PrintingManager();
 
 	void doPrint(const Graphics::ManagedSurface &surf) override;
+
+	Common::StringArray listPrinterNames() const override;
+
+	Common::String getDefaultPrinterName() const override;
 
 private:
 	HDC createDefaultPrinterContext();
@@ -48,7 +54,11 @@ Win32PrintingManager::~Win32PrintingManager() {}
 
 void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 
-	HDC hdcPrint = createDefaultPrinterContext();
+	HDC hdcPrint;
+	if (!_printerName.size())
+		hdcPrint = createDefaultPrinterContext();
+	else
+		hdcPrint = createPrinterContext(Win32::stringToTchar(_printerName));
 
 	DOCINFOA info;
 	info.cbSize = sizeof(info);
@@ -147,6 +157,46 @@ HBITMAP Win32PrintingManager::buildBitmap(HDC hdc, const Graphics::ManagedSurfac
 	free(bitmapInfo);
 
 	return bitmap;
+}
+
+Common::StringArray Win32PrintingManager::listPrinterNames() const {
+	DWORD size;
+	DWORD numPrinterInfos;
+
+	// Get the required size
+	BOOL success = EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 4, NULL, 0, &size, &numPrinterInfos);
+
+	Common::StringArray printerNames;
+	BYTE *printerInfos = new BYTE[size];
+	success = EnumPrinters(PRINTER_ENUM_LOCAL, NULL, 4, (LPBYTE)printerInfos, size, &size, &numPrinterInfos);
+	if (!success)
+		return Common::StringArray();
+
+	for (uint i = 0; i < numPrinterInfos; i++) {
+		PRINTER_INFO_4 info = *((PRINTER_INFO_4 *)(printerInfos + i * sizeof(PRINTER_INFO_4)));
+		TCHAR *name = (TCHAR *)info.pPrinterName;
+		printerNames.push_back(Win32::tcharToString(name));
+	}
+
+	delete[] printerInfos;
+
+	return printerNames;
+}
+
+Common::String Win32PrintingManager::getDefaultPrinterName() const {
+	DWORD size;
+	GetDefaultPrinter(NULL, &size);
+
+	TCHAR *str = new TCHAR[size];
+	BOOL success = GetDefaultPrinter(str, &size);
+	if (!success)
+		return Common::String();
+
+	Common::String name = Win32::tcharToString(str);
+
+	delete[] str;
+
+	return name;
 }
 
 Common::PrintingManager *createWin32PrintingManager() {
