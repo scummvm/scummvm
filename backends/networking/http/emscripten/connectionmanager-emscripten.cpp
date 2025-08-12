@@ -49,20 +49,6 @@ Networking::ConnectionManager *Singleton<Networking::ConnectionManager>::makeIns
 
 namespace Networking {
 
-Common::String ConnectionManagerEmscripten::urlEncode(const Common::String &s) const {
-	const char *input = s.c_str();
-	char *result = (char *)EM_ASM_PTR({
-			var jsString = encodeURIComponent(UTF8ToString($0));
-			var size = lengthBytesUTF8(jsString) + 1;
-			var ret = Module._malloc(size);
-			stringToUTF8Array(jsString, HEAP8, ret, size);
-			return ret; }, input);
-
-	Common::String encodedResult = Common::String(result);
-	free(result); // Free the malloc'd memory from EM_ASM_PTR
-	return encodedResult;
-}
-
 void ConnectionManagerEmscripten::processTransfers() {
 	// Emscripten handles transfers asynchronously via callbacks
 	// No action needed here

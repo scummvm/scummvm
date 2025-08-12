@@ -114,7 +114,7 @@ void GoogleDriveUploadRequest::startUpload() {
 
 	Common::String url = GOOGLEDRIVE_API_FILES;
 	if (_resolvedId != "")
-		url += "/" + ConnMan.urlEncode(_resolvedId);
+		url += "/" + Common::percentEncodeString(_resolvedId);
 	url += "?uploadType=resumable&fields=id,mimeType,modifiedTime,name,size";
 	Networking::JsonCallback callback = new Common::Callback<GoogleDriveUploadRequest, const Networking::JsonResponse &>(this, &GoogleDriveUploadRequest::startUploadCallback);
 	Networking::ErrorCallback failureCallback = new Common::Callback<GoogleDriveUploadRequest, const Networking::ErrorResponse &>(this, &GoogleDriveUploadRequest::startUploadErrorCallback);

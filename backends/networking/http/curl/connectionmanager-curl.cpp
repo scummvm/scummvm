@@ -61,22 +61,6 @@ void ConnectionManagerCurl::registerEasyHandle(CURL *easy) const {
 	curl_multi_add_handle(_multi, easy);
 }
 
-Common::String ConnectionManagerCurl::urlEncode(const Common::String &s) const {
-	if (!_multi)
-		return "";
-#if LIBCURL_VERSION_NUM >= 0x070F04
-	char *output = curl_easy_escape(_multi, s.c_str(), s.size());
-#else
-	char *output = curl_escape(s.c_str(), s.size());
-#endif
-	if (output) {
-		Common::String result = output;
-		curl_free(output);
-		return result;
-	}
-	return "";
-}
-
 // private goes here:
 void ConnectionManagerCurl::processTransfers() {
 	if (!_multi)

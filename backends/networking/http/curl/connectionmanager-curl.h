@@ -47,9 +47,6 @@ public:
 	 */
 	void registerEasyHandle(CURL *easy) const;
 
-	/** Return URL-encoded version of given string. */
-	Common::String urlEncode(const Common::String &s) const override;
-
 };
 
 } // End of namespace Networking

@@ -76,7 +76,7 @@ void OneDriveListDirectoryRequest::listNextDirectory() {
 
 	Common::String dir = _currentDirectory;
 	dir.deleteLastChar();
-	Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN, ConnMan.urlEncode(dir).c_str());
+	Common::String url = Common::String::format(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN, Common::percentEncodeString(dir).c_str());
 	if (dir == "") url = Common::String(ONEDRIVE_API_SPECIAL_APPROOT_CHILDREN_ROOT_ITSELF);
 	makeRequest(url);
 }
