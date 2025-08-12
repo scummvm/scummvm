@@ -29,11 +29,13 @@
 namespace GUI {
 class ButtonWidget;
 class CheckboxWidget;
+class PopUpWidget;
 
 class PrintingDialog : public GUI::Dialog {
 public:
 	enum {
 		kCmdPrint = 'PRNT',
+		kCmdSelectPrinterName = 'SLPN',
 	};
 
 	PrintingDialog(const Graphics::ManagedSurface &surface);
@@ -45,6 +47,9 @@ private:
 
 	GUI::ButtonWidget *_printButton;
 	GUI::CheckboxWidget *_saveAsImageCheckbox;
+	GUI::PopUpWidget *_printersListPopUp;
+
+	Common::HashMap<uint32, Common::String> _tagToPrinterName;
 };
 
 } // End of namespace GUI
