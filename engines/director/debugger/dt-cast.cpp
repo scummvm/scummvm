@@ -111,7 +111,7 @@ void showCast() {
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(520, 240), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(560, 240), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
@@ -152,7 +152,7 @@ void showCast() {
 				ImGui::TableSetupColumn("#", 0, 20.f);
 				ImGui::TableSetupColumn("Script", 0, 80.f);
 				ImGui::TableSetupColumn("Type", 0, 80.f);
-				ImGui::TableSetupColumn("Preview", 0, 32.f);
+				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 80.f);
 				ImGui::TableHeadersRow();
 
 				for (auto it : *movie->getCasts()) {
@@ -186,9 +186,35 @@ void showCast() {
 						ImGui::Text("%s", toString(castMember._value->_type));
 
 						ImGui::TableNextColumn();
-						ImGuiImage imgID = getImageID(castMember._value);
-						if (imgID.id) {
-							showImage(imgID, name.c_str(), 32.f);
+						if (castMember._value->_type == kCastBitmap) {
+							ImGuiImage imgID = getImageID(castMember._value);
+							if (imgID.id) {
+								showImage(imgID, name.c_str(), 32.f);
+							}
+						} else if (castMember._value->_type == kCastText) {
+							const char *text = Common::toPrintable(((TextCastMember *)castMember._value)->_rtext).c_str();
+							ImVec2 textSize = ImGui::CalcTextSize(text);
+							float columnWidth = ImGui::GetColumnWidth();
+							float offsetX = (columnWidth - textSize.x) * 0.5f;
+
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+							ImGui::Text("%s", text);
+						} else if (castMember._value->_type == kCastButton) {
+							ImGui::PushID(castMember._value->getID());
+							ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+
+							ImGui::BeginChild("Button Cast", ImVec2(200, 20), (ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize));
+
+							const char *text = Common::toPrintable(((TextCastMember *)castMember._value)->_rtext).c_str();
+							ImVec2 textSize = ImGui::CalcTextSize(text);
+							float offsetX = (200 /* child size */ - textSize.x) * 0.5f;
+
+							ImGui::SetCursorPosX(offsetX);
+							ImGui::Text("%s", text);
+							ImGui::EndChild();
+
+							ImGui::PopStyleColor();
+							ImGui::PopID();
 						}
 					}
 				}

@@ -193,7 +193,7 @@ ImGuiImage getImageID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
-ImVec4 convertColor(uint32 color);
+void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
