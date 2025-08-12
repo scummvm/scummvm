@@ -937,21 +937,58 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"APPLIS/appli_06.ini", kSaveModeSave, nullptr, "app info" },
 	{"APPLIS/appli_07.ini", kSaveModeSave, nullptr, "app info" },
 
-	// Adi 4 / Addy 4 Base
-	{"DATA/config00.inf", kSaveModeSave, nullptr, nullptr        },
-	{"DATA/statev00.inf", kSaveModeSave, nullptr, nullptr        },
-	// Adi 4 / Addy 4 Grundschule
-	{ "premier.dep", kSaveModeSave, nullptr, nullptr        },
-	{ "quitter.dep", kSaveModeSave, nullptr, nullptr        },
-	{   "appel.dep", kSaveModeSave, nullptr, nullptr        },
-	{  "parole.dep", kSaveModeSave, nullptr, nullptr        },
-	{    "ado4.inf", kSaveModeSave, nullptr, nullptr        },
-	{"mcurrent.inf", kSaveModeSave, nullptr, nullptr        },
-	{   "perso.dep", kSaveModeSave, nullptr, nullptr        },
-	{ "nouveau.dep", kSaveModeSave, nullptr, nullptr        },
-	{     "adi.tmp", kSaveModeSave, nullptr, nullptr        },
-	{     "adi.inf", kSaveModeSave, nullptr, nullptr        },
-	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        },
+	// Adi 4
+	// Temporary ancillary files
+	{"DATA/premier.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/quitter.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/appel.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/parole.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/perso.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/nouveau.dep", kSaveModeSave, nullptr, nullptr},
+	{"DATA/iduser.tmp", kSaveModeSave, nullptr, nullptr},
+	{"adi.tmp", kSaveModeSave, nullptr, nullptr},
+	{"adi4.tmp", kSaveModeSave, nullptr, nullptr},
+
+	// Persitent files
+	{"DATA/iduser.inf", kSaveModeSave, nullptr, nullptr},
+	{"adi.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/ado4.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/mcurrent.inf", kSaveModeSave, nullptr, nullptr},
+
+	{"DATA/config00.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config01.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config02.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config03.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config04.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config05.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config06.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config07.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config08.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config09.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config10.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config10.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config12.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config13.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config14.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/config15.inf", kSaveModeSave, nullptr, nullptr},
+
+	{"DATA/statev00.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev01.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev02.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev03.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev04.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev05.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev06.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev07.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev08.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev09.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev10.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev10.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev12.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev13.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev14.inf", kSaveModeSave, nullptr, nullptr},
+	{"DATA/statev15.inf", kSaveModeSave, nullptr, nullptr},
+
 };
 
 SaveLoad_v7::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
@@ -1395,7 +1432,6 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		_saveFiles[index++].handler = _adibou2AppIcoHandler[i] = new SpriteHandler(_vm, targetName, Common::String::format("app_ico%02d", i + 1));
 	}
 
-	const Common::Array<int> applisOffsets = {0, 4, 8, 12, 16, 20};
 	_saveFiles[index++].handler = _adibou2ApplicationsInfoHandler = new GameFileHandler(_vm, targetName, "applis");
 	_saveFiles[index++].handler = _adibou2LanceHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _adibou2RetourHandler = new FakeFileHandler(_vm);
@@ -1478,19 +1514,48 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 																					   Common::String::format("appli_%02d_ini", i + 1));
 	}
 
-	for (int i = 0; i < 2; i++)
-		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
+	for (uint32 i = 0; i < kAdi4NbrOfTempFiles; i++) {
+		_saveFiles[index++].handler = _adi4TempFileHandler[i] = new FakeFileHandler(_vm);
+	}
 
-	for (int i = 0; i < 11; i++)
-		_saveFiles[index++].handler = _addy4GrundschuleHandler[i] = new FakeFileHandler(_vm);
+	int indexAdi4file = 0;
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "id_user");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "adi");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "ado4");
+
+	_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																							  targetName,
+																							  "mcurrent");
+
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																								  targetName,
+																								  Common::String::format("config%02d", i));
+	}
+
+	for (uint32 i = 0; i < kChildrenCount; i++) {
+		_saveFiles[index++].handler = _adi4GameFileHandler[indexAdi4file++] = new GameFileHandler(_vm,
+																								  targetName,
+																								  Common::String::format("statev%02d", i));
+	}
 }
 
 SaveLoad_v7::~SaveLoad_v7() {
-	for (int i = 0; i < 11; i++)
-		delete _addy4GrundschuleHandler[i];
+	for (uint32 i = 0; i < kAdi4NbrOfTempFiles; i++) {
+		delete _adi4TempFileHandler[i];
+	}
 
-	for (int i = 0; i < 2; i++)
-		delete _addy4BaseHandler[i];
+	for (uint32 i = 0; i < kAdi4NbrOfGameFiles; i++) {
+		delete _adi4GameFileHandler[i];
+	}
 
 	delete _configHandler;
 	for (int i = 0; i < 4; i++)

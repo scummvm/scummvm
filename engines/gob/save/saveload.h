@@ -981,6 +981,10 @@ public:
 	static const uint32 kAdibou2NbrOfApplications = 7;
 	static const uint32 kAdibou2NbrOfSavedDrawings = 12;
 	static const uint32 kAdibou2NbrOfConstructionGameFiles = 3;
+
+	static const uint32 kAdi4NbrOfTempFiles = 9;
+	static const uint32 kAdi4NbrOfGameFiles = 36;
+
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
 
@@ -1110,8 +1114,8 @@ protected:
 	GameFileHandler             *_adibou2AppProgressExtHandler[kAdibou2NbrOfApplications - 4][kChildrenCount];
 	GameFileHandler             *_adibou2AppliIniHandler[kAdibou2NbrOfApplications];
 
-	FakeFileHandler             *_addy4BaseHandler[2];
-	FakeFileHandler             *_addy4GrundschuleHandler[11];
+	FakeFileHandler             *_adi4TempFileHandler[kAdi4NbrOfTempFiles];
+	GameFileHandler             *_adi4GameFileHandler[kAdi4NbrOfGameFiles];
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;
