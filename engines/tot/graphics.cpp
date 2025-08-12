@@ -88,6 +88,7 @@ void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 			drawScreen(scene);
 		}
 	} else {
+		effectNumber = 13;
 		cpCounter2 = cpCounter;
 		if (cpCounter > 145)
 			showError(274);
@@ -125,7 +126,7 @@ void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 						j1 = 10;
 						do {
 							bar((i1 - i2), (j1 - i2), (i1 + i2), (j1 + i2), 0);
-							// updateSceneAreaIfNeeded();
+							updateSceneAreaIfNeeded();
 							j1 += 20;
 						} while (j1 != 150);
 						i1 += 20;
@@ -444,8 +445,8 @@ void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 						int color = scene[4 + (j1 * 320) + i1];
 						*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
 					}
-					delay(2);
-					updateSceneAreaIfNeeded(3);
+					delay(1);
+					updateSceneAreaIfNeeded();
 				}
 			} break;
 			case 14: {

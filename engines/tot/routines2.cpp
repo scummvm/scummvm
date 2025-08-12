@@ -308,9 +308,18 @@ void freeScreenObjects() {
 void freeAnimation() {
 	if (isSecondaryAnimationEnabled) {
 		isSecondaryAnimationEnabled = false;
-		if(curSecondaryAnimationFrame)
+		if(curSecondaryAnimationFrame != NULL) {
 			free(curSecondaryAnimationFrame);
+		}
 		curSecondaryAnimationFrame = NULL;
+		for(int j = 0; j < secondaryAnimDirCount; j++){
+			for(int i = 0; i < secondaryAnimationFrameCount; i++){
+				if(secondaryAnimation.bitmap[j][i] != NULL) {
+					free(secondaryAnimation.bitmap[j][i]);
+				}
+				secondaryAnimation.bitmap[j][i] = NULL;
+			}
+		}
 	}
 }
 

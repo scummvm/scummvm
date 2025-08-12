@@ -491,7 +491,7 @@ void clearVars() {
 		}
 	}
 
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < secondaryAnimDirCount; i++) {
 		for (int j = 0; j < secAnimationFrameCount; j++) {
 			if(secondaryAnimation.bitmap[i][j] != NULL){
 				free(secondaryAnimation.bitmap[i][j]);
