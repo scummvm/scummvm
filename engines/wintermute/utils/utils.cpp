@@ -320,7 +320,7 @@ static inline void swapBytes(byte *l, byte *r, uint32 size) {
 
 static void smallSort(void *base, uint32 num, uint32 size,
 	              int32 (*compare)(const void *, const void *)) {
-	byte *max, *p;
+	byte *max, *p = nullptr;
 
 	for (uint32 e = num; e > 1; e--) {
 		max = (byte *)base;
