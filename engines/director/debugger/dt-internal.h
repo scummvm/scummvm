@@ -106,16 +106,20 @@ typedef struct ImGuiState {
 		int _typeFilter = 0x7FFF;
 	} _cast;
 	struct {
-		Common::Array<ImGuiScript> _scripts;
-		uint _current = 0;
+		struct ScriptData {
+			Common::Array<ImGuiScript> _scripts;
+			uint _current = 0;
+			bool _showByteCode = false;
+			bool _showScript = false;
+		} *_scriptData;
 		ImGuiTextFilter _nameFilter;
-		bool _showByteCode = false;
-		bool _showScript = false;
+		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
+
 	struct {
+		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
-		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 	} _dbg;
 
 	struct {

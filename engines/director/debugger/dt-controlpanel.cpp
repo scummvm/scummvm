@@ -24,16 +24,19 @@
 
 #include "director/archive.h"
 #include "director/movie.h"
+#include "director/window.h"
 #include "director/score.h"
 
 namespace Director {
 namespace DT {
 
 static uint32 getLineFromPC() {
+	_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
+
 	const uint pc = g_lingo->_state->pc;
-	if (_state->_functions._scripts.empty())
+	if (_state->_functions._scriptData->_scripts.empty())
 		return 0;
-	const Common::Array<uint> &offsets = _state->_functions._scripts[_state->_functions._current].startOffsets;
+	const Common::Array<uint> &offsets = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].startOffsets;
 	for (uint i = 0; i < offsets.size(); i++) {
 		if (pc <= offsets[i])
 			return i;
@@ -120,6 +123,9 @@ void showControlPanel() {
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
+
+	_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
+	debug("What is the current movie in the control panel: %s", g_director->getCurrentMovie()->getMacName().c_str());
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
 		Movie *movie = g_director->getCurrentMovie();
