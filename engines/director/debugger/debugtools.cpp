@@ -26,6 +26,7 @@
 #include "director/lingo/lingodec/script.h"
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
+#include "director/castmember/shape.h"
 #include "director/debugger.h"
 #include "director/movie.h"
 #include "director/picture.h"
@@ -174,6 +175,34 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	ImGui::Image(image.id, size);
 	ImGui::EndGroup();
 	setToolTipImage(image, name);
+}
+
+void showShape(CastMember *cast, float thumbnailSize) {
+	// Show in a square box
+	Common::Rect bbox = cast->getBbox();
+	ImVec2 size = {thumbnailSize - 2, (thumbnailSize - 2) * bbox.height() / bbox.width()};
+
+	ImGui::BeginGroup();
+	ImVec2 screenPos = ImGui::GetCursorScreenPos();
+	ImDrawList *dl = ImGui::GetWindowDrawList();
+
+	// If there is no background, set it to white
+	if (cast->getBackColor()) {
+		dl->AddRectFilled(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), cast->getBackColor());
+	} else {
+		dl->AddRectFilled(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
+	}
+	ImVec2 shapePos = screenPos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
+
+	uint8 foreCol = cast->getForeColor();
+	debug("%d: bg: %x, fg: %x", cast->getBackColor(), cast->getForeColor(), cast->getID());
+
+	// The forecolor is in 8 bit format
+	dl->AddRectFilled(shapePos, shapePos + size, cast->getForeColor());
+
+	// Have to add this to make the column auto adjust to correct height
+	ImGui::Dummy(ImVec2(thumbnailSize, thumbnailSize));
+	ImGui::EndGroup();
 }
 
 void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
