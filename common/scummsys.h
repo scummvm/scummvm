@@ -482,7 +482,8 @@
 #endif
 
 //
-// std::nullptr_t when this type is not available
+// std::nullptr_t when unavailable (e.g. the compiler supports C++11,
+// but the standard library is older and has incomplete C++11 support)
 //
 #if defined(NO_CXX11_NULLPTR_T)
 namespace std {
@@ -491,8 +492,8 @@ namespace std {
 #endif
 
 //
-// std::initializer_list
-// Provide replacement when not available
+// std::initializer_list when unavailable (e.g. the compiler supports C++11,
+// but the standard library is older and has incomplete C++11 support)
 //
 #if defined(NO_CXX11_INITIALIZER_LIST)
 namespace std {
