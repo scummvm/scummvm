@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -84,6 +85,7 @@ LeverControl::~LeverControl() {
 }
 
 void LeverControl::parseLevFile(const Common::Path &fileName) {
+	debugC(2, kDebugControl, "LeverControl::parseLevFile(%s)", fileName.toString().c_str());
 	Common::File file;
 	if (!file.open(fileName)) {
 		warning("LEV file %s could could be opened", fileName.toString().c_str());
@@ -160,7 +162,7 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 					uint angle;
 					uint toFrame;
 					if (sscanf(token.c_str(), "%u,%u", &toFrame, &angle) == 2)
-						_frameInfo[frameNumber].directions.push_back(Direction(angle, toFrame));
+						_frameInfo[frameNumber].paths.push_back(PathSegment(angle, toFrame));
 				} else if (token.hasPrefix("p")) {
 					// Format: P(<from> to <to>)
 					tokenizer.nextToken();
@@ -177,6 +179,19 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 
 		// Don't read lines in this place because last will not be parsed.
 	}
+	// Cycle through all unit direction vectors in path segments & determine step distance
+	debugC(3, kDebugControl, "Setting step distances");
+	for(uint frame=0; frame < _frameCount; frame++) {
+		debugC(3, kDebugControl, "Frame %d", frame);
+		for(auto &iter : _frameInfo[frame].paths) {
+			uint destFrame = iter.toFrame;
+			Common::Point deltaPos = _frameInfo[destFrame].hotspot.origin() - _frameInfo[frame].hotspot.origin();
+			Math::Vector2d deltaPosVector((float)deltaPos.x, (float)deltaPos.y);
+			iter.distance *= deltaPosVector.getMagnitude();
+			debugC(3, kDebugControl, "\tdeltaPos = %d,%d, Distance %f", deltaPos.x, deltaPos.y, iter.distance);
+		}
+	}
+	debugC(2, kDebugControl, "LeverControl::~parseLevFile()");
 }
 
 bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
@@ -186,7 +201,7 @@ bool LeverControl::onMouseDown(const Common::Point &screenSpacePos, const Common
 	if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
 		setVenus();
 		_mouseIsCaptured = true;
-		_lastMousePos = backgroundImageSpacePos;
+		_gripOffset = backgroundImageSpacePos - _frameInfo[_currentFrame].hotspot.origin();
 	}
 	return false;
 }
@@ -203,6 +218,7 @@ bool LeverControl::onMouseUp(const Common::Point &screenSpacePos, const Common::
 		_returnRoutesCurrentProgress = _frameInfo[_currentFrame].returnRoute.begin();
 		_returnRoutesCurrentFrame = _currentFrame;
 	}
+	_gripOffset = Common::Point(0,0);
 	return false;
 }
 
@@ -213,21 +229,18 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
-		// Make sure the square distance between the last point and the current point is greater than 16
-		// This is a heuristic. This determines how responsive the lever is to mouse movement.
-		if (_lastMousePos.sqrDist(backgroundImageSpacePos) >= 16) {
-			int angle = calculateVectorAngle(_lastMousePos, backgroundImageSpacePos);
-			_lastMousePos = backgroundImageSpacePos;
+		Common::Point deltaPos = (backgroundImageSpacePos - _gripOffset) - _frameInfo[_currentFrame].hotspot.origin();
 
-			for (Common::List<Direction>::iterator iter = _frameInfo[_currentFrame].directions.begin(); iter != _frameInfo[_currentFrame].directions.end(); ++iter) {
-				if (angle >= (int)iter->angle - ANGLE_DELTA && angle <= (int)iter->angle + ANGLE_DELTA) {
-					_currentFrame = iter->toFrame;
-					renderFrame(_currentFrame);
-					_engine->getScriptManager()->setStateValue(_key, _currentFrame);
-					break;
-				}
-			}
+
+		debugC(1, kDebugControl, "LeverControl::onMouseMove()");
+		debugC(1, kDebugControl, "\tscreenPos = %d,%d, imagePos = %d,%d, deltaPos = %d,%d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y, deltaPos.x, deltaPos.y);
+
+		_currentFrame = nextFrame(deltaPos);
+		if(_lastRenderedFrame != _currentFrame) {
+			renderFrame(_currentFrame);
+			_engine->getScriptManager()->setStateValue(_key, _currentFrame);
 		}
+
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	} else if (_frameInfo[_currentFrame].hotspot.contains(backgroundImageSpacePos)) {
@@ -238,14 +251,25 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	return cursorWasChanged;
 }
 
+uint LeverControl::nextFrame(Common::Point &deltaPos) {
+	Math::Vector2d movement((float)deltaPos.x, (float)deltaPos.y);
+	for (auto &iter : _frameInfo[_currentFrame].paths) {
+		debugC(1, kDebugControl, "\tPossible step = %f,%f, angle = %d, distance %f", iter.direction.getX(), iter.direction.getY(), (uint)Math::rad2deg(iter.angle), iter.distance);
+		if (movement.dotProduct(iter.direction) >= iter.distance/2) {
+			return iter.toFrame;
+		}
+	}
+	return _currentFrame;
+}
+
 bool LeverControl::process(uint32 deltaTimeInMillis) {
 	if (_engine->getScriptManager()->getStateFlag(_key) & Puzzle::DISABLED)
 		return false;
 
 	if (_isReturning) {
 		_accumulatedTime += deltaTimeInMillis;
-		while (_accumulatedTime >= ANIMATION_FRAME_TIME) {
-			_accumulatedTime -= ANIMATION_FRAME_TIME;
+		while (_accumulatedTime >= _returnFramePeriod) {
+			_accumulatedTime -= _returnFramePeriod;
 			if (_returnRoutesCurrentFrame == *_returnRoutesCurrentProgress) {
 				_returnRoutesCurrentProgress++;
 			}
@@ -268,95 +292,6 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 	}
 
 	return false;
-}
-
-int LeverControl::calculateVectorAngle(const Common::Point &pointOne, const Common::Point &pointTwo) {
-	// Check for the easy angles first
-	if (pointOne.x == pointTwo.x && pointOne.y == pointTwo.y)
-		return -1; // This should never happen
-	else if (pointOne.x == pointTwo.x) {
-		if (pointTwo.y < pointOne.y)
-			return 90;
-		else
-			return 270;
-	} else if (pointOne.y == pointTwo.y) {
-		if (pointTwo.x > pointOne.x)
-			return 0;
-		else
-			return 180;
-	} else {
-		// Calculate the angle with trig
-		int16 xDist = pointTwo.x - pointOne.x;
-		int16 yDist = pointTwo.y - pointOne.y;
-
-		// Calculate the angle using arctan
-		// Then convert to degrees. (180 / 3.14159 = 57.2958)
-		int angle = int(atan((float)yDist / (float)abs(xDist)) * 57);
-
-		// Calculate what quadrant pointTwo is in
-		uint quadrant = ((yDist > 0 ? 1 : 0) << 1) | (xDist < 0 ? 1 : 0);
-
-		// Explanation of quadrants:
-		//
-		// yDist > 0  | xDist < 0 | Quadrant number
-		//     0      |     0     |   0
-		//     0      |     1     |   1
-		//     1      |     0     |   2
-		//     1      |     1     |   3
-		//
-		// Note: I know this doesn't line up with traditional mathematical quadrants
-		// but doing it this way allows you can use a switch and is a bit cleaner IMO.
-		//
-		// The graph below shows the 4 quadrants pointTwo can end up in as well
-		// as what the angle as calculated above refers to.
-		// Note: The calculated angle in quadrants 0 and 3 is negative
-		// due to arctan(-x) = -theta
-		//
-		// Origin => (pointOne.x, pointOne.y)
-		//   *    => (pointTwo.x, pointTwo.y)
-		//
-		//                         90                                             |
-		//                         ^                                              |
-		//                 *       |       *                                      |
-		//                  \      |      /                                       |
-		//                   \     |     /                                        |
-		//                    \    |    /                                         |
-		// Quadrant 1          \   |   /         Quadrant 0                       |
-		//                      \  |  /                                           |
-		//                       \ | /                                            |
-		//                angle ( \|/ ) -angle                                    |
-		// 180 <----------------------------------------> 0                       |
-		//               -angle ( /|\ )  angle                                    |
-		//                       / | \                                            |
-		//                      /  |  \                                           |
-		// Quadrant 3          /   |   \         Quadrant 2                       |
-		//                    /    |    \                                         |
-		//                   /     |     \                                        |
-		//                  /      |      \                                       |
-		//                 *       |       *                                      |
-		//                         ^                                              |
-		//                        270                                             |
-
-		// Convert the local angles to unit circle angles
-		switch (quadrant) {
-		case 0:
-			angle = -angle;
-			break;
-		case 1:
-			angle = angle + 180;
-			break;
-		case 2:
-			angle = 360 - angle;
-			break;
-		case 3:
-			angle = 180 + angle;
-			break;
-		default:
-			break;
-		}
-
-		return angle;
-	}
 }
 
 void LeverControl::renderFrame(uint frameNumber) {
