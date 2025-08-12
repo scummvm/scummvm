@@ -63,7 +63,7 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 }
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
-	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Director::Movie *movie = g_director->getCurrentMovie();
 	const Cast *cast = movie->getCasts()->getVal(id.castLib);
 
 	const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
@@ -177,6 +177,15 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
+// ImGuiImage getShapeID(CastMember *castMember) {
+// 	if (castMember->_type != CastType::kCastShape)
+// 		return {};
+
+// 	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
+// 	Common::Rect bbox(shapeMember->getBbox());
+
+// }
+
 void showShape(CastMember *cast, float thumbnailSize) {
 	// Show in a square box
 	Common::Rect bbox = cast->getBbox();
@@ -187,11 +196,6 @@ void showShape(CastMember *cast, float thumbnailSize) {
 	ImDrawList *dl = ImGui::GetWindowDrawList();
 
 	// If there is no background, set it to white
-	if (cast->getBackColor()) {
-		dl->AddRectFilled(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), cast->getBackColor());
-	} else {
-		dl->AddRectFilled(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
-	}
 	ImVec2 shapePos = screenPos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
 
 	uint8 foreCol = cast->getForeColor();
@@ -262,14 +266,15 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 void setScriptToDisplay(const ImGuiScript &script) {
-	uint index = _state->_functions._scripts.size();
-	if (index && _state->_functions._scripts[index - 1] == script) {
-		_state->_functions._showScript = true;
+	uint index = _state->_functions._scriptData->_scripts.size();
+	if (index && _state->_functions._scriptData->_scripts[index - 1] == script) {
+		debug("Here I returned: %s", g_director->getCurrentMovie()->getMacName().c_str());
+		_state->_functions._scriptData->_showScript = true;
 		return;
 	}
-	_state->_functions._scripts.push_back(script);
-	_state->_functions._current = index;
-	_state->_functions._showScript = true;
+	_state->_functions._scriptData->_scripts.push_back(script);
+	_state->_functions._scriptData->_current = index;
+	_state->_functions._scriptData->_showScript = true;
 }
 
 void displayScriptRef(CastMemberID &scriptId) {
