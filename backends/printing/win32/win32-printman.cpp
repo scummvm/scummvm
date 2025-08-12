@@ -50,6 +50,13 @@ void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 
 	HDC hdcPrint = createDefaultPrinterContext();
 
+	DOCINFOA info;
+	info.cbSize = sizeof(info);
+	info.fwType = 0;
+	info.lpszDatatype = nullptr;
+	info.lpszOutput = nullptr;
+	info.lpszDocName = _jobName.c_str();
+
 	HDC hdcImg = CreateCompatibleDC(hdcPrint);
 
 	HBITMAP bitmap = buildBitmap(hdcPrint, surf);
@@ -58,14 +65,15 @@ void Win32PrintingManager::doPrint(const Graphics::ManagedSurface &surf) {
 		return;
 	}
 
-	Escape(hdcPrint, STARTDOC, _jobName.size(), _jobName.c_str(), NULL);
+	StartDocA(hdcPrint, &info);
+	StartPage(hdcPrint);
 
 	SelectObject(hdcImg, bitmap);
 
 	BitBlt(hdcPrint, 0, 0, surf.w, surf.h, hdcImg, 0, 0, SRCCOPY);
 
-	Escape(hdcPrint, NEWFRAME, 0, NULL, NULL);
-	Escape(hdcPrint, ENDDOC, 0, NULL, NULL);
+	EndPage(hdcPrint);
+	EndDoc(hdcPrint);
 
 	DeleteObject(bitmap);
 	DeleteDC(hdcImg);
