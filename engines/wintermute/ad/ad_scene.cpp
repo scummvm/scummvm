@@ -1433,7 +1433,7 @@ bool AdScene::displayRegionContent(AdRegion *region, bool display3DOnly) {
 	}
 
 	// sort by _posY
-	qsort(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
+	qsort_msvc(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
 
 	// display them
 	for (int32 i = 0; i < objects.getSize(); i++) {
@@ -3752,7 +3752,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 	}
 
 	// sort by _posY
-	qsort(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
+	qsort_msvc(objects.getData(), objects.getSize(), sizeof(AdObject *), AdScene::compareObjs);
 
 	return STATUS_OK;
 }

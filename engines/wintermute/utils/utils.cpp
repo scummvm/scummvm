@@ -25,6 +25,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+/*
+ * qsort code originated from Wine sources.
+ * Copyright 2000 Jon Griffiths
+ * Copyright 2014 Piotr Caban
+ */
+
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -300,6 +306,118 @@ float BaseUtils::Hue2RGB(float v1, float v2, float vH) {
 		return (v1 + (v2 - v1) * ((2.0f / 3.0f) - vH) * 6.0f);
 	}
 	return (v1);
+}
+
+static inline void swapBytes(byte *l, byte *r, uint32 size) {
+	byte tmp;
+
+	while (size--) {
+		tmp = *l;
+		*l++ = *r;
+		*r++ = tmp;
+	}
+}
+
+static void smallSort(void *base, uint32 num, uint32 size,
+	              int32 (*compare)(const void *, const void *)) {
+	byte *max, *p;
+
+	for (uint32 e = num; e > 1; e--) {
+		max = (byte *)base;
+		for (uint32 i = 1; i < e; i++) {
+			p = (byte *)base + i * size;
+			if (compare(p, max) > 0)
+				max = p;
+		}
+
+		if (p != max)
+			swapBytes(p, max, size);
+	}
+}
+
+static void quickSort(void *base, uint32 num, uint32 size,
+	              int32 (*compare)(const void *, const void *)) {
+	uint32 stackLo[8 * sizeof(uint32)], stackHi[8 * sizeof(uint32)];
+	uint32 beg, end, lo, hi, med;
+	int32 stackPos;
+
+	stackPos = 0;
+	stackLo[stackPos] = 0;
+	stackHi[stackPos] = num - 1;
+
+#define X(i) ((byte *)base + size * (i))
+	while (stackPos >= 0) {
+		beg = stackLo[stackPos];
+		end = stackHi[stackPos--];
+
+		if (end - beg < 8) {
+			smallSort(X(beg), end - beg + 1, size, compare);
+			continue;
+		}
+
+		lo = beg;
+		hi = end;
+		med = lo + (hi - lo + 1) / 2;
+		if (compare(X(lo), X(med)) > 0)
+			swapBytes(X(lo), X(med), size);
+		if (compare(X(lo), X(hi)) > 0)
+			swapBytes(X(lo), X(hi), size);
+		if (compare(X(med), X(hi)) > 0)
+			swapBytes(X(med), X(hi), size);
+
+		lo++;
+		hi--;
+		while (1) {
+			while (lo <= hi) {
+				if (lo != med && compare(X(lo), X(med)) > 0)
+					break;
+				lo++;
+			}
+
+			while (med != hi) {
+				if (compare(X(hi), X(med)) <= 0)
+					break;
+				hi--;
+			}
+
+			
+			if (hi < lo)
+				break;
+
+			swapBytes(X(lo), X(hi), size);
+			if (hi == med)
+				med = lo;
+			lo++;
+			hi--;
+		}
+
+		while (hi > beg) {
+			if (hi != med && compare(X(hi), X(med)) != 0)
+				break;
+			hi--;
+		}
+
+		if (hi - beg >= end-lo) {
+			stackLo[++stackPos] = beg;
+			stackHi[stackPos] = hi;
+			stackLo[++stackPos] = lo;
+			stackHi[stackPos] = end;
+		} else {
+			stackLo[++stackPos] = lo;
+			stackHi[stackPos] = end;
+			stackLo[++stackPos] = beg;
+			stackHi[stackPos] = hi;
+		}
+	}
+#undef X
+}
+
+void qsort_msvc(void *base, uint32 num, uint32 size,
+	        int32 (*compare)(const void *, const void *)) {
+	if (base == NULL || num == 0)
+		return;
+
+	quickSort(base, num, size, compare);
 }
 
 } // End of namespace Wintermute

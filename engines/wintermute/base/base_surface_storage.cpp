@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/utils/utils.h"
 #include "common/str.h"
 
 namespace Wintermute {
@@ -170,7 +171,7 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::sortSurfaces() {
-	qsort(_surfaces.getData(), _surfaces.getSize(), sizeof(BaseSurface *), surfaceSortCB);
+	qsort_msvc(_surfaces.getData(), _surfaces.getSize(), sizeof(BaseSurface *), surfaceSortCB);
 	return STATUS_OK;
 }
 

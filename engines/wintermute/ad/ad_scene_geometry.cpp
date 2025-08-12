@@ -50,6 +50,7 @@
 #include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
 
@@ -949,7 +950,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 
 		// sort by distance
 		if (activeLights.getSize() > 0) {
-			qsort(activeLights.getData(), activeLights.getSize(), sizeof(Light3D *), AdSceneGeometry::compareLights);
+			qsort_msvc(activeLights.getData(), activeLights.getSize(), sizeof(Light3D *), AdSceneGeometry::compareLights);
 
 			for (int32 i = 0; i < activeLights.getSize(); i++) {
 				activeLights[i]->_isAvailable = static_cast<int32>(i) < maxLights;

@@ -60,6 +60,9 @@ private:
 	static float Hue2RGB(float v1, float v2, float vH);
 };
 
+void qsort_msvc(void *base, uint32 nmemb, uint32 size,
+                int (*compare)(const void *, const void *));
+
 } // End of namespace Wintermute
 
 #endif

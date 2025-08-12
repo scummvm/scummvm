@@ -366,7 +366,7 @@ bool PartEmitter::start() {
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::sortParticlesByZ() {
 	// sort particles by _posY
-	qsort(_particles.getData(), _particles.getSize(), sizeof(PartParticle *), PartEmitter::compareZ);
+	qsort_msvc(_particles.getData(), _particles.getSize(), sizeof(PartParticle *), PartEmitter::compareZ);
 	return STATUS_OK;
 }
 
