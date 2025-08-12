@@ -8,7 +8,7 @@
 namespace Tot {
 
 // Enforces a small delay when text reveal is supposed to happen
-const int enforcedTextAnimDelay = 0;
+const int kEnforcedTextAnimDelay = 0;
 
 void showError(int code) {
 	switch (code) {
@@ -472,10 +472,7 @@ void changeGameSpeed(Common::Event e) {
 	if (e.type == Common::EVENT_KEYUP) {
 		if (e.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (e.kbd.keycode == Common::KEYCODE_f) {
-				if (g_engine->_chrono->_speedMultiplier == 1)
-					g_engine->_chrono->_speedMultiplier = 3;
-				else
-					g_engine->_chrono->_speedMultiplier = 1;
+				g_engine->_chrono->changeSpeed();
 			}
 		}
 	}
@@ -485,14 +482,14 @@ void emptyLoop() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!timeToDraw && !g_engine->shouldQuit());
+	} while (!gameTick && !g_engine->shouldQuit());
 }
 
 void emptyLoop2() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!timeToDraw2);
+	} while (!gameTickHalfSpeed);
 }
 
 void waitForKey() {

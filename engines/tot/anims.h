@@ -25,9 +25,9 @@
 
 namespace Tot {
 
-void drawFlc(uint flicx, uint flicy, int32 posicionfli, uint loop,
-			 byte veloc, byte numevento, bool palcompleta, bool permitesalida,
-			 bool doscientos, bool &salidaflis);
+void drawFlc(uint x, uint y, int32 offset, uint loop,
+			 byte speed, byte eventNumber, bool fullPalette, bool isSkipAllowed,
+			 bool limitPaletteTo200, bool &exitAnim);
 
 void clearAnims();
 /**

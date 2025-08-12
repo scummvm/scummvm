@@ -20,8 +20,8 @@
  */
 
 #include "tot/console.h"
-#include "tot/vars.h"
 #include "tot/routines.h"
+#include "tot/vars.h"
 
 namespace Tot {
 
@@ -36,9 +36,7 @@ TotConsole::TotConsole(TotEngine *engine) : _engine(engine) {
 }
 
 TotConsole::~TotConsole() {
-
 }
-
 
 bool TotConsole::cmdShowMouseGrid(int argc, const char **argv) {
 	_engine->_showMouseGrid = true;
@@ -90,7 +88,6 @@ bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
 	debugPrintf("Loaded screen %d", roomID);
 	return true;
 }
-
 
 bool TotConsole::cmdJumpToPart2(int argc, const char **argv) {
 	list1Complete = true;

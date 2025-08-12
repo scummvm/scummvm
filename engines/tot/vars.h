@@ -147,7 +147,7 @@ struct ScreenObject {
 	uint16 dropOverlaySize;
 	uint16 objectIconBitmap; /* Icon on the inventory */
 
-	byte xrej1, yrej1, xrej2, yrej2; /* position of patches below*/
+	byte xgrid1, ygrid1, xgrid2, ygrid2; /* position of patches below*/
 
 	byte walkAreasPatch[10][10]; /* patch on the scene's walking area (e.g. object prevents character from walking */
 	byte mouseGridPatch[10][10]; /* patch on the mouse grid area (i.e. selectable area of the object */
@@ -370,7 +370,7 @@ extern palette pal;
 /**
  * These are the icons currnetly in the inventory
  */
-extern InventoryEntry mobj[inventoryIconCount];
+extern InventoryEntry inventory[inventoryIconCount];
 /**
  * Keeps an array of all inventory icon bitmaps
  */

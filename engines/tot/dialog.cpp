@@ -19,17 +19,11 @@
  *
  */
 
-#define __conversa_implementation__
-
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 
-#include "tot/chrono.h"
 #include "tot/dialog.h"
-#include "tot/mouse.h"
 #include "tot/routines.h"
-#include "tot/routines2.h"
-#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {
@@ -347,11 +341,11 @@ void fixTree(Tree tree) {
 	}
 }
 
-void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
-	byte firstChat, convselec;
+void showDialogLine(Common::String conversationMatrix[16], uint &chosenTopic) {
+	byte firstChat, selectedConv;
 
 	firstChat = 1;
-	convselec = 0;
+	selectedConv = 0;
 	g_engine->_mouseManager->hide();
 
 	drawMenu(5);
@@ -380,7 +374,7 @@ void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
 				}
 			}
 
-			if (timeToDraw) {
+			if (gameTick) {
 				if (currentRoomData->paletteAnimationFlag && palAnimStep >= 4) {
 					palAnimStep = 0;
 					if (isPaletteAnimEnabled > 6)
@@ -397,22 +391,22 @@ void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
 
 		if (lMouseClicked) {
 			if (mouseClickY < 143)
-				convselec = 0;
+				selectedConv = 0;
 			else {
 				if (mouseClickX >= 0 && mouseClickX <= 280) {
 					if (mouseClickY >= 143 && mouseClickY <= 155) {
-						convselec = firstChat;
+						selectedConv = firstChat;
 					} else if (mouseClickY >= 156 && mouseClickY <= 166) {
-						convselec = firstChat + 1;
+						selectedConv = firstChat + 1;
 					} else if (mouseClickY >= 167 && mouseClickY <= 177) {
-						convselec = firstChat + 2;
+						selectedConv = firstChat + 2;
 					} else if (mouseClickY >= 178 && mouseClickY <= 186) {
-						convselec = firstChat + 3;
+						selectedConv = firstChat + 3;
 					}
 				} else if (mouseClickX >= 281 && mouseClickX <= 319) {
 					if (mouseClickY >= 143 && mouseClickY <= 165) {
 						if (firstChat > 1) {
-							convselec = 0;
+							selectedConv = 0;
 							firstChat -= 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
@@ -424,7 +418,7 @@ void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
 						}
 					} else if (mouseClickY >= 167 && mouseClickY <= 186) {
 						if (firstChat < 12) {
-							convselec = 0;
+							selectedConv = 0;
 							firstChat += 1;
 							g_engine->_mouseManager->hide();
 							drawMenu(5);
@@ -438,14 +432,14 @@ void showDialogLine(Common::String conversationMatrix[16], uint &choosenTopic) {
 				}
 			}
 		} else if (rMouseClicked)
-			convselec = conversationIndex;
-	} while (!((convselec > 0) && (convselec <= conversationIndex)) && !g_engine->shouldQuit());
+			selectedConv = conversationIndex;
+	} while (!((selectedConv > 0) && (selectedConv <= conversationIndex)) && !g_engine->shouldQuit());
 
-	if (convselec == conversationIndex)
+	if (selectedConv == conversationIndex)
 		endOfConversation = true;
-	for (int i = 1; i <= (convselec - 1); i++)
+	for (int i = 1; i <= (selectedConv - 1); i++)
 		l1 = l1->next;
-	choosenTopic = l1->item;
+	chosenTopic = l1->item;
 }
 
 void talk(byte characterIndex) {
@@ -515,22 +509,22 @@ void talk(byte characterIndex) {
 			case 9: {
 				obtainedList1 = true;
 				invIndex = 0;
-				while (mobj[invIndex].code != 0) {
+				while (inventory[invIndex].code != 0) {
 					invIndex += 1;
 				}
-				mobj[invIndex].bitmapIndex = list1Index;
-				mobj[invIndex].code = list1code;
-				mobj[invIndex].objectName = getObjectName(0);
+				inventory[invIndex].bitmapIndex = list1Index;
+				inventory[invIndex].code = list1code;
+				inventory[invIndex].objectName = getObjectName(0);
 			} break;
 			case 25: {
 				obtainedList2 = true;
 				invIndex = 0;
-				while (mobj[invIndex].code != 0) {
+				while (inventory[invIndex].code != 0) {
 					invIndex += 1;
 				}
-				mobj[invIndex].bitmapIndex = list2Index;
-				mobj[invIndex].code = list2code;
-				mobj[invIndex].objectName = getObjectName(1);
+				inventory[invIndex].bitmapIndex = list2Index;
+				inventory[invIndex].code = list2code;
+				inventory[invIndex].objectName = getObjectName(1);
 			} break;
 			}
 		}

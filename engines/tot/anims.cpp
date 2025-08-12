@@ -46,35 +46,35 @@ bool firstLoop;
 
 void drawText(uint x, uint y, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte textColor, byte borderColor) {
 
-	littText(x, (y + 3), str1, borderColor);
+	littText(x, (y + 3), str1,  borderColor);
 	littText(x, (y + 13), str2, borderColor);
 	littText(x, (y + 23), str3, borderColor);
 	littText(x, (y + 33), str4, borderColor);
 	littText(x, (y + 43), str5, borderColor);
 	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	littText(x, (y + 1), str1, borderColor);
+	delay(kEnforcedTextAnimDelay);
+	littText(x, (y + 1), str1,  borderColor);
 	littText(x, (y + 11), str2, borderColor);
 	littText(x, (y + 21), str3, borderColor);
 	littText(x, (y + 31), str4, borderColor);
 	littText(x, (y + 41), str5, borderColor);
 	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	littText(x + 1, (y + 2), str1, borderColor);
+	delay(kEnforcedTextAnimDelay);
+	littText(x + 1, (y + 2), str1,  borderColor);
 	littText(x + 1, (y + 12), str2, borderColor);
 	littText(x + 1, (y + 22), str3, borderColor);
 	littText(x + 1, (y + 32), str4, borderColor);
 	littText(x + 1, (y + 42), str5, borderColor);
 	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	littText(x - 1, (y + 2), str1, borderColor);
+	delay(kEnforcedTextAnimDelay);
+	littText(x - 1, (y + 2), str1,  borderColor);
 	littText(x - 1, (y + 12), str2, borderColor);
 	littText(x - 1, (y + 22), str3, borderColor);
 	littText(x - 1, (y + 32), str4, borderColor);
 	littText(x - 1, (y + 42), str5, borderColor);
 	g_engine->_screen->update();
-	delay(enforcedTextAnimDelay);
-	littText(x, (y + 2), str1, textColor);
+	delay(kEnforcedTextAnimDelay);
+	littText(x, (y + 2), str1,  textColor);
 	littText(x, (y + 12), str2, textColor);
 	littText(x, (y + 22), str3, textColor);
 	littText(x, (y + 32), str4, textColor);
@@ -952,7 +952,7 @@ static void loadFlc(
 			if (exitAnim) {
 				goto Lexit_proc;
 			}
-			if (timeToDraw) {
+			if (gameTick) {
 				frameCount++;
 				handleFlcEvent(eventNumber);
 				const Graphics::Surface *frame = flic.decodeNextFrame();
@@ -993,7 +993,7 @@ static void loadFlc(
 						updatePalette(isPaletteAnimEnabled);
 					} else palAnimStep += 1;
 
-					timeToDraw = false;
+					gameTick = false;
 				} else {
 					break;
 				}
@@ -1030,7 +1030,6 @@ void drawFlc(
 	flicFilePos = offset;
 	flicRelativePos = x + y * 320;
 	loadFlc(loop, skipAllowed, exitAnim, numEvent, fullPalette, limitPaletteTo200, speed, x, y);
-	debug("Salida flis: %d", exitAnim);
 }
 
 void clearAnims() {

@@ -189,10 +189,9 @@ void GraphicsManager::putImageArea(uint putcoordx, uint putcoordy, byte *backgro
 
 	for (int i = 0; i < h; i++) {
 		for (int j = 0; j < w; j++) {
-			// if(destPtr > 0)
 			backgroundScreen[posAbs + sourcePtr++] = *destPtr++;
 		}
-		sourcePtr += (320 - w); // Move to the beginning of the next row in PantFondo
+		sourcePtr += (320 - w); // Move to the beginning of the next row in backgroundScreen
 	}
 }
 
@@ -213,7 +212,6 @@ void GraphicsManager::printPalette() {
 			}
 		}
 	}
-	// updateScreen();
 }
 
 void GraphicsManager::printColor(int x, int y, int color) {
