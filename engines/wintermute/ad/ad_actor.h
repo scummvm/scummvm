@@ -52,17 +52,9 @@ public:
 	BasePoint *_targetPoint;
 	bool update() override;
 	bool display() override;
-	virtual void turnTo(TDirection dir);
-	AdActor(BaseGame *inGame/*=nullptr*/);
-	~AdActor() override;
-	bool loadFile(const char *filename);
-	bool loadBuffer(char *buffer, bool complete = true);
-
-
-private:
 	TDirection _targetDir;
 	TDirection _afterWalkDir;
-
+	virtual void turnTo(TDirection dir);
 	AdPath *_path;
 	AdSpriteSet *_walkSprite;
 	AdSpriteSet *_standSprite;
@@ -71,6 +63,11 @@ private:
 	BaseArray<AdSpriteSet *> _talkSprites;
 	BaseArray<AdSpriteSet *> _talkSpritesEx;
 	TDirection _dir;
+	AdActor(BaseGame *inGame/*=nullptr*/);
+	~AdActor() override;
+	bool loadFile(const char *filename);
+	bool loadBuffer(char *buffer, bool complete = true);
+
 	// new anim system
 	Common::String _talkAnimName;
 	Common::String _idleAnimName;

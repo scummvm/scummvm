@@ -83,17 +83,17 @@ bool AdActor::setDefaultAnimNames() {
 //////////////////////////////////////////////////////////////////////////
 AdActor::~AdActor() {
 	delete _path;
-	delete _targetPoint;
 	_path = nullptr;
+	delete _targetPoint;
 	_targetPoint = nullptr;
 
 	delete _walkSprite;
-	delete _standSprite;
-	delete _turnLeftSprite;
-	delete _turnRightSprite;
 	_walkSprite = nullptr;
+	delete _standSprite;
 	_standSprite = nullptr;
+	delete _turnLeftSprite;
 	_turnLeftSprite = nullptr;
+	delete _turnRightSprite;
 	_turnRightSprite = nullptr;
 
 	_animSprite2 = nullptr; // ref only
@@ -390,15 +390,15 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BLOCKED_REGION: {
 			delete _blockRegion;
-			delete _currentBlockRegion;
 			_blockRegion = nullptr;
+			delete _currentBlockRegion;
 			_currentBlockRegion = nullptr;
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				delete _blockRegion;
-				delete _currentBlockRegion;
 				_blockRegion = nullptr;
+				delete _currentBlockRegion;
 				_currentBlockRegion = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -411,15 +411,15 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_WAYPOINTS: {
 			delete _wptGroup;
-			delete _currentWptGroup;
 			_wptGroup = nullptr;
+			delete _currentWptGroup;
 			_currentWptGroup = nullptr;
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				delete _wptGroup;
-				delete _currentWptGroup;
 				_wptGroup = nullptr;
+				delete _currentWptGroup;
 				_currentWptGroup = nullptr;
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -585,7 +585,19 @@ bool AdActor::display() {
 	if (_active && _partEmitter) {
 		_partEmitter->display();
 	}
+/*
+	// accessibility
+	if (Game->m_AccessMgr->GetActiveObject() == this) {
+		float ScaleX, ScaleY;
+		GetScale(&ScaleX, &ScaleY);
 
+		RECT rc;
+		SetRectEmpty(&rc);
+		if (m_CurrentSprite) {
+			m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
+		}
+		Game->m_AccessMgr->SetHintRect(&rc);
+	}*/
 
 	return STATUS_OK;
 }
