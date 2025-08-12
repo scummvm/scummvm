@@ -1893,7 +1893,7 @@ void Ultima8Engine::showSplashScreen() {
 		dest.moveTo((scr->w - dest.width()) / 2, (scr->h - dest.height()) / 2);
 	}
 
-	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h), dest);
+	scr->blitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h), dest);
 	scr->update();
 	// Handle a single event to get the splash screen shown
 	Common::Event event;
