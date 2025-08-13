@@ -350,7 +350,7 @@ void MartianEngine::dead(int deathId) {
 	_events->pollEvents();
 }
 
-void MartianEngine::establish(int esatabIndex, int sub) {
+void MartianEngine::establish(int estabIndex, int sub) {
 	_fonts._charSet._hi = 10;
 	Font::_fontColors[1] = 0xf7;
 	Font::_fontColors[2] = 0xff;
