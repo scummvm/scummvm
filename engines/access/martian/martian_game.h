@@ -68,7 +68,7 @@ public:
 
 	void doSpecial5(int param1);
 	void showExpositionText(Common::String msg);
-	void establish(int esatabIndex, int sub) override;
+	void establish(int estabIndex, int sub) override;
 
 	/**
 	* Synchronize savegame data
