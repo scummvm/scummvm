@@ -125,7 +125,6 @@ void showControlPanel() {
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
 
 	_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
-	debug("What is the current movie in the control panel: %s", g_director->getCurrentMovie()->getMacName().c_str());
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
 		Movie *movie = g_director->getCurrentMovie();

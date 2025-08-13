@@ -113,7 +113,7 @@ void showCast() {
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(560, 240), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(560, 480), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
@@ -249,7 +249,10 @@ void showCast() {
 							{
 								float offsetX = (columnWidth - 32.f) * 0.5f;
 								ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-								showShape((ShapeCastMember *)castMember._value, 32.f);
+								ImGuiImage shapeID = getShapeID(castMember._value);
+								if (shapeID.id) {
+									showImage(shapeID, name.c_str(), 32.f);
+								}
 							}
 							break;
 						default:
