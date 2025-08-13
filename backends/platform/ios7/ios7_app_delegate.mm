@@ -51,9 +51,6 @@
 		[fm createDirectoryAtPath:savePath withIntermediateDirectories:YES attributes:nil error:nil];
 	}
 
-	_window = [[UIWindow alloc] initWithFrame:rect];
-	[_window retain];
-
 	_controller = [[iOS7ScummVMViewController alloc] init];
 
 	_view = [[iPhoneView alloc] initWithFrame:rect];
@@ -64,8 +61,12 @@
 #endif
 	_controller.view = _view;
 
-	[_window setRootViewController:_controller];
-	[_window makeKeyAndVisible];
+	if (@available(iOS 13.0, *)) {
+		// iOS13 and later uses of UIScene.
+		// The keyWindow is setup by iOS7SceneDelegate
+	} else {
+		[iOS7AppDelegate setKeyWindow:[[UIWindow alloc] initWithFrame:rect]];
+	}
 
 	// Force creation of the shared instance on the main thread
 	iOS7_buildSharedOSystemInstance();
@@ -121,6 +122,21 @@
 }
 #endif
 
+#ifdef __IPHONE_13_0
+- (UISceneConfiguration *)application:(UIApplication *)application configurationForConnectingSceneSession:(UISceneSession *)connectingSceneSession options:(UISceneConnectionOptions *)options API_AVAILABLE(ios(13.0)) {
+	// Called when a new scene session is being created.
+	UISceneConfiguration *config = [[UISceneConfiguration alloc] initWithName:@"ScummVM Scene Configuration" sessionRole:connectingSceneSession.role];
+	[config setDelegateClass:NSClassFromString(@"iOS7SceneDelegate")];
+	return config;
+}
+
+- (void)application:(UIApplication *)application didDiscardSceneSessions:(NSSet<UISceneSession *> *)sceneSessions API_AVAILABLE(ios(13.0)) {
+	// Called when the user discards a scene session.
+	// Use this method to release any resources that were
+	// specific to the discarded scenes, as they will not return.
+}
+#endif
+
 - (void)application:(UIApplication *)application didDecodeRestorableStateWithCoder:(NSCoder *)coder {
 	_restoreState = YES;
 }
@@ -148,6 +164,14 @@
 + (UIInterfaceOrientation)currentOrientation {
 	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
 	return [appDelegate->_controller currentOrientation];
+}
+
++ (void)setKeyWindow:(UIWindow *)window {
+	iOS7AppDelegate *appDelegate = [self iOS7AppDelegate];
+	appDelegate->_window = window;
+	[appDelegate->_window retain];
+	[appDelegate->_window setRootViewController:appDelegate->_controller];
+	[appDelegate->_window makeKeyAndVisible];
 }
 #endif
 
