@@ -616,6 +616,21 @@ bool AdEntity::display() {
 			_partEmitter->display(_region);
 		}
 
+		// accessibility
+		/*if (Game->m_AccessMgr->GetActiveObject() == this) {
+			float ScaleX, ScaleY;
+			GetScale(&ScaleX, &ScaleY);
+
+			RECT rc;
+			SetRectEmpty(&rc);
+			if (m_CurrentSprite) {
+				m_CurrentSprite->GetBoundingRect(&rc, m_PosX - Game->m_OffsetX, m_PosY - Game->m_OffsetY, ScaleX, ScaleY);
+			} else if (m_Region) {
+				m_Region->GetBoundingRect(&rc);
+				OffsetRect(&rc, -Game->m_OffsetX, -Game->m_OffsetY);
+			}
+			Game->m_AccessMgr->SetHintRect(&rc);
+		}*/
 	}
 	return STATUS_OK;
 }
@@ -1181,7 +1196,6 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
-
 
 	if (RGBCOLGetR(_alphaColor) != 0 || RGBCOLGetG(_alphaColor) != 0 ||  RGBCOLGetB(_alphaColor) != 0) {
 		buffer->putTextIndent(indent + 2, "ALPHA_COLOR { %d,%d,%d }\n", RGBCOLGetR(_alphaColor), RGBCOLGetG(_alphaColor), RGBCOLGetB(_alphaColor));

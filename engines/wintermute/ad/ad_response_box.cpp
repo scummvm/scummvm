@@ -137,8 +137,7 @@ bool AdResponseBox::createButtons() {
 		UIButton *btn = new UIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
-			btn->_sharedFonts = true;
-			btn->_sharedImages = true;
+			btn->_sharedFonts = btn->_sharedImages = true;
 			btn->_sharedCursors = true;
 			// iconic
 			if (_responses[i]->_icon) {
@@ -160,11 +159,7 @@ bool AdResponseBox::createButtons() {
 			// textual
 			else {
 				btn->setText(_responses[i]->_text);
-				if (_font == nullptr) {
-					btn->_font = _gameRef->_systemFont;
-				} else {
-					btn->_font = _font;
-				}
+				btn->_font = (_font == nullptr) ? _gameRef->_systemFont : _font;
 				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->_systemFont : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
@@ -173,12 +168,9 @@ bool AdResponseBox::createButtons() {
 					btn->_font = _responses[i]->_font;
 				}
 
-				int width = _responseArea.right - _responseArea.left;
-
-				if (width <= 0) {
+				btn->_width = _responseArea.right - _responseArea.left;
+				if (btn->_width <= 0) {
 					btn->_width = _gameRef->_renderer->getWidth();
-				} else {
-					btn->_width = width;
 				}
 			}
 
@@ -200,9 +192,9 @@ bool AdResponseBox::createButtons() {
 			btn->_visible = false;
 			_respButtons.add(btn);
 
-			if (_responseArea.bottom - _responseArea.top < btn->getHeight()) {
+			if (_responseArea.bottom - _responseArea.top < btn->_height) {
 				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
-				_responseArea.bottom += (btn->getHeight() - (_responseArea.bottom - _responseArea.top));
+				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
 			}
 		}
 	}
@@ -470,7 +462,7 @@ bool AdResponseBox::display() {
 	if (!_horizontal) {
 		int32 totalHeight = 0;
 		for (i = 0; i < _respButtons.getSize(); i++) {
-			totalHeight += (_respButtons[i]->getHeight() + _spacing);
+			totalHeight += (_respButtons[i]->_height + _spacing);
 		}
 		totalHeight -= _spacing;
 
@@ -513,8 +505,7 @@ bool AdResponseBox::display() {
 		}
 #endif
 
-		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
-		        || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
+		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right) || (!_horizontal && yyy + _respButtons[i]->_height > rect.bottom)) {
 
 			scrollNeeded = true;
 			_respButtons[i]->_visible = false;
