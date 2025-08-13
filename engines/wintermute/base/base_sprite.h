@@ -58,7 +58,7 @@ public:
 	int32 _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY, uint32 alpha = Graphics::kDefaultRgbaMod, float rotate = Graphics::kDefaultAngle, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
 	bool getCurrentFrame(float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY);
-	bool _canBreak;
+	bool _canBreak{};
 	bool _editorMuted;
 	bool _continuous;
 	void reset();
