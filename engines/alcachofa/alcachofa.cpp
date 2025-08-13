@@ -211,10 +211,9 @@ void AlcachofaEngine::fadeExit() {
 		_renderer->begin();
 		_drawQueue->clear();
 		float t = ((float)(g_system->getMillis() - startTime)) / kFadeOutDuration;
-		if (room != nullptr)
-			room->draw();
 		_drawQueue->add<FadeDrawRequest>(FadeType::ToBlack, t, -kForegroundOrderCount);
-		_drawQueue->draw();
+		if (room != nullptr)
+			room->draw(); // this executes the drawQueue as well
 		_renderer->end();
 
 		limiter.delayBeforeSwap();
@@ -390,8 +389,7 @@ void AlcachofaEngine::getSavegameThumbnail(Graphics::Surface &thumbnail) {
 	g_engine->drawQueue().clear();
 	g_engine->renderer().begin();
 	g_engine->renderer().setOutput(thumbnail);
-	g_engine->player().currentRoom()->draw();
-	g_engine->drawQueue().draw();
+	g_engine->player().currentRoom()->draw(); // drawQueue is drawn here as well
 	g_engine->renderer().end();
 
 	// we should be within the event loop. as such it is quite safe to mess with the drawQueue or renderer
