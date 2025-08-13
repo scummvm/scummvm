@@ -89,7 +89,7 @@
 {
 	{
 		"adi4",
-		"ADI 4.10",
+		"ADI 4.10 École Environnement",
 		AD_ENTRY1s("intro.stk", "6afc2590856433b9f5295b032f2b205d", 5923112),
 		FR_FRA,
 		kPlatformWindows,
@@ -102,7 +102,7 @@
 {
 	{
 		"adi4",
-		"ADI 4.11",
+		"ADI 4.11 Environnement",
 		AD_ENTRY1s("intro.stk", "6296e4be4e0c270c24d1330881900c7f", 5921234),
 		FR_FRA,
 		kPlatformWindows,
@@ -115,7 +115,7 @@
 {
 	{
 		"adi4",
-		"ADI 4.21",
+		"ADI 4.21 École Environnement",
 		AD_ENTRY1s("intro.stk", "c5b9f6222c0b463f51dab47317c5b687", 5950490),
 		FR_FRA,
 		kPlatformWindows,
@@ -199,7 +199,7 @@
 {
 	{
 		"adi4",
-		"ADI 4.10",
+		"ADI 4.10 Environment",
 		AD_ENTRY1s("intro.stk", "3e3fa9656e37d802027635ace88c4cc5", 5359144),
 		EN_GRB,
 		kPlatformWindows,
