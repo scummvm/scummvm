@@ -298,7 +298,6 @@ void Player::walkDown() {
 
 		calcManScale();
 
-		// TODO: Implement step sounds also for Amazon? (_frame == 10 || _frame == 14)
 		if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[174] == 0 && (_frame == 17 || _frame == 21))
 			_vm->_sound->playSound(0);
 		else if (_vm->getGameID() == kGameAmazon && _vm->_currentMan != 3 && (_frame == 10 || _frame == 14))
