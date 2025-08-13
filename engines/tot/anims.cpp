@@ -966,10 +966,10 @@ static void loadFlc(
 						palette[1] = 0;
 						palette[2] = 0;
 						if (fullPalette) {
-							changePalette(g_engine->_graphics->getPalette(), palette);
-							copyPalette(palette, pal);
+							g_engine->_graphics->fadePalettes(g_engine->_graphics->getPalette(), palette);
+							g_engine->_graphics->copyPalette(palette, pal);
 						} else if (limitPaletteTo200) {
-							g_engine->_graphics->setPalette(palette, 200);
+							g_engine->_graphics->setPalette(palette, 0, 200);
 							for (int i = 0; i <= 200; i++) {
 								if(gamePart == 2 && !shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
 									continue;
@@ -981,7 +981,7 @@ static void loadFlc(
 
 						} else {
 							g_engine->_graphics->setPalette(palette);
-							copyPalette(palette, pal);
+							g_engine->_graphics->copyPalette(palette, pal);
 						}
 					}
 					// Make sure we also update the palette animations! Esp. for part 2
@@ -990,7 +990,7 @@ static void loadFlc(
 						if (isPaletteAnimEnabled > 6)
 							isPaletteAnimEnabled = 0;
 						else isPaletteAnimEnabled += 1;
-						updatePalette(isPaletteAnimEnabled);
+						g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 					} else palAnimStep += 1;
 
 					gameTick = false;

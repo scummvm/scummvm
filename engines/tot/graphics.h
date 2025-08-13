@@ -21,30 +21,70 @@
 #ifndef TOT_GRAPHICS_H
 #define TOT_GRAPHICS_H
 
-#include "engines/tot/vars.h"
-#include "engines/tot/util.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "graphics/font.h"
+
+#include "tot/font/bgifont.h"
+// #include "tot/font/biosfont.h"
+// #include "tot/vars.h"
 
 namespace Tot {
 
-void initGraph();
-void drawFullScreen(byte *screen);
-void copyFromScreen(byte *&screen);
-void drawScreen(byte *screen, bool offsetSize = true);
+class GraphicsManager {
+public:
+	GraphicsManager();
+	~GraphicsManager();
 
-void loadPalette(Common::String image);
-void sceneTransition(byte effectNumber, bool fadeToBlack, byte *screen);
-void turnLightOn();
-void totalFadeOut(byte red);
-void partialFadeOut(byte numCol);
-void totalFadeIn(uint paletteNumber, Common::String paletteName);
-void redFadeIn(palette palette);
-void partialFadeIn(byte numCol);
-void updatePalette(byte paletteIndex);
-void changePalette(palette fromPalette, palette toPalette);
-void changeRGBBlock(byte initialColor, uint numColors, byte *rgb);
-void restoreBackground();
-void copyPalette(palette from, palette to);
-void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
+	void init();
+	void fixPalette(byte *palette, uint num = 768);
+	byte *getPalette();
+	void setPalette(byte palette[768], uint start = 0, uint num = 256);
+	void loadPaletteFromFile(Common::String image);
+	void turnLightOn();
+	void totalFadeOut(byte red);
+	void partialFadeOut(byte numCol);
+	void totalFadeIn(uint paletteNumber, Common::String paletteName);
+	void redFadeIn(byte *palette);
+	void partialFadeIn(byte numCol);
+	void updatePalette(byte paletteIndex);
+	void fadePalettes(byte *fromPalette, byte *toPalette);
+	void copyPalette(byte *from, byte *to);
+
+	void putImg(uint coordx, uint coordy, byte *image, bool transparency = false);
+	void getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image);
+	void putShape(uint coordx, uint coordy, byte *image);
+	void putImageArea(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image);
+	void getImageArea(uint getcoordx1, uint getcoordy1, uint getcoordx2, uint getcoordy2, byte *backgroundScreen, byte *image);
+
+	void littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
+	void euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align = Graphics::kTextAlignLeft, bool alignCenterY = false);
+	void biosText(const Common::String &str, int x, int y, uint32 color);
+
+	void clear();
+
+	void clearActionLine();
+	void writeActionLine(const Common::String &str);
+
+	void drawFullScreen(byte *screen);
+	void copyFromScreen(byte *&screen);
+	void drawScreen(byte *screen, bool offsetSize = true);
+	void restoreBackground();
+	void restoreBackgroundArea(uint x, uint y, uint x2, uint y2);
+
+	void sceneTransition(byte effectNumber, bool fadeToBlack, byte *screen);
+
+	void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
+	void printColor(int x, int y, int color);
+
+
+private:
+	void updateSceneAreaIfNeeded(int speed = 1);
+	signed char fadeData[256][256];
+	Graphics::BgiFont _litt;
+	Graphics::BgiFont _euro;
+	Graphics::Font *_bios;
+};
+
 } // End of namespace Tot
-
 #endif

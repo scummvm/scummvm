@@ -24,7 +24,6 @@
 #include "common/scummsys.h"
 
 #include "tot/anims.h"
-#include "tot/graphics.h"
 #include "tot/vars.h"
 #include "tot/routines2.h"
 #include "tot/util.h"

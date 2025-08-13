@@ -116,16 +116,16 @@ void runaroundRed() {
 					isPaletteAnimEnabled = 0;
 				else
 					isPaletteAnimEnabled += 1;
-				updatePalette(isPaletteAnimEnabled);
+				g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 			} else
 				palAnimStep += 1;
 			g_engine->_screen->update();
 		}
 	} while (!exitLoop && !g_engine->shouldQuit());
 	freeAnimation();
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 }
 
 void updateMovementGrids() {
@@ -179,7 +179,7 @@ static void assembleBackground() {
 
 
 	// copies the entire clean background in backgroundCopy back into background
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 
 	posabs = 4 + dirtyMainSpriteY * 320 + dirtyMainSpriteX;
 	uint16 w, h;
@@ -267,7 +267,7 @@ void drawMainCharacter() {
 
 	bool debug = false;
 	if (debug) {
-		sceneTransition(13, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(13, false, sceneBackground);
 	}
 
 	uint16 tempW;
@@ -425,7 +425,7 @@ void adjustKey() {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -453,7 +453,7 @@ void adjustKey2() {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -485,7 +485,7 @@ void animatedSequence(uint numSequence) {
 		secFrameCount = animationFile.readByte();
 		animationFile.readByte();
 		animptr = (byte *)malloc(animFrameSize);
-		for (uint loopIdx = 1; loopIdx <= 3; repIndex++) {
+		for (uint loopIdx = 1; loopIdx <= 3; loopIdx++) {
 			g_engine->_sound->playVoc("POZO", 180395, 6034);
 			animIndex = 0;
 			do {
@@ -626,20 +626,20 @@ void animatedSequence(uint numSequence) {
 					isPaletteAnimEnabled = 0;
 				else
 					isPaletteAnimEnabled += 1;
-				updatePalette(isPaletteAnimEnabled);
+				g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 			} else
 				palAnimStep += 1;
 			g_engine->_graphics->putShape(animX, animY, animptr);
 		}
 		screenLayers[regobj.depth - 1] = NULL;
-		restoreBackground();
+		g_engine->_graphics->restoreBackground();
 		animIndex = mainCharAnimation.depth;
 		mainCharAnimation.depth = 30;
 		screenLayers[13] = animptr;
 		depthMap[13].posx = animX;
 		depthMap[13].posy = animY;
 		assembleScreen();
-		drawScreen(sceneBackground);
+		g_engine->_graphics->drawScreen(sceneBackground);
 		screenLayers[13] = NULL;
 		mainCharAnimation.depth = animIndex;
 		drawBackpack();
@@ -653,7 +653,7 @@ void animatedSequence(uint numSequence) {
 					isPaletteAnimEnabled = 0;
 				else
 					isPaletteAnimEnabled += 1;
-				updatePalette(isPaletteAnimEnabled);
+				g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 			} else
 				palAnimStep += 1;
 			g_engine->_graphics->putImg(animX, animY, animptr);
@@ -692,7 +692,7 @@ void animatedSequence(uint numSequence) {
 		disableSecondAnimation();
 		screenLayers[12] = NULL;
 		mainCharAnimation.depth = animIndex;
-		drawScreen(sceneBackground);
+		g_engine->_graphics->drawScreen(sceneBackground);
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
@@ -733,15 +733,15 @@ void animatedSequence(uint numSequence) {
 					isPaletteAnimEnabled = 0;
 				else
 					isPaletteAnimEnabled += 1;
-				updatePalette(isPaletteAnimEnabled);
+				g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 			} else
 				palAnimStep += 1;
 			if (gameTickHalfSpeed) {
 				animationFile.read(screenLayers[6], animFrameSize);
 				Common::copy(screenLayers[6], screenLayers[6] + animFrameSize, sceneBackground + 44900);
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animIndex += 1;
 				if (animIndex == 8)
 					g_engine->_sound->playVoc("PUFF", 191183, 18001);
@@ -944,10 +944,10 @@ void lookAtObject(byte objectCode) {
 
 	cpCounter2 = cpCounter;
 	g_engine->_mouseManager->hide();
-	copyPalette(pal, secPalette);
+	g_engine->_graphics->copyPalette(pal, secPalette);
 	readItemRegister(inventory[objectCode].code);
 	g_engine->_graphics->getImg(0, 0, 319, 139, sceneBackground);
-	partialFadeOut(234);
+	g_engine->_graphics->partialFadeOut(234);
 	bar(0, 0, 319, 139, 0);
 	for (yaux = 1; yaux <= 12; yaux++)
 		buttonBorder(
@@ -995,12 +995,12 @@ void lookAtObject(byte objectCode) {
 
 	drawFlc(125, 70, regobj.rotatingObjectAnimation, 60000, 9, 0, false, true, true, foobar);
 
-	sceneTransition(3, true, NULL);
-	partialFadeOut(234);
+	g_engine->_graphics->sceneTransition(3, true, NULL);
+	g_engine->_graphics->partialFadeOut(234);
 	assembleScreen();
-	drawScreen(sceneBackground);
-	copyPalette(secPalette, pal);
-	partialFadeIn(234);
+	g_engine->_graphics->drawScreen(sceneBackground);
+	g_engine->_graphics->copyPalette(secPalette, pal);
+	g_engine->_graphics->partialFadeIn(234);
 	g_engine->_mouseManager->show();
 }
 
@@ -1335,7 +1335,7 @@ void advanceAnimations(bool barredZone, bool animateMouse) {
 				isPaletteAnimEnabled += 1;
 			if (currentRoomData->code == 4 && isPaletteAnimEnabled == 4)
 				g_engine->_sound->playVoc();
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else {
 			palAnimStep += 1;
 		}
@@ -1360,7 +1360,7 @@ void animateGive(uint dir, uint height) {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -1382,7 +1382,7 @@ void animatePickup1(uint dir, uint height) {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -1406,7 +1406,7 @@ void animatePickup2(uint dir, uint height) {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -1432,7 +1432,7 @@ void animateOpen2(uint dir, uint height) {
 				isPaletteAnimEnabled = 0;
 			else
 				isPaletteAnimEnabled += 1;
-			updatePalette(isPaletteAnimEnabled);
+			g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 		} else
 			palAnimStep += 1;
 		sprites(true);
@@ -1504,7 +1504,7 @@ void animateBat() {
 					isPaletteAnimEnabled = 0;
 				else
 					isPaletteAnimEnabled += 1;
-				updatePalette(isPaletteAnimEnabled);
+				g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 			} else
 				palAnimStep += 1;
 		}
@@ -1525,16 +1525,16 @@ void animateBat() {
 		secondaryAnimation.depth = curAnimDepth;
 		secondaryAnimation.dir = curAnimDir;
 	}
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 }
 
 void updateVideo() {
 	readBitmap(regobj.dropOverlay, screenLayers[regobj.depth - 1], regobj.dropOverlaySize, 319);
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 }
 
 void nicheAnimation(byte nicheDir, int32 bitmap) {
@@ -1578,21 +1578,21 @@ void nicheAnimation(byte nicheDir, int32 bitmap) {
 	// Set the height to double to animate 2 images of the same height moving up/down
 	*(sceneBackground + 44900 + 2) = (nicheHeight * 2) + 1;
 
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 
 	for (uint i = 1; i <= nicheHeight; i++) {
 
 		bitmapOffset = bitmapOffset + (increment * (nicheWidth + 1));
 		Common::copy(sceneBackground + bitmapOffset, sceneBackground + bitmapOffset + 888, screenLayers[0] + 4);
 		assembleScreen();
-		drawScreen(sceneBackground);
+		g_engine->_graphics->drawScreen(sceneBackground);
 		g_engine->_screen->update();
 	}
 	readBitmap(bitmap, screenLayers[0], 892, 319);
 
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 
 	if (currentRoomData->code == 24) {
 		free(screenLayers[1]);
@@ -1651,9 +1651,9 @@ void pickupScreenObject() {
 			default: {
 				animatePickup1(charFacingDirection, 0);
 				screenLayers[regobj.depth - 1] = NULL;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(charFacingDirection, 0);
 			}
 			}
@@ -1710,10 +1710,10 @@ void pickupScreenObject() {
 					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				screenLayers[regobj.depth - 1] = NULL;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(0, 1);
 			} break;
 			case 562: { // niche
@@ -1732,9 +1732,9 @@ void pickupScreenObject() {
 							currentRoomData->screenLayers[1].coordx = 66;
 							currentRoomData->screenLayers[1].coordy = 35;
 							currentRoomData->screenLayers[1].depth = 1;
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animatePickup2(3, 1);
 						} else {
 							readItemRegister(niche[0][niche[0][3]]);
@@ -1745,9 +1745,9 @@ void pickupScreenObject() {
 							animatePickup1(3, 1);
 							readBitmap(1190768, screenLayers[regobj.depth - 1],
 									   892, 319);
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animatePickup2(3, 1);
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							currentRoomData->screenLayers[1].bitmapSize = 892;
@@ -1799,9 +1799,9 @@ void pickupScreenObject() {
 							currentRoomData->screenLayers[0].coordx = 217;
 							currentRoomData->screenLayers[0].coordy = 48;
 							currentRoomData->screenLayers[0].depth = 1;
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animatePickup2(0, 1);
 						} else {
 							readItemRegister(niche[1][niche[1][3]]);
@@ -1811,9 +1811,9 @@ void pickupScreenObject() {
 							currentRoomData->screenObjectIndex[8]->objectName = "                    ";
 							animatePickup1(0, 1);
 							readBitmap(1399610, screenLayers[0], 892, 319);
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animatePickup2(0, 1);
 							g_engine->_sound->playVoc("PLATAF", 375907, 14724);
 							currentRoomData->screenLayers[0].bitmapSize = 892;
@@ -1871,7 +1871,7 @@ void pickupScreenObject() {
 				}
 				screenLayers[3] = NULL;
 				disableSecondAnimation();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(2, 1);
 				isRedDevilCaptured = true;
 				isTrapSet = false;
@@ -1879,9 +1879,9 @@ void pickupScreenObject() {
 			default: {
 				animatePickup1(charFacingDirection, 1);
 				screenLayers[regobj.depth - 1] = NULL;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(charFacingDirection, 1);
 			}
 			}
@@ -1931,16 +1931,16 @@ void pickupScreenObject() {
 					with.depth = 3;
 					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(3, 2);
 			} break;
 			default: {
 				animatePickup1(charFacingDirection, 2);
 				screenLayers[regobj.depth - 1] = NULL;
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(charFacingDirection, 2);
 			}
 			}
@@ -2568,7 +2568,7 @@ void useScreenObject() {
 					sprites(true);
 				} while (currentSecondaryTrajectoryIndex != currentRoomData->secondaryTrajectoryLength);
 				disableSecondAnimation();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 			} break;
 			case 201: {
@@ -2598,7 +2598,7 @@ void useScreenObject() {
 								isPaletteAnimEnabled = 0;
 							else
 								isPaletteAnimEnabled += 1;
-							updatePalette(isPaletteAnimEnabled);
+							g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 						} else
 							palAnimStep += 1;
 						gameTick = false;
@@ -2609,7 +2609,7 @@ void useScreenObject() {
 				animateOpen2(3, 2);
 				updateItem(regobj.code);
 				disableSecondAnimation();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				drawText(2652);
 				g_engine->_mouseManager->hide();
@@ -2761,9 +2761,9 @@ void useScreenObject() {
 							currentRoomData->screenLayers[1].coordx = 66;
 							currentRoomData->screenLayers[1].coordy = 35;
 							currentRoomData->screenLayers[1].depth = 1;
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2784,9 +2784,9 @@ void useScreenObject() {
 								readBitmap(1181760, screenLayers[0], 892, 319);
 								break;
 							}
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2851,9 +2851,9 @@ void useScreenObject() {
 							currentRoomData->screenLayers[0].coordx = 217;
 							currentRoomData->screenLayers[0].coordy = 48;
 							currentRoomData->screenLayers[0].depth = 1;
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2877,9 +2877,9 @@ void useScreenObject() {
 										   892, 319);
 								break;
 							}
-							restoreBackground();
+							g_engine->_graphics->restoreBackground();
 							assembleScreen();
-							drawScreen(sceneBackground);
+							g_engine->_graphics->drawScreen(sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2970,9 +2970,9 @@ void useScreenObject() {
 					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				readBitmap(1243652, screenLayers[5], 2718, 319);
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 			} break;
 			case 594: {
 				drawText(regobj.useTextRef);
@@ -2999,9 +2999,9 @@ void useScreenObject() {
 					with.depth = 4;
 					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				updateInventory(usedObjectIndex);
 				drawBackpack();
 				isTrapSet = true;
@@ -3015,9 +3015,9 @@ void useScreenObject() {
 
 				// Show feather on pedestal
 				loadItem(187, 70, 104, 1545820, 8);
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_screen->update();
 
 				animateOpen2(charFacingDirection, 1);
@@ -3045,9 +3045,9 @@ void useScreenObject() {
 				currentRoomData->screenLayers[4].depth = 8;
 				loadItem(186, 63, 464, 1447508, 8);
 
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 18);
 				g_engine->_mouseManager->hide();
@@ -3059,9 +3059,9 @@ void useScreenObject() {
 				currentRoomData->screenLayers[4].coordy = 0;
 				currentRoomData->screenLayers[4].depth = 0;
 				screenLayers[7] = NULL;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(1, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3079,9 +3079,9 @@ void useScreenObject() {
 				g_engine->_mouseManager->hide();
 				animateGive(3, 1);
 				loadItem(86, 55, 92, 1591272, 8);
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animateOpen2(3, 1);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 10);
@@ -3105,7 +3105,7 @@ void useScreenObject() {
 				currentRoomData->screenLayers[4].depth = 8;
 				loadItem(82, 53, 384, 1746554, 8);
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], 15);
 				g_engine->_mouseManager->hide();
@@ -3117,9 +3117,9 @@ void useScreenObject() {
 				currentRoomData->screenLayers[4].coordy = 0;
 				currentRoomData->screenLayers[4].depth = 0;
 				screenLayers[7] = NULL;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animatePickup2(3, 1);
 				drawBackpack();
 				g_engine->_mouseManager->show();
@@ -3184,9 +3184,9 @@ void useScreenObject() {
 				animateGive(1, 1);
 				updateInventory(usedObjectIndex);
 				dropObjectInScreen(regobj);
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				drawBackpack();
 				animateOpen2(1, 1);
 				for (listIndex = 19; listIndex <= 21; listIndex++)
@@ -3205,9 +3205,9 @@ void useScreenObject() {
 				drawFlc(110, 79, offset, 0, 9, 0, false, false, true, foobar);
 				replaceBackpack(usedObjectIndex, 701);
 				drawBackpack();
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				g_engine->_mouseManager->show();
 				for (listIndex = 18; listIndex <= 20; listIndex++)
 					currentRoomData->mouseGrid[listIndex][26] = 10;
@@ -3276,9 +3276,9 @@ void useScreenObject() {
 						with.depth = 1;
 						loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 					}
-					restoreBackground();
+					g_engine->_graphics->restoreBackground();
 					assembleScreen();
-					drawScreen(sceneBackground);
+					g_engine->_graphics->drawScreen(sceneBackground);
 
 					g_engine->_sound->waitForSoundEnd();
 					g_engine->_sound->playVoc("PUFF", 191183, 18001);
@@ -3373,7 +3373,7 @@ void useScreenObject() {
 					animateOpen2(0, 0);
 					g_engine->_sound->stopVoc();
 					g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
-					turnLightOn();
+					g_engine->_graphics->turnLightOn();
 					g_engine->_mouseManager->show();
 					currentRoomData->palettePointer = 1536;
 					currentRoomData->screenObjectIndex[1]->fileIndex = 424;
@@ -3487,9 +3487,9 @@ void openScreenObject() {
 				currentRoomData->screenLayers[yIndex].coordy = 0;
 				currentRoomData->screenLayers[yIndex].depth = 0;
 				currentRoomData->doors[2].openclosed = 1;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animateOpen2(0, 1);
 				g_engine->_mouseManager->show();
 				for (yIndex = 0; yIndex <= 12; yIndex++)
@@ -3522,9 +3522,9 @@ void openScreenObject() {
 				currentRoomData->screenLayers[yIndex].coordy = 0;
 				currentRoomData->screenLayers[yIndex].depth = 0;
 				currentRoomData->doors[0].openclosed = 1;
-				restoreBackground();
+				g_engine->_graphics->restoreBackground();
 				assembleScreen();
-				drawScreen(sceneBackground);
+				g_engine->_graphics->drawScreen(sceneBackground);
 				animateOpen2(1, 1);
 				g_engine->_mouseManager->show();
 				xIndex = 30;
@@ -3901,7 +3901,7 @@ static void scrollRight(uint &horizontalPos) {
 			characterPosX -= 4;
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(sceneBackground);
+		g_engine->_graphics->drawScreen(sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3953,7 +3953,7 @@ static void scrollLeft(uint &horizontalPos) {
 
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-		drawScreen(sceneBackground);
+		g_engine->_graphics->drawScreen(sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3964,7 +3964,7 @@ static void scrollLeft(uint &horizontalPos) {
  */
 void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scrollCorrection) {
 
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 
 	// background now contains background A, backgroundCopy contains background A
 	uint characterFrameW = READ_LE_UINT16(curCharacterAnimationFrame);
@@ -4000,7 +4000,7 @@ void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scr
 	getScreen(sceneBackground);
 	// background now contains full background A again, backgroundCopy contains background B + objects
 
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 	if (rightScroll)
 		scrollRight(horizontalPos);
 	else
@@ -4012,7 +4012,7 @@ void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scr
 	characterPosX += scrollCorrection;
 
 	assembleScreen();
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 	free(spriteBackground);
 	loadScreen();
 	trajectory[currentTrajectoryIndex].x = characterPosX;
@@ -4205,9 +4205,9 @@ void loadGame(SavedGame game) {
 		niche[1][i] = game.niche[1][i];
 	}
 
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_screen->clear();
-	loadPalette("DEFAULT");
+	g_engine->_graphics->loadPaletteFromFile("DEFAULT");
 	loadScreenData(game.roomCode);
 
 	switch (currentRoomData->code) {
@@ -4301,7 +4301,7 @@ void loadGame(SavedGame game) {
 	drawBackpack();
 	if (isRedDevilCaptured == false && currentRoomData->code == 24 && isTrapSet == false)
 		runaroundRed();
-	sceneTransition(transitionEffect, false, sceneBackground);
+	g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 }
 
 /**
@@ -4647,7 +4647,7 @@ void hypertext(
 						isPaletteAnimEnabled += 1;
 					if (currentRoomData->code == 4 && isPaletteAnimEnabled == 4)
 						g_engine->_sound->playVoc();
-					updatePalette(isPaletteAnimEnabled);
+					g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 				} else
 					palAnimStep += 1;
 			}
@@ -4669,10 +4669,10 @@ void wcScene() {
 	currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
 	goToObject(currentZone, targetZone);
 
-	copyPalette(pal, wcPalette);
+	g_engine->_graphics->copyPalette(pal, wcPalette);
 	g_engine->_mouseManager->hide();
 
-	partialFadeOut(234);
+	g_engine->_graphics->partialFadeOut(234);
 
 	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
 
@@ -4703,11 +4703,11 @@ void wcScene() {
 
 	characterPosX = 76 - characterCorrectionX;
 	characterPosY = 78 - characerCorrectionY;
-	copyPalette(wcPalette, pal);
-	restoreBackground();
+	g_engine->_graphics->copyPalette(wcPalette, pal);
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
-	drawScreen(sceneBackground);
-	partialFadeIn(234);
+	g_engine->_graphics->drawScreen(sceneBackground);
+	g_engine->_graphics->partialFadeIn(234);
 	xframe2 = 0;
 	currentTrajectoryIndex = 0;
 	trajectoryLength = 1;

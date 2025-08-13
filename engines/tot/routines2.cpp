@@ -46,7 +46,7 @@ void loadScreenMemory() {
 
 void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
 	for (int j = 0; j < secondaryAnimationFrameCount; j++) {
-		loadAnimationIntoBuffer(stream, secondaryAnimation.bitmap[direction][j], secondaryAnimFrameSize);
+		g_engine->_graphics->loadAnimationIntoBuffer(stream, secondaryAnimation.bitmap[direction][j], secondaryAnimFrameSize);
 	}
 }
 
@@ -268,7 +268,7 @@ void loadScreen() {
 		g_system->getPaletteManager()->setPalette(pal, 0, 201);
 	} break;
 	case 2: {
-		loadPalette("SEGUNDA");
+		g_engine->_graphics->loadPaletteFromFile("SEGUNDA");
 		currentRoomData->paletteAnimationFlag = true;
 	} break;
 	}
@@ -601,7 +601,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	stamp = (byte *)malloc(2054);
 	dipFile.read(stamp, 2054);
 	dipFile.close();
-	drawFullScreen(screen);
+	g_engine->_graphics->drawFullScreen(screen);
 
 	free(screen);
 
@@ -620,7 +620,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 		auxPal[i * 3 + 2] = pal[i * 3 + 2];
 	}
 
-	copyPalette(auxPal, pal);
+	g_engine->_graphics->copyPalette(auxPal, pal);
 	g_engine->_graphics->fixPalette(pal, 768);
 	g_engine->_graphics->setPalette(pal);
 	g_engine->_screen->markAllDirty();
@@ -663,7 +663,7 @@ static void saveDiploma(Common::String &photoName, Common::String &key) {
 	if (photoName != "")
 		name = "tot-diploma-" + photoName + ".png";
 	else
-		"tot-diploma-default.png";
+		name = "tot-diploma-default.png";
 	Common::OutSaveFile *thumbnail = g_engine->getSaveFileManager()->openForSaving(name);
 	Graphics::Surface *surface = g_system->lockScreen();
 	assert(surface);
@@ -677,7 +677,7 @@ void generateDiploma(Common::String &photoName) {
 	Common::String key;
 	g_engine->_mouseManager->hide();
 	photoName.toUppercase();
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	loadDiploma(photoName, key);
 
 	Common::Event e;
@@ -1022,7 +1022,7 @@ void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) 
 	ppFile.read(backgroundPointer, 64000);
 	ppFile.close();
 
-	drawFullScreen(backgroundPointer);
+	g_engine->_graphics->drawFullScreen(backgroundPointer);
 
 	sizeAuxBG = imagesize(0, 0, 319, 59);
 
@@ -1040,8 +1040,8 @@ void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) 
 		intermediatePalette[i * 3 + 2] = intermediatePalette[i * 3 + 2] << 2;
 	}
 
-	changePalette(darkPalette, intermediatePalette);
-	copyPalette(intermediatePalette, pal);
+	g_engine->_graphics->fadePalettes(darkPalette, intermediatePalette);
+	g_engine->_graphics->copyPalette(intermediatePalette, pal);
 	if (cpCounter2 > 9)
 		showError(274);
 }
@@ -1161,7 +1161,7 @@ void scrollCredit(
 		pal[i * 3 + 2] = pal2[i * 3 + 2];
 	}
 
-	changeRGBBlock(16, 240, &pal[16 * 3 + 0]);
+	g_engine->_graphics->setPalette(&pal[16 * 3 + 0], 16, 240);
 	Common::Event e;
 	bool keyPressed = false;
 
@@ -1183,7 +1183,7 @@ void scrollCredit(
 			break;
 	}
 	if (refresh) {
-		copyFromScreen(background);
+		g_engine->_graphics->copyFromScreen(background);
 	}
 }
 
@@ -1246,8 +1246,6 @@ inline bool keyPressed() {
 }
 
 void credits() {
-	Common::String n = "Gabriel";
-	generateDiploma(n);
 	saveAllowed = true;
 	debug("Credits");
 	palette pal2;
@@ -1257,7 +1255,7 @@ void credits() {
 	bool exit;
 
 	g_engine->_mouseManager->hide();
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	g_engine->_screen->clear();
 	g_engine->_sound->playMidi("CREDITOS", true);
@@ -1295,7 +1293,7 @@ void credits() {
 	g_engine->_graphics->putImg(0, 0, background2);
 	if (keyPressed() || exit)
 		goto Lexit;
-	copyFromScreen(background);
+	g_engine->_graphics->copyFromScreen(background);
 	if (keyPressed() || exit)
 		goto Lexit;
 	scrollCredit(59904, 8004, pal2, background, exit, 10, false, true);
@@ -1325,13 +1323,13 @@ void credits() {
 	g_engine->_graphics->putImg(0, 0, background2);
 	if (keyPressed() || exit)
 		goto Lexit;
-	copyFromScreen(background);
+	g_engine->_graphics->copyFromScreen(background);
 	if (keyPressed() || exit)
 		goto Lexit;
 	scrollCredit(121308, 8004, pal2, background, exit, 80, false, true);
 Lexit:
 	delay(1000);
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 	g_engine->_screen->clear();
 	g_engine->_sound->playMidi("INTRODUC", true);
@@ -1350,7 +1348,7 @@ void introduction() {
 	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
 	const long *offsets = (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 	exitPressed = false;
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 
 	if (cpCounter > 6)
 		showError(270);
@@ -1361,7 +1359,7 @@ void introduction() {
 	drawFlc(135, 54, offsets[3], 0, 9, 2, true, true, false, exitPressed);
 	if (exitPressed)
 		goto Lsalirpres;
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_screen->clear();
 	if(isSpanish) {
 		littText(25,  20, messages[0], 253);
@@ -1385,7 +1383,7 @@ void introduction() {
 	if(g_engine->shouldQuit()){
 		return;
 	}
-	totalFadeIn(0, "DEFAULT");
+	g_engine->_graphics->totalFadeIn(0, "DEFAULT");
 	g_engine->_screen->markAllDirty();
 	g_engine->_screen->update();
 	loopCount = 0;
@@ -1404,7 +1402,7 @@ void introduction() {
 		g_system->delayMillis(10);
 	} while (loopCount < 180 && !g_engine->shouldQuit());
 
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_screen->clear();
 	drawFlc(0, 0, offsets[4], 0, 9, 3, true, true, false, exitPressed);
 	if (exitPressed)
@@ -1466,7 +1464,7 @@ void introduction() {
 	delay(1000);
 Lsalirpres:
 	debug("Exiting intro!");
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_screen->clear();
 	g_engine->_mouseManager->show();
 }
@@ -1531,7 +1529,7 @@ void initialMenu(bool fade) {
 					}
 				} else if (y > 140 && y < 155) {
 					if (x > 173 && x < 292) {
-						totalFadeOut(0);
+						g_engine->_graphics->totalFadeOut(0);
 						g_engine->_screen->clear();
 						introduction();
 						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
@@ -1909,15 +1907,15 @@ void sacrificeScene() {
 	}
 
 	// We dont have the width and height here in the byte buffer
-	drawScreen(sceneBackground, false);
-	partialFadeIn(234);
+	g_engine->_graphics->drawScreen(sceneBackground, false);
+	g_engine->_graphics->partialFadeIn(234);
 	g_engine->_sound->stopVoc();
 
 	if (g_engine->shouldQuit())
 		return;
 
 	drawFlc(0, 0, offsets[17], 0, 9, 19, false, false, true, exitPressed);
-	totalFadeOut(128);
+	g_engine->_graphics->totalFadeOut(128);
 	g_engine->_sound->stopVoc();
 	delay(1000);
 	if (g_engine->shouldQuit())
@@ -1975,13 +1973,13 @@ void sacrificeScene() {
 
 	file.read(sceneBackground, 64000);
 	file.close();
-	drawFullScreen(sceneBackground);
+	g_engine->_graphics->drawFullScreen(sceneBackground);
 
 	palaux[0] = 0;
 	palaux[1] = 0;
 	palaux[2] = 0;
 
-	redFadeIn(palaux);
+	g_engine->_graphics->redFadeIn(palaux);
 
 	drawFlc(112, 57, offsets[18], 33, 9, 20, true, false, true, exitPressed);
 	g_engine->_sound->autoPlayVoc("REZOS", 0, 0);
@@ -1993,7 +1991,7 @@ void sacrificeScene() {
 	if (g_engine->shouldQuit())
 		return;
 
-	totalFadeOut(128);
+	g_engine->_graphics->totalFadeOut(128);
 	g_engine->_sound->stopVoc();
 	g_engine->_graphics->clear();
 
@@ -2169,7 +2167,7 @@ void sacrificeScene() {
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(2000);
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	currentRoomData->paletteAnimationFlag = exitPressed;
 	saveAllowed = true;
 }
@@ -2197,7 +2195,7 @@ void ending() {
 		return;
 	}
 	delay(4000);
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_graphics->clear();
 	if(g_engine->shouldQuit()) {
 		return;
@@ -2298,7 +2296,7 @@ void disableSecondAnimation() {
 	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
 	currentRoomData->animationFlag = false;
 	freeAnimation();
-	restoreBackground();
+	g_engine->_graphics->restoreBackground();
 	assembleScreen();
 }
 

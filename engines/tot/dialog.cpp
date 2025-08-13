@@ -381,7 +381,7 @@ void showDialogLine(Common::String conversationMatrix[16], uint &chosenTopic) {
 						isPaletteAnimEnabled = 0;
 					else
 						isPaletteAnimEnabled += 1;
-					updatePalette(isPaletteAnimEnabled);
+					g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
 				} else
 					palAnimStep += 1;
 			}

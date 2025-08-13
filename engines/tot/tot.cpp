@@ -33,7 +33,6 @@
 #include "tot/console.h"
 #include "tot/detection.h"
 #include "tot/font/bgifont.h"
-#include "tot/graphman.h"
 #include "tot/vars.h"
 #include "tot/routines.h"
 #include "tot/routines2.h"
@@ -47,7 +46,6 @@ TotEngine *g_engine;
 TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
 																		 _gameDescription(gameDesc), _randomSource("Tot") {
 	g_engine = this;
-
 	_lang = _gameDescription->language;
 }
 
@@ -82,7 +80,7 @@ Common::Error TotEngine::run() {
 	_mouseManager = new MouseManager();
 
 	_sound->init();
-	initGraph();
+	_graphics->init();
 	initPlayAnim();
 
 	isIntroSeen = ConfMan.getBool("introSeen");

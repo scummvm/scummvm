@@ -37,7 +37,7 @@
 
 #include "tot/chrono.h"
 #include "tot/detection.h"
-#include "tot/graphman.h"
+#include "tot/graphics.h"
 #include "tot/mouse.h"
 #include "tot/sound.h"
 
@@ -64,7 +64,7 @@ protected:
 
 public:
 	Graphics::Screen *_screen = nullptr;
-	GraphicsManager *_graphics = nullptr;
+	Tot::GraphicsManager *_graphics = nullptr;
 	SoundManager *_sound = nullptr;
 	MouseManager *_mouseManager = nullptr;
 	ChronoManager *_chrono = nullptr;

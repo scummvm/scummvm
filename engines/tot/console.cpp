@@ -67,7 +67,7 @@ bool TotConsole::cmdClearLayers(int argc, const char **argv) {
 	_engine->_showScreenGrid = false;
 	_engine->_showGameGrid = false;
 	_engine->_showMouseGrid = false;
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 	debugPrintf("Cleared all debug layers");
 	return true;
 }
@@ -84,7 +84,7 @@ bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
 	freeScreenObjects();
 	clearScreenData();
 	loadScreenData(roomID);
-	drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(sceneBackground);
 	debugPrintf("Loaded screen %d", roomID);
 	return true;
 }
