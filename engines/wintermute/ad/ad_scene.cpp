@@ -1181,8 +1181,8 @@ bool AdScene::traverseNodes(bool doUpdate) {
 				}
 				if (_shieldWindow) {
 					_shieldWindow->_posX = _shieldWindow->_posY = 0;
-					_shieldWindow->setWidth(_gameRef->_renderer->getWidth());
-					_shieldWindow->setHeight(_gameRef->_renderer->getHeight());
+					_shieldWindow->_width = _gameRef->_renderer->getWidth();
+					_shieldWindow->_height = _gameRef->_renderer->getHeight();
 					_shieldWindow->display();
 				}
 			}
@@ -1398,8 +1398,8 @@ bool AdScene::updateFreeObjects() {
 	}
 
 
-	if (_autoScroll && _gameRef->getMainObject() != nullptr) {
-		scrollToObject(_gameRef->getMainObject());
+	if (_autoScroll && _gameRef->_mainObject != nullptr) {
+		scrollToObject(_gameRef->_mainObject);
 	}
 
 
@@ -1570,7 +1570,7 @@ void AdScene::scrollTo(int offsetX, int offsetY) {
 	_targetOffsetTop = MIN(_targetOffsetTop, _height - viewportHeight);
 
 
-	if (_gameRef->getMainObject() && _gameRef->getMainObject()->_is3D) {
+	if (_gameRef->_mainObject && _gameRef->_mainObject->_is3D) {
 		if (abs(origOffsetLeft - _targetOffsetLeft) < 5) {
 			_targetOffsetLeft = origOffsetLeft;
 		}
@@ -1753,7 +1753,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			const char *layerName = val->getString();
 			bool layerFound = false;
 			for (int32 i = 0; i < _layers.getSize(); i++) {
-				if (scumm_stricmp(layerName, _layers[i]->getName()) == 0) {
+				if (scumm_stricmp(layerName, _layers[i]->_name) == 0) {
 					stack->pushNative(_layers[i], true);
 					layerFound = true;
 					break;
@@ -1825,7 +1825,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		} else {
 			const char *nodeName = val->getString();
 			for (int32 i = 0; i < _objects.getSize(); i++) {
-				if (_objects[i] && _objects[i]->getName() && scumm_stricmp(_objects[i]->getName(), nodeName) == 0) {
+				if (_objects[i] && _objects[i]->_name && scumm_stricmp(_objects[i]->_name, nodeName) == 0) {
 					ret = _objects[i];
 					break;
 				}
@@ -2112,7 +2112,7 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		int32 index = stack->pop()->getInt();
         if (_geom ) {
 			if (index >= 0 && index < _geom->_lights.getSize()) {
-				stack->pushString(_geom->_lights[index]->getName());
+				stack->pushString(_geom->_lights[index]->_name);
 			} else {
 				stack->pushNULL();
 			}
@@ -3384,8 +3384,8 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 		AdLayer *layer = _layers[i];
 		for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 			AdSceneNode *node = layer->_nodes[j];
-			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->getName())) ||
-			    (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->getName()))) {
+			if ((node->_type == OBJECT_ENTITY && !scumm_stricmp(name, node->_entity->_name)) ||
+			    (node->_type == OBJECT_REGION && !scumm_stricmp(name, node->_region->_name))) {
 				switch (node->_type) {
 				case OBJECT_ENTITY:
 					ret = node->_entity;
@@ -3403,14 +3403,14 @@ BaseObject *AdScene::getNodeByName(const char *name) {
 
 	// free entities
 	for (int32 i = 0; i < _objects.getSize(); i++) {
-		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->getName())) {
+		if (_objects[i]->_type == OBJECT_ENTITY && !scumm_stricmp(name, _objects[i]->_name)) {
 			return _objects[i];
 		}
 	}
 
 	// waypoint groups
 	for (int32 i = 0; i < _waypointGroups.getSize(); i++) {
-		if (!scumm_stricmp(name, _waypointGroups[i]->getName())) {
+		if (!scumm_stricmp(name, _waypointGroups[i]->_name)) {
 			return _waypointGroups[i];
 		}
 	}
@@ -3455,7 +3455,7 @@ bool AdScene::persistState(bool saving) {
 				if (!node->_entity->_saveState) {
 					continue;
 				}
-				nodeState = state->getNodeState(node->_entity->getName(), saving);
+				nodeState = state->getNodeState(node->_entity->_name, saving);
 				if (nodeState) {
 					nodeState->transferEntity(node->_entity, _persistentStateSprites, saving);
 					//if (Saving) NodeState->_active = node->_entity->_active;
@@ -3466,7 +3466,7 @@ bool AdScene::persistState(bool saving) {
 				if (!node->_region->_saveState) {
 					continue;
 				}
-				nodeState = state->getNodeState(node->_region->getName(), saving);
+				nodeState = state->getNodeState(node->_region->_name, saving);
 				if (nodeState) {
 					if (saving) {
 						nodeState->_active = node->_region->_active;
@@ -3488,7 +3488,7 @@ bool AdScene::persistState(bool saving) {
 			continue;
 		}
 		if (_objects[i]->_type == OBJECT_ENTITY) {
-			nodeState = state->getNodeState(_objects[i]->getName(), saving);
+			nodeState = state->getNodeState(_objects[i]->_name, saving);
 			if (nodeState) {
 				nodeState->transferEntity((AdEntity *)_objects[i], _persistentStateSprites, saving);
 				//if (Saving) NodeState->_active = _objects[i]->_active;
@@ -3499,7 +3499,7 @@ bool AdScene::persistState(bool saving) {
 
 	// waypoint groups
 	for (int32 i = 0; i < _waypointGroups.getSize(); i++) {
-		nodeState = state->getNodeState(_waypointGroups[i]->getName(), saving);
+		nodeState = state->getNodeState(_waypointGroups[i]->_name, saving);
 		if (nodeState) {
 			if (saving) {
 				nodeState->_active = _waypointGroups[i]->_active;
@@ -3766,7 +3766,7 @@ void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
 #endif
 
 Common::String AdScene::debuggerToString() const {
-	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, getName(), _paralaxScrolling, _autoScroll);
+	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, _name, _paralaxScrolling, _autoScroll);
 }
 
 } // End of namespace Wintermute

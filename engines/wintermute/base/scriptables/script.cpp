@@ -254,7 +254,6 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 
 	_thread = false;
 	_methodThread = false;
-
 	delete[] _threadEvent;
 	_threadEvent = nullptr;
 
@@ -327,9 +326,6 @@ bool ScScript::createThread(ScScript *original, uint32 initIP, const Common::Str
 
 	return STATUS_OK;
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::createMethodThread(ScScript *original, const Common::String &methodName) {
@@ -445,8 +441,8 @@ void ScScript::cleanup() {
 	_numExternals = 0;
 
 	delete _operand;
-	delete _reg1;
 	_operand = nullptr;
+	delete _reg1;
 	_reg1 = nullptr;
 
 	delete[] _threadEvent;
@@ -471,7 +467,7 @@ uint32 ScScript::getDWORD() {
 	_scriptStream->seek((int32)_iP);
 	uint32 ret = _scriptStream->readUint32LE();
 	_iP += sizeof(uint32);
-//	assert(oldRet == ret);
+
 	return ret;
 }
 
@@ -569,7 +565,6 @@ bool ScScript::executeInstruction() {
 	case II_DEF_GLOB_VAR:
 	case II_DEF_CONST_VAR: {
 		dw = getDWORD();
-		/*      char *temp = _symbols[dw]; // TODO delete */
 		// only create global var if it doesn't exist
 		if (!_engine->_globals->propExists(_symbols[dw])) {
 			_operand->setNULL();

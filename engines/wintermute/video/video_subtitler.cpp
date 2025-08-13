@@ -179,10 +179,10 @@ void VideoSubtitler::display() {
 
 		BaseFont *font;
 
-		if (_gameRef->getVideoFont() == nullptr) {
-			font = _gameRef->getSystemFont();
+		if (_gameRef->_videoFont == nullptr) {
+			font = _gameRef->_systemFont;
 		} else {
-			font = _gameRef->getVideoFont();
+			font = _gameRef->_videoFont;
 		}
 
 		int textHeight = font->getTextHeight(

@@ -53,8 +53,8 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 BaseScriptable::~BaseScriptable() {
 	//if (_refCount>0) BaseEngine::LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
 	delete _scValue;
-	delete _scProp;
 	_scValue = nullptr;
+	delete _scProp;
 	_scProp = nullptr;
 }
 
@@ -188,7 +188,7 @@ ScScript *BaseScriptable::invokeMethodThread(const char *methodName) {
 }
 
 Common::String BaseScriptable::debuggerToString() const {
-	return Common::String::format("%p: BaseScriptable %s", (const void *)this, getName());
+	return Common::String::format("%p: BaseScriptable %s", (const void *)this, _name);
 }
 
 

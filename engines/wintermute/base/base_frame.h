@@ -41,10 +41,11 @@ class ScStack;
 class BaseFrame: public BaseScriptable {
 public:
 	bool _killSound;
-	void stopSound();
+	bool _keyframe;
 	bool oneTimeDisplay(BaseObject *owner, bool muted = false);
 	DECLARE_PERSISTENT(BaseFrame, BaseScriptable)
-
+	BaseSound *_sound;
+	bool _editorExpanded;
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
 	int32 _moveY;
@@ -65,11 +66,6 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
-
-private:
-	bool _keyframe;
-	bool _editorExpanded;
-	BaseSound *_sound;
 };
 
 } // End of namespace Wintermute

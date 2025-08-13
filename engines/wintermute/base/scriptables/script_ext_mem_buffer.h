@@ -45,9 +45,9 @@ public:
 	SXMemBuffer(BaseGame *inGame, void *buffer);
 	~SXMemBuffer() override;
 	void *scToMemBuffer() override;
-private:
 	int32 _size;
 
+private:
 	bool resize(int newSize);
 	void *_buffer;
 	void cleanup();

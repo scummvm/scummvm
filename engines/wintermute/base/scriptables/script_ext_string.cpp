@@ -80,7 +80,6 @@ void SXString::setStringVal(const char *val) {
 	if (len >= _capacity) {
 		_capacity = len + 1;
 		delete[] _string;
-		_string = nullptr;
 		_string = new char[_capacity]();
 	}
 	Common::strcpy_s(_string, _capacity, val);

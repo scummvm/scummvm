@@ -92,7 +92,7 @@ BasePersistenceManager::BasePersistenceManager(const Common::String &savePrefix,
 	if (savePrefix != "") {
 		_savePrefix = savePrefix;
 	} else if (_gameRef) {
-		_savePrefix = _gameRef->getGameTargetName();
+		_savePrefix = _gameRef->_targetName.c_str();
 	} else {
 		_savePrefix = "wmesav";
 	}
@@ -256,7 +256,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 		// new in ver 2
 		putDWORD((uint32)DCGF_VER_BUILD);
-		putString(_gameRef->getName());
+		putString(_gameRef->_name);
 
 		// thumbnail data size
 		bool thumbnailOK = false;
@@ -387,7 +387,7 @@ bool BasePersistenceManager::initLoad(const Common::String &filename) {
 	}
 	_saving = false;
 
-	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->getName()) != 0) {
+	if (_savedName == "" || scumm_stricmp(_savedName.c_str(), _gameRef->_name) != 0) {
 		debugC(kWintermuteDebugSaveGame, "ERROR: Saved game name doesn't match current game");
 		cleanup();
 		return STATUS_FAILED;

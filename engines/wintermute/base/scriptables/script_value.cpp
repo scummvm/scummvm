@@ -130,7 +130,6 @@ void ScValue::cleanup(bool ignoreNatives) {
 			_valNative->_refCount--;
 			if (_valNative->_refCount <= 0) {
 				delete _valNative;
-				_valNative = nullptr;
 			}
 		}
 	}
@@ -147,7 +146,6 @@ void ScValue::cleanup(bool ignoreNatives) {
 	_persistent = false;
 	_isConstVar = false;
 }
-
 
 
 //////////////////////////////////////////////////////////////////////////

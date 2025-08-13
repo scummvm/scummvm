@@ -344,7 +344,7 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Name") {
-		_scValue->setString(getName());
+		_scValue->setString(_name);
 		return _scValue;
 	}
 
@@ -404,7 +404,7 @@ bool BaseRegion::saveAsText(BaseDynamicBuffer *buffer, int indent, const char *n
 		buffer->putTextIndent(indent, "%s {\n", nameOverride);
 	}
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 	buffer->putTextIndent(indent + 2, "ACTIVE=%s\n", _active ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "EDITOR_SELECTED_POINT=%d\n", _editorSelectedPoint);
@@ -535,6 +535,6 @@ bool BaseRegion::mimic(BaseRegion *region, float scale, int x, int y) {
 }
 
 Common::String BaseRegion::debuggerToString() const {
-	return Common::String::format("%p: Region \"%s\": Rect (top, right, bottom, left): (%d, %d, %d, %d), active: %d ", (const void *)this, getName(), _rect.top, _rect.right, _rect.bottom, _rect.left, _active);
+	return Common::String::format("%p: Region \"%s\": Rect (top, right, bottom, left): (%d, %d, %d, %d), active: %d ", (const void *)this, _name, _rect.top, _rect.right, _rect.bottom, _rect.left, _active);
 }
 } // End of namespace Wintermute

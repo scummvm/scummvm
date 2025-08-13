@@ -580,7 +580,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		if (!_sFX) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_sFX->getFilename());
+			stack->pushString(_sFX->_soundFilename.c_str());
 		}
 		return STATUS_OK;
 	}

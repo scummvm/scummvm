@@ -93,13 +93,6 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 	return STATUS_OK;
 }
 
-void BaseFrame::stopSound() {
-	if (_sound) {
-		_sound->stop();
-	}
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 	if (_sound && !muted) {
@@ -383,8 +376,8 @@ bool BaseFrame::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "MOVE {%d, %d}\n", _moveX, _moveY);
 	}
 
-	if (_sound && _sound->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->getFilename());
+	if (_sound && !_sound->_soundFilename.empty()) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sound->_soundFilename.c_str());
 	}
 
 	buffer->putTextIndent(indent + 2, "KEYFRAME=%s\n", _keyframe ? "TRUE" : "FALSE");
@@ -447,8 +440,8 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "GetSound") == 0) {
 		stack->correctParams(0);
 
-		if (_sound && _sound->getFilename()) {
-			stack->pushString(_sound->getFilename());
+		if (_sound && !_sound->_soundFilename.empty()) {
+			stack->pushString(_sound->_soundFilename.c_str());
 		} else {
 			stack->pushNULL();
 		}
@@ -774,6 +767,6 @@ const char *BaseFrame::scToString() {
 }
 
 Common::String BaseFrame::debuggerToString() const {
-	return Common::String::format("%p: Frame \"%s\": #subframes %d ", (const void *)this, getName(), _subframes.getSize());
+	return Common::String::format("%p: Frame \"%s\": #subframes %d ", (const void *)this, _name, _subframes.getSize());
 }
 } // End of namespace Wintermute

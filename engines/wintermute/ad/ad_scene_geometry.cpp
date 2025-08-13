@@ -364,7 +364,7 @@ bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveCamera(const char *camera, float fov, float nearClipPlane, float farClipPlane) {
 	for (int32 i = 0; i < _cameras.getSize(); i++) {
-		if (scumm_stricmp(_cameras[i]->getName(), camera) == 0)
+		if (scumm_stricmp(_cameras[i]->_name, camera) == 0)
 			return setActiveCamera(i, fov, nearClipPlane, farClipPlane);
 	}
 
@@ -395,7 +395,7 @@ bool AdSceneGeometry::setActiveLight(int32 light) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveLight(char *light) {
 	for (int32 i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(_lights[i]->getName(), light) == 0) {
+		if (scumm_stricmp(_lights[i]->_name, light) == 0) {
 			return setActiveLight(i);
 		}
 	}
@@ -972,7 +972,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		if (ignoreLights.getSize()) {
 			bool ignore = false;
 			for (int32 j = 0; j < ignoreLights.getSize(); j++) {
-				if (scumm_stricmp(_lights[i]->getName(), ignoreLights[j]) == 0) {
+				if (scumm_stricmp(_lights[i]->_name, ignoreLights[j]) == 0) {
 					ignore = true;
 					break;
 				}
@@ -1108,21 +1108,21 @@ bool AdSceneGeometry::enableNode(const char *nodeName, bool enable) {
 
 	int32 i;
 	for (i = 0; i < _blocks.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _blocks[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _blocks[i]->_name) == 0) {
 			_blocks[i]->_active = enable;
 			ret = true;
 		}
 	}
 
 	for (i = 0; i < _planes.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _planes[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _planes[i]->_name) == 0) {
 			_planes[i]->_active = enable;
 			ret = true;
 		}
 	}
 
 	for (i = 0; i < _generics.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _generics[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _generics[i]->_name) == 0) {
 			_generics[i]->_active = enable;
 			ret = true;
 		}
@@ -1134,18 +1134,18 @@ bool AdSceneGeometry::enableNode(const char *nodeName, bool enable) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::isNodeEnabled(const char *nodeName) {
 	for (int32 i = 0; i < _blocks.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _blocks[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _blocks[i]->_name) == 0) {
 			return _blocks[i]->_active;
 		}
 	}
 	for (int32 i = 0; i < _planes.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _planes[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _planes[i]->_name) == 0) {
 			return _planes[i]->_active;
 		}
 	}
 
 	for (int32 i = 0; i < _generics.getSize(); i++) {
-		if (scumm_stricmp(nodeName, _generics[i]->getName()) == 0) {
+		if (scumm_stricmp(nodeName, _generics[i]->_name) == 0) {
 			return _generics[i]->_active;
 		}
 	}
@@ -1159,7 +1159,7 @@ bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 
 	int32 i;
 	for (i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
+		if (scumm_stricmp(lightName, _lights[i]->_name) == 0) {
 			_lights[i]->_active = enable;
 			ret = true;
 		}
@@ -1172,7 +1172,7 @@ bool AdSceneGeometry::enableLight(const char *lightName, bool enable) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::isLightEnabled(const char *lightName) {
 	for (int32 i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
+		if (scumm_stricmp(lightName, _lights[i]->_name) == 0) {
 			return _lights[i]->_active;
 		}
 	}
@@ -1185,7 +1185,7 @@ bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 
 	int32 i;
 	for (i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
+		if (scumm_stricmp(lightName, _lights[i]->_name) == 0) {
 			_lights[i]->_diffuseColor = color;
 			ret = true;
 		}
@@ -1198,7 +1198,7 @@ bool AdSceneGeometry::setLightColor(const char *lightName, uint32 color) {
 //////////////////////////////////////////////////////////////////////////
 uint32 AdSceneGeometry::getLightColor(const char *lightName) {
 	for (int32 i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
+		if (scumm_stricmp(lightName, _lights[i]->_name) == 0) {
 			return _lights[i]->_diffuseColor;
 		}
 	}
@@ -1208,7 +1208,7 @@ uint32 AdSceneGeometry::getLightColor(const char *lightName) {
 //////////////////////////////////////////////////////////////////////////
 DXVector3 AdSceneGeometry::getLightPos(const char *lightName) {
 	for (int32 i = 0; i < _lights.getSize(); i++) {
-		if (scumm_stricmp(lightName, _lights[i]->getName()) == 0) {
+		if (scumm_stricmp(lightName, _lights[i]->_name) == 0) {
 			return _lights[i]->_pos;
 		}
 	}
@@ -1257,7 +1257,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			bool found = false;
 
 			for (int32 j = 0; j < _lights.getSize(); j++) {
-				if (scumm_stricmp(name, _lights[j]->getName()) == 0) {
+				if (scumm_stricmp(name, _lights[j]->_name) == 0) {
 					_lights[j]->persist(persistMgr);
 					found = true;
 					break;
@@ -1290,7 +1290,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
 			for (int32 j = 0; j < _blocks.getSize(); j++) {
-				if (scumm_stricmp(name, _blocks[j]->getName()) == 0) {
+				if (scumm_stricmp(name, _blocks[j]->_name) == 0) {
 					_blocks[j]->persist(persistMgr);
 					found = true;
 					break;
@@ -1321,7 +1321,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
 			for (int32 j = 0; j < _planes.getSize(); j++) {
-				if (scumm_stricmp(name, _planes[j]->getName()) == 0) {
+				if (scumm_stricmp(name, _planes[j]->_name) == 0) {
 					_planes[j]->persist(persistMgr);
 					found = true;
 					break;
@@ -1352,7 +1352,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			persistMgr->transferCharPtr(TMEMBER(name));
 			bool found = false;
 			for (int32 j = 0; j < _generics.getSize(); j++) {
-				if (scumm_stricmp(name, _generics[j]->getName()) == 0) {
+				if (scumm_stricmp(name, _generics[j]->_name) == 0) {
 					_generics[j]->persist(persistMgr);
 					found = true;
 					break;

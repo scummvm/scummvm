@@ -35,12 +35,10 @@ namespace Wintermute {
 class BaseQuickMsg {
 public:
 	const char *getText() const;
-	uint32 getStartTime() const;
+	uint32 _startTime;
+	Common::String _text;
 	BaseQuickMsg(uint32 startTime, const char *text);
 	virtual ~BaseQuickMsg();
-private:
-	Common::String _text;
-	uint32 _startTime;
 };
 
 } // End of namespace Wintermute

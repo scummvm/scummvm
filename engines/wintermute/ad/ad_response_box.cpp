@@ -117,11 +117,11 @@ void AdResponseBox::clearButtons() {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::invalidateButtons() {
 	for (int32 i = 0; i < _respButtons.getSize(); i++) {
-		_respButtons[i]->setImage(nullptr);
+		_respButtons[i]->_image = nullptr;
 		_respButtons[i]->_cursor = nullptr;
-		_respButtons[i]->setFont(nullptr);
-		_respButtons[i]->setFontHover(nullptr);
-		_respButtons[i]->setFontPress(nullptr);
+		_respButtons[i]->_font = nullptr;
+		_respButtons[i]->_fontHover = nullptr;
+		_respButtons[i]->_fontPress = nullptr;
 		_respButtons[i]->setText("");
 	}
 	return STATUS_OK;
@@ -137,17 +137,17 @@ bool AdResponseBox::createButtons() {
 		UIButton *btn = new UIButton(_gameRef);
 		if (btn) {
 			btn->_parent = _window;
-			btn->setSharedFonts(true);
-			btn->setSharedImages(true);
+			btn->_sharedFonts = true;
+			btn->_sharedImages = true;
 			btn->_sharedCursors = true;
 			// iconic
 			if (_responses[i]->_icon) {
-				btn->setImage(_responses[i]->_icon);
+				btn->_image = _responses[i]->_icon;
 				if (_responses[i]->_iconHover) {
-					btn->setImageHover(_responses[i]->_iconHover);
+					btn->_imageHover = _responses[i]->_iconHover;
 				}
 				if (_responses[i]->_iconPressed) {
-					btn->setImagePress(_responses[i]->_iconPressed);
+					btn->_imagePress = _responses[i]->_iconPressed;
 				}
 
 				btn->setCaption(_responses[i]->_text);
@@ -161,34 +161,34 @@ bool AdResponseBox::createButtons() {
 			else {
 				btn->setText(_responses[i]->_text);
 				if (_font == nullptr) {
-					btn->setFont(_gameRef->getSystemFont());
+					btn->_font = _gameRef->_systemFont;
 				} else {
-					btn->setFont(_font);
+					btn->_font = _font;
 				}
-				btn->setFontHover((_fontHover == nullptr) ? _gameRef->getSystemFont() : _fontHover);
-				btn->setFontPress(btn->getFontHover());
-				btn->setTextAlign(_align);
+				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->_systemFont : _fontHover;
+				btn->_fontPress = btn->_fontHover;
+				btn->_align = _align;
 
 				if (_responses[i]->_font) {
-					btn->setFont(_responses[i]->_font);
+					btn->_font = _responses[i]->_font;
 				}
 
 				int width = _responseArea.right - _responseArea.left;
 
 				if (width <= 0) {
-					btn->setWidth(_gameRef->_renderer->getWidth());
+					btn->_width = _gameRef->_renderer->getWidth();
 				} else {
-					btn->setWidth(width);
+					btn->_width = width;
 				}
 			}
 
 #ifdef ENABLE_FOXTAIL
 			if (BaseEngine::instance().isFoxTail()) {
 				btn->addScript("interface/scripts/dialogue_button.script");
-				btn->setWidth(120);
+				btn->_width = 120;
 				if (_fontHover == nullptr) {
-					btn->setFontHover(btn->getFont());
-					btn->setFontPress(btn->getFontHover());
+					btn->_fontHover = btn->_font;
+					btn->_fontPress = btn->_fontHover;
 				}
 			}
 #endif
@@ -197,7 +197,7 @@ bool AdResponseBox::createButtons() {
 			btn->correctSize();
 			//btn->SetListener(this, btn, _responses[i]->_iD);
 			btn->setListener(this, btn, i);
-			btn->setVisible(false);
+			btn->_visible = false;
 			_respButtons.add(btn);
 
 			if (_responseArea.bottom - _responseArea.top < btn->getHeight()) {
@@ -376,7 +376,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 	if (_window) {
 		for (int32 i = 0; i < _window->_widgets.getSize(); i++) {
-			if (!_window->_widgets[i]->getListener()) {
+			if (!_window->_widgets[i]->_listenerObject) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}
 		}
@@ -506,29 +506,29 @@ bool AdResponseBox::display() {
 				scrollNeeded = true;
 				break;
 			}
-			_respButtons[i]->setVisible(true);
+			_respButtons[i]->_visible = true;
 			_respButtons[i]->_posX = 55 + 120 * (i / 3);
 			_respButtons[i]->_posY = 100 + 10 * (i % 3);
 			continue;
 		}
 #endif
 
-		if ((_horizontal && xxx + _respButtons[i]->getWidth() > rect.right)
+		if ((_horizontal && xxx + _respButtons[i]->_width > rect.right)
 		        || (!_horizontal && yyy + _respButtons[i]->getHeight() > rect.bottom)) {
 
 			scrollNeeded = true;
-			_respButtons[i]->setVisible(false);
+			_respButtons[i]->_visible = false;
 			break;
 		}
 
-		_respButtons[i]->setVisible(true);
+		_respButtons[i]->_visible = true;
 		_respButtons[i]->_posX = xxx;
 		_respButtons[i]->_posY = yyy;
 
 		if (_horizontal) {
-			xxx += (_respButtons[i]->getWidth() + _spacing);
+			xxx += (_respButtons[i]->_width + _spacing);
 		} else {
-			yyy += (_respButtons[i]->getHeight() + _spacing);
+			yyy += (_respButtons[i]->_height+ _spacing);
 		}
 	}
 
@@ -541,8 +541,8 @@ bool AdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->setWidth(_gameRef->_renderer->getWidth());
-		_shieldWindow->setHeight(_gameRef->_renderer->getHeight());
+		_shieldWindow->_width = _gameRef->_renderer->getWidth();
+		_shieldWindow->_height = _gameRef->_renderer->getHeight();
 
 		_shieldWindow->display();
 	}
@@ -568,11 +568,11 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->getName(), "prev") == 0) {
+		if (scumm_stricmp(obj->_name, "prev") == 0) {
 			_scrollOffset--;
-		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
+		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset++;
-		} else if (scumm_stricmp(obj->getName(), "response") == 0) {
+		} else if (scumm_stricmp(obj->_name, "response") == 0) {
 			if (_waitingScript) {
 				_waitingScript->_stack->pushInt(_responses[param2]->_iD);
 			}

@@ -310,7 +310,7 @@ bool XMesh::pickPoly(DXVector3 *pickRayOrig, DXVector3 *pickRayDir) {
 ////////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite) {
 	for (int32 i = 0; i < _materials.getSize(); i++) {
-		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(),  matName.c_str()) == 0) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name,  matName.c_str()) == 0) {
 			_materials[i]->setSprite(sprite);
 		}
 	}
@@ -320,7 +320,7 @@ bool XMesh::setMaterialSprite(const Common::String &matName, BaseSprite *sprite)
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora) {
 	for (int32 i = 0; i < _materials.getSize(); i++) {
-		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName.c_str()) == 0) {
 			_materials[i]->setTheora(theora);
 		}
 	}
@@ -330,7 +330,7 @@ bool XMesh::setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::setMaterialEffect(const Common::String &matName, Effect3D *effect, Effect3DParams *params) {
 	for (int32 i = 0; i < _materials.getSize(); i++) {
-		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName.c_str()) == 0) {
 			_materials[i]->setEffect(effect, params);
 		}
 	}
@@ -340,7 +340,7 @@ bool XMesh::setMaterialEffect(const Common::String &matName, Effect3D *effect, E
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::removeMaterialEffect(const Common::String &matName) {
 	for (int32 i = 0; i < _materials.getSize(); i++) {
-		if (_materials[i]->getName() && scumm_stricmp(_materials[i]->getName(), matName.c_str()) == 0) {
+		if (_materials[i]->_name && scumm_stricmp(_materials[i]->_name, matName.c_str()) == 0) {
 			_materials[i]->setEffect(nullptr, nullptr);
 		}
 	}

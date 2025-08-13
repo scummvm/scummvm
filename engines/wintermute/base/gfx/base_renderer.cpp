@@ -340,10 +340,6 @@ bool BaseRenderer::pointInViewport(Point32 *p) {
 	return true;
 }
 
-void BaseRenderer::addRectToList(BaseActiveRect *rect) {
-	_rectList.add(rect);
-}
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseRenderer::displayIndicator() {
 	if (!_indicatorDisplay || !_indicatorProgress) {

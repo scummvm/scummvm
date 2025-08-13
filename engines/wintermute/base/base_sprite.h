@@ -39,21 +39,36 @@ class BaseSurface;
 class BaseObject;
 class BaseSprite: public BaseScriptHolder {
 public:
+	bool killAllSounds();
 	BaseSurface *getSurface();
+	char *_editorBgFile;
+	int32 _editorBgOffsetX;
+	int32 _editorBgOffsetY;
+	int32 _editorBgAlpha;
+	bool _streamed;
+	bool _streamedKeepLoaded;
 	void cleanup();
 	void setDefaults();
+	bool _precise;
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
+	bool _editorAllFrames;
 	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = Graphics::kDefaultZoomX, float scaleY = Graphics::kDefaultZoomY);
 	int32 _moveY;
 	int32 _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY, uint32 alpha = Graphics::kDefaultRgbaMod, float rotate = Graphics::kDefaultAngle, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
 	bool getCurrentFrame(float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY);
+	bool _canBreak;
+	bool _editorMuted;
+	bool _continuous;
 	void reset();
+	BaseObject *_owner;
 	bool isChanged();
+	bool _paused;
 	bool isFinished();
 	bool loadBuffer(char *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
+	uint32 _lastFrameTime;
 	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY, uint32 alpha = Graphics::kDefaultRgbaMod);
 	bool _looping;
 	int32 _currentFrame;
@@ -70,23 +85,8 @@ public:
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
 private:
-	BaseObject *_owner;
-	bool _canBreak;
 	bool _changed;
-	bool _editorAllFrames;
-	char *_editorBgFile;
-	int32 _editorBgOffsetX;
-	int32 _editorBgOffsetY;
-	int32 _editorBgAlpha;
-	bool _editorMuted;
 	bool _finished;
-	bool _continuous;
-	uint32 _lastFrameTime;
-	bool _precise;
-	bool _paused;
-	bool _streamed;
-	bool _streamedKeepLoaded;
-	bool killAllSounds();
 };
 
 } // End of namespace Wintermute

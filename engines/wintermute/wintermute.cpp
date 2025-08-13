@@ -211,7 +211,7 @@ int WintermuteEngine::init() {
 	_game->initialize1();
 
 	// set gameId, for savegame-naming:
-	_game->setGameTargetName(_targetName);
+	_game->_targetName = _targetName;
 
 	if (DID_FAIL(_game->loadSettings("startup.settings"))) {
 		_game->LOG(0, "Error loading game settings.");
@@ -305,11 +305,11 @@ int WintermuteEngine::messageLoop() {
 
 			// ***** flip
 			limiter.delayBeforeSwap();
-			if (!_game->getSuspendedRendering()) {
+			if (!_game->_suspendedRendering) {
 				_game->_renderer->flip();
 			}
 			limiter.startFrame();
-			if (_game->getIsLoading()) {
+			if (_game->_loading) {
 				_game->loadGame(_game->_scheduledLoadSlot);
 			}
 		}

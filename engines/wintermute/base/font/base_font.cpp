@@ -68,7 +68,7 @@ int BaseFont::getTextWidth(const byte *text, int maxLength) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseFont::getLetterHeight() {
+int32 BaseFont::getLetterHeight() {
 	return 0;
 }
 

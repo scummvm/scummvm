@@ -68,7 +68,7 @@ bool UIText::display(int offsetX, int offsetY) {
 
 	BaseFont *font = _font;
 	if (!font) {
-		font = _gameRef->getSystemFont();
+		font = _gameRef->_systemFont;
 	}
 
 	if (_back) {
@@ -321,7 +321,7 @@ bool UIText::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "STATIC\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");

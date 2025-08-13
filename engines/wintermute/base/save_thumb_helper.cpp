@@ -48,7 +48,7 @@ SaveThumbHelper::~SaveThumbHelper() {
 }
 
 BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
-	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
+	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
@@ -70,9 +70,9 @@ bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 
-	if (_gameRef->getSaveThumbWidth() > 0 && _gameRef->getSaveThumbHeight() > 0) {
+	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
 
-		_thumbnail = storeThumb(doFlip, _gameRef->getSaveThumbWidth(), _gameRef->getSaveThumbHeight());
+		_thumbnail = storeThumb(doFlip, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
 		if (!_thumbnail) {
 			return STATUS_FAILED;
 		}

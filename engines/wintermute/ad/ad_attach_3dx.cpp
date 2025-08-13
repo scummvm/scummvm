@@ -92,7 +92,7 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 		_xmodel->render();
 
 		if (registerObjects && _owner && _owner->_registrable) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, _owner, _xmodel,
+			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef, _owner, _xmodel,
 			                                                      _xmodel->_boundingRect.left,
 			                                                      _xmodel->_boundingRect.top,
 			                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,

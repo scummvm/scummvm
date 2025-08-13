@@ -35,6 +35,9 @@ namespace Wintermute {
 
 class BaseRegion : public BaseObject {
 public:
+	float _lastMimicScale;
+	int32 _lastMimicX;
+	int32 _lastMimicY;
 	void cleanup();
 	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
 	bool getBoundingRect(Rect32 *rect);
@@ -59,11 +62,6 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
-
-private:
-	float _lastMimicScale;
-	int32 _lastMimicX;
-	int32 _lastMimicY;
 };
 
 } // End of namespace Wintermute

@@ -179,7 +179,6 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_personalizedSave = false;
 
 	_editorMode = false;
-	//_doNotExpandStrings = false;
 
 	_engineLogCallback = nullptr;
 	_engineLogCallbackData = nullptr;
@@ -225,6 +224,18 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_suspendedRendering = false;
 
 	_lastCursor = nullptr;
+
+	// accessibility flags
+/*	m_AccessTTSEnabled = false;
+	m_AccessTTSTalk = true;
+	m_AccessTTSCaptions = true;
+	m_AccessTTSKeypress = true;
+	m_AccessKeyboardEnabled = false;
+	m_AccessKeyboardCursorSkip = true;
+	m_AccessKeyboardPause = false;
+
+	m_AccessGlobalPaused = false;
+	m_AccessShieldWin = NULL;*/
 
 	_mouseLockRect.setEmpty();
 
@@ -276,7 +287,6 @@ BaseGame::~BaseGame() {
 	delete _videoPlayer;
 	delete _theoraPlayer;
 	delete _soundMgr;
-	//SAFE_DELETE(_keyboardState);
 
 	delete _renderer;
 	delete _musicSystem;
@@ -292,6 +302,7 @@ BaseGame::~BaseGame() {
 	_videoPlayer = nullptr;
 	_theoraPlayer = nullptr;
 	_soundMgr = nullptr;
+	//SAFE_DELETE(_keyboardState);
 
 	_renderer = nullptr;
 	_musicSystem = nullptr;
@@ -332,15 +343,15 @@ bool BaseGame::cleanup() {
 	_focusedWindow = nullptr; // ref only
 
 	delete _cursorNoninteractive;
-	delete _cursor;
-	delete _activeCursor;
 	_cursorNoninteractive = nullptr;
+	delete _cursor;
 	_cursor = nullptr;
+	delete _activeCursor;
 	_activeCursor = nullptr;
 
 	delete _scValue;
-	delete _sFX;
 	_scValue = nullptr;
+	delete _sFX;
 	_sFX = nullptr;
 
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
@@ -586,6 +597,9 @@ bool BaseGame::initialize3() { // renderer is initialized
 	_posX = _renderer->getWidth() / 2;
 	_posY = _renderer->getHeight() / 2;
 	_renderer->initIndicator();
+
+	//if(m_AccessMgr) Game->m_AccessMgr->Initialize();
+
 	return STATUS_OK;
 }
 
@@ -670,6 +684,9 @@ bool BaseGame::initLoop() {
 	_musicSystem->updateMusicCrossfade();
 
 	_surfaceStorage->initLoop();
+
+	//if(m_AccessMgr) m_AccessMgr->InitLoop();
+
 	_fontStorage->initLoop();
 
 
@@ -700,7 +717,7 @@ bool BaseGame::initLoop() {
 
 	_focusedWindow = nullptr;
 	for (int32 i = _windows.getSize() - 1; i >= 0; i--) {
-		if (_windows[i]->isVisible()) {
+		if (_windows[i]->_visible) {
 			_focusedWindow = _windows[i];
 			break;
 		}
@@ -1212,7 +1229,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			stack->pushNative(win, true);
 		} else {
 			delete win;
-			win = nullptr;
 			stack->pushNULL();
 		}
 		return STATUS_OK;
@@ -1799,7 +1815,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		int fileNum = 0;
 		while (true) {
-			Common::sprintf_s(filename, "%s%03d.bmp", val->isNULL() ? getName() : val->getString(), fileNum);
+			Common::sprintf_s(filename, "%s%03d.bmp", val->isNULL() ? _name : val->getString(), fileNum);
 			if (!sfmFileExists(filename)) {
 				break;
 			}
@@ -2052,9 +2068,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AccOutputText") == 0) {
 		stack->correctParams(2);
-		/* const char *str = */	stack->pop()->getString();
-		/* int type = */ stack->pop()->getInt();
-		// do nothing
+		/* const char *str = */stack->pop()->getString();
+		/* int type = */stack->pop()->getInt();
+		//m_AccessMgr->Speak(Str, (TTTSType)Type);
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2327,7 +2343,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetScreenTypeMode") == 0) {
 		stack->correctParams(2);
 		int type = stack->pop()->getInt();
-		stack->pop()->getInt(); //mode is unused
+		stack->pop()->getInt(); // mode is unused
 
 		_renderer->setWindowed(type);
 		stack->pushNULL();
@@ -2415,7 +2431,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// Name
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Name") {
-		_scValue->setString(getName());
+		_scValue->setString(_name);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
@@ -2722,6 +2738,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// AccTTSEnabled
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AccTTSEnabled") {
+		//m_ScValue->SetBool(m_AccessTTSEnabled);
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -2730,6 +2747,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// AccTTSTalk
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "AccTTSTalk") {
+		//m_ScValue->SetBool(m_AccessTTSTalk);
 		_scValue->setBool(false);
 		return _scValue;
 	}
@@ -3262,8 +3280,8 @@ bool BaseGame::displayQuickMsg() {
 	}
 
 	// update
-	for (int32 i = 0; i < (int32)_quickMessages.getSize(); i++) {
-		if (_currentTime - _quickMessages[i]->getStartTime() >= QUICK_MSG_DURATION) {
+	for (int32 i = 0; i < _quickMessages.getSize(); i++) {
+		if (_currentTime - _quickMessages[i]->_startTime>= QUICK_MSG_DURATION) {
 			delete _quickMessages[i];
 			_quickMessages.removeAt(i);
 			i--;
@@ -3835,10 +3853,10 @@ bool BaseGame::displayWindows(bool inGame) {
 	bool res;
 
 	// did we lose focus? focus topmost window
-	if (_focusedWindow == nullptr || !_focusedWindow->isVisible() || _focusedWindow->isDisabled()) {
+	if (_focusedWindow == nullptr || !_focusedWindow->_visible || _focusedWindow->_disable) {
 		_focusedWindow = nullptr;
 		for (int32 i = _windows.getSize() - 1; i >= 0; i--) {
-			if (_windows[i]->isVisible() && !_windows[i]->isDisabled()) {
+			if (_windows[i]->_visible && !_windows[i]->_disable) {
 				_focusedWindow = _windows[i];
 				break;
 			}
@@ -3847,7 +3865,7 @@ bool BaseGame::displayWindows(bool inGame) {
 
 	// display all windows
 	for (int32 i = 0; i < _windows.getSize(); i++) {
-		if (_windows[i]->isVisible() && _windows[i]->getInGame() == inGame) {
+		if (_windows[i]->_visible && _windows[i]->_inGame == inGame) {
 
 			res = _windows[i]->display();
 			if (DID_FAIL(res)) {
@@ -3961,7 +3979,7 @@ bool BaseGame::focusWindow(UIWindow *window) {
 				_gameRef->_focusedWindow = window;
 			}
 
-			if (window->getMode() == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->getMode() == WINDOW_EXCLUSIVE || prev->getMode() == WINDOW_SYSTEM_EXCLUSIVE)) {
+			if (window->_mode == WINDOW_NORMAL && prev != window && _gameRef->validObject(prev) && (prev->_mode == WINDOW_EXCLUSIVE || prev->_mode == WINDOW_SYSTEM_EXCLUSIVE)) {
 				return focusWindow(prev);
 			} else {
 				return STATUS_OK;
@@ -4124,8 +4142,8 @@ void BaseGame::setWindowTitle() {
 		} else {
 			warning("BaseGame::SetWindowTitle - Ignoring textencoding");
 			utf8Title = Utf8String(title);
-			/*          WideString wstr = StringUtil::AnsiToWide(Title);
-			            title = StringUtil::WideToUtf8(wstr);*/
+			/*WideString wstr = StringUtil::AnsiToWide(Title);
+			title = StringUtil::WideToUtf8(wstr);*/
 		}
 		warning("BaseGame::SetWindowTitle: Ignoring value: %s", utf8Title.c_str());
 	}
@@ -4180,10 +4198,12 @@ bool BaseGame::popViewport() {
 
 	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize()) {
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
-	} else _renderer->setViewport(_renderer->_drawOffsetX,
-		                              _renderer->_drawOffsetY,
-		                              _renderer->getWidth() + _renderer->_drawOffsetX,
-		                              _renderer->getHeight() + _renderer->_drawOffsetY);
+	} else {
+		_renderer->setViewport(_renderer->_drawOffsetX,
+		                      _renderer->_drawOffsetY,
+		                      _renderer->getWidth() + _renderer->_drawOffsetX,
+		                      _renderer->getHeight() + _renderer->_drawOffsetY);
+	}
 
 	return STATUS_OK;
 }
@@ -4201,9 +4221,9 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 			}
 		} else {
 			rect->setRect(_renderer->_drawOffsetX,
-						  _renderer->_drawOffsetY,
-						  _renderer->getWidth() + _renderer->_drawOffsetX,
-						  _renderer->getHeight() + _renderer->_drawOffsetY);
+			              _renderer->_drawOffsetY,
+			              _renderer->getWidth() + _renderer->_drawOffsetX,
+			              _renderer->getHeight() + _renderer->_drawOffsetY);
 			if (custom) {
 				*custom = false;
 			}
@@ -4619,7 +4639,7 @@ bool BaseGame::displayDebugInfo() {
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
-			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->getWidth(), TAL_RIGHT);
+			_systemFont->drawText((const byte *)_activeObject->_name, 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
 		Common::sprintf_s(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));

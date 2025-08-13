@@ -318,28 +318,28 @@ bool UIEdit::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "EDIT\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
 
-	if (_back && _back->getFilename()) {
-		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->getFilename());
+	if (_back && _back->_filename) {
+		buffer->putTextIndent(indent + 2, "BACK=\"%s\"\n", _back->_filename);
 	}
 
-	if (_image && _image->getFilename()) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getFilename());
+	if (_image && _image->_filename) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_filename);
 	}
 
-	if (_font && _font->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_font && _font->_filename) {
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
-	if (_fontSelected && _fontSelected->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->getFilename());
+	if (_fontSelected && _fontSelected->_filename) {
+		buffer->putTextIndent(indent + 2, "FONT_SELECTED=\"%s\"\n", _fontSelected->_filename);
 	}
 
-	if (_cursor && _cursor->getFilename()) {
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	if (_cursor && _cursor->_filename) {
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -484,7 +484,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	if (strcmp(name, "SelStart") == 0) {
 		_selStart = value->getInt();
 		_selStart = MAX<int32>(_selStart, 0);
-		_selStart = (int)MIN((size_t)_selStart, strlen(_text));
+		_selStart = (int32)MIN((size_t)_selStart, strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -494,7 +494,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	else if (strcmp(name, "SelEnd") == 0) {
 		_selEnd = value->getInt();
 		_selEnd = MAX<int32>(_selEnd, 0);
-		_selEnd = (int)MIN((size_t)_selEnd, strlen(_text));
+		_selEnd = (int32)MIN((size_t)_selEnd, strlen(_text));
 		return STATUS_OK;
 	}
 
@@ -590,7 +590,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_font) {
 		font = _font;
 	} else {
-		font = _gameRef->getSystemFont();
+		font = _gameRef->_systemFont;
 	}
 
 	if (_fontSelected) {
@@ -604,8 +604,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	_selStart = MAX<int32>(_selStart, 0);
 	_selEnd   = MAX<int32>(_selEnd, 0);
 
-	_selStart = (int)MIN((size_t)_selStart, strlen(_text));
-	_selEnd   = (int)MIN((size_t)_selEnd,   strlen(_text));
+	_selStart = (int32)MIN((size_t)_selStart, strlen(_text));
+	_selEnd   = (int32)MIN((size_t)_selEnd,   strlen(_text));
 
 	//int CursorWidth = font->GetCharWidth(_cursorChar[0]);
 	int cursorWidth = font->getTextWidth((byte *)_cursorChar);
@@ -628,11 +628,10 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		curFirst = true;
 	} else {
 		while (font->getTextWidth((byte *)_text + _scrollOffset, MAX<int32>(0, _selStart - _scrollOffset)) +
-				sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
-
-				> _width - cursorWidth - 2 * _frameWidth) {
+		       sfont->getTextWidth((byte *)(_text + MAX<int32>(_scrollOffset, _selStart)), _selEnd - MAX(_scrollOffset, _selStart))
+		       > _width - cursorWidth - 2 * _frameWidth) {
 			_scrollOffset++;
-			if (_scrollOffset >= (int)strlen(_text)) {
+			if (_scrollOffset >= (int32)strlen(_text)) {
 				break;
 			}
 		}
@@ -727,8 +726,13 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
+/*	if (Game->m_AccessMgr->GetActiveObject() == this) {
+		RECT rc;
+		SetRect(&rc, OffsetX + m_PosX, OffsetY + m_PosY, OffsetX + m_PosX + m_Width, OffsetY + m_PosY + m_Height);
+		Game->m_AccessMgr->SetHintRect(&rc, true);
+	}*/
 
 	_gameRef->_textEncoding = OrigEncoding;
 
@@ -868,7 +872,7 @@ int UIEdit::deleteChars(int start, int end) {
 		_text = str;
 	}
 	if (_parentNotify && _parent) {
-		_parent->applyEvent(getName());
+		_parent->applyEvent(_name);
 	}
 
 	return end - start;
@@ -897,7 +901,7 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 		_text = str;
 	}
 	if (_parentNotify && _parent) {
-		_parent->applyEvent(getName());
+		_parent->applyEvent(_name);
 	}
 
 	return num;

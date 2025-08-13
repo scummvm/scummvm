@@ -47,7 +47,6 @@ public:
 	bool display(int x, int y, int width, int height);
 	UITiledImage(BaseGame *inGame = nullptr);
 	~UITiledImage() override;
-private:
 	BaseSubFrame *_image;
 	Rect32 _upLeft;
 	Rect32 _upMiddle;

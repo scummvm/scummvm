@@ -43,6 +43,7 @@ public:
 	const char *scToString() override;
 	SXFile(BaseGame *inGame, ScStack *Stack);
 	~SXFile() override;
+
 private:
 	Common::SeekableReadStream *_readFile;
 	Common::WriteStream *_writeFile;

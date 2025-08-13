@@ -281,8 +281,8 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 
 
 //////////////////////////////////////////////////////////////////////////
-int BaseFontTT::getLetterHeight() {
-	return (int)getLineHeight();
+int32 BaseFontTT::getLetterHeight() {
+	return (int32)_lineHeight;
 }
 
 
@@ -603,7 +603,7 @@ void BaseFontTT::measureText(const WideString &text, int maxWidth, int maxHeight
 
 		//WrapText(text, maxWidth, maxHeight, lines);
 
-		textHeight = (int)(lines.size() * getLineHeight());
+		textHeight = (int)(lines.size() * _lineHeight);
 	} else {
 		textWidth = _font->getStringWidth(text);
 		textHeight = _fontHeight;

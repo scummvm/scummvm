@@ -101,14 +101,10 @@ public:
 	int getTextWidth(const byte *text, int maxLength = -1) override;
 	int getTextHeight(const byte *text, int width) override;
 	void drawText(const byte *text, int x, int y, int width, TTextAlign align = TAL_LEFT, int max_height = -1, int maxLength = -1) override;
-	int getLetterHeight() override;
+	int32 getLetterHeight() override;
 
 	bool loadBuffer(char *buffer);
 	bool loadFile(const Common::String &filename);
-
-	float getLineHeight() const {
-		return _lineHeight;
-	}
 
 	void afterLoad() override;
 	void initLoop() override;

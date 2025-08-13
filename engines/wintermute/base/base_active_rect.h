@@ -60,7 +60,6 @@ public:
 	BaseActiveRect(BaseGame *inGame, BaseObject *owner, XModel *model, int x, int y, int width, int height, bool precise = true);
 #endif
 	~BaseActiveRect() override;
-
 };
 
 } // End of namespace Wintermute

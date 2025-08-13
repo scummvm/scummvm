@@ -60,12 +60,12 @@ bool AdInventory::insertItem(const char *name, const char *insertAfter) {
 
 	int32 insertIndex = -1;
 	for (int32 i = 0; i < _takenItems.getSize(); i++) {
-		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
+		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			_takenItems.removeAt(i);
 			i--;
 			continue;
 		}
-		if (insertAfter && scumm_stricmp(_takenItems[i]->getName(), insertAfter) == 0) {
+		if (insertAfter && scumm_stricmp(_takenItems[i]->_name, insertAfter) == 0) {
 			insertIndex = i + 1;
 		}
 	}
@@ -88,7 +88,7 @@ bool AdInventory::removeItem(const char *name) {
 	}
 
 	for (int32 i = 0; i < _takenItems.getSize(); i++) {
-		if (scumm_stricmp(_takenItems[i]->getName(), name) == 0) {
+		if (scumm_stricmp(_takenItems[i]->_name, name) == 0) {
 			if (((AdGame *)_gameRef)->_selectedItem == _takenItems[i]) {
 				((AdGame *)_gameRef)->_selectedItem = nullptr;
 			}

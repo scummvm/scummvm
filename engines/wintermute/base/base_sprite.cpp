@@ -482,7 +482,7 @@ bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "SPRITE {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "LOOPING=%s\n", _looping ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "CONTINUOUS=%s\n", _continuous ? "TRUE" : "FALSE");
 	buffer->putTextIndent(indent + 2, "PRECISE=%s\n", _precise ? "TRUE" : "FALSE");
@@ -818,12 +818,14 @@ const char *BaseSprite::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSprite::killAllSounds() {
 	for (int32 i = 0; i < _frames.getSize(); i++) {
-		_frames[i]->stopSound();
+		if (_frames[i]->_sound) {
+			_frames[i]->_sound->stop();
+		}
 	}
 	return STATUS_OK;
 }
 
 Common::String BaseSprite::debuggerToString() const {
-	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, getName());
+	return Common::String::format("%p: Sprite \"%s\"", (const void *)this, _name);
 }
 } // End of namespace Wintermute

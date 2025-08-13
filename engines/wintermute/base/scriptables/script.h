@@ -51,11 +51,8 @@ public:
 	bool finishThreads();
 	bool copyParameters(ScStack *stack);
 
-	void afterLoad();
-protected:
 	ScValue *_operand;
 	ScValue *_reg1;
-public:
 	bool _freezable;
 	bool resume();
 	bool pause();
@@ -66,6 +63,7 @@ public:
 	ScScript *invokeEventHandler(const Common::String &eventName, bool unbreakable = false);
 	uint32 _timeSlice;
 	DECLARE_PERSISTENT(ScScript, BaseClass)
+	void afterLoad();
 	void runtimeError(const char *fmt, ...);
 	bool run();
 	bool finish(bool includingThreads = false);
@@ -134,22 +132,13 @@ public:
 	void cleanup();
 	bool create(const char *filename, byte *buffer, uint32 size, BaseScriptHolder *owner);
 	uint32 _iP;
-private:
 	void readHeader();
 	uint32 _bufferSize;
 	byte *_buffer;
-public:
 	Common::SeekableReadStream *_scriptStream;
 	ScScript(BaseGame *inGame, ScEngine *engine);
 	~ScScript() override;
 	char *_filename;
-	bool _thread;
-	bool _methodThread;
-	char *_threadEvent;
-	BaseScriptHolder *_owner;
-	ScScript::TExternalFunction *getExternal(char *name);
-	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
-private:
 	char **_symbols;
 	uint32 _numSymbols;
 	TFunctionPos *_functions;
@@ -160,6 +149,13 @@ private:
 	uint32 _numFunctions;
 	uint32 _numMethods;
 	uint32 _numEvents;
+	bool _thread;
+	bool _methodThread;
+	char *_threadEvent;
+	BaseScriptHolder *_owner;
+	ScScript::TExternalFunction *getExternal(char *name);
+	bool externalCall(ScStack *stack, ScStack *thisStack, ScScript::TExternalFunction *function);
+private:
 
 	bool initScript();
 	bool initTables();

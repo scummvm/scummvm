@@ -45,10 +45,10 @@ public:
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	~BaseStringTable() override;
+	Common::HashMap<Common::String, Common::String> _strings;
 	char *getKey(const char *str) const;
 	bool persist(BasePersistenceManager *persistMgr) override;
 private:
-	Common::HashMap<Common::String, Common::String> _strings;
 	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
 	void replaceExpand(char *key, char *newStr, size_t newStrSize) const;

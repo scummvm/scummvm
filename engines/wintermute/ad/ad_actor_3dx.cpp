@@ -411,7 +411,7 @@ bool AdActor3DX::display() {
 	bool res = _xmodel->render();
 
 	if (_registrable) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, _xmodel,
+		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef, this, _xmodel,
 		                                                      _xmodel->_boundingRect.left,
 		                                                      _xmodel->_boundingRect.top,
 		                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,
@@ -431,9 +431,9 @@ bool AdActor3DX::display() {
 	}
 
 	// accessibility
-	//	if (_gameRef->_accessMgr->GetActiveObject() == this) {
-	//		_gameRef->_accessMgr->SetHintRect(&_xmodel->m_BoundingRect);
-	//	}
+	//if (_gameRef->_accessMgr->GetActiveObject() == this) {
+	//	_gameRef->_accessMgr->SetHintRect(&_xmodel->m_BoundingRect);
+	//}
 
 	return res;
 }
@@ -471,7 +471,7 @@ bool AdActor3DX::displayShadowVolume() {
 
 	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
 	                               _shadowLightPos._y * _scale3D,
-								   _shadowLightPos._z * _scale3D);
+	                               _shadowLightPos._z * _scale3D);
 	pos = _posVector + lightPos;
 	target = _posVector;
 
@@ -731,8 +731,8 @@ void AdActor3DX::getNextStep2D() {
 
 	DXVector3 currentPoint;
 	adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-	                                                      _path2D->getCurrent()->y,
-	                                                      &currentPoint);
+	                                             _path2D->getCurrent()->y,
+	                                             &currentPoint);
 
 	DXVector3 origVec, newVec;
 
@@ -753,8 +753,8 @@ void AdActor3DX::getNextStep2D() {
 			}
 		} else {
 			adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-			                                                      _path2D->getCurrent()->y,
-			                                                      &currentPoint);
+			                                             _path2D->getCurrent()->y,
+			                                             &currentPoint);
 			initLine3D(_posVector, currentPoint, false);
 		}
 	} else
@@ -782,8 +782,8 @@ void AdActor3DX::followPath2D() {
 
 		DXVector3 currentPoint;
 		adGameRef->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-		                                                         _path2D->getCurrent()->y,
-		                                                         &currentPoint);
+		                                                _path2D->getCurrent()->y,
+		                                                &currentPoint);
 
 		initLine3D(_posVector, currentPoint, true);
 	} else {
@@ -1452,7 +1452,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				} else {
 					bool isSet = false;
 					for (int32 i = 0; i < _attachments.getSize(); i++) {
-						if (scumm_stricmp(_attachments[i]->getName(), attachName) == 0) {
+						if (scumm_stricmp(_attachments[i]->_name, attachName) == 0) {
 							delete _attachments[i];
 							_attachments[i] = at;
 							isSet = true;
@@ -1486,7 +1486,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		} else {
 			bool isFound = false;
 			for (int32 i = 0; i < _attachments.getSize(); i++) {
-				if (scumm_stricmp(_attachments[i]->getName(), attachmentName) == 0) {
+				if (scumm_stricmp(_attachments[i]->_name, attachmentName) == 0) {
 					delete _attachments[i];
 					_attachments.removeAt(i);
 					isFound = true;
@@ -1510,7 +1510,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		} else {
 			bool isFound = false;
 			for (int32 i = 0; i < _attachments.getSize(); i++) {
-				if (scumm_stricmp(_attachments[i]->getName(), attachmentName) == 0) {
+				if (scumm_stricmp(_attachments[i]->_name, attachmentName) == 0) {
 					stack->pushNative(_attachments[i], true);
 					isFound = true;
 					break;

@@ -479,7 +479,7 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "BUTTON\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "\n");
@@ -624,12 +624,11 @@ void UIButton::correctSize() {
 	}
 
 	if (_text) {
-		int textHeight = 0;
-		BaseFont *font = _font ? _font : _gameRef->getSystemFont();
-
-		if (font) {
-			textHeight = font->getTextHeight((byte *)_text, _width);
-		}
+		int textHeight;
+		if (_font)
+			textHeight = _font->getTextHeight((byte *)_text, _width);
+		else
+			textHeight = _gameRef->_systemFont->getTextHeight((byte *)_text, _width);
 
 		if (textHeight > _height) {
 			_height = textHeight;
@@ -719,7 +718,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_font) {
 			font = _font;
 		} else {
-			font = _gameRef->getSystemFont();
+			font = _gameRef->_systemFont;
 		}
 	}
 
@@ -747,7 +746,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}
 
 	if (!_pixelPerfect || !_image) {
-		_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 	}
 
 	// reset unused sprites
@@ -765,6 +764,12 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}
 	if (_imageHover && _imageHover != image) {
 		_imageHover->reset();
+
+/*	if (Game->m_AccessMgr->GetActiveObject() == this) {
+		RECT rc;
+		SetRect(&rc, OffsetX + m_PosX, OffsetY + m_PosY, OffsetX + m_PosX + m_Width, OffsetY + m_PosY + m_Height);
+		Game->m_AccessMgr->SetHintRect(&rc, true);
+	}*/
 	}
 
 	_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
@@ -780,7 +785,7 @@ void UIButton::press() {
 		_listenerObject->listen(_listenerParamObject, _listenerParamDWORD);
 	}
 	if (_parentNotify && _parent) {
-		_parent->applyEvent(getName());
+		_parent->applyEvent(_name);
 	}
 
 	_oneTimePress = false;
@@ -1222,29 +1227,4 @@ bool UIButton::persist(BasePersistenceManager *persistMgr) {
 
 	return STATUS_OK;
 }
-
-void UIButton::setFontHover(BaseFont *font) {
-	_fontHover = font;
-}
-
-BaseFont *UIButton::getFontHover() {
-	return _fontHover;
-}
-
-void UIButton::setFontPress(BaseFont *font) {
-	_fontPress = font;
-}
-
-void UIButton::setImageHover(BaseSprite *sprite) {
-	_imageHover = sprite;
-}
-
-void UIButton::setImagePress(BaseSprite *sprite) {
-	_imagePress = sprite;
-}
-
-void UIButton::setTextAlign(TTextAlign align) {
-	_align = align;
-}
-
 } // End of namespace Wintermute

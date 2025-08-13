@@ -164,6 +164,9 @@ public:
 		return STATUS_OK;
 	};
 	bool pointInViewport(Point32 *P);
+	uint32 _forceAlphaColor;
+	uint32 _window;
+	uint32 _clipperWindow;
 	bool _active;
 	bool _ready;
 
@@ -171,10 +174,6 @@ public:
 	bool isWindowed() const { return _windowed; }
 	int32 getBPP() const { return _bPP; }
 
-	uint32 _window;
-	uint32 _forceAlphaColor;
-
-	void addRectToList(BaseActiveRect *rect);
 
 	// Indicator & Save/Load-related functions
 	void initIndicator();
@@ -190,13 +189,7 @@ public:
 
 	int32 getWidth() const { return _width; }
 	int32 getHeight() const { return _height; }
-protected:
-	int32 _height;
-	int32 _width;
-
 	bool _windowed;
-	int32 _bPP;
-
 	Common::String _loadImageName;
 	Common::String _saveImageName;
 	int32 _saveImageX;
@@ -216,13 +209,14 @@ protected:
 	bool _indicatorDisplay;
 	int32 _indicatorProgress;
 
-	uint32 _clipperWindow;
-
 	Rect32 _windowRect;
 	Rect32 _viewportRect;
 	Rect32 _screenRect;
 	Rect32 _monitorRect;
-private:
+	int32 _bPP;
+	int32 _height;
+	int32 _width;
+
 	BaseArray<BaseActiveRect *> _rectList;
 	bool displaySaveloadImage();
 	bool displaySaveloadRect();

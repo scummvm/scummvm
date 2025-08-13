@@ -46,7 +46,6 @@ public:
 	BaseFontBitmap(BaseGame *inGame);
 	~BaseFontBitmap() override;
 
-private:
 	bool getWidths();
 	BaseSprite *_sprite;
 	int32 _widthsFrame;
@@ -58,6 +57,7 @@ private:
 	BaseSubFrame *_subframe;
 	bool _wholeCell;
 
+private:
 	int getCharWidth(byte index);
 	void drawChar(byte c, int x, int y);
 

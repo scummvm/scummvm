@@ -542,7 +542,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_region && _sprite) {
-		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", getName());
+		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
 	}
 
 	updatePosition();
@@ -594,7 +594,7 @@ bool AdEntity::display() {
 		}
 
 		if (_region && (reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->addRectToList(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -854,7 +854,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		const char *nodeName = stack->pop()->getString();
 
-		if (strcmp(getName(), nodeName) == 0) {
+		if (strcmp(_name, nodeName) == 0) {
 			warning("%s(%s): source and target have the same name", name, nodeName);
 			stack->pushBool(false);
 			return STATUS_OK;
@@ -866,7 +866,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					// found source layer and index, looking for target node
 					for (int32 k = 0; k < layer->_nodes.getSize(); k++) {
-						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->getName(), nodeName) == 0) {
+						if (layer->_nodes[k]->_type == OBJECT_ENTITY && strcmp(layer->_nodes[k]->_entity->_name, nodeName) == 0) {
 							// update target index, depending on method name and comparison of index values
 							if (j < k && strcmp(name, "SetBeforeEntity") == 0) {
 								k--;
@@ -1126,7 +1126,7 @@ const char *AdEntity::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "ENTITY {\n");
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	if (_subtype == ENTITY_SOUND) {
 		buffer->putTextIndent(indent + 2, "SUBTYPE=\"SOUND\"\n");
 	}
@@ -1176,8 +1176,8 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->getFilename());
 	}
 
-	if (_subtype == ENTITY_SOUND && _sFX && _sFX->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->getFilename());
+	if (_subtype == ENTITY_SOUND && _sFX && !_sFX->_soundFilename.empty()) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename.c_str());
 		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}
@@ -1301,6 +1301,6 @@ bool AdEntity::setSprite(const char *filename) {
 }
 
 Common::String AdEntity::debuggerToString() const {
-	return Common::String::format("%p: Entity \"%s\"; (X,Y): (%d, %d), rotate(%d): %f deg, scale(%d): (%f, %f)%%", (const void *)this, getName(), _posX, _posY, _rotatable, _rotate, _zoomable, _scaleX, _scaleY);
+	return Common::String::format("%p: Entity \"%s\"; (X,Y): (%d, %d), rotate(%d): %f deg, scale(%d): (%f, %f)%%", (const void *)this, _name, _posX, _posY, _rotatable, _rotate, _zoomable, _scaleX, _scaleY);
 }
 } // End of namespace Wintermute

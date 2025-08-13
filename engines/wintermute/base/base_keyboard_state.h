@@ -43,6 +43,13 @@ struct keyCodeMapping {
 
 class BaseKeyboardState : public BaseScriptable {
 public:
+	uint32 _currentKeyData;
+	uint32 _currentCharCode;
+	bool _currentPrintable;
+
+	bool _currentShift;
+	bool _currentAlt;
+	bool _currentControl;
 	DECLARE_PERSISTENT(BaseKeyboardState, BaseScriptable)
 	BaseKeyboardState(BaseGame *inGame);
 	~BaseKeyboardState() override;
@@ -63,14 +70,6 @@ public:
 
 private:
 	void init();
-
-	bool _currentPrintable;
-	uint32 _currentKeyData;
-	uint32 _currentCharCode;
-
-	bool _currentShift;
-	bool _currentAlt;
-	bool _currentControl;
 
 	uint8 *_keyStates;
 

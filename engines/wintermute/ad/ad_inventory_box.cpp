@@ -79,12 +79,12 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 	switch (obj->_type) {
 	case UI_BUTTON:
-		if (scumm_stricmp(obj->getName(), "close") == 0) {
+		if (scumm_stricmp(obj->_name, "close") == 0) {
 			_visible = false;
-		} else if (scumm_stricmp(obj->getName(), "prev") == 0) {
+		} else if (scumm_stricmp(obj->_name, "prev") == 0) {
 			_scrollOffset -= _scrollBy;
 			_scrollOffset = MAX<int32>(_scrollOffset, 0);
-		} else if (scumm_stricmp(obj->getName(), "next") == 0) {
+		} else if (scumm_stricmp(obj->_name, "next") == 0) {
 			_scrollOffset += _scrollBy;
 		} else {
 			return BaseObject::listen(param1, param2);
@@ -119,8 +119,8 @@ bool AdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->setWidth(_gameRef->_renderer->getWidth());
-		_closeButton->setHeight(_gameRef->_renderer->getHeight());
+		_closeButton->_width = _gameRef->_renderer->getWidth();
+		_closeButton->_height = _gameRef->_renderer->getHeight();
 
 		_closeButton->display();
 	}
@@ -325,7 +325,7 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 
 	if (_window) {
 		for (int32 i = 0; i < _window->_widgets.getSize(); i++) {
-			if (!_window->_widgets[i]->getListener()) {
+			if (!_window->_widgets[i]->_listenerObject) {
 				_window->_widgets[i]->setListener(this, _window->_widgets[i], 0);
 			}
 		}
@@ -339,7 +339,7 @@ bool AdInventoryBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "INVENTORY_BOX\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", getName());
+	buffer->putTextIndent(indent + 2, "NAME=\"%s\"\n", _name);
 	buffer->putTextIndent(indent + 2, "CAPTION=\"%s\"\n", getCaption());
 
 	buffer->putTextIndent(indent + 2, "AREA { %d, %d, %d, %d }\n", _itemsArea.left, _itemsArea.top, _itemsArea.right, _itemsArea.bottom);

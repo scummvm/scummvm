@@ -43,12 +43,9 @@ public:
 	void scSetString(const char *val) override;
 	const char *scToString() override;
 	void setStringVal(const char *val);
-
+	char *_string;
 	SXString(BaseGame *inGame, ScStack *Stack);
 	~SXString() override;
-
-private:
-	char *_string;
 	int32 _capacity;
 };
 

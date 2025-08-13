@@ -46,9 +46,4 @@ const char *BaseQuickMsg::getText() const {
 	return _text.c_str();
 }
 
-//////////////////////////////////////////////////////////////////////////
-uint32 BaseQuickMsg::getStartTime() const {
-	return _startTime;
-}
-
 } // End of namespace Wintermute

@@ -407,7 +407,7 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	PartForce *force = nullptr;
 
 	for (int32 i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
+		if (scumm_stricmp(name.c_str(), _forces[i]->_name) == 0) {
 			force = _forces[i];
 			break;
 		}
@@ -445,7 +445,7 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::removeForce(const Common::String &name) {
 	for (int32 i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name.c_str(), _forces[i]->getName()) == 0) {
+		if (scumm_stricmp(name.c_str(), _forces[i]->_name) == 0) {
 			delete _forces[i];
 			_forces.removeAt(i);
 			return STATUS_OK;

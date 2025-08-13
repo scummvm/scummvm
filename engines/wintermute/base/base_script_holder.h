@@ -40,6 +40,7 @@ public:
 
 	BaseScriptHolder(BaseGame *inGame);
 	~BaseScriptHolder() override;
+
 	ScScript *invokeMethodThread(const char *methodName) override;
 	virtual void makeFreezable(bool freezable);
 	bool canHandleEvent(const char *eventName) const;
@@ -53,19 +54,20 @@ public:
 	void setFilename(const char *filename);
 	const char *getFilename() { return _filename; }
 	bool parseProperty(char *buffer, bool complete = true);
+
+	char *_filename;
 	bool _freezable;
 	bool _ready;
-
 	BaseArray<ScScript *> _scripts;
+
 	// scripting interface
 	ScValue *scGetProperty(const Common::String &name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	void scDebuggerDesc(char *buf, int bufSize) override;
+
 	// IWmeObject
-private:
-	char *_filename;
 public:
 	virtual bool sendEvent(const char *eventName);
 };

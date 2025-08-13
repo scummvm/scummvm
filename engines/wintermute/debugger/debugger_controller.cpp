@@ -255,7 +255,7 @@ Error DebuggerController::setValue(const Common::String &name, const Common::Str
 }
 
 void DebuggerController::showFps(bool show) {
-	_engine->_game->setShowFPS(show);
+	_engine->_game->_debugShowFPS = show;
 }
 
 Common::Array<BreakpointInfo> DebuggerController::getBreakpoints() const {

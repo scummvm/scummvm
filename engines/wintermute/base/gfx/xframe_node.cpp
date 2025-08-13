@@ -222,7 +222,7 @@ bool FrameNode::findBones(FrameNode *rootFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 FrameNode *FrameNode::findFrame(const char *frameName) {
-	if (getName() && strcmp(getName(), frameName) == 0) {
+	if (_name && strcmp(_name, frameName) == 0) {
 		return this;
 	} else {
 		for (int32 i = 0; i < _frames.getSize(); i++) {

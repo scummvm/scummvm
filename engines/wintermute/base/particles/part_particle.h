@@ -42,7 +42,9 @@ class BasePersistenceManager;
 class PartParticle : public BaseClass {
 public:
 	enum TParticleState {
-	    PARTICLE_NORMAL, PARTICLE_FADEIN, PARTICLE_FADEOUT
+	    PARTICLE_NORMAL,
+		PARTICLE_FADEIN,
+		PARTICLE_FADEOUT
 	};
 
 	PartParticle(BaseGame *inGame);
@@ -77,6 +79,7 @@ public:
 	bool fadeOut(uint32 currentTime, int fadeTime);
 
 	bool persist(BasePersistenceManager *PersistMgr) override;
+
 private:
 	uint32 _fadeStart;
 	int32 _fadeTime;
