@@ -18,33 +18,435 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "common/endian.h"
-#include "common/file.h"
-#include "common/memstream.h"
+#include "common/debug.h"
 #include "common/system.h"
-#include "common/textconsole.h"
+#include "graphics/font.h"
 #include "graphics/paletteman.h"
 
+#include "tot/font/biosfont.h"
 #include "tot/graphics.h"
+#include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
+#include "tot/vars.h"
 
 namespace Tot {
 
-signed char fadeData[256][256];
-int ipal, jpal;
+GraphicsManager::GraphicsManager() {
+	for (int i = 0; i < 256; i++)
+		for (int j = 0; j < 256; j++)
+			fadeData[i][j] = i / (j + 1);
 
-void drawFullScreen(byte *screen) {
+	// loads fonts
+	Common::File exeFile;
+	if (!exeFile.open(Common::Path("TOT.EXE"))) {
+		error("Could not open executable file!");
+	}
+
+	if (g_engine->_lang == Common::ES_ESP) {
+		exeFile.seek(FONT_LITT_OFFSET_ES);
+	} else {
+		exeFile.seek(FONT_LITT_OFFSET_EN);
+	}
+	_litt.loadChr(exeFile);
+	if (g_engine->_lang == Common::ES_ESP) {
+		exeFile.seek(FONT_EURO_OFFSET_ES);
+	} else {
+		exeFile.seek(FONT_EURO_OFFSET_EN);
+	}
+	_euro.loadChr(exeFile);
+	exeFile.close();
+	_bios = new BiosFont();
+}
+
+GraphicsManager::~GraphicsManager() {
+	delete (_bios);
+}
+
+void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {
+	for (int j = y; j < y2; j++) {
+		for (int i = x; i < x2; i++) {
+			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
+		}
+	}
+	g_engine->_screen->addDirtyRect(Common::Rect(x, y, x2, y2));
+}
+
+void GraphicsManager::clear() {
+	g_engine->_screen->clear();
+	g_engine->_screen->markAllDirty();
+	g_engine->_screen->update();
+}
+
+void GraphicsManager::clearActionLine() {
+	restoreBackgroundArea(0, 140, 319, 149);
+}
+
+void GraphicsManager::writeActionLine(const Common::String &str) {
+	euroText(str, 0, 144, 255, Graphics::kTextAlignCenter, true);
+}
+
+void GraphicsManager::setPalette(byte *palette, uint start, uint num) {
+	g_system->getPaletteManager()->setPalette(palette, start, num);
+}
+
+void GraphicsManager::fixPalette(byte *palette, uint num) {
+	for (int i = 0; i < num; i++) {
+		palette[i] = palette[i] << 2;
+	}
+}
+
+byte *GraphicsManager::getPalette() {
+	byte *palette = (byte *)malloc(768);
+	g_system->getPaletteManager()->grabPalette(palette, 0, 256);
+	return palette;
+}
+
+void GraphicsManager::loadPaletteFromFile(Common::String paletteName) {
+
+	Common::File fichero;
+
+	if (!fichero.open(Common::Path(paletteName + ".PAL")))
+		showError(310);
+	fichero.read(pal, 768);
+	fichero.close();
+
+	fixPalette(pal, 768);
+	setPalette(pal);
+}
+
+void GraphicsManager::fadePalettes(byte *from, byte *to) {
+	byte intermediate[768];
+	int aux;
+
+	copyPalette(from, intermediate);
+	for (int j = 32; j >= 0; j--) {
+		for (int i = 0; i < 256; i++) {
+			aux = to[3 * i + 0] - intermediate[3 * i + 0];
+			if (aux > 0)
+				intermediate[3 * i + 0] = intermediate[3 * i + 0] + fadeData[aux][j];
+			else
+				intermediate[3 * i + 0] = intermediate[3 * i + 0] - fadeData[-aux][j];
+
+			aux = to[3 * i + 1] - intermediate[3 * i + 1];
+			if (aux > 0)
+				intermediate[3 * i + 1] = intermediate[3 * i + 1] + fadeData[aux][j];
+			else
+				intermediate[3 * i + 1] = intermediate[3 * i + 1] - fadeData[-aux][j];
+
+			aux = to[3 * i + 2] - intermediate[3 * i + 2];
+			if (aux > 0)
+				intermediate[3 * i + 2] = intermediate[3 * i + 2] + fadeData[aux][j];
+			else
+				intermediate[3 * i + 2] = intermediate[3 * i + 2] - fadeData[-aux][j];
+		}
+		setPalette(intermediate, 0, 256);
+		g_engine->_screen->markAllDirty();
+		g_engine->_screen->update();
+	}
+}
+
+void GraphicsManager::turnLightOn() {
+	Common::File paletteFile;
+	byte intermediate[768];
+
+	if (!paletteFile.open("PALETAS.DAT")) {
+		showError(311);
+	}
+	paletteFile.seek(1536);
+	paletteFile.read(intermediate, 768);
+	paletteFile.close();
+	for (int i = 0; i < 256; i++) {
+		if (i >= 201) {
+			intermediate[3 * i + 0] = pal[3 * i + 0];
+			intermediate[3 * i + 1] = pal[3 * i + 1];
+			intermediate[3 * i + 2] = pal[3 * i + 2];
+		} else {
+			intermediate[3 * i + 0] = intermediate[3 * i + 0] << 2;
+			intermediate[3 * i + 1] = intermediate[3 * i + 1] << 2;
+			intermediate[3 * i + 2] = intermediate[3 * i + 2] << 2;
+		}
+	}
+	fadePalettes(pal, intermediate);
+	copyPalette(intermediate, pal);
+}
+
+void GraphicsManager::totalFadeOut(byte redComponent) {
+	byte intermediate[768];
+
+	for (int ipal = 0; ipal <= 255; ipal++) {
+		intermediate[3 * ipal + 0] = redComponent;
+		intermediate[3 * ipal + 1] = 0;
+		intermediate[3 * ipal + 2] = 0;
+	}
+	fadePalettes(pal, intermediate);
+	copyPalette(intermediate, pal);
+}
+
+void GraphicsManager::partialFadeOut(byte numcol) {
+	byte intermediate[768];
+
+	for (int i = 0; i <= numcol; i++) {
+		intermediate[3 * i + 0] = 0;
+		intermediate[3 * i + 1] = 0;
+		intermediate[3 * i + 2] = 0;
+	}
+	for (int i = (numcol + 1); i <= 255; i++) {
+		intermediate[3 * i + 0] = pal[3 * i + 0];
+		intermediate[3 * i + 1] = pal[3 * i + 1];
+		intermediate[3 * i + 2] = pal[3 * i + 2];
+	}
+	fadePalettes(pal, intermediate);
+	copyPalette(intermediate, pal);
+}
+
+void GraphicsManager::partialFadeIn(byte numcol) {
+	byte darkPalette[768];
+
+	for (int i = 0; i <= numcol; i++) {
+		darkPalette[3 * i + 0] = 0;
+		darkPalette[3 * i + 1] = 0;
+		darkPalette[3 * i + 2] = 0;
+	}
+	for (int i = (numcol + 1); i <= 255; i++) {
+		darkPalette[3 * i + 0] = pal[3 * i + 0];
+		darkPalette[3 * i + 1] = pal[3 * i + 1];
+		darkPalette[3 * i + 2] = pal[3 * i + 2];
+	}
+	fadePalettes(darkPalette, pal);
+}
+
+void GraphicsManager::totalFadeIn(uint paletteNumber, Common::String paletteName) {
+	byte intermediate[768];
+	byte darkPalette[768];
+
+	Common::File paletteFile;
+	if (paletteNumber > 0) {
+		if (!paletteFile.open("PALETAS.DAT"))
+			showError(311);
+		paletteFile.seek(paletteNumber);
+		paletteFile.read(intermediate, 768);
+		paletteFile.close();
+	} else {
+		if (!paletteFile.open(Common::Path(Common::String(paletteName + ".PAL")))) {
+			showError(311);
+		}
+		paletteFile.read(intermediate, 768);
+		paletteFile.close();
+	}
+	for (int i = 0; i <= 255; i++) {
+		darkPalette[3 * i + 0] = 0;
+		darkPalette[3 * i + 1] = 0;
+		darkPalette[3 * i + 2] = 0;
+		// 6-bit color correction
+		intermediate[3 * i + 0] = intermediate[3 * i + 0] << 2;
+		intermediate[3 * i + 1] = intermediate[3 * i + 1] << 2;
+		intermediate[3 * i + 2] = intermediate[3 * i + 2] << 2;
+	}
+
+	fadePalettes(darkPalette, intermediate);
+	copyPalette(intermediate, pal);
+}
+
+void GraphicsManager::redFadeIn(byte *intermediatePalette) {
+	byte dark[768];
+
+	for (int i = 0; i < 256; i++) {
+		dark[3 * i + 0] = 0;
+		dark[3 * i + 1] = 0;
+		dark[3 * i + 2] = 0;
+	}
+	fadePalettes(pal, dark);
+	fadePalettes(dark, intermediatePalette);
+	copyPalette(intermediatePalette, pal);
+}
+
+void GraphicsManager::updatePalette(byte paletteIndex) {
+	int ip;
+
+	switch (gamePart) {
+	case 1: {
+		for (int i = 0; i <= 5; i++) {
+			pal[(i + 195) * 3 + 0] = palAnimSlice[(paletteIndex * 6 + i) * 3 + 0];
+			pal[(i + 195) * 3 + 1] = palAnimSlice[(paletteIndex * 6 + i) * 3 + 1];
+			pal[(i + 195) * 3 + 2] = palAnimSlice[(paletteIndex * 6 + i) * 3 + 2];
+		}
+		setPalette(&pal[195 * 3 + 0], 195, 6);
+	} break;
+	case 2: {
+		switch (paletteIndex) {
+		case 0:
+			ip = 0;
+			break;
+		case 1:
+			ip = 4;
+			break;
+		case 2:
+			ip = 8;
+			break;
+		case 3:
+			ip = 4;
+			break;
+		case 4:
+			ip = 0;
+			break;
+		case 5:
+			ip = -4;
+			break;
+		case 6:
+			ip = -8;
+			break;
+		case 7:
+			ip = -4;
+			break;
+		}
+
+		for (int i = 0; i < 3; i++) {
+			pal[131 * 3 + i] = pal[131 * 3 + i] - ip;
+			pal[134 * 3 + i] = pal[134 * 3 + i] - ip;
+			pal[143 * 3 + i] = pal[143 * 3 + i] - ip;
+			pal[187 * 3 + i] = pal[187 * 3 + i] - ip;
+		}
+		setPalette(pal);
+
+	} break;
+	}
+}
+
+void GraphicsManager::copyPalette(byte *from, byte *to) {
+	Common::copy(from, from + 768, to);
+}
+
+void GraphicsManager::printColor(int x, int y, int color) {
+	int squareHeight = 10;
+	for (int k = 0; k < squareHeight; k++) {
+		for (int l = 0; l < squareHeight; l++) {
+			g_engine->_screen->setPixel(x + l, y + k, color);
+		}
+	}
+}
+
+void GraphicsManager::getImg(uint coordx1, uint coordy1, uint coordx2, uint coordy2, byte *image) {
+
+	uint16 width = coordx2 - coordx1;
+	uint16 height = coordy2 - coordy1;
+
+	WRITE_LE_UINT16(image, width);
+	WRITE_LE_UINT16(image + 2, height);
+
+	width++;
+	height++;
+
+	for (int j = 0; j < width; j++) {
+		for (int i = 0; i < height; i++) {
+			int idx = 4 + i * width + j;
+			*(image + idx) = *(byte *)g_engine->_screen->getBasePtr(coordx1 + j, coordy1 + i);
+		}
+	}
+}
+
+void GraphicsManager::putShape(uint coordx, uint coordy, byte *image) {
+	putImg(coordx, coordy, image, true);
+}
+
+void GraphicsManager::putImg(uint coordx, uint coordy, byte *image, bool transparency) {
+	uint16 w, h;
+
+	w = READ_LE_UINT16(image);
+	h = READ_LE_UINT16(image + 2);
+
+	w++;
+	h++;
+	for (int i = 0; i < w; i++) {
+		for (int j = 0; j < h; j++) {
+			int index = 4 + (j * w + i);
+			if (!transparency || image[index] != 0) {
+				*(byte *)g_engine->_screen->getBasePtr(coordx + i, coordy + j) = image[index];
+			}
+		}
+	}
+	g_engine->_screen->addDirtyRect(Common::Rect(coordx, coordy, coordx + w, coordy + h));
+}
+
+// Copies the rectangle delimited by getCoord** from backgroundScreen into image
+void GraphicsManager::getImageArea(
+	uint getcoordx1, // xframe
+	uint getcoordy1, // yframe
+	uint getcoordx2, // xframe + framewidth
+	uint getcoordy2, // yframe + frameheight
+	byte *backgroundScreen,
+	byte *image) {
+	uint16 w = getcoordx2 - getcoordx1;
+	uint16 h = getcoordy2 - getcoordy1;
+
+	WRITE_UINT16(image, w);
+	WRITE_UINT16(image + 2, h);
+	w++;
+	h++;
+	int posAbs = 4 + getcoordx1 + (getcoordy1 * 320);
+
+	int sourcePtr = 0;
+	byte *destPtr = 4 + image; // Start writing after width and height
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			*destPtr++ = backgroundScreen[posAbs + sourcePtr++];
+		}
+		sourcePtr += (320 - w); // Move to the beginning of the next row in backgroundScreen
+	}
+}
+
+// puts an image into a buffer in the given position, asuming 320 width
+void GraphicsManager::putImageArea(uint putcoordx, uint putcoordy, byte *backgroundScreen, byte *image) {
+	uint16 w, h;
+
+	w = READ_LE_UINT16(image);
+	h = READ_LE_UINT16(image + 2);
+
+	w++;
+	h++;
+	int posAbs = 4 + putcoordx + (putcoordy * 320);
+
+	int sourcePtr = 0;
+	byte *destPtr = 4 + image; // Start writing after width and height
+
+	for (int i = 0; i < h; i++) {
+		for (int j = 0; j < w; j++) {
+			backgroundScreen[posAbs + sourcePtr++] = *destPtr++;
+		}
+		sourcePtr += (320 - w); // Move to the beginning of the next row in backgroundScreen
+	}
+}
+
+void GraphicsManager::littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align, bool alignCenterY) {
+	int height = _euro.getFontHeight();
+	if (alignCenterY) {
+		y = y - _euro.getFontHeight() / 2 + 2;
+	}
+	_litt.drawString(g_engine->_screen, str, x, y, 320, color, align);
+}
+
+void GraphicsManager::euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align, bool alignCenterY) {
+	if (alignCenterY) {
+		y = y - _euro.getFontHeight() / 2;
+	}
+	_euro.drawString(g_engine->_screen, str, x, y, 320, color, align);
+}
+
+void GraphicsManager::biosText(const Common::String &str, int x, int y, uint32 color) {
+	_bios->drawString(g_engine->_screen, str, x, y, 320, color, Graphics::TextAlign::kTextAlignLeft);
+}
+
+void GraphicsManager::drawFullScreen(byte *screen) {
 	Common::copy(screen, screen + 64000, (byte *)g_engine->_screen->getPixels());
 }
 
-void copyFromScreen(byte *&screen) {
+void GraphicsManager::copyFromScreen(byte *&screen) {
 	byte *src = (byte *)g_engine->_screen->getPixels();
 	Common::copy(src, src + 64000, screen);
 }
 
-void drawScreen(byte *screen, bool offsetSize) {
+void GraphicsManager::drawScreen(byte *screen, bool offsetSize) {
 	int offset = offsetSize ? 4 : 0;
 	for (int i1 = 0; i1 < 320; i1++) {
 		for (int j1 = 0; j1 < 140; j1++) {
@@ -54,27 +456,14 @@ void drawScreen(byte *screen, bool offsetSize) {
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 }
 
-void loadPalette(Common::String paletteName) {
-
-	Common::File fichero;
-
-	if (!fichero.open(Common::Path(paletteName + ".PAL")))
-		showError(310);
-	fichero.read(pal, 768);
-	fichero.close();
-
-	g_engine->_graphics->fixPalette(pal, 768);
-	g_engine->_graphics->setPalette(pal);
-}
-
-void updateSceneAreaIfNeeded(int speed = 1) {
+void GraphicsManager::updateSceneAreaIfNeeded(int speed) {
 	if (g_engine->_chrono->shouldPaintEffect(speed)) {
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
 	}
 }
 
-void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
+void GraphicsManager::sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 
 	int i1, i2, i3, j1, j2, j3;
 	bool enabled = false;
@@ -477,221 +866,17 @@ void sceneTransition(byte effectNumber, bool fadeToBlack, byte *scene) {
 	}
 }
 
-void changeRGBBlock(byte initialColor, uint numColors, byte *rgb) {
-	g_system->getPaletteManager()->setPalette(rgb, initialColor, numColors);
-}
-
-void changePalette(palette from, palette to) {
-	palette intermediate;
-	int aux;
-
-	copyPalette(from, intermediate);
-	for (jpal = 32; jpal >= 0; jpal--) {
-		for (ipal = 0; ipal < 256; ipal++) {
-			aux = to[3 * ipal + 0] - intermediate[3 * ipal + 0];
-			if (aux > 0)
-				intermediate[3 * ipal + 0] = intermediate[3 * ipal + 0] + fadeData[aux][jpal];
-			else
-				intermediate[3 * ipal + 0] = intermediate[3 * ipal + 0] - fadeData[-aux][jpal];
-
-			aux = to[3 * ipal + 1] - intermediate[3 * ipal + 1];
-			if (aux > 0)
-				intermediate[3 * ipal + 1] = intermediate[3 * ipal + 1] + fadeData[aux][jpal];
-			else
-				intermediate[3 * ipal + 1] = intermediate[3 * ipal + 1] - fadeData[-aux][jpal];
-
-			aux = to[3 * ipal + 2] - intermediate[3 * ipal + 2];
-			if (aux > 0)
-				intermediate[3 * ipal + 2] = intermediate[3 * ipal + 2] + fadeData[aux][jpal];
-			else
-				intermediate[3 * ipal + 2] = intermediate[3 * ipal + 2] - fadeData[-aux][jpal];
-		}
-		changeRGBBlock(0, 256, intermediate);
-		g_engine->_screen->markAllDirty();
-		g_engine->_screen->update();
-	}
-}
-
-void turnLightOn() {
-	Common::File paletteFile;
-	palette intermediate;
-
-	if (!paletteFile.open("PALETAS.DAT")) {
-		showError(311);
-	}
-	paletteFile.seek(1536);
-	paletteFile.read(intermediate, 768);
-	paletteFile.close();
-	for (int i = 0; i < 256; i++) {
-		if (i >= 201) {
-			intermediate[3 * i + 0] = pal[3 * i + 0];
-			intermediate[3 * i + 1] = pal[3 * i + 1];
-			intermediate[3 * i + 2] = pal[3 * i + 2];
-		} else {
-			intermediate[3 * i + 0] = intermediate[3 * i + 0] << 2;
-			intermediate[3 * i + 1] = intermediate[3 * i + 1] << 2;
-			intermediate[3 * i + 2] = intermediate[3 * i + 2] << 2;
-		}
-	}
-	changePalette(pal, intermediate);
-	copyPalette(intermediate, pal);
-}
-
-void totalFadeOut(byte redComponent) {
-	palette intermediate;
-
-	for (ipal = 0; ipal <= 255; ipal++) {
-		intermediate[3 * ipal + 0] = redComponent;
-		intermediate[3 * ipal + 1] = 0;
-		intermediate[3 * ipal + 2] = 0;
-	}
-	changePalette(pal, intermediate);
-	copyPalette(intermediate, pal);
-}
-
-void partialFadeOut(byte numcol) {
-	palette intermediate;
-
-	for (ipal = 0; ipal <= numcol; ipal++) {
-		intermediate[3 * ipal + 0] = 0;
-		intermediate[3 * ipal + 1] = 0;
-		intermediate[3 * ipal + 2] = 0;
-	}
-	for (ipal = (numcol + 1); ipal <= 255; ipal++) {
-		intermediate[3 * ipal + 0] = pal[3 * ipal + 0];
-		intermediate[3 * ipal + 1] = pal[3 * ipal + 1];
-		intermediate[3 * ipal + 2] = pal[3 * ipal + 2];
-	}
-	changePalette(pal, intermediate);
-	copyPalette(intermediate, pal);
-}
-
-void partialFadeIn(byte numcol) {
-	palette darkPalette;
-
-	for (ipal = 0; ipal <= numcol; ipal++) {
-		darkPalette[3 * ipal + 0] = 0;
-		darkPalette[3 * ipal + 1] = 0;
-		darkPalette[3 * ipal + 2] = 0;
-	}
-	for (ipal = (numcol + 1); ipal <= 255; ipal++) {
-		darkPalette[3 * ipal + 0] = pal[3 * ipal + 0];
-		darkPalette[3 * ipal + 1] = pal[3 * ipal + 1];
-		darkPalette[3 * ipal + 2] = pal[3 * ipal + 2];
-	}
-	changePalette(darkPalette, pal);
-}
-
-void totalFadeIn(uint paletteNumber, Common::String paletteName) {
-	palette intermediate, darkPalette;
-	Common::File paletteFile;
-	if (paletteNumber > 0) {
-		if (!paletteFile.open("PALETAS.DAT"))
-			showError(311);
-		paletteFile.seek(paletteNumber);
-		paletteFile.read(intermediate, 768);
-		paletteFile.close();
-	} else {
-		if (!paletteFile.open(Common::Path(Common::String(paletteName + ".PAL")))) {
-			showError(311);
-		}
-		paletteFile.read(intermediate, 768);
-		paletteFile.close();
-	}
-	for (ipal = 0; ipal <= 255; ipal++) {
-		darkPalette[3 * ipal + 0] = 0;
-		darkPalette[3 * ipal + 1] = 0;
-		darkPalette[3 * ipal + 2] = 0;
-		// 6-bit color correction
-		intermediate[3 * ipal + 0] = intermediate[3 * ipal + 0] << 2;
-		intermediate[3 * ipal + 1] = intermediate[3 * ipal + 1] << 2;
-		intermediate[3 * ipal + 2] = intermediate[3 * ipal + 2] << 2;
-	}
-
-	changePalette(darkPalette, intermediate);
-	copyPalette(intermediate, pal);
-}
-
-void redFadeIn(palette intermediatePalette) {
-	palette dark;
-
-	for (ipal = 0; ipal < 256; ipal++) {
-		dark[3 * ipal + 0] = 0;
-		dark[3 * ipal + 1] = 0;
-		dark[3 * ipal + 2] = 0;
-	}
-	changePalette(pal, dark);
-	changePalette(dark, intermediatePalette);
-	copyPalette(intermediatePalette, pal);
-}
-
-void updatePalette(byte paletteIndex) {
-	int ip;
-
-	switch (gamePart) {
-	case 1: {
-		for (ipal = 0; ipal <= 5; ipal++) {
-			pal[(ipal + 195) * 3 + 0] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 0];
-			pal[(ipal + 195) * 3 + 1] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 1];
-			pal[(ipal + 195) * 3 + 2] = palAnimSlice[(paletteIndex * 6 + ipal) * 3 + 2];
-		}
-		changeRGBBlock(195, 6, &pal[195 * 3 + 0]);
-	} break;
-	case 2: {
-		switch (paletteIndex) {
-		case 0:
-			ip = 0;
-			break;
-		case 1:
-			ip = 4;
-			break;
-		case 2:
-			ip = 8;
-			break;
-		case 3:
-			ip = 4;
-			break;
-		case 4:
-			ip = 0;
-			break;
-		case 5:
-			ip = -4;
-			break;
-		case 6:
-			ip = -8;
-			break;
-		case 7:
-			ip = -4;
-			break;
-		}
-
-		for (int i = 0; i < 3; i++) {
-			pal[131 * 3 + i] = pal[131 * 3 + i] - ip;
-			pal[134 * 3 + i] = pal[134 * 3 + i] - ip;
-			pal[143 * 3 + i] = pal[143 * 3 + i] - ip;
-			pal[187 * 3 + i] = pal[187 * 3 + i] - ip;
-		}
-		g_engine->_graphics->setPalette(pal);
-
-	} break;
-	}
-}
-
-void initGraph() {
+void GraphicsManager::init() {
 	for (int i = 0; i < 256; i++)
 		for (int j = 0; j < 256; j++)
 			fadeData[i][j] = i / (j + 1);
 }
 
-void restoreBackground() {
+void GraphicsManager::restoreBackground() {
 	Common::copy(backgroundCopy + 4, backgroundCopy + screenSize, sceneBackground + 4);
 }
 
-void copyPalette(palette from, palette to) {
-	Common::copy(from, from + 768, to);
-}
-
-void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize) {
+void GraphicsManager::loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize) {
 	buf = (byte *)malloc(animSize);
 	stream->read(buf, animSize);
 	Common::copy(buf, buf + animSize, curSecondaryAnimationFrame);

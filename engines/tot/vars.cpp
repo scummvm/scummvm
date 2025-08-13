@@ -81,9 +81,9 @@ bool isDrawingEnabled;
 
 bool isSecondaryAnimationEnabled;
 
-palette palAnimSlice;
+byte palAnimSlice[768];
 
-palette pal;
+byte pal[768];
 
 InventoryEntry inventory[inventoryIconCount];
 

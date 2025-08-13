@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	forest.o \
 	util.o \
 	vars.o \
-	graphics.o \
 	anims.o \
 	routines2.o \
 	routines.o \
@@ -17,7 +16,7 @@ MODULE_OBJS = \
 	font/biosfont.o \
 	decoder/TotFlicDecoder.o \
 	sound.o \
-	graphman.o \
+	graphics.o \
 	mouse.o \
 	chrono.o \
 	saveload.o \

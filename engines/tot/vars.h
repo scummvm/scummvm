@@ -361,11 +361,11 @@ extern bool isSecondaryAnimationEnabled;
 /**
  * 54 color palette slice.
  */
-extern palette palAnimSlice;
+extern byte palAnimSlice[768];
 /**
  * General palette
  */
-extern palette pal;
+extern byte pal[768];
 
 /**
  * These are the icons currnetly in the inventory

@@ -45,7 +45,7 @@ void newGame() {
 	obtainName(characterName);
 
 	if (!g_engine->shouldQuit()) {
-		totalFadeOut(0);
+		g_engine->_graphics->totalFadeOut(0);
 		g_engine->_graphics->clear();
 		displayLoading();
 		freeInventory();
@@ -60,9 +60,9 @@ void newGame() {
 		readConversationFile(Common::String("CONVERSA.TRE"));
 		initializeScreenFile();
 		initializeObjectFile();
-		loadPalette("DEFAULT");
+		g_engine->_graphics->loadPaletteFromFile("DEFAULT");
 		loadScreenData(1);
-		sceneTransition(13, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(13, false, sceneBackground);
 		mask();
 		inventoryPosition = 0;
 		drawBackpack();
@@ -89,10 +89,10 @@ int engine_start() {
 	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
 	g_engine->_sound->playMidi("SILENT", true);
 
-	totalFadeOut(0);
+	g_engine->_graphics->totalFadeOut(0);
 	g_engine->_graphics->clear();
 
-	loadPalette("DEFAULT");
+	g_engine->_graphics->loadPaletteFromFile("DEFAULT");
 	loadScreenMemory();
 	initialLogo();
 	g_engine->_sound->playMidi("INTRODUC", true);
@@ -426,7 +426,7 @@ int startGame() {
 			startNewGame = false;
 			continueGame = false;
 			g_engine->saveAutosaveIfEnabled();
-			totalFadeOut(0);
+			g_engine->_graphics->totalFadeOut(0);
 			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 			g_engine->_graphics->clear();
 			g_engine->_sound->playMidi("INTRODUC", true);
@@ -468,7 +468,7 @@ int startGame() {
 				freeAnimation();
 				freeScreenObjects();
 				g_engine->_mouseManager->hide();
-				partialFadeOut(234);
+				g_engine->_graphics->partialFadeOut(234);
 				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 				g_engine->_sound->playMidi("CREDITOS", true);
 				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
@@ -477,7 +477,7 @@ int startGame() {
 				sacrificeScene();
 				g_engine->_graphics->clear();
 				loadObjects();
-				loadPalette("SEGUNDA");
+				g_engine->_graphics->loadPaletteFromFile("SEGUNDA");
 				currentTrajectoryIndex = 0;
 				characterPosX = 160;
 				characterPosY = 60;
@@ -487,7 +487,7 @@ int startGame() {
 				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
 				g_engine->_sound->playMidi("SEGUNDA", true);
 				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-				sceneTransition(1, false, sceneBackground);
+				g_engine->_graphics->sceneTransition(1, false, sceneBackground);
 				mask();
 				inventoryPosition = 0;
 				drawBackpack();
@@ -573,7 +573,7 @@ void changeRoom() {
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
 
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (cpCounter > 89)
@@ -583,7 +583,7 @@ void changeRoom() {
 			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			loadTV();
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
@@ -601,12 +601,12 @@ void changeRoom() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			sceneTransition(transitionEffect, true, NULL);
+			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 			g_engine->_sound->stopVoc();
 			g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
 			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
-			sceneTransition(transitionEffect, false, sceneBackground);
+			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
 			oldGridX = 0;
 			oldGridY = 0;
@@ -646,7 +646,7 @@ void changeRoom() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		iframe = 0;
 		currentTrajectoryIndex = 0;
 		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
@@ -654,7 +654,7 @@ void changeRoom() {
 		trajectory[currentTrajectoryIndex].x = characterPosX;
 		trajectory[currentTrajectoryIndex].y = characterPosY;
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		g_engine->_mouseManager->show();
 
 		oldGridX = 0;
@@ -673,9 +673,9 @@ void changeRoom() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			sceneTransition(transitionEffect, true, NULL);
+			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			sceneTransition(transitionEffect, false, sceneBackground);
+			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
 			oldGridX = 0;
 			oldGridY = 0;
@@ -734,9 +734,9 @@ void changeRoom() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			sceneTransition(transitionEffect, true, NULL);
+			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			sceneTransition(transitionEffect, false, sceneBackground);
+			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
 			oldGridX = 0;
 			oldGridY = 0;
@@ -766,7 +766,7 @@ void changeRoom() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (bookTopic[0] == true && currentRoomData->animationFlag == true)
@@ -774,7 +774,7 @@ void changeRoom() {
 		if (cpCounter > 89)
 			showError(274);
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
@@ -793,9 +793,9 @@ void changeRoom() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			sceneTransition(transitionEffect, true, NULL);
+			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			sceneTransition(transitionEffect, false, sceneBackground);
+			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
 			oldGridX = 0;
 			oldGridY = 0;
@@ -826,9 +826,9 @@ void changeRoom() {
 			freeAnimation();
 			freeScreenObjects();
 			g_engine->_mouseManager->hide();
-			sceneTransition(transitionEffect, true, NULL);
+			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			sceneTransition(transitionEffect, false, sceneBackground);
+			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 			g_engine->_mouseManager->show();
 			oldGridX = 0;
 			oldGridY = 0;
@@ -858,7 +858,7 @@ void changeRoom() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		switch (niche[0][niche[0][3]]) {
@@ -880,7 +880,7 @@ void changeRoom() {
 		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
 		if (currentRoomData->code == 4)
 			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
@@ -898,7 +898,7 @@ void changeRoom() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		switch (niche[1][niche[1][3]]) {
@@ -943,7 +943,7 @@ void changeRoom() {
 				}
 			assembleScreen();
 		}
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		if ((isRedDevilCaptured == false) && (isTrapSet == false))
 			runaroundRed();
 		cpCounter = cpCounter2;
@@ -966,7 +966,7 @@ void changeRoom() {
 		freeAnimation();
 		freeScreenObjects();
 		g_engine->_mouseManager->hide();
-		sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
 		g_engine->_sound->stopVoc();
 		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
 		if (cpCounter > 89)
@@ -980,7 +980,7 @@ void changeRoom() {
 			g_engine->_sound->autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
-		sceneTransition(transitionEffect, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
 		cpCounter = cpCounter2;
 		g_engine->_mouseManager->show();
 		oldGridX = 0;
