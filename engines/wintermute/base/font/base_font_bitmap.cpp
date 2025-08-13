@@ -623,7 +623,7 @@ bool BaseFontBitmap::getWidths() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-int32 BaseFontBitmap::getLetterHeight() {
+int BaseFontBitmap::getLetterHeight() {
 	return _tileHeight;
 }
 
