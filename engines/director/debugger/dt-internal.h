@@ -194,9 +194,9 @@ void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
 void displayScriptRef(CastMemberID &scriptId);
 ImGuiImage getImageID(CastMember *castMember);
+ImGuiImage getShapeID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
-void showShape(CastMember *cast, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 

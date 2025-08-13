@@ -21,6 +21,8 @@
 
 #include "backends/imgui/IconsMaterialSymbols.h"
 
+#include "image/png.h"
+
 #include "director/director.h"
 #include "director/lingo/lingodec/context.h"
 #include "director/lingo/lingodec/script.h"
@@ -29,6 +31,9 @@
 #include "director/castmember/shape.h"
 #include "director/debugger.h"
 #include "director/movie.h"
+#include "director/window.h"
+#include "director/score.h"
+#include "director/channel.h"
 #include "director/picture.h"
 
 #include "director/debugger/debugtools.h"
@@ -177,36 +182,46 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
-// ImGuiImage getShapeID(CastMember *castMember) {
-// 	if (castMember->_type != CastType::kCastShape)
-// 		return {};
+ImGuiImage getShapeID(CastMember *castMember) {
+	if (castMember->_type != CastType::kCastShape)
+		return {};
 
-// 	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
-// 	Common::Rect bbox(shapeMember->getBbox());
+	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
 
-// }
+	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+	Channel *channel = nullptr;
 
-void showShape(CastMember *cast, float thumbnailSize) {
-	// Show in a square box
-	Common::Rect bbox = cast->getBbox();
-	ImVec2 size = {thumbnailSize - 2, (thumbnailSize - 2) * bbox.height() / bbox.width()};
+	for (auto it : channels) {
+		if (it->_sprite->_castId.member == castMember->getID()) {
+			channel = it;
+			break;
+		}
+	}
+	if (!channel) {
+		return {};
+	}
 
-	ImGui::BeginGroup();
-	ImVec2 screenPos = ImGui::GetCursorScreenPos();
-	ImDrawList *dl = ImGui::GetWindowDrawList();
+	Common::Rect bbox(castMember->getBbox());
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface();
+	managedSurface->create(bbox.width(), bbox.height(), g_director->_pixelformat);
+	Window::inkBlitFrom(channel, bbox, managedSurface);
+	Graphics::Surface surface = managedSurface->rawSurface();
 
-	// If there is no background, set it to white
-	ImVec2 shapePos = screenPos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String prepend = "shape";
+		Common::String filename = Common::String::format("./dumps/%s-%d.png", encodePathForDump(prepend).c_str(), shapeMember->getID());
+		Common::DumpFile bitmapFile;
 
-	uint8 foreCol = cast->getForeColor();
-	debug("%d: bg: %x, fg: %x", cast->getBackColor(), cast->getForeColor(), cast->getID());
+		bitmapFile.open(Common::Path(filename), true);
+		Image::writePNG(bitmapFile, surface, g_director->getPalette());
 
-	// The forecolor is in 8 bit format
-	dl->AddRectFilled(shapePos, shapePos + size, cast->getForeColor());
+		bitmapFile.close();
+	}
 
-	// Have to add this to make the column auto adjust to correct height
-	ImGui::Dummy(ImVec2(thumbnailSize, thumbnailSize));
-	ImGui::EndGroup();
+	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
+
+	delete managedSurface;
+	return {textureID, surface.w, surface.h};
 }
 
 void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
