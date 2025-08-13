@@ -133,6 +133,15 @@ static AudioStream *openAudio(const char *fileName) {
 
 SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::SoundType type) {
 	AudioStream *stream = openAudio(fileName);
+	if (stream == nullptr && (type == Mixer::kSpeechSoundType || type == Mixer::kMusicSoundType)) {
+		/* If voice files are missing, the player could still read the subtitle
+		 * For this we return infinite silent audio which the user has to skip
+		 * But only do this for speech as there is no skipping for sound effects
+		 * so those would live on forever and block up mixer channels
+		 * Music is fine as well as we clean up the music playack explicitly
+		 */
+		stream = makeSilentAudioStream(8000, false);
+	}
 	if (stream == nullptr)
 		return {};
 
