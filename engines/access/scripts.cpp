@@ -161,7 +161,7 @@ void Scripts::searchForSequence() {
 
 void Scripts::charLoop() {
 	bool endFlag = _endFlag;
-	int pos = _data->pos();
+	int64 pos = _data->pos();
 
 	_sequence = 2000;
 	searchForSequence();
@@ -232,6 +232,7 @@ int Scripts::executeScript() {
 	_endFlag = false;
 	_returnCode = 0;
 
+	debugC(1, kDebugScripts, "** Start script execution (at %d/%d bytes) **", (int)_data->pos(), (int)_data->size());
 	do {
 		// Get next command, skipping over script start start if it's being pointed to
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
@@ -247,6 +248,11 @@ int Scripts::executeScript() {
 
 		executeCommand(_scriptCommand - 0x80);
 	} while (!_endFlag && !_vm->shouldQuitOrRestart());
+
+	if (_data)
+		debugC(1, kDebugScripts, "** End script execution (return %d, at %d/%d bytes) **", _returnCode, (int)_data->pos(), (int)_data->size());
+	else
+		debugC(1, kDebugScripts, "** End script execution (return %d, data cleared) **", _returnCode);
 
 	return _returnCode;
 }
@@ -537,11 +543,12 @@ void Scripts::converse1(int val) {
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
-	// TODO? also set SHORT_1950_88a9 = 0 here?
+	// game also clears screen sprites here which is redundant, done by clearRoom above.
 	_sequence = 0;
 	searchForSequence();
 
 	if (_vm->_screen->_vesaMode) {
+		// This is not in MM, but _vesaMode is also never set there
 		_vm->_converseMode = 1;
 	}
 }
@@ -723,7 +730,8 @@ void Scripts::cmdPlotImage() {
 	int objId = _data->readUint16LE();
 	int imgId = _data->readUint16LE();
 	debugC(1, kDebugScripts, "cmdPlotImage(destX=%d, destY=%d, objId=%d, imgId=%d)", destX, destY, objId, imgId);
-	_vm->_screen->plotImage(_vm->_objectsTable[objId], imgId, Common::Point(destX, destY));
+
+	_vm->_current->plotImage(_vm->_objectsTable[objId], imgId, Common::Point(destX, destY));
 }
 
 void Scripts::cmdSetDisplay() {
@@ -754,7 +762,7 @@ void Scripts::cmdSaveRect() {
 	int w = _vm->_screen->_lastBoundsW;
 	int h = _vm->_screen->_lastBoundsH;
 	assert(x >= 0 && y >= 0 && x < 320 && y < 200 && w > 0 && h > 0 && w <= 320 && h <= 200);
-	_vm->_newRects.push_back(Common::Rect(x, y, x + w, x + h));
+	_vm->_newRects.push_back(Common::Rect(x, y, x + w, y + h));
 }
 
 void Scripts::cmdVideoEnded() {
@@ -1119,7 +1127,7 @@ void Scripts::cmdFreeSound() {
 	if (sound._soundTable.size() > 0 && sound._soundTable[0]._res) {
 		// Keep doing char display loop if playing sound for it
 		do {
-			if (_vm->_flags[236] == 1)
+			if (_vm->getGameID() == kGameAmazon && _vm->_flags[236] == 1)
 				charLoop();
 
 			_vm->_events->pollEvents();

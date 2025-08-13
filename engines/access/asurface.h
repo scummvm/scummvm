@@ -49,8 +49,6 @@ protected:
 public:
 	int _leftSkip, _rightSkip;
 	int _topSkip, _bottomSkip;
-	int _lastBoundsX, _lastBoundsY;
-	int _lastBoundsW, _lastBoundsH;
 	int _orgX1, _orgY1;
 	int _orgX2, _orgY2;
 	int _lColor;
@@ -59,6 +57,9 @@ public:
 	Common::Point _printStart;
 	int _maxChars;
 public:
+	// These values need to be shared between the buffers
+	static int _lastBoundsX, _lastBoundsY;
+	static int _lastBoundsW, _lastBoundsH;
 	static int _clipWidth, _clipHeight;
 public:
 	BaseSurface();

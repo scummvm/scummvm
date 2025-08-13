@@ -109,6 +109,12 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int BaseSurface::_clipWidth;
 int BaseSurface::_clipHeight;
 
+int BaseSurface::_lastBoundsX;
+int BaseSurface::_lastBoundsY;
+int BaseSurface::_lastBoundsW;
+int BaseSurface::_lastBoundsH;
+
+
 BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
 	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
