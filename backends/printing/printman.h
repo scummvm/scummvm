@@ -31,6 +31,11 @@ namespace GUI {
 class PrintingDialog;
 }
 
+enum PageOrientation {
+	kPageOrientationPortrait,
+	kPageOrientationLandscape,
+};
+
 namespace Common {
 
 class PrintingManager {
@@ -40,6 +45,7 @@ public:
 	virtual ~PrintingManager();
 
 	PrintingManager() {
+		_orientation = kPageOrientationLandscape;
 		_jobName = "ScummVM";
 	}
 
@@ -57,6 +63,8 @@ protected:
 	virtual Common::String getDefaultPrinterName() const;
 
 	void setPrinterName(const Common::String &printerName) { _printerName = printerName; }
+
+	PageOrientation _orientation;
 
 	Common::String _jobName;
 	Common::String _printerName;

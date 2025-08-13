@@ -114,6 +114,12 @@ HDC Win32PrintingManager::createPrinterContext(LPTSTR devName) {
 	DEVMODE *devmode = (DEVMODE *)malloc(size);
 	DocumentProperties(NULL, handle, devName, devmode, NULL, DM_OUT_BUFFER);
 
+	if (devmode->dmFields & DM_ORIENTATION) {
+		devmode->dmOrientation = (_orientation == kPageOrientationPortrait) ? DMORIENT_PORTRAIT : DMORIENT_LANDSCAPE;
+	}
+
+	DocumentProperties(NULL, handle, devName, devmode, devmode, DM_OUT_BUFFER | DM_IN_BUFFER);
+
 	ClosePrinter(handle);
 
 	HDC printerDC = CreateDC(TEXT("WINSPOOL"), devName, NULL, devmode);
