@@ -36,6 +36,7 @@ public:
 	enum {
 		kCmdPrint = 'PRNT',
 		kCmdSelectPrinterName = 'SLPN',
+		kCmdSelectOrientation = 'SLOR',
 	};
 
 	PrintingDialog(const Graphics::ManagedSurface &surface);
@@ -48,6 +49,8 @@ private:
 	GUI::ButtonWidget *_printButton;
 	GUI::CheckboxWidget *_saveAsImageCheckbox;
 	GUI::PopUpWidget *_printersListPopUp;
+
+	GUI::PopUpWidget *_orientationPopUp;
 
 	Common::HashMap<uint32, Common::String> _tagToPrinterName;
 };

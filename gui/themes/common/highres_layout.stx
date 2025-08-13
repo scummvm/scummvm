@@ -2888,6 +2888,11 @@
 				type = 'PopUp'
 				width = '140'
 			/>
+			<space/>
+			<widget name = 'Orientation'
+				type = 'PopUp'
+				width = '100'
+			/>
 			<widget name = 'SaveAsImage'
 					type = 'Checkbox'
 					width = '140'

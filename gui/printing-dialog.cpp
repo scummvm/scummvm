@@ -57,6 +57,16 @@ PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 
 	_printersListPopUp->setSelectedTag(defaultPrinterId);
 	g_system->getPrintingManager()->setPrinterName(_tagToPrinterName[defaultPrinterId]);
+
+	// Page settings
+	_orientationPopUp = new PopUpWidget(this, "PrintingDialog.Orientation", Common::U32String(), kCmdSelectOrientation);
+	_orientationPopUp->appendEntry("Portrait", kPageOrientationPortrait);
+	_orientationPopUp->appendEntry("Landscape", kPageOrientationLandscape);
+	// Pre-select orientation
+	if (surface.w > surface.h) {
+		_orientationPopUp->setSelectedTag(kPageOrientationLandscape);
+		printMan->_orientation = kPageOrientationLandscape;
+	}
 }
 
 void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -72,6 +82,9 @@ void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint3
 	}
 	case kCmdSelectPrinterName:
 		g_system->getPrintingManager()->setPrinterName(_tagToPrinterName[data]);
+		break;
+	case kCmdSelectOrientation:
+		g_system->getPrintingManager()->_orientation = (PageOrientation)data;
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
