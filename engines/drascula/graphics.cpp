@@ -26,6 +26,8 @@
 #include "common/textconsole.h"
 #include "common/text-to-speech.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Drascula {
 
 void DrasculaEngine::allocMemory() {
@@ -87,7 +89,7 @@ void DrasculaEngine::moveCursor() {
 		centerText(textName, _mouseX, _mouseY);
 	} else if (!_menuBar && !_menuScreen)
 		_previousSaid.clear();
-	
+
 	if (_menuScreen)
 		showMenu();
 	else if (_menuBar)
@@ -557,6 +559,7 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	globalSpeed = 1000 / vel;
 	FrameSSN = 0;
 	Common::SeekableReadStream *stream = _archives.open(filefli);
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	if (!stream) {
 		warning("playFLI: Failed to load file '%s'", filefli);
@@ -564,10 +567,16 @@ void DrasculaEngine::playFLI(const char *filefli, int vel) {
 	}
 	LastFrame = _system->getMillis();
 
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("animation")->setEnabled(true);
+
 	while (playFrameSSN(stream) && (!term_int) && !shouldQuit()) {
-		if (getScan() == Common::KEYCODE_ESCAPE)
+		if (getAction() == kActionSkip)
 			term_int = 1;
 	}
+
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	delete stream;
 }
@@ -709,6 +718,8 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 
 	Common::SeekableReadStream *stream = _archives.open(animationFile);
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 	if (!stream) {
 		warning("Animation file %s not found", animationFile);
 		return true;
@@ -717,19 +728,27 @@ bool DrasculaEngine::animate(const char *animationFile, int FPS) {
 	NFrames = stream->readSint32LE();
 	showFrame(stream, true);
 	_system->delayMillis(1000 / FPS);
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("animation")->setEnabled(true);
+
 	while (cnt < NFrames) {
 		showFrame(stream);
 		_system->delayMillis(1000 / FPS);
 		cnt++;
 		byte key = getScan();
-		if (key == Common::KEYCODE_ESCAPE)
+		Common::CustomEventType action = getAction();
+		if (action == kActionSkip)
 			term_int = 1;
-		if (key != 0)
+		if (key != 0 || action != kActionNone)
 			break;
 	}
 	delete stream;
 
-	return ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit());
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
+	return ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit());
 }
 
 } // End of namespace Drascula
