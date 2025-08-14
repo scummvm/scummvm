@@ -38,19 +38,19 @@ constexpr int CURSOR_W = 12;
 constexpr int CURSOR_H = 20;
 
 struct ResourceString_Hash {
-	uint operator()(const LPCSTR s) const {
-		return (intptr)s <= 0xffff ? (intptr)s : Common::hashit(s);
+	uint operator()(const intptr s) const {
+		return s <= 0xffff ? s : Common::hashit((LPCSTR)s);
 	}
 };
 
 struct ResourceString_EqualTo {
-	bool operator()(const LPCSTR x, const LPCSTR y) const {
-		bool xNum = (intptr)x <= 0xffff;
-		bool yNum = (intptr)y <= 0xffff;
+	bool operator()(const intptr x, const intptr y) const {
+		bool xNum = x <= 0xffff;
+		bool yNum = y <= 0xffff;
 
 		return (xNum == yNum) && (
-		           (xNum && (intptr)x == (intptr)y) ||
-		           (!xNum && !strcmp(x, y))
+		           (xNum && x == y) ||
+		           (!xNum && !strcmp((LPCSTR)x, (LPCSTR)y))
 		       );
 	}
 };
@@ -73,7 +73,7 @@ public:
 	/**
 	 * Constructor for cursor resources
 	 */
-	Cursor(LPCSTR cursorId);
+	Cursor(intptr cursorId);
 
 	~Cursor();
 
@@ -86,7 +86,7 @@ public:
 class Cursors {
 private:
 	//Libs::Resources &_resources;
-	typedef Common::HashMap<LPCSTR, Cursor *,
+	typedef Common::HashMap<intptr, Cursor *,
 	        ResourceString_Hash, ResourceString_EqualTo> CursorHash;
 	CursorHash _cursors;
 
@@ -98,7 +98,7 @@ public:
 	Cursors(Libs::Resources &res);
 	~Cursors();
 
-	HCURSOR loadCursor(LPCSTR cursorId);
+	HCURSOR loadCursor(intptr cursorId);
 };
 
 } // namespace Gfx

@@ -130,15 +130,15 @@ void CWinApp::SetDialogBkColor() {
 }
 
 HCURSOR CWinApp::LoadStandardCursor(LPCSTR lpszCursorName) {
-	return _cursors.loadCursor(lpszCursorName);
+	return _cursors.loadCursor((intptr)lpszCursorName);
 }
 
 HCURSOR CWinApp::LoadCursor(LPCSTR lpszResourceName) {
-	return _cursors.loadCursor(lpszResourceName);
+	return _cursors.loadCursor((intptr)lpszResourceName);
 }
 
 HCURSOR CWinApp::LoadCursor(UINT nIDResource) {
-	return _cursors.loadCursor((LPCSTR)nIDResource);
+	return _cursors.loadCursor(nIDResource);
 }
 
 HCURSOR CWinApp::SetCursor(HCURSOR hCursor) {

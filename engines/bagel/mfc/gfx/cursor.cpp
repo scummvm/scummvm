@@ -80,11 +80,11 @@ static const byte CURSOR_PALETTE[9] = { 0x80, 0x80, 0x80, 0, 0, 0, 0xff, 0xff, 0
 /*--------------------------------------------*/
 
 Cursors::Cursors(Libs::Resources &res) /* : _resources(res) */ {
-	_cursors[IDC_ARROW] = new Cursor(ARROW_CURSOR);
-	_cursors[IDC_WAIT] =  new Cursor(HOURGLASS_CURSOR);
+	_cursors[(intptr)IDC_ARROW] = new Cursor(ARROW_CURSOR);
+	_cursors[(intptr)IDC_WAIT] =  new Cursor(HOURGLASS_CURSOR);
 
-	_arrowCursor = (HCURSOR)_cursors[IDC_ARROW];
-	_waitCursor = (HCURSOR)_cursors[IDC_WAIT];
+	_arrowCursor = (HCURSOR)_cursors[(intptr)IDC_ARROW];
+	_waitCursor = (HCURSOR)_cursors[(intptr)IDC_WAIT];
 }
 
 Cursors::~Cursors() {
@@ -93,7 +93,7 @@ Cursors::~Cursors() {
 		delete it->_value;
 }
 
-HCURSOR Cursors::loadCursor(LPCSTR cursorId) {
+HCURSOR Cursors::loadCursor(intptr cursorId) {
 	if (!cursorId)
 		// Null cursor used to hide cursor
 		return (HCURSOR)nullptr;
@@ -115,12 +115,11 @@ Cursor::Cursor(const byte *pixels) : _isBuiltIn(true) {
 	Common::copy(pixels, pixels + CURSOR_W * CURSOR_H, dest);
 }
 
-Cursor::Cursor(LPCSTR cursorId) :
-	_isBuiltIn(false) {
+Cursor::Cursor(intptr cursorId) : _isBuiltIn(false) {
 	Image::BitmapDecoder decoder;
 	const auto &resList = AfxGetApp()->getResources();
 
-	intptr id = (intptr)cursorId;
+	intptr id = cursorId;
 	bool success = false;
 
 	Common::SeekableReadStream *bmp = nullptr;
