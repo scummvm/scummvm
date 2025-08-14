@@ -147,6 +147,7 @@ ImGuiImage getImageID(CastMember *castMember) {
 	if (_state->_cast._textures.contains(bmp))
 		return _state->_cast._textures[bmp];
 
+	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
 	if (!pic)
 		return {};
@@ -186,8 +187,6 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	if (castMember->_type != CastType::kCastShape)
 		return {};
 
-	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
-
 	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
 	Channel *channel = nullptr;
 
@@ -203,6 +202,10 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	}
 
 	Common::Rect bbox(castMember->getBbox());
+
+	// Manually set the bbox of the channel to the bbox of cast member
+	// Even though the BBox of the channel and cast member are the same, the channel's bbox is offset to a non zero origin
+	// Depending upon the position of the sprite in the window
 	channel->setBbox(bbox.left, bbox.top, bbox.right, bbox.bottom);
 	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(bbox.width(), bbox.height(), g_director->_pixelformat);
 
@@ -211,7 +214,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 
 	if (debugChannelSet(8, kDebugImages)) {
 		Common::String prepend = "shape";
-		Common::String filename = Common::String::format("./dumps/%s-%d.png", encodePathForDump(prepend).c_str(), shapeMember->getID());
+		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", g_director->getCurrentMovie()->getMacName().c_str(), encodePathForDump(prepend).c_str(), castMember->getID());
 		Common::DumpFile bitmapFile;
 
 		bitmapFile.open(Common::Path(filename), true);

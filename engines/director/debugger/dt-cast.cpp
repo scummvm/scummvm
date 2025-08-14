@@ -193,11 +193,10 @@ void showCast() {
 						switch (castMember._value->_type) {
 						case kCastBitmap:
 							{
-								float offsetX = (columnWidth - 32.f) * 0.5f;
-								ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-
 								ImGuiImage imgID = getImageID(castMember._value);
 								if (imgID.id) {
+									float offsetX = (columnWidth - 32.f) * 0.5f;
+									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 									showImage(imgID, name.c_str(), 32.f);
 								}
 							}
@@ -247,10 +246,10 @@ void showCast() {
 
 						case kCastShape:
 							{
-								float offsetX = (columnWidth - 32.f) * 0.5f;
-								ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 								ImGuiImage shapeID = getShapeID(castMember._value);
 								if (shapeID.id) {
+									float offsetX = (columnWidth - 32.f) * 0.5f;
+									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 									showImage(shapeID, name.c_str(), 32.f);
 								}
 							}
