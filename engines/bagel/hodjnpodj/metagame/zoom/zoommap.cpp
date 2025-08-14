@@ -36,9 +36,6 @@ extern HCURSOR          hGameCursor;
 
 CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 
-CRect   MainRect;                           // screen area spanned by the game window
-CRect   OptionRect;                         // screen area spanned by the option button
-
 int     nReturnValue = -1;       // the values to return to the main EXE to tell it what
 // DLL to dispatch to
 // set the game rects
@@ -117,8 +114,7 @@ CText           *pText = nullptr;   // the game name display
 
 static  BOOL    bActiveWindow = FALSE;          // whether our window is activesho
 CBitmap         *pSplashScreen = nullptr;
-CRect           rText(0, 428, 640, 450);
-CRect           rLeaveRect;
+
 CColorButton    *pReturnButton = nullptr;
 
 /*****************************************************************
@@ -152,7 +148,8 @@ CColorButton    *pReturnButton = nullptr;
  *
  ****************************************************************/
 
-CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) {
+CMainZoomWindow::CMainZoomWindow(HWND hCallingWnd, BOOL bShowExit) :
+		rText(0, 428, 640, 450) {
 	CDC         *pDC = nullptr;                     // device context for the screen
 	CString     WndClass;
 	BOOL        bSuccess = FALSE;
