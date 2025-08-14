@@ -148,27 +148,13 @@ END_MESSAGE_MAP()
 
 
 BOOL CRules::SetupKeyboardHook(void) {
-	#if BUILD_FOR_DLL
-	pRulesDialog = this;                            // retain pointer to our dialog box
-
-	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
-	#else
 	HINSTANCE   hInst;
 
 	pRulesDialog = this;                            // retain pointer to our dialog box
 
 	hInst = AfxGetInstanceHandle();                 // get our application instance
 
-	pKbdHook = MakeProcInstance((FARPROC) PrefHookProc, hInst);
-	if (pKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) pKbdHook, hInst, GetCurrentTask());
-	#endif
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, PrefHookProc, hInst, GetCurrentTask());
 
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return FALSE;
@@ -178,36 +164,21 @@ BOOL CRules::SetupKeyboardHook(void) {
 
 
 void CRules::RemoveKeyboardHook(void) {
-	#if BUILD_FOR_DLL
-	if (m_bKeyboardHook)
-		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
-
-	lpfnKbdHook = nullptr;
-	#else
 	if (m_bKeyboardHook) {
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 		FreeProcInstance(pKbdHook);                     // release our procedure pointer
 	}
 
 	pKbdHook = nullptr;
-	#endif
 
 	pRulesDialog = nullptr;
 	hKbdHook = nullptr;
 	m_bKeyboardHook = FALSE;
 }
 
-
-#if BUILD_FOR_DLL
-extern "C"
-LRESULT KeyboardHookProc(int code, WPARAM wParam, LPARAM lParam) {
-	if (code < 0)                                   // required to punt to next hook
-		return (CallNextHookEx((HHOOK) lpfnKbdHook, code, wParam, lParam));
-#else
 LRESULT PrefHookProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (code < 0)                                   // required to punt to next hook
 		return (CallNextHookEx((HHOOK) pKbdHook, code, wParam, lParam));
-#endif
 
 	if (lParam & 0xA0000000)                        // ignore ALT and key release
 		return FALSE;
