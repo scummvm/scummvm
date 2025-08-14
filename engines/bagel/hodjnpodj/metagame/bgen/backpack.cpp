@@ -60,14 +60,8 @@ static  CBackpack *pBackpackDialog = nullptr;        // pointer to our backpack 
 static  CWnd *pParentWnd = nullptr;             // parent window for this dialog
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CInventory *pInventory = nullptr;         // inventory to be displayed
-
-
-static  CRect       BackpackRect;                   // x/y (left/right) and dx/dy (right/bottom) for the backpack window
-static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
-ScrollBotRect;                  // area spanned by lower scroll curl
 
 //static  CDC *pBackpackDC = nullptr;            // device context for the backpack bitmap
 static  CBitmap *pBackpackBitmap = nullptr;        // bitmap for an entirely blank backpack
