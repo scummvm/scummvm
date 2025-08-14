@@ -62,14 +62,9 @@ static  CPawnShop   *pPawnDialog = nullptr;        // pointer to our pawn dialog
 static  CWnd        *pParentWnd = nullptr;             // parent window for this dialog
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CInventory  *pInventory = nullptr;             // inventory to be displayed
 static  CInventory  *pGeneralStore = nullptr;          // general store's inventory
-
-static  CRect       PawnRect;                       // x/y (left/right) and dx/dy (right/bottom) for the pawn window
-static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
-        ScrollBotRect;                  // area spanned by lower scroll curl
 
 //static  CDC         *pPawnDC = nullptr;                // device context for the pawn bitmap
 static  CBitmap     *pPawnBitmap = nullptr;            // bitmap for an entirely blank pawn
@@ -108,11 +103,7 @@ static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or P
 BOOL CPawnShop::SetupKeyboardHook(void) {
 	pPawnDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPPAWNHOOKPROC)GetProcAddress(hDLLInst, "PawnHookProc");
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, PawnHookProc, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return FALSE;
 
