@@ -103,7 +103,7 @@ public:
 	void setViewportOrg(const CPoint &pt);
 	void offsetViewportOrg(int x, int y);
 
-	byte *getBasePtr(int x, int y) const;
+	byte *getBasePtr(int x, int y);
 	void *getPixels() {
 		return _surface.getPixels();
 	}

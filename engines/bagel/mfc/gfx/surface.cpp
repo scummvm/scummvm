@@ -162,7 +162,7 @@ void Surface::offsetViewportOrg(int x, int y) {
 	_viewportOrg.y += y;
 }
 
-byte *Surface::getBasePtr(int x, int y) const {
+byte *Surface::getBasePtr(int x, int y) {
 	assert(format.bytesPerPixel == 1);
 
 	x += _viewportOrg.x;
