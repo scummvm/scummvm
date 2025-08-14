@@ -31,7 +31,7 @@ bool gameTick = false;
 bool gameTickHalfSpeed = false;
 bool timeToDrawEffect = false;
 
-ChronoManager::ChronoManager(/* args */) : _lastTick(0), _lastDoubleTick(0) {
+ChronoManager::ChronoManager(/* args */) : _lastTick(0) {
 }
 
 ChronoManager::~ChronoManager() {

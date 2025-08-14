@@ -19,14 +19,25 @@
  *
  */
 
-#include "common/file.h"
-#include "common/textconsole.h"
+#ifndef TOT_DEBUG_H
+#define TOT_DEBUG_H
 
-#include "tot/chrono.h"
-#include "tot/vars.h"
+#include "tot/tot.h"
 
 namespace Tot {
 
-
+    // Debug methods
+	void drawMouseGrid(RoomFileRegister *screen);
+	void drawScreenGrid(RoomFileRegister *screen);
+	void drawCharacterPosition();
+	void printPos(int x, int y, int screenPosX, int screenPosY, const char *label);
+	void drawPos(uint x, uint y, byte color);
+	void drawGrid();
+	void drawRect(byte color, int x, int y, int x2, int y2);
+	void drawX(int x, int y, byte color);
+	void drawLine(int x, int y, int x2, int y2, byte color);
+	void printNiches();
 
 } // End of namespace Tot
+
+#endif

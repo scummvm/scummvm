@@ -58,6 +58,10 @@ void SoundManager::init() {
 	setMidiVolume(3, 3);
 	playMidi("SILENT", false);
 	setSfxVolume(6, 6);
+	_rightSfxVol = 6;
+	_leftSfxVol = 6;
+	_musicVolRight = 3;
+	_musicVolLeft = 3;
 }
 
 void SoundManager::loadVoc(Common::String vocFile, long startPos, int16 size) {

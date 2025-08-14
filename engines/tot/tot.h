@@ -26,6 +26,7 @@
 #include "common/events.h"
 #include "common/fs.h"
 #include "common/hash-str.h"
+#include "common/memstream.h"
 #include "common/random.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -40,6 +41,7 @@
 #include "tot/graphics.h"
 #include "tot/mouse.h"
 #include "tot/sound.h"
+#include "tot/types.h"
 
 namespace Tot {
 
@@ -57,12 +59,107 @@ private:
 	 * loading and saving using a single method
 	 */
 	Common::Error syncGame(Common::Serializer &s);
-
+	//rout 1
 	int engineStart();
 	int startGame();
 	void newGame();
 	void changeRoom();
 	void loadTemporaryGame();
+	void drawText(uint number);
+	void displayLoading();
+	void runaroundRed();
+	void sprites(bool drawCharacter);
+	RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
+	void lookAtObject(byte objectNumber);
+	void useInventoryObjectWithInventoryObject(uint obj1, uint obj2);
+	void pickupScreenObject();
+	void useScreenObject();
+	void openScreenObject();
+	void closeScreenObject();
+	void action();
+	void handleAction(byte invPos);
+	void loadObjects();
+	void obtainName(Common::String &playerName);
+	void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scrollCorrection);
+	void loadGame(SavedGame game);
+	void saveGameToRegister();
+	void saveLoad();
+	void calculateRoute(byte zone1, byte zone2, bool extraCorrection = false, bool zonavedada = false);
+	void wcScene();
+	void advanceAnimations(bool barredZone, bool animateMouse);
+	void updateSecondaryAnimationDepth();
+	void updateMainCharacterDepth();
+	void actionLineText(Common::String actionLine);
+	void initializeObjectFile();
+	void saveItem(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
+	void scrollLeft(uint &horizontalPos);
+	void scrollRight(uint &horizontalPos);
+	TextEntry readVerbRegister(uint numRegister);
+
+	void readConversationFile(Common::String f);
+
+	//Rout2
+	void adjustKey();
+	void adjustKey2();
+	void animateGive(uint dir, uint height);
+	void animatePickup1(uint dir, uint height);
+	void animatePickup2(uint dir, uint height);
+	void animateOpen2(uint dir, uint height);
+	void animateBat();
+	void updateVideo();
+	void nicheAnimation(byte nicheDir, int32 bitmap);
+	void replaceBackpack(byte obj1, uint obj2);
+	void dropObjectInScreen(ScreenObject replacementObject);
+	void calculateTrajectory(uint finalX, uint finalY);
+	void animatedSequence(uint numSequence);
+	void loadScreenMemory();
+	void loadAnimation(Common::String animation);
+	void updateAltScreen(byte altScreenNumber);
+	void verifyCopyProtection();
+	void verifyCopyProtection2();
+	void loadTV();
+	void loadScreen();
+	void loadCharAnimation();
+	void freeInventory();
+	void loadItemWithFixedDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth);
+	void loadItem(uint coordx, uint coordy, uint picSize, int32 pic, uint prof);
+	void updateInventory(byte index);
+	void readBitmap(int32 bitmapOffset, byte *bitmap, uint bitmapSize, uint errorCode);
+	void updateItem(uint filePos);
+	void readItemRegister(Common::SeekableReadStream *stream, uint objPos, ScreenObject &thisRegObj);
+	void saveItemRegister(ScreenObject object, Common::SeekableWriteStream *stream);
+	void saveTemporaryGame();
+	void drawLookAtItem(RoomObjectListEntry obj);
+	void putIcon(uint posX, uint posY, uint iconNumber);
+	void drawInventory(byte direction, byte limit);
+	void generateDiploma(Common::String &photoName);
+	void credits();
+	void checkMouseGrid();
+	void introduction();
+	void firstIntroduction();
+	void readAlphaGraph(Common::String &data, int length, int x, int y, byte barColor);
+	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor);
+	void displayObjectDescription(Common::String text, uint x, uint y, byte width, byte textColor, byte shadowColor);
+	void copyProtection();
+	void initialLogo();
+	void initialMenu(bool fade);
+	void exitToDOS();
+	void soundControls();
+	void sacrificeScene();
+	void ending();
+	void loadBat();
+	void loadDevil();
+	void assembleCompleteBackground(byte *image, uint coordx, uint coordy);
+	void assembleScreen(bool scroll = false);
+	void disableSecondAnimation();
+	void clearGame();
+	void saveItemRegister();
+
+	// vars
+	void clearObj();
+	void initPlayAnim();
+	void resetGameState();
+	void clearVars();
 
 protected:
 	// Engine APIs
@@ -72,7 +169,7 @@ public:
 	Graphics::Screen *_screen = nullptr;
 	Tot::GraphicsManager *_graphics = nullptr;
 	SoundManager *_sound = nullptr;
-	MouseManager *_mouseManager = nullptr;
+	MouseManager *_mouse = nullptr;
 	ChronoManager *_chrono = nullptr;
 
 	bool _showMouseGrid = false;
@@ -81,6 +178,267 @@ public:
 	bool _drawObjectAreas = false;
 
 	Common::Language _lang = Common::ES_ESP;
+
+	Common::MemorySeekableReadWriteStream *_conversationData;
+	Common::MemorySeekableReadWriteStream *_rooms;
+	Common::MemorySeekableReadWriteStream *_invItemData;
+
+	bool _roomChange;
+	bool _isTVOn,
+		_isVasePlaced,
+		_isScytheTaken,
+		_isTridentTaken,
+		_isPottersWheelDelivered,
+		_isMudDelivered,
+		_isGreenDevilDelivered,
+		_isRedDevilCaptured,
+		_isPottersManualDelivered,
+		_isCupboardOpen,
+		_isChestOpen,
+		_isTrapSet,
+		_isPeterCoughing;
+
+	bool _isSealRemoved;
+	bool _inGame;
+	bool _firstTimeDone; // Flag for first time run of the game.
+	bool _isIntroSeen;
+	bool _shouldQuitGame;
+	bool _startNewGame; // Flag to initialize game
+	bool _continueGame; // Flag to resume game
+	bool _isSavingDisabled;
+	bool _isDrawingEnabled; // true if sprites should be drawn
+	bool _isSecondaryAnimationEnabled; // Whether room has secondary animation
+
+	InventoryEntry _inventory[kInventoryIconCount]; // These are the icons currnetly in the inventory
+	/**
+	 * Keeps an array of all inventory icon bitmaps
+	 */
+	byte *_inventoryIconBitmaps[kInventoryIconCount];
+	/**
+	 * Position within inventory
+	 */
+	byte _inventoryPosition;
+	/**
+	 * Animation sequences
+	 */
+	CharacterAnim _mainCharAnimation;
+	uint _mainCharFrameSize;
+	SecondaryAnim _secondaryAnimation;
+	uint _secondaryAnimFrameSize;
+	/**
+	 * Currently selected action.
+	 */
+	byte _actionCode = 0;
+	/**
+	 * Previously selected action.
+	 */
+	byte _oldActionCode = 0;
+	/**
+	 * Number of trajectory changes
+	 */
+	byte _trajectorySteps;
+	/**
+	 * index of currently selected door.
+	 */
+	byte _doorIndex;
+	/**
+	 * 1 first part, 2 second part
+	 */
+	byte _gamePart;
+	/**
+	 * Number of frames of secondary animation
+	 */
+	byte _secondaryAnimationFrameCount;
+	/**
+	 * Number of directions of the secondary animation
+	 */
+	byte _secondaryAnimDirCount;
+	/**
+	 * Data protection control
+	 */
+	byte _cpCounter, _cpCounter2;
+	/**
+	 * Coordinates of target step
+	 */
+	byte _destinationX, _destinationY;
+	/**
+	 * Current character facing direction
+	 * 0: upwards
+	 * 1: right
+	 * 2: downwards
+	 * 3: left
+	 */
+	byte _charFacingDirection;
+
+	/**
+	 * Width and height of secondary animation
+	 */
+	uint _secondaryAnimWidth, _secondaryAnimHeight;
+	/**
+	 * Code of selected object in the backpack
+	 */
+	uint _backpackObjectCode;
+	/**
+	 * Auxiliary vars for grid update
+	 */
+	uint _oldposx = 0, _oldposy = 0;
+
+	/**
+	 * Amplitude of movement
+	 */
+	int _element1 = 0, _element2 = 0;
+	/**
+	 * Current position of the main character
+	 */
+	int _characterPosX, _characterPosY;
+	/**
+	 * Target position of the main character?
+	 */
+	int _xframe2 = 0, _yframe2 = 0;
+
+	/**
+	 * Text map
+	 */
+	Common::File _verbFile;
+	/**
+	 * Auxiliary vars with current inventory object name.
+	 */
+	Common::String _oldInventoryObjectName, _inventoryObjectName;
+
+	/**
+	 * Name of player
+	 */
+	Common::String _characterName;
+
+	Common::String _decryptionKey;
+
+	/**
+	 * State of the niches in part 2
+	 */
+	uint _niche[2][4];
+
+	RoomFileRegister *_currentRoomData = NULL;
+
+	ScreenObject _curObject;
+	/**
+	 * New movement to execute.
+	 */
+	Route _mainRoute;
+
+	/**
+	 * Matrix of positions for a trajectory between two points
+	 */
+	Common::Point _trajectory[300];
+
+	/**
+	 * Longitude of the trajectory matrix.
+	 */
+	uint _trajectoryLength;
+	/**
+	 * Position within the trajectory matrix
+	 */
+	uint _currentTrajectoryIndex;
+	/**
+	 * Position within the trajectory matrix for secondary animation
+	 */
+	uint _currentSecondaryTrajectoryIndex;
+	/**
+	 * Screen areas
+	 */
+	byte _currentZone = 0, _targetZone = 0, _oldTargetZone = 0;
+
+	/**
+	 * Amplitude of grid slices
+	 */
+	byte _maxXGrid = 0, _maxYGrid = 0;
+
+	/**
+	 * capture of movement grid of secondary animation
+	 */
+	byte _movementGridForSecondaryAnim[10][10];
+	/**
+	 * capture of mouse grid of secondary animation
+	 */
+	byte _mouseGridForSecondaryAnim[10][10];
+	/**
+	 * movement mask for grid of secondary animation
+	 */
+	byte _maskGridSecondaryAnim[10][10];
+	/**
+	 * mouse mask for grid of secondary animation
+	 */
+	byte _maskMouseSecondaryAnim[10][10];
+
+	bool _list1Complete,
+		_list2Complete,
+		_obtainedList1, // whether we've been given list 1
+		_obtainedList2; // whether we've been given list 2
+
+	/** Conversation topic unlocks */
+	bool _firstTimeTopicA[kCharacterCount],
+		_firstTimeTopicB[kCharacterCount],
+		_firstTimeTopicC[kCharacterCount],
+		_bookTopic[kCharacterCount],
+		_mintTopic[kCharacterCount];
+
+	bool _caves[5];
+
+	/**
+	 * First and second lists of objects to retrieve in the game
+	 */
+	uint16 _firstList[5], _secondList[5];
+
+	long _screenSize;
+
+	/**
+	 * Frame number for the animations
+	 */
+	byte _iframe, _iframe2;
+
+	/**
+	 * Depth of screenobjects
+	 */
+	ObjectInfo _depthMap[kNumScreenOverlays];
+	/**
+	 * Bitmaps of screenobjects
+	 */
+	byte *_screenLayers[kNumScreenOverlays];
+	/**
+	 * Current frame of main character
+	 */
+	byte *_curCharacterAnimationFrame;
+	/**
+	 * Current frame of secondary animation
+	 */
+	byte *_curSecondaryAnimationFrame;
+
+	/**
+	 * Pointer storing the screen as it displays on the game
+	 */
+	byte *sceneBackground;
+
+	/**
+	 * Dirty patch of screen to repaint on every frame
+	 */
+	byte *characterDirtyRect;
+	/**
+	 * Stores a copy of the background bitmap
+	 */
+	byte *backgroundCopy;
+
+	uint currentRoomNumber;
+
+	bool isLoadingFromLauncher = false;
+
+	bool saveAllowed = false;
+
+	/**
+	 * Previous positions of the mouse within the screen grid
+	 */
+	uint oldGridX, oldGridY;
+
+	SavedGame savedGame;
+
 
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
@@ -114,6 +472,23 @@ public:
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
+	void loadScreenData(uint screenNumber);
+	void freeScreenObjects();
+	void freeAnimation();
+	void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5);
+	void drawMenu(byte menuNumber);
+	void assignText();
+	void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
+	void sayLine(uint textRef, byte textColor, byte shadowColor, uint &responseNumber, bool isWithinConversation);
+	void goToObject(byte zone1, byte zone2);
+	void readItemRegister(uint objPos);
+	TextEntry readVerbRegister();
+	void drawBackpack();
+	void mask();
+	void setRoomTrajectories(int height, int width, TRAJECTORIES_OP op, bool fixGrids = true);
+	void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream);
+	//vars
+	void initializeScreenFile();
 };
 
 extern TotEngine *g_engine;

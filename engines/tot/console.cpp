@@ -20,7 +20,6 @@
  */
 
 #include "tot/console.h"
-#include "tot/routines.h"
 #include "tot/vars.h"
 
 namespace Tot {
@@ -67,7 +66,7 @@ bool TotConsole::cmdClearLayers(int argc, const char **argv) {
 	_engine->_showScreenGrid = false;
 	_engine->_showGameGrid = false;
 	_engine->_showMouseGrid = false;
-	g_engine->_graphics->drawScreen(sceneBackground);
+	g_engine->_graphics->drawScreen(g_engine->sceneBackground);
 	debugPrintf("Cleared all debug layers");
 	return true;
 }
@@ -80,18 +79,17 @@ bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
 		debugPrintf("Invalid RoomID %d!\n", roomID);
 		return true;
 	}
-	freeAnimation();
-	freeScreenObjects();
-	clearScreenData();
-	loadScreenData(roomID);
-	g_engine->_graphics->drawScreen(sceneBackground);
+	g_engine->freeAnimation();
+	g_engine->freeScreenObjects();
+	g_engine->loadScreenData(roomID);
+	g_engine->_graphics->drawScreen(g_engine->sceneBackground);
 	debugPrintf("Loaded screen %d", roomID);
 	return true;
 }
 
 bool TotConsole::cmdJumpToPart2(int argc, const char **argv) {
-	list1Complete = true;
-	list2Complete = true;
+	g_engine->_list1Complete = true;
+	g_engine->_list2Complete = true;
 	debugPrintf("Moving on to part 2 of the game");
 	return true;
 }

@@ -38,8 +38,6 @@ const int kFrameEffectMs = 10;
 class ChronoManager {
 private:
 	uint32 _lastTick = 0;
-	uint32 _lastTickEffect = 0;
-	uint32 _lastDoubleTick = 0;
 	byte _tickCount = 0;
 	uint32 _lastEffectRender = 0;
 	byte _speedMultiplier = 1;

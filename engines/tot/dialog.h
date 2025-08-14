@@ -41,6 +41,9 @@ extern bool endOfConversation;
 
 void talkToSceneObject();
 
+void loadTalkAnimations();
+void unloadTalkAnimations();
+
 } // End of namespace Tot
 
 #endif

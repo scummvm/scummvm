@@ -57,6 +57,8 @@ public:
 	void fadeInMusic(byte leftVol, byte rightVol);
 	void setMasterVolume(byte leftVol, byte rightVol);
 	void setSfxBalance(bool left, bool right);
+ 	uint _rightSfxVol, _leftSfxVol;
+ 	uint _musicVolRight, _musicVolLeft;
 
 private:
 	void setSfxVolume(byte volume);

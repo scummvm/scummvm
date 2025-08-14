@@ -26,12 +26,18 @@
 #include "tot/mouse.h"
 #include "tot/tot.h"
 #include "tot/util.h"
+#include "mouse.h"
 
 namespace Tot {
 
 MouseManager::MouseManager() {
 	_mouseArea = Common::Rect(0, 0, 320, 200);
 	loadMasks();
+	mouseX = 160;
+	mouseY = 100;
+	mouseClickX = mouseX;
+	mouseClickY = mouseY;
+	mouseMaskIndex = 1;
 }
 
 MouseManager::~MouseManager() {
@@ -65,7 +71,7 @@ void MouseManager::setMouseArea(Common::Rect rect) {
 	_mouseArea = rect;
 }
 
-void MouseManager::setMousePos(Common::Point p) {
+void MouseManager::warpMouse(Common::Point p) {
 	p.x = CLIP<int16>(p.x, _mouseArea.left, _mouseArea.right);
 	p.y = CLIP<int16>(p.y, _mouseArea.top, _mouseArea.bottom);
 
@@ -77,7 +83,19 @@ void MouseManager::printPos(int x, int y, int screenPosX, int screenPosY) {
 	g_engine->_graphics->euroText(Common::String::format("MousePos: %d, %d", x + 7, y + 7), screenPosX, screenPosY, Graphics::kTextAlignLeft);
 }
 
-void MouseManager::setMousePos(int mask, int x, int y) {
+Common::Point MouseManager::getClickCoordsWithinGrid() {
+	int correctedMouseX = (mouseClickX + 7) / kXGridCount;
+	int correctedMouseY = (mouseClickY + 7) / kYGridCount;
+	return Common::Point(correctedMouseX, correctedMouseY);
+}
+
+Common::Point MouseManager::getMouseCoordsWithinGrid() {
+	int correctedMouseX = (mouseX + 7) / kXGridCount;
+	int correctedMouseY = (mouseY + 7) / kYGridCount;
+	return Common::Point(correctedMouseX, correctedMouseY);
+}
+
+void MouseManager::warpMouse(int mask, int x, int y) {
 	setMouseMask(_currentMouseMask);
 	g_system->warpMouse(x, y);
 }
