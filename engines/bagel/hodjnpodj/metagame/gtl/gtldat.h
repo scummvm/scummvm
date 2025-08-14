@@ -293,11 +293,11 @@ public:
 	CBgbObject FAR *m_lpcIcon ;         // icon for character
 
 	CSound *m_pThemeSound;              // this character's MIDI theme song info
-	char   *m_pszThemeFile;
+	const char *m_pszThemeFile;
 	UINT    m_nThemeStart;
 	UINT    m_nThemeEnd;
 
-	CHAR   *m_pszStarsFile;             // cel strip for stars animation
+	const char *m_pszStarsFile;             // cel strip for stars animation
 
 	// fields for computing computer play (also used for human player
 	// for debugging or giving hints)

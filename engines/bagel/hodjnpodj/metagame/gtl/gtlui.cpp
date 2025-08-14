@@ -782,15 +782,15 @@ BOOL CGtlData::InitOverlay(CMap FAR * lpMap)
 		// initialize theme music info
 		//
 		if (xpXodj->m_bHodj) {
-			xpXodj->m_pszThemeFile = (char *)&HODJS_WALKING_SOUND;
+			xpXodj->m_pszThemeFile = (const char *)&HODJS_WALKING_SOUND;
 			xpXodj->m_nThemeStart = HODJ_SOUND_START;
 			xpXodj->m_nThemeEnd = HODJ_SOUND_END;
-			xpXodj->m_pszStarsFile = (char *)&HODJS_STARS_FILE;
+			xpXodj->m_pszStarsFile = (const char *)&HODJS_STARS_FILE;
 		} else {
-			xpXodj->m_pszThemeFile = (char *)&PODJS_WALKING_SOUND;
+			xpXodj->m_pszThemeFile = (const char *)&PODJS_WALKING_SOUND;
 			xpXodj->m_nThemeStart = PODJ_SOUND_START;
 			xpXodj->m_nThemeEnd = PODJ_SOUND_END;
-			xpXodj->m_pszStarsFile = (char *)&PODJS_STARS_FILE;
+			xpXodj->m_pszStarsFile = (const char *)&PODJS_STARS_FILE;
 		}
 
 	}
