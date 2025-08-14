@@ -481,6 +481,15 @@ on getRes\r\
 end\r\
 ";
 
+/*
+ * GORD@K has a complicated CD detection method which includes writing a temp file to the CD
+ * drive. Since this always works, we have to stub out the entire method.
+ */
+const char *const gordakDetectionFix = "\
+on checkFiles\r\
+   go to movie \"gordak\\intro.dxr\"\r\
+end\r\
+";
 
 struct ScriptHandlerPatch {
 	const char *gameId;
@@ -524,6 +533,7 @@ struct ScriptHandlerPatch {
 	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:Mission Code Millennium", kMovieScript, 15, DEFAULT_CAST_LIB, &mcmillenniumResDetectionFix},
 	{"mcmillennium", nullptr, kPlatformWindows, "PC\\SHARED.DXR", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
 	{"mcmillennium", nullptr, kPlatformMacintosh, "Mission Code Millennium:SHARED.Dxr", kMovieScript, 1013, DEFAULT_CAST_LIB, &mcmillenniumDriveDetectionFix},
+	{"gordak", nullptr, kPlatformWindows, "GORDAKCD.EXE", kMovieScript, 2, DEFAULT_CAST_LIB, &gordakDetectionFix},
 	{nullptr, nullptr, kPlatformUnknown, nullptr, kNoneScript, 0, 0, nullptr},
 
 };
