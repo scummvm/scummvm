@@ -25,8 +25,6 @@
 namespace Bagel {
 namespace MFC {
 
-const CRect CFrameWnd::rectDefault;
-
 IMPLEMENT_DYNAMIC(CFrameWnd, CWnd)
 BEGIN_MESSAGE_MAP(CFrameWnd, CWnd)
 ON_WM_CREATE()
@@ -103,6 +101,7 @@ BOOL CFrameWnd::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle,
 	// Create the window
 	LPCSTR lpszClass = nullptr; //GetIconWndClass(dwDefaultStyle, nIDResource);
 	LPCSTR lpszTitle = m_strTitle.c_str();
+	CRect rectDefault;
 	if (!Create(lpszClass, lpszTitle, dwDefaultStyle, rectDefault,
 		pParentWnd, MAKEINTRESOURCE(nIDResource), 0L, pContext)) {
 		return FALSE;   // will self destruct on failure normally

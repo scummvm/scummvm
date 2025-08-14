@@ -1465,7 +1465,6 @@ class CFrameWnd : public CWnd {
 private:
 	CString m_strTitle;
 	UINT m_nIDHelp = 0;
-	static const CRect rectDefault;
 	CView *m_pViewActive = nullptr;
 
 	void ActivateFrame(int nCmdShow);
@@ -1501,12 +1500,17 @@ public:
 
 	BOOL Create(LPCSTR lpszClassName,
 		LPCSTR lpszWindowName,
-		DWORD dwStyle = WS_OVERLAPPEDWINDOW,
-		const RECT &rect = rectDefault,
+		DWORD dwStyle,
+		const RECT &rect,
 		CWnd *pParentWnd = nullptr,
 		LPCSTR lpszMenuName = nullptr,
 		DWORD dwExStyle = 0,
 		CCreateContext *pContext = nullptr);
+	BOOL Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
+			DWORD dwStyle = WS_OVERLAPPEDWINDOW) {
+		CRect rectDefault;
+		return Create(lpszClassName, lpszWindowName, dwStyle, rectDefault);
+	}
 
 	HMENU GetMenu() const;
 	void RecalcLayout(BOOL bNotify = TRUE);
