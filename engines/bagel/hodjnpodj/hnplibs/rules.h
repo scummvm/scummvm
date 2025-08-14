@@ -57,16 +57,24 @@ private:
 	static  CDC *SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap, CBitmap * &pBitmapOld, CPalette *pPalette, CPalette * &pPalOld);
 	static  void ReleaseCompatibleContext(CDC * &pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld);
 
-	static  BOOL CreateWorkAreas(CDC *pDC);
-	static  void UnfurlScroll(CDC *pDC);
-	static  void UpdateMore(CDC *pDC);
-	static  void WritePage(CDC *pDC, int nPage);
-	static  void DoWaitCursor(void);
-	static  void DoArrowCursor(void);
-	static  void Sleep(clock_t wait);
+	BOOL CreateWorkAreas(CDC *pDC);
+	void UnfurlScroll(CDC *pDC);
+	void UpdateMore(CDC *pDC);
+	void WritePage(CDC *pDC, int nPage);
+	void DoWaitCursor(void);
+	void DoArrowCursor(void);
+	void Sleep(clock_t wait);
 
 private:
 	bool m_bKeyboardHook = false;	// whether keyboard hook present
+	CRect OkayRect;					// rectangle bounding the OKAY button
+	CRect ScrollRect,				// x/y (left/right) and dx/dy (right/bottom) for the scroll window
+		ScrollTopRect,				// rectangle bounding the scroll top section
+		ScrollBotRect,				// rectangle bounding the scroll bottom section
+		ScrollMidRect;				// rectangle bounding the scroll middle section
+
+	CRect ScrollTopCurlRect,		// current location of top curl for mouse clicks
+		ScrollBotCurlRect;			// current location of bottom curl for mouse clicks
 
 // Dialog Data
 	//{{AFX_DATA(CRules)

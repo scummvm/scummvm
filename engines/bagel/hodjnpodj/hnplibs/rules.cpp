@@ -62,7 +62,6 @@ static  CRules      *pRulesDialog = nullptr;           // pointer to our rules d
 static  CWnd        *pParentWnd = nullptr;             // parent window pointer
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static CDibDoc *pScrollTopDIB = nullptr,          // DIB for scroll top section
 	*pScrollMidDIB = nullptr,          // DIB for scroll mid section
@@ -88,14 +87,6 @@ static  CBitmap     *pScrollBitmap = nullptr,          // bitmap for an entirely
 	*pBackgroundBitmapOld = nullptr,   // bitmap previously mapped to the background context
 	*pWorkBitmap = nullptr,            // bitmap containing the work area for the scroll
 	*pWorkBitmapOld = nullptr;         // bitmap previously mapped to the work area context
-
-static CRect ScrollRect,                     // x/y (left/right) and dx/dy (right/bottom) for the scroll window
-	ScrollTopRect,                  // rectangle bounding the scroll top section
-	ScrollBotRect,                  // rectangle bounding the scroll bottom section
-	ScrollMidRect;                  // rectangle bounding the scroll middle section
-
-static CRect ScrollTopCurlRect,              // current location of top curl for mouse clicks
-	ScrollBotCurlRect;              // current location of bottom curl for mouse clicks
 
 static CPalette *pScrollPalette = nullptr,         // palette used for the scroll
 	*pScrollPalOld = nullptr,          // previous palette mapped to scroll context
