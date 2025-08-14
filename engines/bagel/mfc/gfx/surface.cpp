@@ -79,7 +79,7 @@ Surface::XIterator::operator byte *() {
 /*--------------------------------------------*/
 
 Surface::YIterator::YIterator(Surface *surface) : _surface(surface) {
-	assert(surface && surface->format.bytesPerPixel == 1);
+	assert(surface && surface->format.bytesPerPixel <= 1);
 	CPoint org = surface->getViewportOrg();
 
 	_yMin = surface->_clipRect.top - org.y;
