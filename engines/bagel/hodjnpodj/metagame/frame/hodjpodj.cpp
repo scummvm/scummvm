@@ -375,11 +375,8 @@ BOOL CHodjPodjWindow::CheckConfig(CDC *pDC) {
 
 
 BOOL CHodjPodjWindow::CheckLowMemory(void) {
-	BOOL                    bMemoryProblem;
-	DWORD                   dwInfo;
-	WORD                    wFreePages;
-	long                    lFreeBytes;
-	DWORD                   dwFreeSpace;
+	BOOL bMemoryProblem;
+	DWORD dwFreeSpace;
 
 	bMemoryProblem = FALSE;
 
@@ -393,25 +390,8 @@ BOOL CHodjPodjWindow::CheckLowMemory(void) {
 
 	if (dwFreeSpace < 3145728L)
 		bMemoryProblem = TRUE;
-	#if CONTROL_PHYSICAL_MEMORY
-	else {
-		lpfnGetFreeMemInfo = (FPGETFREEMEMINFO)GetProcAddress(GetModuleHandle("KERNEL"), "GETFREEMEMINFO");
-		if (lpfnGetFreeMemInfo != nullptr) {
-			dwInfo = lpfnGetFreeMemInfo();
-			if (dwInfo != -1L) {
-				wFreePages = HIWORD(dwInfo);
-				lFreeBytes = (long) wFreePages * 4096L;
-				if (lFreeBytes < 1400000L) {
-					bMemoryProblem = TRUE;
-					dwFreePhysicalMargin = 200000L;
-				} else
-					dwFreePhysicalMargin = lFreeBytes / 10;
-			}
-		}
-	}
-	#endif
 
-	return (bMemoryProblem);
+	return bMemoryProblem;
 }
 
 
@@ -1916,7 +1896,7 @@ VOID InitBFCInfo(CBfcMgr *pBfcMgr) {
 			pPlayer->m_pInventory->AddItem(MG_OBJ_CROWN, 20);
 		}
 
-		pszTest = (CHAR *)&"Corruption Test";
+		pszTest = (const char *)&"Corruption Test";
 
 		if ((pPlayer->m_pGenStore = new CInventory("General Store")) != nullptr) {
 			for (i = MG_OBJ_BASE; i <= MG_OBJ_MAX; i++) {

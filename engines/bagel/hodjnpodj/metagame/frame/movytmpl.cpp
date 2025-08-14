@@ -52,7 +52,7 @@ BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
 		return FALSE;
 	}
 
-	lpszAviMovie = (LPSTR) AviMovee;
+	lpszAviMovie = AviMovee;
 
 	return PlayMovie();
 }

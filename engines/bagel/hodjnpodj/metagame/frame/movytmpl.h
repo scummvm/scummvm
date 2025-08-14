@@ -63,7 +63,7 @@ protected:
 
 	CRect MovieRect;
 	CWnd *m_pParent = nullptr;
-	LPSTR lpszAviMovie = nullptr;	// The name of movie.
+	LPCSTR lpszAviMovie = nullptr;	// The name of movie.
 
 public:
 	int nMovieId = -1;
