@@ -288,10 +288,9 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	DirectorPlotData *p = (DirectorPlotData *)data;
 	Graphics::MacWindowManager *wm = p->d->_wm;
 
-	if (!p->destRect.contains(x, y)) {
-		debug("What is x: %d, y: %d", x, y);
+	if (!p->destRect.contains(x, y))
 		return;
-	}
+
 
 	T *dst;
 	uint32 tmpDst;
