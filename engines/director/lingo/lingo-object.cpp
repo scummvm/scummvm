@@ -446,7 +446,10 @@ void Lingo::closeXLib(Common::String name) {
 
 void Lingo::closeOpenXLibs() {
 	for (auto &it : _openXLibs) {
-		closeXLib(it._key);
+		// does not affect Xtras
+		if (it._value == kXObj) {
+			closeXLib(it._key);
+		}
 	}
 }
 
