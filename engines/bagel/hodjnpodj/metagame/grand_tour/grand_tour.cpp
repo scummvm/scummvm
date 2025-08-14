@@ -78,32 +78,6 @@ extern HCURSOR          hGameCursor;
 CBitmap     *pSplashScreen = nullptr;
 CPalette    *pGamePalette = nullptr;        // Palette to be used throughout the game
 
-CRect   MainRect;                           // screen area spanned by the game window
-CRect   SplashRect(0, 0, SCROLL_WIDTH, SCROLL_HEIGHT);
-
-CRect   ScoresLeaveRect(PLAY_LEFT, F_TOP, SAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
-CRect   ScoresResetRect(RESTORE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
-
-CRect   PlayRect(PLAY_LEFT, F_TOP - 25, PLAY_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
-CRect   SaveRect(SAVE_LEFT, F_TOP - 25, SAVE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
-CRect   RestoreRect(RESTORE_LEFT, F_TOP - 25, RESTORE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT);
-CRect   AudioRect(AUDIO_LEFT, F_TOP, AUDIO_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
-CRect   Top10Rect(TOP10_LEFT, F_TOP, TOP10_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
-CRect   LeaveRect(LEAVE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT);
-
-CRect   HSHRect(HS_LEFT, HSH_TOP, HS_LEFT + S_WIDTH, HSH_TOP + S_HEIGHT);
-CRect   HSMRect(HS_LEFT, HSM_TOP, HS_LEFT + S_WIDTH, HSM_TOP + S_HEIGHT);
-CRect   HSLRect(HS_LEFT, HSL_TOP, HS_LEFT + S_WIDTH, HSL_TOP + S_HEIGHT);
-CRect   HSNPRect(HS_LEFT, HSNP_TOP, HS_LEFT + S_WIDTH, HSNP_TOP + S_HEIGHT);
-
-CRect   PSHRect(PS_LEFT, PSH_TOP, PS_LEFT + S_WIDTH, PSH_TOP + S_HEIGHT);
-CRect   PSMRect(PS_LEFT, PSM_TOP, PS_LEFT + S_WIDTH, PSM_TOP + S_HEIGHT);
-CRect   PSLRect(PS_LEFT, PSL_TOP, PS_LEFT + S_WIDTH, PSL_TOP + S_HEIGHT);
-CRect   PSNPRect(PS_LEFT, PSNP_TOP, PS_LEFT + S_WIDTH, PSNP_TOP + S_HEIGHT);
-
-CRect   GARect(GA_LEFT, G_TOP, GA_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
-CRect   GGRect(GG_LEFT, G_TOP, GG_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
-CRect   GRRect(GR_LEFT, G_TOP, GR_LEFT + G_WIDTH, G_TOP + G_HEIGHT);
 
 CColorButton    *pScoresResetButton = nullptr;
 CColorButton    *pScoresLeaveButton = nullptr;
@@ -158,10 +132,8 @@ int         nNewRank = -1;
 int         nCurChar = 0;
 int         tmWidth = 0;
 int         tmHeight = 0;
-CRect       rCharRect;
 BOOL        bDonePodj = FALSE;
 CText       *pText = nullptr;
-CRect       cTextRect(0, 0, 0, 0);
 
 int         nHLastScore;
 int         nPLastScore;
@@ -196,7 +168,31 @@ int         nPLastScore;
  *
  ****************************************************************/
 
-CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStruct) {
+CMainGTWindow::CMainGTWindow(HWND hCallingWnd, LPGRANDTRSTRUCT  pgtGrandTourStruct) :
+		SplashRect(0, 0, SCROLL_WIDTH, SCROLL_HEIGHT),
+		ScoresLeaveRect(PLAY_LEFT, F_TOP, SAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT),
+		ScoresResetRect(RESTORE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT),
+	
+		PlayRect(PLAY_LEFT, F_TOP - 25, PLAY_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT),
+		SaveRect(SAVE_LEFT, F_TOP - 25, SAVE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT),
+		RestoreRect(RESTORE_LEFT, F_TOP - 25, RESTORE_LEFT + F_WIDTH, F_TOP - 25 + F_HEIGHT),
+		AudioRect(AUDIO_LEFT, F_TOP, AUDIO_LEFT + F_WIDTH, F_TOP + F_HEIGHT),
+		Top10Rect(TOP10_LEFT, F_TOP, TOP10_LEFT + F_WIDTH, F_TOP + F_HEIGHT),
+		LeaveRect(LEAVE_LEFT, F_TOP, LEAVE_LEFT + F_WIDTH, F_TOP + F_HEIGHT),
+	
+		HSHRect(HS_LEFT, HSH_TOP, HS_LEFT + S_WIDTH, HSH_TOP + S_HEIGHT),
+		HSMRect(HS_LEFT, HSM_TOP, HS_LEFT + S_WIDTH, HSM_TOP + S_HEIGHT),
+		HSLRect(HS_LEFT, HSL_TOP, HS_LEFT + S_WIDTH, HSL_TOP + S_HEIGHT),
+		HSNPRect(HS_LEFT, HSNP_TOP, HS_LEFT + S_WIDTH, HSNP_TOP + S_HEIGHT),
+	
+		PSHRect(PS_LEFT, PSH_TOP, PS_LEFT + S_WIDTH, PSH_TOP + S_HEIGHT),
+		PSMRect(PS_LEFT, PSM_TOP, PS_LEFT + S_WIDTH, PSM_TOP + S_HEIGHT),
+		PSLRect(PS_LEFT, PSL_TOP, PS_LEFT + S_WIDTH, PSL_TOP + S_HEIGHT),
+		PSNPRect(PS_LEFT, PSNP_TOP, PS_LEFT + S_WIDTH, PSNP_TOP + S_HEIGHT),
+	
+		GARect(GA_LEFT, G_TOP, GA_LEFT + G_WIDTH, G_TOP + G_HEIGHT),
+		GGRect(GG_LEFT, G_TOP, GG_LEFT + G_WIDTH, G_TOP + G_HEIGHT),
+		GRRect(GR_LEFT, G_TOP, GR_LEFT + G_WIDTH, G_TOP + G_HEIGHT) {
 	CDC         *pDC = nullptr;                     // device context for the screen
 	CString     WndClass;
 	CSize       mySize;

@@ -81,12 +81,24 @@ struct SCORESTRUCT {
 //
 
 class CMainGTWindow : public CFrameWnd {
-public:
-
 private:
-	HWND    m_hCallAppWnd;
-
+	HWND m_hCallAppWnd;
 	LPGRANDTRSTRUCT m_pgtGTStruct;
+	CRect MainRect;                           // screen area spanned by the game window
+	CRect rCharRect;
+	CRect cTextRect;
+	const CRect   SplashRect;
+	const CRect   ScoresLeaveRect;
+	const CRect   ScoresResetRect;
+	const CRect   PlayRect;
+	const CRect   SaveRect;
+	const CRect   RestoreRect;
+	const CRect   AudioRect;
+	const CRect   Top10Rect;
+	const CRect   LeaveRect;
+	const CRect   HSHRect, HSMRect, HSLRect, HSNPRect;
+	const CRect   PSHRect, PSMRect, PSLRect, PSNPRect;
+	const CRect   GARect, GGRect, GRRect;
 
 public:
 	CMainGTWindow(HWND, LPGRANDTRSTRUCT);
