@@ -56,21 +56,8 @@ namespace Gtl {
 #define TEXT_NEWLINE        '\\'                    // character that indicates enforced line break
 
 
-#if BUILD_FOR_DLL
-
-	LRESULT KeyboardHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
-
-	typedef LRESULT(FAR PASCAL *FPKBDHOOKPROC)(int, WPARAM, LPARAM);
-	extern  HINSTANCE   hDLLInst;
-	extern  HINSTANCE   hExeInst;
-	static  FPKBDHOOKPROC   lpfnKbdHook = nullptr;         // pointer to hook procedure
-
-#else
-
-	LRESULT PrefHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
-	static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
-
-#endif
+LRESULT PrefHookProc(int, WPARAM, LPARAM);   // keyboard hook procedure definition
+static  FARPROC     pKbdHook = nullptr;                // pointer to hook procedure
 
 static  HHOOK       hKbdHook = nullptr;                // handle for hook procedure
 
@@ -78,7 +65,6 @@ static  CRules      *pRulesDialog = nullptr;           // pointer to our rules d
 static  CWnd        *pParentWnd = nullptr;             // parent window pointer
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CDibDoc *pScrollTopDIB = nullptr,          // DIB for scroll top section
                  *pScrollMidDIB = nullptr,          // DIB for scroll mid section
@@ -104,14 +90,6 @@ static  CBitmap *pScrollBitmap = nullptr,          // bitmap for an entirely bla
                    *pBackgroundBitmapOld = nullptr,   // bitmap previously mapped to the background context
                     *pWorkBitmap = nullptr,            // bitmap containing the work area for the scroll
                      *pWorkBitmapOld = nullptr;         // bitmap previously mapped to the work area context
-
-static  CRect       ScrollRect,                     // x/y (left/right) and dx/dy (right/bottom) for the scroll window
-        ScrollTopRect,                  // rectangle bounding the scroll top section
-        ScrollBotRect,                  // rectangle bounding the scroll bottom section
-        ScrollMidRect;                  // rectangle bounding the scroll middle section
-
-static  CRect       ScrollTopCurlRect,              // current location of top curl for mouse clicks
-        ScrollBotCurlRect;              // current location of bottom curl for mouse clicks
 
 static  CPalette *pScrollPalette = nullptr,         // palette used for the scroll
                   *pScrollPalOld = nullptr,          // previous palette mapped to scroll context
@@ -158,27 +136,13 @@ static  BOOL        bBruteForce = FALSE;            // whether we can be clever
 
 
 BOOL CRules::SetupKeyboardHook() {
-	#if BUILD_FOR_DLL
-	pRulesDialog = this;                            // retain pointer to our dialog box
-
-	lpfnKbdHook = (FPKBDHOOKPROC)GetProcAddress(hDLLInst, "KeyboardHookProc");
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
-	#else
 	HINSTANCE   hInst;
 
 	pRulesDialog = this;                            // retain pointer to our dialog box
 
 	hInst = AfxGetInstanceHandle();                 // get our application instance
 
-	pKbdHook = MakeProcInstance((FARPROC) PrefHookProc, hInst);
-	if (pKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) pKbdHook, hInst, GetCurrentTask());
-	#endif
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, PrefHookProc, hInst, GetCurrentTask());
 
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return FALSE;
