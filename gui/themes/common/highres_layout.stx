@@ -2884,23 +2884,41 @@
 
 	<dialog name = 'PrintingDialog' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'PrintersList'
-				type = 'PopUp'
-				width = '140'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+				<widget name = 'PrintersListDesc'
+					type = 'OptionsLabel'
+				/>
+				<space/>
+				<widget name = 'PrintersList'
+					type = 'PopUp'
+					width = '140'
+				/>
+			</layout>
 			<space/>
-			<widget name = 'Orientation'
-				type = 'PopUp'
-				width = '100'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '8'>
+				<widget name = 'OrientationDesc'
+					type = 'OptionsLabel'
+				/>
+				<space/>
+				<widget name = 'Orientation'
+					type = 'PopUp'
+					width = '100'
+				/>
+			</layout>
 			<widget name = 'SaveAsImage'
 					type = 'Checkbox'
 					width = '140'
 			/>
 			<space/>
-			<widget name = 'Print'
-					type = 'Button'
-			/>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<space/>
+				<widget name = 'Print'
+						type = 'Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 

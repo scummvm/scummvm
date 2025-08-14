@@ -37,6 +37,7 @@ PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 	_printButton = new GUI::ButtonWidget(this, "PrintingDialog.Print", _("Print"), Common::U32String(), kCmdPrint);
 	_saveAsImageCheckbox = new GUI::CheckboxWidget(this, "PrintingDialog.SaveAsImage", _("Save as image"));
 
+	new GUI::StaticTextWidget(this, "PrintingDialog.PrintersListDesc", _("Printer:"));
 	_printersListPopUp = new GUI::PopUpWidget(this, "PrintingDialog.PrintersList", Common::U32String(), kCmdSelectPrinterName);
 	Common::PrintingManager *printMan = g_system->getPrintingManager();
 	Common::StringArray printerNames = printMan->listPrinterNames();
@@ -59,6 +60,7 @@ PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 	g_system->getPrintingManager()->setPrinterName(_tagToPrinterName[defaultPrinterId]);
 
 	// Page settings
+	new GUI::StaticTextWidget(this, "PrintingDialog.OrientationDesc", _("Orientation:"));
 	_orientationPopUp = new PopUpWidget(this, "PrintingDialog.Orientation", Common::U32String(), kCmdSelectOrientation);
 	_orientationPopUp->appendEntry("Portrait", kPageOrientationPortrait);
 	_orientationPopUp->appendEntry("Landscape", kPageOrientationLandscape);
@@ -67,6 +69,8 @@ PrintingDialog::PrintingDialog(const Graphics::ManagedSurface &surface)
 		_orientationPopUp->setSelectedTag(kPageOrientationLandscape);
 		printMan->_orientation = kPageOrientationLandscape;
 	}
+
+	new ButtonWidget(this, "PrintingDialog.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
 }
 
 void PrintingDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
