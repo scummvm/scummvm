@@ -193,17 +193,19 @@ ImGuiImage getShapeID(CastMember *castMember) {
 
 	for (auto it : channels) {
 		if (it->_sprite->_castId.member == castMember->getID()) {
-			channel = it;
+			channel = new Channel(*it);
 			break;
 		}
 	}
+	// This means the shapes that are not in any channel won't be shown
 	if (!channel) {
 		return {};
 	}
 
 	Common::Rect bbox(castMember->getBbox());
-	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface();
-	managedSurface->create(bbox.width(), bbox.height(), g_director->_pixelformat);
+	channel->setBbox(bbox.left, bbox.top, bbox.right, bbox.bottom);
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(bbox.width(), bbox.height(), g_director->_pixelformat);
+
 	Window::inkBlitFrom(channel, bbox, managedSurface);
 	Graphics::Surface surface = managedSurface->rawSurface();
 
@@ -221,6 +223,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
 
 	delete managedSurface;
+	delete channel;
 	return {textureID, surface.w, surface.h};
 }
 

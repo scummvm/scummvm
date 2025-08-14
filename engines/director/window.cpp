@@ -328,9 +328,14 @@ void Window::reset() {
 
 void Window::inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo) {
 	Common::Rect srcRect = channel->getBbox();
-	destRect.clip(srcRect);
-
 	DirectorPlotData pd = channel->getPlotData();
+	if (pd.ms)
+	debug("shape: %d", pd.ms->spriteType);
+	destRect.debugPrint();
+	srcRect.debugPrint();
+	destRect.clip(srcRect);
+	destRect.debugPrint();
+
 	pd.destRect = destRect;
 	pd.dst = blitTo;
 
