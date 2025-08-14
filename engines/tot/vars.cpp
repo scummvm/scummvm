@@ -27,9 +27,6 @@
 
 namespace Tot {
 
-int doserror = 0;
-int exitcode = 0;
-
 Common::MemorySeekableReadWriteStream *conversationData;
 Common::MemorySeekableReadWriteStream *rooms;
 Common::MemorySeekableReadWriteStream *invItemData;

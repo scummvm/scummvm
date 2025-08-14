@@ -83,7 +83,7 @@ void showError(int code) {
 		error("Error 152: Unidad no preparada.");
 		break;
 	case 153:
-		error("Error %d: JOZU!! que Barbari\xA0.");
+		error("Error 153: JOZU!! que Barbari\xA0.");
 		break;
 	case 154:
 		error("Error 154: Comprobaci\xA2n err\xA2nea en el control de redundancia c\xA1"

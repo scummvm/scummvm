@@ -58,6 +58,12 @@ private:
 	 */
 	Common::Error syncGame(Common::Serializer &s);
 
+	int engineStart();
+	int startGame();
+	void newGame();
+	void changeRoom();
+	void loadTemporaryGame();
+
 protected:
 	// Engine APIs
 	Common::Error run() override;

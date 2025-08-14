@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	routines2.o \
 	routines.o \
 	dialog.o \
-	game.o \
 	font/bgifont.o \
 	font/biosfont.o \
 	decoder/TotFlicDecoder.o \
