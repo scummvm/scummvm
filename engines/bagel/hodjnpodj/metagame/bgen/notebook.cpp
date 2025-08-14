@@ -58,13 +58,6 @@ static  CWnd *pParentWnd = nullptr;             // parent window pointer
 static  CNotebook *pNotebookDialog = nullptr;        // pointer to our notebook dialog box
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
-
-static  CRect       NotebookRect;                   // x/y (left/right) and dx/dy (right/bottom) for the notebook window
-static  CRect       PersonRect,                     // bounding rectangle for person bitmap
-PlaceRect;                      // bounding rectangle for place bitmap
-static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
-ScrollBotRect;                  // area spanned by lower scroll curl
 
 //static  CDC *pNotebookDC = nullptr;            // device context for the notebook bitmap
 static  CBitmap *pNotebookBitmap = nullptr;        // bitmap for an entirely blank notebook
@@ -110,11 +103,7 @@ static  CNote *pKeyNote = nullptr;               // single note to be shown
 BOOL CNotebook::SetupKeyboardHook(void) {
 	pNotebookDialog = this;                         // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPNOTEHOOKPROC)GetProcAddress(hDLLInst, "NotebookHookProc");
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC)lpfnKbdHook, hExeInst, GetCurrentTask());
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, NotebookHookProc, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return FALSE;
 
