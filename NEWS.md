@@ -87,6 +87,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Parallaction:
    - Added Text-to-Speech support.
 
+ Pink:
+   - Added keymapper support.
+
  Prince:
    - Added Text-to-Speech support.
    - Added keymapper support.
