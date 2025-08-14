@@ -61,8 +61,10 @@ bool DebuggerController::bytecodeExists(const Common::String &filename) {
 
 Error DebuggerController::addBreakpoint(const char *filename, int line) {
 	assert(SCENGINE);
-	if (bytecodeExists(filename)) {
-		SCENGINE->_breakpoints.push_back(new Breakpoint(filename, line, this));
+	Common::String scriptPath(filename);
+	scriptPath.replace('/', '\\');
+	if (bytecodeExists(scriptPath.c_str())) {
+		SCENGINE->_breakpoints.push_back(new Breakpoint(scriptPath.c_str(), line, this));
 		return Error(SUCCESS, OK);
 	} else {
 		return Error(ERROR, NO_SUCH_BYTECODE);
@@ -133,10 +135,12 @@ Error DebuggerController::enableWatchpoint(uint id) {
 
 Error DebuggerController::addWatch(const char *filename, const char *symbol) {
 	assert(SCENGINE);
-	if (!bytecodeExists(filename)) {
-		return Error(ERROR, NO_SUCH_BYTECODE, filename);
+	Common::String scriptPath(filename);
+	scriptPath.replace('/', '\\');
+	if (!bytecodeExists(scriptPath.c_str())) {
+		return Error(ERROR, NO_SUCH_BYTECODE, scriptPath.c_str());
 	}
-	SCENGINE->_watches.push_back(new Watch(filename, symbol, this));
+	SCENGINE->_watches.push_back(new Watch(scriptPath.c_str(), symbol, this));
 	return Error(SUCCESS, OK, "Watchpoint added");
 }
 

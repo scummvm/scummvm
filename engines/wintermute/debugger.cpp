@@ -61,7 +61,7 @@ Console::~Console() {
 bool Console::Cmd_Help(int argc, const char **argv) {
 	if (argc == 1) {
 		// Debugger::Cmd_Help(argc, argv);
-		debugPrintf("\nType help somecommand to get specific help.\n");
+		debugPrintf("\nType 'help' <command> to get specific help.\n");
 	} else {
 		printUsage(argv[1]);
 	}
