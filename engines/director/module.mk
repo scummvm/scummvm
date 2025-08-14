@@ -135,6 +135,7 @@ MODULE_OBJS = \
 	lingo/xlibs/paco.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/panel.o \
+	lingo/xlibs/pharaohs.o \
 	lingo/xlibs/popupmenuxobj.o \
 	lingo/xlibs/porta.o \
 	lingo/xlibs/prefpath.o \
