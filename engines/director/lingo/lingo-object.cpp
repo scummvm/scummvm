@@ -724,7 +724,7 @@ void LM::m_respondsTo(int nargs) {
 // Window
 
 Common::String Window::asString() {
-	return "Window \"" + getName() + "\"";
+	return "window \"" + getName() + "\"";
 }
 
 bool Window::hasProp(const Common::String &propName) {
