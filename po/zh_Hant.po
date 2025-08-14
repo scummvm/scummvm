@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-13 16:39+0000\n"
+"POT-Creation-Date: 2025-08-14 21:23+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -9446,6 +9446,40 @@ msgstr ""
 
 #: engines/pink/gui.cpp:291
 msgid "This menu item is not yet implemented"
+msgstr ""
+
+#: engines/pink/metaengine.cpp:128
+msgid "Interact / Select"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
+#: engines/pink/metaengine.cpp:136
+msgid "Cancel interaction"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
+#: engines/pink/metaengine.cpp:144
+msgid "Skip walk"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
+#: engines/pink/metaengine.cpp:151
+msgid "Skip walk and cancel interaction"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
+#: engines/pink/metaengine.cpp:158
+msgid "Skip sequence"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
+#: engines/pink/metaengine.cpp:165
+msgid "Skip sub-sequence"
+msgstr ""
+
+#. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
+#: engines/pink/metaengine.cpp:173
+msgid "Restart sequence"
 msgstr ""
 
 #: engines/playground3d/metaengine.cpp:55
