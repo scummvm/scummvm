@@ -258,7 +258,6 @@ BOOL BltBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, CRect *pSrcRect, 
 	CPalette    *pPalOld = nullptr,
 	             *pPalOldWork = nullptr;
 	CBitmap     *pWorkOld = nullptr;
-	HDIB        hDib;
 
 	if (pPalette != nullptr) {                                 // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pPalette, FALSE);
@@ -528,7 +527,6 @@ BOOL PaintBitmap(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap, const int x, co
 	             *pPalOldWork = nullptr;
 	CBitmap     *pWorkOld = nullptr;
 	BITMAP      cBitmapData;
-	HDIB        hDib;
 	CRect       SrcRect, DstRect;
 
 	(*pBitmap).GetObject(sizeof(BITMAP), &cBitmapData);
