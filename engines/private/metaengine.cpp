@@ -21,13 +21,34 @@
 
 #include "engines/advancedDetector.h"
 #include "graphics/scaler.h"
+#include "common/translation.h"
 
 #include "private/private.h"
+#include "private/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SUBTITLES,
+		{
+			_s("Display subtitles"),
+			_s("Use subtitles."),
+			"subtitles",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class PrivateMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
 		return "private";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
@@ -40,7 +61,7 @@ Common::Error PrivateMetaEngine::createInstance(OSystem *syst, Engine **engine, 
 }
 
 void PrivateMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
-	byte *palette; 
+	byte *palette;
 	Graphics::Surface *vs = Private::g_private->decodeImage(Private::g_private->_nextVS, &palette);
 	::createThumbnail(&thumb, (const uint8 *)vs->getPixels(), vs->w, vs->h, palette);
 	vs->free();

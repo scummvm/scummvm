@@ -33,6 +33,7 @@
 #include "common/system.h"
 #include "common/timer.h"
 #include "common/macresman.h"
+#include "common/language.h"
 #include "common/compression/stuffit.h"
 #include "graphics/paletteman.h"
 #include "engines/util.h"
@@ -51,7 +52,7 @@ extern int parse(const char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0),
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), _subtitles(nullptr),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -198,6 +199,15 @@ Common::SeekableReadStream *PrivateEngine::loadAssets() {
 }
 
 Common::Error PrivateEngine::run() {
+
+	// Only enable if subtitles are available
+	bool useSubtitles = false;
+	if (!Common::parseBool(ConfMan.get("subtitles"), useSubtitles))
+		error("Failed to parse bool from cheats options");
+
+	if (useSubtitles) {
+		g_system->showOverlay(false);
+	}
 
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
@@ -372,6 +382,8 @@ Common::Error PrivateEngine::run() {
 				_videoDecoder->close();
 				delete _videoDecoder;
 				_videoDecoder = nullptr;
+				delete _subtitles;
+				_subtitles = nullptr;
 				_currentMovie = "";
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
@@ -395,6 +407,14 @@ Common::Error PrivateEngine::run() {
 
 		g_system->updateScreen();
 		g_system->delayMillis(10);
+		if (_subtitles) {
+			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
+				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false);
+			} else {
+				delete _subtitles;
+				_subtitles = nullptr;
+			}
+		}
 	}
 	return Common::kNoError;
 }
@@ -773,7 +793,7 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 	if (_locationMasks.size() == 0) {
 		return false;
 	}
-	
+
 	uint i = 0;
 	uint totalLocations = 0;
 	for (auto &it : maps.locationList) {
@@ -795,7 +815,7 @@ bool PrivateEngine::selectLocation(const Common::Point &mousePos) {
 				if (!diaryPageSet) {
 					return true;
 				}
-	
+
 				_nextSetting = _locationMasks[i].nextSetting;
 
 				return true;
@@ -912,7 +932,7 @@ void PrivateEngine::addMemory(const Common::String &path) {
 	}
 
 	diaryPage.memories.push_back(memory);
-	
+
 	for (int i = _diaryPages.size() - 1; i >= 0; i--) {
 		if (_diaryPages[i].locationID < diaryPage.locationID) {
 			_diaryPages.insert_at(i + 1, diaryPage);
@@ -1448,12 +1468,41 @@ void PrivateEngine::playSound(const Common::String &name, uint loops, bool stopO
 	}
 
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, sh, stream, -1, Audio::Mixer::kMaxChannelVolume);
+	loadSubtitles(path);
 }
 
 bool PrivateEngine::isSoundActive() {
 	return _mixer->isSoundIDActive(-1);
 }
 
+void PrivateEngine::loadSubtitles(const Common::Path &path) {
+	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
+	Common::String subPathStr = path.toString() + ".srt";
+	subPathStr.toLowercase();
+	subPathStr.replace('/', '_');
+	Common::String language(Common::getLanguageCode(_language));
+	if (language == "us")
+		language = "en";
+
+	Common::Path subPath = "subtitles";
+	subPath = subPath.appendComponent(language);
+	subPath = subPath.appendComponent(subPathStr);
+	debugC(1, kPrivateDebugFunction, "Loading subtitles from %s", subPath.toString().c_str());
+	if (Common::File::exists(subPath)) {
+		_subtitles = new Video::Subtitles();
+		_subtitles->loadSRTFile(subPath);
+		g_system->showOverlay(false);
+		int16 h = g_system->getOverlayHeight();
+
+		_subtitles->setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
+		_subtitles->setColor(0xff, 0xff, 0xff);
+		_subtitles->setFont("LiberationSans-Regular.ttf", 50);
+
+	} else {
+		delete _subtitles;
+		_subtitles = nullptr;
+	}
+}
 void PrivateEngine::playVideo(const Common::String &name) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, name.c_str());
 	//stopSound(true);
@@ -1465,6 +1514,8 @@ void PrivateEngine::playVideo(const Common::String &name) {
 
 	if (!_videoDecoder->loadStream(file))
 		error("unable to load video %s", path.toString().c_str());
+
+	loadSubtitles(path);
 	_videoDecoder->start();
 }
 
@@ -1472,6 +1523,8 @@ void PrivateEngine::skipVideo() {
 	_videoDecoder->close();
 	delete _videoDecoder;
 	_videoDecoder = nullptr;
+	delete _subtitles;
+	_subtitles = nullptr;
 	_currentMovie = "";
 }
 
@@ -1651,6 +1704,9 @@ void PrivateEngine::drawScreen() {
 		Graphics::Surface sa = _compositeSurface->getSubArea(w);
 		g_system->copyRectToScreen(sa.getPixels(), sa.pitch, _origin.x, _origin.y, sa.w, sa.h);
 	}
+
+	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused())
+		_subtitles->drawSubtitle(_videoDecoder->getTime(), false);
 	g_system->updateScreen();
 }
 
