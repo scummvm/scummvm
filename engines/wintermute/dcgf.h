@@ -31,7 +31,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 #define DCGF_VER_MAJOR 1
-#define DCGF_VER_MINOR 7
+#define DCGF_VER_MINOR 8
 #define DCGF_VER_BUILD 1
 #define DCGF_VER_SUFFIX "ScummVM"
 #define DCGF_VER_BETA true

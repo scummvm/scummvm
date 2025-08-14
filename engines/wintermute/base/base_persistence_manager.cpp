@@ -556,47 +556,51 @@ TimeDate BasePersistenceManager::getTimeDate() {
 }
 
 void BasePersistenceManager::putFloat(float val) {
-	int exponent = 0;
-	float significand = frexp(val, &exponent);
-	Common::String str = Common::String::format("FS%f", significand);
-	putString(str.c_str());
-	_saveStream->writeSint32LE(exponent);
+	if (checkVersion(1, 8, 1)) {
+		_saveStream->writeFloatLE(val);
+	}
 }
 
 float BasePersistenceManager::getFloat() {
-	char *str = getString();
-	float value = 0.0f;
-	float significand = 0.0f;
-	int32 exponent = _loadStream->readSint32LE();
-	int ret = sscanf(str, "FS%f", &significand);
-	value = ldexp(significand, exponent);
-	if (ret != 1) {
-		warning("%s not parsed as float", str);
+	if (checkVersion(1, 8, 1)) {
+		return _loadStream->readFloatLE();
+	} else {
+		char *str = getString();
+		float value = 0.0f;
+		float significand = 0.0f;
+		int32 exponent = _loadStream->readSint32LE();
+		int ret = sscanf(str, "FS%f", &significand);
+		value = ldexp(significand, exponent);
+		if (ret != 1) {
+			warning("%s not parsed as float", str);
+		}
+		delete[] str;
+		return value;
 	}
-	delete[] str;
-	return value;
 }
 
 void BasePersistenceManager::putDouble(double val) {
-	int exponent = 0;
-	double significand = frexp(val, &exponent);
-	Common::String str = Common::String::format("DS%f", significand);
-	putString(str.c_str());
-	_saveStream->writeSint32LE(exponent);
+	if (checkVersion(1, 8, 1)) {
+		_saveStream->writeDoubleLE(val);
+	}
 }
 
 double BasePersistenceManager::getDouble() {
-	char *str = getString();
-	double value = 0.0f;
-	float significand = 0.0f;
-	int32 exponent = _loadStream->readSint32LE();
-	int ret = sscanf(str, "DS%f", &significand);
-	value = ldexp(significand, exponent);
-	if (ret != 1) {
-		warning("%s not parsed as double", str);
+	if (checkVersion(1, 8, 1)) {
+		return _loadStream->readDoubleLE();
+	} else {
+		char *str = getString();
+		double value = 0.0f;
+		float significand = 0.0f;
+		int32 exponent = _loadStream->readSint32LE();
+		int ret = sscanf(str, "DS%f", &significand);
+		value = ldexp(significand, exponent);
+		if (ret != 1) {
+			warning("%s not parsed as double", str);
+		}
+		delete[] str;
+		return value;
 	}
-	delete[] str;
-	return value;
 }
 
 //////////////////////////////////////////////////////////////////////////
