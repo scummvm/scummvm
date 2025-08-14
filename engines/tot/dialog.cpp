@@ -23,8 +23,8 @@
 #include "common/textconsole.h"
 
 #include "tot/dialog.h"
-#include "tot/routines.h"
 #include "tot/tot.h"
+#include "tot/vars.h"
 
 namespace Tot {
 
@@ -37,7 +37,7 @@ bool endOfConversation;
 
 Common::String decrypt(Common::String encryptedText) {
 	for (int i = 0; i < encryptedText.size(); i++) {
-		encryptedText.setChar(decryptionKey[i] ^ (char)encryptedText[i], i);
+		encryptedText.setChar(g_engine->_decryptionKey[i] ^ (char)encryptedText[i], i);
 	}
 	return encryptedText;
 }
@@ -84,21 +84,21 @@ void findDialogLine(byte characterIndex) {
 			step = NULL;
 		} break;
 		case '3':
-			if (bookTopic[0] && (characterIndex == 3)) {
+			if (g_engine->_bookTopic[0] && (characterIndex == 3)) {
 				speak = false;
 				ascend = true;
 			} else
 				speak = true;
 			break;
 		case '4':
-			if (firstTimeTopicA[characterIndex - 1]) {
+			if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
 				speak = false;
 				ascend = true;
 			} else
 				speak = true;
 			break;
 		case '5':
-			if (bookTopic[characterIndex - 1] && firstTimeTopicB[characterIndex - 1])
+			if (g_engine->_bookTopic[characterIndex - 1] && g_engine->_firstTimeTopicB[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -106,7 +106,7 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case '6':
-			if (bookTopic[characterIndex - 1] && !firstTimeTopicB[characterIndex - 1])
+			if (g_engine->_bookTopic[characterIndex - 1] && !g_engine->_firstTimeTopicB[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -114,10 +114,10 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case '7':
-			if (bookTopic[characterIndex - 1]) {
+			if (g_engine->_bookTopic[characterIndex - 1]) {
 				speak = false;
 				ascend = true;
-			} else if (!firstTimeTopicA[characterIndex - 1])
+			} else if (!g_engine->_firstTimeTopicA[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -125,7 +125,7 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case '8':
-			if (mintTopic[characterIndex - 1] && firstTimeTopicC[characterIndex - 1])
+			if (g_engine->_mintTopic[characterIndex - 1] && g_engine->_firstTimeTopicC[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -133,7 +133,7 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case '9':
-			if (mintTopic[characterIndex - 1] && !firstTimeTopicC[characterIndex - 1])
+			if (g_engine->_mintTopic[characterIndex - 1] && !g_engine->_firstTimeTopicC[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -141,7 +141,7 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case 'A':
-			if (!mintTopic[characterIndex - 1] && !firstTimeTopicA[characterIndex - 1])
+			if (!g_engine->_mintTopic[characterIndex - 1] && !g_engine->_firstTimeTopicA[characterIndex - 1])
 				speak = true;
 			else {
 				speak = false;
@@ -149,43 +149,43 @@ void findDialogLine(byte characterIndex) {
 			}
 			break;
 		case 'B':
-			if (caves[0] && !firstTimeTopicA[8])
+			if (g_engine->_caves[0] && !g_engine->_firstTimeTopicA[8])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'C':
-			if (caves[1] && !firstTimeTopicA[8])
+			if (g_engine->_caves[1] && !g_engine->_firstTimeTopicA[8])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'D':
-			if ((caves[0] && caves[1]) && !firstTimeTopicA[8])
+			if ((g_engine->_caves[0] && g_engine->_caves[1]) && !g_engine->_firstTimeTopicA[8])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'E':
-			if ((caves[0] && !caves[2]) && !firstTimeTopicA[8])
+			if ((g_engine->_caves[0] && !g_engine->_caves[2]) && !g_engine->_firstTimeTopicA[8])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'F':
-			if (!caves[3])
+			if (!g_engine->_caves[3])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'G':
-			if (!caves[4])
+			if (!g_engine->_caves[4])
 				speak = true;
 			else
 				speak = false;
 			break;
 		case 'I':
-			if (!isSealRemoved)
+			if (!g_engine->_isSealRemoved)
 				speak = true;
 			else
 				speak = false;
@@ -200,10 +200,10 @@ void findDialogLine(byte characterIndex) {
 					border = true;
 					switch (characterIndex) {
 					case 1:
-						if (firstTimeTopicA[characterIndex - 1]) {
+						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
 							l1->item = 12;
 							forward = true;
-						} else if (bookTopic[characterIndex - 1]) {
+						} else if (g_engine->_bookTopic[characterIndex - 1]) {
 							forward = true;
 							l1->item = 33;
 						} else {
@@ -212,7 +212,7 @@ void findDialogLine(byte characterIndex) {
 						}
 						break;
 					case 3:
-						if (firstTimeTopicA[characterIndex - 1]) {
+						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
 							l1->item = 103;
 							forward = true;
 						} else {
@@ -321,13 +321,13 @@ void modifyTree(uint node) {
 
 void drawTalkMenu() {
 	byte auxTextY;
-	g_engine->_mouseManager->hide();
+	g_engine->_mouse->hide();
 	for (auxTextY = 25; auxTextY >= 1; auxTextY--)
 		rectangle(0, 175 - auxTextY, 319, 174 + auxTextY, 0);
 	for (auxTextY = 1; auxTextY <= 25; auxTextY++)
-		buttonBorder(0, 175 - auxTextY, 319, 174 + auxTextY, 253, 253, 253, 253, 0);
-	drawMenu(5);
-	g_engine->_mouseManager->show();
+		g_engine->buttonBorder(0, 175 - auxTextY, 319, 174 + auxTextY, 253, 253, 253, 253, 0);
+	g_engine->drawMenu(5);
+	g_engine->_mouse->show();
 }
 
 void fixTree(Tree tree) {
@@ -346,87 +346,79 @@ void showDialogLine(Common::String conversationMatrix[16], uint &chosenTopic) {
 
 	firstChat = 1;
 	selectedConv = 0;
-	g_engine->_mouseManager->hide();
+	g_engine->_mouse->hide();
 
-	drawMenu(5);
+	g_engine->drawMenu(5);
 	euroText(6, 151, conversationMatrix[1], 255);
 	euroText(6, 162, conversationMatrix[2], 255);
 	euroText(6, 173, conversationMatrix[3], 255);
 	euroText(6, 184, conversationMatrix[4], 255);
-	g_engine->_mouseManager->show();
+	g_engine->_mouse->show();
 	Common::Event e;
 	do {
 		bool lMouseClicked = false;
 		bool rMouseClicked = false;
 		do {
 			g_engine->_chrono->updateChrono();
-			g_engine->_mouseManager->animateMouseIfNeeded();
+			g_engine->_mouse->animateMouseIfNeeded();
 
 			while (g_system->getEventManager()->pollEvent(e)) {
 				if (e.type == Common::EVENT_LBUTTONUP) {
 					lMouseClicked = true;
-					mouseClickX = e.mouse.x;
-					mouseClickY = e.mouse.y;
+					g_engine->_mouse->mouseClickX = e.mouse.x;
+					g_engine->_mouse->mouseClickY = e.mouse.y;
 				} else if (e.type == Common::EVENT_RBUTTONUP) {
 					rMouseClicked = true;
-					mouseClickX = e.mouse.x;
-					mouseClickY = e.mouse.y;
+					g_engine->_mouse->mouseClickX = e.mouse.x;
+					g_engine->_mouse->mouseClickY = e.mouse.y;
 				}
 			}
 
 			if (gameTick) {
-				if (currentRoomData->paletteAnimationFlag && palAnimStep >= 4) {
-					palAnimStep = 0;
-					if (isPaletteAnimEnabled > 6)
-						isPaletteAnimEnabled = 0;
-					else
-						isPaletteAnimEnabled += 1;
-					g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
-				} else
-					palAnimStep += 1;
+				g_engine->_graphics->advancePaletteAnim();
 			}
 			g_system->delayMillis(10);
 			g_engine->_screen->update();
 		} while (!lMouseClicked && !rMouseClicked && !g_engine->shouldQuit());
 
 		if (lMouseClicked) {
-			if (mouseClickY < 143)
+			if (g_engine->_mouse->mouseClickY < 143)
 				selectedConv = 0;
 			else {
-				if (mouseClickX >= 0 && mouseClickX <= 280) {
-					if (mouseClickY >= 143 && mouseClickY <= 155) {
+				if (g_engine->_mouse->mouseClickX >= 0 && g_engine->_mouse->mouseClickX <= 280) {
+					if (g_engine->_mouse->mouseClickY >= 143 && g_engine->_mouse->mouseClickY <= 155) {
 						selectedConv = firstChat;
-					} else if (mouseClickY >= 156 && mouseClickY <= 166) {
+					} else if (g_engine->_mouse->mouseClickY >= 156 && g_engine->_mouse->mouseClickY <= 166) {
 						selectedConv = firstChat + 1;
-					} else if (mouseClickY >= 167 && mouseClickY <= 177) {
+					} else if (g_engine->_mouse->mouseClickY >= 167 && g_engine->_mouse->mouseClickY <= 177) {
 						selectedConv = firstChat + 2;
-					} else if (mouseClickY >= 178 && mouseClickY <= 186) {
+					} else if (g_engine->_mouse->mouseClickY >= 178 && g_engine->_mouse->mouseClickY <= 186) {
 						selectedConv = firstChat + 3;
 					}
-				} else if (mouseClickX >= 281 && mouseClickX <= 319) {
-					if (mouseClickY >= 143 && mouseClickY <= 165) {
+				} else if (g_engine->_mouse->mouseClickX >= 281 && g_engine->_mouse->mouseClickX <= 319) {
+					if (g_engine->_mouse->mouseClickY >= 143 && g_engine->_mouse->mouseClickY <= 165) {
 						if (firstChat > 1) {
 							selectedConv = 0;
 							firstChat -= 1;
-							g_engine->_mouseManager->hide();
-							drawMenu(5);
+							g_engine->_mouse->hide();
+							g_engine->drawMenu(5);
 							euroText(6, 151, conversationMatrix[firstChat], 255);
 							euroText(6, 162, conversationMatrix[firstChat + 1], 255);
 							euroText(6, 173, conversationMatrix[firstChat + 2], 255);
 							euroText(6, 184, conversationMatrix[firstChat + 3], 255);
-							g_engine->_mouseManager->show();
+							g_engine->_mouse->show();
 						}
-					} else if (mouseClickY >= 167 && mouseClickY <= 186) {
+					} else if (g_engine->_mouse->mouseClickY >= 167 && g_engine->_mouse->mouseClickY <= 186) {
 						if (firstChat < 12) {
 							selectedConv = 0;
 							firstChat += 1;
-							g_engine->_mouseManager->hide();
-							drawMenu(5);
+							g_engine->_mouse->hide();
+							g_engine->drawMenu(5);
 							euroText(6, 151, conversationMatrix[firstChat], 255);
 							euroText(6, 162, conversationMatrix[firstChat + 1], 255);
 							euroText(6, 173, conversationMatrix[firstChat + 2], 255);
 							euroText(6, 184, conversationMatrix[firstChat + 3], 255);
-							g_engine->_mouseManager->show();
+							g_engine->_mouse->show();
 						}
 					}
 				}
@@ -451,11 +443,11 @@ void talk(byte characterIndex) {
 	Common::String conversationMatrix[16];
 	drawTalkMenu();
 	endOfConversation = false;
-	assignText();
+	g_engine->assignText();
 	// The original game makes a copy of the file upon starting a new game. .007 is the current game (the game
 	// that resumes when clicking "continue game" in the main menu. Part of the savegame data is this 007
 	// conversation file which marks conversatino topics as already gone through or not.
-	readTree(*conversationData, ar, characterIndex - 1);
+	readTree(*g_engine->_conversationData, ar, characterIndex - 1);
 	loadTalkAnimations();
 	do {
 
@@ -467,9 +459,9 @@ void talk(byte characterIndex) {
 		conversationIndex = 0;
 		l1 = l;
 		do {
-			verb.seek(verbRegSize * l1->item);
+			g_engine->_verbFile.seek(kVerbRegSize * l1->item);
 			conversationIndex += 1;
-			text = readVerbRegister();
+			text = g_engine->readVerbRegister();
 			insertName = 0;
 			conversationMatrix[conversationIndex] = decrypt(text.text);
 
@@ -479,7 +471,7 @@ void talk(byte characterIndex) {
 			}
 			if (insertName > 0) {
 				conversationMatrix[conversationIndex].deleteChar(insertName);
-				conversationMatrix[conversationIndex].insertString(characterName, insertName);
+				conversationMatrix[conversationIndex].insertString(g_engine->_characterName, insertName);
 			}
 			if (conversationMatrix[conversationIndex].size() > 45) {
 				stringAux = 45;
@@ -494,7 +486,7 @@ void talk(byte characterIndex) {
 		l1 = l;
 		showDialogLine(conversationMatrix, newNode);
 		delete l;
-		hypertext(newNode, 255, 0, response, true);
+		g_engine->sayLine(newNode, 255, 0, response, true);
 		stringAux = 0;
 		modifyTree(newNode);
 		// 	verifyCopyProtection();
@@ -502,29 +494,29 @@ void talk(byte characterIndex) {
 			newNode = response;
 			stringAux += 1;
 			if (odd(stringAux))
-				hypertext(newNode, 253, 249, response, true);
+				g_engine->sayLine(newNode, 253, 249, response, true);
 			else
-				hypertext(newNode, 255, 0, response, true);
+				g_engine->sayLine(newNode, 255, 0, response, true);
 			switch (newNode) {
 			case 9: {
-				obtainedList1 = true;
+				g_engine->_obtainedList1 = true;
 				invIndex = 0;
-				while (inventory[invIndex].code != 0) {
+				while (g_engine->_inventory[invIndex].code != 0) {
 					invIndex += 1;
 				}
-				inventory[invIndex].bitmapIndex = list1Index;
-				inventory[invIndex].code = list1code;
-				inventory[invIndex].objectName = getObjectName(0);
+				g_engine->_inventory[invIndex].bitmapIndex = kList1Index;
+				g_engine->_inventory[invIndex].code = kList1code;
+				g_engine->_inventory[invIndex].objectName = getObjectName(0);
 			} break;
 			case 25: {
-				obtainedList2 = true;
+				g_engine->_obtainedList2 = true;
 				invIndex = 0;
-				while (inventory[invIndex].code != 0) {
+				while (g_engine->_inventory[invIndex].code != 0) {
 					invIndex += 1;
 				}
-				inventory[invIndex].bitmapIndex = list2Index;
-				inventory[invIndex].code = list2code;
-				inventory[invIndex].objectName = getObjectName(1);
+				g_engine->_inventory[invIndex].bitmapIndex = kList2Index;
+				g_engine->_inventory[invIndex].code = kList2code;
+				g_engine->_inventory[invIndex].objectName = getObjectName(1);
 			} break;
 			}
 		}
@@ -534,54 +526,147 @@ void talk(byte characterIndex) {
 	unloadTalkAnimations();
 	step = ar;
 	fixTree(step);
-	saveConversations(conversationData, ar, characterIndex - 1);
+	saveConversations(g_engine->_conversationData, ar, characterIndex - 1);
 
-	verb.close();
+	g_engine->_verbFile.close();
 	if (g_engine->shouldQuit()) {
 		return;
 	}
 	delete ar;
 	l1 = NULL;
-	g_engine->_mouseManager->hide();
+	g_engine->_mouse->hide();
 
 	for (int i = 25; i >= 1; i--)
 		rectangle(0, 175 - i, 319, 174 + i, 0);
-	mask();
-	drawBackpack();
-	g_engine->_mouseManager->show();
+	g_engine->mask();
+	g_engine->drawBackpack();
+	g_engine->_mouse->show();
 
 	if (characterIndex < 5) {
-		if (firstTimeTopicA[characterIndex - 1])
-			firstTimeTopicA[characterIndex - 1] = false;
-		if (firstTimeTopicB[characterIndex - 1])
-			firstTimeTopicB[characterIndex - 1] = false;
-		if (firstTimeTopicC[characterIndex - 1])
-			firstTimeTopicC[characterIndex - 1] = false;
+		if (g_engine->_firstTimeTopicA[characterIndex - 1])
+			g_engine->_firstTimeTopicA[characterIndex - 1] = false;
+		if (g_engine->_firstTimeTopicB[characterIndex - 1])
+			g_engine->_firstTimeTopicB[characterIndex - 1] = false;
+		if (g_engine->_firstTimeTopicC[characterIndex - 1])
+			g_engine->_firstTimeTopicC[characterIndex - 1] = false;
 	} else if (characterIndex == 8)
-		firstTimeTopicA[8] = false;
+		g_engine->_firstTimeTopicA[8] = false;
 }
 
 void talkToSceneObject() {
-	int mouseX = (mouseClickX + 7) / xGridCount;
-	int mouseY = (mouseClickY + 7) / yGridCount;
-	uint sceneObject = currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[mouseX][mouseY]]->fileIndex;
+	Common::Point p = g_engine->_mouse->getClickCoordsWithinGrid();
+	int correctedMouseX = p.x;
+	int correctedMouseY = p.y;
+	uint sceneObject = g_engine->_currentRoomData->screenObjectIndex[g_engine->_currentRoomData->mouseGrid[correctedMouseX][correctedMouseY]]->fileIndex;
 	if (sceneObject == 0)
 		return;
 
 	// verifyCopyProtection2();
-	readItemRegister(sceneObject);
-	goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
-			   currentRoomData->walkAreasGrid[mouseX][mouseY]);
+	g_engine->readItemRegister(sceneObject);
+	g_engine->goToObject(g_engine->_currentRoomData->walkAreasGrid[(g_engine->_characterPosX + kCharacterCorrectionX) / kXGridCount][(g_engine->_characterPosY + kCharacerCorrectionY) / kYGridCount],
+			   g_engine->_currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 
-	if (regobj.speaking > 0) {
-		talk(regobj.speaking);
+	if (g_engine->_curObject.speaking > 0) {
+		talk(g_engine->_curObject.speaking);
 	} else {
-		assignText();
-		hypertext((Random(10) + 1039), 255, 0, foo, false);
-		verb.close();
-		if (cpCounter > 198)
+		g_engine->assignText();
+		uint foo = 0;
+		g_engine->sayLine((Random(10) + 1039), 255, 0, foo, false);
+		g_engine->_verbFile.close();
+		if (g_engine->_cpCounter > 198)
 			showError(274);
 	}
 }
+
+/**
+ * Loads talking animation of main adn secondary character
+ */
+void loadTalkAnimations() {
+	Common::File animFile;
+
+	if (!animFile.open("TIOHABLA.SEC")) {
+		showError(265);
+	}
+	g_engine->_mainCharFrameSize = animFile.readUint16LE();
+
+	int32 offset = g_engine->_mainCharFrameSize * 16;
+	offset = (offset * g_engine->_charFacingDirection) + 2;
+	animFile.seek(offset);
+	//Will load talking anim always in the upwards direction of the walk cycle array
+	for (int i = 0; i < 16; i++) {
+		g_engine->_mainCharAnimation.bitmap[0][i] = (byte *)malloc(g_engine->_mainCharFrameSize);
+		animFile.read(g_engine->_mainCharAnimation.bitmap[0][i], g_engine->_mainCharFrameSize);
+	}
+	animFile.close();
+
+	if ((g_engine->_currentRoomData->animationName != "PETER") && (g_engine->_currentRoomData->animationName != "ARZCAEL")) {
+		g_engine->_iframe2 = 0;
+		free(g_engine->_curSecondaryAnimationFrame);
+		bool result;
+		switch (g_engine->_curObject.speaking) {
+		case 1:
+			result = animFile.open("JOHN.SEC");
+			break;
+		case 5:
+			result = animFile.open("ALFRED.SEC");
+			break;
+		default:
+			result = animFile.open(Common::Path(g_engine->_currentRoomData->animationName + Common::String(".SEC")));
+		}
+
+		if (!result)
+			showError(265);
+		g_engine->_secondaryAnimFrameSize = animFile.readUint16LE();
+		g_engine->_secondaryAnimationFrameCount = animFile.readByte();
+		g_engine->_secondaryAnimDirCount = animFile.readByte();
+
+		g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
+		if (g_engine->_secondaryAnimDirCount != 0) {
+			g_engine->_secondaryAnimationFrameCount = g_engine->_secondaryAnimationFrameCount / 4;
+			for (int i = 0; i <= 3; i++) {
+				g_engine->loadAnimationForDirection(&animFile, i);
+			}
+		} else {
+			g_engine->loadAnimationForDirection(&animFile, 0);
+		}
+		animFile.close();
+	}
+}
+
+void unloadTalkAnimations() {
+
+	Common::File animFile;
+	if (!animFile.open("PERSONAJ.SPT")) {
+		showError(265);
+	}
+	g_engine->_mainCharFrameSize = animFile.readUint16LE();
+
+	for (int i = 0; i < kWalkFrameCount; i++) {
+		g_engine->_mainCharAnimation.bitmap[0][i] = (byte *)malloc(g_engine->_mainCharFrameSize);
+		animFile.read(g_engine->_mainCharAnimation.bitmap[0][i], g_engine->_mainCharFrameSize);
+	}
+	animFile.close();
+
+	if ((g_engine->_currentRoomData->animationName != "PETER") && (g_engine->_currentRoomData->animationName != "ARZCAEL")) {
+		if (!animFile.open(Common::Path(g_engine->_currentRoomData->animationName + ".DAT"))) {
+			showError(265);
+		}
+		g_engine->_secondaryAnimFrameSize = animFile.readUint16LE();
+		g_engine->_secondaryAnimationFrameCount = animFile.readByte();
+		g_engine->_secondaryAnimDirCount = animFile.readByte();
+		g_engine->_curSecondaryAnimationFrame = (byte *)malloc(g_engine->_secondaryAnimFrameSize);
+		if (g_engine->_secondaryAnimDirCount != 0) {
+
+			g_engine->_secondaryAnimationFrameCount = g_engine->_secondaryAnimationFrameCount / 4;
+			for (int i = 0; i <= 3; i++) {
+				g_engine->loadAnimationForDirection(&animFile, i);
+			}
+		} else {
+			g_engine->loadAnimationForDirection(&animFile, 0);
+		}
+		animFile.close();
+	}
+}
+
 
 } // End of namespace Tot

@@ -24,7 +24,7 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
-#include "engines/tot/util.h"
+
 #include "engines/util.h"
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
@@ -32,22 +32,25 @@
 #include "tot/chrono.h"
 #include "tot/console.h"
 #include "tot/detection.h"
+#include "tot/debug.h"
 #include "tot/dialog.h"
 #include "tot/font/bgifont.h"
 #include "tot/vars.h"
-#include "tot/routines.h"
-#include "tot/routines2.h"
 #include "tot/sound.h"
 #include "tot/tot.h"
+#include "tot/util.h"
 
 namespace Tot {
 
 TotEngine *g_engine;
 
 TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(syst),
-																		 _gameDescription(gameDesc), _randomSource("Tot") {
+																 _gameDescription(gameDesc), _randomSource("Tot") {
 	g_engine = this;
 	_lang = _gameDescription->language;
+	g_engine->_rooms = nullptr;
+	g_engine->_conversationData = nullptr;
+	g_engine->_invItemData = nullptr;
 }
 
 TotEngine::~TotEngine() {
@@ -78,13 +81,13 @@ Common::Error TotEngine::run() {
 	_sound = new SoundManager(_mixer);
 	_chrono = new ChronoManager();
 	// _room = new RoomManager();
-	_mouseManager = new MouseManager();
+	_mouse = new MouseManager();
 
 	_sound->init();
 	_graphics->init();
 	initPlayAnim();
 
-	isIntroSeen = ConfMan.getBool("introSeen");
+	_isIntroSeen = ConfMan.getBool("introSeen");
 	// _inventoryManager = new InventoryManager();
 	// _totGame = new TotGame();
 	// Set the engine's debugger console
@@ -114,7 +117,7 @@ int TotEngine::engineStart() {
 	g_engine->_sound->setMidiVolume(0, 0);
 	g_engine->_sound->playMidi("SILENT", false);
 
-	g_engine->_mouseManager->setMouseArea(Common::Rect(0, 0, 305, 185));
+	g_engine->_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 	g_engine->_sound->playMidi("SILENT", true);
 
 	g_engine->_graphics->totalFadeOut(0);
@@ -126,16 +129,16 @@ int TotEngine::engineStart() {
 	g_engine->_sound->playMidi("INTRODUC", true);
 	g_engine->_sound->setMidiVolume(3, 3);
 	firstIntroduction();
-	g_engine->_mouseManager->setMousePos(1, mouseX, mouseY);
-	initialMenu(firstTimeDone);
-	if (startNewGame && !g_engine->shouldQuit()) {
+	g_engine->_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
+	initialMenu(_firstTimeDone);
+	if (_startNewGame && !g_engine->shouldQuit()) {
 		newGame();
-	} else if (continueGame && !g_engine->shouldQuit()) {
+	} else if (_continueGame && !g_engine->shouldQuit()) {
 		loadTemporaryGame();
 	} else {
-		isSavingDisabled = true;
+		_isSavingDisabled = true;
 		g_engine->openMainMenuDialog();
-		isSavingDisabled = false;
+		_isSavingDisabled = false;
 	}
 
 	return startGame();
@@ -146,8 +149,8 @@ void TotEngine::loadTemporaryGame() {
 }
 
 int TotEngine::startGame() {
-	g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
-	switch (gamePart) {
+	g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+	switch (_gamePart) {
 	case 1:
 		g_engine->_sound->playMidi("PRIMERA", true);
 		break;
@@ -155,9 +158,9 @@ int TotEngine::startGame() {
 		g_engine->_sound->playMidi("SEGUNDA", true);
 		break;
 	}
-	cpCounter2 = cpCounter;
-	g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-	inGame = true;
+	_cpCounter2 = _cpCounter;
+	g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft,g_engine->_sound->_musicVolRight);
+	_inGame = true;
 
 	Common::Event e;
 	const char hotKeyOpen = hotKeyFor(OPEN);
@@ -167,16 +170,16 @@ int TotEngine::startGame() {
 	const char hotKeyLook = hotKeyFor(LOOKAT);
 	const char hotKeyUse = hotKeyFor(USE);
 
-	while (!shouldQuitGame && !g_engine->shouldQuit()) {
+	while (!_shouldQuitGame && !g_engine->shouldQuit()) {
 		bool escapePressed = false;
 		g_engine->_chrono->updateChrono();
-		g_engine->_mouseManager->animateMouseIfNeeded();
+		g_engine->_mouse->animateMouseIfNeeded();
 		// debug
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (isMouseEvent(e)) {
-				g_engine->_mouseManager->setMousePos(e.mouse);
-				mouseX = e.mouse.x;
-				mouseY = e.mouse.y;
+				g_engine->_mouse->warpMouse(e.mouse);
+				_mouse->mouseX = e.mouse.x;
+				_mouse->mouseY = e.mouse.y;
 			}
 			if (e.type == Common::EVENT_KEYUP) {
 				changeGameSpeed(e);
@@ -195,249 +198,250 @@ int TotEngine::startGame() {
 					break;
 				default:
 					if (e.kbd.keycode == hotKeyOpen) {
-						actionCode = 5;
+						_actionCode = 5;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyClose) {
-						actionCode = 6;
+						_actionCode = 6;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyPickup) {
-						actionCode = 2;
+						_actionCode = 2;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyTalk) {
-						actionCode = 1;
+						_actionCode = 1;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyLook) {
-						actionCode = 3;
+						_actionCode = 3;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyUse) {
-						actionCode = 4;
+						_actionCode = 4;
 						action();
 						oldGridX = 0;
 						oldGridY = 0;
 					} else {
-						actionCode = 0; // go to
+						_actionCode = 0; // go to
 					}
 				}
 			} else if (e.type == Common::EVENT_LBUTTONUP) {
-				mouseClickX = e.mouse.x;
-				mouseClickY = e.mouse.y;
-				if (mouseClickY > 0 && mouseClickY < 131) {
-					switch (actionCode) {
+				_mouse->mouseClickX = e.mouse.x;
+				_mouse->mouseClickY = e.mouse.y;
+				if (_mouse->mouseClickY > 0 && _mouse->mouseClickY < 131) {
+					switch (_actionCode) {
 					case 0: // go to
-						cpCounter2 = cpCounter;
+						_cpCounter2 = _cpCounter;
 						// gets the zone where the character is now standing. Zone is calculated using xframe,yframe plus some adjustments to get the center of the feet
-						currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-						if (currentZone < 10) {
-							xframe2 = mouseClickX + 7;
-							yframe2 = mouseClickY + 7;
+						_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+						if (_currentZone < 10) {
+							_xframe2 = _mouse->mouseClickX + 7;
+							_yframe2 = _mouse->mouseClickY + 7;
 							// obtains the target zone from the clicked coordinates
-							targetZone = currentRoomData->walkAreasGrid[xframe2 / xGridCount][yframe2 / yGridCount];
-							if (currentRoomData->code == 21 && currentRoomData->animationFlag) {
-								if ((targetZone >= 1 && targetZone <= 5) ||
-									(targetZone >= 9 && targetZone <= 13) ||
-									(targetZone >= 18 && targetZone <= 21) ||
-									targetZone == 24 || targetZone == 25) {
+							_targetZone = _currentRoomData->walkAreasGrid[_xframe2 / kXGridCount][_yframe2 / kYGridCount];
+							if (_currentRoomData->code == 21 && _currentRoomData->animationFlag) {
+								if ((_targetZone >= 1 && _targetZone <= 5) ||
+									(_targetZone >= 9 && _targetZone <= 13) ||
+									(_targetZone >= 18 && _targetZone <= 21) ||
+									_targetZone == 24 || _targetZone == 25) {
 
-									targetZone = 7;
-									mouseClickX = 232;
-									mouseClickY = 75;
+									_targetZone = 7;
+									_mouse->mouseClickX = 232;
+									_mouse->mouseClickY = 75;
 
-									xframe2 = mouseClickX + 7;
-									yframe2 = mouseClickY + 7;
+									_xframe2 = _mouse->mouseClickX + 7;
+									_yframe2 = _mouse->mouseClickY + 7;
 								}
 							}
 
-							if (oldTargetZone != targetZone || targetZone < 10) {
-								oldTargetZone = targetZone;
+							if (_oldTargetZone != _targetZone || _targetZone < 10) {
+								_oldTargetZone = _targetZone;
 								// Resets the entire route
-								calculateRoute(currentZone, targetZone);
+								calculateRoute(_currentZone, _targetZone);
 
-								doorIndex = 0;
-								roomChange = false;
+								_doorIndex = 0;
+								_roomChange = false;
 
-								for (doorIndex = 0; doorIndex < 5; doorIndex++) {
-									if (currentRoomData->doors[doorIndex].doorcode == targetZone) {
+								for (_doorIndex = 0; _doorIndex < 5; _doorIndex++) {
+									if (_currentRoomData->doors[_doorIndex].doorcode == _targetZone) {
 
-										if (currentRoomData->doors[doorIndex].openclosed == 1) {
-											roomChange = true;
+										if (_currentRoomData->doors[_doorIndex].openclosed == 1) {
+											_roomChange = true;
 											break;
-										} else if ((currentRoomData->code == 5 && targetZone == 27) || (currentRoomData->code == 6 && targetZone == 21)) {
+										} else if ((_currentRoomData->code == 5 && _targetZone == 27) || (_currentRoomData->code == 6 && _targetZone == 21)) {
 											;
 										} else {
-											steps -= 1;
+											_trajectorySteps -= 1;
 										}
 									}
 								}
 								// Sets xframe2 again due to the substraction when closed doors
-								xframe2 = steps;
+								_xframe2 = _trajectorySteps;
 							} else
-								xframe2 = 0;
+								_xframe2 = 0;
 						}
 						break;
 					case 1: // talk
-						roomChange = false;
-						actionCode = 0;
+						_roomChange = false;
+						_actionCode = 0;
 						talkToSceneObject();
-						cpCounter2 = cpCounter;
+						_cpCounter2 = _cpCounter;
 						break;
 					case 2: // pick up
-						roomChange = false;
-						actionCode = 0;
+						_roomChange = false;
+						_actionCode = 0;
 						pickupScreenObject();
-						cpCounter = cpCounter2;
+						_cpCounter = _cpCounter2;
 						break;
 					case 3: // look at
-						roomChange = false;
-						destinationStepX = (mouseClickX + 7) / xGridCount;
-						destinationStepY = (mouseClickY + 7) / yGridCount;
-						if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex > 0) {
+						_roomChange = false;
+						_destinationX = _mouse->getClickCoordsWithinGrid().x;
+						_destinationY =  _mouse->getClickCoordsWithinGrid().y;
+						if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex > 0) {
 							goToObject(
-								currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount],
-								currentRoomData->walkAreasGrid[destinationStepX][destinationStepY]);
-							if (currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex == 562)
+								_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount],
+								_currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
+							if (_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex == 562)
 
-								switch (currentRoomData->code) {
+								switch (_currentRoomData->code) {
 								case 20:
-									if (niche[0][niche[0][3]] > 0)
-										readItemRegister(niche[0][niche[0][3]]);
+									if (_niche[0][_niche[0][3]] > 0)
+										readItemRegister(_niche[0][_niche[0][3]]);
 									else
 										readItemRegister(562);
 									break;
 								case 24:
-									if (niche[1][niche[1][3]] > 0)
-										readItemRegister(niche[1][niche[1][3]]);
+									if (_niche[1][_niche[1][3]] > 0)
+										readItemRegister(_niche[1][_niche[1][3]]);
 									else
 										readItemRegister(562);
 									break;
 								}
 							else
-								readItemRegister(currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]]->fileIndex);
-							if (regobj.lookAtTextRef > 0)
-								drawText(regobj.lookAtTextRef);
-							actionCode = 0;
+								readItemRegister(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
+							if (_curObject.lookAtTextRef > 0)
+								drawText(_curObject.lookAtTextRef);
+							_actionCode = 0;
 						}
 						break;
 					case 4: // use
-						roomChange = false;
-						actionCode = 0;
+						_roomChange = false;
+						_actionCode = 0;
 						useScreenObject();
-						cpCounter = cpCounter2;
+						_cpCounter = _cpCounter2;
 						break;
 					case 5: // open
-						roomChange = false;
-						actionCode = 0;
+						_roomChange = false;
+						_actionCode = 0;
 						openScreenObject();
 						break;
 					case 6: { // close
-						roomChange = false;
-						actionCode = 0;
+						_roomChange = false;
+						_actionCode = 0;
 						closeScreenObject();
-						cpCounter = cpCounter2;
+						_cpCounter = _cpCounter2;
 					} break;
 					}
-				} else if (mouseClickY > 148 && mouseClickY < 158) {
-					if (mouseClickX >= 3 && mouseClickX <= 53) {
-						actionCode = 1;
+				} else if (_mouse->mouseClickY > 148 && _mouse->mouseClickY < 158) {
+					if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 53) {
+						_actionCode = 1;
 						action();
 						break;
-					} else if (mouseClickX >= 58 && mouseClickX <= 103) {
-						actionCode = 2;
+					} else if (_mouse->mouseClickX >= 58 && _mouse->mouseClickX <= 103) {
+						_actionCode = 2;
 						action();
 						break;
-					} else if (mouseClickX >= 108 && mouseClickX <= 153) {
-						actionCode = 3;
+					} else if (_mouse->mouseClickX >= 108 && _mouse->mouseClickX <= 153) {
+						_actionCode = 3;
 						action();
 						break;
-					} else if (mouseClickX >= 158 && mouseClickX <= 198) {
-						actionCode = 4;
+					} else if (_mouse->mouseClickX >= 158 && _mouse->mouseClickX <= 198) {
+						_actionCode = 4;
 						action();
 						break;
-					} else if (mouseClickX >= 203 && mouseClickX <= 248) {
-						actionCode = 5;
+					} else if (_mouse->mouseClickX >= 203 && _mouse->mouseClickX <= 248) {
+						_actionCode = 5;
 						action();
 						break;
-					} else if (mouseClickX >= 253 && mouseClickX <= 311) {
-						actionCode = 6;
+					} else if (_mouse->mouseClickX >= 253 && _mouse->mouseClickX <= 311) {
+						_actionCode = 6;
 						action();
 						break;
 					} else {
-						actionCode = 0;
+						_actionCode = 0;
 						action();
-						cpCounter2 = cpCounter;
+						_cpCounter2 = _cpCounter;
 					}
-				} else if (mouseClickY > 166 && mouseClickY < 199) {
-					if (mouseClickX >= 3 && mouseClickX <= 19) {
+				} else if (_mouse->mouseClickY > 166 && _mouse->mouseClickY < 199) {
+					if (_mouse->mouseClickX >= 3 && _mouse->mouseClickX <= 19) {
 						drawInventory(0, 33);
 						break;
-					} else if (mouseClickX >= 26 && mouseClickX <= 65) {
-						handleAction(inventoryPosition);
+					} else if (_mouse->mouseClickX >= 26 && _mouse->mouseClickX <= 65) {
+						handleAction(_inventoryPosition);
 						break;
-					} else if (mouseClickX >= 70 && mouseClickX <= 108) {
-						handleAction(inventoryPosition + 1);
+					} else if (_mouse->mouseClickX >= 70 && _mouse->mouseClickX <= 108) {
+						handleAction(_inventoryPosition + 1);
 						break;
-					} else if (mouseClickX >= 113 && mouseClickX <= 151) {
-						handleAction(inventoryPosition + 2);
+					} else if (_mouse->mouseClickX >= 113 && _mouse->mouseClickX <= 151) {
+						handleAction(_inventoryPosition + 2);
 						break;
-					} else if (mouseClickX >= 156 && mouseClickX <= 194) {
-						handleAction(inventoryPosition + 3);
+					} else if (_mouse->mouseClickX >= 156 && _mouse->mouseClickX <= 194) {
+						handleAction(_inventoryPosition + 3);
 						break;
-					} else if (mouseClickX >= 199 && mouseClickX <= 237) {
-						handleAction(inventoryPosition + 4);
+					} else if (_mouse->mouseClickX >= 199 && _mouse->mouseClickX <= 237) {
+						handleAction(_inventoryPosition + 4);
 						break;
-					} else if (mouseClickX >= 242 && mouseClickX <= 280) {
-						handleAction(inventoryPosition + 5);
+					} else if (_mouse->mouseClickX >= 242 && _mouse->mouseClickX <= 280) {
+						handleAction(_inventoryPosition + 5);
 						break;
-					} else if (mouseClickX >= 290 && mouseClickX <= 311) {
+					} else if (_mouse->mouseClickX >= 290 && _mouse->mouseClickX <= 311) {
 						drawInventory(1, 33);
 						break;
 					} else {
-						actionCode = 0;
+						_actionCode = 0;
 						action();
 					}
 				}
 			} else if (e.type == Common::EVENT_RBUTTONUP) {
-				mouseClickX = e.mouse.x;
-				mouseClickY = e.mouse.y;
-				destinationStepX = (mouseClickX + 7) / xGridCount;
-				destinationStepY = (mouseClickY + 7) / yGridCount;
-				cpCounter2 = cpCounter;
-				if (destinationStepY < 28) {
-					RoomObjectListEntry obj = *currentRoomData->screenObjectIndex[currentRoomData->mouseGrid[destinationStepX][destinationStepY]];
+				_mouse->mouseClickX = e.mouse.x;
+				_mouse->mouseClickY = e.mouse.y;
+				Common::Point p = _mouse->getClickCoordsWithinGrid();
+				_destinationX = p.x;
+				_destinationY = p.y;
+				_cpCounter2 = _cpCounter;
+				if (_destinationY < 28) {
+					RoomObjectListEntry obj = *_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]];
 					if (obj.fileIndex > 0) {
 
 						drawLookAtItem(obj);
-						goToObject(currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount], currentRoomData->walkAreasGrid[destinationStepX][destinationStepY]);
+						goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], _currentRoomData->walkAreasGrid[_destinationX][_destinationY]);
 						if (obj.fileIndex == 562)
 
-							switch (currentRoomData->code) {
+							switch (_currentRoomData->code) {
 							case 20:
-								if (niche[0][niche[0][3]] > 0)
-									readItemRegister(niche[0][niche[0][3]]);
+								if (_niche[0][_niche[0][3]] > 0)
+									readItemRegister(_niche[0][_niche[0][3]]);
 								else
 									readItemRegister(562);
 								break;
 							case 24:
-								if (niche[1][niche[1][3]] > 0)
-									readItemRegister(niche[1][niche[1][3]]);
+								if (_niche[1][_niche[1][3]] > 0)
+									readItemRegister(_niche[1][_niche[1][3]]);
 								else
 									readItemRegister(562);
 								break;
 							}
 						else
 							readItemRegister(obj.fileIndex);
-						if (regobj.lookAtTextRef > 0)
-							drawText(regobj.lookAtTextRef);
-						actionCode = 0;
+						if (_curObject.lookAtTextRef > 0)
+							drawText(_curObject.lookAtTextRef);
+						_actionCode = 0;
 					}
 				}
 			}
@@ -447,37 +451,37 @@ int TotEngine::startGame() {
 		advanceAnimations(false, true);
 
 		// Scene changes
-		if (xframe2 == 0 && roomChange) {
+		if (_xframe2 == 0 && _roomChange) {
 			changeRoom();
 		}
 
-		if (escapePressed && xframe2 == 0) {
+		if (escapePressed && _xframe2 == 0) {
 			freeAnimation();
 			freeScreenObjects();
-			cpCounter2 = cpCounter;
-			startNewGame = false;
-			continueGame = false;
+			_cpCounter2 = _cpCounter;
+			_startNewGame = false;
+			_continueGame = false;
 			g_engine->saveAutosaveIfEnabled();
 			g_engine->_graphics->totalFadeOut(0);
-			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+			g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
 			g_engine->_graphics->clear();
 			g_engine->_sound->playMidi("INTRODUC", true);
-			g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
+			g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
 			initialMenu(true);
 			verifyCopyProtection2();
 
-			if (startNewGame && !g_engine->shouldQuit()) {
+			if (_startNewGame && !g_engine->shouldQuit()) {
 				newGame();
-			} else if (continueGame && !g_engine->shouldQuit())
+			} else if (_continueGame && !g_engine->shouldQuit())
 				loadTemporaryGame();
 			else {
-				isSavingDisabled = true;
+				_isSavingDisabled = true;
 				g_engine->openMainMenuDialog();
-				cpCounter = cpCounter2;
-				isSavingDisabled = false;
+				_cpCounter = _cpCounter2;
+				_isSavingDisabled = false;
 			}
-			g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
-			switch (gamePart) {
+			g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+			switch (_gamePart) {
 			case 1:
 				g_engine->_sound->playMidi("PRIMERA", true);
 				break;
@@ -485,47 +489,47 @@ int TotEngine::startGame() {
 				g_engine->_sound->playMidi("SEGUNDA", true);
 				break;
 			}
-			g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
+			g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
 		}
 
-		switch (gamePart) {
+		switch (_gamePart) {
 		case 1:
-			if (list1Complete && list2Complete) {
-				list1Complete = false;
-				list2Complete = false;
-				cpCounter = cpCounter2;
-				gamePart = 2;
-				iframe = 0;
+			if (_list1Complete && _list2Complete) {
+				_list1Complete = false;
+				_list2Complete = false;
+				_cpCounter = _cpCounter2;
+				_gamePart = 2;
+				_iframe = 0;
 				freeInventory();
 				freeAnimation();
 				freeScreenObjects();
-				g_engine->_mouseManager->hide();
+				g_engine->_mouse->hide();
 				g_engine->_graphics->partialFadeOut(234);
-				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+				g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
 				g_engine->_sound->playMidi("CREDITOS", true);
-				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-				if (cpCounter2 > 43)
+				g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+				if (_cpCounter2 > 43)
 					showError(274);
 				sacrificeScene();
 				g_engine->_graphics->clear();
 				loadObjects();
 				g_engine->_graphics->loadPaletteFromFile("SEGUNDA");
-				currentTrajectoryIndex = 0;
-				characterPosX = 160;
-				characterPosY = 60;
-				trajectory[currentTrajectoryIndex].x = characterPosX;
-				trajectory[currentTrajectoryIndex].y = characterPosY;
+				_currentTrajectoryIndex = 0;
+				_characterPosX = 160;
+				_characterPosY = 60;
+				_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+				_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 				loadScreenData(20);
-				g_engine->_sound->fadeOutMusic(musicVolLeft, musicVolRight);
+				g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
 				g_engine->_sound->playMidi("SEGUNDA", true);
-				g_engine->_sound->fadeInMusic(musicVolLeft, musicVolRight);
-				g_engine->_graphics->sceneTransition(1, false, sceneBackground);
+				g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+				g_engine->_graphics->sceneTransition(false, sceneBackground, 1);
 				mask();
-				inventoryPosition = 0;
+				_inventoryPosition = 0;
 				drawBackpack();
-				g_engine->_mouseManager->show();
+				g_engine->_mouse->show();
 
-				firstTimeTopicA[8] = true;
+				_firstTimeTopicA[8] = true;
 				oldGridX = 0;
 				oldGridY = 0;
 				checkMouseGrid();
@@ -539,24 +543,24 @@ int TotEngine::startGame() {
 			// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
 			// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
 			if (g_engine->_showMouseGrid) {
-				drawMouseGrid(currentRoomData);
+				drawMouseGrid(_currentRoomData);
 			}
 			if (g_engine->_showScreenGrid) {
-				drawScreenGrid(currentRoomData);
+				drawScreenGrid(_currentRoomData);
 			}
 			if (g_engine->_showGameGrid) {
 				drawGrid();
 			}
 
 			if (g_engine->_drawObjectAreas) {
-				for (int i = 0; i < depthLevelCount; i++) {
-					if (screenLayers[i] != NULL) {
+				for (int i = 0; i < kDepthLevelCount; i++) {
+					if (_screenLayers[i] != NULL) {
 						if (true) {
 							// debug
-							uint16 w = READ_LE_UINT16(screenLayers[i]);
-							uint16 h = READ_LE_UINT16(screenLayers[i] + 2);
-							Common::Rect r = Common::Rect(depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
-							drawRect(180, depthMap[i].posx, depthMap[i].posy, depthMap[i].posx + w, depthMap[i].posy + h);
+							uint16 w = READ_LE_UINT16(_screenLayers[i]);
+							uint16 h = READ_LE_UINT16(_screenLayers[i] + 2);
+							Common::Rect r = Common::Rect(_depthMap[i].posx, _depthMap[i].posy, _depthMap[i].posx + w, _depthMap[i].posy + h);
+							drawRect(180, _depthMap[i].posx, _depthMap[i].posy, _depthMap[i].posx + w, _depthMap[i].posy + h);
 
 							littText(r.left, r.top, Common::String().format("%d", i), 0);
 						}
@@ -568,10 +572,11 @@ int TotEngine::startGame() {
 		g_engine->_screen->update();
 		g_system->delayMillis(10);
 	}
-	g_engine->_mouseManager->hide();
+	g_engine->_mouse->hide();
 	if (!g_engine->shouldQuit()) {
 		ending();
 	}
+	Common::String photoFileName;
 	if (!g_engine->shouldQuit()) {
 		obtainName(photoFileName);
 	}
@@ -586,8 +591,8 @@ int TotEngine::startGame() {
 
 void TotEngine::newGame() {
 	saveAllowed = true;
-	g_engine->_mouseManager->hide();
-	obtainName(characterName);
+	g_engine->_mouse->hide();
+	obtainName(_characterName);
 
 	if (!g_engine->shouldQuit()) {
 		g_engine->_graphics->totalFadeOut(0);
@@ -596,190 +601,186 @@ void TotEngine::newGame() {
 		freeInventory();
 		loadObjects();
 		resetGameState();
-		inGame = true;
-		for (int i = 0; i < inventoryIconCount; i++) {
-			inventory[i].bitmapIndex = 34;
-			inventory[i].code = 0;
-			inventory[i].objectName = getObjectName(10);
+		_inGame = true;
+		for (int i = 0; i < kInventoryIconCount; i++) {
+			_inventory[i].bitmapIndex = 34;
+			_inventory[i].code = 0;
+			_inventory[i].objectName = getObjectName(10);
 		}
 		readConversationFile(Common::String("CONVERSA.TRE"));
 		initializeScreenFile();
 		initializeObjectFile();
 		g_engine->_graphics->loadPaletteFromFile("DEFAULT");
 		loadScreenData(1);
-		g_engine->_graphics->sceneTransition(13, false, sceneBackground);
+		g_engine->_graphics->sceneTransition(false, sceneBackground, 13);
 		mask();
-		inventoryPosition = 0;
+		_inventoryPosition = 0;
 		drawBackpack();
-		iframe = 0;
-		g_engine->_mouseManager->show();
+		_iframe = 0;
+		g_engine->_mouse->show();
 	}
 }
 
 void TotEngine::changeRoom() {
-	roomChange = false;
-	cpCounter = cpCounter2;
-	setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
-	saveRoomData(currentRoomData, rooms);
+	_roomChange = false;
+	_cpCounter = _cpCounter2;
+	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
+	saveRoomData(_currentRoomData, _rooms);
 	// verifyCopyProtection();
-	g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
+	g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
 
-	switch (currentRoomData->doors[doorIndex].nextScene) {
+	switch (_currentRoomData->doors[_doorIndex].nextScene) {
 	case 2: {
-		transitionEffect = Random(15) + 1;
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
+		g_engine->_mouse->hide();
 
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
+		g_engine->_graphics->sceneTransition(true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		if (cpCounter > 89)
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		if (isTVOn)
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		if (_isTVOn)
 			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			loadTV();
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		cpCounter = cpCounter2;
-		g_engine->_mouseManager->show();
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_cpCounter = _cpCounter2;
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 	} break;
 	case 5: {
-		if (currentRoomData->code != 6) {
-			transitionEffect = Random(15) + 1;
-			iframe = 0;
-			currentTrajectoryIndex = 0;
-			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY + 15;
-			trajectory[currentTrajectoryIndex].x = characterPosX;
-			trajectory[currentTrajectoryIndex].y = characterPosY;
+		if (_currentRoomData->code != 6) {
+			_iframe = 0;
+			_currentTrajectoryIndex = 0;
+			_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY + 15;
+			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
+			g_engine->_mouse->hide();
+			g_engine->_graphics->sceneTransition(true, NULL);
+			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			g_engine->_sound->stopVoc();
 			g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
-			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
-			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-			g_engine->_mouseManager->show();
+			g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, 0);
+			g_engine->_graphics->sceneTransition(false, sceneBackground);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			targetZone = 21;
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+			_targetZone = 21;
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_sound->setSfxVolume(leftSfxVol, 0);
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 22, -2);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, 0);
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 22, -2);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 6: {
-		currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-		targetZone = 27;
-		goToObject(currentZone, targetZone);
+		_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+		_targetZone = 27;
+		goToObject(_currentZone, _targetZone);
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 22, 2);
-		g_engine->_mouseManager->show();
+		g_engine->_mouse->hide();
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 22, 2);
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 9: {
-		transitionEffect = Random(15) + 1;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		g_engine->_mouseManager->show();
+		g_engine->_mouse->hide();
+		g_engine->_graphics->sceneTransition(true, NULL);
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		g_engine->_mouse->show();
 
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 12: {
-		if (currentRoomData->code != 13) {
-			transitionEffect = Random(15) + 1;
-			iframe = 0;
-			currentTrajectoryIndex = 0;
-			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-			trajectory[currentTrajectoryIndex].x = characterPosX;
-			trajectory[currentTrajectoryIndex].y = characterPosY;
+		if (_currentRoomData->code != 13) {
+			_iframe = 0;
+			_currentTrajectoryIndex = 0;
+			_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			g_engine->_graphics->sceneTransition(true, NULL);
+			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+			g_engine->_graphics->sceneTransition(false, sceneBackground);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->show();
 		} else {
 
-			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 64, 0);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 64, 0);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 13: {
-		switch (currentRoomData->code) {
+		switch (_currentRoomData->code) {
 		case 12: {
-			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 64, 0);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 64, 0);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		} break;
 		case 14: {
-			currentZone = currentRoomData->walkAreasGrid[(characterPosX + characterCorrectionX) / xGridCount][(characterPosY + characerCorrectionY) / yGridCount];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 56, 0);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 56, 0);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -787,231 +788,225 @@ void TotEngine::changeRoom() {
 		}
 	} break;
 	case 14: {
-		if (currentRoomData->code != 13) {
-			transitionEffect = Random(15) + 1;
-			iframe = 0;
-			currentTrajectoryIndex = 0;
-			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-			trajectory[currentTrajectoryIndex].x = characterPosX;
-			trajectory[currentTrajectoryIndex].y = characterPosY;
+		if (_currentRoomData->code != 13) {
+			_iframe = 0;
+			_currentTrajectoryIndex = 0;
+			_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			g_engine->_graphics->sceneTransition(true, NULL);
+			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+			g_engine->_graphics->sceneTransition(false, sceneBackground);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 56, 0);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 56, 0);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 17: {
-		transitionEffect = Random(15) + 1;
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
+		g_engine->_mouse->hide();
+		g_engine->_graphics->sceneTransition(true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		if (bookTopic[0] == true && currentRoomData->animationFlag == true)
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		if (_bookTopic[0] == true && _currentRoomData->animationFlag == true)
 			disableSecondAnimation();
-		if (cpCounter > 89)
+		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		cpCounter = cpCounter2;
-		g_engine->_mouseManager->show();
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_cpCounter = _cpCounter2;
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 18: {
-		if (currentRoomData->code != 19) {
-			transitionEffect = Random(15) + 1;
-			iframe = 0;
-			currentTrajectoryIndex = 0;
-			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-			trajectory[currentTrajectoryIndex].x = characterPosX;
-			trajectory[currentTrajectoryIndex].y = characterPosY;
+		if (_currentRoomData->code != 19) {
+			_iframe = 0;
+			_currentTrajectoryIndex = 0;
+			_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			g_engine->_graphics->sceneTransition(true, NULL);
+			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+			g_engine->_graphics->sceneTransition(false, sceneBackground);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, true, 131, -1);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 131, -1);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 19: {
-		if (currentRoomData->code != 18) {
-			transitionEffect = Random(15) + 1;
-			iframe = 0;
-			currentTrajectoryIndex = 0;
-			characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-			characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-			trajectory[currentTrajectoryIndex].x = characterPosX;
-			trajectory[currentTrajectoryIndex].y = characterPosY;
+		if (_currentRoomData->code != 18) {
+			_iframe = 0;
+			_currentTrajectoryIndex = 0;
+			_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+			_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+			_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
-			loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			g_engine->_graphics->sceneTransition(true, NULL);
+			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+			g_engine->_graphics->sceneTransition(false, sceneBackground);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
-			currentZone = currentRoomData->walkAreasGrid[((characterPosX + characterCorrectionX) / xGridCount)][((characterPosY + characerCorrectionY) / yGridCount)];
-			goToObject(currentZone, targetZone);
+			_currentZone = _currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)];
+			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouseManager->hide();
-			loadScrollData(currentRoomData->doors[doorIndex].nextScene, false, 131, 1);
-			g_engine->_mouseManager->show();
+			g_engine->_mouse->hide();
+			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 131, 1);
+			g_engine->_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
 	case 20: {
-		transitionEffect = Random(15) + 1;
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
+		g_engine->_mouse->hide();
+		g_engine->_graphics->sceneTransition(true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		switch (niche[0][niche[0][3]]) {
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		switch (_niche[0][_niche[0][3]]) {
 		case 0:
-			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
 			break;
 		case 563:
-			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
 			break;
 		case 615:
-			currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
 			break;
 		}
-		if (cpCounter > 89)
+		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		if (currentRoomData->code == 4)
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		if (_currentRoomData->code == 4)
 			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		cpCounter = cpCounter2;
-		g_engine->_mouseManager->show();
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_cpCounter = _cpCounter2;
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 24: {
-		transitionEffect = Random(15) + 1;
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
+		g_engine->_mouse->hide();
+		g_engine->_graphics->sceneTransition(true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		switch (niche[1][niche[1][3]]) {
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		switch (_niche[1][_niche[1][3]]) {
 		case 0:
-			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
 			break;
 		case 561:
-			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
 			break;
 		case 615:
-			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
 			break;
 		case 622:
-			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
 			break;
 		case 623:
-			currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
 			break;
 		}
-		if (cpCounter > 89)
+		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		if (isTrapSet) {
-			currentRoomData->animationFlag = true;
-			loadAnimation(currentRoomData->animationName);
-			iframe2 = 0;
-			currentSecondaryTrajectoryIndex = 1;
-			currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].x = 214 - 15;
-			currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].y = 115 - 42;
-			secondaryAnimation.dir = currentRoomData->secondaryAnimDirections[currentSecondaryTrajectoryIndex - 1];
-			secondaryAnimation.posx = currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].x;
-			secondaryAnimation.posy = currentRoomData->secondaryAnimTrajectory[currentSecondaryTrajectoryIndex - 1].y;
-			secondaryAnimation.depth = 14;
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		if (_isTrapSet) {
+			_currentRoomData->animationFlag = true;
+			loadAnimation(_currentRoomData->animationName);
+			_iframe2 = 0;
+			_currentSecondaryTrajectoryIndex = 1;
+			_currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x = 214 - 15;
+			_currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y = 115 - 42;
+			_secondaryAnimation.dir = _currentRoomData->secondaryAnimDirections[_currentSecondaryTrajectoryIndex - 1];
+			_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x;
+			_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
+			_secondaryAnimation.depth = 14;
 
-			for (int i = 0; i < maxXGrid; i++)
-				for (int j = 0; j < maxYGrid; j++) {
-					if (maskGridSecondaryAnim[i][j] > 0) {
-						currentRoomData->walkAreasGrid[oldposx + i][oldposy + j] = maskGridSecondaryAnim[i][j];
+			for (int i = 0; i < _maxXGrid; i++)
+				for (int j = 0; j < _maxYGrid; j++) {
+					if (_maskGridSecondaryAnim[i][j] > 0) {
+						_currentRoomData->walkAreasGrid[_oldposx + i][_oldposy + j] = _maskGridSecondaryAnim[i][j];
 					}
-					if (maskMouseSecondaryAnim[i][j] > 0)
-						currentRoomData->mouseGrid[oldposx + i][oldposy + j] = maskMouseSecondaryAnim[i][j];
+					if (_maskMouseSecondaryAnim[i][j] > 0)
+						_currentRoomData->mouseGrid[_oldposx + i][_oldposy + j] = _maskMouseSecondaryAnim[i][j];
 				}
 			assembleScreen();
 		}
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		if ((isRedDevilCaptured == false) && (isTrapSet == false))
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		if ((_isRedDevilCaptured == false) && (_isTrapSet == false))
 			runaroundRed();
-		cpCounter = cpCounter2;
-		g_engine->_mouseManager->show();
+		_cpCounter = _cpCounter2;
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
@@ -1020,23 +1015,22 @@ void TotEngine::changeRoom() {
 		wcScene();
 		break;
 	default: {
-		transitionEffect = Random(15) + 1;
-		iframe = 0;
-		currentTrajectoryIndex = 0;
-		characterPosX = currentRoomData->doors[doorIndex].exitPosX - characterCorrectionX;
-		characterPosY = currentRoomData->doors[doorIndex].exitPosY - characerCorrectionY;
-		trajectory[currentTrajectoryIndex].x = characterPosX;
-		trajectory[currentTrajectoryIndex].y = characterPosY;
+		_iframe = 0;
+		_currentTrajectoryIndex = 0;
+		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
+		_characterPosY = _currentRoomData->doors[_doorIndex].exitPosY - kCharacerCorrectionY;
+		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
+		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouseManager->hide();
-		g_engine->_graphics->sceneTransition(transitionEffect, true, NULL);
+		g_engine->_mouse->hide();
+		g_engine->_graphics->sceneTransition(true, NULL);
 		g_engine->_sound->stopVoc();
-		loadScreenData(currentRoomData->doors[doorIndex].nextScene);
-		if (cpCounter > 89)
+		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
+		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(leftSfxVol, rightSfxVol);
-		switch (currentRoomData->code) {
+		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		switch (_currentRoomData->code) {
 		case 4:
 			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
 			break;
@@ -1044,15 +1038,281 @@ void TotEngine::changeRoom() {
 			g_engine->_sound->autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
-		g_engine->_graphics->sceneTransition(transitionEffect, false, sceneBackground);
-		cpCounter = cpCounter2;
-		g_engine->_mouseManager->show();
+		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_cpCounter = _cpCounter2;
+		g_engine->_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
 	}
 	}
-	oldTargetZone = 0;
+	_oldTargetZone = 0;
+}
+
+void TotEngine::clearObj() {
+
+	_curObject.code = 0;
+	_curObject.height = 0;
+	_curObject.name = "";
+	_curObject.lookAtTextRef = 0;
+	_curObject.beforeUseTextRef = 0;
+	_curObject.afterUseTextRef = 0;
+	_curObject.pickTextRef = 0;
+	_curObject.useTextRef = 0;
+	_curObject.speaking = 0;
+	_curObject.openable = false;
+	_curObject.closeable = false;
+	for (int i = 0; i <= 7; i++)
+		_curObject.used[i] = 0;
+	_curObject.pickupable = false;
+	_curObject.useWith = 0;
+	_curObject.replaceWith = 0;
+	_curObject.depth = 0;
+	_curObject.bitmapPointer = 0;
+	_curObject.bitmapSize = 0;
+	_curObject.rotatingObjectAnimation = 0;
+	_curObject.rotatingObjectPalette = 0;
+	_curObject.dropOverlayX = 0;
+	_curObject.dropOverlayY = 0;
+	_curObject.dropOverlay = 0;
+	_curObject.dropOverlaySize = 0;
+	_curObject.objectIconBitmap = 0;
+	_curObject.xgrid1 = 0;
+	_curObject.ygrid1 = 0;
+	_curObject.xgrid2 = 0;
+	_curObject.ygrid2 = 0;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			_curObject.walkAreasPatch[i][j] = 0;
+			_curObject.mouseGridPatch[i][j] = 0;
+		}
+	}
+	_cpCounter2 = _cpCounter;
+}
+
+/**
+ * Originally the Room file contains 8 copies of each room, one for every save plus the baseline (which is 0).
+ * To put this into memory we need to get the baseline of each room and then put them continuously in a byte stream.addr
+ * Whenever the game access a room instead of accessing the room for the autosave or the current save,
+ * we assume only one room register is there.
+ *
+ * To save a game we merely copy the entire stream into the save.
+ */
+void TotEngine::initializeScreenFile() {
+
+	Common::File roomFile;
+	if (!roomFile.open(Common::Path("PANTALLA.DAT"))) {
+		showError(320);
+	}
+
+	int64 fileSize = roomFile.size();
+	delete (_rooms);
+
+	byte *roomData = (byte *)malloc(kRoomRegSize * 32);
+	int roomCount = 0;
+
+	while (!roomFile.eos()) {
+		if (fileSize - roomFile.pos() >= kRoomRegSize) {
+			roomFile.read(roomData + kRoomRegSize * roomCount, kRoomRegSize);
+			// This one doesnt work for some reason:
+			// rooms->writeStream(roomFile.readStream(roomRegSize), roomRegSize);
+			roomFile.skip(kRoomRegSize * 7);
+			roomCount++;
+		} else {
+			break;
+		}
+	}
+	_rooms = new Common::MemorySeekableReadWriteStream(roomData, kRoomRegSize * roomCount, DisposeAfterUse::NO);
+	roomFile.close();
+}
+
+void TotEngine::resetGameState() {
+	_characterPosX = 160;
+	_characterPosY = 80;
+	_iframe = 0;
+	_trajectory[0].x = _characterPosX;
+	_trajectory[0].y = _characterPosY;
+	_xframe2 = 0;
+	_yframe2 = 1;
+	_currentZone = 1;
+	_targetZone = 1;
+	_oldTargetZone = 0;
+	_charFacingDirection = 1;
+	_firstTimeTopicA[0] = true;
+	_firstTimeTopicA[1] = true;
+	_firstTimeTopicA[2] = true;
+	_firstTimeTopicA[3] = true;
+	_firstTimeTopicA[4] = true;
+	_firstTimeTopicA[5] = true;
+	_firstTimeTopicA[6] = true;
+	_firstTimeTopicA[7] = true;
+	_firstTimeTopicA[8] = true;
+	_firstTimeTopicB[0] = false;
+	_firstTimeTopicB[1] = false;
+	_firstTimeTopicB[2] = false;
+	_firstTimeTopicB[3] = false;
+	_firstTimeTopicB[4] = false;
+	_firstTimeTopicB[5] = false;
+	_firstTimeTopicB[6] = false;
+	_firstTimeTopicB[7] = false;
+	_firstTimeTopicB[8] = false;
+
+	_firstTimeTopicC[0] = false;
+	_firstTimeTopicC[1] = false;
+	_firstTimeTopicC[2] = false;
+	_firstTimeTopicC[3] = false;
+	_firstTimeTopicC[4] = false;
+	_firstTimeTopicC[5] = false;
+	_firstTimeTopicC[6] = false;
+	_firstTimeTopicC[7] = false;
+	_firstTimeTopicC[8] = false;
+
+	_bookTopic[0] = false;
+	_bookTopic[1] = false;
+	_bookTopic[2] = false;
+	_bookTopic[3] = false;
+	_bookTopic[4] = false;
+	_bookTopic[5] = false;
+	_bookTopic[6] = false;
+	_bookTopic[7] = false;
+	_bookTopic[8] = false;
+
+	_mintTopic[0] = false;
+	_mintTopic[1] = false;
+	_mintTopic[2] = false;
+	_mintTopic[3] = false;
+	_mintTopic[4] = false;
+	_mintTopic[5] = false;
+	_mintTopic[6] = false;
+	_mintTopic[7] = false;
+	_mintTopic[8] = false;
+
+	_caves[0] = false;
+	_caves[1] = false;
+	_caves[2] = false;
+	_caves[3] = false;
+	_caves[4] = false;
+
+	_isSecondaryAnimationEnabled = false;
+	_mainCharAnimation.depth = 0;
+
+	_isDrawingEnabled = true;
+	_isSavingDisabled = false;
+	_startNewGame = false;
+	_shouldQuitGame = false;
+	_obtainedList1 = false;
+	_obtainedList2 = false;
+
+	_list1Complete = false;
+	_list2Complete = false;
+
+	_graphics->_paletteAnimFrame = 0;
+	_gamePart = 1;
+
+	_isVasePlaced = false;
+	_isScytheTaken = false;
+	_isTridentTaken = false;
+	_isPottersWheelDelivered = false;
+	_isMudDelivered = false;
+	_isSealRemoved = false;
+
+	_isGreenDevilDelivered = false;
+	_isRedDevilCaptured = false;
+	_isCupboardOpen = false;
+	_isChestOpen = false;
+
+	_isTVOn = false;
+	_isTrapSet = false;
+	_graphics->_palAnimStep = 0;
+
+	_niche[0][0] = 563;
+	_niche[0][1] = 561;
+	_niche[0][2] = 0;
+	_niche[0][3] = 2;
+
+	_niche[1][0] = 615;
+	_niche[1][1] = 622;
+	_niche[1][2] = 623;
+	_niche[1][3] = 0;
+
+	_currentTrajectoryIndex = 0;
+	_inventoryPosition = 0;
+}
+
+void TotEngine::initPlayAnim() {
+	isLoadingFromLauncher = false;
+	_decryptionKey = "23313212133122121312132132312312122132322131221322222112121"
+					"32121121212112111212112333131232323213222132123211213221231"
+					"32132213232333333213132132132322113212132121322123121232332"
+					"23123221322213233221112312231221233232122332211112233122321"
+					"222312211322312223";
+
+	gameTick = false;
+	for (int i = 0; i < kNumScreenOverlays; i++) {
+		_screenLayers[i] = NULL;
+	}
+
+	resetGameState();
+	_firstList[0] = 222;
+	_firstList[1] = 295;
+	_firstList[2] = 402;
+	_firstList[3] = 223;
+	_firstList[4] = 521;
+
+	_secondList[0] = 221;
+	_secondList[1] = 423;
+	_secondList[2] = 308;
+	_secondList[3] = 362;
+	_secondList[4] = 537;
+	_cpCounter = 0;
+	_cpCounter2 = 0;
+	_continueGame = true;
+	_firstTimeDone = false;
+	_isIntroSeen = false;
+	_inGame = false;
+}
+
+void TotEngine::clearVars() {
+	if(sceneBackground != NULL) {
+		free(sceneBackground);
+	}
+	if(backgroundCopy != NULL) {
+		free(backgroundCopy);
+	}
+	if(_conversationData != NULL) {
+		free(_conversationData);
+	}
+	if(_rooms != NULL) {
+		free(_rooms);
+	}
+	if(_invItemData != NULL) {
+		free(_invItemData);
+	}
+	for(int i = 0; i < kNumScreenOverlays; i++) {
+		if(_screenLayers[i] != NULL) {
+			free(_screenLayers[i]);
+		}
+	}
+	for(int i = 0; i < kInventoryIconCount; i++) {
+		if(_inventoryIconBitmaps[i] != NULL) {
+			free(_inventoryIconBitmaps[i]);
+		}
+	}
+	for(int i = 0; i < 4; i++) {
+		for(int j = 0; j < kWalkFrameCount + 30; j++) {
+			if(_mainCharAnimation.bitmap[i][j] != NULL) {
+				free(_mainCharAnimation.bitmap[i][j]);
+			}
+		}
+	}
+
+	for (int i = 0; i < _secondaryAnimDirCount; i++) {
+		for (int j = 0; j < _secondaryAnimationFrameCount; j++) {
+			if(_secondaryAnimation.bitmap[i][j] != NULL){
+				free(_secondaryAnimation.bitmap[i][j]);
+			}
+		}
+	}
 }
 
 } // End of namespace Tot

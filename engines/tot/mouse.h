@@ -27,6 +27,7 @@
 #include "tot/chrono.h"
 
 namespace Tot {
+
 struct MouseMask {
 	void *mask;
 	uint width;
@@ -38,14 +39,20 @@ public:
 	MouseManager();
 	~MouseManager();
 	void drawMask(int idx);
-	void setMousePos(int mask, int x, int y);
+	void warpMouse(int mask, int x, int y);
 	void setMask(int maskNum);
 	void animateMouseIfNeeded();
 	void hide();
 	void show();
 	void setMouseArea(Common::Rect rect);
-	void setMousePos(Common::Point p);
+	void warpMouse(Common::Point p);
 	void printPos(int x, int y, int screenPosX, int screenPosY);
+	Common::Point getClickCoordsWithinGrid();
+	Common::Point getMouseCoordsWithinGrid();
+
+	uint mouseX, mouseY; // Coords of the mouse sprite
+	uint mouseClickX, mouseClickY; // Coords of mouse clicks
+	byte mouseMaskIndex; // Frame index of the mouse mask
 
 private:
 	Common::Rect _mouseArea;

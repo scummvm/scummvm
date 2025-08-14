@@ -26,9 +26,8 @@
 #include "gui/message.h"
 
 #include "tot/forest.h"
-#include "tot/vars.h"
-#include "tot/routines.h"
 #include "tot/tot.h"
+#include "tot/vars.h"
 
 namespace Tot {
 
@@ -84,7 +83,7 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	s.syncAsByte(game.isTVOn);
 	s.syncAsByte(game.isTrapSet);
 
-	for (int i = 0; i < inventoryIconCount; i++) {
+	for (int i = 0; i < kInventoryIconCount; i++) {
 		s.syncAsUint16LE(game.mobj[i].bitmapIndex);
 		s.syncAsUint16LE(game.mobj[i].code);
 		s.syncString(game.mobj[i].objectName);
@@ -103,7 +102,7 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 	s.syncString(game.objetomoinventoryObjectNamehila);
 	s.syncString(game.characterName);
 
-	for (int i = 0; i < routePointCount; i++) {
+	for (int i = 0; i < kRoutePointCount; i++) {
 		s.syncAsSint16LE(game.mainRoute[i].x);
 		s.syncAsSint16LE(game.mainRoute[i].y);
 	}
@@ -113,7 +112,7 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 		s.syncAsSint16LE(game.trajectory[i].y);
 	}
 
-	for (int indiaux = 0; indiaux < characterCount; indiaux++) {
+	for (int indiaux = 0; indiaux < kCharacterCount; indiaux++) {
 		// interleave them just to avoid creating many loops
 		s.syncAsByte(game.firstTimeTopicA[indiaux]);
 		s.syncAsByte(game.firstTimeTopicB[indiaux]);
@@ -143,12 +142,12 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 	if (s.isSaving()) {
 
 		// Restore trajectory
-		setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, RESTORE);
+		g_engine->setRoomTrajectories(g_engine->_secondaryAnimHeight, g_engine->_secondaryAnimWidth, RESTORE);
 		// Make sure to save any unsaved changes in the room
-		saveRoomData(currentRoomData, rooms);
+		g_engine->saveRoomData(g_engine->_currentRoomData, g_engine->_rooms);
 
 		// Do not fix screen grids, they will be fixed differently below
-		setRoomTrajectories(secondaryAnimHeight, secondaryAnimWidth, SET_WITH_ANIM);
+		g_engine->setRoomTrajectories(g_engine->_secondaryAnimHeight, g_engine->_secondaryAnimWidth, SET_WITH_ANIM);
 
 		int size = roomStream->size();
 		byte *roomBuf = (byte *)malloc(size);
@@ -160,14 +159,14 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 	}
 	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
-		int size = rooms->size();
-		delete (rooms);
+		int size = g_engine->_rooms->size();
+		delete (g_engine->_rooms);
 		byte *roomBuf = (byte *)malloc(size);
 		s.syncBytes(roomBuf, size);
 
 		debug("Loading room data now");
 		// TODO: Will roomBuf be automatically freed?
-		rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
+		g_engine->_rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
 }
@@ -186,12 +185,12 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		debug("return conversation totalBytes synced %d", s.bytesSynced());
 	}
 	if (s.isLoading()) {
-		delete (conversationData);
+		delete (g_engine->_conversationData);
 		byte *convBuf = (byte *)malloc(size);
 		s.syncBytes(convBuf, size);
 		debug("Loading conversation data now");
 		// TODO: Will objBuf be automatically freed?
-		conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
+		g_engine->_conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
 }
@@ -209,12 +208,12 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 	}
 	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
-		delete (invItemData);
+		delete (g_engine->_invItemData);
 		byte *objBuf = (byte *)malloc(size);
 		s.syncBytes(objBuf, size);
 		debug("Loading item data now");
 		// TODO: Will objBuf be automatically freed?
-		invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
+		g_engine->_invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
 }
@@ -224,15 +223,15 @@ Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
 		warning("Error while synchronizing general data");
 		return Common::kUnknownError;
 	}
-	if (!syncRoomData(ser, rooms)) {
+	if (!syncRoomData(ser, g_engine->_rooms)) {
 		warning("Error while synchronizing room data");
 		return Common::kUnknownError;
 	}
-	if (!syncItemData(ser, invItemData)) {
+	if (!syncItemData(ser, g_engine->_invItemData)) {
 		warning("Error while syncrhonizing object data");
 		return Common::kUnknownError;
 	}
-	if (!syncConversationData(ser, conversationData)) {
+	if (!syncConversationData(ser, g_engine->_conversationData)) {
 		warning("Error while syncrhonizing conversation data");
 		return Common::kUnknownError;
 	}
@@ -298,7 +297,7 @@ bool TotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 bool TotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return inGame && saveAllowed;
+	return _inGame && saveAllowed;
 }
 
 } // End of namespace Tot

@@ -114,7 +114,7 @@ void handleFlcEvent(byte eventNumber) {
 	bool isEnglish = !isSpanish;
 	switch (eventNumber) {
 	case 0:
-		if (cpCounter > 103)
+		if (g_engine->_cpCounter > 103)
 			showError(274);
 		break;
 	case 1:
@@ -899,7 +899,7 @@ void blit(const Graphics::Surface *src, Common::Rect bounds) {
 
 	for (int i = 0; i < height - 1; i++) {
 		for (int j = 0; j < width - 1; j++) {
-			*((byte *)dest.getBasePtr(j, i)) = *((byte *)src->getBasePtr(j, i));
+			*((byte *)dest.getBasePtr(j, i)) = *((const byte *)src->getBasePtr(j, i));
 		}
 	}
 	g_engine->_screen->addDirtyRect(bounds);
@@ -967,32 +967,27 @@ static void loadFlc(
 						palette[2] = 0;
 						if (fullPalette) {
 							g_engine->_graphics->fadePalettes(g_engine->_graphics->getPalette(), palette);
-							g_engine->_graphics->copyPalette(palette, pal);
+							g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
 						} else if (limitPaletteTo200) {
 							g_engine->_graphics->setPalette(palette, 0, 200);
 							for (int i = 0; i <= 200; i++) {
-								if(gamePart == 2 && !shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
+								if(g_engine->_gamePart == 2 && !g_engine->_shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
 									continue;
 								}
-								pal[i * 3 + 0] = palette[i * 3 + 0];
-								pal[i * 3 + 1] = palette[i * 3 + 1];
-								pal[i * 3 + 2] = palette[i * 3 + 2];
+								g_engine->_graphics->_pal[i * 3 + 0] = palette[i * 3 + 0];
+								g_engine->_graphics->_pal[i * 3 + 1] = palette[i * 3 + 1];
+								g_engine->_graphics->_pal[i * 3 + 2] = palette[i * 3 + 2];
 							}
 
 						} else {
 							g_engine->_graphics->setPalette(palette);
-							g_engine->_graphics->copyPalette(palette, pal);
+							g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
 						}
 					}
 					// Make sure we also update the palette animations! Esp. for part 2
-					if (currentRoomData != NULL && (currentRoomData->paletteAnimationFlag) && (palAnimStep >= 4) && !shouldQuitGame) {
-						palAnimStep = 0;
-						if (isPaletteAnimEnabled > 6)
-							isPaletteAnimEnabled = 0;
-						else isPaletteAnimEnabled += 1;
-						g_engine->_graphics->updatePalette(isPaletteAnimEnabled);
-					} else palAnimStep += 1;
-
+					if(g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
+						g_engine->_graphics->advancePaletteAnim();
+					}
 					gameTick = false;
 				} else {
 					break;

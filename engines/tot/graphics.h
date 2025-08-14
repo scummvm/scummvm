@@ -72,11 +72,29 @@ public:
 	void restoreBackground();
 	void restoreBackgroundArea(uint x, uint y, uint x2, uint y2);
 
-	void sceneTransition(byte effectNumber, bool fadeToBlack, byte *screen);
+	void sceneTransition(bool fadeToBlack, byte *screen, byte effectNumber);
+	void sceneTransition(bool fadeToBlack, byte *screen);
 
+	void advancePaletteAnim();
 	void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
 	void printColor(int x, int y, int color);
 
+	/**
+	 * Aux for palette animation
+	 */
+	byte _paletteAnimFrame = 0;
+	/**
+	 * Delay of palette animation
+	 */
+	byte _palAnimStep = 0;
+	/**
+	 * 54 color palette slice.
+	 */
+	byte _palAnimSlice[768] = { 0 };
+	/**
+	 * General palette
+	 */
+	byte _pal[768] = { 0 };
 
 private:
 	void updateSceneAreaIfNeeded(int speed = 1);

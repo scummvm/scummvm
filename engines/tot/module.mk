@@ -19,7 +19,8 @@ MODULE_OBJS = \
 	mouse.o \
 	chrono.o \
 	saveload.o \
-	midi.o
+	midi.o \
+	debug.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOT), DYNAMIC_PLUGIN)
