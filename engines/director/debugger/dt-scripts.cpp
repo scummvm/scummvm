@@ -160,16 +160,14 @@ void showScriptCasts() {
 }
 
 static void updateCurrentScript() {
-	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty) {
-		debug("%d:%d: %s", g_lingo->_exec._state, _state->_dbg._isScriptDirty, g_director->getCurrentMovie()->getMacName().c_str());
+	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
 		return;
-	}
+
 
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
-	if (callstack.empty()) {
-		debug("Here I returned but before, movie name: %s", g_director->getCurrentMovie()->getMacName().c_str());
+	if (callstack.empty())
 		return;
-	}
+
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];

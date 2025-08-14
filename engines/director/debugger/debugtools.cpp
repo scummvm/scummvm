@@ -289,7 +289,6 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 void setScriptToDisplay(const ImGuiScript &script) {
 	uint index = _state->_functions._scriptData->_scripts.size();
 	if (index && _state->_functions._scriptData->_scripts[index - 1] == script) {
-		debug("Here I returned: %s", g_director->getCurrentMovie()->getMacName().c_str());
 		_state->_functions._scriptData->_showScript = true;
 		return;
 	}

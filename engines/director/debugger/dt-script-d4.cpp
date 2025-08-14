@@ -1168,10 +1168,8 @@ private:
 
 		// draw current statement
 		if (showCurrentStatement) {
-			debug("Does this get called for all statements: %s", _script.handlerId.c_str());
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			debug("Why not scroll here?: %d:%d", _state->_dbg._isScriptDirty, !ImGui::IsItemVisible());
 			if (_state->_dbg._isScriptDirty) {
 				ImGui::SetScrollHereY(0.5f);
 			}
