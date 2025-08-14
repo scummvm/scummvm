@@ -63,14 +63,10 @@ static  CWnd        *pParentWnd = nullptr;             // parent window for this
 static  CGeneralStore   *pStoreDialog = nullptr;       // pointer to our store dialog box
 
 static  CColorButton *pOKButton = nullptr;             // OKAY button on scroll
-static  CRect       OkayRect;                       // rectangle bounding the OKAY button
 
 static  CInventory  *pInventory = nullptr;             // inventory to be displayed
 static  CInventory  *pGeneralStore = nullptr;          // general store's inventory
 
-static  CRect       StoreRect;                      // x/y (left/right) and dx/dy (right/bottom) for the store window
-static  CRect       ScrollTopRect,                  // area spanned by upper scroll curl
-        ScrollBotRect;                  // area spanned by lower scroll curl
 
 //static  CDC         *pStoreDC = nullptr;               // device context for the store bitmap
 static  CBitmap     *pStoreBitmap = nullptr;           // bitmap for an entirely blank store
@@ -108,11 +104,7 @@ static  BOOL        bPlayingHodj = TRUE;            // whether playing Hodj or P
 BOOL CGeneralStore::SetupKeyboardHook(void) {
 	pStoreDialog = this;                            // retain pointer to our dialog box
 
-	lpfnKbdHook = (FPSTOREHOOKPROC)GetProcAddress(hDLLInst, "StoreHookProc");
-	if (lpfnKbdHook == nullptr)                           // setup pointer to our procedure
-		return FALSE;
-
-	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, (HOOKPROC) lpfnKbdHook, hExeInst, GetCurrentTask());
+	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, StoreHookProc, hExeInst, GetCurrentTask());
 	if (hKbdHook == nullptr)                           // plug in our keyboard hook
 		return FALSE;
 
