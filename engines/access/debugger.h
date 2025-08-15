@@ -43,6 +43,8 @@ protected:
 	bool Cmd_Timers(int argc, const char **argv);
 	bool Cmd_GetFlag(int argc, const char **argv);
 	bool Cmd_SetFlag(int argc, const char **argv);
+	bool Cmd_GetTravel(int argc, const char **argv);
+	bool Cmd_SetTravel(int argc, const char **argv);
 
 public:
 	static Debugger *init(AccessEngine *vm);

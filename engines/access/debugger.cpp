@@ -72,6 +72,8 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("timers", WRAP_METHOD(Debugger, Cmd_Timers));
 	registerCmd("getflag", WRAP_METHOD(Debugger, Cmd_GetFlag));
 	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
+	registerCmd("gettravel", WRAP_METHOD(Debugger, Cmd_GetTravel));
+	registerCmd("settravel", WRAP_METHOD(Debugger, Cmd_SetTravel));
 }
 
 Debugger::~Debugger() {
@@ -143,7 +145,7 @@ bool Debugger::Cmd_PlayMovie(int argc, const char **argv) {
 bool Debugger::Cmd_DumpScript(int argc, const char **argv) {
 	if (argc != 2) {
 		debugPrintf("Usage: %s <path>\n", argv[0]);
-		debugPrintf("Dumps the currently loaded script to the given path\n");
+		debugPrintf("Dumps the currently loaded script data to the given path\n");
 		return true;
 	}
 
@@ -197,20 +199,20 @@ bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
-	if (flagNum < 0 || flagNum >= 256) {
+	int num = strToInt(argv[1]);
+	if (num < 0 || num >= ARRAYSIZE(_vm->_flags)) {
 		debugPrintf("Invalid flag number\n");
 		return true;
 	}
 
-	int flagVal = strToInt(argv[2]);
-	if (flagVal < 0 || flagVal >= 256) {
+	int val = strToInt(argv[2]);
+	if (val < 0 || val >= 256) {
 		debugPrintf("Invalid flag val, must be byte\n");
 		return true;
 	}
-	_vm->_flags[flagNum] = flagVal;
+	_vm->_flags[num] = val;
 
-	debugPrintf("Flag %d set to %d\n", flagNum, flagVal);
+	debugPrintf("Flag %d set to %d\n", num, val);
 	return true;
 }
 
@@ -229,6 +231,45 @@ bool Debugger::Cmd_Timers(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Debugger::Cmd_GetTravel(int argc, const char **argv) {
+	debugPrintf("Travel table:\n");
+
+	const int ncols = ARRAYSIZE(_vm->_travel) / 10;
+	for (int row = 0; row < 10; ++row) {
+		for (int col = 0; col < ncols; ++col) {
+			debugPrintf("%d ", _vm->_travel[row * ncols + col]);
+		}
+		debugPrintf("\n");
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_SetTravel(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s <travel number> <travel value>\n", argv[0]);
+		debugPrintf("Sets the given travel table entry to the given value\n");
+		return true;
+	}
+
+	int num = strToInt(argv[1]);
+	if (num < 0 || num >= ARRAYSIZE(_vm->_travel)) {
+		debugPrintf("Invalid travel number\n");
+		return true;
+	}
+
+	int val = strToInt(argv[2]);
+	if (val < 0 || val >= 256) {
+		debugPrintf("Invalid travel val, must be byte\n");
+		return true;
+	}
+	_vm->_flags[num] = val;
+
+	debugPrintf("Travel %d set to %d\n", num, val);
+	return true;
+}
+
 
 /*------------------------------------------------------------------------*/
 
