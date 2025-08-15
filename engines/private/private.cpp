@@ -384,6 +384,7 @@ Common::Error PrivateEngine::run() {
 				_videoDecoder = nullptr;
 				delete _subtitles;
 				_subtitles = nullptr;
+				g_system->clearOverlay();
 				_currentMovie = "";
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
@@ -413,6 +414,7 @@ Common::Error PrivateEngine::run() {
 			} else {
 				delete _subtitles;
 				_subtitles = nullptr;
+				g_system->clearOverlay();
 			}
 		}
 	}
@@ -1501,6 +1503,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	} else {
 		delete _subtitles;
 		_subtitles = nullptr;
+		g_system->clearOverlay();
 	}
 }
 void PrivateEngine::playVideo(const Common::String &name) {
@@ -1525,6 +1528,7 @@ void PrivateEngine::skipVideo() {
 	_videoDecoder = nullptr;
 	delete _subtitles;
 	_subtitles = nullptr;
+	g_system->clearOverlay();
 	_currentMovie = "";
 }
 
