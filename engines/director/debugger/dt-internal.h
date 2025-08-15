@@ -99,7 +99,7 @@ typedef struct ImGuiWindows {
 
 typedef struct ImGuiState {
 	struct {
-		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
+		Common::HashMap<CastMember *, ImGuiImage> _textures;
 		bool _listView = true;
 		int _thumbnailSize = 64;
 		ImGuiTextFilter _nameFilter;
