@@ -1060,6 +1060,7 @@ int Datum::asInt() const {
 
 	switch (type) {
 	case STRING:
+	case SYMBOL:
 		{
 			Common::String src = asString();
 			char *endPtr = nullptr;
@@ -1084,11 +1085,6 @@ int Datum::asInt() const {
 		} else {
 			res = (int)u.f;
 		}
-		break;
-	case SYMBOL:
-		// Undefined behaviour, but relied on by bad game code that e.g. adds things to symbols.
-		// Return a 32-bit number that's sort of related.
-		res = (int)((uint64)u.s & 0xffffffffL);
 		break;
 	default:
 		warning("Incorrect operation asInt() for type: %s", type2str());

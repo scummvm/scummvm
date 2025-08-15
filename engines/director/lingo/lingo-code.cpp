@@ -750,7 +750,8 @@ Datum LC::addData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() + d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() + d2.asInt());
+		warning("LC::addData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -779,7 +780,8 @@ Datum LC::subData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() - d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() - d2.asInt());
+		warning("LC::subData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -808,7 +810,8 @@ Datum LC::mulData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() * d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		res = Datum(d1.asInt() * d2.asInt());
+		warning("LC::mulData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 	return res;
 }
@@ -831,7 +834,7 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 
 	if ((d2.type == INT && d2.u.i == 0) ||
 			(d2.type == FLOAT && d2.u.f == 0.0)) {
-		warning("LC::divData(): division by zero");
+		g_lingo->lingoError("LC::divData(): division by zero");
 		d2 = Datum(1);
 	}
 
@@ -846,7 +849,12 @@ Datum LC::divData(Datum &d1, Datum &d2) {
 	} else if (alignedType == INT) {
 		res = Datum(d1.asInt() / d2.asInt());
 	} else {
-		g_lingo->lingoError("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
+		int denom = d2.asInt();
+		if (denom == 0) {
+			g_lingo->lingoError("LC::divData(): division by zero");
+		}
+		res = Datum(d1.asInt() / d2.asInt());
+		warning("LC::divData(): not supported between types %s and %s", d1.type2str(), d2.type2str());
 	}
 
 	return res;
@@ -866,8 +874,8 @@ Datum LC::modData(Datum &d1, Datum &d2) {
 	int i1 = d1.asInt();
 	int i2 = d2.asInt();
 	if (i2 == 0) {
-		g_lingo->lingoError("LC::modData(): division by zero");
-		i2 = 1;
+		warning("LC::modData(): division by zero");
+		return Datum(0);
 	}
 
 	Datum res(i1 % i2);
@@ -900,7 +908,8 @@ Datum LC::negateData(Datum &d) {
 	} else if (d.type == VOID) {
 		res = Datum(0);
 	} else {
-		g_lingo->lingoError("LC::negateData(): not supported for type %s", d.type2str());
+		warning("LC::negateData(): not supported for type %s", d.type2str());
+		res = Datum(-d.asInt());
 	}
 
 	return res;
