@@ -182,6 +182,13 @@ CastMember *Cast::getCastMemberByScriptId(int scriptId) {
 	return nullptr;
 }
 
+int Cast::getCastIdByScriptId(uint32 scriptId) const {
+	if (_castsScriptIds.contains(scriptId)) {
+		return _castsScriptIds.getVal(scriptId);
+	}
+	return -1;
+}
+
 CastMemberInfo *Cast::getCastMemberInfo(int castId) {
 	CastMemberInfo *result = nullptr;
 
