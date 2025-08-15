@@ -31,7 +31,7 @@ static int sideOfLine(Point a, Point b, Point q) {
 }
 
 static bool lineIntersects(Point a1, Point b1, Point a2, Point b2) {
-	return (sideOfLine(a1, b1, a2) > 0) != (sideOfLine(a1, b1, b2) > 0); 
+	return (sideOfLine(a1, b1, a2) > 0) != (sideOfLine(a1, b1, b2) > 0);
 }
 
 static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
@@ -43,8 +43,7 @@ static bool segmentsIntersect(Point a1, Point b1, Point a2, Point b2) {
 			return lineIntersects(b1, a1, b2, a2) && lineIntersects(b2, a2, b1, a1);
 		else
 			return lineIntersects(a1, b1, b2, a2) && lineIntersects(b2, a2, a1, b1);
-	}
-	else {
+	} else {
 		if (a1.x > b1.x)
 			return lineIntersects(b1, a1, a2, b2) && lineIntersects(a2, b2, b1, a1);
 		else
@@ -67,9 +66,12 @@ EdgeDistances::EdgeDistances(Point edgeA, Point edgeB, Point query) {
 
 bool Polygon::contains(Point query) const {
 	switch (_points.size()) {
-	case 0: return false;
-	case 1: return query == _points[0];
-	case 2: return edgeDistances(0, query)._toEdge < 2.0f;
+	case 0:
+		return false;
+	case 1:
+		return query == _points[0];
+	case 2:
+		return edgeDistances(0, query)._toEdge < 2.0f;
 	default:
 		// we assume that the polygon is convex
 		for (uint i = 1; i < _points.size(); i++) {
@@ -108,23 +110,18 @@ Point Polygon::closestPointTo(Point query, float &distanceSqr) const {
 	assert(_points.size() > 0);
 	Common::Point bestPoint = {};
 	distanceSqr = std::numeric_limits<float>::infinity();
-	for (uint i = 0; i < _points.size(); i++)
-	{
+	for (uint i = 0; i < _points.size(); i++) {
 		auto edgeDists = edgeDistances(i, query);
-		if (edgeDists._onEdge < 0.0f)
-		{
+		if (edgeDists._onEdge < 0.0f) {
 			float pointDistSqr = as2D(query - _points[i]).getSquareMagnitude();
-			if (pointDistSqr < distanceSqr)
-			{
+			if (pointDistSqr < distanceSqr) {
 				bestPoint = _points[i];
 				distanceSqr = pointDistSqr;
 			}
 		}
-		if (edgeDists._onEdge >= 0.0f && edgeDists._onEdge <= edgeDists._edgeLength)
-		{
+		if (edgeDists._onEdge >= 0.0f && edgeDists._onEdge <= edgeDists._edgeLength) {
 			float edgeDistSqr = powf(edgeDists._toEdge, 2.0f);
-			if (edgeDistSqr < distanceSqr)
-			{
+			if (edgeDistSqr < distanceSqr) {
 				distanceSqr = edgeDistSqr;
 				uint j = (i + 1) % _points.size();
 				bestPoint = _points[i] + (_points[j] - _points[i]) * (edgeDists._onEdge / edgeDists._edgeLength);
@@ -164,9 +161,12 @@ static float depthAtForConvex(const PathFindingPolygon &p, Point q) {
 float PathFindingPolygon::depthAt(Point query) const {
 	switch (_points.size()) {
 	case 0:
-	case 1: return 1.0f;
-	case 2: return depthAtForLine(_points[0], _points[1], query, _pointDepths[0], _pointDepths[1]);
-	default: return depthAtForConvex(*this, query);
+	case 1:
+		return 1.0f;
+	case 2:
+		return depthAtForLine(_points[0], _points[1], query, _pointDepths[0], _pointDepths[1]);
+	default:
+		return depthAtForConvex(*this, query);
 	}
 }
 
@@ -238,10 +238,14 @@ static Color colorAtForConvex(const FloorColorPolygon &p, Point query) {
 
 Color FloorColorPolygon::colorAt(Point query) const {
 	switch (_points.size()) {
-	case 0: return kWhite;
-	case 1: return { 255, 255, 255, _pointColors[0].a };
-	case 2: return colorAtForLine(_points[0], _points[1], query, _pointColors[0], _pointColors[1]);
-	default: return colorAtForConvex(*this, query);
+	case 0:
+		return kWhite;
+	case 1:
+		return { 255, 255, 255, _pointColors[0].a };
+	case 2:
+		return colorAtForLine(_points[0], _points[1], query, _pointColors[0], _pointColors[1]);
+	default:
+		return colorAtForConvex(*this, query);
 	}
 }
 
@@ -310,12 +314,10 @@ Point Shape::closestPointTo(Point query, int32 &polygonI) const {
 	assert(_polygons.size() > 0);
 	float bestDistanceSqr = std::numeric_limits<float>::infinity();
 	Point bestPoint = {};
-	for (uint i = 0; i < _polygons.size(); i++)
-	{
+	for (uint i = 0; i < _polygons.size(); i++) {
 		float curDistanceSqr = std::numeric_limits<float>::infinity();
 		Point curPoint = at(i).closestPointTo(query, curDistanceSqr);
-		if (curDistanceSqr < bestDistanceSqr)
-		{
+		if (curDistanceSqr < bestDistanceSqr) {
 			bestDistanceSqr = curDistanceSqr;
 			bestPoint = curPoint;
 			polygonI = (int32)i;
@@ -486,10 +488,10 @@ void PathFindingShape::initializeFloydWarshall() {
 }
 
 void PathFindingShape::calculateFloydWarshall() {
-	const auto distance = [&](uint a, uint b) -> uint& {
+	const auto distance = [&] (uint a, uint b) -> uint &{
 		return _distanceMatrix[a * _linkPoints.size() + b];
 	};
-	const auto previousTarget = [&](uint a, uint b) -> int32& {
+	const auto previousTarget = [&] (uint a, uint b) -> int32 &{
 		return _previousTarget[a * _linkPoints.size() + b];
 	};
 	for (uint over = 0; over < _linkPoints.size(); over++) {

@@ -48,7 +48,7 @@ Item::Item(const Item &other)
 void Item::draw() {
 	if (!isEnabled())
 		return;
-	Item* heldItem = g_engine->player().heldItem();
+	Item *heldItem = g_engine->player().heldItem();
 	if (heldItem == nullptr || !heldItem->name().equalsIgnoreCase(name()))
 		GraphicObject::draw();
 }
@@ -61,8 +61,7 @@ void Item::trigger() {
 			player.triggerObject(this, "MIRAR");
 		else
 			heldItem = nullptr;
-	}
-	else if (heldItem == nullptr)
+	} else if (heldItem == nullptr)
 		heldItem = this;
 	else if (g_engine->script().hasProcedure(name(), heldItem->name()) ||
 		!g_engine->script().hasProcedure(heldItem->name(), name()))
@@ -73,8 +72,7 @@ void Item::trigger() {
 
 ITriggerableObject::ITriggerableObject(ReadStream &stream)
 	: _interactionPoint(Shape(stream).firstPoint())
-	, _interactionDirection((Direction)stream.readSint32LE()) {
-}
+	, _interactionDirection((Direction)stream.readSint32LE()) {}
 
 void ITriggerableObject::onClick() {
 	auto heldItem = g_engine->player().heldItem();
@@ -135,11 +133,17 @@ CursorType Door::cursorType() const {
 	if (fromObject != CursorType::Point)
 		return fromObject;
 	switch (_interactionDirection) {
-	case Direction::Up: return CursorType::LeaveUp;
-	case Direction::Right: return CursorType::LeaveRight;
-	case Direction::Down: return CursorType::LeaveDown;
-	case Direction::Left: return CursorType::LeaveLeft;
-	default: assert(false && "Invalid door character direction"); return fromObject;
+	case Direction::Up:
+		return CursorType::LeaveUp;
+	case Direction::Right:
+		return CursorType::LeaveRight;
+	case Direction::Down:
+		return CursorType::LeaveDown;
+	case Direction::Left:
+		return CursorType::LeaveLeft;
+	default:
+		assert(false && "Invalid door character direction");
+		return fromObject;
 	}
 }
 
@@ -182,16 +186,14 @@ void Character::update() {
 	if (animateGraphic != nullptr) {
 		animateGraphic->topLeft() = Point(0, 0);
 		animateGraphic->update();
-	}
-	else if (_isTalking)
+	} else if (_isTalking)
 		updateTalkingAnimation();
 	else if (g_engine->world().somebodyUsing(this)) {
 		Graphic *talkGraphic = graphicOf(_curTalkingObject, &_graphicTalking);
 		talkGraphic->start(true);
 		talkGraphic->pause();
 		talkGraphic->update();
-	}
-	else
+	} else
 		_graphicNormal.update();
 }
 
@@ -289,8 +291,7 @@ struct SayTextTask final : public Task {
 	SayTextTask(Process &process, Character *character, int32 dialogId)
 		: Task(process)
 		, _character(character)
-		, _dialogId(dialogId) {
-	}
+		, _dialogId(dialogId) {}
 
 	SayTextTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -306,9 +307,8 @@ struct SayTextTask final : public Task {
 		while (true) {
 			g_engine->player().addLastDialogCharacter(_character);
 
-			if (_soundHandle == SoundHandle {})
-			{
-				bool hasMortadeloVoice = g_engine->game().hasMortadeloVoice(_character);					
+			if (_soundHandle == SoundHandle {}) {
+				bool hasMortadeloVoice = g_engine->game().hasMortadeloVoice(_character);
 				_soundHandle = g_engine->sounds().playVoice(
 					String::format(hasMortadeloVoice ? "M%04d" : "%04d", _dialogId),
 					0);
@@ -404,8 +404,7 @@ struct AnimateCharacterTask final : public Task {
 		_graphic->start(false);
 		if (_character->room() == g_engine->player().currentRoom())
 			_graphic->update();
-		do
-		{
+		do {
 			TASK_YIELD(2);
 			if (process().isActiveForPlayer() && g_engine->input().wasAnyMouseReleased())
 				_graphic->pause();
@@ -447,8 +446,7 @@ struct LerpLodBiasTask final : public Task {
 		: Task(process)
 		, _character(character)
 		, _targetLodBias(targetLodBias)
-		, _durationMs(durationMs) {
-	}
+		, _durationMs(durationMs) {}
 
 	LerpLodBiasTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -575,8 +573,7 @@ static Direction getDirection(Point from, Point to) {
 		return slope > 1000 ? Direction::Up
 			: slope < -1000 ? Direction::Down
 			: Direction::Right;
-	}
-	else { // from.x > to.x
+	} else { // from.x > to.x
 		int slope = 1000 * delta.y / delta.x;
 		return slope > 1000 ? Direction::Up
 			: slope < -1000 ? Direction::Down
@@ -597,16 +594,14 @@ void WalkingCharacter::updateWalking() {
 	if (_sourcePos == targetPos) {
 		_currentPos = targetPos;
 		_pathPoints.pop();
-	}
-	else {
+	} else {
 		updateWalkingAnimation();
 		const int32 distanceToTarget = (int32)(sqrtf(_sourcePos.sqrDist(targetPos)));
 		if (_walkedDistance < distanceToTarget) {
 			// separated because having only 16 bits and multiplications seems dangerous
 			_currentPos.x = _sourcePos.x + _walkedDistance * (targetPos.x - _sourcePos.x) / distanceToTarget;
 			_currentPos.y = _sourcePos.y + _walkedDistance * (targetPos.y - _sourcePos.y) / distanceToTarget;
-		}
-		else {
+		} else {
 			_sourcePos = _currentPos = targetPos;
 			_pathPoints.pop();
 			_walkedDistance = 1;
@@ -638,8 +633,7 @@ void WalkingCharacter::updateWalkingAnimation() {
 		_lastWalkAnimFrame = expectedFrame;
 		stepFrameFrom = 2 * expectedFrame - 2;
 		stepFrameTo = 2 * expectedFrame;
-	}
-	else {
+	} else {
 		const int32 frameThreshold = _lastWalkAnimFrame <= halfFrameCount - 1
 			? _lastWalkAnimFrame
 			: (_lastWalkAnimFrame - halfFrameCount + 1) % (halfFrameCount - 2) + 1;
@@ -648,8 +642,7 @@ void WalkingCharacter::updateWalkingAnimation() {
 		if (expectedFrame >= frameThreshold) {
 			stepFrameFrom = 2 * expectedFrame - 2;
 			stepFrameTo = 2 * expectedFrame;
-		}
-		else {
+		} else {
 			stepFrameFrom = 2 * (halfFrameCount - 2);
 			stepFrameTo = 2 * halfFrameCount - 2;
 		}
@@ -661,8 +654,7 @@ void WalkingCharacter::updateWalkingAnimation() {
 	_graphicNormal.frameI() = 2 * expectedFrame; // especially this: wtf?
 }
 
-void WalkingCharacter::onArrived() {
-}
+void WalkingCharacter::onArrived() {}
 
 void WalkingCharacter::stopWalking(Direction direction) {
 	// be careful, the original engine had two versions of this method
@@ -778,12 +770,11 @@ void WalkingCharacter::syncGame(Serializer &serializer) {
 struct ArriveTask : public Task {
 	ArriveTask(Process &process, const WalkingCharacter *character)
 		: Task(process)
-		, _character(character) {
-	}
+		, _character(character) {}
 
 	ArriveTask(Process &process, Serializer &s)
 		: Task(process) {
-		syncGame(s);		
+		syncGame(s);
 	}
 
 	TaskReturn run() override {
@@ -891,8 +882,7 @@ void MainCharacter::walkTo(
 		if (!otherCharacter->isBusy()) {
 			if (activeFloor != nullptr && activeFloor->findEvadeTarget(evadeTarget, activeDepthScale, avoidanceDistSqr, evadeTarget))
 				otherCharacter->WalkingCharacter::walkTo(evadeTarget);
-		}
-		else if (!willIBeBusy) {
+		} else if (!willIBeBusy) {
 			if (activeFloor != nullptr)
 				activeFloor->findEvadeTarget(evadeTarget, activeDepthScale, avoidanceDistSqr, target);
 		}
@@ -908,8 +898,7 @@ void MainCharacter::draw() {
 		if (_currentPos.y <= g_engine->world().filemon()._currentPos.y) {
 			g_engine->world().mortadelo().drawInner();
 			g_engine->world().filemon().drawInner();
-		}
-		else {
+		} else {
 			g_engine->world().filemon().drawInner();
 			g_engine->world().mortadelo().drawInner();
 		}
@@ -1040,8 +1029,7 @@ struct DialogMenuTask : public Task {
 	DialogMenuTask(Process &process, MainCharacter *character)
 		: Task(process)
 		, _input(g_engine->input())
-		, _character(character) {
-	}
+		, _character(character) {}
 
 	DialogMenuTask(Process &process, Serializer &s)
 		: Task(process)
@@ -1117,7 +1105,7 @@ private:
 				g_engine->globalUI().dialogFont(),
 				g_engine->world().getDialogLine(itLine._dialogId),
 				Point(kTextXOffset, itLine._yPosition),
-				maxTextWidth(), false, isHovered ? Color{ 255, 255, 128, 255 } : kWhite, -kForegroundOrderCount + 2);
+				maxTextWidth(), false, isHovered ? Color { 255, 255, 128, 255 } : kWhite, -kForegroundOrderCount + 2);
 			isSomethingHovered = isSomethingHovered || isHovered;
 			if (isHovered && _input.wasMouseLeftReleased())
 				return i - 1;
@@ -1169,8 +1157,7 @@ const char *FloorColor::typeName() const { return "FloorColor"; }
 
 FloorColor::FloorColor(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
-	, _shape(stream) {
-}
+	, _shape(stream) {}
 
 void FloorColor::update() {
 	auto updateFor = [&] (MainCharacter &character) {
