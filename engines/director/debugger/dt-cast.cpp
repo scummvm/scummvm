@@ -203,6 +203,8 @@ void showCast() {
 							break;
 
 						case kCastText:
+						case kCastRichText:
+						case kCastButton:
 							{
 								ImGuiImage textID = getTextID(castMember._value);
 								if (textID.id) {
@@ -210,37 +212,6 @@ void showCast() {
 									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
 									showImage(textID, name.c_str(), 32.f);
 								}
-							}
-							break;
-
-						case kCastRichText:
-							{
-								const char *text = Common::toPrintable(((RichTextCastMember *)castMember._value)->getText()).c_str();
-								ImVec2 textSize = ImGui::CalcTextSize(text);
-								float offsetX = (columnWidth - textSize.x) * 0.5f;
-
-								ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-								ImGui::Text("%s", text);
-							}
-							break;
-
-						case kCastButton:
-							{
-								ImGui::PushID(castMember._value->getID());
-								ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
-
-								ImGui::BeginChild("Button Cast", ImVec2(columnWidth, 20) , (ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysAutoResize));
-
-								const char *text = Common::toPrintable(((TextCastMember *)castMember._value)->_rtext).c_str();
-								ImVec2 textSize = ImGui::CalcTextSize(text);
-								float offsetX = (columnWidth - textSize.x) * 0.5f;
-
-								ImGui::SetCursorPosX(offsetX);
-								ImGui::Text("%s", text);
-								ImGui::EndChild();
-
-								ImGui::PopStyleColor();
-								ImGui::PopID();
 							}
 							break;
 

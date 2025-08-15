@@ -233,7 +233,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 }
 
 ImGuiImage getTextID(CastMember *castMember) {
-	if (castMember->_type != CastType::kCastText)
+	if (castMember->_type != CastType::kCastText && castMember->_type != CastType::kCastButton && castMember->_type != CastType::kCastRichText)
 		return {};
 
 	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
@@ -241,7 +241,7 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 	// This means the shapes that are not in any channel won't be shown
 	for (auto it : channels) {
-		if (it->_sprite && it->_sprite->_castId.member == castMember->getID()) {
+		if (it->_sprite && it->_sprite->_castId.member == castMember->getID() && it->_widget) {
 			source = it->_widget->getSurface()->rawSurface();
 			break;
 		}

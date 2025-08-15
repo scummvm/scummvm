@@ -235,10 +235,23 @@ void showScore() {
 			if (castMember || shape) {
 				ImGuiImage imgID = {};
 
-				if (castMember && castMember->_type == kCastBitmap) {
-					imgID = getImageID(castMember);
-				} else if (castMember && castMember->_type == kCastShape) {
-					imgID = getShapeID(castMember);
+				if (castMember) {
+					switch (castMember->_type) {
+					case kCastBitmap:
+						imgID = getImageID(castMember);
+						break;
+					case kCastShape:
+						imgID = getShapeID(castMember);
+						break;
+					case kCastText:
+					case kCastButton:
+					case kCastRichText:
+						imgID = getTextID(castMember);
+						break;
+
+					default:
+						break;
+					}
 				}
 
 				if (castMember && imgID.id) {
