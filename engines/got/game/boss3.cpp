@@ -563,7 +563,7 @@ void endingScreen() {
 	
 	musicPlay(6, true);
 
-	memset(explosionFlag, 0, 4 * 8);
+	memset(explosionFlag, 0, sizeof(explosionFlag));
 	_G(endGame) = 1;
 
 	_G(explosionRow) = 0;
@@ -652,7 +652,7 @@ int endGameMovement() {
 		_G(explosionRow++);
 		explosionCounter++;
 		if (explosionCounter > 3) {
-			memset(explosionFlag, 0, 32);
+			memset(explosionFlag, 0, sizeof(explosionFlag));
 		}
 	}
 

@@ -178,7 +178,7 @@ void boss2CheckHit(Actor *actor) {
 
 			_G(actor[3])._i1 = 1;
 			_G(actor[3])._i2 = 0;
-			memset(expf, 0, 60);
+			memset(expf, 0, sizeof(expf));
 
 			for (int rep = 7; rep < MAX_ACTORS; rep++) {
 				if (_G(actor[rep])._active)
