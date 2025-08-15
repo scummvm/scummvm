@@ -467,7 +467,7 @@ void Scripts::cmdCheckInventory() {
 	int itemId = _data->readUint16LE();
 	int itemVal = _data->readUint16LE();
 	debugCN(1, kDebugScripts, "cmdCheckInventory(itemId=%d, itemVal=%d)", itemId, itemVal);
-	if ((*_vm->_inventory)[itemId] == itemVal) {
+	if ((byte)(*_vm->_inventory)[itemId] == (byte)itemVal) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -660,13 +660,17 @@ void Scripts::cmdCheckTimer() {
 	if (_endFlag)
 		return;
 
-	if ((idx == 9) && _vm->_events->isKeyActionPending()) {
+	if (_vm->getGameID() == kGameAmazon && idx == 9 && _vm->_events->isKeyActionPending()) {
 		_vm->_events->zeroKeysActions();
 		_vm->_timers[9]._timer = 0;
 		_vm->_timers[9]._flag = 0;
 	}
 
-	int val = _data->readUint16LE() & 0xFF;
+	byte val = (byte)_data->readUint16LE();
+
+	if (val != 0 && val != 1)
+        warning("Invalid check value %d in cmdCheckTimer - expect only 1 or 0??", val);
+
 	if (_vm->_timers[idx]._flag == val) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
@@ -809,14 +813,15 @@ void Scripts::cmdDoTravel() {
 				continue;
 			}
 			if (_vm->_player->_roomNumber != newRoomNum) {
-				_vm->_player->_roomNumber = newRoomNum;
 				_vm->_room->_function = FN_CLEAR1;
 				if (_vm->_res->ROOMTBL[newRoomNum]._travelPos.x == -1) {
 					// For x == -1, the y value is a script Id, not a co-ordinate
 					_vm->_room->_conFlag = true;
+					_vm->_player->_roomNumber = -1;
 					_vm->_scripts->converse1(_vm->_res->ROOMTBL[newRoomNum]._travelPos.y);
 					return;
 				}
+				_vm->_player->_roomNumber = newRoomNum;
 				_vm->_player->_rawPlayer = _vm->_res->ROOMTBL[newRoomNum]._travelPos;
 				cmdRetPos();
 				return;
@@ -863,7 +868,7 @@ void Scripts::cmdCheckAbout() {
 	int idx = _data->readSint16LE();
 	int16 val = _data->readSint16LE();
 	debugCN(1, kDebugScripts, "cmdCheckAbout(idx=%d, val=%d)", idx, val);
-	if (_vm->_ask[idx] == val) {
+	if ((byte)_vm->_ask[idx] == (byte)val) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -1065,9 +1070,9 @@ void Scripts::cmdCheckVFrame() {
 }
 
 void Scripts::cmdJumpChoice() {
-	int val = (_data->readUint16LE() & 0xFF);
+	int val = _data->readUint16LE();
 	debugCN(1, kDebugScripts, "cmdJumpChoice(val=%d, choice=%d)", val, _choice);
-	if (val == _choice) {
+	if ((byte)val == (byte)_choice) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
@@ -1166,7 +1171,8 @@ void Scripts::cmdCheckTravel() {
 	int idx = _data->readSint16LE();
 	uint16 val = _data->readUint16LE();
 	debugCN(1, kDebugScripts, "cmdCheckTravel(idx=%d, val=%d)", idx, val);
-	if (_vm->_travel[idx] == val) {
+
+	if ((byte)_vm->_travel[idx] == (byte)val) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
