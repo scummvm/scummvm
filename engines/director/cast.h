@@ -126,6 +126,7 @@ public:
 	CastMember *getCastMember(int castId, bool load = true);
 	CastMember *getCastMemberByNameAndType(const Common::String &name, CastType type);
 	CastMember *getCastMemberByScriptId(int scriptId);
+	int getCastIdByScriptId(uint32 scriptId) const;
 	CastMemberInfo *getCastMemberInfo(int castId);
 	const Stxt *getStxt(int castId);
 	Common::String getLinkedPath(int castId);
