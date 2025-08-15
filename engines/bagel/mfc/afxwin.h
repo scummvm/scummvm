@@ -1188,7 +1188,8 @@ protected:
 	afx_msg BOOL OnNcCreate(LPCREATESTRUCT lpCreateStruct) {
 		return false;
 	}
-	afx_msg void OnNcDestroy() {}
+	afx_msg void OnNcDestroy();
+	virtual afx_msg void PostNcDestroy() {}
 	afx_msg LRESULT OnNcHitTest(CPoint point) {
 		return 0;
 	}
@@ -1288,6 +1289,8 @@ protected:
 
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {}
 
+	HWND Detach();
+
 protected:
 	Common::HashMap<int, CWnd *> _children;
 	int m_nFlags = 0;
@@ -1305,7 +1308,7 @@ protected:
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
 	// so it'll be set up once in the constructor
-	CWnd *const m_hWnd = nullptr;
+	CWnd *m_hWnd = nullptr;
 
 	CWnd *m_pParentWnd = nullptr;
 	int m_nClassStyle = 0;

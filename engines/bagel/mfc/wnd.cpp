@@ -35,6 +35,7 @@ BEGIN_MESSAGE_MAP(CWnd, CCmdTarget)
 	ON_WM_ACTIVATE()
 	ON_WM_CLOSE()
 	ON_WM_DESTROY()
+	ON_WM_NCDESTROY()
 	ON_WM_DRAWITEM()
 	ON_WM_SETFONT()
 	ON_WM_SETCURSOR()
@@ -135,7 +136,7 @@ BOOL CWnd::Create(LPCSTR lpszClassName, LPCSTR lpszWindowName,
 BOOL CWnd::CreateEx(DWORD dwExStyle, LPCSTR lpszClassName,
 		LPCSTR lpszWindowName, DWORD dwStyle,
 		const RECT &rect, CWnd *pParentWnd, UINT nID,
-		LPVOID lpParam /* = NULL */) {
+		LPVOID lpParam /* = nullptr */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
 		pParentWnd->GetSafeHwnd(), nID, lpParam);
@@ -377,6 +378,7 @@ void CWnd::DestroyWindow() {
 	}
 
 	SendMessage(WM_DESTROY);
+	SendMessage(WM_NCDESTROY);
 }
 
 int CWnd::GetWindowText(CString &rString) const {
@@ -458,6 +460,10 @@ BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 }
 
 LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+	// Don't send messages to already destroyed windows
+	if (!m_hWnd)
+		return 0;
+
 	auto &msg = AfxGetApp()->_currentMessage;
 	msg.hwnd = m_hWnd;
 	msg.message = message;
@@ -1215,6 +1221,25 @@ void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {
 		// Invalidate all descendants
 		SendMessageToDescendants(WM_SETREDRAW, TRUE);
 	}
+}
+
+void CWnd::OnNcDestroy() {
+	Detach();
+	ASSERT(m_hWnd == nullptr);
+
+	// call special post-cleanup routine
+	PostNcDestroy();
+}
+
+HWND CWnd::Detach() {
+	HWND hWnd = m_hWnd;
+
+	auto *pMap = AfxGetApp()->afxMapWnd();
+	assert(pMap);
+	pMap->RemoveHandle(m_hWnd);
+
+	m_hWnd = nullptr;
+	return hWnd;
 }
 
 } // namespace MFC

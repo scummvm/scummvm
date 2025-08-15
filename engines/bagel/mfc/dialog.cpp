@@ -112,7 +112,6 @@ int CDialog::DoModal() {
 	}
 
 	// Finish the dialog
-	DestroyWindow();
 	PostModal();
 
 	// unlock/free resources as necessary
