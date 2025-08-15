@@ -280,8 +280,10 @@ Common::Error PrivateEngine::run() {
 	}
 
 	_needToDrawScreenFrame = false;
+	bool needsUpdate = false;
 
 	while (!shouldQuit()) {
+		needsUpdate = false;
 		checkPhoneCall();
 
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -333,6 +335,7 @@ Common::Error PrivateEngine::run() {
 				break;
 
 			case Common::EVENT_MOUSEMOVE:
+				needsUpdate = true;
 				// Reset cursor to default
 				changeCursor("default");
 				// The following functions will return true
@@ -386,6 +389,8 @@ Common::Error PrivateEngine::run() {
 				_subtitles = nullptr;
 				g_system->clearOverlay();
 				_currentMovie = "";
+			} else if (!_videoDecoder->needsUpdate() && needsUpdate) {
+				g_system->updateScreen();
 			} else if (_videoDecoder->needsUpdate()) {
 				drawScreen();
 			}
