@@ -22,7 +22,6 @@
 #ifndef ALCACHOFA_MENU_H
 #define ALCACHOFA_MENU_H
 
-#include "common/scummsys.h"
 #include "common/savefile.h"
 
 namespace Alcachofa {

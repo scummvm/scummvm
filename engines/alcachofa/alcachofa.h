@@ -22,7 +22,6 @@
 #ifndef ALCACHOFA_H
 #define ALCACHOFA_H
 
-#include "common/scummsys.h"
 #include "common/system.h"
 #include "common/error.h"
 #include "common/fs.h"
