@@ -229,7 +229,10 @@ ImGuiImage getShapeID(CastMember *castMember) {
 
 	delete managedSurface;
 	delete channel;
-	return {textureID, surface.w, surface.h};
+
+	int16 width = surface.w, height = surface.h;
+	surface.free();
+	return {textureID, width, height};
 }
 
 ImGuiImage getTextID(CastMember *castMember) {
@@ -267,7 +270,9 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
 
-	return {textureID, surface.w, surface.h};
+	int16 width = surface.w, height = surface.h;
+	surface.free();
+	return {textureID, width, height};
 }
 
 void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
