@@ -41,7 +41,7 @@ template<class C> static Common::String dumpStructList(const Common::String &ind
 	return str;
 }
 
-};
+}
 
 } // end namespace Dgds
 
