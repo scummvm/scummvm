@@ -37,12 +37,6 @@ namespace Peggle {
 
 extern  LPGAMESTRUCT    pGameInfo;
 
-static  CRect       OptionsRect,
-        OkayRect;
-
-//static  CFont       *pFont = nullptr;
-//static  int         tabstop = 20;
-
 extern CPalette *pOptionsPalette;
 
 

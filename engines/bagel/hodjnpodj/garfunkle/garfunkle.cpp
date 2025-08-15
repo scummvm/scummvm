@@ -60,7 +60,6 @@ BOOL        bPlayingBackSeries = FALSE;
 CSound      *pMusic = nullptr;                     // The sound object for the musician's music
 CSprite     *pAnimSprite[MAX_BUTTONS];          // Pointer for the animating musician
 CBitmap     *pMusicians[(MAX_BUTTONS * 2)];     // Bitmap for Not_playing and Not_there
-CRect       rectMusic[MAX_BUTTONS];             // Musician locations
 int         m_nButID = 0;                       // button which is animating
 
 CText       *m_pSignText = nullptr;                // The current series length display on the sign

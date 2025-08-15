@@ -125,9 +125,6 @@ extern CMainPackRatWindow   *pcwndPackRat;
 CPalette    *pGamePalette = nullptr;           // Palette to be used throughout the game
 CBmpButton      *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
-CRect   MainRect;                           // screen area spanned by the game window
-CRect   OptionRect;                         // screen area spanned by the game window
-
 CSprite *pPlayerRightSprite = nullptr;
 CSprite *pPlayerLeftSprite = nullptr;
 CSprite *pPlayerUpSprite = nullptr;
@@ -152,7 +149,6 @@ CSprite *pLiveSprite  = nullptr;
 CSprite *pLivesSprite[MAXLIVESPRITE];
 
 CSprite *pBalloonSprite  = nullptr;
-CPoint  ptBaloon(609, 25);
 
 CSprite *pPlayerSprite = nullptr;
 CSprite *apBadGuySprite[4];
@@ -196,15 +192,12 @@ BOOL    bKillPlayer = FALSE;
 
 BOOL    bResetGame;
 
-CPoint  ptLastMouseCoord(-1, -1);
-CPoint  ptCurrMouseCoord(-1, -1);
 BOOL    bMouseHidden = FALSE;
 BOOL    bInNewGameRect = FALSE;
 BOOL    bStart;
 
-CRect   rNewGame(21, 3, 227, 20);
-int     anCurrentMaze[999];
-int     anMaze4[999] = {
+int anCurrentMaze[999];
+const int anMaze4[999] = {
 	-1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1,
 	-1, 0, 0, -1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, -1, 0, 0, -1,
 	-1, 0, 0, -1, 1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, 1, -1, 0, 0, -1,
@@ -234,7 +227,7 @@ int     anMaze4[999] = {
 	-1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1
 };
 
-int     anMaze3[999] = {
+const int anMaze3[999] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, 0, 0, -1, 1, 1, 1, 1, 1, 1, 1, 4, 1, 1, 1, 1, -1, -1, 0, -1, -1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, -1, 0, 0, -1,
 	-1, 0, 0, -1, 1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, 0, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, 1, -1, 0, 0, -1,
@@ -264,7 +257,7 @@ int     anMaze3[999] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-int     anMaze2[999] = {
+const int anMaze2[999] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, 0, 0, -1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, -1, 0, 0, -1,
 	-1, 0, 0, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, 0, 0, -1,
@@ -294,8 +287,7 @@ int     anMaze2[999] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-
-int     anMaze1[999] = {
+const int anMaze1[999] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, 0, 0, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, 0, 0, -1,
 	-1, 0, 0, -1, 1, -1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, 1, -1, -1, -1, 1, -1, -1, 1, -1, -1, -1, -1, 1, -1, -1, -1, 1, -1, 0, 0, -1,
@@ -324,10 +316,6 @@ int     anMaze1[999] = {
 	-1, 0, 0, -1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1, 0, 0, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
-
-CRect   ptScore(MainRect.left + 10, MainRect.top + 10,
-                MainRect.left + 110, MainRect.top + 25);
-
 
 int     nExtraLives;
 BOOL    bInLoop;
@@ -364,7 +352,13 @@ BOOL    bBALLOONShown;
  *
  ****************************************************************/
 
-CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
+CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
+		ptBaloon(609, 25),
+		ptLastMouseCoord(-1, -1),
+		ptCurrMouseCoord(-1, -1),
+		rNewGame(21, 3, 227, 20),
+		ptScore(MainRect.left + 10, MainRect.top + 10,
+			MainRect.left + 110, MainRect.top + 25) {
 	CDC     *pDC = nullptr;                        // device context for the screen
 //CPalette    *pOldPalette = nullptr;
 	CString WndClass;

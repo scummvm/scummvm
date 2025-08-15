@@ -43,9 +43,9 @@ public:
 	CBitmap *m_pDlgBackground;
 
 private:
+	CRect OptionsRect, OkayRect;
 
-
-// Dialog Data
+	// Dialog Data
 	//{{AFX_DATA(COptions)
 	enum { IDD = IDD_OPTIONS_DIALOG };
 	// NOTE: the ClassWizard will add data members here

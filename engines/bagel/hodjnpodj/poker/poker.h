@@ -251,6 +251,23 @@ private:
 	BOOL            m_bMouseCaptured;
 	BOOL            m_bEndHand;
 
+	CRect   MainRect;                           // screen area spanned by the game window
+	CRect   BetRect1,               // window area spanned by the Bet1 button
+		BetRect5,               // window area spanned by the Bet5 button
+		BetRect10,              // window area spanned by the Bet10 button
+		BetRect25,              // window area spanned by the Bet25 button
+		BetRect100,             // window area spanned by the Bet100 button
+		BetRect1000,            // window area spanned by the Bet1000 button
+		BetRectAll,             // window area spanned by the BetAll button
+		ClearBetRect,           // window area spanned by the ClearBet button
+		DealRect,               // window area spanned by the Deal button
+		DrawRect,               // window area spanned by the Draw button
+		OptionRect,             // window area spanned by the Option button
+		arCardRect[5];          // window area spanned by the Cards
+
+	CRect   JunkRect;
+	CRect   NewGameRect;
+
 public:
 	CMainPokerWindow(HWND, LPGAMESTRUCT);
 

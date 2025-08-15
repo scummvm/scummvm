@@ -29,7 +29,6 @@ namespace HodjNPodj {
 namespace Poker {
 
 CPalette    *pPayoffPalette = nullptr;
-CRect           crectRedraw(10, 140, 44, 290);
 
 CText           *ptxtPair = nullptr;
 CText           *ptxtPairJacks = nullptr;
@@ -42,17 +41,6 @@ CText           *ptxtFourOAK = nullptr;
 CText           *ptxtStraightFlush = nullptr;
 CText           *ptxtRoyalFlush = nullptr;
 
-CRect           rectPair(10, 131, 80, 146);
-CRect           rectPairJacks(10, 145, 80, 160);
-CRect           rectTwoPair(10, 159, 80, 174);
-CRect           rectThree(10, 173, 80, 188);
-CRect           rectStraight(10, 187, 80, 202);
-CRect           rectFlush(10, 201, 80, 216);
-CRect           rectFullHouse(10, 215, 80, 230);
-CRect           rectFour(10, 229, 80, 244);
-CRect           rectStraightFlush(10, 243, 80, 258);
-CRect           rectRoyalFlush(10, 257, 80, 272);
-
 static CColorButton    *pSetPayButton = nullptr;
 static CColorButton    *pCancelButton = nullptr;
 static CColorButton    *pOKButton = nullptr;
@@ -64,7 +52,18 @@ static CRadioButton    *pKuwaitiButton = nullptr;
 static CRadioButton    *pMartianButton = nullptr;
 
 CSetPayoffsDlg::CSetPayoffsDlg(CWnd *pParent, CPalette *pPalette, UINT nID, int nOdds, BOOL bJustDisplay)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\MSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\MSCROLL.BMP"),
+		crectRedraw(10, 140, 44, 290),
+		rectPair(10, 131, 80, 146),
+		rectPairJacks(10, 145, 80, 160),
+		rectTwoPair(10, 159, 80, 174),
+		rectThree(10, 173, 80, 188),
+		rectStraight(10, 187, 80, 202),
+		rectFlush(10, 201, 80, 216),
+		rectFullHouse(10, 215, 80, 230),
+		rectFour(10, 229, 80, 244),
+		rectStraightFlush(10, 243, 80, 258),
+		rectRoyalFlush(10, 257, 80, 272) {
 	ptxtPair = new CText;
 	ptxtPairJacks = new CText;
 	ptxtTwoPair = new CText;

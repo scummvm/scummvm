@@ -41,13 +41,6 @@ extern void PlayEasterEgg(CDC *pDC, CWnd *pWnd, CPalette *pPalette,
 CPalette    *pGamePalette = nullptr;       // Palette to be used throughout the game
 CBmpButton  *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
-CRect   MainRect;                           // screen area spanned by the game window
-CRect   OptionRect;                         // screen area spanned by the option button
-CRect   rNewGame(21, 3, 227, 20);           // screen area spanned by the name plate
-CRect   rRefreshRect(0, 0, GAME_WIDTH, 385);
-
-CRect   arLetterButt[NUMBEROFROWS * NUMBEROFCOLS];
-CRect   arScreenGrid[NUMBEROFROWS][NUMBEROFCOLS];
 
 char    acWordChosen[WORDSPERLIST];
 char    acWordBack[WORDSPERLIST];
@@ -67,12 +60,7 @@ CBitmap     *pbmpAllLetters;
 int         nCurrentLetter;
 
 CText       *ptxtScore = nullptr;
-CRect       rScore(190, 340, 610, 365);
 
-CString     astrCurrentDisplay[NUMBEROFROWS];
-
-char    acGameGrid[NUMBEROFROWS][NUMBEROFCOLS];
-CRect   arWordDisplay[WORDSPERLIST];
 CString *astrGameList[WORDSPERLIST];
 CString *astrGameListDisplay[WORDSPERLIST];
 CText *atxtDisplayWord[WORDSPERLIST];
@@ -125,7 +113,10 @@ extern char acList[NUMBEROFLISTS][WORDSPERLIST][20];
  *
  ****************************************************************/
 
-CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
+CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
+		rNewGame(21, 3, 227, 20),
+		rRefreshRect(0, 0, GAME_WIDTH, 385),
+		rScore(190, 340, 610, 365) {
 	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CSize   mySize;

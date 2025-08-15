@@ -73,7 +73,6 @@ CPalette        *pGamePalette = nullptr;           // Palette to be used through
 CPalette        *pBtnPalette = nullptr;            // Palette to be used throughout the game
 CBmpButton      *pOptionButton = nullptr;      // Option button object for getting to the options dialog
 
-CRect   MainRect;                           // screen area spanned by the game window
 
 // gtb
 //static BOOL bIgnoreButtonClick = FALSE;
@@ -111,22 +110,6 @@ RECT        arHoldRect[5] = {
 CBmpButton          *pClearBet = nullptr;      // Button for betting Clearing out the bet
 CBmpButton          *pDealButton = nullptr;    // Button for deal all five cards, starts a hand
 CBmpButton          *pDrawButton = nullptr;  // Button for drawing cards not held, after initial deal
-
-CRect   BetRect1,               // window area spanned by the Bet1 button
-        BetRect5,               // window area spanned by the Bet5 button
-        BetRect10,              // window area spanned by the Bet10 button
-        BetRect25,              // window area spanned by the Bet25 button
-        BetRect100,             // window area spanned by the Bet100 button
-        BetRect1000,            // window area spanned by the Bet1000 button
-        BetRectAll,             // window area spanned by the BetAll button
-        ClearBetRect,           // window area spanned by the ClearBet button
-        DealRect,               // window area spanned by the Deal button
-        DrawRect,               // window area spanned by the Draw button
-        OptionRect,             // window area spanned by the Option button
-        arCardRect[5];          // window area spanned by the Cards
-
-CRect   JunkRect;
-CRect   NewGameRect(21, 4, 225, 21);
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 
@@ -229,7 +212,8 @@ BOOL    bFirstTime;
  *
  ****************************************************************/
 
-CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
+CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
+		NewGameRect(21, 4, 225, 21) {
 	CDC     *pDC = nullptr;                        // device context for the screen
 	CString WndClass;
 	CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB

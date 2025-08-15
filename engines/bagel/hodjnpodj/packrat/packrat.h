@@ -99,6 +99,13 @@ private:
 	int             m_nMaze;
 	int             m_nNextDir;
 	BOOL            m_bSuspend;
+	CRect   MainRect;                           // screen area spanned by the game window
+	CRect   OptionRect;                         // screen area spanned by the game window
+	CPoint  ptBaloon;
+	CPoint  ptLastMouseCoord;
+	CPoint  ptCurrMouseCoord;
+	CRect   rNewGame;
+	CRect   ptScore;
 
 public:
 	CMainPackRatWindow(HWND, LPGAMESTRUCT);

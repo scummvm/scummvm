@@ -29,8 +29,6 @@ namespace HodjNPodj {
 namespace Packrat {
 
 static CPalette         *pPackRatOptPalette;
-static CRect            rectDisplayLevel(43, 60, 174, 72);
-static CRect            rectDisplayLives(43, 101, 174, 113);
 CText                   *ptxtLevel = nullptr;
 CText                   *ptxtLives = nullptr;
 
@@ -64,7 +62,10 @@ CColorButton    *pPRCancelButton = nullptr;
  *      n/a
  *
  ****************************************************************/
-CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :
+		CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
+		rectDisplayLevel(43, 60, 174, 72),
+		rectDisplayLives(43, 101, 174, 113) {
 	CDC     *pDC = GetDC();
 	pPackRatOptPalette = pPalette;
 	ptxtLevel = new CText;

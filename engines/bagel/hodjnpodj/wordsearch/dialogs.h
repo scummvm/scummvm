@@ -37,6 +37,7 @@ private:
 	int     m_nGameTime;
 	BOOL    m_bShowWord;
 	BOOL    m_bWordForwardOnly;
+	CRect   rDisplayTime;
 
 public:
 	CWSOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);

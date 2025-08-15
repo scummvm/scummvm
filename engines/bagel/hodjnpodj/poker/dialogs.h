@@ -62,6 +62,7 @@ class CSetAmountDlg : public CBmpDialog {
 private:
 	int     m_nCurrentAmount;   // contains the current amount set
 	char    m_cAmount [6];
+	CRect   rectDisplayAmount;
 
 public:
 	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_SETAMOUNT);
@@ -96,6 +97,14 @@ private:
 	char m_cRoyalFlush[6];
 	int  m_nSetOfOdds;
 	BOOL m_bJustDisplay;
+	CRect crectRedraw;
+	CRect rectPair, rectPairJacks;
+	CRect rectTwoPair, rectThree;
+	CRect rectStraight, rectFlush;
+	CRect rectFullHouse, rectFour;
+	CRect rectStraightFlush;
+	CRect rectRoyalFlush;
+
 public:
 	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
 	void ClearDialogImage();

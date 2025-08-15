@@ -41,6 +41,8 @@ class CPackRatOptDlg : public CBmpDialog {
 private:
 	int     m_nLives;
 	int     m_nLevel;
+	CRect   rectDisplayLevel;
+	CRect   rectDisplayLives;
 
 public:
 	CPackRatOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);

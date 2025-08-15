@@ -49,7 +49,6 @@ void set_wait_cursor(void);
 void reset_wait_cursor(void);
 
 CBmpButton  *pScrollButton = nullptr;
-CRect       ScrollRect;
 
 int             sprite_count = 0,
                 counter = 0 ;
@@ -59,7 +58,9 @@ static CSound   *pGameSound = nullptr;                 // Game theme song
 
 // Board Selection stuff
 BOOL bRandomBoard = FALSE;
-char BoardSelected = CROSS ;
+
+int8 BoardSelected = CROSS;
+
 //static char MaxPegs[2][4] = {
 //	{CROSS, CROSS_PLUS, TRIANGLE,   TRIANGLE_PLUS},
 //	{32,    36,         14,         20},
@@ -80,11 +81,6 @@ CSprite *pCursorSprite = nullptr;
 CSprite *pShotGlass = nullptr;
 CSprite *pTableSlot = nullptr;
 CSprite *pInvalidSlot = nullptr;
-
-int pegz = (((BoardSelected == TRIANGLE) * 15) +
-            ((BoardSelected == TRIANGLE_PLUS) * 21) +
-            ((BoardSelected == CROSS) * 49) +
-            ((BoardSelected == CROSS_PLUS) * 49));
 
 static int nBoard_DX = TRI_BOARD_DX,
            nBoard_DY = TRI_BOARD_DY;

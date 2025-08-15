@@ -29,7 +29,6 @@ namespace HodjNPodj {
 namespace Poker {
 
 static CPalette *pSetAmountPalette;
-static CRect        rectDisplayAmount;
 CText           *ptxtAmount = nullptr;
 long            lCAmount;
 

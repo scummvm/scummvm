@@ -140,6 +140,8 @@ protected:
 	BOOL        m_bOutterWall;
 	BOOL        m_bJoyActive;
 	BOOL        m_bBallOnPaddle;
+
+	CVector gvCenter;
 };
 
 } // namespace Fuge

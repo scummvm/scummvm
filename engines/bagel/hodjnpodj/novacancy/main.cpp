@@ -59,7 +59,6 @@ static CSprite *pCDoorBmp[10];
 
 CPalette    *pGamePalette;
 LPGAMESTRUCT pGameParams;
-static CString gWndClass;
 const char *INI_SECTION = "No Vacancy";
 
 static int gnLDieLeftFinal,    // final positions of dice.

@@ -122,6 +122,7 @@ protected:
 
 private:
 	BOOL m_bDiceBmpsLoaded;
+	CString gWndClass;
 
 	void AnimateDice(void);
 	short LegalizeMove(short i);

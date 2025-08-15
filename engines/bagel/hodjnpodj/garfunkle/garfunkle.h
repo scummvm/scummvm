@@ -206,6 +206,8 @@ public:
 private:
 	void OnSoundNotify(CSound *pSound);
 
+	CRect rectMusic[MAX_BUTTONS];             // Musician locations
+
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void OnDestroy();

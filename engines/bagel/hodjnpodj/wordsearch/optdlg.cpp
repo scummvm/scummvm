@@ -35,7 +35,6 @@ namespace WordSearch {
 #define GAMEJUMP            1
 
 static CPalette     *pPackRatOptPalette;
-static CRect        rDisplayTime(35, 90, 200, 110);      //( 43, 90, 174, 110 );
 CText               *ptxtTime;
 
 CColorButton    *pOKButton = nullptr;
@@ -70,7 +69,8 @@ CCheckButton    *pWordForwardButton = nullptr;
  *
  ****************************************************************/
 CWSOptDlg::CWSOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+		:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
+		rDisplayTime(35, 90, 200, 110) {
 	CDC     *pDC = GetDC();
 
 	pPackRatOptPalette = pPalette;

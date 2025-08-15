@@ -226,7 +226,6 @@ STATIC const CHAR *pszFugeArt[N_ROWS + 1] = {
 STATIC CPalette    *pGamePalette;
 const CHAR  *INI_SECTION = "Fuge";
 LPGAMESTRUCT pGameParams;
-CVector gvCenter(CENTER_X, CENTER_Y);
 
 extern HWND ghParentWnd;
 
@@ -355,7 +354,8 @@ STATIC SIZE ptBrickSize[N_BRICKS] = {
 //
 VOID CALLBACK GetGameParams(CWnd *);
 
-CFugeWindow::CFugeWindow(VOID) {
+CFugeWindow::CFugeWindow(VOID) :
+		gvCenter(CENTER_X, CENTER_Y) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC;

@@ -135,6 +135,17 @@ private:
 	long            m_lScore;
 	CString         m_alpszCurrectGrid[NUMBEROFROWS * NUMBEROFCOLS];
 	BOOL            m_bNoGrid;
+	CRect   MainRect;                           // screen area spanned by the game window
+	CRect   OptionRect;                         // screen area spanned by the option button
+	CRect   rNewGame;
+	CRect   rRefreshRect;
+	CRect   arLetterButt[NUMBEROFROWS * NUMBEROFCOLS];
+	CRect   arScreenGrid[NUMBEROFROWS][NUMBEROFCOLS];
+	CRect       rScore;
+	CString     astrCurrentDisplay[NUMBEROFROWS];
+
+	char    acGameGrid[NUMBEROFROWS][NUMBEROFCOLS];
+	CRect   arWordDisplay[WORDSPERLIST];
 
 	CString _strGameList[WORDSPERLIST];
 	CString _strGameListDisplay[WORDSPERLIST];

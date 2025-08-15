@@ -500,8 +500,6 @@ BOOL CMnk::WriteTableFile() {
 BOOL CMnk::ReadTableFile() {
 	JXENTER(CMnk::ReadTableFile) ;
 	int iError = 0 ;        // error code
-	long lTotalCount ;      // total # bytes left to read
-	BYTE *hpData;			// pointer into data block
 
 	Common::SeekableReadStream *rs = g_system->getSavefileManager()->openForLoading("mankala.dat");
 	if (rs) {
@@ -517,10 +515,9 @@ BOOL CMnk::ReadTableFile() {
 			if (m_lTableSize > m_lpCMnkData->m_cFileHeader.m_lTableSize)
 				m_lTableSize = m_lpCMnkData->m_cFileHeader.m_lTableSize;
 
-			lTotalCount = m_lTableSize;
+			//lTotalCount = m_lTableSize;
 			// total number of bytes to be read
-			hpData = m_lpCMnkData->m_hpcBestWin;   // point to beginning
-			// of table
+			//hpData = m_lpCMnkData->m_hpcBestWin;   // point to beginning of table
 		}
 	} else {
 		iError = 100;      // can't open file

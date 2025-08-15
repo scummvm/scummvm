@@ -71,6 +71,8 @@ public:
 private:
 	BOOL    m_bProgramActive;
 	HWND    m_hCallAppWnd;
+	CRect   ScrollRect;
+
 	void    OnSoundNotify(CSound *pSound);
 
 protected:

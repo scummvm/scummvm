@@ -40,7 +40,7 @@ CBmpButton  *m_pCroPButton = nullptr;
 
 static  CCheckButton *pRandomButton = nullptr;                 // Framed check box
 
-extern  char        BoardSelected;
+extern  int8        BoardSelected;
 extern  BOOL        bRandomBoard;
 static  char        chNewBoard;
 static  BOOL        m_bRandom;
