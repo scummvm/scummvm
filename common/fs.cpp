@@ -539,7 +539,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const Path &patter
 	addMatchingToList(_fileCache);
 
 	if (_includeDirectories)
-			addMatchingToList(_subDirCache);
+		addMatchingToList(_subDirCache);
 
 	return matches;
 }
