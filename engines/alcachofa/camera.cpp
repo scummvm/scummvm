@@ -19,9 +19,9 @@
  *
  */
 
-#include "camera.h"
-#include "alcachofa.h"
-#include "script.h"
+#include "alcachofa/camera.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/script.h"
 
 #include "common/system.h"
 #include "math/vector4d.h"

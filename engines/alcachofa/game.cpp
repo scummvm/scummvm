@@ -19,9 +19,9 @@
  *
  */
 
-#include "alcachofa.h"
-#include "game.h"
-#include "script.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/game.h"
+#include "alcachofa/script.h"
 
 using namespace Common;
 

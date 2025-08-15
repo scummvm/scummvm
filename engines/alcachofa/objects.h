@@ -22,8 +22,8 @@
 #ifndef ALCACHOFA_OBJECTS_H
 #define ALCACHOFA_OBJECTS_H
 
-#include "shape.h"
-#include "graphics.h"
+#include "alcachofa/shape.h"
+#include "alcachofa/graphics.h"
 
 #include "common/serializer.h"
 

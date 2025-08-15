@@ -19,10 +19,10 @@
  *
  */
 
-#include "player.h"
-#include "script.h"
-#include "alcachofa.h"
-#include "menu.h"
+#include "alcachofa/player.h"
+#include "alcachofa/script.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/menu.h"
 
 using namespace Common;
 

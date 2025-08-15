@@ -30,7 +30,7 @@
 #include "common/util.h"
 #include "math/vector2d.h"
 
-#include "common.h"
+#include "alcachofa/common.h"
 
 namespace Alcachofa {
 

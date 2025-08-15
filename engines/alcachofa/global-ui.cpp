@@ -19,10 +19,10 @@
  *
  */
 
-#include "global-ui.h"
-#include "menu.h"
-#include "alcachofa.h"
-#include "script.h"
+#include "alcachofa/global-ui.h"
+#include "alcachofa/menu.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/script.h"
 
 using namespace Common;
 

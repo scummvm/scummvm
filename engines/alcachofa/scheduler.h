@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_SCHEDULER_H
 #define ALCACHOFA_SCHEDULER_H
 
-#include "common.h"
+#include "alcachofa/common.h"
 
 #include "common/stack.h"
 #include "common/str.h"

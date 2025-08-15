@@ -33,17 +33,17 @@
 #include "video/avi_decoder.h"
 #include "video/mpegps_decoder.h"
 
-#include "alcachofa.h"
-#include "metaengine.h"
-#include "console.h"
-#include "detection.h"
-#include "player.h"
-#include "rooms.h"
-#include "script.h"
-#include "global-ui.h"
-#include "menu.h"
-#include "debug.h"
-#include "game.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/metaengine.h"
+#include "alcachofa/console.h"
+#include "alcachofa/detection.h"
+#include "alcachofa/player.h"
+#include "alcachofa/rooms.h"
+#include "alcachofa/script.h"
+#include "alcachofa/global-ui.h"
+#include "alcachofa/menu.h"
+#include "alcachofa/debug.h"
+#include "alcachofa/game.h"
 
 using namespace Math;
 
