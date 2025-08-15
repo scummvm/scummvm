@@ -549,10 +549,7 @@ WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in,
 		return false;
 
 	// Read in the string
-	header._saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		header._saveName += ch;
+	header._saveName = in->readString();
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {

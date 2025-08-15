@@ -107,7 +107,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	FILENAMES.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FILENAMES[idx] = readString(s);
+		FILENAMES[idx] = s.readString();
 
 	// Load the character data
 	count = s.readUint16LE();
@@ -123,7 +123,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	ROOMTBL.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		ROOMTBL[idx]._desc = readString(s);
+		ROOMTBL[idx]._desc = s.readString();
 		ROOMTBL[idx]._travelPos.x = s.readSint16LE();
 		ROOMTBL[idx]._travelPos.y = s.readSint16LE();
 		uint count2 = s.readUint16LE();
@@ -137,14 +137,14 @@ void Resources::load(Common::SeekableReadStream &s) {
 	DEATHS.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
 		DEATHS[idx]._screenId = s.readByte();
-		DEATHS[idx]._msg = readString(s);
+		DEATHS[idx]._msg = s.readString();
 	}
 
 	// Load in the inventory list
 	count = s.readUint16LE();
 	INVENTORY.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		INVENTORY[idx]._desc = readString(s);
+		INVENTORY[idx]._desc = s.readString();
 		for (uint idx2 = 0; idx2 < 4; ++idx2)
 			INVENTORY[idx]._combo[idx2] = s.readSint16LE();
 	}
@@ -158,16 +158,6 @@ uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Lan
 	}
 
 	error("Could not locate appropriate access.dat entry");
-}
-
-Common::String Resources::readString(Common::SeekableReadStream &s) {
-	Common::String result;
-	char c;
-
-	while ((c = s.readByte()) != 0)
-		result += c;
-
-	return result;
 }
 
 /*------------------------------------------------------------------------*/
