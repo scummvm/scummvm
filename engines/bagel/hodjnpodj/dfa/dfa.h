@@ -136,6 +136,14 @@ private:
 	LPGAMESTRUCT    m_lpGameStruct;
 	BOOL            m_bMouseCaptured;
 	long            m_lScore;
+	CRect   MainRect;						// screen area spanned by the game window
+	CRect   ArtRect;						// screen area inside the border trim
+	CRect   OptionRect;						// screen area spanned by the option button
+	CRect   rNewGame;						// screen area spanned by the name plate
+	CRect   arBeaver[NUM_BEAVERS];
+
+	CString aHitFile[NUM_HIT_SOUNDS];
+	CString aMissFile[NUM_MISS_SOUNDS];
 
 public:
 	CMainDFAWindow(HWND, LPGAMESTRUCT);

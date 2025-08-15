@@ -34,8 +34,10 @@ namespace DFA {
 //////////////////////////////////////////////////////////////////////////////
 class CDFAOptDlg : public CBmpDialog {
 private:
-	int     m_nGameTime;
-	int     m_nBeaverTime;
+	int m_nGameTime;
+	int m_nBeaverTime;
+	CRect rDisplayGTime;
+	CRect rDisplayBTime;
 
 public:
 	CDFAOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);

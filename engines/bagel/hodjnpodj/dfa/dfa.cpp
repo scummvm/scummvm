@@ -58,17 +58,9 @@ CSprite     *pMalletSprite = nullptr;      // The cursor will be a sprite that a
 
 CSprite     *pTimerSprite = nullptr;
 int         nCurrentCel;
-CRect   MainRect;                           // screen area spanned by the game window
-CRect   ArtRect;                            // screen area inside the border trim
-CRect   OptionRect;                         // screen area spanned by the option button
-CRect   rNewGame(21, 3, 227, 20);           // screen area spanned by the name plate
 
 CSprite *apBeaverSprite[NUM_BEAVERS];
 int     anBeaverShown[NUM_BEAVERS];
-CRect   arBeaver[NUM_BEAVERS];
-
-CString aHitFile[NUM_HIT_SOUNDS];
-CString aMissFile[NUM_MISS_SOUNDS];
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 int     nCurrentTimer;
@@ -107,7 +99,8 @@ BOOL    bStart;
  *
  ****************************************************************/
 
-CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) {
+CMainDFAWindow::CMainDFAWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
+		rNewGame(21, 3, 227, 20) {
 	CDC         *pDC = nullptr;                        // device context for the screen
 //	CPalette *pOldPalette = nullptr;
 	CPalette    *pOldPal = nullptr;

@@ -36,9 +36,7 @@ namespace DFA {
 #define BEAVERSTEP          1
 
 static CPalette     *pPackRatOptPalette;
-static CRect        rDisplayGTime(43, 85, 174, 97);
 CText               *ptxtGTime;
-static CRect        rDisplayBTime(43, 35, 174, 47);
 CText               *ptxtBTime;
 
 CColorButton    *pDFAOKButton = nullptr;
@@ -72,7 +70,9 @@ CColorButton    *pDFACancelButton = nullptr;
  *
  ****************************************************************/
 CDFAOptDlg::CDFAOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
-	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
+	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
+		rDisplayGTime(43, 85, 174, 97),
+		rDisplayBTime(43, 35, 174, 47) {
 	CDC     *pDC = GetDC();
 
 	pPackRatOptPalette = pPalette;
