@@ -83,7 +83,6 @@ typedef HWND (FAR PASCAL *FPGTFUNCT)(HWND, LPGRANDTRSTRUCT);
 typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, BOOL);
 typedef DWORD (FAR PASCAL * FPGETFREEMEMINFO)(void);
 
-static FPGETFREEMEMINFO lpfnGetFreeMemInfo;
 // Flags when a .dll in the original is loaded
 
 BOOL        bMetaLoaded = FALSE;

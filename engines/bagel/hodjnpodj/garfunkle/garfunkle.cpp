@@ -88,7 +88,7 @@ static const char *cSoundName[MAX_BUTTONS] = {
 	SAX_SOUND, HARP_SOUND, CLARINET_SOUND
 };
 
-const CString cAnimName[MAX_BUTTONS] = {
+static const char *cAnimName[MAX_BUTTONS] = {
 	VIOLIN_ANIM, CELLO_ANIM, DRUM_ANIM, SAX_ANIM,
 	HARP_ANIM, CLARINET_ANIM
 };
