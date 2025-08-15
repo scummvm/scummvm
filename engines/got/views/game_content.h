@@ -38,7 +38,7 @@ private:
 	int _lightningCtr = 0;
 	int _pixelX[8][25] = {};
 	int _pixelY[8][25] = {};
-	byte _pixelP[8][25] = {};
+	//byte _pixelP[8][25] = {};
 	byte _pixelC[8] = {};
 	int _pauseCtr = 0;
 	int _closingStateCtr = 0;
