@@ -87,8 +87,7 @@ void Task::errorForUnexpectedObjectType(const ObjectBase *base) const {
 
 DelayTask::DelayTask(Process &process, uint32 millis)
 	: Task(process)
-	, _endTime(millis) {
-}
+	, _endTime(millis) {}
 
 DelayTask::DelayTask(Process &process, Serializer &s)
 	: Task(process) {
@@ -118,8 +117,7 @@ DECLARE_TASK(DelayTask)
 Process::Process(ProcessId pid, MainCharacterKind characterKind)
 	: _pid(pid)
 	, _character(characterKind)
-	, _name("Unnamed process") {
-}
+	, _name("Unnamed process") {}
 
 Process::Process(Serializer &s) {
 	syncGame(s);
@@ -138,7 +136,8 @@ TaskReturnType Process::run() {
 	while (!_tasks.empty()) {
 		TaskReturn ret = _tasks.top()->run();
 		switch (ret.type()) {
-		case TaskReturnType::Yield: return TaskReturnType::Yield;
+		case TaskReturnType::Yield:
+			return TaskReturnType::Yield;
 		case TaskReturnType::Waiting:
 			_tasks.push(ret.taskToWaitFor());
 			break;
@@ -158,10 +157,18 @@ void Process::debugPrint() {
 	auto *debugger = g_engine->getDebugger();
 	const char *characterName;
 	switch (_character) {
-	case MainCharacterKind::None: characterName = "    <none>"; break;
-	case MainCharacterKind::Filemon: characterName = " Filemon"; break;
-	case MainCharacterKind::Mortadelo: characterName = "Mortadelo"; break;
-	default: characterName = "<invalid>"; break;
+	case MainCharacterKind::None:
+		characterName = "    <none>";
+		break;
+	case MainCharacterKind::Filemon:
+		characterName = " Filemon";
+		break;
+	case MainCharacterKind::Mortadelo:
+		characterName = "Mortadelo";
+		break;
+	default:
+		characterName = "<invalid>";
+		break;
 	}
 	debugger->debugPrintf("pid: %3u char: %s ret: %2d \"%s\"\n", _pid, characterName, _lastReturnValue, _name.c_str());
 
@@ -200,8 +207,7 @@ void Process::syncGame(Serializer &s) {
 		assert(_tasks.empty());
 		for (uint i = 0; i < count; i++)
 			_tasks.push(readTask(*this, s));
-	}
-	else {
+	} else {
 		String taskName;
 		for (uint i = 0; i < count; i++) {
 			taskName = _tasks[i]->taskName();
@@ -363,8 +369,7 @@ void Scheduler::syncGame(Serializer &s) {
 		processes->reserve(count);
 		for (uint32 i = 0; i < count; i++)
 			processes->push_back(new Process(s));
-	}
-	else {
+	} else {
 		for (Process *process : *processes)
 			process->syncGame(s);
 	}

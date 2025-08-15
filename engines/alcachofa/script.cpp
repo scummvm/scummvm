@@ -41,8 +41,7 @@ enum ScriptDebugLevel {
 
 ScriptInstruction::ScriptInstruction(ReadStream &stream)
 	: _op((ScriptOp)stream.readSint32LE())
-	, _arg(stream.readSint32LE()) {
-}
+	, _arg(stream.readSint32LE()) {}
 
 Script::Script() {
 	File file;
@@ -134,8 +133,7 @@ bool Script::hasProcedure(const Common::String &procedure) const {
 struct ScriptTimerTask : public Task {
 	ScriptTimerTask(Process &process, int32 durationSec)
 		: Task(process)
-		, _durationSec(durationSec) {
-	}
+		, _durationSec(durationSec) {}
 
 	ScriptTimerTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -252,11 +250,21 @@ struct ScriptTask : public Task {
 				else {
 					const auto &top = _stack.top();
 					switch (top._type) {
-					case StackEntryType::Number: debug("Number %d", top._number); break;
-					case StackEntryType::Variable: debug("Var %u (%d)", top._index, _script._variables[top._index]); break;
-					case StackEntryType::Instruction: debug("Instr %u", top._index); break;
-					case StackEntryType::String: debug("String %u (\"%s\")", top._index, getStringArg(0)); break;
-					default: debug("INVALID"); break;
+					case StackEntryType::Number:
+						debug("Number %d", top._number);
+						break;
+					case StackEntryType::Variable:
+						debug("Var %u (%d)", top._index, _script._variables[top._index]);
+						break;
+					case StackEntryType::Instruction:
+						debug("Instr %u", top._index);
+						break;
+					case StackEntryType::String:
+						debug("String %u (\"%s\")", top._index, getStringArg(0));
+						break;
+					default:
+						debug("INVALID");
+						break;
 					}
 				}
 			}
@@ -298,8 +306,7 @@ struct ScriptTask : public Task {
 				if (kernelReturn.type() == TaskReturnType::Waiting) {
 					_returnsFromKernelCall = true;
 					return kernelReturn;
-				}
-				else
+				} else
 					handleReturnFromKernelCall(kernelReturn.returnValue());
 			}break;
 			case ScriptOp::JumpIfFalse:
@@ -363,6 +370,7 @@ struct ScriptTask : public Task {
 			}break;
 			default:
 				g_engine->game().unknownInstruction(instruction);
+				break;
 			}
 		}
 	}
@@ -384,8 +392,7 @@ struct ScriptTask : public Task {
 		if (s.isLoading()) {
 			for (uint i = 0; i < count; i++)
 				_stack.push(StackEntry(s));
-		}
-		else {
+		} else {
 			for (uint i = 0; i < count; i++)
 				_stack[i].syncGame(s);
 		}
@@ -600,8 +607,7 @@ private:
 			if (scumm_stricmp(getStringArg(0), "SALIR") == 0) {
 				g_engine->quitGame();
 				g_engine->player().changeRoom("SALIR", true);
-			}
-			else if (scumm_stricmp(getStringArg(0), "MENUPRINCIPALINICIO") == 0)
+			} else if (scumm_stricmp(getStringArg(0), "MENUPRINCIPALINICIO") == 0)
 				warning("STUB: change room to MenuPrincipalInicio special case");
 			else {
 				auto targetRoom = g_engine->world().getRoomByName(getStringArg(0));
@@ -624,8 +630,7 @@ private:
 			if (process().character() == MainCharacterKind::None) {
 				if (g_engine->player().currentRoom() != nullptr)
 					g_engine->player().currentRoom()->toggleActiveFloor();
-			}
-			else
+			} else
 				g_engine->world().getMainCharacterByKind(process().character()).room()->toggleActiveFloor();
 			return TaskReturn::finish(1);
 
@@ -646,8 +651,7 @@ private:
 				graphicObject->toggle(true);
 				graphicObject->graphic()->start(false);
 				return TaskReturn::finish(1);
-			}
-			else
+			} else
 				return TaskReturn::waitFor(graphicObject->animate(process()));
 		}
 
@@ -721,12 +725,10 @@ private:
 			}
 			float targetLodBias = getNumberArg(1) * 0.01f;
 			int32 durationMs = getNumberArg(2);
-			if (durationMs <= 0)
-			{
+			if (durationMs <= 0) {
 				character->lodBias() = targetLodBias;
 				return TaskReturn::finish(1);
-			}
-			else
+			} else
 				return TaskReturn::waitFor(character->lerpLodBias(process(), targetLodBias, durationMs));
 		}
 		case ScriptKernelTask::AnimateCharacter: {
@@ -749,8 +751,7 @@ private:
 				return TaskReturn::finish(1);
 			}
 			ObjectBase *talkObject = getObjectArg(1);
-			if (talkObject == nullptr && *getStringArg(1) != '\0')
-			{
+			if (talkObject == nullptr && *getStringArg(1) != '\0') {
 				g_engine->game().unknownAnimateTalkingObject(getStringArg(1));
 				return TaskReturn::finish(1);
 			}
@@ -798,13 +799,19 @@ private:
 		}
 		case ScriptKernelTask::ClearInventory:
 			switch ((MainCharacterKind)getNumberArg(0)) {
-			case MainCharacterKind::Mortadelo: g_engine->world().mortadelo().clearInventory(); break;
-			case MainCharacterKind::Filemon: g_engine->world().filemon().clearInventory(); break;
-			default: g_engine->game().unknownClearInventoryTarget(getNumberArg(0)); break;
+			case MainCharacterKind::Mortadelo:
+				g_engine->world().mortadelo().clearInventory();
+				break;
+			case MainCharacterKind::Filemon:
+				g_engine->world().filemon().clearInventory();
+				break;
+			default:
+				g_engine->game().unknownClearInventoryTarget(getNumberArg(0));
+				break;
 			}
 			return TaskReturn::finish(1);
 
-			// Camera tasks
+		// Camera tasks
 		case ScriptKernelTask::WaitCamStopping:
 			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
 		case ScriptKernelTask::CamFollow:
@@ -980,8 +987,7 @@ void Script::updateCommonVariables() {
 	if (variable("CalcularTiempoSinPulsarRaton")) {
 		if (_scriptTimer == 0)
 			_scriptTimer = g_engine->getMillis();
-	}
-	else
+	} else
 		_scriptTimer = 0;
 
 	variable("EstanAmbos") = g_engine->world().mortadelo().room() == g_engine->world().filemon().room();

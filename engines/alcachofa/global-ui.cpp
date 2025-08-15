@@ -91,14 +91,12 @@ bool GlobalUI::updateOpeningInventory() {
 		if (deltaTime >= 1000) {
 			_isOpeningInventory = false;
 			g_engine->world().inventory().open();
-		}
-		else {
+		} else {
 			deltaTime = MIN<uint32>(300, deltaTime);
 			g_engine->world().inventory().drawAsOverlay((int32)(g_system->getHeight() * (deltaTime * kSpeed - 1)));
 		}
 		return true;
-	}
-	else if (userWantsToOpenInventory) {
+	} else if (userWantsToOpenInventory) {
 		_isClosingInventory = false;
 		_isOpeningInventory = true;
 		_timeForInventory = g_engine->getMillis();
@@ -136,8 +134,7 @@ bool GlobalUI::updateChangingCharacter() {
 
 	if (!isHoveringChangeButton())
 		return false;
-	if (g_engine->input().wasMouseLeftPressed())
-	{
+	if (g_engine->input().wasMouseLeftPressed()) {
 		player.pressedObject() = &_changeButton;
 		return true;
 	}
@@ -174,8 +171,7 @@ void GlobalUI::drawChangingButton() {
 		return;
 
 	auto anim = activeAnimation();
-	if (!_changeButton.hasAnimation() || &_changeButton.animation() != anim)
-	{
+	if (!_changeButton.hasAnimation() || &_changeButton.animation() != anim) {
 		_changeButton.setAnimation(anim);
 		_changeButton.pause();
 		_changeButton.lastTime() = 42 * (anim->frameCount() - 1) + 1;
@@ -184,8 +180,7 @@ void GlobalUI::drawChangingButton() {
 	_changeButton.topLeft() = { (int16)(g_system->getWidth() + 2), -2 };
 	if (isHoveringChangeButton() &&
 		g_engine->input().isMouseLeftDown() &&
-		player.pressedObject() == &_changeButton)
-	{
+		player.pressedObject() == &_changeButton) {
 		_changeButton.topLeft().x -= 2;
 		_changeButton.topLeft().y += 2;
 	}
@@ -199,8 +194,7 @@ struct CenterBottomTextTask : public Task {
 	CenterBottomTextTask(Process &process, int32 dialogId, uint32 durationMs)
 		: Task(process)
 		, _dialogId(dialogId)
-		, _durationMs(durationMs) {
-	}
+		, _durationMs(durationMs) {}
 
 	CenterBottomTextTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -239,7 +233,7 @@ struct CenterBottomTextTask : public Task {
 		s.syncAsSint32LE(_dialogId);
 		s.syncAsUint32LE(_startTime);
 		s.syncAsUint32LE(_durationMs);
-	} 
+	}
 
 	const char *taskName() const override;
 

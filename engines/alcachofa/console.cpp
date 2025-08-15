@@ -53,8 +53,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("playVideo", WRAP_METHOD(Console, cmdPlayVideo));
 }
 
-Console::~Console() {
-}
+Console::~Console() {}
 
 bool Console::isAnyDebugDrawingOn() const {
 	return
@@ -80,8 +79,7 @@ bool Console::cmdVar(int argc, const char **args) {
 			debugPrintf("Invalid variable name: %s", args[1]);
 		else
 			script.variable(args[1]) = value;
-	}
-	else if (argc == 2) {
+	} else if (argc == 2) {
 		bool hadSomeMatch = false;
 		for (auto it = script.beginVariables(); it != script.endVariables(); it++) {
 			if (matchString(it->_key.c_str(), args[1], true)) {
@@ -112,8 +110,7 @@ bool Console::cmdRoom(int argc, const char **args) {
 			debugPrintf("Player is currently in no room, cannot print details\n");
 			return true;
 		}
-	}
-	else {
+	} else {
 		room = g_engine->world().getRoomByName(args[1]);
 		if (room == nullptr) {
 			debugPrintf("Could not find room with exact name: %s\n", args[1]);
@@ -147,8 +144,7 @@ bool Console::cmdChangeRoom(int argc, const char **args) {
 	else if (argc == 1) {
 		Room *current = g_engine->player().currentRoom();
 		debugPrintf("Current room: %s\n", current == nullptr ? "<null>" : current->name().c_str());
-	}
-	else if (g_engine->world().getRoomByName(args[1]) == nullptr)
+	} else if (g_engine->world().getRoomByName(args[1]) == nullptr)
 		debugPrintf("Invalid room name: %s\n", args[1]);
 	else {
 		g_engine->player().changeRoom(args[1], true);
@@ -284,7 +280,7 @@ bool Console::cmdPlayVideo(int argc, const char **args) {
 			debugPrintf("Video ID can only be an integer\n");
 			return true;
 		}
-		
+
 #ifndef USE_TEXT_CONSOLE_FOR_DEBUGGER
 		// we have to close the console *now* to properly see the video
 		_debuggerDialog->close();
@@ -293,8 +289,7 @@ bool Console::cmdPlayVideo(int argc, const char **args) {
 
 		g_engine->playVideo(videoId);
 		return false;
-	}
-	else
+	} else
 		debugPrintf("usage: playVideo <id>\n");
 	return true;
 }

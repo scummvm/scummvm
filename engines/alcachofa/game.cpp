@@ -33,8 +33,7 @@ Game::Game()
 #else // For release builds the game might still work or the user might still be able to save and restart
 	: _message(warning)
 #endif
-{
-}
+{}
 
 void Game::onLoadedGameFiles() {}
 
@@ -81,7 +80,7 @@ bool Game::shouldTriggerDoor(const Door *door) {
 	return true;
 }
 
-void Game::onUserChangedCharacter() { }
+void Game::onUserChangedCharacter() {}
 
 bool Game::hasMortadeloVoice(const Character *character) {
 	return character == &g_engine->world().mortadelo();

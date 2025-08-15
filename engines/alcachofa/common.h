@@ -103,7 +103,7 @@ struct FakeLock {
 	~FakeLock();
 	void operator = (FakeLock &&other) noexcept;
 	void release();
-	
+
 	inline bool isReleased() const { return _semaphore == nullptr; }
 private:
 	void debug(const char *action);
@@ -143,8 +143,7 @@ inline void syncStack(Common::Serializer &serializer, Common::Stack<T> &stack, v
 			serializeFunction(serializer, value);
 			stack.push(value);
 		}
-	}
-	else {
+	} else {
 		for (uint i = 0; i < size; i++)
 			serializeFunction(serializer, stack[i]);
 	}

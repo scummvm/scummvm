@@ -32,7 +32,7 @@ using namespace Common;
 using namespace Graphics;
 
 namespace Alcachofa {
-	
+
 static void createThumbnail(ManagedSurface &surface) {
 	surface.create(kBigThumbnailWidth, kBigThumbnailHeight, PixelFormat::createFormatRGBA32());
 }
@@ -121,15 +121,13 @@ void Menu::updateSelectedSavefile(bool hasJustSaved) {
 	if (hasJustSaved) {
 		// we just saved in-game so we also still have the correct thumbnail in memory
 		_selectedThumbnail.copyFrom(_bigThumbnail);
-	}
-	else if (isOldSavefile) {
+	} else if (isOldSavefile) {
 		if (!tryReadOldSavefile()) {
 			_selectedSavefileDescription = String::format("Savestate %d",
 				parseSavestateSlot(_savefiles[_selectedSavefileI]));
 			createThumbnail(_selectedThumbnail);
 		}
-	}
-	else {
+	} else {
 		// the unsaved gamestate is shown as grayscale
 		_selectedThumbnail.copyFrom(_bigThumbnail);
 		convertToGrayscale(_selectedThumbnail);
@@ -240,8 +238,7 @@ void Menu::triggerSave() {
 	String fileName;
 	if (_selectedSavefileI < _savefiles.size()) {
 		fileName = _savefiles[_selectedSavefileI]; // overwrite a previous save
-	}
-	else {
+	} else {
 		// for a new savefile we figure out the next slot index
 		int nextSlot = _savefiles.empty()
 			? 1 // start at one to keep autosave alone
@@ -260,8 +257,7 @@ void Menu::triggerSave() {
 		g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), _selectedSavefileDescription, false);
 		_savefiles.push_back(fileName);
 		updateSelectedSavefile(true);
-	}
-	else {
+	} else {
 		GUI::MessageDialog dialog(error.getTranslatedDesc());
 		dialog.runModal();
 	}

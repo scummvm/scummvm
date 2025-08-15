@@ -58,7 +58,7 @@ void Camera::setFollow(WalkingCharacter *target, bool catchUp) {
 }
 
 void Camera::setPosition(Vector2d v) {
-	setPosition({v.getX(), v.getY(), _cur._usedCenter.z()});
+	setPosition({ v.getX(), v.getY(), _cur._usedCenter.z() });
 }
 
 void Camera::setPosition(Vector3d v) {
@@ -156,8 +156,8 @@ Vector3d Camera::transform3Dto2D(Vector3d v3d) const {
 }
 
 Point Camera::transform3Dto2D(Point p3d) const {
-	auto v2d = transform3Dto2D({(float)p3d.x, (float)p3d.y, kBaseScale});
-	return {(int16)v2d.x(), (int16)v2d.y()};
+	auto v2d = transform3Dto2D({ (float)p3d.x, (float)p3d.y, kBaseScale });
+	return { (int16)v2d.x(), (int16)v2d.y() };
 }
 
 void Camera::update() {
@@ -191,7 +191,7 @@ void Camera::updateFollowing(float deltaTime) {
 	Vector3d targetCenter = setAppliedCenter({
 		_shake.getX() + _followTarget->position().x,
 		_shake.getY() + _followTarget->position().y - depthScale * 85,
-		_cur._usedCenter.z()});
+		_cur._usedCenter.z() });
 	targetCenter.y() -= halfHeight;
 	float distanceToTarget = as2D(_cur._usedCenter - targetCenter).getMagnitude();
 	float moveDistance = _followTarget->stepSizeFactor() * _cur._speed * deltaTime;
@@ -461,7 +461,7 @@ struct CamShakeTask final : public CamLerpTask {
 	CamShakeTask(Process &process, Vector2d amplitude, Vector2d frequency, int32 duration)
 		: CamLerpTask(process, duration, EasingType::Linear)
 		, _amplitude(amplitude)
-		, _frequency(frequency) { }
+		, _frequency(frequency) {}
 
 	CamShakeTask(Process &process, Serializer &s)
 		: CamLerpTask(process) {
@@ -547,9 +547,15 @@ struct CamSetInactiveAttributeTask final : public Task {
 
 		auto &state = _camera._backups[0];
 		switch (_attribute) {
-		case kPosZ: state._usedCenter.z() = _value; break;
-		case kScale: state._scale = _value; break;
-		case kRotation: state._rotation = _value; break;
+		case kPosZ:
+			state._usedCenter.z() = _value;
+			break;
+		case kScale:
+			state._scale = _value;
+			break;
+		case kRotation:
+			state._rotation = _value;
+			break;
 		default:
 			g_engine->game().unknownCamSetInactiveAttribute((int)_attribute);
 			break;
@@ -560,10 +566,18 @@ struct CamSetInactiveAttributeTask final : public Task {
 	void debugPrint() override {
 		const char *attributeName;
 		switch (_attribute) {
-		case kPosZ: attributeName = "PosZ"; break;
-		case kScale: attributeName = "Scale"; break;
-		case kRotation: attributeName = "Rotation"; break;
-		default: attributeName = "<unknown>"; break;
+		case kPosZ:
+			attributeName = "PosZ";
+			break;
+		case kScale:
+			attributeName = "Scale";
+			break;
+		case kRotation:
+			attributeName = "Rotation";
+			break;
+		default:
+			attributeName = "<unknown>";
+			break;
 		}
 		g_engine->console().debugPrintf("Set inactive camera %s to %f after %dms\n", attributeName, _value, _delay);
 	}

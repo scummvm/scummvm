@@ -57,8 +57,7 @@ void IDebugRenderer::debugShape(const Shape &shape, Color color) {
 
 AnimationBase::AnimationBase(String fileName, AnimationFolder folder)
 	: _fileName(move(fileName))
-	, _folder(folder) {
-}
+	, _folder(folder) {}
 
 AnimationBase::~AnimationBase() {
 	freeImages();
@@ -70,10 +69,18 @@ void AnimationBase::load() {
 
 	String fullPath;
 	switch (_folder) {
-	case AnimationFolder::Animations: fullPath = "Animaciones/"; break;
-	case AnimationFolder::Masks: fullPath = "Mascaras/"; break;
-	case AnimationFolder::Backgrounds: fullPath = "Fondos/"; break;
-	default: assert(false && "Invalid AnimationFolder");
+	case AnimationFolder::Animations:
+		fullPath = "Animaciones/";
+		break;
+	case AnimationFolder::Masks:
+		fullPath = "Mascaras/";
+		break;
+	case AnimationFolder::Backgrounds:
+		fullPath = "Fondos/";
+		break;
+	default:
+		assert(false && "Invalid AnimationFolder");
+		break;
 	}
 	if (_fileName.size() < 4 || scumm_strnicmp(_fileName.end() - 4, ".AN0", 4) != 0)
 		_fileName += ".AN0";
@@ -236,8 +243,7 @@ Point AnimationBase::imageSize(int32 imageI) const {
 }
 
 Animation::Animation(String fileName, AnimationFolder folder)
-	: AnimationBase(fileName, folder) {
-}
+	: AnimationBase(fileName, folder) {}
 
 void Animation::load() {
 	if (_isLoaded)
@@ -492,8 +498,7 @@ void Font::drawCharacter(int32 imageI, Point centerPoint, Color color) {
 	renderer.quad(center, size, color, Angle(), _texMins[imageI], _texMaxs[imageI]);
 }
 
-Graphic::Graphic() {
-}
+Graphic::Graphic() {}
 
 Graphic::Graphic(ReadStream &stream) {
 	_topLeft.x = stream.readSint16LE();
@@ -515,8 +520,7 @@ Graphic::Graphic(const Graphic &other)
 	, _isLooping(other._isLooping)
 	, _lastTime(other._lastTime)
 	, _frameI(other._frameI)
-	, _depthScale(other._depthScale) {
-}
+	, _depthScale(other._depthScale) {}
 
 void Graphic::loadResources() {
 	if (_animation != nullptr)
@@ -593,8 +597,7 @@ static int8 shiftAndClampOrder(int8 order) {
 }
 
 IDrawRequest::IDrawRequest(int8 order)
-	: _order(shiftAndClampOrder(order)) {
-}
+	: _order(shiftAndClampOrder(order)) {}
 
 AnimationDrawRequest::AnimationDrawRequest(Graphic &graphic, bool is3D, BlendMode blendMode, float lodBias)
 	: IDrawRequest(graphic._order)
@@ -678,7 +681,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 	// allocate on drawQueue to prevent having destruct it
 	assert(originalText != nullptr);
 	auto textLen = strlen(originalText);
-	char *text = (char*)g_engine->drawQueue().allocator().allocateRaw(textLen + 1, 1);
+	char *text = (char *)g_engine->drawQueue().allocator().allocateRaw(textLen + 1, 1);
 	memcpy(text, originalText, textLen + 1);
 
 	// split into trimmed lines
@@ -705,8 +708,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 			itChar = trimTrailing(itChar, itLine, true) + 1;
 			itLine = trimLeading(itLine, itChar);
 			_allLines[lineCount] = TextLine(itLine, itChar - itLine);
-		}
-		else
+		} else
 			_allLines[lineCount] = TextLine(itLine, itChar - itLine);
 		itChar = trimLeading(itChar, textEnd);
 		lineCount++;
@@ -739,8 +741,7 @@ TextDrawRequest::TextDrawRequest(Font &font, const char *originalText, Point pos
 			pos.x = screenW - _width / 2 - 1;
 		for (auto &linePosX : _posX)
 			linePosX = pos.x - linePosX / 2;
-	}
-	else
+	} else
 		fill(_posX.begin(), _posX.end(), pos.x);
 
 	// setup height and y position
@@ -772,8 +773,7 @@ void TextDrawRequest::draw() {
 FadeDrawRequest::FadeDrawRequest(FadeType type, float value, int8 order)
 	: IDrawRequest(order)
 	, _type(type)
-	, _value(value) {
-}
+	, _value(value) {}
 
 void FadeDrawRequest::draw() {
 	Color color;
@@ -808,8 +808,7 @@ struct FadeTask : public Task {
 		, _duration(duration)
 		, _easingType(easingType)
 		, _order(order)
-		, _permanentFadeAction(permanentFadeAction) {
-	}
+		, _permanentFadeAction(permanentFadeAction) {}
 
 	FadeTask(Process &process, Serializer &s)
 		: Task(process) {
@@ -881,8 +880,7 @@ Task *fade(Process &process, FadeType fadeType,
 BorderDrawRequest::BorderDrawRequest(Rect rect, Color color)
 	: IDrawRequest(-kForegroundOrderCount)
 	, _rect(rect)
-	, _color(color) {
-}
+	, _color(color) {}
 
 void BorderDrawRequest::draw() {
 	auto &renderer = g_engine->renderer();

@@ -164,8 +164,7 @@ void AlcachofaEngine::playVideo(int32 videoId) {
 	Common::Event e;
 	decoder->start();
 	while (!decoder->endOfVideo() && !shouldQuit()) {
-		if (decoder->needsUpdate())
-		{
+		if (decoder->needsUpdate()) {
 			auto surface = decoder->decodeNextFrame();
 			if (surface)
 				texture->update(*surface);
@@ -225,8 +224,7 @@ void AlcachofaEngine::fadeExit() {
 }
 
 void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
-	switch (mode)
-	{
+	switch (mode) {
 	case DebugMode::ClosestFloorPoint:
 		_debugHandler.reset(new ClosestFloorPointDebugHandler(param));
 		break;
@@ -242,7 +240,9 @@ void AlcachofaEngine::setDebugMode(DebugMode mode, int32 param) {
 	case DebugMode::FloorColor:
 		_debugHandler.reset(FloorColorDebugHandler::create(param, true));
 		break;
-	default: _debugHandler.reset(nullptr);
+	default:
+		_debugHandler.reset(nullptr);
+		break;
 	}
 	_input.toggleDebugInput(isDebugModeActive());
 }
@@ -259,8 +259,7 @@ void AlcachofaEngine::setMillis(uint32 newMillis) {
 	if (newMillis > sysMillis) {
 		_timeNegOffset = 0;
 		_timePosOffset = newMillis - sysMillis;
-	}
-	else {
+	} else {
 		_timeNegOffset = sysMillis - newMillis;
 		_timePosOffset = 0;
 	}
@@ -342,13 +341,12 @@ bool AlcachofaEngine::syncThumbnail(MySerializer &s, Graphics::ManagedSurface *t
 	if (s.isLoading()) {
 		auto prevPosition = s.readStream().pos();
 		Image::PNGDecoder pngDecoder;
-		if (pngDecoder.loadStream(s.readStream()) && pngDecoder.getSurface () != nullptr) {
+		if (pngDecoder.loadStream(s.readStream()) && pngDecoder.getSurface() != nullptr) {
 			if (thumbnail != nullptr) {
 				thumbnail->free();
 				thumbnail->copyFrom(*pngDecoder.getSurface());
 			}
-		}
-		else {
+		} else {
 			// If we do not get a thumbnail, maybe we get at least the marker that there is no thumbnail
 			s.readStream().seek(prevPosition, SEEK_SET);
 			uint32 magicValue = s.readStream().readUint32LE();
@@ -357,8 +355,7 @@ bool AlcachofaEngine::syncThumbnail(MySerializer &s, Graphics::ManagedSurface *t
 			else // this is not an error, just a pity
 				warning("No thumbnail stored in in-game savestate");
 		}
-	}
-	else {
+	} else {
 		if (thumbnail == nullptr ||
 			thumbnail->getPixels() == nullptr ||
 			!Image::writePNG(s.writeStream(), *thumbnail)) {

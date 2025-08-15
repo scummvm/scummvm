@@ -38,8 +38,7 @@ MenuButton::MenuButton(Room *room, ReadStream &stream)
 	, _graphicNormal(stream)
 	, _graphicHovered(stream)
 	, _graphicClicked(stream)
-	, _graphicDisabled(stream) {
-}
+	, _graphicDisabled(stream) {}
 
 void MenuButton::draw() {
 	if (!isEnabled())
@@ -107,14 +106,12 @@ void MenuButton::trigger() {
 const char *InternetMenuButton::typeName() const { return "InternetMenuButton"; }
 
 InternetMenuButton::InternetMenuButton(Room *room, ReadStream &stream)
-	: MenuButton(room, stream) {
-}
+	: MenuButton(room, stream) {}
 
 const char *OptionsMenuButton::typeName() const { return "OptionsMenuButton"; }
 
 OptionsMenuButton::OptionsMenuButton(Room *room, ReadStream &stream)
-	: MenuButton(room, stream) {
-}
+	: MenuButton(room, stream) {}
 
 void OptionsMenuButton::update() {
 	MenuButton::update();
@@ -130,8 +127,7 @@ void OptionsMenuButton::trigger() {
 const char *MainMenuButton::typeName() const { return "MainMenuButton"; }
 
 MainMenuButton::MainMenuButton(Room *room, ReadStream &stream)
-	: MenuButton(room, stream) {
-}
+	: MenuButton(room, stream) {}
 
 void MainMenuButton::update() {
 	MenuButton::update();
@@ -152,8 +148,7 @@ PushButton::PushButton(Room *room, ReadStream &stream)
 	, _alwaysVisible(readBool(stream))
 	, _graphic1(stream)
 	, _graphic2(stream)
-	, _actionId(stream.readSint32LE()) {
-}
+	, _actionId(stream.readSint32LE()) {}
 
 const char *EditBox::typeName() const { return "EditBox"; }
 
@@ -166,8 +161,7 @@ EditBox::EditBox(Room *room, ReadStream &stream)
 	, i3(stream.readSint32LE())
 	, i4(stream.readSint32LE())
 	, i5(stream.readSint32LE())
-	, _fontId(stream.readSint32LE()) {
-}
+	, _fontId(stream.readSint32LE()) {}
 
 const char *CheckBox::typeName() const { return "CheckBox"; }
 
@@ -178,8 +172,7 @@ CheckBox::CheckBox(Room *room, ReadStream &stream)
 	, _graphicChecked(stream)
 	, _graphicHovered(stream)
 	, _graphicClicked(stream)
-	, _actionId(stream.readSint32LE()) {
-}
+	, _actionId(stream.readSint32LE()) {}
 
 void CheckBox::draw() {
 	if (!isEnabled())
@@ -251,8 +244,7 @@ SlideButton::SlideButton(Room *room, ReadStream &stream)
 	, _maxPos(Shape(stream).firstPoint())
 	, _graphicIdle(stream)
 	, _graphicHovered(stream)
-	, _graphicClicked(stream) {
-}
+	, _graphicClicked(stream) {}
 
 void SlideButton::draw() {
 	auto *optionsMenu = dynamic_cast<OptionsMenu *>(room());
@@ -277,14 +269,12 @@ void SlideButton::update() {
 			optionsMenu->currentSlideButton() = nullptr;
 			g_engine->menu().triggerOptionsValue((OptionsMenuValue)_valueId, _value);
 			update(); // to update the position
-		}
-		else {
+		} else {
 			int clippedMousePosY = CLIP(mousePos.y, _minPos.y, _maxPos.y);
 			_value = (_maxPos.y - clippedMousePosY) / (float)(_maxPos.y - _minPos.y);
 			_graphicClicked.topLeft() = Point((_minPos.x + _maxPos.x) / 2, clippedMousePosY);
 		}
-	}
-	else {
+	} else {
 		_graphicIdle.topLeft() = Point(
 			(_minPos.x + _maxPos.x) / 2,
 			(int16)(_maxPos.y - _value * (_maxPos.y - _minPos.y)));
@@ -322,8 +312,7 @@ const char *IRCWindow::typeName() const { return "IRCWindow"; }
 IRCWindow::IRCWindow(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
 	, _p1(Shape(stream).firstPoint())
-	, _p2(Shape(stream).firstPoint()) {
-}
+	, _p2(Shape(stream).firstPoint()) {}
 
 const char *MessageBox::typeName() const { return "MessageBox"; }
 
