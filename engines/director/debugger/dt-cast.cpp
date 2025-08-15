@@ -204,12 +204,12 @@ void showCast() {
 
 						case kCastText:
 							{
-								const char *text = Common::toPrintable(((TextCastMember *)castMember._value)->_rtext).c_str();
-								ImVec2 textSize = ImGui::CalcTextSize(text);
-								float offsetX = (columnWidth - textSize.x) * 0.5f;
-
-								ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-								ImGui::Text("%s", text);
+								ImGuiImage textID = getTextID(castMember._value);
+								if (textID.id) {
+									float offsetX = (columnWidth - 32.f) * 0.5f;
+									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
+									showImage(textID, name.c_str(), 32.f);
+								}
 							}
 							break;
 
