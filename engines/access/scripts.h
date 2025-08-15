@@ -56,11 +56,6 @@ protected:
 
 	void charLoop();
 
-	/**
-	 * Read a null terminated string from the script
-	 */
-	Common::String readString();
-
 	void cmdObject();
 	void cmdEndObject();
 	void cmdJumpLook();

@@ -72,11 +72,6 @@ protected:
 	uint findEntry(byte gameId, byte discType, byte demoType, Common::Language language);
 
 	/**
-	 * Read a string in from the passed stream
-	 */
-	Common::String readString(Common::SeekableReadStream &s);
-
-	/**
 	 * Load data from the access.dat file
 	 */
 	virtual void load(Common::SeekableReadStream &s);

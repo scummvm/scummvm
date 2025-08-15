@@ -201,7 +201,7 @@ void Scripts::printWatch() {
 	_vm->_screen->_printStart = Common::Point(128, 58);
 	clearWatch();
 
-	Common::String msg = readString();
+	Common::String msg = _data->readString();
 	Common::String line = "";
 	int width = 0;
 	bool lastLine;
@@ -237,9 +237,6 @@ int Scripts::executeScript() {
 		// Get next command, skipping over script start start if it's being pointed to
 		while ((_scriptCommand = _data->readByte()) == SCRIPT_START_BYTE)
 			_data->skip(2);
-
-		if (_data->eos())
-			error("Hit end of script data");
 
 		if (_scriptCommand < 0x80)
 			error("Unexpected opcode value %d", _scriptCommand);
@@ -361,7 +358,7 @@ void Scripts::cmdNull() {
 
 void Scripts::cmdPrint_v2() {
 	// Get a text line for display
-	Common::String msg = readString();
+	Common::String msg = _data->readString();
 	debugC(1, kDebugScripts, "cmdPrint_v2(msg=\"%s\")", msg.c_str());
 	printString(msg);
 }
@@ -378,7 +375,7 @@ void Scripts::doCmdPrint_v1(const Common::String &msg) {
 }
 
 void Scripts::cmdPrint_v1() {
-	Common::String msg = readString();
+	Common::String msg = _data->readString();
 	debugC(1, kDebugScripts, "cmdPrint_v1(msg=\"%s\")", msg.c_str());
 	doCmdPrint_v1(msg);
 }
@@ -403,15 +400,6 @@ void Scripts::printString(const Common::String &msg) {
 
 	// Restore the original screen over the text bubble
 	_vm->_screen->restoreBlock();
-}
-
-Common::String Scripts::readString() {
-	Common::String msg;
-	byte c;
-	while ((c = (char)_data->readByte()) != '\0')
-		msg += c;
-
-	return msg;
 }
 
 void Scripts::cmdRetPos() {
@@ -801,6 +789,7 @@ void Scripts::cmdRemoveLast() {
 }
 
 void Scripts::cmdDoTravel() {
+	// MM only
 	debugC(1, kDebugScripts, "cmdDoTravel()");
 	while (true) {
 		_vm->_travelBox->getList(Martian::TRAVDATA, _vm->_travel);
@@ -847,7 +836,7 @@ void Scripts::cmdHelp_v1() {
 	for (int i = 0; i < 40; i++) {
 		byte c = _data->readByte();
 		if (c != 0xFF) {
-			Common::String tmpStr = c + readString();
+			Common::String tmpStr = c + _data->readString();
 			if (Martian::HELP[i]) {
 				_vm->_helpBox->_tempList[idx] = tmpStr;
 				_vm->_helpBox->_tempListIdx[idx] = i;
@@ -924,33 +913,25 @@ void Scripts::cmdCycle() {
 }
 
 void Scripts::cmdCharSpeak() {
-	debugC(1, kDebugScripts, "cmdCharSpeak()");
 	_vm->_screen->_printOrg = _charsOrg;
 	_vm->_screen->_printStart = _charsOrg;
 
-	byte v;
-	Common::String tmpStr = "";
-	while ((v = _data->readByte()) != 0)
-		tmpStr += (char)v;
-
-	_vm->_bubbleBox->placeBubble(tmpStr);
+	Common::String str = _data->readString();
+	debugC(1, kDebugScripts, "cmdCharSpeak(str=\"%s\")", str.c_str());
+	_vm->_bubbleBox->placeBubble(str);
 	findNull();
 }
 
 void Scripts::cmdTexSpeak() {
-	debugC(1, kDebugScripts, "cmdTexSpeak()");
 	_vm->_screen->_printOrg = _texsOrg;
 	_vm->_screen->_printStart = _texsOrg;
 	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 23 : 20;
 
-	byte v;
-	Common::String tmpStr = "";
-	while ((v = _data->readByte()) != 0)
-		tmpStr += (char)v;
+	Common::String str = _data->readString();
+	debugC(1, kDebugScripts, "cmdTexSpeak(str=\"%s\")", str.c_str());
 
 	_vm->_bubbleBox->_bubbleDisplStr = _vm->_res->getEgoName();
-
-	_vm->_bubbleBox->placeBubble1(tmpStr);
+	_vm->_bubbleBox->placeBubble1(str);
 	findNull();
 }
 
@@ -977,10 +958,7 @@ void Scripts::cmdTexChoice() {
 	_vm->_bubbleBox->clearBubbles();
 	_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 1";
 
-	byte v;
-	Common::String tmpStr = "";
-	while ((v = _data->readByte()) != 0)
-		tmpStr += (char)v;
+	Common::String tmpStr = _data->readString();
 
 	_vm->_bubbleBox->calcBubble(tmpStr);
 	_vm->_bubbleBox->printBubble(tmpStr);
@@ -993,11 +971,9 @@ void Scripts::cmdTexChoice() {
 
 	findNull();
 
-	tmpStr.clear();
-	while ((v = _data->readByte()) != 0)
-		tmpStr += (char)v;
+	tmpStr = _data->readString();
 
-	if (tmpStr.size() != 0) {
+	if (!tmpStr.empty()) {
 		_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 2";
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);
@@ -1008,11 +984,9 @@ void Scripts::cmdTexChoice() {
 	findNull();
 
 	bool choice3Fl = false;
-	tmpStr.clear();
-	while ((v = _data->readByte()) != 0)
-		tmpStr += (char)v;
+	tmpStr = _data->readString();
 
-	if (tmpStr.size() != 0) {
+	if (!tmpStr.empty()) {
 		_vm->_bubbleBox->_bubbleDisplStr = "RESPONSE 3";
 		_vm->_bubbleBox->calcBubble(tmpStr);
 		_vm->_bubbleBox->printBubble(tmpStr);

@@ -45,18 +45,18 @@ void AmazonResources::load(Common::SeekableReadStream &s) {
 	uint count;
 
 	// Load the version specific data
-	NO_HELP_MESSAGE = readString(s);
-	NO_HINTS_MESSAGE = readString(s);
-	RIVER_HIT1 = readString(s);
-	RIVER_HIT2 = readString(s);
-	BAR_MESSAGE = readString(s);
+	NO_HELP_MESSAGE = s.readString();
+	NO_HINTS_MESSAGE = s.readString();
+	RIVER_HIT1 = s.readString();
+	RIVER_HIT2 = s.readString();
+	BAR_MESSAGE = s.readString();
 
 	for (int idx = 0; idx < 3; ++idx)
-		HELPLVLTXT[idx] = readString(s);
+		HELPLVLTXT[idx] = s.readString();
 	for (int idx = 0; idx < 9; ++idx)
-		IQLABELS[idx] = readString(s);
+		IQLABELS[idx] = s.readString();
 
-	CANT_GET_THERE = readString(s);
+	CANT_GET_THERE = s.readString();
 
 	// Get the offset of the general shared data for the game
 	uint entryOffset = findEntry(_vm->getGameID(), 2, 0, (Common::Language)0);
