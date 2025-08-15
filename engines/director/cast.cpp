@@ -1651,7 +1651,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 		_lingodec->parseScripts();
 
 		for (auto it = _lingodec->scripts.begin(); it != _lingodec->scripts.end(); ++it) {
-			debugC(9, kDebugCompile, "[%d/%d] %s", it->second->castID, it->first, it->second->scriptText("\n", false).c_str());
+			debugC(9, kDebugCompile, "[%d/%d] %s", _castsScriptIds[it->first], it->first, it->second->scriptText("\n", false).c_str());
 		}
 
 		if (ConfMan.getBool("dump_scripts")) {
@@ -1659,17 +1659,15 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 				Common::DumpFile out;
 				ScriptType scriptType = kNoneScript;
 
-				if (_loadedCast->contains(it->second->castID)) {
-					CastMember *member = _loadedCast->getVal(it->second->castID);
-					if (member && member->_type == kCastLingoScript) {
-						scriptType = ((ScriptCastMember *)member)->_scriptType;
-					} else {
-						scriptType = kCastScript;
-					}
+				CastMember *member = getCastMemberByScriptId(it->first);
+				if (member && member->_type == kCastLingoScript) {
+					scriptType = ((ScriptCastMember *)member)->_scriptType;
+				} else if (member) {
+					scriptType = kCastScript;
 				}
 
 				Common::String filename = encodePathForDump(_macName);
-				Common::Path lingoPath(dumpScriptName(filename.c_str(), scriptType, it->second->castID, "lingo"));
+				Common::Path lingoPath(dumpScriptName(filename.c_str(), scriptType, _castsScriptIds[it->first], "lingo"));
 
 				if (out.open(lingoPath, true)) {
 					Common::String decompiled = it->second->scriptText("\n", false);
