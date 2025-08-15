@@ -118,6 +118,12 @@ namespace Beacon {
 // See game.cpp for the code to the member functions and the message map.
 //
 class CMainWindow : public CFrameWnd {
+private:
+	struct BLOCK {
+		CRect   rLocation;
+		UINT    nColorIndex;
+	} colorBlock[NUM_BUTTONS];
+
 public:
 	CMainWindow();
 	void NewGame();

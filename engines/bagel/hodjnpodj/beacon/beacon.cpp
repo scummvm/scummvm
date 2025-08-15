@@ -37,8 +37,8 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace Beacon {
 
-void CALLBACK GetSubOptions(CWnd* pParentWind);
-void CALLBACK StepAlongLine(int xpos, int ypos, LPSTR lphdc);
+void CALLBACK GetSubOptions(CWnd *pParentWind);
+void CALLBACK StepAlongLine(int xpos, int ypos, LPARAM lphdc);
 BOOL InArtRegion(CPoint point);
 void MyFocusRect(CDC *pDC, CRect rect, BOOL bPressed);
 
@@ -88,11 +88,6 @@ BOOL        m_bChangeAtTwelve = FALSE;
 float       m_Score = 0;
 
 BOOL        PictureGrid[NUM_COLUMNS][NUM_ROWS];
-
-struct BLOCK {
-	CRect   rLocation;
-	UINT    nColorIndex;
-} colorBlock[NUM_BUTTONS];
 
 static CSound   *pGameSound = nullptr;                             // Game theme song
 
@@ -951,7 +946,7 @@ void CMainWindow::CheckUnderBeam() {
 		End.y = Start.y + (int)(y * radius);
 
 		bChanged = TRUE;
-		LineDDA(Start.x, Start.y, End.x, End.y, (LINEDDAPROC)StepAlongLine, (long)pDC);
+		LineDDA(Start.x, Start.y, End.x, End.y, StepAlongLine, (long)pDC);
 
 		degrees += 1.0F;
 	} // end while
@@ -962,11 +957,11 @@ void CMainWindow::CheckUnderBeam() {
 	ReleaseDC(pDC);
 } // end CheckUnderBeam
 
-void CALLBACK StepAlongLine(int xpos, int ypos, LPSTR lphdc) {
+void CALLBACK StepAlongLine(int xpos, int ypos, LPARAM lpData) {
 	CDC     *pDC;
 	CPoint point;
 
-	pDC = (CDC *)lphdc;
+	pDC = (CDC *)lpData;
 
 	if (bChanged) {
 		point.x = xpos;
