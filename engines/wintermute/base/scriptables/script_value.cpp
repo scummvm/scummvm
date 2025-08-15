@@ -892,7 +892,7 @@ bool ScValue::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 // -1 ... left is less, 0 ... equals, 1 ... left is greater
-int ScValue::compare(ScValue *val1, ScValue *val2) {
+int ScValue::compare(ScValue *val1, ScValue *val2, bool enableFloatCompareWA) {
 	// both natives?
 	if (val1->isNative() && val2->isNative()) {
 		// same class?
@@ -925,12 +925,32 @@ int ScValue::compare(ScValue *val1, ScValue *val2) {
 
 	// one of them is float?
 	if (val1->isFloat() || val2->isFloat()) {
-		if (val1->getFloat() < val2->getFloat()) {
-			return -1;
-		} else if (val1->getFloat() > val2->getFloat()) {
-			return 1;
+		if (enableFloatCompareWA) {
+			// W/A:
+			// The engine uses double precision for script values,
+			// while other parts use single precision.
+			// Conversion between them may not always be exactly
+			// the same across platforms.
+			// Some games maye rely on the higher precision of doubles.
+			// As a result, calculated values may not match the
+			// expectations of the game scripts.
+			// The solution is to cast to single precision before comparison.
+			// This helps fix the in-game 'Face Noir' mini puzzle.
+			if ((float)val1->getFloat() < (float)val2->getFloat()) {
+				return -1;
+			} else if ((float)val1->getFloat() > (float)val2->getFloat()) {
+				return 1;
+			} else {
+				return 0;
+			}
 		} else {
-			return 0;
+			if (val1->getFloat() < val2->getFloat()) {
+				return -1;
+			} else if (val1->getFloat() > val2->getFloat()) {
+				return 1;
+			} else {
+				return 0;
+			}
 		}
 	}
 
@@ -946,11 +966,11 @@ int ScValue::compare(ScValue *val1, ScValue *val2) {
 
 
 //////////////////////////////////////////////////////////////////////////
-int ScValue::compareStrict(ScValue *val1, ScValue *val2) {
+int ScValue::compareStrict(ScValue *val1, ScValue *val2, bool enableFloatCompareWA) {
 	if (val1->getTypeTolerant() != val2->getTypeTolerant()) {
 		return -1;
 	} else {
-		return ScValue::compare(val1, val2);
+		return ScValue::compare(val1, val2, enableFloatCompareWA);
 	}
 }
 

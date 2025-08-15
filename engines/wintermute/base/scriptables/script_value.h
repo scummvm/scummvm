@@ -41,8 +41,8 @@ class BaseScriptable;
 
 class ScValue : public BaseClass {
 public:
-	static int compare(ScValue *val1, ScValue *val2);
-	static int compareStrict(ScValue *val1, ScValue *val2);
+	static int compare(ScValue *val1, ScValue *val2, bool enableFloatCompareWA);
+	static int compareStrict(ScValue *val1, ScValue *val2, bool enableFloatCompareWA);
 	TValType getTypeTolerant();
 	void cleanup(bool ignoreNatives = false);
 	DECLARE_PERSISTENT(ScValue, BaseClass)

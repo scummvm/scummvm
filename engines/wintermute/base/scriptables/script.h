@@ -168,6 +168,8 @@ private:
 	void initOpcodesType();
 	uint32 decodeAltOpcodes(uint32 inst);
 #endif
+
+	bool _enableFloatCompareWA{};
 };
 
 } // End of namespace Wintermute

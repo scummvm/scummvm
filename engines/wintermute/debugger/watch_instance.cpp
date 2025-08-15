@@ -38,10 +38,7 @@ void WatchInstance::evaluate() {
 				// ^^ This here is NULL by default
 			}
 			ScValue* currentValue = _script->resolveName(_watch->getSymbol());
-			if(ScValue::compare(
-					currentValue,
-					_lastValue
-					)) {
+			if(ScValue::compare(currentValue, _lastValue, false)) {
 				_lastValue->copy(currentValue);
 				_watch->trigger(this);
 			}

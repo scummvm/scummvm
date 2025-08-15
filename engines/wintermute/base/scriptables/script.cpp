@@ -107,6 +107,10 @@ ScScript::ScScript(BaseGame *inGame, ScEngine *engine) : BaseClass(inGame) {
 #ifdef ENABLE_FOXTAIL
 	initOpcodesType();
 #endif
+	// W/A for 'Face Noir' game. See comment in script_value.cpp
+	if (BaseEngine::instance().getGameId() == "facenoir") {
+		_enableFloatCompareWA = true;
+	}
 }
 
 
@@ -1019,7 +1023,7 @@ bool ScScript::executeInstruction() {
 		}
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) == 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) == 0);
 		_stack->push(_operand);
 		break;
 
@@ -1043,7 +1047,7 @@ bool ScScript::executeInstruction() {
 		}
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) != 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) != 0);
 		_stack->push(_operand);
 		break;
 
@@ -1058,7 +1062,7 @@ bool ScScript::executeInstruction() {
 		else _operand->setBool(op1->getInt() < op2->getInt());
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) < 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) < 0);
 		_stack->push(_operand);
 		break;
 
@@ -1073,7 +1077,7 @@ bool ScScript::executeInstruction() {
 		else _operand->setBool(op1->getInt() > op2->getInt());
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) > 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) > 0);
 		_stack->push(_operand);
 		break;
 
@@ -1088,7 +1092,7 @@ bool ScScript::executeInstruction() {
 		else _operand->setBool(op1->getInt() <= op2->getInt());
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) <= 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) <= 0);
 		_stack->push(_operand);
 		break;
 
@@ -1103,7 +1107,7 @@ bool ScScript::executeInstruction() {
 		else _operand->setBool(op1->getInt() >= op2->getInt());
 		*/
 
-		_operand->setBool(ScValue::compare(op1, op2) >= 0);
+		_operand->setBool(ScValue::compare(op1, op2, _enableFloatCompareWA) >= 0);
 		_stack->push(_operand);
 		break;
 
@@ -1112,7 +1116,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		//_operand->setBool(op1->getType()==op2->getType() && op1->getFloat()==op2->getFloat());
-		_operand->setBool(ScValue::compareStrict(op1, op2) == 0);
+		_operand->setBool(ScValue::compareStrict(op1, op2, _enableFloatCompareWA) == 0);
 		_stack->push(_operand);
 
 		break;
@@ -1122,7 +1126,7 @@ bool ScScript::executeInstruction() {
 		op1 = _stack->pop();
 
 		//_operand->setBool(op1->getType()!=op2->getType() || op1->getFloat()!=op2->getFloat());
-		_operand->setBool(ScValue::compareStrict(op1, op2) != 0);
+		_operand->setBool(ScValue::compareStrict(op1, op2, _enableFloatCompareWA) != 0);
 		_stack->push(_operand);
 		break;
 
@@ -1352,6 +1356,12 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 #ifdef ENABLE_FOXTAIL
 		initOpcodesType();
 #endif
+		// W/A for 'Face Noir' game. See comment in script_value.cpp
+		if (BaseEngine::instance().getGameId() == "facenoir") {
+			_enableFloatCompareWA = true;
+		} else {
+			_enableFloatCompareWA = false;
+		}
 	}
 
 	return STATUS_OK;
