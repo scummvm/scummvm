@@ -363,10 +363,9 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			stack->pushNULL();
 			return STATUS_OK;
 		}
-		bool val;
-		STATIC_ASSERT(sizeof(val) == 1, bool_is_not_1_byte);
-		if (_readFile->read(&val, sizeof(bool)) == sizeof(bool)) {
-			stack->pushBool(val);
+		byte val;
+		if (_readFile->read(&val, sizeof(byte))) {
+			stack->pushBool(val != 0);
 		} else {
 			stack->pushNULL();
 		}

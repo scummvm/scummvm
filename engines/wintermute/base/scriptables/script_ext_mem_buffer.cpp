@@ -154,10 +154,10 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	else if (strcmp(name, "GetBool") == 0) {
 		stack->correctParams(1);
 		int start = stack->pop()->getInt();
-		if (!checkBounds(script, start, sizeof(bool))) {
+		if (!checkBounds(script, start, sizeof(byte))) {
 			stack->pushNULL();
 		} else {
-			stack->pushBool(*(bool *)((byte *)_buffer + start));
+			stack->pushBool(*((byte *)_buffer + start) != 0);
 		}
 
 		return STATUS_OK;
@@ -292,10 +292,10 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		int start = stack->pop()->getInt();
 		bool val = stack->pop()->getBool();
 
-		if (!checkBounds(script, start, sizeof(bool))) {
+		if (!checkBounds(script, start, sizeof(byte))) {
 			stack->pushBool(false);
 		} else {
-			*(bool *)((byte *)_buffer + start) = val;
+			*((byte *)_buffer + start) = (byte)val;
 			stack->pushBool(true);
 		}
 		return STATUS_OK;
