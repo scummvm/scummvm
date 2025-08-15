@@ -1739,7 +1739,7 @@ public:
 
 	int OnCreate(LPCREATESTRUCT lpcs);
 	void OnDestroy();
-	void PostNcDestroy();
+	void PostNcDestroy() override;
 
 	void OnInitialUpdate();
 	virtual void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
