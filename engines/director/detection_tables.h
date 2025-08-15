@@ -4188,6 +4188,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("elroybug", "", "BUGZERK.EXE", "t:3be9fa389257a608ff21e09074355fa5", 1593811, 400),
 	MACGAME1("elroybug", "1.0", "Elroy Goes Bugzerk", "r:cbce20666bfe47a9533331c6be1e6039", 321438, 404),
 	WINGAME1("elroybug", "1.0", "BUGZERK.EXE", "t:7fcb09d5dcc8096cd7ffa1fd618e5500", 1561075, 404),
+	MACGAME1_l("elroybug", "1.0", "xn--Elroy jagt den Technokfer-6ec", "r:bcd3c718db258701496b3c5bcb827ef2", 520582, Common::DE_DEU, 404),
+	WINGAME1_l("elroybug", "1.0", "BUGZERK.EXE", "t:ce2739427840ffc3bdc1d59d38f3c80d", 1521691, Common::DE_DEU, 404),
 	MACDEMO1("elroybug", "Demo", "Elroy Goes Bugzerk Demo", "bcd3c718db258701496b3c5bcb827ef2", 498394, 404),
 	WINDEMO1("elroybug", "Demo", "ELRYDEMO.EXE", "cb2d86ea52d81d12d1fe8eadfb4a118c", 2438763, 404),
 
@@ -7857,8 +7859,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on Revolutionary War Picture CD from Holiday Digital Pictures
 	MACGAME1("ssrevwar", "", "Revolutionary War Screen Saver", "r:43234754a346ed7ac25b581f6d106866", 217838, 500),
 
-	WINGAME1("trekchair", "", "Cap_win.exe", "a28313a078c0cd3cebdf505af1d63d88", 1399089, 400),
-
 	// Mac version requires installation, Install Star Warped, VISE
 	// Preview is from X-Fools disc
 	// Win/Mac previews from Microshaft Winblows are D6
@@ -7934,8 +7934,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("treasuresamnh", "", "Treasures of the AMNH/Treasures", "r:d17d1380e3d87863c406e012bd5d8078", 718945, 501),
 	WINGAME1("treasuresamnh", "", "TAMNH/TAMNH.EXE", "t:b8417ced47c60179e0ca1cf59bfc209b", 1641329, 501),
 
-	MACGAME1("trekchair", "", "xn--Star Trek Captain's Chair-tl1p/Captain's Chair Player", "d8bad538d97edf5990c451699e429db3", 764476, 501),
-	WINGAME1t("trekchair", "", "CAP_WIN.EXE", "6c3c66dd2a5a91257fd2691e3888d47d", 1399089, 500),
+	MACGAME1("trekchair", "1.0", "xn--Star Trek Captain's Chair-tl1p/Captain's Chair Player", "r:d8bad538d97edf5990c451699e429db3", 764476, 501),
+	WINGAME1("trekchair", "1.0", "SOURCE/CAP_WIN.EXE", "t:6c3c66dd2a5a91257fd2691e3888d47d", 1399089, 500),
 
 	MACGAME1("troubleshoot101", "Basic", "Troubleshooting 101 IA",		   "r:62e979424add2428daa835610fb83864", 719005, 501),
 	MACGAME1("troubleshoot101", "Music", "Troubleshooting 101 IA w MUSIC", "r:222fbd020a3910ef748724945145771c", 719005, 501),
