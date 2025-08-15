@@ -1501,8 +1501,14 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		g_system->showOverlay(false);
 		int16 h = g_system->getOverlayHeight();
 
-		_subtitles->setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
-		_subtitles->setColor(0xff, 0xff, 0xff);
+		// If we are in the main menu, we need to adjust the position of the subtitles
+		if (_currentSetting == getMainDesktopSetting()) {
+			_subtitles->setBBox(Common::Rect(20, h - 100, g_system->getOverlayWidth() - 20, h - 20));
+		} else {
+			_subtitles->setBBox(Common::Rect(20, h - 160, g_system->getOverlayWidth() - 20, h - 20));
+		}
+
+		_subtitles->setColor(0xff, 0xff, 0x80);
 		_subtitles->setFont("LiberationSans-Regular.ttf", 50);
 
 	} else {
