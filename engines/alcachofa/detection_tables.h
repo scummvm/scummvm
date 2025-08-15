@@ -53,7 +53,7 @@ const ADGameDescription gameDescriptions[] = {
 	// The "english" version is just the spanish version with english subtitles...
 	{
 		"mort_phil_adventura_de_cine",
-		u8"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
+		"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
 		AD_ENTRY1s("Textos/Objetos.nkr", "ad3cb78ad7a51cfe63ee6f84768c7e66", 15895),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -62,7 +62,7 @@ const ADGameDescription gameDescriptions[] = {
 	},
 	{
 		"mort_phil_adventura_de_cine",
-		u8"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
+		"Mortadelo y Filemón: Una Aventura de Cine - Edición Especial",
 		AD_ENTRY1s("Textos/Objetos.nkr", "93331e4cc8d2f8f8a0007bfb5140dff5", 16403),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
