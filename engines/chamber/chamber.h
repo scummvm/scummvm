@@ -38,6 +38,14 @@ struct ADGameDescription;
 
 namespace Chamber {
 
+enum CHAMBERActions {
+	kActionNone,
+	kActionInteract,
+	kActionQuit,
+	kActionYes,
+	kActionNo,
+};
+
 class ChamberEngine : public Engine {
 private:
 	// We need random numbers
