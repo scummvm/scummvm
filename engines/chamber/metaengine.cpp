@@ -22,6 +22,12 @@
 #include "chamber/chamber.h"
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Chamber {
 
 Common::Language ChamberEngine::getLanguage() const {
@@ -37,11 +43,72 @@ public:
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 Common::Error ChamberMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Chamber::ChamberEngine(syst, desc);
 	return Common::kNoError;
+}
+
+
+Common::KeymapArray ChamberMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Chamber;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "chamber-default", _("Default keymappings"));
+	Keymap *gameKeymap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *quitDialogKeymap = new Keymap(Keymap::kKeymapTypeGame, "quit-dialog", _("Quit dialog keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Select / Interact"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Select / Interact"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	act = new Action("INTERACT", _("Select / Interact"));
+	act->setCustomEngineActionEvent(kActionInteract);
+	act->addDefaultInputMapping("SPACE");
+	gameKeymap->addAction(act);
+
+	// Only the EN_USA version has a quit dialog. Input handling does a similar check.
+	if (parseLanguage(ConfMan.get("language")) == EN_USA) {
+		act = new Action("QUIT", _("Quit"));
+		act->setCustomEngineActionEvent(kActionQuit);
+		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_X");
+		gameKeymap->addAction(act);
+	}
+
+	act = new Action("YES", _("Yes"));
+	act->setCustomEngineActionEvent(kActionYes);
+	act->addDefaultInputMapping("y");
+	act->addDefaultInputMapping("JOY_A");
+	quitDialogKeymap->addAction(act);
+
+	act = new Action("NO", _("No"));
+	act->setCustomEngineActionEvent(kActionNo);
+	act->addDefaultInputMapping("n");
+	act->addDefaultInputMapping("JOY_B");
+	quitDialogKeymap->addAction(act);
+
+	Common::KeymapArray keymaps(3);
+
+	keymaps[0] = engineKeymap;
+	keymaps[1] = gameKeymap;
+	keymaps[2] = quitDialogKeymap;
+
+	quitDialogKeymap->setEnabled(false);
+
+	return keymaps;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CHAMBER)

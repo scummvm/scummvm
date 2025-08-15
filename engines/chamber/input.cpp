@@ -33,6 +33,8 @@
 #include "chamber/timer.h"
 #include "chamber/ifgm.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Chamber {
 
 byte have_mouse = 0;
@@ -59,10 +61,17 @@ void pollDiscrete(void);
 byte ChamberEngine::readKeyboardChar() {
 	Common::Event event;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->disableAllGameKeymaps();
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	while (true) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
+				g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+				keymapper->getKeymap("chamber-default")->setEnabled(true);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 				return event.kbd.ascii;
 
 			case Common::EVENT_RETURN_TO_LAUNCHER:
@@ -156,13 +165,18 @@ int16 askQuitGame(void) {
 
 	Common::Event event;
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("chamber-default")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("quit-dialog")->setEnabled(true);
+
 	while (quit == -1) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_y)
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionYes)
 					quit = 1;
-				else if (event.kbd.keycode == Common::KEYCODE_n)
+				else if (event.customType == kActionNo)
 					quit = 0;
 				break;
 
@@ -177,6 +191,10 @@ int16 askQuitGame(void) {
 	}
 	cga_CopyScreenBlock(backbuffer, char_draw_max_width + 2, char_draw_coords_y - draw_y + 8, frontbuffer, CalcXY_p(draw_x, draw_y));
 
+	keymapper->getKeymap("quit-dialog")->setEnabled(false);
+	keymapper->getKeymap("chamber-default")->setEnabled(true);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 	return quit;
 }
 
@@ -188,10 +206,10 @@ void pollInput(void) {
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (event.customType == kActionInteract)
 				mouseButtons |= 1;
-			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			else if (event.customType == kActionQuit) {
 				if (g_vm->getLanguage() == Common::EN_USA) {
 					if (askQuitGame() != 0)
 						g_vm->_shouldQuit = true;
@@ -199,8 +217,8 @@ void pollInput(void) {
 			}
 			break;
 
-		case Common::EVENT_KEYUP:
-			if (event.kbd.keycode == Common::KEYCODE_SPACE)
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (event.customType == kActionInteract)
 				mouseButtons &= ~1;
 			break;
 
