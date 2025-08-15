@@ -21,6 +21,8 @@
 
 #include "backends/imgui/IconsMaterialSymbols.h"
 
+#include "graphics/macgui/mactext.h"
+
 #include "image/png.h"
 
 #include "director/director.h"
@@ -191,7 +193,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	Channel *channel = nullptr;
 
 	for (auto it : channels) {
-		if (it->_sprite->_castId.member == castMember->getID()) {
+		if (it->_sprite && it->_sprite->_castId.member == castMember->getID()) {
 			channel = new Channel(*it);
 			break;
 		}
@@ -227,6 +229,44 @@ ImGuiImage getShapeID(CastMember *castMember) {
 
 	delete managedSurface;
 	delete channel;
+	return {textureID, surface.w, surface.h};
+}
+
+ImGuiImage getTextID(CastMember *castMember) {
+	if (castMember->_type != CastType::kCastText)
+		return {};
+
+	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+	Graphics::Surface source;
+
+	// This means the shapes that are not in any channel won't be shown
+	for (auto it : channels) {
+		if (it->_sprite && it->_sprite->_castId.member == castMember->getID()) {
+			source = it->_widget->getSurface()->rawSurface();
+			break;
+		}
+	}
+
+	if (source.format.bytesPerPixel > 4 || !source.getPixels()) {
+		return {};
+	}
+
+	Graphics::Surface surface;
+	surface.copyFrom(source);
+
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String prepend = "text";
+		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", g_director->getCurrentMovie()->getMacName().c_str(), encodePathForDump(prepend).c_str(), castMember->getID());
+		Common::DumpFile bitmapFile;
+
+		bitmapFile.open(Common::Path(filename), true);
+		Image::writePNG(bitmapFile, surface, g_director->getPalette());
+
+		bitmapFile.close();
+	}
+
+	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
+
 	return {textureID, surface.w, surface.h};
 }
 

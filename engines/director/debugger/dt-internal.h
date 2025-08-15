@@ -195,6 +195,7 @@ Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 sc
 void displayScriptRef(CastMemberID &scriptId);
 ImGuiImage getImageID(CastMember *castMember);
 ImGuiImage getShapeID(CastMember *castMember);
+ImGuiImage getTextID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
