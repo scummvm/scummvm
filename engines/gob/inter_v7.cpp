@@ -1455,28 +1455,28 @@ void Inter_v7::o7_draw0xE6() {
 	_vm->_game->_script->readVarIndex();
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xE6 (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_draw0xE7() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xE7 (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_draw0xE8() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xE8 (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_draw0xE9() {
 	_vm->_game->_script->readVarIndex();
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xE8 (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_draw0xF0() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_draw0xF0 (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_executeModAddEvent() {
 	_vm->_game->_script->readVarIndex();
@@ -1484,33 +1484,33 @@ void Inter_v7::o7_executeModAddEvent() {
 	_vm->_game->_script->readVarIndex();
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_executeModAddEvent (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_executeModSetLength() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_executeModStart() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_executeModGetPosition() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_executeModSetLength (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_vmdGetSoundBuffer() {
 	_vm->_game->_script->readValExpr();
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_vmdGetSoundBuffer (Adibou/Musique)");
-};
+}
 
 void Inter_v7::o7_vmdReleaseSoundBuffer() {
 	_vm->_game->_script->readVarIndex();
 	warning("STUB: o7_vmdReleaseSoundBuffer (Adibou/Musique)");
-};
+}
 
 
 void Inter_v7::o7_printText(OpFuncParams &params) {
