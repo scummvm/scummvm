@@ -804,7 +804,7 @@ private:
 			}
 			return TaskReturn::finish(1);
 
-		// Camera tasks
+			// Camera tasks
 		case ScriptKernelTask::WaitCamStopping:
 			return TaskReturn::waitFor(g_engine->camera().waitToStop(process()));
 		case ScriptKernelTask::CamFollow:
