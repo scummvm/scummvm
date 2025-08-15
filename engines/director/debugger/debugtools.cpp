@@ -191,7 +191,6 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	}
 
 	if (_state->_cast._textures.contains(castMember)) {
-		debug("I work");
 		return _state->_cast._textures[castMember];
 	}
 
@@ -248,7 +247,6 @@ ImGuiImage getTextID(CastMember *castMember) {
 	}
 
 	if (_state->_cast._textures.contains(castMember)) {
-		debug("I work");
 		return _state->_cast._textures[castMember];
 	}
 

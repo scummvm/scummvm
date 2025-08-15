@@ -214,8 +214,8 @@ void showArchive();
 void showScore();
 void showChannels();
 
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
-void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);    // dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);       // dt-script-d4.cpp
 
 // dt-scripts.cpp
 void showFuncList();

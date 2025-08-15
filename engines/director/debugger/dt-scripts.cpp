@@ -97,18 +97,16 @@ static void renderCastScript(Symbol &sym) {
 	}
 }
 
-static void renderScript(ImGuiScript &script, bool showByteCode) {
+static void renderScript(ImGuiScript &script, bool showByteCode, bool scrollTo) {
 	if (script.oldAst) {
-		renderOldScriptAST(script, showByteCode);
-		_state->_dbg._isScriptDirty = false;
+		renderOldScriptAST(script, showByteCode, scrollTo);
 		return;
 	}
 
 	if (!script.root)
 		return;
 
-	renderScriptAST(script, showByteCode);
-	_state->_dbg._isScriptDirty = false;
+	renderScriptAST(script, showByteCode, scrollTo);
 }
 
 static bool showScriptCast(CastMemberID &id) {
@@ -302,6 +300,7 @@ void showExecutionContext() {
 	Director::Lingo *lingo = g_director->getLingo();
 
 	Window *currentWindow = g_director->getCurrentWindow();
+	bool scriptsRendered = false;
 
 	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
 		Window *stage = g_director->getStage();
@@ -382,17 +381,18 @@ void showExecutionContext() {
 			Movie *movie = g_director->getCurrentMovie();
 
 			if (!context || context->_functionHandlers.size() == 1) {
-				renderScript(current, _state->_functions._scriptData->_showByteCode);
+				renderScript(current, _state->_functions._scriptData->_showByteCode, true);
 			} else {
 				for (auto &functionHandler : context->_functionHandlers) {
 					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
 					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 					script.moviePath = movie->getArchive()->getPathName().toString();
 					script.handlerName = getHandlerName(functionHandler._value);
-					renderScript(script, _state->_functions._scriptData->_showByteCode);
+					renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
 					ImGui::NewLine();
 				}
 			}
+			scriptsRendered = true;
 
 			ImGui::EndChild();
 		}
@@ -484,18 +484,19 @@ void showExecutionContext() {
 				Movie *movie = g_director->getCurrentMovie();
 
 				if (!context || context->_functionHandlers.size() == 1) {
-					renderScript(current, _state->_functions._scriptData->_showByteCode);
+					renderScript(current, _state->_functions._scriptData->_showByteCode, true);
 				} else {
 					for (auto &functionHandler : context->_functionHandlers) {
 						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
 						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.handlerName = getHandlerName(functionHandler._value);
-						renderScript(script, _state->_functions._scriptData->_showByteCode);
+						renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
 						ImGui::NewLine();
 					}
 				}
 
+				scriptsRendered = true;
 				ImGui::EndChild();
 			}
 
@@ -503,6 +504,9 @@ void showExecutionContext() {
 			ImGui::PopStyleColor();
 			ImGui::PopID();
 		}
+
+		// Mark the scripts not dirty after all the handlers have been rendered
+		_state->_dbg._isScriptDirty = !scriptsRendered;
 
 		g_director->setCurrentWindow(currentWindow);
 		g_lingo->switchStateFromWindow();
