@@ -67,7 +67,7 @@ Sensor::Sensor(
 void Sensor::scale(int factor) {
 	_origin = _origin / factor;
 	_size = _size / factor;
-};
+}
 
 Object *Sensor::duplicate() {
 	Sensor *sensor = new Sensor(_objectID, _origin, _rotation, (*_colours)[0], _firingInterval, _firingRange, _axis, _flags, _condition, _conditionSource);
