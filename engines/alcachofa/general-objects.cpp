@@ -52,20 +52,15 @@ void ObjectBase::toggle(bool isEnabled) {
 	_isEnabled = isEnabled;
 }
 
-void ObjectBase::draw() {
-}
+void ObjectBase::draw() {}
 
-void ObjectBase::drawDebug() {
-}
+void ObjectBase::drawDebug() {}
 
-void ObjectBase::update() {
-}
+void ObjectBase::update() {}
 
-void ObjectBase::loadResources() {
-}
+void ObjectBase::loadResources() {}
 
-void ObjectBase::freeResources() {
-}
+void ObjectBase::freeResources() {}
 
 void ObjectBase::syncGame(Serializer &serializer) {
 	serializer.syncAsByte(_isEnabled);
@@ -99,8 +94,7 @@ GraphicObject::GraphicObject(Room *room, ReadStream &stream)
 GraphicObject::GraphicObject(Room *room, const char *name)
 	: ObjectBase(room, name)
 	, _type(GraphicObjectType::Normal)
-	, _posterizeAlpha(0) {
-}
+	, _posterizeAlpha(0) {}
 
 void GraphicObject::draw() {
 	if (!isEnabled() || !_graphic.hasAnimation())
@@ -127,8 +121,7 @@ void GraphicObject::drawDebug() {
 		topLeftTmp.z() = _graphic.scale();
 		_graphic.animation().outputRect3D(_graphic.frameI(), scale, topLeftTmp, size);
 		topLeft = as2D(topLeftTmp);
-	}
-	else
+	} else
 		_graphic.animation().outputRect2D(_graphic.frameI(), scale, topLeft, size);
 
 	Vector2d points[] = {
@@ -241,8 +234,7 @@ const char *ShapeObject::typeName() const { return "ShapeObject"; }
 ShapeObject::ShapeObject(Room *room, ReadStream &stream)
 	: ObjectBase(room, stream)
 	, _shape(stream)
-	, _cursorType((CursorType)stream.readSint32LE()) {
-}
+	, _cursorType((CursorType)stream.readSint32LE()) {}
 
 void ShapeObject::update() {
 	if (isEnabled())
@@ -272,8 +264,7 @@ void ShapeObject::onHoverStart() {
 	onHoverUpdate();
 }
 
-void ShapeObject::onHoverEnd() {
-}
+void ShapeObject::onHoverEnd() {}
 
 void ShapeObject::onHoverUpdate() {
 	g_engine->drawQueue().add<TextDrawRequest>(
@@ -299,13 +290,11 @@ void ShapeObject::updateSelection() {
 				onClick();
 			else
 				onHoverUpdate();
-		}
-		else {
+		} else {
 			_wasSelected = true;
 			onHoverStart();
 		}
-	}
-	else if (_wasSelected) {
+	} else if (_wasSelected) {
 		_wasSelected = false;
 		onHoverEnd();
 	}

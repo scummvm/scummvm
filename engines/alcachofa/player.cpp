@@ -58,20 +58,31 @@ void Player::updateCursor() {
 	else {
 		auto type = _selectedObject->cursorType();
 		switch (type) {
-		case CursorType::LeaveUp: _cursorFrameI = 8; break;
-		case CursorType::LeaveRight: _cursorFrameI = 10; break;
-		case CursorType::LeaveDown: _cursorFrameI = 12; break;
-		case CursorType::LeaveLeft: _cursorFrameI = 14; break;
-		case CursorType::WalkTo: _cursorFrameI = 6; break;
+		case CursorType::LeaveUp:
+			_cursorFrameI = 8;
+			break;
+		case CursorType::LeaveRight:
+			_cursorFrameI = 10;
+			break;
+		case CursorType::LeaveDown:
+			_cursorFrameI = 12;
+			break;
+		case CursorType::LeaveLeft:
+			_cursorFrameI = 14;
+			break;
+		case CursorType::WalkTo:
+			_cursorFrameI = 6;
+			break;
 		case CursorType::Point:
-		default: _cursorFrameI = 0; break;
+		default:
+			_cursorFrameI = 0;
+			break;
 		}
 
 		if (_cursorFrameI != 0) {
 			if (g_engine->input().isAnyMouseDown() && _pressedObject == _selectedObject)
 				_cursorFrameI++;
-		}
-		else if (g_engine->input().isMouseLeftDown())
+		} else if (g_engine->input().isMouseLeftDown())
 			_cursorFrameI = 2;
 		else if (g_engine->input().isMouseRightDown())
 			_cursorFrameI = 4;
@@ -84,8 +95,7 @@ void Player::drawCursor(bool forceDefaultCursor) {
 		if (forceDefaultCursor)
 			_cursorFrameI = 0;
 		g_engine->drawQueue().add<AnimationDrawRequest>(_cursorAnimation.get(), _cursorFrameI, as2D(cursorPos), -10);
-	}
-	else {
+	} else {
 		auto itemGraphic = _heldItem->graphic();
 		assert(itemGraphic != nullptr);
 		auto &animation = itemGraphic->animation();
@@ -156,10 +166,15 @@ MainCharacter *Player::inactiveCharacter() const {
 FakeSemaphore &Player::semaphoreFor(MainCharacterKind kind) {
 	static FakeSemaphore dummySemaphore("dummy");
 	switch (kind) {
-	case MainCharacterKind::None: return _semaphore;
-	case MainCharacterKind::Mortadelo: return g_engine->world().mortadelo().semaphore();
-	case MainCharacterKind::Filemon: return g_engine->world().filemon().semaphore();
-	default: assert(false && "Invalid main character kind"); return dummySemaphore;
+	case MainCharacterKind::None:
+		return _semaphore;
+	case MainCharacterKind::Mortadelo:
+		return g_engine->world().mortadelo().semaphore();
+	case MainCharacterKind::Filemon:
+		return g_engine->world().filemon().semaphore();
+	default:
+		assert(false && "Invalid main character kind");
+		return dummySemaphore;
 	}
 }
 
@@ -172,8 +187,7 @@ void Player::triggerObject(ObjectBase *object, const char *action) {
 	if (strcmp(action, "MIRAR") == 0 || inactiveCharacter()->currentlyUsing() == object) {
 		action = "MIRAR";
 		_activeCharacter->currentlyUsing() = nullptr;
-	}
-	else
+	} else
 		_activeCharacter->currentlyUsing() = object;
 
 	auto &script = g_engine->script();
@@ -254,7 +268,7 @@ struct DoorTask : public Task {
 		s.syncAsByte(hasMusicLock);
 		if (s.isLoading() && hasMusicLock)
 			_musicLock = FakeLock("door-music", g_engine->sounds().musicSemaphore());
-		
+
 		_lock = FakeLock("door", _character->semaphore());
 		findTarget();
 	}
@@ -347,7 +361,7 @@ void Player::syncGame(Serializer &s) {
 	}
 
 	FakeSemaphore::sync(s, _semaphore);
-	
+
 	String roomName;
 	if (s.isSaving()) {
 		roomName =

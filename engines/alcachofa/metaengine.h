@@ -53,7 +53,7 @@ public:
 
 	void getSavegameThumbnail(Graphics::Surface &thumb) override;
 
-	
+
 };
 
 #endif // ALCACHOFA_METAENGINE_H

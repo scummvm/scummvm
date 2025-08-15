@@ -177,8 +177,7 @@ public:
 			GL_CALL(glDisable(GL_TEXTURE_2D));
 			GL_CALL(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
 			_currentTexture = nullptr;
-		}
-		else {
+		} else {
 			if (_currentTexture == nullptr) {
 				GL_CALL(glEnable(GL_TEXTURE_2D));
 				GL_CALL(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
@@ -253,7 +252,9 @@ public:
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_SRC1_RGB, GL_PRIMARY_COLOR));
 			GL_CALL(glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND1_RGB, GL_SRC_COLOR)); // we have to pre-multiply
 			break;
-		default: assert(false && "Invalid blend mode"); break;
+		default:
+			assert(false && "Invalid blend mode");
+			break;
 		}
 		_currentBlendMode = blendMode;
 	}
@@ -327,8 +328,7 @@ public:
 		}
 
 		float colors[] = { color.r / 255.0f, color.g / 255.0f, color.b / 255.0f, color.a / 255.0f };
-		if (_currentBlendMode == BlendMode::Tinted)
-		{
+		if (_currentBlendMode == BlendMode::Tinted) {
 			colors[0] *= colors[3];
 			colors[1] *= colors[3];
 			colors[2] *= colors[3];

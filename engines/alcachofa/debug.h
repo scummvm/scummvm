@@ -81,8 +81,7 @@ public:
 
 		if (_polygonI >= 0 && (uint)_polygonI < floor->polygonCount())
 			drawIntersectionsFor(floor->at((uint)_polygonI), renderer);
-		else
-		{
+		else {
 			for (uint i = 0; i < floor->polygonCount(); i++)
 				drawIntersectionsFor(floor->at(i), renderer);
 		}
@@ -94,8 +93,7 @@ private:
 	void drawIntersectionsFor(const Polygon &polygon, IDebugRenderer *renderer) {
 		auto &camera = g_engine->camera();
 		auto mousePos3D = g_engine->input().debugInput().mousePos3D();
-		for (uint i = 0; i < polygon._points.size(); i++)
-		{
+		for (uint i = 0; i < polygon._points.size(); i++) {
 			if (!polygon.intersectsEdge(i, _fromPos3D, mousePos3D))
 				continue;
 			auto a = camera.transform3Dto2D(polygon._points[i]);
@@ -123,8 +121,7 @@ public:
 		g_engine->drawQueue().draw();
 
 		auto &input = g_engine->input().debugInput();
-		if (input.wasMouseRightPressed())
-		{
+		if (input.wasMouseRightPressed()) {
 			g_engine->setDebugMode(DebugMode::None, 0);
 			return;
 		}
@@ -149,8 +146,7 @@ public:
 private:
 	void teleport(MainCharacter &character, Point position) {
 		auto currentRoom = g_engine->player().currentRoom();
-		if (character.room() != currentRoom)
-		{
+		if (character.room() != currentRoom) {
 			character.resetTalking();
 			character.room() = currentRoom;
 		}
@@ -174,12 +170,12 @@ public:
 		const Room *room = g_engine->player().currentRoom();
 		uint floorCount = 0;
 		for (auto itObject = room->beginObjects(); itObject != room->endObjects(); ++itObject) {
-			FloorColor *floor = dynamic_cast<FloorColor*>(*itObject);
+			FloorColor *floor = dynamic_cast<FloorColor *>(*itObject);
 			if (floor == nullptr)
 				continue;
 			if (objectI <= 0)
 				// dynamic_cast is not possible due to Shape not having virtual methods
-				return new FloorColorDebugHandler(*(FloorColorShape*)(floor->shape()), useColor);
+				return new FloorColorDebugHandler(*(FloorColorShape *)(floor->shape()), useColor);
 			floorCount++;
 			objectI--;
 		}
@@ -200,15 +196,15 @@ public:
 			_isOnFloor = optColor.first;
 			if (!_isOnFloor) {
 				uint8 roomAlpha = (uint)(g_engine->player().currentRoom()->characterAlphaTint() * 255 / 100);
-				optColor.second = Color{ 255, 255, 255, roomAlpha };
+				optColor.second = Color { 255, 255, 255, roomAlpha };
 			}
 
 			_curColor = _useColor
-				? Color{ optColor.second.r, optColor.second.g, optColor.second.b, 255 }
-				: Color{ optColor.second.a, optColor.second.a, optColor.second.a, 255 };
+				? Color { optColor.second.r, optColor.second.g, optColor.second.b, 255 }
+			: Color { optColor.second.a, optColor.second.a, optColor.second.a, 255 };
 			g_engine->world().mortadelo().color() =
 				g_engine->world().filemon().color() =
-				_useColor ? optColor.second : Color{ 255, 255, 255, optColor.second.a };
+				_useColor ? optColor.second : Color { 255, 255, 255, optColor.second.a };
 		}
 
 		snprintf(_buffer, kBufferSize, "r:%3d g:%3d b:%3d a:%3d",

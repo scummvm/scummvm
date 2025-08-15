@@ -73,8 +73,7 @@ void Sounds::update() {
 			if (g_system->getMillis() >= playback._fadeStart + playback._fadeDuration) {
 				_mixer->stopHandle(playback._handle);
 				_playbacks.erase(_playbacks.begin() + i - 1);
-			}
-			else {
+			} else {
 				byte newVolume = (g_system->getMillis() - playback._fadeStart) * Mixer::kMaxChannelVolume / playback._fadeDuration;
 				_mixer->setChannelVolume(playback._handle, Mixer::kMaxChannelVolume - newVolume);
 			}
@@ -157,8 +156,7 @@ SoundHandle Sounds::playSoundInternal(const char *fileName, byte volume, Mixer::
 			if (sampleCount < 0)
 				samples.clear();
 			samples.resize((uint)sampleCount); // we might have gotten less samples
-		}
-		else {
+		} else {
 			// we did not, now it is getting inefficient
 			const int bufferSize = 2048;
 			int16 buffer[bufferSize];
@@ -345,8 +343,7 @@ Task *Sounds::waitForMusicToEnd(Process &process) {
 
 PlaySoundTask::PlaySoundTask(Process &process, SoundHandle SoundHandle)
 	: Task(process)
-	, _soundHandle(SoundHandle) {
-}
+	, _soundHandle(SoundHandle) {}
 
 PlaySoundTask::PlaySoundTask(Process &process, Serializer &s)
 	: Task(process)
@@ -358,12 +355,10 @@ PlaySoundTask::PlaySoundTask(Process &process, Serializer &s)
 
 TaskReturn PlaySoundTask::run() {
 	auto &sounds = g_engine->sounds();
-	if (sounds.isAlive(_soundHandle))
-	{
+	if (sounds.isAlive(_soundHandle)) {
 		sounds.setAppropriateVolume(_soundHandle, process().character(), nullptr);
 		return TaskReturn::yield();
-	}
-	else
+	} else
 		return TaskReturn::finish(1);
 }
 
@@ -376,7 +371,7 @@ DECLARE_TASK(PlaySoundTask)
 
 WaitForMusicTask::WaitForMusicTask(Process &process)
 	: Task(process)
-	, _lock("wait-for-music", g_engine->sounds().musicSemaphore()) { }
+	, _lock("wait-for-music", g_engine->sounds().musicSemaphore()) {}
 
 WaitForMusicTask::WaitForMusicTask(Process &process, Serializer &s)
 	: Task(process)

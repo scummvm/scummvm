@@ -31,8 +31,7 @@ using namespace Common;
 
 namespace Alcachofa {
 
-Room::Room(World *world, SeekableReadStream &stream) : Room(world, stream, false) {
-}
+Room::Room(World *world, SeekableReadStream &stream) : Room(world, stream, false) {}
 
 static ObjectBase *readRoomObject(Room *room, const String &type, ReadStream &stream) {
 	if (type == ObjectBase::kClassName)
@@ -100,19 +99,16 @@ Room::Room(World *world, SeekableReadStream &stream, bool hasUselessByte)
 		stream.readByte();
 
 	uint32 objectEnd = stream.readUint32LE();
-	while (objectEnd > 0)
-	{
+	while (objectEnd > 0) {
 		const auto type = readVarString(stream);
 		auto object = readRoomObject(this, type, stream);
 		if (object == nullptr) {
 			g_engine->game().unknownRoomObject(type);
 			stream.seek(objectEnd, SEEK_SET);
-		}
-		else if (stream.pos() < objectEnd) {
+		} else if (stream.pos() < objectEnd) {
 			g_engine->game().notEnoughObjectDataRead(_name.c_str(), stream.pos(), objectEnd);
 			stream.seek(objectEnd, SEEK_SET);
-		}
-		else if (stream.pos() > objectEnd) // this is probably not recoverable
+		} else if (stream.pos() > objectEnd) // this is probably not recoverable
 			error("Read past the object data (%u > %lld) in room %s", objectEnd, (long long int)stream.pos(), _name.c_str());
 
 		if (object != nullptr)
@@ -216,8 +212,7 @@ void Room::updateInteraction() {
 			player.activeCharacter()->walkToMouse();
 			g_engine->camera().setFollow(player.activeCharacter());
 		}
-	}
-	else {
+	} else {
 		player.selectedObject()->markSelected();
 		if (input.wasAnyMousePressed())
 			player.pressedObject() = player.selectedObject();
@@ -270,11 +265,9 @@ void Room::drawDebug() {
 
 	if (g_engine->console().showFloorEdges()) {
 		auto &camera = g_engine->camera();
-		for (uint polygonI = 0; polygonI < floor.polygonCount(); polygonI++)
-		{
+		for (uint polygonI = 0; polygonI < floor.polygonCount(); polygonI++) {
 			auto polygon = floor.at(polygonI);
-			for (uint pointI = 0; pointI < polygon._points.size(); pointI++)
-			{
+			for (uint pointI = 0; pointI < polygon._points.size(); pointI++) {
 				int32 targetI = floor.edgeTarget(polygonI, pointI);
 				if (targetI < 0)
 					continue;
@@ -328,8 +321,7 @@ ShapeObject *Room::getSelectedObject(ShapeObject *best) const {
 }
 
 OptionsMenu::OptionsMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {
-}
+	: Room(world, stream, true) {}
 
 bool OptionsMenu::updateInput() {
 	if (!Room::updateInput())
@@ -344,8 +336,7 @@ bool OptionsMenu::updateInput() {
 		}
 
 		_lastSelectedObject->markSelected();
-	}
-	else
+	} else
 		_lastSelectedObject = currentSelectedObject;
 	if (_idleArm != nullptr)
 		_idleArm->toggle(false);
@@ -364,16 +355,13 @@ void OptionsMenu::clearLastSelectedObject() {
 }
 
 ConnectMenu::ConnectMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {
-}
+	: Room(world, stream, true) {}
 
 ListenMenu::ListenMenu(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {
-}
+	: Room(world, stream, true) {}
 
 Inventory::Inventory(World *world, SeekableReadStream &stream)
-	: Room(world, stream, true) {
-}
+	: Room(world, stream, true) {}
 
 Inventory::~Inventory() {
 	// No need to delete items, they are room objects and thus deleted in Room::~Room
@@ -545,8 +533,10 @@ World::~World() {
 
 MainCharacter &World::getMainCharacterByKind(MainCharacterKind kind) const {
 	switch (kind) {
-	case MainCharacterKind::Mortadelo: return *_mortadelo;
-	case MainCharacterKind::Filemon: return *_filemon;
+	case MainCharacterKind::Mortadelo:
+		return *_mortadelo;
+	case MainCharacterKind::Filemon:
+		return *_filemon;
 	default:
 		error("Invalid character kind given to getMainCharacterByKind");
 	}
@@ -554,8 +544,10 @@ MainCharacter &World::getMainCharacterByKind(MainCharacterKind kind) const {
 
 MainCharacter &World::getOtherMainCharacterByKind(MainCharacterKind kind) const {
 	switch (kind) {
-	case MainCharacterKind::Mortadelo: return *_filemon;
-	case MainCharacterKind::Filemon: return *_mortadelo;
+	case MainCharacterKind::Mortadelo:
+		return *_filemon;
+	case MainCharacterKind::Filemon:
+		return *_mortadelo;
 	default:
 		error("Invalid character kind given to getOtherMainCharacterByKind");
 	}
@@ -691,8 +683,7 @@ bool World::loadWorldFile(const char *path) {
 		if (file.pos() < roomEnd) {
 			g_engine->game().notEnoughRoomDataRead(path, file.pos(), roomEnd);
 			file.seek(roomEnd, SEEK_SET);
-		}
-		else if (file.pos() > roomEnd) // this surely is not recoverable
+		} else if (file.pos() > roomEnd) // this surely is not recoverable
 			error("Read past the room data for world %s", path);
 		roomEnd = file.readUint32LE();
 	}
@@ -770,7 +761,7 @@ void World::loadDialogLines() {
 	 * Name 123, "This is the dialog line\r\n
 	 *     Name     123   This is the dialog line    \r\n
 	 *
-	 * - The ID does not have to be correct, it is ignored by the original engine. 
+	 * - The ID does not have to be correct, it is ignored by the original engine.
 	 * - We only need the dialog line and insert null-terminators where appropriate.
 	 */
 	loadEncryptedFile("Textos/DIALOGOS.nkr", _dialogChunk);

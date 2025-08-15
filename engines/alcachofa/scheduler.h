@@ -101,7 +101,7 @@ protected:
 		// or we could just use const_cast and promise that we won't modify the object itself
 		ObjectBase *base = const_cast<Common::remove_const_t<TObject> *>(object);
 		syncObjectAsString(s, base, optional);
-		object = dynamic_cast<TObject*>(base);
+		object = dynamic_cast<TObject *>(base);
 		if (object == nullptr && base != nullptr)
 			errorForUnexpectedObjectType(base);
 	}
