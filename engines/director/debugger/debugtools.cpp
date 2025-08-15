@@ -137,17 +137,17 @@ Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 sc
 }
 
 ImGuiImage getImageID(CastMember *castMember) {
-	if (castMember->_type != CastType::kCastBitmap)
+	if (castMember->_type != CastType::kCastBitmap) {
 		return {};
+	}
 
 	BitmapCastMember *bmpMember = (BitmapCastMember *)castMember;
-	Common::Rect bbox(bmpMember->getBbox());
-	Graphics::Surface *bmp = bmpMember->getMatte(bbox);
-	if (!bmp)
-		return {};
 
-	if (_state->_cast._textures.contains(bmp))
-		return _state->_cast._textures[bmp];
+	if (_state->_cast._textures.contains(bmpMember)) {
+		return _state->_cast._textures[bmpMember];
+	}
+
+	Common::Rect bbox(bmpMember->getBbox());
 
 	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
@@ -155,8 +155,8 @@ ImGuiImage getImageID(CastMember *castMember) {
 		return {};
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
-	_state->_cast._textures[bmp] = {textureID, pic->_surface.w, pic->_surface.h};
-	return _state->_cast._textures[bmp];
+	_state->_cast._textures[bmpMember] = {textureID, pic->_surface.w, pic->_surface.h};
+	return _state->_cast._textures[bmpMember];
 }
 
 static void setToolTipImage(const ImGuiImage &image, const char *name) {
@@ -186,8 +186,14 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 }
 
 ImGuiImage getShapeID(CastMember *castMember) {
-	if (castMember->_type != CastType::kCastShape)
+	if (castMember->_type != CastType::kCastShape) {
 		return {};
+	}
+
+	if (_state->_cast._textures.contains(castMember)) {
+		debug("I work");
+		return _state->_cast._textures[castMember];
+	}
 
 	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
 	Channel *channel = nullptr;
@@ -231,13 +237,20 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	delete channel;
 
 	int16 width = surface.w, height = surface.h;
-	surface.free();
-	return {textureID, width, height};
+
+	_state->_cast._textures[castMember] = {textureID, width, height};
+	return _state->_cast._textures[castMember];
 }
 
 ImGuiImage getTextID(CastMember *castMember) {
-	if (castMember->_type != CastType::kCastText && castMember->_type != CastType::kCastButton && castMember->_type != CastType::kCastRichText)
+	if (castMember->_type != CastType::kCastText && castMember->_type != CastType::kCastButton && castMember->_type != CastType::kCastRichText) {
 		return {};
+	}
+
+	if (_state->_cast._textures.contains(castMember)) {
+		debug("I work");
+		return _state->_cast._textures[castMember];
+	}
 
 	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
 	Graphics::Surface source;
@@ -272,7 +285,9 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 	int16 width = surface.w, height = surface.h;
 	surface.free();
-	return {textureID, width, height};
+
+	_state->_cast._textures[castMember] = {textureID, width, height};
+	return _state->_cast._textures[castMember];
 }
 
 void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
