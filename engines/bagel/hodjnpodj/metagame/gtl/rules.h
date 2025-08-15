@@ -63,6 +63,9 @@ private:
 	void UpdateMore(CDC *pDC);
 	void WritePage(CDC *pDC, int nPage);
 	void DoWaitCursor(void);
+	void DoWaitCursor(int nCode) override {
+		CDialog::DoWaitCursor(nCode);
+	}
 	void DoArrowCursor(void);
 	void Sleep(clock_t wait);
 
