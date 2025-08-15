@@ -19,11 +19,11 @@
  *
  */
 
-#include "script.h"
-#include "rooms.h"
-#include "global-ui.h"
-#include "alcachofa.h"
-#include "script-debug.h"
+#include "alcachofa/script.h"
+#include "alcachofa/rooms.h"
+#include "alcachofa/global-ui.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/script-debug.h"
 
 #include "common/file.h"
 

@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_SCRIPT_H
 #define ALCACHOFA_SCRIPT_H
 
-#include "common.h"
+#include "alcachofa/common.h"
 
 #include "common/hashmap.h"
 #include "common/span.h"

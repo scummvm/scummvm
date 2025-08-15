@@ -19,10 +19,10 @@
  *
  */
 
-#include "graphics.h"
-#include "alcachofa.h"
-#include "shape.h"
-#include "global-ui.h"
+#include "alcachofa/graphics.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/shape.h"
+#include "alcachofa/global-ui.h"
 
 #include "common/system.h"
 #include "common/file.h"

@@ -19,7 +19,7 @@
  *
  */
 
-#include "shape.h"
+#include "alcachofa/shape.h"
 
 using namespace Common;
 using namespace Math;

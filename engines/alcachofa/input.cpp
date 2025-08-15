@@ -19,9 +19,9 @@
  *
  */
 
-#include "input.h"
-#include "alcachofa.h"
-#include "metaengine.h"
+#include "alcachofa/input.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/metaengine.h"
 
 using namespace Common;
 

@@ -19,10 +19,10 @@
  *
  */
 
-#include "sounds.h"
-#include "rooms.h"
-#include "alcachofa.h"
-#include "detection.h"
+#include "alcachofa/sounds.h"
+#include "alcachofa/rooms.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/detection.h"
 
 #include "common/file.h"
 #include "common/substream.h"

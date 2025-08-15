@@ -22,11 +22,11 @@
 #include "gui/message.h"
 #include "graphics/thumbnail.h"
 
-#include "alcachofa.h"
-#include "metaengine.h"
-#include "menu.h"
-#include "player.h"
-#include "script.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/metaengine.h"
+#include "alcachofa/menu.h"
+#include "alcachofa/player.h"
+#include "alcachofa/script.h"
 
 using namespace Common;
 using namespace Graphics;

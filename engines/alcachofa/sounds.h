@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_SOUNDS_H
 #define ALCACHOFA_SOUNDS_H
 
-#include "scheduler.h"
+#include "alcachofa/scheduler.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 

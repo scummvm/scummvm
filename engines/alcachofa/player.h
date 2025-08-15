@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_PLAYER_H
 #define ALCACHOFA_PLAYER_H
 
-#include "rooms.h"
+#include "alcachofa/rooms.h"
 
 namespace Alcachofa {
 

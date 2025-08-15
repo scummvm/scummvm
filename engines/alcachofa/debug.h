@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_DEBUG_H
 #define ALCACHOFA_DEBUG_H
 
-#include "alcachofa.h"
+#include "alcachofa/alcachofa.h"
 
 using namespace Common;
 

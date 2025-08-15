@@ -19,11 +19,11 @@
  *
  */
 
-#include "scheduler.h"
+#include "alcachofa/scheduler.h"
 
 #include "common/system.h"
-#include "alcachofa.h"
-#include "menu.h"
+#include "alcachofa/alcachofa.h"
+#include "alcachofa/menu.h"
 
 using namespace Common;
 
@@ -173,7 +173,7 @@ void Process::debugPrint() {
 
 #define DEFINE_TASK(TaskName) \
 	extern Task *constructTask_##TaskName(Process &process, Serializer &s);
-#include "tasks.h"
+#include "alcachofa/tasks.h"
 
 static Task *readTask(Process &process, Serializer &s) {
 	assert(s.isLoading());
@@ -183,7 +183,7 @@ static Task *readTask(Process &process, Serializer &s) {
 #define DEFINE_TASK(TaskName) \
 	if (taskName == #TaskName) \
 		return constructTask_##TaskName(process, s);
-#include "tasks.h"
+#include "alcachofa/tasks.h"
 
 	error("Invalid task type in savestate: %s", taskName.c_str());
 }

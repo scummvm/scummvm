@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_CAMERA_H
 #define ALCACHOFA_CAMERA_H
 
-#include "common.h"
+#include "alcachofa/common.h"
 #include "math/matrix4.h"
 
 namespace Alcachofa {

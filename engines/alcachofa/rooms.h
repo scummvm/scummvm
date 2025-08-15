@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_ROOMS_H
 #define ALCACHOFA_ROOMS_H
 
-#include "objects.h"
+#include "alcachofa/objects.h"
 
 namespace Alcachofa {
 

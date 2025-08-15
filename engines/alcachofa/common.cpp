@@ -19,8 +19,8 @@
  *
  */
 
-#include "common.h"
-#include "detection.h"
+#include "alcachofa/common.h"
+#include "alcachofa/detection.h"
 
 using namespace Common;
 using namespace Math;

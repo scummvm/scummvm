@@ -19,11 +19,11 @@
  *
  */
 
-#include "objects.h"
-#include "rooms.h"
-#include "scheduler.h"
-#include "global-ui.h"
-#include "alcachofa.h"
+#include "alcachofa/objects.h"
+#include "alcachofa/rooms.h"
+#include "alcachofa/scheduler.h"
+#include "alcachofa/global-ui.h"
+#include "alcachofa/alcachofa.h"
 
 #include "common/system.h"
 
