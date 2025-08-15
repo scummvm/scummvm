@@ -248,6 +248,26 @@ void TextMgr::display(int16 textNr, int16 textRow, int16 textColumn) {
 		logicTextPtr = _vm->_game._curLogic->texts[textNr - 1];
 		processedTextPtr = stringPrintf(logicTextPtr);
 		processedTextPtr = stringWordWrap(processedTextPtr, 40);
+
+#ifdef USE_TTS
+		if (!_vm->_game.gfxMode) {
+			_vm->sayText(processedTextPtr);
+		} else if (_vm->_game.curLogicNr != 0) {
+			if (_vm->_previousDisplayRow != -1 && textRow != _vm->_previousDisplayRow + 1) {
+				_vm->_combinedText += "\n";
+				_vm->_replaceDisplayNewlines = false;
+			}
+
+			_vm->_combinedText += " ";
+			_vm->_combinedText += processedTextPtr;
+		} else if (_vm->_voiceClock) {
+			_vm->sayText(processedTextPtr);
+			_vm->_voiceClock = false;
+		}
+
+		_vm->_previousDisplayRow = textRow;
+#endif
+
 		displayText(processedTextPtr);
 
 		// Signal, that non-blocking text is shown at the moment
@@ -399,7 +419,8 @@ bool TextMgr::messageBox(const char *textPtr) {
 		_vm->inGameTimerUpdate();
 
 		if (windowTimer > 0) {
-			if (_vm->inGameTimerGetPassedCycles() >= windowTimer) {
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (_vm->inGameTimerGetPassedCycles() >= windowTimer && (!ttsMan || !ttsMan->isSpeaking())) {
 				// Timer reached, close automatically
 				_vm->cycleInnerLoopInactive();
 			}
@@ -510,6 +531,9 @@ void TextMgr::drawMessageBox(const char *textPtr, int16 forcedHeight, int16 want
 
 	_reset_Column = _messageState.textPos.column;
 	displayText(processedTextPtr);
+#ifdef USE_TTS
+	_vm->sayText(processedTextPtr);
+#endif
 	_reset_Column = 0;
 
 	charPos_Pop();
@@ -546,7 +570,7 @@ bool TextMgr::isMouseWithinMessageBox() {
 	return false;
 }
 
-void TextMgr::closeWindow() {
+void TextMgr::closeWindow(bool ttsStopSpeech) {
 	if (_messageState.window_Active) {
 		// Close the window by copying the game screen to the display screen.
 		// Our graphics code was designed with the assumption that the window would
@@ -559,6 +583,13 @@ void TextMgr::closeWindow() {
 		const int16 y = MAX<int16>(0, _messageState.backgroundPos_y);
 		_gfx->render_Block(x, y, _messageState.backgroundSize_Width, _messageState.backgroundSize_Height);
 	}
+
+#ifdef USE_TTS
+	if (ttsStopSpeech && (_messageState.dialogue_Open || _messageState.window_Active)) {
+		_vm->stopTextToSpeech();
+	}
+#endif
+
 	_messageState.dialogue_Open = false;
 	_messageState.window_Active = false;
 }
@@ -580,7 +611,7 @@ bool TextMgr::statusEnabled() {
 	return _statusEnabled;
 }
 
-void TextMgr::statusDraw() {
+void TextMgr::statusDraw(bool ttsVoiceScore, bool ttsVoiceSound) {
 	char *statusTextPtr = nullptr;
 
 	charAttrib_Push();
@@ -597,6 +628,12 @@ void TextMgr::statusDraw() {
 			charPos_Set(_statusRow, FONT_COLUMN_CHARACTERS - Common::strnlen(statusTextPtr, FONT_COLUMN_CHARACTERS) - 1);
 		displayText(statusTextPtr);
 
+#ifdef USE_TTS
+		if (ttsVoiceScore) {
+			_vm->sayText(statusTextPtr, Common::TextToSpeechManager::INTERRUPT);
+		}
+#endif
+
 		if (!_vm->isLanguageRTL())
 			charPos_Set(_statusRow, 30);
 		else
@@ -607,6 +644,12 @@ void TextMgr::statusDraw() {
 			statusTextPtr = stringPrintf(_systemUI->getStatusTextSoundOff());
 		}
 		displayText(statusTextPtr);
+
+#ifdef USE_TTS
+		if (ttsVoiceSound) {
+			_vm->sayText(statusTextPtr);
+		}
+#endif
 	}
 
 	charPos_Pop();
@@ -631,6 +674,10 @@ void TextMgr::clearBlock(int16 row_Upper, int16 column_Upper, int16 row_Lower, i
 	//  see cmdClearLines() comments.
 	charPos_Clip(row_Upper, column_Upper);
 	charPos_Clip(row_Lower, column_Lower);
+
+#ifdef USE_TTS
+	_vm->_combinedText.clear();
+#endif
 
 	int16 x = column_Upper;
 	int16 y = row_Upper;
@@ -774,6 +821,9 @@ void TextMgr::promptKeyPress(uint16 newKey) {
 			promptRememberForAutoComplete(true);
 
 			memcpy(&_promptPrevious, &_prompt, sizeof(_prompt));
+#ifdef USE_TTS
+			_vm->sayText((char *)&_prompt);
+#endif
 			// parse text
 			_vm->_words->parseUsingDictionary((char *)&_prompt);
 
@@ -1010,6 +1060,9 @@ void TextMgr::stringKeyPress(uint16 newKey) {
 		stringRememberForAutoComplete(true);
 
 		_inputStringEntered = true;
+#ifdef USE_TTS
+		_vm->sayText((const char *)_inputString);
+#endif
 
 		_vm->cycleInnerLoopInactive(); // exit GetString-loop
 		break;

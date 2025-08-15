@@ -355,6 +355,9 @@ void GfxMenu::execute() {
 
 	if (_drawnMenuNr >= 0) {
 		if (viaKeyboard) {
+#ifdef USE_TTS
+			_vm->_queueNextText = true;
+#endif
 			drawMenu(_drawnMenuNr, _array[_drawnMenuNr]->selectedItemNr);
 		}
 		if (viaMouse) {
@@ -410,6 +413,9 @@ void GfxMenu::drawMenuName(int16 menuNr, bool inverted) {
 	if (!inverted) {
 		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
 	} else {
+#ifdef USE_TTS
+		_vm->sayText(menuEntry->text.c_str(), Common::TextToSpeechManager::INTERRUPT, false);
+#endif
 		_text->charAttrib_Set(15, _text->calculateTextBackground(0));
 	}
 
@@ -428,6 +434,15 @@ void GfxMenu::drawItemName(int16 itemNr, bool inverted) {
 	if (!inverted) {
 		_text->charAttrib_Set(0, _text->calculateTextBackground(15));
 	} else {
+#ifdef USE_TTS
+		if (_vm->_queueNextText) {
+			_vm->sayText(itemEntry->text.c_str(), Common::TextToSpeechManager::QUEUE, false);
+			_vm->_queueNextText = false;
+		} else {
+			_vm->sayText(itemEntry->text.c_str(), Common::TextToSpeechManager::INTERRUPT, false);
+		}
+#endif
+		
 		_text->charAttrib_Set(15, _text->calculateTextBackground(0));
 	}
 
@@ -549,6 +564,9 @@ void GfxMenu::keyPress(uint16 newKey) {
 		}
 
 		if (newMenuNr != _drawnMenuNr) {
+#ifdef USE_TTS
+			_vm->_queueNextText = true;
+#endif
 			removeActiveMenu(_drawnMenuNr);
 			_drawnMenuNr = newMenuNr;
 			drawMenu(_drawnMenuNr, _array[_drawnMenuNr]->selectedItemNr);

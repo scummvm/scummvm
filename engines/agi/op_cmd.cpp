@@ -668,12 +668,29 @@ void cmdCloseDialogue(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 }
 
 void cmdCloseWindow(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+#ifdef USE_TTS
+	// Delay closing the text window until TTS is finished
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while (ttsMan && ttsMan->isSpeaking()) {
+		int key = vm->doPollKeyboard();
+
+		if (key != 0) {
+			break;
+		}
+
+		vm->wait(10);
+	}
+#endif
+
 	vm->_text->closeWindow();
 }
 
 void cmdStatusLineOn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	TextMgr *text = vm->_text;
 
+#ifdef USE_TTS
+	vm->_voiceClock = true;
+#endif
 	text->statusEnable();
 	text->statusDraw();
 }
@@ -1826,6 +1843,9 @@ void cmdTextScreen(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdGraphics(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	debugC(4, kDebugLevelScripts, "switching to graphics mode");
 
+#ifdef USE_TTS
+	vm->stopTextToSpeech();
+#endif
 	vm->redrawScreen();
 }
 
@@ -2012,6 +2032,10 @@ void cmdGetString(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		leadInTextPtr = textMgr->stringWordWrap(leadInTextPtr, 40); // ?? not absolutely sure
 
 		textMgr->displayText(leadInTextPtr);
+#ifdef USE_TTS
+		vm->sayText(vm->_combinedText, Common::TextToSpeechManager::INTERRUPT);
+		vm->_combinedText.clear();
+#endif
 	}
 
 	vm->cycleInnerLoopActive(CYCLE_INNERLOOP_GETSTRING);
@@ -2049,6 +2073,10 @@ void cmdGetNum(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		leadInTextPtr = textMgr->stringWordWrap(leadInTextPtr, 40); // ?? not absolutely sure
 
 		textMgr->displayText(leadInTextPtr);
+#ifdef USE_TTS
+		vm->sayText(vm->_combinedText, Common::TextToSpeechManager::INTERRUPT);
+		vm->_combinedText.clear();
+#endif
 	}
 
 	textMgr->inputEditOff();
@@ -2435,6 +2463,13 @@ int AgiEngine::runLogic(int16 logicNr) {
 		case 0x00:  // return
 			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, logicNr);
 			debugC(2, kDebugLevelScripts, "=================");
+
+#ifdef USE_TTS
+		sayText(_combinedText, Common::TextToSpeechManager::QUEUE, true);
+		_replaceDisplayNewlines = true;
+		_combinedText.clear();
+		_previousDisplayRow = -1;
+#endif
 
 //			if (vm->getVersion() < 0x2000) {
 //				if (logic_index < state->max_logics) {
