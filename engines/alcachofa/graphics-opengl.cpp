@@ -19,8 +19,8 @@
  *
  */
 
-#include "graphics.h"
-#include "detection.h"
+#include "alcachofa/graphics.h"
+#include "alcachofa/detection.h"
 
 #include "common/system.h"
 #include "engines/util.h"

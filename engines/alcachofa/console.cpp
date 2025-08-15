@@ -23,9 +23,9 @@
 #include "gui/console.h"
 #endif
 
-#include "console.h"
-#include "script.h"
-#include "alcachofa.h"
+#include "alcachofa/console.h"
+#include "alcachofa/script.h"
+#include "alcachofa/alcachofa.h"
 
 using namespace Common;
 

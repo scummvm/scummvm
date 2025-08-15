@@ -22,7 +22,7 @@
 #ifndef ALCACHOFA_GLOBAL_UI_H
 #define ALCACHOFA_GLOBAL_UI_H
 
-#include "objects.h"
+#include "alcachofa/objects.h"
 
 namespace Alcachofa {
 

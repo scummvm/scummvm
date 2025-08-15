@@ -30,8 +30,8 @@
 #include "math/vector2d.h"
 #include "graphics/managed_surface.h"
 
-#include "camera.h"
-#include "common.h"
+#include "alcachofa/camera.h"
+#include "alcachofa/common.h"
 
 namespace Alcachofa {
 
