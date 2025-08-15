@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-14 21:23+0000\n"
-"PO-Revision-Date: 2025-08-12 12:36+0000\n"
+"PO-Revision-Date: 2025-08-15 10:33+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -10563,50 +10563,38 @@ msgid "This menu item is not yet implemented"
 msgstr "Cette fonction du menu n'est pas encore implémentée"
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Interact / Select"
-msgstr "Se déplacer / Interagir / Sélectionner"
+msgstr "Interagir / Sélectionner"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel interaction"
-msgstr "Annuler l'action"
+msgstr "Annuler l'interaction"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip walk"
-msgstr "Passer les dialogues"
+msgstr "Passer le déplacement"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "Passer le déplacement et annuler l'interaction"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sequence"
 msgstr "Passer la séquence"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sub-sequence"
-msgstr "Passer la séquence"
+msgstr "Passer la sous-séquence"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
-#| msgid "Restart the Scene"
 msgid "Restart sequence"
-msgstr "Redémarrer la scène"
+msgstr "Redémarrer la séquence"
 
 #: engines/playground3d/metaengine.cpp:55
 msgid "Switch test"
