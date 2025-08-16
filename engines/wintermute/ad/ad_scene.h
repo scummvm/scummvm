@@ -187,6 +187,8 @@ public:
 	bool restoreDeviceObjects() override;
 	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
+	void onLayerResized(AdLayer *layer);
+
 	// scripting interface
 	ScValue *scGetProperty(const Common::String &name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;

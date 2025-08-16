@@ -27,6 +27,8 @@
 
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/ad/ad_layer.h"
+#include "engines/wintermute/ad/ad_game.h"
+#include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_node.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
@@ -463,6 +465,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 		if (_width < 0) {
 			_width = 0;
 		}
+		((AdGame *)_gameRef)->_scene->onLayerResized(this);
 		return STATUS_OK;
 	}
 
@@ -474,6 +477,7 @@ bool AdLayer::scSetProperty(const char *name, ScValue *value) {
 		if (_height < 0) {
 			_height = 0;
 		}
+		((AdGame *)_gameRef)->_scene->onLayerResized(this);
 		return STATUS_OK;
 	}
 

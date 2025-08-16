@@ -359,7 +359,7 @@ uint32 AdScene::getAlphaAt(int x, int y, bool colorCheck) {
 	}
 
 	if (_mainLayer) {
-		for (int32 i = (int32)_mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
+		for (int32 i = _mainLayer->_nodes.getSize() - 1; i >= 0; i--) {
 			AdSceneNode *node = _mainLayer->_nodes[i];
 			if (node->_type == OBJECT_REGION && node->_region->_active && (colorCheck || !node->_region->_blocked) && node->_region->pointInRegion(x, y)) {
 				if (!node->_region->_blocked) {
@@ -1237,6 +1237,7 @@ bool AdScene::traverseNodes(bool doUpdate) {
 						_gameRef->_renderer->setup2D();
 					}
 
+					// only display 3D if geometry is set
 					if (!node->_entity->_is3D || _geom) {
 						if (doUpdate) {
 							node->_entity->update();
@@ -3752,7 +3753,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
-void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
+void AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
 	if (shadowType > SHADOW_STENCIL) {
 		shadowType = SHADOW_STENCIL;
 	}
@@ -3764,6 +3765,14 @@ void Wintermute::AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
 	_maxShadowType = shadowType;
 }
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+void AdScene::onLayerResized(AdLayer *layer) {
+	if (layer != nullptr && layer == _mainLayer) {
+		_width = layer->_width;
+		_height = layer->_height;
+	}
+}
 
 Common::String AdScene::debuggerToString() const {
 	return Common::String::format("%p: Scene \"%s\", paralax: %d, autoscroll: %d", (const void *)this, _name, _paralaxScrolling, _autoScroll);
