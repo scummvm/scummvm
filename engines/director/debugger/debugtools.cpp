@@ -49,9 +49,9 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 	if (!cast->_lingodec)
 		return nullptr;
 	for (auto p : cast->_lingodec->scripts) {
-		if ((p.second->castID & 0xFFFF) != id.member)
+		if (cast->getCastIdByScriptId(p.first) != id.member)
 			continue;
-		;
+
 		for (const LingoDec::Handler &handler : p.second->handlers) {
 			if (handler.name == handlerId) {
 				return &handler;
