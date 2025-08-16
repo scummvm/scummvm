@@ -49,7 +49,9 @@ struct BalloonPositions {
 
 
 
+#ifdef USE_TTS
 static const int kNumberOfVoiceDatas = 65;
+#endif
 
 class DialogueManager {
 
