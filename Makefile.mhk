@@ -1,0 +1,48 @@
+# Simple Makefile for standalone .mhk file extractor
+# This builds a standalone tool that can parse and extract .mhk files
+
+# Compiler settings
+CXX = clang++
+CXXFLAGS = -std=c++17 -Wall -O2
+
+# Target executable
+TARGET = mhk_extractor
+
+# Source file
+SOURCE = simple_mhk_extractor.cpp
+
+# Default target
+all: $(TARGET)
+
+# Build the executable
+$(TARGET): $(SOURCE)
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+# Clean target
+clean:
+	rm -f $(TARGET)
+
+# Install target (optional)
+install: $(TARGET)
+	cp $(TARGET) /usr/local/bin/
+
+# Help target
+help:
+	@echo "Simple .mhk file extractor"
+	@echo ""
+	@echo "Targets:"
+	@echo "  all      - Build the mhk_extractor executable"
+	@echo "  clean    - Remove build artifacts"
+	@echo "  install  - Install to /usr/local/bin/"
+	@echo "  help     - Show this help"
+	@echo ""
+	@echo "Usage:"
+	@echo "  ./mhk_extractor list <mhk_file>"
+	@echo "  ./mhk_extractor extract <mhk_file> <output_dir>"
+	@echo "  ./mhk_extractor info <mhk_file>"
+	@echo ""
+	@echo "Example:"
+	@echo "  ./mhk_extractor list data.mhk"
+	@echo "  ./mhk_extractor extract data.mhk extracted_files/"
+
+.PHONY: all clean install help

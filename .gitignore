@@ -306,3 +306,6 @@ scummvm.ttp
 
 #Ignore Python generated files
 __pycache__/
+
+_reference/
+_test/
