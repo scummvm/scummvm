@@ -47,6 +47,8 @@
 #include "lab/speciallocks.h"
 #include "lab/utils.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Lab {
 
 enum SpecialLock {
@@ -302,8 +304,19 @@ void LabEngine::interfaceOn() {
 }
 
 bool LabEngine::doUse(uint16 curInv) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 	switch (curInv) {
 	case kItemMap:
+		if (_mainDisplay) {
+			keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+			keymapper->getKeymap("exit")->setEnabled(false);
+			keymapper->getKeymap("map")->setEnabled(true);
+		} else if (_alternate) {
+			keymapper->getKeymap("inventory")->setEnabled(false);
+			keymapper->getKeymap("map")->setEnabled(true);
+		}
+
 		drawStaticMessage(kTextUseMap);
 		interfaceOff();
 		_anim->stopDiff();
@@ -313,8 +326,22 @@ bool LabEngine::doUse(uint16 curInv) {
 		_graphics->setPalette(initColors, 8);
 		_graphics->drawMessage("", false);
 		_graphics->drawPanel();
+
+		if (_alternate) {
+			keymapper->getKeymap("map")->setEnabled(false);
+			keymapper->getKeymap("inventory")->setEnabled(true);
+		} else {
+			keymapper->getKeymap("map")->setEnabled(false);
+			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+			keymapper->getKeymap("exit")->setEnabled(true);
+		}
+
 		return true;
 	case kItemJournal:
+		keymapper->getKeymap("inventory")->setEnabled(false);
+		keymapper->getKeymap("journal")->setEnabled(true);
+		keymapper->getKeymap("exit")->setEnabled(true);
+
 		drawStaticMessage(kTextUseJournal);
 		interfaceOff();
 		_anim->stopDiff();
@@ -323,6 +350,11 @@ bool LabEngine::doUse(uint16 curInv) {
 		doJournal();
 		_graphics->drawPanel();
 		_graphics->drawMessage("", false);
+
+		keymapper->getKeymap("journal")->setEnabled(false);
+		keymapper->getKeymap("exit")->setEnabled(false);
+		keymapper->getKeymap("inventory")->setEnabled(true);
+
 		return true;
 	case kItemLamp:
 		interfaceOff();
@@ -563,7 +595,7 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 	uint16 oldDirection = 0;
 	uint16 lastInv = kItemMap;
 
-	if (code == Common::KEYCODE_RETURN)
+	if (msgClass == kMessageAction && code == kActionInteract)
 		msgClass = kMessageLeftClick;
 
 	bool leftButtonClick = (msgClass == kMessageLeftClick);
@@ -572,13 +604,13 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 	_anim->_doBlack = false;
 
 	if (_graphics->_longWinInFront) {
-		if (msgClass == kMessageRawKey || leftButtonClick || rightButtonClick) {
+		if (msgClass == kMessageAction || leftButtonClick || rightButtonClick) {
 			_graphics->_longWinInFront = false;
 			_graphics->drawPanel();
 			drawRoomMessage(curInv, _closeDataPtr);
 			_graphics->screenUpdate();
 		}
-	} else if (msgClass == kMessageRawKey) {
+	} else if (msgClass == kMessageAction) {
 		return processKey(curMsg, msgClass, qualifier, curPos, curInv, forceDraw, code);
 	} else if (msgClass == kMessageButtonUp) {
 		if (!_alternate)
@@ -606,11 +638,21 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 		// Sets the correct button list
 		interfaceOn();
 
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 		if (_alternate) {
 			if (lastInv && _conditions->in(lastInv))
 				curInv = lastInv;
 			else
 				decIncInv(&curInv, false);
+
+			keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+			keymapper->getKeymap("exit")->setEnabled(false);
+			keymapper->getKeymap("inventory")->setEnabled(true);
+		} else {
+			keymapper->getKeymap("inventory")->setEnabled(false);
+			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+			keymapper->getKeymap("exit")->setEnabled(true);
 		}
 
 		_graphics->drawPanel();
@@ -624,19 +666,21 @@ bool LabEngine::processEvent(MessageClass tmpClass, uint16 code, uint16 qualifie
 }
 
 bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualifier, Common::Point &curPos, uint16 &curInv, bool &forceDraw, uint16 code) {
-	if ((getPlatform() == Common::kPlatformWindows) && (code == Common::KEYCODE_b)) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
+	if ((getPlatform() == Common::kPlatformWindows) && (code == kActionDropBreadcrumb)) {
 		// Start bread crumbs
 		_breadCrumbs[0]._crumbRoomNum = 0;
 		_numCrumbs = 0;
 		_droppingCrumbs = true;
 		_interface->mayShowCrumbIndicator();
 		_graphics->screenUpdate();
-	} else if (getPlatform() == Common::kPlatformWindows && (code == Common::KEYCODE_f || code == Common::KEYCODE_r)) {
+	} else if (getPlatform() == Common::kPlatformWindows && (code == kActionFollowBreadcrumbs || code == kActionRunWhileFollowingBreadcrumbs)) {
 		// Follow bread crumbs
 		if (_droppingCrumbs) {
 			if (_numCrumbs > 0) {
 				_followingCrumbs = true;
-				_followCrumbsFast = (code == Common::KEYCODE_r);
+				_followCrumbsFast = (code == kActionRunWhileFollowingBreadcrumbs);
 				_isCrumbTurning = false;
 				_isCrumbWaiting = false;
 				_crumbTimestamp = _system->getMillis();
@@ -652,6 +696,10 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 					_graphics->drawPanel();
 					drawRoomMessage(curInv, _closeDataPtr);
 					_graphics->screenUpdate();
+
+					keymapper->getKeymap("inventory")->setEnabled(false);
+					keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+					keymapper->getKeymap("exit")->setEnabled(true);
 				}
 			} else {
 				_breadCrumbs[0]._crumbRoomNum = 0;
@@ -661,11 +709,14 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 				_graphics->screenUpdate();
 			}
 		}
-	} else if ((code == Common::KEYCODE_x) || (code == Common::KEYCODE_q)) {
+	} else if ((code == kActionQuit)) {
 		// Quit?
 		_graphics->drawMessage("Do you want to quit? (Y/N)", false);
 		eatMessages();
 		interfaceOff();
+
+		keymapper->disableAllGameKeymaps();
+		keymapper->getKeymap("quit-dialog")->setEnabled(true);
 
 		while (1) {
 			// Make sure we check the music at least after every message
@@ -679,21 +730,29 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 				// Does music load and next animation frame when you've run out of messages
 				updateEvents();
 				_anim->diffNextFrame();
-			} else if (curMsg->_msgClass == kMessageRawKey) {
-				if ((curMsg->_code == Common::KEYCODE_y) || (curMsg->_code == Common::KEYCODE_q)) {
+			} else if (curMsg->_msgClass == kMessageAction) {
+				if ((curMsg->_code == kActionQuitDialogYes)) {
 					_anim->stopDiff();
 					return false;
-				} else if (curMsg->_code < 128)
+				} else if (curMsg->_code == kActionQuitDialogNo)
 					break;
 			} else if ((curMsg->_msgClass == kMessageLeftClick) || (curMsg->_msgClass == kMessageRightClick))
 				break;
 		}
 
+		keymapper->getKeymap("quit-dialog")->setEnabled(false);
+		keymapper->getKeymap("lab-default")->setEnabled(true);
+		if (_alternate) {
+			keymapper->getKeymap("inventory")->setEnabled(true);
+		} else {
+			keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+			keymapper->getKeymap("exit")->setEnabled(true);
+		}
 		forceDraw = true;
 		interfaceOn();
-	} else if (code == Common::KEYCODE_ESCAPE) {
+	} else if (code == kActionExit) {
 		_closeDataPtr = nullptr;
-	} else if (code == Common::KEYCODE_TAB) {
+	} else if (code == kActionFocusOnNextInteractiveItem) {
 		const CloseData *tmpClosePtr = _closeDataPtr;
 
 		// get next close-up in list after the one pointed to by curPos
@@ -709,6 +768,8 @@ bool LabEngine::processKey(IntuiMessage *curMsg, uint32 msgClass, uint16 &qualif
 }
 
 void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDirection, bool &forceDraw, uint16 buttonId, uint16 &actionMode) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+
 	switch (buttonId) {
 	case kButtonPickup:
 	case kButtonUse:
@@ -735,6 +796,10 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 	case kButtonInventory:
 		eatMessages();
+
+		keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+		keymapper->getKeymap("exit")->setEnabled(false);
+		keymapper->getKeymap("inventory")->setEnabled(true);
 
 		_alternate = true;
 		_anim->_doBlack = true;
@@ -852,6 +917,7 @@ void LabEngine::processMainButton(uint16 &curInv, uint16 &lastInv, uint16 &oldDi
 
 void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonId, uint16 &actionMode) {
 	_anim->_doBlack = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	switch (buttonId) {
 	case kButtonMainDisplay:
@@ -864,6 +930,11 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 		interfaceOn();
 		_graphics->drawPanel();
 		drawRoomMessage(curInv, _closeDataPtr);
+
+		keymapper->getKeymap("inventory")->setEnabled(false);
+		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+		keymapper->getKeymap("exit")->setEnabled(true);
+
 		break;
 
 	case kButtonSaveLoad: {
@@ -954,6 +1025,10 @@ void LabEngine::processAltButton(uint16 &curInv, uint16 &lastInv, uint16 buttonI
 				interfaceOn();
 				_graphics->drawPanel();
 				drawRoomMessage(curInv, _closeDataPtr);
+
+				keymapper->getKeymap("inventory")->setEnabled(false);
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+				keymapper->getKeymap("exit")->setEnabled(true);
 			} else {
 				_breadCrumbs[0]._crumbRoomNum = 0;
 				_droppingCrumbs = false;
@@ -1054,6 +1129,10 @@ void LabEngine::go() {
 
 	// If the user has requested to load a game from the launcher, skip the intro
 	if (!ConfMan.hasKey("save_slot")) {
+		Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+		keymapper->disableAllGameKeymaps();
+		keymapper->getKeymap("intro")->setEnabled(true);
+
 		_event->mouseHide();
 		_introPlaying = true;
 		Intro *intro = new Intro(this);
@@ -1061,6 +1140,11 @@ void LabEngine::go() {
 		delete intro;
 		_introPlaying = false;
 		_event->mouseShow();
+
+		keymapper->getKeymap("intro")->setEnabled(false);
+		keymapper->getKeymap("lab-default")->setEnabled(true);
+		keymapper->getKeymap("exit")->setEnabled(true);
+		keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 	}
 
 	mainGameLoop();
