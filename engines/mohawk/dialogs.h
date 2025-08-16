@@ -143,6 +143,22 @@ private:
 
 #endif
 
+class MohawkDefaultOptionsWidget : public GUI::OptionsContainerWidget {
+public:
+	MohawkDefaultOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain);
+	~MohawkDefaultOptionsWidget() override;
+
+	// OptionsContainerWidget API
+	void load() override;
+	bool save() override;
+
+private:
+	// OptionsContainerWidget API
+	void defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const override;
+
+	GUI::CheckboxWidget *_audioPopFixCheckbox;
+};
+
 } // End of namespace Mohawk
 
 #endif
