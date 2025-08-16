@@ -322,7 +322,7 @@ bool crossBlit(byte *dst, const byte *src,
 	}
 
 	// Attempt to use a faster method if possible
-	FastBlitFunc blitFunc = getFastBlitFunc(dstFmt, dstFmt);
+	FastBlitFunc blitFunc = getFastBlitFunc(dstFmt, srcFmt);
 	if (blitFunc) {
 		blitFunc(dst, src, dstPitch, srcPitch, w, h);
 		return true;
