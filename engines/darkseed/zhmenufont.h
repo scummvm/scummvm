@@ -22,7 +22,7 @@
 #ifndef DARKSEED_ZHMENUFONT_H
 #define DARKSEED_ZHMENUFONT_H
 
-#include <common/array.h>
+#include "common/array.h"
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
