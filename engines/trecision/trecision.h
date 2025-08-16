@@ -23,6 +23,7 @@
 #define TRECISION_TRECISION_H
 
 #include "common/str-array.h"
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/str.h"
 #include "common/serializer.h"
@@ -35,7 +36,6 @@
 #include "trecision/fastfile.h"
 #include "trecision/struct.h"
 #include "trecision/scheduler.h"
-#include <common/events.h>
 
 namespace Trecision {
 class AnimManager;
