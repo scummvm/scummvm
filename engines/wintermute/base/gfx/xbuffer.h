@@ -22,8 +22,8 @@
 #ifndef WINTERMUTE_XBUFFER_H
 #define WINTERMUTE_XBUFFER_H
 
-#include <common/types.h>
-#include <common/util.h>
+#include "common/types.h"
+#include "common/util.h"
 
 namespace Wintermute {
 
