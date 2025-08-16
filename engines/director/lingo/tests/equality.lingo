@@ -58,6 +58,15 @@ scummvmAssert("2000" < "25")
 scummvmAssert("abc" < "abcd")
 scummvmAssert("abc" < "def")
 
+-- Non-coercable string is always bigger than a number or void
+scummvmAssert("test" > 3000)
+scummvmAssert(3000 < "test")
+scummvmAssert("test" > 300.0)
+scummvmAssert(300.0 < "test")
+scummvmAssert("test" > VOID)
+scummvmAssert(VOID < "test")
+
+
 -- Mimic an object
 scummvmAssert("<Object:#FileIO" > 0)
 

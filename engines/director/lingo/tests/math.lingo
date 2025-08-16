@@ -73,3 +73,93 @@ scummvmAssertEqual(integer(-2.49), -1)
 scummvmAssertEqual(integer(-2.5), -2)
 
 set the scummvmVersion to save
+
+-- Min/max - D4 has bugs related to handling VOID
+set the scummvmVersion to 400
+scummvmAssertEqual(min(VOID, 30), 30)
+scummvmAssertEqual(ilk(max(VOID, 30)), #void)
+scummvmAssertEqual(ilk(min(30, VOID)), #void)
+scummvmAssertEqual(max(30, VOID), 30)
+
+scummvmAssertEqual(min(VOID, "test"), "test")
+scummvmAssertEqual(ilk(max(VOID, "test")), #void)
+scummvmAssertEqual(ilk(min("test", VOID)), #void)
+scummvmAssertEqual(max("test", VOID), "test")
+
+scummvmAssertEqual(min(1, VOID, 3), 3)
+scummvmAssertEqual(max(1, VOID, 3), 3)
+scummvmAssertEqual(min(VOID, 3, "test"), 3)
+scummvmAssertEqual(ilk(max(VOID, 3, "test")), #void)
+scummvmAssertEqual(min(1, VOID, 3, "test"), 3)
+scummvmAssertEqual(max(1, VOID, 3, "test"), "test")
+
+scummvmAssertEqual(min(VOID, "test", 3), 3)
+scummvmAssertEqual(ilk(max(VOID, "test", 3)), #void)
+scummvmAssertEqual(min(3, VOID, "test"), "test")
+scummvmAssertEqual(max(3, VOID, "test"), "test")
+scummvmAssertEqual(ilk(min(3, "test", VOID)), #void)
+scummvmAssertEqual(max(3, "test", VOID), "test")
+scummvmAssertEqual(ilk(min("test", 3, VOID)), #void)
+scummvmAssertEqual(max("test", 3, VOID), "test")
+scummvmAssertEqual(min("test", VOID, 3), 3)
+scummvmAssertEqual(max("test", VOID, 3), "test")
+scummvmAssertEqual(min("test", VOID, 3, "2.5"), "2.5")
+scummvmAssertEqual(max("test", VOID, 3, "2.5"), "test")
+scummvmAssertEqual(min(1, "test", VOID, 3, "2.5"), "2.5")
+scummvmAssertEqual(max(1, "test", VOID, 3, "2.5"), "test")
+scummvmAssertEqual(min(1, "test", 3, "2.5"), 1)
+scummvmAssertEqual(max(1, "test", 3, "2.5"), "test")
+
+-- D5 fixes the VOID bug
+set the scummvmVersion to 500
+scummvmAssertEqual(ilk(min(VOID, 30)), #void)
+scummvmAssertEqual(max(VOID, 30), 30)
+scummvmAssertEqual(ilk(min(30, VOID)), #void)
+scummvmAssertEqual(max(30, VOID), 30)
+
+scummvmAssertEqual(min(VOID, "test"), "test")
+scummvmAssertEqual(ilk(max(VOID, "test")), #void)
+scummvmAssertEqual(min("test", VOID), "test")
+scummvmAssertEqual(ilk(max("test", VOID)), #void)
+
+scummvmAssertEqual(ilk(min(1, VOID, 3)), #void)
+scummvmAssertEqual(max(1, VOID, 3), 3)
+scummvmAssertEqual(min(VOID, 3, "test"), "test")
+scummvmAssertEqual(max(VOID, 3, "test"), "test")
+scummvmAssertEqual(min(1, VOID, 3, "test"), "test")
+scummvmAssertEqual(max(1, VOID, 3, "test"), "test")
+
+scummvmAssertEqual(min(VOID, "test", 3), 3)
+scummvmAssertEqual(max(VOID, "test", 3), 3)
+scummvmAssertEqual(min(3, VOID, "test"), "test")
+scummvmAssertEqual(max(3, VOID, "test"), "test")
+scummvmAssertEqual(ilk(min(3, "test", VOID)), #void)
+scummvmAssertEqual(ilk(max(3, "test", VOID)), #void)
+scummvmAssertEqual(ilk(min("test", 3, VOID)), #void)
+scummvmAssertEqual(ilk(max("test", 3, VOID)), #void)
+scummvmAssertEqual(min("test", VOID, 3), 3)
+scummvmAssertEqual(max("test", VOID, 3), 3)
+scummvmAssertEqual(min("test", VOID, 3, "2.5"), "2.5")
+scummvmAssertEqual(max("test", VOID, 3, "2.5"), 3)
+scummvmAssertEqual(min(1, "test", VOID, 3, "2.5"), "2.5")
+scummvmAssertEqual(max(1, "test", VOID, 3, "2.5"), 3)
+scummvmAssertEqual(min(1, "test", 3, "2.5"), 1)
+scummvmAssertEqual(max(1, "test", 3, "2.5"), "test")
+
+-- cases the same for both
+set the scummvmVersion to 400
+scummvmAssertEqual(min(29, "30.0"), 29)
+scummvmAssertEqual(max(29, "30.0"), "30.0")
+scummvmAssertEqual(min(30, "30.0"), 30)
+scummvmAssertEqual(max(30, "30.0"), "30.0")
+scummvmAssertEqual(min(31, "30.0"), "30.0")
+scummvmAssertEqual(max(31, "30.0"), 31)
+scummvmAssertEqual(min(30.0, "30.1"), 30.0)
+scummvmAssertEqual(max(30.0, "30.1"), "30.1")
+scummvmAssertEqual(min(30.2, "30.1"), "30.1")
+scummvmAssertEqual(max(30.2, "30.1"), 30.2)
+
+scummvmAssertEqual(min(50000, "test"), 50000)
+scummvmAssertEqual(max(50000, "test"), "test")
+scummvmAssertEqual(min(5000.0, "test"), 5000.0)
+scummvmAssertEqual(max(5000.0, "test"), "test")

@@ -95,6 +95,8 @@ public:
 	// used for film loops
 	bool hasSubChannels();
 	Common::Array<Channel> *getSubChannels();
+	CastMemberID getSubChannelSound1();
+	CastMemberID getSubChannelSound2();
 
 public:
 	Sprite *_sprite;

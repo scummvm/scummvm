@@ -858,9 +858,6 @@ int Lingo::getAlignedType(const Datum &d1, const Datum &d2, bool equality) {
 		opType = FLOAT;
 	} else if ((d1Type == STRING && d2Type == INT) || (d1Type == INT && d2Type == STRING)) {
 		opType = STRING;
-	} else if ((d1Type == SYMBOL && d2Type != SYMBOL) || (d2Type == SYMBOL && d1Type != SYMBOL)) {
-		// some fun undefined behaviour: adding anything to a symbol returns an int.
-		opType = INT;
 	} else if (d1Type == d2Type) {
 		opType = d1Type;
 	}
@@ -1063,6 +1060,7 @@ int Datum::asInt() const {
 
 	switch (type) {
 	case STRING:
+	case SYMBOL:
 		{
 			Common::String src = asString();
 			char *endPtr = nullptr;
@@ -1087,11 +1085,6 @@ int Datum::asInt() const {
 		} else {
 			res = (int)u.f;
 		}
-		break;
-	case SYMBOL:
-		// Undefined behaviour, but relied on by bad game code that e.g. adds things to symbols.
-		// Return a 32-bit number that's sort of related.
-		res = (int)((uint64)u.s & 0xffffffffL);
 		break;
 	default:
 		warning("Incorrect operation asInt() for type: %s", type2str());
@@ -1525,6 +1518,13 @@ uint32 Datum::compareTo(const Datum &d) const {
 			}
 		}
 		return result;
+
+		// non-coercable strings always outrank numbers and VOID
+	} else if ((this->type == FLOAT || this->type == INT || this->type == VOID) && (d.type == STRING || d.type == SYMBOL)) {
+		return kCompareLessEqual | kCompareLess;
+	} else if ((d.type == FLOAT || d.type == INT || d.type == VOID) && (this->type == STRING || this->type == SYMBOL)) {
+		return kCompareGreaterEqual | kCompareGreater;
+
 	} else {
 		warning("Datum::compareTo(): Invalid comparison between types %s and %s", type2str(), d.type2str());
 		return kCompareError;

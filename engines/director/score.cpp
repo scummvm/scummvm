@@ -1686,9 +1686,20 @@ Channel *Score::getChannelById(uint16 id) {
 
 void Score::playSoundChannel(bool puppetOnly) {
 	DirectorSound *sound = _window->getSoundManager();
+	CastMemberID sound1 = _currentFrame->_mainChannels.sound1;
+	CastMemberID sound2 = _currentFrame->_mainChannels.sound2;
+	for (int i = (int)_channels.size() - 1; i >= 0; i--) {
+		if (_channels[i]->hasSubChannels()) {
+			if (sound1.isNull())
+				sound1 = _channels[i]->getSubChannelSound1();
+			if (sound2.isNull())
+				sound2 = _channels[i]->getSubChannelSound2();
+		}
+	}
+
 	debugC(5, kDebugSound, "Score::playSoundChannel(): Sound1: %s puppet: %d type: %d, volume: %d, Sound2: %s puppet: %d, type: %d, volume: %d",
-			_currentFrame->_mainChannels.sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
-			_currentFrame->_mainChannels.sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
+			sound1.asString().c_str(), sound->isChannelPuppet(1), _currentFrame->_mainChannels.soundType1, sound->getChannelVolume(1),
+			sound2.asString().c_str(), sound->isChannelPuppet(2), _currentFrame->_mainChannels.soundType2, sound->getChannelVolume(2));
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
@@ -1696,7 +1707,7 @@ void Score::playSoundChannel(bool puppetOnly) {
 		if (_currentFrame->_mainChannels.soundType1 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType1 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType1, _currentFrame->_mainChannels.sound1.member, 1);
 		} else {
-			sound->playCastMember(_currentFrame->_mainChannels.sound1, 1);
+			sound->playCastMember(sound1, 1);
 		}
 	}
 
@@ -1706,7 +1717,7 @@ void Score::playSoundChannel(bool puppetOnly) {
 		if (_currentFrame->_mainChannels.soundType2 >= kMinSampledMenu && _currentFrame->_mainChannels.soundType2 <= kMaxSampledMenu) {
 			sound->playExternalSound(_currentFrame->_mainChannels.soundType2, _currentFrame->_mainChannels.sound2.member, 2);
 		} else {
-			sound->playCastMember(_currentFrame->_mainChannels.sound2, 2);
+			sound->playCastMember(sound2, 2);
 		}
 	}
 

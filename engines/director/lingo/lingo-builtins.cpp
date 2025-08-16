@@ -1144,36 +1144,57 @@ void LB::b_max(int nargs) {
 	max.type = INT;
 	max.u.i = 0;
 
+	bool hasVoidQuirk = g_director->getVersion() < 500;
+
+	Common::Array<Datum> testArr;
+
 	if (nargs == 1) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
-			uint arrsize = d.u.farr->arr.size();
-
-			if (d.u.farr->_sorted && arrsize) {
-				max = d.u.farr->arr[arrsize - 1];
-			} else {
-				for (uint i = 0; i < arrsize; i++) {
-					Datum item = d.u.farr->arr[i];
-					if (i == 0 || item > max) {
-						max = item;
-					}
-				}
+			for (auto &it : d.u.farr->arr) {
+				testArr.push_back(it);
 			}
 		} else {
 			max = d;
 		}
 	} else if (nargs > 0) {
 		for (int i = 0; i < nargs; i++) {
-			Datum d = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs + i];
+			Datum d = g_lingo->peek(nargs - i - 1);
 			if (d.type == ARRAY) {
 				warning("b_max: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d > max) {
-				max = d;
-			}
+			testArr.push_back(d);
 		}
 		g_lingo->dropStack(nargs);
 	}
+
+	if (!testArr.empty()) {
+		// D4: if there is a VOID for the first arg of max, return VOID
+		if (hasVoidQuirk && testArr[0].type == VOID) {
+			g_lingo->pushVoid();
+			return;
+		}
+		// The trick seems to be to compare each item in sequence.
+		// D4: If we encounter a VOID, treat it as the smallest value possible.
+		// D5+: If we encounter a string, and the current maximum is a VOID, it gets ignored.
+		// D5+: If we encounter a VOID, and the current maximum is a STRING, set it to VOID.
+
+		max = testArr[0];
+		for (int i = 1; i < (int)testArr.size(); i++) {
+			if (!hasVoidQuirk) {
+				if ((max.type == VOID) && (testArr[i].type == STRING)) {
+					continue;
+				} else if ((testArr[i].type == VOID) && (max.type == STRING)) {
+					max = Datum();
+					continue;
+				}
+			}
+			if (testArr[i] > max) {
+				max = testArr[i];
+			}
+		}
+	}
+
 	g_lingo->push(max);
 }
 
@@ -1182,35 +1203,57 @@ void LB::b_min(int nargs) {
 	min.type = INT;
 	min.u.i = 0;
 
+	bool hasVoidQuirk = g_director->getVersion() < 500;
+
+	Common::Array<Datum> testArr;
+
 	if (nargs == 1) {
 		Datum d = g_lingo->pop();
 		if (d.type == ARRAY) {
-			uint arrsize = d.u.farr->arr.size();
-
-			if (d.u.farr->_sorted && arrsize) {
-				min = d.u.farr->arr[0];
-			} else {
-				for (uint i = 0; i < arrsize; i++) {
-					Datum item = d.u.farr->arr[i];
-					if (i == 0 || item < min) {
-						min = item;
-					}
-				}
+			for (auto &it : d.u.farr->arr) {
+				testArr.push_back(it);
 			}
 		} else {
 			min = d;
 		}
 	} else if (nargs > 0) {
 		for (int i = 0; i < nargs; i++) {
-			Datum d = g_lingo->_state->stack[g_lingo->_state->stack.size() - nargs + i];
+			Datum d = g_lingo->peek(nargs - i - 1);
 			if (d.type == ARRAY) {
 				warning("b_min: undefined behavior: array mixed with other args");
 			}
-			if (i == 0 || d < min) {
-				min = d;
-			}
+			testArr.push_back(d);
 		}
 		g_lingo->dropStack(nargs);
+	}
+	if (!testArr.empty()) {
+		// D4: if there is a VOID for the last arg of min, return VOID
+		if (hasVoidQuirk && testArr[testArr.size()-1].type == VOID) {
+			g_lingo->pushVoid();
+			return;
+		}
+		// The trick seems to be to compare each item in sequence.
+		// If we encounter a VOID, and the current minimum is a number or a symbol, it gets converted to VOID.
+		// If we encounter a VOID, and the current minimum is a string, we ignore it.
+		// If the current minimum is VOID, and we encounter a string, the current minimum is set to the string.
+
+		min = testArr[0];
+		for (int i = 1; i < (int)testArr.size(); i++) {
+			if (testArr[i].type == VOID) {
+				if (min.type != STRING) {
+					min = Datum();
+				}
+				continue;
+			// D4: if the current minimum is VOID, set the next value as the new minimum
+			// D5+: if the current minimum is VOID, and the next value is a string (coercable or not), set it as the new minimum
+			} else if ((min.type == VOID) && (hasVoidQuirk || (testArr[i].type == STRING))) {
+				min = testArr[i];
+				continue;
+			}
+			if (testArr[i] < min) {
+				min = testArr[i];
+			}
+		}
 	}
 	g_lingo->push(min);
 }

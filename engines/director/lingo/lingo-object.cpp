@@ -104,6 +104,7 @@
 #include "director/lingo/xlibs/paco.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/panel.h"
+#include "director/lingo/xlibs/pharaohs.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
 #include "director/lingo/xlibs/porta.h"
 #include "director/lingo/xlibs/prefpath.h"
@@ -302,6 +303,7 @@ static const struct XLibProto {
 	XLIBDEF(PACoXObj,			kXObj,			300),	// D3
 	XLIBDEF(PalXObj,			kXObj,			400),	// D4
 	XLIBDEF(PanelXObj,			kXObj,			200),	// D2
+	XLIBDEF(PharaohsXObj,			kXObj,					400),	// D4
 	XLIBDEF(PopUpMenuXObj,		kXObj,			200),	// D2
 	XLIBDEF(Porta,				kXObj,			300),	// D3
 	XLIBDEF(PrefPath,			kXObj,			400),	// D4
@@ -444,7 +446,10 @@ void Lingo::closeXLib(Common::String name) {
 
 void Lingo::closeOpenXLibs() {
 	for (auto &it : _openXLibs) {
-		closeXLib(it._key);
+		// does not affect Xtras
+		if (it._value == kXObj) {
+			closeXLib(it._key);
+		}
 	}
 }
 

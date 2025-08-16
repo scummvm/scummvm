@@ -19,32 +19,33 @@
  *
  */
 
-#ifndef DIRECTOR_CASTMEMBER_MOVIE_H
-#define DIRECTOR_CASTMEMBER_MOVIE_H
-
-#include "director/castmember/filmloop.h"
+#ifndef DIRECTOR_LINGO_XLIBS_PHARAOHS_H
+#define DIRECTOR_LINGO_XLIBS_PHARAOHS_H
 
 namespace Director {
 
-class MovieCastMember : public FilmLoopCastMember {
+class PharaohsXObject : public Object<PharaohsXObject> {
 public:
-	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
-	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
-
-	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new MovieCastMember(cast, castId, *this)); }
-
-	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, uint frame) override;
-	void load() override;
-
-	bool hasField(int field) override;
-	Datum getField(int field) override;
-	bool setField(int field, const Datum &value) override;
-
-	Common::String formatInfo() override;
-
-	uint32 _flags;
-	bool _enableScripts;
+	PharaohsXObject(ObjectType objType);
 };
+
+namespace PharaohsXObj {
+
+extern const char *xlibName;
+extern const XlibFileDesc fileNames[];
+
+void open(ObjectType type, const Common::Path &path);
+void close(ObjectType type);
+
+void m_new(int nargs);
+void m_dispose(int nargs);
+void m_windowsdir(int nargs);
+void m_writestring(int nargs);
+void m_getstring(int nargs);
+void m_checkattrib(int nargs);
+void m_checkDrive(int nargs);
+
+} // End of namespace PharaohsXObj
 
 } // End of namespace Director
 

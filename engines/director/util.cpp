@@ -446,8 +446,10 @@ const char *recIndent() {
 
 bool isAbsolutePath(const Common::String &path) {
 	// Starts with Mac directory notation for the game root
-	if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator))
+	if (path.hasPrefix(Common::String("@:")) ||
+		path.hasPrefix(Common::String("@\\"))) {
 		return true;
+	}
 	// Starts with a Windows drive letter
 	if (path.size() >= 3
 			&& Common::isAlpha(path[0])
@@ -471,6 +473,12 @@ bool isPathWithRelativeMarkers(const Common::String &path) {
 Common::String rectifyRelativePath(const Common::String &path, const Common::Path &base) {
 	Common::StringArray components = base.splitComponents();
 	uint32 idx = 0;
+
+	// If a path is provided that begins with @, it will be relative to the top level, not the base.
+	if ((path.size() > 0) && (path[0] == '@')) {
+		idx++;
+		components.clear();
+	}
 
 	while (idx < path.size()) {
 		uint32 start = idx;
@@ -539,7 +547,8 @@ Common::String convertPath(const Common::String &path) {
 
 	if (path.hasPrefix("::")) { // Parent directory
 		idx = 2;
-	} else if (path.hasPrefix(Common::String("@") + g_director->_dirSeparator)) { // Root of the game
+	} else if (path.hasPrefix(Common::String("@:")) ||
+				path.hasPrefix(Common::String("@\\"))) { // Root of the game
 		idx = 2;
 	} else if (path.size() >= 3
 					&& Common::isAlpha(path[0])
