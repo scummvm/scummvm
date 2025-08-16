@@ -1478,10 +1478,17 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 void ScummEngine::decreaseScriptDelay(int amount) {
 	ScriptSlot *ss = vm.slot;
 	int i;
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+#endif
 	for (i = 0; i < NUM_SCRIPT_SLOT; i++, ss++) {
 		if (ss->status == ssPaused) {
 			ss->delay -= amount;
+#ifdef USE_TTS
+			if (ss->delay < 0 && (!ttsMan || !ttsMan->isSpeaking())) {
+#else
 			if (ss->delay < 0) {
+#endif
 				if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh && ss->number == 134) {
 					// Unlike the DOS version, there doesn't
 					// appear to be anything in the credits
@@ -1651,6 +1658,9 @@ void ScummEngine::abortCutscene() {
 	uint32 offs = vm.cutScenePtr[idx];
 	if (offs) {
 		ScriptSlot *ss = &vm.slot[vm.cutSceneScript[idx]];
+#ifdef USE_TTS
+		stopTextToSpeech();
+#endif
 		ss->offs = offs;
 		ss->status = ssRunning;
 		ss->freezeCount = 0;

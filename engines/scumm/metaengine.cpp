@@ -858,6 +858,17 @@ static const ExtraGuiOption enableAmbienceSounds = {
 };
 #endif
 
+#ifdef USE_TTS
+static const ExtraGuiOption enableTTS = {
+	_s("Enable Text to Speech"),
+	_s("Use TTS to read text in the game (if TTS is available)"),
+	"tts_enabled",
+	false,
+	0,
+	0
+};
+#endif
+
 const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	ExtraGuiOptions options;
 	// Query the GUI options
@@ -894,6 +905,11 @@ const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &
 			options.push_back(enableAmbienceSounds);
 #endif
 	}
+#ifdef USE_TTS
+	if (target.empty() || guiOptions.contains(GAMEOPTION_TTS)) {
+		options.push_back(enableTTS);
+	}
+#endif
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
 
