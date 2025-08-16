@@ -23,6 +23,11 @@
 
 #include "common/debug.h"
 
+// The initialization of the static const integral data members is done in the class definition,
+// but we still need to provide a definition if they are odr-used (e.g. GCC 4.7 wants this).
+const uint8 MidiDriver_ADLIB_Multisource::OPL2_NUM_CHANNELS;
+const uint8 MidiDriver_ADLIB_Multisource::OPL3_NUM_CHANNELS;
+
 bool OplInstrumentOperatorDefinition::isEmpty() const {
 	return freqMultMisc == 0 && level == 0 && decayAttack == 0 &&
 		   releaseSustain == 0 && waveformSelect == 0;
