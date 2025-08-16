@@ -338,8 +338,8 @@ public:
 	 * @param bo Width of the bottom side of the border, in pixels.
 	 */
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
-	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, const BorderOffsets &offsets);
+	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, const BorderOffsets &offsets);
 	void disableBorder();
 	void loadInternalBorder(uint32 flags);
 	/**
@@ -402,7 +402,7 @@ private:
 protected:
 	void drawBorder();
 	WindowClick isInBorder(int x, int y) const;
-	BorderOffsets getBorderOffsets() const { return _macBorder.getOffset(); }
+	const BorderOffsets &getBorderOffsets() const { return _macBorder.getOffset(); }
 
 protected:
 	ManagedSurface _borderSurface;

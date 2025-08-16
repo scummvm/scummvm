@@ -159,11 +159,11 @@ public:
 	void disableBorder();
 
 	void loadBorder(Common::SeekableReadStream &file, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets);
+	void loadBorder(Common::SeekableReadStream &file, uint32 flags, const BorderOffsets &offsets);
 	void loadInternalBorder(uint32 flags);
 
 	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, int lo = -1, int ro = -1, int to = -1, int bo = -1);
-	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets);
+	void setBorder(Graphics::ManagedSurface *surface, uint32 flags, const BorderOffsets &offsets);
 private:
 	int _scrollPos, _scrollSize;
 	Common::String _title;
