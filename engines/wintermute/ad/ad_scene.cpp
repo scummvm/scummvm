@@ -3551,7 +3551,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 			if (layer->_nodes[j]->_type == OBJECT_ENTITY) {
 				AdEntity *ent = layer->_nodes[j]->_entity;
 
-				if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
+				if (ent->_item && strcmp(ent->_item, itemName) == 0) {
 					ent->_active = show;
 				}
 			}
@@ -3561,7 +3561,7 @@ bool AdScene::handleItemAssociations(const char *itemName, bool show) {
 	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			AdEntity *ent = (AdEntity *)_objects[i];
-			if (ent->getItemName() && strcmp(ent->getItemName(), itemName) == 0) {
+			if (ent->_item && strcmp(ent->_item, itemName) == 0) {
 				ent->_active = show;
 			}
 		}
@@ -3753,7 +3753,7 @@ bool AdScene::getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects,
 
 #ifdef ENABLE_WME3D
 //////////////////////////////////////////////////////////////////////////
-void AdScene::setMaxShadowType(Wintermute::TShadowType shadowType) {
+void AdScene::setMaxShadowType(TShadowType shadowType) {
 	if (shadowType > SHADOW_STENCIL) {
 		shadowType = SHADOW_STENCIL;
 	}

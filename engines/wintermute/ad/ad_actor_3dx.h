@@ -128,7 +128,7 @@ private:
 	bool mergeAnimations(const char *filename);
 	bool mergeAnimations2(const char *filename);
 	bool unloadAnimation(const char *animName);
-	bool isGoToNeeded(int x, int y);
+	bool isGoToNeeded(int32 x, int32 y);
 };
 
 } // namespace Wintermute

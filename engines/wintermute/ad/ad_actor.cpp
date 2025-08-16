@@ -1016,10 +1016,10 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 			return STATUS_OK;
 		}
 		AdEntity *ent = (AdEntity *)obj;
-		if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
+		if (ent->_walkToX == 0 && ent->_walkToY == 0) {
 			goTo(ent->_posX, ent->_posY);
 		} else {
-			goTo(ent->getWalkToX(), ent->getWalkToY(), ent->getWalkToDir());
+			goTo(ent->_walkToX, ent->_walkToY, ent->_walkToDir);
 		}
 		if (strcmp(name, "GoToObjectAsync") != 0) {
 			script->waitForExclusive(this);

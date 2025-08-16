@@ -1606,16 +1606,16 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 		bool goToNeeded = true;
 
-		if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
+		if (ent->_walkToX == 0 && ent->_walkToY == 0) {
 			goToNeeded = isGoToNeeded(ent->_posX, ent->_posY);
 		} else {
-			goToNeeded = isGoToNeeded(ent->getWalkToX(), ent->getWalkToY());
+			goToNeeded = isGoToNeeded(ent->_walkToX, ent->_walkToY);
 		}
 
 		if (!goToNeeded) {
 			// no goto needed, but we still want to turn
-			if (ent->getWalkToX() != 0 || ent->getWalkToY() != 0) {
-				turnTo(dirToAngle(ent->getWalkToDir()));
+			if (ent->_walkToX != 0 || ent->_walkToY != 0) {
+				turnTo(dirToAngle(ent->_walkToDir));
 				if (strcmp(name, "GoToObjectAsync") != 0) {
 					script->waitForExclusive(this);
 				}
@@ -1633,10 +1633,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		if (adGame->_scene->_2DPathfinding) {
-			if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
+			if (ent->_walkToX== 0 && ent->_walkToY== 0) {
 				goTo2D(ent->_posX, ent->_posY);
 			} else {
-				goTo2D(ent->getWalkToX(), ent->getWalkToY(), dirToAngle(ent->getWalkToDir()));
+				goTo2D(ent->_walkToX, ent->_walkToY, dirToAngle(ent->_walkToDir));
 			}
 
 			if (strcmp(name, "GoToObjectAsync") != 0) {
@@ -1646,11 +1646,11 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			if (adGame->_scene->_geom) {
 				DXVector3 pos;
 
-				if (adGame->_scene->_geom->convert2Dto3DTolerant(ent->getWalkToX(), ent->getWalkToY(), &pos)) {
-					if (ent->getWalkToX() == 0 && ent->getWalkToY() == 0) {
+				if (adGame->_scene->_geom->convert2Dto3DTolerant(ent->_walkToX, ent->_walkToY, &pos)) {
+					if (ent->_walkToX == 0 && ent->_walkToY == 0) {
 						goTo3D(pos);
 					} else {
-						goTo3D(pos, dirToAngle(ent->getWalkToDir()));
+						goTo3D(pos, dirToAngle(ent->_walkToDir));
 					}
 
 					if (strcmp(name, "GoToObjectAsync") != 0) {
@@ -2434,7 +2434,7 @@ bool AdActor3DX::unloadAnimation(const char *animName) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool AdActor3DX::isGoToNeeded(int x, int y) {
+bool AdActor3DX::isGoToNeeded(int32 x, int32 y) {
 	if (ABS(x - _posX) <= _goToTolerance && ABS(y - _posY) <= _goToTolerance) {
 		return false;
 	} else {

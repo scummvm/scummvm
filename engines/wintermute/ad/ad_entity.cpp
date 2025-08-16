@@ -89,22 +89,6 @@ AdEntity::~AdEntity() {
 	_item = nullptr;
 }
 
-int32 AdEntity::getWalkToX() const {
-	return _walkToX;
-}
-
-int32 AdEntity::getWalkToY() const {
-	return _walkToY;
-}
-
-TDirection AdEntity::getWalkToDir() const {
-	return _walkToDir;
-}
-
-const char *AdEntity::getItemName() const {
-	return _item;
-}
-
 #ifdef ENABLE_FOXTAIL
 int32 AdEntity::getHintX() const {
 	return _hintX;

@@ -54,11 +54,6 @@ public:
 	bool loadBuffer(char *buffer, bool complete = true);
 	TEntityType _subtype;
 
-	int32 getWalkToX() const;
-	int32 getWalkToY() const;
-	TDirection getWalkToDir() const;
-	const char* getItemName() const;
-
 #ifdef ENABLE_FOXTAIL
 	int32 getHintX() const;
 	int32 getHintY() const;
