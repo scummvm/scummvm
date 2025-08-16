@@ -1157,7 +1157,7 @@ void Scripts::cmdPrintWatch() {
 
 void Scripts::cmdDispAbout() {
 	debugC(1, kDebugScripts, "cmdDispAbout()");
-	_vm->_travelBox->getList(Martian::ASK_TBL, _vm->_ask);
+	_vm->_aboutBox->getList(Martian::ASK_TBL, _vm->_ask);
 	int btnSelected = 0;
 	int boxX = _vm->_aboutBox->doBox_v1(_vm->_startAboutItem, _vm->_startAboutBox, btnSelected);
 	_vm->_startAboutItem = _vm->_boxDataStart;
@@ -1167,7 +1167,7 @@ void Scripts::cmdDispAbout() {
 	if (btnSelected == 2)
 		_vm->_useItem = -1;
 	else
-		_vm->_useItem = _vm->_travelBox->_tempListIdx[boxX];
+		_vm->_useItem = _vm->_aboutBox->_tempListIdx[boxX];
 }
 
 void Scripts::cmdPushLocation() {
