@@ -733,6 +733,7 @@ public:
 		void fillSolidRect(int x, int y, int cx, int cy, COLORREF clr);
 		void fillRect(const Common::Rect &r, COLORREF crColor);
 		void drawRect(const Common::Rect &r, CBrush *brush);
+		void frameRect(const Common::Rect &r, CBrush *brush);
 		void frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight);
 		void floodFill(int x, int y, COLORREF crColor);
 		void floodFill(int x, int y, COLORREF crColor,

@@ -343,7 +343,7 @@ void CDC::Ellipse(int x1, int y1, int x2, int y2) {
 }
 
 void CDC::FrameRect(LPCRECT lpRect, CBrush *pBrush) {
-	impl()->drawRect(*lpRect, pBrush);
+	impl()->frameRect(*lpRect, pBrush);
 }
 
 void CDC::Draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight) {
@@ -826,6 +826,13 @@ void CDC::Impl::drawRect(const Common::Rect &r, CBrush *brush) {
 	}
 
 	Gfx::frameRect(bitmap, r, penColor, _drawMode);
+}
+
+void CDC::Impl::frameRect(const Common::Rect &r, CBrush *brush) {
+	CBitmap::Impl *bitmap = (CBitmap::Impl *)_bitmap;
+	byte brushColor = brush->_brush->getColor();
+
+	bitmap->frameRect(r, brushColor);
 }
 
 void CDC::Impl::frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight) {
