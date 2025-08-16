@@ -22,6 +22,7 @@
 #ifndef GOT_VIEWS_VIEW_H
 #define GOT_VIEWS_VIEW_H
 
+#include "common/text-to-speech.h"
 #include "got/events.h"
 #include "got/gfx/gfx_chunks.h"
 
@@ -66,6 +67,10 @@ protected:
 
 	void fadeOut();
 	void fadeIn(const byte *pal = nullptr);
+
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
+#endif
 
 public:
 	View(const Common::String &name, UIElement *uiParent) : UIElement(name, uiParent) {}

@@ -412,6 +412,10 @@ void boss2ClosingSequence4() {
 
 	showLevel(BOSS_LEVEL2);
 
+#ifdef USE_TTS
+	_G(thorInfo)._previousScore = -1;
+#endif
+
 	playSound(ANGEL, true);
 	placeTile(18, 10, 152);
 	placeTile(19, 10, 202);

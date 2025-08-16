@@ -49,6 +49,11 @@ void ThorInfo::clear() {
 	_lastObject = 0;
 	_lastObjectName = nullptr;
 	_armor = 0;
+#ifdef USE_TTS
+	_previousJewels = -1;
+	_previousScore = -1;
+	_previousKeys = -1;
+#endif
 	Common::fill(_filler, _filler + 65, 0);
 }
 
@@ -85,6 +90,12 @@ void ThorInfo::sync(Common::Serializer &s) {
 	if (s.isLoading()) {
 		_objectName = (_object == 0) ? nullptr : OBJECT_NAMES[_object - 1];
 		_lastObjectName = (_lastObject == 0) ? nullptr : OBJECT_NAMES[_lastObject - 1];
+
+#ifdef USE_TTS
+		_previousJewels = -1;
+		_previousScore = -1;
+		_previousKeys = -1;
+#endif
 	}
 }
 

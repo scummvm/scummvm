@@ -39,6 +39,10 @@ private:
 	int _hammerFrame = 0;
 	int _smackCtr = 0;
 
+#ifdef USE_TTS
+	bool _titleVoiced = false;
+#endif
+
 protected:
 	int _selectedItem = 0;
 

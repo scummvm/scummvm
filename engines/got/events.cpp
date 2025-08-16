@@ -413,6 +413,9 @@ UIElement *UIElement::findViewGlobally(const Common::String &name) {
 void UIElement::close() {
 	assert(g_events->focusedView() == this);
 	g_events->popView();
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
 }
 
 void UIElement::draw() {
@@ -483,5 +486,18 @@ int UIElement::getRandomNumber(int maxNumber) {
 void UIElement::timeout() {
 	redraw();
 }
+
+#ifdef USE_TTS
+
+void UIElement::stopTextToSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+
+	_previousSaid.clear();
+}
+
+#endif
 
 } // namespace Got

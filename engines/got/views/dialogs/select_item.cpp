@@ -45,6 +45,9 @@ void SelectItem::draw() {
 
 	if (_G(thorInfo)._inventory == 0) {
 		s.print(Common::Point(44, 52), "No Items Found", 14);
+#ifdef USE_TTS
+		sayText("No Items Found");
+#endif
 		return;
 	}
 
@@ -65,6 +68,10 @@ void SelectItem::draw() {
 		objName = ITEM_NAMES[_selectedItem];
 	else
 		objName = _G(thorInfo)._objectName;
+
+#ifdef USE_TTS
+	sayText(objName);
+#endif
 
 	s.print(Common::Point((s.w - (strlen(objName) * 8)) / 2, 66), objName, 12);
 	s.frameRect(Common::Rect(26 + (_selectedItem * _HRZSP), 22,

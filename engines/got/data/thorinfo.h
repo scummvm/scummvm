@@ -51,6 +51,11 @@ struct ThorInfo {
 	const char *_lastObjectName = nullptr;
 	byte _armor = 0;
 	byte _filler[65] = {};
+#ifdef USE_TTS
+	int _previousJewels = -1;
+	int _previousScore = -1;
+	int _previousKeys = -1;
+#endif
 
 	void clear();
 	void sync(Common::Serializer &s);

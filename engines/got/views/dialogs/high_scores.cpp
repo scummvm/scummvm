@@ -55,6 +55,9 @@ void HighScores::draw() {
 
 	const int titleStart = (s.w - title.size() * 8) / 2;
 	s.print(Common::Point(titleStart, 4), title, 54);
+#ifdef USE_TTS
+	sayText(title);
+#endif
 
 	for (int i = 0; i < 7; ++i) {
 		const HighScore &hs = _G(highScores)._scores[_currentArea - 1][i];
@@ -67,6 +70,11 @@ void HighScores::draw() {
 		s.print(Common::Point(15, 24 + i * 18), hs._name, 14);
 		Common::String score = Common::String::format("%d", hs._total);
 		s.print(Common::Point(275 - (score.size() * 8), 24 + i * 18), score, 14);
+
+#ifdef USE_TTS
+		sayText(Common::String::format("%s: %d", hs._name, hs._total), Common::TextToSpeechManager::QUEUE);
+		_previousSaid.clear();
+#endif
 	}
 }
 
@@ -125,7 +133,8 @@ void HighScores::goToNextArea() {
 }
 
 bool HighScores::tick() {
-	if (--_timeoutCtr < 0)
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (--_timeoutCtr < 0 && (!ttsMan || !ttsMan->isSpeaking()))
 		goToNextArea();
 
 	return true;

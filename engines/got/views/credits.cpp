@@ -25,6 +25,22 @@
 namespace Got {
 namespace Views {
 
+#ifdef USE_TTS
+
+static const char *creditsText[] = {
+	"Programming: Ron Davis",
+	"Graphics: Gary Sirois",
+	"Level Design: Adam Pedersen",
+	"Additional Programming: Jason Blochowiak",
+	"Music: Roy Davis",
+	"Title Screen Art: Wayne C. Timmerman",
+	"Additional Level Design: Ron Davis, Doug Howell, Ken Heckbert, Evan Heckbert",
+	"Play Testing: Ken Heckbert, Doug Howell, Tom King",
+	"Play Testing: Kelly Rogers, Michael Smith, Rik Pierce"
+};
+
+#endif
+
 #define CREDITS_COUNT 9
 #define FADE_FRAMES 15
 #define DISPLAY_TIME 15
@@ -67,6 +83,10 @@ void Credits::draw() {
 		drawCredit(s, gfxNum1, gfxNum3, 16, 40 + 24);
 		drawCredit(s, gfxNum2, gfxNum4, 16, 40 + 24);
 	}
+
+#ifdef USE_TTS
+	sayText(creditsText[creditNum]);
+#endif
 
 	s.markAllDirty();
 }
@@ -111,7 +131,12 @@ bool Credits::tick() {
 		if (_frameCtr == (CREDIT_TIME * CREDITS_COUNT) + 10) {
 			replaceView("HighScores", true, true);
 		} else {
-			++_frameCtr;
+#ifdef USE_TTS
+			// Pause credits progression until TTS is finished
+			Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+			if (_frameCtr % CREDIT_TIME < FADE_FRAMES + DISPLAY_TIME || !ttsMan || !ttsMan->isSpeaking())
+#endif
+				++_frameCtr;
 			redraw();
 		}
 	}

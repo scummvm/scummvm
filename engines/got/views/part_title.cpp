@@ -30,20 +30,35 @@ void PartTitle::draw() {
 	GfxSurface s = getSurface();
 	s.clear();
 	s.print(Common::Point(13 * 8, 13 * 8), "God of Thunder", 14);
+#ifdef USE_TTS
+	Common::String ttsMessage = "God of Thunder: ";
+#endif
 
 	switch (_G(area)) {
 	case 1:
 		s.print(Common::Point(8 * 8, 15 * 8), "Part I: Serpent Surprise", 32);
+#ifdef USE_TTS
+		ttsMessage += "Part 1: Serpent Surprise";
+#endif
 		break;
 	case 2:
 		s.print(Common::Point(7 * 8, 15 * 8), "Part II: Non-Stick Nognir", 32);
+#ifdef USE_TTS
+		ttsMessage += "Part 2: Non-Stick Nognir";
+#endif
 		break;
 	case 3:
 		s.print(Common::Point(7 * 8, 15 * 8), "Part III: Lookin' for Loki", 32);
+#ifdef USE_TTS
+		ttsMessage += "Part 3: Lookin' for Loki";
+#endif
 		break;
 	default:
 		break;
 	}
+#ifdef USE_TTS
+	sayText(ttsMessage);
+#endif
 }
 
 bool PartTitle::msgAction(const ActionMessage &msg) {
@@ -54,7 +69,8 @@ bool PartTitle::msgAction(const ActionMessage &msg) {
 }
 
 bool PartTitle::tick() {
-	if (++_timeoutCtr == 80) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (++_timeoutCtr >= 80 && (!ttsMan || !ttsMan->isSpeaking())) {
 		_timeoutCtr = 0;
 		done();
 	}
@@ -63,6 +79,9 @@ bool PartTitle::tick() {
 }
 
 void PartTitle::done() {
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
 	replaceView("Game", true, true);
 }
 

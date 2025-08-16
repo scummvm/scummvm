@@ -77,6 +77,16 @@ void SelectOption::draw() {
 	for (uint i = 0; i < _options.size(); ++i)
 		s.print(Common::Point(32, 28 + i * 16), _options[i], 14);
 
+#ifdef USE_TTS
+	if (!_titleVoiced) {
+		sayText(_title);
+		sayText(_options[_selectedItem], Common::TextToSpeechManager::QUEUE);
+		_titleVoiced = true;
+	} else {
+		sayText(_options[_selectedItem]);
+	}
+#endif
+
 	// Draw selection pointer
 	if (_smackCtr > 0) {
 		// Selecting an item
@@ -91,6 +101,11 @@ void SelectOption::draw() {
 bool SelectOption::msgFocus(const FocusMessage &msg) {
 	_selectedItem = 0;
 	_smackCtr = 0;
+
+#ifdef USE_TTS
+	_titleVoiced = false;
+#endif
+
 	return true;
 }
 

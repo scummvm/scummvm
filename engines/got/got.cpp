@@ -78,6 +78,14 @@ Common::Error GotEngine::run() {
 		initGame();
 	syncSoundSettings();
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+#endif
+
 	runGame();
 
 	return Common::kNoError;

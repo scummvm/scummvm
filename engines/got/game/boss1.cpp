@@ -278,6 +278,10 @@ void boss1ClosingSequence4() {
 	_G(scrn)._music = 4;
 	showLevel(BOSS_LEVEL1);
 
+#ifdef USE_TTS
+	_G(thorInfo)._previousScore = -1;
+#endif
+
 	playSound(ANGEL, true);
 	placeTile(18, 6, 148);
 	placeTile(19, 6, 202);

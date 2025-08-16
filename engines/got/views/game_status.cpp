@@ -61,6 +61,20 @@ void GameStatus::displayMagic(GfxSurface &s) {
 
 void GameStatus::displayJewels(GfxSurface &s) {
 	const Common::String str = Common::String::format("%d", _G(thorInfo)._jewels);
+
+#ifdef USE_TTS
+	if (_G(thorInfo)._previousJewels != _G(thorInfo)._jewels && _G(gameMode) != MODE_SCORE_INV) {
+		if (_lastStatusSpoken == kJewels) {
+			stopTextToSpeech();
+		}
+
+		sayText("Jewels: " + str, Common::TextToSpeechManager::QUEUE);
+
+		_G(thorInfo)._previousJewels = _G(thorInfo)._jewels;
+		_lastStatusSpoken = kJewels;
+	}
+#endif
+
 	int x;
 	if (str.size() == 1)
 		x = 70;
@@ -77,12 +91,38 @@ void GameStatus::displayScore(GfxSurface &s) {
 	const Common::String str = Common::String::format("%ld", _G(thorInfo)._score);
 	const int x = 276 - (str.size() * 8);
 
+#ifdef USE_TTS
+	if (_G(thorInfo)._previousScore != _G(thorInfo)._score && _G(gameMode) != MODE_SCORE_INV && _scoreCountdown == 0) {
+		if (_lastStatusSpoken == kScore) {
+			stopTextToSpeech();
+		}
+
+		sayText("Score: " + str, Common::TextToSpeechManager::QUEUE);
+
+		_G(thorInfo)._previousScore = _G(thorInfo)._score;
+		_lastStatusSpoken = kScore;
+	}
+#endif
+
 	s.fillRect(Common::Rect(223, 32, 279, 42), STAT_COLOR);
 	s.print(Common::Point(x, 32), str, 14);
 }
 
 void GameStatus::displayKeys(GfxSurface &s) {
 	const Common::String str = Common::String::format("%d", _G(thorInfo)._keys);
+
+#ifdef USE_TTS
+	if (_G(thorInfo)._previousKeys != _G(thorInfo)._keys && _G(gameMode) != MODE_SCORE_INV) {
+		if (_lastStatusSpoken == kKeys) {
+			stopTextToSpeech();
+		}
+
+		sayText("Keys: " + str, Common::TextToSpeechManager::QUEUE);
+
+		_G(thorInfo)._previousKeys = _G(thorInfo)._keys;
+		_lastStatusSpoken = kKeys;
+	}
+#endif
 
 	int x;
 	if (str.size() == 1)
