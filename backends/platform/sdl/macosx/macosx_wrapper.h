@@ -22,7 +22,7 @@
 #ifndef PLATFORM_SDL_MACOSX_WRAPPER_H
 #define PLATFORM_SDL_MACOSX_WRAPPER_H
 
-#include <common/str.h>
+#include "common/str.h"
 
 Common::String getDesktopPathMacOSX();
 Common::String getDocumentsPathMacOSX();
