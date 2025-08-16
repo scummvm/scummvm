@@ -27,6 +27,17 @@
 namespace Got {
 namespace Views {
 
+#ifdef USE_TTS
+
+enum LastStatusSpoken {
+	kNone = 0,
+	kJewels = 1,
+	kScore = 2,
+	kKeys = 3
+};
+
+#endif
+
 class GameStatus : public View {
 private:
 	int _scoreCountdown = 0;
@@ -38,6 +49,10 @@ private:
 	void displayScore(GfxSurface &s);
 	void displayKeys(GfxSurface &s);
 	void displayItem(GfxSurface &s);
+
+#ifdef USE_TTS
+	LastStatusSpoken _lastStatusSpoken = kNone;
+#endif
 
 public:
 	GameStatus() : View("GameStatus") {}

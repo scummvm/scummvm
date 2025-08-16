@@ -60,6 +60,10 @@ bool Story::msgFocus(const FocusMessage &msg) {
 
 	const char *p = (const char *)_G(tmpBuff);
 
+#ifdef USE_TTS
+	_ttsMessage.clear();
+#endif
+
 	while (i < 46) {
 		if (*p == '\n') {
 			x = 8;
@@ -69,7 +73,13 @@ bool Story::msgFocus(const FocusMessage &msg) {
 			if (i == 23) {
 				// Move to start of of "second page" of the surface
 				y = 240 + 2;
+#ifdef USE_TTS
+				_secondPageIndex = _ttsMessage.size() - 1;
+#endif
 			}
+#ifdef USE_TTS
+			_ttsMessage += '\n';
+#endif
 		} else if (*p == '/' && *(p + 4) == '/') {
 			p++;
 			s[0] = *p++;
@@ -88,10 +98,18 @@ bool Story::msgFocus(const FocusMessage &msg) {
 			_surface.rawPrintChar(*p, x + 1, y, 255);
 			_surface.rawPrintChar(*p, x, y, color);
 			x += 8;
+
+#ifdef USE_TTS
+			_ttsMessage += *p;
+#endif
 		}
 
 		p++;
 	}
+
+#ifdef USE_TTS
+	sayText(_ttsMessage.substr(0, _secondPageIndex));
+#endif
 
 	// Final two glyphs
 	Gfx::Pics glyphs("STORYPIC", 262);
@@ -130,9 +148,12 @@ void Story::draw() {
 bool Story::msgAction(const ActionMessage &msg) {
 	if (msg._action == KEYBIND_ESCAPE || _yp == MAX_Y)
 		done();
-	else if (!_scrolling)
+	else if (!_scrolling) {
+#ifdef USE_TTS
+		sayText(_ttsMessage.substr(_secondPageIndex));
+#endif
 		_scrolling = true;
-	else
+	} else
 		_yp = MAX_Y;
 
 	return true;

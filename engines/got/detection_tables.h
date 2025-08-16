@@ -34,7 +34,7 @@ const ADGameDescription gameDescriptions[] = {
 		 Common::EN_ANY,
 		 Common::kPlatformDOS,
 		 ADGF_TESTING,
-		 GUIO1(GUIO_NOSPEECH)
+		 GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 	},
 	{
 		"got",
@@ -43,7 +43,7 @@ const ADGameDescription gameDescriptions[] = {
 		 Common::EN_ANY,
 		 Common::kPlatformDOS,
 		 ADGF_TESTING | ADGF_DEMO,
-		 GUIO1(GUIO_NOSPEECH)
+		 GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 	},
 	{
 		"got",
@@ -52,7 +52,7 @@ const ADGameDescription gameDescriptions[] = {
 		 Common::EN_ANY,
 		 Common::kPlatformDOS,
 		 ADGF_TESTING,
-		 GUIO1(GUIO_NOSPEECH)
+		 GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 	},
 	{
 		"got",
@@ -61,7 +61,7 @@ const ADGameDescription gameDescriptions[] = {
 		 Common::EN_ANY,
 		 Common::kPlatformDOS,
 		 ADGF_TESTING | ADGF_DEMO,
-		 GUIO1(GUIO_NOSPEECH)
+		 GUIO2(GUIO_NOSPEECH, GAMEOPTION_TTS)
 	},
 
 	AD_TABLE_END_MARKER};

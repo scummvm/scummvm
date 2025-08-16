@@ -69,6 +69,24 @@ void Say::draw() {
 	const char *endP = _content + _contentLength;
 	int color = 14;
 	int x = 20, lc = 0;
+#ifdef USE_TTS
+	// Voice all text immediately, so that TTS syncs better with the text appearing on screen
+	Common::String ttsMessage = _content;
+	int ttsMessageLc = 0;
+	for (uint i = 0; i < ttsMessage.size(); ++i) {
+		if (ttsMessage[i] == '\n') {
+			ttsMessageLc++;
+
+			if (ttsMessageLc > 4) {
+				ttsMessage.erase(i);
+				ttsMessage += "\n\nMore...";
+				break;
+			}
+		}
+	}
+
+	sayText(ttsMessage);
+#endif
 
 	while (p < endP) {
 		if (*p == '~' && Common::isXDigit(*(p + 1))) {

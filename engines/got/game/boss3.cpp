@@ -548,6 +548,10 @@ void boss3ClosingSequence3() {
 	_G(scrn)._music = 6;
 	showLevel(BOSS_LEVEL3);
 
+#ifdef USE_TTS
+	_G(thorInfo)._previousScore = -1;
+#endif
+
 	_G(exitFlag) = 0;
 	musicPause();
 

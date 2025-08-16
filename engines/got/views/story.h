@@ -35,6 +35,11 @@ private:
 
 	void done();
 
+#ifdef USE_TTS
+	Common::String _ttsMessage;
+	uint _secondPageIndex = 0;
+#endif
+
 public:
 	Story() : View("Story") {}
 	virtual ~Story() {}

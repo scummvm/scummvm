@@ -87,6 +87,9 @@ protected:
 	Bounds _bounds;
 	bool _needsRedraw = true;
 	Common::String _name;
+#ifdef USE_TTS
+	Common::String _previousSaid;
+#endif
 
 protected:
 	/**
@@ -214,6 +217,13 @@ protected:
 	virtual bool msgMouseMove(const MouseMoveMessage &msg) {
 		return false;
 	}
+
+#ifdef USE_TTS
+	/**
+	 * Stops TTS voicing and clears the previously spoken text
+	 */
+	void stopTextToSpeech();
+#endif
 
 public:
 	bool send(const MouseMoveMessage &msg) {
