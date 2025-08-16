@@ -113,7 +113,7 @@ void showCast() {
 		return;
 
 	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(560, 480), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(480, 480), ImGuiCond_FirstUseEver);
 
 	if (ImGui::Begin("Cast", &_state->_w.cast)) {
 		// display a toolbar with: grid/list/filters buttons + name filter
@@ -154,7 +154,7 @@ void showCast() {
 				ImGui::TableSetupColumn("#", 0, 20.f);
 				ImGui::TableSetupColumn("Script", 0, 80.f);
 				ImGui::TableSetupColumn("Type", 0, 80.f);
-				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 30.f);
+				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 50.f);
 				ImGui::TableHeadersRow();
 
 				for (auto it : *movie->getCasts()) {
