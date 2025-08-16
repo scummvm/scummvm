@@ -111,7 +111,7 @@ void Animation::anim0() {
 		} else {
 			_countdownTicks = _initialTicks;
 			++_frameNumber;
-			AnimationFrame *frame = calcFrame();
+			const AnimationFrame *frame = calcFrame();
 
 			if (frame == nullptr) {
 				_frameNumber = 0;
@@ -130,7 +130,7 @@ void Animation::anim1() {
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		AnimationFrame *frame = calcFrame();
+		const AnimationFrame *frame = calcFrame();
 
 		if (frame == nullptr) {
 			--_frameNumber;
@@ -148,7 +148,7 @@ void Animation::anim2() {
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		AnimationFrame *frame = calcFrame();
+		const AnimationFrame *frame = calcFrame();
 
 		if (frame == nullptr) {
 			_frameNumber = 0;
@@ -166,7 +166,7 @@ void Animation::anim3() {
 		} else {
 			_countdownTicks = _initialTicks;
 			++_frameNumber;
-			AnimationFrame *frame = calcFrame();
+			const AnimationFrame *frame = calcFrame();
 
 			if (frame == nullptr) {
 				--_currentLoopCount;
@@ -185,7 +185,7 @@ void Animation::anim4() {
 	} else {
 		_countdownTicks = _initialTicks;
 		++_frameNumber;
-		AnimationFrame *frame = calcFrame();
+		const AnimationFrame *frame = calcFrame();
 
 		if (frame == nullptr) {
 			if (--_currentLoopCount == -1) {
@@ -209,38 +209,38 @@ void Animation::anim7() {
 	setFrame(calcFrame1());
 }
 
-AnimationFrame *Animation::calcFrame() {
+const AnimationFrame *Animation::calcFrame() {
 	return (_frameNumber < (int)_frames.size()) ? _frames[_frameNumber] : nullptr;
 }
 
-AnimationFrame *Animation::calcFrame1() {
+const AnimationFrame *Animation::calcFrame1() {
 	return _frames[0];
 }
 
-void Animation::setFrame(AnimationFrame *frame) {
+void Animation::setFrame(const AnimationFrame *frame) {
 	assert(frame);
 	_countdownTicks += frame->_frameDelay;
 	setFrame1(frame);
 }
 
-void Animation::setFrame1(AnimationFrame *frame) {
+void Animation::setFrame1(const AnimationFrame *frame) {
 	_vm->_animation->_base.x = frame->_baseX;
 	_vm->_animation->_base.y = frame->_baseY;
 
 	// Loop to add image draw requests for the parts of the frame
-	for (const AnimationFramePart *part: frame->_parts) {
+	for (const AnimationFramePart &part: frame->_parts) {
 		ImageEntry ie;
 
 		// Set the flags
-		ie._flags = part->_flags & ~IMGFLAG_UNSCALED;
+		ie._flags = part._flags & ~IMGFLAG_UNSCALED;
 		if (_vm->_animation->_frameScale == -1)
 			ie._flags |= IMGFLAG_UNSCALED;
 
 		// Set the other fields
-		ie._spritesPtr = _vm->_objectsTable[part->_spritesIndex];
-		ie._frameNumber = part->_frameIndex;
-		ie._position = part->_position + _vm->_animation->_base;
-		ie._offsetY = part->_offsetY - ie._position.y;
+		ie._spritesPtr = _vm->_objectsTable[part._spritesIndex];
+		ie._frameNumber = part._frameIndex;
+		ie._position = part._position + _vm->_animation->_base;
+		ie._offsetY = part._offsetY - ie._position.y;
 
 		_vm->_images.addToList(ie);
 	}
@@ -260,7 +260,7 @@ AnimationFrame::AnimationFrame(Common::SeekableReadStream *stream, int startOffs
 	while (nextOffset != 0) {
 		stream->seek(startOffset + nextOffset);
 
-		AnimationFramePart *framePart = new AnimationFramePart(stream);
+		AnimationFramePart framePart(stream);
 		_parts.push_back(framePart);
 
 		nextOffset = stream->readUint16LE();
@@ -268,8 +268,6 @@ AnimationFrame::AnimationFrame(Common::SeekableReadStream *stream, int startOffs
 }
 
 AnimationFrame::~AnimationFrame() {
-	for (auto *part : _parts)
-		delete part;
 }
 
 /*------------------------------------------------------------------------*/

@@ -373,7 +373,7 @@ void AccessEngine::plotList1() {
 
 		_imgUnscaled = (ie._flags & IMGFLAG_UNSCALED) != 0;
 		Common::Point pt = ie._position - _screen->_bufferStart;
-		SpriteResource *sprites = ie._spritesPtr;
+		const SpriteResource *sprites = ie._spritesPtr;
 		const SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
 
 		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);

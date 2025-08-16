@@ -59,12 +59,12 @@ public:
 	/**
 	 * Get the width of a given character
 	 */
-	int charWidth(char c);
+	int charWidth(char c) const;
 
 	/**
 	 * Get the width of a given string
 	 */
-	int stringWidth(const Common::String &msg);
+	int stringWidth(const Common::String &msg) const;
 
 	/**
 	 * Type of line wrapping - Martian wraps based on chars, Amazon based on px.
@@ -87,17 +87,17 @@ public:
 	 * @returns			True if last line
 	 */
 	bool getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
-				 LINE_WIDTH_TYPE widthType = kWidthInPixels);
+				 LINE_WIDTH_TYPE widthType = kWidthInPixels) const;
 
 	/**
 	 * Draw a string on a given surface
 	 */
-	void drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt);
+	void drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) const;
 
 	/**
 	 * Draw a character on a given surface
 	 */
-	int drawChar(BaseSurface *s, char c, Common::Point &pt);
+	int drawChar(BaseSurface *s, char c, Common::Point &pt) const;
 
 };
 
