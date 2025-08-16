@@ -31,6 +31,7 @@
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
 #include "director/castmember/shape.h"
+#include "director/castmember/text.h"
 #include "director/debugger.h"
 #include "director/movie.h"
 #include "director/window.h"
@@ -209,7 +210,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	sprite->_pattern = shapeMember->_pattern;
 	sprite->_thickness = shapeMember->_lineThickness;
 
-	// Make a temporary channel to blit the shape to
+	// Make a temporary channel to blit the shape from
 	Channel *channel = new Channel(nullptr, sprite);
 
 	Common::Rect bbox(castMember->getBbox());
@@ -237,6 +238,7 @@ ImGuiImage getShapeID(CastMember *castMember) {
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
 
 	delete managedSurface;
+	delete sprite;
 	delete channel;
 
 	int16 width = surface.w, height = surface.h;
@@ -254,23 +256,23 @@ ImGuiImage getTextID(CastMember *castMember) {
 		return _state->_cast._textures[castMember];
 	}
 
-	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
-	Graphics::Surface source;
+	Common::Rect bbox(castMember->getBbox());
 
-	// This means the shapes that are not in any channel won't be shown
-	for (auto it : channels) {
-		if (it->_sprite && it->_sprite->_castId.member == castMember->getID() && it->_widget) {
-			source = it->_widget->getSurface()->rawSurface();
-			break;
-		}
-	}
+	// Make a temporary Sprite
+	Sprite *sprite = new Sprite();
+	sprite->_spriteType = kTextSprite;
+	sprite->_movie = g_director->getCurrentMovie();
+	sprite->setCast(CastMemberID(castMember->getID(), castMember->getCast()->_castLibID));
+	sprite->_backColor = castMember->getBackColor();
+	sprite->_foreColor = castMember->getForeColor();
+	sprite->_editable = false;
 
-	if (source.format.bytesPerPixel > 4 || !source.getPixels()) {
-		return {};
-	}
+	// Make a temporary channel to blit the shape from
+	Channel *channel = new Channel(nullptr, sprite);
 
+	Graphics::MacWidget *widget = castMember->createWidget(bbox, channel, kTextSprite);
 	Graphics::Surface surface;
-	surface.copyFrom(source);
+	surface.copyFrom(*widget->getSurface());
 
 	if (debugChannelSet(8, kDebugImages)) {
 		Common::String prepend = "text";
@@ -287,6 +289,9 @@ ImGuiImage getTextID(CastMember *castMember) {
 
 	int16 width = surface.w, height = surface.h;
 	surface.free();
+	delete widget;
+	delete sprite;
+	delete channel;
 
 	_state->_cast._textures[castMember] = {textureID, width, height};
 	return _state->_cast._textures[castMember];
