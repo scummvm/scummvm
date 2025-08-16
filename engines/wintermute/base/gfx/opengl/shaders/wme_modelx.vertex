@@ -50,7 +50,6 @@ void main() {
 		float intensity = 1.0;
 		vec4 lightPosition = viewMatrix * lights[i]._position;
 		vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
-		float dist = length(vertexToLight);
 
 		if (lights[i]._direction.w < 0.0) { // Spotlight
 			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0);
@@ -69,13 +68,11 @@ void main() {
 		}
 
 		intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
-		light.rgb += lights[i]._color.rgb * intensity;
+		light += lights[i]._color.rgb * intensity;
 	}
 
-	Color.rgba *= vec4(light.rgb, 1.0);
-	Color.rgba += vec4(ambient.rgb * ambientLight.rgb, 1.0);
+	Color.rgb *= light;
+	Color.rgb += ambient.rgb * ambientLight.rgb;
 
-	Color.r = min(Color.r, 1.0);
-	Color.g = min(Color.g, 1.0);
-	Color.b = min(Color.b, 1.0);
+	Color.rgb = clamp(Color.rgb, 0.0, 1.0);
 }

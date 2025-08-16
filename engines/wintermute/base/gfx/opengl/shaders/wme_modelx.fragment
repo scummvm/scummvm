@@ -20,7 +20,7 @@ void main() {
 	}
 
 	if (enableFog) {
-		outColor = mix(fogColor, outColor, fogFactor);
+		outColor.rgb = mix(fogColor.rgb, outColor.rgb, fogFactor);
 	}
 
 	if (UBOOL_TEST(alphaTest) && outColor.a < alphaRef) {
