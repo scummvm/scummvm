@@ -105,7 +105,7 @@ void Scroller::setActive(bool active) {
 }
 
 bool Scroller::isMoving() {
-	return _xScroller.isMoving() | _yScroller.isMoving();
+	return _xScroller.isMoving() || _yScroller.isMoving();
 }
 
 bool Scroller::update(uint32 deltatime) {
