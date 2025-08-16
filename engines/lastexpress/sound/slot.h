@@ -33,7 +33,7 @@ class Subtitle;
 class SoundManager;
 struct HPF;
 
-#include <common/pack-start.h>
+#include "common/pack-start.h"
 typedef struct SaveSlot {
 	int32 status;
 	int32 tag;
@@ -61,7 +61,7 @@ typedef struct SaveSlot {
 		memset(name2, 0, 16);
 	}
 } SaveSlot;
-#include <common/pack-end.h>
+#include "common/pack-end.h"
 
 class Slot {
 	friend class Subtitle;
