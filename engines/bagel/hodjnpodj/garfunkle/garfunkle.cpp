@@ -93,11 +93,11 @@ static const char *cAnimName[MAX_BUTTONS] = {
 	HARP_ANIM, CLARINET_ANIM
 };
 
-int     nNumCels[MAX_BUTTONS] = { VIOLIN_CELS, CELLO_CELS, DRUM_CELS, SAX_CELS,
+const int nNumCels[MAX_BUTTONS] = { VIOLIN_CELS, CELLO_CELS, DRUM_CELS, SAX_CELS,
                                   HARP_CELS, CLARINET_CELS
                                 };
 
-POINT   Offset[MAX_BUTTONS] = {
+const POINT Offset[MAX_BUTTONS] = {
 	{ VIOLIN_OFFSET_X, VIOLIN_OFFSET_Y },
 	{ CELLO_OFFSET_X, CELLO_OFFSET_Y },
 	{ DRUM_OFFSET_X, DRUM_OFFSET_Y },
