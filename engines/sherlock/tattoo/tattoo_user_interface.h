@@ -100,6 +100,7 @@ public:
 	bool _personFound;
 	int _activeObj;
 	Common::KeyState _keyState;
+	Common::CustomEventType _action;
 	Common::Point _lookPos;
 	ScrollHighlight _scrollHighlight;
 	Common::SeekableReadStream *_mask, *_mask1;
