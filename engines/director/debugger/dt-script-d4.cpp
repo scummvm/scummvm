@@ -35,7 +35,7 @@ namespace DT {
 
 class RenderScriptVisitor : public LingoDec::NodeVisitor {
 public:
-	RenderScriptVisitor(ImGuiScript &script, bool showByteCode) : _script(script), _showByteCode(showByteCode) {
+	RenderScriptVisitor(ImGuiScript &script, bool showByteCode, bool scrollTo) : _script(script), _showByteCode(showByteCode), _scrollTo(scrollTo) {
 		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (!callstack.empty()) {
 			CFrame *head = callstack[callstack.size() - 1];
@@ -916,6 +916,7 @@ private:
 			return;
 		case LingoDec::kDatumPropList: {
 			ImGui::Text("[");
+			ImGui::SameLine();
 			if (datum.l.size() == 0) {
 				ImGui::Text(":");
 				ImGui::SameLine();
@@ -943,6 +944,7 @@ private:
 		if (ImGui::IsItemHovered() && g_lingo->_globalvars.contains(varName)) {
 			const Datum &val = g_lingo->_globalvars.getVal(varName);
 			ImGui::BeginTooltip();
+			ImGui::Text("%s", varName.c_str());
 			ImGui::Text("Click to add to watches.");
 			Common::String s = val.asString(true);
 			s.wordWrap(150);
@@ -1008,7 +1010,7 @@ private:
 					ImGui::Text(",");
 					ImGui::SameLine();
 				}
-				ImGui::TextColored(_state->_colors._var_color, "%s", _script.globalNames[i].c_str());
+				renderVar(_script.globalNames[i]);
 				ImGui::SameLine();
 			}
 		}
@@ -1132,7 +1134,11 @@ private:
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
+		// Need to give a new id for each button
+		ImGui::PushID(_renderLineID);
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::PopID();
+		_renderLineID++;
 
 		// click on breakpoint column?
 		if (ImGui::IsItemClicked(0)) {
@@ -1164,7 +1170,7 @@ private:
 		if (showCurrentStatement) {
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (_state->_dbg._isScriptDirty && !ImGui::IsItemVisible()) {
+			if (_state->_dbg._isScriptDirty && _scrollTo) {
 				ImGui::SetScrollHereY(0.5f);
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
@@ -1211,10 +1217,12 @@ private:
 	int _indent = 0;
 	bool _currentStatementDisplayed = false;
 	bool _isScriptInDebug = false;
+	int _renderLineID = 0;
+	bool _scrollTo = false;
 };
 
-void renderScriptAST(ImGuiScript &script, bool showByteCode) {
-	RenderScriptVisitor visitor(script, showByteCode);
+void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo) {
+	RenderScriptVisitor visitor(script, showByteCode, scrollTo);
 	script.root->accept(visitor);
 }
 

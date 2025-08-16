@@ -291,6 +291,7 @@ void InkPrimitives<T>::drawPoint(int x, int y, uint32 src, void *data) {
 	if (!p->destRect.contains(x, y))
 		return;
 
+
 	T *dst;
 	uint32 tmpDst;
 

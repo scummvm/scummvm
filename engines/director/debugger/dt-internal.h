@@ -84,7 +84,6 @@ typedef struct ImGuiScript {
 
 typedef struct ImGuiWindows {
 	bool controlPanel = true;
-	bool callStack = false;
 	bool vars = false;
 	bool channels = false;
 	bool cast = false;
@@ -95,27 +94,32 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
+	bool executionContext = false;
 } ImGuiWindows;
 
 typedef struct ImGuiState {
 	struct {
-		Common::HashMap<Graphics::Surface *, ImGuiImage> _textures;
+		Common::HashMap<CastMember *, ImGuiImage> _textures;
 		bool _listView = true;
 		int _thumbnailSize = 64;
 		ImGuiTextFilter _nameFilter;
 		int _typeFilter = 0x7FFF;
 	} _cast;
 	struct {
-		Common::Array<ImGuiScript> _scripts;
-		uint _current = 0;
+		struct ScriptData {
+			Common::Array<ImGuiScript> _scripts;
+			uint _current = 0;
+			bool _showByteCode = false;
+			bool _showScript = false;
+		} *_scriptData;
 		ImGuiTextFilter _nameFilter;
-		bool _showByteCode = false;
-		bool _showScript = false;
+		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
+
 	struct {
+		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
-		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 	} _dbg;
 
 	struct {
@@ -137,6 +141,7 @@ typedef struct ImGuiState {
 		ImVec4 _script_ref = ImColor(IM_COL32(0x7f, 0x7f, 0xff, 0xfff));
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
+		ImVec4 _var_ref_out_of_scope = ImColor(IM_COL32(0xFF, 0x00, 0xFF, 0xFF));
 	} _colors;
 
 	struct {
@@ -184,20 +189,22 @@ typedef struct ImGuiState {
 
 // debugtools.cpp
 ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::String &handlerId);
+ScriptContext *getScriptContext(CastMemberID id);
 void setScriptToDisplay(const ImGuiScript &script);
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc);
 void displayScriptRef(CastMemberID &scriptId);
 ImGuiImage getImageID(CastMember *castMember);
+ImGuiImage getShapeID(CastMember *castMember);
+ImGuiImage getTextID(CastMember *castMember);
 Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
-void displayVariable(const Common::String &name, bool changed);
+void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
 
 // dt-lists.cpp
-void showCallStack();
 void showVars();
 void showWatchedVars();
 void showBreakpointList();
@@ -207,18 +214,24 @@ void showArchive();
 void showScore();
 void showChannels();
 
-void renderOldScriptAST(ImGuiScript &script, bool showByteCode);    // dt-script-d2.cpp
-void renderScriptAST(ImGuiScript &script, bool showByteCode);       // dt-script-d4.cpp
+void renderOldScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);    // dt-script-d2.cpp
+void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);       // dt-script-d4.cpp
 
 // dt-scripts.cpp
 void showFuncList();
 void showScriptCasts();
-void showScripts();
+void showExecutionContext();
+
+// dt-save-state.cpp
+void saveCurrentState();
+void loadSavedState();
+long long int getWindowFlags();
+void setWindowFlags(long long int openFlags);
 
 extern ImGuiState *_state;
 
-}
+} // End of namespace DT
 
-}
+} // End of namespace Director
 
 #endif

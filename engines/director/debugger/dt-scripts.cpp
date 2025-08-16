@@ -25,6 +25,7 @@
 #include "director/debugger/dt-internal.h"
 
 #include "director/archive.h"
+#include "director/window.h"
 #include "director/cast.h"
 #include "director/debugger.h"
 #include "director/movie.h"
@@ -96,18 +97,16 @@ static void renderCastScript(Symbol &sym) {
 	}
 }
 
-static void renderScript(ImGuiScript &script, bool showByteCode) {
+static void renderScript(ImGuiScript &script, bool showByteCode, bool scrollTo) {
 	if (script.oldAst) {
-		renderOldScriptAST(script, showByteCode);
-		_state->_dbg._isScriptDirty = false;
+		renderOldScriptAST(script, showByteCode, scrollTo);
 		return;
 	}
 
 	if (!script.root)
 		return;
 
-	renderScriptAST(script, showByteCode);
-	_state->_dbg._isScriptDirty = false;
+	renderScriptAST(script, showByteCode, scrollTo);
 }
 
 static bool showScriptCast(CastMemberID &id) {
@@ -162,9 +161,11 @@ static void updateCurrentScript() {
 	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
 		return;
 
+
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	if (callstack.empty())
 		return;
+
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
@@ -176,68 +177,6 @@ static void updateCurrentScript() {
 	script.moviePath = movie->getArchive()->getPathName().toString();
 	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
 	setScriptToDisplay(script);
-}
-
-void showScripts() {
-	updateCurrentScript();
-
-	if (!_state->_functions._showScript)
-		return;
-
-	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(240, 240), ImGuiCond_FirstUseEver);
-
-	if (ImGui::Begin("Script", &_state->_functions._showScript)) {
-		ImGui::BeginDisabled(_state->_functions._scripts.empty() || _state->_functions._current == 0);
-		if (ImGui::Button(ICON_MS_ARROW_BACK)) {
-			_state->_functions._current--;
-		}
-		ImGui::EndDisabled();
-		ImGui::SetItemTooltip("Backward");
-		ImGui::SameLine();
-
-		ImGui::BeginDisabled(_state->_functions._current >= _state->_functions._scripts.size() - 1);
-		if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
-			_state->_functions._current++;
-		}
-		ImGui::EndDisabled();
-		ImGui::SetItemTooltip("Forward");
-		ImGui::SameLine();
-
-		const char *currentScript = nullptr;
-		if (_state->_functions._current < _state->_functions._scripts.size()) {
-			currentScript = _state->_functions._scripts[_state->_functions._current].handlerName.c_str();
-		}
-
-		if (ImGui::BeginCombo("##handlers", currentScript)) {
-			for (uint i = 0; i < _state->_functions._scripts.size(); i++) {
-				auto &script = _state->_functions._scripts[i];
-				bool selected = i == _state->_functions._current;
-				if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
-					_state->_functions._current = i;
-				}
-			}
-			ImGui::EndCombo();
-		}
-
-		if (!_state->_functions._scripts[_state->_functions._current].oldAst) {
-			ImGui::SameLine(0, 20);
-			ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._showByteCode, true); // Lingo
-			ImGui::SetItemTooltip("Lingo");
-			ImGui::SameLine();
-
-			ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._showByteCode); // Bytecode
-			ImGui::SetItemTooltip("Bytecode");
-		}
-
-		ImGui::Separator();
-		const ImVec2 childsize = ImGui::GetContentRegionAvail();
-		ImGui::BeginChild("##script", childsize);
-		ImGuiScript &script = _state->_functions._scripts[_state->_functions._current];
-		renderScript(script, _state->_functions._showByteCode);
-		ImGui::EndChild();
-	}
-	ImGui::End();
 }
 
 static Common::String getHandlerName(Symbol &sym) {
@@ -347,6 +286,230 @@ void showFuncList() {
 			ImGui::EndTable();
 		}
 		ImGui::EndChild();
+	}
+	ImGui::End();
+}
+
+void showExecutionContext() {
+	if (!_state->_w.executionContext)
+		return;
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(500, 750), ImGuiCond_FirstUseEver);
+
+	Director::Lingo *lingo = g_director->getLingo();
+
+	Window *currentWindow = g_director->getCurrentWindow();
+	bool scriptsRendered = false;
+
+	if (ImGui::Begin("Execution Context", &_state->_w.executionContext, ImGuiWindowFlags_AlwaysAutoResize)) {
+		Window *stage = g_director->getStage();
+		g_director->setCurrentWindow(stage);
+		g_lingo->switchStateFromWindow();
+
+		int windowID = 0;
+		ImGui::PushID(windowID);
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+
+		ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f));
+		ImGui::Text("%s", stage->asString().c_str());
+		ImGui::Text("%s", stage->getCurrentMovie()->getMacName().c_str());
+
+		ImGui::SeparatorText("Backtrace");
+		ImVec2 childSize = ImGui::GetContentRegionAvail();
+		childSize.y /= 3;
+		ImGui::BeginChild("##backtrace", childSize);
+		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+		ImGui::EndChild();
+
+		ImGui::SeparatorText("Scripts");
+
+		_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(stage);
+		updateCurrentScript();
+
+		if (_state->_functions._scriptData->_showScript) {
+			ImGui::BeginDisabled(_state->_functions._scriptData->_scripts.empty() || _state->_functions._scriptData->_current == 0);
+			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
+				_state->_functions._scriptData->_current--;
+			}
+			ImGui::EndDisabled();
+			ImGui::SetItemTooltip("Backward");
+			ImGui::SameLine();
+
+			ImGui::BeginDisabled(_state->_functions._scriptData->_current >= _state->_functions._scriptData->_scripts.size() - 1);
+			if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
+				_state->_functions._scriptData->_current++;
+			}
+			ImGui::EndDisabled();
+			ImGui::SetItemTooltip("Forward");
+			ImGui::SameLine();
+
+			const char *currentScript = nullptr;
+
+			if (_state->_functions._scriptData->_current < _state->_functions._scriptData->_scripts.size()) {
+				currentScript = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].handlerName.c_str();
+			}
+
+			if (ImGui::BeginCombo("##handlers", currentScript)) {
+				for (uint i = 0; i < _state->_functions._scriptData->_scripts.size(); i++) {
+					auto &script = _state->_functions._scriptData->_scripts[i];
+					bool selected = i == _state->_functions._scriptData->_current;
+					if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
+						_state->_functions._scriptData->_current = i;
+					}
+				}
+				ImGui::EndCombo();
+			}
+
+			if (!_state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].oldAst) {
+				ImGui::SameLine(0, 20);
+				ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._scriptData->_showByteCode, true); // Lingo
+				ImGui::SetItemTooltip("Lingo");
+				ImGui::SameLine();
+
+				ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._scriptData->_showByteCode); // Bytecode
+				ImGui::SetItemTooltip("Bytecode");
+			}
+
+			ImGui::Separator();
+			childSize = ImGui::GetContentRegionAvail();
+			ImGui::BeginChild("##script", childSize);
+			ImGuiScript &current = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current];
+
+			// Get all the handlers from the script
+			ScriptContext* context = getScriptContext(current.id);
+			Movie *movie = g_director->getCurrentMovie();
+
+			if (!context || context->_functionHandlers.size() == 1) {
+				renderScript(current, _state->_functions._scriptData->_showByteCode, true);
+			} else {
+				for (auto &functionHandler : context->_functionHandlers) {
+					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+					script.moviePath = movie->getArchive()->getPathName().toString();
+					script.handlerName = getHandlerName(functionHandler._value);
+					renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
+					ImGui::NewLine();
+				}
+			}
+			scriptsRendered = true;
+
+			ImGui::EndChild();
+		}
+
+		ImGui::EndChild();
+		ImGui::PopStyleColor();
+		ImGui::PopID();
+
+		ImGui::SameLine();
+
+		const Common::Array<Window *> *windowList = g_director->getWindowList();
+
+		for (auto window : (*windowList)) {
+			g_director->setCurrentWindow(window);
+			g_lingo->switchStateFromWindow();
+
+			windowID += 1;
+			ImGui::PushID(windowID);
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImGui::GetStyleColorVec4(ImGuiCol_FrameBg));
+
+			ImGui::BeginChild("Window##", ImVec2(500.0f, 700.0f), ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY);
+
+			ImGui::Text("%s", window->asString().c_str());
+			ImGui::Text("%s", window->getCurrentMovie()->getMacName().c_str());
+
+			ImGui::SeparatorText("Backtrace");
+			childSize = ImGui::GetContentRegionAvail();
+			childSize.y /= 3;
+			ImGui::BeginChild("##backtrace", childSize);
+			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+			ImGui::EndChild();
+
+			ImGui::SeparatorText("Scripts");
+
+			_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(window);
+			updateCurrentScript();
+
+			if (_state->_functions._scriptData->_showScript) {
+				ImGui::BeginDisabled(_state->_functions._scriptData->_scripts.empty() || _state->_functions._scriptData->_current == 0);
+				if (ImGui::Button(ICON_MS_ARROW_BACK)) {
+					_state->_functions._scriptData->_current--;
+				}
+				ImGui::EndDisabled();
+				ImGui::SetItemTooltip("Backward");
+				ImGui::SameLine();
+
+				ImGui::BeginDisabled(_state->_functions._scriptData->_current >= _state->_functions._scriptData->_scripts.size() - 1);
+				if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
+					_state->_functions._scriptData->_current++;
+				}
+				ImGui::EndDisabled();
+				ImGui::SetItemTooltip("Forward");
+				ImGui::SameLine();
+
+				const char *currentScript = nullptr;
+
+				if (_state->_functions._scriptData->_current < _state->_functions._scriptData->_scripts.size()) {
+					currentScript = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].handlerName.c_str();
+				}
+
+				if (ImGui::BeginCombo("##handlers", currentScript)) {
+					for (uint i = 0; i < _state->_functions._scriptData->_scripts.size(); i++) {
+						auto &script = _state->_functions._scriptData->_scripts[i];
+						bool selected = i == _state->_functions._scriptData->_current;
+						if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
+							_state->_functions._scriptData->_current = i;
+						}
+					}
+					ImGui::EndCombo();
+				}
+
+				if (!_state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].oldAst) {
+					ImGui::SameLine(0, 20);
+					ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._scriptData->_showByteCode, true); // Lingo
+					ImGui::SetItemTooltip("Lingo");
+					ImGui::SameLine();
+
+					ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._scriptData->_showByteCode); // Bytecode
+					ImGui::SetItemTooltip("Bytecode");
+				}
+
+				ImGui::Separator();
+				childSize = ImGui::GetContentRegionAvail();
+				ImGui::BeginChild("##script", childSize);
+				ImGuiScript &current = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current];
+
+				// Get all the handlers from the script
+				ScriptContext* context = getScriptContext(current.id);
+				Movie *movie = g_director->getCurrentMovie();
+
+				if (!context || context->_functionHandlers.size() == 1) {
+					renderScript(current, _state->_functions._scriptData->_showByteCode, true);
+				} else {
+					for (auto &functionHandler : context->_functionHandlers) {
+						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+						script.moviePath = movie->getArchive()->getPathName().toString();
+						script.handlerName = getHandlerName(functionHandler._value);
+						renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
+						ImGui::NewLine();
+					}
+				}
+
+				scriptsRendered = true;
+				ImGui::EndChild();
+			}
+
+			ImGui::EndChild();
+			ImGui::PopStyleColor();
+			ImGui::PopID();
+		}
+
+		// Mark the scripts not dirty after all the handlers have been rendered
+		_state->_dbg._isScriptDirty = !scriptsRendered;
+
+		g_director->setCurrentWindow(currentWindow);
+		g_lingo->switchStateFromWindow();
 	}
 	ImGui::End();
 }

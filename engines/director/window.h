@@ -169,6 +169,8 @@ public:
 
 	Common::String formatWindowInfo();
 
+	static void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
+
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
 
@@ -225,7 +227,6 @@ private:
 	bool _isModal;
 
 private:
-	void inkBlitFrom(Channel *channel, Common::Rect destRect, Graphics::ManagedSurface *blitTo = nullptr);
 	static void drawChannelBox(Director::Movie *currentMovie, Graphics::ManagedSurface *blitTo, int selectedChannel);
 	void drawFrameCounter(Graphics::ManagedSurface *blitTo);
 

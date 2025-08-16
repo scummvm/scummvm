@@ -24,6 +24,7 @@
 #include "director/debugger/dt-internal.h"
 
 #include "director/cast.h"
+#include "director/castmember/castmember.h"
 #include "director/channel.h"
 #include "director/frame.h"
 #include "director/movie.h"
@@ -234,8 +235,24 @@ void showScore() {
 			if (castMember || shape) {
 				ImGuiImage imgID = {};
 
-				if (castMember)
-					imgID = getImageID(castMember);
+				if (castMember) {
+					switch (castMember->_type) {
+					case kCastBitmap:
+						imgID = getImageID(castMember);
+						break;
+					case kCastShape:
+						imgID = getShapeID(castMember);
+						break;
+					case kCastText:
+					case kCastButton:
+					case kCastRichText:
+						imgID = getTextID(castMember);
+						break;
+
+					default:
+						break;
+					}
+				}
 
 				if (castMember && imgID.id) {
 					Common::String name(getDisplayName(castMember));

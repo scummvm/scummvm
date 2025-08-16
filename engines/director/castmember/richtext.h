@@ -45,6 +45,7 @@ public:
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
 
+	Common::String getText() { return Common::String(_plainText); }
 	uint32 getCastDataSize() override;
 	void writeCastData(Common::SeekableWriteStream *writeStream) override;
 

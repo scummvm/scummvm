@@ -21,13 +21,21 @@
 
 #include "backends/imgui/IconsMaterialSymbols.h"
 
+#include "graphics/macgui/mactext.h"
+
+#include "image/png.h"
+
 #include "director/director.h"
 #include "director/lingo/lingodec/context.h"
 #include "director/lingo/lingodec/script.h"
 #include "director/cast.h"
 #include "director/castmember/bitmap.h"
+#include "director/castmember/shape.h"
 #include "director/debugger.h"
 #include "director/movie.h"
+#include "director/window.h"
+#include "director/score.h"
+#include "director/channel.h"
 #include "director/picture.h"
 
 #include "director/debugger/debugtools.h"
@@ -49,9 +57,9 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 	if (!cast->_lingodec)
 		return nullptr;
 	for (auto p : cast->_lingodec->scripts) {
-		if ((p.second->castID & 0xFFFF) != id.member)
+		if (cast->getCastIdByScriptId(p.first) != id.member)
 			continue;
-		;
+
 		for (const LingoDec::Handler &handler : p.second->handlers) {
 			if (handler.name == handlerId) {
 				return &handler;
@@ -63,12 +71,12 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 
 const LingoDec::Handler *getHandler(CastMemberID id, const Common::String &handlerId) {
 	const Director::Movie *movie = g_director->getCurrentMovie();
-	for (const auto it : *movie->getCasts()) {
-		const Cast *cast = it._value;
-		const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
-		if (handler)
-			return handler;
-	}
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	const LingoDec::Handler *handler = getHandler(cast, id, handlerId);
+	if (handler)
+		return handler;
+
 	return getHandler(movie->getSharedCast(), id, handlerId);
 }
 
@@ -106,6 +114,18 @@ ImGuiScript toImGuiScript(ScriptType scriptType, CastMemberID id, const Common::
 	return result;
 }
 
+ScriptContext *getScriptContext(CastMemberID id) {
+	const Director::Movie *movie = g_director->getCurrentMovie();;
+	const Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	if (!cast) {
+		return nullptr;
+	}
+
+	ScriptContext *ctx = cast->_lingoArchive->findScriptContext(id.member);
+	return ctx;
+}
+
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {
@@ -117,25 +137,26 @@ Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 sc
 }
 
 ImGuiImage getImageID(CastMember *castMember) {
-	if (castMember->_type != CastType::kCastBitmap)
+	if (castMember->_type != CastType::kCastBitmap) {
 		return {};
+	}
 
 	BitmapCastMember *bmpMember = (BitmapCastMember *)castMember;
+
+	if (_state->_cast._textures.contains(bmpMember)) {
+		return _state->_cast._textures[bmpMember];
+	}
+
 	Common::Rect bbox(bmpMember->getBbox());
-	Graphics::Surface *bmp = bmpMember->getMatte(bbox);
-	if (!bmp)
-		return {};
 
-	if (_state->_cast._textures.contains(bmp))
-		return _state->_cast._textures[bmp];
-
+	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
 	if (!pic)
 		return {};
 
 	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(pic->_surface, pic->_palette, pic->_paletteColors);
-	_state->_cast._textures[bmp] = {textureID, pic->_surface.w, pic->_surface.h};
-	return _state->_cast._textures[bmp];
+	_state->_cast._textures[bmpMember] = {textureID, pic->_surface.w, pic->_surface.h};
+	return _state->_cast._textures[bmpMember];
 }
 
 static void setToolTipImage(const ImGuiImage &image, const char *name) {
@@ -157,6 +178,9 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
 	ImVec2 pos = ImGui::GetCursorPos();
+
+	// Reserve the space of area thumbnailSize * thumbnailSize to make sure the column stretches properly
+	ImGui::Dummy(ImVec2(thumbnailSize, thumbnailSize));
 	ImVec2 imgPos = pos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
 	ImGui::SetCursorPos(imgPos);
 	ImGui::Image(image.id, size);
@@ -164,7 +188,111 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	setToolTipImage(image, name);
 }
 
-void displayVariable(const Common::String &name, bool changed) {
+ImGuiImage getShapeID(CastMember *castMember) {
+	if (castMember->_type != CastType::kCastShape) {
+		return {};
+	}
+
+	if (_state->_cast._textures.contains(castMember)) {
+		return _state->_cast._textures[castMember];
+	}
+
+	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
+
+	// Make a temporary Sprite
+	Sprite *sprite = new Sprite();
+	sprite->_movie = g_director->getCurrentMovie();
+	sprite->setCast(CastMemberID(castMember->getID(), castMember->getCast()->_castLibID));
+	sprite->_ink = shapeMember->_ink;
+	sprite->_backColor = shapeMember->getBackColor();
+	sprite->_foreColor = shapeMember->getForeColor();
+	sprite->_pattern = shapeMember->_pattern;
+	sprite->_thickness = shapeMember->_lineThickness;
+
+	// Make a temporary channel to blit the shape to
+	Channel *channel = new Channel(nullptr, sprite);
+
+	Common::Rect bbox(castMember->getBbox());
+
+	// Manually set the bbox of the channel to the bbox of cast member
+	// Even though the BBox of the channel and cast member are the same, the channel's bbox is offset to a non zero origin
+	// Depending upon the position of the sprite in the window
+	channel->setBbox(bbox.left, bbox.top, bbox.right, bbox.bottom);
+	Graphics::ManagedSurface *managedSurface = new Graphics::ManagedSurface(bbox.width(), bbox.height(), g_director->_pixelformat);
+
+	Window::inkBlitFrom(channel, bbox, managedSurface);
+	Graphics::Surface surface = managedSurface->rawSurface();
+
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String prepend = "shape";
+		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", g_director->getCurrentMovie()->getMacName().c_str(), encodePathForDump(prepend).c_str(), castMember->getID());
+		Common::DumpFile bitmapFile;
+
+		bitmapFile.open(Common::Path(filename), true);
+		Image::writePNG(bitmapFile, surface, g_director->getPalette());
+
+		bitmapFile.close();
+	}
+
+	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
+
+	delete managedSurface;
+	delete channel;
+
+	int16 width = surface.w, height = surface.h;
+
+	_state->_cast._textures[castMember] = {textureID, width, height};
+	return _state->_cast._textures[castMember];
+}
+
+ImGuiImage getTextID(CastMember *castMember) {
+	if (castMember->_type != CastType::kCastText && castMember->_type != CastType::kCastButton && castMember->_type != CastType::kCastRichText) {
+		return {};
+	}
+
+	if (_state->_cast._textures.contains(castMember)) {
+		return _state->_cast._textures[castMember];
+	}
+
+	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+	Graphics::Surface source;
+
+	// This means the shapes that are not in any channel won't be shown
+	for (auto it : channels) {
+		if (it->_sprite && it->_sprite->_castId.member == castMember->getID() && it->_widget) {
+			source = it->_widget->getSurface()->rawSurface();
+			break;
+		}
+	}
+
+	if (source.format.bytesPerPixel > 4 || !source.getPixels()) {
+		return {};
+	}
+
+	Graphics::Surface surface;
+	surface.copyFrom(source);
+
+	if (debugChannelSet(8, kDebugImages)) {
+		Common::String prepend = "text";
+		Common::String filename = Common::String::format("./dumps/%s-%s-%d.png", g_director->getCurrentMovie()->getMacName().c_str(), encodePathForDump(prepend).c_str(), castMember->getID());
+		Common::DumpFile bitmapFile;
+
+		bitmapFile.open(Common::Path(filename), true);
+		Image::writePNG(bitmapFile, surface, g_director->getPalette());
+
+		bitmapFile.close();
+	}
+
+	ImTextureID textureID = (ImTextureID)(intptr_t)g_system->getImGuiTexture(surface, g_director->getPalette(), g_director->getPaletteColorCount());
+
+	int16 width = surface.w, height = surface.h;
+	surface.free();
+
+	_state->_cast._textures[castMember] = {textureID, width, height};
+	return _state->_cast._textures[castMember];
+}
+
+void displayVariable(const Common::String &name, bool changed, bool outOfScope) {
 	ImU32 var_color = ImGui::GetColorU32(_state->_colors._var_ref);
 	ImU32 color;
 
@@ -189,8 +317,11 @@ void displayVariable(const Common::String &name, bool changed) {
 		}
 	}
 
-	if (changed)
+	if (changed) {
 		var_color = ImGui::GetColorU32(_state->_colors._var_ref_changed);
+	} else if (outOfScope) {
+		var_color = ImGui::GetColorU32(_state->_colors._var_ref_out_of_scope);
+	}
 
 	if (color == ImGui::GetColorU32(_state->_colors._bp_color_disabled) && ImGui::IsItemHovered()) {
 		color = ImGui::GetColorU32(_state->_colors._bp_color_hover);
@@ -218,14 +349,14 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 void setScriptToDisplay(const ImGuiScript &script) {
-	uint index = _state->_functions._scripts.size();
-	if (index && _state->_functions._scripts[index - 1] == script) {
-		_state->_functions._showScript = true;
+	uint index = _state->_functions._scriptData->_scripts.size();
+	if (index && _state->_functions._scriptData->_scripts[index - 1] == script) {
+		_state->_functions._scriptData->_showScript = true;
 		return;
 	}
-	_state->_functions._scripts.push_back(script);
-	_state->_functions._current = index;
-	_state->_functions._showScript = true;
+	_state->_functions._scriptData->_scripts.push_back(script);
+	_state->_functions._scriptData->_current = index;
+	_state->_functions._scriptData->_showScript = true;
 }
 
 void displayScriptRef(CastMemberID &scriptId) {
@@ -302,7 +433,7 @@ void onImGuiInit() {
 	icons_config.GlyphOffset = {0, 4};
 
 	static const ImWchar icons_ranges[] = {ICON_MIN_MS, ICON_MAX_MS, 0};
-	ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
+	io.FontDefault = ImGui::addTTFFontFromArchive("MaterialSymbolsSharp.ttf", 16.f, &icons_config, icons_ranges);
 
 	_state = new ImGuiState();
 
@@ -355,17 +486,19 @@ void onImGuiRender() {
 			ImGui::MenuItem("Functions", NULL, &_state->_w.funcList);
 			ImGui::MenuItem("Cast", NULL, &_state->_w.cast);
 			ImGui::MenuItem("Channels", NULL, &_state->_w.channels);
-			ImGui::MenuItem("CallStack", NULL, &_state->_w.callStack);
 			ImGui::MenuItem("Breakpoints", NULL, &_state->_w.bpList);
 			ImGui::MenuItem("Vars", NULL, &_state->_w.vars);
 			ImGui::MenuItem("Watched Vars", NULL, &_state->_w.watchedVars);
 			ImGui::MenuItem("Logger", NULL, &_state->_w.logger);
 			ImGui::MenuItem("Archive", NULL, &_state->_w.archive);
+			ImGui::MenuItem("Execution Context", NULL, &_state->_w.executionContext);
 
 			ImGui::SeparatorText("Misc");
 			if (ImGui::MenuItem("Save state")) {
+				saveCurrentState();
 			}
 			if (ImGui::MenuItem("Load state")) {
+				loadSavedState();
 			}
 			ImGui::Separator();
 			ImGui::MenuItem("Settings", NULL, &_state->_w.settings);
@@ -376,11 +509,10 @@ void onImGuiRender() {
 	}
 
 	showScriptCasts();
-	showScripts();
+	showExecutionContext();
 
 	showControlPanel();
 	showVars();
-	showCallStack();
 	showChannels();
 	showCast();
 	showFuncList();
