@@ -197,19 +197,20 @@ ImGuiImage getShapeID(CastMember *castMember) {
 		return _state->_cast._textures[castMember];
 	}
 
-	Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
-	Channel *channel = nullptr;
+	ShapeCastMember *shapeMember = (ShapeCastMember *)castMember;
 
-	for (auto it : channels) {
-		if (it->_sprite && it->_sprite->_castId.member == castMember->getID()) {
-			channel = new Channel(*it);
-			break;
-		}
-	}
-	// This means the shapes that are not in any channel won't be shown
-	if (!channel) {
-		return {};
-	}
+	// Make a temporary Sprite
+	Sprite *sprite = new Sprite();
+	sprite->_movie = g_director->getCurrentMovie();
+	sprite->setCast(CastMemberID(castMember->getID(), castMember->getCast()->_castLibID));
+	sprite->_ink = shapeMember->_ink;
+	sprite->_backColor = shapeMember->getBackColor();
+	sprite->_foreColor = shapeMember->getForeColor();
+	sprite->_pattern = shapeMember->_pattern;
+	sprite->_thickness = shapeMember->_lineThickness;
+
+	// Make a temporary channel to blit the shape to
+	Channel *channel = new Channel(nullptr, sprite);
 
 	Common::Rect bbox(castMember->getBbox());
 
