@@ -23,6 +23,8 @@
 
 #include "common/text-to-speech.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Drascula {
 
 void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int height, int count, byte* src, int delayVal, bool copyRectangle) {
@@ -46,34 +48,38 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 void DrasculaEngine::animation_1_1() {
 	debug(4, "animation_1_1()");
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("animation")->setEnabled(true);
+
 	while (term_int == 0 && !shouldQuit()) {
 		playMusic(29);
 		playFLI("logoddm.bin", 9);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		delay(600);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 		delay(340);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		playMusic(26);
 		delay(500);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		playFLI("logoalc.bin", 8);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 		loadPic("cielo.alg", screenSurface, COMPLETE_PAL);
 		black();
 		updateScreen();
 		fadeFromBlack(2);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		delay(900);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		color_abc(kColorRed);
 		centerText(_textmisc[1], 160, 100);
@@ -81,13 +87,13 @@ void DrasculaEngine::animation_1_1() {
 		sayText(_textmisc[1], Common::TextToSpeechManager::INTERRUPT);
 
 		updateScreen();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		delay(1000);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		delay(1200);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		playFLI("scrollb.bin", 9);
@@ -101,10 +107,10 @@ void DrasculaEngine::animation_1_1() {
 			break;
 		loadPic("cielo2.alg", screenSurface, COMPLETE_PAL);
 		updateScreen();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		fadeToBlack(1);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 
@@ -114,10 +120,10 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("aux104.alg", drawSurface2);
 
 		playMusic(4);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		delay(400);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		for (int l2 = 0; l2 < 3; l2++) {
@@ -125,16 +131,16 @@ void DrasculaEngine::animation_1_1() {
 				copyBackground();
 				copyBackground(interf_x[l], interf_y[l], 156, 45, 63, 31, drawSurface2, screenSurface);
 				updateScreen();
-				if (getScan() == Common::KEYCODE_ESCAPE || shouldQuit()) {
+				if (getAction() == kActionSkip || shouldQuit()) {
 					term_int = 1;
 					break;
 				}
 				pause(3);
 			}
-			if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+			if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 				break;
 		}
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		for (int l = 0, l2 = 0, p = 0; l < 180; l++) {
@@ -151,17 +157,17 @@ void DrasculaEngine::animation_1_1() {
 			}
 			if (l2 == 7)
 				l2 = 0;
-			if (getScan() == Common::KEYCODE_ESCAPE  || shouldQuit()) {
+			if (getAction() == kActionSkip  || shouldQuit()) {
 				term_int = 1;
 				break;
 			}
 		}
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		copyBackground(0, 0, 0, 0, 320, 200, screenSurface, bgSurface);
 
 		talk_drascula_big(1);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		clearRoom();
@@ -181,14 +187,14 @@ void DrasculaEngine::animation_1_1() {
 		placeDrascula();
 		updateScreen();
 		talk_igor(8, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		copyBackground();
 		placeIgor();
 		placeDrascula();
 		updateScreen();
 		talk_drascula(2);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_drascula(3);
 		if (animate("lib.bin", 16))
@@ -201,7 +207,7 @@ void DrasculaEngine::animation_1_1() {
 		updateScreen();
 		pause(10);
 		talk_solo(_textd[4],"d4.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		loadPic("plan1.alg", screenSurface, HALF_PAL);
 		updateScreen();
@@ -219,30 +225,30 @@ void DrasculaEngine::animation_1_1() {
 		loadPic("plan3.alg", screenSurface, HALF_PAL);
 		updateScreen();
 		pause(20);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_solo(_textd[7], "d7.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		loadPic("plan3.alg", screenSurface, HALF_PAL);
 		updateScreen();
 		talk_solo(_textd[8], "d8.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 		loadPic(100, bgSurface, HALF_PAL);
 		MusicFadeout();
 		stopMusic();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(9, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_drascula(9);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(10, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		playMusic(11);
 		talk_drascula(10);
@@ -262,14 +268,14 @@ void DrasculaEngine::animation_1_1() {
 		black();
 		playMusic(23);
 		fadeFromBlack(0);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackDrascula = 1;
 		talk_igor(1, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_drascula(11, 1);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackDrascula = 3;
 		copyBackground();
@@ -283,7 +289,7 @@ void DrasculaEngine::animation_1_1() {
 		placeDrascula();
 		updateScreen();
 		talk_drascula(12);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackDrascula = 3;
 		copyBackground();
@@ -297,11 +303,11 @@ void DrasculaEngine::animation_1_1() {
 		placeDrascula();
 		updateScreen();
 		talk_igor(2, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		pause(13);
 		talk_drascula(13, 1);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackDrascula = 3;
 		copyBackground();
@@ -315,35 +321,35 @@ void DrasculaEngine::animation_1_1() {
 		placeDrascula();
 		updateScreen();
 		talk_drascula(14);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(3, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_drascula(15);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(4, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_drascula(16);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(5, kIgorDch);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackIgor = 3;
 		talk_drascula(17);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		pause(18);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_igor(6, kIgorFront);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		fadeToBlack(0);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 
@@ -356,6 +362,10 @@ void DrasculaEngine::animation_1_1() {
 		playFLI("intro.bin", 12);
 		term_int = 1;
 	}
+
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 	clearRoom();
 	loadPic(96, frontSurface, COMPLETE_PAL);
 	loadPic(99, backSurface);
@@ -365,6 +375,10 @@ void DrasculaEngine::animation_2_1() {
 	debug(4, "animation_2_1()");
 
 	int l;
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("animation")->setEnabled(true);
 
 	walkToPoint(Common::Point(231, 91));
 	_characterVisible = false;
@@ -376,22 +390,22 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		loadPic("an11y13.alg", extraSurface);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		talk_bartender(22);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		loadPic(97, extraSurface);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		pause(4);
 		playSound(1);
 		hiccup(18);
 		finishSound();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		clearRoom();
@@ -401,36 +415,36 @@ void DrasculaEngine::animation_2_1() {
 		color_solo = kColorWhite;
 		pause(80);
 
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_solo(_textbj[1], "BJ1.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 		loadPic("bj.alg", screenSurface, HALF_PAL);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		black();
 		updateScreen();
 		fadeFromBlack(1);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		color_solo = kColorYellow;
 		talk_solo(_text[214], "214.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		clearRoom();
 
 		loadPic(16, bgSurface, HALF_PAL);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		loadPic("auxbj.alg", drawSurface3);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 
 		_roomNumber = 16;
 
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		for (l = 0; l < 200; l++)
 			factor_red[l] = 99;
@@ -444,7 +458,7 @@ void DrasculaEngine::animation_2_1() {
 			break;
 
 		walkToPoint(Common::Point(100 + curWidth / 2, 99 + curHeight));
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackProtagonist = 1;
 		curX = 100;
@@ -458,42 +472,42 @@ void DrasculaEngine::animation_2_1() {
 			break;
 		playMusic(9);
 		loadPic(97, extraSurface);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		updateRoom();
 		updateScreen();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		pause(120);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_solo(_text[223], "223.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		color_solo = kColorWhite;
 		updateRoom();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		updateScreen();
 		pause(110);
 		talk_solo(_textbj[11], "BJ11.als");
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		updateRoom();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		updateScreen();
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		pause(118);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		walkToPoint(Common::Point(132, 97 + curHeight));
 		pause(60);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk(224);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk_bj(12);
 		walkToPoint(Common::Point(157, 98 + curHeight));
@@ -512,30 +526,32 @@ void DrasculaEngine::animation_2_1() {
 		// Also check animation_9_6(), where the same hack was used by
 		// the original
 		_roomNumber = -1;
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		pause(8);
 		updateRoom();
 		updateScreen();
 		talk(225);
 		pause(76);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		trackProtagonist = 1;
 		updateRoom();
 		updateScreen();
 		talk(226);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		updateRoom();
 		updateScreen();
 		pause(30);
-		if ((term_int == 1) || (getScan() == Common::KEYCODE_ESCAPE) || shouldQuit())
+		if ((term_int == 1) || (getAction() == kActionSkip) || shouldQuit())
 			break;
 		talk(227);
 		fadeToBlack(0);
 		break;
 	}
+	keymapper->getKeymap("animation")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 }
 
 void DrasculaEngine::animation_3_1() {
@@ -757,7 +773,7 @@ void DrasculaEngine::animation_16_2() {
 	else
 		playMusic(32);
 
-	if (getScan() != 0) {
+	if (getScan() != 0 || getAction() != kActionNone) {
 		asco();
 		return;
 	}
@@ -777,7 +793,7 @@ void DrasculaEngine::animation_16_2() {
 		centerText(_texthis[i], 180, 180);
 		updateScreen();
 
-		if (getScan() != 0) {
+		if (getScan() != 0 || getAction() != kActionNone) {
 			asco();
 			return;
 		}
@@ -785,7 +801,7 @@ void DrasculaEngine::animation_16_2() {
 		uint32 now = _system->getMillis();
 		while (_system->getMillis() - now < 3000 * 2) {
 			delay(50);
-			if (getScan() != 0) {
+			if (getScan() != 0 || getAction() != kActionNone) {
 				asco();
 				return;
 			}
@@ -794,7 +810,7 @@ void DrasculaEngine::animation_16_2() {
 		if (i < 4) {
 			fadeToBlack(1);
 			clearRoom();
-			if (getScan() != 0) {
+			if (getScan() != 0 || getAction() != kActionNone) {
 				asco();
 				return;
 			}
@@ -809,7 +825,7 @@ void DrasculaEngine::animation_16_2() {
 		copyBackground(0, 200 - l, 0, 0, 320, l, bgSurface, screenSurface);
 		delay(10);
 		updateScreen();
-		if (getScan() != 0) {
+		if (getScan() != 0 || getAction() != kActionNone) {
 			asco();
 			return;
 		}

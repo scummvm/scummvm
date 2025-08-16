@@ -175,6 +175,8 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	_keyBufferHead = _keyBufferTail = 0;
 
+	_actionBufferHead = _actionBufferTail = 0;
+
 	_roomHandlers = nullptr;
 }
 
@@ -664,30 +666,31 @@ bool DrasculaEngine::runCurrentChapter() {
 
 		_canSaveLoad = true;
 		Common::KeyCode key = getScan();
+		Common::CustomEventType action = getAction();
 		_canSaveLoad = false;
 		if (_loadedDifferentChapter)
 			return true;
-		if (key == Common::KEYCODE_F1 && !_menuScreen) {
+		if (action == kActionLook && !_menuScreen) {
 			selectVerb(kVerbLook);
-		} else if (key == Common::KEYCODE_F2 && !_menuScreen) {
+		} else if (action == kActionPick && !_menuScreen) {
 			selectVerb(kVerbPick);
-		} else if (key == Common::KEYCODE_F3 && !_menuScreen) {
+		} else if (action == kActionOpen && !_menuScreen) {
 			selectVerb(kVerbOpen);
-		} else if (key == Common::KEYCODE_F4 && !_menuScreen) {
+		} else if (action == kActionClose && !_menuScreen) {
 			selectVerb(kVerbClose);
-		} else if (key == Common::KEYCODE_F5 && !_menuScreen) {
+		} else if (action == kActionTalk && !_menuScreen) {
 			selectVerb(kVerbTalk);
-		} else if (key == Common::KEYCODE_F6 && !_menuScreen) {
+		} else if (action == kActionMove && !_menuScreen) {
 			selectVerb(kVerbMove);
-		} else if (key == Common::KEYCODE_F7) {
+		} else if (action == kActionLoadGame) {
 			// ScummVM load screen
 			if (!scummVMSaveLoadDialog(false))
 				return true;
-		} else if (key == Common::KEYCODE_F8) {
+		} else if (action == kActionVerbReset) {
 			selectVerb(kVerbNone);
-		} else if (key == Common::KEYCODE_F9) {
+		} else if (action == kActionVolumeControls) {
 			volumeControls();
-		} else if (key == Common::KEYCODE_F10) {
+		} else if (action == kActionSaveGame) {
 			if (!ConfMan.getBool("originalsaveload")) {
 				// ScummVM save screen
 				scummVMSaveLoadDialog(true);
@@ -696,7 +699,7 @@ bool DrasculaEngine::runCurrentChapter() {
 				if (!saveLoadScreen())
 					return true;
 			}
-		} else if (key == Common::KEYCODE_v) {
+		} else if (action == kActionSubtitlesEnable) {
 			_subtitlesDisabled = true;
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);
 
@@ -706,7 +709,7 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			updateScreen();
 			delay(1410);
-		} else if (key == Common::KEYCODE_t) {
+		} else if (action == kActionSubtitlesDisable) {
 			_subtitlesDisabled = false;
 			ConfMan.setBool("subtitles", !_subtitlesDisabled);
 
@@ -716,14 +719,14 @@ bool DrasculaEngine::runCurrentChapter() {
 
 			updateScreen();
 			delay(1460);
-		} else if (key == Common::KEYCODE_ESCAPE) {
+		} else if (action == kActionQuit) {
 			if (!confirmExit())
 				return false;
-		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && _roomNumber == 61) {
+		} else if (currentChapter == 6 && action == kActionEasterEgg && _roomNumber == 61) {
 			loadPic("alcbar.alg", bgSurface, 255);
 		}
 
-		if (_leftMouseButton != 0 || _rightMouseButton != 0 || key != 0)
+		if (_leftMouseButton != 0 || _rightMouseButton != 0 || key != 0 || action != kActionNone)
 			framesWithoutAction = 0;
 
 		if (framesWithoutAction == 15000) {
@@ -833,6 +836,32 @@ void DrasculaEngine::flushKeyBuffer() {
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
+Common::CustomEventType DrasculaEngine::getAction() {
+	updateEvents();
+	if (_actionBufferHead == _actionBufferTail)
+		return kActionNone;
+
+	Common::CustomEventType action = _actionBuffer[_actionBufferTail];
+	_actionBufferTail = (_actionBufferTail + 1) % ACTIONBUFSIZE;
+
+	return action;
+}
+
+void DrasculaEngine::addActionToBuffer(Common::CustomEventType& action) {
+	if ((_actionBufferHead + 1) % ACTIONBUFSIZE == _actionBufferTail) {
+		warning("action buffer overflow");
+		return;
+	}
+
+	_actionBuffer[_actionBufferHead] = action;
+	_actionBufferHead = (_actionBufferHead + 1) % ACTIONBUFSIZE;
+}
+
+void DrasculaEngine::flushActionBuffer() {
+	updateEvents();
+	_actionBufferHead = _actionBufferTail = 0;
+}
+
 void DrasculaEngine::updateEvents() {
 	Common::Event event;
 	Common::EventManager *eventMan = _system->getEventManager();
@@ -841,6 +870,11 @@ void DrasculaEngine::updateEvents() {
 
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			addActionToBuffer(event.customType);
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			break;
 		case Common::EVENT_KEYDOWN:
 			addKeyToBuffer(event.kbd);
 			break;

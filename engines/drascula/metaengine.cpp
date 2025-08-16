@@ -29,6 +29,10 @@
 #include "drascula/drascula.h"
 #include "drascula/detection.h"
 
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 namespace Drascula {
 
 static const ADExtraGuiOptionsMap optionsList[] = {
@@ -106,6 +110,7 @@ public:
 	int getMaximumSaveSlot() const override;
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool DrasculaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -189,6 +194,148 @@ bool DrasculaMetaEngine::removeSaveState(const char *target, int slot) const {
 Common::Error DrasculaMetaEngine::createInstance(OSystem *syst, Engine **engine, const Drascula::DrasculaGameDescription *desc) const {
 	*engine = new Drascula::DrasculaEngine(syst,desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray DrasculaMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Drascula;
+
+	bool originalSaveLoad = ConfMan.getBool("originalsaveload", target);
+
+	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "drascula-default", _("Default keymappings"));
+	Keymap *gameKeyMap = new Keymap(Keymap::kKeymapTypeGame, "game-shortcuts", _("Game keymappings"));
+	Keymap *animationKeyMap = new Keymap(Keymap::kKeymapTypeGame, "animation", _("Animation keymappings"));
+	Keymap *quitDialogKeyMap = new Keymap(Keymap::kKeymapTypeGame, "quit-dialog", _("Quit dialog keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Move / Interact / Select"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Inventory"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SKIP", _("Skip"));
+	act->setCustomEngineActionEvent(kActionSkip);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_X");
+	animationKeyMap->addAction(act);
+
+	act = new Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionLook);
+	act->addDefaultInputMapping("F1");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PICK", _("Pick"));
+	act->setCustomEngineActionEvent(kActionPick);
+	act->addDefaultInputMapping("F2");
+	gameKeyMap->addAction(act);
+
+	act = new Action("OPEN", _("Open"));
+	act->setCustomEngineActionEvent(kActionOpen);
+	act->addDefaultInputMapping("F3");
+	gameKeyMap->addAction(act);
+
+	act = new Action("CLOSE", _("Close"));
+	act->setCustomEngineActionEvent(kActionClose);
+	act->addDefaultInputMapping("F4");
+	gameKeyMap->addAction(act);
+
+	act = new Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionTalk);
+	act->addDefaultInputMapping("F5");
+	gameKeyMap->addAction(act);
+
+	act = new Action("MOVE", _("Move"));
+	act->setCustomEngineActionEvent(kActionMove);
+	act->addDefaultInputMapping("F6");
+	gameKeyMap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoadGame);
+	act->addDefaultInputMapping("F7");
+	act->addDefaultInputMapping("JOY_LEFT");
+	gameKeyMap->addAction(act);
+
+	act = new Action("RESETVERBS", _("Reset selected verb"));
+	act->setCustomEngineActionEvent(kActionVerbReset);
+	act->addDefaultInputMapping("F8");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	gameKeyMap->addAction(act);
+
+	act = new Action("VOLCONTROLS", _("Volume controls"));
+	act->setCustomEngineActionEvent(kActionVolumeControls);
+	act->addDefaultInputMapping("F9");
+	act->addDefaultInputMapping("JOY_X");
+	gameKeyMap->addAction(act);
+
+	if (originalSaveLoad) {
+		act = new Action("SAVELOAD", _("Save / load game"));
+		act->setCustomEngineActionEvent(kActionSaveGame);
+		act->addDefaultInputMapping("F10");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		gameKeyMap->addAction(act);
+	} else {
+		act = new Action("SAVE", _("Save game"));
+		act->setCustomEngineActionEvent(kActionSaveGame);
+		act->addDefaultInputMapping("F10");
+		act->addDefaultInputMapping("JOY_RIGHT");
+		gameKeyMap->addAction(act);
+	}
+
+	act = new Action("SUBTITLESENABLE", _("Enable subtitles"));
+	act->setCustomEngineActionEvent(kActionSubtitlesEnable);
+	act->addDefaultInputMapping("v");
+	act->addDefaultInputMapping("JOY_UP");
+	gameKeyMap->addAction(act);
+
+	act = new Action("SUBTITLESDISABLE", _("Disable subtitles"));
+	act->setCustomEngineActionEvent(kActionSubtitlesDisable);
+	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping("JOY_DOWN");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUIT", _("Quit"));
+	act->setCustomEngineActionEvent(kActionQuit);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	gameKeyMap->addAction(act);
+
+	act = new Action(kStandardActionEE, _("???"));
+	act->setCustomEngineActionEvent(kActionEasterEgg);
+	act->addDefaultInputMapping("0");
+	gameKeyMap->addAction(act);
+
+	act = new Action("PAUSESPEECH", _("Pause speech"));
+	act->setCustomEngineActionEvent(kActionPauseSpeech);
+	act->addDefaultInputMapping("SPACE");
+	act->addDefaultInputMapping("PAUSE");
+	act->addDefaultInputMapping("JOY_Y");
+	gameKeyMap->addAction(act);
+
+	act = new Action("QUITCONFIRM", _("Confirm quit"));
+	act->setCustomEngineActionEvent(kActionConfirmQuit);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	quitDialogKeyMap->addAction(act);
+
+	KeymapArray keymaps(4);
+
+	keymaps[0] = engineKeyMap;
+	keymaps[1] = gameKeyMap;
+	keymaps[2] = animationKeyMap;
+	keymaps[3] = quitDialogKeyMap;
+
+	animationKeyMap->setEnabled(false);
+	quitDialogKeyMap->setEnabled(false);
+
+	return keymaps;
 }
 
 } // End of namespace Drascula

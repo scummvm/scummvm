@@ -24,6 +24,8 @@
 
 #include "common/text-to-speech.h"
 
+#include "backends/keymapper/keymapper.h"
+
 // The verbs are represented in-game as a picture, thus we are
 // adding transcriptions here
 // While only English, Spanish, Italian, and Russian are translated in-game,
@@ -183,6 +185,8 @@ void DrasculaEngine::selectVerb(int verb) {
 
 bool DrasculaEngine::confirmExit() {
 	byte key = 0;
+	Common::CustomEventType action = kActionNone;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	color_abc(kColorRed);
 	updateRoom();
@@ -191,10 +195,14 @@ bool DrasculaEngine::confirmExit() {
 
 	sayText(_textsys[kConfirmExit], Common::TextToSpeechManager::INTERRUPT);
 
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("quit-dialog")->setEnabled(true);
+
 	delay(100);
 	while (!shouldQuit()) {
 		key = getScan();
-		if (key != 0)
+		action = getAction();
+		if (key != 0 || action != kActionNone)
 			break;
 
 		// This gives a better feedback to the user when he is asked to
@@ -207,7 +215,10 @@ bool DrasculaEngine::confirmExit() {
 		updateScreen();
 	}
 
-	if (key == Common::KEYCODE_ESCAPE || shouldQuit()) {
+	keymapper->getKeymap("quit-dialog")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
+	if (action == kActionConfirmQuit || shouldQuit()) {
 		stopMusic();
 		return false;
 	}
@@ -272,7 +283,7 @@ void DrasculaEngine::clearMenu() {
 
 			sayText(verbNames[n], Common::TextToSpeechManager::INTERRUPT);
 		}
-		
+
 		copyRect(OBJWIDTH * n, OBJHEIGHT * verbActivated, _verbBarX[n], 2,
 						OBJWIDTH, OBJHEIGHT, cursorSurface, screenSurface);
 		verbActivated = 1;

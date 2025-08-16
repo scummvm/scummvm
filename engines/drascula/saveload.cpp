@@ -30,6 +30,8 @@
 
 #include "drascula/drascula.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Drascula {
 
 #define MAGIC_HEADER 0xD6A55A57		// (D)rascula (GA)me (S)cummVM (SA)ve (ST)ate
@@ -344,8 +346,11 @@ bool DrasculaEngine::loadGame(int slot) {
 Common::String DrasculaEngine::enterName(Common::String &selectedName) {
 	Common::KeyCode key;
 	Common::String inputLine = selectedName;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 
 	flushKeyBuffer();
+	flushActionBuffer();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
 	while (!shouldQuit()) {
@@ -371,6 +376,7 @@ Common::String DrasculaEngine::enterName(Common::String &selectedName) {
 		}
 	}
 
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 	_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	return inputLine;
 }
