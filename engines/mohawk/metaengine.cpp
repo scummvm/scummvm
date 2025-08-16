@@ -334,6 +334,14 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 		return Mohawk::MohawkMetaEngine_Riven::registerDefaultSettings();
 	}
 
+	// Rest of the Mohawk games.
+	ConfMan.registerDefault("fix_audio_pops", true);
+
+	if (!ConfMan.hasKey("fix_audio_pops", target)) {
+		ConfMan.setBool("fix_audio_pops", true, target);
+		ConfMan.flushToDisk();
+	}
+
 	return MetaEngine::registerDefaultSettings(target);
 }
 
@@ -351,7 +359,7 @@ GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidget(GUI::Gui
 	}
 #endif
 
-	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
+	return new Mohawk::MohawkDefaultOptionsWidget(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MOHAWK)

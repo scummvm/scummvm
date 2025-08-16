@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/config-manager.h"
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -34,6 +35,65 @@
 #include "mohawk/resource.h"
 
 namespace Mohawk {
+
+/**
+ * Applies a heuristic to detect and address discontinuity
+ * at the end of 8-bit unsigned PCM samples, which were present in the
+ * original game assets. The function modifies the DataChunk and dataSize
+ * directly if a fix is applied.
+ *
+ * @param dataChunk The DataChunk containing sample metadata.
+ * @param dataSize The total size of the data.
+ * @param stream The stream to look for samples.
+ */
+void scanAndFixAudioPops(DataChunk &dataChunk, uint32 &dataSize, Common::SeekableReadStream *stream) {
+	const int PCM8_U_SILENCE = 0x80;
+	const int SQUELCH = 32; // Threshold of discontinuity before removing. Lower values = increased sensitivity.
+	bool is_safe = false;
+
+	// Peek at the last 4 samples without permanently moving the stream pointer.
+	uint32 current_pos = stream->pos();
+	stream->seek(current_pos + dataSize - 4, SEEK_SET);
+	byte s[4];
+	stream->read(s, 4);
+	stream->seek(current_pos, SEEK_SET); // Return to original position
+
+	// Path 1: Check for sustained quietness. If all samples are very close to silence,
+	// any minor fluctuation is inaudible and the sound is considered safe.
+	bool is_stable_and_quiet = true;
+	for (int i = 0; i < 4; i++) {
+		if (abs(s[i] - PCM8_U_SILENCE) > SQUELCH) {
+			is_stable_and_quiet = false;
+			break;
+		}
+	}
+	if (is_stable_and_quiet) {
+		is_safe = true;
+	}
+
+	// Path 2: If not stable/quiet, check for a consistent fade-out trend.
+	if (!is_safe) {
+		int dist_last = abs(s[3] - PCM8_U_SILENCE);
+		int dist_prev = abs(s[2] - PCM8_U_SILENCE);
+		int dist_ante = abs(s[1] - PCM8_U_SILENCE);
+
+		if (dist_last < dist_prev && dist_prev < dist_ante) {
+			is_safe = true;
+		}
+	}
+
+	// If the ending is neither stable nor fading, apply the fix.
+	if (!is_safe) {
+		debug(0, "MOHAWK: Pop/click detected at sample %u. Final samples: %02x %02x %02x %02x. Truncating one sample.",
+			dataChunk.sampleCount, s[0], s[1], s[2], s[3]);
+
+		dataChunk.sampleCount--;
+		dataSize--; // Also decrement the total data size to be read.
+		if (dataChunk.loopCount == 0xFFFF && dataChunk.loopEnd > dataChunk.sampleCount) {
+			dataChunk.loopEnd = dataChunk.sampleCount;
+		}
+	}
+}
 
 Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *stream, CueList *cueList) {
 	uint32 tag = 0;
@@ -136,6 +196,16 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 				dataChunk.loopCount = stream->readUint16BE();
 				dataChunk.loopStart = stream->readUint32BE();
 				dataChunk.loopEnd = stream->readUint32BE();
+
+			// For unsigned 8-bit PCM, check for and fix a potential pop/click at the end of the sample.
+			if (dataChunk.encoding == kCodecRaw && dataChunk.bitsPerSample == 8 && dataChunk.sampleCount >= 4) {
+				MohawkEngine *mohawkEngine = static_cast<MohawkEngine *>(g_engine);
+				const char *gameId = mohawkEngine->getGameId();
+				// Myst does not have pops and Riven does not have unsigned 8-bit PCM and so is ignored.
+				if (strcmp(gameId, "myst") != 0 && strcmp(gameId, "riven") != 0 && ConfMan.getBool("fix_audio_pops")) {
+					scanAndFixAudioPops(dataChunk, dataSize, stream);
+				}
+			}
 
 				// NOTE: We currently ignore all of the loop parameters here. Myst uses the
 				// loopCount variable but the loopStart and loopEnd are always 0 and the size of

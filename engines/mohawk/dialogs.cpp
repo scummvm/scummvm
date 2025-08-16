@@ -449,4 +449,33 @@ bool RivenOptionsWidget::save() {
 
 #endif
 
+MohawkDefaultOptionsWidget::MohawkDefaultOptionsWidget(GuiObject *boss, const Common::String &name, const Common::String &domain) :
+	OptionsContainerWidget(boss, name, "MohawkEngineOptionsDialog", domain) {
+
+	_audioPopFixCheckbox = new GUI::CheckboxWidget(widgetsBoss(), "MohawkEngineOptionsDialog.AudioDiscontinuityFix",
+		_("Fix audio pops/clicks"),
+		_("Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."));
+}
+
+MohawkDefaultOptionsWidget::~MohawkDefaultOptionsWidget() {
+}
+
+void MohawkDefaultOptionsWidget::defineLayout(GUI::ThemeEval &layouts, const Common::String &layoutName, const Common::String &overlayedLayout) const {
+	layouts.addDialog(layoutName, overlayedLayout)
+		.addLayout(GUI::ThemeLayout::kLayoutVertical)
+			.addPadding(0, 0, 0, 0)
+			.addWidget("AudioDiscontinuityFix", "Checkbox")
+		.closeLayout()
+	.closeDialog();
+}
+
+void MohawkDefaultOptionsWidget::load() {
+	_audioPopFixCheckbox->setState(ConfMan.getBool("fix_audio_pops", _domain));
+}
+
+bool MohawkDefaultOptionsWidget::save() {
+	ConfMan.setBool("fix_audio_pops", _audioPopFixCheckbox->getState(), _domain);
+	return true;
+}
+
 } // End of namespace Mohawk
