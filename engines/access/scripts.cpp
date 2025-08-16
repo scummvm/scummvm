@@ -112,7 +112,7 @@ void Scripts::setOpcodes() {
 	COMMAND_LIST[62] = &Scripts::cmdPlayVideoSound;
 	COMMAND_LIST[63] = &Scripts::cmdPrintWatch;
 	COMMAND_LIST[64] = &Scripts::cmdDispAbout;
-	COMMAND_LIST[65] = &Scripts::cmdPushLocation;
+	COMMAND_LIST[65] = &Scripts::cmdPushLocation_v1;
 	COMMAND_LIST[66] = &Scripts::cmdCheckTravel;
 	COMMAND_LIST[67] = &Scripts::cmdBlock;
 	COMMAND_LIST[68] = &Scripts::cmdPlayerOff;
@@ -132,7 +132,7 @@ void Scripts::setOpcodes_v2() {
 	COMMAND_LIST[32] = &Scripts::cmdJumpGoto;
 	COMMAND_LIST[40] = &Scripts::cmdVideoEnded;
 	COMMAND_LIST[45] = COMMAND_LIST[46] = &Scripts::cmdSpecial;
-	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
+	COMMAND_LIST[63] = COMMAND_LIST[64] = COMMAND_LIST[65] = COMMAND_LIST[66] = COMMAND_LIST[67] = &Scripts::cmdPushLocation;
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
@@ -1170,7 +1170,16 @@ void Scripts::cmdDispAbout() {
 		_vm->_useItem = _vm->_aboutBox->_tempListIdx[boxX];
 }
 
+void Scripts::cmdPushLocation_v1() {
+	// MM only
+	debugC(1, kDebugScripts, "cmdPushLocation_v1()");
+	_choiceStart = _data->pos() + 2;
+	cmdGoto();
+}
+
 void Scripts::cmdPushLocation() {
+	// TODO: Double-check this code.  It doesn't seem to match function
+	//   sub13BC0 in Amazon?
 	debugC(1, kDebugScripts, "cmdPushLocation()");
 	_choiceStart = _data->pos() - 1;
 }
