@@ -232,6 +232,9 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 	offsets.titleBottom = -1;
 	offsets.titlePos = 0;
 	offsets.dark = false;
+	offsets.closeButtonTop = -1;
+	offsets.closeButtonLeft = -1;
+	offsets.closeButtonWidth = 0;
 	offsets.resizeButtonTop = -1;
 	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 0;
@@ -273,6 +276,9 @@ void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags,
 	offsets.titleBottom = -1;
 	offsets.titlePos = 0;
 	offsets.dark = false;
+	offsets.closeButtonTop = -1;
+	offsets.closeButtonLeft = -1;
+	offsets.closeButtonWidth = 0;
 	offsets.resizeButtonTop = -1;
 	offsets.resizeButtonHeight = 0;
 	offsets.upperScrollHeight = 0;
