@@ -30,6 +30,7 @@
 #include "graphics/paletteman.h"
 
 #include "gob/gob.h"
+#include "gob/hotspots.h"
 #include "gob/util.h"
 #include "gob/global.h"
 #include "gob/dataio.h"
@@ -371,6 +372,10 @@ void Util::setMousePos(int16 x, int16 y) {
 	x = CLIP<int>(x + _vm->_video->_screenDeltaX, 0, _vm->_width - 1);
 	y = CLIP<int>(y + _vm->_video->_screenDeltaY, 0, _vm->_height - 1);
 	g_system->warpMouse(x, y);
+
+#ifdef USE_TTS
+	_vm->_game->_hotspots->voiceHotspotText(x, y);
+#endif
 }
 
 void Util::waitMouseUp() {

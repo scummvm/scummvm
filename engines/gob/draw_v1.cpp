@@ -233,6 +233,9 @@ void Draw_v1::printTotText(int16 id) {
 	}
 	ptrEnd++;
 
+#ifdef USE_TTS
+	Common::String ttsMessage;
+#endif
 	while (*ptr != 1) {
 		cmd = *ptr;
 		if (cmd == 3) {
@@ -281,8 +284,13 @@ void Draw_v1::printTotText(int16 id) {
 			}
 
 			_textToPrint = buf;
+#ifdef USE_TTS
+			ttsMessage += _textToPrint;
+			ttsMessage += " ";
+#endif
+
 			destSpriteX = _destSpriteX;
-			spriteOperation(DRAW_PRINTTEXT);
+			spriteOperation(DRAW_PRINTTEXT, false);
 			if (ptrEnd[17] & 0x80) {
 				if (ptr[1] == ' ') {
 					_destSpriteX += _fonts[_fontIndex]->getCharWidth();
@@ -304,6 +312,18 @@ void Draw_v1::printTotText(int16 id) {
 		}
 	}
 
+#ifdef USE_TTS
+	if (_previousTot != ttsMessage) {
+		if (_vm->_game->_hotspots->hoveringOverHotspot()) {
+			_vm->sayText(ttsMessage);
+		} else {
+			_vm->sayText(ttsMessage, Common::TextToSpeechManager::QUEUE);
+		}
+
+		_previousTot = ttsMessage;
+	}
+#endif
+
 	delete textItem;
 	_renderFlags = savedFlags;
 
@@ -316,7 +336,7 @@ void Draw_v1::printTotText(int16 id) {
 	}
 }
 
-void Draw_v1::spriteOperation(int16 operation) {
+void Draw_v1::spriteOperation(int16 operation, bool ttsAddHotspotText) {
 	int16 len;
 	int16 x, y;
 	int16 perLine;
@@ -415,6 +435,14 @@ void Draw_v1::spriteOperation(int16 operation) {
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + len * font->getCharWidth() - 1,
 				_destSpriteY + font->getCharHeight() - 1);
+
+#ifdef USE_TTS
+		if (ttsAddHotspotText) {
+			_vm->_game->_hotspots->addHotspotText(_textToPrint, _destSpriteX, _destSpriteY,
+											_destSpriteX + len * font->getCharWidth() - 1,
+											_destSpriteY + font->getCharHeight() - 1, _destSurface);
+		}
+#endif
 
 		for (int i = 0; i < len; i++) {
 			font->drawLetter(*_spritesArray[_destSurface], _textToPrint[i],

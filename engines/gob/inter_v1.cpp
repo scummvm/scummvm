@@ -1361,12 +1361,19 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 cmd = _vm->_game->_script->readInt16();
 	int16 key;
 
+#ifdef USE_TTS
+	_vm->_game->_hotspots->voiceUnassignedHotspots();
+#endif
 	switch (cmd) {
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
 		key = _vm->_game->_hotspots->check(0, 0);
 		storeKey(key);
+#ifdef USE_TTS
+		_vm->stopTextToSpeech();
+		_vm->_game->_hotspots->clearHotspotText();
+#endif
 
 		_vm->_util->clearKeyBuf();
 		break;
@@ -1395,6 +1402,17 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
 		storeKey(key);
+#ifdef USE_TTS
+		if (key) {
+			// After a key is pressed with the notepad open, no longer voice the notepad. This prevents very awkward voicing
+			// as the user types
+			if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
+				_vm->_weenVoiceNotepad = false;
+			}
+
+			_vm->stopTextToSpeech();
+		}
+#endif
 		break;
 
 	case 2:
@@ -1656,6 +1674,13 @@ void Inter_v1::o1_copySprite(OpFuncParams &params) {
 		warning("o1_copySprite(): Invalid destination surface index %d", _vm->_draw->_destSurface);
 		return;
 	}
+
+#ifdef USE_TTS
+	_vm->_game->_hotspots->adjustHotspotTextRect(_vm->_draw->_spriteLeft, _vm->_draw->_spriteTop, 
+											_vm->_draw->_spriteLeft + _vm->_draw->_spriteRight - 1, 
+											_vm->_draw->_spriteTop + _vm->_draw->_spriteBottom - 1,
+											_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY, _vm->_draw->_sourceSurface);
+#endif
 
 	_vm->_draw->spriteOperation(DRAW_BLITSURF);
 }

@@ -107,6 +107,7 @@ struct GOBGameDescription {
 };
 
 #define GAMEOPTION_COPY_PROTECTION	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TTS				GUIO_GAMEOPTIONS2
 
 } // End of namespace Gob
 

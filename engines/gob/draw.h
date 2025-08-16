@@ -225,7 +225,7 @@ public:
 
 	virtual void animateCursor(int16 cursor) = 0;
 	virtual void printTotText(int16 id) = 0;
-	virtual void spriteOperation(int16 operation) = 0;
+	virtual void spriteOperation(int16 operation, bool ttsAddHotspotText = true) = 0;
 
 	virtual int16 openWin(int16 id) { return 0; }
 	virtual void closeWin(int16 id) {}
@@ -241,6 +241,9 @@ public:
 
 protected:
 	GobEngine *_vm;
+#ifdef USE_TTS
+	Common::String _previousTot;
+#endif
 };
 
 class Draw_v1 : public Draw {
@@ -250,7 +253,7 @@ public:
 	void blitCursor() override;
 	void animateCursor(int16 cursor) override;
 	void printTotText(int16 id) override;
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	Draw_v1(GobEngine *vm);
 	~Draw_v1() override {}
@@ -263,7 +266,7 @@ public:
 	void blitCursor() override;
 	void animateCursor(int16 cursor) override;
 	void printTotText(int16 id) override;
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	Draw_v2(GobEngine *vm);
 	~Draw_v2() override {}
@@ -286,7 +289,7 @@ class Draw_Fascination: public Draw_v2 {
 public:
 	Draw_Fascination(GobEngine *vm);
 	~Draw_Fascination() override {}
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 
 	void decompWin(int16 x, int16 y, SurfacePtr destPtr);
 	void drawWin(int16 fct);
@@ -310,7 +313,7 @@ class Draw_Playtoons: public Draw_v2 {
 public:
 	Draw_Playtoons(GobEngine *vm);
 	~Draw_Playtoons() override {}
-	void spriteOperation(int16 operation) override;
+	void spriteOperation(int16 operation, bool ttsAddHotspotText = true) override;
 };
 
 

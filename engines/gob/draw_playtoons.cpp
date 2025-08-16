@@ -31,13 +31,14 @@
 #include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 
 namespace Gob {
 
 Draw_Playtoons::Draw_Playtoons(GobEngine *vm) : Draw_v2(vm) {
 }
 
-void Draw_Playtoons::spriteOperation(int16 operation) {
+void Draw_Playtoons::spriteOperation(int16 operation, bool ttsAddHotspotText) {
 	int16 len;
 	int16 x, y;
 	bool deltaVeto;
@@ -349,6 +350,13 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 				_destSpriteX += _fontToSprite[_fontIndex].width;
 			}
 		}
+
+#ifdef USE_TTS
+		if (ttsAddHotspotText) {
+			_vm->_game->_hotspots->addHotspotText(_textToPrint, left, _destSpriteY, 
+											_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1, _destSurface);
+		}
+#endif
 
 		dirtiedRect(_destSurface, left, _destSpriteY,
 				_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1);
