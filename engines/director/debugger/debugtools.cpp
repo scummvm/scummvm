@@ -178,6 +178,9 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize) {
 	ImVec2 screenPos = ImGui::GetCursorScreenPos();
 	ImGui::GetWindowDrawList()->AddRect(screenPos, screenPos + ImVec2(thumbnailSize, thumbnailSize), 0xFFFFFFFF);
 	ImVec2 pos = ImGui::GetCursorPos();
+
+	// Reserve the space of area thumbnailSize * thumbnailSize to make sure the column stretches properly
+	ImGui::Dummy(ImVec2(thumbnailSize, thumbnailSize));
 	ImVec2 imgPos = pos + ImVec2(1 + (thumbnailSize - 2 - size.x) * 0.5f, 1 + (thumbnailSize - 2 - size.y) * 0.5f);
 	ImGui::SetCursorPos(imgPos);
 	ImGui::Image(image.id, size);
