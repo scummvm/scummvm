@@ -74,6 +74,8 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
 	registerCmd("gettravel", WRAP_METHOD(Debugger, Cmd_GetTravel));
 	registerCmd("settravel", WRAP_METHOD(Debugger, Cmd_SetTravel));
+	registerCmd("getask", WRAP_METHOD(Debugger, Cmd_GetAsk));
+	registerCmd("setask", WRAP_METHOD(Debugger, Cmd_SetAsk));
 }
 
 Debugger::~Debugger() {
@@ -237,6 +239,7 @@ bool Debugger::Cmd_GetTravel(int argc, const char **argv) {
 
 	const int ncols = ARRAYSIZE(_vm->_travel) / 10;
 	for (int row = 0; row < 10; ++row) {
+		debugPrintf("%2d: ", row * ncols);
 		for (int col = 0; col < ncols; ++col) {
 			debugPrintf("%d ", _vm->_travel[row * ncols + col]);
 		}
@@ -267,6 +270,45 @@ bool Debugger::Cmd_SetTravel(int argc, const char **argv) {
 	_vm->_flags[num] = val;
 
 	debugPrintf("Travel %d set to %d\n", num, val);
+	return true;
+}
+
+bool Debugger::Cmd_GetAsk(int argc, const char **argv) {
+	debugPrintf("Ask table:\n");
+
+	const int ncols = ARRAYSIZE(_vm->_ask) / 10;
+	for (int row = 0; row < 10; ++row) {
+		debugPrintf("%2d: ", row * ncols);
+		for (int col = 0; col < ncols; ++col) {
+			debugPrintf("%d ", _vm->_ask[row * ncols + col]);
+		}
+		debugPrintf("\n");
+	}
+
+	return true;
+}
+
+bool Debugger::Cmd_SetAsk(int argc, const char **argv) {
+	if (argc != 3) {
+		debugPrintf("Usage: %s <ask number> <ask value>\n", argv[0]);
+		debugPrintf("Sets the given ask table entry to the given value\n");
+		return true;
+	}
+
+	int num = strToInt(argv[1]);
+	if (num < 0 || num >= ARRAYSIZE(_vm->_ask)) {
+		debugPrintf("Invalid ask number\n");
+		return true;
+	}
+
+	int val = strToInt(argv[2]);
+	if (val < 0 || val >= 256) {
+		debugPrintf("Invalid ask val, must be byte\n");
+		return true;
+	}
+	_vm->_flags[num] = val;
+
+	debugPrintf("Ask %d set to %d\n", num, val);
 	return true;
 }
 

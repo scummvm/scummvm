@@ -45,6 +45,8 @@ protected:
 	bool Cmd_SetFlag(int argc, const char **argv);
 	bool Cmd_GetTravel(int argc, const char **argv);
 	bool Cmd_SetTravel(int argc, const char **argv);
+	bool Cmd_GetAsk(int argc, const char **argv);
+	bool Cmd_SetAsk(int argc, const char **argv);
 
 public:
 	static Debugger *init(AccessEngine *vm);
