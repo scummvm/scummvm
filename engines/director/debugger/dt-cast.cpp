@@ -154,7 +154,7 @@ void showCast() {
 				ImGui::TableSetupColumn("#", 0, 20.f);
 				ImGui::TableSetupColumn("Script", 0, 80.f);
 				ImGui::TableSetupColumn("Type", 0, 80.f);
-				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 80.f);
+				ImGui::TableSetupColumn("Preview", ImGuiTableColumnFlags_WidthStretch, 30.f);
 				ImGui::TableHeadersRow();
 
 				for (auto it : *movie->getCasts()) {
@@ -190,10 +190,11 @@ void showCast() {
 						ImGui::TableNextColumn();
 						float columnWidth = ImGui::GetColumnWidth();
 
+						ImGuiImage imgID = {};
 						switch (castMember._value->_type) {
 						case kCastBitmap:
 							{
-								ImGuiImage imgID = getImageID(castMember._value);
+								imgID = getImageID(castMember._value);
 								if (imgID.id) {
 									float offsetX = (columnWidth - 32.f) * 0.5f;
 									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
@@ -206,22 +207,22 @@ void showCast() {
 						case kCastRichText:
 						case kCastButton:
 							{
-								ImGuiImage textID = getTextID(castMember._value);
-								if (textID.id) {
+								imgID = getTextID(castMember._value);
+								if (imgID.id) {
 									float offsetX = (columnWidth - 32.f) * 0.5f;
 									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-									showImage(textID, name.c_str(), 32.f);
+									showImage(imgID, name.c_str(), 32.f);
 								}
 							}
 							break;
 
 						case kCastShape:
 							{
-								ImGuiImage shapeID = getShapeID(castMember._value);
-								if (shapeID.id) {
+								imgID = getShapeID(castMember._value);
+								if (imgID.id) {
 									float offsetX = (columnWidth - 32.f) * 0.5f;
 									ImGui::SetCursorPosX(ImGui::GetCursorPosX() + offsetX);
-									showImage(shapeID, name.c_str(), 32.f);
+									showImage(imgID, name.c_str(), 32.f);
 								}
 							}
 							break;
@@ -264,10 +265,41 @@ void showCast() {
 							textHeight *= (textSize.x / textWidth);
 						}
 
-						ImGuiImage imgID = getImageID(castMember._value);
-						if (imgID.id) {
-							showImage(imgID, name.c_str(), thumbnailSize);
-						} else {
+						ImGuiImage imgID = {};
+						switch (castMember._value->_type) {
+						case kCastBitmap:
+							{
+								imgID = getImageID(castMember._value);
+								if (imgID.id) {
+									showImage(imgID, name.c_str(), thumbnailSize);
+								}
+							}
+							break;
+
+						case kCastText:
+						case kCastRichText:
+						case kCastButton:
+							{
+								imgID = getTextID(castMember._value);
+								if (imgID.id) {
+									showImage(imgID, name.c_str(), thumbnailSize);
+								}
+							}
+							break;
+
+						case kCastShape:
+							{
+								imgID = getShapeID(castMember._value);
+								if (imgID.id) {
+									showImage(imgID, name.c_str(), thumbnailSize);
+								}
+							}
+							break;
+						default:
+							break;
+						}
+
+						if (!imgID.id) {
 							ImGui::PushID(castMember._key);
 							ImGui::InvisibleButton("##canvas", ImVec2(thumbnailSize, thumbnailSize));
 							ImGui::PopID();
