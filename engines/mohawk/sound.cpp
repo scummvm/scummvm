@@ -20,6 +20,7 @@
  */
 
 #include "common/debug.h"
+#include "common/config-manager.h"
 
 #include "audio/mididrv.h"
 #include "audio/midiparser.h"
@@ -198,7 +199,12 @@ Audio::RewindableAudioStream *makeMohawkWaveStream(Common::SeekableReadStream *s
 
 			// For unsigned 8-bit PCM, check for and fix a potential pop/click at the end of the sample.
 			if (dataChunk.encoding == kCodecRaw && dataChunk.bitsPerSample == 8 && dataChunk.sampleCount >= 4) {
-				scanAndFixAudioPops(dataChunk, dataSize, stream);
+				MohawkEngine *mohawkEngine = static_cast<MohawkEngine *>(g_engine);
+				const char *gameId = mohawkEngine->getGameId();
+				// Myst does not have pops and Riven does not have unsigned 8-bit PCM and so is ignored.
+				if (strcmp(gameId, "myst") != 0 && strcmp(gameId, "riven") != 0 && ConfMan.getBool("fix_audio_pops")) {
+					scanAndFixAudioPops(dataChunk, dataSize, stream);
+				}
 			}
 
 				// NOTE: We currently ignore all of the loop parameters here. Myst uses the
