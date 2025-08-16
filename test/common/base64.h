@@ -30,7 +30,7 @@ static const char *base64_validate_tests[] = {
 	"YQ==YWJj", // data after padding
 };
 
-#include <common/pack-start.h>	// START STRUCT PACKING
+#include "common/pack-start.h"	// START STRUCT PACKING
 
 struct Base64TestStruct {
 	uint32 x;
@@ -40,7 +40,7 @@ struct Base64TestStruct {
 	byte b;
 } PACKED_STRUCT;
 
-#include <common/pack-end.h>	// END STRUCT PACKING
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 class Base64TestSuite : public CxxTest::TestSuite {
 	public:
