@@ -68,10 +68,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	}
 }
 
-CharEntry::CharEntry() {
-	_charFlag = 0;
-	_estabIndex = 0;
-	_startColor = _numColors = 0;
+CharEntry::CharEntry() : _charFlag(0), _estabIndex(0), _startColor(0), _numColors(0) {
 }
 
 /*------------------------------------------------------------------------*/

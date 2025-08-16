@@ -33,14 +33,14 @@ Font::~Font() {
 		fontChar.free();
 }
 
-int Font::charWidth(char c) {
+int Font::charWidth(char c) const {
 	if (c < _firstCharIndex)
 		return 0;
 
 	return _chars[c - _firstCharIndex].w;
 }
 
-int Font::stringWidth(const Common::String &msg) {
+int Font::stringWidth(const Common::String &msg) const {
 	int total = 0;
 
 	for (const char *c = msg.c_str(); *c != '\0'; ++c)
@@ -50,7 +50,7 @@ int Font::stringWidth(const Common::String &msg) {
 }
 
 bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
-				   LINE_WIDTH_TYPE widthType) {
+				   LINE_WIDTH_TYPE widthType) const {
 	assert(maxWidth > 0);
 	width = 0;
 	const char *src = s.c_str();
@@ -98,7 +98,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 	return true;
 }
 
-void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) {
+void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) const {
 	Common::Point currPt = pt;
 	const char *msgP = msg.c_str();
 
@@ -108,13 +108,13 @@ void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::P
 	}
 }
 
-int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) {
-	Graphics::Surface &ch = _chars[c - _firstCharIndex];
+int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) const {
+	const Graphics::Surface &ch = _chars[c - _firstCharIndex];
 	Graphics::Surface dest = s->getSubArea(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
 
 	// Loop through the lines of the character
 	for (int y = 0; y < ch.h; ++y) {
-		byte *pSrc = (byte *)ch.getBasePtr(0, y);
+		const byte *pSrc = (const byte *)ch.getBasePtr(0, y);
 		byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 		// Loop through the horizontal pixels of the line

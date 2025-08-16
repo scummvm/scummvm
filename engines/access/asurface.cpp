@@ -84,11 +84,7 @@ SpriteFrame::~SpriteFrame() {
 
 /*------------------------------------------------------------------------*/
 
-ImageEntry::ImageEntry() {
-	_frameNumber = 0;
-	_spritesPtr = nullptr;
-	_offsetY = 0;
-	_flags = 0;
+ImageEntry::ImageEntry() : _frameNumber(0), _spritesPtr(nullptr), _offsetY(0), _flags(0) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -114,13 +110,10 @@ int BaseSurface::_lastBoundsY;
 int BaseSurface::_lastBoundsW;
 int BaseSurface::_lastBoundsH;
 
-
 BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
 	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
-	_lastBoundsX = _lastBoundsY = 0;
-	_lastBoundsW = _lastBoundsH = 0;
 	_orgX1 = _orgY1 = 0;
 	_orgX2 = _orgY2 = 0;
 	_lColor = 0;

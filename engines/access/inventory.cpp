@@ -43,7 +43,7 @@ void InventoryEntry::load(const Common::String &name, const int *data) {
 	}
 }
 
-int InventoryEntry::checkItem(int itemId) {
+int InventoryEntry::checkItem(int itemId) const {
 	if (_otherItem1 == itemId)
 		return _newItem1;
 	else if (_otherItem2 == itemId)
@@ -378,7 +378,7 @@ void InventoryManager::freeInvCells() {
 	_vm->_objectsTable[99] = nullptr;
 }
 
-int InventoryManager::coordIndexOf() {
+int InventoryManager::coordIndexOf() const {
 	const Common::Point pt = _vm->_events->_mousePos;
 
 	for (int i = 0; i < (int)_invCoords.size(); ++i) {

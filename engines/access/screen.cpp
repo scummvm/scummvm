@@ -44,11 +44,7 @@
 
 namespace Access {
 
-ScreenSave::ScreenSave(){
-	_clipWidth = _clipHeight = 0;
-	_windowXAdd = _windowYAdd = 0;
-	_scrollCol = _scrollRow = 0;
-	_screenYOff = 0;
+ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windowYAdd(0), _scrollCol(0), _scrollRow(0), _screenYOff(0) {
 }
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {

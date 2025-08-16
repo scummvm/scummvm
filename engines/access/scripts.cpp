@@ -629,6 +629,10 @@ void Scripts::cmdDispInv_v2() {
 void Scripts::cmdSetAbout() {
 	int idx = _data->readByte();
 	byte val = _data->readByte();
+
+	if (idx < 0 || idx >= ARRAYSIZE(_vm->_ask))
+		error("Invalid index %d in cmdSetAbout", idx);
+
 	debugC(1, kDebugScripts, "cmdSetAbout(idx=%d, val=%d)", idx, val);
 	_vm->_ask[idx] = val;
 	_vm->_startAboutBox = _vm->_startAboutItem = 0;
@@ -868,6 +872,10 @@ void Scripts::cmdCheckAbout() {
 	int idx = _data->readSint16LE();
 	int16 val = _data->readSint16LE();
 	debugCN(1, kDebugScripts, "cmdCheckAbout(idx=%d, val=%d)", idx, val);
+
+	if (idx < 0 || idx >= ARRAYSIZE(_vm->_ask))
+		error("Invalid index %d in cmdCheckAbout", idx);
+
 	if ((byte)_vm->_ask[idx] == (byte)val) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
