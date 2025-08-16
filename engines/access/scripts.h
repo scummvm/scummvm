@@ -127,6 +127,7 @@ protected:
 	void cmdPrintWatch();
 	void cmdDispAbout();
 	void cmdPushLocation();
+	void cmdPushLocation_v1();
 	void cmdCheckTravel();
 	void cmdBlock();
 	void cmdPlayerOff();
