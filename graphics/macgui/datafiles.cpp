@@ -88,7 +88,7 @@ void MacWindowManager::cleanupDataBundle() {
 	delete _dataBundle;
 }
 
-BorderOffsets MacWindowManager::getBorderOffsets(uint32 windowType) {
+const BorderOffsets &MacWindowManager::getBorderOffsets(uint32 windowType) {
 	int i = 0;
 	while (borders[i].type != 0xFF) {
 		if (borders[i].type == windowType)

@@ -363,7 +363,7 @@ public:
 	void cleanupDataBundle();
 	void cleanupDesktopBmp();
 
-	BorderOffsets getBorderOffsets(uint32 windowType);
+	const BorderOffsets &getBorderOffsets(uint32 windowType);
 	Common::SeekableReadStream *getBorderFile(uint32 windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::Path &filename);
 

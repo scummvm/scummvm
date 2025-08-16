@@ -243,7 +243,7 @@ void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags,
 	loadBorder(file, flags, offsets);
 }
 
-void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
+void MacWindowBorder::loadBorder(Common::SeekableReadStream &file, uint32 flags, const BorderOffsets &offsets) {
 	Image::BitmapDecoder bmpDecoder;
 	bmpDecoder.loadStream(file);
 
@@ -286,7 +286,7 @@ void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags,
 	setBorder(surface, flags, offsets);
 }
 
-void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets) {
+void MacWindowBorder::setBorder(Graphics::ManagedSurface *surface, uint32 flags, const BorderOffsets &offsets) {
 	addBorder(surface, flags, offsets.titlePos);
 
 	if ((flags & kWindowBorderActive) && offsets.left + offsets.right + offsets.top + offsets.bottom > -4) { // Checking against default -1
@@ -306,7 +306,7 @@ void MacWindowBorder::loadInternalBorder(uint32 flags) {
 		warning("trying to load non-existing internal border type");
 		return;
 	}
-	BorderOffsets offsets = _wm->getBorderOffsets(_borderType);
+	const BorderOffsets &offsets = _wm->getBorderOffsets(_borderType);
 	Common::SeekableReadStream *file = _wm->getBorderFile(_borderType, flags);
 	if (file) {
 		loadBorder(*file, flags, offsets);

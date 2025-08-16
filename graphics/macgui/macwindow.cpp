@@ -394,11 +394,11 @@ void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, int l
 	_macBorder.loadBorder(file, flags, lo, ro, to, bo);
 }
 
-void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, BorderOffsets offsets) {
+void MacWindow::loadBorder(Common::SeekableReadStream &file, uint32 flags, const BorderOffsets &offsets) {
 	_macBorder.loadBorder(file, flags, offsets);
 }
 
-void MacWindow::setBorder(Graphics::ManagedSurface *surface, uint32 flags, BorderOffsets offsets) {
+void MacWindow::setBorder(Graphics::ManagedSurface *surface, uint32 flags, const BorderOffsets &offsets) {
 	_macBorder.setBorder(surface, flags, offsets);
 }
 
