@@ -127,6 +127,24 @@ ScriptContext *getScriptContext(CastMemberID id) {
 	return ctx;
 }
 
+int16 getCastIdFromScriptNameIndex(uint32 nameIndex, CastMemberID id, Common::String handlerName) {
+	Movie *movie = g_director->getCurrentMovie();
+	Cast *cast = movie->getCasts()->getVal(id.castLib);
+
+	// If the name at nameIndex is not the same as handler name, means its a local script
+	if (cast->_lingoArchive->names[nameIndex] != handlerName) {
+		return id.member;
+	}
+
+	for (auto it : cast->_lingoArchive->scriptContexts[kMovieScript]) {
+		if (it._value->_functionHandlers.contains(handlerName)) {
+			return it._key;
+		}
+	}
+
+	return -1;
+}
+
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
 	auto &bps = g_lingo->getBreakpoints();
 	for (uint i = 0; i < bps.size(); i++) {
