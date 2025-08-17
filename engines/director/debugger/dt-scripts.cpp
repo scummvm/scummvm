@@ -327,6 +327,13 @@ void showExecutionContext() {
 		updateCurrentScript();
 
 		if (scriptData->_showScript) {
+			ImGuiScript &current = scriptData->_scripts[scriptData->_current];
+
+			// Get all the handlers from the script
+			ScriptContext* context = getScriptContext(current.id);
+			Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
+			ImGui::Text("%s", scriptInfo.c_str());
+
 			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
 				scriptData->_current--;
@@ -373,15 +380,11 @@ void showExecutionContext() {
 			ImGui::Separator();
 			childSize = ImGui::GetContentRegionAvail();
 			ImGui::BeginChild("##script", childSize);
-			ImGuiScript &current = scriptData->_scripts[scriptData->_current];
-
-			// Get all the handlers from the script
-			ScriptContext* context = getScriptContext(current.id);
-			Movie *movie = g_director->getCurrentMovie();
 
 			if (!context || context->_functionHandlers.size() == 1) {
 				renderScript(current, scriptData->_showByteCode, true);
 			} else {
+				Movie *movie = g_director->getCurrentMovie();
 				for (auto &functionHandler : context->_functionHandlers) {
 					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
 					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
@@ -425,11 +428,17 @@ void showExecutionContext() {
 			ImGui::EndChild();
 
 			ImGui::SeparatorText("Scripts");
-
 			scriptData = &_state->_functions._windowScriptData.getOrCreateVal(window);
 			updateCurrentScript();
 
 			if (scriptData->_showScript) {
+				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
+
+				// Get all the handlers from the script
+				ScriptContext* context = getScriptContext(current.id);
+				Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
+				ImGui::Text("%s", scriptInfo.c_str());
+
 				ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 				if (ImGui::Button(ICON_MS_ARROW_BACK)) {
 					scriptData->_current--;
@@ -476,11 +485,7 @@ void showExecutionContext() {
 				ImGui::Separator();
 				childSize = ImGui::GetContentRegionAvail();
 				ImGui::BeginChild("##script", childSize);
-				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
-				// Get all the handlers from the script
-				ScriptContext* context = getScriptContext(current.id);
-				context->_id;
 				if (!context || context->_functionHandlers.size() == 1) {
 					renderScript(current, scriptData->_showByteCode, true);
 				} else {
