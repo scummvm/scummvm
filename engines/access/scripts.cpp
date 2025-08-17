@@ -270,7 +270,10 @@ void Scripts::cmdEndObject() {
 	else
 		msg = GENERAL_MESSAGES[_vm->_room->_selectCommand];
 	debugC(1, kDebugScripts, "cmdEndObject(msg=\"%s\")", msg);
-	printString(msg);
+	if (_vm->getGameID() == kGameMartianMemorandum)
+		doCmdPrint_v1(msg);
+	else
+		printString(msg);
 }
 
 void Scripts::cmdJumpLook() {
