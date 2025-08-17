@@ -98,6 +98,8 @@ public:
 		int32 obj = 0;
 		for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
 			if (node._startOffset == _script.bytecodeArray[i].pos) {
+				// This obj represents the index of the handler being called
+				// The index may be local (lingo context-wide) or global (cast-wide)
 				obj = _script.bytecodeArray[i].obj;
 				break;
 			}
@@ -117,10 +119,13 @@ public:
 			ImGui::EndTooltip();
 		}
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(obj, _script.id.castLib), node.name);
+			int16 castId = getCastIdFromScriptNameIndex(obj, _script.id, node.name);
+			debug("Does it work? %d", castId);
+			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(castId, _script.id.castLib), node.name);
 			script.moviePath = _script.moviePath;
 			script.handlerName = node.name;
 			setScriptToDisplay(script);
+			_state->_dbg._isScriptDirty = true;
 		}
 		ImGui::SameLine();
 
@@ -1016,6 +1021,10 @@ private:
 		}
 
 		ImGui::NewLine();
+		if (_state->_dbg._isScriptDirty && _scrollTo) {
+			debug("I set scroll, %s", _script.handlerId.c_str());
+			ImGui::SetScrollHereY(0.5f);
+		}
 		unindent();
 		node.block->accept(*this);
 
@@ -1171,6 +1180,7 @@ private:
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
 			if (_state->_dbg._isScriptDirty && _scrollTo) {
+			debug("I set scroll here as well: %s", _script.handlerId.c_str());
 				ImGui::SetScrollHereY(0.5f);
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
