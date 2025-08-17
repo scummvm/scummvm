@@ -392,8 +392,6 @@ void MartianEngine::synchronize(Common::Serializer &s) {
 		s.syncAsByte(_ask[i]);
 	}
 
-	s.syncAsSint16LE(_pictureTaken);
-
 	/*
 	TODO: Do any of these need to be synchronized here?
 	Mostly involved in modal dialogs.
