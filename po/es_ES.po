@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-17 16:05+0000\n"
-"PO-Revision-Date: 2025-08-14 21:36+0000\n"
+"PO-Revision-Date: 2025-08-17 20:16+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8284,24 +8284,18 @@ msgid "Debug graphics"
 msgstr "Depurar gráficos"
 
 #: engines/drascula/metaengine.cpp:207
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "Asignaciones de introducción"
+msgstr "Asignaciones de animaciones"
 
 #: engines/drascula/metaengine.cpp:208
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Asignaciones del panel de salida"
+msgstr "Asignaciones de ventana de salida"
 
 #: engines/drascula/metaengine.cpp:212 engines/tetraedge/metaengine.cpp:92
 msgid "Move / Interact / Select"
 msgstr "Mover/Interactuar/Seleccionar"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
 msgstr "Recoger"
 
@@ -8314,46 +8308,32 @@ msgid "Open"
 msgstr "Abrir"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "Usar objeto seleccionado"
+msgstr "Reiniciar verbo seleccionado"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Controles táctiles"
+msgstr "Controles de volumen"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Juegos guardados"
+msgstr "Guardar/Cargar partida"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Subtítulos"
+msgstr "Activar subtítulos"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Subtítulos"
+msgstr "Desactivar subtítulos"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "Silenciar voces"
+msgstr "Pausar diálogo"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Confirmar"
+msgstr "Confirmar salida"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
