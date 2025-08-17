@@ -92,7 +92,7 @@ void MartianScripts::cmdSpecial1(int param1, int param2) {
 	//
 	_vm->_events->hideCursor();
 
-	if (param1 != -1) {
+	if ((byte)param1 != (byte)-1) {
 		_vm->_files->loadScreen(49, param1);
 		_vm->_buffer2.copyBuffer(_vm->_screen);
 	}

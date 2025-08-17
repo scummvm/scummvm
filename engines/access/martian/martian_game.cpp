@@ -94,6 +94,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	_fonts._charSet._hi = 8;
 	_fonts._charFor._lo = 0;
 	_fonts._charFor._hi = 255;
+	Font::_fontColors[3] = 0;
 
 	_screen->_maxChars = 40;
 	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
@@ -316,6 +317,8 @@ void MartianEngine::showExpositionText(Common::String msg) {
 			_screen->_printOrg.y = _screen->_printStart.y;
 		}
 	} while (!lastLine);
+	// Avoid re-using double-click
+	_events->clearEvents();
 	_events->waitKeyActionMouse();
 }
 
@@ -323,7 +326,7 @@ void MartianEngine::dead(int deathId) {
 	// Load and display death screen
 	_events->hideCursor();
 	_screen->forceFadeOut();
-	_files->loadScreen(48, _deaths[deathId]._screenId);
+	_files->loadScreen(48, _deaths[deathId]._screenId - 1);
 	_screen->setIconPalette();
 	_buffer2.copyBuffer(_screen);
 	_screen->forceFadeIn();
