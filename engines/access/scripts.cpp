@@ -765,7 +765,16 @@ void Scripts::cmdVideoEnded() {
 	debugCN(1, kDebugScripts, "cmdVideoEnded()");
 	_vm->_events->pollEventsAndWait();
 
-	if (_vm->_video->_videoEnd) {
+	// Slight HACK - add ability to skip unskippable videos.
+	bool skipVideo = false;
+	Common::CustomEventType action;
+	if (_vm->_events->getAction(action) && action == kActionSkip) {
+		skipVideo = true;
+		_vm->_sound->stopSound();
+		_vm->_events->zeroKeysActions();
+	}
+
+	if (_vm->_video->_videoEnd || skipVideo) {
 		debugC(1, kDebugScripts, " -> True");
 		cmdGoto();
 	} else {
