@@ -51,12 +51,7 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
-	_bubbleTitle.clear();
-
-	byte v;
-	while ((v = stream->readByte()) != 0)
-		_bubbleTitle += (char)v;
-
+	_bubbleTitle = stream->readString();
 	_bubbleDisplStr = _bubbleTitle;
 }
 
@@ -680,12 +675,16 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	while (!_vm->shouldQuit()) {
 		_vm->_events->pollEvents();
-		if (!_vm->_events->_leftButton)
+		if (!_vm->_events->_leftButton && !_vm->_events->_wheelDown && !_vm->_events->_wheelUp)
 			continue;
+
+		//
+		// Slight enhancement from original - also allow mouse wheel events to scroll up/down.
+		//
 
 		if (((_type == TYPE_1) || (_type == TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
-			if (_btnUpPos.contains(_vm->_events->_mousePos)) {
+			if (_btnUpPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelUp) {
 				if (_vm->_bcnt) {
 					if (_vm->_boxSelectY != 0) {
 						--_vm->_boxSelectY;
@@ -697,7 +696,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 					}
 				}
 				continue;
-			} else if (_btnDownPos.contains(_vm->_events->_mousePos)) {
+			} else if (_btnDownPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelDown) {
 				if (_vm->_bcnt) {
 					if (_vm->_bcnt == _vm->_numLines) {
 						if (_vm->_bcnt != _vm->_boxSelectY + 1) {
@@ -716,6 +715,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 				continue;
 			}
 		}
+
+		if (!_vm->_events->_leftButton)
+			continue;
 
 		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
 		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
