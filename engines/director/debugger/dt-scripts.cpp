@@ -323,21 +323,21 @@ void showExecutionContext() {
 
 		ImGui::SeparatorText("Scripts");
 
-		_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(stage);
+		ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(stage);
 		updateCurrentScript();
 
-		if (_state->_functions._scriptData->_showScript) {
-			ImGui::BeginDisabled(_state->_functions._scriptData->_scripts.empty() || _state->_functions._scriptData->_current == 0);
+		if (scriptData->_showScript) {
+			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
-				_state->_functions._scriptData->_current--;
+				scriptData->_current--;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Backward");
 			ImGui::SameLine();
 
-			ImGui::BeginDisabled(_state->_functions._scriptData->_current >= _state->_functions._scriptData->_scripts.size() - 1);
+			ImGui::BeginDisabled(scriptData->_current >= scriptData->_scripts.size() - 1);
 			if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
-				_state->_functions._scriptData->_current++;
+				scriptData->_current++;
 			}
 			ImGui::EndDisabled();
 			ImGui::SetItemTooltip("Forward");
@@ -345,49 +345,49 @@ void showExecutionContext() {
 
 			const char *currentScript = nullptr;
 
-			if (_state->_functions._scriptData->_current < _state->_functions._scriptData->_scripts.size()) {
-				currentScript = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].handlerName.c_str();
+			if (scriptData->_current < scriptData->_scripts.size()) {
+				currentScript = scriptData->_scripts[scriptData->_current].handlerName.c_str();
 			}
 
 			if (ImGui::BeginCombo("##handlers", currentScript)) {
-				for (uint i = 0; i < _state->_functions._scriptData->_scripts.size(); i++) {
-					auto &script = _state->_functions._scriptData->_scripts[i];
-					bool selected = i == _state->_functions._scriptData->_current;
+				for (uint i = 0; i < scriptData->_scripts.size(); i++) {
+					auto &script = scriptData->_scripts[i];
+					bool selected = i == scriptData->_current;
 					if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
-						_state->_functions._scriptData->_current = i;
+						scriptData->_current = i;
 					}
 				}
 				ImGui::EndCombo();
 			}
 
-			if (!_state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].oldAst) {
+			if (!scriptData->_scripts[scriptData->_current].oldAst) {
 				ImGui::SameLine(0, 20);
-				ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._scriptData->_showByteCode, true); // Lingo
+				ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &scriptData->_showByteCode, true); // Lingo
 				ImGui::SetItemTooltip("Lingo");
 				ImGui::SameLine();
 
-				ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._scriptData->_showByteCode); // Bytecode
+				ImGuiEx::toggleButton(ICON_MS_STACKS, &scriptData->_showByteCode); // Bytecode
 				ImGui::SetItemTooltip("Bytecode");
 			}
 
 			ImGui::Separator();
 			childSize = ImGui::GetContentRegionAvail();
 			ImGui::BeginChild("##script", childSize);
-			ImGuiScript &current = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current];
+			ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 			// Get all the handlers from the script
 			ScriptContext* context = getScriptContext(current.id);
 			Movie *movie = g_director->getCurrentMovie();
 
 			if (!context || context->_functionHandlers.size() == 1) {
-				renderScript(current, _state->_functions._scriptData->_showByteCode, true);
+				renderScript(current, scriptData->_showByteCode, true);
 			} else {
 				for (auto &functionHandler : context->_functionHandlers) {
 					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
 					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 					script.moviePath = movie->getArchive()->getPathName().toString();
 					script.handlerName = getHandlerName(functionHandler._value);
-					renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
+					renderScript(script, scriptData->_showByteCode, script == current);
 					ImGui::NewLine();
 				}
 			}
@@ -426,21 +426,21 @@ void showExecutionContext() {
 
 			ImGui::SeparatorText("Scripts");
 
-			_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(window);
+			scriptData = &_state->_functions._windowScriptData.getOrCreateVal(window);
 			updateCurrentScript();
 
-			if (_state->_functions._scriptData->_showScript) {
-				ImGui::BeginDisabled(_state->_functions._scriptData->_scripts.empty() || _state->_functions._scriptData->_current == 0);
+			if (scriptData->_showScript) {
+				ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 				if (ImGui::Button(ICON_MS_ARROW_BACK)) {
-					_state->_functions._scriptData->_current--;
+					scriptData->_current--;
 				}
 				ImGui::EndDisabled();
 				ImGui::SetItemTooltip("Backward");
 				ImGui::SameLine();
 
-				ImGui::BeginDisabled(_state->_functions._scriptData->_current >= _state->_functions._scriptData->_scripts.size() - 1);
+				ImGui::BeginDisabled(scriptData->_current >= scriptData->_scripts.size() - 1);
 				if (ImGui::Button(ICON_MS_ARROW_FORWARD)) {
-					_state->_functions._scriptData->_current++;
+					scriptData->_current++;
 				}
 				ImGui::EndDisabled();
 				ImGui::SetItemTooltip("Forward");
@@ -448,41 +448,41 @@ void showExecutionContext() {
 
 				const char *currentScript = nullptr;
 
-				if (_state->_functions._scriptData->_current < _state->_functions._scriptData->_scripts.size()) {
-					currentScript = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].handlerName.c_str();
+				if (scriptData->_current < scriptData->_scripts.size()) {
+					currentScript = scriptData->_scripts[scriptData->_current].handlerName.c_str();
 				}
 
 				if (ImGui::BeginCombo("##handlers", currentScript)) {
-					for (uint i = 0; i < _state->_functions._scriptData->_scripts.size(); i++) {
-						auto &script = _state->_functions._scriptData->_scripts[i];
-						bool selected = i == _state->_functions._scriptData->_current;
+					for (uint i = 0; i < scriptData->_scripts.size(); i++) {
+						auto &script = scriptData->_scripts[i];
+						bool selected = i == scriptData->_current;
 						if (ImGui::Selectable(script.handlerName.c_str(), &selected)) {
-							_state->_functions._scriptData->_current = i;
+							scriptData->_current = i;
 						}
 					}
 					ImGui::EndCombo();
 				}
 
-				if (!_state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].oldAst) {
+				if (!scriptData->_scripts[scriptData->_current].oldAst) {
 					ImGui::SameLine(0, 20);
-					ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &_state->_functions._scriptData->_showByteCode, true); // Lingo
+					ImGuiEx::toggleButton(ICON_MS_PACKAGE_2, &scriptData->_showByteCode, true); // Lingo
 					ImGui::SetItemTooltip("Lingo");
 					ImGui::SameLine();
 
-					ImGuiEx::toggleButton(ICON_MS_STACKS, &_state->_functions._scriptData->_showByteCode); // Bytecode
+					ImGuiEx::toggleButton(ICON_MS_STACKS, &scriptData->_showByteCode); // Bytecode
 					ImGui::SetItemTooltip("Bytecode");
 				}
 
 				ImGui::Separator();
 				childSize = ImGui::GetContentRegionAvail();
 				ImGui::BeginChild("##script", childSize);
-				ImGuiScript &current = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current];
+				ImGuiScript &current = scriptData->_scripts[scriptData->_current];
 
 				// Get all the handlers from the script
 				ScriptContext* context = getScriptContext(current.id);
 				context->_id;
 				if (!context || context->_functionHandlers.size() == 1) {
-					renderScript(current, _state->_functions._scriptData->_showByteCode, true);
+					renderScript(current, scriptData->_showByteCode, true);
 				} else {
 					for (auto &functionHandler : context->_functionHandlers) {
 						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
@@ -490,7 +490,7 @@ void showExecutionContext() {
 						Movie *movie = g_director->getCurrentMovie();
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.handlerName = getHandlerName(functionHandler._value);
-						renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
+						renderScript(script, scriptData->_showByteCode, script == current);
 						ImGui::NewLine();
 					}
 				}

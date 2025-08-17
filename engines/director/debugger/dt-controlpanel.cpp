@@ -31,12 +31,12 @@ namespace Director {
 namespace DT {
 
 static uint32 getLineFromPC() {
-	_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
+	ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
 
 	const uint pc = g_lingo->_state->pc;
-	if (_state->_functions._scriptData->_scripts.empty())
+	if (scriptData->_scripts.empty())
 		return 0;
-	const Common::Array<uint> &offsets = _state->_functions._scriptData->_scripts[_state->_functions._scriptData->_current].startOffsets;
+	const Common::Array<uint> &offsets = scriptData->_scripts[scriptData->_current].startOffsets;
 	for (uint i = 0; i < offsets.size(); i++) {
 		if (pc <= offsets[i])
 			return i;
@@ -123,8 +123,6 @@ void showControlPanel() {
 	ImVec2 vp(ImGui::GetMainViewport()->Size);
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
-
-	_state->_functions._scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
 
 	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
 		Movie *movie = g_director->getCurrentMovie();
