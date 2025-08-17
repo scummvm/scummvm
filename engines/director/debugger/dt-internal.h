@@ -118,6 +118,7 @@ typedef struct ImGuiState {
 
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
+		bool _goToDefinition = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
 	} _dbg;
