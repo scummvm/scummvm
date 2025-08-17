@@ -1143,7 +1143,8 @@ private:
 			color = _state->_colors._bp_color_enabled;
 
 		// Need to give a new id for each button
-		ImGui::PushID(_renderLineID);
+		Common::String id = _script.handlerId + _renderLineID;
+		ImGui::PushID(id.c_str());
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		ImGui::PopID();
 		_renderLineID++;
@@ -1225,7 +1226,7 @@ private:
 	int _indent = 0;
 	bool _currentStatementDisplayed = false;
 	bool _isScriptInDebug = false;
-	int _renderLineID = 0;
+	int _renderLineID = 1;
 	bool _scrollTo = false;
 };
 
