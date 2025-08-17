@@ -41,16 +41,16 @@ void MartianScripts::cmdSpecial0() {
 	_vm->_midi->midiPlay();
 	_vm->_midi->setLoop(true);
 
-	_vm->_events->_vbCount = 300;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-		_vm->_events->pollEventsAndWait();
-
 	_vm->_screen->forceFadeOut();
 	_vm->_files->loadScreen("HOUSE.SC");
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(46, 30), "HVID.VID", 20);
 
-	warning("TODO: MartianScripts::cmdSpecial0: Work out how to get timing right");
+	_vm->_events->hideCursor();
+	_vm->_events->_vbCount = 300;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+
 	do {
 		_vm->_video->playVideo();
 		_vm->_events->pollEvents();
@@ -81,9 +81,11 @@ void MartianScripts::cmdSpecial0() {
 	do {
 		_vm->_events->pollEvents();
 	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
+
+	_vm->_events->showCursor();
 	_vm->_midi->stopSong();
 	_vm->_midi->freeMusic();
-	warning("TODO: Pop Midi");
+	//warning("TODO: Pop Midi?");
 }
 
 void MartianScripts::cmdSpecial1(int param1, int param2) {
