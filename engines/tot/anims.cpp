@@ -36,14 +36,6 @@
 
 namespace Tot {
 
-const int textAreaSize = 320 * 70 + 4;
-
-int32 flicFilePos;
-uint loopNumber, flicRelativePos;
-byte *textAreaBackground = (byte *)malloc(textAreaSize);
-byte frameCount;
-bool firstLoop;
-
 void drawText(uint x, uint y, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte textColor, byte borderColor) {
 
 	littText(x, (y + 3), str1,  borderColor);
@@ -107,7 +99,7 @@ void clearCharacterText() {
 	removeText(2, 100, 134, 199, 0);
 }
 
-void handleFlcEvent(byte eventNumber) {
+void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 
 	const char *const *messages = g_engine->_lang == Common::ES_ESP ? animMessages[0] : animMessages[1];
 	bool isSpanish = g_engine->_lang == Common::ES_ESP;
@@ -332,7 +324,7 @@ void handleFlcEvent(byte eventNumber) {
 			g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 			break;
 		case 60:
-			g_engine->_graphics->getImg(0, 0, 319, 29, textAreaBackground);
+			g_engine->_graphics->getImg(0, 0, 319, 29, g_engine->_graphics->_textAreaBackground);
 			break;
 		}
 		break;
@@ -352,7 +344,7 @@ void handleFlcEvent(byte eventNumber) {
 				messages[104],
 				255, 249);
 			delay(3500);
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[105],
 				messages[106],
@@ -364,7 +356,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 6:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[110],
 				messages[111],
@@ -374,7 +366,7 @@ void handleFlcEvent(byte eventNumber) {
 				255, 249);
 		}
 		else if ((loopNumber == 5) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[275],
 				messages[276],
@@ -386,7 +378,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 7:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[115],
 				messages[116],
@@ -398,7 +390,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 8:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[120],
 				messages[121],
@@ -408,7 +400,7 @@ void handleFlcEvent(byte eventNumber) {
 				255, 249);
 		}
 		else if ((loopNumber == 5) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[280],
 				messages[281],
@@ -420,7 +412,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 9:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[125],
 				messages[126],
@@ -432,7 +424,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 10:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[130],
 				messages[131],
@@ -444,7 +436,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 11:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[135],
 				messages[136],
@@ -456,7 +448,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 12:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[140],
 				messages[141],
@@ -468,7 +460,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 13:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[145],
 				messages[146],
@@ -480,7 +472,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 14:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[150],
 				messages[151],
@@ -490,7 +482,7 @@ void handleFlcEvent(byte eventNumber) {
 				255, 249);
 		}
 		else if ((loopNumber == 5) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[285],
 				messages[286],
@@ -502,7 +494,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 15:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[155],
 				messages[156],
@@ -514,7 +506,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 16:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[160],
 				messages[161],
@@ -527,7 +519,7 @@ void handleFlcEvent(byte eventNumber) {
 	case 17:
 		switch (frameCount) {
 		case 1:
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			break;
 		case 17:
 			delay(500);
@@ -539,7 +531,7 @@ void handleFlcEvent(byte eventNumber) {
 		break;
 	case 18:
 		if ((loopNumber == 1) && (frameCount == 3)) {
-			g_engine->_graphics->putImg(0, 0, textAreaBackground);
+			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
 				messages[165],
 				messages[166],
@@ -564,7 +556,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 1:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->getImg(0, 0, 319, 69, textAreaBackground);
+				g_engine->_graphics->getImg(0, 0, 319, 69, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -580,7 +572,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 3:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -596,7 +588,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 6:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -612,7 +604,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 9:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -628,7 +620,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 12:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -644,7 +636,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 15:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -660,7 +652,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 18:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -676,7 +668,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 21:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -692,7 +684,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 24:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -708,7 +700,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 27:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -724,7 +716,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 30:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(15, 1,
@@ -739,7 +731,7 @@ void handleFlcEvent(byte eventNumber) {
 			break;
 		case 33:
 			if (frameCount == 17)
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			break;
 		}
 		break;
@@ -780,7 +772,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 1:
 			switch (frameCount) {
 			case 2:
-				g_engine->_graphics->getImg(0, 0, 319, 69, textAreaBackground);
+				g_engine->_graphics->getImg(0, 0, 319, 69, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 3:
 				drawText(65, 1,
@@ -796,7 +788,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 2:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -812,7 +804,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 5:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -828,7 +820,7 @@ void handleFlcEvent(byte eventNumber) {
 		case 8:
 			switch (frameCount) {
 			case 1:
-				g_engine->_graphics->putImg(0, 0, textAreaBackground);
+				g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 				break;
 			case 2:
 				drawText(65, 1,
@@ -906,19 +898,20 @@ void blit(const Graphics::Surface *src, Common::Rect bounds) {
 	g_engine->_screen->update();
 }
 
-static void loadFlc(
-	uint &loop,
-	bool &isSkipAllowed,
-	bool &exitAnim,
-	byte &eventNumber,
-	bool &fullPalette,
-	bool &limitPaletteTo200,
-	byte &speed,
-	uint &x,
-	uint &y) {
+void drawFlc(
+	uint x,
+	uint y,
+	int32 offset,
+	uint loop,
+	byte speed,
+	byte eventNumber,
+	bool fullPalette,
+	bool isSkipAllowed,
+	bool limitPaletteTo200,
+	bool &exitAnim) {
 
-	frameCount = 0;
-	loopNumber = 0;
+	uint loopNumber = 0;
+	byte frameCount = 0;
 
 	Common::File animationsFile;
 	Common::String fileName;
@@ -930,13 +923,13 @@ static void loadFlc(
 	if (!animationsFile.open(Common::Path(fileName))) {
 		showError(272);
 	}
-	animationsFile.seek(flicFilePos, SEEK_SET);
+	animationsFile.seek(offset, SEEK_SET);
 	// Need to read header to get the total size of the FLIC file.
 	FliHeader header = readHeader(&animationsFile);
 	Common::SeekableSubReadStream *thisFlic = new Common::SeekableSubReadStream(
 		&animationsFile,
-		flicFilePos,
-		flicFilePos + header.size);
+		offset,
+		offset + header.size);
 
 	TotFlicDecoder flic = TotFlicDecoder();
 
@@ -954,7 +947,7 @@ static void loadFlc(
 			}
 			if (gameTick) {
 				frameCount++;
-				handleFlcEvent(eventNumber);
+				handleFlcEvent(eventNumber, loopNumber, frameCount);
 				const Graphics::Surface *frame = flic.decodeNextFrame();
 				if (frame) {
 					Common::Rect boundingBox = Common::Rect(x, y, x + flic.getWidth() + 1, y + flic.getHeight() + 1);
@@ -971,7 +964,7 @@ static void loadFlc(
 						} else if (limitPaletteTo200) {
 							g_engine->_graphics->setPalette(palette, 0, 200);
 							for (int i = 0; i <= 200; i++) {
-								if(g_engine->_gamePart == 2 && !g_engine->_shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
+								if (g_engine->_gamePart == 2 && !g_engine->_shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
 									continue;
 								}
 								g_engine->_graphics->_pal[i * 3 + 0] = palette[i * 3 + 0];
@@ -985,7 +978,7 @@ static void loadFlc(
 						}
 					}
 					// Make sure we also update the palette animations! Esp. for part 2
-					if(g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
+					if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
 						g_engine->_graphics->advancePaletteAnim();
 					}
 					gameTick = false;
@@ -1001,7 +994,6 @@ static void loadFlc(
 				flic.rewind();
 			}
 			frameCount = 0;
-			firstLoop = false;
 		}
 	} while (loopNumber <= loop && !g_engine->shouldQuit());
 	flic.stop();
@@ -1009,25 +1001,7 @@ Lexit_proc:
 	animationsFile.close();
 }
 
-void drawFlc(
-	uint x,
-	uint y,
-	int32 offset,
-	uint loop,
-	byte speed,
-	byte numEvent,
-	bool fullPalette,
-	bool skipAllowed,
-	bool limitPaletteTo200,
-	bool &exitAnim) {
-
-	firstLoop = true;
-	flicFilePos = offset;
-	flicRelativePos = x + y * 320;
-	loadFlc(loop, skipAllowed, exitAnim, numEvent, fullPalette, limitPaletteTo200, speed, x, y);
-}
-
 void clearAnims() {
-	free(textAreaBackground);
+	free(g_engine->_graphics->_textAreaBackground);
 }
 } // End of namespace Tot

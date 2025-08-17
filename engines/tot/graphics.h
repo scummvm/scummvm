@@ -31,6 +31,9 @@
 
 namespace Tot {
 
+
+const int kTextAreaSize = 320 * 70 + 4;
+
 class GraphicsManager {
 public:
 	GraphicsManager();
@@ -96,6 +99,10 @@ public:
 	 */
 	byte _pal[768] = { 0 };
 
+	/**
+	 * TextArea for animations text
+	 */
+	byte *_textAreaBackground = (byte *)malloc(kTextAreaSize);
 private:
 	void updateSceneAreaIfNeeded(int speed = 1);
 	signed char fadeData[256][256];
