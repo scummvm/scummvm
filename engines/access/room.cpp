@@ -108,13 +108,13 @@ void Room::takePicture() {
 			return;
 		}
 
-		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)){
+		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)) {
 			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
 		}
 
-		if (_vm->_inventory->_inv[26]._value != ITEM_USED) {
+		if (_vm->_flags[26] != 2) {
 			Common::String msg = "ALTHOUGH IT WOULD MAKE A NICE PICTURE, YOU MAY FIND SOMETHING MORE INTERESTING TO USE YOUR FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
@@ -122,7 +122,7 @@ void Room::takePicture() {
 
 		Common::String msg = "THAT PHOTO MAY COME IN HANDY SOME DAY.";
 		_vm->_scripts->doCmdPrint_v1(msg);
-		_vm->_inventory->_inv[8]._value = ITEM_IN_INVENTORY;
+		_vm->_flags[8] = 1;
 		_vm->_pictureTaken++;
 		if (_vm->_pictureTaken == 16)
 			_vm->_inventory->_inv[44]._value = ITEM_USED;
