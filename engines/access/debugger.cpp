@@ -121,7 +121,9 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 bool Debugger::Cmd_Cheat(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
-		debugPrintf("Switches on/off the cheat mode (skips Amazon guard on boat)\n");
+		debugPrintf("Switches on/off the cheat mode.  Cheat mode:\n");
+		debugPrintf(" - [Amazon] Skips guard on boat\n");
+		debugPrintf(" - [MM] Allows travel to \"can't get there from here\" locations\n");
 		return true;
 	}
 
@@ -353,8 +355,17 @@ bool Debugger::Cmd_Everything(int argc, const char **argv) {
 	for (uint i = 0; i < ARRAYSIZE(_vm->_travel); ++i)
 		_vm->_travel[i] = 1;
 
-	// Turn off some known-broken locations
-	_vm->_travel[12] = 0; // "LOVE SCENE"
+	//
+	// Turn off known-broken/cut locations that exist in the travel table
+	// but you can't go there or going there directly will cause a crash.
+	//
+	const int INVALID_TRAVEL_LOCATIONS[] = {
+		10, // RESTAURANT
+		12, // LOVE SCENE
+	};
+
+	for (uint i = 0; i < ARRAYSIZE(INVALID_TRAVEL_LOCATIONS); ++i)
+		_vm->_travel[INVALID_TRAVEL_LOCATIONS[i]] = 0;
 
 	for (uint i = 0; i < ARRAYSIZE(_vm->_ask); ++i)
 		_vm->_ask[i] = 1;

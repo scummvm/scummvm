@@ -811,7 +811,7 @@ void Scripts::cmdDoTravel() {
 
 		if (btnSelected != 2) {
 			int newRoomNum = _vm->_travelBox->_tempListIdx[boxX];
-			if (Martian::CAN_TRAVEL_MATRIX[newRoomNum] != _vm->_flags[171]) {
+			if (!_vm->_cheatFl && (Martian::CAN_TRAVEL_MATRIX[newRoomNum] != _vm->_flags[171])) {
 				_vm->_bubbleBox->_bubbleDisplStr = "TRAVEL";
 				doCmdPrint_v1(_vm->_res->CANT_GET_THERE);
 				continue;
