@@ -70,12 +70,11 @@ Debugger::Debugger(AccessEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("playmovie", WRAP_METHOD(Debugger, Cmd_PlayMovie));
 	registerCmd("dumpscript", WRAP_METHOD(Debugger, Cmd_DumpScript));
 	registerCmd("timers", WRAP_METHOD(Debugger, Cmd_Timers));
-	registerCmd("getflag", WRAP_METHOD(Debugger, Cmd_GetFlag));
-	registerCmd("setflag", WRAP_METHOD(Debugger, Cmd_SetFlag));
-	registerCmd("gettravel", WRAP_METHOD(Debugger, Cmd_GetTravel));
-	registerCmd("settravel", WRAP_METHOD(Debugger, Cmd_SetTravel));
-	registerCmd("getask", WRAP_METHOD(Debugger, Cmd_GetAsk));
-	registerCmd("setask", WRAP_METHOD(Debugger, Cmd_SetAsk));
+	registerCmd("flag", WRAP_METHOD(Debugger, Cmd_Flag));
+	registerCmd("travel", WRAP_METHOD(Debugger, Cmd_Travel));
+	registerCmd("ask", WRAP_METHOD(Debugger, Cmd_Ask));
+	registerCmd("inventory", WRAP_METHOD(Debugger, Cmd_Inventory));
+	registerCmd("everything", WRAP_METHOD(Debugger, Cmd_Everything));
 }
 
 Debugger::~Debugger() {
@@ -122,7 +121,7 @@ bool Debugger::Cmd_LoadScene(int argc, const char **argv) {
 bool Debugger::Cmd_Cheat(int argc, const char **argv) {
 	if (argc != 1) {
 		debugPrintf("Usage: %s\n", argv[0]);
-		debugPrintf("Switches on/off the cheat mode\n");
+		debugPrintf("Switches on/off the cheat mode (skips Amazon guard on boat)\n");
 		return true;
 	}
 
@@ -177,27 +176,21 @@ bool Debugger::Cmd_DumpScript(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_GetFlag(int argc, const char **argv) {
-	if (argc != 2) {
-		debugPrintf("Usage: %s <flag number>\n", argv[0]);
-		debugPrintf("Prints the value of the given flag\n");
+bool Debugger::Cmd_Flag(int argc, const char **argv) {
+	if (argc != 2 && argc != 3) {
+		debugPrintf("Usage: %s <flag number> [<flag value>]\n", argv[0]);
+		debugPrintf("Prints or sets the value of the given flag\n");
 		return true;
 	}
 
-	int flagNum = strToInt(argv[1]);
-	if (flagNum < 0 || flagNum >= 256) {
-		debugPrintf("Invalid flag number\n");
-		return true;
-	}
+	if (argc == 2) {
+		int flagNum = strToInt(argv[1]);
+		if (flagNum < 0 || flagNum >= 256) {
+			debugPrintf("Invalid flag number\n");
+			return true;
+		}
 
-	debugPrintf("Flag %d: %d\n", flagNum, _vm->_flags[flagNum]);
-	return true;
-}
-
-bool Debugger::Cmd_SetFlag(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Usage: %s <flag number> <flag value>\n", argv[0]);
-		debugPrintf("Sets the given flag to the given value\n");
+		debugPrintf("Flag %d: %d\n", flagNum, _vm->_flags[flagNum]);
 		return true;
 	}
 
@@ -234,25 +227,22 @@ bool Debugger::Cmd_Timers(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_GetTravel(int argc, const char **argv) {
-	debugPrintf("Travel table:\n");
-
-	const int ncols = ARRAYSIZE(_vm->_travel) / 10;
-	for (int row = 0; row < 10; ++row) {
-		debugPrintf("%2d: ", row * ncols);
-		for (int col = 0; col < ncols; ++col) {
-			debugPrintf("%d ", _vm->_travel[row * ncols + col]);
-		}
-		debugPrintf("\n");
+bool Debugger::Cmd_Travel(int argc, const char **argv) {
+	if (argc != 1 && argc != 3) {
+		debugPrintf("Usage: %s [<travel number> <travel value>]\n", argv[0]);
+		debugPrintf("Dump the travel table, or set a travel table entry to the given value\n");
+		return true;
 	}
 
-	return true;
-}
+	if (argc == 1) {
+		debugPrintf("Travel table:\n");
 
-bool Debugger::Cmd_SetTravel(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Usage: %s <travel number> <travel value>\n", argv[0]);
-		debugPrintf("Sets the given travel table entry to the given value\n");
+		for (int i = 0; i < ARRAYSIZE(_vm->_travel); ++i) {
+			if (!Martian::TRAVDATA[i])
+				break;
+			debugPrintf("%2d: %d (%s)\n", i, _vm->_travel[i], Martian::TRAVDATA[i]);
+		}
+
 		return true;
 	}
 
@@ -273,25 +263,22 @@ bool Debugger::Cmd_SetTravel(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::Cmd_GetAsk(int argc, const char **argv) {
-	debugPrintf("Ask table:\n");
-
-	const int ncols = ARRAYSIZE(_vm->_ask) / 10;
-	for (int row = 0; row < 10; ++row) {
-		debugPrintf("%2d: ", row * ncols);
-		for (int col = 0; col < ncols; ++col) {
-			debugPrintf("%d ", _vm->_ask[row * ncols + col]);
-		}
-		debugPrintf("\n");
+bool Debugger::Cmd_Ask(int argc, const char **argv) {
+	if (argc != 1 && argc != 3) {
+		debugPrintf("Usage: %s [<ask number> <ask value>]\n", argv[0]);
+		debugPrintf("Dump the ask table, or set an ask table entry to the given value\n");
+		return true;
 	}
 
-	return true;
-}
+	if (argc == 1) {
+		debugPrintf("Ask table:\n");
 
-bool Debugger::Cmd_SetAsk(int argc, const char **argv) {
-	if (argc != 3) {
-		debugPrintf("Usage: %s <ask number> <ask value>\n", argv[0]);
-		debugPrintf("Sets the given ask table entry to the given value\n");
+		for (int i = 0; i < ARRAYSIZE(_vm->_ask); ++i) {
+			if (!Martian::ASK_TBL[i])
+				break;
+			debugPrintf("%2d: %d (%s)\n", i, _vm->_ask[i], Martian::ASK_TBL[i]);
+		}
+
 		return true;
 	}
 
@@ -311,6 +298,72 @@ bool Debugger::Cmd_SetAsk(int argc, const char **argv) {
 	debugPrintf("Ask %d set to %d\n", num, val);
 	return true;
 }
+
+bool Debugger::Cmd_Inventory(int argc, const char **argv) {
+	if (argc != 1 && argc != 3) {
+		debugPrintf("Usage: %s [<inv number> <state value>]\n", argv[0]);
+		debugPrintf("Dump the list of inventory items and their state, or set the state of an item\n");
+		return true;
+	}
+
+	static const char* STATE_NAMES[] = {
+		"0 - Not Found",
+		"1 - In Inv   ",
+		"2 - Used	 ",
+	};
+
+	if (argc == 1) {
+		debugPrintf("Inventory items:\n");
+
+		for (int i = 0; i < (int)_vm->_inventory->_inv.size(); ++i) {
+			const InventoryEntry &entry = _vm->_inventory->_inv[i];
+			debugPrintf("%2d: %s  %s\n", i, STATE_NAMES[entry._value], entry._name.c_str());
+		}
+		return true;
+	}
+
+	int num = strToInt(argv[1]);
+	if (num < 0 || num >= (int)_vm->_inventory->_inv.size()) {
+		debugPrintf("Invalid inv number\n");
+		return true;
+	}
+
+	int val = strToInt(argv[2]);
+	if (val < 0 || val > 2) {
+		debugPrintf("Invalid inv state val, must be 0/1/2\n");
+		return true;
+	}
+	_vm->_inventory->_inv[num]._value = val;
+
+	debugPrintf("Set item %d to %d\n", num, val);
+	return true;
+}
+
+bool Debugger::Cmd_Everything(int argc, const char **argv) {
+	if (argc != 2 || strcmp(argv[1], "please") != 0) {
+		debugPrintf("Usage: %s please\n", argv[0]);
+		debugPrintf("Gives you all items, travel locations, and ask subjects.\n");
+		debugPrintf("Cannot be undone and may break your game, so you have to confirm with 'please'.\n");
+		return true;
+	}
+
+	for (uint i = 0; i < _vm->_res->INVENTORY.size(); ++i)
+		_vm->_inventory->_inv[i]._value = ITEM_IN_INVENTORY;
+
+	for (uint i = 0; i < ARRAYSIZE(_vm->_travel); ++i)
+		_vm->_travel[i] = 1;
+
+	// Turn off some known-broken locations
+	_vm->_travel[12] = 0; // "LOVE SCENE"
+
+	for (uint i = 0; i < ARRAYSIZE(_vm->_ask); ++i)
+		_vm->_ask[i] = 1;
+
+	debugPrintf("You now have everything, can go anywhere, and can ask anything.\n");
+
+	return true;
+}
+
 
 
 /*------------------------------------------------------------------------*/
