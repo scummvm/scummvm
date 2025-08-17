@@ -372,14 +372,15 @@ static void addScriptCastToDisplay(CastMemberID &id) {
 }
 
 void setScriptToDisplay(const ImGuiScript &script) {
-	uint index = _state->_functions._scriptData->_scripts.size();
-	if (index && _state->_functions._scriptData->_scripts[index - 1] == script) {
-		_state->_functions._scriptData->_showScript = true;
+	ScriptData *scriptData = &_state->_functions._windowScriptData.getOrCreateVal(g_director->getCurrentWindow());
+	uint index = scriptData->_scripts.size();
+	if (index && scriptData->_scripts[index - 1] == script) {
+		scriptData->_showScript = true;
 		return;
 	}
-	_state->_functions._scriptData->_scripts.push_back(script);
-	_state->_functions._scriptData->_current = index;
-	_state->_functions._scriptData->_showScript = true;
+	scriptData->_scripts.push_back(script);
+	scriptData->_current = index;
+	scriptData->_showScript = true;
 }
 
 void displayScriptRef(CastMemberID &scriptId) {

@@ -97,6 +97,13 @@ typedef struct ImGuiWindows {
 	bool executionContext = false;
 } ImGuiWindows;
 
+typedef struct ScriptData {
+	Common::Array<ImGuiScript> _scripts;
+	uint _current = 0;
+	bool _showByteCode = false;
+	bool _showScript = false;
+} ScriptData;
+
 typedef struct ImGuiState {
 	struct {
 		Common::HashMap<CastMember *, ImGuiImage> _textures;
@@ -106,12 +113,6 @@ typedef struct ImGuiState {
 		int _typeFilter = 0x7FFF;
 	} _cast;
 	struct {
-		struct ScriptData {
-			Common::Array<ImGuiScript> _scripts;
-			uint _current = 0;
-			bool _showByteCode = false;
-			bool _showScript = false;
-		} *_scriptData;
 		ImGuiTextFilter _nameFilter;
 		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
