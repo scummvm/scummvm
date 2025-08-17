@@ -287,6 +287,7 @@ void Room::clearRoom() {
 	freePlayField();
 	freeTileData();
 	_vm->_player->freeSprites();
+	_vm->_images.clear();
 }
 
 void Room::loadRoomData(const byte *roomData) {
