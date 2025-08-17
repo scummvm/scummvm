@@ -1252,10 +1252,10 @@ void TotEngine::credits() {
 
 	_mouse->hide();
 	_graphics->totalFadeOut(0);
-	_sound->fadeOutMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeOutMusic();
 	_screen->clear();
 	_sound->playMidi("CREDITOS", true);
-	_sound->fadeInMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeInMusic();
 	drawCreditsScreen(background, sizeBg2, background2);
 
 	exit = false;
@@ -1326,10 +1326,10 @@ void TotEngine::credits() {
 Lexit:
 	delay(1000);
 	_graphics->totalFadeOut(0);
-	_sound->fadeOutMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeOutMusic();
 	_screen->clear();
 	_sound->playMidi("INTRODUC", true);
-	_sound->fadeInMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeInMusic();
 	_mouse->show();
 	free(background);
 	free(background2);
@@ -1768,6 +1768,7 @@ void TotEngine::soundControls() {
 						_graphics->putImg(86, 76, sliderBackground2);
 						_graphics->putImg(xfade, 76, slider);
 						musicVol = xfade - 86;
+						debug("musicvol=%d", musicVol);
 						_sound->_musicVolRight = round((float)(musicVol) / 20);
 						_sound->_musicVolLeft = round((float)(musicVol) / 20);
 						_sound->setMidiVolume(_sound->_musicVolLeft, _sound->_musicVolRight);
@@ -1917,9 +1918,9 @@ void TotEngine::sacrificeScene() {
 	if (shouldQuit())
 		return;
 
-	_sound->fadeOutMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeOutMusic();
 	_sound->playMidi("SACRIFIC", true);
-	_sound->fadeInMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeInMusic();
 	_graphics->clear();
 
 	littText(10, 31, messages[23], 254);
@@ -2196,9 +2197,9 @@ void TotEngine::ending() {
 	if(shouldQuit()) {
 		return;
 	}
-	_sound->fadeOutMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeOutMusic();
 	_sound->playMidi("SACRIFIC", true);
-	_sound->fadeInMusic(_sound->_musicVolLeft, _sound->_musicVolRight);
+	_sound->fadeInMusic();
 	drawFlc(0, 0, offsets[30], 12, 9, 26, true, false, false, exitRequested);
 	if(exitRequested){
 		return;

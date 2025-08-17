@@ -170,23 +170,23 @@ void SoundManager::setSfxVolume(byte voll, byte volr) {
 
 void SoundManager::setMidiVolume(byte voll, byte volr) {
 	int volume = (voll) / (float)7 * 255;
+	debug("Setting Midi volume to %d", volume);
 	setMusicVolume(volume);
 }
 
-void SoundManager::fadeOutMusic(byte voll, byte volr) {
-	byte stepVol = (voll + volr) / 2;
-	for (int ivol = stepVol; ivol >= 0; ivol--) {
-		setMidiVolume(ivol, ivol);
+void SoundManager::fadeOutMusic() {
+	byte stepVol = (_musicVolLeft + _musicVolRight) / 2;
+	for (int i = stepVol; i >= 0; i--) {
+		setMidiVolume(i, i);
 		delay(10);
 	}
 }
 
-void SoundManager::fadeInMusic(byte voll, byte volr) {
-	byte ivol, stepVol;
+void SoundManager::fadeInMusic() {
 
-	stepVol = (voll + volr) / 2;
-	for (ivol = 0; ivol <= stepVol; ivol++) {
-		setMidiVolume(ivol, ivol);
+	byte stepVol = (_musicVolLeft + _musicVolRight) / 2;
+	for (int i = 0; i <= stepVol; i++) {
+		setMidiVolume(i, i);
 		delay(10);
 	}
 }
