@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-14 21:23+0000\n"
+"POT-Creation-Date: 2025-08-17 16:05+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -68,11 +68,11 @@ msgstr "Dostupná jádra:"
 #: gui/downloadpacksdialog.cpp:388 gui/integrity-dialog.cpp:354
 #: gui/gui-manager.cpp:168 gui/imagealbum-dialog.cpp:133 gui/textviewer.cpp:53
 #: gui/unknown-game-dialog.cpp:53 backends/platform/android/options.cpp:558
-#: engines/queen/metaengine.cpp:264 engines/saga/metaengine.cpp:374
-#: engines/scumm/help.cpp:126 engines/scumm/help.cpp:141
-#: engines/scumm/help.cpp:166 engines/scumm/help.cpp:194
-#: engines/scumm/help.cpp:212 engines/supernova/metaengine.cpp:341
-#: engines/twp/metaengine.cpp:179
+#: engines/drascula/metaengine.cpp:245 engines/queen/metaengine.cpp:264
+#: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
+#: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
+#: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
+#: engines/supernova/metaengine.cpp:341 engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Zavřít"
 
@@ -118,7 +118,7 @@ msgstr "Jít nahoru"
 #: backends/platform/wii/options.cpp:47 engines/asylum/asylum.cpp:204
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
-#: engines/drascula/saveload.cpp:49 engines/grim/inputdialog.cpp:84
+#: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:84
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
@@ -377,7 +377,7 @@ msgstr ""
 #: engines/agos/midi.cpp:320 engines/agos/midi.cpp:378
 #: engines/agos/midi.cpp:457 engines/buried/saveload.cpp:83
 #: engines/director/lingo/lingo-builtins.cpp:2176
-#: engines/drascula/saveload.cpp:49 engines/grim/inputdialog.cpp:83
+#: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:83
 #: engines/groovie/script.cpp:665 engines/mtropolis/mtropolis.cpp:114
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
@@ -1158,8 +1158,8 @@ msgstr ""
 msgid "Copy"
 msgstr ""
 
-#: gui/gui-manager.cpp:282 engines/pegasus/pegasus.cpp:2819
-#: engines/wintermute/keymapper_tables.h:305
+#: gui/gui-manager.cpp:282 engines/drascula/metaengine.cpp:310
+#: engines/pegasus/pegasus.cpp:2819 engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
 #: engines/wintermute/keymapper_tables.h:491
@@ -2606,7 +2606,8 @@ msgid ""
 "And more..."
 msgstr "Přidat Hru..."
 
-#: gui/options.cpp:2967 engines/engine.cpp:655 engines/queen/metaengine.cpp:269
+#: gui/options.cpp:2967 engines/engine.cpp:655
+#: engines/drascula/metaengine.cpp:255 engines/queen/metaengine.cpp:269
 #: engines/ultima/nuvie/metaengine.cpp:71
 #, fuzzy
 msgid "Move"
@@ -3263,7 +3264,8 @@ msgstr ""
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/hdb/metaengine.cpp:275 engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/drascula/metaengine.cpp:304 engines/hdb/metaengine.cpp:275
+#: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -3482,7 +3484,7 @@ msgstr "~N~ávrat do Spouštěče"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:1048 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:390
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:858
 #: engines/groovie/script.cpp:2256 engines/groovie/script.cpp:2283
@@ -3503,7 +3505,7 @@ msgstr "Uložit hru:"
 
 #: engines/dialogs.cpp:95 engines/engine.cpp:1048 engines/agi/saveload.cpp:766
 #: engines/avalanche/parser.cpp:1918 engines/cine/various.cpp:349
-#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:384
+#: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:390
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:853
 #: engines/groovie/script.cpp:858 engines/groovie/script.cpp:2256
@@ -3874,11 +3876,12 @@ msgstr "Menu hry"
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:202
-#: engines/composer/metaengine.cpp:125 engines/freescape/movement.cpp:87
-#: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
-#: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:140
-#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/prince/metaengine.cpp:269 engines/wintermute/keymapper_tables.h:220
+#: engines/composer/metaengine.cpp:125 engines/drascula/metaengine.cpp:224
+#: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:533
+#: engines/grim/grim.cpp:633 engines/illusions/metaengine.cpp:142
+#: engines/made/metaengine.cpp:140 engines/mohawk/myst.cpp:566
+#: engines/mohawk/riven.cpp:847 engines/prince/metaengine.cpp:269
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -5968,18 +5971,19 @@ msgstr "Zkontrolovat Aktualizace..."
 #: engines/access/metaengine.cpp:192 engines/bbvs/metaengine.cpp:92
 #: engines/buried/metaengine.cpp:133 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
-#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
-#: engines/illusions/metaengine.cpp:89 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
-#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/drascula/metaengine.cpp:205 engines/hopkins/metaengine.cpp:206
+#: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
+#: engines/queen/metaengine.cpp:146 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -6072,10 +6076,10 @@ msgid "Move down-right"
 msgstr "Přesunout se doprava"
 
 #: engines/access/metaengine.cpp:262 engines/bbvs/metaengine.cpp:124
-#: engines/dgds/metaengine.cpp:83 engines/scumm/help.cpp:167
-#: engines/scumm/help.cpp:231 engines/supernova/metaengine.cpp:326
-#: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
-#: engines/ultima/nuvie/metaengine.cpp:67
+#: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
+#: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
+#: engines/supernova/metaengine.cpp:326 engines/tinsel/metaengine.cpp:300
+#: engines/tsage/metaengine.cpp:206 engines/ultima/nuvie/metaengine.cpp:67
 msgid "Look"
 msgstr "Dívat se"
 
@@ -6107,10 +6111,10 @@ msgstr "Svléct"
 #: engines/access/metaengine.cpp:278 engines/cine/metaengine.cpp:337
 #: engines/crab/input/input.cpp:251 engines/cruise/metaengine.cpp:192
 #: engines/draci/metaengine.cpp:237 engines/dragons/metaengine.cpp:148
-#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
-#: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
-#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
-#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
+#: engines/drascula/metaengine.cpp:218 engines/griffon/metaengine.cpp:152
+#: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
+#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
+#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
 #: engines/scumm/help.cpp:252 engines/sludge/keymapper_tables.h:58
 #: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
@@ -6127,9 +6131,9 @@ msgid "Climb"
 msgstr ""
 
 #: engines/access/metaengine.cpp:288 engines/bbvs/metaengine.cpp:130
-#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
-#: engines/supernova/metaengine.cpp:361 engines/tsage/metaengine.cpp:216
-#: engines/ultima/ultima4/metaengine.cpp:70
+#: engines/drascula/metaengine.cpp:250 engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:226 engines/supernova/metaengine.cpp:361
+#: engines/tsage/metaengine.cpp:216 engines/ultima/ultima4/metaengine.cpp:70
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr "Mluvit"
@@ -6140,7 +6144,7 @@ msgstr "Mluvit"
 msgid "Walk"
 msgstr "Jít"
 
-#: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:959
+#: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:312
@@ -6150,7 +6154,7 @@ msgstr "Jít"
 msgid "Unable to locate the '%s' engine data file."
 msgstr "Nelze najít datové soubory jádra '%s'."
 
-#: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:975
+#: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:1009
 #: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:329 engines/tony/tony.cpp:200
@@ -6159,7 +6163,7 @@ msgstr "Nelze najít datové soubory jádra '%s'."
 msgid "The '%s' engine data file is corrupt."
 msgstr "Datové soubory jádra '%s' jsou poškozeny."
 
-#: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:986
+#: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:1020
 #: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5449
@@ -6217,7 +6221,7 @@ msgstr ""
 
 #: engines/adl/metaengine.cpp:117 engines/cge/metaengine.cpp:56
 #: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
-#: engines/drascula/metaengine.cpp:51 engines/efh/metaengine.cpp:44
+#: engines/drascula/metaengine.cpp:55 engines/efh/metaengine.cpp:44
 #: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
 #: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
 #: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
@@ -6229,7 +6233,7 @@ msgstr "Použít Text ke čtení"
 
 #: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
 #: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
-#: engines/drascula/metaengine.cpp:52 engines/efh/metaengine.cpp:45
+#: engines/drascula/metaengine.cpp:56 engines/efh/metaengine.cpp:45
 #: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
 #: engines/mortevielle/metaengine.cpp:38
 #, fuzzy
@@ -6250,7 +6254,7 @@ msgstr ""
 #: engines/agi/metaengine.cpp:111 engines/bagel/metaengine.cpp:50
 #: engines/chewy/metaengine.cpp:36 engines/cine/metaengine.cpp:46
 #: engines/crab/metaengine.cpp:34 engines/darkseed/metaengine.cpp:36
-#: engines/drascula/metaengine.cpp:38 engines/dreamweb/metaengine.cpp:48
+#: engines/drascula/metaengine.cpp:42 engines/dreamweb/metaengine.cpp:48
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
 #: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
@@ -6263,7 +6267,7 @@ msgstr "Použít původní obrazovky načtení/uložení"
 #: engines/agi/metaengine.cpp:112 engines/bagel/metaengine.cpp:51
 #: engines/chewy/metaengine.cpp:37 engines/cine/metaengine.cpp:47
 #: engines/crab/metaengine.cpp:35 engines/darkseed/metaengine.cpp:37
-#: engines/drascula/metaengine.cpp:39 engines/dreamweb/metaengine.cpp:49
+#: engines/drascula/metaengine.cpp:43 engines/dreamweb/metaengine.cpp:49
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
 #: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
@@ -6383,7 +6387,7 @@ msgstr "Tato hra není podporována"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:397
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:403
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:870 engines/groovie/script.cpp:2243
@@ -6402,7 +6406,7 @@ msgstr "Obnovit hru:"
 
 #: engines/agi/saveload.cpp:779 engines/avalanche/parser.cpp:1906
 #: engines/cine/various.cpp:360 engines/dm/dm.cpp:271
-#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:397
+#: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:403
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:835
 #: engines/groovie/script.cpp:853 engines/groovie/script.cpp:870
@@ -6515,15 +6519,16 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/buried/metaengine.cpp:136 engines/cine/metaengine.cpp:271
 #: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
-#: engines/efh/metaengine.cpp:230 engines/hopkins/metaengine.cpp:207
-#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
-#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
-#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
-#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
-#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
-#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
-#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
+#: engines/drascula/metaengine.cpp:206 engines/efh/metaengine.cpp:230
+#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
+#: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
+#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
+#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
+#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 #, fuzzy
 msgid "Game keymappings"
 msgstr "~V~olby..."
@@ -7201,8 +7206,8 @@ msgstr "Povolit zachycování myši"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/buried/metaengine.cpp:179
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/dgds/metaengine.cpp:75 engines/efh/metaengine.cpp:246
-#: engines/freescape/games/castle/castle.cpp:246
+#: engines/dgds/metaengine.cpp:75 engines/drascula/metaengine.cpp:285
+#: engines/efh/metaengine.cpp:246 engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:231
@@ -7225,8 +7230,8 @@ msgstr "Uložit hru"
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:339 engines/buried/metaengine.cpp:184
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
-#: engines/dgds/metaengine.cpp:74 engines/efh/metaengine.cpp:252
-#: engines/freescape/games/castle/castle.cpp:251
+#: engines/dgds/metaengine.cpp:74 engines/drascula/metaengine.cpp:260
+#: engines/efh/metaengine.cpp:252 engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:236
@@ -8020,7 +8025,74 @@ msgstr ""
 msgid "Debug graphics"
 msgstr "Obraz"
 
-#: engines/drascula/saveload.cpp:47
+#: engines/drascula/metaengine.cpp:207
+#, fuzzy
+msgid "Animation keymappings"
+msgstr "~V~olby..."
+
+#: engines/drascula/metaengine.cpp:208
+#, fuzzy
+msgid "Quit dialog keymappings"
+msgstr "~V~olby..."
+
+#: engines/drascula/metaengine.cpp:212 engines/tetraedge/metaengine.cpp:92
+#, fuzzy
+msgid "Move / Interact / Select"
+msgstr "Přesunout se doleva"
+
+#: engines/drascula/metaengine.cpp:235
+#, fuzzy
+#| msgid "Pick up"
+msgid "Pick"
+msgstr "Sebrat"
+
+#: engines/drascula/metaengine.cpp:240 engines/queen/metaengine.cpp:259
+#: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
+#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
+#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
+#: engines/supernova/metaengine.cpp:336 engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "Otevřít"
+
+#: engines/drascula/metaengine.cpp:266
+#, fuzzy
+msgid "Reset selected verb"
+msgstr "~P~ředchozí"
+
+#: engines/drascula/metaengine.cpp:272
+#, fuzzy
+#| msgid "Control"
+msgid "Volume controls"
+msgstr "Ovládání"
+
+#: engines/drascula/metaengine.cpp:279
+#, fuzzy
+msgid "Save / load game"
+msgstr "Uložit hru:"
+
+#: engines/drascula/metaengine.cpp:292
+#, fuzzy
+msgid "Enable subtitles"
+msgstr "Povolit zachycování myši"
+
+#: engines/drascula/metaengine.cpp:298
+#, fuzzy
+msgid "Disable subtitles"
+msgstr "Povolit zachycování myši"
+
+#: engines/drascula/metaengine.cpp:315
+#, fuzzy
+#| msgid "Speech"
+msgid "Pause speech"
+msgstr "Řeč"
+
+#: engines/drascula/metaengine.cpp:322
+#, fuzzy
+#| msgid "Confirm"
+msgid "Confirm quit"
+msgstr "Potvrdit"
+
+#: engines/drascula/saveload.cpp:49
 msgid ""
 "ScummVM found that you have old saved games for Drascula that should be "
 "converted.\n"
@@ -10554,14 +10626,6 @@ msgstr "Přeskočit řádek"
 msgid "Use journal"
 msgstr "Zobrazit Vše"
 
-#: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
-#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
-#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
-#: engines/scumm/help.cpp:211 engines/supernova/metaengine.cpp:336
-#: engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "Otevřít"
-
 #: engines/queen/metaengine.cpp:274 engines/saga/metaengine.cpp:384
 #: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
 #: engines/scumm/help.cpp:164 engines/scumm/help.cpp:200
@@ -12987,11 +13051,6 @@ msgstr ""
 #: engines/tetraedge/metaengine.cpp:44
 msgid "Restore some scenes originally in the Windows edition"
 msgstr ""
-
-#: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-msgid "Move / Interact / Select"
-msgstr "Přesunout se doleva"
 
 #: engines/tinsel/detection_tables.h:481
 #, fuzzy
@@ -15890,11 +15949,6 @@ msgstr ""
 #~| msgid "Special sound effects volume"
 #~ msgid "Toggle sound effect on/off"
 #~ msgstr "Hlasitost speciálních zvukových efektů"
-
-#, fuzzy
-#~| msgid "Pick up"
-#~ msgid "Pickup"
-#~ msgstr "Sebrat"
 
 #, fuzzy
 #~| msgid "Default game keymap"
