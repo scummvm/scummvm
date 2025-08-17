@@ -26,16 +26,31 @@
 #include "common/file.h"
 
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/score.h"
 #include "director/debugger/dt-internal.h"
 
 namespace Director {
 namespace DT {
 
 Common::String savedStateFileName = Common::String("ImGuiSaveState.json");
-const char *WINDOW_LIST[] = {
-	"Archive", "Breakpoints", "Vars", "Watched Vars", "Score", "Control Panel",
-	"Execution Context", "Functions", "Channels", "Cast", "Settings"
-};
+
+Common::Array<WindowFlag> getWindowFlags() {
+	return {
+		{ "Archive",			&_state->_w.archive			 },
+		{ "Breakpoints",		&_state->_w.bpList			 },
+		{ "Cast",				&_state->_w.cast			 },
+		{ "Channels",			&_state->_w.channels		 },
+		{ "Control Panel",		&_state->_w.controlPanel	 },
+		{ "Execution Context",	&_state->_w.executionContext },
+		{ "Functions",			&_state->_w.funcList		 },
+		{ "Log",				&_state->_w.logger			 },
+		{ "Score",				&_state->_w.score			 },
+		{ "Settings",			&_state->_w.settings		 },
+		{ "Vars",				&_state->_w.vars			 },
+		{ "Watched Vars",		&_state->_w.watchedVars		 },
+	};
+}
 
 // What are the things that need saving?
 // 1) Window Positions
@@ -46,8 +61,22 @@ void saveCurrentState() {
 	Common::JSONObject json = Common::JSONObject();
 
 	// Whether windows are open or not
-	long long int openFlags = getWindowFlags();
-	json["Windows"] = new Common::JSONValue(openFlags);
+	Common::Array<WindowFlag> windows = getWindowFlags();
+
+	uint index = 0;
+	int64 openFlags = 0;
+	for (const WindowFlag &it : windows) {
+		openFlags += (*it.flag) ? 1 << index : 0;
+		index += 1;
+	}
+	if (debugChannelSet(7, kDebugImGui)) {
+		debugC(7, kDebugImGui, "Window flags: ");
+		for (auto it : windows) {
+			debug("%s: %s", it.name, *it.flag ? "open" : "closed");
+		}
+	}
+
+	json["Windows"] = new Common::JSONValue((long long int)openFlags);
 
 	// Window Settings
 	const char *windowSettings = ImGui::SaveIniSettingsToMemory();
@@ -56,7 +85,6 @@ void saveCurrentState() {
 	// Current Log
 	ImVector<char *> currentLog = _state->_logger->getItems();
 	Common::JSONArray log;
-
 	for (auto iter : currentLog) {
 		log.push_back(new Common::JSONValue(iter));
 	}
@@ -64,7 +92,7 @@ void saveCurrentState() {
 
 	// Save the JSON
 	Common::JSONValue save(json);
-	debug("ImGui::Saved state: %s", save.stringify().c_str());
+	debugC(7, kDebugImGui, "ImGui::Saved state: %s", save.stringify().c_str());
 
 	Common::OutSaveFile *stream = g_engine->getSaveFileManager()->openForSaving(savedStateFileName);
 
@@ -80,47 +108,46 @@ void saveCurrentState() {
 	delete stream;
 }
 
-long long int getWindowFlags() {
-	long long int openFlags = 0;
-	openFlags += (_state->_w.archive) ? 1 : 0;
-	openFlags += (_state->_w.bpList) ? 1 << 1 : 0;
-	openFlags += (_state->_w.cast) ? 1 << 2 : 0;
-	openFlags += (_state->_w.channels) ? 1 << 3 : 0;
-	openFlags += (_state->_w.controlPanel) ? 1 << 4 : 0;
-	openFlags += (_state->_w.executionContext) ? 1 << 5 : 0;
-	openFlags += (_state->_w.funcList) ? 1 << 6: 0;
-	openFlags += (_state->_w.logger) ? 1 << 7 : 0;
-	openFlags += (_state->_w.score) ? 1 << 8 : 0;
-	openFlags += (_state->_w.settings) ? 1 << 9 : 0;
-	openFlags += (_state->_w.vars) ? 1 << 10 : 0;
-	openFlags += (_state->_w.watchedVars) ? 1 << 11 : 0;
-
-	return openFlags;
-}
-
 void loadSavedState() {
 	Common::InSaveFile *savedState = g_engine->getSaveFileManager()->openForLoading(savedStateFileName);
 
-	if (!savedState) {
+	if (!savedState || savedState->size() == 0) {
 		debug("ImGui::loadSavedState(): Failed to open saved state file: %s", savedStateFileName.c_str());
 		return;
 	}
 
-	char *data = (char *)malloc(savedState->size());
+	// ASAN throws an error if the data is exactly equal to savedState->size() in JSON::parse()
+	// Probably because JSON::parse() expects a NULL terminated data
+	char *data = (char *)malloc(savedState->size() + 1);
+	data[savedState->size()] = '\0';
 	savedState->read(data, savedState->size());
 
 	Common::JSONValue *saved = Common::JSON::parse(data);
 
 	if (!saved) {
 		debug("ImGui:: Bad JSON: Failed to parse the Saved state");
+		free(data);
 		return;
 	}
 
-	debug("ImGui::loaded state: %s", saved->stringify(true).c_str());
+	debugC(7, kDebugImGui, "ImGui::loaded state: %s", saved->stringify(true).c_str());
 
 	// Load open/closed window flags
-	long long int openFlags = saved->asObject()["Windows"]->asIntegerNumber();
-	setWindowFlags(openFlags);
+	int64 openFlags = saved->asObject()["Windows"]->asIntegerNumber();
+	Common::Array<WindowFlag> windows = getWindowFlags();
+
+	uint index = 0;
+	for (WindowFlag it : windows) {
+		*it.flag = (openFlags & 1 << index) ? true : false;
+		index += 1;
+	}
+	_state->_w.archive = (openFlags & 1) ? true : false;
+	if (debugChannelSet(7, kDebugImGui)) {
+		debugC(7, kDebugImGui, "Window flags: ");
+		for (auto it : windows) {
+			debug("%s: %s", it.name, *it.flag ? "open" : "closed");
+		}
+	}
 
 	// Load window settings
 	const char *windowSettings = saved->asObject()["Window Settings"]->asString().c_str();
@@ -131,7 +158,7 @@ void loadSavedState() {
 
 	if (debugChannelSet(7, kDebugImGui)) {
 		debugC(7, kDebugImGui, "Loading log: \n");
-		for (auto iter: log) {
+		for (auto iter : log) {
 			debugC(7, kDebugImGui, "%s", iter->asString().c_str());
 		}
 	}
@@ -142,21 +169,8 @@ void loadSavedState() {
 	}
 
 	free(data);
-}
-
-void setWindowFlags(long long int openFlags) {
-	_state->_w.archive = (openFlags & 1) ? true : false;
-	_state->_w.bpList = (openFlags & 1 << 1) ? true : false;
-	_state->_w.cast = (openFlags & 1 << 2) ? true : false;
-	_state->_w.channels = (openFlags & 1 << 3) ? true : false;
-	_state->_w.controlPanel = (openFlags & 1 << 4) ? true : false;
-	_state->_w.executionContext = (openFlags & 1 << 5) ? true : false;
-	_state->_w.funcList = (openFlags & 1 << 6) ? true : false;
-	_state->_w.logger = (openFlags & 1 << 7) ? true : false;
-	_state->_w.score = (openFlags & 1 << 8) ? true : false;
-	_state->_w.settings = (openFlags & 1 << 9) ? true : false;
-	_state->_w.vars = (openFlags & 1 << 10) ? true : false;
-	_state->_w.watchedVars = (openFlags & 1 << 11) ? true : false;
+	delete saved;
+	delete savedState;
 }
 
 }	// End of namespace DT
