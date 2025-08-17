@@ -714,6 +714,8 @@ void Player::checkScroll() {
 	if (_playerDirection == NONE)
 		return;
 
+	calcPlayer();
+
 	if ((_playerDirection == UPLEFT || _playerDirection == DOWNLEFT ||
 			_playerDirection == LEFT) && _playerX <= _scrollThreshold) {
 		// Scroll right
@@ -819,7 +821,7 @@ bool Player::scrollLeft(int forcedAmount) {
 		return true;
 	} else {
 		_scrollFlag = true;
-		_vm->_scrollX = _vm->_scrollX + _scrollAmount;
+		_vm->_scrollX += _scrollAmount;
 
 		do {
 			if (_vm->_scrollX < TILE_WIDTH)
