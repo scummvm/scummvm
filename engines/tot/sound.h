@@ -53,8 +53,8 @@ public:
 	void waitForSoundEnd();
 	void setSfxVolume(byte leftVol, byte rightVol);
 	void setMidiVolume(byte leftVol, byte rightVol);
-	void fadeOutMusic(byte leftVol, byte rightVol);
-	void fadeInMusic(byte leftVol, byte rightVol);
+	void fadeOutMusic();
+	void fadeInMusic();
 	void setMasterVolume(byte leftVol, byte rightVol);
 	void setSfxBalance(bool left, bool right);
  	uint _rightSfxVol, _leftSfxVol;

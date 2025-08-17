@@ -48,9 +48,9 @@ TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 																 _gameDescription(gameDesc), _randomSource("Tot") {
 	g_engine = this;
 	_lang = _gameDescription->language;
-	g_engine->_rooms = nullptr;
-	g_engine->_conversationData = nullptr;
-	g_engine->_invItemData = nullptr;
+	_rooms = nullptr;
+	_conversationData = nullptr;
+	_invItemData = nullptr;
 }
 
 TotEngine::~TotEngine() {
@@ -108,36 +108,36 @@ int TotEngine::engineStart() {
 	if (ConfMan.hasKey("save_slot")) {
 		return startGame();
 	}
-	g_engine->_graphics->clear();
+	_graphics->clear();
 	displayLoading();
 
 	loadCharAnimation();
 	loadObjects();
 
-	g_engine->_sound->setMidiVolume(0, 0);
-	g_engine->_sound->playMidi("SILENT", false);
+	_sound->setMidiVolume(0, 0);
+	_sound->playMidi("SILENT", false);
 
-	g_engine->_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
-	g_engine->_sound->playMidi("SILENT", true);
+	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
+	_sound->playMidi("SILENT", true);
 
-	g_engine->_graphics->totalFadeOut(0);
-	g_engine->_graphics->clear();
+	_graphics->totalFadeOut(0);
+	_graphics->clear();
 
-	g_engine->_graphics->loadPaletteFromFile("DEFAULT");
+	_graphics->loadPaletteFromFile("DEFAULT");
 	loadScreenMemory();
 	initialLogo();
-	g_engine->_sound->playMidi("INTRODUC", true);
-	g_engine->_sound->setMidiVolume(3, 3);
+	_sound->playMidi("INTRODUC", true);
+	_sound->setMidiVolume(3, 3);
 	firstIntroduction();
-	g_engine->_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
+	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
 	initialMenu(_firstTimeDone);
-	if (_startNewGame && !g_engine->shouldQuit()) {
+	if (_startNewGame && !shouldQuit()) {
 		newGame();
-	} else if (_continueGame && !g_engine->shouldQuit()) {
+	} else if (_continueGame && !shouldQuit()) {
 		loadTemporaryGame();
 	} else {
 		_isSavingDisabled = true;
-		g_engine->openMainMenuDialog();
+		openMainMenuDialog();
 		_isSavingDisabled = false;
 	}
 
@@ -145,21 +145,21 @@ int TotEngine::engineStart() {
 }
 
 void TotEngine::loadTemporaryGame() {
-	g_engine->loadGameState(g_engine->getMetaEngine()->getAutosaveSlot());
+	loadGameState(getMetaEngine()->getAutosaveSlot());
 }
 
 int TotEngine::startGame() {
-	g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+	_sound->fadeOutMusic();
 	switch (_gamePart) {
 	case 1:
-		g_engine->_sound->playMidi("PRIMERA", true);
+		_sound->playMidi("PRIMERA", true);
 		break;
 	case 2:
-		g_engine->_sound->playMidi("SEGUNDA", true);
+		_sound->playMidi("SEGUNDA", true);
 		break;
 	}
 	_cpCounter2 = _cpCounter;
-	g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft,g_engine->_sound->_musicVolRight);
+	_sound->fadeInMusic();
 	_inGame = true;
 
 	Common::Event e;
@@ -170,14 +170,14 @@ int TotEngine::startGame() {
 	const char hotKeyLook = hotKeyFor(LOOKAT);
 	const char hotKeyUse = hotKeyFor(USE);
 
-	while (!_shouldQuitGame && !g_engine->shouldQuit()) {
+	while (!_shouldQuitGame && !shouldQuit()) {
 		bool escapePressed = false;
-		g_engine->_chrono->updateChrono();
-		g_engine->_mouse->animateMouseIfNeeded();
+		_chrono->updateChrono();
+		_mouse->animateMouseIfNeeded();
 		// debug
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (isMouseEvent(e)) {
-				g_engine->_mouse->warpMouse(e.mouse);
+				_mouse->warpMouse(e.mouse);
 				_mouse->mouseX = e.mouse.x;
 				_mouse->mouseY = e.mouse.y;
 			}
@@ -186,6 +186,14 @@ int TotEngine::startGame() {
 
 				switch (e.kbd.keycode) {
 
+				case Common::KEYCODE_UP:
+					_sound->fadeInMusic();
+					break;
+
+				case Common::KEYCODE_DOWN:
+					_sound->fadeOutMusic();
+					break;
+
 				case Common::KEYCODE_ESCAPE:
 					escapePressed = true;
 					break;
@@ -193,7 +201,7 @@ int TotEngine::startGame() {
 					soundControls();
 					break;
 				case Common::KEYCODE_F2:
-					g_engine->openMainMenuDialog();
+					openMainMenuDialog();
 					// saveLoad();
 					break;
 				default:
@@ -461,35 +469,35 @@ int TotEngine::startGame() {
 			_cpCounter2 = _cpCounter;
 			_startNewGame = false;
 			_continueGame = false;
-			g_engine->saveAutosaveIfEnabled();
-			g_engine->_graphics->totalFadeOut(0);
-			g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
-			g_engine->_graphics->clear();
-			g_engine->_sound->playMidi("INTRODUC", true);
-			g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+			saveAutosaveIfEnabled();
+			_graphics->totalFadeOut(0);
+			_sound->fadeOutMusic();
+			_graphics->clear();
+			_sound->playMidi("INTRODUC", true);
+			_sound->fadeInMusic();
 			initialMenu(true);
 			verifyCopyProtection2();
 
-			if (_startNewGame && !g_engine->shouldQuit()) {
+			if (_startNewGame && !shouldQuit()) {
 				newGame();
-			} else if (_continueGame && !g_engine->shouldQuit())
+			} else if (_continueGame && !shouldQuit())
 				loadTemporaryGame();
 			else {
 				_isSavingDisabled = true;
-				g_engine->openMainMenuDialog();
+				openMainMenuDialog();
 				_cpCounter = _cpCounter2;
 				_isSavingDisabled = false;
 			}
-			g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+			_sound->fadeOutMusic();
 			switch (_gamePart) {
 			case 1:
-				g_engine->_sound->playMidi("PRIMERA", true);
+				_sound->playMidi("PRIMERA", true);
 				break;
 			case 2:
-				g_engine->_sound->playMidi("SEGUNDA", true);
+				_sound->playMidi("SEGUNDA", true);
 				break;
 			}
-			g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+			_sound->fadeInMusic();
 		}
 
 		switch (_gamePart) {
@@ -503,31 +511,31 @@ int TotEngine::startGame() {
 				freeInventory();
 				freeAnimation();
 				freeScreenObjects();
-				g_engine->_mouse->hide();
-				g_engine->_graphics->partialFadeOut(234);
-				g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
-				g_engine->_sound->playMidi("CREDITOS", true);
-				g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
+				_mouse->hide();
+				_graphics->partialFadeOut(234);
+				_sound->fadeOutMusic();
+				_sound->playMidi("CREDITOS", true);
+				_sound->fadeInMusic();
 				if (_cpCounter2 > 43)
 					showError(274);
 				sacrificeScene();
-				g_engine->_graphics->clear();
+				_graphics->clear();
 				loadObjects();
-				g_engine->_graphics->loadPaletteFromFile("SEGUNDA");
+				_graphics->loadPaletteFromFile("SEGUNDA");
 				_currentTrajectoryIndex = 0;
 				_characterPosX = 160;
 				_characterPosY = 60;
 				_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 				_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 				loadScreenData(20);
-				g_engine->_sound->fadeOutMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
-				g_engine->_sound->playMidi("SEGUNDA", true);
-				g_engine->_sound->fadeInMusic(g_engine->_sound->_musicVolLeft, g_engine->_sound->_musicVolRight);
-				g_engine->_graphics->sceneTransition(false, sceneBackground, 1);
+				_sound->fadeOutMusic();
+				_sound->playMidi("SEGUNDA", true);
+				_sound->fadeInMusic();
+				_graphics->sceneTransition(false, sceneBackground, 1);
 				mask();
 				_inventoryPosition = 0;
 				drawBackpack();
-				g_engine->_mouse->show();
+				_mouse->show();
 
 				_firstTimeTopicA[8] = true;
 				oldGridX = 0;
@@ -539,20 +547,20 @@ int TotEngine::startGame() {
 
 		// Debug graphics
 		{
-			// g_engine->_graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
-			// g_engine->_mouseManager->printPos(xraton, yraton, 220, 0);
+			// _graphics->euroText(Common::String::format("Room: %d", currentRoomNumber), 0, 0, 220, Graphics::kTextAlignLeft);
+			// _mouseManager->printPos(xraton, yraton, 220, 0);
 			// printPos(characterPosX, characterPosY, 220, 10, "CharPos");
-			if (g_engine->_showMouseGrid) {
+			if (_showMouseGrid) {
 				drawMouseGrid(_currentRoomData);
 			}
-			if (g_engine->_showScreenGrid) {
+			if (_showScreenGrid) {
 				drawScreenGrid(_currentRoomData);
 			}
-			if (g_engine->_showGameGrid) {
+			if (_showGameGrid) {
 				drawGrid();
 			}
 
-			if (g_engine->_drawObjectAreas) {
+			if (_drawObjectAreas) {
 				for (int i = 0; i < kDepthLevelCount; i++) {
 					if (_screenLayers[i] != NULL) {
 						if (true) {
@@ -569,21 +577,21 @@ int TotEngine::startGame() {
 			}
 		}
 
-		g_engine->_screen->update();
+		_screen->update();
 		g_system->delayMillis(10);
 	}
-	g_engine->_mouse->hide();
-	if (!g_engine->shouldQuit()) {
+	_mouse->hide();
+	if (!shouldQuit()) {
 		ending();
 	}
 	Common::String photoFileName;
-	if (!g_engine->shouldQuit()) {
+	if (!shouldQuit()) {
 		obtainName(photoFileName);
 	}
-	if (!g_engine->shouldQuit()) {
+	if (!shouldQuit()) {
 		generateDiploma(photoFileName);
 	}
-	if (!g_engine->shouldQuit()) {
+	if (!shouldQuit()) {
 		credits();
 	}
 	return EXIT_SUCCESS;
@@ -591,12 +599,12 @@ int TotEngine::startGame() {
 
 void TotEngine::newGame() {
 	saveAllowed = true;
-	g_engine->_mouse->hide();
+	_mouse->hide();
 	obtainName(_characterName);
 
-	if (!g_engine->shouldQuit()) {
-		g_engine->_graphics->totalFadeOut(0);
-		g_engine->_graphics->clear();
+	if (!shouldQuit()) {
+		_graphics->totalFadeOut(0);
+		_graphics->clear();
 		displayLoading();
 		freeInventory();
 		loadObjects();
@@ -610,14 +618,14 @@ void TotEngine::newGame() {
 		readConversationFile(Common::String("CONVERSA.TRE"));
 		initializeScreenFile();
 		initializeObjectFile();
-		g_engine->_graphics->loadPaletteFromFile("DEFAULT");
+		_graphics->loadPaletteFromFile("DEFAULT");
 		loadScreenData(1);
-		g_engine->_graphics->sceneTransition(false, sceneBackground, 13);
+		_graphics->sceneTransition(false, sceneBackground, 13);
 		mask();
 		_inventoryPosition = 0;
 		drawBackpack();
 		_iframe = 0;
-		g_engine->_mouse->show();
+		_mouse->show();
 	}
 }
 
@@ -627,7 +635,7 @@ void TotEngine::changeRoom() {
 	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
 	saveRoomData(_currentRoomData, _rooms);
 	// verifyCopyProtection();
-	g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+	_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 
 	switch (_currentRoomData->doors[_doorIndex].nextScene) {
 	case 2: {
@@ -639,21 +647,21 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
+		_mouse->hide();
 
-		g_engine->_graphics->sceneTransition(true, NULL);
-		g_engine->_sound->stopVoc();
+		_graphics->sceneTransition(true, NULL);
+		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		if (_isTVOn)
-			g_engine->_sound->autoPlayVoc("PARASITO", 355778, 20129);
+			_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			loadTV();
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, sceneBackground);
 		_cpCounter = _cpCounter2;
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 	} break;
@@ -667,14 +675,14 @@ void TotEngine::changeRoom() {
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_graphics->sceneTransition(true, NULL);
+			_mouse->hide();
+			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			g_engine->_sound->stopVoc();
-			g_engine->_sound->autoPlayVoc("CALDERA", 6433, 15386);
-			g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, 0);
-			g_engine->_graphics->sceneTransition(false, sceneBackground);
-			g_engine->_mouse->show();
+			_sound->stopVoc();
+			_sound->autoPlayVoc("CALDERA", 6433, 15386);
+			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
+			_graphics->sceneTransition(false, sceneBackground);
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -685,10 +693,10 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, 0);
+			_mouse->hide();
+			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 22, -2);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -700,10 +708,10 @@ void TotEngine::changeRoom() {
 		goToObject(_currentZone, _targetZone);
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		_mouse->hide();
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 22, 2);
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
@@ -711,8 +719,8 @@ void TotEngine::changeRoom() {
 	case 9: {
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_graphics->sceneTransition(true, NULL);
+		_mouse->hide();
+		_graphics->sceneTransition(true, NULL);
 		_iframe = 0;
 		_currentTrajectoryIndex = 0;
 		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
@@ -720,8 +728,8 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
-		g_engine->_mouse->show();
+		_graphics->sceneTransition(false, sceneBackground);
+		_mouse->show();
 
 		oldGridX = 0;
 		oldGridY = 0;
@@ -737,23 +745,23 @@ void TotEngine::changeRoom() {
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_graphics->sceneTransition(true, NULL);
+			_mouse->hide();
+			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(false, sceneBackground);
-			g_engine->_mouse->show();
+			_graphics->sceneTransition(false, sceneBackground);
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
-			g_engine->_mouse->show();
+			_mouse->show();
 		} else {
 
 			_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 64, 0);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -766,9 +774,9 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 64, 0);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -778,9 +786,9 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 56, 0);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -797,11 +805,11 @@ void TotEngine::changeRoom() {
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_graphics->sceneTransition(true, NULL);
+			_mouse->hide();
+			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(false, sceneBackground);
-			g_engine->_mouse->show();
+			_graphics->sceneTransition(false, sceneBackground);
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -811,9 +819,9 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 56, 0);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -828,18 +836,18 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_graphics->sceneTransition(true, NULL);
-		g_engine->_sound->stopVoc();
+		_mouse->hide();
+		_graphics->sceneTransition(true, NULL);
+		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_bookTopic[0] == true && _currentRoomData->animationFlag == true)
 			disableSecondAnimation();
 		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+		_graphics->sceneTransition(false, sceneBackground);
 		_cpCounter = _cpCounter2;
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
@@ -854,11 +862,11 @@ void TotEngine::changeRoom() {
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_graphics->sceneTransition(true, NULL);
+			_mouse->hide();
+			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(false, sceneBackground);
-			g_engine->_mouse->show();
+			_graphics->sceneTransition(false, sceneBackground);
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -868,9 +876,9 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 131, -1);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -886,11 +894,11 @@ void TotEngine::changeRoom() {
 			_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
-			g_engine->_graphics->sceneTransition(true, NULL);
+			_mouse->hide();
+			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			g_engine->_graphics->sceneTransition(false, sceneBackground);
-			g_engine->_mouse->show();
+			_graphics->sceneTransition(false, sceneBackground);
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -900,9 +908,9 @@ void TotEngine::changeRoom() {
 			goToObject(_currentZone, _targetZone);
 			freeAnimation();
 			freeScreenObjects();
-			g_engine->_mouse->hide();
+			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 131, 1);
-			g_engine->_mouse->show();
+			_mouse->show();
 			oldGridX = 0;
 			oldGridY = 0;
 			checkMouseGrid();
@@ -917,9 +925,9 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_graphics->sceneTransition(true, NULL);
-		g_engine->_sound->stopVoc();
+		_mouse->hide();
+		_graphics->sceneTransition(true, NULL);
+		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		switch (_niche[0][_niche[0][3]]) {
 		case 0:
@@ -937,12 +945,12 @@ void TotEngine::changeRoom() {
 		}
 		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		if (_currentRoomData->code == 4)
-			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
+			_sound->loadVoc("GOTA", 140972, 1029);
+		_graphics->sceneTransition(false, sceneBackground);
 		_cpCounter = _cpCounter2;
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
@@ -956,9 +964,9 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_graphics->sceneTransition(true, NULL);
-		g_engine->_sound->stopVoc();
+		_mouse->hide();
+		_graphics->sceneTransition(true, NULL);
+		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		switch (_niche[1][_niche[1][3]]) {
 		case 0:
@@ -979,7 +987,7 @@ void TotEngine::changeRoom() {
 		}
 		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		if (_isTrapSet) {
 			_currentRoomData->animationFlag = true;
 			loadAnimation(_currentRoomData->animationName);
@@ -1002,11 +1010,11 @@ void TotEngine::changeRoom() {
 				}
 			assembleScreen();
 		}
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, sceneBackground);
 		if ((_isRedDevilCaptured == false) && (_isTrapSet == false))
 			runaroundRed();
 		_cpCounter = _cpCounter2;
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
@@ -1023,24 +1031,24 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		freeAnimation();
 		freeScreenObjects();
-		g_engine->_mouse->hide();
-		g_engine->_graphics->sceneTransition(true, NULL);
-		g_engine->_sound->stopVoc();
+		_mouse->hide();
+		_graphics->sceneTransition(true, NULL);
+		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_cpCounter > 89)
 			showError(274);
-		g_engine->_sound->setSfxVolume(g_engine->_sound->_leftSfxVol, g_engine->_sound->_rightSfxVol);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		switch (_currentRoomData->code) {
 		case 4:
-			g_engine->_sound->loadVoc("GOTA", 140972, 1029);
+			_sound->loadVoc("GOTA", 140972, 1029);
 			break;
 		case 23:
-			g_engine->_sound->autoPlayVoc("FUENTE", 0, 0);
+			_sound->autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
-		g_engine->_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, sceneBackground);
 		_cpCounter = _cpCounter2;
-		g_engine->_mouse->show();
+		_mouse->show();
 		oldGridX = 0;
 		oldGridY = 0;
 		checkMouseGrid();
