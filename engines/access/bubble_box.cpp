@@ -670,7 +670,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_vm->_boxSelectYOld = -1;
 	_vm->_boxSelectY = _startBox;
 
-	_vm->_numLines = (_bounds.bottom >> 3) - 2;
+	_vm->_numLines = (_bounds.height() / 8) - 2;
 	if (_type == TYPE_3)
 		--_vm->_numLines;
 
