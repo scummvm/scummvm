@@ -41,12 +41,11 @@ protected:
 	bool Cmd_PlayMovie(int argc, const char **argv);
 	bool Cmd_DumpScript(int argc, const char **argv);
 	bool Cmd_Timers(int argc, const char **argv);
-	bool Cmd_GetFlag(int argc, const char **argv);
-	bool Cmd_SetFlag(int argc, const char **argv);
-	bool Cmd_GetTravel(int argc, const char **argv);
-	bool Cmd_SetTravel(int argc, const char **argv);
-	bool Cmd_GetAsk(int argc, const char **argv);
-	bool Cmd_SetAsk(int argc, const char **argv);
+	bool Cmd_Flag(int argc, const char **argv);
+	bool Cmd_Travel(int argc, const char **argv);
+	bool Cmd_Ask(int argc, const char **argv);
+	bool Cmd_Inventory(int argc, const char **argv);
+	bool Cmd_Everything(int argc, const char **argv);
 
 public:
 	static Debugger *init(AccessEngine *vm);
