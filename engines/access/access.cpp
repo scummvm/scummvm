@@ -33,7 +33,7 @@ namespace Access {
 
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	: _gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
-	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
+	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]), _pictureTaken(_flags[176]) {
 	// Set up debug channels
 
 	_aboutBox = nullptr;

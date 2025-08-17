@@ -251,8 +251,6 @@ public:
 	byte _byte26CB5;
 	int _bcnt;
 	//byte *_tempList;
-	int16 _pictureTaken;
-	//
 
 	bool _vidEnd;
 	bool _clearSummaryFlag;
@@ -262,6 +260,7 @@ public:
 	int &_useItem;
 	int &_startup;
 	int &_manScaleOff;
+	int &_pictureTaken;
 
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
