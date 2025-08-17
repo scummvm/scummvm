@@ -812,8 +812,8 @@ void Scripts::cmdDoTravel() {
 		if (btnSelected != 2) {
 			int newRoomNum = _vm->_travelBox->_tempListIdx[boxX];
 			if (Martian::CAN_TRAVEL_MATRIX[newRoomNum] != _vm->_flags[171]) {
-				_vm->_bubbleBox->_bubbleTitle = "TRAVEL";
-				_vm->_bubbleBox->printString(_vm->_res->CANT_GET_THERE);
+				_vm->_bubbleBox->_bubbleDisplStr = "TRAVEL";
+				doCmdPrint_v1(_vm->_res->CANT_GET_THERE);
 				continue;
 			}
 			if (_vm->_player->_roomNumber != newRoomNum) {

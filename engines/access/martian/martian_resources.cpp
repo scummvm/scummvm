@@ -397,6 +397,8 @@ void MartianResources::load(Common::SeekableReadStream &s) {
 	_font1 = new MartianFont(6, ARRAYSIZE(FONT1_WIDTHS), FONT1_WIDTHS, FONT1_OFFSETS, FONT1_DATA);
 	_font2 = new MartianFont(6, ARRAYSIZE(FONT2_WIDTHS), FONT2_WIDTHS, FONT2_OFFSETS, FONT2_DATA);
 	_bitFont = new MartianBitFont(ARRAYSIZE(BITFONT_DATA) / 8, BITFONT_DATA);
+
+	CANT_GET_THERE = "YOU CAN'T GET THERE FROM HERE.";
 }
 
 const byte *MartianResources::getCursor(int num) const {
