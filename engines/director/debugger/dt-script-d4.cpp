@@ -95,16 +95,6 @@ public:
 	}
 
 	virtual void visit(const LingoDec::CallNode &node) override {
-		int32 obj = 0;
-		for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
-			if (node._startOffset == _script.bytecodeArray[i].pos) {
-				// This obj represents the index of the handler being called
-				// The index may be local (lingo context-wide) or global (cast-wide)
-				obj = _script.bytecodeArray[i].obj;
-				break;
-			}
-		}
-
 		// new line only if it's a statement
 		if (node.isStatement) {
 			renderLine(node._startOffset);
@@ -119,13 +109,21 @@ public:
 			ImGui::EndTooltip();
 		}
 		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
+			int32 obj = 0;
+			for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
+				if (node._startOffset == _script.bytecodeArray[i].pos) {
+					// This obj represents the index of the handler being called
+					// The index may be local (lingo context-wide) or global (cast-wide)
+					obj = _script.bytecodeArray[i].obj;
+					break;
+				}
+			}
 			int16 castId = getCastIdFromScriptNameIndex(obj, _script.id, node.name);
-			debug("Does it work? %d", castId);
 			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(castId, _script.id.castLib), node.name);
 			script.moviePath = _script.moviePath;
 			script.handlerName = node.name;
 			setScriptToDisplay(script);
-			_state->_dbg._isScriptDirty = true;
+			_state->_dbg._goToDefinition = true;
 		}
 		ImGui::SameLine();
 
@@ -991,6 +989,11 @@ private:
 				ImGui::SameLine();
 			}
 		}
+		if (_state->_dbg._goToDefinition && _scrollTo) {
+			ImGui::SetScrollHereY(0.5f);
+			_state->_dbg._goToDefinition = false;
+		}
+
 		indent();
 
 		if (isMethod && !_script.propertyNames.empty() && node.handler == &node.handler->script->handlers[0]) {
@@ -1021,10 +1024,6 @@ private:
 		}
 
 		ImGui::NewLine();
-		if (_state->_dbg._isScriptDirty && _scrollTo) {
-			debug("I set scroll, %s", _script.handlerId.c_str());
-			ImGui::SetScrollHereY(0.5f);
-		}
 		unindent();
 		node.block->accept(*this);
 

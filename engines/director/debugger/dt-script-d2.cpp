@@ -69,6 +69,11 @@ public:
 			}
 			ImGui::NewLine();
 		}
+		if (_state->_dbg._goToDefinition && _scrollTo) {
+			ImGui::SetScrollHereY(0.5f);
+			_state->_dbg._goToDefinition = false;
+		}
+
 		indent();
 		for (uint i = 0; i < node->stmts->size(); i++) {
 			Node *stmt = (*node->stmts)[i];
@@ -497,10 +502,12 @@ public:
 				}
 			}
 
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(obj, _script.id.castLib), *node->name);
+			int16 castId = getCastIdFromScriptNameIndex(obj, _script.id, *node->name);
+			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(castId, _script.id.castLib), *node->name);
 			script.moviePath = _script.moviePath;
 			script.handlerName = *node->name;
 			setScriptToDisplay(script);
+			_state->_dbg._goToDefinition = true;
 		}
 		ImGui::SameLine();
 		for (uint i = 0; i < node->args->size(); i++) {

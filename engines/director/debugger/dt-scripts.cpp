@@ -166,7 +166,6 @@ static void updateCurrentScript() {
 	if (callstack.empty())
 		return;
 
-
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
 	Director::Movie *movie = g_director->getCurrentMovie();
@@ -481,14 +480,14 @@ void showExecutionContext() {
 
 				// Get all the handlers from the script
 				ScriptContext* context = getScriptContext(current.id);
-				Movie *movie = g_director->getCurrentMovie();
-
+				context->_id;
 				if (!context || context->_functionHandlers.size() == 1) {
 					renderScript(current, _state->_functions._scriptData->_showByteCode, true);
 				} else {
 					for (auto &functionHandler : context->_functionHandlers) {
 						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
 						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+						Movie *movie = g_director->getCurrentMovie();
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.handlerName = getHandlerName(functionHandler._value);
 						renderScript(script, _state->_functions._scriptData->_showByteCode, script == current);
