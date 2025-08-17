@@ -253,7 +253,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		loadObjects();
 
 		g_engine->_graphics->loadPaletteFromFile("DEFAULT");
-		loadScreenMemory();
+		initScreenPointers();
 
 		g_engine->_graphics->totalFadeOut(0);
 		g_engine->_graphics->clear();

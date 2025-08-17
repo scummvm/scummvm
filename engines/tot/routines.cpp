@@ -31,7 +31,7 @@
 namespace Tot {
 
 void TotEngine::drawText(uint number) {
-	assignText();
+	readTextFile();
 	uint foo = 0;
 	sayLine(number, 255, 0, foo, false);
 	_verbFile.close();
@@ -920,7 +920,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 
 	if (_curObject.used[0] != 9) {
 		if (_curObject.beforeUseTextRef != 0) {
-			assignText();
+			readTextFile();
 			textRef = readVerbRegister(_curObject.beforeUseTextRef);
 			description = textRef.text;
 			for (yaux = 0; yaux < textRef.text.size(); yaux++)
@@ -934,7 +934,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	} else {
 
 		if (_curObject.afterUseTextRef != 0) {
-			assignText();
+			readTextFile();
 			textRef = readVerbRegister(_curObject.afterUseTextRef);
 			description = textRef.text;
 			for (yaux = 0; yaux < textRef.text.size(); yaux++)
@@ -2107,7 +2107,7 @@ void TotEngine::useScreenObject() {
 						if (completedListItems == 5) {
 							_obtainedList1 = false;
 							_list1Complete = true;
-							assignText();
+							readTextFile();
 							sayLine(1018, 255, 0, foo, false);
 							sayLine(foo, 253, 249, foo, true);
 							_verbFile.close();
@@ -2130,7 +2130,7 @@ void TotEngine::useScreenObject() {
 							drawBackpack();
 							_mouse->show();
 						} else {
-							assignText();
+							readTextFile();
 							sayLine(_curObject.useTextRef, 255, 0, foo, false);
 							_mouse->hide();
 							animateGive(_charFacingDirection, 1);
@@ -2159,7 +2159,7 @@ void TotEngine::useScreenObject() {
 						if (completedListItems == 5) {
 							_obtainedList2 = false;
 							_list2Complete = true;
-							assignText();
+							readTextFile();
 							sayLine(1020, 255, 0, foo, false);
 							sayLine(foo, 253, 249, foo, true);
 							_verbFile.close();
@@ -2181,7 +2181,7 @@ void TotEngine::useScreenObject() {
 							drawBackpack();
 							_mouse->show();
 						} else {
-							assignText();
+							readTextFile();
 							sayLine(_curObject.useTextRef, 255, 0, foo, false);
 							_mouse->hide();
 							animateGive(_charFacingDirection, 1);
@@ -2196,7 +2196,7 @@ void TotEngine::useScreenObject() {
 			case 159: {
 				switch (_curObject.code) {
 				case 173: {
-					assignText();
+					readTextFile();
 					sayLine(1118, 255, 0, foo, false);
 					_mouse->hide();
 					animateGive(_charFacingDirection, 1);
@@ -2206,7 +2206,7 @@ void TotEngine::useScreenObject() {
 					_verbFile.close();
 				} break;
 				case 218: {
-					assignText();
+					readTextFile();
 					sayLine(687, 255, 0, foo, false);
 					_mouse->hide();
 					animateGive(_charFacingDirection, 1);
@@ -2225,7 +2225,7 @@ void TotEngine::useScreenObject() {
 				}
 			} break;
 			case 160: {
-				assignText();
+				readTextFile();
 				sayLine(2466, 255, 0, foo, false);
 				_mouse->hide();
 				animateGive(_charFacingDirection, 1);
@@ -2247,7 +2247,7 @@ void TotEngine::useScreenObject() {
 				case 563: {
 					_isPottersManualDelivered = true;
 					if (_isPottersWheelDelivered && _isGreenDevilDelivered && _isMudDelivered) {
-						assignText();
+						readTextFile();
 						sayLine(2696, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2274,7 +2274,7 @@ void TotEngine::useScreenObject() {
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
 					} else {
-						assignText();
+						readTextFile();
 						sayLine(2696, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2292,7 +2292,7 @@ void TotEngine::useScreenObject() {
 				case 598: {
 					_isMudDelivered = true;
 					if (_isPottersWheelDelivered && _isGreenDevilDelivered && _isPottersManualDelivered) {
-						assignText();
+						readTextFile();
 						sayLine(2821, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2319,7 +2319,7 @@ void TotEngine::useScreenObject() {
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
 					} else {
-						assignText();
+						readTextFile();
 						sayLine(2821, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2337,7 +2337,7 @@ void TotEngine::useScreenObject() {
 				case 623: {
 					_isPottersWheelDelivered = true;
 					if (_isMudDelivered && _isGreenDevilDelivered && _isPottersManualDelivered) {
-						assignText();
+						readTextFile();
 						sayLine(2906, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2364,7 +2364,7 @@ void TotEngine::useScreenObject() {
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
 					} else {
-						assignText();
+						readTextFile();
 						sayLine(2906, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2382,7 +2382,7 @@ void TotEngine::useScreenObject() {
 				case 701: {
 					_isGreenDevilDelivered = true;
 					if (_isMudDelivered && _isPottersWheelDelivered && _isPottersManualDelivered) {
-						assignText();
+						readTextFile();
 						sayLine(3188, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);
@@ -2409,7 +2409,7 @@ void TotEngine::useScreenObject() {
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
 					} else {
-						assignText();
+						readTextFile();
 						sayLine(3188, 255, 0, foo, false);
 						_mouse->hide();
 						animateGive(0, 1);

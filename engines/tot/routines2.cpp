@@ -38,7 +38,7 @@
 
 namespace Tot {
 
-void TotEngine::loadScreenMemory() {
+void TotEngine::initScreenPointers() {
 	_screenSize = 65520;
 	sceneBackground = (byte *)malloc(_screenSize);
 	backgroundCopy = (byte *)malloc(_screenSize);
@@ -110,7 +110,7 @@ void TotEngine::loadAnimation(Common::String animationName) {
 	debug("Finished loading animation!");
 }
 
-void TotEngine::assignText() {
+void TotEngine::readTextFile() {
 	if (!_verbFile.open("CONVERSA.TXT")) {
 		showError(313);
 	}

@@ -124,7 +124,7 @@ int TotEngine::engineStart() {
 	_graphics->clear();
 
 	_graphics->loadPaletteFromFile("DEFAULT");
-	loadScreenMemory();
+	initScreenPointers();
 	initialLogo();
 	_sound->playMidi("INTRODUC", true);
 	_sound->setMidiVolume(3, 3);

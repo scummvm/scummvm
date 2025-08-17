@@ -112,7 +112,7 @@ private:
 	void dropObjectInScreen(ScreenObject replacementObject);
 	void calculateTrajectory(uint finalX, uint finalY);
 	void animatedSequence(uint numSequence);
-	void loadScreenMemory();
+	void initScreenPointers();
 	void loadAnimation(Common::String animation);
 	void updateAltScreen(byte altScreenNumber);
 	void verifyCopyProtection();
@@ -477,7 +477,7 @@ public:
 	void freeAnimation();
 	void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5);
 	void drawMenu(byte menuNumber);
-	void assignText();
+	void readTextFile();
 	void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
 	void sayLine(uint textRef, byte textColor, byte shadowColor, uint &responseNumber, bool isWithinConversation);
 	void goToObject(byte zone1, byte zone2);

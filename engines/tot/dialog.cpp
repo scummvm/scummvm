@@ -443,7 +443,7 @@ void talk(byte characterIndex) {
 	Common::String conversationMatrix[16];
 	drawTalkMenu();
 	endOfConversation = false;
-	g_engine->assignText();
+	g_engine->readTextFile();
 	// The original game makes a copy of the file upon starting a new game. .007 is the current game (the game
 	// that resumes when clicking "continue game" in the main menu. Part of the savegame data is this 007
 	// conversation file which marks conversatino topics as already gone through or not.
@@ -569,7 +569,7 @@ void talkToSceneObject() {
 	if (g_engine->_curObject.speaking > 0) {
 		talk(g_engine->_curObject.speaking);
 	} else {
-		g_engine->assignText();
+		g_engine->readTextFile();
 		uint foo = 0;
 		g_engine->sayLine((Random(10) + 1039), 255, 0, foo, false);
 		g_engine->_verbFile.close();
