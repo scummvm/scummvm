@@ -104,6 +104,11 @@ typedef struct ScriptData {
 	bool _showScript = false;
 } ScriptData;
 
+typedef struct WindowFlag {
+	const char *name;
+	bool *flag;
+} WindowFlag;
+
 typedef struct ImGuiState {
 	struct {
 		Common::HashMap<CastMember *, ImGuiImage> _textures;
@@ -228,8 +233,7 @@ void showExecutionContext();
 // dt-save-state.cpp
 void saveCurrentState();
 void loadSavedState();
-long long int getWindowFlags();
-void setWindowFlags(long long int openFlags);
+Common::Array<WindowFlag> getWindowFlags();
 
 extern ImGuiState *_state;
 
