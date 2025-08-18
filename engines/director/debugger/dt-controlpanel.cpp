@@ -69,6 +69,8 @@ static bool stepInShouldPauseDebugger() {
 		_state->_dbg._lastLinePC = line;
 		return true;
 	}
+
+	debug("I'm returning false for some reason, %d:%d", g_lingo->_state->callstack.size(), _state->_dbg._callstackSize);
 	return false;
 }
 
@@ -76,13 +78,13 @@ static bool stepOutShouldPause() {
 	const uint32 line = getLineFromPC();
 
 	// we stop when:
-	// - the statement line is different
 	// - OR we go up in the callstack
 	if (g_lingo->_state->callstack.size() < _state->_dbg._callstackSize) {
 		_state->_dbg._lastLinePC = line;
 		return true;
 	}
 
+	debug("I'm returning false for some reason, %d:%d", g_lingo->_state->callstack.size(), _state->_dbg._callstackSize);
 	return false;
 }
 
