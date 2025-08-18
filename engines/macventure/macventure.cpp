@@ -138,6 +138,8 @@ Common::Error MacVentureEngine::run() {
 	_decodingNamingArticles = new StringTable(this, _resourceManager, kNamingArticlesStringTableID);
 	_decodingIndirectArticles = new StringTable(this, _resourceManager, kIndirectArticlesStringTableID);
 
+	SearchMan.addSubDirectoryMatching(_gamePath, _filenames->getString(3));
+
 	loadDataBundle();
 
 	// Big class instantiation
@@ -1149,13 +1151,7 @@ Common::String MacVentureEngine::getCommandsPausedString() const {
 }
 
 Common::Path MacVentureEngine::getFilePath(FilePathID id) const {
-	if (id <= 3) { // We don't want a file in the subdirectory
-		return Common::Path(_filenames->getString(id));
-	} else { // We want a game file
-		Common::Path path(_filenames->getString(3));
-		path.joinInPlace(_filenames->getString(id));
-		return path;
-	}
+	return Common::Path(_filenames->getString(id));
 }
 
 bool MacVentureEngine::isOldText() const {

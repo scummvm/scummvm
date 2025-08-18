@@ -62,6 +62,11 @@ bool MacVentureMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSavesUseExtendedFormat);
 }
 
+void MacVentureEngine::initializePath(const Common::FSNode &gamePath) {
+	Engine::initializePath(gamePath);
+	_gamePath = gamePath;
+}
+
 bool MacVentureEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
