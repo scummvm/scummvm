@@ -74,6 +74,9 @@ void MartianEngine::initVariables() {
 
 	ARRAYCLEAR(_ask);
 	_ask[33] = 1;
+
+	ARRAYCLEAR(_flags);
+
 }
 
 void MartianEngine::setNoteParams() {
@@ -337,6 +340,7 @@ void MartianEngine::dead(int deathId) {
 	_fonts._charSet._lo = 1;
 	_fonts._charFor._lo = 247;
 	_fonts._charFor._hi = 255;
+	Font::_fontColors[3] = 247;
 	_screen->_maxChars = 50;
 	_screen->_printOrg = Common::Point(24, 18);
 	_screen->_printStart = Common::Point(24, 18);
