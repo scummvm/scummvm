@@ -159,6 +159,58 @@ void showScriptCasts() {
 	}
 }
 
+static void addToOpenHandlers(ImGuiScript handler) {
+	_state->_openHandlers.remove(handler);
+	_state->_openHandlers.push_back(handler);
+}
+
+static bool showHandler(ImGuiScript handler) {
+	ScriptContext *ctx = getScriptContext(handler.id);
+	Common::String wName(ctx->asString());
+
+	ImGui::SetNextWindowPos(ImVec2(20, 160), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(480, 540), ImGuiCond_FirstUseEver);
+
+	bool closed = true;
+
+	if (ImGui::Begin(wName.c_str(), &closed)) {
+		if (!ctx || ctx->_functionHandlers.size() <= 1) {
+			renderScript(handler, false, true);
+		} else {
+			for (auto &functionHandler : ctx->_functionHandlers) {
+				ImGuiScript script = toImGuiScript(ctx->_scriptType, handler.id, functionHandler._key);
+				script.byteOffsets = ctx->_functionByteOffsets[script.handlerId];
+				_state->_dbg._goToDefinition = true;
+				renderScript(script, false, script == handler);
+				ImGui::NewLine();
+			}
+		}
+	}
+	ImGui::End();
+
+	if (!closed)
+		return false;
+
+	return true;
+}
+
+/**
+ * Display all open handlers
+ */
+void showHandlers() {
+	if (_state->_openHandlers.empty()) {
+		return;
+	}
+
+	for (Common::List<ImGuiScript>::iterator handler = _state->_openHandlers.begin(); handler != _state->_openHandlers.end();) {
+		if (!showHandler(*handler)) {
+			handler = _state->_openHandlers.erase(handler);
+		} else {
+			handler++;
+		}
+	}
+}
+
 static void updateCurrentScript() {
 	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
 		return;
@@ -234,7 +286,8 @@ void showFuncList() {
 								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);
-								setScriptToDisplay(script);
+								addToOpenHandlers(script);
+								_state->_dbg._goToDefinition = true;
 							}
 							ImGui::TableNextColumn();
 							ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
@@ -272,7 +325,8 @@ void showFuncList() {
 								script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
 								script.moviePath = movie->getArchive()->getPathName().toString();
 								script.handlerName = getHandlerName(functionHandler._value);
-								setScriptToDisplay(script);
+								addToOpenHandlers(script);
+								_state->_dbg._goToDefinition = true;
 							}
 							ImGui::TableNextColumn();
 							ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());

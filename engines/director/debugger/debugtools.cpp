@@ -534,6 +534,7 @@ void onImGuiRender() {
 
 	showScriptCasts();
 	showExecutionContext();
+	showHandlers();
 
 	showControlPanel();
 	showVars();

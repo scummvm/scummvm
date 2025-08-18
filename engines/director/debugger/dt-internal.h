@@ -166,6 +166,7 @@ typedef struct ImGuiState {
 	bool _wasHidden = false;
 
 	Common::List<CastMemberID> _scriptCasts;
+	Common::List<ImGuiScript> _openHandlers;
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
@@ -229,6 +230,7 @@ void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo);    
 void showFuncList();
 void showScriptCasts();
 void showExecutionContext();
+void showHandlers();
 
 // dt-save-state.cpp
 void saveCurrentState();
