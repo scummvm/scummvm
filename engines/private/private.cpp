@@ -52,7 +52,7 @@ extern int parse(const char *);
 PrivateEngine::PrivateEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _image(nullptr), _videoDecoder(nullptr),
 	  _compositeSurface(nullptr), _transparentColor(0), _frameImage(nullptr),
-	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), _subtitles(nullptr),
+	  _framePalette(nullptr), _maxNumberClicks(0), _sirenWarning(0), _subtitles(nullptr), _sfxSubtitles(false),
 	  _screenW(640), _screenH(480) {
 	_rnd = new Common::RandomSource("private");
 
@@ -203,10 +203,15 @@ Common::Error PrivateEngine::run() {
 	// Only enable if subtitles are available
 	bool useSubtitles = false;
 	if (!Common::parseBool(ConfMan.get("subtitles"), useSubtitles))
-		error("Failed to parse bool from cheats options");
+		warning("Failed to parse bool from subtitles options");
+
+	if (!Common::parseBool(ConfMan.get("sfxSubtitles"), _sfxSubtitles))
+		warning("Failed to parse bool from sfxSubtitles options");
 
 	if (useSubtitles) {
 		g_system->showOverlay(false);
+	} else if (_sfxSubtitles) {
+		warning("SFX subtitles are enabled, but no subtitles will be shown");
 	}
 
 	_language = Common::parseLanguage(ConfMan.get("language"));
@@ -1500,17 +1505,19 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		_subtitles->loadSRTFile(subPath);
 		g_system->showOverlay(false);
 		int16 h = g_system->getOverlayHeight();
-
+		float scale = h / 2160.f;
 		// If we are in the main menu, we need to adjust the position of the subtitles
-		if (_currentSetting == getMainDesktopSetting()) {
-			_subtitles->setBBox(Common::Rect(20, h - 100, g_system->getOverlayWidth() - 20, h - 20));
+		if (_mode == 0) {
+			_subtitles->setBBox(Common::Rect(20, h - 200 * scale, g_system->getOverlayWidth() - 20, h - 20));
+		} else if (_mode == -1) {
+			_subtitles->setBBox(Common::Rect(20, h - 220 * scale, g_system->getOverlayWidth() - 20, h - 20));
 		} else {
-			_subtitles->setBBox(Common::Rect(20, h - 160, g_system->getOverlayWidth() - 20, h - 20));
+			_subtitles->setBBox(Common::Rect(20, h - 160 * scale, g_system->getOverlayWidth() - 20, h - 20));
 		}
-
+		int fontSize = MAX(8, int(50 * scale));
 		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("LiberationSans-Regular.ttf", 50);
-
+		_subtitles->setFont("LiberationSans-Regular.ttf", fontSize, "regular");
+		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
 	} else {
 		delete _subtitles;
 		_subtitles = nullptr;
@@ -1721,7 +1728,7 @@ void PrivateEngine::drawScreen() {
 	}
 
 	if (_subtitles && _videoDecoder && !_videoDecoder->isPaused())
-		_subtitles->drawSubtitle(_videoDecoder->getTime(), false);
+		_subtitles->drawSubtitle(_videoDecoder->getTime(), false, _sfxSubtitles);
 	g_system->updateScreen();
 }
 

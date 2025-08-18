@@ -38,6 +38,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_SFX_SUBTITLES,
+		{
+			_s("Display SFX subtitles"),
+			_s("Use SFX subtitles."),
+			"sfxSubtitles",
+			false,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

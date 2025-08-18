@@ -221,6 +221,7 @@ public:
 
 	void loadSubtitles(const Common::Path &path);
 	Video::Subtitles *_subtitles;
+	bool _sfxSubtitles;
 
 	Graphics::Surface *decodeImage(const Common::String &file, byte **palette);
 	//byte *decodePalette(const Common::String &name);
