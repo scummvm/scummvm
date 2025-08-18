@@ -86,10 +86,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Carbon Copy The Game", "Carbon Copy", "322410318c60045928a10f6b4c0b0a87", 519189),
 	FANGAMEN("Carbon Copy The Game", "Carbon Copy", "53417dce5931dfb96a21583dbafe1f8c", 331759), // alt version
 	FANGAMEN("Carbon Copy The Game", "Carbon Copy", "dd1f8eb1fe741cfb0df8827ecb04e584", 518580), // alt version
-	FANGAME("Castle of Ert", "069daab46729291a615e9ee3528008ff", 198699),
 	FANGAME("Castle of Ert", "31a832c2be51e622fb2c586803dadf9e", 198699), // alt version
 	FANGAME("Castle of Ert", "289d1f944d7c30b257587a7a49579d0f", 198713), // alt version
-	FANGAME("Castle of Ert", "ecadcdd9bdee68aeb32507932857db30", 198727), // alt version, v1.0
 	FANGAMEN("Castle of Ert", "Castle of Ert V1.2", "bc1c119b4a95ea6891a6e22c35e6c2d8", 201984),
 	FANGAMEN("City Adventure", "City Adventure 1.1", "0c9415ea525ffeedb346f7a62ebe6cd3", 285789),
 	FANGAME("Color by Number", "8fc77e5976ca25d05cf74db3ec3e5ef2", 528306),
