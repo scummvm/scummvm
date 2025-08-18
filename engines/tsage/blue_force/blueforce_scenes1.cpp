@@ -3051,7 +3051,7 @@ void Scene180::signal() {
 		_palms.setDetails(6, 180, 12, 13, 14, 1);
 		_garage.setDetails(Rect(241, 85, 319, 121), 180, 30, 31, 32, 1, NULL);
 		_fence.setDetails(Rect(0, 109, 21, 125), 180, 9, 10, 11, 1, NULL);
-		_house.setDetails(4, 180, 24, 25, 26, 1);
+		_house.setDetails(5, 180, 24, 25, 26, 1);
 		_steps.setDetails(7, 180, 6, 7, 8, 1);
 		_curb.setDetails(2, 180, 3, 4, 5, 1);
 		_sky.setDetails(Rect(0, 0, 319, 190), 180, 0, 1, 2, 1, NULL);
