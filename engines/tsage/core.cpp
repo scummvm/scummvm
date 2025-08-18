@@ -1766,7 +1766,7 @@ void SceneItem::display(int resNum, int lineNum, ...) {
 				// Set secondary fg color
 				int v = va_arg(va, int);
 				g_globals->_sceneText._color3 = v;
-				g_globals->gfxManager()._font._colors.foreground = v;
+				g_globals->gfxManager()._font._colors2.foreground = v;
 				break;
 			}
 			case SET_POS_MODE:
