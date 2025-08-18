@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-18 10:12+0000\n"
+"POT-Creation-Date: 2025-08-18 10:17+0000\n"
 "PO-Revision-Date: 2023-02-26 15:01+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -331,9 +331,10 @@ msgstr "Іншае сховішча працуе цяпер. Ці хочаце �
 #: gui/launcher.cpp:510 gui/options.cpp:3486 gui/options.cpp:3860
 #: base/main.cpp:592 backends/events/default/default-events.cpp:193
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
-#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/lab/metaengine.cpp:197 engines/parallaction/metaengine.cpp:169
+#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:362
+#: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
+#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
+#: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
@@ -344,9 +345,10 @@ msgstr "Так"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:510 gui/options.cpp:3486 gui/options.cpp:3860
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
-#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
-#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/lab/metaengine.cpp:204 engines/parallaction/metaengine.cpp:175
+#: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:368
+#: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
+#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
+#: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
@@ -470,7 +472,7 @@ msgid "Cancel download"
 msgstr "Скасаваць ладаваньне"
 
 #: gui/downloaddialog.cpp:67 gui/downloadpacksdialog.cpp:202
-#: gui/downloadpacksdialog.cpp:282
+#: gui/downloadpacksdialog.cpp:282 engines/efh/metaengine.cpp:524
 msgid "Hide"
 msgstr "Схаваць"
 
@@ -3810,19 +3812,19 @@ msgstr "Стандартныя клявішы гульні"
 #: engines/cge/metaengine.cpp:203 engines/cge2/metaengine.cpp:216
 #: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
-#: engines/efh/metaengine.cpp:234 engines/groovie/metaengine.cpp:205
-#: engines/hdb/metaengine.cpp:207 engines/hopkins/metaengine.cpp:211
-#: engines/hugo/metaengine.cpp:97 engines/illusions/metaengine.cpp:94
-#: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:502
-#: engines/lure/metaengine.cpp:177 engines/made/metaengine.cpp:126
-#: engines/mads/metaengine.cpp:280 engines/mtropolis/metaengine.cpp:161
-#: engines/nancy/input.cpp:181 engines/parallaction/metaengine.cpp:138
-#: engines/saga/metaengine.cpp:278 engines/sludge/keymapper_tables.h:561
-#: engines/sludge/keymapper_tables.h:580 engines/stark/metaengine.cpp:189
-#: engines/sword1/metaengine.cpp:271 engines/tinsel/metaengine.cpp:246
-#: engines/toon/metaengine.cpp:86 engines/touche/metaengine.cpp:122
-#: engines/trecision/metaengine.cpp:125 engines/tsage/metaengine.cpp:178
-#: engines/tucker/metaengine.cpp:172 engines/ultima/ultima4/metaengine.cpp:224
+#: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
+#: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:97
+#: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:367
+#: engines/kyra/engine/lol.cpp:502 engines/lure/metaengine.cpp:177
+#: engines/made/metaengine.cpp:126 engines/mads/metaengine.cpp:280
+#: engines/mtropolis/metaengine.cpp:161 engines/nancy/input.cpp:181
+#: engines/parallaction/metaengine.cpp:138 engines/saga/metaengine.cpp:278
+#: engines/sludge/keymapper_tables.h:561 engines/sludge/keymapper_tables.h:580
+#: engines/stark/metaengine.cpp:189 engines/sword1/metaengine.cpp:271
+#: engines/tinsel/metaengine.cpp:246 engines/toon/metaengine.cpp:86
+#: engines/touche/metaengine.cpp:122 engines/trecision/metaengine.cpp:125
+#: engines/tsage/metaengine.cpp:178 engines/tucker/metaengine.cpp:172
+#: engines/ultima/ultima4/metaengine.cpp:224
 #: engines/ultima/nuvie/metaengine.cpp:235
 #: engines/ultima/ultima8/metaengine.cpp:139 engines/vcruise/metaengine.cpp:158
 #: engines/wintermute/keymapper_tables.h:42 engines/zvision/metaengine.cpp:203
@@ -3845,19 +3847,18 @@ msgstr "Сярэдні пстрык"
 #: engines/cge/metaengine.cpp:209 engines/cge2/metaengine.cpp:222
 #: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
-#: engines/efh/metaengine.cpp:240 engines/groovie/metaengine.cpp:211
-#: engines/hopkins/metaengine.cpp:217 engines/hugo/metaengine.cpp:104
-#: engines/illusions/metaengine.cpp:101 engines/kyra/engine/eobcommon.cpp:368
-#: engines/kyra/engine/lol.cpp:503 engines/lure/metaengine.cpp:183
-#: engines/made/metaengine.cpp:133 engines/mads/metaengine.cpp:286
-#: engines/mtropolis/metaengine.cpp:167 engines/nancy/input.cpp:188
-#: engines/parallaction/metaengine.cpp:144 engines/saga/metaengine.cpp:289
-#: engines/sludge/keymapper_tables.h:567 engines/sludge/keymapper_tables.h:586
-#: engines/stark/metaengine.cpp:195 engines/sword1/metaengine.cpp:277
-#: engines/tinsel/metaengine.cpp:252 engines/toon/metaengine.cpp:92
-#: engines/touche/metaengine.cpp:128 engines/trecision/metaengine.cpp:131
-#: engines/tsage/metaengine.cpp:184 engines/tucker/metaengine.cpp:178
-#: engines/ultima/ultima4/metaengine.cpp:230
+#: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:217
+#: engines/hugo/metaengine.cpp:104 engines/illusions/metaengine.cpp:101
+#: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
+#: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:133
+#: engines/mads/metaengine.cpp:286 engines/mtropolis/metaengine.cpp:167
+#: engines/nancy/input.cpp:188 engines/parallaction/metaengine.cpp:144
+#: engines/saga/metaengine.cpp:289 engines/sludge/keymapper_tables.h:567
+#: engines/sludge/keymapper_tables.h:586 engines/stark/metaengine.cpp:195
+#: engines/sword1/metaengine.cpp:277 engines/tinsel/metaengine.cpp:252
+#: engines/toon/metaengine.cpp:92 engines/touche/metaengine.cpp:128
+#: engines/trecision/metaengine.cpp:131 engines/tsage/metaengine.cpp:184
+#: engines/tucker/metaengine.cpp:178 engines/ultima/ultima4/metaengine.cpp:230
 #: engines/ultima/nuvie/metaengine.cpp:241
 #: engines/ultima/ultima8/metaengine.cpp:145
 #: engines/wintermute/keymapper_tables.h:48 engines/zvision/metaengine.cpp:209
@@ -3891,11 +3892,11 @@ msgstr "Мэню гульні"
 #. I18N: Skipping cutscene playback
 #: engines/metaengine.cpp:112 engines/access/metaengine.cpp:202
 #: engines/composer/metaengine.cpp:125 engines/drascula/metaengine.cpp:224
-#: engines/freescape/movement.cpp:87 engines/grim/grim.cpp:533
-#: engines/grim/grim.cpp:633 engines/illusions/metaengine.cpp:142
-#: engines/made/metaengine.cpp:140 engines/mohawk/myst.cpp:566
-#: engines/mohawk/riven.cpp:847 engines/prince/metaengine.cpp:269
-#: engines/wintermute/keymapper_tables.h:220
+#: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:87
+#: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
+#: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:140
+#: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
+#: engines/prince/metaengine.cpp:269 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -4771,9 +4772,9 @@ msgstr "Y"
 #: backends/platform/sdl/miyoo/miyoo.cpp:94
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:46
-#: engines/got/metaengine.cpp:61 engines/mm/mm1/metaengine.cpp:49
-#: engines/mm/mm1/metaengine.cpp:92 engines/supernova/metaengine.cpp:303
-#: engines/titanic/metaengine.cpp:233
+#: engines/efh/metaengine.cpp:397 engines/got/metaengine.cpp:61
+#: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
+#: engines/supernova/metaengine.cpp:303 engines/titanic/metaengine.cpp:233
 msgid "Select"
 msgstr "Выбраць"
 
@@ -5950,19 +5951,20 @@ msgstr "Праверыць абновы..."
 #: engines/access/metaengine.cpp:192 engines/bbvs/metaengine.cpp:92
 #: engines/buried/metaengine.cpp:133 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
-#: engines/drascula/metaengine.cpp:205 engines/hopkins/metaengine.cpp:206
-#: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
-#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
-#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/drascula/metaengine.cpp:205 engines/efh/metaengine.cpp:256
+#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
+#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
+#: engines/queen/metaengine.cpp:146 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -5983,7 +5985,7 @@ msgstr "Прапусьціць радок"
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
-#: engines/efh/metaengine.cpp:258 engines/hdb/metaengine.cpp:213
+#: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 #: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:53
 msgid "Move up"
@@ -5992,7 +5994,7 @@ msgstr "Рухацца ўгару"
 #. I18N: Move Actor to downwards direction
 #: engines/access/metaengine.cpp:221 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
-#: engines/efh/metaengine.cpp:264 engines/hdb/metaengine.cpp:219
+#: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 #: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:54
 msgid "Move down"
@@ -6002,7 +6004,7 @@ msgstr "Рухацца ўніз"
 #. I18N: Move actor left during fight
 #: engines/access/metaengine.cpp:228 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
-#: engines/efh/metaengine.cpp:270 engines/hdb/metaengine.cpp:225
+#: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/kyra/engine/eobcommon.cpp:371 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
@@ -6014,7 +6016,7 @@ msgstr "Рухацца налева"
 #. I18N: Move actor right during fight
 #: engines/access/metaengine.cpp:235 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
-#: engines/efh/metaengine.cpp:276 engines/hdb/metaengine.cpp:231
+#: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/kyra/engine/eobcommon.cpp:372 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
@@ -6024,7 +6026,7 @@ msgstr "Рухацца направа"
 
 #. I18N: Move Actor to top-left direction
 #: engines/access/metaengine.cpp:242 engines/cine/metaengine.cpp:405
-#: engines/efh/metaengine.cpp:282
+#: engines/efh/metaengine.cpp:314
 #, fuzzy
 #| msgid "Move left"
 msgid "Move up-left"
@@ -6032,7 +6034,7 @@ msgstr "Рухацца налева"
 
 #. I18N: Move Actor to top-right direction
 #: engines/access/metaengine.cpp:247 engines/cine/metaengine.cpp:411
-#: engines/efh/metaengine.cpp:287
+#: engines/efh/metaengine.cpp:320
 #, fuzzy
 #| msgid "Move right"
 msgid "Move up-right"
@@ -6040,7 +6042,7 @@ msgstr "Рухацца направа"
 
 #. I18N: Move Actor to bottom-left direction
 #: engines/access/metaengine.cpp:252 engines/cine/metaengine.cpp:417
-#: engines/efh/metaengine.cpp:292
+#: engines/efh/metaengine.cpp:326
 #, fuzzy
 #| msgid "Move down"
 msgid "Move down-left"
@@ -6048,7 +6050,7 @@ msgstr "Рухацца ўніз"
 
 #. I18N: Move Actor to bottom-right direction
 #: engines/access/metaengine.cpp:257 engines/cine/metaengine.cpp:423
-#: engines/efh/metaengine.cpp:297
+#: engines/efh/metaengine.cpp:332
 #, fuzzy
 #| msgid "Move right"
 msgid "Move down-right"
@@ -6064,16 +6066,16 @@ msgstr "Глядзець"
 
 #. I18N: Combat command in Might & Magic 1
 #: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:136
-#: engines/cine/metaengine.cpp:342 engines/hdb/metaengine.cpp:237
-#: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:81
-#: engines/queen/metaengine.cpp:294 engines/saga/metaengine.cpp:379
-#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
-#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:201
-#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:227
-#: engines/scumm/help.cpp:253 engines/sky/metaengine.cpp:95
-#: engines/sludge/keymapper_tables.h:333 engines/supernova/metaengine.cpp:356
-#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
-#: engines/ultima/ultima4/metaengine.cpp:71
+#: engines/cine/metaengine.cpp:342 engines/efh/metaengine.cpp:462
+#: engines/hdb/metaengine.cpp:237 engines/lab/metaengine.cpp:323
+#: engines/mm/mm1/metaengine.cpp:81 engines/queen/metaengine.cpp:294
+#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
+#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
+#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
+#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
+#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
+#: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
+#: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6111,9 +6113,10 @@ msgid "Climb"
 msgstr ""
 
 #: engines/access/metaengine.cpp:288 engines/bbvs/metaengine.cpp:130
-#: engines/drascula/metaengine.cpp:250 engines/scumm/help.cpp:174
-#: engines/scumm/help.cpp:226 engines/supernova/metaengine.cpp:361
-#: engines/tsage/metaengine.cpp:216 engines/ultima/ultima4/metaengine.cpp:70
+#: engines/drascula/metaengine.cpp:250 engines/efh/metaengine.cpp:506
+#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
+#: engines/supernova/metaengine.cpp:361 engines/tsage/metaengine.cpp:216
+#: engines/ultima/ultima4/metaengine.cpp:70
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr "Гутарыць"
@@ -6503,16 +6506,16 @@ msgstr ""
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/buried/metaengine.cpp:136 engines/cine/metaengine.cpp:271
 #: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
-#: engines/drascula/metaengine.cpp:206 engines/efh/metaengine.cpp:230
-#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
-#: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
-#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
-#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
-#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
-#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
-#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
-#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
+#: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
+#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
+#: engines/lab/metaengine.cpp:152 engines/lure/metaengine.cpp:169
+#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
+#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
+#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -7188,8 +7191,8 @@ msgid "Delete selected saved game"
 msgstr "Выдаліць абраны захоў"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
-#: engines/bladerunner/metaengine.cpp:296 engines/titanic/metaengine.cpp:218
-#: engines/wintermute/keymapper_tables.h:670
+#: engines/bladerunner/metaengine.cpp:296 engines/efh/metaengine.cpp:415
+#: engines/titanic/metaengine.cpp:218 engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
 #: engines/wintermute/keymapper_tables.h:892
 #: engines/wintermute/keymapper_tables.h:1326
@@ -7204,8 +7207,8 @@ msgid "Scroll up"
 msgstr "Прагортваньне ўгару"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
-#: engines/bladerunner/metaengine.cpp:303 engines/titanic/metaengine.cpp:225
-#: engines/wintermute/keymapper_tables.h:677
+#: engines/bladerunner/metaengine.cpp:303 engines/efh/metaengine.cpp:403
+#: engines/titanic/metaengine.cpp:225 engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
 #: engines/wintermute/keymapper_tables.h:899
 #: engines/wintermute/keymapper_tables.h:1333
@@ -7233,7 +7236,7 @@ msgstr "Прыбраць гук"
 #: engines/bladerunner/metaengine.cpp:330 engines/buried/metaengine.cpp:179
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
 #: engines/dgds/metaengine.cpp:75 engines/drascula/metaengine.cpp:285
-#: engines/efh/metaengine.cpp:246 engines/freescape/games/castle/castle.cpp:246
+#: engines/efh/metaengine.cpp:272 engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:231
@@ -7257,7 +7260,8 @@ msgstr "Захаваць гульню"
 #: engines/bladerunner/metaengine.cpp:339 engines/buried/metaengine.cpp:184
 #: engines/cge/metaengine.cpp:227 engines/cge2/metaengine.cpp:241
 #: engines/dgds/metaengine.cpp:74 engines/drascula/metaengine.cpp:260
-#: engines/efh/metaengine.cpp:252 engines/freescape/games/castle/castle.cpp:251
+#: engines/efh/metaengine.cpp:279 engines/efh/metaengine.cpp:613
+#: engines/freescape/games/castle/castle.cpp:251
 #: engines/freescape/games/dark/dark.cpp:191
 #: engines/freescape/games/driller/driller.cpp:140
 #: engines/freescape/games/eclipse/eclipse.cpp:236
@@ -7309,8 +7313,8 @@ msgstr "Зьвесткі даказак"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:93
-#: engines/dragons/metaengine.cpp:224
-#: engines/freescape/games/castle/castle.cpp:259
+#: engines/dragons/metaengine.cpp:224 engines/efh/metaengine.cpp:373
+#: engines/efh/metaengine.cpp:619 engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:145
 #: engines/freescape/games/eclipse/eclipse.cpp:241
@@ -7760,7 +7764,8 @@ msgid "Talk / Interact"
 msgstr "Інтэракцыя"
 
 #. I18N: Combat command in Might & Magic 1
-#: engines/crab/input/input.cpp:125 engines/griffon/metaengine.cpp:145
+#: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
+#: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
 #: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
@@ -8202,23 +8207,380 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 "Далучыць ператварэньне тэксту ў мову для аб’ектаў, наладаў і біблійнай цытаты"
 
-#: engines/efh/metaengine.cpp:302
+#: engines/efh/metaengine.cpp:235
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 1"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:236
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 2"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:237
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 3"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:238
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 4"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:239
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 5"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:240
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 6"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:241
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 7"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:242
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 8"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:243
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 9"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:244
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 10"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:245
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 11"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:246
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 12"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:247
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 13"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:248
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select option 14"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
+#: engines/supernova/metaengine.cpp:218
+#, fuzzy
+#| msgid "Game Options"
+msgid "Menu keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:258
+#, fuzzy
+#| msgid "Game Options"
+msgid "Quit keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:259
+#, fuzzy
+#| msgid "Game Options"
+msgid "Skip video keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:260
+#, fuzzy
+#| msgid "Game Options"
+msgid "Skip song keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:261
+#, fuzzy
+#| msgid "Game Options"
+msgid "Status menu navigation keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:262
+#, fuzzy
+#| msgid "Game Options"
+msgid "Status menu keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:263
+#, fuzzy
+#| msgid "Game Options"
+msgid "Status menu submenu keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:264
+#, fuzzy
+#| msgid "Game Options"
+msgid "Interaction keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:265
+#, fuzzy
+#| msgid "Game Options"
+msgid "Fight keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:266
+#, fuzzy
+#| msgid "Game Options"
+msgid "Character selection keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:267
+#, fuzzy
+#| msgid "Game Options"
+msgid "Enemy selection keymappings"
+msgstr "~Н~алады гульні"
+
+#: engines/efh/metaengine.cpp:268
+#, fuzzy
+#| msgid "Game Options"
+msgid "Death menu keymappings"
+msgstr "~Н~алады гульні"
+
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:339
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 1 status"
 msgstr "Паказваць партрэты пэрсанажаў"
 
-#: engines/efh/metaengine.cpp:307
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:347
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 2 status"
 msgstr "Паказваць партрэты пэрсанажаў"
 
-#: engines/efh/metaengine.cpp:312
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:355
 #, fuzzy
 #| msgid "Show character portraits"
 msgid "Character 3 status"
 msgstr "Паказваць партрэты пэрсанажаў"
+
+#: engines/efh/metaengine.cpp:385
+#, fuzzy
+#| msgid "Skip cutscene"
+msgid "Skip song"
+msgstr "Прапусьціць сцэнку"
+
+#: engines/efh/metaengine.cpp:391
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip song and intro"
+msgstr "Прапусьціць радок"
+
+#: engines/efh/metaengine.cpp:427
+#, fuzzy
+#| msgid "Active"
+msgid "Active skills"
+msgstr "Дзейна"
+
+#. I18N: It's a Tetris game clone, this action drops current tetris item
+#: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
+#: engines/wintermute/keymapper_tables.h:2035
+msgid "Drop"
+msgstr "Скід"
+
+#: engines/efh/metaengine.cpp:437
+msgid "Equip"
+msgstr ""
+
+#: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
+#: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
+#: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
+#: engines/scumm/help.cpp:200 engines/scumm/help.cpp:210
+#: engines/supernova/metaengine.cpp:366 engines/twp/metaengine.cpp:180
+msgid "Give"
+msgstr "Даць"
+
+#: engines/efh/metaengine.cpp:447
+#, fuzzy
+#| msgid "Menu"
+msgid "Info"
+msgstr "Мэню"
+
+#: engines/efh/metaengine.cpp:452
+msgid "Passive skills"
+msgstr ""
+
+#: engines/efh/metaengine.cpp:457
+msgid "Trade"
+msgstr ""
+
+#: engines/efh/metaengine.cpp:467
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Exit status menu"
+msgstr "Выйсьці з гульні"
+
+#: engines/efh/metaengine.cpp:481
+#, fuzzy
+#| msgid "Quit Game"
+msgid "Exit submenu"
+msgstr "Выйсьці з гульні"
+
+#: engines/efh/metaengine.cpp:493
+msgid "Leave"
+msgstr ""
+
+#: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
+#, fuzzy
+#| msgid "Status:"
+msgid "Status"
+msgstr "Статус:"
+
+#: engines/efh/metaengine.cpp:518
+msgid "Defend"
+msgstr ""
+
+#. I18N: Run is a movement type
+#. I18N: Action in In Cold Blood
+#: engines/efh/metaengine.cpp:530 engines/freescape/games/castle/castle.cpp:279
+#: engines/grim/grim.cpp:501 engines/grim/grim.cpp:596
+#: engines/hpl1/metaengine.cpp:82 engines/icb/icb.cpp:131
+#: engines/icb/icb.cpp:197 engines/ultima/ultima8/metaengine.cpp:57
+msgid "Run"
+msgstr "Запусьціць"
+
+#. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
+#: engines/efh/metaengine.cpp:543
+#, fuzzy
+#| msgid "Next location"
+msgid "View terrain"
+msgstr "Наступная лякацыя"
+
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:550
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select character 1"
+msgstr "Выбраць групаваньне"
+
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:557
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select character 2"
+msgstr "Выбраць групаваньне"
+
+#. I18N: (Game name: Escape from hell) Character is a hero in-game
+#: engines/efh/metaengine.cpp:564
+#, fuzzy
+#| msgid "Select Group by"
+msgid "Select character 3"
+msgstr "Выбраць групаваньне"
+
+#: engines/efh/metaengine.cpp:570
+#, fuzzy
+#| msgid "Change game options"
+msgid "Cancel character selection"
+msgstr "Зьмяніць налады гульні"
+
+#: engines/efh/metaengine.cpp:577
+#, fuzzy
+msgid "Select enemy 1"
+msgstr "Выбярыце тэму"
+
+#: engines/efh/metaengine.cpp:583
+#, fuzzy
+msgid "Select enemy 2"
+msgstr "Выбярыце тэму"
+
+#: engines/efh/metaengine.cpp:589
+#, fuzzy
+msgid "Select enemy 3"
+msgstr "Выбярыце тэму"
+
+#: engines/efh/metaengine.cpp:595
+#, fuzzy
+msgid "Select enemy 4"
+msgstr "Выбярыце тэму"
+
+#: engines/efh/metaengine.cpp:601
+#, fuzzy
+msgid "Select enemy 5"
+msgstr "Выбярыце тэму"
+
+#: engines/efh/metaengine.cpp:607
+#, fuzzy
+#| msgid "Change game options"
+msgid "Cancel enemy selection"
+msgstr "Зьмяніць налады гульні"
+
+#: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
+#: engines/tsage/metaengine.cpp:237
+#, fuzzy
+#| msgid "Restore game:"
+msgid "Restart game"
+msgstr "Аднавіць гульню:"
+
+#: engines/efh/metaengine.cpp:632
+#, fuzzy
+#| msgid "Play note 1: A"
+msgid "Play sound type 13"
+msgstr "Граць ноту 1: Ля"
+
+#: engines/efh/metaengine.cpp:637
+#, fuzzy
+#| msgid "Play note 1: A"
+msgid "Play sound type 14"
+msgstr "Граць ноту 1: Ля"
+
+#: engines/efh/metaengine.cpp:642
+#, fuzzy
+#| msgid "Play note 1: A"
+msgid "Play sound type 15"
+msgstr "Граць ноту 1: Ля"
+
+#: engines/efh/metaengine.cpp:647
+#, fuzzy
+#| msgid "Play note 5: E"
+msgid "Play sound type 5"
+msgstr "Граць ноту 5: Мі-дыез"
+
+#: engines/efh/metaengine.cpp:652
+#, fuzzy
+#| msgid "Play note 1: A"
+msgid "Play sound type 10"
+msgstr "Граць ноту 1: Ля"
+
+#: engines/efh/metaengine.cpp:657
+msgid "Play sound type 9"
+msgstr ""
+
+#: engines/efh/metaengine.cpp:662
+#, fuzzy
+#| msgid "Play note 1: A"
+msgid "Play sound type 16"
+msgstr "Граць ноту 1: Ля"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8386,15 +8748,6 @@ msgstr "Сьлізганьне налева"
 #| msgid "Slide Right"
 msgid "Rotate Right"
 msgstr "Сьлізганьне направа"
-
-#. I18N: Run is a movement type
-#. I18N: Action in In Cold Blood
-#: engines/freescape/games/castle/castle.cpp:279 engines/grim/grim.cpp:501
-#: engines/grim/grim.cpp:596 engines/hpl1/metaengine.cpp:82
-#: engines/icb/icb.cpp:131 engines/icb/icb.cpp:197
-#: engines/ultima/ultima8/metaengine.cpp:57
-msgid "Run"
-msgstr "Запусьціць"
 
 #: engines/freescape/games/castle/castle.cpp:290
 msgid "Crawl"
@@ -9772,12 +10125,6 @@ msgstr "~Н~алады гульні"
 msgid "Yes/No keymappings"
 msgstr "~Н~алады гульні"
 
-#: engines/lure/metaengine.cpp:203 engines/tsage/metaengine.cpp:237
-#, fuzzy
-#| msgid "Restore game:"
-msgid "Restart game"
-msgstr "Аднавіць гульню:"
-
 #. I18N: Shift Cursor during fight to top left
 #: engines/lure/metaengine.cpp:233
 #, fuzzy
@@ -10986,14 +11333,6 @@ msgstr "Прапусьціць дыялёг"
 #| msgid "Show journal"
 msgid "Use journal"
 msgstr "Паказаць дзёньнік"
-
-#: engines/queen/metaengine.cpp:274 engines/saga/metaengine.cpp:384
-#: engines/scumm/help.cpp:124 engines/scumm/help.cpp:139
-#: engines/scumm/help.cpp:164 engines/scumm/help.cpp:200
-#: engines/scumm/help.cpp:210 engines/supernova/metaengine.cpp:366
-#: engines/twp/metaengine.cpp:180
-msgid "Give"
-msgstr "Даць"
 
 #: engines/queen/metaengine.cpp:279 engines/saga/metaengine.cpp:354
 #: engines/scumm/help.cpp:202 engines/scumm/help.cpp:214
@@ -12938,12 +13277,6 @@ msgstr "УВАГА: Гэты рухавік не падтрымлівае выд
 msgid "Debug keymappings"
 msgstr "Стандартныя клявішы гульні"
 
-#: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
-#, fuzzy
-#| msgid "Game Options"
-msgid "Menu keymappings"
-msgstr "~Н~алады гульні"
-
 #: engines/sludge/keymapper_tables.h:36
 #, fuzzy
 #| msgid "Game Options"
@@ -14692,12 +15025,6 @@ msgstr ""
 #: engines/ultima/nuvie/metaengine.cpp:66
 msgid "Walk south-west"
 msgstr ""
-
-#. I18N: It's a Tetris game clone, this action drops current tetris item
-#: engines/ultima/nuvie/metaengine.cpp:72
-#: engines/wintermute/keymapper_tables.h:2035
-msgid "Drop"
-msgstr "Скід"
 
 #: engines/ultima/nuvie/metaengine.cpp:75
 msgid "Multi-use"
@@ -16532,11 +16859,6 @@ msgstr ""
 
 #~ msgid "Minimal Volume"
 #~ msgstr "Мінімальная гучнасьць"
-
-#, fuzzy
-#~| msgid "Select Group by"
-#~ msgid "Select Actor 6"
-#~ msgstr "Выбраць групаваньне"
 
 #, fuzzy
 #~| msgid "Next action"
