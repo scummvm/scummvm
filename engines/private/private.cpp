@@ -301,6 +301,9 @@ Common::Error PrivateEngine::run() {
 				}
 				break;
 
+			case Common::EVENT_SCREEN_CHANGED:
+				adjustSubtitleSize();
+				break;
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
@@ -420,7 +423,7 @@ Common::Error PrivateEngine::run() {
 		g_system->delayMillis(10);
 		if (_subtitles) {
 			if (_mixer->isSoundHandleActive(_fgSoundHandle)) {
-				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false);
+				_subtitles->drawSubtitle(_mixer->getElapsedTime(_fgSoundHandle).msecs(), false, _sfxSubtitles);
 			} else {
 				delete _subtitles;
 				_subtitles = nullptr;
@@ -1487,6 +1490,27 @@ bool PrivateEngine::isSoundActive() {
 	return _mixer->isSoundIDActive(-1);
 }
 
+void PrivateEngine::adjustSubtitleSize() {
+	debugC(1, kPrivateDebugFunction, "%s()", __FUNCTION__);
+	if (_subtitles) {
+		int16 h = g_system->getOverlayHeight();
+		int16 w = g_system->getOverlayWidth();
+		float scale = h / 2160.f;
+		// If we are in the main menu, we need to adjust the position of the subtitles
+		if (_mode == 0) {
+			_subtitles->setBBox(Common::Rect(20, h - 200 * scale, w - 20, h - 20));
+		} else if (_mode == -1) {
+			_subtitles->setBBox(Common::Rect(20, h - 220 * scale, w - 20, h - 20));
+		} else {
+			_subtitles->setBBox(Common::Rect(20, h - 160 * scale, w - 20, h - 20));
+		}
+		int fontSize = MAX(8, int(50 * scale));
+		_subtitles->setColor(0xff, 0xff, 0x80);
+		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, "regular");
+		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+	}
+}
+
 void PrivateEngine::loadSubtitles(const Common::Path &path) {
 	debugC(1, kPrivateDebugFunction, "%s(%s)", __FUNCTION__, path.toString().c_str());
 	Common::String subPathStr = path.toString() + ".srt";
@@ -1504,20 +1528,7 @@ void PrivateEngine::loadSubtitles(const Common::Path &path) {
 		_subtitles = new Video::Subtitles();
 		_subtitles->loadSRTFile(subPath);
 		g_system->showOverlay(false);
-		int16 h = g_system->getOverlayHeight();
-		float scale = h / 2160.f;
-		// If we are in the main menu, we need to adjust the position of the subtitles
-		if (_mode == 0) {
-			_subtitles->setBBox(Common::Rect(20, h - 200 * scale, g_system->getOverlayWidth() - 20, h - 20));
-		} else if (_mode == -1) {
-			_subtitles->setBBox(Common::Rect(20, h - 220 * scale, g_system->getOverlayWidth() - 20, h - 20));
-		} else {
-			_subtitles->setBBox(Common::Rect(20, h - 160 * scale, g_system->getOverlayWidth() - 20, h - 20));
-		}
-		int fontSize = MAX(8, int(50 * scale));
-		_subtitles->setColor(0xff, 0xff, 0x80);
-		_subtitles->setFont("LiberationSans-Regular.ttf", fontSize, "regular");
-		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+		adjustSubtitleSize();
 	} else {
 		delete _subtitles;
 		_subtitles = nullptr;

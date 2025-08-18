@@ -220,6 +220,7 @@ public:
 	void skipVideo();
 
 	void loadSubtitles(const Common::Path &path);
+	void adjustSubtitleSize();
 	Video::Subtitles *_subtitles;
 	bool _sfxSubtitles;
 
