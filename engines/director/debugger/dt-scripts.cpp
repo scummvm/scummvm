@@ -66,6 +66,7 @@ static void renderCastScript(Symbol &sym) {
 		if (bp)
 			color = _state->_colors._bp_color_enabled;
 
+		ImGui::PushID(pc);
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		if (ImGui::IsItemClicked(0)) {
 			if (bp) {
@@ -94,6 +95,7 @@ static void renderCastScript(Symbol &sym) {
 		ImGui::Text("[%5d] ", pc);
 		ImGui::SameLine();
 		ImGui::Text("%s", lingo->decodeInstruction(sym.u.defn, pc, &pc).c_str());
+		ImGui::PopID();
 	}
 }
 
