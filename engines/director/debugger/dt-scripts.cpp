@@ -331,8 +331,11 @@ void showExecutionContext() {
 
 			// Get all the handlers from the script
 			ScriptContext* context = getScriptContext(current.id);
-			Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
-			ImGui::Text("%s", scriptInfo.c_str());
+
+			if (context) {
+				Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
+				ImGui::Text("%s", scriptInfo.c_str());
+			}
 
 			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 			if (ImGui::Button(ICON_MS_ARROW_BACK)) {
@@ -436,8 +439,11 @@ void showExecutionContext() {
 
 				// Get all the handlers from the script
 				ScriptContext* context = getScriptContext(current.id);
-				Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
-				ImGui::Text("%s", scriptInfo.c_str());
+
+				if (context) {
+					Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
+					ImGui::Text("%s", scriptInfo.c_str());
+				}
 
 				ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
 				if (ImGui::Button(ICON_MS_ARROW_BACK)) {
