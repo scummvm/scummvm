@@ -221,6 +221,8 @@ public:
 	MacVentureEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~MacVentureEngine() override;
 
+	void initializePath(const Common::FSNode &gamePath) override;
+
 	bool hasFeature(EngineFeature f) const override;
 
 	Common::Error run() override;
@@ -378,6 +380,7 @@ private: // Attributes
 
 	SoundManager *_soundManager;
 
+	Common::FSNode _gamePath;
 	Common::Archive *_dataBundle;
 
 	// Engine state
