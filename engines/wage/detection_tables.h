@@ -123,7 +123,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Eidisi I", "06ae31c4361f9bd5b91593858b6d0d79", 172310), // alt version
 	FANGAME("Elite Commando", "3fc74f1403c1529b52f3cd4d60771dac", 293704), // v1.0
 	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "49a0708da81dbeb28c6e607429c92209", 408657),
-	FANGAMEN("Enchanted Pencils", "Enchanted Pencils 0.99 (PG)", "0095d0e069851521c44ca3cdc94bcba3", 414464), // alt?
 	FANGAMEN("Escape!", "xn--Escape!-z46c", "28a9658ee846a34f133df29b54cf255a", 64819), // Original file name "Escape!†"
 	FANGAMEN("Escape!", "xn--Escape!-lha", "63378d6b032d4337b7e74759337eceaa", 64805), // Original file name " Escape!", alt version
 	FANGAME("Escape from School!", "2055747bb874052333190eb993246a7f", 49849),
@@ -199,6 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 108788),
 	FANGAMEN("Mansion!", "Mansion! 1.0", "c993619e5bd99ccca6e3ce28d93be33a", 389857),
 	FANGAMEN("Maze of the Questing Beast", "MQB", "03775e1894809f24234aeaab18f39451", 134444),
+	FANGAMEN("Maze of the Questing Beast", "MQB", "e2b89bd1ae34114445a4bb4795f0f514", 134444),	 // alt version
 	FANGAMEN("Maze of the Questing Beast Solutions", "MQB Solutions", "8a27e515f12162cc8b85e4f2bd16a1e5", 37606),
 	FANGAME("Messy House", "32ca71f2ff37997407cead590c2dd306", 176864),
 	FANGAME("Midnight Snack", "70ba8a5a1f0304669c9987360bba236f", 67696),
@@ -215,7 +215,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Mormonoids from the Deep", "Mormonoids 1.25", "1a7ee052b375f0c0a4c18836c978ce5b", 645077), // alt version
 	FANGAMEN("Mountain of Mayhem", "xn--Mountain of Mayhem -3g6k", "634211b004371635d191ae0687035501", 749747), // Original file name "Mountain of Mayhem †"
 	FANGAME("Mountain of Mayhem", "c83a5703b3ea95f465839f4f54ef0805", 749733), // alt version
-	FANGAMEN("Maze of the Questing Beast", "MQB", "e2b89bd1ae34114445a4bb4795f0f514", 134444),
 	FANGAME("Muddy Water", "711dd9d154d13c31bc216ef8539bb095", 662438), // v1.3.2
 	FANGAME("Mystery of the Moors", "593dc2fcb92c0f5f4d94b5fc390a2ba2", 849909),
 	FANGAME("Necropolis", "70fbba8a0b1626216f674df2ca9c58ba", 397396),
