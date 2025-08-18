@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-18 10:17+0000\n"
+"POT-Creation-Date: 2025-08-18 10:27+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -6265,23 +6265,23 @@ msgstr "Erabili zilarrezko kurtsoreak"
 msgid "Use the checkered cursor from later Apple II models"
 msgstr ""
 
-#: engines/adl/metaengine.cpp:117 engines/cge/metaengine.cpp:56
-#: engines/cine/metaengine.cpp:69 engines/cruise/metaengine.cpp:45
-#: engines/drascula/metaengine.cpp:55 engines/efh/metaengine.cpp:44
-#: engines/glk/metaengine.cpp:193 engines/griffon/metaengine.cpp:40
-#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
-#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
-#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
-#: engines/wage/metaengine.cpp:51
+#: engines/adl/metaengine.cpp:117 engines/agi/metaengine.cpp:220
+#: engines/cge/metaengine.cpp:56 engines/cine/metaengine.cpp:69
+#: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:55
+#: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:193
+#: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
+#: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
+#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
 #, fuzzy
 msgid "Enable Text to Speech"
 msgstr "Testu eta ahotsa:"
 
-#: engines/adl/metaengine.cpp:118 engines/cge/metaengine.cpp:57
-#: engines/cine/metaengine.cpp:70 engines/cruise/metaengine.cpp:46
-#: engines/drascula/metaengine.cpp:56 engines/efh/metaengine.cpp:45
-#: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
-#: engines/mortevielle/metaengine.cpp:38
+#: engines/adl/metaengine.cpp:118 engines/agi/metaengine.cpp:221
+#: engines/cge/metaengine.cpp:57 engines/cine/metaengine.cpp:70
+#: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:56
+#: engines/efh/metaengine.cpp:45 engines/made/metaengine.cpp:52
+#: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
 #, fuzzy
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
@@ -6417,14 +6417,14 @@ msgid ""
 "PCjr may sound wrong."
 msgstr ""
 
-#: engines/agi/metaengine.cpp:433 engines/asylum/asylum.cpp:655
+#: engines/agi/metaengine.cpp:447 engines/asylum/asylum.cpp:655
 #: engines/buried/saveload.cpp:53 engines/mohawk/riven.cpp:759
 #: engines/petka/saveload.cpp:121
 #, fuzzy
 msgid "This game does not support loading"
 msgstr "Jokoaren ID ez-onartua"
 
-#: engines/agi/metaengine.cpp:456 engines/asylum/asylum.cpp:666
+#: engines/agi/metaengine.cpp:470 engines/asylum/asylum.cpp:666
 #: engines/buried/saveload.cpp:64 engines/mohawk/riven.cpp:774
 #: engines/petka/saveload.cpp:101
 #, fuzzy
