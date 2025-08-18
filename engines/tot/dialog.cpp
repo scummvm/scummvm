@@ -28,13 +28,6 @@
 
 namespace Tot {
 
-byte conversationIndex;
-
-listP l1, l;
-Tree ar, auxTree, step;
-
-bool endOfConversation;
-
 Common::String decrypt(Common::String encryptedText) {
 	for (int i = 0; i < encryptedText.size(); i++) {
 		encryptedText.setChar(g_engine->_decryptionKey[i] ^ (char)encryptedText[i], i);
@@ -42,7 +35,7 @@ Common::String decrypt(Common::String encryptedText) {
 	return encryptedText;
 }
 
-void findDialogLine(byte characterIndex);
+void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex);
 
 static void findDownwards(Tree curTree, bool &descend) {
 	if (curTree != NULL) {
@@ -56,17 +49,16 @@ static void findDownwards(Tree curTree, bool &descend) {
 	}
 }
 
-void findDialogLine(byte characterIndex) {
+void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex) {
 	bool speak, ascend, descend, border, forward;
 
-	auxTree = ar;
-	auxTree = auxTree->child;
+	Tree auxTree = tree->child;
 	bool done = false;
-	l = new list;
-	l->next = NULL;
-	l1 = l;
+	linkedList->next = NULL;
+	LinkedList* l1 = linkedList;
 	border = false;
 	ascend = false;
+	Tree step;
 	do {
 		switch (auxTree->element.spoken) {
 		case '0':
@@ -234,7 +226,7 @@ void findDialogLine(byte characterIndex) {
 			}
 			if (forward) {
 				forward = false;
-				l1->next = new list;
+				l1->next = new LinkedList;
 				l1 = l1->next;
 				l1->next = NULL;
 			}
@@ -292,10 +284,10 @@ void findDialogLine(byte characterIndex) {
 	l1 = NULL;
 }
 
-void modifyTree(uint node) {
+void modifyTree(Tree tree, uint node) {
 
 	bool found = false;
-	auxTree = ar->child;
+	Tree auxTree = tree->child;
 	do {
 		if (auxTree->element.index == node) {
 
@@ -341,11 +333,15 @@ void fixTree(Tree tree) {
 	}
 }
 
-void showDialogLine(Common::String conversationMatrix[16], uint &chosenTopic) {
-	byte firstChat, selectedConv;
+void showDialogLine(
+	Common::String conversationMatrix[16],
+	uint &chosenTopic,
+	byte conversationIndex,
+	LinkedList* l1,
+	bool &endOfConversation) {
 
-	firstChat = 1;
-	selectedConv = 0;
+	byte firstChat = 1;
+	byte selectedConv = 0;
 	g_engine->_mouse->hide();
 
 	g_engine->drawMenu(5);
@@ -442,22 +438,25 @@ void talk(byte characterIndex) {
 
 	Common::String conversationMatrix[16];
 	drawTalkMenu();
-	endOfConversation = false;
+	bool endOfConversation = false;
 	g_engine->readTextFile();
 	// The original game makes a copy of the file upon starting a new game. .007 is the current game (the game
 	// that resumes when clicking "continue game" in the main menu. Part of the savegame data is this 007
 	// conversation file which marks conversatino topics as already gone through or not.
-	readTree(*g_engine->_conversationData, ar, characterIndex - 1);
+	Tree tree;
+	readTree(*g_engine->_conversationData, tree, characterIndex - 1);
 	loadTalkAnimations();
+	LinkedList* l1;
 	do {
 
 		for (int i = 0; i < 16; i++) {
 			conversationMatrix[i] = "";
 		}
 
-		findDialogLine(characterIndex);
-		conversationIndex = 0;
-		l1 = l;
+		LinkedList *linkedList = new LinkedList;
+		findDialogLine(linkedList, tree, characterIndex);
+		byte conversationIndex = 0;
+		l1 = linkedList;
 		do {
 			g_engine->_verbFile.seek(kVerbRegSize * l1->item);
 			conversationIndex += 1;
@@ -483,12 +482,12 @@ void talk(byte characterIndex) {
 			}
 			l1 = l1->next;
 		} while ((l1->next != NULL) && (l1 != NULL) && !g_engine->shouldQuit());
-		l1 = l;
-		showDialogLine(conversationMatrix, newNode);
-		delete l;
+		l1 = linkedList;
+		showDialogLine(conversationMatrix, newNode, conversationIndex, l1, endOfConversation);
+		delete linkedList;
 		g_engine->sayLine(newNode, 255, 0, response, true);
 		stringAux = 0;
-		modifyTree(newNode);
+		modifyTree(tree, newNode);
 		// 	verifyCopyProtection();
 		while (response > 0 && !g_engine->shouldQuit()) {
 			newNode = response;
@@ -524,15 +523,15 @@ void talk(byte characterIndex) {
 	} while (!endOfConversation && !g_engine->shouldQuit());
 
 	unloadTalkAnimations();
-	step = ar;
+	Tree step = tree;
 	fixTree(step);
-	saveConversations(g_engine->_conversationData, ar, characterIndex - 1);
+	saveConversations(g_engine->_conversationData, tree, characterIndex - 1);
 
 	g_engine->_verbFile.close();
 	if (g_engine->shouldQuit()) {
 		return;
 	}
-	delete ar;
+	delete tree;
 	l1 = NULL;
 	g_engine->_mouse->hide();
 

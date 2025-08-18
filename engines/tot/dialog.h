@@ -27,17 +27,10 @@
 
 namespace Tot {
 
-typedef struct list *listP;
-
-struct list {
+struct LinkedList {
 	uint item;
-	listP next;
+	LinkedList* next;
 };
-
-extern byte conversationIndex;
-extern listP l1, l;
-extern Tree ar, auxTree, step;
-extern bool endOfConversation;
 
 void talkToSceneObject();
 
