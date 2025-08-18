@@ -46,6 +46,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Drascula:
    - Fixed displaying accented characters.
    - Added Text-to-Speech support.
+   - Added keymapper support.
 
  EFH:
    - Fixed giving and dropping unequippable items.
