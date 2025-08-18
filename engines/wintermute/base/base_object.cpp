@@ -122,6 +122,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 
 	_blendMode = Graphics::BLEND_NORMAL;
+	_accessCaption = nullptr;
 }
 
 
