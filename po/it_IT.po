@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-17 16:05+0000\n"
+"POT-Creation-Date: 2025-08-18 10:12+0000\n"
 "PO-Revision-Date: 2025-08-13 10:27+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -318,7 +318,7 @@ msgstr "Un altro servizio di archiviazione è attivo. Vuoi interromperlo?"
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/parallaction/metaengine.cpp:169
+#: engines/lab/metaengine.cpp:197 engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
@@ -331,7 +331,7 @@ msgstr "Sì"
 #: engines/buried/buried.cpp:598 engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/grim/grim.cpp:366
 #: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
-#: engines/parallaction/metaengine.cpp:175
+#: engines/lab/metaengine.cpp:204 engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
@@ -1018,7 +1018,8 @@ msgstr "Interfaccia"
 
 #. I18N: Action in In Cold Blood
 #: gui/gui-manager.cpp:163 engines/hpl1/metaengine.cpp:91
-#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173 engines/mohawk/myst.cpp:572
+#: engines/icb/icb.cpp:95 engines/icb/icb.cpp:173
+#: engines/lab/metaengine.cpp:160 engines/mohawk/myst.cpp:572
 #: engines/mohawk/riven.cpp:853 engines/sludge/keymapper_tables.h:40
 #: engines/supernova/metaengine.cpp:226 engines/teenagent/metaengine.cpp:207
 #: engines/ultima/ultima4/metaengine.cpp:42
@@ -3328,7 +3329,7 @@ msgstr "Motore per avventure grafiche"
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
 #: engines/drascula/metaengine.cpp:304 engines/hdb/metaengine.cpp:275
-#: engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -6291,17 +6292,17 @@ msgstr "Cerca aggiornamenti..."
 #: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
 #: engines/drascula/metaengine.cpp:205 engines/hopkins/metaengine.cpp:206
 #: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
-#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
-#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
-#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
+#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
+#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Mappe tasti predefinite"
 
@@ -6390,14 +6391,15 @@ msgstr "Guarda"
 #. I18N: Combat command in Might & Magic 1
 #: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:136
 #: engines/cine/metaengine.cpp:342 engines/hdb/metaengine.cpp:237
-#: engines/mm/mm1/metaengine.cpp:81 engines/queen/metaengine.cpp:294
-#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
-#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
-#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
-#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
-#: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
-#: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
+#: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:81
+#: engines/queen/metaengine.cpp:294 engines/saga/metaengine.cpp:379
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:201
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:227
+#: engines/scumm/help.cpp:253 engines/sky/metaengine.cpp:95
+#: engines/sludge/keymapper_tables.h:333 engines/supernova/metaengine.cpp:356
+#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
+#: engines/ultima/ultima4/metaengine.cpp:71
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
@@ -6841,14 +6843,14 @@ msgstr "AGOS - Principali"
 #: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
 #: engines/drascula/metaengine.cpp:206 engines/efh/metaengine.cpp:230
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
-#: engines/illusions/metaengine.cpp:90 engines/lure/metaengine.cpp:169
-#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
-#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
-#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
+#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
 msgstr "Mappature tasti gioco"
 
@@ -6880,7 +6882,7 @@ msgstr "Attiva/disattiva effetti sonori"
 msgid "Toggle fast mode on / off"
 msgstr "Attiva/disattiva modalità veloce"
 
-#: engines/agos/metaengine.cpp:290
+#: engines/agos/metaengine.cpp:290 engines/lab/metaengine.cpp:264
 msgid "Walk forward"
 msgstr "Avanza"
 
@@ -6889,9 +6891,10 @@ msgid "Turn backward"
 msgstr "Voltati indietro"
 
 #: engines/agos/metaengine.cpp:302 engines/kyra/engine/eobcommon.cpp:373
-#: engines/kyra/engine/lol.cpp:514 engines/mm/mm1/metaengine.cpp:97
-#: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
-#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
+#: engines/kyra/engine/lol.cpp:514 engines/lab/metaengine.cpp:257
+#: engines/mm/mm1/metaengine.cpp:97 engines/mohawk/riven.cpp:901
+#: engines/pegasus/pegasus.cpp:2740 engines/twine/metaengine.cpp:353
+#: engines/ultima/ultima8/metaengine.cpp:49
 #: engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
@@ -6901,9 +6904,10 @@ msgid "Turn left"
 msgstr "Gira a sinistra"
 
 #: engines/agos/metaengine.cpp:308 engines/kyra/engine/eobcommon.cpp:374
-#: engines/kyra/engine/lol.cpp:515 engines/mm/mm1/metaengine.cpp:98
-#: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
-#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
+#: engines/kyra/engine/lol.cpp:515 engines/lab/metaengine.cpp:271
+#: engines/mm/mm1/metaengine.cpp:98 engines/mohawk/riven.cpp:907
+#: engines/pegasus/pegasus.cpp:2747 engines/twine/metaengine.cpp:346
+#: engines/ultima/ultima8/metaengine.cpp:50
 #: engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
@@ -7626,7 +7630,7 @@ msgstr "Mappatura comandi scene intermezzo"
 msgid "Main menu keymappings"
 msgstr "Mappature tasti menù principale"
 
-#: engines/buried/metaengine.cpp:137
+#: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 msgid "Inventory keymappings"
 msgstr "Mappature tasti inventario"
 
@@ -8264,7 +8268,7 @@ msgstr "Debug grafica"
 msgid "Animation keymappings"
 msgstr "Mappatura tasti dell'introduzione"
 
-#: engines/drascula/metaengine.cpp:208
+#: engines/drascula/metaengine.cpp:208 engines/lab/metaengine.cpp:151
 #, fuzzy
 #| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
@@ -9438,8 +9442,9 @@ msgstr "Attacco 2"
 msgid "Attack 3"
 msgstr "Attacco 3"
 
-#: engines/kyra/engine/lol.cpp:509 engines/mm/mm1/metaengine.cpp:103
-#: engines/mohawk/myst.cpp:606 engines/wintermute/keymapper_tables.h:1526
+#: engines/kyra/engine/lol.cpp:509 engines/lab/metaengine.cpp:278
+#: engines/mm/mm1/metaengine.cpp:103 engines/mohawk/myst.cpp:606
+#: engines/wintermute/keymapper_tables.h:1526
 #: engines/wintermute/keymapper_tables.h:1673
 #: engines/wintermute/keymapper_tables.h:1722
 #: engines/wintermute/keymapper_tables.h:1745
@@ -9569,7 +9574,7 @@ msgstr ""
 "di EOB II.\n"
 "\n"
 
-#: engines/lab/engine.cpp:124
+#: engines/lab/engine.cpp:126
 msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
@@ -9577,6 +9582,168 @@ msgstr ""
 "Questa è una versione dimostrativa del gioco per Windows. Per giocare la "
 "versione completa, dovrai utilizzare l'interprete originale ed acquistare "
 "una chiave da Wyrmkeep"
+
+#: engines/lab/metaengine.cpp:150
+#, fuzzy
+#| msgid "PET keymappings"
+msgid "Exit keymappings"
+msgstr "Mappatura tasti PET"
+
+#: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
+msgid "Intro keymappings"
+msgstr "Mappatura tasti dell'introduzione"
+
+#: engines/lab/metaengine.cpp:155
+#, fuzzy
+#| msgid "Star Map keymappings"
+msgid "Map keymappings"
+msgstr "Mappature tasti Mappa Stellare"
+
+#: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
+msgid "Journal keymappings"
+msgstr "Mappature tasti del diario"
+
+#. I18N: Exits the game
+#: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
+#: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
+#: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
+#: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:720
+#: engines/wintermute/keymapper_tables.h:1849
+msgid "Exit"
+msgstr "Esci"
+
+#: engines/lab/metaengine.cpp:179
+#, fuzzy
+#| msgid "Enable the sound for the game"
+msgid "Raise the sound volume"
+msgstr "Abilita effetti sonori del gioco"
+
+#: engines/lab/metaengine.cpp:185
+msgid "Lower the sound volume"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:209 engines/teenagent/metaengine.cpp:232
+#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
+msgid "Skip intro"
+msgstr "Salta introduzione"
+
+#: engines/lab/metaengine.cpp:216
+msgid "Interact with object with chosen action"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:221
+#, fuzzy
+#| msgid "Next object"
+msgid "Take object"
+msgstr "Oggetto successivo"
+
+#: engines/lab/metaengine.cpp:227
+#, fuzzy
+#| msgid "Go to next object"
+msgid "Move or manipulate object"
+msgstr "Seleziona oggetto successivo"
+
+#: engines/lab/metaengine.cpp:233
+#, fuzzy
+#| msgid "Open door"
+msgid "Open door or object"
+msgstr "Apri porta"
+
+#: engines/lab/metaengine.cpp:239
+msgid "Close door or object"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:245
+msgid "Look at object close-up"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:251
+#, fuzzy
+#| msgid "Scroll inventory up"
+msgid "Switch to inventory display"
+msgstr "Scorri inventario verso l'alto"
+
+#: engines/lab/metaengine.cpp:284
+#, fuzzy
+#| msgid "Go to next object"
+msgid "Move focus to interactive object"
+msgstr "Seleziona oggetto successivo"
+
+#: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
+msgid "Start dropping virtual bread crumbs"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
+msgid "Follow virtual bread crumbs"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
+msgid "Run while following virtual bread crumbs"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:311
+#, fuzzy
+#| msgid "Switch to 2xSai scaling"
+msgid "Switch to main display"
+msgstr "Passa a modalità (scaler) 2xSai"
+
+#: engines/lab/metaengine.cpp:317
+#, fuzzy
+#| msgid "Save / Load dialog"
+msgid "Open save / load dialog"
+msgstr "Finestra di salvataggio / caricamento"
+
+#: engines/lab/metaengine.cpp:329
+#, fuzzy
+#| msgid "Look at"
+msgid "Look at scene"
+msgstr "Esamina"
+
+#: engines/lab/metaengine.cpp:335
+#, fuzzy
+#| msgid "Use inventory item"
+msgid "Previous inventory item"
+msgstr "Usa oggetto dell'inventario"
+
+#: engines/lab/metaengine.cpp:342
+#, fuzzy
+#| msgid "Animated inventory items"
+msgid "Next inventory item"
+msgstr "Animazioni oggetti inventario"
+
+#: engines/lab/metaengine.cpp:373
+msgid "Exit map display"
+msgstr ""
+
+#: engines/lab/metaengine.cpp:379
+#, fuzzy
+#| msgid "Up level"
+msgid "Up one level"
+msgstr "Sali di un livello"
+
+#: engines/lab/metaengine.cpp:385
+#, fuzzy
+#| msgid "Down level"
+msgid "Down one level"
+msgstr "Scendi di un livello"
+
+#: engines/lab/metaengine.cpp:391
+#, fuzzy
+#| msgid "Show journal"
+msgid "Go back in journal"
+msgstr "Mostra diario"
+
+#: engines/lab/metaengine.cpp:397
+#, fuzzy
+#| msgid "Use journal"
+msgid "Exit journal"
+msgstr "Usa diario"
+
+#: engines/lab/metaengine.cpp:402
+#, fuzzy
+#| msgid "Show journal"
+msgid "Go forward in journal"
+msgstr "Mostra diario"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10698,10 +10865,6 @@ msgstr "Caratteri migliorati"
 #: engines/queen/metaengine.cpp:53
 msgid "Use an easier to read custom font"
 msgstr "Utilizza un font alternativo, più leggibile"
-
-#: engines/queen/metaengine.cpp:148
-msgid "Journal keymappings"
-msgstr "Mappature tasti del diario"
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
@@ -13008,14 +13171,6 @@ msgstr "Pagina precedente"
 msgid "Page down"
 msgstr "Pagina successiva"
 
-#. I18N: Exits the game
-#: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
-#: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
-#: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:720
-#: engines/wintermute/keymapper_tables.h:1849
-msgid "Exit"
-msgstr "Esci"
-
 #: engines/supernova/metaengine.cpp:321
 msgid "Go"
 msgstr "Vai"
@@ -13186,11 +13341,6 @@ msgstr "Chiudi inventario"
 #: engines/teenagent/metaengine.cpp:226
 msgid "Toggle inventory"
 msgstr "Mostra / nascondi inventario"
-
-#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
-#: engines/voyeur/metaengine.cpp:235
-msgid "Skip intro"
-msgstr "Salta introduzione"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14913,10 +15063,6 @@ msgstr "Mappature tasti delle stanza"
 msgid "Camera keymappings"
 msgstr "Mappature tasti della camera"
 
-#: engines/voyeur/metaengine.cpp:188
-msgid "Intro keymappings"
-msgstr "Mappatura tasti dell'introduzione"
-
 #: engines/voyeur/metaengine.cpp:204
 msgid "Skip scene"
 msgstr "Salta scena"
@@ -15729,11 +15875,6 @@ msgstr ""
 #~| msgid "Side Step"
 #~ msgid "Step"
 #~ msgstr "Movimento laterale"
-
-#, fuzzy
-#~| msgid "Animated inventory items"
-#~ msgid "Next Inventory Item"
-#~ msgstr "Animazioni oggetti inventario"
 
 #~ msgid "Could not find any engine capable of running the selected game"
 #~ msgstr ""
@@ -16673,9 +16814,6 @@ msgstr ""
 
 #~ msgid "Switch to HQ 2x/3x scaling"
 #~ msgstr "Passa a modalità (scaler) HQ 2x/3x"
-
-#~ msgid "Switch to 2xSai scaling"
-#~ msgstr "Passa a modalità (scaler) 2xSai"
 
 #~ msgid "Switch to Super2xSai scaling"
 #~ msgstr "Passa a modalità (scaler) Super2xSai"
