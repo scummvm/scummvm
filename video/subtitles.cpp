@@ -49,6 +49,35 @@ void SRTParser::cleanup() {
 	_entries.clear();
 }
 
+Common::String SRTParser::SRTParser::parseTag(Common::String &text) const {
+    // Parse tags in _subtitle
+    // <i> and </i> for italics
+    // <sfx> and </sfx> for sound effects
+
+    Common::String tag;
+    Common::String::size_type pos = text.find("<i>");
+    debug(1, "Subtitles: %s", text.c_str());
+    if (pos != Common::String::npos) {
+        text.erase(pos, 3);
+        pos = text.find("</i>");
+        if (pos != Common::String::npos) {
+            text.erase(pos, 4);
+        }
+        tag = "i";
+    } else {
+        pos = text.find("<sfx>");
+        if (pos != Common::String::npos) {
+            text.erase(pos, 5);
+            pos = text.find("</sfx>");
+            if (pos != Common::String::npos) {
+                text.erase(pos, 6);
+            }
+            tag = "sfx";
+        }
+    }
+    return tag;
+}
+
 bool parseTime(const char **pptr, uint32 *res) {
 	int hours, mins, secs, msecs;
 	const char *ptr = *pptr;
@@ -206,7 +235,8 @@ bool SRTParser::parseFile(const Common::Path &fname) {
 			break;
 		}
 
-		_entries.push_back(new SRTEntry(seq, start, end, text));
+		Common::String tag = parseTag(text);
+		_entries.push_back(new SRTEntry(seq, start, end, text, tag));
 	}
 
 	qsort(_entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparator);
@@ -228,9 +258,21 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) const {
 	return (*entry)->text;
 }
 
+Common::String SRTParser::getTag(uint32 timestamp) const {
+	SRTEntry test(0, timestamp, 0, "");
+	SRTEntry *testptr = &test;
+
+	const SRTEntry **entry = (const SRTEntry **)bsearch(&testptr, _entries.data(), _entries.size(), sizeof(SRTEntry *), &SRTEntryComparatorBSearch);
+
+	if (entry == NULL)
+		return "";
+
+	return (*entry)->tag;
+}
+
 #define SHADOW 1
 
-Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0), _overlayHasAlpha(true),
+Subtitles::Subtitles() : _loaded(false), _hPad(0), _vPad(0), _overlayHasAlpha(true),
 	_lastOverlayWidth(-1), _lastOverlayHeight(-1) {
 	_surface = new Graphics::Surface();
 	_subtitleDev = ConfMan.getBool("subtitle_dev");
@@ -240,33 +282,36 @@ Subtitles::~Subtitles() {
 	delete _surface;
 }
 
-void Subtitles::setFont(const char *fontname, int height) {
+void Subtitles::setFont(const char *fontname, int height, Common::String type) {
+	Graphics::Font *font = nullptr;
 	_fontHeight = height;
 
 #ifdef USE_FREETYPE2
 	Common::File *file = new Common::File();
 	if (file->open(fontname)) {
-		_font = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
-		if (!_font)
+		font = Graphics::loadTTFFont(file, DisposeAfterUse::YES, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+		if (!font)
 			delete file;
+		else
+			_fonts[type] = font;
 	} else {
 		delete file;
 	}
 
-	if (!_font) {
-		_font = Graphics::loadTTFFontFromArchive(fontname, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
+	if (!font) {
+		_fonts[type] = Graphics::loadTTFFontFromArchive(fontname, _fontHeight, Graphics::kTTFSizeModeCharacter, 96);
 	}
 #endif
 
-	if (!_font) {
+	if (!_fonts[type]) {
 		debug(1, "Cannot load font %s directly", fontname);
-		_font = FontMan.getFontByName(fontname);
+		_fonts[type] = FontMan.getFontByName(fontname);
 	}
 
-	if (!_font) {
+	if (!_fonts[type]) {
 		warning("Cannot load font %s", fontname);
 
-		_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_fonts[type] = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
 	}
 
 }
@@ -302,10 +347,12 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 	_vPad = vertical;
 }
 
-bool Subtitles::drawSubtitle(uint32 timestamp, bool force) const {
+bool Subtitles::drawSubtitle(uint32 timestamp, bool force, bool showSFX) {
 	Common::String subtitle;
+	Common::String tag;
 	if (_loaded) {
 		subtitle = _srtParser.getSubtitle(timestamp);
+		tag = _srtParser.getTag(timestamp);
 	} else if (_subtitleDev) {
 		subtitle = _fname.toString('/');
 		uint32 hours, mins, secs, msecs;
@@ -357,10 +404,13 @@ bool Subtitles::drawSubtitle(uint32 timestamp, bool force) const {
 		return false;
 
 	if (force || subtitle != _subtitle) {
-		debug(1, "%d: %s", timestamp, subtitle.c_str());
+		debug(1, "%d: %s with tag %s", timestamp, subtitle.c_str(), tag.c_str());
 
 		_subtitle = subtitle;
-		renderSubtitle();
+		_tag = tag;
+
+		if (_tag != "sfx" || showSFX)
+			renderSubtitle();
 	}
 
 	if (_overlayHasAlpha) {
@@ -382,8 +432,10 @@ void Subtitles::renderSubtitle() const {
 	_surface->fillRect(Common::Rect(0, 0, _surface->w, _surface->h), _transparentColor);
 
 	Common::Array<Common::U32String> lines;
+	Common::String fontType = _tag == "i" ? "italic" : "regular";
+	const Graphics::Font *font = _fonts[fontType] ? _fonts[fontType] : _fonts["regular"];
 
-	_font->wordWrapText(convertUtf8ToUtf32(_subtitle), _realBBox.width(), lines);
+	font->wordWrapText(convertUtf8ToUtf32(_subtitle), _realBBox.width(), lines);
 
 	if (lines.empty()) {
 		_drawRect.left = 0;
@@ -398,7 +450,7 @@ void Subtitles::renderSubtitle() const {
 
 	int width = 0;
 	for (uint i = 0; i < lines.size(); i++)
-		width = MAX(_font->getStringWidth(lines[i]), width);
+		width = MAX(font->getStringWidth(lines[i]), width);
 	width = MIN(width + 2 * _hPad, (int)_realBBox.width());
 
 	int originX = (_realBBox.width() - width) / 2;
@@ -406,14 +458,14 @@ void Subtitles::renderSubtitle() const {
 	for (uint i = 0; i < lines.size(); i++) {
 		Common::U32String line = convertBiDiU32String(lines[i]).visual;
 
-		_font->drawString(_surface, line, originX, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, originX + SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, originX, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
-		_font->drawString(_surface, line, originX + SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		font->drawString(_surface, line, originX, height, width, _blackColor, Graphics::kTextAlignCenter);
+		font->drawString(_surface, line, originX + SHADOW * 2, height, width, _blackColor, Graphics::kTextAlignCenter);
+		font->drawString(_surface, line, originX, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
+		font->drawString(_surface, line, originX + SHADOW * 2, height + SHADOW * 2, width, _blackColor, Graphics::kTextAlignCenter);
 
-		_font->drawString(_surface, line, originX + SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
+		font->drawString(_surface, line, originX + SHADOW, height + SHADOW, width, _color, Graphics::kTextAlignCenter);
 
-		height += _font->getFontHeight();
+		height += font->getFontHeight();
 
 		if (height + _vPad > _realBBox.bottom)
 			break;

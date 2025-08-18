@@ -24,6 +24,7 @@
 
 #include "common/str.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 
 namespace Graphics {
@@ -39,9 +40,10 @@ struct SRTEntry {
 	uint32 end;
 
 	Common::String text;
+	Common::String tag;
 
-	SRTEntry(uint seq_, uint32 start_, uint32 end_, Common::String text_) {
-		seq = seq_; start = start_; end = end_; text = text_;
+	SRTEntry(uint seq_, uint32 start_, uint32 end_, Common::String text_, Common::String tag_ = "") {
+		seq = seq_; start = start_; end = end_; text = text_; tag = tag_;
 	}
 };
 
@@ -52,7 +54,9 @@ public:
 
 	void cleanup();
 	bool parseFile(const Common::Path &fname);
+	Common::String parseTag(Common::String &text) const;
 	Common::String getSubtitle(uint32 timestamp) const;
+	Common::String getTag(uint32 timestamp) const;
 
 private:
 	Common::Array<SRTEntry *> _entries;
@@ -65,11 +69,11 @@ public:
 
 	void loadSRTFile(const Common::Path &fname);
 	void close() { _loaded = false; _subtitle.clear(); _fname.clear(); _srtParser.cleanup(); }
-	void setFont(const char *fontname, int height = 18);
+	void setFont(const char *fontname, int height = 18, Common::String type = "regular");
 	void setBBox(const Common::Rect &bbox);
 	void setColor(byte r, byte g, byte b);
 	void setPadding(uint16 horizontal, uint16 vertical);
-	bool drawSubtitle(uint32 timestamp, bool force = false) const;
+	bool drawSubtitle(uint32 timestamp, bool force = false, bool showSFX = false);
 	bool isLoaded() const { return _loaded || _subtitleDev; }
 
 private:
@@ -80,7 +84,7 @@ private:
 	bool _subtitleDev;
 	bool _overlayHasAlpha;
 
-	const Graphics::Font *_font;
+	Common::HashMap<Common::String, const Graphics::Font *> _fonts;
 	int _fontHeight;
 
 	Graphics::Surface *_surface;
@@ -92,6 +96,7 @@ private:
 
 	Common::Path _fname;
 	mutable Common::String _subtitle;
+	mutable Common::String _tag;
 	uint32 _color;
 	uint32 _blackColor;
 	uint32 _transparentColor;
