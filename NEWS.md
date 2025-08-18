@@ -61,6 +61,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
 
+ Lab:
+   - Added keymapper support.
+
  Lure:
    - Added Russian version support to lure.dat.
 
