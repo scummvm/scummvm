@@ -279,7 +279,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Schmoozer", "db31e320f286a5f4ab2c70022d24dcb2", 221244), // alt version
 	FANGAME("sMythWorld", "8224b15a910c9e7515923107d138de77", 472101),
 	FANGAME("Sorceror's Quest (Demo)", "r:ee8efbccea0807674af2bb53e6edf338", 531622),
-	// ??? problems with dog bitmap?
 	FANGAMEN("Space Adventure", "SpaceAdventure", "3908c75d639989a28993c59931fbe1ec", 155100),
 	FANGAMEN("Space Adventure", "SpaceAdventure", "e38d524cb778ed0beb77ee9299f0ed45", 155100), // alt version
 	FANGAMEN("Space Adventure", "SpaceAdventure", "6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // alt version
