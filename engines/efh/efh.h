@@ -395,7 +395,7 @@ enum EfhKeymapCode {
 
 struct EfhKeymap {
 	EfhKeymapCode _keymap;
-	Common::String _id;
+	const char *_id;
 };
 
 static const EfhKeymap _efhKeymaps[] = {
