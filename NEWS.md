@@ -53,6 +53,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed being unable to replace 3rd party member.
    - Fixed quitting in status menu.
    - Added Text-to-Speech support.
+   - Added keymapper support.
 
  Freescape:
    - Added roll rotation to Driller and Dark Side.
