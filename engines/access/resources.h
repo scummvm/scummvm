@@ -49,11 +49,6 @@ class Resources {
 		Common::Language _language;
 		uint _fileOffset;
 	};
-	struct RoomEntry {
-		Common::String _desc;
-		Common::Point _travelPos;
-		Common::Array<byte> _data;
-	};
 	struct DeathEntry {
 		byte _screenId;
 		Common::String _msg;
@@ -63,6 +58,12 @@ class Resources {
 		int _combo[4];
 	};
 protected:
+	struct RoomEntry {
+		Common::String _desc;
+		Common::Point _travelPos;
+		Common::Array<byte> _data;
+	};
+
 	AccessEngine *_vm;
 	Common::Array<DATEntry> _datIndex;
 
