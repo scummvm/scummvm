@@ -270,8 +270,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Robot Planet", "1066f6b2892cda16c2f365d1ec97537c", 107089),
 	FANGAME("Royal Malaise, Part 1", "a12d6990b2a0d1ce3cca5f19c8ef70cc", 306481),
 	FANGAMEN("Sands of Time", "xn--Sands of Time-1s6g", "d065662865d0cb9065812479ed7d2795", 122416), // Original file name "Sands of Time†"
-	FANGAMEN("Sands of Time", "Sands of Time", "d065662865d0cb9065812479ed7d2795", 122416), // same version, normal file name
-	FANGAMEN("Sands of Time", "Sands of Time", "466add24c5092937afca005041c7150b", 122380), // alt version, normal file name
+	FANGAMEN("Sands of Time", "Sands of Time", "466add24c5092937afca005041c7150b", 122380), // alt version
 	BIGGAME("scepters", "", "Scepters", "ecb776fb660205fad5819a26f7e180b5", 347103), // original 1986 version
 	BIGGAME("scepters", "", "Scepters", "e6c58e96b02f8eb46e0ccfe4f547045b", 346339), // alt version
 	BIGGAME("scepters", "", "Scepters", "2c824f1bd7b22c575c7be86ac88ebd23", 347284), // alt version
@@ -286,7 +285,6 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("SpaceAdventure (Demo)", "r:6cc726d460c76fbe8a4d16ce1831d4e7", 155086), // identical to the above, different file name
 	FANGAMEN("SparGate", "SparGate- vNC.1", "a7a7bfc1825011c2df8b7a03b57fcac9", 611991),
 	FANGAMEN("Spear of Destiny", "xn--SpearOfDestiny-ef3h", "ac00a26f04f83b47c278cc1d226f48df", 333409), // Original file name "SpearOfDestiny†"
-	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "ac00a26f04f83b47c278cc1d226f48df", 333409), // same version, normal file name
 	FANGAMEN("Spear of Destiny", "SpearOfDestiny", "64faf0d0324e25dbe5519a8bbdb43081", 332809), // alt version
 	FANGAMEN("Spear of Destiny", "Spear Of Destiny", "93fa152f3de31c0202e978fe2e9d78f7", 333395), // alt version, different file name
 	FANGAME("Spear of Destiny", "ea90bddd0925742351340cf88dd1c7a6", 620350), // alt version, different file name
@@ -297,9 +295,8 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Strange Disappearance", "xn--Strange Disappearance -", "9d6e41b61c0fc90400e5da2fcb653a4a", 772026), // Original file name "Strange Disappearance "
 	FANGAMEN("Strange Disappearance", "xn--Strange Disappearance -xav71fwa", "9d6e41b61c0fc90400e5da2fcb653a4a", 772026), // Original file name '"Strange Disappearance" ', same version
 	FANGAME("The Sultan's Palace", "fde31cbcc77b66969b4cfcd43075341e", 456599), // Releases titled "Palace of Sand" were made with FutureBasic
-	FANGAMEN("Swamp Witch", "xn--Swamp Witch-dl3f", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // Original file name "Swamp Witch†"
 	FANGAMEN("Success", "Success 1.0", "bacb07694a4559ae617923484aa40505", 93935),
-	FANGAME("Swamp Witch", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // same version, normal file name
+	FANGAMEN("Swamp Witch", "xn--Swamp Witch-dl3f", "bd8c8394be31f7845d55785b7ccfbbde", 739525), // Original file name "Swamp Witch†"
 	FANGAME("Swamp Witch", "07463c8b3b908b0c493a41b949ac1ff5", 739875), // alt version
 	FANGAME("Swamp Witch", "865a07a0356926d6cab8f14208e11f9c", 739511), // alt version
 	FANGAME("Swamp Witch", "dcda6bb0f27ae66884cab75ffc04e0d9", 739525), // alt version
