@@ -119,7 +119,7 @@ typedef struct ImGuiState {
 	} _cast;
 	struct {
 		ImGuiTextFilter _nameFilter;
-		bool _showScriptContexts;
+		bool _showScriptContexts = true;
 		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
 

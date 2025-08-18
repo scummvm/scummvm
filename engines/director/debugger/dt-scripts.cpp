@@ -281,98 +281,13 @@ void showFuncList() {
 
 		Movie *movie = g_director->getCurrentMovie();
 		if (_state->_functions._showScriptContexts) {
-			if (ImGui::BeginTable("Functions", 4, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
-				ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch, 240.f);
-				ImGui::TableSetupColumn("Movie", 0, 60.f);
-				ImGui::TableSetupColumn("Cast", 0, 60.f);
-				ImGui::TableSetupColumn("Type", 0, 80.f);
-				ImGui::TableHeadersRow();
-
-				for (auto &cast : *movie->getCasts()) {
-					for (int i = 0; i <= kMaxScriptType; i++) {
-						if (cast._value->_lingoArchive->scriptContexts[i].empty())
-							continue;
-						Common::String scriptType(scriptType2str((ScriptType)i));
-						for (auto &scriptContext : cast._value->_lingoArchive->scriptContexts[i]) {
-							Common::String name = Common::String::format("%d", scriptContext._key);
-							CastMemberInfo *cmi = cast._value->getCastMemberInfo(scriptContext._key);
-							if (cmi && !cmi->name.empty()) {
-								name += Common::String::format(" \"%s\"", cmi->name.c_str());
-							}
-							for (auto &functionHandler : scriptContext._value->_functionHandlers) {
-								Common::String function = Common::String::format("%s: %s", name.c_str(), g_lingo->formatFunctionName(functionHandler._value).c_str());
-								if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
-									continue;
-
-								ImGui::TableNextRow();
-								ImGui::TableNextColumn();
-								if (ImGui::Selectable(function.c_str())) {
-									CastMemberID memberID(scriptContext._key, cast._key);
-									ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
-									script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
-									script.moviePath = movie->getArchive()->getPathName().toString();
-									script.handlerName = getHandlerName(functionHandler._value);
-									addToOpenHandlers(script);
-								}
-								ImGui::TableNextColumn();
-								ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
-								ImGui::TableNextColumn();
-								ImGui::Text("%d", cast._key);
-								ImGui::TableNextColumn();
-								ImGui::Text("%s", scriptType.c_str());
-							}
-						}
-					}
-				}
-
-				Cast *sharedCast = movie->getSharedCast();
-				if (sharedCast && sharedCast->_lingoArchive) {
-					for (int i = 0; i <= kMaxScriptType; i++) {
-						if (sharedCast->_lingoArchive->scriptContexts[i].empty())
-							continue;
-						Common::String scriptType(scriptType2str((ScriptType)i));
-						for (auto &scriptContext : sharedCast->_lingoArchive->scriptContexts[i]) {
-							Common::String name = Common::String::format("%d", scriptContext._key);
-							CastMemberInfo *cmi = sharedCast->getCastMemberInfo(scriptContext._key);
-							if (cmi && !cmi->name.empty()) {
-								name += Common::String::format(" \"%s\"", cmi->name.c_str());
-							}
-							for (auto &functionHandler : scriptContext._value->_functionHandlers) {
-								Common::String function = Common::String::format("%s: %s", name.c_str(), g_lingo->formatFunctionName(functionHandler._value).c_str());
-								if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
-									continue;
-
-								ImGui::TableNextRow();
-								ImGui::TableNextColumn();
-								if (ImGui::Selectable(function.c_str())) {
-									CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
-									ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
-									script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
-									script.moviePath = movie->getArchive()->getPathName().toString();
-									script.handlerName = getHandlerName(functionHandler._value);
-									addToOpenHandlers(script);
-									_state->_dbg._goToDefinition = true;
-								}
-								ImGui::TableNextColumn();
-								ImGui::Text("%s", movie->getArchive()->getPathName().toString().c_str());
-								ImGui::TableNextColumn();
-								ImGui::Text("SHARED");
-								ImGui::TableNextColumn();
-								ImGui::Text("%s", scriptType.c_str());
-							}
-						}
-					}
-				}
-				ImGui::EndTable();
-			}
-		} else {
 			for (auto cast : *movie->getCasts()) {
 				Common::String castName = Common::String::format("%d", cast._key);
 				if (cast._value->getCastName().size()) {
 					castName += Common::String::format(": %s ", cast._value->getCastName().c_str());
 				}
 
-				if (ImGui::TreeNode(castName.c_str())) {
+				if (ImGui::TreeNodeEx(castName.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 					for (auto context : cast._value->_lingoArchive->lctxContexts) {
 						CastMemberInfo *cmi = cast._value->getCastMemberInfo(context._value->_id);
 						Common::String contextName = Common::String::format("%d", context._value->_id);
@@ -411,6 +326,134 @@ void showFuncList() {
 					}
 					ImGui::TreePop();
 				}
+			}
+
+			Cast *sharedCast = movie->getSharedCast();
+			if (sharedCast && sharedCast->_lingoArchive) {
+				Common::String castName = Common::String::format("%s", "SHARED");
+				if (sharedCast->getCastName().size()) {
+					castName += Common::String::format(": %s ", sharedCast->getCastName().c_str());
+				}
+
+				if (ImGui::TreeNode(castName.c_str())) {
+					for (auto context : sharedCast->_lingoArchive->lctxContexts) {
+						CastMemberInfo *cmi = sharedCast->getCastMemberInfo(context._value->_id);
+						Common::String contextName = Common::String::format("%d", context._value->_id);
+						if (cmi && cmi->name.size()) {
+							contextName += Common::String::format(": %s", cmi->name.c_str());
+						}
+
+						contextName += Common::String::format(": %s", scriptType2str(context._value->_scriptType));
+						if (!context._value || !context._value->_functionHandlers.size() || !_state->_functions._nameFilter.PassFilter(contextName.c_str())) {
+							continue;
+						}
+
+						ImGui::PushID(context._key);
+						if (ImGui::TreeNode(contextName.c_str())) {
+							if (ImGui::BeginTable("Functions", 1, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+								ImGui::TableSetupColumn("Function", ImGuiTableColumnFlags_WidthStretch, 240.f);
+								for (auto &functionHandler : context._value->_functionHandlers) {
+									Common::String function = Common::String::format("%s", g_lingo->formatFunctionName(functionHandler._value).c_str());
+
+									ImGui::TableNextRow();
+									ImGui::TableNextColumn();
+									if (ImGui::Selectable(function.c_str())) {
+										CastMemberID memberID(sharedCast->getCastIdByScriptId(context._key), SHARED_CAST_LIB);
+										ImGuiScript script = toImGuiScript(context._value->_scriptType, memberID, functionHandler._key);
+										script.byteOffsets = context._value->_functionByteOffsets[script.handlerId];
+										script.moviePath = movie->getArchive()->getPathName().toString();
+										script.handlerName = g_lingo->formatFunctionName(functionHandler._value);
+										addToOpenHandlers(script);
+									}
+								}
+								ImGui::EndTable();
+							}
+							ImGui::TreePop();
+						}
+						ImGui::PopID();
+					}
+					ImGui::TreePop();
+				}
+			}
+		} else {
+			if (ImGui::BeginTable("Functions", 2, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_Resizable | ImGuiTableFlags_RowBg)) {
+				ImGui::TableSetupColumn("Function", 0, 240.f);
+				ImGui::TableSetupColumn("Cast Name", ImGuiTableColumnFlags_WidthStretch, 240.f);
+				ImGui::TableHeadersRow();
+
+				for (auto &cast : *movie->getCasts()) {
+					for (int i = 0; i <= kMaxScriptType; i++) {
+						if (cast._value->_lingoArchive->scriptContexts[i].empty())
+							continue;
+						Common::String scriptType(scriptType2str((ScriptType)i));
+						for (auto &scriptContext : cast._value->_lingoArchive->scriptContexts[i]) {
+							Common::String name = Common::String::format("%d", scriptContext._key);
+							CastMemberInfo *cmi = cast._value->getCastMemberInfo(scriptContext._key);
+							CastMember *castMember = cast._value->getCastMember(scriptContext._key);
+
+							for (auto &functionHandler : scriptContext._value->_functionHandlers) {
+								Common::String function = Common::String::format("%s-%s (%d lib %d)",
+									castMember ? castType2str(castMember->_type) : "any", g_lingo->formatFunctionName(functionHandler._value).c_str(),
+									scriptContext._key, cast._key
+								);
+								if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
+									continue;
+
+								ImGui::TableNextRow();
+								ImGui::TableNextColumn();
+								if (ImGui::Selectable(function.c_str())) {
+									CastMemberID memberID(scriptContext._key, cast._key);
+									ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
+									script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
+									script.moviePath = movie->getArchive()->getPathName().toString();
+									script.handlerName = getHandlerName(functionHandler._value);
+									addToOpenHandlers(script);
+								}
+
+								ImGui::TableNextColumn();
+								ImGui::Text("%s", (cmi && cmi->name.size()) ? cmi->name.c_str() : "unnamed");
+							}
+						}
+					}
+				}
+
+				Cast *sharedCast = movie->getSharedCast();
+				if (sharedCast && sharedCast->_lingoArchive) {
+					for (int i = 0; i <= kMaxScriptType; i++) {
+						if (sharedCast->_lingoArchive->scriptContexts[i].empty())
+							continue;
+						Common::String scriptType(scriptType2str((ScriptType)i));
+						for (auto &scriptContext : sharedCast->_lingoArchive->scriptContexts[i]) {
+							Common::String name = Common::String::format("%d", scriptContext._key);
+							CastMemberInfo *cmi = sharedCast->getCastMemberInfo(scriptContext._key);
+							CastMember *castMember = sharedCast->getCastMember(scriptContext._key);
+
+							for (auto &functionHandler : scriptContext._value->_functionHandlers) {
+								Common::String function = Common::String::format("%s-%s (%d lib %d)",
+									castMember ? castType2str(castMember->_type) : "any", g_lingo->formatFunctionName(functionHandler._value).c_str(),
+									scriptContext._key, SHARED_CAST_LIB
+								);
+								if (!_state->_functions._nameFilter.PassFilter(function.c_str()))
+									continue;
+
+								ImGui::TableNextRow();
+								ImGui::TableNextColumn();
+								if (ImGui::Selectable(function.c_str())) {
+									CastMemberID memberID(scriptContext._key, SHARED_CAST_LIB);
+									ImGuiScript script = toImGuiScript(scriptContext._value->_scriptType, memberID, functionHandler._key);
+									script.byteOffsets = scriptContext._value->_functionByteOffsets[script.handlerId];
+									script.moviePath = movie->getArchive()->getPathName().toString();
+									script.handlerName = getHandlerName(functionHandler._value);
+									addToOpenHandlers(script);
+								}
+
+								ImGui::TableNextColumn();
+								ImGui::Text("%s", (cmi && cmi->name.size()) ? cmi->name.c_str() : "unnamed");
+							}
+						}
+					}
+				}
+				ImGui::EndTable();
 			}
 		}
 		ImGui::EndChild();
