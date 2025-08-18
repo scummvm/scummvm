@@ -399,6 +399,12 @@ void MartianResources::load(Common::SeekableReadStream &s) {
 	_bitFont = new MartianBitFont(ARRAYSIZE(BITFONT_DATA) / 8, BITFONT_DATA);
 
 	CANT_GET_THERE = "YOU CAN'T GET THERE FROM HERE.";
+
+	// The EXE doesn't have full data for the last few room table entries (49~51), as they are only
+	// talk locations.  That means the DAT file doesn't include them, so we add them manually.
+	ROOMTBL.push_back(RoomEntry({"MICHELE BLOODWORTH", Common::Point(-1, 18), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry({"BRADLEY ERICSON", Common::Point(-1, 19), Common::Array<byte>()}));
+	ROOMTBL.push_back(RoomEntry({"COOPER BRADBURY", Common::Point(-1, 21), Common::Array<byte>()}));
 }
 
 const byte *MartianResources::getCursor(int num) const {
