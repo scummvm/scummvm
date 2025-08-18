@@ -132,9 +132,7 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 		s.syncAsUint16LE(game.niche[1][indiaux]);
 	}
 
-	uint32 newBytes = s.bytesSynced();
-	debug("return generalData totalBytes synced %d", s.bytesSynced());
-	return true;
+	return s.bytesSynced() == 1740;
 }
 
 bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *roomStream) {
@@ -155,9 +153,7 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		roomStream->read(roomBuf, size);
 		s.syncBytes(roomBuf, size);
 		free(roomBuf);
-		debug("return room totalBytes synced %d", s.bytesSynced());
 	}
-	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
 		int size = g_engine->_rooms->size();
 		delete (g_engine->_rooms);
@@ -168,7 +164,7 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		// TODO: Will roomBuf be automatically freed?
 		g_engine->_rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
-	return true;
+	return s.bytesSynced() - startBytes == 347392;
 }
 
 bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *conversations) {
@@ -182,7 +178,6 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		conversations->read(convBuf, size);
 		s.syncBytes(convBuf, size);
 		free(convBuf);
-		debug("return conversation totalBytes synced %d", s.bytesSynced());
 	}
 	if (s.isLoading()) {
 		delete (g_engine->_conversationData);
@@ -192,7 +187,7 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		// TODO: Will objBuf be automatically freed?
 		g_engine->_conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
-	return true;
+	return s.bytesSynced() - startBytes == 2304;
 }
 
 bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *items) {
@@ -204,7 +199,6 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		items->read(objBuf, size);
 		s.syncBytes(objBuf, size);
 		free(objBuf);
-		debug("return items totalBytes synced %d", s.bytesSynced());
 	}
 	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
@@ -215,7 +209,7 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		// TODO: Will objBuf be automatically freed?
 		g_engine->_invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
-	return true;
+	return s.bytesSynced() - startBytes == 200322;
 }
 
 Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
@@ -235,6 +229,11 @@ Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
 		warning("Error while syncrhonizing conversation data");
 		return Common::kUnknownError;
 	}
+	if (ser.err()) {
+		warning("Error while synchronizing");
+		return Common::kUnknownError;
+	}
+
 	return Common::kNoError;
 }
 

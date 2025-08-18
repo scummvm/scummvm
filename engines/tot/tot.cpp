@@ -85,7 +85,7 @@ Common::Error TotEngine::run() {
 
 	_sound->init();
 	_graphics->init();
-	initPlayAnim();
+	initVars();
 
 	_isIntroSeen = ConfMan.getBool("introSeen");
 	// _inventoryManager = new InventoryManager();
@@ -1247,7 +1247,7 @@ void TotEngine::resetGameState() {
 	_inventoryPosition = 0;
 }
 
-void TotEngine::initPlayAnim() {
+void TotEngine::initVars() {
 	isLoadingFromLauncher = false;
 	_decryptionKey = "23313212133122121312132132312312122132322131221322222112121"
 					"32121121212112111212112333131232323213222132123211213221231"
