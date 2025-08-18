@@ -34,8 +34,7 @@ namespace Wage {
 #define FANGAMENDr(n,f,m,s,r) { "wage",n,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_GENERIC | ADGF_DEMO | r,GUIO0() }
 #define BIGGAME(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT,GUIO0() }
 #define BIGGAMEr(t,v,f,m,s,r) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT | r,GUIO0() }
-#define BIGGAMED(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO,GUIO0() }
-#define BIGGAMEDr(t,v,f,m,s,r) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEMO | r,GUIO0() }
+#define BIGGAMED(t,v,f,m,s) { t,v,AD_ENTRY1s(f,m,s),Common::EN_ANY,Common::kPlatformMacintosh,ADGF_DEFAULT| ADGF_DEMO,GUIO0() }
 
 static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
