@@ -225,6 +225,9 @@ public:
 	bool isQuitting() const {
 		return _quitFlag != QUIT_NONE;
 	}
+	void quit() {
+		_quitFlag = QUIT_QUITTING;
+	}
 
 	void SetCapture(HWND hWnd);
 	void ReleaseCapture();

@@ -23,6 +23,7 @@
 #include "bagel/afxwin.h"
 #include "bagel/hodjnpodj/metagame/frame/movytmpl.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -59,7 +60,7 @@ BOOL CMovieWindow::BlowWindow(CWnd *pParent, BOOL bScroll,
 
 BOOL CMovieWindow::PlayMovie() {
 	Video::AVIDecoder decoder;
-	auto *app = AfxGetApp();
+	CWinApp *app = AfxGetApp();
 	Graphics::Screen *screen = app->getScreen();
 	Common::Rect destRect = MovieRect;
 	CFile file;
@@ -76,18 +77,19 @@ BOOL CMovieWindow::PlayMovie() {
 	while (!decoder.endOfVideo()) {
 		if (decoder.hasDirtyPalette()) {
 			Graphics::Palette pal(decoder.getPalette(), 256);
-			AfxGetApp()->setPalette(pal);
+			app->setPalette(pal);
 		}
 
 		if (decoder.needsUpdate()) {
 			const Graphics::Surface *frame = decoder.decodeNextFrame();
 			screen->blitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), destRect);
+			screen->update();
 		}
 
 		bool breakFlag = false;
-		while (app->pollEvents(event) && !breakFlag) {
-			breakFlag = (event.type == Common::EVENT_KEYDOWN &&
-				event.kbd.keycode == Common::KEYCODE_ESCAPE) ||
+		while (g_system->getEventManager()->pollEvent(event) && !breakFlag) {
+			breakFlag = (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_START &&
+				event.customType == KEYBIND_ESCAPE) ||
 				(event.type == Common::EVENT_LBUTTONDOWN) ||
 				(event.type == Common::EVENT_QUIT) ||
 				(event.type == Common::EVENT_RETURN_TO_LAUNCHER);
@@ -97,7 +99,12 @@ BOOL CMovieWindow::PlayMovie() {
 	}
 
 	decoder.stop();
-	m_pParent->PostMessage(WM_COMMAND, MOVIE_OVER);
+
+	if (event.type == Common::EVENT_QUIT ||
+		event.type == Common::EVENT_RETURN_TO_LAUNCHER)
+		app->quit();
+	else
+		m_pParent->PostMessage(WM_COMMAND, MOVIE_OVER);
 
 	return TRUE;
 }
