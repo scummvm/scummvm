@@ -31,6 +31,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  ADL:
    - Added Text-to-Speech support.
 
+ AGI:
+   - Added Text-to-Speech support.
+
  Buried:
    - Added keymapper support.
 
