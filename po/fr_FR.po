@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-17 16:05+0000\n"
-"PO-Revision-Date: 2025-08-15 10:33+0000\n"
+"PO-Revision-Date: 2025-08-18 09:28+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8288,26 +8288,20 @@ msgid "Debug graphics"
 msgstr "Déboguer les graphismes"
 
 #: engines/drascula/metaengine.cpp:207
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "Conf. des touches Intro"
+msgstr "Conf. des touches Animation"
 
 #: engines/drascula/metaengine.cpp:208
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Conf. des touches du panneau Quitter"
+msgstr "Conf. des touches Message Quitter"
 
 #: engines/drascula/metaengine.cpp:212 engines/tetraedge/metaengine.cpp:92
 msgid "Move / Interact / Select"
 msgstr "Se déplacer / Interagir / Sélectionner"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
-msgstr "Ramasser"
+msgstr "Prendre"
 
 #: engines/drascula/metaengine.cpp:240 engines/queen/metaengine.cpp:259
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
@@ -8318,46 +8312,32 @@ msgid "Open"
 msgstr "Ouvrir"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "Utiliser l'objet sélectionné"
+msgstr "Réinitialiser le verbe sélectionné"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Contrôles tactiles"
+msgstr "Contrôles du volume"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Sauvegardes"
+msgstr "Sauvegarder / Charger une partie"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Act. / Désact. les sous-titres"
+msgstr "Activer les sous-titres"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Act. / Désact. les sous-titres"
+msgstr "Désactiver les sous-titres"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "Couper les voix"
+msgstr "Mettre en pause un dialogue"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Confirmer"
+msgstr "Confirmer la fermeture"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
