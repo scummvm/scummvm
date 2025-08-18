@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-18 10:40+0000\n"
-"PO-Revision-Date: 2025-06-16 11:46+0000\n"
+"PO-Revision-Date: 2025-08-18 16:54+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.7.2\n"
+"X-Generator: Weblate 5.12.2\n"
 "X-Language-name: Ελληνικά\n"
 
 #: audio/mac_plugin.cpp:30
@@ -3861,20 +3861,16 @@ msgid "Start anyway"
 msgstr "Εκκίνηση παρά ταύτα"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"ΠΡΟΣΟΧΗ: Το παιχνίδι που θα ξεκινήσει, δεν υποστηρίζεται ακόμα πλήρως από το "
-"ScummVM. Ως εκ τούτου, είναι πιθανό να είναι ασταθές, και κάθε αποθηκευμένο "
-"παιχνίδι που κάνετε μπορεί να μη λειτουργεί σε μελλοντικές εκδόσεις του "
-"ScummVM."
+"ΠΡΟΣΟΧΗ: Το παιχνίδι που θα ξεκινήσει περιέχει το πρόσθετο \"%s\" το οποίο "
+"δεν υποστηρίζεται ακόμα πλήρως από το ScummVM. Ως εκ τούτου, είναι πιθανό να "
+"είναι ασταθές, και κάθε αποθηκευμένο παιχνίδι που κάνετε μπορεί να μη "
+"λειτουργεί σε μελλοντικές εκδόσεις του ScummVM."
 
 #: engines/engine.cpp:852
 #, c-format
@@ -8852,10 +8848,8 @@ msgid "Leave"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "Κατάσταση:"
+msgstr "Κατάσταση"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
@@ -10388,16 +10382,12 @@ msgid "Exit map display"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up one level"
-msgstr "Επίπεδο Αποσφαλμάτωσης:"
+msgstr "Ένα επίπεδο πάνω"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down one level"
-msgstr "Επίπεδο Αποσφαλμάτωσης:"
+msgstr "Ένα επίπεδο κάτω"
 
 #: engines/lab/metaengine.cpp:391
 #, fuzzy
@@ -10556,7 +10546,7 @@ msgstr "Άνοιγμα μενού παιχνιδιού"
 
 #: engines/mads/metaengine.cpp:317
 msgid "Scroll bar up"
-msgstr "Κύλιση πάνω"
+msgstr "Κύλιση μπάρας πάνω"
 
 #: engines/mads/metaengine.cpp:323
 msgid "Scroll bar down"
@@ -14005,10 +13995,8 @@ msgid "Perform default action"
 msgstr "Κοίτα προς"
 
 #: engines/supernova/metaengine.cpp:244
-#, fuzzy
-#| msgid "Interpolation:"
 msgid "Instructions"
-msgstr "Παρεμβολή:"
+msgstr "Οδηγίες"
 
 #: engines/supernova/metaengine.cpp:250
 #, fuzzy
@@ -14353,10 +14341,8 @@ msgid "Remote"
 msgstr "Αφαίρεση"
 
 #: engines/titanic/metaengine.cpp:254
-#, fuzzy
-#| msgid "Room:"
 msgid "Rooms"
-msgstr "Δωμάτιο:"
+msgstr "Δωμάτια"
 
 #: engines/titanic/metaengine.cpp:259
 msgid "Real life"
@@ -14387,10 +14373,8 @@ msgid "Scroll to bottom"
 msgstr "Κίνηση προς τον πάτο"
 
 #: engines/titanic/metaengine.cpp:291
-#, fuzzy
-#| msgid "Transitions:"
 msgid "Translation"
-msgstr "Μεταβάσεις:"
+msgstr "Μετάφραση"
 
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
@@ -15122,10 +15106,8 @@ msgid "Open door"
 msgstr "Άνοιγμα ολογραφικού χάρτη"
 
 #: engines/ultima/ultima4/metaengine.cpp:64
-#, fuzzy
-#| msgid "Password:"
 msgid "Pass"
-msgstr "Κωδικός:"
+msgstr "Πέρασε"
 
 #: engines/ultima/ultima4/metaengine.cpp:65
 msgid "Peer"
@@ -15144,10 +15126,8 @@ msgid "Ready weapon"
 msgstr "Επόμενη ενέργεια"
 
 #: engines/ultima/ultima4/metaengine.cpp:69
-#, fuzzy
-#| msgid "Status:"
 msgid "Stats"
-msgstr "Κατάσταση:"
+msgstr "Στατιστικά"
 
 #: engines/ultima/ultima4/metaengine.cpp:72
 msgid "Wear armor"
@@ -15158,10 +15138,8 @@ msgid "Yell"
 msgstr ""
 
 #: engines/ultima/ultima4/metaengine.cpp:79
-#, fuzzy
-#| msgid "Speed:"
 msgid "Speed up"
-msgstr "Ταχύτητα:"
+msgstr "Επιτάχυνση"
 
 #: engines/ultima/ultima4/metaengine.cpp:80
 #, fuzzy
@@ -15319,16 +15297,12 @@ msgid "Create transport"
 msgstr "Δημιουργία φακέλου"
 
 #: engines/ultima/ultima4/metaengine.cpp:121
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Up level"
-msgstr "Επίπεδο Αποσφαλμάτωσης:"
+msgstr "Πάνω επίπεδο"
 
 #: engines/ultima/ultima4/metaengine.cpp:122
-#, fuzzy
-#| msgid "Debug level:"
 msgid "Down level"
-msgstr "Επίπεδο Αποσφαλμάτωσης:"
+msgstr "Κάτω επίπεδο"
 
 #: engines/ultima/ultima4/metaengine.cpp:123
 msgid "Grant virtue"
