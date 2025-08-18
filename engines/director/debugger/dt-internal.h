@@ -119,6 +119,7 @@ typedef struct ImGuiState {
 	} _cast;
 	struct {
 		ImGuiTextFilter _nameFilter;
+		bool _showScriptContexts;
 		Common::HashMap<Window *, ScriptData> _windowScriptData;
 	} _functions;
 
@@ -167,6 +168,8 @@ typedef struct ImGuiState {
 
 	Common::List<CastMemberID> _scriptCasts;
 	Common::List<ImGuiScript> _openHandlers;
+	bool _showCompleteScript = true;
+
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
 	int _prevFrame = -1;
 	struct {
