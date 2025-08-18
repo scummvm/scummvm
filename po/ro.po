@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-18 10:27+0000\n"
+"POT-Creation-Date: 2025-08-18 10:40+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -9410,6 +9410,15 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1500
 msgid "Best"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:456
+msgid "Fix audio pops/clicks"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:457
+msgid ""
+"Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
 
 #: engines/mohawk/metaengine.cpp:291
