@@ -393,7 +393,8 @@ void showExecutionContext() {
 					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 					script.moviePath = movie->getArchive()->getPathName().toString();
 					script.handlerName = getHandlerName(functionHandler._value);
-					renderScript(script, scriptData->_showByteCode, script == current);
+					// Need to pass by reference in case of the current handler
+					renderScript(current == script ? current : script, scriptData->_showByteCode, script == current);
 					ImGui::NewLine();
 				}
 			}
@@ -501,7 +502,8 @@ void showExecutionContext() {
 						Movie *movie = g_director->getCurrentMovie();
 						script.moviePath = movie->getArchive()->getPathName().toString();
 						script.handlerName = getHandlerName(functionHandler._value);
-						renderScript(script, scriptData->_showByteCode, script == current);
+						// Need to pass by reference in case of the current handler
+						renderScript(current == script ? current : script, scriptData->_showByteCode, script == current);
 						ImGui::NewLine();
 					}
 				}

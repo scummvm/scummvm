@@ -831,7 +831,7 @@ private:
 		if (showCurrentStatement) {
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (_state->_dbg._isScriptDirty && _scrollTo) {
+			if (_state->_dbg._isScriptDirty && _scrollTo && g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) {
 				ImGui::SetScrollHereY(0.5f);
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
