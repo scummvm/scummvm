@@ -34,7 +34,6 @@ namespace Tot {
 #define SAVEGAME_CURRENT_VERSION 1
 
 bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
-	uint32 startBytes = s.bytesSynced();
 	// Uint16
 	s.syncAsUint16LE(game.roomCode);
 	s.syncAsUint16LE(game.trajectoryLength);
@@ -161,7 +160,6 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		s.syncBytes(roomBuf, size);
 
 		debug("Loading room data now");
-		// TODO: Will roomBuf be automatically freed?
 		g_engine->_rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
 	return s.bytesSynced() - startBytes == 347392;
@@ -184,7 +182,6 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		byte *convBuf = (byte *)malloc(size);
 		s.syncBytes(convBuf, size);
 		debug("Loading conversation data now");
-		// TODO: Will objBuf be automatically freed?
 		g_engine->_conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
 	return s.bytesSynced() - startBytes == 2304;
@@ -200,13 +197,11 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		s.syncBytes(objBuf, size);
 		free(objBuf);
 	}
-	uint32 newBytes = s.bytesSynced();
 	if (s.isLoading()) {
 		delete (g_engine->_invItemData);
 		byte *objBuf = (byte *)malloc(size);
 		s.syncBytes(objBuf, size);
 		debug("Loading item data now");
-		// TODO: Will objBuf be automatically freed?
 		g_engine->_invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
 	return s.bytesSynced() - startBytes == 200322;

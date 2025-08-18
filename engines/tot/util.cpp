@@ -394,7 +394,6 @@ void littText(int x, int y, Common::String text, byte color, Graphics::TextAlign
 void littText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
 	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
 	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
-	// TODO: Investigate why this is needed
 	y = y + 2;
 	g_engine->_graphics->littText(text, x, y, color, align, yAligned);
 }
@@ -406,7 +405,6 @@ void euroText(int x, int y, Common::String text, byte color, Graphics::TextAlign
 void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
 	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
 	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
-	// TODO: Investigate why this is needed
 	y = y + 2;
 	g_engine->_graphics->euroText(text, x, y, color, align, yAligned);
 }
@@ -422,7 +420,6 @@ void outtextxy(int x, int y, Common::String text, byte color, bool euro, Graphic
 void outtextxy(int x, int y, char const *text, byte color, bool euro, Graphics::TextAlign align) {
 	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
 	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
-	// TODO: Investigate why this is needed
 	y = y + 2;
 	if (euro) {
 		g_engine->_graphics->euroText(text, x, y, color, align, yAligned);
