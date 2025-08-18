@@ -645,11 +645,13 @@ void Room::executeCommand(int commandId) {
 				return;
 			}
 			if (_vm->_useItem == 39) {
+				// Use hoverboard
 				if (_vm->_player->_roomNumber == 23)
-					_vm->_currentMan = 1;
+					_vm->_flags[174] = 1;
 				commandOff();
 				return;
 			} else if (_vm->_useItem == 6) {
+				// Use comlink
 				_vm->_flags[3] = 2;
 				_vm->_scripts->converse1(24);
 

@@ -175,6 +175,12 @@ void Player::removeSprite1() {
 	}
 }
 
+bool Player::isMMHover() const {
+	// Whether or not this is MM and the player is on the hoverboard.
+	return (_vm->getGameID() == kGameMartianMemorandum &&
+		_vm->_flags[174] == 1);
+}
+
 void Player::calcManScale() {
 	if (!_vm->_manScaleOff) {
 		_vm->_scale = ((((_rawPlayer.y - _vm->_scaleMaxY + _vm->_scaleN1) *
@@ -252,9 +258,9 @@ void Player::walkUp() {
 
 	_playerDirection = UP;
 	int walkOff = _walkOffUp[_frame - _upWalkMin];
-	int tempL = _rawPlayerLow.y - _vm->_screen->_scaleTable2[walkOff];
+	int tempL = _rawPlayerLow.y - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOff]);
 	_rawYTempL = (byte)tempL;
-	int yTemp = _rawPlayer.y - _vm->_screen->_scaleTable1[walkOff] -
+	int yTemp = _rawPlayer.y - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOff]) -
 		(tempL < 0 ? 1 : 0);
 	_rawYTemp = yTemp;
 	_rawXTemp = _rawPlayer.x;
@@ -284,10 +290,10 @@ void Player::walkDown() {
 		_frame = _downWalkMin;
 
 	_playerDirection = DOWN;
-	int walkOff = _walkOffDown[_frame - _downWalkMin];
-	int tempL = _vm->_screen->_scaleTable2[walkOff] + _rawPlayerLow.y;
+	int walkOff =  _walkOffDown[_frame - _downWalkMin];
+	int tempL = (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOff]) + _rawPlayerLow.y;
 	_rawYTempL = (byte)tempL;
-	_rawYTemp = _vm->_screen->_scaleTable1[walkOff] + _rawPlayer.y + (tempL >= 0x100 ? 1 : 0);
+	_rawYTemp = (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOff]) + _rawPlayer.y + (tempL >= 0x100 ? 1 : 0);
 	_rawXTemp = _rawPlayer.x;
 
 	if (_vm->_room->codeWalls()) {
@@ -324,9 +330,9 @@ void Player::walkLeft() {
 	}
 	if (flag) {
 		int walkOffset = _walkOffLeft[_frame - _sideWalkMin];
-		int tempL = _rawPlayerLow.x - _vm->_screen->_scaleTable2[walkOffset];
+		int tempL = _rawPlayerLow.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[walkOffset] -
+		_rawXTemp = _rawPlayer.x - (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) -
 			(tempL < 0 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x - _vm->_screen->_scaleTable1[_scrollConst];
@@ -366,9 +372,9 @@ void Player::walkRight() {
 	}
 	if (flag) {
 		int walkOffset = _walkOffRight[_frame - _sideWalkMin];
-		int tempL = _rawPlayerLow.x + _vm->_screen->_scaleTable2[walkOffset];
+		int tempL = _rawPlayerLow.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable2[walkOffset]);
 		_rawTempL = (byte)tempL;
-		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[walkOffset] +
+		_rawXTemp = _rawPlayer.x + (isMMHover() ? 2 : _vm->_screen->_scaleTable1[walkOffset]) +
 			(tempL >= 0x100 ? 1 : 0);
 	} else {
 		_rawXTemp = _rawPlayer.x + _vm->_screen->_scaleTable1[_scrollConst];
@@ -681,8 +687,17 @@ void Player::plotCom1() {
 
 void Player::plotCom2() {
 	// WORKAROUND: Amazon has at least one cutscene with the player not properly turned off
-	if (!_playerOff && _spritesPtr != nullptr)
-		_vm->_images.addToList(*this);
+	if (!_playerOff && _spritesPtr != nullptr) {
+		ImageEntry ie = *this;
+		if (!isMMHover()) {
+			_vm->_images.addToList(ie);
+		} else if (_vm->_objectsTable[23]) {
+			// MM player on hoverboard
+			ie._spritesPtr = _vm->_objectsTable[23];
+			ie._frameNumber = 13;
+			_vm->_images.addToList(ie);
+		}
+	}
 }
 
 void Player::plotCom3() {

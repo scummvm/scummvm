@@ -73,6 +73,8 @@ protected:
 	void walkUpRight();
 	void walkDownRight();
 	void checkScrollUp();
+
+	bool isMMHover() const;
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
