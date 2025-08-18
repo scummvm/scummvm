@@ -1521,16 +1521,19 @@ void TotEngine::initialMenu(bool fade) {
 						validOption = true;
 					} else if (x > 173 && x < 267) {
 						credits();
-						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						if(!g_engine->shouldQuit()) {
+							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						}
 					}
 				} else if (y > 140 && y < 155) {
 					if (x > 173 && x < 292) {
 						_graphics->totalFadeOut(0);
 						_screen->clear();
 						introduction();
-						drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						if(!g_engine->shouldQuit()) {
+							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						}
 					} else if (x >= 18 && x <= 145) {
-						debug("Load");
 						_startNewGame = false;
 						_continueGame = false;
 						validOption = true;

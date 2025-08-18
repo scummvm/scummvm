@@ -157,7 +157,7 @@ private:
 
 	// vars
 	void clearObj();
-	void initPlayAnim();
+	void initVars();
 	void resetGameState();
 	void clearVars();
 

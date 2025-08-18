@@ -953,7 +953,10 @@ void drawFlc(
 					Common::Rect boundingBox = Common::Rect(x, y, x + flic.getWidth() + 1, y + flic.getHeight() + 1);
 					blit(frame, boundingBox);
 					if (flic.hasDirtyPalette()) {
-						byte *palette = (byte *)flic.getPalette();
+
+						const byte *fliPalette = (const byte *)flic.getPalette();
+						byte *palette = (byte *)malloc(768);
+						Common::copy(fliPalette, fliPalette + 768, palette);
 						// game fixes background to 0
 						palette[0] = 0;
 						palette[1] = 0;

@@ -39,29 +39,29 @@ bool BgiFont::loadChr(const Common::Path &fileName) {
 }
 
 bool BgiFont::loadChr(Common::SeekableReadStream &stream) {
-	uint16 fileSignature = stream.readUint16LE();
+	/* fileSignature = */ stream.readUint16LE();
 	/*
 		Description until finding value 0x1A
 	*/
 	Common::String description = stream.readString(0x1A);
 	uint16 headerSize = stream.readUint16LE();
 	Common::String name = stream.readString(0, 4);
-	uint16 fontSize = stream.readUint16LE();
-	byte majorVersion = stream.readByte();
-	byte minorVersion = stream.readByte();
-	byte majorRevision = stream.readByte();
-	byte minorRevision = stream.readByte();
+	/*uint16 fontSize = */ stream.readUint16LE();
+	/* byte majorVersion = */ stream.readByte();
+	/* byte minorVersion = */ stream.readByte();
+	/* byte majorRevision = */ stream.readByte();
+	/* byte minorRevision = */ stream.readByte();
 
 	int remainingBytes = headerSize - (description.size() + 1 + 14);
 	stream.seek(remainingBytes, SEEK_CUR);
 
-	char signature = stream.readByte();
+	/* char signature = */ stream.readByte();
 	_charCount = stream.readUint16LE();
 	// undefined byte
 	stream.skip(1);
 
 	_firstChar = stream.readByte();
-	uint16 strokeOffset = stream.readUint16LE();
+	/* uint16 strokeOffset = */ stream.readUint16LE();
 	/*byte scanFlag = */ stream.readByte();
 
 	// Distance from the origin to the font's highest point
@@ -127,7 +127,7 @@ bool BgiFont::loadChr(Common::SeekableReadStream &stream) {
 
 byte Graphics::BgiFont::fixSign(byte original) {
 	// If negative shifts the sign bit to the right position
-	return original & 0x7F | ((original & 0x40) << 1);
+	return (original & 0x7F) | ((original & 0x40) << 1);
 }
 
 BgiFont::CachedFont *BgiFont::drawCachedFont(int size) {

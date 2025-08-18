@@ -61,12 +61,11 @@ int MidiPlayer::open() {
 
 	// Don't call open() twice!
 	assert(!_driver);
-	int devFlags = MDT_MIDI | MDT_ADLIB;
 
 	OPL::Config::OplType oplType =
 		MidiDriver_ADLIB_Multisource::detectOplType(OPL::Config::kOpl3) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
 
-	_driverMsMusic = new MidiDriver_AdLib(OPL::Config::kOpl3);
+	_driverMsMusic = new MidiDriver_AdLib(oplType);
 
 	_parserMusic = MidiParser::createParser_SMF();
 	_driver = _driverMsMusic;
@@ -190,7 +189,6 @@ void MidiDriver_AdLib::loadInstrumentBankFromDriver(long offset) {
 	if (!driverFile.open("CTMIDI.DRV")) {
 		error("Couldnt find midi file!");
 	}
-	debug("Loading bank from offset: %d", offset);
 	driverFile.seek(offset, SEEK_SET);
 	uint8 *data = (uint8 *)malloc(128 * (11 + 21));
 	driverFile.read(data, 128 * (11 + 21));
