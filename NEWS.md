@@ -105,6 +105,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
    - Added keymapper support.
 
+ Queen:
+   - Added keymapper support.
+
  SCI:
    - Fixed the palette in SLATER Mac.
    - Fixed LSL6 temporary freeze after control panel.
@@ -144,6 +147,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added keymapper support.
 
  Titanic:
+   - Added keymapper support.
+
+ Toltecs:
    - Added keymapper support.
 
  TwinE:
