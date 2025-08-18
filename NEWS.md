@@ -78,6 +78,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed protection from elements spell.
    - Added Text-to-Speech support.
 
+ Mohawk:
+   - Fixed popping noise in speech in some game releases (bug in the original).
+
  NANCY:
    - Added support for ScummVM's save/load screens.
    - Fixed a crash while reading files from the Zip disk in Secret of the
