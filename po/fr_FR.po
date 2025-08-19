@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-19 14:00+0000\n"
-"PO-Revision-Date: 2025-08-19 20:10+0000\n"
+"PO-Revision-Date: 2025-08-19 20:27+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9978,17 +9978,15 @@ msgstr "Descendre d'un niveau"
 
 #: engines/lab/metaengine.cpp:391
 msgid "Go back in journal"
-msgstr "Retourner dans le journal"
+msgstr "Reculer dans le journal"
 
 #: engines/lab/metaengine.cpp:397
 msgid "Exit journal"
 msgstr "Quitter le journal"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "Afficher le journal"
+msgstr "Avancer dans le journal"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10456,12 +10454,14 @@ msgstr "Meilleur"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "Corriger les pops/clics audio"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
+"Réduit les bruits audibles à la fin de certains effets sonores (hors Myst et "
+"Riven)."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
