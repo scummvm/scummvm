@@ -435,7 +435,7 @@ public:
 	/**
 	 * Previous positions of the mouse within the screen grid
 	 */
-	uint oldGridX, oldGridY;
+	uint oldGridX = 0, oldGridY = 0;
 
 	SavedGame savedGame;
 
