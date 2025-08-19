@@ -27,13 +27,7 @@
 
 namespace Tot {
 
-struct LinkedList {
-	uint item;
-	LinkedList* next;
-};
-
 void talkToSceneObject();
-
 void loadTalkAnimations();
 void unloadTalkAnimations();
 

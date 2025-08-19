@@ -35,7 +35,7 @@ Common::String decrypt(Common::String encryptedText) {
 	return encryptedText;
 }
 
-void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex);
+Common::List<uint>* findDialogue(Tree tree, byte characterIndex);
 
 static void findDownwards(Tree curTree, bool &descend) {
 	if (curTree != NULL) {
@@ -49,13 +49,12 @@ static void findDownwards(Tree curTree, bool &descend) {
 	}
 }
 
-void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex) {
+Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 	bool speak, ascend, descend, border, forward;
 
 	Tree auxTree = tree->child;
 	bool done = false;
-	linkedList->next = NULL;
-	LinkedList* l1 = linkedList;
+	Common::List<uint> *linkedList = new Common::List<uint>();
 	border = false;
 	ascend = false;
 	Tree step;
@@ -193,27 +192,34 @@ void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex) {
 					switch (characterIndex) {
 					case 1:
 						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
-							l1->item = 12;
+							linkedList->push_back(12);
+							// l1->item = 12;
 							forward = true;
 						} else if (g_engine->_bookTopic[characterIndex - 1]) {
 							forward = true;
-							l1->item = 33;
+							linkedList->push_back(33);
+
+							// l1->item = 33;
 						} else {
-							l1->item = 21;
+							linkedList->push_back(21);
+							// l1->item = 21;
 							forward = true;
 						}
 						break;
 					case 3:
 						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
-							l1->item = 103;
+							linkedList->push_back(103);
+							// l1->item = 103;
 							forward = true;
 						} else {
-							l1->item = 112;
+							linkedList->push_back(112);
+							// l1->item = 112;
 							forward = true;
 						}
 						break;
 					default: {
-						l1->item = auxTree->element.index;
+						linkedList->push_back(auxTree->element.index);
+						// l1->item = auxTree->element.index;
 						forward = true;
 					}
 					}
@@ -221,14 +227,15 @@ void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex) {
 					;
 				}
 			else {
-				l1->item = auxTree->element.index;
+				linkedList->push_back(auxTree->element.index);
+				// l1->item = auxTree->element.index;
 				forward = true;
 			}
 			if (forward) {
 				forward = false;
-				l1->next = new LinkedList;
-				l1 = l1->next;
-				l1->next = NULL;
+				// l1->next = new LinkedList;
+				// l1 = l1->next;
+				// l1->next = NULL;
 			}
 			if (rightSibling(auxTree) != NULL)
 				auxTree = rightSibling(auxTree);
@@ -281,7 +288,7 @@ void findDialogLine(LinkedList* linkedList, Tree tree, byte characterIndex) {
 	} while (!done);
 	auxTree = NULL;
 	step = NULL;
-	l1 = NULL;
+	return linkedList;
 }
 
 void modifyTree(Tree tree, uint node) {
@@ -333,11 +340,11 @@ void fixTree(Tree tree) {
 	}
 }
 
-void showDialogLine(
+void showDialogueLine(
 	Common::String conversationMatrix[16],
 	uint &chosenTopic,
 	byte conversationIndex,
-	LinkedList* l1,
+	Common::ListInternal::Iterator<uint> l1,
 	bool &endOfConversation) {
 
 	byte firstChat = 1;
@@ -426,8 +433,8 @@ void showDialogLine(
 	if (selectedConv == conversationIndex)
 		endOfConversation = true;
 	for (int i = 1; i <= (selectedConv - 1); i++)
-		l1 = l1->next;
-	chosenTopic = l1->item;
+		l1++;
+	chosenTopic = *l1;
 }
 
 void talk(byte characterIndex) {
@@ -446,19 +453,18 @@ void talk(byte characterIndex) {
 	Tree tree;
 	readTree(*g_engine->_conversationData, tree, characterIndex - 1);
 	loadTalkAnimations();
-	LinkedList* l1;
+	Common::ListInternal::Iterator<uint> l1;
 	do {
 
 		for (int i = 0; i < 16; i++) {
 			conversationMatrix[i] = "";
 		}
 
-		LinkedList *linkedList = new LinkedList;
-		findDialogLine(linkedList, tree, characterIndex);
+		Common::List<uint> *linkedList = findDialogue(tree, characterIndex);
 		byte conversationIndex = 0;
-		l1 = linkedList;
-		do {
-			g_engine->_verbFile.seek(kVerbRegSize * l1->item);
+		l1 = linkedList->begin();
+		while (l1 != linkedList->end() && !g_engine->shouldQuit()) {
+			g_engine->_verbFile.seek(kVerbRegSize * (*l1));
 			conversationIndex += 1;
 			text = g_engine->readVerbRegister();
 			insertName = 0;
@@ -480,10 +486,10 @@ void talk(byte characterIndex) {
 				conversationMatrix[conversationIndex] = conversationMatrix[conversationIndex].substr(0, stringAux);
 				conversationMatrix[conversationIndex].insertString(" ...", stringAux);
 			}
-			l1 = l1->next;
-		} while ((l1->next != NULL) && (l1 != NULL) && !g_engine->shouldQuit());
-		l1 = linkedList;
-		showDialogLine(conversationMatrix, newNode, conversationIndex, l1, endOfConversation);
+			l1++;
+		};
+		l1 = linkedList->begin();
+		showDialogueLine(conversationMatrix, newNode, conversationIndex, l1, endOfConversation);
 		delete linkedList;
 		g_engine->sayLine(newNode, 255, 0, response, true);
 		stringAux = 0;
@@ -532,7 +538,7 @@ void talk(byte characterIndex) {
 		return;
 	}
 	delete tree;
-	l1 = NULL;
+
 	g_engine->_mouse->hide();
 
 	for (int i = 25; i >= 1; i--)
