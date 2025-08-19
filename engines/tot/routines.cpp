@@ -794,7 +794,6 @@ void TotEngine::loadScreenData(uint screenNumber) {
 
 	_rooms->seek(screenNumber * kRoomRegSize, SEEK_SET);
 	_currentRoomData = readScreenDataFile(_rooms);
-	debug("Current roomData is = %p", _currentRoomData);
 	loadScreen();
 	for (int i = 0; i < 15; i++) {
 		RoomBitmapRegister &bitmap = _currentRoomData->screenLayers[i];
