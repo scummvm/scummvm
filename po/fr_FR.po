@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-19 14:00+0000\n"
-"PO-Revision-Date: 2025-08-19 20:03+0000\n"
+"PO-Revision-Date: 2025-08-19 20:10+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9945,62 +9945,44 @@ msgid "Run while following virtual bread crumbs"
 msgstr "Courir en suivant le fil d'Ariane virtuel"
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to 2xSai scaling"
 msgid "Switch to main display"
-msgstr "Basculer vers l'échelle 2xSai"
+msgstr "Basculer vers l'affichage principal"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Écran de Sauvegarde/Chargement"
+msgstr "Ouvrir l'écran de sauvegarde/chargement"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "Regarder"
+msgstr "Regarder le décor"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Previous inventory item"
-msgstr "Utiliser l'item d'inventaire"
+msgstr "Item d'inventaire précédent"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Next Inventory Item"
 msgid "Next inventory item"
 msgstr "Item d'inventaire suivant"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Sortir de l'écran Carte"
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
 msgstr "Monter d'un niveau"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
 msgstr "Descendre d'un niveau"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "Afficher le journal"
+msgstr "Retourner dans le journal"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Use journal"
 msgid "Exit journal"
-msgstr "Utiliser le journal"
+msgstr "Quitter le journal"
 
 #: engines/lab/metaengine.cpp:402
 #, fuzzy
