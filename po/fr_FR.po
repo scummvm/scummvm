@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-18 10:40+0000\n"
-"PO-Revision-Date: 2025-08-19 05:25+0000\n"
+"PO-Revision-Date: 2025-08-19 06:04+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -5856,7 +5856,7 @@ msgstr "Générer la liste"
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:66
 msgid "Status: "
-msgstr "État : "
+msgstr "Etat : "
 
 #: backends/platform/libretro/src/libretro-options-widget.cpp:148
 msgid "Failed, can't access playlist file"
@@ -6228,7 +6228,7 @@ msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:88 backends/platform/wii/options.cpp:100
 msgid "Status:"
-msgstr "État :"
+msgstr "Etat :"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Unknown"
@@ -8454,85 +8454,63 @@ msgid "Skip song keymappings"
 msgstr "Conf. des touches Passer les chansons"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Conf. des touches Menu Démarrage"
+msgstr "Conf. des touches Navigation du menu Etat"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Conf. des touches Menu Démarrage"
+msgstr "Conf. des touches Menu Etat"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Conf. des touches Menu Démarrage"
+msgstr "Conf. des touches Sous-menu menu Etat"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Interaction keymappings"
-msgstr "Conf. des touches Intro"
+msgstr "Conf. des touches Interaction"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Fight keymappings"
-msgstr "Conf. des touches PET"
+msgstr "Conf. des touches Combat"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Conf. des touches Menu Démarrage"
+msgstr "Conf. des touches Sélection des personnages"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Animation keymappings"
 msgid "Enemy selection keymappings"
-msgstr "Conf. des touches Animation"
+msgstr "Conf. des touches Sélection des ennemis"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Conf. des touches Menu Démarrage"
+msgstr "Conf. des touches Menu Mort"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
 msgid "Character 1 status"
-msgstr "Status du personnage 1"
+msgstr "Etat du personnage 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:347
 msgid "Character 2 status"
-msgstr "Status du personnage 2"
+msgstr "Etat du personnage 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:355
 msgid "Character 3 status"
-msgstr "Status du personnage 3"
+msgstr "Etat du personnage 3"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip song"
-msgstr "Passer la séquence"
+msgstr "Passer la chanson"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "Passer l'intro"
+msgstr "Passer la chanson et l'intro"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "Actif"
+msgstr "Compétences actives"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8542,7 +8520,7 @@ msgstr "Lâcher"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "Equiper"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8553,44 +8531,36 @@ msgid "Give"
 msgstr "Donner"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "Menu d'information"
+msgstr "Info"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "Compétences passives"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "Commercer"
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "Quitter vers le menu"
+msgstr "Quitter le menu Etat"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "Sortir du jeu"
+msgstr "Sortir du sous-menu"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Partir"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "État :"
+msgstr "Etat"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "Défendre"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8603,73 +8573,51 @@ msgstr "Courir"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "View constellations"
 msgid "View terrain"
-msgstr "Voir les constellations"
+msgstr "Afficher le terrain"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner personnage 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
-msgstr "Sélectionner acteur 2"
+msgstr "Sélectionner personnage 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
-msgstr "Sélectionner acteur 3"
+msgstr "Sélectionner personnage 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Cancel interaction"
 msgid "Cancel character selection"
-msgstr "Annuler l'interaction"
+msgstr "Annuler la sélection d'un personnage"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Sélectionner un index"
+msgstr "Sélectionner ennemi 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Sélectionner un index"
+msgstr "Sélectionner ennemi 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Sélectionner un index"
+msgstr "Sélectionner ennemi 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Sélectionner un index"
+msgstr "Sélectionner ennemi 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Sélectionner un index"
+msgstr "Sélectionner ennemi 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Cancel interaction"
 msgid "Cancel enemy selection"
-msgstr "Annuler l'interaction"
+msgstr "Annuler la sélection d'un ennemi"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8677,44 +8625,32 @@ msgid "Restart game"
 msgstr "Redémarrer"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "Jouer la note 1 : La"
+msgstr "Jouer le son type 13"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "Jouer la note 1 : La"
+msgstr "Jouer le son type 14"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "Jouer la note 1 : La"
+msgstr "Jouer le son type 15"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "Jouer la note 5 : Mi"
+msgstr "Jouer le son type 5"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "Jouer la note 1 : La"
+msgstr "Jouer le son type 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "Jouer le son type 9"
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "Jouer la note 1 : La"
+msgstr "Jouer le son type 16"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -9927,20 +9863,16 @@ msgstr ""
 "d'acquérir une clé auprès de Wyrmkeep"
 
 #: engines/lab/metaengine.cpp:150
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit keymappings"
-msgstr "Conf. des touches PET"
+msgstr "Conf. des touches Sortir"
 
 #: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
 msgstr "Conf. des touches Intro"
 
 #: engines/lab/metaengine.cpp:155
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Map keymappings"
-msgstr "Conf. des touches Carte céleste"
+msgstr "Conf. des touches Carte"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 msgid "Journal keymappings"
@@ -9956,14 +9888,12 @@ msgid "Exit"
 msgstr "Sortir"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "Active les sons du jeu"
+msgstr "Augmenter le volume du son"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "Baisser le volume du son"
 
 #: engines/lab/metaengine.cpp:209 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
@@ -9972,45 +9902,35 @@ msgstr "Passer l'intro"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "Interagir avec l'objet à l'aide de l'action choisie"
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "Objet suivant"
+msgstr "Prendre un objet"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "Objet suivant"
+msgstr "Déplacer ou manipuler un objet"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open door"
 msgid "Open door or object"
-msgstr "Ouvrir une porte"
+msgstr "Ouvrir une porte ou un objet"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "Fermer une porte ou un objet"
 
 #: engines/lab/metaengine.cpp:245
 msgid "Look at object close-up"
-msgstr ""
+msgstr "Regarder un objet de près"
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll inventory up"
 msgid "Switch to inventory display"
-msgstr "Faire défiler l'inventaire vers le haut"
+msgstr "Basculer vers l'affichage de l'inventaire"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "Objet suivant"
+msgstr "Déplacer le focus vers l'objet interactif"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
