@@ -1717,13 +1717,20 @@ bool Gui::processInventoryEvents(WindowReference ref, WindowClick click, Common:
 			Common::Rect lassoArea(topLeft, bottomRight);
 
 			Common::Array<ObjID> &selectedObjects = _engine->getSelectedObjects();
+			bool selectSelfWindow = true;
+
 			for (auto &obj : data.children) {
 				ObjID id = obj.obj;
 				Common::Rect bounds = _engine->getObjBounds(id);
 				if (lassoArea.intersects(bounds) || lassoArea.contains(bounds)) {
 					_engine->selectObject(id);
 					selectedObjects.push_back(id);
+					selectSelfWindow = false;
 				}
+			}
+
+			if (selectSelfWindow) {
+				_engine->handleObjectSelect(1, kSelfWindow, false, false);
 			}
 		}
 
