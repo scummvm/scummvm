@@ -34,16 +34,28 @@ struct Surface;
 
 namespace Video {
 
+struct SubtitlePart {
+	Common::String text;
+	Common::String tag;
+
+	SubtitlePart(const Common::String &text_, const Common::String &tag_) : text(text_), tag(tag_) {}
+};
+
 struct SRTEntry {
 	uint seq;
 	uint32 start;
 	uint32 end;
 
-	Common::String text;
-	Common::String tag;
+	Common::Array<SubtitlePart> parts;
 
-	SRTEntry(uint seq_, uint32 start_, uint32 end_, Common::String text_, Common::String tag_ = "") {
-		seq = seq_; start = start_; end = end_; text = text_; tag = tag_;
+	SRTEntry(uint seq_, uint32 start_, uint32 end_, const Common::Array<SubtitlePart> &parts_) {
+		seq = seq_; start = start_; end = end_; parts = parts_;
+	}
+
+	// Dummy constructor for bsearch
+	SRTEntry(uint seq_, uint32 start_, uint32 end_, const Common::String &text, const Common::String &tag = "") {
+		seq = seq_; start = start_; end = end_;
+		parts.push_back(SubtitlePart(text, tag));
 	}
 };
 
@@ -54,9 +66,9 @@ public:
 
 	void cleanup();
 	bool parseFile(const Common::Path &fname);
-	Common::String parseTag(Common::String &text) const;
+	void parseTextAndTags(const Common::String &text, Common::Array<SubtitlePart> &parts) const;
+	const Common::Array<SubtitlePart> *getSubtitleParts(uint32 timestamp) const;
 	Common::String getSubtitle(uint32 timestamp) const;
-	Common::String getTag(uint32 timestamp) const;
 
 private:
 	Common::Array<SRTEntry *> _entries;
@@ -96,7 +108,7 @@ private:
 
 	Common::Path _fname;
 	mutable Common::String _subtitle;
-	mutable Common::String _tag;
+	mutable const Common::Array<SubtitlePart> *_parts;
 	uint32 _color;
 	uint32 _blackColor;
 	uint32 _transparentColor;
