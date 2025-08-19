@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-18 10:40+0000\n"
-"PO-Revision-Date: 2025-08-18 09:28+0000\n"
+"PO-Revision-Date: 2025-08-19 05:25+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8381,88 +8381,60 @@ msgstr ""
 "Bible"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "Sélectionner acteur 2"
+msgstr "Sélectionner option 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "Sélectionner acteur 3"
+msgstr "Sélectionner option 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "Sélectionner acteur 4"
+msgstr "Sélectionner option 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "Sélectionner acteur 5"
+msgstr "Sélectionner option 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "Sélectionner Acteur 6"
+msgstr "Sélectionner option 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "Sélectionner acteur 1"
+msgstr "Sélectionner option 14"
 
 #: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
 #: engines/supernova/metaengine.cpp:218
@@ -8470,22 +8442,16 @@ msgid "Menu keymappings"
 msgstr "Conf. des touches des menus"
 
 #: engines/efh/metaengine.cpp:258
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Quit keymappings"
-msgstr "Conf. des touches PET"
+msgstr "Conf. des touches Quitter"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "Conf. des touches Sauvegarder/Charger"
+msgstr "Conf. des touches Passer les vidéos"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "Conf. des touches des mini-jeux"
+msgstr "Conf. des touches Passer les chansons"
 
 #: engines/efh/metaengine.cpp:261
 #, fuzzy
