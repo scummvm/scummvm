@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-19 14:00+0000\n"
-"PO-Revision-Date: 2025-08-19 06:04+0000\n"
+"PO-Revision-Date: 2025-08-19 20:03+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9934,15 +9934,15 @@ msgstr "Déplacer le focus vers l'objet interactif"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "Commencer à laisser un fil d'Ariane virtuel"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "Suivre le fil d'Ariane virtuel"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "Courir en suivant le fil d'Ariane virtuel"
 
 #: engines/lab/metaengine.cpp:311
 #, fuzzy
