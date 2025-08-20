@@ -979,7 +979,7 @@ void MacVentureEngine::openObject(ObjID objID) {
 		_gui->updateWindowInfo(kMainGameWindow, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(kMainGameWindow, _world->getObjAttr(objID, kAttrContainerOpen));
 		updateExits();
-		_gui->setWindowTitle(kMainGameWindow, _world->getText(objID, objID, objID)); // it ignores source and target in the original
+		_gui->setWindowTitle(kMainGameWindow, capitalize(_world->getText(objID, objID, objID))); // it ignores source and target in the original
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		WindowReference invID = _gui->createInventoryWindow(objID);
@@ -1317,6 +1317,23 @@ bool MacVentureEngine::loadTextHuffman() {
 		return true;
 	}
 	return false;
+}
+
+Common::String MacVentureEngine::capitalize(const Common::String &str) const {
+	Common::String out(str);
+	bool shouldCapitalize = true;
+
+	for (char &c : out) {
+		if (shouldCapitalize) {
+			c = toupper(c);
+			shouldCapitalize = false;
+		} else {
+			if (c == ' ')
+				shouldCapitalize = true;
+		}
+	}
+
+	return out;
 }
 
 // Global Settings

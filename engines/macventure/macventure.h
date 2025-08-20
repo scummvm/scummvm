@@ -361,6 +361,8 @@ private:
 
 	const char *getGameFileName() const;
 
+	Common::String capitalize(const Common::String &str) const;
+
 private: // Attributes
 
 	const ADGameDescription *_gameDescription;
