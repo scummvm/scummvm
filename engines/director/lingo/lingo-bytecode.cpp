@@ -1100,6 +1100,9 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		if (info)
 			castName = info->name;
 	} else {
+		// In case the cast member is not supported/loaded (e.g. Picture Cast Member)
+		// Try if the cast info for the cast member is loaded
+		_assemblyId = archive->cast->getCastIdByScriptId(scriptId);
 		warning("Script %d has no associated cast member", scriptId);
 		scriptType = kMovieScript;
 	}
