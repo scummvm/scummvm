@@ -1573,7 +1573,6 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		break;
 	case kCastPicture:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): kCastPicture (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
-		castInfoSize = 0;
 		break;
 	case kCastMovie:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastMovie (id=%d, %d children)",  id, res->children.size());
@@ -1585,8 +1584,6 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		break;
 	default:
 		warning("BUILDBOT: STUB: Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
-		// also don't try and read the strings... we don't know what this item is.
-		castInfoSize = 0;
 		break;
 	}
 	if (target) {
@@ -1860,8 +1857,7 @@ void Cast::dumpScript(const char *script, ScriptType type, uint16 id) {
 }
 
 void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
-	if (!_loadedCast->contains(id))
-		return;
+	// We need to process cast info even if the assosiated cast member is not loaded/supported (e.g. Picture)
 
 	if (debugChannelSet(7, kDebugLoading)) {
 		debug("Cast::loadingCastInfo: Loading cast info for castId: %d", id);
@@ -1871,7 +1867,6 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 
 	CastMemberInfo *ci = new CastMemberInfo();
 	Common::MemoryReadStreamEndian *entryStream;
-	CastMember *member = _loadedCast->getVal(id);
 
 	// We need this data while saving the cast information back
 	// Is it possible that the count changes?
@@ -2075,20 +2070,23 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		debugC(4, kDebugLoading, "Cast::loadCastInfo(): castId: %d, no castinfo", id);
 
 	// For D4+ we may force Lingo scripts
-	if (_version < kFileVer400 || debugChannelSet(-1, kDebugNoBytecode)) {
-		if (!ci->script.empty()) {
-			ScriptType scriptType = kCastScript;
-			// the script type here could be wrong!
-			if (member->_type == kCastLingoScript) {
-				scriptType = ((ScriptCastMember *)member)->_scriptType;
+	if (_loadedCast->contains(id)) {
+		CastMember *member = _loadedCast->getVal(id);
+
+		if ((_version < kFileVer400 || debugChannelSet(-1, kDebugNoBytecode))) {
+			if (!ci->script.empty()) {
+				ScriptType scriptType = kCastScript;
+				// the script type here could be wrong!
+				if (member->_type == kCastLingoScript) {
+					scriptType = ((ScriptCastMember *)member)->_scriptType;
+				}
+
+				if (ConfMan.getBool("dump_scripts"))
+					dumpScript(ci->script.c_str(), scriptType, id);
+
+				_lingoArchive->addCode(ci->script, scriptType, id, ci->name.c_str());
 			}
-
-			if (ConfMan.getBool("dump_scripts"))
-				dumpScript(ci->script.c_str(), scriptType, id);
-
-			_lingoArchive->addCode(ci->script, scriptType, id, ci->name.c_str());
 		}
-	}
 
 	// For SoundCastMember, read the flags in the CastInfo
 	if (_version >= kFileVer400 && _version < kFileVer600 && member->_type == kCastSound) {
@@ -2097,9 +2095,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
-	// For PaletteCastMember, run load() as we need it right now
-	if (member->_type == kCastPalette)
-		member->load();
+		// For PaletteCastMember, run load() as we need it right now
+		if (member->_type == kCastPalette)
+			member->load();
+	}
 
 	ci->autoHilite = castInfo.flags & 2;
 	ci->scriptId = castInfo.scriptId;
