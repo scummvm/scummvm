@@ -39,6 +39,7 @@ private:
 	bool _isScriptInDebug = false;
 	bool _currentStatementDisplayed = false;
 	bool _scrollTo = false;
+	bool _scrollDone = true;
 
 public:
 	explicit RenderOldScriptVisitor(ImGuiScript &script, bool scrollTo) : _script(script), _scrollTo(scrollTo) {
@@ -779,7 +780,12 @@ private:
 		bool showCurrentStatement = false;
 		_script.startOffsets.push_back(pc);
 
-		if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
+		if (_script.pc != 0 && pc >= _script.pc) {
+			if (!_currentStatementDisplayed) {
+				showCurrentStatement = true;
+				_currentStatementDisplayed = true;
+			}
+		} else if (_isScriptInDebug && g_lingo->_exec._state == kPause) {
 			// check current statement
 			if (!_currentStatementDisplayed) {
 				if (g_lingo->_state->pc <= pc) {
@@ -831,8 +837,9 @@ private:
 		if (showCurrentStatement) {
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (_state->_dbg._isScriptDirty && _scrollTo && g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) {
+			if (!_scrollDone && _scrollTo && g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) {
 				ImGui::SetScrollHereY(0.5f);
+				_scrollDone = true;
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
 		}
