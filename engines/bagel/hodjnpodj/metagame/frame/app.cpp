@@ -23,6 +23,7 @@
 #include "bagel/hodjnpodj/metagame/frame/hodjpodj.h"
 #include "bagel/hodjnpodj/metagame/bgen/mgstat.h"
 #include "bagel/boflib/sound.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -52,6 +53,7 @@ BOOL CTheApp::InitApplication() {
 	}
 
 	addFontResource("msserif.fon");
+	setFocusChangeProc(focusChange);
 	return CWinApp::InitApplication();
 }
 
@@ -132,6 +134,13 @@ void CTheApp::selectMinigame() {
 BOOL CTheApp::OnIdle(LONG lCount) {
 	CBofSound::audioTask();
 	return true;
+}
+
+void CTheApp::focusChange(CWnd *oldFocus, CWnd *newFocus) {
+	CEdit *oldCtl = dynamic_cast<CEdit *>(oldFocus);
+	CEdit *newCtl = dynamic_cast<CEdit *>(newFocus);
+	if (oldCtl != newCtl)
+		BagelMetaEngine::setKeybindingMode(newFocus ? KBMODE_MINIMAL : KBMODE_NORMAL);
 }
 
 } // namespace Frame

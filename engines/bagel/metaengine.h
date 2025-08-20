@@ -74,7 +74,7 @@ public:
 	/**
 	 * Set the keybinding mode
 	 */
-	void setKeybindingMode(Bagel::KeybindingMode mode);
+	static void setKeybindingMode(Bagel::KeybindingMode mode);
 };
 
 #endif // BAGEL_METAENGINE_H

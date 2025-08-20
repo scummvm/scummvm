@@ -24,6 +24,7 @@
 #include "bagel/hodjnpodj/metagame/gtl/gtlfrm.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtldoc.h"
 #include "bagel/hodjnpodj/metagame/gtl/gtlview.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -65,6 +66,12 @@ CGtlApp::CGtlApp() {
 }
 
 CGtlApp::~CGtlApp() {
+}
+
+BOOL CGtlApp::InitApplication() {
+	bool result = CWinApp::InitApplication();
+	setFocusChangeProc(focusChange);
+	return result;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -232,6 +239,13 @@ END_MESSAGE_MAP()
 void CGtlApp::OnAppAbout() {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
+}
+
+void CGtlApp::focusChange(CWnd *oldFocus, CWnd *newFocus) {
+	CEdit *oldCtl = dynamic_cast<CEdit *>(oldFocus);
+	CEdit *newCtl = dynamic_cast<CEdit *>(newFocus);
+	if (oldCtl != newCtl)
+		BagelMetaEngine::setKeybindingMode(newFocus ? KBMODE_MINIMAL : KBMODE_NORMAL);
 }
 
 /////////////////////////////////////////////////////////////////////////////

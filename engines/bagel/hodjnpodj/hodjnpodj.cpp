@@ -58,6 +58,7 @@ Common::Error HodjNPodjEngine::run() {
 	_midi = new MusicPlayer();
 
 	// Run the game
+	BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 
 	Metagame::Frame::CTheApp app;
 	app.InitApplication();

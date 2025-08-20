@@ -76,6 +76,7 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	BOOL InitApplication() override;
 	void CreateInstance(void);
 	BOOL CallOnFileNew(void) ;
 	BOOL CallOnFileOpen(void) ;
@@ -85,6 +86,9 @@ public:
 	virtual int DoMessageBox(LPCSTR lpszPrompt,
 	                         UINT nType, UINT nIDPrompt) ;
 	BOOL OnIdle(LONG lCount) override;
+
+private:
+	static void focusChange(CWnd *oldFocus, CWnd *newFocus);
 };
 
 #if GTLMDI

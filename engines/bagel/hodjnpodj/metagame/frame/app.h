@@ -37,6 +37,7 @@ private:
 	Common::String _startupMinigame;
 
 	void selectMinigame();
+	static void focusChange(CWnd *oldFocus, CWnd *newFocus);
 
 public:
 	CTheApp();

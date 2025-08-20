@@ -41,6 +41,7 @@ typedef void(*TimerProc)(
 );
 
 typedef Common::KeyCode(*KeybindProc)(int key);
+typedef void (*FocusChangeProc)(CWnd *oldFocus, CWnd *newFocus);
 
 class WndList : public Common::List<CWnd *> {
 public:
@@ -98,6 +99,7 @@ private:
 	HOOKPROC _kbdHookProc = nullptr;
 	int _idleCtr = 0;
 	KeybindProc _keybindProc = nullptr;
+	FocusChangeProc _focusChangeProc = nullptr;
 
 protected:
 	enum QuitFlag {
@@ -274,6 +276,10 @@ public:
 
 	void setKeybinder(KeybindProc proc) {
 		_keybindProc = proc;
+	}
+
+	void setFocusChangeProc(FocusChangeProc proc) {
+		_focusChangeProc = proc;
 	}
 };
 

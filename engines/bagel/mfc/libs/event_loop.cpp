@@ -435,6 +435,10 @@ void EventLoop::SetFocus(CWnd *wnd) {
 
 	if (newFocus != _focusedWin) {
 		CWnd *focusedWin = CWnd::FromHandle(_focusedWin);
+		CWnd *newFocusedWin = CWnd::FromHandle(newFocus);
+
+		if (_focusChangeProc)
+			_focusChangeProc(focusedWin, newFocusedWin);
 
 		if (focusedWin) {
 			focusedWin->_hasFocus = false;
