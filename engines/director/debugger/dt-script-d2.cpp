@@ -503,8 +503,9 @@ public:
 				}
 			}
 
-			int16 castId = getCastIdFromScriptNameIndex(obj, _script.id, *node->name);
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(castId, _script.id.castLib), *node->name);
+			ScriptContext *context = getScriptContext(obj, _script.id, *node->name);
+			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), *node->name);
+			script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 			script.moviePath = _script.moviePath;
 			script.handlerName = *node->name;
 			setScriptToDisplay(script);

@@ -70,7 +70,6 @@ static bool stepInShouldPauseDebugger() {
 		return true;
 	}
 
-	debug("I'm returning false for some reason, %d:%d", g_lingo->_state->callstack.size(), _state->_dbg._callstackSize);
 	return false;
 }
 
@@ -84,7 +83,6 @@ static bool stepOutShouldPause() {
 		return true;
 	}
 
-	debug("I'm returning false for some reason, %d:%d", g_lingo->_state->callstack.size(), _state->_dbg._callstackSize);
 	return false;
 }
 
