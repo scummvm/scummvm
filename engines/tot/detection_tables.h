@@ -22,7 +22,7 @@
 namespace Tot {
 
 const PlainGameDescriptor totGames[] = {
-	{ "tot", "Tot" },
+	{ "tot", "Trick or Treat" },
 	{ 0, 0 }
 };
 
@@ -30,7 +30,10 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"tot",
 		nullptr,
-		AD_ENTRY1s("CREDITOS.DAT", "6885c1fadd25a0c0da1c88f071a30e63", 130080),
+		AD_ENTRY2s(
+			"AZCCOG.DAT", "2f66724fcd7f51c5b4a715b30f088581", 79916,
+			"CREDITOS.DAT", "6885c1fadd25a0c0da1c88f071a30e63", 130080
+		),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
@@ -39,7 +42,10 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"tot",
 		nullptr,
-		AD_ENTRY1s("CREDITOS.DAT", "bca1c63cfee9ec8b722f7715e21b5e8e", 130080),
+		AD_ENTRY2s(
+			"AZCCOG.DAT", "2f66724fcd7f51c5b4a715b30f088581", 79916,
+			"CREDITOS.DAT", "bca1c63cfee9ec8b722f7715e21b5e8e", 130080
+		),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
