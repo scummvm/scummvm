@@ -127,22 +127,22 @@ ScriptContext *getScriptContext(CastMemberID id) {
 	return ctx;
 }
 
-int16 getCastIdFromScriptNameIndex(uint32 nameIndex, CastMemberID id, Common::String handlerName) {
+ScriptContext *getScriptContext(uint32 nameIndex, CastMemberID id, Common::String handlerName) {
 	Movie *movie = g_director->getCurrentMovie();
 	Cast *cast = movie->getCasts()->getVal(id.castLib);
 
-	// If the name at nameIndex is not the same as handler name, means its a local script
-	if (cast->_lingoArchive->names[nameIndex] != handlerName) {
-		return id.member;
+	// If the name at nameIndex is not the same as handler name, means its a local script (in the same Lscr resource)
+	if (cast && cast->_lingoArchive->names[nameIndex] != handlerName) {
+		return cast->_lingoArchive->findScriptContext(id.member);
 	}
 
 	for (auto it : cast->_lingoArchive->scriptContexts[kMovieScript]) {
 		if (it._value->_functionHandlers.contains(handlerName)) {
-			return it._key;
+			return it._value;
 		}
 	}
 
-	return -1;
+	return nullptr;
 }
 
 Director::Breakpoint *getBreakpoint(const Common::String &handlerName, uint16 scriptId, uint pc) {
