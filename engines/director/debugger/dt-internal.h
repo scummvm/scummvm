@@ -63,6 +63,7 @@ typedef struct ImGuiScript {
 	Common::String handlerName;
 	Common::String moviePath;
 	Common::Array<uint32> byteOffsets;
+	uint pc = 0;
 
 	bool isMethod = false;
 	bool isGenericEvent = false;

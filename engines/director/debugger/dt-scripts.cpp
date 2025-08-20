@@ -111,6 +111,54 @@ static void renderScript(ImGuiScript &script, bool showByteCode, bool scrollTo) 
 	renderScriptAST(script, showByteCode, scrollTo);
 }
 
+static void renderCallStack(uint pc) {
+	Common::Array<CFrame *> callstack = g_lingo->_state->callstack;
+	if (callstack.size() == 0) {
+		ImGui::Text("End of execution\n");
+		return;
+	}
+
+	ImGui::Text("Call stack:\n");
+	for (int i = 0; i < (int)callstack.size(); i++) {
+		Common::String stackFrame;
+		CFrame *frame = callstack[callstack.size() - i - 1];
+		uint framePc = pc;
+		if (i > 0)
+			framePc = callstack[callstack.size() - i]->retPC;
+
+		if (frame->sp.type != VOIDSYM) {
+			stackFrame = Common::String::format("#%d ", i);
+			if (frame->sp.ctx && frame->sp.ctx->_id) {
+				stackFrame += Common::String::format("%d:", frame->sp.ctx->_id);
+			}
+			if (frame->sp.ctx && frame->sp.ctx->isFactory()) {
+				stackFrame += Common::String::format("%s:", frame->sp.ctx->getName().c_str());
+			}
+			stackFrame += Common::String::format("%s at [%5d]\n",
+				frame->sp.name->c_str(),
+				framePc
+			);
+		} else {
+			stackFrame = Common::String::format("#%d [unknown] at [%5d]\n", i,
+				framePc
+			);
+		}
+
+		if (ImGui::Selectable(stackFrame.c_str())) {
+			Director::Movie *movie = g_director->getCurrentMovie();
+			CFrame *head = callstack[callstack.size() - i - 1];
+			ScriptContext *scriptContext = head->sp.ctx;
+			int castLibID = movie->getCast()->_castLibID;
+			ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
+			script.byteOffsets = head->sp.ctx->_functionByteOffsets[script.handlerId];
+			script.moviePath = movie->getArchive()->getPathName().toString();
+			script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
+			script.pc = framePc;
+			setScriptToDisplay(script);
+		}
+	}
+}
+
 static bool showScriptCast(CastMemberID &id) {
 	Common::String wName("Script ");
 	wName += id.asString();
@@ -230,7 +278,6 @@ static void updateCurrentScript() {
 	if ((g_lingo->_exec._state != kPause) || !_state->_dbg._isScriptDirty)
 		return;
 
-
 	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	if (callstack.empty())
 		return;
@@ -244,6 +291,7 @@ static void updateCurrentScript() {
 	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
 	script.moviePath = movie->getArchive()->getPathName().toString();
 	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
+	script.pc = 0;
 	setScriptToDisplay(script);
 }
 
@@ -490,7 +538,7 @@ void showExecutionContext() {
 		ImVec2 childSize = ImGui::GetContentRegionAvail();
 		childSize.y /= 3;
 		ImGui::BeginChild("##backtrace", childSize);
-		ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+		renderCallStack(lingo->_state->pc);
 		ImGui::EndChild();
 
 		ImGui::SeparatorText("Scripts");
@@ -561,12 +609,16 @@ void showExecutionContext() {
 			} else {
 				Movie *movie = g_director->getCurrentMovie();
 				for (auto &functionHandler : context->_functionHandlers) {
-					ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
-					script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-					script.moviePath = movie->getArchive()->getPathName().toString();
-					script.handlerName = getHandlerName(functionHandler._value);
-					// Need to pass by reference in case of the current handler
-					renderScript(current == script ? current : script, scriptData->_showByteCode, script == current);
+					if (current.handlerId == functionHandler._key) {
+						renderScript(current, scriptData->_showByteCode, true);
+					} else {
+						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+						script.moviePath = movie->getArchive()->getPathName().toString();
+						script.handlerName = getHandlerName(functionHandler._value);
+						// Need to pass by reference in case of the current handler
+						renderScript(script, scriptData->_showByteCode, false);
+					}
 					ImGui::NewLine();
 				}
 			}
@@ -600,7 +652,7 @@ void showExecutionContext() {
 			childSize = ImGui::GetContentRegionAvail();
 			childSize.y /= 3;
 			ImGui::BeginChild("##backtrace", childSize);
-			ImGui::Text("%s", lingo->formatCallStack(lingo->_state->pc).c_str());
+			renderCallStack(lingo->_state->pc);
 			ImGui::EndChild();
 
 			ImGui::SeparatorText("Scripts");
@@ -668,14 +720,18 @@ void showExecutionContext() {
 				if (!context || context->_functionHandlers.size() == 1) {
 					renderScript(current, scriptData->_showByteCode, true);
 				} else {
+					Movie *movie = g_director->getCurrentMovie();
 					for (auto &functionHandler : context->_functionHandlers) {
-						ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
-						script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-						Movie *movie = g_director->getCurrentMovie();
-						script.moviePath = movie->getArchive()->getPathName().toString();
-						script.handlerName = getHandlerName(functionHandler._value);
-						// Need to pass by reference in case of the current handler
-						renderScript(current == script ? current : script, scriptData->_showByteCode, script == current);
+						if (current.handlerId == functionHandler._key) {
+							renderScript(current, scriptData->_showByteCode, true);
+						} else {
+							ImGuiScript script = toImGuiScript(context->_scriptType, current.id, functionHandler._key);
+							script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+							script.moviePath = movie->getArchive()->getPathName().toString();
+							script.handlerName = getHandlerName(functionHandler._value);
+							// Need to pass by reference in case of the current handler
+							renderScript(script, scriptData->_showByteCode, false);
+						}
 						ImGui::NewLine();
 					}
 				}
