@@ -47,11 +47,21 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord *KEYBINDINGS[1] = {
+	MINIMAL_KEYS
+};
+
 } // namespace SpaceBar
 
 namespace HodjNPodj {
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
+	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr, "JOY_A" },
+	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
+};
+
+static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_SELECT, "SELECT", _s("Select"), "SPACE", "RETURN", "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_UP, "UP", _s("Up"), "UP", nullptr, "JOY_UP"},
@@ -64,6 +74,12 @@ static const KeybindingRecord MINIMAL_KEYS[] = {
 	{ KEYBIND_END, "END", _s("End"), "END", "KP2", "JOY_RIGHT"},
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
+
+static const KeybindingRecord *KEYBINDINGS[2] = {
+	NORMAL_KEYS,
+	MINIMAL_KEYS
+};
+
 
 Common::KeyCode KeybindToKeycode(int key) {
 	switch (key) {
@@ -122,34 +138,67 @@ bool BagelMetaEngine::hasFeature(MetaEngineFeature f) const {
 	       (f == kSupportsLoadingDuringStartup);
 }
 
+void BagelMetaEngine::setKeybindingMode(Bagel::KeybindingMode mode) {
+	Common::Keymapper *const mapper = g_engine->getEventManager()->getKeymapper();
+	mapper->cleanupGameKeymaps();
+
+	// Currently only Hodj n Podj uses setKeybindingMode
+	Common::KeymapArray arr = initKeymaps(mode, false);
+
+	for (uint idx = 0; idx < arr.size(); ++idx)
+		mapper->addGameKeymap(arr[idx]);
+}
+
+Common::String BagelMetaEngine::getGameId(const Common::String &target) {
+	// Store a copy of the active domain
+	Common::String currDomain = ConfMan.getActiveDomainName();
+
+	// Switch to the given target domain and get it's game Id
+	ConfMan.setActiveDomain(target);
+	Common::String gameId = ConfMan.get("gameid");
+
+	// Switch back to the original domain and return the game Id
+	ConfMan.setActiveDomain(currDomain);
+	return gameId;
+}
+
 Common::KeymapArray BagelMetaEngine::initKeymaps(const char *target) const {
+	// Get the current game
+	Common::String gameId = getGameId(target);
+	bool isSpacebar = gameId == "spacebar";
+
+	return initKeymaps(Bagel::KBMODE_ALL, isSpacebar);
+}
+
+Common::KeymapArray BagelMetaEngine::initKeymaps(Bagel::KeybindingMode mode, bool isSpacebar) {
 	Common::KeymapArray keymapArray;
 
-	// The current keymaps are only applicable for Space Bar
-	const Common::ConfigManager::Domain *domain = ConfMan.getDomain(target);
-	Common::String gameId = domain->getVal("gameid");
+	for (int idx = 0; idx < (isSpacebar ? 1 : 2); ++idx) {
+		if (mode != Bagel::KBMODE_ALL && idx != mode)
+			continue;
 
-	const Bagel::KeybindingRecord *keys = (gameId == "spacebar") ?
-	                                      Bagel::SpaceBar::MINIMAL_KEYS :
-	                                      Bagel::HodjNPodj::MINIMAL_KEYS;
+		Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel",
+			(idx == 0) ? _s("General Keys") : _s("Minimal Keys"));
+		keymapArray.push_back(keyMap);
 
-	Common::Keymap *keyMap = new Common::Keymap(Common::Keymap::kKeymapTypeGame, "bagel", _s("General Keys"));
-	keymapArray.push_back(keyMap);
+		const Bagel::KeybindingRecord *keys = isSpacebar ?
+			Bagel::SpaceBar::KEYBINDINGS[idx] : Bagel::HodjNPodj::KEYBINDINGS[idx];
 
-	for (const Bagel::KeybindingRecord *r = keys; r->_id; ++r) {
-		Common::Action *act = new Common::Action(r->_id, _(r->_desc));
-		act->setCustomEngineActionEvent(r->_action);
-		act->addDefaultInputMapping(r->_key1);
-		if (r->_key2)
-			act->addDefaultInputMapping(r->_key2);
-		if (r->_joy)
-			act->addDefaultInputMapping(r->_joy);
+		for (const Bagel::KeybindingRecord *r = keys; r->_id; ++r) {
+			Common::Action *act = new Common::Action(r->_id, _(r->_desc));
+			act->setCustomEngineActionEvent(r->_action);
+			act->addDefaultInputMapping(r->_key1);
+			if (r->_key2)
+				act->addDefaultInputMapping(r->_key2);
+			if (r->_joy)
+				act->addDefaultInputMapping(r->_joy);
 
-		if (r->_action == Bagel::KEYBIND_UP || r->_action == Bagel::KEYBIND_DOWN ||
-		        r->_action == Bagel::KEYBIND_LEFT || r->_action == Bagel::KEYBIND_RIGHT)
-			act->allowKbdRepeats();
+			if (r->_action == Bagel::KEYBIND_UP || r->_action == Bagel::KEYBIND_DOWN ||
+				r->_action == Bagel::KEYBIND_LEFT || r->_action == Bagel::KEYBIND_RIGHT)
+				act->allowKbdRepeats();
 
-		keyMap->addAction(act);
+			keyMap->addAction(act);
+		}
 	}
 
 	return keymapArray;

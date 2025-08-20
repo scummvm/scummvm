@@ -36,9 +36,20 @@ enum KeybindingAction {
 	KEYBIND_SELECT, KEYBIND_ESCAPE, KEYBIND_PAGEUP,
 	KEYBIND_PAGEDOWN, KEYBIND_HOME, KEYBIND_END
 };
+
+
+enum KeybindingMode {
+	KBMODE_NORMAL,		///< Keys available when normal in-game
+	KBMODE_MINIMAL,		///< Keys when in a textbox,
+	KBMODE_ALL
+};
+
 } // namespace Bagel
 
 class BagelMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
+private:
+	static Common::String getGameId(const Common::String &target);
+
 public:
 	const char *getName() const override;
 
@@ -53,7 +64,17 @@ public:
 
 	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
 
+	/**
+	 * Initialize keymaps
+	 */
+	static Common::KeymapArray initKeymaps(Bagel::KeybindingMode mode, bool isSpacebar);
+
 	Common::KeymapArray initKeymaps(const char *target) const override;
+
+	/**
+	 * Set the keybinding mode
+	 */
+	void setKeybindingMode(Bagel::KeybindingMode mode);
 };
 
 #endif // BAGEL_METAENGINE_H
