@@ -725,7 +725,7 @@ public:
 	SequenceManager _sequenceManager;
 	SpeakerGameText _gameTextSpeaker;
 	SpeakerJakeUniform _jakeUniformSpeaker;
-	SpeakerLaura _lauraSpeaker;
+	SpeakerLaura370 _lauraSpeaker;
 	SpeakerLauraHeld _lauraHeldSpeaker;
 	SpeakerGreen _greenSpeaker;
 	SpeakerHarrison _harrisonSpeaker;

@@ -4636,6 +4636,28 @@ void Scene360::dispatch() {
  *
  *--------------------------------------------------------------------------*/
 
+void Scene370::SpeakerLaura370::setText(const Common::String& msg) {
+	_removeObject1 = _removeObject2 = true;
+
+	_object1.postInit();
+	_object1.setVisage(345);
+	_object1.setStrip2(5);
+	_object1.fixPriority(254);
+	_object1.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	_object2.postInit();
+	_object2.setVisage(345);
+	_object2.setStrip2(3);
+	_object2.fixPriority(255);
+
+	_object2.setPosition(Common::Point(BF_GLOBALS._sceneManager._scene->_sceneBounds.left + 38,
+		BF_GLOBALS._sceneManager._scene->_sceneBounds.top + 166));
+
+	VisualSpeaker::setText(msg);
+	_object2.fixCountdown(8, _numFrames);
+}
+
 bool Scene370::GreensGun::startAction(CursorType action, Event &event) {
 	Scene370 *scene = (Scene370 *)BF_GLOBALS._sceneManager._scene;
 
