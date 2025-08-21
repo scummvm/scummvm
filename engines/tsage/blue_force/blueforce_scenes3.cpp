@@ -5727,12 +5727,13 @@ bool Scene390::Green::startAction(CursorType action, Event &event) {
 
 bool Scene390::Object2::startAction(CursorType action, Event &event) {
 	Scene390 *scene = (Scene390 *)BF_GLOBALS._sceneManager._scene;
-
+	// Larry at the Jail
 	switch (action) {
 	case CURSOR_TALK:
-		if (!_flag)
+		if (_flag)
 			break;
 
+		BF_GLOBALS._player.disableControl();
 		if (!BF_GLOBALS.getFlag(onDuty)) {
 			scene->_sceneMode = 3917;
 		} else if (BF_GLOBALS.getFlag(fTalkedToBarry) && !BF_GLOBALS.getFlag(fTalkedToLarry)) {
