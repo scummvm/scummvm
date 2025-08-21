@@ -481,18 +481,18 @@ void Scene50::signal() {
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 410) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(f1097Frankie);
+			BF_GLOBALS.clearFlag(f1097Frankie);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 340) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
-			BF_GLOBALS.setFlag(f1097Marina);
+			BF_GLOBALS.clearFlag(f1097Marina);
 		}
 
 		if ((BF_GLOBALS._driveFromScene == 380) && (_sceneNumber != BF_GLOBALS._driveFromScene)) {
 			if (BF_GLOBALS._bookmark >= bLauraToParamedics)
-				BF_GLOBALS.setFlag(f1098Marina);
+				BF_GLOBALS.clearFlag(f1098Marina);
 			if (BF_GLOBALS._bookmark >= bStoppedFrankie)
-				BF_GLOBALS.setFlag(f1098Frankie);
+				BF_GLOBALS.clearFlag(f1098Frankie);
 			if (BF_GLOBALS._bookmark == bArrestedGreen) {
 				BF_GLOBALS._deathReason = 19;
 				_sceneNumber = 666;
