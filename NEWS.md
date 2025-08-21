@@ -132,6 +132,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed game detection for the Macintosh version of MI1 from the first
      first LucasArts Mac CD Game Pack. Previously you had to make sure to
      only copy the data fork, not the (empty) resource fork.
+   - Added Text-to-Speech support.
 
  Sherlock:
    - Added keymapper support.
