@@ -130,6 +130,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      first LucasArts Mac CD Game Pack. Previously you had to make sure to
      only copy the data fork, not the (empty) resource fork.
 
+ Sherlock:
+   - Added keymapper support.
+
  Supernova:
    - Added keymapper support.
 
