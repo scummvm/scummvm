@@ -509,7 +509,7 @@ void Scene50::signal() {
 		// Initial delay complete, time to switch to interactive mode
 		_text.remove();
 		BF_GLOBALS._player.enableControl();
-		BF_GLOBALS._events.setCursor(CURSOR_WALK);
+		BF_GLOBALS._events.setCursor(CURSOR_USE);
 		_sceneMode = 0;
 	}
 }
