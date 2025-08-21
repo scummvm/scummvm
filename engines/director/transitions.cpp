@@ -587,7 +587,7 @@ void Window::playTransition(uint frame, RenderMode mode, uint16 transDuration, u
 		debugC(6, kDebugImages, "Window::playTransition(): delaying for %d", diff);
 		g_director->delayMillis(diff);
 
-		g_lingo->executePerFrameHook(t.frame, i);
+		g_lingo->executePerFrameHook(t.frame, i, false);
 	}
 
 	debugC(2, kDebugImages, "Window::playTransition(): Transition %d finished in %d ms", t.type, g_system->getMillis() - transStartTime);
@@ -781,7 +781,7 @@ void Window::dissolveTrans(TransParams &t, Common::Rect &clipRect, Graphics::Man
 		}
 		stepTransition(t, i);
 
-		g_lingo->executePerFrameHook(t.frame, i + 1);
+		g_lingo->executePerFrameHook(t.frame, i + 1, false);
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, nextFrame, clipRect);
@@ -906,7 +906,7 @@ void Window::dissolvePatternsTrans(TransParams &t, Common::Rect &clipRect, Graph
 
 		stepTransition(t, i);
 
-		g_lingo->executePerFrameHook(t.frame, i + 1);
+		g_lingo->executePerFrameHook(t.frame, i + 1, false);
 
 		if (_vm->processEvents(true)) {
 			exitTransition(t, nextFrame, clipRect);
@@ -1085,7 +1085,7 @@ void Window::transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::Ma
 		stepTransition(t, i);
 		rects.clear();
 
-		g_lingo->executePerFrameHook(t.frame, i);
+		g_lingo->executePerFrameHook(t.frame, i, false);
 
 		uint32 endTime = g_system->getMillis();
 		int diff = MAX(0, (int)t.stepDuration - (int)(endTime - startTime));
@@ -1157,7 +1157,7 @@ void Window::transZoom(TransParams &t, Common::Rect &clipRect, Graphics::Managed
 		debugC(6, kDebugImages, "Window::transZoom(): delaying for %d", diff);
 		g_director->delayMillis(diff);
 
-		g_lingo->executePerFrameHook(t.frame, i);
+		g_lingo->executePerFrameHook(t.frame, i, false);
 	}
 
 	render(true, _composeSurface);
