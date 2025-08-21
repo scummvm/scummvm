@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-21 08:28+0000\n"
-"PO-Revision-Date: 2025-08-21 17:16+0000\n"
+"PO-Revision-Date: 2025-08-21 17:33+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -13265,20 +13265,16 @@ msgid "Save files name editing keymappings"
 msgstr "Conf. des touches Edition des noms des sauvegardes"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Conf. des touches Echap"
+msgstr "Conf. des touches Enigme de la feuille"
 
 #: engines/sherlock/metaengine.cpp:784
 msgid "Options menu keymappings"
 msgstr "Conf. des touches Menu Options"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Password entry keymappings"
-msgstr "Conf. des touches Menu Pause"
+msgstr "Conf. des touches Saisie du mot de passe"
 
 #: engines/sherlock/metaengine.cpp:787
 msgid "Talk options keymappings"
@@ -13413,7 +13409,7 @@ msgstr "Act. / Désact. mode insertion"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
 msgid "Close puzzle"
-msgstr "Fermer le puzzle"
+msgstr "Fermer l'énigme"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
