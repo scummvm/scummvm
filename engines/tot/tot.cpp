@@ -80,7 +80,6 @@ Common::Error TotEngine::run() {
 	_graphics = new GraphicsManager();
 	_sound = new SoundManager(_mixer);
 	_chrono = new ChronoManager();
-	// _room = new RoomManager();
 	_mouse = new MouseManager();
 
 	_sound->init();
@@ -208,33 +207,33 @@ int TotEngine::startGame() {
 					if (e.kbd.keycode == hotKeyOpen) {
 						_actionCode = 5;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyClose) {
 						_actionCode = 6;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyPickup) {
 						_actionCode = 2;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyTalk) {
 						_actionCode = 1;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyLook) {
 						_actionCode = 3;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else if (e.kbd.keycode == hotKeyUse) {
 						_actionCode = 4;
 						action();
-						oldGridX = 0;
-						oldGridY = 0;
+						_oldGridX = 0;
+						_oldGridY = 0;
 					} else {
 						_actionCode = 0; // go to
 					}
@@ -531,15 +530,15 @@ int TotEngine::startGame() {
 				_sound->fadeOutMusic();
 				_sound->playMidi("SEGUNDA", true);
 				_sound->fadeInMusic();
-				_graphics->sceneTransition(false, sceneBackground, 1);
+				_graphics->sceneTransition(false, _sceneBackground, 1);
 				mask();
 				_inventoryPosition = 0;
 				drawBackpack();
 				_mouse->show();
 
 				_firstTimeTopicA[8] = true;
-				oldGridX = 0;
-				oldGridY = 0;
+				_oldGridX = 0;
+				_oldGridY = 0;
 				checkMouseGrid();
 			}
 			break;
@@ -598,7 +597,7 @@ int TotEngine::startGame() {
 }
 
 void TotEngine::newGame() {
-	saveAllowed = true;
+	_saveAllowed = true;
 	_mouse->hide();
 	obtainName(_characterName);
 
@@ -620,7 +619,7 @@ void TotEngine::newGame() {
 		initializeObjectFile();
 		_graphics->loadPaletteFromFile("DEFAULT");
 		loadScreenData(1);
-		_graphics->sceneTransition(false, sceneBackground, 13);
+		_graphics->sceneTransition(false, _sceneBackground, 13);
 		mask();
 		_inventoryPosition = 0;
 		drawBackpack();
@@ -659,11 +658,11 @@ void TotEngine::changeRoom() {
 			_sound->autoPlayVoc("PARASITO", 355778, 20129);
 		else
 			loadTV();
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 	} break;
 	case 5: {
 		if (_currentRoomData->code != 6) {
@@ -681,10 +680,10 @@ void TotEngine::changeRoom() {
 			_sound->stopVoc();
 			_sound->autoPlayVoc("CALDERA", 6433, 15386);
 			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
-			_graphics->sceneTransition(false, sceneBackground);
+			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
@@ -697,8 +696,8 @@ void TotEngine::changeRoom() {
 			_sound->setSfxVolume(_sound->_leftSfxVol, 0);
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 22, -2);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -712,8 +711,8 @@ void TotEngine::changeRoom() {
 		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 22, 2);
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 9: {
@@ -728,11 +727,11 @@ void TotEngine::changeRoom() {
 		_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 		_trajectory[_currentTrajectoryIndex].y = _characterPosY;
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		_mouse->show();
 
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 12: {
@@ -748,10 +747,10 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			_graphics->sceneTransition(false, sceneBackground);
+			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			_mouse->show();
 		} else {
 
@@ -762,8 +761,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 64, 0);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -777,8 +776,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 64, 0);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} break;
 		case 14: {
@@ -789,8 +788,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 56, 0);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} break;
 		}
@@ -808,10 +807,10 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			_graphics->sceneTransition(false, sceneBackground);
+			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
@@ -822,8 +821,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 56, 0);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -845,11 +844,11 @@ void TotEngine::changeRoom() {
 		if (_cpCounter > 89)
 			showError(274);
 		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 18: {
@@ -865,10 +864,10 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			_graphics->sceneTransition(false, sceneBackground);
+			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
@@ -879,8 +878,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, true, 131, -1);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -897,10 +896,10 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			_graphics->sceneTransition(true, NULL);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
-			_graphics->sceneTransition(false, sceneBackground);
+			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		} else {
 
@@ -911,8 +910,8 @@ void TotEngine::changeRoom() {
 			_mouse->hide();
 			loadScrollData(_currentRoomData->doors[_doorIndex].nextScene, false, 131, 1);
 			_mouse->show();
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 	} break;
@@ -948,11 +947,11 @@ void TotEngine::changeRoom() {
 		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 		if (_currentRoomData->code == 4)
 			_sound->loadVoc("GOTA", 140972, 1029);
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 24: {
@@ -1010,13 +1009,13 @@ void TotEngine::changeRoom() {
 				}
 			assembleScreen();
 		}
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		if ((_isRedDevilCaptured == false) && (_isTrapSet == false))
 			runaroundRed();
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 255:
@@ -1046,11 +1045,11 @@ void TotEngine::changeRoom() {
 			_sound->autoPlayVoc("FUENTE", 0, 0);
 			break;
 		}
-		_graphics->sceneTransition(false, sceneBackground);
+		_graphics->sceneTransition(false, _sceneBackground);
 		_cpCounter = _cpCounter2;
 		_mouse->show();
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	}
 	}
@@ -1248,7 +1247,7 @@ void TotEngine::resetGameState() {
 }
 
 void TotEngine::initVars() {
-	isLoadingFromLauncher = false;
+	_isLoadingFromLauncher = false;
 	_decryptionKey = "23313212133122121312132132312312122132322131221322222112121"
 					"32121121212112111212112333131232323213222132123211213221231"
 					"32132213232333333213132132132322113212132121322123121232332"
@@ -1278,14 +1277,41 @@ void TotEngine::initVars() {
 	_firstTimeDone = false;
 	_isIntroSeen = false;
 	_inGame = false;
+
+	_sceneBackground = NULL;
+	_backgroundCopy = NULL;
+	_conversationData = NULL;
+	_rooms = NULL;
+	_invItemData = NULL;
+
+	for(int i = 0; i < kNumScreenOverlays; i++) {
+		_screenLayers[i] = NULL;
+	}
+
+	for(int i = 0; i < kInventoryIconCount; i++) {
+		_inventoryIconBitmaps[i] = NULL;
+	}
+
+	for(int i = 0; i < 4; i++) {
+		for(int j = 0; j < kWalkFrameCount + 30; j++) {
+			_mainCharAnimation.bitmap[i][j] = NULL;
+		}
+	}
+
+	for (int i = 0; i < _secondaryAnimDirCount; i++) {
+		for (int j = 0; j < kSecAnimationFrameCount; j++) {
+			_secondaryAnimation.bitmap[i][j] = NULL;
+		}
+	}
 }
 
 void TotEngine::clearVars() {
-	if(sceneBackground != NULL) {
-		free(sceneBackground);
+	if(_sceneBackground != NULL) {
+		free(_sceneBackground);
 	}
-	if(backgroundCopy != NULL) {
-		free(backgroundCopy);
+
+	if(_backgroundCopy != NULL) {
+		free(_backgroundCopy);
 	}
 	if(_conversationData != NULL) {
 		free(_conversationData);

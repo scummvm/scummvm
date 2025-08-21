@@ -889,7 +889,7 @@ void GraphicsManager::init() {
 }
 
 void GraphicsManager::restoreBackground() {
-	Common::copy(g_engine->backgroundCopy + 4, g_engine->backgroundCopy + g_engine->_screenSize, g_engine->sceneBackground + 4);
+	Common::copy(g_engine->_backgroundCopy + 4, g_engine->_backgroundCopy + g_engine->_screenSize, g_engine->_sceneBackground + 4);
 }
 
 void GraphicsManager::loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize) {
