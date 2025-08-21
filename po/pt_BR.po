@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-21 06:58+0000\n"
+"POT-Creation-Date: 2025-08-21 08:22+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6547,18 +6547,20 @@ msgstr "Utiliza o cursor quadriculado dos modelos posteriores do Apple II"
 #: engines/cge/metaengine.cpp:56 engines/cine/metaengine.cpp:69
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:55
 #: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:193
-#: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
-#: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
-#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
-#: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
+#: engines/gob/metaengine.cpp:57 engines/griffon/metaengine.cpp:40
+#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
+#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
+#: engines/sci/detection_options.h:223 engines/supernova/metaengine.cpp:53
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Habilitar Texto para Fala"
 
 #: engines/adl/metaengine.cpp:118 engines/agi/metaengine.cpp:221
 #: engines/cge/metaengine.cpp:57 engines/cine/metaengine.cpp:70
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:56
-#: engines/efh/metaengine.cpp:45 engines/made/metaengine.cpp:52
-#: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
+#: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
+#: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
+#: engines/mortevielle/metaengine.cpp:38
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr ""
 "Utiliza narrador TTS para ler texto no jogo (se o TTS estiver disponível)"
