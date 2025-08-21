@@ -50,7 +50,7 @@ static void convertToGrayscale(ManagedSurface &surface) {
 		pixel = (uint32 *)surface.getBasePtr(0, y);
 		for (int x = 0; x < surface.w; x++, pixel++) {
 			*pixel &= rgbMask;
-			byte gray = (components[0] + components[1] + components[2] + components[3]) / 3;
+			byte gray = (byte)CLIP(0.29f * components[0] + 0.58f * components[1] + 0.11f * components[2], 0.0f, 255.0f);
 			*pixel =
 				(uint32(gray) << surface.format.rShift) |
 				(uint32(gray) << surface.format.gShift) |
