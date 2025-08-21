@@ -26,6 +26,8 @@
 #include "gui/message.h"
 #include "graphics/cursorman.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void WetEngine::initSegment(ArcadeShooting *arc) {
@@ -730,7 +732,7 @@ void WetEngine::runBeforeArcade(ArcadeShooting *arc) {
 }
 
 void WetEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_c) {
+	if (keycode == kActionCredits) {
 		_background->decoder->pauseVideo(true);
 		showCredits();
 		loadPalette(_currentPalette);
@@ -740,33 +742,31 @@ void WetEngine::pressedKey(const int keycode) {
 		drawScreen();
 		if (!_music.empty())
 			playSound(_music, 0, _musicRate); // restore music
-	} else if (keycode == Common::KEYCODE_s) { // Added for testing
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-		}
-	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+	} else if (keycode == kActionSkipLevel) { // Added for testing
+		_skipLevel = true;
+	} else if (keycode == kActionKillPlayer) { // Added for testing
 		_health = 0;
-	} else if (keycode == Common::KEYCODE_ESCAPE) {
+	} else if (keycode == kActionPause) {
 		openMainMenuDialog();
-	} else if (keycode == Common::KEYCODE_LEFT) {
+	} else if (keycode == kActionLeft) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.x > 0) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerLeft);
 		}
-	} else if (keycode == Common::KEYCODE_DOWN) {
+	} else if (keycode == kActionDown) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.y < 130) { // Viewport value minus 30
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerBottom);
 		}
-	} else if (keycode == Common::KEYCODE_RIGHT) {
+	} else if (keycode == kActionRight) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.x < _screenW) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
 				_c33PlayerDirection.push_back(kPlayerRight);
 		}
-	} else if (keycode == Common::KEYCODE_UP) {
+	} else if (keycode == kActionUp) {
 		if (_arcadeMode == "YT" && _c33PlayerPosition.y > 0) {
 			_c33UseMouse = false;
 			if (_c33PlayerDirection.size() < 3)
@@ -1182,6 +1182,20 @@ bool WetEngine::checkRButtonUp() {
 
 void WetEngine::setRButtonUp(const bool val) {
 	_rButtonUp = val;
+}
+
+void WetEngine::disableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
+}
+
+void WetEngine::enableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+	keymapper->getKeymap("direction")->setEnabled(true);
 }
 
 } // End of namespace Hypno

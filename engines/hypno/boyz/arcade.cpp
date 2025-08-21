@@ -24,6 +24,8 @@
 
 #include "common/events.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void BoyzEngine::runBeforeArcade(ArcadeShooting *arc) {
@@ -187,14 +189,12 @@ void BoyzEngine::showArcadeStats(int territory, const ArcadeStats &data) {
 }
 
 void BoyzEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_c) {
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-			return;
-		}
-	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+	if (keycode == kActionSkipLevel) {
+		_skipLevel = true;
+		return;
+	} else if (keycode == kActionKillPlayer) { // Added for testing
 		_health = 0;
-	} else if (keycode == Common::KEYCODE_ESCAPE) {
+	} else if (keycode == kActionPause) {
 		openMainMenuDialog();
 	}
 }

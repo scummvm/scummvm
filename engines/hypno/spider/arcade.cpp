@@ -101,23 +101,21 @@ void SpiderEngine::findNextSegment(ArcadeShooting *arc) {
 
 
 void SpiderEngine::pressedKey(const int keycode) {
-	if (keycode == Common::KEYCODE_c) {
-		if (_cheatsEnabled) {
-			_skipLevel = true;
-			return;
-		}
-	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+	if (keycode == kActionSkipLevel) {
+		_skipLevel = true;
+		return;
+	} else if (keycode == kActionKillPlayer) { // Added for testing
 		_health = 0;
-	} else if (keycode == Common::KEYCODE_LEFT) {
+	} else if (keycode == kActionLeft) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerLeft;
-	} else if (keycode == Common::KEYCODE_DOWN) {
+	} else if (keycode == kActionDown) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerBottom;
-	} else if (keycode == Common::KEYCODE_RIGHT) {
+	} else if (keycode == kActionRight) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerRight;
-	} else if (keycode == Common::KEYCODE_UP) {
+	} else if (keycode == kActionUp) {
 		_lastPlayerPosition = _currentPlayerPosition;
 		_currentPlayerPosition = kPlayerTop;
 	}
