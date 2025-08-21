@@ -341,7 +341,7 @@ public:
 			GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texCoords));
 		GL_CALL(glDrawArrays(GL_QUADS, 0, 4));
 
-#ifdef _DEBUG
+#ifdef ALCACHOFA_DEBUG
 		// make sure we crash instead of someone using our stack arrays
 		GL_CALL(glVertexPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));
 		GL_CALL(glTexCoordPointer(2, GL_FLOAT, sizeof(Vector2d), nullptr));

@@ -28,7 +28,7 @@ using namespace Common;
 namespace Alcachofa {
 
 Game::Game()
-#ifdef _DEBUG // During development let's check out these errors more carefully
+#ifdef ALCACHOFA_DEBUG // During development let's check out these errors more carefully
 	: _message(error)
 #else // For release builds the game might still work or the user might still be able to save and restart
 	: _message(warning)
