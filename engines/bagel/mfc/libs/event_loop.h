@@ -251,7 +251,6 @@ public:
 	MMRESULT joyReleaseCapture(UINT uJoyID);
 
 	HHOOK HookKeyboard(HOOKPROC proc) {
-		assert(!_kbdHookProc);
 		_kbdHookProc = proc;
 		return (HHOOK)proc;
 	}
