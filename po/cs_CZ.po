@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-19 14:00+0000\n"
+"POT-Creation-Date: 2025-08-21 06:58+0000\n"
 "PO-Revision-Date: 2023-12-14 14:27+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -72,7 +72,8 @@ msgstr "Dostupná jádra:"
 #: engines/saga/metaengine.cpp:374 engines/scumm/help.cpp:126
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:212
-#: engines/supernova/metaengine.cpp:341 engines/twp/metaengine.cpp:179
+#: engines/sherlock/metaengine.cpp:430 engines/supernova/metaengine.cpp:341
+#: engines/twp/metaengine.cpp:179
 msgid "Close"
 msgstr "Zavřít"
 
@@ -337,6 +338,7 @@ msgstr "Jiné úložiště právě pracuje. Chcete ho přerušit?"
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
 msgstr "Ano"
@@ -351,6 +353,7 @@ msgstr "Ano"
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
 msgstr "Ne"
@@ -2611,7 +2614,7 @@ msgstr "Přidat Hru..."
 
 #: gui/options.cpp:2967 engines/engine.cpp:655
 #: engines/drascula/metaengine.cpp:255 engines/queen/metaengine.cpp:269
-#: engines/ultima/nuvie/metaengine.cpp:71
+#: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
 #, fuzzy
 msgid "Move"
 msgstr "Vzad"
@@ -3498,8 +3501,8 @@ msgstr "~N~ávrat do Spouštěče"
 #: engines/nancy/state/loadsave.cpp:107 engines/neverhood/menumodule.cpp:925
 #: engines/pegasus/pegasus.cpp:407 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:746 engines/sci/engine/kfile.cpp:1104
-#: engines/sherlock/scalpel/scalpel.cpp:1248
-#: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
+#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:81 engines/startrek/saveload.cpp:42
 #: engines/toltecs/menu.cpp:308 engines/toon/toon.cpp:3820
 #: engines/trecision/saveload.cpp:67 engines/tsage/scenes.cpp:636
 #: engines/wage/saveload.cpp:763 engines/zvision/file/save_manager.cpp:47
@@ -3522,8 +3525,8 @@ msgstr "Uložit hru:"
 #: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:407
 #: engines/prince/saveload.cpp:54 engines/saga/metaengine.cpp:469
 #: engines/sci/engine/guest_additions.cpp:747 engines/sci/engine/kfile.cpp:1104
-#: engines/sherlock/scalpel/scalpel.cpp:1248
-#: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
+#: engines/sherlock/scalpel/scalpel.cpp:1250
+#: engines/sherlock/tattoo/widget_files.cpp:81 engines/startrek/saveload.cpp:42
 #: engines/tinsel/metaengine.cpp:323 engines/toltecs/menu.cpp:308
 #: engines/toon/toon.cpp:3820 engines/trecision/saveload.cpp:67
 #: engines/tsage/scenes.cpp:636 engines/wage/saveload.cpp:763
@@ -3883,7 +3886,8 @@ msgstr "Menu hry"
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
 #: engines/illusions/metaengine.cpp:142 engines/made/metaengine.cpp:140
 #: engines/mohawk/myst.cpp:566 engines/mohawk/riven.cpp:847
-#: engines/prince/metaengine.cpp:269 engines/wintermute/keymapper_tables.h:220
+#: engines/prince/metaengine.cpp:269 engines/sherlock/metaengine.cpp:384
+#: engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1276
 #: engines/wintermute/keymapper_tables.h:1601
@@ -4813,7 +4817,9 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/efh/metaengine.cpp:397 engines/got/metaengine.cpp:61
 #: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
-#: engines/supernova/metaengine.cpp:303 engines/titanic/metaengine.cpp:233
+#: engines/sherlock/metaengine.cpp:660 engines/sherlock/metaengine.cpp:671
+#: engines/sherlock/metaengine.cpp:1010 engines/supernova/metaengine.cpp:303
+#: engines/titanic/metaengine.cpp:233
 #, fuzzy
 msgid "Select"
 msgstr "Činnost/Vybrat"
@@ -5979,14 +5985,14 @@ msgstr "Zkontrolovat Aktualizace..."
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -5998,7 +6004,7 @@ msgstr "Výchozí rozložení kláves"
 msgid "Move / Interact / Skip"
 msgstr "Zvýraznit následující dialog"
 
-#: engines/access/metaengine.cpp:208
+#: engines/access/metaengine.cpp:208 engines/sherlock/metaengine.cpp:483
 #, fuzzy
 #| msgid "Skip line"
 msgid "Skip movie"
@@ -6078,11 +6084,14 @@ msgstr "Zrušit stahování"
 msgid "Move down-right"
 msgstr "Přesunout se doprava"
 
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
 #: engines/access/metaengine.cpp:262 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
-#: engines/supernova/metaengine.cpp:326 engines/tinsel/metaengine.cpp:300
-#: engines/tsage/metaengine.cpp:206 engines/ultima/nuvie/metaengine.cpp:67
+#: engines/sherlock/metaengine.cpp:405 engines/sherlock/metaengine.cpp:556
+#: engines/sherlock/metaengine.cpp:813 engines/supernova/metaengine.cpp:326
+#: engines/tinsel/metaengine.cpp:300 engines/tsage/metaengine.cpp:206
+#: engines/ultima/nuvie/metaengine.cpp:67
 msgid "Look"
 msgstr "Dívat se"
 
@@ -6095,6 +6104,7 @@ msgstr "Dívat se"
 #: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
 #: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
 #: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
+#: engines/sherlock/metaengine.cpp:440 engines/sherlock/metaengine.cpp:561
 #: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
 #: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
 #: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
@@ -6120,13 +6130,13 @@ msgstr "Svléct"
 #: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
 #: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
-#: engines/scumm/help.cpp:252 engines/sludge/keymapper_tables.h:58
-#: engines/sludge/keymapper_tables.h:119 engines/sludge/keymapper_tables.h:168
-#: engines/sludge/keymapper_tables.h:181 engines/sludge/keymapper_tables.h:217
-#: engines/sludge/keymapper_tables.h:256 engines/stark/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:313 engines/titanic/metaengine.cpp:244
-#: engines/titanic/metaengine.cpp:297 engines/twine/metaengine.cpp:370
-#: engines/zvision/metaengine.cpp:252
+#: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
+#: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
+#: engines/sludge/keymapper_tables.h:168 engines/sludge/keymapper_tables.h:181
+#: engines/sludge/keymapper_tables.h:217 engines/sludge/keymapper_tables.h:256
+#: engines/stark/metaengine.cpp:267 engines/tinsel/metaengine.cpp:313
+#: engines/titanic/metaengine.cpp:244 engines/titanic/metaengine.cpp:297
+#: engines/twine/metaengine.cpp:370 engines/zvision/metaengine.cpp:252
 msgid "Inventory"
 msgstr "Inventář"
 
@@ -6137,8 +6147,8 @@ msgstr ""
 #: engines/access/metaengine.cpp:288 engines/bbvs/metaengine.cpp:130
 #: engines/drascula/metaengine.cpp:250 engines/efh/metaengine.cpp:506
 #: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
-#: engines/supernova/metaengine.cpp:361 engines/tsage/metaengine.cpp:216
-#: engines/ultima/ultima4/metaengine.cpp:70
+#: engines/sherlock/metaengine.cpp:415 engines/supernova/metaengine.cpp:361
+#: engines/tsage/metaengine.cpp:216 engines/ultima/ultima4/metaengine.cpp:70
 #: engines/ultima/nuvie/metaengine.cpp:68
 msgid "Talk"
 msgstr "Mluvit"
@@ -6263,7 +6273,7 @@ msgstr ""
 #: engines/got/metaengine.cpp:35 engines/groovie/metaengine.cpp:53
 #: engines/m4/metaengine.cpp:37 engines/nancy/metaengine.cpp:104
 #: engines/neverhood/dialogs.cpp:47 engines/sci/detection_options.h:107
-#: engines/sherlock/metaengine.cpp:39 engines/toltecs/metaengine.cpp:44
+#: engines/sherlock/metaengine.cpp:47 engines/toltecs/metaengine.cpp:44
 #: engines/trecision/metaengine.cpp:41 engines/ultima/metaengine.cpp:52
 #: engines/zvision/metaengine.cpp:42
 msgid "Use original save/load screens"
@@ -6276,7 +6286,7 @@ msgstr "Použít původní obrazovky načtení/uložení"
 #: engines/got/metaengine.cpp:36 engines/groovie/metaengine.cpp:54
 #: engines/m4/metaengine.cpp:38 engines/nancy/metaengine.cpp:105
 #: engines/neverhood/dialogs.cpp:48 engines/sci/detection_options.h:108
-#: engines/sherlock/metaengine.cpp:40 engines/toltecs/metaengine.cpp:45
+#: engines/sherlock/metaengine.cpp:48 engines/toltecs/metaengine.cpp:45
 #: engines/trecision/metaengine.cpp:42 engines/ultima/metaengine.cpp:53
 #: engines/zvision/metaengine.cpp:43
 msgid "Use the original save/load screens instead of the ScummVM ones"
@@ -6402,10 +6412,10 @@ msgstr "Tato hra není podporována"
 #: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:938
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:749
-#: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
-#: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
-#: engines/zvision/file/save_manager.cpp:60
+#: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:100
+#: engines/startrek/saveload.cpp:67 engines/toltecs/menu.cpp:278
+#: engines/toon/toon.cpp:3914 engines/zvision/file/save_manager.cpp:60
 msgid "Restore game:"
 msgstr "Obnovit hru:"
 
@@ -6422,10 +6432,11 @@ msgstr "Obnovit hru:"
 #: engines/mads/nebular/dialogs_nebular.cpp:385
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:938
 #: engines/prince/saveload.cpp:63 engines/sci/engine/guest_additions.cpp:750
-#: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1261
-#: engines/sherlock/tattoo/widget_files.cpp:93 engines/startrek/saveload.cpp:67
-#: engines/toltecs/menu.cpp:278 engines/toon/toon.cpp:3914
-#: engines/zvision/file/save_manager.cpp:60 engines/zvision/metaengine.cpp:287
+#: engines/sci/engine/kfile.cpp:1246 engines/sherlock/scalpel/scalpel.cpp:1263
+#: engines/sherlock/tattoo/widget_files.cpp:100
+#: engines/startrek/saveload.cpp:67 engines/toltecs/menu.cpp:278
+#: engines/toon/toon.cpp:3914 engines/zvision/file/save_manager.cpp:60
+#: engines/zvision/metaengine.cpp:287
 msgid "Restore"
 msgstr "Obnovit"
 
@@ -6968,7 +6979,7 @@ msgid "Escape"
 msgstr "Klávesa Escape"
 
 #: engines/bbvs/metaengine.cpp:117 engines/hopkins/metaengine.cpp:229
-#: engines/illusions/metaengine.cpp:147
+#: engines/illusions/metaengine.cpp:147 engines/sherlock/metaengine.cpp:835
 #, fuzzy
 #| msgid "Open/Close Inventory"
 msgid "Open inventory"
@@ -7167,8 +7178,12 @@ msgid "Delete selected saved game"
 msgstr "Spustit zvolenou hru"
 
 #. I18N: This keymap allows scrolling texts and lists upwards
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll up in the map
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up in the widget
 #: engines/bladerunner/metaengine.cpp:296 engines/efh/metaengine.cpp:415
-#: engines/titanic/metaengine.cpp:218 engines/wintermute/keymapper_tables.h:670
+#: engines/sherlock/metaengine.cpp:368 engines/sherlock/metaengine.cpp:995
+#: engines/sherlock/metaengine.cpp:1021 engines/titanic/metaengine.cpp:218
+#: engines/wintermute/keymapper_tables.h:670
 #: engines/wintermute/keymapper_tables.h:871
 #: engines/wintermute/keymapper_tables.h:892
 #: engines/wintermute/keymapper_tables.h:1326
@@ -7184,8 +7199,12 @@ msgid "Scroll up"
 msgstr "Posunout seznam nahoru"
 
 #. I18N: This keymap allows scrolling texts and lists downwards
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll down in the map
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down in the widget
 #: engines/bladerunner/metaengine.cpp:303 engines/efh/metaengine.cpp:403
-#: engines/titanic/metaengine.cpp:225 engines/wintermute/keymapper_tables.h:677
+#: engines/sherlock/metaengine.cpp:374 engines/sherlock/metaengine.cpp:1003
+#: engines/sherlock/metaengine.cpp:1029 engines/titanic/metaengine.cpp:225
+#: engines/wintermute/keymapper_tables.h:677
 #: engines/wintermute/keymapper_tables.h:878
 #: engines/wintermute/keymapper_tables.h:899
 #: engines/wintermute/keymapper_tables.h:1333
@@ -7222,12 +7241,14 @@ msgstr "Povolit zachycování myši"
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:181
 #: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
 #: engines/prince/metaengine.cpp:243 engines/saga/metaengine.cpp:442
-#: engines/sludge/keymapper_tables.h:107 engines/sludge/keymapper_tables.h:156
-#: engines/stark/metaengine.cpp:208 engines/tetraedge/metaengine.cpp:110
-#: engines/titanic/metaengine.cpp:199 engines/toltecs/metaengine.cpp:234
-#: engines/toon/metaengine.cpp:112 engines/trecision/metaengine.cpp:169
-#: engines/tsage/metaengine.cpp:242 engines/ultima/ultima8/metaengine.cpp:45
-#: engines/vcruise/metaengine.cpp:175 engines/wintermute/keymapper_tables.h:920
+#: engines/sherlock/metaengine.cpp:462 engines/sherlock/metaengine.cpp:613
+#: engines/sherlock/metaengine.cpp:819 engines/sludge/keymapper_tables.h:107
+#: engines/sludge/keymapper_tables.h:156 engines/stark/metaengine.cpp:208
+#: engines/tetraedge/metaengine.cpp:110 engines/titanic/metaengine.cpp:199
+#: engines/toltecs/metaengine.cpp:234 engines/toon/metaengine.cpp:112
+#: engines/trecision/metaengine.cpp:169 engines/tsage/metaengine.cpp:242
+#: engines/ultima/ultima8/metaengine.cpp:45 engines/vcruise/metaengine.cpp:175
+#: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
 msgstr "Uložit hru"
 
@@ -7247,9 +7268,11 @@ msgstr "Uložit hru"
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349 engines/pegasus/pegasus.cpp:2831
 #: engines/prince/metaengine.cpp:249 engines/saga/metaengine.cpp:432
-#: engines/stark/metaengine.cpp:213 engines/tetraedge/metaengine.cpp:104
-#: engines/titanic/metaengine.cpp:205 engines/toltecs/metaengine.cpp:240
-#: engines/toon/metaengine.cpp:118 engines/trecision/metaengine.cpp:175
+#: engines/sherlock/metaengine.cpp:457 engines/sherlock/metaengine.cpp:608
+#: engines/sherlock/metaengine.cpp:824 engines/stark/metaengine.cpp:213
+#: engines/tetraedge/metaengine.cpp:104 engines/titanic/metaengine.cpp:205
+#: engines/toltecs/metaengine.cpp:240 engines/toon/metaengine.cpp:118
+#: engines/trecision/metaengine.cpp:175
 #: engines/ultima/ultima8/metaengine.cpp:46 engines/vcruise/metaengine.cpp:180
 #: engines/wintermute/keymapper_tables.h:925
 #: engines/wintermute/keymapper_tables.h:1265
@@ -7291,9 +7314,10 @@ msgstr ""
 #: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:145
 #: engines/freescape/games/eclipse/eclipse.cpp:241
-#: engines/saga/metaengine.cpp:437 engines/sword1/metaengine.cpp:295
-#: engines/trecision/metaengine.cpp:156 engines/tsage/metaengine.cpp:231
-#: engines/vcruise/metaengine.cpp:190
+#: engines/saga/metaengine.cpp:437 engines/sherlock/metaengine.cpp:359
+#: engines/sherlock/metaengine.cpp:618 engines/sherlock/metaengine.cpp:848
+#: engines/sword1/metaengine.cpp:295 engines/trecision/metaengine.cpp:156
+#: engines/tsage/metaengine.cpp:231 engines/vcruise/metaengine.cpp:190
 #, fuzzy
 msgid "Quit game"
 msgstr " (Hra)"
@@ -7331,11 +7355,12 @@ msgid "Main menu keymappings"
 msgstr "~V~olby..."
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
+#: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:783
 #, fuzzy
 msgid "Inventory keymappings"
 msgstr "~V~olby..."
 
-#: engines/buried/metaengine.cpp:141
+#: engines/buried/metaengine.cpp:141 engines/sherlock/metaengine.cpp:1183
 #, fuzzy
 #| msgid "Interact"
 msgid "Select / Interact"
@@ -7577,7 +7602,7 @@ msgstr "Použít Text ke čtení"
 #: engines/dreamweb/metaengine.cpp:74 engines/griffon/metaengine.cpp:41
 #: engines/lure/metaengine.cpp:54 engines/mads/metaengine.cpp:125
 #: engines/parallaction/metaengine.cpp:53 engines/prince/metaengine.cpp:41
-#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:113
+#: engines/sci/detection_options.h:224 engines/sherlock/metaengine.cpp:121
 #: engines/supernova/metaengine.cpp:54 engines/teenagent/metaengine.cpp:50
 #: engines/twine/metaengine.cpp:145 engines/wage/metaengine.cpp:52
 msgid "Use TTS to read the descriptions (if TTS is available)"
@@ -7802,7 +7827,7 @@ msgstr "~P~ředchozí"
 msgid "Map"
 msgstr "Mapovat"
 
-#: engines/crab/input/input.cpp:246
+#: engines/crab/input/input.cpp:246 engines/sherlock/metaengine.cpp:467
 #, fuzzy
 msgid "Journal"
 msgstr "Zobrazit Vše"
@@ -8034,17 +8059,19 @@ msgstr ""
 msgid "Debug graphics"
 msgstr "Obraz"
 
-#: engines/drascula/metaengine.cpp:207
+#: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
 #, fuzzy
 msgid "Animation keymappings"
 msgstr "~V~olby..."
 
 #: engines/drascula/metaengine.cpp:208 engines/lab/metaengine.cpp:151
+#: engines/sherlock/metaengine.cpp:338 engines/sherlock/metaengine.cpp:786
 #, fuzzy
 msgid "Quit dialog keymappings"
 msgstr "~V~olby..."
 
-#: engines/drascula/metaengine.cpp:212 engines/tetraedge/metaengine.cpp:92
+#: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
+#: engines/tetraedge/metaengine.cpp:92
 #, fuzzy
 msgid "Move / Interact / Select"
 msgstr "Přesunout se doleva"
@@ -8059,7 +8086,8 @@ msgstr "Sebrat"
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
 #: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
 #: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
-#: engines/supernova/metaengine.cpp:336 engines/twp/metaengine.cpp:178
+#: engines/sherlock/metaengine.cpp:425 engines/supernova/metaengine.cpp:336
+#: engines/twp/metaengine.cpp:178
 msgid "Open"
 msgstr "Otevřít"
 
@@ -8207,7 +8235,7 @@ msgstr "Činnost/Vybrat"
 msgid "Menu keymappings"
 msgstr "~V~olby..."
 
-#: engines/efh/metaengine.cpp:258
+#: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
 #, fuzzy
 msgid "Quit keymappings"
 msgstr "~V~olby..."
@@ -8316,6 +8344,7 @@ msgstr ""
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
 #: engines/scumm/help.cpp:139 engines/scumm/help.cpp:164
 #: engines/scumm/help.cpp:200 engines/scumm/help.cpp:210
+#: engines/sherlock/metaengine.cpp:445 engines/sherlock/metaengine.cpp:566
 #: engines/supernova/metaengine.cpp:366 engines/twp/metaengine.cpp:180
 msgid "Give"
 msgstr "Dát"
@@ -9382,22 +9411,32 @@ msgstr "~O~dstranit Hru"
 msgid "Side step"
 msgstr "Přesunout se Doleva"
 
-#: engines/illusions/metaengine.cpp:108
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
+#: engines/illusions/metaengine.cpp:108 engines/sherlock/metaengine.cpp:1138
 #, fuzzy
 msgid "Move cursor up"
 msgstr "Vpřed"
 
-#: engines/illusions/metaengine.cpp:115
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
+#: engines/illusions/metaengine.cpp:115 engines/sherlock/metaengine.cpp:1146
 #, fuzzy
 msgid "Move cursor down"
 msgstr "Vpřed"
 
-#: engines/illusions/metaengine.cpp:122
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the password input field
+#: engines/illusions/metaengine.cpp:122 engines/sherlock/metaengine.cpp:1090
+#: engines/sherlock/metaengine.cpp:1154 engines/sherlock/metaengine.cpp:1195
 #, fuzzy
 msgid "Move cursor left"
 msgstr "Vpřed"
 
-#: engines/illusions/metaengine.cpp:129
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the foolscap puzzle input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) cursor refers to the text cursor in the password input field
+#: engines/illusions/metaengine.cpp:129 engines/sherlock/metaengine.cpp:1098
+#: engines/sherlock/metaengine.cpp:1162 engines/sherlock/metaengine.cpp:1203
 #, fuzzy
 msgid "Move cursor right"
 msgstr "Vpřed"
@@ -9733,7 +9772,7 @@ msgid ""
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
 
-#: engines/lab/metaengine.cpp:150
+#: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
 #, fuzzy
 msgid "Exit keymappings"
 msgstr "~V~olby..."
@@ -9743,18 +9782,23 @@ msgstr "~V~olby..."
 msgid "Intro keymappings"
 msgstr "~V~olby..."
 
-#: engines/lab/metaengine.cpp:155
+#: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
+#: engines/sherlock/metaengine.cpp:778
 #, fuzzy
 msgid "Map keymappings"
 msgstr "~V~olby..."
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
+#: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
 #, fuzzy
 msgid "Journal keymappings"
 msgstr "~V~olby..."
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
+#: engines/sherlock/metaengine.cpp:395 engines/sherlock/metaengine.cpp:494
+#: engines/sherlock/metaengine.cpp:538 engines/sherlock/metaengine.cpp:549
+#: engines/sherlock/metaengine.cpp:601 engines/sherlock/metaengine.cpp:678
 #: engines/supernova/metaengine.cpp:297 engines/supernova/metaengine.cpp:373
 #: engines/ultima/ultima4/metaengine.cpp:54 engines/voyeur/metaengine.cpp:198
 #: engines/voyeur/metaengine.cpp:229 engines/wintermute/keymapper_tables.h:720
@@ -9900,7 +9944,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Přístup k následující částí hry je dostupný pouze v její plné verzi."
 
 #: engines/lure/metaengine.cpp:53 engines/mads/metaengine.cpp:124
-#: engines/sherlock/metaengine.cpp:112 engines/twine/metaengine.cpp:144
+#: engines/sherlock/metaengine.cpp:120 engines/twine/metaengine.cpp:144
 msgid "TTS Narrator"
 msgstr ""
 
@@ -10205,7 +10249,9 @@ msgid "Reorder party"
 msgstr ""
 
 #. I18N: Action of hero party in Might & Magic 1
-#: engines/mm/mm1/metaengine.cpp:111 engines/ultima/ultima4/metaengine.cpp:68
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to search the journal
+#: engines/mm/mm1/metaengine.cpp:111 engines/sherlock/metaengine.cpp:514
+#: engines/sherlock/metaengine.cpp:957 engines/ultima/ultima4/metaengine.cpp:68
 #, fuzzy
 #| msgid "Search:"
 msgid "Search"
@@ -11110,8 +11156,9 @@ msgstr "Dívat se na"
 #: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
-#: engines/scumm/help.cpp:230 engines/sludge/keymapper_tables.h:318
-#: engines/twp/metaengine.cpp:181 engines/wintermute/keymapper_tables.h:134
+#: engines/scumm/help.cpp:230 engines/sherlock/metaengine.cpp:420
+#: engines/sludge/keymapper_tables.h:318 engines/twp/metaengine.cpp:181
+#: engines/wintermute/keymapper_tables.h:134
 #: engines/wintermute/keymapper_tables.h:1546
 msgid "Pick up"
 msgstr "Sebrat"
@@ -12872,50 +12919,432 @@ msgid ""
 "\n"
 msgstr ""
 
-#: engines/sherlock/metaengine.cpp:51
+#: engines/sherlock/metaengine.cpp:59
 msgid "Pixellated scene transitions"
 msgstr "Pixelované přechody scén"
 
-#: engines/sherlock/metaengine.cpp:52
+#: engines/sherlock/metaengine.cpp:60
 msgid "When changing scenes, a randomized pixel transition is done"
 msgstr "Při změně scény je proveden náhodný pixelový přechod"
 
-#: engines/sherlock/metaengine.cpp:63
+#: engines/sherlock/metaengine.cpp:71
 msgid "Don't show hotspots when moving mouse"
 msgstr "Nezobarzovat aktivní body při pohybu myší"
 
-#: engines/sherlock/metaengine.cpp:64
+#: engines/sherlock/metaengine.cpp:72
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
 msgstr ""
 "Aktivní body zobrazovat pouze při kliknutí na ně nebo tlačítko činnosti"
 
-#: engines/sherlock/metaengine.cpp:75
+#: engines/sherlock/metaengine.cpp:83
 msgid "Show character portraits"
 msgstr "Zobrazit portréty postav"
 
-#: engines/sherlock/metaengine.cpp:76
+#: engines/sherlock/metaengine.cpp:84
 msgid "Show portraits for the characters when conversing"
 msgstr "Zobrazit portréty postav když mluví"
 
-#: engines/sherlock/metaengine.cpp:87
+#: engines/sherlock/metaengine.cpp:95
 msgid "Slide dialogs into view"
 msgstr "Dialogová okna vplují na obrazovku"
 
-#: engines/sherlock/metaengine.cpp:88
+#: engines/sherlock/metaengine.cpp:96
 msgid "Slide UI dialogs into view, rather than simply showing them immediately"
 msgstr ""
 "Dialohová okna rozhraní vplují na obrazovku, místo aby se zobrazovala "
 "okamžitě"
 
-#: engines/sherlock/metaengine.cpp:99
+#: engines/sherlock/metaengine.cpp:107
 msgid "Transparent windows"
 msgstr "Průhledná okna"
 
-#: engines/sherlock/metaengine.cpp:100
+#: engines/sherlock/metaengine.cpp:108
 msgid "Show windows with a partially transparent background"
 msgstr "Zobrazit okna s částečně průhledným pozadím"
+
+#: engines/sherlock/metaengine.cpp:331
+#, fuzzy
+msgid "Scroll keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
+#, fuzzy
+msgid "Main user interface keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
+#, fuzzy
+msgid "Darts minigame keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:335
+#, fuzzy
+msgid "Talk keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:337
+#, fuzzy
+msgid "Files keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:340
+#, fuzzy
+msgid "Settings keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
+#, fuzzy
+msgid "Movie keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:349
+#, fuzzy
+msgid "Skip / Deselect verb"
+msgstr "~P~ředchozí"
+
+#: engines/sherlock/metaengine.cpp:450
+msgid "Setup"
+msgstr ""
+
+#: engines/sherlock/metaengine.cpp:472
+#, fuzzy
+#| msgid "Reset"
+msgid "Files"
+msgstr "Resetovat"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
+#: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:906
+msgid "Go back 10 pages"
+msgstr ""
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
+#: engines/sherlock/metaengine.cpp:507
+msgid "Go ahead 10 pages"
+msgstr ""
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
+#: engines/sherlock/metaengine.cpp:521
+#: engines/wintermute/keymapper_tables.h:965
+#, fuzzy
+msgid "First page"
+msgstr "Seslat kouzlo"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the last page of the journal
+#: engines/sherlock/metaengine.cpp:528
+#: engines/wintermute/keymapper_tables.h:970
+#, fuzzy
+msgid "Last page"
+msgstr "Seslat kouzlo"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
+#: engines/sherlock/metaengine.cpp:572
+#, fuzzy
+msgid "Go back a page"
+msgstr "Zobrazit Vše"
+
+#: engines/sherlock/metaengine.cpp:578
+#, fuzzy
+msgid "Scroll left"
+msgstr "Přesunout se doleva"
+
+#: engines/sherlock/metaengine.cpp:584
+#, fuzzy
+msgid "Scroll Right"
+msgstr "Přesunout se doprava"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
+#: engines/sherlock/metaengine.cpp:591
+msgid "Go ahead a page"
+msgstr ""
+
+#: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
+#, fuzzy
+msgid "Select option"
+msgstr "Činnost/Vybrat"
+
+#: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
+#, fuzzy
+msgid "Toggle music"
+msgstr "Povolit zachycování myši"
+
+#: engines/sherlock/metaengine.cpp:690
+#, fuzzy
+msgid "Toggle portraits"
+msgstr "Povolit zachycování myši"
+
+#: engines/sherlock/metaengine.cpp:695
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change font style"
+msgstr "Rychlý režim"
+
+#: engines/sherlock/metaengine.cpp:700
+#, fuzzy
+#| msgid "Special sound effects volume"
+msgid "Toggle sound effects"
+msgstr "Hlasitost speciálních zvukových efektů"
+
+#: engines/sherlock/metaengine.cpp:705
+#, fuzzy
+msgid "Toggle windows mode"
+msgstr "Rychlý režim"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
+#: engines/sherlock/metaengine.cpp:711
+#, fuzzy
+#| msgid "Change game options"
+msgid "Change auto-help location"
+msgstr "Změnit volby hry"
+
+#: engines/sherlock/metaengine.cpp:716
+#, fuzzy
+msgid "Toggle voices"
+msgstr "Zapnout héliový režim"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
+#: engines/sherlock/metaengine.cpp:724
+msgid "Fade by pixel"
+msgstr ""
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
+#: engines/sherlock/metaengine.cpp:730
+#, fuzzy
+msgid "Fade directly"
+msgstr "Cesta není adresář"
+
+#. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
+#: engines/sherlock/metaengine.cpp:736
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change fade mode"
+msgstr "Rychlý režim"
+
+#: engines/sherlock/metaengine.cpp:776
+#, fuzzy
+msgid "Journal search keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:779
+#, fuzzy
+msgid "Menu scrolling keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:780
+#, fuzzy
+msgid "save / load menu keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:781
+#, fuzzy
+msgid "Save files name editing keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:782
+#, fuzzy
+msgid "Foolscap puzzle keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:784
+#, fuzzy
+msgid "Options menu keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:785
+#, fuzzy
+msgid "Password entry keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:787
+#, fuzzy
+msgid "Talk options keymappings"
+msgstr "~V~olby..."
+
+#: engines/sherlock/metaengine.cpp:789
+#, fuzzy
+msgid "Move / Examine / Select"
+msgstr "Přesunout se doleva"
+
+#: engines/sherlock/metaengine.cpp:795
+#, fuzzy
+msgid "Open verb menu / close menu"
+msgstr "~N~ávrat do Spouštěče"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
+#: engines/sherlock/metaengine.cpp:806
+#, fuzzy
+#| msgid "Fast mode"
+msgid "Change speed"
+msgstr "Rychlý režim"
+
+#: engines/sherlock/metaengine.cpp:829
+#, fuzzy
+msgid "Open journal"
+msgstr "Zobrazit Vše"
+
+#: engines/sherlock/metaengine.cpp:842
+#, fuzzy
+msgid "Open options"
+msgstr "~N~ávrat do Spouštěče"
+
+#: engines/sherlock/metaengine.cpp:858
+#, fuzzy
+#| msgid "Fit to window"
+msgid "Exit / Close window"
+msgstr "Přizpůsobit oknu"
+
+#: engines/sherlock/metaengine.cpp:868
+#, fuzzy
+msgid "Skip prolog"
+msgstr "Přeskočit řádek"
+
+#: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
+msgid "Change selected option to the left"
+msgstr ""
+
+#: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
+msgid "Change selected option to the right"
+msgstr ""
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
+#: engines/sherlock/metaengine.cpp:891
+#, fuzzy
+msgid "Go forward 10 pages"
+msgstr "Zobrazit Vše"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
+#: engines/sherlock/metaengine.cpp:898
+#, fuzzy
+msgid "Go forward 1 page"
+msgstr "Zobrazit Vše"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
+#: engines/sherlock/metaengine.cpp:913
+#, fuzzy
+msgid "Go back 1 page"
+msgstr "Zobrazit Vše"
+
+#: engines/sherlock/metaengine.cpp:920
+#, fuzzy
+msgid "Go to start of journal"
+msgstr "Zobrazit Vše"
+
+#: engines/sherlock/metaengine.cpp:927
+#, fuzzy
+msgid "Go to end of journal"
+msgstr "Zobrazit Vše"
+
+#: engines/sherlock/metaengine.cpp:968
+#, fuzzy
+msgid "Skip darts minigame"
+msgstr "Přeskočit řádek"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
+#: engines/sherlock/metaengine.cpp:979
+#, fuzzy
+#| msgid "Scroll list up"
+msgid "Scroll to top left"
+msgstr "Posunout seznam nahoru"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
+#: engines/sherlock/metaengine.cpp:987
+#, fuzzy
+msgid "Scroll to bottom right"
+msgstr "Přesunout se doleva"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
+#: engines/sherlock/metaengine.cpp:1037
+#, fuzzy
+msgid "Scroll page up"
+msgstr "Posunout seznam nahoru"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
+#: engines/sherlock/metaengine.cpp:1044
+#, fuzzy
+msgid "Scroll page down"
+msgstr "Posunout seznam dolu"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
+#: engines/sherlock/metaengine.cpp:1051
+#, fuzzy
+#| msgid "Scroll list up"
+msgid "Scroll to end"
+msgstr "Posunout seznam nahoru"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
+#: engines/sherlock/metaengine.cpp:1058
+#, fuzzy
+#| msgid "Scroll list up"
+msgid "Scroll to start"
+msgstr "Posunout seznam nahoru"
+
+#: engines/sherlock/metaengine.cpp:1068
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Go to next save file slot"
+msgstr "Zvýraznit následující dialog"
+
+#: engines/sherlock/metaengine.cpp:1074
+#, fuzzy
+msgid "Go to next page of save files"
+msgstr "Vložte herní disk pro uložení/načtení"
+
+#: engines/sherlock/metaengine.cpp:1079
+#, fuzzy
+#| msgid "Select a Theme"
+msgid "Select save file"
+msgstr "Vyberte Vzhled"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
+#: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
+#, fuzzy
+msgid "Go to the line start"
+msgstr "Přepnout na škálování 2xSai"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
+#: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
+#, fuzzy
+msgid "Go to the line end"
+msgstr "~N~ávrat do Spouštěče"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
+#: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
+#, fuzzy
+msgid "Toggle insert mode"
+msgstr "Rychlý režim"
+
+#. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
+#: engines/sherlock/metaengine.cpp:1131
+#, fuzzy
+#| msgid "Close"
+msgid "Close puzzle"
+msgstr "Zavřít"
+
+#: engines/sherlock/metaengine.cpp:1173
+msgid "Exit inventory / Close verb menu / Cancel item use action"
+msgstr ""
+
+#: engines/sherlock/metaengine.cpp:1235
+#, fuzzy
+msgid "Select next option"
+msgstr "Vyberte Vzhled"
+
+#: engines/sherlock/metaengine.cpp:1257
+#, fuzzy
+#| msgid "Highlight next dialogue"
+msgid "Go to next talk option"
+msgstr "Zvýraznit následující dialog"
+
+#: engines/sherlock/metaengine.cpp:1263
+#, fuzzy
+#| msgid "Go to previous directory level"
+msgid "Go to previous talk option"
+msgstr "Jít na předchozí úroveň adresáře"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -14705,11 +15134,6 @@ msgstr "Přepnout centrální datovou obrazovku"
 msgid "Toggle audio"
 msgstr "Povolit zachycování myši"
 
-#: engines/ultima/nuvie/metaengine.cpp:99
-#, fuzzy
-msgid "Toggle music"
-msgstr "Povolit zachycování myši"
-
 #: engines/ultima/nuvie/metaengine.cpp:100
 #, fuzzy
 msgid "Toggle sfx"
@@ -15791,16 +16215,6 @@ msgstr ""
 msgid "Cancel waiting"
 msgstr "Zrušit stahování"
 
-#: engines/wintermute/keymapper_tables.h:965
-#, fuzzy
-msgid "First page"
-msgstr "Seslat kouzlo"
-
-#: engines/wintermute/keymapper_tables.h:970
-#, fuzzy
-msgid "Last page"
-msgstr "Seslat kouzlo"
-
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
@@ -16304,10 +16718,6 @@ msgstr ""
 #~ msgstr "Přesunout se doleva"
 
 #, fuzzy
-#~ msgid "Roll Right"
-#~ msgstr "Přesunout se doprava"
-
-#, fuzzy
 #~ msgid "Look Up"
 #~ msgstr "Dívat se"
 
@@ -16373,11 +16783,6 @@ msgstr ""
 #~ msgctxt "Options menu"
 #~ msgid "Language selection"
 #~ msgstr "Jazyk:"
-
-#, fuzzy
-#~| msgid "Special sound effects volume"
-#~ msgid "Toggle sound effect on/off"
-#~ msgstr "Hlasitost speciálních zvukových efektů"
 
 #, fuzzy
 #~| msgid "Default game keymap"
@@ -16557,10 +16962,6 @@ msgstr ""
 #~ msgstr "Rychlý režim"
 
 #, fuzzy
-#~ msgid "Go to main menu"
-#~ msgstr "~N~ávrat do Spouštěče"
-
-#, fuzzy
 #~ msgid "Go to map screen"
 #~ msgstr "Uložit snímek obrazovky"
 
@@ -16728,10 +17129,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "SAGA2 support not compiled in"
 #~ msgstr "Zakompilované funkce:"
-
-#, fuzzy
-#~ msgid "Skip minigame"
-#~ msgstr "Přeskočit řádek"
 
 #, fuzzy
 #~ msgid "Music menu"
