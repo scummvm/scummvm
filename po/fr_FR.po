@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-21 08:28+0000\n"
-"PO-Revision-Date: 2025-08-21 17:33+0000\n"
+"PO-Revision-Date: 2025-08-21 18:46+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8354,7 +8354,7 @@ msgstr "Ouvrir"
 
 #: engines/drascula/metaengine.cpp:266
 msgid "Reset selected verb"
-msgstr "Réinitialiser le verbe sélectionné"
+msgstr "Réinitialiser la commande sélectionnée"
 
 #: engines/drascula/metaengine.cpp:272
 msgid "Volume controls"
@@ -13149,7 +13149,7 @@ msgstr "Conf. des touches Film"
 
 #: engines/sherlock/metaengine.cpp:349
 msgid "Skip / Deselect verb"
-msgstr "Passer / Désélectionner le verbe"
+msgstr "Passer / Désélectionner la commande"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
@@ -13285,10 +13285,8 @@ msgid "Move / Examine / Select"
 msgstr "Se déplacer / Examiner / Sélectionner"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "Ouvrir le menu action / Fermer le menu"
+msgstr "Ouvrir / Fermer le menu des commandes"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
@@ -13414,6 +13412,8 @@ msgstr "Fermer l'énigme"
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
+"Quitter l'inventaire / Fermer le menu des commandes / Annuler l'action "
+"d'utilisation d'un item"
 
 #: engines/sherlock/metaengine.cpp:1235
 msgid "Select next option"
@@ -13740,7 +13740,7 @@ msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
 msgstr ""
 "Supprime certaines actions répétitives, ajoute la possibilité de "
-"sélectionner les verbes au clavier"
+"sélectionner les commandes au clavier"
 
 #: engines/supernova/metaengine.cpp:220
 msgid "Improved mode keymappings"
@@ -14479,7 +14479,7 @@ msgstr "Contrôles :"
 #. I18N: Setting to invert verb colors or keep the original verb colors.
 #: engines/twp/dialogs.cpp:48
 msgid "Invert verb colors"
-msgstr "Inverser les couleurs des verbes"
+msgstr "Inverser les couleurs des commandes"
 
 #. I18N: Setting to use retro or modern fonts.
 #: engines/twp/dialogs.cpp:50
@@ -14489,7 +14489,7 @@ msgstr "Polices retro"
 #. I18N: Setting to use retro or modern verbs.
 #: engines/twp/dialogs.cpp:52
 msgid "Retro Verbs"
-msgstr "Verbes retro"
+msgstr "Commandes retro"
 
 #. I18N: Setting to use classic sentence or modern sentence.
 #: engines/twp/dialogs.cpp:54
@@ -14503,7 +14503,7 @@ msgstr "Ransome *sans bip* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
 msgid "Select highlighted verb"
-msgstr "Sélectionner le verbe surligné"
+msgstr "Sélectionner la commande surlignée"
 
 #: engines/twp/metaengine.cpp:156
 msgid "Go to previous object"
@@ -14515,19 +14515,19 @@ msgstr "Objet suivant"
 
 #: engines/twp/metaengine.cpp:158
 msgid "Select verb / item left"
-msgstr "Sélectionner verbe / élément gauche"
+msgstr "Sélectionner commande / élément gauche"
 
 #: engines/twp/metaengine.cpp:159
 msgid "Select verb / item right"
-msgstr "Sélectionner verbe / élément droite"
+msgstr "Sélectionner commande / élément droite"
 
 #: engines/twp/metaengine.cpp:160
 msgid "Select verb / item up"
-msgstr "Sélectionner verbe / élément haut"
+msgstr "Sélectionner commande / élément haut"
 
 #: engines/twp/metaengine.cpp:161
 msgid "Select verb / item down"
-msgstr "Sélectionner verbe / élément bas"
+msgstr "Sélectionner commande / élément bas"
 
 #: engines/twp/metaengine.cpp:163
 msgid "Select actor 1"
