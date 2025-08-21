@@ -399,7 +399,7 @@ RadioConvDialog::RadioConvDialog() : GfxDialog() {
 }
 
 RadioConvDialog::~RadioConvDialog() {
-	BF_GLOBALS._events.setCursor(CURSOR_WALK);
+	BF_GLOBALS._events.setCursor(CURSOR_USE);
 }
 
 int RadioConvDialog::execute() {
