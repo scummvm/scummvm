@@ -51,9 +51,6 @@ DEFINE_TASK(ScriptTimerTask)
 DEFINE_TASK(ScriptTask)
 DEFINE_TASK(PlaySoundTask)
 DEFINE_TASK(WaitForMusicTask)
-
-// this one is special as the implementation is in the same TU as the signature
-// which causes a warning on some pedantic compiler
-//DEFINE_TASK(DelayTask)  
+DEFINE_TASK(DelayTask)  
 
 #undef DEFINE_TASK
