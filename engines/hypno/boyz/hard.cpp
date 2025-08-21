@@ -27,6 +27,8 @@
 
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void BoyzEngine::runCode(Code *code) {
@@ -74,6 +76,8 @@ void BoyzEngine::runMainMenu(Code *code) {
 		if (posY >= 185)
 			break;
 	}
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -120,6 +124,7 @@ void BoyzEngine::runMainMenu(Code *code) {
 		g_system->delayMillis(10);
 	}
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 	menu->free();
 	delete menu;
 
@@ -152,6 +157,8 @@ bool BoyzEngine::runExitMenu() {
 	Common::Rect yesBox(142, 87, 179, 102);
 	Common::Rect noBox(142, 104, 179, 119);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("exit-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			Common::Point mousePos = g_system->getEventManager()->getMousePos();
@@ -162,12 +169,12 @@ bool BoyzEngine::runExitMenu() {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_y) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionYes) {
 					quit = true;
 					cont = false;
 
-				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+				} else if (event.customType == kActionNo) {
 					quit = false;
 					cont = false;
 					break;
@@ -194,6 +201,7 @@ bool BoyzEngine::runExitMenu() {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("exit-menu")->setEnabled(false);
 	menu->free();
 	delete menu;
 	return quit;
@@ -215,6 +223,9 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("difficulty-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -241,17 +252,17 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 				}
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_c) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionDifficultyChump) {
 					_difficulty = "chump";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_p) {
+				} else if (event.customType == kActionDifficultyPunk) {
 					_difficulty = "punk";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_b) {
+				} else if (event.customType == kActionDifficultyBadass) {
 					_difficulty = "bad ass";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_a) {
+				} else if (event.customType == kActionDifficultExit) {
 					cont = false;
 				}
 				break;
@@ -264,6 +275,8 @@ void BoyzEngine::runDifficultyMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("difficulty-menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	if (_difficulty.empty())
 		_nextLevel = "<main_menu>";
@@ -303,6 +316,9 @@ void BoyzEngine::runRetryMenu(Code *code) {
 	free(palette);
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("retry-menu")->setEnabled(true);
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
@@ -331,20 +347,20 @@ void BoyzEngine::runRetryMenu(Code *code) {
 					quitGame();
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_s) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionRetry) {
 					_nextLevel = _checkpoint;
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_n) {
+				} else if (event.customType == kActionNewMission) {
 					_nextLevel = "<main_menu>";
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_t) {
+				} else if (event.customType == kActionRestart) {
 					// Restore initial health for the team
 					_health = _maxHealth;
 					_stats = _globalStats;
 					_nextLevel = firstLevelTerritory(_checkpoint);
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_q)
+				} else if (event.customType == kActionQuit)
 					quitGame();
 				break;
 
@@ -356,6 +372,8 @@ void BoyzEngine::runRetryMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("retry-menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 
 	menu->free();
 	delete menu;
