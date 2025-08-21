@@ -817,9 +817,9 @@ void Scene60::Action1::signal() {
 		_state = useRadio();
 		setDelay(4);
 		break;
-	case 3:
+	case 3: // Put in a radio dispatch code
 		switch (_state) {
-		case 1:
+		case 1: // 10-04
 			if (BF_GLOBALS.removeFlag(fCan1004Marina)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_state = 606;
@@ -830,10 +830,10 @@ void Scene60::Action1::signal() {
 				_state = 611;
 			}
 			break;
-		case 2:
+		case 2: // 10-13
 			_state = 612;
 			break;
-		case 3:
+		case 3: // 10-15
 			if (BF_GLOBALS.removeFlag(f1015Marina)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_state = 613;
@@ -847,7 +847,7 @@ void Scene60::Action1::signal() {
 				_state = 616;
 			}
 			break;
-		case 4:
+		case 4: // 10-27
 			if (BF_GLOBALS.removeFlag(f1027Marina)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
@@ -856,7 +856,7 @@ void Scene60::Action1::signal() {
 				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 618;
-			} else if (BF_GLOBALS.removeFlag(f1015Drunk)) {
+			} else if (BF_GLOBALS.removeFlag(f1027Drunk)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_actionIndex = 5;
 				_state = 619;
@@ -864,7 +864,7 @@ void Scene60::Action1::signal() {
 				_state = 620;
 			}
 			break;
-		case 5:
+		case 5: // 10-35
 			if (BF_GLOBALS.removeFlag(f1035Marina)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
 				T2_GLOBALS._uiElements.addScore(50);
@@ -872,7 +872,6 @@ void Scene60::Action1::signal() {
 			} else if (BF_GLOBALS.removeFlag(f1035Frankie)) {
 				BF_GLOBALS.setFlag(fCalledBackup);
 				T2_GLOBALS._uiElements.addScore(50);
-				_actionIndex = 5;
 				_state = 622;
 			} else if (BF_GLOBALS.removeFlag(f1035Drunk)) {
 				T2_GLOBALS._uiElements.addScore(10);
@@ -881,13 +880,12 @@ void Scene60::Action1::signal() {
 				_state = 624;
 			}
 			break;
-		case 6:
+		case 6: // 10-97
 			if (BF_GLOBALS.removeFlag(f1097Marina)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_state = 625;
 			} else if (BF_GLOBALS.removeFlag(f1097Frankie)) {
 				T2_GLOBALS._uiElements.addScore(10);
-				_actionIndex = 5;
 				_state = 626;
 			} else if (BF_GLOBALS.removeFlag(f1097Drunk)) {
 				T2_GLOBALS._uiElements.addScore(10);
@@ -896,7 +894,7 @@ void Scene60::Action1::signal() {
 				_state = 628;
 			}
 			break;
-		case 7:
+		case 7: // 10-98
 			if (BF_GLOBALS.removeFlag(f1098Marina)) {
 				T2_GLOBALS._uiElements.addScore(10);
 				_state = 629;
@@ -910,7 +908,7 @@ void Scene60::Action1::signal() {
 				_state = 632;
 			}
 			break;
-		case 0:
+		case 0: // 10-02
 		default:
 			_state = 610;
 			break;
