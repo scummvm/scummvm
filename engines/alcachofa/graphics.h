@@ -476,4 +476,4 @@ private:
 
 }
 
-#endif // ALCACHOFA_ENGINE_H
+#endif // ALCACHOFA_GRAPHICS_H
