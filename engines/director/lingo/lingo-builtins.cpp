@@ -43,6 +43,7 @@
 #include "director/castmember/bitmap.h"
 #include "director/castmember/palette.h"
 #include "director/castmember/text.h"
+#include "director/castmember/transition.h"
 #include "director/lingo/lingo-builtins.h"
 #include "director/lingo/lingo-code.h"
 #include "director/lingo/lingo-codegen.h"
@@ -2988,6 +2989,8 @@ void LB::b_puppetTransition(int nargs) {
 	Window *stage = g_director->getCurrentWindow();
 	uint16 duration = 250, area = 1, chunkSize = 1, type = 0;
 
+	TransitionCastMember *tcast = nullptr;
+
 	switch (nargs) {
 	case 4:
 		area = g_lingo->pop().asInt();
@@ -3000,7 +3003,21 @@ void LB::b_puppetTransition(int nargs) {
 		duration = g_lingo->pop().asInt() * 250;
 		// fall through
 	case 1:
-		type = ((TransitionType)(g_lingo->pop().asInt()));
+		{
+			Datum d = g_lingo->pop();
+			if (d.type == CASTREF) {
+				CastMemberID castId = d.asMemberID();
+				CastMember *cast = stage->getCurrentMovie()->getCastMember(castId);
+				if (cast->_type == kCastTransition) {
+					tcast = (TransitionCastMember *)cast;
+				} else {
+					warning("b_puppetTransition: expected transition cast member");
+					return;
+				}
+			} else {
+				type = ((TransitionType)(d.asInt()));
+			}
+		}
 		break;
 	default:
 		ARGNUMCHECK(1);
@@ -3010,11 +3027,17 @@ void LB::b_puppetTransition(int nargs) {
 
 	if (stage->_puppetTransition) {
 		warning("b_puppetTransition: Transition already queued");
-		return;
+		delete stage->_puppetTransition;
+		stage->_puppetTransition = nullptr;
 	}
-	debugC(3, kDebugImages, "b_puppetTransition(): type: %d, duration: %d, chunkSize: %d, area: %d", type, duration, chunkSize, area);
+	if (tcast) {
+		stage->_puppetTransition = new TransParams(tcast->_durationMillis, tcast->_area, tcast->_chunkSize, tcast->_transType);
+	} else {
+		stage->_puppetTransition = new TransParams(duration, area, chunkSize, ((TransitionType)type));
+	}
+	debugC(3, kDebugImages, "b_puppetTransition(): type: %d, duration: %d, chunkSize: %d, area: %d",
+			stage->_puppetTransition->type, stage->_puppetTransition->duration, stage->_puppetTransition->chunkSize, stage->_puppetTransition->area);
 
-	stage->_puppetTransition = new TransParams(duration, area, chunkSize, ((TransitionType)type));
 }
 
 void LB::b_ramNeeded(int nargs) {
