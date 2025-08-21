@@ -85,35 +85,6 @@ void Task::errorForUnexpectedObjectType(const ObjectBase *base) const {
 		base->name().c_str(), taskName(), base->typeName());
 }
 
-DelayTask::DelayTask(Process &process, uint32 millis)
-	: Task(process)
-	, _endTime(millis) {}
-
-DelayTask::DelayTask(Process &process, Serializer &s)
-	: Task(process) {
-	syncGame(s);
-}
-
-TaskReturn DelayTask::run() {
-	TASK_BEGIN;
-	_endTime += g_engine->getMillis();
-	while (g_engine->getMillis() < _endTime)
-		TASK_YIELD(1);
-	TASK_END;
-}
-
-void DelayTask::debugPrint() {
-	uint32 remaining = g_engine->getMillis() <= _endTime ? _endTime - g_engine->getMillis() : 0;
-	g_engine->getDebugger()->debugPrintf("Delay for further %ums\n", remaining);
-}
-
-void DelayTask::syncGame(Serializer &s) {
-	Task::syncGame(s);
-	s.syncAsUint32LE(_endTime);
-}
-
-DECLARE_TASK(DelayTask)
-
 Process::Process(ProcessId pid, MainCharacterKind characterKind)
 	: _pid(pid)
 	, _character(characterKind)
