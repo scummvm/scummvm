@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-21 08:26+0000\n"
+"POT-Creation-Date: 2025-08-21 08:28+0000\n"
 "PO-Revision-Date: 2025-06-28 10:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -320,7 +320,7 @@ msgstr "すでに別のストレージが使用されています。切断しま
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
@@ -335,7 +335,7 @@ msgstr "はい"
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
@@ -366,8 +366,8 @@ msgstr "JSONコードの内容が不正です。"
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:1359
-#: engines/scumm/scumm.cpp:1784 engines/scumm/scumm.cpp:2274
-#: engines/scumm/scumm.cpp:2290 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1792 engines/scumm/scumm.cpp:2282
+#: engines/scumm/scumm.cpp:2298 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
@@ -1024,7 +1024,7 @@ msgstr "作用"
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1004 engines/supernova/metaengine.cpp:273
+#: engines/scumm/metaengine.cpp:1020 engines/supernova/metaengine.cpp:273
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/ultima/ultima4/metaengine.cpp:44
 #: engines/ultima/ultima4/metaengine.cpp:136
@@ -1043,7 +1043,7 @@ msgstr "上"
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:971 engines/supernova/metaengine.cpp:279
+#: engines/scumm/metaengine.cpp:987 engines/supernova/metaengine.cpp:279
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/ultima/ultima4/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:137
@@ -1061,7 +1061,7 @@ msgstr "下"
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:984
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1000
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:138
@@ -1080,7 +1080,7 @@ msgstr "左"
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:991
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1007
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:139
@@ -6301,6 +6301,7 @@ msgstr "これはApple IIの後期モデルから使用されます"
 #: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
 #: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/scumm/dialogs.cpp:1221 engines/scumm/metaengine.cpp:863
 #: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "音声合成をオンにする"
@@ -6311,6 +6312,7 @@ msgstr "音声合成をオンにする"
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
 #: engines/got/metaengine.cpp:49 engines/made/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
+#: engines/scumm/dialogs.cpp:1222 engines/scumm/metaengine.cpp:864
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "音声合成を使用してゲーム内のテキストを読み上げる(利用可能な場合のみ)"
 
@@ -6506,7 +6508,7 @@ msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 "このロケーションでは、セーブまたはクイックロードはサポートされていません"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3170
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3200
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6517,7 +6519,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3157
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3187
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6528,7 +6530,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3190
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3220
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7194,7 +7196,7 @@ msgstr "モードの切替"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1030
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
 #: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
 #: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -7829,7 +7831,7 @@ msgstr "会話/作用"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1033
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
 msgid "Attack"
@@ -10599,7 +10601,7 @@ msgstr "早め"
 msgid "Normal"
 msgstr "標準"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1500
+#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1551
 msgid "Best"
 msgstr "良質"
 
@@ -11903,7 +11905,7 @@ msgid "Your Name:"
 msgstr "ユーザー名："
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4252
 msgid "Host"
 msgstr "ホスト"
 
@@ -11913,7 +11915,7 @@ msgid "Querying games..."
 msgstr "ゲームに照会中..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4252
 msgid "Join"
 msgstr "参加"
 
@@ -12047,11 +12049,11 @@ msgid ""
 "that was intended or not."
 msgstr ""
 
-#: engines/scumm/dialogs.cpp:1312
+#: engines/scumm/dialogs.cpp:1333
 msgid "Overture Timing:"
 msgstr "Overtureのタイミング："
 
-#: engines/scumm/dialogs.cpp:1316
+#: engines/scumm/dialogs.cpp:1337
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -12059,16 +12061,16 @@ msgstr ""
 "BGMを置き換える際、OvertureがLucasfilmとLoomのロゴに切り替わるタイミングを調"
 "整します。"
 
-#: engines/scumm/dialogs.cpp:1403
+#: engines/scumm/dialogs.cpp:1438
 msgid "Music Quality:"
 msgstr "音質："
 
-#: engines/scumm/dialogs.cpp:1407
+#: engines/scumm/dialogs.cpp:1442
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr "音楽の質を選択。オリジナル版ではゲームメニューから選択します。"
 
-#: engines/scumm/dialogs.cpp:1408
+#: engines/scumm/dialogs.cpp:1443
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
@@ -12077,46 +12079,46 @@ msgstr ""
 "音楽の質を選択。オリジナル版ではハードの検出とスピードテストにより基本的な"
 "セットアップがなされますが、ゲームメニューからもある程度変更できます。"
 
-#: engines/scumm/dialogs.cpp:1499 engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1550 engines/scumm/dialogs.cpp:1551
 msgid "auto"
 msgstr "オート"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "Low"
 msgstr "低"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
 msgid "Medium"
 msgstr "中"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "High"
 msgstr "高"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Good"
 msgstr "良"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Better"
 msgstr "可"
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Hardware Rating: %s   -   "
 msgstr "ハードレート: %s   -   "
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Quality Selection: %s"
 msgstr "品質セレクション: %s"
 
-#: engines/scumm/dialogs.cpp:1515
+#: engines/scumm/dialogs.cpp:1566
 msgid "Playback Adjust:"
 msgstr "再生アジャスト："
 
-#: engines/scumm/dialogs.cpp:1519
+#: engines/scumm/dialogs.cpp:1570
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -12124,11 +12126,11 @@ msgstr ""
 "CDオーディオトラックを再生する際、開始位置を調整します。サウンドに問題がある"
 "場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1604
+#: engines/scumm/dialogs.cpp:1673
 msgid "Intro Adjust:"
 msgstr "イントロ調整："
 
-#: engines/scumm/dialogs.cpp:1608
+#: engines/scumm/dialogs.cpp:1677
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -12137,11 +12139,11 @@ msgstr ""
 "イントロトラックを、この位置から再生します。曲が途中で切れたり、同期が正しく"
 "ない場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1617
+#: engines/scumm/dialogs.cpp:1686
 msgid "Outlook Adjust:"
 msgstr "アウトルック調整："
 
-#: engines/scumm/dialogs.cpp:1621
+#: engines/scumm/dialogs.cpp:1690
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -12150,25 +12152,25 @@ msgstr ""
 "アウトルックミュージックはイントロの一部です。トラック内での再生開始位置を調"
 "整します。曲が途切れたり、前の曲が聞こえる場合に使用して下さい。"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:773
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:773
 msgid "Load modded audio"
 msgstr "改造オーディオをロード"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:774
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:774
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr "可能なら、BGM・SE・スピーチクリップを改造ファイルに置き換えて下さい。"
 
-#: engines/scumm/dialogs.cpp:1736
+#: engines/scumm/dialogs.cpp:1815
 msgid "Multiplayer Server:"
 msgstr "マルチプレイサーバー："
 
-#: engines/scumm/dialogs.cpp:1742
+#: engines/scumm/dialogs.cpp:1821
 msgid "Online Server:"
 msgstr "オンラインサーバー："
 
-#: engines/scumm/dialogs.cpp:1743
+#: engines/scumm/dialogs.cpp:1822
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -12176,22 +12178,22 @@ msgstr ""
 "接続するサーバーのアドレスです。 \"https://\" または \"http://\"スキーマで始"
 "まる必要があります。"
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 msgid "Enable online competitive mods"
 msgstr "オンライン対戦MODの有効化"
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 #, fuzzy
 #| msgid ""
 #| "Enables custom-made modifications intented for online competitive play."
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "オンライン対戦を想定したカスタムMODが利用可能です。"
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid "Enable connection to Multiplayer Server"
 msgstr "マルチプレイサーバーへの接続を許可"
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12199,24 +12201,24 @@ msgstr ""
 "オンラインマルチプレイのホストおよび参加を可能とするサーバーへの接続を切り替"
 "えます。"
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Host games over LAN"
 msgstr "LANでゲームを開催"
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "セッションをローカルネットワーク上で発見できるようにします。"
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Generate random maps"
 msgstr "マップをランダム生成"
 
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "ランダムなマップ生成を許可(Moonbase Consoleに基づく)。"
 
-#: engines/scumm/dialogs.cpp:1757
+#: engines/scumm/dialogs.cpp:1836
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -12672,19 +12674,19 @@ msgstr "右へ飛ぶ"
 msgid "Fly to lower right"
 msgstr "右へ降下"
 
-#: engines/scumm/input.cpp:1394
+#: engines/scumm/input.cpp:1405
 msgid "Snap scroll on"
 msgstr "スナップスクロールをオン"
 
-#: engines/scumm/input.cpp:1396
+#: engines/scumm/input.cpp:1407
 msgid "Snap scroll off"
 msgstr "スナップスクロールをオフ"
 
-#: engines/scumm/input.cpp:1409
+#: engines/scumm/input.cpp:1420
 msgid "Music volume: "
 msgstr "音楽の音量： "
 
-#: engines/scumm/input.cpp:1426
+#: engines/scumm/input.cpp:1437
 msgid "Subtitle speed: "
 msgstr "字幕の速度： "
 
@@ -12852,36 +12854,36 @@ msgstr "音声を有効にする"
 msgid "Enable ambience sounds."
 msgstr "音声を有効にする"
 
-#: engines/scumm/metaengine.cpp:965
+#: engines/scumm/metaengine.cpp:981
 #, fuzzy
 #| msgid "Down Left"
 msgid "Down left"
 msgstr "左下"
 
-#: engines/scumm/metaengine.cpp:978
+#: engines/scumm/metaengine.cpp:994
 #, fuzzy
 #| msgid "Down Right"
 msgid "Down right"
 msgstr "右下"
 
-#: engines/scumm/metaengine.cpp:998
+#: engines/scumm/metaengine.cpp:1014
 #, fuzzy
 #| msgid "Upper left item"
 msgid "Up left"
 msgstr "左上のアイテム"
 
-#: engines/scumm/metaengine.cpp:1011
+#: engines/scumm/metaengine.cpp:1027
 #, fuzzy
 #| msgid "Up Right"
 msgid "Up right"
 msgstr "右上"
 
-#: engines/scumm/metaengine.cpp:1023
+#: engines/scumm/metaengine.cpp:1039
 msgid "Switch weapon"
 msgstr "武器を切り替え"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1037
+#: engines/scumm/metaengine.cpp:1053
 msgid "Win the bike fight cheat"
 msgstr "バイク戦闘を省略"
 
@@ -12966,7 +12968,7 @@ msgid ""
 "its sub-folders should be what you need."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:1781
+#: engines/scumm/scumm.cpp:1789
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -12976,7 +12978,7 @@ msgstr ""
 "このゲームではサポートされていないため、オーディオは無効になります。\n"
 "オリジナルのメディアから、圧縮せずにコピーしてください。"
 
-#: engines/scumm/scumm.cpp:2272
+#: engines/scumm/scumm.cpp:2280
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -12985,7 +12987,7 @@ msgstr ""
 "ネイティブMIDIのサポートには、LucasArts提供のthe Roland Upgradeが必要です。\n"
 "しかし%sがありません。代わりにAdLibを使用します。"
 
-#: engines/scumm/scumm.cpp:2288
+#: engines/scumm/scumm.cpp:2296
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -12993,7 +12995,7 @@ msgstr ""
 "このMonkey Island 1の特定のバージョンは、MT-32に必要な\n"
 "リソースが欠落しています。AdLibを代用します。"
 
-#: engines/scumm/scumm.cpp:4110
+#: engines/scumm/scumm.cpp:4140
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -13003,7 +13005,7 @@ msgstr ""
 "ディレクトリーの「Maniac」フォルダー内にゲームファイルを配置し、ゲームが"
 "ScummVMに追加されていなければなりません。"
 
-#: engines/scumm/scumm.cpp:4222
+#: engines/scumm/scumm.cpp:4252
 msgid "Would you like to host or join a network play session?"
 msgstr "セッションを開催、または参加しますか?"
 

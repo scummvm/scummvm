@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-21 08:26+0000\n"
+"POT-Creation-Date: 2025-08-21 08:28+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -322,7 +322,7 @@ msgstr "Інше хмарне сховище вже є активним. Чи в
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
@@ -337,7 +337,7 @@ msgstr "Так"
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
@@ -368,8 +368,8 @@ msgstr "Невірний формат JSON-коду."
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:1359
-#: engines/scumm/scumm.cpp:1784 engines/scumm/scumm.cpp:2274
-#: engines/scumm/scumm.cpp:2290 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1792 engines/scumm/scumm.cpp:2282
+#: engines/scumm/scumm.cpp:2298 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
@@ -1037,7 +1037,7 @@ msgstr "Взаємодія"
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1004 engines/supernova/metaengine.cpp:273
+#: engines/scumm/metaengine.cpp:1020 engines/supernova/metaengine.cpp:273
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/ultima/ultima4/metaengine.cpp:44
 #: engines/ultima/ultima4/metaengine.cpp:136
@@ -1056,7 +1056,7 @@ msgstr "Догори"
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:971 engines/supernova/metaengine.cpp:279
+#: engines/scumm/metaengine.cpp:987 engines/supernova/metaengine.cpp:279
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/ultima/ultima4/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:137
@@ -1074,7 +1074,7 @@ msgstr "Донизу"
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:984
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1000
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:138
@@ -1093,7 +1093,7 @@ msgstr "Наліво"
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:991
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1007
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:139
@@ -6519,6 +6519,7 @@ msgstr ""
 #: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
 #: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/scumm/dialogs.cpp:1221 engines/scumm/metaengine.cpp:863
 #: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Ввімкнути генератор мови"
@@ -6529,6 +6530,7 @@ msgstr "Ввімкнути генератор мови"
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
 #: engines/got/metaengine.cpp:49 engines/made/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
+#: engines/scumm/dialogs.cpp:1222 engines/scumm/metaengine.cpp:864
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
 
@@ -6726,7 +6728,7 @@ msgstr "Відновити"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "Швидке завантаження або збереження не підтримується в цій локації"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3170
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3200
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6737,7 +6739,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3157
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3187
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6748,7 +6750,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3190
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3220
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7419,7 +7421,7 @@ msgstr "Перемкнути режим бою"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1030
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
 #: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
 #: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -8057,7 +8059,7 @@ msgstr "Говорити/Взаємодіятя"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1033
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
 msgid "Attack"
@@ -10734,7 +10736,7 @@ msgstr "Найшвидші"
 msgid "Normal"
 msgstr "Нормальний"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1500
+#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1551
 msgid "Best"
 msgstr "Найкраще"
 
@@ -12060,7 +12062,7 @@ msgid "Your Name:"
 msgstr "Ваше ім'я:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4252
 msgid "Host"
 msgstr "Розпочати"
 
@@ -12070,7 +12072,7 @@ msgid "Querying games..."
 msgstr "Вичитую список ігор..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4252
 msgid "Join"
 msgstr "Приєднатись"
 
@@ -12211,11 +12213,11 @@ msgstr ""
 "використовувались на приставці Sega. Вони значно темніші, хоча незрозуміло, "
 "було це задумано чи ні."
 
-#: engines/scumm/dialogs.cpp:1312
+#: engines/scumm/dialogs.cpp:1333
 msgid "Overture Timing:"
 msgstr "Час увертюри:"
 
-#: engines/scumm/dialogs.cpp:1316
+#: engines/scumm/dialogs.cpp:1337
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -12223,16 +12225,16 @@ msgstr ""
 "Якщо використовується заміна для музики, це налаштування підстроює час, коли "
 "увертюра переключиться на сцену з логотипами Lucasfilm та Loom."
 
-#: engines/scumm/dialogs.cpp:1403
+#: engines/scumm/dialogs.cpp:1438
 msgid "Music Quality:"
 msgstr "Якість музики:"
 
-#: engines/scumm/dialogs.cpp:1407
+#: engines/scumm/dialogs.cpp:1442
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr "Виберіть якість музики. Оригінал дозволяє вибрати це з меню гри."
 
-#: engines/scumm/dialogs.cpp:1408
+#: engines/scumm/dialogs.cpp:1443
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
@@ -12242,46 +12244,46 @@ msgstr ""
 "виявлення апаратного забезпечення та тестів швидкості, але також дозволяє "
 "певною мірою змінювати через меню гри."
 
-#: engines/scumm/dialogs.cpp:1499 engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1550 engines/scumm/dialogs.cpp:1551
 msgid "auto"
 msgstr "автоматично"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "Low"
 msgstr "Низька"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
 msgid "Medium"
 msgstr "Середня"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "High"
 msgstr "Висока"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Good"
 msgstr "Хороша"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Better"
 msgstr "Краща"
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Hardware Rating: %s   -   "
 msgstr "Рейтинг обладнання: %s  -   "
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Quality Selection: %s"
 msgstr "Вибір якості: %s"
 
-#: engines/scumm/dialogs.cpp:1515
+#: engines/scumm/dialogs.cpp:1566
 msgid "Playback Adjust:"
 msgstr "Підстроїти відтворення:"
 
-#: engines/scumm/dialogs.cpp:1519
+#: engines/scumm/dialogs.cpp:1570
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -12289,11 +12291,11 @@ msgstr ""
 "Під час програвання звуку з CD-треку, пидстроїти стартове положення звуку на "
 "вказаний обсяг. Використовуйте це, якщо чуєте неправильні звуки."
 
-#: engines/scumm/dialogs.cpp:1604
+#: engines/scumm/dialogs.cpp:1673
 msgid "Intro Adjust:"
 msgstr "Підстроїти вступ:"
 
-#: engines/scumm/dialogs.cpp:1608
+#: engines/scumm/dialogs.cpp:1677
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -12303,11 +12305,11 @@ msgstr ""
 "Використовуйте це, якщо музика завершується передчасно, або якщо вам не "
 "подобається, як музика синхронізується зі вступом."
 
-#: engines/scumm/dialogs.cpp:1617
+#: engines/scumm/dialogs.cpp:1686
 msgid "Outlook Adjust:"
 msgstr "Підстроїти краєвид:"
 
-#: engines/scumm/dialogs.cpp:1621
+#: engines/scumm/dialogs.cpp:1690
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -12317,11 +12319,11 @@ msgstr ""
 "коли вона почне програватись. Використовуйте це, якщо музика вимикається "
 "передчасно, або ви чуєте частину попередньої музики."
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:773
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:773
 msgid "Load modded audio"
 msgstr "Завантажити модифіковане аудіо"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:774
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:774
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
@@ -12329,15 +12331,15 @@ msgstr ""
 "Замінити музику, звукові ефекти та озвучення з модифікованих файлів, якщо є "
 "доступне."
 
-#: engines/scumm/dialogs.cpp:1736
+#: engines/scumm/dialogs.cpp:1815
 msgid "Multiplayer Server:"
 msgstr "Сервер мультиплеєру:"
 
-#: engines/scumm/dialogs.cpp:1742
+#: engines/scumm/dialogs.cpp:1821
 msgid "Online Server:"
 msgstr "Онлайн-сервер:"
 
-#: engines/scumm/dialogs.cpp:1743
+#: engines/scumm/dialogs.cpp:1822
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -12345,19 +12347,19 @@ msgstr ""
 "Адреса серверу для під'єднання для онлайн-ігор. Вона мусить починатись з "
 "\"https://\" або \"http://\"."
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 msgid "Enable online competitive mods"
 msgstr "Увімкнути моди для онлайн-змагань"
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "Вмикає зміни гри, призначені для онлайнових змагань."
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid "Enable connection to Multiplayer Server"
 msgstr "Ввімкнути поєднання з Мультиплеєрним сервером"
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -12365,24 +12367,24 @@ msgstr ""
 "Перемикає поєднання з сервером, який дозволяє організовувати та "
 "під'єднуватись до онлайнових ігор через Інтернет."
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Host games over LAN"
 msgstr "Організувати ігри через LAN"
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "Робить ігрові сесії видимими у локальній мережі."
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Generate random maps"
 msgstr "Створення випадкових карт"
 
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "Дозволити випадкову генерацію карти (на основі Moonbase Console)."
 
-#: engines/scumm/dialogs.cpp:1757
+#: engines/scumm/dialogs.cpp:1836
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -12838,19 +12840,19 @@ msgstr "Летіти направо"
 msgid "Fly to lower right"
 msgstr "Летіти донизу направо"
 
-#: engines/scumm/input.cpp:1394
+#: engines/scumm/input.cpp:1405
 msgid "Snap scroll on"
 msgstr "Прокрутка стрибками"
 
-#: engines/scumm/input.cpp:1396
+#: engines/scumm/input.cpp:1407
 msgid "Snap scroll off"
 msgstr "Вмикає прокрутку стрибками"
 
-#: engines/scumm/input.cpp:1409
+#: engines/scumm/input.cpp:1420
 msgid "Music volume: "
 msgstr "Гучність музики: "
 
-#: engines/scumm/input.cpp:1426
+#: engines/scumm/input.cpp:1437
 msgid "Subtitle speed: "
 msgstr "Швид. субтитрів: "
 
@@ -13007,36 +13009,36 @@ msgstr "Ввімкнути фонові звуки"
 msgid "Enable ambience sounds."
 msgstr "Ввімкнути фонові звуки."
 
-#: engines/scumm/metaengine.cpp:965
+#: engines/scumm/metaengine.cpp:981
 #, fuzzy
 #| msgid "Down Left"
 msgid "Down left"
 msgstr "Донизу-наліво"
 
-#: engines/scumm/metaengine.cpp:978
+#: engines/scumm/metaengine.cpp:994
 #, fuzzy
 #| msgid "Down Right"
 msgid "Down right"
 msgstr "Донизу-направо"
 
-#: engines/scumm/metaengine.cpp:998
+#: engines/scumm/metaengine.cpp:1014
 #, fuzzy
 #| msgid "Upper left item"
 msgid "Up left"
 msgstr "Верхня ліва річ"
 
-#: engines/scumm/metaengine.cpp:1011
+#: engines/scumm/metaengine.cpp:1027
 #, fuzzy
 #| msgid "Up Right"
 msgid "Up right"
 msgstr "Догори-направо"
 
-#: engines/scumm/metaengine.cpp:1023
+#: engines/scumm/metaengine.cpp:1039
 msgid "Switch weapon"
 msgstr "Перемкнути зброю"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1037
+#: engines/scumm/metaengine.cpp:1053
 msgid "Win the bike fight cheat"
 msgstr "Чіт вигравання бою на мотиках"
 
@@ -13128,7 +13130,7 @@ msgstr ""
 "містить необхідних даних для меню та діалогів. Гляньте у папку 'The Dig f' "
 "на вашому CD. Всередині ви зможете знайти вірний файл."
 
-#: engines/scumm/scumm.cpp:1781
+#: engines/scumm/scumm.cpp:1789
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -13139,7 +13141,7 @@ msgstr ""
 "виключено.\n"
 "Будь-ласка скопіюйте наново файли з оригінальних дисків без компресії."
 
-#: engines/scumm/scumm.cpp:2272
+#: engines/scumm/scumm.cpp:2280
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -13148,7 +13150,7 @@ msgstr ""
 "Режим \"рідного\" MIDI потребує поновлення Roland Upgrade від\n"
 "LucasArts, проте %s відсутній. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:2288
+#: engines/scumm/scumm.cpp:2296
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -13156,7 +13158,7 @@ msgstr ""
 "Ця версія Monkey Island 1 бракує деякі ресурси, необхідні\n"
 "для роботи MT-32. Перемикаюсь на AdLib."
 
-#: engines/scumm/scumm.cpp:4110
+#: engines/scumm/scumm.cpp:4140
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -13166,7 +13168,7 @@ msgstr ""
 "вам потрібно переписати файли гри Maniac Manssion у папку Maniac всередині "
 "папки з грою Tentacle, а також додати саму гру у ScummVM."
 
-#: engines/scumm/scumm.cpp:4222
+#: engines/scumm/scumm.cpp:4252
 msgid "Would you like to host or join a network play session?"
 msgstr "Чи ви хочете розпочати або приєднатися до мережевої гри?"
 

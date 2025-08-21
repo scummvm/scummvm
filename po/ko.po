@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-21 08:26+0000\n"
+"POT-Creation-Date: 2025-08-21 08:28+0000\n"
 "PO-Revision-Date: 2025-07-05 08:36+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -320,7 +320,7 @@ msgstr "다른 저장소가 지금 작동 중입니다. 중단할까요?"
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
 #: engines/parallaction/metaengine.cpp:169
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
 msgid "Yes"
@@ -335,7 +335,7 @@ msgstr "예"
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
 #: engines/parallaction/metaengine.cpp:175
-#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4216
+#: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
 msgid "No"
@@ -366,8 +366,8 @@ msgstr "JSON 코드 내용이 잘못되었습니다."
 #: engines/mtropolis/mtropolis.cpp:124 engines/parallaction/saveload.cpp:270
 #: engines/saga/music.cpp:102 engines/sci/engine/kgraphics.cpp:76
 #: engines/sci/graphics/controls32.cpp:934 engines/scumm/scumm.cpp:1359
-#: engines/scumm/scumm.cpp:1784 engines/scumm/scumm.cpp:2274
-#: engines/scumm/scumm.cpp:2290 engines/sky/compact.cpp:140
+#: engines/scumm/scumm.cpp:1792 engines/scumm/scumm.cpp:2282
+#: engines/scumm/scumm.cpp:2298 engines/sky/compact.cpp:140
 #: engines/sword1/animation.cpp:566 engines/sword1/animation.cpp:574
 #: engines/sword1/control.cpp:2816 engines/sword1/logic.cpp:1738
 #: engines/sword2/animation.cpp:459 engines/sword2/animation.cpp:469
@@ -1026,7 +1026,7 @@ msgstr "소통"
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
-#: engines/scumm/metaengine.cpp:1004 engines/supernova/metaengine.cpp:273
+#: engines/scumm/metaengine.cpp:1020 engines/supernova/metaengine.cpp:273
 #: engines/twine/metaengine.cpp:430 engines/twine/metaengine.cpp:497
 #: engines/twp/metaengine.cpp:154 engines/ultima/ultima4/metaengine.cpp:44
 #: engines/ultima/ultima4/metaengine.cpp:136
@@ -1045,7 +1045,7 @@ msgstr "위쪽"
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
-#: engines/scumm/metaengine.cpp:971 engines/supernova/metaengine.cpp:279
+#: engines/scumm/metaengine.cpp:987 engines/supernova/metaengine.cpp:279
 #: engines/twine/metaengine.cpp:437 engines/twine/metaengine.cpp:505
 #: engines/twp/metaengine.cpp:155 engines/ultima/ultima4/metaengine.cpp:45
 #: engines/ultima/ultima4/metaengine.cpp:137
@@ -1063,7 +1063,7 @@ msgstr "아래쪽"
 #: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
-#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:984
+#: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1000
 #: engines/twine/metaengine.cpp:452 engines/twine/metaengine.cpp:520
 #: engines/twp/metaengine.cpp:152 engines/ultima/ultima4/metaengine.cpp:46
 #: engines/ultima/ultima4/metaengine.cpp:138
@@ -1082,7 +1082,7 @@ msgstr "왼쪽"
 #: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
-#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:991
+#: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1007
 #: engines/twine/metaengine.cpp:444 engines/twine/metaengine.cpp:513
 #: engines/twp/metaengine.cpp:153 engines/ultima/ultima4/metaengine.cpp:47
 #: engines/ultima/ultima4/metaengine.cpp:139
@@ -6412,6 +6412,7 @@ msgstr "후기 애플 II 모델의 체크 무늬 커서를 사용"
 #: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
 #: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
 #: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
+#: engines/scumm/dialogs.cpp:1221 engines/scumm/metaengine.cpp:863
 #: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "TTS 활성화"
@@ -6422,6 +6423,7 @@ msgstr "TTS 활성화"
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
 #: engines/got/metaengine.cpp:49 engines/made/metaengine.cpp:52
 #: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
+#: engines/scumm/dialogs.cpp:1222 engines/scumm/metaengine.cpp:864
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "TTS를 사용하여 게임 텍스트 읽기 (TTS가 가능한 경우)"
 
@@ -6619,7 +6621,7 @@ msgstr "복원"
 msgid "Quick load or save game isn't supported in this location"
 msgstr "이 위치에서는 빠른 게임 불러오기 또는 저장이 지원되지 않음"
 
-#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3170
+#: engines/agos/saveload.cpp:160 engines/scumm/scumm.cpp:3200
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -6630,7 +6632,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3157
+#: engines/agos/saveload.cpp:195 engines/scumm/scumm.cpp:3187
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -6641,7 +6643,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3190
+#: engines/agos/saveload.cpp:203 engines/scumm/scumm.cpp:3220
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7280,7 +7282,7 @@ msgstr "전투 전환"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1030
+#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
 #: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
 #: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
@@ -7864,7 +7866,7 @@ msgstr "대화 / 소통"
 #. I18N: Combat command in Might & Magic 1
 #: engines/crab/input/input.cpp:125 engines/efh/metaengine.cpp:487
 #: engines/efh/metaengine.cpp:512 engines/griffon/metaengine.cpp:145
-#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1017
+#: engines/mm/mm1/metaengine.cpp:65 engines/scumm/metaengine.cpp:1033
 #: engines/ultima/ultima4/metaengine.cpp:48
 #: engines/ultima/nuvie/metaengine.cpp:74
 msgid "Attack"
@@ -10414,7 +10416,7 @@ msgstr "가장 빠름"
 msgid "Normal"
 msgstr "보통"
 
-#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1500
+#: engines/mohawk/dialogs.cpp:367 engines/scumm/dialogs.cpp:1551
 msgid "Best"
 msgstr "최고"
 
@@ -11684,7 +11686,7 @@ msgid "Your Name:"
 msgstr "사용자 이름:"
 
 #. I18N: Button, start hosting online multiplayer game
-#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-createsession.cpp:49 engines/scumm/scumm.cpp:4252
 msgid "Host"
 msgstr "호스트"
 
@@ -11694,7 +11696,7 @@ msgid "Querying games..."
 msgstr "게임 쿼리 중..."
 
 #. I18N: Join online multiplayer game
-#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4222
+#: engines/scumm/dialog-sessionselector.cpp:64 engines/scumm/scumm.cpp:4252
 msgid "Join"
 msgstr "참여"
 
@@ -11831,11 +11833,11 @@ msgstr ""
 "게임에서 정의된 색상을 사용하는 대신 실제 세가 하드웨어에서 사용되는 색상을 "
 "시뮬레이션합니다. 이는 상당히 어둡지만 의도한 것인지 아닌지는 불분명합니다."
 
-#: engines/scumm/dialogs.cpp:1312
+#: engines/scumm/dialogs.cpp:1333
 msgid "Overture Timing:"
 msgstr "서곡 타이밍:"
 
-#: engines/scumm/dialogs.cpp:1316
+#: engines/scumm/dialogs.cpp:1337
 msgid ""
 "When using replacement music, this adjusts the time when the Overture "
 "changes to the scene with the Lucasfilm and Loom logotypes."
@@ -11843,16 +11845,16 @@ msgstr ""
 "대체 음악을 사용할 경우, 서곡이 루카스필름과 룸 로고가 있는 장면으로 바뀌는 "
 "시간을 조정합니다."
 
-#: engines/scumm/dialogs.cpp:1403
+#: engines/scumm/dialogs.cpp:1438
 msgid "Music Quality:"
 msgstr "음악 품질:"
 
-#: engines/scumm/dialogs.cpp:1407
+#: engines/scumm/dialogs.cpp:1442
 msgid ""
 "Select music quality. The original lets you choose this from the Game menu."
 msgstr "음악 품질을 선택하세요. 원본은 게임 메뉴에서 선택할 수 있습니다."
 
-#: engines/scumm/dialogs.cpp:1408
+#: engines/scumm/dialogs.cpp:1443
 msgid ""
 "Select music quality. The original determines the basic setup by hardware "
 "detection and speed tests, but also allows changes through the Game menu to "
@@ -11861,46 +11863,46 @@ msgstr ""
 "음악 품질을 선택합니다. 원본은 하드웨어 감지 및 속도 테스트를 통해 기본 설정"
 "을 결정하지만 게임 메뉴를 통해 어느 정도 변경할 수도 있습니다."
 
-#: engines/scumm/dialogs.cpp:1499 engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1550 engines/scumm/dialogs.cpp:1551
 msgid "auto"
 msgstr "자동"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "Low"
 msgstr "낮음"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:75
 msgid "Medium"
 msgstr "중간"
 
-#: engines/scumm/dialogs.cpp:1499
+#: engines/scumm/dialogs.cpp:1550
 msgid "High"
 msgstr "높은"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Good"
 msgstr "좋음"
 
-#: engines/scumm/dialogs.cpp:1500
+#: engines/scumm/dialogs.cpp:1551
 msgid "Better"
 msgstr "더 좋음"
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Hardware Rating: %s   -   "
 msgstr "하드웨어 등급: %s   -   "
 
-#: engines/scumm/dialogs.cpp:1501
+#: engines/scumm/dialogs.cpp:1552
 #, c-format
 msgid "Quality Selection: %s"
 msgstr "품질 선택: %s"
 
-#: engines/scumm/dialogs.cpp:1515
+#: engines/scumm/dialogs.cpp:1566
 msgid "Playback Adjust:"
 msgstr "재생 조정:"
 
-#: engines/scumm/dialogs.cpp:1519
+#: engines/scumm/dialogs.cpp:1570
 msgid ""
 "When playing sound from the CD audio track, adjust the start position of the "
 "sound by this much. Use this if you often hear bits of the wrong sound."
@@ -11908,11 +11910,11 @@ msgstr ""
 "CD 오디오 트랙에서 사운드를 재생할 때, 사운드의 시작 위치를 이만큼 조정합니"
 "다. 잘못된 사운드의 비트를 자주 듣는 경우 이 옵션을 사용합니다."
 
-#: engines/scumm/dialogs.cpp:1604
+#: engines/scumm/dialogs.cpp:1673
 msgid "Intro Adjust:"
 msgstr "인트로 조정:"
 
-#: engines/scumm/dialogs.cpp:1608
+#: engines/scumm/dialogs.cpp:1677
 msgid ""
 "When playing the intro track, play from this point in it. Use this if the "
 "music gets cut off prematurely, or if you are unhappy with the way the music "
@@ -11921,11 +11923,11 @@ msgstr ""
 "인트로 트랙을 재생할 때는 이 지점부터 재생합니다. 음악이 일찍 끊어지거나, 음"
 "악이 인트로와 동기화되는 방식에 만족하지 못하는 경우 이 옵션을 사용합니다."
 
-#: engines/scumm/dialogs.cpp:1617
+#: engines/scumm/dialogs.cpp:1686
 msgid "Outlook Adjust:"
 msgstr "전망 조정:"
 
-#: engines/scumm/dialogs.cpp:1621
+#: engines/scumm/dialogs.cpp:1690
 msgid ""
 "The outlook music is part of the intro track. Adjust the position in the "
 "track at which it starts playing. Use this if the music is cut off, or if "
@@ -11934,26 +11936,26 @@ msgstr ""
 "전망 음악은 인트로 트랙의 일부입니다. 트랙에서 재생이 시작되는 위치를 조정합"
 "니다. 음악이 끊어지거나 이전 음악의 일부가 들리는 경우 이 기능을 사용합니다."
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:773
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:773
 msgid "Load modded audio"
 msgstr "개조된 오디오 불러오기"
 
-#: engines/scumm/dialogs.cpp:1734 engines/scumm/metaengine.cpp:774
+#: engines/scumm/dialogs.cpp:1813 engines/scumm/metaengine.cpp:774
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
 "가능하다면, 음악, 사운드 효과, 음성 클립을 수정된 오디오 파일로 교체하세요."
 
-#: engines/scumm/dialogs.cpp:1736
+#: engines/scumm/dialogs.cpp:1815
 msgid "Multiplayer Server:"
 msgstr "멀티플레이어 서버:"
 
-#: engines/scumm/dialogs.cpp:1742
+#: engines/scumm/dialogs.cpp:1821
 msgid "Online Server:"
 msgstr "온라인 서버:"
 
-#: engines/scumm/dialogs.cpp:1743
+#: engines/scumm/dialogs.cpp:1822
 msgid ""
 "Address of the server to connect to for online play.  It must start with "
 "either \"https://\" or \"http://\" schemas."
@@ -11961,19 +11963,19 @@ msgstr ""
 "온라인 플레이를 위해 연결할 서버의 주소입니다.  \"https://\" 또는 \"http://"
 "\" 스키마로 시작해야 합니다."
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 msgid "Enable online competitive mods"
 msgstr "온라인 경쟁 개조 활성화"
 
-#: engines/scumm/dialogs.cpp:1745
+#: engines/scumm/dialogs.cpp:1824
 msgid "Enables custom-made modifications intended for online competitive play."
 msgstr "온라인 경쟁 플레이에 맞춰 맞춤형 수정이 가능합니다."
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid "Enable connection to Multiplayer Server"
 msgstr "멀티플레이어 서버 연결 활성화"
 
-#: engines/scumm/dialogs.cpp:1749
+#: engines/scumm/dialogs.cpp:1828
 msgid ""
 "Toggles the connection to the server that allows hosting and joining online "
 "multiplayer games over the Internet."
@@ -11981,24 +11983,24 @@ msgstr ""
 "인터넷을 통해 온라인 멀티플레이어 게임을 호스팅하고 참여할 수 있는 서버와의 "
 "연결을 전환합니다."
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Host games over LAN"
 msgstr "LAN을 통한 게임 호스팅"
 
-#: engines/scumm/dialogs.cpp:1750
+#: engines/scumm/dialogs.cpp:1829
 msgid "Allows the game sessions to be discovered over your local area network."
 msgstr "로컬 영역 네트워크를 통해 게임 세션을 검색할 수 있습니다."
 
 #. I18N: Moonbase Console is a program name
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Generate random maps"
 msgstr "무작위 지도 생성"
 
-#: engines/scumm/dialogs.cpp:1754
+#: engines/scumm/dialogs.cpp:1833
 msgid "Allow random map generation (Based from Moonbase Console)."
 msgstr "무작위 맵 생성을 허용합니다 (Moonbase 콘솔 기반)."
 
-#: engines/scumm/dialogs.cpp:1757
+#: engines/scumm/dialogs.cpp:1836
 msgid ""
 "Address of the server to connect to for hosting and joining online game "
 "sessions."
@@ -12452,19 +12454,19 @@ msgstr "오른쪽으로 비행"
 msgid "Fly to lower right"
 msgstr "오른쪽 하단 비행"
 
-#: engines/scumm/input.cpp:1394
+#: engines/scumm/input.cpp:1405
 msgid "Snap scroll on"
 msgstr "스냅 스크롤 켜기"
 
-#: engines/scumm/input.cpp:1396
+#: engines/scumm/input.cpp:1407
 msgid "Snap scroll off"
 msgstr "스냅 스크롤 끄기"
 
-#: engines/scumm/input.cpp:1409
+#: engines/scumm/input.cpp:1420
 msgid "Music volume: "
 msgstr "음악 볼륨: "
 
-#: engines/scumm/input.cpp:1426
+#: engines/scumm/input.cpp:1437
 msgid "Subtitle speed: "
 msgstr "자막 속도: "
 
@@ -12621,28 +12623,28 @@ msgstr "공연장 분위기 사운드 활성화"
 msgid "Enable ambience sounds."
 msgstr "공연장 분위기 사운드 활성화합니다."
 
-#: engines/scumm/metaengine.cpp:965
+#: engines/scumm/metaengine.cpp:981
 msgid "Down left"
 msgstr "왼쪽 아래"
 
-#: engines/scumm/metaengine.cpp:978
+#: engines/scumm/metaengine.cpp:994
 msgid "Down right"
 msgstr "오른쪽 아래"
 
-#: engines/scumm/metaengine.cpp:998
+#: engines/scumm/metaengine.cpp:1014
 msgid "Up left"
 msgstr "왼쪽 상단"
 
-#: engines/scumm/metaengine.cpp:1011
+#: engines/scumm/metaengine.cpp:1027
 msgid "Up right"
 msgstr "오른쪽 상단"
 
-#: engines/scumm/metaengine.cpp:1023
+#: engines/scumm/metaengine.cpp:1039
 msgid "Switch weapon"
 msgstr "무기 전환"
 
 #. I18N: Lets one skip the bike/car fight sequences in Full Throttle
-#: engines/scumm/metaengine.cpp:1037
+#: engines/scumm/metaengine.cpp:1053
 msgid "Win the bike fight cheat"
 msgstr "자전거 대결에서 승리하는 치트"
 
@@ -12730,7 +12732,7 @@ msgstr ""
 "기에는 필요한 메뉴와 대화 상자 정의가 하나도 없습니다. CD에서 'The Dig f' 폴"
 "더를 찾으세요. 하위 폴더 중 하나면 필요한 것이 있을 것입니다."
 
-#: engines/scumm/scumm.cpp:1781
+#: engines/scumm/scumm.cpp:1789
 msgid ""
 "Audio files compressed with ScummVM Tools were detected; *.BUN/*.SOU\n"
 "compression is not supported anymore for this game, audio will be disabled.\n"
@@ -12740,7 +12742,7 @@ msgstr ""
 "압축은 이 게임에서 더 이상 지원되지 않으므로 오디오가 비활성화됩니다.\n"
 "게임을 압축하지 않고 원본 미디어에서 복사하세요."
 
-#: engines/scumm/scumm.cpp:2272
+#: engines/scumm/scumm.cpp:2280
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -12749,7 +12751,7 @@ msgstr ""
 "실기 미디 지원에는 루카스아츠의 롤랜드 업그레이드가 필요하지만,\n"
 "%s가 없습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:2288
+#: engines/scumm/scumm.cpp:2296
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
@@ -12757,7 +12759,7 @@ msgstr ""
 "이 특정 버전의 원숭이 섬 1은 MT-32에 필요한 리소스가 일부\n"
 "빠진 것으로 알려져 있습니다. 대신 애드립을 사용합니다."
 
-#: engines/scumm/scumm.cpp:4110
+#: engines/scumm/scumm.cpp:4140
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
@@ -12767,7 +12769,7 @@ msgstr ""
 "게임 파일이 Tentacle 게임 디렉터리 내의 'Maniac' 디렉터리에 있어야 하고, 게임"
 "을 ScummVM에 추가해야 합니다."
 
-#: engines/scumm/scumm.cpp:4222
+#: engines/scumm/scumm.cpp:4252
 msgid "Would you like to host or join a network play session?"
 msgstr "네트워크 플레이 세션을 호스팅하거나 참여하고 싶습니까?"
 
