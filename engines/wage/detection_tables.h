@@ -40,6 +40,29 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEND("World Builder Demo World", "Demo World", "e221e6f9631f110b484f239e58137a3f", 45467),
 	FANGAME("Ray's World Template", "r:28be556dd85b5c0b28f5ac20793ba542", 38264),
 
+	// Use two files, so we override other included templates
+	{ "worldbuilder",
+		"World Builder",
+		AD_ENTRY2s("World Template","cb30c899eec946803793fca4e916adb8", 34444,
+					"Example Sound Lib", "ca2d25ee13020d5949da06b6a38a1101", 49505),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+
+	// Use two files, so we override other included templates
+	{ "worldbuilder",
+		"World Builder v1.2",
+		AD_ENTRY2s("World Template","242d9d343cfc09d61096beb91419c493", 34772,
+					"Sound Library #1", "02f62fdb302c5f1e0a9a11edb972f4a3", 471067),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+
+
 	// Render Tests
 	//FANGAME("Shape Test", "7466edab34a853707343c26eb362b8c1", 38194),
 	//FANGAME("Rects", "03d2f93b1cafe963a0e29232f4867cc4", 38177),
@@ -191,7 +214,24 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Lost Weekend", "5952ce2396c162e478f49b93f64dbefc", 178443),
 	FANGAME("Lost Weekend", "c1f3de4fedf59b0a7637bbb2a0ed16d6", 178443), // 24-bit version
 	FANGAME("The Lost Skater", "5d1fa9ac715ce780ace9aa018caadb51", 334718),
-	FANGAME("Mac Spudd!", "eaba9195dd27c2a26b809a730417122b", 781859),
+	{ "wage",
+		"Mac Spudd!",
+		AD_ENTRY2s("Mac Spudd!","eaba9195dd27c2a26b809a730417122b",781859,
+					"Mac Spudd! Sounds", "4c57693915fbe9ce6c72a40d84c4e929", 663598),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
+	{ "wage",
+		"Mac Spudd!",
+		AD_ENTRY2s("Mac Spudd!","eaba9195dd27c2a26b809a730417122b",781859,
+					"Mac Spudd! Sounds", "75fb4df3390de44be771bf6cb491b085", 663716),
+		Common::EN_ANY,
+		Common::kPlatformMacintosh,
+		ADGF_GENERIC,
+		GUIO0()
+	},
 	FANGAME("MacWanker 1.0", "2fd407020adf527d1193f3351d7244b5", 178005),
 	FANGAME("Magic Rings", "263e2c90af61f0798bf41f6a1e3f6345", 108788),
 	FANGAMEN("Mansion!", "Mansion! 1.0", "c993619e5bd99ccca6e3ce28d93be33a", 389857),

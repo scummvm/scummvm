@@ -36,6 +36,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"raysmaze", "Ray's Maze"},
 	{"scepters", "Enchanted Scepters"},
 	{"twisted", "Twisted!"},
+	{"worldbuilder", "World Builder"},
 	{"wage", "WAGE"},
 	{0, 0}
 };
