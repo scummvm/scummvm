@@ -61,6 +61,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Freescape:
    - Added roll rotation to Driller and Dark Side.
 
+ Gob:
+   - Added Text-to-Speech support.
+
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
