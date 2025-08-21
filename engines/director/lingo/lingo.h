@@ -573,7 +573,7 @@ public:
 
 public:
 	void executeImmediateScripts(Frame *frame);
-	void executePerFrameHook(int frame, int subframe);
+	void executePerFrameHook(int frame, int subframe, bool stepFrame = true);
 
 	// lingo-utils.cpp
 private:
