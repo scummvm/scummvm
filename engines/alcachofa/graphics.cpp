@@ -117,7 +117,7 @@ void AnimationBase::load() {
 		_spriteBases.push_back(stream->readUint32LE());
 		assert(_spriteBases.back() < imageCount);
 	}
-#ifdef _DEBUG
+#ifdef ALCACHOFA_DEBUG
 	for (uint i = spriteCount; i < kMaxSpriteIDs; i++)
 		assert(stream->readSint32LE() == 0);
 #else
