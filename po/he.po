@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-21 08:28+0000\n"
+"POT-Creation-Date: 2025-08-21 19:35+0000\n"
 "PO-Revision-Date: 2025-04-09 20:18+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -316,7 +316,8 @@ msgstr "אחסון אחר עובד כעת. האם להפריע לו?"
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:510 gui/options.cpp:3486 gui/options.cpp:3860
 #: base/main.cpp:592 backends/events/default/default-events.cpp:193
-#: engines/buried/buried.cpp:598 engines/director/events.cpp:101
+#: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:91
+#: engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:362
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
@@ -331,7 +332,8 @@ msgstr "כן"
 #: gui/downloaddialog.cpp:153 gui/filebrowser-dialog.cpp:135
 #: gui/fluidsynth-dialog.cpp:210 gui/launcher.cpp:421 gui/launcher.cpp:450
 #: gui/launcher.cpp:510 gui/options.cpp:3486 gui/options.cpp:3860
-#: engines/buried/buried.cpp:598 engines/director/events.cpp:101
+#: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:97
+#: engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:368
 #: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
 #: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
@@ -3210,8 +3212,9 @@ msgstr "מנוע משחק הרפתקה גרפי"
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
-#: engines/drascula/metaengine.cpp:304 engines/hdb/metaengine.cpp:275
-#: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
+#: engines/hdb/metaengine.cpp:275 engines/lab/metaengine.cpp:172
+#: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -5892,22 +5895,23 @@ msgid "Check for Updates..."
 msgstr "בדיקת עדכונים..."
 
 #: engines/access/metaengine.cpp:192 engines/bbvs/metaengine.cpp:92
-#: engines/buried/metaengine.cpp:133 engines/cine/metaengine.cpp:270
-#: engines/cruise/metaengine.cpp:168 engines/draci/metaengine.cpp:195
-#: engines/drascula/metaengine.cpp:205 engines/efh/metaengine.cpp:256
-#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:92
-#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
-#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
-#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
-#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/buried/metaengine.cpp:133 engines/chamber/metaengine.cpp:59
+#: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
+#: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
+#: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
+#: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
+#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
+#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
+#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -6448,18 +6452,18 @@ msgid "AGOS main"
 msgstr ""
 
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
-#: engines/buried/metaengine.cpp:136 engines/cine/metaengine.cpp:271
-#: engines/cruise/metaengine.cpp:169 engines/draci/metaengine.cpp:196
-#: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
-#: engines/hugo/metaengine.cpp:93 engines/illusions/metaengine.cpp:90
-#: engines/lab/metaengine.cpp:152 engines/lure/metaengine.cpp:169
-#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
-#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
-#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/buried/metaengine.cpp:136 engines/chamber/metaengine.cpp:60
+#: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
+#: engines/draci/metaengine.cpp:196 engines/drascula/metaengine.cpp:206
+#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
+#: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
+#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 #, fuzzy
 #| msgid "Game Options"
 msgid "Game keymappings"
@@ -7312,7 +7316,9 @@ msgstr "א~פ~שרויות משחק"
 msgid "Inventory keymappings"
 msgstr "א~פ~שרויות משחק"
 
-#: engines/buried/metaengine.cpp:141 engines/sherlock/metaengine.cpp:1183
+#: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
+#: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
+#: engines/sherlock/metaengine.cpp:1183
 #, fuzzy
 #| msgid "Interact"
 msgid "Select / Interact"
@@ -7575,6 +7581,14 @@ msgstr "שימוש בהמרת טקסט לדיבור כדי לקרוא את הכ�
 #| msgid "Close"
 msgid "Close the dialog box"
 msgstr "סגירה"
+
+#: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
+#: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
+#: engines/sherlock/metaengine.cpp:786
+#, fuzzy
+#| msgid "Game Options"
+msgid "Quit dialog keymappings"
+msgstr "א~פ~שרויות משחק"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8039,13 +8053,6 @@ msgstr "ניפוי תקלים של תצוגה"
 #, fuzzy
 #| msgid "Game Options"
 msgid "Animation keymappings"
-msgstr "א~פ~שרויות משחק"
-
-#: engines/drascula/metaengine.cpp:208 engines/lab/metaengine.cpp:151
-#: engines/sherlock/metaengine.cpp:338 engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Game Options"
-msgid "Quit dialog keymappings"
 msgstr "א~פ~שרויות משחק"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
