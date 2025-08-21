@@ -395,8 +395,7 @@ bool AlcachofaEngine::tryLoadFromLauncher() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (!ConfMan.hasKey("save_slot") || saveSlot < 0)
 		return false;
-	auto *saveFileMgr = g_system->getSavefileManager();
-	auto *saveFile = saveFileMgr->openForLoading(getSaveStateName(saveSlot));
+	auto *saveFile = g_system->getSavefileManager()->openForLoading(getSaveStateName(saveSlot));
 	if (saveFile == nullptr)
 		return false;
 	bool result = loadGameStream(saveFile).getCode() == kNoError;
