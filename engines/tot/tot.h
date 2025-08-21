@@ -139,7 +139,7 @@ private:
 	void firstIntroduction();
 	void readAlphaGraph(Common::String &data, int length, int x, int y, byte barColor);
 	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor);
-	void displayObjectDescription(Common::String text, uint x, uint y, byte width, byte textColor, byte shadowColor);
+	void displayObjectDescription(Common::String text);
 	void copyProtection();
 	void initialLogo();
 	void initialMenu(bool fade);

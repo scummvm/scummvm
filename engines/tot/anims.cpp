@@ -934,8 +934,9 @@ void drawFlc(
 	TotFlicDecoder flic = TotFlicDecoder();
 
 	flic.loadStream(thisFlic);
-	flic.start();
 
+	flic.start();
+	bool skipFrame = false;
 	do {
 		exitProcedure(exitAnim, isSkipAllowed);
 		loopNumber++;
@@ -945,7 +946,10 @@ void drawFlc(
 			if (exitAnim) {
 				goto Lexit_proc;
 			}
-			if (gameTick) {
+			if(speed == 9) {
+				skipFrame = !skipFrame;
+			}
+			if (gameTick && !skipFrame) {
 				frameCount++;
 				handleFlcEvent(eventNumber, loopNumber, frameCount);
 				const Graphics::Surface *frame = flic.decodeNextFrame();

@@ -30,8 +30,8 @@ namespace Tot {
  */
 extern bool gameTick, gameTickHalfSpeed, timeToDrawEffect;
 
-const int kTickMs = 20;
-// const int kTickMs = 50;
+// const int kTickMs = 20;
+const int kTickMs = 50;
 const int kHalfTickMultiplier = 2;
 const int kFrameEffectMs = 10;
 

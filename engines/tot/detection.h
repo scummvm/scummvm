@@ -54,7 +54,7 @@ public:
 	}
 
 	const char *getEngineName() const override {
-		return "Tot";
+		return "Trick or Treat";
 	}
 
 	const char *getOriginalCopyright() const override {
