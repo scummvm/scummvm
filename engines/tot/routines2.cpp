@@ -40,8 +40,8 @@ namespace Tot {
 
 void TotEngine::initScreenPointers() {
 	_screenSize = 65520;
-	sceneBackground = (byte *)malloc(_screenSize);
-	backgroundCopy = (byte *)malloc(_screenSize);
+	_sceneBackground = (byte *)malloc(_screenSize);
+	_backgroundCopy = (byte *)malloc(_screenSize);
 }
 
 void TotEngine::loadAnimationForDirection(Common::SeekableReadStream *stream, int direction) {
@@ -242,8 +242,8 @@ void TotEngine::loadScreen() {
 	palette palcp;
 
 	_screenSize = _currentRoomData->roomImageSize;
-	readBitmap(_currentRoomData->roomImagePointer, sceneBackground, _screenSize, 316);
-	Common::copy(sceneBackground, sceneBackground + _screenSize, backgroundCopy);
+	readBitmap(_currentRoomData->roomImagePointer, _sceneBackground, _screenSize, 316);
+	Common::copy(_sceneBackground, _sceneBackground + _screenSize, _backgroundCopy);
 	switch (_gamePart) {
 	case 1: {
 		if (!paletteFile.open("PALETAS.DAT")) {
@@ -699,7 +699,7 @@ void TotEngine::checkMouseGrid() {
 	if (_mouse->mouseY >= 0 && _mouse->mouseY <= 131) {
 		xGrid = _mouse->getMouseCoordsWithinGrid().x;
 		yGrid = _mouse->getMouseCoordsWithinGrid().y;
-		if (_currentRoomData->mouseGrid[xGrid][yGrid] != _currentRoomData->mouseGrid[oldGridX][oldGridY] || _oldInventoryObjectName != "") {
+		if (_currentRoomData->mouseGrid[xGrid][yGrid] != _currentRoomData->mouseGrid[_oldGridX][_oldGridY] || _oldInventoryObjectName != "") {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (_actionCode) {
@@ -732,8 +732,8 @@ void TotEngine::checkMouseGrid() {
 			}
 			actionLineText(actionLine);
 			_mouse->show();
-			oldGridX = xGrid;
-			oldGridY = yGrid;
+			_oldGridX = xGrid;
+			_oldGridY = yGrid;
 		}
 		_oldActionCode = 253;
 		_oldInventoryObjectName = "";
@@ -771,8 +771,8 @@ void TotEngine::checkMouseGrid() {
 			_mouse->show();
 			_oldActionCode = _actionCode;
 			_oldInventoryObjectName = "";
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 		}
 	} else if (_mouse->mouseY >= 166 && _mouse->mouseY <= 199) {
 		if (_mouse->mouseX >= 26 && _mouse->mouseX <= 65) {
@@ -791,7 +791,7 @@ void TotEngine::checkMouseGrid() {
 			invObject = ' ';
 		}
 
-		if (invObject != _oldInventoryObjectName || oldGridX != 0) {
+		if (invObject != _oldInventoryObjectName || _oldGridX != 0) {
 			bar(0, 140, 319, 149, 0);
 			Common::String actionLine;
 			switch (_actionCode) {
@@ -824,8 +824,8 @@ void TotEngine::checkMouseGrid() {
 			_oldInventoryObjectName = invObject;
 		}
 		_oldActionCode = 255;
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 	}
 }
 
@@ -1140,7 +1140,7 @@ void scrollCredit(
 		showError(270);
 	}
 	creditFile.seek(position);
-	creditFile.read(g_engine->sceneBackground, size);
+	creditFile.read(g_engine->_sceneBackground, size);
 	creditFile.read(pal2, 768);
 	creditFile.close();
 
@@ -1166,7 +1166,7 @@ void scrollCredit(
 				keyPressed = true;
 			}
 		}
-		putCreditsImg(85, i, g_engine->sceneBackground, background, !withFade);
+		putCreditsImg(85, i, g_engine->_sceneBackground, background, !withFade);
 		if (keyPressed) {
 			exit = true;
 			break;
@@ -1240,7 +1240,7 @@ inline bool keyPressed() {
 }
 
 void TotEngine::credits() {
-	saveAllowed = true;
+	_saveAllowed = true;
 	debug("Credits");
 	palette pal2;
 	byte *background;
@@ -1334,7 +1334,7 @@ Lexit:
 }
 
 void TotEngine::introduction() {
-	saveAllowed = false;
+	_saveAllowed = false;
 	_mouse->hide();
 	bool exitPressed;
 	uint loopCount;
@@ -1804,7 +1804,7 @@ void TotEngine::soundControls() {
 }
 
 void TotEngine::sacrificeScene() {
-	saveAllowed = false;
+	_saveAllowed = false;
 	palette palaux;
 
 	Common::File file;
@@ -1892,7 +1892,7 @@ void TotEngine::sacrificeScene() {
 		showError(318);
 	}
 	file.read(palaux, 768);
-	file.read(sceneBackground, 44800);
+	file.read(_sceneBackground, 44800);
 	file.close();
 
 	g_engine->_graphics->_pal[0] = 0;
@@ -1905,7 +1905,7 @@ void TotEngine::sacrificeScene() {
 	}
 
 	// We dont have the width and height here in the byte buffer
-	_graphics->drawScreen(sceneBackground, false);
+	_graphics->drawScreen(_sceneBackground, false);
 	_graphics->partialFadeIn(234);
 	_sound->stopVoc();
 
@@ -1969,9 +1969,9 @@ void TotEngine::sacrificeScene() {
 		palaux[i * 3 + 2] <<= 2;
 	}
 
-	file.read(sceneBackground, 64000);
+	file.read(_sceneBackground, 64000);
 	file.close();
-	_graphics->drawFullScreen(sceneBackground);
+	_graphics->drawFullScreen(_sceneBackground);
 
 	palaux[0] = 0;
 	palaux[1] = 0;
@@ -2167,11 +2167,11 @@ void TotEngine::sacrificeScene() {
 	delay(2000);
 	_graphics->totalFadeOut(0);
 	_currentRoomData->paletteAnimationFlag = exitPressed;
-	saveAllowed = true;
+	_saveAllowed = true;
 }
 
 void TotEngine::ending() {
-	saveAllowed = false;
+	_saveAllowed = false;
 	bool exitRequested;
 
 	const char *const *messages = (_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
@@ -2212,7 +2212,7 @@ void TotEngine::ending() {
 	delay(1000);
 	_sound->playVoc("NOOO", 0, 0);
 	delay(3000);
-	saveAllowed = true;
+	_saveAllowed = true;
 }
 
 void TotEngine::loadBat() {
@@ -2256,7 +2256,7 @@ void TotEngine::assembleCompleteBackground(byte *image, uint coordx, uint coordy
 	w = READ_LE_UINT16(image);
 	h = READ_LE_UINT16(image + 2);
 
-	wFondo = READ_LE_UINT16(sceneBackground);
+	wFondo = READ_LE_UINT16(_sceneBackground);
 
 	wFondo++;
 	w++;
@@ -2265,7 +2265,7 @@ void TotEngine::assembleCompleteBackground(byte *image, uint coordx, uint coordy
 		for (int j = 0; j < h; j++) {
 			int color = image[4 + j * w + i];
 			if (color != 0) {
-				sceneBackground[4 + (coordy + j) * wFondo + (coordx + i)] = color;
+				_sceneBackground[4 + (coordy + j) * wFondo + (coordx + i)] = color;
 			}
 		}
 	}

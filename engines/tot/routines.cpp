@@ -120,7 +120,7 @@ void TotEngine::runaroundRed() {
 	freeAnimation();
 	_graphics->restoreBackground();
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 }
 
 void updateMovementGrids() {
@@ -150,8 +150,8 @@ void updateMovementGrids() {
 
 		g_engine->_oldposx = j1arm;
 		g_engine->_oldposy = j2arm;
-		g_engine->oldGridX = 0;
-		g_engine->oldGridY = 0;
+		g_engine->_oldGridX = 0;
+		g_engine->_oldGridY = 0;
 	}
 }
 
@@ -178,8 +178,8 @@ static void assembleBackground() {
 
 	posabs = 4 + dirtyMainSpriteY * 320 + dirtyMainSpriteX;
 	uint16 w, h;
-	w = READ_LE_UINT16(g_engine->characterDirtyRect);
-	h = READ_LE_UINT16(g_engine->characterDirtyRect + 2);
+	w = READ_LE_UINT16(g_engine->_characterDirtyRect);
+	h = READ_LE_UINT16(g_engine->_characterDirtyRect + 2);
 	w++;
 	h++;
 
@@ -190,7 +190,7 @@ static void assembleBackground() {
 		for (int i = 0; i < w; i++) {
 			int pos = posabs + j * 320 + i;
 			int destPos = 4 + (j * w + i);
-			g_engine->characterDirtyRect[destPos] = g_engine->sceneBackground[pos];
+			g_engine->_characterDirtyRect[destPos] = g_engine->_sceneBackground[pos];
 		}
 	}
 }
@@ -209,8 +209,8 @@ static void assembleImage(byte *img, uint imgPosX, uint imgPosY) {
 	uint16 wImg = READ_LE_UINT16(img) + 1;
 	uint16 hImg = READ_LE_UINT16(img + 2) + 1;
 
-	uint16 wBg = READ_LE_UINT16(g_engine->characterDirtyRect) + 1;
-	uint16 hBg = READ_LE_UINT16(g_engine->characterDirtyRect + 2) + 1;
+	uint16 wBg = READ_LE_UINT16(g_engine->_characterDirtyRect) + 1;
+	uint16 hBg = READ_LE_UINT16(g_engine->_characterDirtyRect + 2) + 1;
 
 	// This region calculates the overlapping area of (x, incx, y, incy)
 	{
@@ -240,7 +240,7 @@ static void assembleImage(byte *img, uint imgPosX, uint imgPosY) {
 			int bgOffset = 4 + ((y - dirtyMainSpriteY) + j) * wBg + i + (x - dirtyMainSpriteX);
 			int imgOffset = 4 + (y - imgPosY + j) * wImg + i + (x - imgPosX);
 			if (img[imgOffset] != 0) {
-				g_engine->characterDirtyRect[bgOffset] = img[imgOffset];
+				g_engine->_characterDirtyRect[bgOffset] = img[imgOffset];
 			}
 		}
 	}
@@ -262,7 +262,7 @@ void drawMainCharacter() {
 
 	bool debug = false;
 	if (debug) {
-		g_engine->_graphics->sceneTransition(false, g_engine->sceneBackground, 13);
+		g_engine->_graphics->sceneTransition(false, g_engine->_sceneBackground, 13);
 	}
 
 	uint16 tempW;
@@ -272,10 +272,10 @@ void drawMainCharacter() {
 	tempW += 6;
 	tempH += 6;
 
-	g_engine->characterDirtyRect = (byte *)malloc((tempW + 1) * (tempH + 1) + 4);
+	g_engine->_characterDirtyRect = (byte *)malloc((tempW + 1) * (tempH + 1) + 4);
 
-	WRITE_LE_UINT16(g_engine->characterDirtyRect, tempW);
-	WRITE_LE_UINT16(g_engine->characterDirtyRect + 2, tempH);
+	WRITE_LE_UINT16(g_engine->_characterDirtyRect, tempW);
+	WRITE_LE_UINT16(g_engine->_characterDirtyRect + 2, tempH);
 
 	assembleBackground();
 	curDepth = 0;
@@ -286,14 +286,14 @@ void drawMainCharacter() {
 		curDepth += 1;
 	}
 
-	g_engine->_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, g_engine->characterDirtyRect);
+	g_engine->_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, g_engine->_characterDirtyRect);
 
 	if (debug) {
 		// draw background dirty area
 		drawRect(2, dirtyMainSpriteX, dirtyMainSpriteY, dirtyMainSpriteX + tempW, dirtyMainSpriteY + tempH);
 		drawPos(g_engine->_xframe2, g_engine->_yframe2, 218);
 	}
-	free(g_engine->characterDirtyRect);
+	free(g_engine->_characterDirtyRect);
 }
 
 void TotEngine::sprites(bool drawMainCharachter) {
@@ -348,10 +348,10 @@ void TotEngine::sprites(bool drawMainCharachter) {
 				patchW -= (dirtyMainSpriteX + patchW) - 320 + 1;
 			}
 
-			characterDirtyRect = (byte *)malloc((patchW + 1) * (patchH + 1) + 4);
+			_characterDirtyRect = (byte *)malloc((patchW + 1) * (patchH + 1) + 4);
 
-			WRITE_LE_UINT16(characterDirtyRect, patchW);
-			WRITE_LE_UINT16(characterDirtyRect + 2, patchH);
+			WRITE_LE_UINT16(_characterDirtyRect, patchW);
+			WRITE_LE_UINT16(_characterDirtyRect + 2, patchH);
 
 			assembleBackground();
 			curDepth = 0;
@@ -363,7 +363,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 					assembleImage(_curCharacterAnimationFrame, _characterPosX, _characterPosY);
 				curDepth += 1;
 			}
-			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, characterDirtyRect);
+			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, _characterDirtyRect);
 		} else { // character and animation are in different parts of the screen
 
 			if (drawMainCharachter) {
@@ -384,9 +384,9 @@ void TotEngine::sprites(bool drawMainCharachter) {
 				secAnimW -= (dirtyMainSpriteX + secAnimW) - 320 + 1;
 			}
 
-			characterDirtyRect = (byte *)malloc((secAnimW + 1) * (secAnimH + 1) + 4);
-			WRITE_LE_UINT16(characterDirtyRect, secAnimW);
-			WRITE_LE_UINT16(characterDirtyRect + 2, secAnimH);
+			_characterDirtyRect = (byte *)malloc((secAnimW + 1) * (secAnimH + 1) + 4);
+			WRITE_LE_UINT16(_characterDirtyRect, secAnimW);
+			WRITE_LE_UINT16(_characterDirtyRect + 2, secAnimH);
 
 			assembleBackground();
 			curDepth = 0;
@@ -396,7 +396,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 					assembleImage(_curSecondaryAnimationFrame, _secondaryAnimation.posx, _secondaryAnimation.posy);
 				curDepth += 1;
 			}
-			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, characterDirtyRect);
+			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, _characterDirtyRect);
 		}
 	} else if (drawMainCharachter) {
 		drawMainCharacter();
@@ -611,7 +611,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		_depthMap[13].posx = animX;
 		_depthMap[13].posy = animY;
 		assembleScreen();
-		_graphics->drawScreen(sceneBackground);
+		_graphics->drawScreen(_sceneBackground);
 		_screenLayers[13] = NULL;
 		_mainCharAnimation.depth = animIndex;
 		drawBackpack();
@@ -656,7 +656,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		disableSecondAnimation();
 		_screenLayers[12] = NULL;
 		_mainCharAnimation.depth = animIndex;
-		_graphics->drawScreen(sceneBackground);
+		_graphics->drawScreen(_sceneBackground);
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
@@ -694,10 +694,10 @@ void TotEngine::animatedSequence(uint numSequence) {
 			_graphics->advancePaletteAnim();
 			if (gameTickHalfSpeed) {
 				animationFile.read(_screenLayers[6], animFrameSize);
-				Common::copy(_screenLayers[6], _screenLayers[6] + animFrameSize, sceneBackground + 44900);
+				Common::copy(_screenLayers[6], _screenLayers[6] + animFrameSize, _sceneBackground + 44900);
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animIndex += 1;
 				if (animIndex == 8)
 					_sound->playVoc("PUFF", 191183, 18001);
@@ -790,7 +790,7 @@ RoomFileRegister *TotEngine::readScreenDataFile(Common::SeekableReadStream *scre
 
 void TotEngine::loadScreenData(uint screenNumber) {
 	debug("Opening screen %d", screenNumber);
-	currentRoomNumber = screenNumber;
+	_currentRoomNumber = screenNumber;
 
 	_rooms->seek(screenNumber * kRoomRegSize, SEEK_SET);
 	_currentRoomData = readScreenDataFile(_rooms);
@@ -901,7 +901,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	_mouse->hide();
 	_graphics->copyPalette(g_engine->_graphics->_pal, secPalette);
 	readItemRegister(_inventory[objectCode].code);
-	_graphics->getImg(0, 0, 319, 139, sceneBackground);
+	_graphics->getImg(0, 0, 319, 139, _sceneBackground);
 	_graphics->partialFadeOut(234);
 	bar(0, 0, 319, 139, 0);
 	for (yaux = 1; yaux <= 12; yaux++)
@@ -953,7 +953,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	_graphics->sceneTransition(true, NULL, 3);
 	_graphics->partialFadeOut(234);
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 	_graphics->copyPalette(secPalette, g_engine->_graphics->_pal);
 	_graphics->partialFadeIn(234);
 	_mouse->show();
@@ -1431,14 +1431,14 @@ void TotEngine::animateBat() {
 	}
 	_graphics->restoreBackground();
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 }
 
 void TotEngine::updateVideo() {
 	readBitmap(_curObject.dropOverlay, _screenLayers[_curObject.depth - 1], _curObject.dropOverlaySize, 319);
 	_graphics->restoreBackground();
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 }
 
 void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
@@ -1461,17 +1461,17 @@ void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
 	case 0: {
 		bitmapOffset = 44904;
 		increment = 1;
-		Common::copy(_screenLayers[0], _screenLayers[0] + 892, sceneBackground + 44900);
+		Common::copy(_screenLayers[0], _screenLayers[0] + 892, _sceneBackground + 44900);
 		readBitmap(bitmap, _screenLayers[0], 892, 319);
-		Common::copy(_screenLayers[0] + 4, _screenLayers[0] + 4 + 888, sceneBackground + 44900 + 892);
+		Common::copy(_screenLayers[0] + 4, _screenLayers[0] + 4 + 888, _sceneBackground + 44900 + 892);
 	} break;
 	case 1: { // object slides to reveal empty stand
 		bitmapOffset = 892 + 44900;
 		increment = -1;
 		// Reads the empty niche into a non-visible part of background
-		readBitmap(bitmap, sceneBackground + 44900, 892, 319);
+		readBitmap(bitmap, _sceneBackground + 44900, 892, 319);
 		// Copies whatever is currently on the niche in a non-visible part of background contiguous with the above
-		Common::copy(_screenLayers[0] + 4, _screenLayers[0] + 4 + 888, sceneBackground + 44900 + 892);
+		Common::copy(_screenLayers[0] + 4, _screenLayers[0] + 4 + 888, _sceneBackground + 44900 + 892);
 		// We now have in consecutive pixels the empty stand and the object
 
 	} break;
@@ -1480,23 +1480,23 @@ void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
 	uint16 nicheHeight = READ_LE_UINT16(_screenLayers[0] + 2);
 
 	// Set the height to double to animate 2 images of the same height moving up/down
-	*(sceneBackground + 44900 + 2) = (nicheHeight * 2) + 1;
+	*(_sceneBackground + 44900 + 2) = (nicheHeight * 2) + 1;
 
 	_graphics->restoreBackground();
 
 	for (uint i = 1; i <= nicheHeight; i++) {
 
 		bitmapOffset = bitmapOffset + (increment * (nicheWidth + 1));
-		Common::copy(sceneBackground + bitmapOffset, sceneBackground + bitmapOffset + 888, _screenLayers[0] + 4);
+		Common::copy(_sceneBackground + bitmapOffset, _sceneBackground + bitmapOffset + 888, _screenLayers[0] + 4);
 		assembleScreen();
-		_graphics->drawScreen(sceneBackground);
+		_graphics->drawScreen(_sceneBackground);
 		_screen->update();
 	}
 	readBitmap(bitmap, _screenLayers[0], 892, 319);
 
 	_graphics->restoreBackground();
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 
 	if (_currentRoomData->code == 24) {
 		free(_screenLayers[1]);
@@ -1557,7 +1557,7 @@ void TotEngine::pickupScreenObject() {
 				_screenLayers[_curObject.depth - 1] = NULL;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(_charFacingDirection, 0);
 			}
 			}
@@ -1617,7 +1617,7 @@ void TotEngine::pickupScreenObject() {
 				_graphics->restoreBackground();
 
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(0, 1);
 			} break;
 			case 562: { // niche
@@ -1638,7 +1638,7 @@ void TotEngine::pickupScreenObject() {
 							_currentRoomData->screenLayers[1].depth = 1;
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animatePickup2(3, 1);
 						} else {
 							readItemRegister(_niche[0][_niche[0][3]]);
@@ -1651,7 +1651,7 @@ void TotEngine::pickupScreenObject() {
 									   892, 319);
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animatePickup2(3, 1);
 							_sound->playVoc("PLATAF", 375907, 14724);
 							_currentRoomData->screenLayers[1].bitmapSize = 892;
@@ -1705,7 +1705,7 @@ void TotEngine::pickupScreenObject() {
 							_currentRoomData->screenLayers[0].depth = 1;
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animatePickup2(0, 1);
 						} else {
 							readItemRegister(_niche[1][_niche[1][3]]);
@@ -1717,7 +1717,7 @@ void TotEngine::pickupScreenObject() {
 							readBitmap(1399610, _screenLayers[0], 892, 319);
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animatePickup2(0, 1);
 							_sound->playVoc("PLATAF", 375907, 14724);
 							_currentRoomData->screenLayers[0].bitmapSize = 892;
@@ -1775,7 +1775,7 @@ void TotEngine::pickupScreenObject() {
 				}
 				_screenLayers[3] = NULL;
 				disableSecondAnimation();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(2, 1);
 				_isRedDevilCaptured = true;
 				_isTrapSet = false;
@@ -1785,7 +1785,7 @@ void TotEngine::pickupScreenObject() {
 				_screenLayers[_curObject.depth - 1] = NULL;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(_charFacingDirection, 1);
 			}
 			}
@@ -1837,14 +1837,14 @@ void TotEngine::pickupScreenObject() {
 				}
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(3, 2);
 			} break;
 			default: {
 				animatePickup1(_charFacingDirection, 2);
 				_screenLayers[_curObject.depth - 1] = NULL;
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(_charFacingDirection, 2);
 			}
 			}
@@ -1859,8 +1859,8 @@ void TotEngine::pickupScreenObject() {
 			drawText(textRef);
 			_currentRoomData->mouseGrid[34][8] = 24;
 			_actionCode = 0;
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 			return;
 		} break;
@@ -1934,8 +1934,8 @@ void TotEngine::pickupScreenObject() {
 		if (_curObject.pickTextRef > 0)
 			drawText(_curObject.pickTextRef);
 		_actionCode = 0;
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 		return;
 	}
@@ -1954,8 +1954,8 @@ void TotEngine::pickupScreenObject() {
 	if (_curObject.pickTextRef > 0)
 		drawText(_curObject.pickTextRef);
 	_actionCode = 0;
-	oldGridX = 0;
-	oldGridY = 0;
+	_oldGridX = 0;
+	_oldGridY = 0;
 	checkMouseGrid();
 }
 
@@ -2473,7 +2473,7 @@ void TotEngine::useScreenObject() {
 					sprites(true);
 				} while (_currentSecondaryTrajectoryIndex != _currentRoomData->secondaryTrajectoryLength);
 				disableSecondAnimation();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
 			} break;
 			case 201: {
@@ -2485,8 +2485,8 @@ void TotEngine::useScreenObject() {
 				drawBackpack();
 				_mouse->show();
 				_actionCode = 0;
-				oldGridX = 0;
-				oldGridY = 0;
+				_oldGridX = 0;
+				_oldGridY = 0;
 				checkMouseGrid();
 			} break;
 			case 219: {
@@ -2506,7 +2506,7 @@ void TotEngine::useScreenObject() {
 				animateOpen2(3, 2);
 				updateItem(_curObject.code);
 				disableSecondAnimation();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
 				drawText(2652);
 				_mouse->hide();
@@ -2537,8 +2537,8 @@ void TotEngine::useScreenObject() {
 				animatedSequence(4);
 				_mouse->show();
 				_actionCode = 0;
-				oldGridX = 0;
-				oldGridY = 0;
+				_oldGridX = 0;
+				_oldGridY = 0;
 				checkMouseGrid();
 			} break;
 			case 221: {
@@ -2660,7 +2660,7 @@ void TotEngine::useScreenObject() {
 							_currentRoomData->screenLayers[1].depth = 1;
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2683,7 +2683,7 @@ void TotEngine::useScreenObject() {
 							}
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2750,7 +2750,7 @@ void TotEngine::useScreenObject() {
 							_currentRoomData->screenLayers[0].depth = 1;
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2776,7 +2776,7 @@ void TotEngine::useScreenObject() {
 							}
 							_graphics->restoreBackground();
 							assembleScreen();
-							_graphics->drawScreen(sceneBackground);
+							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
 							drawBackpack();
@@ -2869,7 +2869,7 @@ void TotEngine::useScreenObject() {
 				readBitmap(1243652, _screenLayers[5], 2718, 319);
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 			} break;
 			case 594: {
 				drawText(_curObject.useTextRef);
@@ -2898,7 +2898,7 @@ void TotEngine::useScreenObject() {
 				}
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				updateInventory(usedObjectIndex);
 				drawBackpack();
 				_isTrapSet = true;
@@ -2914,7 +2914,7 @@ void TotEngine::useScreenObject() {
 				loadItem(187, 70, 104, 1545820, 8);
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_screen->update();
 
 				animateOpen2(_charFacingDirection, 1);
@@ -2944,7 +2944,7 @@ void TotEngine::useScreenObject() {
 
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
 				goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], 18);
 				_mouse->hide();
@@ -2958,7 +2958,7 @@ void TotEngine::useScreenObject() {
 				_screenLayers[7] = NULL;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(1, 1);
 				drawBackpack();
 				_mouse->show();
@@ -2978,7 +2978,7 @@ void TotEngine::useScreenObject() {
 				loadItem(86, 55, 92, 1591272, 8);
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animateOpen2(3, 1);
 				_mouse->show();
 				goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], 10);
@@ -3002,7 +3002,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[4].depth = 8;
 				loadItem(82, 53, 384, 1746554, 8);
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
 				goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], 15);
 				_mouse->hide();
@@ -3016,7 +3016,7 @@ void TotEngine::useScreenObject() {
 				_screenLayers[7] = NULL;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(3, 1);
 				drawBackpack();
 				_mouse->show();
@@ -3083,7 +3083,7 @@ void TotEngine::useScreenObject() {
 				dropObjectInScreen(_curObject);
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				drawBackpack();
 				animateOpen2(1, 1);
 				for (listIndex = 19; listIndex <= 21; listIndex++)
@@ -3104,7 +3104,7 @@ void TotEngine::useScreenObject() {
 				drawBackpack();
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
 				for (listIndex = 18; listIndex <= 20; listIndex++)
 					_currentRoomData->mouseGrid[listIndex][26] = 10;
@@ -3175,7 +3175,7 @@ void TotEngine::useScreenObject() {
 					}
 					_graphics->restoreBackground();
 					assembleScreen();
-					_graphics->drawScreen(sceneBackground);
+					_graphics->drawScreen(_sceneBackground);
 
 					_sound->waitForSoundEnd();
 					_sound->playVoc("PUFF", 191183, 18001);
@@ -3331,8 +3331,8 @@ void TotEngine::useScreenObject() {
 			}
 		}
 	}
-	oldGridX = 0;
-	oldGridY = 0;
+	_oldGridX = 0;
+	_oldGridY = 0;
 	_actionCode = 0;
 	checkMouseGrid();
 }
@@ -3387,7 +3387,7 @@ void TotEngine::openScreenObject() {
 				_currentRoomData->doors[2].openclosed = 1;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animateOpen2(0, 1);
 				_mouse->show();
 				for (yIndex = 0; yIndex <= 12; yIndex++)
@@ -3396,8 +3396,8 @@ void TotEngine::openScreenObject() {
 				for (xIndex = 33; xIndex <= 35; xIndex++)
 					_currentRoomData->mouseGrid[xIndex][13] = 43;
 				_actionCode = 0;
-				oldGridX = 0;
-				oldGridY = 0;
+				_oldGridX = 0;
+				_oldGridY = 0;
 				_oldTargetZone = 0;
 				checkMouseGrid();
 				return;
@@ -3422,7 +3422,7 @@ void TotEngine::openScreenObject() {
 				_currentRoomData->doors[0].openclosed = 1;
 				_graphics->restoreBackground();
 				assembleScreen();
-				_graphics->drawScreen(sceneBackground);
+				_graphics->drawScreen(_sceneBackground);
 				animateOpen2(1, 1);
 				_mouse->show();
 				xIndex = 30;
@@ -3444,8 +3444,8 @@ void TotEngine::openScreenObject() {
 					for (yIndex = 0; yIndex <= 10; yIndex++)
 						_currentRoomData->mouseGrid[xIndex][yIndex] = 8;
 				_actionCode = 0;
-				oldGridX = 0;
-				oldGridY = 0;
+				_oldGridX = 0;
+				_oldGridY = 0;
 				checkMouseGrid();
 				return;
 			}
@@ -3487,8 +3487,8 @@ void TotEngine::openScreenObject() {
 			}
 		_actionCode = 0;
 	}
-	oldGridX = 0;
-	oldGridY = 0;
+	_oldGridX = 0;
+	_oldGridY = 0;
 	checkMouseGrid();
 }
 
@@ -3559,8 +3559,8 @@ void TotEngine::closeScreenObject() {
 			}
 		_actionCode = 0;
 	}
-	oldGridX = 0;
-	oldGridY = 0;
+	_oldGridX = 0;
+	_oldGridY = 0;
 	checkMouseGrid();
 }
 
@@ -3606,8 +3606,8 @@ void TotEngine::handleAction(byte invPos) {
 		_actionCode = 0;
 		if (_cpCounter > 130)
 			showError(274);
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 2: {
@@ -3618,8 +3618,8 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->show();
 		drawText((Random(10) + 1049));
 		_actionCode = 0;
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 3: {
@@ -3628,8 +3628,8 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->show();
 		_actionCode = 0;
 		lookAtObject(invPos);
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 4:
@@ -3645,8 +3645,8 @@ void TotEngine::handleAction(byte invPos) {
 			if (_cpCounter > 25)
 				showError(274);
 			useInventoryObjectWithInventoryObject(_backpackObjectCode, _inventory[invPos].code);
-			oldGridX = 0;
-			oldGridY = 0;
+			_oldGridX = 0;
+			_oldGridY = 0;
 			checkMouseGrid();
 		}
 		break;
@@ -3656,8 +3656,8 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->show();
 		drawText(Random(9) + 1059);
 		_actionCode = 0;
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	case 6: {
@@ -3668,8 +3668,8 @@ void TotEngine::handleAction(byte invPos) {
 		_actionCode = 0;
 		if (_cpCounter2 > 35)
 			showError(274);
-		oldGridX = 0;
-		oldGridY = 0;
+		_oldGridX = 0;
+		_oldGridY = 0;
 		checkMouseGrid();
 	} break;
 	}
@@ -3763,12 +3763,12 @@ void TotEngine::scrollRight(uint &horizontalPos) {
 	size_t numBytes = 44796;
 	for (int i = 0; i < stepCount; i++) {
 		// move everything to the left
-		memmove(sceneBackground + 4, sceneBackground + 8, numBytes);
+		memmove(_sceneBackground + 4, _sceneBackground + 8, numBytes);
 
 		horizontalPos += 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				sceneBackground[320 + k * 320 + j] = backgroundCopy[horizontalPos + k * 320 + j];
+				_sceneBackground[320 + k * 320 + j] = _backgroundCopy[horizontalPos + k * 320 + j];
 			}
 		}
 		if (characterPos > 0) {
@@ -3786,20 +3786,20 @@ void TotEngine::scrollRight(uint &horizontalPos) {
 			Common::copy(_curCharacterAnimationFrame, _curCharacterAnimationFrame + _mainCharFrameSize, assembledCharacterFrame);
 
 			// puts the original captured background back in the background for next iteration
-			_graphics->putImageArea(_characterPosX - 2, _characterPosY, sceneBackground, spriteBackground);
+			_graphics->putImageArea(_characterPosX - 2, _characterPosY, _sceneBackground, spriteBackground);
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 			// Grabs current area surrounding character (which might contain parts of A and B)
-			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, sceneBackground, spriteBackground);
+			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, spriteBackground);
 			// blits over the character sprite, only on black pixels
 			blit(spriteBackground, assembledCharacterFrame);
 			// puts it back in the background (character + piece of background)
-			_graphics->putImageArea(_characterPosX, _characterPosY, sceneBackground, assembledCharacterFrame);
+			_graphics->putImageArea(_characterPosX, _characterPosY, _sceneBackground, assembledCharacterFrame);
 		} else
 			_characterPosX -= 4;
 		_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		_screen->update();
-		_graphics->drawScreen(sceneBackground);
+		_graphics->drawScreen(_sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3816,13 +3816,13 @@ void TotEngine::scrollLeft(uint &horizontalPos) {
 	for (int i = stepCount; i >= 1; i--) {
 		for (int j = numBytes; j > 0; j--) {
 			// move the previous background to the right
-			sceneBackground[j + 4] = sceneBackground[j];
+			_sceneBackground[j + 4] = _sceneBackground[j];
 		}
 
 		horizontalPos -= 4;
 		for (int k = 0; k < 140; k++) {
 			for (int j = 0; j < 4; j++) {
-				sceneBackground[4 + k * 320 + j] = backgroundCopy[4 + horizontalPos + k * 320 + j];
+				_sceneBackground[4 + k * 320 + j] = _backgroundCopy[4 + horizontalPos + k * 320 + j];
 			}
 		}
 
@@ -3838,20 +3838,20 @@ void TotEngine::scrollLeft(uint &horizontalPos) {
 			_curCharacterAnimationFrame = _mainCharAnimation.bitmap[3][_iframe];
 			Common::copy(_curCharacterAnimationFrame, _curCharacterAnimationFrame + _mainCharFrameSize, assembledCharacterFrame);
 
-			_graphics->putImageArea(_characterPosX + 2, _characterPosY, sceneBackground, spriteBackground);
+			_graphics->putImageArea(_characterPosX + 2, _characterPosY, _sceneBackground, spriteBackground);
 
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 
-			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, sceneBackground, spriteBackground);
+			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, spriteBackground);
 			blit(spriteBackground, assembledCharacterFrame);
-			_graphics->putImageArea(_characterPosX, _characterPosY, sceneBackground, assembledCharacterFrame);
+			_graphics->putImageArea(_characterPosX, _characterPosY, _sceneBackground, assembledCharacterFrame);
 		} else
 			_characterPosX += 4;
 
 		_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		_screen->update();
-		_graphics->drawScreen(sceneBackground);
+		_graphics->drawScreen(_sceneBackground);
 	}
 	free(assembledCharacterFrame);
 }
@@ -3870,7 +3870,7 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 	debug("characterPos=%d,%d, size=%d,%d", _characterPosX, _characterPosY, characterFrameW, characterFrameH);
 	/* Copy the area with the player from previous scren*/
 	spriteBackground = (byte *)malloc(4 + (characterFrameW + 8) * (characterFrameH + 8));
-	_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + characterFrameW, _characterPosY + characterFrameH, sceneBackground, spriteBackground);
+	_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + characterFrameW, _characterPosY + characterFrameH, _sceneBackground, spriteBackground);
 
 	// Start screen 2
 
@@ -3891,26 +3891,26 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 	// background contains background B + objects, backgroundCopy contains plain background B
 
 	// Copies the contents of background into backgroundCopy
-	Common::copy(sceneBackground, sceneBackground + 44804, backgroundCopy);
+	Common::copy(_sceneBackground, _sceneBackground + 44804, _backgroundCopy);
 	// background contains background B + objects, backgroundCopy contains background B + objects
 
 	g_engine->_graphics->_paletteAnimFrame = 0;
-	getScreen(sceneBackground);
+	getScreen(_sceneBackground);
 	// background now contains full background A again, backgroundCopy contains background B + objects
 
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 	if (rightScroll)
 		scrollRight(horizontalPos);
 	else
 		scrollLeft(horizontalPos);
 
 	// After scroll is done, backgroundCopy will now contain the resulting background (background B + objects)
-	Common::copy(backgroundCopy, backgroundCopy + 44804, sceneBackground);
+	Common::copy(_backgroundCopy, _backgroundCopy + 44804, _sceneBackground);
 
 	_characterPosX += scrollCorrection;
 
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 	free(spriteBackground);
 	loadScreen();
 	_trajectory[_currentTrajectoryIndex].x = _characterPosX;
@@ -3918,94 +3918,94 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 }
 
 void TotEngine::saveGameToRegister() {
-	savedGame.roomCode = _currentRoomData->code;
-	savedGame.trajectoryLength = _trajectoryLength;
-	savedGame.currentTrajectoryIndex = _currentTrajectoryIndex;
-	savedGame.backpackObjectCode = _backpackObjectCode;
-	savedGame.rightSfxVol = _sound->_rightSfxVol;
-	savedGame.leftSfxVol = _sound->_leftSfxVol;
-	savedGame.musicVolRight = _sound->_musicVolRight;
-	savedGame.musicVolLeft = _sound->_musicVolLeft;
-	savedGame.oldGridX = oldGridX;
-	savedGame.oldGridY = oldGridY;
-	savedGame.secAnimDepth = _secondaryAnimation.depth;
-	savedGame.secAnimDir = _secondaryAnimation.dir;
-	savedGame.secAnimX = _secondaryAnimation.posx;
-	savedGame.secAnimY = _secondaryAnimation.posy;
-	savedGame.secAnimIFrame = _iframe2;
+	_savedGame.roomCode = _currentRoomData->code;
+	_savedGame.trajectoryLength = _trajectoryLength;
+	_savedGame.currentTrajectoryIndex = _currentTrajectoryIndex;
+	_savedGame.backpackObjectCode = _backpackObjectCode;
+	_savedGame.rightSfxVol = _sound->_rightSfxVol;
+	_savedGame.leftSfxVol = _sound->_leftSfxVol;
+	_savedGame.musicVolRight = _sound->_musicVolRight;
+	_savedGame.musicVolLeft = _sound->_musicVolLeft;
+	_savedGame.oldGridX = _oldGridX;
+	_savedGame.oldGridY = _oldGridY;
+	_savedGame.secAnimDepth = _secondaryAnimation.depth;
+	_savedGame.secAnimDir = _secondaryAnimation.dir;
+	_savedGame.secAnimX = _secondaryAnimation.posx;
+	_savedGame.secAnimY = _secondaryAnimation.posy;
+	_savedGame.secAnimIFrame = _iframe2;
 
-	savedGame.currentZone = _currentZone;
-	savedGame.targetZone = _targetZone;
-	savedGame.oldTargetZone = _oldTargetZone;
-	savedGame.inventoryPosition = _inventoryPosition;
-	savedGame.actionCode = _actionCode;
-	savedGame.oldActionCode = _oldActionCode;
-	savedGame.steps = _trajectorySteps;
-	savedGame.doorIndex = _doorIndex;
-	savedGame.characterFacingDir = _charFacingDirection;
-	savedGame.iframe = _iframe;
-	savedGame.gamePart = _gamePart;
+	_savedGame.currentZone = _currentZone;
+	_savedGame.targetZone = _targetZone;
+	_savedGame.oldTargetZone = _oldTargetZone;
+	_savedGame.inventoryPosition = _inventoryPosition;
+	_savedGame.actionCode = _actionCode;
+	_savedGame.oldActionCode = _oldActionCode;
+	_savedGame.steps = _trajectorySteps;
+	_savedGame.doorIndex = _doorIndex;
+	_savedGame.characterFacingDir = _charFacingDirection;
+	_savedGame.iframe = _iframe;
+	_savedGame.gamePart = _gamePart;
 
-	savedGame.isSealRemoved = _isSealRemoved;
-	savedGame.obtainedList1 = _obtainedList1;
-	savedGame.obtainedList2 = _obtainedList2;
-	savedGame.list1Complete = _list1Complete;
-	savedGame.list2Complete = _list2Complete;
-	savedGame.isVasePlaced = _isVasePlaced;
-	savedGame.isScytheTaken = _isScytheTaken;
-	savedGame.isTridentTaken = _isTridentTaken;
-	savedGame.isPottersWheelDelivered = _isPottersWheelDelivered;
-	savedGame.isMudDelivered = _isMudDelivered;
-	savedGame.isGreenDevilDelivered = _isGreenDevilDelivered;
-	savedGame.isRedDevilCaptured = _isRedDevilCaptured;
-	savedGame.isPottersManualDelivered = _isPottersManualDelivered;
-	savedGame.isCupboardOpen = _isCupboardOpen;
-	savedGame.isChestOpen = _isChestOpen;
-	savedGame.isTVOn = _isTVOn;
-	savedGame.isTrapSet = _isTrapSet;
+	_savedGame.isSealRemoved = _isSealRemoved;
+	_savedGame.obtainedList1 = _obtainedList1;
+	_savedGame.obtainedList2 = _obtainedList2;
+	_savedGame.list1Complete = _list1Complete;
+	_savedGame.list2Complete = _list2Complete;
+	_savedGame.isVasePlaced = _isVasePlaced;
+	_savedGame.isScytheTaken = _isScytheTaken;
+	_savedGame.isTridentTaken = _isTridentTaken;
+	_savedGame.isPottersWheelDelivered = _isPottersWheelDelivered;
+	_savedGame.isMudDelivered = _isMudDelivered;
+	_savedGame.isGreenDevilDelivered = _isGreenDevilDelivered;
+	_savedGame.isRedDevilCaptured = _isRedDevilCaptured;
+	_savedGame.isPottersManualDelivered = _isPottersManualDelivered;
+	_savedGame.isCupboardOpen = _isCupboardOpen;
+	_savedGame.isChestOpen = _isChestOpen;
+	_savedGame.isTVOn = _isTVOn;
+	_savedGame.isTrapSet = _isTrapSet;
 
 	for (int i = 0; i < kInventoryIconCount; i++) {
-		savedGame.mobj[i].bitmapIndex = _inventory[i].bitmapIndex;
-		savedGame.mobj[i].code = _inventory[i].code;
-		savedGame.mobj[i].objectName = _inventory[i].objectName;
+		_savedGame.mobj[i].bitmapIndex = _inventory[i].bitmapIndex;
+		_savedGame.mobj[i].code = _inventory[i].code;
+		_savedGame.mobj[i].objectName = _inventory[i].objectName;
 	}
 
-	savedGame.element1 = _element1;
-	savedGame.element2 = _element2;
-	savedGame.characterPosX = _characterPosX;
-	savedGame.characterPosY = _characterPosY;
-	savedGame.xframe2 = _xframe2;
-	savedGame.yframe2 = _yframe2;
+	_savedGame.element1 = _element1;
+	_savedGame.element2 = _element2;
+	_savedGame.characterPosX = _characterPosX;
+	_savedGame.characterPosY = _characterPosY;
+	_savedGame.xframe2 = _xframe2;
+	_savedGame.yframe2 = _yframe2;
 
-	savedGame.oldInventoryObjectName = _oldInventoryObjectName;
-	savedGame.objetomoinventoryObjectNamehila = _inventoryObjectName;
-	savedGame.characterName = _characterName;
+	_savedGame.oldInventoryObjectName = _oldInventoryObjectName;
+	_savedGame.objetomoinventoryObjectNamehila = _inventoryObjectName;
+	_savedGame.characterName = _characterName;
 
 	for (int i = 0; i < kRoutePointCount; i++) {
-		savedGame.mainRoute[i].x = _mainRoute[i].x;
-		savedGame.mainRoute[i].y = _mainRoute[i].y;
+		_savedGame.mainRoute[i].x = _mainRoute[i].x;
+		_savedGame.mainRoute[i].y = _mainRoute[i].y;
 	}
 
 	for (int i = 0; i < 300; i++) {
-		savedGame.trajectory[i].x = _trajectory[i].x;
-		savedGame.trajectory[i].y = _trajectory[i].y;
+		_savedGame.trajectory[i].x = _trajectory[i].x;
+		_savedGame.trajectory[i].y = _trajectory[i].y;
 	}
 
 	for (int i = 0; i < kCharacterCount; i++) {
-		savedGame.firstTimeTopicA[i] = _firstTimeTopicA[i];
-		savedGame.firstTimeTopicB[i] = _firstTimeTopicB[i];
-		savedGame.firstTimeTopicC[i] = _firstTimeTopicC[i];
-		savedGame.bookTopic[i] = _bookTopic[i];
-		savedGame.mintTopic[i] = _mintTopic[i];
+		_savedGame.firstTimeTopicA[i] = _firstTimeTopicA[i];
+		_savedGame.firstTimeTopicB[i] = _firstTimeTopicB[i];
+		_savedGame.firstTimeTopicC[i] = _firstTimeTopicC[i];
+		_savedGame.bookTopic[i] = _bookTopic[i];
+		_savedGame.mintTopic[i] = _mintTopic[i];
 	}
 	for (int i = 0; i < 5; i++) {
-		savedGame.caves[i] = _caves[i];
-		savedGame.firstList[i] = _firstList[i];
-		savedGame.secondList[i] = _secondList[i];
+		_savedGame.caves[i] = _caves[i];
+		_savedGame.firstList[i] = _firstList[i];
+		_savedGame.secondList[i] = _secondList[i];
 	}
 	for (int i = 0; i < 4; i++) {
-		savedGame.niche[0][i] = _niche[0][i];
-		savedGame.niche[1][i] = _niche[1][i];
+		_savedGame.niche[0][i] = _niche[0][i];
+		_savedGame.niche[1][i] = _niche[1][i];
 	}
 }
 
@@ -4020,8 +4020,8 @@ void TotEngine::loadGame(SavedGame game) {
 	_sound->_leftSfxVol = game.leftSfxVol;
 	_sound->_musicVolRight = game.musicVolRight;
 	_sound->_musicVolLeft = game.musicVolLeft;
-	oldGridX = game.oldGridX;
-	oldGridY = game.oldGridY;
+	_oldGridX = game.oldGridX;
+	_oldGridY = game.oldGridY;
 	_secondaryAnimation.depth = game.secAnimDepth;
 	_secondaryAnimation.dir = game.secAnimDir;
 	_secondaryAnimation.posx = game.secAnimX;
@@ -4198,7 +4198,7 @@ void TotEngine::loadGame(SavedGame game) {
 	drawBackpack();
 	if (_isRedDevilCaptured == false && _currentRoomData->code == 24 && _isTrapSet == false)
 		runaroundRed();
-	_graphics->sceneTransition(false, sceneBackground);
+	_graphics->sceneTransition(false, _sceneBackground);
 }
 
 TextEntry TotEngine::readVerbRegister(uint numRegister) {
@@ -4502,7 +4502,7 @@ void TotEngine::wcScene() {
 	_graphics->copyPalette(wcPalette, g_engine->_graphics->_pal);
 	_graphics->restoreBackground();
 	assembleScreen();
-	_graphics->drawScreen(sceneBackground);
+	_graphics->drawScreen(_sceneBackground);
 	_graphics->partialFadeIn(234);
 	_xframe2 = 0;
 	_currentTrajectoryIndex = 0;

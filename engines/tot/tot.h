@@ -415,29 +415,29 @@ public:
 	/**
 	 * Pointer storing the screen as it displays on the game
 	 */
-	byte *sceneBackground;
+	byte *_sceneBackground;
 
 	/**
 	 * Dirty patch of screen to repaint on every frame
 	 */
-	byte *characterDirtyRect;
+	byte *_characterDirtyRect;
 	/**
 	 * Stores a copy of the background bitmap
 	 */
-	byte *backgroundCopy;
+	byte *_backgroundCopy;
 
-	uint currentRoomNumber;
+	uint _currentRoomNumber;
 
-	bool isLoadingFromLauncher = false;
+	bool _isLoadingFromLauncher = false;
 
-	bool saveAllowed = false;
+	bool _saveAllowed = false;
 
 	/**
 	 * Previous positions of the mouse within the screen grid
 	 */
-	uint oldGridX = 0, oldGridY = 0;
+	uint _oldGridX = 0, _oldGridY = 0;
 
-	SavedGame savedGame;
+	SavedGame _savedGame;
 
 
 public:

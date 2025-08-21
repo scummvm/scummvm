@@ -260,7 +260,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		loadGame(loadedGame);
 	} else {
 		saveGameToRegister();
-		result = syncSaveData(s, savedGame);
+		result = syncSaveData(s, _savedGame);
 	}
 	return result;
 }
@@ -291,7 +291,7 @@ bool TotEngine::canLoadGameStateCurrently(Common::U32String *msg) {
 	return true;
 }
 bool TotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
-	return _inGame && saveAllowed;
+	return _inGame && _saveAllowed;
 }
 
 } // End of namespace Tot
