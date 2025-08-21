@@ -198,7 +198,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAMEN("Journey", "2 The Journey v1.5 (1992)", "4bbc047d21740f79f3f198628ba8f8bc", 665011), // alt version
 	FANGAMEN("Journey", "1 The Journey v1.6 (1992)", "cff7929abf284060c2070dfc1a2fa9cf", 765189),
 	FANGAMEN("Journey", "The Journey 1.6.2 US", "588a516caa187005fdfcbc72823c8eff", 820316),
-	FANGAMEN("Jumble", "xn--LSJUMBLE -", "555ead186ec1683157e53b96fc4a99d5", 647083), // Original file name is "LSJUMBLE† "
+	FANGAMEN("Jumble", "xn--LSJUMBLE -nd0e", "555ead186ec1683157e53b96fc4a99d5", 647083), // Original file name is "LSJUMBLE† "
 	FANGAME("Karth of the Jungle", "6dae6eef6f46101ba8c9e312bb82e824", 96455),
 	FANGAME("Karth of the Jungle", "52414de10b5d0f75a582740d8d3face6", 96455), // alt version
 	FANGAME("Karth of the Jungle", "c869cacc59f2402d06bc8197be28b5df", 96704), // alt version
@@ -267,6 +267,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Periapt", "7e26a7827c694232624321a5a6844511", 405750),
 	FANGAME("Periapt", "bc36e40de279d5f0844577fe702d9f64", 405750), // alt version
 	FANGAME("Periapt", "661642865321fa81ce84ae2eedbc1aff", 405736), // alt version
+	FANGAMEN("Periapt", "Periapt.1", "661642865321fa81ce84ae2eedbc1aff", 405736), // alt version
 	FANGAME("The Phoenix", "bd6dabf7a19d2ab7902498a8513f8c71", 431387),
 	FANGAMEN("The Phoenix v1.2", "The Phoenix", "fee9f1de7ad9096d084461d6066192b1", 431384),
 	FANGAME("Pirate Attack!", "d4d3f59b57d5bf3dd690fd657ecdd9c6", 323722),
@@ -289,7 +290,7 @@ static const ADGameDescription gameDescriptions[] = {
 	FANGAME("Quest for T-Rex", "f1edd78817e5a72fb7d85879f168fc8c", 592328), // alt version
 	FANGAME("Quest for T-Rex", "31ef93ae4ee7b48e3720b977dcf480c3", 592314), // alt version
 	FANGAME("Quest for T-Rex", "90d5ac734a3944480bdeb4a89524db41", 591728), // alt version
-	FANGAME("Quest for T-Rex", "1ff85bc2ca98e016bc4809ba4499b58b", 595989), // alt version
+	FANGAMEN("Quest for T-Rex", "3 Quest for T-Rex (19901125)", "1ff85bc2ca98e016bc4809ba4499b58b", 595989), // alt version
 	FANGAMEN("Quest for T-Rex", "Quest for T-Rex 1.2", "edd1164eccad3eaa23b3636000b5a047", 593924),
 	FANGAMEN("Quest for the Dark Sword", "xn--Quest for the Dark Sword-3r4o", "d98c3879ff20ca7e835e3a630c2c74ef", 572320), // original file name "Quest for the Dark Sword™"
 	FANGAMEN("Quester: The Forbidden Lands", "Quester (Demo)", "r:5f0b06526d3a951121333953f559da3f", 254868),
