@@ -926,11 +926,11 @@ void TotEngine::lookAtObject(byte objectCode) {
 			description = textRef.text;
 			for (yaux = 0; yaux < textRef.text.size(); yaux++)
 				description.setChar(_decryptionKey[yaux] ^ textRef.text[yaux], yaux);
-			displayObjectDescription(description, 60, 15, 33, 255, 0);
+			displayObjectDescription(description);
 			_verbFile.close();
 		} else {
 			description = _inventory[objectCode].objectName;
-			displayObjectDescription(description, 60, 15, 33, 255, 0);
+			displayObjectDescription(description);
 		}
 	} else {
 
@@ -940,11 +940,11 @@ void TotEngine::lookAtObject(byte objectCode) {
 			description = textRef.text;
 			for (yaux = 0; yaux < textRef.text.size(); yaux++)
 				description.setChar(_decryptionKey[yaux] ^ textRef.text[yaux], yaux);
-			displayObjectDescription(description, 60, 15, 33, 255, 0);
+			displayObjectDescription(description);
 			_verbFile.close();
 		} else {
 			description = _inventory[objectCode].objectName;
-			displayObjectDescription(description, 60, 15, 33, 255, 0);
+			displayObjectDescription(description);
 		}
 	}
 

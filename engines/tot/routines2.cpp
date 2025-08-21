@@ -935,14 +935,12 @@ void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx
 		bar(posx + (output.size()) * 6, posy + 2, (posx + (output.size()) * 6) + 6, posy + 9, barColor);
 }
 
-void TotEngine::displayObjectDescription(
-	Common::String textString,
-	uint xpos,
-	uint ypos,
-	byte maxWidth,
-	byte textColor,
-	byte shadowColor) {
-
+void TotEngine::displayObjectDescription(Common::String textString) {
+	uint xpos = 60;
+	uint ypos = 15;
+	byte maxWidth = 33;
+	byte textColor = 255;
+	byte shadowColor = 0;
 	byte ihc, lineCounter;
 	byte newLineMatrix[10];
 
