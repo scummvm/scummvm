@@ -391,6 +391,7 @@ void Channel::setCast(CastMemberID memberID) {
 	if (_sprite->_cast)
 		_sprite->_cast->releaseWidget();
 
+	bool hasChanged = _sprite->_castId != memberID;
 	// Replace the cast member in the sprite.
 	// Only change the dimensions if the "stretch" flag is set,
 	// indicating that the sprite has already been warped away from cast
@@ -398,6 +399,24 @@ void Channel::setCast(CastMemberID memberID) {
 	// dimensions of the sprite, -then- change the cast ID, and expect
 	// those custom dimensions to stick around.
 	_sprite->setCast(memberID, !_sprite->_stretch);
+
+	// Duplicate of the special cases in setClean.
+	// Maybe it makes sense to force setClean to use setCast instead?
+	if (hasChanged && _sprite->_cast) {
+		if (_sprite->_cast->_type == kCastDigitalVideo) {
+			DigitalVideoCastMember *dv = (DigitalVideoCastMember *)_sprite->_cast;
+			if (dv->loadVideoFromCast()) {
+				_movieTime = 0;
+				dv->setChannel(this);
+				dv->startVideo();
+			}
+		} else if (_sprite->_cast->_type == kCastFilmLoop ||
+					_sprite->_cast->_type == kCastMovie) {
+			// brand new film loop, reset the frame counter.
+			_filmLoopFrame = 1;
+		}
+	}
+
 	replaceWidget();
 
 	// Based on Director in a Nutshell, page 15
