@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-21 08:28+0000\n"
-"PO-Revision-Date: 2025-08-18 11:12+0000\n"
+"PO-Revision-Date: 2025-08-21 09:15+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -13090,73 +13090,55 @@ msgid "Show windows with a partially transparent background"
 msgstr "Mostrar las ventanas con un fondo parcialmente transparente"
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Scroll keymappings"
-msgstr "Asignaciones de introducción"
+msgstr "Asignaciones de desplazamiento"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Main user interface keymappings"
-msgstr "Asignaciones del menú principal"
+msgstr "Asignaciones de la interfaz principal"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Darts minigame keymappings"
-msgstr "Asignaciones de minijuegos"
+msgstr "Asignaciones de minijuego de dardos"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Map keymappings"
 msgid "Talk keymappings"
-msgstr "Asignaciones del mapa"
+msgstr "Asignaciones para hablar"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "Fight keymappings"
 msgid "Files keymappings"
-msgstr "Asignaciones de combate"
+msgstr "Asignaciones de ficheros"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Skip song keymappings"
 msgid "Settings keymappings"
-msgstr "Asignaciones para omitir canciones"
+msgstr "Asignaciones de opciones"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Movement keymappings"
 msgid "Movie keymappings"
-msgstr "Asignaciones de movimiento"
+msgstr "Asignaciones de vídeos"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Reset selected verb"
 msgid "Skip / Deselect verb"
-msgstr "Reiniciar verbo seleccionado"
+msgstr "Omitir/Deseleccionar verbo"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
-msgstr ""
+msgstr "Configuración"
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "Conjunto de tiles"
+msgstr "Ficheros"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:906
 msgid "Go back 10 pages"
-msgstr ""
+msgstr "Retroceder 10 páginas"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:507
 msgid "Go ahead 10 pages"
-msgstr ""
+msgstr "Avanzar 10 páginas"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521
@@ -13172,344 +13154,246 @@ msgstr "Última página"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Go back in journal"
 msgid "Go back a page"
-msgstr "Volver al diario"
+msgstr "Retroceder una página"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Roll left"
 msgid "Scroll left"
-msgstr "Inclinar hacia la izquierda"
+msgstr "Desplazar hacia la izquierda"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Roll Right"
 msgid "Scroll Right"
-msgstr "Rodar hacia la derecha"
+msgstr "Desplazar hacia la derecha"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
 msgid "Go ahead a page"
-msgstr ""
+msgstr "Avanzar una página"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
-#, fuzzy
-#| msgid "Select option 1"
 msgid "Select option"
-msgstr "Seleccionar opción 1"
+msgstr "Seleccionar opción"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
 msgid "Toggle music"
 msgstr "Activar/Desactivar música"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle combat"
 msgid "Toggle portraits"
-msgstr "Entrar/salir del modo de combate"
+msgstr "Activar/Desactivar retratos"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "Cambiar tamaño de fuente"
+msgstr "Cambiar estilo de fuente"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
 msgstr "Activar/Desactivar efectos de sonido"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle god mode"
 msgid "Toggle windows mode"
-msgstr "Activar/Desactivar modo Dios"
+msgstr "Activar/Desactivar modo de ventanas"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change action"
 msgid "Change auto-help location"
-msgstr "Cambiar acción"
+msgstr "Cambiar posición de autoayuda"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Toggle cheats"
 msgid "Toggle voices"
-msgstr "Activar/Desactivar trucos"
+msgstr "Activar/Desactivar voces"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
 msgid "Fade by pixel"
-msgstr ""
+msgstr "Fundido píxel por píxel"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "Crear directorio"
+msgstr "Fundido directo"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "Cambiar modo"
+msgstr "Cambiar modo de fundidos"
 
 #: engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Journal keymappings"
 msgid "Journal search keymappings"
-msgstr "Asignaciones del diario"
+msgstr "Asignaciones para buscar en diario"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "Asignaciones del menú"
+msgstr "Asignaciones de despl. en menús"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "Asignaciones de guardado/carga"
+msgstr "Asignaciones del menú de guardar/cargar"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Save file management menus keymappings"
 msgid "Save files name editing keymappings"
-msgstr "Asignaciones de los menús de archivos guardados"
+msgstr "Asignaciones para editar nombres de archivos guardados"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Asignaciones de escapada"
+msgstr "Asignaciones del acertijo del folio"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Options menu keymappings"
-msgstr "Asignaciones del menú principal"
+msgstr "Asignaciones del menú de opciones"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Password entry keymappings"
-msgstr "Asignaciones del menú de pausa"
+msgstr "Asignaciones para introducir contraseñas"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Animation keymappings"
 msgid "Talk options keymappings"
-msgstr "Asignaciones de animaciones"
+msgstr "Asignaciones de opciones de conversación"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Move / Examine / Select"
-msgstr "Mover/Interactuar/Seleccionar"
+msgstr "Mover/Examinar/Seleccionar"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "Abrir menú de acciones/Cerrar menú"
+msgstr "Abrir/Cerrar menú de verbos"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "Cambiar sonido"
+msgstr "Cambiar velocidad"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Use journal"
 msgid "Open journal"
-msgstr "Usar diario"
+msgstr "Abrir diario"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "Abrir menú de opciones"
+msgstr "Abrir opciones"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "Ajustado en ventana"
+msgstr "Salir/Cerrar ventana"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "Omitir diálogo"
+msgstr "Omitir prólogo"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "Cambiar opción selecc. a la izda."
 
 #: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "Cambiar opción selecc. a la dcha."
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Go forward in journal"
 msgid "Go forward 10 pages"
-msgstr "Avanzar diario"
+msgstr "Avanzar 10 páginas"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Go forward in journal"
 msgid "Go forward 1 page"
-msgstr "Avanzar diario"
+msgstr "Avanzar una página"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Go back in journal"
 msgid "Go back 1 page"
-msgstr "Volver al diario"
+msgstr "Retroceder una página"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of journal"
-msgstr "Ir al principio de la línea"
+msgstr "Ir al principio del diario"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of journal"
-msgstr "Ir al final de la línea"
+msgstr "Ir al final del diario"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
-#| msgid "Skip minigame"
 msgid "Skip darts minigame"
-msgstr "Omitir minijuego"
+msgstr "Omitir minijuego de dardos"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to top left"
-msgstr "Ir al inicio"
+msgstr "Ir a parte superior"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Scroll to bottom"
 msgid "Scroll to bottom right"
-msgstr "Ir al final"
+msgstr "Ir a parte inferior dcha."
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "Subir barra de desplazamiento"
+msgstr "Desplazar hacia arriba"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "Bajar barra de desplazamiento"
+msgstr "Desplazar hacia abajo"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to end"
-msgstr "Ir al inicio"
+msgstr "Desplazar al final"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to start"
-msgstr "Ir al inicio"
+msgstr "Desplazar al principio"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next save file slot"
-msgstr "Ir al diálogo siguiente"
+msgstr "Ir al siguiente espacio de guardado"
 
 #: engines/sherlock/metaengine.cpp:1074
-#, fuzzy
-#| msgid "Go to start of save / load menu"
 msgid "Go to next page of save files"
-msgstr "Inicio del menú de guardado/carga"
+msgstr "Ir a sig. página de guardados"
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "Selecciona el archivo de copia de seguridad"
+msgstr "Seleccionar archivo guardado"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "Ir al final de la línea"
+msgstr "Ir al principio de la línea"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line end"
 msgstr "Ir al final de la línea"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "Modo rápido"
+msgstr "Activar/Desactivar modo de insertado"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "Cerrar ventana"
+msgstr "Cerrar acertijo"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr ""
+msgstr "Salir de inventario/Cerrar menú verbos/Cancelar acción objeto"
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select next Actor"
 msgid "Select next option"
-msgstr "Seleccionar al siguiente actor"
+msgstr "Seleccionar siguiente opción"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next talk option"
-msgstr "Ir al diálogo siguiente"
+msgstr "Siguiente opción de conversación"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogs"
 msgid "Go to previous talk option"
-msgstr "Ir a diálogos anteriores"
+msgstr "Opción de conversación anterior"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
