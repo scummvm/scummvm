@@ -28,6 +28,7 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CFrameWnd, CWnd)
 BEGIN_MESSAGE_MAP(CFrameWnd, CWnd)
 ON_WM_CREATE()
+ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
 HMENU CFrameWnd::GetMenu() const {
@@ -237,6 +238,17 @@ void CFrameWnd::ActivateFrame(int nCmdShow) {
 
 void CFrameWnd::OnUpdateFrameTitle(BOOL bAddToTitle) {
 	// TODO: CFrameWnd::OnUpdateFrameTitle
+}
+
+void CFrameWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+	if (nState != WA_INACTIVE) {
+		// Invalidate the dialog and its children
+		Invalidate(TRUE);
+		for (auto child : _children)
+			child._value->Invalidate(TRUE);
+	}
+
+	CWnd::OnActivate(nState, pWndOther, bMinimized);
 }
 
 } // namespace MFC

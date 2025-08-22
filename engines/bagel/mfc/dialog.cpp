@@ -33,6 +33,7 @@ ON_MESSAGE(WM_INITDIALOG, CDialog::HandleInitDialog)
 ON_MESSAGE(WM_SETFONT, CDialog::HandleSetFont)
 ON_WM_SYSCHAR()
 ON_WM_CLOSE()
+ON_WM_ACTIVATE()
 END_MESSAGE_MAP()
 
 CDialog::CDialog(LPCSTR lpszTemplateName, CWnd *pParentWnd) {
@@ -298,6 +299,17 @@ void CDialog::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 	// If no match found, pass to base class
 	CWnd::OnSysChar(nChar, nRepCnt, nFlags);
+}
+
+void CDialog::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+	if (nState != WA_INACTIVE) {
+		// Invalidate the dialog and its children
+		Invalidate(TRUE);
+		for (auto child : _children)
+			child._value->Invalidate(TRUE);
+	}
+
+	CWnd::OnActivate(nState, pWndOther, bMinimized);
 }
 
 } // namespace MFC
