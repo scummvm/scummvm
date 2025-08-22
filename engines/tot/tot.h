@@ -101,10 +101,6 @@ private:
 	//Rout2
 	void adjustKey();
 	void adjustKey2();
-	void animateGive(uint dir, uint height);
-	void animatePickup1(uint dir, uint height);
-	void animatePickup2(uint dir, uint height);
-	void animateOpen2(uint dir, uint height);
 	void animateBat();
 	void updateVideo();
 	void nicheAnimation(byte nicheDir, int32 bitmap);
@@ -113,21 +109,30 @@ private:
 	void calculateTrajectory(uint finalX, uint finalY);
 	void animatedSequence(uint numSequence);
 	void initScreenPointers();
-	void loadAnimation(Common::String animation);
-	void updateAltScreen(byte altScreenNumber);
 	void verifyCopyProtection();
 	void verifyCopyProtection2();
+
+	void loadAnimation(Common::String animation);
+	void loadCharAnimation();
+	void animateGive(uint dir, uint height);
+	void animatePickup1(uint dir, uint height);
+	void animatePickup2(uint dir, uint height);
+	void animateOpen2(uint dir, uint height);
+
 	void loadTV();
 	void loadScreen();
-	void loadCharAnimation();
-	void freeInventory();
-	void loadItemWithFixedDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth);
-	void loadItem(uint coordx, uint coordy, uint picSize, int32 pic, uint prof);
-	void updateInventory(byte index);
+	void loadScreenLayerWithDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth);
+	void loadScreenLayer(uint coordx, uint coordy, uint picSize, int32 pic, uint prof);
 	void readBitmap(int32 bitmapOffset, byte *bitmap, uint bitmapSize, uint errorCode);
+	void updateAltScreen(byte altScreenNumber);
+
+	void freeInventory();
+	void updateInventory(byte index);
 	void updateItem(uint filePos);
 	void readItemRegister(Common::SeekableReadStream *stream, uint objPos, ScreenObject &thisRegObj);
 	void saveItemRegister(ScreenObject object, Common::SeekableWriteStream *stream);
+	void saveItemRegister();
+
 	void saveTemporaryGame();
 	void drawLookAtItem(RoomObjectListEntry obj);
 	void putIcon(uint posX, uint posY, uint iconNumber);
@@ -153,10 +158,9 @@ private:
 	void assembleScreen(bool scroll = false);
 	void disableSecondAnimation();
 	void clearGame();
-	void saveItemRegister();
 
 	// vars
-	void clearObj();
+	void clearCurrentInventoryObject();
 	void initVars();
 	void resetGameState();
 	void clearVars();
@@ -473,8 +477,8 @@ public:
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override;
 
 	void loadScreenData(uint screenNumber);
-	void freeScreenObjects();
-	void freeAnimation();
+	void clearScreenLayers();
+	void clearAnimation();
 	void buttonBorder(uint x1, uint y1, uint x2, uint y2, byte color1, byte color2, byte color3, byte color4, byte color5);
 	void drawMenu(byte menuNumber);
 	void readTextFile();
@@ -483,8 +487,8 @@ public:
 	void goToObject(byte zone1, byte zone2);
 	void readItemRegister(uint objPos);
 	TextEntry readVerbRegister();
-	void drawBackpack();
-	void mask();
+	void drawInventory();
+	void drawInventoryMask();
 	void setRoomTrajectories(int height, int width, TRAJECTORIES_OP op, bool fixGrids = true);
 	void saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream);
 	//vars

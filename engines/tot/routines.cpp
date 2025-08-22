@@ -117,7 +117,7 @@ void TotEngine::runaroundRed() {
 			_screen->update();
 		}
 	} while (!exitLoop && !shouldQuit());
-	freeAnimation();
+	clearAnimation();
 	_graphics->restoreBackground();
 	assembleScreen();
 	_graphics->drawScreen(_sceneBackground);
@@ -614,7 +614,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		_graphics->drawScreen(_sceneBackground);
 		_screenLayers[13] = NULL;
 		_mainCharAnimation.depth = animIndex;
-		drawBackpack();
+		drawInventory();
 		for (animIndex = 32; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
@@ -798,7 +798,7 @@ void TotEngine::loadScreenData(uint screenNumber) {
 	for (int i = 0; i < 15; i++) {
 		RoomBitmapRegister &bitmap = _currentRoomData->screenLayers[i];
 		if (bitmap.bitmapSize > 0) {
-			loadItem(bitmap.coordx, bitmap.coordy, bitmap.bitmapSize, bitmap.bitmapPointer, bitmap.depth);
+			loadScreenLayer(bitmap.coordx, bitmap.coordy, bitmap.bitmapSize, bitmap.bitmapPointer, bitmap.depth);
 		}
 	}
 	if (_currentRoomData->animationFlag && _currentRoomData->code != 24) {
@@ -1004,7 +1004,7 @@ void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint obj
 			_inventory[indobj1].objectName = _inventory[indobj1 + 1].objectName;
 		}
 		_mouse->hide();
-		drawBackpack();
+		drawInventory();
 		_mouse->show();
 	}
 	if (textRef > 0)
@@ -1383,7 +1383,7 @@ void TotEngine::animateBat() {
 		curAnimHeight = _secondaryAnimHeight;
 		curAnimDepth = _secondaryAnimation.depth;
 		curAnimDir = _secondaryAnimation.dir;
-		freeAnimation();
+		clearAnimation();
 	}
 	loadBat();
 	_sound->stopVoc();
@@ -1417,7 +1417,7 @@ void TotEngine::animateBat() {
 	} while (!loopBreak && !shouldQuit());
 
 	_sound->stopVoc();
-	freeAnimation();
+	clearAnimation();
 	if (_currentRoomData->animationFlag) {
 		_secondaryAnimWidth = currAnimWidth;
 		_secondaryAnimHeight = curAnimHeight;
@@ -1601,7 +1601,7 @@ void TotEngine::pickupScreenObject() {
 					with.coordx = 80;
 					with.coordy = 56;
 					with.depth = 2;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{
 					RoomBitmapRegister &with = _currentRoomData->screenLayers[2];
@@ -1611,7 +1611,7 @@ void TotEngine::pickupScreenObject() {
 					with.coordx = 76;
 					with.coordy = 62;
 					with.depth = 1;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				_screenLayers[_curObject.depth - 1] = NULL;
 				_graphics->restoreBackground();
@@ -1823,7 +1823,7 @@ void TotEngine::pickupScreenObject() {
 					with.coordx = 38;
 					with.coordy = 58;
 					with.depth = 1;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{ // ring
 					RoomBitmapRegister &with = _currentRoomData->screenLayers[1];
@@ -1833,7 +1833,7 @@ void TotEngine::pickupScreenObject() {
 					with.coordx = 50;
 					with.coordy = 58;
 					with.depth = 3;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				_graphics->restoreBackground();
 				assembleScreen();
@@ -1949,7 +1949,7 @@ void TotEngine::pickupScreenObject() {
 	_inventory[inventoryIndex].code = _curObject.code;
 	_inventory[inventoryIndex].objectName = _curObject.name;
 	_mouse->hide();
-	drawBackpack();
+	drawInventory();
 	_mouse->show();
 	if (_curObject.pickTextRef > 0)
 		drawText(_curObject.pickTextRef);
@@ -1984,7 +1984,7 @@ void TotEngine::dropObjectInScreen(ScreenObject replacementObject) {
 				with.coordx = replacementObject.dropOverlayX;
 				with.coordy = replacementObject.dropOverlayY;
 				with.depth = replacementObject.depth;
-				loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+				loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 			}
 			for (int j = replacementObject.ygrid1; j <= replacementObject.ygrid2; j++)
 				for (int i = replacementObject.xgrid1; i <= replacementObject.xgrid2; i++) {
@@ -2055,7 +2055,7 @@ void TotEngine::useScreenObject() {
 						_currentRoomData->mouseGrid[_oldposx + listIndex][_oldposy + invIndex] = _mouseGridForSecondaryAnim[listIndex][invIndex];
 					}
 
-				freeAnimation();
+				clearAnimation();
 				_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x + 8;
 				_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
 				_currentRoomData->animationName = "GALLOPIC";
@@ -2128,7 +2128,7 @@ void TotEngine::useScreenObject() {
 								listIndex += 1;
 							}
 							updateInventory(listIndex);
-							drawBackpack();
+							drawInventory();
 							_mouse->show();
 						} else {
 							readTextFile();
@@ -2179,7 +2179,7 @@ void TotEngine::useScreenObject() {
 								listIndex += 1;
 							}
 							updateInventory(listIndex);
-							drawBackpack();
+							drawInventory();
 							_mouse->show();
 						} else {
 							readTextFile();
@@ -2217,7 +2217,7 @@ void TotEngine::useScreenObject() {
 					_verbFile.close();
 					_mouse->hide();
 					updateInventory(usedObjectIndex);
-					drawBackpack();
+					drawInventory();
 					_mouse->show();
 					for (foo = 0; foo < kCharacterCount; foo++)
 						_bookTopic[foo] = true;
@@ -2236,7 +2236,7 @@ void TotEngine::useScreenObject() {
 				_verbFile.close();
 				_mouse->hide();
 				updateInventory(usedObjectIndex);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				for (foo = 0; foo < kCharacterCount; foo++) {
 					_mintTopic[foo] = true;
@@ -2260,7 +2260,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						replaceBackpack(usedObjectIndex, 676);
-						drawBackpack();
+						drawInventory();
 						disableSecondAnimation();
 						{
 							RoomBitmapRegister &with = _currentRoomData->screenLayers[0];
@@ -2270,7 +2270,7 @@ void TotEngine::useScreenObject() {
 							with.coordx = 120;
 							with.coordy = 55;
 							with.depth = 1;
-							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+							loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
@@ -2286,7 +2286,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						updateInventory(usedObjectIndex);
-						drawBackpack();
+						drawInventory();
 						_mouse->show();
 					}
 				} break;
@@ -2305,7 +2305,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						replaceBackpack(usedObjectIndex, 676);
-						drawBackpack();
+						drawInventory();
 						disableSecondAnimation();
 						{
 							RoomBitmapRegister &with = _currentRoomData->screenLayers[0];
@@ -2315,7 +2315,7 @@ void TotEngine::useScreenObject() {
 							with.coordx = 120;
 							with.coordy = 55;
 							with.depth = 1;
-							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+							loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
@@ -2331,7 +2331,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						updateInventory(usedObjectIndex);
-						drawBackpack();
+						drawInventory();
 						_mouse->show();
 					}
 				} break;
@@ -2350,7 +2350,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						replaceBackpack(usedObjectIndex, 676);
-						drawBackpack();
+						drawInventory();
 						disableSecondAnimation();
 						{
 							RoomBitmapRegister &with = _currentRoomData->screenLayers[0];
@@ -2360,7 +2360,7 @@ void TotEngine::useScreenObject() {
 							with.coordx = 120;
 							with.coordy = 55;
 							with.depth = 1;
-							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+							loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
@@ -2376,7 +2376,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						updateInventory(usedObjectIndex);
-						drawBackpack();
+						drawInventory();
 						_mouse->show();
 					}
 				} break;
@@ -2395,7 +2395,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						replaceBackpack(usedObjectIndex, 676);
-						drawBackpack();
+						drawInventory();
 						disableSecondAnimation();
 						{
 							RoomBitmapRegister &with = _currentRoomData->screenLayers[0];
@@ -2405,7 +2405,7 @@ void TotEngine::useScreenObject() {
 							with.coordx = 120;
 							with.coordy = 55;
 							with.depth = 1;
-							loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+							loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 						}
 						_currentRoomData->mouseGrid[15][12] = 7;
 						_mouse->show();
@@ -2421,7 +2421,7 @@ void TotEngine::useScreenObject() {
 						_verbFile.close();
 						_mouse->hide();
 						updateInventory(usedObjectIndex);
-						drawBackpack();
+						drawInventory();
 						_mouse->show();
 					}
 				} break;
@@ -2450,7 +2450,7 @@ void TotEngine::useScreenObject() {
 
 				animateGive(3, 2);
 				updateInventory(usedObjectIndex);
-				drawBackpack();
+				drawInventory();
 				animateOpen2(3, 2);
 				animatedSequence(6);
 
@@ -2482,7 +2482,7 @@ void TotEngine::useScreenObject() {
 				_mouse->hide();
 				animatedSequence(5);
 				replaceBackpack(usedObjectIndex, 423);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				_actionCode = 0;
 				_oldGridX = 0;
@@ -2562,7 +2562,7 @@ void TotEngine::useScreenObject() {
 				_sound->playVoc("TIJERAS", 252764, 5242);
 				_sound->waitForSoundEnd();
 				animatePickup2(2, 0);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 			} break;
 			case 227: {
@@ -2573,7 +2573,7 @@ void TotEngine::useScreenObject() {
 				_sound->waitForSoundEnd();
 				animateOpen2(0, 2);
 				replaceBackpack(usedObjectIndex, 453);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				updateItem(_inventory[usedObjectIndex].code);
 				_isCupboardOpen = true;
@@ -2608,7 +2608,7 @@ void TotEngine::useScreenObject() {
 				_sound->waitForSoundEnd();
 				animatePickup2(0, 2);
 				replaceBackpack(usedObjectIndex, 204);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 			} break;
 			case 507: {
@@ -2617,7 +2617,7 @@ void TotEngine::useScreenObject() {
 				_sound->playVoc("MAQUINA", 153470, 7378);
 				animateOpen2(0, 1);
 				updateInventory(usedObjectIndex);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				_currentRoomData->mouseGrid[27][8] = 22;
 			} break;
@@ -2663,7 +2663,7 @@ void TotEngine::useScreenObject() {
 							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
-							drawBackpack();
+							drawInventory();
 							_mouse->show();
 						} else {
 
@@ -2686,7 +2686,7 @@ void TotEngine::useScreenObject() {
 							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(3, 1);
 							updateInventory(usedObjectIndex);
-							drawBackpack();
+							drawInventory();
 							_currentRoomData->screenObjectIndex[9]->objectName = "                    ";
 							_sound->playVoc("PLATAF", 375907, 14724);
 							switch (_niche[0][_niche[0][3]]) {
@@ -2753,7 +2753,7 @@ void TotEngine::useScreenObject() {
 							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
-							drawBackpack();
+							drawInventory();
 							_mouse->show();
 						} else {
 
@@ -2779,7 +2779,7 @@ void TotEngine::useScreenObject() {
 							_graphics->drawScreen(_sceneBackground);
 							animateOpen2(0, 1);
 							updateInventory(usedObjectIndex);
-							drawBackpack();
+							drawInventory();
 							_currentRoomData->screenObjectIndex[8]->objectName = "                    ";
 							_sound->playVoc("PLATAF", 375907, 14724);
 							switch (_niche[1][_niche[1][3]]) {
@@ -2854,7 +2854,7 @@ void TotEngine::useScreenObject() {
 					with.coordx = 168;
 					with.coordy = 83;
 					with.depth = 12;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				{
 					RoomBitmapRegister &with = _currentRoomData->screenLayers[2];
@@ -2864,7 +2864,7 @@ void TotEngine::useScreenObject() {
 					with.coordx = 177;
 					with.coordy = 82;
 					with.depth = 1;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				readBitmap(1243652, _screenLayers[5], 2718, 319);
 				_graphics->restoreBackground();
@@ -2877,7 +2877,7 @@ void TotEngine::useScreenObject() {
 				animateGive(3, 2);
 				animatePickup2(3, 2);
 				replaceBackpack(usedObjectIndex, 607);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 			} break;
 			case 608: {
@@ -2894,13 +2894,13 @@ void TotEngine::useScreenObject() {
 					with.coordx = 208;
 					with.coordy = 105;
 					with.depth = 4;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
 				updateInventory(usedObjectIndex);
-				drawBackpack();
+				drawInventory();
 				_isTrapSet = true;
 				_mouse->show();
 			} break;
@@ -2911,7 +2911,7 @@ void TotEngine::useScreenObject() {
 				animateGive(_charFacingDirection, 1);
 
 				// Show feather on pedestal
-				loadItem(187, 70, 104, 1545820, 8);
+				loadScreenLayer(187, 70, 104, 1545820, 8);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -2940,7 +2940,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[4].coordx = 186;
 				_currentRoomData->screenLayers[4].coordy = 64;
 				_currentRoomData->screenLayers[4].depth = 8;
-				loadItem(186, 63, 464, 1447508, 8);
+				loadScreenLayer(186, 63, 464, 1447508, 8);
 
 				_graphics->restoreBackground();
 				assembleScreen();
@@ -2960,7 +2960,7 @@ void TotEngine::useScreenObject() {
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(1, 1);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				for (listIndex = 35; listIndex <= 37; listIndex++)
 					for (invIndex = 21; invIndex <= 25; invIndex++)
@@ -2975,7 +2975,7 @@ void TotEngine::useScreenObject() {
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
 				animateGive(3, 1);
-				loadItem(86, 55, 92, 1591272, 8);
+				loadScreenLayer(86, 55, 92, 1591272, 8);
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -3000,7 +3000,7 @@ void TotEngine::useScreenObject() {
 				_currentRoomData->screenLayers[4].coordx = 82;
 				_currentRoomData->screenLayers[4].coordy = 53;
 				_currentRoomData->screenLayers[4].depth = 8;
-				loadItem(82, 53, 384, 1746554, 8);
+				loadScreenLayer(82, 53, 384, 1746554, 8);
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
 				_mouse->show();
@@ -3018,7 +3018,7 @@ void TotEngine::useScreenObject() {
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
 				animatePickup2(3, 1);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 				for (listIndex = 0; listIndex <= 2; listIndex++)
 					for (invIndex = 10; invIndex <= 12; invIndex++)
@@ -3037,7 +3037,7 @@ void TotEngine::useScreenObject() {
 				goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], 5);
 				_mouse->hide();
 				updateInventory(usedObjectIndex);
-				drawBackpack();
+				drawInventory();
 				drawFlc(133, 0, offset, 0, 9, 22, false, false, true, foobar);
 				{
 					RoomBitmapRegister &with = _currentRoomData->screenLayers[2];
@@ -3047,7 +3047,7 @@ void TotEngine::useScreenObject() {
 					with.coordx = 147;
 					with.coordy = 38;
 					with.depth = 9;
-					loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+					loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 				}
 				updateAltScreen(31);
 				for (listIndex = 18; listIndex <= 20; listIndex++)
@@ -3070,7 +3070,7 @@ void TotEngine::useScreenObject() {
 				_sound->playVoc("AFILAR", 0, 6433);
 				drawFlc(160, 15, offset, 0, 9, 23, false, false, true, foobar);
 				replaceBackpack(usedObjectIndex, 715);
-				drawBackpack();
+				drawInventory();
 				_mouse->show();
 			} break;
 			case 686: {
@@ -3084,7 +3084,7 @@ void TotEngine::useScreenObject() {
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
-				drawBackpack();
+				drawInventory();
 				animateOpen2(1, 1);
 				for (listIndex = 19; listIndex <= 21; listIndex++)
 					for (invIndex = 10; invIndex <= 13; invIndex++)
@@ -3101,7 +3101,7 @@ void TotEngine::useScreenObject() {
 				_mouse->hide();
 				drawFlc(110, 79, offset, 0, 9, 0, false, false, true, foobar);
 				replaceBackpack(usedObjectIndex, 701);
-				drawBackpack();
+				drawInventory();
 				_graphics->restoreBackground();
 				assembleScreen();
 				_graphics->drawScreen(_sceneBackground);
@@ -3171,7 +3171,7 @@ void TotEngine::useScreenObject() {
 						with.coordx = 39;
 						with.coordy = 16;
 						with.depth = 1;
-						loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+						loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 					}
 					_graphics->restoreBackground();
 					assembleScreen();
@@ -3234,7 +3234,7 @@ void TotEngine::useScreenObject() {
 					_inventory[usedObjectIndex].code = _curObject.code;
 					_inventory[usedObjectIndex].objectName = _curObject.name;
 					_mouse->hide();
-					drawBackpack();
+					drawInventory();
 					_mouse->show();
 				} break;
 				case 169: {
@@ -3883,7 +3883,7 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 		{
 			RoomBitmapRegister &with = _currentRoomData->screenLayers[i];
 			if (with.bitmapSize > 0)
-				loadItem(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
+				loadScreenLayer(with.coordx, with.coordy, with.bitmapSize, with.bitmapPointer, with.depth);
 		}
 	}
 	// assembles the screen objects into background
@@ -4010,8 +4010,8 @@ void TotEngine::saveGameToRegister() {
 }
 
 void TotEngine::loadGame(SavedGame game) {
-	freeAnimation();
-	freeScreenObjects();
+	clearAnimation();
+	clearScreenLayers();
 
 	_trajectoryLength = game.trajectoryLength;
 	_currentTrajectoryIndex = game.currentTrajectoryIndex;
@@ -4193,9 +4193,9 @@ void TotEngine::loadGame(SavedGame game) {
 	} break;
 	}
 
-	mask();
+	drawInventoryMask();
 	_inventoryPosition = 0;
-	drawBackpack();
+	drawInventory();
 	if (_isRedDevilCaptured == false && _currentRoomData->code == 24 && _isTrapSet == false)
 		runaroundRed();
 	_graphics->sceneTransition(false, _sceneBackground);

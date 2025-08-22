@@ -543,8 +543,8 @@ void talk(byte characterIndex) {
 
 	for (int i = 25; i >= 1; i--)
 		rectangle(0, 175 - i, 319, 174 + i, 0);
-	g_engine->mask();
-	g_engine->drawBackpack();
+	g_engine->drawInventoryMask();
+	g_engine->drawInventory();
 	g_engine->_mouse->show();
 
 	if (characterIndex < 5) {
