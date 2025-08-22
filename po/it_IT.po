@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-21 19:35+0000\n"
-"PO-Revision-Date: 2025-08-13 10:27+0000\n"
+"PO-Revision-Date: 2025-08-22 09:58+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -7917,10 +7917,8 @@ msgstr "Chiudi finestra dialogo"
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "Mappa tasti finestra Esci"
+msgstr "Mappatura tasti finestra Uscita"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8311,10 +8309,8 @@ msgid "Debug graphics"
 msgstr "Debug grafica"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti animazioni"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
@@ -8322,10 +8318,8 @@ msgid "Move / Interact / Select"
 msgstr "Spostamento / Interazione / Selezione"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
-msgstr "Raccogli"
+msgstr "Prendi"
 
 #: engines/drascula/metaengine.cpp:240 engines/queen/metaengine.cpp:259
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
@@ -8337,46 +8331,32 @@ msgid "Open"
 msgstr "Apri"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "Usa oggetto selezionato"
+msgstr "Resetta comando selezionato"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Controlli Touch"
+msgstr "Controlli volume"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Giochi salvati"
+msgstr "Salva / carica gioco"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Sottotitoli si/no"
+msgstr "Attiva sottotitoli"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Sottotitoli si/no"
+msgstr "Disattiva sottotitoli"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "Silenzia il parlato"
+msgstr "Pausa dialogo"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Conferma"
+msgstr "Conferma uscita"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -8411,88 +8391,60 @@ msgstr ""
 "Abilita Sintesi Vocale per gli oggetti, le opzioni e i passaggi della Bibbia"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "Seleziona personaggio 2"
+msgstr "Seleziona opzione 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "Seleziona personaggio 3"
+msgstr "Seleziona opzione 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "Seleziona personaggio 4"
+msgstr "Seleziona opzione 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "Seleziona personaggio 5"
+msgstr "Seleziona opzione 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "Seleziona personaggio 6"
+msgstr "Seleziona opzione 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "Seleziona personaggio 1"
+msgstr "Seleziona opzione 14"
 
 #: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
 #: engines/supernova/metaengine.cpp:218
@@ -8500,22 +8452,16 @@ msgid "Menu keymappings"
 msgstr "Mappature tasti menù"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Quit keymappings"
-msgstr "Mappatura tasti PET"
+msgstr "Mappature tasti uscita"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "Mappa tasti Salvataggio/Caricamento"
+msgstr "Mappature tasti salto video"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "Mappature tasti dei mini-giochi"
+msgstr "Mappature tasti salto canzoni"
 
 #: engines/efh/metaengine.cpp:261
 #, fuzzy
