@@ -157,7 +157,7 @@ static void renderCallStack(uint pc) {
 			ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 			script.byteOffsets = head->sp.ctx->_functionByteOffsets[script.handlerId];
 			script.moviePath = movie->getArchive()->getPathName().toString();
-			script.handlerName = Common::String::format("%s-%d:%s", castId, script.handlerId.c_str());
+			script.handlerName = Common::String::format("%d:%s", castId, script.handlerId.c_str());
 			script.pc = framePc;
 			setScriptToDisplay(script);
 		}

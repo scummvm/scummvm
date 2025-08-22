@@ -95,7 +95,7 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
-	bool executionContext = true;
+	bool executionContext = false;
 } ImGuiWindows;
 
 typedef struct ScriptData {
@@ -127,6 +127,7 @@ typedef struct ImGuiState {
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 		bool _goToDefinition = false;
+		bool _scrollToPC = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
 	} _dbg;

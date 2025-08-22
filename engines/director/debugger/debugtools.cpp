@@ -379,6 +379,7 @@ void setScriptToDisplay(const ImGuiScript &script) {
 	scriptData->_scripts.push_back(script);
 	scriptData->_current = index;
 	scriptData->_showScript = true;
+	_state->_dbg._scrollToPC = true;
 }
 
 void displayScriptRef(CastMemberID &scriptId) {
