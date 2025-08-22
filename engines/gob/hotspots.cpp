@@ -2440,7 +2440,7 @@ void Hotspots::expandHotspotText(uint16 spotID) {
 	if (_vm->getGameType() == kGameTypeFascination) {
 		// Don't include hotspots that aren't on the current window
 		uint16 windowNum = _hotspots[spotID].getWindow();
-		if (windowNum != 0 && (_vm->_draw->_fascinWin[windowNum].id == -1 || 
+		if (windowNum != 0 && windowNum < 10 && (_vm->_draw->_fascinWin[windowNum].id == -1 ||
 							_vm->_draw->_fascinWin[windowNum].id != _vm->_draw->_winCount - 1)) {
 			return;
 		}
