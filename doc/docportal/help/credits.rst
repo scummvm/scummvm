@@ -1553,6 +1553,8 @@ WAGE
 .. list-table::
    :widths: 35 65
 
+   * - Alikhan Balpykov
+     -
    * - Eugene Sandulenko
      -
 
@@ -1594,6 +1596,8 @@ Z-Vision
      -
    * - Anton Yarcev
      -
+   * - Thomas N McEwan
+     - Widescreen mod, HQ panoramas, 3D audio enhancement
 
 Backend Teams
 *************
