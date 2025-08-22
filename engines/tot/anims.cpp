@@ -33,6 +33,7 @@
 #include "tot/vars.h"
 #include "tot/statics.h"
 #include "tot/tot.h"
+#include "tot/util.h"
 
 namespace Tot {
 
@@ -847,14 +848,12 @@ void drawFlc(uint x, uint y, int32 fliOffset, uint loop,
 			 bool doscientos, bool &salidaflis);
 
 static void exitProcedure(bool &exitLoop, bool &isSkipAllowed) {
-
 	exitLoop = false;
-	if (isSkipAllowed) {
-		Common::Event e;
-		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYDOWN || (e.type == Common::EVENT_LBUTTONUP)) {
-				exitLoop = true;
-			}
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+		changeGameSpeed(e);
+		if (isSkipAllowed && e.type == Common::EVENT_KEYUP || (e.type == Common::EVENT_LBUTTONUP)) {
+			exitLoop = true;
 		}
 	}
 }
