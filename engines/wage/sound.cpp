@@ -100,8 +100,13 @@ void WageEngine::playSound(Common::String soundName) {
 		if (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				if (saveDialog())
-					_shouldQuit = true;
+				if (!_shouldQuit) {
+					g_system->getEventManager()->resetQuit();
+					if (saveDialog()) {
+						_shouldQuit = true;
+						g_system->getEventManager()->pushEvent(event);
+					}
+				}
 				break;
 			default:
 				break;

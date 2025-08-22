@@ -316,7 +316,7 @@ void Gui::executeMenuCommand(int action, Common::String &text) {
 		break;
 
 	case kMenuActionQuit:
-		_engine->saveDialog();
+		_engine->quitGame();
 		break;
 
 	case kMenuActionSave:

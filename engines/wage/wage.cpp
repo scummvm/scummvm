@@ -232,8 +232,15 @@ void WageEngine::processEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_QUIT:
-			if (saveDialog())
-				_shouldQuit = true;
+		case Common::EVENT_RETURN_TO_LAUNCHER:
+			if (!_shouldQuit) {
+				g_system->getEventManager()->resetQuit();
+				g_system->getEventManager()->resetReturnToLauncher();
+				if (saveDialog()) {
+					_shouldQuit = true;
+					g_system->getEventManager()->pushEvent(event);
+				}
+			}
 			break;
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
