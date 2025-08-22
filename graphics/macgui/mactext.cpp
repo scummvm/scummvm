@@ -117,7 +117,7 @@ uint MacTextLine::getChunkNum(int *col) {
 
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow, bool fixedDims, bool scrollBar) :
 	MacWidget(parent, x, y, w, h, wm, true, border, gutter, boxShadow),
-	_macFont(macFont) {
+	_macFont(macFont), _scrollBar(scrollBar) {
 
 	D(6, "MacText::MacText(): fgcolor: %d, bgcolor: %d s: \"%s\"", fgcolor, bgcolor, Common::toPrintable(s.encode()).c_str());
 
@@ -150,7 +150,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 // NOTE: This constructor and the one afterward are for MacText engines that don't use widgets. This is the classic was MacText was constructed.
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *macFont, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims, bool scrollBar) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(macFont) {
+	_macFont(macFont), _scrollBar(scrollBar) {
 
 	_str = s;
 
@@ -176,7 +176,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 // Working with plain Font
 MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, bool fixedDims, bool scrollBar) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0),
-	_macFont(nullptr) {
+	_macFont(nullptr), _scrollBar(scrollBar) {
 
 	_str = s;
 
