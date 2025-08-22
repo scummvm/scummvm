@@ -1550,6 +1550,10 @@ void Scheduler_v1d::promptAction(Act *action) {
 
 	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 
+#ifdef USE_TTS
+	_vm->_queueAllVoicing = true;
+#endif
+
 	response.toLowercase();
 
 	char resp[256];
@@ -1593,6 +1597,10 @@ void Scheduler_v2d::promptAction(Act *action) {
 
 	response = Utils::promptBox(_vm->_file->fetchString(action->_a3._promptIndex));
 	response.toLowercase();
+
+#ifdef USE_TTS
+	_vm->_queueAllVoicing = true;
+#endif
 
 	debug(1, "doAction(act3), expecting answer %s", _vm->_file->fetchString(action->_a3._responsePtr[0]));
 

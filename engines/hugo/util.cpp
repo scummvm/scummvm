@@ -85,7 +85,13 @@ void reverseByte(byte *data) {
 	*data = result;
 }
 
-void notifyBox(const Common::String &msg) {
+void notifyBox(const Common::String &msg, bool ttsVoiceText, bool ttsReplaceNewlines) {
+#ifdef USE_TTS
+	if (ttsVoiceText) {
+		sayText(msg, Common::TextToSpeechManager::QUEUE, ttsReplaceNewlines);
+	}
+#endif
+
 	notifyBox(Common::U32String(msg));
 }
 
@@ -95,20 +101,38 @@ void notifyBox(const Common::U32String &msg) {
 
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
+
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
 }
 
 Common::String promptBox(const Common::String &msg) {
 	if (msg.empty())
 		return Common::String();
 
+#ifdef USE_TTS
+	sayText(msg, Common::TextToSpeechManager::QUEUE);
+#endif
+
 	EntryDialog dialog(msg, "OK", "");
 
 	dialog.runModal();
 
-	return dialog.getEditString();
+	Common::U32String input = dialog.getEditString();
+
+#ifdef USE_TTS
+	sayText(input);
+#endif
+
+	return input;
 }
 
 bool yesNoBox(const Common::String &msg) {
+#ifdef USE_TTS
+	sayText(msg, Common::TextToSpeechManager::QUEUE);
+#endif
+
 	return yesNoBox(Common::U32String(msg));
 }
 
@@ -117,7 +141,14 @@ bool yesNoBox(const Common::U32String &msg) {
 		return 0;
 
 	GUI::MessageDialog dialog(msg, Common::U32String("YES"), Common::U32String("NO"));
-	return (dialog.runModal() == GUI::kMessageOK);
+
+	int result = dialog.runModal();
+
+#ifdef USE_TTS
+	stopTextToSpeech();
+#endif
+
+	return (result == GUI::kMessageOK);
 }
 
 char *hugo_strlwr(char *buffer) {
@@ -131,6 +162,39 @@ char *hugo_strlwr(char *buffer) {
 
 	return result;
 }
+
+#ifdef USE_TTS
+
+void sayText(const Common::String &text, Common::TextToSpeechManager::Action action, bool replaceNewlines) {
+	Common::String ttsMessage(text);
+
+	if (replaceNewlines) {
+		ttsMessage.replace('\n', ' ');
+		ttsMessage.replace('\r', ' ');
+	}
+
+	// Some text is enclosed in < and >, which won't be voiced unless they're replaced
+	Common::replace(ttsMessage, "<", ", ");
+	Common::replace(ttsMessage, ">", ", ");
+
+	sayText(Common::U32String(ttsMessage, Common::CodePage::kWindows1252), action);
+}
+
+void sayText(const Common::U32String &text, Common::TextToSpeechManager::Action action) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled")) {
+		ttsMan->say(text, action);
+	}
+}
+
+void stopTextToSpeech() {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ConfMan.getBool("tts_enabled") && ttsMan->isSpeaking()) {
+		ttsMan->stop();
+	}
+}
+
+#endif
 
 } // End of namespace Utils
 

@@ -73,6 +73,10 @@ static const byte stdMouseCursor[] = {
 	1, 1,  1,  1,  1,  1,  1,  1,  0,  0,  1, 1
 };
 
+#ifdef USE_TTS
+static const uint8 kHelpFirstNewlineIndex = 20;
+#endif
+
 
 Screen::Screen(HugoEngine *vm) : _vm(vm) {
 	_mainPalette = nullptr;
@@ -483,17 +487,25 @@ void Screen::shadowStr(int16 sx, const int16 sy, const char *s, const byte color
  * present in the DOS versions
  */
 void Screen::userHelp() const {
-	Utils::notifyBox(
-	           "F1  - Press F1 again\n"
-	           "      for instructions\n"
-	           "F2  - Sound on/off\n"
-	           "F3  - Recall last line\n"
-	           "F4  - Save game\n"
-	           "F5  - Restore game\n"
-	           "F6  - Inventory\n"
-	           "F8  - Turbo button\n"
-	           "\n"
-	           "ESC - Return to game");
+	Common::String message = "F1  - Press F1 again\n"
+	                         "      for instructions\n"
+	                         "F2  - Sound on/off\n"
+	                         "F3  - Recall last line\n"
+	                         "F4  - Save game\n"
+	                         "F5  - Restore game\n"
+	                         "F6  - Inventory\n"
+	                         "F8  - Turbo button\n"
+	                         "\n"
+	                         "ESC - Return to game";
+
+#ifdef USE_TTS
+	// Replace the first newline with a space for smoother voicing
+	message[kHelpFirstNewlineIndex] = ' ';
+	Utils::sayText(message, Common::TextToSpeechManager::INTERRUPT, false);
+	message[kHelpFirstNewlineIndex] = '\n';
+#endif
+
+	Utils::notifyBox(message, false);
 }
 
 void Screen::drawStatusText() {
