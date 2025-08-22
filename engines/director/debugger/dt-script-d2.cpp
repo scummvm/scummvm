@@ -504,12 +504,14 @@ public:
 			}
 
 			ScriptContext *context = getScriptContext(obj, _script.id, *node->name);
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), *node->name);
-			script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-			script.moviePath = _script.moviePath;
-			script.handlerName = *node->name;
-			setScriptToDisplay(script);
-			_state->_dbg._goToDefinition = true;
+			if (context) {
+				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), *node->name);
+				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+				script.moviePath = _script.moviePath;
+				script.handlerName = *node->name;
+				setScriptToDisplay(script);
+				_state->_dbg._goToDefinition = true;
+			}
 		}
 		ImGui::SameLine();
 		for (uint i = 0; i < node->args->size(); i++) {
