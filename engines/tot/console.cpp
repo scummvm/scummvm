@@ -79,8 +79,8 @@ bool TotConsole::cmdLoadRoom(int argc, const char **argv) {
 		debugPrintf("Invalid RoomID %d!\n", roomID);
 		return true;
 	}
-	g_engine->freeAnimation();
-	g_engine->freeScreenObjects();
+	g_engine->clearAnimation();
+	g_engine->clearScreenLayers();
 	g_engine->loadScreenData(roomID);
 	g_engine->_graphics->drawScreen(g_engine->_sceneBackground);
 	debugPrintf("Loaded screen %d", roomID);

@@ -297,7 +297,7 @@ void TotEngine::loadCharAnimation() {
 	characterFile.close();
 }
 
-void TotEngine::freeScreenObjects() {
+void TotEngine::clearScreenLayers() {
 	for (int i = 0; i < kNumScreenOverlays; i++) {
 		if (_screenLayers[i] != NULL)
 			free(_screenLayers[i]);
@@ -305,7 +305,7 @@ void TotEngine::freeScreenObjects() {
 	}
 }
 
-void TotEngine::freeAnimation() {
+void TotEngine::clearAnimation() {
 	if (_isSecondaryAnimationEnabled) {
 		_isSecondaryAnimationEnabled = false;
 		_curSecondaryAnimationFrame = NULL;
@@ -330,7 +330,7 @@ void TotEngine::verifyCopyProtection2() {
 	// TODO:
 }
 
-void TotEngine::loadItemWithFixedDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
+void TotEngine::loadScreenLayerWithDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
 	_screenLayers[depth] = (byte *)malloc(bitmapSize);
 	readBitmap(bitmapIndex, _screenLayers[depth], bitmapSize, 319);
 
@@ -343,8 +343,8 @@ void TotEngine::loadItemWithFixedDepth(uint coordx, uint coordy, uint bitmapSize
 	_depthMap[depth].posy2 = coordy + h + 1;
 }
 
-void TotEngine::loadItem(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
-	loadItemWithFixedDepth(coordx, coordy, bitmapSize, bitmapIndex, depth - 1);
+void TotEngine::loadScreenLayer(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
+	loadScreenLayerWithDepth(coordx, coordy, bitmapSize, bitmapIndex, depth - 1);
 }
 
 void TotEngine::updateInventory(byte index) {
@@ -375,7 +375,7 @@ void TotEngine::updateItem(uint itemPosition) {
 
 void TotEngine::readItemRegister(Common::SeekableReadStream *stream, uint itemPos, ScreenObject &thisRegObj) {
 	stream->seek(itemPos * kItemRegSize);
-	clearObj();
+	clearCurrentInventoryObject();
 	thisRegObj.code = stream->readUint16LE();
 	thisRegObj.height = stream->readByte();
 
@@ -431,7 +431,7 @@ void TotEngine::putIcon(uint iconPosX, uint iconPosY, uint iconNum) {
 	_graphics->putImg(iconPosX, iconPosY, _inventoryIconBitmaps[_inventory[iconNum].bitmapIndex - 1]);
 }
 
-void TotEngine::drawBackpack() {
+void TotEngine::drawInventory() {
 	putIcon(34, 169, _inventoryPosition);
 	putIcon(77, 169, _inventoryPosition + 1);
 	putIcon(120, 169, _inventoryPosition + 2);
@@ -473,13 +473,13 @@ void TotEngine::drawInventory(byte dir, byte max) {
 	case 0:
 		if (_inventoryPosition > 0) {
 			_inventoryPosition -= 1;
-			drawBackpack();
+			drawInventory();
 		}
 		break;
 	case 1:
 		if (_inventoryPosition < (max - 6)) {
 			_inventoryPosition += 1;
-			drawBackpack();
+			drawInventory();
 		}
 		break;
 	}
@@ -497,7 +497,7 @@ void TotEngine::drawInventory(byte dir, byte max) {
 		showError(274);
 }
 
-void TotEngine::mask() {
+void TotEngine::drawInventoryMask() {
 
 	buttonBorder(0, 140, 319, 149, 0, 0, 0, 0, 0);
 	for (int i = 1; i <= 25; i++)
@@ -883,7 +883,7 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx, int posy, byte barColor,
 						 byte textColor) {
 	int pun = 1;
-	bool borracursor;
+	bool removeCaret;
 	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
 
 	biosText(posx, posy, "-", textColor);
@@ -912,17 +912,17 @@ void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx
 					biosText(posx, posy, output, textColor);
 					biosText((posx + (output.size()) * 6), posy, "-", textColor);
 					pun -= 1;
-					borracursor = true;
+					removeCaret = true;
 				} else if ((asciiCode < '\40') || (asciiCode > '\373')) {
 					_sound->beep(1200, 60);
-					borracursor = false;
+					removeCaret = false;
 				} else {
 					pun += 1;
 					output = output + (char)e.kbd.ascii;
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
 					littText(posx, posy, output, textColor);
 					littText((posx + (output.size()) * 6), posy, "-", textColor);
-					borracursor = true;
+					removeCaret = true;
 				}
 			}
 		}
@@ -931,7 +931,7 @@ void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx
 		_screen->update();
 	}
 
-	if (borracursor)
+	if (removeCaret)
 		bar(posx + (output.size()) * 6, posy + 2, (posx + (output.size()) * 6) + 6, posy + 9, barColor);
 }
 
@@ -2293,7 +2293,7 @@ void TotEngine::assembleScreen(bool scroll) {
 void TotEngine::disableSecondAnimation() {
 	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
 	_currentRoomData->animationFlag = false;
-	freeAnimation();
+	clearAnimation();
 	_graphics->restoreBackground();
 	assembleScreen();
 }
