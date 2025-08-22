@@ -54,11 +54,14 @@ void Midi::midi_play(const char *name, int volume, bool loop, int trigger, int r
 		error("Could not find music - %s", fileName.c_str());
 
 	HLock(workHandle);
+#if 0
+// Dump the midi file for analysis purposes
 	Common::DumpFile dump;
 	dump.open(fileName.c_str());
 	dump.write(*workHandle, assetSize);
 	dump.close();
-	
+#endif
+
 #ifdef TODO
 	byte *pSrc = (byte *)*workHandle;
 
