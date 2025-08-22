@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-21 19:35+0000\n"
-"PO-Revision-Date: 2025-08-12 05:24+0000\n"
+"PO-Revision-Date: 2025-08-23 01:36+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -8558,14 +8558,12 @@ msgid "Leave"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "Status:"
+msgstr "Status"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "Försvara"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8578,10 +8576,8 @@ msgstr "Spring"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "View constellations"
 msgid "View terrain"
-msgstr "Visa konstellationer"
+msgstr "Visa terräng"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
@@ -13144,12 +13140,12 @@ msgstr "Plattuppsättning"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:906
 msgid "Go back 10 pages"
-msgstr ""
+msgstr "Gå bakåt 10 sidor"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:507
 msgid "Go ahead 10 pages"
-msgstr ""
+msgstr "Gå framåt 10 sidor"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521
@@ -13165,10 +13161,8 @@ msgstr "Sista sida"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back a page"
-msgstr "Visa dagbok"
+msgstr "Gå tillbaka en sida"
 
 #: engines/sherlock/metaengine.cpp:578
 #, fuzzy
@@ -13185,13 +13179,11 @@ msgstr "Rulla åt höger"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
 msgid "Go ahead a page"
-msgstr ""
+msgstr "Gå framåt en sida"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
 msgid "Toggle music"
@@ -13210,16 +13202,12 @@ msgid "Change font style"
 msgstr "Ändra typsnittsstorlek"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
-msgstr "Växla ljudeffekter på/av"
+msgstr "Växla ljudeffekter"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle god mode"
 msgid "Toggle windows mode"
-msgstr "Växla gud-läge"
+msgstr "Växla fönsterläge"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
@@ -13229,10 +13217,8 @@ msgid "Change auto-help location"
 msgstr "Byt åtgärd"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Toggle cheats"
 msgid "Toggle voices"
-msgstr "Växla fusk"
+msgstr "Växla röster"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
