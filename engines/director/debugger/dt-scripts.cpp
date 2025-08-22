@@ -300,7 +300,7 @@ static void updateCurrentScript() {
 	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
 	script.moviePath = movie->getArchive()->getPathName().toString();
-	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", castId, script.handlerId.c_str()) : script.handlerId;
+	script.handlerName = Common::String::format("%d:%s", castId, script.handlerId.c_str());
 	script.pc = 0;
 	setScriptToDisplay(script);
 }

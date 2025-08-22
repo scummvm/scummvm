@@ -53,6 +53,7 @@ static bool stepOverShouldPauseDebugger() {
 	if (((g_lingo->_state->callstack.size() == _state->_dbg._callstackSize) && (line != _state->_dbg._lastLinePC)) ||
 		 (g_lingo->_state->callstack.size() < _state->_dbg._callstackSize)) {
 		_state->_dbg._lastLinePC = line;
+		_state->_dbg._isScriptDirty = true;
 		return true;
 	}
 
@@ -67,6 +68,7 @@ static bool stepInShouldPauseDebugger() {
 	// - OR when the callstack level change
 	if ((g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) || (_state->_dbg._lastLinePC != line)) {
 		_state->_dbg._lastLinePC = line;
+		_state->_dbg._isScriptDirty = true;
 		return true;
 	}
 
@@ -80,6 +82,7 @@ static bool stepOutShouldPause() {
 	// - OR we go up in the callstack
 	if (g_lingo->_state->callstack.size() < _state->_dbg._callstackSize) {
 		_state->_dbg._lastLinePC = line;
+		_state->_dbg._isScriptDirty = true;
 		return true;
 	}
 
