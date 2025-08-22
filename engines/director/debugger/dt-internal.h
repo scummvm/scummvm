@@ -95,7 +95,7 @@ typedef struct ImGuiWindows {
 	bool logger = false;
 	bool archive = false;
 	bool watchedVars = false;
-	bool executionContext = false;
+	bool executionContext = true;
 } ImGuiWindows;
 
 typedef struct ScriptData {
