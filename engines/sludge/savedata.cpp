@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -101,7 +102,12 @@ bool CustomSaveHelper::fileToStack(const Common::String &filename, StackHandler 
 	Common::InSaveFile *fp = g_system->getSavefileManager()->openForLoading(filename);
 
 	if (fp == NULL) {
-		return fatal("No such file", filename); //TODO: false value
+		// Try looking inside game folder
+		delete fp;
+		Common::File *f = new Common::File();
+		if (!f->open(Common::Path(filename)))
+			return fatal("No such file", filename); //TODO: false value
+		fp = f;
 	}
 
 	_encode1 = (byte)_saveEncoding & 255;
