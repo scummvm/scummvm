@@ -24,6 +24,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      The Secret of Tremendous Corporation, Robin's Rescue and
      others, 12 titles so far.
    - Added support for Adibou 2: Nature & Sciences.
+   - Added support for WAGE-based game. More than 160 titles so far.
 
  Access:
    - Added keymapper support.
