@@ -149,10 +149,15 @@ static void renderCallStack(uint pc) {
 			CFrame *head = callstack[callstack.size() - i - 1];
 			ScriptContext *scriptContext = head->sp.ctx;
 			int castLibID = movie->getCast()->_castLibID;
-			ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
+			int castId = head->sp.ctx->_id;
+			if (castId == -1) {
+				castId = movie->getCast()->getCastIdByScriptId(head->sp.ctx->_parentNumber);
+			}
+
+			ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 			script.byteOffsets = head->sp.ctx->_functionByteOffsets[script.handlerId];
 			script.moviePath = movie->getArchive()->getPathName().toString();
-			script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
+			script.handlerName = Common::String::format("%s-%d:%s", castId, script.handlerId.c_str());
 			script.pc = framePc;
 			setScriptToDisplay(script);
 		}
@@ -287,10 +292,15 @@ static void updateCurrentScript() {
 	Director::Movie *movie = g_director->getCurrentMovie();
 	ScriptContext *scriptContext = head->sp.ctx;
 	int castLibID = movie->getCast()->_castLibID;
-	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(head->sp.ctx->_id, castLibID), *head->sp.name);
+	int castId = head->sp.ctx->_id;
+	if (castId == -1) {
+		castId = movie->getCast()->getCastIdByScriptId(head->sp.ctx->_parentNumber);
+	}
+
+	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
 	script.moviePath = movie->getArchive()->getPathName().toString();
-	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", head->sp.ctx->_id, script.handlerId.c_str()) : script.handlerId;
+	script.handlerName = head->sp.ctx->_id ? Common::String::format("%d:%s", castId, script.handlerId.c_str()) : script.handlerId;
 	script.pc = 0;
 	setScriptToDisplay(script);
 }
