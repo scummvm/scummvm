@@ -36,6 +36,26 @@
 
 namespace Hugo {
 
+#ifdef USE_TTS
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read text in the game (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+#endif
+
 uint32 HugoEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
 }
@@ -49,6 +69,12 @@ public:
 	const char *getName() const override {
 		return "hugo";
 	}
+
+#ifdef USE_TTS
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
+	}
+#endif
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const HugoGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;

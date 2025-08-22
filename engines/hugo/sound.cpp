@@ -171,6 +171,10 @@ void SoundHandler::toggleMusic() {
  */
 void SoundHandler::toggleSound() {
 	_vm->_config._soundFl = !_vm->_config._soundFl;
+
+#ifdef USE_TTS
+	_vm->_voiceSoundSetting = true;
+#endif
 }
 
 void SoundHandler::playMIDI(SoundPtr seqPtr, uint16 size) {
