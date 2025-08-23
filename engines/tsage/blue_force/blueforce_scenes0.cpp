@@ -538,6 +538,10 @@ void Scene50::process(Event &event) {
 			}
 		}
 
+		if (mouseDown) {
+			event.handled = true;
+		}
+
 		// No hotspot selected, so remove any current tooltip display
 		_text.remove();
 	}
