@@ -190,8 +190,8 @@ protected:
 #ifdef USE_RGB_COLOR
 		    gameFormat(),
 #endif
-		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
-		    scalerIndex(0), scaleFactor(1), shader() {
+		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), flags(0),
+			filtering(true), scalerIndex(0), scaleFactor(1), shader() {
 		}
 
 		bool valid;
@@ -217,7 +217,8 @@ protected:
 #endif
 			    && aspectRatioCorrection == right.aspectRatioCorrection
 			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering
+			    && flags == right.flags
+			    && filtering == right.filtering
 			    && shader == right.shader;
 		}
 

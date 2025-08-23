@@ -551,6 +551,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 						transactionError |= OSystem::kTransactionModeSwitchFailed;
 					}
 
+					if (_oldState.flags != _currentState.flags) {
+						transactionError |= OSystem::kTransactionModeSwitchFailed;
+					}
+
 					if (_oldState.filtering != _currentState.filtering) {
 						transactionError |= OSystem::kTransactionFilteringFailed;
 					}
