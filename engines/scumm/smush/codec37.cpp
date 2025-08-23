@@ -242,6 +242,12 @@ void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
 #define READ_LITERAL_PIXEL(src, v) \
 	v = *src++
 
+#define READ_LITERAL_2PIXEL(src, v) \
+	do {                            \
+		v = *src | (*src << 8);     \
+		src++;                      \
+	} while (0)
+
 #define WRITE_4X1_LINE(dst, v)  \
 	do {                        \
 		int j;                  \
@@ -256,6 +262,12 @@ void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
 			(dst)[j] = (src)[j]; \
 	} while (0)
 
+#define WRITE_2X1_LINE(dst, v)      \
+	do {                            \
+		(dst)[0] = v & 0xFF;        \
+		(dst)[1] = (v >> 8) & 0xFF; \
+	} while (0)
+
 #else /* SCUMM_NEED_ALIGNMENT */
 
 #define DECLARE_LITERAL_TEMP(v) \
@@ -267,11 +279,20 @@ void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
 		v += (v << 8) + (v << 16) + (v << 24); \
 	} while (0)
 
+#define READ_LITERAL_2PIXEL(src, v) \
+	do {                            \
+		v = *src | (*src << 8);     \
+		src++;                      \
+	} while (0)
+
 #define WRITE_4X1_LINE(dst, v) \
 	*(uint32 *)(dst) = v
 
 #define COPY_4X1_LINE(dst, src)               \
 	*(uint32 *)(dst) = *(const uint32 *)(src)
+
+#define WRITE_2X1_LINE(dst, v) \
+	*(uint16 *)(dst) = v
 
 #endif /* SCUMM_NEED_ALIGNMENT */
 
@@ -299,6 +320,26 @@ void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
 			WRITE_4X1_LINE(dst + pitch * x, t); \
 		}                                       \
 		dst += 4;                               \
+	} while (0)
+
+/* Fill a 4x4 pixel block with four 2x2 sub-blocks of different pixel values */
+
+#define LITERAL_2X2(src, dst, pitch)             \
+	do {                                         \
+		uint16 p1, p2, p3, p4;                   \
+		READ_LITERAL_2PIXEL(src, p1);            \
+		READ_LITERAL_2PIXEL(src, p2);            \
+		READ_LITERAL_2PIXEL(src, p3);            \
+		READ_LITERAL_2PIXEL(src, p4);            \
+		WRITE_2X1_LINE(dst, p1);                 \
+		WRITE_2X1_LINE(dst + pitch, p1);         \
+		WRITE_2X1_LINE(dst + 2, p2);             \
+		WRITE_2X1_LINE(dst + pitch + 2, p2);     \
+		WRITE_2X1_LINE(dst + pitch * 2, p3);     \
+		WRITE_2X1_LINE(dst + pitch * 2 + 2, p4); \
+		WRITE_2X1_LINE(dst + pitch * 3, p3);     \
+		WRITE_2X1_LINE(dst + pitch * 3 + 2, p4); \
+		dst += 4;                                \
 	} while (0)
 
 /* Fill sixteen 1x1 pixel blocks with literal pixel values */
@@ -397,7 +438,7 @@ void SmushDeltaBlocksDecoder::proc3WithFDFE(byte *dst, const byte *src, int32 ne
 			if (code == 0xFD) {
 				LITERAL_4X4(src, dst, pitch);
 			} else if (code == 0xFE) {
-				LITERAL_4X1(src, dst, pitch);
+				LITERAL_2X2(src, dst, pitch);
 			} else if (code == 0xFF) {
 				LITERAL_1X1(src, dst, pitch);
 			} else {
