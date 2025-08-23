@@ -23,6 +23,7 @@
 #include "access/access.h"
 #include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
+#include "access/martian/martian_tunnel.h"
 #include "access/martian/martian_scripts.h"
 
 namespace Access {
@@ -31,9 +32,15 @@ namespace Martian {
 
 MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
+	_tunnel = new MartianTunnel(_game);
+}
+
+MartianScripts::~MartianScripts() {
+	delete _tunnel;
 }
 
 void MartianScripts::cmdSpecial0() {
+	// Abduction scene
 	_vm->_sound->stopSound();
 	_vm->_midi->stopSong();
 
@@ -106,6 +113,10 @@ void MartianScripts::cmdSpecial1(int param1, int param2) {
 	_vm->establish(0, param2);
 }
 
+void MartianScripts::cmdSpecial2() {
+	_tunnel->tunnel2();
+};
+
 void MartianScripts::cmdSpecial3() {
 	_vm->_screen->forceFadeOut();
 	_vm->_events->hideCursor();
@@ -115,6 +126,10 @@ void MartianScripts::cmdSpecial3() {
 	_vm->_screen->setIconPalette();
 	_vm->_events->showCursor();
 	_vm->_screen->forceFadeIn();
+}
+
+void MartianScripts::cmdSpecial4() {
+	_tunnel->tunnel4();
 }
 
 void MartianScripts::doIntro(int param1) {
@@ -147,6 +162,8 @@ void MartianScripts::cmdSpecial6() {
 
 	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
 	notesRes->_stream->seek(72);
+	uint16 offset = notesRes->_stream->readUint16LE();
+	notesRes->_stream->seek(offset);
 
 	// Read the message
 	Common::String msg = notesRes->_stream->readString();
@@ -158,6 +175,8 @@ void MartianScripts::cmdSpecial6() {
 	delete _vm->_objectsTable[0];
 	_vm->_objectsTable[0] = nullptr;
 	_vm->_midi->stopSong();
+
+	// TODO: Restore original music here?
 }
 
 void MartianScripts::cmdSpecial7() {
@@ -323,13 +342,13 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		cmdSpecial1(param1, param2);
 		break;
 	case 2:
-		warning("TODO: cmdSpecial2");
+		cmdSpecial2();
 		break;
 	case 3:
 		cmdSpecial3();
 		break;
 	case 4:
-		warning("TODO: cmdSpecial4");
+		cmdSpecial4();
 		break;
 	case 5:
 		doIntro(param1);
