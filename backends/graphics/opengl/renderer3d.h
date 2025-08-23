@@ -66,9 +66,9 @@ protected:
 	GLuint _renderBuffers[3];
 	GLuint _frameBuffers[2];
 
-#define CTX_STATE(gl_param) GLboolean _save ## gl_param
-#define CTX_BOOLEAN(gl_param) GLboolean _save ## gl_param
-#define CTX_INTEGER(gl_param, count) GLint _save ## gl_param[count]
+#define CTX_STATE(gl_param) GLboolean _save ## gl_param = false
+#define CTX_BOOLEAN(gl_param) GLboolean _save ## gl_param = false
+#define CTX_INTEGER(gl_param, count) GLint _save ## gl_param[count] = { 0 }
 
 	CTX_STATE(GL_BLEND);
 	CTX_STATE(GL_CULL_FACE);
