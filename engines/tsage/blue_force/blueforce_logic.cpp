@@ -1350,7 +1350,12 @@ void BlueForceInvObjectList::alterInventory(int mode) {
  * When an inventory item is selected, check if it's the gun belt, since that has a specific dialog
  */
 bool BlueForceInvObjectList::SelectItem(int objectNumber) {
-	if (objectNumber == INV_AMMO_BELT) {
+	if (objectNumber == 0) {
+		// For Blue Force, clicking on an empty inventory (which corresponds to objectNumber 0)
+		// has to return true here to prevent the cursor being set (in UIInventorySlot::process())
+		// which would cause an assertion fault for resource size.
+		return true;
+	} else if (objectNumber == INV_AMMO_BELT) {
 		AmmoBeltDialog *dlg = new AmmoBeltDialog();
 		dlg->execute();
 		delete dlg;
