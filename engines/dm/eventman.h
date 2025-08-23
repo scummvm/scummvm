@@ -179,11 +179,10 @@ public:
 class KeyboardInput {
 public:
 	CommandType _commandToIssue;
-	Common::KeyCode _key;
-	byte _modifiers;
+	Common::CustomEventType _action;
 
-	KeyboardInput(CommandType command, Common::KeyCode keycode, byte modifierFlags) : _commandToIssue(command), _key(keycode), _modifiers(modifierFlags) {}
-	KeyboardInput() : _commandToIssue(kDMCommandNone), _key(Common::KEYCODE_ESCAPE), _modifiers(0) {}
+	KeyboardInput(CommandType command, Common::CustomEventType action) : _commandToIssue(command), _action(action) {}
+	KeyboardInput() : _commandToIssue(kDMCommandNone), _action(kActionNone) {}
 }; // @ KEYBOARD_INPUT
 
 class DMEngine;
