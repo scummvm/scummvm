@@ -2004,7 +2004,7 @@ void Hotspots::clearPreviousSaid() {
 	_previousSaid.clear();
 }
 
-void Hotspots::adjustHotspotTextRect(uint16 oldLeft, uint16 oldTop, uint16 oldRight, uint16 oldBottom, uint16 newX, uint16 newY, int16 surf) {
+void Hotspots::adjustHotspotTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf) {
 	if (oldLeft > oldRight || oldTop > oldBottom) {
 		return;
 	}
