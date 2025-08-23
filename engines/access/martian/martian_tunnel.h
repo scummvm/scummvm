@@ -19,44 +19,48 @@
  *
  */
 
-#ifndef ACCESS_MARTIAN_SCRIPTS_H
-#define ACCESS_MARTIAN_SCRIPTS_H
+#ifndef ACCESS_MARTIAN_MARTIAN_TUNNEL_H
+#define ACCESS_MARTIAN_MARTIAN_TUNNEL_H
 
 #include "common/scummsys.h"
-#include "access/scripts.h"
 
 namespace Access {
 
 namespace Martian {
 
 class MartianEngine;
-class MartianTunnel;
 
-class MartianScripts : public Scripts {
-private:
-	MartianEngine *_game;
-	MartianTunnel *_tunnel;
-
-	void cmdSpecial0();
-	void cmdSpecial1(int param1, int param2);
-	void cmdSpecial2();
-	void cmdSpecial3();
-	void cmdSpecial4();
-	void doIntro(int param1);
-	void cmdSpecial6();
-	void cmdSpecial7();
-
-protected:
-	void executeSpecial(int commandIndex, int param1, int param2) override;
-	void executeCommand(int commandIndex) override;
-
+class MartianTunnel {
 public:
-	MartianScripts(AccessEngine *vm);
-	~MartianScripts();
+	MartianTunnel(MartianEngine *vm);
+	~MartianTunnel();
+
+	void tunnel2();
+	void tunnel4();
+
+private:
+	void doTunnel();
+	void drawArrowSprites();
+	void drawArrowSprites2();
+	void clearWorkScreenArea();
+	void copyBufBlockToScreen();
+	void tunnel_doloop_8c65();
+	void tunnel_17f5c();
+	void tunnel_1888a();
+	void tunnel_18985();
+
+	MartianEngine *_vm;
+	int16 _tunnelParam_ca42;
+	int16 _tunnelParam_ca44;
+	int16 _tunnelParam_ca46;
+	uint16 _tunnel_ca20;
+	byte _tunnelMoveFlag;
+	int16 _crawlFrame;
+	byte _tunnelStopLoop_ca27;
 };
 
-} // End of namespace Martian
+}
 
-} // End of namespace Access
+} // end namespace Access
 
-#endif /* ACCESS_MARTIAN_SCRIPTS_H */
+#endif // ACCESS_MARTIAN_MARTIAN_TUNNEL_H

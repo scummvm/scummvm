@@ -149,6 +149,7 @@ public:
 };
 
 enum ImageFlag {
+	IMGFLAG_NONE = 0,
 	IMGFLAG_CROPPED = 1,
 	IMGFLAG_BACKWARDS = 2,
 	IMGFLAG_DRAWN = 4,

@@ -72,6 +72,7 @@ Player::Player(AccessEngine *vm) : Manager(vm), ImageEntry() {
 	_playerDirection = NONE;
 	_xFlag = _yFlag = 0;
 	_inactiveYOff = 0;
+	_jetpackFlag = 0;
 
 	_sideWalkMin = _sideWalkMax = 0;
 	_upWalkMin = _upWalkMax = 0;
@@ -193,8 +194,56 @@ void Player::calcManScale() {
 	}
 }
 
+void Player::jetpack() {
+	_playerDirection = UP;
+	ImageFlag flags = IMGFLAG_NONE;
+	if (!_vm->_timers[0]._flag) {
+		_vm->_timers[0]._flag = 1;
+		_jetpackFlag ^= 1;
+		_rawPlayer.y -= 4;
+		if (_move == RIGHT) {
+			_frame = 0;
+			flags = IMGFLAG_CROPPED;
+			if (_rawPlayer.x < 0x101)
+				_rawPlayer.x += 2;
+			else
+				_rawPlayer.x = 256;
+		}
+		if (_move == LEFT) {
+			_frame = 0;
+			flags = IMGFLAG_BACKWARDS;
+			_rawPlayer.x -= 2;
+			if (_rawPlayer.x < 0)
+				_rawPlayer.x = 0;
+		}
+
+		// Leave tex facing whichever direction he was previously
+		// unless moving in some direction
+		if (_move == LEFT || _move == RIGHT)
+			_flags = (_flags & 0xfd) | flags;
+	}
+
+	_flags |= IMGFLAG_UNSCALED;
+
+	_position.x = _rawPlayer.x;
+	_position.y = _rawPlayer.y - _playerOffset.y;
+	_offsetY = _playerOffset.y;
+	_frameNumber = 23 + _jetpackFlag;
+
+	ImageEntry ie = *this;
+	ie._spritesPtr = _vm->_objectsTable[35];
+	_vm->_images.addToList(ie);
+}
+
 void Player::walk() {
 	_collideFlag = false;
+
+	if (_vm->getGameID() == kGameMartianMemorandum && _vm->_flags[173] == 1) {
+		// Special case for MM Jetpack
+		jetpack();
+		return;
+	}
+
 	_playerDirection = NONE;
 
 	if (_playerOff)
