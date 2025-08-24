@@ -348,11 +348,6 @@ void CWnd::DestroyWindow() {
 		app->PopActiveWindow();
 	}
 
-	// Flush any other pending events
-	MSG msg;
-	while (app->PeekMessage(&msg, m_hWnd, 0, 0, PM_REMOVE)) {
-	}
-
 	// Mark as not needed any repainting
 	Validate();
 
