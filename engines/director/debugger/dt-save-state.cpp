@@ -33,7 +33,7 @@
 namespace Director {
 namespace DT {
 
-Common::String savedStateFileName = Common::String("ImGuiSaveState.json");
+const char *savedStateFileName = "ImGuiSaveState.json";
 
 Common::Array<WindowFlag> getWindowFlags() {
 	return {
@@ -99,9 +99,9 @@ void saveCurrentState() {
 	if (stream) {
 		stream->writeString(save.stringify());
 		stream->finalize();
-		debug("ImGui::SaveCurrentState: Saved the current ImGui State @%s", savedStateFileName.c_str());
+		debug("ImGui::SaveCurrentState: Saved the current ImGui State @%s", savedStateFileName);
 	} else {
-		debug("ImGui::SaveCurrentState: Failed to open the file %s for saving", savedStateFileName.c_str());
+		debug("ImGui::SaveCurrentState: Failed to open the file %s for saving", savedStateFileName);
 	}
 
 	// Clean up everything
@@ -112,7 +112,7 @@ void loadSavedState() {
 	Common::InSaveFile *savedState = g_engine->getSaveFileManager()->openForLoading(savedStateFileName);
 
 	if (!savedState || savedState->size() == 0) {
-		debug("ImGui::loadSavedState(): Failed to open saved state file: %s", savedStateFileName.c_str());
+		debug("ImGui::loadSavedState(): Failed to open saved state file: %s", savedStateFileName);
 		return;
 	}
 
