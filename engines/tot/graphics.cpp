@@ -935,16 +935,13 @@ void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effect
 	uint32 effectStartTime = g_system->getMillis();
 	// Disable effects for now
 	if (!enabled) {
-		debug("Effects disabled! requested effect is %d, with fadeToBlack =%d", effectNumber, fadeToBlack);
 		if (!fadeToBlack) {
 			drawScreen(scene);
 		}
 	} else {
-		effectNumber = 15;
 		g_engine->_cpCounter2 = g_engine->_cpCounter;
 		if (g_engine->_cpCounter > 145)
 			showError(274);
-		debug("Effect %d, pasaraanegro=%d", effectNumber, fadeToBlack);
 		if (fadeToBlack)
 			switch (effectNumber) {
 			case 1: {
