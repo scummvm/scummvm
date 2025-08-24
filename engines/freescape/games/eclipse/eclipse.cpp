@@ -110,6 +110,9 @@ void EclipseEngine::initGameState() {
 	_lastThirtySeconds = seconds / 30;
 	_lastFiveSeconds = seconds / 5;
 	_resting = false;
+
+	// Start playing music, if any, in any supported format
+	playMusic("Total Eclipse Theme");
 }
 
 void EclipseEngine::loadAssets() {
