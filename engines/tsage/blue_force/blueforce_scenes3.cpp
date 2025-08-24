@@ -369,7 +369,9 @@ void Scene300::postInit(SceneObjectList *OwnerList) {
 }
 
 void Scene300::signal() {
-	switch (_sceneMode) {
+	int sceneMode = _sceneMode;
+	++_sceneMode;
+	switch (sceneMode) {
 	case 300:
 		BF_GLOBALS._sound1.fadeSound(33);
 		BF_GLOBALS.clearFlag(onBike);

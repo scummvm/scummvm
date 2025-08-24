@@ -1351,7 +1351,7 @@ void BlueForceInvObjectList::alterInventory(int mode) {
  */
 bool BlueForceInvObjectList::SelectItem(int objectNumber) {
 	if (objectNumber == INV_NONE) {
-		// For Blue Force, clicking on an empty inventory (which corresponds to objectNumber 0)
+		// For Blue Force, clicking on an empty inventory slot (which corresponds to objectNumber 0)
 		// has to return true here to prevent the cursor being set (in UIInventorySlot::process())
 		// which would cause an assertion fault for resource size.
 		return true;
