@@ -166,8 +166,6 @@ ImGuiImage getImageID(CastMember *castMember) {
 		return _state->_cast._textures[bmpMember];
 	}
 
-	Common::Rect bbox(bmpMember->getBbox());
-
 	bmpMember->load();
 	Picture *pic = bmpMember->_picture;
 	if (!pic)
