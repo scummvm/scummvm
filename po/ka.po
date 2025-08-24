@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-23 21:28+0000\n"
-"PO-Revision-Date: 2025-07-13 07:36+0000\n"
+"PO-Revision-Date: 2025-08-24 07:36+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ka/>\n"
@@ -5642,16 +5642,12 @@ msgid "Default keymappings"
 msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
 #: engines/access/metaengine.cpp:196
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Move / Interact / Skip"
-msgstr "გადაადგილება / ურთიერთქმედება / დიალოგის გამოტოვება"
+msgstr "გადაადგილება / ურთიერთქმედება / გამოტოვება"
 
 #: engines/access/metaengine.cpp:208 engines/sherlock/metaengine.cpp:483
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
-msgstr "ვიდეოს გამოტოვება"
+msgstr "ფილმის გამოტოვება"
 
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
@@ -6884,38 +6880,28 @@ msgid "Cutscene keymappings"
 msgstr "ამოჭრილი სცენის კლავიატურის ასახვები"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main menu keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "მთავარი მენიუს კლავიატურის მალსახმობები"
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 #: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:783
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Inventory keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "ინვენტარის კლავიატურის მალსახმობები"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
 #: engines/sherlock/metaengine.cpp:1183
-#, fuzzy
-#| msgid "Select / Interact / Move"
 msgid "Select / Interact"
-msgstr "არჩევა / ურთიერთობა / გადაადგილება"
+msgstr "არჩევა / ურთიერთობა"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "კონტროლი"
+msgstr "კონტროლის ღილაკი"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "მენიუში გასვლა"
+msgstr "მთავარ მენიუში გასვლა"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -6928,16 +6914,12 @@ msgid "Look down"
 msgstr "დახედვა"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "შეხედე"
+msgstr "გახედვა მარცხნივ"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "შეხედე"
+msgstr "გახედვა მარჯვნივ"
 
 #: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
@@ -6972,17 +6954,13 @@ msgstr ""
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
-#, fuzzy
-#| msgid "View evidence"
 msgid "Biochip evidence"
-msgstr "მტკიცებულების ნახვა"
+msgstr "ბიოჩიპის მტკიცებულება"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "დამალული ფაილების ჩვენება"
+msgstr "ბიოჩიპის ფაილები"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
@@ -7001,10 +6979,8 @@ msgstr ""
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "მინიშნებების ჩვენება"
+msgstr "წერტილების ჩვენება"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -7150,10 +7126,8 @@ msgstr "დიალოგური ფანჯრის დახურვა"
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "პანელის კლავიატურის მალსახმობების ფანჯრიდან გასვლა"
+msgstr "დიალოგის კლავიატურის მალსახმობების დიალოგიდან გასვლა"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -7445,10 +7419,8 @@ msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable Text to Speech"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "ტექსტის წარმოთქმის ჩართვა"
+msgstr "ტექსტის წარმოთქმის ჩართვა ნაკლული გახმოვანებებისთვის"
 
 #: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:65
 msgid ""
@@ -7522,10 +7494,8 @@ msgid "Debug graphics"
 msgstr "გრაფიკის გამართვა"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "ანიმაციის კლავიატურის მალსახმობები"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
@@ -7533,8 +7503,6 @@ msgid "Move / Interact / Select"
 msgstr "გადაადგილება / ურთიერთქმედება / არჩევა"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
 msgstr "აღება"
 
@@ -7548,46 +7516,32 @@ msgid "Open"
 msgstr "გახსნა"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "მონიშნული ობიექტის გამოყენება"
+msgstr "მონიშნული ზმნის ჩამოყრა"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "სენსორის კონტროლები"
+msgstr "ხმის კონტროლები"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "შენახული თამაშები"
+msgstr "თამაშის შენახვა / ჩატვირთვა"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "სუბტიტრების გადართვა"
+msgstr "სუბტიტრების ჩართვა"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "სუბტიტრების გადართვა"
+msgstr "სუბტიტრების გამორთვა"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "საუბრის დადუმება"
+msgstr "საუბრის შეჩერება"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "დადასტურება"
+msgstr "გასვლის დადასტურება"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -7613,88 +7567,60 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "1 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "აირჩიეთ მსახიობი 2"
+msgstr "2 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "აირჩიეთ მსახიობი 3"
+msgstr "3 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "აირჩიეთ მსახიობი 4"
+msgstr "4 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "აირჩიეთ მსახიობი 5"
+msgstr "5 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Actor 6"
 msgid "Select option 6"
-msgstr "აირჩიეთ მსახიობი 6"
+msgstr "6 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "7 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "8 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "9 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "10 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "11 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "12 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "13 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "14 პარამეტრის არჩევა"
 
 #: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
 #: engines/supernova/metaengine.cpp:218
@@ -7702,70 +7628,48 @@ msgid "Menu keymappings"
 msgstr "მენიუს კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Quit keymappings"
-msgstr "PET კლავიატურის მალსახმობები"
+msgstr "კლავიატურის მალსახმობებიდან გასვლა"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "კლავიატურის მალსახმობების შენახვა/ჩატვირთვა"
+msgstr "ვიდეოს კლავიატურის მალსახმობების გამოტოვება"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "მინითამაშის კლავიატურის მალსახმობები"
+msgstr "სიმღერის კლავიატურის მალსახმობების გამოტოვება"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Start მენიუს კლავიატურის მალსახმობები"
+msgstr "სტატუსის მენიუს ნავიგაციის კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Start მენიუს კლავიატურის მალსახმობები"
+msgstr "სტატუსის მენიუს კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Start მენიუს კლავიატურის მალსახმობები"
+msgstr "სტატუსის მენიუს ქვემენიუს კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Interaction keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "ურთიერთობის კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Fight keymappings"
-msgstr "PET კლავიატურის მალსახმობები"
+msgstr "ბრძოლის კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Start მენიუს კლავიატურის მალსახმობები"
+msgstr "პერსონაჟის არჩევნის კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Enemy selection keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "მტრის არჩევნის კლავიატურის მალსახმობები"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Start მენიუს კლავიატურის მალსახმობები"
+msgstr "სიკვდილის მენიუს კლავიატურის მალსახმობები"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
@@ -7783,22 +7687,16 @@ msgid "Character 3 status"
 msgstr "გმირი 3-ის პასუხი"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip song"
-msgstr "სცენის გამოტოვება"
+msgstr "სიმღერის გამოტოვება"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "შესავლის გამოტოვება"
+msgstr "სიმღერის და შესავლის გამოტოვება"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "აქტიური"
+msgstr "აქტიური უნარები"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -7820,10 +7718,8 @@ msgid "Give"
 msgstr "მიცემა"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "ინფორმაციის მენიუ"
+msgstr "ინფორმაცია"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
@@ -7834,26 +7730,20 @@ msgid "Trade"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "მენიუში გასვლა"
+msgstr "გასვლა სტატუსის მენიუდან"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "თამაშიდან გასვლა"
+msgstr "ქვემენიუდან გასვლა"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
 msgstr ""
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "მდგომარეობა:"
+msgstr "სტატუსი"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
@@ -7870,73 +7760,51 @@ msgstr "გაშვება"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "View constellations"
 msgid "View terrain"
-msgstr "თანავარსკვლავედების ნახვა"
+msgstr "რელიეფის ნახვა"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "აირჩიეთ პერსონაჟი 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
-msgstr "აირჩიეთ მსახიობი 2"
+msgstr "აირჩიეთ პერსონაჟი 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
-msgstr "აირჩიეთ მსახიობი 3"
+msgstr "აირჩიეთ პერსონაჟი 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel character selection"
-msgstr "ქმედების გაუქმება"
+msgstr "პერსონაჟის არჩევნის გაუქმება"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ მტერი 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ მტერი 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ მტერი 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ მტერი 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "აირჩიეთ ინდექსი"
+msgstr "აირჩიეთ მტერი 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel enemy selection"
-msgstr "ქმედების გაუქმება"
+msgstr "მტრის არჩევნის გაუქმება"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -9068,10 +8936,8 @@ msgid ""
 msgstr ""
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit keymappings"
-msgstr "PET კლავიატურის მალსახმობები"
+msgstr "კლავიატურის მალსახმობებიდან გასვლა"
 
 #: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
@@ -9079,17 +8945,13 @@ msgstr "შესავლის კლავიატურის მალს�
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Map keymappings"
-msgstr "ვარსკვლავების რუკის კლავიატურის მალსახმობები"
+msgstr "რუკის კლავიატურის მალსახმობები"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
-#, fuzzy
-#| msgid "Computer keymappings"
 msgid "Journal keymappings"
-msgstr "კომპიუტერის კლავიატურის მალსახმობები"
+msgstr "ჟურნალის კლავიატურის მალსახმობები"
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
@@ -9121,20 +8983,16 @@ msgid "Interact with object with chosen action"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "შემდეგი ობიექტი"
+msgstr "ობიექტის აღება"
 
 #: engines/lab/metaengine.cpp:227
 msgid "Move or manipulate object"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open door"
 msgid "Open door or object"
-msgstr "კარის გახსნა"
+msgstr "კარის ან ობიექტის გახსნა"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
@@ -9145,16 +9003,12 @@ msgid "Look at object close-up"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Switch to inventory display"
-msgstr "ინვენტარში მაღლა აწევა"
+msgstr "გადართვა ინვენტარის ჩვენებაზე"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Move focus to interactive object"
-msgstr "გადაადგილება / ურთიერთქმედება / არჩევა"
+msgstr "ფოკუსის გადატანა ინტერაქტიულ ობიექტზე"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
@@ -9169,68 +9023,48 @@ msgid "Run while following virtual bread crumbs"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to Grimwall"
 msgid "Switch to main display"
-msgstr "გრიმვოლზე გადართვა"
+msgstr "გადართვა მთავარ ეკრანზე"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Saved games"
 msgid "Open save / load dialog"
-msgstr "შენახული თამაშები"
+msgstr "შენახვის / ჩატვირთვის დიალოგის გახსნა"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "შეხედე"
+msgstr "შეხედვა სცენაზე"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Previous inventory item"
-msgstr "ინვენტარის ნივთის გამოყენება"
+msgstr "წინა ინვენტარის ნივთი"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next inventory item"
-msgstr "ანიმირებული ინვენტარის ელემენტები"
+msgstr "შემდეგი ინვენტარის ნივთი"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
 msgstr ""
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
-msgstr "დონის აწევა"
+msgstr "მაღლა ერთი დონით"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
-msgstr "დონის ჩამოწევა"
+msgstr "დაბლა ერთი დონით"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "უკან გადასვლა ჟურნალში"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Show journal"
 msgid "Exit journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "ჟურნალიდან გასვლა"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "წინ გადასვლა ჟურნალში"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10031,16 +9865,12 @@ msgid "<original>"
 msgstr "<ორიგინალი>"
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Save file management menus keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "ფაილის მართვის მენიუს კლავიატურის მალსახმობების შენახვა"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Pause menu keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "მენიუს კლავიატურის მალსახმობების შეჩერება"
 
 #: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
 #: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
@@ -10053,17 +9883,13 @@ msgid "Move / Interact"
 msgstr "გადაადგილება / ურთიერთქმედება"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Pause / Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "შეჩერება / საწყისი ეკრანის გამოტოვება"
+msgstr "შეჩერების / გასვლის მენიუ"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "საწყისი ეკრანის გამოტოვება"
+msgstr "ამოჭრილი სცენის სექციის გამოტოვება"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
@@ -10072,10 +9898,8 @@ msgstr ""
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "ახალი შენახული თამაშის შექმნა"
+msgstr "დაადასტურეთ არჩეული შენახვის / ახალი შენახვის სახელი"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -10163,24 +9987,18 @@ msgid "This menu item is not yet implemented"
 msgstr ""
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Interact / Select"
-msgstr "გადაადგილება / ურთიერთქმედება / არჩევა"
+msgstr "ურთიერთქმედება / არჩევა"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel interaction"
-msgstr "ქმედების გაუქმება"
+msgstr "ურთიერთობის გაუქმება"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip walk"
-msgstr "დიალოგის გამოტოვება"
+msgstr "სიარულის გამოტოვება"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
@@ -10189,24 +10007,18 @@ msgstr ""
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sequence"
-msgstr "სცენის გამოტოვება"
+msgstr "მიმდევრობის გამოტოვება"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sub-sequence"
-msgstr "სცენის გამოტოვება"
+msgstr "ქვემიმდევრობის გამოტოვება"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
-#| msgid "Restart game"
 msgid "Restart sequence"
-msgstr "თამაშის თავიდან დაწყება"
+msgstr "მიმდევრობის თავიდან დაწყება"
 
 #: engines/playground3d/metaengine.cpp:55
 msgid "Switch test"
@@ -10226,24 +10038,18 @@ msgid "3DO Plumbers requires RGB support."
 msgstr ""
 
 #: engines/prince/metaengine.cpp:237
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open interaction menu"
-msgstr "მთავარი მენიუს გახსნა"
+msgstr "ურტიერთქმედების მენიუს გახსნა"
 
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
-#, fuzzy
-#| msgid "End key"
 msgid "Z key"
-msgstr "ღილაკი end"
+msgstr "ღილაკი Z"
 
 #. I18N: This refers to the X key on a keyboard.
 #: engines/prince/metaengine.cpp:263
-#, fuzzy
-#| msgid "End key"
 msgid "X key"
-msgstr "ღილაკი end"
+msgstr "ღილაკი X"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
@@ -10284,52 +10090,36 @@ msgid "Skip text"
 msgstr "შემდეგის გამოტოვება"
 
 #: engines/queen/metaengine.cpp:203
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll inventory up"
-msgstr "ინვენტარში მაღლა აწევა"
+msgstr "ინვენტარში მაღლა ახვევა"
 
 #: engines/queen/metaengine.cpp:209
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll inventory down"
-msgstr "სიის ჩამოხვევა"
+msgstr "ინვენტარის ქვემოთ ჩამოწევა"
 
 #: engines/queen/metaengine.cpp:215
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 1"
-msgstr "ინვენტარის ნივთის გამოყენება"
+msgstr "ინვენტარის ნივთი 1"
 
 #: engines/queen/metaengine.cpp:220
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 2"
-msgstr "ინვენტარის ნივთის გამოყენება"
+msgstr "ინვენტარის ნივთი 2"
 
 #: engines/queen/metaengine.cpp:225
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 3"
-msgstr "ინვენტარის ნივთის გამოყენება"
+msgstr "ინვენტარის ნივთი 3"
 
 #: engines/queen/metaengine.cpp:230
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 4"
-msgstr "ინვენტარის ნივთის გამოყენება"
+msgstr "ინვენტარის ნივთი 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip cutaway / dialog"
-msgstr "დიალოგის გამოტოვება"
+msgstr "ამოჭრის / დიალოგის გამოტოვება"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "ჟურნალის გამოყენება"
 
 #: engines/queen/metaengine.cpp:279 engines/saga/metaengine.cpp:354
 #: engines/scumm/help.cpp:202 engines/scumm/help.cpp:214
@@ -10357,10 +10147,8 @@ msgid "Talk to"
 msgstr "დაელაპარაკე"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "ჟურნალის დახურვა"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -12033,62 +11821,44 @@ msgid "Show windows with a partially transparent background"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Scroll keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "გადახვევის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main user interface keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "მთავარი მომხმარებლის ინტერფეისის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Darts minigame keymappings"
-msgstr "მინითამაშის კლავიატურის მალსახმობები"
+msgstr "დარტსის მინითამაშის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Talk keymappings"
-msgstr "ვარსკვლავების რუკის კლავიატურის მალსახმობები"
+msgstr "საუბრის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Files keymappings"
-msgstr "PET კლავიატურის მალსახმობები"
+msgstr "ფაილის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Settings keymappings"
-msgstr "მინითამაშის კლავიატურის მალსახმობები"
+msgstr "მორგების კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Movement keymappings"
 msgid "Movie keymappings"
-msgstr "გადაადგილების კლავიატურის მალსახმობები"
+msgstr "ფილმის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Skip / Deselect verb"
-msgstr "მონიშნული ობიექტის გამოყენება"
+msgstr "ზმნის მონიშვნა / მონიშვნის მოხსნა"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "ფილების ნაკრები"
+msgstr "ფაილები"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -12115,22 +11885,16 @@ msgstr "ბოლო გვერდი"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back a page"
-msgstr "ჟურნალის ჩვენება"
+msgstr "ერთი გვერდით უკან"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Roll left"
 msgid "Scroll left"
-msgstr "გადაბრუნება მარცხნივ"
+msgstr "გადახვევა მარცხნივ"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Roll Right"
 msgid "Scroll Right"
-msgstr "გადაბრუნება მარჯვნივ"
+msgstr "გადახვევა მარჯვნივ"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
@@ -12138,51 +11902,37 @@ msgid "Go ahead a page"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option"
-msgstr "აირჩიეთ მსახიობი 1"
+msgstr "აირჩიეთ პარამეტრი"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
 msgid "Toggle music"
 msgstr "მუსიკის გადართვა"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle combat"
 msgid "Toggle portraits"
-msgstr "ბრძოლის გადართვა"
+msgstr "პორტრეტების გადართვა"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "ფონტის ზომის შეცვლა"
+msgstr "ფონტის სტილის შეცვლა"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effects on / off"
 msgid "Toggle sound effects"
-msgstr "ხმოვანი ეფექტის ჩართ/გამორთ"
+msgstr "ხმის ეფექტების გადართვა"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle god mode"
 msgid "Toggle windows mode"
-msgstr "ღმერთის რეჟიმის გადართვა"
+msgstr "ფანჯრების რეჟიმის გადართვა"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change action"
 msgid "Change auto-help location"
-msgstr "ქმედების შეცვლა"
+msgstr "ავტოდახმარების მდებარეობის შეცვლა"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Toggle cheats"
 msgid "Toggle voices"
-msgstr "ჩიტების გადართვა"
+msgstr "ხმების გადართვა"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
@@ -12191,108 +11941,74 @@ msgstr ""
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "საქაღალდის შექმნა"
+msgstr "პირდაპირ მინავლება"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "რეჟიმის შეცვლა"
+msgstr "მინავლების რეჟიმის შეცვლა"
 
 #: engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Computer keymappings"
 msgid "Journal search keymappings"
-msgstr "კომპიუტერის კლავიატურის მალსახმობები"
+msgstr "ჟურნალში ძებნის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "მენიუს გადახვევის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "კლავიატურის მალსახმობების შენახვა/ჩატვირთვა"
+msgstr "მენიუს კლავიატურის მალსახმობების შენახვა/ჩატვირთვა"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Save files name editing keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "ფაილის სახელის ჩასწორების კლავიატურის მალსახმობების შენახვა"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "სპეციალური კლავიატურის მალსახმობები"
+msgstr "ქაღალდის ფორმატის პაზლის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Options menu keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "მორგების მენიუს კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Password entry keymappings"
-msgstr "მენიუს კლავიატურის მალსახმობები"
+msgstr "პაროლის შეყვანის კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Talk options keymappings"
-msgstr "შესავლის კლავიატურის მალსახმობები"
+msgstr "საუბრის მორგების კლავიატურის მალსახმობები"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Move / Examine / Select"
-msgstr "გადაადგილება / ურთიერთქმედება / არჩევა"
+msgstr "გადაადგილება / გასინჯვა / არჩევა"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "ქმედებების მენიუს გახსნა / მენიუს დახურვა"
+msgstr "ზმნის მენიუს გახსნა / მენიუს დახურვა"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "ხმის შეცვლა"
+msgstr "სიჩქარის შეცვლა"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Show journal"
 msgid "Open journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "ჟურნალის გახსნა"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "მორგების მენიუს გახსნა"
+msgstr "მორგების ფანჯრის გახსნა"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "ფანჯარაში ჩატევა"
+msgstr "ფანჯრიდან გასვლა / ფანჯრის დახურვა"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "დიალოგის გამოტოვება"
+msgstr "პროლოგის გამოტოვება"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
@@ -12304,100 +12020,72 @@ msgstr ""
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "ჟურნალის ჩვენება"
+msgstr "გადასვლა 10 გვერდით წინ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 1 page"
-msgstr "ჟურნალის ჩვენება"
+msgstr "გადასვლა 1 გვერდით წინ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back 1 page"
-msgstr "ჟურნალის ჩვენება"
+msgstr "გადასვლა 1 გვერდით უკან"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go to start of journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "გადასვლა ჟურნალის დასაწყისში"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go to end of journal"
-msgstr "ჟურნალის ჩვენება"
+msgstr "გადასვლა ჟურნალის ბოლოში"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
-#| msgid "Skip autosave"
 msgid "Skip darts minigame"
-msgstr "ავტოშენახვის გამოტოვება"
+msgstr "დარტსის მინითამაშის გამოტოვება"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to top left"
-msgstr "სიის ახვევა თავში"
+msgstr "გადახვევა ზედა მარცხენა მხარეს"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Scroll to bottom"
 msgid "Scroll to bottom right"
-msgstr "გადახვევა ბოლოში"
+msgstr "გადახვევა ქვედა მარჯვენა მხარეს"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "ჩოჩიის მაღლა აწევა"
+msgstr "გადახვევა გვერდით ზემოთ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "ჩოჩიის დაბლა ჩამოწევა"
+msgstr "გადახვევა გვერდით ქვემოთ"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to end"
-msgstr "სიის ახვევა თავში"
+msgstr "გადახვევა ბოლომდე"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to start"
-msgstr "სიის ახვევა თავში"
+msgstr "გადახვევა დასაწყისამდე"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next save file slot"
-msgstr "გადასვლა შემდეგ დიალოგზე"
+msgstr "გადასვლა შემდეგი ფაილის შენახვის სლოტზე"
 
 #: engines/sherlock/metaengine.cpp:1074
 msgid "Go to next page of save files"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "აირჩიეთ მარქაფის ფაილი"
+msgstr "აირჩიეთ შესანახი ფაილი"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
@@ -12414,39 +12102,29 @@ msgstr ""
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "სწრაფი რეჟიმის გადართვა"
+msgstr "ჩასმის რეჟიმის გადართვა"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "მხტუნარას დახურვა"
+msgstr "პაზლის დახურვა"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select next Actor"
 msgid "Select next option"
-msgstr "აირჩიეთ შემდეგი მსახიობი"
+msgstr "შემდეგი პარამეტრის არჩევა"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next talk option"
-msgstr "გადასვლა შემდეგ დიალოგზე"
+msgstr "შემდეგი საუბრის პარამეტრზე გადასვლა"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogs"
 msgid "Go to previous talk option"
-msgstr "გადასვლა წინა დიალოგებზე"
+msgstr "წინა საუბრის პარამეტრზე გადასვლა"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
