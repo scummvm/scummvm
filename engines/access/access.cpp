@@ -62,7 +62,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentMan = 0;
 	_currentManOld = -1;
 	_converseMode = 0;
-	_numAnimTimers = 0;
 	_startup = 0;
 	_currentCharFlag = false;
 	_boxSelect = false;

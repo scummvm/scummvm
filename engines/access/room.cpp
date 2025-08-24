@@ -166,8 +166,7 @@ void Room::doRoom() {
 			_vm->_images.clear();
 			_vm->_newRects.clear();
 			_vm->_oldRects.clear();
-			_vm->_numAnimTimers = 0;
-
+			_vm->_animation->clearTimers();
 			reloadRoom();
 		}
 
@@ -266,7 +265,7 @@ void Room::doRoom() {
 }
 
 void Room::roomInit() {
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
 	_vm->_scripts->searchForSequence();
 	_vm->_scripts->executeScript();
@@ -279,7 +278,7 @@ void Room::clearRoom() {
 	}
 
 	_vm->_sound->freeSounds();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 
 	_vm->_animation->freeAnimationData();
 	_vm->_scripts->freeScriptData();

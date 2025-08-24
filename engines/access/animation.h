@@ -68,6 +68,11 @@ public:
 	 * Update the timing of all currently active animation
 	 */
 	void updateTimers();
+
+	/**
+	 * Remove the last animation timer
+	 */
+	void popBackTimer() { _animationTimers.pop_back(); }
 };
 
 class AnimationResource {

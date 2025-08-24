@@ -195,7 +195,6 @@ public:
 	int _establishMode;
 	int _establishGroup;
 	int _establishCtrlTblOfs;
-	int _numAnimTimers;
 	TimerList _timers;
 	DeathList _deaths;
 	FontManager _fonts;
