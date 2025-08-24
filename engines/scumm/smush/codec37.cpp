@@ -262,10 +262,11 @@ void SmushDeltaBlocksDecoder::makeTable(int pitch, int index) {
 			(dst)[j] = (src)[j]; \
 	} while (0)
 
-#define WRITE_2X1_LINE(dst, v)      \
-	do {                            \
-		(dst)[0] = v & 0xFF;        \
-		(dst)[1] = (v >> 8) & 0xFF; \
+#define WRITE_2X1_LINE(dst, v)  \
+	do {                        \
+		int j;                  \
+		for (j = 0; j < 2; j++) \
+			(dst)[j] = v;       \
 	} while (0)
 
 #else /* SCUMM_NEED_ALIGNMENT */
