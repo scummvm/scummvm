@@ -18,10 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/translation.h"
 
 #include "tot/metaengine.h"
 #include "tot/detection.h"
 #include "tot/tot.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_NO_TRANSITIONS,
+		{
+			_s("Disable scene transitions"),
+			_s("Disable original transition effects between scenes"),
+			"transitions_disable",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 const char *TotMetaEngine::getName() const {
 	return "tot";
@@ -36,6 +52,10 @@ bool TotMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return checkExtendedSaves(f) ||
 	(f == kSupportsLoadingDuringStartup);
 }
+
+const ADExtraGuiOptionsMap *TotMetaEngine::getAdvancedExtraGuiOptions() const {
+		return optionsList;
+	}
 
 #if PLUGIN_ENABLED_DYNAMIC(TOT)
 REGISTER_PLUGIN_DYNAMIC(TOT, PLUGIN_TYPE_ENGINE, TotMetaEngine);

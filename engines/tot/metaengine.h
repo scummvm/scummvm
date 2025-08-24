@@ -36,6 +36,8 @@ public:
 	 * Used by e.g. the launcher to determine whether to enable the Load button.
 	 */
 	bool hasFeature(MetaEngineFeature f) const override;
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
 };
 
 #endif // TOT_METAENGINE_H

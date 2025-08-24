@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "tot/detection.h"
 
 namespace Tot {
 
@@ -37,7 +38,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_NO_TRANSITIONS)
 	},
 	{
 		"tot",
@@ -49,7 +50,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
+		GUIO1(GAMEOPTION_NO_TRANSITIONS)
 	},
 	AD_TABLE_END_MARKER
 };

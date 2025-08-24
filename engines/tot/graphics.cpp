@@ -18,6 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "graphics/font.h"
@@ -931,7 +933,7 @@ void effect15(bool fadeToBlack, byte *scene) {
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effectNumber) {
 
 	// bool enabled = false;
-	bool enabled = true;
+	bool enabled = ConfMan.getBool("transitions_disable") == false;
 	uint32 effectStartTime = g_system->getMillis();
 	// Disable effects for now
 	if (!enabled) {
