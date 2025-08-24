@@ -56,7 +56,6 @@ static const KeybindingRecord *KEYBINDINGS[1] = {
 namespace HodjNPodj {
 
 static const KeybindingRecord MINIMAL_KEYS[] = {
-	{ KEYBIND_SELECT, "SELECT", _s("Select"), "RETURN", nullptr, "JOY_A" },
 	{ KEYBIND_ESCAPE, "ESCAPE", _s("Escape"), "ESCAPE", nullptr, "JOY_B" },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr, nullptr }
 };
