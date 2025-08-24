@@ -137,6 +137,8 @@ void MartianScripts::doIntro(int param1) {
 }
 
 void MartianScripts::cmdSpecial6() {
+	// A special transition screen after the jetpack in the outpost.
+	warning("cmdSpecial6: TODO: Store current music");
 	_vm->_midi->stopSong();
 	_vm->_screen->setDisplayScan();
 	_vm->_events->clearEvents();
@@ -176,7 +178,11 @@ void MartianScripts::cmdSpecial6() {
 	_vm->_objectsTable[0] = nullptr;
 	_vm->_midi->stopSong();
 
-	// TODO: Restore original music here?
+	// WORKAROUND: Reset Tex's scale flag after jetpack.
+	// (bug also present in original game)
+	_vm->_player->_flags &= ~IMGFLAG_UNSCALED;
+
+	warning("cmdSpecial6: TODO: Restore original music");
 }
 
 void MartianScripts::cmdSpecial7() {
@@ -201,7 +207,7 @@ void MartianScripts::cmdSpecial7() {
 
 	// Load objects specific to this special scene
 	Resource *data = _vm->_files->loadFile(40, 2);
-	_game->_spec7Objects = new SpriteResource(_vm, data);
+	_game->_objectsTable[40] = new SpriteResource(_vm, data);
 	delete data;
 
 	// Load animation data
@@ -212,23 +218,25 @@ void MartianScripts::cmdSpecial7() {
 
 	// Load script
 	Resource *newScript = _vm->_files->loadFile(40, 0);
-	_vm->_scripts->setScript(newScript);
+	setScript(newScript);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
-	_vm->_scripts->_sequence = 0;
-
+	_sequence = 0;
+	searchForSequence();
+	executeScript();
 	_vm->_sound->playSound(0);
 
 	do {
 		charLoop();
+		_vm->_events->pollEvents();
 	} while (_vm->_flags[134] != 1);
 
 	do {
 		_vm->_events->pollEvents();
 	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
-	_game->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_animation->freeAnimationData();
 	_vm->_scripts->freeScriptData();
 	_vm->_sound->freeSounds();
@@ -255,7 +263,6 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_screen->_printOrg = Common::Point(24, 18);
 	_vm->_screen->_printStart = Common::Point(24, 18);
 
-	// Display death message
 	_game->showExpositionText(Common::String(SPEC7MESSAGE));
 
 	_vm->_events->showCursor();
@@ -281,8 +288,8 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_files->loadScreen(40, 7);
 	_vm->_destIn = _vm->_screen;
 
-	_vm->_screen->plotImage(_game->_spec7Objects, 8, Common::Point(104, 176));
-	_vm->_screen->plotImage(_game->_spec7Objects, 7, Common::Point(102, 160));
+	_vm->_screen->plotImage(_game->_objectsTable[40], 8, Common::Point(176, 104));
+	_vm->_screen->plotImage(_game->_objectsTable[40], 7, Common::Point(160, 102));
 	_vm->_events->showCursor();
 	_vm->_screen->forceFadeIn();
 
@@ -315,8 +322,8 @@ void MartianScripts::cmdSpecial7() {
 
 	_vm->_sound->freeSounds();
 
-	delete _game->_spec7Objects;
-	_game->_spec7Objects = nullptr;
+	delete _game->_objectsTable[40];
+	_game->_objectsTable[40] = nullptr;
 
 	_vm->_events->hideCursor();
 	_vm->_screen->forceFadeOut();
