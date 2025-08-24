@@ -81,6 +81,7 @@ public:
 	void advancePaletteAnim();
 	void loadAnimationIntoBuffer(Common::SeekableReadStream *stream, byte *&buf, int animSize);
 	void printColor(int x, int y, int color);
+	void updateSceneArea(int speed = 1);
 
 	/**
 	 * Aux for palette animation
@@ -104,7 +105,6 @@ public:
 	 */
 	byte *_textAreaBackground = (byte *)malloc(kTextAreaSize);
 private:
-	void updateSceneAreaIfNeeded(int speed = 1);
 	signed char fadeData[256][256];
 	Graphics::BgiFont _litt;
 	Graphics::BgiFont _euro;

@@ -469,23 +469,470 @@ void GraphicsManager::drawScreen(byte *screen, bool offsetSize) {
 	g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 }
 
-void GraphicsManager::updateSceneAreaIfNeeded(int speed) {
-	if (g_engine->_chrono->shouldPaintEffect(speed)) {
+void GraphicsManager::updateSceneArea(int speed) {
+	// if (g_engine->_chrono->shouldPaintEffect(speed)) {
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-	}
+	// }
 }
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene) {
 	sceneTransition(fadeToBlack, scene, Random(15) + 1);
 }
 
+void updateScreenIfNeeded(uint32 &targetTime) {
+	Common::Event e;
+	while (g_system->getEventManager()->pollEvent(e)) {
+	}
+	if (g_system->getMillis() > targetTime) {
+		g_engine->_graphics->updateSceneArea();
+		targetTime = g_system->getMillis() + 10;
+	}
+	g_system->delayMillis(1);
+}
+
+void effect9(bool fadeToBlack, byte *scene);
+void effect7(bool fadeToBlack, byte *scene);
+
+void effect13(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 319; i1 >= 0; i1--) {
+			line(i1, 0, i1, 139, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		for (int i1 = 0; i1 < 320; i1++) {
+			for (int j1 = 0; j1 < 140; j1++) { // one vertical line
+				int color = scene[4 + (j1 * 320) + i1];
+				*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
+			}
+			updateScreenIfNeeded(targetTime);
+		}
+	}
+}
+
+void effect1(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 0; i1 <= 69; i1++) {
+
+			line(0, (i1 * 2), 319, (i1 * 2), 0);
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int i1 = 70; i1 >= 1; i1--) {
+
+			line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+		for (int i1 = 0; i1 <= 69; i1++) {
+			byte *src = scene + (i1 * 640) + 4;
+			Common::copy(src, src + 320, screenBuf + (i1 * 640));
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int i1 = 70; i1 >= 1; i1--) {
+			byte *src = scene + (i1 * 640) - 320 + 4;
+			Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
+			updateScreenIfNeeded(targetTime);
+		}
+	}
+}
+
+void effect2(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 70; i1 >= 1; i1--) {
+			line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int i1 = 0; i1 <= 69; i1++) {
+			line(0, (i1 * 2), 319, (i1 * 2), 0);
+			updateScreenIfNeeded(targetTime);
+			// delay(5);
+		}
+	} else {
+		effect9(fadeToBlack, scene);
+	}
+}
+
+void effect9(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 319; i1 >= 0; i1--) {
+			line(319, 139, i1, 0, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int i1 = 1; i1 <= 139; i1++) {
+			line(319, 139, 0, i1, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+
+		for (int i1 = 70; i1 >= 1; i1--) {
+			byte *src = scene + ((i1 * 640) - 320) + 4;
+			Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
+			updateScreenIfNeeded(targetTime);
+			// delay(5);
+		}
+		for (int i1 = 0; i1 <= 69; i1++) {
+			byte *src = scene + (i1 * 640) + 4;
+			Common::copy(src, src + 320, screenBuf + (i1 * 640));
+			updateScreenIfNeeded(targetTime);
+			// delay(5);
+		}
+	}
+}
+
+void effect3(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	int i1 = 0, j1 = 0;
+	if (fadeToBlack) {
+		for (int i2 = 1; i2 <= 9; i2++) {
+			i1 = 10;
+			do {
+				j1 = 10;
+				do {
+					bar((i1 - i2), (j1 - i2), (i1 + i2), (j1 + i2), 0);
+					j1 += 20;
+				} while (j1 != 150);
+				i1 += 20;
+				updateScreenIfNeeded(targetTime);
+			} while (i1 != 330);
+		}
+		bar(0, 0, 319, 139, 0);
+	} else {
+		effect7(false, scene);
+	}
+}
+
+void effect7(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	int i1 = 0, j1 = 0;
+	if (fadeToBlack) {
+		for (i1 = 69; i1 >= 0; i1--) {
+			rectangle(i1, i1, (319 - i1), (139 - i1), 0);
+			updateScreenIfNeeded(targetTime);
+			g_system->delayMillis(1);
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+		for (int i2 = 1; i2 <= 9; i2++) {
+			i1 = 10;
+			do {
+				j1 = 10;
+				do {
+					for (int i3 = (j1 - i2); i3 <= (j1 + i2); i3++) {
+						byte *src = scene + +4 + (i3 * 320) + +(i1 - i2);
+						Common::copy(src, src + (i2 * 2), screenBuf + (i3 * 320) + (i1 - i2));
+					}
+					j1 += 20;
+				} while (j1 != 150);
+				updateScreenIfNeeded(targetTime);
+				i1 += 20;
+			} while (i1 != 330);
+		}
+		g_engine->_graphics->drawScreen(scene);
+	}
+}
+
+void effect4(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i2 = 1; i2 <= 22; i2++) {
+			for (int i1 = 1; i1 <= 16; i1++)
+				for (int j1 = 1; j1 <= 7; j1++) {
+					if ((i1 + j1) == (i2 + 1)) {
+						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+						updateScreenIfNeeded(targetTime);
+						// delay(8);
+					}
+				}
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+		for (int i2 = 1; i2 <= 22; i2++) {
+			for (int i1 = 1; i1 <= 16; i1++)
+				for (int j1 = 1; j1 <= 7; j1++) {
+					if ((i1 + j1) == (i2 + 1)) {
+						for (int i3 = ((j1 - 1) * 20); i3 <= ((j1 - 1) * 20 + 19); i3++) {
+							byte *src = scene + +4 + (i3 * 320) + ((i1 - 1) * 20);
+							Common::copy(src, src + 20, screenBuf + (i3 * 320) + ((i1 - 1) * 20));
+						}
+						updateScreenIfNeeded(targetTime);
+						// delay(8);
+					}
+				}
+		}
+	}
+}
+
+void effect5(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int j1 = 0; j1 <= 139; j1++) {
+			line(0, j1, 319, (139 - j1), 0);
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int j1 = 318; j1 >= 1; j1--) {
+			line(j1, 0, (319 - j1), 139, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		effect9(false, scene);
+	}
+}
+
+void effect6(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 0; i1 < 70; i1++) {
+			rectangle(i1, i1, (319 - i1), (139 - i1), 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+		for (int i1 = 70; i1 >= 0; i1--) {
+			for (int j1 = i1; j1 <= (139 - i1); j1++) {
+				byte *src = scene + 4 + (j1 * 320) + i1;
+				Common::copy(src, src + 319 - (i1 * 2), screenBuf + (j1 * 320) + i1);
+			}
+			updateScreenIfNeeded(targetTime);
+		}
+	}
+}
+
+void effect8(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 0; i1 <= 319; i1++) {
+			line(0, 139, i1, 0, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+		for (int i1 = 1; i1 <= 139; i1++) {
+			line(0, 139, 319, i1, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		effect9(false, scene);
+	}
+}
+
+void effect10(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int j1 = 1; j1 <= 7; j1++) {
+			if ((j1 % 2) == 0)
+				for (int i1 = 1; i1 <= 16; i1++) {
+					bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+					updateScreenIfNeeded(targetTime);
+					g_system->delayMillis(2); // original enforces delay(8);
+				}
+			else
+				for (int i1 = 16; i1 >= 1; i1--) {
+					bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+					updateScreenIfNeeded(targetTime);
+					g_system->delayMillis(2); // original enforces delay(8);
+				}
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+		for (int j1 = 1; j1 <= 7; j1++) {
+			if ((j1 % 2) == 0)
+				for (int i1 = 1; i1 <= 16; i1++) {
+					for (int j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+						byte *src = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+
+						Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
+					}
+					updateScreenIfNeeded(targetTime);
+					g_system->delayMillis(2); // original enforces delay(8);
+				}
+			else
+				for (int i1 = 16; i1 >= 1; i1--) {
+					for (int j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+						byte *src = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+						Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
+					}
+					updateScreenIfNeeded(targetTime);
+					g_system->delayMillis(2); // original enforces delay(8);
+				}
+		}
+	}
+}
+
+void effect11(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	int i1 = 0, j1 = 0, j3 = 0;
+	if (fadeToBlack) {
+		for (int i2 = 0; i2 <= 3; i2++) {
+			j1 = 1 + i2;
+			for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
+				bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			i1--;
+			for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
+				bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			j1--;
+			for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
+				bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			i1++;
+			for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
+				bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+
+		for (int i2 = 0; i2 <= 3; i2++) {
+			j1 = 1 + i2;
+			for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
+				for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+					byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+					Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
+				}
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			i1--;
+			for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
+				for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+					byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+					Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
+				}
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			j1--;
+			for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
+				for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+					byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+					Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
+				}
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+			i1++;
+			for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
+				for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
+					byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
+					Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
+				}
+				updateScreenIfNeeded(targetTime);
+				g_system->delayMillis(1); // delay(8);
+			}
+		}
+	}
+}
+
+void effect12(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	int i2 = 0, j2 = 0;
+	if (fadeToBlack) {
+		for (int i1 = 1; i1 <= 15000; i1++) {
+			i2 = Random(318);
+			j2 = Random(138);
+			bar(i2, j2, (i2 + 2), (j2 + 2), 0);
+			putpixel(Random(320), Random(139), 0);
+			if (i1 % 100 == 0) {
+				updateScreenIfNeeded(targetTime);
+			}
+		}
+	} else {
+		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+
+		for (int i1 = 1; i1 <= 15000; i1++) {
+			i2 = Random(318);
+			j2 = Random(138);
+
+			byte *src1 = scene + 4 + (j2 * 320) + i2;
+			byte *src2 = scene + 4 + ((j2 + 1) * 320) + i2;
+			Common::copy(src1, src1 + 2, screenBuf + j2 * 320 + i2);
+
+			Common::copy(src2, src2 + 2, screenBuf + (j2 + 1) * 320 + i2);
+			i2 = Random(320);
+			j2 = Random(140);
+
+			byte *src3 = scene + 4 + (j2 * 320) + i2;
+			Common::copy(src3, src3 + 1, screenBuf + (j2 * 320) + i2);
+			if (i1 % 100 == 0) {
+				updateScreenIfNeeded(targetTime);
+			}
+		}
+		g_engine->_graphics->drawScreen(scene);
+	}
+}
+
+void effect14(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	if (fadeToBlack) {
+		for (int i1 = 0; i1 <= 319; i1++) {
+			line(i1, 0, i1, 139, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		for (int i1 = 320; i1 > 0; i1--) {
+			for (int j1 = 0; j1 < 140; j1++) {
+				int color = scene[4 + (j1 * 320) + i1];
+				*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
+			}
+			updateScreenIfNeeded(targetTime);
+		}
+	}
+}
+
+void effect15(bool fadeToBlack, byte *scene) {
+	uint32 targetTime = 0;
+	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+
+	if (fadeToBlack) {
+		for (int j1 = 0; j1 <= 70; j1++) {
+			Common::copy(screenBuf + (j1 * 320), screenBuf + (j1 * 320) + 320, screenBuf + ((j1 + 1) * 320));
+			line(0, j1, 319, j1, 0);
+			Common::copy(screenBuf + ((139 - j1) * 320), screenBuf + ((139 - j1) * 320) + 320, screenBuf + ((138 - j1) * 320));
+			line(0, (139 - j1), 319, (139 - j1), 0);
+			// delay(2);
+			updateScreenIfNeeded(targetTime);
+		}
+		// delay(5);
+		for (int j1 = 0; j1 <= 160; j1++) {
+			line(0, 68, j1, 68, 0);
+			line(319, 68, (319 - j1), 68, 0);
+			updateScreenIfNeeded(targetTime);
+		}
+	} else {
+		for (int j1 = 160; j1 > 0; j1--) {
+			line(j1, 69, (319 - j1), 69, 255);
+			updateScreenIfNeeded(targetTime);
+		}
+		// delay(5);
+		for (int j1 = 70; j1 > 0; j1--) {
+			byte *src1 = scene + 4 + j1 * 320;
+			byte *src2 = scene + 4 + (139 - j1) * 320;
+			Common::copy(src1, src1 + 320, screenBuf + j1 * 320);
+
+			Common::copy(src2, src2 + 320, screenBuf + (139 - j1) * 320);
+			updateScreenIfNeeded(targetTime);
+		}
+	}
+}
+
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effectNumber) {
 
-	int i1, i2, i3, j1, j2, j3;
-	bool enabled = false;
-	// bool enabled = true;
-
-	byte *screenBuf = (byte *)g_engine->_screen->getPixels();
+	// bool enabled = false;
+	bool enabled = true;
+	uint32 effectStartTime = g_system->getMillis();
 	// Disable effects for now
 	if (!enabled) {
 		debug("Effects disabled! requested effect is %d, with fadeToBlack =%d", effectNumber, fadeToBlack);
@@ -493,7 +940,7 @@ void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effect
 			drawScreen(scene);
 		}
 	} else {
-		// effectNumber = 13;
+		effectNumber = 15;
 		g_engine->_cpCounter2 = g_engine->_cpCounter;
 		if (g_engine->_cpCounter > 145)
 			showError(274);
@@ -501,385 +948,94 @@ void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effect
 		if (fadeToBlack)
 			switch (effectNumber) {
 			case 1: {
-				for (i1 = 0; i1 <= 69; i1++) {
-					line(0, (i1 * 2), 319, (i1 * 2), 0);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-				for (i1 = 70; i1 >= 1; i1--) {
-					line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
+				effect1(true, scene);
 			} break;
 			case 2: {
-				for (i1 = 70; i1 >= 1; i1--) {
-					line(0, (i1 * 2 - 1), 319, (i1 * 2 - 1), 0);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-				for (i1 = 0; i1 <= 69; i1++) {
-					line(0, (i1 * 2), 319, (i1 * 2), 0);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
+				effect2(true, scene);
 			} break;
 			case 3: {
-				for (i2 = 1; i2 <= 9; i2++) {
-					i1 = 10;
-					do {
-						j1 = 10;
-						do {
-							bar((i1 - i2), (j1 - i2), (i1 + i2), (j1 + i2), 0);
-							updateSceneAreaIfNeeded();
-							j1 += 20;
-						} while (j1 != 150);
-						i1 += 20;
-						updateSceneAreaIfNeeded();
-					} while (i1 != 330);
-				}
-				bar(0, 0, 319, 139, 0);
-				updateSceneAreaIfNeeded();
+				effect3(true, scene);
 			} break;
 			case 4: {
-				for (i2 = 1; i2 <= 22; i2++) {
-					for (i1 = 1; i1 <= 16; i1++)
-						for (j1 = 1; j1 <= 7; j1++) {
-							if ((i1 + j1) == (i2 + 1)) {
-								bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-								updateSceneAreaIfNeeded();
-								delay(8);
-							}
-						}
-				}
+				effect4(true, scene);
 			} break;
 			case 5: {
-				for (j1 = 0; j1 <= 139; j1++) {
-					line(0, j1, 319, (139 - j1), 0);
-					updateSceneAreaIfNeeded();
-				}
-				for (j1 = 318; j1 >= 1; j1--) {
-					line(j1, 0, (319 - j1), 139, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect5(true, scene);
 			} break;
 			case 6: {
-				for (i1 = 0; i1 < 70; i1++) {
-					rectangle(i1, i1, (319 - i1), (139 - i1), 0);
-					delay(5);
-					updateSceneAreaIfNeeded();
-				}
+				effect6(true, scene);
 			} break;
 			case 7: {
-				for (i1 = 69; i1 >= 0; i1--) {
-					rectangle(i1, i1, (319 - i1), (139 - i1), 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect7(true, scene);
 			} break;
 			case 8: {
-
-				for (i1 = 0; i1 <= 319; i1++) {
-					line(0, 139, i1, 0, 0);
-					updateSceneAreaIfNeeded();
-				}
-				for (i1 = 1; i1 <= 139; i1++) {
-					line(0, 139, 319, i1, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect8(true, scene);
 			} break;
 			case 9: {
-
-				for (i1 = 319; i1 >= 0; i1--) {
-					line(319, 139, i1, 0, 0);
-					updateSceneAreaIfNeeded();
-				}
-				for (i1 = 1; i1 <= 139; i1++) {
-					line(319, 139, 0, i1, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect9(true, scene);
 			} break;
 			case 10: {
-				for (j1 = 1; j1 <= 7; j1++) {
-					if ((j1 % 2) == 0)
-						for (i1 = 1; i1 <= 16; i1++) {
-							bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-							updateSceneAreaIfNeeded();
-							delay(8);
-						}
-					else
-						for (i1 = 16; i1 >= 1; i1--) {
-							bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-							updateSceneAreaIfNeeded();
-							delay(8);
-						}
-				}
+				effect10(true, scene);
 			} break;
 			case 11: {
-				for (i2 = 0; i2 <= 3; i2++) {
-					j1 = 1 + i2;
-					for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
-						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					i1--;
-					for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
-						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					j1--;
-					for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
-						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					i1++;
-					for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
-						bar(((i1 - 1) * 20), ((j1 - 1) * 20), ((i1 - 1) * 20 + 19), ((j1 - 1) * 20 + 19), 0);
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-				}
+				effect11(true, scene);
 			} break;
 			case 12: {
-				for (i1 = 1; i1 <= 15000; i1++) {
-					i2 = Random(318);
-					j2 = Random(138);
-					bar(i2, j2, (i2 + 2), (j2 + 2), 0);
-					putpixel(Random(320), Random(139), 0);
-					updateSceneAreaIfNeeded(5);
-				}
-				bar(0, 0, 319, 139, 0);
-				updateSceneAreaIfNeeded();
+				effect12(true, scene);
 			} break;
 			case 13: {
-				for (i1 = 319; i1 >= 0; i1--) {
-					line(i1, 0, i1, 139, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect13(true, scene);
 			} break;
 			case 14: {
-				for (i1 = 0; i1 <= 319; i1++) {
-					line(i1, 0, i1, 139, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect14(true, scene);
 			} break;
 			case 15: {
-
-				for (j1 = 0; j1 <= 70; j1++) {
-					Common::copy(screenBuf + (j1 * 320), screenBuf + (j1 * 320) + 320, screenBuf + ((j1 + 1) * 320));
-					line(0, j1, 319, j1, 0);
-					Common::copy(screenBuf + ((139 - j1) * 320), screenBuf + ((139 - j1) * 320) + 320, screenBuf + ((138 - j1) * 320));
-					line(0, (139 - j1), 319, (139 - j1), 0);
-					delay(2);
-					updateSceneAreaIfNeeded();
-				}
-				delay(5);
-				for (j1 = 0; j1 <= 160; j1++) {
-					line(0, 68, j1, 68, 0);
-					line(319, 68, (319 - j1), 68, 0);
-					updateSceneAreaIfNeeded();
-				}
+				effect15(true, scene);
 			} break;
 			}
 		else
 			switch (effectNumber) {
-			case 1: {
-				for (i1 = 0; i1 <= 69; i1++) {
-					byte *src = scene + (i1 * 640) + 4;
-					Common::copy(src, src + 320, screenBuf + (i1 * 640));
-
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-				for (i1 = 70; i1 >= 1; i1--) {
-					byte *src = scene + (i1 * 640) - 320 + 4;
-					Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-			} break;
+			case 1:
+				effect1(false, scene);
+			 	break;
 			case 2:
 			case 5:
 			case 8:
-			case 9: {
-				for (i1 = 70; i1 >= 1; i1--) {
-					byte *src = scene + ((i1 * 640) - 320) + 4;
-					Common::copy(src, src + 320, screenBuf + (i1 * 640) - 320);
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-				for (i1 = 0; i1 <= 69; i1++) {
-					byte *src = scene + (i1 * 640) + 4;
-					Common::copy(src, src + 320, screenBuf + (i1 * 640));
-					updateSceneAreaIfNeeded();
-					delay(5);
-				}
-			} break;
+			case 9:
+				effect9(false, scene);
+			break;
 			case 3:
 			case 7: {
-				for (i2 = 1; i2 <= 9; i2++) {
-					i1 = 10;
-					do {
-						j1 = 10;
-						do {
-							for (i3 = (j1 - i2); i3 <= (j1 + i2); i3++) {
-								byte *src = scene + +4 + (i3 * 320) + +(i1 - i2);
-								Common::copy(src, src + (i2 * 2), screenBuf + (i3 * 320) + (i1 - i2));
-							}
-							j1 += 20;
-						} while (j1 != 150);
-						updateSceneAreaIfNeeded();
-						i1 += 20;
-					} while (i1 != 330);
-				}
-				drawScreen(scene);
+				effect7(false, scene);
 			} break;
 			case 4: {
-				for (i2 = 1; i2 <= 22; i2++) {
-					for (i1 = 1; i1 <= 16; i1++)
-						for (j1 = 1; j1 <= 7; j1++) {
-							if ((i1 + j1) == (i2 + 1)) {
-								for (i3 = ((j1 - 1) * 20); i3 <= ((j1 - 1) * 20 + 19); i3++) {
-									byte *src = scene + +4 + (i3 * 320) + ((i1 - 1) * 20);
-									Common::copy(src, src + 20, screenBuf + (i3 * 320) + ((i1 - 1) * 20));
-									updateSceneAreaIfNeeded();
-								}
-								delay(8);
-							}
-						}
-				}
+				effect4(false, scene);
 			} break;
 			case 6: {
-				for (i1 = 70; i1 >= 0; i1--) {
-					for (j1 = i1; j1 <= (139 - i1); j1++) {
-						byte *src = scene + 4 + (j1 * 320) + i1;
-						Common::copy(src, src + 319 - (i1 * 2), screenBuf + (j1 * 320) + i1);
-					}
-					updateSceneAreaIfNeeded();
-				}
+				effect6(false, scene);
 			} break;
 			case 10: {
-				for (j1 = 1; j1 <= 7; j1++) {
-					if ((j1 % 2) == 0)
-						for (i1 = 1; i1 <= 16; i1++) {
-							for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-								byte *src = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-
-								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
-							}
-							updateSceneAreaIfNeeded();
-							delay(8);
-						}
-					else
-						for (i1 = 16; i1 >= 1; i1--) {
-							for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-								byte *src = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-								Common::copy(src, src + 20, screenBuf + (j3 * 320) + ((i1 - 1) * 20));
-							}
-							updateSceneAreaIfNeeded();
-							delay(8);
-						}
-				}
+				effect10(false, scene);
 			} break;
 			case 11: {
-				for (i2 = 0; i2 <= 3; i2++) {
-					j1 = 1 + i2;
-					for (i1 = (1 + i2); i1 <= (16 - i2); i1++) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-							byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-						}
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					i1--;
-					for (j1 = (2 + i2); j1 <= (7 - i2); j1++) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-							byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-						}
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					j1--;
-					for (i1 = (16 - i2); i1 >= (1 + i2); i1--) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-							byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-						}
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-					i1++;
-					for (j1 = (6 - i2); j1 >= (2 + i2); j1--) {
-						for (j3 = ((j1 - 1) * 20); j3 <= ((j1 - 1) * 20 + 19); j3++) {
-							byte *buf = scene + 4 + (j3 * 320) + ((i1 - 1) * 20);
-							Common::copy(buf, buf + 20, screenBuf + ((j3 * 320) + ((i1 - 1) * 20)));
-						}
-						updateSceneAreaIfNeeded();
-						delay(8);
-					}
-				}
+				effect11(false, scene);
 			} break;
 			case 12: {
-				for (i1 = 1; i1 <= 15000; i1++) {
-					i2 = Random(318);
-					j2 = Random(138);
-
-					byte *src1 = scene + 4 + (j2 * 320) + i2;
-					byte *src2 = scene + 4 + ((j2 + 1) * 320) + i2;
-					Common::copy(src1, src1 + 2, screenBuf + j2 * 320 + i2);
-
-					Common::copy(src2, src2 + 2, screenBuf + (j2 + 1) * 320 + i2);
-					i2 = Random(320);
-					j2 = Random(140);
-
-					byte *src3 = scene + 4 + (j2 * 320) + i2;
-					Common::copy(src3, src3 + 1, screenBuf + (j2 * 320) + i2);
-
-					updateSceneAreaIfNeeded();
-				}
-				drawScreen(scene);
+				effect12(false, scene);
 			} break;
-			case 13: {
-				debug("case 13!");
-				for (i1 = 0; i1 <= 319; i1++) {
-					for (j1 = 0; j1 <= 139; j1++) {
-						int color = scene[4 + (j1 * 320) + i1];
-						*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
-					}
-					delay(1);
-					updateSceneAreaIfNeeded();
-				}
-			} break;
+			case 13:
+				effect13(false, scene);
+				break;
 			case 14: {
-				for (i1 = 320; i1 > 0; i1--) {
-					for (j1 = 0; j1 < 140; j1++) {
-						int color = scene[4 + (j1 * 320) + i1];
-						*((byte *)g_engine->_screen->getBasePtr(i1, j1)) = color;
-					}
-					updateSceneAreaIfNeeded();
-				}
+				effect14(false, scene);
 			} break;
 			case 15: {
-				for (j1 = 160; j1 > 0; j1--) {
-					line(j1, 69, (319 - j1), 69, 255);
-					updateSceneAreaIfNeeded();
-				}
-				delay(5);
-				for (j1 = 70; j1 > 0; j1--) {
-					byte *src1 = scene + 4 + j1 * 320;
-					byte *src2 = scene + 4 + (139 - j1) * 320;
-					Common::copy(src1, src1 + 320, screenBuf + j1 * 320);
-
-					Common::copy(src2, src2 + 320, screenBuf + (139 - j1) * 320);
-					updateSceneAreaIfNeeded();
-				}
+				effect15(false, scene);
 			} break;
 			}
 	}
+	updateSceneArea();
+	debug("Effect finished in %u ms", g_system->getMillis() - effectStartTime);
 }
 
 void GraphicsManager::init() {
