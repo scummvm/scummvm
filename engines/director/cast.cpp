@@ -321,15 +321,18 @@ bool Cast::loadConfig() {
 		return false;
 	}
 	Common::SeekableReadStreamEndian *stream = nullptr;
+	const char *chunkTag = "VWCF";
 	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
-	if (!stream)
+	if (!stream) {
 		stream = _castArchive->getMovieResourceIfPresent(MKTAG('D', 'R', 'C', 'F'));
+		chunkTag = "DRCF";
+	}
 	if (!stream) {
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
 		return false;
 	}
 
-	debugC(1, kDebugLoading, "****** Loading Config VWCF for cast libID %d (%s)", _castLibID, _castName.c_str());
+	debugC(1, kDebugLoading, "****** Loading Config %s for cast libID %d (%s)", chunkTag, _castLibID, _castName.c_str());
 
 	if (debugChannelSet(5, kDebugLoading))
 		stream->hexdump(stream->size());
@@ -413,8 +416,8 @@ bool Cast::loadConfig() {
 	// uint16 stageColorG = stream.readUint16();
 	// uint16 stageColorB = stream.readUint16();
 
-	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d, light: %d, unk: %d, font: %d, size: %d"
-			", style: %d", _len, _fileVersion, _lightswitch, _unk1, _commentFont, _commentSize, _commentStyle);
+	debugC(1, kDebugLoading, "Cast::loadConfig(): len: %d, fileVersion: %d (v%d), light: %d, unk: %d, font: %d, size: %d"
+			", style: %d", _len, _fileVersion, humanVersion(_fileVersion), _lightswitch, _unk1, _commentFont, _commentSize, _commentStyle);
 	debugC(1, kDebugLoading, "Cast::loadConfig(): stagecolor: %d, depth: %d",
 			_stageColor, _bitdepth);
 	if (debugChannelSet(1, kDebugLoading))
