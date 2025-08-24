@@ -80,7 +80,7 @@ void SoundCastMember::load() {
 			sndId = (uint16)(_castId + _cast->_castIDoffset);
 		}
 	} else {
-		warning("STUB: SoundCastMember::SoundCastMember(): Sounds not yet supported for version %d", _cast->_version);
+		warning("STUB: SoundCastMember::SoundCastMember(): Sounds not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 
 	Common::SeekableReadStreamEndian *sndData = _cast->getResource(tag, sndId);

@@ -109,7 +109,7 @@ void PaletteCastMember::load() {
 			warning("PaletteCastMember::load(): No CLUT resource found in %d children", _children.size());
 		}
 	} else {
-		warning("STUB: PaletteCastMember::load(): Palettes not yet supported for version %d", _cast->_version);
+		warning("STUB: PaletteCastMember::load(): Palettes not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 	if (paletteId) {
 

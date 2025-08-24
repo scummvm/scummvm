@@ -724,7 +724,7 @@ void FilmLoopCastMember::load() {
 			warning("FilmLoopCastMember::load(): No SCVW resource found in %d children", _children.size());
 		}
 	} else {
-		warning("STUB: FilmLoopCastMember::load(): Film loops not yet supported for version %d", _cast->_version);
+		warning("STUB: FilmLoopCastMember::load(): Film loops not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 
 	_loaded = true;

@@ -48,7 +48,7 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 		_durationMillis = stream.readUint16BE();
 		debugC(5, kDebugLoading, "TransitionCastMember::TransitionCastMember(): transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
 	} else {
-		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version %d", _cast->_version);
+		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 }
 

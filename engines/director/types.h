@@ -466,7 +466,7 @@ const char *spriteType2str(SpriteType type);
 const char *inkType2str(InkType type);
 const char *symbolType2str(SymbolType type);
 Common::String objectType2str(int fl);
-
+\
 enum CollisionTest {
 	kCollisionNo = 0,
 	kCollisionYes,

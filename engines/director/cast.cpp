@@ -484,7 +484,7 @@ bool Cast::loadConfig() {
 				_defaultPalette.member -= 1;
 
 		} else {
-			warning("STUB: Cast::loadConfig(): Extended config not yet supported for version %d", _version);
+			warning("STUB: Cast::loadConfig(): Extended config not yet supported for version v%d (%d)", humanVersion(_version), _version);
 		}
 		debugC(1, kDebugLoading, "Cast::loadConfig(): platform: %s, defaultPalette: %s, frameRate: %d", getPlatformAbbrev(_platform), _defaultPalette.asString().c_str(), _frameRate);
 	}
@@ -1388,7 +1388,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		castInfoOffset = stream.pos();
 		castDataOffset = stream.pos() + castInfoSize;
 	} else {
-		error("Cast::loadCastData: unsupported Director version (%d)", _version);
+		error("Cast::loadCastData: unsupported Director version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
@@ -1645,7 +1645,7 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 			}
 		}
 	} else {
-		error("Cast::loadLingoContext: unsupported Director version (%d)", _version);
+		error("Cast::loadLingoContext: unsupported Director version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	if (debugChannelSet(-1, kDebugImGui) || ConfMan.getBool("dump_scripts")) {
@@ -1879,7 +1879,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	if (_version >= kFileVer400 && _version < kFileVer600 && member->_type == kCastSound) {
 		((SoundCastMember *)member)->_looping = castInfo.flags & 16 ? 0 : 1;
 	} else if (_version >= kFileVer600 && member->_type == kCastSound) {
-		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version %d", _version);
+		warning("STUB: Cast::loadCastInfo(): Sound cast member info not yet supported for version v%d (%d)", humanVersion(_version), _version);
 	}
 
 	// For PaletteCastMember, run load() as we need it right now

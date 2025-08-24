@@ -62,7 +62,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 		assert(stream.pos() == stream.size()); // There should be no more data
 	} else {
-		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version %d", version);
+		warning("STUB: ScriptCastMember::ScriptCastMember(): Scripts not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
 }
 

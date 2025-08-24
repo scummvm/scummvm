@@ -1773,7 +1773,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			frame1Offset, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else {
-		error("STUB: Score::loadFrames(): score not yet supported for version %d", version);
+		error("STUB: Score::loadFrames(): score not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
 
 	// partically by channels, hence we keep it and read the score from left to right

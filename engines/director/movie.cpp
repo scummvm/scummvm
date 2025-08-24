@@ -258,7 +258,7 @@ bool Movie::loadArchive() {
 		} else if (_version < kFileVer600) {
 			r = new Common::MemoryReadStreamEndian(kBlankScoreD4, sizeof(kBlankScoreD4), true);
 		} else {
-			error("Movie::loadArchive(): score format not yet supported for version %d", _version);
+			error("Movie::loadArchive(): score format not yet supported for version v%d (%d)", humanVersion(_version), _version);
 		}
 	}
 

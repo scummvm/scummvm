@@ -111,7 +111,7 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 }
 
 void Frame::writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 version) {
-	debugC(6, kDebugLoading, "Frame::writeChannel: writing main channels for version %d", version);
+	debugC(6, kDebugLoading, "Frame::writeChannel: writing main channels for version v%d (%d)", humanVersion(version), version);
 
 	if (version >= kFileVer400 && version < kFileVer500) {
 		writeMainChannelsD4(writeStream);

@@ -158,7 +158,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			}
 		}
 	} else {
-		warning("STUB: BitmapCastMember::BitmapCastMember(): Bitmaps not yet supported for version %d", version);
+		warning("STUB: BitmapCastMember::BitmapCastMember(): Bitmaps not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
 
 	_tag = castTag;
