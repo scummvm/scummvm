@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-23 21:28+0000\n"
+"POT-Creation-Date: 2025-08-24 17:16+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -8939,6 +8939,14 @@ msgstr "Включить путешествие камнем"
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
 msgstr "Разрешить путешествовать с помощью бросания камней на старте"
+
+#: engines/freescape/metaengine.cpp:141
+msgid "Smoother movement"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:142
+msgid "Use smoother movements instead of discrete steps"
+msgstr ""
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"

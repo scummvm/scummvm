@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-23 21:28+0000\n"
+"POT-Creation-Date: 2025-08-24 17:16+0000\n"
 "PO-Revision-Date: 2025-08-21 18:46+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -8766,6 +8766,14 @@ msgstr "Activer le rock travel"
 #: engines/freescape/metaengine.cpp:131
 msgid "Enable traveling using a rock shoot at start"
 msgstr "Permet le déplacement à l'aide d'un rocher tiré au départ"
+
+#: engines/freescape/metaengine.cpp:141
+msgid "Smoother movement"
+msgstr ""
+
+#: engines/freescape/metaengine.cpp:142
+msgid "Use smoother movements instead of discrete steps"
+msgstr ""
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
