@@ -175,16 +175,16 @@ public:
 	static void audioTask();
 	static bool soundsPlaying();
 	static bool MidiAvailable() {
-		return _bMidiAvailable;
+		return true;
 	}
 	static bool SoundAvailable() {
-		return _bSoundAvailable;
+		return true;
 	}
 	static bool SoundVolumeAvailable() {
-		return _bWaveVolume;
+		return true;
 	}
 	static bool MidiVolumeAvailable() {
-		return _bMidiVolume;
+		return true;
 	}
 
 	static CBofSound *OnMCIStopped(WPARAM wParam, LPARAM lParam) {
@@ -227,10 +227,6 @@ private:
 	static int _nCount;                    // Count of active sounds
 	static int _nWavCount;                 // Number of wave sound devices
 	static int _nMidiCount;                // Number of midi sound devices
-	static bool _bSoundAvailable;          // Whether wave sound is available
-	static bool _bMidiAvailable;           // Whether midi sound is available
-	static bool _bWaveVolume;              // Whether wave volume can be set
-	static bool _bMidiVolume;              // Whether midi volume can be set
 	static void *_pMainWnd;                // Window for message processing
 	static bool _bInit;
 

@@ -43,12 +43,8 @@ namespace Bagel {
 char    CBofSound::_szDrivePath[MAX_DIRPATH];
 CBofSound *CBofSound::_pSoundChain = nullptr;   // Pointer to chain of linked Sounds
 int     CBofSound::_nCount = 0;                 // Count of currently active Sounds
-int     CBofSound::_nWavCount = 0;              // Available wave sound devices
-int     CBofSound::_nMidiCount = 0;             // Available midi sound devices
-bool    CBofSound::_bSoundAvailable = false;    // Whether wave sound is available
-bool    CBofSound::_bMidiAvailable = false;     // Whether midi sound is available
-bool    CBofSound::_bWaveVolume = false;        // Whether wave volume can be set
-bool    CBofSound::_bMidiVolume = false;        // Whether midi volume can be set
+int     CBofSound::_nWavCount = 1;              // Available wave sound devices
+int     CBofSound::_nMidiCount = 1;             // Available midi sound devices
 void *CBofSound::_pMainWnd = nullptr;         // Window for message processing
 
 bool    CBofSound::_bInit = false;
@@ -203,11 +199,15 @@ void CBofSound::setVolume(int nVolume) {
 	assert(nVolume >= VOLUME_INDEX_MIN && nVolume <= VOLUME_INDEX_MAX);
 
 	_nVol = CLIP(nVolume, VOLUME_INDEX_MIN, VOLUME_INDEX_MAX);
-	g_system->getMixer()->setChannelVolume(_handle, VOLUME_SVM(_nVol));
 
-	// TODO: MIDI volume
+	Audio::Mixer *mixer = g_system->getMixer();
+	byte vol = VOLUME_SVM(_nVol);
+	mixer->setChannelVolume(_handle, vol);
+
+	mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, vol);
+	mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, vol);
+	g_engine->_midi->setVolume(vol);
 }
-
 
 void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 	assert(nMidiVolume >= VOLUME_INDEX_MIN && nMidiVolume <= VOLUME_INDEX_MAX);
