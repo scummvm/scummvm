@@ -151,6 +151,7 @@ public:
 	void purgeMouseEvents();
 	void pushEvent(Common::Event &event);
 	void clearExitEvents();
+	bool isActionActive(const Common::CustomEventType &action);
 
 private:
 	// for continuous events (keyDown)
@@ -334,6 +335,16 @@ public:
 	bool _shootMode;
 	bool _noClipMode;
 	bool _invertY;
+
+	bool _smoothMovement;
+	// Player movement state
+	bool _moveForward;
+	bool _moveBackward;
+	bool _strafeLeft;
+	bool _strafeRight;
+	bool _moveUp;
+	bool _moveDown;
+
 	virtual void initKeymaps(Common::Keymap *engineKeyMap, Common::Keymap *infoScreenKeyMap, const char *target);
 	EventManagerWrapper *_eventManager;
 	void processInput();
@@ -343,7 +354,9 @@ public:
 	virtual void releasedKey(const int keycode);
 	Common::Point getNormalizedPosition(Common::Point position);
 	virtual bool onScreenControls(Common::Point mouse);
-	void move(CameraMovement direction, uint8 scale, float deltaTime);
+	void updatePlayerMovement(float deltaTime);
+	void updatePlayerMovementSmooth(float deltaTime);
+	void updatePlayerMovementClassic(float deltaTime);
 	void resolveCollisions(Math::Vector3d newPosition);
 	virtual void checkIfStillInArea();
 	void changePlayerHeight(int index);
@@ -358,6 +371,9 @@ public:
 	bool tryStepUp(Math::Vector3d currentPosition);
 	bool tryStepDown(Math::Vector3d currentPosition);
 	bool _hasFallen;
+	bool _isCollidingWithWall;
+	bool _isStepping;
+	bool _isFalling;
 	int _maxFallingDistance;
 	int _maxShield;
 	int _maxEnergy;

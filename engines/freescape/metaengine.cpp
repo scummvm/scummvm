@@ -135,6 +135,17 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			0
 		}
 	},
+	{
+		GAMEOPTION_MODERN_MOVEMENT,
+		{
+			_s("Smoother movement"),
+			_s("Use smoother movements instead of discrete steps"),
+			"smooth_movement",
+			true,
+			0,
+			0
+		}
+	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 

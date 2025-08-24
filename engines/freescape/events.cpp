@@ -102,6 +102,7 @@ void EventManagerWrapper::purgeKeyboardEvents() {
 	_delegate->purgeKeyboardEvents();
 	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
 	_currentActionDown = kActionNone;
+	_keyRepeatTime = 0;
 }
 
 void EventManagerWrapper::purgeMouseEvents() {
@@ -116,6 +117,10 @@ void EventManagerWrapper::clearExitEvents() {
 	_delegate->resetQuit();
 	//_delegate->resetReturnToLauncher();
 
+}
+
+bool EventManagerWrapper::isActionActive(const Common::CustomEventType &action) {
+	return _currentActionDown == action;
 }
 
 } // namespace Freescape

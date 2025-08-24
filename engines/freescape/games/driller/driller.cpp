@@ -927,16 +927,16 @@ void DrillerEngine::endGame() {
 
 bool DrillerEngine::onScreenControls(Common::Point mouse) {
 	if (_moveFowardArea.contains(mouse)) {
-		move(kForwardMovement, _scaleVector.x(), 20.0);
+		//move(kForwardMovement, _scaleVector.x(), 20.0);
 		return true;
 	} else if (_moveLeftArea.contains(mouse)) {
-		move(kLeftMovement, _scaleVector.y(), 20.0);
+		//move(kLeftMovement, _scaleVector.y(), 20.0);
 		return true;
 	} else if (_moveRightArea.contains(mouse)) {
-		move(kRightMovement, _scaleVector.y(), 20.0);
+		//move(kRightMovement, _scaleVector.y(), 20.0);
 		return true;
 	} else if (_moveBackArea.contains(mouse)) {
-		move(kBackwardMovement, _scaleVector.x(), 20.0);
+		//move(kBackwardMovement, _scaleVector.x(), 20.0);
 		return true;
 	} else if (_moveUpArea.contains(mouse)) {
 		rise();

@@ -88,6 +88,13 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("invert_y"), _invertY))
 		error("Failed to parse bool from invert_y option");
 
+	_smoothMovement = false;
+	if (!Common::parseBool(ConfMan.get("smooth_movement"), _smoothMovement))
+		error("Failed to parse bool from smooth_movement option");
+
+	if (isDriller() || isSpaceStationOblivion() || isDark())
+		_smoothMovement = false;
+
 	_gameStateControl = kFreescapeGameStateStart;
 	_startArea = 0;
 	_startEntrance = 0;
@@ -99,6 +106,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_position = Math::Vector3d(0, 0, 0);
 	_lastPosition = Math::Vector3d(0, 0, 0);
 	_hasFallen = false;
+	_isCollidingWithWall = false;
+	_isStepping = false;
+	_isFalling = false;
 	_maxFallingDistance = 64;
 	_velocity = Math::Vector3d(0, 0, 0);
 	_cameraFront = Math::Vector3d(0, 0, 0);
@@ -116,6 +126,12 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_currentDemoMousePosition = _crossairPosition;
 	_flyMode = false;
 	_noClipMode = false;
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_moveUp = false;
+	_moveDown = false;
 	_playerWasCrushed = false;
 	_forceEndGame = false;
 	_syncSound = false;
@@ -518,8 +534,8 @@ void FreescapeEngine::warpMouseToCrossair() {
 
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
-	float deltaTime = 20.0;
 	_lastFrame = currentFrame;
+
 	Common::Event event;
 	Common::Point mousePos;
 
@@ -550,17 +566,23 @@ void FreescapeEngine::processInput() {
 			if (_hasFallen || _playerWasCrushed)
 				break;
 			switch (event.customType) {
-			case kActionMoveUp:
-				move(kForwardMovement, _scaleVector.x(), deltaTime);
+				case kActionMoveUp:
+				_moveForward = true;
 				break;
 			case kActionMoveDown:
-				move(kBackwardMovement, _scaleVector.x(), deltaTime);
+				_moveBackward = true;
 				break;
 			case kActionMoveLeft:
-				move(kLeftMovement, _scaleVector.y(), deltaTime);
+				_strafeLeft = true;
 				break;
 			case kActionMoveRight:
-				move(kRightMovement, _scaleVector.y(), deltaTime);
+				_strafeRight = true;
+				break;
+			case kActionRiseOrFlyUp:
+				_moveUp = true;
+				break;
+			case kActionLowerOrFlyDown:
+				_moveDown = true;
 				break;
 			case kActionShoot:
 				shoot();
@@ -613,6 +635,41 @@ void FreescapeEngine::processInput() {
 				break;
 			}
 			break;
+
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			if (_hasFallen || _playerWasCrushed)
+				break;
+			switch (event.customType) {
+			case kActionMoveUp:
+				_moveForward = false;
+				break;
+			case kActionMoveDown:
+				_moveBackward = false;
+				break;
+			case kActionMoveLeft:
+				_strafeLeft = false;
+				break;
+			case kActionMoveRight:
+				_strafeRight = false;
+				break;
+			case kActionRiseOrFlyUp:
+				if (!_flyMode)
+					rise();
+				else
+					_moveUp = false;
+				break;
+			case kActionLowerOrFlyDown:
+				if (!_flyMode)
+					lower();
+				else
+					_moveDown = false;
+				break;
+			default:
+				releasedKey(event.customType);
+				break;
+			}
+			break;
+
 		case Common::EVENT_KEYDOWN:
 			if (_hasFallen || _playerWasCrushed)
 				break;
@@ -781,6 +838,10 @@ Common::Error FreescapeEngine::run() {
 	g_system->updateScreen();
 
 	while (!shouldQuit()) {
+		float currentFrame = g_system->getMillis();
+		float deltaTime = (currentFrame - _lastFrame) / 1000.0f;
+		_lastFrame = currentFrame;
+
 		updateTimeVariables();
 		if (_gameStateControl == kFreescapeGameStateRestart) {
 			initGameState();
@@ -789,6 +850,7 @@ Common::Error FreescapeEngine::run() {
 			endGame();
 
 		processInput();
+		updatePlayerMovement(deltaTime);
 		if (_demoMode)
 			generateDemoInput();
 
@@ -974,6 +1036,14 @@ void FreescapeEngine::initGameState() {
 	_yaw = 0;
 	_pitch = 0;
 	_roll = 0;
+
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_moveUp = false;
+	_moveDown = false;
+
 	_endGameKeyPressed = false;
 	_endGamePlayerEndArea = false;
 
