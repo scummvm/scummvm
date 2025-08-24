@@ -57,7 +57,7 @@ void CDocument::SetModifiedFlag(BOOL bModified) {
 }
 
 void CDocument::AddView(CView *pView) {
-	ASSERT_VALID(pView);
+	assert(dynamic_cast<CView *>(pView) != nullptr);
 	assert(pView->m_pDocument == nullptr); // must not be already attached
 	assert(!m_viewList.contains(pView));   // must not be in list
 
@@ -129,8 +129,10 @@ void CDocument::OnCloseDocument() {
 	m_bAutoDelete = FALSE;  // don't destroy document while closing views
 
 	while (!m_viewList.empty()) {
+		size_t arrSize = m_viewList.size();
+
 		// get frame attached to the view
-		CView *pView = (CView *)m_viewList.begin();
+		CView *pView = m_viewList.front();
 		ASSERT_VALID(pView);
 		CFrameWnd *pFrame = pView->GetParentFrame();
 		ASSERT_VALID(pFrame);
@@ -138,7 +140,9 @@ void CDocument::OnCloseDocument() {
 		// and close it
 		PreCloseFrame(pFrame);
 		pFrame->DestroyWindow();
+
 		// will destroy the view as well
+		assert(m_viewList.size() < arrSize);
 	}
 	m_bAutoDelete = bAutoDelete;
 

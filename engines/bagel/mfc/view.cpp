@@ -28,6 +28,7 @@ namespace MFC {
 IMPLEMENT_DYNAMIC(CView, CWnd)
 BEGIN_MESSAGE_MAP(CView, CWnd)
 ON_WM_PAINT()
+ON_WM_NCDESTROY()
 END_MESSAGE_MAP()
 
 BOOL CView::PreCreateWindow(CREATESTRUCT &cs) {
@@ -61,12 +62,19 @@ void CView::OnDestroy() {
 	CWnd::OnDestroy();
 }
 
-// self destruction
+void CView::OnNcDestroy() {
+	CWnd::OnNcDestroy();
+
+	// De-register the view from the document
+	if (m_pDocument)
+		m_pDocument->RemoveView(this);
+	m_pDocument = nullptr;
+
+	PostNcDestroy();
+}
+
 void CView::PostNcDestroy() {
-	// default for views is to allocate them on the heap
-	//  the default post-cleanup is to 'delete this'.
-	//  never explicitly call 'delete' on a view
-	delete this;
+	// Default implementation does nothing
 }
 
 void CView::OnInitialUpdate() {

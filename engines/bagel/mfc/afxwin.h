@@ -1730,6 +1730,7 @@ protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT &cCs) override;
 	virtual void OnDraw(CDC *pDC) {}
 	void OnPaint();
+	void OnNcDestroy();
 
 	DECLARE_MESSAGE_MAP()
 

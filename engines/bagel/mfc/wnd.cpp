@@ -1226,9 +1226,6 @@ void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {
 void CWnd::OnNcDestroy() {
 	Detach();
 	ASSERT(m_hWnd == nullptr);
-
-	// call special post-cleanup routine
-	PostNcDestroy();
 }
 
 HWND CWnd::Detach() {
