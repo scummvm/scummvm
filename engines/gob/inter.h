@@ -796,6 +796,10 @@ protected:
 									const Common::Array<byte> &appChildData,
 									uint32 childNbr, uint32 appliNbr);
 
+	void o7_writeUnknownChildDataToGameVariables(OpGobParams &params);
+	void o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params);
+	void o7_writeUnknownChildUin16ToGameVariables(OpGobParams &params);
+
 	void o7_startAdi4Application(OpGobParams &params);
 
 	void o7_xorDeobfuscate(OpGobParams &params);
@@ -812,8 +816,9 @@ private:
 	const uint32 kAdi4InfGeneralChildDataSize = 3406;
 	const uint32 kAdi4InfAppChildDataSize = 200;
 
-	uint32 _adi4CurrentAppNbr;
-	uint32 _adi4CurrentChildNbr;
+	uint32 _adi4CurrentAppNbr = 0;
+	uint32 _adi4CurrentChildNbr = 0;
+	uint32 _adi4CurrentSectionInAppChildData = 0; // 0, 1, or 2
 	Common::Array<byte> _adi4GeneralChildData;
 	Common::Array<byte> _adi4CurrentAppChildData;
 

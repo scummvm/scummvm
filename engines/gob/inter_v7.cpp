@@ -150,7 +150,9 @@ void Inter_v7::setupOpcodesFunc() {
 }
 
 void Inter_v7::setupOpcodesGob() {
-	Inter_Playtoons::setupOpcodesGob();
+	OPCODEGOB(55, o7_writeUnknownChildDataToGameVariables);
+	OPCODEGOB(64, o7_writeUnknownAppChildDataToGameVariables);
+	OPCODEGOB(74, o7_writeUnknownChildUin16ToGameVariables);
 
 	OPCODEGOB(406, o7_startAdi4Application);
 	OPCODEGOB(407, o7_xorDeobfuscate);
@@ -2050,7 +2052,6 @@ bool Inter_v7::writeAdi4InstalledAppsData(const Common::Array<byte> &generalChil
 										 const Common::Array<byte> &appChildData,
 										 uint32 childNbr,
 										 uint32 appliNbr) {
-
 	if (!writeAdi4InfDataForChild(generalChildData, childNbr, 0, kAdi4InfGeneralChildDataSize)) {
 		warning("wrAdi4InstalledAppsData: Failed to write general data for child %d in ADI.INF", childNbr);
 		return false;
@@ -2069,9 +2070,39 @@ bool Inter_v7::writeAdi4InstalledAppsData(const Common::Array<byte> &generalChil
 								 kAdi4InfAppChildDataSize)) {
 		warning("readAdi4InstalledAppsData: Failed to write app-specific data for child %d in ADI.INF", childNbr);
 		return false;
-	}
+								 }
 
 	return true;
+}
+
+void Inter_v7::o7_writeUnknownChildDataToGameVariables(OpGobParams &params) {
+	uint16 destVarIndex = _vm->_game->_script->readUint16();
+	_vm->_game->_script->skip(14);
+
+	if (_adi4GeneralChildData.empty())
+		return;
+
+	_vm->_inter->_variables->copyFrom(destVarIndex * 4, &_adi4GeneralChildData[3344], 40);
+	WRITE_VARO_UINT16(destVarIndex * 4 + 39, _adi4CurrentChildNbr);
+}
+
+void Inter_v7::o7_writeUnknownAppChildDataToGameVariables(OpGobParams &params) {
+	uint16 destVarIndex = _vm->_game->_script->readUint16();
+	if (_adi4GeneralChildData.empty())
+		return;
+
+	for (uint32 i = 0; i < kAdi4InfAppChildDataSize; ++i) {
+		WRITE_VARO_UINT8(destVarIndex * 4 + i,
+						_adi4CurrentAppChildData[i + _adi4CurrentSectionInAppChildData * kAdi4InfAppChildDataSize] & 3);
+	}
+}
+
+void Inter_v7::o7_writeUnknownChildUin16ToGameVariables(OpGobParams &params) {
+	uint16 varIndex = _vm->_game->_script->readUint16();
+	if (_adi4GeneralChildData.empty())
+		return;
+
+	WRITE_VAR(varIndex, READ_LE_UINT16(&_adi4GeneralChildData[3241]));
 }
 
 void Inter_v7::o7_startAdi4Application(OpGobParams &params) {
@@ -2137,6 +2168,7 @@ void Inter_v7::o7_startAdi4Application(OpGobParams &params) {
 		_vm->_dataIO->closeArchive(false);
 	}
 
+	_adi4CurrentSectionInAppChildData = 0;
 	_adi4GeneralChildData.clear();
 	_adi4CurrentAppChildData.clear();
 }
