@@ -61,8 +61,6 @@ protected:
 	void setNoteParams();
 	void displayNote(const Common::String &msg);
 public:
-	SpriteResource *_spec7Objects;
-
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	~MartianEngine() override;
 

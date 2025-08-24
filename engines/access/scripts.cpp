@@ -805,7 +805,7 @@ void Scripts::cmdPlayBufVid() {
 
 void Scripts::cmdRemoveLast() {
 	debugC(1, kDebugScripts, "cmdRemoveLast()");
-	--_vm->_numAnimTimers;
+	_vm->_animation->popBackTimer();
 }
 
 void Scripts::cmdDoTravel() {

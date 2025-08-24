@@ -181,7 +181,7 @@ void CampScene::mWhileDoOpen() {
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_images.clear();
 
 	if (_vm->isCD()) {
@@ -200,7 +200,7 @@ void CampScene::mWhileDoOpen() {
 		_vm->freeCells();
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
-		_vm->_numAnimTimers = 0;
+		_vm->_animation->clearTimers();
 		_vm->_images.clear();
 	}
 }
@@ -1316,7 +1316,7 @@ void Cast::doCast(int param1) {
 
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 
 	_vm->_midi->newMusic(58, 0);
 	screen.forceFadeIn();
@@ -1349,7 +1349,7 @@ void Cast::doCast(int param1) {
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_images.clear();
 	screen.forceFadeOut();
 

@@ -195,7 +195,7 @@ void AmazonEngine::initVariables() {
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
-	_numAnimTimers = 0;
+	_animation->clearTimers();
 }
 
 void AmazonEngine::establish(int screenId, int esatabIndex) {

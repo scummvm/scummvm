@@ -32,12 +32,12 @@ namespace Martian {
 
 MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
 AccessEngine(syst, gameDesc), _skipStart(false), _introObjects(nullptr),
-_creditsStream(nullptr), _spec7Objects(nullptr)
+_creditsStream(nullptr)
 {
 }
 
 MartianEngine::~MartianEngine() {
-	_introObjects = _spec7Objects = nullptr;
+	_introObjects = nullptr;
 	_skipStart = false;
 	_creditsStream = nullptr;
 }
@@ -67,7 +67,7 @@ void MartianEngine::initVariables() {
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
-	_numAnimTimers = 0;
+	_animation->clearTimers();
 
 	ARRAYCLEAR(_travel);
 	_travel[7] = 1;
