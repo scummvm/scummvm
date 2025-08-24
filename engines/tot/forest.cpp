@@ -186,7 +186,6 @@ void readTree(Common::SeekableReadStream &stream, Tree &a, uint position) {
 void readTree(Common::String f, Tree &a, uint offset) {
 
 	Common::File treeFile;
-	debug("Filename = %s", f.c_str());
 	if (!treeFile.open(Common::Path(f))) {
 		showError(314);
 	}
