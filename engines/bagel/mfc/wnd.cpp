@@ -356,9 +356,12 @@ void CWnd::DestroyWindow() {
 	// Mark as not needed any repainting
 	Validate();
 
-	// Detach any child controls
-	for (auto &node : _children)
-		node._value->m_pParentWnd = nullptr;
+	// Destroy and detach child controls
+	for (auto &node : _children) {
+		CWnd *child = node._value;
+		child->DestroyWindow();
+		child->m_pParentWnd = nullptr;
+	}
 	_children.clear();
 
 	// Free any owned controls

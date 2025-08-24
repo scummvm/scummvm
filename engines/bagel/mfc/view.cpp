@@ -74,7 +74,8 @@ void CView::OnNcDestroy() {
 }
 
 void CView::PostNcDestroy() {
-	// Default implementation does nothing
+	// Default implementation destroys view
+	delete this;
 }
 
 void CView::OnInitialUpdate() {
