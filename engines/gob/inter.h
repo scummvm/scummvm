@@ -787,6 +787,17 @@ protected:
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
 
+	bool readAdi4InfDataForChild(Common::Array<byte> &dest, uint32 childNumber, uint32 offset, uint32 size);
+	bool readAdi4InstalledAppsData(Common::Array<byte> &generalChildData,
+								   Common::Array<byte> &appChildData,
+								   uint32 childNbr, uint32 appliNbr);
+	bool writeAdi4InfDataForChild(const Common::Array<byte> &data, uint32 childNumber, uint32 offset, uint32 size);
+	bool writeAdi4InstalledAppsData(const Common::Array<byte> &generalChildData,
+									const Common::Array<byte> &appChildData,
+									uint32 childNbr, uint32 appliNbr);
+
+	void o7_startAdi4Application(OpGobParams &params);
+
 	void o7_xorDeobfuscate(OpGobParams &params);
 	void o7_xorObfuscate(OpGobParams &params);
 	void o7_ansiToOEM(OpGobParams &params);
@@ -797,6 +808,15 @@ protected:
 	void o7_dummy(OpGobParams &params);
 
 private:
+	const uint32 kAdi4InfChildDataSize = 7406;
+	const uint32 kAdi4InfGeneralChildDataSize = 3406;
+	const uint32 kAdi4InfAppChildDataSize = 200;
+
+	uint32 _adi4CurrentAppNbr;
+	uint32 _adi4CurrentChildNbr;
+	Common::Array<byte> _adi4GeneralChildData;
+	Common::Array<byte> _adi4CurrentAppChildData;
+
 	INIConfig _inis;
 	TranslationDatabases _translationDatabases;
 	Common::HashMap<Common::String, Database, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _databases;
