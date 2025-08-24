@@ -931,10 +931,7 @@ void effect15(bool fadeToBlack, byte *scene) {
 }
 
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effectNumber) {
-
-	// bool enabled = false;
 	bool enabled = ConfMan.getBool("transitions_disable") == false;
-	uint32 effectStartTime = g_system->getMillis();
 	// Disable effects for now
 	if (!enabled) {
 		if (!fadeToBlack) {
@@ -1034,7 +1031,6 @@ void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene, byte effect
 			}
 	}
 	updateSceneArea();
-	debug("Effect finished in %u ms", g_system->getMillis() - effectStartTime);
 }
 
 void GraphicsManager::init() {

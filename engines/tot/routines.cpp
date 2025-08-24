@@ -750,7 +750,6 @@ RoomObjectListEntry *readRoomObjects(Common::SeekableReadStream *screenDataFile)
 }
 
 RoomFileRegister *TotEngine::readScreenDataFile(Common::SeekableReadStream *screenDataFile) {
-	debug("reading screen data file!");
 	RoomFileRegister *screenData = new RoomFileRegister();
 	screenData->code = screenDataFile->readUint16LE();
 	screenData->roomImagePointer = screenDataFile->readUint32LE();
@@ -789,7 +788,6 @@ RoomFileRegister *TotEngine::readScreenDataFile(Common::SeekableReadStream *scre
 }
 
 void TotEngine::loadScreenData(uint screenNumber) {
-	debug("Opening screen %d", screenNumber);
 	_currentRoomNumber = screenNumber;
 
 	_rooms->seek(screenNumber * kRoomRegSize, SEEK_SET);
@@ -3705,7 +3703,6 @@ void TotEngine::loadObjects() {
 	}
 
 	objectFile.close();
-	debug("Successfully read objects!");
 }
 
 void TotEngine::obtainName(Common::String &playerName) {
@@ -4519,7 +4516,6 @@ void TotEngine::wcScene() {
 
 void TotEngine::readConversationFile(Common::String f) {
 	Common::File conversationFile;
-	debug("Filename = %s", f.c_str());
 	if (!conversationFile.open(Common::Path(f))) {
 		showError(314);
 	}

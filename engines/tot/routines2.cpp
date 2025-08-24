@@ -51,7 +51,6 @@ void TotEngine::loadAnimationForDirection(Common::SeekableReadStream *stream, in
 }
 
 void TotEngine::loadAnimation(Common::String animationName) {
-	debug("Loading animation!");
 	Common::File animFile;
 
 	if (animationName == "PETER")
@@ -107,7 +106,6 @@ void TotEngine::loadAnimation(Common::String animationName) {
 			_mouseGridForSecondaryAnim[i][j] = _currentRoomData->mouseGrid[_oldposx + i][_oldposy + j];
 		}
 	_iframe2 = 0;
-	debug("Finished loading animation!");
 }
 
 void TotEngine::readTextFile() {

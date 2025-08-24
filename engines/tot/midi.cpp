@@ -156,7 +156,6 @@ void MidiPlayer::load(Common::SeekableReadStream *in, int32 size) {
 	in->read(*dataPtr, size);
 
 	parser->loadMusic(*dataPtr, size);
-	debug("Successfully loaded Music");
 }
 
 void MidiPlayer::play(int track) {
