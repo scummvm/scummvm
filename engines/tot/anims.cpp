@@ -852,7 +852,7 @@ static void exitProcedure(bool &exitLoop, bool &isSkipAllowed) {
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
 		changeGameSpeed(e);
-		if (isSkipAllowed && e.type == Common::EVENT_KEYUP || (e.type == Common::EVENT_LBUTTONUP)) {
+		if (isSkipAllowed && (e.type == Common::EVENT_KEYUP || (e.type == Common::EVENT_LBUTTONUP))) {
 			exitLoop = true;
 		}
 	}

@@ -117,7 +117,6 @@ bool SoundManager::isVocPlaying() {
 
 void SoundManager::playMidi(Common::String fileName, bool loop) {
 	Common::File musicFile;
-	debug("Opening music file %s", fileName.c_str());
 	musicFile.open(Common::Path(fileName + ".MUS"));
 	if (!musicFile.isOpen()) {
 		showError(267);
@@ -170,7 +169,6 @@ void SoundManager::setSfxVolume(byte voll, byte volr) {
 
 void SoundManager::setMidiVolume(byte voll, byte volr) {
 	int volume = (voll) / (float)7 * 255;
-	debug("Setting Midi volume to %d", volume);
 	setMusicVolume(volume);
 }
 

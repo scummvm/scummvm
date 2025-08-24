@@ -3687,8 +3687,10 @@ void TotEngine::loadObjects() {
 		break;
 	}
 
-	if (!objectFile.isOpen())
+	if (!objectFile.isOpen()) {
 		showError(312);
+		debug("Object file exists? %b", objectFile.exists("OBJMOCH.DAT"));
+	}
 	for (int i = 0; i < kInventoryIconCount; i++) {
 		_inventoryIconBitmaps[i] = (byte *)malloc(kInventoryIconSize);
 		objectFile.read(_inventoryIconBitmaps[i], kInventoryIconSize);
