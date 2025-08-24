@@ -499,7 +499,6 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 	}
 
 	// If the player has not moved, try to step up
-	bool steppedUp = false;
 	if ((lastPosition - newPosition).length() < 1) { // If the player has not moved
 		// Try to step up
 		newPosition = position;
