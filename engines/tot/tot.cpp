@@ -124,12 +124,12 @@ int TotEngine::engineStart() {
 
 	_graphics->loadPaletteFromFile("DEFAULT");
 	initScreenPointers();
-	// initialLogo();
+	initialLogo();
 	_sound->playMidi("INTRODUC", true);
 	_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
-	// initialMenu(_firstTimeDone);
+	initialMenu(_firstTimeDone);
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
 	} else if (_continueGame && !shouldQuit()) {
@@ -599,7 +599,7 @@ int TotEngine::startGame() {
 void TotEngine::newGame() {
 	_saveAllowed = true;
 	_mouse->hide();
-	// obtainName(_characterName);
+	obtainName(_characterName);
 
 	if (!shouldQuit()) {
 		_graphics->totalFadeOut(0);
@@ -620,11 +620,6 @@ void TotEngine::newGame() {
 		_graphics->loadPaletteFromFile("DEFAULT");
 		loadScreenData(1);
 		_graphics->sceneTransition(false, _sceneBackground, 13);
-		// bool fade = false;
-		// while(!g_engine->shouldQuit()){
-		// 	_graphics->sceneTransition(fade, _sceneBackground, 13);
-		// 	fade = !fade;
-		// }
 		drawInventoryMask();
 		_inventoryPosition = 0;
 		drawInventory();

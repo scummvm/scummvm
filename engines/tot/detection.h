@@ -38,7 +38,7 @@ extern const PlainGameDescriptor totGames[];
 
 extern const ADGameDescription gameDescriptions[];
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_NO_TRANSITIONS GUIO_GAMEOPTIONS1
 
 } // End of namespace Tot
 
