@@ -208,7 +208,7 @@ public:
 	int stringLength(const char *str, uint16 fontIndex);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
-	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
+	void drawButton( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
 
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);

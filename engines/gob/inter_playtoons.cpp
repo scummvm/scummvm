@@ -91,7 +91,7 @@ void Inter_Playtoons::setupOpcodesFunc() {
 
 	CLEAROPCODEFUNC(0x3D);
 	OPCODEFUNC(0x0B, oPlaytoons_printText);
-	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
+	OPCODEFUNC(0x1B, oPlaytoons_createButton);
 	OPCODEFUNC(0x24, oPlaytoons_putPixel);
 	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
@@ -188,8 +188,8 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	_vm->_game->_script->skip(1);
 }
 
-void Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
-	_vm->_game->_hotspots->oPlaytoons_F_1B();
+void Inter_Playtoons::oPlaytoons_createButton(OpFuncParams &params) {
+	_vm->_game->_hotspots->createButton();
 }
 
 void Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {

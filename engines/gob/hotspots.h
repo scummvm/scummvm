@@ -104,7 +104,7 @@ public:
 	int16 findCursor(uint16 x, uint16 y) const;
 
 	/** implementation of oPlaytoons_F_1B code*/
-	void oPlaytoons_F_1B();
+	void createButton();
 
 #ifdef USE_TTS
 	bool hoveringOverHotspot() const;

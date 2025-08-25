@@ -1852,7 +1852,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	return cursor;
 }
 
-void Hotspots::oPlaytoons_F_1B() {
+void Hotspots::createButton() {
 	int16 shortId;
 	int16 longId;
 	int16 var2;
@@ -1882,7 +1882,7 @@ void Hotspots::oPlaytoons_F_1B() {
 		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) ||
 			(_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
-			warning("oPlaytoons_F_1B: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
+			warning("createButton: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
 
 			left = _hotspots[i].left;
 			top = _hotspots[i].top;
@@ -1899,7 +1899,7 @@ void Hotspots::oPlaytoons_F_1B() {
 				right -= 2;
 				bottom -= 2;
 			}
-			_vm->_draw->oPlaytoons_sub_F_1B(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
+			_vm->_draw->drawButton(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
 			return;
 		}
 	}

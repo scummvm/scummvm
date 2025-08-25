@@ -503,7 +503,7 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	spriteOperation(DRAW_PRINTTEXT);
 }
 
-void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, int16 bottom,
+void Draw::drawButton(uint16 id, int16 left, int16 top, int16 right, int16 bottom,
 		char *paramStr, int16 fontIndex, int16 var4, int16 shortId) {
 
 	int16 width;

@@ -674,7 +674,7 @@ protected:
 	void setupOpcodesGob() override;
 
 	void oPlaytoons_printText(OpFuncParams &params);
-	void oPlaytoons_F_1B(OpFuncParams &params);
+	void oPlaytoons_createButton(OpFuncParams &params);
 	void oPlaytoons_putPixel(OpFuncParams &params);
 	void oPlaytoons_freeSprite(OpFuncParams &params);
 	void oPlaytoons_checkData(OpFuncParams &params);
