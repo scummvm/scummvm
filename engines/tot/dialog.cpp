@@ -24,7 +24,6 @@
 
 #include "tot/dialog.h"
 #include "tot/tot.h"
-#include "tot/vars.h"
 
 namespace Tot {
 

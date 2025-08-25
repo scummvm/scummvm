@@ -34,7 +34,6 @@
 #include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
-#include "tot/vars.h"
 
 namespace Tot {
 
@@ -1477,7 +1476,7 @@ void TotEngine::initialLogo() {
 	delay(1000);
 }
 
-void TotEngine::initialMenu(bool fade) {
+void TotEngine::startMenu(bool fade) {
 	bool bar = false;
 	bool validOption = false;
 	_sound->stopVoc();

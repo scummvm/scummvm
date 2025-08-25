@@ -30,7 +30,6 @@
 #include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
-#include "tot/vars.h"
 
 namespace Tot {
 

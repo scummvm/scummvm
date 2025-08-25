@@ -6,7 +6,6 @@ MODULE_OBJS = \
 	metaengine.o \
 	forest.o \
 	util.o \
-	vars.o \
 	anims.o \
 	routines2.o \
 	routines.o \

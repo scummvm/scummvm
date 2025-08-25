@@ -26,7 +26,7 @@
 #include "tot/debug.h"
 #include "tot/statics.h"
 #include "tot/tot.h"
-#include "tot/vars.h"
+#include "tot/util.h"
 
 namespace Tot {
 
