@@ -1751,9 +1751,9 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 
 	if (version < kFileVer400) {
 		_numChannelsDisplayed = 30;
-	} else if (version >= kFileVer400 && version < kFileVer600) {
-		uint32 frame1Offset = _framesStream->readUint32();
-		/* uint32 numOfFrames = */ _framesStream->readUint32();
+	} else if (version >= kFileVer400 && version < kFileVer1100) {
+		_frame1Offset = _framesStream->readUint32();
+		_numOfFrames = _framesStream->readUint32();
 		_framesVersion = _framesStream->readUint16();
 		_spriteRecordSize = _framesStream->readUint16();
 		_numChannels = _framesStream->readUint16();
@@ -1769,8 +1769,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			_framesStream->readUint16(); // Skip
 		}
 
-		debugC(1, kDebugLoading, "Score::loadFrames(): frame1Offset: 0x%x, version: %d, spriteRecordSize: 0x%x, numChannels: %d, numChannelsDisplayed: %d",
-			frame1Offset, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
+		debugC(1, kDebugLoading, "Score::loadFrames(): size: %d, frame1Offset: %d, numOfFrames: %d, version: %d, spriteRecordSize: %d, numChannels: %d, numChannelsDisplayed: %d",
+			_framesStreamSize, _frame1Offset, _numOfFrames, _framesVersion, _spriteRecordSize, _numChannels, _numChannelsDisplayed);
 		// Unknown, some bytes - constant (refer to contuinity).
 	} else {
 		error("STUB: Score::loadFrames(): score not yet supported for version v%d (%d)", humanVersion(version), version);
@@ -1788,8 +1788,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	_firstFramePosition = _framesStream->pos();
 
 	// Pre-computing number of frames, as sometimes the frameNumber in stream mismatches
-	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: %d, framesstreamsizeL %d",
-			_firstFramePosition, _framesStreamSize);
+	debugC(1, kDebugLoading, "Score::loadFrames(): Precomputing total number of frames! First frame pos: %d",
+			_firstFramePosition);
 
 	// Calculate number of frames and their positions
 	// numOfFrames in the header is often incorrect

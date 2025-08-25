@@ -170,13 +170,20 @@ public:
 	Frame *_currentFrame;
 	uint32 _curFrameNumber;
 	uint32 _numFrames;
-	uint32 _framesVersion;
-	uint32 _numChannels;
 	uint8 _currentTempo;
 	CastMemberID _currentPaletteId;
 
+	// header D4+
+	uint32 _framesStreamSize;
+	int32 _frame1Offset;
+	int32 _numOfFrames;
+	uint16 _framesVersion;
+	uint16 _spriteRecordSize;
+	uint16 _numChannels;
+	int16 _numChannelsDisplayed;  // D7+, no-op in earlier versions
+	//  20 bytes in total
+
 	uint _firstFramePosition;
-	uint _framesStreamSize;
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
@@ -201,11 +208,6 @@ public:
 	Cursor _defaultCursor;
 	CursorRef _currentCursor;
 	bool _skipTransition;
-
-	int _numChannelsDisplayed;
-
-	/* Data to be saved */
-	uint16 _spriteRecordSize;
 
 private:
 	DirectorEngine *_vm;
