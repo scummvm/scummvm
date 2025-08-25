@@ -89,7 +89,8 @@ bool Wage::WageEngine::hasFeature(EngineFeature f) const {
 	return
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsSavingDuringRuntime) ||
+		(f == kSupportsQuitDialogOverride);
 }
 
 Common::Error WageMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
