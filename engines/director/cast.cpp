@@ -1432,21 +1432,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 
 	uint32 castDataSize, castInfoSize,  castType, castDataSizeToRead, castDataOffset, castInfoOffset;
 	uint8 flags1 = 0xFF;
-	byte unk1 = 0, unk2 = 0, unk3 = 0;
 
 	// D2-3 cast members should be loaded in loadCastDataVWCR
-#if 0
-	if (_version < kFileVer400) {
-		size1 = stream.readUint16();
-		sizeToRead = size1 +16; // 16 is for bounding rects
-		size2 = stream.readUint32();
-		castType = stream.readByte();
-		unk1 = stream.readByte();
-		unk2 = stream.readByte();
-		unk3 = stream.readByte();
-	}
-#endif
-
 	if (_version >= kFileVer400 && _version < kFileVer500) {
 		castDataSize = stream.readUint16();
 		castDataSizeToRead = castDataSize;
@@ -1472,8 +1459,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		error("Cast::loadCastData: unsupported Director version v%d (%d)", humanVersion(_version), _version);
 	}
 
-	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %x castDataSize: %d castInfoSize: %d (%x) unk1: %d unk2: %d unk3: %d",
-		id, castType, castDataSize, castInfoSize, castInfoSize, unk1, unk2, unk3);
+	debugC(3, kDebugLoading, "Cast::loadCastData(): CASt: id: %d type: %s (%x) castDataSize: %d castInfoSize: %d (%x)",
+		id, castType2str((CastType)castType), castType, castDataSize, castInfoSize, castInfoSize);
 
 	// read the cast member itself
 	byte *data = (byte *)calloc(castDataSizeToRead, 1);
