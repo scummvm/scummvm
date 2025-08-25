@@ -46,7 +46,7 @@ void  reverseByte(byte *data);
  * Show a dialog notifying the user about something, with
  * only a simple "OK" button to dismiss it.
  */
-void notifyBox(const Common::String &msg);	// Redirect to call notifyBox with u32strings
+void notifyBox(const Common::String &msg, bool ttsVoiceText = true, bool ttsReplaceNewlines = true);	// Redirect to call notifyBox with u32strings
 void notifyBox(const Common::U32String &msg);
 
 /**
@@ -66,6 +66,20 @@ bool yesNoBox(const Common::U32String &msg);
  * @return the string which was passed in
  */
 char *hugo_strlwr(char *buffer);
+
+#ifdef USE_TTS
+/**
+ * Voice text with the text-to-speech system.
+ */
+void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT, 
+			bool replaceNewlines = true);	// Clean up text, then redirect to call sayText with u32strings
+void sayText(const Common::U32String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
+
+/**
+ * Stop TTS voicing.
+ */
+void stopTextToSpeech();
+#endif
 
 } // End of namespace Utils
 

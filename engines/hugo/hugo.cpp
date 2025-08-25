@@ -106,6 +106,13 @@ HugoEngine::HugoEngine(OSystem *syst, const HugoGameDescription *gd) : Engine(sy
 	_boot._exitLen = 0;
 	_file = nullptr;
 	_scheduler = nullptr;
+
+#ifdef USE_TTS
+	_queueAllVoicing = false;
+	_voiceScoreLine = true;
+	_voiceSoundSetting = false;
+	_previousScore = 0;
+#endif
 }
 
 HugoEngine::~HugoEngine() {
@@ -282,6 +289,14 @@ Common::Error HugoEngine::run() {
 	_screen->resetInventoryObjId();
 
 	_scheduler->initCypher();
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan) {
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+		ttsMan->setLanguage(ConfMan.get("language"));
+	}
+#endif
 
 	initStatus();                                   // Initialize game status
 	initConfig();                                   // Initialize user's config
@@ -712,7 +727,7 @@ void HugoEngine::endGame() {
 
 	if (_boot._registered != kRegRegistered)
 		Utils::notifyBox(_text->getTextEngine(kEsAdvertise));
-	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()));
+	Utils::notifyBox(Common::String::format("%s\n%s", _episode, getCopyrightString()), true, false);
 	_status._viewState = kViewExit;
 }
 
@@ -737,5 +752,27 @@ void HugoEngine::syncSoundSettings() {
 Common::String HugoEngine::getSaveStateName(int slot) const {
 	return _targetName + Common::String::format("-%02d.SAV", slot);
 }
+
+#ifdef USE_TTS
+
+void HugoEngine::sayText(const Common::String &text, Common::TextToSpeechManager::Action action) {
+	// _previousSaid is used to prevent the TTS from looping when sayText is called inside a loop,
+	// for example when the user hovers over an object. Without it when the text ends it would speak
+	// the same text again.
+	// _previousSaid is cleared when appropriate to allow for repeat requests
+	if (_previousSaid != text) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan && ttsMan->isSpeaking() && _queueAllVoicing) {
+			Utils::sayText(text, Common::TextToSpeechManager::QUEUE, false);
+		} else {
+			Utils::sayText(text, action, false);
+			_queueAllVoicing = false;
+		}
+
+		_previousSaid = text;
+	}
+}
+
+#endif
 
 } // End of namespace Hugo

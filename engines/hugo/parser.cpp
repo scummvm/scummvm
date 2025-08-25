@@ -40,6 +40,7 @@
 #include "hugo/object.h"
 #include "hugo/text.h"
 #include "hugo/inventory.h"
+#include "hugo/mouse.h"
 
 namespace Hugo {
 
@@ -208,6 +209,12 @@ void Parser::freeParser() {
 
 void Parser::switchTurbo() {
 	_vm->_config._turboFl = !_vm->_config._turboFl;
+
+#ifdef USE_TTS
+	if (_vm->_config._turboFl) {
+		_vm->sayText("T");
+	}
+#endif
 }
 
 /**
@@ -235,6 +242,10 @@ void Parser::charHandler() {
 				// Remove inventory bar if active
 				if (_vm->_inventory->getInventoryState() == kInventoryActive)
 					_vm->_inventory->setInventoryState(kInventoryUp);
+#ifdef USE_TTS
+				_vm->sayText(_cmdLine);
+				_vm->_previousSaid.clear();
+#endif
 				// Call Line handler and reset line
 				command(_cmdLine);
 				_cmdLine[_cmdLineIndex = 0] = '\0';
@@ -266,6 +277,30 @@ void Parser::charHandler() {
 
 	Common::sprintf_s(_vm->_statusLine, ">%s%c", _cmdLine, _cmdLineCursor);
 	Common::sprintf_s(_vm->_scoreLine, "F1-Help  %s  Score: %d of %d Sound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off");
+
+#ifdef USE_TTS
+	if (_vm->_previousScore != _vm->getScore()) {
+		_vm->sayText(Common::String::format("Score: %d of %d", _vm->getScore(), _vm->getMaxScore()));
+		_vm->_previousScore = _vm->getScore();
+	}
+
+	if (_vm->_voiceScoreLine) {
+		_vm->sayText(Common::String::format("F1: Help\n%s\nScore: %d of %d\nSound %s", (_vm->_config._turboFl) ? "T" : " ", _vm->getScore(), _vm->getMaxScore(), (_vm->_config._soundFl) ? "On" : "Off"));
+		_vm->_voiceScoreLine = false;
+	}
+
+	if (_vm->_voiceSoundSetting) {
+		_vm->sayText(Common::String::format("Sound %s", (_vm->_config._soundFl) ? "On" : "Off"));
+
+		// If the mouse is in the top menu range, the top menu will close and reopen after the sound setting is changed,
+		// causing the new sound setting voicing to be interrupted. Therefore, keep trying to voice the new sound setting
+		// as long as the top menu can be opened
+		int mouseY = _vm->_mouse->getMouseY();
+		if (mouseY <= 0 || mouseY >= 5) {
+			_vm->_voiceSoundSetting = false;
+		}
+	}
+#endif
 
 	// See if "look" button pressed
 	if (gameStatus._lookFl) {
@@ -452,18 +487,32 @@ void Parser::showDosInventory() const {
 
 	buffer += Common::String(_vm->_text->getTextParser(kTBIntro)) + "\n";
 	index = 0;
+#ifdef USE_TTS
+	Common::String ttsMessage = buffer;
+#endif
 	for (int i = 0; i < _vm->_object->_numObj; i++) { // Assign strings
 		if (_vm->_object->isCarried(i)) {
-			if (index++ & 1)
+			if (index++ & 1) {
 				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n";
-			else
+#ifdef USE_TTS
+				ttsMessage += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n";
+#endif
+			} else {
 				buffer += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)));
+#ifdef USE_TTS
+				ttsMessage += Common::String(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)) + "\n" + Common::String(blanks, len1 - strlen(_vm->_text->getNoun(_vm->_object->_objects[i]._nounIndex, 2)));
+#endif
+			}
 		}
 	}
 	if (index & 1)
 		buffer += "\n";
 	buffer += Common::String(_vm->_text->getTextParser(kTBOutro));
-	Utils::notifyBox(buffer.c_str());
+#ifdef USE_TTS
+	ttsMessage += Common::String(_vm->_text->getTextParser(kTBOutro));
+	_vm->sayText(ttsMessage, Common::TextToSpeechManager::INTERRUPT);
+#endif
+	Utils::notifyBox(buffer.c_str(), false);
 }
 
 } // End of namespace Hugo

@@ -142,6 +142,10 @@ void MouseHandler::cursorText(const char *buffer, const int16 cx, const int16 cy
 	// Display the string and add rect to display list
 	_vm->_screen->shadowStr(sx, sy, buffer, _TBRIGHTWHITE);
 	_vm->_screen->displayList(kDisplayAdd, sx, sy, sdx, sdy);
+
+#ifdef USE_TTS
+	_vm->sayText(buffer);
+#endif
 }
 
 /**
@@ -334,6 +338,11 @@ void MouseHandler::mouseHandler() {
 			const char *name = _vm->_text->getNoun(_vm->_object->_objects[(objId == kHeroIndex) ? _vm->_heroImage : objId]._nounIndex, kCursorNameIndex);
 			if (name[0] != kCursorNochar)
 				cursorText(name, cx, cy, U_FONT8, _TBRIGHTWHITE);
+#ifdef USE_TTS
+			else {
+				_vm->_previousSaid.clear();
+			}
+#endif
 
 			// Process right click over object in view or iconbar
 			if (_rightButtonFl)
@@ -347,6 +356,11 @@ void MouseHandler::mouseHandler() {
 				objId = kExitHotspot;
 				cursorText(_vm->_text->getTextMouse(kMsExit), cx, cy, U_FONT8, _TBRIGHTWHITE);
 			}
+#ifdef USE_TTS
+			else {
+				_vm->_previousSaid.clear();
+			}
+#endif
 		}
 	}
 	// Left click over icon, object or to move somewhere

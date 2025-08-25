@@ -104,6 +104,14 @@ bool intro_v1d::introPlay() {
 	if (_vm->getGameStatus()._skipIntroFl)
 		return true;
 
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan && ttsMan->isSpeaking()) {
+		return false;
+	}
+
+	Common::String ttsMessage;
+#endif
 	if (_introTicks < introSize) {
 		switch (_introState++) {
 		case 0:
@@ -132,9 +140,21 @@ bool intro_v1d::introPlay() {
 			_font.drawString(&_surf, buffer, 0, 163, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
+#ifdef USE_TTS
+			ttsMessage = "Hugo's House of Horrors\n\n";
+			ttsMessage += buffer;
+			ttsMessage += '\n';
+			ttsMessage += _vm->getCopyrightString();
+#endif
+
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 				Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 				_font.drawString(&_surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+				// Insert at second newline after "Hugo's House of Horrors" so that a newline remains between that line
+				// and this one
+				ttsMessage.insertString(buffer, ttsMessage.find('\n') + 1);
+#endif
 			}
 
 			// SCRIPT, size 24-16
@@ -164,6 +184,9 @@ bool intro_v1d::introPlay() {
 
 			Common::strcpy_s(buffer, "S t a r r i n g :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = "Starring:";
+#endif
 			break;
 		case 3:
 			// TROMAN, size 20-9
@@ -172,6 +195,9 @@ bool intro_v1d::introPlay() {
 
 			Common::strcpy_s(buffer, "Hugo !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = buffer;
+#endif
 			break;
 		case 4:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
@@ -182,11 +208,17 @@ bool intro_v1d::introPlay() {
 
 			Common::strcpy_s(buffer, "P r o d u c e d  b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = "Produced by:";
+#endif
 			break;
 		case 5:
 			// TROMAN size 16-9
 			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = buffer;
+#endif
 			break;
 		case 6:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
@@ -194,11 +226,17 @@ bool intro_v1d::introPlay() {
 			// TROMAN, size 16-9
 			Common::strcpy_s(buffer, "D i r e c t e d   b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = "Directed by:";
+#endif
 			break;
 		case 7:
 			// TROMAN, size 16-9
 			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = buffer;
+#endif
 			break;
 		case 8:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
@@ -206,11 +244,17 @@ bool intro_v1d::introPlay() {
 			// TROMAN, size 16-9
 			Common::strcpy_s(buffer, "M u s i c   b y :");
 			_font.drawString(&_surf, buffer, 0, 95, 320, _TMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = "Music by:";
+#endif
 			break;
 		case 9:
 			// TROMAN, size 16-9
 			Common::strcpy_s(buffer, "David P Gray !");
 			_font.drawString(&_surf, buffer, 0, 115, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = buffer;
+#endif
 			break;
 		case 10:
 			_vm->_screen->drawRectangle(true, 82, 92, 237, 138, _TBLACK);
@@ -221,10 +265,17 @@ bool intro_v1d::introPlay() {
 
 			Common::strcpy_s(buffer, "E n j o y !");
 			_font.drawString(&_surf, buffer, 0, 100, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
+#ifdef USE_TTS
+			ttsMessage = "Enjoy!";
+#endif
 			break;
 		default:
 			break;
 		}
+
+#ifdef USE_TTS
+		_vm->sayText(ttsMessage);
+#endif
 
 		_vm->_screen->displayBackground();
 		g_system->updateScreen();
@@ -261,15 +312,34 @@ void intro_v2d::introInit() {
 
 	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
+#ifdef USE_TTS
+	Common::String ttsMessage = buffer;
+#endif
+
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		// TROMAN, size 10-5
 		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
+
+#ifdef USE_TTS
+		ttsMessage = buffer + ttsMessage;
+#endif
 	}
+
+#ifdef USE_TTS
+	_vm->sayText(ttsMessage);
+#endif
 
 	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while (ttsMan && ttsMan->isSpeaking()) {
+		g_system->delayMillis(10);
+	}
+#endif
 }
 
 bool intro_v2d::introPlay() {
@@ -302,14 +372,33 @@ void intro_v3d::introInit() {
 
 	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
+#ifdef USE_TTS
+	Common::String ttsMessage = buffer;
+#endif
+
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
+
+#ifdef USE_TTS
+		ttsMessage = buffer + ttsMessage;
+#endif
 	}
+
+#ifdef USE_TTS
+	_vm->sayText(ttsMessage);
+#endif
 
 	_vm->_screen->displayBackground();
 	g_system->updateScreen();
 	g_system->delayMillis(5000);
+
+#ifdef USE_TTS
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	while (ttsMan && ttsMan->isSpeaking()) {
+		g_system->delayMillis(10);
+	}
+#endif
 
 	_vm->_file->readBackground(22); // display screen MAP_3d
 	_vm->_screen->displayBackground();

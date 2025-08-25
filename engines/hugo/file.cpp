@@ -450,6 +450,9 @@ bool FileManager::restoreGame(const int16 slot) {
 
 	int score = in->readSint16BE();
 	_vm->setScore(score);
+#ifdef USE_TTS
+	_vm->_previousScore = -1;
+#endif
 
 	gameStatus._storyModeFl = (in->readByte() == 1);
 	_vm->_mouse->setJumpExitFl(in->readByte() == 1);

@@ -22,6 +22,8 @@
 #ifndef HUGO_HUGO_H
 #define HUGO_HUGO_H
 
+#include "common/text-to-speech.h"
+
 #include "engines/engine.h"
 
 // This include is here temporarily while the engine is being refactored.
@@ -245,6 +247,15 @@ public:
 	Command _statusLine;
 	Command _scoreLine;
 
+#ifdef USE_TTS
+	bool _voiceScoreLine;
+	bool _voiceSoundSetting;
+	bool _queueAllVoicing;
+	int _previousScore;
+
+	Common::String _previousSaid;
+#endif
+
 	const HugoGameDescription *_gameDescription;
 	uint32 getFeatures() const;
 	const char *getGameId() const;
@@ -288,6 +299,10 @@ public:
 
 	Common::String getSaveStateName(int slot) const override;
 	uint16 **loadLongArray(Common::SeekableReadStream &in);
+
+#ifdef USE_TTS
+	void sayText(const Common::String &text, Common::TextToSpeechManager::Action action = Common::TextToSpeechManager::INTERRUPT);
+#endif
 
 	FileManager *_file;
 	Scheduler *_scheduler;
