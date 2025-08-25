@@ -144,6 +144,20 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	return *this;
 }
 
+bool Sprite::operator==(const Sprite &sprite) {
+	return _spriteType == sprite._spriteType &&
+		_castId == sprite._castId &&
+		_startPoint == sprite._startPoint &&
+		_width == sprite._width &&
+		_height == sprite._height &&
+		_ink == sprite._ink &&
+		_foreColor == sprite._foreColor &&
+		_backColor == sprite._backColor &&
+		_blendAmount == sprite._blendAmount &&
+		_inkData == sprite._inkData &&
+		_thickness == sprite._thickness;
+}
+
 Sprite::Sprite(const Sprite &sprite) {
 	_matte = nullptr;
 	*this = sprite;
