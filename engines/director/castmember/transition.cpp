@@ -39,14 +39,14 @@ TransitionCastMember::TransitionCastMember(Cast *cast, uint16 castId, Common::Se
 	if (debugChannelSet(5, kDebugLoading)) {
 		stream.hexdump(stream.size());
 	}
-	if (_cast->_version < kFileVer600) {
+	if (_cast->_version < kFileVer1100) {
 		stream.readByte();
 		_chunkSize = stream.readByte();
 		_transType = static_cast<TransitionType>(stream.readByte());
 		_flags = stream.readByte();
 		_area = !(_flags & 1);
 		_durationMillis = stream.readUint16BE();
-		debugC(5, kDebugLoading, "TransitionCastMember::TransitionCastMember(): transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
+		debugC(3, kDebugLoading, "  TransitionCastMember: transType: %d, durationMillis: %d, flags: %d, chunkSize: %d, area: %d", _transType, _durationMillis, _flags, _chunkSize, _area);
 	} else {
 		warning("STUB: TransitionCastMember::TransitionCastMember(): Transitions not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}

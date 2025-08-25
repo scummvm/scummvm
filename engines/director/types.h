@@ -58,7 +58,8 @@ enum CastType {
 	kCastDigitalVideo = 10,
 	kCastLingoScript = 11,
 	kCastRichText = 12,
-	kCastTransition = 14,
+	kCastTransition = 14,		// D5
+	kCastXtra = 15,
 };
 
 enum ScriptType {

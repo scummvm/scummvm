@@ -100,7 +100,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 		_pitch *= _bitsPerPixel;
 		_pitch >>= 3;
 
-	} else if (version >= kFileVer400 && version < kFileVer600) {
+	} else if (version >= kFileVer400 && version < kFileVer700) {
 		_flags1 = flags1;
 		_pitch = stream.readUint16();
 		_pitch &= 0x0fff;
@@ -160,6 +160,8 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 	} else {
 		warning("STUB: BitmapCastMember::BitmapCastMember(): Bitmaps not yet supported for version v%d (%d)", humanVersion(version), version);
 	}
+
+	debugC(3, kDebugLoading, "  BitmapCastMember: %s", formatInfo().c_str());
 
 	_tag = castTag;
 }

@@ -39,9 +39,8 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 
 	if (version < kFileVer400) {
 		error("Unhandled Script cast");
-	} else if (version >= kFileVer400 && version < kFileVer600) {
-		byte unk1 = stream.readByte();
-		byte type = stream.readByte();
+	} else if (version >= kFileVer400 && version < kFileVer1100) {
+		uint16 type = stream.readUint16BE();
 
 		switch (type) {
 		case 1:
@@ -58,7 +57,7 @@ ScriptCastMember::ScriptCastMember(Cast *cast, uint16 castId, Common::SeekableRe
 			error("ScriptCastMember: Unprocessed script type: %d", type);
 		}
 
-		debugC(3, kDebugLoading, "CASt: Script type: %s (%d), unk1: %d", scriptType2str(_scriptType), type, unk1);
+		debugC(3, kDebugLoading, "  CASt: Script type: %s (%d)", scriptType2str(_scriptType), type);
 
 		assert(stream.pos() == stream.size()); // There should be no more data
 	} else {
