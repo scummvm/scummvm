@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-24 17:16+0000\n"
-"PO-Revision-Date: 2025-08-23 01:36+0000\n"
+"PO-Revision-Date: 2025-08-25 13:07+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -8234,10 +8234,8 @@ msgid "Move / Interact / Select"
 msgstr "Flytta / Interagera / Välj"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pick up"
 msgid "Pick"
-msgstr "Ta"
+msgstr "Plocka"
 
 #: engines/drascula/metaengine.cpp:240 engines/queen/metaengine.cpp:259
 #: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
@@ -8249,46 +8247,32 @@ msgid "Open"
 msgstr "Öppna"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "Använd valt objekt"
+msgstr "Nollställ valt verb"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "Pekkontroller"
+msgstr "Volymkontroller"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "Sparade spel"
+msgstr "Spara / läs in spel"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "Växla undertexter"
+msgstr "Aktivera undertexter"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "Växla undertexter"
+msgstr "Inaktivera undertexter"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "Inget tal"
+msgstr "Pausa tal"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "Bekräfta"
+msgstr "Bekräfta avslut"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -8321,88 +8305,60 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "Aktivera text till tal för objekt, alternativ och bibelcitat"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 1"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "Välj skådespelare 2"
+msgstr "Välj alternativ 2"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "Välj skådespelare 3"
+msgstr "Välj alternativ 3"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "Välj skådespelare 4"
+msgstr "Välj alternativ 4"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "Välj skådespelare 5"
+msgstr "Välj alternativ 5"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select option 6"
-msgstr "Välj grupp utifrån"
+msgstr "Välj alternativ 6"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 7"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 8"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 9"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 10"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 11"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 12"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 13"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "Välj skådespelare 1"
+msgstr "Välj alternativ 14"
 
 #: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
 #: engines/supernova/metaengine.cpp:218
@@ -8410,10 +8366,8 @@ msgid "Menu keymappings"
 msgstr "Tangentmappningar för meny"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Quit keymappings"
-msgstr "PET-tangentmappningar"
+msgstr "Avsluta tangentmappningar"
 
 #: engines/efh/metaengine.cpp:259
 #, fuzzy
@@ -8491,22 +8445,16 @@ msgid "Character 3 status"
 msgstr "Status för karaktär 3"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip song"
-msgstr "Hoppa över scen"
+msgstr "Hoppa över låt"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "Hoppa över intro"
+msgstr "Hoppa över låt och intro"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "Aktiv"
+msgstr "Aktiva färdigheter"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8516,7 +8464,7 @@ msgstr "Släpp"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "Utrusta"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8528,34 +8476,28 @@ msgid "Give"
 msgstr "Ge"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "Info-meny"
+msgstr "Info"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "Passiva färdigheter"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "Handla"
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "Avsluta till menyn"
+msgstr "Avsluta statusmenyn"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "Avsluta spel"
+msgstr "Avsluta undermeny"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Lämna"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
 msgid "Status"
@@ -8581,66 +8523,46 @@ msgstr "Visa terräng"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
-msgstr "Välj skådespelare 1"
+msgstr "Välj karaktär 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
-msgstr "Välj skådespelare 2"
+msgstr "Välj karaktär 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
-msgstr "Välj skådespelare 3"
+msgstr "Välj karaktär 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel character selection"
-msgstr "Avbryt handling"
+msgstr "Avbryt karaktärsval"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Välj index"
+msgstr "Välj fiende 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Välj index"
+msgstr "Välj fiende 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Välj index"
+msgstr "Välj fiende 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Välj index"
+msgstr "Välj fiende 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Välj index"
+msgstr "Välj fiende 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel enemy selection"
-msgstr "Avbryt handling"
+msgstr "Avbryt fiendeval"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8648,44 +8570,32 @@ msgid "Restart game"
 msgstr "Starta om spelet"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "Spela not 1: A"
+msgstr "Spela upp ljudtyp 13"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "Spela not 1: A"
+msgstr "Spela upp ljudtyp 14"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "Spela not 1: A"
+msgstr "Spela upp ljudtyp 15"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "Spela not 5: E"
+msgstr "Spela upp ljudtyp 5"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "Spela not 1: A"
+msgstr "Spela upp ljudtyp 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "Spela upp ljudtyp 9"
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "Spela not 1: A"
+msgstr "Spela upp ljudtyp 16"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8764,11 +8674,11 @@ msgstr "Aktivera resa med ett stenskott vid start"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "Mjukare rörelse"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Använd mjuka rörelser i stället för diskreta steg"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
@@ -9888,10 +9798,8 @@ msgstr ""
 "Wyrmkeep"
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit keymappings"
-msgstr "PET-tangentmappningar"
+msgstr "Avsluta tangentmappningar"
 
 #: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
@@ -9922,14 +9830,12 @@ msgid "Exit"
 msgstr "Avsluta"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "Aktivera ljudet för spelet"
+msgstr "Höj ljudvolymen"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "Sänk ljudvolymen"
 
 #: engines/lab/metaengine.cpp:209 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
@@ -9937,82 +9843,66 @@ msgid "Skip intro"
 msgstr "Hoppa över intro"
 
 #: engines/lab/metaengine.cpp:216
+#, fuzzy
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "Interagera med objektet med vald åtgärd"
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "Nästa objekt"
+msgstr "Ta objekt"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "Gå till nästa objekt"
+msgstr "Flytta eller manipulera objekt"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open door"
 msgid "Open door or object"
-msgstr "Öppna dörr"
+msgstr "Öppna dörr eller objekt"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "Stäng dörr eller objekt"
 
 #: engines/lab/metaengine.cpp:245
+#, fuzzy
 msgid "Look at object close-up"
-msgstr ""
+msgstr "Titta på objektet i närbild"
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll inventory up"
 msgid "Switch to inventory display"
-msgstr "Rulla uppåt i inventarier"
+msgstr "Växla till inventarieskärm"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "Gå till nästa objekt"
+msgstr "Flytta fokus till interaktivt objekt"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "Börja släppa virtuella brödsmulor"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "Följ virtuella brödsmulor"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "Spring medan du följer virtuella brödsmulor"
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to 2xSai scaling"
 msgid "Switch to main display"
-msgstr "Byt till 2xSai-förstoring"
+msgstr "Växla till huvudskärmen"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Spara / Läs in-dialog"
+msgstr "Öppna dialog för spara / läs in"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "Titta på"
+msgstr "Titta på scen"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Previous inventory item"
-msgstr "Använd inventarieobjekt"
+msgstr "Föregående inventarieobjekt"
 
 #: engines/lab/metaengine.cpp:342
 #, fuzzy
@@ -10022,37 +9912,27 @@ msgstr "Nästa objekt i inventariet"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Avsluta kartvisning"
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
-msgstr "Upp nivå"
+msgstr "Upp en nivå"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
-msgstr "Ner nivå"
+msgstr "Ner en nivå"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "Visa dagbok"
+msgstr "Gå bakåt i dagbok"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Use journal"
 msgid "Exit journal"
-msgstr "Använd dagbok"
+msgstr "Avsluta dagbok"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "Visa dagbok"
+msgstr "Gå framåt i dagbok"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10519,12 +10399,14 @@ msgstr "Bästa"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "Fixa knaster/klickljud"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
 msgstr ""
+"Minskar hörbara knaster i slutet av vissa ljudeffekter (endast Non Myst/"
+"Riven)."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -11068,49 +10950,38 @@ msgid "This menu item is not yet implemented"
 msgstr "Detta menyval är ännu inte implementerat"
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Interact / Select"
-msgstr "Flytta / Interagera / Välj"
+msgstr "Interagera / Välj"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel interaction"
-msgstr "Avbryt handling"
+msgstr "Avbryt interaktion"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip walk"
-msgstr "Hoppa över dialog"
+msgstr "Hoppa över gång"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "Hoppa över promenad och avbryt interaktion"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sequence"
-msgstr "Hoppa över scen"
+msgstr "Hoppa över sekvens"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sub-sequence"
-msgstr "Hoppa över scen"
+msgstr "Hoppa över undersekvens"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
 msgid "Restart sequence"
-msgstr "Öppna debug-konsolen"
+msgstr "Starta om sekvens"
 
 #: engines/playground3d/metaengine.cpp:55
 msgid "Switch test"
@@ -13087,10 +12958,8 @@ msgid "Show windows with a partially transparent background"
 msgstr "Visar fönster med en delvis genomskinlig bakgrund"
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Scroll keymappings"
-msgstr "Tangentmappningar för intro"
+msgstr "Tangentmappningar för rullning"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
 #, fuzzy
@@ -13105,10 +12974,8 @@ msgid "Darts minigame keymappings"
 msgstr "Tangentmappningar för minispel"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Talk keymappings"
-msgstr "Tangentmappningar för Star Map"
+msgstr "Tangentmappningar för tal"
 
 #: engines/sherlock/metaengine.cpp:337
 #, fuzzy
@@ -13129,20 +12996,16 @@ msgid "Movie keymappings"
 msgstr "Tangentmappningar för förflyttning"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Skip / Deselect verb"
-msgstr "Använd valt objekt"
+msgstr "Hoppa över / Avmarkera verb"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
-msgstr ""
+msgstr "Konfigurera"
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "Plattuppsättning"
+msgstr "Filer"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -13173,14 +13036,10 @@ msgid "Go back a page"
 msgstr "Gå tillbaka en sida"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Roll left"
 msgid "Scroll left"
 msgstr "Rulla åt vänster"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Roll Right"
 msgid "Scroll Right"
 msgstr "Rulla åt höger"
 
@@ -13198,16 +13057,12 @@ msgid "Toggle music"
 msgstr "Växla musik"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle combat"
 msgid "Toggle portraits"
-msgstr "Växla strid"
+msgstr "Växla porträtt"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "Ändra typsnittsstorlek"
+msgstr "Ändra typsnittsstil"
 
 #: engines/sherlock/metaengine.cpp:700
 msgid "Toggle sound effects"
@@ -13231,21 +13086,17 @@ msgstr "Växla röster"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
 msgid "Fade by pixel"
-msgstr ""
+msgstr "Tona ut efter bildpunkt"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "Skapa katalog"
+msgstr "Tona ut direkt"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "Ändra läge"
+msgstr "Ändra uttoningsläge"
 
 #: engines/sherlock/metaengine.cpp:776
 #, fuzzy
@@ -13260,10 +13111,8 @@ msgid "Menu scrolling keymappings"
 msgstr "Tangentmappningar för meny"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "Spara/Läs in tangentmappningar"
+msgstr "spara / läs in tangentmappningar för meny"
 
 #: engines/sherlock/metaengine.cpp:781
 #, fuzzy
@@ -13296,135 +13145,100 @@ msgid "Talk options keymappings"
 msgstr "Tangentmappningar för intro"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Move / Examine / Select"
-msgstr "Flytta / Interagera / Välj"
+msgstr "Flytta / Undersök / Välj"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "Öppna åtgärdsmeny / Stäng meny"
+msgstr "Öppna verbmeny / stäng meny"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "Byt ljud"
+msgstr "Ändra hastighet"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Use journal"
 msgid "Open journal"
-msgstr "Använd dagbok"
+msgstr "Öppna dagbok"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "Öppna alternativmenyn"
+msgstr "Öppna alternativ"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "Anpassa till fönster"
+msgstr "Avsluta / Stäng fönster"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "Hoppa över dialog"
+msgstr "Hoppa över prolog"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
+#, fuzzy
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "Ändra valt alternativ till vänster"
 
 #: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
+#, fuzzy
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "Ändra valt alternativ till höger"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "Visa dagbok"
+msgstr "Gå framåt 10 sidor"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 1 page"
-msgstr "Visa dagbok"
+msgstr "Gå framåt en sida"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back 1 page"
-msgstr "Visa dagbok"
+msgstr "Gå bakåt en sida"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of journal"
-msgstr "Gå till radstart"
+msgstr "Gå till början av dagbok"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of journal"
-msgstr "Gå till radslut"
+msgstr "Gå till slutet av dagbok"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
 msgid "Skip darts minigame"
-msgstr "Skippa rad"
+msgstr "Hoppa över dart-minispel"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to top left"
-msgstr "Rulla överst"
+msgstr "Rulla längst upp till vänster"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Scroll to bottom"
 msgid "Scroll to bottom right"
-msgstr "Rulla nederst"
+msgstr "Rulla längst ner"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "Rullningslist upp"
+msgstr "Rulla sida upp"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "Rullningslist ner"
+msgstr "Rulla sida ner"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to end"
-msgstr "Rulla överst"
+msgstr "Rulla till slutet"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to start"
-msgstr "Rulla överst"
+msgstr "Rulla till början"
 
 #: engines/sherlock/metaengine.cpp:1068
 #, fuzzy
@@ -13433,57 +13247,44 @@ msgid "Go to next save file slot"
 msgstr "Gå till nästa dialog"
 
 #: engines/sherlock/metaengine.cpp:1074
-#, fuzzy
-#| msgid "Go to start of save / load menu"
 msgid "Go to next page of save files"
-msgstr "Gå till början av spara/läs in-meny"
+msgstr "Gå till nästa sida för sparade filer"
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "Välj säkerhetskopiefil"
+msgstr "Välj sparningsfil"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "Gå till radslut"
+msgstr "Gå till radbörjan"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line end"
 msgstr "Gå till radslut"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "Växla snabbläge"
+msgstr "Växla infogningsläge"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "Stäng popup"
+msgstr "Stäng pussel"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
 msgstr ""
+"Avsluta inventerier / Stäng verbmeny / Avbryt åtgärd för objektanvändning"
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select next Actor"
 msgid "Select next option"
-msgstr "Välj nästa skådespelare"
+msgstr "Välj nästa alternativ"
 
 #: engines/sherlock/metaengine.cpp:1257
 #, fuzzy
