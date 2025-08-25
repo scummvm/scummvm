@@ -32,12 +32,14 @@ class FileManager {
 public:
 	FileManager(ZVision *engine);
 	~FileManager() {};
-	
-	bool loadZix(const Common::Path &name);
+
+	bool loadZix(const Common::Path &zixPath);
 	Common::File *open(const Common::Path &fileName, bool allowSrc=true);	// Wrapper to automatically handle loading of files which may be empty & have an alternate .src file
+	bool exists(Common::Path filePath, bool allowSrc=true);	// Wrapper to automatically handle checking existence of files which may be empty & have an alternate .src file
 
 private:
 	ZVision *_engine;
+	Common::Path srcPath(Common::Path filePath);
 };
 
 } // End of namespace ZVision

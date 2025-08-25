@@ -25,27 +25,27 @@
 
 namespace ZVision {
 
-const char* genExcluded[] {"*.dll", "*.ini", "*.exe", "*.isu", "*.inf", "*path*.txt", "r.svr", "*.zix"};
-//TODO - change this to a list of alternate pairs; only throw an error if both alternatives are unavailable
-const char* zgiExcluded[] {
-	"c000h01q.raw", "cm00h01q.raw", "dm00h01q.raw", "e000h01q.raw", "em00h11p.raw", "em00h50q.raw", "gjnph65p.raw", 
-	"gjnph72p.raw", "h000h01q.raw", "m000h01q.raw", "p000h01q.raw", "q000h01q.raw", "sw00h01q.raw", "t000h01q.raw", 
+const char* genExcluded[] {"*.dll", "*.ini", "*.exe", "*.isu", "*.inf", "*path*.txt", "r.svr", "*.zix", "*.hlp", "*.gid"};
+
+const char* zgiAlternates[] {
+	"c000h01q.raw", "cm00h01q.raw", "dm00h01q.raw", "e000h01q.raw", "em00h11p.raw", "em00h50q.raw", "gjnph65p.raw",
+	"gjnph72p.raw", "h000h01q.raw", "m000h01q.raw", "p000h01q.raw", "q000h01q.raw", "sw00h01q.raw", "t000h01q.raw",
 	"u000h01q.raw"
 	};
-	
-FileManager::FileManager(ZVision *engine) : 
+
+FileManager::FileManager(ZVision *engine) :
 	_engine(engine) {}
 
 Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 	debugC(5, kDebugFile, "FileManager::open()");
 	Common::File *file = new Common::File();
 	Common::File *out = nullptr;
-	
+
 	Common::String fileName = filePath.baseName();
 	bool open = false;
 	bool altFound = false;
 	bool altOpen = false;
-	
+
 	bool found = SearchMan.hasFile(filePath);
 	if(found) {
 		debugC(5, kDebugFile,"File %s found", fileName.c_str());
@@ -53,7 +53,7 @@ Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 		if(open)
 			debugC(5, kDebugFile,"File %s opened", fileName.c_str());
 	}
-	
+
 	if (allowSrc) {
 		Common::File *altFile = new Common::File();
 		Common::String altName = fileName;
@@ -68,7 +68,7 @@ Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 			if (altOpen)
 				debugC(5, kDebugFile,"Alternate file %s opened", altName.c_str());
 		}
-		
+
 		if(altOpen) {
 			if(open)
 				out = file->size() < altFile->size() ? altFile : file;
@@ -87,8 +87,8 @@ Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 			else
 				warning("Unable to find file %s or alternate file %s", fileName.c_str(), altName.c_str());
 		}
-		
-		if (out == altFile) 
+
+		if (out == altFile)
 			debugC(5, kDebugFile,"Returning alternate file %s", altName.c_str());
 		else {
 			if(altOpen)
@@ -104,41 +104,60 @@ Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 		else
 			warning("File %s not found", fileName.c_str());
 	}
-	
-	if (out == file) 
+
+	if (out == file)
 		debugC(5, kDebugFile,"Returning file %s", fileName.c_str());
 	else {
 		if(open)
 			file->close();
 		delete file;
 	}
-	
+
 	return out;
 }
 
-bool FileManager::loadZix(const Common::Path &name) {
+bool FileManager::exists(Common::Path filePath, bool allowSrc) {
 	Common::File file;
-	if (!file.open(name))
+	if (file.exists(filePath))
+		return true;
+	else if (allowSrc) {
+		if (file.exists(srcPath(filePath)))
+			return true;
+	}
+	return false;
+}
+
+Common::Path FileManager::srcPath(Common::Path filePath) {
+		Common::String name = filePath.baseName();
+		name.setChar('s', name.size() - 3);
+		name.setChar('r', name.size() - 2);
+		name.setChar('c', name.size() - 1);
+		return filePath.getParent().appendComponent(name);
+}
+
+bool FileManager::loadZix(const Common::Path &zixPath) {
+	Common::File zixFile;
+	if (!zixFile.open(zixPath))
 		return false;
 
 	Common::String line;
 
 	// Skip first block
-	while (!file.eos()) {
-		line = file.readLine();
+	while (!zixFile.eos()) {
+		line = zixFile.readLine();
 		if (line.matchString("----------*", true))
 			break;
 	}
-	
-	if (file.eos())
-		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
+
+	if (zixFile.eos())
+		error("Corrupt ZIX file: %s", zixPath.toString(Common::Path::kNativeSeparator).c_str());
 
 	uint8 archives = 0;
 
 	// Parse subdirectories & archives
-	debugC(1, kDebugFile, "Parsing list of subdirectories & archives in %s", name.toString(Common::Path::kNativeSeparator).c_str());
-	while (!file.eos()) {
-		line = file.readLine();
+	debugC(1, kDebugFile, "Parsing list of subdirectories & archives in %s", zixPath.toString(Common::Path::kNativeSeparator).c_str());
+	while (!zixFile.eos()) {
+		line = zixFile.readLine();
 		line.trim();
 		if (line.matchString("----------*", true))
 			break;
@@ -170,7 +189,8 @@ bool FileManager::loadZix(const Common::Path &name) {
 			Common::Path path(line, '/');
 			path = path.getLastComponent();	//We are using the search manager in "flat" mode, so only filenames are needed
 
-			if (line.matchString("*.zfs", true)) {
+			if (line.matchString("*.zfs", true))
+				if (!SearchMan.hasArchive(line)) {
 				debugC(1, kDebugFile, "Adding archive %s to search manager.", path.toString().c_str());
 				Common::Archive *arc;
 				arc = new ZfsArchive(path);
@@ -180,44 +200,57 @@ bool FileManager::loadZix(const Common::Path &name) {
 		}
 	}
 
-	if (file.eos())
-		error("Corrupt ZIX file: %s", name.toString(Common::Path::kNativeSeparator).c_str());
+	if (zixFile.eos())
+		error("Corrupt ZIX file: %s", zixPath.toString(Common::Path::kNativeSeparator).c_str());
 
 	//Parse files
-	debugC(1, kDebugFile, "Parsing list of individual resource files in %s", name.toString(Common::Path::kNativeSeparator).c_str());
-	while (!file.eos()) {
-		line = file.readLine();
+	debugC(1, kDebugFile, "Parsing list of individual resource files in %s", zixPath.toString(Common::Path::kNativeSeparator).c_str());
+	while (!zixFile.eos()) {
+		line = zixFile.readLine();
 		line.trim();
 		uint dr = 0;
 		char buf[32];
 		if (sscanf(line.c_str(), "%u %s", &dr, buf) == 2) {
 			if (dr <= archives && dr > 0) {
-				Common::String path(buf);
+				Common::String name(buf);
 				bool exclude = false;
-				for(auto filename : genExcluded)
-					if(path.matchString(filename, true)) {
+				bool allowSrc = false;
+				for (auto excName : genExcluded)
+					if(name.matchString(excName, true)) {
 						exclude = true;
 						break;
 					}
-				for(auto filename : zgiExcluded)
-					if(path.matchString(filename, true)) {
-						//exclude = true;
+				for (auto altName : zgiAlternates)
+					if(name.matchString(altName, true)) {
+						allowSrc = true;
 						break;
 					}
-				if(!exclude) {
+				if (!exclude) {
+					Common::Path path(name);
 					// No need to add file, just verify that it exists
-					Common::File resource;
-					if(!resource.exists(buf))
-						warning("Missing file %s", path.c_str());
-					else
-						debugC(5, kDebugFile, "File found: %s", path.c_str());
-					if(path.matchString("*.zfs", true)) {
-						Common::Path path_(path);
-						debugC(kDebugFile, "Adding archive %s to search manager.", path.c_str());
-						Common::Archive *arc;
-						arc = new ZfsArchive(path_);
-						SearchMan.add(path, arc);
+					if (allowSrc) {
+						Common::Path altPath = srcPath(path);
+						if (!SearchMan.hasFile(path) && !SearchMan.hasFile(altPath))
+							warning("Missing files %s and/or %s", path.toString().c_str(), altPath.toString().c_str());
+						else if (SearchMan.hasFile(path))
+							debugC(5, kDebugFile, "File found: %s", path.toString().c_str());
+						else
+							debugC(5, kDebugFile, "Alternate file found: %s", altPath.toString().c_str());
 					}
+					else {
+						if (!SearchMan.hasFile(path))
+							warning("Missing file %s", path.toString().c_str());
+						else
+							debugC(5, kDebugFile, "File found: %s", path.toString().c_str());
+					}
+					if (name.matchString("*.zfs", true))
+						if (!SearchMan.hasArchive(name)) {
+							Common::Path path_(path);
+							debugC(kDebugFile, "Adding archive %s to search manager.", path.toString().c_str());
+							Common::Archive *arc;
+							arc = new ZfsArchive(path_);
+							SearchMan.add(name, arc);
+						}
 				}
 			}
 		}

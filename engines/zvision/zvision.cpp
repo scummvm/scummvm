@@ -401,7 +401,6 @@ void ZVision::initializePath(const Common::FSNode &gamePath) {
 	if (ConfMan.hasKey("extrapath")) {
 		Common::Path gameExtraPath = ConfMan.getPath("extrapath");
 		const Common::FSNode gameExtraDir(gameExtraPath);
-		SearchMan.addDirectory(gameExtraPath, 0, 1, true);
 		SearchMan.addSubDirectoryMatching(gameExtraDir, "auxvid");
 		SearchMan.addSubDirectoryMatching(gameExtraDir, "auxscr");
 	}
