@@ -214,6 +214,7 @@ class ScriptContext : public Object<ScriptContext> {
 public:
 	ScriptType _scriptType;
 	int _id;
+	int _scriptId;
 	uint16 _parentNumber;
 	uint16 _castLibHint;
 	Common::Array<Common::String> _functionNames; // used by cb_localcall
@@ -231,7 +232,7 @@ private:
 	bool _onlyInLctxContexts = false;
 
 public:
-	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0, uint16 castLibHint = 0, uint16 parentNumber = 0);
+	ScriptContext(Common::String name, ScriptType type = kNoneScript, int id = 0, uint16 castLibHint = 0, uint16 parentNumber = 0, int scriptId = 0);
 	ScriptContext(const ScriptContext &sc);
 	~ScriptContext() override;
 

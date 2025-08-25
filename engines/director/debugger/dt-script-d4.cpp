@@ -20,6 +20,8 @@
  */
 
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/cast.h"
 #include "director/debugger/dt-internal.h"
 
 #include "director/debugger.h"
@@ -122,9 +124,22 @@ public:
 
 			if (context) {
 				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), node.name);
+				Director::Movie *movie = g_director->getCurrentMovie();
+
 				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 				script.moviePath = _script.moviePath;
-				script.handlerName = node.name;
+				int castId = context->_id;
+				bool childScript = false;
+				if (castId == -1) {
+					castId = movie->getCast()->getCastIdByScriptId(context->_parentNumber);
+					childScript = true;
+				}
+				// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler
+				if (childScript) {
+					script.handlerName = Common::String::format("%d (p<%d>): %s", context->_scriptId, castId, script.handlerId.c_str());
+				} else {
+					script.handlerName = Common::String::format("%d (%d): %s", context->_scriptId, castId, script.handlerId.c_str());
+				}
 				setScriptToDisplay(script);
 				_state->_dbg._goToDefinition = true;
 			}
