@@ -88,7 +88,7 @@ private:
 	void parseLevFile(const Common::Path &fileName);
 	void renderFrame(uint frameNumber);
 	void getLevParams(const Common::String &inputStr, Common::String &parameter, Common::String &values);
-	uint nextFrame(Common::Point &deltaPos);
+	uint getNextFrame(Common::Point &deltaPos);
 };
 
 } // End of namespace ZVision

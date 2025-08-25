@@ -181,9 +181,9 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 	}
 	// Cycle through all unit direction vectors in path segments & determine step distance
 	debugC(3, kDebugControl, "Setting step distances");
-	for(uint frame=0; frame < _frameCount; frame++) {
+	for (uint frame=0; frame < _frameCount; frame++) {
 		debugC(3, kDebugControl, "Frame %d", frame);
-		for(auto &iter : _frameInfo[frame].paths) {
+		for (auto &iter : _frameInfo[frame].paths) {
 			uint destFrame = iter.toFrame;
 			Common::Point deltaPos = _frameInfo[destFrame].hotspot.origin() - _frameInfo[frame].hotspot.origin();
 			Math::Vector2d deltaPosVector((float)deltaPos.x, (float)deltaPos.y);
@@ -229,17 +229,20 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 	bool cursorWasChanged = false;
 
 	if (_mouseIsCaptured) {
-		Common::Point deltaPos = (backgroundImageSpacePos - _gripOffset) - _frameInfo[_currentFrame].hotspot.origin();
+		uint nextFrame = _currentFrame;
+		do {
+			Common::Point gripOrigin = _frameInfo[_currentFrame].hotspot.origin() + _gripOffset;
+			debugC(1, kDebugControl, "LeverControl::onMouseMove() screenPos = %d,%d, imagePos = %d,%d, gripOrigin = %d,%d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y, gripOrigin.x, gripOrigin.y);
+			Common::Point deltaPos = backgroundImageSpacePos - gripOrigin;
+			nextFrame = getNextFrame(deltaPos);
+			if (nextFrame != _currentFrame) {
+				_currentFrame = nextFrame;
+				_engine->getScriptManager()->setStateValue(_key, _currentFrame);
+			}
+		} while (nextFrame != _currentFrame);
 
-
-		debugC(1, kDebugControl, "LeverControl::onMouseMove()");
-		debugC(1, kDebugControl, "\tscreenPos = %d,%d, imagePos = %d,%d, deltaPos = %d,%d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y, deltaPos.x, deltaPos.y);
-
-		_currentFrame = nextFrame(deltaPos);
-		if(_lastRenderedFrame != _currentFrame) {
+		if (_lastRenderedFrame != _currentFrame)
 			renderFrame(_currentFrame);
-			_engine->getScriptManager()->setStateValue(_key, _currentFrame);
-		}
 
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
@@ -247,11 +250,10 @@ bool LeverControl::onMouseMove(const Common::Point &screenSpacePos, const Common
 		_engine->getCursorManager()->changeCursor(_cursor);
 		cursorWasChanged = true;
 	}
-
 	return cursorWasChanged;
 }
 
-uint LeverControl::nextFrame(Common::Point &deltaPos) {
+uint LeverControl::getNextFrame(Common::Point &deltaPos) {
 	Math::Vector2d movement((float)deltaPos.x, (float)deltaPos.y);
 	for (auto &iter : _frameInfo[_currentFrame].paths) {
 		debugC(1, kDebugControl, "\tPossible step = %f,%f, angle = %d, distance %f", iter.direction.getX(), iter.direction.getY(), (uint)Math::rad2deg(iter.angle), iter.distance);
@@ -295,14 +297,9 @@ bool LeverControl::process(uint32 deltaTimeInMillis) {
 }
 
 void LeverControl::renderFrame(uint frameNumber) {
-	if (frameNumber == 0) {
-		_lastRenderedFrame = frameNumber;
-	} else if (frameNumber < _lastRenderedFrame && _mirrored) {
-		_lastRenderedFrame = frameNumber;
+	_lastRenderedFrame = frameNumber;
+	if (frameNumber != 0 && frameNumber < _lastRenderedFrame && _mirrored)
 		frameNumber = (_frameCount * 2) - frameNumber - 1;
-	} else {
-		_lastRenderedFrame = frameNumber;
-	}
 
 	const Graphics::Surface *frameData;
 
