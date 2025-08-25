@@ -127,6 +127,9 @@ static void soundTimer(void *refCon) {
 	Scene *scene = (Scene *)refCon;
 	WageEngine *engine = (WageEngine *)g_engine;
 
+	if (!engine)
+		return;
+
 	g_system->getTimerManager()->removeTimerProc(&soundTimer);
 
 	if (engine->_world->_player->_currentScene != scene)
