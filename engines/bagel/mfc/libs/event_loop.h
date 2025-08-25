@@ -173,12 +173,10 @@ public:
 			_activeWindows.top();
 	}
 
-	void doModal(CWnd *wnd) {
-		SetActiveWindow(wnd);
-		runEventLoop();
-		if (GetActiveWindow() == wnd)
-			PopActiveWindow();
-	}
+	/**
+	 * Shows a modal dialog
+	 */
+	void doModal(CWnd *wnd);
 
 	/**
 	 * Polls for any pending messages and adds

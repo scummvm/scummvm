@@ -80,6 +80,13 @@ void EventLoop::PopActiveWindow() {
 	}
 }
 
+void EventLoop::doModal(CWnd *wnd) {
+	SetActiveWindow(wnd);
+	runEventLoop();
+	if (GetActiveWindow() == wnd)
+		wnd->DestroyWindow();
+}
+
 void EventLoop::checkMessages() {
 	// Don't do any actual ScummVM event handling
 	// until at least one window has been set up
