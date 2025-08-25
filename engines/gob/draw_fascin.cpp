@@ -260,7 +260,7 @@ void Draw_Fascination::spriteOperation(int16 operation, bool ttsAddHotspotText) 
 
 #ifdef USE_TTS
 		if (ttsAddHotspotText) {
-			_vm->_game->_hotspots->addHotspotText(_textToPrint, left, _destSpriteY,
+			_vm->_game->_hotspots->addHotspotTTSText(_textToPrint, left, _destSpriteY,
 											_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1, _destSurface);
 		}
 #endif
@@ -552,7 +552,7 @@ void Draw_Fascination::drawWin(int16 fct) {
 			_destSpriteX += len * _fonts[_fontIndex]->getCharWidth();
 
 #ifdef USE_TTS
-			_vm->_game->_hotspots->addHotspotText(_textToPrint, left, _destSpriteY,
+			_vm->_game->_hotspots->addHotspotTTSText(_textToPrint, left, _destSpriteY,
 											_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1, _destSurface);
 #endif
 
@@ -676,7 +676,7 @@ void Draw_Fascination::drawWin(int16 fct) {
 			_destSpriteX += len * _fonts[_fontIndex]->getCharWidth();
 
 #ifdef USE_TTS
-			_vm->_game->_hotspots->addHotspotText(_textToPrint, left, _destSpriteY,
+			_vm->_game->_hotspots->addHotspotTTSText(_textToPrint, left, _destSpriteY,
 											_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1, _destSurface);
 #endif
 

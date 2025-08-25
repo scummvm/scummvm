@@ -212,7 +212,7 @@ Hotspots::Hotspots(GobEngine *vm) : _vm(vm) {
 	_currentX     = 0;
 	_currentY     = 0;
 #ifdef USE_TTS
-	_currentHotspotTextIndex = -1;
+	_currentHotspotTTSTextIndex = -1;
 	_hotspotSpokenLast = false;
 #endif
 }
@@ -270,8 +270,8 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 		spot.scriptFuncLeave = _vm->_game->_script;
 
 #ifdef USE_TTS
-		removeHotspotText(i);
-		expandHotspotText(i);
+		removeHotspotTTSText(i);
+		expandHotspotTTSText(i);
 #endif
 
 		debugC(1, kDebugHotspots, "Adding hotspot %03d: Coord:%3d+%3d+%3d+%3d - id:%04X, key:%04X, flag:%04X - fcts:%5d, %5d, %5d",
@@ -291,7 +291,7 @@ void Hotspots::remove(uint16 id) {
 			debugC(1, kDebugHotspots, "Removing hotspot %d: %X", i, id);
 			_hotspots[i].clear();
 #ifdef USE_TTS
-			removeHotspotText(i);
+			removeHotspotTTSText(i);
 #endif
 		}
 	}
@@ -305,7 +305,7 @@ void Hotspots::removeState(uint8 state) {
 			debugC(1, kDebugHotspots, "Removing hotspot %d: %X (by state %X)", i, spot.id, state);
 			spot.clear();
 #ifdef USE_TTS
-			removeHotspotText(i);
+			removeHotspotTTSText(i);
 #endif
 		}
 	}
@@ -389,7 +389,7 @@ void Hotspots::recalculate(bool force) {
 
 #ifdef USE_TTS
 	voiceUnassignedHotspots();
-	clearUnassignedHotspotText();
+	clearUnassignedHotspotTTSText();
 #endif
 }
 
@@ -1777,7 +1777,7 @@ void Hotspots::evaluate() {
 	}
 
 #ifdef USE_TTS
-	clearUnassignedHotspotText();
+	clearUnassignedHotspotTTSText();
 #endif
 }
 
@@ -1913,44 +1913,44 @@ bool Hotspots::hoveringOverHotspot() const {
 	return _currentIndex != 0;
 }
 
-void Hotspots::addHotspotText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf) {
+void Hotspots::addHotspotTTSText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf) {
 	if (x1 <= x2 && y1 <= y2) {
 		Common::Rect rect(x1, y1, x2, y2);
-		for (uint i = 0; i < _hotspotText.size(); ++i) {
+		for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
 			// If there's already hotspot text at the same position, simply change the text
-			if (rect.contains(_hotspotText[i].rect) || _hotspotText[i].rect.contains(rect)) {
-				_hotspotText[i].str = text;
-				_hotspotText[i].voiced = false;
+			if (rect.contains(_hotspotTTSText[i].rect) || _hotspotTTSText[i].rect.contains(rect)) {
+				_hotspotTTSText[i].str = text;
+				_hotspotTTSText[i].voiced = false;
 				return;
 			}
 		}
 
-		_hotspotText.push_back(HotspotTTSText{text, rect, -1, false, surf});
+		_hotspotTTSText.push_back(HotspotTTSText{text, rect, -1, false, surf});
 	} else {
 		_vm->sayText(text, Common::TextToSpeechManager::QUEUE);
 	}
 }
 
-void Hotspots::voiceHotspotText(int16 x, int16 y) {
+void Hotspots::voiceHotspotTTSText(int16 x, int16 y) {
 	// Don't allow any text on Ween's notepad to be voiced by moving the mouse, as the text is typically broken into pieces,
 	// which results in awkward voicing
 	if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
 		return;
 	}
 
-	for (uint i = 0; i < _hotspotText.size(); ++i) {
-		if (_hotspotText[i].rect.contains(x, y)) {
-			if ((int16)i != _currentHotspotTextIndex) {
-				_vm->sayText(_hotspotText[i].str, _hotspotSpokenLast ? Common::TextToSpeechManager::INTERRUPT : Common::TextToSpeechManager::QUEUE);
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].rect.contains(x, y)) {
+			if ((int16)i != _currentHotspotTTSTextIndex) {
+				_vm->sayText(_hotspotTTSText[i].str, _hotspotSpokenLast ? Common::TextToSpeechManager::INTERRUPT : Common::TextToSpeechManager::QUEUE);
 				_hotspotSpokenLast = true;
-				_currentHotspotTextIndex = i;
+				_currentHotspotTTSTextIndex = i;
 			}
 			
 			return;
 		}
 	}
 
-	_currentHotspotTextIndex = -1;
+	_currentHotspotTTSTextIndex = -1;
 	if (!hoveringOverHotspot()) {
 		clearPreviousSaid();
 	}
@@ -1959,23 +1959,23 @@ void Hotspots::voiceHotspotText(int16 x, int16 y) {
 
 void Hotspots::voiceUnassignedHotspots() {
 	Common::String ttsMessage;
-	for (uint i = 0; i < _hotspotText.size(); ++i) {
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
 		// For Ween's notepad, manually add spaces back in
 		if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
 			if (_vm->_weenVoiceNotepad) {
 				if (_vm->_draw->_fontIndex < _vm->_draw->kFontCount && _vm->_draw->_fonts[_vm->_draw->_fontIndex]) {
 					if (i > 0 && 
-						_hotspotText[i].rect.left != 
-						_hotspotText[i - 1].rect.left + _vm->_draw->_fonts[_vm->_draw->_fontIndex]->getCharWidth()) {
+						_hotspotTTSText[i].rect.left !=
+						_hotspotTTSText[i - 1].rect.left + _vm->_draw->_fonts[_vm->_draw->_fontIndex]->getCharWidth()) {
 						ttsMessage += " ";
 					}
 				}
 
-				ttsMessage += _hotspotText[i].str;
+				ttsMessage += _hotspotTTSText[i].str;
 			}
-		} else if (_hotspotText[i].hotspot == -1 && !_hotspotText[i].voiced) {
-			ttsMessage += _hotspotText[i].str + "\n";
-			_hotspotText[i].voiced = true;
+		} else if (_hotspotTTSText[i].hotspot == -1 && !_hotspotTTSText[i].voiced) {
+			ttsMessage += _hotspotTTSText[i].str + "\n";
+			_hotspotTTSText[i].voiced = true;
 		}
 	}
 
@@ -1986,14 +1986,14 @@ void Hotspots::voiceUnassignedHotspots() {
 	}
 }
 
-void Hotspots::clearHotspotText() {
-	_hotspotText.clear();
+void Hotspots::clearHotspotTTSText() {
+	_hotspotTTSText.clear();
 }
 
-void Hotspots::clearUnassignedHotspotText() {
-	for (Common::Array<HotspotTTSText>::iterator it = _hotspotText.begin(); it != _hotspotText.end();) {
+void Hotspots::clearUnassignedHotspotTTSText() {
+	for (Common::Array<HotspotTTSText>::iterator it = _hotspotTTSText.begin(); it != _hotspotTTSText.end();) {
 		if (it->hotspot == -1) {
-			it = _hotspotText.erase(it);
+			it = _hotspotTTSText.erase(it);
 		} else {
 			it++;
 		}
@@ -2004,15 +2004,15 @@ void Hotspots::clearPreviousSaid() {
 	_previousSaid.clear();
 }
 
-void Hotspots::adjustHotspotTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf) {
+void Hotspots::adjustHotspotTTSTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf) {
 	if (oldLeft > oldRight || oldTop > oldBottom) {
 		return;
 	}
 
 	Common::Rect oldRect(oldLeft, oldTop, oldRight, oldBottom);
-	for (uint i = 0; i < _hotspotText.size(); ++i) {
-		if (_hotspotText[i].surf == surf && oldRect.contains(_hotspotText[i].rect)) {
-			_hotspotText[i].rect.moveTo(newX, newY);
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].surf == surf && oldRect.contains(_hotspotTTSText[i].rect)) {
+			_hotspotTTSText[i].rect.moveTo(newX, newY);
 			return;
 		}
 	}
@@ -2432,7 +2432,7 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 
 #ifdef USE_TTS
 
-void Hotspots::expandHotspotText(uint16 spotID) {
+void Hotspots::expandHotspotTTSText(uint16 spotID) {
 	if (spotID > kHotspotCount || _hotspots[spotID].getType() == kTypeClick || _hotspots[spotID].isDisabled()) {
 		return;
 	}
@@ -2456,14 +2456,14 @@ void Hotspots::expandHotspotText(uint16 spotID) {
 		return;
 	}
 	
-	for (int i = _hotspotText.size() - 1; i >= 0; --i) {
-		if (_hotspotText[i].hotspot != -1) {
+	for (int i = _hotspotTTSText.size() - 1; i >= 0; --i) {
+		if (_hotspotTTSText[i].hotspot != -1) {
 			continue;
 		}
 
-		if (spotRect.intersects(_hotspotText[i].rect)) {
-			_hotspotText[i].rect = spotRect;
-			_hotspotText[i].hotspot = spotID;
+		if (spotRect.intersects(_hotspotTTSText[i].rect)) {
+			_hotspotTTSText[i].rect = spotRect;
+			_hotspotTTSText[i].hotspot = spotID;
 
 			// Try to voice what the mouse is hovering over, as the text underneath the mouse may have changed
 			int16 dx = 0;
@@ -2473,19 +2473,19 @@ void Hotspots::expandHotspotText(uint16 spotID) {
 				dy = 0;
 			}
 
-			voiceHotspotText(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy);
+			voiceHotspotTTSText(_vm->_global->_inter_mouseX - dx, _vm->_global->_inter_mouseY - dy);
 			return;
 		}
 	}
 }
 
-void Hotspots::removeHotspotText(uint16 spotID) {
-	for (uint i = 0; i < _hotspotText.size(); ++i) {
-		if (_hotspotText[i].hotspot == spotID) {
-			_hotspotText.remove_at(i);
+void Hotspots::removeHotspotTTSText(uint16 spotID) {
+	for (uint i = 0; i < _hotspotTTSText.size(); ++i) {
+		if (_hotspotTTSText[i].hotspot == spotID) {
+			_hotspotTTSText.remove_at(i);
 
-			if ((int16)i == _currentHotspotTextIndex) {
-				_currentHotspotTextIndex = -1;
+			if ((int16)i == _currentHotspotTTSTextIndex) {
+				_currentHotspotTTSTextIndex = -1;
 			}
 			return;
 		}

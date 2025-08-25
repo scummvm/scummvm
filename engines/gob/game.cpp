@@ -688,7 +688,7 @@ void Game::playTot(int32 function) {
 #ifdef USE_TTS
 	if (_vm->getGameType() == kGameTypeWeen && _vm->isCurrentTot("edit.tot")) {
 		_vm->_weenVoiceNotepad = true;
-		_vm->_game->_hotspots->clearHotspotText();
+		_vm->_game->_hotspots->clearHotspotTTSText();
 	}
 #endif
 
@@ -764,7 +764,7 @@ void Game::capturePop(char doDraw) {
 		_vm->_draw->_needAdjust = savedNeedAdjust;
 
 #ifdef USE_TTS
-		_hotspots->clearHotspotText();
+		_hotspots->clearHotspotTTSText();
 #endif
 	}
 	_vm->_draw->freeSprite(Draw::kCaptureSurface + _captureCount);

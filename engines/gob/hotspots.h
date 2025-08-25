@@ -108,13 +108,13 @@ public:
 
 #ifdef USE_TTS
 	bool hoveringOverHotspot() const;
-	void addHotspotText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf);
+	void addHotspotTTSText(const Common::String &text, uint16 x1, uint16 y1, uint16 x2, uint16 y2, int16 surf);
 	void voiceUnassignedHotspots();
-	void voiceHotspotText(int16 x, int16 y);
-	void clearHotspotText();
-	void clearUnassignedHotspotText();
+	void voiceHotspotTTSText(int16 x, int16 y);
+	void clearHotspotTTSText();
+	void clearUnassignedHotspotTTSText();
 	void clearPreviousSaid();
-	void adjustHotspotTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf);
+	void adjustHotspotTTSTextRect(int16 oldLeft, int16 oldTop, int16 oldRight, int16 oldBottom, int16 newX, int16 newY, int16 surf);
 #endif
 
 private:
@@ -212,9 +212,9 @@ private:
 
 #ifdef USE_TTS
 	Common::String _previousSaid;
-	int16 _currentHotspotTextIndex;
 	bool _hotspotSpokenLast;
-	Common::Array<HotspotTTSText> _hotspotText;
+	Common::Array<HotspotTTSText> _hotspotTTSText;
+	int16 _currentHotspotTTSTextIndex;
 #endif
 
 	/** Add a hotspot, returning the new index. */
@@ -308,8 +308,8 @@ private:
 	void updateAllTexts(const InputDesc *inputs) const;
 
 #ifdef USE_TTS
-	void expandHotspotText(uint16 spotID);
-	void removeHotspotText(uint16 spotID);
+	void expandHotspotTTSText(uint16 spotID);
+	void removeHotspotTTSText(uint16 spotID);
 #endif
 };
 

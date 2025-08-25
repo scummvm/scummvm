@@ -899,7 +899,7 @@ void Draw_v2::spriteOperation(int16 operation, bool ttsAddHotspotText) {
 		}
 
 		if (ttsAddHotspotText) {
-			_vm->_game->_hotspots->addHotspotText(_textToPrint, left, _destSpriteY,
+			_vm->_game->_hotspots->addHotspotTTSText(_textToPrint, left, _destSpriteY,
 											_destSpriteX - 1, _destSpriteY + _fonts[_fontIndex]->getCharHeight() - 1, _destSurface);
 		}
 #endif

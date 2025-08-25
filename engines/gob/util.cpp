@@ -374,7 +374,7 @@ void Util::setMousePos(int16 x, int16 y) {
 	g_system->warpMouse(x, y);
 
 #ifdef USE_TTS
-	_vm->_game->_hotspots->voiceHotspotText(x, y);
+	_vm->_game->_hotspots->voiceHotspotTTSText(x, y);
 #endif
 }
 

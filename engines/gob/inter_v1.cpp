@@ -1372,7 +1372,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		storeKey(key);
 #ifdef USE_TTS
 		_vm->stopTextToSpeech();
-		_vm->_game->_hotspots->clearHotspotText();
+		_vm->_game->_hotspots->clearHotspotTTSText();
 #endif
 
 		_vm->_util->clearKeyBuf();
@@ -1676,7 +1676,7 @@ void Inter_v1::o1_copySprite(OpFuncParams &params) {
 	}
 
 #ifdef USE_TTS
-	_vm->_game->_hotspots->adjustHotspotTextRect(_vm->_draw->_spriteLeft, _vm->_draw->_spriteTop, 
+	_vm->_game->_hotspots->adjustHotspotTTSTextRect(_vm->_draw->_spriteLeft, _vm->_draw->_spriteTop,
 											_vm->_draw->_spriteLeft + _vm->_draw->_spriteRight - 1, 
 											_vm->_draw->_spriteTop + _vm->_draw->_spriteBottom - 1,
 											_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY, _vm->_draw->_sourceSurface);
