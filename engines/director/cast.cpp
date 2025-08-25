@@ -484,7 +484,7 @@ bool Cast::loadConfig() {
 
 		debugC(1, kDebugLoading, "Cast::loadConfig(): field24: %d, field25: %d, field26: %d, frameRate: %d, platformID: %d",
 				_field24, _field25, _field26, _frameRate, _platformID);
-		debugC(1, kDebugLoading, "Cast::loadConfig(): protection: %d, field29: %d, checksum: %d",
+		debugC(1, kDebugLoading, "Cast::loadConfig(): protection: %d, field29: %d, checksum: 0x%08x",
 			_protection, _field29, _checksum);
 
 		//Calculation and verification of checksum
@@ -510,7 +510,7 @@ bool Cast::loadConfig() {
 			}
 
 			debugC(1, kDebugLoading, "Cast::loadConfig(): field30: %d, defaultPalette: %s", _field30, _defaultPalette.asString().c_str());
-		} else if (_version >= kFileVer500 && _version < kFileVer600) {
+		} else if (_version >= kFileVer500) {
 			_field30 = stream->readSint16();
 			_defPaletteNum = stream->readSint16();
 			_chunkBaseNum = stream->readSint32();
