@@ -1101,19 +1101,6 @@ BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
 	return MFC::KillTimer(m_hWnd, nIDEvent);
 }
 
-BOOL CWnd::GetScrollRange(int nBar,
-	LPINT lpMinPos, LPINT lpMaxPos) const {
-	error("TODO: CWnd::GetScrollRange");
-}
-
-INT CWnd::GetScrollPosition() const {
-	error("TODO: CWnd::GetScrollPosition");
-}
-
-int CWnd::SetScrollPos(int nBar, int nPos, BOOL bRedraw) {
-	error("TODO: CWnd::SetScrollPos");
-}
-
 void CWnd::createDialogIndirect(LPCDLGTEMPLATE dlgTemplate) {
 	CDialog *dialog = dynamic_cast<CDialog *>(this);
 	assert(dialog);

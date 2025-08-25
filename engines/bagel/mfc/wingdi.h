@@ -769,9 +769,9 @@ extern intptr GetWindowWord(HWND hWnd, int nIndex);
 extern int AddFontResource(LPCSTR fontName);
 extern bool RemoveFontResource(LPCSTR fontName);
 extern int SetScrollPos(HWND hWnd, int nBar,
-                        int nPos, BOOL bRedraw);
-extern BOOL SetScrollRange(HWND hWnd, int nBar,
-                           int nMinPos, int nMaxPos, BOOL bRedraw);
+    int nPos, BOOL bRedraw);
+extern void SetScrollRange(HWND hWnd, int nBar,
+    int nMinPos, int nMaxPos, BOOL bRedraw);
 
 extern BOOL ClipCursor(const RECT *lpRect);
 extern BOOL GetCursorPos(LPPOINT lpPoint);

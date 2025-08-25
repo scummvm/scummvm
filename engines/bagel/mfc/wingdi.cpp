@@ -296,14 +296,16 @@ bool RemoveFontResource(LPCSTR fontName) {
 	return AfxGetApp()->removeFontResource(fontName);
 }
 
-int SetScrollPos(HWND hWnd, int nBar,
-                 int nPos, BOOL bRedraw) {
-	error("TODO: SetScrollPos");
+int SetScrollPos(HWND hWnd, int /*nBar*/,
+		int nPos, BOOL bRedraw) {
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	return wnd->SetScrollPos(nPos, bRedraw);
 }
 
-BOOL SetScrollRange(HWND hWnd, int nBar,
-                    int nMinPos, int nMaxPos, BOOL bRedraw) {
-	error("TODO: SetScrollRange");
+void SetScrollRange(HWND hWnd, int /*nBar*/,
+		int nMinPos, int nMaxPos, BOOL bRedraw) {
+	CWnd *wnd = CWnd::FromHandle(hWnd);
+	wnd->SetScrollRange(nMinPos, nMaxPos, bRedraw);
 }
 
 BOOL ClipCursor(const RECT *lpRect) {

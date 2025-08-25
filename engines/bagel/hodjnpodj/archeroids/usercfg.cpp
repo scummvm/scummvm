@@ -317,9 +317,9 @@ BOOL CUserCfgDlg::OnInitDialog(void) {
 	if (nVal < BADGUYS_MIN || nVal > BADGUYS_MAX)
 		m_nInitNumBadGuys = DEFAULT_BADGUYS;
 
-	SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, TRUE);
-	SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, TRUE);
-	SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, TRUE);
+	MFC::SetScrollRange(GetDlgItem(IDS_GAMESPEED)->m_hWnd, SB_CTL, SPEED_MIN, SPEED_MAX, TRUE);
+	MFC::SetScrollRange(GetDlgItem(IDS_LIVES)->m_hWnd, SB_CTL, LIVES_MIN, LIVES_MAX, TRUE);
+	MFC::SetScrollRange(GetDlgItem(IDS_ARCHER_LEVEL)->m_hWnd, SB_CTL, LEVEL_MIN, LEVEL_MAX, TRUE);
 
 	pDC = GetDC();
 	tmpRect.SetRect(18, 113, 65, 132);

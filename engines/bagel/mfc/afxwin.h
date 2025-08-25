@@ -1440,10 +1440,20 @@ public:
 	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 
-	BOOL GetScrollRange(int nBar,
-	                    LPINT lpMinPos, LPINT lpMaxPos) const;
-	INT GetScrollPosition() const;
-	int SetScrollPos(int nBar, int nPos, BOOL bRedraw = TRUE);
+	virtual int GetScrollPos() const {
+		return 0;
+	}
+	int GetScrollPosition() const {
+		return GetScrollPos();
+	}
+	virtual int SetScrollPos(int nPos, BOOL bRedraw = true) {
+		return 0;
+	}
+	virtual void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const {}
+	void GetScrollRange(int /*nBar*/, LPINT lpMinPos, LPINT lpMaxPos) const {
+		GetScrollRange(lpMinPos, lpMaxPos);
+	}
+	virtual void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) {}
 
 	void SetCapture();
 	void ReleaseCapture();
@@ -1715,10 +1725,10 @@ public:
 	~CScrollBar() override { }
 	CVIRTUAL BOOL Create(DWORD dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
 
-	int GetScrollPos() const;
-	int SetScrollPos(int nPos, BOOL bRedraw = true);
-	void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const;
-	void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw);
+	int GetScrollPos() const override;
+	int SetScrollPos(int nPos, BOOL bRedraw = true) override;
+	void GetScrollRange(LPINT lpMinPos, LPINT lpMaxPos) const override;
+	void SetScrollRange(int nMinPos, int nMaxPos, BOOL bRedraw) override;
 	void ShowScrollBar(BOOL bShow);
 	BOOL SetScrollInfo(LPSCROLLINFO lpScrollInfo, BOOL bRedraw);
 };
