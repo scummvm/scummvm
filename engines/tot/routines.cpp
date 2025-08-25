@@ -3686,7 +3686,7 @@ void TotEngine::loadObjects() {
 	}
 
 	if (!objectFile.isOpen()) {
-		debug("Object file exists? %d", objectFile.exists("OBJMOCH.DAT"));
+		debug("Object file exists? %d, open? %d", objectFile.exists("OBJMOCH.DAT"), objectFile.isOpen());
 		showError(312);
 	}
 	for (int i = 0; i < kInventoryIconCount; i++) {

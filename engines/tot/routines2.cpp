@@ -1529,9 +1529,14 @@ void TotEngine::startMenu(bool fade) {
 							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 						}
 					} else if (x >= 18 && x <= 145) {
-						_startNewGame = false;
-						_continueGame = false;
-						validOption = true;
+						_isSavingDisabled = true;
+						bool result = loadGameDialog();
+						_isSavingDisabled = false;
+						if(result) {
+							_startNewGame = false;
+							_continueGame = false;
+							validOption = true;
+						}
 					}
 				} else if (y > 174 && y < 190) {
 					if (x > 20 && x < 145) {
