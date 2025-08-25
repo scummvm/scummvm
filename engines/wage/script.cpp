@@ -796,11 +796,21 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompLtTextInputString:
 		return !compare(o2, o1, kCompEqStringTextInput);
 	case kCompLtObjChr:
-		return o1->_value.obj->_currentOwner != o2->_value.chr;
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			return o1->_value.obj->_currentOwner != o2->_value.chr;
+		}
+		break;
 	case kCompLtChrObj:
 		return compare(o2, o1, kCompLtObjChr);
 	case kCompLtObjScene:
-		return o1->_value.obj->_currentScene != o2->_value.scene;
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			return o1->_value.obj->_currentScene != o2->_value.scene;
+		}
+		break;
 	case kCompGtNumNum:
 		return o1->_value.number > o2->_value.number;
 	case kCompGtStringString:
@@ -808,16 +818,25 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 	case kCompGtChrScene:
 		return (o1->_value.chr != NULL && o1->_value.chr->_currentScene != o2->_value.scene);
 	case kMoveObjChr:
-		if (o1->_value.obj->_currentOwner != o2->_value.chr) {
-			_world->move(o1->_value.obj, o2->_value.chr);
-			_handled = true;  // TODO: Is this correct?
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+		} else {
+			if (o1->_value.obj->_currentOwner != o2->_value.chr) {
+				_world->move(o1->_value.obj, o2->_value.chr);
+				_handled = true;  // TODO: Is this correct?
+			}
 		}
 		break;
 	case kMoveObjScene:
-		if (o1->_value.obj->_currentScene != o2->_value.scene) {
-			_world->move(o1->_value.obj, o2->_value.scene);
-			// Note: This shouldn't call setHandled() - see
-			// Sultan's Palace 'Food and Drink' scene.
+		if (o1->_value.obj == NULL) {
+			debug(1, "%s() o1->_value.obj is null", __func__);
+			return false;
+		} else {
+			if (o1->_value.obj->_currentScene != o2->_value.scene) {
+				_world->move(o1->_value.obj, o2->_value.scene);
+				// Note: This shouldn't call setHandled() - see
+				// Sultan's Palace 'Food and Drink' scene.
+			}
 		}
 		break;
 	case kMoveChrScene:
