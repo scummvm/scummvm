@@ -55,8 +55,8 @@ M4Engine::~M4Engine() {
 
 void M4Engine::initializePath(const Common::FSNode &gamePath) {
 	Engine::initializePath(gamePath);
-	SearchMan.addDirectory(gamePath.getChild("goodstuf"));
-	SearchMan.addDirectory(gamePath.getChild("resource"), 0, 2);
+	SearchMan.addSubDirectoryMatching(gamePath, "goodstuf");
+	SearchMan.addSubDirectoryMatching(gamePath, "resource");
 }
 
 uint32 M4Engine::getFeatures() const {
