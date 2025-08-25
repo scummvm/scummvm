@@ -134,9 +134,7 @@ int TotEngine::engineStart() {
 	} else if (_continueGame && !shouldQuit()) {
 		loadTemporaryGame();
 	} else {
-		_isSavingDisabled = true;
-		openMainMenuDialog();
-		_isSavingDisabled = false;
+
 	}
 
 	return startGame();
