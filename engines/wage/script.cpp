@@ -307,10 +307,12 @@ bool Script::execute(World *world, int loopCount, Common::String *inputText, Des
 		} else {
 			Chr *player = _world->_player;
 			ObjArray *weapons = player->getWeapons(true);
-			for (ObjArray::const_iterator weapon = weapons->begin(); weapon != weapons->end(); ++weapon) {
-				if (_engine->tryAttack(*weapon, input)) {
-					_handled = _engine->handleAttack(*weapon);
-					break;
+			if (weapons) {
+				for (const auto &weapon : *weapons) {
+					if (_engine->tryAttack(weapon, input)) {
+						_handled = _engine->handleAttack(weapon);
+						break;
+					}
 				}
 			}
 
@@ -730,8 +732,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 			debug(1, "%s() o2->_value.scene is null", __func__);
 			return false;
 		} else {
-			for (ObjList::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
-				if (*it == o1->_value.obj)
+			for (const auto &obj : o2->_value.scene->_objs)
+				if (obj == o1->_value.obj)
 					return true;
 		}
 		return false;
@@ -739,8 +741,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		if (o2->_value.scene == NULL) {
 			debug(1, "%s() o2->_value.scene is null", __func__);
 		} else {
-			for (ChrList::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
-				if (*it == o1->_value.chr)
+			for (const auto &chr : o2->_value.scene->_chrs)
+				if (chr == o1->_value.chr)
 					return true;
 		}
 		return false;
@@ -748,8 +750,8 @@ bool Script::compare(Operand *o1, Operand *o2, int comparator) {
 		if (o2->_value.chr == NULL) {
 			debug(1, "%s() o2->_value.chr is null", __func__);
 		} else {
-			for (ObjArray::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
-				if (*it == o1->_value.obj)
+			for (const auto &obj : o2->_value.chr->_inventory)
+				if (obj == o1->_value.obj)
 					return true;
 		}
 		return false;
