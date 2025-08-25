@@ -675,16 +675,19 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	while (!_vm->shouldQuit()) {
 		_vm->_events->pollEvents();
-		if (!_vm->_events->_leftButton && !_vm->_events->_wheelDown && !_vm->_events->_wheelUp)
+		if (!_vm->_events->_leftButton && !_vm->_events->_wheelDown && !_vm->_events->_wheelUp && !_vm->_events->isKeyActionPending())
 			continue;
 
 		//
-		// Slight enhancement from original - also allow mouse wheel events to scroll up/down.
+		// Slight enhancement from original - we also allow mouse wheel and
+		// keyboard events to scroll up/down.
 		//
-
 		if (((_type == TYPE_1) || (_type == TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
-			if (_btnUpPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelUp) {
+
+			Common::CustomEventType action = kActionNone;
+			_vm->_events->getAction(action);
+			if (_btnUpPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelUp || action == kActionMoveUp) {
 				if (_vm->_bcnt) {
 					if (_vm->_boxSelectY != 0) {
 						--_vm->_boxSelectY;
@@ -696,7 +699,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 					}
 				}
 				continue;
-			} else if (_btnDownPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelDown) {
+			} else if (_btnDownPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelDown || action == kActionMoveDown) {
 				if (_vm->_bcnt) {
 					if (_vm->_bcnt == _vm->_numLines) {
 						if (_vm->_bcnt != _vm->_boxSelectY + 1) {
