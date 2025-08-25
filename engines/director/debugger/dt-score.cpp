@@ -47,6 +47,61 @@ const char *modes2[] = {
 	ICON_MS_FORMS_APPS_SCRIPT, "Script",	// forms_apps_script
 };
 
+static void buildContinuationData() {
+	if (_state->_loadedContinuationData) {
+		return;
+	}
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint numFrames = score->_scoreCache.size();
+
+	uint numChannels = score->_scoreCache[0]->_sprites.size();
+	_state->_continuationData.resize(numChannels);
+
+	for (int ch = 0; ch < (int)numChannels; ch++) {
+		_state->_continuationData[ch].resize(numFrames);
+
+		uint currentContinuation = 1;
+		for (int f = 0; f < (int)numFrames; f++) {
+			Frame &frame = *score->_scoreCache[f];
+			Sprite &sprite = *frame._sprites[ch];
+
+			Frame *prevFrame = (f == 0) ? nullptr : score->_scoreCache[f - 1];
+			Sprite *prevSprite = (prevFrame) ? prevFrame->_sprites[ch] : nullptr;
+
+			if (prevSprite) {
+				if (!(*prevSprite == sprite)) {
+					currentContinuation = f + 1;
+				}
+			} else {
+				currentContinuation = f + 1;
+			}
+			_state->_continuationData[ch][f].first = currentContinuation;
+		}
+
+		currentContinuation = 1;
+		for (int f = (int)numFrames - 1; f >= 0; f--) {
+			Frame &frame = *score->_scoreCache[f];
+			Sprite &sprite = *frame._sprites[ch];
+
+			Frame *nextFrame = (f == (int)numFrames - 1) ? nullptr : score->_scoreCache[f + 1];
+			Sprite *nextSprite = (nextFrame) ? nextFrame->_sprites[ch] : nullptr;
+
+			if (nextSprite) {
+				if (!(*nextSprite == sprite)) {
+					currentContinuation = f + 1;
+				}
+			} else {
+				currentContinuation = f + 1;
+			}
+			_state->_continuationData[ch][f].second = currentContinuation;
+			debug("%d %d [%d, %d]", ch, f, _state->_continuationData[ch][f].first, _state->_continuationData[ch][f].second);
+		}
+	}
+
+	_state->_loadedContinuationData = true;
+}
+
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
@@ -188,6 +243,8 @@ void showScore() {
 	if (!_state->_w.score)
 		return;
 
+	buildContinuationData();
+
 	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
 
@@ -294,10 +351,10 @@ void showScore() {
 
 			if (castMember || shape) {
 				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
-				ImGui::Text("  ?"); ImGui::SameLine(50);
+				ImGui::Text("  %d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
 				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
-				ImGui::Text("  ?"); ImGui::SameLine();
+				ImGui::Text("  %d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
 
