@@ -1243,8 +1243,8 @@ void Inter_v2::o2_getTotTextItemPart(OpFuncParams &params) {
 
 	stringVar = stringStartVar;
 	if (part == -1) {
-		warning("o2_getTotTextItemPart, part == -1");
 		_vm->_draw->_hotspotText = GET_VARO_STR(stringVar);
+		return;
 	}
 
 	WRITE_VARO_UINT8(stringVar, 0);
