@@ -82,6 +82,7 @@ static const Graphics::MacMenuData menuSubItems[] = {
 	{ 0, NULL,			0, 0, false }
 };
 
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *gui);
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *gui);
 static void menuCommandsCallback(int action, Common::String &text, void *data);
 
@@ -131,6 +132,7 @@ Gui::Gui(WageEngine *engine) {
 	uint maxWidth = _screen.w;
 
 	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
+	_consoleWindow->setCallback(consoleWindowCallback, this);
 	_consoleWindow->setEditable(true);
 
 	_selectedMenuItem = -1;
@@ -184,6 +186,21 @@ void Gui::drawScene() {
 	_menu->setDirty(true);
 }
 
+static bool consoleWindowCallback(WindowClick click, Common::Event &event, void *g) {
+	Gui *gui = (Gui *)g;
+
+	return gui->processConsoleEvents(click, event);
+}
+
+bool Gui::processConsoleEvents(WindowClick click, Common::Event &event) {
+	if (click == kBorderCloseButton && event.type == Common::EVENT_LBUTTONUP) {
+		_engine->quitGame();
+		return true;
+	}
+
+	return false;
+}
+
 static bool sceneWindowCallback(WindowClick click, Common::Event &event, void *g) {
 	Gui *gui = (Gui *)g;
 
@@ -197,6 +214,10 @@ bool Gui::processSceneEvents(WindowClick click, Common::Event &event) {
 		if (obj != nullptr)
 			_engine->processTurn(NULL, obj);
 
+		return true;
+	}
+	if (click == kBorderCloseButton && event.type == Common::EVENT_LBUTTONUP) {
+		_engine->quitGame();
 		return true;
 	}
 

@@ -47,6 +47,7 @@
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+#include "common/config-manager.h"
 #include "common/stream.h"
 #include "common/system.h"
 
@@ -100,12 +101,16 @@ void WageEngine::playSound(Common::String soundName) {
 		if (_eventMan->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
-				if (!_shouldQuit) {
-					g_system->getEventManager()->resetQuit();
-					if (saveDialog()) {
-						_shouldQuit = true;
-						g_system->getEventManager()->pushEvent(event);
+				if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+					if (!_shouldQuit) {
+						g_system->getEventManager()->resetQuit();
+						if (saveDialog()) {
+							_shouldQuit = true;
+							g_system->getEventManager()->pushEvent(event);
+						}
 					}
+				} else {
+					_shouldQuit = true;
 				}
 				break;
 			default:
@@ -121,6 +126,9 @@ void WageEngine::playSound(Common::String soundName) {
 static void soundTimer(void *refCon) {
 	Scene *scene = (Scene *)refCon;
 	WageEngine *engine = (WageEngine *)g_engine;
+
+	if (!engine)
+		return;
 
 	g_system->getTimerManager()->removeTimerProc(&soundTimer);
 
