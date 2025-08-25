@@ -20,6 +20,8 @@
  */
 
 #include "director/director.h"
+#include "director/movie.h"
+#include "director/cast.h"
 #include "director/debugger/dt-internal.h"
 
 #include "director/debugger.h"
@@ -104,11 +106,11 @@ public:
 		const ImVec4 color = (ImVec4)ImColor(g_lingo->_builtinCmds.contains(node.name) ? _state->_colors._builtin_color : _state->_colors._call_color);
 		ImGui::TextColored(color, "%s", node.name.c_str());
 		// TODO: we should test Director::builtins too (but inaccessible)
-		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
+		if (!g_lingo->_builtinFuncs.contains(node.name) && ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
 			ImGui::Text("Go to definition");
 			ImGui::EndTooltip();
 		}
-		if (!g_lingo->_builtinCmds.contains(node.name) && ImGui::IsItemClicked()) {
+		if (!g_lingo->_builtinFuncs.contains(node.name) && ImGui::IsItemClicked()) {
 			int32 obj = 0;
 			for (uint i = 0; i < _script.bytecodeArray.size(); i++) {
 				if (node._startOffset == _script.bytecodeArray[i].pos) {
@@ -119,12 +121,28 @@ public:
 				}
 			}
 			ScriptContext *context = getScriptContext(obj, _script.id, node.name);
-			ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), node.name);
-			script.byteOffsets = context->_functionByteOffsets[script.handlerId];
-			script.moviePath = _script.moviePath;
-			script.handlerName = node.name;
-			setScriptToDisplay(script);
-			_state->_dbg._goToDefinition = true;
+
+			if (context) {
+				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), node.name);
+				Director::Movie *movie = g_director->getCurrentMovie();
+
+				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
+				script.moviePath = _script.moviePath;
+				int castId = context->_id;
+				bool childScript = false;
+				if (castId == -1) {
+					castId = movie->getCast()->getCastIdByScriptId(context->_parentNumber);
+					childScript = true;
+				}
+				// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler
+				if (childScript) {
+					script.handlerName = Common::String::format("%d (p<%d>): %s", context->_scriptId, castId, script.handlerId.c_str());
+				} else {
+					script.handlerName = Common::String::format("%d (%d): %s", context->_scriptId, castId, script.handlerId.c_str());
+				}
+				setScriptToDisplay(script);
+				_state->_dbg._goToDefinition = true;
+			}
 		}
 		ImGui::SameLine();
 
@@ -1185,9 +1203,9 @@ private:
 		if (showCurrentStatement) {
 			dl->AddQuadFilled(ImVec2(pos.x, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 4.f), ImVec2(pos.x + 9.f, pos.y + 10.f), ImVec2(pos.x, pos.y + 10.f), ImColor(_state->_colors._current_statement));
 			dl->AddTriangleFilled(ImVec2(pos.x + 8.f, pos.y), ImVec2(pos.x + 14.f, pos.y + 7.f), ImVec2(pos.x + 8.f, pos.y + 14.f), ImColor(_state->_colors._current_statement));
-			if (!_scrollDone && _scrollTo && g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) {
+			if (_state->_dbg._scrollToPC && _scrollTo && g_lingo->_state->callstack.size() != _state->_dbg._callstackSize) {
 				ImGui::SetScrollHereY(0.5f);
-				_scrollDone = true;
+				_state->_dbg._scrollToPC = false;
 			}
 			dl->AddRectFilled(ImVec2(pos.x + 16.f, pos.y), ImVec2(pos.x + width, pos.y + 16.f), ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0x20)), 0.4f);
 		}

@@ -127,6 +127,7 @@ typedef struct ImGuiState {
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 		bool _goToDefinition = false;
+		bool _scrollToPC = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
 	} _dbg;
@@ -177,6 +178,9 @@ typedef struct ImGuiState {
 		int frame = -1;
 		int channel = -1;
 	} _selectedScoreCast;
+
+	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
+	bool _loadedContinuationData;
 
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;

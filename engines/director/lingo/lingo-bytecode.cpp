@@ -1032,7 +1032,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	uint16 scriptId = lctxIndex;
 
 	// unk2
-	for (uint32 i = 0; i < 0x10; i++) {
+	stream.readSint16BE();
+	uint16 parentNumber = stream.readSint16BE();
+
+	for (uint32 i = 0; i < 0xC; i++) {
 		stream.readByte();
 	}
 
@@ -1098,7 +1101,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 			castName = info->name;
 	} else {
 		warning("Script %d has no associated cast member", scriptId);
-		scriptType = kNoneScript;
+		scriptType = kMovieScript;
 	}
 
 	_assemblyArchive = archive;
@@ -1114,12 +1117,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 		debugC(1, kDebugCompile, "Add V4 script %d: factory '%s'", scriptId, factoryName.c_str());
 
-		sc = _assemblyContext = new ScriptContext(factoryName, scriptType, _assemblyId);
+		sc = _assemblyContext = new ScriptContext(factoryName, scriptType, _assemblyId, parentNumber, scriptId);
 		registerFactory(factoryName);
 	} else {
 		debugC(1, kDebugCompile, "Add V4 script %d: %s %d", scriptId, scriptType2str(scriptType), _assemblyId);
 
-		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", _assemblyId), scriptType, _assemblyId, archive->cast->_castLibID);
+		sc = _assemblyContext = new ScriptContext(!castName.empty() ? castName : Common::String::format("%d", _assemblyId), scriptType, _assemblyId, archive->cast->_castLibID, parentNumber, scriptId);
 	}
 
 	// initialise each property

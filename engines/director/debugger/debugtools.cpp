@@ -66,6 +66,13 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 				return &handler;
 			}
 		}
+		for (const LingoDec::Script *factoryScript : p.second->factories) {
+			for (const LingoDec::Handler &handler : factoryScript->handlers) {
+				if (handler.name == handlerId) {
+					return &handler;
+				}
+			}
+		}
 	}
 	return nullptr;
 }
@@ -379,6 +386,7 @@ void setScriptToDisplay(const ImGuiScript &script) {
 	scriptData->_scripts.push_back(script);
 	scriptData->_current = index;
 	scriptData->_showScript = true;
+	_state->_dbg._scrollToPC = true;
 }
 
 void displayScriptRef(CastMemberID &scriptId) {
