@@ -138,7 +138,7 @@ const String parseGameGUIOptionsPlatforms(const String &str) {
 
 	for (int i = 0; g_platforms[i].code; i++)
 		if (str.contains("plat_" + String(g_platforms[i].code)))
-			res += String(g_platforms[i].id);
+			res += GUIO_PLATFORM_PREFIX + String(g_platforms[i].id);
 
 	return res;
 }
@@ -146,8 +146,8 @@ const String parseGameGUIOptionsPlatforms(const String &str) {
 const String getGameGUIOptionsDescriptionPlatforms(const String &str) {
 	String res;
 
-	for (int i = 0; g_platforms[i].id; i++)
-		if (str.contains(g_platforms[i].id))
+	for (int i = 0; g_platforms[i].id != kPlatformUnknown; i++)
+		if (str.contains(GUIO_PLATFORM_PREFIX + String(g_platforms[i].id)))
 			res += "plat_" + String(g_platforms[i].code) + " ";
 
 	res.trim();

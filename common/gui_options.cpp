@@ -176,9 +176,20 @@ String parseGameGUIOptions(const String &str) {
 const String getGameGUIOptionsDescription(const String &options) {
 	String res;
 
-	for (int i = 0; g_gameOptions[i].desc; i++)
-		if (options.contains(g_gameOptions[i].option[0]))
-			res += String(g_gameOptions[i].desc) + " ";
+	for (int i = 0; i < options.size(); i++) {
+		// Skip the next byte after platform prefix as it will contain platform info
+		if (options[i] == GUIO_PLATFORM_PREFIX[0]) {
+			i++;
+			continue;
+		}
+
+		for (int j = 0; g_gameOptions[j].desc; j++) {
+			if (options[i] == g_gameOptions[j].option[0]) {
+				res += String(g_gameOptions[j].desc) + " ";
+				break;
+			}
+		}
+	}
 
 	res += getGameGUIOptionsDescriptionPlatforms(options);
 	res.trim();
