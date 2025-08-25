@@ -96,12 +96,15 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 	Common::String param;
 	Common::String values;
 
+	int id = 0;
+
 	while (!file.eos()) {
 		line = file.readLine();
 		getLevParams(line, param, values);
 
 		if (param.matchString("animation_id", true)) {
-			// Not used
+			sscanf(values.c_str(), "%d", &id);
+			debugC(2, kDebugControl, "Lever animation ID: %d", id);
 		} else if (param.matchString("filename", true)) {
 			_animation = _engine->loadAnimation(Common::Path(values));
 		} else if (param.matchString("skipcolor", true)) {
@@ -179,6 +182,19 @@ void LeverControl::parseLevFile(const Common::Path &fileName) {
 
 		// Don't read lines in this place because last will not be parsed.
 	}
+	// WORKAROUND for a script bug in Zork: Nemesis, room tz2e (orrery)
+	// Animation coordinates for left hand lever do not properly align with background image
+	switch (id) {
+	case 2926:
+		_animationCoords.bottom -= 4;
+		_animationCoords.right += 1;
+		_animationCoords.left -= 1;
+		_animationCoords.top += 1;
+		break;
+	default:
+		break;
+	}
+
 	// Cycle through all unit direction vectors in path segments & determine step distance
 	debugC(3, kDebugControl, "Setting step distances");
 	for (uint frame=0; frame < _frameCount; frame++) {
