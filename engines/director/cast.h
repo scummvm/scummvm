@@ -178,7 +178,6 @@ public:
 	uint16 _castIDoffset;
 
 	Common::Rect _movieRect;
-	CastMemberID _defaultPalette;
 	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;
@@ -231,6 +230,22 @@ public:
 	/* 60 */ int32 _field29;
 	/* 64 */ uint32 _checksum;
 	/* 68 */ uint16 _field30;	// Marked as remnants in ProjectorRays
+	/* 70 */ uint16 _defPaletteNum = 0; // _defaultPalette before D5, unused later
+	/* 72 */ uint32 _chunkBaseNum = 0;
+	/* 76 */ CastMemberID _defaultPalette;
+
+	/****** D6.0-D8.5 *******/
+	/* 80 */ int8 _netUnk1 = 0;
+	/* 81 */ int8 _netUnk2 = 0;
+	/* 82 */ int16 _netPreloadNumFrames = 0;
+
+	/****** post D9-D10 *******/
+	/* 84 */ uint32 _windowFlags = 0;
+	/* 88 */ CastMemberID _windowIconId;
+	/* 92 */ CastMemberID _windowMaskId;
+	/* 96 */ CastMemberID _windowDragRegionMaskId;
+
+	/* 100 */ // End of config
 
 private:
 	DirectorEngine *_vm;
