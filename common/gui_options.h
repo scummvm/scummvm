@@ -22,7 +22,7 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
-#include "platform.h"
+#include "common/platform.h"
 
 // This is an equivalent of an enum. Feel free to renumerate them
 // They are used only internally for making lookups cheaper and for
@@ -84,18 +84,15 @@
 #define GUIO_NOLANG          "\x33"
 
 // Helper macros to get string for the platform
-#ifdef _MSC_VER
-// Extra level of indirection required to force macro expansion
+// Extra level of indirection required to force macro expansion on some compilers
 #define GET_PLAT_STR_IMPL(val, hex) hex
 #define GET_PLAT_STR_EXPAND(x) GET_PLAT_STR_IMPL x
 #define GET_PLAT_STR(name) GET_PLAT_STR_EXPAND((name))
-#else
-#define GET_PLAT_STR_IMPL(val, hex) hex
-#define GET_PLAT_STR(name) GET_PLAT_STR_IMPL(name)
-#endif
+
+#define GUIO_PLATFORM_PREFIX "\x40"
 
 // Get hex string literal for the given platform
-#define GUIO_PLATFORM(p) GET_PLAT_STR(p##_VAL)
+#define GUIO_PLATFORM(p) GUIO_PLATFORM_PREFIX GET_PLAT_STR(p##_VAL)
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.

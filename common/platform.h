@@ -37,57 +37,52 @@ namespace Common {
 
 class String;
 
-// Helper macros to get enum value for the platform
-#ifdef _MSC_VER
-// Extra level of indirection required to force macro expansion
+// Extra level of indirection required to force macro expansion on some compilers
 #define GET_ENUM_VAL_IMPL(val, hex) val
 #define GET_ENUM_VAL_EXPAND(x) GET_ENUM_VAL_IMPL x
 #define GET_ENUM_VAL(name) GET_ENUM_VAL_EXPAND((name))
-#else
-#define GET_ENUM_VAL_IMPL(val, hex) val
-#define GET_ENUM_VAL(name) GET_ENUM_VAL_IMPL(name)
-#endif
 
 // List of platforms values as int and string literals, to be used in platform enum and gui options
-#define kPlatformApple2GS_VAL 0x40, "\x40"
-#define kPlatformApple2_VAL 0x41, "\x41"
-#define kPlatform3DO_VAL 0x42, "\x42"
-#define kPlatformAcorn_VAL 0x43, "\x43"
-#define kPlatformAmiga_VAL 0x44, "\x44"
-#define kPlatformAtari8Bit_VAL 0x45, "\x45"
-#define kPlatformAtariST_VAL 0x46, "\x46"
-#define kPlatformC64_VAL 0x47, "\x47"
-#define kPlatformAmstradCPC_VAL 0x48, "\x48"
-#define kPlatformDOS_VAL 0x49, "\x49"
-#define kPlatformPC98_VAL 0x4A, "\x4A"
-#define kPlatformWii_VAL 0x4B, "\x4B"
-#define kPlatformCoCo_VAL 0x4C, "\x4C"
-#define kPlatformCoCo3_VAL 0x4D, "\x4D"
-#define kPlatformFMTowns_VAL 0x4E, "\x4E"
-#define kPlatformLinux_VAL 0x4F, "\x4F"
-#define kPlatformMacintosh_VAL 0x50, "\x50"
-#define kPlatformPCEngine_VAL 0x51, "\x51"
-#define kPlatformNES_VAL 0x52, "\x52"
-#define kPlatformSegaCD_VAL 0x53, "\x53"
-#define kPlatformWindows_VAL 0x54, "\x54"
-#define kPlatformPSX_VAL 0x55, "\x55"
-#define kPlatformPS2_VAL 0x56, "\x56"
-#define kPlatformPS3_VAL 0x57, "\x57"
-#define kPlatformXbox_VAL 0x58, "\x58"
-#define kPlatformCDi_VAL 0x59, "\x59"
-#define kPlatformIOS_VAL 0x5A, "\x5A"
-#define kPlatformAndroid_VAL 0x5B, "\x5B"
-#define kPlatformOS2_VAL 0x5C, "\x5C"
-#define kPlatformBeOS_VAL 0x5D, "\x5D"
-#define kPlatformPocketPC_VAL 0x5E, "\x5E"
-#define kPlatformMegaDrive_VAL 0x5F, "\x5F"
-#define kPlatformSaturn_VAL 0x60, "\x60"
-#define kPlatformPippin_VAL 0x61, "\x61"
-#define kPlatformMacintoshII_VAL 0x62, "\x62"
-#define kPlatformShockwave_VAL 0x63, "\x63"
-#define kPlatformZX_VAL 0x64, "\x64"
-#define kPlatformTI994_VAL 0x65, "\x65"
-#define kPlatformNintendoSwitch_VAL 0x66, "\x66"
+// Starting from 1 to avoid dealing with "\x00" in the middle of the string
+#define kPlatformApple2GS_VAL 0x01, "\x01"
+#define kPlatformApple2_VAL 0x02, "\x02"
+#define kPlatform3DO_VAL 0x03, "\x03"
+#define kPlatformAcorn_VAL 0x04, "\x04"
+#define kPlatformAmiga_VAL 0x05, "\x05"
+#define kPlatformAtari8Bit_VAL 0x06, "\x06"
+#define kPlatformAtariST_VAL 0x07, "\x07"
+#define kPlatformC64_VAL 0x08, "\x08"
+#define kPlatformAmstradCPC_VAL 0x09, "\x09"
+#define kPlatformDOS_VAL 0x0A, "\x0A"
+#define kPlatformPC98_VAL 0x0B, "\x0B"
+#define kPlatformWii_VAL 0x0C, "\x0C"
+#define kPlatformCoCo_VAL 0x0D, "\x0D"
+#define kPlatformCoCo3_VAL 0x0E, "\x0E"
+#define kPlatformFMTowns_VAL 0x0F, "\x0F"
+#define kPlatformLinux_VAL 0x10, "\x10"
+#define kPlatformMacintosh_VAL 0x11, "\x11"
+#define kPlatformPCEngine_VAL 0x12, "\x12"
+#define kPlatformNES_VAL 0x13, "\x13"
+#define kPlatformSegaCD_VAL 0x14, "\x14"
+#define kPlatformWindows_VAL 0x15, "\x15"
+#define kPlatformPSX_VAL 0x16, "\x16"
+#define kPlatformPS2_VAL 0x17, "\x17"
+#define kPlatformPS3_VAL 0x18, "\x18"
+#define kPlatformXbox_VAL 0x19, "\x19"
+#define kPlatformCDi_VAL 0x1A, "\x1A"
+#define kPlatformIOS_VAL 0x1B, "\x1B"
+#define kPlatformAndroid_VAL 0x1C, "\x1C"
+#define kPlatformOS2_VAL 0x1D, "\x1D"
+#define kPlatformBeOS_VAL 0x1E, "\x1E"
+#define kPlatformPocketPC_VAL 0x1F, "\x1F"
+#define kPlatformMegaDrive_VAL 0x20, "\x20"
+#define kPlatformSaturn_VAL 0x21, "\x21"
+#define kPlatformPippin_VAL 0x22, "\x22"
+#define kPlatformMacintoshII_VAL 0x23, "\x23"
+#define kPlatformShockwave_VAL 0x24, "\x24"
+#define kPlatformZX_VAL 0x25, "\x25"
+#define kPlatformTI994_VAL 0x26, "\x26"
+#define kPlatformNintendoSwitch_VAL 0x27, "\x27"
 
 /**
  * List of game platforms. Specifying a platform for a target can be used to
@@ -143,9 +138,7 @@ enum Platform : int8 {
 // Do not pollute namespace
 #undef GET_ENUM_VAL_IMPL
 #undef GET_ENUM_VAL
-#ifdef _MSC_VER
 #undef GET_ENUM_VAL_EXPAND
-#endif
 
 struct PlatformDescription {
 	const char *code;
