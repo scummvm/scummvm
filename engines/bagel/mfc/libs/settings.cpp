@@ -131,6 +131,7 @@ void Settings::Domain::save(Common::OutSaveFile *dest) {
 	}
 
 	dest->writeByte('\n');
+	_modified = false;
 }
 
 void Settings::Domain::flushToDisk() {
