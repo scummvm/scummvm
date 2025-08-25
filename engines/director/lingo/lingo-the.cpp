@@ -1742,6 +1742,16 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 					channel->_dirty = true;
 				}
 				channel->setCast(castId);
+
+				// If we change the channel cast we also have to update the sprite in the score.
+				// If we don't then the cast will show up incorrectly when the score is updated.
+				Sprite *nextSprite = score->_currentFrame->_sprites[id];
+				if (nextSprite) {
+					nextSprite->setWidth(sprite->getWidth());
+					nextSprite->setHeight(sprite->getHeight());
+					nextSprite->setCast(castId, true);
+				}
+
 				channel->_dirty = true;
 			}
 		}
@@ -2453,6 +2463,8 @@ void Lingo::setObjectProp(Datum &obj, Common::String &propName, Datum &val) {
 		} else {
 			g_lingo->lingoError("Lingo::setObjectProp: Object <%s> has no property '%s'", obj.asString(true).c_str(), propName.c_str());
 		}
+	} else if (obj.type == INT) {
+		obj.u.i = val.asInt();
 	} else if (obj.type == PARRAY) {
 		int index = LC::compareArrays(LC::eqData, obj, propName, true).u.i;
 		if (index > 0) {
