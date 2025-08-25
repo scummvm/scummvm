@@ -275,6 +275,10 @@ bool Gui::processEvent(Common::Event &event) {
 		}
 	}
 
+	if (event.type == Common::EVENT_KEYDOWN) {
+		_wm->setActiveWindow(_consoleWindow->getId());
+	}
+
 	return _wm->processEvent(event);
 }
 
