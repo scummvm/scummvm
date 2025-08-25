@@ -196,7 +196,9 @@ void Room::doRoom() {
 				_vm->_player->checkScroll();
 			}
 
+			_vm->_canSaveLoad = true;
 			doCommands();
+			_vm->_canSaveLoad = false;
 			if (_vm->shouldQuitOrRestart())
 				return;
 
@@ -592,9 +594,10 @@ void Room::doCommands() {
 			mainAreaClick();
 		}
 	} else if (_vm->_events->getAction(action)) {
-		for (int i = 0; i < ARRAYSIZE(_accessActionCodes); ++i) {
-			if (_accessActionCodes[i]._action == action) {
-				handleCommand(_accessActionCodes[i]._code);
+		const AccessActionCode *actionCodes = (_vm->getGameID() == kGameMartianMemorandum) ? MARTIAN_ACTION_CODES : AMAZON_ACTION_CODES;
+		for (int i = 0; actionCodes[i]._action != kActionNone; ++i) {
+			if (actionCodes[i]._action == action) {
+				handleCommand(actionCodes[i]._code);
 				break;
 			}
 		}
@@ -616,12 +619,16 @@ void Room::cycleCommand(int incr) {
 }
 
 void Room::handleCommand(int commandId) {
-	if (commandId == 9) {
+	if (commandId == -2) {
+		// Save-load button event from keymapper.  Only open if allowed at the moment.
+		if (_vm->_canSaveLoad)
+			_vm->openMainMenuDialog();
+	} else if (commandId == 9) {
 		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
 		_vm->_canSaveLoad = false;
-	}  else if (commandId == _selectCommand) {
+	} else if (commandId == _selectCommand) {
 		_vm->_events->debounceLeft();
 		commandOff();
 	} else {

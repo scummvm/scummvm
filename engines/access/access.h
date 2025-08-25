@@ -86,7 +86,11 @@ enum ACCESSActions {
 	kActionTalk,
 	kActionWalk,
 	kActionHelp,
+	kActionOpen,
+	kActionMove,
+	kActionTravel,
 	kActionSkip,
+	kActionSaveLoad,
 };
 
 struct AccessActionCode {
@@ -94,7 +98,7 @@ struct AccessActionCode {
 	int8 _code;
 };
 
-static const AccessActionCode _accessActionCodes[] = {
+static const AccessActionCode AMAZON_ACTION_CODES[] = {
 	{ kActionLook, 1 },
 	{ kActionUse, 2 },
 	{ kActionTake, 3 },
@@ -103,6 +107,22 @@ static const AccessActionCode _accessActionCodes[] = {
 	{ kActionTalk, 6 },
 	{ kActionWalk, 7 },
 	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
+};
+
+static const AccessActionCode MARTIAN_ACTION_CODES[] = {
+	{ kActionLook, 0 },
+	{ kActionOpen, 1 },
+	{ kActionMove, 2 },
+	{ kActionTake, 3 },
+	{ kActionUse, 4 },
+	{ kActionWalk, 5 },
+	{ kActionTalk, 6 },
+	{ kActionTravel, 7 },
+	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
 };
 
 #define ACCESS_SAVEGAME_VERSION 1
