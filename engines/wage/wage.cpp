@@ -99,6 +99,8 @@ WageEngine::~WageEngine() {
 	delete _resManager;
 	delete _gui;
 	delete _rnd;
+
+	g_engine = nullptr;
 }
 
 bool WageEngine::pollEvent(Common::Event &event) {
