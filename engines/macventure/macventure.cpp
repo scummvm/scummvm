@@ -674,7 +674,7 @@ Item MacVentureEngine::removeOutlier(Layout &layout, bool flag, Common::Rect rec
 			max = flag ? 0x7fff : -0x8000;
 		}
 		if (first || oob) {
-			int center = childBounds.width() / 2 | 0;
+			int center = childBounds.width() / 2;
 			bool over = false;
 			if (flag) {
 				over = (max >= center);
@@ -792,7 +792,7 @@ void MacVentureEngine::cleanUp(WindowReference reference) {
 
 			Item toAdd;
 			toAdd.id = outlier.id;
-			toAdd.bounds = Common::Rect(Common::Point(x, y + (height - outlier.bounds.height()) / 2 | 0),
+			toAdd.bounds = Common::Rect(Common::Point(x, y + (height - outlier.bounds.height()) / 2),
 										outlier.bounds.width(), outlier.bounds.height());
 			items.push_back(toAdd);
 
@@ -815,13 +815,13 @@ void MacVentureEngine::messUp(WindowReference reference) {
 		if (scale < 0)
 			scale = 0;
 		float f = randBetween(0, 10) / 10.0f;
-		int y = ((int)(f * scale) | 0) + data.bounds.top;
+		int y = (int)(f * scale) + data.bounds.top;
 
 		scale = data.bounds.width() - childMeasures.x;
 		if (scale < 0)
 			scale = 0;
 		f = randBetween(0, 10) / 10.0f;
-		int x = ((int)(f * scale) | 0) + data.bounds.left;
+		int x = (int)(f * scale) + data.bounds.left;
 
 		items.push_back(Item{child.obj, Common::Rect(Common::Point(x, y), childMeasures.x, childMeasures.y)});
 	}
