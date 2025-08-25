@@ -20,7 +20,6 @@
  */
 
 #include "tot/console.h"
-#include "tot/vars.h"
 
 namespace Tot {
 

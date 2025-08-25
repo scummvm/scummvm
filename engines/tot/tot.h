@@ -147,7 +147,7 @@ private:
 	void displayObjectDescription(Common::String text);
 	void copyProtection();
 	void initialLogo();
-	void initialMenu(bool fade);
+	void startMenu(bool fade);
 	void exitToDOS();
 	void soundControls();
 	void sacrificeScene();

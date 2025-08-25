@@ -27,7 +27,6 @@
 
 #include "tot/forest.h"
 #include "tot/tot.h"
-#include "tot/vars.h"
 
 namespace Tot {
 

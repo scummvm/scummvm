@@ -30,7 +30,6 @@
 #include "tot/anims.h"
 #include "tot/decoder/TotFlicDecoder.h"
 #include "tot/graphics.h"
-#include "tot/vars.h"
 #include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"

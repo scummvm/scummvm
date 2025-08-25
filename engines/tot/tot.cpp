@@ -35,7 +35,6 @@
 #include "tot/debug.h"
 #include "tot/dialog.h"
 #include "tot/font/bgifont.h"
-#include "tot/vars.h"
 #include "tot/sound.h"
 #include "tot/tot.h"
 #include "tot/util.h"
@@ -129,7 +128,7 @@ int TotEngine::engineStart() {
 	_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
-	initialMenu(_firstTimeDone);
+	startMenu(_firstTimeDone);
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
 	} else if (_continueGame && !shouldQuit()) {
@@ -474,7 +473,7 @@ int TotEngine::startGame() {
 			_graphics->clear();
 			_sound->playMidi("INTRODUC", true);
 			_sound->fadeInMusic();
-			initialMenu(true);
+			startMenu(true);
 			verifyCopyProtection2();
 
 			if (_startNewGame && !shouldQuit()) {
