@@ -28,9 +28,9 @@
 namespace Access {
 
 Resources *Resources::init(AccessEngine *vm) {
-	if (vm->getGameID() == GType_Amazon)
+	if (vm->getGameID() == kGameAmazon)
 		return new Amazon::AmazonResources(vm);
-	else if (vm->getGameID() == GType_MartianMemorandum)
+	else if (vm->getGameID() == kGameMartianMemorandum)
 		return new Martian::MartianResources(vm);
 
 	error("Unknown game");
@@ -65,28 +65,28 @@ bool Resources::load(Common::U32String &errorMessage) {
 	// Load in the index
 	uint count = f.readUint16LE();
 	_datIndex.resize(count);
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		_datIndex[idx]._gameId = f.readByte();
-		_datIndex[idx]._discType = f.readByte();
-		_datIndex[idx]._demoType = f.readByte();
+	for (auto &datEntry : _datIndex) {
+		datEntry._gameId = f.readByte();
+		datEntry._discType = f.readByte();
+		datEntry._demoType = f.readByte();
 
 		byte language = f.readByte();
 		switch (language) {
 		case 0:
-			_datIndex[idx]._language = (Common::Language)0;
+			datEntry._language = (Common::Language)0;
 			break;
 		case 5:
-			_datIndex[idx]._language = Common::EN_ANY;
+			datEntry._language = Common::EN_ANY;
 			break;
 		case 23:
-			_datIndex[idx]._language = Common::ES_ESP;
+			datEntry._language = Common::ES_ESP;
 			break;
 		default:
 			error("Unknown language");
 			break;
 		}
 
-		_datIndex[idx]._fileOffset = f.readUint32LE();
+		datEntry._fileOffset = f.readUint32LE();
 	}
 
 	// Load in the data for the game
@@ -107,7 +107,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	FILENAMES.resize(count);
 	for (uint idx = 0; idx < count; ++idx)
-		FILENAMES[idx] = readString(s);
+		FILENAMES[idx] = s.readString();
 
 	// Load the character data
 	count = s.readUint16LE();
@@ -123,7 +123,7 @@ void Resources::load(Common::SeekableReadStream &s) {
 	count = s.readUint16LE();
 	ROOMTBL.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		ROOMTBL[idx]._desc = readString(s);
+		ROOMTBL[idx]._desc = s.readString();
 		ROOMTBL[idx]._travelPos.x = s.readSint16LE();
 		ROOMTBL[idx]._travelPos.y = s.readSint16LE();
 		uint count2 = s.readUint16LE();
@@ -137,38 +137,27 @@ void Resources::load(Common::SeekableReadStream &s) {
 	DEATHS.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
 		DEATHS[idx]._screenId = s.readByte();
-		DEATHS[idx]._msg = readString(s);
+		DEATHS[idx]._msg = s.readString();
 	}
 
 	// Load in the inventory list
 	count = s.readUint16LE();
 	INVENTORY.resize(count);
 	for (uint idx = 0; idx < count; ++idx) {
-		INVENTORY[idx]._desc = readString(s);
+		INVENTORY[idx]._desc = s.readString();
 		for (uint idx2 = 0; idx2 < 4; ++idx2)
 			INVENTORY[idx]._combo[idx2] = s.readSint16LE();
 	}
 }
 
 uint Resources::findEntry(byte gameId, byte discType, byte demoType, Common::Language language) {
-	for (uint idx = 0; idx < _datIndex.size(); ++idx) {
-		DATEntry &de = _datIndex[idx];
+	for (const DATEntry &de : _datIndex) {
 		if (de._gameId == gameId && de._discType == discType &&
 			de._demoType == demoType && de._language == language)
 			return de._fileOffset;
 	}
 
 	error("Could not locate appropriate access.dat entry");
-}
-
-Common::String Resources::readString(Common::SeekableReadStream &s) {
-	Common::String result;
-	char c;
-
-	while ((c = s.readByte()) != 0)
-		result += c;
-
-	return result;
 }
 
 /*------------------------------------------------------------------------*/

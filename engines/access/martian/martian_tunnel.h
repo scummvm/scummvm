@@ -19,46 +19,48 @@
  *
  */
 
-#ifndef ACCESS_MARTIAN_ROOM_H
-#define ACCESS_MARTIAN_ROOM_H
+#ifndef ACCESS_MARTIAN_MARTIAN_TUNNEL_H
+#define ACCESS_MARTIAN_MARTIAN_TUNNEL_H
 
 #include "common/scummsys.h"
-#include "access/room.h"
 
 namespace Access {
-
-class AccessEngine;
 
 namespace Martian {
 
 class MartianEngine;
 
-class MartianRoom : public Room {
-private:
-	MartianEngine *_game;
-
-protected:
-	void loadRoom(int roomNumber) override;
-
-	void roomInit() override;
-
-	void reloadRoom() override;
-
-	void reloadRoom1() override;
-
-	void mainAreaClick() override;
+class MartianTunnel {
 public:
-	MartianRoom(AccessEngine *vm);
+	MartianTunnel(MartianEngine *vm);
+	~MartianTunnel();
 
-	~MartianRoom() override;
+	void tunnel2();
+	void tunnel4();
 
-	void init4Quads() override { }
+private:
+	void doTunnel();
+	void drawArrowSprites();
+	void drawArrowSprites2();
+	void clearWorkScreenArea();
+	void copyBufBlockToScreen();
+	void tunnel_doloop_8c65();
+	void tunnel_17f5c();
+	void tunnel_1888a();
+	void tunnel_18985();
 
-	void roomMenu() override;
+	MartianEngine *_vm;
+	int16 _tunnelParam_ca42;
+	int16 _tunnelParam_ca44;
+	int16 _tunnelParam_ca46;
+	uint16 _tunnel_ca20;
+	byte _tunnelMoveFlag;
+	int16 _crawlFrame;
+	byte _tunnelStopLoop_ca27;
 };
 
-} // End of namespace Martian
+}
 
-} // End of namespace Access
+} // end namespace Access
 
-#endif /* ACCESS_AMAZON_ROOM_H */
+#endif // ACCESS_MARTIAN_MARTIAN_TUNNEL_H

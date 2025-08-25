@@ -31,13 +31,20 @@
 #include "access/resources.h"
 #include "access/martian/martian_resources.h"
 
+
+// for frame contents debugging
+//#define DEBUG_FRAME_DUMP 1
+
+#ifdef DEBUG_FRAME_DUMP
+#include "graphics/paletteman.h"
+#include "image/png.h"
+#include "common/path.h"
+#include "common/file.h"
+#endif
+
 namespace Access {
 
-ScreenSave::ScreenSave(){
-	_clipWidth = _clipHeight = 0;
-	_windowXAdd = _windowYAdd = 0;
-	_scrollCol = _scrollRow = 0;
-	_screenYOff = 0;
+ScreenSave::ScreenSave() : _clipWidth(0), _clipHeight(0), _windowXAdd(0), _windowYAdd(0), _scrollCol(0), _scrollRow(0), _screenYOff(0) {
 }
 
 Screen::Screen(AccessEngine *vm) : _vm(vm) {
@@ -70,7 +77,7 @@ Screen::Screen(AccessEngine *vm) : _vm(vm) {
 	_endCycle = 0;
 	_fadeIn = false;
 
-	for (int i = 0; i < 768; ++i) {
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i) {
 		_rawPalette[i] = 0;
 		_savedPalettes[0][i] = 0;
 		_savedPalettes[1][i] = 0;
@@ -118,23 +125,32 @@ void Screen::setInitialPalettte() {
 }
 
 void Screen::setManPalette() {
+	// Player palette is colors 224~246
 	for (int i = 0; i < 0x42; i++) {
 		_rawPalette[672 + i] = PALETTE_6BIT_TO_8BIT(_manPal[i]);
 	}
 }
 
 void Screen::setIconPalette() {
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	// Icon palette is colors 247~255
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		for (int i = 0; i < 0x1B; i++) {
 			_rawPalette[741 + i] = PALETTE_6BIT_TO_8BIT(Martian::ICON_PALETTE[i]);
 		}
 	}
 }
 
-void Screen::loadPalette(int fileNum, int subfile) {
+void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 	Resource *res = _vm->_files->loadFile(fileNum, subfile);
-	byte *palette = res->data();
-	Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	const byte *palette = res->data() + srcOffset;
+
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		for (int i = 0; i < _numColors * 3; i++)
+			_rawPalette[_startColor * 3 + i] = PALETTE_6BIT_TO_8BIT(palette[i]);
+	} else {
+		// TODO: is this right for Amaazon?  Surely it should be converted?  Maybe never used..
+		Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
+	}
 	delete res;
 }
 
@@ -231,7 +247,7 @@ void Screen::setBufferScan() {
 
 void Screen::setScaleTable(int scale) {
 	int total = 0;
-	for (int idx = 0; idx < 256; ++idx) {
+	for (int idx = 0; idx < ARRAYSIZE(_scaleTable1); ++idx) {
 		_scaleTable1[idx] = total >> 8;
 		_scaleTable2[idx] = total & 0xff;
 		total += scale;
@@ -332,6 +348,17 @@ void Screen::cyclePaletteBackwards() {
 
 void Screen::flashPalette(int count) {
 	// No implementation needed in ScummVM
+}
+
+void Screen::dump(const char *fname) const {
+#ifdef DEBUG_FRAME_DUMP
+	/* For debugging, dump the frame contents.. */
+	::Common::DumpFile outf;
+	uint32 now = g_system->getMillis();
+	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));
+	::Image::writePNG(outf, *this, _rawPalette);
+	outf.close();
+#endif
 }
 
 } // End of namespace Access

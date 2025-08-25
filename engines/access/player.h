@@ -57,6 +57,7 @@ protected:
 	SpriteResource *_playerSprites1;
 	int _scrollEnd;
 	int _inactiveYOff;
+	int _jetpackFlag;
 
 	void plotCom(int v1);
 	void plotCom0();
@@ -73,6 +74,10 @@ protected:
 	void walkUpRight();
 	void walkDownRight();
 	void checkScrollUp();
+
+	bool isMMHover() const;
+	void jetpack();
+
 public:
 	Direction _playerDirection;
 	SpriteResource *_playerSprites;
@@ -128,6 +133,8 @@ public:
 	void removeSprite1();
 
 	void calcManScale();
+
+	void extracted();
 
 	void walk();
 

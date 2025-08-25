@@ -36,25 +36,12 @@ Room::Room(AccessEngine *vm) : Manager(vm) {
 	_playFieldWidth = _playFieldHeight = 0;
 	_matrixSize = 0;
 	_tile = nullptr;
-	_selectCommand = 0;
 	_conFlag = false;
 	_selectCommand = -1;
 
-	switch (vm->getGameID()) {
-	case GType_Amazon:
-		for (int i = 0; i < 10; i++) {
-			_rMouse[i][0] = Amazon::RMOUSE[i][0];
-			_rMouse[i][1] = Amazon::RMOUSE[i][1];
-		}
-		break;
-	case GType_MartianMemorandum:
-		for (int i = 0; i < 10; i++) {
-			_rMouse[i][0] = Martian::RMOUSE[i][0];
-			_rMouse[i][1] = Martian::RMOUSE[i][1];
-		}
-		break;
-	default:
-		error("Game not supported");
+	for (int i = 0; i < 10; i++) {
+		_rMouse[i][0] = vm->_res->getRMouse(i, 0);
+		_rMouse[i][1] = vm->_res->getRMouse(i, 1);
 	}
 }
 
@@ -92,12 +79,20 @@ void Room::clearCamera() {
 }
 
 void Room::takePicture() {
+	// aka specialFuncRoomNumber47
 	_vm->_events->pollEvents();
-	if (!_vm->_events->_leftButton)
+	if (!_vm->_events->_leftButton) {
+		// WORKAROUND: The original doesn't reset player move direction here
+		// because it handles mouse/keyboard differently, but we need to reset
+		// after mouse-up, otherwise the next click anywhere not on a button
+		// will repeat the previous move.
+		_vm->_player->_move = NONE;
 		return;
+	}
 
 	Common::Array<Common::Rect> pictureCoords;
 	for (int i = 0; Martian::PICTURERANGE[i][0] != -1; i += 2) {
+		// PICTURERANGE is min/max X, min/max Y
 		pictureCoords.push_back(Common::Rect(Martian::PICTURERANGE[i][0], Martian::PICTURERANGE[i + 1][0],
 			                                 Martian::PICTURERANGE[i][1], Martian::PICTURERANGE[i + 1][1]));
 	}
@@ -105,6 +100,7 @@ void Room::takePicture() {
 	int result = _vm->_events->checkMouseBox1(pictureCoords);
 
 	if (result == 4) {
+		// Take picture button
 		_vm->_events->debounceLeft();
 		if (_vm->_inventory->_inv[44]._value != ITEM_IN_INVENTORY) {
 			Common::String msg = "YOU HAVE NO MORE FILM.";
@@ -112,13 +108,13 @@ void Room::takePicture() {
 			return;
 		}
 
-		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)){
+		if ((_vm->_scrollCol < 35) || (_vm->_scrollRow >= 20)) {
 			Common::String msg = "THAT ISN'T INTERESTING ENOUGH TO WASTE FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
 		}
 
-		if (_vm->_inventory->_inv[26]._value != ITEM_USED) {
+		if (_vm->_flags[26] != 2) {
 			Common::String msg = "ALTHOUGH IT WOULD MAKE A NICE PICTURE, YOU MAY FIND SOMETHING MORE INTERESTING TO USE YOUR FILM ON.";
 			_vm->_scripts->doCmdPrint_v1(msg);
 			return;
@@ -126,7 +122,7 @@ void Room::takePicture() {
 
 		Common::String msg = "THAT PHOTO MAY COME IN HANDY SOME DAY.";
 		_vm->_scripts->doCmdPrint_v1(msg);
-		_vm->_inventory->_inv[8]._value = ITEM_IN_INVENTORY;
+		_vm->_flags[8] = 1;
 		_vm->_pictureTaken++;
 		if (_vm->_pictureTaken == 16)
 			_vm->_inventory->_inv[44]._value = ITEM_USED;
@@ -136,6 +132,7 @@ void Room::takePicture() {
 		clearCamera();
 		return;
 	} else if (result == 5) {
+		// Exit button
 		if (_vm->_flags[26] != 2) {
 			_vm->_video->closeVideo();
 			_vm->_video->_videoEnd = true;
@@ -160,13 +157,16 @@ void Room::takePicture() {
 void Room::doRoom() {
 	bool reloadFlag = false;
 
+	// Noctropolis doesn't have an icon bar at the bottom, so never set arrow cursor
+	int mouseCursorArrowYThreshold = (_vm->getGameID() == kGameMartianMemorandum) ? 184 :
+		((_vm->getGameID() == kGameAmazon) ? 177 : 1000);
+
 	while (!_vm->shouldQuit()) {
 		if (!reloadFlag) {
 			_vm->_images.clear();
 			_vm->_newRects.clear();
 			_vm->_oldRects.clear();
-			_vm->_numAnimTimers = 0;
-
+			_vm->_animation->clearTimers();
 			reloadRoom();
 		}
 
@@ -188,7 +188,7 @@ void Room::doRoom() {
 			_vm->_events->pollEventsAndWait();
 			_vm->_canSaveLoad = false;
 
-			if ((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
+			if ((_vm->getGameID() == kGameMartianMemorandum) && (_vm->_player->_roomNumber == 47)) {
 				takePicture();
 			} else {
 				_vm->_player->walk();
@@ -196,7 +196,9 @@ void Room::doRoom() {
 				_vm->_player->checkScroll();
 			}
 
+			_vm->_canSaveLoad = true;
 			doCommands();
+			_vm->_canSaveLoad = false;
 			if (_vm->shouldQuitOrRestart())
 				return;
 
@@ -216,6 +218,9 @@ void Room::doRoom() {
 			}
 
 			if (_vm->_player->_scrollFlag) {
+				// TODO: Refactor a bit - the first 8 lines here are identical
+				// in both branches, but for now maintain original logic for
+				// ease of RE comparison
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = FN_NONE;
@@ -227,13 +232,18 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 					_vm->copyRects();
+
+					if (_vm->_events->_mousePos.y < mouseCursorArrowYThreshold)
+						_vm->_events->setCursor(_vm->_events->_normalMouse);
+					else
+						_vm->_events->setCursor(CURSOR_ARROW);
+
 					_vm->copyBF2Vid();
 				}
 			} else {
 				_vm->copyBF1BF2();
 				_vm->_newRects.clear();
 				_function = FN_NONE;
-
 				roomLoop();
 				if (_vm->shouldQuitOrRestart())
 					return;
@@ -244,8 +254,7 @@ void Room::doRoom() {
 				} else {
 					_vm->plotList();
 
-					if (((_vm->getGameID() == GType_MartianMemorandum) && (_vm->_events->_mousePos.y < 184)) ||
-						((_vm->getGameID() == GType_Amazon) && (_vm->_events->_mousePos.y < 177)))
+					if (_vm->_events->_mousePos.y < mouseCursorArrowYThreshold)
 						_vm->_events->setCursor(_vm->_events->_normalMouse);
 					else
 						_vm->_events->setCursor(CURSOR_ARROW);
@@ -257,6 +266,13 @@ void Room::doRoom() {
 	}
 }
 
+void Room::roomInit() {
+	_vm->_animation->clearTimers();
+	_vm->_scripts->_sequence = INIT_ROOM_SCRIPT;
+	_vm->_scripts->searchForSequence();
+	_vm->_scripts->executeScript();
+}
+
 void Room::clearRoom() {
 	if (_vm->_midi->_music) {
 		_vm->_midi->stopSong();
@@ -264,7 +280,7 @@ void Room::clearRoom() {
 	}
 
 	_vm->_sound->freeSounds();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 
 	_vm->_animation->freeAnimationData();
 	_vm->_scripts->freeScriptData();
@@ -272,6 +288,7 @@ void Room::clearRoom() {
 	freePlayField();
 	freeTileData();
 	_vm->_player->freeSprites();
+	_vm->_images.clear();
 }
 
 void Room::loadRoomData(const byte *roomData) {
@@ -340,8 +357,8 @@ void Room::loadRoomData(const byte *roomData) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (uint i = 0; i < roomInfo._extraCells.size(); ++i)
-		_vm->_extraCells.push_back(roomInfo._extraCells[i]);
+	for (const auto extraCell : roomInfo._extraCells)
+		_vm->_extraCells.push_back(extraCell);
 
 	// Load sounds for the scene
 	_vm->_sound->loadSounds(roomInfo._sounds);
@@ -380,8 +397,8 @@ void Room::setupRoom() {
 		_vm->_scrollRow = 0;
 	} else {
 		_vm->_scrollY = _vm->_player->_rawPlayer.y -
-			(_vm->_player->_rawPlayer.y / 16) * 16;
-		int yc = MAX((_vm->_player->_rawPlayer.y >> 4) -
+			(_vm->_player->_rawPlayer.y / TILE_HEIGHT) * TILE_HEIGHT;
+		int yc = MAX((_vm->_player->_rawPlayer.y / TILE_HEIGHT) -
 			(screen._vWindowHeight / 2), 0);
 		_vm->_scrollRow = yc;
 
@@ -430,7 +447,7 @@ void Room::buildColumn(int playX, int screenX) {
 		_playFieldWidth + playX;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
-	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight);
+	int h = MIN(_vm->_screen->_vWindowHeight + 1, _playFieldHeight - _vm->_scrollRow);
 
 	for (int y = 0; y < h; ++y) {
 		byte *pTile = _tile + (*pSrc << 8);
@@ -451,10 +468,10 @@ void Room::buildRow(int playY, int screenY) {
 		return;
 	assert(screenY <= (_vm->_screen->h - TILE_HEIGHT));
 
-	const byte *pSrc = _playField + playY *_playFieldWidth + _vm->_scrollCol;
+	const byte *pSrc = _playField + playY * _playFieldWidth + _vm->_scrollCol;
 
 	// WORKAROUND: Original's use of '+ 1' would frequently cause memory overruns
-	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth);
+	int w = MIN(_vm->_screen->_vWindowWidth + 1, _playFieldWidth - _vm->_scrollCol);
 
 	for (int x = 0; x < w; ++x) {
 		byte *pTile = _tile + (*pSrc << 8);
@@ -577,9 +594,10 @@ void Room::doCommands() {
 			mainAreaClick();
 		}
 	} else if (_vm->_events->getAction(action)) {
-		for (int i = 0; i < ARRAYSIZE(_accessActionCodes); ++i) {
-			if (_accessActionCodes[i]._action == action) {
-				handleCommand(_accessActionCodes[i]._code);
+		const AccessActionCode *actionCodes = (_vm->getGameID() == kGameMartianMemorandum) ? MARTIAN_ACTION_CODES : AMAZON_ACTION_CODES;
+		for (int i = 0; actionCodes[i]._action != kActionNone; ++i) {
+			if (actionCodes[i]._action == action) {
+				handleCommand(actionCodes[i]._code);
 				break;
 			}
 		}
@@ -601,12 +619,16 @@ void Room::cycleCommand(int incr) {
 }
 
 void Room::handleCommand(int commandId) {
-	if (commandId == 9) {
+	if (commandId == -2) {
+		// Save-load button event from keymapper.  Only open if allowed at the moment.
+		if (_vm->_canSaveLoad)
+			_vm->openMainMenuDialog();
+	} else if (commandId == 9) {
 		_vm->_events->debounceLeft();
 		_vm->_canSaveLoad = true;
 		_vm->openMainMenuDialog();
 		_vm->_canSaveLoad = false;
-	}  else if (commandId == _selectCommand) {
+	} else if (commandId == _selectCommand) {
 		_vm->_events->debounceLeft();
 		commandOff();
 	} else {
@@ -620,7 +642,7 @@ void Room::executeCommand(int commandId) {
 	Screen &screen = *_vm->_screen;
 	_selectCommand = commandId;
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		switch (commandId) {
 		case 4:
 			events.setCursor(CURSOR_ARROW);
@@ -629,11 +651,13 @@ void Room::executeCommand(int commandId) {
 				return;
 			}
 			if (_vm->_useItem == 39) {
+				// Use hoverboard
 				if (_vm->_player->_roomNumber == 23)
-					_vm->_currentMan = 1;
+					_vm->_flags[174] = 1;
 				commandOff();
 				return;
 			} else if (_vm->_useItem == 6) {
+				// Use comlink
 				_vm->_flags[3] = 2;
 				_vm->_scripts->converse1(24);
 
@@ -707,18 +731,18 @@ void Room::executeCommand(int commandId) {
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	// Get the toolbar icons resource
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw the button as selected
-	screen.plotImage(spr, 0, Common::Point(0, 177));
-	screen.plotImage(spr, 1, Common::Point(143, 177));
-	screen.plotImage(spr, _selectCommand + 2,
-		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == GType_MartianMemorandum) ? 184 : 176));
-
-	delete spr;
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		screen.plotImage(icons, 0, Common::Point(5, 184));
+		screen.plotImage(icons, 1, Common::Point(155, 184));
+	} else {
+		screen.plotImage(icons, 0, Common::Point(0, 177));
+		screen.plotImage(icons, 1, Common::Point(143, 177));
+	}
+	screen.plotImage(icons, _selectCommand + 2,
+		Common::Point(_rMouse[_selectCommand][0], (_vm->getGameID() == kGameMartianMemorandum) ? 184 : 176));
 
 	_vm->_screen->restoreScreen();
 	_vm->_boxSelect = true;
@@ -807,7 +831,7 @@ int Room::calcLR(int yp) {
 	int yv = (yp - screen._orgY1) * (screen._orgX2 - screen._orgX1);
 	int yd = screen._orgY2 - screen._orgY1;
 
-	int rem = (yv % yd) << 1;
+	int rem = (yv % yd) * 2;
 	yv /= yd;
 	if (rem >= yd || rem < 0)
 		++yv;
@@ -821,7 +845,7 @@ int Room::calcUD(int xp) {
 	int xv = (xp - screen._orgX1) * (screen._orgY2 - screen._orgY1);
 	int xd = screen._orgX2 - screen._orgX1;
 
-	int rem = (xv % xd) << 1;
+	int rem = (xv % xd) * 2;
 	xv /= xd;
 	if (rem >= xd || rem < 0)
 		++xv;
@@ -883,16 +907,14 @@ bool Room::codeWalls() {
 		}
 	}
 
-	for (uint i = 0; i < _jetFrame.size(); ++i) {
-		JetFrame &jf = _jetFrame[i];
+	for (const JetFrame &jf : _jetFrame) {
 		if (checkCode(jf._wallCode, jf._wallCodeOld) ||
 			checkCode(jf._wallCode1, jf._wallCode1Old))
 			return true;
 	}
 
 	// Copy the current wall calculations to the old properties
-	for (uint i = 0; i < _jetFrame.size(); ++i) {
-		JetFrame &jf = _jetFrame[i];
+	for (JetFrame &jf : _jetFrame) {
 		jf._wallCodeOld = jf._wallCode;
 		jf._wallCode1Old = jf._wallCode1;
 	}
@@ -939,7 +961,7 @@ RoomInfo::RoomInfo(const byte *data, int gameType, bool isCD, bool isDemo) {
 	_roomFlag = stream.readByte();
 
 	_estIndex = -1;
-	if (gameType == GType_Amazon && isCD)
+	if (gameType == kGameAmazon && isCD)
 		_estIndex = stream.readSint16LE();
 
 	_musicFile.load(stream);

@@ -33,10 +33,13 @@ class Scripts;
 
 #define SCRIPT_START_BYTE 0xE0
 #define ROOM_SCRIPT 2000
+#define INIT_ROOM_SCRIPT 1000
 
 typedef void(Scripts::*ScriptMethodPtr)();
 
 class Scripts : public Manager {
+	friend class Debugger;
+
 private:
 	int _specialFunction;
 
@@ -53,14 +56,10 @@ protected:
 
 	void charLoop();
 
-	/**
-	 * Read a null terminated string from the script
-	 */
-	Common::String readString();
-
 	void cmdObject();
 	void cmdEndObject();
 	void cmdJumpLook();
+	void cmdJumpOpen();
 	void cmdJumpHelp();
 	void cmdJumpGet();
 	void cmdJumpMove();
@@ -128,6 +127,7 @@ protected:
 	void cmdPrintWatch();
 	void cmdDispAbout();
 	void cmdPushLocation();
+	void cmdPushLocation_v1();
 	void cmdCheckTravel();
 	void cmdBlock();
 	void cmdPlayerOff();
@@ -165,7 +165,7 @@ public:
 	int executeScript();
 
 	void findNull();
-	void doCmdPrint_v1(Common::String msg);
+	void doCmdPrint_v1(const Common::String &msg);
 
 	/**
 	 * Print a given message to the screen in a bubble box

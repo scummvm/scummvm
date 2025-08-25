@@ -66,7 +66,6 @@ private:
 	bool isSoundQueued(int soundId) const;
 public:
 	Common::Array<SoundEntry> _soundTable;
-	bool _playingSound;
 public:
 	SoundManager(AccessEngine *vm, Audio::Mixer *mixer);
 	~SoundManager();
@@ -78,7 +77,7 @@ public:
 	bool isSFXPlaying();
 
 	Resource *loadSound(int fileNum, int subfile);
-	void loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds);
+	void loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds);
 
 	void stopSound();
 	void freeSounds();
@@ -95,7 +94,7 @@ private:
 
 public:
 	Resource *_music;
-	bool _byte1F781;
+	bool _byte1F781; // Maybe repeat flag?
 
 public:
 	MusicManager(AccessEngine *vm);

@@ -47,6 +47,7 @@ EventsManager::EventsManager(AccessEngine *vm) : _vm(vm) {
 	_vbCount = 0;
 	_keyCode = Common::KEYCODE_INVALID;
 	_priorTimerTime = 0;
+	_action = kActionNone;
 }
 
 EventsManager::~EventsManager() {
@@ -72,7 +73,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 		CursorMan.replaceCursor(_invCursor, _invCursor.w / 2, _invCursor.h / 2, 0);
 	} else {
 		// Get a pointer to the mouse data to use, and get the cursor hotspot
-		const byte *srcP = &_vm->_res->CURSORS[cursorId][0];
+		const byte *srcP = _vm->_res->getCursor(cursorId);
 		int hotspotX = (int16)READ_LE_UINT16(srcP);
 		int hotspotY = (int16)READ_LE_UINT16(srcP + 2);
 		srcP += 4;
@@ -344,7 +345,7 @@ Common::Point EventsManager::calcRawMouse() {
 	return pt;
 }
 
-int EventsManager::checkMouseBox1(Common::Array<Common::Rect> &rects) {
+int EventsManager::checkMouseBox1(const Common::Array<Common::Rect> &rects) {
 	for (uint16 i = 0; i < rects.size(); ++i) {
 		if (rects[i].left == -1)
 			return -1;

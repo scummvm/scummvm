@@ -68,6 +68,11 @@ public:
 	 * Update the timing of all currently active animation
 	 */
 	void updateTimers();
+
+	/**
+	 * Remove the last animation timer
+	 */
+	void popBackTimer() { _animationTimers.pop_back(); }
 };
 
 class AnimationResource {
@@ -77,7 +82,7 @@ public:
 	AnimationResource(AccessEngine *vm, Resource *res);
 	~AnimationResource();
 
-	int getCount() { return _animations.size(); }
+	int getCount() const { return _animations.size(); }
 	Animation *getAnimation(int idx) { return _animations[idx]; }
 };
 
@@ -93,10 +98,10 @@ private:
 	void animNone();
 	void anim7();
 
-	AnimationFrame *calcFrame();
-	AnimationFrame *calcFrame1();
-	void setFrame(AnimationFrame *frame);
-	void setFrame1(AnimationFrame *frame);
+	const AnimationFrame *calcFrame();
+	const AnimationFrame *calcFrame1();
+	void setFrame(const AnimationFrame *frame);
+	void setFrame1(const AnimationFrame *frame);
 public:
 	int _type;
 	int _scaling;
@@ -116,7 +121,7 @@ class AnimationFrame {
 public:
 	int _baseX, _baseY;
 	int _frameDelay;
-	Common::Array<AnimationFramePart *> _parts;
+	Common::Array<AnimationFramePart> _parts;
 public:
 	AnimationFrame(Common::SeekableReadStream *stream, int startOffset);
 	~AnimationFrame();

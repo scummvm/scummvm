@@ -86,7 +86,11 @@ enum ACCESSActions {
 	kActionTalk,
 	kActionWalk,
 	kActionHelp,
+	kActionOpen,
+	kActionMove,
+	kActionTravel,
 	kActionSkip,
+	kActionSaveLoad,
 };
 
 struct AccessActionCode {
@@ -94,7 +98,7 @@ struct AccessActionCode {
 	int8 _code;
 };
 
-static const AccessActionCode _accessActionCodes[] = {
+static const AccessActionCode AMAZON_ACTION_CODES[] = {
 	{ kActionLook, 1 },
 	{ kActionUse, 2 },
 	{ kActionTake, 3 },
@@ -103,9 +107,23 @@ static const AccessActionCode _accessActionCodes[] = {
 	{ kActionTalk, 6 },
 	{ kActionWalk, 7 },
 	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
 };
 
-extern const char *const _estTable[];
+static const AccessActionCode MARTIAN_ACTION_CODES[] = {
+	{ kActionLook, 0 },
+	{ kActionOpen, 1 },
+	{ kActionMove, 2 },
+	{ kActionTake, 3 },
+	{ kActionUse, 4 },
+	{ kActionWalk, 5 },
+	{ kActionTalk, 6 },
+	{ kActionTravel, 7 },
+	{ kActionHelp, 8 },
+	{ kActionSaveLoad, -2 },
+	{ kActionNone, -1 },
+};
 
 #define ACCESS_SAVEGAME_VERSION 1
 
@@ -121,6 +139,11 @@ struct AccessSavegameHeader {
 class AccessEngine : public Engine {
 private:
 	uint32 _lastTime, _curTime;
+
+	/**
+	 * A cache for the ICONS.LZ sprite data
+	 */
+	SpriteResource *_icons;
 
 	/**
 	 * Handles basic initialization
@@ -186,14 +209,12 @@ public:
 	ASurface _buffer2;
 	ASurface _vidBuf;
 	int _vidX, _vidY;
-	Common::Array<CharEntry *> _charTable;
 	SpriteResource *_objectsTable[100];
 	bool _establishTable[100];
 	bool _establishFlag;
 	int _establishMode;
 	int _establishGroup;
 	int _establishCtrlTblOfs;
-	int _numAnimTimers;
 	TimerList _timers;
 	DeathList _deaths;
 	FontManager _fonts;
@@ -235,8 +256,8 @@ public:
 
 	// Fields used by MM
 	// TODO: Refactor
-	int _travel[60];
-	int _ask[40];
+	byte _travel[60];
+	byte _ask[40];
 	int _startTravelItem;
 	int _startTravelBox;
 	int _startAboutItem;
@@ -248,9 +269,7 @@ public:
 	int _numLines;
 	byte _byte26CB5;
 	int _bcnt;
-	byte *_tempList;
-	int _pictureTaken;
-	//
+	//byte *_tempList;
 
 	bool _vidEnd;
 	bool _clearSummaryFlag;
@@ -260,6 +279,7 @@ public:
 	int &_useItem;
 	int &_startup;
 	int &_manScaleOff;
+	int &_pictureTaken;
 
 public:
 	AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc);
@@ -279,7 +299,9 @@ public:
 
 	int getRandomNumber(int maxNumber);
 
-	void loadCells(Common::Array<CellIdent> &cells);
+	const SpriteResource *getIcons();
+
+	void loadCells(const Common::Array<CellIdent> &cells);
 
 	/**
 	* Free the sprites list

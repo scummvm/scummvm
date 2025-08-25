@@ -26,10 +26,10 @@
 
 namespace Access {
 
-enum {
-	GType_Amazon = 1,
-	GType_MartianMemorandum = 2,
-	GType_Noctropolis = 3
+enum AccessGameType {
+	kGameAmazon = 1,
+	kGameMartianMemorandum = 2,
+	kGameNoctropolis = 3
 };
 
 struct AccessGameDescription {

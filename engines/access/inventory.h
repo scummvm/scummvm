@@ -47,7 +47,7 @@ public:
 
 	void load(const Common::String &name, const int *data);
 
-	int checkItem(int itemId);
+	int checkItem(int itemId) const;
 };
 
 class InventoryManager : public Manager {
@@ -98,7 +98,7 @@ private:
 
 	void freeInvCells();
 
-	int coordIndexOf();
+	int coordIndexOf() const;
 
 	void saveScreens();
 

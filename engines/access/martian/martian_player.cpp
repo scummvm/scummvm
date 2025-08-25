@@ -59,6 +59,8 @@ void MartianPlayer::load() {
 	_upWalkMax = 14;
 	_downWalkMin = 15;
 	_downWalkMax = 23;
+
+	// playerPalette is configured in Player::load.
 }
 
 } // End of namespace Martian

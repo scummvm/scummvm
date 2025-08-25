@@ -25,7 +25,7 @@
 
 namespace Access {
 
-BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title) : Manager(vm) {
+BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title) : Manager(vm) {
 	_type = type;
 	_bounds = Common::Rect(x, y, x + w, y + h);
 	_bubbleDisplStr = title;
@@ -39,8 +39,8 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 	_boxEndX = _boxEndY = 0;
 	_boxPStartX = _boxPStartY = 0;
 	// Unused in AGoE
-	for (int i = 0; i < 60; i++) {
-		_tempList[i] = "";
+	for (int i = 0; i < ARRAYSIZE(_tempList); i++) {
+		_tempList[i].clear();
 		_tempListIdx[i] = 0;
 	}
 	_btnUpPos = Common::Rect(0, 0, 0, 0);
@@ -51,20 +51,14 @@ BubbleBox::BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w
 }
 
 void BubbleBox::load(Common::SeekableReadStream *stream) {
-	_bubbleTitle.clear();
-
-	byte v;
-	while ((v = stream->readByte()) != 0)
-		_bubbleTitle += (char)v;
-
+	_bubbleTitle = stream->readString();
 	_bubbleDisplStr = _bubbleTitle;
 }
 
 void BubbleBox::clearBubbles() {
 	// Loop through the bubble list to restore the screen areas
-	for (uint i = 0; i < _bubbles.size(); ++i) {
+	for (Common::Rect r: _bubbles) {
 		_vm->_screen->_screenYOff = 0;
-		Common::Rect r = _bubbles[i];
 		r.left -= 2;
 		r.right = MIN(r.right, (int16)_vm->_screen->w);
 
@@ -76,7 +70,7 @@ void BubbleBox::clearBubbles() {
 }
 
 void BubbleBox::placeBubble(const Common::String &msg) {
-	_vm->_screen->_maxChars = (_vm->getGameID() == GType_MartianMemorandum) ? 30 : 27;
+	_vm->_screen->_maxChars = (_vm->getGameID() == kGameMartianMemorandum) ? 30 : 27;
 	placeBubble1(msg);
 }
 
@@ -84,8 +78,8 @@ void BubbleBox::placeBubble1(const Common::String &msg) {
 	_bubbles.clear();
 	_vm->_fonts._charSet._lo = 1;
 	_vm->_fonts._charSet._hi = 8;
-	_vm->_fonts._charFor._lo = (_vm->getGameID() == GType_MartianMemorandum) ? 247 : 29;
-	_vm->_fonts._charFor._hi = (_vm->getGameID() == GType_MartianMemorandum) ? 255 : 32;
+	_vm->_fonts._charFor._lo = (_vm->getGameID() == kGameMartianMemorandum) ? 247 : 29;
+	_vm->_fonts._charFor._hi = (_vm->getGameID() == kGameMartianMemorandum) ? 255 : 32;
 
 	calcBubble(msg);
 
@@ -117,32 +111,43 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+		if (_vm->getGameID() == kGameMartianMemorandum) {
+			lastLine = _vm->_fonts._font1->getLine(s, screen._maxChars, line, width, Font::kWidthInChars);
+			width = _vm->_fonts._font1->stringWidth(line);
+		} else {
+			lastLine = _vm->_fonts._font2->getLine(s, screen._maxChars * 6, line, width);
+		}
+
 		_vm->_fonts._printMaxX = MAX(width, _vm->_fonts._printMaxX);
 
 		screen._printOrg.y += 6;
 		screen._printOrg.x = screen._printStart.x;
 	} while (!lastLine);
 
-	if (_type == kBoxTypeFileDialog)
-		++screen._printOrg.y += 6;
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		bounds.setWidth((_vm->_fonts._printMaxX / 16 + 2) * 16 + 2 + 1);
+		bounds.bottom = screen._printOrg.y + 4 + 1;
+	} else {
+		if (_type == kBoxTypeFileDialog)
+			(++screen._printOrg.y) += 6;
 
-	// Determine the width for the area
-	width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
-	if (width >= 24)
-		width += 20 - ((width - 24) % 20);
-	bounds.setWidth(width);
+		// Determine the width for the area
+		width = (((_vm->_fonts._printMaxX >> 4) + 1) << 4) + 5;
+		if (width >= 24)
+			width += 20 - ((width - 24) % 20);
+		bounds.setWidth(width);
 
-	// Determine the height for area
-	int y = screen._printOrg.y + 6;
-	if (_type == kBoxTypeFileDialog)
-		y += 6;
-	int height = y - bounds.top;
-	bounds.setHeight(height);
+		// Determine the height for area
+		int y = screen._printOrg.y + 6;
+		if (_type == kBoxTypeFileDialog)
+			y += 6;
+		int height = y - bounds.top;
+		bounds.setHeight(height);
 
-	height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
-	if (height >= 0)
-		bounds.setHeight(bounds.height() + 13 - (height % 13));
+		height -= (_type == kBoxTypeFileDialog) ? 30 : 24;
+		if (height >= 0)
+			bounds.setHeight(bounds.height() + 13 - (height % 13));
+	}
 
 	if (bounds.bottom > screen.h)
 		bounds.translate(0, screen.h - bounds.bottom);
@@ -156,14 +161,18 @@ void BubbleBox::calcBubble(const Common::String &msg) {
 }
 
 void BubbleBox::printBubble(const Common::String &msg) {
-	if (_vm->getGameID() == GType_MartianMemorandum)
+	if (_vm->getGameID() == kGameMartianMemorandum)
 		printBubble_v1(msg);
 	else
 		printBubble_v2(msg);
 }
 
 void BubbleBox::printBubble_v1(const Common::String &msg) {
+	Font::_fontColors[1] = 255;
+
 	drawBubble(_bubbles.size() - 1);
+
+	Font::_fontColors[3] = 247;
 
 	// Loop through drawing the lines
 	Common::String s = msg;
@@ -172,8 +181,8 @@ void BubbleBox::printBubble_v1(const Common::String &msg) {
 	bool lastLine;
 	do {
 		// Get next line
-		Font &font2 = *_vm->_fonts._font2;
-		lastLine = font2.getLine(s, _vm->_screen->_maxChars * 6, line, width);
+		Font &font1 = *_vm->_fonts._font1;
+		lastLine = font1.getLine(s, _vm->_screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		printString(line);
 
@@ -218,7 +227,7 @@ void BubbleBox::printBubble_v2(const Common::String &msg) {
 
 void BubbleBox::drawBubble(int index) {
 	_bounds = _bubbles[index];
-	if (_vm->getGameID() == GType_MartianMemorandum) {
+	if (_vm->getGameID() == kGameMartianMemorandum) {
 		int btnSelected = 0;
 		doBox_v1(0, 0, btnSelected);
 	} else
@@ -252,10 +261,7 @@ void BubbleBox::doBox(int item, int box) {
 		return;
 	}
 
-	// Get icons data
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *icons = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Set the up boundaries and color to use for the box background
 	_vm->_screen->_orgX1 = _bounds.left - 2;
@@ -325,18 +331,27 @@ void BubbleBox::doBox(int item, int box) {
 	_charCol = charCol;
 	_rowOff = rowOff;
 	_vm->_screen->restoreScreen();
-
-	// Free icons data
-	delete icons;
 }
 
 void BubbleBox::setCursorPos(int posX, int posY) {
-	_vm->_screen->_printStart = _vm->_screen->_printOrg = Common::Point((posX << 3) + _rowOff, posY << 3);
-	warning("Missing call to setCursorPos");
+	Common::Point newPt =  Common::Point(posX * 8, posY * 8 + _rowOff);
+	_vm->_screen->_printStart = _vm->_screen->_printOrg = newPt;
+	// This function (at 0x6803) calculates something from a lookup table, but
+	// never does anything with it.
+	debug("Skipping call to setCursorPos");
 }
 
 void BubbleBox::printString(Common::String msg) {
-	warning("TODO: Proper implementation of printString");
+
+	if (_vm->_fonts._charSet._hi & 2) {
+		// Draw a shadow for the text
+		Common::Point shadowPt = _vm->_screen->_printOrg + Common::Point(1, 1);
+		byte oldcol = Font::_fontColors[3];
+		Font::_fontColors[3] = 0;
+		_vm->_fonts._font1->drawString(_vm->_screen, msg, shadowPt);
+		Font::_fontColors[3] = oldcol;
+	}
+
 	_vm->_fonts._font1->drawString(_vm->_screen, msg, _vm->_screen->_printOrg);
 }
 
@@ -345,6 +360,7 @@ void BubbleBox::displayBoxData() {
 	_rowOff = 2;
 	_vm->_fonts._charFor._lo = 0xF7;
 	_vm->_fonts._charFor._hi = 0xFF;
+	Font::_fontColors[3] = 247;
 
 	if (_tempList[0].size() == 0)
 		return;
@@ -361,7 +377,7 @@ void BubbleBox::displayBoxData() {
 		_vm->_events->hideCursor();
 
 		_vm->_screen->_orgX1 = _boxStartX;
-		_vm->_screen->_orgX2 = _boxEndX;
+		_vm->_screen->_orgX2 = _boxEndX + 1;
 		_vm->_screen->_orgY1 = _boxStartY;
 		_vm->_screen->_orgY2 = _boxEndY;
 		_vm->_screen->_lColor = 0xFA;
@@ -441,6 +457,11 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	_startItem = item;
 	_startBox = box;
 
+	Common::Point origPrintStart = _vm->_screen->_printStart;
+	Common::Point origPrintOrg = _vm->_screen->_printOrg;
+
+	_vm->_events->hideCursor();
+
 	// Save state information
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
@@ -470,17 +491,14 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	// Draw the inner box;
 	++_vm->_screen->_orgX1;
 	++_vm->_screen->_orgY1;
-	--_vm->_screen->_orgX2;
-	--_vm->_screen->_orgY2;
+	_vm->_screen->_orgX2 -= 2;
+	_vm->_screen->_orgY2 -= 2;
 	_vm->_screen->_lColor = 0xF9;
 
 	// Draw the inner border
 	_vm->_screen->drawBox();
 
-	// Get icons data
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *icons = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	// Draw upper border
 	_vm->_bcnt = (_vm->_screen->_orgX2 - _vm->_screen->_orgX1) >> 4;
@@ -501,8 +519,9 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	int tmpX = 0;
 	int tmpY = 0;
 	if (_type != TYPE_2) {
+		// Draw the button background at the bottom
 		oldY = _vm->_screen->_orgY1;
-		--_vm->_screen->_orgY2;
+		//--_vm->_screen->_orgY2;
 		_vm->_screen->_orgY1 = _vm->_screen->_orgY2 - 8;
 		if (_type == TYPE_3)
 			_vm->_screen->_orgY1 -= 8;
@@ -584,33 +603,31 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		_vm->_screen->drawLine();
 	}
 
-	int len = _bubbleDisplStr.size();
-	int newX = _bounds.top >> 3;
-	newX = (len - newX) / 2;
+	// Draw the box title
+	int displStrLen = _bubbleDisplStr.size();
 
-	_boxPStartX = _bounds.left >> 3;
-	newX += _boxPStartX;
+	_boxPStartX = _bounds.left / 8;
+	int newX = _boxPStartX + (_bounds.width() / 8 - displStrLen) / 2;
 
-	int newY = _bounds.top >> 3;
-	int bp = _bounds.top - (newY << 3) + 1;
-	if (bp == 8) {
-		++newY;
-		bp = 0;
+	_boxPStartY = _bounds.top / 8;
+	_rowOff = 1 - (_boxPStartY * 8 - _bounds.top);
+	if (_rowOff == 8) {
+		_rowOff = 0;
+		++_boxPStartY;
 	}
 
-	_rowOff = bp;
-	retval_ = _boxPStartY = newY;
+	retval_ = _rowOff;
 
-	setCursorPos(newX, newY);
+	setCursorPos(newX, _boxPStartY);
 
-	_vm->_fonts._charFor._lo = 0xFF;
-	_vm->_fonts._font1->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
+	Font::_fontColors[1] = _vm->_fonts._charFor._lo = 0xFF;
+	_vm->_fonts._bitFont->drawString(_vm->_screen, _bubbleDisplStr, _vm->_screen->_printOrg);
 
 	if (_type == TYPE_2) {
 		_vm->_events->showCursor();
-		warning("TODO: pop values");
+		_vm->_screen->_printStart = origPrintStart;
+		_vm->_screen->_printOrg = origPrintOrg;
 		_vm->_screen->restoreScreen();
-		delete icons;
 		return retval_;
 	}
 
@@ -643,14 +660,12 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		}
 	}
 
-	delete icons;
-
 	_vm->_screen->restoreScreen();
 	_vm->_boxDataStart = _startItem;
 	_vm->_boxSelectYOld = -1;
 	_vm->_boxSelectY = _startBox;
 
-	_vm->_numLines = (_bounds.bottom >> 3) - 2;
+	_vm->_numLines = (_bounds.height() / 8) - 2;
 	if (_type == TYPE_3)
 		--_vm->_numLines;
 
@@ -660,12 +675,19 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 
 	while (!_vm->shouldQuit()) {
 		_vm->_events->pollEvents();
-		if (!_vm->_events->_leftButton)
+		if (!_vm->_events->_leftButton && !_vm->_events->_wheelDown && !_vm->_events->_wheelUp && !_vm->_events->isKeyActionPending())
 			continue;
 
-		if (((_type == TYPE_1) || (_type != TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
+		//
+		// Slight enhancement from original - we also allow mouse wheel and
+		// keyboard events to scroll up/down.
+		//
+		if (((_type == TYPE_1) || (_type == TYPE_3)) && (_vm->_timers[2]._flag == 0)) {
 			++_vm->_timers[2]._flag;
-			if (_btnUpPos.contains(_vm->_events->_mousePos)) {
+
+			Common::CustomEventType action = kActionNone;
+			_vm->_events->getAction(action);
+			if (_btnUpPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelUp || action == kActionMoveUp) {
 				if (_vm->_bcnt) {
 					if (_vm->_boxSelectY != 0) {
 						--_vm->_boxSelectY;
@@ -677,7 +699,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 					}
 				}
 				continue;
-			} else if (_btnDownPos.contains(_vm->_events->_mousePos)) {
+			} else if (_btnDownPos.contains(_vm->_events->_mousePos) || _vm->_events->_wheelDown || action == kActionMoveDown) {
 				if (_vm->_bcnt) {
 					if (_vm->_bcnt == _vm->_numLines) {
 						if (_vm->_bcnt != _vm->_boxSelectY + 1) {
@@ -697,9 +719,12 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 			}
 		}
 
+		if (!_vm->_events->_leftButton)
+			continue;
+
 		if ((_vm->_events->_mousePos.x >= _boxStartX) && (_vm->_events->_mousePos.x <= _boxEndX)
 		&&  (_vm->_events->_mousePos.y >= _boxStartY) && (_vm->_events->_mousePos.y <= _boxEndY)) {
-			int val = (_vm->_events->_mousePos.x >> 3) - _boxPStartY;
+			int val = (_vm->_events->_mousePos.y >> 3) - _boxPStartY;
 			if (val > _vm->_bcnt)
 				continue;
 			--val;
@@ -753,15 +778,19 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 		retval_ = -1;
 	else
 		retval_ = _vm->_boxDataStart + _vm->_boxSelectY;
+
+	_vm->_screen->_printStart = origPrintStart;
+	_vm->_screen->_printOrg = origPrintOrg;
+
 	return retval_;
 }
 
-void BubbleBox::getList(const char *const data[], int *flags) {
+void BubbleBox::getList(const char *const data[], const byte *flags) {
 	int srcIdx = 0;
 	int destIdx = 0;
 	while (data[srcIdx]) {
 		if (flags[srcIdx]) {
-			_tempList[destIdx] = Common::String(data[srcIdx]);
+			_tempList[destIdx] = data[srcIdx];
 			_tempListIdx[destIdx] = srcIdx;
 			++destIdx;
 		}

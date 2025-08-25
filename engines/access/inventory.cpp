@@ -43,7 +43,7 @@ void InventoryEntry::load(const Common::String &name, const int *data) {
 	}
 }
 
-int InventoryEntry::checkItem(int itemId) {
+int InventoryEntry::checkItem(int itemId) const {
 	if (_otherItem1 == itemId)
 		return _newItem1;
 	else if (_otherItem2 == itemId)
@@ -152,7 +152,7 @@ int InventoryManager::newDisplayInv() {
 			_vm->_buffer1.clearBuffer();
 
 			SpriteResource *spr = _vm->_objectsTable[99];
-			SpriteFrame *frame = spr->getFrame(_vm->_useItem);
+			const SpriteFrame *frame = spr->getFrame(_vm->_useItem);
 
 			int w = screen._scaleTable1[46];
 			int h = screen._scaleTable1[35];
@@ -211,15 +211,19 @@ int InventoryManager::newDisplayInv() {
 }
 
 int InventoryManager::displayInv() {
-	int *inv = (int *) malloc(_vm->_res->INVENTORY.size() * sizeof(int));
-	const char **names = (const char **)malloc(_vm->_res->INVENTORY.size() * sizeof(const char *));
+	size_t invSize = _vm->_res->INVENTORY.size();
 
-	for (uint i = 0; i < _vm->_res->INVENTORY.size(); i++) {
-		inv[i] = _inv[i]._value;
-		names[i] = _inv[i]._name.c_str();
+	Common::Array<byte> invFlags(invSize + 1);
+	Common::Array<const char *> invNames(invSize + 1);
+
+	// Only show items that are in the inventory, skip "used".
+	for (size_t i = 0; i < invSize; i++) {
+		byte flag = (_inv[i]._value == ITEM_IN_INVENTORY) ? 1 : 0;
+		invFlags[i] = flag;
+		invNames[i] = _inv[i]._name.c_str();
 	}
 	_vm->_events->forceSetCursor(CURSOR_CROSSHAIRS);
-	_vm->_invBox->getList(names, inv);
+	_vm->_invBox->getList(invNames.data(), invFlags.data());
 
 	int btnSelected = 0;
 	int boxX = _vm->_invBox->doBox_v1(_startInvItem, _startInvBox, btnSelected);
@@ -234,8 +238,6 @@ int InventoryManager::displayInv() {
 	else
 		_vm->_useItem = -1;
 
-	free(names);
-	free(inv);
 	return 0;
 }
 
@@ -376,7 +378,7 @@ void InventoryManager::freeInvCells() {
 	_vm->_objectsTable[99] = nullptr;
 }
 
-int InventoryManager::coordIndexOf() {
+int InventoryManager::coordIndexOf() const {
 	const Common::Point pt = _vm->_events->_mousePos;
 
 	for (int i = 0; i < (int)_invCoords.size(); ++i) {
