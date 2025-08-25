@@ -249,6 +249,7 @@ void PetkaEngine::playVideo(Common::SeekableReadStream *stream) {
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
 			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				goto end;
 			default:
 				break;
