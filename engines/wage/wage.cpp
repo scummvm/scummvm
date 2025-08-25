@@ -233,13 +233,17 @@ void WageEngine::processEvents() {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RETURN_TO_LAUNCHER:
-			if (!_shouldQuit) {
-				g_system->getEventManager()->resetQuit();
-				g_system->getEventManager()->resetReturnToLauncher();
-				if (saveDialog()) {
-					_shouldQuit = true;
-					g_system->getEventManager()->pushEvent(event);
+			if (ConfMan.hasKey("confirm_exit") && ConfMan.getBool("confirm_exit")) {
+				if (!_shouldQuit) {
+					g_system->getEventManager()->resetQuit();
+					g_system->getEventManager()->resetReturnToLauncher();
+					if (saveDialog()) {
+						_shouldQuit = true;
+						g_system->getEventManager()->pushEvent(event);
+					}
 				}
+			} else {
+				_shouldQuit = true;
 			}
 			break;
 		case Common::EVENT_KEYDOWN:
