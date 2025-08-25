@@ -1759,7 +1759,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_numChannels = _framesStream->readUint16();
 
 		if (_framesVersion > 13) {
-			_numChannelsDisplayed = _framesStream->readUint16();
+			_numChannelsDisplayed = _framesStream->readUint16(); // Up to 500
 		} else {
 			if (_framesVersion <= 7)    // Director5
 				_numChannelsDisplayed = 48;

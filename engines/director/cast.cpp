@@ -1461,7 +1461,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		}
 		castDataOffset = stream.pos();
 		castInfoOffset = stream.pos() + castDataSizeToRead;
-	} else if (_version >= kFileVer500 && _version < kFileVer600) {
+	} else if (_version >= kFileVer500 && _version < kFileVer1100) { // After D5 there are no changes, TODO: Check D11, D12
 		castType = stream.readUint32();
 		castInfoSize = stream.readUint32();
 		castDataSize = stream.readUint32();
