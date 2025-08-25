@@ -683,6 +683,7 @@ void MacMenu::clearSubMenu(int id) {
 		delete menu->submenu->items[j];
 
 	menu->submenu->items.clear();
+	menu->submenu->highlight = -1;
 }
 
 void MacMenu::createSubMenuFromString(int id, const char *str, int commandId) {
