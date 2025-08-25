@@ -23,6 +23,7 @@ gui/message.cpp
 gui/onscreendialog.cpp
 gui/options.cpp
 gui/predictivedialog.cpp
+gui/printing-dialog.cpp
 gui/recorderdialog.cpp
 gui/remotebrowser.cpp
 gui/saveload-dialog.cpp
