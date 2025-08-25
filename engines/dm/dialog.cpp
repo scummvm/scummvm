@@ -29,6 +29,8 @@
 #include "dm/text.h"
 #include "dm/eventman.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace DM {
 
 DialogMan::DialogMan(DMEngine *vm) : _vm(vm) {
@@ -175,6 +177,11 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 	evtMan._primaryMouseInput = evtMan._primaryMouseInputDialogSets[dialogSetIndex][choiceCount - 1];
 	evtMan.discardAllInput();
 	_selectedDialogChoice = 99;
+
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("choice-selection")->setEnabled(true);
+
 	do {
 		Common::Event key;
 		Common::EventType eventType = evtMan.processInput(&key);
@@ -182,11 +189,15 @@ int16 DialogMan::getChoice(uint16 choiceCount, uint16 dialogSetIndex, int16 driv
 		_vm->delay(1);
 		displMan.updateScreen();
 		if ((_selectedDialogChoice == 99) && (choiceCount == 1)
-			&& (eventType != Common::EVENT_INVALID) && key.kbd.keycode == Common::KEYCODE_RETURN) {
+			&& (eventType == Common::EVENT_CUSTOM_ENGINE_ACTION_START) && key.customType == kActionSelectChoice) {
 			/* If a choice has not been made yet with the mouse and the dialog has only one possible choice and carriage return was pressed on the keyboard */
 			_selectedDialogChoice = kDMDialogChoice1;
 		}
 	} while (_selectedDialogChoice == 99);
+
+	keymapper->getKeymap("choice-selection")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 	displMan._useByteBoxCoordinates = false;
 	Box boxA = evtMan._primaryMouseInput[_selectedDialogChoice - 1]._hitbox;
 	boxA._rect.left -= 3;
