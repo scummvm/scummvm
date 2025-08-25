@@ -323,6 +323,21 @@
 	0, 0, 0
 },
 
+{
+	{
+		"adibou2readcount45",
+		"", // "I can read/I can count 4-5 years"
+		AD_ENTRY2s("intro_ap.stk", "5ac48f29e989fae9a3c600978e52f5cf", 41662238,
+				   "appli_01.vmd", "3a596569b76c0180a7e1643c1c76d383", 56432),
+		EN_GRB,
+		kPlatformWindows,
+		ADGF_ADDON,
+		GUIO0()
+	},
+	kFeatures640x480,
+	0, 0, 0
+},
+
 // -- Add-ons : Read/Count 6-7 years --
 {
 	{
