@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-24 17:16+0000\n"
-"PO-Revision-Date: 2025-08-21 18:46+0000\n"
+"PO-Revision-Date: 2025-08-25 13:07+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -8769,11 +8769,11 @@ msgstr "Permet le déplacement à l'aide d'un rocher tiré au départ"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "Mouvements fluides"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Effectue des mouvements fluides plutôt que des étapes distinctes"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
