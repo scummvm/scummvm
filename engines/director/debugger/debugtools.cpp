@@ -66,6 +66,13 @@ const LingoDec::Handler *getHandler(const Cast *cast, CastMemberID id, const Com
 				return &handler;
 			}
 		}
+		for (const LingoDec::Script *factoryScript : p.second->factories) {
+			for (const LingoDec::Handler &handler : factoryScript->handlers) {
+				if (handler.name == handlerId) {
+					return &handler;
+				}
+			}
+		}
 	}
 	return nullptr;
 }
