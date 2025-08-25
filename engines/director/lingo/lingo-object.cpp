@@ -478,8 +478,8 @@ void LM::m_dispose(int nargs) {
 
 /* ScriptContext */
 
-ScriptContext::ScriptContext(Common::String name, ScriptType type, int id, uint16 castLibHint, uint16 parentNumber)
-	: Object<ScriptContext>(name), _scriptType(type), _id(id), _castLibHint(castLibHint), _parentNumber(parentNumber) {
+ScriptContext::ScriptContext(Common::String name, ScriptType type, int id, uint16 castLibHint, uint16 parentNumber, int scriptId)
+	: Object<ScriptContext>(name), _scriptType(type), _id(id), _castLibHint(castLibHint), _parentNumber(parentNumber), _scriptId(scriptId) {
 	_objType = kScriptObj;
 }
 
@@ -498,6 +498,7 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 	_properties = sc._properties;
 	_propertyNames = sc._propertyNames;
 	_parentNumber = sc._parentNumber;
+	_scriptId = sc._scriptId;
 
 	_id = sc._id;
 	_castLibHint = sc._castLibHint;
