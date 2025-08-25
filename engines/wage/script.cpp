@@ -713,23 +713,45 @@ struct Comparator {
 };
 
 bool Script::compare(Operand *o1, Operand *o2, int comparator) {
+	if (o1 == NULL) {
+		debug(1, "%s() o1 is null", __func__);
+		return false;
+	}
+	if (o2 == NULL) {
+		debug(1, "%s() o2 is null", __func__);
+		return false;
+	}
+
 	switch(comparator) {
 	case kCompEqNumNum:
 		return o1->_value.number == o2->_value.number;
 	case kCompEqObjScene:
-		for (ObjList::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
-			if (*it == o1->_value.obj)
-				return true;
+		if (o2->_value.scene == NULL) {
+			debug(1, "%s() o2->_value.scene is null", __func__);
+			return false;
+		} else {
+			for (ObjList::const_iterator it = o2->_value.scene->_objs.begin(); it != o2->_value.scene->_objs.end(); ++it)
+				if (*it == o1->_value.obj)
+					return true;
+		}
 		return false;
 	case kCompEqChrScene:
-		for (ChrList::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
-			if (*it == o1->_value.chr)
-				return true;
+		if (o2->_value.scene == NULL) {
+			debug(1, "%s() o2->_value.scene is null", __func__);
+		} else {
+			for (ChrList::const_iterator it = o2->_value.scene->_chrs.begin(); it != o2->_value.scene->_chrs.end(); ++it)
+				if (*it == o1->_value.chr)
+					return true;
+		}
 		return false;
 	case kCompEqObjChr:
-		for (ObjArray::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
-			if (*it == o1->_value.obj)
-				return true;
+		if (o2->_value.chr == NULL) {
+			debug(1, "%s() o2->_value.chr is null", __func__);
+		} else {
+			for (ObjArray::const_iterator it = o2->_value.chr->_inventory.begin(); it != o2->_value.chr->_inventory.end(); ++it)
+				if (*it == o1->_value.obj)
+					return true;
+		}
 		return false;
 	case kCompEqChrChr:
 		return o1->_value.chr == o2->_value.chr;
