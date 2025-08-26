@@ -95,7 +95,6 @@ Common::Error TotEngine::run() {
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot != -1)
 		(void)loadGameState(saveSlot);
-
 	engineStart();
 
 	return Common::kNoError;
@@ -1251,12 +1250,32 @@ void TotEngine::initVars() {
 					"23123221322213233221112312231221233232122332211112233122321"
 					"222312211322312223";
 
+
+	for(int i = 0; i < kNumScreenOverlays; i++) {
+		_screenLayers[i] = NULL;
+	}
+
+	for(int i = 0; i < kInventoryIconCount; i++) {
+		_inventoryIconBitmaps[i] = NULL;
+	}
+
+	for(int i = 0; i < 4; i++) {
+		for(int j = 0; j < kWalkFrameCount + 30; j++) {
+			_mainCharAnimation.bitmap[i][j] = NULL;
+		}
+	}
+
+	for (int i = 0; i < _secondaryAnimDirCount; i++) {
+		for (int j = 0; j < kSecAnimationFrameCount; j++) {
+			_secondaryAnimation.bitmap[i][j] = NULL;
+		}
+	}
+
+	resetGameState();
 	gameTick = false;
 	for (int i = 0; i < kNumScreenOverlays; i++) {
 		_screenLayers[i] = NULL;
 	}
-
-	resetGameState();
 	_firstList[0] = 222;
 	_firstList[1] = 295;
 	_firstList[2] = 402;
@@ -1280,26 +1299,6 @@ void TotEngine::initVars() {
 	_conversationData = NULL;
 	_rooms = NULL;
 	_sceneObjectsData = NULL;
-
-	for(int i = 0; i < kNumScreenOverlays; i++) {
-		_screenLayers[i] = NULL;
-	}
-
-	for(int i = 0; i < kInventoryIconCount; i++) {
-		_inventoryIconBitmaps[i] = NULL;
-	}
-
-	for(int i = 0; i < 4; i++) {
-		for(int j = 0; j < kWalkFrameCount + 30; j++) {
-			_mainCharAnimation.bitmap[i][j] = NULL;
-		}
-	}
-
-	for (int i = 0; i < _secondaryAnimDirCount; i++) {
-		for (int j = 0; j < kSecAnimationFrameCount; j++) {
-			_secondaryAnimation.bitmap[i][j] = NULL;
-		}
-	}
 }
 
 void TotEngine::clearVars() {
