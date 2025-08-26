@@ -184,6 +184,7 @@ public:
 	//  20 bytes in total
 
 	uint _firstFramePosition;
+	uint _indexStart = 0;
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
