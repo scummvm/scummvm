@@ -157,6 +157,8 @@ private:
 
 	void writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize);
 
+	void seekToFrameInList(int frame);
+
 public:
 	Common::Array<Channel *> _channels;
 	Common::SortedArray<Label *> *_labels;
@@ -185,6 +187,7 @@ public:
 
 	uint _firstFramePosition;
 	uint _indexStart = 0;
+	uint _frameDataOffset = 0;
 	Common::MemoryReadStreamEndian *_framesStream;
 
 	byte _currentFrameRate;
