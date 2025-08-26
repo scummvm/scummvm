@@ -81,7 +81,6 @@ int MidiPlayer::open() {
 	_parserMusic->setMidiDriver(_driver);
 	_parserMusic->setTimerRate(_driver->getBaseTempo());
 	_driver->setTimerCallback(this, &onTimer);
-	debug("Successfully opened driver");
 	return 0;
 }
 
@@ -199,7 +198,6 @@ void MidiDriver_AdLib::loadInstrumentBankFromDriver(long offset) {
 }
 
 void MidiDriver_AdLib::loadInstrumentBank(uint8 *instrumentBankData) {
-	debug("Load instrument bank!");
 	for (int i = 0; i < 128; i++) {
 		AdLibIbkInstrumentDefinition instrument;
 
@@ -227,7 +225,6 @@ void MidiDriver_AdLib::loadInstrumentBank(uint8 *instrumentBankData) {
 		instrument.padding2 = *instrumentBankData++;
 		instrument.toOplInstrumentDefinition(_dsfInstrumentBank[i]);
 	}
-	debug("Loaded instrument bank!");
 }
 
 } // End of namespace Tot

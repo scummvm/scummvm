@@ -29,12 +29,12 @@
 #include "graphics/framelimiter.h"
 #include "graphics/paletteman.h"
 
+#include "tot/anims.h"
 #include "tot/chrono.h"
 #include "tot/console.h"
 #include "tot/detection.h"
 #include "tot/debug.h"
 #include "tot/dialog.h"
-#include "tot/font/bgifont.h"
 #include "tot/sound.h"
 #include "tot/tot.h"
 #include "tot/util.h"
@@ -49,7 +49,7 @@ TotEngine::TotEngine(OSystem *syst, const ADGameDescription *gameDesc) : Engine(
 	_lang = _gameDescription->language;
 	_rooms = nullptr;
 	_conversationData = nullptr;
-	_invItemData = nullptr;
+	_sceneObjectsData = nullptr;
 }
 
 TotEngine::~TotEngine() {
@@ -101,7 +101,6 @@ Common::Error TotEngine::run() {
 	return Common::kNoError;
 }
 
-
 int TotEngine::engineStart() {
 	if (ConfMan.hasKey("save_slot")) {
 		return startGame();
@@ -110,7 +109,7 @@ int TotEngine::engineStart() {
 	displayLoading();
 
 	loadCharAnimation();
-	loadObjects();
+	loadInventory();
 
 	_sound->setMidiVolume(0, 0);
 	_sound->playMidi("SILENT", false);
@@ -128,11 +127,11 @@ int TotEngine::engineStart() {
 	_sound->setMidiVolume(3, 3);
 	firstIntroduction();
 	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
-	startMenu(_firstTimeDone);
+	mainMenu(_firstTimeDone);
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
 	} else if (_continueGame && !shouldQuit()) {
-		loadTemporaryGame();
+		resumeGame();
 	} else {
 
 	}
@@ -140,7 +139,7 @@ int TotEngine::engineStart() {
 	return startGame();
 }
 
-void TotEngine::loadTemporaryGame() {
+void TotEngine::resumeGame() {
 	loadGameState(getMetaEngine()->getAutosaveSlot());
 }
 
@@ -316,19 +315,19 @@ int TotEngine::startGame() {
 								switch (_currentRoomData->code) {
 								case 20:
 									if (_niche[0][_niche[0][3]] > 0)
-										readItemRegister(_niche[0][_niche[0][3]]);
+										readObject(_niche[0][_niche[0][3]]);
 									else
-										readItemRegister(562);
+										readObject(562);
 									break;
 								case 24:
 									if (_niche[1][_niche[1][3]] > 0)
-										readItemRegister(_niche[1][_niche[1][3]]);
+										readObject(_niche[1][_niche[1][3]]);
 									else
-										readItemRegister(562);
+										readObject(562);
 									break;
 								}
 							else
-								readItemRegister(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
+								readObject(_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[_destinationX][_destinationY]]->fileIndex);
 							if (_curObject.lookAtTextRef > 0)
 								drawText(_curObject.lookAtTextRef);
 							_actionCode = 0;
@@ -430,19 +429,19 @@ int TotEngine::startGame() {
 							switch (_currentRoomData->code) {
 							case 20:
 								if (_niche[0][_niche[0][3]] > 0)
-									readItemRegister(_niche[0][_niche[0][3]]);
+									readObject(_niche[0][_niche[0][3]]);
 								else
-									readItemRegister(562);
+									readObject(562);
 								break;
 							case 24:
 								if (_niche[1][_niche[1][3]] > 0)
-									readItemRegister(_niche[1][_niche[1][3]]);
+									readObject(_niche[1][_niche[1][3]]);
 								else
-									readItemRegister(562);
+									readObject(562);
 								break;
 							}
 						else
-							readItemRegister(obj.fileIndex);
+							readObject(obj.fileIndex);
 						if (_curObject.lookAtTextRef > 0)
 							drawText(_curObject.lookAtTextRef);
 						_actionCode = 0;
@@ -471,13 +470,13 @@ int TotEngine::startGame() {
 			_graphics->clear();
 			_sound->playMidi("INTRODUC", true);
 			_sound->fadeInMusic();
-			startMenu(true);
+			mainMenu(true);
 			verifyCopyProtection2();
 
 			if (_startNewGame && !shouldQuit()) {
 				newGame();
 			} else if (_continueGame && !shouldQuit())
-				loadTemporaryGame();
+				resumeGame();
 			else {
 				_isSavingDisabled = true;
 				openMainMenuDialog();
@@ -516,7 +515,7 @@ int TotEngine::startGame() {
 					showError(274);
 				sacrificeScene();
 				_graphics->clear();
-				loadObjects();
+				loadInventory();
 				_graphics->loadPaletteFromFile("SEGUNDA");
 				_currentTrajectoryIndex = 0;
 				_characterPosX = 160;
@@ -603,7 +602,7 @@ void TotEngine::newGame() {
 		_graphics->clear();
 		displayLoading();
 		freeInventory();
-		loadObjects();
+		loadInventory();
 		resetGameState();
 		_inGame = true;
 		for (int i = 0; i < kInventoryIconCount; i++) {
@@ -611,7 +610,7 @@ void TotEngine::newGame() {
 			_inventory[i].code = 0;
 			_inventory[i].objectName = getObjectName(10);
 		}
-		readConversationFile(Common::String("CONVERSA.TRE"));
+		readConversationFile();
 		initializeScreenFile();
 		initializeObjectFile();
 		_graphics->loadPaletteFromFile("DEFAULT");
@@ -1131,6 +1130,7 @@ void TotEngine::initializeScreenFile() {
 }
 
 void TotEngine::resetGameState() {
+	debug("Reset game state");
 	_characterPosX = 160;
 	_characterPosY = 80;
 	_iframe = 0;
@@ -1279,7 +1279,7 @@ void TotEngine::initVars() {
 	_backgroundCopy = NULL;
 	_conversationData = NULL;
 	_rooms = NULL;
-	_invItemData = NULL;
+	_sceneObjectsData = NULL;
 
 	for(int i = 0; i < kNumScreenOverlays; i++) {
 		_screenLayers[i] = NULL;
@@ -1316,8 +1316,8 @@ void TotEngine::clearVars() {
 	if(_rooms != NULL) {
 		free(_rooms);
 	}
-	if(_invItemData != NULL) {
-		free(_invItemData);
+	if(_sceneObjectsData != NULL) {
+		free(_sceneObjectsData);
 	}
 	for(int i = 0; i < kNumScreenOverlays; i++) {
 		if(_screenLayers[i] != NULL) {
@@ -1344,6 +1344,160 @@ void TotEngine::clearVars() {
 			}
 		}
 	}
+}
+
+void TotEngine::mainMenu(bool fade) {
+	bool bar = false;
+	bool validOption = false;
+	_sound->stopVoc();
+
+	long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][1] : flcOffsets[1][1];
+
+	if (fade)
+		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+	else
+		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, bar);
+	if (_cpCounter2 > 10)
+		showError(274);
+	_mouse->mouseX = 160;
+	_mouse->mouseY = 95;
+	_mouse->mouseMaskIndex = 1;
+	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
+	Common::Event e;
+	do {
+		_chrono->updateChrono();
+		_mouse->animateMouseIfNeeded();
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (isMouseEvent(e)) {
+				_mouse->warpMouse(e.mouse);
+			}
+			if (e.type == Common::EVENT_KEYDOWN) {
+				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					exitToDOS();
+				}
+			}
+			if (e.type == Common::EVENT_LBUTTONUP) {
+				uint x = e.mouse.x + 7;
+				uint y = e.mouse.y + 7;
+				if (y > 105 && y < 120) {
+					if (x > 46 && x < 145) {
+						_startNewGame = true;
+						_continueGame = false;
+						validOption = true;
+					} else if (x > 173 && x < 267) {
+						credits();
+						if(!g_engine->shouldQuit()) {
+							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						}
+					}
+				} else if (y > 140 && y < 155) {
+					if (x > 173 && x < 292) {
+						_graphics->totalFadeOut(0);
+						_screen->clear();
+						introduction();
+						if(!g_engine->shouldQuit()) {
+							drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
+						}
+					} else if (x >= 18 && x <= 145) {
+						_isSavingDisabled = true;
+						bool result = loadGameDialog();
+						_isSavingDisabled = false;
+						if(result) {
+							_startNewGame = false;
+							_continueGame = false;
+							validOption = true;
+						}
+					}
+				} else if (y > 174 && y < 190) {
+					if (x > 20 && x < 145) {
+						_startNewGame = false;
+						validOption = true;
+						_continueGame = true;
+					} else if (x > 173 && y < 288) {
+						exitToDOS();
+					}
+				}
+			}
+		}
+		_screen->update();
+		g_system->delayMillis(10);
+	} while (!validOption && !shouldQuit());
+}
+
+void exitGame() {
+	g_engine->_graphics->clear();
+	g_system->quit();
+}
+
+void TotEngine::clearGame() {
+	resetGameState();
+	clearAnims();
+	clearVars();
+}
+
+void TotEngine::exitToDOS() {
+	debug("Exit to dos!");
+	uint oldMousePosX, oldMousePosY, dialogSize;
+	byte oldMouseMask;
+	char exitChar;
+
+	oldMousePosX = _mouse->mouseX;
+	oldMousePosY = _mouse->mouseY;
+	oldMouseMask = _mouse->mouseMaskIndex;
+	_mouse->hide();
+	dialogSize = imagesize(58, 48, 262, 120);
+	byte *dialogBackground = (byte *)malloc(dialogSize);
+	_graphics->getImg(58, 48, 262, 120, dialogBackground);
+
+	drawMenu(7);
+	_mouse->mouseX = 160;
+	_mouse->mouseY = 90;
+	_mouse->mouseMaskIndex = 1;
+
+	_mouse->setMouseArea(Common::Rect(115, 80, 190, 100));
+	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
+	Common::Event e;
+	const char hotKeyYes = hotKeyFor(YES);
+	const char hotKeyNo = hotKeyFor(NO);
+	exitChar = '@';
+	do {
+		_chrono->updateChrono();
+		_mouse->animateMouseIfNeeded();
+
+		while (g_system->getEventManager()->pollEvent(e)) {
+			if (isMouseEvent(e)) {
+				_mouse->warpMouse(e.mouse);
+			}
+			if (e.type == Common::EVENT_KEYDOWN) {
+				if (e.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					exitChar = '\33';
+				} else if (e.kbd.keycode == hotKeyYes) {
+					debug("would exit game now");
+					free(dialogBackground);
+					exitGame();
+				} else if (e.kbd.keycode == hotKeyNo) {
+					exitChar = '\33';
+				}
+			} else if (e.type == Common::EVENT_LBUTTONUP) {
+				uint x = e.mouse.x;
+				if (x < 145) {
+					free(dialogBackground);
+					g_system->quit();
+				} else if (x > 160) {
+					exitChar = '\33';
+				}
+			}
+		}
+		_screen->update();
+	} while (exitChar != '\33' && !shouldQuit());
+	debug("finished exitToDos");
+	_graphics->putImg(58, 48, dialogBackground);
+	_mouse->mouseX = oldMousePosX;
+	_mouse->mouseY = oldMousePosY;
+	_mouse->mouseMaskIndex = oldMouseMask;
+	_mouse->show();
+	free(dialogBackground);
+	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 } // End of namespace Tot

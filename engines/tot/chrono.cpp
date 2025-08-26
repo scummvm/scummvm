@@ -76,9 +76,6 @@ void ChronoManager::delay(int ms) {
 	uint32 delayStart = g_system->getMillis();
 	Common::Event e;
 	ms = ms / _speedMultiplier;
-	if (ms > 10) {
-		debug("Starting delay of %d", ms);
-	}
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}

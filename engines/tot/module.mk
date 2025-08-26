@@ -19,7 +19,9 @@ MODULE_OBJS = \
 	chrono.o \
 	saveload.o \
 	midi.o \
-	debug.o
+	debug.o \
+	cutscenes.o \
+	resources.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOT), DYNAMIC_PLUGIN)

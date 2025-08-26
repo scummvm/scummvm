@@ -63,12 +63,18 @@ private:
 	int engineStart();
 	int startGame();
 	void newGame();
+	void resumeGame();
+
 	void changeRoom();
-	void loadTemporaryGame();
+	void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scrollCorrection);
 	void drawText(uint number);
 	void displayLoading();
 	void runaroundRed();
 	void sprites(bool drawCharacter);
+	void saveGameToRegister();
+	void saveLoad();
+	void loadGame(SavedGame game);
+
 	RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
 	void lookAtObject(byte objectNumber);
 	void useInventoryObjectWithInventoryObject(uint obj1, uint obj2);
@@ -78,12 +84,8 @@ private:
 	void closeScreenObject();
 	void action();
 	void handleAction(byte invPos);
-	void loadObjects();
+	void loadInventory();
 	void obtainName(Common::String &playerName);
-	void loadScrollData(uint roomCode, bool rightScroll, uint horizontalPos, int scrollCorrection);
-	void loadGame(SavedGame game);
-	void saveGameToRegister();
-	void saveLoad();
 	void calculateRoute(byte zone1, byte zone2, bool extraCorrection = false, bool zonavedada = false);
 	void wcScene();
 	void advanceAnimations(bool barredZone, bool animateMouse);
@@ -91,12 +93,12 @@ private:
 	void updateMainCharacterDepth();
 	void actionLineText(Common::String actionLine);
 	void initializeObjectFile();
-	void saveItem(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
+	void saveObjectsData(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
 	void scrollLeft(uint &horizontalPos);
 	void scrollRight(uint &horizontalPos);
-	TextEntry readVerbRegister(uint numRegister);
+	TextEntry readTextRegister(uint numRegister);
 
-	void readConversationFile(Common::String f);
+	void readConversationFile();
 
 	//Rout2
 	void adjustKey();
@@ -128,9 +130,9 @@ private:
 
 	void freeInventory();
 	void updateInventory(byte index);
-	void updateItem(uint filePos);
-	void readItemRegister(Common::SeekableReadStream *stream, uint objPos, ScreenObject &thisRegObj);
-	void saveItemRegister(ScreenObject object, Common::SeekableWriteStream *stream);
+	void updateObject(uint filePos);
+	void readObject(Common::SeekableReadStream *stream, uint objPos, ScreenObject &thisRegObj);
+	void saveObject(ScreenObject object, Common::SeekableWriteStream *stream);
 	void saveItemRegister();
 
 	void saveTemporaryGame();
@@ -147,7 +149,7 @@ private:
 	void displayObjectDescription(Common::String text);
 	void copyProtection();
 	void initialLogo();
-	void startMenu(bool fade);
+	void mainMenu(bool fade);
 	void exitToDOS();
 	void soundControls();
 	void sacrificeScene();
@@ -185,7 +187,7 @@ public:
 
 	Common::MemorySeekableReadWriteStream *_conversationData;
 	Common::MemorySeekableReadWriteStream *_rooms;
-	Common::MemorySeekableReadWriteStream *_invItemData;
+	Common::MemorySeekableReadWriteStream *_sceneObjectsData;
 
 	bool _roomChange;
 	bool _isTVOn,
@@ -248,7 +250,7 @@ public:
 	/**
 	 * 1 first part, 2 second part
 	 */
-	byte _gamePart = 0;
+	byte _gamePart;
 	/**
 	 * Number of frames of secondary animation
 	 */
@@ -485,8 +487,8 @@ public:
 	void loadAnimationForDirection(Common::SeekableReadStream *stream, int direction);
 	void sayLine(uint textRef, byte textColor, byte shadowColor, uint &responseNumber, bool isWithinConversation);
 	void goToObject(byte zone1, byte zone2);
-	void readItemRegister(uint objPos);
-	TextEntry readVerbRegister();
+	void readObject(uint objPos);
+	TextEntry readTextRegister();
 	void drawInventory();
 	void drawInventoryMask();
 	void setRoomTrajectories(int height, int width, TRAJECTORIES_OP op, bool fixGrids = true);

@@ -465,7 +465,7 @@ void talk(byte characterIndex) {
 		while (l1 != linkedList->end() && !g_engine->shouldQuit()) {
 			g_engine->_verbFile.seek(kVerbRegSize * (*l1));
 			conversationIndex += 1;
-			text = g_engine->readVerbRegister();
+			text = g_engine->readTextRegister();
 			insertName = 0;
 			conversationMatrix[conversationIndex] = decrypt(text.text);
 
@@ -566,7 +566,7 @@ void talkToSceneObject() {
 		return;
 
 	// verifyCopyProtection2();
-	g_engine->readItemRegister(sceneObject);
+	g_engine->readObject(sceneObject);
 	g_engine->goToObject(g_engine->_currentRoomData->walkAreasGrid[(g_engine->_characterPosX + kCharacterCorrectionX) / kXGridCount][(g_engine->_characterPosY + kCharacerCorrectionY) / kYGridCount],
 			   g_engine->_currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 
