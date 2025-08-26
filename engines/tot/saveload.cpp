@@ -129,12 +129,10 @@ bool syncGeneralData(Common::Serializer &s, SavedGame &game) {
 		s.syncAsUint16LE(game.niche[0][indiaux]);
 		s.syncAsUint16LE(game.niche[1][indiaux]);
 	}
-
-	return s.bytesSynced() == 1740;
+	return true;
 }
 
 bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *roomStream) {
-	uint32 startBytes = s.bytesSynced();
 	if (s.isSaving()) {
 
 		// Restore trajectory
@@ -161,11 +159,10 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		debug("Loading room data now");
 		g_engine->_rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
-	return s.bytesSynced() - startBytes == 347392;
+	return true;
 }
 
 bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *conversations) {
-	uint32 startBytes = s.bytesSynced();
 
 	int size = conversations->size();
 	if (s.isSaving()) {
@@ -183,27 +180,26 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		debug("Loading conversation data now");
 		g_engine->_conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
-	return s.bytesSynced() - startBytes == 2304;
+	return true;
 }
 
-bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *items) {
-	uint32 startBytes = s.bytesSynced();
-	int size = items->size();
+bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *sceneObjects) {
+	int size = sceneObjects->size();
 	if (s.isSaving()) {
 		byte *objBuf = (byte *)malloc(size);
-		items->seek(0, 0);
-		items->read(objBuf, size);
+		sceneObjects->seek(0, 0);
+		sceneObjects->read(objBuf, size);
 		s.syncBytes(objBuf, size);
 		free(objBuf);
 	}
 	if (s.isLoading()) {
-		delete (g_engine->_invItemData);
+		delete (g_engine->_sceneObjectsData);
 		byte *objBuf = (byte *)malloc(size);
 		s.syncBytes(objBuf, size);
 		debug("Loading item data now");
-		g_engine->_invItemData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
+		g_engine->_sceneObjectsData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
-	return s.bytesSynced() - startBytes == 200322;
+	return true;
 }
 
 Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
@@ -215,7 +211,7 @@ Common::Error syncSaveData(Common::Serializer &ser, SavedGame &game) {
 		warning("Error while synchronizing room data");
 		return Common::kUnknownError;
 	}
-	if (!syncItemData(ser, g_engine->_invItemData)) {
+	if (!syncItemData(ser, g_engine->_sceneObjectsData)) {
 		warning("Error while syncrhonizing object data");
 		return Common::kUnknownError;
 	}
@@ -243,17 +239,16 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		displayLoading();
 
 		loadCharAnimation();
-		loadObjects();
+		loadInventory();
 
 		g_engine->_graphics->loadPaletteFromFile("DEFAULT");
 		initScreenPointers();
 
 		g_engine->_graphics->totalFadeOut(0);
 		g_engine->_graphics->clear();
-		displayLoading();
 		initializeScreenFile();
 		initializeObjectFile();
-		readConversationFile(Common::String("CONVERSA.TRE"));
+		readConversationFile();
 		// }
 		result = syncSaveData(s, loadedGame);
 		loadGame(loadedGame);
