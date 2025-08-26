@@ -82,11 +82,11 @@ void Credits::draw() {
 
 		drawCredit(s, gfxNum1, gfxNum3, 16, 40 + 24);
 		drawCredit(s, gfxNum2, gfxNum4, 16, 40 + 24);
-	}
 
 #ifdef USE_TTS
-	sayText(creditsText[creditNum]);
+		sayText(creditsText[creditNum]);
 #endif
+	}
 
 	s.markAllDirty();
 }
