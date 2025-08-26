@@ -158,34 +158,21 @@ void updateMovementGrids() {
 
 void sprites(bool drawCharacter);
 
-static uint curDepth;
-/**
- * Point of origin of the area surrounding the main character.
- * Calculated using the position of the character.
- */
-static uint dirtyMainSpriteX, dirtyMainSpriteY;
-/**
- * End point of origin of the area surrounding the main character.
- * Calculated using the position of the character + dimension
- */
-static uint dirtyMainSpriteX2, dirtyMainSpriteY2;
-
 static void assembleBackground() {
 	uint posabs;
-
 
 	// copies the entire clean background in backgroundCopy back into background
 	g_engine->_graphics->restoreBackground();
 
-	posabs = 4 + dirtyMainSpriteY * 320 + dirtyMainSpriteX;
+	posabs = 4 + g_engine->_dirtyMainSpriteY * 320 + g_engine->_dirtyMainSpriteX;
 	uint16 w, h;
 	w = READ_LE_UINT16(g_engine->_characterDirtyRect);
 	h = READ_LE_UINT16(g_engine->_characterDirtyRect + 2);
 	w++;
 	h++;
 
-	dirtyMainSpriteX2 = dirtyMainSpriteX + w;
-	dirtyMainSpriteY2 = dirtyMainSpriteY + h;
+	g_engine->_dirtyMainSpriteX2 = g_engine->_dirtyMainSpriteX + w;
+	g_engine->_dirtyMainSpriteY2 = g_engine->_dirtyMainSpriteY + h;
 
 	for (int j = 0; j < h; j++) {
 		for (int i = 0; i < w; i++) {
@@ -215,30 +202,30 @@ static void assembleImage(byte *img, uint imgPosX, uint imgPosY) {
 
 	// This region calculates the overlapping area of (x, incx, y, incy)
 	{
-		if (imgPosX < dirtyMainSpriteX)
-			x = dirtyMainSpriteX;
+		if (imgPosX < g_engine->_dirtyMainSpriteX)
+			x = g_engine->_dirtyMainSpriteX;
 		else
 			x = imgPosX;
 
-		if (imgPosX + wImg < dirtyMainSpriteX + wBg)
+		if (imgPosX + wImg < g_engine->_dirtyMainSpriteX + wBg)
 			incx = imgPosX + wImg - x;
 		else
-			incx = dirtyMainSpriteX + wBg - x;
+			incx = g_engine->_dirtyMainSpriteX + wBg - x;
 
-		if (imgPosY < dirtyMainSpriteY)
-			y = dirtyMainSpriteY;
+		if (imgPosY < g_engine->_dirtyMainSpriteY)
+			y = g_engine->_dirtyMainSpriteY;
 		else
 			y = imgPosY;
 
-		if (imgPosY + hImg < dirtyMainSpriteY + hBg)
+		if (imgPosY + hImg < g_engine->_dirtyMainSpriteY + hBg)
 			incy = imgPosY + hImg - y;
 		else
-			incy = dirtyMainSpriteY + hBg - y;
+			incy = g_engine->_dirtyMainSpriteY + hBg - y;
 	} // end of region calculating overlapping area
 
 	for (int j = 0; j < incy; j++) {
 		for (int i = 0; i < incx; i++) {
-			int bgOffset = 4 + ((y - dirtyMainSpriteY) + j) * wBg + i + (x - dirtyMainSpriteX);
+			int bgOffset = 4 + ((y - g_engine->_dirtyMainSpriteY) + j) * wBg + i + (x - g_engine->_dirtyMainSpriteX);
 			int imgOffset = 4 + (y - imgPosY + j) * wImg + i + (x - imgPosX);
 			if (img[imgOffset] != 0) {
 				g_engine->_characterDirtyRect[bgOffset] = img[imgOffset];
@@ -248,13 +235,13 @@ static void assembleImage(byte *img, uint imgPosX, uint imgPosY) {
 }
 
 static void overlayLayers() {
-	if (g_engine->_screenLayers[curDepth] != NULL) {
+	if (g_engine->_screenLayers[g_engine->_curDepth] != NULL) {
 		if (
-			(g_engine->_depthMap[curDepth].posx <= dirtyMainSpriteX2) &&
-			(g_engine->_depthMap[curDepth].posx2 > dirtyMainSpriteX) &&
-			(g_engine->_depthMap[curDepth].posy < dirtyMainSpriteY2) &&
-			(g_engine->_depthMap[curDepth].posy2 > dirtyMainSpriteY)) {
-			assembleImage(g_engine->_screenLayers[curDepth], g_engine->_depthMap[curDepth].posx, g_engine->_depthMap[curDepth].posy);
+			(g_engine->_depthMap[g_engine->_curDepth].posx <= g_engine->_dirtyMainSpriteX2) &&
+			(g_engine->_depthMap[g_engine->_curDepth].posx2 > g_engine->_dirtyMainSpriteX) &&
+			(g_engine->_depthMap[g_engine->_curDepth].posy < g_engine->_dirtyMainSpriteY2) &&
+			(g_engine->_depthMap[g_engine->_curDepth].posy2 > g_engine->_dirtyMainSpriteY)) {
+			assembleImage(g_engine->_screenLayers[g_engine->_curDepth], g_engine->_depthMap[g_engine->_curDepth].posx, g_engine->_depthMap[g_engine->_curDepth].posy);
 		}
 	}
 }
@@ -279,19 +266,19 @@ void drawMainCharacter() {
 	WRITE_LE_UINT16(g_engine->_characterDirtyRect + 2, tempH);
 
 	assembleBackground();
-	curDepth = 0;
-	while (curDepth != kDepthLevelCount) {
+	g_engine->_curDepth = 0;
+	while (g_engine->_curDepth != kDepthLevelCount) {
 		overlayLayers();
-		if (g_engine->_mainCharAnimation.depth == curDepth)
+		if (g_engine->_mainCharAnimation.depth == g_engine->_curDepth)
 			assembleImage(g_engine->_curCharacterAnimationFrame, g_engine->_characterPosX, g_engine->_characterPosY);
-		curDepth += 1;
+		g_engine->_curDepth += 1;
 	}
 
-	g_engine->_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, g_engine->_characterDirtyRect);
+	g_engine->_graphics->putImg(g_engine->_dirtyMainSpriteX, g_engine->_dirtyMainSpriteY, g_engine->_characterDirtyRect);
 
 	if (debug) {
 		// draw background dirty area
-		drawRect(2, dirtyMainSpriteX, dirtyMainSpriteY, dirtyMainSpriteX + tempW, dirtyMainSpriteY + tempH);
+		drawRect(2, g_engine->_dirtyMainSpriteX, g_engine->_dirtyMainSpriteY, g_engine->_dirtyMainSpriteX + tempW, g_engine->_dirtyMainSpriteY + tempH);
 		drawPos(g_engine->_xframe2, g_engine->_yframe2, 218);
 	}
 	free(g_engine->_characterDirtyRect);
@@ -301,8 +288,8 @@ void TotEngine::sprites(bool drawMainCharachter) {
 	// grabs the current frame from the walk cycle
 	_curCharacterAnimationFrame = _mainCharAnimation.bitmap[_charFacingDirection][_iframe];
 
-	dirtyMainSpriteX = _characterPosX - 3;
-	dirtyMainSpriteY = _characterPosY - 3;
+	_dirtyMainSpriteX = _characterPosX - 3;
+	_dirtyMainSpriteY = _characterPosY - 3;
 	if (_isSecondaryAnimationEnabled) {
 		if (_currentRoomData->secondaryTrajectoryLength > 1) {
 			updateMovementGrids();
@@ -321,15 +308,15 @@ void TotEngine::sprites(bool drawMainCharachter) {
 
 		if (
 			((_secondaryAnimation.posx < (_characterPosX + curCharFrameW) + 4) &&
-			 ((_secondaryAnimation.posx + secAnimW + 1) > dirtyMainSpriteX) &&
+			 ((_secondaryAnimation.posx + secAnimW + 1) > _dirtyMainSpriteX) &&
 			 (_secondaryAnimation.posy < (_characterPosY + curCharFrameH + 4))) &&
-			((_secondaryAnimation.posy + secAnimH + 1) > dirtyMainSpriteY)) { // Character is in the area of the animation
+			((_secondaryAnimation.posy + secAnimH + 1) > _dirtyMainSpriteY)) { // Character is in the area of the animation
 
 			if (_secondaryAnimation.posx < _characterPosX) {
-				dirtyMainSpriteX = _secondaryAnimation.posx - 3;
+				_dirtyMainSpriteX = _secondaryAnimation.posx - 3;
 			}
 			if (_secondaryAnimation.posy < _characterPosY) {
-				dirtyMainSpriteY = _secondaryAnimation.posy - 3;
+				_dirtyMainSpriteY = _secondaryAnimation.posy - 3;
 			}
 
 			uint16 patchW = secAnimW + curCharFrameW + 6;
@@ -341,12 +328,12 @@ void TotEngine::sprites(bool drawMainCharachter) {
 				patchH = secAnimH + 6 + abs(_characterPosY - _secondaryAnimation.posy);
 			}
 
-			if (dirtyMainSpriteY + patchH > 140) {
-				patchH -= (dirtyMainSpriteY + patchH) - 140 + 1;
+			if (_dirtyMainSpriteY + patchH > 140) {
+				patchH -= (_dirtyMainSpriteY + patchH) - 140 + 1;
 			}
 
-			if (dirtyMainSpriteX + patchW > 320) {
-				patchW -= (dirtyMainSpriteX + patchW) - 320 + 1;
+			if (_dirtyMainSpriteX + patchW > 320) {
+				patchW -= (_dirtyMainSpriteX + patchW) - 320 + 1;
 			}
 
 			_characterDirtyRect = (byte *)malloc((patchW + 1) * (patchH + 1) + 4);
@@ -355,34 +342,34 @@ void TotEngine::sprites(bool drawMainCharachter) {
 			WRITE_LE_UINT16(_characterDirtyRect + 2, patchH);
 
 			assembleBackground();
-			curDepth = 0;
-			while (curDepth != kDepthLevelCount) {
+			_curDepth = 0;
+			while (_curDepth != kDepthLevelCount) {
 				overlayLayers();
-				if (_secondaryAnimation.depth == curDepth)
+				if (_secondaryAnimation.depth == _curDepth)
 					assembleImage(_curSecondaryAnimationFrame, _secondaryAnimation.posx, _secondaryAnimation.posy);
-				if (_mainCharAnimation.depth == curDepth)
+				if (_mainCharAnimation.depth == _curDepth)
 					assembleImage(_curCharacterAnimationFrame, _characterPosX, _characterPosY);
-				curDepth += 1;
+				_curDepth += 1;
 			}
-			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, _characterDirtyRect);
+			_graphics->putImg(_dirtyMainSpriteX, _dirtyMainSpriteY, _characterDirtyRect);
 		} else { // character and animation are in different parts of the screen
 
 			if (drawMainCharachter) {
 				drawMainCharacter();
 			}
 
-			dirtyMainSpriteX = _secondaryAnimation.posx - 3;
-			dirtyMainSpriteY = _secondaryAnimation.posy - 3;
+			_dirtyMainSpriteX = _secondaryAnimation.posx - 3;
+			_dirtyMainSpriteY = _secondaryAnimation.posy - 3;
 
 			secAnimW = READ_LE_UINT16(_curSecondaryAnimationFrame) + 6;
 			secAnimH = READ_LE_UINT16(_curSecondaryAnimationFrame + 2) + 6;
 
-			if (dirtyMainSpriteY + secAnimH > 140) {
-				secAnimH -= (dirtyMainSpriteY + secAnimH) - 140 + 1;
+			if (_dirtyMainSpriteY + secAnimH > 140) {
+				secAnimH -= (_dirtyMainSpriteY + secAnimH) - 140 + 1;
 			}
 
-			if (dirtyMainSpriteX + secAnimW > 320) {
-				secAnimW -= (dirtyMainSpriteX + secAnimW) - 320 + 1;
+			if (_dirtyMainSpriteX + secAnimW > 320) {
+				secAnimW -= (_dirtyMainSpriteX + secAnimW) - 320 + 1;
 			}
 
 			_characterDirtyRect = (byte *)malloc((secAnimW + 1) * (secAnimH + 1) + 4);
@@ -390,14 +377,14 @@ void TotEngine::sprites(bool drawMainCharachter) {
 			WRITE_LE_UINT16(_characterDirtyRect + 2, secAnimH);
 
 			assembleBackground();
-			curDepth = 0;
-			while (curDepth != kDepthLevelCount) {
+			_curDepth = 0;
+			while (_curDepth != kDepthLevelCount) {
 				overlayLayers();
-				if (_secondaryAnimation.depth == curDepth)
+				if (_secondaryAnimation.depth == _curDepth)
 					assembleImage(_curSecondaryAnimationFrame, _secondaryAnimation.posx, _secondaryAnimation.posy);
-				curDepth += 1;
+				_curDepth += 1;
 			}
-			_graphics->putImg(dirtyMainSpriteX, dirtyMainSpriteY, _characterDirtyRect);
+			_graphics->putImg(_dirtyMainSpriteX, _dirtyMainSpriteY, _characterDirtyRect);
 		}
 	} else if (drawMainCharachter) {
 		drawMainCharacter();
@@ -3646,11 +3633,6 @@ void TotEngine::obtainName(Common::String &playerName) {
 	free(namePromptBG);
 }
 
-void loadScrollData(uint roomCode, bool rightScroll,
-					uint horizontalPos, int scrollCorrection);
-
-static byte *spriteBackground;
-
 /**
  * Blits srcImage over dstImage on the zeroed pixels of dstImage
  */
@@ -3709,13 +3691,13 @@ void TotEngine::scrollRight(uint &horizontalPos) {
 			Common::copy(_curCharacterAnimationFrame, _curCharacterAnimationFrame + _mainCharFrameSize, assembledCharacterFrame);
 
 			// puts the original captured background back in the background for next iteration
-			_graphics->putImageArea(_characterPosX - 2, _characterPosY, _sceneBackground, spriteBackground);
+			_graphics->putImageArea(_characterPosX - 2, _characterPosY, _sceneBackground, _spriteBackground);
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 			// Grabs current area surrounding character (which might contain parts of A and B)
-			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, spriteBackground);
+			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, _spriteBackground);
 			// blits over the character sprite, only on black pixels
-			blit(spriteBackground, assembledCharacterFrame);
+			blit(_spriteBackground, assembledCharacterFrame);
 			// puts it back in the background (character + piece of background)
 			_graphics->putImageArea(_characterPosX, _characterPosY, _sceneBackground, assembledCharacterFrame);
 		} else
@@ -3761,13 +3743,13 @@ void TotEngine::scrollLeft(uint &horizontalPos) {
 			_curCharacterAnimationFrame = _mainCharAnimation.bitmap[3][_iframe];
 			Common::copy(_curCharacterAnimationFrame, _curCharacterAnimationFrame + _mainCharFrameSize, assembledCharacterFrame);
 
-			_graphics->putImageArea(_characterPosX + 2, _characterPosY, _sceneBackground, spriteBackground);
+			_graphics->putImageArea(_characterPosX + 2, _characterPosY, _sceneBackground, _spriteBackground);
 
 			uint16 pasoframeW = READ_LE_UINT16(assembledCharacterFrame);
 			uint16 pasoframeH = READ_LE_UINT16(assembledCharacterFrame + 2);
 
-			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, spriteBackground);
-			blit(spriteBackground, assembledCharacterFrame);
+			_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + pasoframeW, _characterPosY + pasoframeH, _sceneBackground, _spriteBackground);
+			blit(_spriteBackground, assembledCharacterFrame);
 			_graphics->putImageArea(_characterPosX, _characterPosY, _sceneBackground, assembledCharacterFrame);
 		} else
 			_characterPosX += 4;
@@ -3791,8 +3773,8 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 	uint characterFrameW = READ_LE_UINT16(_curCharacterAnimationFrame);
 	uint characterFrameH = READ_LE_UINT16(_curCharacterAnimationFrame + 2);
 	/* Copy the area with the player from previous scren*/
-	spriteBackground = (byte *)malloc(4 + (characterFrameW + 8) * (characterFrameH + 8));
-	_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + characterFrameW, _characterPosY + characterFrameH, _sceneBackground, spriteBackground);
+	_spriteBackground = (byte *)malloc(4 + (characterFrameW + 8) * (characterFrameH + 8));
+	_graphics->getImageArea(_characterPosX, _characterPosY, _characterPosX + characterFrameW, _characterPosY + characterFrameH, _sceneBackground, _spriteBackground);
 
 	// Start screen 2
 
@@ -3833,7 +3815,7 @@ void TotEngine::loadScrollData(uint roomCode, bool rightScroll, uint horizontalP
 
 	assembleScreen();
 	_graphics->drawScreen(_sceneBackground);
-	free(spriteBackground);
+	free(_spriteBackground);
 	loadScreen();
 	_trajectory[_currentTrajectoryIndex].x = _characterPosX;
 	_trajectory[_currentTrajectoryIndex].y = _characterPosY;

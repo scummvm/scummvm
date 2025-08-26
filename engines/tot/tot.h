@@ -445,7 +445,18 @@ public:
 
 	SavedGame _savedGame;
 
-
+	uint _curDepth;
+	/**
+	 * Point of origin of the area surrounding the main character.
+	 * Calculated using the position of the character.
+	 */
+	uint _dirtyMainSpriteX, _dirtyMainSpriteY;
+	/**
+	 * End point of origin of the area surrounding the main character.
+	 * Calculated using the position of the character + dimension
+	 */
+	uint _dirtyMainSpriteX2, _dirtyMainSpriteY2;
+	byte *_spriteBackground;
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~TotEngine() override;
