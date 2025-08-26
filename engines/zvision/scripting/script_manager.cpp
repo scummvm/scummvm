@@ -255,7 +255,7 @@ bool ScriptManager::checkPuzzleCriteria(Puzzle *puzzle, uint counter) {
 	if (counter == 0 && (getStateFlag(puzzle->key) & Puzzle::DO_ME_NOW) == 0) {
 		return true;
 	}
-	
+
 	// WORKAROUNDS:
 	switch (_engine->getGameId()) {
 	case GID_NEMESIS:
@@ -654,7 +654,7 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 		}
 	}
 
-	// _engine->setRenderDelay(2); // TODO: Uncertain if this is necessary; doesn't seem to cause any problems when disabled, but keep an eye on it.
+	 _engine->setRenderDelay(2); // Necessary to ensure proper redraw in certain locations, in particular the infinite corridor in Zork Grand Inquisitor (room th20)
 
 	if (!leavingMenu) {
 		if (!isLoading && !enteringMenu) {
