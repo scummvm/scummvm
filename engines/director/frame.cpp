@@ -169,7 +169,8 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - initPos + offset) {
-		case 0: // Sound/Tempo/Transition
+		// Sound/Tempo/Transition
+		case 0:
 			_mainChannels.actionId = CastMemberID(stream.readByte(), DEFAULT_CAST_LIB);
 			break;
 		case 1:
@@ -222,8 +223,9 @@ void Frame::readMainChannelsD2(Common::MemoryReadStreamEndian &stream, uint16 of
 			if (unk[0] || unk[1])
 				debugC(8, kDebugLoading, "Frame::readMainChannelsD2(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
+
+		// Palette
 		case 16: {
-				// palette
 				int16 paletteId = stream.readSint16();
 				if (paletteId == 0) {
 					_mainChannels.palette.paletteId = CastMemberID(0, 0);
@@ -447,8 +449,8 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - initPos + offset) {
+		// Sound/Tempo/Transition
 		case 0:
-			// Sound/Tempo/Transition
 			unk1 = stream.readByte();
 			if (unk1)
 				warning("Frame::readMainChannelsD4(): STUB: unk1: %d 0x%x", unk1, unk1);
@@ -509,8 +511,9 @@ void Frame::readMainChannelsD4(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 19:
 			_mainChannels.colorTrans = stream.readByte();
 			break;
+
+		// Palette, 20 bytes
 		case 20: {
-				// palette, 13 bytes
 				int16 paletteId = stream.readSint16();
 				if (paletteId == 0) {
 					_mainChannels.palette.paletteId = CastMemberID(0, 0);
@@ -850,8 +853,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - initPos + offset) {
+		// Sound/Tempo/Transition
 		case 0:
-			// Sound/Tempo/Transition
 			_mainChannels.actionId.castLib = stream.readUint16();
 			break;
 		case 2:
@@ -876,19 +879,19 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			_mainChannels.trans.member = stream.readUint16();
 			break;
 		case 16:
-			stream.read(unk, 2);
-			if (unk[0] || unk[1])
-				warning("Frame::readMainChannelsD5(): STUB: unk1: 0x%02x 0x%02x", unk[0], unk[1]);
+			_mainChannels.colorTempo = stream.readByte();
+			break;
+		case 17:
+			_mainChannels.colorSound1 = stream.readByte();
 			break;
 		case 18:
-			stream.read(unk, 2);
-			if (unk[0] || unk[1])
-				warning("Frame::readMainChannelsD5(): STUB: unk2: 0x%02x 0x%02x", unk[0], unk[1]);
+			_mainChannels.colorSound2 = stream.readByte();
+			break;
+		case 19:
+			_mainChannels.colorScript = stream.readByte();
 			break;
 		case 20:
-			stream.read(unk, 1);
-			if (unk[0])
-				warning("Frame::readMainChannelsD5(): STUB: unk3: 0x%02x", unk[0]);
+			_mainChannels.colorTrans = stream.readByte();
 			break;
 		case 21:
 			_mainChannels.tempo = stream.readByte();
@@ -900,6 +903,8 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			if (unk[0] || unk[1])
 				warning("Frame::readMainChannelsD5(): STUB: unk4: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
+
+		// Palette
 		case 24:
 			_mainChannels.palette.paletteId.castLib = stream.readSint16();
 			break;
@@ -974,9 +979,11 @@ void Frame::writeMainChannelsD5(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.trans.member);			// 12, 13
 	writeStream->writeUint16BE(_mainChannels.trans.member);			// 14, 15
 
-	writeStream->writeUint16BE(0);		// Unknown	// 16, 17
-	writeStream->writeUint16BE(0);		// Unknown	// 18, 19
-	writeStream->writeByte(0);			// Unknown: Sound/Tempo/Transition	// 20
+	writeStream->writeByte(_mainChannels.colorTempo);				// 16
+	writeStream->writeByte(_mainChannels.colorSound1);				// 17
+	writeStream->writeByte(_mainChannels.colorSound2);				// 18
+	writeStream->writeByte(_mainChannels.colorScript);				// 19
+	writeStream->writeByte(_mainChannels.colorTrans);				// 20
 
 	writeStream->writeByte(_mainChannels.tempo);			// 21
 	writeStream->writeUint16BE(0);		// Unknown	// 22, 23
