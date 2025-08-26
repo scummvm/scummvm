@@ -138,6 +138,8 @@ public:
 
 	byte _volume;
 	bool _stretch;
+
+	uint32 _spriteListIdx;
 };
 
 } // End of namespace Director

@@ -75,6 +75,8 @@ void Sprite::reset() {
 
 	_volume = 0;
 	_stretch = false;
+
+	_spriteListIdx = 0;
 }
 
 Sprite& Sprite::operator=(const Sprite &sprite) {
@@ -121,6 +123,8 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 
 	_volume = sprite._volume;
 	_stretch = sprite._stretch;
+
+	_spriteListIdx = sprite._spriteListIdx;
 
 	return *this;
 }
