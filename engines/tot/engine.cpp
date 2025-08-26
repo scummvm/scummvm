@@ -4386,7 +4386,6 @@ void TotEngine::loadAnimation(Common::String animationName) {
 	}
 
 	animFile.close();
-	debug("Read all frames! longtray2=%d", _currentRoomData->secondaryTrajectoryLength);
 	_secondaryAnimWidth = READ_LE_UINT16(_secondaryAnimation.bitmap[0][1]) + 1;
 	_secondaryAnimHeight = READ_LE_UINT16(_secondaryAnimation.bitmap[0][1] + 2) + 1;
 
