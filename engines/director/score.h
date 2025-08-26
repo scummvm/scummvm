@@ -157,7 +157,7 @@ private:
 
 	void writeFrame(Common::SeekableWriteStream *writeStream, Frame frame, uint32 channelSize, uint32 mainChannelSize);
 
-	void seekToFrameInList(int frame);
+	void seekToMemberInList(int frame);
 
 public:
 	Common::Array<Channel *> _channels;

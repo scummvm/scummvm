@@ -1747,6 +1747,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		_framesStream->hexdump(_framesStream->size());
 	}
 
+	_frameDataOffset = 0;
+
 	if (version < kFileVer400) {
 		_framesStreamSize = _framesStream->readUint32();
 		_numChannelsDisplayed = 30;
@@ -1776,8 +1778,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		for (int i = 0; i < numEntries; i++) {
 			uint32 off = _framesStream->readUint32();
 			if (i > 0) {
-				debugC(2, kDebugLoading, "  Score::loadFrames(): entry %d offset: 0x%x (%d), size: %d",
-					i - 1, prevOff, prevOff, off - prevOff);
+				debugC(2, kDebugLoading, "  Score::loadFrames(): entry %d offset: 0x%x (%d) -> 0x%x, size: %d",
+					i - 1, prevOff, prevOff, _frameDataOffset + prevOff, off - prevOff);
 			}
 			prevOff = off;
 		}
@@ -1846,9 +1848,9 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	debugC(1, kDebugLoading, "Score::loadFrames(): Number of frames: %d, framesStreamSize: %d", _numFrames, _framesStreamSize);
 }
 
-void Score::seekToFrameInList(int frameNum) {
+void Score::seekToMemberInList(int frameNum) {
 	if (frameNum < 1 || frameNum >= _numOfFrames) {
-		warning("Score::seekToFrameInList(): frameNum %d out of bounds [1, %d)", frameNum, _numOfFrames);
+		warning("Score::seekToMemberInList(): frameNum %d out of bounds [1, %d)", frameNum, _numOfFrames);
 		return;
 	}
 
@@ -1856,7 +1858,7 @@ void Score::seekToFrameInList(int frameNum) {
 	uint32 off = _framesStream->readUint32();
 	uint32 size = _framesStream->readUint32() - off;
 
-	debugC(3, kDebugLoading, "    off: 0x%x size: 0x%x", off, size);
+	debugC(3, kDebugLoading, "    off: 0x%x size: %d", _frameDataOffset + off, size);
 
 	_framesStream->seek(_frameDataOffset + off, SEEK_SET);
 }
@@ -1873,12 +1875,8 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 		_currentFrame->reset();
 
 		// Reset position to start
-		if (_version < kFileVer600) {
-			_framesStream->seek(_firstFramePosition);
-			sourceFrame = 0;
-		} else {
-			sourceFrame = 1;
-		}
+		_framesStream->seek(_firstFramePosition);
+		sourceFrame = 0;
 
 		// Reset sprite contents
 		for (auto &it : _currentFrame->_sprites)
@@ -1887,13 +1885,7 @@ bool Score::loadFrame(int frameNum, bool loadCast) {
 
 	debugC(7, kDebugLoading, "****** Source frame %d to Destination frame %d, current offset 0x%x", sourceFrame, targetFrame, (uint32)_framesStream->pos());
 
-	if (_version >= kFileVer600 && _version < kFileVer1100)
-		seekToFrameInList(sourceFrame);
-
 	while (sourceFrame < targetFrame - 1 && readOneFrame()) {
-		if (_version >= kFileVer600 && _version < kFileVer1100)
-			seekToFrameInList(sourceFrame);
-
 		sourceFrame++;
 	}
 
@@ -1917,7 +1909,7 @@ bool Score::readOneFrame() {
 	uint16 channelSize;
 	uint16 channelOffset;
 
-	if (_framesStream->pos() >= _framesStreamSize || _framesStream->eos())
+	if (_framesStream->pos() - _frameDataOffset >= _framesStreamSize || _framesStream->eos())
 		return false;
 
 	uint16 frameSize = _framesStream->readUint16();
