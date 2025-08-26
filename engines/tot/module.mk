@@ -7,8 +7,7 @@ MODULE_OBJS = \
 	forest.o \
 	util.o \
 	anims.o \
-	routines2.o \
-	routines.o \
+	engine.o \
 	dialog.o \
 	font/bgifont.o \
 	font/biosfont.o \

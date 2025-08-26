@@ -86,8 +86,6 @@ Common::Error TotEngine::run() {
 	initVars();
 
 	_isIntroSeen = ConfMan.getBool("introSeen");
-	// _inventoryManager = new InventoryManager();
-	// _totGame = new TotGame();
 	// Set the engine's debugger console
 	setDebugger(new TotConsole(this));
 
