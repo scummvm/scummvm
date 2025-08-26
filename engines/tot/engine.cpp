@@ -871,7 +871,6 @@ void TotEngine::lookAtObject(byte objectCode) {
 void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint objectCode2) {
 	byte invIndex, indobj1, indobj2;
 
-	debug("Reading item register %d", objectCode1);
 	readObject(_sceneObjectsData, objectCode1, _curObject);
 	// verifyCopyProtection2();
 	if (_curObject.used[0] != 1 || _curObject.useWith != objectCode2) {
@@ -2832,9 +2831,7 @@ void TotEngine::useScreenObject() {
 				_mouse->hide();
 				_sound->playVoc("PUFF", 191183, 18001);
 				// Animate to scythe
-				debug("Start anim!");
 				drawFlc(180, 60, offset, 0, 9, 0, false, false, true, foobar);
-				debug("End Anim!");
 				// load Scythe
 				_currentRoomData->screenLayers[2].bitmapPointer = 1545820;
 				_currentRoomData->screenLayers[2].bitmapSize = 104;

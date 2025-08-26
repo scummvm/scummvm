@@ -882,16 +882,9 @@ static FliHeader readHeader(Common::File *file) {
 	return headerfile;
 }
 
-void blit(const Graphics::Surface *src, Common::Rect bounds) {
-	int16 height = bounds.bottom - bounds.top;
-	int16 width = bounds.right - bounds.left;
+void blit(TotFlicDecoder *flic, const Graphics::Surface *src, Common::Rect bounds) {
 	Graphics::Surface dest = g_engine->_screen->getSubArea(bounds);
-
-	for (int i = 0; i < height - 1; i++) {
-		for (int j = 0; j < width - 1; j++) {
-			*((byte *)dest.getBasePtr(j, i)) = *((const byte *)src->getBasePtr(j, i));
-		}
-	}
+	flic->copyDirtyRectsToBuffer((byte *)dest.getPixels(), dest.pitch);
 	g_engine->_screen->addDirtyRect(bounds);
 	g_engine->_screen->update();
 }
@@ -929,11 +922,11 @@ void drawFlc(
 		offset,
 		offset + header.size);
 
-	TotFlicDecoder flic = TotFlicDecoder();
+	TotFlicDecoder *flic = new TotFlicDecoder();
 
-	flic.loadStream(thisFlic);
+	flic->loadStream(thisFlic);
 
-	flic.start();
+	flic->start();
 	bool skipFrame = false;
 	do {
 		exitProcedure(exitAnim, isSkipAllowed);
@@ -944,64 +937,68 @@ void drawFlc(
 			if (exitAnim) {
 				goto Lexit_proc;
 			}
-			if(speed == 9) {
-				skipFrame = !skipFrame;
-			}
-			if (gameTick && !skipFrame) {
-				frameCount++;
+			// if(speed == 9) {
+			// 	skipFrame = !skipFrame;
+			// }
+			if (gameTick) {
+				// Make sure we also update the palette animations! Esp. for part 2
+				if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
+					g_engine->_graphics->advancePaletteAnim();
+				}
+
 				handleFlcEvent(eventNumber, loopNumber, frameCount);
-				const Graphics::Surface *frame = flic.decodeNextFrame();
-				if (frame) {
-					Common::Rect boundingBox = Common::Rect(x, y, x + flic.getWidth() + 1, y + flic.getHeight() + 1);
-					blit(frame, boundingBox);
-					if (flic.hasDirtyPalette()) {
+				if(!skipFrame) {
+					const Graphics::Surface *frame = flic->decodeNextFrame();
+					if (frame) {
+						frameCount++;
+						Common::Rect boundingBox = Common::Rect(x, y, x + flic->getWidth() + 1, y + flic->getHeight() + 1);
+						blit(flic, frame, boundingBox);
+						if (flic->hasDirtyPalette()) {
 
-						const byte *fliPalette = (const byte *)flic.getPalette();
-						byte *palette = (byte *)malloc(768);
-						Common::copy(fliPalette, fliPalette + 768, palette);
-						// game fixes background to 0
-						palette[0] = 0;
-						palette[1] = 0;
-						palette[2] = 0;
-						if (fullPalette) {
-							g_engine->_graphics->fadePalettes(g_engine->_graphics->getPalette(), palette);
-							g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
-						} else if (limitPaletteTo200) {
-							g_engine->_graphics->setPalette(palette, 0, 200);
-							for (int i = 0; i <= 200; i++) {
-								if (g_engine->_gamePart == 2 && !g_engine->_shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
-									continue;
+							const byte *fliPalette = (const byte *)flic->getPalette();
+							byte *palette = (byte *)malloc(768);
+							Common::copy(fliPalette, fliPalette + 768, palette);
+							// game fixes background to 0
+							palette[0] = 0;
+							palette[1] = 0;
+							palette[2] = 0;
+							if (fullPalette) {
+								g_engine->_graphics->fadePalettes(g_engine->_graphics->getPalette(), palette);
+								g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
+							} else if (limitPaletteTo200) {
+								g_engine->_graphics->setPalette(palette, 0, 200);
+								for (int i = 0; i <= 200; i++) {
+									if (g_engine->_gamePart == 2 && !g_engine->_shouldQuitGame && (i == 131 || i == 134 || i == 143 || i == 187)) {
+										continue;
+									}
+									g_engine->_graphics->_pal[i * 3 + 0] = palette[i * 3 + 0];
+									g_engine->_graphics->_pal[i * 3 + 1] = palette[i * 3 + 1];
+									g_engine->_graphics->_pal[i * 3 + 2] = palette[i * 3 + 2];
 								}
-								g_engine->_graphics->_pal[i * 3 + 0] = palette[i * 3 + 0];
-								g_engine->_graphics->_pal[i * 3 + 1] = palette[i * 3 + 1];
-								g_engine->_graphics->_pal[i * 3 + 2] = palette[i * 3 + 2];
-							}
 
-						} else {
-							g_engine->_graphics->setPalette(palette);
-							g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
+							} else {
+								g_engine->_graphics->setPalette(palette);
+								g_engine->_graphics->copyPalette(palette, g_engine->_graphics->_pal);
+							}
 						}
+
+						gameTick = false;
+					} else {
+						break;
 					}
-					// Make sure we also update the palette animations! Esp. for part 2
-					if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
-						g_engine->_graphics->advancePaletteAnim();
-					}
-					gameTick = false;
-				} else {
-					break;
 				}
 			}
 			g_system->delayMillis(10);
-		} while (!flic.endOfVideo() && !g_engine->shouldQuit());
+		} while (!flic->endOfVideo() && !g_engine->shouldQuit());
 
-		if (flic.endOfVideo()) {
-			if (flic.isRewindable()) {
-				flic.rewind();
+		if (flic->endOfVideo()) {
+			if (flic->isRewindable()) {
+				flic->rewind();
 			}
 			frameCount = 0;
 		}
 	} while (loopNumber <= loop && !g_engine->shouldQuit());
-	flic.stop();
+	flic->stop();
 Lexit_proc:
 	animationsFile.close();
 }

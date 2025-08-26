@@ -265,7 +265,6 @@ inline bool keyPressed() {
 
 void TotEngine::credits() {
 	_saveAllowed = true;
-	debug("Credits");
 	palette pal2;
 	byte *background;
 	byte *background2;
