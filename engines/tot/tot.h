@@ -250,7 +250,7 @@ public:
 	/**
 	 * 1 first part, 2 second part
 	 */
-	byte _gamePart = 1;
+	byte _gamePart;
 	/**
 	 * Number of frames of secondary animation
 	 */

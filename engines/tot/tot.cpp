@@ -1261,7 +1261,7 @@ void TotEngine::initVars() {
 		}
 	}
 
-	for (int i = 0; i < _secondaryAnimDirCount; i++) {
+	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < kSecAnimationFrameCount; j++) {
 			_secondaryAnimation.bitmap[i][j] = NULL;
 		}
