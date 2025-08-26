@@ -55,6 +55,9 @@ enum {
 
 	kMainChannelSizeD6 = 48,
 	kSprChannelSizeD6 = 24,
+
+	kMainChannelSizeD7 = 48,
+	kSprChannelSizeD7 = 24,
 };
 
 struct PaletteInfo {
@@ -188,6 +191,14 @@ private:
 	void readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 	void readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
 
+	void writeMainChannelsD6(Common::SeekableWriteStream *writeStream);
+
+	void readChannelD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+	void readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size);
+
+	void writeMainChannelsD7(Common::SeekableWriteStream *writeStream);
+
 	Image::ImageDecoder *getImageFrom(uint16 spriteId);
 	Common::String readTextStream(Common::SeekableReadStreamEndian *textStream, TextCastMember *textCast);
 
@@ -204,9 +215,12 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
+void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition);
 
 void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite);
 void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite);
+void writeSpriteDataD6(Common::SeekableWriteStream *writeStream, Sprite &sprite);
+void writeSpriteDataD7(Common::SeekableWriteStream *writeStream, Sprite &sprite);
 
 } // End of namespace Director
 

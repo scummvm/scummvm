@@ -105,6 +105,8 @@ void Frame::readChannel(Common::MemoryReadStreamEndian &stream, uint16 offset, u
 		readChannelD5(stream, offset, size);
 	} else if (version >= kFileVer600 && version < kFileVer700) {
 		readChannelD6(stream, offset, size);
+	} else if (version >= kFileVer700 && version < kFileVer1100) {
+		readChannelD7(stream, offset, size);
 	} else {
 		error("Frame::readChannel(): Unsupported Director version: %d", version);
 	}
@@ -117,6 +119,12 @@ void Frame::writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 v
 		writeMainChannelsD4(writeStream);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
 		writeMainChannelsD5(writeStream);
+	} else if (version >= kFileVer500 && version < kFileVer600) {
+		writeMainChannelsD5(writeStream);
+	} else if (version >= kFileVer600 && version < kFileVer700) {
+		writeMainChannelsD6(writeStream);
+	} else if (version >= kFileVer700 && version < kFileVer1100) {
+		writeMainChannelsD7(writeStream);
 	} else {
 		warning("Frame::writeChannel(): Unsupported Director version: %d", version);
 	}
@@ -1213,6 +1221,10 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 	error("Frame::readMainChannelsD6(): Miscomputed field position: %d", offset);
 }
 
+void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
+	warning("STUB: Frame::writeMainChannelsD6()");
+}
+
 void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
 	uint16 spritePosition = (offset - kMainChannelSizeD6) / kSprChannelSizeD6;
 	uint16 spriteStart = spritePosition * kSprChannelSizeD6 + kMainChannelSizeD6;
@@ -1384,6 +1396,233 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		}
 	}
 }
+
+void writeSpriteDataD6(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
+	warning("STUB: writeSpriteDataD6()");
+}
+
+/**************************
+ *
+ * D7 Loading
+ *
+ **************************/
+
+void Frame::readChannelD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	// 48 bytes header
+	if (offset < kMainChannelSizeD7) {
+		uint16 needSize = MIN(size, (uint16)(kMainChannelSizeD7 - offset));
+		readMainChannelsD7(stream, offset, needSize);
+		size -= needSize;
+		offset += needSize;
+	}
+
+	if (offset >= kMainChannelSizeD7) {
+		byte spritePosition = (offset - kMainChannelSizeD7) / kSprChannelSizeD7;
+		uint16 nextStart = (spritePosition + 1) * kSprChannelSizeD7 + kMainChannelSizeD7;
+
+		while (size > 0) {
+			uint16 needSize = MIN((uint16)(nextStart - offset), size);
+			readSpriteD7(stream, offset, needSize);
+			offset += needSize;
+			size -= needSize;
+			nextStart += kSprChannelSizeD7;
+		}
+	}
+}
+
+void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	if (debugChannelSet(8, kDebugLoading)) {
+		debugC(8, kDebugLoading, "Frame::readMainChannelsD7(): %d byte header", size);
+		stream.hexdump(size);
+	}
+	error("Frame::readMainChannelsD7(): Miscomputed field position: %d", offset);
+}
+
+void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {
+	warning("STUB: Frame::writeMainChannelsD7()");
+}
+
+void Frame::readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
+	uint16 spritePosition = (offset - kMainChannelSizeD7) / kSprChannelSizeD7;
+	uint16 spriteStart = spritePosition * kSprChannelSizeD7 + kMainChannelSizeD7;
+
+	uint16 fieldPosition = offset - spriteStart;
+
+	debugC(5, kDebugLoading, "Frame::readSpriteD7(): sprite: %d offset: %d size: %d, field: %d", spritePosition, offset, size, fieldPosition);
+	if (debugChannelSet(8, kDebugLoading)) {
+		stream.hexdump(size);
+	}
+
+	Sprite &sprite = *_sprites[spritePosition + 1];
+
+	uint32 initPos = stream.pos();
+	uint32 finishPosition = initPos + size;
+
+	readSpriteDataD7(stream, sprite, initPos - fieldPosition, finishPosition);
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readSpriteD7(): Read %" PRId64 " extra bytes", stream.pos() - finishPosition);
+	}
+
+	// Sometimes removed sprites leave garbage in the channel
+	// We set it to zero, so then could skip
+	if (sprite._width <= 0 || sprite._height <= 0)
+		sprite._width = sprite._height = 0;
+}
+
+void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+	while (stream.pos() < finishPosition) {
+		switch (stream.pos() - startPosition) {
+		case 0:
+			if (sprite._puppet) {
+				stream.readByte();
+			} else {
+				sprite._spriteType = (SpriteType)stream.readByte();
+			}
+			break;
+		case 1: {
+			byte inkData = stream.readByte();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPInk))
+				continue;
+
+			sprite._inkData = inkData;
+
+			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+			sprite._trails = sprite._inkData & 0x40 ? true : false;
+			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+			}
+			break;
+		case 2: {
+			uint8 foreColor = stream.readByte();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor))
+				continue;
+
+			sprite._foreColor = g_director->transformColor(foreColor);
+			}
+			break;
+		case 3: {
+			uint8 backColor = stream.readByte();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor))
+				continue;
+
+			sprite._backColor = g_director->transformColor(backColor);
+			}
+			break;
+		case 4:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readSint16();
+			} else {
+				int castLib = stream.readSint16();
+				sprite._castId = CastMemberID(sprite._castId.member, castLib);
+			}
+			break;
+		case 6:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readUint16();
+			} else {
+				uint16 memberID = stream.readUint16();
+				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
+			}
+			break;
+		case 8: {
+				int scriptCastLib = stream.readSint16();
+				sprite._scriptId = CastMemberID(sprite._scriptId.member, scriptCastLib);
+			}
+			break;
+		case 10: {
+				uint16 scriptMemberID = stream.readUint16();
+				sprite._scriptId = CastMemberID(scriptMemberID, sprite._scriptId.castLib);  // Inherit castLib from previous frame
+			}
+			break;
+		case 12: {
+			uint16 startPointY = stream.readUint16();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPLocV) || sprite.getAutoPuppet(kAPLoc))
+				continue;
+
+			sprite._startPoint.y = startPointY;
+			break;
+			}
+		case 14: {
+			uint16 startPointX = stream.readUint16();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPLocH) || sprite.getAutoPuppet(kAPLoc))
+				continue;
+
+			sprite._startPoint.x = startPointX;
+			}
+			break;
+		case 16: {
+			uint16 height = stream.readUint16();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPHeight))
+				continue;
+
+			sprite._height = height;
+			}
+			break;
+		case 18: {
+			uint16 width = stream.readUint16();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPWidth))
+				continue;
+
+			sprite._width = width;
+			}
+			break;
+		case 20:
+			// & 0x0f scorecolor
+			// 0x10 forecolor is rgb
+			// 0x20 bgcolor is rgb
+			// 0x40 editable
+			// 0x80 moveable
+			sprite._colorcode = stream.readByte();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPMoveable))
+				continue;
+
+			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
+			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			break;
+		case 21: {
+			byte blendAmount = stream.readByte();
+
+			if (sprite._puppet || sprite.getAutoPuppet(kAPBlend))
+				continue;
+
+			sprite._blendAmount = blendAmount;
+			}
+			break;
+		case 22:
+			if (sprite._puppet) {
+				stream.readByte();
+			} else {
+				sprite._thickness = stream.readByte();
+			}
+			break;
+		case 23:
+			(void)stream.readByte(); // unused
+			break;
+		default:
+			// This means that a `case` label has to be split at this position
+			error("readSpriteDataD7(): Miscomputed field position: %" PRId64, stream.pos() - startPosition);
+		}
+	}
+}
+
+void writeSpriteDataD7(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
+	warning("STUB: writeSpriteDataD7()");
+}
+
+/**************************
+ *
+ * Utility Functions
+ *
+ **************************/
 
 Common::String Frame::formatChannelInfo() {
 	Common::String result;
