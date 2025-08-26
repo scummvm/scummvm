@@ -1,1 +1,2 @@
 engines/private/detection.cpp
+engines/private/metaengine.cpp
