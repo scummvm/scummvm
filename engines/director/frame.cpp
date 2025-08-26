@@ -783,10 +783,9 @@ void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite)
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._scriptId.member);			// 0
 
-	// If the sprite is a puppet (controlled by lingo scripting)
-	// The rest of the data isn't read
 	if (sprite._puppet) {
-		writeStream->write(0, 19);								// 1-19
+		for (int i = 1; i < kSprChannelSizeD4; i++)
+			writeStream->writeByte(0);
 	} else {
 		writeStream->writeByte((byte) sprite._spriteType);		// 1
 		writeStream->writeByte(sprite._foreColor);				// 2
@@ -1160,10 +1159,9 @@ void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite)
 	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._spriteType);			// 0
 
-	// If the sprite is a puppet (controlled by lingo scripting)
-	// The rest of the data isn't read
 	if (sprite._puppet) {
-		writeStream->write(0, 19);								// 1-19
+		for (int i = 1; i < kSprChannelSizeD5; i++)
+			writeStream->writeByte(0);
 	} else {
 		writeStream->writeByte(sprite._inkData);				// 1
 		writeStream->writeSint16BE(sprite._castId.castLib);		// 2, 3
