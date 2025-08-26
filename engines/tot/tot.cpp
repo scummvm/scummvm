@@ -510,7 +510,7 @@ int TotEngine::startGame() {
 				_sound->fadeInMusic();
 				if (_cpCounter2 > 43)
 					showError(274);
-				sacrificeScene();
+				// sacrificeScene();
 				_graphics->clear();
 				loadInventory();
 				_graphics->loadPaletteFromFile("SEGUNDA");
@@ -593,14 +593,13 @@ void TotEngine::newGame() {
 	_saveAllowed = true;
 	_mouse->hide();
 	obtainName(_characterName);
-
 	if (!shouldQuit()) {
 		_graphics->totalFadeOut(0);
 		_graphics->clear();
 		displayLoading();
 		freeInventory();
-		loadInventory();
 		resetGameState();
+		loadInventory();
 		_inGame = true;
 		for (int i = 0; i < kInventoryIconCount; i++) {
 			_inventory[i].bitmapIndex = 34;
@@ -1127,7 +1126,6 @@ void TotEngine::initializeScreenFile() {
 }
 
 void TotEngine::resetGameState() {
-	debug("Reset game state");
 	_characterPosX = 160;
 	_characterPosY = 80;
 	_iframe = 0;

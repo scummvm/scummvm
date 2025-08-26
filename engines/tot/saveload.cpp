@@ -249,7 +249,7 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 		initializeScreenFile();
 		initializeObjectFile();
 		readConversationFile();
-		// }
+
 		result = syncSaveData(s, loadedGame);
 		loadGame(loadedGame);
 	} else {
