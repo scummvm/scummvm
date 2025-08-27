@@ -53,7 +53,7 @@ enum {
 	kMainChannelSizeD5 = 48,
 	kSprChannelSizeD5 = 24,
 
-	kMainChannelSizeD6 = 48,
+	kMainChannelSizeD6 = 144,
 	kSprChannelSizeD6 = 24,
 
 	kMainChannelSizeD7 = 48,
@@ -80,6 +80,8 @@ struct PaletteInfo {
 	byte style;
 	byte colorCode;
 
+	uint32 spriteListIdx; // D6+
+
 	PaletteInfo() {
 		paletteId = CastMemberID(0, 0);
 		firstColor = lastColor = 0;
@@ -89,26 +91,34 @@ struct PaletteInfo {
 		overTime = false; speed = 0;
 		frameCount = cycleCount = 0;
 		fade = delay = style = colorCode = 0;
+		spriteListIdx = 0;
 	}
 };
 
 struct MainChannels {
 	CastMemberID actionId;
+	uint32 scriptSpriteListIdx; // D6+
+
 	uint16 transDuration;
 	uint8 transArea; // 1 - Whole Window, 0 - Changing Area
 	uint8 transChunkSize;
 	TransitionType transType;
 	CastMemberID trans;
+	uint32 transSpriteListIdx; // D6+
 	PaletteInfo palette;
 	uint8 tempo;
+	uint32 tempoSpriteListIdx; // D6+
+	uint16 tempoD6Flags;
 
 	uint8 scoreCachedTempo;
 	CastMemberID scoreCachedPaletteId;
 
 	CastMemberID sound1;
 	uint8 soundType1;
+	uint32 sound1SpriteListIdx; // D6+
 	CastMemberID sound2;
 	uint8 soundType2;
+	uint32 sound2SpriteListIdx; // D6+
 
 	byte colorTempo;
 	byte colorSound1;
@@ -125,6 +135,8 @@ struct MainChannels {
 		transArea = 0;
 		transChunkSize = 0;
 		tempo = 0;
+		tempoSpriteListIdx = 0;
+		tempoD6Flags = 0;
 
 		scoreCachedTempo = 0;
 		scoreCachedPaletteId = CastMemberID(0, 0);
@@ -133,8 +145,11 @@ struct MainChannels {
 		sound2 = CastMemberID(0, 0);
 		soundType1 = 0;
 		soundType2 = 0;
+		sound1SpriteListIdx = 0;
+		sound2SpriteListIdx = 0;
 
 		actionId = CastMemberID(0, 0);
+		scriptSpriteListIdx = 0;
 		skipFrameFlag = 0;
 		blend = 0;
 

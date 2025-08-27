@@ -1226,7 +1226,173 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 		debugC(8, kDebugLoading, "Frame::readMainChannelsD6(): %d byte header", size);
 		stream.hexdump(size);
 	}
-	error("Frame::readMainChannelsD6(): Miscomputed field position: %d", offset);
+
+	uint32 initPos = stream.pos();
+	uint32 finishPosition = initPos + size;
+	byte unk[16];
+
+	while (stream.pos() < finishPosition) {
+		switch (stream.pos() - initPos + offset) {
+		// Sound1
+		case 0:
+			_mainChannels.sound1.castLib = stream.readUint16();
+			break;
+		case 2:
+			_mainChannels.sound1.member = stream.readUint16();
+			break;
+		case 4:
+			_mainChannels.sound1SpriteListIdx = stream.readUint32();
+			break;
+		case 6:
+			_mainChannels.sound1SpriteListIdx = stream.readUint16();
+			break;
+		case 8:
+			_mainChannels.colorSound1 = stream.readByte();
+			break;
+		case 9:
+			stream.read(unk, 15); // alignment bytes
+			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): sound1.unk: ");
+			break;
+
+		// Sound2
+		case 24+0:
+			_mainChannels.sound2.castLib = stream.readUint16();
+			break;
+		case 24+2:
+			_mainChannels.sound2.member = stream.readUint16();
+			break;
+		case 24+4:
+			_mainChannels.sound2SpriteListIdx = stream.readUint32();
+			break;
+		case 24+8:
+			_mainChannels.colorSound2 = stream.readByte();
+			break;
+		case 24+9:
+			stream.read(unk, 15); // alignment bytes
+			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): sound2.unk: ");
+			break;
+
+		// Palette
+		case 48+0:
+			_mainChannels.palette.paletteId.castLib = stream.readSint16();
+			break;
+		case 48+2:
+			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!_mainChannels.palette.paletteId.isNull())
+				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
+			break;
+		case 48+4:
+			_mainChannels.palette.speed = stream.readByte(); // 52
+			_mainChannels.palette.flags = stream.readByte(); // 53
+			_mainChannels.palette.colorCycling = (_mainChannels.palette.flags & 0x80) != 0;
+			_mainChannels.palette.normal = (_mainChannels.palette.flags & 0x60) == 0x00;
+			_mainChannels.palette.fadeToBlack = (_mainChannels.palette.flags & 0x60) == 0x60;
+			_mainChannels.palette.fadeToWhite = (_mainChannels.palette.flags & 0x60) == 0x40;
+			_mainChannels.palette.autoReverse = (_mainChannels.palette.flags & 0x10) != 0;
+			_mainChannels.palette.overTime = (_mainChannels.palette.flags & 0x04) != 0;
+			break;
+		case 48+6:
+			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80); // 51
+			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80); // 52
+			break;
+		case 48+8:
+			_mainChannels.palette.frameCount = stream.readUint16(); // 53
+			break;
+		case 48+10:
+			_mainChannels.palette.cycleCount = stream.readUint16(); // 55
+			break;
+		case 48+12:
+			_mainChannels.palette.fade = stream.readByte();
+			break;
+		case 48+13:
+			_mainChannels.palette.delay = stream.readByte();
+			break;
+		case 48+14:
+			_mainChannels.palette.style = stream.readByte();
+			break;
+		case 48+15:
+			_mainChannels.palette.colorCode = stream.readByte();
+			break;
+		case 48+16:
+			_mainChannels.palette.spriteListIdx = stream.readUint32();
+			break;
+		case 48+20:
+			stream.read(unk, 4); // alignment bytes
+			hexdumpIfNotZero(unk, 4, "Frame::readMainChannelsD6(): palette.unk: ");
+			break;
+
+		// Transition
+		case 72+0:
+			_mainChannels.trans.castLib = stream.readUint16();
+			break;
+		case 72+2:
+			_mainChannels.trans.member = stream.readUint16();
+			break;
+		case 72+4:
+			_mainChannels.transSpriteListIdx = stream.readUint32();
+			break;
+		case 72+8:
+			_mainChannels.colorTrans = stream.readByte();
+			break;
+		case 72+9:
+			stream.read(unk, 15); // alignment bytes
+			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): trans.unk: ");
+			break;
+
+		// Tempo
+		case 96+0:
+			_mainChannels.tempoSpriteListIdx = stream.readUint32();
+			break;
+		case 96+4:
+			_mainChannels.tempoD6Flags = stream.readUint16();
+			break;
+		case 96+6:
+			_mainChannels.tempo = stream.readByte();
+			if (_mainChannels.tempo && _mainChannels.tempo <= 120)
+				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
+			break;
+		case 96+7:
+			_mainChannels.colorTempo = stream.readByte();
+			break;
+		case 96+8:
+			stream.read(unk, 16); // alignment bytes
+			hexdumpIfNotZero(unk, 16, "Frame::readMainChannelsD6(): tempo.unk: ");
+			break;
+
+		// Script
+		case 120+0:
+			_mainChannels.actionId.castLib = stream.readUint16();
+			break;
+		case 120+2:
+			_mainChannels.actionId.member = stream.readUint16();
+			break;
+		case 120+4:
+			_mainChannels.scriptSpriteListIdx = stream.readUint32();
+			break;
+		case 120+8:
+			_mainChannels.colorScript = stream.readByte();
+			break;
+		case 120+9:
+			stream.read(unk, 15); // alignment bytes
+			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): sound2.unk: ");
+			break;
+
+		// 144 bytes (24 * 6)
+
+		default:
+			// This means that a `case` label has to be split at this position
+			error("Frame::readMainChannelsD6(): Miscomputed field position: %" PRId64, stream.pos() - initPos + offset);
+			break;
+		}
+	}
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readMainChannelsD6(): Read %" PRId64 "extra bytes", stream.pos() - finishPosition);
+	}
+
+	_mainChannels.transChunkSize = CLIP<byte>(_mainChannels.transChunkSize, 0, 128);
+	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
 void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
@@ -1318,6 +1484,13 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				stream.readUint32();
 			} else {
 				sprite._spriteListIdx = stream.readUint32();
+			}
+			break;
+		case 10: // This field could be optimized
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readUint16();
+			} else {
+				sprite._spriteListIdx = stream.readUint16();
 			}
 			break;
 		case 12:

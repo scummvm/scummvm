@@ -1810,3 +1810,20 @@ double readAppleFloat80(void *ptr_) {
 
 	return Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
 }
+
+void hexdumpIfNotZero(byte *data, int len, const char *prefix) {
+	bool nonZero = false;
+	for (int i = 0; i < len; i++) {
+		if (data[i] != 0) {
+			nonZero = true;
+			break;
+		}
+	}
+
+	if (nonZero) {
+		if (prefix)
+			debugN("%s ", prefix);
+
+		Common::hexdump(data, len);
+	}
+}

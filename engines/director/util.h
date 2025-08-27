@@ -140,5 +140,6 @@ inline void lerpPalette(byte *target, const byte *palA, int palALength, const by
 } // End of namespace Director
 
 double readAppleFloat80(void *ptr);
+void hexdumpIfNotZero(byte *data, int len, const char *prefix);
 
 #endif
