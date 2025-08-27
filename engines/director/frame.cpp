@@ -899,7 +899,7 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
 			break;
 		case 22:
-			stream.read(unk, 2);
+			stream.read(unk, 2); // alignment bytes
 			if (unk[0] || unk[1])
 				warning("Frame::readMainChannelsD5(): STUB: unk4: 0x%02x 0x%02x", unk[0], unk[1]);
 			break;
@@ -934,17 +934,19 @@ void Frame::readMainChannelsD5(Common::MemoryReadStreamEndian &stream, uint16 of
 			_mainChannels.palette.cycleCount = stream.readUint16(); // 34
 			break;
 		case 36:
-			stream.read(unk, 2);
-			if (unk[0] || unk[1])
-				warning("Frame::readMainChannelsD5(): STUB: unk5: 0x%02x 0x%02x", unk[0], unk[1]);
+			_mainChannels.palette.fade = stream.readByte();
+			break;
+		case 37:
+			_mainChannels.palette.delay = stream.readByte();
 			break;
 		case 38:
-			stream.read(unk, 2);
-			if (unk[0] || unk[1])
-				warning("Frame::readMainChannelsD5(): STUB: unk6: 0x%02x 0x%02x", unk[0], unk[1]);
+			_mainChannels.palette.style = stream.readByte();
+			break;
+		case 39:
+			_mainChannels.palette.colorCode = stream.readByte();
 			break;
 		case 40: {
-				stream.read(unk, 8);
+				stream.read(unk, 8); // alignment bytes
 
 				Common::String s;
 				for (int i = 0; i < 8; i++)
@@ -997,9 +999,11 @@ void Frame::writeMainChannelsD5(Common::SeekableWriteStream *writeStream) {
 
 	writeStream->writeUint16BE(_mainChannels.palette.frameCount);			// 32, 33
 	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);			// 34, 35
+	writeStream->writeByte(_mainChannels.palette.fade);					// 36
+	writeStream->writeByte(_mainChannels.palette.delay);					// 37
+	writeStream->writeByte(_mainChannels.palette.style);					// 38
+	writeStream->writeByte(_mainChannels.palette.colorCode);				// 39
 
-	writeStream->writeUint16BE(0);		// Unknown	// 36, 37
-	writeStream->writeUint16BE(0);		// Unknown	// 38, 39
 	writeStream->writeUint64BE(0);		// Unknown 	// 40, 41, 42, 43, 44, 45, 46, 47
 }
 
