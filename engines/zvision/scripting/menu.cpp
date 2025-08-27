@@ -117,8 +117,6 @@ void MenuManager::onMouseDown(const Common::Point &pos) {
 				_redraw = true;
 			}
 	}
-	debugC(kDebugMouse, "mouse position %d %d", pos.x, pos.y);
-	debugC(kDebugMouse, "panorama position %d %d", pos.x, pos.y);
 }
 
 void MenuManager::onMouseMove(const Common::Point &pos) {

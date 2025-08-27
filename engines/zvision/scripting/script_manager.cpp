@@ -533,7 +533,7 @@ void ScriptManager::killSideFxType(ScriptingEffect::ScriptingEffectType type) {
 }
 
 void ScriptManager::onMouseDown(const Common::Point &screenSpacePos, const Common::Point &backgroundImageSpacePos) {
-	debugC(1, kDebugMouse, "Mouse panorama/script coordinates %d x %d", backgroundImageSpacePos.x, backgroundImageSpacePos.y);
+	debugC(1, kDebugMouse, "Mouse screen coordinates: %d, %d, background/script coordinates: %d, %d", screenSpacePos.x, screenSpacePos.y, backgroundImageSpacePos.x, backgroundImageSpacePos.y);
 	if (!_activeControls) {
 		return;
 	}
