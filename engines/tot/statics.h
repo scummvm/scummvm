@@ -718,13 +718,13 @@ static const char *const fullScreenMessages[2][59] = {
     "... AAAHHHHH!! ...",
     // Diploma
     // 49
-     "CERTIFICATE No:",
-    "I, Jacob, the Great Master",
-    "of the Sek Umh Fraternity",
-    "certify that: ",
-    "has liberated me from the",
-    "Eternal Caverns, and I shall be",
-    "greatful to him forever.",
+     "CERTIFICADO N\xA7:",
+    "Yo, Jacob, el Gran Maestre ",
+    "de la Hermandad de Sek Umh Nejl",
+    "certifico que: ",
+    "me ha liberado de las Cavernas",
+    "Eternas, por lo cual le estar\x82 ",
+    "por siempre agradecido.",
 	// 56
 	"  him back!  If you  achieve  this your  body will",
 	"  live once more.",

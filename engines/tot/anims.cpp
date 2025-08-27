@@ -925,7 +925,9 @@ void drawFlc(
 	TotFlicDecoder *flic = new TotFlicDecoder();
 
 	flic->loadStream(thisFlic);
-
+	if(speed == 9) {
+		debug("Playing at half speed!");
+	}
 	flic->start();
 	bool skipFrame = false;
 	do {
@@ -937,15 +939,15 @@ void drawFlc(
 			if (exitAnim) {
 				goto Lexit_proc;
 			}
-			// if(speed == 9) {
-			// 	skipFrame = !skipFrame;
-			// }
+
 			if (gameTick) {
 				// Make sure we also update the palette animations! Esp. for part 2
 				if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
 					g_engine->_graphics->advancePaletteAnim();
 				}
-
+				if(speed == 9) {
+					skipFrame = !skipFrame;
+				}
 				handleFlcEvent(eventNumber, loopNumber, frameCount);
 				if(!skipFrame) {
 					const Graphics::Surface *frame = flic->decodeNextFrame();
@@ -986,6 +988,8 @@ void drawFlc(
 					} else {
 						break;
 					}
+				} else {
+					debug("Skipping frame!");
 				}
 			}
 			g_system->delayMillis(10);
