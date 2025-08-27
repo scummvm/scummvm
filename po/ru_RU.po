@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-24 17:16+0000\n"
+"POT-Creation-Date: 2025-08-27 21:21+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -3857,7 +3857,7 @@ msgstr "Раскладка клавиш по умолчанию"
 #: engines/cine/metaengine.cpp:277 engines/composer/metaengine.cpp:113
 #: engines/cruise/metaengine.cpp:173 engines/draci/metaengine.cpp:200
 #: engines/groovie/metaengine.cpp:205 engines/hdb/metaengine.cpp:207
-#: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:97
+#: engines/hopkins/metaengine.cpp:211 engines/hugo/metaengine.cpp:123
 #: engines/illusions/metaengine.cpp:94 engines/kyra/engine/eobcommon.cpp:367
 #: engines/kyra/engine/lol.cpp:502 engines/lure/metaengine.cpp:177
 #: engines/made/metaengine.cpp:126 engines/mads/metaengine.cpp:280
@@ -3892,7 +3892,7 @@ msgstr "Средний щелчок"
 #: engines/cine/metaengine.cpp:283 engines/composer/metaengine.cpp:119
 #: engines/cruise/metaengine.cpp:179 engines/draci/metaengine.cpp:206
 #: engines/groovie/metaengine.cpp:211 engines/hopkins/metaengine.cpp:217
-#: engines/hugo/metaengine.cpp:104 engines/illusions/metaengine.cpp:101
+#: engines/hugo/metaengine.cpp:130 engines/illusions/metaengine.cpp:101
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:503
 #: engines/lure/metaengine.cpp:183 engines/made/metaengine.cpp:133
 #: engines/mads/metaengine.cpp:286 engines/mtropolis/metaengine.cpp:167
@@ -6293,7 +6293,7 @@ msgstr "Проверить обновления..."
 #: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
 #: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
-#: engines/hugo/metaengine.cpp:92 engines/illusions/metaengine.cpp:89
+#: engines/hugo/metaengine.cpp:118 engines/illusions/metaengine.cpp:89
 #: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
 #: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
 #: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
@@ -6461,7 +6461,7 @@ msgid "Walk"
 msgstr "Идти"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
-#: engines/hugo/hugo.cpp:427 engines/lure/lure.cpp:57
+#: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
 #: engines/mortevielle/mortevielle.cpp:300 engines/sky/compact.cpp:129
 #: engines/supernova/supernova.cpp:467 engines/teenagent/resources.cpp:312
 #: engines/tony/tony.cpp:187 engines/toon/toon.cpp:5425
@@ -6471,7 +6471,7 @@ msgid "Unable to locate the '%s' engine data file."
 msgstr "Не удалось найти файл движка %s."
 
 #: engines/access/resources.cpp:51 engines/drascula/drascula.cpp:1009
-#: engines/hugo/hugo.cpp:439 engines/lure/lure.cpp:66
+#: engines/hugo/hugo.cpp:454 engines/lure/lure.cpp:66
 #: engines/mortevielle/mortevielle.cpp:308 engines/supernova/supernova.cpp:472
 #: engines/teenagent/resources.cpp:329 engines/tony/tony.cpp:200
 #: engines/toon/toon.cpp:5438
@@ -6480,7 +6480,7 @@ msgid "The '%s' engine data file is corrupt."
 msgstr "Файл движка %s повреждён."
 
 #: engines/access/resources.cpp:60 engines/drascula/drascula.cpp:1020
-#: engines/hugo/hugo.cpp:449 engines/lure/lure.cpp:69
+#: engines/hugo/hugo.cpp:464 engines/lure/lure.cpp:69
 #: engines/mortevielle/mortevielle.cpp:318 engines/tony/tony.cpp:211
 #: engines/toon/toon.cpp:5449
 #, c-format
@@ -6534,11 +6534,12 @@ msgstr "Используйте курсор-шахматку из более п�
 #: engines/cruise/metaengine.cpp:45 engines/drascula/metaengine.cpp:55
 #: engines/efh/metaengine.cpp:44 engines/glk/metaengine.cpp:193
 #: engines/gob/metaengine.cpp:57 engines/got/metaengine.cpp:48
-#: engines/griffon/metaengine.cpp:40 engines/made/metaengine.cpp:51
-#: engines/mm/metaengine.cpp:91 engines/mortevielle/metaengine.cpp:37
-#: engines/parallaction/metaengine.cpp:52 engines/sci/detection_options.h:223
-#: engines/scumm/dialogs.cpp:1221 engines/scumm/metaengine.cpp:863
-#: engines/supernova/metaengine.cpp:53 engines/wage/metaengine.cpp:51
+#: engines/griffon/metaengine.cpp:40 engines/hugo/metaengine.cpp:45
+#: engines/made/metaengine.cpp:51 engines/mm/metaengine.cpp:91
+#: engines/mortevielle/metaengine.cpp:37 engines/parallaction/metaengine.cpp:52
+#: engines/sci/detection_options.h:223 engines/scumm/dialogs.cpp:1221
+#: engines/scumm/metaengine.cpp:863 engines/supernova/metaengine.cpp:53
+#: engines/wage/metaengine.cpp:51
 msgid "Enable Text to Speech"
 msgstr "Включить текст-в-речь"
 
@@ -6546,9 +6547,10 @@ msgstr "Включить текст-в-речь"
 #: engines/cge/metaengine.cpp:57 engines/cine/metaengine.cpp:70
 #: engines/cruise/metaengine.cpp:46 engines/drascula/metaengine.cpp:56
 #: engines/efh/metaengine.cpp:45 engines/gob/metaengine.cpp:58
-#: engines/got/metaengine.cpp:49 engines/made/metaengine.cpp:52
-#: engines/mm/metaengine.cpp:92 engines/mortevielle/metaengine.cpp:38
-#: engines/scumm/dialogs.cpp:1222 engines/scumm/metaengine.cpp:864
+#: engines/got/metaengine.cpp:49 engines/hugo/metaengine.cpp:46
+#: engines/made/metaengine.cpp:52 engines/mm/metaengine.cpp:92
+#: engines/mortevielle/metaengine.cpp:38 engines/scumm/dialogs.cpp:1222
+#: engines/scumm/metaengine.cpp:864
 msgid "Use TTS to read text in the game (if TTS is available)"
 msgstr "Использовать TTS для чтения игровых текстов вслух (если TTS доступна)"
 
@@ -6842,7 +6844,7 @@ msgstr "Главная AGOS"
 #: engines/buried/metaengine.cpp:136 engines/chamber/metaengine.cpp:60
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/draci/metaengine.cpp:196 engines/drascula/metaengine.cpp:206
-#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:93
+#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:119
 #: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
 #: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
 #: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
@@ -7276,7 +7278,7 @@ msgstr "Раскладки клавиш выхода"
 #. I18N: ESC key
 #: engines/bbvs/metaengine.cpp:111 engines/cruise/metaengine.cpp:223
 #: engines/freescape/movement.cpp:101 engines/got/metaengine.cpp:78
-#: engines/hugo/metaengine.cpp:160 engines/lure/metaengine.cpp:209
+#: engines/hugo/metaengine.cpp:186 engines/lure/metaengine.cpp:209
 #: engines/mads/metaengine.cpp:292 engines/mm/mm1/metaengine.cpp:41
 #: engines/mm/mm1/metaengine.cpp:47 engines/saga/metaengine.cpp:328
 #: engines/tinsel/metaengine.cpp:258 engines/tsage/metaengine.cpp:190
@@ -7557,7 +7559,7 @@ msgstr "Вкл/выкл приватность для улик"
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:231
-#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:128
+#: engines/hopkins/metaengine.cpp:236 engines/hugo/metaengine.cpp:154
 #: engines/lure/metaengine.cpp:191 engines/made/metaengine.cpp:181
 #: engines/mads/metaengine.cpp:305 engines/pegasus/pegasus.cpp:2825
 #: engines/prince/metaengine.cpp:243 engines/saga/metaengine.cpp:442
@@ -9606,29 +9608,29 @@ msgstr "Фонарик"
 msgid "Glowstick"
 msgstr "Светящаяся палочка"
 
-#: engines/hugo/metaengine.cpp:111
+#: engines/hugo/metaengine.cpp:137
 msgid "User help"
 msgstr "Помощь пользователя"
 
-#: engines/hugo/metaengine.cpp:117
+#: engines/hugo/metaengine.cpp:143
 msgid "Toggle sound"
 msgstr "Переключить звук"
 
-#: engines/hugo/metaengine.cpp:122
+#: engines/hugo/metaengine.cpp:148
 msgid "Repeat last line"
 msgstr "Повторить последнюю фразу"
 
-#: engines/hugo/metaengine.cpp:135 engines/lure/metaengine.cpp:197
+#: engines/hugo/metaengine.cpp:161 engines/lure/metaengine.cpp:197
 #: engines/mads/metaengine.cpp:311 engines/tsage/metaengine.cpp:247
 msgid "Restore game"
 msgstr "Восстановить игру"
 
-#: engines/hugo/metaengine.cpp:142 engines/mohawk/myst_stacks/menu.cpp:300
+#: engines/hugo/metaengine.cpp:168 engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/riven_stacks/aspit.cpp:371
 msgid "New game"
 msgstr "Новое сохранение"
 
-#: engines/hugo/metaengine.cpp:148 engines/wintermute/keymapper_tables.h:249
+#: engines/hugo/metaengine.cpp:174 engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:396
 #: engines/wintermute/keymapper_tables.h:658
 #: engines/wintermute/keymapper_tables.h:864
@@ -9641,47 +9643,47 @@ msgstr "Новое сохранение"
 msgid "Show inventory"
 msgstr "Показать инвентарь"
 
-#: engines/hugo/metaengine.cpp:154
+#: engines/hugo/metaengine.cpp:180
 msgid "Turbo mode"
 msgstr "Турбо-режим"
 
 #. I18N: Move actor in the top direction
-#: engines/hugo/metaengine.cpp:167
+#: engines/hugo/metaengine.cpp:193
 msgid "Move to top"
 msgstr "Переместиться наверх"
 
 #. I18N: Move actor in the bottom direction
-#: engines/hugo/metaengine.cpp:175
+#: engines/hugo/metaengine.cpp:201
 msgid "Move to bottom"
 msgstr "Переместиться вниз"
 
 #. I18N: Move actor in the left direction
-#: engines/hugo/metaengine.cpp:183
+#: engines/hugo/metaengine.cpp:209
 msgid "Move to left"
 msgstr "Переместиться влево"
 
 #. I18N: Move actor in the right direction
-#: engines/hugo/metaengine.cpp:191
+#: engines/hugo/metaengine.cpp:217
 msgid "Move to right"
 msgstr "Переместиться вправо"
 
 #. I18N: Move actor in the top-left direction
-#: engines/hugo/metaengine.cpp:199
+#: engines/hugo/metaengine.cpp:225
 msgid "Move to top left"
 msgstr "Переместиться наверх-влево"
 
 #. I18N: Move actor in the top-right direction
-#: engines/hugo/metaengine.cpp:205
+#: engines/hugo/metaengine.cpp:231
 msgid "Move to top right"
 msgstr "Переместиться наверх-вправо"
 
 #. I18N: Move actor in the bottom-left direction
-#: engines/hugo/metaengine.cpp:211
+#: engines/hugo/metaengine.cpp:237
 msgid "Move to bottom left"
 msgstr "Переместиться вниз-влево"
 
 #. I18N: Move actor in the bottom-right direction
-#: engines/hugo/metaengine.cpp:217
+#: engines/hugo/metaengine.cpp:243
 msgid "Move to bottom right"
 msgstr "Переместиться вниз-вправо"
 
