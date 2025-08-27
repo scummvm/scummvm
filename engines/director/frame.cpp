@@ -1603,7 +1603,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 }
 
 void writeSpriteDataD6(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
-	writeStream->writeByte(sprite._spriteType);			// 0
+	writeStream->writeByte(sprite._spriteType);				// 0
 	writeStream->writeByte(sprite._inkData);				// 1
 	writeStream->writeByte(sprite._foreColor);				// 2
 	writeStream->writeByte(sprite._backColor);				// 3
@@ -2081,7 +2081,28 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 }
 
 void writeSpriteDataD7(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
-	warning("STUB: writeSpriteDataD7()");
+	writeStream->writeByte(sprite._spriteType);				// 0
+	writeStream->writeByte(sprite._inkData);				// 1
+	writeStream->writeByte(sprite._foreColor);				// 2
+	writeStream->writeByte(sprite._backColor);				// 3
+	writeStream->writeSint16BE(sprite._castId.castLib);		// 4, 5
+	writeStream->writeUint16BE(sprite._castId.member);		// 6, 7
+	writeStream->writeUint32BE(sprite._spriteListIdx);		// 8, 9, 10, 11
+	writeStream->writeUint16BE(sprite._startPoint.y);		// 12, 13
+	writeStream->writeUint16BE(sprite._startPoint.x);		// 14, 15
+	writeStream->writeUint16BE(sprite._height);				// 16, 17
+	writeStream->writeUint16BE(sprite._width);				// 18, 19
+	writeStream->writeByte(sprite._colorcode);				// 20
+	writeStream->writeByte(sprite._blendAmount);			// 21
+	writeStream->writeByte(sprite._thickness);				// 22
+	writeStream->writeByte(sprite._flags);					// 23
+	writeStream->writeByte(sprite._fgColorG);				// 24
+	writeStream->writeByte(sprite._bgColorG);				// 25
+	writeStream->writeByte(sprite._fgColorB);				// 26
+	writeStream->writeByte(sprite._bgColorB);				// 27
+	writeStream->writeUint32BE(sprite._angleRot);			// 28
+	writeStream->writeUint32BE(sprite._angleSkew);			// 32
+	writePadding(writeStream, 12);							// 36-47
 }
 
 /**************************
