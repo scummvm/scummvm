@@ -1908,6 +1908,8 @@ void Frame::readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, 
 }
 
 void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, uint32 startPosition, uint32 finishPosition) {
+	byte unk[12];
+
 	while (stream.pos() < finishPosition) {
 		switch (stream.pos() - startPosition) {
 		case 0:
@@ -1917,35 +1919,29 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._spriteType = (SpriteType)stream.readByte();
 			}
 			break;
-		case 1: {
-			byte inkData = stream.readByte();
+		case 1:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPInk)) {
+				stream.readByte();
+			} else {
+				sprite._inkData = stream.readByte();
 
-			if (sprite._puppet || sprite.getAutoPuppet(kAPInk))
-				continue;
-
-			sprite._inkData = inkData;
-
-			sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
-			sprite._trails = sprite._inkData & 0x40 ? true : false;
-			sprite._stretch = sprite._inkData & 0x80 ? true : false;
+				sprite._ink = static_cast<InkType>(sprite._inkData & 0x3f);
+				sprite._trails = sprite._inkData & 0x40 ? true : false;
+				sprite._stretch = sprite._inkData & 0x80 ? true : false;
 			}
 			break;
-		case 2: {
-			uint8 foreColor = stream.readByte();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor))
-				continue;
-
-			sprite._foreColor = g_director->transformColor(foreColor);
+		case 2:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
+				stream.readByte();
+			} else {
+				sprite._foreColor = g_director->transformColor((uint8)stream.readByte());
 			}
 			break;
-		case 3: {
-			uint8 backColor = stream.readByte();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor))
-				continue;
-
-			sprite._backColor = g_director->transformColor(backColor);
+		case 3:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
+				stream.readByte();
+			} else {
+				sprite._backColor = g_director->transformColor((uint8)stream.readByte());
 			}
 			break;
 		case 4:
@@ -1964,73 +1960,69 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 				sprite._castId = CastMemberID(memberID, sprite._castId.castLib);  // Inherit castLib from previous frame
 			}
 			break;
-		case 8: {
-				int scriptCastLib = stream.readSint16();
-				sprite._scriptId = CastMemberID(sprite._scriptId.member, scriptCastLib);
+		case 8:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readUint32();
+			} else {
+				sprite._spriteListIdx = stream.readUint32();
 			}
 			break;
-		case 10: {
-				uint16 scriptMemberID = stream.readUint16();
-				sprite._scriptId = CastMemberID(scriptMemberID, sprite._scriptId.castLib);  // Inherit castLib from previous frame
+		case 10: // This field could be optimized
+			if (sprite._puppet || sprite.getAutoPuppet(kAPCast)) {
+				stream.readUint16();
+			} else {
+				sprite._spriteListIdx = stream.readUint16();
 			}
 			break;
-		case 12: {
-			uint16 startPointY = stream.readUint16();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPLocV) || sprite.getAutoPuppet(kAPLoc))
-				continue;
-
-			sprite._startPoint.y = startPointY;
-			break;
-			}
-		case 14: {
-			uint16 startPointX = stream.readUint16();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPLocH) || sprite.getAutoPuppet(kAPLoc))
-				continue;
-
-			sprite._startPoint.x = startPointX;
+		case 12:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPLoc)) {
+				stream.readUint16();
+			} else {
+				sprite._startPoint.y = (int16)stream.readUint16();
 			}
 			break;
-		case 16: {
-			uint16 height = stream.readUint16();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPHeight))
-				continue;
-
-			sprite._height = height;
+		case 14:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPLoc)) {
+				stream.readUint16();
+			} else {
+				sprite._startPoint.x = (int16)stream.readUint16();
 			}
 			break;
-		case 18: {
-			uint16 width = stream.readUint16();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPWidth))
-				continue;
-
-			sprite._width = width;
+		case 16:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPHeight)) {
+				stream.readUint16();
+			} else {
+				sprite._height = (int16)stream.readUint16();
+			}
+			break;
+		case 18:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPWidth)) {
+				stream.readUint16();
+			} else {
+				sprite._width = (int16)stream.readUint16();
 			}
 			break;
 		case 20:
-			// & 0x0f scorecolor
-			// 0x10 forecolor is rgb
-			// 0x20 bgcolor is rgb
-			// 0x40 editable
-			// 0x80 moveable
-			sprite._colorcode = stream.readByte();
+			if (sprite._puppet || sprite.getAutoPuppet(kAPMoveable)) {
+				stream.readByte();
+			} else {
+				// & 0x0f scorecolor
+				// 0x10 forecolor is rgb
+				// 0x20 bgcolor is rgb
+				// 0x40 editable
+				// 0x80 moveable
+				sprite._colorcode = stream.readByte();
 
-			if (sprite._puppet || sprite.getAutoPuppet(kAPMoveable))
-				continue;
-
-			sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
-			sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+				sprite._editable = ((sprite._colorcode & 0x40) == 0x40);
+				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+				sprite._moveable = ((sprite._colorcode & 0x80) == 0x80);
+			}
 			break;
-		case 21: {
-			byte blendAmount = stream.readByte();
-
-			if (sprite._puppet || sprite.getAutoPuppet(kAPBlend))
-				continue;
-
-			sprite._blendAmount = blendAmount;
+		case 21:
+			if (sprite._puppet) {
+				stream.readByte();
+			} else {
+				sprite._blendAmount = stream.readByte();
 			}
 			break;
 		case 22:
@@ -2041,7 +2033,45 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			}
 			break;
 		case 23:
-			(void)stream.readByte(); // unused
+			sprite._flags = stream.readByte();
+			break;
+		case 24:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
+				stream.readByte();
+			} else {
+				sprite._fgColorG = (uint8)stream.readByte();
+			}
+			break;
+		case 25:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
+				stream.readByte();
+			} else {
+				sprite._bgColorG = (uint8)stream.readByte();
+			}
+			break;
+		case 26:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPForeColor)) {
+				stream.readByte();
+			} else {
+				sprite._fgColorB = (uint8)stream.readByte();
+			}
+			break;
+		case 27:
+			if (sprite._puppet || sprite.getAutoPuppet(kAPBackColor)) {
+				stream.readByte();
+			} else {
+				sprite._bgColorB = (uint8)stream.readByte();
+			}
+			break;
+		case 28:
+			sprite._angleRot = stream.readUint32();
+			break;
+		case 32:
+			sprite._angleSkew = stream.readUint32();
+			break;
+		case 36:
+			stream.read(unk, 12); // alignment bytes
+			hexdumpIfNotZero(unk, 12, "Frame::readSpriteDataD7(): sprite.unk: ");
 			break;
 		default:
 			// This means that a `case` label has to be split at this position

@@ -76,7 +76,14 @@ void Sprite::reset() {
 	_volume = 0;
 	_stretch = false;
 
-	_spriteListIdx = 0;
+	_spriteListIdx = 0; // D6+
+
+	// D7+
+	_flags = 0;
+	_fgColorG = _fgColorB = 0;
+	_bgColorG = _bgColorB = 0;
+	_angleRot = 0;
+	_angleSkew = 0;
 }
 
 Sprite& Sprite::operator=(const Sprite &sprite) {
@@ -125,6 +132,14 @@ Sprite& Sprite::operator=(const Sprite &sprite) {
 	_stretch = sprite._stretch;
 
 	_spriteListIdx = sprite._spriteListIdx;
+
+	_flags = sprite._flags;
+	_fgColorG = sprite._fgColorG;
+	_fgColorB = sprite._fgColorB;
+	_bgColorG = sprite._bgColorG;
+	_bgColorB = sprite._bgColorB;
+	_angleRot = sprite._angleRot;
+	_angleSkew = sprite._angleSkew;
 
 	return *this;
 }

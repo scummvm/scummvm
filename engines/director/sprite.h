@@ -139,7 +139,14 @@ public:
 	byte _volume;
 	bool _stretch;
 
-	uint32 _spriteListIdx;
+	uint32 _spriteListIdx;	 // D6+
+
+	// D7+
+	byte _flags;
+	byte _fgColorG, _fgColorB;		// R component sits in _foreColor
+	byte _bgColorG, _bgColorB;		// R component sits in _backColor
+	int32 _angleRot;
+	int32 _angleSkew;
 };
 
 } // End of namespace Director
