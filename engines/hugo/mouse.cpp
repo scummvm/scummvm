@@ -325,6 +325,10 @@ void MouseHandler::mouseHandler() {
 	} else {
 		if (cy < 5 && cy > 0) {
 			_vm->_topMenu->runModal();
+			// When the top menu is shown, it eats all the events, including mouse move, which means the
+			// getMouseX() and getMouseY() have not been updated and the topMenu will be shown immediately
+			// again. We do not know where the cursor is currently, but move it outside of the ]0, 5[ range.
+			setMouseY(0);
 		}
 	}
 
