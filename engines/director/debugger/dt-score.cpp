@@ -81,10 +81,10 @@ static void buildContinuationData() {
 
 			if (prevSprite) {
 				if (!(*prevSprite == sprite)) {
-					currentContinuation = f + 1;
+					currentContinuation = f;
 				}
 			} else {
-				currentContinuation = f + 1;
+				currentContinuation = f;
 			}
 			_state->_continuationData[ch][f].first = currentContinuation;
 		}
@@ -99,13 +99,12 @@ static void buildContinuationData() {
 
 			if (nextSprite) {
 				if (!(*nextSprite == sprite)) {
-					currentContinuation = f + 1;
+					currentContinuation = f;
 				}
 			} else {
-				currentContinuation = f + 1;
+				currentContinuation = f;
 			}
 			_state->_continuationData[ch][f].second = currentContinuation;
-			debug("%d %d [%d, %d]", ch, f, _state->_continuationData[ch][f].first, _state->_continuationData[ch][f].second);
 		}
 	}
 
@@ -169,35 +168,56 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::TableNextColumn();
 
+		int startCont = _state->_continuationData[ch][f].first;
+		int endCont = _state->_continuationData[ch][f].second;
 		ImGui::PushID(ch * 10000 + f);
 
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
-		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
-		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
+		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
+			if (f == startCont) {
+				_state->_colors._contColorIndex = (_state->_colors._contColorIndex + 1) % _state->_colors._contColorCount;
+			}
 
+			if (_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 >= startCont &&
+				_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 <= endCont &&
+				ch == _state->_selectedScoreCast.channel &&
+				mode <= kModeExtended) {
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._channel_selected_col);
+			} else if (_state->_hoveredScoreCast.frame >= startCont &&
+				_state->_hoveredScoreCast.frame <= endCont &&
+				ch == _state->_hoveredScoreCast.channel) {
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._channel_hovered_col);
+			} else {
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._contColors[_state->_colors._contColorIndex]);
+			}
+		}
+
+		float startX = ImGui::GetCursorScreenPos().x;
+		float width = ImGui::GetColumnWidth(ImGui::TableGetColumnIndex()) * (endCont - startCont + 1);
+
+		Common::String string = Common::String("");
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				ImGui::Selectable(Common::String::format("%d", sprite._castId.member).c_str());
+				string += Common::String::format("%d", sprite._castId.member).c_str();
 			else if (sprite.isQDShape())
-				ImGui::Selectable("Q");
+				string += "Q";
 			else
-				ImGui::Selectable("  ");
+				string += "  ";
 			break;
 
 		case kModeInk:
-			ImGui::Selectable(Common::String::format("%s", inkType2str(sprite._ink)).c_str());
+			string += Common::String::format("%s", inkType2str(sprite._ink)).c_str();
 			break;
 
 		case kModeLocation:
-			ImGui::Selectable(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
+			string += Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
 			break;
 
 		case kModeBlend:
-			ImGui::Selectable(Common::String::format("%d", sprite._blendAmount).c_str());
+			string += Common::String::format("%d", sprite._blendAmount);
 			break;
 
 		case kModeBehavior:
@@ -206,27 +226,27 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChTempo:
 			if (frame._mainChannels.tempo)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.tempo).c_str());
+				string += Common::String::format("%d", frame._mainChannels.tempo);
 			break;
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				ImGui::Text("%d", frame._mainChannels.palette.paletteId.member);
+				string += Common::String::format("%d", frame._mainChannels.palette.paletteId.member);
 			break;
 
 		case kChTransition:
 			if (frame._mainChannels.transType)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.transType).c_str());
+				string += Common::String::format("%d", frame._mainChannels.transType);
 			break;
 
 		case kChSound1:
 			if (frame._mainChannels.sound1.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound1.member).c_str());
+				string += Common::String::format("%d", frame._mainChannels.sound1.member);
 			break;
 
 		case kChSound2:
 			if (frame._mainChannels.sound2.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound2.member).c_str());
+				string += Common::String::format("%d", frame._mainChannels.sound2.member);
 			break;
 
 		case kChScript:
@@ -235,9 +255,18 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kModeExtended: // Render empty row
 		default:
-			ImGui::Selectable("  ");
+			string += "  ";
 		}
 
+		const char *text = string.c_str();
+		ImGui::Text("%s", text);
+
+		// // Center text inside span
+		// ImVec2 textSize = ImGui::CalcTextSize(text);
+		// float cursorX = startX + (width - textSize.x) * 0.5f;
+		// ImGui::SetCursorScreenPos(ImVec2(cursorX, ImGui::GetCursorScreenPos().y));
+
+		// ImGui::TextUnformatted(text);
 		ImGui::PopID();
 
 		if (ImGui::IsItemClicked(0)) {
@@ -252,6 +281,11 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 				g_director->getCurrentWindow()->render(true);
 			}
+		}
+
+		if (ImGui::IsItemHovered()) {
+			_state->_hoveredScoreCast.frame = f;
+			_state->_hoveredScoreCast.channel = ch;
 		}
 	}
 
@@ -370,10 +404,12 @@ void showScore() {
 
 			if (castMember || shape) {
 				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
-				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first); ImGui::SameLine(50);
+				// the continuation data is 0-indexed but the frames are 1-indexed
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
 				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
-				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second); ImGui::SameLine();
+				// the continuation data is 0-indexed but the frames are 1-indexed
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second + 1); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
 
@@ -501,8 +537,8 @@ void showScore() {
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
-							  ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
-								  ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
+					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
+					ImGuiTableFlags_SizingStretchProp | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupScrollFreeze(1, 2);
@@ -511,7 +547,7 @@ void showScore() {
 
 			ImGui::TableSetupColumn("##", flags);
 			for (uint i = 0; i < tableColumns; i++) {
-				Common::String label = (i + _state->_scoreFrameOffset) % 5 ? " " : Common::String::format("%-2d", i + _state->_scoreFrameOffset);
+				Common::String label = Common::String::format("%-2d", i + _state->_scoreFrameOffset);
 				label += Common::String::format("##l%d", i);
 
 				ImGui::TableSetupColumn(label.c_str(), flags);
@@ -593,6 +629,8 @@ void showScore() {
 
 			int mode = _state->_scoreMode;
 
+			// Reset the color index, so that each channel gets the same color each time
+			_state->_colors._contColorIndex = 0;
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				if (mode == kModeExtended) // This will render empty row
 					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode);
