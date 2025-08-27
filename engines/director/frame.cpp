@@ -1358,7 +1358,7 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 120+9:
 			stream.read(unk, 15); // alignment bytes
-			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): sound2.unk: ");
+			hexdumpIfNotZero(unk, 15, "Frame::readMainChannelsD6(): script.unk: ");
 			break;
 
 		// 144 bytes (24 * 6)
@@ -1665,7 +1665,173 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 		debugC(8, kDebugLoading, "Frame::readMainChannelsD7(): %d byte header", size);
 		stream.hexdump(size);
 	}
-	error("Frame::readMainChannelsD7(): Miscomputed field position: %d", offset);
+
+	uint32 initPos = stream.pos();
+	uint32 finishPosition = initPos + size;
+	byte unk[40];
+
+	while (stream.pos() < finishPosition) {
+		switch (stream.pos() - initPos + offset) {
+		// Sound1
+		case 0:
+			_mainChannels.sound1.castLib = stream.readUint16();
+			break;
+		case 2:
+			_mainChannels.sound1.member = stream.readUint16();
+			break;
+		case 4:
+			_mainChannels.sound1SpriteListIdx = stream.readUint32();
+			break;
+		case 6:
+			_mainChannels.sound1SpriteListIdx = stream.readUint16();
+			break;
+		case 8:
+			_mainChannels.colorSound1 = stream.readByte();
+			break;
+		case 9:
+			stream.read(unk, 39); // alignment bytes
+			hexdumpIfNotZero(unk, 39, "Frame::readMainChannelsD7(): sound1.unk: ");
+			break;
+
+		// Sound2
+		case 48+0:
+			_mainChannels.sound2.castLib = stream.readUint16();
+			break;
+		case 48+2:
+			_mainChannels.sound2.member = stream.readUint16();
+			break;
+		case 48+4:
+			_mainChannels.sound2SpriteListIdx = stream.readUint32();
+			break;
+		case 48+8:
+			_mainChannels.colorSound2 = stream.readByte();
+			break;
+		case 48+9:
+			stream.read(unk, 39); // alignment bytes
+			hexdumpIfNotZero(unk, 39, "Frame::readMainChannelsD7(): sound2.unk: ");
+			break;
+
+		// Palette
+		case 96+0:
+			_mainChannels.palette.paletteId.castLib = stream.readSint16();
+			break;
+		case 96+2:
+			_mainChannels.palette.paletteId.member = stream.readSint16();
+			if (!_mainChannels.palette.paletteId.isNull())
+				_mainChannels.scoreCachedPaletteId = _mainChannels.palette.paletteId;
+			break;
+		case 96+4:
+			_mainChannels.palette.speed = stream.readByte(); // 52
+			_mainChannels.palette.flags = stream.readByte(); // 53
+			_mainChannels.palette.colorCycling = (_mainChannels.palette.flags & 0x80) != 0;
+			_mainChannels.palette.normal = (_mainChannels.palette.flags & 0x60) == 0x00;
+			_mainChannels.palette.fadeToBlack = (_mainChannels.palette.flags & 0x60) == 0x60;
+			_mainChannels.palette.fadeToWhite = (_mainChannels.palette.flags & 0x60) == 0x40;
+			_mainChannels.palette.autoReverse = (_mainChannels.palette.flags & 0x10) != 0;
+			_mainChannels.palette.overTime = (_mainChannels.palette.flags & 0x04) != 0;
+			break;
+		case 96+6:
+			_mainChannels.palette.firstColor = g_director->transformColor(stream.readByte() ^ 0x80); // 51
+			_mainChannels.palette.lastColor = g_director->transformColor(stream.readByte() ^ 0x80); // 52
+			break;
+		case 96+8:
+			_mainChannels.palette.frameCount = stream.readUint16(); // 53
+			break;
+		case 96+10:
+			_mainChannels.palette.cycleCount = stream.readUint16(); // 55
+			break;
+		case 96+12:
+			_mainChannels.palette.fade = stream.readByte();
+			break;
+		case 96+13:
+			_mainChannels.palette.delay = stream.readByte();
+			break;
+		case 96+14:
+			_mainChannels.palette.style = stream.readByte();
+			break;
+		case 96+15:
+			_mainChannels.palette.colorCode = stream.readByte();
+			break;
+		case 96+16:
+			_mainChannels.palette.spriteListIdx = stream.readUint32();
+			break;
+		case 96+20:
+			stream.read(unk, 28); // alignment bytes
+			hexdumpIfNotZero(unk, 28, "Frame::readMainChannelsD7(): palette.unk: ");
+			break;
+
+		// Transition
+		case 144+0:
+			_mainChannels.trans.castLib = stream.readUint16();
+			break;
+		case 144+2:
+			_mainChannels.trans.member = stream.readUint16();
+			break;
+		case 144+4:
+			_mainChannels.transSpriteListIdx = stream.readUint32();
+			break;
+		case 144+8:
+			_mainChannels.colorTrans = stream.readByte();
+			break;
+		case 144+9:
+			stream.read(unk, 39); // alignment bytes
+			hexdumpIfNotZero(unk, 39, "Frame::readMainChannelsD7(): trans.unk: ");
+			break;
+
+		// Tempo
+		case 192+0:
+			_mainChannels.tempoSpriteListIdx = stream.readUint32();
+			break;
+		case 192+4:
+			_mainChannels.tempoD6Flags = stream.readUint16();
+			break;
+		case 192+6:
+			_mainChannels.tempo = stream.readByte();
+			if (_mainChannels.tempo && _mainChannels.tempo <= 120)
+				_mainChannels.scoreCachedTempo = _mainChannels.tempo;
+			break;
+		case 192+7:
+			_mainChannels.colorTempo = stream.readByte();
+			break;
+		case 192+8:
+			stream.read(unk, 40); // alignment bytes
+			hexdumpIfNotZero(unk, 40, "Frame::readMainChannelsD7(): tempo.unk: ");
+			break;
+
+		// Script
+		case 240+0:
+			_mainChannels.actionId.castLib = stream.readUint16();
+			break;
+		case 240+2:
+			_mainChannels.actionId.member = stream.readUint16();
+			break;
+		case 240+4:
+			_mainChannels.scriptSpriteListIdx = stream.readUint32();
+			break;
+		case 240+8:
+			_mainChannels.colorScript = stream.readByte();
+			break;
+		case 240+9:
+			stream.read(unk, 39); // alignment bytes
+			hexdumpIfNotZero(unk, 39, "Frame::readMainChannelsD7(): script.unk: ");
+			break;
+
+		// 144 bytes (24 * 6)
+
+		default:
+			// This means that a `case` label has to be split at this position
+			error("Frame::readMainChannelsD7(): Miscomputed field position: %" PRId64, stream.pos() - initPos + offset);
+			break;
+		}
+	}
+
+	if (stream.pos() > finishPosition) {
+		// This means that the relevant `case` label reads too many bytes and must be split
+		error("Frame::readMainChannelsD7(): Read %" PRId64 "extra bytes", stream.pos() - finishPosition);
+	}
+
+	_mainChannels.transChunkSize = CLIP<byte>(_mainChannels.transChunkSize, 0, 128);
+	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
 void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {

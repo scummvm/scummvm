@@ -56,8 +56,8 @@ enum {
 	kMainChannelSizeD6 = 144,
 	kSprChannelSizeD6 = 24,
 
-	kMainChannelSizeD7 = 48,
-	kSprChannelSizeD7 = 24,
+	kMainChannelSizeD7 = 288,
+	kSprChannelSizeD7 = 48,
 };
 
 struct PaletteInfo {
