@@ -1379,18 +1379,20 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 	_mainChannels.transDuration = CLIP<uint16>(_mainChannels.transDuration, 0, 32000);  // restrict to 32 secs
 }
 
+static void writePadding(Common::SeekableWriteStream *writeStream, int size) {
+	for (int i = 0; i < size; i++) {
+		writeStream->writeByte(0);
+	}
+}
+
 void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
-	// Sound2
+	// Sound1
 	writeStream->writeUint16BE(_mainChannels.sound1.castLib);			// 0
 	writeStream->writeUint16BE(_mainChannels.sound1.member);			// 2
 	writeStream->writeUint32BE(_mainChannels.sound1SpriteListIdx);		// 4
 	writeStream->writeUint16BE(_mainChannels.sound1SpriteListIdx);		// 6
 	writeStream->writeByte(_mainChannels.colorSound1);					// 8
-	// 15 empty bytes
-	writeStream->writeByte(0);											// 9
-	writeStream->writeUint64BE(0);										// 10
-	writeStream->writeUint32BE(0);										// 18
-	writeStream->writeUint16BE(0);										// 22
+	writePadding(writeStream, 15);										// 9-23
 
 	// Sound2
 	writeStream->writeUint16BE(_mainChannels.sound2.castLib);			// 24+0
@@ -1398,11 +1400,7 @@ void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint32BE(_mainChannels.sound2SpriteListIdx);		// 24+4
 	writeStream->writeUint16BE(_mainChannels.sound2SpriteListIdx);		// 24+6
 	writeStream->writeByte(_mainChannels.colorSound2);					// 24+8
-	// 15 empty bytes
-	writeStream->writeByte(0);											// 24+9
-	writeStream->writeUint64BE(0);										// 24+10
-	writeStream->writeUint32BE(0);										// 24+18
-	writeStream->writeUint16BE(0);										// 24+22
+	writePadding(writeStream, 15);										// 24+9
 
 	// Palette
 	writeStream->writeUint16BE(_mainChannels.palette.paletteId.castLib);	// 48+0
@@ -1418,37 +1416,28 @@ void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeByte(_mainChannels.palette.style);					// 48+14
 	writeStream->writeByte(_mainChannels.palette.colorCode);				// 48+15
 	writeStream->writeUint32BE(_mainChannels.palette.spriteListIdx);		// 48+16
-	writeStream->writeUint32BE(0);											// 48+20
+	writePadding(writeStream, 4);											// 48+20
 
 	// Transition
 	writeStream->writeUint16BE(_mainChannels.trans.castLib);				// 72+0
 	writeStream->writeUint16BE(_mainChannels.trans.member);					// 72+2
 	writeStream->writeUint32BE(_mainChannels.transSpriteListIdx);			// 72+4
 	writeStream->writeByte(_mainChannels.colorTrans);						// 72+8
-	// 15 empty bytes
-	writeStream->writeByte(0);												// 72+9
-	writeStream->writeUint64BE(0);											// 72+10
-	writeStream->writeUint32BE(0);											// 72+18
-	writeStream->writeUint16BE(0);											// 72+22
+	writePadding(writeStream, 15);											// 72+9
 
 	// Tempo
 	writeStream->writeUint32BE(_mainChannels.tempoSpriteListIdx);			// 96+0
 	writeStream->writeUint16BE(_mainChannels.tempoD6Flags);					// 96+4
 	writeStream->writeByte(_mainChannels.tempo);							// 96+6
 	writeStream->writeByte(_mainChannels.colorTempo);						// 96+7
-	writeStream->writeUint64BE(0);											// 96+8
-	writeStream->writeUint64BE(0);											// 96+16
+	writePadding(writeStream, 16);											// 96+8
 
 	// Script
 	writeStream->writeUint32BE(_mainChannels.actionId.castLib);				// 120+0
 	writeStream->writeUint16BE(_mainChannels.actionId.member);				// 120+2
 	writeStream->writeUint32BE(_mainChannels.scriptSpriteListIdx);			// 120+4
 	writeStream->writeByte(_mainChannels.colorScript);						// 120+8
-	// 15 empty bytes
-	writeStream->writeByte(0);												// 120+9
-	writeStream->writeUint64BE(0);											// 120+10
-	writeStream->writeUint32BE(0);											// 120+18
-	writeStream->writeUint16BE(0);											// 120+22
+	writePadding(writeStream, 15);											// 120+9
 }
 
 void Frame::readSpriteD6(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
@@ -1835,7 +1824,58 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 }
 
 void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {
-	warning("STUB: Frame::writeMainChannelsD7()");
+	// Sound1
+	writeStream->writeUint16BE(_mainChannels.sound1.castLib);			// 0
+	writeStream->writeUint16BE(_mainChannels.sound1.member);			// 2
+	writeStream->writeUint32BE(_mainChannels.sound1SpriteListIdx);		// 4
+	writeStream->writeUint16BE(_mainChannels.sound1SpriteListIdx);		// 6
+	writeStream->writeByte(_mainChannels.colorSound1);					// 8
+	writePadding(writeStream, 39);										// 9-23
+
+	// Sound2
+	writeStream->writeUint16BE(_mainChannels.sound2.castLib);			// 48+0
+	writeStream->writeUint16BE(_mainChannels.sound2.member);			// 48+2
+	writeStream->writeUint32BE(_mainChannels.sound2SpriteListIdx);		// 48+4
+	writeStream->writeUint16BE(_mainChannels.sound2SpriteListIdx);		// 48+6
+	writeStream->writeByte(_mainChannels.colorSound2);					// 48+8
+	writePadding(writeStream, 39);										// 48+9
+
+	// Palette
+	writeStream->writeUint16BE(_mainChannels.palette.paletteId.castLib);	// 96+0
+	writeStream->writeUint16BE(_mainChannels.palette.paletteId.member);		// 96+2
+	writeStream->writeByte(_mainChannels.palette.speed);					// 96+4
+	writeStream->writeByte(_mainChannels.palette.flags);					// 96+5
+	writeStream->writeByte(_mainChannels.palette.firstColor);				// 96+6
+	writeStream->writeByte(_mainChannels.palette.lastColor);				// 96+7
+	writeStream->writeUint16BE(_mainChannels.palette.frameCount);			// 96+8
+	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);			// 96+10
+	writeStream->writeByte(_mainChannels.palette.fade);						// 96+12
+	writeStream->writeByte(_mainChannels.palette.delay);					// 96+13
+	writeStream->writeByte(_mainChannels.palette.style);					// 96+14
+	writeStream->writeByte(_mainChannels.palette.colorCode);				// 96+15
+	writeStream->writeUint32BE(_mainChannels.palette.spriteListIdx);		// 96+16
+	writePadding(writeStream, 28);											// 96+20
+
+	// Transition
+	writeStream->writeUint16BE(_mainChannels.trans.castLib);				// 144+0
+	writeStream->writeUint16BE(_mainChannels.trans.member);					// 144+2
+	writeStream->writeUint32BE(_mainChannels.transSpriteListIdx);			// 144+4
+	writeStream->writeByte(_mainChannels.colorTrans);						// 144+8
+	writePadding(writeStream, 39);											// 144+9
+
+	// Tempo
+	writeStream->writeUint32BE(_mainChannels.tempoSpriteListIdx);			// 192+0
+	writeStream->writeUint16BE(_mainChannels.tempoD6Flags);					// 192+4
+	writeStream->writeByte(_mainChannels.tempo);							// 192+6
+	writeStream->writeByte(_mainChannels.colorTempo);						// 192+7
+	writePadding(writeStream, 40);											// 192+8
+
+	// Script
+	writeStream->writeUint32BE(_mainChannels.actionId.castLib);				// 240+0
+	writeStream->writeUint16BE(_mainChannels.actionId.member);				// 240+2
+	writeStream->writeUint32BE(_mainChannels.scriptSpriteListIdx);			// 240+4
+	writeStream->writeByte(_mainChannels.colorScript);						// 240+8
+	writePadding(writeStream, 39);											// 240+9
 }
 
 void Frame::readSpriteD7(Common::MemoryReadStreamEndian &stream, uint16 offset, uint16 size) {
