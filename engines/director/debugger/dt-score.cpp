@@ -211,7 +211,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				ImGui::Text(frame._mainChannels.palette.paletteId.asString().c_str());
+				ImGui::Text("%d", frame._mainChannels.palette.paletteId.member);
 			break;
 
 		case kChTransition:
@@ -370,10 +370,10 @@ void showScore() {
 
 			if (castMember || shape) {
 				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
-				ImGui::Text("  %d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first); ImGui::SameLine(50);
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
 				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
-				ImGui::Text("  %d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second); ImGui::SameLine();
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
 
