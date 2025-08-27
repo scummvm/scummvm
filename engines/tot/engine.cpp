@@ -4844,7 +4844,12 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 
 	biosText(81, 61,  messages[50], 0);
 	biosText(61, 81,  messages[51], 0);
-	biosText(31, 101, messages[52] + g_engine->_characterName, 0);
+	if(g_engine->_lang == Common::ES_ESP) {
+		biosText(31, 101, messages[52] + g_engine->_characterName, 0);
+	} else {
+		biosText(31, 101, messages[52], 0);
+		biosText(151, 101, g_engine->_characterName, 0);
+	}
 	biosText(31, 121, messages[53], 0);
 	biosText(31, 141, messages[54], 0);
 	biosText(31, 161, messages[55], 0);
@@ -4858,6 +4863,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 	biosText(30, 120, messages[53], 15);
 	biosText(30, 140, messages[54], 15);
 	biosText(30, 160, messages[55], 15);
+
 	delay(1500);
 	g_engine->_sound->playVoc("PORTAZO", 434988, 932);
 	g_engine->_graphics->putShape(270, 159, stamp);
