@@ -782,34 +782,26 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 }
 
 void writeSpriteDataD4(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
-	// Writing 20 bytes of sprite data
-	// The original data for a certain sprite might be less
 	writeStream->writeByte(sprite._scriptId.member);			// 0
+	writeStream->writeByte((byte) sprite._spriteType);		// 1
+	writeStream->writeByte(sprite._foreColor);				// 2
+	writeStream->writeByte(sprite._backColor);				// 3
+	writeStream->writeByte(sprite._thickness);				// 4
+	writeStream->writeByte(sprite._inkData);				// 5
 
-	if (sprite._puppet) {
-		for (int i = 1; i < kSprChannelSizeD4; i++)
-			writeStream->writeByte(0);
+	if (sprite.isQDShape()) {
+		writeStream->writeUint16BE(sprite._pattern);		// 6, 7
 	} else {
-		writeStream->writeByte((byte) sprite._spriteType);		// 1
-		writeStream->writeByte(sprite._foreColor);				// 2
-		writeStream->writeByte(sprite._backColor);				// 3
-		writeStream->writeByte(sprite._thickness);				// 4
-		writeStream->writeByte(sprite._inkData);				// 5
-
-		if (sprite.isQDShape()) {
-			writeStream->writeUint16BE(sprite._pattern);		// 6, 7
-		} else {
-			writeStream->writeUint16BE(sprite._castId.member);	// 6, 7
-		}
-
-		writeStream->writeUint16BE(sprite._startPoint.y);		// 8, 9
-		writeStream->writeUint16BE(sprite._startPoint.x);		// 10, 11
-		writeStream->writeUint16BE(sprite._height);				// 12, 13
-		writeStream->writeUint16BE(sprite._width);				// 14, 15
-		writeStream->writeUint16BE(sprite._scriptId.member);	// 16, 17
-		writeStream->writeByte(sprite._colorcode);				// 18
-		writeStream->writeByte(sprite._blendAmount);			// 19
+		writeStream->writeUint16BE(sprite._castId.member);	// 6, 7
 	}
+
+	writeStream->writeUint16BE(sprite._startPoint.y);		// 8, 9
+	writeStream->writeUint16BE(sprite._startPoint.x);		// 10, 11
+	writeStream->writeUint16BE(sprite._height);				// 12, 13
+	writeStream->writeUint16BE(sprite._width);				// 14, 15
+	writeStream->writeUint16BE(sprite._scriptId.member);	// 16, 17
+	writeStream->writeByte(sprite._colorcode);				// 18
+	writeStream->writeByte(sprite._blendAmount);			// 19
 }
 
 /**************************
@@ -987,22 +979,22 @@ void Frame::writeMainChannelsD5(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeByte(_mainChannels.colorScript);				// 19
 	writeStream->writeByte(_mainChannels.colorTrans);				// 20
 
-	writeStream->writeByte(_mainChannels.tempo);			// 21
-	writeStream->writeUint16BE(0);		// Unknown	// 22, 23
+	writeStream->writeByte(_mainChannels.tempo);					// 21
+	writeStream->writeUint16BE(0);									// Unknown	// 22, 23
 
-	writeStream->writeSint16BE(_mainChannels.palette.paletteId.castLib);		// 24, 25
-	writeStream->writeSint16BE(_mainChannels.palette.paletteId.member);			// 26, 27
-	writeStream->writeByte(_mainChannels.palette.speed);					// 28
-	writeStream->writeByte(_mainChannels.palette.flags);					// 29
-	writeStream->writeByte(_mainChannels.palette.firstColor ^ 0x80);		// 30
-	writeStream->writeByte(_mainChannels.palette.lastColor ^ 0x80);				// 31
+	writeStream->writeSint16BE(_mainChannels.palette.paletteId.castLib);	// 24, 25
+	writeStream->writeSint16BE(_mainChannels.palette.paletteId.member);		// 26, 27
+	writeStream->writeByte(_mainChannels.palette.speed);				// 28
+	writeStream->writeByte(_mainChannels.palette.flags);				// 29
+	writeStream->writeByte(_mainChannels.palette.firstColor ^ 0x80);	// 30
+	writeStream->writeByte(_mainChannels.palette.lastColor ^ 0x80);		// 31
 
-	writeStream->writeUint16BE(_mainChannels.palette.frameCount);			// 32, 33
-	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);			// 34, 35
+	writeStream->writeUint16BE(_mainChannels.palette.frameCount);		// 32, 33
+	writeStream->writeUint16BE(_mainChannels.palette.cycleCount);		// 34, 35
 	writeStream->writeByte(_mainChannels.palette.fade);					// 36
-	writeStream->writeByte(_mainChannels.palette.delay);					// 37
-	writeStream->writeByte(_mainChannels.palette.style);					// 38
-	writeStream->writeByte(_mainChannels.palette.colorCode);				// 39
+	writeStream->writeByte(_mainChannels.palette.delay);				// 37
+	writeStream->writeByte(_mainChannels.palette.style);				// 38
+	writeStream->writeByte(_mainChannels.palette.colorCode);			// 39
 
 	writeStream->writeUint64BE(0);		// Unknown 	// 40, 41, 42, 43, 44, 45, 46, 47
 }
@@ -1166,30 +1158,22 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 }
 
 void writeSpriteDataD5(Common::SeekableWriteStream *writeStream, Sprite &sprite) {
-	// Writing 24 bytes of sprite data
-	// The original data for a certain sprite might be less
-	writeStream->writeByte(sprite._spriteType);			// 0
-
-	if (sprite._puppet) {
-		for (int i = 1; i < kSprChannelSizeD5; i++)
-			writeStream->writeByte(0);
-	} else {
-		writeStream->writeByte(sprite._inkData);				// 1
-		writeStream->writeSint16BE(sprite._castId.castLib);		// 2, 3
-		writeStream->writeUint16BE(sprite._castId.member);		// 4, 5
-		writeStream->writeSint16BE(sprite._scriptId.castLib);	// 6, 7
-		writeStream->writeUint16BE(sprite._scriptId.member);	// 8, 9
-		writeStream->writeByte(sprite._foreColor);				// 10
-		writeStream->writeByte(sprite._backColor);				// 11
-		writeStream->writeUint16BE(sprite._startPoint.y);		// 12, 13
-		writeStream->writeUint16BE(sprite._startPoint.x);		// 14, 15
-		writeStream->writeUint16BE(sprite._height);				// 16, 17
-		writeStream->writeUint16BE(sprite._width);				// 18, 19
-		writeStream->writeByte(sprite._colorcode);				// 20
-		writeStream->writeByte(sprite._blendAmount);			// 21
-		writeStream->writeByte(sprite._thickness);				// 22
-		writeStream->writeByte(0);								// 23, unused
-	}
+	writeStream->writeByte(sprite._spriteType);				// 0
+	writeStream->writeByte(sprite._inkData);				// 1
+	writeStream->writeSint16BE(sprite._castId.castLib);		// 2, 3
+	writeStream->writeUint16BE(sprite._castId.member);		// 4, 5
+	writeStream->writeSint16BE(sprite._scriptId.castLib);	// 6, 7
+	writeStream->writeUint16BE(sprite._scriptId.member);	// 8, 9
+	writeStream->writeByte(sprite._foreColor);				// 10
+	writeStream->writeByte(sprite._backColor);				// 11
+	writeStream->writeUint16BE(sprite._startPoint.y);		// 12, 13
+	writeStream->writeUint16BE(sprite._startPoint.x);		// 14, 15
+	writeStream->writeUint16BE(sprite._height);				// 16, 17
+	writeStream->writeUint16BE(sprite._width);				// 18, 19
+	writeStream->writeByte(sprite._colorcode);				// 20
+	writeStream->writeByte(sprite._blendAmount);			// 21
+	writeStream->writeByte(sprite._thickness);				// 22
+	writeStream->writeByte(0);								// 23, unused
 }
 
 /**************************
