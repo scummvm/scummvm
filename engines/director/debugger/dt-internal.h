@@ -152,7 +152,21 @@ typedef struct ImGuiState {
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
 		ImVec4 _var_ref_out_of_scope = ImColor(IM_COL32(0xFF, 0x00, 0xFF, 0xFF));
+		// Colors to show continuation data
+		const int _contColorCount = 5;
+		ImColor _contColors[5] = {
+			ImColor(IM_COL32(0x00, 0x00, 0xB2, 0xFF)), // Blue
+			ImColor(IM_COL32(0xB2, 0x00, 0x00, 0xFF)), // Red
+			ImColor(IM_COL32(0x61, 0x1F, 0x9F, 0xFF)), // Violet
+			ImColor(IM_COL32(0x73, 0x1E, 0x1E, 0xFF)), // Brown
+			ImColor(IM_COL32(0x00, 0x59, 0x00, 0xFF)), // Green
+		};
+
+		ImColor _channel_selected_col = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
+		ImColor _channel_hovered_col = ImColor(IM_COL32(0xFF, 0xFF, 0, 0x3C));
+		int _contColorIndex = 0;
 	} _colors;
+
 
 	struct {
 		DatumHash _locals;
@@ -178,6 +192,11 @@ typedef struct ImGuiState {
 		int frame = -1;
 		int channel = -1;
 	} _selectedScoreCast;
+
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _hoveredScoreCast;
 
 	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
 	bool _loadedContinuationData;
