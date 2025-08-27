@@ -23,8 +23,9 @@
 #ifndef ZVISION_ZVISION_H
 #define ZVISION_ZVISION_H
 
-#include "common/random.h"
 #include "common/events.h"
+#include "common/random.h"
+#include "common/system.h"
 #include "engines/engine.h"
 #include "graphics/pixelformat.h"
 #include "gui/debugger.h"
@@ -76,7 +77,7 @@ struct ScreenLayout {
 };
 
 // NB Footage of original DOS Nemesis engine indicates playfield was centrally placed on screen.
-// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.  
+// Subtitle scripts, however, suggest playfield was higher up, otherwise they run off the bottom of the screen.
 // This could just be an error in the scripts or an artefact of the original game's development, so we will continue to use as-released central placement.
 
 static const ScreenLayout nemesisLayout {
@@ -270,7 +271,7 @@ public:
 	void saveSettings();
 
 	bool quit(bool askFirst = true, bool streaming = false);
-	
+
 	// Engine features
 	bool hasFeature(EngineFeature f) const override;
 	bool canLoadGameStateCurrently(Common::U32String *msg = nullptr) override;
@@ -278,10 +279,15 @@ public:
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;
 
+	// Used to update cursor on a location change
+	void onMouseMove() {
+		onMouseMove(_system->getEventManager()->getMousePos());
+	}
+
 private:
 	void initialize();
 	void initFonts();
-	
+
 	void initializePath(const Common::FSNode &gamePath) override;
 
 	void parseStrFile(const Common::String &fileName);

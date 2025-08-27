@@ -761,6 +761,9 @@ void ScriptManager::ChangeLocationReal(bool isLoading) {
 	}
 
 	_engine->getRenderManager()->checkBorders();
+
+	_engine->onMouseMove();	// Trigger a pseudo mouse movement to change cursor if we enter the new location with it already over a hotspot
+
 	debugC(1, kDebugScript, "\tLocation change complete");
 }
 
