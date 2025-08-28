@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-27 21:21+0000\n"
-"PO-Revision-Date: 2025-08-25 13:07+0000\n"
+"PO-Revision-Date: 2025-08-28 16:36+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6549,7 +6549,7 @@ msgstr "Utilise les graphismes en couleurs au lieu du noir et blanc"
 
 #: engines/adl/metaengine.cpp:80
 msgid "Show scanlines"
-msgstr "Afficher le tracé par ligne"
+msgstr "Effet Scanline"
 
 #: engines/adl/metaengine.cpp:81
 msgid "Darken every other scanline to mimic the look of a CRT"
