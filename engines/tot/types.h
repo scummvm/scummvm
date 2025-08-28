@@ -117,9 +117,9 @@ struct InventoryEntry {
  */
 struct TextEntry {
 	Common::String  text; // string
-	bool 			continued;  // true if the next entry is a continuation of this one
-	uint16 			response;   // entry number of reply
-	int32 			pointer;
+	bool 			continued = false;  // true if the next entry is a continuation of this one
+	uint16 			response = 0;   // entry number of reply
+	int32 			pointer = 0;
 };
 
 struct ScreenObject {

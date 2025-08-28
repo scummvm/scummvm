@@ -60,7 +60,7 @@ private:
 			charWidth = 0;
 			offset = 0;
 		}
-		~GlyphEntry();
+		~GlyphEntry() {}
 
 		uint16 charWidth;
 		uint32 offset;
