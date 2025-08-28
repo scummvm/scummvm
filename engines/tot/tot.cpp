@@ -554,7 +554,7 @@ int TotEngine::startGame() {
 
 			if (_drawObjectAreas) {
 				for (int i = 0; i < kDepthLevelCount; i++) {
-					if (_screenLayers[i] != NULL) {
+					if (_screenLayers[i] != nullptr) {
 						if (true) {
 							// debug
 							uint16 w = READ_LE_UINT16(_screenLayers[i]);
@@ -640,7 +640,7 @@ void TotEngine::changeRoom() {
 		clearScreenLayers();
 		_mouse->hide();
 
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_cpCounter > 89)
@@ -667,7 +667,7 @@ void TotEngine::changeRoom() {
 			clearAnimation();
 			clearScreenLayers();
 			_mouse->hide();
-			_graphics->sceneTransition(true, NULL);
+			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_sound->stopVoc();
 			_sound->autoPlayVoc("CALDERA", 6433, 15386);
@@ -711,7 +711,7 @@ void TotEngine::changeRoom() {
 		clearAnimation();
 		clearScreenLayers();
 		_mouse->hide();
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_iframe = 0;
 		_currentTrajectoryIndex = 0;
 		_characterPosX = _currentRoomData->doors[_doorIndex].exitPosX - kCharacterCorrectionX;
@@ -737,7 +737,7 @@ void TotEngine::changeRoom() {
 			clearAnimation();
 			clearScreenLayers();
 			_mouse->hide();
-			_graphics->sceneTransition(true, NULL);
+			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
@@ -797,7 +797,7 @@ void TotEngine::changeRoom() {
 			clearAnimation();
 			clearScreenLayers();
 			_mouse->hide();
-			_graphics->sceneTransition(true, NULL);
+			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
@@ -828,7 +828,7 @@ void TotEngine::changeRoom() {
 		clearAnimation();
 		clearScreenLayers();
 		_mouse->hide();
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_bookTopic[0] == true && _currentRoomData->animationFlag == true)
@@ -854,7 +854,7 @@ void TotEngine::changeRoom() {
 			clearAnimation();
 			clearScreenLayers();
 			_mouse->hide();
-			_graphics->sceneTransition(true, NULL);
+			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
@@ -886,7 +886,7 @@ void TotEngine::changeRoom() {
 			clearAnimation();
 			clearScreenLayers();
 			_mouse->hide();
-			_graphics->sceneTransition(true, NULL);
+			_graphics->sceneTransition(true, nullptr);
 			loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 			_graphics->sceneTransition(false, _sceneBackground);
 			_mouse->show();
@@ -917,7 +917,7 @@ void TotEngine::changeRoom() {
 		clearAnimation();
 		clearScreenLayers();
 		_mouse->hide();
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		switch (_niche[0][_niche[0][3]]) {
@@ -956,7 +956,7 @@ void TotEngine::changeRoom() {
 		clearAnimation();
 		clearScreenLayers();
 		_mouse->hide();
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		switch (_niche[1][_niche[1][3]]) {
@@ -1023,7 +1023,7 @@ void TotEngine::changeRoom() {
 		clearAnimation();
 		clearScreenLayers();
 		_mouse->hide();
-		_graphics->sceneTransition(true, NULL);
+		_graphics->sceneTransition(true, nullptr);
 		_sound->stopVoc();
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		if (_cpCounter > 89)
@@ -1248,29 +1248,29 @@ void TotEngine::initVars() {
 
 
 	for(int i = 0; i < kNumScreenOverlays; i++) {
-		_screenLayers[i] = NULL;
+		_screenLayers[i] = nullptr;
 	}
 
 	for(int i = 0; i < kInventoryIconCount; i++) {
-		_inventoryIconBitmaps[i] = NULL;
+		_inventoryIconBitmaps[i] = nullptr;
 	}
 
 	for(int i = 0; i < 4; i++) {
 		for(int j = 0; j < kWalkFrameCount + 30; j++) {
-			_mainCharAnimation.bitmap[i][j] = NULL;
+			_mainCharAnimation.bitmap[i][j] = nullptr;
 		}
 	}
 
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < kSecAnimationFrameCount; j++) {
-			_secondaryAnimation.bitmap[i][j] = NULL;
+			_secondaryAnimation.bitmap[i][j] = nullptr;
 		}
 	}
 
 	resetGameState();
 	_chrono->_gameTick = false;
 	for (int i = 0; i < kNumScreenOverlays; i++) {
-		_screenLayers[i] = NULL;
+		_screenLayers[i] = nullptr;
 	}
 	_firstList[0] = 222;
 	_firstList[1] = 295;
@@ -1290,43 +1290,43 @@ void TotEngine::initVars() {
 	_isIntroSeen = false;
 	_inGame = false;
 
-	_sceneBackground = NULL;
-	_backgroundCopy = NULL;
-	_conversationData = NULL;
-	_rooms = NULL;
-	_sceneObjectsData = NULL;
+	_sceneBackground = nullptr;
+	_backgroundCopy = nullptr;
+	_conversationData = nullptr;
+	_rooms = nullptr;
+	_sceneObjectsData = nullptr;
 }
 
 void TotEngine::clearVars() {
-	if(_sceneBackground != NULL) {
+	if(_sceneBackground != nullptr) {
 		free(_sceneBackground);
 	}
 
-	if(_backgroundCopy != NULL) {
+	if(_backgroundCopy != nullptr) {
 		free(_backgroundCopy);
 	}
-	if(_conversationData != NULL) {
+	if(_conversationData != nullptr) {
 		free(_conversationData);
 	}
-	if(_rooms != NULL) {
+	if(_rooms != nullptr) {
 		free(_rooms);
 	}
-	if(_sceneObjectsData != NULL) {
+	if(_sceneObjectsData != nullptr) {
 		free(_sceneObjectsData);
 	}
 	for(int i = 0; i < kNumScreenOverlays; i++) {
-		if(_screenLayers[i] != NULL) {
+		if(_screenLayers[i] != nullptr) {
 			free(_screenLayers[i]);
 		}
 	}
 	for(int i = 0; i < kInventoryIconCount; i++) {
-		if(_inventoryIconBitmaps[i] != NULL) {
+		if(_inventoryIconBitmaps[i] != nullptr) {
 			free(_inventoryIconBitmaps[i]);
 		}
 	}
 	for(int i = 0; i < 4; i++) {
 		for(int j = 0; j < kWalkFrameCount + 30; j++) {
-			if(_mainCharAnimation.bitmap[i][j] != NULL) {
+			if(_mainCharAnimation.bitmap[i][j] != nullptr) {
 				free(_mainCharAnimation.bitmap[i][j]);
 			}
 		}
@@ -1334,7 +1334,7 @@ void TotEngine::clearVars() {
 
 	for (int i = 0; i < _secondaryAnimDirCount; i++) {
 		for (int j = 0; j < _secondaryAnimationFrameCount; j++) {
-			if(_secondaryAnimation.bitmap[i][j] != NULL){
+			if(_secondaryAnimation.bitmap[i][j] != nullptr){
 				free(_secondaryAnimation.bitmap[i][j]);
 			}
 		}

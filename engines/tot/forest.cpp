@@ -26,14 +26,14 @@ namespace Tot {
 void initTree(Tree &a, nodeElement data) {
 	a = new treeDef;
 	a->element = data;
-	a->parent = NULL;
-	a->sibling = NULL;
-	a->child = NULL;
+	a->parent = nullptr;
+	a->sibling = nullptr;
+	a->child = nullptr;
 }
 
 bool isRoot(Tree node) {
 	bool root;
-	if (node->parent == NULL)
+	if (node->parent == nullptr)
 		root = true;
 	else
 		root = false;
@@ -62,7 +62,7 @@ int depth(Tree node) {
 	Tree aux;
 	int depthCount = 0;
 	aux = node;
-	while (aux->parent != NULL) {
+	while (aux->parent != nullptr) {
 		depthCount += 1;
 		aux = parent(aux);
 	}
@@ -71,31 +71,31 @@ int depth(Tree node) {
 
 void expandNode(Tree &node, nodeElement data) {
 	Tree aux = node;
-	if (aux->child != NULL) {
+	if (aux->child != nullptr) {
 
 		aux = leftChild(aux);
-		while (aux->sibling != NULL)
+		while (aux->sibling != nullptr)
 			aux = rightSibling(aux);
 		;
 		aux->sibling = new treeDef;
 		aux = aux->sibling;
 		aux->element = data;
-		aux->sibling = NULL;
-		aux->child = NULL;
+		aux->sibling = nullptr;
+		aux->child = nullptr;
 		aux->parent = node;
 	} else {
 
 		aux->child = new treeDef;
 		aux = aux->child;
 		aux->element = data;
-		aux->sibling = NULL;
-		aux->child = NULL;
+		aux->sibling = nullptr;
+		aux->child = nullptr;
 		aux->parent = node;
 	}
 }
 
 void preOrder(Tree a, Common::String &encodedString) {
-	if (a != NULL) {
+	if (a != nullptr) {
 		encodedString = Common::String::format("%s%d%cN%d@", encodedString.c_str(), a->element.index, a->element.spoken, depth(a));
 		preOrder(leftChild(a), encodedString);
 		preOrder(rightSibling(a), encodedString);
@@ -169,7 +169,7 @@ void readTree(Common::SeekableReadStream &stream, Tree &a, uint position) {
 		else if (level > (currentLevel + 1)) {
 			aux = leftChild(aux);
 			currentLevel += 1;
-			while (rightSibling(aux) != NULL)
+			while (rightSibling(aux) != nullptr)
 				aux = rightSibling(aux);
 			expandNode(aux, data);
 		} else {

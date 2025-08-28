@@ -37,7 +37,7 @@ Common::String decrypt(Common::String encryptedText) {
 Common::List<uint>* findDialogue(Tree tree, byte characterIndex);
 
 static void findDownwards(Tree curTree, bool &descend) {
-	if (curTree != NULL) {
+	if (curTree != nullptr) {
 		if (curTree->element.spoken != '1') {
 			descend = true;
 			return;
@@ -68,7 +68,7 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 			findDownwards(step, descend);
 			if (!(descend))
 				ascend = true;
-			step = NULL;
+			step = nullptr;
 		} break;
 		case '3':
 			if (g_engine->_bookTopic[0] && (characterIndex == 3)) {
@@ -222,7 +222,7 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 			if (forward) {
 				forward = false;
 			}
-			if (rightSibling(auxTree) != NULL)
+			if (rightSibling(auxTree) != nullptr)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
@@ -230,15 +230,15 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 						auxTree = parent(auxTree);
 					else
 						break;
-				} while (!(auxTree->element.spoken == '1' && rightSibling(auxTree) != NULL));
-				if (rightSibling(auxTree) != NULL)
+				} while (!(auxTree->element.spoken == '1' && rightSibling(auxTree) != nullptr));
+				if (rightSibling(auxTree) != nullptr)
 					auxTree = rightSibling(auxTree);
 				else
 					done = true;
 			}
 		} else if (ascend) {
 			ascend = false;
-			if (rightSibling(auxTree) != NULL)
+			if (rightSibling(auxTree) != nullptr)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
@@ -246,24 +246,24 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 						auxTree = parent(auxTree);
 					else
 						break;
-				} while (!((auxTree->element.spoken == '1') && (rightSibling(auxTree) != NULL)));
-				if (rightSibling(auxTree) != NULL)
+				} while (!((auxTree->element.spoken == '1') && (rightSibling(auxTree) != nullptr)));
+				if (rightSibling(auxTree) != nullptr)
 					auxTree = rightSibling(auxTree);
 				else
 					done = true;
 			}
-		} else if (leftChild(auxTree) != NULL)
+		} else if (leftChild(auxTree) != nullptr)
 			auxTree = leftChild(auxTree);
-		else if (rightSibling(auxTree) != NULL)
+		else if (rightSibling(auxTree) != nullptr)
 			auxTree = rightSibling(auxTree);
 		else {
 			auxTree = parent(auxTree);
-			if (rightSibling(auxTree) != NULL)
+			if (rightSibling(auxTree) != nullptr)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
 					auxTree = parent(auxTree);
-				} while (!(isRoot(auxTree) || rightSibling(auxTree) != NULL));
+				} while (!(isRoot(auxTree) || rightSibling(auxTree) != nullptr));
 				if (isRoot(auxTree))
 					done = true;
 				else
@@ -271,8 +271,8 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 			}
 		}
 	} while (!done);
-	auxTree = NULL;
-	step = NULL;
+	auxTree = nullptr;
+	step = nullptr;
 	return linkedList;
 }
 
@@ -289,14 +289,14 @@ void modifyTree(Tree tree, uint node) {
 				auxTree->element.spoken = 'Z';
 			found = true;
 		} else {
-			if (leftChild(auxTree) != NULL)
+			if (leftChild(auxTree) != nullptr)
 				auxTree = leftChild(auxTree);
-			else if (rightSibling(auxTree) != NULL)
+			else if (rightSibling(auxTree) != nullptr)
 				auxTree = rightSibling(auxTree);
 			else {
 				do {
 					auxTree = parent(auxTree);
-				} while (!(rightSibling(auxTree) != NULL));
+				} while (!(rightSibling(auxTree) != nullptr));
 				auxTree = rightSibling(auxTree);
 			}
 		}
@@ -315,7 +315,7 @@ void drawTalkMenu() {
 }
 
 void fixTree(Tree tree) {
-	if (tree != NULL) {
+	if (tree != nullptr) {
 		if (tree->element.spoken == 'Z')
 			tree->element.spoken = '2';
 		else {

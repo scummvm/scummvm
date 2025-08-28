@@ -199,14 +199,14 @@ struct RoomFileRegister {
 	Common::Point trajectories[9][30][5];
 	DoorRegistry doors[5]; /* doors in the room */
 	RoomBitmapRegister screenLayers[15];
-	RoomObjectListEntry *screenObjectIndex[51] = {NULL}; 	/* includes name of objects for mouseover + index to object file*/
-	bool animationFlag;										/* true if there is a secondary animation */
-	Common::String animationName;							/* name of the secondary animation, 8 chars*/
-	bool paletteAnimationFlag;								/* true if there exist palette animation */
-	uint16 palettePointer;									/* points to the screen palette */
-	Common::Point secondaryAnimTrajectory[300];				/* trajectory of the secondary animation */
-	uint16 secondaryAnimDirections[300];					/* directions of the secondary trajectory. Pos 300 reflects object code. */
-	uint16 secondaryTrajectoryLength;						/* length of the trajectory of the secondary animation */
+	RoomObjectListEntry *screenObjectIndex[51] = { nullptr }; 	/* includes name of objects for mouseover + index to object file*/
+	bool animationFlag;											/* true if there is a secondary animation */
+	Common::String animationName;								/* name of the secondary animation, 8 chars*/
+	bool paletteAnimationFlag;									/* true if there exist palette animation */
+	uint16 palettePointer;										/* points to the screen palette */
+	Common::Point secondaryAnimTrajectory[300];					/* trajectory of the secondary animation */
+	uint16 secondaryAnimDirections[300];						/* directions of the secondary trajectory. Pos 300 reflects object code. */
+	uint16 secondaryTrajectoryLength;							/* length of the trajectory of the secondary animation */
 };
 
 struct SavedGame {
