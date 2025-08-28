@@ -283,7 +283,7 @@ public:
 	/**
 	 * Code of selected object in the backpack
 	 */
-	uint _backpackObjectCode;
+	uint _backpackObjectCode = 0;
 	/**
 	 * Auxiliary vars for grid update
 	 */
@@ -296,7 +296,7 @@ public:
 	/**
 	 * Current position of the main character
 	 */
-	int _characterPosX, _characterPosY;
+	int _characterPosX = 0, _characterPosY = 0;
 	/**
 	 * Target position of the main character?
 	 */

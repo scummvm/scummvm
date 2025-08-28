@@ -102,7 +102,7 @@ bool BgiFont::loadChr(Common::SeekableReadStream &stream) {
 	// Read drawing instructions until next glyph definition
 	for (int i = 0; i < _charCount; i++) {
 		_totalWidth += _glyphs[i].charWidth;
-		stream.seek(_glyphs[i].offset, pos);
+		stream.seek(pos + _glyphs[i].offset, SEEK_SET);
 		int m;
 		do {
 			DrawingInstruction *inst = new DrawingInstruction();
