@@ -671,11 +671,7 @@ void BitmapCastMember::load() {
 		debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
 
 		if (w > 0 && h > 0) {
-			if (_cast->_version < kFileVer600) {
-				img = new BITDDecoder(w, h, _bitsPerPixel, _pitch, g_director->getPalette(), _cast->_version);
-			} else {
-				img = new Image::BitmapDecoder();
-			}
+			img = new BITDDecoder(w, h, _bitsPerPixel, _pitch, g_director->getPalette(), _cast->_version);
 		} else if (pic->size() == 0) {
 			// zero-length bitmap
 		} else {
