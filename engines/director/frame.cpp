@@ -1248,6 +1248,9 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 24+4:
 			_mainChannels.sound2SpriteListIdx = stream.readUint32();
 			break;
+		case 24+6:
+			_mainChannels.sound2SpriteListIdx = stream.readUint16();
+			break;
 		case 24+8:
 			_mainChannels.colorSound2 = stream.readByte();
 			break;
@@ -1300,6 +1303,9 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 48+16:
 			_mainChannels.palette.spriteListIdx = stream.readUint32();
 			break;
+		case 48+18:
+			_mainChannels.palette.spriteListIdx = stream.readUint16();
+			break;
 		case 48+20:
 			stream.read(unk, 4); // alignment bytes
 			hexdumpIfNotZero(unk, 4, "Frame::readMainChannelsD6(): palette.unk: ");
@@ -1315,6 +1321,9 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 72+4:
 			_mainChannels.transSpriteListIdx = stream.readUint32();
 			break;
+		case 72+6:
+			_mainChannels.transSpriteListIdx = stream.readUint16();
+			break;
 		case 72+8:
 			_mainChannels.colorTrans = stream.readByte();
 			break;
@@ -1326,6 +1335,9 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 		// Tempo
 		case 96+0:
 			_mainChannels.tempoSpriteListIdx = stream.readUint32();
+			break;
+		case 96+2:
+			_mainChannels.tempoSpriteListIdx = stream.readUint16();
 			break;
 		case 96+4:
 			_mainChannels.tempoD6Flags = stream.readUint16();
@@ -1352,6 +1364,9 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 120+4:
 			_mainChannels.scriptSpriteListIdx = stream.readUint32();
+			break;
+		case 120+6:
+			_mainChannels.scriptSpriteListIdx = stream.readUint16();
 			break;
 		case 120+8:
 			_mainChannels.colorScript = stream.readByte();
@@ -1390,7 +1405,6 @@ void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.sound1.castLib);			// 0
 	writeStream->writeUint16BE(_mainChannels.sound1.member);			// 2
 	writeStream->writeUint32BE(_mainChannels.sound1SpriteListIdx);		// 4
-	writeStream->writeUint16BE(_mainChannels.sound1SpriteListIdx);		// 6
 	writeStream->writeByte(_mainChannels.colorSound1);					// 8
 	writePadding(writeStream, 15);										// 9-23
 
@@ -1398,7 +1412,6 @@ void Frame::writeMainChannelsD6(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.sound2.castLib);			// 24+0
 	writeStream->writeUint16BE(_mainChannels.sound2.member);			// 24+2
 	writeStream->writeUint32BE(_mainChannels.sound2SpriteListIdx);		// 24+4
-	writeStream->writeUint16BE(_mainChannels.sound2SpriteListIdx);		// 24+6
 	writeStream->writeByte(_mainChannels.colorSound2);					// 24+8
 	writePadding(writeStream, 15);										// 24+9
 
@@ -1692,6 +1705,9 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 48+4:
 			_mainChannels.sound2SpriteListIdx = stream.readUint32();
 			break;
+		case 48+6:
+			_mainChannels.sound2SpriteListIdx = stream.readUint16();
+			break;
 		case 48+8:
 			_mainChannels.colorSound2 = stream.readByte();
 			break;
@@ -1744,6 +1760,9 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 96+16:
 			_mainChannels.palette.spriteListIdx = stream.readUint32();
 			break;
+		case 96+18:
+			_mainChannels.palette.spriteListIdx = stream.readUint16();
+			break;
 		case 96+20:
 			stream.read(unk, 28); // alignment bytes
 			hexdumpIfNotZero(unk, 28, "Frame::readMainChannelsD7(): palette.unk: ");
@@ -1759,6 +1778,9 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 		case 144+4:
 			_mainChannels.transSpriteListIdx = stream.readUint32();
 			break;
+		case 144+6:
+			_mainChannels.transSpriteListIdx = stream.readUint16();
+			break;
 		case 144+8:
 			_mainChannels.colorTrans = stream.readByte();
 			break;
@@ -1770,6 +1792,9 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 		// Tempo
 		case 192+0:
 			_mainChannels.tempoSpriteListIdx = stream.readUint32();
+			break;
+		case 192+2:
+			_mainChannels.tempoSpriteListIdx = stream.readUint16();
 			break;
 		case 192+4:
 			_mainChannels.tempoD6Flags = stream.readUint16();
@@ -1796,6 +1821,9 @@ void Frame::readMainChannelsD7(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 240+4:
 			_mainChannels.scriptSpriteListIdx = stream.readUint32();
+			break;
+		case 240+6:
+			_mainChannels.scriptSpriteListIdx = stream.readUint16();
 			break;
 		case 240+8:
 			_mainChannels.colorScript = stream.readByte();
@@ -1828,7 +1856,6 @@ void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.sound1.castLib);			// 0
 	writeStream->writeUint16BE(_mainChannels.sound1.member);			// 2
 	writeStream->writeUint32BE(_mainChannels.sound1SpriteListIdx);		// 4
-	writeStream->writeUint16BE(_mainChannels.sound1SpriteListIdx);		// 6
 	writeStream->writeByte(_mainChannels.colorSound1);					// 8
 	writePadding(writeStream, 39);										// 9-23
 
@@ -1836,7 +1863,6 @@ void Frame::writeMainChannelsD7(Common::SeekableWriteStream *writeStream) {
 	writeStream->writeUint16BE(_mainChannels.sound2.castLib);			// 48+0
 	writeStream->writeUint16BE(_mainChannels.sound2.member);			// 48+2
 	writeStream->writeUint32BE(_mainChannels.sound2SpriteListIdx);		// 48+4
-	writeStream->writeUint16BE(_mainChannels.sound2SpriteListIdx);		// 48+6
 	writeStream->writeByte(_mainChannels.colorSound2);					// 48+8
 	writePadding(writeStream, 39);										// 48+9
 
