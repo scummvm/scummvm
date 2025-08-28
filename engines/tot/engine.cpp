@@ -1278,9 +1278,11 @@ void TotEngine::animateBat() {
 			{290, 110},  {290, 112},  {290, 114},  {289, 116},  {289, 118},  {289, 120},  {289, 122},  {289, 124},
 			{290, 122},  {290, 120},  {290, 118}
 	};
-	byte curAnimIFrame;
-	uint currAnimWidth, curAnimHeight,
-		curAnimIdx, curAnimLength, curAnimX, curAnimY, curAnimDepth, curAnimDir;
+	byte curAnimIFrame = 0;
+	uint currAnimWidth = 0, curAnimHeight = 0,
+		 curAnimIdx = 0, curAnimLength = 0,
+		 curAnimX = 0, curAnimY = 0,
+		 curAnimDepth = 0, curAnimDir = 0;
 
 	bool loopBreak = false;
 	if (_currentRoomData->animationFlag) {
@@ -1350,8 +1352,8 @@ void TotEngine::updateVideo() {
 }
 
 void TotEngine::nicheAnimation(byte nicheDir, int32 bitmap) {
-	uint bitmapOffset;
-	int increment;
+	uint bitmapOffset = 0;
+	int increment = 0;
 
 	// Room with Red
 	if (_currentRoomData->code == 24) {
@@ -4727,7 +4729,7 @@ void TotEngine::drawInventoryMask() {
 void TotEngine::drawMenu(byte menuNumber) {
 	byte *bitmap;
 	uint menuSize;
-	byte xmenu, ymenu;
+	byte xmenu = 0, ymenu = 0;
 	long menuOffset;
 
 	Common::File menuFile;
@@ -5099,7 +5101,7 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx, int posy, byte barColor,
 						 byte textColor) {
 	int pun = 1;
-	bool removeCaret;
+	bool removeCaret = 0;
 	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
 
 	biosText(posx, posy, "-", textColor);
@@ -5340,6 +5342,8 @@ void TotEngine::soundControls() {
 				xfade = 86 + musicVol;
 				bool mouseReleased = false;
 				do {
+
+					oldxfade = xfade;
 					while (g_system->getEventManager()->pollEvent(e)) {
 						if (e.type == Common::EVENT_LBUTTONUP) {
 							mouseReleased = true;

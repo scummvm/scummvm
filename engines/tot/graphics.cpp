@@ -65,8 +65,8 @@ GraphicsManager::~GraphicsManager() {
 }
 
 void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {
-	for (int j = y; j < y2; j++) {
-		for (int i = x; i < x2; i++) {
+	for (uint j = y; j < y2; j++) {
+		for (uint i = x; i < x2; i++) {
 			*((byte *)g_engine->_screen->getBasePtr(i, j)) = 0;
 		}
 	}
@@ -92,7 +92,7 @@ void GraphicsManager::setPalette(byte *palette, uint start, uint num) {
 }
 
 void GraphicsManager::fixPalette(byte *palette, uint num) {
-	for (int i = 0; i < num; i++) {
+	for (uint i = 0; i < num; i++) {
 		palette[i] <<= 2;
 	}
 }
@@ -277,7 +277,7 @@ void GraphicsManager::redFadeIn(byte *intermediatePalette) {
 }
 
 void GraphicsManager::updatePalette(byte paletteIndex) {
-	int ip;
+	int ip = 0;
 
 	switch (g_engine->_gamePart) {
 	case 1: {
@@ -471,10 +471,8 @@ void GraphicsManager::drawScreen(byte *screen, bool offsetSize) {
 }
 
 void GraphicsManager::updateSceneArea(int speed) {
-	// if (g_engine->_chrono->shouldPaintEffect(speed)) {
 		g_engine->_screen->addDirtyRect(Common::Rect(0, 0, 320, 140));
 		g_engine->_screen->update();
-	// }
 }
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene) {
 	sceneTransition(fadeToBlack, scene, Random(15) + 1);

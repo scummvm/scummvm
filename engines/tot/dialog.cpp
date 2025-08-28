@@ -49,13 +49,10 @@ static void findDownwards(Tree curTree, bool &descend) {
 }
 
 Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
-	bool speak, ascend, descend, border, forward;
+	bool speak = false, ascend = false, descend = false, border = false, forward = false, done = false;
 
 	Tree auxTree = tree->child;
-	bool done = false;
 	Common::List<uint> *linkedList = new Common::List<uint>();
-	border = false;
-	ascend = false;
 	Tree step;
 	do {
 		switch (auxTree->element.spoken) {
@@ -192,33 +189,26 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 					case 1:
 						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
 							linkedList->push_back(12);
-							// l1->item = 12;
 							forward = true;
 						} else if (g_engine->_bookTopic[characterIndex - 1]) {
 							forward = true;
 							linkedList->push_back(33);
-
-							// l1->item = 33;
 						} else {
 							linkedList->push_back(21);
-							// l1->item = 21;
 							forward = true;
 						}
 						break;
 					case 3:
 						if (g_engine->_firstTimeTopicA[characterIndex - 1]) {
 							linkedList->push_back(103);
-							// l1->item = 103;
 							forward = true;
 						} else {
 							linkedList->push_back(112);
-							// l1->item = 112;
 							forward = true;
 						}
 						break;
 					default: {
 						linkedList->push_back(auxTree->element.index);
-						// l1->item = auxTree->element.index;
 						forward = true;
 					}
 					}
@@ -227,14 +217,10 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 				}
 			else {
 				linkedList->push_back(auxTree->element.index);
-				// l1->item = auxTree->element.index;
 				forward = true;
 			}
 			if (forward) {
 				forward = false;
-				// l1->next = new LinkedList;
-				// l1 = l1->next;
-				// l1->next = NULL;
 			}
 			if (rightSibling(auxTree) != NULL)
 				auxTree = rightSibling(auxTree);
