@@ -362,7 +362,7 @@ void showDialogueLine(
 				}
 			}
 
-			if (gameTick) {
+			if (g_engine->_chrono->_gameTick) {
 				g_engine->_graphics->advancePaletteAnim();
 			}
 			g_system->delayMillis(10);

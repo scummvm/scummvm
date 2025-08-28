@@ -940,7 +940,7 @@ void drawFlc(
 				goto Lexit_proc;
 			}
 
-			if (gameTick) {
+			if (g_engine->_chrono->_gameTick) {
 				// Make sure we also update the palette animations! Esp. for part 2
 				if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
 					g_engine->_graphics->advancePaletteAnim();
@@ -984,7 +984,7 @@ void drawFlc(
 							}
 						}
 
-						gameTick = false;
+						g_engine->_chrono->_gameTick = false;
 					} else {
 						break;
 					}

@@ -27,10 +27,6 @@
 
 namespace Tot {
 
-bool gameTick = false;
-bool gameTickHalfSpeed = false;
-bool timeToDrawEffect = false;
-
 ChronoManager::ChronoManager(/* args */) : _lastTick(0) {
 }
 
@@ -41,28 +37,18 @@ void ChronoManager::updateChrono() {
 	uint32 currentTime = g_system->getMillis();
 
 	if ((currentTime - _lastTick) >= kTickMs / _speedMultiplier) {
-		gameTick = true;
+		_gameTick = true;
 		_tickCount++;
 		if (_tickCount == kHalfTickMultiplier) {
 			_tickCount = 0;
-			gameTickHalfSpeed = true;
+			_gameTickHalfSpeed = true;
 		} else {
-			gameTickHalfSpeed = false;
+			_gameTickHalfSpeed = false;
 		}
 		_lastTick = currentTime;
 	} else {
-		gameTick = false;
+		_gameTick = false;
 	}
-}
-
-bool ChronoManager::shouldPaintEffect(int speed) {
-	uint32 curTime = g_system->getMillis();
-	// _lastEffectRender += g_system->getMillis();
-	if ((curTime - _lastEffectRender) >= kFrameEffectMs * speed) {
-		_lastEffectRender = curTime;
-		return true;
-	} else
-		return false;
 }
 
 void ChronoManager::changeSpeed() {

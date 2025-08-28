@@ -479,14 +479,14 @@ void emptyLoop() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!gameTick && !g_engine->shouldQuit());
+	} while (!g_engine->_chrono->_gameTick && !g_engine->shouldQuit());
 }
 
 void emptyLoop2() {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
-	} while (!gameTickHalfSpeed);
+	} while (!g_engine->_chrono->_gameTickHalfSpeed);
 }
 
 void waitForKey() {
