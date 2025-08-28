@@ -144,7 +144,7 @@ void Room81::proc3() {
 		return;
 	}
 
-	for (int i = 0; i < 3; ++i)
+	for (int16 i = 0; i < 3; ++i)
 		_G(det)->startDetail(3 + i, 255, false);
 
 	_G(det)->stopDetail(2);

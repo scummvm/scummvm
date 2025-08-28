@@ -54,7 +54,7 @@ static const MovLine CHEWY_MPKT1[2] = {
 void Room17::entry() {
 	if (!_G(gameState).R17EnergyOut) {
 		_G(det)->startDetail(1, 255, ANI_FRONT);
-		for (int i = 0; i < 3; ++i)
+		for (int16 i = 0; i < 3; ++i)
 			_G(det)->startDetail(6 + i, 255, ANI_FRONT);
 	}
 
