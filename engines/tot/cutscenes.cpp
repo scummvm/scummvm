@@ -27,7 +27,7 @@
 
 namespace Tot {
 
-void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) {
+byte *drawCreditsScreen(uint &sizeAuxBG, byte *&auxBG) {
 	palette intermediatePalette, darkPalette;
 
 	Common::File ppFile;
@@ -35,7 +35,7 @@ void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) 
 	if (!ppFile.open("DIPLOMA.PAN")) {
 		showError(315);
 	}
-	backgroundPointer = (byte *)malloc(64000);
+	byte *backgroundPointer = (byte *)malloc(64000);
 	ppFile.read(intermediatePalette, 768);
 	ppFile.read(backgroundPointer, 64000);
 	ppFile.close();
@@ -62,6 +62,7 @@ void drawCreditsScreen(byte *&backgroundPointer, uint &sizeAuxBG, byte *&auxBG) 
 	g_engine->_graphics->copyPalette(intermediatePalette, g_engine->_graphics->_pal);
 	if (g_engine->_cpCounter2 > 9)
 		showError(274);
+	return backgroundPointer;
 }
 
 void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
@@ -266,7 +267,6 @@ inline bool keyPressed() {
 void TotEngine::credits() {
 	_saveAllowed = true;
 	palette pal2;
-	byte *background;
 	byte *background2;
 	uint sizeBg2;
 	bool exit;
@@ -277,7 +277,7 @@ void TotEngine::credits() {
 	_screen->clear();
 	_sound->playMidi("CREDITOS", true);
 	_sound->fadeInMusic();
-	drawCreditsScreen(background, sizeBg2, background2);
+	byte *background = drawCreditsScreen(sizeBg2, background2);
 
 	exit = false;
 
