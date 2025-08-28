@@ -146,6 +146,7 @@ CMainWindow::CMainWindow() {
 
 	if (LoadArtWork() == FALSE) {            // Load first artwork & display
 		PostMessage(WM_CLOSE, 0, 0);
+		return;
 	}
 
 	// Build Scroll Command button
@@ -1329,12 +1330,6 @@ BOOL CMainWindow::LoadArtWork() {
 	inFile.close();                                         // close the data store
 	nLastPick = pick;
 
-	if (pGamePalette != nullptr) {
-		pGamePalette->DeleteObject();
-		delete pGamePalette;
-		pGamePalette = nullptr;
-	}
-
 	pDC = GetDC();
 	pSourceDC = new CDC();
 	pSource = new CBitmap();          // Source is the original, in-tact artwork for framed mode
@@ -1358,8 +1353,8 @@ BOOL CMainWindow::LoadArtWork() {
 
 	(*pSourceDoc).OpenDocument(bufName);
 
-	ASSERT(pGamePalette == nullptr);
-	pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
+	if (!pGamePalette)
+		pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
 
 	// setup new palette in scratch areas
 	pOldPal1 = pScratch1DC->SelectPalette(pGamePalette, FALSE);
