@@ -31,9 +31,10 @@ MODULE_OBJS := \
 	martian/martian_player.o \
 	martian/martian_resources.o \
 	martian/martian_tunnel.o \
-	video/movie_decoder.o \
 	martian/martian_room.o \
-	martian/martian_scripts.o
+	martian/martian_scripts.o \
+	martian/midiparser_bemd.o \
+	video/movie_decoder.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)
