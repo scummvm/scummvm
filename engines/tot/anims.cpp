@@ -988,8 +988,6 @@ void drawFlc(
 					} else {
 						break;
 					}
-				} else {
-					debug("Skipping frame!");
 				}
 			}
 			g_system->delayMillis(10);
