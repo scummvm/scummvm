@@ -87,7 +87,7 @@ void TotEngine::runaroundRed() {
 	_isSecondaryAnimationEnabled = true;
 	do {
 		_chrono->updateChrono();
-		if (gameTick) {
+		if (_chrono->_gameTick) {
 			if (secTrajIndex == secTrajLength)
 				exitLoop = true;
 			secTrajIndex += 1;
@@ -111,9 +111,9 @@ void TotEngine::runaroundRed() {
 				_secondaryAnimation.depth = 3;
 			}
 
-			gameTickHalfSpeed = true;
+			_chrono->_gameTickHalfSpeed = true;
 			sprites(false);
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->advancePaletteAnim();
 			_screen->update();
 		}
@@ -294,7 +294,7 @@ void TotEngine::sprites(bool drawMainCharachter) {
 		if (_currentRoomData->secondaryTrajectoryLength > 1) {
 			updateMovementGrids();
 		}
-		if (gameTickHalfSpeed) {
+		if (_chrono->_gameTickHalfSpeed) {
 			if (_isPeterCoughing && !_sound->isVocPlaying()) {
 				_iframe2 = 0;
 			}
@@ -401,13 +401,13 @@ void TotEngine::adjustKey() {
 		_iframe++;
 		_currentTrajectoryIndex += 1;
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_graphics->advancePaletteAnim();
 		sprites(true);
 	} while (_currentTrajectoryIndex != _trajectoryLength);
 	_charFacingDirection = 3;
 	emptyLoop();
-	gameTick = false;
+	_chrono->_gameTick = false;
 	sprites(true);
 }
 
@@ -421,12 +421,12 @@ void TotEngine::adjustKey2() {
 		_iframe++;
 		_currentTrajectoryIndex -= 1;
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_graphics->advancePaletteAnim();
 		sprites(true);
 	} while (_currentTrajectoryIndex != 0);
 	emptyLoop();
-	gameTick = false;
+	_chrono->_gameTick = false;
 	sprites(true);
 }
 
@@ -457,8 +457,8 @@ void TotEngine::animatedSequence(uint numSequence) {
 			animIndex = 0;
 			do {
 				emptyLoop();
-				gameTick = false;
-				if (gameTickHalfSpeed) {
+				_chrono->_gameTick = false;
+				if (_chrono->_gameTickHalfSpeed) {
 					if (_currentSecondaryTrajectoryIndex >= _currentRoomData->secondaryTrajectoryLength)
 						_currentSecondaryTrajectoryIndex = 1;
 					else
@@ -500,8 +500,8 @@ void TotEngine::animatedSequence(uint numSequence) {
 			animIndex = 0;
 			do {
 				emptyLoop();
-				gameTick = false;
-				if (gameTickHalfSpeed) {
+				_chrono->_gameTick = false;
+				if (_chrono->_gameTickHalfSpeed) {
 					if (_currentSecondaryTrajectoryIndex >= _currentRoomData->secondaryTrajectoryLength)
 						_currentSecondaryTrajectoryIndex = 1;
 					else
@@ -542,8 +542,8 @@ void TotEngine::animatedSequence(uint numSequence) {
 		animIndex = 0;
 		do {
 			emptyLoop();
-			gameTick = false;
-			if (gameTickHalfSpeed) {
+			_chrono->_gameTick = false;
+			if (_chrono->_gameTickHalfSpeed) {
 				if (_currentSecondaryTrajectoryIndex >= _currentRoomData->secondaryTrajectoryLength)
 					_currentSecondaryTrajectoryIndex = 1;
 				else
@@ -566,7 +566,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		_iframe = 0;
 		_charFacingDirection = 2;
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_characterPosX = tmpCharacterPosX;
 		sprites(true);
 	} break;
@@ -586,7 +586,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		for (animIndex = 1; animIndex <= 31; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->advancePaletteAnim();
 			_graphics->putShape(animX, animY, animptr);
 		}
@@ -605,7 +605,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		for (animIndex = 32; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->advancePaletteAnim();
 			_graphics->putImg(animX, animY, animptr);
 			if (shouldQuit()) {
@@ -629,7 +629,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		for (animIndex = 1; animIndex <= 8; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->putShape(animX, animY, animptr);
 			if (shouldQuit()) {
 				break;
@@ -647,9 +647,9 @@ void TotEngine::animatedSequence(uint numSequence) {
 		for (animIndex = 9; animIndex <= secFrameCount; animIndex++) {
 			animationFile.read(animptr, animFrameSize);
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->putShape(animX, animY, animptr);
 			if (shouldQuit()) {
 				break;
@@ -660,7 +660,7 @@ void TotEngine::animatedSequence(uint numSequence) {
 		_iframe = 0;
 		_charFacingDirection = 2;
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		sprites(true);
 	} break;
 	case 6: {
@@ -677,9 +677,9 @@ void TotEngine::animatedSequence(uint numSequence) {
 		animIndex = 0;
 		do {
 			emptyLoop();
-			gameTick = false;
+			_chrono->_gameTick = false;
 			_graphics->advancePaletteAnim();
-			if (gameTickHalfSpeed) {
+			if (_chrono->_gameTickHalfSpeed) {
 				animationFile.read(_screenLayers[6], animFrameSize);
 				Common::copy(_screenLayers[6], _screenLayers[6] + animFrameSize, _sceneBackground + 44900);
 				_graphics->restoreBackground();
@@ -1084,9 +1084,9 @@ void TotEngine::updateMainCharacterDepth() {
 }
 
 void TotEngine::advanceAnimations(bool barredZone, bool animateMouse) {
-	if (gameTick) {
+	if (_chrono->_gameTick) {
 
-		if (_currentRoomData->animationFlag && gameTickHalfSpeed) {
+		if (_currentRoomData->animationFlag && _chrono->_gameTickHalfSpeed) {
 			if (_isPeterCoughing && (Random(100) == 1) && !_sound->isVocPlaying() && _mintTopic[0] == false) {
 				debug("Playing tos");
 				_sound->playVoc("TOS", 258006, 14044);
@@ -1189,7 +1189,7 @@ void TotEngine::advanceAnimations(bool barredZone, bool animateMouse) {
 		if (_isDrawingEnabled) {
 			sprites(true);
 		}
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_graphics->advancePaletteAnim();
 	}
 }
@@ -1202,7 +1202,7 @@ void TotEngine::animateGive(uint dir, uint height) {
 	_charFacingDirection = dir;
 	for (uint i = 0; i < 5; i++) {
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		// Must add 1 to i because the original game uses 1-based indices
 		_iframe = 15 + 6 + 5 + height * 10 - (i + 1);
 
@@ -1217,7 +1217,7 @@ void TotEngine::animatePickup1(uint dir, uint height) {
 	_charFacingDirection = dir;
 	for (uint i = 0; i < 5; i++) {
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_iframe = 15 + height * 10 + (i + 1);
 
 		_graphics->advancePaletteAnim();
@@ -1232,7 +1232,7 @@ void TotEngine::animatePickup2(uint dir, uint height) {
 
 	for (uint i = 0; i < 5; i++) {
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 
 		_iframe = 15 + 5 + height * 10 + (i + 1);
 
@@ -1241,7 +1241,7 @@ void TotEngine::animatePickup2(uint dir, uint height) {
 		_screen->update();
 	}
 	emptyLoop();
-	gameTick = false;
+	_chrono->_gameTick = false;
 	sprites(true);
 	_iframe = 0;
 }
@@ -1251,14 +1251,14 @@ void TotEngine::animateOpen2(uint dir, uint height) {
 	_cpCounter = _cpCounter2;
 	for (uint i = 0; i < 5; i++) {
 		emptyLoop();
-		gameTick = false;
+		_chrono->_gameTick = false;
 		_iframe = 15 + 6 + height * 10 - (i + 1);
 
 		_graphics->advancePaletteAnim();
 		sprites(true);
 	}
 	emptyLoop();
-	gameTick = false;
+	_chrono->_gameTick = false;
 	sprites(true);
 	_iframe = 0;
 }
@@ -1304,7 +1304,7 @@ void TotEngine::animateBat() {
 	_secondaryAnimation.depth = 14;
 	do {
 		_chrono->updateChrono();
-		if (gameTick) {
+		if (_chrono->_gameTick) {
 			if (curAnimIdx == curAnimLength)
 				loopBreak = true;
 			curAnimIdx += 1;
@@ -1317,7 +1317,7 @@ void TotEngine::animateBat() {
 			_secondaryAnimation.posy = batTrajectory[curAnimIdx][1];
 			_secondaryAnimation.dir = 0;
 			sprites(true);
-			gameTick = false;
+			_chrono->_gameTick = false;
 			if (curAnimIdx % 24 == 0)
 				_sound->playVoc();
 			_graphics->advancePaletteAnim();
@@ -1953,7 +1953,7 @@ void TotEngine::useScreenObject() {
 					_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x;
 					_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
 					emptyLoop();
-					gameTick = false;
+					_chrono->_gameTick = false;
 					emptyLoop2();
 					sprites(true);
 					_screen->update();
@@ -2353,7 +2353,7 @@ void TotEngine::useScreenObject() {
 					_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x;
 					_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
 					emptyLoop();
-					gameTick = false;
+					_chrono->_gameTick = false;
 					emptyLoop2();
 					sprites(true);
 				} while (!(_currentSecondaryTrajectoryIndex == (_currentRoomData->secondaryTrajectoryLength / 2)));
@@ -2377,7 +2377,7 @@ void TotEngine::useScreenObject() {
 					_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x;
 					_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
 					emptyLoop();
-					gameTick = false;
+					_chrono->_gameTick = false;
 
 					emptyLoop2();
 					sprites(true);
@@ -2406,9 +2406,9 @@ void TotEngine::useScreenObject() {
 				animateGive(3, 2);
 				do {
 					_chrono->updateChrono();
-					if (gameTick) {
+					if (_chrono->_gameTick) {
 						_graphics->advancePaletteAnim();
-						gameTick = false;
+						_chrono->_gameTick = false;
 					}
 					_screen->update();
 					g_system->delayMillis(10);
@@ -4290,9 +4290,9 @@ void TotEngine::sayLine(
 				}
 				changeGameSpeed(e);
 			}
-			if (gameTick) {
-				gameTick = false;
-				if (gameTickHalfSpeed) {
+			if (_chrono->_gameTick) {
+				_chrono->_gameTick = false;
+				if (_chrono->_gameTickHalfSpeed) {
 					if (isWithinConversation) {
 						talkAnimIndex += 1;
 						if (textColor == 255) {

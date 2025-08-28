@@ -1268,7 +1268,7 @@ void TotEngine::initVars() {
 	}
 
 	resetGameState();
-	gameTick = false;
+	_chrono->_gameTick = false;
 	for (int i = 0; i < kNumScreenOverlays; i++) {
 		_screenLayers[i] = NULL;
 	}

@@ -48,7 +48,7 @@ void MouseManager::drawMask(int idx) {
 }
 
 void MouseManager::animateMouseIfNeeded() {
-	if (gameTick) {
+	if (g_engine->_chrono->_gameTick) {
 		setMouseMask(_currentMouseMask);
 		if (_currentMouseMask < 7) {
 			// sync this with frame time

@@ -137,8 +137,8 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 	do {
 		g_engine->_chrono->updateChrono();
 		g_system->delayMillis(10);
-	} while (!gameTick && !g_engine->shouldQuit());
-	gameTick = false;
+	} while (!g_engine->_chrono->_gameTick && !g_engine->shouldQuit());
+	g_engine->_chrono->_gameTick = false;
 
 	// Copies the credit window directly to the screen
 	for (int i = 0; i < hImg1; i++) {
@@ -412,7 +412,7 @@ void TotEngine::introduction() {
 			goto Lsalirpres;
 		}
 
-		if (gameTick) {
+		if (g_engine->_chrono->_gameTick) {
 			loopCount += 1;
 		}
 		g_system->delayMillis(10);
