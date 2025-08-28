@@ -189,31 +189,31 @@ public:
 	Common::MemorySeekableReadWriteStream *_rooms;
 	Common::MemorySeekableReadWriteStream *_sceneObjectsData;
 
-	bool _roomChange;
-	bool _isTVOn,
-		_isVasePlaced,
-		_isScytheTaken,
-		_isTridentTaken,
-		_isPottersWheelDelivered,
-		_isMudDelivered,
-		_isGreenDevilDelivered,
-		_isRedDevilCaptured,
-		_isPottersManualDelivered,
-		_isCupboardOpen,
-		_isChestOpen,
-		_isTrapSet,
-		_isPeterCoughing;
+	bool _roomChange = false;
+	bool _isTVOn = false;
+	bool _isVasePlaced = false;
+	bool _isScytheTaken = false;
+	bool _isTridentTaken = false;
+	bool _isPottersWheelDelivered = false;
+	bool _isMudDelivered = false;
+	bool _isGreenDevilDelivered = false;
+	bool _isRedDevilCaptured = false;
+	bool _isPottersManualDelivered = false;
+	bool _isCupboardOpen = false;
+	bool _isChestOpen = false;
+	bool _isTrapSet = false;
+	bool _isPeterCoughing = false;
 
-	bool _isSealRemoved;
-	bool _inGame;
-	bool _firstTimeDone; // Flag for first time run of the game.
-	bool _isIntroSeen;
-	bool _shouldQuitGame;
-	bool _startNewGame; // Flag to initialize game
-	bool _continueGame; // Flag to resume game
-	bool _isSavingDisabled;
-	bool _isDrawingEnabled; // true if sprites should be drawn
-	bool _isSecondaryAnimationEnabled; // Whether room has secondary animation
+	bool _isSealRemoved = false;
+	bool _inGame = false;
+	bool _firstTimeDone = false; // Flag for first time run of the game.
+	bool _isIntroSeen = false;
+	bool _shouldQuitGame = false;
+	bool _startNewGame = false; // Flag to initialize game
+	bool _continueGame = false; // Flag to resume game
+	bool _isSavingDisabled = false;
+	bool _isDrawingEnabled = false; // true if sprites should be drawn
+	bool _isSecondaryAnimationEnabled = false; // Whether room has secondary animation
 
 	InventoryEntry _inventory[kInventoryIconCount]; // These are the icons currnetly in the inventory
 	/**
@@ -223,7 +223,7 @@ public:
 	/**
 	 * Position within inventory
 	 */
-	byte _inventoryPosition;
+	byte _inventoryPosition = 0;
 	/**
 	 * Animation sequences
 	 */
@@ -242,31 +242,31 @@ public:
 	/**
 	 * Number of trajectory changes
 	 */
-	byte _trajectorySteps;
+	byte _trajectorySteps = 0;
 	/**
 	 * index of currently selected door.
 	 */
-	byte _doorIndex;
+	byte _doorIndex = 0;
 	/**
 	 * 1 first part, 2 second part
 	 */
-	byte _gamePart;
+	byte _gamePart = 1;
 	/**
 	 * Number of frames of secondary animation
 	 */
-	byte _secondaryAnimationFrameCount;
+	byte _secondaryAnimationFrameCount = 0;
 	/**
 	 * Number of directions of the secondary animation
 	 */
-	byte _secondaryAnimDirCount;
+	byte _secondaryAnimDirCount = 0;
 	/**
 	 * Data protection control
 	 */
-	byte _cpCounter, _cpCounter2;
+	byte _cpCounter = 0, _cpCounter2 = 0;
 	/**
 	 * Coordinates of target step
 	 */
-	byte _destinationX, _destinationY;
+	byte _destinationX = 0, _destinationY = 0;
 	/**
 	 * Current character facing direction
 	 * 0: upwards
@@ -274,12 +274,12 @@ public:
 	 * 2: downwards
 	 * 3: left
 	 */
-	byte _charFacingDirection;
+	byte _charFacingDirection = 0;
 
 	/**
 	 * Width and height of secondary animation
 	 */
-	uint _secondaryAnimWidth, _secondaryAnimHeight;
+	uint _secondaryAnimWidth = 0, _secondaryAnimHeight = 0;
 	/**
 	 * Code of selected object in the backpack
 	 */
@@ -314,7 +314,7 @@ public:
 	/**
 	 * Name of player
 	 */
-	Common::String _characterName;
+	Common::String _characterName = "";
 
 	Common::String _decryptionKey;
 
@@ -339,15 +339,15 @@ public:
 	/**
 	 * Longitude of the trajectory matrix.
 	 */
-	uint _trajectoryLength;
+	uint _trajectoryLength = 0;
 	/**
 	 * Position within the trajectory matrix
 	 */
-	uint _currentTrajectoryIndex;
+	uint _currentTrajectoryIndex = 0;
 	/**
 	 * Position within the trajectory matrix for secondary animation
 	 */
-	uint _currentSecondaryTrajectoryIndex;
+	uint _currentSecondaryTrajectoryIndex = 0;
 	/**
 	 * Screen areas
 	 */
@@ -375,31 +375,31 @@ public:
 	 */
 	byte _maskMouseSecondaryAnim[10][10];
 
-	bool _list1Complete,
-		_list2Complete,
-		_obtainedList1, // whether we've been given list 1
-		_obtainedList2; // whether we've been given list 2
+	bool _list1Complete = false,
+		_list2Complete = false,
+		_obtainedList1 = false, // whether we've been given list 1
+		_obtainedList2 = false; // whether we've been given list 2
 
 	/** Conversation topic unlocks */
-	bool _firstTimeTopicA[kCharacterCount],
-		_firstTimeTopicB[kCharacterCount],
-		_firstTimeTopicC[kCharacterCount],
-		_bookTopic[kCharacterCount],
-		_mintTopic[kCharacterCount];
+	bool _firstTimeTopicA[kCharacterCount] = { false },
+		_firstTimeTopicB[kCharacterCount] = { false },
+		_firstTimeTopicC[kCharacterCount] = { false },
+		_bookTopic[kCharacterCount] = { false },
+		_mintTopic[kCharacterCount] = { false };
 
-	bool _caves[5];
+	bool _caves[5] = { false };
 
 	/**
 	 * First and second lists of objects to retrieve in the game
 	 */
-	uint16 _firstList[5], _secondList[5];
+	uint16 _firstList[5] = { 0 }, _secondList[5] = { 0 };
 
-	long _screenSize;
+	long _screenSize = 65520;
 
 	/**
 	 * Frame number for the animations
 	 */
-	byte _iframe, _iframe2;
+	byte _iframe = 0, _iframe2 = 0;
 
 	/**
 	 * Depth of screenobjects
@@ -432,7 +432,7 @@ public:
 	 */
 	byte *_backgroundCopy;
 
-	uint _currentRoomNumber;
+	uint _currentRoomNumber = 0;
 
 	bool _isLoadingFromLauncher = false;
 
@@ -445,17 +445,17 @@ public:
 
 	SavedGame _savedGame;
 
-	uint _curDepth;
+	uint _curDepth = 0;
 	/**
 	 * Point of origin of the area surrounding the main character.
 	 * Calculated using the position of the character.
 	 */
-	uint _dirtyMainSpriteX, _dirtyMainSpriteY;
+	uint _dirtyMainSpriteX = 0, _dirtyMainSpriteY = 0;
 	/**
 	 * End point of origin of the area surrounding the main character.
 	 * Calculated using the position of the character + dimension
 	 */
-	uint _dirtyMainSpriteX2, _dirtyMainSpriteY2;
+	uint _dirtyMainSpriteX2 = 0, _dirtyMainSpriteY2 = 0;
 	byte *_spriteBackground;
 public:
 	TotEngine(OSystem *syst, const ADGameDescription *gameDesc);
