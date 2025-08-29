@@ -402,6 +402,14 @@ void displayScriptRef(CastMemberID &scriptId) {
 	}
 }
 
+ImColor brightenColor(const ImColor& color, float factor) {
+	ImVec4 col = color.Value;
+	col.x = CLIP<float>(col.x * factor, 0.0f, 1.0f);
+	col.y = CLIP<float>(col.y * factor, 0.0f, 1.0f);
+	col.z = CLIP<float>(col.z * factor, 0.0f, 1.0f);
+	return ImColor(col);
+}
+
 static void showSettings() {
 	if (!_state->_w.settings)
 		return;
