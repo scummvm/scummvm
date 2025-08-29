@@ -20,6 +20,7 @@
  */
 
 #include "common/platform.h"
+#include "common/gui_options.h"
 #include "common/str.h"
 #include "common/algorithm.h"
 
@@ -40,12 +41,10 @@ const PlatformDescription g_platforms[] = {
 	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
 	{ "coco", "coco", "coco", "CoCo", kPlatformCoCo },		// CoCo 1/2
 	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },	// CoCo 3 only
-
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
 	// "FM TOWNS", "FmTowns", etc.
 	{ "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
-
 	{ "linux", "linux", "linux", "Linux", kPlatformLinux },
 	{ "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
 	{ "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
@@ -122,6 +121,46 @@ const char *getPlatformDescription(Platform id) {
 			return l->description;
 	}
 	return l->description;
+}
+
+bool checkGameGUIOptionPlatform(Platform plat, const String &str) {
+	if (!str.contains("plat_")) // If no platforms are specified
+		return true;
+
+	if (str.contains(getGameGUIOptionsDescriptionPlatform(plat)))
+		return true;
+
+	return false;
+}
+
+const String parseGameGUIOptionsPlatforms(const String &str) {
+	String res;
+
+	for (int i = 0; g_platforms[i].code; i++)
+		if (str.contains("plat_" + String(g_platforms[i].code)))
+			res += GUIO_PLATFORM_PREFIX + String(g_platforms[i].id);
+
+	return res;
+}
+
+const String getGameGUIOptionsDescriptionPlatforms(const String &str) {
+	String res;
+
+	for (int i = 0; g_platforms[i].id != kPlatformUnknown; i++)
+		if (str.contains(GUIO_PLATFORM_PREFIX + String(g_platforms[i].id)))
+			res += "plat_" + String(g_platforms[i].code) + " ";
+
+	res.trim();
+
+	return res;
+}
+
+const String getGameGUIOptionsDescriptionPlatform(Platform plat) {
+	if (plat == kPlatformUnknown)
+		return "";
+
+	// Using platform code as description for GUI options to avoid spaces in the name
+	return String("plat_") + getPlatformCode(plat);
 }
 
 List<String> getPlatformList() {

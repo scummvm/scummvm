@@ -22,6 +22,8 @@
 #ifndef COMMON_GUI_OPTIONS_H
 #define COMMON_GUI_OPTIONS_H
 
+#include "common/platform.h"
+
 // This is an equivalent of an enum. Feel free to renumerate them
 // They are used only internally for making lookups cheaper and for
 // possibility to concatenate them as codes to the detection tables
@@ -80,6 +82,17 @@
 #define GUIO_NOSPEECHVOLUME  "\x32"
 
 #define GUIO_NOLANG          "\x33"
+
+// Helper macros to get string for the platform
+// Extra level of indirection required to force macro expansion on some compilers
+#define GET_PLAT_STR_IMPL(val, hex) hex
+#define GET_PLAT_STR_EXPAND(x) GET_PLAT_STR_IMPL x
+#define GET_PLAT_STR(name) GET_PLAT_STR_EXPAND((name))
+
+#define GUIO_PLATFORM_PREFIX "\x40"
+
+// Get hex string literal for the given platform
+#define GUIO_PLATFORM(p) GUIO_PLATFORM_PREFIX GET_PLAT_STR(p##_VAL)
 
 // Special GUIO flags for the AdvancedDetector's caching of game specific
 // options.
@@ -144,8 +157,19 @@ namespace Common {
 
 class String;
 
+/**
+* Check if given option exists in a string
+*/
 bool checkGameGUIOption(const String &option, const String &str);
+
+/**
+* Parse GUIOptions string to GUIO literals defined in this file
+*/
 String parseGameGUIOptions(const String &str);
+
+/**
+* Return string containing gui options description based on GUIO literals
+*/
 const String getGameGUIOptionsDescription(const String &options);
 
 /**
@@ -153,7 +177,7 @@ const String getGameGUIOptionsDescription(const String &options);
  * domain when they differ to the ones passed as
  * parameter.
  */
-void updateGameGUIOptions(const String &options, const String &langOption);
+void updateGameGUIOptions(const String &options, const String &langOption, const String &platOption);
 
 /** @} */
 
