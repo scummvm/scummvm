@@ -23,6 +23,11 @@ MODULE_OBJS = \
 	sounds.o \
 	ui-objects.o
 
+ifdef USE_OPENGL_GAME
+MODULE_OBJS += \
+	graphics-opengl-classic.o
+endif
+
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ALCACHOFA), DYNAMIC_PLUGIN)

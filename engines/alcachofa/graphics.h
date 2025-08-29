@@ -95,7 +95,7 @@ public:
 	static IRenderer *createOpenGLRenderer(Common::Point resolution);
 };
 
-class IDebugRenderer : public IRenderer {
+class IDebugRenderer : public virtual IRenderer {
 public:
 	virtual void debugPolygon(
 		Common::Span<Math::Vector2d> points,
