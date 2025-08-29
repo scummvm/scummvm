@@ -170,10 +170,19 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		int startCont = _state->_continuationData[ch][f].first;
 		int endCont = _state->_continuationData[ch][f].second;
-		ImGui::PushID(ch * 10000 + f);
 
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+
+		if (ImGui::IsItemClicked(0)) {
+			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
+			_state->_selectedScoreCast.channel = ch;
+		}
+
+		if (ImGui::IsItemHovered()) {
+			_state->_hoveredScoreCast.frame = f;
+			_state->_hoveredScoreCast.channel = ch;
+		}
 
 		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
 			if (f == startCont) {
@@ -192,10 +201,20 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			} else {
 				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._contColors[_state->_colors._contColorIndex]);
 			}
+
 		}
 
-		float startX = ImGui::GetCursorScreenPos().x;
-		float width = ImGui::GetColumnWidth(ImGui::TableGetColumnIndex()) * (endCont - startCont + 1);
+		// If the frame is not the start, then don't render any text
+		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
+			if (f == endCont && sprite._castId.member) {
+				ImGui::PushFont(ImGui::GetIO().FontDefault);
+				ImGui::Text("-\uf819");
+				ImGui::PopFont();
+			}
+			continue;
+		}
+
+		ImGui::PushID(ch * 10000 + f);
 
 		Common::String string = Common::String("");
 		switch (mode) {
@@ -259,14 +278,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		}
 
 		const char *text = string.c_str();
-		ImGui::Text("%s", text);
-
-		// // Center text inside span
-		// ImVec2 textSize = ImGui::CalcTextSize(text);
-		// float cursorX = startX + (width - textSize.x) * 0.5f;
-		// ImGui::SetCursorScreenPos(ImVec2(cursorX, ImGui::GetCursorScreenPos().y));
-
-		// ImGui::TextUnformatted(text);
+		ImGui::Text(u8"\u25cf%s", text);
 		ImGui::PopID();
 
 		if (ImGui::IsItemClicked(0)) {
