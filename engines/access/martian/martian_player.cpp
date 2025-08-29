@@ -39,7 +39,7 @@ void MartianPlayer::load() {
 
 	// Overwrite game-specific values
 	_playerOffset.x = _vm->_screen->_scaleTable1[20];
-	_playerOffset.y = _vm->_screen->_scaleTable1[52];
+	_playerOffset.y = _vm->_screen->_scaleTable1[62];
 	_leftDelta = -9;
 	_rightDelta = 33;
 	_upDelta = 5;
