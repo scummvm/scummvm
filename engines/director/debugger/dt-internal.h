@@ -183,7 +183,7 @@ typedef struct ImGuiState {
 	bool _wasHidden = false;
 
 	Common::List<CastMemberID> _scriptCasts;
-	Common::List<ImGuiScript> _openHandlers;
+	Common::HashMap<int, ImGuiScript> _openHandlers;
 	bool _showCompleteScript = true;
 
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
