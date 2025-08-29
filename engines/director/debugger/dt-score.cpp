@@ -162,6 +162,10 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	numFrames -= _state->_scoreFrameOffset - 1;
 	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
 
+	if (modeSel == kModeExtended) {
+		_state->_colors._contColorIndex = ch % _state->_colors._contColorCount;
+	}
+
 	for (int f = 0; f < (int)numFrames; f++) {
 		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset - 1];
 		Sprite &sprite = *frame._sprites[ch];
@@ -199,14 +203,16 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 				ch == _state->_hoveredScoreCast.channel) {
 				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._channel_hovered_col);
 			} else {
-				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._contColors[_state->_colors._contColorIndex]);
+				if (mode == modeSel)
+					ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._contColors[_state->_colors._contColorIndex]);
+				else
+					ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, brightenColor(_state->_colors._contColors[_state->_colors._contColorIndex], 1.5));
 			}
-
 		}
 
 		// If the frame is not the start, then don't render any text
 		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
-			if (f == endCont && sprite._castId.member) {
+			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
 				ImGui::PushFont(ImGui::GetIO().FontDefault);
 				ImGui::Text("-\uf819");
 				ImGui::PopFont();
@@ -216,27 +222,26 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::PushID(ch * 10000 + f);
 
-		Common::String string = Common::String("");
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				string += Common::String::format("%d", sprite._castId.member).c_str();
+				ImGui::Text(Common::String::format("%d", sprite._castId.member).c_str());
 			else if (sprite.isQDShape())
-				string += "Q";
+				ImGui::Text("Q");
 			else
-				string += "  ";
+				ImGui::Text("  ");
 			break;
 
 		case kModeInk:
-			string += Common::String::format("%s", inkType2str(sprite._ink)).c_str();
+			ImGui::Text(inkType2str(sprite._ink));
 			break;
 
 		case kModeLocation:
-			string += Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
+			ImGui::Text(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
 			break;
 
 		case kModeBlend:
-			string += Common::String::format("%d", sprite._blendAmount);
+			ImGui::Text(Common::String::format("%d", sprite._blendAmount).c_str());
 			break;
 
 		case kModeBehavior:
@@ -245,27 +250,27 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChTempo:
 			if (frame._mainChannels.tempo)
-				string += Common::String::format("%d", frame._mainChannels.tempo);
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.tempo).c_str());
 			break;
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				string += Common::String::format("%d", frame._mainChannels.palette.paletteId.member);
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.palette.paletteId.member).c_str());
 			break;
 
 		case kChTransition:
 			if (frame._mainChannels.transType)
-				string += Common::String::format("%d", frame._mainChannels.transType);
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.transType).c_str());
 			break;
 
 		case kChSound1:
 			if (frame._mainChannels.sound1.member)
-				string += Common::String::format("%d", frame._mainChannels.sound1.member);
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound1.member).c_str());
 			break;
 
 		case kChSound2:
 			if (frame._mainChannels.sound2.member)
-				string += Common::String::format("%d", frame._mainChannels.sound2.member);
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound2.member).c_str());
 			break;
 
 		case kChScript:
@@ -274,11 +279,9 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kModeExtended: // Render empty row
 		default:
-			string += "  ";
+			ImGui::Text("  ");
 		}
 
-		const char *text = string.c_str();
-		ImGui::Text(u8"\u25cf%s", text);
 		ImGui::PopID();
 
 		if (ImGui::IsItemClicked(0)) {

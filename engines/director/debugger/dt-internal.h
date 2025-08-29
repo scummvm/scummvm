@@ -155,11 +155,11 @@ typedef struct ImGuiState {
 		// Colors to show continuation data
 		const int _contColorCount = 5;
 		ImColor _contColors[5] = {
-			ImColor(IM_COL32(0x00, 0x00, 0xB2, 0xFF)), // Blue
-			ImColor(IM_COL32(0xB2, 0x00, 0x00, 0xFF)), // Red
-			ImColor(IM_COL32(0x61, 0x1F, 0x9F, 0xFF)), // Violet
-			ImColor(IM_COL32(0x73, 0x1E, 0x1E, 0xFF)), // Brown
-			ImColor(IM_COL32(0x00, 0x59, 0x00, 0xFF)), // Green
+			ImColor(IM_COL32(0x00, 0x00, 0xB2, 0x80)), // Blue
+			ImColor(IM_COL32(0xB2, 0x00, 0x00, 0x80)), // Red
+			ImColor(IM_COL32(0x61, 0x1F, 0x9F, 0x80)), // Violet
+			ImColor(IM_COL32(0x73, 0x1E, 0x1E, 0x80)), // Brown
+			ImColor(IM_COL32(0x00, 0x59, 0x00, 0x80)), // Green
 		};
 
 		ImColor _channel_selected_col = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
@@ -236,6 +236,7 @@ Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
+ImColor brightenColor(const ImColor &color, float factor);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp
