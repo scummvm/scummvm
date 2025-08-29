@@ -161,7 +161,11 @@ EditBox::EditBox(Room *room, ReadStream &stream)
 	, i3(stream.readSint32LE())
 	, i4(stream.readSint32LE())
 	, i5(stream.readSint32LE())
-	, _fontId(stream.readSint32LE()) {}
+	, _fontId(0) {
+
+	if (g_engine->version() == EngineVersion::V3_1)
+		_fontId = stream.readSint32LE();
+}
 
 const char *CheckBox::typeName() const { return "CheckBox"; }
 

@@ -22,6 +22,8 @@
 #ifndef ALCACHOFA_GAME_H
 #define ALCACHOFA_GAME_H
 
+#include "alcachofa/script.h"
+
 #include "common/textconsole.h"
 #include "common/file.h"
 
@@ -48,6 +50,10 @@ public:
 	virtual ~Game() {}
 
 	virtual void onLoadedGameFiles();
+	virtual Common::Point getResolution() = 0;
+	virtual const char *const *getMapFiles() = 0; ///< Returns a nullptr-terminated list
+	virtual Common::Span<const ScriptOp> getScriptOpMap() = 0;
+	virtual Common::Span<const ScriptKernelTask> getScriptKernelTaskMap() = 0;
 
 	virtual bool doesRoomHaveBackground(const Room *room);
 	virtual void unknownRoomObject(const Common::String &type);

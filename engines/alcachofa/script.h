@@ -33,20 +33,20 @@ namespace Alcachofa {
 
 class Process;
 
+// the ScriptOp and ScriptKernelTask enums represent the *implemented* order
+// the specific Game instance maps the version-specific op codes to our order
+
 enum class ScriptOp {
 	Nop,
 	Dup,
 	PushAddr,
+	PushDynAddr,
 	PushValue,
 	Deref,
-	Crash5, ///< would crash original engine by writing to read-only memory
+	Pop1,
 	PopN,
 	Store,
-	Crash8,
-	Crash9,
 	LoadString,
-	LoadString2, ///< exactly the same as LoadString
-	Crash12,
 	ScriptCall,
 	KernelCall,
 	JumpIfFalse,
@@ -55,8 +55,6 @@ enum class ScriptOp {
 	Negate,
 	BooleanNot,
 	Mul,
-	Crash21,
-	Crash22,
 	Add,
 	Sub,
 	Less,
@@ -67,15 +65,14 @@ enum class ScriptOp {
 	NotEquals,
 	BitAnd,
 	BitOr,
-	Crash33,
-	Crash34,
-	Crash35,
-	Crash36,
-	Return
+	ReturnValue,
+	ReturnVoid,
+	Crash
 };
 
 enum class ScriptKernelTask {
-	PlayVideo = 1,
+	Nop = 0,
+	PlayVideo,
 	PlaySound,
 	PlayMusic,
 	StopMusic,
@@ -85,7 +82,6 @@ enum class ScriptKernelTask {
 	StopAndTurnMe,
 	ChangeCharacter,
 	SayText,
-	Nop10,
 	Go,
 	Put,
 	ChangeCharacterRoom,
@@ -99,7 +95,6 @@ enum class ScriptKernelTask {
 	CharacterDrop,
 	Delay,
 	HadNoMousePressFor,
-	Nop24,
 	Fork,
 	Animate,
 	AnimateCharacter,
@@ -109,7 +104,6 @@ enum class ScriptKernelTask {
 	SetDialogLineReturn,
 	DialogMenu,
 	ClearInventory,
-	Nop34,
 	FadeType0,
 	FadeType1,
 	LerpWorldLodBias,
@@ -130,7 +124,11 @@ enum class ScriptKernelTask {
 	FadeIn2,
 	FadeOut2,
 	LerpCamXYZ,
-	LerpCamToObjectKeepingZ
+	LerpCamToObjectKeepingZ,
+
+	SheriffTakesCharacter, ///< some special-case V1 tasks, unknown yet
+	ChangeDoor,
+	Disguise
 };
 
 enum class ScriptFlags {
@@ -148,7 +146,7 @@ inline bool operator & (ScriptFlags a, ScriptFlags b) {
 struct ScriptInstruction {
 	ScriptInstruction(Common::ReadStream &stream);
 
-	ScriptOp _op;
+	int32 _op; ///< int32 because it still has to be mapped using a game-specific translation table
 	int32 _arg;
 };
 

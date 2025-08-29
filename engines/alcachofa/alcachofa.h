@@ -111,6 +111,7 @@ public:
 	AlcachofaEngine(OSystem *syst, const AlcachofaGameDescription *gameDesc);
 	~AlcachofaEngine() override;
 
+	inline EngineVersion version() const { return gameDescription().engineVersion; }
 	inline bool isV1() const { return gameDescription().isVersionBetween(10, 19); }
 	inline bool isV2() const { return gameDescription().isVersionBetween(20, 29); }
 	inline bool isV3() const { return gameDescription().isVersionBetween(30, 39); }

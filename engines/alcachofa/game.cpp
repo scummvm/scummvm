@@ -114,18 +114,13 @@ void Game::unknownVariable(const char *name) {
 }
 
 void Game::unknownInstruction(const ScriptInstruction &instruction) {
-	const char *type =
-		instruction._op == ScriptOp::Crash5 || // these are defined in the game
-		instruction._op == ScriptOp::Crash8 || // but implemented as crashes
-		instruction._op == ScriptOp::Crash9 ||
-		instruction._op == ScriptOp::Crash12 ||
-		instruction._op == ScriptOp::Crash21 ||
-		instruction._op == ScriptOp::Crash22 ||
-		instruction._op == ScriptOp::Crash33 ||
-		instruction._op == ScriptOp::Crash34 ||
-		instruction._op == ScriptOp::Crash35 ||
-		instruction._op == ScriptOp::Crash36
-		? "crash" : "invalid";
+	const char *type;
+	if (instruction._op < 0 || (uint32)instruction._op >= getScriptOpMap().size())
+		type = "out-of-bounds";
+	else if (getScriptOpMap()[instruction._op] == ScriptOp::Crash)
+		type = "crash"; // these are defined in the game, but implemented as write to null-pointer
+	else
+		type = "unimplemented"; // we forgot to implement them
 	_message("Script reached %s instruction: %d %d", type, (int)instruction._op, instruction._arg);
 }
 
