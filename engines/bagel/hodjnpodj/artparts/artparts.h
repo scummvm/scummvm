@@ -129,7 +129,8 @@ public:
 	virtual void SplashScratchPaint();
 
 private:
-	VOID        OnSoundNotify(CSound *pSound);
+	VOID OnSoundNotify(CSound *pSound);
+	static BOOL CopyPaletteContents(CPalette *pSource, CPalette *pDest);
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;

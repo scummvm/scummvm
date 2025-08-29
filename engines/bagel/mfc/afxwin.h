@@ -644,6 +644,7 @@ public:
 
 	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
 	int GetObject(int nCount, LPVOID lpObject) const;
+	UINT GetEntryCount() const;
 	UINT GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors) const;
 	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,

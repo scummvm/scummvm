@@ -1269,6 +1269,35 @@ void CMainWindow::DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight) {
 
 } //End DrawPart();
 
+BOOL CMainWindow::CopyPaletteContents(CPalette *pSource, CPalette *pDest) {
+    ASSERT(pSource && pDest);
+
+    // Get the number of entries in the source palette
+    UINT nEntries = pSource->GetEntryCount();
+    if (nEntries == 0)
+        return FALSE;
+
+    // Allocate memory for the palette entries
+    LOGPALETTE *pLogPal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nEntries);
+    if (!pLogPal)
+        return FALSE;
+
+    pLogPal->palVersion = 0x300;
+    pLogPal->palNumEntries = (WORD)nEntries;
+
+    // Fill in the PALETTEENTRY array
+    pSource->GetPaletteEntries(0, nEntries, pLogPal->palPalEntry);
+
+    // Delete old HPALETTE inside pDest
+    pDest->DeleteObject();
+
+    // Create new palette from entries
+    BOOL bResult = pDest->CreatePalette(pLogPal);
+
+    free(pLogPal);
+    return bResult;
+}
+
 /*****************************************************************
  *
  *  LoadArtWork
@@ -1353,9 +1382,16 @@ BOOL CMainWindow::LoadArtWork() {
 
 	(*pSourceDoc).OpenDocument(bufName);
 
-	if (!pGamePalette)
-		pGamePalette = (*pSourceDoc).DetachPalette();       // Acquire the shared palette for our game from the art
-
+	// Acquire the shared palette for our game from the art
+	if (!pGamePalette) {
+		pGamePalette = (*pSourceDoc).DetachPalette();
+	} else {
+		// WORKAROUND: Keep a single pGamePalette, since there
+		// are UI elements that have pointers to it
+		CPalette *src = pSourceDoc->DetachPalette();
+		CopyPaletteContents(src, pGamePalette);
+		delete src;
+	}
 	// setup new palette in scratch areas
 	pOldPal1 = pScratch1DC->SelectPalette(pGamePalette, FALSE);
 	pScratch1DC->RealizePalette();
@@ -1566,6 +1602,7 @@ void CMainWindow::NewGame() {
 
 	if (LoadArtWork() == FALSE) {                                    // Load artwork to Scratch1
 		PostMessage(WM_CLOSE, 0, 0);
+		return;
 	}
 
 	CheckForWin();

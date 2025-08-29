@@ -55,6 +55,11 @@ int CPalette::GetObject(int nCount, LPVOID lpObject) const {
 	return 4 + (4 * i);
 }
 
+UINT CPalette::GetEntryCount() const {
+	const Impl *src = static_cast<const Impl *>(m_hObject);
+	return src->size();
+}
+
 UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 		LPPALETTEENTRY lpPaletteColors) const {
 	const Impl *src = static_cast<const Impl *>(m_hObject);
