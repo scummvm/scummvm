@@ -47,6 +47,16 @@ const char *modes2[] = {
 	ICON_MS_FORMS_APPS_SCRIPT, "Script",	// forms_apps_script
 };
 
+// These are the score channel colors coming from the Authoring Tool
+const uint32 scoreColors[6] = {
+	0xceceff,
+	0xffffce,
+	0xceffce,
+	0xceffff,
+	0xffceff,
+	0xffce9c,
+};
+
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
