@@ -36,12 +36,33 @@ bool MidiParser_BEmd::loadMusic(byte *data, uint32 size) {
 	unloadMusic();
 	const byte *pos = data;
 
+	//
+	// 'BEmd' MIDI format from Martian Memorandum.
+	//
+	// A simple single-track format that splits note and timing data.
+	//
+	// Header is:
+	//     'BEmd' (magic number)
+	//     0xC0 0x00 (unknown, always 0xC0?
+	//     16-bit offset to timing data block
+	//     16-bit size of timing data block
+	//     6 bytes unk (normally 0)
+	// Header is followed by the track data block, then timing delta data
+	// block.
+	//
+	// Track data mostly follows other MIDI formats with a few differences:
+	//  * Fixed length arguments
+	//  * 0xFF 0x51 (tempo meta event) is followed by a uint16 which is fed
+	//      directly to the PIT as a delay
+	//  * Deltas are assumed to be 0. On 0xF8, a 16 bit int is read from
+	//      the timing block and sent to the PIT as a timing delay.
+	//
 	if (!memcmp(pos, "BEmd", 4)) {
 		pos += 4;
 		if (size <= 16)
 			error("Wrong BEmd music resource size");
 
-		/*uint16 unk1 = */ READ_LE_UINT16(pos);  // Normally 0xC0.. tempo?
+		/*uint16 unk1 = */ READ_LE_UINT16(pos);  // Normally 0xC0?
 		uint16 secondBlockOffset = READ_LE_UINT16(pos + 2);
 		if (secondBlockOffset < 16 || secondBlockOffset >= size)
 			error("Bad second block offset in BEmd file");
@@ -180,6 +201,7 @@ bool MidiParser_BEmd::processEvent(const EventInfo &info, bool fireEvents) {
 
 void MidiParser_BEmd::resetTracking() {
 	_tickData = _trackDataEnd;
+	MidiParser::resetTracking();
 }
 
 } // end namespace Access
