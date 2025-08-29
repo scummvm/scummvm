@@ -136,6 +136,7 @@ bool CastMember::hasField(int field) {
 	case kTheName:
 	case kTheNumber:
 	case kTheRect:
+	case kThePreLoad:
 	case kThePurgePriority:
 	case kTheScriptText:
 	case kTheSize:
@@ -208,6 +209,9 @@ Datum CastMember::getField(int field) {
 		// not sure get the initial rect would be fine to castmember
 		d = Datum(_cast->getCastMember(_castId)->_initialRect);
 		break;
+	case kThePreLoad:
+		d = 0; // ScummVM does not do preloading
+		break;
 	case kThePurgePriority:
 		d = _purgePriority;
 		break;
@@ -268,6 +272,9 @@ bool CastMember::setField(int field, const Datum &d) {
 		return true;
 	case kTheRect:
 		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		return false;
+	case kThePreLoad:
+		warning("CastMember::setField(): Attempt to set preLoad field to %d but ScummVM does not do preloading", d.asInt());
 		return false;
 	case kThePurgePriority:
 		_purgePriority = CLIP<int>(d.asInt(), 0, 3);
