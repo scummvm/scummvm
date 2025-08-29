@@ -62,10 +62,9 @@ void game_main() {
 		(void)g_engine->loadGameState(saveSlot);
 		Dialogs::MainMenu::playGame();
 		return;
-	} else {
-		Dialogs::MainMenu::execute();
 	}
 
+	Dialogs::MainMenu::execute();
 	tidy();
 }
 
@@ -162,7 +161,6 @@ void cursorChoice(int16 nr) {
 		_G(cur)->setAnimation(40, 40, delay);
 		break;
 	case CUR_USER:
-		break;
 	default:
 		break;
 	}
@@ -472,7 +470,7 @@ void setupScreen(SetupScreenMode mode) {
 	} else {
 		kb_mov(1);
 		_G(det)->unfreezeAni();
-		check_mouse_ausgang(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
+		check_mouse_exit(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 
 		if (!_G(flags).SaveMenu)
 			calc_ani_timer();
@@ -1143,7 +1141,7 @@ bool autoMove(int16 movNr, int16 playerNum) {
 			if (_G(mov)->auto_go_status()) {
 				while (_G(mov)->auto_go_status()) {
 					if (SHOULD_QUIT)
-						return 0;
+						return false;
 					if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE) {
 						if (_G(flags).ExitMov || _G(flags).BreakAMov) {
 							key = Common::KEYCODE_ESCAPE;
@@ -1611,7 +1609,7 @@ bool isCurInventory(int16 nr) {
 	return _G(cur)->getInventoryCursor() == nr;
 }
 
-void check_mouse_ausgang(int16 x, int16 y) {
+void check_mouse_exit(int16 x, int16 y) {
 	if (_G(menu_item) == CUR_WALK) {
 		bool found = true;
 		int16 nr = _G(obj)->is_exit(x, y);

@@ -349,7 +349,7 @@ void auto_scroll(int16 scrx, int16 scry);
 
 int16 calc_mouse_mov_obj(int16 *auto_nr);
 
-void check_mouse_ausgang(int16 x, int16 y);
+void check_mouse_exit(int16 x, int16 y);
 
 void calcExit(int16 x, int16 y);
 

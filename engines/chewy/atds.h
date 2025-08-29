@@ -282,16 +282,16 @@ private:
 	bool _continueWhenSpeechEnds = false;
 
 	SplitStringInit _ssi[AAD_MAX_PERSON] = {
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
-		{ 0, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
+		{ nullptr, 100, 0 },
 	};
 
 	char *_splitPtr[MAX_STR_SPLIT] = { nullptr };
