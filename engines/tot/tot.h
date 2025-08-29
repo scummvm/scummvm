@@ -323,7 +323,7 @@ public:
 	 */
 	uint _niche[2][4];
 
-	RoomFileRegister *_currentRoomData = NULL;
+	RoomFileRegister *_currentRoomData = nullptr;
 
 	ScreenObject _curObject;
 	/**

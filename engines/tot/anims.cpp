@@ -942,7 +942,7 @@ void drawFlc(
 
 			if (g_engine->_chrono->_gameTick) {
 				// Make sure we also update the palette animations! Esp. for part 2
-				if (g_engine->_currentRoomData != NULL && !g_engine->_shouldQuitGame) {
+				if (g_engine->_currentRoomData != nullptr && !g_engine->_shouldQuitGame) {
 					g_engine->_graphics->advancePaletteAnim();
 				}
 				if(speed == 9) {
