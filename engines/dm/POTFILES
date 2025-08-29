@@ -1,2 +1,3 @@
 engines/dm/dm.cpp
 engines/dm/loadsave.cpp
+engines/dm/metaengine.cpp

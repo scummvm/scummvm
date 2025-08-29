@@ -47,47 +47,35 @@ namespace DM {
 void EventManager::initArrays() {
 	KeyboardInput primaryKeyboardInputInterface[7] = { // @ G0458_as_Graphic561_PrimaryKeyboardInput_Interface
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandToggleInventoryChampion0, Common::KEYCODE_F1, 0), /* F1 (<CSI>1~) Atari ST: Code = 0x3B00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion1, Common::KEYCODE_F2, 0), /* F2 (<CSI>2~) Atari ST: Code = 0x3C00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion2, Common::KEYCODE_F3, 0), /* F3 (<CSI>3~) Atari ST: Code = 0x3D00 */
-		KeyboardInput(kDMCommandToggleInventoryChampion3, Common::KEYCODE_F4, 0), /* F4 (<CSI>4~) Atari ST: Code = 0x3E00 */
-		KeyboardInput(kDMCommandSaveGame, Common::KEYCODE_s, Common::KBD_CTRL), /* CTRL-S       Atari ST: Code = 0x0013 */
-		KeyboardInput(kDMCommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc (0x1B)   Atari ST: Code = 0x001B */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandToggleInventoryChampion0, kActionToggleInventoryChampion0), /* F1 (<CSI>1~) Atari ST: Code = 0x3B00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion1, kActionToggleInventoryChampion1), /* F2 (<CSI>2~) Atari ST: Code = 0x3C00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion2, kActionToggleInventoryChampion2), /* F3 (<CSI>3~) Atari ST: Code = 0x3D00 */
+		KeyboardInput(kDMCommandToggleInventoryChampion3, kActionToggleInventoryChampion3), /* F4 (<CSI>4~) Atari ST: Code = 0x3E00 */
+		KeyboardInput(kDMCommandSaveGame, kActionSave), /* CTRL-S       Atari ST: Code = 0x0013 */
+		KeyboardInput(kDMCommandFreezeGame, kActionFreezeGame), /* Esc (0x1B)   Atari ST: Code = 0x001B */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 
 	KeyboardInput secondaryKeyboardInputMovement[19] = { // @ G0459_as_Graphic561_SecondaryKeyboardInput_Movement
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_KP4, 0), /* Numeric pad 4 Atari ST: Code = 0x5200 */
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_KP5, 0), /* Numeric pad 5 Atari ST: Code = 0x4800 */
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_KP6, 0), /* Numeric pad 6 Atari ST: Code = 0x4700 */
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_KP1, 0), /* Numeric pad 1 Atari ST: Code = 0x4B00 */
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_KP2, 0), /* Numeric pad 2 Atari ST: Code = 0x5000 */
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_KP3, 0), /* Numeric pad 3 Atari ST: Code = 0x4D00. Remaining entries below not present */
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_w, 0), /* Up Arrow (<CSI>A) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveForward, Common::KEYCODE_w, Common::KBD_SHIFT), /* Shift Up Arrow (<CSI>T) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_a, 0), /* Backward Arrow (<CSI>D) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveLeft, Common::KEYCODE_a, Common::KBD_SHIFT), /* Shift Forward Arrow (<CSI> A) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_d, 0), /* Forward Arrow (<CSI>C) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveRight, Common::KEYCODE_d, Common::KBD_SHIFT), /* Shift Backward Arrow (<CSI> @) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_s, 0), /* Down arrow (<CSI>B) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandMoveBackward, Common::KEYCODE_s, Common::KBD_SHIFT), /* Shift Down arrow (<CSI>S) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_q, 0), /* Del (0x7F) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnLeft, Common::KEYCODE_q, Common::KBD_SHIFT), /* Shift Del (0x7F) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_e, 0), /* Help (<CSI>?~) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandTurnRight, Common::KEYCODE_e, Common::KBD_SHIFT), /* Shift Help (<CSI>?~) */ /*Differs for testing convenience*/
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandTurnLeft, kActionTurnLeft), /* Numeric pad 4 Atari ST: Code = 0x5200 */
+		KeyboardInput(kDMCommandMoveForward, kActionMoveForward), /* Numeric pad 5 Atari ST: Code = 0x4800 */
+		KeyboardInput(kDMCommandTurnRight, kActionTurnRight), /* Numeric pad 6 Atari ST: Code = 0x4700 */
+		KeyboardInput(kDMCommandMoveLeft, kActionMoveLeft), /* Numeric pad 1 Atari ST: Code = 0x4B00 */
+		KeyboardInput(kDMCommandMoveBackward, kActionMoveBackward), /* Numeric pad 2 Atari ST: Code = 0x5000 */
+		KeyboardInput(kDMCommandMoveRight, kActionMoveRight), /* Numeric pad 3 Atari ST: Code = 0x4D00. Remaining entries below not present */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	KeyboardInput primaryKeyboardInputPartySleeping[3] = { // @ G0460_as_Graphic561_PrimaryKeyboardInput_PartySleeping
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandWakeUp, Common::KEYCODE_RETURN, 0), /* Return */
-		KeyboardInput(kDMCommandFreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandWakeUp, kActionWakeUp), /* Return */
+		KeyboardInput(kDMCommandFreezeGame, kActionFreezeGame), /* Esc */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	KeyboardInput primaryKeyboardInputFrozenGame[2] = { // @ G0461_as_Graphic561_PrimaryKeyboardInput_FrozenGame
 		/* { Command, Code } */
-		KeyboardInput(kDMCommandUnfreezeGame, Common::KEYCODE_ESCAPE, 0), /* Esc */
-		KeyboardInput(kDMCommandNone, Common::KEYCODE_INVALID, 0)
+		KeyboardInput(kDMCommandUnfreezeGame, kActionFreezeGame), /* Esc */
+		KeyboardInput(kDMCommandNone, kActionNone)
 	};
 	MouseInput primaryMouseInputEntrance[4] = { // @ G0445_as_Graphic561_PrimaryMouseInput_Entrance[4]
 		/* { Command, Box.X1, Box.X2, Box.Y1, Box.Y2, Button } */
@@ -617,11 +605,17 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 				*grabKey = event;
 				return event.type;
 			}
-
+			break;
+		}
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START: {
+			if (grabKey) {
+				*grabKey = event;
+				return event.type;
+			}
 			if (_primaryKeyboardInput) {
 				KeyboardInput *input = _primaryKeyboardInput;
 				while (input->_commandToIssue != kDMCommandNone) {
-					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+					if (input->_action == event.customType) {
 						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;
@@ -633,7 +627,7 @@ Common::EventType EventManager::processInput(Common::Event *grabKey, Common::Eve
 			if (_secondaryKeyboardInput) {
 				KeyboardInput *input = _secondaryKeyboardInput;
 				while (input->_commandToIssue != kDMCommandNone) {
-					if ((input->_key == event.kbd.keycode) && (input->_modifiers == (event.kbd.flags & input->_modifiers))) {
+					if (input->_action == event.customType) {
 						processPendingClick(); // possible fix to BUG0_73
 						_commandQueue.push(Command(Common::Point(-1, -1), input->_commandToIssue));
 						break;

@@ -37,6 +37,8 @@
 #include "dm/movesens.h"
 #include "dm/sounds.h"
 
+#include "backends/keymapper/keymapper.h"
+
 
 namespace DM {
 
@@ -2478,6 +2480,9 @@ void ChampionMan::renameChampion(Champion *champ) {
 	int16 textPosX = 177;
 	int16 textPosY = 91;
 
+	Common::Keymapper *keymapper = _vm->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+
 	for (;;) { /*_Infinite loop_*/
 		bool championTitleIsFull = ((renamedChampionStringMode == kDMRenameChampionTitle) && (curCharacterIndex == 19));
 		if (!championTitleIsFull) {
@@ -2491,8 +2496,10 @@ void ChampionMan::renameChampion(Champion *champ) {
 			Common::Event event;
 			Common::EventType eventType = evtMan.processInput(&event, &event);
 			display.updateScreen();
-			if (_vm->_engineShouldQuit)
+			if (_vm->_engineShouldQuit){
+				keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 				return;
+			}
 			display.updateScreen();
 				//_vm->f22_delay(1);
 
@@ -2518,8 +2525,10 @@ void ChampionMan::renameChampion(Champion *champ) {
 							break;
 						}
 					}
-					if (!found)
+					if (!found) {
+						keymapper->getKeymap("game-shortcuts")->setEnabled(true);
 						return;
+					}
 
 					if (renamedChampionStringMode == kDMRenameChampionTitle)
 						renamedChampionString = champ->_title;
