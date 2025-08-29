@@ -27,6 +27,8 @@
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 extern int parse_arc(const char *);
@@ -309,12 +311,15 @@ void HypnoEngine::runArcade(ArcadeShooting *arc) {
 			case Common::EVENT_QUIT:
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				pressedKey(event.customType);
+				if (event.customType == kActionPrimaryShoot)
+					if (clickedPrimaryShoot(mousePos))
+						shootingPrimary = true;
+				break;
 
 			case Common::EVENT_KEYDOWN:
 				pressedKey(event.kbd.keycode);
-				if (event.kbd.keycode == Common::KEYCODE_LCTRL)
-					if (clickedPrimaryShoot(mousePos))
-						shootingPrimary = true;
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
@@ -823,5 +828,16 @@ bool HypnoEngine::checkRButtonUp() {
 void HypnoEngine::setRButtonUp(const bool val) {
 	return;
 }
+
+void HypnoEngine::disableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+}
+
+void HypnoEngine::enableGameKeymaps() {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+}
+
 } // End of namespace Hypno
 

@@ -42,6 +42,8 @@
 #include "hypno/grammar.h"
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 Hotspots *g_parsedHots;
@@ -233,12 +235,16 @@ void HypnoEngine::runIntros(Videos &videos) {
 		playVideo(*it);
 	}
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	disableGameKeymaps();
+	keymapper->getKeymap("intro")->setEnabled(true);
+
 	while (!shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionSkipIntro)
 					skip = true;
 				break;
 			case Common::EVENT_LBUTTONDOWN:
@@ -290,6 +296,8 @@ void HypnoEngine::runIntros(Videos &videos) {
 		g_system->updateScreen();
 		g_system->delayMillis(10);
 	}
+	keymapper->getKeymap("intro")->setEnabled(false);
+	enableGameKeymaps();
 }
 
 void HypnoEngine::runIntro(MVideo &video) {

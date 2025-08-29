@@ -27,6 +27,8 @@
 
 #include "hypno/hypno.h"
 
+#include "backends/keymapper/keymapper.h"
+
 namespace Hypno {
 
 void WetEngine::endCredits(Code *code) {
@@ -85,6 +87,11 @@ void WetEngine::runLevelMenu(Code *code) {
 	drawImage(*menu, 0, 0, false);
 	bool cont = true;
 	playSound("sound/bub01.raw", 0, 22050);
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("menu")->setEnabled(true);
+
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -94,18 +101,18 @@ void WetEngine::runLevelMenu(Code *code) {
 			case Common::EVENT_RETURN_TO_LAUNCHER:
 				break;
 
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_DOWN && currentLevel < _lastLevel) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionDown && currentLevel < _lastLevel) {
 					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel++;
-				} else if (event.kbd.keycode == Common::KEYCODE_UP && currentLevel > 0) {
+				} else if (event.customType == kActionUp && currentLevel > 0) {
 					playSound("sound/m_hilite.raw", 1, 11025);
 					currentLevel--;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN ) {
+				} else if (event.customType == kActionSelect ) {
 					playSound("sound/m_choice.raw", 1, 11025);
 					_nextLevel = Common::String::format("c%d", _ids[currentLevel]);
 					cont = false;
-				} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				} else if (event.customType == kActionPause) {
 					openMainMenuDialog();
 				}
 
@@ -127,6 +134,10 @@ void WetEngine::runLevelMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+
 	menu->free();
 	delete menu;
 }
@@ -146,7 +157,13 @@ void WetEngine::runMainMenu(Code *code) {
 	drawImage(surName, subName.left, subName.top, true);
 	drawString("scifi08.fgx", _enterNameString, 48, 50, 100, c);
 	_name.clear();
+
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("direction")->setEnabled(false);
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
+
 	bool cont = true;
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -213,6 +230,10 @@ void WetEngine::runMainMenu(Code *code) {
 	bool found = loadProfile(_name);
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+	keymapper->getKeymap("direction")->setEnabled(true);
+
 	if (found || _name.empty()) {
 		menu->free();
 		delete menu;
@@ -251,6 +272,11 @@ void WetEngine::runMainMenu(Code *code) {
 	drawString("scifi08.fgx", _name, 140, 50, 170, c);
 
 	cont = true;
+
+	keymapper->getKeymap("game-shortcuts")->setEnabled(false);
+	keymapper->getKeymap("pause")->setEnabled(false);
+	keymapper->getKeymap("menu")->setEnabled(true);
+
 	while (!shouldQuit() && cont) {
 		while (g_system->getEventManager()->pollEvent(event)) {
 			// Events
@@ -261,7 +287,7 @@ void WetEngine::runMainMenu(Code *code) {
 				break;
 
 			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_KEYDOWN:
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 				if (!g_system->hasFeature(OSystem::kFeatureTouchscreen))
 					event.mouse = Common::Point(0, 0);
 
@@ -275,13 +301,13 @@ void WetEngine::runMainMenu(Code *code) {
 					}
 				} else if (idx == 1 && subWet.contains(event.mouse)) {
 					//  Nothing
-				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_LEFT) && idx > 0) {
+				} else if ((subWet.contains(event.mouse) || subDamp.contains(event.mouse) || event.customType == kActionLeft) && idx > 0) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx--;
-				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.kbd.keycode == Common::KEYCODE_RIGHT) && idx < 2) {
+				} else if ((subWet.contains(event.mouse) || subSoaked.contains(event.mouse) || event.customType == kActionRight) && idx < 2) {
 					playSound("sound/no_rapid.raw", 1, 11025);
 					idx++;
-				} else if (event.kbd.keycode == Common::KEYCODE_RETURN)
+				} else if (event.customType == kActionSelect)
 					cont = false;
 
 				drawImage(*menu, 0, 0, false);
@@ -307,6 +333,11 @@ void WetEngine::runMainMenu(Code *code) {
 		drawScreen();
 		g_system->delayMillis(10);
 	}
+
+	keymapper->getKeymap("menu")->setEnabled(false);
+	keymapper->getKeymap("game-shortcuts")->setEnabled(true);
+	keymapper->getKeymap("pause")->setEnabled(true);
+
 	_name.toLowercase(); // make sure it is lowercase when we finish
 	_difficulty = difficulties[idx];
 	_nextLevel = code->levelIfWin;
