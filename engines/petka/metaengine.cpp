@@ -26,6 +26,11 @@
 
 #include "petka/petka.h"
 
+#include "common/translation.h"
+#include "backends/keymapper/action.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/standard-actions.h"
+
 class PetkaMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
 	const char *getName() const override {
@@ -38,6 +43,7 @@ public:
 	bool removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::KeymapArray initKeymaps(const char *target) const override;
 };
 
 bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -98,6 +104,108 @@ SaveStateDescriptor PetkaMetaEngine::querySaveMetaInfos(const char *target, int 
 Common::Error PetkaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	*engine = new Petka::PetkaEngine(syst, desc);
 	return Common::kNoError;
+}
+
+Common::KeymapArray PetkaMetaEngine::initKeymaps(const char *target) const {
+	using namespace Common;
+	using namespace Petka;
+
+	Keymap *engineKeymap = new Keymap(Keymap::kKeymapTypeGame, "petka-default", _("Default keymappings"));
+
+	Action *act;
+
+	act = new Action(kStandardActionLeftClick, _("Interact / Skip dialog"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeymap->addAction(act);
+
+	// I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game has multiple actions that you can perform(take, use, etc.), the action menu allows you to select one of them.
+	act = new Action(kStandardActionRightClick, _("Open action menu / Close current interface"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
+	engineKeymap->addAction(act);
+
+	act = new Action("LOOK", _("Look"));
+	act->setCustomEngineActionEvent(kActionCursorLook);
+	act->addDefaultInputMapping("1");
+	act->addDefaultInputMapping("l");
+	act->addDefaultInputMapping("JOY_DOWN");
+	engineKeymap->addAction(act);
+
+	act = new Action("WALK", _("Walk"));
+	act->setCustomEngineActionEvent(kActionCursorWalk);
+	act->addDefaultInputMapping("2");
+	act->addDefaultInputMapping("w");
+	act->addDefaultInputMapping("JOY_LEFT");
+	engineKeymap->addAction(act);
+
+	act = new Action("TAKE", _("Take"));
+	act->setCustomEngineActionEvent(kActionCursorTake);
+	act->addDefaultInputMapping("3");
+	act->addDefaultInputMapping("g");
+	act->addDefaultInputMapping("JOY_UP");
+	engineKeymap->addAction(act);
+
+	act = new Action("USE", _("Use"));
+	act->setCustomEngineActionEvent(kActionCursorUse);
+	act->addDefaultInputMapping("4");
+	act->addDefaultInputMapping("u");
+	act->addDefaultInputMapping("JOY_RIGHT");
+	engineKeymap->addAction(act);
+
+	act = new Action("TALK", _("Talk"));
+	act->setCustomEngineActionEvent(kActionCursorTalk);
+	act->addDefaultInputMapping("5");
+	act->addDefaultInputMapping("t");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeymap->addAction(act);
+
+	// I18N: (Game Name: Red Comrades 1: Save the Galaxy) The game features two characters, but all actions are normally performed by Petka. This action allows you to "use" an object specifically with Chapayev instead.
+	act = new Action("CHAPAYEV", _("Chapayev use object"));
+	act->setCustomEngineActionEvent(kActionCursorChapayev);
+	act->addDefaultInputMapping("6");
+	act->addDefaultInputMapping("c");
+	act->addDefaultInputMapping("JOY_RIGHT_TRIGGER");
+	engineKeymap->addAction(act);
+
+	act = new Action("INVENTORY", _("Inventory"));
+	act->setCustomEngineActionEvent(kActionInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
+	engineKeymap->addAction(act);
+
+	act = new Action("MAP", _("Map"));
+	act->setCustomEngineActionEvent(kActionMap);
+	act->addDefaultInputMapping("TAB");
+	act->addDefaultInputMapping("m");
+	act->addDefaultInputMapping("JOY_RIGHT_SHOULDER");
+	engineKeymap->addAction(act);
+
+	act = new Action("OPTIONS", _("Show / Hide options screen"));
+	act->setCustomEngineActionEvent(kActionOptions);
+	act->addDefaultInputMapping("o");
+	act->addDefaultInputMapping("JOY_LEFT_TRIGGER");
+	engineKeymap->addAction(act);
+
+	act = new Action("PREVIOUS_INTERFACE", _("Close current interface"));
+	act->setCustomEngineActionEvent(kActionPrevInterface);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeymap->addAction(act);
+
+	act = new Action("SAVE", _("Save game"));
+	act->setCustomEngineActionEvent(kActionSave);
+	act->addDefaultInputMapping("F2");
+	engineKeymap->addAction(act);
+
+	act = new Action("LOAD", _("Load game"));
+	act->setCustomEngineActionEvent(kActionLoad);
+	act->addDefaultInputMapping("F3");
+	engineKeymap->addAction(act);
+
+	return Keymap::arrayOf(engineKeymap);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PETKA)
