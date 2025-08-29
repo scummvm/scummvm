@@ -25,6 +25,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      others, 12 titles so far.
    - Added support for Adibou 2: Nature & Sciences.
    - Added support for WAGE-based game. More than 160 titles so far.
+   - Added support for Penumbra: Overture.
 
  Access:
    - Added keymapper support.
