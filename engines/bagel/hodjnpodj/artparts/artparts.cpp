@@ -28,15 +28,9 @@
 #include "bagel/hodjnpodj/hnplibs/cmessbox.h"
 #include "bagel/hodjnpodj/artparts/artparts.h"
 #include "bagel/hodjnpodj/hnplibs/rules.h"
-#include "bagel/hodjnpodj/hnplibs/button.h"
 #include "bagel/hodjnpodj/hnplibs/bitmaps.h"
-#include "bagel/hodjnpodj/hnplibs/text.h"
 #include "bagel/hodjnpodj/artparts/optndlg.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
-//include <stdafx.h>
-//include <time.h>
-//include <fstream.h>
-//include <dos.h>
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -44,53 +38,25 @@ namespace ArtParts {
 
 BOOL    InArtRegion(CPoint point);
 CPoint  WinToArt(CPoint point);
-void    MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
-void    CALLBACK GetSubOptions(CWnd* pParentWind);
-
-POINT Grid[MAX_COLUMNS][MAX_ROWS];          // Location of the art parts
-
-CBmpButton  *m_pScrollButton;
-CBitmap     *pScratch1 = nullptr,              // Off-screen bitmap of current positions
-             *pScratch2 = nullptr,              // Off-screen bitmap of new positions
-              *pOldBmp1 = nullptr,
-               *pOldBmp2 = nullptr;
-CPalette    *pGamePalette = nullptr,           // Palette of current artwork
-             *pOldPal1 = nullptr,
-              *pOldPal2 = nullptr;
-CDC         *pScratch1DC = nullptr,
-             *pScratch2DC = nullptr;
-CText       *m_pTimeText = nullptr;            // Time to be posted in Locale box of screen
-CBitmap     *pLocaleBitmap = nullptr,          // Locale of game bitmap for title bar
-             *pBlankBitmap = nullptr;           // Blank area of locale for time display
-
-BOOL        bStartOkay = TRUE;
-BOOL        bGameStarted = FALSE;           // becomes TRUE at start time, FALSE at game end
-BOOL        bSwitched = FALSE;              // flag for undo -- only true after a part switch
-BOOL        bFramed = FALSE;                // Framed (hint) mode is turned off by default
-BOOL        bSuccess;
-BOOL        m_bIgnoreScrollClick;
-BOOL        m_bShowOutOfPlace = FALSE;
-
-int         nSeconds = MIN_TIME,
-            nMinutes = 0,
-            nLastPick = 0;
-int         m_nTime = MIN_TIME;                     // Time is in SECONDS
-int         m_nRows = MIN_ROWS;                     // Number of rows in the artwork grid
-int         m_nColumns = MIN_COLUMNS;               // Number of columns in the artwork grid
-int         m_nWidth = ART_WIDTH / MIN_COLUMNS;     // The Width of each Part
-int         m_nHeight = ART_HEIGHT / MIN_ROWS;      // The Height of each Part
-float       m_nScore = 0.0;                         // The current percentage of correctly placed parts
-char        szCurrentArt[64];
-
-int         tempTime = MIN_TIME;                    // temporary holding places
-int         tempRows = MIN_ROWS;                    //...for options changes,
-int         tempColumns = MIN_COLUMNS;              //...which only get used
-BOOL        tempFramed = TRUE;                      //...when NewGame is called.
-
-static CSound   *pGameSound = nullptr;                 // Game theme song
 
 extern  HWND ghParentWnd;
 extern  LPGAMESTRUCT pGameInfo;
+
+CPalette *CMainWindow::pGamePalette;
+int CMainWindow::nSeconds;
+int CMainWindow::nMinutes;
+int CMainWindow::nLastPick;
+int CMainWindow::m_nTime;
+int CMainWindow::m_nRows;
+int CMainWindow::m_nColumns;
+int CMainWindow::m_nWidth;
+int CMainWindow::m_nHeight;
+float CMainWindow::m_nScore;
+BOOL CMainWindow::bFramed;
+int CMainWindow::tempTime;
+int CMainWindow::tempRows;
+int CMainWindow::tempColumns;
+BOOL CMainWindow::tempFramed;
 
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -104,6 +70,7 @@ CMainWindow::CMainWindow() {
 	CRect   MainRect, tmpRect;
 	CDC     *pDC = nullptr;
 
+	initStatics();
 	BeginWaitCursor();
 
 	// Define a special window class which traps double-clicks, is byte aligned
@@ -206,6 +173,24 @@ CMainWindow::CMainWindow() {
 
 } //End of CMainWindow
 
+void CMainWindow::initStatics() {
+	pGamePalette = nullptr;
+	nSeconds = MIN_TIME;
+	nMinutes = 0;
+	nLastPick = 0;
+	m_nTime = MIN_TIME;
+	m_nRows = MIN_ROWS;
+	m_nColumns = MIN_COLUMNS;
+	m_nWidth = ART_WIDTH / MIN_COLUMNS;
+	m_nHeight = ART_HEIGHT / MIN_ROWS;
+	m_nScore = 0.0;
+
+	bFramed = FALSE;
+	tempTime = MIN_TIME;
+	tempRows = MIN_ROWS;
+	tempColumns = MIN_COLUMNS;
+	tempFramed = TRUE;
+}
 
 // OnPaint:
 // This is called whenever Windows sends a WM_PAINT message.
@@ -1393,14 +1378,16 @@ BOOL CMainWindow::LoadArtWork() {
 		delete src;
 	}
 	// setup new palette in scratch areas
-	pOldPal1 = pScratch1DC->SelectPalette(pGamePalette, FALSE);
-	pScratch1DC->RealizePalette();
+	if (!pOldPal1) {
+		pOldPal1 = pScratch1DC->SelectPalette(pGamePalette, FALSE);
+		pScratch1DC->RealizePalette();
 
-	pOldPal2 = pScratch2DC->SelectPalette(pGamePalette, FALSE);
-	pScratch2DC->RealizePalette();
+		pOldPal2 = pScratch2DC->SelectPalette(pGamePalette, FALSE);
+		pScratch2DC->RealizePalette();
 
-	pOldPal = pSourceDC->SelectPalette(pGamePalette, FALSE);
-	pSourceDC->RealizePalette();
+		pOldPal = pSourceDC->SelectPalette(pGamePalette, FALSE);
+		pSourceDC->RealizePalette();
+	}
 
 	hDIB = (*pSourceDoc).GetHDIB();
 
@@ -1745,7 +1732,7 @@ void CMainWindow::ShowOutOfPlace() {
  *      void
  *
  ****************************************************************/
-void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
+void CMainWindow::MyFocusRect(CDC *pDC, CRect rect, int nDrawMode) {
 	CBrush      *pMyBrush = nullptr;                   // New Brush
 	CBrush      *pOldBrush = nullptr;                  // Pointer to old brush
 	CPen        *pMyPen = nullptr;                     // New Pen
@@ -1898,7 +1885,7 @@ void CMainWindow::OnClose() {
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 }
 
-void CALLBACK GetSubOptions(CWnd* pParentWind) {
+void CMainWindow::GetSubOptions(CWnd *pParentWind) {
 	COptnDlg OptionsDlg(pParentWind, pGamePalette);          // Call Specific Game
 	//...Options dialog box
 	OptionsDlg.m_nColumns = m_nColumns;

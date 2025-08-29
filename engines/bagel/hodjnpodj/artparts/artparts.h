@@ -23,6 +23,8 @@
 #define HODJNPODJ_ARTPARTS_ARTPARTS_H
 
 #include "bagel/boflib/sound.h"
+#include "bagel/hodjnpodj/hnplibs/button.h"
+#include "bagel/hodjnpodj/hnplibs/text.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -129,8 +131,54 @@ public:
 	virtual void SplashScratchPaint();
 
 private:
+	POINT Grid[MAX_COLUMNS][MAX_ROWS];          // Location of the art parts
+
+	CBmpButton *m_pScrollButton = nullptr;
+	CBitmap *pScratch1 = nullptr,              // Off-screen bitmap of current positions
+		*pScratch2 = nullptr,              // Off-screen bitmap of new positions
+		*pOldBmp1 = nullptr,
+		*pOldBmp2 = nullptr;
+	CPalette *pOldPal1 = nullptr,
+		*pOldPal2 = nullptr;
+	CDC *pScratch1DC = nullptr,
+		*pScratch2DC = nullptr;
+	CText *m_pTimeText = nullptr;            // Time to be posted in Locale box of screen
+	CBitmap *pLocaleBitmap = nullptr,          // Locale of game bitmap for title bar
+		*pBlankBitmap = nullptr;           // Blank area of locale for time display
+
+	BOOL bStartOkay = TRUE;
+	BOOL bGameStarted = FALSE;		// becomes TRUE at start time, FALSE at game end
+	BOOL bSwitched = FALSE;			// flag for undo -- only true after a part switch
+	BOOL bSuccess;
+	BOOL m_bIgnoreScrollClick;
+	BOOL m_bShowOutOfPlace = FALSE;
+	char szCurrentArt[64];
+
+	static CPalette *pGamePalette;	// Palette of current artwork
+	static int nSeconds;
+	static int nMinutes;
+	static int nLastPick;
+	static int m_nTime;				// Time is in SECONDS
+	static int m_nRows;				// Number of rows in the artwork grid
+	static int m_nColumns;			// Number of columns in the artwork grid
+	static int m_nWidth;			// The Width of each Part
+	static int m_nHeight;			// The Height of each Part
+	static float m_nScore;			// The current percentage of correctly placed parts
+	static BOOL bFramed;			// Framed (hint) mode is turned off by default
+
+	static int tempTime;			// temporary holding places
+	static int tempRows;			//...for options changes,
+	static int tempColumns;			//...which only get used
+	static BOOL tempFramed;			//...when NewGame is called.
+
+	CSound *pGameSound = nullptr;	// Game theme song
+
+private:
+	void initStatics();
 	VOID OnSoundNotify(CSound *pSound);
 	static BOOL CopyPaletteContents(CPalette *pSource, CPalette *pDest);
+	void MyFocusRect(CDC *pDC, CRect rect, int nDrawMode);
+	static void GetSubOptions(CWnd *pParentWind);
 
 protected:
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;

@@ -186,6 +186,8 @@ void frameRect(Gfx::Surface *dest,
 	if (drawMode == R2_COPYPEN) {
 		dest->frameRect(r, color);
 		return;
+	} else if (drawMode == R2_NOP) {
+		return;
 	}
 
 	assert(drawMode == R2_NOT);
