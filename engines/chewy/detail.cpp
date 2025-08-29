@@ -28,8 +28,8 @@
 
 namespace Chewy {
 
-#define ON 1
-#define OFF 0
+#define ANI_ON 1
+#define ANI_OFF 0
 
 bool RoomInfo::load(Common::SeekableReadStream *src) {
 	_roomNr = src->readByte();
@@ -165,11 +165,11 @@ Detail::Detail() {
 	for (int16 i = 0; i < (MAXDETAILS * MAX_SOUNDS); i++) {
 		_rdi.detailSfxIndex[i] = -1;
 	}
-	_directTafAni = OFF;
+	_directTafAni = ANI_OFF;
 }
 
 Detail::~Detail() {
-	_directTafAni = OFF;
+	_directTafAni = ANI_OFF;
 }
 
 void Detail::load_rdi(const char *fname_, int16 room_nr) {
@@ -381,7 +381,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 
 	for (int16 i = start; (i <= end); i++) {
 		AniDetailInfo *adiptr = &_rdi.Ainfo[i];
-		if ((adiptr->start_flag) && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
+		if (adiptr->start_flag && (adiptr->start_ani != -1) && (adiptr->end_ani != -1)) {
 			int16 sprnr = adiptr->ani_count;
 			int16 *Cxy = _rdi.dptr->correction + sprnr * 2;
 			int16 kx = Cxy[0];
@@ -420,9 +420,8 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 							--adiptr->ani_count;
 						else {
 							adiptr->ani_count = adiptr->end_ani;
-							if ((adiptr->start_flag != 255) && (adiptr->start_flag > 0)) {
+							if (adiptr->start_flag != 255) {
 								--adiptr->start_flag;
-
 							}
 						}
 					}
@@ -435,7 +434,7 @@ void Detail::plot_ani_details(int16 scrx, int16 scry, int16 start, int16 end, in
 							++adiptr->ani_count;
 						else {
 							adiptr->ani_count = adiptr->start_ani;
-							if ((adiptr->start_flag != 255) && (adiptr->start_flag > 0)) {
+							if (adiptr->start_flag != 255) {
 								--adiptr->start_flag;
 							}
 						}
@@ -605,7 +604,7 @@ int16 Detail::mouse_on_detail(int16 mouse_x, int16 mouse_y, int16 scrx, int16 sc
 
 void Detail::set_taf_ani_mem(byte *load_area) {
 	_tafLoadBuffer = load_area;
-	_directTafAni = ON;
+	_directTafAni = ANI_ON;
 }
 
 void Detail::load_taf_ani_sprite(int16 nr) {
