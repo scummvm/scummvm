@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-27 21:21+0000\n"
+"POT-Creation-Date: 2025-08-29 14:23+0000\n"
 "PO-Revision-Date: 2025-05-06 12:03+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -327,7 +327,7 @@ msgstr ""
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:321
 msgid "Yes"
 msgstr "Ja"
 
@@ -343,7 +343,7 @@ msgstr "Ja"
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:322
 msgid "No"
 msgstr "Nein"
 
@@ -17241,7 +17241,7 @@ msgstr "Münze entnehmen"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: engines/zvision/zvision.cpp:298
+#: engines/zvision/zvision.cpp:301
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -17259,7 +17259,7 @@ msgstr ""
 "Du benötigst jeweils alle Schriftarten des gewählten Paketes, beispielsweise "
 "LiberationMono, LiberationSans und LiberationSerif."
 
-#: engines/zvision/zvision.cpp:313
+#: engines/zvision/zvision.cpp:316
 msgid ""
 "MIDI playback is not available, or else improperly configured. Zork Nemesis "
 "contains several music puzzles which require MIDI audio in order to be "

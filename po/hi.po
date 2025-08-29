@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-27 21:21+0000\n"
+"POT-Creation-Date: 2025-08-29 14:23+0000\n"
 "PO-Revision-Date: 2024-07-11 17:47+0000\n"
 "Last-Translator: Krish <ganatrakrish2882005@gmail.com>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -323,7 +323,7 @@ msgstr "एक अन्य स्टोरेज अभी काम कर र
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:321
 msgid "Yes"
 msgstr "हाँ"
 
@@ -339,7 +339,7 @@ msgstr "हाँ"
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:322
 msgid "No"
 msgstr "नहीं"
 
@@ -15944,7 +15944,7 @@ msgstr ""
 msgid "Preferences"
 msgstr ""
 
-#: engines/zvision/zvision.cpp:298
+#: engines/zvision/zvision.cpp:301
 #, fuzzy
 #| msgid ""
 #| "Before playing this game, you'll need to copy the required fonts into "
@@ -15972,7 +15972,7 @@ msgstr ""
 "LiberationMono, LiberationSans और LiberationSerif, या GNU FreeFont से "
 "FreeMono, FreeSans और FreeSerif."
 
-#: engines/zvision/zvision.cpp:313
+#: engines/zvision/zvision.cpp:316
 msgid ""
 "MIDI playback is not available, or else improperly configured. Zork Nemesis "
 "contains several music puzzles which require MIDI audio in order to be "

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-27 21:21+0000\n"
+"POT-Creation-Date: 2025-08-29 14:23+0000\n"
 "PO-Revision-Date: 2023-12-14 14:28+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -328,7 +328,7 @@ msgstr "Ein anna lagringsteneste arbeider nett no. Vill du abryta han?"
 #: engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:318
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:321
 msgid "Yes"
 msgstr "Ja"
 
@@ -344,7 +344,7 @@ msgstr "Ja"
 #: engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
-#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:319
+#: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:322
 msgid "No"
 msgstr "Nei"
 
@@ -16510,7 +16510,7 @@ msgstr ""
 msgid "Preferences"
 msgstr "Føretrukken eining:"
 
-#: engines/zvision/zvision.cpp:298
+#: engines/zvision/zvision.cpp:301
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
 "ScummVM's extras directory, or into the game directory. On Windows, you'll "
@@ -16521,7 +16521,7 @@ msgid ""
 "LiberationSerif."
 msgstr ""
 
-#: engines/zvision/zvision.cpp:313
+#: engines/zvision/zvision.cpp:316
 msgid ""
 "MIDI playback is not available, or else improperly configured. Zork Nemesis "
 "contains several music puzzles which require MIDI audio in order to be "
