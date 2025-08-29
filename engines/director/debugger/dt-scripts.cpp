@@ -228,8 +228,8 @@ void showScriptCasts() {
 }
 
 static void addToOpenHandlers(ImGuiScript handler) {
-	_state->_openHandlers.remove(handler);
-	_state->_openHandlers.push_back(handler);
+	_state->_openHandlers.erase(handler.id.member);
+	_state->_openHandlers[handler.id.member] = handler;
 }
 
 static bool showHandler(ImGuiScript handler) {
@@ -283,11 +283,9 @@ void showHandlers() {
 		return;
 	}
 
-	for (Common::List<ImGuiScript>::iterator handler = _state->_openHandlers.begin(); handler != _state->_openHandlers.end();) {
-		if (!showHandler(*handler)) {
-			handler = _state->_openHandlers.erase(handler);
-		} else {
-			handler++;
+	for (auto handler : _state->_openHandlers) {
+		if (!showHandler(handler._value)) {
+			_state->_openHandlers.erase(handler._value.id.member);
 		}
 	}
 }
