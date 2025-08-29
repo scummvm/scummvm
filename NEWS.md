@@ -66,6 +66,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Gob:
    - Added Text-to-Speech support.
 
+ Hugo:
+   - Added Text-to-Speech support.
+   - Fixed closing the top menu.
+
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
