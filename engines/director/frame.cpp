@@ -2092,6 +2092,9 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 		case 28:
 			sprite._angleRot = stream.readUint32();
 			break;
+		case 30:	// half of the field
+			sprite._angleRot = stream.readUint16();
+			break;
 		case 32:
 			sprite._angleSkew = stream.readUint32();
 			break;
