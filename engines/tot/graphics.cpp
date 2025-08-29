@@ -44,13 +44,13 @@ GraphicsManager::GraphicsManager() {
 		error("Could not open executable file!");
 	}
 
-	if (g_engine->_lang == Common::ES_ESP) {
+	if (isLanguageSpanish()) {
 		exeFile.seek(FONT_LITT_OFFSET_ES);
 	} else {
 		exeFile.seek(FONT_LITT_OFFSET_EN);
 	}
 	_litt.loadChr(exeFile);
-	if (g_engine->_lang == Common::ES_ESP) {
+	if (isLanguageSpanish()) {
 		exeFile.seek(FONT_EURO_OFFSET_ES);
 	} else {
 		exeFile.seek(FONT_EURO_OFFSET_EN);

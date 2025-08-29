@@ -69,7 +69,6 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 
 	uint16 wImg1, hImg1;
 	uint horizontalAux;
-	uint inc, inc2;
 	byte *step;
 
 	wImg1 = READ_LE_UINT16(img1);
@@ -94,10 +93,10 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 	}
 
 	for (int kk = 0; kk < hImg1; kk++) {
-		inc2 = (kk * wImg1) + 4;
+		uint inc2 = (kk * wImg1) + 4;
 		yPos = kk + y;
 		for (int jj = 0; jj <= wImg1; jj++) {
-			inc = inc2 + jj;
+			uint inc = inc2 + jj;
 			if ((direct && img1[inc] > 0) || (img1[inc] > 16 && yPos >= 66 && yPos <= 192)) {
 				step[inc] = img1[inc];
 			} else if (img1[inc] > 16) {
@@ -143,7 +142,7 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 
 	// Copies the credit window directly to the screen
 	for (int i = 0; i < hImg1; i++) {
-		byte *src = step + 4 + (horizontalAux * i);
+		const byte *src = step + 4 + (horizontalAux * i);
 		byte *dst = ((byte *)g_engine->_screen->getPixels()) + (320 * (y + i)) + x;
 		Common::copy(src, src + horizontalAux, dst);
 	}
@@ -361,9 +360,9 @@ void TotEngine::introduction() {
 	_mouse->hide();
 	bool exitPressed;
 	uint loopCount;
-	bool isSpanish = _lang == Common::ES_ESP;
-	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
-	const long *offsets = (_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+	bool isSpanish = isLanguageSpanish();
+	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
+	const long *offsets = getOffsetsByCurrentLanguage();
 	exitPressed = false;
 	_graphics->totalFadeOut(0);
 
@@ -496,8 +495,8 @@ void TotEngine::firstIntroduction() {
 
 void TotEngine::initialLogo() {
 	bool foobar = false;
-	long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][0] : flcOffsets[1][0];
-	drawFlc(0, 0, offset, 0, 18, 25, false, false, false, foobar);
+	const long *offsets = getOffsetsByCurrentLanguage();
+	drawFlc(0, 0, offsets[0], 0, 18, 25, false, false, false, foobar);
 	delay(1000);
 }
 
@@ -506,10 +505,10 @@ void TotEngine::sacrificeScene() {
 	palette palaux;
 
 	Common::File file;
-	bool isSpanish = (_lang == Common::ES_ESP);
-	const char *const *messages = (isSpanish) ? fullScreenMessages[0] : fullScreenMessages[1];
+	bool isSpanish = isLanguageSpanish();
+	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
 
-	const long *offsets = (isSpanish) ? flcOffsets[0] : flcOffsets[1];
+	const long *offsets = getOffsetsByCurrentLanguage();
 
 	_sound->stopVoc();
 	bool exitPressed = _currentRoomData->paletteAnimationFlag;
@@ -872,8 +871,8 @@ void TotEngine::ending() {
 	_saveAllowed = false;
 	bool exitRequested;
 
-	const char *const *messages = (_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
-	const long *offsets = (_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
+	const long *offsets = getOffsetsByCurrentLanguage();
 
 	littText(10, 41, messages[43], 249);
 	littText(10, 39, messages[43], 249);
@@ -923,7 +922,7 @@ void TotEngine::wcScene() {
 
 	_graphics->partialFadeOut(234);
 
-	const char *const *messages = (_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
 
 	littText(10, 20, messages[45], 253);
 	delay(1000);

@@ -101,8 +101,8 @@ void clearCharacterText() {
 
 void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 
-	const char *const *messages = g_engine->_lang == Common::ES_ESP ? animMessages[0] : animMessages[1];
-	bool isSpanish = g_engine->_lang == Common::ES_ESP;
+	const char *const *messages = getAnimMessagesByCurrentLanguage();
+	bool isSpanish = isLanguageSpanish();
 	bool isEnglish = !isSpanish;
 	switch (eventNumber) {
 	case 0:
@@ -136,12 +136,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			// English only
 			case 40:
-				if(isEnglish){
+				if (isEnglish) {
 					clearCharacterText();
 				}
 				break;
 			case 41:
-				if(isEnglish) {
+				if (isEnglish) {
 					drawCharacterText(messages[250], messages[251], messages[252], messages[253], messages[254]);
 				}
 				break;
@@ -161,75 +161,73 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				drawCharacterText(messages[30], messages[31], messages[32], messages[33], messages[34]);
 				break;
 			case 70:
-				if(isEnglish) {
+				if (isEnglish) {
 					clearTvText();
 				}
 				break;
 			case 71:
-				if(isEnglish) {
+				if (isEnglish) {
 					drawTvText(messages[255], messages[256], messages[257], messages[258], messages[259]);
 				}
 				break;
 			case 73:
-				if(isEnglish) {
+				if (isEnglish) {
 					clearCharacterText();
 				}
 			case 74:
-				if(isEnglish) {
+				if (isEnglish) {
 					drawCharacterText(
 						messages[35],
 						messages[36],
 						messages[37],
 						messages[38],
-						messages[39]
-					);
+						messages[39]);
 				}
 			case 75:
-				if(isSpanish) {
+				if (isSpanish) {
 					clearCharacterText();
 				}
 				break;
 			case 76:
-				if(isSpanish) {
+				if (isSpanish) {
 					clearTvText();
 				}
 				break;
 			case 77:
-				if(isSpanish) {
+				if (isSpanish) {
 					drawCharacterText(messages[35], messages[36], messages[37], messages[38], messages[39]);
 				}
 				break;
 
 			case 80:
-				if(isEnglish) {
+				if (isEnglish) {
 					clearTvText();
 				}
 				break;
 			case 82:
-				if(isEnglish) {
+				if (isEnglish) {
 					clearCharacterText();
 				}
 				break;
 			case 83:
-				if(isEnglish) {
+				if (isEnglish) {
 					drawCharacterText(messages[260], messages[261], messages[262], messages[263], messages[264]);
 				}
 				break;
 			case 89:
-				if(isSpanish) {
+				if (isSpanish) {
 					clearCharacterText();
 				}
 				break;
 			case 90:
-				if(isSpanish) {
+				if (isSpanish) {
 					drawCharacterText(messages[40], messages[41], messages[42], messages[43], messages[44]);
-				}
-				else {
+				} else {
 					clearCharacterText();
 				}
 				break;
 			case 91:
-				if(isEnglish) {
+				if (isEnglish) {
 					drawCharacterText(messages[40], messages[41], messages[42], messages[43], messages[44]);
 				}
 				break;
@@ -284,7 +282,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 			clearTvText();
 			drawTvText(messages[80], messages[81], messages[82], messages[83], messages[84]);
 
-			if(isEnglish) {
+			if (isEnglish) {
 				delay(5000);
 				clearTvText();
 				drawTvText(messages[265], messages[266], messages[267], messages[268], messages[269]);
@@ -302,7 +300,7 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 			clearCharacterText();
 			drawCharacterText(messages[95], messages[96], messages[97], messages[98], messages[99]);
 
-			if(isEnglish) {
+			if (isEnglish) {
 				delay(6000);
 				clearCharacterText();
 				drawCharacterText(messages[95], messages[96], messages[97], messages[98], messages[99]);
@@ -337,183 +335,180 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 
 			delay(2000);
 			drawText(5, 1,
-				messages[100],
-				messages[101],
-				messages[102],
-				messages[103],
-				messages[104],
-				255, 249);
+					 messages[100],
+					 messages[101],
+					 messages[102],
+					 messages[103],
+					 messages[104],
+					 255, 249);
 			delay(3500);
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[105],
-				messages[106],
-				messages[107],
-				messages[108],
-				messages[109],
-				255, 0);
+					 messages[105],
+					 messages[106],
+					 messages[107],
+					 messages[108],
+					 messages[109],
+					 255, 0);
 		}
 		break;
 	case 6:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[110],
-				messages[111],
-				messages[112],
-				messages[113],
-				messages[114],
-				255, 249);
-		}
-		else if ((loopNumber == 5) && (frameCount == 3)) {
+					 messages[110],
+					 messages[111],
+					 messages[112],
+					 messages[113],
+					 messages[114],
+					 255, 249);
+		} else if ((loopNumber == 5) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[275],
-				messages[276],
-				messages[277],
-				messages[278],
-				messages[279],
-				255, 249);
+					 messages[275],
+					 messages[276],
+					 messages[277],
+					 messages[278],
+					 messages[279],
+					 255, 249);
 		}
 		break;
 	case 7:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[115],
-				messages[116],
-				messages[117],
-				messages[118],
-				messages[119],
-				255, 0);
+					 messages[115],
+					 messages[116],
+					 messages[117],
+					 messages[118],
+					 messages[119],
+					 255, 0);
 		}
 		break;
 	case 8:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[120],
-				messages[121],
-				messages[122],
-				messages[123],
-				messages[124],
-				255, 249);
-		}
-		else if ((loopNumber == 5) && (frameCount == 3)) {
+					 messages[120],
+					 messages[121],
+					 messages[122],
+					 messages[123],
+					 messages[124],
+					 255, 249);
+		} else if ((loopNumber == 5) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[280],
-				messages[281],
-				messages[282],
-				messages[283],
-				messages[284],
-				255, 249);
+					 messages[280],
+					 messages[281],
+					 messages[282],
+					 messages[283],
+					 messages[284],
+					 255, 249);
 		}
 		break;
 	case 9:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[125],
-				messages[126],
-				messages[127],
-				messages[128],
-				messages[129],
-				255, 0);
+					 messages[125],
+					 messages[126],
+					 messages[127],
+					 messages[128],
+					 messages[129],
+					 255, 0);
 		}
 		break;
 	case 10:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[130],
-				messages[131],
-				messages[132],
-				messages[133],
-				messages[134],
-				255, 249);
+					 messages[130],
+					 messages[131],
+					 messages[132],
+					 messages[133],
+					 messages[134],
+					 255, 249);
 		}
 		break;
 	case 11:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[135],
-				messages[136],
-				messages[137],
-				messages[138],
-				messages[139],
-				 255, 0);
+					 messages[135],
+					 messages[136],
+					 messages[137],
+					 messages[138],
+					 messages[139],
+					 255, 0);
 		}
 		break;
 	case 12:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[140],
-				messages[141],
-				messages[142],
-				messages[143],
-				messages[144],
-				255, 249);
+					 messages[140],
+					 messages[141],
+					 messages[142],
+					 messages[143],
+					 messages[144],
+					 255, 249);
 		}
 		break;
 	case 13:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[145],
-				messages[146],
-				messages[147],
-				messages[148],
-				messages[149],
-				255, 0);
+					 messages[145],
+					 messages[146],
+					 messages[147],
+					 messages[148],
+					 messages[149],
+					 255, 0);
 		}
 		break;
 	case 14:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[150],
-				messages[151],
-				messages[152],
-				messages[153],
-				messages[154],
-				255, 249);
-		}
-		else if ((loopNumber == 5) && (frameCount == 3)) {
+					 messages[150],
+					 messages[151],
+					 messages[152],
+					 messages[153],
+					 messages[154],
+					 255, 249);
+		} else if ((loopNumber == 5) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[285],
-				messages[286],
-				messages[287],
-				messages[288],
-				messages[289],
-				255, 249);
+					 messages[285],
+					 messages[286],
+					 messages[287],
+					 messages[288],
+					 messages[289],
+					 255, 249);
 		}
 		break;
 	case 15:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[155],
-				messages[156],
-				messages[157],
-				messages[158],
-				messages[159],
-				255, 0);
+					 messages[155],
+					 messages[156],
+					 messages[157],
+					 messages[158],
+					 messages[159],
+					 255, 0);
 		}
 		break;
 	case 16:
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[160],
-				messages[161],
-				messages[162],
-				messages[163],
-				messages[164],
-				255, 249);
+					 messages[160],
+					 messages[161],
+					 messages[162],
+					 messages[163],
+					 messages[164],
+					 255, 249);
 		}
 		break;
 	case 17:
@@ -533,23 +528,23 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 		if ((loopNumber == 1) && (frameCount == 3)) {
 			g_engine->_graphics->putImg(0, 0, g_engine->_graphics->_textAreaBackground);
 			drawText(5, 1,
-				messages[165],
-				messages[166],
-				messages[167],
-				messages[168],
-				messages[169],
-				255, 0);
+					 messages[165],
+					 messages[166],
+					 messages[167],
+					 messages[168],
+					 messages[169],
+					 255, 0);
 		}
 		break;
 	case 19:
 		if (frameCount == 1)
 			drawText(5, 121,
-				messages[170],
-				messages[171],
-				messages[172],
-				messages[173],
-				messages[174],
-			 	253, 249);
+					 messages[170],
+					 messages[171],
+					 messages[172],
+					 messages[173],
+					 messages[174],
+					 253, 249);
 		break;
 	case 20:
 		switch (loopNumber) {
@@ -560,12 +555,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[175],
-					messages[176],
-					messages[177],
-					messages[178],
-					messages[179],
-					255, 0);
+						 messages[175],
+						 messages[176],
+						 messages[177],
+						 messages[178],
+						 messages[179],
+						 255, 0);
 				break;
 			}
 			break;
@@ -576,12 +571,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[180],
-					messages[181],
-					messages[182],
-					messages[183],
-					messages[184],
-					230, 249);
+						 messages[180],
+						 messages[181],
+						 messages[182],
+						 messages[183],
+						 messages[184],
+						 230, 249);
 				break;
 			}
 			break;
@@ -592,12 +587,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[185],
-					messages[186],
-					messages[187],
-					messages[188],
-					messages[189],
-					230, 249);
+						 messages[185],
+						 messages[186],
+						 messages[187],
+						 messages[188],
+						 messages[189],
+						 230, 249);
 				break;
 			}
 			break;
@@ -608,12 +603,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[190],
-					messages[191],
-					messages[192],
-					messages[193],
-					messages[194],
-					230, 249);
+						 messages[190],
+						 messages[191],
+						 messages[192],
+						 messages[193],
+						 messages[194],
+						 230, 249);
 				break;
 			}
 			break;
@@ -624,12 +619,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[195],
-					messages[196],
-					messages[197],
-					messages[198],
-					messages[199],
-					230, 249);
+						 messages[195],
+						 messages[196],
+						 messages[197],
+						 messages[198],
+						 messages[199],
+						 230, 249);
 				break;
 			}
 			break;
@@ -640,12 +635,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[200],
-					messages[201],
-					messages[202],
-					messages[203],
-					messages[204],
-					230, 249);
+						 messages[200],
+						 messages[201],
+						 messages[202],
+						 messages[203],
+						 messages[204],
+						 230, 249);
 				break;
 			}
 			break;
@@ -656,12 +651,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[205],
-					messages[206],
-					messages[207],
-					messages[208],
-					messages[209],
-					230, 249);
+						 messages[205],
+						 messages[206],
+						 messages[207],
+						 messages[208],
+						 messages[209],
+						 230, 249);
 				break;
 			}
 			break;
@@ -672,12 +667,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[210],
-					messages[211],
-					messages[212],
-					messages[213],
-					messages[214],
-					230, 249);
+						 messages[210],
+						 messages[211],
+						 messages[212],
+						 messages[213],
+						 messages[214],
+						 230, 249);
 				break;
 			}
 			break;
@@ -688,12 +683,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[215],
-					messages[216],
-					messages[217],
-					messages[218],
-					messages[219],
-					230, 249);
+						 messages[215],
+						 messages[216],
+						 messages[217],
+						 messages[218],
+						 messages[219],
+						 230, 249);
 				break;
 			}
 			break;
@@ -704,12 +699,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[220],
-					messages[221],
-					messages[222],
-					messages[223],
-					messages[224],
-					230, 249);
+						 messages[220],
+						 messages[221],
+						 messages[222],
+						 messages[223],
+						 messages[224],
+						 230, 249);
 				break;
 			}
 			break;
@@ -720,12 +715,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(15, 1,
-					messages[225],
-					messages[226],
-					messages[227],
-					messages[228],
-					messages[229],
-					230, 249);
+						 messages[225],
+						 messages[226],
+						 messages[227],
+						 messages[228],
+						 messages[229],
+						 230, 249);
 				break;
 			}
 			break;
@@ -776,12 +771,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 3:
 				drawText(65, 1,
-					messages[230],
-					messages[231],
-					messages[232],
-					messages[233],
-					messages[234],
-					253, 249);
+						 messages[230],
+						 messages[231],
+						 messages[232],
+						 messages[233],
+						 messages[234],
+						 253, 249);
 				break;
 			}
 			break;
@@ -792,12 +787,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 2:
 				drawText(65, 1,
-					messages[235],
-					messages[236],
-					messages[237],
-					messages[238],
-					messages[239],
-					253, 249);
+						 messages[235],
+						 messages[236],
+						 messages[237],
+						 messages[238],
+						 messages[239],
+						 253, 249);
 				break;
 			}
 			break;
@@ -808,12 +803,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 2:
 				drawText(65, 1,
-					messages[240],
-					messages[241],
-					messages[242],
-					messages[243],
-					messages[244],
-					253, 249);
+						 messages[240],
+						 messages[241],
+						 messages[242],
+						 messages[243],
+						 messages[244],
+						 253, 249);
 				break;
 			}
 			break;
@@ -824,12 +819,12 @@ void handleFlcEvent(byte eventNumber, uint loopNumber, byte frameCount) {
 				break;
 			case 2:
 				drawText(65, 1,
-					messages[245],
-					messages[246],
-					messages[247],
-					messages[248],
-					messages[249],
-					253, 249);
+						 messages[245],
+						 messages[246],
+						 messages[247],
+						 messages[248],
+						 messages[249],
+						 253, 249);
 				break;
 			}
 			break;
@@ -846,7 +841,7 @@ void drawFlc(uint x, uint y, int32 fliOffset, uint loop,
 			 byte speed, byte eventNumber, bool fullPalette, bool isSkipAllowed,
 			 bool doscientos, bool &salidaflis);
 
-static void exitProcedure(bool &exitLoop, bool &isSkipAllowed) {
+static void exitProcedure(bool &exitLoop, bool isSkipAllowed) {
 	exitLoop = false;
 	Common::Event e;
 	while (g_system->getEventManager()->pollEvent(e)) {
