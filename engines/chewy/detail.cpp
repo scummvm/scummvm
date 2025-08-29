@@ -152,6 +152,11 @@ Detail::Detail() {
 	for (int16 i = 0; i < (MAX_M_ITEMS - 1) << 2; i += 4)
 		_rdi.mvect[i] = -1;
 
+	for (int16 i = 0; i < 4; ++i)
+		_rdiDataHeader._id[i] = 0;
+
+	_rdiDataHeader._nr = -1;
+	
 	_globalDelay = 0;
 	_aniFreezeflag = false;
 	_fullTaf = false;
