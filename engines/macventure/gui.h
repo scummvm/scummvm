@@ -177,6 +177,10 @@ public:
 
 	void createInnerSurface(Graphics::ManagedSurface *innerSurface, Graphics::ManagedSurface *outerSurface, const BorderBounds &borders);
 
+private:
+	bool decodeStartupScreen();
+	bool decodeTitleScreen();
+	bool displayTitleScreenAndWait(uint32 ms);
 
 private: // Attributes
 

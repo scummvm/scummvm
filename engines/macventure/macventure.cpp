@@ -156,6 +156,7 @@ Common::Error MacVentureEngine::run() {
 		}
 	} else {
 		setNewGameState();
+		_gui->drawTitle();
 	}
 	selectControl(kStartOrResume);
 

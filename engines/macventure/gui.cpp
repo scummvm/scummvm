@@ -209,8 +209,84 @@ void Gui::drawMenu() {
 	_menu->draw(&_screen);
 }
 
+bool Gui::decodeStartupScreen() {
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork("StartupScreen");
+
+	if (!stream)
+		return false;
+
+	for (int y = 0; y < kScreenHeight; y++) {
+		for (int x = 0; x < kScreenWidth / 8; x++) {
+			byte b = stream->readByte();
+
+			for (int z = 0; z < 8; z++) {
+				_screen.setPixel(8 * x + z, y, (b & (0x80 >> z)) ? kColorBlack : kColorWhite);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool Gui::decodeTitleScreen() {
+	Common::Path titlePath = _engine->getFilePath(kTitlePathID);
+	if (_resourceManager->open(titlePath)) {
+		Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
+
+		if (stream) {
+			ImageAsset *title = new ImageAsset(stream);
+
+			_screen.fillRect(Common::Rect(kScreenWidth, kScreenHeight), kColorBlack);
+			title->blitInto(&_screen, 0, (kScreenHeight - title->getHeight()) / 2, kBlitDirect);
+
+			delete title;
+		} else {
+			// PACK file
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool Gui::displayTitleScreenAndWait(uint32 ms) {
+	g_system->copyRectToScreen(_screen.getPixels(), kScreenWidth, 0, 0, kScreenWidth, kScreenHeight);
+
+	uint32 now = g_system->getMillis();
+	while (g_system->getMillis() < now + 3000) {
+		if (_engine->shouldQuit())
+			return false;
+
+		Common::Event event;
+
+		while (_engine->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				return false;
+		}
+
+		g_system->updateScreen();
+		g_system->delayMillis(10);
+	}
+
+	return true;
+}
+
 void Gui::drawTitle() {
-	warning("drawTitle hasn't been tested yet");
+	bool success = true;
+
+	_wm.pushCursor(Graphics::kMacCursorOff);
+
+	if (decodeStartupScreen())
+		success = displayTitleScreenAndWait(4000);
+
+	if (success) {
+		if (decodeTitleScreen())
+			displayTitleScreenAndWait(4000);
+	}
+
+	_wm.popCursor();
 }
 
 void Gui::clearControls() {
