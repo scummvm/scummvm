@@ -53,7 +53,7 @@
 
 namespace ZVision {
 
-#define ZVISION_SETTINGS_KEYS_COUNT 12
+#define ZVISION_SETTINGS_KEYS_COUNT 15
 
 struct ZvisionIniSettings {
 	const char *name;
@@ -67,6 +67,9 @@ struct ZvisionIniSettings {
 	{"lineskipvideo", StateKey_VideoLineSkip, 0, false, false}, // video line skip, 0 = default, 1 = always, 2 = pixel double when possible, unused
 	{"installlevel", StateKey_InstallLevel, 0, false, false},   // 0 = full, checked by universe.scr
 	{"debugcheats", StateKey_DebugCheats, -1, true, false}, // always start with the GOxxxx cheat enabled
+	{"Pentium", StateKey_CPU, 1, true, false},	// !1 = 486, 1 = i586/Pentium
+	{"LowMemory", StateKey_WIN958, 0, false, false},	// 0 = high system RAM, !0 = low system RAM (<8MB)
+	{"DOS", StateKey_Platform, 0, false, false}, // 0 = Windows, !0 = DOS
 	// Editable settings
 	{"qsoundenabled", StateKey_Qsound, -1, true, true}, // 1 = enable generic directional audio and non-linear volume scaling.  Genuine Qsound is copyright & unlikely to be implemented.
 	{"keyboardturnspeed", StateKey_KbdRotateSpeed, 5, false, true},

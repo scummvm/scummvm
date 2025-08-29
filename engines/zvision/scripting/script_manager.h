@@ -73,13 +73,13 @@ enum StateKey {
 	StateKey_VenusEnable = 58,
 	StateKey_HighQuality = 59,
 	StateKey_VideoLineSkip = 65,
-	StateKey_Platform = 66,
+	StateKey_Platform = 66,	// 0 = Windows, !0 = DOS
 	StateKey_InstallLevel = 67,
 	StateKey_CountryCode = 68,
-	StateKey_CPU = 69,
+	StateKey_CPU = 69,	// !1 = 486, 1 = i586/Pentium
 	StateKey_MovieCursor = 70,
 	StateKey_NoTurnAnim = 71,
-	StateKey_WIN958 = 72,
+	StateKey_WIN958 = 72,	// 0 = high system RAM, !0 = low system RAM (<8MB)
 	StateKey_ShowErrorDlg = 73,
 	StateKey_DebugCheats = 74,
 	StateKey_JapanFonts = 75,
@@ -266,7 +266,7 @@ public:
 	/** Mark next location */
 	void changeLocation(char world, char room, char node, char view, uint32 offset);
 	void changeLocation(const Location &_newLocation);
-	
+
 	bool changingLocation() const;
 
 	void serialize(Common::WriteStream *stream);
