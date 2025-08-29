@@ -66,6 +66,25 @@ inline Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
 	return selectedHotkeys[hotkey];
 };
 
+inline const char *const *getFullScreenMessagesByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+}
+
+inline const char *const *getAnimMessagesByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? animMessages[0] : animMessages[1];
+}
+
+inline const char *const *getHardcodedObjectsByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? hardcodedObjects_ES : hardcodedObjects_EN;
+}
+
+inline const long *getOffsetsByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+}
+
+inline bool isLanguageSpanish() {
+	return g_engine->_lang == Common::ES_ESP;
+};
 
 } // End of namespace Tot
 

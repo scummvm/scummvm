@@ -40,7 +40,7 @@ void TotEngine::drawText(uint number) {
 }
 
 void TotEngine::displayLoading() {
-	const char *msg = (_lang == Common::ES_ESP) ? fullScreenMessages[0][58] : fullScreenMessages[1][58];
+	const char *msg = getFullScreenMessagesByCurrentLanguage()[58];
 
 	setRGBPalette(255, 63, 63, 63);
 	littText(121, 72, msg, 0);
@@ -2734,7 +2734,7 @@ void TotEngine::useScreenObject() {
 			} break;
 			case 583: {
 
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][20] : flcOffsets[1][20];
+				long offset = getOffsetsByCurrentLanguage()[20];
 
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
@@ -2815,7 +2815,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 632: {
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][21] : flcOffsets[1][21];
+				long offset = getOffsetsByCurrentLanguage()[21];
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
 				animateGive(_charFacingDirection, 1);
@@ -2878,7 +2878,7 @@ void TotEngine::useScreenObject() {
 					_caves[3] = true;
 			} break;
 			case 633: { //Use ring!
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][22] : flcOffsets[1][22];
+				long offset = getOffsetsByCurrentLanguage()[22];
 
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
@@ -2936,7 +2936,7 @@ void TotEngine::useScreenObject() {
 					_caves[3] = true;
 			} break;
 			case 643: { // Urn with altar
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][23] : flcOffsets[1][23];
+				long offset = getOffsetsByCurrentLanguage()[23];
 
 				if (_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount] != 5)
 					drawText(_curObject.useTextRef);
@@ -2968,7 +2968,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 657: { // sharpen scythe
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][24] : flcOffsets[1][24];
+				long offset = getOffsetsByCurrentLanguage()[24];
 
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 178 - 7;
@@ -3000,7 +3000,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 689: { // rope
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][25] : flcOffsets[1][25];
+				long offset = getOffsetsByCurrentLanguage()[25];
 
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 124 - 7;
@@ -3020,7 +3020,7 @@ void TotEngine::useScreenObject() {
 					_currentRoomData->mouseGrid[listIndex][27] = 10;
 			} break;
 			case 700: { // Trident
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][26] : flcOffsets[1][26];
+				long offset = getOffsetsByCurrentLanguage()[26];
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 224 - 7;
 				_mouse->mouseClickY = 91 - 7;
@@ -3064,7 +3064,7 @@ void TotEngine::useScreenObject() {
 				updateObject(_curObject.code);
 			} break;
 			case 709: { // rock with mural
-				long offset = (_lang == Common::ES_ESP) ? flcOffsets[0][27] : flcOffsets[1][27];
+				long offset = getOffsetsByCurrentLanguage()[27];
 
 				if (_isSealRemoved) {
 					drawText(_curObject.useTextRef);
@@ -3202,8 +3202,8 @@ void TotEngine::useScreenObject() {
 					_sound->autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
 				case 682: {
-					long offsetWithJar = (_lang == Common::ES_ESP) ? flcOffsets[0][28] : flcOffsets[1][28];
-					long offsetNoJar = (_lang == Common::ES_ESP) ? flcOffsets[0][29] : flcOffsets[1][29];
+					long offsetWithJar = getOffsetsByCurrentLanguage()[28];
+					long offsetNoJar = getOffsetsByCurrentLanguage()[29];
 
 					_mouse->hide();
 					_sound->playVoc("CLICK", 27742, 2458);
@@ -3605,7 +3605,7 @@ void TotEngine::loadInventory() {
 	}
 	if (_cpCounter > 65)
 		showError(274);
-	const char *emptyName = (_lang == Common::ES_ESP) ? hardcodedObjects_ES[10] : hardcodedObjects_EN[10];
+	const char *emptyName = getHardcodedObjectsByCurrentLanguage()[10];
 	for (int i = 0; i < kInventoryIconCount; i++) {
 		_inventory[i].bitmapIndex = 34;
 		_inventory[i].code = 0;
@@ -4737,8 +4737,8 @@ void TotEngine::drawMenu(byte menuNumber) {
 		showError(258);
 	}
 
-	menuOffset = _lang == Common::ES_ESP ? menuOffsets_ES[menuNumber - 1][0] : menuOffsets_EN[menuNumber - 1][0];
-	menuSize = _lang == Common::ES_ESP ? menuOffsets_ES[menuNumber - 1][1] : menuOffsets_EN[menuNumber - 1][1];
+	menuOffset = isLanguageSpanish() ? menuOffsets_ES[menuNumber - 1][0] : menuOffsets_EN[menuNumber - 1][0];
+	menuSize = isLanguageSpanish() ? menuOffsets_ES[menuNumber - 1][1] : menuOffsets_EN[menuNumber - 1][1];
 
 	switch (menuNumber) {
 	case 1: {
@@ -4840,13 +4840,13 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 
 	key.append(passArray, passArray + 10);
 
-	const char *const *messages = (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
 	biosText(91, 16, messages[49] + key, 255);
 	biosText(90, 15,  messages[49] + key, 13);
 
 	biosText(81, 61,  messages[50], 0);
 	biosText(61, 81,  messages[51], 0);
-	if(g_engine->_lang == Common::ES_ESP) {
+	if(isLanguageSpanish()) {
 		biosText(31, 101, messages[52] + g_engine->_characterName, 0);
 	} else {
 		biosText(31, 101, messages[52], 0);
