@@ -81,7 +81,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "a066f7284e063ac3e5d7409102b7a497", 2985984),
 		Common::Language::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 
@@ -92,7 +92,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		AD_ENTRY1s("Penumbra.exe", "be48f62ecd16975e31083989129eafd3", 8159232),
 		Common::Language::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_UNSUPPORTED,
 		GUIO0()
 	},
 
