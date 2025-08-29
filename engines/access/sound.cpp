@@ -308,8 +308,6 @@ void MusicManager::midiPlay() {
 
 	uint32 magic = READ_BE_UINT32(_music->data());
 	if (magic == MKTAG('B', 'E', 'm', 'd')) {
-		warning("TODO: Implement Martian Memorandum style MIDI parsing");
-		_isPlaying = false;
 		_parser = new MidiParser_BEmd();
 
 		if (!_parser->loadMusic(_music->data(), _music->_size))
