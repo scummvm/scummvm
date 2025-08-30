@@ -94,7 +94,7 @@ public:
 	static InfoEntries loadInfoEntries(Common::SeekableReadStreamEndian &stream, uint16 version);
 	static void saveInfoEntries(Common::SeekableWriteStream *writeStream, InfoEntries info);
 
-	static void writeRect(Common::SeekableWriteStream *writeStream, Common::Rect rect);
+	static void writeRect(Common::WriteStream *writeStream, Common::Rect rect);
 
 	void loadCastLibMapping(Common::SeekableReadStreamEndian &stream);
 	bool loadArchive();

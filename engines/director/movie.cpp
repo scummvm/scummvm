@@ -284,7 +284,7 @@ Common::Rect Movie::readRect(Common::ReadStreamEndian &stream) {
 	return rect;
 }
 
-void Movie::writeRect(Common::SeekableWriteStream *writeStream, Common::Rect rect) {
+void Movie::writeRect(Common::WriteStream *writeStream, Common::Rect rect) {
 	writeStream->writeSint16BE(rect.top);
 	writeStream->writeSint16BE(rect.left);
 	writeStream->writeSint16BE(rect.bottom);
