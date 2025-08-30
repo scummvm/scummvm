@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-29 14:23+0000\n"
-"PO-Revision-Date: 2025-08-30 13:31+0000\n"
+"PO-Revision-Date: 2025-08-30 16:10+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -8139,8 +8139,6 @@ msgid "Move / Interact / Select"
 msgstr "이동 / 소통 / 선택"
 
 #: engines/drascula/metaengine.cpp:235
-#, fuzzy
-#| msgid "Pickup"
 msgid "Pick"
 msgstr "줍기"
 
@@ -8155,7 +8153,7 @@ msgstr "열기"
 
 #: engines/drascula/metaengine.cpp:266
 msgid "Reset selected verb"
-msgstr "선택한 동사 재설정"
+msgstr "선택한 버브 재설정"
 
 #: engines/drascula/metaengine.cpp:272
 msgid "Volume controls"
@@ -9767,8 +9765,6 @@ msgid "Previous inventory item"
 msgstr "이전 인벤토리 아이템"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Next Inventory Item"
 msgid "Next inventory item"
 msgstr "다음 인벤토리 아이템"
 
@@ -10680,10 +10676,8 @@ msgstr "일시 정지 / 나가기 메뉴"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
-#, fuzzy
-#| msgid "Skip cutscene"
 msgid "Skip section of cutscene"
-msgstr "컷씬 건너뛰기"
+msgstr "컷신의 섹션 건너뛰기"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
@@ -10692,10 +10686,8 @@ msgstr "전체 장면 (일부 장면에서만 작동) 건너뛰기"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
-#, fuzzy
-#| msgid "Create a new saved game"
 msgid "Confirm the selected save / new save name"
-msgstr "새 저장된 게임 만들기"
+msgstr "선택한 저장 / 새 저장 이름 확인"
 
 #: engines/parallaction/saveload.cpp:129
 #, c-format
@@ -10795,24 +10787,18 @@ msgid "This menu item is not yet implemented"
 msgstr "이 메뉴 항목은 아직 구현되지 않았음"
 
 #: engines/pink/metaengine.cpp:128
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Interact / Select"
-msgstr "이동 / 소통"
+msgstr "소통 / 선택"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action makes the player still walk to the target but not start interacting when they arrive.
 #: engines/pink/metaengine.cpp:136
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel interaction"
-msgstr "동작 취소"
+msgstr "상호작용 취소"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and immediately start interacting.
 #: engines/pink/metaengine.cpp:144
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip walk"
-msgstr "대화 건너뛰기"
+msgstr "걷기 건너뛰기"
 
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
@@ -10821,24 +10807,18 @@ msgstr "걷기 건너뛰기 및 상호 작용 취소"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sequence"
-msgstr "장면 건너뛰기"
+msgstr "시퀀스 건너뛰기"
 
 #. I18N: (Game Name: Pink Panther) This action skips part of the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:165
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip sub-sequence"
-msgstr "장면 건너뛰기"
+msgstr "하위 시퀀스 건너뛰기"
 
 #. I18N: (Game Name: Pink Panther) This action restarts the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:173
-#, fuzzy
-#| msgid "Restart the Scene"
 msgid "Restart sequence"
-msgstr "씬을 재시작"
+msgstr "시퀀스 재시작"
 
 #: engines/playground3d/metaengine.cpp:55
 msgid "Switch test"
@@ -10858,24 +10838,18 @@ msgid "3DO Plumbers requires RGB support."
 msgstr "3DO Plumbers에는 RGB 지원이 필요합니다."
 
 #: engines/prince/metaengine.cpp:237
-#, fuzzy
-#| msgid "Open main menu"
 msgid "Open interaction menu"
-msgstr "메인 메뉴 열기"
+msgstr "상호작용 메뉴 열기"
 
 #. I18N: This refers to the Z key on a keyboard.
 #: engines/prince/metaengine.cpp:256
-#, fuzzy
-#| msgid "End key"
 msgid "Z key"
-msgstr "엔드 키"
+msgstr "Z 키"
 
 #. I18N: This refers to the X key on a keyboard.
 #: engines/prince/metaengine.cpp:263
-#, fuzzy
-#| msgid "End key"
 msgid "X key"
-msgstr "엔드 키"
+msgstr "X 키"
 
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
@@ -10916,52 +10890,36 @@ msgid "Skip text"
 msgstr "대사 건너뛰기"
 
 #: engines/queen/metaengine.cpp:203
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Scroll inventory up"
-msgstr "인벤토리에서 위로 스크롤"
+msgstr "인벤토리 위로 스크롤"
 
 #: engines/queen/metaengine.cpp:209
-#, fuzzy
-#| msgid "Scroll list down"
 msgid "Scroll inventory down"
-msgstr "목록 아래로 스크롤"
+msgstr "인벤토리 아래로 스크롤"
 
 #: engines/queen/metaengine.cpp:215
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 1"
-msgstr "인벤토리 아이템 사용"
+msgstr "인벤토리 아이템 1"
 
 #: engines/queen/metaengine.cpp:220
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 2"
-msgstr "인벤토리 아이템 사용"
+msgstr "인벤토리 아이템 2"
 
 #: engines/queen/metaengine.cpp:225
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 3"
-msgstr "인벤토리 아이템 사용"
+msgstr "인벤토리 아이템 3"
 
 #: engines/queen/metaengine.cpp:230
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Inventory item 4"
-msgstr "인벤토리 아이템 사용"
+msgstr "인벤토리 아이템 4"
 
 #: engines/queen/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip cutaway / dialog"
-msgstr "대화 건너뛰기"
+msgstr "컷어웨이 / 대화 건너뛰기"
 
 #: engines/queen/metaengine.cpp:240
-#, fuzzy
-#| msgid "Show journal"
 msgid "Use journal"
-msgstr "일기 표시"
+msgstr "저널 사용"
 
 #: engines/queen/metaengine.cpp:279 engines/saga/metaengine.cpp:354
 #: engines/scumm/help.cpp:202 engines/scumm/help.cpp:214
@@ -10989,10 +10947,8 @@ msgid "Talk to"
 msgstr "대화하기"
 
 #: engines/queen/metaengine.cpp:299
-#, fuzzy
-#| msgid "Show journal"
 msgid "Close journal"
-msgstr "일기 표시"
+msgstr "저널 닫기"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:875
@@ -12797,62 +12753,44 @@ msgid "Show windows with a partially transparent background"
 msgstr "부분적으로 투명한 배경을 가진 창 표시"
 
 #: engines/sherlock/metaengine.cpp:331
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Scroll keymappings"
-msgstr "인트로 키맵핑"
+msgstr "스크롤 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:332 engines/sherlock/metaengine.cpp:772
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main user interface keymappings"
-msgstr "메뉴 키매핑"
+msgstr "메인 사용자 인터페이스 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:333 engines/sherlock/metaengine.cpp:777
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Darts minigame keymappings"
-msgstr "미니게임 키맵핑"
+msgstr "다트 미니게임 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:335
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Talk keymappings"
-msgstr "별자리 지도 키맵핑"
+msgstr "말하기 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Files keymappings"
-msgstr "PET 키맵핑"
+msgstr "파일 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Settings keymappings"
-msgstr "미니게임 키맵핑"
+msgstr "설정 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Movement keymappings"
 msgid "Movie keymappings"
 msgstr "이동 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:349
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Skip / Deselect verb"
-msgstr "선택한 개체를 사용"
+msgstr "건너뛰기 / 버브 선택 해제"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
 msgstr "설정"
 
 #: engines/sherlock/metaengine.cpp:472
-#, fuzzy
-#| msgid "Tileset"
 msgid "Files"
-msgstr "타일셋"
+msgstr "파일"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go back 10 pages in the journal
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
@@ -12879,22 +12817,16 @@ msgstr "마지막 페이지"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go back a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:572
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back a page"
-msgstr "일기 표시"
+msgstr "한 페이지 뒤로 돌아가기"
 
 #: engines/sherlock/metaengine.cpp:578
-#, fuzzy
-#| msgid "Roll left"
 msgid "Scroll left"
-msgstr "왼쪽으로 구르기"
+msgstr "왼쪽으로 스크롤"
 
 #: engines/sherlock/metaengine.cpp:584
-#, fuzzy
-#| msgid "Roll Right"
 msgid "Scroll Right"
-msgstr "오른쪽으로 구르기"
+msgstr "오른쪽으로 스크롤"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
@@ -12902,51 +12834,37 @@ msgid "Go ahead a page"
 msgstr "한 페이지 넘어가기"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option"
-msgstr "배우 1 선택"
+msgstr "옵션 선택"
 
 #: engines/sherlock/metaengine.cpp:685 engines/ultima/nuvie/metaengine.cpp:99
 msgid "Toggle music"
 msgstr "음악 전환"
 
 #: engines/sherlock/metaengine.cpp:690
-#, fuzzy
-#| msgid "Toggle combat"
 msgid "Toggle portraits"
-msgstr "전투 전환"
+msgstr "초상화 전환"
 
 #: engines/sherlock/metaengine.cpp:695
-#, fuzzy
-#| msgid "Change font size"
 msgid "Change font style"
-msgstr "글꼴 크기 변경"
+msgstr "글꼴 스타일 변경"
 
 #: engines/sherlock/metaengine.cpp:700
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggle sound effects"
-msgstr "사운드 효과 켜기/끄기 전환"
+msgstr "사운드 효과 전환"
 
 #: engines/sherlock/metaengine.cpp:705
-#, fuzzy
-#| msgid "Toggle god mode"
 msgid "Toggle windows mode"
-msgstr "신 모드 전환"
+msgstr "윈도우 모드 전환"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an auto-help feature, this action is used to change the auto-help location between left and right
 #: engines/sherlock/metaengine.cpp:711
-#, fuzzy
-#| msgid "Change action"
 msgid "Change auto-help location"
-msgstr "동작 변경"
+msgstr "자동 도움말 위치 변경"
 
 #: engines/sherlock/metaengine.cpp:716
-#, fuzzy
-#| msgid "Toggle cheats"
 msgid "Toggle voices"
-msgstr "치트 전환"
+msgstr "음성 전환"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
@@ -12955,108 +12873,74 @@ msgstr "픽셀 단위로 페이드"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
-#, fuzzy
-#| msgid "Create directory"
 msgid "Fade directly"
-msgstr "디렉터리 만들기"
+msgstr "직접 페이드"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode
 #: engines/sherlock/metaengine.cpp:736
-#, fuzzy
-#| msgid "Change mode"
 msgid "Change fade mode"
-msgstr "모드 변경"
+msgstr "페이드 모드 변경"
 
 #: engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Computer keymappings"
 msgid "Journal search keymappings"
-msgstr "컴퓨터 키맵핑"
+msgstr "저널 검색 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "메뉴 키매핑"
+msgstr "메뉴 스크롤 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "키맵핑 저장/불러오기"
+msgstr "메뉴 키맵핑 저장 / 로드"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Save files name editing keymappings"
-msgstr "메뉴 키매핑"
+msgstr "파일 이름 편집 키맵핑 저장"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Escape 키맵핑"
+msgstr "풀스캡 퍼즐 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Options menu keymappings"
-msgstr "메뉴 키매핑"
+msgstr "옵션 메뉴 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Password entry keymappings"
-msgstr "메뉴 키매핑"
+msgstr "비밀번호 입력 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Talk options keymappings"
-msgstr "인트로 키맵핑"
+msgstr "말하기 옵션 키맵핑"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Examine / Select"
-msgstr "이동 / 소통"
+msgstr "이동 / 검사 / 선택"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "동작 메뉴 열기 / 메뉴 닫기"
+msgstr "버브 메뉴 열기 / 메뉴 닫기"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "사운드 변경"
+msgstr "속도 변경"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Show journal"
 msgid "Open journal"
-msgstr "일기 표시"
+msgstr "저널 열기"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "옵션 메뉴 열기"
+msgstr "옵션 열기"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "창 크기에 맞춤"
+msgstr "나가기 / 창 닫기"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "대화 건너뛰기"
+msgstr "프롤로그 건너뛰기"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
@@ -13068,155 +12952,111 @@ msgstr "선택한 옵션을 오른쪽으로 변경"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "일기 표시"
+msgstr "10 페이지 앞으로 이동"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 1 page"
-msgstr "일기 표시"
+msgstr "1 페이지 앞으로 이동"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back 1 page"
-msgstr "일기 표시"
+msgstr "1 페이지 뒤로 이동"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of journal"
-msgstr "줄의 시작으로 이동"
+msgstr "저널 시작으로 이동"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of journal"
-msgstr "줄의 끝으로 이동"
+msgstr "저널 끝으로 이동"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
-#| msgid "Skip minigame"
 msgid "Skip darts minigame"
-msgstr "미니게임 건너뛰기"
+msgstr "다트 미니게임 건너뛰기"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to top left"
-msgstr "위로 스크롤"
+msgstr "왼쪽 상단으로 스크롤"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Scroll to bottom"
 msgid "Scroll to bottom right"
-msgstr "아래로 스크롤"
+msgstr "오른쪽 하단으로 스크롤"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "스크롤바를 위로"
+msgstr "페이지 위로 스크롤"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "스크롤바를 아래로"
+msgstr "페이지 아래로 스크롤"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to end"
-msgstr "위로 스크롤"
+msgstr "끝까지 스크롤"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to start"
-msgstr "위로 스크롤"
+msgstr "시작으로 스크롤"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next save file slot"
-msgstr "다음 대화로 이동"
+msgstr "다음 저장 파일 슬롯으로 이동"
 
 #: engines/sherlock/metaengine.cpp:1074
-#, fuzzy
-#| msgid "Go to start of save / load menu"
 msgid "Go to next page of save files"
-msgstr "저장 / 로드 메뉴 시작으로 이동"
+msgstr "저장 파일의 다음 페이지로 이동"
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "백업 파일 선택"
+msgstr "저장 파일 선택"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "줄의 끝으로 이동"
+msgstr "줄의 시작으로 이동"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line end"
 msgstr "줄의 끝으로 이동"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "빠른 모드 전환"
+msgstr "삽입 모드 전환"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "팝업 닫기"
+msgstr "퍼즐 닫기"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr "인벤토리 나가기 / 동사 메뉴 닫기 / 항목 사용 작업 취소"
+msgstr "인벤토리 나가기 / 버브 메뉴 닫기 / 항목 사용 작업 취소"
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select next Actor"
 msgid "Select next option"
-msgstr "다음 배우 선택"
+msgstr "다음 옵션 선택"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next talk option"
-msgstr "다음 대화로 이동"
+msgstr "다음 대화 옵션으로 이동"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogs"
 msgid "Go to previous talk option"
-msgstr "이전 대화로 이동"
+msgstr "이전 대화 옵션으로 이동"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
@@ -13516,8 +13356,7 @@ msgstr "개선된 모드"
 #: engines/supernova/metaengine.cpp:42
 msgid ""
 "Removes some repetitive actions, adds possibility to change verbs by keyboard"
-msgstr ""
-"일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
+msgstr "일부 반복적인 작업을 제거하고,키보드로 버브를 변경할 수 있는 기능을 추가함"
 
 #: engines/supernova/metaengine.cpp:220
 msgid "Improved mode keymappings"
@@ -13707,22 +13546,16 @@ msgid "Reveal all interactive hotspots (hold the key)"
 msgstr "모든 대화형 핫스팟(키를 누르고 있음)을 표시"
 
 #: engines/teenagent/metaengine.cpp:201
-#, fuzzy
-#| msgid "Inventory / Examine"
 msgid "Move / Examine"
-msgstr "인벤토리 / 조사하다"
+msgstr "이동 / 검사"
 
 #: engines/teenagent/metaengine.cpp:221
-#, fuzzy
-#| msgid "Open / Close inventory"
 msgid "Close inventory"
-msgstr "인벤토리 열기 / 닫기"
+msgstr "인벤토리 닫기"
 
 #: engines/teenagent/metaengine.cpp:226
-#, fuzzy
-#| msgid "Toggle inventory tray"
 msgid "Toggle inventory"
-msgstr "인벤토리 트레이 전환"
+msgstr "인벤토리 전환"
 
 #: engines/tetraedge/metaengine.cpp:32
 msgid "Correct movie aspect ratio"
@@ -14270,7 +14103,7 @@ msgstr "랜섬 *삐 소리 없음* (DLC)"
 
 #: engines/twp/metaengine.cpp:151
 msgid "Select highlighted verb"
-msgstr "강조된 버브를 선택"
+msgstr "강조된 버브 선택"
 
 #: engines/twp/metaengine.cpp:156
 msgid "Go to previous object"
