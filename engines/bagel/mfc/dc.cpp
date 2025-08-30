@@ -652,7 +652,7 @@ BOOL CDC::GetTextMetrics(LPTEXTMETRIC lpMetrics) const {
 
 /*--------------------------------------------*/
 
-CDC::Impl::Impl() : _drawMode(R2_COPYPEN) {
+CDC::Impl::Impl(CWnd *wndOwner) : m_pWnd(wndOwner), _drawMode(R2_COPYPEN) {
 	// By default the _bitmap will point to
 	// this dummy 1x1 bitmap
 	_defaultBitmap.CreateBitmap(1, 1, 1, 8, nullptr);
@@ -779,9 +779,19 @@ CPalette *CDC::Impl::selectPalette(CPalette *pal) {
 
 UINT CDC::Impl::realizePalette() {
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
-	assert(pal);
-	AfxGetApp()->setPalette(*pal);
-	return 256;
+	if (m_pWnd == nullptr || !pal)
+		return 0;
+
+	CWinApp *app = AfxGetApp();
+	CWnd *pTopLevel = m_pWnd->GetTopLevelFrame();
+	if (pTopLevel == app->GetActiveWindow()) {
+		// This window is active - update the system palette
+		AfxGetApp()->setPalette(*pal);
+		return 1;  // number of entries changed - simplified
+	}
+
+	// Not active - do not change system palette
+	return 0;
 }
 
 COLORREF CDC::Impl::GetNearestColor(COLORREF crColor) const {

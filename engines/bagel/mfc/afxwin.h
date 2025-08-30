@@ -695,6 +695,7 @@ public:
 
 	class Impl : public Gfx::TextRender {
 	private:
+		CWnd *m_pWnd;
 		DefaultBitmap _defaultBitmap;
 		Common::Point _linePos;
 		COLORREF _bkColor = RGB(255, 255, 255);
@@ -715,7 +716,7 @@ public:
 		CPalette *_cPalette = nullptr;
 
 	public:
-		Impl();
+		Impl(CWnd *wndOwner = nullptr);
 		Impl(HDC srcDc);
 
 		HGDIOBJ Attach(HGDIOBJ gdiObj);
@@ -1365,6 +1366,7 @@ public:
 	Common::Array<CWnd *> GetSafeParents(bool includeSelf = true);
 
 	CWnd *GetParent() const;
+	CWnd *GetTopLevelFrame();
 	HWND GetSafeHwnd() const;
 
 	void ShowWindow(int nCmdShow);

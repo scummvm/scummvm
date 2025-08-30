@@ -191,6 +191,13 @@ CWnd *CWnd::GetParent() const {
 	return m_pParentWnd;
 }
 
+CWnd *CWnd::GetTopLevelFrame() {
+	CWnd *p = this;
+	while (p->GetParent() != nullptr)
+		p = p->GetParent();
+	return p;
+}
+
 Common::Array<const CWnd *> CWnd::GetSafeParents(bool includeSelf) const {
 	Common::Array<const CWnd *> results;
 	bool hasParentDialog = false;
@@ -418,7 +425,7 @@ CDC *CWnd::GetDC() {
 
 	} else {
 		// Return a new DC for the window
-		CDC::Impl *hDC = new CDC::Impl();
+		CDC::Impl *hDC = new CDC::Impl(this);
 		hDC->Attach(_hFont);
 		hDC->Attach(_hPen);
 		hDC->Attach(_hBrush);
