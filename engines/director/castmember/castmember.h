@@ -150,6 +150,7 @@ struct EditInfo {
 	bool valid;
 
 	EditInfo(): valid(false) {}
+	void read(Common::ReadStreamEndian *stream);
 	void write(Common::WriteStream *stream);
 
 	Common::String toString() {

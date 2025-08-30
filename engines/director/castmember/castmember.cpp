@@ -30,6 +30,20 @@
 
 namespace Director {
 
+void EditInfo::read(Common::ReadStreamEndian *stream) {
+	rect = Movie::readRect(*stream);
+	selStart = stream->readUint32();
+	selEnd = stream->readUint32();
+	version = stream->readByte();
+	rulerFlag = stream->readByte();
+	// We're ignoring 2 bytes here
+	valid = true;
+	if (debugChannelSet(3, kDebugLoading)) {
+		rect.debugPrint(0, "EditInfo: ");
+		debug("selStart: %d  selEnd: %d  version: %d  rulerFlag: %d", selStart, selEnd, version, rulerFlag);
+	}
+}
+
 void EditInfo::write(Common::WriteStream *stream) {
 	Movie::writeRect(stream, rect);
 	stream->writeUint32BE(selStart);

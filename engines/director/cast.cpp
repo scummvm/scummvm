@@ -1459,20 +1459,6 @@ void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
 	g_director->openArchive(resPath);
 }
 
-static void readEditInfo(EditInfo *info, Common::ReadStreamEndian *stream) {
-	info->rect = Movie::readRect(*stream);
-	info->selStart = stream->readUint32();
-	info->selEnd = stream->readUint32();
-	info->version = stream->readByte();
-	info->rulerFlag = stream->readByte();
-	// We're ignoring 2 bytes here
-	info->valid = true;
-	if (debugChannelSet(3, kDebugLoading)) {
-		info->rect.debugPrint(0, "EditInfo: ");
-		debug("selStart: %d  selEnd: %d  version: %d  rulerFlag: %d", info->selStart,info->selEnd, info->version, info->rulerFlag);
-	}
-}
-
 void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Resource *res) {
 	// IDs are stored as relative to the start of the cast array.
 	id += _castArrayStart;
@@ -2004,7 +1990,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	case 8:
 		if (castInfo.strings[8].len) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[8].data, castInfo.strings[8].len, stream.isBE());
-			readEditInfo(&ci->rteEditInfo, entryStream);
+			ci->rteEditInfo.read(entryStream);
 			delete entryStream;
 			dumpS = Common::String::format("rteEditInfo: { %s } ", ci->rteEditInfo.toString().c_str()) + dumpS;
 		}
@@ -2012,7 +1998,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	case 7:
 		if (castInfo.strings[7].len) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[7].data, castInfo.strings[7].len, stream.isBE());
-			readEditInfo(&ci->textEditInfo, entryStream);
+			ci->textEditInfo.read(entryStream);
 			delete entryStream;
 			dumpS = Common::String::format("textEditInfo: { %s } ", ci->textEditInfo.toString().c_str()) + dumpS;
 		}
@@ -2033,7 +2019,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 	case 5:
 		if (castInfo.strings[5].len) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[5].data, castInfo.strings[5].len, stream.isBE());
-			readEditInfo(&ci->scriptEditInfo, entryStream);
+			ci->scriptEditInfo.read(entryStream);
 			delete entryStream;
 			dumpS = Common::String::format("scriptEditInfo: { %s } ", ci->scriptEditInfo.toString().c_str()) + dumpS;
 		}
