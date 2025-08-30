@@ -58,6 +58,7 @@ public:
 	Sprite(Frame *frame = nullptr);
 	Sprite(const Sprite &sprite);
 	Sprite& operator=(const Sprite &sprite);
+	bool operator==(const Sprite &sprite);
 	~Sprite();
 
 	Frame *getFrame() const { return _frame; }

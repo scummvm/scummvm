@@ -127,6 +127,7 @@ typedef struct ImGuiState {
 	struct {
 		bool _isScriptDirty = false; // indicates whether or not we have to display the script corresponding to the current stackframe
 		bool _goToDefinition = false;
+		bool _scrollToPC = false;
 		uint _lastLinePC = 0;
 		uint _callstackSize = 0;
 	} _dbg;
@@ -151,7 +152,21 @@ typedef struct ImGuiState {
 		ImVec4 _var_ref = ImColor(IM_COL32(0xe6, 0xe6, 0x00, 0xff));
 		ImVec4 _var_ref_changed = ImColor(IM_COL32(0xFF, 0x00, 0x00, 0xFF));
 		ImVec4 _var_ref_out_of_scope = ImColor(IM_COL32(0xFF, 0x00, 0xFF, 0xFF));
+		// Colors to show continuation data
+		const int _contColorCount = 5;
+		ImColor _contColors[5] = {
+			ImColor(IM_COL32(0x00, 0x00, 0xB2, 0x80)), // Blue
+			ImColor(IM_COL32(0xB2, 0x00, 0x00, 0x80)), // Red
+			ImColor(IM_COL32(0x61, 0x1F, 0x9F, 0x80)), // Violet
+			ImColor(IM_COL32(0x73, 0x1E, 0x1E, 0x80)), // Brown
+			ImColor(IM_COL32(0x00, 0x59, 0x00, 0x80)), // Green
+		};
+
+		ImColor _channel_selected_col = ImColor(IM_COL32(0x94, 0x00, 0xD3, 0xFF));
+		ImColor _channel_hovered_col = ImColor(IM_COL32(0xFF, 0xFF, 0, 0x3C));
+		int _contColorIndex = 0;
 	} _colors;
+
 
 	struct {
 		DatumHash _locals;
@@ -168,7 +183,7 @@ typedef struct ImGuiState {
 	bool _wasHidden = false;
 
 	Common::List<CastMemberID> _scriptCasts;
-	Common::List<ImGuiScript> _openHandlers;
+	Common::HashMap<int, ImGuiScript> _openHandlers;
 	bool _showCompleteScript = true;
 
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _variables;
@@ -177,6 +192,14 @@ typedef struct ImGuiState {
 		int frame = -1;
 		int channel = -1;
 	} _selectedScoreCast;
+
+	struct {
+		int frame = -1;
+		int channel = -1;
+	} _hoveredScoreCast;
+
+	Common::Array<Common::Array<Common::Pair<uint, uint>>> _continuationData;
+	bool _loadedContinuationData;
 
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
@@ -213,6 +236,7 @@ Common::String getDisplayName(CastMember *castMember);
 void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
+ImColor brightenColor(const ImColor &color, float factor);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp

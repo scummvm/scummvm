@@ -57,6 +57,60 @@ const uint32 scoreColors[6] = {
 	0xffce9c,
 };
 
+static void buildContinuationData() {
+	if (_state->_loadedContinuationData) {
+		return;
+	}
+
+	Score *score = g_director->getCurrentMovie()->getScore();
+	uint numFrames = score->_scoreCache.size();
+
+	uint numChannels = score->_scoreCache[0]->_sprites.size();
+	_state->_continuationData.resize(numChannels);
+
+	for (int ch = 0; ch < (int)numChannels; ch++) {
+		_state->_continuationData[ch].resize(numFrames);
+
+		uint currentContinuation = 1;
+		for (int f = 0; f < (int)numFrames; f++) {
+			Frame &frame = *score->_scoreCache[f];
+			Sprite &sprite = *frame._sprites[ch];
+
+			Frame *prevFrame = (f == 0) ? nullptr : score->_scoreCache[f - 1];
+			Sprite *prevSprite = (prevFrame) ? prevFrame->_sprites[ch] : nullptr;
+
+			if (prevSprite) {
+				if (!(*prevSprite == sprite)) {
+					currentContinuation = f;
+				}
+			} else {
+				currentContinuation = f;
+			}
+			_state->_continuationData[ch][f].first = currentContinuation;
+		}
+
+		currentContinuation = 1;
+		for (int f = (int)numFrames - 1; f >= 0; f--) {
+			Frame &frame = *score->_scoreCache[f];
+			Sprite &sprite = *frame._sprites[ch];
+
+			Frame *nextFrame = (f == (int)numFrames - 1) ? nullptr : score->_scoreCache[f + 1];
+			Sprite *nextSprite = (nextFrame) ? nextFrame->_sprites[ch] : nullptr;
+
+			if (nextSprite) {
+				if (!(*nextSprite == sprite)) {
+					currentContinuation = f;
+				}
+			} else {
+				currentContinuation = f;
+			}
+			_state->_continuationData[ch][f].second = currentContinuation;
+		}
+	}
+
+	_state->_loadedContinuationData = true;
+}
+
 static void displayScoreChannel(int ch, int mode, int modeSel) {
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint numFrames = score->_scoreCache.size();
@@ -108,41 +162,86 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	numFrames -= _state->_scoreFrameOffset - 1;
 	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
 
+	if (modeSel == kModeExtended) {
+		_state->_colors._contColorIndex = ch % _state->_colors._contColorCount;
+	}
+
 	for (int f = 0; f < (int)numFrames; f++) {
 		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset - 1];
 		Sprite &sprite = *frame._sprites[ch];
 
 		ImGui::TableNextColumn();
 
-		ImGui::PushID(ch * 10000 + f);
+		int startCont = _state->_continuationData[ch][f].first;
+		int endCont = _state->_continuationData[ch][f].second;
 
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
-		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
-		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
+		if (ImGui::IsItemClicked(0)) {
+			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
+			_state->_selectedScoreCast.channel = ch;
+		}
+
+		if (ImGui::IsItemHovered()) {
+			_state->_hoveredScoreCast.frame = f;
+			_state->_hoveredScoreCast.channel = ch;
+		}
+
+		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
+			if (f == startCont) {
+				_state->_colors._contColorIndex = (_state->_colors._contColorIndex + 1) % _state->_colors._contColorCount;
+			}
+
+			if (_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 >= startCont &&
+				_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 <= endCont &&
+				ch == _state->_selectedScoreCast.channel &&
+				mode <= kModeExtended) {
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._channel_selected_col);
+			} else if (_state->_hoveredScoreCast.frame >= startCont &&
+				_state->_hoveredScoreCast.frame <= endCont &&
+				ch == _state->_hoveredScoreCast.channel) {
+				ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._channel_hovered_col);
+			} else {
+				if (mode == modeSel)
+					ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, _state->_colors._contColors[_state->_colors._contColorIndex]);
+				else
+					ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, brightenColor(_state->_colors._contColors[_state->_colors._contColorIndex], 1.5));
+			}
+		}
+
+		// If the frame is not the start, then don't render any text
+		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
+			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
+				ImGui::PushFont(ImGui::GetIO().FontDefault);
+				ImGui::Text("-\uf819");
+				ImGui::PopFont();
+			}
+			continue;
+		}
+
+		ImGui::PushID(ch * 10000 + f);
 
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				ImGui::Selectable(Common::String::format("%d", sprite._castId.member).c_str());
+				ImGui::Text(Common::String::format("%d", sprite._castId.member).c_str());
 			else if (sprite.isQDShape())
-				ImGui::Selectable("Q");
+				ImGui::Text("Q");
 			else
-				ImGui::Selectable("  ");
+				ImGui::Text("  ");
 			break;
 
 		case kModeInk:
-			ImGui::Selectable(Common::String::format("%s", inkType2str(sprite._ink)).c_str());
+			ImGui::Text(inkType2str(sprite._ink));
 			break;
 
 		case kModeLocation:
-			ImGui::Selectable(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
+			ImGui::Text(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
 			break;
 
 		case kModeBlend:
-			ImGui::Selectable(Common::String::format("%d", sprite._blendAmount).c_str());
+			ImGui::Text(Common::String::format("%d", sprite._blendAmount).c_str());
 			break;
 
 		case kModeBehavior:
@@ -156,7 +255,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				ImGui::Text(frame._mainChannels.palette.paletteId.asString().c_str());
+				ImGui::Text(Common::String::format("%d", frame._mainChannels.palette.paletteId.member).c_str());
 			break;
 
 		case kChTransition:
@@ -180,15 +279,10 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kModeExtended: // Render empty row
 		default:
-			ImGui::Selectable("  ");
+			ImGui::Text("  ");
 		}
 
 		ImGui::PopID();
-
-		if (ImGui::IsItemClicked(0)) {
-			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
-			_state->_selectedScoreCast.channel = ch;
-		}
 	}
 
 	ImGui::PopFont();
@@ -197,6 +291,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 void showScore() {
 	if (!_state->_w.score)
 		return;
+
+	buildContinuationData();
 
 	ImVec2 pos(40, 40);
 	ImGui::SetNextWindowPos(pos, ImGuiCond_FirstUseEver);
@@ -304,10 +400,12 @@ void showScore() {
 
 			if (castMember || shape) {
 				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
-				ImGui::Text("  ?"); ImGui::SameLine(50);
+				// the continuation data is 0-indexed but the frames are 1-indexed
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
 				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
-				ImGui::Text("  ?"); ImGui::SameLine();
+				// the continuation data is 0-indexed but the frames are 1-indexed
+				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second + 1); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
 			}
 
@@ -435,8 +533,8 @@ void showScore() {
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
-							  ImGuiTableFlags_Borders | ImGuiTableFlags_HighlightHoveredColumn |
-								  ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | addonFlags)) {
+					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
+					ImGuiTableFlags_SizingStretchProp | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
 			ImGui::TableSetupScrollFreeze(1, 2);
@@ -445,7 +543,7 @@ void showScore() {
 
 			ImGui::TableSetupColumn("##", flags);
 			for (uint i = 0; i < tableColumns; i++) {
-				Common::String label = (i + _state->_scoreFrameOffset) % 5 ? " " : Common::String::format("%-2d", i + _state->_scoreFrameOffset);
+				Common::String label = Common::String::format("%-2d", i + _state->_scoreFrameOffset);
 				label += Common::String::format("##l%d", i);
 
 				ImGui::TableSetupColumn(label.c_str(), flags);
@@ -527,6 +625,8 @@ void showScore() {
 
 			int mode = _state->_scoreMode;
 
+			// Reset the color index, so that each channel gets the same color each time
+			_state->_colors._contColorIndex = 0;
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				if (mode == kModeExtended) // This will render empty row
 					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode);
