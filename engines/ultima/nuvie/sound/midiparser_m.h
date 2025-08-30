@@ -47,15 +47,15 @@ class MidiParser_M : public MidiParser {
 protected:
 	struct LoopData {
 		byte numLoops;
-		byte *startPos;
-		byte *returnPos;
+		const byte *startPos;
+		const byte *returnPos;
 	};
 
 public:
 	MidiParser_M(int8 source = -1);
 	~MidiParser_M();
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 	void unloadMusic() override;
 	void onTimer() override;
 
@@ -69,7 +69,7 @@ protected:
 
 	// The point in the MIDI data where the global loop (not using the stack)
 	// has started and will return.
-	byte *_loopPoint;
+	const byte *_loopPoint;
 
 	// A stack of nested loops, similar to a call stack. A call command will
 	// specify an offset where the parser should jump to (startPus), plus a

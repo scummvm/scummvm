@@ -70,7 +70,7 @@ public:
 
 	using MidiDriver_MT32GM::send;
 	void send(int8 source, uint32 b) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 	/**
 	 * Sets the assignments of the 16 M instruments to the MIDI instruments and

@@ -31,7 +31,7 @@ MidiParser_SMF::MidiParser_SMF(int8 source) : MidiParser(source) {
 
 void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 	uint8 subtrack = info.subtrack;
-	byte *playPos = _position._subtracks[subtrack]._playPos;
+	const byte *playPos = _position._subtracks[subtrack]._playPos;
 	info.start = playPos;
 	info.delta = readVLQ(playPos);
 
@@ -117,13 +117,13 @@ void MidiParser_SMF::parseNextEvent(EventInfo &info) {
 	_position._subtracks[subtrack]._playPos = playPos;
 }
 
-bool MidiParser_SMF::loadMusic(byte *data, uint32 size) {
+bool MidiParser_SMF::loadMusic(const byte *data, uint32 size) {
 	uint32 len;
 	byte midiType;
 	byte numTrackChunks;
 
 	unloadMusic();
-	byte *pos = data;
+	const byte *pos = data;
 
 	if (!memcmp(pos, "RIFF", 4)) {
 		// Skip the outer RIFF header.

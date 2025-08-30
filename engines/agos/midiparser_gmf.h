@@ -38,14 +38,14 @@ class MidiParser_GMF : public MidiParser_SMF {
 public:
 	MidiParser_GMF(int8 source = -1, bool useDosTempos = false);
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
 protected:
 	void parseNextEvent(EventInfo &info) override;
 
 	// The end position of each track, exclusive
 	// (i.e. 1 byte past the end of the data).
-	byte *_tracksEndPos[MAXIMUM_TRACKS];
+	const byte *_tracksEndPos[MAXIMUM_TRACKS];
 
 	// True if the music tempos from the DOS version should be used; false if
 	// the tempos from the Windows version should be used.

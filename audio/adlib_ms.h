@@ -708,7 +708,7 @@ public:
 	using MidiDriver_Multisource::send;
 	void send(int8 source, uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 	void stopAllNotes(bool stopSustainedNotes = false) override;
 
 	void stopAllNotes(uint8 source, uint8 channel) override;

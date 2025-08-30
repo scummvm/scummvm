@@ -138,7 +138,7 @@ public:
 	void close() override;
 	void send(uint32 b) override;
 	void send(int8 source, uint32 b) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 	MidiChannel *allocateChannel() override { return nullptr; }
 	MidiChannel *getPercussionChannel() override { return nullptr; }
 
@@ -1198,7 +1198,7 @@ void MidiDriver_Miles_AdLib::pitchBendChange(byte midiChannel, byte parameter1, 
 	}
 }
 
-void MidiDriver_Miles_AdLib::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_Miles_AdLib::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	if (type == MIDI_META_END_OF_TRACK && source >= 0)
 		// Stop hanging notes and release resources used by this source.
 		deinitSource(source);

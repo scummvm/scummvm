@@ -152,7 +152,7 @@ void MidiDriver_M_MT32::send(int8 source, uint32 b) {
 	}
 }
 
-void MidiDriver_M_MT32::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_M_MT32::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	// Load instrument is ignored for MT-32; instruments are set using
 	// setInstrumentAssignments.
 }

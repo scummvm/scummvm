@@ -47,7 +47,7 @@ protected:
 public:
 	MidiParser_SMF(int8 source = -1);
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };

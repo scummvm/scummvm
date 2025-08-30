@@ -232,7 +232,7 @@ void MidiDriver_M_AdLib::send(int8 source, uint32 b) {
 	}
 }
 
-void MidiDriver_M_AdLib::metaEvent(int8 source, byte type, byte* data, uint16 length) {
+void MidiDriver_M_AdLib::metaEvent(int8 source, byte type, const byte* data, uint16 length) {
 	if (type == 0x3) {
 		// Load instrument
 		// This loads an OPL instrument definition into the bank. The first 

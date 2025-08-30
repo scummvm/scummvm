@@ -155,7 +155,7 @@ void MidiDriver_Casio::send(int8 source, uint32 b) {
 	processEvent(source, b, outputChannel);
 }
 
-void MidiDriver_Casio::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_Casio::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	assert(source < MAXIMUM_SOURCES);
 
 	if (type == 0x2F && source >= 0) // End of Track

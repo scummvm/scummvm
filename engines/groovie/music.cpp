@@ -325,7 +325,7 @@ uint16 MusicPlayerMidi::sysExNoDelay(const byte *msg, uint16 length) {
 	return _driver ? _driver->sysExNoDelay(msg, length) : 0;
 }
 
-void MusicPlayerMidi::metaEvent(byte type, byte *data, uint16 length) {
+void MusicPlayerMidi::metaEvent(byte type, const byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:
 		// End of Track, play the background song
@@ -501,7 +501,7 @@ void MusicPlayerXMI::send(int8 source, uint32 b) {
 	_multisourceDriver->send(source, b);
 }
 
-void MusicPlayerXMI::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MusicPlayerXMI::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	if (type == 0x2F) // End Of Track
 		MusicPlayerMidi::endTrack();
 	_multisourceDriver->metaEvent(source, type, data, length);

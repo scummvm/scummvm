@@ -24,7 +24,7 @@
 #include "common/debug.h"
 #include "common/memstream.h"
 
-bool MidiParser_QT::loadMusic(byte *data, uint32 size) {
+bool MidiParser_QT::loadMusic(const byte *data, uint32 size) {
 	if (size < 8)
 		return false;
 
@@ -407,7 +407,7 @@ void MidiParser_QT::sendToDriver(uint32 b) {
 	}
 }
 
-void MidiParser_QT::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+void MidiParser_QT::sendMetaEventToDriver(byte type, const byte *data, uint16 length) {
 	if (_source < 0) {
 		MidiParser::sendMetaEventToDriver(type, data, length);
 	} else {

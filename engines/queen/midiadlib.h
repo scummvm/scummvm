@@ -38,7 +38,7 @@ public:
 	int open() override;
 	void close() override;
 	void send(uint32 b) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
+	void metaEvent(byte type, const byte *data, uint16 length) override;
 	MidiChannel *allocateChannel() override { return 0; }
 	MidiChannel *getPercussionChannel() override { return 0; }
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override;
