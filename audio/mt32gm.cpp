@@ -964,7 +964,7 @@ uint16 MidiDriver_MT32GM::sysExMT32(const byte *msg, uint16 length, const uint32
 	return 0;
 }
 
-void MidiDriver_MT32GM::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_MT32GM::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	assert(source < MAXIMUM_SOURCES);
 
 	if (type == 0x2F && source >= 0) // End of Track

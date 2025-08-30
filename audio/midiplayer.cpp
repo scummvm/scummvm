@@ -122,7 +122,7 @@ void MidiPlayer::sendToChannel(byte ch, uint32 b) {
 	}
 }
 
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
+void MidiPlayer::metaEvent(byte type, const byte *data, uint16 length) {
 	switch (type) {
 	case 0x2F:	// End of Track
 		endOfTrack();

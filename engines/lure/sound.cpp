@@ -854,11 +854,11 @@ void MidiMusic::send(int8 source, uint32 b) {
 	_driver->send(source, b);
 }
 
-void MidiMusic::metaEvent(byte type, byte *data, uint16 length) {
+void MidiMusic::metaEvent(byte type, const byte *data, uint16 length) {
 	metaEvent(-1, type, data, length);
 }
 
-void MidiMusic::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiMusic::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	if (type == MIDI_META_END_OF_TRACK)
 		stopMusic();
 
@@ -943,7 +943,7 @@ void MidiDriver_ADLIB_Lure::channelAftertouch(uint8 channel, uint8 pressure, uin
 	_activeNotesMutex.unlock();
 }
 
-void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_ADLIB_Lure::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	if (type == MIDI_META_SEQUENCER && length >= 6 &&
 			data[0] == 0x00 && data[1] == 0x00 && data[2] == 0x3F && data[3] == 0x00) {
 		// Custom sequencer meta event

@@ -119,7 +119,7 @@ public:
 
 	using MidiDriver_BASE::send;
 	void send(int8 source, uint32 b) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 	void stopAllNotes(bool stopSustainedNotes = false) override;
 	MidiChannel *allocateChannel() override;

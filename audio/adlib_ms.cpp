@@ -938,7 +938,7 @@ void MidiDriver_ADLIB_Multisource::sysEx(const byte *msg, uint16 length) {
 	}
 }
 
-void MidiDriver_ADLIB_Multisource::metaEvent(int8 source, byte type, byte *data, uint16 length) {
+void MidiDriver_ADLIB_Multisource::metaEvent(int8 source, byte type, const byte *data, uint16 length) {
 	if (type == MIDI_META_END_OF_TRACK && source >= 0)
 		// Stop hanging notes and release resources used by this source.
 		deinitSource(source);

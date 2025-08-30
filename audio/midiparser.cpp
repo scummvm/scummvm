@@ -94,7 +94,7 @@ void MidiParser::sendToDriver(uint32 b) {
 	}
 }
 
-void MidiParser::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
+void MidiParser::sendMetaEventToDriver(byte type, const byte *data, uint16 length) {
 	if (_source < 0) {
 		_driver->metaEvent(type, data, length);
 	} else {
@@ -109,7 +109,7 @@ void MidiParser::setTempo(uint32 tempo) {
 }
 
 // This is the conventional (i.e. SMF) variable length quantity
-uint32 MidiParser::readVLQ(byte * &data) {
+uint32 MidiParser::readVLQ(const byte * &data) {
 	byte str;
 	uint32 value = 0;
 	int i;

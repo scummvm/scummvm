@@ -473,7 +473,7 @@ void MidiParser_SCI::trackState(uint32 b) {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	byte *playPos = _position._subtracks[0]._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 
 	info.start = playPos;
 	info.delta = 0;

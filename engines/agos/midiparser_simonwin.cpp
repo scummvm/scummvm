@@ -30,8 +30,8 @@ MidiParser_SimonWin::MidiParser_SimonWin(int8 source, bool useDosTempos) :
 	MidiParser_SMF(source), _useDosTempos(useDosTempos) { }
 
 void MidiParser_SimonWin::parseNextEvent(EventInfo &info) {
-	byte *parsePos = _position._subtracks[info.subtrack]._playPos;
-	uint8 *start = parsePos;
+	const byte *parsePos = _position._subtracks[info.subtrack]._playPos;
+	const uint8 *start = parsePos;
 	uint32 delta = readVLQ(parsePos);
 	uint8 event = *(parsePos++);
 
@@ -93,13 +93,13 @@ int32 MidiParser_SimonWin::determineDataSize(Common::SeekableReadStream *stream)
 	return totalSize;
 }
 
-bool MidiParser_SimonWin::loadMusic(byte *data, uint32 size) {
+bool MidiParser_SimonWin::loadMusic(const byte *data, uint32 size) {
 	assert(size > 7);
 
 	unloadMusic();
 
 	// The first byte indicates the number of tracks in the MIDI data.
-	byte *pos = data;
+	const byte *pos = data;
 	_numTracks = *(pos++);
 	if (_numTracks > MAXIMUM_TRACKS) {
 		warning("MidiParser_SimonWin::loadMusic - Can only handle %d tracks but was handed %d", MAXIMUM_TRACKS, _numTracks);

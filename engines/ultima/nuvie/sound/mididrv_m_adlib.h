@@ -57,7 +57,7 @@ public:
 
 	using MidiDriver_Multisource::send;
 	void send(int8 source, uint32 b) override;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 
 protected:
 	void programChange(uint8 channel, uint8 program, uint8 source) override;
