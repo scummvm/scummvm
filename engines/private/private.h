@@ -45,6 +45,10 @@ struct ADGameDescription;
 
 namespace Private {
 
+enum PRIVATEActions {
+	kActionSkip,
+};
+
 // debug channels
 enum {
 	kPrivateDebugFunction = 1,

@@ -295,8 +295,8 @@ Common::Error PrivateEngine::run() {
 			mousePos = g_system->getEventManager()->getMousePos();
 			// Events
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE && _videoDecoder) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				if (event.customType == kActionSkip && _videoDecoder) {
 					skipVideo();
 				}
 				break;
