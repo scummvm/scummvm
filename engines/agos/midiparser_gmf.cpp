@@ -30,8 +30,8 @@ MidiParser_GMF::MidiParser_GMF(int8 source, bool useDosTempos) : MidiParser_SMF(
 }
 
 void MidiParser_GMF::parseNextEvent(EventInfo &info) {
-	byte *parsePos = _position._subtracks[0]._playPos;
-	uint8 *start = parsePos;
+	const byte *parsePos = _position._subtracks[0]._playPos;
+	const uint8 *start = parsePos;
 	uint32 delta = readVLQ(parsePos);
 
 	// GMF does not use end of track events, so we have to use the size of the
@@ -42,7 +42,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 	bool containsMoreData = true;
 	if (parsePos > _tracksEndPos[_activeTrack] - 5) {
 		containsMoreData = false;
-		byte *checkPos = parsePos;
+		const byte *checkPos = parsePos;
 		while (checkPos < _tracksEndPos[_activeTrack]) {
 			if (*checkPos != 0) {
 				containsMoreData = true;
@@ -92,7 +92,7 @@ void MidiParser_GMF::parseNextEvent(EventInfo &info) {
 	}
 }
 
-bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
+bool MidiParser_GMF::loadMusic(const byte *data, uint32 size) {
 	assert(size > 7);
 
 	unloadMusic();
@@ -128,9 +128,9 @@ bool MidiParser_GMF::loadMusic(byte *data, uint32 size) {
 		// A multi-track file starts with a list of 2-byte offsets which
 		// identify the starting position of each track, as well as the end of
 		// the last track.
-		byte *pos = data;
+		const byte *pos = data;
 		// Read the start offset of the first track.
-		byte *trackStart = data + READ_LE_UINT16(pos);
+		const byte *trackStart = data + READ_LE_UINT16(pos);
 		pos += 2;
 		// The number of offsets before the first track indicates the number of
 		// tracks plus 1 because the end offset of the last track is included

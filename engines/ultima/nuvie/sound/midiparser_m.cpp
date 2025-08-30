@@ -41,7 +41,7 @@ MidiParser_M::~MidiParser_M() {
 	delete _loopStack;
 }
 
-bool MidiParser_M::loadMusic(byte* data, uint32 size) {
+bool MidiParser_M::loadMusic(const byte* data, uint32 size) {
 	unloadMusic();
 
 	// M uses only 1 track.
@@ -127,7 +127,7 @@ void MidiParser_M::onTimer() {
 }
 
 bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
-	byte *playPos = _position._subtracks[0]._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 
 	if (info.command() == 0x8 && info.channel() == 0x1) {
 		// Call subroutine
@@ -177,7 +177,7 @@ bool MidiParser_M::processEvent(const EventInfo& info, bool fireEvents) {
 }
 
 void MidiParser_M::parseNextEvent(EventInfo &info) {
-	byte *playPos = _position._subtracks[0]._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 	assert(playPos >= _tracks[0][0]);
 	assert(playPos - _tracks[0][0] < (int)_trackLength);
 

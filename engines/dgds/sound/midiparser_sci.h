@@ -55,7 +55,7 @@ public:
 	void mainThreadEnd();
 
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask);
-	bool loadMusic(byte *, uint32) override {
+	bool loadMusic(const byte *, uint32) override {
 		return false;
 	}
 	void initTrack();

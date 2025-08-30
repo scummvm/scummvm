@@ -232,14 +232,14 @@ public:
 	virtual uint16 sysExNoDelay(const byte *msg, uint16 length) { sysEx(msg, length); return 0; }
 
 	// TODO: Document this.
-	virtual void metaEvent(byte type, byte *data, uint16 length) { }
+	virtual void metaEvent(byte type, const byte *data, uint16 length) { }
 
 	/**
 	 * Send a meta event from a specific source. If the MIDI driver
 	 * does not support multiple sources, the source parameter is
 	 * ignored.
 	 */
-	virtual void metaEvent(int8 source, byte type, byte *data, uint16 length) { metaEvent(type, data, length); }
+	virtual void metaEvent(int8 source, byte type, const byte *data, uint16 length) { metaEvent(type, data, length); }
 
 	/**
 	 * Stops all currently active notes. Specify stopSustainedNotes if

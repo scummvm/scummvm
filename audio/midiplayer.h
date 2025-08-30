@@ -123,7 +123,7 @@ public:
 
 	// MidiDriver_BASE implementation
 	void send(uint32 b) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
+	void metaEvent(byte type, const byte *data, uint16 length) override;
 
 protected:
 	/**

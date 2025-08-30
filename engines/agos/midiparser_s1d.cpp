@@ -33,12 +33,12 @@ namespace AGOS {
  */
 class MidiParser_S1D : public MidiParser {
 private:
-	byte *_data;
+	const byte *_data;
 	bool _noDelta;
 
 	struct Loop {
 		uint16 timer;
-		byte *start, *end;
+		const byte *start, *end;
 		bool noDelta;
 	} _loops[16];
 
@@ -57,7 +57,7 @@ private:
 	// be played. If false, all notes of a chord will be sent to the driver.
 	bool _monophonicChords;
 
-	uint32 readVLQ2(byte *&data);
+	uint32 readVLQ2(const byte *&data);
 protected:
 	void parseNextEvent(EventInfo &info) override;
 	bool processEvent(const EventInfo &info, bool fireEvents = true) override;
@@ -71,11 +71,11 @@ protected:
 		Common::fill(_lastPlayedNoteTime, _lastPlayedNoteTime + ARRAYSIZE(_lastPlayedNoteTime), 0);
 	}
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };
 
-uint32 MidiParser_S1D::readVLQ2(byte *&data) {
+uint32 MidiParser_S1D::readVLQ2(const byte *&data) {
 	uint32 delta = 0;
 
 	// LE format VLQ, which is 2 bytes long at max.
@@ -89,7 +89,7 @@ uint32 MidiParser_S1D::readVLQ2(byte *&data) {
 }
 
 void MidiParser_S1D::parseNextEvent(EventInfo &info) {
-	byte *playPos = _position._subtracks[0]._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 	info.start = playPos;
 	info.length = 0;
 	info.delta = _noDelta ? 0 : readVLQ2(playPos);
@@ -220,14 +220,14 @@ bool MidiParser_S1D::processEvent(const EventInfo &info, bool fireEvents) {
 	return MidiParser::processEvent(info, fireEvents);
 }
 
-bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
+bool MidiParser_S1D::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
 
 	if (!size)
 		return false;
 
 	// The original actually just ignores the first two bytes.
-	byte *pos = data + 2;
+	const byte *pos = data + 2;
 	if (*pos == 0xFC) {
 		// SysEx found right at the start
 		// this seems to happen since Elvira 2, we ignore it

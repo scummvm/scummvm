@@ -79,7 +79,7 @@ void AdLibMidiDriver::setVolume(uint32 volume) {
 		adlibSetChannelVolume(i, volume * 64 / 256 + 64);
 }
 
-void AdLibMidiDriver::metaEvent(byte type, byte *data, uint16 length) {
+void AdLibMidiDriver::metaEvent(byte type, const byte *data, uint16 length) {
 	int event = 0;
 	if (length > 4 && READ_BE_UINT32(data) == 0x3F00) {
 		event = data[4];

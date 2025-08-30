@@ -39,7 +39,7 @@ protected:
 	void parseNextEvent (EventInfo &info) override;
 
 public:
-	bool loadMusic (byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 	uint32 getTick() override { return (uint32) _markerCount * _ppqn / 2; }
 };
 
@@ -55,7 +55,7 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 	_markerCount += _lastMarkerCount;
 	_lastMarkerCount = 0;
 
-	byte *playPos = _position._subtracks[0]._playPos;
+	const byte *playPos = _position._subtracks[0]._playPos;
 
 	info.delta = 0;
 	do {
@@ -128,9 +128,9 @@ void MidiParser_RO::parseNextEvent (EventInfo &info) {
 	_position._subtracks[0]._playPos = playPos;
 }
 
-bool MidiParser_RO::loadMusic (byte *data, uint32 size) {
+bool MidiParser_RO::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
-	byte *pos = data;
+	const byte *pos = data;
 
 	if (memcmp (pos, "RO", 2)) {
 		error("'RO' header expected but found '%c%c' instead", pos[0], pos[1]);

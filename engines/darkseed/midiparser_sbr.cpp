@@ -38,8 +38,8 @@ MidiParser_SBR::MidiParser_SBR(int8 source, bool sfx) : MidiParser_SMF(source), 
 
 void MidiParser_SBR::parseNextEvent(EventInfo &info) {
 	uint8 subtrack = info.subtrack;
-	byte *parsePos = _position._subtracks[subtrack]._playPos;
-	uint8 *start = parsePos;
+	const byte *parsePos = _position._subtracks[subtrack]._playPos;
+	const uint8 *start = parsePos;
 
 	/**
 	 * SBR uses 6 byte structures to represent events:
@@ -215,7 +215,7 @@ void MidiParser_SBR::onTrackStart(uint8 track) {
 	Common::fill(_trackLoopCounter, _trackLoopCounter + ARRAYSIZE(_trackLoopCounter), 0);
 }
 
-bool MidiParser_SBR::loadMusic(byte *data, uint32 size) {
+bool MidiParser_SBR::loadMusic(const byte *data, uint32 size) {
 	assert(size > 0);
 
 	unloadMusic();
@@ -229,7 +229,7 @@ bool MidiParser_SBR::loadMusic(byte *data, uint32 size) {
 	// terminated by a 00 byte.
 	uint16 bytesRead = 0;
 	for (int i = 0; i < endTrack; i++) {
-		byte *startOfTrack = data;
+		const byte *startOfTrack = data;
 		uint16 trackSize = 0;
 
 		bool foundEndOfTrack = false;
@@ -273,7 +273,7 @@ bool MidiParser_SBR::loadMusic(byte *data, uint32 size) {
 			// subtrack indices, terminated by a 00 byte.
 			// (The track is padded with garbage and terminated by another
 			// 00 byte to match the x * 6 byte event format used by all tracks.)
-			uint8 *tracklist = _tracks[i][0] + 1;
+			const uint8 *tracklist = _tracks[i][0] + 1;
 			uint8 subtrackIndex = 0;
 			while (*tracklist != 0) {
 				_tracks[i][subtrackIndex++] = _tracks[*tracklist][0];

@@ -33,7 +33,7 @@ class MidiParser_SBR : public MidiParser_SMF {
 public:
 	MidiParser_SBR(int8 source = -1, bool sfx = false);
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
 protected:
 	void parseNextEvent(EventInfo &info) override;

@@ -119,7 +119,7 @@ public:
 	void send(uint32 b) override;
 	void sysEx(const byte* msg, uint16 length) override;
 	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
-	void metaEvent(byte type, byte *data, uint16 length) override;
+	void metaEvent(byte type, const byte *data, uint16 length) override;
 
 	void pause(bool pause) override;
 
@@ -149,7 +149,7 @@ public:
 	using MusicPlayerMidi::send;
 	void send(int8 source, uint32 b) override;
 	using MusicPlayerMidi::metaEvent;
-	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
+	void metaEvent(int8 source, byte type, const byte *data, uint16 length) override;
 	void stopAllNotes(bool stopSustainedNotes) override;
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
 		if (_milesXmidiTimbres)
