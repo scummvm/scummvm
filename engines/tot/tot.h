@@ -91,11 +91,11 @@ private:
 	void advanceAnimations(bool barredZone, bool animateMouse);
 	void updateSecondaryAnimationDepth();
 	void updateMainCharacterDepth();
-	void actionLineText(Common::String actionLine);
+	void actionLineText(const Common::String &actionLine);
 	void initializeObjectFile();
 	void saveObjectsData(ScreenObject object, Common::SeekableWriteStream *objectDataStream);
-	void scrollLeft(uint &horizontalPos);
-	void scrollRight(uint &horizontalPos);
+	void scrollLeft(uint horizontalPos);
+	void scrollRight(uint horizontalPos);
 	TextEntry readTextRegister(uint numRegister);
 
 	void readConversationFile();
@@ -114,7 +114,7 @@ private:
 	void verifyCopyProtection();
 	void verifyCopyProtection2();
 
-	void loadAnimation(Common::String animation);
+	void loadAnimation(const Common::String &animation);
 	void loadCharAnimation();
 	void animateGive(uint dir, uint height);
 	void animatePickup1(uint dir, uint height);
@@ -146,7 +146,7 @@ private:
 	void firstIntroduction();
 	void readAlphaGraph(Common::String &data, int length, int x, int y, byte barColor);
 	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor);
-	void displayObjectDescription(Common::String text);
+	void displayObjectDescription(const Common::String &text);
 	void copyProtection();
 	void initialLogo();
 	void mainMenu(bool fade);
