@@ -28,6 +28,10 @@ MODULE_OBJS += \
 	graphics-opengl-classic.o
 endif
 
+ifdef USE_OPENGL_SHADERS
+MODULE_OBJS += \
+	graphics-opengl-shaders.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ALCACHOFA), DYNAMIC_PLUGIN)

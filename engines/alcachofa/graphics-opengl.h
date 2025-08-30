@@ -30,13 +30,6 @@
 
 namespace Alcachofa {
 
-struct OpenGLFormat {
-	GLenum _format, _type;
-	inline bool isValid() const { return _format != GL_NONE; }
-};
-
-OpenGLFormat getOpenGLFormatOf(const Graphics::PixelFormat &format);
-
 class OpenGLTexture : public ITexture {
 public:
 	OpenGLTexture(int32 w, int32 h, bool withMipmaps);
@@ -50,6 +43,8 @@ private:
 	GLuint _handle;
 	bool _withMipmaps;
 	bool _mirrorWrap = true;
+	bool _didConvertOnce = false;
+	Graphics::ManagedSurface _tmpSurface;
 };
 
 class OpenGLRenderer : public virtual IRenderer {
@@ -68,6 +63,8 @@ protected:
 	void setViewportToRect(int16 outputWidth, int16 outputHeight);
 	virtual void setMatrices(bool flipped) = 0;
 	void checkFirstDrawCommand();
+	void getQuadPositions(Math::Vector2d topLeft, Math::Vector2d size, Math::Angle rotation, Math::Vector2d positions[]) const;
+	void getQuadTexCoords(Math::Vector2d texMin, Math::Vector2d texMax, Math::Vector2d texCoords[]) const;
 
 	Common::Point _resolution, _outputSize;
 	Graphics::Surface *_currentOutput = nullptr;
@@ -76,6 +73,9 @@ protected:
 	float _currentLodBias = 0.0f;
 	bool _isFirstDrawCommand = false;
 };
+
+IRenderer *createOpenGLRendererClassic(Common::Point resolution);
+IRenderer *createOpenGLRendererShaders(Common::Point resolution);
 
 }
 

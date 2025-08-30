@@ -127,24 +127,10 @@ public:
 		Angle rotation,
 		Vector2d texMin,
 		Vector2d texMax) override {
-		Vector2d positions[] = {
-			topLeft + Vector2d(0,			0),
-			topLeft + Vector2d(0,			+size.getY()),
-			topLeft + Vector2d(+size.getX(), +size.getY()),
-			topLeft + Vector2d(+size.getX(), 0),
-		};
-		if (abs(rotation.getDegrees()) > epsilon) {
-			const Vector2d zero(0, 0);
-			for (int i = 0; i < 4; i++)
-				positions[i].rotateAround(zero, rotation);
-		}
+		Vector2d positions[4], texCoords[4];
+		getQuadPositions(topLeft, size, rotation, positions);
+		getQuadTexCoords(texMin, texMax, texCoords);
 
-		Vector2d texCoords[] = {
-			{ texMin.getX(), texMin.getY() },
-			{ texMin.getX(), texMax.getY() },
-			{ texMax.getX(), texMax.getY() },
-			{ texMax.getX(), texMin.getY() }
-		};
 		if (_currentTexture != nullptr) {
 			// float equality is fine here, if it was calculated it was not a normal graphic
 			_currentTexture->setMirrorWrap(texMin != Vector2d() || texMax != Vector2d(1, 1));
@@ -230,8 +216,8 @@ public:
 	}
 };
 
-IRenderer *IRenderer::createOpenGLRenderer(Point resolution) {
-	initGraphics3d(resolution.x, resolution.y);
+IRenderer *createOpenGLRendererClassic(Point resolution) {
+	debug("Use OpenGL classic renderer");
 	return new OpenGLRendererClassic(resolution);
 }
 
