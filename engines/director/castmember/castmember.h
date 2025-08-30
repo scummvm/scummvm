@@ -151,37 +151,54 @@ struct EditInfo {
 
 	EditInfo(): valid(false) {}
 	void write(Common::WriteStream *stream);
+
+	Common::String toString() {
+		return Common::String::format("rect: [%d,%d,%d,%d] selStart: %d selEnd: %d version: %d rulerFlag: %d valid: %d",
+			rect.left, rect.top, rect.right, rect.bottom, selStart, selEnd, version, rulerFlag, valid);
+	}
 };
 
 struct CastMemberInfo {
+	// Header
 	uint32 unk1;
 	uint32 unk2;
 	uint32 flags;
 	uint16 count;
 	bool autoHilite;
 	uint32 scriptId;
-	Common::String script;
+
+	// List items
+	Common::String script;     // 0       (removed on protecting)
 	Common::String name;
 	Common::String directory;
 	Common::String fileName;
-	Common::String type;
-	EditInfo scriptEditInfo;
-	FontStyle scriptStyle;
-	EditInfo textEditInfo;
-	Common::String modifiedBy;
-	Common::String comments;
+	Common::String fileType;	// 4     pre-D5
+	Common::String propInit;	// 4     post-D5
+	EditInfo scriptEditInfo;	// 5      (removed on protecting)
+	FontStyle scriptStyle;		//        (removed on protecting)
+	EditInfo textEditInfo;		//        (removed on protecting)
+	EditInfo rteEditInfo;		//        (removed on protecting)
+	byte xtraGuid[16];			// 9
+	Common::String xtraDisplayName;
+	Common::Array<byte> bpTable; //       (removed on protecting)
+	Common::Array<byte> xtraRect;		// Rect32
+	Common::Rect scriptRect;	//        (removed on protecting)
+	Common::Array<byte> dvWindowInfo; //  (removed on protecting)
+	byte guid[16];				// 15   Seems to be a GUID
+	Common::String mediaFormatName; // 16 Used by DV cast members to store the media format name
+	uint32 creationTime;		//        (removed on protecting)
+	uint32 modifiedTime;		//        (removed on protecting)
+	Common::String modifiedBy;	//        (removed on protecting)
+	Common::String comments;	// 20     (removed on protecting, but could be retained)
+	uint32 imageQuality;		// 21
 
-	// There just has to be a better solution
-	// It is not rare to find these strings in the CastMemberInfo
-	Common::Array<byte> unknown1;
-	Common::Array<byte> unknown2;
-	Common::Array<byte> unknown3;
-	Common::Array<byte> unknown4;
-	Common::Array<byte> unknown5;
-	Common::Array<byte> unknown6;
-	Common::Array<byte> unknown7;
-
-	CastMemberInfo() : autoHilite(false), scriptId(0) {}
+	CastMemberInfo() : autoHilite(false), scriptId(0) {
+		memset(xtraGuid, 0, 16);
+		memset(guid, 0, 16);
+		creationTime = 0;
+		modifiedTime = 0;
+		imageQuality = 0;
+	}
 };
 
 } // End of namespace Director
