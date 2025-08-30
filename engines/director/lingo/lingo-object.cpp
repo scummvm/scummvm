@@ -137,6 +137,7 @@
 #include "director/lingo/xlibs/xcmdglue.h"
 #include "director/lingo/xlibs/xio.h"
 #include "director/lingo/xlibs/xplayanim.h"
+#include "director/lingo/xlibs/xplaypacoxfcn.h"
 #include "director/lingo/xlibs/xsoundxfcn.h"
 #include "director/lingo/xlibs/xwin.h"
 #include "director/lingo/xlibs/yasix.h"
@@ -338,6 +339,7 @@ static const struct XLibProto {
 	XLIBDEF(WidgetXObj, 		kXObj,			400),	// D4
 	XLIBDEF(WindowXObj,			kXObj,			200),	// D2
 	XLIBDEF(XCMDGlueXObj,		kXObj,			200),	// D2
+	XLIBDEF(XPlayPACoXFCN,			kXObj,					300),	// D3
 	XLIBDEF(XSoundXFCN,			kXObj,			400),	// D4
 	XLIBDEF(XWINXObj,			kXObj,			300),	// D3
 	XLIBDEF(XioXObj,			kXObj,			400),	// D3

@@ -186,6 +186,10 @@ bool DigitalVideoCastMember::loadVideoFromCast() {
 bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	// TODO: detect file type (AVI, QuickTime, FLIC) based on magic number,
 	// insert the right video decoder
+	if (_filename == path) {
+		// we've already loaded this video, or not. no point trying again.
+		return _video ? true : false;
+	}
 
 	if (_video) {
 		delete _video;
@@ -357,21 +361,16 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 	if (_emptyFile)
 		return nullptr;
 
+	if (!_video || !_video->isVideoLoaded()) {
+		// try and load the video if not already
+		if (!loadVideoFromCast()) {
+			return nullptr;
+		}
+	}
+
 	Graphics::MacWidget *widget = new Graphics::MacWidget(g_director->getCurrentWindow(), bbox.left, bbox.top, bbox.width(), bbox.height(), g_director->_wm, false);
 
 	_channel = channel;
-
-	if (!_video || !_video->isVideoLoaded()) {
-		// try and load the video if not already
-		loadVideoFromCast();
-	}
-
-	if (!_video || !_video->isVideoLoaded()) {
-		warning("DigitalVideoCastMember::createWidget: No video decoder");
-		delete widget;
-
-		return nullptr;
-	}
 
 	// Do not render stopped videos
 	if (_channel->_movieRate == 0.0 && !_getFirstFrame && _lastFrame) {

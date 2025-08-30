@@ -146,6 +146,22 @@ void Window::probeResources(Archive *archive) {
 			}
 		}
 
+		// Mac Director will check resource STR# id 200 from the projector
+		// executable, and use the second string in the list.
+		// Usually this is "Shared Cast", but Journeyman Project
+		// has this set to "Mars ESG Upper 03"??
+		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 200)) {
+			Common::SeekableReadStreamEndian *name = archive->getResource(MKTAG('S', 'T', 'R', '#'), 200);
+			int num = name->readUint16();
+			if (num < 2) {
+				warning("Window::probeResources: Missing data in the Filenames resource of the Projector file");
+				delete name;
+			} else {
+				_soundsFilenameHint = decodePlatformEncoding(name->readPascalString());
+				_sharedCastFilenameHint = decodePlatformEncoding(name->readPascalString());
+			}
+		}
+
 		if (archive->hasResource(MKTAG('S', 'T', 'R', '#'), 0)) {
 			if (_currentMovie)
 				_currentMovie->setArchive(archive);

@@ -3215,7 +3215,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("sculpt4d",   "Vol.5 Demo", "Sculpt Demo Vol.5", "f54ac20d51c496911f9144ee595ade60", 1456309, 300),
 	MACDEMO1("sculpt4d",   "Using Demo", "UsingSculpt1.0",    "2ce360c9ea2da80a2c6d1040b0ad92dd", 383380, 313),
 
-	WINGAME1("selfish", "", "selfish.exe", "t:260d50f7d51adba057a06bbcb6da3d43", 371037, 300),
+	MACGAME1("selfish", "", "Click for Story! (8mb)", "r:7f443f2e63fd497a9ad85b10dc880a91", 384549, 310),
+	WINGAME1("selfish", "", "SELFISH/SELFISH.EXE", "t:260d50f7d51adba057a06bbcb6da3d43", 371037, 310),
 
 	MACGAME1("sfk", "D3", "More SFK Products!", "r:1ae45c23586b41997ba52e2e7c771c4c", 377667, 310),
 
