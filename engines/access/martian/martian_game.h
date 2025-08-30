@@ -31,7 +31,6 @@ namespace Martian {
 class MartianEngine : public AccessEngine {
 private:
 	bool _skipStart;
-	SpriteResource *_introObjects;
 	Common::MemoryReadStream *_creditsStream;
 
 	/**

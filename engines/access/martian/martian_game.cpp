@@ -31,13 +31,12 @@ namespace Access {
 namespace Martian {
 
 MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
-AccessEngine(syst, gameDesc), _skipStart(false), _introObjects(nullptr),
+AccessEngine(syst, gameDesc), _skipStart(false),
 _creditsStream(nullptr)
 {
 }
 
 MartianEngine::~MartianEngine() {
-	_introObjects = nullptr;
 	_skipStart = false;
 	_creditsStream = nullptr;
 }
@@ -208,7 +207,7 @@ bool MartianEngine::showCredits() {
 	while (posX != -1) {
 		posY = _creditsStream->readSint16LE();
 		int frameNum = _creditsStream->readSint16LE();
-		_screen->plotImage(_introObjects, frameNum, Common::Point(posX, posY));
+		_screen->plotImage(_objectsTable[41], frameNum, Common::Point(posX, posY));
 
 		posX = _creditsStream->readSint16LE();
 	}
@@ -244,7 +243,7 @@ void MartianEngine::doCredits() {
 	_events->hideCursor();
 	_screen->forceFadeOut();
 	Resource *data = _files->loadFile(41, 1);
-	_introObjects = new SpriteResource(this, data);
+	_objectsTable[41] = new SpriteResource(this, data);
 	delete data;
 
 	_files->loadScreen(41, 0);
@@ -265,7 +264,8 @@ void MartianEngine::doCredits() {
 		while (!shouldQuit() && !_events->isKeyActionMousePressed()&& !showCredits())
 			_events->pollEventsAndWait();
 
-		warning("TODO: Free word_21E2B (roomSprites+54h)");
+		delete _objectsTable[41];
+		_objectsTable[41] = nullptr;
 		_midi->freeMusic();
 	}
 }
