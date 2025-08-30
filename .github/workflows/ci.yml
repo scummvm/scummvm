@@ -122,12 +122,6 @@ jobs:
           cd build-scummvm
           ls
           msbuild scummvm.sln /m /p:VcpkgEnableManifest=true /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }} /v:minimal
-      - name: Upload libs
-        uses: actions/upload-artifact@v4
-        if: matrix.buildArtifacts == 'true'
-        with:
-          name: libs-${{ matrix.triplet }}
-          path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}
       - name: Upload scummvm
         uses: actions/upload-artifact@v4
         if: matrix.buildArtifacts == 'true'
@@ -138,19 +132,19 @@ jobs:
         uses: actions/upload-artifact@v4
         if: matrix.buildArtifacts == 'true'
         with:
-          name: scummvm-${{ matrix.arch }}
+          name: libs-${{ matrix.arch }}
           path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}\\bin\\*.dll
       - name: Upload scummvm symbols
         uses: actions/upload-artifact@v4
-        if: matrix.buildArtifacts == 'true'
+        if: matrix.buildArtifacts == 'true' && env.CONFIGURATION == 'Debug'
         with:
           name: symbols-${{ matrix.arch }}
           path: build-scummvm/${{ env.CONFIGURATION }}${{ matrix.arch }}/*.pdb
       - name: Upload scummvm libs symbols
         uses: actions/upload-artifact@v4
-        if: matrix.buildArtifacts == 'true'
+        if: matrix.buildArtifacts == 'true' && env.CONFIGURATION == 'Debug'
         with:
-          name: symbols-${{ matrix.arch }}
+          name: lib-symbols-${{ matrix.arch }}
           path: ${{ env.VCPKG_INSTALLED_DIR }}\\${{ matrix.triplet }}\\bin\\*.pdb
   xcode:
     name: Xcode
