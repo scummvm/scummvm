@@ -30,7 +30,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	Common::MemoryReadStream s(data, 999);
 
 	_charFlag = s.readByte();
-	if (vm->getGameID() != GType_Amazon || !vm->isCD()) {
+	if (vm->getGameID() != kGameAmazon || !vm->isCD()) {
 		_screenFile.load(s);
 		_estabIndex = s.readSint16LE();
 	} else {
@@ -40,7 +40,7 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 
 	_paletteFile.load(s);
 	_startColor = s.readUint16LE();
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() == kGameMartianMemorandum) {
 		int lastColor = s.readUint16LE();
 		_numColors = lastColor - _startColor;
 	} else
@@ -68,32 +68,30 @@ CharEntry::CharEntry(const byte *data, AccessEngine *vm) {
 	}
 }
 
-CharEntry::CharEntry() {
-	_charFlag = 0;
-	_estabIndex = 0;
-	_startColor = _numColors = 0;
+CharEntry::CharEntry() : _charFlag(0), _estabIndex(0), _startColor(0), _numColors(0) {
 }
 
 /*------------------------------------------------------------------------*/
 
 CharManager::CharManager(AccessEngine *vm) : Manager(vm) {
 	// Setup character list
-	for (uint idx = 0; idx < _vm->_res->CHARTBL.size(); ++idx) {
-		if (_vm->_res->CHARTBL[idx].size() == 0)
+	for (const auto &charEntry: _vm->_res->CHARTBL) {
+		if (charEntry.size() == 0)
 			_charTable.push_back(CharEntry());
 		else
-			_charTable.push_back(CharEntry(&_vm->_res->CHARTBL[idx][0], _vm));
+			_charTable.push_back(CharEntry(charEntry.data(), _vm));
 	}
 
 	_charFlag = 0;
 }
 
 void CharManager::loadChar(int charId) {
-	CharEntry &ce = _charTable[charId];
+	const CharEntry &ce = _charTable[charId];
 	_charFlag = ce._charFlag;
 
+	// Amazon calls "establish" before loading the screen, but MM does it after.
 	_vm->_establishFlag = false;
-	if (ce._estabIndex != -1) {
+	if (_vm->getGameID() == kGameAmazon && ce._estabIndex != -1) {
 		_vm->_establishFlag = true;
 		if (!_vm->_establishTable[ce._estabIndex]) {
 			_vm->_establishTable[ce._estabIndex] = true;
@@ -114,6 +112,15 @@ void CharManager::loadChar(int charId) {
 	_vm->_buffer2.blitFrom(*_vm->_screen);
 	_vm->_screen->setDisplayScan();
 
+	if (_vm->getGameID() == kGameMartianMemorandum && ce._estabIndex != -1) {
+		_vm->_establishFlag = true;
+		if (!_vm->_establishTable[ce._estabIndex]) {
+			_vm->_establishTable[ce._estabIndex] = true;
+			_vm->establish(0, ce._estabIndex);
+			_vm->_screen->blitFrom(_vm->_buffer1);
+		}
+	}
+
 	if (_charFlag != 2 && _charFlag != 3) {
 		charMenu();
 	}
@@ -121,7 +128,8 @@ void CharManager::loadChar(int charId) {
 	_vm->_screen->_startColor = ce._startColor;
 	_vm->_screen->_numColors = ce._numColors;
 	if (ce._paletteFile._fileNum != -1) {
-		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile);
+		int srcOffset = (_vm->getGameID() == kGameMartianMemorandum ? ce._startColor * 3 : 0);
+		_vm->_screen->loadPalette(ce._paletteFile._fileNum, ce._paletteFile._subfile, srcOffset);
 	}
 	_vm->_screen->setIconPalette();
 	_vm->_screen->setPalette();
@@ -142,25 +150,23 @@ void CharManager::loadChar(int charId) {
 
 	// Load extra cells
 	_vm->_extraCells.clear();
-	for (uint i = 0; i < ce._extraCells.size(); ++i)
-		_vm->_extraCells.push_back(ce._extraCells[i]);
+	for (const auto &extraCell : ce._extraCells)
+		_vm->_extraCells.push_back(extraCell);
 }
 
 void CharManager::charMenu() {
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	Screen &screen = *_vm->_screen;
 	screen.saveScreen();
 	screen.setDisplayScan();
 
-	if (_vm->getGameID() == GType_MartianMemorandum) {
-		screen.plotImage(spr, 17, Common::Point(0, 184));
-		screen.plotImage(spr, 18, Common::Point(193, 184));
-	} else if (_vm->getGameID() == GType_Amazon) {
-		screen.plotImage(spr, 17, Common::Point(0, 176));
-		screen.plotImage(spr, 18, Common::Point(155, 176));
+	if (_vm->getGameID() == kGameMartianMemorandum) {
+		screen.plotImage(icons, 17, Common::Point(0, 184));
+		screen.plotImage(icons, 18, Common::Point(193, 184));
+	} else if (_vm->getGameID() == kGameAmazon) {
+		screen.plotImage(icons, 17, Common::Point(0, 176));
+		screen.plotImage(icons, 18, Common::Point(155, 176));
 	} else
 		error("Game not supported");
 
@@ -169,7 +175,6 @@ void CharManager::charMenu() {
 	screen.copyTo(&_vm->_buffer1);
 
 	screen.restoreScreen();
-	delete spr;
 }
 
 } // End of namespace Access

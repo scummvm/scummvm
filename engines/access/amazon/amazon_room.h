@@ -39,7 +39,6 @@ private:
 	bool _antOutFlag;
 	const byte *_icon;
 
-	void roomSet();
 protected:
 	void loadRoom(int roomNumber) override;
 

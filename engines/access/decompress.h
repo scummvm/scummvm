@@ -28,15 +28,15 @@ namespace Access {
 
 class LzwDecompressor {
 public:
-	void decompress(byte *source, byte *dest);
+	void decompress(const byte *source, byte *dest);
 private:
-	byte *_source;
+	const byte *_source;
 	byte _sourceBitsLeft;
 	byte _codeLength;
 	uint16 getCode();
 };
 
-uint32 decompressDBE(byte *source, byte **dest);
+uint32 decompressDBE(const byte *source, byte **dest);
 
 } // End of namespace Access
 

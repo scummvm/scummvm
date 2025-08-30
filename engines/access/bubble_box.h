@@ -74,7 +74,7 @@ public:
 	Common::Rect _btnDownPos;
 	Common::Array<Common::Rect> _bubbles;
 public:
-	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, Common::String title);
+	BubbleBox(AccessEngine *vm, Access::BoxType type, int x, int y, int w, int h, int val1, int val2, int val3, int val4, const char *title);
 
 	void load(Common::SeekableReadStream *stream);
 
@@ -102,7 +102,7 @@ public:
 	void doBox(int item, int box);
 
 	int doBox_v1(int item, int box, int &btnSelected);
-	void getList(const char *const data[], int *flags);
+	void getList(const char *const data[], const byte *flags);
 	void setCursorPos(int posX, int posY);
 	void printString(Common::String msg);
 };

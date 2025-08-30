@@ -35,7 +35,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		GType_Amazon,
+		kGameAmazon,
 		0
 	},
 
@@ -51,7 +51,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO1(GUIO_NONE)
 		},
-		GType_Amazon,
+		kGameAmazon,
 		0
 	},
 
@@ -66,7 +66,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_DEMO,
 			GUIO1(GUIO_NONE)
 		},
-		GType_Amazon,
+		kGameAmazon,
 		0
 	},
 
@@ -81,7 +81,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_CD,
 			GUIO1(GUIO_NONE)
 		},
-		GType_Amazon,
+		kGameAmazon,
 		0
 	},
 
@@ -96,7 +96,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		GType_MartianMemorandum,
+		kGameMartianMemorandum,
 		0
 	},
 
@@ -111,7 +111,7 @@ static const AccessGameDescription gameDescriptions[] = {
 			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO1(GUIO_NONE)
 		},
-		GType_MartianMemorandum,
+		kGameMartianMemorandum,
 		0
 	},
 

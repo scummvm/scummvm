@@ -77,8 +77,11 @@ void VideoPlayer::setVideo(BaseSurface *vidSurface, const Common::Point &pt, int
 			_videoData->_stream->read(pDest, _xCount);
 		}
 
-		if (vidSurface == _vm->_screen)
+		if (vidSurface == _vm->_screen) {
+			assert(pt.x >= 0 && pt.y >= 0 && pt.x < 320 && pt.y < 200 &&
+				_xCount > 0 && _xCount <= 320 && _scanCount > 0 && _scanCount <= 200);
 			_vm->_newRects.push_back(Common::Rect(pt.x, pt.y, pt.x + _xCount, pt.y + _scanCount));
+		}
 
 		getFrame();
 	}
@@ -112,11 +115,14 @@ void VideoPlayer::getFrame() {
 void VideoPlayer::playVideo() {
 	if (_vm->_timers[31]._flag)
 		return;
-	++_vm->_timers[31]._flag;
+	_vm->_timers[31]._flag = 1;
 
 	byte *pDest = _startCoord;
 	byte *pLine = _startCoord;
 	uint32 frameEnd = _videoData->_stream->pos() + _frameSize;
+
+	if (frameEnd > _videoData->_stream->size())
+		error("VideoPlayer::playVideo: Frame end %d > stream size %d", frameEnd, (int)_videoData->_stream->size());
 
 	while ((uint32)_videoData->_stream->pos() < frameEnd) {
 		int count = _videoData->_stream->readByte();
@@ -158,6 +164,8 @@ void VideoPlayer::playVideo() {
 	if (_vidSurface == _vm->_screen)
 		_vm->_screen->markAllDirty();
 
+	_vm->_screen->dump("vidframe");
+
 	getFrame();
 	if (++_videoFrame == _frameCount) {
 		closeVideo();
@@ -166,6 +174,7 @@ void VideoPlayer::playVideo() {
 }
 
 void VideoPlayer::copyVideo() {
+	// aka drawTalkVideoFrame
 	_vm->_player->calcPlayer();
 
 	// Figure out the dirty rect area for the video frame
@@ -173,16 +182,20 @@ void VideoPlayer::copyVideo() {
 		_vm->_vidY - _vm->_screen->_bufferStart.y,
 		_vm->_vidX - _vm->_screen->_bufferStart.x + _header._width,
 		_vm->_vidY - _vm->_screen->_bufferStart.y + _header._height);
-	if (!_vm->_screen->clip(r))
+	if (_vm->_screen->clip(r))
 		return;
+	assert(r.left >= 0 && r.left < 320 && r.top >= 0 && r.top < 200 &&
+		r.right > 0 && r.right <= 320 && r.bottom > 0 && r.bottom <= 200);
 	_vm->_newRects.push_back(r);
 
-	int vh = _header._height;
-	int vw = _header._width;
-	int destIdx = _vm->_vidX - _vm->_screen->_bufferStart.x;
-	int srcIdx = _vm->_screen->_leftSkip;
-	for (int i = 0; i < _vm->_screen->_topSkip; i++)
-		destIdx += 160;
+	// Draw the clipped video to the buffer
+	int vh = r.height();
+	int vw = r.width();
+	int destIdx = r.left + r.top * _vm->_buffer2.pitch;
+	int srcIdx = _vm->_screen->_leftSkip + _vm->_screen->_topSkip * _vm->_vidBuf.pitch;
+
+	assert(srcIdx >= 0);
+	assert(destIdx >= 0);
 
 	const byte *srcP = (const byte *)_vm->_vidBuf.getPixels() + srcIdx;
 	byte *destP = (byte *)_vm->_buffer2.getPixels() + destIdx;

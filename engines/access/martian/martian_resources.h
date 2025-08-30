@@ -43,15 +43,13 @@ extern const int SIDEOFFD[];
 extern const byte CREDIT_DATA[];
 extern const byte ICON_PALETTE[];
 
-extern const int RMOUSE[10][2];
-
 extern byte HELP[];
 extern const char *const ASK_TBL[];
 extern const char *const TRAVDATA[];
 
 extern const char *const SPEC7MESSAGE;
 
-extern const byte _byte1EEB5[];
+extern const byte CAN_TRAVEL_MATRIX[];
 extern const int PICTURERANGE[][2];
 
 class MartianResources : public Resources {
@@ -61,11 +59,17 @@ protected:
 	 */
 	void load(Common::SeekableReadStream &s) override;
 public:
-	MartianFont *_font6x6;
-	MartianFont *_font3x5;
+	MartianFont *_font1;
+	MartianFont *_font2;
+	MartianBitFont *_bitFont;
 public:
-	MartianResources(AccessEngine *vm) : Resources(vm), _font6x6(nullptr), _font3x5(nullptr) {}
+	MartianResources(AccessEngine *vm) : Resources(vm), _font1(nullptr), _font2(nullptr), _bitFont(nullptr) {}
 	~MartianResources() override;
+
+	const byte *getCursor(int num) const override;
+	const char *getEgoName() const override { return "TEX"; }
+	int getRMouse(int i, int j) const override;
+	int inButtonXRange(int x) const override;
 };
 
 #define MMRES (*((Martian::MartianResources *)_vm->_res))

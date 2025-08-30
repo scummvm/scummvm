@@ -31,11 +31,12 @@
 #include "access/access.h"
 #include "access/sound.h"
 
+#include "access/martian/midiparser_bemd.h"
+
 namespace Access {
 
 SoundManager::SoundManager(AccessEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_effectsHandle = new Audio::SoundHandle();
-	_playingSound = false;
 }
 
 SoundManager::~SoundManager() {
@@ -46,8 +47,8 @@ SoundManager::~SoundManager() {
 void SoundManager::clearSounds() {
 	debugC(1, kDebugSound, "clearSounds()");
 
-	for (uint i = 0; i < _soundTable.size(); ++i)
-		delete _soundTable[i]._res;
+	for (auto &sound : _soundTable)
+		delete sound._res;
 
 	_soundTable.clear();
 
@@ -101,7 +102,7 @@ void SoundManager::playSound(int soundIndex, bool loop) {
 void SoundManager::playSound(Resource *res, int priority, bool loop, int soundIndex) {
 	debugC(1, kDebugSound, "playSound");
 
-	byte *resourceData = res->data();
+	const byte *resourceData = res->data();
 
 	assert(res->_size >= 32);
 
@@ -186,14 +187,14 @@ bool SoundManager::isSFXPlaying() {
 	return _mixer->isSoundHandleActive(*_effectsHandle);
 }
 
-void SoundManager::loadSounds(Common::Array<RoomInfo::SoundIdent> &sounds) {
+void SoundManager::loadSounds(const Common::Array<RoomInfo::SoundIdent> &sounds) {
 	debugC(1, kDebugSound, "loadSounds");
 
 	clearSounds();
 
-	for (uint i = 0; i < sounds.size(); ++i) {
-		Resource *sound = loadSound(sounds[i]._fileNum, sounds[i]._subfile);
-		_soundTable.push_back(SoundEntry(sound, sounds[i]._priority));
+	for (const auto &sound : sounds) {
+		Resource *soundRes = loadSound(sound._fileNum, sound._subfile);
+		_soundTable.push_back(SoundEntry(soundRes, sound._priority));
 	}
 }
 
@@ -230,7 +231,7 @@ MusicManager::MusicManager(AccessEngine *vm) : _vm(vm) {
 	//
 	switch (musicType) {
 	case MT_ADLIB: {
-		if (_vm->getGameID() == GType_Amazon && !_vm->isDemo()) {
+		if (_vm->getGameID() == kGameAmazon && !_vm->isDemo()) {
 			Resource   *midiDrvResource = _vm->_files->loadFile(92, 1);
 			Common::MemoryReadStream *adLibInstrumentStream = new Common::MemoryReadStream(midiDrvResource->data(), midiDrvResource->_size);
 
@@ -305,10 +306,20 @@ void MusicManager::midiPlay() {
 
 	stop();
 
-	if (READ_BE_UINT32(_music->data()) != MKTAG('F', 'O', 'R', 'M')) {
-		warning("midiPlay() Unexpected signature");
-		_isPlaying = false;
-	} else {
+	uint32 magic = READ_BE_UINT32(_music->data());
+	if (magic == MKTAG('B', 'E', 'm', 'd')) {
+		_parser = new MidiParser_BEmd();
+
+		if (!_parser->loadMusic(_music->data(), _music->_size))
+			error("midiPlay() couldn't load music resource");
+
+		_parser->setTrack(0);
+		_parser->setMidiDriver(this);
+		_parser->setTimerRate(_driver->getBaseTempo());
+		_parser->property(MidiParser::mpAutoLoop, _isLooping);
+		setVolume(127);
+		_isPlaying = true;
+	} else if (magic == MKTAG('F', 'O', 'R', 'M')) {
 		_parser = MidiParser::createParser_XMIDI();
 
 		if (!_parser->loadMusic(_music->data(), _music->_size))
@@ -325,6 +336,9 @@ void MusicManager::midiPlay() {
 
 		setVolume(127);
 		_isPlaying = true;
+	} else {
+		warning("midiPlay() Unexpected signature 0x%08x, expected 'FORM'", magic);
+		_isPlaying = false;
 	}
 }
 

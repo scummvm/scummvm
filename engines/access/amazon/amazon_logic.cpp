@@ -181,7 +181,7 @@ void CampScene::mWhileDoOpen() {
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_images.clear();
 
 	if (_vm->isCD()) {
@@ -200,7 +200,7 @@ void CampScene::mWhileDoOpen() {
 		_vm->freeCells();
 		_vm->_oldRects.clear();
 		_vm->_newRects.clear();
-		_vm->_numAnimTimers = 0;
+		_vm->_animation->clearTimers();
 		_vm->_images.clear();
 	}
 }
@@ -615,7 +615,7 @@ void Plane::doFallCell() {
 	if (_vm->_scaleI <= 20)
 		return;
 
-	SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_planeCount / 6);
+	const SpriteFrame *frame = _vm->_objectsTable[20]->getFrame(_planeCount / 6);
 	Common::Rect r(115, 11, 115 + _vm->_screen->_scaleTable1[frame->w],
 		11 + _vm->_screen->_scaleTable1[frame->h]);
 	_vm->_buffer2.sPlotF(frame, r);
@@ -1316,7 +1316,7 @@ void Cast::doCast(int param1) {
 
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 
 	_vm->_midi->newMusic(58, 0);
 	screen.forceFadeIn();
@@ -1349,7 +1349,7 @@ void Cast::doCast(int param1) {
 	_vm->freeCells();
 	_vm->_oldRects.clear();
 	_vm->_newRects.clear();
-	_vm->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_images.clear();
 	screen.forceFadeOut();
 
@@ -2181,7 +2181,6 @@ void Ant::doAnt() {
 						idx = antHandleRight(idx, buf);
 				} else {
 					// Handle movement based on keyboard keys
-					buf = Amazon::PITWALK;
 					if (_vm->_player->_move == UP)
 						idx = antHandleStab(idx, buf);
 					else if (_vm->_player->_move == LEFT)

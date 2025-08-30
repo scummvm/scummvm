@@ -19,46 +19,31 @@
  *
  */
 
-#ifndef ACCESS_MARTIAN_ROOM_H
-#define ACCESS_MARTIAN_ROOM_H
+#ifndef ACCESS_MARTIAN_MIDI_PARSER_BEMD_H
+#define ACCESS_MARTIAN_MIDI_PARSER_BEMD_H
 
-#include "common/scummsys.h"
-#include "access/room.h"
+#include "audio/midiparser.h"
 
 namespace Access {
 
-class AccessEngine;
+class MidiParser_BEmd : public MidiParser {
+public:
+	MidiParser_BEmd();
 
-namespace Martian {
-
-class MartianEngine;
-
-class MartianRoom : public Room {
-private:
-	MartianEngine *_game;
+	bool loadMusic(byte *data, uint32 size) override;
 
 protected:
-	void loadRoom(int roomNumber) override;
+	void parseNextEvent(EventInfo &info) override;
+	bool processEvent(const EventInfo &info, bool fireEvents) override;
+	void resetTracking() override;
 
-	void roomInit() override;
+private:
+	const byte *_trackDataEnd;
+	const byte *_tickData;
+	const byte *_tickDataEnd;
 
-	void reloadRoom() override;
-
-	void reloadRoom1() override;
-
-	void mainAreaClick() override;
-public:
-	MartianRoom(AccessEngine *vm);
-
-	~MartianRoom() override;
-
-	void init4Quads() override { }
-
-	void roomMenu() override;
 };
 
-} // End of namespace Martian
+} // end namespace Access
 
-} // End of namespace Access
-
-#endif /* ACCESS_AMAZON_ROOM_H */
+#endif // ACCESS_MARTIAN_MIDI_PARSER_BEMD_H

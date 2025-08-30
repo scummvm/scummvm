@@ -109,10 +109,10 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 
 Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const Access::AccessGameDescription *gd) const {
 	switch (gd->gameID) {
-	case Access::GType_Amazon:
+	case Access::kGameAmazon:
 		*engine = new Access::Amazon::AmazonEngine(syst, gd);
 		break;
-	case Access::GType_MartianMemorandum:
+	case Access::kGameMartianMemorandum:
 		*engine = new Access::Martian::MartianEngine(syst, gd);
 		break;
 	default:
@@ -189,6 +189,12 @@ Common::KeymapArray AccessMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	using namespace Access;
 
+	// Get the game ID for the target
+	const Common::String currDomain = ConfMan.getActiveDomainName();
+	ConfMan.setActiveDomain(target);
+	const Common::String gameId = ConfMan.get("gameid");
+	ConfMan.setActiveDomain(currDomain);
+
 	Keymap *engineKeyMap = new Keymap(Keymap::kKeymapTypeGame, "access-default", _("Default keymappings"));
 
 	Action *act;
@@ -262,42 +268,86 @@ Common::KeymapArray AccessMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("LOOK", _("Look"));
 	act->setCustomEngineActionEvent(kActionLook);
 	act->addDefaultInputMapping("F1");
-	act->addDefaultInputMapping("F2");
+	if (strcmp(target, "amazon") == 0)
+		act->addDefaultInputMapping("F2");
 	engineKeyMap->addAction(act);
 
-	act = new Action("USE", _("Use"));
-	act->setCustomEngineActionEvent(kActionUse);
-	act->addDefaultInputMapping("F3");
-	engineKeyMap->addAction(act);
+	if (gameId.equals("martian")) {
+		act = new Action("OPEN", _("Open"));
+		act->setCustomEngineActionEvent(kActionOpen);
+		act->addDefaultInputMapping("F2");
+		engineKeyMap->addAction(act);
 
-	act = new Action("TAKE", _("Take"));
-	act->setCustomEngineActionEvent(kActionTake);
-	act->addDefaultInputMapping("F4");
-	engineKeyMap->addAction(act);
+		act = new Action("MOVE", _("Move"));
+		act->setCustomEngineActionEvent(kActionMove);
+		act->addDefaultInputMapping("F3");
+		engineKeyMap->addAction(act);
 
-	act = new Action("INVENTORY", _("Inventory"));
-	act->setCustomEngineActionEvent(kActionInventory);
-	act->addDefaultInputMapping("F5");
-	engineKeyMap->addAction(act);
+		act = new Action("GET", _("Get"));
+		act->setCustomEngineActionEvent(kActionTake);
+		act->addDefaultInputMapping("F4");
+		engineKeyMap->addAction(act);
 
-	act = new Action("CLIMB", _("Climb"));
-	act->setCustomEngineActionEvent(kActionClimb);
-	act->addDefaultInputMapping("F6");
-	engineKeyMap->addAction(act);
+		act = new Action("USE", _("Use"));
+		act->setCustomEngineActionEvent(kActionUse);
+		act->addDefaultInputMapping("F5");
+		engineKeyMap->addAction(act);
 
-	act = new Action("TALK", _("Talk"));
-	act->setCustomEngineActionEvent(kActionTalk);
-	act->addDefaultInputMapping("F7");
-	engineKeyMap->addAction(act);
+		act = new Action("GOTO", _("Goto"));
+		act->setCustomEngineActionEvent(kActionWalk);
+		act->addDefaultInputMapping("F6");
+		engineKeyMap->addAction(act);
 
-	act = new Action("WALK", _("Walk"));
-	act->setCustomEngineActionEvent(kActionWalk);
-	act->addDefaultInputMapping("F8");
-	engineKeyMap->addAction(act);
+		act = new Action("TALK", _("Talk"));
+		act->setCustomEngineActionEvent(kActionTalk);
+		act->addDefaultInputMapping("F7");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TRAVEL", _("Travel"));
+		act->setCustomEngineActionEvent(kActionTravel);
+		act->addDefaultInputMapping("F8");
+		engineKeyMap->addAction(act);
+	} else {
+		// Amazon keymaps
+		act = new Action("USE", _("Use"));
+		act->setCustomEngineActionEvent(kActionUse);
+		act->addDefaultInputMapping("F3");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TAKE", _("Take"));
+		act->setCustomEngineActionEvent(kActionTake);
+		act->addDefaultInputMapping("F4");
+		engineKeyMap->addAction(act);
+
+		act = new Action("INVENTORY", _("Inventory"));
+		act->setCustomEngineActionEvent(kActionInventory);
+		act->addDefaultInputMapping("F5");
+		engineKeyMap->addAction(act);
+
+		act = new Action("CLIMB", _("Climb"));
+		act->setCustomEngineActionEvent(kActionClimb);
+		act->addDefaultInputMapping("F6");
+		engineKeyMap->addAction(act);
+
+		act = new Action("TALK", _("Talk"));
+		act->setCustomEngineActionEvent(kActionTalk);
+		act->addDefaultInputMapping("F7");
+		engineKeyMap->addAction(act);
+
+		act = new Action("WALK", _("Walk"));
+		act->setCustomEngineActionEvent(kActionWalk);
+		act->addDefaultInputMapping("F8");
+		engineKeyMap->addAction(act);
+	}
 
 	act = new Action("HELP", _("Help"));
 	act->setCustomEngineActionEvent(kActionHelp);
 	act->addDefaultInputMapping("F9");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SAVELOAD", _("Open save/load menu"));
+	act->setCustomEngineActionEvent(kActionSaveLoad);
+	act->addDefaultInputMapping("F10");
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);

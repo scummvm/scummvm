@@ -81,7 +81,7 @@ public:
 	/**
 	 * Return frame counter
 	 */
-	uint32 getFrameCounter() { return _frameCounter; }
+	uint32 getFrameCounter() const { return _frameCounter; }
 
 	/**
 	 * Sets the cursor and reset the normal cursor
@@ -141,11 +141,11 @@ public:
 
 	void waitKeyActionMouse();
 
-	Common::Point &getMousePos() { return _mousePos; }
+	const Common::Point &getMousePos() const { return _mousePos; }
 
 	Common::Point calcRawMouse();
 
-	int checkMouseBox1(Common::Array<Common::Rect> &rects);
+	int checkMouseBox1(const Common::Array<Common::Rect> &rects);
 
 	bool isKeyActionMousePressed();
 

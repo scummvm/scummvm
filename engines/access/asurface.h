@@ -49,8 +49,6 @@ protected:
 public:
 	int _leftSkip, _rightSkip;
 	int _topSkip, _bottomSkip;
-	int _lastBoundsX, _lastBoundsY;
-	int _lastBoundsW, _lastBoundsH;
 	int _orgX1, _orgY1;
 	int _orgX2, _orgY2;
 	int _lColor;
@@ -59,6 +57,9 @@ public:
 	Common::Point _printStart;
 	int _maxChars;
 public:
+	// These values need to be shared between the buffers
+	static int _lastBoundsX, _lastBoundsY;
+	static int _lastBoundsW, _lastBoundsH;
 	static int _clipWidth, _clipHeight;
 public:
 	BaseSurface();
@@ -67,27 +68,27 @@ public:
 
 	void clearBuffer();
 
-	void plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt);
+	void plotImage(const SpriteResource *sprite, int frameNum, const Common::Point &pt);
 
 	/**
 	 * Scaled draw frame in forward orientation
 	 */
-	void sPlotF(SpriteFrame *frame, const Common::Rect &bounds);
+	void sPlotF(const SpriteFrame *frame, const Common::Rect &bounds);
 
 	/**
 	 * Scaled draw frame in backwards orientation
 	 */
-	void sPlotB(SpriteFrame *frame, const Common::Rect &bounds);
+	void sPlotB(const SpriteFrame *frame, const Common::Rect &bounds);
 
 	/**
 	 * Draw an image full-size in forward orientation
 	 */
-	void plotF(SpriteFrame *frame, const Common::Point &pt);
+	void plotF(const SpriteFrame *frame, const Common::Point &pt);
 
 	/**
 	 * Draw an image full-size in backwards orientation
 	 */
-	void plotB(SpriteFrame *frame, const Common::Point &pt);
+	void plotB(const SpriteFrame *frame, const Common::Point &pt);
 
 	virtual void copyBlock(BaseSurface *src, const Common::Rect &bounds);
 
@@ -131,7 +132,7 @@ public:
 
 class SpriteFrame : public ASurface {
 public:
-	SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize);
+	SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize);
 	~SpriteFrame() override;
 };
 
@@ -139,15 +140,16 @@ class SpriteResource {
 public:
 	Common::Array<SpriteFrame *> _frames;
 public:
-	SpriteResource(AccessEngine *vm, Resource *res);
+	SpriteResource(const AccessEngine *vm, Resource *res);
 	~SpriteResource();
 
 	int getCount() { return _frames.size(); }
 
-	SpriteFrame *getFrame(int idx) { return _frames[idx]; }
+	const SpriteFrame *getFrame(int idx) const { return _frames[idx]; }
 };
 
 enum ImageFlag {
+	IMGFLAG_NONE = 0,
 	IMGFLAG_CROPPED = 1,
 	IMGFLAG_BACKWARDS = 2,
 	IMGFLAG_DRAWN = 4,

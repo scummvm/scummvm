@@ -30,15 +30,13 @@ namespace Access {
 
 namespace Martian {
 
-MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) : AccessEngine(syst, gameDesc) {
-	_skipStart = false;
-	_introObjects = nullptr;
-	_creditsStream = nullptr;
-	_spec7Objects = nullptr;
+MartianEngine::MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc) :
+AccessEngine(syst, gameDesc), _skipStart(false),
+_creditsStream(nullptr)
+{
 }
 
 MartianEngine::~MartianEngine() {
-	_introObjects = _spec7Objects = nullptr;
 	_skipStart = false;
 	_creditsStream = nullptr;
 }
@@ -53,8 +51,6 @@ void MartianEngine::configSelect() {
 }
 
 void MartianEngine::initVariables() {
-	warning("TODO: initVariables");
-
 	// Set player room and position
 	_player->_roomNumber = 7;
 
@@ -63,30 +59,23 @@ void MartianEngine::initVariables() {
 	Common::fill(&_objectsTable[0], &_objectsTable[100], (SpriteResource *)nullptr);
 	_player->_playerOff = false;
 
-	// Setup timers
-	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
-	for (int i = 0; i < 32; ++i) {
-		TimerEntry te;
-		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
-		te._flag = 1;
-
-		_timers.push_back(te);
-	}
+	setupTimers();
 
 	_player->_playerX = _player->_rawPlayer.x = _res->ROOMTBL[_player->_roomNumber]._travelPos.x;
 	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 	_room->_selectCommand = -1;
 	_events->setNormalCursor(CURSOR_CROSSHAIRS);
 	_mouseMode = 0;
-	_numAnimTimers = 0;
+	_animation->clearTimers();
 
-	for (int i = 0; i < 60; i++)
-		_travel[i] = 0;
+	ARRAYCLEAR(_travel);
 	_travel[7] = 1;
 
-	for (int i = 0; i < 40; i++)
-		_ask[i] = 0;
+	ARRAYCLEAR(_ask);
 	_ask[33] = 1;
+
+	ARRAYCLEAR(_flags);
+
 }
 
 void MartianEngine::setNoteParams() {
@@ -107,6 +96,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	_fonts._charSet._hi = 8;
 	_fonts._charFor._lo = 0;
 	_fonts._charFor._hi = 255;
+	Font::_fontColors[3] = 0;
 
 	_screen->_maxChars = 40;
 	_screen->_printOrg = _screen->_printStart = Common::Point(59, 124);
@@ -118,7 +108,7 @@ void MartianEngine::displayNote(const Common::String &msg) {
 	int width = 0;
 	bool lastLine = false;
 	do {
-		lastLine = _fonts._font1->getLine(lines, _screen->_maxChars * 6, line, width);
+		lastLine = _fonts._font1->getLine(lines, _screen->_maxChars, line, width, Font::kWidthInChars);
 		_bubbleBox->printString(line);
 		_screen->_printOrg = Common::Point(_screen->_printStart.x, _screen->_printOrg.y + 6);
 
@@ -155,11 +145,7 @@ void MartianEngine::doSpecial5(int param1) {
 	notesRes->_stream->skip(param1 * 2);
 	int pos = notesRes->_stream->readUint16LE();
 	notesRes->_stream->seek(pos);
-	Common::String msg = "";
-	byte c;
-	while ((c = (char)notesRes->_stream->readByte()) != '\0')
-		msg += c;
-
+	Common::String msg = notesRes->_stream->readString();
 	displayNote(msg);
 
 	_midi->stopSong();
@@ -218,10 +204,10 @@ bool MartianEngine::showCredits() {
 	int posX = _creditsStream->readSint16LE();
 	int posY = 0;
 
-	while(posX != -1) {
+	while (posX != -1) {
 		posY = _creditsStream->readSint16LE();
 		int frameNum = _creditsStream->readSint16LE();
-		_screen->plotImage(_introObjects, frameNum, Common::Point(posX, posY));
+		_screen->plotImage(_objectsTable[41], frameNum, Common::Point(posX, posY));
 
 		posX = _creditsStream->readSint16LE();
 	}
@@ -257,7 +243,7 @@ void MartianEngine::doCredits() {
 	_events->hideCursor();
 	_screen->forceFadeOut();
 	Resource *data = _files->loadFile(41, 1);
-	_introObjects = new SpriteResource(this, data);
+	_objectsTable[41] = new SpriteResource(this, data);
 	delete data;
 
 	_files->loadScreen(41, 0);
@@ -278,8 +264,21 @@ void MartianEngine::doCredits() {
 		while (!shouldQuit() && !_events->isKeyActionMousePressed()&& !showCredits())
 			_events->pollEventsAndWait();
 
-		warning("TODO: Free word_21E2B");
+		delete _objectsTable[41];
+		_objectsTable[41] = nullptr;
 		_midi->freeMusic();
+	}
+}
+
+void MartianEngine::setupTimers() {
+	_timers.clear();
+	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
+	for (int i = 0; i < 32; ++i) {
+		TimerEntry te;
+		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
+		te._flag = 1;
+
+		_timers.push_back(te);
 	}
 }
 
@@ -291,19 +290,11 @@ void MartianEngine::setupGame() {
 		_deaths[idx]._msg = _res->DEATHS[idx]._msg;
 	}
 
-	// Setup timers
-	const int TIMER_DEFAULTS[] = { 4, 10, 8, 1, 1, 1, 1, 2 };
-	for (int i = 0; i < 32; ++i) {
-		TimerEntry te;
-		te._initTm = te._timer = (i < 8) ? TIMER_DEFAULTS[i] : 1;
-		te._flag = 1;
-
-		_timers.push_back(te);
-	}
+	setupTimers();
 
 	// Miscellaneous
 	Martian::MartianResources &res = *((Martian::MartianResources *)_res);
-	_fonts.load(res._font6x6, res._font3x5);
+	_fonts.load(res._font1, res._font2, res._bitFont);
 
 	// Set player room and position
 	_player->_roomNumber = 7;
@@ -311,12 +302,12 @@ void MartianEngine::setupGame() {
 	_player->_playerY = _player->_rawPlayer.y = _res->ROOMTBL[_player->_roomNumber]._travelPos.y;
 }
 
-void MartianEngine::showDeathText(Common::String msg) {
+void MartianEngine::showExpositionText(Common::String msg) {
 	Common::String line = "";
 	int width = 0;
 	bool lastLine;
 	do {
-		lastLine = _fonts._font2->getLine(msg, _screen->_maxChars * 6, line, width);
+		lastLine = _fonts._font2->getLine(msg, _screen->_maxChars, line, width, Font::kWidthInChars);
 		// Draw the text
 		_bubbleBox->printString(line);
 
@@ -329,6 +320,8 @@ void MartianEngine::showDeathText(Common::String msg) {
 			_screen->_printOrg.y = _screen->_printStart.y;
 		}
 	} while (!lastLine);
+	// Avoid re-using double-click
+	_events->clearEvents();
 	_events->waitKeyActionMouse();
 }
 
@@ -336,7 +329,7 @@ void MartianEngine::dead(int deathId) {
 	// Load and display death screen
 	_events->hideCursor();
 	_screen->forceFadeOut();
-	_files->loadScreen(48, _deaths[deathId]._screenId);
+	_files->loadScreen(48, _deaths[deathId]._screenId - 1);
 	_screen->setIconPalette();
 	_buffer2.copyBuffer(_screen);
 	_screen->forceFadeIn();
@@ -347,12 +340,13 @@ void MartianEngine::dead(int deathId) {
 	_fonts._charSet._lo = 1;
 	_fonts._charFor._lo = 247;
 	_fonts._charFor._hi = 255;
+	Font::_fontColors[3] = 247;
 	_screen->_maxChars = 50;
 	_screen->_printOrg = Common::Point(24, 18);
 	_screen->_printStart = Common::Point(24, 18);
 
 	// Display death message
-	showDeathText(_deaths[deathId]._msg);
+	showExpositionText(_deaths[deathId]._msg);
 
 	_screen->forceFadeOut();
 	_room->clearRoom();
@@ -362,6 +356,66 @@ void MartianEngine::dead(int deathId) {
 	_restartFl = true;
 	_events->pollEvents();
 }
+
+void MartianEngine::establish(int estabIndex, int sub) {
+	_fonts._charSet._hi = 10;
+	Font::_fontColors[1] = 0xf7;
+	Font::_fontColors[2] = 0xff;
+
+	_screen->_maxChars = 50;
+	_screen->_printOrg = _screen->_printStart = Common::Point(24, 18);
+
+	// TODO: Original has a small delay here.
+
+	Resource *notesRes = _files->loadFile("ETEXT.DAT");
+	notesRes->_stream->seek(2 * sub);
+	uint16 msgOffset = notesRes->_stream->readUint16LE();
+	if (msgOffset == 0 || msgOffset >= notesRes->_stream->size()) {
+		error("MartianEngine::establish: Invalid message offset %d for msg %d", msgOffset, sub);
+	}
+
+	notesRes->_stream->seek(msgOffset);
+
+	Common::String msg = notesRes->_stream->readString();
+	showExpositionText(msg);
+
+	_events->hideCursor();
+	if (sub != 0x3f) {
+		_screen->forceFadeOut();
+		_screen->clearScreen();
+	}
+
+	_events->showCursor();
+}
+
+void MartianEngine::synchronize(Common::Serializer &s) {
+	AccessEngine::synchronize(s);
+
+	for (int i = 0; i < ARRAYSIZE(_travel); i++) {
+		s.syncAsByte(_travel[i]);
+	}
+
+	for (int i = 0; i < ARRAYSIZE(_ask); i++) {
+		s.syncAsByte(_ask[i]);
+	}
+
+	/*
+	TODO: Do any of these need to be synchronized here?
+	Mostly involved in modal dialogs.
+	_startTravelItem
+	_startTravelBox
+	_startAboutItem
+	_startAboutBox
+	_byte26CB5
+	_bcnt
+	_boxDataStart
+	_boxDataEnd
+	_boxSelectY
+	_boxSelectYOld
+	_numLines
+	*/
+}
+
 
 } // End of namespace Martian
 

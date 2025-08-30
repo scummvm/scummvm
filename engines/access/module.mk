@@ -1,9 +1,9 @@
 MODULE := engines/access
 
 MODULE_OBJS := \
+	access.o \
 	animation.o \
 	asurface.o \
-	access.o \
 	bubble_box.o \
 	char.o \
 	data.o \
@@ -21,7 +21,6 @@ MODULE_OBJS := \
 	scripts.o \
 	sound.o \
 	video.o \
-	video/movie_decoder.o \
 	amazon/amazon_game.o \
 	amazon/amazon_logic.o \
 	amazon/amazon_player.o \
@@ -31,8 +30,11 @@ MODULE_OBJS := \
 	martian/martian_game.o \
 	martian/martian_player.o \
 	martian/martian_resources.o \
+	martian/martian_tunnel.o \
 	martian/martian_room.o \
-	martian/martian_scripts.o
+	martian/martian_scripts.o \
+	martian/midiparser_bemd.o \
+	video/movie_decoder.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ACCESS), DYNAMIC_PLUGIN)

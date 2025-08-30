@@ -29,18 +29,18 @@ Font::Font(byte firstCharIndex) : _firstCharIndex(firstCharIndex), _bitWidth(0),
 }
 
 Font::~Font() {
-	for (uint i = 0; i < _chars.size(); ++i)
-		_chars[i].free();
+	for (auto &fontChar : _chars)
+		fontChar.free();
 }
 
-int Font::charWidth(char c) {
+int Font::charWidth(char c) const {
 	if (c < _firstCharIndex)
 		return 0;
 
 	return _chars[c - _firstCharIndex].w;
 }
 
-int Font::stringWidth(const Common::String &msg) {
+int Font::stringWidth(const Common::String &msg) const {
 	int total = 0;
 
 	for (const char *c = msg.c_str(); *c != '\0'; ++c)
@@ -49,7 +49,8 @@ int Font::stringWidth(const Common::String &msg) {
 	return total;
 }
 
-bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width) {
+bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &width,
+				   LINE_WIDTH_TYPE widthType) const {
 	assert(maxWidth > 0);
 	width = 0;
 	const char *src = s.c_str();
@@ -64,7 +65,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 		}
 
 		++src;
-		width += charWidth(c);
+		width += (widthType == kWidthInPixels ? charWidth(c) : 1);
 		if (width < maxWidth)
 			continue;
 
@@ -79,7 +80,7 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 		// Work backwards to find space at the start of the current word
 		// as a point to split the line on
 		while (src >= s.c_str() && *src != ' ') {
-			width -= charWidth(*src);
+			width -= (widthType == kWidthInPixels ? charWidth(*src) : 1);
 			--src;
 		}
 		if (src < s.c_str())
@@ -93,11 +94,11 @@ bool Font::getLine(Common::String &s, int maxWidth, Common::String &line, int &w
 
 	// Return entire string
 	line = s;
-	s = Common::String();
+	s.clear();
 	return true;
 }
 
-void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) {
+void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::Point &pt) const {
 	Common::Point currPt = pt;
 	const char *msgP = msg.c_str();
 
@@ -107,13 +108,13 @@ void Font::drawString(BaseSurface *s, const Common::String &msg, const Common::P
 	}
 }
 
-int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) {
-	Graphics::Surface &ch = _chars[c - _firstCharIndex];
+int Font::drawChar(BaseSurface *s, char c, Common::Point &pt) const {
+	const Graphics::Surface &ch = _chars[c - _firstCharIndex];
 	Graphics::Surface dest = s->getSubArea(Common::Rect(pt.x, pt.y, pt.x + ch.w, pt.y + ch.h));
 
 	// Loop through the lines of the character
 	for (int y = 0; y < ch.h; ++y) {
-		byte *pSrc = (byte *)ch.getBasePtr(0, y);
+		const byte *pSrc = (const byte *)ch.getBasePtr(0, y);
 		byte *pDest = (byte *)dest.getBasePtr(0, y);
 
 		// Loop through the horizontal pixels of the line
@@ -171,10 +172,15 @@ void AmazonFont::load(const int *fontIndex, const byte *fontData) {
 
 MartianFont::MartianFont(int height, Common::SeekableReadStream &s) : Font(0) {
 	_height = height;
-	load(s);
+	loadFromStream(s);
 }
 
-void MartianFont::load(Common::SeekableReadStream &s) {
+MartianFont::MartianFont(int height, size_t count, const byte *widths, const int *offsets, const byte *data) : Font(0) {
+	_height = height;
+	loadFromData(count, widths, offsets, data);
+}
+
+void MartianFont::loadFromStream(Common::SeekableReadStream &s) {
 	// Get the number of characters and the size of the raw font data
 	size_t count = s.readUint16LE();
 	size_t dataSize = s.readUint16LE();
@@ -196,6 +202,10 @@ void MartianFont::load(Common::SeekableReadStream &s) {
 	data.resize(dataSize);
 	s.read(&data[0], dataSize);
 
+	loadFromData(count, widths.data(), offsets.data(), data.data());
+}
+
+void MartianFont::loadFromData(size_t count, const byte *widths, const int *offsets, const byte *data) {
 	// Iterate through decoding each character
 	_chars.resize(count);
 	for (size_t idx = 0; idx < count; ++idx) {
@@ -222,14 +232,34 @@ void MartianFont::load(Common::SeekableReadStream &s) {
 
 /*------------------------------------------------------------------------*/
 
-FontManager::FontManager() : _font1(nullptr), _font2(nullptr) {
+MartianBitFont::MartianBitFont(size_t count, const byte *data) : Font(0x20) {
+	_height = 8;
+	_chars.resize(count);
+	for (size_t i = 0; i < count; i++) {
+		Graphics::Surface &surface = _chars[i];
+		surface.create(8, _height, Graphics::PixelFormat::createFormatCLUT8());
+		for (int y = 0; y < _height; y++) {
+			byte src = data[i * 8 + y];
+			byte *dst = static_cast<byte *>(surface.getBasePtr(0, y));
+			for (int x = 7; x >= 0; x--) {
+				dst[x] = (src & 1);
+				src >>= 1;
+			}
+		}
+	}
+}
+
+/*------------------------------------------------------------------------*/
+
+FontManager::FontManager() : _font1(nullptr), _font2(nullptr), _bitFont(nullptr) {
 	_printMaxX = 0;
 	Common::fill(&Font::_fontColors[0], &Font::_fontColors[4], 0);
 }
 
-void FontManager::load(Font *font1, Font *font2) {
+void FontManager::load(Font *font1, Font *font2, Font *bitFont) {
 	_font1 = font1;
 	_font2 = font2;
+	_bitFont = bitFont;
 }
 
 

@@ -31,8 +31,8 @@ namespace Martian {
 class MartianEngine : public AccessEngine {
 private:
 	bool _skipStart;
-	SpriteResource *_introObjects;
 	Common::MemoryReadStream *_creditsStream;
+
 	/**
 	 * Do the game introduction
 	 */
@@ -48,6 +48,7 @@ private:
 	void initObjects();
 	void configSelect();
 	void initVariables();
+	void setupTimers();
 protected:
 	/**
 	 * Play the game
@@ -59,14 +60,17 @@ protected:
 	void setNoteParams();
 	void displayNote(const Common::String &msg);
 public:
-	SpriteResource *_spec7Objects;
-
 	MartianEngine(OSystem *syst, const AccessGameDescription *gameDesc);
 	~MartianEngine() override;
 
 	void doSpecial5(int param1);
-	void showDeathText(Common::String msg);
-	void establish(int esatabIndex, int sub) override {};
+	void showExpositionText(Common::String msg);
+	void establish(int estabIndex, int sub) override;
+
+	/**
+	* Synchronize savegame data
+	*/
+	void synchronize(Common::Serializer &s) override;
 };
 
 } // End of namespace Martian

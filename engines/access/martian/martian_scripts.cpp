@@ -23,6 +23,7 @@
 #include "access/access.h"
 #include "access/martian/martian_game.h"
 #include "access/martian/martian_resources.h"
+#include "access/martian/martian_tunnel.h"
 #include "access/martian/martian_scripts.h"
 
 namespace Access {
@@ -31,9 +32,15 @@ namespace Martian {
 
 MartianScripts::MartianScripts(AccessEngine *vm) : Scripts(vm) {
 	_game = (MartianEngine *)_vm;
+	_tunnel = new MartianTunnel(_game);
+}
+
+MartianScripts::~MartianScripts() {
+	delete _tunnel;
 }
 
 void MartianScripts::cmdSpecial0() {
+	// Abduction scene
 	_vm->_sound->stopSound();
 	_vm->_midi->stopSong();
 
@@ -41,43 +48,60 @@ void MartianScripts::cmdSpecial0() {
 	_vm->_midi->midiPlay();
 	_vm->_midi->setLoop(true);
 
-	_vm->_events->_vbCount = 300;
-	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
-		_vm->_events->pollEventsAndWait();
-
 	_vm->_screen->forceFadeOut();
 	_vm->_files->loadScreen("HOUSE.SC");
 
 	_vm->_video->setVideo(_vm->_screen, Common::Point(46, 30), "HVID.VID", 20);
 
+	_vm->_events->hideCursor();
+	_vm->_events->_vbCount = 300;
+	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
+		_vm->_events->pollEventsAndWait();
+
 	do {
 		_vm->_video->playVideo();
+		_vm->_events->pollEvents();
 		if (_vm->_video->_videoFrame == 4) {
 			_vm->_screen->flashPalette(16);
 			_vm->_sound->playSound(4);
 			do {
 				_vm->_events->pollEvents();
-			} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
-			_vm->_timers[31]._timer = _vm->_timers[31]._initTm = 40;
+			} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
+			//
+			// TODO:
+			//
+			// The original sets these, probably to hold the video until the sound finishes?
+			// But, if we do that they never get past frame 4, because in the next iteration
+			// of the loop the timer is still "counting down", so we stay on frame 4 forever.
+			//
+			// Need to double-check the exact flow of the original here.
+			//
+			//_vm->_timers[31]._timer = _vm->_timers[31]._initTm = 40;
 		}
 	} while (!_vm->_video->_videoEnd && !_vm->shouldQuit());
 
-	if (_vm->_video->_videoEnd) {
-		_vm->_screen->flashPalette(12);
-		_vm->_sound->playSound(4);
-		do {
-			_vm->_events->pollEvents();
-		} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
-		_vm->_midi->stopSong();
-		_vm->_midi->freeMusic();
-		warning("TODO: Pop Midi");
-	}
+	if (_vm->shouldQuit())
+		return;
+
+	_vm->_screen->flashPalette(12);
+	_vm->_sound->playSound(4);
+	do {
+		_vm->_events->pollEvents();
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
+
+	_vm->_events->showCursor();
+	_vm->_midi->stopSong();
+	_vm->_midi->freeMusic();
+	//warning("TODO: Pop Midi?");
 }
 
-void MartianScripts::cmdSpecial1(int param1) {
+void MartianScripts::cmdSpecial1(int param1, int param2) {
+	//
+	// Special 1 is a scene transition with some explanatory text
+	//
 	_vm->_events->hideCursor();
 
-	if (param1 != -1) {
+	if ((byte)param1 != (byte)-1) {
 		_vm->_files->loadScreen(49, param1);
 		_vm->_buffer2.copyBuffer(_vm->_screen);
 	}
@@ -85,7 +109,13 @@ void MartianScripts::cmdSpecial1(int param1) {
 	_vm->_screen->setIconPalette();
 	_vm->_screen->forceFadeIn();
 	_vm->_events->showCursor();
+
+	_vm->establish(0, param2);
 }
+
+void MartianScripts::cmdSpecial2() {
+	_tunnel->tunnel2();
+};
 
 void MartianScripts::cmdSpecial3() {
 	_vm->_screen->forceFadeOut();
@@ -98,11 +128,17 @@ void MartianScripts::cmdSpecial3() {
 	_vm->_screen->forceFadeIn();
 }
 
+void MartianScripts::cmdSpecial4() {
+	_tunnel->tunnel4();
+}
+
 void MartianScripts::doIntro(int param1) {
 	_game->doSpecial5(param1);
 }
 
 void MartianScripts::cmdSpecial6() {
+	// A special transition screen after the jetpack in the outpost.
+	warning("cmdSpecial6: TODO: Store current music");
 	_vm->_midi->stopSong();
 	_vm->_screen->setDisplayScan();
 	_vm->_events->clearEvents();
@@ -128,20 +164,25 @@ void MartianScripts::cmdSpecial6() {
 
 	Resource *notesRes = _vm->_files->loadFile("ETEXT.DAT");
 	notesRes->_stream->seek(72);
+	uint16 offset = notesRes->_stream->readUint16LE();
+	notesRes->_stream->seek(offset);
 
 	// Read the message
-	Common::String msg = "";
-	byte c;
-	while ((c = (char)notesRes->_stream->readByte()) != '\0')
-		msg += c;
+	Common::String msg = notesRes->_stream->readString();
 
 	//display the message
-	_game->showDeathText(msg);
+	_game->showExpositionText(msg);
 
 	delete notesRes;
 	delete _vm->_objectsTable[0];
 	_vm->_objectsTable[0] = nullptr;
 	_vm->_midi->stopSong();
+
+	// WORKAROUND: Reset Tex's scale flag after jetpack.
+	// (bug also present in original game)
+	_vm->_player->_flags &= ~IMGFLAG_UNSCALED;
+
+	warning("cmdSpecial6: TODO: Restore original music");
 }
 
 void MartianScripts::cmdSpecial7() {
@@ -166,7 +207,7 @@ void MartianScripts::cmdSpecial7() {
 
 	// Load objects specific to this special scene
 	Resource *data = _vm->_files->loadFile(40, 2);
-	_game->_spec7Objects = new SpriteResource(_vm, data);
+	_game->_objectsTable[40] = new SpriteResource(_vm, data);
 	delete data;
 
 	// Load animation data
@@ -177,23 +218,25 @@ void MartianScripts::cmdSpecial7() {
 
 	// Load script
 	Resource *newScript = _vm->_files->loadFile(40, 0);
-	_vm->_scripts->setScript(newScript);
+	setScript(newScript);
 
 	_vm->_images.clear();
 	_vm->_oldRects.clear();
-	_vm->_scripts->_sequence = 0;
-
+	_sequence = 0;
+	searchForSequence();
+	executeScript();
 	_vm->_sound->playSound(0);
 
 	do {
 		charLoop();
+		_vm->_events->pollEvents();
 	} while (_vm->_flags[134] != 1);
 
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
-	_game->_numAnimTimers = 0;
+	_vm->_animation->clearTimers();
 	_vm->_animation->freeAnimationData();
 	_vm->_scripts->freeScriptData();
 	_vm->_sound->freeSounds();
@@ -220,8 +263,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_screen->_printOrg = Common::Point(24, 18);
 	_vm->_screen->_printStart = Common::Point(24, 18);
 
-	// Display death message
-	_game->showDeathText(Common::String(SPEC7MESSAGE));
+	_game->showExpositionText(Common::String(SPEC7MESSAGE));
 
 	_vm->_events->showCursor();
 	_vm->_screen->copyBuffer(&_vm->_buffer1);
@@ -246,8 +288,8 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_files->loadScreen(40, 7);
 	_vm->_destIn = _vm->_screen;
 
-	_vm->_screen->plotImage(_game->_spec7Objects, 8, Common::Point(104, 176));
-	_vm->_screen->plotImage(_game->_spec7Objects, 7, Common::Point(102, 160));
+	_vm->_screen->plotImage(_game->_objectsTable[40], 8, Common::Point(176, 104));
+	_vm->_screen->plotImage(_game->_objectsTable[40], 7, Common::Point(160, 102));
 	_vm->_events->showCursor();
 	_vm->_screen->forceFadeIn();
 
@@ -258,7 +300,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(0);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_events->_vbCount = 80;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
@@ -267,7 +309,7 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(1);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_events->_vbCount = 80;
 	while (!_vm->shouldQuit() && _vm->_events->_vbCount > 0)
@@ -276,12 +318,12 @@ void MartianScripts::cmdSpecial7() {
 	_vm->_sound->playSound(2);
 	do {
 		_vm->_events->pollEvents();
-	} while (!_vm->shouldQuit() && _vm->_sound->_playingSound);
+	} while (!_vm->shouldQuit() && _vm->_sound->isSFXPlaying());
 
 	_vm->_sound->freeSounds();
 
-	delete _game->_spec7Objects;
-	_game->_spec7Objects = nullptr;
+	delete _game->_objectsTable[40];
+	_game->_objectsTable[40] = nullptr;
 
 	_vm->_events->hideCursor();
 	_vm->_screen->forceFadeOut();
@@ -304,16 +346,16 @@ void MartianScripts::executeSpecial(int commandIndex, int param1, int param2) {
 		cmdSpecial0();
 		break;
 	case 1:
-		cmdSpecial1(param1);
+		cmdSpecial1(param1, param2);
 		break;
 	case 2:
-		warning("TODO: cmdSpecial2");
+		cmdSpecial2();
 		break;
 	case 3:
 		cmdSpecial3();
 		break;
 	case 4:
-		warning("TODO: cmdSpecial4");
+		cmdSpecial4();
 		break;
 	case 5:
 		doIntro(param1);

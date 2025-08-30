@@ -33,7 +33,7 @@ namespace Access {
 
 AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	: _gameDescription(gameDesc), Engine(syst), _randomSource("Access"),
-	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]) {
+	  _useItem(_flags[99]), _startup(_flags[170]), _manScaleOff(_flags[172]), _pictureTaken(_flags[176]) {
 	// Set up debug channels
 
 	_aboutBox = nullptr;
@@ -62,7 +62,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_currentMan = 0;
 	_currentManOld = -1;
 	_converseMode = 0;
-	_numAnimTimers = 0;
 	_startup = 0;
 	_currentCharFlag = false;
 	_boxSelect = false;
@@ -98,15 +97,12 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_cheatFl = false;
 	_restartFl = false;
 	_printEnd = 0;
-	for (int i = 0; i < 100; i++)
-		_objectsTable[i] = nullptr;
+	ARRAYCLEAR(_objectsTable);
 	_clearSummaryFlag = false;
 
-	for (int i = 0; i < 60; i++)
-		_travel[i] = 0;
+	ARRAYCLEAR(_travel);
 	_startTravelItem = _startTravelBox = 0;
-	for (int i = 0; i < 33; i++)
-		_ask[i] = 0;
+	ARRAYCLEAR(_ask);
 	_startAboutItem = _startAboutBox = 0;
 	_byte26CB5 = 0;
 	_bcnt = 0;
@@ -115,13 +111,14 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_boxSelectY = 0;
 	_boxSelectYOld = -1;
 	_numLines = 0;
-	_tempList = nullptr;
+	//_tempList = nullptr;
 	_pictureTaken = 0;
 
 	_vidEnd = false;
 
-	for (int i = 0; i < 6; ++i)
-		_countTbl[i] = 0;
+	_icons = nullptr;
+
+	ARRAYCLEAR(_countTbl);
 }
 
 AccessEngine::~AccessEngine() {
@@ -143,6 +140,7 @@ AccessEngine::~AccessEngine() {
 	delete _scripts;
 	delete _sound;
 	delete _video;
+	delete _icons;
 
 	freeCells();
 	delete _establish;
@@ -172,11 +170,12 @@ void AccessEngine::initialize() {
 	// Create sub-objects of the engine
 	_animation = new AnimationManager(this);
 	_bubbleBox = new BubbleBox(this, TYPE_2, 64, 32, 130, 122, 0, 0, 0, 0, "");
-	if (getGameID() == GType_MartianMemorandum) {
-		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 146, 122, 1, 32, 2, 76, "HELP");
-		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 24, 2, 74, "TRAVEL");
-		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 146, 122, 1, 32, 2, 76, "INVENTORY");
-		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 194, 122, 1, 32, 2, 76, "ASK ABOUT");
+	if (getGameID() == kGameMartianMemorandum) {
+		// Note: add 1 more pixel to width and height to get the right box size.
+		_helpBox = new BubbleBox(this, TYPE_1, 64, 24, 147, 123, 1, 32, 2, 76, "HELP");
+		_travelBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 24, 2, 74, "TRAVEL");
+		_invBox = new BubbleBox(this, TYPE_1, 64, 32, 147, 123, 1, 32, 2, 76, "INVENTORY");
+		_aboutBox = new BubbleBox(this, TYPE_1, 64, 32, 195, 123, 1, 32, 2, 76, "ASK ABOUT");
 	} else {
 		_helpBox = nullptr;
 		_travelBox = nullptr;
@@ -206,6 +205,15 @@ void AccessEngine::initialize() {
 	}
 }
 
+const SpriteResource *AccessEngine::getIcons() {
+	if (!_icons) {
+		Resource *iconData = _files->loadFile("ICONS.LZ");
+		_icons = new SpriteResource(this, iconData);
+		delete iconData;
+	}
+	return _icons;
+}
+
 Common::Error AccessEngine::run() {
 	_res = Resources::init(this);
 	Common::U32String errorMessage;
@@ -226,16 +234,17 @@ int AccessEngine::getRandomNumber(int maxNumber) {
 	return _randomSource.getRandomNumber(maxNumber);
 }
 
-void AccessEngine::loadCells(Common::Array<CellIdent> &cells) {
-	for (uint i = 0; i < cells.size(); ++i) {
-		Resource *spriteData = _files->loadFile(cells[i]);
-		_objectsTable[cells[i]._cell] = new SpriteResource(this, spriteData);
+void AccessEngine::loadCells(const Common::Array<CellIdent> &cells) {
+	for (const auto &cell : cells) {
+		Resource *spriteData = _files->loadFile(cell);
+		assert(_objectsTable[cell._cell] == nullptr); // ensure no leaks
+		_objectsTable[cell._cell] = new SpriteResource(this, spriteData);
 		delete spriteData;
 	}
 }
 
 void AccessEngine::freeCells() {
-	for (int i = 0; i < 100; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_objectsTable); ++i) {
 		delete _objectsTable[i];
 		_objectsTable[i] = nullptr;
 	}
@@ -363,8 +372,8 @@ void AccessEngine::plotList1() {
 
 		_imgUnscaled = (ie._flags & IMGFLAG_UNSCALED) != 0;
 		Common::Point pt = ie._position - _screen->_bufferStart;
-		SpriteResource *sprites = ie._spritesPtr;
-		SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
+		const SpriteResource *sprites = ie._spritesPtr;
+		const SpriteFrame *frame = sprites->getFrame(ie._frameNumber);
 
 		Common::Rect bounds(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
 		if (!_imgUnscaled) {
@@ -410,8 +419,8 @@ void AccessEngine::plotList1() {
 
 void AccessEngine::copyBlocks() {
 	// Copy the block list from the previous frame
-	for (uint i = 0; i < _oldRects.size(); ++i) {
-		_screen->copyBlock(&_buffer2, _oldRects[i]);
+	for (const auto &rect : _oldRects) {
+		_screen->copyBlock(&_buffer2, rect);
 	}
 
 	copyRects();
@@ -419,9 +428,9 @@ void AccessEngine::copyBlocks() {
 
 void AccessEngine::copyRects() {
 	_oldRects.clear();
-	for (uint i = 0; i < _newRects.size(); ++i) {
-		_screen->copyBlock(&_buffer2, _newRects[i]);
-		_oldRects.push_back(_newRects[i]);
+	for (const auto &rect : _newRects) {
+		_screen->copyBlock(&_buffer2, rect);
+		_oldRects.push_back(rect);
 	}
 }
 
@@ -451,6 +460,7 @@ void AccessEngine::freeChar() {
 	_scripts->freeScriptData();
 	_animation->clearTimers();
 	_animation->freeAnimationData();
+	_player->freeSprites();
 }
 
 Common::Error AccessEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -538,10 +548,7 @@ WARN_UNUSED_RESULT bool AccessEngine::readSavegameHeader(Common::InSaveFile *in,
 		return false;
 
 	// Read in the string
-	header._saveName.clear();
-	char ch;
-	while ((ch = (char)in->readByte()) != '\0')
-		header._saveName += ch;
+	header._saveName = in->readString();
 
 	// Get the thumbnail
 	if (!Graphics::loadThumbnail(*in, header._thumbnail, skipThumbnail)) {

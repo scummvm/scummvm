@@ -29,7 +29,7 @@ namespace Access {
 
 const int TRANSPARENCY = 0;
 
-SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
+SpriteResource::SpriteResource(const AccessEngine *vm, Resource *res) {
 	Common::Array<uint32> offsets;
 	int count = res->_stream->readUint16LE();
 
@@ -48,15 +48,15 @@ SpriteResource::SpriteResource(AccessEngine *vm, Resource *res) {
 }
 
 SpriteResource::~SpriteResource() {
-	for (uint i = 0; i < _frames.size(); ++i)
-		delete _frames[i];
+	for (auto *frame : _frames)
+		delete frame;
 }
 
-SpriteFrame::SpriteFrame(AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
+SpriteFrame::SpriteFrame(const AccessEngine *vm, Common::SeekableReadStream *stream, int frameSize) {
 	int xSize = stream->readUint16LE();
 	int ySize = stream->readUint16LE();
 
-	if (vm->getGameID() == GType_MartianMemorandum) {
+	if (vm->getGameID() == kGameMartianMemorandum) {
 		int size = stream->readUint16LE();
 		if (size != frameSize)
 			warning("Unexpected file difference: framesize %d - size %d %d - unknown %d", frameSize, xSize, ySize, size);
@@ -84,11 +84,7 @@ SpriteFrame::~SpriteFrame() {
 
 /*------------------------------------------------------------------------*/
 
-ImageEntry::ImageEntry() {
-	_frameNumber = 0;
-	_spritesPtr = nullptr;
-	_offsetY = 0;
-	_flags = 0;
+ImageEntry::ImageEntry() : _frameNumber(0), _spritesPtr(nullptr), _offsetY(0), _flags(0) {
 }
 
 /*------------------------------------------------------------------------*/
@@ -109,12 +105,15 @@ void ImageEntryList::addToList(ImageEntry &ie) {
 int BaseSurface::_clipWidth;
 int BaseSurface::_clipHeight;
 
+int BaseSurface::_lastBoundsX;
+int BaseSurface::_lastBoundsY;
+int BaseSurface::_lastBoundsW;
+int BaseSurface::_lastBoundsH;
+
 BaseSurface::BaseSurface(): Graphics::Screen(0, 0) {
 	free();		// Free the 0x0 surface allocated by Graphics::Screen
 	_leftSkip = _rightSkip = 0;
 	_topSkip = _bottomSkip = 0;
-	_lastBoundsX = _lastBoundsY = 0;
-	_lastBoundsW = _lastBoundsH = 0;
 	_orgX1 = _orgY1 = 0;
 	_orgX2 = _orgY2 = 0;
 	_lColor = 0;
@@ -130,8 +129,8 @@ void BaseSurface::clearBuffer() {
 	Common::fill(pSrc, pSrc + w * h, 0);
 }
 
-void BaseSurface::plotImage(SpriteResource *sprite, int frameNum, const Common::Point &pt) {
-	SpriteFrame *frame = sprite->getFrame(frameNum);
+void BaseSurface::plotImage(const SpriteResource *sprite, int frameNum, const Common::Point &pt) {
+	const SpriteFrame *frame = sprite->getFrame(frameNum);
 	Common::Rect r(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h);
 
 	if (!clip(r)) {
@@ -148,19 +147,19 @@ void BaseSurface::copyBuffer(Graphics::ManagedSurface *src) {
 	blitFrom(*src);
 }
 
-void BaseSurface::plotF(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotF(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotF(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::plotB(SpriteFrame *frame, const Common::Point &pt) {
+void BaseSurface::plotB(const SpriteFrame *frame, const Common::Point &pt) {
 	sPlotB(frame, Common::Rect(pt.x, pt.y, pt.x + frame->w, pt.y + frame->h));
 }
 
-void BaseSurface::sPlotF(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotF(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, false);
 }
 
-void BaseSurface::sPlotB(SpriteFrame *frame, const Common::Rect &bounds) {
+void BaseSurface::sPlotB(const SpriteFrame *frame, const Common::Rect &bounds) {
 	transBlitFrom(*frame, Common::Rect(0, 0, frame->w, frame->h), bounds, TRANSPARENCY, true);
 }
 
@@ -208,10 +207,10 @@ void BaseSurface::drawLine() {
 }
 
 void BaseSurface::drawBox() {
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX1, _orgY2, _orgX2, _orgY2, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY1, _orgX2, _orgY1, _lColor);
-	Graphics::ManagedSurface::drawLine(_orgX2, _orgY2, _orgX2, _orgY2, _lColor);
+	Graphics::ManagedSurface::hLine(_orgX1, _orgY1, _orgX2, _lColor);
+	Graphics::ManagedSurface::hLine(_orgX1, _orgY2, _orgX2, _lColor);
+	Graphics::ManagedSurface::vLine(_orgX1, _orgY1, _orgY2, _lColor);
+	Graphics::ManagedSurface::vLine(_orgX2, _orgY1, _orgY2, _lColor);
 }
 
 void BaseSurface::flipHorizontal(BaseSurface &dest) {
@@ -245,6 +244,8 @@ void BaseSurface::moveBufferDown() {
 	Common::copy_backward(p, p + (pitch * (h - TILE_HEIGHT)), p + (pitch * h));
 }
 
+/* For compatibility with the original logic, true return means the
+   rect is *outside* the clip region. */
 bool BaseSurface::clip(Common::Rect &r) {
 	int skip;
 	_leftSkip = _rightSkip = 0;

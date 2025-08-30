@@ -34,10 +34,10 @@ MartianRoom::MartianRoom(AccessEngine *vm) : Room(vm) {
 	_game = (MartianEngine *)vm;
 
 	for (int i = 0; i < 30; i++)
-		_byte26CD2[i] = 0;
+		_vm->_flags[200 + i] = 0;
 
 	for (int i = 0; i < 10; i++)
-		_byte26CBC[i] = 0;
+		_vm->_flags[178 + i] = 0;
 }
 
 MartianRoom::~MartianRoom() {
@@ -69,7 +69,7 @@ void MartianRoom::reloadRoom1() {
 	_vm->_events->hideCursor();
 	_vm->_screen->clearScreen();
 	_vm->_events->showCursor();
-	roomSet();
+	roomInit();
 	_vm->_player->load();
 
 	if (_vm->_player->_roomNumber != 47)
@@ -91,32 +91,26 @@ void MartianRoom::reloadRoom1() {
 	_vm->_events->clearEvents();
 }
 
-void MartianRoom::roomSet() {
-	_vm->_numAnimTimers = 0;
-	_vm->_scripts->_sequence = 1000;
-	_vm->_scripts->searchForSequence();
-	_vm->_scripts->executeScript();
+void MartianRoom::roomInit() {
+	Room::roomInit();
 
 	for (int i = 0; i < 30; i++)
-		_byte26CD2[i] = 0;
+		_vm->_flags[200 + i] = 0;
 
 	for (int i = 0; i < 10; i++)
-		_byte26CBC[i] = 0;
+		_vm->_flags[178 + i] = 0;
 }
 
 void MartianRoom::roomMenu() {
-	Resource *iconData = _vm->_files->loadFile("ICONS.LZ");
-	SpriteResource *spr = new SpriteResource(_vm, iconData);
-	delete iconData;
+	const SpriteResource *icons = _vm->getIcons();
 
 	_vm->_screen->saveScreen();
 	_vm->_screen->setDisplayScan();
 	_vm->_destIn = _vm->_screen;	// TODO: Redundant
-	_vm->_screen->plotImage(spr, 0, Common::Point(5, 184));
-	_vm->_screen->plotImage(spr, 1, Common::Point(155, 184));
+	_vm->_screen->plotImage(icons, 0, Common::Point(5, 184));
+	_vm->_screen->plotImage(icons, 1, Common::Point(155, 184));
 
 	_vm->_screen->restoreScreen();
-	delete spr;
 }
 
 void MartianRoom::mainAreaClick() {
