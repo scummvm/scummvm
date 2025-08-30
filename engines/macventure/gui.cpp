@@ -234,6 +234,7 @@ bool Gui::decodeTitleScreen() {
 		Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
 
 		if (stream) {
+			// New PPICT title screen
 			ImageAsset *title = new ImageAsset(stream);
 
 			_screen.fillRect(Common::Rect(kScreenWidth, kScreenHeight), kColorBlack);
@@ -241,14 +242,44 @@ bool Gui::decodeTitleScreen() {
 
 			delete title;
 		} else {
-			// PACK file
-			return false;
-		}
+			// Old PACK title screen
+			stream = Common::MacResManager::openFileOrDataFork(titlePath);
+			if (!stream)
+				return false;
 
-		return true;
+			stream->seek(0x200);
+
+			for (int y = 0; y < 302; y++) {
+				byte line[72];
+				int count = 0;
+
+				while (count < 72) {
+					byte n = stream->readByte();
+
+					if (n == 0x80) {
+						// Do nothing
+					} else if (n & 0x80) {
+						n = (n ^ 0xFF) + 2;
+						byte v = stream->readByte();
+
+						while (n--)
+							line[count++] = v;
+					} else {
+						n++;
+						while (n--)
+							line[count++] = stream->readByte();
+					}
+				}
+
+				for (int x = 0; x < 512; x++)
+					_screen.setPixel(x, y, (line[x / 8] & (0x80 >> (x % 8))) ? kColorBlack : kColorWhite);
+			}
+
+			delete stream;
+		}
 	}
 
-	return false;
+	return true;
 }
 
 bool Gui::displayTitleScreenAndWait(uint32 ms) {
