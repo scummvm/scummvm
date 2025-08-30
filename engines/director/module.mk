@@ -168,6 +168,7 @@ MODULE_OBJS = \
 	lingo/xlibs/xcmdglue.o \
 	lingo/xlibs/xio.o \
 	lingo/xlibs/xplayanim.o \
+	lingo/xlibs/xplaypacoxfcn.o \
 	lingo/xlibs/xsoundxfcn.o \
 	lingo/xlibs/xwin.o \
 	lingo/xlibs/yasix.o \
