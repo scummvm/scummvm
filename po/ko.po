@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-29 14:23+0000\n"
-"PO-Revision-Date: 2025-07-05 08:36+0000\n"
+"PO-Revision-Date: 2025-08-30 13:31+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -861,7 +861,7 @@ msgstr "이메일 클라이언트 실행"
 
 #: gui/integrity-dialog.cpp:152
 msgid "This game includes add-ons, pick the part you want to be checked:"
-msgstr ""
+msgstr "이 게임에는 애드온이 포함되어 있고, 확인하고 싶은 부분을 선택하세요:"
 
 #: gui/integrity-dialog.cpp:258
 msgid "Calculation complete"
@@ -1609,7 +1609,7 @@ msgstr "게임 옵션(~G~)..."
 
 #: gui/launcher.cpp:1194
 msgid "Add-on"
-msgstr ""
+msgstr "애드온"
 
 #. I18N: List grouping when no engine is specified
 #: gui/launcher.cpp:1244 gui/launcher.cpp:1446
@@ -3711,19 +3711,15 @@ msgid "Start anyway"
 msgstr "무시하고 시작"
 
 #: engines/engine.cpp:827
-#, fuzzy, c-format
-#| msgid ""
-#| "WARNING: The game you are about to start is not yet fully supported by "
-#| "ScummVM. As such, it is likely to be unstable, and any saved game you "
-#| "make might not work in future versions of ScummVM."
+#, c-format
 msgid ""
 "WARNING: the game you are about to start contains the add-on \"%s\" which is "
 "not yet fully supported by ScummVM. As such, it is likely to be unstable, "
 "and any saved game you make might not work in future versions of ScummVM."
 msgstr ""
-"경고: 지금 시작하려는 게임은 아직 ScummVM에서 완전히 지원하지 않습니다. 동작"
-"이 불안정할 가능성이 높으며 세이브 파일이 앞으로 나올 ScummVM 버전에서 지원되"
-"지 않을 수도 있습니다."
+"시작하려는 게임에 ScummVM에서 아직 완전히 지원되지 않는 애드온 \"%s\"가 "
+"포함되어 있습니다. 따라서 불안정할 가능성이 높으며, 저장된 게임은 향후 "
+"ScummVM 버전에서 작동하지 않을 수 있습니다."
 
 #: engines/engine.cpp:852
 #, c-format
@@ -3732,6 +3728,8 @@ msgid ""
 "run independently. Please copy the add-on contents into a subdirectory of "
 "the base game, and start the base game itself."
 msgstr ""
+"추가하려는 게임 \"%s\"은 \"%s\"의 애드온이므로 단독으로 실행할 수 없습니다. "
+"애드온 콘텐츠를 기본 게임의 하위 디렉터리에 복사한 후 기본 게임을 실행하세요."
 
 #: engines/engine.cpp:869
 msgid "This game is not supported."
@@ -3758,12 +3756,13 @@ msgstr "현재는 게임을 저장할 수 없음"
 msgid ""
 "The directory '%s' looks like an add-on for the game '%s', but ScummVM could "
 "not find any matching add-on in it."
-msgstr ""
+msgstr "디렉터리 '%s'는 게임 '%s'의 애드온처럼 보이지만 ScummVM은 일치하는 애드온을 "
+"찾을 수 없습니다."
 
 #: engines/engine.cpp:1243
 #, c-format
 msgid "Directory '%s' matches several add-ons, please pick one."
-msgstr ""
+msgstr "디렉터리 '%s'은(는) 여러 개의 애드온과 일치합니다. 하나를 선택하세요."
 
 #: engines/game.cpp:199
 #, c-format
@@ -6187,16 +6186,12 @@ msgid "Default keymappings"
 msgstr "기본 키맵핑"
 
 #: engines/access/metaengine.cpp:196
-#, fuzzy
-#| msgid "Move / Interact / Skip dialog"
 msgid "Move / Interact / Skip"
-msgstr "이동 / 소통 / 대화 건너뛰기"
+msgstr "이동 / 소통 / 건너뛰기"
 
 #: engines/access/metaengine.cpp:208 engines/sherlock/metaengine.cpp:483
-#, fuzzy
-#| msgid "Skip video"
 msgid "Skip movie"
-msgstr "비디오 건너뛰기"
+msgstr "동영상 건너뛰기"
 
 #. I18N: Move Actor to upwards direction
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
@@ -7477,7 +7472,7 @@ msgstr "정말 종료하겠습니까?"
 
 #: engines/buried/buried.cpp:608
 msgid "Your game is now Paused.  Click OK to continue."
-msgstr "이제 게임이 일시 중지되었습니다.  계속하려면 확인을 클릭하세요."
+msgstr "이제 게임이 일시 정지되었습니다.  계속하려면 확인을 클릭하세요."
 
 #. I18N: This option allows the user to skip cutscenes.
 #. I18N: This option allows the user to skip text and cutscenes.
@@ -7495,38 +7490,28 @@ msgid "Cutscene keymappings"
 msgstr "컷신 키맵핑"
 
 #: engines/buried/metaengine.cpp:135
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Main menu keymappings"
-msgstr "메뉴 키매핑"
+msgstr "메인 메뉴 키매핑"
 
 #: engines/buried/metaengine.cpp:137 engines/lab/metaengine.cpp:153
 #: engines/sherlock/metaengine.cpp:336 engines/sherlock/metaengine.cpp:783
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Inventory keymappings"
-msgstr "인트로 키맵핑"
+msgstr "인벤토리 키맵핑"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
 #: engines/sherlock/metaengine.cpp:1183
-#, fuzzy
-#| msgid "Select / Interact / Move"
 msgid "Select / Interact"
-msgstr "선택 / 소통 / 이동"
+msgstr "선택 / 소통"
 
 #. I18N: This action refers to the control key on the keyboard.
 #: engines/buried/metaengine.cpp:148
-#, fuzzy
-#| msgid "Control"
 msgid "Control key"
-msgstr "조작"
+msgstr "조작키"
 
 #: engines/buried/metaengine.cpp:173 engines/buried/metaengine.cpp:224
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Quit to main menu"
-msgstr "메뉴 종료"
+msgstr "메인 메뉴 종료"
 
 #: engines/buried/metaengine.cpp:190 engines/mohawk/riven.cpp:913
 #: engines/zvision/metaengine.cpp:217
@@ -7539,16 +7524,12 @@ msgid "Look down"
 msgstr "아래를 보기"
 
 #: engines/buried/metaengine.cpp:204
-#, fuzzy
-#| msgid "Look at"
 msgid "Look left"
-msgstr "보기"
+msgstr "왼쪽 보기"
 
 #: engines/buried/metaengine.cpp:211
-#, fuzzy
-#| msgid "Look at"
 msgid "Look right"
-msgstr "보기"
+msgstr "오른쪽 보기"
 
 #: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
 #: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
@@ -7564,58 +7545,52 @@ msgstr "앞으로 이동"
 #. I18N: AI is Artificial Intelligence
 #: engines/buried/metaengine.cpp:230
 msgid "Replay last AI comment"
-msgstr ""
+msgstr "마지막 AI 댓글 다시 보기"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the Artificial Intelligence biochip.
 #: engines/buried/metaengine.cpp:237
 msgid "Biochip AI"
-msgstr ""
+msgstr "바이오칩 AI"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the blank biochip.
 #: engines/buried/metaengine.cpp:243
 msgid "Biochip blank"
-msgstr ""
+msgstr "바이오칩 블랭크"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the cloak biochip.
 #: engines/buried/metaengine.cpp:249
 msgid "Biochip cloak"
-msgstr ""
+msgstr "바이오칩 망토"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the evidence biochip.
 #: engines/buried/metaengine.cpp:255
-#, fuzzy
-#| msgid "View evidence"
 msgid "Biochip evidence"
-msgstr "증거 보기"
+msgstr "바이오칩 증거"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the files biochip.
 #: engines/buried/metaengine.cpp:261
-#, fuzzy
-#| msgid "Show hidden files"
 msgid "Biochip files"
-msgstr "숨긴 파일 표시"
+msgstr "바이오칩 파일"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the interface biochip.
 #: engines/buried/metaengine.cpp:267
 msgid "Biochip interface"
-msgstr ""
+msgstr "바이오칩 인터페이스"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the jump biochip.
 #: engines/buried/metaengine.cpp:273
 msgid "Biochip jump"
-msgstr ""
+msgstr "바이오칩 점프"
 
 #. I18N: The game has an inventory with a list of biochips. This action is used to switch the equipped biochip to the translate biochip.
 #: engines/buried/metaengine.cpp:279
 msgid "Biochip translate"
-msgstr ""
+msgstr "바이오칩 번역"
 
 #. I18N: Shows a summary of collected points in the game.
 #: engines/buried/metaengine.cpp:285
-#, fuzzy
-#| msgid "Show hints"
 msgid "Show points"
-msgstr "힌트 표시"
+msgstr "포인트 표시"
 
 #: engines/buried/saveload.cpp:80
 msgid ""
@@ -7769,10 +7744,8 @@ msgstr "대화 상자를 닫기"
 #: engines/chamber/metaengine.cpp:61 engines/drascula/metaengine.cpp:208
 #: engines/lab/metaengine.cpp:151 engines/sherlock/metaengine.cpp:338
 #: engines/sherlock/metaengine.cpp:786
-#, fuzzy
-#| msgid "Quit panel keymapping"
 msgid "Quit dialog keymappings"
-msgstr "패널 키맵핑 종료"
+msgstr "대화 상자 키맵핑 종료"
 
 #: engines/cine/metaengine.cpp:57
 msgid "Use transparent dialog boxes in 16 color scenes"
@@ -8072,17 +8045,13 @@ msgstr ""
 "게임이 실제 색상 그래픽 모드로 설계되지 않았더라도 실제 색상 그래픽 모드 사용"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
-#, fuzzy
-#| msgid "Enable Text to Speech for Subtitles"
 msgid "Enable Text to Speech for Missing Voiceovers"
-msgstr "자막에 TTS를 활성화"
+msgstr "누락된 음성 해설에 대한 TTS 활성화"
 
 #: engines/draci/metaengine.cpp:69 engines/prince/metaengine.cpp:65
-#, fuzzy
-#| msgid "Use TTS to read the subtitles (if TTS is available)"
 msgid ""
 "Use TTS to read the subtitles of missing voiceovers (if TTS is available)"
-msgstr "TTS를 사용하여 자막 읽기 (TTS가 가능한 경우)"
+msgstr "(TTS가 가능한 경우) TTS를 사용하여 누락된 음성 해설의 자막 읽기"
 
 #: engines/draci/metaengine.cpp:212
 msgid "Skip intro / Exit map or inventory"
@@ -8161,17 +8130,13 @@ msgid "Debug graphics"
 msgstr "그래픽 디버그"
 
 #: engines/drascula/metaengine.cpp:207 engines/sherlock/metaengine.cpp:330
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Animation keymappings"
-msgstr "인트로 키맵핑"
+msgstr "애니메이션 키맵핑"
 
 #: engines/drascula/metaengine.cpp:212 engines/sherlock/metaengine.cpp:343
 #: engines/tetraedge/metaengine.cpp:92
-#, fuzzy
-#| msgid "Move / Interact"
 msgid "Move / Interact / Select"
-msgstr "이동 / 소통"
+msgstr "이동 / 소통 / 선택"
 
 #: engines/drascula/metaengine.cpp:235
 #, fuzzy
@@ -8189,46 +8154,32 @@ msgid "Open"
 msgstr "열기"
 
 #: engines/drascula/metaengine.cpp:266
-#, fuzzy
-#| msgid "Use selected object"
 msgid "Reset selected verb"
-msgstr "선택한 개체를 사용"
+msgstr "선택한 동사 재설정"
 
 #: engines/drascula/metaengine.cpp:272
-#, fuzzy
-#| msgid "Touch Controls"
 msgid "Volume controls"
-msgstr "터치 조작"
+msgstr "볼륨 조작"
 
 #: engines/drascula/metaengine.cpp:279
-#, fuzzy
-#| msgid "Saved games"
 msgid "Save / load game"
-msgstr "저장된 게임"
+msgstr "저장 / 로드 게임"
 
 #: engines/drascula/metaengine.cpp:292
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Enable subtitles"
-msgstr "자막 전환"
+msgstr "자막 활성화"
 
 #: engines/drascula/metaengine.cpp:298
-#, fuzzy
-#| msgid "Toggle subtitles"
 msgid "Disable subtitles"
-msgstr "자막 전환"
+msgstr "자막 비활성화"
 
 #: engines/drascula/metaengine.cpp:315
-#, fuzzy
-#| msgid "Mute speech"
 msgid "Pause speech"
-msgstr "말 음소거"
+msgstr "말 일시 정지"
 
 #: engines/drascula/metaengine.cpp:322
-#, fuzzy
-#| msgid "Confirm"
 msgid "Confirm quit"
-msgstr "확인"
+msgstr "종료 확인"
 
 #: engines/drascula/saveload.cpp:49
 msgid ""
@@ -8261,88 +8212,60 @@ msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "개체, 옵션, 성경 인용문에 대해 TTS를 활성화"
 
 #: engines/efh/metaengine.cpp:235
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 1"
-msgstr "배우 1 선택"
+msgstr "옵션 1 선택"
 
 #: engines/efh/metaengine.cpp:236
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select option 2"
-msgstr "배우 2 선택"
+msgstr "옵션 2 선택"
 
 #: engines/efh/metaengine.cpp:237
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select option 3"
-msgstr "배우 3 선택"
+msgstr "옵션 3 선택"
 
 #: engines/efh/metaengine.cpp:238
-#, fuzzy
-#| msgid "Select actor 4"
 msgid "Select option 4"
-msgstr "배우 4 선택"
+msgstr "옵션 4 선택"
 
 #: engines/efh/metaengine.cpp:239
-#, fuzzy
-#| msgid "Select actor 5"
 msgid "Select option 5"
-msgstr "배우 5 선택"
+msgstr "옵션 5 선택"
 
 #: engines/efh/metaengine.cpp:240
-#, fuzzy
-#| msgid "Select Group by"
 msgid "Select option 6"
-msgstr "그룹 선택 기준"
+msgstr "옵션 6 선택"
 
 #: engines/efh/metaengine.cpp:241
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 7"
-msgstr "배우 1 선택"
+msgstr "옵션 7 선택"
 
 #: engines/efh/metaengine.cpp:242
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 8"
-msgstr "배우 1 선택"
+msgstr "옵션 8 선택"
 
 #: engines/efh/metaengine.cpp:243
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 9"
-msgstr "배우 1 선택"
+msgstr "옵션 9 선택"
 
 #: engines/efh/metaengine.cpp:244
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 10"
-msgstr "배우 1 선택"
+msgstr "옵션 10 선택"
 
 #: engines/efh/metaengine.cpp:245
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 11"
-msgstr "배우 1 선택"
+msgstr "옵션 11 선택"
 
 #: engines/efh/metaengine.cpp:246
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 12"
-msgstr "배우 1 선택"
+msgstr "옵션 12 선택"
 
 #: engines/efh/metaengine.cpp:247
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 13"
-msgstr "배우 1 선택"
+msgstr "옵션 13 선택"
 
 #: engines/efh/metaengine.cpp:248
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select option 14"
-msgstr "배우 1 선택"
+msgstr "옵션 14 선택"
 
 #: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
 #: engines/supernova/metaengine.cpp:218
@@ -8350,70 +8273,48 @@ msgid "Menu keymappings"
 msgstr "메뉴 키매핑"
 
 #: engines/efh/metaengine.cpp:258 engines/sherlock/metaengine.cpp:329
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Quit keymappings"
-msgstr "PET 키맵핑"
+msgstr "키맵핑 종료"
 
 #: engines/efh/metaengine.cpp:259
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "Skip video keymappings"
-msgstr "키맵핑 저장/불러오기"
+msgstr "비디오 키맵핑 건너뛰기"
 
 #: engines/efh/metaengine.cpp:260
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Skip song keymappings"
-msgstr "미니게임 키맵핑"
+msgstr "노래 키맵 건너뛰기"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "상태 메뉴 탐색 키맵핑"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "상태 메뉴 키맵핑"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "상태 메뉴 하위 메뉴 키맵핑"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Interaction keymappings"
-msgstr "인트로 키맵핑"
+msgstr "상호작용 키맵핑"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Fight keymappings"
-msgstr "PET 키맵핑"
+msgstr "싸움 키맵핑"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "캐릭터 선택 키맵핑"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Enemy selection keymappings"
-msgstr "인트로 키맵핑"
+msgstr "적 선택 키맵핑"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "시작 메뉴 키맵핑"
+msgstr "죽음 메뉴 키맵핑"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
@@ -8431,22 +8332,16 @@ msgid "Character 3 status"
 msgstr "캐릭터 3 상태"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip song"
-msgstr "장면 건너뛰기"
+msgstr "노래 건너뛰기"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "인트로 건너뛰기"
+msgstr "노래와 인트로 건너뛰기"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "활성화"
+msgstr "활성화 스킬"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8456,7 +8351,7 @@ msgstr "떨어뜨리기"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "장비"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8468,44 +8363,36 @@ msgid "Give"
 msgstr "주기"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "정보 메뉴"
+msgstr "정보"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "패시브 스킬"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "거래"
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "메뉴 종료"
+msgstr "상태 메뉴 나가기"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "게임 나가기"
+msgstr "서브메뉴 나가기"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "떠나기"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "상태:"
+msgstr "상태"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "방어"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8518,73 +8405,51 @@ msgstr "달리기"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "View constellations"
 msgid "View terrain"
-msgstr "별자리 보기"
+msgstr "지형 보기"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
-msgstr "배우 1 선택"
+msgstr "캐릭터 1 선택"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
-msgstr "배우 2 선택"
+msgstr "캐릭터 2 선택"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
-msgstr "배우 3 선택"
+msgstr "캐릭터 3 선택"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel character selection"
-msgstr "동작 취소"
+msgstr "캐릭터 선택 취소"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "색인 선택"
+msgstr "적 1 선택"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "색인 선택"
+msgstr "적 2 선택"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "색인 선택"
+msgstr "적 3 선택"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "색인 선택"
+msgstr "적 4 선택"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "색인 선택"
+msgstr "적 5 선택"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel enemy selection"
-msgstr "동작 취소"
+msgstr "적 선택 취소"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8592,44 +8457,32 @@ msgid "Restart game"
 msgstr "게임 재시작"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "음 1 연주: A"
+msgstr "사운드 유형 13 재생"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "음 1 연주: A"
+msgstr "사운드 유형 14 재생"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "음 1 연주: A"
+msgstr "사운드 유형 15 재생"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "음 5 연주: E"
+msgstr "사운드 유형 5 재생"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "음 1 연주: A"
+msgstr "사운드 유형 10 재생"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "사운드 유형 9 재생"
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "음 1 연주: A"
+msgstr "사운드 유형 16 재생"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8705,11 +8558,11 @@ msgstr "시작 시 암석 사격을 사용하여 여행 가능"
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "더 부드러운 움직임"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "개별적인 단계 대신 더 부드러운 움직임 사용"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
@@ -9103,12 +8956,11 @@ msgstr ""
 "릴 수 없음을 참고 바랍니다."
 
 #: engines/grim/metaengine.cpp:87
-#, fuzzy
-#| msgid "Escape from Monkey Island support is not compiled in"
 msgid ""
 "Escape from Monkey Island PS2 support required MPEG2 support, which is not "
 "compiled in"
-msgstr "원숭이섬 탈출 지원이 컴파일 되지 않았음"
+msgstr "원숭이섬 탈출 지원이 PS2에서 탈출하려면 MPEG2 지원이 필요하지만, 이는 "
+"컴파일되지 않았음"
 
 #: engines/grim/metaengine.cpp:92
 msgid "Escape from Monkey Island support is not compiled in"
@@ -9812,10 +9664,8 @@ msgstr ""
 "사용하고 Wyrmkeep에서 키를 구매해야 함"
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit keymappings"
-msgstr "PET 키맵핑"
+msgstr "키맵핑 나가기"
 
 #: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
 msgid "Intro keymappings"
@@ -9823,17 +9673,13 @@ msgstr "인트로 키맵핑"
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Map keymappings"
-msgstr "별자리 지도 키맵핑"
+msgstr "지도 키맵핑"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
-#, fuzzy
-#| msgid "Computer keymappings"
 msgid "Journal keymappings"
-msgstr "컴퓨터 키맵핑"
+msgstr "저널 키맵핑"
 
 #. I18N: Exits the game
 #: engines/lab/metaengine.cpp:166 engines/lab/metaengine.cpp:191
@@ -9848,14 +9694,12 @@ msgid "Exit"
 msgstr "나가기"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "게임의 사운드를 활성화"
+msgstr "소리 볼륨 높임"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "소리 볼륨 낮추기"
 
 #: engines/lab/metaengine.cpp:209 engines/teenagent/metaengine.cpp:232
 #: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
@@ -9864,81 +9708,63 @@ msgstr "인트로 건너뛰기"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "선택한 동작으로 객체와 상호 작용"
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "다음 개체"
+msgstr "객체 가져가기"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "다음 개체로 이동"
+msgstr "객체를 이동하거나 조작"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open door"
 msgid "Open door or object"
-msgstr "문 열기"
+msgstr "문이나 객체 열기"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "문이나 물건 닫기"
 
 #: engines/lab/metaengine.cpp:245
 msgid "Look at object close-up"
-msgstr ""
+msgstr "객체를 클로즈업으로 보기"
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll up in inventory"
 msgid "Switch to inventory display"
-msgstr "인벤토리에서 위로 스크롤"
+msgstr "인벤토리 표시로 전환"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "다음 개체로 이동"
+msgstr "대화형 객체로 포커스 이동"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "가상의 빵가루를 떨어뜨리기 시작"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "가상의 빵가루를 따르기"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "가상 빵가루를 따라가며 실행"
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to 2xSai scaling"
 msgid "Switch to main display"
-msgstr "2xSai 크기조절로 전환"
+msgstr "메인 디스플레이로 전환"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "저장 / 불러오기 대화 상자"
+msgstr "저장/로드 대화 상자 열기"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "보기"
+msgstr "장면 보기"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Previous inventory item"
-msgstr "인벤토리 아이템 사용"
+msgstr "이전 인벤토리 아이템"
 
 #: engines/lab/metaengine.cpp:342
 #, fuzzy
@@ -9948,37 +9774,27 @@ msgstr "다음 인벤토리 아이템"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "지도 표시 종료"
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
-msgstr "레벨 상승"
+msgstr "1 레벨 상승"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
-msgstr "레벨 하락"
+msgstr "1 레벨 하락"
 
 #: engines/lab/metaengine.cpp:391
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back in journal"
-msgstr "일기 표시"
+msgstr "저널로 돌아가기"
 
 #: engines/lab/metaengine.cpp:397
-#, fuzzy
-#| msgid "Show journal"
 msgid "Exit journal"
-msgstr "일기 표시"
+msgstr "저널 나가기"
 
 #: engines/lab/metaengine.cpp:402
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward in journal"
-msgstr "일기 표시"
+msgstr "저널에서 앞으로 가기"
 
 #: engines/lab/processroom.cpp:320
 msgid ""
@@ -10439,12 +10255,12 @@ msgstr "최고"
 
 #: engines/mohawk/dialogs.cpp:456
 msgid "Fix audio pops/clicks"
-msgstr ""
+msgstr "오디오 팝/클릭 수정"
 
 #: engines/mohawk/dialogs.cpp:457
 msgid ""
 "Reduces audible pops at the end of some sound effects (Non Myst/Riven only)."
-msgstr ""
+msgstr "일부 사운드 효과(미스트/리븐 제외)의 끝에서 들리는 펑 하는 소리 줄입니다."
 
 #: engines/mohawk/metaengine.cpp:291
 msgid "Myst ME support not compiled in"
@@ -10841,16 +10657,12 @@ msgid "<original>"
 msgstr "<원본>"
 
 #: engines/neverhood/metaengine.cpp:187
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Save file management menus keymappings"
-msgstr "메뉴 키매핑"
+msgstr "파일 관리 메뉴 키맵 저장"
 
 #: engines/neverhood/metaengine.cpp:188
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Pause menu keymappings"
-msgstr "메뉴 키매핑"
+msgstr "일시 정지 메뉴 키맵핑"
 
 #: engines/neverhood/metaengine.cpp:192 engines/prince/metaengine.cpp:231
 #: engines/queen/metaengine.cpp:180 engines/sludge/keymapper_tables.h:83
@@ -10863,10 +10675,8 @@ msgid "Move / Interact"
 msgstr "이동 / 소통"
 
 #: engines/neverhood/metaengine.cpp:206
-#, fuzzy
-#| msgid "Pause / Skip cutscene"
 msgid "Pause / Exit menu"
-msgstr "일시 정지 / 컷씬 건너뛰기"
+msgstr "일시 정지 / 나가기 메뉴"
 
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips part of the scene.
 #: engines/neverhood/metaengine.cpp:214
@@ -10878,7 +10688,7 @@ msgstr "컷씬 건너뛰기"
 #. I18N: (Game name: The Neverhood) The game has multiple cutscenes, and this action skips the entire scene.
 #: engines/neverhood/metaengine.cpp:221
 msgid "Skip entire scene (works only in some scenes)"
-msgstr ""
+msgstr "전체 장면 (일부 장면에서만 작동) 건너뛰기"
 
 #. I18N: (Game name: The Neverhood) This action confirms the selected save or entered new save name in the save file management menus.
 #: engines/neverhood/metaengine.cpp:228
@@ -11007,7 +10817,7 @@ msgstr "대화 건너뛰기"
 #. I18N: (Game Name: Pink Panther) The player normally clicks on a target (character/object) to move toward it and interact (talk,use etc.) with it. This action skips the walking animation and also prevents the interaction, instead instantly placing the player next to the target.
 #: engines/pink/metaengine.cpp:151
 msgid "Skip walk and cancel interaction"
-msgstr ""
+msgstr "걷기 건너뛰기 및 상호 작용 취소"
 
 #. I18N: (Game Name: Pink Panther) This action fully skips the current running sequence (cutscene, dialog, interaction, etc).
 #: engines/pink/metaengine.cpp:158
@@ -11093,7 +10903,7 @@ msgstr "읽기 쉬운 커스텀 글꼴을 사용"
 
 #: engines/queen/metaengine.cpp:186
 msgid "Move / Skip / Use default action with inventory item"
-msgstr ""
+msgstr "인벤토리 항목에 대한 이동/건너뛰기/기본 작업 사용"
 
 #. I18N: Speeds up the game to twice its normal speed
 #: engines/queen/metaengine.cpp:192 engines/teenagent/metaengine.cpp:239
@@ -13036,7 +12846,7 @@ msgstr "선택한 개체를 사용"
 
 #: engines/sherlock/metaengine.cpp:450
 msgid "Setup"
-msgstr ""
+msgstr "설정"
 
 #: engines/sherlock/metaengine.cpp:472
 #, fuzzy
@@ -13048,12 +12858,12 @@ msgstr "타일셋"
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:501 engines/sherlock/metaengine.cpp:906
 msgid "Go back 10 pages"
-msgstr ""
+msgstr "10 페이지 뒤로 돌아가기"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:507
 msgid "Go ahead 10 pages"
-msgstr ""
+msgstr "10 페이지 넘어가기"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a journal, this action is used to go to the first page of the journal
 #: engines/sherlock/metaengine.cpp:521
@@ -13089,7 +12899,7 @@ msgstr "오른쪽으로 구르기"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has an inventory, this action is go ahead a page (one page displays 6 items) in the inventory
 #: engines/sherlock/metaengine.cpp:591
 msgid "Go ahead a page"
-msgstr ""
+msgstr "한 페이지 넘어가기"
 
 #: engines/sherlock/metaengine.cpp:649 engines/sherlock/metaengine.cpp:934
 #, fuzzy
@@ -13141,7 +12951,7 @@ msgstr "치트 전환"
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade by pixel"
 #: engines/sherlock/metaengine.cpp:724
 msgid "Fade by pixel"
-msgstr ""
+msgstr "픽셀 단위로 페이드"
 
 #. I18N: (Game: The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel) The game has a fade animation when switching scenes, this action is used to change the fade mode to "Fade directly"
 #: engines/sherlock/metaengine.cpp:730
@@ -13250,11 +13060,11 @@ msgstr "대화 건너뛰기"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "선택한 옵션을 왼쪽으로 변경"
 
 #: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "선택한 옵션을 오른쪽으로 변경"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
@@ -13388,7 +13198,7 @@ msgstr "팝업 닫기"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr ""
+msgstr "인벤토리 나가기 / 동사 메뉴 닫기 / 항목 사용 작업 취소"
 
 #: engines/sherlock/metaengine.cpp:1235
 #, fuzzy
@@ -13894,7 +13704,7 @@ msgstr "독일어를 제외한 모든 언어에서는 독일어 대신 영어 �
 
 #: engines/sword25/metaengine.cpp:130
 msgid "Reveal all interactive hotspots (hold the key)"
-msgstr ""
+msgstr "모든 대화형 핫스팟(키를 누르고 있음)을 표시"
 
 #: engines/teenagent/metaengine.cpp:201
 #, fuzzy
