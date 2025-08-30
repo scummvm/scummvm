@@ -187,7 +187,7 @@ static void assembleBackground() {
  * calculates the overlapping area between the source image and the background,
  * then "blits" (copies) the pixels from the image to the overlapping area of the background, respecting transparency.
  */
-static void assembleImage(byte *img, uint imgPosX, uint imgPosY) {
+static void assembleImage(const byte *img, uint imgPosX, uint imgPosY) {
 
 	uint x, // starting point of the overlap
 		y;
@@ -1194,7 +1194,7 @@ void TotEngine::advanceAnimations(bool barredZone, bool animateMouse) {
 	}
 }
 
-void TotEngine::actionLineText(Common::String actionLine) {
+void TotEngine::actionLineText(const Common::String &actionLine) {
 	euroText(160, 144, actionLine, 255, Graphics::kTextAlignCenter);
 }
 
@@ -3657,7 +3657,7 @@ static void getScreen(byte *bg) {
 	Common::copy(screenBuf, screenBuf + (22400 * 2), bg + 4);
 }
 
-void TotEngine::scrollRight(uint &horizontalPos) {
+void TotEngine::scrollRight(uint horizontalPos) {
 
 	int characterPos = 25 + (320 - (_characterPosX + kCharacterCorrectionX * 2));
 	// We scroll 4 by 4 pixels so we divide by 4 to find out the number of necessary steps
@@ -3708,7 +3708,7 @@ void TotEngine::scrollRight(uint &horizontalPos) {
 	free(assembledCharacterFrame);
 }
 
-void TotEngine::scrollLeft(uint &horizontalPos) {
+void TotEngine::scrollLeft(uint horizontalPos) {
 
 	int characterPos = 25 + _characterPosX;
 	horizontalPos = 320 - horizontalPos;
@@ -4357,7 +4357,7 @@ void TotEngine::loadAnimationForDirection(Common::SeekableReadStream *stream, in
 	}
 }
 
-void TotEngine::loadAnimation(Common::String animationName) {
+void TotEngine::loadAnimation(const Common::String &animationName) {
 	Common::File animFile;
 
 	if (animationName == "PETER")
@@ -5153,7 +5153,7 @@ void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx
 		bar(posx + (output.size()) * 6, posy + 2, (posx + (output.size()) * 6) + 6, posy + 9, barColor);
 }
 
-void TotEngine::displayObjectDescription(Common::String textString) {
+void TotEngine::displayObjectDescription(const Common::String &textString) {
 	uint xpos = 60;
 	uint ypos = 15;
 	byte maxWidth = 33;

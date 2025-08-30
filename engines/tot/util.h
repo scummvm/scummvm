@@ -23,13 +23,13 @@ int engine_start();
 
 void setRGBPalette(int color, int r, int g, int b);
 
-void littText(int x, int y, Common::String text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void littText(int x, int y, const Common::String &text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 void littText(int x, int y, char const *text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
-void euroText(int x, int y, Common::String text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
+void euroText(int x, int y, const Common::String &text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign align = Graphics::kTextAlignStart);
 
-void biosText(int x, int y, Common::String text, byte color);
+void biosText(int x, int y, const Common::String &text, byte color);
 
 unsigned int imagesize(int x, int y, int x2, int y2);
 

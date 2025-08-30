@@ -65,7 +65,7 @@ byte *drawCreditsScreen(uint &sizeAuxBG, byte *&auxBG) {
 	return backgroundPointer;
 }
 
-void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
+void putCreditsImg(uint x, uint y, const byte *img1, const byte *img2, bool direct) {
 
 	uint16 wImg1, hImg1;
 	uint horizontalAux;
@@ -87,7 +87,7 @@ void putCreditsImg(uint x, uint y, byte *img1, byte *img2, bool direct) {
 
 	// Copies the crop in the background corresponding to the current credit window in img1
 	for (int i = 0; i < hImg1; i++) {
-		byte *src = img2 + (320 * (y + i)) + x;
+		const byte *src = img2 + (320 * (y + i)) + x;
 		byte *dst = step + 4 + (horizontalAux * i);
 		Common::copy(src, src + horizontalAux, dst);
 	}

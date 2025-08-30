@@ -30,19 +30,19 @@ void drawMouseGrid(RoomFileRegister *screen) {
 	for (int i = 0; i < 39; i++) {
 		for (int j = 0; j < 27; j++) {
 			int color = screen->mouseGrid[i][j];
-			if (color != 0) {
-				int startX = i * kXGridCount + 7;
-				int startY = j * kYGridCount;
-				for (int i2 = 0; i2 < kXGridCount; i2 += 2) {
-					for (int j2 = 0; j2 < kYGridCount; j2++) {
-						int absPixel = startY + j2;
-						int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-						if (offsetX < startX + kXGridCount && color != 0) {
-							*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
-						}
+			if (color == 0) continue;
+			int startX = i * kXGridCount + 7;
+			int startY = j * kYGridCount;
+			for (int i2 = 0; i2 < kXGridCount; i2 += 2) {
+				for (int j2 = 0; j2 < kYGridCount; j2++) {
+					int absPixel = startY + j2;
+					int offsetX = (absPixel % 2 == 0) ? 1 : 0;
+					if (offsetX < startX + kXGridCount && color != 0) {
+						*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 					}
 				}
 			}
+
 		}
 	}
 	g_engine->_screen->markAllDirty();
@@ -52,16 +52,17 @@ void drawScreenGrid(RoomFileRegister *screen) {
 	for (int i = 0; i < 39; i++) {
 		for (int j = 0; j < 27; j++) {
 			int color = screen->walkAreasGrid[i][j];
-			if (color != 0) {
-				int startX = i * kXGridCount + 7;
-				int startY = j * kYGridCount;
-				for (int i2 = 0; i2 < kXGridCount; i2 += 2) {
-					for (int j2 = 0; j2 < kYGridCount; j2++) {
-						int absPixel = startY + j2;
-						int offsetX = (absPixel % 2 == 0) ? 1 : 0;
-						if (offsetX < startX + kXGridCount && color != 0) {
-							*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
-						}
+			if (color == 0)
+				continue;
+
+			int startX = i * kXGridCount + 7;
+			int startY = j * kYGridCount;
+			for (int i2 = 0; i2 < kXGridCount; i2 += 2) {
+				for (int j2 = 0; j2 < kYGridCount; j2++) {
+					int absPixel = startY + j2;
+					int offsetX = (absPixel % 2 == 0) ? 1 : 0;
+					if (offsetX < startX + kXGridCount && color != 0) {
+						*(byte *)g_engine->_screen->getBasePtr(startX + i2 + offsetX, startY + j2) = 255 - color;
 					}
 				}
 			}

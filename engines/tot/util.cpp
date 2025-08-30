@@ -387,7 +387,7 @@ void setRGBPalette(int color, int r, int g, int b) {
 	g_system->getPaletteManager()->setPalette(palbuf, 0, 256);
 }
 
-void littText(int x, int y, Common::String text, byte color, Graphics::TextAlign align) {
+void littText(int x, int y, const Common::String &text, byte color, Graphics::TextAlign align) {
 	littText(x, y, text.c_str(), color, align);
 }
 
@@ -398,7 +398,7 @@ void littText(int x, int y, char const *text, byte color, Graphics::TextAlign al
 	g_engine->_graphics->littText(text, x, y, color, align, yAligned);
 }
 
-void euroText(int x, int y, Common::String text, byte color, Graphics::TextAlign align) {
+void euroText(int x, int y, const Common::String &text, byte color, Graphics::TextAlign align) {
 	euroText(x, y, text.c_str(), color, align);
 }
 
@@ -409,26 +409,7 @@ void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign al
 	g_engine->_graphics->euroText(text, x, y, color, align, yAligned);
 }
 
-void outtextxy(int x, int y, Common::String text, byte color, bool euro, Graphics::TextAlign align) {
-	if (euro) {
-		euroText(x, y, text.c_str(), color, align);
-	} else {
-		littText(x, y, text.c_str(), color, align);
-	}
-}
-
-void outtextxy(int x, int y, char const *text, byte color, bool euro, Graphics::TextAlign align) {
-	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
-	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
-	y = y + 2;
-	if (euro) {
-		g_engine->_graphics->euroText(text, x, y, color, align, yAligned);
-	} else {
-		g_engine->_graphics->littText(text, x, y, color, align, yAligned);
-	}
-}
-
-void biosText(int x, int y, Common::String text, byte color) {
+void biosText(int x, int y, const Common::String &text, byte color) {
 	g_engine->_graphics->biosText(text, x, y, color);
 }
 

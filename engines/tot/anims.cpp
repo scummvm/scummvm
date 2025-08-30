@@ -36,7 +36,7 @@
 
 namespace Tot {
 
-void drawText(uint x, uint y, Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5, byte textColor, byte borderColor) {
+void drawText(uint x, uint y, const Common::String &str1, const Common::String &str2, const Common::String &str3, const Common::String &str4, const Common::String &str5, byte textColor, byte borderColor) {
 
 	littText(x, (y + 3), str1,  borderColor);
 	littText(x, (y + 13), str2, borderColor);
@@ -84,7 +84,7 @@ void removeText(uint xTextLine1, uint yTextLine1, uint xTextLine2, uint yTextLin
 	g_engine->_screen->addDirtyRect(Common::Rect(xTextLine1, yTextLine1, xTextLine2, yTextLine2));
 }
 
-void drawTvText(Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5) {
+void drawTvText(const Common::String &str1, const Common::String &str2, const Common::String &str3, const Common::String &str4, const Common::String &str5) {
 	drawText(80, 0, str1, str2, str3, str4, str5, 253, 0);
 }
 
@@ -92,8 +92,8 @@ void clearTvText() {
 	removeText(80, 0, 319, 53, 0);
 }
 
-void drawCharacterText(Common::String str1, Common::String str2, Common::String str3, Common::String str4, Common::String str5) {
-	drawText(2, 100,str1, str2, str3, str4, str5, 255, 0);
+void drawCharacterText(const Common::String &str1, const Common::String &str2, const Common::String &str3, const Common::String &str4, const Common::String &str5) {
+	drawText(2, 100, str1, str2, str3, str4, str5, 255, 0);
 }
 void clearCharacterText() {
 	removeText(2, 100, 134, 199, 0);
