@@ -983,12 +983,7 @@ void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId
 			{
 				castInfo.strings[5].data = (byte *)malloc(castInfo.strings[5].len);
 				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(castInfo.strings[5].data, castInfo.strings[5].len);
-
-				Movie::writeRect(stream, ci->scriptEditInfo.rect);
-				stream->writeUint32BE(ci->scriptEditInfo.selStart);
-				stream->writeUint32BE(ci->scriptEditInfo.selEnd);
-				stream->writeByte(ci->scriptEditInfo.version);
-				stream->writeByte(ci->scriptEditInfo.rulerFlag);
+				ci->scriptEditInfo.write(stream);
 				delete stream;
 			}
 			break;
@@ -1000,7 +995,6 @@ void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId
 				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(castInfo.strings[6].data, castInfo.strings[6].len);
 				stream->writeUint16BE(1);			// FIXME: For CastMembers, the count is 1, observed value, need to validate
 				ci->scriptStyle.write(stream);
-
 				delete stream;
 			}
 			break;
@@ -1010,12 +1004,7 @@ void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId
 				castInfo.strings[7].data = (byte *)malloc(castInfo.strings[7].len);
 
 				Common::MemoryWriteStream *stream = new Common::MemoryWriteStream(castInfo.strings[7].data, castInfo.strings[7].len);
-				Movie::writeRect(stream, ci->textEditInfo.rect);
-				stream->writeUint32BE(ci->textEditInfo.selStart);
-				stream->writeUint32BE(ci->textEditInfo.selEnd);
-				stream->writeByte(ci->textEditInfo.version);
-				stream->writeByte(ci->textEditInfo.rulerFlag);
-
+				ci->textEditInfo.write(stream);
 				delete stream;
 			}
 			break;

@@ -150,6 +150,7 @@ struct EditInfo {
 	bool valid;
 
 	EditInfo(): valid(false) {}
+	void write(Common::WriteStream *stream);
 };
 
 struct CastMemberInfo {

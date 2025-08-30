@@ -30,6 +30,14 @@
 
 namespace Director {
 
+void EditInfo::write(Common::WriteStream *stream) {
+	Movie::writeRect(stream, rect);
+	stream->writeUint32BE(selStart);
+	stream->writeUint32BE(selEnd);
+	stream->writeByte(version);
+	stream->writeByte(rulerFlag);
+}
+
 CastMember::CastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream) : Object<CastMember>("CastMember") {
 	_type = kCastTypeNull;
 	_cast = cast;
