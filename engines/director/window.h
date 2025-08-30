@@ -225,6 +225,8 @@ private:
 
 	int _windowType;
 	bool _isModal;
+	Common::String _sharedCastFilenameHint;
+	Common::String _soundsFilenameHint;
 
 private:
 	static void drawChannelBox(Director::Movie *currentMovie, Graphics::ManagedSurface *blitTo, int selectedChannel);
