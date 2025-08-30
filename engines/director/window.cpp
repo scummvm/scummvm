@@ -645,13 +645,18 @@ bool Window::step() {
 Common::Path Window::getSharedCastPath() {
 	Common::Array<Common::String> namesToTry;
 	if (_vm->getVersion() < 400) {
-		if (g_director->getPlatform() == Common::kPlatformWindows) {
+		if (!_sharedCastFilenameHint.empty()) {
+			namesToTry.push_back(_sharedCastFilenameHint);
+		} else if (g_director->getPlatform() == Common::kPlatformWindows) {
 			namesToTry.push_back("SHARDCST.MMM");
 		} else {
 			namesToTry.push_back("Shared Cast");
 		}
 	} else if (_vm->getVersion() < 500) {
 		namesToTry.push_back("Shared.dir");
+		if (!_sharedCastFilenameHint.empty()) {
+			namesToTry.push_back(_sharedCastFilenameHint);
+		}
 	}
 
 	Common::Path result;
