@@ -26,12 +26,15 @@
 #include "common/macresman.h"
 #include "bagel/boflib/file_functions.h"
 #include "bagel/bagel.h"
+#include "bagel/afxwin.h"
 
 namespace Bagel {
 
 bool fileExists(const char *pszFileName) {
 	if (g_engine->getPlatform() == Common::kPlatformMacintosh) {
 		return Common::MacResManager::exists(pszFileName);
+	} else if (!g_engine->isSpaceBar()) {
+		return MFC::FileExists(pszFileName);
 	} else {
 		return Common::File::exists(pszFileName);
 	}

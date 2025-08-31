@@ -654,7 +654,14 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 			return false;
 		}
 
-		//CBofWindow *pWnd = CBofApp::getApp()->getMainWindow();
+		// WORKAROUND: Hodj may not specify sound type
+		if (!(nFlags & (SOUND_WAVE | SOUND_MIDI))) {
+			Common::String name(pszSoundFile);
+			if (name.hasSuffixIgnoreCase(".wav"))
+				nFlags |= SOUND_WAVE;
+			else if (name.hasSuffixIgnoreCase(".mid"))
+				nFlags |= SOUND_MIDI;
+		}
 
 		// Take care of any last minute cleanup before we start this new sound
 		CBofSound::audioTask();
