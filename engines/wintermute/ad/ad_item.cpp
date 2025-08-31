@@ -414,7 +414,7 @@ bool AdItem::update() {
 bool AdItem::display(int x, int y) {
 	int width = 0;
 	if (_currentSprite) {
-		Rect32 rc;
+		Common::Rect32 rc;
 		_currentSprite->getBoundingRect(&rc, 0, 0);
 		width = rc.width();
 	}

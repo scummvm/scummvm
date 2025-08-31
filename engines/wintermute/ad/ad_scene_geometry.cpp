@@ -428,7 +428,7 @@ bool AdSceneGeometry::storeDrawingParams() {
 		_lastScrollY = 0;
 	}
 
-	Rect32 rc;
+	Common::Rect32 rc;
 	_gameRef->getCurrentViewportRect(&rc);
 	float width = (float)rc.right - (float)rc.left;
 	float height = (float)rc.bottom - (float)rc.top;

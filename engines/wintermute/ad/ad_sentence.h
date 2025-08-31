@@ -31,7 +31,6 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/persistent.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/dctypes.h"    // Added by ClassView
 #include "common/rect.h"
 
@@ -56,7 +55,7 @@ public:
 	TTextAlign _align;
 	bool display();
 	int32 _width;
-	Point32 _pos;
+	Common::Point32 _pos;
 	BaseFont *_font;
 	char *getNextStance();
 	char *getCurrentStance();

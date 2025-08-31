@@ -29,7 +29,6 @@
 #define WINTERMUTE_UTILS_H
 
 #include "engines/wintermute/wintypes.h"
-#include "engines/wintermute/math/rect32.h"
 
 namespace Wintermute {
 

@@ -127,7 +127,7 @@ bool AdInventoryBox::display() {
 
 
 	// display window
-	Rect32 rect = _itemsArea;
+	Common::Rect32 rect = _itemsArea;
 	if (_window) {
 		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		_window->display();

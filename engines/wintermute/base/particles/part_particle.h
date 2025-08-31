@@ -28,9 +28,8 @@
 #ifndef WINTERMUTE_PARTPARTICLE_H
 #define WINTERMUTE_PARTPARTICLE_H
 
-
+#include "common/rect.h"
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
 
 namespace Wintermute {
@@ -59,7 +58,7 @@ public:
 	int32 _alpha1;
 	int32 _alpha2;
 
-	Rect32 _border;
+	Common::Rect32 _border;
 	Vector2 _pos;
 	float _posZ;
 	Vector2 _velocity;

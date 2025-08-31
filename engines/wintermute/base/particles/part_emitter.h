@@ -81,7 +81,7 @@ public:
 	int32 _maxBatches;
 	int32 _batchesGenerated;
 
-	Rect32 _border;
+	Common::Rect32 _border;
 	int32 _borderThicknessLeft;
 	int32 _borderThicknessRight;
 	int32 _borderThicknessTop;

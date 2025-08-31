@@ -592,7 +592,7 @@ bool UIButton::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 void UIButton::correctSize() {
-	Rect32 rect;
+	Common::Rect32 rect;
 
 	BaseSprite *img = nullptr;
 	if (_image) {
@@ -726,7 +726,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	int imageY = offsetY + _posY;
 
 	if (image && _centerImage) {
-		Rect32 rc;
+		Common::Rect32 rc;
 		image->getBoundingRect(&rc, 0, 0);
 		imageX += (_width - (rc.right - rc.left)) / 2;
 		imageY += (_height - (rc.bottom - rc.top)) / 2;

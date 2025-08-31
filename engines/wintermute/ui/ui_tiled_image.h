@@ -48,15 +48,15 @@ public:
 	UITiledImage(BaseGame *inGame = nullptr);
 	~UITiledImage() override;
 	BaseSubFrame *_image;
-	Rect32 _upLeft;
-	Rect32 _upMiddle;
-	Rect32 _upRight;
-	Rect32 _middleLeft;
-	Rect32 _middleMiddle;
-	Rect32 _middleRight;
-	Rect32 _downLeft;
-	Rect32 _downMiddle;
-	Rect32 _downRight;
+	Common::Rect32 _upLeft;
+	Common::Rect32 _upMiddle;
+	Common::Rect32 _upRight;
+	Common::Rect32 _middleLeft;
+	Common::Rect32 _middleMiddle;
+	Common::Rect32 _middleRight;
+	Common::Rect32 _downLeft;
+	Common::Rect32 _downMiddle;
+	Common::Rect32 _downRight;
 };
 
 } // End of namespace Wintermute

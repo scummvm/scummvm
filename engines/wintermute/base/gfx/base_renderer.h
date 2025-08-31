@@ -28,7 +28,6 @@
 #ifndef WINTERMUTE_BASE_RENDERER_H
 #define WINTERMUTE_BASE_RENDERER_H
 
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/coll_templ.h"
 
@@ -66,7 +65,7 @@ public:
 	 */
 	virtual BaseImage *takeScreenshot(int newWidth = 0, int newHeight = 0) = 0;
 	virtual bool setViewport(int left, int top, int right, int bottom);
-	virtual bool setViewport(Rect32 *rect);
+	virtual bool setViewport(Common::Rect32 *rect);
 	virtual bool setScreenViewport();
 	virtual void setWindowed(bool windowed) = 0;
 
@@ -163,7 +162,7 @@ public:
 	virtual bool endSpriteBatch() {
 		return STATUS_OK;
 	};
-	bool pointInViewport(Point32 *P);
+	bool pointInViewport(Common::Point32 *P);
 	uint32 _forceAlphaColor;
 	uint32 _window;
 	uint32 _clipperWindow;
@@ -209,10 +208,10 @@ public:
 	bool _indicatorDisplay;
 	int32 _indicatorProgress;
 
-	Rect32 _windowRect;
-	Rect32 _viewportRect;
-	Rect32 _screenRect;
-	Rect32 _monitorRect;
+	Common::Rect32 _windowRect;
+	Common::Rect32 _viewportRect;
+	Common::Rect32 _screenRect;
+	Common::Rect32 _monitorRect;
 	int32 _bPP;
 	int32 _height;
 	int32 _width;

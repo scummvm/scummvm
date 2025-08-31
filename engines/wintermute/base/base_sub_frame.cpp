@@ -114,7 +114,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	char *params;
 	int cmd;
 	BaseParser parser;
-	Rect32 rect;
+	Common::Rect32 rect;
 	int r = 255, g = 255, b = 255;
 	int ar = 255, ag = 255, ab = 255, alpha = 255;
 	bool customTrans = false;
@@ -217,7 +217,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	return STATUS_OK;
 }
 
-Rect32 &BaseSubFrame::getRect() {
+Common::Rect32 &BaseSubFrame::getRect() {
 	if (_wantsDefaultRect && _surface) {
 		BasePlatform::setRect(&_rect, 0, 0, _surface->getWidth(), _surface->getHeight());
 		_wantsDefaultRect = false;
@@ -225,7 +225,7 @@ Rect32 &BaseSubFrame::getRect() {
 	return _rect;
 }
 
-void BaseSubFrame::setRect(Rect32 rect) {
+void BaseSubFrame::setRect(Common::Rect32 rect) {
 	_wantsDefaultRect = false;
 	_rect = rect;
 }
@@ -279,7 +279,7 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSubFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseSubFrame::getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
 	}
@@ -309,7 +309,7 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 		buffer->putTextIndent(indent + 2, "TRANSPARENT { %d,%d,%d }\n", RGBCOLGetR(_transparent), RGBCOLGetG(_transparent), RGBCOLGetB(_transparent));
 	}
 
-	Rect32 rect;
+	Common::Rect32 rect;
 	BasePlatform::setRectEmpty(&rect);
 	if (_surface) {
 		BasePlatform::setRect(&rect, 0, 0, _surface->getWidth(), _surface->getHeight());

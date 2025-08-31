@@ -40,7 +40,7 @@ public:
 	int32 _lastMimicY;
 	void cleanup();
 	bool mimic(BaseRegion *region, float scale = 100.0f, int x = 0, int y = 0);
-	bool getBoundingRect(Rect32 *rect);
+	bool getBoundingRect(Common::Rect32 *rect);
 	bool ptInPolygon(int32 x, int32 y);
 	DECLARE_PERSISTENT(BaseRegion, BaseObject)
 	bool _active;
@@ -51,7 +51,7 @@ public:
 	bool createRegion();
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	Rect32 _rect;
+	Common::Rect32 _rect;
 	BaseArray<BasePoint *> _points;
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override { return saveAsText(buffer, indent, nullptr); }
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);

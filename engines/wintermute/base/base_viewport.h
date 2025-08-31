@@ -28,9 +28,8 @@
 #ifndef WINTERMUTE_BASE_VIEWPORT_H
 #define WINTERMUTE_BASE_VIEWPORT_H
 
-
+#include "common/rect.h"
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
@@ -39,7 +38,7 @@ class BaseViewport : public BaseClass {
 public:
 	int getHeight() const;
 	int getWidth() const;
-	Rect32 *getRect();
+	Common::Rect32 *getRect();
 	bool setRect(int32 left, int32 top, int32 right, int32 bottom, bool noCheck = false);
 	DECLARE_PERSISTENT(BaseViewport, BaseClass)
 	int32 _offsetY;
@@ -49,7 +48,7 @@ public:
 	~BaseViewport() override;
 	virtual Common::String debuggerToString() const;
 private:
-	Rect32 _rect;
+	Common::Rect32 _rect;
 };
 
 } // End of namespace Wintermute

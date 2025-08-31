@@ -775,7 +775,7 @@ bool BasePersistenceManager::transferByte(const char *name, byte *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // RECT
-bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
+bool BasePersistenceManager::transferRect32(const char *name, Common::Rect32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->left);
 		_saveStream->writeSint32LE(val->top);
@@ -800,7 +800,7 @@ bool BasePersistenceManager::transferRect32(const char *name, Rect32 *val) {
 
 //////////////////////////////////////////////////////////////////////////
 // POINT
-bool BasePersistenceManager::transferPoint32(const char *name, Point32 *val) {
+bool BasePersistenceManager::transferPoint32(const char *name, Common::Point32 *val) {
 	if (_saving) {
 		_saveStream->writeSint32LE(val->x);
 		_saveStream->writeSint32LE(val->y);

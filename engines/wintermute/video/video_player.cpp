@@ -162,7 +162,7 @@ bool VideoPlayer::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoPlayer::display() {
-	Rect32 rc;
+	Common::Rect32 rc;
 	bool res;
 
 	if (_texture && _videoFrameReady) {

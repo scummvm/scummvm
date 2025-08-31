@@ -56,7 +56,7 @@ public:
 
 	bool displayDebugInfo() override;
 
-	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) override;
+	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *viewport, bool *customViewport) override;
 
 #ifdef ENABLE_WME3D
 	uint32 getAmbientLightColor() override;

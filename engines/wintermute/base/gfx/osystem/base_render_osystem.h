@@ -97,10 +97,10 @@ public:
 	void drawFromQueuedTicket(const RenderQueueIterator &ticket);
 
 	bool setViewport(int left, int top, int right, int bottom) override;
-	bool setViewport(Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
+	bool setViewport(Common::Rect32 *rect) override { return BaseRenderer::setViewport(rect); }
 	void modTargetRect(Common::Rect *rect);
-	void pointFromScreen(Point32 *point);
-	void pointToScreen(Point32 *point);
+	void pointFromScreen(Common::Point32 *point);
+	void pointToScreen(Common::Point32 *point);
 
 	float getScaleRatioX() const override {
 		return _ratioX;
