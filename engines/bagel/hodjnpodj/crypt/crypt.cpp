@@ -24,6 +24,7 @@
 #include "bagel/hodjnpodj/crypt/globals.h"
 #include "bagel/hodjnpodj/crypt/crypt.h"
 #include "bagel/hodjnpodj/hodjnpodj.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -65,7 +66,7 @@ CCryptogram::CCryptogram(CDC *pDC) {
 	********************************************************/
 	bIsGameOver         = FALSE;        // Initialize solved switch
 
-	//srand((unsigned) time(nullptr));     // seed the random number generator
+	BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 }
 
 /*****************************************************************
@@ -102,6 +103,8 @@ CCryptogram::~CCryptogram() {
 
 	if (m_cRecordGram != nullptr)
 		delete m_cRecordGram;
+
+	BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 }
 
 /*****************************************************************
