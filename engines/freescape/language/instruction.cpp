@@ -332,9 +332,6 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 		delay = delay * 10;
 
 	waitInLoop(delay);
-	if (_syncSound) {
-		waitForSounds();
-	}
 }
 
 void FreescapeEngine::executeExecute(FCLInstruction &instruction, bool shot, bool collided, bool activated) {
