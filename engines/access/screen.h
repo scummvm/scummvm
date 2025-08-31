@@ -145,7 +145,7 @@ public:
 
 	void getPalette(byte *pal);
 
-	void flashPalette(int count);
+	void flashPalette(int step);
 
 	/**
 	 * Copy a buffer to the screen

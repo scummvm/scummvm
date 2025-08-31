@@ -346,8 +346,22 @@ void Screen::cyclePaletteBackwards() {
 	}
 }
 
-void Screen::flashPalette(int count) {
-	// No implementation needed in ScummVM
+void Screen::flashPalette(int step) {
+	// Note: Original parameter is for 64-level palette
+	step *= 4;
+
+	for (int i = 0; i < Graphics::PALETTE_SIZE; ++i) {
+		_tempPalette[i] = (byte)MIN(_rawPalette[i] + step, 255);
+	}
+
+	updatePalette();
+	_vm->_events->pollEventsAndWait();
+
+	// Ensure at least 1 frame delay at 30FPS before resetting palette
+	// to ensure the effect is perceptible and matches original.
+	_vm->_events->delay(30);
+	setPalette();
+	_vm->_events->pollEventsAndWait();
 }
 
 void Screen::dump(const char *fname) const {
