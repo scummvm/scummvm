@@ -154,8 +154,8 @@ struct EditInfo {
 	void write(Common::WriteStream *stream);
 
 	Common::String toString() {
-		return Common::String::format("rect: [%d,%d,%d,%d] selStart: %d selEnd: %d version: %d rulerFlag: %d valid: %d",
-			rect.left, rect.top, rect.right, rect.bottom, selStart, selEnd, version, rulerFlag, valid);
+		return Common::String::format("rect: [%s] selStart: %d selEnd: %d version: %d rulerFlag: %d valid: %d",
+			rect.toString().c_str(), selStart, selEnd, version, rulerFlag, valid);
 	}
 };
 

@@ -143,9 +143,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 				_flags1, _borderSize, _gutterSize, _boxShadow, _textType, _textAlign);
 		debugC(2, kDebugLoading, "TextCastMember(): background rgb: 0x%04x 0x%04x 0x%04x, shadow: %d flags: %d textHeight: %d",
 				_bgpalinfo1, _bgpalinfo2, _bgpalinfo3, _textShadow, _textFlags, _textHeight);
-		if (debugChannelSet(2, kDebugLoading)) {
-			_initialRect.debugPrint(2, "TextCastMember(): rect:");
-		}
+		debugC(2, kDebugLoading, "TextCastMember(): rect: [%s]", _initialRect.toString().c_str());
 	} else {
 		warning("STUB: Text/ButtonCastMember: Text not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}

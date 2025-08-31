@@ -65,6 +65,16 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 		g = (stream.readUint16BE() >> 8);
 		b = (stream.readUint16BE() >> 8);
 		_bgColor = _pf32.RGBToColor(r, g, b);
+
+		debugC(3, kDebugLoading, "  RichTextCastMember(): initialRect: [%s], boundingRect: [%s], antialiasFlag: 0x%02x, cropFlags: 0x%02x, scrollPos: %d, antialiasFontSize: %d, displayHeight: %d",
+			_initialRect.toString().c_str(),
+			_boundingRect.toString().c_str(),
+			_antialiasFlag,
+			_cropFlags,
+			_scrollPos,
+			_antialiasFontSize,
+			_displayHeight);
+		debugC(3, kDebugLoading, "  RichTextCastMember(): foreColor: 0x%08x, bgColor: 0x%08x", _foreColor, _bgColor);
 	} else {
 		warning("STUB: RichTextCastMember: RTE not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
