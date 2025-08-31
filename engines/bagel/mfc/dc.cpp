@@ -519,8 +519,9 @@ HGDIOBJ CDC::SelectObject(HGDIOBJ hGdiObj) {
 }
 
 CPalette *CDC::SelectPalette(CPalette *pPalette, BOOL bForceBackground) {
-	HPALETTE hOld = impl()->selectPalette(!pPalette ? nullptr :
-		pPalette->m_hObject);
+	HPALETTE hOld = impl()->selectPalette(
+		!pPalette ? nullptr : pPalette->m_hObject,
+		bForceBackground);
 	return (CPalette *)CGdiObject::FromHandle(hOld);
 }
 
@@ -754,8 +755,9 @@ void CDC::Impl::setScreenRect(const Common::Rect &r) {
 	_bitmap = _defaultBitmap._bitmap;
 }
 
-HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
+HPALETTE CDC::Impl::selectPalette(HPALETTE pal, BOOL bForceBackground) {
 	HPALETTE oldPal = _palette;
+	m_bForceBackground = bForceBackground;
 
 	if (pal) {
 		_palette = pal;
@@ -769,10 +771,10 @@ HPALETTE CDC::Impl::selectPalette(HPALETTE pal) {
 	return oldPal;
 }
 
-CPalette *CDC::Impl::selectPalette(CPalette *pal) {
+CPalette *CDC::Impl::selectPalette(CPalette *pal, BOOL bForceBackground) {
 	CPalette *oldPal = _cPalette;
 	_cPalette = pal;
-	selectPalette((HPALETTE)_cPalette->m_hObject);
+	selectPalette((HPALETTE)_cPalette->m_hObject, bForceBackground);
 	return oldPal;
 }
 
@@ -784,7 +786,7 @@ UINT CDC::Impl::realizePalette() {
 
 	CWinApp *app = AfxGetApp();
 	CWnd *pTopLevel = m_pWnd->GetTopLevelFrame();
-	if (pTopLevel == app->GetActiveWindow()) {
+	if (!m_bForceBackground && pTopLevel == app->GetActiveWindow()) {
 		// This window is active - update the system palette
 		AfxGetApp()->setPalette(*pal);
 		return 1;  // number of entries changed - simplified

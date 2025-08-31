@@ -157,7 +157,7 @@ HGDIOBJ GetStockObject(int i) {
 
 HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
 	auto *surf = static_cast<CDC::Impl *>(hdc);
-	return surf->selectPalette(hPal);
+	return surf->selectPalette(hPal, bForceBkgd);
 }
 
 UINT RealizePalette(HDC hdc) {

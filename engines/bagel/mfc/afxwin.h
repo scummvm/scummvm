@@ -714,6 +714,7 @@ public:
 		HBRUSH _brush;
 		HPALETTE _palette = nullptr;
 		CPalette *_cPalette = nullptr;
+		BOOL m_bForceBackground = FALSE;
 
 	public:
 		Impl(CWnd *wndOwner = nullptr);
@@ -726,8 +727,8 @@ public:
 		void setScreenRect();
 		void setScreenRect(const Common::Rect &r);
 
-		HPALETTE selectPalette(HPALETTE pal);
-		CPalette *selectPalette(CPalette *pal);
+		HPALETTE selectPalette(HPALETTE pal, BOOL bForceBackground);
+		CPalette *selectPalette(CPalette *pal, BOOL bForceBackground);
 		UINT realizePalette();
 		COLORREF GetNearestColor(COLORREF crColor) const;
 

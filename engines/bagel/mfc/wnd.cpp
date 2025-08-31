@@ -429,7 +429,7 @@ CDC *CWnd::GetDC() {
 		hDC->Attach(_hFont);
 		hDC->Attach(_hPen);
 		hDC->Attach(_hBrush);
-		hDC->selectPalette(_hPalette);
+		hDC->selectPalette(_hPalette, TRUE);
 
 		RECT screenRect;
 		screenRect.left = screenRect.top = 0;
