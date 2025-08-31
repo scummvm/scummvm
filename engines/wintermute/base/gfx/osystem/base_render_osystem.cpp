@@ -233,7 +233,7 @@ void BaseRenderOSystem::fade(uint16 alpha) {
 void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect fillRect;
 
-	Rect32 rc;
+	Common::Rect32 rc;
 	_gameRef->getCurrentViewportRect(&rc);
 	fillRect.left = (int16)rc.left;
 	fillRect.top = (int16)rc.top;
@@ -506,14 +506,14 @@ void BaseRenderOSystem::modTargetRect(Common::Rect *rect) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::pointFromScreen(Point32 *point) {
+void BaseRenderOSystem::pointFromScreen(Common::Point32 *point) {
 	point->x = (int16)(point->x / _ratioX - _borderLeft / _ratioX + _renderRect.left);
 	point->y = (int16)(point->y / _ratioY - _borderTop / _ratioY + _renderRect.top);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
-void BaseRenderOSystem::pointToScreen(Point32 *point) {
+void BaseRenderOSystem::pointToScreen(Common::Point32 *point) {
 	point->x = (int16)MathUtil::roundUp(point->x * _ratioX) + _borderLeft - _renderRect.left;
 	point->y = (int16)MathUtil::roundUp(point->y * _ratioY) + _borderTop - _renderRect.top;
 }

@@ -29,7 +29,6 @@
 #define WINTERMUTE_AD_SCENE_GEOMETRY_H
 
 #include "engines/wintermute/base/base_object.h"
-#include "engines/wintermute/math/rect32.h"
 
 namespace Wintermute {
 

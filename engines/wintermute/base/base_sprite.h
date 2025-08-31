@@ -53,7 +53,7 @@ public:
 	DECLARE_PERSISTENT(BaseSprite, BaseScriptHolder)
 
 	bool _editorAllFrames;
-	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = Graphics::kDefaultZoomX, float scaleY = Graphics::kDefaultZoomY);
+	bool getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX = Graphics::kDefaultZoomX, float scaleY = Graphics::kDefaultZoomY);
 	int32 _moveY;
 	int32 _moveX;
 	bool display(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY, uint32 alpha = Graphics::kDefaultRgbaMod, float rotate = Graphics::kDefaultAngle, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
@@ -72,7 +72,7 @@ public:
 	bool draw(int x, int y, BaseObject *Register = nullptr, float zoomX = Graphics::kDefaultZoomX, float zoomY = Graphics::kDefaultZoomY, uint32 alpha = Graphics::kDefaultRgbaMod);
 	bool _looping;
 	int32 _currentFrame;
-	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Rect32 *rect = nullptr);
+	bool addFrame(const char *filename, uint32 delay = 0, int hotspotX = 0, int hotspotY = 0, Common::Rect32 *rect = nullptr);
 	BaseSprite(BaseGame *inGame, BaseObject *owner = nullptr);
 	~BaseSprite() override;
 	BaseArray<BaseFrame *> _frames;

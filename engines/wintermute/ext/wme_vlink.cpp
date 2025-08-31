@@ -129,7 +129,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 							Common::StackLock lock(_frameMutex);
 							texture->putSurface(_surface, false);
 						}
-						texture->display(0, 0, Rect32(texture->getWidth(), texture->getHeight()));
+						texture->display(0, 0, Common::Rect32(texture->getWidth(), texture->getHeight()));
 						_updateNeeded = false;
 						_gameRef->_renderer->flip();
 					}

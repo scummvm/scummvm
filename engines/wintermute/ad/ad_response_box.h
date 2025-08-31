@@ -73,7 +73,7 @@ public:
 	UIWindow *_window;
 	UIWindow *_shieldWindow;
 	bool _horizontal;
-	Rect32 _responseArea;
+	Common::Rect32 _responseArea;
 	int32 _verticalAlign;
 	TTextAlign _align;
 	bool loadFile(const char *filename);

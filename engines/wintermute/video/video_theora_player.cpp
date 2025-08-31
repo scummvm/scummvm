@@ -357,7 +357,7 @@ bool VideoTheoraPlayer::writeVideo(const Graphics::Surface *decodedFrame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool VideoTheoraPlayer::display(uint32 alpha) {
-	Rect32 rc;
+	Common::Rect32 rc;
 	bool res;
 
 	if (_texture && _videoFrameReady) {

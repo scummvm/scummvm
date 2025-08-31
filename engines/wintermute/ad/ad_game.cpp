@@ -1458,7 +1458,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
-					Rect32 rc;
+					Common::Rect32 rc;
 					parser.scanStr(params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) {
 						_sceneViewport = new BaseViewport(_gameRef);
@@ -1633,7 +1633,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 
 	BaseArray<AdObject *> objects;
 
-	Point32 p;
+	Common::Point32 p;
 	int distance = xCenter * xCenter + yCenter * yCenter;
 
 	switch (action) {
@@ -2104,7 +2104,7 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 		if (doUpdate)
 			_gameRef->pluginEvents().applyEvent(WME_EVENT_UPDATE, nullptr);
 
-		Point32 p;
+		Common::Point32 p;
 		getMousePos(&p);
 
 		_scene->update();
@@ -2366,7 +2366,7 @@ bool AdGame::renderShadowGeometry() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::validMouse() {
-	Point32 pos;
+	Common::Point32 pos;
 	BasePlatform::getCursorPos(&pos);
 
 	return _renderer->pointInViewport(&pos);
@@ -2528,7 +2528,7 @@ Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object)
 #endif
 
 //////////////////////////////////////////////////////////////////////////
-bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) {
+bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *viewport, bool *customViewport) {
 	if (_scene && _scene->_mainLayer) {
 		int32 portX, portY, portWidth, portHeight;
 		_scene->getViewportOffset(&portX, &portY);

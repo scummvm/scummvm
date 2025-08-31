@@ -210,7 +210,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 
 	// and paint it
 	if (surface) {
-		Rect32 rc;
+		Common::Rect32 rc;
 		BasePlatform::setRect(&rc, 0, 0, surface->getWidth(), surface->getHeight());
 		for (int32 i = 0; i < _layers.getSize(); i++) {
 			uint32 color = _layers[i]->_color;

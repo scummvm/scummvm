@@ -60,14 +60,14 @@ public:
 	TWindowMode _mode;
 	bool moveFocus(bool forward = true);
 	bool handleMouse(TMouseEvent Event, TMouseButton Button) override;
-	Point32 _dragFrom;
+	Common::Point32 _dragFrom;
 	bool _dragging;
 	DECLARE_PERSISTENT(UIWindow, UIObject)
 	bool _transparent;
 	bool showWidget(const char *name, bool visible = true);
 	bool enableWidget(const char *name, bool enable = true);
-	Rect32 _titleRect;
-	Rect32 _dragRect;
+	Common::Rect32 _titleRect;
+	Common::Rect32 _dragRect;
 	bool display(int offsetX = 0, int offsetY = 0) override;
 	UIWindow(BaseGame *inGame);
 	~UIWindow() override;

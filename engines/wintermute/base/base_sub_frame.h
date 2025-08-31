@@ -53,7 +53,7 @@ public:
 	~BaseSubFrame() override;
 	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
-	bool getBoundingRect(Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
+	bool getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
 	const char* getSurfaceFilename();
 
 	int32 _hotspotX;
@@ -61,11 +61,11 @@ public:
 	uint32 _alpha;
 	// These two setters and getters are rather useful, as they allow _rect to be lazily defined
 	// Thus we don't need to load the actual graphics before the rect is actually needed.
-	Rect32 &getRect();
-	void setRect(Rect32 rect);
+	Common::Rect32 &getRect();
+	void setRect(Common::Rect32 rect);
 private:
 	bool _wantsDefaultRect;
-	Rect32 _rect;
+	Common::Rect32 _rect;
 	char *_surfaceFilename;
 public:
 	bool _cKDefault;

@@ -945,7 +945,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_VIEWPORT: {
-			Rect32 rc;
+			Common::Rect32 rc;
 			parser.scanStr(params, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 			if (!_viewport) {
 				_viewport = new BaseViewport(_gameRef);
@@ -2855,7 +2855,7 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 	// viewport
 	if (_viewport) {
-		Rect32 *rc = _viewport->getRect();
+		Common::Rect32 *rc = _viewport->getRect();
 		buffer->putTextIndent(indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
 	}
 

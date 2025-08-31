@@ -48,7 +48,7 @@ public:
 	UIButton *_closeButton;
 	int32 _spacing;
 	int32 _scrollOffset;
-	Rect32 _itemsArea;
+	Common::Rect32 _itemsArea;
 	bool listen(BaseScriptHolder *param1, uint32 param2) override;
 	UIWindow *_window;
 	AdInventoryBox(BaseGame *inGame);

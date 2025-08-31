@@ -81,11 +81,11 @@ bool BaseRegion::pointInRegion(int x, int y) {
 		return false;
 	}
 
-	Point32 pt;
+	Common::Point32 pt;
 	pt.x = x;
 	pt.y = y;
 
-	Rect32 rect;
+	Common::Rect32 rect;
 	rect.left = x - 1;
 	rect.right = x + 2;
 	rect.top = y - 1;
@@ -491,7 +491,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseRegion::getBoundingRect(Rect32 *rect) {
+bool BaseRegion::getBoundingRect(Common::Rect32 *rect) {
 	if (_points.getSize() == 0) {
 		BasePlatform::setRectEmpty(rect);
 	} else {

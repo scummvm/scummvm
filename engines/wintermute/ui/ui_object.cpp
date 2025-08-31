@@ -126,7 +126,7 @@ void UIObject::setListener(BaseScriptHolder *object, BaseScriptHolder *listenerO
 
 //////////////////////////////////////////////////////////////////////////
 void UIObject::correctSize() {
-	Rect32 rect;
+	Common::Rect32 rect;
 
 	if (_width <= 0) {
 		if (_image) {

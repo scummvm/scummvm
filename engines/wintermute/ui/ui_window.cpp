@@ -1232,7 +1232,7 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	if (!BasePlatform::isRectEmpty(&_dragRect)) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
-			Rect32 dragRect = _dragRect;
+			Common::Rect32 dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
 			BasePlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);

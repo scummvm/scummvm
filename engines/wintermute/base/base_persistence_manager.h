@@ -30,7 +30,6 @@
 
 
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/base/gfx/xmath.h"
 #include "engines/savestate.h"
 #include "common/stream.h"
@@ -92,8 +91,8 @@ public:
 	bool transferDouble(const char *name, double *val);
 	bool transferBool(const char *name, bool *val);
 	bool transferByte(const char *name, byte *val);
-	bool transferRect32(const char *name, Rect32 *val);
-	bool transferPoint32(const char *name, Point32 *val);
+	bool transferRect32(const char *name, Common::Rect32 *val);
+	bool transferPoint32(const char *name, Common::Point32 *val);
 	bool transferConstChar(const char *name, const char **val);
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);

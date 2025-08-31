@@ -69,7 +69,7 @@ bool BaseSurface::isTransparentAt(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSurface::displayHalfTrans(int x, int y, Rect32 rect) {
+bool BaseSurface::displayHalfTrans(int x, int y, Common::Rect32 rect) {
 	return STATUS_FAILED;
 }
 

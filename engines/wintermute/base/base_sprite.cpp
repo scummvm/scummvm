@@ -463,15 +463,15 @@ BaseSurface *BaseSprite::getSurface() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSprite::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float scaleY) {
+bool BaseSprite::getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX, float scaleY) {
 	if (!rect) {
 		return false;
 	}
 
 	BasePlatform::setRectEmpty(rect);
 	for (int32 i = 0; i < _frames.getSize(); i++) {
-		Rect32 frame;
-		Rect32 temp;
+		Common::Rect32 frame;
+		Common::Rect32 temp;
 		BasePlatform::copyRect(&temp, rect);
 		_frames[i]->getBoundingRect(&frame, x, y, scaleX, scaleY);
 		BasePlatform::unionRect(rect, &temp, &frame);

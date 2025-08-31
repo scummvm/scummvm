@@ -446,7 +446,7 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::display() {
-	Rect32 rect = _responseArea;
+	Common::Rect32 rect = _responseArea;
 	if (_window) {
 		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		//_window->display();

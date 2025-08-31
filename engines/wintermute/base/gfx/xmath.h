@@ -31,7 +31,7 @@
 #ifndef WINTERMUTE_XMATH_H
 #define WINTERMUTE_XMATH_H
 
-#include "engines/wintermute/math/rect32.h"
+#include "common/scummsys.h"
 
 namespace Wintermute {
 
@@ -125,7 +125,7 @@ struct DXMatrix {
 		float _m[4][4];
 		float _m4x4[16];
 	};
-	
+
 	DXMatrix() {}
 	DXMatrix(const float *pf);
 

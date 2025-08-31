@@ -113,7 +113,7 @@ public:
 	bool _registrable;
 	bool _zoomable;
 	bool _shadowable;
-	Rect32 _rect;
+	Common::Rect32 _rect;
 	bool _rectSet;
 	int32 _iD;
 	bool _movable;

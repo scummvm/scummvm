@@ -252,7 +252,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 	row = c / _numColumns;
 	col = c % _numColumns;
 
-	Rect32 rect;
+	Common::Rect32 rect;
 	/* l t r b */
 	int tileWidth;
 	if (_wholeCell) {

@@ -34,7 +34,6 @@
 #include "engines/wintermute/ext/plugin_event.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/debugger.h"
 #include "common/events.h"
 #include "common/random.h"
@@ -81,7 +80,7 @@ public:
 
 	virtual bool onScriptShutdown(ScScript *script);
 
-	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Rect32 *viewport, bool *customViewport);
+	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Common::Rect32 *viewport, bool *customViewport);
 #ifdef ENABLE_WME3D
 	virtual uint32 getAmbientLightColor();
 	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
@@ -109,8 +108,8 @@ public:
 	bool _miniUpdateEnabled;
 	virtual void miniUpdate();
 
-	void getMousePos(Point32 *Pos);
-	Rect32 _mouseLockRect;
+	void getMousePos(Common::Point32 *Pos);
+	Common::Rect32 _mouseLockRect;
 
 	bool _shuttingDown;
 
@@ -297,7 +296,7 @@ public:
 	Timer _timerLive;
 
 	BaseObject *_capturedObject;
-	Point32 _mousePos;
+	Common::Point32 _mousePos;
 	bool validObject(BaseObject *object);
 	bool unregisterObject(BaseObject *object);
 	bool registerObject(BaseObject *object);
@@ -336,7 +335,7 @@ public:
 	virtual bool windowLoadHook(UIWindow *win, char **buf, char **params);
 	virtual bool windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name);
 	bool getCurrentViewportOffset(int *offsetX = nullptr, int *offsetY = nullptr) const;
-	bool getCurrentViewportRect(Rect32 *rect, bool *custom = nullptr) const;
+	bool getCurrentViewportRect(Common::Rect32 *rect, bool *custom = nullptr) const;
 	bool popViewport();
 	bool pushViewport(BaseViewport *Viewport);
 	bool setActiveObject(BaseObject *Obj);

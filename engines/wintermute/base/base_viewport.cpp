@@ -80,7 +80,7 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 
 
 //////////////////////////////////////////////////////////////////////////
-Rect32 *BaseViewport::getRect() {
+Common::Rect32 *BaseViewport::getRect() {
 	return &_rect;
 }
 
