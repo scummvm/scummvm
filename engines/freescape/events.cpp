@@ -100,7 +100,7 @@ bool EventManagerWrapper::pollEvent(Common::Event &event) {
 
 void EventManagerWrapper::purgeKeyboardEvents() {
 	_delegate->purgeKeyboardEvents();
-	_currentKeyDown.keycode = Common::KEYCODE_INVALID;
+	_currentKeyDown.reset();
 	_currentActionDown = kActionNone;
 	_keyRepeatTime = 0;
 }

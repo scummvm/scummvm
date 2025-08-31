@@ -280,7 +280,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		if (isC64())
 			_playerSid->startMusic();
 		else {
-			playSound(_soundIndexStart, true);
+			playSound(_soundIndexStart, true, _soundFxHandle);
 			// Start playing music, if any, in any supported format
 			playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme");
 		}
@@ -292,7 +292,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		// Show the number of completed areas
 		_areaMap[127]->_name.replace(0, 3, Common::String::format("%4d", _gameStateVars[32]));
 	} else
-		playSound(_soundIndexAreaChange, false);
+		playSound(_soundIndexAreaChange, false, _soundFxHandle);
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	clearTemporalMessages();
@@ -967,7 +967,7 @@ bool DrillerEngine::onScreenControls(Common::Point mouse) {
 void DrillerEngine::drawSensorShoot(Sensor *sensor) {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		playSound(_soundIndexHit, true);
+		playSound(_soundIndexHit, true, _soundFxHandle);
 	}
 
 	Math::Vector3d target;

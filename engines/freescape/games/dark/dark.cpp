@@ -510,8 +510,8 @@ bool DarkEngine::checkIfGameEnded() {
 		} else {
 			restoreECD(*_currentArea, index);
 			insertTemporaryMessage(_messagesList[1], _countdown - 2);
-			stopAllSounds();
-			playSound(_soundIndexRestoreECD, false);
+			stopAllSounds(_movementSoundHandle);
+			playSound(_soundIndexRestoreECD, false, _soundFxHandle);
 		}
 		_gameStateVars[kVariableDarkECD] = 0;
 
@@ -644,11 +644,11 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	_gameStateVars[0x1f] = 0;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		playSound(_soundIndexStart, true);
+		playSound(_soundIndexStart, true, _soundFxHandle);
 	} else if (areaID == _endArea && entranceID == _endEntrance) {
 		_pitch = 10;
 	} else {
-		playSound(_soundIndexAreaChange, false);
+		playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
@@ -861,7 +861,7 @@ void DarkEngine::drawIndicator(Graphics::Surface *surface, int xPosition, int yP
 void DarkEngine::drawSensorShoot(Sensor *sensor) {
 	if (_gameStateControl == kFreescapeGameStatePlaying) {
 		// Avoid playing new sounds, so the endgame can progress
-		playSound(_soundIndexHit, true);
+		playSound(_soundIndexHit, true, _soundFxHandle);
 	}
 
 	Math::Vector3d target;
@@ -951,7 +951,7 @@ void DarkEngine::drawInfoMenu() {
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
-					playSound(6, true);
+					playSound(6, true, _soundFxHandle);
 				} else if (event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;

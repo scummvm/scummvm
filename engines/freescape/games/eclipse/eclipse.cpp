@@ -35,7 +35,7 @@ namespace Freescape {
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	// These sounds can be overriden by the class of each platform
 	_soundIndexShoot = 8;
-	_soundIndexCollide = 4;
+	_soundIndexCollide = 1;
 	_soundIndexFall = 3;
 	_soundIndexClimb = 3;
 	_soundIndexMenu = -1;
@@ -178,8 +178,9 @@ bool EclipseEngine::checkIfGameEnded() {
 			if (isDOS())
 				playSoundFx(4, false);
 			else
-				playSound(_soundIndexStartFalling, false);
+				playSound(_soundIndexStartFalling, false, _soundFxHandle);
 
+			stopMovement();
 			// If shield is less than 11 after a fall, the game ends
 			if (_gameStateVars[k8bitVariableShield] > 15 + 11) {
 				_gameStateVars[k8bitVariableShield] -= 15;
@@ -221,7 +222,7 @@ void EclipseEngine::endGame() {
 
 	if (_endGameKeyPressed && (_countdown == 0 || _countdown == -3600)) {
 		if (isSpectrum())
-			playSound(5, true);
+			playSound(5, true, _soundFxHandle);
 		_gameStateControl = kFreescapeGameStateRestart;
 	}
 	_endGameKeyPressed = false;
@@ -312,7 +313,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
-		playSound(_soundIndexStart, true);
+		playSound(_soundIndexStart, true, _soundFxHandle);
 		if (isEclipse2()) {
 			_gameStateControl = kFreescapeGameStateStart;
 			_pitch = -10;
@@ -325,7 +326,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 		else
 			_pitch = 10;
 	} else {
-		playSound(_soundIndexAreaChange, false);
+		playSound(_soundIndexAreaChange, false, _soundFxHandle);
 	}
 
 	_gfx->_keyColor = 0;
@@ -453,7 +454,7 @@ void EclipseEngine::drawInfoMenu() {
 					saveGameDialog();
 					_gfx->setViewport(_viewArea);
 				} else if (isDOS() && event.customType == kActionToggleSound) {
-					playSound(_soundIndexMenu, true);
+					playSound(_soundIndexMenu, true, _soundFxHandle);
 				} else if ((isDOS() || isCPC() || isSpectrum()) && event.customType == kActionEscape) {
 					_forceEndGame = true;
 					cont = false;

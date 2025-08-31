@@ -107,7 +107,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_lastPosition = Math::Vector3d(0, 0, 0);
 	_hasFallen = false;
 	_isCollidingWithWall = false;
-	_isStepping = false;
+	_isSteppingUp = false;
 	_isFalling = false;
 	_maxFallingDistance = 64;
 	_velocity = Math::Vector3d(0, 0, 0);
@@ -945,32 +945,32 @@ bool FreescapeEngine::checkIfGameEnded() {
 		return false;
 
 	if (_gameStateVars[k8bitVariableShield] == 0) {
-		playSound(_soundIndexNoShield, true);
+		playSound(_soundIndexNoShield, true, _soundFxHandle);
 
 		if (!_noShieldMessage.empty())
 			insertTemporaryMessage(_noShieldMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_gameStateVars[k8bitVariableEnergy] == 0 && isDriller()) {
-		playSound(_soundIndexNoEnergy, true);
+		playSound(_soundIndexNoEnergy, true, _soundFxHandle);
 
 		if (!_noEnergyMessage.empty())
 			insertTemporaryMessage(_noEnergyMessage, _countdown - 2);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_hasFallen) {
 		_hasFallen = false;
-		playSound(_soundIndexFallen, false);
+		playSound(_soundIndexFallen, false, _soundFxHandle);
 
 		if (!_fallenMessage.empty())
 			insertTemporaryMessage(_fallenMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_countdown <= 0) {
-		playSound(_soundIndexTimeout, false);
+		playSound(_soundIndexTimeout, false, _soundFxHandle);
 
 		if (!_timeoutMessage.empty())
 			insertTemporaryMessage(_timeoutMessage, _countdown - 4);
 		_gameStateControl = kFreescapeGameStateEnd;
 	} else if (_playerWasCrushed) {
-		playSound(_soundIndexCrushed, true);
+		playSound(_soundIndexCrushed, true, _soundFxHandle);
 
 		_playerWasCrushed = false;
 		if (!_crushedMessage.empty())
@@ -980,7 +980,7 @@ bool FreescapeEngine::checkIfGameEnded() {
 		// so no need to wait for the end of the game
 		_endGameDelayTicks = 0;
 	} else if (_forceEndGame) {
-		playSound(_soundIndexForceEndGame, true);
+		playSound(_soundIndexForceEndGame, true, _soundFxHandle);
 
 		_forceEndGame = false;
 		if (!_forceEndGameMessage.empty())

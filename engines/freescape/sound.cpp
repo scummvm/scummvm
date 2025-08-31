@@ -299,7 +299,7 @@ void FreescapeEngine::loadSpeakerFxDOS(Common::SeekableReadStream *file, int off
 	}
 }
 
-void FreescapeEngine::playSound(int index, bool sync) {
+void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle) {
 	if (index < 0) {
 		debugC(1, kFreescapeDebugMedia, "Sound not specified");
 		return;
@@ -319,7 +319,7 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	if (isDOS()) {
 		soundSpeakerFx *speakerFxInfo = _soundsSpeakerFx[index];
 		if (speakerFxInfo)
-			playSoundDOS(speakerFxInfo, sync);
+			playSoundDOS(speakerFxInfo, sync, handle);
 		else
 			debugC(1, kFreescapeDebugMedia, "WARNING: Sound %d is not available", index);
 
@@ -416,7 +416,6 @@ void FreescapeEngine::playMusic(const Common::Path &filename) {
 		_mixer->stopHandle(_musicHandle);
 		Audio::LoopingAudioStream *loop = new Audio::LoopingAudioStream(stream, 0);
 		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, loop);
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxChannelVolume / 10);
 	}
 }
 
@@ -448,9 +447,9 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 	}
 }
 
-void FreescapeEngine::stopAllSounds() {
+void FreescapeEngine::stopAllSounds(Audio::SoundHandle &handle) {
 	_speaker->stop();
-	_mixer->stopHandle(_soundFxHandle);
+	_mixer->stopHandle(handle);
 }
 
 void FreescapeEngine::waitForSounds() {
@@ -533,7 +532,7 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
 }
 
-void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {
+void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle) {
 	uint freq = speakerFxInfo->frequencyStart;
 
 	for (int i = 0; i < speakerFxInfo->repetitions; i++) {
@@ -545,8 +544,8 @@ void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync) {
 		}
 	}
 
-	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
+	_mixer->stopHandle(handle);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, _speaker, -1, kFreescapeDefaultVolume / 2, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {

@@ -218,7 +218,7 @@ void FreescapeEngine::shoot() {
 	if (_shootingFrames > 0) // No more than one shot at a time
 		return;
 
-	playSound(_soundIndexShoot, false);
+	playSound(_soundIndexShoot, false, _movementSoundHandle);
 	g_system->delayMillis(2);
 	_shootingFrames = 10;
 
@@ -471,15 +471,8 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 	_gotoExecuted = false;
 	bool executed = runCollisionConditions(lastPosition, newPosition);
-	if (executed) {
-		_moveForward = false;
-		_moveBackward = false;
-		_strafeLeft = false;
-		_strafeRight = false;
-		_moveUp = false;
-		_moveDown = false;
-		_eventManager->purgeKeyboardEvents();
-	}
+	if (executed)
+		stopMovement();
 
 	if (_gotoExecuted) {
 		_gotoExecuted = false;
@@ -492,11 +485,15 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 			if (!executed)
 				setGameBit(31);
-			playSound(_soundIndexClimb, false);
+			playSound(_soundIndexCollide, false, _movementSoundHandle);
 		}
 		_position = newPosition;
 		return;
 	}
+
+	bool isSteppingUp = false;
+	bool isSteppingDown = false;
+	bool isCollidingWithWall = false;
 
 	// If the player has not moved, try to step up
 	if ((lastPosition - newPosition).length() < 1) { // If the player has not moved
@@ -509,19 +506,13 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 
 		newPosition = _currentArea->resolveCollisions(lastPosition, newPosition, _playerHeight);
 		if (_lastPosition.y() < newPosition.y())
-			playSound(_soundIndexClimb, false);
-	}
+			isSteppingUp = true;
 
-	if ((lastPosition - newPosition).length() < 1) { // Something is blocking the player
 		if (!executed)
 			setGameBit(31);
 
-		debug("Player blocked at position %f %f %f playing collision sound!", newPosition.x(), newPosition.y(), newPosition.z());
-		if (!_isCollidingWithWall)
-			playSound(_soundIndexCollide, false);
-		_isCollidingWithWall = true;
-	} else
-		_isCollidingWithWall = false;
+		isCollidingWithWall = true;
+	}
 
 	// Check for falling
 	lastPosition = newPosition;
@@ -541,15 +532,44 @@ void FreescapeEngine::resolveCollisions(Math::Vector3d const position) {
 		_endGameDelayTicks = 60 * 5;
 		if (isEclipse()) // No need for an variable index, since these are special types of sound
 			playSoundFx(0, true);
+
+		if (_hasFallen)
+			stopMovement();
 	}
 
 	if (!_hasFallen && fallen > 0) {
-		playSound(_soundIndexFall, false);
-
+		isSteppingDown = true;
 		// Position in Y was changed, let's re-run effects
-		runCollisionConditions(lastPosition, newPosition);
+		if (runCollisionConditions(lastPosition, newPosition))
+			stopMovement();
 	}
+
+
+	if (isSteppingUp)  {
+		debug("Stepping up sound!");
+		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
+			playSound(_soundIndexClimb, false, _movementSoundHandle);
+	} else if (isSteppingDown) {
+		debug("Stepping down sound!");
+		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
+			playSound(_soundIndexFall, false, _movementSoundHandle);
+	} else if (isCollidingWithWall) {
+		debug("Colliding with wall sound!");
+		if (!_mixer->isSoundHandleActive(_movementSoundHandle))
+			playSound(_soundIndexCollide, false, _movementSoundHandle);
+	}
+
 	_position = newPosition;
+}
+
+void FreescapeEngine::stopMovement() {
+	_moveForward = false;
+	_moveBackward = false;
+	_strafeLeft = false;
+	_strafeRight = false;
+	_moveUp = false;
+	_moveDown = false;
+	_eventManager->purgeKeyboardEvents();
 }
 
 bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, Math::Vector3d const newPosition) {
@@ -568,7 +588,7 @@ bool FreescapeEngine::runCollisionConditions(Math::Vector3d const lastPosition, 
 
 	if (_gotoExecuted) {
 		executeMovementConditions();
-		return collided;
+		return true;
 	}
 
 	Math::Vector3d direction = newPosition - lastPosition;

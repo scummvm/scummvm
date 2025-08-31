@@ -330,17 +330,17 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
 		if (getGameBit(31))
-			playSound(13, true);
+			playSound(13, true, _soundFxHandle);
 		else
-			playSound(_soundIndexStart, false);
+			playSound(_soundIndexStart, false, _soundFxHandle);
 	} else if (areaID == _endArea && entranceID == _endEntrance) {
 		_pitch = -85;
 	} else {
 		// If escaped, play a different sound
 		if (getGameBit(31))
-			playSound(13, true);
+			playSound(13, true, _soundFxHandle);
 		else
-			playSound(_soundIndexAreaChange, true);
+			playSound(_soundIndexAreaChange, true, _soundFxHandle);
 	}
 
 	debugC(1, kFreescapeDebugMove, "starting player position: %f, %f, %f", _position.x(), _position.y(), _position.z());

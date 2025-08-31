@@ -349,6 +349,7 @@ public:
 	EventManagerWrapper *_eventManager;
 	void processInput();
 	void resetInput();
+	void stopMovement();
 	void generateDemoInput();
 	virtual void pressedKey(const int keycode);
 	virtual void releasedKey(const int keycode);
@@ -372,7 +373,8 @@ public:
 	bool tryStepDown(Math::Vector3d currentPosition);
 	bool _hasFallen;
 	bool _isCollidingWithWall;
-	bool _isStepping;
+	bool _isSteppingUp;
+	bool _isSteppingDown;
 	bool _isFalling;
 	int _maxFallingDistance;
 	int _maxShield;
@@ -463,15 +465,16 @@ public:
 	// Sound
 	Audio::SoundHandle _soundFxHandle;
 	Audio::SoundHandle _musicHandle;
+	Audio::SoundHandle _movementSoundHandle;
 	Freescape::SizedPCSpeaker *_speaker;
 
 	bool _syncSound;
 	bool _firstSound;
 	bool _usePrerecordedSounds;
 	void waitForSounds();
-	void stopAllSounds();
+	void stopAllSounds(Audio::SoundHandle &handle);
 	bool isPlayingSound();
-	void playSound(int index, bool sync);
+	void playSound(int index, bool sync, Audio::SoundHandle &handle);
 	void playWav(const Common::Path &filename);
 	void playMusic(const Common::Path &filename);
 	void queueSoundConst(double hzFreq, int duration);
@@ -479,7 +482,7 @@ public:
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	uint16 playSoundDOSSpeaker(uint16 startFrequency, soundSpeakerFx *speakerFxInfo);
-	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync);
+	void playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle);
 
 	virtual void playSoundFx(int index, bool sync);
 	virtual void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
