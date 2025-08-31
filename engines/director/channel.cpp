@@ -766,7 +766,7 @@ Common::Array<Channel> *Channel::getSubChannels() {
 		if (_sprite->_cast->_type == kCastFilmLoop)
 			return ((FilmLoopCastMember *)_sprite->_cast)->getSubChannels(bbox, _filmLoopFrame);
 		else if (_sprite->_cast->_type == kCastMovie)
-			return ((MovieCastMember *)_sprite->_cast)->getSubChannels(bbox, _filmLoopFrame);
+			return ((MovieCastMember *)_sprite->_cast)->getSubChannels(bbox);
 	}
 	warning("Channel doesn't have any sub-channels");
 	return nullptr;
@@ -777,7 +777,7 @@ CastMemberID Channel::getSubChannelSound1() {
 		if (_sprite->_cast->_type == kCastFilmLoop)
 			return ((FilmLoopCastMember *)_sprite->_cast)->getSubChannelSound1(_filmLoopFrame);
 		else if (_sprite->_cast->_type == kCastMovie)
-			return ((MovieCastMember *)_sprite->_cast)->getSubChannelSound2(_filmLoopFrame);
+			return ((MovieCastMember *)_sprite->_cast)->getSubChannelSound2();
 	}
 	warning("Channel doesn't have any sub-channels");
 	return CastMemberID();
@@ -788,7 +788,7 @@ CastMemberID Channel::getSubChannelSound2() {
 		if (_sprite->_cast->_type == kCastFilmLoop)
 			return ((FilmLoopCastMember *)_sprite->_cast)->getSubChannelSound1(_filmLoopFrame);
 		else if (_sprite->_cast->_type == kCastMovie)
-			return ((MovieCastMember *)_sprite->_cast)->getSubChannelSound2(_filmLoopFrame);
+			return ((MovieCastMember *)_sprite->_cast)->getSubChannelSound2();
 	}
 	warning("Channel doesn't have any sub-channels");
 	return CastMemberID();

@@ -69,7 +69,6 @@ public:
 	virtual void updateWidget(Graphics::MacWidget *widget, Channel *channel) {}
 	virtual void updateFromWidget(Graphics::MacWidget *widget, bool spriteEditable) {}
 	virtual Common::Rect getInitialRect() { return _initialRect; }
-	virtual Common::Array<Channel> *getSubChannels(Common::Rect &bbox, Channel *channel) { return nullptr; }
 
 	virtual void setColors(uint32 *fgcolor, uint32 *bgcolor) { return; }
 	virtual uint32 getForeColor() { return 0; }

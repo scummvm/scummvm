@@ -54,7 +54,10 @@ public:
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new MovieCastMember(cast, castId, *this)); }
 
-	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, uint frame) override;
+	Common::Array<Channel> *getSubChannels(Common::Rect &bbox);
+	CastMemberID getSubChannelSound1();
+	CastMemberID getSubChannelSound2();
+
 	void load() override;
 
 	bool isModified();

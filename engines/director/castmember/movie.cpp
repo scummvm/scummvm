@@ -105,7 +105,7 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &sou
 	_enableScripts = source._enableScripts;
 }
 
-Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint frame) {
+Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox) {
 	Common::Rect widgetRect(bbox.width() ? bbox.width() : _initialRect.width(), bbox.height() ? bbox.height() : _initialRect.height());
 
 	if (_needsReload) {
@@ -161,7 +161,16 @@ Common::Array<Channel> *MovieCastMember::getSubChannels(Common::Rect &bbox, uint
 	}
 
 	return &_subchannels;
-	return FilmLoopCastMember::getSubChannels(bbox, frame);
+}
+
+CastMemberID MovieCastMember::getSubChannelSound1() {
+	warning("STUB: MovieCastMember:: getSubChannelSound1(): Not implemented");
+	return CastMemberID();
+}
+
+CastMemberID MovieCastMember::getSubChannelSound2() {
+	warning("STUB: MovieCastMember:: getSubChannelSound2(): Not implemented");
+	return CastMemberID();
 }
 
 void MovieCastMember::load() {
