@@ -54,9 +54,17 @@ public:
 private:
 	Common::U32String _plainText;
 	Graphics::PixelFormat _pf32;
+	Picture *_picture;
+
+	// _initialRect
+	// _boundingRect
+	byte _antialiasFlag;
+	byte _cropFlags;
+	uint16 _scrollPos;
+	uint16 _antialiasFontSize;  // Seems to be always 12
+	uint16 _displayHeight;
 	uint32 _foreColor;
 	uint32 _bgColor;
-	Picture *_picture;
 };
 
 } // End of namespace Director

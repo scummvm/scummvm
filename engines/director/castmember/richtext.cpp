@@ -40,7 +40,7 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 
 	_pf32 = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 
-	if (version >= kFileVer500 && version < kFileVer600) {
+	if (version >= kFileVer500 && version < kFileVer1100) {
 		if (debugChannelSet(5, kDebugLoading)) {
 			debugC(5, kDebugLoading, "RichTextCastMember():");
 			stream.hexdump(stream.size());
@@ -48,9 +48,14 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 
 		_initialRect = Movie::readRect(stream);
 		_boundingRect = Movie::readRect(stream);
-		stream.seek(8, SEEK_CUR);
+		_antialiasFlag = stream.readByte();
+		_cropFlags = stream.readByte();
+		_scrollPos = stream.readUint16BE();
+		_antialiasFontSize = stream.readUint16BE();
+		_displayHeight = stream.readUint16BE();
+
 		uint8 r = 0, g = 0, b = 0;
-		stream.readByte();
+		stream.readByte(); // skip one byte
 		r = stream.readByte();
 		g = stream.readByte();
 		b = stream.readByte();
@@ -61,7 +66,7 @@ RichTextCastMember::RichTextCastMember(Cast *cast, uint16 castId, Common::Seekab
 		b = (stream.readUint16BE() >> 8);
 		_bgColor = _pf32.RGBToColor(r, g, b);
 	} else {
-		warning("RichTextCastMember(): >D5 isn't handled");
+		warning("STUB: RichTextCastMember: RTE not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 
 	_type = kCastRichText;
