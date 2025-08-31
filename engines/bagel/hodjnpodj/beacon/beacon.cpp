@@ -76,7 +76,7 @@ UINT        nSlice = START_ENTRY;
 int         nLastPick = 0;
 
 int         m_nSweepCount = 0;
-int         m_nTotalSquares = (NUM_COLUMNS * NUM_ROWS) -
+constexpr int         m_nTotalSquares = (NUM_COLUMNS * NUM_ROWS) -
                               ((START_WIDTH / GRID_WIDTH) * (START_HEIGHT / GRID_HEIGHT));
 int         m_nRemoved = 0;                             // Count blocks removed
 UINT        m_nSweeps = MAX_SWEEPS;
@@ -114,6 +114,7 @@ CMainWindow::CMainWindow() {
 	int     i;
 
 	BeginWaitCursor();
+	initStatics();
 
 	// Define a special window class which traps double-clicks, is byte aligned
 	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
@@ -258,6 +259,36 @@ CMainWindow::CMainWindow() {
 
 } //End of CMainWindow
 
+void CMainWindow::initStatics() {
+	m_pScrollButton = nullptr;
+	pScrollUp = pScrollDown = nullptr;
+	pOldPal1 = pOldPal2 = pGamePalette = nullptr;
+	pBeaconBitmap = pBackBitmap = pOldBmp1 = nullptr;
+	pArtBitmap = pOldBmp2 = nullptr;
+
+	pArtDC = pBackDC = nullptr;
+	m_pScoreTxt = m_pSweepTxt = nullptr;
+
+	bSuccess = FALSE;
+	m_bIgnoreScrollClick = FALSE;
+	bChanged = FALSE;
+	bPlaying = FALSE;
+	bNewGame = FALSE;
+
+	nCurrentIndex = BUTTON_ENTRY;
+	nNextIndex = BUTTON_ENTRY;
+	nSlice = START_ENTRY;
+	nLastPick = 0;
+	m_nSweepCount = 0;
+	m_nRemoved = 0;
+	m_nSweeps = MAX_SWEEPS;
+	m_nSpeed = MAX_SPEED;
+	tempSweeps = 100;
+	tempSpeed = MAX_SPEED;
+	m_bAutomatic = FALSE;
+	m_bChangeAtTwelve = FALSE;
+	m_Score = 0;
+}
 
 // OnPaint:
 // This is called whenever Windows sends a WM_PAINT message.

@@ -124,6 +124,8 @@ private:
 		UINT    nColorIndex;
 	} colorBlock[NUM_BUTTONS];
 
+	void initStatics();
+
 public:
 	CMainWindow();
 	void NewGame();
