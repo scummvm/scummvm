@@ -306,7 +306,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 	stream.seek(offset);
 	uint16 count = stream.readUint16();
 
-	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries", count);
+	debugC(3, kDebugLoading, "Movie::loadInfoEntries(): InfoEntry: %d entries, unk1: 0x%08x, unk2: 0x%08x flags: 0x%08x", count, res.unk1, res.unk2, res.flags);
 
 	if (count == 0)
 		return res;
