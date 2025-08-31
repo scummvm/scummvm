@@ -1037,7 +1037,10 @@ void Cast::writeCastInfo(Common::SeekableWriteStream *writeStream, uint32 castId
 
 		case 12:
 			castInfo.strings[12].data = (byte *)malloc(castInfo.strings[12].len);
-			memcpy(castInfo.strings[12].data, ci->xtraRect.data(), castInfo.strings[12].len);
+			WRITE_BE_INT32(castInfo.strings[12].data, ci->xtraRect.top);
+			WRITE_BE_INT32(castInfo.strings[12].data + 4, ci->xtraRect.left);
+			WRITE_BE_INT32(castInfo.strings[12].data + 8, ci->xtraRect.bottom);
+			WRITE_BE_INT32(castInfo.strings[12].data + 12, ci->xtraRect.right);
 			break;
 
 		case 13:
@@ -1230,7 +1233,7 @@ uint32 Cast::getCastInfoStringLength(uint32 stringIndex, CastMemberInfo *ci) {
 		return ci->bpTable.size();
 
 	case 12:
-		return ci->xtraRect.size();
+		return 16;
 
 	case 13:
 		return 8;
@@ -1956,7 +1959,10 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		if (castInfo.strings[12].len) {
 			warning("Cast::loadCastInfo(): BUILDBOT: xtraRect for castid %d", id);
 			Common::hexdump(castInfo.strings[12].data, castInfo.strings[12].len);
-			ci->xtraRect = Common::Array<byte>(castInfo.strings[12].data, castInfo.strings[12].len);
+			ci->xtraRect.top = READ_BE_INT32(castInfo.strings[12].data);
+			ci->xtraRect.left = READ_BE_INT32(castInfo.strings[12].data + 4);
+			ci->xtraRect.bottom = READ_BE_INT32(castInfo.strings[12].data + 8);
+			ci->xtraRect.right = READ_BE_INT32(castInfo.strings[12].data + 12);
 
 			dumpS = "xtraRect: <data> " + dumpS;
 		}

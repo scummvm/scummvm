@@ -182,7 +182,7 @@ struct CastMemberInfo {
 	byte xtraGuid[16];			// 9
 	Common::String xtraDisplayName;
 	Common::Array<byte> bpTable; //       (removed on protecting)
-	Common::Array<byte> xtraRect;		// Rect32
+	Common::Rect32 xtraRect;		// Rect32
 	Common::Rect scriptRect;	//        (removed on protecting)
 	Common::Array<byte> dvWindowInfo; //  (removed on protecting)
 	byte guid[16];				// 15   Seems to be a GUID
