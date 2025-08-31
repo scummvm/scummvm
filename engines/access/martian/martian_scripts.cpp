@@ -92,7 +92,6 @@ void MartianScripts::cmdSpecial0() {
 	_vm->_events->showCursor();
 	_vm->_midi->stopSong();
 	_vm->_midi->freeMusic();
-	//warning("TODO: Pop Midi?");
 }
 
 void MartianScripts::cmdSpecial1(int param1, int param2) {

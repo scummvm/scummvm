@@ -211,6 +211,9 @@ void Room::doRoom() {
 				return;
 			} else if (_function == FN_RELOAD) {
 				reloadRoom1();
+				// WORKAROUND: This doesn't seem to restore the palette correctly?
+				// This is only ever used in the abduction scene (special 0)
+				_vm->_screen->setPalette();
 				reloadFlag = true;
 				break;
 			} else if (_function == FN_BREAK) {
