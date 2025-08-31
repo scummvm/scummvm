@@ -330,9 +330,11 @@ public:
  * It removes the virtual call overhead for reading bytes from a memory buffer,
  * and allows directly inlining this access.
  *
+ * FIXME:
  * The code duplication with MemoryReadStream is not ideal.
  * It might be possible to avoid this by making this a final subclass of
- * MemoryReadStream, but that is a C++11 feature.
+ * MemoryReadStream. Deviating from it would also allow faster aligned memory
+ * loads.
  */
 class BitStreamMemoryStream {
 private:
