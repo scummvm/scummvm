@@ -244,7 +244,7 @@ int Sprite::labVal(Action snq, int lab) {
 			return i;
 	} else {
 		char tmpStr[kLineMax + 1];
-		STATIC_ASSERT(sizeof(tmpStr) >= kPathMax, mergeExt_expects_kPathMax_buffer);
+		static_assert(sizeof(tmpStr) >= kPathMax, "mergeExt expects kPathMax buffer");
 		_vm->mergeExt(tmpStr, _file, kSprExt);
 
 		if (_vm->_resman->exist(tmpStr)) { // sprite description file exist
