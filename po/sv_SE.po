@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-08-31 15:09+0000\n"
-"PO-Revision-Date: 2025-08-25 13:07+0000\n"
+"PO-Revision-Date: 2025-09-01 01:36+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -9845,7 +9845,6 @@ msgid "Skip intro"
 msgstr "Hoppa över intro"
 
 #: engines/lab/metaengine.cpp:216
-#, fuzzy
 msgid "Interact with object with chosen action"
 msgstr "Interagera med objektet med vald åtgärd"
 
@@ -9866,7 +9865,6 @@ msgid "Close door or object"
 msgstr "Stäng dörr eller objekt"
 
 #: engines/lab/metaengine.cpp:245
-#, fuzzy
 msgid "Look at object close-up"
 msgstr "Titta på objektet i närbild"
 
@@ -9907,8 +9905,6 @@ msgid "Previous inventory item"
 msgstr "Föregående inventarieobjekt"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Next Inventory Item"
 msgid "Next inventory item"
 msgstr "Nästa objekt i inventariet"
 
@@ -12986,16 +12982,12 @@ msgid "Files keymappings"
 msgstr "PET-tangentmappningar"
 
 #: engines/sherlock/metaengine.cpp:340
-#, fuzzy
-#| msgid "Minigame keymappings"
 msgid "Settings keymappings"
-msgstr "Tangentmappningar för minispel"
+msgstr "Tangentmappningar för inställningar"
 
 #: engines/sherlock/metaengine.cpp:341 engines/sherlock/metaengine.cpp:774
-#, fuzzy
-#| msgid "Movement keymappings"
 msgid "Movie keymappings"
-msgstr "Tangentmappningar för förflyttning"
+msgstr "Tangentmappningar för filmer"
 
 #: engines/sherlock/metaengine.cpp:349
 msgid "Skip / Deselect verb"
@@ -13101,16 +13093,12 @@ msgid "Change fade mode"
 msgstr "Ändra uttoningsläge"
 
 #: engines/sherlock/metaengine.cpp:776
-#, fuzzy
-#| msgid "Journal keymappings"
 msgid "Journal search keymappings"
-msgstr "Tangentmappningar för dagbok"
+msgstr "Tangentmappningar för dagbokssökning"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "Tangentmappningar för meny"
+msgstr "Tangentmappningar för menyrullning"
 
 #: engines/sherlock/metaengine.cpp:780
 msgid "save / load menu keymappings"
@@ -13129,16 +13117,12 @@ msgid "Foolscap puzzle keymappings"
 msgstr "Escape-tangentmappningar"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Options menu keymappings"
-msgstr "Kortkommandon för huvudmeny"
+msgstr "Kortkommandon för alternativmeny"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Password entry keymappings"
-msgstr "Kortkommandon för pausmeny"
+msgstr "Kortkommandon för lösenordsinmatning"
 
 #: engines/sherlock/metaengine.cpp:787
 #, fuzzy
@@ -13176,12 +13160,10 @@ msgid "Skip prolog"
 msgstr "Hoppa över prolog"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
-#, fuzzy
 msgid "Change selected option to the left"
 msgstr "Ändra valt alternativ till vänster"
 
 #: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
-#, fuzzy
 msgid "Change selected option to the right"
 msgstr "Ändra valt alternativ till höger"
 
