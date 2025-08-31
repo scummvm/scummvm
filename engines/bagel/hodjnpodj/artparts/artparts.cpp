@@ -1257,30 +1257,17 @@ void CMainWindow::DrawPart(CPoint Src, CPoint Dst, int nWidth, int nHeight) {
 BOOL CMainWindow::CopyPaletteContents(CPalette *pSource, CPalette *pDest) {
     ASSERT(pSource && pDest);
 
-    // Get the number of entries in the source palette
-    UINT nEntries = pSource->GetEntryCount();
-    if (nEntries == 0)
-        return FALSE;
+	// Get the number of entries in the source palette
+	UINT nEntries = pSource->GetEntryCount();
+	if (nEntries == 0)
+		return FALSE;
 
-    // Allocate memory for the palette entries
-    LOGPALETTE *pLogPal = (LOGPALETTE*)malloc(sizeof(LOGPALETTE) + sizeof(PALETTEENTRY) * nEntries);
-    if (!pLogPal)
-        return FALSE;
+	// Use C++-isms to copy palette contents from src to dest
+	Graphics::Palette *src = pSource->_palette;
+	Graphics::Palette *dest = pDest->_palette;
+	*dest = *src;
 
-    pLogPal->palVersion = 0x300;
-    pLogPal->palNumEntries = (WORD)nEntries;
-
-    // Fill in the PALETTEENTRY array
-    pSource->GetPaletteEntries(0, nEntries, pLogPal->palPalEntry);
-
-    // Delete old HPALETTE inside pDest
-    pDest->DeleteObject();
-
-    // Create new palette from entries
-    BOOL bResult = pDest->CreatePalette(pLogPal);
-
-    free(pLogPal);
-    return bResult;
+	return TRUE;
 }
 
 /*****************************************************************
