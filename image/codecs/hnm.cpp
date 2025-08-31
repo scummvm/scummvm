@@ -542,12 +542,12 @@ static const int8 S4[] = {
 	-8, -7, -6, -5, -4, -3, -2, -1
 };
 
-STATIC_ASSERT(ARRAYSIZE(LUMA_QUANT_TABLE) == 64, "invalid luma table size");
-STATIC_ASSERT(ARRAYSIZE(CHROMA_QUANT_TABLE) == 64, "invalid chromaa table size");
-STATIC_ASSERT(ARRAYSIZE(AAN_FACTORS) == 64, "invalid AAN factors table size");
-STATIC_ASSERT(ARRAYSIZE(ZIGZAG) == 64, "invalid zigzag table size");
-STATIC_ASSERT(ARRAYSIZE(S2) == 16 * 2, "invalid S2 table size");
-STATIC_ASSERT(ARRAYSIZE(S4) == 16, "invalid S4 table size");
+static_assert(ARRAYSIZE(LUMA_QUANT_TABLE) == 64, "invalid luma table size");
+static_assert(ARRAYSIZE(CHROMA_QUANT_TABLE) == 64, "invalid chromaa table size");
+static_assert(ARRAYSIZE(AAN_FACTORS) == 64, "invalid AAN factors table size");
+static_assert(ARRAYSIZE(ZIGZAG) == 64, "invalid zigzag table size");
+static_assert(ARRAYSIZE(S2) == 16 * 2, "invalid S2 table size");
+static_assert(ARRAYSIZE(S4) == 16, "invalid S4 table size");
 
 static const int HEADER_SIZE = 6 * sizeof(uint32);
 

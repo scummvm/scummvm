@@ -130,21 +130,6 @@
 	#include <limits>
 #endif
 
-#ifndef STATIC_ASSERT
-	/**
-	 * Generates a compile-time assertion.
-	 *
-	 * @param expression An expression that can be evaluated at compile time.
-	 * @param message An underscore-delimited message to be presented at compile
-	 * time if the expression evaluates to false.
-	 *
-	 * TODO: Now that we require C++11, all uses of this macro could just use
-	 * static_assert().
-	 */
-	#define STATIC_ASSERT(expression, message) \
-		static_assert((expression), #message)
-#endif
-
 // The following math constants are usually defined by the system math.h header, but
 // they are not part of the ANSI C++ standards and so can NOT be relied upon to be
 // present i.e. when -std=c++11 is passed to GCC, enabling strict ANSI compliance.
