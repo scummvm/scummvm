@@ -1759,7 +1759,7 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 		int32 ver = (int32)_framesStream->readUint32();
 		uint32 listStart = _framesStream->readUint32();
 
-		debugC(1, kDebugLoading, "Score::loadFrames(): len: %d, version: %d, listStart: 0x%x",
+		debugC(1, kDebugLoading, "Score::loadFrames(): D6+ len: %d, version: %d, listStart: 0x%x",
 			_framesStreamSize, ver, listStart);
 
 		_framesStream->seek(listStart);

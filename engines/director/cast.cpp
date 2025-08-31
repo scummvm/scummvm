@@ -1893,16 +1893,16 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		} else {
 			ci->imageQuality = READ_BE_INT32(castInfo.strings[21].data);
 
-			dumpS = Common::String::format("imageQuality: %d (0x%08X) ", ci->imageQuality, ci->imageQuality) + dumpS;
+			dumpS = Common::String::format("imageQuality: %d (0x%08X), ", ci->imageQuality, ci->imageQuality) + dumpS;
 		}
 		// fallthrough
 	case 20:
 		ci->comments = castInfo.strings[20].readString();
-		dumpS = Common::String::format("comments: '%s' ", ci->comments.c_str()) + dumpS;
+		dumpS = Common::String::format("comments: '%s', ", ci->comments.c_str()) + dumpS;
 		// fallthrough
 	case 19:
 		ci->modifiedBy = castInfo.strings[19].readString();
-		dumpS = Common::String::format("modifiedBy: '%s' ", ci->modifiedBy.c_str()) + dumpS;
+		dumpS = Common::String::format("modifiedBy: '%s', ", ci->modifiedBy.c_str()) + dumpS;
 		// fallthrough
 	case 18:
 		if (castInfo.strings[18].len != 4) {
@@ -1910,7 +1910,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			Common::hexdump(castInfo.strings[18].data, castInfo.strings[18].len);
 		} else {
 			ci->modifiedTime = READ_BE_INT32(castInfo.strings[18].data);
-			dumpS = Common::String::format("modifiedTime: %d (0x%08X) ", ci->modifiedTime, ci->modifiedTime) + dumpS;
+			dumpS = Common::String::format("modifiedTime: %d (0x%08X), ", ci->modifiedTime, ci->modifiedTime) + dumpS;
 		}
 		// fallthrough
 	case 17:
@@ -1919,12 +1919,12 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			Common::hexdump(castInfo.strings[17].data, castInfo.strings[17].len);
 		} else {
 			ci->creationTime = READ_BE_INT32(castInfo.strings[17].data);
-			dumpS = Common::String::format("creationTime: %d (0x%08X) ", ci->creationTime, ci->creationTime) + dumpS;
+			dumpS = Common::String::format("creationTime: %d (0x%08X), ", ci->creationTime, ci->creationTime) + dumpS;
 		}
 		// fallthrough
 	case 16:
 		ci->mediaFormatName = castInfo.strings[2].readString();
-		dumpS = Common::String::format("mediaFormatName: '%s' ", ci->mediaFormatName.c_str()) + dumpS;
+		dumpS = Common::String::format("mediaFormatName: '%s', ", ci->mediaFormatName.c_str()) + dumpS;
 		// fallthrough
 	case 15:
 		if (castInfo.strings[15].len) {
@@ -1933,7 +1933,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 				Common::hexdump(castInfo.strings[15].data, castInfo.strings[15].len);
 			} else {
 				memcpy(ci->guid, castInfo.strings[15].data, 16);
-				dumpS = "guid: <data> " + dumpS;
+				dumpS = "guid: <data>, " + dumpS;
 			}
 		}
 		// fallthrough
@@ -1943,7 +1943,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			Common::hexdump(castInfo.strings[14].data, castInfo.strings[14].len);
 			ci->dvWindowInfo = Common::Array<byte>(castInfo.strings[14].data, castInfo.strings[14].len);
 
-			dumpS = "dvWindowInfo: <data> " + dumpS;
+			dumpS = "dvWindowInfo: <data>, " + dumpS;
 		}
 		// fallthrough
 	case 13:
@@ -1952,7 +1952,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			ci->scriptRect = Movie::readRect(*entryStream);
 			delete entryStream;
 
-			dumpS = Common::String::format("scriptRect: [%d,%d,%d,%d] ", ci->scriptRect.left, ci->scriptRect.top, ci->scriptRect.right, ci->scriptRect.bottom) + dumpS;
+			dumpS = Common::String::format("scriptRect: [%d,%d,%d,%d], ", ci->scriptRect.left, ci->scriptRect.top, ci->scriptRect.right, ci->scriptRect.bottom) + dumpS;
 		}
 		// fallthrough
 	case 12:
@@ -1964,7 +1964,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			ci->xtraRect.bottom = READ_BE_INT32(castInfo.strings[12].data + 8);
 			ci->xtraRect.right = READ_BE_INT32(castInfo.strings[12].data + 12);
 
-			dumpS = "xtraRect: <data> " + dumpS;
+			dumpS = "xtraRect: <data>, " + dumpS;
 		}
 		// fallthrough
 	case 11:
@@ -1972,14 +1972,14 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			warning("Cast::loadCastInfo(): BUILDBOT: bptable for castid %d", id);
 			Common::hexdump(castInfo.strings[11].data, castInfo.strings[11].len);
 			ci->bpTable = Common::Array<byte>(castInfo.strings[11].data, castInfo.strings[11].len);
-			dumpS = "bpTable: <data> " + dumpS;
+			dumpS = "bpTable: <data>, " + dumpS;
 		}
 		// fallthrough
 	case 10:
 		if (castInfo.strings[10].len) {
 			Common::hexdump(castInfo.strings[10].data, castInfo.strings[10].len);
 			ci->xtraDisplayName = castInfo.strings[10].readString(false); // C string
-			dumpS = Common::String::format("xtraDisplayName: '%s' ", ci->xtraDisplayName.c_str()) + dumpS;
+			dumpS = Common::String::format("xtraDisplayName: '%s', ", ci->xtraDisplayName.c_str()) + dumpS;
 		}
 		// fallthrough
 	case 9:
@@ -1989,7 +1989,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 				Common::hexdump(castInfo.strings[9].data, castInfo.strings[9].len);
 			} else {
 				memcpy(ci->xtraGuid, castInfo.strings[9].data, 16);
-				dumpS = "xtraGUID: <data> " + dumpS;
+				dumpS = "xtraGUID: <data>, " + dumpS;
 			}
 		}
 		// fallthrough
@@ -1998,7 +1998,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[8].data, castInfo.strings[8].len, stream.isBE());
 			ci->rteEditInfo.read(entryStream);
 			delete entryStream;
-			dumpS = Common::String::format("rteEditInfo: { %s } ", ci->rteEditInfo.toString().c_str()) + dumpS;
+			dumpS = Common::String::format("rteEditInfo: { %s }, ", ci->rteEditInfo.toString().c_str()) + dumpS;
 		}
 		// fallthrough
 	case 7:
@@ -2006,7 +2006,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[7].data, castInfo.strings[7].len, stream.isBE());
 			ci->textEditInfo.read(entryStream);
 			delete entryStream;
-			dumpS = Common::String::format("textEditInfo: { %s } ", ci->textEditInfo.toString().c_str()) + dumpS;
+			dumpS = Common::String::format("textEditInfo: { %s }, ", ci->textEditInfo.toString().c_str()) + dumpS;
 		}
 		// fallthrough
 	case 6:
@@ -2019,7 +2019,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 				ci->scriptStyle.read(*entryStream, this);
 			delete entryStream;
 
-			dumpS = "scriptStyle: <data> " + dumpS;
+			dumpS = "scriptStyle: <data>, " + dumpS;
 		}
 		// fallthrough
 	case 5:
@@ -2027,7 +2027,7 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 			entryStream = new Common::MemoryReadStreamEndian(castInfo.strings[5].data, castInfo.strings[5].len, stream.isBE());
 			ci->scriptEditInfo.read(entryStream);
 			delete entryStream;
-			dumpS = Common::String::format("scriptEditInfo: { %s } ", ci->scriptEditInfo.toString().c_str()) + dumpS;
+			dumpS = Common::String::format("scriptEditInfo: { %s }, ", ci->scriptEditInfo.toString().c_str()) + dumpS;
 		}
 		// fallthrough
 	case 4:
@@ -2035,30 +2035,30 @@ void Cast::loadCastInfo(Common::SeekableReadStreamEndian &stream, uint16 id) {
 		if (_version < kFileVer500) {
 			ci->fileType = castInfo.strings[4].readString();
 
-			dumpS = Common::String::format("fileType: '%s' ", ci->fileType.c_str()) + dumpS;
+			dumpS = Common::String::format("fileType: '%s', ", ci->fileType.c_str()) + dumpS;
 
 		} else {
 			ci->propInit = castInfo.strings[4].readString();
 
-			dumpS = Common::String::format("propInit: '%s' ", ci->propInit.c_str()) + dumpS;
+			dumpS = Common::String::format("propInit: '%s', ", ci->propInit.c_str()) + dumpS;
 		}
 		// fallthrough
 	case 3:
 		ci->fileName = castInfo.strings[3].readString();
-		dumpS = Common::String::format("fileName: '%s' ", ci->fileName.c_str()) + dumpS;
+		dumpS = Common::String::format("fileName: '%s', ", ci->fileName.c_str()) + dumpS;
 		// fallthrough
 	case 2:
 		ci->directory = castInfo.strings[2].readString();
-		dumpS = Common::String::format("directory: '%s' ", ci->directory.c_str()) + dumpS;
+		dumpS = Common::String::format("directory: '%s', ", ci->directory.c_str()) + dumpS;
 		// fallthrough
 	case 1:
 		ci->name = castInfo.strings[1].readString();
-		dumpS = Common::String::format("name: '%s' ", ci->name.c_str()) + dumpS;
+		dumpS = Common::String::format("name: '%s', ", ci->name.c_str()) + dumpS;
 		// fallthrough
 	case 0:
 		ci->script = castInfo.strings[0].readString(false);
 		if (!ci->script.empty()) {
-			dumpS = Common::String::format("script: %d bytes ", ci->script.size()) + dumpS;
+			dumpS = Common::String::format("script: %d bytes, ", ci->script.size()) + dumpS;
 		}
 		// fallthrough
 	case -1:
