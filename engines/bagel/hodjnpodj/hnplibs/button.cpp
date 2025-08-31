@@ -1231,18 +1231,19 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	(void)(*pDC).SelectObject(pOldBrush);
 
 	(*pDC).FrameRect(&controlRect, &frameBrush);    // paint the box and indicate selection
-	if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
-		controlRect.InflateRect(-1, -1);
-		(*pDC).FrameRect(&controlRect, &frameBrush);
-	}
 
 	if (m_bCheckState) {                            // indicate that the box is checked
 		pOldPen = (*pDC).SelectObject(&controlPen);
 		(*pDC).MoveTo(controlRect.left, controlRect.top);
-		(*pDC).LineTo(controlRect.right, controlRect.bottom);
+		(*pDC).LineTo(controlRect.right - 1, controlRect.bottom - 1);
 		(*pDC).MoveTo(controlRect.left, controlRect.bottom - 1);
 		(*pDC).LineTo(controlRect.right - 1, controlRect.top);
 		(void)(*pDC).SelectObject(pOldPen);
+	}
+
+	if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
+		controlRect.InflateRect(-1, -1);
+		(*pDC).FrameRect(&controlRect, &frameBrush);
 	}
 
 	(*pDC).GetTextMetrics(&fontMetrics);                    // get some info about the font
