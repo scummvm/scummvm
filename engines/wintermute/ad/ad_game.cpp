@@ -2535,7 +2535,7 @@ bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, b
 		_scene->getViewportSize(&portWidth, &portHeight);
 		*customViewport = _sceneViewport || _scene->_viewport;
 
-		viewport->setRect(portX, portY, portX + portWidth, portY + portHeight);
+		BasePlatform::setRect(viewport, portX, portY, portX + portWidth, portY + portHeight);
 
 #ifdef ENABLE_WME3D
 		if (_scene->_scroll3DCompatibility) {

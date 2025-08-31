@@ -179,7 +179,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	bool decoration = false;
 	bool mirrorX = false;
 	bool mirrorY = false;
-	rect.setEmpty();
+	BasePlatform::setRectEmpty(&rect);
 	char *surface_file = nullptr;
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
@@ -327,7 +327,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 		}
 	}
 
-	if (rect.isRectEmpty()) {
+	if (BasePlatform::isRectEmpty(&rect)) {
 		sub->setDefaultRect();
 	} else {
 		sub->setRect(rect);
@@ -354,7 +354,7 @@ bool BaseFrame::getBoundingRect(Rect32 *rect, int x, int y, float scaleX, float 
 	if (!rect) {
 		return false;
 	}
-	rect->setEmpty();
+	BasePlatform::setRectEmpty(rect);
 
 	Rect32 subRect;
 

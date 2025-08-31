@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "common/str.h"
 #include "math/utils.h"
 
@@ -48,7 +49,7 @@ IMPLEMENT_PERSISTENT(PartEmitter, false)
 PartEmitter::PartEmitter(BaseGame *inGame, BaseScriptHolder *owner) : BaseObject(inGame) {
 	_width = _height = 0;
 
-	_border.setEmpty();
+	BasePlatform::setRectEmpty(&_border);
 	_borderThicknessLeft = _borderThicknessRight = _borderThicknessTop = _borderThicknessBottom = 0;
 
 	_angle1 = _angle2 = 0;
@@ -194,7 +195,7 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 	float angVelocity = BaseUtils::randomFloat(_angVelocity1, _angVelocity2);
 	float growthRate = BaseUtils::randomFloat(_growthRate1, _growthRate2);
 
-	if (!_border.isRectEmpty()) {
+	if (!BasePlatform::isRectEmpty(&_border)) {
 		int thicknessLeft   = (int)(_borderThicknessLeft   - (float)_borderThicknessLeft   * posZ / 100.0f);
 		int thicknessRight  = (int)(_borderThicknessRight  - (float)_borderThicknessRight  * posZ / 100.0f);
 		int thicknessTop    = (int)(_borderThicknessTop    - (float)_borderThicknessTop    * posZ / 100.0f);
@@ -387,7 +388,7 @@ int PartEmitter::compareZ(const void *obj1, const void *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartEmitter::setBorder(int x, int y, int width, int height) {
-	_border.setRect(x, y, x + width, y + height);
+	BasePlatform::setRect(&_border, x, y, x + width, y + height);
 
 	return STATUS_OK;
 }

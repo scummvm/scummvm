@@ -44,7 +44,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 	_creationTime = 0;
 	_lifeTime = 0;
 	_isDead = true;
-	_border.setEmpty();
+	BasePlatform::setRectEmpty(&_border);
 
 	_state = PARTICLE_NORMAL;
 	_fadeStart = 0;
@@ -124,7 +124,7 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		}
 
 		// particle hit the border
-		if (!_isDead && !_border.isRectEmpty()) {
+		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
 			Point32 p;
 			p.x = (int32)_pos.x;
 			p.y = (int32)_pos.y;

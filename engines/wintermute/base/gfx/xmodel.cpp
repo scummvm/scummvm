@@ -43,6 +43,7 @@
 #include "engines/wintermute/base/gfx/xfile.h"
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
+#include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
@@ -64,7 +65,7 @@ XModel::XModel(BaseGame *inGame, BaseObject *owner) : BaseObject(inGame) {
 	_lastOffsetX = _lastOffsetY = 0;
 
 	_BBoxStart = _BBoxEnd = DXVector3(0.0f, 0.0f, 0.0f);
-	_boundingRect.setEmpty();
+	BasePlatform::setRectEmpty(&_boundingRect);
 
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; i++) {
 		_channels[i] = nullptr;

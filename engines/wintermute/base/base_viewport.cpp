@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
@@ -36,7 +37,7 @@ IMPLEMENT_PERSISTENT(BaseViewport, false)
 
 //////////////////////////////////////////////////////////////////////////
 BaseViewport::BaseViewport(BaseGame *inGame) : BaseClass(inGame) {
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 	_mainObject = nullptr;
 	_offsetX = _offsetY = 0;
 }
@@ -71,7 +72,7 @@ bool BaseViewport::setRect(int32 left, int32 top, int32 right, int32 bottom, boo
 		bottom = MIN(bottom, BaseEngine::instance().getRenderer()->getHeight());
 	}
 
-	_rect.setRect(left, top, right, bottom);
+	BasePlatform::setRect(&_rect, left, top, right, bottom);
 	_offsetX = left;
 	_offsetY = top;
 	return STATUS_OK;

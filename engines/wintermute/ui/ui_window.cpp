@@ -54,8 +54,8 @@ IMPLEMENT_PERSISTENT(UIWindow, false)
 
 //////////////////////////////////////////////////////////////////////////
 UIWindow::UIWindow(BaseGame *inGame) : UIObject(inGame) {
-	_titleRect.setEmpty();
-	_dragRect.setEmpty();
+	BasePlatform::setRectEmpty(&_titleRect);
+	BasePlatform::setRectEmpty(&_dragRect);
 	_titleAlign = TAL_LEFT;
 	_transparent = false;
 
@@ -210,7 +210,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		image->draw(_posX + offsetX, _posY + offsetY, _transparent ? nullptr : this);
 	}
 
-	if (!_titleRect.isRectEmpty() && font && _text) {
+	if (!BasePlatform::isRectEmpty(&_titleRect) && font && _text) {
 		font->drawText((byte *)_text, _posX + offsetX + _titleRect.left, _posY + offsetY + _titleRect.top, _titleRect.right - _titleRect.left, _titleAlign, _titleRect.bottom - _titleRect.top);
 	}
 
@@ -603,7 +603,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 	// HACK: Increase window title height by 1 for "5 Lethal Demons" game
 	// For some reason getFontHeight() is off-by-one comparing to height set in TITLE_RECT,
 	// Which made text being bigger then title rect and drawing was skipped.
-	if (BaseEngine::instance().getGameId() == "5ld" && !_titleRect.isRectEmpty() && _text) {
+	if (BaseEngine::instance().getGameId() == "5ld" && !BasePlatform::isRectEmpty(&_titleRect) && _text) {
 		_titleRect.bottom ++;
 	}
 
@@ -678,11 +678,11 @@ bool UIWindow::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		error("UIWindow::SaveAsText - Unhandled enum-value NUM_TEXT_ALIGN");
 	}
 
-	if (!_titleRect.isRectEmpty()) {
+	if (!BasePlatform::isRectEmpty(&_titleRect)) {
 		buffer->putTextIndent(indent + 2, "TITLE_RECT { %d, %d, %d, %d }\n", _titleRect.left, _titleRect.top, _titleRect.right, _titleRect.bottom);
 	}
 
-	if (!_dragRect.isRectEmpty()) {
+	if (!BasePlatform::isRectEmpty(&_dragRect)) {
 		buffer->putTextIndent(indent + 2, "DRAG_RECT { %d, %d, %d, %d }\n", _dragRect.left, _dragRect.top, _dragRect.right, _dragRect.bottom);
 	}
 
@@ -1229,13 +1229,13 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 	bool res = UIObject::handleMouse(event, button);
 
 	// handle window dragging
-	if (!_dragRect.isRectEmpty()) {
+	if (!BasePlatform::isRectEmpty(&_dragRect)) {
 		// start drag
 		if (event == MOUSE_CLICK && button == MOUSE_BUTTON_LEFT) {
 			Rect32 dragRect = _dragRect;
 			int offsetX, offsetY;
 			getTotalOffset(&offsetX, &offsetY);
-			dragRect.offsetRect(_posX + offsetX, _posY + offsetY);
+			BasePlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
 
 			if (BasePlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
 				_dragFrom.x = _gameRef->_mousePos.x;

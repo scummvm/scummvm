@@ -47,7 +47,7 @@ IMPLEMENT_PERSISTENT(AdInventoryBox, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
-	_itemsArea.setEmpty();
+	BasePlatform::setRectEmpty(&_itemsArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 	_itemWidth = _itemHeight = 50;
@@ -129,7 +129,7 @@ bool AdInventoryBox::display() {
 	// display window
 	Rect32 rect = _itemsArea;
 	if (_window) {
-		rect.offsetRect(_window->_posX, _window->_posY);
+		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		_window->display();
 	}
 

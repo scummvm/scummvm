@@ -237,7 +237,7 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	m_AccessGlobalPaused = false;
 	m_AccessShieldWin = NULL;*/
 
-	_mouseLockRect.setEmpty();
+	BasePlatform::setRectEmpty(&_mouseLockRect);
 
 	_suppressScriptErrors = false;
 	_lastMiniUpdate = 0;
@@ -1291,7 +1291,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			BaseUtils::swap(&top, &bottom);
 		}
 
-		_mouseLockRect.setRect(left, top, right, bottom);
+		BasePlatform::setRect(&_mouseLockRect, left, top, right, bottom);
 
 		stack->pushNULL();
 		return STATUS_OK;
@@ -4220,7 +4220,7 @@ bool BaseGame::getCurrentViewportRect(Rect32 *rect, bool *custom) const {
 				*custom = true;
 			}
 		} else {
-			rect->setRect(_renderer->_drawOffsetX,
+			BasePlatform::setRect(rect, _renderer->_drawOffsetX,
 			              _renderer->_drawOffsetY,
 			              _renderer->getWidth() + _renderer->_drawOffsetX,
 			              _renderer->getHeight() + _renderer->_drawOffsetY);
@@ -4686,7 +4686,7 @@ bool BaseGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport,
 		*layerWidth = _renderer->getWidth();
 		*layerHeight = _renderer->getHeight();
 		*customViewport = false;
-		viewport->setRect(0, 0, _renderer->getWidth(), _renderer->getHeight());
+		BasePlatform::setRect(viewport, 0, 0, _renderer->getWidth(), _renderer->getHeight());
 		return true;
 	} else
 		return false;

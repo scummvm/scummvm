@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
+#include "engines/wintermute/platform_osystem.h"
 
 namespace Wintermute {
 
@@ -165,7 +166,7 @@ bool VideoPlayer::display() {
 	bool res;
 
 	if (_texture && _videoFrameReady) {
-		rc.setRect(0, 0, _texture->getWidth(), _texture->getHeight());
+		BasePlatform::setRect(&rc, 0, 0, _texture->getWidth(), _texture->getHeight());
 		if (_playZoom == 100.0f) {
 			res = _texture->display(_playPosX, _playPosY, rc);
 		} else {

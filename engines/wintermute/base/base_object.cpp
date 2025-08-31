@@ -73,7 +73,7 @@ BaseObject::BaseObject(BaseGame *inGame) : BaseScriptHolder(inGame) {
 
 	_iD = _gameRef->getSequence();
 
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 	_rectSet = false;
 
 	_cursor = nullptr;

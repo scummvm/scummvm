@@ -47,7 +47,7 @@ BaseRegion::BaseRegion(BaseGame *inGame) : BaseObject(inGame) {
 	_lastMimicScale = -1;
 	_lastMimicX = _lastMimicY = INT_MIN_VALUE;
 
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 }
 
 
@@ -64,7 +64,7 @@ void BaseRegion::cleanup() {
 	}
 	_points.removeAll();
 
-	_rect.setEmpty();
+	BasePlatform::setRectEmpty(&_rect);
 	_editorSelectedPoint = -1;
 }
 
@@ -493,7 +493,7 @@ bool BaseRegion::ptInPolygon(int32 x, int32 y) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseRegion::getBoundingRect(Rect32 *rect) {
 	if (_points.getSize() == 0) {
-		rect->setEmpty();
+		BasePlatform::setRectEmpty(rect);
 	} else {
 		int32 minX = INT_MAX_VALUE, minY = INT_MAX_VALUE, maxX = INT_MIN_VALUE, maxY = INT_MIN_VALUE;
 
@@ -504,7 +504,7 @@ bool BaseRegion::getBoundingRect(Rect32 *rect) {
 			maxX = MAX(maxX, _points[i]->x);
 			maxY = MAX(maxY, _points[i]->y);
 		}
-		rect->setRect(minX, minY, maxX, maxY);
+		BasePlatform::setRect(rect, minX, minY, maxX, maxY);
 	}
 	return STATUS_OK;
 }

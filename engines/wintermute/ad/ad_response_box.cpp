@@ -58,7 +58,7 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_shieldWindow = new UIWindow(_gameRef);
 
 	_horizontal = false;
-	_responseArea.setEmpty();
+	BasePlatform::setRectEmpty(&_responseArea);
 	_scrollOffset = 0;
 	_spacing = 0;
 
@@ -448,7 +448,7 @@ bool AdResponseBox::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 bool AdResponseBox::display() {
 	Rect32 rect = _responseArea;
 	if (_window) {
-		rect.offsetRect(_window->_posX, _window->_posY);
+		BasePlatform::offsetRect(&rect, _window->_posX, _window->_posY);
 		//_window->display();
 	}
 

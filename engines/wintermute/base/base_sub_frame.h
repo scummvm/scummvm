@@ -61,7 +61,7 @@ public:
 	uint32 _alpha;
 	// These two setters and getters are rather useful, as they allow _rect to be lazily defined
 	// Thus we don't need to load the actual graphics before the rect is actually needed.
-	Rect32 getRect();
+	Rect32 &getRect();
 	void setRect(Rect32 rect);
 private:
 	bool _wantsDefaultRect;

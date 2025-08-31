@@ -191,16 +191,53 @@ bool BasePlatform::setCursorPos(int x, int y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BasePlatform::setRectEmpty(Rect32 *lprc) {
+	if (lprc == nullptr) {
+		return false;
+	}
+	lprc->left = lprc->right = lprc->top = lprc->bottom = 0;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BasePlatform::isRectEmpty(const Rect32 *lprc) {
+	if (lprc == nullptr) {
+		return false;
+	}
+	return ((lprc->left >= lprc->right) || (lprc->top >= lprc->bottom));
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BasePlatform::ptInRect(Rect32 *lprc, Point32 p) {
+	if (lprc == nullptr) {
+		return false;
+	}
 	return (p.x >= lprc->left) && (p.x < lprc->right) && (p.y >= lprc->top) && (p.y < lprc->bottom);
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BasePlatform::setRect(Rect32 *lprc, int32 left, int32 top, int32 right, int32 bottom) {
+	if (lprc == nullptr) {
+		return false;
+	}
+
+	lprc->left   = left;
+	lprc->right  = right;
+	lprc->top    = top;
+	lprc->bottom = bottom;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const Rect32 *lprcSrc2) {
-	if (lprcSrc1->isRectEmpty() || lprcSrc2->isRectEmpty() ||
-	        lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
-	        lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
-		lprcDst->setEmpty();
+	if (lprcDst == nullptr || lprcSrc1 == nullptr || lprcSrc2 == nullptr) {
+		return false;
+	}
+
+	if (BasePlatform::isRectEmpty(lprcSrc1) || BasePlatform::isRectEmpty(lprcSrc2) ||
+		lprcSrc1->left >= lprcSrc2->right || lprcSrc2->left >= lprcSrc1->right ||
+		lprcSrc1->top >= lprcSrc2->bottom || lprcSrc2->top >= lprcSrc1->bottom) {
+		setRectEmpty(lprcDst);
 		return false;
 	}
 	lprcDst->left   = MAX(lprcSrc1->left, lprcSrc2->left);
@@ -213,15 +250,19 @@ bool BasePlatform::intersectRect(Rect32 *lprcDst, const Rect32 *lprcSrc1, const 
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::unionRect(Rect32 *lprcDst, Rect32 *lprcSrc1, Rect32 *lprcSrc2) {
-	if (lprcSrc1->isRectEmpty()) {
-		if (lprcSrc2->isRectEmpty()) {
-			lprcDst->setEmpty();
+	if (lprcDst == nullptr || lprcSrc1 == nullptr || lprcSrc2 == nullptr) {
+		return false;
+	}
+
+	if (isRectEmpty(lprcSrc1)) {
+		if (isRectEmpty(lprcSrc2)) {
+			setRectEmpty(lprcDst);
 			return false;
 		} else {
 			*lprcDst = *lprcSrc2;
 		}
 	} else {
-		if (lprcSrc2->isRectEmpty()) {
+		if (isRectEmpty(lprcSrc2)) {
 			*lprcDst = *lprcSrc1;
 		} else {
 			lprcDst->left   = MIN(lprcSrc1->left, lprcSrc2->left);
@@ -241,6 +282,27 @@ bool BasePlatform::copyRect(Rect32 *lprcDst, Rect32 *lprcSrc) {
 	}
 
 	*lprcDst = *lprcSrc;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BasePlatform::equalRect(Rect32 *lprc1, Rect32 *lprc2) {
+	if (lprc1 == nullptr || lprc2 == nullptr) {
+		return false;
+	}
+	
+	return ((lprc1->left == lprc2->left) && (lprc1->right == lprc2->right) &&
+			(lprc1->top == lprc2->top) && (lprc1->bottom == lprc2->bottom));
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BasePlatform::offsetRect(Rect32 *lprc, int32 x, int32 y) {
+	if (!lprc)
+		return false;
+	lprc->left   += x;
+	lprc->right  += x;
+	lprc->top    += y;
+	lprc->bottom += y;
 	return true;
 }
 

@@ -64,66 +64,12 @@ struct Rect32 {
 	Rect32() : top(0), left(0), bottom(0), right(0) {}
 	Rect32(int32 w, int32 h) : top(0), left(0), bottom(h), right(w) {}
 	Rect32(const Common::Rect &rect) : top(rect.top), left(rect.left), bottom(rect.bottom), right(rect.right) {}
-	Rect32(int32 x1, int32 y1, int32 x2, int32 y2) : top(y1), left(x1), bottom(y2), right(x2) {
-		assert(isValidRect());
-	}
-	bool operator==(const Rect32 &rhs) const {
-		return equals(rhs);
-	}
-	bool operator!=(const Rect32 &rhs) const {
-		return !equals(rhs);
-	}
 
 	int32 width() const {
 		return right - left;
 	}
 	int32 height() const {
 		return bottom - top;
-	}
-
-	void setWidth(int32 aWidth) {
-		right = left + aWidth;
-	}
-
-	void setHeight(int32 aHeight) {
-		bottom = top + aHeight;
-	}
-
-	void setEmpty() {
-		left = right = top = bottom = 0;
-	}
-
-	bool isRectEmpty() const {
-		return (left >= right) || (top >= bottom);
-	}
-
-	void offsetRect(int dx, int dy) {
-		left   += dx;
-		top    += dy;
-		right  += dx;
-		bottom += dy;
-	}
-
-	void setRect(int32 newLeft, int32 newTop, int32 newRight, int32 newBottom) {
-		this->left   = newLeft;
-		this->top    = newTop;
-		this->right  = newRight;
-		this->bottom = newBottom;
-	}
-
-	/**
-	 * Check if the given rect is equal to this one.
-	 *
-	 * @param r The rectangle to check
-	 *
-	 * @return true if the given rect is equal, false otherwise
-	 */
-	bool equals(const Rect32 &r) const {
-		return (left == r.left) && (right == r.right) && (top == r.top) && (bottom == r.bottom);
-	}
-
-	bool isValidRect() const {
-		return (left <= right && top <= bottom);
 	}
 };
 
