@@ -30,7 +30,7 @@ class MidiParser_BEmd : public MidiParser {
 public:
 	MidiParser_BEmd();
 
-	bool loadMusic(byte *data, uint32 size) override;
+	bool loadMusic(const byte *data, uint32 size) override;
 
 protected:
 	void parseNextEvent(EventInfo &info) override;
