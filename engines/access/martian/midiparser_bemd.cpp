@@ -32,7 +32,7 @@ namespace Access {
 MidiParser_BEmd::MidiParser_BEmd(): _tickData(nullptr), _tickDataEnd(nullptr), _trackDataEnd(nullptr) {
 }
 
-bool MidiParser_BEmd::loadMusic(byte *data, uint32 size) {
+bool MidiParser_BEmd::loadMusic(const byte *data, uint32 size) {
 	unloadMusic();
 	const byte *pos = data;
 
@@ -96,7 +96,7 @@ bool MidiParser_BEmd::loadMusic(byte *data, uint32 size) {
 
 void MidiParser_BEmd::parseNextEvent(EventInfo &info) {
 	uint8 subtrack = info.subtrack;
-	byte *playPos = _position._subtracks[subtrack]._playPos;
+	const byte *playPos = _position._subtracks[subtrack]._playPos;
 	info.start = playPos;
 
 	info.delta = 0;
