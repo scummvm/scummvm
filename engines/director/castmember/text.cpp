@@ -117,7 +117,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 		if (debugChannelSet(2, kDebugLoading)) {
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
-	} else if (version >= kFileVer400 && version < kFileVer600) {
+	} else if (version >= kFileVer400 && version < kFileVer1100) {
 		_flags1 = flags1;
 		_borderSize = stream.readByte();
 		_gutterSize = stream.readByte();
@@ -147,7 +147,7 @@ TextCastMember::TextCastMember(Cast *cast, uint16 castId, Common::SeekableReadSt
 			_initialRect.debugPrint(2, "TextCastMember(): rect:");
 		}
 	} else {
-		warning("Text/ButtonCastMember(): >D5 isn't handled");
+		warning("STUB: Text/ButtonCastMember: Text not yet supported for version v%d (%d)", humanVersion(_cast->_version), _cast->_version);
 	}
 
 	if (asButton) {
