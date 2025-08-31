@@ -695,7 +695,7 @@ public:
 
 	class Impl : public Gfx::TextRender {
 	private:
-		CWnd *m_pWnd;
+		CWnd *m_pWnd = nullptr;
 		DefaultBitmap _defaultBitmap;
 		Common::Point _linePos;
 		COLORREF _bkColor = RGB(255, 255, 255);
