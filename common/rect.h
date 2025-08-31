@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/debug.h"
+#include "common/str.h"
 
 #define PRINT_RECT(x) (x).left,(x).top,(x).right,(x).bottom
 
@@ -118,6 +119,13 @@ struct PointBase {
 			return 0xFFFFFF;
 
 		return uint(diffx * diffx + diffy * diffy);
+	}
+
+	/**
+	 * Return string representation of the point.
+	 */
+	String toString() const {
+		return String::format("%d, %d", x, y);
 	}
 };
 
@@ -435,6 +443,13 @@ struct RectBase {
 	 */
 	void debugPrintC(int debuglevel, uint32 debugChannel, const char *caption = "Rect:") const {
 		debugC(debuglevel, debugChannel, "%s %d, %d, %d, %d", caption, left, top, right, bottom);
+	}
+
+	/**
+	 * Return string representation of the rectangle.
+	 */
+	String toString() const {
+		return String::format("%d, %d, %d, %d", left, top, right, bottom);
 	}
 
 	/**
