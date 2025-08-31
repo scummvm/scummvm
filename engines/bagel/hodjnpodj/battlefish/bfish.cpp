@@ -949,6 +949,7 @@ BOOL CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				if (m_pOctopus != nullptr) {
 					m_pOctopus->LinkSprite();
 					m_pOctopus->PaintSprite(pDC, OCTOPUS_X, OCTOPUS_Y);
+					AfxGetApp()->pause();
 				}
 				ReleaseDC(pDC);
 			}
@@ -3210,6 +3211,7 @@ VOID CBFishWindow::CreatePlume(CPoint point) {
 
 					for (i = 0; i < N_PLUME_CELS; i++) {
 						pSprite->PaintSprite(pDC, point);
+						AfxGetApp()->pause();
 						Sleep(100);
 					}
 				} else {
@@ -3221,12 +3223,14 @@ VOID CBFishWindow::CreatePlume(CPoint point) {
 
 			pSprite->EraseSprite(pDC);
 			delete pSprite;
+			AfxGetApp()->pause();
 
 			// create a dup of the master plume of water
 			//
 			if ((pSprite = m_pMasterMiss->DuplicateSprite(pDC)) != nullptr) {
 				pSprite->LinkSprite();
 				pSprite->PaintSprite(pDC, point);
+				AfxGetApp()->pause();
 
 			} else {
 				errCode = ERR_MEMORY;
@@ -3273,6 +3277,7 @@ VOID CBFishWindow::CreateHarpoon(CPoint point) {
 
 					for (i = 0; i < N_HARP_CELS; i++) {
 						pSprite->PaintSprite(pDC, point);
+						AfxGetApp()->pause();
 						Sleep(100);
 					}
 				} else {
@@ -3284,12 +3289,14 @@ VOID CBFishWindow::CreateHarpoon(CPoint point) {
 
 			pSprite->EraseSprite(pDC);
 			delete pSprite;
+			AfxGetApp()->pause();
 
 			// create a dup of the master harpoon
 			//
 			if ((pSprite = m_pMasterHit->DuplicateSprite(pDC)) != nullptr) {
 				pSprite->LinkSprite();
 				pSprite->PaintSprite(pDC, point);
+				AfxGetApp()->pause();
 
 			} else {
 				errCode = ERR_MEMORY;
