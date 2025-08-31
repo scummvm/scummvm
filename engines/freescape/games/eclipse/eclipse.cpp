@@ -313,6 +313,8 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_lastPosition = _position;
 
 	if (areaID == _startArea && entranceID == _startEntrance) {
+		if (_pitch >= 180)
+			_pitch = 360 - _pitch;
 		playSound(_soundIndexStart, true, _soundFxHandle);
 		if (isEclipse2()) {
 			_gameStateControl = kFreescapeGameStateStart;
