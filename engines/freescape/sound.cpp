@@ -325,7 +325,7 @@ void FreescapeEngine::playSound(int index, bool sync, Audio::SoundHandle &handle
 
 		return;
 	} else if (isSpectrum() && !isDriller()) {
-		playSoundZX(_soundsSpeakerFxZX[index]);
+		playSoundZX(_soundsSpeakerFxZX[index], handle);
 		return;
 	}
 
@@ -503,7 +503,7 @@ uint16 FreescapeEngine::playSoundDOSSpeaker(uint16 frequencyStart, soundSpeakerF
 	return freq;
 }
 
-void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
+void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle) {
 	for (auto &it : *data) {
 		soundUnitZX value = it;
 
@@ -529,7 +529,7 @@ void FreescapeEngine::playSoundZX(Common::Array<soundUnitZX> *data) {
 	}
 
 	_mixer->stopHandle(_soundFxHandle);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, _speaker, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, _speaker, -1, kFreescapeDefaultVolume, 0, DisposeAfterUse::NO);
 }
 
 void FreescapeEngine::playSoundDOS(soundSpeakerFx *speakerFxInfo, bool sync, Audio::SoundHandle &handle) {

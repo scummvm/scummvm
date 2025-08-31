@@ -491,7 +491,7 @@ public:
 	void loadSpeakerFxZX(Common::SeekableReadStream *file, int sfxTable, int sfxData);
 	Common::HashMap<uint16, soundSpeakerFx *> _soundsSpeakerFx;
 
-	void playSoundZX(Common::Array<soundUnitZX> *data);
+	void playSoundZX(Common::Array<soundUnitZX> *data, Audio::SoundHandle &handle);
 	Common::HashMap<uint16, Common::Array<soundUnitZX>*> _soundsSpeakerFxZX;
 	int _soundIndexShoot;
 	int _soundIndexCollide;
