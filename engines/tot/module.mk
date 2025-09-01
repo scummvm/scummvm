@@ -1,26 +1,26 @@
 MODULE := engines/tot
 
 MODULE_OBJS = \
-	tot.o \
-	console.o \
-	metaengine.o \
-	forest.o \
-	util.o \
-	anims.o \
-	engine.o \
-	dialog.o \
+	decoder/TotFlicDecoder.o \
 	font/bgifont.o \
 	font/biosfont.o \
-	decoder/TotFlicDecoder.o \
-	sound.o \
-	graphics.o \
-	mouse.o \
+	anims.o \
 	chrono.o \
-	saveload.o \
-	midi.o \
-	debug.o \
+	console.o \
 	cutscenes.o \
-	resources.o
+	debug.o \
+	dialog.o \
+	engine.o \
+	forest.o \
+	graphics.o \
+	metaengine.o \
+	midi.o \
+	mouse.o \
+	resources.o \
+	saveload.o \
+	sound.o \
+	tot.o \
+	util.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TOT), DYNAMIC_PLUGIN)

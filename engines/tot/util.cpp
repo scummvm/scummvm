@@ -1,4 +1,23 @@
-
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
 
@@ -391,7 +410,7 @@ void littText(int x, int y, const Common::String &text, byte color, Graphics::Te
 	littText(x, y, text.c_str(), color, align);
 }
 
-void littText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
+void littText(int x, int y, const char *text, byte color, Graphics::TextAlign align) {
 	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
 	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
 	y = y + 2;
@@ -402,7 +421,7 @@ void euroText(int x, int y, const Common::String &text, byte color, Graphics::Te
 	euroText(x, y, text.c_str(), color, align);
 }
 
-void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign align) {
+void euroText(int x, int y, const char *text, byte color, Graphics::TextAlign align) {
 	bool yAligned = (align == Graphics::kTextAlignCenter) ? true : false;
 	x = (align == Graphics::kTextAlignCenter) ? 0 : x;
 	y = y + 2;
@@ -471,13 +490,13 @@ void emptyLoop2() {
 }
 
 void waitForKey() {
-	bool teclapulsada = false;
+	bool waitForKey = false;
 	Common::Event e;
 	debug("Waiting for key!");
-	while (!teclapulsada && !g_engine->shouldQuit()) {
+	while (!waitForKey && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 			if (e.type == Common::EVENT_KEYDOWN) {
-				teclapulsada = true;
+				waitForKey = true;
 			}
 		}
 

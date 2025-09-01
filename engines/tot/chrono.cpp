@@ -65,9 +65,6 @@ void ChronoManager::delay(int ms) {
 	while ((g_system->getMillis() - delayStart) < ms && !g_engine->shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
-		if (ms > 10) {
-			g_system->delayMillis(10);
-		}
 		g_engine->_screen->update();
 	}
 }

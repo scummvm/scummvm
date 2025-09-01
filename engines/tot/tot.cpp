@@ -1137,60 +1137,17 @@ void TotEngine::resetGameState() {
 	_targetZone = 1;
 	_oldTargetZone = 0;
 	_charFacingDirection = 1;
-	_firstTimeTopicA[0] = true;
-	_firstTimeTopicA[1] = true;
-	_firstTimeTopicA[2] = true;
-	_firstTimeTopicA[3] = true;
-	_firstTimeTopicA[4] = true;
-	_firstTimeTopicA[5] = true;
-	_firstTimeTopicA[6] = true;
-	_firstTimeTopicA[7] = true;
-	_firstTimeTopicA[8] = true;
-	_firstTimeTopicB[0] = false;
-	_firstTimeTopicB[1] = false;
-	_firstTimeTopicB[2] = false;
-	_firstTimeTopicB[3] = false;
-	_firstTimeTopicB[4] = false;
-	_firstTimeTopicB[5] = false;
-	_firstTimeTopicB[6] = false;
-	_firstTimeTopicB[7] = false;
-	_firstTimeTopicB[8] = false;
+	for (int i = 0; i < 9; i++) {
+		_firstTimeTopicA[i] = true;
+		_firstTimeTopicB[i] = false;
+		_firstTimeTopicC[i] = false;
+		_bookTopic[i] = false;
+		_mintTopic[i] = false;
+	}
 
-	_firstTimeTopicC[0] = false;
-	_firstTimeTopicC[1] = false;
-	_firstTimeTopicC[2] = false;
-	_firstTimeTopicC[3] = false;
-	_firstTimeTopicC[4] = false;
-	_firstTimeTopicC[5] = false;
-	_firstTimeTopicC[6] = false;
-	_firstTimeTopicC[7] = false;
-	_firstTimeTopicC[8] = false;
-
-	_bookTopic[0] = false;
-	_bookTopic[1] = false;
-	_bookTopic[2] = false;
-	_bookTopic[3] = false;
-	_bookTopic[4] = false;
-	_bookTopic[5] = false;
-	_bookTopic[6] = false;
-	_bookTopic[7] = false;
-	_bookTopic[8] = false;
-
-	_mintTopic[0] = false;
-	_mintTopic[1] = false;
-	_mintTopic[2] = false;
-	_mintTopic[3] = false;
-	_mintTopic[4] = false;
-	_mintTopic[5] = false;
-	_mintTopic[6] = false;
-	_mintTopic[7] = false;
-	_mintTopic[8] = false;
-
-	_caves[0] = false;
-	_caves[1] = false;
-	_caves[2] = false;
-	_caves[3] = false;
-	_caves[4] = false;
+	for (int i = 0; i < 5; i++) {
+		_caves[i] = false;
+	}
 
 	_isSecondaryAnimationEnabled = false;
 	_mainCharAnimation.depth = 0;
@@ -1298,35 +1255,35 @@ void TotEngine::initVars() {
 }
 
 void TotEngine::clearVars() {
-	if(_sceneBackground != nullptr) {
+	if (_sceneBackground != nullptr) {
 		free(_sceneBackground);
 	}
 
-	if(_backgroundCopy != nullptr) {
+	if (_backgroundCopy != nullptr) {
 		free(_backgroundCopy);
 	}
-	if(_conversationData != nullptr) {
+	if (_conversationData != nullptr) {
 		free(_conversationData);
 	}
-	if(_rooms != nullptr) {
+	if (_rooms != nullptr) {
 		free(_rooms);
 	}
-	if(_sceneObjectsData != nullptr) {
+	if (_sceneObjectsData != nullptr) {
 		free(_sceneObjectsData);
 	}
-	for(int i = 0; i < kNumScreenOverlays; i++) {
-		if(_screenLayers[i] != nullptr) {
+	for (int i = 0; i < kNumScreenOverlays; i++) {
+		if (_screenLayers[i] != nullptr) {
 			free(_screenLayers[i]);
 		}
 	}
-	for(int i = 0; i < kInventoryIconCount; i++) {
-		if(_inventoryIconBitmaps[i] != nullptr) {
+	for (int i = 0; i < kInventoryIconCount; i++) {
+		if (_inventoryIconBitmaps[i] != nullptr) {
 			free(_inventoryIconBitmaps[i]);
 		}
 	}
-	for(int i = 0; i < 4; i++) {
-		for(int j = 0; j < kWalkFrameCount + 30; j++) {
-			if(_mainCharAnimation.bitmap[i][j] != nullptr) {
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < kWalkFrameCount + 30; j++) {
+			if (_mainCharAnimation.bitmap[i][j] != nullptr) {
 				free(_mainCharAnimation.bitmap[i][j]);
 			}
 		}
@@ -1334,7 +1291,7 @@ void TotEngine::clearVars() {
 
 	for (int i = 0; i < _secondaryAnimDirCount; i++) {
 		for (int j = 0; j < _secondaryAnimationFrameCount; j++) {
-			if(_secondaryAnimation.bitmap[i][j] != nullptr){
+			if (_secondaryAnimation.bitmap[i][j] != nullptr) {
 				free(_secondaryAnimation.bitmap[i][j]);
 			}
 		}

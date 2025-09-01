@@ -804,7 +804,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 	Common::String description;
 	bool foobar = false;
 	TextEntry textRef;
-	palette secPalette;
+	Palette secPalette;
 
 	_cpCounter2 = _cpCounter;
 	_mouse->hide();
@@ -823,7 +823,7 @@ void TotEngine::lookAtObject(byte objectCode) {
 			251,              // color2
 			251,              // color3
 			251,              // color4
-			0                // color5
+			0                 // color5
 		);
 
 	drawMenu(4);
@@ -4537,7 +4537,7 @@ void TotEngine::loadTV() {
 
 void TotEngine::loadScreen() {
 	Common::File paletteFile;
-	palette palcp;
+	Palette palcp;
 
 	_screenSize = _currentRoomData->roomImageSize;
 	readBitmap(_currentRoomData->roomImagePointer, _sceneBackground, _screenSize, 316);
@@ -4788,7 +4788,7 @@ void TotEngine::drawMenu(byte menuNumber) {
 }
 
 static void loadDiploma(Common::String &photoName, Common::String &key) {
-	palette auxPal;
+	Palette auxPal;
 	byte *screen;
 	uint size;
 	byte *stamp;

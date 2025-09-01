@@ -97,98 +97,92 @@ void TotEngine::readConversationFile() {
 	conversationFile.close();
 }
 
-void saveDoorMetadata(DoorRegistry doors, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeUint16LE(doors.nextScene);
-	screenDataStream->writeUint16LE(doors.exitPosX);
-	screenDataStream->writeUint16LE(doors.exitPosY);
-	screenDataStream->writeByte(doors.openclosed);
-	screenDataStream->writeByte(doors.doorcode);
+void saveDoorMetadata(DoorRegistry doors, Common::SeekableWriteStream *out) {
+	out->writeUint16LE(doors.nextScene);
+	out->writeUint16LE(doors.exitPosX);
+	out->writeUint16LE(doors.exitPosY);
+	out->writeByte(doors.openclosed);
+	out->writeByte(doors.doorcode);
 }
 
-void savePoint(Common::Point point, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeUint16LE(point.x);
-	screenDataStream->writeUint16LE(point.y);
+void savePoint(Common::Point point, Common::SeekableWriteStream *out) {
+	out->writeUint16LE(point.x);
+	out->writeUint16LE(point.y);
 }
 
-void saveBitmapRegister(RoomBitmapRegister bitmap, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeSint32LE(bitmap.bitmapPointer);
-	screenDataStream->writeUint16LE(bitmap.bitmapSize);
-	screenDataStream->writeUint16LE(bitmap.coordx);
-	screenDataStream->writeUint16LE(bitmap.coordy);
-	screenDataStream->writeUint16LE(bitmap.depth);
+void saveBitmapRegister(RoomBitmapRegister bitmap, Common::SeekableWriteStream *out) {
+	out->writeSint32LE(bitmap.bitmapPointer);
+	out->writeUint16LE(bitmap.bitmapSize);
+	out->writeUint16LE(bitmap.coordx);
+	out->writeUint16LE(bitmap.coordy);
+	out->writeUint16LE(bitmap.depth);
 }
 
-void saveRoomObjectList(RoomObjectListEntry objectList, Common::SeekableWriteStream *screenDataStream) {
+void saveRoomObjectList(RoomObjectListEntry objectList, Common::SeekableWriteStream *out) {
 
-	screenDataStream->writeUint16LE(objectList.fileIndex);
-	screenDataStream->writeByte(objectList.objectName.size());
+	out->writeUint16LE(objectList.fileIndex);
+	out->writeByte(objectList.objectName.size());
 	int paddingSize = 20 - objectList.objectName.size();
 	if (paddingSize < 20) {
-		screenDataStream->writeString(objectList.objectName);
+		out->writeString(objectList.objectName);
 	}
 	if (paddingSize > 0) {
-		char *padding = (char *)malloc(paddingSize);
-		for (int i = 0; i < paddingSize; i++) {
-			padding[i] = '\0';
-		}
-		screenDataStream->write(padding, paddingSize);
+		char *padding = (char *)calloc(paddingSize, 1);
+		out->write(padding, paddingSize);
 
 		free(padding);
 	}
 }
 
-void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *screenDataStream) {
-	screenDataStream->writeUint16LE(room->code);
-	screenDataStream->writeUint32LE(room->roomImagePointer);
-	screenDataStream->writeUint16LE(room->roomImageSize);
-	screenDataStream->write(room->walkAreasGrid, 40 * 28);
-	screenDataStream->write(room->mouseGrid, 40 * 28);
+void saveRoom(RoomFileRegister *room, Common::SeekableWriteStream *out) {
+	out->writeUint16LE(room->code);
+	out->writeUint32LE(room->roomImagePointer);
+	out->writeUint16LE(room->roomImageSize);
+	out->write(room->walkAreasGrid, 40 * 28);
+	out->write(room->mouseGrid, 40 * 28);
 
 	// read puntos
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 30; j++) {
 			for (int k = 0; k < 5; k++) {
-				savePoint(room->trajectories[i][j][k], screenDataStream);
+				savePoint(room->trajectories[i][j][k], out);
 			}
 		}
 	}
 
 	for (int i = 0; i < 5; i++) {
-		saveDoorMetadata(room->doors[i], screenDataStream);
+		saveDoorMetadata(room->doors[i], out);
 	}
 	for (int i = 0; i < 15; i++) {
-		saveBitmapRegister(room->screenLayers[i], screenDataStream);
+		saveBitmapRegister(room->screenLayers[i], out);
 	}
 	for (int i = 0; i < 51; i++) {
-		saveRoomObjectList(*room->screenObjectIndex[i], screenDataStream);
+		saveRoomObjectList(*room->screenObjectIndex[i], out);
 	}
-	screenDataStream->writeByte(room->animationFlag);
+	out->writeByte(room->animationFlag);
 
-	screenDataStream->writeByte(room->animationName.size());
-	screenDataStream->writeString(room->animationName);
+	out->writeByte(room->animationName.size());
+	out->writeString(room->animationName);
 	int paddingSize = 8 - room->animationName.size();
 	if (paddingSize > 0) {
-		char *padding = (char *)malloc(paddingSize);
-		for (int i = 0; i < paddingSize; i++) {
-			padding[i] = '\0';
-		}
+		char *padding = (char *)calloc(paddingSize, 1);
 		// 8 max char name
-		screenDataStream->write(padding, paddingSize);
+		out->write(padding, paddingSize);
 
 		free(padding);
 	}
-	screenDataStream->writeByte(room->paletteAnimationFlag);
-	screenDataStream->writeUint16LE(room->palettePointer);
+	out->writeByte(room->paletteAnimationFlag);
+	out->writeUint16LE(room->palettePointer);
 	for (int i = 0; i < 300; i++) {
-		savePoint(room->secondaryAnimTrajectory[i], screenDataStream);
+		savePoint(room->secondaryAnimTrajectory[i], out);
 	}
-	screenDataStream->write(room->secondaryAnimDirections, 600);
-	screenDataStream->writeUint16LE(room->secondaryTrajectoryLength);
+	out->write(room->secondaryAnimDirections, 600);
+	out->writeUint16LE(room->secondaryTrajectoryLength);
 }
 
-void TotEngine::saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *stream) {
+void TotEngine::saveRoomData(RoomFileRegister *room, Common::SeekableWriteStream *out) {
 	_rooms->seek(room->code * kRoomRegSize, SEEK_SET);
-	saveRoom(room, stream);
+	saveRoom(room, out);
 }
 
 void TotEngine::readObject(Common::SeekableReadStream *stream, uint itemPos, ScreenObject &thisRegObj) {
@@ -258,137 +252,134 @@ void TotEngine::initializeObjectFile() {
 	objFile.close();
 }
 
-void TotEngine::saveObjectsData(ScreenObject object, Common::SeekableWriteStream *objectDataStream) {
-	objectDataStream->writeUint16LE(object.code);
-	objectDataStream->writeByte(object.height);
+void TotEngine::saveObjectsData(ScreenObject object, Common::SeekableWriteStream *out) {
+	out->writeUint16LE(object.code);
+	out->writeByte(object.height);
 
-	objectDataStream->writeByte(object.name.size());
-	objectDataStream->writeString(object.name);
+	out->writeByte(object.name.size());
+	out->writeString(object.name);
 	int paddingSize = kObjectNameLength - object.name.size();
 	if (paddingSize > 0) {
-		char *padding = (char *)malloc(paddingSize);
-		for (int i = 0; i < paddingSize; i++) {
-			padding[i] = '\0';
-		}
+		char *padding = (char *)calloc(paddingSize, 1);
 		// 8 max char name
-		objectDataStream->write(padding, paddingSize);
+		out->write(padding, paddingSize);
 		free(padding);
 	}
 
-	objectDataStream->writeUint16LE(object.lookAtTextRef);
-	objectDataStream->writeUint16LE(object.beforeUseTextRef);
-	objectDataStream->writeUint16LE(object.afterUseTextRef);
-	objectDataStream->writeUint16LE(object.pickTextRef);
-	objectDataStream->writeUint16LE(object.useTextRef);
+	out->writeUint16LE(object.lookAtTextRef);
+	out->writeUint16LE(object.beforeUseTextRef);
+	out->writeUint16LE(object.afterUseTextRef);
+	out->writeUint16LE(object.pickTextRef);
+	out->writeUint16LE(object.useTextRef);
 
-	objectDataStream->writeByte(object.speaking);
-	objectDataStream->writeByte(object.openable);
-	objectDataStream->writeByte(object.closeable);
+	out->writeByte(object.speaking);
+	out->writeByte(object.openable);
+	out->writeByte(object.closeable);
 
-	objectDataStream->write(object.used, 8);
+	out->write(object.used, 8);
 
-	objectDataStream->writeByte(object.pickupable);
+	out->writeByte(object.pickupable);
 
-	objectDataStream->writeUint16LE(object.useWith);
-	objectDataStream->writeUint16LE(object.replaceWith);
-	objectDataStream->writeByte(object.depth);
-	objectDataStream->writeUint32LE(object.bitmapPointer);
-	objectDataStream->writeUint16LE(object.bitmapSize);
-	objectDataStream->writeUint16LE(object.rotatingObjectAnimation);
-	objectDataStream->writeUint16LE(object.rotatingObjectPalette);
-	objectDataStream->writeUint16LE(object.dropOverlayX);
-	objectDataStream->writeUint16LE(object.dropOverlayY);
-	objectDataStream->writeUint32LE(object.dropOverlay);
-	objectDataStream->writeUint16LE(object.dropOverlaySize);
-	objectDataStream->writeUint16LE(object.objectIconBitmap);
+	out->writeUint16LE(object.useWith);
+	out->writeUint16LE(object.replaceWith);
+	out->writeByte(object.depth);
+	out->writeUint32LE(object.bitmapPointer);
+	out->writeUint16LE(object.bitmapSize);
+	out->writeUint16LE(object.rotatingObjectAnimation);
+	out->writeUint16LE(object.rotatingObjectPalette);
+	out->writeUint16LE(object.dropOverlayX);
+	out->writeUint16LE(object.dropOverlayY);
+	out->writeUint32LE(object.dropOverlay);
+	out->writeUint16LE(object.dropOverlaySize);
+	out->writeUint16LE(object.objectIconBitmap);
 
-	objectDataStream->writeByte(object.xgrid1);
-	objectDataStream->writeByte(object.ygrid1);
-	objectDataStream->writeByte(object.xgrid2);
-	objectDataStream->writeByte(object.ygrid2);
+	out->writeByte(object.xgrid1);
+	out->writeByte(object.ygrid1);
+	out->writeByte(object.xgrid2);
+	out->writeByte(object.ygrid2);
 
-	objectDataStream->write(object.walkAreasPatch, 100);
-	objectDataStream->write(object.mouseGridPatch, 100);
+	out->write(object.walkAreasPatch, 100);
+	out->write(object.mouseGridPatch, 100);
 }
 
-void TotEngine::saveObject(ScreenObject object, Common::SeekableWriteStream *stream) {
+void TotEngine::saveObject(ScreenObject object, Common::SeekableWriteStream *out) {
 	_sceneObjectsData->seek(object.code * kItemRegSize, SEEK_SET);
-	saveObjectsData(object, stream);
+	saveObjectsData(object, out);
 }
 
-DoorRegistry readDoorMetadata(Common::SeekableReadStream *screenDataFile) {
+DoorRegistry readDoorMetadata(Common::SeekableReadStream *in) {
 	DoorRegistry doorMetadata;
-	doorMetadata.nextScene = screenDataFile->readUint16LE();
-	doorMetadata.exitPosX = screenDataFile->readUint16LE();
-	doorMetadata.exitPosY = screenDataFile->readUint16LE();
-	doorMetadata.openclosed = screenDataFile->readByte();
-	doorMetadata.doorcode = screenDataFile->readByte();
+	doorMetadata.nextScene = in->readUint16LE();
+	doorMetadata.exitPosX = in->readUint16LE();
+	doorMetadata.exitPosY = in->readUint16LE();
+	doorMetadata.openclosed = in->readByte();
+	doorMetadata.doorcode = in->readByte();
 
 	return doorMetadata;
 }
 
-Common::Point readPoint(Common::SeekableReadStream *screenDataFile) {
+Common::Point readPoint(Common::SeekableReadStream *in) {
 	Common::Point point;
-	point.x = screenDataFile->readUint16LE();
-	point.y = screenDataFile->readUint16LE();
+	point.x = in->readUint16LE();
+	point.y = in->readUint16LE();
 	return point;
 }
 
-RoomBitmapRegister readAuxBitmaps(Common::SeekableReadStream *screenDataFile) {
+RoomBitmapRegister readAuxBitmaps(Common::SeekableReadStream *in) {
 	RoomBitmapRegister bitmapMetadata = RoomBitmapRegister();
-	bitmapMetadata.bitmapPointer = screenDataFile->readSint32LE();
-	bitmapMetadata.bitmapSize = screenDataFile->readUint16LE();
-	bitmapMetadata.coordx = screenDataFile->readUint16LE();
-	bitmapMetadata.coordy = screenDataFile->readUint16LE();
-	bitmapMetadata.depth = screenDataFile->readUint16LE();
+	bitmapMetadata.bitmapPointer = in->readSint32LE();
+	bitmapMetadata.bitmapSize = in->readUint16LE();
+	bitmapMetadata.coordx = in->readUint16LE();
+	bitmapMetadata.coordy = in->readUint16LE();
+	bitmapMetadata.depth = in->readUint16LE();
 	return bitmapMetadata;
 }
 
-RoomObjectListEntry *readRoomObjects(Common::SeekableReadStream *screenDataFile) {
+RoomObjectListEntry *readRoomObjects(Common::SeekableReadStream *in) {
 	RoomObjectListEntry *objectMetadata = new RoomObjectListEntry();
-	objectMetadata->fileIndex = screenDataFile->readUint16LE();
-	objectMetadata->objectName = screenDataFile->readPascalString();
+	objectMetadata->fileIndex = in->readUint16LE();
+	objectMetadata->objectName = in->readPascalString();
 
-	screenDataFile->skip(20 - objectMetadata->objectName.size());
+	in->skip(20 - objectMetadata->objectName.size());
 
 	return objectMetadata;
 }
 
-RoomFileRegister *TotEngine::readScreenDataFile(Common::SeekableReadStream *screenDataFile) {
+RoomFileRegister *TotEngine::readScreenDataFile(Common::SeekableReadStream *in) {
 	RoomFileRegister *screenData = new RoomFileRegister();
-	screenData->code = screenDataFile->readUint16LE();
-	screenData->roomImagePointer = screenDataFile->readUint32LE();
-	screenData->roomImageSize = screenDataFile->readUint16LE();
-	screenDataFile->read(screenData->walkAreasGrid, 40 * 28);
-	screenDataFile->read(screenData->mouseGrid, 40 * 28);
+	screenData->code = in->readUint16LE();
+	screenData->roomImagePointer = in->readUint32LE();
+	screenData->roomImageSize = in->readUint16LE();
+	in->read(screenData->walkAreasGrid, 40 * 28);
+	in->read(screenData->mouseGrid, 40 * 28);
 	for (int i = 0; i < 9; i++) {
 		for (int j = 0; j < 30; j++) {
 			for (int k = 0; k < 5; k++) {
-				screenData->trajectories[i][j][k] = readPoint(screenDataFile);
+				screenData->trajectories[i][j][k] = readPoint(in);
 			}
 		}
 	}
 
 	for (int i = 0; i < 5; i++) {
-		screenData->doors[i] = readDoorMetadata(screenDataFile);
+		screenData->doors[i] = readDoorMetadata(in);
 	}
 	for (int i = 0; i < 15; i++) {
-		screenData->screenLayers[i] = readAuxBitmaps(screenDataFile);
+		screenData->screenLayers[i] = readAuxBitmaps(in);
 	}
 	for (int i = 0; i < 51; i++) {
-		screenData->screenObjectIndex[i] = readRoomObjects(screenDataFile);
+		screenData->screenObjectIndex[i] = readRoomObjects(in);
 	}
 
-	screenData->animationFlag = screenDataFile->readByte();
-	screenData->animationName = screenDataFile->readPascalString();
-	screenDataFile->skip(8 - screenData->animationName.size());
-	screenData->paletteAnimationFlag = screenDataFile->readByte();
-	screenData->palettePointer = screenDataFile->readUint16LE();
+	screenData->animationFlag = in->readByte();
+	screenData->animationName = in->readPascalString();
+	in->skip(8 - screenData->animationName.size());
+	screenData->paletteAnimationFlag = in->readByte();
+	screenData->palettePointer = in->readUint16LE();
 	for (int i = 0; i < 300; i++) {
-		screenData->secondaryAnimTrajectory[i] = readPoint(screenDataFile);
+		screenData->secondaryAnimTrajectory[i] = readPoint(in);
 	}
-	screenDataFile->read(screenData->secondaryAnimDirections, 600);
-	screenData->secondaryTrajectoryLength = screenDataFile->readUint16LE();
+	in->read(screenData->secondaryAnimDirections, 600);
+	screenData->secondaryTrajectoryLength = in->readUint16LE();
 	return screenData;
 }
 

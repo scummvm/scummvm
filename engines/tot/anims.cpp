@@ -944,7 +944,7 @@ void drawFlc(
 					skipFrame = !skipFrame;
 				}
 				handleFlcEvent(eventNumber, loopNumber, frameCount);
-				if(!skipFrame) {
+				if (!skipFrame) {
 					const Graphics::Surface *frame = flic->decodeNextFrame();
 					if (frame) {
 						frameCount++;
