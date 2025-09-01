@@ -52,6 +52,12 @@ class OpenGLRendererShaders : public OpenGLRenderer {
 public:
 	OpenGLRendererShaders(Point resolution)
 		: OpenGLRenderer(resolution) {
+		static constexpr const char *const kAttributes[] = {
+			"in_pos",
+			"in_uv",
+			"in_color",
+			nullptr
+		};
 		if (!_shader.loadFromStrings("alcachofa", kVertexShader, kFragmentShader, kAttributes))
 			error("Could not load shader");
 
@@ -194,13 +200,6 @@ private:
 	bool _needsNewBatch = false;
 	OpenGLTexture *_batchTexture = nullptr;
 	ScopedPtr<OpenGLTexture> _whiteTexture;
-
-	static constexpr const char *const kAttributes[] = {
-		"in_pos",
-		"in_uv",
-		"in_color",
-		nullptr
-	};
 
 	static constexpr const char *const kVertexShader = R"(
 		uniform mat4 projection;
