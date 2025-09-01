@@ -167,6 +167,8 @@ private:
 
 	SimpleShadowVertex _simpleShadow[4];
 
+	Graphics::TSpriteBlendMode _blendMode;
+
 	DXMatrix _glProjectionMatrix;
 	float _alphaRef;
 

@@ -80,7 +80,6 @@ public:
 	virtual bool stencilSupported() = 0;
 	virtual bool invalidateTexture(BaseSurfaceOpenGL3D *texture) = 0;
 
-	Graphics::TSpriteBlendMode _blendMode;
 	virtual void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode, bool forceChange = false) = 0;
 
 	virtual bool invalidateDeviceObjects() = 0;
