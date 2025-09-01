@@ -70,6 +70,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
    - Fixed closing the top menu.
 
+ Hypno:
+   - Added keymapper support.
+
  Kyra:
    - Reduce CPU usage in the LoL main menu.
    - Reduce CPU usage in EoB 1 and 2.
