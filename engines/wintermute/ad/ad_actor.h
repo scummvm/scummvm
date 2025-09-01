@@ -52,7 +52,7 @@ public:
 	BasePoint *_targetPoint;
 	bool update() override;
 	bool display() override;
-	TDirection _targetDir;
+	TDirection _targetDir{DI_NONE};
 	TDirection _afterWalkDir;
 	virtual void turnTo(TDirection dir);
 	AdPath *_path;
@@ -92,11 +92,11 @@ public:
 	void initLine(const BasePoint &startPt, const BasePoint &endPt);
 	void getNextStep();
 	void followPath();
-	double _pFStepX;
-	double _pFStepY;
-	double _pFX;
-	double _pFY;
-	int32 _pFCount;
+	double _pFStepX{};
+	double _pFStepY{};
+	double _pFX{};
+	double _pFY{};
+	int32 _pFCount{};
 };
 
 } // End of namespace Wintermute

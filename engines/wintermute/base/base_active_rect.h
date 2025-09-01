@@ -41,7 +41,7 @@ class XModel;
 class BaseActiveRect: BaseClass {
 public:
 	void clipRect();
-	bool _precise;
+	bool _precise{};
 	float _zoomX;
 	float _zoomY;
 	BaseSubFrame *_frame;

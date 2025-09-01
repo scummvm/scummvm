@@ -91,7 +91,7 @@ public:
 		uint32 methodTable;
 	} TScriptHeader;
 
-	TScriptHeader _header;
+	TScriptHeader _header{};
 
 	typedef struct {
 		char *name;

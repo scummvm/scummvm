@@ -167,7 +167,7 @@ public:
 	BaseObject *_mainObject;
 	bool initInput();
 	bool initLoop();
-	uint32 _currentTime;
+	uint32 _currentTime{};
 	uint32 _deltaTime;
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
@@ -348,9 +348,9 @@ public:
 	SaveThumbHelper *_cachedThumbnail;
 
 private:
-	bool _bilinearFiltering;
+	bool _bilinearFiltering{};
 #ifdef ENABLE_WME3D
-	bool _force2dRenderer;
+	bool _force2dRenderer{};
 #endif
 
 	AnsiString getDeviceType() const;

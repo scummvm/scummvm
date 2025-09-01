@@ -83,7 +83,7 @@ private:
 	uint32 _fadeStart;
 	int32 _fadeTime;
 	int32 _currentAlpha;
-	int32 _fadeStartAlpha;
+	int32 _fadeStartAlpha{};
 };
 
 } // End of namespace Wintermute

@@ -157,8 +157,8 @@ public:
 	BaseArray<AdWaypointGroup *> _waypointGroups;
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
-	int32 _width;
-	int32 _height;
+	int32 _width{};
+	int32 _height{};
 	bool addObject(AdObject *Object);
 	bool removeObject(AdObject *Object);
 	int32 _editorMarginH;

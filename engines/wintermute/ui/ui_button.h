@@ -40,7 +40,7 @@ public:
 	bool _stayPressed;
 	bool _centerImage;
 	bool _oneTimePress;
-	uint32 _oneTimePressTime;
+	uint32 _oneTimePressTime{};
 	DECLARE_PERSISTENT(UIButton, UIObject)
 	void press();
 	bool display() override { return display(0, 0); }

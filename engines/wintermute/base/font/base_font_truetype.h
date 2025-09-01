@@ -50,7 +50,7 @@ private:
 		int32 _maxHeight;
 		int32 _maxLength;
 		BaseSurface *_surface;
-		int32 _priority;
+		//int32 _priority;
 		int32 _textOffset;
 		bool _marked;
 		uint32 _lastUsed;
@@ -60,6 +60,7 @@ private:
 			_width = _maxHeight = _maxLength = -1;
 			_align = TAL_LEFT;
 			_surface = nullptr;
+			//_priority = -1;
 			_textOffset = 0;
 			_lastUsed = 0;
 			_marked = false;

@@ -110,7 +110,7 @@ private:
 	int _numInst;
 	bool _persistent;
 	SystemClass *_next;
-	int _iD;
+	int _iD{};
 	int _savedID;
 	AnsiString _name;
 	PERSISTBUILD _build;
