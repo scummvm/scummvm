@@ -702,7 +702,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 		return;
 	}
 
-	else if (ArtRect.PtInRect(point)) {
+	else if (!bEndGame && ArtRect.PtInRect(point)) {
 		CDC *pDC;
 
 		pDC = GetDC();
@@ -799,7 +799,7 @@ void CMainDFAWindow::OnMouseMove(UINT nFlags, CPoint point) {
 
 void CMainDFAWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 
-	if (ArtRect.PtInRect(point)) {
+	if (!bEndGame && ArtRect.PtInRect(point)) {
 		CDC *pDC;
 
 		pDC = GetDC();

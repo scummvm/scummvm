@@ -86,7 +86,7 @@ BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
 int CBitmap::GetObject(int nCount, LPVOID lpObject) const {
 	CBitmap::Impl *src = static_cast<CBitmap::Impl *>(m_hObject);
 	BITMAP *dest = (BITMAP *)lpObject;
-	assert(nCount == sizeof(BITMAP));
+	assert(src && nCount == sizeof(BITMAP));
 
 	dest->bmType = 0;
 	dest->bmWidth = src->w;
