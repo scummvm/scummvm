@@ -934,15 +934,19 @@ void CMainPackRatWindow::SetMaze() {
 		break;
 	}
 
-
-//  pOldPal = pDC->SelectPalette( pGamePalette, FALSE );
-//  pDC->RealizePalette();
-
 	bTestBmp = CSprite::SetBackdrop(pDC, pGamePalette, pTempBmp);
 	ASSERT(bTestBmp);
 	pTempBmp = nullptr;
 
 	m_anMazeArray = (int *) &anCurrentMaze[0];
+#ifdef DYNAMIC_OBJ_COUNT
+	m_nNumberOfObjectsLeft = 0;
+	for (int nLoop = 0; nLoop < 999; nLoop++) {
+		if (m_anMazeArray[nLoop] > 0) {
+			m_nNumberOfObjectsLeft++;
+		}
+	}
+#endif
 
 	anSuperObj[0] = FALSE;
 	anSuperObj[1] = FALSE;
@@ -958,7 +962,6 @@ void CMainPackRatWindow::SetMaze() {
 	ReleaseDC(pDC);
 	RedrawWindow();
 	m_bSuspend = FALSE;
-	return;
 }
 
 /*****************************************************************
