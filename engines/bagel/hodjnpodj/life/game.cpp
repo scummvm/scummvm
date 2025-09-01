@@ -1173,7 +1173,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "Current Villages: %d", (*m_cLife).ColonyPlaced());
-		bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1188,7 +1188,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "Score: %.1f", (*m_cLife).m_dScore);
-		bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1203,7 +1203,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "%d", (*m_cLife).m_nYears);
-		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1217,7 +1217,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "years");
-		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1231,7 +1231,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "past");
-		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1246,7 +1246,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "%d", nLifeCounter);
-		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1260,7 +1260,7 @@ void CMainWindow::DisplayStats() {
 		ASSERT(bAssertCheck);   // initialize the text objext
 
 		Common::sprintf_s(buf, "left");
-		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1305,39 +1305,39 @@ void CMainWindow::RefreshStats() {
 
 	// Colony placed count box
 	Common::sprintf_s(buf, "Current Villages: %d", (*m_cLife).ColonyPlaced());
-	bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+	bAssertCheck = m_cLife->pColonyPlaced->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// Score box
 	Common::sprintf_s(buf, "Score: %.1f", (*m_cLife).m_dScore);
-	bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+	bAssertCheck = m_cLife->pScore->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 	ASSERT(bAssertCheck);   // paint the text
 
 	// Round box
 	if (bIsInfiniteTurns != TRUE) {
 		Common::sprintf_s(buf, "%d", (*m_cLife).m_nYears);
 
-		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 		Common::sprintf_s(buf, "years");
-		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 
 		Common::sprintf_s(buf, "past");
-		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	} else {
 		Common::sprintf_s(buf, "");
 
-		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYears->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
-		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
-		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pYearsText2->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 
@@ -1345,19 +1345,19 @@ void CMainWindow::RefreshStats() {
 	// update colony count stat
 	if (bIsInfiniteLife == TRUE) {
 		Common::sprintf_s(buf, "Unlim");
-		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 		Common::sprintf_s(buf, "");
-		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	} else {
 		Common::sprintf_s(buf, "%d", nLifeCounter);
-		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 
 		Common::sprintf_s(buf, "left");
-		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+		bAssertCheck = m_cLife->pColonyStatText1->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 		ASSERT(bAssertCheck);   // paint the text
 	}
 

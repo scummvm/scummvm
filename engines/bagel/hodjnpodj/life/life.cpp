@@ -234,7 +234,7 @@ void CLife::change_board(UINT nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta)
 			//decrement colony counter if not infinite
 			nLifeCounter--;
 			Common::sprintf_s(buf, "%d", nLifeCounter);
-			bAssertCheck = pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+			bAssertCheck = pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 		}
 		i = brand() % VILLAGES;
@@ -255,7 +255,7 @@ void CLife::change_board(UINT nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta)
 			//Add life back to colony counter if finite
 			nLifeCounter++;
 			Common::sprintf_s(buf, "%d", nLifeCounter);
-			bAssertCheck = pColonyStat->DisplayString(pDC, buf, 21, FW_BOLD, STATS_COLOR);
+			bAssertCheck = pColonyStat->DisplayString(pDC, buf, STATS_FONT_SIZE, FW_BOLD, STATS_COLOR);
 			ASSERT(bAssertCheck);   // paint the text
 		}
 

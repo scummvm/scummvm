@@ -68,6 +68,7 @@ static const char *months[12] = {
 
 // stat info
 #define STATS_COLOR             RGB(255, 255, 0)    // color of visual game stats
+#define STATS_FONT_SIZE			15
 #define MONTH_COL_POS           17                  // sprite calendar pos
 #define MONTH_ROW_POS           140
 
@@ -84,22 +85,22 @@ static const char *months[12] = {
 #define ROUND_LEFT_COL          15          // years past pos
 #define ROUND_LEFT_ROW          315
 #define ROUND_RIGHT_COL         62
-#define ROUND_RIGHT_ROW         329
+#define ROUND_RIGHT_ROW         331
 
 #define ROUND_TEXT1_LEFT_COL    15
 #define ROUND_TEXT1_LEFT_ROW    330
 #define ROUND_TEXT1_RIGHT_COL   62
-#define ROUND_TEXT1_RIGHT_ROW   350
+#define ROUND_TEXT1_RIGHT_ROW   352
 
 #define ROUND_TEXT2_LEFT_COL    15
 #define ROUND_TEXT2_LEFT_ROW    351
 #define ROUND_TEXT2_RIGHT_COL   62
-#define ROUND_TEXT2_RIGHT_ROW   371
+#define ROUND_TEXT2_RIGHT_ROW   373
 
 #define VILLAGE_LEFT_COL        15          // villages left pos
 #define VILLAGE_LEFT_ROW        423
 #define VILLAGE_RIGHT_COL       62
-#define VILLAGE_RIGHT_ROW       437
+#define VILLAGE_RIGHT_ROW       441
 
 #define VILLAGE_TEXT1_LEFT_COL      15
 #define VILLAGE_TEXT1_LEFT_ROW      438
