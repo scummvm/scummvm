@@ -19,7 +19,7 @@
  *
  */
 
-#include "tot/font/bgifont.h"
+#include "graphics/fonts/bgifont.h"
 
 namespace Graphics {
 

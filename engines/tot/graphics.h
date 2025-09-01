@@ -25,12 +25,9 @@
 #include "common/system.h"
 #include "graphics/font.h"
 
-#include "tot/font/bgifont.h"
-// #include "tot/font/biosfont.h"
-// #include "tot/vars.h"
+#include "graphics/fonts/bgifont.h"
 
 namespace Tot {
-
 
 const int kTextAreaSize = 320 * 70 + 4;
 
