@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	fontman.o \
 	fonts/amigafont.o \
 	fonts/bdf.o \
+	fonts/bgifont.o \
 	fonts/consolefont.o \
 	fonts/dosfont.o \
 	fonts/freetype.o \
