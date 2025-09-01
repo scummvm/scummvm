@@ -107,6 +107,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Parallaction:
    - Added Text-to-Speech support.
 
+ Petka:
+   - Added keymapper support.
+
  Pink:
    - Added keymapper support.
 
