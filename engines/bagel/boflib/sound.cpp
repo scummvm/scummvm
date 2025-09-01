@@ -231,8 +231,8 @@ void CBofSound::setVolume(int nMidiVolume, int nWaveVolume) {
 bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 	assert(isValidObject(this));
 
-	// Assume failure
-	bool bSuccess = false;
+	// Assume success
+	bool bSuccess = true;
 
 	if (_errCode == ERR_NONE) {
 		// We must be attached to a valid window
@@ -279,7 +279,6 @@ bool CBofSound::play(uint32 dwBeginHere, uint32 TimeFormatFlag) {
 
 			g_engine->_midi->play(this);
 			_bPlaying = true;
-			bSuccess = true;
 
 		} else if (_wFlags & SOUND_WAVE) {
 
