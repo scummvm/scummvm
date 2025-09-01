@@ -44,27 +44,4 @@ uint32 NetworkReadStream::addResponseHeaders(char *buffer, uint32 bufferSize) {
 	return bufferSize;
 }
 
-double NetworkReadStream::getProgress() const {
-	if (_progressTotal < 1)
-		return 0;
-	return (double)_progressDownloaded / (double)_progressTotal;
-}
-
-void NetworkReadStream::setProgress(uint64 downloaded, uint64 total) {
-	_progressDownloaded = downloaded;
-	_progressTotal = total;
-}
-
-uint32 NetworkReadStream::read(void *dataPtr, uint32 dataSize) {
-	uint32 actuallyRead = _backingStream.read(dataPtr, dataSize);
-
-	if (actuallyRead == 0) {
-		if (_requestComplete)
-			_eos = true;
-		return 0;
-	}
-
-	return actuallyRead;
-}
-
 } // End of namespace Networking

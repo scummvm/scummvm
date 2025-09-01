@@ -36,7 +36,6 @@ typedef Common::Array<Common::String> RequestHeaders;
 // Simple interface for platform-specific NetworkReadStream implementations
 class NetworkReadStream : public Common::ReadStream {
 protected:
-	Common::MemoryReadWriteStream _backingStream;
 	bool _keepAlive;
 	long _keepAliveIdle, _keepAliveInterval;
 	bool _eos, _requestComplete;
@@ -44,7 +43,6 @@ protected:
 	uint32 _sendingContentsSize;
 	uint32 _sendingContentsPos;
 	Common::String _responseHeaders;
-	uint64 _progressDownloaded, _progressTotal;
 
 	/**
 	 * Fills the passed buffer with _sendingContentsBuffer contents.
@@ -63,8 +61,8 @@ protected:
 	uint32 addResponseHeaders(char *buffer, uint32 bufferSize);
 
 	NetworkReadStream(bool keepAlive, long keepAliveIdle, long keepAliveInterval)
-		: _backingStream(DisposeAfterUse::YES), _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr),
-		  _sendingContentsSize(0), _sendingContentsPos(0), _progressDownloaded(0), _progressTotal(0),
+		: _eos(false), _requestComplete(false), _sendingContentsBuffer(nullptr),
+		  _sendingContentsSize(0), _sendingContentsPos(0),
 		  _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval) {
 	}
 
@@ -119,7 +117,7 @@ public:
 	 * @param dataSize  number of bytes to be read
 	 * @return the number of bytes which were actually read.
 	 */
-	uint32 read(void *dataPtr, uint32 dataSize) override;
+	uint32 read(void *dataPtr, uint32 dataSize) override = 0;
 
 	/**
 	 * Returns HTTP response code from inner CURL handle.
@@ -146,10 +144,7 @@ public:
 	virtual Common::HashMap<Common::String, Common::String> responseHeadersMap() const = 0;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
-	double getProgress() const;
-
-	/** Used in curl progress callback to pass current downloaded/total values. */
-	void setProgress(uint64 downloaded, uint64 total);
+	virtual double getProgress() const = 0;
 
 	bool keepAlive() const { return _keepAlive; }
 

@@ -25,6 +25,7 @@
 #include <jni.h>
 
 #include "backends/networking/http/networkreadstream.h"
+#include "common/memstream.h"
 
 namespace Networking {
 
@@ -37,11 +38,14 @@ private:
 
 	void resetStream(JNIEnv *env);
 	void finished(int errorCode, const Common::String &errorMsg);
+	void setProgress(uint64 downloaded, uint64 total);
 
 	jobject _request;
+	Common::MemoryReadWriteStream _backingStream;
 
 	Common::HashMap<Common::String, Common::String> _responseHeadersMap;
 	uint64 _downloaded;
+	uint64 _progressDownloaded, _progressTotal;
 	int _errorCode;
 	Common::String _errorMsg;
 public:
@@ -75,6 +79,8 @@ public:
 
 	bool hasError() const override { return _errorCode < 200 || _errorCode >= 300; }
 	const char *getError() const override { return _errorMsg.c_str(); }
+	double getProgress() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 };
 
 } // End of namespace Networking

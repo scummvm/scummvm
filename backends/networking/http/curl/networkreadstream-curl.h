@@ -38,11 +38,13 @@ namespace Networking {
 
 class NetworkReadStreamCurl : public NetworkReadStream {
 private:
+	Common::MemoryReadWriteStream _backingStream;
 	CURL *_easy;
 	struct curl_slist *_headersSlist;
 	char *_errorBuffer;
 	CURLcode _errorCode;
 	byte *_bufferCopy; // To use with old curl version where CURLOPT_COPYPOSTFIELDS is not available
+	uint64 _progressDownloaded, _progressTotal;
 	void initCurl(const char *url, RequestHeaders *headersList);
 	bool reuseCurl(const char *url, RequestHeaders *headersList);
 	static struct curl_slist *requestHeadersToSlist(const RequestHeaders *headersList);
@@ -77,6 +79,11 @@ public:
 		const Common::HashMap<Common::String, Common::Path> &formFiles) override;
 	/** Send <buffer>, using POST by default. */
 	bool reuse(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize, bool uploading = false, bool usingPatch = false, bool post = true) override;
+
+	/** Used in curl progress callback to pass current downloaded/total values. */
+	void setProgress(uint64 downloaded, uint64 total);
+	double getProgress() const override;
+	uint32 read(void *dataPtr, uint32 dataSize) override;
 
 	long httpResponseCode() const override;
 	Common::String currentLocation() const override;
