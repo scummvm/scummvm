@@ -119,8 +119,6 @@ void Frame::writeMainChannels(Common::SeekableWriteStream *writeStream, uint16 v
 		writeMainChannelsD4(writeStream);
 	} else if (version >= kFileVer500 && version < kFileVer600) {
 		writeMainChannelsD5(writeStream);
-	} else if (version >= kFileVer500 && version < kFileVer600) {
-		writeMainChannelsD5(writeStream);
 	} else if (version >= kFileVer600 && version < kFileVer700) {
 		writeMainChannelsD6(writeStream);
 	} else if (version >= kFileVer700 && version < kFileVer1100) {
