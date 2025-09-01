@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-01 15:02+0000\n"
-"PO-Revision-Date: 2025-08-25 09:11+0000\n"
+"PO-Revision-Date: 2025-09-01 17:10+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8261,50 +8261,38 @@ msgstr ""
 "diseñado para dicho modo"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Character selection keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "Asignaciones de selección de personajes"
+msgstr "Asignaciones de selección de diálogos"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle leader inventory"
-msgstr "Mostrar/Ocultar inventario"
+msgstr "Mostrar/Ocultar inventario del líder"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Seleccionar diálogo (solo si hay una única opción)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 1 inventory"
-msgstr "Mostrar/Ocultar inventario"
+msgstr "Mostrar/Ocultar inventario de paladín 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 2 inventory"
-msgstr "Mostrar/Ocultar inventario"
+msgstr "Mostrar/Ocultar inventario de paladín 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 3 inventory"
-msgstr "Mostrar/Ocultar inventario"
+msgstr "Mostrar/Ocultar inventario de paladín 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 4 inventory"
-msgstr "Mostrar/Ocultar inventario"
+msgstr "Mostrar/Ocultar inventario de paladín 4"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8323,10 +8311,8 @@ msgstr "Desplazarse a la derecha"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
-#, fuzzy
-#| msgid "Hole up & camp"
 msgid "Wake up champion"
-msgstr "Acampar"
+msgstr "Despertar a paladín"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -9608,13 +9594,11 @@ msgstr "Asignaciones de introducción"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "Disparo principal"
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Segundos"
+msgstr "Disparo secundario"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
@@ -9623,29 +9607,21 @@ msgid "Skip intro"
 msgstr "Omitir introducción"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "Exit keymappings"
 msgid "Exit menu keymappings"
-msgstr "Asignaciones de salida"
+msgstr "Asignaciones del menú de salida"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Enemy selection keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "Asignaciones de selección de enemigos"
+msgstr "Asignaciones del menú de sel. dificultad"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Death menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "Asignaciones del menú de muerte"
+msgstr "Asignaciones del menú de reintentado"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "Omitir diálogo"
+msgstr "Omitir nivel (truco)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9653,52 +9629,44 @@ msgstr "Omitir diálogo"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "Matar a jugador"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "Modo fácil"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "Modo normal"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "Modo difícil"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "Retirarse"
+msgstr "Reintentar sector"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Reiniciar animación"
+msgstr "Reintentar territorio"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Iniciar misión nueva"
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "Asignaciones del menú de pausa"
+msgstr "Asignaciones de pausa"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Interaction keymappings"
 msgid "Direction keymappings"
-msgstr "Asignaciones de interacciones"
+msgstr "Asignaciones de direcciones"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -11288,28 +11256,20 @@ msgid "X key"
 msgstr "Tecla X"
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display subtitles"
-msgstr "Desactivar subtítulos"
+msgstr "Mostrar subtítulos"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use subtitles."
-msgstr "Desactivar subtítulos"
+msgstr "Muestra subtítulos."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display SFX subtitles"
-msgstr "Desactivar subtítulos"
+msgstr "Mostrar subtítulos para efectos de sonido"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use SFX subtitles."
-msgstr "Desactivar subtítulos"
+msgstr "Muestra subtítulos cuando suenen efectos de sonido (para sordos)."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
