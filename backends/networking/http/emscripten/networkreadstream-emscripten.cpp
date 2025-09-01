@@ -19,21 +19,6 @@
  *
  */
 
-#define FORBIDDEN_SYMBOL_EXCEPTION_asctime
-#define FORBIDDEN_SYMBOL_EXCEPTION_clock
-#define FORBIDDEN_SYMBOL_EXCEPTION_ctime
-#define FORBIDDEN_SYMBOL_EXCEPTION_difftime
-#define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_getdate
-#define FORBIDDEN_SYMBOL_EXCEPTION_gmtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_localtime
-#define FORBIDDEN_SYMBOL_EXCEPTION_mktime
-#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
-#define FORBIDDEN_SYMBOL_EXCEPTION_strdup
-#define FORBIDDEN_SYMBOL_EXCEPTION_time
-#include <emscripten.h>
-#include <emscripten/fetch.h>
-
 #include "backends/networking/http/emscripten/networkreadstream-emscripten.h"
 #include "backends/networking/http/networkreadstream.h"
 #include "base/version.h"
@@ -53,254 +38,275 @@ NetworkReadStream *NetworkReadStream::make(const char *url, RequestHeaders *head
 	return new NetworkReadStreamEmscripten(url, headersList, buffer, bufferSize, uploading, usingPatch, post, keepAlive, keepAliveIdle, keepAliveInterval);
 }
 
-void NetworkReadStreamEmscripten::emscriptenOnReadyStateChange(emscripten_fetch_t *fetch) {
-	if (fetch->readyState != 2)
+void NetworkReadStreamEmscripten::resetStream() {
+	_eos = false;
+	_sendingContentsSize = _sendingContentsPos = 0;
+	_readPos = 0;
+	_fetchId = 0;
+}
+
+void NetworkReadStreamEmscripten::initFetch() {
+	static bool initialized = false;
+	if (!initialized) {
+		NetworkReadStreamEmscripten_init();
+		initialized = true;
+	}
+}
+
+char **NetworkReadStreamEmscripten::buildHeadersArray(const RequestHeaders *headersList) {
+	if (!headersList || headersList->empty())
+		return nullptr;
+
+	const int maxEntries = headersList->size() * 2;
+	char **headers = new char *[maxEntries + 1];
+
+	int idx = 0;
+	for (const Common::String &header : *headersList) {
+		uint colonPos = header.findFirstOf(':');
+		if (colonPos == Common::String::npos) {
+			warning("NetworkReadStreamEmscripten: Malformed header (no colon): %s", header.c_str());
+			continue;
+		}
+
+		Common::String key = header.substr(0, colonPos);
+		Common::String value = header.substr(colonPos + 1);
+		key.trim();
+		value.trim();
+		headers[idx++] = scumm_strdup(key.c_str());
+		headers[idx++] = scumm_strdup(value.c_str());
+		debug(5, "Header: '%s' = '%s'", key.c_str(), value.c_str());
+	}
+
+	headers[idx] = nullptr;
+
+	return headers;
+}
+
+void NetworkReadStreamEmscripten::cleanupStringArray(char **array) {
+	if (!array)
 		return;
 
-	size_t headersLengthBytes = emscripten_fetch_get_response_headers_length(fetch) + 1;
-	char *headerString = (char *)malloc(headersLengthBytes);
-
-	assert(headerString);
-	emscripten_fetch_get_response_headers(fetch, headerString, headersLengthBytes);
-	NetworkReadStreamEmscripten *stream = (NetworkReadStreamEmscripten *)fetch->userData;
-	stream->addResponseHeaders(headerString, headersLengthBytes);
-	free(headerString);
-}
-
-void NetworkReadStreamEmscripten::emscriptenOnProgress(emscripten_fetch_t *fetch) {
-	/*
-	if (fetch->totalBytes) {
-		debug(5,"Downloading %s.. %.2f percent complete.", fetch->url, fetch->dataOffset * 100.0 / fetch->totalBytes);
-	} else {
-		debug(5,"Downloading %s.. %lld bytes complete.", fetch->url, fetch->dataOffset + fetch->numBytes);
-	}
-	debug(5,"Downloading %s.. %.2f %s complete. HTTP readyState: %hu. HTTP status: %hu - "
-			"HTTP statusText: %s. Received chunk [%llu, %llu]",
-			fetch->url,
-			fetch->totalBytes > 0 ? (fetch->dataOffset + fetch->numBytes) * 100.0 / fetch->totalBytes : (fetch->dataOffset + fetch->numBytes),
-			fetch->totalBytes > 0 ? "percent" : " bytes",
-			fetch->readyState,
-			fetch->status,
-			fetch->statusText,
-			fetch->dataOffset,
-			fetch->dataOffset + fetch->numBytes);
-	*/
-	NetworkReadStreamEmscripten *stream = (NetworkReadStreamEmscripten *)fetch->userData;
-	if (stream) {
-		stream->setProgress(fetch->dataOffset, fetch->totalBytes);
-	}
-}
-
-void NetworkReadStreamEmscripten::emscriptenOnSuccess(emscripten_fetch_t *fetch) {
-	NetworkReadStreamEmscripten *stream = (NetworkReadStreamEmscripten *)fetch->userData;
-	stream->emscriptenDownloadFinished(true);
-}
-
-void NetworkReadStreamEmscripten::emscriptenOnError(emscripten_fetch_t *fetch) {
-	NetworkReadStreamEmscripten *stream = (NetworkReadStreamEmscripten *)fetch->userData;
-	stream->emscriptenDownloadFinished(false);
-}
-
-void NetworkReadStreamEmscripten::emscriptenDownloadFinished(bool success) {
-	_requestComplete = true;
-	if (_emscripten_fetch->numBytes > 0) {
-		// TODO: This could be done continuously during emscriptenOnProgress?
-		this->_backingStream.write(_emscripten_fetch->data, _emscripten_fetch->numBytes);
-	}
-	this->setProgress(_emscripten_fetch->numBytes, _emscripten_fetch->numBytes);
-
-	if (success) {
-		debug(5, "NetworkReadStreamEmscripten::emscriptenHandleDownload Finished downloading %llu bytes from URL %s. HTTP status code: %d", _emscripten_fetch->numBytes, _emscripten_fetch->url, _emscripten_fetch->status);
-		_success = true; // TODO: actually pass the result code from emscripten_fetch
-	} else {
-		debug(5, "NetworkReadStreamEmscripten::emscriptenHandleDownload Downloading %s failed, HTTP failure status code: %d, status text: %s", _emscripten_fetch->url, _emscripten_fetch->status, _emscripten_fetch->statusText);
-
-		// Make a copy of the error message since _emscripten_fetch might be cleaned up
-		if (_emscripten_fetch && _emscripten_fetch->statusText) {
-			_errorBuffer = strdup(_emscripten_fetch->statusText);
-		} else {
-			_errorBuffer = strdup("Unknown error");
-		}
-		warning("NetworkReadStreamEmscripten::finished %s - Request failed (%s)", _emscripten_fetch_url, getError());
-	}
-}
-
-void NetworkReadStreamEmscripten::resetStream() {
-	_eos = _requestComplete = false;
-	_sendingContentsSize = _sendingContentsPos = 0;
-	_progressDownloaded = _progressTotal = 0;
-	_emscripten_fetch = nullptr;
-	_emscripten_request_headers = nullptr;
-	free(_errorBuffer);
-	_errorBuffer = nullptr;
-}
-
-void NetworkReadStreamEmscripten::initEmscripten(const char *url, RequestHeaders *headersList) {
-
-	resetStream();
-	emscripten_fetch_attr_init(_emscripten_fetch_attr);
-
-	// convert header list
-	// first get size of list
-	int size = 0;
-	if (headersList) {
-		size = headersList->size();
-		debug(5, "_emscripten_request_headers count: %d", size);
-	}
-	_emscripten_request_headers = new char *[size * 2 + 1];
-	_emscripten_request_headers[size * 2] = 0; // header array needs to be null-terminated.
-
-	int i = 0;
-	if (headersList) {
-		for (const Common::String &header : *headersList) {
-			// Find the colon separator
-			uint colonPos = header.findFirstOf(':');
-			if (colonPos == Common::String::npos) {
-				warning("NetworkReadStreamEmscripten: Malformed header (no colon): %s", header.c_str());
-				continue;
-			}
-
-			// Split into key and value parts
-			Common::String key = header.substr(0, colonPos);
-			Common::String value = header.substr(colonPos + 1);
-
-			// Trim whitespace from key and value
-			key.trim();
-			value.trim();
-
-			// Store key and value as separate strings
-			_emscripten_request_headers[i++] = strdup(key.c_str());
-			_emscripten_request_headers[i++] = strdup(value.c_str());
-			debug(9, "_emscripten_request_headers key='%s' value='%s'", key.c_str(), value.c_str());
-		}
+	for (int i = 0; array[i] != nullptr; ++i) {
+		free(array[i]);
 	}
 
-	_emscripten_fetch_attr->requestHeaders = _emscripten_request_headers;
-	strcpy(_emscripten_fetch_attr->requestMethod, "GET"); // todo: move down to setup buffer contents
-	_emscripten_fetch_attr->attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-	_emscripten_fetch_attr->onerror = emscriptenOnError;
-	_emscripten_fetch_attr->onprogress = emscriptenOnProgress;
-	_emscripten_fetch_attr->onreadystatechange = emscriptenOnReadyStateChange;
-	_emscripten_fetch_attr->onsuccess = emscriptenOnSuccess;
-	_emscripten_fetch_attr->userData = this;
-}
-void NetworkReadStreamEmscripten::setupBufferContents(const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post) {
-	if (uploading) {
-		strcpy(_emscripten_fetch_attr->requestMethod, "PUT");
-		_emscripten_fetch_attr->requestDataSize = bufferSize;
-		_emscripten_fetch_attr->requestData = (const char *)buffer;
-	} else if (usingPatch) {
-		strcpy(_emscripten_fetch_attr->requestMethod, "PATCH");
-	} else {
-		if (post || bufferSize != 0) {
-			strcpy(_emscripten_fetch_attr->requestMethod, "POST");
-			_emscripten_fetch_attr->requestDataSize = bufferSize;
-			_emscripten_fetch_attr->requestData = (const char *)buffer;
-		}
-	}
-	debug(5, "NetworkReadStreamEmscripten::setupBufferContents uploading %s usingPatch %s post %s ->method %s", uploading ? "true" : "false", usingPatch ? "true" : "false", post ? "true" : "false", _emscripten_fetch_attr->requestMethod);
-	_emscripten_fetch = emscripten_fetch(_emscripten_fetch_attr, _emscripten_fetch_url);
+	delete[] array;
 }
 
-void NetworkReadStreamEmscripten::setupFormMultipart(const Common::HashMap<Common::String, Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles) {
-	// set POST multipart upload form fields/files
-	error("NetworkReadStreamEmscripten::setupFormMultipart not implemented");
+char **NetworkReadStreamEmscripten::buildFormFieldsArray(const Common::HashMap<Common::String, Common::String> &formFields) {
+	if (formFields.empty())
+		return nullptr;
+
+	// Array contains alternating name/value pairs, plus null terminator
+	int count = formFields.size() * 2;
+	char **fields = new char *[count + 1];
+
+	int idx = 0;
+	for (Common::HashMap<Common::String, Common::String>::const_iterator i = formFields.begin(); i != formFields.end(); ++i) {
+		fields[idx++] = scumm_strdup(i->_key.c_str());
+		fields[idx++] = scumm_strdup(i->_value.c_str());
+	}
+	fields[idx] = nullptr;
+
+	return fields;
+}
+
+char **NetworkReadStreamEmscripten::buildFormFilesArray(const Common::HashMap<Common::String, Common::Path> &formFiles) {
+	if (formFiles.empty())
+		return nullptr;
+
+	// Array contains alternating name/path pairs, plus null terminator
+	int count = formFiles.size() * 2;
+	char **files = new char *[count + 1];
+
+	int idx = 0;
+	for (Common::HashMap<Common::String, Common::Path>::const_iterator i = formFiles.begin(); i != formFiles.end(); ++i) {
+		files[idx++] = scumm_strdup(i->_key.c_str());
+		files[idx++] = scumm_strdup(i->_value.toString(Common::Path::kNativeSeparator).c_str());
+	}
+	files[idx] = nullptr;
+
+	return files;
+}
+
+double NetworkReadStreamEmscripten::getProgress() const {
+	uint64 numBytes = NetworkReadStreamEmscripten_getNumBytes(_fetchId);
+	uint64 totalBytes = NetworkReadStreamEmscripten_totalBytes(_fetchId);
+	if (numBytes == 0 || totalBytes == 0) {
+		return 0.0; // avoid division by zero or infinite if either is zero
+	}
+	debug(5, "NetworkReadStreamEmscripten::getProgress - Progress: %llu / %llu for %s", numBytes, totalBytes, _url.c_str());
+	return (double)numBytes / (double)totalBytes;
 }
 
 /** Send <postFields>, using POST by default. */
 NetworkReadStreamEmscripten::NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const Common::String &postFields,
-		bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
-		_emscripten_fetch_attr(new emscripten_fetch_attr_t()), _emscripten_fetch_url(url), _errorBuffer(nullptr),
-		NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval) {
-	initEmscripten(url, headersList);
-	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
-}
-/** Send <formFields>, <formFiles>, using POST multipart/form. */
-NetworkReadStreamEmscripten::NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const Common::HashMap<Common::String,
-		Common::String> &formFields, const Common::HashMap<Common::String, Common::Path> &formFiles, bool keepAlive, long keepAliveIdle,
-		long keepAliveInterval) : _emscripten_fetch_attr(new emscripten_fetch_attr_t()), _emscripten_fetch_url(url), _errorBuffer(nullptr),
-		NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval) {
-	initEmscripten(url, headersList);
-	setupFormMultipart(formFields, formFiles);
+	bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval),
+	_fetchId(0), _url(url), _headersList(headersList), _readPos(0) {
+
+	initFetch();
+
+	// Determine HTTP method
+	const char *method = "GET";
+	if (uploading) {
+		method = "PUT";
+	} else if (usingPatch) {
+		method = "PATCH";
+	} else if (postFields.size() != 0) {
+		method = "POST";
+	}
+
+	// Build headers
+	char **headers = buildHeadersArray(_headersList);
+
+	debug(5, "Starting fetch: %s %s (body size: %u)", method, _url.c_str(), postFields.size());
+
+	// Start the fetch
+	_fetchId = NetworkReadStreamEmscripten_fetch(method, _url.c_str(), headers, postFields.c_str(), postFields.size());
+
+	// Clean up headers
+	cleanupStringArray(headers);
 }
 
+/** Send <formFields>, <formFiles>, using POST multipart/form. */
+NetworkReadStreamEmscripten::NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const Common::HashMap<Common::String, Common::String> &formFields,
+	const Common::HashMap<Common::String, Common::Path> &formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval) ,
+	_fetchId(0), _url(url), _headersList(headersList), _readPos(0){
+
+	initFetch();
+
+	// Build all three arrays
+	char **formFieldsArray = buildFormFieldsArray(formFields);
+	char **formFilesArray = buildFormFilesArray(formFiles);
+	char **headers = buildHeadersArray(_headersList);
+
+	debug(5, "Starting FormData fetch: POST %s with %d fields and %d files", _url.c_str(), formFields.size(), formFiles.size());
+
+	// Call NetworkReadStreamEmscripten_fetch with FormData parameters (method is always POST for FormData)
+	_fetchId = NetworkReadStreamEmscripten_fetch("POST", _url.c_str(), headers, nullptr, 0, // no regular request body
+												 formFieldsArray, formFilesArray);
+
+	// Clean up allocated strings
+	cleanupStringArray(formFieldsArray);
+	cleanupStringArray(formFilesArray);
+	cleanupStringArray(headers);
+}
 /** Send <buffer>, using POST by default. */
 NetworkReadStreamEmscripten::NetworkReadStreamEmscripten(const char *url, RequestHeaders *headersList, const byte *buffer, uint32 bufferSize,
-		bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval) :
-		_emscripten_fetch_attr(new emscripten_fetch_attr_t()), _emscripten_fetch_url(url), _errorBuffer(nullptr),
-		NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval) {
-	initEmscripten(url, headersList);
-	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
+	bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval) : 
+	NetworkReadStream(keepAlive, keepAliveIdle, keepAliveInterval),
+	_fetchId(0), _url(url), _headersList(headersList), _readPos(0) {
+
+	initFetch();
+
+	// Determine HTTP method
+	const char *method = "GET";
+	if (uploading) {
+		method = "PUT";
+	} else if (usingPatch) {
+		method = "PATCH";
+	} else if (post || bufferSize != 0) {
+		method = "POST";
+	}
+
+	// Build headers
+	char **headers = buildHeadersArray(_headersList);
+
+	debug(5, "Starting fetch: %s %s (buffer size: %u)", method, _url.c_str(), bufferSize);
+
+	// Start the fetch
+	_fetchId = NetworkReadStreamEmscripten_fetch(method, _url.c_str(), headers, (const char *)buffer, bufferSize);
+
+	// Clean up headers
+	cleanupStringArray(headers);
 }
 
 NetworkReadStreamEmscripten::~NetworkReadStreamEmscripten() {
-	if (_emscripten_fetch) {
-		debug(5, "~NetworkReadStreamEmscripten: emscripten_fetch_close");
-		emscripten_fetch_close(_emscripten_fetch);
-	}
-
-	// Free the headers array and its contents
-	if (_emscripten_request_headers) {
-		for (int i = 0; _emscripten_request_headers[i] != nullptr; ++i) {
-			free(_emscripten_request_headers[i]); // Free each strdup'd string
-		}
-		delete[] _emscripten_request_headers;
+	debug(5, "NetworkReadStreamEmscripten::~NetworkReadStreamEmscripten %s", _url.c_str());
+	if (_fetchId) {
+		debug(5, "~NetworkReadStreamEmscripten: NetworkReadStreamEmscripten_close");
+		NetworkReadStreamEmscripten_close(_fetchId);
+		_fetchId = 0;
 	}
 }
 
 uint32 NetworkReadStreamEmscripten::read(void *dataPtr, uint32 dataSize) {
-	uint32 actuallyRead = _backingStream.read(dataPtr, dataSize);
+	if (!_fetchId || _eos || dataSize == 0) {
+		warning("NetworkReadStreamEmscripten::read - Invalid state");
+		return 0;
+	}
 
-	// Only access _emscripten_fetch->url if _emscripten_fetch is valid
-	// debug(5,"NetworkReadStreamEmscripten::read %u %s %s %s", actuallyRead, _eos ? "_eos" : "not _eos", _requestComplete ? "_requestComplete" : "_request not Complete", _emscripten_fetch ? _emscripten_fetch->url : "no-url");
-	if (actuallyRead == 0) {
-		if (_requestComplete)
+	// Get direct pointer to JS buffer
+	char *jsBuffer = NetworkReadStreamEmscripten_getDataPtr(_fetchId);
+	if (!jsBuffer) {
+		return 0;
+	}
+
+	// Get current number of bytes available
+	uint32 numBytes = NetworkReadStreamEmscripten_getNumBytes(_fetchId);
+
+	// Calculate how many bytes we can actually read
+	uint32 availableBytes = numBytes - _readPos;
+	uint32 bytesToRead = (dataSize < availableBytes) ? dataSize : availableBytes;
+	uint32 totalBytes = NetworkReadStreamEmscripten_totalBytes(_fetchId);
+	debug(5, "NetworkReadStreamEmscripten::read - Progress: %u / %u for %s, currently at %u Trying to read %u bytes", numBytes, totalBytes, _url.c_str(), _readPos, bytesToRead);
+
+	if (bytesToRead == 0) {
+		// Check if transfer is complete
+		if (NetworkReadStreamEmscripten_completed(_fetchId))
 			_eos = true;
 		return 0;
 	}
 
-	return actuallyRead;
+	// Copy data directly from JS buffer
+	memcpy(dataPtr, jsBuffer + _readPos, bytesToRead);
+	_readPos += bytesToRead;
+
+	return bytesToRead;
 }
 
 bool NetworkReadStreamEmscripten::hasError() const {
-	return !_success;
+	return NetworkReadStreamEmscripten_hasError(_fetchId) && NetworkReadStreamEmscripten_completed(_fetchId);
 }
 
 const char *NetworkReadStreamEmscripten::getError() const {
-	return _errorBuffer;
+	if (!hasError() || _fetchId == 0) {
+		return "No error";
+	}
+
+	return NetworkReadStreamEmscripten_getErr(_fetchId);
+}
+
+bool NetworkReadStreamEmscripten::eos() const {
+	return _eos;
 }
 
 long NetworkReadStreamEmscripten::httpResponseCode() const {
-	// return 200;
-	unsigned short responseCode = 0;
-	if (_emscripten_fetch)
-		responseCode = _emscripten_fetch->status;
-	debug(5, "NetworkReadStreamEmscripten::httpResponseCode %hu", responseCode);
-	return responseCode;
+	return _fetchId ? NetworkReadStreamEmscripten_status(_fetchId) : 0;
 }
 
 Common::String NetworkReadStreamEmscripten::currentLocation() const {
-	debug(5, "NetworkReadStreamEmscripten::currentLocation %s", _emscripten_fetch_url);
-	return Common::String(_emscripten_fetch_url);
+	return Common::String(_url);
 }
 
 Common::HashMap<Common::String, Common::String> NetworkReadStreamEmscripten::responseHeadersMap() const {
 
 	Common::HashMap<Common::String, Common::String> headers;
 
-	const char *headerString = _responseHeaders.c_str();
-	char **responseHeaders = emscripten_fetch_unpack_response_headers(headerString);
-	assert(responseHeaders);
+	if (!_fetchId)
+		return headers;
 
-	int numHeaders = 0;
-	for (; responseHeaders[numHeaders * 2]; ++numHeaders) {
-		// Check both the header and its value are present.
-		assert(responseHeaders[(numHeaders * 2) + 1]);
-		headers[responseHeaders[numHeaders * 2]] = responseHeaders[(numHeaders * 2) + 1];
+	char **responseHeaders = NetworkReadStreamEmscripten_responseHeadersArray(_fetchId);
+	if (!responseHeaders)
+		return headers;
+
+	for (int i = 0; responseHeaders[i * 2]; ++i) {
+		headers[responseHeaders[i * 2]] = responseHeaders[(i * 2) + 1];
 	}
 
-	emscripten_fetch_free_unpacked_response_headers(responseHeaders);
-
+	// Note: No need to free responseHeaders - it's managed by JavaScript side
 	return headers;
 }
 
