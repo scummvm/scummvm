@@ -39,6 +39,8 @@ namespace PDQ {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
+	~CMainWindow();
+
 	VOID        PlayGame(void);
 	VOID        PaintScreen(VOID);
 	VOID        PaintCategory(INT);

@@ -33,6 +33,7 @@
 #include "bagel/hodjnpodj/pdq/main.h"
 #include "bagel/hodjnpodj/pdq/game.h"
 #include "bagel/hodjnpodj/pdq/guess.h"
+#include "bagel/metaengine.h"
 
 namespace Bagel {
 namespace HodjNPodj {
@@ -199,8 +200,8 @@ CMainWindow::CMainWindow() {
 
 	LoadCategoryNames();
 
-	// seed the random number generator
-	//srand((unsigned)time(nullptr));
+	// Restrict the keybinding to minimal
+	BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
 
 	EndWaitCursor();
 
@@ -221,6 +222,9 @@ CMainWindow::CMainWindow() {
 	HandleError(errCode);
 }
 
+CMainWindow::~CMainWindow() {
+	BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
+}
 
 ERROR_CODE CMainWindow::LoadCategoryNames(VOID) {
 	CDC *pDC;
