@@ -129,15 +129,23 @@ struct PointBase {
 	}
 };
 
-struct Point   : public PointBase<int16, Point  > {
-	using PointBase::PointBase;
-};
-struct Point32 : public PointBase<int32, Point32> {
-	using PointBase::PointBase;
-};
+/**
+ * Old GCC don't support constructor inheritance
+ */
+#define BEGIN_POINT_TYPE(T, Point) \
+	struct Point : public PointBase<T, Point> {
+#define END_POINT_TYPE(T, Point) \
+		constexpr Point() : PointBase() {} \
+		constexpr Point(T x1, T y1) : PointBase(x1, y1) {} \
+	}; \
+	static inline Point operator*(int multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); } \
+	static inline Point operator*(double multiplier, const Point &p) { return Point((T)(p.x * multiplier), (T)(p.y * multiplier)); }
 
-static inline Point operator*(int multiplier, const Point &p) { return Point(p.x * multiplier, p.y * multiplier); }
-static inline Point operator*(double multiplier, const Point &p) { return Point((int16)(p.x * multiplier), (int16)(p.y * multiplier)); }
+BEGIN_POINT_TYPE(int16, Point)
+END_POINT_TYPE(int16, Point)
+BEGIN_POINT_TYPE(int32, Point32)
+		constexpr Point32(const Point &o) : PointBase(o.x, o.y) {}
+END_POINT_TYPE(int32, Point32)
 
 /**
  * Simple class for handling a rectangular zone.
@@ -499,12 +507,24 @@ struct RectBase {
 	}
 };
 
-struct Rect   : public RectBase<int16, Rect,   Point  > {
-	using RectBase::RectBase;
-};
-struct Rect32 : public RectBase<int32, Rect32, Point32> {
-	using RectBase::RectBase;
-};
+/**
+ * Old GCC don't support constructor inheritance
+ */
+#define BEGIN_RECT_TYPE(T, Rect, Point) \
+	struct Rect : public RectBase<T, Rect, Point> {
+
+#define END_RECT_TYPE(T, Rect, Point) \
+		constexpr Rect() : RectBase() {} \
+		constexpr Rect(T w, T h) : RectBase(w, h) {} \
+		Rect(const Point &topLeft, const Point &bottomRight) : RectBase(topLeft, bottomRight) {} \
+		constexpr Rect(const Point &topLeft, T w, T h) : RectBase(topLeft, w, h) {} \
+		Rect(T x1, T y1, T x2, T y2) : RectBase(x1, y1, x2, y2) {} \
+	};
+
+BEGIN_RECT_TYPE(int16, Rect, Point)
+END_RECT_TYPE(int16, Rect, Point)
+BEGIN_RECT_TYPE(int32, Rect32, Point32)
+END_RECT_TYPE(int32, Rect32, Point32)
 /** @} */
 
 } // End of namespace Common
