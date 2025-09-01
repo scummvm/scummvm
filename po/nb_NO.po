@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-01 14:55+0000\n"
+"POT-Creation-Date: 2025-09-01 15:02+0000\n"
 "PO-Revision-Date: 2024-12-05 21:24+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -3907,10 +3907,10 @@ msgstr "Høyreklikk"
 #. I18N: Action in In Cold Blood
 #: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:252
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
-#: engines/cruise/metaengine.cpp:217 engines/grim/grim.cpp:550
-#: engines/hdb/metaengine.cpp:258 engines/hypno/metaengine.cpp:186
-#: engines/hypno/metaengine.cpp:369 engines/icb/icb.cpp:137
-#: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
+#: engines/cruise/metaengine.cpp:217 engines/dm/metaengine.cpp:180
+#: engines/grim/grim.cpp:550 engines/hdb/metaengine.cpp:258
+#: engines/hypno/metaengine.cpp:186 engines/hypno/metaengine.cpp:369
+#: engines/icb/icb.cpp:137 engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
 #: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
 #: engines/sludge/keymapper_tables.h:187 engines/sludge/keymapper_tables.h:243
@@ -6338,22 +6338,22 @@ msgstr "Sjekk for oppdateringer..."
 #: engines/access/metaengine.cpp:192 engines/bbvs/metaengine.cpp:92
 #: engines/buried/metaengine.cpp:133 engines/chamber/metaengine.cpp:59
 #: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
-#: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
-#: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
-#: engines/hugo/metaengine.cpp:118 engines/hypno/metaengine.cpp:128
-#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
-#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
-#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
-#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/private/metaengine.cpp:91 engines/queen/metaengine.cpp:146
-#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/dm/metaengine.cpp:124 engines/draci/metaengine.cpp:195
+#: engines/drascula/metaengine.cpp:205 engines/efh/metaengine.cpp:256
+#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:118
+#: engines/hypno/metaengine.cpp:128 engines/illusions/metaengine.cpp:89
+#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
+#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
+#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
+#: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:91
+#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Standard tasteoppsett"
 
@@ -6897,18 +6897,18 @@ msgstr "AGOS primær"
 #: engines/agos/metaengine.cpp:228 engines/bbvs/metaengine.cpp:93
 #: engines/buried/metaengine.cpp:136 engines/chamber/metaengine.cpp:60
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
-#: engines/draci/metaengine.cpp:196 engines/drascula/metaengine.cpp:206
-#: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:119
-#: engines/hypno/metaengine.cpp:166 engines/hypno/metaengine.cpp:267
-#: engines/hypno/metaengine.cpp:311 engines/illusions/metaengine.cpp:90
-#: engines/lab/metaengine.cpp:152 engines/lure/metaengine.cpp:169
-#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
-#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
-#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
-#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
-#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
-#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
-#: engines/tucker/metaengine.cpp:168
+#: engines/dm/metaengine.cpp:126 engines/draci/metaengine.cpp:196
+#: engines/drascula/metaengine.cpp:206 engines/hopkins/metaengine.cpp:207
+#: engines/hugo/metaengine.cpp:119 engines/hypno/metaengine.cpp:166
+#: engines/hypno/metaengine.cpp:267 engines/hypno/metaengine.cpp:311
+#: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
+#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
+#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
+#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
+#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
+#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
+#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
+#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
 msgid "Game keymappings"
 msgstr "Spilltasteoppsett"
 
@@ -6954,11 +6954,11 @@ msgstr "Gå fremover"
 msgid "Turn backward"
 msgstr "Snu rundt"
 
-#: engines/agos/metaengine.cpp:302 engines/kyra/engine/eobcommon.cpp:373
-#: engines/kyra/engine/lol.cpp:514 engines/lab/metaengine.cpp:257
-#: engines/mm/mm1/metaengine.cpp:97 engines/mohawk/riven.cpp:901
-#: engines/pegasus/pegasus.cpp:2740 engines/twine/metaengine.cpp:353
-#: engines/ultima/ultima8/metaengine.cpp:49
+#: engines/agos/metaengine.cpp:302 engines/dm/metaengine.cpp:186
+#: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:514
+#: engines/lab/metaengine.cpp:257 engines/mm/mm1/metaengine.cpp:97
+#: engines/mohawk/riven.cpp:901 engines/pegasus/pegasus.cpp:2740
+#: engines/twine/metaengine.cpp:353 engines/ultima/ultima8/metaengine.cpp:49
 #: engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
 #: engines/wintermute/keymapper_tables.h:2122
@@ -6967,11 +6967,11 @@ msgstr "Snu rundt"
 msgid "Turn left"
 msgstr "Snu mot venstre"
 
-#: engines/agos/metaengine.cpp:308 engines/kyra/engine/eobcommon.cpp:374
-#: engines/kyra/engine/lol.cpp:515 engines/lab/metaengine.cpp:271
-#: engines/mm/mm1/metaengine.cpp:98 engines/mohawk/riven.cpp:907
-#: engines/pegasus/pegasus.cpp:2747 engines/twine/metaengine.cpp:346
-#: engines/ultima/ultima8/metaengine.cpp:50
+#: engines/agos/metaengine.cpp:308 engines/dm/metaengine.cpp:206
+#: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:515
+#: engines/lab/metaengine.cpp:271 engines/mm/mm1/metaengine.cpp:98
+#: engines/mohawk/riven.cpp:907 engines/pegasus/pegasus.cpp:2747
+#: engines/twine/metaengine.cpp:346 engines/ultima/ultima8/metaengine.cpp:50
 #: engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
 #: engines/wintermute/keymapper_tables.h:2128
@@ -7612,8 +7612,9 @@ msgstr "Ledetråder privat/offentlig"
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:330 engines/buried/metaengine.cpp:179
 #: engines/cge/metaengine.cpp:221 engines/cge2/metaengine.cpp:235
-#: engines/dgds/metaengine.cpp:75 engines/drascula/metaengine.cpp:285
-#: engines/efh/metaengine.cpp:272 engines/freescape/games/castle/castle.cpp:246
+#: engines/dgds/metaengine.cpp:75 engines/dm/metaengine.cpp:174
+#: engines/drascula/metaengine.cpp:285 engines/efh/metaengine.cpp:272
+#: engines/freescape/games/castle/castle.cpp:246
 #: engines/freescape/games/dark/dark.cpp:186
 #: engines/freescape/games/driller/driller.cpp:135
 #: engines/freescape/games/eclipse/eclipse.cpp:235
@@ -7746,7 +7747,8 @@ msgstr "Indeks-tasteoppsett"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/private/metaengine.cpp:94 engines/sherlock/metaengine.cpp:1183
+#: engines/dm/metaengine.cpp:130 engines/private/metaengine.cpp:94
+#: engines/sherlock/metaengine.cpp:1183
 #, fuzzy
 #| msgid "Interact Mode"
 msgid "Select / Interact"
@@ -7787,10 +7789,11 @@ msgstr "Se på"
 msgid "Look right"
 msgstr "Se på"
 
-#: engines/buried/metaengine.cpp:218 engines/kyra/engine/eobcommon.cpp:369
-#: engines/kyra/engine/lol.cpp:510 engines/mohawk/riven.cpp:881
-#: engines/titanic/metaengine.cpp:336 engines/titanic/metaengine.cpp:378
-#: engines/twine/metaengine.cpp:332 engines/ultima/ultima8/metaengine.cpp:51
+#: engines/buried/metaengine.cpp:218 engines/dm/metaengine.cpp:196
+#: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:510
+#: engines/mohawk/riven.cpp:881 engines/titanic/metaengine.cpp:336
+#: engines/titanic/metaengine.cpp:378 engines/twine/metaengine.cpp:332
+#: engines/ultima/ultima8/metaengine.cpp:51
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
 #: engines/wintermute/keymapper_tables.h:2116
@@ -8359,6 +8362,78 @@ msgstr ""
 msgid "Use true color graphics mode, even if the game is not designed for it"
 msgstr ""
 "Bruk kantutjevning ved visning av tekst (selv når spillet ikke ber om det)"
+
+#: engines/dm/metaengine.cpp:125
+#, fuzzy
+#| msgid "Start menu keymappings"
+msgid "Dialog choice selection keymappings"
+msgstr "Startmeny-tasteoppsett"
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
+#: engines/dm/metaengine.cpp:137
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle leader inventory"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
+
+#. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
+#: engines/dm/metaengine.cpp:144
+msgid "Select dialog choice (only works if there is a single choice)"
+msgstr ""
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
+#: engines/dm/metaengine.cpp:151
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle champion 1 inventory"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
+#: engines/dm/metaengine.cpp:157
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle champion 2 inventory"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
+#: engines/dm/metaengine.cpp:163
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle champion 3 inventory"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
+#: engines/dm/metaengine.cpp:169
+#, fuzzy
+#| msgid "Toggle Inventory/IQ Points display"
+msgid "Toggle champion 4 inventory"
+msgstr "Skru visning av utstyrsliste/IQ-poeng av/på"
+
+#: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
+#: engines/mm/mm1/metaengine.cpp:99
+#, fuzzy
+#| msgid "Strafe Left"
+msgid "Strafe left"
+msgstr "Gå sidelengs mot venstre"
+
+#: engines/dm/metaengine.cpp:226 engines/titanic/metaengine.cpp:343
+#: engines/titanic/metaengine.cpp:384
+#, fuzzy
+#| msgid "Move backwards"
+msgid "Move backward"
+msgstr "Gå bakover"
+
+#: engines/dm/metaengine.cpp:236 engines/hpl1/metaengine.cpp:79
+#: engines/mm/mm1/metaengine.cpp:100
+#, fuzzy
+#| msgid "Strafe Right"
+msgid "Strafe right"
+msgstr "Gå sidelengs mot høyre"
+
+#. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
+#: engines/dm/metaengine.cpp:247
+msgid "Wake up champion"
+msgstr ""
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 #, fuzzy
@@ -9624,18 +9699,6 @@ msgstr "Fremover"
 #: engines/hpl1/metaengine.cpp:77
 msgid "Backward"
 msgstr "Bakover"
-
-#: engines/hpl1/metaengine.cpp:78 engines/mm/mm1/metaengine.cpp:99
-#, fuzzy
-#| msgid "Strafe Left"
-msgid "Strafe left"
-msgstr "Gå sidelengs mot venstre"
-
-#: engines/hpl1/metaengine.cpp:79 engines/mm/mm1/metaengine.cpp:100
-#, fuzzy
-#| msgid "Strafe Right"
-msgid "Strafe right"
-msgstr "Gå sidelengs mot høyre"
 
 #: engines/hpl1/metaengine.cpp:80
 #, fuzzy
@@ -14862,12 +14925,6 @@ msgstr "Overganger:"
 #: engines/titanic/metaengine.cpp:307
 msgid "Toggle between Star Map and photo of your home"
 msgstr ""
-
-#: engines/titanic/metaengine.cpp:343 engines/titanic/metaengine.cpp:384
-#, fuzzy
-#| msgid "Move backwards"
-msgid "Move backward"
-msgstr "Gå bakover"
 
 #: engines/titanic/metaengine.cpp:350
 msgid "Stop moving"
