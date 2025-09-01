@@ -298,6 +298,10 @@ typedef struct tagWNDCLASS {
 	LPCSTR      lpszClassName;
 } WNDCLASS, *PWNDCLASS, *NPWNDCLASS, *LPWNDCLASS;
 
+struct CDataExchange {
+	BOOL m_bSaveAndValidate;
+};
+
 } // namespace MFC
 } // namespace Bagel
 

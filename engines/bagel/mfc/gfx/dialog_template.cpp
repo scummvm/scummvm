@@ -266,8 +266,9 @@ void CDialogTemplate::loadTemplate(CDialog *dialog) {
 	dialog->SendMessageToDescendants(WM_SETFONT,
 		(WPARAM)dialog->_dialogFont.m_hObject, 0);
 
-	// Allow the dialog so set up replacement controls
-	dialog->DoDataExchange(nullptr);
+	// Allow the dialog to set up replacement controls
+	CDataExchange exchange = { FALSE };
+	dialog->DoDataExchange(&exchange);
 }
 
 } // namespace Gfx

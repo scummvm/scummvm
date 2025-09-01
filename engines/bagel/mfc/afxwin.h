@@ -63,7 +63,6 @@ class CWinThread;
 class CWnd;
 
 // Dummy class definitions that may need replacing later
-class CDataExchange {};
 struct COPYDATASTRUCT {};
 struct HELPINFO {};
 struct NCCALCSIZE_PARAMS {};

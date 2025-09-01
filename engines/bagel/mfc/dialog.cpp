@@ -229,9 +229,18 @@ void CDialog::DDX_Radio(CDataExchange *pDX,
 void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, int &value) {
 	error("TODO: CDialog::DDX_Text");
 }
+
 void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, CString &value) {
-	error("TODO: CDialog::DDX_Text");
+	CEdit *edit = dynamic_cast<CEdit *>(GetDlgItem(nIDC));
+	assert(edit);
+
+	if (pDX->m_bSaveAndValidate) {
+		edit->GetWindowText(value);
+	} else {
+		edit->SetWindowText(value.c_str());
+	}
 }
+
 void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, UINT &value) {
 	error("TODO: CDialog::DDX_Text");
 }
@@ -257,15 +266,23 @@ void CDialog::EndDialog(int nResult) {
 }
 
 BOOL CDialog::UpdateData(BOOL bSaveAndValidate) {
-	error("TODO: CDialog::UpdateData");
+	if (bSaveAndValidate) {
+		CDataExchange exchange = { TRUE };
+		DoDataExchange(&exchange);
+	}
+
+	return TRUE;
 }
 
 void CDialog::OnOK() {
-	error("TODO: CDialog::OnOK");
+	if (!UpdateData(TRUE))
+		return;
+
+	EndDialog(IDOK);
 }
 
 void CDialog::OnCancel() {
-	error("TODO: CDialog::OnCancel");
+	EndDialog(IDCANCEL);
 }
 
 BOOL CDialog::CreateIndirect(LPCDLGTEMPLATE lpDialogTemplate,
