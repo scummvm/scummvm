@@ -794,6 +794,11 @@ Datum Window::getField(int field) {
 	case kTheFileName:
 		return getFileName();
 	case kTheDrawRect:
+		warning("Window::getField: poorly handled getting field 'drawRect'");
+		ensureMovieIsLoaded();
+
+		// TODO: This should allow stretching or panning
+		return getStageRect();
 	case kTheSourceRect:
 	// case kTheImage:
 	// case kThePicture::
@@ -819,6 +824,9 @@ bool Window::setField(int field, const Datum &value) {
 	case kTheWindowType:
 		setWindowType(value.asInt());
 		return true;
+	case kTheDrawRect:
+		warning("Window::setField: poorly handled setting field 'drawRect'");
+		// fallthrough
 	case kTheRect:
 		return setStageRect(value);
 	case kTheModal:
