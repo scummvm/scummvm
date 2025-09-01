@@ -35,7 +35,7 @@ public:
 	~MidiDriver_AdLib();
 
 	void loadInstrumentBank(uint8 *instrumentBankData);
-	void loadInstrumentBankFromDriver(long offset);
+	void loadInstrumentBankFromDriver(int32 offset);
 
 protected:
 	OplInstrumentDefinition *_dsfInstrumentBank;

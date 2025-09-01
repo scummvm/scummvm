@@ -394,7 +394,7 @@ public:
 	 */
 	uint16 _firstList[5] = { 0 }, _secondList[5] = { 0 };
 
-	long _screenSize = 65520;
+	int32 _screenSize = 65520;
 
 	/**
 	 * Frame number for the animations

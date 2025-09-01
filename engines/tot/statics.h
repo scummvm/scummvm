@@ -916,7 +916,7 @@ const int FONT_EURO_OFFSET_ES = 159681;
 const int FONT_LITT_OFFSET_EN = 153010;
 const int FONT_EURO_OFFSET_EN = 159107;
 
-static const long menuOffsets_ES[8][2] = {
+static const int32 menuOffsets_ES[8][2] = {
 	{0, 16004},
 	{16004, 24535},
 	{40539, 24535},
@@ -927,7 +927,7 @@ static const long menuOffsets_ES[8][2] = {
 	{147327, 7148},
 };
 
-static const long menuOffsets_EN[8][2] = {
+static const int32 menuOffsets_EN[8][2] = {
 	{0, 16004},
 	{16004, 24535},
 	{40539, 24535},
@@ -938,7 +938,7 @@ static const long menuOffsets_EN[8][2] = {
 	{146775, 7148},
 };
 
-static const long flcOffsets[2][32] = {
+static const int32 flcOffsets[2][32] = {
 	{
 		0,      // Logo
 		837602, // Menu reveal

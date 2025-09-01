@@ -31,11 +31,11 @@ void euroText(int x, int y, char const *text, byte color, Graphics::TextAlign al
 
 void biosText(int x, int y, const Common::String &text, byte color);
 
-unsigned int imagesize(int x, int y, int x2, int y2);
+uint imagesize(int x, int y, int x2, int y2);
 
 void rectangle(int x1, int y1, int x2, int y2, byte color);
 
-void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, byte color);
+void line(uint x1, uint y1, uint x2, uint y2, byte color);
 
 void bar(int x1, int y1, int x2, int y2, byte color);
 
@@ -49,9 +49,9 @@ void waitForKey();
 
 void changeGameSpeed(Common::Event e);
 
-inline bool odd(long i) { return i % 2 != 0; }
+inline bool odd(int32 i) { return i % 2 != 0; }
 
-unsigned Random(unsigned range);
+uint Random(uint range);
 int Random(int range);
 
 inline Common::String getObjectName(int idx) {
@@ -78,7 +78,7 @@ inline const char *const *getHardcodedObjectsByCurrentLanguage() {
 	return (g_engine->_lang == Common::ES_ESP) ? hardcodedObjects_ES : hardcodedObjects_EN;
 }
 
-inline const long *getOffsetsByCurrentLanguage() {
+inline const int32 *getOffsetsByCurrentLanguage() {
 	return (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
 }
 

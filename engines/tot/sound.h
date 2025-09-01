@@ -40,7 +40,7 @@ public:
 	~SoundManager();
 
 	void init();
-	void loadVoc(Common::String vocFile, long startPos, int16 vocSize);
+	void loadVoc(Common::String vocFile, int32 startPos, int16 vocSize);
 	void autoPlayVoc(Common::String vocFile, int32 startPos, int16 vocSize);
 	void playVoc(Common::String vocFile, int32 startPos, uint vocSize);
 	void playVoc();

@@ -1346,7 +1346,7 @@ void TotEngine::mainMenu(bool fade) {
 	bool validOption = false;
 	_sound->stopVoc();
 
-	long offset = getOffsetsByCurrentLanguage()[1];
+	int32 offset = getOffsetsByCurrentLanguage()[1];
 
 	if (fade)
 		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);

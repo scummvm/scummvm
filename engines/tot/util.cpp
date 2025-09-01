@@ -413,7 +413,7 @@ void biosText(int x, int y, const Common::String &text, byte color) {
 	g_engine->_graphics->biosText(text, x, y, color);
 }
 
-unsigned int imagesize(int x, int y, int x2, int y2) {
+uint imagesize(int x, int y, int x2, int y2) {
 	int w = x2 - x + 1;
 	int h = y2 - y + 1;
 	return 4 + (w * h);
@@ -442,7 +442,7 @@ void putpixel(int x, int y, byte color) {
 	g_engine->_screen->setPixel(x, y, color);
 }
 
-void line(unsigned int x1, unsigned int y1, unsigned int x2, unsigned int y2, byte color) {
+void line(uint x1, uint y1, uint x2, uint y2, byte color) {
 	g_engine->_screen->drawLine(x1, y1, x2, y2, color);
 }
 
@@ -486,7 +486,7 @@ void waitForKey() {
 	}
 }
 
-unsigned int Random(unsigned int range) { return g_engine->getRandomNumber(range); }
+uint Random(uint range) { return g_engine->getRandomNumber(range); }
 int Random(int range) { return g_engine->getRandomNumber(range - 1); }
 
 } // End of namespace Tot
