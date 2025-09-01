@@ -47,6 +47,8 @@ public:
 	VOID        LoadIniSettings(VOID);
 
 protected:
+	void initMembers();
+	void initStatics();
 	VOID        GameReset(VOID);
 	VOID        GamePause(VOID);
 	VOID        GameResume(VOID);

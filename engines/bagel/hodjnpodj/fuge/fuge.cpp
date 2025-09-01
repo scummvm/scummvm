@@ -148,7 +148,7 @@ STATIC const CHAR *pszPaddles[N_PADDLE_SIZES] = {
 	".\\ART\\PADCEL90.BMP"
 };
 
-STATIC DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
+STATIC const DOUBLE fPaddleAngles[N_PADDLE_SIZES] = {
 	PADDLE0_ANGLE,
 	PADDLE1_ANGLE,
 	PADDLE2_ANGLE
@@ -233,7 +233,7 @@ typedef struct {
 	VECTOR v1, v2;
 } BRICK_VECTORS;
 
-STATIC BRICK_VECTORS aBrickVectors[BRICKS_PER_ROW] = {
+STATIC const BRICK_VECTORS aBrickVectors[BRICKS_PER_ROW] = {
 	{{-1,  1, 0}, { 5, -2, 0}},
 	{{-5,  2, 0}, { 1,  0, 0}},
 	{{-1,  0, 0}, { 5,  2, 0}},
@@ -253,7 +253,7 @@ STATIC BRICK_VECTORS aBrickVectors[BRICKS_PER_ROW] = {
 };
 
 
-STATIC VECTOR vBrickCritPoints[N_ROWS][N_BRICK_POINTS] = {
+STATIC const VECTOR BRICK_CRIT_POINTS[N_ROWS][N_BRICK_POINTS] = {
 	{	{  0, -191, 0}, {  8, -191, 0}, { 15, -190, 0}, { 23, -190, 0}, { 31, -188, 0},
 		{ 39, -187, 0}, { 47, -185, 0}, { 55, -183, 0}, { 62, -181, 0}, { 69, -178, 0},
 		{ 67, -172, 0}, { 64, -165, 0}, { 56, -168, 0}, { 48, -171, 0}, { 40, -173, 0},
@@ -296,9 +296,9 @@ STATIC VECTOR vBrickCritPoints[N_ROWS][N_BRICK_POINTS] = {
 		{  0, -109, 0}
 	}
 };
+STATIC VECTOR vBrickCritPoints[N_ROWS][N_BRICK_POINTS];
 
-
-STATIC POINT ptBrickPos[N_BRICKS] = {
+STATIC const POINT ptBrickPos[N_BRICKS] = {
 	{184,  62}, {250,  48}, {319,  48}, {385,  62},         // Purple Bricks
 	{445, 104}, {483, 165}, {483, 240}, {445, 309},
 	{385, 365}, {321, 404}, {250, 404}, {184, 365},
@@ -330,7 +330,7 @@ STATIC POINT ptBrickPos[N_BRICKS] = {
 	{214, 280}, {204, 240}, {204, 195}, {214, 158}
 };
 
-STATIC SIZE ptBrickSize[N_BRICKS] = {
+STATIC const SIZE ptBrickSize[N_BRICKS] = {
 	{70, 52}, {68, 27}, {70, 27}, {70, 52}, {50, 66}, {28, 74},
 	{28, 75}, {50, 66}, {70, 52}, {68, 27}, {70, 27}, {69, 52},
 	{50, 66}, {28, 74}, {28, 75}, {50, 65}, {64, 48}, {62, 24},
@@ -354,8 +354,7 @@ STATIC SIZE ptBrickSize[N_BRICKS] = {
 //
 VOID CALLBACK GetGameParams(CWnd *);
 
-CFugeWindow::CFugeWindow(VOID) :
-		gvCenter(CENTER_X, CENTER_Y) {
+CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC;
@@ -366,38 +365,9 @@ CFugeWindow::CFugeWindow(VOID) :
 	// assume no error
 	errCode = ERR_NONE;
 
-	// Initialize members
-	//
-	m_nInitNumBalls = BALLS_DEF;
-	m_nInitStartLevel = LEVEL_DEF;
-	m_nInitBallSpeed = SPEED_DEF;
-	m_nInitPaddleSize = PSIZE_DEF;
-	m_nGForceFactor = GFORCE_DEF;
-
-	m_pScrollButton = nullptr;
-	m_pGamePalette = nullptr;
-	m_pSoundTrack = nullptr;
-	m_bPause = FALSE;
-	m_bGameActive = FALSE;
-	m_bIgnoreScrollClick = FALSE;
-	m_bBallOnPaddle = FALSE;
-	m_nPaddleCelIndex = 29;
-	m_pPaddle = nullptr;
-	m_pBall = nullptr;
-	m_bMovingPaddle = FALSE;
-	m_lScore = 0;
-	m_pBrickSound = nullptr;
-	m_pWallSound = nullptr;
-	m_pPaddleSound = nullptr;
-	m_pExtraLifeSound = nullptr;
-	m_hBrickRes = nullptr;
-	m_hWallRes = nullptr;
-	m_hPaddleRes = nullptr;
-	m_hExtraLifeRes = nullptr;
-	pGameParams->lScore = 0;
-	m_nNumRows = 0;
-	m_bJoyActive = FALSE;
-	memset(m_bBrickVisible, 0, sizeof(BOOL) * N_BRICKS);
+	// Initialize fields
+	initMembers();
+	initStatics();
 
 	// Set the coordinates for the "Start New Game" button
 	//
@@ -532,6 +502,47 @@ CFugeWindow::CFugeWindow(VOID) :
 	}
 
 	HandleError(errCode);
+}
+
+void CFugeWindow::initMembers() {
+	m_nInitNumBalls = BALLS_DEF;
+	m_nInitStartLevel = LEVEL_DEF;
+	m_nInitBallSpeed = SPEED_DEF;
+	m_nInitPaddleSize = PSIZE_DEF;
+	m_nGForceFactor = GFORCE_DEF;
+
+	m_pScrollButton = nullptr;
+	m_pGamePalette = nullptr;
+	m_pSoundTrack = nullptr;
+	m_bPause = FALSE;
+	m_bGameActive = FALSE;
+	m_bIgnoreScrollClick = FALSE;
+	m_bBallOnPaddle = FALSE;
+	m_nPaddleCelIndex = 29;
+	m_pPaddle = nullptr;
+	m_pBall = nullptr;
+	m_bMovingPaddle = FALSE;
+	m_lScore = 0;
+	m_pBrickSound = nullptr;
+	m_pWallSound = nullptr;
+	m_pPaddleSound = nullptr;
+	m_pExtraLifeSound = nullptr;
+	m_hBrickRes = nullptr;
+	m_hWallRes = nullptr;
+	m_hPaddleRes = nullptr;
+	m_hExtraLifeRes = nullptr;
+	pGameParams->lScore = 0;
+	m_nNumRows = 0;
+	m_bJoyActive = FALSE;
+	memset(m_bBrickVisible, 0, sizeof(BOOL) * N_BRICKS);
+}
+
+void CFugeWindow::initStatics() {
+	pGamePalette = nullptr;
+
+	// Set up the brick critical points from defaults
+	Common::copy(&BRICK_CRIT_POINTS[0][0], &BRICK_CRIT_POINTS[0][0] + N_ROWS * N_BRICK_POINTS,
+		&vBrickCritPoints[0][0]);
 }
 
 VOID CFugeWindow::InitializeJoystick(VOID) {
