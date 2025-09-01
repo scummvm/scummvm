@@ -116,10 +116,10 @@ CMainWindow::CMainWindow(HWND hParentWnd, LPGAMESTRUCT lpGameInfo) {
 	/*******************************************
 	* Handle the meta-game structure settings. *
 	*******************************************/
-	m_lpGameStruct =  lpGameInfo;
 
-	m_cLife = nullptr;
-	m_pSound = nullptr;
+	m_lpGameStruct = lpGameInfo;
+
+	initStatics();
 
 	/********************************
 	* Set the global window handle. *
@@ -348,6 +348,17 @@ CMainWindow::~CMainWindow() {
 		delete pScrollSprite;
 }
 
+void CMainWindow::initStatics() {
+	nSpeed = nCountDown = nLife = nPlace = 0;
+	nTurnCounter = nLifeCounter = 0;
+	bPrePlaceColonies = bIsInfiniteLife = bIsInfiniteTurns = FALSE;
+	gbNewGame = FALSE;
+	pEvolveButton = nullptr;
+	pGamePalette = nullptr;
+	pScrollSprite = nullptr;
+	pCalendarSprite = nullptr;
+	hWndParent = nullptr;
+}
 /*****************************************************************
  *
  * OnPaint

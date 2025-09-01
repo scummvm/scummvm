@@ -141,19 +141,18 @@ class CLife;
 
 class CMainWindow : public CFrameWnd {
 private:
-	CLife           *m_cLife;
-//	CButton          *pEvolveButton,
-//					*pCommandButton;
-	LPGAMESTRUCT    m_lpGameStruct;
-	HWND            m_hCallAppWnd;
-	BOOL            m_bGameActive;
-	CSound          *m_pSound;
+	CLife           *m_cLife = nullptr;
+	LPGAMESTRUCT    m_lpGameStruct = nullptr;
+	HWND            m_hCallAppWnd = nullptr;
+	BOOL            m_bGameActive = FALSE;
+	CSound          *m_pSound = nullptr;
 	CRect           m_rNewGameButton;
 
 public:
 	CMainWindow(HWND, LPGAMESTRUCT);
 	~CMainWindow();
 
+	void initStatics();
 	void SplashScreen();
 	void DisplayStats();
 	void RefreshStats();
