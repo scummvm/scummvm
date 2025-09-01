@@ -184,9 +184,9 @@ public:
 
 	Common::Language _lang = Common::ES_ESP;
 
-	Common::MemorySeekableReadWriteStream *_conversationData;
-	Common::MemorySeekableReadWriteStream *_rooms;
-	Common::MemorySeekableReadWriteStream *_sceneObjectsData;
+	Common::MemorySeekableReadWriteStream *_conversationData = nullptr;
+	Common::MemorySeekableReadWriteStream *_rooms = nullptr;
+	Common::MemorySeekableReadWriteStream *_sceneObjectsData = nullptr;
 
 	bool _roomChange = false;
 	bool _isTVOn = false;
