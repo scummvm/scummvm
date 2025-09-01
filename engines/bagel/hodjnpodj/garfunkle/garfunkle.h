@@ -204,6 +204,7 @@ public:
 	virtual void SplashScreen();
 
 private:
+	void initStatics();
 	void OnSoundNotify(CSound *pSound);
 
 	CRect rectMusic[MAX_BUTTONS];             // Musician locations

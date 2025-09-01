@@ -93,11 +93,11 @@ static const char *cAnimName[MAX_BUTTONS] = {
 	HARP_ANIM, CLARINET_ANIM
 };
 
-const int nNumCels[MAX_BUTTONS] = { VIOLIN_CELS, CELLO_CELS, DRUM_CELS, SAX_CELS,
+static const int nNumCels[MAX_BUTTONS] = { VIOLIN_CELS, CELLO_CELS, DRUM_CELS, SAX_CELS,
                                   HARP_CELS, CLARINET_CELS
                                 };
 
-const POINT Offset[MAX_BUTTONS] = {
+static const POINT Offset[MAX_BUTTONS] = {
 	{ VIOLIN_OFFSET_X, VIOLIN_OFFSET_Y },
 	{ CELLO_OFFSET_X, CELLO_OFFSET_Y },
 	{ DRUM_OFFSET_X, DRUM_OFFSET_Y },
@@ -125,6 +125,7 @@ CMainWindow::CMainWindow() {
 	int     i, j;
 
 	BeginWaitCursor();
+	initStatics();
 
 	pGameInfo->lScore = 0L;
 
@@ -262,6 +263,36 @@ CMainWindow::CMainWindow() {
 
 } //End of CMainWindow
 
+void CMainWindow::initStatics() {
+	m_pScrollButton = nullptr;
+	pGamePalette = nullptr;
+	bSuccess = FALSE;
+	m_bIgnoreScrollClick = FALSE;
+	bLDown = FALSE;
+	bPlayingBackSeries = FALSE;
+	pMusic = nullptr;
+	Common::fill(pAnimSprite, pAnimSprite + MAX_BUTTONS, nullptr);
+	Common::fill(pMusicians, pMusicians + (MAX_BUTTONS * 2), nullptr);
+	m_nButID = 0;
+
+	m_pSignText = nullptr;
+	pRibbon = nullptr;
+	m_bPlaying = FALSE;
+	m_bNewGame = FALSE;
+	m_bPlayGame = FALSE;
+
+	m_nSpeed = 0;
+	m_nNumButtons = 0;
+	m_nWinCondition = 0;
+
+	tempPlayGame = FALSE;
+	tempSpeed = 0;
+	tempNumButtons = 0;
+	nNoteCount = 0;
+	nCheckCount = 0;
+	nSButFlag = MAX_BUTTONS;
+	pNoteMarker = nullptr;
+}
 
 // OnPaint:
 // This is called whenever Windows sends a WM_PAINT message.
