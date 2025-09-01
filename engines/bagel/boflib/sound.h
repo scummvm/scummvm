@@ -58,8 +58,8 @@ namespace Bagel {
 #define SOUND_LOCK 0x1000    // Reserve this channel until user stops it
 #define SOUND_PRELOAD 0x2000 // Only works for Resource MAC snd files
 #define SOUND_OVEROK 0x4000  // OK to play another sound over this file
+#define SND_MEMORY 0x8000    // Raw in-memory sound passed rather than a filename
 
-#define SND_MEMORY 0
 #define SND_NODEFAULT 0
 #define SND_SYNC 0
 #define SND_ASYNC SOUND_ASYNCH

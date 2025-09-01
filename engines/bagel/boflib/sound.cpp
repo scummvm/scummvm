@@ -120,8 +120,12 @@ void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
 		_chType = SOUND_TYPE_WAV;
 	}
 
-	if (pszPathName != nullptr) {
+	if (pszPathName != nullptr && (_wFlags & SND_MEMORY)) {
+		// In-memory wave sound
+		_pFileBuf = (byte *)const_cast<char *>(pszPathName);
+		_iFileSize = 999999;
 
+	} else if (pszPathName != nullptr) {
 		if ((_szDrivePath[0] != '\0') && (*pszPathName == '.'))
 			pszPathName++;
 		else if (!strncmp(pszPathName, ".\\", 2))
@@ -649,7 +653,11 @@ bool BofPlaySound(const char *pszSoundFile, uint32 nFlags, int iQSlot) {
 	if (pszSoundFile != nullptr) {
 		nFlags |= SOUND_AUTODELETE;
 
-		if (!fileExists(pszSoundFile)) {
+		if (nFlags & SND_MEMORY) {
+			// Hardcoded for wave files
+			nFlags |= SOUND_WAVE;
+
+		} else if (!fileExists(pszSoundFile)) {
 			logWarning(buildString("Sound File '%s' not found", pszSoundFile));
 			return false;
 		}
@@ -750,7 +758,8 @@ bool CBofSound::loadSound() {
 bool CBofSound::releaseSound() {
 	assert(isValidObject(this));
 
-	free(_pFileBuf);
+	if (!(_wFlags & SND_MEMORY))
+		free(_pFileBuf);
 	_pFileBuf = nullptr;
 
 	return true;
