@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-08-31 15:09+0000\n"
+"POT-Creation-Date: 2025-09-01 14:53+0000\n"
 "PO-Revision-Date: 2024-02-05 18:42+0000\n"
 "Last-Translator: Josu Igoa <josuigoa@ni.eus>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -112,7 +112,7 @@ msgstr "Joan gora"
 #: engines/buried/saveload.cpp:83 engines/cine/saveload.cpp:857
 #: engines/director/lingo/xlibs/jitdraw3.cpp:123
 #: engines/drascula/saveload.cpp:51 engines/grim/inputdialog.cpp:84
-#: engines/mohawk/myst_stacks/menu.cpp:283
+#: engines/hypno/metaengine.cpp:225 engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/myst_stacks/menu.cpp:300
 #: engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:349
@@ -318,9 +318,9 @@ msgstr "Beste biltegiratzen bat dago orain martxan. Gelditu nahi al duzu?"
 #: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:91
 #: engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:362
-#: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
-#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:197
-#: engines/parallaction/metaengine.cpp:169
+#: engines/grim/grim.cpp:366 engines/hypno/metaengine.cpp:192
+#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
+#: engines/lab/metaengine.cpp:197 engines/parallaction/metaengine.cpp:169
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:638 engines/sherlock/metaengine.cpp:1240
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:321
@@ -334,9 +334,9 @@ msgstr "Bai"
 #: engines/buried/buried.cpp:598 engines/chamber/metaengine.cpp:97
 #: engines/director/events.cpp:101
 #: engines/director/lingo/xlibs/jitdraw3.cpp:139 engines/efh/metaengine.cpp:368
-#: engines/grim/grim.cpp:366 engines/kyra/gui/saveload_eob.cpp:611
-#: engines/kyra/gui/saveload_eob.cpp:644 engines/lab/metaengine.cpp:204
-#: engines/parallaction/metaengine.cpp:175
+#: engines/grim/grim.cpp:366 engines/hypno/metaengine.cpp:198
+#: engines/kyra/gui/saveload_eob.cpp:611 engines/kyra/gui/saveload_eob.cpp:644
+#: engines/lab/metaengine.cpp:204 engines/parallaction/metaengine.cpp:175
 #: engines/sci/graphics/controls32.cpp:937 engines/scumm/scumm.cpp:4246
 #: engines/sherlock/metaengine.cpp:643 engines/sherlock/metaengine.cpp:1246
 #: engines/toon/toon.cpp:1550 engines/zvision/zvision.cpp:322
@@ -3319,8 +3319,8 @@ msgstr "Abendura grafikoen motorea"
 #: backends/events/default/default-events.cpp:358
 #: engines/adl/metaengine.cpp:352 engines/buried/metaengine.cpp:154
 #: engines/chamber/metaengine.cpp:84 engines/drascula/metaengine.cpp:304
-#: engines/hdb/metaengine.cpp:275 engines/lab/metaengine.cpp:172
-#: engines/mohawk/myst_stacks/menu.cpp:317
+#: engines/hdb/metaengine.cpp:275 engines/hypno/metaengine.cpp:251
+#: engines/lab/metaengine.cpp:172 engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
 #: engines/neverhood/metaengine.cpp:200 engines/saga/metaengine.cpp:449
 #: engines/scumm/help.cpp:84 engines/scumm/help.cpp:86
@@ -3906,7 +3906,8 @@ msgstr "Eskuin klik-a"
 #: engines/metaengine.cpp:99 engines/agos/metaengine.cpp:252
 #: engines/buried/metaengine.cpp:167 engines/crab/input/input.cpp:261
 #: engines/cruise/metaengine.cpp:217 engines/grim/grim.cpp:550
-#: engines/hdb/metaengine.cpp:258 engines/icb/icb.cpp:137
+#: engines/hdb/metaengine.cpp:258 engines/hypno/metaengine.cpp:186
+#: engines/hypno/metaengine.cpp:369 engines/icb/icb.cpp:137
 #: engines/icb/icb.cpp:203 engines/mohawk/myst.cpp:595
 #: engines/mohawk/riven.cpp:876 engines/sky/metaengine.cpp:126
 #: engines/sludge/keymapper_tables.h:52 engines/sludge/keymapper_tables.h:125
@@ -4868,10 +4869,10 @@ msgstr ""
 #: backends/platform/sdl/opendingux/opendingux.cpp:57
 #: backends/platform/sdl/ps3/ps3.cpp:44 backends/platform/sdl/psp2/psp2.cpp:46
 #: engines/efh/metaengine.cpp:397 engines/got/metaengine.cpp:76
-#: engines/mm/mm1/metaengine.cpp:49 engines/mm/mm1/metaengine.cpp:92
-#: engines/sherlock/metaengine.cpp:660 engines/sherlock/metaengine.cpp:671
-#: engines/sherlock/metaengine.cpp:1010 engines/supernova/metaengine.cpp:303
-#: engines/titanic/metaengine.cpp:233
+#: engines/hypno/metaengine.cpp:363 engines/mm/mm1/metaengine.cpp:49
+#: engines/mm/mm1/metaengine.cpp:92 engines/sherlock/metaengine.cpp:660
+#: engines/sherlock/metaengine.cpp:671 engines/sherlock/metaengine.cpp:1010
+#: engines/supernova/metaengine.cpp:303 engines/titanic/metaengine.cpp:233
 #, fuzzy
 msgid "Select"
 msgstr "Ekintza/Aukeratu"
@@ -6027,19 +6028,19 @@ msgstr "Eguneraketak bilatzen..."
 #: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
 #: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
 #: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
-#: engines/hugo/metaengine.cpp:118 engines/illusions/metaengine.cpp:89
-#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
-#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/prince/metaengine.cpp:227 engines/queen/metaengine.cpp:146
-#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
-#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
-#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
-#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
-#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
-#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
-#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
-#: engines/voyeur/metaengine.cpp:184
+#: engines/hugo/metaengine.cpp:118 engines/hypno/metaengine.cpp:128
+#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
+#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
+#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
+#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
+#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
+#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
+#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
+#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
+#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
 #, fuzzy
 msgid "Default keymappings"
 msgstr "~A~ukerak..."
@@ -6060,6 +6061,7 @@ msgstr "Lerroa saltatu"
 #: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
+#: engines/hypno/metaengine.cpp:302 engines/hypno/metaengine.cpp:356
 #: engines/nancy/input.cpp:195 engines/tinsel/metaengine.cpp:263
 #: engines/titanic/metaengine.cpp:324 engines/ultima/ultima8/metaengine.cpp:53
 #, fuzzy
@@ -6070,6 +6072,7 @@ msgstr "Atzera mugitu"
 #: engines/access/metaengine.cpp:221 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
+#: engines/hypno/metaengine.cpp:290 engines/hypno/metaengine.cpp:342
 #: engines/nancy/input.cpp:201 engines/tinsel/metaengine.cpp:269
 #: engines/titanic/metaengine.cpp:330 engines/ultima/ultima8/metaengine.cpp:54
 #, fuzzy
@@ -6081,6 +6084,7 @@ msgstr "Eskuinera irristatu"
 #: engines/access/metaengine.cpp:228 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
+#: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
 #: engines/kyra/engine/eobcommon.cpp:371 engines/lure/metaengine.cpp:218
 #: engines/nancy/input.cpp:207 engines/tinsel/metaengine.cpp:275
 #: engines/titanic/metaengine.cpp:312 engines/titanic/metaengine.cpp:390
@@ -6094,6 +6098,7 @@ msgstr "Ezkerrera irristatu"
 #: engines/access/metaengine.cpp:235 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
+#: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
 #: engines/kyra/engine/eobcommon.cpp:372 engines/lure/metaengine.cpp:226
 #: engines/nancy/input.cpp:213 engines/tinsel/metaengine.cpp:281
 #: engines/titanic/metaengine.cpp:318 engines/titanic/metaengine.cpp:396
@@ -6588,14 +6593,16 @@ msgstr ""
 #: engines/cine/metaengine.cpp:271 engines/cruise/metaengine.cpp:169
 #: engines/draci/metaengine.cpp:196 engines/drascula/metaengine.cpp:206
 #: engines/hopkins/metaengine.cpp:207 engines/hugo/metaengine.cpp:119
-#: engines/illusions/metaengine.cpp:90 engines/lab/metaengine.cpp:152
-#: engines/lure/metaengine.cpp:169 engines/made/metaengine.cpp:122
-#: engines/mads/metaengine.cpp:275 engines/neverhood/metaengine.cpp:186
-#: engines/queen/metaengine.cpp:147 engines/sludge/keymapper_tables.h:33
-#: engines/stark/metaengine.cpp:185 engines/sword1/metaengine.cpp:267
-#: engines/tinsel/metaengine.cpp:241 engines/toon/metaengine.cpp:82
-#: engines/touche/metaengine.cpp:119 engines/trecision/metaengine.cpp:121
-#: engines/tsage/metaengine.cpp:170 engines/tucker/metaengine.cpp:168
+#: engines/hypno/metaengine.cpp:166 engines/hypno/metaengine.cpp:267
+#: engines/hypno/metaengine.cpp:311 engines/illusions/metaengine.cpp:90
+#: engines/lab/metaengine.cpp:152 engines/lure/metaengine.cpp:169
+#: engines/made/metaengine.cpp:122 engines/mads/metaengine.cpp:275
+#: engines/neverhood/metaengine.cpp:186 engines/queen/metaengine.cpp:147
+#: engines/sludge/keymapper_tables.h:33 engines/stark/metaengine.cpp:185
+#: engines/sword1/metaengine.cpp:267 engines/tinsel/metaengine.cpp:241
+#: engines/toon/metaengine.cpp:82 engines/touche/metaengine.cpp:119
+#: engines/trecision/metaengine.cpp:121 engines/tsage/metaengine.cpp:170
+#: engines/tucker/metaengine.cpp:168
 #, fuzzy
 msgid "Game keymappings"
 msgstr "~A~ukerak..."
@@ -7181,9 +7188,10 @@ msgstr "Mututu/Ez-mututu"
 
 #. I18N: This keymap allows skipping video cutscenes
 #: engines/bladerunner/metaengine.cpp:229 engines/buried/metaengine.cpp:160
-#: engines/scumm/help.cpp:79 engines/scumm/metaengine.cpp:1046
-#: engines/supernova/metaengine.cpp:309 engines/toltecs/metaengine.cpp:246
-#: engines/twp/metaengine.cpp:162 engines/zvision/metaengine.cpp:304
+#: engines/hypno/metaengine.cpp:152 engines/scumm/help.cpp:79
+#: engines/scumm/metaengine.cpp:1046 engines/supernova/metaengine.cpp:309
+#: engines/toltecs/metaengine.cpp:246 engines/twp/metaengine.cpp:162
+#: engines/zvision/metaengine.cpp:304
 msgid "Skip cutscene"
 msgstr "Eszena saltatu"
 
@@ -7395,8 +7403,8 @@ msgstr "Jauzi egin"
 msgid "Allow cutscenes to be skipped"
 msgstr "Utzi testua eta bideoak saltatzen"
 
-#: engines/buried/metaengine.cpp:134 engines/supernova/metaengine.cpp:219
-#: engines/voyeur/metaengine.cpp:185
+#: engines/buried/metaengine.cpp:134 engines/hypno/metaengine.cpp:130
+#: engines/supernova/metaengine.cpp:219 engines/voyeur/metaengine.cpp:185
 #, fuzzy
 msgid "Cutscene keymappings"
 msgstr "~A~ukerak..."
@@ -8292,8 +8300,8 @@ msgstr "Aukeratu Taldea honen bidez"
 msgid "Select option 14"
 msgstr "Aukeratu Taldea honen bidez"
 
-#: engines/efh/metaengine.cpp:257 engines/sludge/keymapper_tables.h:35
-#: engines/supernova/metaengine.cpp:218
+#: engines/efh/metaengine.cpp:257 engines/hypno/metaengine.cpp:312
+#: engines/sludge/keymapper_tables.h:35 engines/supernova/metaengine.cpp:218
 #, fuzzy
 msgid "Menu keymappings"
 msgstr "~A~ukerak..."
@@ -9430,49 +9438,148 @@ msgstr "Ezkerrera irristatu"
 msgid "Move to bottom right"
 msgstr "Eskuinera irristatu"
 
-#: engines/hypno/metaengine.cpp:33
+#: engines/hypno/metaengine.cpp:37
 #, fuzzy
 msgid "Enable original cheats"
 msgstr "Gaitu helio modua"
 
-#: engines/hypno/metaengine.cpp:34
+#: engines/hypno/metaengine.cpp:38
 msgid "Allow cheats using the C key."
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:44
+#: engines/hypno/metaengine.cpp:48
 #, fuzzy
 msgid "Enable infinite health cheat"
 msgstr "Gaitu kurtsore flotatzaileak"
 
-#: engines/hypno/metaengine.cpp:45
+#: engines/hypno/metaengine.cpp:49
 msgid "Player health will never decrease (except for game over scenes)."
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:55
+#: engines/hypno/metaengine.cpp:59
 #, fuzzy
 msgid "Enable infinite ammo cheat"
 msgstr "Gaitu helio modua"
 
-#: engines/hypno/metaengine.cpp:56
+#: engines/hypno/metaengine.cpp:60
 msgid "Player ammo will never decrease."
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:66
+#: engines/hypno/metaengine.cpp:70
 msgid "Unlock all levels"
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:67
+#: engines/hypno/metaengine.cpp:71
 msgid "All levels will be available to play."
 msgstr ""
 
-#: engines/hypno/metaengine.cpp:77
+#: engines/hypno/metaengine.cpp:81
 #, fuzzy
 msgid "Enable restored content"
 msgstr "Gaitu kurtsore flotatzaileak"
 
-#: engines/hypno/metaengine.cpp:78
+#: engines/hypno/metaengine.cpp:82
 msgid "Add additional content that is not enabled the original implementation."
 msgstr ""
+
+#: engines/hypno/metaengine.cpp:129 engines/lab/metaengine.cpp:154
+#: engines/voyeur/metaengine.cpp:188
+#, fuzzy
+msgid "Intro keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:134
+msgid "Primary shoot"
+msgstr ""
+
+#: engines/hypno/metaengine.cpp:140
+#, fuzzy
+msgid "Secondary shoot"
+msgstr "Bigarren gaztea"
+
+#: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
+#: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
+#: engines/voyeur/metaengine.cpp:235
+#, fuzzy
+#| msgid "Skip line"
+msgid "Skip intro"
+msgstr "Lerroa saltatu"
+
+#: engines/hypno/metaengine.cpp:167
+#, fuzzy
+msgid "Exit menu keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:168
+#, fuzzy
+msgid "Difficulty selection menu keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:169
+#, fuzzy
+msgid "Retry menu keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
+#: engines/hypno/metaengine.cpp:322
+#, fuzzy
+#| msgid "Speech"
+msgid "Skip level (cheat)"
+msgstr "Ahotsa"
+
+#. I18N: (Game name: Soldier Boyz) player refers to the users own character.
+#. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
+#. I18N: (Game name: Wetlands) player refers to the users own character.
+#: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
+#: engines/hypno/metaengine.cpp:329
+msgid "Kill player"
+msgstr ""
+
+#. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
+#: engines/hypno/metaengine.cpp:205
+msgid "Chump"
+msgstr ""
+
+#. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
+#: engines/hypno/metaengine.cpp:212
+msgid "Punk"
+msgstr ""
+
+#. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
+#: engines/hypno/metaengine.cpp:219
+msgid "Badass"
+msgstr ""
+
+#. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
+#: engines/hypno/metaengine.cpp:232
+msgid "Retry sector"
+msgstr ""
+
+#. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
+#: engines/hypno/metaengine.cpp:239
+#, fuzzy
+msgid "Restart territory"
+msgstr "~T~rantsizioak gaituta"
+
+#: engines/hypno/metaengine.cpp:245
+msgid "Begin new mission"
+msgstr ""
+
+#: engines/hypno/metaengine.cpp:313
+#, fuzzy
+msgid "Pause keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:314
+#, fuzzy
+msgid "Direction keymappings"
+msgstr "~A~ukerak..."
+
+#: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
+#: engines/tsage/metaengine.cpp:259
+#, fuzzy
+msgid "Show credits"
+msgstr "Saguaren kurtsorea erakutsi"
 
 #. I18N: Action in In Cold Blood
 #: engines/icb/icb.cpp:107
@@ -9845,11 +9952,6 @@ msgstr ""
 msgid "Exit keymappings"
 msgstr "~A~ukerak..."
 
-#: engines/lab/metaengine.cpp:154 engines/voyeur/metaengine.cpp:188
-#, fuzzy
-msgid "Intro keymappings"
-msgstr "~A~ukerak..."
-
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
 #, fuzzy
@@ -9882,13 +9984,6 @@ msgstr "Jokoaren izen osoa"
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
 msgstr ""
-
-#: engines/lab/metaengine.cpp:209 engines/teenagent/metaengine.cpp:232
-#: engines/toon/metaengine.cpp:98 engines/voyeur/metaengine.cpp:235
-#, fuzzy
-#| msgid "Skip line"
-msgid "Skip intro"
-msgstr "Lerroa saltatu"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
@@ -10186,11 +10281,6 @@ msgstr "Jokoa kargatu:"
 #, fuzzy
 msgid "Show intro"
 msgstr "Erakutsi fitxategi ezkutuak"
-
-#: engines/mads/metaengine.cpp:349 engines/tsage/metaengine.cpp:259
-#, fuzzy
-msgid "Show credits"
-msgstr "Saguaren kurtsorea erakutsi"
 
 #: engines/mads/metaengine.cpp:355
 #, fuzzy
@@ -17037,10 +17127,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Player Data"
 #~ msgstr "Denbora: "
-
-#, fuzzy
-#~ msgid "Seconds"
-#~ msgstr "Bigarren gaztea"
 
 #~ msgctxt "lowres"
 #~ msgid "Misc"
