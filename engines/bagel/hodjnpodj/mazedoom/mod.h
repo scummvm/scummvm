@@ -101,7 +101,7 @@ namespace MazeDoom {
 #define TIME_LOCATION_X     420
 #define TIME_LOCATION_Y       4
 #define TIME_WIDTH          195
-#define TIME_HEIGHT          15
+#define TIME_HEIGHT          16
 
 /////////////////////////////////////////////////////////////////////////////
 
