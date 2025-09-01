@@ -81,11 +81,11 @@ struct PointBase {
 	/**
 	 * Create a point by dividing a point by the (double) @p divisor value.
 	 */
-	ConcretePoint operator/(double divisor) const { return ConcretePoint((int16)(x / divisor), (int16)(y / divisor)); }
+	ConcretePoint operator/(double divisor) const { return ConcretePoint((T)(x / divisor), (T)(y / divisor)); }
 	/**
 	 * Create a point by multiplying a point by the (double) @p multiplier value.
 	 */
-	ConcretePoint operator*(double multiplier) const { return ConcretePoint((int16)(x * multiplier), (int16)(y * multiplier)); }
+	ConcretePoint operator*(double multiplier) const { return ConcretePoint((T)(x * multiplier), (T)(y * multiplier)); }
 
 	/**
 	 * Change a point's position by adding @p delta to its x and y coordinates.
@@ -166,7 +166,7 @@ struct RectBase {
 	/**
 	 * Create a rectangle with the top-left corner at position (0, 0) and the given width @p w and height @p h.
 	 */
-	constexpr RectBase(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}
+	constexpr RectBase(T w, T h) : top(0), left(0), bottom(h), right(w) {}
 	/**
 	 * Create a rectangle with the top-left corner at the position @p topLeft
 	 * and the bottom-right corner at the position @p bottomRight.
@@ -181,7 +181,7 @@ struct RectBase {
 	 * Create a rectangle with the top-left corner at the position @p topLeft
 	 * and the given width @p w and height @p h.
 	 */
-	constexpr RectBase(const ConcretePoint &topLeft, int16 w, int16 h) : top(topLeft.y), left(topLeft.x), bottom(topLeft.y + h), right(topLeft.x + w) {
+	constexpr RectBase(const ConcretePoint &topLeft, T w, T h) : top(topLeft.y), left(topLeft.x), bottom(topLeft.y + h), right(topLeft.x + w) {
 	}
 	/**
 	 * Create a rectangle with the top-left corner at the given position (x1, y1)
@@ -189,7 +189,7 @@ struct RectBase {
 	 *
 	 * The @p x2 value must be greater or equal @p x1 and @p y2 must be greater or equal @p y1.
 	 */
-	RectBase(int16 x1, int16 y1, int16 x2, int16 y2) : top(y1), left(x1), bottom(y2), right(x2) {
+	RectBase(T x1, T y1, T x2, T y2) : top(y1), left(x1), bottom(y2), right(x2) {
 		assert(isValidRect());
 	}
 	/**
