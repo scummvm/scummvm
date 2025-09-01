@@ -120,6 +120,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added Text-to-Speech support.
    - Added keymapper support.
 
+ Private:
+   - Added keymapper support.
+
  Queen:
    - Added keymapper support.
 
