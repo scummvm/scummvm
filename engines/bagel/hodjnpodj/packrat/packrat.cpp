@@ -360,14 +360,10 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		ptScore(MainRect.left + 10, MainRect.top + 10,
 			MainRect.left + 110, MainRect.top + 25) {
 	CDC     *pDC = nullptr;                        // device context for the screen
-//CPalette    *pOldPalette = nullptr;
 	CString WndClass;
 	CSize   mySize;
 	BOOL    bTestCreate;                        // bool for testing the creation of each button
-
-//CDibDoc *pDibDoc = nullptr;            // pointer to the background art DIB
 	BOOL    bTestBmp;                       // bool for testing the creation of the splash screen
-
 	int     nLoop1;
 	JOYINFO joyInfo;
 
@@ -378,6 +374,7 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 // this adds a bit to our app size but avoids hangs/freezes/lockups.
 
 	BeginWaitCursor();
+	initStatics();
 
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
 	                               nullptr, nullptr, nullptr);
@@ -769,6 +766,74 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 	bInLoop = FALSE;
 	EndWaitCursor();
 	(*this).SetFocus();
+}
+
+void CMainPackRatWindow::initStatics() {
+	pGamePalette = nullptr;
+	pOptionButton = nullptr;
+	pPlayerRightSprite = nullptr;
+	pPlayerLeftSprite = nullptr;
+	pPlayerUpSprite = nullptr;
+	pPlayerDownSprite = nullptr;
+
+	pBadGuyUpSprite = nullptr;
+	pBadGuyDownSprite = nullptr;
+	pBadGuyLeftSprite = nullptr;
+	pBadGuyRightSprite = nullptr;
+
+	pGoodGuyUpSprite = nullptr;
+	pGoodGuyDownSprite = nullptr;
+	pGoodGuyLeftSprite = nullptr;
+	pGoodGuyRightSprite = nullptr;
+
+	pFlashUpSprite = nullptr;
+	pFlashDownSprite = nullptr;
+	pFlashLeftSprite = nullptr;
+	pFlashRightSprite = nullptr;
+
+	pLiveSprite = nullptr;
+	pLivesSprite[MAXLIVESPRITE];
+
+	pBalloonSprite = nullptr;
+
+	pPlayerSprite = nullptr;
+	Common::fill(apBadGuySprite, apBadGuySprite + 4, nullptr);
+
+	pSSpaceBMP = nullptr;
+	pLSpaceBMP = nullptr;
+	pGameSound = nullptr;                             // Game theme song
+
+	ptNOLocInGrid.x = ptNOLocInGrid.y = 0;
+	nPaintObject = 0;
+
+	nPlayerMove = 0;
+	Common::fill(anBadGuyMove, anBadGuyMove + 4, 0);
+
+	bFirstTimer = FALSE;
+	bEatTurtle = FALSE;
+	Common::fill(abChangeTurtle, abChangeTurtle + 4, FALSE);
+	nEatTurtle = 0;
+	bChangeTurtle = FALSE;
+	nOldTSpeed = 0;
+	Common::fill(abGoodTurtle, abGoodTurtle + 4, FALSE);
+	Common::fill(anSuperObj, anSuperObj + 4, FALSE);
+
+	bEndGame = FALSE;
+	bFlashTurtle = FALSE;
+	Common::fill(anReleaseTurtleCount, anReleaseTurtleCount + 4, 0);
+
+	bUseJoyStick = FALSE;
+	awJoyCenter[0] = awJoyCenter[1] = 0;
+
+	nNumOfBGKilled = 0;
+	nStartingLives = 0;
+
+	nKillBadGuy = 0;
+	bKillPlayer = FALSE;
+	bResetGame = FALSE;
+	bMouseHidden = FALSE;
+	bInNewGameRect = FALSE;
+	bStart = FALSE;
 }
 
 /*****************************************************************

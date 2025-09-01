@@ -74,31 +74,33 @@ namespace Packrat {
 
 class CMainPackRatWindow : public CFrameWnd {
 public:
-	int             m_nBadGuySpeed;
-	int             m_nPlayerSpeed;
-	int             m_nGameLevel;
-	int             m_nLives;
+	int             m_nBadGuySpeed = 0;
+	int             m_nPlayerSpeed = 0;
+	int             m_nGameLevel = 0;
+	int             m_nLives = 0;
 
 private:
-// BOOL         m_bPlaySounds;            // bool for am I playing a certain # of rounds
-	HWND            m_hCallAppWnd;
-	LPGAMESTRUCT    m_lpGameStruct;
-	BOOL            m_bMouseCaptured;
-// int              m_anMazeArray [37][27];
-	int             *m_anMazeArray;
-	int             m_nPDirection;
-	POINT           m_ptCurrPLocInGrid;
-	POINT           m_ptCurrentPPos;
-	int             m_anBDirection[4];
-	int             m_nNumberOfMoves;
-	int             m_nBDirection;
-	POINT           m_aptCurrBLocInGrid[4];
-	POINT           m_aptCurrentBPos[4];
-	int             m_nNumberOfObjectsLeft;
-	long            m_lScore;
-	int             m_nMaze;
-	int             m_nNextDir;
-	BOOL            m_bSuspend;
+	HWND            m_hCallAppWnd = nullptr;
+	LPGAMESTRUCT    m_lpGameStruct = nullptr;
+	BOOL            m_bMouseCaptured = FALSE;
+	int             *m_anMazeArray = 0;
+	int             m_nPDirection = 0;
+	POINT           m_ptCurrPLocInGrid = { 0, 0 };
+	POINT           m_ptCurrentPPos = { 0, 0 };
+	int             m_anBDirection[4] = { 0 };
+	int             m_nNumberOfMoves = 0;
+	int             m_nBDirection = 0;
+	POINT           m_aptCurrBLocInGrid[4] = {
+		{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }
+	};
+	POINT           m_aptCurrentBPos[4] = {
+		{ 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }
+	};
+	int             m_nNumberOfObjectsLeft = 0;
+	long            m_lScore = 0;
+	int             m_nMaze = 0;
+	int             m_nNextDir = 0;
+	BOOL            m_bSuspend = FALSE;
 	CRect   MainRect;                           // screen area spanned by the game window
 	CRect   OptionRect;                         // screen area spanned by the game window
 	CPoint  ptBaloon;
@@ -110,6 +112,7 @@ private:
 public:
 	CMainPackRatWindow(HWND, LPGAMESTRUCT);
 
+	void initStatics();
 	void SplashScreen();
 
 	static  void ReleaseResources(void);
