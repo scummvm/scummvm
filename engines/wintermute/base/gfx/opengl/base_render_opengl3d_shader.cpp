@@ -408,7 +408,7 @@ bool BaseRenderOpenGL3DShader::setupLines() {
 	return true;
 }
 
-bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Wintermute::Rect32 &rect,
+bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurface *tex, const Common::Rect32 &rect,
 	                                    const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
 	                                    const Wintermute::Vector2 &scale,
 	                                    float angle, uint32 color, bool alphaDisable,
@@ -593,7 +593,7 @@ bool BaseRenderOpenGL3DShader::setProjection() {
 	bool customViewport;
 	getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
 
-	Rect32 rc;
+	Common::Rect32 rc;
 	_gameRef->getCurrentViewportRect(&rc);
 	float viewportWidth = (float)rc.right - (float)rc.left;
 	float viewportHeight = (float)rc.bottom - (float)rc.top;

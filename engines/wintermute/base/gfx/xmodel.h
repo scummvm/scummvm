@@ -34,7 +34,6 @@
 #include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/base/gfx/3deffect_params.h"
 #include "engines/wintermute/coll_templ.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
 
@@ -220,7 +219,7 @@ public:
 	static bool loadName(BaseNamedObject *obj, XFileData *data);
 	static bool loadName(Common::String &targetStr, XFileData *data);
 
-	Rect32 _boundingRect;
+	Common::Rect32 _boundingRect;
 	BaseObject *_owner{};
 
 	bool parseAnim(char *buffer);
@@ -255,7 +254,7 @@ private:
 	bool findBones(bool animOnly = false, XModel *parentModel = nullptr);
 
 	void updateBoundingRect();
-	void static inline updateRect(Rect32 *rc, DXVector3 *vec);
+	void static inline updateRect(Common::Rect32 *rc, DXVector3 *vec);
 	DXViewport _drawingViewport{};
 	DXMatrix _lastWorldMat;
 	DXMatrix _lastViewMat;

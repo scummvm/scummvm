@@ -489,7 +489,7 @@ bool XModel::render() {
 		_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
 
 		// remember scene offset
-		Rect32 rc;
+		Common::Rect32 rc;
 		_gameRef->getCurrentViewportRect(&rc);
 		float width = (float)rc.right - (float)rc.left;
 		float height = (float)rc.bottom - (float)rc.top;
@@ -658,7 +658,7 @@ void XModel::updateBoundingRect() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void XModel::updateRect(Rect32 *rc, DXVector3 *vec) {
+void XModel::updateRect(Common::Rect32 *rc, DXVector3 *vec) {
 	rc->left   = MIN(rc->left, (int32)vec->_x);
 	rc->right  = MAX(rc->right, (int32)vec->_x);
 	rc->top    = MIN(rc->top, (int32)vec->_y);

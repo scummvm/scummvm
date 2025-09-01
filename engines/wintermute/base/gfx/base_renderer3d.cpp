@@ -54,7 +54,7 @@ void BaseRenderer3D::initLoop() {
 	setup2D();
 }
 
-bool BaseRenderer3D::drawSprite(BaseSurface *texture, const Wintermute::Rect32 &rect,
+bool BaseRenderer3D::drawSprite(BaseSurface *texture, const Common::Rect32 &rect,
 	                        float zoomX, float zoomY, const Wintermute::Vector2 &pos,
 	                        uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
 	                        bool mirrorX, bool mirrorY) {
@@ -73,7 +73,7 @@ bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, floa
 		*resHeight = _gameRef->_editorResolutionHeight;
 
 	int lWidth, lHeight;
-	Rect32 sceneViewport;
+	Common::Rect32 sceneViewport;
 	_gameRef->getLayerSize(&lWidth, &lHeight, &sceneViewport, customViewport);
 	*layerWidth = (float)lWidth;
 	*layerHeight = (float)lHeight;

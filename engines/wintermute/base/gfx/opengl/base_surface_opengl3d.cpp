@@ -72,28 +72,28 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
 	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, zoomX, zoomY, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
+bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Common::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	prepareToDraw();
 
 	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::display(int x, int y, Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
 	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
+bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 hotspotX, int32 hotspotY, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
 	x -= hotspotX;
@@ -110,7 +110,7 @@ bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 h
 	return true;
 }
 
-bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Rect32 rect, int numTimesX, int numTimesY) {
+bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) {
 	prepareToDraw();
 
 	Vector2 scale(numTimesX, numTimesY);

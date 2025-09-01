@@ -23,7 +23,6 @@
 #define WINTERMUTE_BASE_RENDER_OPENGL3D_H
 
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
-#include "engines/wintermute/math/rect32.h"
 #include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/dctypes.h"
 
@@ -143,7 +142,7 @@ public:
 	bool endSpriteBatch() override;
 	bool commitSpriteBatch() override;
 
-	bool drawSpriteEx(BaseSurface *texture, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+	bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
 	                  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
 
 	void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
