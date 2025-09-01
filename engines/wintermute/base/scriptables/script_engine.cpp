@@ -527,6 +527,12 @@ bool ScEngine::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_globals));
 	_scripts.persist(persistMgr);
 
+	// initialise to defaults
+	if (!persistMgr->getIsSaving()) {
+		_isProfiling = false;
+		_profilingStartTime = 0;
+	}
+
 	return STATUS_OK;
 }
 

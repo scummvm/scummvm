@@ -265,6 +265,11 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 		filename = nullptr;
 	}
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		_fadeStartAlpha = 0;
+	}
+
 	return STATUS_OK;
 }
 

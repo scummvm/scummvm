@@ -1375,6 +1375,20 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 		_maxLightsWarning = false;
 	}
 
+	// initialise to defaults
+	if (!persistMgr->getIsSaving()) {
+		memset(&_drawingViewport, 0, sizeof(DXViewport));
+
+		DXMatrixIdentity(&_lastWorldMat);
+		DXMatrixIdentity(&_lastViewMat);
+		DXMatrixIdentity(&_lastProjMat);
+
+		_lastOffsetX = _lastOffsetY = 0;
+		_lastScrollX = _lastScrollY = 0;
+
+		_PFAlternateDist = FLT_MAX; // this is not stored in original, lets restore to default
+	}
+
 	return true;
 }
 

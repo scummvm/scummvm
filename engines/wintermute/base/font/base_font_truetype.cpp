@@ -522,7 +522,13 @@ bool BaseFontTT::persist(BasePersistenceManager *persistMgr) {
 		for (int i = 0; i < NUM_CACHED_TEXTS; i++) {
 			_cachedTexts[i] = nullptr;
 		}
+	}
+
+	// initialise to defaults
+	if (!persistMgr->getIsSaving()) {
 		_fallbackFont = _font = _deletableFont = nullptr;
+		_lineHeight = 0;
+		_maxCharWidth = _maxCharHeight = 0;
 	}
 
 	return STATUS_OK;

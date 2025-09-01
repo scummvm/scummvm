@@ -84,10 +84,13 @@ Loader3DS::FileObject3DS::FileObject3DS() {
 	_lightColor = 0;
 	_lightHotspot = false;
 	_lightFalloff = false;
+	_lightTarget._x = _lightTarget._y = _lightTarget._z = 0.0f;
+	_lightPos._x = _lightPos._y = _lightPos._z = 0.0f;
 
 	_cameraBank = 0;
 	_cameraLens = 0;
 	_cameraFOV = 0;
+	_cameraPos._x = _cameraPos._y = _cameraPos._z = 0.0f;
 
 	_hidden = false;
 }

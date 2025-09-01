@@ -439,6 +439,11 @@ bool BaseRegion::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_lastMimicY));
 	_points.persist(persistMgr);
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		BasePlatform::setRectEmpty(&_rect);
+	}
+
 	return STATUS_OK;
 }
 

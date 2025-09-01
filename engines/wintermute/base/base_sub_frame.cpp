@@ -400,6 +400,11 @@ bool BaseSubFrame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_mirrorY));
 	persistMgr->transferUint32(TMEMBER(_transparent));
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		_surface = nullptr;
+	}
+
 	return STATUS_OK;
 }
 

@@ -1559,6 +1559,11 @@ bool AdGame::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferCharPtr(TMEMBER(_startupScene));
 
+	// TODO: update at next save version bump
+	//persistMgr->transferSint32(TMEMBER_INT(_videoSkipButton));
+	if (!persistMgr->getIsSaving()) {
+		_videoSkipButton = VIDEO_SKIP_LEFT;
+	}
 
 	return STATUS_OK;
 }

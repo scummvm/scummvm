@@ -200,6 +200,11 @@ bool AdTalkNode::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_spriteSet));
 	persistMgr->transferCharPtr(TMEMBER(_spriteSetFilename));
 
+	// initialise to default
+	if (!persistMgr->getIsSaving()) {
+		_preCache = false;
+	}
+
 	return STATUS_OK;
 }
 
