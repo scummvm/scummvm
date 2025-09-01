@@ -182,6 +182,14 @@ void CWinApp::DoWaitCursor(int nCode) {
 	}
 }
 
+HFONT CWinApp::getFont(const char *lpszFacename, int nHeight) {
+	if ((!lpszFacename || !*lpszFacename) || !nHeight)
+		// Use system font
+		return getDefaultFont();
+	else
+		return _fonts.getFont(lpszFacename, nHeight);
+}
+
 void CWinApp::AddDocTemplate(CDocTemplate *pTemplate) {
 	if (m_pDocManager == NULL)
 		m_pDocManager = new CDocManager();

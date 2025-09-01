@@ -2032,9 +2032,7 @@ public:
 			nClipPrecision, nQuality, nPitchAndFamily,
 			lpszFacename);
 	}
-	HFONT getFont(const char *lpszFacename, int nHeight) {
-		return _fonts.getFont(lpszFacename, nHeight);
-	}
+	HFONT getFont(const char *lpszFacename, int nHeight);
 	HFONT getDefaultFont() {
 		assert(_defaultFont._font);
 		return (HFONT)_defaultFont._font;
