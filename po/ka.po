@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-01 14:53+0000\n"
+"POT-Creation-Date: 2025-09-01 14:55+0000\n"
 "PO-Revision-Date: 2025-08-24 07:36+0000\n"
 "Last-Translator: NorwayFun <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <https://translations.scummvm.org/projects/scummvm/"
@@ -5631,14 +5631,15 @@ msgstr "განახლებების შემოწმება..."
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/private/metaengine.cpp:91 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "ნაგულისხმევი კლავიატურის მალსახმობები"
 
@@ -6900,7 +6901,7 @@ msgstr "ინვენტარის კლავიატურის მა�
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/sherlock/metaengine.cpp:1183
+#: engines/private/metaengine.cpp:94 engines/sherlock/metaengine.cpp:1183
 msgid "Select / Interact"
 msgstr "არჩევა / ურთიერთობა"
 
@@ -10158,6 +10159,34 @@ msgstr "ღილაკი Z"
 msgid "X key"
 msgstr "ღილაკი X"
 
+#: engines/private/metaengine.cpp:37
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Display subtitles"
+msgstr "სუბტიტრების გამორთვა"
+
+#: engines/private/metaengine.cpp:38
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Use subtitles."
+msgstr "სუბტიტრების გამორთვა"
+
+#: engines/private/metaengine.cpp:48
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Display SFX subtitles"
+msgstr "სუბტიტრების გამორთვა"
+
+#: engines/private/metaengine.cpp:49
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Use SFX subtitles."
+msgstr "სუბტიტრების გამორთვა"
+
+#: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
+msgid "Skip video"
+msgstr "ვიდეოს გამოტოვება"
+
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
 msgstr ""
@@ -12952,10 +12981,6 @@ msgstr ""
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
 msgstr "დააჭირეთ ღილაკს \"დიახ\""
-
-#: engines/trecision/metaengine.cpp:137
-msgid "Skip video"
-msgstr "ვიდეოს გამოტოვება"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-01 14:53+0000\n"
+"POT-Creation-Date: 2025-09-01 14:55+0000\n"
 "PO-Revision-Date: 2025-08-30 16:10+0000\n"
 "Last-Translator: Hoseok Seo <ddinghoya@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6176,14 +6176,15 @@ msgstr "업데이트 확인 중..."
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/private/metaengine.cpp:91 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "기본 키맵핑"
 
@@ -7509,7 +7510,7 @@ msgstr "인벤토리 키맵핑"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/sherlock/metaengine.cpp:1183
+#: engines/private/metaengine.cpp:94 engines/sherlock/metaengine.cpp:1183
 msgid "Select / Interact"
 msgstr "선택 / 소통"
 
@@ -10953,6 +10954,34 @@ msgstr "Z 키"
 msgid "X key"
 msgstr "X 키"
 
+#: engines/private/metaengine.cpp:37
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Display subtitles"
+msgstr "자막 비활성화"
+
+#: engines/private/metaengine.cpp:38
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Use subtitles."
+msgstr "자막 비활성화"
+
+#: engines/private/metaengine.cpp:48
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Display SFX subtitles"
+msgstr "자막 비활성화"
+
+#: engines/private/metaengine.cpp:49
+#, fuzzy
+#| msgid "Disable subtitles"
+msgid "Use SFX subtitles."
+msgstr "자막 비활성화"
+
+#: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
+msgid "Skip video"
+msgstr "비디오 건너뛰기"
+
 #: engines/qdengine/dialogs.cpp:32
 msgid "Enable 16 bits per pixel mode"
 msgstr "픽셀당 16비트 모드 활성화"
@@ -13906,10 +13935,6 @@ msgstr "음성 / 텍스트 / 텍스트 및 음성 간 전환"
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
 msgstr "\"예\" 키를 누름"
-
-#: engines/trecision/metaengine.cpp:137
-msgid "Skip video"
-msgstr "비디오 건너뛰기"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144

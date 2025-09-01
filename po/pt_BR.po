@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-01 14:53+0000\n"
+"POT-Creation-Date: 2025-09-01 14:55+0000\n"
 "PO-Revision-Date: 2024-11-16 02:13+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6314,14 +6314,15 @@ msgstr "Procurar por Atualizações..."
 #: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
 #: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
 #: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/private/metaengine.cpp:91 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 msgid "Default keymappings"
 msgstr "Mapeamento padrão de teclas"
 
@@ -7723,7 +7724,7 @@ msgstr "Mapeamentos de teclas de índice"
 
 #: engines/buried/metaengine.cpp:141 engines/chamber/metaengine.cpp:65
 #: engines/chamber/metaengine.cpp:71 engines/chamber/metaengine.cpp:77
-#: engines/sherlock/metaengine.cpp:1183
+#: engines/private/metaengine.cpp:94 engines/sherlock/metaengine.cpp:1183
 #, fuzzy
 #| msgid "Interact Mode"
 msgid "Select / Interact"
@@ -11599,6 +11600,34 @@ msgstr "Tecla anti-chefe"
 msgid "X key"
 msgstr "Tecla anti-chefe"
 
+#: engines/private/metaengine.cpp:37
+#, fuzzy
+#| msgid "Toggle subtitles"
+msgid "Display subtitles"
+msgstr "Ativar/desativar legendas"
+
+#: engines/private/metaengine.cpp:38
+#, fuzzy
+#| msgid "Toggle subtitles"
+msgid "Use subtitles."
+msgstr "Ativar/desativar legendas"
+
+#: engines/private/metaengine.cpp:48
+#, fuzzy
+#| msgid "Toggle subtitles"
+msgid "Display SFX subtitles"
+msgstr "Ativar/desativar legendas"
+
+#: engines/private/metaengine.cpp:49
+#, fuzzy
+#| msgid "Toggle subtitles"
+msgid "Use SFX subtitles."
+msgstr "Ativar/desativar legendas"
+
+#: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
+msgid "Skip video"
+msgstr "Pular vídeo"
+
 #: engines/qdengine/dialogs.cpp:32
 #, fuzzy
 #| msgid "Enable the debug mode"
@@ -14923,10 +14952,6 @@ msgstr "Alternar entre voz/texto/texto com voz"
 #: engines/touche/metaengine.cpp:182
 msgid "Press \"Yes\" Key"
 msgstr "Pressionar Tecla \"Sim\""
-
-#: engines/trecision/metaengine.cpp:137
-msgid "Skip video"
-msgstr "Pular vídeo"
 
 #. I18N: Toggles walking speed of actor
 #: engines/trecision/metaengine.cpp:144
