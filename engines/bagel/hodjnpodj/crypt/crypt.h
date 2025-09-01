@@ -39,7 +39,7 @@ namespace Crypt {
 
 class CCryptogram {
 private:
-	CCryptRecord    *m_cRecordGram;
+	CCryptRecord    *m_cRecordGram = nullptr;
 	int             m_nCryptMap[MAP][ALPHABET];
 
 public:
@@ -59,9 +59,9 @@ public:
 	void        DrawSource(CDC *pDC);
 
 	char        m_chEncryptGram[MAX_GRAM_LEN];
-	CPaintGram  *m_cPaintGram;
-	CStats      *m_cStats;
-	BOOL        bIsGameOver;
+	CPaintGram  *m_cPaintGram = nullptr;
+	CStats      *m_cStats = nullptr;
+	BOOL        bIsGameOver = FALSE;
 };
 
 // Globals!

@@ -490,9 +490,12 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	CRules      RulesDlg((CWnd *)this, RULES_TEXT, pGamePalette,
 	                     (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 	CMainMenu COptionsWind((CWnd *)this, pGamePalette,
-	                       (m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) : 0),
-	                       GetGameParams, RULES_TEXT,
-	                       (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr), m_lpGameStruct);
+	    m_lpGameStruct->bPlayingMetagame ? (NO_NEWGAME | NO_OPTIONS) :
+			// WORKAROUND: Properly disable Continue initially
+			CSprite::GetSpriteChain() ? 0 : NO_RETURN,
+	    GetGameParams, RULES_TEXT,
+	    (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr),
+		m_lpGameStruct);
 
 	m_bPause = TRUE;
 
