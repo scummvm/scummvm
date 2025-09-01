@@ -2734,7 +2734,7 @@ void TotEngine::useScreenObject() {
 			} break;
 			case 583: {
 
-				long offset = getOffsetsByCurrentLanguage()[20];
+				int32 offset = getOffsetsByCurrentLanguage()[20];
 
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
@@ -2815,7 +2815,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 632: {
-				long offset = getOffsetsByCurrentLanguage()[21];
+				int32 offset = getOffsetsByCurrentLanguage()[21];
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
 				animateGive(_charFacingDirection, 1);
@@ -2878,7 +2878,7 @@ void TotEngine::useScreenObject() {
 					_caves[3] = true;
 			} break;
 			case 633: { //Use ring!
-				long offset = getOffsetsByCurrentLanguage()[22];
+				int32 offset = getOffsetsByCurrentLanguage()[22];
 
 				drawText(_curObject.useTextRef);
 				_mouse->hide();
@@ -2936,7 +2936,7 @@ void TotEngine::useScreenObject() {
 					_caves[3] = true;
 			} break;
 			case 643: { // Urn with altar
-				long offset = getOffsetsByCurrentLanguage()[23];
+				int32 offset = getOffsetsByCurrentLanguage()[23];
 
 				if (_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount] != 5)
 					drawText(_curObject.useTextRef);
@@ -2968,7 +2968,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 657: { // sharpen scythe
-				long offset = getOffsetsByCurrentLanguage()[24];
+				int32 offset = getOffsetsByCurrentLanguage()[24];
 
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 178 - 7;
@@ -3000,7 +3000,7 @@ void TotEngine::useScreenObject() {
 				_mouse->show();
 			} break;
 			case 689: { // rope
-				long offset = getOffsetsByCurrentLanguage()[25];
+				int32 offset = getOffsetsByCurrentLanguage()[25];
 
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 124 - 7;
@@ -3020,7 +3020,7 @@ void TotEngine::useScreenObject() {
 					_currentRoomData->mouseGrid[listIndex][27] = 10;
 			} break;
 			case 700: { // Trident
-				long offset = getOffsetsByCurrentLanguage()[26];
+				int32 offset = getOffsetsByCurrentLanguage()[26];
 				drawText(_curObject.useTextRef);
 				_mouse->mouseClickX = 224 - 7;
 				_mouse->mouseClickY = 91 - 7;
@@ -3064,7 +3064,7 @@ void TotEngine::useScreenObject() {
 				updateObject(_curObject.code);
 			} break;
 			case 709: { // rock with mural
-				long offset = getOffsetsByCurrentLanguage()[27];
+				int32 offset = getOffsetsByCurrentLanguage()[27];
 
 				if (_isSealRemoved) {
 					drawText(_curObject.useTextRef);
@@ -3202,8 +3202,8 @@ void TotEngine::useScreenObject() {
 					_sound->autoPlayVoc("CALDERA", 6433, 15386);
 				} break;
 				case 682: {
-					long offsetWithJar = getOffsetsByCurrentLanguage()[28];
-					long offsetNoJar = getOffsetsByCurrentLanguage()[29];
+					int32 offsetWithJar = getOffsetsByCurrentLanguage()[28];
+					int32 offsetNoJar = getOffsetsByCurrentLanguage()[29];
 
 					_mouse->hide();
 					_sound->playVoc("CLICK", 27742, 2458);
@@ -4730,7 +4730,7 @@ void TotEngine::drawMenu(byte menuNumber) {
 	byte *bitmap;
 	uint menuSize;
 	byte xmenu = 0, ymenu = 0;
-	long menuOffset;
+	int32 menuOffset;
 
 	Common::File menuFile;
 	if (!menuFile.open("MENUS.DAT")) {

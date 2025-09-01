@@ -362,7 +362,7 @@ void TotEngine::introduction() {
 	uint loopCount;
 	bool isSpanish = isLanguageSpanish();
 	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
-	const long *offsets = getOffsetsByCurrentLanguage();
+	const int32 *offsets = getOffsetsByCurrentLanguage();
 	exitPressed = false;
 	_graphics->totalFadeOut(0);
 
@@ -495,7 +495,7 @@ void TotEngine::firstIntroduction() {
 
 void TotEngine::initialLogo() {
 	bool foobar = false;
-	const long *offsets = getOffsetsByCurrentLanguage();
+	const int32 *offsets = getOffsetsByCurrentLanguage();
 	drawFlc(0, 0, offsets[0], 0, 18, 25, false, false, false, foobar);
 	delay(1000);
 }
@@ -508,7 +508,7 @@ void TotEngine::sacrificeScene() {
 	bool isSpanish = isLanguageSpanish();
 	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
 
-	const long *offsets = getOffsetsByCurrentLanguage();
+	const int32 *offsets = getOffsetsByCurrentLanguage();
 
 	_sound->stopVoc();
 	bool exitPressed = _currentRoomData->paletteAnimationFlag;
@@ -872,7 +872,7 @@ void TotEngine::ending() {
 	bool exitRequested;
 
 	const char *const *messages = getFullScreenMessagesByCurrentLanguage();
-	const long *offsets = getOffsetsByCurrentLanguage();
+	const int32 *offsets = getOffsetsByCurrentLanguage();
 
 	littText(10, 41, messages[43], 249);
 	littText(10, 39, messages[43], 249);

@@ -64,7 +64,7 @@ void SoundManager::init() {
 	_musicVolLeft = 3;
 }
 
-void SoundManager::loadVoc(Common::String vocFile, long startPos, int16 size) {
+void SoundManager::loadVoc(Common::String vocFile, int32 startPos, int16 size) {
 	Common::File vocResource;
 
 	if (size == 0) {

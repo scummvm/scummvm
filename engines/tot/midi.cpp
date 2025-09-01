@@ -182,7 +182,7 @@ MidiDriver_AdLib::~MidiDriver_AdLib() {
 	delete[] _dsfInstrumentBank;
 }
 
-void MidiDriver_AdLib::loadInstrumentBankFromDriver(long offset) {
+void MidiDriver_AdLib::loadInstrumentBankFromDriver(int32 offset) {
 	Common::File driverFile;
 	if (!driverFile.open("CTMIDI.DRV")) {
 		error("Couldnt find midi file!");
