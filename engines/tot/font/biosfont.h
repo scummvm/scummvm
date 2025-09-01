@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef TOT_BIG5FONT_H
-#define TOT_BIG5FONT_H
+#ifndef TOT_BIOSFONT_H
+#define TOT_BIOSFONT_H
 
 #include "graphics/big5.h"
 #include "graphics/font.h"

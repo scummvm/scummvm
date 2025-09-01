@@ -28,16 +28,16 @@
 namespace Tot {
 
 byte *drawCreditsScreen(uint &sizeAuxBG, byte *&auxBG) {
-	palette intermediatePalette, darkPalette;
+	Palette intermediatePalette, darkPalette;
 
 	Common::File ppFile;
 
 	if (!ppFile.open("DIPLOMA.PAN")) {
 		showError(315);
 	}
-	byte *backgroundPointer = (byte *)malloc(64000);
-	ppFile.read(intermediatePalette, 768);
-	ppFile.read(backgroundPointer, 64000);
+	byte *backgroundPointer = (byte *)malloc(320 * 200);
+	ppFile.read(intermediatePalette, 256 * 3);
+	ppFile.read(backgroundPointer, 320 * 200);
 	ppFile.close();
 
 	g_engine->_graphics->drawFullScreen(backgroundPointer);
@@ -48,7 +48,7 @@ byte *drawCreditsScreen(uint &sizeAuxBG, byte *&auxBG) {
 	auxBG = (byte *)malloc(sizeAuxBG);
 	g_engine->_graphics->getImg(0, 0, 319, 59, auxBG);
 
-	for (int i = 0; i <= 255; i++) {
+	for (int i = 0; i < 256; i++) {
 		darkPalette[i * 3 + 0] = 0;
 		darkPalette[i * 3 + 1] = 0;
 		darkPalette[i * 3 + 2] = 0;
@@ -153,7 +153,7 @@ void putCreditsImg(uint x, uint y, const byte *img1, const byte *img2, bool dire
 void scrollCredit(
 	int32 position,
 	uint size,
-	palette &pal2,
+	Palette &pal2,
 	byte *&background,
 	bool &exit,
 	int minHeight,
@@ -168,7 +168,7 @@ void scrollCredit(
 	creditFile.read(pal2, 768);
 	creditFile.close();
 
-	for (int i = 16; i <= 255; i++) {
+	for (int i = 16; i < 256; i++) {
 		// Adjust for 6-bit DAC
 		pal2[i * 3 + 0] <<= 2;
 		pal2[i * 3 + 1] <<= 2;
@@ -208,7 +208,7 @@ void scrollCredit(
 void scrollSingleCredit(
 	int32 pos,
 	uint size,
-	palette &pal2,
+	Palette &pal2,
 	byte *&background,
 	bool &exit) {
 	scrollCredit(
@@ -265,10 +265,10 @@ inline bool keyPressed() {
 
 void TotEngine::credits() {
 	_saveAllowed = true;
-	palette pal2;
+	Palette pal2;
 	byte *background2;
 	uint sizeBg2;
-	bool exit;
+	bool shouldExit = false;
 
 	_mouse->hide();
 	_graphics->totalFadeOut(0);
@@ -278,71 +278,69 @@ void TotEngine::credits() {
 	_sound->fadeInMusic();
 	byte *background = drawCreditsScreen(sizeBg2, background2);
 
-	exit = false;
-
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollCredit(0, 8004, pal2, background, exit, 10, false, true);
-	if (keyPressed() || exit)
+	scrollCredit(0, 8004, pal2, background, shouldExit, 10, false, true);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(8772, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(8772, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(17544, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(17544, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(26316, 7504, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(26316, 7504, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(34588, 7504, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(34588, 7504, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(42860, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(42860, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(51632, 7504, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(51632, 7504, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	removeTitle(background2);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	_graphics->putImg(0, 0, background2);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	_graphics->copyFromScreen(background);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollCredit(59904, 8004, pal2, background, exit, 10, false, true);
-	if (keyPressed() || exit)
+	scrollCredit(59904, 8004, pal2, background, shouldExit, 10, false, true);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(68676, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(68676, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(77448, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(77448, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(86220, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(86220, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(94992, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(94992, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(103764, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(103764, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollSingleCredit(112536, 8004, pal2, background, exit);
-	if (keyPressed() || exit)
+	scrollSingleCredit(112536, 8004, pal2, background, shouldExit);
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	removeTitle(background2);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	_graphics->putImg(0, 0, background2);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
 	_graphics->copyFromScreen(background);
-	if (keyPressed() || exit)
+	if (keyPressed() || shouldExit)
 		goto Lexit;
-	scrollCredit(121308, 8004, pal2, background, exit, 80, false, true);
+	scrollCredit(121308, 8004, pal2, background, shouldExit, 80, false, true);
 Lexit:
 	delay(1000);
 	_graphics->totalFadeOut(0);
@@ -502,7 +500,7 @@ void TotEngine::initialLogo() {
 
 void TotEngine::sacrificeScene() {
 	_saveAllowed = false;
-	palette palaux;
+	Palette palaux;
 
 	Common::File file;
 	bool isSpanish = isLanguageSpanish();
@@ -913,7 +911,7 @@ void TotEngine::ending() {
 }
 
 void TotEngine::wcScene() {
-	palette wcPalette;
+	Palette wcPalette;
 	_currentZone = _currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount];
 	goToObject(_currentZone, _targetZone);
 

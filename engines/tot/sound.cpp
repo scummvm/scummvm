@@ -47,6 +47,7 @@ SoundManager::SoundManager(Audio::Mixer *mixer) : _mixer(mixer) {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 100);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, 100);
 }
+
 SoundManager::~SoundManager() {
 	if (_midiPlayer)
 		delete _midiPlayer;
@@ -105,9 +106,12 @@ void SoundManager::stopVoc() {
 }
 
 void SoundManager::waitForSoundEnd() {
+	Common::Event e;
 	do {
+		while (g_system->getEventManager()->pollEvent(e)) { }
 		g_engine->_chrono->updateChrono();
 		g_engine->_screen->update();
+		g_system->delayMillis(10);
 	} while (g_engine->_sound->isVocPlaying());
 }
 

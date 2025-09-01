@@ -182,7 +182,7 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 			break;
 		}
 		if (speak) {
-			if (auxTree->element.spoken == '2')
+			if (auxTree->element.spoken == '2') {
 				if (!border) {
 					border = true;
 					switch (characterIndex) {
@@ -212,10 +212,8 @@ Common::List<uint>* findDialogue(Tree tree, byte characterIndex) {
 						forward = true;
 					}
 					}
-				} else {
-					;
 				}
-			else {
+			} else {
 				linkedList->push_back(auxTree->element.index);
 				forward = true;
 			}
@@ -582,7 +580,7 @@ void loadTalkAnimations() {
 	int32 offset = g_engine->_mainCharFrameSize * 16;
 	offset = (offset * g_engine->_charFacingDirection) + 2;
 	animFile.seek(offset);
-	//Will load talking anim always in the upwards direction of the walk cycle array
+	// Will load talking anim always in the upwards direction of the walk cycle array
 	for (int i = 0; i < 16; i++) {
 		g_engine->_mainCharAnimation.bitmap[0][i] = (byte *)malloc(g_engine->_mainCharFrameSize);
 		animFile.read(g_engine->_mainCharAnimation.bitmap[0][i], g_engine->_mainCharFrameSize);

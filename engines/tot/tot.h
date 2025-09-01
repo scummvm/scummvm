@@ -59,7 +59,7 @@ private:
 	 * loading and saving using a single method
 	 */
 	Common::Error syncGame(Common::Serializer &s);
-	//rout 1
+
 	int engineStart();
 	int startGame();
 	void newGame();
@@ -100,7 +100,6 @@ private:
 
 	void readConversationFile();
 
-	//Rout2
 	void adjustKey();
 	void adjustKey2();
 	void animateBat();

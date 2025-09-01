@@ -231,7 +231,6 @@ Common::Error TotEngine::syncGame(Common::Serializer &s) {
 	Common::Error result;
 
 	if (s.isLoading()) {
-		debug("Loading game!!");
 		SavedGame loadedGame;
 		// Means we are loading from before the game has started
 		// if(rooms == nullptr) {

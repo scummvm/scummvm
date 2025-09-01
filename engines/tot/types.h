@@ -277,7 +277,7 @@ struct SavedGame {
 	uint niche[2][4];
 };
 
-typedef byte palette[768];
+typedef byte Palette[768];
 
 } // End of namespace Tot
 
