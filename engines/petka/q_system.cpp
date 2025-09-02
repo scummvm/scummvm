@@ -419,6 +419,7 @@ void QSystem::onEvent(const Common::Event &event) {
 		default:
 			break;
 		}
+		break;
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.keycode == Common::KEYCODE_r)
 			if (event.kbd.flags & Common::KBD_ALT) {
