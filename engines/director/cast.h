@@ -218,7 +218,7 @@ public:
 	/* 31 */ uint8 _field18;
 	/* 32 */ int32 _field19;
 	/* 36 */ int16 _version;
-	/* 38 */ int16 _field21;
+	/* 38 */ int16 _movieDepth;
 	/* 40 */ int32 _field22;
 	/* 44 */ int32 _field23;
 	/* 48 */ int32 _field24;

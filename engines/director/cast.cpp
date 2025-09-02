@@ -460,12 +460,12 @@ bool Cast::loadConfig() {
 
 		/* version = */ stream->readUint16();	// We've already read it, this is offset 36
 
-		_field21 = stream->readSint16();
+		_movieDepth = stream->readSint16();
 		_field22 = stream->readSint32();
 		_field23 = stream->readSint32();
 
-		debugC(1, kDebugLoading, "Cast::loadConfig(): field17: %d, field18: %d, field19: %d, field21: %d, field22: %d field23: %d",
-			_field17, _field18, _field19, _field21, _field22, _field23);
+		debugC(1, kDebugLoading, "Cast::loadConfig(): field17: %d, field18: %d, field19: %d, movieDepth: %d, field22: %d field23: %d",
+			_field17, _field18, _field19, _movieDepth, _field22, _field23);
 	}
 
 	if (_version >= kFileVer400) {
@@ -560,6 +560,10 @@ bool Cast::loadConfig() {
 		_vm->setVersion(humanVer);
 	}
 
+	if (_movieDepth > 0) {
+		warning("STUB: loadConfig(): Movie bit depth is %d", _movieDepth);
+	}
+
 	delete stream;
 	return true;
 }
@@ -604,7 +608,7 @@ void Cast::saveConfig(Common::SeekableWriteStream *writeStream, uint32 offset) {
 
 	writeStream->writeUint16BE(_version);   		// 36
 
-	writeStream->writeUint16BE(_field21);           // 38
+	writeStream->writeUint16BE(_movieDepth);           // 38
 	writeStream->writeUint32BE(_field22);           // 40
 	writeStream->writeUint32BE(_field23);           // 44
 
@@ -1156,7 +1160,7 @@ uint32 Cast::computeChecksum() {
 	check *= _field18 + 18;
 	check += _field19 + 19;
 	check *= _version + 20;
-	check += _field21 + 21;
+	check += _movieDepth + 21;
 	check += _field22 + 22;
 	check += _field23 + 23;
 	check += _field24 + 24;
