@@ -204,11 +204,6 @@ public:
 	BOOL PostMessage(HWND hWnd, UINT Msg,
 		WPARAM wParam, LPARAM lParam);
 
-	/**
-	 * Allow for MFC-specific message preprocessing
-	 */
-	bool PreTranslateMessage(MSG *pMsg);
-
 	void TranslateMessage(LPMSG lpMsg);
 
 	void DispatchMessage(LPMSG lpMsg);

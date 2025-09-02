@@ -21,6 +21,7 @@
 
 #include "common/textconsole.h"
 #include "bagel/mfc/afxwin.h"
+#include "bagel/mfc/keyboard.h"
 
 namespace Bagel {
 namespace MFC {
@@ -215,6 +216,47 @@ LRESULT CDialog::HandleSetFont(WPARAM wParam, LPARAM) {
 	// Virtual method dialog descendants can override
 	OnSetFont(CFont::FromHandle((HFONT)wParam));
 	return 0;
+}
+
+BOOL CDialog::PreTranslateMessage(MSG *pMsg) {
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN) {
+		CWnd *pFocus = GetFocus();
+
+		// Special case: prevent multi-line edit controls from handling Enter
+		if (pFocus && pFocus->IsKindOf(RUNTIME_CLASS(CEdit))) {
+			DWORD style = pFocus->GetStyle();
+			if ((style & ES_MULTILINE) == 0) {
+				// Not a multi-line edit box - simulate default pushbutton
+				CWnd *pDefault = GetDefaultPushButton();
+				if (pDefault) {
+					pDefault->SendMessage(WM_COMMAND, MAKEWPARAM(IDOK, BN_CLICKED), (LPARAM)pDefault->m_hWnd);
+
+				} else {
+					// No button - just call OnOK directly
+					OnOK();
+				}
+
+				return TRUE;
+			}
+		}
+	} else if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) {
+		OnCancel();
+		return true;
+	}
+
+	return CWnd::PreTranslateMessage(pMsg);
+}
+
+CWnd *CDialog::GetDefaultPushButton() const {
+	for (auto &child : _children) {
+		CWnd *pChild = child._value;
+		DWORD style = pChild->GetStyle();
+		if ((style & BS_DEFPUSHBUTTON) && pChild->GetDlgCtrlID() == IDOK) {
+			return pChild;
+		}
+	}
+
+	return nullptr;
 }
 
 void CDialog::DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl) {

@@ -42,7 +42,8 @@ void EventLoop::runEventLoop() {
 		if (!GetMessage(msg))
 			break;
 
-		if (msg.message != WM_NULL && !PreTranslateMessage(&msg)) {
+		CWnd *mainWnd = GetActiveWindow();
+		if (msg.message != WM_NULL && mainWnd && !mainWnd->PreTranslateMessage(&msg)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
@@ -329,11 +330,6 @@ void EventLoop::checkForFrameUpdate() {
 
 	// Cleanup any temporary handle wrapper
 	AfxGetApp()->AfxUnlockTempMaps();
-}
-
-bool EventLoop::PreTranslateMessage(MSG *pMsg) {
-	// No implementation currently
-	return false;
 }
 
 BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,

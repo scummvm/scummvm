@@ -1443,6 +1443,9 @@ public:
 	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, DWORD) = nullptr);
 	BOOL KillTimer(UINT_PTR nIDEvent);
 
+	virtual BOOL PreTranslateMessage(MSG *pMsg) {
+		return false;
+	}
 	virtual int GetScrollPos() const {
 		return 0;
 	}
@@ -1562,6 +1565,7 @@ private:
 		HINSTANCE hInst);
 	BOOL CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 		CWnd *pParentWnd, HINSTANCE hInst);
+	CWnd *GetDefaultPushButton() const;
 
 protected:
 	DECLARE_MESSAGE_MAP()
@@ -1591,6 +1595,7 @@ public:
 	virtual BOOL OnInitDialog() {
 		return true;
 	}
+	BOOL PreTranslateMessage(MSG *pMsg) override;
 
 	DWORD GetDefID() const;
 	void SetDefID(UINT nID);
