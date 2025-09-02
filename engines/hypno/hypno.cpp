@@ -61,7 +61,7 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _background(nullptr), _masks(nullptr), _musicRate(0), _musicStereo(false),
 	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
 	  _doNotStopSounds(false), _screenW(0), _screenH(0), // Every games initializes its own resolution
-	  _keepTimerDuringScenes(false) {
+	  _keepTimerDuringScenes(false), _subtitles(nullptr) {
 	_rnd = new Common::RandomSource("hypno");
 	_checkpoint = "";
 
@@ -173,6 +173,16 @@ Common::Error HypnoEngine::run() {
 		} else
 			g_system->delayMillis(300);
 	}
+
+	// Only enable if subtitles are available
+	bool useSubtitles = false;
+	if (!Common::parseBool(ConfMan.get("subtitles"), useSubtitles))
+		warning("Failed to parse bool from subtitles options");
+
+	if (useSubtitles) {
+		g_system->showOverlay(false);
+	}
+
 	return Common::kNoError;
 }
 
@@ -284,6 +294,9 @@ void HypnoEngine::runIntros(Videos &videos) {
 					playing = true;
 					if (it->decoder->needsUpdate()) {
 						updateScreen(*it);
+						if (_subtitles && it->decoder && !it->decoder->isPaused())
+							_subtitles->drawSubtitle(it->decoder->getTime(), false, false);
+
 						drawScreen();
 					}
 				}
@@ -301,9 +314,15 @@ void HypnoEngine::runIntros(Videos &videos) {
 }
 
 void HypnoEngine::runIntro(MVideo &video) {
+	Common::Path path(video.path);
+	loadSubtitles(path);
 	Videos tmp;
 	tmp.push_back(video);
 	runIntros(tmp);
+
+	delete _subtitles;
+	_subtitles = nullptr;
+	g_system->clearOverlay();
 }
 
 void HypnoEngine::runCode(Code *code) { error("Function \"%s\" not implemented", __FUNCTION__); }
@@ -547,6 +566,48 @@ void HypnoEngine::drawScreen() {
 }
 
 // Video handling
+
+void HypnoEngine::adjustSubtitleSize() {
+	debugC(1, kHypnoDebugMedia, "%s()", __FUNCTION__);
+	if (_subtitles) {
+		int16 h = g_system->getOverlayHeight();
+		int16 w = g_system->getOverlayWidth();
+		float scale = h / 2160.f;
+		_subtitles->setBBox(Common::Rect(20, h - 160 * scale, w - 20, h - 20));
+		int fontSize = MAX(8, int(50 * scale));
+		_subtitles->setColor(0xff, 0xff, 0x80);
+		_subtitles->setFont("NotoSerif-Regular.ttf", fontSize, "regular");
+		_subtitles->setFont("NotoSerif-Italic.ttf", fontSize, "italic");
+	}
+}
+
+void HypnoEngine::loadSubtitles(const Common::Path &path) {
+	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, path.toString().c_str());
+	debug("Subtitle path: %s", path.toString().c_str());
+	Common::String subPathStr = path.toString() + ".srt";
+	subPathStr.toLowercase();
+	subPathStr.replace('/', '_');
+	subPathStr.replace('\\', '_');
+	Common::String language(Common::getLanguageCode(_language));
+	if (language == "us")
+		language = "en";
+
+	Common::Path subPath = "subtitles";
+	subPath = subPath.appendComponent(language);
+	subPath = subPath.appendComponent(subPathStr);
+	debugC(1, kHypnoDebugMedia, "Loading subtitles from %s", subPath.toString().c_str());
+	if (Common::File::exists(subPath)) {
+		_subtitles = new Video::Subtitles();
+		_subtitles->loadSRTFile(subPath);
+		g_system->showOverlay(false);
+		adjustSubtitleSize();
+	} else {
+		delete _subtitles;
+		_subtitles = nullptr;
+		g_system->clearOverlay();
+	}
+}
+
 
 void HypnoEngine::playVideo(MVideo &video) {
 	debugC(1, kHypnoDebugMedia, "%s(%s)", __FUNCTION__, video.path.c_str());

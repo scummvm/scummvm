@@ -32,6 +32,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "video/subtitles.h"
 
 #include "hypno/grammar.h"
 #include "hypno/libfile.h"
@@ -196,6 +197,10 @@ public:
 	bool canSaveAutosaveCurrently() override { return false; }
 	bool canSaveGameStateCurrently(Common::U32String *msg = nullptr) override { return (isDemo() ? false : true); }
 	Common::String _checkpoint;
+
+	Video::Subtitles *_subtitles;
+	void adjustSubtitleSize();
+	void loadSubtitles(const Common::Path &path);
 
 	Common::Path _prefixDir;
 	Common::Path convertPath(const Common::String &);
