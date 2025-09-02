@@ -287,4 +287,288 @@ bool TotEngine::canSaveGameStateCurrently(Common::U32String *msg) {
 	return _inGame && _saveAllowed;
 }
 
+void TotEngine::saveGameToRegister() {
+	_savedGame.roomCode = _currentRoomData->code;
+	_savedGame.trajectoryLength = _trajectoryLength;
+	_savedGame.currentTrajectoryIndex = _currentTrajectoryIndex;
+	_savedGame.backpackObjectCode = _backpackObjectCode;
+	_savedGame.rightSfxVol = _sound->_rightSfxVol;
+	_savedGame.leftSfxVol = _sound->_leftSfxVol;
+	_savedGame.musicVolRight = _sound->_musicVolRight;
+	_savedGame.musicVolLeft = _sound->_musicVolLeft;
+	_savedGame.oldGridX = _oldGridX;
+	_savedGame.oldGridY = _oldGridY;
+	_savedGame.secAnimDepth = _secondaryAnimation.depth;
+	_savedGame.secAnimDir = _secondaryAnimation.dir;
+	_savedGame.secAnimX = _secondaryAnimation.posx;
+	_savedGame.secAnimY = _secondaryAnimation.posy;
+	_savedGame.secAnimIFrame = _iframe2;
+
+	_savedGame.currentZone = _currentZone;
+	_savedGame.targetZone = _targetZone;
+	_savedGame.oldTargetZone = _oldTargetZone;
+	_savedGame.inventoryPosition = _inventoryPosition;
+	_savedGame.actionCode = _actionCode;
+	_savedGame.oldActionCode = _oldActionCode;
+	_savedGame.steps = _trajectorySteps;
+	_savedGame.doorIndex = _doorIndex;
+	_savedGame.characterFacingDir = _charFacingDirection;
+	_savedGame.iframe = _iframe;
+	_savedGame.gamePart = _gamePart;
+
+	_savedGame.isSealRemoved = _isSealRemoved;
+	_savedGame.obtainedList1 = _obtainedList1;
+	_savedGame.obtainedList2 = _obtainedList2;
+	_savedGame.list1Complete = _list1Complete;
+	_savedGame.list2Complete = _list2Complete;
+	_savedGame.isVasePlaced = _isVasePlaced;
+	_savedGame.isScytheTaken = _isScytheTaken;
+	_savedGame.isTridentTaken = _isTridentTaken;
+	_savedGame.isPottersWheelDelivered = _isPottersWheelDelivered;
+	_savedGame.isMudDelivered = _isMudDelivered;
+	_savedGame.isGreenDevilDelivered = _isGreenDevilDelivered;
+	_savedGame.isRedDevilCaptured = _isRedDevilCaptured;
+	_savedGame.isPottersManualDelivered = _isPottersManualDelivered;
+	_savedGame.isCupboardOpen = _isCupboardOpen;
+	_savedGame.isChestOpen = _isChestOpen;
+	_savedGame.isTVOn = _isTVOn;
+	_savedGame.isTrapSet = _isTrapSet;
+
+	for (int i = 0; i < kInventoryIconCount; i++) {
+		_savedGame.mobj[i].bitmapIndex = _inventory[i].bitmapIndex;
+		_savedGame.mobj[i].code = _inventory[i].code;
+		_savedGame.mobj[i].objectName = _inventory[i].objectName;
+	}
+
+	_savedGame.element1 = _element1;
+	_savedGame.element2 = _element2;
+	_savedGame.characterPosX = _characterPosX;
+	_savedGame.characterPosY = _characterPosY;
+	_savedGame.xframe2 = _xframe2;
+	_savedGame.yframe2 = _yframe2;
+
+	_savedGame.oldInventoryObjectName = _oldInventoryObjectName;
+	_savedGame.objetomoinventoryObjectNamehila = _inventoryObjectName;
+	_savedGame.characterName = _characterName;
+
+	for (int i = 0; i < kRoutePointCount; i++) {
+		_savedGame.mainRoute[i].x = _mainRoute[i].x;
+		_savedGame.mainRoute[i].y = _mainRoute[i].y;
+	}
+
+	for (int i = 0; i < 300; i++) {
+		_savedGame.trajectory[i].x = _trajectory[i].x;
+		_savedGame.trajectory[i].y = _trajectory[i].y;
+	}
+
+	for (int i = 0; i < kCharacterCount; i++) {
+		_savedGame.firstTimeTopicA[i] = _firstTimeTopicA[i];
+		_savedGame.firstTimeTopicB[i] = _firstTimeTopicB[i];
+		_savedGame.firstTimeTopicC[i] = _firstTimeTopicC[i];
+		_savedGame.bookTopic[i] = _bookTopic[i];
+		_savedGame.mintTopic[i] = _mintTopic[i];
+	}
+	for (int i = 0; i < 5; i++) {
+		_savedGame.caves[i] = _caves[i];
+		_savedGame.firstList[i] = _firstList[i];
+		_savedGame.secondList[i] = _secondList[i];
+	}
+	for (int i = 0; i < 4; i++) {
+		_savedGame.niche[0][i] = _niche[0][i];
+		_savedGame.niche[1][i] = _niche[1][i];
+	}
+}
+
+void TotEngine::loadGame(SavedGame game) {
+	clearAnimation();
+	clearScreenLayers();
+
+	_trajectoryLength = game.trajectoryLength;
+	_currentTrajectoryIndex = game.currentTrajectoryIndex;
+	_backpackObjectCode = game.backpackObjectCode;
+	_sound->_rightSfxVol = game.rightSfxVol;
+	_sound->_leftSfxVol = game.leftSfxVol;
+	_sound->_musicVolRight = game.musicVolRight;
+	_sound->_musicVolLeft = game.musicVolLeft;
+	_oldGridX = game.oldGridX;
+	_oldGridY = game.oldGridY;
+	_secondaryAnimation.depth = game.secAnimDepth;
+	_secondaryAnimation.dir = game.secAnimDir;
+	_secondaryAnimation.posx = game.secAnimX;
+	_secondaryAnimation.posy = game.secAnimY;
+	_iframe2 = game.secAnimIFrame;
+	_currentZone = game.currentZone;
+	_targetZone = game.targetZone;
+	_oldTargetZone = game.oldTargetZone;
+	_inventoryPosition = game.inventoryPosition;
+	_actionCode = game.actionCode;
+	_oldActionCode = game.oldActionCode;
+	_trajectorySteps = game.steps;
+	_doorIndex = game.doorIndex;
+	_charFacingDirection = game.characterFacingDir;
+	_iframe = game.iframe;
+	if (game.gamePart != _gamePart) {
+		_gamePart = game.gamePart;
+		for (int i = 0; i < kInventoryIconCount; i++) {
+			free(_inventoryIconBitmaps[i]);
+		}
+		loadInventory();
+	}
+	_isSealRemoved = game.isSealRemoved;
+	_obtainedList1 = game.obtainedList1;
+	_obtainedList2 = game.obtainedList2;
+	_list1Complete = game.list1Complete;
+	_list2Complete = game.list2Complete;
+	_isVasePlaced = game.isVasePlaced;
+	_isScytheTaken = game.isScytheTaken;
+	if (_cpCounter > 24)
+		showError(274);
+	_isTridentTaken = game.isTridentTaken;
+	_isPottersWheelDelivered = game.isPottersWheelDelivered;
+	_isMudDelivered = game.isMudDelivered;
+	_isGreenDevilDelivered = game.isGreenDevilDelivered;
+	_isRedDevilCaptured = game.isRedDevilCaptured;
+	_isPottersManualDelivered = game.isPottersManualDelivered;
+	_isCupboardOpen = game.isCupboardOpen;
+	_isChestOpen = game.isChestOpen;
+	_isTVOn = game.isTVOn;
+	_isTrapSet = game.isTrapSet;
+	for (int i = 0; i < kInventoryIconCount; i++) {
+		_inventory[i].bitmapIndex = game.mobj[i].bitmapIndex;
+		_inventory[i].code = game.mobj[i].code;
+		_inventory[i].objectName = game.mobj[i].objectName;
+	}
+	_element1 = game.element1;
+	_element2 = game.element2;
+	_characterPosX = game.characterPosX;
+	_characterPosY = game.characterPosY;
+	_xframe2 = game.xframe2;
+	_yframe2 = game.yframe2;
+	_oldInventoryObjectName = game.oldInventoryObjectName;
+	_inventoryObjectName = game.objetomoinventoryObjectNamehila;
+	_characterName = game.characterName;
+	for (int i = 0; i < kRoutePointCount; i++) {
+		_mainRoute[i].x = game.mainRoute[i].x;
+		_mainRoute[i].y = game.mainRoute[i].y;
+	}
+	for (int indiaux = 0; indiaux < 300; indiaux++) {
+		_trajectory[indiaux].x = game.trajectory[indiaux].x;
+		_trajectory[indiaux].y = game.trajectory[indiaux].y;
+	}
+	for (int i = 0; i < kCharacterCount; i++) {
+		_firstTimeTopicA[i] = game.firstTimeTopicA[i];
+		_firstTimeTopicB[i] = game.firstTimeTopicB[i];
+		_firstTimeTopicC[i] = game.firstTimeTopicC[i];
+		_bookTopic[i] = game.bookTopic[i];
+		_mintTopic[i] = game.mintTopic[i];
+	}
+	for (int i = 0; i < 5; i++) {
+		_caves[i] = game.caves[i];
+		_firstList[i] = game.firstList[i];
+		_secondList[i] = game.secondList[i];
+	}
+	for (int i = 0; i < 4; i++) {
+		_niche[0][i] = game.niche[0][i];
+		_niche[1][i] = game.niche[1][i];
+	}
+
+	_graphics->totalFadeOut(0);
+	_screen->clear();
+	_graphics->loadPaletteFromFile("DEFAULT");
+	loadScreenData(game.roomCode);
+
+	switch (_currentRoomData->code) {
+	case 2: {
+		if (_isTVOn)
+			_sound->autoPlayVoc("PARASITO", 355778, 20129);
+		else
+			loadTV();
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+	} break;
+	case 4: {
+		_sound->loadVoc("GOTA", 140972, 1029);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+	} break;
+	case 5: {
+		_sound->setSfxVolume(_sound->_leftSfxVol, 0);
+		_sound->autoPlayVoc("CALDERA", 6433, 15386);
+	} break;
+	case 6: {
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+		_sound->autoPlayVoc("CALDERA", 6433, 15386);
+	} break;
+	case 17: {
+		if (_bookTopic[0] == true && _currentRoomData->animationFlag)
+			disableSecondAnimation();
+	} break;
+	case 20: {
+		switch (_niche[0][_niche[0][3]]) {
+		case 0:
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(4);
+			break;
+		case 561:
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(5);
+			break;
+		case 563:
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(6);
+			break;
+		case 615:
+			_currentRoomData->screenObjectIndex[9]->objectName = getObjectName(7);
+			break;
+		}
+	} break;
+	case 23: {
+		_sound->autoPlayVoc("Fuente", 0, 0);
+		_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
+	} break;
+	case 24: {
+		switch (_niche[1][_niche[1][3]]) {
+		case 0:
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(4);
+			break;
+		case 561:
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(5);
+			break;
+		case 615:
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(7);
+			break;
+		case 622:
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(8);
+			break;
+		case 623:
+			_currentRoomData->screenObjectIndex[8]->objectName = getObjectName(9);
+			break;
+		}
+		if (_isTrapSet) {
+			_currentRoomData->animationFlag = true;
+			loadAnimation(_currentRoomData->animationName);
+			_iframe2 = 0;
+			_currentSecondaryTrajectoryIndex = 1;
+			_currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x = 214 - 15;
+			_currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y = 115 - 42;
+			_secondaryAnimation.dir = _currentRoomData->secondaryAnimDirections[_currentSecondaryTrajectoryIndex - 1];
+			_secondaryAnimation.posx = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].x;
+			_secondaryAnimation.posy = _currentRoomData->secondaryAnimTrajectory[_currentSecondaryTrajectoryIndex - 1].y;
+			_secondaryAnimation.depth = 14;
+
+			for (int i = 0; i < _maxXGrid; i++)
+				for (int j = 0; j < _maxYGrid; j++) {
+					if (_maskGridSecondaryAnim[i][j] > 0)
+						_currentRoomData->walkAreasGrid[_oldposx + i][_oldposy + j] = _maskGridSecondaryAnim[i][j];
+					if (_maskMouseSecondaryAnim[i][j] > 0)
+						_currentRoomData->mouseGrid[_oldposx + i][_oldposy + j] = _maskMouseSecondaryAnim[i][j];
+				}
+		}
+		assembleScreen();
+	} break;
+	}
+
+	drawInventoryMask();
+	_inventoryPosition = 0;
+	drawInventory();
+	if (_isRedDevilCaptured == false && _currentRoomData->code == 24 && _isTrapSet == false)
+		runaroundRed();
+	_graphics->sceneTransition(false, _sceneBackground);
+}
+
 } // End of namespace Tot
