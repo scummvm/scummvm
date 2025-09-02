@@ -1604,7 +1604,7 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		warning("BUILDBOT: Left over bytes: %d in dataStream for id: %d type: %s", leftOver, id, castType2str((CastType) castType));
 
 	if (target) { // Skip unhandled casts
-		debugCN(3, kDebugLoading, "Children: ");
+		debugCN(3, kDebugLoading, "  Children: ");
 		for (uint child = 0; child < res->children.size(); child++) {
 			debugCN(3, kDebugLoading, "%d ", res->children[child].index);
 			target->_children.push_back(res->children[child]);

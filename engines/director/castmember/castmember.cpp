@@ -38,10 +38,7 @@ void EditInfo::read(Common::ReadStreamEndian *stream) {
 	rulerFlag = stream->readByte();
 	// We're ignoring 2 bytes here
 	valid = true;
-	if (debugChannelSet(3, kDebugLoading)) {
-		rect.debugPrint(0, "EditInfo: ");
-		debug("selStart: %d  selEnd: %d  version: %d  rulerFlag: %d", selStart, selEnd, version, rulerFlag);
-	}
+	debugC(3, kDebugLoading, "  EditInfo: rect: [%s],  selStart: %d,  selEnd: %d,  version: %d,  rulerFlag: %d", rect.toString().c_str(), selStart, selEnd, version, rulerFlag);
 }
 
 void EditInfo::write(Common::WriteStream *stream) {

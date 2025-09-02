@@ -323,7 +323,7 @@ InfoEntries Movie::loadInfoEntries(Common::SeekableReadStreamEndian &stream, uin
 		res.strings[i].data = (byte *)malloc(res.strings[i].len);
 		stream.read(res.strings[i].data, res.strings[i].len);
 
-		debugC(6, kDebugLoading, "InfoEntry %d: %d bytes", i, res.strings[i].len);
+		debugC(6, kDebugLoading, "    InfoEntry %d: %d bytes", i, res.strings[i].len);
 	}
 
 	free(entries);
