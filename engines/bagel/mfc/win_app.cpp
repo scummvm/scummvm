@@ -184,8 +184,8 @@ void CWinApp::DoWaitCursor(int nCode) {
 
 HFONT CWinApp::getFont(const char *lpszFacename, int nHeight) {
 	if ((!lpszFacename || !*lpszFacename) || !nHeight)
-		// Use system font
-		return getDefaultFont();
+		// Use default font
+		return _fonts.getFont("MS Sans Serif", 8);
 	else
 		return _fonts.getFont(lpszFacename, nHeight);
 }
