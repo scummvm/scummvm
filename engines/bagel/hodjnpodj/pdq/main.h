@@ -73,12 +73,12 @@ protected:
 
 	CRect        m_rNewGameButton;
 	CSprite     *m_pCategories[N_CATEGORIES];
-	CSprite     *m_pScrollSprite;
-	CGuessDlg   *m_pDlgGuess;
-	CSound      *m_pSoundTrack;
-	INT          m_iLastType;
-	BOOL         m_bInMenu;
-	BOOL         m_bInGuess;
+	CSprite     *m_pScrollSprite = nullptr;
+	CGuessDlg   *m_pDlgGuess = nullptr;
+	CSound      *m_pSoundTrack = nullptr;
+	INT          m_iLastType = 0;
+	BOOL         m_bInMenu = FALSE;
+	BOOL         m_bInGuess = FALSE;
 };
 
 } // namespace PDQ

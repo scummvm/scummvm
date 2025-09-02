@@ -180,10 +180,6 @@ CMainWindow::CMainWindow() {
 		if ((txtTotalScore = new CText) != nullptr)
 			txtTotalScore->SetupText(pDC, pMyGamePalette, &tmpRect, JUSTIFY_CENTER);
 
-		if ((m_pDlgGuess = new CGuessDlg(this, pMyGamePalette)) == nullptr) {
-			errCode = ERR_MEMORY;
-		}
-
 		ReleaseDC(pDC);
 	} else {
 		errCode = ERR_MEMORY;
@@ -533,12 +529,6 @@ void CMainWindow::OnClose() {
 		ReleaseDC(pDC);
 	}
 
-	assert(m_pDlgGuess != nullptr);
-	if (m_pDlgGuess != nullptr) {
-		delete m_pDlgGuess;
-		m_pDlgGuess = nullptr;
-	}
-
 	assert(txtTotalScore != nullptr);
 	if (txtTotalScore != nullptr) {
 		delete txtTotalScore;
@@ -652,10 +642,10 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	default:
 
 		if (bInGame && ((nChar == KEY_ENTER) || (toupper(nChar) >= 'A' && toupper(nChar) <= 'Z'))) {
+			m_pDlgGuess = new CGuessDlg(this, pMyGamePalette);
+			assert(m_pDlgGuess);
 
 			GamePauseTimer();
-
-			assert(m_pDlgGuess != nullptr);
 
 			m_pDlgGuess->text = "";
 			if (nChar != KEY_ENTER)
@@ -666,14 +656,9 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 			m_bInGuess = FALSE;
 			SetFocus();
 
-			/*
-			* Check user's guess with the actual phrase
-			*/
+			// Check user's guess with the actual phrase
 			if (CheckUserGuess(m_pDlgGuess->text)) {
-
-				/*
-				* User WON - now we need to shut off the timer
-				*/
+				// User WON - now we need to shut off the timer
 				GameStopTimer();
 
 				WinGame();
@@ -706,13 +691,16 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 					PlayGame();
 				}
 			} else {
+				// User guessed incorrectly
 				if (pGameParams->bSoundEffectsEnabled)
 					sndPlaySound(WAV_BADGUESS, SND_ASYNC);
 			}
+
+			delete m_pDlgGuess;
+			m_pDlgGuess = nullptr;
 			GameResumeTimer();
 
 		} else {
-
 			CFrameWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 		}
 		break;
