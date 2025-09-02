@@ -20,12 +20,9 @@
  */
 
 #include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/system.h"
-#include "graphics/font.h"
+#include "graphics/fonts/dosfont.h"
 #include "graphics/paletteman.h"
 
-#include "tot/font/biosfont.h"
 #include "tot/graphics.h"
 #include "tot/statics.h"
 #include "tot/tot.h"
@@ -57,11 +54,11 @@ GraphicsManager::GraphicsManager() {
 	}
 	_euro.loadChr(exeFile);
 	exeFile.close();
-	_bios = new BiosFont();
+	_dosFont = new Graphics::DosFont();
 }
 
 GraphicsManager::~GraphicsManager() {
-	delete (_bios);
+	delete (_dosFont);
 }
 
 void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {
@@ -448,7 +445,7 @@ void GraphicsManager::euroText(const Common::String &str, int x, int y, uint32 c
 }
 
 void GraphicsManager::biosText(const Common::String &str, int x, int y, uint32 color) {
-	_bios->drawString(g_engine->_screen, str, x, y, 320, color, Graphics::TextAlign::kTextAlignLeft);
+	_dosFont->drawString(g_engine->_screen, str, x, y, 320, color, Graphics::TextAlign::kTextAlignLeft);
 }
 
 void GraphicsManager::drawFullScreen(byte *screen) {

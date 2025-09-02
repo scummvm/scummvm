@@ -105,7 +105,7 @@ private:
 	signed char fadeData[256][256];
 	Graphics::BgiFont _litt;
 	Graphics::BgiFont _euro;
-	Graphics::Font *_bios;
+	Graphics::Font *_dosFont;
 };
 
 } // End of namespace Tot
