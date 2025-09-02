@@ -619,6 +619,11 @@ void Window::loadStartMovieXLibs() {
 ProjectorArchive::ProjectorArchive(Common::Path path)
 	: _path(path), _files() {
 
+	if (path.empty()) {
+		_isLoaded = false;
+		return;
+	}
+
 	// Buffer 100K into memory
 	Common::SeekableReadStream *stream = createBufferedReadStream();
 	if (!stream) {
