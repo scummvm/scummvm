@@ -613,7 +613,12 @@ void Window::loadStartMovieXLibs() {
 	if (strcmp(g_director->getGameId(), "warlock") == 0 && g_director->getPlatform() != Common::kPlatformWindows) {
 		g_lingo->openXLib("FPlayXObj", kXObj, Common::Path());
 	}
-	g_lingo->openXLib("SerialPort", kXObj, Common::Path());
+
+	// After D5 we always have list of Xlibs to load
+	if (g_director->getVersion() < 500 && g_director->getPlatform() == Common::kPlatformMacintosh) {
+		// SerialPort is Mac-only
+		g_lingo->openXLib("SerialPort", kXObj, Common::Path());
+	}
 }
 
 ProjectorArchive::ProjectorArchive(Common::Path path)
