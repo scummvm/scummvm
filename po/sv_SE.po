@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-01 15:02+0000\n"
-"PO-Revision-Date: 2025-09-01 01:36+0000\n"
+"PO-Revision-Date: 2025-09-02 18:21+0000\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -9573,14 +9573,12 @@ msgstr "Retirera"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Starta om animering"
+msgstr "Starta om territoriet"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Påbörja nytt uppdrag"
 
 #: engines/hypno/metaengine.cpp:313
 #, fuzzy
@@ -9981,10 +9979,8 @@ msgstr "Avsluta tangentmappningar"
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Map keymappings"
-msgstr "Tangentmappningar för Star Map"
+msgstr "Tangentmappningar för karta"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
@@ -11176,28 +11172,20 @@ msgid "X key"
 msgstr "X-tangent"
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display subtitles"
-msgstr "Inaktivera undertexter"
+msgstr "Visa undertexter"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use subtitles."
-msgstr "Inaktivera undertexter"
+msgstr "Använd undertexter."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display SFX subtitles"
-msgstr "Inaktivera undertexter"
+msgstr "Visa undertexter för ljudeffekter"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use SFX subtitles."
-msgstr "Inaktivera undertexter"
+msgstr "Använd undertexter för ljudeffekter."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
@@ -13167,10 +13155,8 @@ msgid "Talk keymappings"
 msgstr "Tangentmappningar för tal"
 
 #: engines/sherlock/metaengine.cpp:337
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Files keymappings"
-msgstr "PET-tangentmappningar"
+msgstr "Tangentmappningar för filer"
 
 #: engines/sherlock/metaengine.cpp:340
 msgid "Settings keymappings"
