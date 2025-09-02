@@ -166,7 +166,7 @@ bool MidiParser_SMF::loadMusic(const byte *data, uint32 size) {
 	int tracksRead = 0;
 	while (tracksRead < numTrackChunks) {
 		if (memcmp(pos, "MTrk", 4)) {
-			warning("Position: %p ('%c')", (void *)pos, *pos);
+			warning("Position: %p ('%c')", (const void *)pos, *pos);
 			warning("Hit invalid block '%c%c%c%c' while scanning for track locations", pos[0], pos[1], pos[2], pos[3]);
 			return false;
 		}
