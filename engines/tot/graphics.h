@@ -103,8 +103,8 @@ public:
 	byte *_textAreaBackground = (byte *)malloc(kTextAreaSize);
 private:
 	signed char fadeData[256][256];
-	Graphics::BgiFont _litt;
-	Graphics::BgiFont _euro;
+	Graphics::BgiFont *_litt;
+	Graphics::BgiFont *_euro;
 	Graphics::Font *_dosFont;
 };
 

@@ -46,19 +46,23 @@ GraphicsManager::GraphicsManager() {
 	} else {
 		exeFile.seek(FONT_LITT_OFFSET_EN);
 	}
-	_litt.loadChr(exeFile);
+	_litt = new Graphics::BgiFont();
+	_litt->loadChr(exeFile);
 	if (isLanguageSpanish()) {
 		exeFile.seek(FONT_EURO_OFFSET_ES);
 	} else {
 		exeFile.seek(FONT_EURO_OFFSET_EN);
 	}
-	_euro.loadChr(exeFile);
+	_euro = new Graphics::BgiFont();
+	_euro->loadChr(exeFile);
 	exeFile.close();
 	_dosFont = new Graphics::DosFont();
 }
 
 GraphicsManager::~GraphicsManager() {
 	delete (_dosFont);
+	delete (_litt);
+	delete (_euro);
 }
 
 void GraphicsManager::restoreBackgroundArea(uint x, uint y, uint x2, uint y2) {
@@ -432,16 +436,16 @@ void GraphicsManager::putImageArea(uint putcoordx, uint putcoordy, byte *backgro
 
 void GraphicsManager::littText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align, bool alignCenterY) {
 	if (alignCenterY) {
-		y = y - _euro.getFontHeight() / 2 + 2;
+		y = y - _litt->getFontHeight() / 2 + 2;
 	}
-	_litt.drawString(g_engine->_screen, str, x, y, 320, color, align);
+	_litt->drawString(g_engine->_screen, str, x, y, 320, color, align);
 }
 
 void GraphicsManager::euroText(const Common::String &str, int x, int y, uint32 color, Graphics::TextAlign align, bool alignCenterY) {
 	if (alignCenterY) {
-		y = y - _euro.getFontHeight() / 2;
+		y = y - _euro->getFontHeight() / 2;
 	}
-	_euro.drawString(g_engine->_screen, str, x, y, 320, color, align);
+	_euro->drawString(g_engine->_screen, str, x, y, 320, color, align);
 }
 
 void GraphicsManager::biosText(const Common::String &str, int x, int y, uint32 color) {
