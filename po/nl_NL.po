@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-01 15:02+0000\n"
+"POT-Creation-Date: 2025-09-02 20:05+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -5748,7 +5748,8 @@ msgstr "R2"
 
 #. I18N: Hardware key
 #: backends/platform/sdl/miyoo/miyoo.cpp:83
-#: backends/platform/sdl/miyoo/miyoo.cpp:114 engines/grim/grim.cpp:545
+#: backends/platform/sdl/miyoo/miyoo.cpp:114
+#: engines/alcachofa/metaengine.cpp:99 engines/grim/grim.cpp:545
 #: engines/grim/grim.cpp:645 engines/hdb/metaengine.cpp:264
 #: engines/made/metaengine.cpp:175 engines/toltecs/metaengine.cpp:252
 msgid "Menu"
@@ -5938,25 +5939,26 @@ msgstr "Startmenu"
 msgid "Check for Updates..."
 msgstr "Controleren op updates..."
 
-#: engines/access/metaengine.cpp:192 engines/bbvs/metaengine.cpp:92
-#: engines/buried/metaengine.cpp:133 engines/chamber/metaengine.cpp:59
-#: engines/cine/metaengine.cpp:270 engines/cruise/metaengine.cpp:168
-#: engines/dm/metaengine.cpp:124 engines/draci/metaengine.cpp:195
-#: engines/drascula/metaengine.cpp:205 engines/efh/metaengine.cpp:256
-#: engines/hopkins/metaengine.cpp:206 engines/hugo/metaengine.cpp:118
-#: engines/hypno/metaengine.cpp:128 engines/illusions/metaengine.cpp:89
-#: engines/lab/metaengine.cpp:149 engines/lure/metaengine.cpp:168
-#: engines/made/metaengine.cpp:121 engines/mads/metaengine.cpp:274
-#: engines/neverhood/metaengine.cpp:185 engines/playground3d/metaengine.cpp:51
-#: engines/prince/metaengine.cpp:227 engines/private/metaengine.cpp:91
-#: engines/queen/metaengine.cpp:146 engines/sherlock/metaengine.cpp:313
-#: engines/stark/metaengine.cpp:184 engines/supernova/metaengine.cpp:217
-#: engines/sword1/metaengine.cpp:266 engines/sword25/metaengine.cpp:108
-#: engines/teenagent/metaengine.cpp:197 engines/tetraedge/metaengine.cpp:86
-#: engines/tinsel/metaengine.cpp:240 engines/titanic/metaengine.cpp:172
-#: engines/toltecs/metaengine.cpp:212 engines/toon/metaengine.cpp:81
-#: engines/trecision/metaengine.cpp:120 engines/tsage/metaengine.cpp:169
-#: engines/tucker/metaengine.cpp:167 engines/voyeur/metaengine.cpp:184
+#: engines/access/metaengine.cpp:192 engines/alcachofa/metaengine.cpp:83
+#: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
+#: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
+#: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
+#: engines/draci/metaengine.cpp:195 engines/drascula/metaengine.cpp:205
+#: engines/efh/metaengine.cpp:256 engines/hopkins/metaengine.cpp:206
+#: engines/hugo/metaengine.cpp:118 engines/hypno/metaengine.cpp:128
+#: engines/illusions/metaengine.cpp:89 engines/lab/metaengine.cpp:149
+#: engines/lure/metaengine.cpp:168 engines/made/metaengine.cpp:121
+#: engines/mads/metaengine.cpp:274 engines/neverhood/metaengine.cpp:185
+#: engines/playground3d/metaengine.cpp:51 engines/prince/metaengine.cpp:227
+#: engines/private/metaengine.cpp:91 engines/queen/metaengine.cpp:146
+#: engines/sherlock/metaengine.cpp:313 engines/stark/metaengine.cpp:184
+#: engines/supernova/metaengine.cpp:217 engines/sword1/metaengine.cpp:266
+#: engines/sword25/metaengine.cpp:108 engines/teenagent/metaengine.cpp:197
+#: engines/tetraedge/metaengine.cpp:86 engines/tinsel/metaengine.cpp:240
+#: engines/titanic/metaengine.cpp:172 engines/toltecs/metaengine.cpp:212
+#: engines/toon/metaengine.cpp:81 engines/trecision/metaengine.cpp:120
+#: engines/tsage/metaengine.cpp:169 engines/tucker/metaengine.cpp:167
+#: engines/voyeur/metaengine.cpp:184
 #, fuzzy
 #| msgid "Default game keymap"
 msgid "Default keymappings"
@@ -6090,13 +6092,14 @@ msgid "Take"
 msgstr "Doe af"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:278 engines/cine/metaengine.cpp:337
-#: engines/crab/input/input.cpp:251 engines/cruise/metaengine.cpp:192
-#: engines/draci/metaengine.cpp:237 engines/dragons/metaengine.cpp:148
-#: engines/drascula/metaengine.cpp:218 engines/griffon/metaengine.cpp:152
-#: engines/grim/grim.cpp:521 engines/grim/grim.cpp:621
-#: engines/hdb/metaengine.cpp:251 engines/hpl1/metaengine.cpp:94
-#: engines/icb/icb.cpp:101 engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
+#: engines/access/metaengine.cpp:278 engines/alcachofa/metaengine.cpp:105
+#: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
+#: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
+#: engines/dragons/metaengine.cpp:148 engines/drascula/metaengine.cpp:218
+#: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
+#: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
+#: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
+#: engines/icb/icb.cpp:179 engines/scumm/help.cpp:228
 #: engines/scumm/help.cpp:237 engines/scumm/help.cpp:244
 #: engines/scumm/help.cpp:252 engines/sherlock/metaengine.cpp:435
 #: engines/sludge/keymapper_tables.h:58 engines/sludge/keymapper_tables.h:119
@@ -6798,6 +6801,48 @@ msgid ""
 "or\n"
 "2. Any .sav file inside the QfG2 Remake game directory"
 msgstr ""
+
+#: engines/alcachofa/metaengine.cpp:40
+#, fuzzy
+#| msgid "High guard"
+msgid "High Quality"
+msgstr "Hoge waakzaamheid"
+
+#: engines/alcachofa/metaengine.cpp:41
+#, fuzzy
+#| msgid "Toggle sound effects on/off"
+msgid "Toggles some optional graphical effects"
+msgstr "Geluidseffecten aan-/uitzetten"
+
+#: engines/alcachofa/metaengine.cpp:42
+msgid "high_quality"
+msgstr ""
+
+#: engines/alcachofa/metaengine.cpp:51
+msgid "32 Bits"
+msgstr ""
+
+#: engines/alcachofa/metaengine.cpp:52
+msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
+msgstr ""
+
+#: engines/alcachofa/metaengine.cpp:53
+msgid "32_bits"
+msgstr ""
+
+#: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
+#, fuzzy
+#| msgid "Active"
+msgid "Activate"
+msgstr "Actief"
+
+#: engines/alcachofa/metaengine.cpp:93 engines/queen/metaengine.cpp:279
+#: engines/saga/metaengine.cpp:354 engines/scumm/help.cpp:202
+#: engines/scumm/help.cpp:214 engines/twp/metaengine.cpp:182
+#: engines/wintermute/keymapper_tables.h:122
+#: engines/wintermute/keymapper_tables.h:1534
+msgid "Look at"
+msgstr "Kijk naar"
 
 #: engines/alg/metaengine.cpp:34
 msgid "Use lower quality single speed CD-ROM video"
@@ -7738,12 +7783,6 @@ msgstr "Film snel afspelen"
 #: engines/scumm/help.cpp:250 engines/sludge/keymapper_tables.h:313
 msgid "Examine"
 msgstr "Onderzoek"
-
-#: engines/cine/metaengine.cpp:347
-#, fuzzy
-#| msgid "Active"
-msgid "Activate"
-msgstr "Actief"
 
 #: engines/cine/metaengine.cpp:352
 msgid "Speak"
@@ -11550,13 +11589,6 @@ msgstr "Sla dialoog over"
 #| msgid "Show journal"
 msgid "Use journal"
 msgstr "Toon logboek"
-
-#: engines/queen/metaengine.cpp:279 engines/saga/metaengine.cpp:354
-#: engines/scumm/help.cpp:202 engines/scumm/help.cpp:214
-#: engines/twp/metaengine.cpp:182 engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1534
-msgid "Look at"
-msgstr "Kijk naar"
 
 #: engines/queen/metaengine.cpp:284 engines/saga/metaengine.cpp:359
 #: engines/scumm/help.cpp:144 engines/scumm/help.cpp:169
@@ -18201,9 +18233,6 @@ msgstr ""
 
 #~ msgid "Indiana Jones Fight controls:"
 #~ msgstr "Indiana Jones Vecht besturing:"
-
-#~ msgid "High guard"
-#~ msgstr "Hoge waakzaamheid"
 
 #~ msgid "Guard down"
 #~ msgstr "Niet waakzaam"
