@@ -1224,6 +1224,7 @@ void Frame::readMainChannelsD6(Common::MemoryReadStreamEndian &stream, uint16 of
 			break;
 		case 0+4:
 			_mainChannels.scriptSpriteListIdx = stream.readUint32();
+			break;
 		case 0+6:
 			_mainChannels.scriptSpriteListIdx = stream.readUint16();
 			break;
