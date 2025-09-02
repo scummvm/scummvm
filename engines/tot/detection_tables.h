@@ -31,9 +31,10 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"tot",
 		nullptr,
-		AD_ENTRY2s(
+		AD_ENTRY3s(
 			"AZCCOG.DAT", "2f66724fcd7f51c5b4a715b30f088581", 79916,
-			"CREDITOS.DAT", "6885c1fadd25a0c0da1c88f071a30e63", 130080
+			"CREDITOS.DAT", "6885c1fadd25a0c0da1c88f071a30e63", 130080,
+			"TOT.EXE", "cf3a34941be45d3207e38f8f5d66ba00", 209520
 		),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
@@ -43,9 +44,10 @@ const ADGameDescription gameDescriptions[] = {
 	{
 		"tot",
 		nullptr,
-		AD_ENTRY2s(
+		AD_ENTRY3s(
 			"AZCCOG.DAT", "2f66724fcd7f51c5b4a715b30f088581", 79916,
-			"CREDITOS.DAT", "bca1c63cfee9ec8b722f7715e21b5e8e", 130080
+			"CREDITOS.DAT", "bca1c63cfee9ec8b722f7715e21b5e8e", 130080,
+			"TOT.EXE", "e711989e516bd33d0da6c278c82a0493", 207280
 		),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
