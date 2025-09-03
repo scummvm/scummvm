@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-03 18:55+0000\n"
+"PO-Revision-Date: 2025-09-03 18:58+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -13410,59 +13410,41 @@ msgid "Foolscap puzzle keymappings"
 msgstr "Mappatura tasti nel puzzle del foglio"
 
 #: engines/sherlock/metaengine.cpp:784
-#, fuzzy
-#| msgid "Main menu keymappings"
 msgid "Options menu keymappings"
-msgstr "Mappature tasti menù principale"
+msgstr "Mappature tasti menù opzioni"
 
 #: engines/sherlock/metaengine.cpp:785
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Password entry keymappings"
-msgstr "Mappature tasti menù di pausa"
+msgstr "Mappature tasti di immissione password"
 
 #: engines/sherlock/metaengine.cpp:787
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Talk options keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti opzioni dei dialoghi"
 
 #: engines/sherlock/metaengine.cpp:789
-#, fuzzy
-#| msgid "Move / Interact / Select"
 msgid "Move / Examine / Select"
-msgstr "Spostamento / Interazione / Selezione"
+msgstr "Spostamento / Esamina / Selezione"
 
 #: engines/sherlock/metaengine.cpp:795
-#, fuzzy
-#| msgid "Open action menu / Close menu"
 msgid "Open verb menu / close menu"
-msgstr "Apri menù azioni / Chiudi menù"
+msgstr "Apri menù verbi / chiudi menù"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action changes the speed of the game (walking, animations, etc.)
 #: engines/sherlock/metaengine.cpp:806
-#, fuzzy
-#| msgid "Change sound"
 msgid "Change speed"
-msgstr "Modifica suono"
+msgstr "Modifica velocità"
 
 #: engines/sherlock/metaengine.cpp:829
-#, fuzzy
-#| msgid "Use journal"
 msgid "Open journal"
-msgstr "Usa diario"
+msgstr "Apri diario"
 
 #: engines/sherlock/metaengine.cpp:842
-#, fuzzy
-#| msgid "Open options menu"
 msgid "Open options"
-msgstr "Apri menù opzioni"
+msgstr "Apri opzioni"
 
 #: engines/sherlock/metaengine.cpp:858
-#, fuzzy
-#| msgid "Fit to window"
 msgid "Exit / Close window"
-msgstr "Adatta alla finestra"
+msgstr "Esci / Chiudi finestra"
 
 #: engines/sherlock/metaengine.cpp:868
 #, fuzzy
