@@ -72,6 +72,8 @@ class BaseRenderer3D;
 struct FogParameters;
 #endif
 
+#define NUM_MUSIC_CHANNELS 5
+
 class BaseGame: public BaseObject {
 public:
 
@@ -134,7 +136,6 @@ public:
 	bool setWaitCursor(const char *filename);
 
 	Common::String _localSaveDir;
-	// TODO: This can probably be removed completely:
 	bool _saveDirChecked;
 
 #ifdef ENABLE_WME3D
@@ -249,7 +250,7 @@ public:
 	bool _smartCache; // RO
 	bool _videoSubtitles;
 	bool _subtitles; // RO
-
+	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
 	int32 _scheduledLoadSlot;
 	bool _loading;
 	bool _personalizedSave;
@@ -275,9 +276,21 @@ public:
 
 	static void invalidateValues(void *value, void *data);
 	bool loadSettings(const char *filename);
-
+	bool resumeMusic(int channel);
+	bool setMusicStartTime(int channel, uint32 time);
+	bool pauseMusic(int channel);
+	bool stopMusic(int channel);
+	bool playMusic(int channel, const char *filename, bool looping = true, uint32 loopStart = 0);
+	BaseSound *_music[NUM_MUSIC_CHANNELS];
+	bool _musicCrossfadeRunning;
+	bool _musicCrossfadeSwap;
+	uint32 _musicCrossfadeStartTime;
+	uint32 _musicCrossfadeLength;
+	int32 _musicCrossfadeChannel1;
+	int32 _musicCrossfadeChannel2;
+	int32 _musicCrossfadeVolume1;
+	int32 _musicCrossfadeVolume2;
 	bool displayWindows(bool inGame = false);
-	// TODO: This should be expanded into a proper class eventually:
 	Common::String readRegistryString(const Common::String &key, const Common::String &initValue) const;
 	bool _useD3D;
 	virtual bool cleanup();
@@ -304,6 +317,7 @@ public:
 	void quickMessageForm(char *fmt, ...);
 	bool displayQuickMsg();
 	uint32 _fps;
+	bool updateMusicCrossfade();
 
 	bool isVideoPlaying();
 	bool stopVideo();

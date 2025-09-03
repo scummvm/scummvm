@@ -71,7 +71,6 @@ MODULE_OBJS := \
 	base/base_file_manager.o \
 	base/base_frame.o \
 	base/base_game.o \
-	base/base_game_music.o \
 	base/base_game_settings.o \
 	base/base_keyboard_state.o \
 	base/base_named_object.o \
