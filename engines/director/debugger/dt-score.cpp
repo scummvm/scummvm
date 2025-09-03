@@ -188,6 +188,15 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		if (ImGui::IsItemClicked(0)) {
 			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
 			_state->_selectedScoreCast.channel = ch;
+
+			if (f + _state->_scoreFrameOffset == (int)currentFrameNum) {
+				if (_state->_selectedChannel == ch)
+					_state->_selectedChannel = -1;
+				else
+					_state->_selectedChannel = ch;
+
+				g_director->getCurrentWindow()->render(true);
+			}
 		}
 	}
 
@@ -620,10 +629,11 @@ void showChannels() {
 				if (ImGui::Selectable(Common::String::format("%-3d", i + 1).c_str(), isSelected, ImGuiSelectableFlags_SpanAllColumns)) {
 					if (isSelected) {
 						_state->_selectedChannel = -1;
-						g_director->getCurrentWindow()->render(true);
 					 } else {
 						_state->_selectedChannel = i + 1;
 					 }
+
+					g_director->getCurrentWindow()->render(true);
 				}
 
 				ImGui::TableNextColumn();
