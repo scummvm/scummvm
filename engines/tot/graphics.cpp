@@ -476,7 +476,7 @@ void GraphicsManager::updateSceneArea(int speed) {
 		g_engine->_screen->update();
 }
 void GraphicsManager::sceneTransition(bool fadeToBlack, byte *scene) {
-	sceneTransition(fadeToBlack, scene, Random(15) + 1);
+	sceneTransition(fadeToBlack, scene, getRandom(15) + 1);
 }
 
 void updateScreenIfNeeded(uint32 &targetTime) {
@@ -841,10 +841,10 @@ void effect12(bool fadeToBlack, byte *scene) {
 	int i2 = 0, j2 = 0;
 	if (fadeToBlack) {
 		for (int i1 = 1; i1 <= 15000; i1++) {
-			i2 = Random(318);
-			j2 = Random(138);
+			i2 = getRandom(318);
+			j2 = getRandom(138);
 			bar(i2, j2, (i2 + 2), (j2 + 2), 0);
-			putpixel(Random(320), Random(139), 0);
+			putpixel(getRandom(320), getRandom(139), 0);
 			if (i1 % 100 == 0) {
 				updateScreenIfNeeded(targetTime);
 			}
@@ -853,16 +853,16 @@ void effect12(bool fadeToBlack, byte *scene) {
 		byte *screenBuf = (byte *)g_engine->_screen->getPixels();
 
 		for (int i1 = 1; i1 <= 15000; i1++) {
-			i2 = Random(318);
-			j2 = Random(138);
+			i2 = getRandom(318);
+			j2 = getRandom(138);
 
 			byte *src1 = scene + 4 + (j2 * 320) + i2;
 			byte *src2 = scene + 4 + ((j2 + 1) * 320) + i2;
 			Common::copy(src1, src1 + 2, screenBuf + j2 * 320 + i2);
 
 			Common::copy(src2, src2 + 2, screenBuf + (j2 + 1) * 320 + i2);
-			i2 = Random(320);
-			j2 = Random(140);
+			i2 = getRandom(320);
+			j2 = getRandom(140);
 
 			byte *src3 = scene + 4 + (j2 * 320) + i2;
 			Common::copy(src3, src3 + 1, screenBuf + (j2 * 320) + i2);
