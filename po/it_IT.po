@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-02 20:05+0000\n"
+"POT-Creation-Date: 2025-09-03 08:57+0000\n"
 "PO-Revision-Date: 2025-08-22 09:58+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -974,7 +974,7 @@ msgid "Sine"
 msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:43
-#: backends/platform/sdl/psp2/psp2.cpp:45 engines/dragons/metaengine.cpp:189
+#: backends/platform/sdl/psp2/psp2.cpp:45 engines/dragons/metaengine.cpp:188
 msgid "Triangle"
 msgstr "Triangolo"
 
@@ -1036,7 +1036,7 @@ msgstr "Interazione"
 
 #: gui/gui-manager.cpp:174 engines/metaengine.cpp:137
 #: engines/awe/metaengine.cpp:57 engines/crab/input/input.cpp:95
-#: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:159
+#: engines/crab/input/input.cpp:145 engines/dragons/metaengine.cpp:158
 #: engines/freescape/movement.cpp:35 engines/got/metaengine.cpp:70
 #: engines/griffon/metaengine.cpp:121 engines/grim/grim.cpp:481
 #: engines/grim/grim.cpp:563 engines/icb/icb.cpp:68 engines/icb/icb.cpp:152
@@ -1055,7 +1055,7 @@ msgstr "Su"
 
 #: gui/gui-manager.cpp:180 engines/metaengine.cpp:143
 #: engines/awe/metaengine.cpp:58 engines/crab/input/input.cpp:101
-#: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:165
+#: engines/crab/input/input.cpp:151 engines/dragons/metaengine.cpp:164
 #: engines/freescape/movement.cpp:42 engines/got/metaengine.cpp:71
 #: engines/griffon/metaengine.cpp:127 engines/grim/grim.cpp:486
 #: engines/grim/grim.cpp:568 engines/icb/icb.cpp:73 engines/icb/icb.cpp:157
@@ -1074,7 +1074,7 @@ msgstr "Giù"
 
 #: gui/gui-manager.cpp:186 engines/metaengine.cpp:149
 #: engines/awe/metaengine.cpp:59 engines/crab/input/input.cpp:107
-#: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:171
+#: engines/crab/input/input.cpp:157 engines/dragons/metaengine.cpp:170
 #: engines/got/metaengine.cpp:72 engines/griffon/metaengine.cpp:133
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:573 engines/icb/icb.cpp:78
 #: engines/icb/icb.cpp:162 engines/scumm/metaengine.cpp:1000
@@ -1093,7 +1093,7 @@ msgstr "Sinistra"
 
 #: gui/gui-manager.cpp:192 engines/metaengine.cpp:155
 #: engines/awe/metaengine.cpp:60 engines/crab/input/input.cpp:113
-#: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:177
+#: engines/crab/input/input.cpp:163 engines/dragons/metaengine.cpp:176
 #: engines/got/metaengine.cpp:73 engines/griffon/metaengine.cpp:139
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:578 engines/icb/icb.cpp:83
 #: engines/icb/icb.cpp:167 engines/scumm/metaengine.cpp:1007
@@ -3420,7 +3420,7 @@ msgstr "Cambia modalità"
 msgid "Shift"
 msgstr "Tasto Maiusc"
 
-#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:153
+#: dists/android.strings.xml.cpp:51 engines/dragons/metaengine.cpp:152
 #: engines/scumm/help.cpp:88 engines/scumm/help.cpp:91
 #: engines/ultima/ultima4/metaengine.cpp:53
 msgid "Enter"
@@ -6131,17 +6131,17 @@ msgid "R3"
 msgstr "R3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:40 backends/platform/sdl/psp2/psp2.cpp:42
-#: engines/dragons/metaengine.cpp:201
+#: engines/dragons/metaengine.cpp:200
 msgid "Cross"
 msgstr "Croce"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:43
-#: engines/dragons/metaengine.cpp:195
+#: engines/dragons/metaengine.cpp:194
 msgid "Circle"
 msgstr "Cerchio"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:44
-#: engines/dragons/metaengine.cpp:183
+#: engines/dragons/metaengine.cpp:182
 msgid "Square"
 msgstr "Quadrato"
 
@@ -6439,7 +6439,7 @@ msgstr "Prendi"
 #: engines/access/metaengine.cpp:278 engines/alcachofa/metaengine.cpp:105
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
-#: engines/dragons/metaengine.cpp:148 engines/drascula/metaengine.cpp:218
+#: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
 #: engines/griffon/metaengine.cpp:152 engines/grim/grim.cpp:521
 #: engines/grim/grim.cpp:621 engines/hdb/metaengine.cpp:251
 #: engines/hpl1/metaengine.cpp:94 engines/icb/icb.cpp:101
@@ -7682,7 +7682,7 @@ msgstr "Database indizi"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:375 engines/darkseed/metaengine.cpp:93
-#: engines/dragons/metaengine.cpp:224 engines/efh/metaengine.cpp:373
+#: engines/dragons/metaengine.cpp:223 engines/efh/metaengine.cpp:373
 #: engines/efh/metaengine.cpp:619 engines/freescape/games/castle/castle.cpp:259
 #: engines/freescape/games/dark/dark.cpp:196
 #: engines/freescape/games/driller/driller.cpp:145
@@ -8201,12 +8201,12 @@ msgstr ""
 "nella directory SOUND."
 
 #. I18N: Perform action on object where cursor points
-#: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:136
+#: engines/darkseed/metaengine.cpp:75 engines/dragons/metaengine.cpp:135
 #: engines/tinsel/metaengine.cpp:294 engines/twp/metaengine.cpp:150
 msgid "Action"
 msgstr "Azione"
 
-#: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:142
+#: engines/darkseed/metaengine.cpp:81 engines/dragons/metaengine.cpp:141
 msgid "Change command"
 msgstr "Cambia azione"
 
@@ -8386,7 +8386,7 @@ msgstr "Oggetto precedente nell'inventario"
 msgid "Next item in inventory"
 msgstr "Oggetto successivo nell'inventario"
 
-#: engines/dragons/dragons.cpp:1884
+#: engines/dragons/dragons.cpp:1887
 #, c-format
 msgid ""
 "Error: The file '%s' hasn't been extracted properly.\n"
@@ -8399,7 +8399,7 @@ msgstr ""
 "%s per informazioni su come estrarre correttamente i file DTSPEECH.XA e *."
 "STR dal disco del gioco."
 
-#: engines/dragons/metaengine.cpp:121
+#: engines/dragons/metaengine.cpp:120
 #, c-format
 msgid ""
 "Error: It appears that the game data files were extracted incorrectly.\n"
@@ -8417,15 +8417,15 @@ msgstr ""
 "\n"
 "Per ulteriori informazioni: %s"
 
-#: engines/dragons/metaengine.cpp:207
+#: engines/dragons/metaengine.cpp:206
 msgid "Left shoulder"
 msgstr "Grilletto inferiore sinistro"
 
-#: engines/dragons/metaengine.cpp:213
+#: engines/dragons/metaengine.cpp:212
 msgid "Right shoulder"
 msgstr "Grilletto inferiore destro"
 
-#: engines/dragons/metaengine.cpp:219
+#: engines/dragons/metaengine.cpp:218
 msgid "Debug graphics"
 msgstr "Debug grafica"
 
