@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-03 16:35+0000\n"
+"PO-Revision-Date: 2025-09-03 18:55+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -13394,28 +13394,20 @@ msgid "Journal search keymappings"
 msgstr "Mappature tasti ricerca nel diario"
 
 #: engines/sherlock/metaengine.cpp:779
-#, fuzzy
-#| msgid "Menu keymappings"
 msgid "Menu scrolling keymappings"
-msgstr "Mappature tasti menù"
+msgstr "Mappature tasti scorrimento menù"
 
 #: engines/sherlock/metaengine.cpp:780
-#, fuzzy
-#| msgid "Save/Load keymappings"
 msgid "save / load menu keymappings"
-msgstr "Mappa tasti Salvataggio/Caricamento"
+msgstr "Mappature tasti manù salvataggio/caricamento"
 
 #: engines/sherlock/metaengine.cpp:781
-#, fuzzy
-#| msgid "Save file management menus keymappings"
 msgid "Save files name editing keymappings"
-msgstr "Mappature tasti menù salvataggi"
+msgstr "Mappature tasti modifica nome salvataggi"
 
 #: engines/sherlock/metaengine.cpp:782
-#, fuzzy
-#| msgid "Escape keymappings"
 msgid "Foolscap puzzle keymappings"
-msgstr "Mappatura tasto Escape"
+msgstr "Mappatura tasti nel puzzle del foglio"
 
 #: engines/sherlock/metaengine.cpp:784
 #, fuzzy
