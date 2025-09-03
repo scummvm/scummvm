@@ -355,6 +355,7 @@ void AdGame::finishSentences() {
 			}
 		}
 	}
+	//Game->m_AccessMgr->Stop();
 }
 
 
@@ -2110,12 +2111,19 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 
 		if (doUpdate || displayAll) {
+			//m_AccessMgr->DisplayBeforeGUI();
+
 			// display normal windows
 			displayWindows(false);
+
+			//m_AccessMgr->DisplayAfterGUI();
 
 			setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
+			//if (m_AccessGlobalPaused)
+			//	DisplaySentences(false);
+			//else
 			displaySentences(_state == GAME_FROZEN);
 
 			showCursor();
@@ -2347,6 +2355,30 @@ bool AdGame::renderShadowGeometry() {
 		return true;
 }
 #endif
+
+//////////////////////////////////////////////////////////////////////////
+/*CBObject *CAdGame::GetNextAccessObject(CBObject *CurrObject) {
+	CBObject *Ret = CBGame::GetNextAccessObject(CurrObject);
+	if (!Ret) {
+		if (m_ResponseBox && m_StateEx == GAME_WAITING_RESPONSE)
+			return m_ResponseBox->GetNextAccessObject(CurrObject);
+		if (m_Scene)
+			return m_Scene->GetNextAccessObject(CurrObject);
+	}
+	return Ret;
+}
+
+//////////////////////////////////////////////////////////////////////////
+CBObject *CAdGame::GetPrevAccessObject(CBObject *CurrObject) {
+	CBObject *Ret = CBGame::GetPrevAccessObject(CurrObject);
+	if (!Ret) {
+		if (m_ResponseBox && m_StateEx == GAME_WAITING_RESPONSE)
+			return m_ResponseBox->GetPrevAccessObject(CurrObject);
+		if (m_Scene)
+			return m_Scene->GetPrevAccessObject(CurrObject);
+	}
+	return Ret;
+}*/
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::validMouse() {
