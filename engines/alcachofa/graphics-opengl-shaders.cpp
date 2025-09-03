@@ -196,7 +196,7 @@ private:
 	Array<VBO> _vbos;
 	Array<Vertex> _vertices;
 	uint _curVBO = 0;
-	uint _usedTextureUnits = 0;
+//	uint _usedTextureUnits = 0;
 	bool _needsNewBatch = false;
 	OpenGLTexture *_batchTexture = nullptr;
 	ScopedPtr<OpenGLTexture> _whiteTexture;
