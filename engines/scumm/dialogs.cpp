@@ -826,8 +826,8 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		return fixedDottMenuStrings[langIndex][stringno];
 	}
 
-	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1) - 1;
+	if (stringno + 1 >= ARRAYSIZE(strMap1[0])) {
+		stringno -= ARRAYSIZE(strMap1[0]);
 		assert(stringno < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}
