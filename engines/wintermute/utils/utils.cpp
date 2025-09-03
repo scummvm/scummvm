@@ -414,7 +414,7 @@ static void quickSort(void *base, uint32 num, uint32 size,
 
 void qsort_msvc(void *base, uint32 num, uint32 size,
 	        int32 (*compare)(const void *, const void *)) {
-	if (base == NULL || num == 0)
+	if (base == nullptr || num == 0)
 		return;
 
 	quickSort(base, num, size, compare);

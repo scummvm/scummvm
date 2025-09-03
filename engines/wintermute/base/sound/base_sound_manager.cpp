@@ -138,8 +138,6 @@ BaseSoundBuffer *BaseSoundMgr::addSound(const Common::String &filename, Audio::M
 	_sounds.add(sound);
 
 	return sound;
-
-	return nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

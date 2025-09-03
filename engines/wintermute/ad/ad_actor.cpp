@@ -598,13 +598,13 @@ bool AdActor::update() {
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->_finished) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite;
 	}
 
-	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != nullptr && _animSprite2->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM_SET && _animSprite2 != nullptr && _animSprite2->_finished) {
 		_state = _nextState;
 		_nextState = STATE_READY;
 		_currentSprite = _animSprite2;
@@ -653,12 +653,11 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_LEFT:
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
-			if (_dir > 0) {
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished) {
+			if (_dir > 0)
 				_dir = (TDirection)(_dir - 1);
-			} else {
+			else
 				_dir = (TDirection)(NUM_DIRECTIONS - 1);
-			}
 
 			if (_dir == _targetDir) {
 				_tempSprite2 = nullptr;
@@ -690,7 +689,7 @@ bool AdActor::update() {
 
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_TURNING_RIGHT:
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished()) {
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished) {
 			_dir = (TDirection)(_dir + 1);
 
 			if ((int)_dir >= (int)NUM_DIRECTIONS) {
@@ -757,7 +756,7 @@ bool AdActor::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = nullptr;
@@ -825,7 +824,7 @@ bool AdActor::update() {
 
 	if (_currentSprite && !already_moved) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-		if (_currentSprite->isChanged()) {
+		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
 			afterMove();
@@ -885,7 +884,7 @@ void AdActor::getNextStep() {
 	}
 
 	_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-	if (!_currentSprite->isChanged()) {
+	if (!_currentSprite->_changed) {
 		return;
 	}
 

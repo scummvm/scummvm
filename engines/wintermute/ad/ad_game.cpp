@@ -1983,6 +1983,7 @@ bool AdGame::branchResponseUsed(int id) const {
 	char *context = _dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr;
 	for (int32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
+			// make sure context != nullptr	
 			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->_context) == 0)) {
 				return true;
 			}
@@ -2011,6 +2012,7 @@ bool AdGame::gameResponseUsed(int id) const {
 	for (int32 i = 0; i < _responsesGame.getSize(); i++) {
 		const AdResponseContext *respContext = _responsesGame[i];
 		if (respContext->_id == id) {
+			// make sure context != nullptr	
 			if ((context == nullptr && respContext->_context == nullptr) || ((context != nullptr && respContext->_context != nullptr) && (context != nullptr && scumm_stricmp(context, respContext->_context) == 0))) {
 				return true;
 			}
@@ -2026,6 +2028,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (int32 i = 0; i < _responsesGame.getSize(); i++) {
 		if (_responsesGame[i]->_id == id) {
+			// make sure context != nullptr	
 			if ((context == nullptr && _responsesGame[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesGame[i]->_context) == 0)) {
 				delete _responsesGame[i];
 				_responsesGame.removeAt(i);
@@ -2036,6 +2039,7 @@ bool AdGame::resetResponse(int id) {
 
 	for (int32 i = 0; i < _responsesBranch.getSize(); i++) {
 		if (_responsesBranch[i]->_id == id) {
+			// make sure context != nullptr	
 			if ((context == nullptr && _responsesBranch[i]->_context == nullptr) || (context != nullptr && scumm_stricmp(context, _responsesBranch[i]->_context) == 0)) {
 				delete _responsesBranch[i];
 				_responsesBranch.removeAt(i);

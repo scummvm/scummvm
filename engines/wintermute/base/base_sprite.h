@@ -63,9 +63,9 @@ public:
 	bool _continuous;
 	void reset();
 	BaseObject *_owner;
-	bool isChanged();
+	bool _changed;
 	bool _paused;
-	bool isFinished();
+	bool _finished;
 	bool loadBuffer(char *buffer, bool compete = true, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	bool loadFile(const Common::String &filename, int lifeTime = -1, TSpriteCacheType cacheType = CACHE_ALL);
 	uint32 _lastFrameTime;
@@ -84,9 +84,6 @@ public:
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
 	Common::String debuggerToString() const override;
-private:
-	bool _changed;
-	bool _finished;
 };
 
 } // End of namespace Wintermute

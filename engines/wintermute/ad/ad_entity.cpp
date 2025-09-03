@@ -651,7 +651,7 @@ bool AdEntity::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = nullptr;
@@ -677,7 +677,7 @@ bool AdEntity::update() {
 
 	if (_currentSprite) {
 		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
-		if (_currentSprite->isChanged()) {
+		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
 		}

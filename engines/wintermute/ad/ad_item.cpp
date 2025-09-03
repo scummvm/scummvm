@@ -337,7 +337,7 @@ bool AdItem::update() {
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->_finished) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -376,7 +376,7 @@ bool AdItem::update() {
 		}
 
 		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
-		if (_tempSprite2 == nullptr || _tempSprite2->isFinished() || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
+		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
 				_tempSprite2 = nullptr;

@@ -122,14 +122,6 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 	return display(x, y, registerOwner, zoomX, zoomY, alpha);
 }
 
-bool BaseSprite::isChanged() {
-	return _changed;
-}
-
-bool BaseSprite::isFinished() {
-	return _finished;
-}
-
 //////////////////////////////////////////////////////////////////////
 bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {

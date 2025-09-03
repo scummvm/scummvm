@@ -1011,7 +1011,6 @@ int AdSceneGeometry::compareLights(const void *obj1, const void *obj2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::correctTargetPoint(const DXVector3 &source, DXVector3 *target) {
-	// the source parameter is not even used in wme3d
 	int32 i;
 	int32 MaxLen = 1000;
 	int32 Step = 10;

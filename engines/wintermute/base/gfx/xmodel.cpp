@@ -395,7 +395,7 @@ bool XModel::playAnim(int channel, const Common::String &name, uint32 transition
 	AnimationSet *anim = getAnimationSetByName(name);
 	if (anim) {
 		char *currentAnim = _channels[channel]->getName();
-		if (_owner && currentAnim) {
+		if (_owner && currentAnim && !name.empty()) {
 			transitionTime = _owner->getAnimTransitionTime(currentAnim, const_cast<char *>(name.c_str()));
 		}
 
