@@ -161,6 +161,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 		error("glInit: texture size not allowed: %d", textureSize);
 	_textureSize = textureSize;
 	fb->setTextureSizeAndMask(textureSize, (textureSize - 1) << ZB_POINT_ST_FRAC_BITS);
+	fb->setTextureEnvironment(&_texEnv);
 
 	// allocate GLVertex array
 	vertex_max = POLYGON_MAX_VERTEX;

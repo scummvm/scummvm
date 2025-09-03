@@ -123,14 +123,12 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
 		uint8 c_a, c_r, c_g, c_b;
 		texture->getARGBAt(wrap_s, wrap_t, s, t, c_a, c_r, c_g, c_b);
 		if (kLightsMode) {
-			uint l_a = (a >> (ZB_POINT_ALPHA_BITS - 8));
-			uint l_r = (r >> (ZB_POINT_RED_BITS - 8));
-			uint l_g = (g >> (ZB_POINT_GREEN_BITS - 8));
-			uint l_b = (b >> (ZB_POINT_BLUE_BITS - 8));
-			c_a = (c_a * l_a) >> (ZB_POINT_ALPHA_BITS - 8);
-			c_r = (c_r * l_r) >> (ZB_POINT_RED_BITS - 8);
-			c_g = (c_g * l_g) >> (ZB_POINT_GREEN_BITS - 8);
-			c_b = (c_b * l_b) >> (ZB_POINT_BLUE_BITS - 8);
+			// the name kLightsMode might be misleading, it is only false for
+			// depth-only triangles, in which case: sure, no texture env needed
+			applyTextureEnvironment(
+				texture->internalformat(),
+				a, r, g, b,
+				c_a, c_r, c_g, c_b);
 		}
 		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>(fbOffset + _a, c_a, c_r, c_g, c_b, z, fog, fog_r, fog_g, fog_b);
 	}
