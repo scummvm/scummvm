@@ -363,8 +363,12 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 			   << "\t<PropertyGroup>\n"
 			   << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
 			   << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
-			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
-			   << "\t</PropertyGroup>\n"
+			   << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n";
+
+	if (_msvcVersion.version >= 17 && setup.useVcpkg)
+		properties << "\t\t<VcpkgEnableManifest>true</VcpkgEnableManifest>\n";
+
+	properties << "\t</PropertyGroup>\n"
 			   << "\t<ItemDefinitionGroup>\n"
 			   << "\t\t<ClCompile>\n"
 			   << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
