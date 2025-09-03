@@ -39,7 +39,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("High Quality"),
 			_s("Toggles some optional graphical effects"),
-			_s("high_quality"),
+			"high_quality",
 			true,
 			0,
 			0
@@ -50,7 +50,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		{
 			_s("32 Bits"),
 			_s("Uses 32bit textures instead of 16bit ones (currently not implemented)"),
-			_s("32_bits"),
+			"32_bits",
 			true,
 			0,
 			0
