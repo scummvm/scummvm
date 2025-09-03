@@ -21,9 +21,7 @@
 #ifndef TOT_GRAPHICS_H
 #define TOT_GRAPHICS_H
 
-#include "common/scummsys.h"
 #include "common/system.h"
-#include "graphics/font.h"
 
 #include "graphics/fonts/bgifont.h"
 

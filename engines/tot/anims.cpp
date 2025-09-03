@@ -20,16 +20,10 @@
  */
 
 #include "common/debug.h"
-#include "common/events.h"
-#include "common/file.h"
 #include "common/substream.h"
-#include "common/system.h"
-#include "common/textconsole.h"
-#include "graphics/paletteman.h"
 
 #include "tot/anims.h"
 #include "tot/decoder/TotFlicDecoder.h"
-#include "tot/graphics.h"
 #include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"

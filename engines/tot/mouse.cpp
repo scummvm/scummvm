@@ -18,15 +18,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "common/file.h"
-#include "common/system.h"
 #include "graphics/cursorman.h"
 
 #include "tot/mouse.h"
 #include "tot/tot.h"
 #include "tot/util.h"
-#include "mouse.h"
 
 namespace Tot {
 

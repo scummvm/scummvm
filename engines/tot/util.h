@@ -21,13 +21,6 @@
 #ifndef TOT_UTIL_H
 #define TOT_UTIL_H
 
-#include "common/endian.h"
-#include "common/events.h"
-#include "common/language.h"
-#include "common/scummsys.h"
-#include "graphics/font.h"
-
-#include "tot/statics.h"
 #include "tot/tot.h"
 
 namespace Tot {
@@ -74,33 +67,19 @@ inline bool odd(int32 i) { return i % 2 != 0; }
 uint Random(uint range);
 int Random(int range);
 
-inline Common::String getObjectName(int idx) {
-	return g_engine->_lang == Common::ES_ESP ? hardcodedObjects_ES[idx] : hardcodedObjects_EN[idx];
-}
+Common::String getObjectName(int idx);
 
-inline Common::String getActionLineText(int idx) {
-	return g_engine->_lang == Common::ES_ESP ? actionLine_ES[idx] : actionLine_EN[idx];
-}
-inline Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
-	const Common::KeyCode *selectedHotkeys = (g_engine->_lang == Common::ES_ESP)? hotkeys[0]: hotkeys[1];
-	return selectedHotkeys[hotkey];
-};
+Common::KeyCode hotKeyFor(HOTKEYS hotkey);
 
-inline const char *const *getFullScreenMessagesByCurrentLanguage() {
-	return (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
-}
+Common::String getActionLineText(int idx);
 
-inline const char *const *getAnimMessagesByCurrentLanguage() {
-	return (g_engine->_lang == Common::ES_ESP) ? animMessages[0] : animMessages[1];
-}
+const char *const *getFullScreenMessagesByCurrentLanguage();
 
-inline const char *const *getHardcodedObjectsByCurrentLanguage() {
-	return (g_engine->_lang == Common::ES_ESP) ? hardcodedObjects_ES : hardcodedObjects_EN;
-}
+const char *const *getAnimMessagesByCurrentLanguage();
 
-inline const int32 *getOffsetsByCurrentLanguage() {
-	return (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
-}
+const char *const *getHardcodedObjectsByCurrentLanguage();
+
+const int32 *getOffsetsByCurrentLanguage();
 
 inline bool isLanguageSpanish() {
 	return g_engine->_lang == Common::ES_ESP;

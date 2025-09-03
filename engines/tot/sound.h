@@ -21,11 +21,7 @@
 #ifndef TOT_SOUND_H
 #define TOT_SOUND_H
 
-#include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
-#include "audio/mididrv.h"
-#include "audio/midiparser.h"
-#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "common/file.h"
 
