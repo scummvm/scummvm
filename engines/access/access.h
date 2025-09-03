@@ -269,7 +269,6 @@ public:
 	int _numLines;
 	byte _byte26CB5;
 	int _bcnt;
-	//byte *_tempList;
 
 	bool _vidEnd;
 	bool _clearSummaryFlag;

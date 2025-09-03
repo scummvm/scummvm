@@ -148,7 +148,7 @@ void Screen::loadPalette(int fileNum, int subfile, int srcOffset) {
 		for (int i = 0; i < _numColors * 3; i++)
 			_rawPalette[_startColor * 3 + i] = PALETTE_6BIT_TO_8BIT(palette[i]);
 	} else {
-		// TODO: is this right for Amaazon?  Surely it should be converted?  Maybe never used..
+		// TODO: is this right for Amazon?  Surely it should be converted?  Maybe never used..
 		Common::copy(palette, palette + (_numColors * 3), &_rawPalette[_startColor * 3]);
 	}
 	delete res;
@@ -366,7 +366,7 @@ void Screen::flashPalette(int step) {
 
 void Screen::dump(const char *fname) const {
 #ifdef DEBUG_FRAME_DUMP
-	/* For debugging, dump the frame contents.. */
+	// For debugging, dump the frame contents.
 	::Common::DumpFile outf;
 	uint32 now = g_system->getMillis();
 	outf.open(::Common::Path(::Common::String::format("/tmp/%07d-%s.png", now, fname)));

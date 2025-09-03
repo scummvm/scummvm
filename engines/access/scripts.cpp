@@ -480,8 +480,8 @@ void Scripts::cmdCheckInventory() {
 }
 
 void Scripts::cmdSetTex() {
-	int xStart = _data->readSint16LE();
-	int yStart = _data->readSint16LE();
+	const int xStart = _data->readSint16LE();
+	const int yStart = _data->readSint16LE();
 	debugC(1, kDebugScripts, "cmdSetTex(xStart=%d, yStart=%d)", xStart, yStart);
 	_vm->_player->_playerDirection = RIGHT;
 	int posX = xStart - (_vm->_player->_playerOffset.x / 2);
@@ -768,7 +768,7 @@ void Scripts::cmdVideoEnded() {
 	debugCN(1, kDebugScripts, "cmdVideoEnded()");
 	_vm->_events->pollEventsAndWait();
 
-	// Slight HACK - add ability to skip unskippable videos.
+	// Slight enhancement over original - add ability to skip unskippable videos.
 	bool skipVideo = false;
 	Common::CustomEventType action;
 	if (_vm->_events->getAction(action) && action == kActionSkip) {
