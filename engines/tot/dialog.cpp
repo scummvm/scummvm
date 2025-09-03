@@ -19,9 +19,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/textconsole.h"
-
 #include "tot/dialog.h"
 #include "tot/tot.h"
 

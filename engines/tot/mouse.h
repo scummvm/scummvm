@@ -21,11 +21,6 @@
 #ifndef TOT_MOUSE_H
 #define TOT_MOUSE_H
 
-#include "common/rect.h"
-#include "common/scummsys.h"
-
-#include "tot/chrono.h"
-
 namespace Tot {
 
 struct MouseMask {

@@ -21,6 +21,7 @@
 #include "common/textconsole.h"
 #include "graphics/paletteman.h"
 
+#include "tot/statics.h"
 #include "tot/tot.h"
 #include "tot/util.h"
 
@@ -31,330 +32,328 @@ const int kEnforcedTextAnimDelay = 0;
 
 void showError(int code) {
 	const char *const *messages = (isLanguageSpanish()) ? errorMessages[0] : errorMessages[1];
-
 	switch (code) {
 	case 1:
-		error(messages[0]);
+		error("%s", messages[0]);
 		break;
 	case 2:
-		error(messages[1]);
+		error("%s", messages[1]);
 		break;
 	case 3:
-		error(messages[2]);
+		error("%s", messages[2]);
 		break;
 	case 4:
-		error(messages[3]);
+		error("%s", messages[3]);
 		break;
 	case 5:
-		error(messages[4]);
+		error("%s", messages[4]);
 		break;
 	case 6:
-		error(messages[5]);
+		error("%s", messages[5]);
 		break;
 	case 12:
-		error(messages[6]);
+		error("%s", messages[6]);
 		break;
 	case 13:
 	case 14:
-		error(messages[7],
-			  code);
+		error(messages[7], code);
 		break;
 	case 15:
-		error(messages[8]);
+		error("%s", messages[8]);
 		break;
 	case 16:
-		error(messages[9]);
+		error("%s", messages[9]);
 		break;
 	case 17:
-		error(messages[10]);
+		error("%s", messages[10]);
 		break;
 	case 18:
-		error(messages[11]);
+		error("%s", messages[11]);
 		break;
 	case 100:
-		error(messages[12]);
+		error("%s", messages[12]);
 		break;
 	case 101:
-		error(messages[13]);
+		error("%s", messages[13]);
 		break;
 	case 102:
-		error(messages[14]);
+		error("%s", messages[14]);
 		break;
 	case 103:
-		error(messages[15]);
+		error("%s", messages[15]);
 		break;
 	case 104:
-		error(messages[16]);
+		error("%s", messages[16]);
 		break;
 	case 105:
-		error(messages[17]);
+		error("%s", messages[17]);
 		break;
 	case 106:
-		error(messages[18]);
+		error("%s", messages[18]);
 		break;
 	case 150:
-		error(messages[19]);
+		error("%s", messages[19]);
 		break;
 	case 151:
-		error(messages[20]);
+		error("%s", messages[20]);
 		break;
 	case 152:
-		error(messages[21]);
+		error("%s", messages[21]);
 		break;
 	case 153:
-		error(messages[22]);
+		error("%s", messages[22]);
 		break;
 	case 154:
-		error(messages[23]);
+		error("%s", messages[23]);
 		break;
 	case 155:
 		error(messages[24], code);
 		break;
 	case 156:
-		error(messages[25]);
+		error("%s", messages[25]);
 		break;
 	case 157:
-		error(messages[26]);
+		error("%s", messages[26]);
 		break;
 	case 158:
-		error(messages[27]);
+		error("%s", messages[27]);
 		break;
 	case 159:
-		error(messages[28]);
+		error("%s", messages[28]);
 		break;
 	case 160:
-		error(messages[29]);
+		error("%s", messages[29]);
 		break;
 	case 161:
-		error(messages[30]);
+		error("%s", messages[30]);
 		break;
 	case 162:
-		error(messages[31]);
+		error("%s", messages[31]);
 		break;
 	case 200:
-		error(messages[32]);
+		error("%s", messages[32]);
 		break;
 	case 201:
-		error(messages[33]);
+		error("%s", messages[33]);
 		break;
 	case 202:
-		error(messages[34]);
+		error("%s", messages[34]);
 		break;
 	case 203:
-		error(messages[35]);
+		error("%s", messages[35]);
 		break;
 	case 204:
-		error(messages[36]);
+		error("%s", messages[36]);
 		break;
 	case 205:
-		error(messages[37]);
+		error("%s", messages[37]);
 		break;
 	case 206:
-		error(messages[38]);
+		error("%s", messages[38]);
 		break;
 	case 207:
-		error(messages[39]);
+		error("%s", messages[39]);
 		break;
 	case 208:
-		error(messages[40]);
+		error("%s", messages[40]);
 		break;
 	case 209:
-		error(messages[41]);
+		error("%s", messages[41]);
 		break;
 	case 210:
-		error(messages[42]);
+		error("%s", messages[42]);
 		break;
 	case 211:
-		error(messages[43]);
+		error("%s", messages[43]);
 		break;
 	case 212:
-		error(messages[44]);
+		error("%s", messages[44]);
 		break;
 	case 213:
-		error(messages[45]);
+		error("%s", messages[45]);
 		break;
 	case 214:
-		error(messages[46]);
+		error("%s", messages[46]);
 		break;
 	case 215:
-		error(messages[47]);
+		error("%s", messages[47]);
 		break;
 	case 216:
-		error(messages[48]);
+		error("%s", messages[48]);
 		break;
 	case 250:
-		error(messages[49]);
+		error("%s", messages[49]);
 		break;
 	case 251:
-		error(messages[50]);
+		error("%s", messages[50]);
 		break;
 	case 252:
-		error(messages[51]);
+		error("%s", messages[51]);
 		break;
 	case 253:
-		error(messages[52]);
+		error("%s", messages[52]);
 		break;
 	case 254:
-		error(messages[53]);
+		error("%s", messages[53]);
 		break;
 	case 255:
-		error(messages[54]);
+		error("%s", messages[54]);
 		break;
 	case 256:
-		error(messages[55]);
+		error("%s", messages[55]);
 		break;
 	case 257:
-		error(messages[56]);
+		error("%s", messages[56]);
 		break;
 	case 258:
-		error(messages[57]);
+		error("%s", messages[57]);
 		break;
 	case 259:
-		error(messages[58]);
+		error("%s", messages[58]);
 		break;
 	case 260:
-		error(messages[59]);
+		error("%s", messages[59]);
 		break;
 	case 261:
-		error(messages[60]);
+		error("%s", messages[60]);
 		break;
 	case 262:
-		error(messages[61]);
+		error("%s", messages[61]);
 		break;
 	case 263:
-		error(messages[62]);
+		error("%s", messages[62]);
 		break;
 	case 264:
-		error(messages[63]);
+		error("%s", messages[63]);
 		break;
 	case 265:
-		error(messages[64]);
+		error("%s", messages[64]);
 		break;
 	case 266:
-		error(messages[65]);
+		error("%s", messages[65]);
 		break;
 	case 267:
-		error(messages[66]);
+		error("%s", messages[66]);
 		break;
 	case 268:
-		error(messages[67]);
+		error("%s", messages[67]);
 		break;
 	case 269:
-		error(messages[68]);
+		error("%s", messages[68]);
 		break;
 	case 270:
-		error(messages[69]);
+		error("%s", messages[69]);
 		break;
 	case 271:
-		error(messages[70]);
+		error("%s", messages[70]);
 		break;
 	case 272:
-		error(messages[71]);
+		error("%s", messages[71]);
 		break;
 	case 273:
-		error(messages[72]);
+		error("%s", messages[72]);
 		break;
 	case 274:
-		error(messages[73]);
+		error("%s", messages[73]);
 		break;
 	case 275:
-		error(messages[74]);
+		error("%s", messages[74]);
 		break;
 	case 276:
-		error(messages[75]);
+		error("%s", messages[75]);
 		break;
 	case 277:
-		error(messages[76]);
+		error("%s", messages[76]);
 		break;
 	case 278:
-		error(messages[77]);
+		error("%s", messages[77]);
 		break;
 	case 279:
-		error(messages[78]);
+		error("%s", messages[78]);
 		break;
 	case 280:
-		error(messages[79]);
+		error("%s", messages[79]);
 		break;
 	case 281:
-		error(messages[80]);
+		error("%s", messages[80]);
 		break;
 	case 282:
-		error(messages[81]);
+		error("%s", messages[81]);
 		break;
 	case 299:
-		error(messages[82]);
+		error("%s", messages[82]);
 		break;
 	case 300:
-		error(messages[83]);
+		error("%s", messages[83]);
 		break;
 	case 301:
-		error(messages[84]);
+		error("%s", messages[84]);
 		break;
 	case 302:
-		error(messages[85]);
+		error("%s", messages[85]);
 		break;
 	case 303:
-		error(messages[86]);
+		error("%s", messages[86]);
 		break;
 	case 304:
-		error(messages[87]);
+		error("%s", messages[87]);
 		break;
 	case 305:
-		error(messages[88]);
+		error("%s", messages[88]);
 		break;
 	case 306:
-		error(messages[89]);
+		error("%s", messages[89]);
 		break;
 	case 307:
-		error(messages[90]);
+		error("%s", messages[90]);
 		break;
 	case 308:
-		error(messages[91]);
+		error("%s", messages[91]);
 		break;
 	case 309:
-		error(messages[92]);
+		error("%s", messages[92]);
 		break;
 	case 310:
-		error(messages[93]);
+		error("%s", messages[93]);
 		break;
 	case 311:
-		error(messages[94]);
+		error("%s", messages[94]);
 		break;
 	case 312:
-		error(messages[95]);
+		error("%s", messages[95]);
 		break;
 	case 313:
-		error(messages[96]);
+		error("%s", messages[96]);
 		break;
 	case 314:
-		error(messages[97]);
+		error("%s", messages[97]);
 		break;
 	case 315:
-		error(messages[98]);
+		error("%s", messages[98]);
 		break;
 	case 316:
-		error(messages[99]);
+		error("%s", messages[99]);
 		break;
 	case 317:
-		error(messages[100]);
+		error("%s", messages[100]);
 		break;
 	case 318:
-		error(messages[101]);
+		error("%s", messages[101]);
 		break;
 	case 319:
-		error(messages[102]);
+		error("%s", messages[102]);
 		break;
 	case 320:
-		error(messages[103]);
+		error("%s", messages[103]);
 		break;
 	case 321:
-		error(messages[104]);
+		error("%s", messages[104]);
 		break;
 	case 322:
-		error(messages[105]);
+		error("%s", messages[105]);
 		break;
 	case 323:
-		error(messages[106]);
+		error("%s", messages[106]);
 		break;
 	default: {
 		if (code >= 7 && code <= 11) {
@@ -498,5 +497,35 @@ void waitForKey() {
 
 uint Random(uint range) { return g_engine->getRandomNumber(range); }
 int Random(int range) { return g_engine->getRandomNumber(range - 1); }
+
+Common::String getObjectName(int idx) {
+	return g_engine->_lang == Common::ES_ESP ? hardcodedObjects_ES[idx] : hardcodedObjects_EN[idx];
+}
+
+Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
+	const Common::KeyCode *selectedHotkeys = (g_engine->_lang == Common::ES_ESP)? hotkeys[0]: hotkeys[1];
+	return selectedHotkeys[hotkey];
+};
+
+Common::String getActionLineText(int idx) {
+	return g_engine->_lang == Common::ES_ESP ? actionLine_ES[idx] : actionLine_EN[idx];
+}
+
+const char *const *getFullScreenMessagesByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? fullScreenMessages[0] : fullScreenMessages[1];
+}
+
+const char *const *getAnimMessagesByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? animMessages[0] : animMessages[1];
+}
+
+const char *const *getHardcodedObjectsByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? hardcodedObjects_ES : hardcodedObjects_EN;
+}
+
+const int32 *getOffsetsByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? flcOffsets[0] : flcOffsets[1];
+}
+
 
 } // End of namespace Tot

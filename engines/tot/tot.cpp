@@ -26,8 +26,6 @@
 #include "common/system.h"
 
 #include "engines/util.h"
-#include "graphics/framelimiter.h"
-#include "graphics/paletteman.h"
 
 #include "tot/anims.h"
 #include "tot/chrono.h"
@@ -107,7 +105,6 @@ int TotEngine::engineStart() {
 
 	loadCharAnimation();
 	loadInventory();
-
 	_sound->setMidiVolume(0, 0);
 	_sound->playMidi("SILENT", false);
 
@@ -1304,17 +1301,19 @@ void TotEngine::mainMenu(bool fade) {
 	_sound->stopVoc();
 
 	int32 offset = getOffsetsByCurrentLanguage()[1];
-
+	_mouse->hide();
 	if (fade)
 		drawFlc(0, 0, offset, 0, 9, 0, true, false, false, bar);
 	else
 		drawFlc(0, 0, offset, 0, 9, 0, false, false, false, bar);
+
 	if (_cpCounter2 > 10)
 		showError(274);
 	_mouse->mouseX = 160;
 	_mouse->mouseY = 95;
 	_mouse->mouseMaskIndex = 1;
 	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
+	_mouse->show();
 	Common::Event e;
 	do {
 		_chrono->updateChrono();
