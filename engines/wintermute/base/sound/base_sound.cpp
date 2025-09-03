@@ -34,6 +34,7 @@ namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(BaseSound, false)
 
+//////////////////////////////////////////////////////////////////////////
 BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = nullptr;
 	_soundFilename = "";
@@ -52,6 +53,7 @@ BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 }
 
+//////////////////////////////////////////////////////////////////////////
 BaseSound::~BaseSound() {
 	if (_sound) {
 		_gameRef->_soundMgr->removeSound(_sound);
@@ -59,6 +61,7 @@ BaseSound::~BaseSound() {
 	_sound = nullptr;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
 		_gameRef->_soundMgr->removeSound(_sound);
@@ -79,6 +82,7 @@ bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setSoundSimple() {
 	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
@@ -99,6 +103,7 @@ bool BaseSound::setSoundSimple() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getLength() {
 	if (_sound) {
 		return _sound->getLength();
@@ -107,6 +112,7 @@ uint32 BaseSound::getLength() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::play(bool looping) {
 	if (_sound) {
 		_soundPaused = false;
@@ -116,6 +122,7 @@ bool BaseSound::play(bool looping) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::stop() {
 	if (_sound) {
 		_soundPaused = false;
@@ -125,6 +132,7 @@ bool BaseSound::stop() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::pause(bool freezePaused) {
 	if (_sound) {
 		_soundPaused = true;
@@ -137,6 +145,7 @@ bool BaseSound::pause(bool freezePaused) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::resume() {
 	if (_sound && _soundPaused) {
 		_soundPaused = false;
@@ -146,6 +155,7 @@ bool BaseSound::resume() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	if (persistMgr->getIsSaving() && _sound) {
 		_soundPlaying = _sound->isPlaying();
@@ -179,14 +189,17 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::isPlaying() {
 	return _sound && _sound->isPlaying();
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::isPaused() {
 	return _sound && _soundPaused;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPositionTime(uint32 time) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -199,6 +212,7 @@ bool BaseSound::setPositionTime(uint32 time) {
 	return ret;
 }
 
+//////////////////////////////////////////////////////////////////////////
 uint32 BaseSound::getPositionTime() {
 	if (!_sound) {
 		return 0;
@@ -211,6 +225,7 @@ uint32 BaseSound::getPositionTime() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolumePercent(int percent) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -219,6 +234,7 @@ bool BaseSound::setVolumePercent(int percent) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setVolume(int volume) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -274,6 +290,7 @@ bool BaseSound::setPan(float pan) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::applyFX(TSFXType type, float param1, float param2, float param3, float param4) {
 	if (!_sound) {
 		return STATUS_OK;

@@ -1092,11 +1092,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 		if (_autoScroll) {
 			// adjust horizontal scroll
 			if (_gameRef->getTimer()->getTime() - _lastTimeH >= _scrollTimeH) {
-				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeH) / _scrollTimeH;
+
 				// Cap the amount of catch-up to avoid jittery characters.
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeH) / _scrollTimeH;
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
+
 				_lastTimeH = _gameRef->getTimer()->getTime();
 				if (_offsetLeft < _targetOffsetLeft) {
 					_offsetLeft += _scrollPixelsH * timesMissed;
@@ -1109,11 +1111,13 @@ bool AdScene::traverseNodes(bool doUpdate) {
 
 			// adjust vertical scroll
 			if (_gameRef->getTimer()->getTime() - _lastTimeV >= _scrollTimeV) {
-				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeV) / _scrollTimeV;
+
 				// Cap the amount of catch-up to avoid jittery characters.
+				int timesMissed = (_gameRef->getTimer()->getTime() - _lastTimeV) / _scrollTimeV;
 				if (timesMissed > 2) {
 					timesMissed = 2;
 				}
+
 				_lastTimeV = _gameRef->getTimer()->getTime();
 				if (_offsetTop < _targetOffsetTop) {
 					_offsetTop += _scrollPixelsV * timesMissed;
@@ -2361,7 +2365,6 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 ScValue *AdScene::scGetProperty(const Common::String &name) {
 	_scValue->setNULL();
@@ -2483,7 +2486,6 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
@@ -2526,7 +2528,6 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		} else {
 			_scValue->setNULL();
 		}
-
 		return _scValue;
 	}
 
@@ -2539,7 +2540,6 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		} else {
 			_scValue->setFloat(0.0f);
 		}
-
 		return _scValue;
 	}
 #endif
@@ -2594,7 +2594,6 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		} else {
 			_scValue->setInt(_geom->_lights.getSize());
 		}
-
 		return _scValue;
 	}
 #endif
@@ -2603,7 +2602,6 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 		return BaseObject::scGetProperty(name);
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::scSetProperty(const char *name, ScValue *value) {
@@ -2730,7 +2728,6 @@ bool AdScene::scSetProperty(const char *name, ScValue *value) {
 			_geom->_waypointHeight = value->getFloat();
 			_geom->dropWaypoints();
 		}
-
 		return STATUS_OK;
 	}
 
@@ -2854,8 +2851,6 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "VIEWPORT { %d, %d, %d, %d }\n", rc->left, rc->top, rc->right, rc->bottom);
 	}
 
-
-
 	// editor settings
 	buffer->putTextIndent(indent + 2, "; ----- editor settings\n");
 	buffer->putTextIndent(indent + 2, "EDITOR_MARGIN_H=%d\n", _editorMarginH);
@@ -2909,7 +2904,6 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		_rotLevels[i]->saveAsText(buffer, indent + 2);
 	}
 
-
 	buffer->putTextIndent(indent + 2, "\n");
 
 	// free entities
@@ -2917,7 +2911,6 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	for (int32 i = 0; i < _objects.getSize(); i++) {
 		if (_objects[i]->_type == OBJECT_ENTITY) {
 			_objects[i]->saveAsText(buffer, indent + 2);
-
 		}
 	}
 
@@ -2928,9 +2921,11 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::sortScaleLevels() {
+
 	if (_scaleLevels.getSize() == 0) {
 		return STATUS_OK;
 	}
+
 	bool changed;
 	do {
 		changed = false;
@@ -2952,9 +2947,11 @@ bool AdScene::sortScaleLevels() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdScene::sortRotLevels() {
+
 	if (_rotLevels.getSize() == 0) {
 		return STATUS_OK;
 	}
+
 	bool changed;
 	do {
 		changed = false;
@@ -3078,13 +3075,18 @@ bool AdScene::persist(BasePersistenceManager *persistMgr) {
 	if (BaseEngine::instance().getFlags() & GF_3D) {
 		persistMgr->transferSint32(TMEMBER(_editorResolutionWidth));
 		persistMgr->transferSint32(TMEMBER(_editorResolutionHeight));
+
 		persistMgr->transferFloat(TMEMBER(_fov));
 		persistMgr->transferFloat(TMEMBER(_nearClipPlane));
 		persistMgr->transferFloat(TMEMBER(_farClipPlane));
+
 		persistMgr->transferBool(TMEMBER(_2DPathfinding));
 		persistMgr->transferSint32(TMEMBER_INT(_maxShadowType));
+
 		persistMgr->transferBool(TMEMBER(_scroll3DCompatibility));
+
 		persistMgr->transferUint32(TMEMBER(_ambientLightColor));
+
 		persistMgr->transferBool(TMEMBER(_fogEnabled));
 		persistMgr->transferUint32(TMEMBER(_fogColor));
 		persistMgr->transferFloat(TMEMBER(_fogStart));
@@ -3126,7 +3128,6 @@ bool AdScene::correctTargetPoint2(int32 startX, int32 startY, int32 *targetX, in
 	y1 = *targetY;
 	x2 = startX;
 	y2 = startY;
-
 
 	xLength = abs(x2 - x1);
 	yLength = abs(y2 - y1);

@@ -323,7 +323,6 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 					break;
 				}
 			}
-
 		}
 
 		if (!regFound) {
@@ -990,9 +989,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	_state = STATE_TALKING;
 
-	if (deleteSound) {
+	if (deleteSound)
 		delete[] sound;
-	}
 
 	//if (!m_Sentence->m_Sound)
 	//	Game->m_AccessMgr->Speak(m_Sentence->m_Text, TTS_TALK);

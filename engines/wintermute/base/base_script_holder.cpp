@@ -311,9 +311,9 @@ bool BaseScriptHolder::addScript(const char *filename) {
 		if (_gameRef->_editorForceScripts) {
 			// editor hack
 #if EXTENDED_DEBUGGER_ENABLED
-			scr = new DebuggableScript(_gameRef,  _gameRef->_scEngine);
+			scr = new DebuggableScript(_gameRef, _gameRef->_scEngine);
 #else
-			scr = new ScScript(_gameRef,  _gameRef->_scEngine);
+			scr = new ScScript(_gameRef, _gameRef->_scEngine);
 #endif
 			size_t filenameSize = strlen(filename) + 1;
 			scr->_filename = new char[filenameSize];

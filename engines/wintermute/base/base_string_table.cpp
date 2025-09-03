@@ -36,7 +36,6 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
-
 }
 
 
@@ -44,7 +43,6 @@ BaseStringTable::BaseStringTable(BaseGame *inGame) : BaseClass(inGame) {
 BaseStringTable::~BaseStringTable() {
 	// delete strings
 	_strings.clear();
-
 }
 
 

@@ -50,9 +50,8 @@ BaseFontStorage::~BaseFontStorage() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseFontStorage::cleanup(bool warn) {
 	for (int32 i = 0; i < _fonts.getSize(); i++) {
-		if (warn) {
+		if (warn)
 			_gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
-		}
 		delete _fonts[i];
 	}
 	_fonts.removeAll();

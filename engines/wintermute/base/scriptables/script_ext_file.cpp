@@ -746,12 +746,12 @@ uint32 SXFile::getLength() {
 	} else if ((_mode == 2 || _mode == 3) && _writeFile) {
 		error("SXFile - reading length for WriteFile not supported");
 		return 0;
-		/*
-		        uint32 currentPos = ftell((FILE *)_writeFile);
-		        fseek((FILE *)_writeFile, 0, SEEK_END);
-		        int ret = ftell((FILE *)_writeFile);
-		        fseek((FILE *)_writeFile, CurrentPos, SEEK_SET);
-		        return Ret;*/
+/*
+		uint32 currentPos = ftell((FILE *)_writeFile);
+		fseek((FILE *)_writeFile, 0, SEEK_END);
+		int ret = ftell((FILE *)_writeFile);
+		fseek((FILE *)_writeFile, CurrentPos, SEEK_SET);
+		return Ret;*/
 	} else {
 		return 0;
 	}

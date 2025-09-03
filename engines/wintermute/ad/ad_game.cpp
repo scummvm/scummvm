@@ -2102,12 +2102,10 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 		// display in-game windows
 		displayWindows(true);
-		if (_inventoryBox) {
+		if (_inventoryBox)
 			_inventoryBox->display();
-		}
-		if (_stateEx == GAME_WAITING_RESPONSE) {
+		if (_stateEx == GAME_WAITING_RESPONSE)
 			_responseBox->display();
-		}
 		_renderer->displayIndicator();
 
 

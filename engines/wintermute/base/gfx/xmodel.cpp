@@ -313,9 +313,8 @@ bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, Anim
 	}
 	parentAnimSet->addAnimation(anim);
 
-	if (newAnimSet) {
+	if (newAnimSet)
 		_animationSets.add(parentAnimSet);
-	}
 
 	return true;
 }

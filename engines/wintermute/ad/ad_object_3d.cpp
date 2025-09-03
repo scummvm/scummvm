@@ -75,7 +75,6 @@ void AdObject3D::clearIgnoredLights() {
 	for (int32 i = 0; i < _ignoredLights.getSize(); ++i) {
 		delete _ignoredLights[i];
 	}
-
 	_ignoredLights.removeAll();
 }
 
@@ -216,7 +215,6 @@ bool AdObject3D::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		getBonePosition3D(boneName, &pos);
 
 		ScValue *val = stack->getPushValue();
-
 		if (val) {
 			val->setProperty("X", pos._x);
 			val->setProperty("Y", pos._y);
@@ -471,7 +469,6 @@ bool AdObject3D::scSetProperty(const char *name, ScValue *value) {
 		if (_shadowType < 0) {
 			_shadowType = SHADOW_NONE;
 		}
-
 		if (_shadowType > SHADOW_STENCIL) {
 			_shadowType = SHADOW_STENCIL;
 		}
@@ -586,10 +583,8 @@ bool AdObject3D::skipTo(int x, int y, bool tolerant) {
 
 //////////////////////////////////////////////////////////////////////////
 ShadowVolume *AdObject3D::getShadowVolume() {
-	if (_shadowVolume == nullptr) {
+	if (_shadowVolume == nullptr)
 		_shadowVolume = _gameRef->_renderer3D->createShadowVolume();
-	}
-
 	return _shadowVolume;
 }
 
@@ -631,8 +626,8 @@ bool AdObject3D::getBonePosition3D(const char *boneName, DXVector3 *pos, DXVecto
 		return false;
 	}
 
-	DXVector3 vz(0, 0, 0);
 	if (!offset) {
+		DXVector3 vz(0, 0, 0);
 		offset = &vz;
 	}
 

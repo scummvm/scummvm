@@ -480,7 +480,8 @@ float AdSceneGeometry::getHeightAt(DXVector3 pos, float tolerance, bool *intFoun
 
 	for (int32 i = 0; i < _planes.getSize(); i++) {
 		for (uint32 j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
-			if (C3DUtils::intersectTriangle(pos, dir,
+			if (C3DUtils::intersectTriangle(
+				                        pos, dir,
 				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
 				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[1]]._pos,
 				                        _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[2]]._pos,
@@ -546,13 +547,11 @@ bool AdSceneGeometry::directPathExists(DXVector3 *p1, DXVector3 *p2) {
 			float dist;
 
 			if (C3DUtils::pickGetIntersect(*p1, *p2, v0, v1, v2, &intersection, &dist)) {
-				if (C3DUtils::intersectTriangle(*p1, *p1 - *p2, v0, v1, v2,
-				                                &intersection._x, &intersection._y, &intersection._z)) {
+				if (C3DUtils::intersectTriangle(*p1, *p1 - *p2, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z)) {
 					return false;
 				}
 
-				if (C3DUtils::intersectTriangle(*p2, *p2 - *p1, v0, v1, v2,
-				                                &intersection._x, &intersection._y, &intersection._z)) {
+				if (C3DUtils::intersectTriangle(*p2, *p2 - *p1, v0, v1, v2, &intersection._x, &intersection._y, &intersection._z)) {
 					return false;
 				}
 			}
@@ -703,7 +702,6 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	x -= (mleft + mright) / 2 + modWidth;
 	y -= (mtop + mbottom) / 2 + modHeight;
 
-
 	DXVector3 vPickRayDir;
 	DXVector3 vPickRayOrig;
 
@@ -731,7 +729,8 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	DXVector3 intersection, ray;
 	for (int32 i = 0; i < _planes.getSize(); i++) {
 		for (int32 j = 0; j < _planes[i]->_mesh->_numFaces; j++) {
-			if (C3DUtils::intersectTriangle(vPickRayOrig, vPickRayDir,
+			if (C3DUtils::intersectTriangle(
+								  vPickRayOrig, vPickRayDir,
 								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[0]]._pos,
 								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[1]]._pos,
 								  _planes[i]->_mesh->_vertices[_planes[i]->_mesh->_faces[j]._vertices[2]]._pos,

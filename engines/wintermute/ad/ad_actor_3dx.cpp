@@ -288,8 +288,7 @@ bool AdActor3DX::update() {
 			_tempSkelAnim = _sentence->_currentSkelAnim;
 		}
 
-		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) ||
-		                (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
 		if (_tempSkelAnim == nullptr || !_xmodel->isAnimPending(0, _tempSkelAnim) || timeIsUp) {
 			if (timeIsUp) {
 				_sentence->finish();
@@ -727,9 +726,7 @@ void AdActor3DX::getNextStep2D() {
 	newPos._z += -cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_gameRef->_deltaTime / 1000.f;
 
 	DXVector3 currentPoint;
-	adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-	                                             _path2D->getCurrent()->y,
-	                                             &currentPoint);
+	adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
 
 	DXVector3 origVec, newVec;
 
@@ -749,9 +746,7 @@ void AdActor3DX::getNextStep2D() {
 				_nextState = STATE_READY;
 			}
 		} else {
-			adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-			                                             _path2D->getCurrent()->y,
-			                                             &currentPoint);
+			adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
 			initLine3D(_posVector, currentPoint, false);
 		}
 	} else
@@ -778,9 +773,7 @@ void AdActor3DX::followPath2D() {
 		_state = STATE_FOLLOWING_PATH;
 
 		DXVector3 currentPoint;
-		adGameRef->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x,
-		                                                _path2D->getCurrent()->y,
-		                                                &currentPoint);
+		adGameRef->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
 
 		initLine3D(_posVector, currentPoint, true);
 	} else {
@@ -1673,14 +1666,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			dir = val->getInt();
 			angle = dirToAngle((TDirection)dir);
 		}
-
-		if (_path2D) {
+		if (_path2D)
 			_path2D->reset();
-		}
-
-		if (_path3D) {
+		if (_path3D)
 			_path3D->reset();
-		}
 
 		turnTo(angle);
 		if (strcmp(name, "TurnToAsync") != 0) {
@@ -2021,11 +2010,10 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		float offsetZ = stack->pop()->getFloat();
 
 		PartEmitter *emitter = createParticleEmitter(boneName, DXVector3(offsetX, offsetY, offsetZ));
-		if (emitter) {
+		if (emitter)
 			stack->pushNative(_partEmitter, true);
-		} else {
+		else
 			stack->pushNULL();
-		}
 
 		return true;
 	} else {

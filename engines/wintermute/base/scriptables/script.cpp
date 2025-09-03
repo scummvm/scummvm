@@ -1450,9 +1450,8 @@ bool ScScript::pause() {
 		return STATUS_FAILED;
 	}
 
-	if (!_freezable || _state == SCRIPT_PERSISTENT) {
+	if (!_freezable || _state == SCRIPT_PERSISTENT)
 		return STATUS_OK;
-	}
 
 	_origState = _state;
 	_state = SCRIPT_PAUSED;
@@ -1463,9 +1462,8 @@ bool ScScript::pause() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ScScript::resume() {
-	if (_state != SCRIPT_PAUSED) {
+	if (_state != SCRIPT_PAUSED)
 		return STATUS_OK;
-	}
 
 	_state = _origState;
 	return STATUS_OK;
