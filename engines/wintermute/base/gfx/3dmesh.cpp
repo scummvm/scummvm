@@ -74,7 +74,7 @@ bool Mesh3DS::createVertexBuffer() {
 	int vbSize = _numFaces * sizeof(Mesh3DSVertex) * 3;
 	_vb = DXBuffer(vbSize);
 	if (_vb.ptr() == nullptr) {
-		_gameRef->LOG(0, "Error creating vertex buffer.");
+		_game->LOG(0, "Error creating vertex buffer.");
 		return false;
 	} else
 		return true;
@@ -91,7 +91,7 @@ bool Mesh3DS::fillVertexBuffer(uint32 color) {
 	int vbSize = _numFaces * sizeof(Mesh3DSVertex) * 3;
 	_vb = DXBuffer(vbSize);
 	if (_vb.ptr() == nullptr) {
-		_gameRef->LOG(0, "Error creating vertex buffer.");
+		_game->LOG(0, "Error creating vertex buffer.");
 		return false;
 	}
 

@@ -92,7 +92,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTION) {
-			_gameRef->LOG(0, "'ACTION' keyword expected.");
+			_game->LOG(0, "'ACTION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -114,7 +114,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_SPRITESET: {
 			delete _spriteSet;
-			_spriteSet = new AdSpriteSet(_gameRef);
+			_spriteSet = new AdSpriteSet(_game);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
 				SAFE_DELETE(_spriteSet);
 				cmd = PARSERR_GENERIC;
@@ -135,7 +135,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_COMMENT:
-			if (_gameRef->_editorMode) {
+			if (_game->_editorMode) {
 				BaseUtils::setString(&_comment, params);
 			}
 			break;
@@ -149,12 +149,12 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ACTION definition");
+		_game->LOG(0, "Syntax error in ACTION definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ACTION definition");
+		_game->LOG(0, "Error loading ACTION definition");
 		return STATUS_FAILED;
 	}
 
@@ -166,7 +166,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 
 	if (_preCache && _spriteFilename) {
 		SAFE_DELETE(_sprite);
-		_sprite = new BaseSprite(_gameRef);
+		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			return STATUS_FAILED;
 		}
@@ -174,7 +174,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 
 	if (_preCache && _spriteSetFilename) {
 		SAFE_DELETE(_spriteSet);
-		_spriteSet = new AdSpriteSet(_gameRef);
+		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			return STATUS_FAILED;
 		}
@@ -238,7 +238,7 @@ bool AdTalkNode::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
-		_sprite = new BaseSprite(_gameRef);
+		_sprite = new BaseSprite(_game);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			SAFE_DELETE(_sprite);
 			return STATUS_FAILED;
@@ -246,7 +246,7 @@ bool AdTalkNode::loadSprite() {
 			return STATUS_OK;
 		}
 	} else if (_spriteSetFilename && !_spriteSet) {
-		_spriteSet = new AdSpriteSet(_gameRef);
+		_spriteSet = new AdSpriteSet(_game);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			SAFE_DELETE(_spriteSet);
 			return STATUS_FAILED;

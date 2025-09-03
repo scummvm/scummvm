@@ -113,7 +113,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 	// check for materials
 	if ((bufMaterials.ptr() == nullptr) || (numMaterials == 0)) {
 		// no materials are found, create default material
-		Material *mat = new Material(_gameRef);
+		Material *mat = new Material(_game);
 		mat->_material._diffuse.color._r = 0.5f;
 		mat->_material._diffuse.color._g = 0.5f;
 		mat->_material._diffuse.color._b = 0.5f;
@@ -125,7 +125,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		// load the materials
 		DXMaterial *fileMats = (DXMaterial *)bufMaterials.ptr();
 		for (uint i = 0; i < numMaterials; i++) {
-			Material *mat = new Material(_gameRef);
+			Material *mat = new Material(_game);
 			mat->_material = fileMats[i];
 			mat->_material._ambient = mat->_material._diffuse;
 

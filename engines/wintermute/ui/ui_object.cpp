@@ -72,7 +72,7 @@ UIObject::UIObject(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 UIObject::~UIObject() {
-	if (!_gameRef->_loadInProgress) {
+	if (!_game->_loadInProgress) {
 		SystemClassRegistry::getInstance()->enumInstances(BaseGame::invalidateValues, "ScValue", (void *)this);
 	}
 
@@ -80,7 +80,7 @@ UIObject::~UIObject() {
 		delete _back;
 	}
 	if (_font && !_sharedFonts) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 
 	if (_image && !_sharedImages) {
@@ -162,13 +162,13 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (_font) {
-			_gameRef->_fontStorage->removeFont(_font);
+			_game->_fontStorage->removeFont(_font);
 		}
 		if (val->isNULL()) {
 			_font = nullptr;
 			stack->pushBool(true);
 		} else {
-			_font = _gameRef->_fontStorage->addFont(val->getString());
+			_font = _game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_font != nullptr);
 		}
 		return STATUS_OK;
@@ -189,7 +189,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		_image = new BaseSprite(_gameRef);
+		_image = new BaseSprite(_game);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
 			SAFE_DELETE(_image);
 			stack->pushBool(false);
@@ -529,14 +529,14 @@ const char *UIObject::scToString() {
 
 //////////////////////////////////////////////////////////////////////////
 bool UIObject::isFocused() {
-	if (!_gameRef->_focusedWindow) {
+	if (!_game->_focusedWindow) {
 		return false;
 	}
-	if (_gameRef->_focusedWindow == this) {
+	if (_game->_focusedWindow == this) {
 		return true;
 	}
 
-	UIObject *obj = _gameRef->_focusedWindow;
+	UIObject *obj = _game->_focusedWindow;
 	while (obj) {
 		if (obj == this) {
 			return true;
@@ -578,7 +578,7 @@ bool UIObject::focus() {
 				}
 			} else {
 				if (obj->_type == UI_WINDOW) {
-					_gameRef->focusWindow((UIWindow *)obj);
+					_game->focusWindow((UIWindow *)obj);
 				}
 			}
 

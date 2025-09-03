@@ -234,7 +234,7 @@ void BaseRenderOSystem::fadeToColor(byte r, byte g, byte b, byte a) {
 	Common::Rect fillRect;
 
 	Common::Rect32 rc;
-	_gameRef->getCurrentViewportRect(&rc);
+	_game->getCurrentViewportRect(&rc);
 	fillRect.left = (int16)rc.left;
 	fillRect.top = (int16)rc.top;
 	fillRect.setWidth((int16)(rc.right - rc.left));
@@ -519,7 +519,7 @@ void BaseRenderOSystem::pointToScreen(Common::Point32 *point) {
 }
 
 BaseSurface *BaseRenderOSystem::createSurface() {
-	return new BaseSurfaceOSystem(_gameRef);
+	return new BaseSurfaceOSystem(_game);
 }
 
 void BaseRenderOSystem::endSaveLoad() {

@@ -103,7 +103,7 @@ DXVector3 *AdPath3D::getCurrent() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdPath3D::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferPtr(TMEMBER(_gameRef));
+	persistMgr->transferPtr(TMEMBER(_game));
 
 	persistMgr->transferSint32(TMEMBER(_currIndex));
 	persistMgr->transferBool(TMEMBER(_ready));

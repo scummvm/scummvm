@@ -43,7 +43,7 @@ BaseScriptable *makeSXArray(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	_length = 0;
-	_values = new ScValue(_gameRef);
+	_values = new ScValue(_game);
 
 	int numParams = stack->pop()->getInt(0);
 
@@ -62,7 +62,7 @@ SXArray::SXArray(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 //////////////////////////////////////////////////////////////////////////
 SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 	_length = 0;
-	_values = new ScValue(_gameRef);
+	_values = new ScValue(_game);
 }
 
 

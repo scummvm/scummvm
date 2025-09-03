@@ -73,11 +73,11 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		SAFE_DELETE(_animSprite);
-		_animSprite = new BaseSprite(_gameRef, this);
+		_animSprite = new BaseSprite(_game, this);
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_game->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
@@ -147,7 +147,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
-			BaseSprite *spr = new BaseSprite(_gameRef, this);
+			BaseSprite *spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(filename))) {
 				script->runtimeError("SetSprite method failed for file '%s'", filename);
 				stack->pushBool(false);
@@ -199,7 +199,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		const char *filename = stack->pop()->getString();
 		bool ex = stack->pop()->getBool();
 
-		BaseSprite *spr = new BaseSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_game, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("AddTalkSprite method failed for file '%s'", filename);
@@ -281,7 +281,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		BaseScriptable *arr;
 		stack->pushInt(0);
-		arr = makeSXArray(_gameRef, stack);
+		arr = makeSXArray(_game, stack);
 		for (int32 i = 0; i < sprites.getSize(); i++) {
 			stack->pushString(sprites[i]->getFilename());
 			((SXArray *)arr)->push(stack->pop());
@@ -302,7 +302,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		bool setCurrent = false;
 		bool setTemp2 = false;
 
-		BaseSprite *spr = new BaseSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_game, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("SetTalkSprite method failed for file '%s'", filename);

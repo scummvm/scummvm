@@ -56,7 +56,7 @@ Material::Material(BaseGame *inGame) : BaseNamedObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 Material::~Material() {
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_sprite = nullptr; // ref only
@@ -88,10 +88,10 @@ bool Material::setTexture(const Common::String &filename, bool adoptName) {
 	_textureFilename = filename;
 
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
-	_surface = _gameRef->_surfaceStorage->addSurface(_textureFilename);
+	_surface = _game->_surfaceStorage->addSurface(_textureFilename);
 	_ownedSurface = true;
 	_sprite = nullptr;
 
@@ -106,7 +106,7 @@ bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 
 	_textureFilename = sprite->getFilename();
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_surface = nullptr;
@@ -126,7 +126,7 @@ bool Material::setTheora(VideoTheoraPlayer *theora, bool adoptName) {
 	_textureFilename = theora->_filename;
 
 	if (_surface && _ownedSurface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 
 	_surface = nullptr;

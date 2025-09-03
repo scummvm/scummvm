@@ -61,7 +61,7 @@ public:
 	~BaseEngine() override;
 	static void createInstance(const Common::String &targetName, const Common::String &gameId, Common::Language lang, WMETargetExecutable targetExecutable, uint32 flags);
 
-	void setGameRef(BaseGame *gameRef) { _gameRef = gameRef; }
+	void setGameRef(BaseGame *game) { _gameRef = game; }
 
 	Common::RandomSource *getRandomSource() { return _rnd; }
 	uint32 randInt(int from, int to);

@@ -41,7 +41,7 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 	if (noValue) {
 		_scValue = nullptr;
 	} else {
-		_scValue = new ScValue(_gameRef);
+		_scValue = new ScValue(_game);
 	}
 
 	_persistable = persistable;
@@ -76,7 +76,7 @@ bool BaseScriptable::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 	if (!_scProp) {
-		_scProp = new ScValue(_gameRef);
+		_scProp = new ScValue(_game);
 	}
 	if (_scProp) {
 		return _scProp->getProp(name.c_str()); // TODO: Change to Common::String
@@ -89,7 +89,7 @@ ScValue *BaseScriptable::scGetProperty(const Common::String &name) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::scSetProperty(const char *name, ScValue *value) {
 	if (!_scProp) {
-		_scProp = new ScValue(_gameRef);
+		_scProp = new ScValue(_game);
 	}
 	if (_scProp) {
 		return _scProp->setProp(name, value);
@@ -150,7 +150,7 @@ void BaseScriptable::scSetBool(bool val) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptable::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 	persistMgr->transferSint32(TMEMBER(_refCount));
 	persistMgr->transferPtr(TMEMBER_PTR(_scProp));
 	persistMgr->transferPtr(TMEMBER_PTR(_scValue));

@@ -294,7 +294,7 @@ bool PartEmitter::updateInternal(uint32 currentTime, uint32 timerDelta) {
 				if (firstDeadIndex >= 0) {
 					particle = _particles[firstDeadIndex];
 				} else {
-					particle = new PartParticle(_gameRef);
+					particle = new PartParticle(_game);
 					_particles.add(particle);
 				}
 				initParticle(particle, currentTime, timerDelta);
@@ -415,7 +415,7 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 		}
 	}
 	if (!force) {
-		force = new PartForce(_gameRef);
+		force = new PartForce(_game);
 		if (force) {
 			force->setName(name.c_str());
 			_forces.add(force);
@@ -1231,7 +1231,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	} else {
 		persistMgr->transferUint32(TMEMBER(numForces));
 		for (uint32 i = 0; i < numForces; i++) {
-			PartForce *force = new PartForce(_gameRef);
+			PartForce *force = new PartForce(_game);
 			force->persist(persistMgr);
 			_forces.add(force);
 		}
@@ -1247,7 +1247,7 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 	} else {
 		persistMgr->transferUint32(TMEMBER(numParticles));
 		for (uint32 i = 0; i < numParticles; i++) {
-			PartParticle *particle = new PartParticle(_gameRef);
+			PartParticle *particle = new PartParticle(_game);
 			particle->persist(persistMgr);
 			_particles.add(particle);
 		}

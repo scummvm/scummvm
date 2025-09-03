@@ -67,7 +67,7 @@ AdInventoryBox::AdInventoryBox(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdInventoryBox::~AdInventoryBox() {
-	_gameRef->unregisterObject(_window);
+	_game->unregisterObject(_window);
 	_window = nullptr;
 
 	SAFE_DELETE(_closeButton);
@@ -102,7 +102,7 @@ bool AdInventoryBox::listen(BaseScriptHolder *param1, uint32 param2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdInventoryBox::display() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
 	if (!_visible) {
 		return STATUS_OK;
@@ -120,8 +120,8 @@ bool AdInventoryBox::display() {
 
 	if (_closeButton) {
 		_closeButton->_posX = _closeButton->_posY = 0;
-		_closeButton->_width = _gameRef->_renderer->getWidth();
-		_closeButton->_height = _gameRef->_renderer->getHeight();
+		_closeButton->_width = _game->_renderer->getWidth();
+		_closeButton->_height = _game->_renderer->getHeight();
 
 		_closeButton->display();
 	}
@@ -136,7 +136,7 @@ bool AdInventoryBox::display() {
 
 	// display items
 	if (_window && _window->_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = _window->_alphaColor;
+		_game->_renderer->_forceAlphaColor = _window->_alphaColor;
 	}
 	int yyy = rect.top;
 	for (int j = 0; j < itemsY; j++) {
@@ -145,7 +145,7 @@ bool AdInventoryBox::display() {
 			int itemIndex = _scrollOffset + j * itemsX + i;
 			if (itemIndex >= 0 && itemIndex < adGame->_inventoryOwner->getInventory()->_takenItems.getSize()) {
 				AdItem *item = adGame->_inventoryOwner->getInventory()->_takenItems[itemIndex];
-				if (item != ((AdGame *)_gameRef)->_selectedItem || !_hideSelected) {
+				if (item != ((AdGame *)_game)->_selectedItem || !_hideSelected) {
 					item->update();
 					item->display(xxx, yyy);
 				}
@@ -156,7 +156,7 @@ bool AdInventoryBox::display() {
 		yyy += (_itemHeight + _spacing);
 	}
 	if (_window && _window->_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = 0;
+		_game->_renderer->_forceAlphaColor = 0;
 	}
 
 	return STATUS_OK;
@@ -167,7 +167,7 @@ bool AdInventoryBox::display() {
 bool AdInventoryBox::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdInventoryBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -176,7 +176,7 @@ bool AdInventoryBox::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
+		_game->LOG(0, "Error parsing INVENTORY_BOX file '%s'", filename);
 	}
 
 
@@ -229,7 +229,7 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 	_exclusive = false;
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_INVENTORY_BOX) {
-			_gameRef->LOG(0, "'INVENTORY_BOX' keyword expected.");
+			_game->LOG(0, "'INVENTORY_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -253,12 +253,12 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			SAFE_DELETE(_window);
-			_window = new UIWindow(_gameRef);
+			_window = new UIWindow(_game);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
 			} else {
-				_gameRef->registerObject(_window);
+				_game->registerObject(_window);
 			}
 			break;
 
@@ -303,17 +303,17 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in INVENTORY_BOX definition");
+		_game->LOG(0, "Syntax error in INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading INVENTORY_BOX definition");
+		_game->LOG(0, "Error loading INVENTORY_BOX definition");
 		return STATUS_FAILED;
 	}
 
 	if (_exclusive) {
 		SAFE_DELETE(_closeButton);
-		_closeButton = new UIButton(_gameRef);
+		_closeButton = new UIButton(_game);
 		if (_closeButton) {
 			_closeButton->setName("close");
 			_closeButton->setListener(this, _closeButton, 0);

@@ -101,7 +101,7 @@ void BaseFontTT::initLoop() {
 int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	WideString textStr;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
 		textStr = StringUtil::ansiToWide((const char *)text, _charset);
@@ -122,7 +122,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 int BaseFontTT::getTextHeight(const byte *text, int width) {
 	WideString textStr;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
 		textStr = StringUtil::ansiToWide((const char *)text, _charset);
@@ -147,7 +147,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	// TODO: Why do we still insist on Widestrings everywhere?
 	// HACK: J.U.L.I.A. uses CP1252, we need to fix that,
 	// And we still don't have any UTF8-support.
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		textStr = StringUtil::utf8ToWide((const char *)text);
 	} else {
 		textStr = StringUtil::ansiToWide((const char *)text, _charset);
@@ -158,7 +158,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
-	BaseRenderer *renderer = _gameRef->_renderer;
+	BaseRenderer *renderer = _game->_renderer;
 
 	// find cached surface, if exists
 	uint32 minUseTime = INT_MAX_VALUE;
@@ -258,13 +258,13 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 	//debugC(kWintermuteDebugFont, "%s %d %d %d %d", text.c_str(), RGBCOLGetR(_layers[0]->_color), RGBCOLGetG(_layers[0]->_color), RGBCOLGetB(_layers[0]->_color), RGBCOLGetA(_layers[0]->_color));
 //	void drawAlphaString(Surface *dst, const Common::String &str, int x, int y, int w, uint32 color, TextAlign align = kTextAlignLeft, int deltax = 0, bool useEllipsis = true) const;
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _gameRef->_renderer->getPixelFormat());
+	surface->create((uint16)width, (uint16)(_lineHeight * lines.size()), _game->_renderer->getPixelFormat());
 	uint32 useColor = 0xffffffff;
 	Common::Array<WideString>::iterator it;
 	int heightOffset = 0;
 	for (it = lines.begin(); it != lines.end(); ++it) {
 		WideString str;
-		if (_gameRef->_textRTL) {
+		if (_game->_textRTL) {
 			str = Common::convertBiDiU32String(*it, Common::BIDI_PAR_RTL);
 		} else {
 			str = Common::convertBiDiU32String(*it, Common::BIDI_PAR_LTR);
@@ -273,7 +273,7 @@ BaseSurface *BaseFontTT::renderTextToTexture(const WideString &text, int width, 
 		heightOffset += (int)_lineHeight;
 	}
 
-	BaseSurface *retSurface = _gameRef->_renderer->createSurface();
+	BaseSurface *retSurface = _game->_renderer->createSurface();
 	retSurface->create(surface->w, surface->h);
 	retSurface->putSurface(*surface, true);
 	surface->free();
@@ -293,7 +293,7 @@ int BaseFontTT::getLetterHeight() {
 bool BaseFontTT::loadFile(const Common::String &filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
+		_game->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
 
@@ -302,7 +302,7 @@ bool BaseFontTT::loadFile(const Common::String &filename) {
 	setFilename(filename.c_str());
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) {
-		_gameRef->LOG(0, "Error parsing TTFONT file '%s'", filename.c_str());
+		_game->LOG(0, "Error parsing TTFONT file '%s'", filename.c_str());
 	}
 
 	delete[] buffer;
@@ -349,7 +349,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 	BaseParser parser;
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_TTFONT) {
-		_gameRef->LOG(0, "'TTFONT' keyword expected.");
+		_game->LOG(0, "'TTFONT' keyword expected.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
@@ -421,7 +421,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in TTFONT definition");
+		_game->LOG(0, "Syntax error in TTFONT definition");
 		return STATUS_FAILED;
 	}
 

@@ -61,14 +61,14 @@ AdSpriteSet::~AdSpriteSet() {
 bool AdSpriteSet::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdSpriteSet::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdSpriteSet::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
 	bool ret;
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing SPRITESET file '%s'", filename);
+		_game->LOG(0, "Error parsing SPRITESET file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -114,7 +114,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITESET) {
-			_gameRef->LOG(0, "'SPRITESET' keyword expected.");
+			_game->LOG(0, "'SPRITESET' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -135,7 +135,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_LEFT:
 			SAFE_DELETE(_sprites[DI_LEFT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -145,7 +145,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_RIGHT:
 			SAFE_DELETE(_sprites[DI_RIGHT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -155,7 +155,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP:
 			SAFE_DELETE(_sprites[DI_UP]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -165,7 +165,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN:
 			SAFE_DELETE(_sprites[DI_DOWN]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -175,7 +175,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP_LEFT:
 			SAFE_DELETE(_sprites[DI_UPLEFT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -185,7 +185,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_UP_RIGHT:
 			SAFE_DELETE(_sprites[DI_UPRIGHT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -195,7 +195,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN_LEFT:
 			SAFE_DELETE(_sprites[DI_DOWNLEFT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -205,7 +205,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 		case TOKEN_DOWN_RIGHT:
 			SAFE_DELETE(_sprites[DI_DOWNRIGHT]);
-			spr = new BaseSprite(_gameRef,  _owner);
+			spr = new BaseSprite(_game,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -222,12 +222,12 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SPRITESET definition");
+		_game->LOG(0, "Syntax error in SPRITESET definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading SPRITESET definition");
+		_game->LOG(0, "Error loading SPRITESET definition");
 		if (spr) {
 			delete spr;
 		}

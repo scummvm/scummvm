@@ -103,7 +103,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		stack->pop()->getString();
 
 		stack->pushInt(0);
-		BaseScriptable *array = makeSXArray(_gameRef, stack);
+		BaseScriptable *array = makeSXArray(_game, stack);
 
 		if (strcmp(dirName, "saves") == 0 && strcmp(name, "GetFiles") == 0) {
 			// used in "Tale of The Lost Bride and A Hidden Treasure"
@@ -149,7 +149,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		warning("Directory.GetDrives is not implemented! Returning empty array...");
 
 		stack->pushInt(0);
- 		stack->pushNative(makeSXArray(_gameRef, stack), false);
+ 		stack->pushNative(makeSXArray(_game, stack), false);
  		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;

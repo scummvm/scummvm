@@ -53,7 +53,7 @@ IMPLEMENT_PERSISTENT(AdActor, false)
 
 //////////////////////////////////////////////////////////////////////////
 AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
-	_path = new AdPath(_gameRef);
+	_path = new AdPath(_game);
 
 	_type = OBJECT_ACTOR;
 	_dir = DI_LEFT;
@@ -114,7 +114,7 @@ AdActor::~AdActor() {
 bool AdActor::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdActor::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdActor::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -123,7 +123,7 @@ bool AdActor::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ACTOR file '%s'", filename);
+		_game->LOG(0, "Error parsing ACTOR file '%s'", filename);
 	}
 
 
@@ -218,13 +218,13 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTOR) {
-			_gameRef->LOG(0, "'ACTOR' keyword expected.");
+			_game->LOG(0, "'ACTOR' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 	AdSpriteSet *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
@@ -280,7 +280,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_WALK:
 			SAFE_DELETE(_walkSprite);
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -289,7 +289,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_TALK:
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -298,7 +298,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_TALK_SPECIAL:
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -308,7 +308,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_STAND:
 			SAFE_DELETE(_standSprite);
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -318,7 +318,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TURN_LEFT:
 			SAFE_DELETE(_turnLeftSprite);
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -328,7 +328,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TURN_RIGHT:
 			SAFE_DELETE(_turnRightSprite);
-			spr = new AdSpriteSet(_gameRef, this);
+			spr = new AdSpriteSet(_game, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -342,7 +342,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -380,8 +380,8 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_BLOCKED_REGION: {
 			SAFE_DELETE(_blockRegion);
 			SAFE_DELETE(_currentBlockRegion);
-			BaseRegion *rgn = new BaseRegion(_gameRef);
-			BaseRegion *crgn = new BaseRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_game);
+			BaseRegion *crgn = new BaseRegion(_game);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				SAFE_DELETE(_blockRegion);
 				SAFE_DELETE(_currentBlockRegion);
@@ -397,8 +397,8 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_WAYPOINTS: {
 			SAFE_DELETE(_wptGroup);
 			SAFE_DELETE(_currentWptGroup);
-			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
-			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
+			AdWaypointGroup *wpt = new AdWaypointGroup(_game);
+			AdWaypointGroup *cwpt = new AdWaypointGroup(_game);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				SAFE_DELETE(_wptGroup);
 				SAFE_DELETE(_currentWptGroup);
@@ -428,7 +428,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_ANIMATION: {
-			AdSpriteSet *anim = new AdSpriteSet(_gameRef, this);
+			AdSpriteSet *anim = new AdSpriteSet(_game, this);
 			if (!anim || DID_FAIL(anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -442,14 +442,14 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ACTOR definition");
+		_game->LOG(0, "Syntax error in ACTOR definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
 		if (spr) {
 			delete spr;
 		}
-		_gameRef->LOG(0, "Error loading ACTOR definition");
+		_game->LOG(0, "Error loading ACTOR definition");
 		return STATUS_FAILED;
 	}
 
@@ -504,7 +504,7 @@ void AdActor::goTo(int x, int y, TDirection afterWalkDir) {
 	_targetPoint->x = x;
 	_targetPoint->y = y;
 
-	((AdGame *)_gameRef)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
+	((AdGame *)_game)->_scene->correctTargetPoint(_posX, _posY, &_targetPoint->x, &_targetPoint->y, true, this);
 
 	_state = STATE_SEARCHING_PATH;
 
@@ -521,7 +521,7 @@ bool AdActor::display() {
 	if (_alphaColor != 0) {
 		alpha = _alphaColor;
 	} else {
-		alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
+		alpha = _shadowable ? ((AdGame *)_game)->_scene->getAlphaAt(_posX, _posY, true) : 0xFFFFFFFF;
 	}
 
 	float scaleX, scaleY;
@@ -533,7 +533,7 @@ bool AdActor::display() {
 		if (_rotateValid) {
 			rotate = _rotate;
 		} else {
-			rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+			rotate = ((AdGame *)_game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 		}
 	} else {
 		rotate = 0.0f;
@@ -545,7 +545,7 @@ bool AdActor::display() {
 
 	if (_currentSprite && _active) {
 		bool reg = _registrable;
-		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) {
+		if (_ignoreItems && ((AdGame *)_game)->_selectedItem) {
 			reg = false;
 		}
 
@@ -727,7 +727,7 @@ bool AdActor::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_SEARCHING_PATH:
 		// keep asking scene for the path
-		if (((AdGame *)_gameRef)->_scene->getPath(BasePoint(_posX, _posY), *_targetPoint, _path, this)) {
+		if (((AdGame *)_game)->_scene->getPath(BasePoint(_posX, _posY), *_targetPoint, _path, this)) {
 			_state = STATE_WAITING_PATH;
 		}
 		break;
@@ -755,7 +755,7 @@ bool AdActor::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _game->getTimer()->getTime() - _sentence->_startTime);
 		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
@@ -767,12 +767,12 @@ bool AdActor::update() {
 				if (_tempSprite2) {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
-					((AdGame *)_gameRef)->addSentence(_sentence);
+					((AdGame *)_game)->addSentence(_sentence);
 				}
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((AdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_game)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -823,7 +823,7 @@ bool AdActor::update() {
 	}
 
 	if (_currentSprite && !already_moved) {
-		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -831,7 +831,7 @@ bool AdActor::update() {
 		}
 	}
 
-	//_gameRef->QuickMessageForm("%s", _currentSprite->_filename);
+	//_game->QuickMessageForm("%s", _currentSprite->_filename);
 
 	updateBlockRegion();
 	_ready = (_state == STATE_READY);
@@ -883,7 +883,7 @@ void AdActor::getNextStep() {
 		return;
 	}
 
-	_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+	_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100, _zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100);
 	if (!_currentSprite->_changed) {
 		return;
 	}
@@ -904,7 +904,7 @@ void AdActor::getNextStep() {
 		maxStepX--;
 	}
 
-	if (((AdGame *)_gameRef)->_scene->isBlockedAt((int)_pFX, (int)_pFY, true, this)) {
+	if (((AdGame *)_game)->_scene->isBlockedAt((int)_pFX, (int)_pFY, true, this)) {
 		if (_pFCount == 0) {
 			_state = _nextState;
 			_nextState = STATE_READY;
@@ -1016,7 +1016,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		ScValue *val = stack->pop();
 
 		// turn to object?
-		if (val->isNative() && _gameRef->validObject((BaseObject *)val->getNative())) {
+		if (val->isNative() && _game->validObject((BaseObject *)val->getNative())) {
 			BaseObject *obj = (BaseObject *)val->getNative();
 			int angle = (int)(atan2((double)(obj->_posY - _posY), (double)(obj->_posX - _posX)) * (180 / 3.14));
 			dir = (int)angleToDirection(angle);
@@ -1299,11 +1299,11 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
 		SAFE_DELETE(_animSprite);
-		_animSprite = new BaseSprite(_gameRef, this);
+		_animSprite = new BaseSprite(_game, this);
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
-				_gameRef->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
+				_game->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
 				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
@@ -1488,7 +1488,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 
 	char *fileBuffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(animsFilename);
 	if (fileBuffer == nullptr) {
-		_gameRef->LOG(0, "AdActor::MergeAnims failed for file '%s'", animsFilename);
+		_game->LOG(0, "AdActor::MergeAnims failed for file '%s'", animsFilename);
 		return STATUS_FAILED;
 	}
 
@@ -1502,7 +1502,7 @@ bool AdActor::mergeAnims(const char *animsFilename) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ANIMATION: {
-			AdSpriteSet *anim = new AdSpriteSet(_gameRef, this);
+			AdSpriteSet *anim = new AdSpriteSet(_game, this);
 			if (!anim || DID_FAIL(anim->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 				ret = STATUS_FAILED;

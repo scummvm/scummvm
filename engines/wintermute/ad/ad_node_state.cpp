@@ -87,7 +87,7 @@ void AdNodeState::setCursor(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdNodeState::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferBool(TMEMBER(_active));
 	persistMgr->transferCharPtr(TMEMBER(_name));
@@ -113,7 +113,7 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 	size_t captionSize = strlen(caption) + 1;
 	_caption[caseVal - 1] = new char[captionSize];
 	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);
-	_gameRef->expandStringByStringTable(&_caption[caseVal - 1]);
+	_game->expandStringByStringTable(&_caption[caseVal - 1]);
 }
 
 
@@ -137,8 +137,8 @@ bool AdNodeState::transferEntity(AdEntity *entity, bool includingSprites, bool s
 	}
 
 	// HACK!
-	if (this->_gameRef != entity->_gameRef) {
-		this->_gameRef = entity->_gameRef;
+	if (this->_game != entity->_game) {
+		this->_game = entity->_game;
 	}
 
 	if (saving) {

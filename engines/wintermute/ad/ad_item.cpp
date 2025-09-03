@@ -83,7 +83,7 @@ AdItem::~AdItem() {
 bool AdItem::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdItem::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdItem::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -92,7 +92,7 @@ bool AdItem::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ITEM file '%s'", filename);
+		_game->LOG(0, "Error parsing ITEM file '%s'", filename);
 	}
 
 
@@ -167,7 +167,7 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ITEM) {
-			_gameRef->LOG(0, "'ITEM' keyword expected.");
+			_game->LOG(0, "'ITEM' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -197,8 +197,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
 			SAFE_DELETE(_sprite);
-			_sprite = new BaseSprite(_gameRef, this);
-			if (!_sprite || DID_FAIL(_sprite->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			_sprite = new BaseSprite(_game, this);
+			if (!_sprite || DID_FAIL(_sprite->loadFile(params, ((AdGame *)_game)->_texItemLifeTime))) {
 				SAFE_DELETE(_sprite);
 				cmd = PARSERR_GENERIC;
 			}
@@ -207,8 +207,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_IMAGE_HOVER:
 		case TOKEN_SPRITE_HOVER:
 			SAFE_DELETE(_spriteHover);
-			_spriteHover = new BaseSprite(_gameRef, this);
-			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			_spriteHover = new BaseSprite(_game, this);
+			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile(params, ((AdGame *)_game)->_texItemLifeTime))) {
 				SAFE_DELETE(_spriteHover);
 				cmd = PARSERR_GENERIC;
 			}
@@ -245,8 +245,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_TALK: {
-			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+			BaseSprite *spr = new BaseSprite(_game, this);
+			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_game)->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSprites.add(spr);
@@ -255,8 +255,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			BaseSprite *spr = new BaseSprite(_gameRef, this);
-			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_gameRef)->_texTalkLifeTime))) {
+			BaseSprite *spr = new BaseSprite(_game, this);
+			if (!spr || DID_FAIL(spr->loadFile(params, ((AdGame *)_game)->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_talkSpritesEx.add(spr);
@@ -266,8 +266,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursorNormal);
-			_cursorNormal = new BaseSprite(_gameRef);
-			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			_cursorNormal = new BaseSprite(_game);
+			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile(params, ((AdGame *)_game)->_texItemLifeTime))) {
 				SAFE_DELETE(_cursorNormal);
 				cmd = PARSERR_GENERIC;
 			}
@@ -275,8 +275,8 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR_HOVER:
 			SAFE_DELETE(_cursorHover);
-			_cursorHover = new BaseSprite(_gameRef);
-			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
+			_cursorHover = new BaseSprite(_game);
+			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile(params, ((AdGame *)_game)->_texItemLifeTime))) {
 				SAFE_DELETE(_cursorHover);
 				cmd = PARSERR_GENERIC;
 			}
@@ -311,11 +311,11 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ITEM definition");
+		_game->LOG(0, "Syntax error in ITEM definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ITEM definition");
+		_game->LOG(0, "Error loading ITEM definition");
 		return STATUS_FAILED;
 	}
 
@@ -360,7 +360,7 @@ bool AdItem::update() {
 		//////////////////////////////////////////////////////////////////////////
 	case STATE_READY:
 		if (!_animSprite) {
-			if (_gameRef->_activeObject == this && _spriteHover) {
+			if (_game->_activeObject == this && _spriteHover) {
 				_currentSprite = _spriteHover;
 			} else {
 				_currentSprite = _sprite;
@@ -375,7 +375,7 @@ bool AdItem::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _game->getTimer()->getTime() - _sentence->_startTime);
 		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
@@ -387,11 +387,11 @@ bool AdItem::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((AdGame *)_gameRef)->addSentence(_sentence);
+				((AdGame *)_game)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((AdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_game)->addSentence(_sentence);
 		}
 	}
 	default:
@@ -432,7 +432,7 @@ bool AdItem::display(int x, int y) {
 		}
 		amountX += _amountOffsetX;
 
-		BaseFont *font = _font ? _font : _gameRef->_systemFont;
+		BaseFont *font = _font ? _font : _game->_systemFont;
 		if (font) {
 			if (_amountString) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
@@ -466,7 +466,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		SAFE_DELETE(_spriteHover);
-		BaseSprite *spr = new BaseSprite(_gameRef, this);
+		BaseSprite *spr = new BaseSprite(_game, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverSprite failed for file '%s'", filename);
@@ -516,7 +516,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		SAFE_DELETE(_cursorNormal);
-		BaseSprite *spr = new BaseSprite(_gameRef);
+		BaseSprite *spr = new BaseSprite(_game);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetNormalCursor failed for file '%s'", filename);
@@ -581,7 +581,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		const char *filename = stack->pop()->getString();
 
 		SAFE_DELETE(_cursorHover);
-		BaseSprite *spr = new BaseSprite(_gameRef);
+		BaseSprite *spr = new BaseSprite(_game);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
 			script->runtimeError("Item.SetHoverCursor failed for file '%s'", filename);

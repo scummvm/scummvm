@@ -80,7 +80,7 @@ AdNodeState *AdSceneState::getNodeState(const char *name, bool saving) {
 	}
 
 	if (saving) {
-		AdNodeState *ret = new AdNodeState(_gameRef);
+		AdNodeState *ret = new AdNodeState(_game);
 		ret->setName(name);
 		_nodeStates.add(ret);
 

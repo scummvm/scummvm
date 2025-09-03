@@ -97,7 +97,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 	// Load a file, but avoid having the File-manager handle the disposal of it.
 	Common::SeekableReadStream *file = BaseFileManager::getEngineInstance()->openFile(filename, true, false);
 	if (!file) {
-		_gameRef->LOG(0, "Error opening sound file '%s'", filename.c_str());
+		_game->LOG(0, "Error opening sound file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
 	Common::String strFilename(filename);
@@ -224,7 +224,7 @@ void BaseSoundBuffer::updateVolume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSoundBuffer::setVolume(int volume) {
-	_volume = volume * _gameRef->_soundMgr->getMasterVolume() / 255;
+	_volume = volume * _game->_soundMgr->getMasterVolume() / 255;
 	if (_stream && _handle) {
 		byte vol = (byte)(_volume);
 		g_system->getMixer()->setChannelVolume(*_handle, vol);

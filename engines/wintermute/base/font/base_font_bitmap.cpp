@@ -84,7 +84,7 @@ int BaseFontBitmap::getTextHeight(const byte *text, int width) {
 int BaseFontBitmap::getTextWidth(const byte *text, int maxLength) {
 	AnsiString str;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
@@ -117,7 +117,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 
 	AnsiString str;
 
-	if (_gameRef->_textEncoding == TEXT_UTF8) {
+	if (_game->_textEncoding == TEXT_UTF8) {
 		WideString wstr = StringUtil::utf8ToWide(Utf8String((const char *)text));
 		str = StringUtil::wideToAnsi(wstr);
 	} else {
@@ -146,13 +146,13 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 #endif
 
 	if (draw) {
-		_gameRef->_renderer->startSpriteBatch();
+		_game->_renderer->startSpriteBatch();
 	}
 
 	while (!done) {
 		if (maxHeight > 0 && (numLines + 1)*_tileHeight > maxHeight) {
 			if (draw) {
-				_gameRef->_renderer->endSpriteBatch();
+				_game->_renderer->endSpriteBatch();
 			}
 			return numLines * _tileHeight;
 		}
@@ -233,7 +233,7 @@ int BaseFontBitmap::textHeightDraw(const byte *text, int x, int y, int width, TT
 	}
 
 	if (draw) {
-		_gameRef->_renderer->endSpriteBatch();
+		_game->_renderer->endSpriteBatch();
 	}
 
 	return numLines * _tileHeight;
@@ -281,7 +281,7 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 bool BaseFontBitmap::loadFile(const Common::String &filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
+		_game->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
 		return STATUS_FAILED;
 	}
 
@@ -290,7 +290,7 @@ bool BaseFontBitmap::loadFile(const Common::String &filename) {
 	setFilename(filename.c_str());
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) {
-		_gameRef->LOG(0, "Error parsing FONT file '%s'", filename.c_str());
+		_game->LOG(0, "Error parsing FONT file '%s'", filename.c_str());
 	}
 
 	delete[] buffer;
@@ -349,7 +349,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	BaseParser parser;
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_FONT) {
-		_gameRef->LOG(0, "'FONT' keyword expected.");
+		_game->LOG(0, "'FONT' keyword expected.");
 		return STATUS_FAILED;
 	}
 	buffer = params;
@@ -451,20 +451,20 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in FONT definition");
+		_game->LOG(0, "Syntax error in FONT definition");
 		return STATUS_FAILED;
 	}
 
 	if (spriteFile != nullptr) {
 		SAFE_DELETE(_sprite);
-		_sprite = new BaseSprite(_gameRef, this);
+		_sprite = new BaseSprite(_game, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
 			SAFE_DELETE(_sprite);
 		}
 	}
 
 	if (surfaceFile != nullptr && !_sprite) {
-		_subframe = new BaseSubFrame(_gameRef);
+		_subframe = new BaseSubFrame(_game);
 		if (customTrans) {
 			_subframe->setSurface(surfaceFile, false, r, g, b);
 		} else {
@@ -479,7 +479,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 
 	if (((_subframe == nullptr || _subframe->_surface == nullptr) && _sprite == nullptr) || _numColumns == 0 || _tileWidth == 0 || _tileHeight == 0) {
-		_gameRef->LOG(0, "Incomplete font definition");
+		_game->LOG(0, "Incomplete font definition");
 		return STATUS_FAILED;
 	}
 
@@ -612,10 +612,10 @@ bool BaseFontBitmap::getWidths() {
 	}
 	surf->endPixelOp();
 	/*
-	_gameRef->LOG(0, "----- %s ------", _filename);
+	_game->LOG(0, "----- %s ------", _filename);
 	for(int j=0; j<16; j++)
 	{
-	_gameRef->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
+		_game->LOG(0, "%02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d %02d", _widths[j*16+0], _widths[j*16+1], _widths[j*16+2], _widths[j*16+3], _widths[j*16+4], _widths[j*16+5], _widths[j*16+6], _widths[j*16+7], _widths[j*16+8], _widths[j*16+9], _widths[j*16+10], _widths[j*16+11], _widths[j*16+12], _widths[j*16+13], _widths[j*16+14], _widths[j*16+15]);
 	}
 	*/
 	return STATUS_OK;

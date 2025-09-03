@@ -62,7 +62,7 @@ public:
 
 private:
 	// Set by initialize on game-startup, the object referred to is also deleted by deinit in WintermuteEngine
-	static BaseGame *_gameRef;
+	static BaseGame *_game;
 	static WintermuteEngine *_engineRef;
 };
 

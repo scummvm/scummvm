@@ -74,7 +74,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 	int nuColumns = (width - (_middleLeft.right - _middleLeft.left) - (_middleRight.right - _middleRight.left)) / tileWidth;
 	int nuRows = (height - (_upMiddle.bottom - _upMiddle.top) - (_downMiddle.bottom - _downMiddle.top)) / tileHeight;
 
-	_gameRef->_renderer->startSpriteBatch();
+	_game->_renderer->startSpriteBatch();
 
 	// top left/right
 	_image->_surface->displayTrans(x,                                                       y, _upLeft);
@@ -105,7 +105,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 		_image->_surface->displayTiled(xxx, yyy, _middleMiddle, nuColumns, nuRows);
 	}
 
-	_gameRef->_renderer->endSpriteBatch();
+	_game->_renderer->endSpriteBatch();
 
 	return STATUS_OK;
 }
@@ -115,7 +115,7 @@ bool UITiledImage::display(int x, int y, int width, int height) {
 bool UITiledImage::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UITiledImage::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -124,7 +124,7 @@ bool UITiledImage::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
+		_game->LOG(0, "Error parsing TILED_IMAGE file '%s'", filename);
 	}
 
 
@@ -180,7 +180,7 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_TILED_IMAGE) {
-			_gameRef->LOG(0, "'TILED_IMAGE' keyword expected.");
+			_game->LOG(0, "'TILED_IMAGE' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -196,7 +196,7 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			SAFE_DELETE(_image);
-			_image = new BaseSubFrame(_gameRef);
+			_image = new BaseSubFrame(_game);
 			if (!_image || DID_FAIL(_image->setSurface(params))) {
 				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
@@ -258,11 +258,11 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in TILED_IMAGE definition");
+		_game->LOG(0, "Syntax error in TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading TILED_IMAGE definition");
+		_game->LOG(0, "Error loading TILED_IMAGE definition");
 		return STATUS_FAILED;
 	}
 

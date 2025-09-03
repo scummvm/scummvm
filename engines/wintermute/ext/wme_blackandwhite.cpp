@@ -83,7 +83,7 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 		stack->correctParams(0);
 
 		_postFilterMode = kPostFilterSepia;
-		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
+		_game->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -96,7 +96,7 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 		stack->correctParams(0);
 
 		_postFilterMode = kPostFilterBlackAndWhite;
-		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
+		_game->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -109,7 +109,7 @@ bool SXBlackAndWhite::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 		stack->correctParams(0);
 
 		_postFilterMode = kPostFilterOff;
-		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
+		_game->_renderer3D->setPostfilter(_postFilterMode);
 
 		stack->pushBool(true);
 		return STATUS_OK;
@@ -241,7 +241,7 @@ bool SXBlackAndWhite::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferSint32(TMEMBER_INT(_postFilterMode));
 	if (!persistMgr->getIsSaving()) {
-		_gameRef->_renderer3D->setPostfilter(_postFilterMode);
+		_game->_renderer3D->setPostfilter(_postFilterMode);
 	}
 
 	return STATUS_OK;

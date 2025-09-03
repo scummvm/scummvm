@@ -53,7 +53,7 @@ bool BaseStringTable::addString(const char *key, const char *val, bool reportDup
 	}
 
 	if (scumm_stricmp(key, "@right-to-left") == 0) {
-		_gameRef->_textRTL = true;
+		_game->_textRTL = true;
 		return STATUS_OK;
 	}
 
@@ -240,13 +240,13 @@ bool BaseStringTable::loadFile(const char *filename, bool clearOld) {
 
 	if (size > 3 && buffer[0] == '\xEF' && buffer[1] == '\xBB' && buffer[2] == '\xBF') {
 		pos += 3;
-		if (_gameRef->_textEncoding != TEXT_UTF8) {
-			_gameRef->_textEncoding = TEXT_UTF8;
-			//_gameRef->_textEncoding = TEXT_ANSI;
+		if (_game->_textEncoding != TEXT_UTF8) {
+			_game->_textEncoding = TEXT_UTF8;
+			//_game->_textEncoding = TEXT_ANSI;
 			BaseEngine::LOG(0, "  UTF8 file detected, switching to UTF8 text encoding");
 		}
 	} else {
-		_gameRef->_textEncoding = TEXT_ANSI;
+		_game->_textEncoding = TEXT_ANSI;
 	}
 
 	uint32 lineLength = 0;

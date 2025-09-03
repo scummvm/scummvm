@@ -61,7 +61,7 @@ BaseSurfaceOSystem::BaseSurfaceOSystem(BaseGame *inGame) : BaseSurface(inGame) {
 BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 	if (_surface) {
 		if (_valid)
-			_gameRef->addMem(-_width * _height * 4);
+			_game->addMem(-_width * _height * 4);
 		_surface->free();
 		delete _surface;
 		_surface = nullptr;
@@ -73,7 +73,7 @@ BaseSurfaceOSystem::~BaseSurfaceOSystem() {
 		_alphaMask = nullptr;
 	}
 
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 }
 
@@ -113,7 +113,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 
 	if (_surface) {
 		if (_valid)
-			_gameRef->addMem(-_width * _height * 4);
+			_game->addMem(-_width * _height * 4);
 		_surface->free();
 		delete _surface;
 		_surface = nullptr;
@@ -136,7 +136,7 @@ bool BaseSurfaceOSystem::finishLoad() {
 		_surface->copyFrom(*image->getSurface());
 	}
 
-	_gameRef->addMem(_width * _height * 4);
+	_game->addMem(_width * _height * 4);
 
 	if (_filename.matchString("savegame:*g", true)) {
 		uint8 r, g, b, a;
@@ -211,14 +211,14 @@ bool BaseSurfaceOSystem::finishLoad() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::create(int width, int height) {
 	if (_valid)
-		_gameRef->addMem(-_width * _height * 4);
+		_game->addMem(-_width * _height * 4);
 	_surface->free();
 
 	_width = width;
 	_height = height;
 
 	_surface->create(_width, _height, g_system->getScreenFormat());
-	_gameRef->addMem(_width * _height * 4);
+	_game->addMem(_width * _height * 4);
 
 	_valid = true;
 
@@ -232,7 +232,7 @@ bool BaseSurfaceOSystem::invalidate() {
 	}
 
 	if (_valid) {
-		_gameRef->addMem(-_width * _height * 4);
+		_game->addMem(-_width * _height * 4);
 		_surface->free();
 		_valid = false;
 	}
@@ -273,10 +273,10 @@ bool BaseSurfaceOSystem::startPixelOp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::endPixelOp() {
-	_lastUsedTime = _gameRef->getLiveTimer()->getTime();
+	_lastUsedTime = _game->getLiveTimer()->getTime();
 	_pixelOpReady = false;
 	if (_surfaceModified) {
-		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 		renderer->invalidateTicketsFromSurface(this);
 		_surfaceModified = false;
 	}
@@ -330,9 +330,9 @@ bool BaseSurfaceOSystem::displayTiled(int x, int y, Common::Rect32 rect, int num
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Common::Rect32 *rect, Common::Rect32 *newRect, Graphics::TransformStruct transform) {
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 
-	_lastUsedTime = _gameRef->getLiveTimer()->getTime();
+	_lastUsedTime = _game->getLiveTimer()->getTime();
 
 	// TODO: Skip this check if we can reuse an existing ticket?
 	if (!_valid) {
@@ -398,7 +398,7 @@ bool BaseSurfaceOSystem::putSurface(const Graphics::Surface &surface, bool hasAl
 	} else {
 		_alphaType = _alphaMaskType;
 	}
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 	renderer->invalidateTicketsFromSurface(this);
 
 	return STATUS_OK;

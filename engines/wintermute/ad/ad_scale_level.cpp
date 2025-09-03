@@ -51,7 +51,7 @@ AdScaleLevel::~AdScaleLevel() {
 bool AdScaleLevel::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdScaleLevel::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdScaleLevel::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -60,7 +60,7 @@ bool AdScaleLevel::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
+		_game->LOG(0, "Error parsing SCALE_LEVEL file '%s'", filename);
 	}
 
 
@@ -93,7 +93,7 @@ bool AdScaleLevel::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SCALE_LEVEL) {
-			_gameRef->LOG(0, "'SCALE_LEVEL' keyword expected.");
+			_game->LOG(0, "'SCALE_LEVEL' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -127,7 +127,7 @@ bool AdScaleLevel::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in SCALE_LEVEL definition");
+		_game->LOG(0, "Syntax error in SCALE_LEVEL definition");
 		return STATUS_FAILED;
 	}
 

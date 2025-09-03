@@ -57,7 +57,7 @@ bool XMeshOpenGL::render(XModel *model) {
 
 	// For WME DX, mesh model is not visible, possible it's clipped.
 	// For OpenGL, mesh is visible, skip draw it here instead in core.
-	if (!_gameRef->_renderer3D->_camera)
+	if (!_game->_renderer3D->_camera)
 		return false;
 
 	auto fvf = _blendedMesh->getFVF();
@@ -159,7 +159,7 @@ bool XMeshOpenGL::renderFlatShadowModel(uint32 shadowColor) {
 
 	// For WME DX, mesh model is not visible, possible it's clipped.
 	// For OpenGL, mesh is visible, skip draw it here instead in core.
-	if (!_gameRef->_renderer3D->_camera)
+	if (!_game->_renderer3D->_camera)
 		return false;
 
 	// W/A for the scene with the table in the laboratory where the engine switches to flat shadows.

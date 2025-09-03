@@ -94,7 +94,7 @@ ScValue *DebuggableScript::resolveName(const Common::String &name) {
 	cstr[255] = '\0'; // We 0-terminate it just in case it's > 256 chars.
 
 	ScValue *value = getVar(cstr);
-	ScValue *res = new ScValue(_gameRef);
+	ScValue *res = new ScValue(_game);
 
 	if (value == nullptr) {
 		return res;

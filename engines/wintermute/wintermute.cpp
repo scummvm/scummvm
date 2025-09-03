@@ -71,6 +71,7 @@ WintermuteEngine::~WintermuteEngine() {
 	// Dispose your resources here
 	deinit();
 	delete _game;
+	_game = nullptr;
 	//_debugger deleted by Engine
 }
 

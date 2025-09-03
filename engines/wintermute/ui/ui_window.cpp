@@ -102,7 +102,7 @@ void UIWindow::cleanup() {
 	SAFE_DELETE(_viewport);
 	delete _backInactive;
 	if (!_sharedFonts && _fontInactive) {
-		_gameRef->_fontStorage->removeFont(_fontInactive);
+		_game->_fontStorage->removeFont(_fontInactive);
 	}
 	if (!_sharedImages && _imageInactive) {
 		delete _imageInactive;
@@ -120,26 +120,26 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	// go exclusive
 	if (_mode == WINDOW_EXCLUSIVE || _mode == WINDOW_SYSTEM_EXCLUSIVE) {
 		if (!_shieldWindow) {
-			_shieldWindow = new UIWindow(_gameRef);
+			_shieldWindow = new UIWindow(_game);
 		}
 		if (_shieldWindow) {
 			_shieldWindow->_posX = _shieldWindow->_posY = 0;
-			_shieldWindow->_width = _gameRef->_renderer->getWidth();
-			_shieldWindow->_height = _gameRef->_renderer->getHeight();
+			_shieldWindow->_width = _game->_renderer->getWidth();
+			_shieldWindow->_height = _game->_renderer->getHeight();
 
 			_shieldWindow->display();
 		}
 	} else if (_isMenu) {
 		if (!_shieldButton) {
-			_shieldButton = new UIButton(_gameRef);
+			_shieldButton = new UIButton(_game);
 			_shieldButton->setName("close");
 			_shieldButton->setListener(this, _shieldButton, 0);
 			_shieldButton->_parent = this;
 		}
 
 		_shieldButton->_posX = _shieldButton->_posY = 0;
-		_shieldButton->_width = _gameRef->_renderer->getWidth();
-		_shieldButton->_height = _gameRef->_renderer->getHeight();
+		_shieldButton->_width = _game->_renderer->getWidth();
+		_shieldButton->_height = _game->_renderer->getHeight();
 
 		_shieldButton->display();
 	}
@@ -153,15 +153,15 @@ bool UIWindow::display(int offsetX, int offsetY) {
 		byte fadeG = RGBCOLGetG(_fadeColor);
 		byte fadeB = RGBCOLGetB(_fadeColor);
 		byte fadeA = RGBCOLGetA(_fadeColor);
-		_gameRef->_renderer->fadeToColor(fadeR, fadeG, fadeB, fadeA);
+		_game->_renderer->fadeToColor(fadeR, fadeG, fadeB, fadeA);
 	}
 
 	if (_dragging) {
-		_posX += (_gameRef->_mousePos.x - _dragFrom.x);
-		_posY += (_gameRef->_mousePos.y - _dragFrom.y);
+		_posX += (_game->_mousePos.x - _dragFrom.x);
+		_posY += (_game->_mousePos.y - _dragFrom.y);
 
-		_dragFrom.x = _gameRef->_mousePos.x;
-		_dragFrom.y = _gameRef->_mousePos.y;
+		_dragFrom.x = _game->_mousePos.x;
+		_dragFrom.y = _game->_mousePos.y;
 	}
 
 	if (!_focusedWidget || (!_focusedWidget->_canFocus || _focusedWidget->_disable || !_focusedWidget->_visible)) {
@@ -171,11 +171,11 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	bool popViewport = false;
 	if (_clipContents) {
 		if (!_viewport) {
-			_viewport = new BaseViewport(_gameRef);
+			_viewport = new BaseViewport(_game);
 		}
 		if (_viewport) {
 			_viewport->setRect(_posX + offsetX, _posY + offsetY, _posX + _width + offsetX, _posY + _height + offsetY);
-			_gameRef->pushViewport(_viewport);
+			_game->pushViewport(_viewport);
 			popViewport = true;
 		}
 	}
@@ -198,7 +198,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = _alphaColor;
+		_game->_renderer->_forceAlphaColor = _alphaColor;
 	}
 	if (back) {
 		back->display(_posX + offsetX, _posY + offsetY, _width, _height);
@@ -212,7 +212,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (!_transparent && !image) {
-		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
+		_game->_renderer->_rectList.add(new BaseActiveRect(_game,  this, nullptr, _posX + offsetX, _posY + offsetY, _width, _height, 100, 100, false));
 	}
 
 	for (int32 i = 0; i < _widgets.getSize(); i++) {
@@ -220,11 +220,11 @@ bool UIWindow::display(int offsetX, int offsetY) {
 	}
 
 	if (_alphaColor != 0) {
-		_gameRef->_renderer->_forceAlphaColor = 0;
+		_game->_renderer->_forceAlphaColor = 0;
 	}
 
 	if (popViewport) {
-		_gameRef->popViewport();
+		_game->popViewport();
 	}
 
 	return STATUS_OK;
@@ -235,7 +235,7 @@ bool UIWindow::display(int offsetX, int offsetY) {
 bool UIWindow::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIWindow::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -244,7 +244,7 @@ bool UIWindow::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing WINDOW file '%s'", filename);
+		_game->LOG(0, "Error parsing WINDOW file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -341,7 +341,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WINDOW) {
-			_gameRef->LOG(0, "'WINDOW' keyword expected.");
+			_game->LOG(0, "'WINDOW' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -365,7 +365,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			SAFE_DELETE(_back);
-			_back = new UITiledImage(_gameRef);
+			_back = new UITiledImage(_game);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
 				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
@@ -374,7 +374,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK_INACTIVE:
 			delete _backInactive;
-			_backInactive = new UITiledImage(_gameRef);
+			_backInactive = new UITiledImage(_game);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile(params))) {
 				SAFE_DELETE(_backInactive);
 				cmd = PARSERR_GENERIC;
@@ -383,7 +383,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			SAFE_DELETE(_image);
-			_image = new BaseSprite(_gameRef);
+			_image = new BaseSprite(_game);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
 				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
@@ -392,7 +392,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE_INACTIVE:
 			SAFE_DELETE(_imageInactive);
-			_imageInactive = new BaseSprite(_gameRef);
+			_imageInactive = new BaseSprite(_game);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(params))) {
 				SAFE_DELETE(_imageInactive);
 				cmd = PARSERR_GENERIC;
@@ -401,9 +401,9 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -411,9 +411,9 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_INACTIVE:
 			if (_fontInactive) {
-				_gameRef->_fontStorage->removeFont(_fontInactive);
+				_game->_fontStorage->removeFont(_fontInactive);
 			}
-			_fontInactive = _gameRef->_fontStorage->addFont(params);
+			_fontInactive = _game->_fontStorage->addFont(params);
 			if (!_fontInactive) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -421,7 +421,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TITLE:
 			setText(params);
-			_gameRef->expandStringByStringTable(&_text);
+			_game->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:
@@ -460,7 +460,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -468,7 +468,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BUTTON: {
-			UIButton *btn = new UIButton(_gameRef);
+			UIButton *btn = new UIButton(_game);
 			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
 				SAFE_DELETE(btn);
 				cmd = PARSERR_GENERIC;
@@ -480,7 +480,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_STATIC: {
-			UIText *text = new UIText(_gameRef);
+			UIText *text = new UIText(_game);
 			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
 				SAFE_DELETE(text);
 				cmd = PARSERR_GENERIC;
@@ -492,7 +492,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_EDIT: {
-			UIEdit *edit = new UIEdit(_gameRef);
+			UIEdit *edit = new UIEdit(_game);
 			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
 				SAFE_DELETE(edit);
 				cmd = PARSERR_GENERIC;
@@ -504,7 +504,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_WINDOW: {
-			UIWindow *win = new UIWindow(_gameRef);
+			UIWindow *win = new UIWindow(_game);
 			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
 				SAFE_DELETE(win);
 				cmd = PARSERR_GENERIC;
@@ -574,17 +574,17 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		default:
-			if (DID_FAIL(_gameRef->windowLoadHook(this, &buffer, &params))) {
+			if (DID_FAIL(_game->windowLoadHook(this, &buffer, &params))) {
 				cmd = PARSERR_GENERIC;
 			}
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in WINDOW definition");
+		_game->LOG(0, "Syntax error in WINDOW definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading WINDOW definition");
+		_game->LOG(0, "Error loading WINDOW definition");
 		return STATUS_FAILED;
 	}
 
@@ -782,9 +782,9 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		if (_fontInactive) {
-			_gameRef->_fontStorage->removeFont(_fontInactive);
+			_game->_fontStorage->removeFont(_fontInactive);
 		}
-		_fontInactive = _gameRef->_fontStorage->addFont(stack->pop()->getString());
+		_fontInactive = _game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontInactive != nullptr);
 
 		return STATUS_OK;
@@ -797,7 +797,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		SAFE_DELETE(_imageInactive);
-		_imageInactive = new BaseSprite(_gameRef);
+		_imageInactive = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
 			SAFE_DELETE(_imageInactive);
@@ -874,8 +874,8 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Center") == 0) {
 		stack->correctParams(0);
-		_posX = (_gameRef->_renderer->getWidth() - _width) / 2;
-		_posY = (_gameRef->_renderer->getHeight() - _height) / 2;
+		_posX = (_game->_renderer->getWidth() - _width) / 2;
+		_posY = (_game->_renderer->getHeight() - _height) / 2;
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -904,7 +904,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		UIButton *btn = new UIButton(_gameRef);
+		UIButton *btn = new UIButton(_game);
 		if (!val->isNULL()) {
 			btn->setName(val->getString());
 		}
@@ -923,7 +923,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		UIText *sta = new UIText(_gameRef);
+		UIText *sta = new UIText(_game);
 		if (!val->isNULL()) {
 			sta->setName(val->getString());
 		}
@@ -942,7 +942,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		UIEdit *edi = new UIEdit(_gameRef);
+		UIEdit *edi = new UIEdit(_game);
 		if (!val->isNULL()) {
 			edi->setName(val->getString());
 		}
@@ -961,7 +961,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		UIWindow *win = new UIWindow(_gameRef);
+		UIWindow *win = new UIWindow(_game);
 		if (!val->isNULL()) {
 			win->setName(val->getString());
 		}
@@ -992,7 +992,7 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		}
 		stack->pushNULL();
 		return STATUS_OK;
-	} else if DID_SUCCEED(_gameRef->windowScriptMethodHook(this, script, stack, name)) {
+	} else if DID_SUCCEED(_game->windowScriptMethodHook(this, script, stack, name)) {
 		return STATUS_OK;
 	}
 
@@ -1224,9 +1224,9 @@ bool UIWindow::handleMouse(TMouseEvent event, TMouseButton button) {
 			getTotalOffset(&offsetX, &offsetY);
 			BasePlatform::offsetRect(&dragRect, _posX + offsetX, _posY + offsetY);
 
-			if (BasePlatform::ptInRect(&dragRect, _gameRef->_mousePos)) {
-				_dragFrom.x = _gameRef->_mousePos.x;
-				_dragFrom.y = _gameRef->_mousePos.y;
+			if (BasePlatform::ptInRect(&dragRect, _game->_mousePos)) {
+				_dragFrom.x = _game->_mousePos.x;
+				_dragFrom.y = _game->_mousePos.y;
 				_dragging = true;
 			}
 		}
@@ -1334,7 +1334,7 @@ bool UIWindow::goExclusive() {
 		_mode = WINDOW_EXCLUSIVE;
 		_visible = true;
 		_disable = false;
-		_gameRef->focusWindow(this);
+		_game->focusWindow(this);
 		return STATUS_OK;
 	} else {
 		return STATUS_FAILED;
@@ -1355,9 +1355,9 @@ bool UIWindow::goSystemExclusive() {
 	_ready = false;
 	_visible = true;
 	_disable = false;
-	_gameRef->focusWindow(this);
+	_game->focusWindow(this);
 
-	_gameRef->freeze(_pauseMusic);
+	_game->freeze(_pauseMusic);
 	return STATUS_OK;
 }
 
@@ -1365,7 +1365,7 @@ bool UIWindow::goSystemExclusive() {
 //////////////////////////////////////////////////////////////////////////
 bool UIWindow::close() {
 	if (_mode == WINDOW_SYSTEM_EXCLUSIVE) {
-		_gameRef->unfreeze();
+		_game->unfreeze();
 	}
 
 	_mode = WINDOW_NORMAL;

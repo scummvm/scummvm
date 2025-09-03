@@ -100,7 +100,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		const char *path = stack->pop()->getString();
 
 #ifdef USE_BINK
-		_gameRef->freeze();
+		_game->freeze();
 		((WintermuteEngine *)g_engine)->savingEnable(false);
 
 		// Load a file, but avoid having the File-manager handle the disposal of it.
@@ -108,11 +108,11 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		if (file) {
 			_videoDecoder = new Video::BinkDecoder();
 			if (_videoDecoder && _videoDecoder->loadStream(file) && _videoDecoder->isVideoLoaded()) {
-				_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_gameRef->_renderer->getPixelFormat()));
-				BaseSurface *texture = _gameRef->_renderer->createSurface();
+				_videoDecoder->setOutputPixelFormat(Graphics::PixelFormat(_game->_renderer->getPixelFormat()));
+				BaseSurface *texture = _game->_renderer->createSurface();
 				texture->create(_videoDecoder->getWidth(), _videoDecoder->getHeight());
 
-				_gameRef->_renderer->setup2D();
+				_game->_renderer->setup2D();
 
 				_frame = -1;
 				_updateNeeded = false;
@@ -131,7 +131,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 						}
 						texture->display(0, 0, Common::Rect32(texture->getWidth(), texture->getHeight()));
 						_updateNeeded = false;
-						_gameRef->_renderer->flip();
+						_game->_renderer->flip();
 					}
 					g_system->delayMillis(10);
 
@@ -145,7 +145,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 						} else if (event.type == Common::EVENT_LBUTTONDOWN) {
 							_videoFinished = true;
 						} else if (event.type == Common::EVENT_SCREEN_CHANGED) {
-							_gameRef->_renderer->onWindowChange();
+							_game->_renderer->onWindowChange();
 						}
 					}
 				} while (!g_engine->shouldQuit() && !_videoFinished);
@@ -164,7 +164,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 		}
 
 		((WintermuteEngine *)g_engine)->savingEnable(true);
-		_gameRef->unfreeze();
+		_game->unfreeze();
 #else
 		warning("SXVlink::Play(%s) Bink playback not compiled in", path);
 #endif

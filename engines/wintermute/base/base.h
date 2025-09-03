@@ -49,7 +49,7 @@ public:
 	bool parseEditorProperty(char *buffer, bool complete = true);
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent = 0);
 	BaseClass();
-	BaseGame *_gameRef;
+	BaseGame *_game;
 	BaseClass(BaseGame *GameOwner);
 	virtual ~BaseClass();
 

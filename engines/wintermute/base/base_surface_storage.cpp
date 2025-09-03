@@ -67,16 +67,16 @@ bool BaseSurfaceStorage::cleanup(bool warn) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::initLoop() {
-	if (_gameRef->_smartCache && _gameRef->getLiveTimer()->getTime() - _lastCleanupTime >= _gameRef->_surfaceGCCycleTime) {
-		_lastCleanupTime = _gameRef->getLiveTimer()->getTime();
+	if (_game->_smartCache && _game->getLiveTimer()->getTime() - _lastCleanupTime >= _game->_surfaceGCCycleTime) {
+		_lastCleanupTime = _game->getLiveTimer()->getTime();
 		sortSurfaces();
 		for (int32 i = 0; i < _surfaces.getSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) {
 				break;
 			}
 
-			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_gameRef->getLiveTimer()->getTime() - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
-				//_gameRef->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
+			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_game->getLiveTimer()->getTime() - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
+				//_game->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}
 		}
@@ -114,7 +114,7 @@ BaseSurface *BaseSurfaceStorage::addSurface(const Common::String &filename, bool
 		if (filename.size()) {
 			BaseEngine::LOG(0, "Missing image: '%s'", filename.c_str());
 		}
-		if (_gameRef->_debugDebugMode) {
+		if (_game->_debugDebugMode) {
 			return addSurface("invalid_debug.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 		} else {
 			return addSurface("invalid.bmp", defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
@@ -160,7 +160,7 @@ bool BaseSurfaceStorage::persist(BasePersistenceManager *persistMgr)
 
 	if (!persistMgr->getIsSaving()) cleanup(false);
 
-	persistMgr->transfer(TMEMBER(_gameRef));
+	persistMgr->transfer(TMEMBER(_game));
 
 	//_surfaces.persist(persistMgr);
 

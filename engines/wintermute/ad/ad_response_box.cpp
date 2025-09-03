@@ -57,7 +57,7 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 	_font = _fontHover = nullptr;
 
 	_window = nullptr;
-	_shieldWindow = new UIWindow(_gameRef);
+	_shieldWindow = new UIWindow(_game);
 
 	_horizontal = false;
 	BasePlatform::setRectEmpty(&_responseArea);
@@ -81,10 +81,10 @@ AdResponseBox::~AdResponseBox() {
 	SAFE_DELETE_ARRAY(_lastResponseTextOrig);
 
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 	if (_fontHover) {
-		_gameRef->_fontStorage->removeFont(_fontHover);
+		_game->_fontStorage->removeFont(_fontHover);
 	}
 
 	clearResponses();
@@ -131,7 +131,7 @@ bool AdResponseBox::createButtons() {
 
 	_scrollOffset = 0;
 	for (int32 i = 0; i < _responses.getSize(); i++) {
-		UIButton *btn = new UIButton(_gameRef);
+		UIButton *btn = new UIButton(_game);
 		if (btn) {
 			btn->_parent = _window;
 			btn->_sharedFonts = btn->_sharedImages = true;
@@ -149,15 +149,15 @@ bool AdResponseBox::createButtons() {
 				btn->setCaption(_responses[i]->_text);
 				if (_cursor) {
 					btn->_cursor = _cursor;
-				} else if (_gameRef->_activeCursor) {
-					btn->_cursor = _gameRef->_activeCursor;
+				} else if (_game->_activeCursor) {
+					btn->_cursor = _game->_activeCursor;
 				}
 			}
 			// textual
 			else {
 				btn->setText(_responses[i]->_text);
-				btn->_font = (_font == nullptr) ? _gameRef->_systemFont : _font;
-				btn->_fontHover = (_fontHover == nullptr) ? _gameRef->_systemFont : _fontHover;
+				btn->_font = (_font == nullptr) ? _game->_systemFont : _font;
+				btn->_fontHover = (_fontHover == nullptr) ? _game->_systemFont : _fontHover;
 				btn->_fontPress = btn->_fontHover;
 				btn->_align = _align;
 
@@ -167,7 +167,7 @@ bool AdResponseBox::createButtons() {
 
 				btn->_width = _responseArea.right - _responseArea.left;
 				if (btn->_width <= 0) {
-					btn->_width = _gameRef->_renderer->getWidth();
+					btn->_width = _game->_renderer->getWidth();
 				}
 			}
 
@@ -190,7 +190,7 @@ bool AdResponseBox::createButtons() {
 			_respButtons.add(btn);
 
 			if (_responseArea.bottom - _responseArea.top < btn->_height) {
-				_gameRef->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
+				_game->LOG(0, "Warning: Response '%s' is too high to be displayed within response box. Correcting.", _responses[i]->_text);
 				_responseArea.bottom += (btn->_height - (_responseArea.bottom - _responseArea.top));
 			}
 		}
@@ -205,7 +205,7 @@ bool AdResponseBox::createButtons() {
 bool AdResponseBox::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdResponseBox::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -214,7 +214,7 @@ bool AdResponseBox::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
+		_game->LOG(0, "Error parsing RESPONSE_BOX file '%s'", filename);
 	}
 
 
@@ -262,7 +262,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_RESPONSE_BOX) {
-			_gameRef->LOG(0, "'RESPONSE_BOX' keyword expected.");
+			_game->LOG(0, "'RESPONSE_BOX' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -278,7 +278,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_WINDOW:
 			SAFE_DELETE(_window);
-			_window = new UIWindow(_gameRef);
+			_window = new UIWindow(_game);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
 				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
@@ -289,9 +289,9 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -299,9 +299,9 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_HOVER:
 			if (_fontHover) {
-				_gameRef->_fontStorage->removeFont(_fontHover);
+				_game->_fontStorage->removeFont(_fontHover);
 			}
-			_fontHover = _gameRef->_fontStorage->addFont(params);
+			_fontHover = _game->_fontStorage->addFont(params);
 			if (!_fontHover) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -345,7 +345,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -357,7 +357,7 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in RESPONSE_BOX definition");
+		_game->LOG(0, "Syntax error in RESPONSE_BOX definition");
 		return STATUS_FAILED;
 	}
 
@@ -527,8 +527,8 @@ bool AdResponseBox::display() {
 	// go exclusive
 	if (_shieldWindow) {
 		_shieldWindow->_posX = _shieldWindow->_posY = 0;
-		_shieldWindow->_width = _gameRef->_renderer->getWidth();
-		_shieldWindow->_height = _gameRef->_renderer->getHeight();
+		_shieldWindow->_width = _game->_renderer->getWidth();
+		_shieldWindow->_height = _game->_renderer->getHeight();
 
 		_shieldWindow->display();
 	}
@@ -564,8 +564,8 @@ bool AdResponseBox::listen(BaseScriptHolder *param1, uint32 param2) {
 			}
 			handleResponse(_responses[param2]);
 			_waitingScript = nullptr;
-			_gameRef->_state = GAME_RUNNING;
-			((AdGame *)_gameRef)->_stateEx = GAME_NORMAL;
+			_game->_state = GAME_RUNNING;
+			((AdGame *)_game)->_stateEx = GAME_NORMAL;
 			_ready = true;
 			invalidateButtons();
 			clearResponses();
@@ -608,7 +608,7 @@ bool AdResponseBox::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponseBox::weedResponses() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
 	for (int32 i = 0; i < _responses.getSize(); i++) {
 		switch (_responses[i]->_responseType) {
@@ -646,7 +646,7 @@ void AdResponseBox::setLastResponseText(const char *text, const char *textOrig) 
 bool AdResponseBox::handleResponse(const AdResponse *response) {
 	setLastResponseText(response->_text, response->_textOrig);
 
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 
 	switch (response->_responseType) {
 	case RESPONSE_ONCE:

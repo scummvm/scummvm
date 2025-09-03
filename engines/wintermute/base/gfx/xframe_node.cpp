@@ -98,7 +98,7 @@ void FrameNode::setTransformation(int slot, DXVector3 pos, DXVector3 scale, DXQu
 
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj) {
-	_gameRef->miniUpdate();
+	_game->miniUpdate();
 
 	bool res = true;
 
@@ -111,7 +111,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 	}
 
 	if (objectType == kXClassMesh) { // load a child mesh
-		XMesh *mesh = _gameRef->_renderer3D->createXMesh();
+		XMesh *mesh = _game->_renderer3D->createXMesh();
 		res = mesh->loadFromXData(filename, xobj);
 		if (res) {
 			_meshes.add(mesh);
@@ -137,7 +137,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 	} else if (objectType == kXClassAnimation) { // load a single animation (shouldn't happen here)
 		return model->loadAnimation(filename, xobj);
 	} else if (objectType == kXClassFrame) { // create a new child frame
-		FrameNode *childFrame = new FrameNode(_gameRef);
+		FrameNode *childFrame = new FrameNode(_game);
 
 		// get the name of the child frame
 		res = XModel::loadName(childFrame, xobj);

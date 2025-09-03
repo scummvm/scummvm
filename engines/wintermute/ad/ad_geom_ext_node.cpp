@@ -72,7 +72,7 @@ bool AdGeomExtNode::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_NODE) {
-			_gameRef->LOG(0, "'NODE' keyword expected.");
+			_game->LOG(0, "'NODE' keyword expected.");
 			return false;
 		}
 
@@ -119,11 +119,11 @@ bool AdGeomExtNode::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in geometry description file");
+		_game->LOG(0, "Syntax error in geometry description file");
 		return false;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading geometry description");
+		_game->LOG(0, "Error loading geometry description");
 		return false;
 	}
 	return true;

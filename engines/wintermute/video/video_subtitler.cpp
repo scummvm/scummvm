@@ -162,7 +162,7 @@ bool VideoSubtitler::loadSubtitles(const Common::String &filename, const Common:
 
 		if (start != -1 && cardText.size() > 0 && (start != 1 || end != 1)){
 			// Add a subtitlecard based on the line we have just parsed
-			_subtitles.push_back(SubtitleCard(_gameRef, cardText, start, end));
+			_subtitles.push_back(SubtitleCard(_game, cardText, start, end));
 		}
 
 		pos += lineLength + 1;
@@ -179,21 +179,21 @@ void VideoSubtitler::display() {
 
 		BaseFont *font;
 
-		if (_gameRef->_videoFont == nullptr) {
-			font = _gameRef->_systemFont;
+		if (_game->_videoFont == nullptr) {
+			font = _game->_systemFont;
 		} else {
-			font = _gameRef->_videoFont;
+			font = _game->_videoFont;
 		}
 
 		int textHeight = font->getTextHeight(
 		                     (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
-		                     _gameRef->_renderer->getWidth());
+		                     _game->_renderer->getWidth());
 
 		font->drawText(
 		    (const byte *)_subtitles[_currentSubtitle].getText().c_str(),
 		    0,
-		    (_gameRef->_renderer->getHeight() - textHeight - 5),
-		    (_gameRef->_renderer->getWidth()),
+		    (_game->_renderer->getHeight() - textHeight - 5),
+		    (_game->_renderer->getWidth()),
 		    TAL_CENTER);
 	}
 }

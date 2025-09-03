@@ -82,7 +82,7 @@ bool BaseFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, float
 	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		// filter out subframes unsupported by current renderer
 		if (!allFrames) {
-			if ((_subframes[i]->_2DOnly && _gameRef->_useD3D) || (_subframes[i]->_3DOnly && !_gameRef->_useD3D))
+			if ((_subframes[i]->_2DOnly && _game->_useD3D) || (_subframes[i]->_3DOnly && !_game->_useD3D))
 				continue;
 		}
 		res = _subframes[i]->draw(x, y, registerOwner, zoomX, zoomY, precise, alpha, rotate, blendMode);
@@ -101,7 +101,7 @@ bool BaseFrame::oneTimeDisplay(BaseObject *owner, bool muted) {
 		}
 		_sound->play();
 		/*
-		if (_gameRef->_state == GAME_FROZEN) {
+		if (_game->_state == GAME_FROZEN) {
 		    _sound->Pause(true);
 		}
 		*/
@@ -246,7 +246,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			break;
 
 		case TOKEN_SUBFRAME: {
-			BaseSubFrame *subframe = new BaseSubFrame(_gameRef);
+			BaseSubFrame *subframe = new BaseSubFrame(_game);
 			if (!subframe || DID_FAIL(subframe->loadBuffer(params, lifeTime, keepLoaded))) {
 				delete subframe;
 				cmd = PARSERR_GENERIC;
@@ -260,7 +260,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 			if (_sound) {
 				SAFE_DELETE(_sound);
 			}
-			_sound = new BaseSound(_gameRef);
+			_sound = new BaseSound(_game);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
 				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
 					BaseEngine::LOG(0, "Error loading sound '%s'.", params);
@@ -305,7 +305,7 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	}
 
 
-	BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+	BaseSubFrame *sub = new BaseSubFrame(_game);
 	if (surface_file != nullptr) {
 		if (customTrans) {
 			sub->setSurface(surface_file, false, r, g, b, lifeTime, keepLoaded);
@@ -455,7 +455,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 		SAFE_DELETE(_sound);
 
 		if (!val->isNULL()) {
-			_sound = new BaseSound(_gameRef);
+			_sound = new BaseSound(_game);
 			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
 				stack->pushBool(false);
 				SAFE_DELETE(_sound);
@@ -520,7 +520,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			filename = val->getString();
 		}
 
-		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_game);
 		if (filename != nullptr) {
 			sub->setSurface(filename);
 			sub->setDefaultRect();
@@ -547,7 +547,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 			filename = val->getString();
 		}
 
-		BaseSubFrame *sub = new BaseSubFrame(_gameRef);
+		BaseSubFrame *sub = new BaseSubFrame(_game);
 		if (filename != nullptr) {
 			sub->setSurface(filename);
 		}
@@ -625,7 +625,7 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
-		_scValue = new ScValue(_gameRef);
+		_scValue = new ScValue(_game);
 	}
 	_scValue->setNULL();
 

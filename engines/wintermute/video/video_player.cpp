@@ -108,7 +108,7 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	_aviDecoder = new Video::AVIDecoder();
 	_aviDecoder->loadStream(file);
 
-	_subtitler = new VideoSubtitler(_gameRef);
+	_subtitler = new VideoSubtitler(_game);
 	_foundSubtitles = _subtitler->loadSubtitles(_filename, subtitleFile);
 
 	if (!_aviDecoder->isVideoLoaded()) {
@@ -116,7 +116,7 @@ bool VideoPlayer::initialize(const Common::String &filename, const Common::Strin
 	}
 
 	// Additional setup.
-	_texture = _gameRef->_renderer->createSurface();
+	_texture = _game->_renderer->createSurface();
 	_texture->create(_aviDecoder->getWidth(), _aviDecoder->getHeight());
 	_playZoom = 100;
 
@@ -133,18 +133,18 @@ bool VideoPlayer::update() {
 		return STATUS_OK;
 	}
 
-	if (_playbackStarted && !_freezeGame && _gameRef->_state == GAME_FROZEN) {
+	if (_playbackStarted && !_freezeGame && _game->_state == GAME_FROZEN) {
 		return STATUS_OK;
 	}
 
-	if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+	if (_subtitler && _foundSubtitles && _game->_subtitles) {
 		_subtitler->update(_aviDecoder->getCurFrame());
 	}
 
 	if (_aviDecoder->endOfVideo()) {
 		_playbackStarted = false;
 		if (_freezeGame) {
-			_gameRef->unfreeze();
+			_game->unfreeze();
 		}
 	}
 	if (!_aviDecoder->endOfVideo() && _aviDecoder->getTimeToNextFrame() == 0) {
@@ -174,7 +174,7 @@ bool VideoPlayer::display() {
 		res = STATUS_FAILED;
 	}
 
-	if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+	if (_subtitler && _foundSubtitles && _game->_subtitles) {
 		_subtitler->display();
 	}
 	return res;
@@ -186,14 +186,14 @@ bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
 		return STATUS_FAILED;
 
 	if (!_playbackStarted && freezeMusic) {
-		_gameRef->freeze(freezeMusic);
+		_game->freeze(freezeMusic);
 		_freezeGame = freezeMusic;
 	}
 
 	_playbackStarted = false;
 	float width, height;
 	if (_aviDecoder) {
-		if (_subtitler && _foundSubtitles && _gameRef->_subtitles) {
+		if (_subtitler && _foundSubtitles && _game->_subtitles) {
 			_subtitler->update(_aviDecoder->getFrameCount());
 			_subtitler->display();
 		}
@@ -203,8 +203,8 @@ bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
 		width = (float)_aviDecoder->getWidth();
 		height = (float)_aviDecoder->getHeight();
 	} else {
-		width = (float)_gameRef->_renderer->getWidth();
-		height = (float)_gameRef->_renderer->getHeight();
+		width = (float)_game->_renderer->getWidth();
+		height = (float)_game->_renderer->getHeight();
 	}
 
 	switch (type) {
@@ -215,18 +215,18 @@ bool VideoPlayer::play(TVideoPlayback type, int x, int y, bool freezeMusic) {
 			break;
 
 		case VID_PLAY_STRETCH: {
-			float zoomX = (float)((float)_gameRef->_renderer->getWidth() / width * 100);
-			float zoomY = (float)((float)_gameRef->_renderer->getHeight() / height * 100);
+			float zoomX = (float)((float)_game->_renderer->getWidth() / width * 100);
+			float zoomY = (float)((float)_game->_renderer->getHeight() / height * 100);
 			_playZoom = MIN(zoomX, zoomY);
-			_playPosX = (int)((_gameRef->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
-			_playPosX = (int)((_gameRef->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
+			_playPosX = (int)((_game->_renderer->getWidth() - width * (_playZoom / 100)) / 2);
+			_playPosX = (int)((_game->_renderer->getHeight() - height * (_playZoom / 100)) / 2);
 		}
 			break;
 
 		case VID_PLAY_CENTER:
 			_playZoom = 100.0f;
-			_playPosX = (int)((_gameRef->_renderer->getWidth() - width) / 2);
-			_playPosY = (int)((_gameRef->_renderer->getHeight() - height) / 2);
+			_playPosX = (int)((_game->_renderer->getWidth() - width) / 2);
+			_playPosY = (int)((_game->_renderer->getHeight() - height) / 2);
 			break;
 
 		default:
@@ -248,7 +248,7 @@ bool VideoPlayer::stop() {
 	cleanup();
 
 	if (_freezeGame)
-		_gameRef->unfreeze();
+		_game->unfreeze();
 
 	return STATUS_OK;
 }

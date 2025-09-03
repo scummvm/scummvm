@@ -52,7 +52,7 @@ BaseViewport::~BaseViewport() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseViewport::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_mainObject));
 	persistMgr->transferSint32(TMEMBER(_offsetX));

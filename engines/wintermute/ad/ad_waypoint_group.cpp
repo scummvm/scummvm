@@ -67,7 +67,7 @@ void AdWaypointGroup::cleanup() {
 bool AdWaypointGroup::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdWaypointGroup::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -76,7 +76,7 @@ bool AdWaypointGroup::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
+		_game->LOG(0, "Error parsing WAYPOINTS file '%s'", filename);
 	}
 
 
@@ -115,7 +115,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WAYPOINTS) {
-			_gameRef->LOG(0, "'WAYPOINTS' keyword expected.");
+			_game->LOG(0, "'WAYPOINTS' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -161,7 +161,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in WAYPOINTS definition");
+		_game->LOG(0, "Syntax error in WAYPOINTS definition");
 		return STATUS_FAILED;
 	}
 

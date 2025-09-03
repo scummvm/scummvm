@@ -37,7 +37,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExt::AdGeomExt(BaseGame *in_gameRef) : BaseClass(in_gameRef) {
+AdGeomExt::AdGeomExt(BaseGame *in_game) : BaseClass(in_game) {
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -52,13 +52,13 @@ AdGeomExt::~AdGeomExt() {
 bool AdGeomExt::loadFile(char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdGeomExt::LoadFile failed for file '%s'", filename);
 		return false;
 	}
 
 	bool ret = loadBuffer(buffer);
 	if (!ret) {
-		_gameRef->LOG(0, "Error parsing geometry description file '%s'", filename);
+		_game->LOG(0, "Error parsing geometry description file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -82,7 +82,7 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 	BaseParser parser;
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_GEOMETRY) {
-		_gameRef->LOG(0, "'GEOMETRY' keyword expected.");
+		_game->LOG(0, "'GEOMETRY' keyword expected.");
 		return false;
 	}
 
@@ -91,7 +91,7 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NODE: {
-			AdGeomExtNode *node = new AdGeomExtNode(_gameRef);
+			AdGeomExtNode *node = new AdGeomExtNode(_game);
 
 			if (node && node->loadBuffer(params, false)) {
 				_nodes.add(node);
@@ -105,11 +105,11 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in geometry description file");
+		_game->LOG(0, "Syntax error in geometry description file");
 		return false;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading geometry description");
+		_game->LOG(0, "Error loading geometry description");
 		return false;
 	}
 
@@ -121,15 +121,15 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 bool AdGeomExt::addStandardNodes() {
 	AdGeomExtNode *node;
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("walk_*", GEOM_WALKPLANE, true);
 	_nodes.add(node);
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("blk_*", GEOM_BLOCKED, false);
 	_nodes.add(node);
 
-	node = new AdGeomExtNode(_gameRef);
+	node = new AdGeomExtNode(_game);
 	node->setupNode("wpt_*", GEOM_WAYPOINT, false);
 	_nodes.add(node);
 

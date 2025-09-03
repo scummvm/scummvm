@@ -58,7 +58,7 @@ bool AdAttach3DX::init(const char *modelFile, const char *name, const char *pare
 	_parentBone = parentBone;
 	setName(name);
 
-	_xmodel = new XModel(_gameRef, _owner);
+	_xmodel = new XModel(_game, _owner);
 	if (!_xmodel) {
 		return false;
 	}
@@ -83,7 +83,7 @@ bool AdAttach3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
-	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	BaseRenderer3D *renderer = _game->_renderer3D;
 	DXMatrix finalMat;
 	DXMatrixMultiply(&finalMat, &_worldMatrix, viewMat);
 	renderer->setWorldTransform(finalMat);
@@ -92,7 +92,7 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 		_xmodel->render();
 
 		if (registerObjects && _owner && _owner->_registrable) {
-			renderer->_rectList.add(new BaseActiveRect(_gameRef, _owner, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
+			renderer->_rectList.add(new BaseActiveRect(_game, _owner, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
 		}
 	}
 
@@ -101,7 +101,7 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update) {
-	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	BaseRenderer3D *renderer = _game->_renderer3D;
 	DXMatrix finalMat;
 	DXMatrixMultiply(&finalMat, &_worldMatrix, modelMat);
 

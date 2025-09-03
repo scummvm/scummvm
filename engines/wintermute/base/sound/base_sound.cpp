@@ -56,7 +56,7 @@ BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 //////////////////////////////////////////////////////////////////////////
 BaseSound::~BaseSound() {
 	if (_sound) {
-		_gameRef->_soundMgr->removeSound(_sound);
+		_game->_soundMgr->removeSound(_sound);
 	}
 	_sound = nullptr;
 }
@@ -64,12 +64,12 @@ BaseSound::~BaseSound() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
-		_gameRef->_soundMgr->removeSound(_sound);
+		_game->_soundMgr->removeSound(_sound);
 		_sound = nullptr;
 	}
 	_soundFilename = Common::String(); // Set empty
 
-	_sound = _gameRef->_soundMgr->addSound(filename, type, streamed);
+	_sound = _game->_soundMgr->addSound(filename, type, streamed);
 	if (_sound) {
 		_soundFilename = filename;
 
@@ -84,7 +84,7 @@ bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSound::setSoundSimple() {
-	_sound = _gameRef->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
+	_sound = _game->_soundMgr->addSound(_soundFilename, _soundType, _soundStreamed);
 	if (_sound) {
 		if (_soundPosition) {
 			_sound->setPosition(_soundPosition);
@@ -173,7 +173,7 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 		_sFXParam1 = _sFXParam2 = _sFXParam3 = _sFXParam4 = 0;
 	}
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferString(TMEMBER(_soundFilename));
 	persistMgr->transferBool(TMEMBER(_soundLooping));

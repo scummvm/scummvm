@@ -59,11 +59,11 @@ RenderTicket::RenderTicket(BaseSurfaceOSystem *owner, const Graphics::Surface *s
 		// (Mirroring should most likely be done before rotation. See also
 		// TransformTools.)
 		if (_transform._angle != Graphics::kDefaultAngle) {
-			_surface = temp.rotoscale(transform, owner->_gameRef->getBilinearFiltering());
+			_surface = temp.rotoscale(transform, owner->_game->getBilinearFiltering());
 		} else if ((dstRect->width() != srcRect->width() ||
 			    dstRect->height() != srcRect->height()) &&
 			    _transform._numTimesX * _transform._numTimesY == 1) {
-			_surface = temp.scale(dstRect->width(), dstRect->height(), owner->_gameRef->getBilinearFiltering());
+			_surface = temp.scale(dstRect->width(), dstRect->height(), owner->_game->getBilinearFiltering());
 		} else {
 			_surface = new Graphics::Surface();
 			_surface->copyFrom(temp);

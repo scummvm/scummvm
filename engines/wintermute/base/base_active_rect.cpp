@@ -115,7 +115,7 @@ BaseActiveRect::~BaseActiveRect() {
 void BaseActiveRect::clipRect() {
 	Common::Rect32 rc;
 	bool customViewport;
-	_gameRef->getCurrentViewportRect(&rc, &customViewport);
+	_game->getCurrentViewportRect(&rc, &customViewport);
 	BaseRenderer *rend = BaseEngine::getRenderer();
 
 	if (!customViewport) {

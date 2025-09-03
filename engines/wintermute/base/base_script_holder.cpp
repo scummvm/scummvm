@@ -98,7 +98,7 @@ bool BaseScriptHolder::applyEvent(const char *eventName, bool unbreakable) {
 		}
 	}
 	if (numHandlers > 0 && unbreakable) {
-		_gameRef->_scEngine->tickUnbreakable();
+		_game->_scEngine->tickUnbreakable();
 	}
 
 	return ret;
@@ -306,14 +306,14 @@ bool BaseScriptHolder::addScript(const char *filename) {
 		}
 	}
 
-	ScScript *scr =  _gameRef->_scEngine->runScript(filename, this);
+	ScScript *scr =  _game->_scEngine->runScript(filename, this);
 	if (!scr) {
-		if (_gameRef->_editorForceScripts) {
+		if (_game->_editorForceScripts) {
 			// editor hack
 #if EXTENDED_DEBUGGER_ENABLED
-			scr = new DebuggableScript(_gameRef, _gameRef->_scEngine);
+			scr = new DebuggableScript(_game, _game->_scEngine);
 #else
-			scr = new ScScript(_gameRef, _gameRef->_scEngine);
+			scr = new ScScript(_game, _game->_scEngine);
 #endif
 			size_t filenameSize = strlen(filename) + 1;
 			scr->_filename = new char[filenameSize];
@@ -321,7 +321,7 @@ bool BaseScriptHolder::addScript(const char *filename) {
 			scr->_state = SCRIPT_ERROR;
 			scr->_owner = this;
 			_scripts.add(scr);
-			_gameRef->_scEngine->_scripts.add(scr);
+			_game->_scEngine->_scripts.add(scr);
 
 			return STATUS_OK;
 		}
@@ -430,7 +430,7 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	}
 
 
-	ScValue *val = new ScValue(_gameRef);
+	ScValue *val = new ScValue(_game);
 	val->setString(propValue);
 	scSetProperty(propName, val);
 
@@ -461,9 +461,9 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 			debuggableEngine = dynamic_cast<DebuggableScEngine*>(_scripts[i]->_engine);
 			// TODO: Not pretty
 			assert(debuggableEngine);
-			ScScript *thread = new DebuggableScript(_gameRef,  debuggableEngine);
+			ScScript *thread = new DebuggableScript(_game,  debuggableEngine);
 #else
-			ScScript *thread = new ScScript(_gameRef,  _scripts[i]->_engine);
+			ScScript *thread = new ScScript(_game,  _scripts[i]->_engine);
 #endif
 			if (thread) {
 				bool ret = thread->createMethodThread(_scripts[i], methodName);

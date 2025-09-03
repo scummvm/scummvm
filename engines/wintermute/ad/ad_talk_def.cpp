@@ -69,7 +69,7 @@ AdTalkDef::~AdTalkDef() {
 bool AdTalkDef::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdTalkDef::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdTalkDef::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -78,7 +78,7 @@ bool AdTalkDef::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing TALK file '%s'", filename);
+		_game->LOG(0, "Error parsing TALK file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -114,7 +114,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_TALK) {
-			_gameRef->LOG(0, "'TALK' keyword expected.");
+			_game->LOG(0, "'TALK' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -129,7 +129,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_ACTION: {
-			AdTalkNode *node = new AdTalkNode(_gameRef);
+			AdTalkNode *node = new AdTalkNode(_game);
 			if (node && DID_SUCCEED(node->loadBuffer(params, false))) {
 				_nodes.add(node);
 			} else {
@@ -149,7 +149,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_DEFAULT_SPRITESET: {
 			SAFE_DELETE(_defaultSpriteSet);
-			_defaultSpriteSet = new AdSpriteSet(_gameRef);
+			_defaultSpriteSet = new AdSpriteSet(_game);
 			if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadBuffer(params, false))) {
 				SAFE_DELETE(_defaultSpriteSet);
 				cmd = PARSERR_GENERIC;
@@ -167,12 +167,12 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in TALK definition");
+		_game->LOG(0, "Syntax error in TALK definition");
 		return STATUS_FAILED;
 	}
 
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading TALK definition");
+		_game->LOG(0, "Error loading TALK definition");
 		return STATUS_FAILED;
 	}
 
@@ -180,14 +180,14 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 	SAFE_DELETE(_defaultSpriteSet);
 
 	if (_defaultSpriteFilename) {
-		_defaultSprite = new BaseSprite(_gameRef);
+		_defaultSprite = new BaseSprite(_game);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			return STATUS_FAILED;
 		}
 	}
 
 	if (_defaultSpriteSetFilename) {
-		_defaultSpriteSet = new AdSpriteSet(_gameRef);
+		_defaultSpriteSet = new AdSpriteSet(_game);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			return STATUS_FAILED;
 		}
@@ -242,7 +242,7 @@ bool AdTalkDef::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
-		_defaultSprite = new BaseSprite(_gameRef);
+		_defaultSprite = new BaseSprite(_game);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
 			SAFE_DELETE(_defaultSprite);
 			return STATUS_FAILED;
@@ -250,7 +250,7 @@ bool AdTalkDef::loadDefaultSprite() {
 			return STATUS_OK;
 		}
 	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
-		_defaultSpriteSet = new AdSpriteSet(_gameRef);
+		_defaultSpriteSet = new AdSpriteSet(_game);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
 			SAFE_DELETE(_defaultSpriteSet);
 			return STATUS_FAILED;

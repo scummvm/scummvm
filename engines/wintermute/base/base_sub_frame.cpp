@@ -72,7 +72,7 @@ BaseSubFrame::BaseSubFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 //////////////////////////////////////////////////////////////////////////
 BaseSubFrame::~BaseSubFrame() {
 	if (_surface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 	}
 	SAFE_DELETE_ARRAY(_surfaceFilename);
 }
@@ -247,12 +247,12 @@ bool BaseSubFrame::draw(int x, int y, BaseObject *registerOwner, float zoomX, fl
 
 	if (registerOwner != nullptr && !_decoration) {
 		if (zoomX == Graphics::kDefaultZoomX && zoomY == Graphics::kDefaultZoomY) {
-			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_game,  registerOwner, this, x - _hotspotX + getRect().left, y  - _hotspotY + getRect().top, getRect().right - getRect().left, getRect().bottom - getRect().top, zoomX, zoomY, precise));
 		} else {
-			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_gameRef,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
+			BaseEngine::getRenderer()->_rectList.add(new BaseActiveRect(_game,  registerOwner, this, (int)(x - (_hotspotX + getRect().left) * (zoomX / 100)), (int)(y - (_hotspotY + getRect().top) * (zoomY / 100)), (int)((getRect().right - getRect().left) * (zoomX / 100)), (int)((getRect().bottom - getRect().top) * (zoomY / 100)), zoomX, zoomY, precise));
 		}
 	}
-	if (_gameRef->_suspendedRendering) {
+	if (_game->_suspendedRendering) {
 		return STATUS_OK;
 	}
 
@@ -493,7 +493,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		if (val->isNULL()) {
 			if (_surface) {
-				_gameRef->_surfaceStorage->removeSurface(_surface);
+				_game->_surfaceStorage->removeSurface(_surface);
 			}
 			SAFE_DELETE_ARRAY(_surfaceFilename);
 			stack->pushBool(true);
@@ -517,7 +517,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 //////////////////////////////////////////////////////////////////////////
 ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	if (!_scValue) {
-		_scValue = new ScValue(_gameRef);
+		_scValue = new ScValue(_game);
 	}
 	_scValue->setNULL();
 
@@ -685,13 +685,13 @@ const char *BaseSubFrame::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, byte ckRed, byte ckGreen, byte ckBlue, int lifeTime, bool keepLoaded) {
 	if (_surface) {
-		_gameRef->_surfaceStorage->removeSurface(_surface);
+		_game->_surfaceStorage->removeSurface(_surface);
 		_surface = nullptr;
 	}
 
 	SAFE_DELETE_ARRAY(_surfaceFilename);
 
-	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
+	_surface = _game->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
 		_surfaceFilename = new char[filename.size() + 1];
 		Common::strcpy_s(_surfaceFilename, filename.size() + 1, filename.c_str());
@@ -716,7 +716,7 @@ bool BaseSubFrame::setSurfaceSimple() {
 		_surface = nullptr;
 		return STATUS_OK;
 	}
-	_surface = _gameRef->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
+	_surface = _game->_surfaceStorage->addSurface(_surfaceFilename, _cKDefault, _cKRed, _cKGreen, _cKBlue, _lifeTime, _keepLoaded);
 	if (_surface) {
 		return STATUS_OK;
 	} else {

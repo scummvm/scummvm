@@ -118,7 +118,7 @@ void AdSceneGeometry::cleanup() {
 	_waypointGroups.removeAll();
 
 	for (i = 0; i < _cameras.getSize(); i++) {
-		BaseRenderer3D *renderer = _gameRef->_renderer3D;
+		BaseRenderer3D *renderer = _game->_renderer3D;
 		if (renderer->_camera == _cameras[i])
 			renderer->_camera = nullptr;
 		delete _cameras[i];
@@ -143,7 +143,7 @@ void AdSceneGeometry::cleanup() {
 
 //////////////////////////////////////////////////////////////////////////
 AdGeomExt *AdSceneGeometry::getGeometryExtension(char *filename) {
-	AdGeomExt *ret = new AdGeomExt(_gameRef);
+	AdGeomExt *ret = new AdGeomExt(_game);
 
 	AnsiString path = PathUtil::getDirectoryName(filename);
 	AnsiString name = PathUtil::getFileNameWithoutExtension(filename);
@@ -168,7 +168,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	// load waypoint graphics from resources
 	if (!_wptMarker) {
-		_wptMarker = new BaseSprite(_gameRef);
+		_wptMarker = new BaseSprite(_game);
 		if (_wptMarker) {
 			if (!_wptMarker->loadFile("wpt.sprite")) {
 				delete _wptMarker;
@@ -180,13 +180,13 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	Common::String extenstionCheck(filename);
 	extenstionCheck.toLowercase();
 	if (!extenstionCheck.hasSuffix(".3ds")) {
-		_gameRef->LOG(0, "Error: no suitable loader found for file '%s'", filename);
+		_game->LOG(0, "Error: no suitable loader found for file '%s'", filename);
 		return false;
 	}
 
 	AdGeomExt *geomExt = getGeometryExtension(const_cast<char *>(filename));
 
-	Loader3DS *loader = new Loader3DS(_gameRef);
+	Loader3DS *loader = new Loader3DS(_game);
 	if (!loader->parseFile(filename)) {
 		delete loader;
 		delete geomExt;
@@ -206,9 +206,9 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		switch (extNode->_type) {
 		case GEOM_WALKPLANE: {
-				AdWalkplane *plane = new AdWalkplane(_gameRef);
+				AdWalkplane *plane = new AdWalkplane(_game);
 				plane->setName(loader->getMeshName(i).c_str());
-				plane->_mesh = _gameRef->_renderer3D->createMesh3DS();
+				plane->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, plane->_mesh)) {
 					delete plane->_mesh;
 					delete plane;
@@ -225,9 +225,9 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			break;
 
 		case GEOM_BLOCKED: {
-				AdBlock *block = new AdBlock(_gameRef);
+				AdBlock *block = new AdBlock(_game);
 				block->setName(loader->getMeshName(i).c_str());
-				block->_mesh = _gameRef->_renderer3D->createMesh3DS();
+				block->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, block->_mesh)) {
 					delete block->_mesh;
 					delete block;
@@ -244,7 +244,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			break;
 
 		case GEOM_WAYPOINT: {
-				Mesh3DS *mesh = _gameRef->_renderer3D->createMesh3DS();
+				Mesh3DS *mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, mesh)) {
 					delete mesh;
 					delete loader;
@@ -252,7 +252,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 					return false;
 				} else {
 					if (_waypointGroups.getSize() == 0) {
-						_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
+						_waypointGroups.add(new AdWaypointGroup3D(_game));
 					}
 					_waypointGroups[0]->addFromMesh(mesh);
 					delete mesh;
@@ -261,9 +261,9 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 			break;
 
 		case GEOM_GENERIC: {
-				AdGeneric *generic = new AdGeneric(_gameRef);
+				AdGeneric *generic = new AdGeneric(_game);
 				generic->setName(loader->getMeshName(i).c_str());
-				generic->_mesh = _gameRef->_renderer3D->createMesh3DS();
+				generic->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, generic->_mesh)) {
 					delete generic->_mesh;
 					delete generic;
@@ -283,7 +283,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	// load cameras
 	for (i = 0; i < loader->getNumCameras(); i++) {
-		Camera3D *camera = new Camera3D(_gameRef);
+		Camera3D *camera = new Camera3D(_game);
 		if (!loader->loadCamera(i, camera)) {
 			delete camera;
 			delete loader;
@@ -295,7 +295,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	// load lights
 	for (i = 0; i < loader->getNumLights(); i++) {
-		Light3D *light = new Light3D(_gameRef);
+		Light3D *light = new Light3D(_game);
 		if (!loader->loadLight(i, light)) {
 			delete light;
 			delete loader;
@@ -343,7 +343,7 @@ bool AdSceneGeometry::dropWaypoints() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveCamera(int camera, float fov, float nearClipPlane, float farClipPlane) {
 	if (camera < 0 || camera >= _cameras.getSize()) {
-		_gameRef->LOG(0, "Warning: Camera %d is out of bounds.", camera);
+		_game->LOG(0, "Warning: Camera %d is out of bounds.", camera);
 		return false;
 	} else {
 		_activeCamera = camera;
@@ -369,7 +369,7 @@ bool AdSceneGeometry::setActiveCamera(const char *camera, float fov, float nearC
 			return setActiveCamera(i, fov, nearClipPlane, farClipPlane);
 	}
 
-	_gameRef->LOG(0, "Warning: Camera '%s' not found.", camera);
+	_game->LOG(0, "Warning: Camera '%s' not found.", camera);
 	return false;
 }
 
@@ -385,7 +385,7 @@ Camera3D *AdSceneGeometry::getActiveCamera() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::setActiveLight(int32 light) {
 	if (light < 0 || light >= _lights.getSize()) {
-		_gameRef->LOG(0, "Warning: Light %d is out of bounds.", light);
+		_game->LOG(0, "Warning: Light %d is out of bounds.", light);
 		return false;
 	} else {
 		_activeLight = light;
@@ -401,7 +401,7 @@ bool AdSceneGeometry::setActiveLight(char *light) {
 		}
 	}
 
-	_gameRef->LOG(0, "Warning: Light '%s' not found.", light);
+	_game->LOG(0, "Warning: Light '%s' not found.", light);
 	return false;
 }
 
@@ -412,7 +412,7 @@ DXMatrix *AdSceneGeometry::getViewMatrix() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::storeDrawingParams() {
-    BaseRenderer3D *renderer = _gameRef->_renderer3D;
+    BaseRenderer3D *renderer = _game->_renderer3D;
 
 	// store values
 	_drawingViewport = renderer->getViewPort();
@@ -421,7 +421,7 @@ bool AdSceneGeometry::storeDrawingParams() {
 	renderer->getViewTransform(&_lastViewMat);
 	renderer->getProjectionTransform(&_lastProjMat);
 
-	AdScene *scene = ((AdGame *)_gameRef)->_scene;
+	AdScene *scene = ((AdGame *)_game)->_scene;
 	if (scene) {
 		_lastScrollX = scene->getOffsetLeft();
 		_lastScrollY = scene->getOffsetTop();
@@ -431,18 +431,18 @@ bool AdSceneGeometry::storeDrawingParams() {
 	}
 
 	Common::Rect32 rc;
-	_gameRef->getCurrentViewportRect(&rc);
+	_game->getCurrentViewportRect(&rc);
 	float width = (float)rc.right - (float)rc.left;
 	float height = (float)rc.bottom - (float)rc.top;
 
 	// margins
 	int mleft = rc.left;
-	int mright = _gameRef->_renderer3D->getWidth() - width - rc.left;
+	int mright = _game->_renderer3D->getWidth() - width - rc.left;
 	int mtop = rc.top;
-	int mbottom = _gameRef->_renderer3D->getHeight() - height - rc.top;
+	int mbottom = _game->_renderer3D->getHeight() - height - rc.top;
 
-	_lastOffsetX = _gameRef->_offsetX + (mleft - mright) / 2;
-	_lastOffsetY = _gameRef->_offsetY + (mtop - mbottom) / 2;
+	_lastOffsetX = _game->_offsetX + (mleft - mright) / 2;
+	_lastOffsetY = _game->_offsetY + (mtop - mbottom) / 2;
 
 	_lastValuesInitialized = true;
 
@@ -454,7 +454,7 @@ bool AdSceneGeometry::render(bool render) {
 	// store values
 	storeDrawingParams();
 	if (render) {
-		_gameRef->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, _lights, getActiveCamera());
+		_game->_renderer3D->renderSceneGeometry(_planes, _blocks, _generics, _lights, getActiveCamera());
 	}
 
 	return true;
@@ -464,7 +464,7 @@ bool AdSceneGeometry::render(bool render) {
 bool AdSceneGeometry::renderShadowGeometry() {
 	storeDrawingParams();
 
-	_gameRef->_renderer3D->renderShadowGeometry(_planes, _blocks, _generics, getActiveCamera());
+	_game->_renderer3D->renderShadowGeometry(_planes, _blocks, _generics, getActiveCamera());
 	return true;
 }
 
@@ -680,7 +680,7 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, DXVector3 *pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
-	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	BaseRenderer3D *renderer = _game->_renderer3D;
 
 	if (!_lastValuesInitialized) {
 		_drawingViewport = renderer->getViewPort();
@@ -691,7 +691,7 @@ bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
 	float layerWidth, layerHeight;
 	float modWidth, modHeight;
 	bool customViewport;
-	_gameRef->_renderer3D->getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
+	_game->_renderer3D->getProjectionParams(&resWidth, &resHeight, &layerWidth, &layerHeight, &modWidth, &modHeight, &customViewport);
 
 	// modify coordinates according to viewport settings
 	int mleft = _drawingViewport._x;
@@ -881,8 +881,8 @@ float AdSceneGeometry::getPointsDist(DXVector3 p1, DXVector3 p2) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::initLoop() {
-	uint32 start = _gameRef->_currentTime;
-	while (!_PFReady && _gameRef->_currentTime - start <= _PFMaxTime) {
+	uint32 start = _game->_currentTime;
+	while (!_PFReady && _game->_currentTime - start <= _PFMaxTime) {
 		pathFinderStep();
 	}
 
@@ -892,7 +892,7 @@ bool AdSceneGeometry::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
 	// disable all lights
-	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	BaseRenderer3D *renderer = _game->_renderer3D;
 	int32 maxLights = renderer->getMaxActiveLights();
 	for (int32 i = 0; i < maxLights; i++) {
 		renderer->lightEnable(i, false);
@@ -908,7 +908,7 @@ bool AdSceneGeometry::createLights() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLights) {
 	const int maxLightCount = 100;
-	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	BaseRenderer3D *renderer = _game->_renderer3D;
 	int maxLights = renderer->getMaxActiveLights();
 
 	int32 numActiveLights = 0;
@@ -925,7 +925,7 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		}
 	} else {
 		if (!_maxLightsWarning) {
-			_gameRef->LOG(0, "Warning: Using more lights than the hardware supports (%d)", maxLights);
+			_game->LOG(0, "Warning: Using more lights than the hardware supports (%d)", maxLights);
 			_maxLightsWarning = true;
 		}
 
@@ -1267,7 +1267,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 			}
 
 			if (!found) {
-				Light3D *light = new Light3D(_gameRef);
+				Light3D *light = new Light3D(_game);
 				light->persist(persistMgr);
 				delete light;
 			}
@@ -1299,7 +1299,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				}
 			}
 			if (!found) {
-				AdBlock *block = new AdBlock(_gameRef);
+				AdBlock *block = new AdBlock(_game);
 				block->persist(persistMgr);
 				delete block;
 			}
@@ -1330,7 +1330,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				}
 			}
 			if (!found) {
-				AdWalkplane *plane = new AdWalkplane(_gameRef);
+				AdWalkplane *plane = new AdWalkplane(_game);
 				plane->persist(persistMgr);
 				delete plane;
 			}
@@ -1361,7 +1361,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				}
 			}
 			if (!found) {
-				AdGeneric *generic = new AdGeneric(_gameRef);
+				AdGeneric *generic = new AdGeneric(_game);
 				generic->persist(persistMgr);
 				delete generic;
 			}

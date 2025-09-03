@@ -49,7 +49,7 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-	_gameRef->_renderer3D->_lastTexture = nullptr;
+	_game->_renderer3D->_lastTexture = nullptr;
 
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 	glEnableClientState(GL_VERTEX_ARRAY);
@@ -124,7 +124,7 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 
-	BaseRenderOpenGL3D *renderer = dynamic_cast<BaseRenderOpenGL3D *>(_gameRef->_renderer3D);
+	BaseRenderOpenGL3D *renderer = dynamic_cast<BaseRenderOpenGL3D *>(_game->_renderer3D);
 	renderer->setProjection2D();
 
 	glFrontFace(GL_CW);
@@ -145,7 +145,7 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
 
-	_gameRef->_renderer3D->setup3D(nullptr, true);
+	_game->_renderer3D->setup3D(nullptr, true);
 
 	// clear stencil buffer
 	glClearStencil(0);
@@ -156,7 +156,7 @@ bool ShadowVolumeOpenGL::renderToScene() {
 
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::initMask() {
-	auto *rend = _gameRef->_renderer3D;
+	auto *rend = _game->_renderer3D;
 
 	// bottom left
 	_shadowMask[0].x = 0.0f;

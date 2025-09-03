@@ -35,18 +35,18 @@
 
 namespace Wintermute {
 
-BaseGame *BasePlatform::_gameRef = nullptr;
+BaseGame *BasePlatform::_game = nullptr;
 WintermuteEngine *BasePlatform::_engineRef = nullptr;
 
 #define CLASS_NAME "GF_FRAME"
 int BasePlatform::initialize(WintermuteEngine *engineRef, BaseGame *inGame, int argc, char *argv[]) {
-	_gameRef = inGame;
+	_game = inGame;
 	_engineRef = engineRef;
 	return true;
 }
 
 void BasePlatform::deinit() {
-	_gameRef = nullptr;
+	_game = nullptr;
 	_engineRef = nullptr;
 }
 
@@ -55,90 +55,90 @@ void BasePlatform::handleEvent(Common::Event *event) {
 	switch (event->type) {
 
 	case Common::EVENT_LBUTTONDOWN:
-		if (_gameRef) {
-			if (_gameRef->isLeftDoubleClick()) {
-				_gameRef->onMouseLeftDblClick();
+		if (_game) {
+			if (_game->isLeftDoubleClick()) {
+				_game->onMouseLeftDblClick();
 			} else {
-				_gameRef->onMouseLeftDown();
+				_game->onMouseLeftDown();
 			}
 		}
 		break;
 	case Common::EVENT_RBUTTONDOWN:
-		if (_gameRef) {
-			if (_gameRef->isRightDoubleClick()) {
-				_gameRef->onMouseRightDblClick();
+		if (_game) {
+			if (_game->isRightDoubleClick()) {
+				_game->onMouseRightDblClick();
 			} else {
-				_gameRef->onMouseRightDown();
+				_game->onMouseRightDown();
 			}
 		}
 		break;
 	case Common::EVENT_MBUTTONDOWN:
-		if (_gameRef) {
-			_gameRef->onMouseMiddleDown();
+		if (_game) {
+			_game->onMouseMiddleDown();
 		}
 		break;
 	case Common::EVENT_LBUTTONUP:
-		if (_gameRef) {
-			_gameRef->onMouseLeftUp();
+		if (_game) {
+			_game->onMouseLeftUp();
 		}
 		break;
 	case Common::EVENT_RBUTTONUP:
-		if (_gameRef) {
-			_gameRef->onMouseRightUp();
+		if (_game) {
+			_game->onMouseRightUp();
 		}
 		break;
 	case Common::EVENT_MBUTTONUP:
-		if (_gameRef) {
-			_gameRef->onMouseMiddleUp();
+		if (_game) {
+			_game->onMouseMiddleUp();
 		}
 		break;
 	case Common::EVENT_KEYDOWN:
-		if (_gameRef) {
-			_gameRef->handleKeypress(event);
+		if (_game) {
+			_game->handleKeypress(event);
 		}
 		break;
 	case Common::EVENT_KEYUP:
-		if (_gameRef) {
-			_gameRef->handleKeyRelease(event);
+		if (_game) {
+			_game->handleKeyRelease(event);
 		}
 		break;
 	case Common::EVENT_WHEELUP:
 	case Common::EVENT_WHEELDOWN:
-		if (_gameRef) {
-			_gameRef->handleMouseWheel(event->type == Common::EVENT_WHEELUP ? 1 : -1);
+		if (_game) {
+			_game->handleMouseWheel(event->type == Common::EVENT_WHEELUP ? 1 : -1);
 		}
 		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-		if (_gameRef) {
-			_gameRef->handleCustomActionStart((BaseGameCustomAction)event->customType);
+		if (_game) {
+			_game->handleCustomActionStart((BaseGameCustomAction)event->customType);
 		}
 		break;
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-		if (_gameRef) {
-			_gameRef->handleCustomActionEnd((BaseGameCustomAction)event->customType);
+		if (_game) {
+			_game->handleCustomActionEnd((BaseGameCustomAction)event->customType);
 		}
 		break;
 	case Common::EVENT_SCREEN_CHANGED:
-		if (_gameRef) {
-			_gameRef->_renderer->onWindowChange();
+		if (_game) {
+			_game->_renderer->onWindowChange();
 		}
 		break;
-// Focus-events have been removed (_gameRef->onActivate originally)
+// Focus-events have been removed (_game->onActivate originally)
 	case Common::EVENT_RETURN_TO_LAUNCHER:
-		_gameRef->_quitting = true;
+		_game->_quitting = true;
 		break;
 	case Common::EVENT_QUIT:
 // Block kept in case we want to support autoSaveOnExit.
 // Originally this was the behaviour for WME Lite on iOS:
-//		if (_gameRef) {
-//			_gameRef->AutoSaveOnExit();
-//			_gameRef->_quitting = true;
+//		if (_game) {
+//			_game->AutoSaveOnExit();
+//			_game->_quitting = true;
 //		}
 
 // The engine CAN query for closing, but we disable it for now, as the EVENT_QUIT-event
 // can't be stopped.
-//		if (_gameRef) {
-//			_gameRef->onWindowClose();
+//		if (_game) {
+//			_game->onWindowClose();
 //		}
 		break;
 	default:

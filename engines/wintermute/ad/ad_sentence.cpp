@@ -56,7 +56,7 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 	_font = nullptr;
 
 	_pos.x = _pos.y = 0;
-	_width = _gameRef->_renderer->getWidth();
+	_width = _game->_renderer->getWidth();
 
 	_align = (TTextAlign)TAL_CENTER;
 
@@ -193,18 +193,18 @@ bool AdSentence::display() {
 		_soundStarted = true;
 	}
 
-	if (_gameRef->_subtitles) {
+	if (_game->_subtitles) {
 		int32 x = _pos.x;
 		int32 y = _pos.y;
 
 		if (!_fixedPos) {
-			x = x - ((AdGame *)_gameRef)->_scene->getOffsetLeft();
-			y = y - ((AdGame *)_gameRef)->_scene->getOffsetTop();
+			x = x - ((AdGame *)_game)->_scene->getOffsetLeft();
+			y = y - ((AdGame *)_game)->_scene->getOffsetTop();
 		}
 
 
 		x = MAX<int32>(x, 0);
-		x = MIN(x, _gameRef->_renderer->getWidth() - _width);
+		x = MIN(x, _game->_renderer->getWidth() - _width);
 		y = MAX<int32>(y, 0);
 
 		_font->drawText((byte *)_text, x, y, _width, _align);
@@ -237,7 +237,7 @@ bool AdSentence::finish() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
 	persistMgr->transferSint32(TMEMBER_INT(_align));
 	persistMgr->transferSint32(TMEMBER(_currentStance));
@@ -280,12 +280,12 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 		return STATUS_OK;    // no talk def file found
 	}
 
-	_talkDef = new AdTalkDef(_gameRef);
+	_talkDef = new AdTalkDef(_game);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
 		SAFE_DELETE(_talkDef);
 		return STATUS_FAILED;
 	}
-	//_gameRef->LOG(0, "Using .talk file: %s", TalkDefFile);
+	//_game->LOG(0, "Using .talk file: %s", TalkDefFile);
 
 	return STATUS_OK;
 }
@@ -302,9 +302,9 @@ bool AdSentence::update(TDirection dir) {
 
 	/*
 	if (_sound) CurrentTime = _sound->GetPositionTime();
-	else CurrentTime = _gameRef->getTimer()->getTime() - _startTime;
+	else CurrentTime = _game->getTimer()->getTime() - _startTime;
 	*/
-	currentTime = _gameRef->getTimer()->getTime() - _startTime;
+	currentTime = _game->getTimer()->getTime() - _startTime;
 
 	bool talkNodeFound = false;
 	for (int32 i = 0; i < _talkDef->_nodes.getSize(); i++) {
@@ -343,7 +343,7 @@ bool AdSentence::update(TDirection dir) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::canSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
-	return (_gameRef->getTimer()->getTime() - _startTime) > 300;
+	return (_game->getTimer()->getTime() - _startTime) > 300;
 }
 
 } // End of namespace Wintermute

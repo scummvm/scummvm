@@ -67,14 +67,14 @@ bool BaseRenderer3D::getProjectionParams(float *resWidth, float *resHeight, floa
 	*resWidth = _width;
 	*resHeight = _height;
 
-	if (_gameRef->_editorResolutionWidth > 0)
-		*resWidth = _gameRef->_editorResolutionWidth;
-	if (_gameRef->_editorResolutionHeight > 0)
-		*resHeight = _gameRef->_editorResolutionHeight;
+	if (_game->_editorResolutionWidth > 0)
+		*resWidth = _game->_editorResolutionWidth;
+	if (_game->_editorResolutionHeight > 0)
+		*resHeight = _game->_editorResolutionHeight;
 
 	int lWidth, lHeight;
 	Common::Rect32 sceneViewport;
-	_gameRef->getLayerSize(&lWidth, &lHeight, &sceneViewport, customViewport);
+	_game->getLayerSize(&lWidth, &lHeight, &sceneViewport, customViewport);
 	*layerWidth = (float)lWidth;
 	*layerHeight = (float)lHeight;
 

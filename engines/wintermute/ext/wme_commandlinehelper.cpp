@@ -45,7 +45,7 @@ BaseScriptable *makeSXCommandLineHelper(BaseGame *inGame, ScStack *stack) {
 //////////////////////////////////////////////////////////////////////////
 SXCommandLineHelper::SXCommandLineHelper(BaseGame *inGame, ScStack *stack) : BaseScriptable(inGame) {
 	stack->correctParams(0);
-	_gameRef->LOG(0, "new SXCommandLineHelper()");
+	_game->LOG(0, "new SXCommandLineHelper()");
 }
 
 

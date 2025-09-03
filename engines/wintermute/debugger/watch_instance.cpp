@@ -34,7 +34,7 @@ void WatchInstance::evaluate() {
 		if (!_watch->getFilename().compareTo(_script->_filename)) {
 
 			if(_lastValue == nullptr) {
-				_lastValue = new ScValue(_script->_gameRef);
+				_lastValue = new ScValue(_script->_game);
 				// ^^ This here is NULL by default
 			}
 			ScValue* currentValue = _script->resolveName(_watch->getSymbol());

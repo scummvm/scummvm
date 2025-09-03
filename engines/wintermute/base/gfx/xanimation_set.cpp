@@ -80,7 +80,7 @@ bool AnimationSet::addEvent(AnimationEvent *event) {
 	} else {
 		int frameTime = getFrameTime();
 		if (frameTime < 0) {
-			_gameRef->LOG(0, "Error adding animation event %s, no keyframes found", event->_eventName);
+			_game->LOG(0, "Error adding animation event %s, no keyframes found", event->_eventName);
 			SAFE_DELETE(event);
 			return false;
 		}

@@ -51,7 +51,7 @@ BaseFontStorage::~BaseFontStorage() {
 bool BaseFontStorage::cleanup(bool warn) {
 	for (int32 i = 0; i < _fonts.getSize(); i++) {
 		if (warn)
-			_gameRef->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
+			_game->LOG(0, "Removing orphan font '%s'", _fonts[i]->getFilename());
 		delete _fonts[i];
 	}
 	_fonts.removeAll();
@@ -81,7 +81,7 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	}
 
 	/*
-	BaseFont* font = new BaseFont(_gameRef);
+	BaseFont* font = new BaseFont(_game);
 	if (!font) return nullptr;
 
 	if (DID_FAIL(font->loadFile(filename))) {
@@ -94,7 +94,7 @@ BaseFont *BaseFontStorage::addFont(const Common::String &filename) {
 	    return font;
 	}
 	*/
-	BaseFont *font = BaseFont::createFromFile(_gameRef,  filename);
+	BaseFont *font = BaseFont::createFromFile(_game,  filename);
 	if (font) {
 		font->_refCount = 1;
 		_fonts.add(font);
@@ -130,7 +130,7 @@ bool BaseFontStorage::persist(BasePersistenceManager *persistMgr) {
 		cleanup(false);
 	}
 
-	persistMgr->transferPtr(TMEMBER_PTR(_gameRef));
+	persistMgr->transferPtr(TMEMBER_PTR(_game));
 	_fonts.persist(persistMgr);
 
 	return STATUS_OK;

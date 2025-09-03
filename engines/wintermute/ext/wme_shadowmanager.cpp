@@ -49,7 +49,7 @@ SXShadowManager::SXShadowManager(BaseGame *inGame, ScStack *stack) : BaseScripta
 	event._type = WME_EVENT_UPDATE;
 	event._callback = callback;
 	event._plugin = this;
-	_gameRef->pluginEvents().subscribeEvent(event);
+	_game->pluginEvents().subscribeEvent(event);
 	
 	_defaultLightPos = DXVector3(1.0f, 200.0f, 1.0f);
 	_minShadow = 0.1f;
@@ -64,7 +64,7 @@ SXShadowManager::~SXShadowManager() {
 	event._type = WME_EVENT_UPDATE;
 	event._callback = callback;
 	event._plugin = this;
-	_gameRef->pluginEvents().unsubscribeEvent(event);
+	_game->pluginEvents().unsubscribeEvent(event);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -344,7 +344,7 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 		event._type = WME_EVENT_UPDATE;
 		event._callback = callback;
 		event._plugin = this;
-		_gameRef->pluginEvents().subscribeEvent(event);
+		_game->pluginEvents().subscribeEvent(event);
 
 		// Actor and light lists is not get restored, plugin is not designed to work this way.
 		// Lists get refreshed by game script on scene change.
@@ -364,7 +364,7 @@ bool SXShadowManager::persist(BasePersistenceManager *persistMgr) {
 void SXShadowManager::callback(void *eventData1, void *eventData2) {
 	SXShadowManager *shadowManager = (SXShadowManager *)eventData2;
 
-	uint32 time = shadowManager->_gameRef->scGetProperty("CurrentTime")->getInt();
+	uint32 time = shadowManager->_game->scGetProperty("CurrentTime")->getInt();
 	if (time - shadowManager->_lastTime > 20) {
 		shadowManager->_lastTime = time;
 		shadowManager->update();
@@ -373,7 +373,7 @@ void SXShadowManager::callback(void *eventData1, void *eventData2) {
 
 void SXShadowManager::update() {
 	if (_useSmartShadows) {
-		AdGame *adGame = (AdGame *)_gameRef;
+		AdGame *adGame = (AdGame *)_game;
 		if (!adGame->_scene || !adGame->_scene->_geom)
 			return;
 
@@ -414,9 +414,9 @@ void SXShadowManager::update() {
 }
 
 void SXShadowManager::run() {
-	_lastTime = _gameRef->scGetProperty("CurrentTime")->getInt();
+	_lastTime = _game->scGetProperty("CurrentTime")->getInt();
 	_lights.clear();
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 	if (!adGame->_scene || !adGame->_scene->_geom)
 		return;
 	for (int32 l = 0; l < adGame->_scene->_geom->_lights.getSize(); l++) {

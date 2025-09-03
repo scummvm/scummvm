@@ -50,7 +50,7 @@ UIEntity::UIEntity(BaseGame *inGame) : UIObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 UIEntity::~UIEntity() {
 	if (_entity) {
-		_gameRef->unregisterObject(_entity);
+		_game->unregisterObject(_entity);
 	}
 	_entity = nullptr;
 }
@@ -60,7 +60,7 @@ UIEntity::~UIEntity() {
 bool UIEntity::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -69,7 +69,7 @@ bool UIEntity::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ENTITY container file '%s'", filename);
+		_game->LOG(0, "Error parsing ENTITY container file '%s'", filename);
 	}
 
 
@@ -112,7 +112,7 @@ bool UIEntity::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY_CONTAINER) {
-			_gameRef->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
+			_game->LOG(0, "'ENTITY_CONTAINER' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -165,17 +165,17 @@ bool UIEntity::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
+		_game->LOG(0, "Syntax error in ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ENTITY_CONTAINER definition");
+		_game->LOG(0, "Error loading ENTITY_CONTAINER definition");
 		return STATUS_FAILED;
 	}
 
 	correctSize();
 
-	if (_gameRef->_editorMode) {
+	if (_game->_editorMode) {
 		_width = 50;
 		_height = 50;
 	}
@@ -221,9 +221,9 @@ bool UIEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 //////////////////////////////////////////////////////////////////////////
 bool UIEntity::setEntity(const char *filename) {
 	if (_entity) {
-		_gameRef->unregisterObject(_entity);
+		_game->unregisterObject(_entity);
 	}
-	_entity = new AdEntity(_gameRef);
+	_entity = new AdEntity(_game);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
 		SAFE_DELETE(_entity);
 		return STATUS_FAILED;
@@ -231,7 +231,7 @@ bool UIEntity::setEntity(const char *filename) {
 		_entity->_nonIntMouseEvents = true;
 		_entity->_sceneIndependent = true;
 		_entity->makeFreezable(false);
-		_gameRef->registerObject(_entity);
+		_game->registerObject(_entity);
 	}
 	return STATUS_OK;
 }

@@ -61,10 +61,10 @@ bool Light3D::setLight(int index) {
 	diffuse._z = RGBCOLGetB(_diffuseColor) / 256.0f;
 	diffuse._w = 1.0f;
 
-	_gameRef->_renderer3D->setLightParameters(index, _pos, _target - _pos, diffuse, _isSpotlight);
+	_game->_renderer3D->setLightParameters(index, _pos, _target - _pos, diffuse, _isSpotlight);
 
 	if (_active) {
-		_gameRef->_renderer3D->lightEnable(index, true);
+		_game->_renderer3D->lightEnable(index, true);
 	}
 
 	return true;

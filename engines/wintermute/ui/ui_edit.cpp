@@ -84,7 +84,7 @@ UIEdit::UIEdit(BaseGame *inGame) : UIObject(inGame) {
 UIEdit::~UIEdit() {
 	if (!_sharedFonts) {
 		if (_fontSelected) {
-			_gameRef->_fontStorage->removeFont(_fontSelected);
+			_game->_fontStorage->removeFont(_fontSelected);
 		}
 	}
 
@@ -96,7 +96,7 @@ UIEdit::~UIEdit() {
 bool UIEdit::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIEdit::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -105,7 +105,7 @@ bool UIEdit::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing EDIT file '%s'", filename);
+		_game->LOG(0, "Error parsing EDIT file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -171,7 +171,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_EDIT) {
-			_gameRef->LOG(0, "'EDIT' keyword expected.");
+			_game->LOG(0, "'EDIT' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -191,7 +191,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			SAFE_DELETE(_back);
-			_back = new UITiledImage(_gameRef);
+			_back = new UITiledImage(_game);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
 				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
@@ -200,7 +200,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			SAFE_DELETE(_image);
-			_image = new BaseSprite(_gameRef);
+			_image = new BaseSprite(_game);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
 				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
@@ -209,9 +209,9 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -219,9 +219,9 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_SELECTED:
 			if (_fontSelected) {
-				_gameRef->_fontStorage->removeFont(_fontSelected);
+				_game->_fontStorage->removeFont(_fontSelected);
 			}
-			_fontSelected = _gameRef->_fontStorage->addFont(params);
+			_fontSelected = _game->_fontStorage->addFont(params);
 			if (!_fontSelected) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -229,7 +229,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText(params);
-			_gameRef->expandStringByStringTable(&_text);
+			_game->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_X:
@@ -258,7 +258,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -298,11 +298,11 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in EDIT definition");
+		_game->LOG(0, "Syntax error in EDIT definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading EDIT definition");
+		_game->LOG(0, "Error loading EDIT definition");
 		return STATUS_FAILED;
 	}
 
@@ -385,9 +385,9 @@ bool UIEdit::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 
 		if (_fontSelected) {
-			_gameRef->_fontStorage->removeFont(_fontSelected);
+			_game->_fontStorage->removeFont(_fontSelected);
 		}
-		_fontSelected = _gameRef->_fontStorage->addFont(stack->pop()->getString());
+		_fontSelected = _game->_fontStorage->addFont(stack->pop()->getString());
 		stack->pushBool(_fontSelected != nullptr);
 
 		return STATUS_OK;
@@ -461,7 +461,7 @@ ScValue *UIEdit::scGetProperty(const Common::String &name) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Text") {
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::ansiToWide(_text);
 			_scValue->setString(StringUtil::wideToUtf8(wstr).c_str());
 		} else {
@@ -532,7 +532,7 @@ bool UIEdit::scSetProperty(const char *name, ScValue *value) {
 	// Text
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Text") == 0) {
-		if (_gameRef->_textEncoding == TEXT_UTF8) {
+		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(value->getString());
 			setText(StringUtil::wideToAnsi(wstr).c_str());
 		} else {
@@ -571,8 +571,8 @@ bool UIEdit::display(int offsetX, int offsetY) {
 
 
 	// hack!
-	TTextEncoding OrigEncoding = _gameRef->_textEncoding;
-	_gameRef->_textEncoding = TEXT_ANSI;
+	TTextEncoding OrigEncoding = _game->_textEncoding;
+	_game->_textEncoding = TEXT_ANSI;
 
 	if (_back) {
 		_back->display(offsetX + _posX, offsetY + _posY, _width, _height);
@@ -588,7 +588,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	if (_font) {
 		font = _font;
 	} else {
-		font = _gameRef->_systemFont;
+		font = _game->_systemFont;
 	}
 
 	if (_fontSelected) {
@@ -654,7 +654,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		width = _posX + _width + offsetX - _frameWidth;
 		height = MAX(font->getLetterHeight(), sfont->getLetterHeight());
 
-		if (_gameRef->_textRTL) {
+		if (_game->_textRTL) {
 			xxx += alignOffset;
 		}
 
@@ -724,7 +724,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 	}
 
 
-	_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+	_game->_renderer->_rectList.add(new BaseActiveRect(_game,  this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 
 /*	if (Game->m_AccessMgr->GetActiveObject() == this) {
 		RECT rc;
@@ -732,7 +732,7 @@ bool UIEdit::display(int offsetX, int offsetY) {
 		Game->m_AccessMgr->SetHintRect(&rc, true);
 	}*/
 
-	_gameRef->_textEncoding = OrigEncoding;
+	_game->_textEncoding = OrigEncoding;
 
 	return STATUS_OK;
 }
@@ -761,9 +761,9 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	case Common::KEYCODE_RIGHT:
 	case Common::KEYCODE_DOWN:
 		if (event->kbd.keycode == Common::KEYCODE_HOME) {
-			_selEnd = _gameRef->_textRTL ? strlen(_text) : 0;
+			_selEnd = _game->_textRTL ? strlen(_text) : 0;
 		} else if (event->kbd.keycode == Common::KEYCODE_END) {
-			_selEnd = _gameRef->_textRTL ? 0 : strlen(_text);
+			_selEnd = _game->_textRTL ? 0 : strlen(_text);
 		} else if (event->kbd.keycode == Common::KEYCODE_LEFT ||
 				   event->kbd.keycode == Common::KEYCODE_UP) {
 			_selEnd--;
@@ -779,7 +779,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	// Delete right
 	case Common::KEYCODE_DELETE:
 		if (_selStart == _selEnd) {
-			if (_gameRef->_textRTL) {
+			if (_game->_textRTL) {
 				deleteChars(_selStart - 1, _selStart);
 				_selEnd--;
 				if (_selEnd < 0) {
@@ -800,7 +800,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 	// Delete left
 	case Common::KEYCODE_BACKSPACE:
 		if (_selStart == _selEnd) {
-			if (_gameRef->_textRTL) {
+			if (_game->_textRTL) {
 				deleteChars(_selStart, _selStart + 1);
 			} else {
 				deleteChars(_selStart - 1, _selStart);
@@ -836,7 +836,7 @@ bool UIEdit::handleKeypress(Common::Event *event, bool printable) {
 		wstr += (char)event->kbd.ascii;
 		_selEnd += insertChars(_selEnd, (const byte *)StringUtil::wideToAnsi(wstr).c_str(), 1);
 
-		if (_gameRef->_textRTL) {
+		if (_game->_textRTL) {
 			_selEnd = _selStart;
 		} else {
 			_selStart = _selEnd;

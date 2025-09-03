@@ -55,7 +55,7 @@ AdRegion::~AdRegion() {
 bool AdRegion::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdRegion::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdRegion::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -64,7 +64,7 @@ bool AdRegion::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing REGION file '%s'", filename);
+		_game->LOG(0, "Error parsing REGION file '%s'", filename);
 	}
 
 
@@ -121,7 +121,7 @@ bool AdRegion::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_REGION) {
-			_gameRef->LOG(0, "'REGION' keyword expected.");
+			_game->LOG(0, "'REGION' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -210,7 +210,7 @@ bool AdRegion::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in REGION definition");
+		_game->LOG(0, "Syntax error in REGION definition");
 		return STATUS_FAILED;
 	}
 

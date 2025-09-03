@@ -55,7 +55,7 @@ AdResponse::~AdResponse() {
 	SAFE_DELETE(_iconHover);
 	SAFE_DELETE(_iconPressed);
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 }
 
@@ -70,9 +70,9 @@ void AdResponse::setText(const char *text) {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIcon(const char *filename) {
 	delete _icon;
-	_icon = new BaseSprite(_gameRef);
+	_icon = new BaseSprite(_game);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
+		_game->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
 		SAFE_DELETE(_icon);
 		return STATUS_FAILED;
 	}
@@ -82,11 +82,11 @@ bool AdResponse::setIcon(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setFont(const char *filename) {
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
-	_font = _gameRef->_fontStorage->addFont(filename);
+	_font = _game->_fontStorage->addFont(filename);
 	if (!_font) {
-		_gameRef->LOG(0, "AdResponse::setFont failed for file '%s'", filename);
+		_game->LOG(0, "AdResponse::setFont failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -95,9 +95,9 @@ bool AdResponse::setFont(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconHover(const char *filename) {
 	SAFE_DELETE(_iconHover);
-	_iconHover = new BaseSprite(_gameRef);
+	_iconHover = new BaseSprite(_game);
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
+		_game->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
 		SAFE_DELETE(_iconHover);
 		return STATUS_FAILED;
 	}
@@ -108,9 +108,9 @@ bool AdResponse::setIconHover(const char *filename) {
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
 	SAFE_DELETE(_iconPressed);
-	_iconPressed = new BaseSprite(_gameRef);
+	_iconPressed = new BaseSprite(_game);
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
-		_gameRef->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
+		_game->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
 		SAFE_DELETE(_iconPressed);
 		return STATUS_FAILED;
 	}

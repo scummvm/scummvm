@@ -81,7 +81,7 @@ AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 	_responseBox = nullptr;
 	_inventoryBox = nullptr;
 
-	_scene = new AdScene(_gameRef);
+	_scene = new AdScene(_game);
 	_scene->setName("");
 	registerObject(_scene);
 
@@ -153,7 +153,7 @@ bool AdGame::cleanup() {
 
 	// remove items
 	for (int32 i = 0; i < _items.getSize(); i++) {
-		_gameRef->unregisterObject(_items[i]);
+		_game->unregisterObject(_items[i]);
 	}
 	_items.removeAll();
 
@@ -169,12 +169,12 @@ bool AdGame::cleanup() {
 
 
 	if (_responseBox) {
-		_gameRef->unregisterObject(_responseBox);
+		_game->unregisterObject(_responseBox);
 		_responseBox = nullptr;
 	}
 
 	if (_inventoryBox) {
-		_gameRef->unregisterObject(_inventoryBox);
+		_game->unregisterObject(_inventoryBox);
 		_inventoryBox = nullptr;
 	}
 
@@ -211,7 +211,7 @@ bool AdGame::initLoop() {
 		changeScene(_scheduledScene, _scheduledFadeIn);
 		SAFE_DELETE_ARRAY(_scheduledScene);
 
-		_gameRef->_activeObject = nullptr;
+		_game->_activeObject = nullptr;
 	}
 
 
@@ -271,10 +271,10 @@ bool AdGame::removeObject(AdObject *object) {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::changeScene(const char *filename, bool fadeIn) {
 	if (_scene == nullptr) {
-		_scene = new AdScene(_gameRef);
+		_scene = new AdScene(_game);
 		registerObject(_scene);
 	} else {
-		_gameRef->pluginEvents().applyEvent(WME_EVENT_SCENE_SHUTDOWN, _scene);
+		_game->pluginEvents().applyEvent(WME_EVENT_SCENE_SHUTDOWN, _scene);
 		_scene->applyEvent("SceneShutdown", true);
 
 		setPrevSceneName(_scene->_name);
@@ -314,10 +314,10 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 			}
 
 			_scene->loadState();
-			_gameRef->pluginEvents().applyEvent(WME_EVENT_SCENE_INIT, _scene);
+			_game->pluginEvents().applyEvent(WME_EVENT_SCENE_INIT, _scene);
 		}
 		if (fadeIn) {
-			_gameRef->_transMgr->start(TRANSITION_FADE_IN);
+			_game->_transMgr->start(TRANSITION_FADE_IN);
 		}
 		return ret;
 	} else {
@@ -393,7 +393,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadActor") == 0) {
 		stack->correctParams(1);
-		AdActor *act = new AdActor(_gameRef);
+		AdActor *act = new AdActor(_game);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
@@ -413,7 +413,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		// assume that we have an .X model here
 		// wme3d has also support for .ms3d files
 		// but they are deprecated
-		AdActor3DX *act = new AdActor3DX(_gameRef);
+		AdActor3DX *act = new AdActor3DX(_game);
 		if (act && DID_SUCCEED(act->loadFile(stack->pop()->getString()))) {
 			addObject(act);
 			stack->pushNative(act, true);
@@ -430,7 +430,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "LoadEntity") == 0) {
 		stack->correctParams(1);
-		AdEntity *ent = new AdEntity(_gameRef);
+		AdEntity *ent = new AdEntity(_game);
 		if (ent && DID_SUCCEED(ent->loadFile(stack->pop()->getString()))) {
 			addObject(ent);
 			stack->pushNative(ent, true);
@@ -479,7 +479,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdEntity *ent = new AdEntity(_gameRef);
+		AdEntity *ent = new AdEntity(_game);
 		addObject(ent);
 		if (!val->isNULL()) {
 			ent->setName(val->getString());
@@ -495,7 +495,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		AdItem *item = new AdItem(_gameRef);
+		AdItem *item = new AdItem(_game);
 		addItem(item);
 		if (!val->isNULL()) {
 			item->setName(val->getString());
@@ -566,7 +566,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		ScValue *val4 = stack->pop();
 
 		if (_responseBox) {
-			AdResponse *res = new AdResponse(_gameRef);
+			AdResponse *res = new AdResponse(_game);
 			if (res) {
 				res->_iD = id;
 				res->setText(text);
@@ -819,8 +819,8 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		_gameRef->unregisterObject(_responseBox);
-		_responseBox = new AdResponseBox(_gameRef);
+		_game->unregisterObject(_responseBox);
+		_responseBox = new AdResponseBox(_game);
 		if (_responseBox && !DID_FAIL(_responseBox->loadFile(filename))) {
 			registerObject(_responseBox);
 			stack->pushBool(true);
@@ -838,8 +838,8 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(1);
 		const char *filename = stack->pop()->getString();
 
-		_gameRef->unregisterObject(_inventoryBox);
-		_inventoryBox = new AdInventoryBox(_gameRef);
+		_game->unregisterObject(_inventoryBox);
+		_inventoryBox = new AdInventoryBox(_game);
 		if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile(filename))) {
 			registerObject(_inventoryBox);
 			stack->pushBool(true);
@@ -904,7 +904,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 
 		if (!_sceneViewport) {
-			_sceneViewport = new BaseViewport(_gameRef);
+			_sceneViewport = new BaseViewport(_game);
 		}
 		if (_sceneViewport) {
 			_sceneViewport->setRect(x, y, x + width, y + height);
@@ -1185,7 +1185,7 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 			BaseObject *obj = (BaseObject *)value->getNative();
 			if (obj == this) {
 				_inventoryOwner = _invObject;
-			} else if (_gameRef->validObject(obj)) {
+			} else if (_game->validObject(obj)) {
 				_inventoryOwner = (AdObject *)obj;
 			}
 		}
@@ -1267,7 +1267,7 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(0);
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(new AdActor(_gameRef));
+		thisObj->setNative(new AdActor(_game));
 		stack->pushNULL();
 	}
 
@@ -1278,7 +1278,7 @@ bool AdGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		stack->correctParams(0);
 		thisObj = thisStack->getTop();
 
-		thisObj->setNative(new AdEntity(_gameRef));
+		thisObj->setNative(new AdEntity(_game));
 		stack->pushNULL();
 	}
 
@@ -1300,7 +1300,7 @@ bool AdGame::showCursor() {
 		return STATUS_OK;
 	}
 
-	if (_selectedItem && _gameRef->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
+	if (_selectedItem && _game->_state == GAME_RUNNING && _stateEx == GAME_NORMAL && _interactive) {
 		if (_selectedItem->_cursorCombined) {
 			BaseSprite *origLastCursor = _lastCursor;
 			BaseGame::showCursor();
@@ -1325,7 +1325,7 @@ bool AdGame::showCursor() {
 bool AdGame::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdGame::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdGame::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -1334,7 +1334,7 @@ bool AdGame::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing GAME file '%s'", filename);
+		_game->LOG(0, "Error parsing GAME file '%s'", filename);
 	}
 
 
@@ -1394,7 +1394,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 				switch (cmd) {
 				case TOKEN_RESPONSE_BOX:
 					SAFE_DELETE(_responseBox);
-					_responseBox = new AdResponseBox(_gameRef);
+					_responseBox = new AdResponseBox(_game);
 					if (_responseBox && !DID_FAIL(_responseBox->loadFile(params2))) {
 						registerObject(_responseBox);
 					} else {
@@ -1405,7 +1405,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 
 				case TOKEN_INVENTORY_BOX:
 					SAFE_DELETE(_inventoryBox);
-					_inventoryBox = new AdInventoryBox(_gameRef);
+					_inventoryBox = new AdInventoryBox(_game);
 					if (_inventoryBox && !DID_FAIL(_inventoryBox->loadFile(params2))) {
 						registerObject(_inventoryBox);
 					} else {
@@ -1446,7 +1446,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 					Common::Rect32 rc;
 					parser.scanStr(params2, "%d,%d,%d,%d", &rc.left, &rc.top, &rc.right, &rc.bottom);
 					if (!_sceneViewport) {
-						_sceneViewport = new BaseViewport(_gameRef);
+						_sceneViewport = new BaseViewport(_game);
 					}
 					if (_sceneViewport) {
 						_sceneViewport->setRect(rc.left, rc.top, rc.right, rc.bottom);
@@ -1478,16 +1478,16 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in GAME definition");
+		_game->LOG(0, "Syntax error in GAME definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading GAME definition");
+		_game->LOG(0, "Error loading GAME definition");
 		return STATUS_FAILED;
 	}
 
 	if (itemFound && !itemsFound) {
-		_gameRef->LOG(0, "**Warning** Please put the items definition to a separate file.");
+		_game->LOG(0, "**Warning** Please put the items definition to a separate file.");
 	}
 
 	return STATUS_OK;
@@ -1693,7 +1693,7 @@ bool AdGame::handleCustomActionStart(BaseGameCustomAction action) {
 	}
 
 	BasePlatform::setCursorPos(p.x, p.y);
-	setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y));
+	setActiveObject(_game->_renderer->getObjectAt(p.x, p.y));
 	onMouseLeftDown();
 	onMouseLeftUp();
 	return true;
@@ -1725,7 +1725,7 @@ bool AdGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *ex
 bool AdGame::loadItemsFile(const char *filename, bool merge) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdGame::LoadItemsFile failed for file '%s'", filename);
+		_game->LOG(0, "AdGame::LoadItemsFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -1736,7 +1736,7 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 	//Common::strcpy_s(_filename, filenameSize, filename);
 
 	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) {
-		_gameRef->LOG(0, "Error parsing ITEMS file '%s'", filename);
+		_game->LOG(0, "Error parsing ITEMS file '%s'", filename);
 	}
 
 
@@ -1765,7 +1765,7 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_ITEM: {
-			AdItem *item = new AdItem(_gameRef);
+			AdItem *item = new AdItem(_game);
 			if (item && !DID_FAIL(item->loadBuffer(params, false))) {
 				// delete item with the same name, if exists
 				if (merge) {
@@ -1788,11 +1788,11 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 	}
 
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ITEMS definition");
+		_game->LOG(0, "Syntax error in ITEMS definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ITEMS definition");
+		_game->LOG(0, "Error loading ITEMS definition");
 		return STATUS_FAILED;
 	}
 
@@ -1819,7 +1819,7 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 	}
 
 	if (saving) {
-		AdSceneState *ret = new AdSceneState(_gameRef);
+		AdSceneState *ret = new AdSceneState(_game);
 		ret->setFilename(filenameCor);
 
 		_sceneStates.add(ret);
@@ -1845,7 +1845,7 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 	cmd = parser.getCommand(buffer, commands, params);
 	switch (cmd) {
 	case TOKEN_ENTITY_CONTAINER: {
-		UIEntity *ent = new UIEntity(_gameRef);
+		UIEntity *ent = new UIEntity(_game);
 		if (!ent || DID_FAIL(ent->loadBuffer(*params, false))) {
 			SAFE_DELETE(ent);
 			cmd = PARSERR_GENERIC;
@@ -1875,7 +1875,7 @@ bool AdGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *st
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 
-		UIEntity *ent = new UIEntity(_gameRef);
+		UIEntity *ent = new UIEntity(_game);
 		if (!val->isNULL()) {
 			ent->setName(val->getString());
 		}
@@ -1971,7 +1971,7 @@ bool AdGame::addBranchResponse(int id) {
 	if (branchResponseUsed(id)) {
 		return STATUS_OK;
 	}
-	AdResponseContext *r = new AdResponseContext(_gameRef);
+	AdResponseContext *r = new AdResponseContext(_game);
 	r->_id = id;
 	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr);
 	_responsesBranch.add(r);
@@ -1999,7 +1999,7 @@ bool AdGame::addGameResponse(int id) {
 	if (gameResponseUsed(id)) {
 		return STATUS_OK;
 	}
-	AdResponseContext *r = new AdResponseContext(_gameRef);
+	AdResponseContext *r = new AdResponseContext(_game);
 	r->_id = id;
 	r->setContext(_dlgPendingBranches.getSize() > 0 ? _dlgPendingBranches[_dlgPendingBranches.getSize() - 1] : nullptr);
 	_responsesGame.add(r);
@@ -2090,16 +2090,16 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 		// process plugin events
 		if (doUpdate)
-			_gameRef->pluginEvents().applyEvent(WME_EVENT_UPDATE, nullptr);
+			_game->pluginEvents().applyEvent(WME_EVENT_UPDATE, nullptr);
 
 		Common::Point32 p;
 		getMousePos(&p);
 
 		_scene->update();
 
-		_gameRef->pluginEvents().applyEvent(WME_EVENT_SCENE_DRAW_BEGIN, _scene);
+		_game->pluginEvents().applyEvent(WME_EVENT_SCENE_DRAW_BEGIN, _scene);
 		_scene->display();
-		_gameRef->pluginEvents().applyEvent(WME_EVENT_SCENE_DRAW_END, _scene);
+		_game->pluginEvents().applyEvent(WME_EVENT_SCENE_DRAW_END, _scene);
 
 		// display in-game windows
 		displayWindows(true);
@@ -2118,7 +2118,7 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 
 			//m_AccessMgr->DisplayAfterGUI();
 
-			setActiveObject(_gameRef->_renderer->getObjectAt(p.x, p.y));
+			setActiveObject(_game->_renderer->getObjectAt(p.x, p.y));
 
 			// textual info
 			//if (m_AccessGlobalPaused)
@@ -2198,7 +2198,7 @@ AdItem *AdGame::getItemByName(const char *name) const {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::addItem(AdItem *item) {
 	_items.add(item);
-	return _gameRef->registerObject(item);
+	return _game->registerObject(item);
 }
 
 
@@ -2401,7 +2401,7 @@ bool AdGame::onMouseLeftDown() {
 	}
 
 	if ((_videoSkipButton == VIDEO_SKIP_LEFT || _videoSkipButton == VIDEO_SKIP_BOTH) && isVideoPlaying()) {
-		_gameRef->stopVideo();
+		_game->stopVideo();
 		return STATUS_OK;
 	}
 
@@ -2419,7 +2419,7 @@ bool AdGame::onMouseLeftDown() {
 	}
 
 	if (_activeObject != nullptr) {
-		_gameRef->_capturedObject = _gameRef->_activeObject;
+		_game->_capturedObject = _game->_activeObject;
 	}
 	_mouseLeftDown = true;
 
@@ -2497,7 +2497,7 @@ bool AdGame::onMouseRightDown() {
 	}
 
 	if ((_videoSkipButton == VIDEO_SKIP_RIGHT || _videoSkipButton == VIDEO_SKIP_BOTH) && isVideoPlaying()) {
-		_gameRef->stopVideo();
+		_game->stopVideo();
 		return STATUS_OK;
 	}
 
@@ -2543,7 +2543,7 @@ bool AdGame::onMouseRightUp() {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::displayDebugInfo() {
 	char str[100];
-	if (_gameRef->_debugDebugMode) {
+	if (_game->_debugDebugMode) {
 		Common::sprintf_s(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 
@@ -2577,18 +2577,18 @@ bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *vie
 		if (_scene->_scroll3DCompatibility) {
 			// backward compatibility hack
 			// WME pre-1.7 expects the camera to only view the top-left part of the scene
-			*layerWidth = _gameRef->_renderer->getWidth();
-			*layerHeight = _gameRef->_renderer->getHeight();
+			*layerWidth = _game->_renderer->getWidth();
+			*layerHeight = _game->_renderer->getHeight();
 		} else
 #endif
 		{
 			*layerWidth = _scene->_mainLayer->_width;
 			*layerHeight = _scene->_mainLayer->_height;
 #ifdef ENABLE_WME3D
-			if (_gameRef->_editorResolutionWidth > 0)
-				*layerWidth = _gameRef->_editorResolutionWidth;
-			if (_gameRef->_editorResolutionHeight > 0)
-				*layerHeight = _gameRef->_editorResolutionHeight;
+			if (_game->_editorResolutionWidth > 0)
+				*layerWidth = _game->_editorResolutionWidth;
+			if (_game->_editorResolutionHeight > 0)
+				*layerHeight = _game->_editorResolutionHeight;
 #endif
 		}
 		return true;

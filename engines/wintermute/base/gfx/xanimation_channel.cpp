@@ -56,7 +56,7 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 
 	ActiveAnimation *anim = nullptr;
 	if (animSet != nullptr) {
-		anim = new ActiveAnimation(_gameRef, _model);
+		anim = new ActiveAnimation(_game, _model);
 		anim->start(animSet, animSet->_looping);
 	}
 
@@ -73,7 +73,7 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 			_anim[1] = anim;
 			_transitioning = (anim != nullptr);
 			_transtitionTime = transitionTime;
-			_transitionStart = _gameRef->_currentTime;
+			_transitionStart = _game->_currentTime;
 		} else {
 			_anim[0] = anim;
 			SAFE_DELETE(_anim[1]);
@@ -99,7 +99,7 @@ bool AnimationChannel::stopAnim(uint32 transitionTime) {
 
 		_transitioning = true;
 		_transtitionTime = transitionTime;
-		_transitionStart = _gameRef->_currentTime;
+		_transitionStart = _game->_currentTime;
 	}
 
 	return true;
@@ -108,7 +108,7 @@ bool AnimationChannel::stopAnim(uint32 transitionTime) {
 //////////////////////////////////////////////////////////////////////////
 bool AnimationChannel::update(bool debug) {
 	if (_transitioning) {
-		uint32 delta = _gameRef->_currentTime - _transitionStart;
+		uint32 delta = _game->_currentTime - _transitionStart;
 
 		if (delta >= _transtitionTime) {
 			_transitioning = false;
@@ -124,7 +124,7 @@ bool AnimationChannel::update(bool debug) {
 				return _anim[0]->update();
 			}
 		} else {
-			float lerpValue = float(_gameRef->_currentTime - _transitionStart) / float(_transtitionTime);
+			float lerpValue = float(_game->_currentTime - _transitionStart) / float(_transtitionTime);
 
 			if (_anim[0]) {
 				_anim[0]->update(0, true, lerpValue);
@@ -193,7 +193,7 @@ bool AnimationChannel::persist(BasePersistenceManager *persistMgr) {
 
 		if (!persistMgr->getIsSaving()) {
 			if (animExists)
-				_anim[i] = new ActiveAnimation(_gameRef, _model);
+				_anim[i] = new ActiveAnimation(_game, _model);
 			else
 				_anim[i] = nullptr;
 		}

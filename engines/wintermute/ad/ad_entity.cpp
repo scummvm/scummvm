@@ -81,7 +81,7 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdEntity::~AdEntity() {
-	_gameRef->unregisterObject(_region);
+	_game->unregisterObject(_region);
 	SAFE_DELETE(_theora);
 
 	SAFE_DELETE_ARRAY(_item);
@@ -101,7 +101,7 @@ int32 AdEntity::getHintY() const {
 bool AdEntity::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "AdEntity::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -110,7 +110,7 @@ bool AdEntity::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing ENTITY file '%s'", filename);
+		_game->LOG(0, "Error parsing ENTITY file '%s'", filename);
 	}
 
 
@@ -225,13 +225,13 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ENTITY) {
-			_gameRef->LOG(0, "'ENTITY' keyword expected.");
+			_game->LOG(0, "'ENTITY' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
 	}
 
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 	BaseSprite *spr = nullptr;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
@@ -252,7 +252,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_SPRITE: {
 			SAFE_DELETE(_sprite);
-			spr = new BaseSprite(_gameRef, this);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -262,7 +262,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_TALK: {
-			spr = new BaseSprite(_gameRef, this);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -272,7 +272,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_TALK_SPECIAL: {
-			spr = new BaseSprite(_gameRef, this);
+			spr = new BaseSprite(_game, this);
 			if (!spr || DID_FAIL(spr->loadFile(params, adGame->_texTalkLifeTime))) {
 				cmd = PARSERR_GENERIC;
 			} else {
@@ -338,7 +338,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -351,15 +351,15 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_REGION: {
 			if (_region) {
-				_gameRef->unregisterObject(_region);
+				_game->unregisterObject(_region);
 			}
 			_region = nullptr;
-			BaseRegion *rgn = new BaseRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_game);
 			if (!rgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
 			} else {
 				_region = rgn;
-				_gameRef->registerObject(_region);
+				_game->registerObject(_region);
 			}
 		}
 		break;
@@ -367,8 +367,8 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_BLOCKED_REGION: {
 			SAFE_DELETE(_blockRegion);
 			SAFE_DELETE(_currentBlockRegion);
-			BaseRegion *rgn = new BaseRegion(_gameRef);
-			BaseRegion *crgn = new BaseRegion(_gameRef);
+			BaseRegion *rgn = new BaseRegion(_game);
+			BaseRegion *crgn = new BaseRegion(_game);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
 				SAFE_DELETE(_blockRegion);
 				SAFE_DELETE(_currentBlockRegion);
@@ -384,8 +384,8 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_WAYPOINTS: {
 			SAFE_DELETE(_wptGroup);
 			SAFE_DELETE(_currentWptGroup);
-			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
-			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
+			AdWaypointGroup *wpt = new AdWaypointGroup(_game);
+			AdWaypointGroup *cwpt = new AdWaypointGroup(_game);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				SAFE_DELETE(_wptGroup);
 				SAFE_DELETE(_currentWptGroup);
@@ -405,20 +405,20 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_SUBTYPE: {
 			if (scumm_stricmp(params, "sound") == 0) {
 				SAFE_DELETE(_sprite);
-				if (_gameRef->_editorMode) {
-					spr = new BaseSprite(_gameRef, this);
+				if (_game->_editorMode) {
+					spr = new BaseSprite(_game, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) {
 						cmd = PARSERR_GENERIC;
 					} else {
 						_sprite = spr;
 					}
 				}
-				if (_gameRef->_editorMode) {
+				if (_game->_editorMode) {
 					_editorOnly = true;
 				}
 				_zoomable = false;
 				_rotatable = false;
-				_registrable = _gameRef->_editorMode;
+				_registrable = _game->_editorMode;
 				_shadowable = false;
 				_subtype = ENTITY_SOUND;
 			}
@@ -501,11 +501,11 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in ENTITY definition");
+		_game->LOG(0, "Syntax error in ENTITY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading ENTITY definition");
+		_game->LOG(0, "Error loading ENTITY definition");
 		if (spr) {
 			delete spr;
 		}
@@ -513,7 +513,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_region && _sprite) {
-		_gameRef->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
+		_game->LOG(0, "Warning: Entity '%s' has both sprite and region.", _name);
 	}
 
 	updatePosition();
@@ -524,7 +524,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 	_alphaColor = BYTETORGBA(ar, ag, ab, alpha);
 	_state = STATE_READY;
 
-	if (_item && ((AdGame *)_gameRef)->isItemTaken(_item)) {
+	if (_item && ((AdGame *)_game)->isItemTaken(_item)) {
 		_active = false;
 	}
 
@@ -541,7 +541,7 @@ bool AdEntity::display() {
 		if (_alphaColor != 0) {
 			alpha = _alphaColor;
 		} else {
-			alpha = _shadowable ? ((AdGame *)_gameRef)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
+			alpha = _shadowable ? ((AdGame *)_game)->_scene->getAlphaAt(_posX, _posY) : 0xFFFFFFFF;
 		}
 
 		float scaleX, scaleY;
@@ -552,7 +552,7 @@ bool AdEntity::display() {
 			if (_rotateValid) {
 				rotate = _rotate;
 			} else {
-				rotate = ((AdGame *)_gameRef)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
+				rotate = ((AdGame *)_game)->_scene->getRotationAt(_posX, _posY) + _relativeRotate;
 			}
 		} else {
 			rotate = 0.0f;
@@ -560,12 +560,12 @@ bool AdEntity::display() {
 
 
 		bool reg = _registrable;
-		if (_ignoreItems && ((AdGame *)_gameRef)->_selectedItem) {
+		if (_ignoreItems && ((AdGame *)_game)->_selectedItem) {
 			reg = false;
 		}
 
 		if (_region && (reg || _editorAlwaysRegister)) {
-			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef,  _registerAlias, _region, _gameRef->_offsetX, _gameRef->_offsetY));
+			_game->_renderer->_rectList.add(new BaseActiveRect(_game,  _registerAlias, _region, _game->_offsetX, _game->_offsetY));
 		}
 
 		displaySpriteAttachments(true);
@@ -650,7 +650,7 @@ bool AdEntity::update() {
 			_tempSprite2 = _sentence->_currentSprite;
 		}
 
-		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _gameRef->getTimer()->getTime() - _sentence->_startTime);
+		bool timeIsUp = (_sentence->_sound && _sentence->_soundStarted && (!_sentence->_sound->isPlaying() && !_sentence->_sound->isPaused())) || (!_sentence->_sound && _sentence->_duration <= _game->getTimer()->getTime() - _sentence->_startTime);
 		if (_tempSprite2 == nullptr || _tempSprite2->_finished || (/*_tempSprite2->_looping &&*/ timeIsUp)) {
 			if (timeIsUp) {
 				_sentence->finish();
@@ -662,11 +662,11 @@ bool AdEntity::update() {
 					_tempSprite2->reset();
 					_currentSprite = _tempSprite2;
 				}
-				((AdGame *)_gameRef)->addSentence(_sentence);
+				((AdGame *)_game)->addSentence(_sentence);
 			}
 		} else {
 			_currentSprite = _tempSprite2;
-			((AdGame *)_gameRef)->addSentence(_sentence);
+			((AdGame *)_game)->addSentence(_sentence);
 		}
 	}
 	break;
@@ -676,7 +676,7 @@ bool AdEntity::update() {
 
 
 	if (_currentSprite) {
-		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) : 100);
+		_currentSprite->getCurrentFrame(_zoomable ? ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) : 100);
 		if (_currentSprite->_changed) {
 			_posX += _currentSprite->_moveX;
 			_posY += _currentSprite->_moveY;
@@ -688,7 +688,7 @@ bool AdEntity::update() {
 
 	if (_theora) {
 		int offsetX, offsetY;
-		_gameRef->getOffset(&offsetX, &offsetY);
+		_game->getOffset(&offsetX, &offsetY);
 		_theora->_posX = _posX - offsetX;
 		_theora->_posY = _posY - offsetY;
 
@@ -735,7 +735,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int startTime = stack->pop()->getInt();
 
 		SAFE_DELETE(_theora);
-		_theora = new VideoTheoraPlayer(_gameRef);
+		_theora = new VideoTheoraPlayer(_game);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL()) {
 				_theora->setAlphaImage(valAlpha->getString());
@@ -843,8 +843,8 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		for (int32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
-			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
+		for (int32 i = 0; i < ((AdGame *)_game)->_scene->_layers.getSize(); i++) {
+			AdLayer *layer = ((AdGame *)_game)->_scene->_layers[i];
 			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					// found source layer and index, looking for target node
@@ -886,8 +886,8 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "GetLayer") == 0 || strcmp(name, "GetIndex") == 0) {
 		stack->correctParams(0);
 
-		for (int32 i = 0; i < ((AdGame *)_gameRef)->_scene->_layers.getSize(); i++) {
-			AdLayer *layer = ((AdGame *)_gameRef)->_scene->_layers[i];
+		for (int32 i = 0; i < ((AdGame *)_game)->_scene->_layers.getSize(); i++) {
+			AdLayer *layer = ((AdGame *)_game)->_scene->_layers[i];
 			for (int32 j = 0; j < layer->_nodes.getSize(); j++) {
 				if (layer->_nodes[j]->_type == OBJECT_ENTITY && this == layer->_nodes[j]->_entity) {
 					if (strcmp(name, "GetLayer") == 0) {
@@ -912,8 +912,8 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "CreateRegion") == 0) {
 		stack->correctParams(0);
 		if (!_region) {
-			_region = new BaseRegion(_gameRef);
-			_gameRef->registerObject(_region);
+			_region = new BaseRegion(_game);
+			_game->registerObject(_region);
 		}
 		if (_region) {
 			stack->pushNative(_region, true);
@@ -930,7 +930,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteRegion") == 0) {
 		stack->correctParams(0);
 		if (_region) {
-			_gameRef->unregisterObject(_region);
+			_game->unregisterObject(_region);
 			_region = nullptr;
 			stack->pushBool(true);
 		} else {
@@ -1269,7 +1269,7 @@ bool AdEntity::setSprite(const char *filename) {
 	}
 
 	SAFE_DELETE(_sprite);
-	BaseSprite *spr = new BaseSprite(_gameRef, this);
+	BaseSprite *spr = new BaseSprite(_game, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
 		SAFE_DELETE(_sprite);
 		return STATUS_FAILED;

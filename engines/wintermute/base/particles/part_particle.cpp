@@ -78,7 +78,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 	SAFE_DELETE(_sprite);
 
 	SystemClassRegistry::getInstance()->_disabled = true;
-	_sprite = new BaseSprite(_gameRef, (BaseObject*)_gameRef);
+	_sprite = new BaseSprite(_game, (BaseObject*)_game);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;

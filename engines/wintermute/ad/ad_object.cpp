@@ -124,26 +124,26 @@ AdObject::~AdObject() {
 	_stickRegion = nullptr;
 
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 
 	if (_inventory) {
-		((AdGame *)_gameRef)->unregisterInventory(_inventory);
+		((AdGame *)_game)->unregisterInventory(_inventory);
 		_inventory = nullptr;
 	}
 
 	if (_partEmitter) {
-		_gameRef->unregisterObject(_partEmitter);
+		_game->unregisterObject(_partEmitter);
 	}
 
 
 	for (int32 i = 0; i < _attachmentsPre.getSize(); i++) {
-		_gameRef->unregisterObject(_attachmentsPre[i]);
+		_game->unregisterObject(_attachmentsPre[i]);
 	}
 	_attachmentsPre.removeAll();
 
 	for (int32 i = 0; i < _attachmentsPost.getSize(); i++) {
-		_gameRef->unregisterObject(_attachmentsPost[i]);
+		_game->unregisterObject(_attachmentsPost[i]);
 	}
 	_attachmentsPost.removeAll();
 }
@@ -152,14 +152,14 @@ AdObject::~AdObject() {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::playAnim(const char *filename) {
 	SAFE_DELETE(_animSprite);
-	_animSprite = new BaseSprite(_gameRef, this);
+	_animSprite = new BaseSprite(_game, this);
 	if (!_animSprite) {
-		_gameRef->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_game->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		return STATUS_FAILED;
 	}
 	bool res = _animSprite->loadFile(filename);
 	if (DID_FAIL(res)) {
-		_gameRef->LOG(res, "AdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
+		_game->LOG(res, "AdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
 		delete _animSprite;
 		_animSprite = nullptr;
 		return res;
@@ -296,7 +296,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "StickToRegion") == 0) {
 		stack->correctParams(1);
 
-		AdLayer *main = ((AdGame *)_gameRef)->_scene->_mainLayer;
+		AdLayer *main = ((AdGame *)_game)->_scene->_mainLayer;
 		bool regFound = false;
 
 		int32 i;
@@ -369,8 +369,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(2);
 
 		if (!_inventory) {
-			_inventory = new AdInventory(_gameRef);
-			((AdGame *)_gameRef)->registerInventory(_inventory);
+			_inventory = new AdInventory(_game);
+			((AdGame *)_game)->registerInventory(_inventory);
 		}
 
 		ScValue *val = stack->pop();
@@ -382,7 +382,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				script->runtimeError("Cannot add item '%s' to inventory", itemName);
 			} else {
 				// hide associated entities
-				((AdGame *)_gameRef)->_scene->handleItemAssociations(itemName, false);
+				((AdGame *)_game)->_scene->handleItemAssociations(itemName, false);
 			}
 
 		} else {
@@ -400,8 +400,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new AdInventory(_gameRef);
-			((AdGame *)_gameRef)->registerInventory(_inventory);
+			_inventory = new AdInventory(_game);
+			((AdGame *)_game)->registerInventory(_inventory);
 		}
 
 		ScValue *val = stack->pop();
@@ -410,7 +410,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 				script->runtimeError("Cannot remove item '%s' from inventory", val->getString());
 			} else {
 				// show associated entities
-				((AdGame *)_gameRef)->_scene->handleItemAssociations(val->getString(), true);
+				((AdGame *)_game)->_scene->handleItemAssociations(val->getString(), true);
 			}
 		} else {
 			script->runtimeError("DropItem: item name expected");
@@ -427,13 +427,13 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new AdInventory(_gameRef);
-			((AdGame *)_gameRef)->registerInventory(_inventory);
+			_inventory = new AdInventory(_game);
+			((AdGame *)_game)->registerInventory(_inventory);
 		}
 
 		ScValue *val = stack->pop();
 		if (val->_type == VAL_STRING) {
-			AdItem *item = ((AdGame *)_gameRef)->getItemByName(val->getString());
+			AdItem *item = ((AdGame *)_game)->getItemByName(val->getString());
 			if (item) {
 				stack->pushNative(item, true);
 			} else {
@@ -455,8 +455,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		if (!_inventory) {
-			_inventory = new AdInventory(_gameRef);
-			((AdGame *)_gameRef)->registerInventory(_inventory);
+			_inventory = new AdInventory(_game);
+			((AdGame *)_game)->registerInventory(_inventory);
 		}
 
 		ScValue *val = stack->pop();
@@ -503,7 +503,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "DeleteParticleEmitter") == 0) {
 		stack->correctParams(0);
 		if (_partEmitter) {
-			_gameRef->unregisterObject(_partEmitter);
+			_game->unregisterObject(_partEmitter);
 			_partEmitter = nullptr;
 		}
 		stack->pushNULL();
@@ -522,13 +522,13 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int offsetY = stack->pop()->getInt();
 
 		bool res;
-		AdEntity *ent = new AdEntity(_gameRef);
+		AdEntity *ent = new AdEntity(_game);
 		if (DID_FAIL(res = ent->loadFile(filename))) {
 			delete ent;
 			script->runtimeError("AddAttachment() failed loading entity '%s'", filename);
 			stack->pushBool(false);
 		} else {
-			_gameRef->registerObject(ent);
+			_game->registerObject(ent);
 
 			ent->_posX = offsetX;
 			ent->_posY = offsetY;
@@ -558,7 +558,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			for (int32 i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i] == obj) {
 					found = true;
-					_gameRef->unregisterObject(_attachmentsPre[i]);
+					_game->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.removeAt(i);
 					i--;
 				}
@@ -566,7 +566,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			for (int32 i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i] == obj) {
 					found = true;
-					_gameRef->unregisterObject(_attachmentsPost[i]);
+					_game->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.removeAt(i);
 					i--;
 				}
@@ -576,7 +576,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			for (int32 i = 0; i < _attachmentsPre.getSize(); i++) {
 				if (_attachmentsPre[i]->_name && scumm_stricmp(_attachmentsPre[i]->_name, attachmentName) == 0) {
 					found = true;
-					_gameRef->unregisterObject(_attachmentsPre[i]);
+					_game->unregisterObject(_attachmentsPre[i]);
 					_attachmentsPre.removeAt(i);
 					i--;
 				}
@@ -584,7 +584,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			for (int32 i = 0; i < _attachmentsPost.getSize(); i++) {
 				if (_attachmentsPost[i]->_name && scumm_stricmp(_attachmentsPost[i]->_name, attachmentName) == 0) {
 					found = true;
-					_gameRef->unregisterObject(_attachmentsPost[i]);
+					_game->unregisterObject(_attachmentsPost[i]);
 					_attachmentsPost.removeAt(i);
 					i--;
 				}
@@ -838,10 +838,10 @@ const char *AdObject::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::setFont(const char *filename) {
 	if (_font) {
-		_gameRef->_fontStorage->removeFont(_font);
+		_game->_fontStorage->removeFont(_font);
 	}
 	if (filename) {
-		_font = _gameRef->_fontStorage->addFont(filename);
+		_font = _game->_fontStorage->addFont(filename);
 		return _font == nullptr ? STATUS_FAILED : STATUS_OK;
 	} else {
 		_font = nullptr;
@@ -862,7 +862,7 @@ int32 AdObject::getHeight() {
 		}
 
 		if (_zoomable) {
-			float zoom = ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY);
+			float zoom = ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY);
 			ret = (int32)(ret * zoom / 100);
 		}
 		return ret;
@@ -872,7 +872,7 @@ int32 AdObject::getHeight() {
 //////////////////////////////////////////////////////////////////////////
 void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
 	if (!_sentence) {
-		_sentence = new AdSentence(_gameRef);
+		_sentence = new AdSentence(_game);
 	}
 	if (!_sentence) {
 		return;
@@ -886,21 +886,21 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	SAFE_DELETE(_sentence->_sound);
 
 	_sentence->setText(text);
-	_gameRef->expandStringByStringTable(&_sentence->_text);
+	_game->expandStringByStringTable(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = Align;
-	_sentence->_startTime = _gameRef->getTimer()->getTime();
+	_sentence->_startTime = _game->getTimer()->getTime();
 	_sentence->_currentStance = -1;
-	_sentence->_font = _font == nullptr ? _gameRef->_systemFont : _font;
+	_sentence->_font = _font == nullptr ? _game->_systemFont : _font;
 	_sentence->_freezable = _freezable;
 
 	// try to locate speech file automatically
 	bool deleteSound = false;
 	if (!sound) {
-		char *key = _gameRef->getKeyFromStringTable(text);
+		char *key = _game->getKeyFromStringTable(text);
 		if (key) {
-			sound = ((AdGame *)_gameRef)->findSpeechFile(key);
+			sound = ((AdGame *)_game)->findSpeechFile(key);
 			delete[] key;
 
 			if (sound) {
@@ -911,7 +911,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	// load sound and set duration appropriately
 	if (sound) {
-		BaseSound *snd = new BaseSound(_gameRef);
+		BaseSound *snd = new BaseSound(_game);
 		if (snd && DID_SUCCEED(snd->setSound(sound, Audio::Mixer::kSpeechSoundType, true))) {
 			_sentence->setSound(snd);
 			if (_sentence->_duration <= 0) {
@@ -927,7 +927,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 	// set duration by text length
 	if (_sentence->_duration <= 0) {
-		_sentence->_duration = MAX<int32>((size_t)1000, _gameRef->_subtitlesSpeed * strlen(_sentence->_text));
+		_sentence->_duration = MAX<int32>((size_t)1000, _game->_subtitlesSpeed * strlen(_sentence->_text));
 	}
 
 
@@ -937,18 +937,18 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	y = _posY;
 
 	if (!_sceneIndependent && _subtitlesModRelative) {
-		x -= ((AdGame *)_gameRef)->_scene->getOffsetLeft();
-		y -= ((AdGame *)_gameRef)->_scene->getOffsetTop();
+		x -= ((AdGame *)_game)->_scene->getOffsetLeft();
+		y -= ((AdGame *)_game)->_scene->getOffsetTop();
 	}
 
 
 	if (_subtitlesWidth > 0) {
 		width = _subtitlesWidth;
 	} else {
-		if ((x < _gameRef->_renderer->getWidth() / 4 || x > _gameRef->_renderer->getWidth() * 0.75)) {
-			width = MAX(_gameRef->_renderer->getWidth() / 4, MIN(x * 2, (_gameRef->_renderer->getWidth() - x) * 2));
+		if ((x < _game->_renderer->getWidth() / 4 || x > _game->_renderer->getWidth() * 0.75)) {
+			width = MAX(_game->_renderer->getWidth() / 4, MIN(x * 2, (_game->_renderer->getWidth() - x) * 2));
 		} else {
-			width = _gameRef->_renderer->getWidth() / 2;
+			width = _game->_renderer->getWidth() / 2;
 		}
 	}
 
@@ -967,8 +967,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 
-	x = MIN(MAX<int32>(0, x), _gameRef->_renderer->getWidth() - width);
-	y = MIN(MAX<int32>(0, y), _gameRef->_renderer->getHeight() - height);
+	x = MIN(MAX<int32>(0, x), _game->_renderer->getWidth() - width);
+	y = MIN(MAX<int32>(0, y), _game->_renderer->getHeight() - height);
 
 	_sentence->_width = width;
 
@@ -978,8 +978,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 
 
 	if (_subtitlesModRelative) {
-		_sentence->_pos.x += ((AdGame *)_gameRef)->_scene->getOffsetLeft();
-		_sentence->_pos.y += ((AdGame *)_gameRef)->_scene->getOffsetTop();
+		_sentence->_pos.x += ((AdGame *)_game)->_scene->getOffsetLeft();
+		_sentence->_pos.y += ((AdGame *)_game)->_scene->getOffsetTop();
 	}
 
 	_sentence->_fixedPos = !_subtitlesModRelative;
@@ -1007,7 +1007,7 @@ bool AdObject::reset() {
 
 	_state = _nextState = STATE_READY;
 
-	_gameRef->_scEngine->resetObject(this);
+	_game->_scEngine->resetObject(this);
 
 	return STATUS_OK;
 }
@@ -1108,7 +1108,7 @@ bool AdObject::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::updateBlockRegion() {
-	AdGame *adGame = (AdGame *)_gameRef;
+	AdGame *adGame = (AdGame *)_game;
 	if (adGame->_scene) {
 		if (_blockRegion && _currentBlockRegion) {
 			_currentBlockRegion->mimic(_blockRegion, _zoomable ? adGame->_scene->getScaleAt(_posY) : 100.0f, _posX, _posY);
@@ -1124,8 +1124,8 @@ bool AdObject::updateBlockRegion() {
 //////////////////////////////////////////////////////////////////////////
 AdInventory *AdObject::getInventory() {
 	if (!_inventory) {
-		_inventory = new AdInventory(_gameRef);
-		((AdGame *)_gameRef)->registerInventory(_inventory);
+		_inventory = new AdInventory(_game);
+		((AdGame *)_game)->registerInventory(_inventory);
 	}
 	return _inventory;
 }
@@ -1135,7 +1135,7 @@ AdInventory *AdObject::getInventory() {
 bool AdObject::afterMove() {
 	AdRegion *newRegions[MAX_NUM_REGIONS];
 
-	((AdGame *)_gameRef)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
+	((AdGame *)_game)->_scene->getRegionsAt(_posX, _posY, newRegions, MAX_NUM_REGIONS);
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
 		if (!newRegions[i]) {
 			break;
@@ -1154,7 +1154,7 @@ bool AdObject::afterMove() {
 	}
 
 	for (int i = 0; i < MAX_NUM_REGIONS; i++) {
-		if (_currentRegions[i] && _gameRef->validObject(_currentRegions[i])) {
+		if (_currentRegions[i] && _game->validObject(_currentRegions[i])) {
 			_currentRegions[i]->applyEvent("ActorLeave");
 		}
 		_currentRegions[i] = newRegions[i];
@@ -1181,7 +1181,7 @@ bool AdObject::getScale(float *scaleX, float *scaleY) {
 		} else if (_scale >= 0) {
 			*scaleX = *scaleY = _scale;
 		} else {
-			*scaleX = *scaleY = ((AdGame *)_gameRef)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
+			*scaleX = *scaleY = ((AdGame *)_game)->_scene->getZoomAt(_posX, _posY) + _relativeScale;
 		}
 	} else {
 		*scaleX = *scaleY = 100;
@@ -1261,9 +1261,9 @@ PartEmitter *AdObject::createParticleEmitter(bool followParent, int offsetX, int
 	_partOffsetY = offsetY;
 
 	if (!_partEmitter) {
-		_partEmitter = new PartEmitter(_gameRef, this);
+		_partEmitter = new PartEmitter(_game, this);
 		if (_partEmitter) {
-			_gameRef->registerObject(_partEmitter);
+			_game->registerObject(_partEmitter);
 		}
 	}
 	updatePartEmitter();

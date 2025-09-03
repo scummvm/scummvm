@@ -79,16 +79,16 @@ UIButton::~UIButton() {
 
 	if (!_sharedFonts) {
 		if (_fontHover) {
-			_gameRef->_fontStorage->removeFont(_fontHover);
+			_game->_fontStorage->removeFont(_fontHover);
 		}
 		if (_fontPress) {
-			_gameRef->_fontStorage->removeFont(_fontPress);
+			_game->_fontStorage->removeFont(_fontPress);
 		}
 		if (_fontDisable) {
-			_gameRef->_fontStorage->removeFont(_fontDisable);
+			_game->_fontStorage->removeFont(_fontDisable);
 		}
 		if (_fontFocus) {
-			_gameRef->_fontStorage->removeFont(_fontFocus);
+			_game->_fontStorage->removeFont(_fontFocus);
 		}
 	}
 
@@ -105,7 +105,7 @@ UIButton::~UIButton() {
 bool UIButton::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_gameRef->LOG(0, "UIButton::LoadFile failed for file '%s'", filename);
+		_game->LOG(0, "UIButton::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
@@ -114,7 +114,7 @@ bool UIButton::loadFile(const char *filename) {
 	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer, true))) {
-		_gameRef->LOG(0, "Error parsing BUTTON file '%s'", filename);
+		_game->LOG(0, "Error parsing BUTTON file '%s'", filename);
 	}
 
 	delete[] buffer;
@@ -208,7 +208,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_BUTTON) {
-			_gameRef->LOG(0, "'BUTTON' keyword expected.");
+			_game->LOG(0, "'BUTTON' keyword expected.");
 			return STATUS_FAILED;
 		}
 		buffer = params;
@@ -232,7 +232,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK:
 			SAFE_DELETE(_back);
-			_back = new UITiledImage(_gameRef);
+			_back = new UITiledImage(_game);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
 				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
@@ -241,7 +241,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK_HOVER:
 			SAFE_DELETE(_backHover);
-			_backHover = new UITiledImage(_gameRef);
+			_backHover = new UITiledImage(_game);
 			if (!_backHover || DID_FAIL(_backHover->loadFile(params))) {
 				SAFE_DELETE(_backHover);
 				cmd = PARSERR_GENERIC;
@@ -250,7 +250,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK_PRESS:
 			SAFE_DELETE(_backPress);
-			_backPress = new UITiledImage(_gameRef);
+			_backPress = new UITiledImage(_game);
 			if (!_backPress || DID_FAIL(_backPress->loadFile(params))) {
 				SAFE_DELETE(_backPress);
 				cmd = PARSERR_GENERIC;
@@ -259,7 +259,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK_DISABLE:
 			SAFE_DELETE(_backDisable);
-			_backDisable = new UITiledImage(_gameRef);
+			_backDisable = new UITiledImage(_game);
 			if (!_backDisable || DID_FAIL(_backDisable->loadFile(params))) {
 				SAFE_DELETE(_backDisable);
 				cmd = PARSERR_GENERIC;
@@ -268,7 +268,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_BACK_FOCUS:
 			SAFE_DELETE(_backFocus);
-			_backFocus = new UITiledImage(_gameRef);
+			_backFocus = new UITiledImage(_game);
 			if (!_backFocus || DID_FAIL(_backFocus->loadFile(params))) {
 				SAFE_DELETE(_backFocus);
 				cmd = PARSERR_GENERIC;
@@ -277,7 +277,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 			SAFE_DELETE(_image);
-			_image = new BaseSprite(_gameRef);
+			_image = new BaseSprite(_game);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
 				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
@@ -286,7 +286,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE_HOVER:
 			SAFE_DELETE(_imageHover);
-			_imageHover = new BaseSprite(_gameRef);
+			_imageHover = new BaseSprite(_game);
 			if (!_imageHover || DID_FAIL(_imageHover->loadFile(params))) {
 				SAFE_DELETE(_imageHover);
 				cmd = PARSERR_GENERIC;
@@ -295,7 +295,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE_PRESS:
 			SAFE_DELETE(_imagePress);
-			_imagePress = new BaseSprite(_gameRef);
+			_imagePress = new BaseSprite(_game);
 			if (!_imagePress || DID_FAIL(_imagePress->loadFile(params))) {
 				SAFE_DELETE(_imagePress);
 				cmd = PARSERR_GENERIC;
@@ -304,7 +304,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE_DISABLE:
 			SAFE_DELETE(_imageDisable);
-			_imageDisable = new BaseSprite(_gameRef);
+			_imageDisable = new BaseSprite(_game);
 			if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(params))) {
 				SAFE_DELETE(_imageDisable);
 				cmd = PARSERR_GENERIC;
@@ -313,7 +313,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE_FOCUS:
 			SAFE_DELETE(_imageFocus);
-			_imageFocus = new BaseSprite(_gameRef);
+			_imageFocus = new BaseSprite(_game);
 			if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(params))) {
 				SAFE_DELETE(_imageFocus);
 				cmd = PARSERR_GENERIC;
@@ -322,9 +322,9 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT:
 			if (_font) {
-				_gameRef->_fontStorage->removeFont(_font);
+				_game->_fontStorage->removeFont(_font);
 			}
-			_font = _gameRef->_fontStorage->addFont(params);
+			_font = _game->_fontStorage->addFont(params);
 			if (!_font) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -332,9 +332,9 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_HOVER:
 			if (_fontHover) {
-				_gameRef->_fontStorage->removeFont(_fontHover);
+				_game->_fontStorage->removeFont(_fontHover);
 			}
-			_fontHover = _gameRef->_fontStorage->addFont(params);
+			_fontHover = _game->_fontStorage->addFont(params);
 			if (!_fontHover) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -342,9 +342,9 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_PRESS:
 			if (_fontPress) {
-				_gameRef->_fontStorage->removeFont(_fontPress);
+				_game->_fontStorage->removeFont(_fontPress);
 			}
-			_fontPress = _gameRef->_fontStorage->addFont(params);
+			_fontPress = _game->_fontStorage->addFont(params);
 			if (!_fontPress) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -352,9 +352,9 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_DISABLE:
 			if (_fontDisable) {
-				_gameRef->_fontStorage->removeFont(_fontDisable);
+				_game->_fontStorage->removeFont(_fontDisable);
 			}
-			_fontDisable = _gameRef->_fontStorage->addFont(params);
+			_fontDisable = _game->_fontStorage->addFont(params);
 			if (!_fontDisable) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -362,9 +362,9 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_FONT_FOCUS:
 			if (_fontFocus) {
-				_gameRef->_fontStorage->removeFont(_fontFocus);
+				_game->_fontStorage->removeFont(_fontFocus);
 			}
-			_fontFocus = _gameRef->_fontStorage->addFont(params);
+			_fontFocus = _game->_fontStorage->addFont(params);
 			if (!_fontFocus) {
 				cmd = PARSERR_GENERIC;
 			}
@@ -372,7 +372,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TEXT:
 			setText(params);
-			_gameRef->expandStringByStringTable(&_text);
+			_game->expandStringByStringTable(&_text);
 			break;
 
 		case TOKEN_TEXT_ALIGN:
@@ -403,7 +403,7 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_CURSOR:
 			SAFE_DELETE(_cursor);
-			_cursor = new BaseSprite(_gameRef);
+			_cursor = new BaseSprite(_game);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
 				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
@@ -451,11 +451,11 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 		}
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		_gameRef->LOG(0, "Syntax error in BUTTON definition");
+		_game->LOG(0, "Syntax error in BUTTON definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC) {
-		_gameRef->LOG(0, "Error loading BUTTON definition");
+		_game->LOG(0, "Error loading BUTTON definition");
 		return STATUS_FAILED;
 	}
 
@@ -618,7 +618,7 @@ void UIButton::correctSize() {
 		if (_font)
 			textHeight = _font->getTextHeight((byte *)_text, _width);
 		else
-			textHeight = _gameRef->_systemFont->getTextHeight((byte *)_text, _width);
+			textHeight = _game->_systemFont->getTextHeight((byte *)_text, _width);
 
 		if (textHeight > _height) {
 			_height = textHeight;
@@ -647,10 +647,10 @@ bool UIButton::display(int offsetX, int offsetY) {
 
 	//RECT rect;
 	//rect.setRect(OffsetX + _posX, OffsetY + _posY, OffsetX+_posX+_width, OffsetY+_posY+_height);
-	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _gameRef->_mousePos)!=FALSE);
-	_hover = (!_disable && _gameRef->_activeObject == this && (_gameRef->_interactive || _gameRef->_state == GAME_SEMI_FROZEN));
+	//_hover = (!_disable && BasePlatform::ptInRect(&rect, _game->_mousePos)!=FALSE);
+	_hover = (!_disable && _game->_activeObject == this && (_game->_interactive || _game->_state == GAME_SEMI_FROZEN));
 
-	if ((_press && _hover && !_gameRef->_mouseLeftDown) ||
+	if ((_press && _hover && !_game->_mouseLeftDown) ||
 			(_oneTimePress && g_system->getMillis() - _oneTimePressTime >= 100)) {
 		press();
 	}
@@ -708,7 +708,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 		if (_font) {
 			font = _font;
 		} else {
-			font = _gameRef->_systemFont;
+			font = _game->_systemFont;
 		}
 	}
 
@@ -736,7 +736,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}
 
 	if (!_pixelPerfect || !_image) {
-		_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
+		_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, nullptr, offsetX + _posX, offsetY + _posY, _width, _height, 100, 100, false));
 	}
 
 	// reset unused sprites
@@ -762,7 +762,7 @@ bool UIButton::display(int offsetX, int offsetY) {
 	}*/
 	}
 
-	_press = _hover && _gameRef->_mouseLeftDown && _gameRef->_capturedObject == this;
+	_press = _hover && _game->_mouseLeftDown && _game->_capturedObject == this;
 
 	return STATUS_OK;
 }
@@ -794,13 +794,13 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (_fontDisable) {
-			_gameRef->_fontStorage->removeFont(_fontDisable);
+			_game->_fontStorage->removeFont(_fontDisable);
 		}
 		if (val->isNULL()) {
 			_fontDisable = nullptr;
 			stack->pushBool(true);
 		} else {
-			_fontDisable = _gameRef->_fontStorage->addFont(val->getString());
+			_fontDisable = _game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontDisable != nullptr);
 		}
 		return STATUS_OK;
@@ -814,13 +814,13 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (_fontHover) {
-			_gameRef->_fontStorage->removeFont(_fontHover);
+			_game->_fontStorage->removeFont(_fontHover);
 		}
 		if (val->isNULL()) {
 			_fontHover = nullptr;
 			stack->pushBool(true);
 		} else {
-			_fontHover = _gameRef->_fontStorage->addFont(val->getString());
+			_fontHover = _game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontHover != nullptr);
 		}
 		return STATUS_OK;
@@ -834,13 +834,13 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (_fontPress) {
-			_gameRef->_fontStorage->removeFont(_fontPress);
+			_game->_fontStorage->removeFont(_fontPress);
 		}
 		if (val->isNULL()) {
 			_fontPress = nullptr;
 			stack->pushBool(true);
 		} else {
-			_fontPress = _gameRef->_fontStorage->addFont(val->getString());
+			_fontPress = _game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontPress != nullptr);
 		}
 		return STATUS_OK;
@@ -854,13 +854,13 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *val = stack->pop();
 
 		if (_fontFocus) {
-			_gameRef->_fontStorage->removeFont(_fontFocus);
+			_game->_fontStorage->removeFont(_fontFocus);
 		}
 		if (val->isNULL()) {
 			_fontFocus = nullptr;
 			stack->pushBool(true);
 		} else {
-			_fontFocus = _gameRef->_fontStorage->addFont(val->getString());
+			_fontFocus = _game->_fontStorage->addFont(val->getString());
 			stack->pushBool(_fontFocus != nullptr);
 		}
 		return STATUS_OK;
@@ -888,7 +888,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		delete _imageDisable;
-		_imageDisable = new BaseSprite(_gameRef);
+		_imageDisable = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {
 			SAFE_DELETE(_imageDisable);
@@ -936,7 +936,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		SAFE_DELETE(_imageHover);
-		_imageHover = new BaseSprite(_gameRef);
+		_imageHover = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imageHover || DID_FAIL(_imageHover->loadFile(filename))) {
 			SAFE_DELETE(_imageHover);
@@ -983,7 +983,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		SAFE_DELETE(_imagePress);
-		_imagePress = new BaseSprite(_gameRef);
+		_imagePress = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imagePress || DID_FAIL(_imagePress->loadFile(filename))) {
 			SAFE_DELETE(_imagePress);
@@ -1030,7 +1030,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(1);
 
 		SAFE_DELETE(_imageFocus);
-		_imageFocus = new BaseSprite(_gameRef);
+		_imageFocus = new BaseSprite(_game);
 		const char *filename = stack->pop()->getString();
 		if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(filename))) {
 			SAFE_DELETE(_imageFocus);

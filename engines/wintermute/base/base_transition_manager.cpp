@@ -69,8 +69,8 @@ bool BaseTransitionMgr::start(TTransitionType type, bool nonInteractive) {
 
 	if (nonInteractive) {
 		_preserveInteractive = true;
-		_origInteractive = _gameRef->_interactive;
-		_gameRef->_interactive = false;
+		_origInteractive = _game->_interactive;
+		_game->_interactive = false;
 	} /*else _preserveInteractive */;
 
 
@@ -128,7 +128,7 @@ bool BaseTransitionMgr::update() {
 
 	if (isReady()) {
 		if (_preserveInteractive) {
-			_gameRef->_interactive = _origInteractive;
+			_game->_interactive = _origInteractive;
 		}
 	}
 	return STATUS_OK;
