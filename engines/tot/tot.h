@@ -72,7 +72,7 @@ private:
 	void runaroundRed();
 	void sprites(bool drawCharacter);
 	void saveGameToRegister();
-	void saveLoad();
+	void originalSaveLoadScreen();
 	void loadGame(SavedGame game);
 
 	RoomFileRegister *readScreenDataFile(Common::SeekableReadStream *screenDataFile);
@@ -144,7 +144,7 @@ private:
 	void introduction();
 	void firstIntroduction();
 	void readAlphaGraph(Common::String &data, int length, int x, int y, byte barColor);
-	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor);
+	void readAlphaGraphSmall(Common::String &data, int length, int x, int y, byte barColor, byte textColor, char startChar = '\0');
 	void displayObjectDescription(const Common::String &text);
 	void copyProtection();
 	void initialLogo();

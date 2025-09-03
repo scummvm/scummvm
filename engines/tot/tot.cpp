@@ -116,18 +116,16 @@ int TotEngine::engineStart() {
 
 	_graphics->loadPaletteFromFile("DEFAULT");
 	initScreenPointers();
-	initialLogo();
-	_sound->playMidi("INTRODUC", true);
-	_sound->setMidiVolume(3, 3);
-	firstIntroduction();
-	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
+	// initialLogo();
+	// _sound->playMidi("INTRODUC", true);
+	// _sound->setMidiVolume(3, 3);
+	// firstIntroduction();
+	// _mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
 	mainMenu(_firstTimeDone);
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
 	} else if (_continueGame && !shouldQuit()) {
 		resumeGame();
-	} else {
-
 	}
 
 	return startGame();
@@ -190,8 +188,10 @@ int TotEngine::startGame() {
 					soundControls();
 					break;
 				case Common::KEYCODE_F2:
-					openMainMenuDialog();
-					// saveLoad();
+					if(ConfMan.getBool("original_save_load_screen"))
+						originalSaveLoadScreen();
+					else
+						openMainMenuDialog();
 					break;
 				default:
 					if (e.kbd.keycode == hotKeyOpen) {
@@ -1351,13 +1351,19 @@ void TotEngine::mainMenu(bool fade) {
 						}
 					} else if (x >= 18 && x <= 145) {
 						_isSavingDisabled = true;
-						bool result = loadGameDialog();
-						_isSavingDisabled = false;
-						if(result) {
-							_startNewGame = false;
-							_continueGame = false;
+						if(ConfMan.getBool("original_save_load_screen")) {
+							originalSaveLoadScreen();
 							validOption = true;
 						}
+						else {
+							bool result = loadGameDialog();
+							if(result) {
+								validOption = true;
+							}
+						}
+						_startNewGame = false;
+						_continueGame = false;
+						_isSavingDisabled = false;
 					}
 				} else if (y > 174 && y < 190) {
 					if (x > 20 && x < 145) {

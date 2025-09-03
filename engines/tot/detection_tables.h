@@ -39,7 +39,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::ES_ESP,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_NO_TRANSITIONS)
+		GUIO2(GAMEOPTION_NO_TRANSITIONS, GAMEOPTION_ORIGINAL_SAVELOAD_DIALOG)
 	},
 	{
 		"tot",
@@ -52,7 +52,7 @@ const ADGameDescription gameDescriptions[] = {
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,
-		GUIO1(GAMEOPTION_NO_TRANSITIONS)
+		GUIO2(GAMEOPTION_NO_TRANSITIONS, GAMEOPTION_ORIGINAL_SAVELOAD_DIALOG)
 	},
 	AD_TABLE_END_MARKER
 };
