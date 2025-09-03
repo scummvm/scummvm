@@ -169,6 +169,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		project << "\t<ItemGroup>\n";
 		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
 		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/null_osystem.cpp\" />\n";
+		project << "\t\t<ClCompile Remove=\"" << setup.srcDir << "/backends/base-backend.cpp\" />\n"; // symbols are already defined in null_osystem.cpp
 		project << "\t</ItemGroup>\n";
 	}
 
