@@ -2400,6 +2400,11 @@ bool AdGame::onMouseLeftDown() {
 		return STATUS_OK;
 	}
 
+	if ((_videoSkipButton == VIDEO_SKIP_LEFT || _videoSkipButton == VIDEO_SKIP_BOTH) && isVideoPlaying()) {
+		_gameRef->stopVideo();
+		return STATUS_OK;
+	}
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 	}
@@ -2423,6 +2428,9 @@ bool AdGame::onMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseLeftUp() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
@@ -2450,6 +2458,10 @@ bool AdGame::onMouseLeftUp() {
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseLeftDblClick() {
 	if (!validMouse()) {
+		return STATUS_OK;
+	}
+
+	if (isVideoPlaying()) {
 		return STATUS_OK;
 	}
 
@@ -2484,6 +2496,11 @@ bool AdGame::onMouseRightDown() {
 		return STATUS_OK;
 	}
 
+	if ((_videoSkipButton == VIDEO_SKIP_RIGHT || _videoSkipButton == VIDEO_SKIP_BOTH) && isVideoPlaying()) {
+		_gameRef->stopVideo();
+		return STATUS_OK;
+	}
+
 	if ((_state == GAME_RUNNING && !_interactive) || _stateEx == GAME_WAITING_RESPONSE) {
 		return STATUS_OK;
 	}
@@ -2505,6 +2522,9 @@ bool AdGame::onMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::onMouseRightUp() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 	}
