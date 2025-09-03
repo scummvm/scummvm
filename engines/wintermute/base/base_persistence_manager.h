@@ -124,8 +124,7 @@ private:
 	byte _savedExtMajor;
 	byte _savedExtMinor;
 	bool _saving;
-	// Separate from Base, as this class can do SOME operations without a _gameRef.
-	BaseGame *_gameRef;
+	BaseGame *_game;
 };
 
 } // End of namespace Wintermute

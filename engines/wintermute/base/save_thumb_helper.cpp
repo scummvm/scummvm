@@ -34,7 +34,7 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _gameRef(inGame) {
+SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _game(inGame) {
 	_thumbnail = nullptr;
 	_scummVMThumb = nullptr;
 }
@@ -48,19 +48,19 @@ SaveThumbHelper::~SaveThumbHelper() {
 }
 
 BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
-	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+	if (_game->_thumbnailWidth > 0 && _game->_thumbnailHeight > 0) {
 		if (doFlip) {
 			// when using opengl on windows it seems to be necessary to do this twice
 			// works normally for direct3d
-			_gameRef->displayContent(false);
-			_gameRef->_renderer->flip();
+			_game->displayContent(false);
+			_game->_renderer->flip();
 
-			_gameRef->displayContent(false);
-			_gameRef->_renderer->flip();
+			_game->displayContent(false);
+			_game->_renderer->flip();
 		}
 
 		// normal thumbnail
-		return _gameRef->_renderer->takeScreenshot(width, height);
+		return _game->_renderer->takeScreenshot(width, height);
 	}
 	return nullptr;
 }
@@ -70,9 +70,9 @@ bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 	delete _thumbnail;
 	_thumbnail = nullptr;
 
-	if (_gameRef->_thumbnailWidth > 0 && _gameRef->_thumbnailHeight > 0) {
+	if (_game->_thumbnailWidth > 0 && _game->_thumbnailHeight > 0) {
 
-		_thumbnail = storeThumb(doFlip, _gameRef->_thumbnailWidth, _gameRef->_thumbnailHeight);
+		_thumbnail = storeThumb(doFlip, _game->_thumbnailWidth, _game->_thumbnailHeight);
 		if (!_thumbnail) {
 			return STATUS_FAILED;
 		}

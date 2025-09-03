@@ -161,8 +161,8 @@ bool BasePlatform::getCursorPos(Common::Point32 *lpPoint) {
 	// this seems to give the right results
 	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
-	if (!_gameRef->_useD3D) {
-		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	if (!_game->_useD3D) {
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 		renderer->pointFromScreen(lpPoint);
 	}
 #endif
@@ -180,8 +180,8 @@ bool BasePlatform::setCursorPos(int x, int y) {
 	// this seems to give the right results
 	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
-	if (!_gameRef->_useD3D) {
-		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+	if (!_game->_useD3D) {
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 		renderer->pointToScreen(&p);
 	}
 #endif
