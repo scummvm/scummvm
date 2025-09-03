@@ -27,6 +27,21 @@
 
 namespace TinyGL {
 
+GLTextureEnvArgument::GLTextureEnvArgument()
+	: sourceRGB(TGL_TEXTURE)
+	, operandRGB(TGL_SRC_COLOR)
+	, sourceAlpha(TGL_TEXTURE)
+	, operandAlpha(TGL_SRC_ALPHA) {}
+
+GLTextureEnv::GLTextureEnv()
+	: envMode(TGL_MODULATE)
+	, combineRGB(TGL_REPLACE)
+	, combineAlpha(TGL_REPLACE) {}
+
+bool GLTextureEnv::isDefault() const {
+	return envMode == TGL_MODULATE;
+}
+
 void GLContext::issueDrawCall(DrawCall *drawCall) {
 	if (_enableDirtyRectangles && drawCall->getDirtyRegion().isEmpty())
 		return;
@@ -469,6 +484,7 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.texture = c->current_texture;
 	state.wrapS = c->texture_wrap_s;
 	state.wrapT = c->texture_wrap_t;
+	state.textureEnv = c->_texEnv;
 	state.lightingEnabled = c->lighting_enabled;
 	state.textureVersion = c->current_texture->versionNumber;
 	state.fogEnabled = c->fog_enabled;
@@ -543,6 +559,7 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->current_texture = state.texture;
 	c->texture_wrap_s = state.wrapS;
 	c->texture_wrap_t = state.wrapT;
+	c->_texEnv = state.textureEnv;
 	c->fog_enabled = state.fogEnabled;
 	c->fog_color = Vector4(state.fogColorR, state.fogColorG, state.fogColorB, 1.0f);
 
