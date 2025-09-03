@@ -2393,7 +2393,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				FileList files = listDirectory(folder);
 
 				// Add to list of test folders
-				testDirs.push_back(folder);
+				if (shouldInclude.top()) {
+					testDirs.push_back(folder);
+				}
 
 				for (FileList::const_iterator f = files.begin(); f != files.end(); ++f) {
 					if (f->isDirectory)
