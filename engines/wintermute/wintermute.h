@@ -51,7 +51,6 @@ enum {
 class WintermuteEngine : public Engine {
 public:
 	WintermuteEngine(OSystem *syst, const WMEGameDescription *desc);
-	WintermuteEngine();
 	~WintermuteEngine() override;
 
 	virtual Wintermute::Console *getConsole() { return _debugger; }
