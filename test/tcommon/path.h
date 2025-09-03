@@ -1,6 +1,6 @@
 #include <cxxtest/TestSuite.h>
 
-#include "test/common/str-helper.h"
+#include "test/tcommon/str-helper.h"
 
 #include "common/path.h"
 #include "common/hashmap.h"
