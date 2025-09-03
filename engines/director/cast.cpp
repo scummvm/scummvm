@@ -692,7 +692,7 @@ void Cast::loadCast() {
 	// Font Directory
 	_vm->_wm->_fontMan->loadFonts(_castArchive->getPathName());
 
-	debugC(1, kDebugLoading, "****** Loading cast member data for for cast libID %d (%s)", _castLibID, _castName.c_str());
+	debugC(1, kDebugLoading, "****** Loading cast member data for cast libID %d (%s)", _castLibID, _castName.c_str());
 
 	// CastMember Information Array
 	if (_castArchive->hasResource(MKTAG('V', 'W', 'C', 'R'), -1)) {
