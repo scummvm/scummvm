@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 11:23+0000\n"
-"PO-Revision-Date: 2025-09-03 13:08+0000\n"
+"PO-Revision-Date: 2025-09-03 13:41+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -10119,86 +10119,66 @@ msgid "Move or manipulate object"
 msgstr "Muovi o manipola oggetto"
 
 #: engines/lab/metaengine.cpp:233
-#, fuzzy
-#| msgid "Open door"
 msgid "Open door or object"
-msgstr "Apri porta"
+msgstr "Apri porta/oggetto"
 
 #: engines/lab/metaengine.cpp:239
 msgid "Close door or object"
-msgstr ""
+msgstr "Chiudi porta/oggetto"
 
 #: engines/lab/metaengine.cpp:245
 msgid "Look at object close-up"
-msgstr ""
+msgstr "Vista ravvicinata oggetto"
 
 #: engines/lab/metaengine.cpp:251
-#, fuzzy
-#| msgid "Scroll inventory up"
 msgid "Switch to inventory display"
-msgstr "Scorri inventario verso l'alto"
+msgstr "Passa alla schermata inventario"
 
 #: engines/lab/metaengine.cpp:284
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move focus to interactive object"
-msgstr "Seleziona oggetto successivo"
+msgstr "Sposta focus sull'oggetto interattivo"
 
 #: engines/lab/metaengine.cpp:292 engines/lab/metaengine.cpp:352
 msgid "Start dropping virtual bread crumbs"
-msgstr ""
+msgstr "Inizia a lasciare un filo d'Arianna virtuale"
 
 #: engines/lab/metaengine.cpp:298 engines/lab/metaengine.cpp:359
 msgid "Follow virtual bread crumbs"
-msgstr ""
+msgstr "Segui filo d'Arianna virtuale"
 
 #: engines/lab/metaengine.cpp:304 engines/lab/metaengine.cpp:366
 msgid "Run while following virtual bread crumbs"
-msgstr ""
+msgstr "Corri mentre segui il filo d'Arianna virtuale"
 
 #: engines/lab/metaengine.cpp:311
-#, fuzzy
-#| msgid "Switch to 2xSai scaling"
 msgid "Switch to main display"
-msgstr "Passa a modalità (scaler) 2xSai"
+msgstr "Passa alla schermata principale"
 
 #: engines/lab/metaengine.cpp:317
-#, fuzzy
-#| msgid "Save / Load dialog"
 msgid "Open save / load dialog"
-msgstr "Finestra di salvataggio / caricamento"
+msgstr "Apri finestra salvataggio / caricamento"
 
 #: engines/lab/metaengine.cpp:329
-#, fuzzy
-#| msgid "Look at"
 msgid "Look at scene"
-msgstr "Esamina"
+msgstr "Esamina scena"
 
 #: engines/lab/metaengine.cpp:335
-#, fuzzy
-#| msgid "Use inventory item"
 msgid "Previous inventory item"
-msgstr "Usa oggetto dell'inventario"
+msgstr "Oggetto precedente dell'inventario"
 
 #: engines/lab/metaengine.cpp:342
-#, fuzzy
-#| msgid "Animated inventory items"
 msgid "Next inventory item"
-msgstr "Animazioni oggetti inventario"
+msgstr "Oggetto seguente dell'inventario"
 
 #: engines/lab/metaengine.cpp:373
 msgid "Exit map display"
-msgstr ""
+msgstr "Esci dalla visualizzazione mappa"
 
 #: engines/lab/metaengine.cpp:379
-#, fuzzy
-#| msgid "Up level"
 msgid "Up one level"
 msgstr "Sali di un livello"
 
 #: engines/lab/metaengine.cpp:385
-#, fuzzy
-#| msgid "Down level"
 msgid "Down one level"
 msgstr "Scendi di un livello"
 
