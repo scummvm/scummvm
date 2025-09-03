@@ -291,16 +291,16 @@ void FrameBuffer::applyTextureEnvironment(
 
 	// Fixed-point multiplication helpers:
 	// e.g. fpMul16_8_16 is multiplying a 16bit by a 8bit factor resulting in a 16bit output
-	const auto fpMul16_8_16 = [](uint a, uint b) -> uint {
+	const auto fpMul16_8_16 = [](uint32 a, uint32 b) -> uint32 {
 		return (a >> 8) * b;
 	};
-	const auto fpMul16_8_8 = [](uint a, uint b) -> uint {
+	const auto fpMul16_8_8 = [](uint32 a, uint32 b) -> uint32 {
 		return ((a >> 8) * b) >> 8;
 	};
-	const auto fpMul8_8_8 = [](uint a, uint b) -> uint {
+	const auto fpMul8_8_8 = [](uint32 a, uint32 b) -> uint32 {
 		return (a * b) >> 8;
 	};
-	const auto fpMul8_8_16 = [](uint a, uint b) -> uint {
+	const auto fpMul8_8_16 = [](uint32 a, uint32 b) -> uint32 {
 		return a * b;
 	};
 
@@ -428,6 +428,7 @@ void FrameBuffer::applyTextureEnvironment(
 			assert(false && "Invalid texture environment color combine");
 			break;
 		}
+		
 		switch (_textureEnv->combineAlpha) {
 		case TGL_REPLACE:
 			texA = arg0.a;
