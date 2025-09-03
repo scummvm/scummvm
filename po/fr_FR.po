@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 11:23+0000\n"
-"PO-Revision-Date: 2025-09-03 12:18+0000\n"
+"PO-Revision-Date: 2025-09-03 13:08+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -9702,33 +9702,25 @@ msgstr "Badass"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "Retraite"
+msgstr "Recommencer le secteur"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Redémarrer l'animation"
+msgstr "Redémarrer le territoire"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Commencer une nouvelle mission"
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "Conf. des touches Menu Pause"
+msgstr "Conf. des touches Pause"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Interaction keymappings"
 msgid "Direction keymappings"
-msgstr "Conf. des touches Interaction"
+msgstr "Conf. des touches Directions"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -11336,28 +11328,20 @@ msgid "X key"
 msgstr "Touche X"
 
 #: engines/private/metaengine.cpp:37
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display subtitles"
-msgstr "Désactiver les sous-titres"
+msgstr "Afficher les sous-titres"
 
 #: engines/private/metaengine.cpp:38
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use subtitles."
-msgstr "Désactiver les sous-titres"
+msgstr "Affiche les sous-titres."
 
 #: engines/private/metaengine.cpp:48
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Display SFX subtitles"
-msgstr "Désactiver les sous-titres"
+msgstr "Afficher les sous-titres des sons"
 
 #: engines/private/metaengine.cpp:49
-#, fuzzy
-#| msgid "Disable subtitles"
 msgid "Use SFX subtitles."
-msgstr "Désactiver les sous-titres"
+msgstr "Affiche les sous-titres des sons."
 
 #: engines/private/metaengine.cpp:100 engines/trecision/metaengine.cpp:137
 msgid "Skip video"
