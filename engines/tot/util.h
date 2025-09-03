@@ -64,7 +64,7 @@ void changeGameSpeed(Common::Event e);
 
 inline bool odd(int32 i) { return i % 2 != 0; }
 
-int Random(int range);
+int getRandom(int range);
 
 Common::String getObjectName(int idx);
 

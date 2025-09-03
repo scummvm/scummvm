@@ -229,7 +229,7 @@ void removeTitle(byte *&background2) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
 		i2 = g_engine->getRandomNumber(318);
-		j2 = Random(58);
+		j2 = getRandom(58);
 		byte *src = background2 + 4 + (j2 * 320) + i2;
 		byte *dest = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
 		Common::copy(src, src + 2, dest);
@@ -239,8 +239,8 @@ void removeTitle(byte *&background2) {
 
 		Common::copy(src2, src2 + 2, dest2);
 
-		i2 = Random(320);
-		j2 = Random(60);
+		i2 = getRandom(320);
+		j2 = getRandom(60);
 
 		byte *src3 = background2 + 4 + (j2 * 320) + i2;
 		byte *dest3 = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;

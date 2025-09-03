@@ -495,7 +495,7 @@ void waitForKey() {
 	}
 }
 
-int Random(int range) { return g_engine->getRandomNumber(range - 1); }
+int getRandom(int range) { return g_engine->getRandomNumber(range - 1); }
 
 Common::String getObjectName(int idx) {
 	return g_engine->_lang == Common::ES_ESP ? hardcodedObjects_ES[idx] : hardcodedObjects_EN[idx];

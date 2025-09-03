@@ -556,7 +556,7 @@ void talkToSceneObject() {
 	} else {
 		g_engine->readTextFile();
 		uint foo = 0;
-		g_engine->sayLine((Random(10) + 1039), 255, 0, foo, false);
+		g_engine->sayLine((getRandom(10) + 1039), 255, 0, foo, false);
 		g_engine->_verbFile.close();
 		if (g_engine->_cpCounter > 198)
 			showError(274);
