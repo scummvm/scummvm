@@ -47,6 +47,12 @@ namespace CxxTest
         return (x == y);
     }
 
+    template<>
+    bool equals<bool, int>(bool x, int y)
+    {
+        return (x == (bool)y);
+    }
+
     template<class X, class Y>
     void doAssertEquals( const char *file, unsigned line,
                          const char *xExpr, X x,
