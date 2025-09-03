@@ -1408,4 +1408,11 @@ bool BaseObject::renderModel() {
 }
 #endif
 
+//////////////////////////////////////////////////////////////////////////
+/*char *CBObject::GetAccessCaption() {
+	if (m_AccessCaption)
+		return m_AccessCaption;
+	else
+		return GetCaption();
+}*/
 } // End of namespace Wintermute

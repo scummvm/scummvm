@@ -993,6 +993,9 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	if (deleteSound) {
 		delete[] sound;
 	}
+
+	//if (!m_Sentence->m_Sound)
+	//	Game->m_AccessMgr->Speak(m_Sentence->m_Text, TTS_TALK);
 }
 
 

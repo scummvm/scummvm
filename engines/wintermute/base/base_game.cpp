@@ -439,6 +439,10 @@ bool BaseGame::initialize1() {
 		if (_fontStorage == nullptr) {
 			break;
 		}
+		//m_AccessMgr = new CBAccessMgr(this);
+		//if(m_AccessMgr == nullptr) {
+		//	break;
+		//}
 
 		_soundMgr = new BaseSoundMgr(this);
 		if (_soundMgr == nullptr) {
@@ -3329,6 +3333,8 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	if (_mainObject == object) {
 		_mainObject = nullptr;
 	}
+	// is it active accessibility object?
+	//if(m_AccessMgr && m_AccessMgr->GetActiveObject()==Object) m_AccessMgr->SetActiveObject(NULL);
 
 	// destroy object
 	for (int32 i = 0; i < _regObjects.getSize(); i++) {
