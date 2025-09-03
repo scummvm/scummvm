@@ -136,7 +136,7 @@ void Scripts::setOpcodes_v2() {
 }
 
 void Scripts::setScript(Resource *res, bool restartFlag) {
-	debugC(1, kDebugScripts, "setScript(res=%p (%s), restartFlag=%d)", res, res->getFileName(), restartFlag);
+	debugC(1, kDebugScripts, "setScript(res=%p (%s), restartFlag=%d)", (void *)res, res->getFileName(), restartFlag);
 	_resource = res;
 	_data = res->_stream;
 	_endFlag = restartFlag;
