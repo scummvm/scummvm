@@ -168,6 +168,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	if (setup.tests) {
 		project << "\t<ItemGroup>\n";
 		project << "\t\t<ClCompile Include=\"test_runner.cpp\" />\n";
+		project << "\t\t<ClCompile Include=\"" << setup.srcDir << "/test/null_osystem.cpp\" />\n";
 		project << "\t</ItemGroup>\n";
 	}
 
