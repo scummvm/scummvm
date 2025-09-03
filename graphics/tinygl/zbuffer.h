@@ -76,6 +76,8 @@ static const int DRAW_DEPTH_ONLY = 0;
 static const int DRAW_FLAT = 1;
 static const int DRAW_SMOOTH = 2;
 
+struct GLTextureEnv; // defined in zgl.h
+
 struct Buffer {
 	byte *pbuf;
 	uint *zbuf;
@@ -673,6 +675,10 @@ public:
 		_wrapT = wrapt;
 	}
 
+	void setTextureEnvironment(const GLTextureEnv *texEnv) {
+		_textureEnv = texEnv;
+	}
+
 	void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
 		_textureSize = textureSize;
 		_textureSizeMask = textureSizeMask;
@@ -773,6 +779,11 @@ private:
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
 	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
+	void applyTextureEnvironment(
+		int internalformat,
+		uint previousA, uint previousR, uint previousG, uint previousB,
+		byte &texA, byte &texR, byte &texG, byte &texB);
+
 	Buffer _offscreenBuffer;
 	byte *_pbuf;
 	int _pbufWidth;
@@ -792,6 +803,7 @@ private:
 	bool _clippingEnabled;
 
 	const TexelBuffer *_currentTexture;
+	const GLTextureEnv *_textureEnv;
 	uint _wrapS, _wrapT;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;

@@ -279,4 +279,174 @@ Graphics::Surface *copyFromFrameBuffer(const Graphics::PixelFormat &dstFormat) {
 	return c->fb->copyFromFrameBuffer(dstFormat);
 }
 
+void FrameBuffer::applyTextureEnvironment(
+	int internalformat,
+	uint previousA, uint previousR, uint previousG, uint previousB,
+	byte &texA, byte &texR, byte &texG, byte &texB)
+{
+	// summary notation is used from https://registry.khronos.org/OpenGL-Refpages/gl2.1/xhtml/glTexEnv.xml
+	// previousARGB is still in 16bit fixed-point format
+	// texARGB is both input and output
+	// GL_RGB/GL_RGBA might be identical as TexelBuffer returns As=1
+
+	// Fixed-point multiplication helpers:
+	// e.g. fpMul16_8_16 is multiplying a 16bit by a 8bit factor resulting in a 16bit output
+	const auto fpMul16_8_16 = [](uint a, uint b) -> uint {
+		return (a >> 8) * b;
+	};
+	const auto fpMul16_8_8 = [](uint a, uint b) -> uint {
+		return ((a >> 8) * b) >> 8;
+	};
+	const auto fpMul8_8_8 = [](uint a, uint b) -> uint {
+		return (a * b) >> 8;
+	};
+	const auto fpMul8_8_16 = [](uint a, uint b) -> uint {
+		return a * b;
+	};
+
+	struct Arg {
+		byte a, r, g, b;
+	};
+	const auto getCombineArg = [&](const GLTextureEnvArgument &mode) -> Arg {
+		Arg op = {};
+
+		// Source values
+		switch (mode.sourceRGB) {
+		case TGL_TEXTURE:
+			op.r = texR;
+			op.g = texG;
+			op.b = texB;
+			break;
+		case TGL_PRIMARY_COLOR:
+			op.r = previousR >> ZB_POINT_ALPHA_FRAC_BITS;
+			op.g = previousG >> ZB_POINT_ALPHA_FRAC_BITS;
+			op.b = previousB >> ZB_POINT_ALPHA_FRAC_BITS;
+			break;
+		default:
+			assert(false && "Invalid texture environment arg color source");
+			break;
+		}
+		switch (mode.sourceAlpha) {
+		case TGL_TEXTURE:
+			op.a = texA;
+			break;
+		case TGL_PRIMARY_COLOR:
+			op.a = previousA >> ZB_POINT_ALPHA_FRAC_BITS;
+			break;
+		default:
+			assert(false && "Invalid texture environment arg alpha source");
+			break;
+		}
+
+		// Operands
+		switch (mode.operandRGB) {
+		case TGL_SRC_COLOR:
+			break;
+		case TGL_ONE_MINUS_SRC_COLOR:
+			op.r = 255 - op.r;
+			op.g = 255 - op.g;
+			op.b = 255 - op.b;
+			break;
+		case TGL_SRC_ALPHA:
+			op.r = op.g = op.b = op.a;
+			break;
+		default:
+			assert(false && "Invalid texture environment arg color operand");
+			break;
+		}
+		switch (mode.operandAlpha) {
+		case TGL_SRC_ALPHA:
+			break;
+		case TGL_ONE_MINUS_SRC_ALPHA:
+			op.a = 255 - op.a;
+			break;
+		default:
+			assert(false && "Invalid texture environment arg alpha operand");
+			break;
+		}
+
+		return op;
+	};
+
+	switch (_textureEnv->envMode) {
+	case TGL_REPLACE:
+		// GL_RGB:  Cs | Ap
+		// GL_RGBA: Cs | As
+		texA = internalformat == TGL_RGBA ? texA : previousA >> ZB_POINT_ALPHA_FRAC_BITS;
+		break;
+	case TGL_MODULATE:
+	{
+		// GL_RGB:  CpCs | Ap 
+		// GL_RGBA: CpCs | ApAs
+		texA = fpMul16_8_8(previousA, texA);
+		texR = fpMul16_8_8(previousR, texR);
+		texG = fpMul16_8_8(previousG, texG);
+		texB = fpMul16_8_8(previousB, texB);
+		break;
+	}
+	case TGL_DECAL:
+	{
+		// GL_RGB:  Cs              | Ap
+		// GL_RGBA: Cp(1-As) + CsAs | Ap
+		texA = previousA >> ZB_POINT_ALPHA_FRAC_BITS;
+		texR = (fpMul16_8_16(previousR, 255 - texA) + fpMul8_8_16(texR, texA)) >> 8;
+		texG = (fpMul16_8_16(previousG, 255 - texA) + fpMul8_8_16(texG, texA)) >> 8;
+		texB = (fpMul16_8_16(previousB, 255 - texA) + fpMul8_8_16(texB, texA)) >> 8;
+		break;
+	}
+	case TGL_ADD:
+	{
+		// GL_RGB: Cp + Cs | Ap
+		// GL_RGB: Cp + Cs | ApAs
+		texA = fpMul16_8_8(previousA, texA);
+		texR = (previousR >> ZB_POINT_ALPHA_FRAC_BITS) + texR;
+		texG = (previousG >> ZB_POINT_ALPHA_FRAC_BITS) + texG;
+		texB = (previousB >> ZB_POINT_ALPHA_FRAC_BITS) + texB;
+		break;
+	}
+	case TGL_COMBINE:
+	{
+		Arg arg0 = getCombineArg(_textureEnv->arg0);
+		Arg arg1 = getCombineArg(_textureEnv->arg1);
+		switch (_textureEnv->combineRGB) {
+		case TGL_REPLACE:
+			texR = arg0.r;
+			texG = arg0.g;
+			texB = arg0.b;
+			break;
+		case TGL_MODULATE:
+			texR = fpMul8_8_8(arg0.r, arg1.r);
+			texG = fpMul8_8_8(arg0.g, arg1.g);
+			texB = fpMul8_8_8(arg0.b, arg1.b);
+			break;
+		case TGL_ADD:
+			texR = arg0.r + arg1.r;
+			texG = arg0.g + arg1.g;
+			texB = arg0.b + arg1.b;
+			break;
+		default:
+			assert(false && "Invalid texture environment color combine");
+			break;
+		}
+		switch (_textureEnv->combineAlpha) {
+		case TGL_REPLACE:
+			texA = arg0.a;
+			break;
+		case TGL_MODULATE:
+			texA = fpMul8_8_8(arg0.a, arg1.a);
+			break;
+		case TGL_ADD:
+			texA = arg0.a + arg1.a;
+			break;
+		default:
+			assert(false && "Invalid texture environment alpha combine");
+		}
+		break;
+	}
+	default:
+		assert(false && "Invalid texture environment mode");
+		break;
+	}
+}
+
 } // end of namespace TinyGL
