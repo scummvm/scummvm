@@ -188,6 +188,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 		// We override the normal target to ignore the exit code (this allows us to have a clean output and not message about the command exit code)
 		project << "\t\t<Target Name=\"PostBuildEvent\">\n"
 		        << "\t\t\t<Message Text=\"Description: Run tests\" />\n"
+		        << "\t\t\t<Copy SourceFiles=\"" + setup.filePrefix + "/dists/engine-data/encoding.dat\" DestinationFolder=\"$(ProjectDir)test/engine-data\" SkipUnchangedFiles=\"true\" />\n"
 		        << "\t\t\t<Exec Command=\"$(TargetPath)\"  IgnoreExitCode=\"true\" />\n"
 		        << "\t\t</Target>\n";
 	}
