@@ -18,11 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "common/debug.h"
+#include "dragons/actor.h"
+#include "dragons/actorresource.h"
 #include "dragons/dragons.h"
 #include "dragons/dragonini.h"
-#include "dragons/actorresource.h"
-#include "dragons/actor.h"
 #include "dragons/scene.h"
 #include "dragons/screen.h"
 

@@ -21,7 +21,9 @@
 #ifndef DRAGONS_ACTORRESOURCE_H
 #define DRAGONS_ACTORRESOURCE_H
 
-#include "common/system.h"
+#include "common/scummsys.h"
+#include "graphics/surface.h"
+#include "common/stream.h"
 
 namespace Dragons {
 

@@ -21,7 +21,7 @@
 #ifndef DRAGONS_DRAGONVAR_H
 #define DRAGONS_DRAGONVAR_H
 
-#include "common/system.h"
+#include "common/scummsys.h"
 
 namespace Dragons {
 

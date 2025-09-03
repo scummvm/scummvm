@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/scummsys.h"
 #include "dragons/minigame4.h"
 #include "dragons/actor.h"
 #include "dragons/dragons.h"
