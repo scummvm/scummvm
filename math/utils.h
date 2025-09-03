@@ -92,9 +92,9 @@ inline OutputT deg2rad(InputT deg) {
 }
 
 // Handle the case differently when the input type is double
-template<class OutputT>
-inline OutputT deg2rad(double deg) {
-	return (OutputT)( deg * 0.0174532925199433);
+template<>
+inline double deg2rad<double, double>(double deg) {
+	return ( deg * 0.0174532925199433);
 }
 
 // Convert degrees to radians
