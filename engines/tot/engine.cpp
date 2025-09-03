@@ -4613,7 +4613,7 @@ void TotEngine::generateDiploma(Common::String &photoName) {
 	do {
 		_screen->update();
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYUP) {
+			if (e.type == Common::EVENT_KEYDOWN) {
 				keyPressed = true;
 			}
 		}
@@ -4998,7 +4998,7 @@ void TotEngine::soundControls() {
 			_chrono->updateChrono();
 			_mouse->animateMouseIfNeeded();
 			while (g_system->getEventManager()->pollEvent(e)) {
-				if (e.type == Common::EVENT_KEYUP) {
+				if (e.type == Common::EVENT_KEYDOWN) {
 					keyPressed = true;
 				}
 				if (e.type == Common::EVENT_LBUTTONDOWN) {

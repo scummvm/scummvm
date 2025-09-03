@@ -170,7 +170,7 @@ int TotEngine::startGame() {
 				_mouse->mouseX = e.mouse.x;
 				_mouse->mouseY = e.mouse.y;
 			}
-			if (e.type == Common::EVENT_KEYUP) {
+			if (e.type == Common::EVENT_KEYDOWN) {
 				changeGameSpeed(e);
 
 				switch (e.kbd.keycode) {

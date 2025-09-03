@@ -186,7 +186,7 @@ void scrollCredit(
 	// Loops an image from the bottom of the screen to the top
 	for (int i = 199; i >= minHeight; i--) {
 		while (g_system->getEventManager()->pollEvent(e)) {
-			if (e.type == Common::EVENT_KEYUP) {
+			if (e.type == Common::EVENT_KEYDOWN) {
 				keyPressed = true;
 			}
 		}
@@ -228,7 +228,7 @@ void removeTitle(byte *&background2) {
 	for (int i1 = 1; i1 <= 15000; i1++) {
 		while (g_system->getEventManager()->pollEvent(e)) {
 		}
-		i2 = Random(318);
+		i2 = g_engine->getRandomNumber(318);
 		j2 = Random(58);
 		byte *src = background2 + 4 + (j2 * 320) + i2;
 		byte *dest = ((byte *)g_engine->_screen->getPixels()) + (j2 * 320) + i2;
@@ -260,7 +260,7 @@ void removeTitle(byte *&background2) {
 inline bool keyPressed() {
 	Common::Event e;
 	g_system->getEventManager()->pollEvent(e);
-	return e.type == Common::EVENT_KEYUP;
+	return e.type == Common::EVENT_KEYDOWN;
 }
 
 void TotEngine::credits() {
