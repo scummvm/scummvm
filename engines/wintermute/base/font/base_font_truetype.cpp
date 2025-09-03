@@ -36,6 +36,8 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "graphics/fonts/ttf.h"
 #include "graphics/fontman.h"
 #include "common/unicode-bidi.h"
@@ -73,10 +75,10 @@ BaseFontTT::~BaseFontTT() {
 	}
 	_layers.removeAll();
 
-	delete[] _fontFile;
-	_fontFile = nullptr;
+	SAFE_DELETE_ARRAY(_fontFile);
 
-	delete _deletableFont;
+	SAFE_DELETE(_deletableFont);
+
 	_font = nullptr;
 }
 

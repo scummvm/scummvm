@@ -47,6 +47,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -96,13 +97,9 @@ UIWindow::~UIWindow() {
 
 //////////////////////////////////////////////////////////////////////////
 void UIWindow::cleanup() {
-	delete _shieldWindow;
-	_shieldWindow = nullptr;
-	delete _shieldButton;
-	_shieldButton = nullptr;
-	delete _viewport;
-	_viewport = nullptr;
-
+	SAFE_DELETE(_shieldWindow);
+	SAFE_DELETE(_shieldButton);
+	SAFE_DELETE(_viewport);
 	delete _backInactive;
 	if (!_sharedFonts && _fontInactive) {
 		_gameRef->_fontStorage->removeFont(_fontInactive);
@@ -367,11 +364,10 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete _back;
+			SAFE_DELETE(_back);
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
-				delete _back;
-				_back = nullptr;
+				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -380,28 +376,25 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			delete _backInactive;
 			_backInactive = new UITiledImage(_gameRef);
 			if (!_backInactive || DID_FAIL(_backInactive->loadFile(params))) {
-				delete _backInactive;
-				_backInactive = nullptr;
+				SAFE_DELETE(_backInactive);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
+			SAFE_DELETE(_image);
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_INACTIVE:
-			delete _imageInactive;
+			SAFE_DELETE(_imageInactive);
 			_imageInactive = new BaseSprite(_gameRef);
 			if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(params))) {
-				delete _imageInactive;
-				_imageInactive = nullptr;
+				SAFE_DELETE(_imageInactive);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -466,11 +459,10 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -478,8 +470,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_BUTTON: {
 			UIButton *btn = new UIButton(_gameRef);
 			if (!btn || DID_FAIL(btn->loadBuffer(params, false))) {
-				delete btn;
-				btn = nullptr;
+				SAFE_DELETE(btn);
 				cmd = PARSERR_GENERIC;
 			} else {
 				btn->_parent = this;
@@ -491,8 +482,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_STATIC: {
 			UIText *text = new UIText(_gameRef);
 			if (!text || DID_FAIL(text->loadBuffer(params, false))) {
-				delete text;
-				text = nullptr;
+				SAFE_DELETE(text);
 				cmd = PARSERR_GENERIC;
 			} else {
 				text->_parent = this;
@@ -504,8 +494,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_EDIT: {
 			UIEdit *edit = new UIEdit(_gameRef);
 			if (!edit || DID_FAIL(edit->loadBuffer(params, false))) {
-				delete edit;
-				edit = nullptr;
+				SAFE_DELETE(edit);
 				cmd = PARSERR_GENERIC;
 			} else {
 				edit->_parent = this;
@@ -517,8 +506,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 		case TOKEN_WINDOW: {
 			UIWindow *win = new UIWindow(_gameRef);
 			if (!win || DID_FAIL(win->loadBuffer(params, false))) {
-				delete win;
-				win = nullptr;
+				SAFE_DELETE(win);
 				cmd = PARSERR_GENERIC;
 			} else {
 				win->_parent = this;
@@ -808,12 +796,11 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetInactiveImage") == 0) {
 		stack->correctParams(1);
 
-		delete _imageInactive;
+		SAFE_DELETE(_imageInactive);
 		_imageInactive = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageInactive || DID_FAIL(_imageInactive->loadFile(filename))) {
-			delete _imageInactive;
-			_imageInactive = nullptr;
+			SAFE_DELETE(_imageInactive);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);

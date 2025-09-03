@@ -53,6 +53,7 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -89,8 +90,7 @@ AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 //////////////////////////////////////////////////////////////////////////
 AdSceneGeometry::~AdSceneGeometry() {
 	cleanup();
-	delete _wptMarker;
-	_wptMarker = nullptr;
+	SAFE_DELETE(_wptMarker);
 }
 
 //////////////////////////////////////////////////////////////////////////

@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -43,8 +44,7 @@ AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdGeomExtNode::~AdGeomExtNode() {
-	delete[] _namePattern;
-	_namePattern = nullptr;
+	SAFE_DELETE_ARRAY(_namePattern);
 }
 
 TOKEN_DEF_START

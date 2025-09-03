@@ -48,6 +48,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "common/str.h"
 #include "common/util.h"
@@ -109,22 +110,15 @@ AdObject::AdObject(BaseGame *inGame) : BaseObject(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdObject::~AdObject() {
 	_currentSprite = nullptr; // reference only, don't delete
-	delete _animSprite;
-	_animSprite = nullptr;
-	delete _sentence;
-	_sentence = nullptr;
-	delete[] _forcedTalkAnimName;
-	_forcedTalkAnimName = nullptr;
+	SAFE_DELETE(_animSprite);
+	SAFE_DELETE(_sentence);
+	SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 
-	delete _blockRegion;
-	_blockRegion = nullptr;
-	delete _wptGroup;
-	_wptGroup = nullptr;
+	SAFE_DELETE(_blockRegion);
+	SAFE_DELETE(_wptGroup);
 
-	delete _currentBlockRegion;
-	_currentBlockRegion = nullptr;
-	delete _currentWptGroup;
-	_currentWptGroup = nullptr;
+	SAFE_DELETE(_currentBlockRegion);
+	SAFE_DELETE(_currentWptGroup);
 
 	_tempSprite2 = nullptr; // reference only
 	_stickRegion = nullptr;
@@ -157,7 +151,7 @@ AdObject::~AdObject() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::playAnim(const char *filename) {
-	delete _animSprite;
+	SAFE_DELETE(_animSprite);
 	_animSprite = new BaseSprite(_gameRef, this);
 	if (!_animSprite) {
 		_gameRef->LOG(0, "AdObject::PlayAnim: error creating temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
@@ -252,7 +246,7 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ForceTalkAnim") == 0) {
 		stack->correctParams(1);
 		const char *animName = stack->pop()->getString();
-		delete[] _forcedTalkAnimName;
+		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 		size_t animNameSize = strlen(animName) + 1;
 		_forcedTalkAnimName = new char[animNameSize];
 		Common::strcpy_s(_forcedTalkAnimName, animNameSize, animName);
@@ -886,13 +880,11 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	}
 
 	if (_forcedTalkAnimName && _forcedTalkAnimUsed) {
-		delete[] _forcedTalkAnimName;
-		_forcedTalkAnimName = nullptr;
+		SAFE_DELETE_ARRAY(_forcedTalkAnimName);
 		_forcedTalkAnimUsed = false;
 	}
 
-	delete(_sentence->_sound);
-	_sentence->_sound = nullptr;
+	SAFE_DELETE(_sentence->_sound);
 
 	_sentence->setText(text);
 	_gameRef->expandStringByStringTable(&_sentence->_text);
@@ -1007,8 +999,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject::reset() {
 	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr) {
-		delete _animSprite;
-		_animSprite = nullptr;
+		SAFE_DELETE(_animSprite);
 	} else if (_state == STATE_TALKING && _sentence) {
 		_sentence->finish();
 	}

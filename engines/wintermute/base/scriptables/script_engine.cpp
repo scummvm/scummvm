@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -110,8 +111,7 @@ bool ScEngine::cleanup() {
 
 	_scripts.removeAll();
 
-	delete _globals;
-	_globals = nullptr;
+	SAFE_DELETE(_globals);
 
 	emptyScriptCache();
 
@@ -481,8 +481,7 @@ int ScEngine::getNumScripts(int *running, int *waiting, int *persistent) {
 bool ScEngine::emptyScriptCache() {
 	for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
 		if (_cachedScripts[i]) {
-			delete _cachedScripts[i];
-			_cachedScripts[i] = nullptr;
+			SAFE_DELETE(_cachedScripts[i]);
 		}
 	}
 	return STATUS_OK;

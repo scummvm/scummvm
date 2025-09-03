@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -224,8 +225,7 @@ bool UIEntity::setEntity(const char *filename) {
 	}
 	_entity = new AdEntity(_gameRef);
 	if (!_entity || DID_FAIL(_entity->loadFile(filename))) {
-		delete _entity;
-		_entity = nullptr;
+		SAFE_DELETE(_entity);
 		return STATUS_FAILED;
 	} else {
 		_entity->_nonIntMouseEvents = true;

@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -56,15 +57,11 @@ AdTalkDef::~AdTalkDef() {
 	}
 	_nodes.removeAll();
 
-	delete[] _defaultSpriteFilename;
-	_defaultSpriteFilename = nullptr;
-	delete _defaultSprite;
-	_defaultSprite = nullptr;
+	SAFE_DELETE_ARRAY(_defaultSpriteFilename);
+	SAFE_DELETE(_defaultSprite);
 
-	delete[] _defaultSpriteSetFilename;
-	_defaultSpriteSetFilename = nullptr;
-	delete _defaultSpriteSet;
-	_defaultSpriteSet = nullptr;
+	SAFE_DELETE_ARRAY(_defaultSpriteSetFilename);
+	SAFE_DELETE(_defaultSpriteSet);
 }
 
 
@@ -136,7 +133,7 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 			if (node && DID_SUCCEED(node->loadBuffer(params, false))) {
 				_nodes.add(node);
 			} else {
-				delete node;
+				SAFE_DELETE(node);
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -151,11 +148,10 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_DEFAULT_SPRITESET: {
-			delete _defaultSpriteSet;
+			SAFE_DELETE(_defaultSpriteSet);
 			_defaultSpriteSet = new AdSpriteSet(_gameRef);
 			if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadBuffer(params, false))) {
-				delete _defaultSpriteSet;
-				_defaultSpriteSet = nullptr;
+				SAFE_DELETE(_defaultSpriteSet);
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -180,10 +176,8 @@ bool AdTalkDef::loadBuffer(char *buffer, bool complete) {
 		return STATUS_FAILED;
 	}
 
-	delete _defaultSprite;
-	_defaultSprite = nullptr;
-	delete _defaultSpriteSet;
-	_defaultSpriteSet = nullptr;
+	SAFE_DELETE(_defaultSprite);
+	SAFE_DELETE(_defaultSpriteSet);
 
 	if (_defaultSpriteFilename) {
 		_defaultSprite = new BaseSprite(_gameRef);
@@ -250,8 +244,7 @@ bool AdTalkDef::loadDefaultSprite() {
 	if (_defaultSpriteFilename && !_defaultSprite) {
 		_defaultSprite = new BaseSprite(_gameRef);
 		if (!_defaultSprite || DID_FAIL(_defaultSprite->loadFile(_defaultSpriteFilename))) {
-			delete _defaultSprite;
-			_defaultSprite = nullptr;
+			SAFE_DELETE(_defaultSprite);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -259,8 +252,7 @@ bool AdTalkDef::loadDefaultSprite() {
 	} else if (_defaultSpriteSetFilename && !_defaultSpriteSet) {
 		_defaultSpriteSet = new AdSpriteSet(_gameRef);
 		if (!_defaultSpriteSet || DID_FAIL(_defaultSpriteSet->loadFile(_defaultSpriteSetFilename))) {
-			delete _defaultSpriteSet;
-			_defaultSpriteSet = nullptr;
+			SAFE_DELETE(_defaultSpriteSet);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;

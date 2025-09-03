@@ -30,6 +30,8 @@
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #ifdef USE_VORBIS
@@ -76,11 +78,9 @@ BaseSoundBuffer::~BaseSoundBuffer() {
 
 	if (_handle) {
 		g_system->getMixer()->stopHandle(*_handle);
-		delete _handle;
-		_handle = nullptr;
+		SAFE_DELETE(_handle);
 	}
-	delete _stream;
-	_stream = nullptr;
+	SAFE_DELETE(_stream);
 }
 
 
@@ -138,8 +138,7 @@ bool BaseSoundBuffer::loadFromFile(const Common::String &filename, bool forceRel
 bool BaseSoundBuffer::play(bool looping, uint32 startSample) {
 	if (_handle) {
 		g_system->getMixer()->stopHandle(*_handle);
-		delete _handle;
-		_handle = nullptr;
+		SAFE_DELETE(_handle);
 	}
 	// Store the loop-value for save-games.
 	setLooping(looping);

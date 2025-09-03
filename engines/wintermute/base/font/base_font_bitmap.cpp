@@ -38,6 +38,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -62,10 +63,8 @@ BaseFontBitmap::BaseFontBitmap(BaseGame *inGame) : BaseFont(inGame) {
 
 //////////////////////////////////////////////////////////////////////
 BaseFontBitmap::~BaseFontBitmap() {
-	delete _subframe;
-	_subframe = nullptr;
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_subframe);
+	SAFE_DELETE(_sprite);
 }
 
 
@@ -457,11 +456,10 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 	}
 
 	if (spriteFile != nullptr) {
-		delete _sprite;
+		SAFE_DELETE(_sprite);
 		_sprite = new BaseSprite(_gameRef, this);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(spriteFile))) {
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_sprite);
 		}
 	}
 

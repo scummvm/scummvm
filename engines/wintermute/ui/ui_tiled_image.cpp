@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -57,8 +58,7 @@ UITiledImage::UITiledImage(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 UITiledImage::~UITiledImage() {
-	delete _image;
-	_image = nullptr;
+	SAFE_DELETE(_image);
 }
 
 
@@ -195,11 +195,10 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
+			SAFE_DELETE(_image);
 			_image = new BaseSubFrame(_gameRef);
 			if (!_image || DID_FAIL(_image->setSurface(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;

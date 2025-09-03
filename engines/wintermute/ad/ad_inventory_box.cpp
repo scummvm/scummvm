@@ -38,6 +38,8 @@
 #include "engines/wintermute/ui/ui_button.h"
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 #include "common/rect.h"
 
@@ -68,8 +70,7 @@ AdInventoryBox::~AdInventoryBox() {
 	_gameRef->unregisterObject(_window);
 	_window = nullptr;
 
-	delete _closeButton;
-	_closeButton = nullptr;
+	SAFE_DELETE(_closeButton);
 }
 
 
@@ -251,11 +252,10 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			delete _window;
+			SAFE_DELETE(_window);
 			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
-				delete _window;
-				_window = nullptr;
+				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_gameRef->registerObject(_window);
@@ -312,7 +312,7 @@ bool AdInventoryBox::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_exclusive) {
-		delete _closeButton;
+		SAFE_DELETE(_closeButton);
 		_closeButton = new UIButton(_gameRef);
 		if (_closeButton) {
 			_closeButton->setName("close");

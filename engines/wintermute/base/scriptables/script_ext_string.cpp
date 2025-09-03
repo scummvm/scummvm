@@ -32,6 +32,8 @@
 #include "engines/wintermute/base/scriptables/script_ext_string.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/utils/string_util.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 #include "common/tokenizer.h"
 
@@ -79,7 +81,7 @@ void SXString::setStringVal(const char *val) {
 	int len = strlen(val);
 	if (len >= _capacity) {
 		_capacity = len + 1;
-		delete[] _string;
+		SAFE_DELETE_ARRAY(_string);
 		_string = new char[_capacity]();
 	}
 	Common::strcpy_s(_string, _capacity, val);
@@ -396,7 +398,7 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 			char *newStr = new char[newCap]();
 			if (newStr) {
 				Common::strcpy_s(newStr, newCap, _string);
-				delete[] _string;
+				SAFE_DELETE_ARRAY(_string);
 				_string = newStr;
 				_capacity = newCap;
 			}

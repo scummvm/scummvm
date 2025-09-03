@@ -59,6 +59,7 @@
 #include "engines/wintermute/ui/ui_window.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/ad/ad_actor_3dx.h"
@@ -83,8 +84,7 @@ AdScene::AdScene(BaseGame *inGame) : BaseObject(inGame) {
 AdScene::~AdScene() {
 	cleanup();
 	_gameRef->unregisterObject(_fader);
-	delete _pfTarget;
-	_pfTarget = nullptr;
+	SAFE_DELETE(_pfTarget);
 }
 
 
@@ -179,8 +179,7 @@ void AdScene::cleanup() {
 
 	_mainLayer = nullptr; // reference only
 
-	delete _shieldWindow;
-	_shieldWindow = nullptr;
+	SAFE_DELETE(_shieldWindow);
 
 	_gameRef->unregisterObject(_fader);
 	_fader = nullptr;
@@ -219,11 +218,9 @@ void AdScene::cleanup() {
 	_objects.removeAll();
 
 #ifdef ENABLE_WME3D
-	delete _geom;
-	_geom = nullptr;
+	SAFE_DELETE(_geom);
 #endif
-	delete _viewport;
-	_viewport = nullptr;
+	SAFE_DELETE(_viewport);
 
 	setDefaults();
 }
@@ -751,7 +748,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			AdLayer *layer = new AdLayer(_gameRef);
 			if (!layer || DID_FAIL(layer->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete layer;
+				SAFE_DELETE(layer);
 			} else {
 				_gameRef->registerObject(layer);
 				_layers.add(layer);
@@ -768,7 +765,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || DID_FAIL(wpt->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete wpt;
+				SAFE_DELETE(wpt);
 			} else {
 				_gameRef->registerObject(wpt);
 				_waypointGroups.add(wpt);
@@ -780,7 +777,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			AdScaleLevel *sl = new AdScaleLevel(_gameRef);
 			if (!sl || DID_FAIL(sl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete sl;
+				SAFE_DELETE(sl);
 			} else {
 				_gameRef->registerObject(sl);
 				_scaleLevels.add(sl);
@@ -792,7 +789,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			AdRotLevel *rl = new AdRotLevel(_gameRef);
 			if (!rl || DID_FAIL(rl->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete rl;
+				SAFE_DELETE(rl);
 			} else {
 				_gameRef->registerObject(rl);
 				_rotLevels.add(rl);
@@ -804,7 +801,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 			AdEntity *entity = new AdEntity(_gameRef);
 			if (!entity || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete entity;
+				SAFE_DELETE(entity);
 			} else {
 				addObject(entity);
 			}
@@ -812,25 +809,23 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 #ifdef ENABLE_WME3D
 		case TOKEN_GEOMETRY:
-			delete _geom;
-			_geom = nullptr;
+			SAFE_DELETE(_geom);
 			if (!_gameRef->_useD3D) {
 				break;
 			}
 			_geom = new AdSceneGeometry(_gameRef);
-			if (_geom == nullptr || !_geom->loadFile(params)) {
-				delete _geom;
-				_geom = nullptr;
+			if (!_geom || !_geom->loadFile(params)) {
+				SAFE_DELETE(_geom);
 				cmd = PARSERR_GENERIC;
 			}
 			break;

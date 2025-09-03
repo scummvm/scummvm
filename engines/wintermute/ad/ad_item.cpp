@@ -40,6 +40,8 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -69,15 +71,11 @@ AdItem::AdItem(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdItem::~AdItem() {
-	delete _spriteHover;
-	_spriteHover = nullptr;
-	delete _cursorNormal;
-	_cursorNormal = nullptr;
-	delete _cursorHover;
-	_cursorHover = nullptr;
+	SAFE_DELETE(_spriteHover);
+	SAFE_DELETE(_cursorNormal);
+	SAFE_DELETE(_cursorHover);
 
-	delete[] _amountString;
-	_amountString = nullptr;
+	SAFE_DELETE_ARRAY(_amountString);
 }
 
 
@@ -198,22 +196,20 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_IMAGE:
 		case TOKEN_SPRITE:
-			delete _sprite;
+			SAFE_DELETE(_sprite);
 			_sprite = new BaseSprite(_gameRef, this);
 			if (!_sprite || DID_FAIL(_sprite->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
-				delete _sprite;
-				_sprite = nullptr;
+				SAFE_DELETE(_sprite);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_HOVER:
 		case TOKEN_SPRITE_HOVER:
-			delete _spriteHover;
+			SAFE_DELETE(_spriteHover);
 			_spriteHover = new BaseSprite(_gameRef, this);
 			if (!_spriteHover || DID_FAIL(_spriteHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
-				delete _spriteHover;
-				_spriteHover = nullptr;
+				SAFE_DELETE(_spriteHover);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -269,21 +265,19 @@ bool AdItem::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_CURSOR:
-			delete _cursorNormal;
+			SAFE_DELETE(_cursorNormal);
 			_cursorNormal = new BaseSprite(_gameRef);
 			if (!_cursorNormal || DID_FAIL(_cursorNormal->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
-				delete _cursorNormal;
-				_cursorNormal = nullptr;
+				SAFE_DELETE(_cursorNormal);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_CURSOR_HOVER:
-			delete _cursorHover;
+			SAFE_DELETE(_cursorHover);
 			_cursorHover = new BaseSprite(_gameRef);
 			if (!_cursorHover || DID_FAIL(_cursorHover->loadFile(params, ((AdGame *)_gameRef)->_texItemLifeTime))) {
-				delete _cursorHover;
-				_cursorHover = nullptr;
+				SAFE_DELETE(_cursorHover);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -339,8 +333,7 @@ bool AdItem::update() {
 	_currentSprite = nullptr;
 
 	if (_state == STATE_READY && _animSprite) {
-		delete _animSprite;
-		_animSprite = nullptr;
+		SAFE_DELETE(_animSprite);
 	}
 
 	// finished playing animation?
@@ -472,8 +465,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 		const char *filename = stack->pop()->getString();
 
-		delete _spriteHover;
-		_spriteHover = nullptr;
+		SAFE_DELETE(_spriteHover);
 		BaseSprite *spr = new BaseSprite(_gameRef, this);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -523,8 +515,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 		const char *filename = stack->pop()->getString();
 
-		delete _cursorNormal;
-		_cursorNormal = nullptr;
+		SAFE_DELETE(_cursorNormal);
 		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -589,8 +580,7 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 		const char *filename = stack->pop()->getString();
 
-		delete _cursorHover;
-		_cursorHover = nullptr;
+		SAFE_DELETE(_cursorHover);
 		BaseSprite *spr = new BaseSprite(_gameRef);
 		if (!spr || DID_FAIL(spr->loadFile(filename))) {
 			stack->pushBool(false);
@@ -789,12 +779,10 @@ bool AdItem::scSetProperty(const char *name, ScValue *value) {
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "AmountString") == 0) {
-		if (value->isNULL()) {
-			delete[] _amountString;
-			_amountString = nullptr;
-		} else {
+		if (value->isNULL())
+			SAFE_DELETE_ARRAY(_amountString);
+		else
 			BaseUtils::setString(&_amountString, value->getString());
-		}
 		return STATUS_OK;
 	}
 

@@ -40,10 +40,8 @@ SkinMeshHelper::SkinMeshHelper(DXMesh *mesh, DXSkinInfo *skinInfo) {
 
 //////////////////////////////////////////////////////////////////////////
 SkinMeshHelper::~SkinMeshHelper() {
-	delete _mesh;
-	_mesh = nullptr;
-	delete _skinInfo;
-	_skinInfo = nullptr;
+	SAFE_DELETE(_mesh);
+	SAFE_DELETE(_skinInfo);
 }
 
 //////////////////////////////////////////////////////////////////////////

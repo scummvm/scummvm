@@ -41,6 +41,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/detection.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -94,8 +95,7 @@ void BaseSprite::cleanup() {
 	}
 	_frames.removeAll();
 
-	delete[] _editorBgFile;
-	_editorBgFile = nullptr;
+	SAFE_DELETE_ARRAY(_editorBgFile);
 
 	setDefaults();
 }
@@ -276,7 +276,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 		case TOKEN_EDITOR_BG_FILE:
 			if (_gameRef->_editorMode) {
-				delete[] _editorBgFile;
+				SAFE_DELETE_ARRAY(_editorBgFile);
 				size_t editorBgFileSize = strlen(params) + 1;
 				_editorBgFile = new char[editorBgFileSize];
 				Common::strcpy_s(_editorBgFile, editorBgFileSize, params);

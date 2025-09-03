@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_sprite.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -49,8 +50,7 @@ AdSpriteSet::AdSpriteSet(BaseGame *inGame, BaseObject *owner) : BaseObject(inGam
 //////////////////////////////////////////////////////////////////////////
 AdSpriteSet::~AdSpriteSet() {
 	for (int i = 0; i < NUM_DIRECTIONS; i++) {
-		delete _sprites[i];
-		_sprites[i] = nullptr;
+		SAFE_DELETE(_sprites[i]);
 	}
 
 	_owner = nullptr;
@@ -134,8 +134,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_LEFT:
-			delete _sprites[DI_LEFT];
-			_sprites[DI_LEFT] = nullptr;
+			SAFE_DELETE(_sprites[DI_LEFT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -145,8 +144,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_RIGHT:
-			delete _sprites[DI_RIGHT];
-			_sprites[DI_RIGHT] = nullptr;
+			SAFE_DELETE(_sprites[DI_RIGHT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -156,8 +154,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_UP:
-			delete _sprites[DI_UP];
-			_sprites[DI_UP] = nullptr;
+			SAFE_DELETE(_sprites[DI_UP]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -167,8 +164,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_DOWN:
-			delete _sprites[DI_DOWN];
-			_sprites[DI_DOWN] = nullptr;
+			SAFE_DELETE(_sprites[DI_DOWN]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -178,8 +174,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_UP_LEFT:
-			delete _sprites[DI_UPLEFT];
-			_sprites[DI_UPLEFT] = nullptr;
+			SAFE_DELETE(_sprites[DI_UPLEFT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -189,8 +184,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_UP_RIGHT:
-			delete _sprites[DI_UPRIGHT];
-			_sprites[DI_UPRIGHT] = nullptr;
+			SAFE_DELETE(_sprites[DI_UPRIGHT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -200,8 +194,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_DOWN_LEFT:
-			delete _sprites[DI_DOWNLEFT];
-			_sprites[DI_DOWNLEFT] = nullptr;
+			SAFE_DELETE(_sprites[DI_DOWNLEFT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;
@@ -211,8 +204,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 			break;
 
 		case TOKEN_DOWN_RIGHT:
-			delete _sprites[DI_DOWNRIGHT];
-			_sprites[DI_DOWNRIGHT] = nullptr;
+			SAFE_DELETE(_sprites[DI_DOWNRIGHT]);
 			spr = new BaseSprite(_gameRef,  _owner);
 			if (!spr || DID_FAIL(spr->loadFile(params, lifeTime, cacheType))) {
 				cmd = PARSERR_GENERIC;

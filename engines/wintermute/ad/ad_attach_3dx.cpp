@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -52,8 +53,7 @@ AdAttach3DX::~AdAttach3DX() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::init(const char *modelFile, const char *name, const char *parentBone) {
-	delete _xmodel;
-	_xmodel = nullptr;
+	SAFE_DELETE(_xmodel);
 
 	_parentBone = parentBone;
 	setName(name);
@@ -65,8 +65,7 @@ bool AdAttach3DX::init(const char *modelFile, const char *name, const char *pare
 
 	bool res = _xmodel->loadFromFile(modelFile);
 	if (!res) {
-		delete _xmodel;
-		_xmodel = nullptr;
+		SAFE_DELETE(_xmodel);
 	}
 
 	return res;

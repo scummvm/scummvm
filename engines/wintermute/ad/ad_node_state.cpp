@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "common/str.h"
 
@@ -54,39 +55,32 @@ AdNodeState::AdNodeState(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdNodeState::~AdNodeState() {
-	delete[] _name;
-	_name = nullptr;
-	delete[] _filename;
-	_filename = nullptr;
-	delete[] _cursor;
-	_cursor = nullptr;
+	SAFE_DELETE_ARRAY(_name);
+	SAFE_DELETE_ARRAY(_filename);
+	SAFE_DELETE_ARRAY(_cursor);
 	for (int i = 0; i < 7; i++) {
-		delete[] _caption[i];
-		_caption[i] = nullptr;
+		SAFE_DELETE_ARRAY(_caption[i]);
 	}
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setName(const char *name) {
-	delete[] _name;
-	_name = nullptr;
+	SAFE_DELETE_ARRAY(_name);
 	BaseUtils::setString(&_name, name);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setFilename(const char *filename) {
-	delete[] _filename;
-	_filename = nullptr;
+	SAFE_DELETE_ARRAY(_filename);
 	BaseUtils::setString(&_filename, filename);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdNodeState::setCursor(const char *filename) {
-	delete[] _cursor;
-	_cursor = nullptr;
+	SAFE_DELETE_ARRAY(_cursor);
 	BaseUtils::setString(&_cursor, filename);
 }
 
@@ -115,7 +109,7 @@ void AdNodeState::setCaption(const char *caption, int caseVal) {
 	if (caseVal < 1 || caseVal > 7)
 		return;
 
-	delete[] _caption[caseVal - 1];
+	SAFE_DELETE_ARRAY(_caption[caseVal - 1]);
 	size_t captionSize = strlen(caption) + 1;
 	_caption[caseVal - 1] = new char[captionSize];
 	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);

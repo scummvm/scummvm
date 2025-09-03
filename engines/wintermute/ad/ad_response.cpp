@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -48,16 +49,11 @@ AdResponse::AdResponse(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdResponse::~AdResponse() {
-	delete[] _text;
-	_text = nullptr;
-	delete[] _textOrig;
-	_textOrig = nullptr;
-	delete _icon;
-	_icon = nullptr;
-	delete _iconHover;
-	_iconHover = nullptr;
-	delete _iconPressed;
-	_iconPressed = nullptr;
+	SAFE_DELETE_ARRAY(_text);
+	SAFE_DELETE_ARRAY(_textOrig);
+	SAFE_DELETE(_icon);
+	SAFE_DELETE(_iconHover);
+	SAFE_DELETE(_iconPressed);
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
 	}
@@ -77,8 +73,7 @@ bool AdResponse::setIcon(const char *filename) {
 	_icon = new BaseSprite(_gameRef);
 	if (!_icon || DID_FAIL(_icon->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIcon failed for file '%s'", filename);
-		delete _icon;
-		_icon = nullptr;
+		SAFE_DELETE(_icon);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -99,12 +94,11 @@ bool AdResponse::setFont(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconHover(const char *filename) {
-	delete _iconHover;
+	SAFE_DELETE(_iconHover);
 	_iconHover = new BaseSprite(_gameRef);
 	if (!_iconHover || DID_FAIL(_iconHover->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIconHover failed for file '%s'", filename);
-		delete _iconHover;
-		_iconHover = nullptr;
+		SAFE_DELETE(_iconHover);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;
@@ -113,12 +107,11 @@ bool AdResponse::setIconHover(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdResponse::setIconPressed(const char *filename) {
-	delete _iconPressed;
+	SAFE_DELETE(_iconPressed);
 	_iconPressed = new BaseSprite(_gameRef);
 	if (!_iconPressed || DID_FAIL(_iconPressed->loadFile(filename))) {
 		_gameRef->LOG(0, "AdResponse::setIconPressed failed for file '%s'", filename);
-		delete _iconPressed;
-		_iconPressed = nullptr;
+		SAFE_DELETE(_iconPressed);
 		return STATUS_FAILED;
 	}
 	return STATUS_OK;

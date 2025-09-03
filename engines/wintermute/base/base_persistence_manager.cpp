@@ -123,20 +123,16 @@ void BasePersistenceManager::cleanup() {
 
 	_thumbnailDataSize = 0;
 	if (_thumbnailData) {
-		delete[] _thumbnailData;
-		_thumbnailData = nullptr;
+		SAFE_DELETE_ARRAY(_thumbnailData);
 	}
 
 	_scummVMThumbSize = 0;
 	if (_scummVMThumbnailData) {
-		delete[] _scummVMThumbnailData;
-		_scummVMThumbnailData = nullptr;
+		SAFE_DELETE_ARRAY(_scummVMThumbnailData);
 	}
 
-	delete _loadStream;
-	delete _saveStream;
-	_loadStream = nullptr;
-	_saveStream = nullptr;
+	SAFE_DELETE(_loadStream);
+	SAFE_DELETE(_saveStream);
 }
 
 Common::String BasePersistenceManager::getFilenameForSlot(int slot) const {
@@ -298,8 +294,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 
 
 		// in any case, destroy the cached thumbnail once used
-		delete _gameRef->_cachedThumbnail;
-		_gameRef->_cachedThumbnail = nullptr;
+		SAFE_DELETE(_gameRef->_cachedThumbnail);
 
 		uint32 dataOffset = _offset +
 		                    sizeof(uint32) + // data offset

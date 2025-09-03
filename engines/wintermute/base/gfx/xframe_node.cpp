@@ -117,7 +117,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 			_meshes.add(mesh);
 			return true;
 		} else {
-			delete mesh;
+			SAFE_DELETE(mesh);
 			return false;
 		}
 	} else if (objectType == kXClassFrameTransformMatrix) { // load the transformation matrix
@@ -143,7 +143,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 		res = XModel::loadName(childFrame, xobj);
 		if (!res) {
 			BaseEngine::LOG(0, "Error loading frame name");
-			delete childFrame;
+			SAFE_DELETE(childFrame);
 			return res;
 		}
 

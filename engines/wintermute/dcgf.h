@@ -47,4 +47,16 @@
 
 #define COMPRESSED_FILE_MAGIC 0x504D435A // ZCMP
 
+#define SAFE_DELETE(obj) \
+do {                     \
+	delete (obj);        \
+	(obj) = nullptr;     \
+} while (0)
+
+#define SAFE_DELETE_ARRAY(obj) \
+do {                           \
+	delete[] (obj);            \
+	(obj) = nullptr;           \
+} while (0)
+
 #endif

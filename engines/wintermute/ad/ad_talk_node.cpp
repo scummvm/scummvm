@@ -32,6 +32,8 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
+
 namespace Wintermute {
 
 IMPLEMENT_PERSISTENT(AdTalkNode, false)
@@ -52,16 +54,11 @@ AdTalkNode::AdTalkNode(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkNode::~AdTalkNode() {
-	delete[] _spriteFilename;
-	_spriteFilename = nullptr;
-	delete _sprite;
-	_sprite = nullptr;
-	delete[] _spriteSetFilename;
-	_spriteSetFilename = nullptr;
-	delete _spriteSet;
-	_spriteSet = nullptr;
-	delete _comment;
-	_comment = nullptr;
+	SAFE_DELETE_ARRAY(_spriteFilename);
+	SAFE_DELETE(_sprite);
+	SAFE_DELETE_ARRAY(_spriteSetFilename);
+	SAFE_DELETE(_spriteSet);
+	SAFE_DELETE_ARRAY(_comment);
 }
 
 TOKEN_DEF_START
@@ -119,8 +116,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 			delete _spriteSet;
 			_spriteSet = new AdSpriteSet(_gameRef);
 			if (!_spriteSet || DID_FAIL(_spriteSet->loadBuffer(params, false))) {
-				delete _spriteSet;
-				_spriteSet = nullptr;
+				SAFE_DELETE(_spriteSet);
 				cmd = PARSERR_GENERIC;
 			}
 		}
@@ -169,7 +165,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_preCache && _spriteFilename) {
-		delete _sprite;
+		SAFE_DELETE(_sprite);
 		_sprite = new BaseSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
 			return STATUS_FAILED;
@@ -177,7 +173,7 @@ bool AdTalkNode::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_preCache && _spriteSetFilename) {
-		delete _spriteSet;
+		SAFE_DELETE(_spriteSet);
 		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
 			return STATUS_FAILED;
@@ -244,8 +240,7 @@ bool AdTalkNode::loadSprite() {
 	if (_spriteFilename && !_sprite) {
 		_sprite = new BaseSprite(_gameRef);
 		if (!_sprite || DID_FAIL(_sprite->loadFile(_spriteFilename))) {
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_sprite);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;
@@ -253,8 +248,7 @@ bool AdTalkNode::loadSprite() {
 	} else if (_spriteSetFilename && !_spriteSet) {
 		_spriteSet = new AdSpriteSet(_gameRef);
 		if (!_spriteSet || DID_FAIL(_spriteSet->loadFile(_spriteSetFilename))) {
-			delete _spriteSet;
-			_spriteSet = nullptr;
+			SAFE_DELETE(_spriteSet);
 			return STATUS_FAILED;
 		} else {
 			return STATUS_OK;

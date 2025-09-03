@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/font/base_font_storage.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -182,8 +183,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		/* const char *filename = */ val->getString();
 
-		delete _image;
-		_image = nullptr;
+		SAFE_DELETE(_image);
 		if (val->isNULL()) {
 			stack->pushBool(true);
 			return STATUS_OK;
@@ -191,8 +191,7 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		_image = new BaseSprite(_gameRef);
 		if (!_image || DID_FAIL(_image->loadFile(val->getString()))) {
-			delete _image;
-			_image = nullptr;
+			SAFE_DELETE(_image);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);

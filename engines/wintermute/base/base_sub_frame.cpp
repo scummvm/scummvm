@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -73,8 +74,7 @@ BaseSubFrame::~BaseSubFrame() {
 	if (_surface) {
 		_gameRef->_surfaceStorage->removeSurface(_surface);
 	}
-	delete[] _surfaceFilename;
-	_surfaceFilename = nullptr;
+	SAFE_DELETE_ARRAY(_surfaceFilename);
 }
 
 
@@ -121,8 +121,7 @@ bool BaseSubFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 	BasePlatform::setRectEmpty(&rect);
 	char *surfaceFile = nullptr;
 
-	delete _surface;
-	_surface = nullptr;
+	SAFE_DELETE(_surface);
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -495,8 +494,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			if (_surface) {
 				_gameRef->_surfaceStorage->removeSurface(_surface);
 			}
-			delete[] _surfaceFilename;
-			_surfaceFilename = nullptr;
+			SAFE_DELETE_ARRAY(_surfaceFilename);
 			stack->pushBool(true);
 		} else {
 			const char *filename = val->getString();
@@ -690,8 +688,7 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 		_surface = nullptr;
 	}
 
-	delete[] _surfaceFilename;
-	_surfaceFilename = nullptr;
+	SAFE_DELETE_ARRAY(_surfaceFilename);
 
 	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {

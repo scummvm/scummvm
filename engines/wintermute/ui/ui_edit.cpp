@@ -44,6 +44,8 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/util.h"
 #include "common/keyboard.h"
 
@@ -86,8 +88,7 @@ UIEdit::~UIEdit() {
 		}
 	}
 
-	delete[] _cursorChar;
-	_cursorChar = nullptr;
+	SAFE_DELETE_ARRAY(_cursorChar);
 }
 
 
@@ -189,21 +190,19 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete _back;
+			SAFE_DELETE(_back);
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
-				delete _back;
-				_back = nullptr;
+				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
+			SAFE_DELETE(_image);
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -258,11 +257,10 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -558,7 +556,7 @@ void UIEdit::setCursorChar(const char *character) {
 	if (!character) {
 		return;
 	}
-	delete[] _cursorChar;
+	SAFE_DELETE_ARRAY(_cursorChar);
 	size_t cursorCharSize = strlen(character) + 1;
 	_cursorChar = new char [cursorCharSize];
 	Common::strcpy_s(_cursorChar, cursorCharSize, character);
@@ -868,7 +866,7 @@ int UIEdit::deleteChars(int start, int end) {
 		}
 		memcpy(str + MAX(0, start), _text + end, strlen(_text) - end + 1);
 
-		delete[] _text;
+		SAFE_DELETE_ARRAY(_text);
 		_text = str;
 	}
 	if (_parentNotify && _parent) {
@@ -897,7 +895,7 @@ int UIEdit::insertChars(int pos, const byte *chars, int num) {
 
 		memcpy(str + pos, chars, num);
 
-		delete[] _text;
+		SAFE_DELETE_ARRAY(_text);
 		_text = str;
 	}
 	if (_parentNotify && _parent) {

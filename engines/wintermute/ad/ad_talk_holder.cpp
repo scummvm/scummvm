@@ -35,6 +35,8 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -49,8 +51,7 @@ AdTalkHolder::AdTalkHolder(BaseGame *inGame) : AdObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdTalkHolder::~AdTalkHolder() {
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 
 	for (int32 i = 0; i < _talkSprites.getSize(); i++) {
 		delete _talkSprites[i];
@@ -71,14 +72,13 @@ BaseSprite *AdTalkHolder::getTalkStance(const char *stance) {
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
-		delete _animSprite;
+		SAFE_DELETE(_animSprite);
 		_animSprite = new BaseSprite(_gameRef, this);
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "AdTalkHolder::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
-				delete _animSprite;
-				_animSprite = nullptr;
+				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
 			}
@@ -137,8 +137,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			setCurrent = true;
 		}
 
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 
 		if (val->isNULL()) {
 			_sprite = nullptr;

@@ -38,6 +38,8 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 #include "math/utils.h"
 
@@ -111,8 +113,7 @@ PartEmitter::~PartEmitter() {
 	}
 	_sprites.removeAll();
 
-	delete[] _emitEvent;
-	_emitEvent = nullptr;
+	SAFE_DELETE_ARRAY(_emitEvent);
 }
 
 //////////////////////////////////////////////////////////////////////////

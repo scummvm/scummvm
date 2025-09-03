@@ -53,6 +53,7 @@
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "common/str.h"
 
@@ -81,12 +82,9 @@ AdEntity::AdEntity(BaseGame *inGame) : AdTalkHolder(inGame) {
 //////////////////////////////////////////////////////////////////////////
 AdEntity::~AdEntity() {
 	_gameRef->unregisterObject(_region);
+	SAFE_DELETE(_theora);
 
-	delete _theora;
-	_theora = nullptr;
-
-	delete[] _item;
-	_item = nullptr;
+	SAFE_DELETE_ARRAY(_item);
 }
 
 #ifdef ENABLE_FOXTAIL
@@ -253,8 +251,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SPRITE: {
-			delete _sprite;
-			_sprite = nullptr;
+			SAFE_DELETE(_sprite);
 			spr = new BaseSprite(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadFile(params))) {
 				cmd = PARSERR_GENERIC;
@@ -340,11 +337,10 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -369,17 +365,13 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_BLOCKED_REGION: {
-			delete _blockRegion;
-			_blockRegion = nullptr;
-			delete _currentBlockRegion;
-			_currentBlockRegion = nullptr;
+			SAFE_DELETE(_blockRegion);
+			SAFE_DELETE(_currentBlockRegion);
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
-				delete _blockRegion;
-				_blockRegion = nullptr;
-				delete _currentBlockRegion;
-				_currentBlockRegion = nullptr;
+				SAFE_DELETE(_blockRegion);
+				SAFE_DELETE(_currentBlockRegion);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -390,17 +382,13 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			delete _wptGroup;
-			_wptGroup = nullptr;
-			delete _currentWptGroup;
-			_currentWptGroup = nullptr;
+			SAFE_DELETE(_wptGroup);
+			SAFE_DELETE(_currentWptGroup);
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
-				delete _wptGroup;
-				_wptGroup = nullptr;
-				delete _currentWptGroup;
-				_currentWptGroup = nullptr;
+				SAFE_DELETE(_wptGroup);
+				SAFE_DELETE(_currentWptGroup);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -416,8 +404,7 @@ bool AdEntity::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_SUBTYPE: {
 			if (scumm_stricmp(params, "sound") == 0) {
-				delete _sprite;
-				_sprite = nullptr;
+				SAFE_DELETE(_sprite);
 				if (_gameRef->_editorMode) {
 					spr = new BaseSprite(_gameRef, this);
 					if (!spr || DID_FAIL(spr->loadFile("entity_sound.sprite"))) {
@@ -625,12 +612,11 @@ bool AdEntity::update() {
 	_currentSprite = nullptr;
 
 	if (_state == STATE_READY && _animSprite) {
-		delete _animSprite;
-		_animSprite = nullptr;
+		SAFE_DELETE(_animSprite);
 	}
 
 	// finished playing animation?
-	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->isFinished()) {
+	if (_state == STATE_PLAYING_ANIM && _animSprite != nullptr && _animSprite->_finished) {
 		_state = STATE_READY;
 		_currentSprite = _animSprite;
 	}
@@ -709,8 +695,7 @@ bool AdEntity::update() {
 		_theora->update();
 		if (_theora->isFinished()) {
 			_theora->stop();
-			delete _theora;
-			_theora = nullptr;
+			SAFE_DELETE(_theora);
 		}
 	}
 
@@ -749,7 +734,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		ScValue *valAlpha = stack->pop();
 		int startTime = stack->pop()->getInt();
 
-		delete _theora;
+		SAFE_DELETE(_theora);
 		_theora = new VideoTheoraPlayer(_gameRef);
 		if (_theora && DID_SUCCEED(_theora->initialize(filename))) {
 			if (!valAlpha->isNULL()) {
@@ -773,8 +758,7 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(0);
 		if (_theora) {
 			_theora->stop();
-			delete _theora;
-			_theora = nullptr;
+			SAFE_DELETE(_theora);
 			stack->pushBool(true);
 		} else {
 			stack->pushBool(false);
@@ -1284,12 +1268,10 @@ bool AdEntity::setSprite(const char *filename) {
 		_currentSprite = nullptr;
 	}
 
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 	BaseSprite *spr = new BaseSprite(_gameRef, this);
 	if (!spr || DID_FAIL(spr->loadFile(filename))) {
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 		return STATUS_FAILED;
 	} else {
 		_sprite = spr;

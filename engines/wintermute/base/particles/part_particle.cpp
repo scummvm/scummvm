@@ -30,6 +30,8 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -63,8 +65,7 @@ PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 PartParticle::~PartParticle() {
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -74,8 +75,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 		return STATUS_OK;
 	}
 
-	delete _sprite;
-	_sprite = nullptr;
+	SAFE_DELETE(_sprite);
 
 	SystemClassRegistry::getInstance()->_disabled = true;
 	_sprite = new BaseSprite(_gameRef, (BaseObject*)_gameRef);
@@ -83,8 +83,7 @@ bool PartParticle::setSprite(const Common::String &filename) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;
 	} else {
-		delete _sprite;
-		_sprite = nullptr;
+		SAFE_DELETE(_sprite);
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_FAILED;
 	}

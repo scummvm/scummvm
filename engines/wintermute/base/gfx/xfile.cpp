@@ -45,8 +45,7 @@ XFile::~XFile() {
 
 //////////////////////////////////////////////////////////////////////////
 bool XFile::closeFile() {
-	delete _xfile;
-	_xfile = nullptr;
+	SAFE_DELETE(_xfile);
 
 	return true;
 }

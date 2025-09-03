@@ -38,6 +38,7 @@
 #include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/dcgf.h"
 
 #include "math/utils.h"
 
@@ -55,17 +56,12 @@ XMesh::XMesh(Wintermute::BaseGame *inGame) : BaseNamedObject(inGame) {
 }
 
 XMesh::~XMesh() {
-	delete _skinMesh;
-	_skinMesh = nullptr;
-	delete _blendedMesh;
-	_blendedMesh = nullptr;
-	delete _staticMesh;
-	_staticMesh = nullptr;
+	SAFE_DELETE(_skinMesh);
+	SAFE_DELETE(_blendedMesh);
+	SAFE_DELETE(_staticMesh);
 
-	delete[] _boneMatrices;
-	_boneMatrices = nullptr;
-	delete[] _adjacency;
-	_adjacency = nullptr;
+	SAFE_DELETE_ARRAY(_boneMatrices);
+	SAFE_DELETE_ARRAY(_adjacency);
 
 	_materials.removeAll();
 }
@@ -104,8 +100,7 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 		_skinMesh->getOriginalMesh(&_staticMesh);
 		_staticMesh->cloneMesh(&_blendedMesh);
 
-		delete _skinMesh;
-		_skinMesh = nullptr;
+		SAFE_DELETE(_skinMesh);
 
 		if (_blendedMesh) {
 			uint32 numFaces = _blendedMesh->getNumFaces();
@@ -151,10 +146,9 @@ bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
 bool XMesh::generateMesh() {
 	uint32 numFaces = _skinMesh->getNumFaces();
 
-	delete _blendedMesh;
-	_blendedMesh = nullptr;
+	SAFE_DELETE(_blendedMesh);
 
-	delete[] _adjacency;
+	SAFE_DELETE_ARRAY(_adjacency);
 	_adjacency = new uint32[numFaces * 3];
 
 	// blend the mesh
@@ -350,8 +344,7 @@ bool XMesh::removeMaterialEffect(const Common::String &matName) {
 //////////////////////////////////////////////////////////////////////////
 bool XMesh::invalidateDeviceObjects() {
 	if (_skinMesh) {
-		delete[] _blendedMesh;
-		_blendedMesh = nullptr;
+		SAFE_DELETE(_blendedMesh);
 	}
 
 	for (int32 i = 0; i < _materials.getSize(); i++) {

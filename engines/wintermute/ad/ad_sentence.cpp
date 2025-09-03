@@ -37,6 +37,7 @@
 #include "engines/wintermute/base/font/base_font.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -72,16 +73,11 @@ AdSentence::AdSentence(BaseGame *inGame) : BaseClass(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSentence::~AdSentence() {
-	delete _sound;
-	_sound = nullptr;
-	delete[] _text;
-	_text = nullptr;
-	delete[] _stances;
-	_stances = nullptr;
-	delete[] _tempStance;
-	_tempStance = nullptr;
-	delete _talkDef;
-	_talkDef = nullptr;
+	SAFE_DELETE(_sound);
+	SAFE_DELETE_ARRAY(_text);
+	SAFE_DELETE_ARRAY(_stances);
+	SAFE_DELETE_ARRAY(_tempStance);
+	SAFE_DELETE(_talkDef);
 
 	_currentSprite = nullptr; // ref only
 	_currentSkelAnim = nullptr;
@@ -223,7 +219,7 @@ void AdSentence::setSound(BaseSound *sound) {
 	if (!sound) {
 		return;
 	}
-	delete _sound;
+	SAFE_DELETE(_sound);
 	_sound = sound;
 	_soundStarted = false;
 }
@@ -267,8 +263,7 @@ bool AdSentence::persist(BasePersistenceManager *persistMgr) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::setupTalkFile(const char *soundFilename) {
-	delete _talkDef;
-	_talkDef = nullptr;
+	SAFE_DELETE(_talkDef);
 	_currentSprite = nullptr;
 
 	if (!soundFilename) {
@@ -287,8 +282,7 @@ bool AdSentence::setupTalkFile(const char *soundFilename) {
 
 	_talkDef = new AdTalkDef(_gameRef);
 	if (!_talkDef || DID_FAIL(_talkDef->loadFile(talkDefFileName.c_str()))) {
-		delete _talkDef;
-		_talkDef = nullptr;
+		SAFE_DELETE(_talkDef);
 		return STATUS_FAILED;
 	}
 	//_gameRef->LOG(0, "Using .talk file: %s", TalkDefFile);

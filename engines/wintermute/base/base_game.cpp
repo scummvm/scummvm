@@ -277,40 +277,25 @@ BaseGame::~BaseGame() {
 
 	cleanup();
 
-	delete _mathClass;
-	delete _directoryClass;
+	SAFE_DELETE(_mathClass);
+	SAFE_DELETE(_directoryClass);
 
-	delete _transMgr;
-	delete _scEngine;
-	delete _fontStorage;
-	delete _surfaceStorage;
-	delete _videoPlayer;
-	delete _theoraPlayer;
-	delete _soundMgr;
-
-	delete _renderer;
-	delete _musicSystem;
-	delete _settings;
-
-	_mathClass = nullptr;
-	_directoryClass = nullptr;
-
-	_transMgr = nullptr;
-	_scEngine = nullptr;
-	_fontStorage = nullptr;
-	_surfaceStorage = nullptr;
-	_videoPlayer = nullptr;
-	_theoraPlayer = nullptr;
-	_soundMgr = nullptr;
+	SAFE_DELETE(_transMgr);
+	SAFE_DELETE(_scEngine);
+	SAFE_DELETE(_fontStorage);
+	SAFE_DELETE(_surfaceStorage);
+	SAFE_DELETE(_videoPlayer);
+	SAFE_DELETE(_theoraPlayer);
+	SAFE_DELETE(_soundMgr);
 	//SAFE_DELETE(_keyboardState);
 
-	_renderer = nullptr;
-	_musicSystem = nullptr;
-	_settings = nullptr;
+	SAFE_DELETE(_renderer);
+	//SAFE_DELETE(m_AccessMgr);
+	SAFE_DELETE(_musicSystem);
+	SAFE_DELETE(_settings);
 
 #ifdef ENABLE_HEROCRAFT
-	delete _rndHc;
-	_rndHc = nullptr;
+	SAFE_DELETE(_rndHc);
 #endif
 
 	DEBUG_DebugDisable();
@@ -320,8 +305,7 @@ BaseGame::~BaseGame() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::cleanup() {
-	delete _loadingIcon;
-	_loadingIcon = nullptr;
+	SAFE_DELETE(_loadingIcon);
 
 	deleteSaveThumbnail();
 
@@ -334,25 +318,20 @@ bool BaseGame::cleanup() {
 	_fader = nullptr;
 
 	for (int32 i = 0; i < _regObjects.getSize(); i++) {
-		delete _regObjects[i];
-		_regObjects[i] = nullptr;
+		SAFE_DELETE(_regObjects[i]);
 	}
 	_regObjects.removeAll();
 
 	_windows.removeAll(); // refs only
 	_focusedWindow = nullptr; // ref only
+	//m_AccessShieldWin = nullptr;
 
-	delete _cursorNoninteractive;
-	_cursorNoninteractive = nullptr;
-	delete _cursor;
-	_cursor = nullptr;
-	delete _activeCursor;
-	_activeCursor = nullptr;
+	SAFE_DELETE(_cursorNoninteractive);
+	SAFE_DELETE(_cursor);
+	SAFE_DELETE(_activeCursor);
 
-	delete _scValue;
-	_scValue = nullptr;
-	delete _sFX;
-	_sFX = nullptr;
+	SAFE_DELETE(_scValue);
+	SAFE_DELETE(_sFX);
 
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->_owner = nullptr;
@@ -384,15 +363,15 @@ bool BaseGame::cleanup() {
 	setName(nullptr);
 	setFilename(nullptr);
 	for (int i = 0; i < 7; i++) {
-		delete[] _caption[i];
-		_caption[i] = nullptr;
+		SAFE_DELETE_ARRAY(_caption[i]);
 	}
 
 	_lastCursor = nullptr;
 
-	delete _keyboardState;
-	_keyboardState = nullptr;
+	SAFE_DELETE(_keyboardState);
 
+	//if(m_AccessMgr) m_AccessMgr->SetActiveObject(NULL);
+	
 	return STATUS_OK;
 }
 
@@ -513,13 +492,14 @@ bool BaseGame::initialize1() {
 	if (loaded == true) {
 		return STATUS_OK;
 	} else {
-		delete _mathClass;
 		delete _directoryClass;
+		delete _mathClass;
 		delete _keyboardState;
 		delete _transMgr;
 		delete _surfaceStorage;
 		delete _fontStorage;
 		delete _soundMgr;
+		//delete m_AccessMgr;
 		delete _scEngine;
 		delete _videoPlayer;
 		return STATUS_FAILED;
@@ -949,32 +929,28 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 #endif
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_ACTIVE_CURSOR:
-			delete _activeCursor;
-			_activeCursor = nullptr;
+			SAFE_DELETE(_activeCursor);
 			_activeCursor = new BaseSprite(_gameRef);
 			if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(params))) {
-				delete _activeCursor;
-				_activeCursor = nullptr;
+				SAFE_DELETE(_activeCursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_NONINTERACTIVE_CURSOR:
-			delete _cursorNoninteractive;
+			SAFE_DELETE(_cursorNoninteractive);
 			_cursorNoninteractive = new BaseSprite(_gameRef);
 			if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(params))) {
-				delete _cursorNoninteractive;
-				_cursorNoninteractive = nullptr;
+				SAFE_DELETE(_cursorNoninteractive);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -1362,7 +1338,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			type = (int)VID_PLAY_STRETCH;
 		}
 
-		delete _theoraPlayer;
+		SAFE_DELETE(_theoraPlayer);
 		_theoraPlayer = new VideoTheoraPlayer(this);
 		if (_theoraPlayer && DID_SUCCEED(_theoraPlayer->initialize(filename, subtitleFile))) {
 			_theoraPlayer->_dontDropFrames = !dropFrames;
@@ -1374,8 +1350,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			}
 		} else {
 			stack->pushBool(false);
-			delete _theoraPlayer;
-			_theoraPlayer = nullptr;
+			SAFE_DELETE(_theoraPlayer);
 		}
 
 		return STATUS_OK;
@@ -1705,8 +1680,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveActiveCursor") == 0) {
 		stack->correctParams(0);
-		delete _activeCursor;
-		_activeCursor = nullptr;
+		SAFE_DELETE(_activeCursor);
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -1968,9 +1942,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "RemoveWaitCursor") == 0) {
 		stack->correctParams(0);
-		delete _cursorNoninteractive;
-		_cursorNoninteractive = nullptr;
-
+		SAFE_DELETE(_cursorNoninteractive);
 		stack->pushNULL();
 
 		return STATUS_OK;
@@ -2024,11 +1996,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_loadingIconY = stack->pop()->getInt();
 		_loadingIconPersistent = stack->pop()->getBool();
 
-		delete _loadingIcon;
+		SAFE_DELETE(_loadingIcon);
 		_loadingIcon = new BaseSprite(this);
 		if (!_loadingIcon || DID_FAIL(_loadingIcon->loadFile(filename))) {
-			delete _loadingIcon;
-			_loadingIcon = nullptr;
+			SAFE_DELETE(_loadingIcon);
 		} else {
 			displayContent(false, true);
 			_gameRef->_renderer->flip();
@@ -2044,8 +2015,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "HideLoadingIcon") == 0) {
 		stack->correctParams(0);
-		delete _loadingIcon;
-		_loadingIcon = nullptr;
+		SAFE_DELETE(_loadingIcon);
 		stack->pushNULL();
 		return STATUS_OK;
 	}
@@ -4349,8 +4319,7 @@ bool BaseGame::setWaitCursor(const char *filename) {
 
 	_cursorNoninteractive = new BaseSprite(_gameRef);
 	if (!_cursorNoninteractive || DID_FAIL(_cursorNoninteractive->loadFile(filename))) {
-		delete _cursorNoninteractive;
-		_cursorNoninteractive = nullptr;
+		SAFE_DELETE(_cursorNoninteractive);
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -4375,8 +4344,7 @@ bool BaseGame::stopVideo() {
 	}
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
-		delete _theoraPlayer;
-		_theoraPlayer = nullptr;
+		SAFE_DELETE(_theoraPlayer);
 	}
 	return STATUS_OK;
 }
@@ -4412,8 +4380,7 @@ bool BaseGame::storeSaveThumbnail() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::deleteSaveThumbnail() {
-	delete _cachedThumbnail;
-	_cachedThumbnail = nullptr;
+	SAFE_DELETE(_cachedThumbnail);
 }
 
 

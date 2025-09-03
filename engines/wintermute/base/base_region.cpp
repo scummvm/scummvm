@@ -35,6 +35,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -290,9 +291,7 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		int index = stack->pop()->getInt();
 
 		if (index >= 0 && index < _points.getSize()) {
-			delete _points[index];
-			_points[index] = nullptr;
-
+			SAFE_DELETE(_points[index]);
 			_points.removeAt(index);
 			createRegion();
 

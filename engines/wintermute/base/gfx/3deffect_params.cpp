@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/gfx/3deffect_params.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -122,8 +123,7 @@ Effect3DParams::~Effect3DParams() {
 //////////////////////////////////////////////////////////////////////////
 void Effect3DParams::clear() {
 	for (int32 i = 0; i < _params.getSize(); i++) {
-		delete _params[i];
-		_params[i] = nullptr;
+		SAFE_DELETE(_params[i]);
 	}
 
 	_params.removeAll();

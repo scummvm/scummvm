@@ -35,6 +35,8 @@
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "video/theora_decoder.h"
 #include "common/system.h"
 
@@ -96,12 +98,9 @@ void VideoTheoraPlayer::cleanup() {
 	if (_theoraDecoder) {
 		_theoraDecoder->close();
 	}
-	delete _subtitler;
-	_subtitler = nullptr;
-	delete _theoraDecoder;
-	_theoraDecoder = nullptr;
-	delete _texture;
-	_texture = nullptr;
+	SAFE_DELETE(_subtitler);
+	SAFE_DELETE(_theoraDecoder);
+	SAFE_DELETE(_texture);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -149,8 +148,7 @@ bool VideoTheoraPlayer::resetStream() {
 	if (_theoraDecoder) {
 		_theoraDecoder->close();
 	}
-	delete _theoraDecoder;
-	_theoraDecoder = nullptr;
+	SAFE_DELETE(_theoraDecoder);
 
 #if defined (USE_THEORADEC)
 	// Load a file, but avoid having the File-manager handle the disposal of it.

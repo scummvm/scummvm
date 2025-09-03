@@ -44,6 +44,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -82,19 +83,13 @@ bool AdActor::setDefaultAnimNames() {
 
 //////////////////////////////////////////////////////////////////////////
 AdActor::~AdActor() {
-	delete _path;
-	_path = nullptr;
-	delete _targetPoint;
-	_targetPoint = nullptr;
+	SAFE_DELETE(_path);
+	SAFE_DELETE(_targetPoint);
 
-	delete _walkSprite;
-	_walkSprite = nullptr;
-	delete _standSprite;
-	_standSprite = nullptr;
-	delete _turnLeftSprite;
-	_turnLeftSprite = nullptr;
-	delete _turnRightSprite;
-	_turnRightSprite = nullptr;
+	SAFE_DELETE(_walkSprite);
+	SAFE_DELETE(_standSprite);
+	SAFE_DELETE(_turnLeftSprite);
+	SAFE_DELETE(_turnRightSprite);
 
 	_animSprite2 = nullptr; // ref only
 
@@ -109,8 +104,7 @@ AdActor::~AdActor() {
 	_talkSpritesEx.removeAll();
 
 	for (int32 i = 0; i < _anims.getSize(); i++) {
-		delete _anims[i];
-		_anims[i] = nullptr;
+		SAFE_DELETE(_anims[i]);
 	}
 	_anims.removeAll();
 }
@@ -285,8 +279,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_WALK:
-			delete _walkSprite;
-			_walkSprite = nullptr;
+			SAFE_DELETE(_walkSprite);
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texWalkLifeTime, CACHE_HALF))) {
 				cmd = PARSERR_GENERIC;
@@ -314,8 +307,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_STAND:
-			delete _standSprite;
-			_standSprite = nullptr;
+			SAFE_DELETE(_standSprite);
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true, adGame->_texStandLifeTime))) {
 				cmd = PARSERR_GENERIC;
@@ -325,8 +317,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_TURN_LEFT:
-			delete _turnLeftSprite;
-			_turnLeftSprite = nullptr;
+			SAFE_DELETE(_turnLeftSprite);
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
@@ -336,8 +327,7 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_TURN_RIGHT:
-			delete _turnRightSprite;
-			_turnRightSprite = nullptr;
+			SAFE_DELETE(_turnRightSprite);
 			spr = new AdSpriteSet(_gameRef, this);
 			if (!spr || DID_FAIL(spr->loadBuffer(params, true))) {
 				cmd = PARSERR_GENERIC;
@@ -351,11 +341,10 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -389,17 +378,13 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BLOCKED_REGION: {
-			delete _blockRegion;
-			_blockRegion = nullptr;
-			delete _currentBlockRegion;
-			_currentBlockRegion = nullptr;
+			SAFE_DELETE(_blockRegion);
+			SAFE_DELETE(_currentBlockRegion);
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || DID_FAIL(rgn->loadBuffer(params, false))) {
-				delete _blockRegion;
-				_blockRegion = nullptr;
-				delete _currentBlockRegion;
-				_currentBlockRegion = nullptr;
+				SAFE_DELETE(_blockRegion);
+				SAFE_DELETE(_currentBlockRegion);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -410,17 +395,13 @@ bool AdActor::loadBuffer(char *buffer, bool complete) {
 		break;
 
 		case TOKEN_WAYPOINTS: {
-			delete _wptGroup;
-			_wptGroup = nullptr;
-			delete _currentWptGroup;
-			_currentWptGroup = nullptr;
+			SAFE_DELETE(_wptGroup);
+			SAFE_DELETE(_currentWptGroup);
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || DID_FAIL(wpt->loadBuffer(params, false))) {
-				delete _wptGroup;
-				_wptGroup = nullptr;
-				delete _currentWptGroup;
-				_currentWptGroup = nullptr;
+				SAFE_DELETE(_wptGroup);
+				SAFE_DELETE(_currentWptGroup);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -609,8 +590,7 @@ bool AdActor::update() {
 
 	if (_state == STATE_READY) {
 		if (_animSprite) {
-			delete _animSprite;
-			_animSprite = nullptr;
+			SAFE_DELETE(_animSprite);
 		}
 		if (_animSprite2) {
 			_animSprite2 = nullptr;
@@ -1145,8 +1125,7 @@ bool AdActor::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 					_animSprite2 = nullptr;
 				}
 
-				delete _anims[i];
-				_anims[i] = nullptr;
+				SAFE_DELETE(_anims[i]);
 				_anims.removeAt(i);
 				i--;
 				found = true;
@@ -1320,14 +1299,13 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	// forced stance?
 	if (_forcedTalkAnimName && !_forcedTalkAnimUsed) {
 		_forcedTalkAnimUsed = true;
-		delete _animSprite;
+		SAFE_DELETE(_animSprite);
 		_animSprite = new BaseSprite(_gameRef, this);
 		if (_animSprite) {
 			bool res = _animSprite->loadFile(_forcedTalkAnimName);
 			if (DID_FAIL(res)) {
 				_gameRef->LOG(res, "AdActor::GetTalkStance: error loading talk sprite (object:\"%s\" sprite:\"%s\")", _name, _forcedTalkAnimName);
-				delete _animSprite;
-				_animSprite = nullptr;
+				SAFE_DELETE(_animSprite);
 			} else {
 				return _animSprite;
 			}

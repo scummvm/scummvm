@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/base/base_engine.h"
@@ -139,28 +140,21 @@ bool BaseObject::cleanup() {
 	}
 
 	BaseScriptHolder::cleanup();
-	delete[] _soundEvent;
-	_soundEvent = nullptr;
+	SAFE_DELETE_ARRAY(_soundEvent);
 
 	if (!_sharedCursors) {
-		delete _cursor;
-		_cursor = nullptr;
-		delete _activeCursor;
-		_activeCursor = nullptr;
+		SAFE_DELETE(_cursor);
+		SAFE_DELETE(_activeCursor);
 	}
-	delete _sFX;
-	_sFX = nullptr;
+	SAFE_DELETE(_sFX);
 
 	for (int i = 0; i < 7; i++) {
-		delete[] _caption[i];
-		_caption[i] = nullptr;
+		SAFE_DELETE_ARRAY(_caption[i]);
 	}
 
 #ifdef ENABLE_WME3D
-	delete _xmodel;
-	_xmodel = nullptr;
-	delete _shadowModel;
-	_shadowModel = nullptr;
+	SAFE_DELETE(_xmodel);
+	SAFE_DELETE(_shadowModel);
 
 	if (_shadowImage) {
 		_gameRef->_surfaceStorage->removeSurface(_shadowImage);
@@ -184,7 +178,7 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 	if (caseVal < 1 || caseVal > 7)
 		return;
 
-	delete[] _caption[caseVal - 1];
+	SAFE_DELETE_ARRAY(_caption[caseVal - 1]);
 	size_t captionSize = strlen(caption) + 1;
 	_caption[caseVal - 1] = new char[captionSize];
 	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);
@@ -257,8 +251,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	else if (strcmp(name, "RemoveCursor") == 0) {
 		stack->correctParams(0);
 		if (!_sharedCursors) {
-			delete _cursor;
-			_cursor = nullptr;
+			SAFE_DELETE(_cursor);
 		} else {
 			_cursor = nullptr;
 
@@ -1157,15 +1150,13 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setCursor(const char *filename) {
 	if (!_sharedCursors) {
-		delete _cursor;
-		_cursor = nullptr;
+		SAFE_DELETE(_cursor);
 	}
 
 	_sharedCursors = false;
 	_cursor = new BaseSprite(_gameRef);
 	if (!_cursor || DID_FAIL(_cursor->loadFile(filename))) {
-		delete _cursor;
-		_cursor = nullptr;
+		SAFE_DELETE(_cursor);
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1175,11 +1166,10 @@ bool BaseObject::setCursor(const char *filename) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseObject::setActiveCursor(const char *filename) {
-	delete _activeCursor;
+	SAFE_DELETE(_activeCursor);
 	_activeCursor = new BaseSprite(_gameRef);
 	if (!_activeCursor || DID_FAIL(_activeCursor->loadFile(filename))) {
-		delete _activeCursor;
-		_activeCursor = nullptr;
+		SAFE_DELETE(_activeCursor);
 		return STATUS_FAILED;
 	} else {
 		return STATUS_OK;
@@ -1258,8 +1248,7 @@ bool BaseObject::playSFX(const char *filename, bool looping, bool playNow, const
 			return STATUS_OK;
 		}
 	} else {
-		delete _sFX;
-		_sFX = nullptr;
+		SAFE_DELETE(_sFX);
 		return STATUS_FAILED;
 	}
 }
@@ -1270,8 +1259,7 @@ bool BaseObject::stopSFX(bool deleteSound) {
 	if (_sFX) {
 		_sFX->stop();
 		if (deleteSound) {
-			delete _sFX;
-			_sFX = nullptr;
+			SAFE_DELETE(_sFX);
 		}
 		return STATUS_OK;
 	} else {
@@ -1376,8 +1364,7 @@ bool BaseObject::isReady() {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseObject::setSoundEvent(const char *eventName) {
-	delete[] _soundEvent;
-	_soundEvent = nullptr;
+	SAFE_DELETE_ARRAY(_soundEvent);
 	if (eventName) {
 		size_t soundEventSize = strlen(eventName) + 1;
 		_soundEvent = new char[soundEventSize];

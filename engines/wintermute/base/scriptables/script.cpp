@@ -33,6 +33,8 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/ext/externals.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/memstream.h"
 
 #ifdef ENABLE_FOXTAIL
@@ -258,8 +260,7 @@ bool ScScript::create(const char *filename, byte *buffer, uint32 size, BaseScrip
 
 	_thread = false;
 	_methodThread = false;
-	delete[] _threadEvent;
-	_threadEvent = nullptr;
+	SAFE_DELETE_ARRAY(_threadEvent);
 
 	size_t filenameSize = strlen(filename) + 1;
 	_filename = new char[filenameSize];
@@ -444,13 +445,10 @@ void ScScript::cleanup() {
 	_externals = nullptr;
 	_numExternals = 0;
 
-	delete _operand;
-	_operand = nullptr;
-	delete _reg1;
-	_reg1 = nullptr;
+	SAFE_DELETE(_operand);
+	SAFE_DELETE(_reg1);
 
-	delete[] _threadEvent;
-	_threadEvent = nullptr;
+	SAFE_DELETE_ARRAY(_threadEvent);
 
 	_state = SCRIPT_FINISHED;
 
@@ -461,8 +459,7 @@ void ScScript::cleanup() {
 
 	_parentScript = nullptr; // ref only
 
-	delete _scriptStream;
-	_scriptStream = nullptr;
+	SAFE_DELETE(_scriptStream);
 }
 
 

@@ -38,6 +38,8 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -59,8 +61,7 @@ BaseFrame::BaseFrame(BaseGame *inGame) : BaseScriptable(inGame, true) {
 
 //////////////////////////////////////////////////////////////////////
 BaseFrame::~BaseFrame() {
-	delete _sound;
-	_sound = nullptr;
+	SAFE_DELETE(_sound);
 
 	for (int32 i = 0; i < _subframes.getSize(); i++) {
 		delete _subframes[i];
@@ -68,8 +69,7 @@ BaseFrame::~BaseFrame() {
 	_subframes.removeAll();
 
 	for (int32 i = 0; i < _applyEvent.getSize(); i++) {
-		delete[] _applyEvent[i];
-		_applyEvent[i] = nullptr;
+		SAFE_DELETE_ARRAY(_applyEvent[i]);
 	}
 	_applyEvent.removeAll();
 }
@@ -258,16 +258,14 @@ bool BaseFrame::loadBuffer(char *buffer, int lifeTime, bool keepLoaded) {
 
 		case TOKEN_SOUND: {
 			if (_sound) {
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			}
 			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(params, Audio::Mixer::kSFXSoundType, false))) {
 				if (BaseEngine::instance().getSoundMgr()->_soundAvailable) {
 					BaseEngine::LOG(0, "Error loading sound '%s'.", params);
 				}
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			}
 		}
 		break;
@@ -454,15 +452,13 @@ bool BaseFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStac
 	if (strcmp(name, "SetSound") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		delete _sound;
-		_sound = nullptr;
+		SAFE_DELETE(_sound);
 
 		if (!val->isNULL()) {
 			_sound = new BaseSound(_gameRef);
 			if (!_sound || DID_FAIL(_sound->setSound(val->getString(), Audio::Mixer::kSFXSoundType, false))) {
 				stack->pushBool(false);
-				delete _sound;
-				_sound = nullptr;
+				SAFE_DELETE(_sound);
 			} else {
 				stack->pushBool(true);
 			}

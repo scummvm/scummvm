@@ -37,6 +37,8 @@
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -173,8 +175,8 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 			AdSceneNode *node = new AdSceneNode(_gameRef);
 			if (!region || !node || DID_FAIL(region->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete region;
-				delete node;
+				SAFE_DELETE(region);
+				SAFE_DELETE(node);
 			} else {
 				node->setRegion(region);
 				_nodes.add(node);
@@ -190,8 +192,8 @@ bool AdLayer::loadBuffer(char *buffer, bool complete) {
 			}
 			if (!entity || !node || DID_FAIL(entity->loadBuffer(params, false))) {
 				cmd = PARSERR_GENERIC;
-				delete entity;
-				delete node;
+				SAFE_DELETE(entity);
+				SAFE_DELETE(node);
 			} else {
 				node->setEntity(entity);
 				_nodes.add(node);
@@ -361,8 +363,7 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 		for (int32 i = 0; i < _nodes.getSize(); i++) {
 			if (_nodes[i] == toDelete) {
-				delete _nodes[i];
-				_nodes[i] = nullptr;
+				SAFE_DELETE(_nodes[i]);
 				_nodes.removeAt(i);
 				break;
 			}

@@ -26,6 +26,7 @@
  */
 
 #include "engines/wintermute/base/base_named_object.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -47,15 +48,13 @@ BaseNamedObject::BaseNamedObject(TDynamicConstructor, TDynamicConstructor) {
 
 //////////////////////////////////////////////////////////////////////////
 BaseNamedObject::~BaseNamedObject() {
-	delete[] _name;
-	_name = nullptr;
+	SAFE_DELETE_ARRAY(_name);
 }
 
 
 //////////////////////////////////////////////////////////////////////
 void BaseNamedObject::setName(const char *name) {
-	delete[] _name;
-	_name = nullptr;
+	SAFE_DELETE_ARRAY(_name);
 
 	if (name == nullptr) {
 		return;

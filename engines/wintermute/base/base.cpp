@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_dynamic_buffer.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -117,14 +118,14 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME: {
-			delete[] propName;
+			SAFE_DELETE_ARRAY(propName);
 			size_t propNameSize = strlen(params) + 1;
 			propName = new char[propNameSize];
 			Common::strcpy_s(propName, propNameSize, params);
 			break;
 		}
 		case TOKEN_VALUE: {
-			delete[] propValue;
+			SAFE_DELETE_ARRAY(propValue);
 			size_t propValueSize = strlen(params) + 1;
 			propValue = new char[propValueSize];
 			Common::strcpy_s(propValue, propValueSize, params);
@@ -136,14 +137,14 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		delete[] propName;
-		delete[] propValue;
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
 		BaseEngine::LOG(0, "Syntax error in EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
-		delete[] propName;
-		delete[] propValue;
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
 		BaseEngine::LOG(0, "Error loading EDITOR_PROPERTY definition");
 		return STATUS_FAILED;
 	}
@@ -151,8 +152,8 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	setEditorProp(propName, propValue);
 
-	delete[] propName;
-	delete[] propValue;
+	SAFE_DELETE_ARRAY(propName);
+	SAFE_DELETE_ARRAY(propValue);
 
 	return STATUS_OK;
 }

@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/system/sys_instance.h"
 #include "engines/wintermute/base/scriptables/script_ext_array.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -67,8 +68,7 @@ SXArray::SXArray(BaseGame *inGame) : BaseScriptable(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 SXArray::~SXArray() {
-	delete _values;
-	_values = nullptr;
+	SAFE_DELETE(_values);
 }
 
 

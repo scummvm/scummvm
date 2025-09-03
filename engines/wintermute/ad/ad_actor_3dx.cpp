@@ -57,6 +57,7 @@
 #include "engines/wintermute/base/sound/base_sound.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -115,13 +116,10 @@ AdActor3DX::~AdActor3DX() {
 	}
 	_transitionTimes.removeAll();
 
-	delete _path2D;
-	_path2D = nullptr;
-	delete _path3D;
-	_path3D = nullptr;
+	SAFE_DELETE(_path2D);
+	SAFE_DELETE(_path3D);
 
-	delete _targetPoint2D;
-	_targetPoint2D = nullptr;
+	SAFE_DELETE(_targetPoint2D);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -142,8 +140,7 @@ bool AdActor3DX::update() {
 
 	if (_sentence && _state != STATE_TALKING) {
 		_sentence->finish();
-		delete _sentence;
-		_sentence = nullptr;
+		SAFE_DELETE(_sentence);
 
 		// kill talking anim
 		if (_talkAnimChannel > 0)
@@ -960,10 +957,8 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 		buffer = params;
 	}
 
-	delete _xmodel;
-	_xmodel = nullptr;
-	delete _shadowModel;
-	_shadowModel = nullptr;
+	SAFE_DELETE(_xmodel);
+	SAFE_DELETE(_shadowModel);
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -1096,8 +1091,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 				_xmodel = new XModel(_gameRef, this);
 
 				if (!_xmodel || !_xmodel->loadFromFile(params)) {
-					delete _xmodel;
-					_xmodel = nullptr;
+					SAFE_DELETE(_xmodel);
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
@@ -1109,12 +1103,11 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_SHADOW_MODEL:
 			if (_xmodel) {
-				delete _shadowModel;
+				SAFE_DELETE(_shadowModel);
 				_shadowModel = new XModel(_gameRef, this);
 
 				if (!_shadowModel || !_shadowModel->loadFromFile(params, _xmodel)) {
-					delete _shadowModel;
-					_shadowModel = nullptr;
+					SAFE_DELETE(_shadowModel);
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
@@ -1123,11 +1116,10 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || !_cursor->loadFile(params)) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -1168,15 +1160,13 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BLOCKED_REGION: {
-			delete _blockRegion;
-			_blockRegion = nullptr;
-			delete _currentBlockRegion;
-			_currentBlockRegion = nullptr;
+			SAFE_DELETE(_blockRegion);
+			SAFE_DELETE(_currentBlockRegion);
 			BaseRegion *rgn = new BaseRegion(_gameRef);
 			BaseRegion *crgn = new BaseRegion(_gameRef);
 			if (!rgn || !crgn || !rgn->loadBuffer(params, false)) {
-				delete rgn;
-				delete crgn;
+				SAFE_DELETE(rgn);
+				SAFE_DELETE(crgn);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_blockRegion = rgn;
@@ -1187,15 +1177,13 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 		}
 
 		case TOKEN_WAYPOINTS: {
-			delete _wptGroup;
-			_wptGroup = nullptr;
-			delete _currentWptGroup;
-			_currentWptGroup = nullptr;
+			SAFE_DELETE(_wptGroup);
+			SAFE_DELETE(_currentWptGroup);
 			AdWaypointGroup *wpt = new AdWaypointGroup(_gameRef);
 			AdWaypointGroup *cwpt = new AdWaypointGroup(_gameRef);
 			if (!wpt || !cwpt || !wpt->loadBuffer(params, false)) {
-				delete wpt;
-				delete cwpt;
+				SAFE_DELETE(wpt);
+				SAFE_DELETE(cwpt);
 				cmd = PARSERR_GENERIC;
 			} else {
 				_wptGroup = wpt;
@@ -1447,13 +1435,13 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 				AdAttach3DX *at = new AdAttach3DX(_gameRef, this);
 				if (!at || !at->init(filename, attachName, boneName)) {
 					script->runtimeError("Error adding attachment");
-					delete at;
+					SAFE_DELETE(at);
 					stack->pushBool(false);
 				} else {
 					bool isSet = false;
 					for (int32 i = 0; i < _attachments.getSize(); i++) {
 						if (scumm_stricmp(_attachments[i]->_name, attachName) == 0) {
-							delete _attachments[i];
+							SAFE_DELETE(_attachments[i]);
 							_attachments[i] = at;
 							isSet = true;
 							break;
@@ -1487,7 +1475,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			bool isFound = false;
 			for (int32 i = 0; i < _attachments.getSize(); i++) {
 				if (scumm_stricmp(_attachments[i]->_name, attachmentName) == 0) {
-					delete _attachments[i];
+					SAFE_DELETE(_attachments[i]);
 					_attachments.removeAt(i);
 					isFound = true;
 					break;
@@ -2530,8 +2518,8 @@ bool AdActor3DX::parseEffect(char *buffer) {
 		}
 	}
 
-	delete[] effectFile;
-	delete[] material;
+	SAFE_DELETE_ARRAY(effectFile);
+	SAFE_DELETE_ARRAY(material);
 
 	return true;
 }

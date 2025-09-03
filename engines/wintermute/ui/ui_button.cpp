@@ -40,6 +40,7 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -230,101 +231,91 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_BACK:
-			delete _back;
+			SAFE_DELETE(_back);
 			_back = new UITiledImage(_gameRef);
 			if (!_back || DID_FAIL(_back->loadFile(params))) {
-				delete _back;
-				_back = nullptr;
+				SAFE_DELETE(_back);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_HOVER:
-			delete _backHover;
+			SAFE_DELETE(_backHover);
 			_backHover = new UITiledImage(_gameRef);
 			if (!_backHover || DID_FAIL(_backHover->loadFile(params))) {
-				delete _backHover;
-				_backHover = nullptr;
+				SAFE_DELETE(_backHover);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_PRESS:
-			delete _backPress;
+			SAFE_DELETE(_backPress);
 			_backPress = new UITiledImage(_gameRef);
 			if (!_backPress || DID_FAIL(_backPress->loadFile(params))) {
-				delete _backPress;
-				_backPress = nullptr;
+				SAFE_DELETE(_backPress);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_DISABLE:
-			delete _backDisable;
+			SAFE_DELETE(_backDisable);
 			_backDisable = new UITiledImage(_gameRef);
 			if (!_backDisable || DID_FAIL(_backDisable->loadFile(params))) {
-				delete _backDisable;
-				_backDisable = nullptr;
+				SAFE_DELETE(_backDisable);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_BACK_FOCUS:
-			delete _backFocus;
+			SAFE_DELETE(_backFocus);
 			_backFocus = new UITiledImage(_gameRef);
 			if (!_backFocus || DID_FAIL(_backFocus->loadFile(params))) {
-				delete _backFocus;
-				_backFocus = nullptr;
+				SAFE_DELETE(_backFocus);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE:
-			delete _image;
+			SAFE_DELETE(_image);
 			_image = new BaseSprite(_gameRef);
 			if (!_image || DID_FAIL(_image->loadFile(params))) {
-				delete _image;
-				_image = nullptr;
+				SAFE_DELETE(_image);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_HOVER:
-			delete _imageHover;
+			SAFE_DELETE(_imageHover);
 			_imageHover = new BaseSprite(_gameRef);
 			if (!_imageHover || DID_FAIL(_imageHover->loadFile(params))) {
-				delete _imageHover;
-				_imageHover = nullptr;
+				SAFE_DELETE(_imageHover);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_PRESS:
-			delete _imagePress;
+			SAFE_DELETE(_imagePress);
 			_imagePress = new BaseSprite(_gameRef);
 			if (!_imagePress || DID_FAIL(_imagePress->loadFile(params))) {
-				delete _imagePress;
-				_imagePress = nullptr;
+				SAFE_DELETE(_imagePress);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_DISABLE:
-			delete _imageDisable;
+			SAFE_DELETE(_imageDisable);
 			_imageDisable = new BaseSprite(_gameRef);
 			if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(params))) {
-				delete _imageDisable;
-				_imageDisable = nullptr;
+				SAFE_DELETE(_imageDisable);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
 
 		case TOKEN_IMAGE_FOCUS:
-			delete _imageFocus;
+			SAFE_DELETE(_imageFocus);
 			_imageFocus = new BaseSprite(_gameRef);
 			if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(params))) {
-				delete _imageFocus;
-				_imageFocus = nullptr;
+				SAFE_DELETE(_imageFocus);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -411,11 +402,10 @@ bool UIButton::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;
@@ -901,8 +891,7 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_imageDisable = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageDisable || DID_FAIL(_imageDisable->loadFile(filename))) {
-			delete _imageDisable;
-			_imageDisable = nullptr;
+			SAFE_DELETE(_imageDisable);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -946,12 +935,11 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetHoverImage") == 0) {
 		stack->correctParams(1);
 
-		delete _imageHover;
+		SAFE_DELETE(_imageHover);
 		_imageHover = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageHover || DID_FAIL(_imageHover->loadFile(filename))) {
-			delete _imageHover;
-			_imageHover = nullptr;
+			SAFE_DELETE(_imageHover);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -994,12 +982,11 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetPressedImage") == 0) {
 		stack->correctParams(1);
 
-		delete _imagePress;
+		SAFE_DELETE(_imagePress);
 		_imagePress = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imagePress || DID_FAIL(_imagePress->loadFile(filename))) {
-			delete _imagePress;
-			_imagePress = nullptr;
+			SAFE_DELETE(_imagePress);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);
@@ -1042,12 +1029,11 @@ bool UIButton::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "SetFocusedImage") == 0) {
 		stack->correctParams(1);
 
-		delete _imageFocus;
+		SAFE_DELETE(_imageFocus);
 		_imageFocus = new BaseSprite(_gameRef);
 		const char *filename = stack->pop()->getString();
 		if (!_imageFocus || DID_FAIL(_imageFocus->loadFile(filename))) {
-			delete _imageFocus;
-			_imageFocus = nullptr;
+			SAFE_DELETE(_imageFocus);
 			stack->pushBool(false);
 		} else {
 			stack->pushBool(true);

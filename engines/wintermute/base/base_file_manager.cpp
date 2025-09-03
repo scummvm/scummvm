@@ -34,6 +34,8 @@
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/algorithm.h"
 #include "common/debug.h"
 #include "common/str.h"
@@ -85,8 +87,7 @@ bool BaseFileManager::cleanup() {
 	_packages.clear();
 
 	// get rid of the resources:
-	delete _resources;
-	_resources = NULL;
+	SAFE_DELETE(_resources);
 
 	return STATUS_OK;
 }

@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/base_surface.h"
 #include "engines/wintermute/platform_osystem.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -76,15 +77,12 @@ VideoPlayer::~VideoPlayer() {
 bool VideoPlayer::cleanup() {
 	_playing = false;
 
-	delete _subtitler;
-	_subtitler = nullptr;
+	SAFE_DELETE(_subtitler);
 	if (_aviDecoder) {
 		_aviDecoder->close();
 	}
-	delete _aviDecoder;
-	_aviDecoder = nullptr;
-	delete _texture;
-	_texture = nullptr;
+	SAFE_DELETE(_aviDecoder);
+	SAFE_DELETE(_texture);
 
 	return setDefaults();
 }

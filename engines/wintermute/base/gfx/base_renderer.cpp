@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/dcgf.h"
 
 #ifdef ENABLE_WME3D
 #include "engines/wintermute/base/gfx/xmodel.h"
@@ -79,7 +80,7 @@ BaseRenderer::BaseRenderer(BaseGame *inGame) : BaseClass(inGame) {
 BaseRenderer::~BaseRenderer() {
 	deleteRectList();
 	unclipCursor();
-	delete _saveLoadImage;
+	SAFE_DELETE(_saveLoadImage);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -232,25 +233,21 @@ void BaseRenderer::initSaveLoad(bool isSaving, bool quickSave) {
 	_hasDrawnSaveLoadImage = false;
 
 	if (isSaving && !quickSave) {
-		delete _saveLoadImage;
-		_saveLoadImage = nullptr;
+		SAFE_DELETE(_saveLoadImage);
 		if (_saveImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
-				delete _saveLoadImage;
-				_saveLoadImage = nullptr;
+				SAFE_DELETE(_saveLoadImage);
 			}
 		}
 	} else {
-		delete _saveLoadImage;
-		_saveLoadImage = nullptr;
+		SAFE_DELETE(_saveLoadImage);
 		if (_loadImageName.size()) {
 			_saveLoadImage = createSurface();
 
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
-				delete _saveLoadImage;
-				_saveLoadImage = nullptr;
+				SAFE_DELETE(_saveLoadImage);
 			}
 		}
 		_loadInProgress = true;
@@ -262,8 +259,7 @@ void BaseRenderer::endSaveLoad() {
 	_indicatorDisplay = false;
 	_indicatorWidthDrawn = 0;
 
-	delete _saveLoadImage;
-	_saveLoadImage = nullptr;
+	SAFE_DELETE(_saveLoadImage);
 }
 
 void BaseRenderer::persistSaveLoadImages(BasePersistenceManager *persistMgr) {

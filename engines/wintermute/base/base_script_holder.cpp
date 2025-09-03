@@ -33,6 +33,7 @@
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -55,8 +56,7 @@ BaseScriptHolder::~BaseScriptHolder() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseScriptHolder::cleanup() {
-	delete[] _filename;
-	_filename = nullptr;
+	SAFE_DELETE_ARRAY(_filename);
 
 	for (int32 i = 0; i < _scripts.getSize(); i++) {
 		_scripts[i]->finish(true);
@@ -398,14 +398,14 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
 		case TOKEN_NAME: {
-			delete[] propName;
+			SAFE_DELETE_ARRAY(propName);
 			size_t propNameSize = strlen(params) + 1;
 			propName = new char[propNameSize];
 			Common::strcpy_s(propName, propNameSize, params);
 			break;
 		}
 		case TOKEN_VALUE: {
-			delete[] propValue;
+			SAFE_DELETE_ARRAY(propValue);
 			size_t propValueSize = strlen(params) + 1;
 			propValue = new char[propValueSize];
 			Common::strcpy_s(propValue, propValueSize, params);
@@ -417,14 +417,14 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 
 	}
 	if (cmd == PARSERR_TOKENNOTFOUND) {
-		delete[] propName;
-		delete[] propValue;
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
 		BaseEngine::LOG(0, "Syntax error in PROPERTY definition");
 		return STATUS_FAILED;
 	}
 	if (cmd == PARSERR_GENERIC || propName == nullptr || propValue == nullptr) {
-		delete[] propName;
-		delete[] propValue;
+		SAFE_DELETE_ARRAY(propName);
+		SAFE_DELETE_ARRAY(propValue);
 		BaseEngine::LOG(0, "Error loading PROPERTY definition");
 		return STATUS_FAILED;
 	}
@@ -435,8 +435,8 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 	scSetProperty(propName, val);
 
 	delete val;
-	delete[] propName;
-	delete[] propValue;
+	SAFE_DELETE_ARRAY(propName);
+	SAFE_DELETE_ARRAY(propValue);
 
 	return STATUS_OK;
 }

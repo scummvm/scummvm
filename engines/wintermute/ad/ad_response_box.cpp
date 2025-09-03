@@ -44,6 +44,8 @@
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/wintermute.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "common/str.h"
 
 namespace Wintermute {
@@ -73,15 +75,10 @@ AdResponseBox::AdResponseBox(BaseGame *inGame) : BaseObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 AdResponseBox::~AdResponseBox() {
-
-	delete _window;
-	_window = nullptr;
-	delete _shieldWindow;
-	_shieldWindow = nullptr;
-	delete[] _lastResponseText;
-	_lastResponseText = nullptr;
-	delete[] _lastResponseTextOrig;
-	_lastResponseTextOrig = nullptr;
+	SAFE_DELETE(_window);
+	SAFE_DELETE(_shieldWindow);
+	SAFE_DELETE_ARRAY(_lastResponseText);
+	SAFE_DELETE_ARRAY(_lastResponseTextOrig);
 
 	if (_font) {
 		_gameRef->_fontStorage->removeFont(_font);
@@ -280,11 +277,10 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_WINDOW:
-			delete _window;
+			SAFE_DELETE(_window);
 			_window = new UIWindow(_gameRef);
 			if (!_window || DID_FAIL(_window->loadBuffer(params, false))) {
-				delete _window;
-				_window = nullptr;
+				SAFE_DELETE(_window);
 				cmd = PARSERR_GENERIC;
 			} else if (_shieldWindow) {
 				_shieldWindow->_parent = _window;
@@ -348,11 +344,10 @@ bool AdResponseBox::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_CURSOR:
-			delete _cursor;
+			SAFE_DELETE(_cursor);
 			_cursor = new BaseSprite(_gameRef);
 			if (!_cursor || DID_FAIL(_cursor->loadFile(params))) {
-				delete _cursor;
-				_cursor = nullptr;
+				SAFE_DELETE(_cursor);
 				cmd = PARSERR_GENERIC;
 			}
 			break;

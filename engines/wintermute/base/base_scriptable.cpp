@@ -28,6 +28,7 @@
 #include "engines/wintermute/base/base_scriptable.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -52,10 +53,8 @@ BaseScriptable::BaseScriptable(BaseGame *inGame, bool noValue, bool persistable)
 //////////////////////////////////////////////////////////////////////////
 BaseScriptable::~BaseScriptable() {
 	//if (_refCount>0) BaseEngine::LOG(0, "Warning: Destroying object, _refCount=%d", _refCount);
-	delete _scValue;
-	_scValue = nullptr;
-	delete _scProp;
-	_scProp = nullptr;
+	SAFE_DELETE(_scValue);
+	SAFE_DELETE(_scProp);
 }
 
 

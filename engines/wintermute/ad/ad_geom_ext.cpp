@@ -32,6 +32,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -42,8 +43,7 @@ AdGeomExt::AdGeomExt(BaseGame *in_gameRef) : BaseClass(in_gameRef) {
 //////////////////////////////////////////////////////////////////////////
 AdGeomExt::~AdGeomExt() {
 	for (int32 i = 0; i < _nodes.getSize(); i++) {
-		delete _nodes[i];
-		_nodes[i] = nullptr;
+		SAFE_DELETE(_nodes[i]);
 	}
 	_nodes.removeAll();
 }
@@ -96,10 +96,7 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 			if (node && node->loadBuffer(params, false)) {
 				_nodes.add(node);
 			} else {
-				if (node) {
-					delete node;
-				}
-
+				SAFE_DELETE(node);
 				cmd = PARSERR_GENERIC;
 				}
 			}

@@ -44,10 +44,8 @@ AnimationChannel::AnimationChannel(BaseGame *inGame, XModel *model) : BaseClass(
 
 //////////////////////////////////////////////////////////////////////////
 AnimationChannel::~AnimationChannel() {
-	delete _anim[0];
-	_anim[0] = nullptr;
-	delete _anim[1];
-	_anim[1] = nullptr;
+	SAFE_DELETE(_anim[0]);
+	SAFE_DELETE(_anim[1]);
 
 	_model = nullptr; // ref only
 }
@@ -63,16 +61,13 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 	}
 
 	if (transitionTime == 0) {
-		delete _anim[0];
-		_anim[0] = nullptr;
-		delete _anim[1];
-		_anim[1] = nullptr;
+		SAFE_DELETE(_anim[0]);
+		SAFE_DELETE(_anim[1]);
 
 		_anim[0] = anim;
 		_transitioning = false;
 	} else {
-		delete _anim[1];
-		_anim[1] = nullptr;
+		SAFE_DELETE(_anim[1]);
 
 		if (_anim[0]) {
 			_anim[1] = anim;
@@ -81,8 +76,7 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 			_transitionStart = _gameRef->_currentTime;
 		} else {
 			_anim[0] = anim;
-			delete _anim[1];
-			_anim[1] = nullptr;
+			SAFE_DELETE(_anim[1]);
 			_transitioning = false;
 		}
 	}
@@ -94,13 +88,10 @@ bool AnimationChannel::playAnim(AnimationSet *animSet, uint32 transitionTime, ui
 bool AnimationChannel::stopAnim(uint32 transitionTime) {
 	if (transitionTime == 0 || !_anim[0]) {
 		_transitioning = false;
-		delete _anim[0];
-		_anim[0] = nullptr;
-		delete _anim[1];
-		_anim[1] = nullptr;
+		SAFE_DELETE(_anim[0]);
+		SAFE_DELETE(_anim[1]);
 	} else {
-		delete _anim[1];
-		_anim[1] = nullptr;
+		SAFE_DELETE(_anim[1]);
 
 		if (_anim[0]) {
 			_anim[0]->setLooping(false);
@@ -123,7 +114,7 @@ bool AnimationChannel::update(bool debug) {
 			_transitioning = false;
 
 			// shift second animation to first slot and update it
-			delete _anim[0];
+			SAFE_DELETE(_anim[0]);
 			_anim[0] = _anim[1];
 			_anim[1] = nullptr;
 
@@ -217,13 +208,11 @@ bool AnimationChannel::persist(BasePersistenceManager *persistMgr) {
 //////////////////////////////////////////////////////////////////////////
 bool AnimationChannel::unloadAnim(AnimationSet *animSet) {
 	if (_anim[0] && _anim[0]->getAnimSet() == animSet) {
-		delete _anim[0];
-		_anim[0] = nullptr;
+		SAFE_DELETE(_anim[0]);
 	}
 
 	if (_anim[1] && _anim[1]->getAnimSet() == animSet) {
-		delete _anim[1];
-		_anim[1] = nullptr;
+		SAFE_DELETE(_anim[1]);
 	}
 
 	return true;
