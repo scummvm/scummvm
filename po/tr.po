@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 11:23+0000\n"
+"POT-Creation-Date: 2025-09-03 15:34+0000\n"
 "PO-Revision-Date: 2024-10-10 12:33+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
@@ -124,7 +124,7 @@ msgstr "Yukarı git"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:186
+#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:177
 msgid "Cancel"
 msgstr "İptal"
 
@@ -3703,7 +3703,7 @@ msgid ""
 msgstr ""
 
 #: engines/engine.cpp:808 engines/engine.cpp:833
-#: engines/wintermute/wintermute.cpp:186
+#: engines/wintermute/wintermute.cpp:177
 msgid "Start anyway"
 msgstr ""
 
@@ -15566,19 +15566,19 @@ msgstr "Özellikler derlenmiştir:"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Özellikler derlenmiştir:"
 
-#: engines/wintermute/wintermute.cpp:152
+#: engines/wintermute/wintermute.cpp:143
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:163
+#: engines/wintermute/wintermute.cpp:154
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:174
+#: engines/wintermute/wintermute.cpp:165
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:185
+#: engines/wintermute/wintermute.cpp:176
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
