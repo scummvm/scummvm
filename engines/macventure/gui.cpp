@@ -229,9 +229,11 @@ bool Gui::decodeStartupScreen() {
 }
 
 bool Gui::decodeTitleScreen() {
+	Common::MacResManager resMan;
 	Common::Path titlePath = _engine->getFilePath(kTitlePathID);
-	if (_resourceManager->open(titlePath)) {
-		Common::SeekableReadStream *stream = _resourceManager->getResource(MKTAG('P', 'P', 'I', 'C'), 0);
+
+	if (resMan.open(titlePath)) {
+		Common::SeekableReadStream *stream = resMan.getResource(MKTAG('P', 'P', 'I', 'C'), 0);
 
 		if (stream) {
 			// New PPICT title screen
