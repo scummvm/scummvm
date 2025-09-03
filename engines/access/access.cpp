@@ -111,7 +111,6 @@ AccessEngine::AccessEngine(OSystem *syst, const AccessGameDescription *gameDesc)
 	_boxSelectY = 0;
 	_boxSelectYOld = -1;
 	_numLines = 0;
-	//_tempList = nullptr;
 	_pictureTaken = 0;
 
 	_vidEnd = false;

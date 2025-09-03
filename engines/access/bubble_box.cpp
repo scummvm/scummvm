@@ -521,6 +521,7 @@ int BubbleBox::doBox_v1(int item, int box, int &btnSelected) {
 	if (_type != TYPE_2) {
 		// Draw the button background at the bottom
 		oldY = _vm->_screen->_orgY1;
+		// Original does this here, but we need bottom/right offset by 1.
 		//--_vm->_screen->_orgY2;
 		_vm->_screen->_orgY1 = _vm->_screen->_orgY2 - 8;
 		if (_type == TYPE_3)
