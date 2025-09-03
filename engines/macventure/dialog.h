@@ -75,7 +75,6 @@ private:
 
 private:
 	Gui *_gui;
-	Graphics::MacWindowManager *_wm;
 
 	Common::String _userInput;
 	Common::Array<DialogElement*> _elements;
