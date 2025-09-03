@@ -18,6 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#include "common/translation.h"
 #include "gui/message.h"
 
 #include "tot/forest.h"
@@ -151,7 +152,6 @@ bool syncRoomData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		byte *roomBuf = (byte *)malloc(size);
 		s.syncBytes(roomBuf, size);
 
-		debug("Loading room data now");
 		g_engine->_rooms = new Common::MemorySeekableReadWriteStream(roomBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
@@ -172,7 +172,6 @@ bool syncConversationData(Common::Serializer &s, Common::MemorySeekableReadWrite
 		delete (g_engine->_conversationData);
 		byte *convBuf = (byte *)malloc(size);
 		s.syncBytes(convBuf, size);
-		debug("Loading conversation data now");
 		g_engine->_conversationData = new Common::MemorySeekableReadWriteStream(convBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
@@ -191,7 +190,6 @@ bool syncItemData(Common::Serializer &s, Common::MemorySeekableReadWriteStream *
 		delete (g_engine->_sceneObjectsData);
 		byte *objBuf = (byte *)malloc(size);
 		s.syncBytes(objBuf, size);
-		debug("Loading item data now");
 		g_engine->_sceneObjectsData = new Common::MemorySeekableReadWriteStream(objBuf, size, DisposeAfterUse::NO);
 	}
 	return true;
@@ -264,7 +262,7 @@ Common::Error TotEngine::saveGameStream(Common::WriteStream *stream, bool isAuto
 Common::Error TotEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	byte version = stream->readByte();
 	if (version > SAVEGAME_CURRENT_VERSION) {
-		GUI::MessageDialog dialog(Common::String("Saved game was created with a newer version of ScummVM. Unable to load."));
+		GUI::MessageDialog dialog(_("Saved game was created with a newer version of ScummVM. Unable to load."));
 		dialog.runModal();
 		return Common::kUnknownError;
 	}
