@@ -2374,6 +2374,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 				error("Malformed TESTS definition in " + moduleMkFile);
 			++i;
 
+			if (!shouldInclude.top())
+				continue;
+
 			while (i != tokens.end()) {
 				// Read input
 				std::string folder = unifyPath(*i);
