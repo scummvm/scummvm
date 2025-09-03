@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 10:17+0000\n"
+"POT-Creation-Date: 2025-09-03 11:23+0000\n"
 "PO-Revision-Date: 2024-12-01 22:18+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese (Simplified Han script) <https://translations.scummvm."
@@ -2559,8 +2559,9 @@ msgstr ""
 "及其他..."
 
 #: gui/options.cpp:2967 engines/engine.cpp:655
-#: engines/drascula/metaengine.cpp:255 engines/queen/metaengine.cpp:269
-#: engines/sherlock/metaengine.cpp:410 engines/ultima/nuvie/metaengine.cpp:71
+#: engines/access/metaengine.cpp:281 engines/drascula/metaengine.cpp:255
+#: engines/queen/metaengine.cpp:269 engines/sherlock/metaengine.cpp:410
+#: engines/ultima/nuvie/metaengine.cpp:71
 msgid "Move"
 msgstr "移动"
 
@@ -3817,7 +3818,7 @@ msgstr "游戏菜单"
 
 #. I18N: Skipping cutscene plaback
 #. I18N: Skipping cutscene playback
-#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:202
+#: engines/metaengine.cpp:112 engines/access/metaengine.cpp:208
 #: engines/composer/metaengine.cpp:125 engines/drascula/metaengine.cpp:224
 #: engines/efh/metaengine.cpp:379 engines/freescape/movement.cpp:87
 #: engines/grim/grim.cpp:533 engines/grim/grim.cpp:633
@@ -5815,7 +5816,7 @@ msgstr "最小化"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
 #: backends/platform/sdl/macosx/appmenu_osx.mm:312
-#: engines/access/metaengine.cpp:298 engines/bladerunner/metaengine.cpp:321
+#: engines/access/metaengine.cpp:343 engines/bladerunner/metaengine.cpp:321
 #: engines/supernova/metaengine.cpp:238 engines/tucker/metaengine.cpp:215
 #: engines/zvision/metaengine.cpp:246
 msgid "Help"
@@ -6104,7 +6105,7 @@ msgstr "启动器"
 msgid "Check for Updates..."
 msgstr "正在检查更新..."
 
-#: engines/access/metaengine.cpp:192 engines/alcachofa/metaengine.cpp:83
+#: engines/access/metaengine.cpp:198 engines/alcachofa/metaengine.cpp:83
 #: engines/bbvs/metaengine.cpp:92 engines/buried/metaengine.cpp:133
 #: engines/chamber/metaengine.cpp:59 engines/cine/metaengine.cpp:270
 #: engines/cruise/metaengine.cpp:168 engines/dm/metaengine.cpp:124
@@ -6127,20 +6128,20 @@ msgstr "正在检查更新..."
 msgid "Default keymappings"
 msgstr "默认按键绑定"
 
-#: engines/access/metaengine.cpp:196
+#: engines/access/metaengine.cpp:202
 #, fuzzy
 #| msgid "Go to next dialogue"
 msgid "Move / Interact / Skip"
 msgstr "转到下一对话"
 
-#: engines/access/metaengine.cpp:208 engines/sherlock/metaengine.cpp:483
+#: engines/access/metaengine.cpp:214 engines/sherlock/metaengine.cpp:483
 #, fuzzy
 #| msgid "Skip video"
 msgid "Skip movie"
 msgstr "跳过视频"
 
 #. I18N: Move Actor to upwards direction
-#: engines/access/metaengine.cpp:214 engines/asylum/metaengine.cpp:171
+#: engines/access/metaengine.cpp:220 engines/asylum/metaengine.cpp:171
 #: engines/asylum/metaengine.cpp:198 engines/cine/metaengine.cpp:377
 #: engines/efh/metaengine.cpp:286 engines/hdb/metaengine.cpp:213
 #: engines/hypno/metaengine.cpp:302 engines/hypno/metaengine.cpp:356
@@ -6150,7 +6151,7 @@ msgid "Move up"
 msgstr "向上移动"
 
 #. I18N: Move Actor to downwards direction
-#: engines/access/metaengine.cpp:221 engines/asylum/metaengine.cpp:177
+#: engines/access/metaengine.cpp:227 engines/asylum/metaengine.cpp:177
 #: engines/asylum/metaengine.cpp:205 engines/cine/metaengine.cpp:384
 #: engines/efh/metaengine.cpp:293 engines/hdb/metaengine.cpp:219
 #: engines/hypno/metaengine.cpp:290 engines/hypno/metaengine.cpp:342
@@ -6161,7 +6162,7 @@ msgstr "向下移动"
 
 #. I18N: Move Actor to left direction
 #. I18N: Move actor left during fight
-#: engines/access/metaengine.cpp:228 engines/asylum/metaengine.cpp:183
+#: engines/access/metaengine.cpp:234 engines/asylum/metaengine.cpp:183
 #: engines/asylum/metaengine.cpp:212 engines/cine/metaengine.cpp:391
 #: engines/efh/metaengine.cpp:300 engines/hdb/metaengine.cpp:225
 #: engines/hypno/metaengine.cpp:284 engines/hypno/metaengine.cpp:335
@@ -6174,7 +6175,7 @@ msgstr "向左移动"
 
 #. I18N: Move Actor to right direction
 #. I18N: Move actor right during fight
-#: engines/access/metaengine.cpp:235 engines/asylum/metaengine.cpp:189
+#: engines/access/metaengine.cpp:241 engines/asylum/metaengine.cpp:189
 #: engines/asylum/metaengine.cpp:219 engines/cine/metaengine.cpp:398
 #: engines/efh/metaengine.cpp:307 engines/hdb/metaengine.cpp:231
 #: engines/hypno/metaengine.cpp:296 engines/hypno/metaengine.cpp:349
@@ -6186,31 +6187,31 @@ msgid "Move right"
 msgstr "向右移动"
 
 #. I18N: Move Actor to top-left direction
-#: engines/access/metaengine.cpp:242 engines/cine/metaengine.cpp:405
+#: engines/access/metaengine.cpp:248 engines/cine/metaengine.cpp:405
 #: engines/efh/metaengine.cpp:314
 msgid "Move up-left"
 msgstr "向左上方移动"
 
 #. I18N: Move Actor to top-right direction
-#: engines/access/metaengine.cpp:247 engines/cine/metaengine.cpp:411
+#: engines/access/metaengine.cpp:253 engines/cine/metaengine.cpp:411
 #: engines/efh/metaengine.cpp:320
 msgid "Move up-right"
 msgstr "向右上方移动"
 
 #. I18N: Move Actor to bottom-left direction
-#: engines/access/metaengine.cpp:252 engines/cine/metaengine.cpp:417
+#: engines/access/metaengine.cpp:258 engines/cine/metaengine.cpp:417
 #: engines/efh/metaengine.cpp:326
 msgid "Move down-left"
 msgstr "向左下方移动"
 
 #. I18N: Move Actor to bottom-right direction
-#: engines/access/metaengine.cpp:257 engines/cine/metaengine.cpp:423
+#: engines/access/metaengine.cpp:263 engines/cine/metaengine.cpp:423
 #: engines/efh/metaengine.cpp:332
 msgid "Move down-right"
 msgstr "向右下方移动"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to look at an object or npc in the game
-#: engines/access/metaengine.cpp:262 engines/bbvs/metaengine.cpp:124
+#: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:124
 #: engines/dgds/metaengine.cpp:83 engines/drascula/metaengine.cpp:230
 #: engines/scumm/help.cpp:167 engines/scumm/help.cpp:231
 #: engines/sherlock/metaengine.cpp:405 engines/sherlock/metaengine.cpp:556
@@ -6220,32 +6221,65 @@ msgstr "向右下方移动"
 msgid "Look"
 msgstr "观察"
 
+#: engines/access/metaengine.cpp:276 engines/drascula/metaengine.cpp:240
+#: engines/queen/metaengine.cpp:259 engines/saga/metaengine.cpp:369
+#: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
+#: engines/scumm/help.cpp:165 engines/scumm/help.cpp:193
+#: engines/scumm/help.cpp:211 engines/sherlock/metaengine.cpp:425
+#: engines/supernova/metaengine.cpp:336 engines/twp/metaengine.cpp:178
+msgid "Open"
+msgstr "打开"
+
+#: engines/access/metaengine.cpp:286 engines/scumm/help.cpp:128
+#: engines/ultima/nuvie/metaengine.cpp:70
+msgid "Get"
+msgstr "获取"
+
 #. I18N: Combat command in Might & Magic 1
-#: engines/access/metaengine.cpp:268 engines/bbvs/metaengine.cpp:136
-#: engines/cine/metaengine.cpp:342 engines/efh/metaengine.cpp:462
-#: engines/hdb/metaengine.cpp:237 engines/lab/metaengine.cpp:323
-#: engines/mm/mm1/metaengine.cpp:81 engines/queen/metaengine.cpp:294
-#: engines/saga/metaengine.cpp:379 engines/scumm/help.cpp:129
-#: engines/scumm/help.cpp:153 engines/scumm/help.cpp:171
-#: engines/scumm/help.cpp:201 engines/scumm/help.cpp:216
-#: engines/scumm/help.cpp:227 engines/scumm/help.cpp:253
-#: engines/sherlock/metaengine.cpp:440 engines/sherlock/metaengine.cpp:561
-#: engines/sky/metaengine.cpp:95 engines/sludge/keymapper_tables.h:333
-#: engines/supernova/metaengine.cpp:356 engines/tsage/metaengine.cpp:211
-#: engines/twp/metaengine.cpp:186 engines/ultima/ultima4/metaengine.cpp:71
+#: engines/access/metaengine.cpp:291 engines/access/metaengine.cpp:312
+#: engines/bbvs/metaengine.cpp:136 engines/cine/metaengine.cpp:342
+#: engines/efh/metaengine.cpp:462 engines/hdb/metaengine.cpp:237
+#: engines/lab/metaengine.cpp:323 engines/mm/mm1/metaengine.cpp:81
+#: engines/queen/metaengine.cpp:294 engines/saga/metaengine.cpp:379
+#: engines/scumm/help.cpp:129 engines/scumm/help.cpp:153
+#: engines/scumm/help.cpp:171 engines/scumm/help.cpp:201
+#: engines/scumm/help.cpp:216 engines/scumm/help.cpp:227
+#: engines/scumm/help.cpp:253 engines/sherlock/metaengine.cpp:440
+#: engines/sherlock/metaengine.cpp:561 engines/sky/metaengine.cpp:95
+#: engines/sludge/keymapper_tables.h:333 engines/supernova/metaengine.cpp:356
+#: engines/tsage/metaengine.cpp:211 engines/twp/metaengine.cpp:186
+#: engines/ultima/ultima4/metaengine.cpp:71
 #: engines/ultima/nuvie/metaengine.cpp:69
 #: engines/wintermute/keymapper_tables.h:140
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Use"
 msgstr "使用"
 
-#: engines/access/metaengine.cpp:273 engines/cine/metaengine.cpp:332
+#: engines/access/metaengine.cpp:296
+msgid "Goto"
+msgstr ""
+
+#: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
+#: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
+#: engines/efh/metaengine.cpp:506 engines/scumm/help.cpp:174
+#: engines/scumm/help.cpp:226 engines/sherlock/metaengine.cpp:415
+#: engines/supernova/metaengine.cpp:361 engines/tsage/metaengine.cpp:216
+#: engines/ultima/ultima4/metaengine.cpp:70
+#: engines/ultima/nuvie/metaengine.cpp:68
+msgid "Talk"
+msgstr "交流"
+
+#: engines/access/metaengine.cpp:306 engines/scumm/help.cpp:175
+msgid "Travel"
+msgstr "旅行"
+
+#: engines/access/metaengine.cpp:317 engines/cine/metaengine.cpp:332
 #: engines/saga/metaengine.cpp:394 engines/supernova/metaengine.cpp:331
 msgid "Take"
 msgstr "拿取"
 
 #. I18N: Action in In Cold Blood
-#: engines/access/metaengine.cpp:278 engines/alcachofa/metaengine.cpp:105
+#: engines/access/metaengine.cpp:322 engines/alcachofa/metaengine.cpp:105
 #: engines/cine/metaengine.cpp:337 engines/crab/input/input.cpp:251
 #: engines/cruise/metaengine.cpp:192 engines/draci/metaengine.cpp:237
 #: engines/dragons/metaengine.cpp:147 engines/drascula/metaengine.cpp:218
@@ -6264,24 +6298,21 @@ msgstr "拿取"
 msgid "Inventory"
 msgstr "物品栏"
 
-#: engines/access/metaengine.cpp:283 engines/ultima/ultima4/metaengine.cpp:51
+#: engines/access/metaengine.cpp:327 engines/ultima/ultima4/metaengine.cpp:51
 msgid "Climb"
 msgstr ""
 
-#: engines/access/metaengine.cpp:288 engines/bbvs/metaengine.cpp:130
-#: engines/drascula/metaengine.cpp:250 engines/efh/metaengine.cpp:506
-#: engines/scumm/help.cpp:174 engines/scumm/help.cpp:226
-#: engines/sherlock/metaengine.cpp:415 engines/supernova/metaengine.cpp:361
-#: engines/tsage/metaengine.cpp:216 engines/ultima/ultima4/metaengine.cpp:70
-#: engines/ultima/nuvie/metaengine.cpp:68
-msgid "Talk"
-msgstr "交流"
-
-#: engines/access/metaengine.cpp:293 engines/bbvs/metaengine.cpp:142
+#: engines/access/metaengine.cpp:337 engines/bbvs/metaengine.cpp:142
 #: engines/freescape/games/castle/castle.cpp:284 engines/scumm/help.cpp:225
 #: engines/tsage/metaengine.cpp:201
 msgid "Walk"
 msgstr "行走"
+
+#: engines/access/metaengine.cpp:348
+#, fuzzy
+#| msgid "Page Up in save/load menu"
+msgid "Open save/load menu"
+msgstr "存读档菜单上一页"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -8286,15 +8317,6 @@ msgstr "向左移动"
 #| msgid "Pickup"
 msgid "Pick"
 msgstr "捡起"
-
-#: engines/drascula/metaengine.cpp:240 engines/queen/metaengine.cpp:259
-#: engines/saga/metaengine.cpp:369 engines/scumm/help.cpp:125
-#: engines/scumm/help.cpp:140 engines/scumm/help.cpp:165
-#: engines/scumm/help.cpp:193 engines/scumm/help.cpp:211
-#: engines/sherlock/metaengine.cpp:425 engines/supernova/metaengine.cpp:336
-#: engines/twp/metaengine.cpp:178
-msgid "Open"
-msgstr "打开"
 
 #: engines/drascula/metaengine.cpp:266
 #, fuzzy
@@ -12426,10 +12448,6 @@ msgstr "拉"
 msgid "Go to"
 msgstr "走向"
 
-#: engines/scumm/help.cpp:128 engines/ultima/nuvie/metaengine.cpp:70
-msgid "Get"
-msgstr "获取"
-
 #: engines/scumm/help.cpp:130 engines/scumm/help.cpp:142
 msgid "Read"
 msgstr "阅读"
@@ -12467,10 +12485,6 @@ msgstr "修复"
 #: engines/scumm/help.cpp:159
 msgid "Switch"
 msgstr "切换"
-
-#: engines/scumm/help.cpp:175
-msgid "Travel"
-msgstr "旅行"
 
 #: engines/scumm/help.cpp:176
 msgid "To Henry / To Indy"
