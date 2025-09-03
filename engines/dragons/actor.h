@@ -21,7 +21,9 @@
 #ifndef DRAGONS_ACTOR_H
 #define DRAGONS_ACTOR_H
 
-#include "common/system.h"
+#include "common/array.h"
+#include "common/scummsys.h"
+#include "graphics/surface.h"
 
 namespace Dragons {
 class Actor;

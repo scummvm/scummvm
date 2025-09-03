@@ -21,8 +21,6 @@
 #ifndef DRAGONS_DRAGONOBD_H
 #define DRAGONS_DRAGONOBD_H
 
-#include "common/system.h"
-
 namespace Dragons {
 
 class BigfileArchive;

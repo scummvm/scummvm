@@ -24,7 +24,6 @@
 #include "common/scummsys.h"
 #include "common/stream.h"
 #include "graphics/surface.h"
-#include "common/rect.h"
 
 namespace Dragons {
 

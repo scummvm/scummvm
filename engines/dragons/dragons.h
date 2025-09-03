@@ -21,10 +21,9 @@
 #ifndef DRAGONS_DRAGONS_H
 #define DRAGONS_DRAGONS_H
 
-#include "gui/EventRecorder.h"
 #include "engines/engine.h"
-#include "dragons/specialopcodes.h"
 #include "dragons/detection.h"
+#include "common/rect.h"
 
 namespace Dragons {
 

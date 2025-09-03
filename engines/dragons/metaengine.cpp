@@ -28,7 +28,6 @@
 #include "backends/keymapper/keymapper.h"
 #include "backends/keymapper/standard-actions.h"
 #include "base/plugins.h"
-#include "graphics/thumbnail.h"
 
 class DragonsMetaEngine : public AdvancedMetaEngine<Dragons::DragonsGameDescription> {
 public:

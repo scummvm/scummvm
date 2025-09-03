@@ -18,14 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gui/message.h"
 #include "common/config-manager.h"
 #include "common/keyboard.h"
 #include "common/language.h"
 #include "common/translation.h"
+#include "common/error.h"
+#include "common/events.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 #include "engines/util.h"
 #include "graphics/thumbnail.h"
-#include "common/error.h"
+#include "gui/message.h"
 #include "dragons/actor.h"
 #include "dragons/actorresource.h"
 #include "dragons/background.h"

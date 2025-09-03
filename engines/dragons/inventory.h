@@ -22,8 +22,6 @@
 #ifndef DRAGONS_INVENTORY_H
 #define DRAGONS_INVENTORY_H
 
-#include "common/system.h"
-
 namespace Dragons {
 
 class Actor;
