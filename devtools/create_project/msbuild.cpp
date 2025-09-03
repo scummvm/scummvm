@@ -319,7 +319,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 		if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 			project << "\t\t<PreBuildEvent>\n"
 			        << "\t\t\t<Message>Generate revision</Message>\n"
-			        << "\t\t\t<Command>" << getPreBuildEvent() << "</Command>\n"
+			        << "\t\t\t<Command>" << getPreBuildEvent(setup) << "</Command>\n"
 			        << "\t\t</PreBuildEvent>\n";
 
 			// Copy data files to the build folder
