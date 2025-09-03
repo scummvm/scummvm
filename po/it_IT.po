@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 16:43+0000\n"
-"PO-Revision-Date: 2025-09-03 18:58+0000\n"
+"PO-Revision-Date: 2025-09-03 19:18+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -13447,170 +13447,124 @@ msgid "Exit / Close window"
 msgstr "Esci / Chiudi finestra"
 
 #: engines/sherlock/metaengine.cpp:868
-#, fuzzy
-#| msgid "Skip dialog"
 msgid "Skip prolog"
-msgstr "Salta battuta dialogo"
+msgstr "Salta prologo"
 
 #: engines/sherlock/metaengine.cpp:878 engines/sherlock/metaengine.cpp:945
 msgid "Change selected option to the left"
-msgstr ""
+msgstr "Cambia l'opzione selezionata verso sinistra"
 
 #: engines/sherlock/metaengine.cpp:884 engines/sherlock/metaengine.cpp:951
 msgid "Change selected option to the right"
-msgstr ""
+msgstr "Cambia l'opzione selezionata verso destra"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 10 pages in the journal
 #: engines/sherlock/metaengine.cpp:891
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 10 pages"
-msgstr "Mostra diario"
+msgstr "Avanza di 10 pagine"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go forward 1 page in the journal
 #: engines/sherlock/metaengine.cpp:898
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go forward 1 page"
-msgstr "Mostra diario"
+msgstr "Avanza di una pagina"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a journal, this action is used to go back 1 page in the journal
 #: engines/sherlock/metaengine.cpp:913
-#, fuzzy
-#| msgid "Show journal"
 msgid "Go back 1 page"
-msgstr "Mostra diario"
+msgstr "Torna indietro di una pagina"
 
 #: engines/sherlock/metaengine.cpp:920
-#, fuzzy
-#| msgid "Go to start of line"
 msgid "Go to start of journal"
-msgstr "Vai a inizio riga"
+msgstr "Ritorna all'inizio del diario"
 
 #: engines/sherlock/metaengine.cpp:927
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to end of journal"
-msgstr "Vai a fine riga"
+msgstr "Vai alla fine del diario"
 
 #: engines/sherlock/metaengine.cpp:968
-#, fuzzy
-#| msgid "Skip minigame"
 msgid "Skip darts minigame"
-msgstr "Salta minigioco"
+msgstr "Salta minigioco freccette"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the top left of the map
 #: engines/sherlock/metaengine.cpp:979
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to top left"
-msgstr "Vai a inizio lista"
+msgstr "Scorri in alto e a sinistra"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a map, this action is used to scroll to the bottom right of the map
 #: engines/sherlock/metaengine.cpp:987
-#, fuzzy
-#| msgid "Scroll to bottom"
 msgid "Scroll to bottom right"
-msgstr "Vai a fine lista"
+msgstr "Scorri in basso e a destra"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll up by a page in the widget
 #: engines/sherlock/metaengine.cpp:1037
-#, fuzzy
-#| msgid "Scroll bar up"
 msgid "Scroll page up"
-msgstr "Barra scorrimento su"
+msgstr "Scorri pagina verso l'alto"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll down by a page in the widget
 #: engines/sherlock/metaengine.cpp:1044
-#, fuzzy
-#| msgid "Scroll bar down"
 msgid "Scroll page down"
-msgstr "Barra scorrimento giù"
+msgstr "Scorri pagina verso il basso"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the end of the widget
 #: engines/sherlock/metaengine.cpp:1051
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to end"
-msgstr "Vai a inizio lista"
+msgstr "Scorri fino alla fine"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has multiple widgets for various purposes (eg. inventory, save files, etc.), this action is used to scroll to the start of the widget
 #: engines/sherlock/metaengine.cpp:1058
-#, fuzzy
-#| msgid "Scroll to top"
 msgid "Scroll to start"
-msgstr "Vai a inizio lista"
+msgstr "Scorri all'inizio"
 
 #: engines/sherlock/metaengine.cpp:1068
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next save file slot"
-msgstr "Dialogo successivo"
+msgstr "Vai alla prossima posizione di salvataggio"
 
 #: engines/sherlock/metaengine.cpp:1074
-#, fuzzy
-#| msgid "Go to start of save / load menu"
 msgid "Go to next page of save files"
-msgstr "Vai all'inizio del menù salva / carica"
+msgstr "Vai alla prossima pagina di salvataggi"
 
 #: engines/sherlock/metaengine.cpp:1079
-#, fuzzy
-#| msgid "Select backup file"
 msgid "Select save file"
-msgstr "Seleziona file backup"
+msgstr "Seleziona file salvataggio"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the start of the password input field
 #: engines/sherlock/metaengine.cpp:1106 engines/sherlock/metaengine.cpp:1211
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line start"
-msgstr "Vai a fine riga"
+msgstr "Vai a inizio riga"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the save file name input field
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) This action is used to go to the end of the password input field
 #: engines/sherlock/metaengine.cpp:1113 engines/sherlock/metaengine.cpp:1218
-#, fuzzy
-#| msgid "Go to end of line"
 msgid "Go to the line end"
 msgstr "Vai a fine riga"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save file name input field has 2 modes, insert and overwrite, this action toggles between them
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) save password input field has 2 modes, insert and overwrite, this action toggles between them
 #: engines/sherlock/metaengine.cpp:1120 engines/sherlock/metaengine.cpp:1225
-#, fuzzy
-#| msgid "Toggle fast mode"
 msgid "Toggle insert mode"
-msgstr "Attiva modalità veloce"
+msgstr "Alterna modalità inserisci/sovrascrivi"
 
 #. I18N: (Game name: The Lost Files of Sherlock Holmes: The Case of the Rose Tattoo) The game has a foolscap puzzle, where the player has to decode a hidden message on a piece of paper called a foolscap. this action is used to exit the puzzle
 #: engines/sherlock/metaengine.cpp:1131
-#, fuzzy
-#| msgid "Close popup"
 msgid "Close puzzle"
-msgstr "Chiudi popup"
+msgstr "Chiudi puzzle"
 
 #: engines/sherlock/metaengine.cpp:1173
 msgid "Exit inventory / Close verb menu / Cancel item use action"
-msgstr ""
+msgstr "Esci dall'inventario / Chiudi menù verbi / Annulla uso di un oggetto"
 
 #: engines/sherlock/metaengine.cpp:1235
-#, fuzzy
-#| msgid "Select next Actor"
 msgid "Select next option"
-msgstr "Seleziona personaggio successivo"
+msgstr "Seleziona opzione seguente"
 
 #: engines/sherlock/metaengine.cpp:1257
-#, fuzzy
-#| msgid "Go to next dialog"
 msgid "Go to next talk option"
-msgstr "Dialogo successivo"
+msgstr "Vai all'opzione di dialogo seguente"
 
 #: engines/sherlock/metaengine.cpp:1263
-#, fuzzy
-#| msgid "Go to previous dialogs"
 msgid "Go to previous talk option"
-msgstr "Dialogo precedente"
+msgstr "Vai all'opzione di dialogo precedente"
 
 #: engines/sky/compact.cpp:140
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
