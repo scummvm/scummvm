@@ -377,7 +377,7 @@ void MacVentureEngine::handleObjectSelect(ObjID objID, WindowReference win, bool
 		} else {
 			if (objID == 0) {
 				unselectAll();
-				objID = win;
+				objID = windata.objRef;
 			}
 			if (objID > 0) {
 				int currentObjectIndex = findObjectInArray(objID, _currentSelection);
