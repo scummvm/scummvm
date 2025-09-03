@@ -987,6 +987,8 @@ bool Debugger::cmdBpList(int argc, const char **argv) {
 
 bool Debugger::cmdDraw(int argc, const char **argv) {
 	if (argc > 1) {
+		int prevDraw = g_director->_debugDraw;
+
 		for (int i = 1; i < argc; i++) {
 			if (!scumm_stricmp(argv[i], "off")) {
 				g_director->_debugDraw = 0;
@@ -1000,6 +1002,10 @@ bool Debugger::cmdDraw(int argc, const char **argv) {
 				debugPrintf("Valid parameters are 'cast', 'frame', 'all' or 'off'.\n");
 				return true;
 			}
+		}
+
+		if (prevDraw != g_director->_debugDraw) {
+			g_director->getCurrentWindow()->render(true);
 		}
 	}
 
