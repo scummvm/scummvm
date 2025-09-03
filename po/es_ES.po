@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-02 20:05+0000\n"
-"PO-Revision-Date: 2025-09-01 17:10+0000\n"
+"PO-Revision-Date: 2025-09-03 08:52+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7176,10 +7176,8 @@ msgstr ""
 "Remake"
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "Calidad de música:"
+msgstr "Calidad alta"
 
 #: engines/alcachofa/metaengine.cpp:41
 #, fuzzy
