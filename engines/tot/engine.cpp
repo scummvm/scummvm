@@ -872,7 +872,7 @@ void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint obj
 	readObject(_sceneObjectsData, objectCode1, _curObject);
 	// verifyCopyProtection2();
 	if (_curObject.used[0] != 1 || _curObject.useWith != objectCode2) {
-		drawText(Random(11) + 1022);
+		drawText(getRandom(11) + 1022);
 		return;
 	}
 
@@ -1085,7 +1085,7 @@ void TotEngine::advanceAnimations(bool barredZone, bool animateMouse) {
 	if (_chrono->_gameTick) {
 
 		if (_currentRoomData->animationFlag && _chrono->_gameTickHalfSpeed) {
-			if (_isPeterCoughing && (Random(100) == 1) && !_sound->isVocPlaying() && _mintTopic[0] == false) {
+			if (_isPeterCoughing && (getRandom(100) == 1) && !_sound->isVocPlaying() && _mintTopic[0] == false) {
 				debug("Playing tos");
 				_sound->playVoc("TOS", 258006, 14044);
 			}
@@ -1593,7 +1593,7 @@ void TotEngine::pickupScreenObject() {
 					} else {
 
 						_mouse->show();
-						drawText(1049 + Random(10));
+						drawText(1049 + getRandom(10));
 						_mouse->hide();
 						return;
 					}
@@ -1663,7 +1663,7 @@ void TotEngine::pickupScreenObject() {
 						}
 					} else {
 						_mouse->show();
-						drawText(1049 + Random(10));
+						drawText(1049 + getRandom(10));
 						_mouse->hide();
 						return;
 					}
@@ -2627,7 +2627,7 @@ void TotEngine::useScreenObject() {
 							updateAltScreen(24);
 						}
 					} else {
-						drawText(Random(11) + 1022);
+						drawText(getRandom(11) + 1022);
 					}
 				} break;
 				case 24: {
@@ -2725,7 +2725,7 @@ void TotEngine::useScreenObject() {
 							updateAltScreen(20);
 						}
 					} else {
-						drawText(Random(11) + 1022);
+						drawText(getRandom(11) + 1022);
 					}
 				} break;
 				}
@@ -3089,15 +3089,15 @@ void TotEngine::useScreenObject() {
 					drawFlc(180, 50, offset, 0, 9, 22, false, false, true, foobar);
 					_shouldQuitGame = true;
 				} else
-					drawText(Random(11) + 1022);
+					drawText(getRandom(11) + 1022);
 			} break;
 			}
 		} else {
 			goToObject(_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount], _currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 			if (_curObject.code == 536 || _curObject.code == 220)
-				drawText(Random(6) + 1033);
+				drawText(getRandom(6) + 1033);
 			else
-				drawText(Random(11) + 1022);
+				drawText(getRandom(11) + 1022);
 		}
 	} else { //use object with something on the scene
 		if (sceneObject > 0) {
@@ -3233,7 +3233,7 @@ void TotEngine::useScreenObject() {
 					drawText(_curObject.beforeUseTextRef);
 			} break;
 			default:
-				drawText(1022 + Random(11));
+				drawText(1022 + getRandom(11));
 			}
 		}
 	}
@@ -3260,7 +3260,7 @@ void TotEngine::openScreenObject() {
 			   _currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 
 	if (_curObject.openable == false) {
-		drawText(Random(9) + 1059);
+		drawText(getRandom(9) + 1059);
 		return;
 	} else {
 		shouldSpeak = false;
@@ -3358,7 +3358,7 @@ void TotEngine::openScreenObject() {
 			break;
 		}
 		if (shouldSpeak) {
-			drawText(Random(9) + 1059);
+			drawText(getRandom(9) + 1059);
 			return;
 		}
 		_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[correctedMouseX][correctedMouseY]]->fileIndex = _curObject.replaceWith;
@@ -3413,7 +3413,7 @@ void TotEngine::closeScreenObject() {
 	goToObject(_currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)],
 			   _currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
 	if (_curObject.closeable == false) {
-		drawText((Random(10) + 1068));
+		drawText((getRandom(10) + 1068));
 		return;
 	} else {
 		shouldSpeak = false;
@@ -3430,7 +3430,7 @@ void TotEngine::closeScreenObject() {
 			break;
 		}
 		if (shouldSpeak) {
-			drawText(Random(10) + 1068);
+			drawText(getRandom(10) + 1068);
 			return;
 		}
 		_currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[correctedMouseX][correctedMouseY]]->fileIndex = _curObject.replaceWith;
@@ -3508,7 +3508,7 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->hide();
 		actionLineText(getActionLineText(1) + _inventory[invPos].objectName);
 		_mouse->show();
-		drawText((Random(10) + 1039));
+		drawText((getRandom(10) + 1039));
 		_actionCode = 0;
 		if (_cpCounter > 130)
 			showError(274);
@@ -3522,7 +3522,7 @@ void TotEngine::handleAction(byte invPos) {
 		if (_cpCounter2 > 13)
 			showError(274);
 		_mouse->show();
-		drawText((Random(10) + 1049));
+		drawText((getRandom(10) + 1049));
 		_actionCode = 0;
 		_oldGridX = 0;
 		_oldGridY = 0;
@@ -3560,7 +3560,7 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->hide();
 		actionLineText(getActionLineText(5) + _inventory[invPos].objectName);
 		_mouse->show();
-		drawText(Random(9) + 1059);
+		drawText(getRandom(9) + 1059);
 		_actionCode = 0;
 		_oldGridX = 0;
 		_oldGridY = 0;
@@ -3570,7 +3570,7 @@ void TotEngine::handleAction(byte invPos) {
 		_mouse->hide();
 		actionLineText(getActionLineText(6) + _inventory[invPos].objectName);
 		_mouse->show();
-		drawText(Random(10) + 1068);
+		drawText(getRandom(10) + 1068);
 		_actionCode = 0;
 		if (_cpCounter2 > 35)
 			showError(274);
@@ -4550,7 +4550,7 @@ static void loadDiploma(Common::String &photoName, Common::String &key) {
 
 	char *passArray = (char *)malloc(10);
 	for (int i = 0; i < 10; i++)
-		passArray[i] = (char)(Random(10) + 48);
+		passArray[i] = (char)(getRandom(10) + 48);
 
 	key.append(passArray, passArray + 10);
 
