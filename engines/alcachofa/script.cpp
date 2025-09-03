@@ -118,7 +118,7 @@ int32 &Script::variable(const char *name) {
 	if (_variableNames.tryGetVal(name, index))
 		return _variables[index];
 	g_engine->game().unknownVariable(name);
-	static int dummy = 0;
+	static int32 dummy = 0;
 	return dummy;
 }
 
