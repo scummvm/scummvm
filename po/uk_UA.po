@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 08:57+0000\n"
+"POT-Creation-Date: 2025-09-03 10:17+0000\n"
 "PO-Revision-Date: 2025-03-27 07:17+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -7134,20 +7134,12 @@ msgstr "Якість музики:"
 msgid "Toggles some optional graphical effects"
 msgstr "Перемикання звукових ефектів"
 
-#: engines/alcachofa/metaengine.cpp:42
-msgid "high_quality"
-msgstr ""
-
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
-msgstr ""
-
-#: engines/alcachofa/metaengine.cpp:53
-msgid "32_bits"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347

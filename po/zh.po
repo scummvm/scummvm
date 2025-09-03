@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 08:57+0000\n"
+"POT-Creation-Date: 2025-09-03 10:17+0000\n"
 "PO-Revision-Date: 2024-05-14 12:42+0000\n"
 "Last-Translator: 复予 <clonewith@qq.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -6469,20 +6469,12 @@ msgstr ""
 msgid "Toggles some optional graphical effects"
 msgstr "特殊音效音量"
 
-#: engines/alcachofa/metaengine.cpp:42
-msgid "high_quality"
-msgstr ""
-
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
-msgstr ""
-
-#: engines/alcachofa/metaengine.cpp:53
-msgid "32_bits"
 msgstr ""
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347

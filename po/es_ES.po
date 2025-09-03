@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 08:57+0000\n"
+"POT-Creation-Date: 2025-09-03 10:17+0000\n"
 "PO-Revision-Date: 2025-09-03 08:54+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -7183,10 +7183,6 @@ msgstr "Calidad alta"
 msgid "Toggles some optional graphical effects"
 msgstr "Activar/Desactivar ciertos efectos gráficos opcionales"
 
-#: engines/alcachofa/metaengine.cpp:42
-msgid "high_quality"
-msgstr "high_quality"
-
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
 msgstr "32 bits"
@@ -7196,10 +7192,6 @@ msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
 msgstr ""
 "Utiliza texturas a 32 bits en lugar de las texturas a 16 bits (todavía sin "
 "implementar)"
-
-#: engines/alcachofa/metaengine.cpp:53
-msgid "32_bits"
-msgstr "32_bits"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 msgid "Activate"
@@ -16474,6 +16466,12 @@ msgstr ""
 "que es imprescindible tener audio en MIDI para poder resolverlos.  También "
 "se podrían resolver estos acertijos con subtítulos, si están disponibles. "
 "¿Quieres seguir ejecutando el juego?"
+
+#~ msgid "high_quality"
+#~ msgstr "high_quality"
+
+#~ msgid "32_bits"
+#~ msgstr "32_bits"
 
 #~ msgid "Scroll Up"
 #~ msgstr "Subir"
