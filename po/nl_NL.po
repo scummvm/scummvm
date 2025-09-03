@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2025-09-03 15:34+0000\n"
+"POT-Creation-Date: 2025-09-03 16:43+0000\n"
 "PO-Revision-Date: 2024-11-14 01:18+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -123,7 +123,7 @@ msgstr "Ga omhoog"
 #: engines/scumm/dialog-createsession.cpp:47
 #: engines/scumm/dialog-sessionselector.cpp:67
 #: engines/scumm/he/moonbase/dialog-mapgenerator.cpp:138
-#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:177
+#: engines/sword1/control.cpp:2816 engines/wintermute/wintermute.cpp:178
 msgid "Cancel"
 msgstr "Annuleren"
 
@@ -3731,7 +3731,7 @@ msgstr ""
 "ScummVM."
 
 #: engines/engine.cpp:808 engines/engine.cpp:833
-#: engines/wintermute/wintermute.cpp:177
+#: engines/wintermute/wintermute.cpp:178
 msgid "Start anyway"
 msgstr "Evengoed starten"
 
@@ -16607,20 +16607,20 @@ msgstr "Ondersteuning voor Hero Craft is niet meegecompileerd"
 msgid "Wintermute3D support is not compiled in"
 msgstr "Ondersteuning voor Wintermute3D is niet meegecompileerd"
 
-#: engines/wintermute/wintermute.cpp:143
+#: engines/wintermute/wintermute.cpp:144
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Dit spel vereist PNG, JPEG en Vorbis ondersteuning."
 
-#: engines/wintermute/wintermute.cpp:154
+#: engines/wintermute/wintermute.cpp:155
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr "Dit spel vereist de FoxTail subengine, welke niet is meegecompileerd."
 
-#: engines/wintermute/wintermute.cpp:165
+#: engines/wintermute/wintermute.cpp:166
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 "Dit spel vereist de HeroCraft subengine, welke niet is meegecompileerd."
 
-#: engines/wintermute/wintermute.cpp:176
+#: engines/wintermute/wintermute.cpp:177
 msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
