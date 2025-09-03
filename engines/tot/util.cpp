@@ -498,7 +498,7 @@ void waitForKey() {
 int getRandom(int range) { return g_engine->getRandomNumber(range - 1); }
 
 Common::String getObjectName(int idx) {
-	return g_engine->_lang == Common::ES_ESP ? hardcodedObjects_ES[idx] : hardcodedObjects_EN[idx];
+	return g_engine->_lang == Common::ES_ESP ? hardcodedTexts_ES[idx] : hardcodedTexts_EN[idx];
 }
 
 Common::KeyCode hotKeyFor(HOTKEYS hotkey) {
@@ -518,8 +518,8 @@ const char *const *getAnimMessagesByCurrentLanguage() {
 	return (g_engine->_lang == Common::ES_ESP) ? animMessages[0] : animMessages[1];
 }
 
-const char *const *getHardcodedObjectsByCurrentLanguage() {
-	return (g_engine->_lang == Common::ES_ESP) ? hardcodedObjects_ES : hardcodedObjects_EN;
+const char *const *getHardcodedTextsByCurrentLanguage() {
+	return (g_engine->_lang == Common::ES_ESP) ? hardcodedTexts_ES : hardcodedTexts_EN;
 }
 
 const int32 *getOffsetsByCurrentLanguage() {
