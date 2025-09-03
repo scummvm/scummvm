@@ -456,7 +456,7 @@ void line(uint x1, uint y1, uint x2, uint y2, byte color) {
 }
 
 void changeGameSpeed(Common::Event e) {
-	if (e.type == Common::EVENT_KEYUP) {
+	if (e.type == Common::EVENT_KEYDOWN) {
 		if (e.kbd.hasFlags(Common::KBD_CTRL)) {
 			if (e.kbd.keycode == Common::KEYCODE_f) {
 				g_engine->_chrono->changeSpeed();
