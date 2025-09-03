@@ -78,13 +78,13 @@ private:
 	void decodePPIC(Common::SeekableReadStream *baseStream, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 	void decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight, uint &bitWidth, uint &rowBytes);
 
-	void decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC1(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC2(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	void decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC0(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC1(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC2(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	void decodePPIC3(Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 
-	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
-	byte walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream);
+	void decodeHuffGraphic(const PPICHuff &huff, Common::BitStream8MSB &stream, Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
+	byte walkHuff(const PPICHuff &huff, Common::BitStream8MSB &stream);
 
 	void blitDirect(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
 	void blitBIC(Graphics::ManagedSurface *target, int ox, int oy, const Common::Array<byte> &data, uint bitHeight, uint bitWidth, uint rowBytes);
