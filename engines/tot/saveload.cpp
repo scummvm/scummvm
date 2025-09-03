@@ -18,11 +18,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "gui/saveload.h"
-#include "common/error.h"
-#include "common/savefile.h"
-#include "common/serializer.h"
-#include "common/system.h"
 #include "gui/message.h"
 
 #include "tot/forest.h"

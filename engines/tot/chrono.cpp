@@ -21,7 +21,6 @@
 
 #include "common/system.h"
 
-#include "chrono.h"
 #include "tot/chrono.h"
 #include "tot/tot.h"
 
@@ -53,9 +52,9 @@ void ChronoManager::updateChrono() {
 
 void ChronoManager::changeSpeed() {
 	if (_speedMultiplier == 1)
-		g_engine->_chrono->_speedMultiplier = 4;
+		_speedMultiplier = 4;
 	else
-		g_engine->_chrono->_speedMultiplier = 1;
+		_speedMultiplier = 1;
 }
 
 void ChronoManager::delay(int ms) {

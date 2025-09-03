@@ -19,9 +19,7 @@
  *
  */
 
-#include "audio/adlib_ms.h"
 #include "audio/midiparser.h"
-#include "common/debug.h"
 #include "common/file.h"
 
 #include "tot/midi.h"

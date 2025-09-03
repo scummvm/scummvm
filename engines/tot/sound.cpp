@@ -18,17 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "audio/adlib_ms.h"
-#include "audio/audiostream.h"
 #include "audio/decoders/voc.h"
-#include "audio/midiparser.h"
-#include "audio/midiplayer.h"
 #include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 #include "common/config-manager.h"
-#include "common/memstream.h"
-#include "common/substream.h"
 
 #include "tot/sound.h"
 #include "tot/tot.h"

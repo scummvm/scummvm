@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/debug.h"
-#include "common/endian.h"
 #include "common/savefile.h"
 #include "image/png.h"
 

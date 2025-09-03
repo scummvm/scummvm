@@ -23,7 +23,6 @@
 #define TOT_MIDI_H
 
 #include "audio/adlib_ms.h"
-#include "audio/mididrv.h"
 #include "audio/mididrv_ms.h"
 #include "audio/midiparser.h"
 
