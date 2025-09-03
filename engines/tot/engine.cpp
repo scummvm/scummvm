@@ -3603,7 +3603,7 @@ void TotEngine::loadInventory() {
 	}
 	if (_cpCounter > 65)
 		showError(274);
-	const char *emptyName = getHardcodedObjectsByCurrentLanguage()[10];
+	const char *emptyName = getHardcodedTextsByCurrentLanguage()[10];
 	for (int i = 0; i < kInventoryIconCount; i++) {
 		_inventory[i].bitmapIndex = 34;
 		_inventory[i].code = 0;
@@ -4812,21 +4812,38 @@ void TotEngine::readAlphaGraph(Common::String &output, int length, int posx, int
 	}
 }
 
-void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx, int posy, byte barColor,
-						 byte textColor) {
+void TotEngine::readAlphaGraphSmall(
+	Common::String &output,
+	int length,
+	int posx,
+	int posy,
+	byte barColor,
+	byte textColor,
+	char startChar) {
 	int pun = 1;
-	bool removeCaret = 0;
-	bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
-
-	biosText(posx, posy, "-", textColor);
+	bool removeCaret = false;
+	if (startChar != 0) {
+		output.append(1, startChar);
+		output.toUppercase();
+		pun += 1;
+		bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
+		euroText(posx, posy, output, textColor);
+		euroText((posx + (output.size()) * 6), posy, "-", textColor);
+		removeCaret = true;
+	}
+	else {
+		bar(posx, posy + 2, posx + length * 6, posy + 9, barColor);
+		euroText(posx, posy, "-", textColor);
+	}
 	Common::Event e;
 	bool done = false;
-
 	while (!done && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
+			// debug("Event!");
 			if (e.type == Common::EVENT_KEYDOWN) {
 				int keycode = e.kbd.keycode;
 				int asciiCode = e.kbd.ascii;
+
 				// ENTER key
 				if (keycode == Common::KEYCODE_RETURN || keycode == Common::KEYCODE_KP_ENTER) {
 					if (output.size() > 0) {
@@ -4834,26 +4851,31 @@ void TotEngine::readAlphaGraphSmall(Common::String &output, int length, int posx
 						continue;
 					}
 				}
-
 				if (pun > length && asciiCode != 8) {
 					_sound->beep(750, 60);
 					bar((posx + (output.size()) * 6), (posy + 2), (posx + (output.size() + 1) * 6), (posy + 9), barColor);
 				} else if (asciiCode == 8 && pun > 1) {
 					output = output.substr(0, output.size() - 1);
+					output.toUppercase();
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
-					biosText(posx, posy, output, textColor);
-					biosText((posx + (output.size()) * 6), posy, "-", textColor);
+					euroText(posx, posy, output, textColor);
+					euroText((posx + (output.size()) * 6), posy, "-", textColor);
 					pun -= 1;
 					removeCaret = true;
-				} else if ((asciiCode < '\40') || (asciiCode > '\373')) {
+				} else if (
+					(asciiCode < 97 || asciiCode > 122) &&
+					(asciiCode < 65 || asciiCode > 90) &&
+					(asciiCode < 32 || asciiCode > 57) &&
+					(asciiCode < 164 || asciiCode > 165)) {
 					_sound->beep(1200, 60);
 					removeCaret = false;
 				} else {
 					pun += 1;
 					output = output + (char)e.kbd.ascii;
+					output.toUppercase();
 					bar(posx, (posy + 2), (posx + length * 6), (posy + 9), barColor);
-					littText(posx, posy, output, textColor);
-					littText((posx + (output.size()) * 6), posy, "-", textColor);
+					euroText(posx, posy, output, textColor);
+					euroText((posx + (output.size()) * 6), posy, "-", textColor);
 					removeCaret = true;
 				}
 			}

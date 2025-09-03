@@ -19,6 +19,8 @@
  *
  */
 #include "common/translation.h"
+#include "common/savefile.h"
+#include "graphics/thumbnail.h"
 #include "gui/message.h"
 
 #include "tot/forest.h"
@@ -562,6 +564,206 @@ void TotEngine::loadGame(SavedGame game) {
 	if (_isRedDevilCaptured == false && _currentRoomData->code == 24 && _isTrapSet == false)
 		runaroundRed();
 	_graphics->sceneTransition(false, _sceneBackground);
+}
+
+Common::String drawAndSelectSaves(Common::StringArray saves, int selectedGame) {
+	g_engine->_mouse->hide();
+	const char *availableText = getHardcodedTextsByCurrentLanguage()[11];
+	int size = saves.size();
+	for (int i = 0; i < 6; i++) {
+
+		int color = i == selectedGame ? 255 : 253;
+		if (i < size) {
+			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[i]);
+			if (!in) {
+				warning("Could not open save file: %s", saves[i].c_str());
+			}
+			ExtendedSavegameHeader header;
+			bool result = g_engine->getMetaEngine()->readSavegameHeader(in, &header, true);
+			euroText(65, 29 + (i * 15), result ? header.description.c_str() : saves[i].c_str(), color);
+		} else {
+			euroText(65, 29 + (i * 15), availableText, color);
+		}
+	}
+	g_engine->_mouse->show();
+	if (selectedGame < saves.size())
+		return saves[selectedGame];
+	else
+		return "";
+}
+
+void TotEngine::originalSaveLoadScreen() {
+	uint oldMouseX, oldMouseY;
+	int partidaselecc = -1;
+	bool modificada = false;
+	Common::String nombrepartida = "";
+
+	bool exitSaveLoadMenu = false;
+	oldMouseX = _mouse->mouseX;
+	oldMouseY = _mouse->mouseY;
+	_mouse->hide();
+
+	uint menuBgSize = imagesize(50, 10, 270, 120);
+	byte *menuBgPointer = (byte *)malloc(menuBgSize);
+	_graphics->getImg(50, 10, 270, 120, menuBgPointer);
+
+	for (int i = 0; i < 6; i++) {
+		uint textY = i + 1;
+		buttonBorder((120 - (textY * 10)), (80 - (textY * 10)), (200 + (textY * 10)), (60 + (textY * 10)), 251, 251, 251, 251, 0);
+	}
+	drawMenu(2);
+	if (!g_engine->_saveAllowed) {
+		bar(61, 15, 122, 23, 253);
+		bar(201, 15, 259, 23, 253);
+	}
+	Common::String pattern = isLanguageSpanish ? "tot-es.###" : "tot.###";
+	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(pattern);
+	debug("Found saves:");
+	for (int i = 0; i < saves.size(); i++) {
+		debug("Save %d: %s", i, saves[i].c_str());
+	}
+	nombrepartida = drawAndSelectSaves(saves, partidaselecc);
+	if (_cpCounter2 > 17)
+		showError(274);
+	_mouse->mouseX = 150;
+	_mouse->mouseY = 60;
+	_mouse->mouseMaskIndex = 1;
+	_mouse->setMouseArea(Common::Rect(55, 13, 250, 105));
+	_mouse->warpMouse(1, 150, 60);
+
+	do {
+		Common::Event e;
+		bool mouseClicked = false;
+		bool keyPressed = false;
+		char lastInputChar = '\0';
+		do {
+			_chrono->updateChrono();
+			if (_chrono->_gameTick) {
+				_mouse->animateMouseIfNeeded();
+			}
+			while (g_system->getEventManager()->pollEvent(e)) {
+				if (isMouseEvent(e)) {
+					_mouse->warpMouse(e.mouse);
+					_mouse->mouseX = e.mouse.x;
+					_mouse->mouseY = e.mouse.y;
+				}
+
+				if (e.type == Common::EVENT_LBUTTONUP || e.type == Common::EVENT_RBUTTONUP) {
+					mouseClicked = true;
+					_mouse->mouseClickX = e.mouse.x;
+					_mouse->mouseClickY = e.mouse.y;
+				} else if (e.type == Common::EVENT_KEYDOWN) {
+					keyPressed = true;
+					lastInputChar = e.kbd.ascii;
+				}
+			}
+
+			g_engine->_screen->update();
+			g_system->delayMillis(10);
+		} while (!keyPressed && !mouseClicked && !g_engine->shouldQuit());
+
+		if (mouseClicked) {
+			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
+				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) {
+					if (partidaselecc >= 0 && _saveAllowed && nombrepartida != "") {
+						debug("would save game now!");
+						debug("partidaseleccionada - %d, saveAllowed=%d, nombrepartida = %s", partidaselecc, _saveAllowed, nombrepartida.c_str());
+						saveGameState(partidaselecc, nombrepartida, false);
+						_graphics->putImg(50, 10, menuBgPointer);
+						exitSaveLoadMenu = true;
+						partidaselecc = -1;
+					} else {
+						debug("partidaseleccionada - %d, saveAllowed=%d, nombrepartida = %s", partidaselecc, _saveAllowed, nombrepartida.c_str());
+						_sound->beep(100, 300);
+					}
+				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
+					if (partidaselecc >= 0 && !modificada) {
+						if (partidaselecc < saves.size()) {
+							_mouse->hide();
+							_graphics->putImg(50, 10, menuBgPointer);
+							free(menuBgPointer);
+							if (_saveAllowed) {
+								clearAnimation();
+								clearScreenLayers();
+							}
+							Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[partidaselecc]);
+							if (!in) {
+
+								warning("Could not open save file: %s", saves[partidaselecc].c_str());
+								exitSaveLoadMenu = true;
+								return;
+							}
+							int slotNum = atoi(saves[partidaselecc].c_str() + saves[partidaselecc].size() - 3);
+							loadGameState(slotNum);
+							_mouse->mouseX = oldMouseX;
+							_mouse->mouseY = oldMouseY;
+
+							_mouse->show();
+							_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
+							exitSaveLoadMenu = true;
+							partidaselecc = -1;
+							delete in;
+							return;
+						} else {
+							debug("partidaseleccionada - %d", partidaselecc);
+							_sound->beep(100, 300);
+						}
+					} else {
+						debug("partidaseleccionada - %d, modificada=%d", partidaselecc, modificada);
+						_sound->beep(100, 300);
+						nombrepartida = drawAndSelectSaves(saves, partidaselecc);
+						_mouse->show();
+					}
+				} else if (_mouse->mouseClickX >= 200 && _mouse->mouseClickX <= 250) {
+					if (_inGame && _saveAllowed) {
+						_graphics->putImg(50, 10, menuBgPointer);
+						exitSaveLoadMenu = true;
+						partidaselecc = -1;
+					} else {
+						_sound->beep(100, 300);
+					}
+				}
+			} else if (_mouse->mouseClickY >= 24 && _mouse->mouseClickY <= 32) {
+				partidaselecc = 0;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 0);
+			} else if (_mouse->mouseClickY >= 39 && _mouse->mouseClickY <= 47) {
+				partidaselecc = 1;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 1);
+			} else if (_mouse->mouseClickY >= 54 && _mouse->mouseClickY <= 62) {
+				partidaselecc = 2;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 2);
+			} else if (_mouse->mouseClickY >= 69 && _mouse->mouseClickY <= 77) {
+				partidaselecc = 3;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 3);
+			} else if (_mouse->mouseClickY >= 84 && _mouse->mouseClickY <= 92) {
+				partidaselecc = 4;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 4);
+			} else if (_mouse->mouseClickY >= 99 && _mouse->mouseClickY <= 107) {
+				partidaselecc = 5;
+				modificada = false;
+				nombrepartida = drawAndSelectSaves(saves, 5);
+			}
+		}
+
+		if (partidaselecc >= 0 && keyPressed && _saveAllowed) {
+			_mouse->hide();
+			byte ytext = 29 + (partidaselecc * 15);
+			readAlphaGraphSmall(nombrepartida, 30, 65, ytext, 251, 254, lastInputChar);
+			modificada = true;
+			_mouse->show();
+			keyPressed = false;
+		}
+	} while (!exitSaveLoadMenu && !g_engine->shouldQuit());
+	_mouse->mouseX = oldMouseX;
+	_mouse->mouseY = oldMouseY;
+	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
+	free(menuBgPointer);
+	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 } // End of namespace Tot

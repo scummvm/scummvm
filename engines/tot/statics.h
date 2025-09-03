@@ -27,7 +27,6 @@
 
 namespace Tot {
 
-
 static const char *const animMessages[2][290] = {
 //Spanish
 {
@@ -1114,8 +1113,7 @@ static const char *const actionLine_EN[] = {
     " WITH ",
 };
 
-
-static const char *const hardcodedObjects_ES[] = {
+static const char *const hardcodedTexts_ES[] = {
     "LISTA ", // 0
     "LISTA", // 1
     "CARBON", // 2
@@ -1126,10 +1124,11 @@ static const char *const hardcodedObjects_ES[] = {
     "ESTATUA GROTESCA",// 7
     "PARED", // 8
     "TORNO", // 9
-    "VACIO"
+    "VACIO",
+	"DISPONIBLE"
 };
 
-static const char *const hardcodedObjects_EN[] = {
+static const char *const hardcodedTexts_EN[] = {
     "LIST ",
     "LIST",
     "COAL",
@@ -1140,7 +1139,8 @@ static const char *const hardcodedObjects_EN[] = {
     "GROTESQUE STATUE",
     "WALL",
     "POTTER""S WHEEL",
-    "FREE"
+    "FREE",
+	"AVAILABLE"
 };
 
 static const Common::KeyCode hotkeys[2][8]{

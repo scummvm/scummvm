@@ -76,7 +76,7 @@ const char *const *getFullScreenMessagesByCurrentLanguage();
 
 const char *const *getAnimMessagesByCurrentLanguage();
 
-const char *const *getHardcodedObjectsByCurrentLanguage();
+const char *const *getHardcodedTextsByCurrentLanguage();
 
 const int32 *getOffsetsByCurrentLanguage();
 
