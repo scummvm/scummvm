@@ -51,7 +51,6 @@ private:
 	};
 
 private:
-	ZVision *_engine;
 	Common::String _lines[NUM_TEXT_LINES];
 
 public:

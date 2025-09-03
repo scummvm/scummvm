@@ -55,9 +55,8 @@ public:
 #if defined(USE_MPEG2) && defined(USE_A52)
 	double getVobAmplification(Common::String fileName) const;
 #endif
-	
+
 private:
-	ZVision *_engine;
 	uint _scriptScale = 100; // Z-Vision scripts internally use a volume scale of 0-100; ScummVM uses a scale of 0-255.
 	volumeScaling _mode = kVolumeLinear;
 };

@@ -30,8 +30,7 @@
 
 namespace ZVision {
 
-StringManager::StringManager(ZVision *engine)
-	: _engine(engine) {
+StringManager::StringManager(ZVision *engine) {
 }
 
 StringManager::~StringManager() {
