@@ -90,7 +90,6 @@ MODULE_OBJS := \
 	base/base_viewport.o \
 	base/saveload.o \
 	base/save_thumb_helper.o \
-	base/timer.o \
 	ext/dll_dlltest.o \
 	ext/dll_geturl.o \
 	ext/dll_httpconnect.o \

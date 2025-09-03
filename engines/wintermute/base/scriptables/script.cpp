@@ -1246,7 +1246,7 @@ bool ScScript::sleep(uint32 duration) {
 		_waitTime = g_system->getMillis() + duration;
 		_waitFrozen = true;
 	} else {
-		_waitTime = _game->getTimer()->getTime() + duration;
+		_waitTime = _game->_timer + duration;
 		_waitFrozen = false;
 	}
 	return STATUS_OK;

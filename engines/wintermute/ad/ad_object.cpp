@@ -870,7 +870,7 @@ int32 AdObject::getHeight() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign Align) {
+void AdObject::talk(const char *text, const char *sound, uint32 duration, const char *stances, TTextAlign align) {
 	if (!_sentence) {
 		_sentence = new AdSentence(_game);
 	}
@@ -889,8 +889,8 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	_game->expandStringByStringTable(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
-	_sentence->_align = Align;
-	_sentence->_startTime = _game->getTimer()->getTime();
+	_sentence->_align = align;
+	_sentence->_startTime = _game->_timer;
 	_sentence->_currentStance = -1;
 	_sentence->_font = _font == nullptr ? _game->_systemFont : _font;
 	_sentence->_freezable = _freezable;

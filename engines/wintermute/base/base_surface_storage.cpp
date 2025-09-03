@@ -67,15 +67,15 @@ bool BaseSurfaceStorage::cleanup(bool warn) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceStorage::initLoop() {
-	if (_game->_smartCache && _game->getLiveTimer()->getTime() - _lastCleanupTime >= _game->_surfaceGCCycleTime) {
-		_lastCleanupTime = _game->getLiveTimer()->getTime();
+	if (_game->_smartCache && _game->_liveTimer - _lastCleanupTime >= _game->_surfaceGCCycleTime) {
+		_lastCleanupTime = _game->_liveTimer;
 		sortSurfaces();
 		for (int32 i = 0; i < _surfaces.getSize(); i++) {
 			if (_surfaces[i]->_lifeTime <= 0) {
 				break;
 			}
 
-			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_game->getLiveTimer()->getTime() - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
+			if (_surfaces[i]->_lifeTime > 0 && _surfaces[i]->_valid && (int)(_game->_liveTimer - _surfaces[i]->_lastUsedTime) >= _surfaces[i]->_lifeTime) {
 				//_game->QuickMessageForm("Invalidating: %s", _surfaces[i]->_filename);
 				_surfaces[i]->invalidate();
 			}

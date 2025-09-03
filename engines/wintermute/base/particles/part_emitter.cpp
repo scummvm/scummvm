@@ -32,9 +32,9 @@
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/base_engine.h"
-#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/base/base_region.h"
 #include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
@@ -252,7 +252,7 @@ bool PartEmitter::update() {
 	if (!_running) {
 		return STATUS_OK;
 	} else {
-		return updateInternal(BaseEngine::getTimer()->getTime(), BaseEngine::getTimer()->getTimeDelta());
+		return updateInternal(_game->_timer, _game->_timerDelta);
 	}
 }
 
@@ -353,7 +353,7 @@ bool PartEmitter::start() {
 	if (_overheadTime > 0) {
 		uint32 delta = 500;
 		int steps = _overheadTime / delta;
-		uint32 currentTime = BaseEngine::getTimer()->getTime() - _overheadTime;
+		uint32 currentTime = _game->_timer - _overheadTime;
 
 		for (int i = 0; i < steps; i++) {
 			updateInternal(currentTime, delta);

@@ -364,9 +364,9 @@ bool BaseSprite::getCurrentFrame(float zoomX, float zoomY) {
 
 	uint32 timer;
 	if (_owner && _owner->_freezable) {
-		timer = _game->getTimer()->getTime();
+		timer = _game->_timer;
 	} else {
-		timer = _game->getLiveTimer()->getTime();
+		timer = _game->_liveTimer;
 	}
 
 	int lastFrame = _currentFrame;

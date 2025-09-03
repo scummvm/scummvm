@@ -301,10 +301,10 @@ bool AdSentence::update(TDirection dir) {
 	// if sound is available, synchronize with sound, otherwise use timer
 
 	/*
-	if (_sound) CurrentTime = _sound->GetPositionTime();
-	else CurrentTime = _game->getTimer()->getTime() - _startTime;
+	if (_sound) currentTime = _sound->getPositionTime();
+	else currentTime = _game->_timer - _startTime;
 	*/
-	currentTime = _game->getTimer()->getTime() - _startTime;
+	currentTime = _game->_timer - _startTime;
 
 	bool talkNodeFound = false;
 	for (int32 i = 0; i < _talkDef->_nodes.getSize(); i++) {
@@ -343,7 +343,7 @@ bool AdSentence::update(TDirection dir) {
 //////////////////////////////////////////////////////////////////////////
 bool AdSentence::canSkip() {
 	// prevent accidental sentence skipping (TODO make configurable)
-	return (_game->getTimer()->getTime() - _startTime) > 300;
+	return (_game->_timer - _startTime) > 300;
 }
 
 } // End of namespace Wintermute

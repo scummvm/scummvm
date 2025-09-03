@@ -30,7 +30,6 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_game_custom_actions.h"
-#include "engines/wintermute/base/timer.h"
 #include "engines/wintermute/ext/plugin_event.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
@@ -305,8 +304,13 @@ public:
 	TGameState _state;
 	TGameState _origState;
 	bool _origInteractive;
-	Timer _timerNormal;
-	Timer _timerLive;
+	uint32 _timer;
+	uint32 _timerDelta;
+	uint32 _timerLast;
+
+	uint32 _liveTimer;
+	uint32 _liveTimerDelta;
+	uint32 _liveTimerLast;
 
 	BaseObject *_capturedObject;
 	Common::Point32 _mousePos;
@@ -398,8 +402,6 @@ public:
 
 	bool getBilinearFiltering() { return _bilinearFiltering; }
 	void addMem(int32 bytes);
-	const Timer *getTimer() const { return &_timerNormal; }
-	const Timer *getLiveTimer() const { return &_timerLive; }
 
 	void autoSaveOnExit();
 	PluginEvent &pluginEvents() { return _pluginEvents; }

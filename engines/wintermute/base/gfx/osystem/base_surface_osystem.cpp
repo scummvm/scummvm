@@ -273,7 +273,7 @@ bool BaseSurfaceOSystem::startPixelOp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurfaceOSystem::endPixelOp() {
-	_lastUsedTime = _game->getLiveTimer()->getTime();
+	_lastUsedTime = _game->_liveTimer;
 	_pixelOpReady = false;
 	if (_surfaceModified) {
 		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
@@ -332,7 +332,7 @@ bool BaseSurfaceOSystem::displayTiled(int x, int y, Common::Rect32 rect, int num
 bool BaseSurfaceOSystem::drawSprite(int x, int y, Common::Rect32 *rect, Common::Rect32 *newRect, Graphics::TransformStruct transform) {
 	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_game->_renderer);
 
-	_lastUsedTime = _game->getLiveTimer()->getTime();
+	_lastUsedTime = _game->_liveTimer;
 
 	// TODO: Skip this check if we can reuse an existing ticket?
 	if (!_valid) {

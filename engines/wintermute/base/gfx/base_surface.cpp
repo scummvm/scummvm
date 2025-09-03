@@ -85,7 +85,7 @@ bool BaseSurface::invalidate() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseSurface::prepareToDraw() {
-	_lastUsedTime = _game->getLiveTimer()->getTime();
+	_lastUsedTime = _game->_liveTimer;
 
 	if (!_valid) {
 		//_game->LOG(0, "Reviving: %s", _filename);

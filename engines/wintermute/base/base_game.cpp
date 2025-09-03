@@ -99,7 +99,7 @@ IMPLEMENT_PERSISTENT(BaseGame, true)
 
 
 //////////////////////////////////////////////////////////////////////
-BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _targetName(targetName), _timerNormal(), _timerLive() {
+BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _targetName(targetName) {
 	_shuttingDown = false;
 
 	_state = GAME_RUNNING;
@@ -143,6 +143,14 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 
 	_subtitles = true;
 	_videoSubtitles = true;
+
+	_timer = 0;
+	_timerDelta = 0;
+	_timerLast = 0;
+
+	_liveTimer = 0;
+	_liveTimerDelta = 0;
+	_liveTimerLast = 0;
 
 	_sequence = 0;
 
@@ -695,12 +703,16 @@ bool BaseGame::initLoop() {
 	_lastTime  = _currentTime;
 	_fpsTime += _deltaTime;
 
-	_timerLive.updateTime(_deltaTime, 1000);
+	_liveTimerDelta = _liveTimer - _liveTimerLast;
+	_liveTimerLast = _liveTimer;
+	_liveTimer += MIN((uint32)1000, _deltaTime);
 
 	if (_state != GAME_FROZEN) {
-		_timerNormal.updateTime(_deltaTime, 1000);
+		_timerDelta = _timer - _timerLast;
+		_timerLast = _timer;
+		_timer += MIN((uint32)1000, _deltaTime);
 	} else {
-		_timerNormal.setTimeDelta(0);
+		_timerDelta = 0;
 	}
 
 	_framesRendered++;
@@ -1483,7 +1495,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		_musicCrossfadeStartTime = _game->getLiveTimer()->getTime();
+		_musicCrossfadeStartTime = _game->_liveTimer;
 		_musicCrossfadeChannel1 = channel1;
 		_musicCrossfadeChannel2 = channel2;
 		_musicCrossfadeLength = fadeLength;
@@ -1515,7 +1527,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			return STATUS_OK;
 		}
 
-		_musicCrossfadeStartTime = _game->getLiveTimer()->getTime();
+		_musicCrossfadeStartTime = _game->_liveTimer;
 		_musicCrossfadeChannel1 = channel;
 		_musicCrossfadeChannel2 = channel;
 		_musicCrossfadeLength = fadeLength;
@@ -2737,7 +2749,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// CurrentTime (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "CurrentTime") {
-		_scValue->setInt((int)getTimer()->getTime());
+		_scValue->setInt((int)_timer);
 		return _scValue;
 	}
 
@@ -4285,7 +4297,7 @@ bool BaseGame::updateMusicCrossfade() {
 		_music[_musicCrossfadeChannel2]->play();
 	}
 
-	uint32 currentTime = _game->getLiveTimer()->getTime() - _musicCrossfadeStartTime;
+	uint32 currentTime = _game->_liveTimer - _musicCrossfadeStartTime;
 
 	if (currentTime >= _musicCrossfadeLength) {
 		_musicCrossfadeRunning = false;
@@ -4390,8 +4402,13 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_videoFont));
 	persistMgr->transferBool(TMEMBER(_videoSubtitles));
 
-	_timerNormal.persist(persistMgr);
-	_timerLive.persist(persistMgr);
+	persistMgr->transferUint32(TMEMBER(_timer));
+	persistMgr->transferUint32(TMEMBER(_timerDelta));
+	persistMgr->transferUint32(TMEMBER(_timerLast));
+
+	persistMgr->transferUint32(TMEMBER(_liveTimer));
+	persistMgr->transferUint32(TMEMBER(_liveTimerDelta));
+	persistMgr->transferUint32(TMEMBER(_liveTimerLast));
 
 	_renderer->persistSaveLoadImages(persistMgr);
 
@@ -5101,7 +5118,7 @@ bool BaseGame::displayDebugInfo() {
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
-		Common::sprintf_s(str, "Timer: %d", getTimer()->getTime());
+		Common::sprintf_s(str, "Timer: %d", _timer);
 		_game->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
