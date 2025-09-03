@@ -638,7 +638,7 @@ void TotEngine::sacrificeScene() {
 	littText(10, 50, messages[24], 255);
 	littText(10, 70, messages[25], 255);
 
-	for (int i = 0; i < 32; i++) {
+	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
@@ -647,7 +647,7 @@ void TotEngine::sacrificeScene() {
 	if (shouldQuit())
 		return;
 
-	for (int i = 32; i > 0; i--) {
+	for (int i = 31; i >= 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
@@ -812,7 +812,7 @@ void TotEngine::sacrificeScene() {
 		littText(10, 140, messages[39], 255);
 	}
 
-	for (int i = 0; i < 32; i++) {
+	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
@@ -820,7 +820,7 @@ void TotEngine::sacrificeScene() {
 	if (shouldQuit())
 		return;
 
-	for (int i = 32; i > 0; i--) {
+	for (int i = 31; i >= 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
@@ -848,14 +848,14 @@ void TotEngine::sacrificeScene() {
 	littText(10, 80, messages[41], 255);
 	littText(10, 100, messages[42], 255);
 
-	for (int i = 0; i < 32; i++) {
+	for (int i = 0; i <= 31; i++) {
 		setRGBPalette(255, 32 + i, i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
 	delay(7000);
 	if (shouldQuit())
 		return;
-	for (int i = 32; i > 0; i--) {
+	for (int i = 31; i >= 0; i--) {
 		setRGBPalette(255, 63 - (32 - i), i * 2, i * 2);
 		setRGBPalette(254, 32 - i, 0, 0);
 	}
