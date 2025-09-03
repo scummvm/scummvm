@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2025-09-03 11:23+0000\n"
-"PO-Revision-Date: 2025-08-22 09:58+0000\n"
+"PO-Revision-Date: 2025-09-03 13:08+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6448,7 +6448,7 @@ msgstr "Usa"
 
 #: engines/access/metaengine.cpp:296
 msgid "Goto"
-msgstr ""
+msgstr "Vai verso"
 
 #: engines/access/metaengine.cpp:301 engines/access/metaengine.cpp:332
 #: engines/bbvs/metaengine.cpp:130 engines/drascula/metaengine.cpp:250
@@ -6500,10 +6500,8 @@ msgid "Walk"
 msgstr "Cammina"
 
 #: engines/access/metaengine.cpp:348
-#, fuzzy
-#| msgid "Page up in save / load menu"
 msgid "Open save/load menu"
-msgstr "Pagina precedente del menù salva / carica"
+msgstr "Apri menù di salvataggio/caricamento"
 
 #: engines/access/resources.cpp:43 engines/drascula/drascula.cpp:993
 #: engines/hugo/hugo.cpp:442 engines/lure/lure.cpp:57
@@ -7182,24 +7180,22 @@ msgstr ""
 "2. Qualsiasi file .sav presente nella directory di QfG2 Remake"
 
 #: engines/alcachofa/metaengine.cpp:40
-#, fuzzy
-#| msgid "Music Quality:"
 msgid "High Quality"
-msgstr "Qualità musica:"
+msgstr "Alta qualità"
 
 #: engines/alcachofa/metaengine.cpp:41
-#, fuzzy
-#| msgid "Toggle sound effect on/off"
 msgid "Toggles some optional graphical effects"
-msgstr "Attiva/disattiva effetti sonori"
+msgstr "Abilita alcuni effetti grafici opzionali"
 
 #: engines/alcachofa/metaengine.cpp:51
 msgid "32 Bits"
-msgstr ""
+msgstr "32 bit"
 
 #: engines/alcachofa/metaengine.cpp:52
 msgid "Uses 32bit textures instead of 16bit ones (currently not implemented)"
 msgstr ""
+"Utilizza le texture a 32 bit al posto di quelle a 16 bit (attualmente non "
+"implementato)"
 
 #: engines/alcachofa/metaengine.cpp:87 engines/cine/metaengine.cpp:347
 msgid "Activate"
@@ -8297,50 +8293,38 @@ msgstr ""
 "modalità"
 
 #: engines/dm/metaengine.cpp:125
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Dialog choice selection keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappature tasti finestre di dialogo"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. One of them can be assigned the "leader". This action toggles the inventory screen of the leader champion.
 #: engines/dm/metaengine.cpp:137
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle leader inventory"
-msgstr "Mostra / nascondi inventario"
+msgstr "Mostra/nascondi inventario del leader"
 
 #. I18N: (Game name: Dungeon Master) The game has multi-choice dialogs. If there is only one choice, then this action can be used to select it.
 #: engines/dm/metaengine.cpp:144
 msgid "Select dialog choice (only works if there is a single choice)"
-msgstr ""
+msgstr "Accetta scelta dialogo (se è disponibile una sola opzione)"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 1.
 #: engines/dm/metaengine.cpp:151
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 1 inventory"
-msgstr "Mostra / nascondi inventario"
+msgstr "Mostra/nascondi inventario del campione 1"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 2.
 #: engines/dm/metaengine.cpp:157
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 2 inventory"
-msgstr "Mostra / nascondi inventario"
+msgstr "Mostra/nascondi inventario del campione 2"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 3.
 #: engines/dm/metaengine.cpp:163
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 3 inventory"
-msgstr "Mostra / nascondi inventario"
+msgstr "Mostra/nascondi inventario del campione 3"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. This action toggles the inventory screen of champion 4.
 #: engines/dm/metaengine.cpp:169
-#, fuzzy
-#| msgid "Toggle inventory"
 msgid "Toggle champion 4 inventory"
-msgstr "Mostra / nascondi inventario"
+msgstr "Mostra/nascondi inventario del campione 4"
 
 #: engines/dm/metaengine.cpp:216 engines/hpl1/metaengine.cpp:78
 #: engines/mm/mm1/metaengine.cpp:99
@@ -8359,10 +8343,8 @@ msgstr "Scorri a destra"
 
 #. I18N: (Game name: Dungeon Master) The player has a team of 4 characters called "champions" which they choose themselves. The champions can be put to sleep. This action wakes up the sleeping champion.
 #: engines/dm/metaengine.cpp:247
-#, fuzzy
-#| msgid "Hole up & camp"
 msgid "Wake up champion"
-msgstr "Accampamento"
+msgstr "Sveglia campione 1"
 
 #: engines/draci/metaengine.cpp:68 engines/prince/metaengine.cpp:64
 msgid "Enable Text to Speech for Missing Voiceovers"
@@ -8599,52 +8581,36 @@ msgid "Skip song keymappings"
 msgstr "Mappature tasti salto canzoni"
 
 #: engines/efh/metaengine.cpp:261
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu navigation keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappature tasti di navigazione del menù di stato"
 
 #: engines/efh/metaengine.cpp:262
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappature tasti menù di stato"
 
 #: engines/efh/metaengine.cpp:263
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Status menu submenu keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappature tasti sottomenù del menù di stato"
 
 #: engines/efh/metaengine.cpp:264
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Interaction keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti interazioni"
 
 #: engines/efh/metaengine.cpp:265
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Fight keymappings"
-msgstr "Mappatura tasti PET"
+msgstr "Mappatura tasti combattimento"
 
 #: engines/efh/metaengine.cpp:266
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Character selection keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappatura tasti di selezione personaggi"
 
 #: engines/efh/metaengine.cpp:267
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Enemy selection keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti di selezione nemici"
 
 #: engines/efh/metaengine.cpp:268
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Death menu keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappature tasti menù morte"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:339
@@ -8662,22 +8628,16 @@ msgid "Character 3 status"
 msgstr "Stato del personaggio 3"
 
 #: engines/efh/metaengine.cpp:385
-#, fuzzy
-#| msgid "Skip scene"
 msgid "Skip song"
-msgstr "Salta scena"
+msgstr "Salta canzone"
 
 #: engines/efh/metaengine.cpp:391
-#, fuzzy
-#| msgid "Skip intro"
 msgid "Skip song and intro"
-msgstr "Salta introduzione"
+msgstr "Salta canzone e introduzione"
 
 #: engines/efh/metaengine.cpp:427
-#, fuzzy
-#| msgid "Active"
 msgid "Active skills"
-msgstr "Attivo"
+msgstr "Abilità attive"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
 #: engines/efh/metaengine.cpp:432 engines/ultima/nuvie/metaengine.cpp:72
@@ -8687,7 +8647,7 @@ msgstr "Rilascia"
 
 #: engines/efh/metaengine.cpp:437
 msgid "Equip"
-msgstr ""
+msgstr "Equipaggia"
 
 #: engines/efh/metaengine.cpp:442 engines/queen/metaengine.cpp:274
 #: engines/saga/metaengine.cpp:384 engines/scumm/help.cpp:124
@@ -8699,44 +8659,36 @@ msgid "Give"
 msgstr "Dai"
 
 #: engines/efh/metaengine.cpp:447
-#, fuzzy
-#| msgid "Info Menu"
 msgid "Info"
-msgstr "Menù Informazioni"
+msgstr "Informazioni"
 
 #: engines/efh/metaengine.cpp:452
 msgid "Passive skills"
-msgstr ""
+msgstr "Abilità passive"
 
 #: engines/efh/metaengine.cpp:457
 msgid "Trade"
-msgstr ""
+msgstr "Scambia"
 
 #: engines/efh/metaengine.cpp:467
-#, fuzzy
-#| msgid "Quit to menu"
 msgid "Exit status menu"
-msgstr "Esci al menù principale"
+msgstr "Esci dal menù di stato"
 
 #: engines/efh/metaengine.cpp:481
-#, fuzzy
-#| msgid "Exit game"
 msgid "Exit submenu"
-msgstr "Esci dal gioco"
+msgstr "Esci dal sottomenù"
 
 #: engines/efh/metaengine.cpp:493
 msgid "Leave"
-msgstr ""
+msgstr "Esci"
 
 #: engines/efh/metaengine.cpp:500 engines/efh/metaengine.cpp:536
-#, fuzzy
-#| msgid "Status:"
 msgid "Status"
-msgstr "Stato:"
+msgstr "Stato"
 
 #: engines/efh/metaengine.cpp:518
 msgid "Defend"
-msgstr ""
+msgstr "Difesa"
 
 #. I18N: Run is a movement type
 #. I18N: Action in In Cold Blood
@@ -8749,73 +8701,51 @@ msgstr "Corri"
 
 #. I18N: (Game name: Escape from hell) This action is used to view the terrain during a fight so that the player can see where they can move if they decide to run.
 #: engines/efh/metaengine.cpp:543
-#, fuzzy
-#| msgid "View constellations"
 msgid "View terrain"
-msgstr "Mostra costellazioni"
+msgstr "Mostra terreno circostante"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:550
-#, fuzzy
-#| msgid "Select actor 1"
 msgid "Select character 1"
 msgstr "Seleziona personaggio 1"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:557
-#, fuzzy
-#| msgid "Select actor 2"
 msgid "Select character 2"
 msgstr "Seleziona personaggio 2"
 
 #. I18N: (Game name: Escape from hell) Character is a hero in-game
 #: engines/efh/metaengine.cpp:564
-#, fuzzy
-#| msgid "Select actor 3"
 msgid "Select character 3"
 msgstr "Seleziona personaggio 3"
 
 #: engines/efh/metaengine.cpp:570
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel character selection"
-msgstr "Annulla azione"
+msgstr "Annulla selezione personaggio"
 
 #: engines/efh/metaengine.cpp:577
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 1"
-msgstr "Seleziona indice"
+msgstr "Seleziona nemico 1"
 
 #: engines/efh/metaengine.cpp:583
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 2"
-msgstr "Seleziona indice"
+msgstr "Seleziona nemico 2"
 
 #: engines/efh/metaengine.cpp:589
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 3"
-msgstr "Seleziona indice"
+msgstr "Seleziona nemico 3"
 
 #: engines/efh/metaengine.cpp:595
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 4"
-msgstr "Seleziona indice"
+msgstr "Seleziona nemico 4"
 
 #: engines/efh/metaengine.cpp:601
-#, fuzzy
-#| msgid "Select index"
 msgid "Select enemy 5"
-msgstr "Seleziona indice"
+msgstr "Seleziona nemico 5"
 
 #: engines/efh/metaengine.cpp:607
-#, fuzzy
-#| msgid "Cancel action"
 msgid "Cancel enemy selection"
-msgstr "Annulla azione"
+msgstr "Annulla selezione nemico"
 
 #: engines/efh/metaengine.cpp:625 engines/lure/metaengine.cpp:203
 #: engines/tsage/metaengine.cpp:237
@@ -8823,44 +8753,32 @@ msgid "Restart game"
 msgstr "Ricomincia gioco"
 
 #: engines/efh/metaengine.cpp:632
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 13"
-msgstr "Suona nota 1: La"
+msgstr "Riproduci suono tipo 13"
 
 #: engines/efh/metaengine.cpp:637
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 14"
-msgstr "Suona nota 1: La"
+msgstr "Riproduci suono tipo 14"
 
 #: engines/efh/metaengine.cpp:642
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 15"
-msgstr "Suona nota 1: La"
+msgstr "Riproduci suono tipo 15"
 
 #: engines/efh/metaengine.cpp:647
-#, fuzzy
-#| msgid "Play note 5: E"
 msgid "Play sound type 5"
-msgstr "Suona nota 5: Mi"
+msgstr "Riproduci suono tipo 5"
 
 #: engines/efh/metaengine.cpp:652
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 10"
-msgstr "Suona nota 1: La"
+msgstr "Riproduci suono tipo 10"
 
 #: engines/efh/metaengine.cpp:657
 msgid "Play sound type 9"
-msgstr ""
+msgstr "Riproduci suono tipo 9"
 
 #: engines/efh/metaengine.cpp:662
-#, fuzzy
-#| msgid "Play note 1: A"
 msgid "Play sound type 16"
-msgstr "Suona nota 1: La"
+msgstr "Riproduci suono tipo 16"
 
 #: engines/freescape/metaengine.cpp:42
 msgid "Prerecorded sounds"
@@ -8940,11 +8858,11 @@ msgstr ""
 
 #: engines/freescape/metaengine.cpp:141
 msgid "Smoother movement"
-msgstr ""
+msgstr "Movimento fluido"
 
 #: engines/freescape/metaengine.cpp:142
 msgid "Use smoother movements instead of discrete steps"
-msgstr ""
+msgstr "Effettua movimenti fluidi anzichè spostamenti a passi prestabiliti"
 
 #: engines/freescape/movement.cpp:49
 msgid "Strafe Left"
@@ -9693,13 +9611,11 @@ msgstr "Mappatura tasti dell'introduzione"
 
 #: engines/hypno/metaengine.cpp:134
 msgid "Primary shoot"
-msgstr ""
+msgstr "Sparo arma principale"
 
 #: engines/hypno/metaengine.cpp:140
-#, fuzzy
-#| msgid "Seconds"
 msgid "Secondary shoot"
-msgstr "Secondi"
+msgstr "Sparo arma secondaria"
 
 #: engines/hypno/metaengine.cpp:146 engines/lab/metaengine.cpp:209
 #: engines/teenagent/metaengine.cpp:232 engines/toon/metaengine.cpp:98
@@ -9708,29 +9624,21 @@ msgid "Skip intro"
 msgstr "Salta introduzione"
 
 #: engines/hypno/metaengine.cpp:167
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit menu keymappings"
-msgstr "Mappatura tasti PET"
+msgstr "Mappatura tasti menù di uscita"
 
 #: engines/hypno/metaengine.cpp:168
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Difficulty selection menu keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti menù selezione difficoltà"
 
 #: engines/hypno/metaengine.cpp:169
-#, fuzzy
-#| msgid "Start menu keymappings"
 msgid "Retry menu keymappings"
-msgstr "Mappature menù principale"
+msgstr "Mappatura tasti menù Ritenta"
 
 #: engines/hypno/metaengine.cpp:172 engines/hypno/metaengine.cpp:270
 #: engines/hypno/metaengine.cpp:322
-#, fuzzy
-#| msgid "Skip speech"
 msgid "Skip level (cheat)"
-msgstr "Salta dialogo"
+msgstr "Salta livello (cheat)"
 
 #. I18N: (Game name: Soldier Boyz) player refers to the users own character.
 #. I18N: (Game name: Marvel Comics Spider-Man: The Sinister Six) player refers to the users own character.
@@ -9738,52 +9646,44 @@ msgstr "Salta dialogo"
 #: engines/hypno/metaengine.cpp:180 engines/hypno/metaengine.cpp:278
 #: engines/hypno/metaengine.cpp:329
 msgid "Kill player"
-msgstr ""
+msgstr "Sacrifica giocatore"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Chump is the easy mode.
 #: engines/hypno/metaengine.cpp:205
 msgid "Chump"
-msgstr ""
+msgstr "Chump (facile)"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Punk is the medium mode.
 #: engines/hypno/metaengine.cpp:212
 msgid "Punk"
-msgstr ""
+msgstr "Punk (normale)"
 
 #. I18N: (Game name: Soldier Boyz) the game has 3 difficulty levels: Chump, Punk and Badass. Badass is the hard mode.
 #: engines/hypno/metaengine.cpp:219
 msgid "Badass"
-msgstr ""
+msgstr "Badass (difficile)"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart from the last checkpoint.
 #: engines/hypno/metaengine.cpp:232
-#, fuzzy
-#| msgid "Retreat"
 msgid "Retry sector"
-msgstr "Ritirata"
+msgstr "Riprova segmento"
 
 #. I18N: (Game name: Soldier Boyz) This makes the player restart the current mission / level.
 #: engines/hypno/metaengine.cpp:239
-#, fuzzy
-#| msgid "Restart animation"
 msgid "Restart territory"
-msgstr "Ripeti animazione"
+msgstr "Riprova missione"
 
 #: engines/hypno/metaengine.cpp:245
 msgid "Begin new mission"
-msgstr ""
+msgstr "Inizia nuova missione"
 
 #: engines/hypno/metaengine.cpp:313
-#, fuzzy
-#| msgid "Pause menu keymappings"
 msgid "Pause keymappings"
-msgstr "Mappature tasti menù di pausa"
+msgstr "Mappatura tasti pausa"
 
 #: engines/hypno/metaengine.cpp:314
-#, fuzzy
-#| msgid "Intro keymappings"
 msgid "Direction keymappings"
-msgstr "Mappatura tasti dell'introduzione"
+msgstr "Mappatura tasti di direzione"
 
 #: engines/hypno/metaengine.cpp:316 engines/mads/metaengine.cpp:349
 #: engines/tsage/metaengine.cpp:259
@@ -10173,17 +10073,13 @@ msgstr ""
 "una chiave da Wyrmkeep"
 
 #: engines/lab/metaengine.cpp:150 engines/sherlock/metaengine.cpp:773
-#, fuzzy
-#| msgid "PET keymappings"
 msgid "Exit keymappings"
-msgstr "Mappatura tasti PET"
+msgstr "Mappatura tasti uscita"
 
 #: engines/lab/metaengine.cpp:155 engines/sherlock/metaengine.cpp:339
 #: engines/sherlock/metaengine.cpp:778
-#, fuzzy
-#| msgid "Star Map keymappings"
 msgid "Map keymappings"
-msgstr "Mappature tasti Mappa Stellare"
+msgstr "Mappature tasti Mappa"
 
 #: engines/lab/metaengine.cpp:156 engines/queen/metaengine.cpp:148
 #: engines/sherlock/metaengine.cpp:334 engines/sherlock/metaengine.cpp:775
@@ -10203,30 +10099,24 @@ msgid "Exit"
 msgstr "Esci"
 
 #: engines/lab/metaengine.cpp:179
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Raise the sound volume"
-msgstr "Abilita effetti sonori del gioco"
+msgstr "Aumenta volume sonoro"
 
 #: engines/lab/metaengine.cpp:185
 msgid "Lower the sound volume"
-msgstr ""
+msgstr "Riduci volume sonoro"
 
 #: engines/lab/metaengine.cpp:216
 msgid "Interact with object with chosen action"
-msgstr ""
+msgstr "Interagisci con l'oggetto effettuando l'azione scelta"
 
 #: engines/lab/metaengine.cpp:221
-#, fuzzy
-#| msgid "Next object"
 msgid "Take object"
-msgstr "Oggetto successivo"
+msgstr "Prendi oggetto"
 
 #: engines/lab/metaengine.cpp:227
-#, fuzzy
-#| msgid "Go to next object"
 msgid "Move or manipulate object"
-msgstr "Seleziona oggetto successivo"
+msgstr "Muovi o manipola oggetto"
 
 #: engines/lab/metaengine.cpp:233
 #, fuzzy
