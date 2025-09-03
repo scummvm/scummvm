@@ -118,8 +118,9 @@ void AdSceneGeometry::cleanup() {
 	_waypointGroups.removeAll();
 
 	for (i = 0; i < _cameras.getSize(); i++) {
-		if (_gameRef->_renderer3D->_camera == _cameras[i])
-			_gameRef->_renderer3D->_camera = nullptr;
+		BaseRenderer3D *renderer = _gameRef->_renderer3D;
+		if (renderer->_camera == _cameras[i])
+			renderer->_camera = nullptr;
 		delete _cameras[i];
 	}
 	_cameras.removeAll();
@@ -411,13 +412,14 @@ DXMatrix *AdSceneGeometry::getViewMatrix() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::storeDrawingParams() {
+    BaseRenderer3D *renderer = _gameRef->_renderer3D;
+
 	// store values
-	_drawingViewport = _gameRef->_renderer3D->getViewPort();
+	_drawingViewport = renderer->getViewPort();
 
-	_gameRef->_renderer3D->getWorldTransform(&_lastWorldMat);
-	_gameRef->_renderer3D->getViewTransform(&_lastViewMat);
-	_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
-
+	renderer->getWorldTransform(&_lastWorldMat);
+	renderer->getViewTransform(&_lastViewMat);
+	renderer->getProjectionTransform(&_lastProjMat);
 
 	AdScene *scene = ((AdGame *)_gameRef)->_scene;
 	if (scene) {
@@ -679,9 +681,11 @@ bool AdSceneGeometry::convert2Dto3DTolerant(int x, int y, DXVector3 *pos) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::convert2Dto3D(int x, int y, DXVector3 *pos) {
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+
 	if (!_lastValuesInitialized) {
-		_drawingViewport = _gameRef->_renderer3D->getViewPort();
-		_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
+		_drawingViewport = renderer->getViewPort();
+		renderer->getProjectionTransform(&_lastProjMat);
 	}
 
 	float resWidth, resHeight;
@@ -889,14 +893,13 @@ bool AdSceneGeometry::initLoop() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::createLights() {
 	// disable all lights
-	int32 maxLights = _gameRef->_renderer3D->getMaxActiveLights();
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	int32 maxLights = renderer->getMaxActiveLights();
 	for (int32 i = 0; i < maxLights; i++) {
-		_gameRef->_renderer3D->lightEnable(i, false);
+		renderer->lightEnable(i, false);
 	}
 
-	int32 lightCount = MIN(_lights.getSize(), maxLights);
-
-	for (int32 i = 0; i < lightCount; i++) {
+	for (int32 i = 0; i < MIN(_lights.getSize(), maxLights); i++) {
 		_lights[i]->setLight(i);
 	}
 
@@ -906,7 +909,8 @@ bool AdSceneGeometry::createLights() {
 //////////////////////////////////////////////////////////////////////////
 bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLights) {
 	const int maxLightCount = 100;
-	int maxLights = _gameRef->_renderer3D->getMaxActiveLights();
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+	int maxLights = renderer->getMaxActiveLights();
 
 	int32 numActiveLights = 0;
 	for (int32 i = 0; i < _lights.getSize(); i++) {
@@ -953,14 +957,14 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 			qsort_msvc(activeLights.getData(), activeLights.getSize(), sizeof(Light3D *), AdSceneGeometry::compareLights);
 
 			for (int32 i = 0; i < activeLights.getSize(); i++) {
-				activeLights[i]->_isAvailable = static_cast<int32>(i) < maxLights;
+				activeLights[i]->_isAvailable = i < maxLights;
 			}
 		}
 	}
 
 	// light all available lights
 	for (int32 i = 0; i < maxLightCount; i++) {
-		_gameRef->_renderer3D->lightEnable(i, false);
+		renderer->lightEnable(i, false);
 	}
 
 	numActiveLights = 0;
@@ -984,8 +988,8 @@ bool AdSceneGeometry::enableLights(DXVector3 point, BaseArray<char *> &ignoreLig
 		}
 
 		if (_lights[i]->_isAvailable) {
+			renderer->lightEnable(i, _lights[i]->_active);
 			if (_lights[i]->_active) {
-				_gameRef->_renderer3D->lightEnable(i, _lights[i]->_active);
 				numActiveLights++;
 			}
 		}

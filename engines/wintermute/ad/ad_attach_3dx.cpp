@@ -83,20 +83,16 @@ bool AdAttach3DX::update() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
 	DXMatrix finalMat;
 	DXMatrixMultiply(&finalMat, &_worldMatrix, viewMat);
-	_gameRef->_renderer3D->setWorldTransform(finalMat);
+	renderer->setWorldTransform(finalMat);
 
 	if (_xmodel) {
 		_xmodel->render();
 
 		if (registerObjects && _owner && _owner->_registrable) {
-			_gameRef->_renderer->_rectList.add(new BaseActiveRect(_gameRef, _owner, _xmodel,
-			                                                      _xmodel->_boundingRect.left,
-			                                                      _xmodel->_boundingRect.top,
-			                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,
-			                                                      _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top,
-			                                                      true));
+			renderer->_rectList.add(new BaseActiveRect(_gameRef, _owner, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
 		}
 	}
 
@@ -105,6 +101,7 @@ bool AdAttach3DX::displayAttachable(DXMatrix *viewMat, bool registerObjects) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float extrusionDepth, bool update) {
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
 	DXMatrix finalMat;
 	DXMatrixMultiply(&finalMat, &_worldMatrix, modelMat);
 
@@ -114,7 +111,7 @@ bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float e
 			_xmodel->updateShadowVol(getShadowVolume(), &finalMat, light, extrusionDepth);
 		}
 
-		_gameRef->_renderer3D->setWorldTransform(finalMat);
+		renderer->setWorldTransform(finalMat);
 		getShadowVolume()->renderToStencilBuffer();
 	}
 

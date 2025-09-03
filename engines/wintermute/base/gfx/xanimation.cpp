@@ -220,23 +220,22 @@ bool Animation::loadAnimationKeyData(XAnimationKeyObject *animationKey) {
 			C3DUtils::decomposeMatrixSimple(&keyData, &transVec, &scaleVec, &qRot);
 
 			BonePositionKey *positionKey = new BonePositionKey;
-			BoneScaleKey *scaleKey = new BoneScaleKey;
-			BoneRotationKey *rotationKey = new BoneRotationKey;
-
 			positionKey->_time = time;
-			scaleKey->_time = time;
-			rotationKey->_time = time;
-
 			positionKey->_pos = transVec;
+			_posKeys.add(positionKey);
+
+			BoneScaleKey *scaleKey = new BoneScaleKey;
+			scaleKey->_time = time;
 			scaleKey->_scale = scaleVec;
+			_scaleKeys.add(scaleKey);
+
+			BoneRotationKey *rotationKey = new BoneRotationKey;
+			rotationKey->_time = time;
 			rotationKey->_rotation = qRot;
 
 			rotationKey->_rotation._x = -rotationKey->_rotation._x;
 			rotationKey->_rotation._y = -rotationKey->_rotation._y;
 			rotationKey->_rotation._z = -rotationKey->_rotation._z;
-
-			_posKeys.add(positionKey);
-			_scaleKeys.add(scaleKey);
 			_rotKeys.add(rotationKey);
 		}
 	} else {

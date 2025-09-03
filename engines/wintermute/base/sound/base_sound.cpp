@@ -227,23 +227,7 @@ bool BaseSound::setVolume(int volume) {
 	}
 }
 
-bool BaseSound::setPrivateVolume(int volume) {
-	if (!_sound) {
-		return STATUS_FAILED;
-	} else {
-		_sound->setPrivateVolume(volume);
-		return STATUS_OK;
-	}
-}
-
-int BaseSound::getVolumePercent() {
-	if (!_sound) {
-		return 0;
-	} else {
-		return _sound->getPrivateVolume() * 100 / 255;
-	}
-}
-
+//////////////////////////////////////////////////////////////////////////
 int BaseSound::getVolume() {
 	if (!_sound) {
 		return 0;
@@ -252,6 +236,7 @@ int BaseSound::getVolume() {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setLoopStart(uint32 pos) {
 	if (!_sound) {
 		return STATUS_FAILED;
@@ -261,6 +246,26 @@ bool BaseSound::setLoopStart(uint32 pos) {
 	}
 }
 
+//////////////////////////////////////////////////////////////////////////
+bool BaseSound::setPrivateVolume(int volume) {
+	if (!_sound) {
+		return STATUS_FAILED;
+	} else {
+		_sound->setPrivateVolume(volume);
+		return STATUS_OK;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+int BaseSound::getVolumePercent() {
+	if (!_sound) {
+		return 0;
+	} else {
+		return _sound->getPrivateVolume() * 100 / 255;
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseSound::setPan(float pan) {
 	if (_sound) {
 		return _sound->setPan(pan);

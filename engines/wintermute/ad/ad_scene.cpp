@@ -3582,7 +3582,7 @@ bool AdScene::getRegionsAt(int x, int y, AdRegion **regionList, int numRegions) 
 			}
 		}
 	}
-	for (int i = numUsed; i < numRegions; i++) {
+	for (int32 i = numUsed; i < numRegions; i++) {
 		regionList[i] = nullptr;
 	}
 

@@ -469,21 +469,23 @@ bool XModel::updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3
 
 //////////////////////////////////////////////////////////////////////////
 bool XModel::render() {
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+
 	if (_rootFrame) {
 		// set culling
 		if (_owner && !_owner->_drawBackfaces) {
-			_gameRef->_renderer3D->enableCulling();
+			renderer->enableCulling();
 		} else {
-			_gameRef->_renderer3D->disableCulling();
+			renderer->disableCulling();
 		}
 
 		// render everything
 		bool res = _rootFrame->render(this);
 
 		// remember matrices for object picking purposes
-		_gameRef->_renderer3D->getWorldTransform(&_lastWorldMat);
-		_gameRef->_renderer3D->getViewTransform(&_lastViewMat);
-		_gameRef->_renderer3D->getProjectionTransform(&_lastProjMat);
+		renderer->getWorldTransform(&_lastWorldMat);
+		renderer->getViewTransform(&_lastViewMat);
+		renderer->getProjectionTransform(&_lastProjMat);
 
 		// remember scene offset
 		Common::Rect32 rc;
@@ -493,9 +495,9 @@ bool XModel::render() {
 
 		// margins
 		int mleft = rc.left;
-		int mright = _gameRef->_renderer->getWidth() - width - rc.left;
+		int mright = renderer->getWidth() - width - rc.left;
 		int mtop = rc.top;
-		int mbottom = _gameRef->_renderer->getHeight() - height - rc.top;
+		int mbottom = renderer->getHeight() - height - rc.top;
 
 		_lastOffsetX = _gameRef->_offsetX + (mleft - mright) / 2;
 		_lastOffsetY = _gameRef->_offsetY + (mtop - mbottom) / 2;
@@ -548,6 +550,7 @@ bool XModel::isTransparentAt(int x, int y) {
 	x += _lastOffsetX;
 	y += _lastOffsetY;
 
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
 	if (!_gameRef->_renderer3D->_camera)
 		return true;
 
@@ -561,8 +564,8 @@ bool XModel::isTransparentAt(int x, int y) {
 	y -= _drawingViewport._y + modHeight;
 
 	if (customViewport) {
-		x += _gameRef->_renderer3D->_drawOffsetX;
-		y += _gameRef->_renderer3D->_drawOffsetY;
+		x += renderer->_drawOffsetX;
+		y += renderer->_drawOffsetY;
 	}
 
 	DXVector3 pickRayDir;
@@ -607,13 +610,15 @@ void XModel::updateBoundingRect() {
 	_boundingRect.left = _boundingRect.top = INT_MAX_VALUE;
 	_boundingRect.right = _boundingRect.bottom = INT_MIN_VALUE;
 
+	BaseRenderer3D *renderer = _gameRef->_renderer3D;
+
 	DXMatrix viewMat, projMat, worldMat;
 	DXVector3 vec2d(0, 0, 0);
-	_gameRef->_renderer3D->getViewTransform(&viewMat);
-	_gameRef->_renderer3D->getProjectionTransform(&projMat);
-	_gameRef->_renderer3D->getWorldTransform(&worldMat);
+	renderer->getViewTransform(&viewMat);
+	renderer->getProjectionTransform(&projMat);
+	renderer->getWorldTransform(&worldMat);
 
-	_drawingViewport = _gameRef->_renderer3D->getViewPort();
+	_drawingViewport = renderer->getViewPort();
 
 	float x1 = _BBoxStart._x;
 	float x2 = _BBoxEnd._x;
@@ -648,10 +653,10 @@ void XModel::updateBoundingRect() {
 	DXVec3Project(&vec2d, &v222, &_drawingViewport, &projMat, &viewMat, &worldMat);
 	updateRect(&_boundingRect, &vec2d);
 
-	_boundingRect.left -= _gameRef->_renderer3D->_drawOffsetX;
-	_boundingRect.right -= _gameRef->_renderer3D->_drawOffsetX;
-	_boundingRect.bottom -= _gameRef->_renderer3D->_drawOffsetY;
-	_boundingRect.top -= _gameRef->_renderer3D->_drawOffsetY;
+	_boundingRect.left -= renderer->_drawOffsetX;
+	_boundingRect.right -= renderer->_drawOffsetX;
+	_boundingRect.bottom -= renderer->_drawOffsetY;
+	_boundingRect.top -= renderer->_drawOffsetY;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1101,7 +1106,7 @@ bool XModel::unloadAnimation(const char *animName) {
 	bool found = false;
 	for (int32 i = 0; i < _animationSets.getSize(); i++) {
 		if (scumm_stricmp(animName, _animationSets[i]->_name) == 0) {
-			for (int j = 0; j < X_NUM_ANIMATION_CHANNELS; j++) {
+			for (int32 j = 0; j < X_NUM_ANIMATION_CHANNELS; j++) {
 				if (_channels[j])
 					_channels[j]->unloadAnim(_animationSets[i]);
 			}
