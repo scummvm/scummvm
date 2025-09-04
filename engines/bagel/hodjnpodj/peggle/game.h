@@ -60,6 +60,7 @@ class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow(HWND);
 
+	void initStatics();
 	void SplashScreen();
 
 	static  void UpdatePegPosition(CDC *pDC, CSprite *pSprite, int x, int y);

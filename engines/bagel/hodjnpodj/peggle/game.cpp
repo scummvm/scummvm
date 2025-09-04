@@ -90,13 +90,6 @@ static BOOL bPegMoving = FALSE;
 
 /////////////////////////////////////////////////////////////////////////////
 
-// theApp:
-// Just creating this application object runs the whole application.
-//
-// CTheApp NEAR theApp;
-
-/////////////////////////////////////////////////////////////////////////////
-
 // CMainWindow constructor:
 // Create the window with the appropriate style, size, menu, etc.;
 // it will be later revealed by CTheApp::InitInstance().  Then
@@ -112,6 +105,8 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 
 
 	BeginWaitCursor();
+	initStatics();
+
 	m_hCallAppWnd = hCallingApp;
 
 // select a type!
@@ -226,6 +221,30 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 	EndWaitCursor();
 }
 
+void CMainWindow::initStatics() {
+	pScrollButton = nullptr;
+	sprite_count = counter = 0;
+	pGamePalette = nullptr;
+	pGameSound = nullptr;
+
+	bRandomBoard = FALSE;
+	BoardSelected = CROSS;
+	Common::fill(&fState[0][0], &fState[0][0] + GRID_SIZE * GRID_SIZE, 0);
+
+	for (POINT &pt : Moves)
+		pt.x = pt.y = 0;
+
+	pCursorSprite = nullptr;
+	pShotGlass = nullptr;
+	pTableSlot = nullptr;
+	pInvalidSlot = nullptr;
+
+	nBoard_DX = TRI_BOARD_DX;
+	nBoard_DY = TRI_BOARD_DY;
+
+	bIgnoreScroll = FALSE;
+	bPegMoving = FALSE;
+}
 
 void CMainWindow::OnActivateApp(BOOL bActive, HTASK hTask) {
 	m_bProgramActive = bActive;
