@@ -376,12 +376,12 @@ void CWnd::DestroyWindow() {
 		m_pParentWnd->_children.erase(_controlId);
 	}
 
+	SendMessage(WM_DESTROY);
+	SendMessage(WM_NCDESTROY);
+
 	// If it's the active window, pop it
 	if (isActiveWindow)
 		AfxGetApp()->PopActiveWindow();
-
-	SendMessage(WM_DESTROY);
-	SendMessage(WM_NCDESTROY);
 }
 
 int CWnd::GetWindowText(CString &rString) const {
