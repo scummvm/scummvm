@@ -340,7 +340,7 @@ struct GLContext {
 	int texture_min_filter;
 	uint texture_wrap_s;
 	uint texture_wrap_t;
-	GLTextureEnv texEnv;
+	GLTextureEnv _texEnv;
 	Common::Array<struct tglColorAssociation> colorAssociationList;
 
 	// shared state
