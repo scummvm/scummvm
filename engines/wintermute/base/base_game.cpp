@@ -5416,6 +5416,7 @@ bool BaseGame::onMouseLeftDown() {
 		_capturedObject = _activeObject;
 	}
 	_mouseLeftDown = true;
+	//CBPlatform::SetCapture(m_Renderer->m_Window);
 
 	return STATUS_OK;
 }
@@ -5426,6 +5427,7 @@ bool BaseGame::onMouseLeftUp() {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
 
+	//ReleaseCapture();
 	_capturedObject = nullptr;
 	_mouseLeftDown = false;
 
