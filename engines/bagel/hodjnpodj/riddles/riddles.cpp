@@ -1085,11 +1085,14 @@ VOID CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 	// continue as long as there is a currently active non-paused game
 	//
 	if (m_bGameActive && !m_bPause) {
+		// Tick of the clock counting down
+		if (pGameParams->bSoundEffectsEnabled) {
+			// Don't tick whilst speech of riddle clue is playing
+			if (CBofSound::waveSoundPlaying())
+				return;
 
-		// tick of the clock counting down
-		//
-		if (pGameParams->bSoundEffectsEnabled)
 			sndPlaySound(WAV_TICK, SND_ASYNC);
+		}
 
 		// keep track of how long it takes
 		m_nTimer++;
