@@ -631,7 +631,6 @@ bool BaseGame::initialize2() { // we know whether we are going to be accelerated
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initialize3() { // renderer is initialized
 	_posX = _renderer->getWidth() / 2;
@@ -649,7 +648,6 @@ bool BaseGame::initialize3() { // renderer is initialized
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugEnable(const char *filename) {
@@ -674,7 +672,6 @@ void BaseGame::DEBUG_DebugEnable(const char *filename) {
 	LOG(0, "");
 }
 
-
 //////////////////////////////////////////////////////////////////////
 void BaseGame::DEBUG_DebugDisable() {
 	if (_debugLogFile != nullptr) {
@@ -684,7 +681,6 @@ void BaseGame::DEBUG_DebugDisable() {
 	}
 	_debugDebugMode = false;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 void BaseGame::LOG(bool res, const char *fmt, ...) {
@@ -719,7 +715,6 @@ void BaseGame::setEngineLogCallback(ENGINE_LOG_CALLBACK callback, void *data) {
 	_engineLogCallback = callback;
 	_engineLogCallbackData = data;
 }
-
 
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initLoop() {
@@ -784,18 +779,15 @@ bool BaseGame::initLoop() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////
 bool BaseGame::initInput() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 int BaseGame::getSequence() {
 	return ++_sequence;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setOffset(int32 offsetX, int32 offsetY) {
@@ -812,7 +804,6 @@ void BaseGame::getOffset(int *offsetX, int *offsetY) const {
 		*offsetY = _offsetY;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::loadFile(const char *filename) {
@@ -834,7 +825,6 @@ bool BaseGame::loadFile(const char *filename) {
 
 	return ret;
 }
-
 
 TOKEN_DEF_START
 TOKEN_DEF(GAME)
@@ -974,7 +964,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			_videoFont = _game->_fontStorage->addFont(params);
 			break;
 
-
 #ifdef ENABLE_WME3D
 		case TOKEN_SHADOW_IMAGE:
 			if (_shadowImage) {
@@ -1073,7 +1062,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			saveImageName = params;
+			_saveImageName = params;
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
@@ -1085,7 +1074,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			loadImageName = params;
+			_loadImageName = params;
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
@@ -1129,7 +1118,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 // high level scripting interface
@@ -1228,7 +1216,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		return STATUS_OK;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// UnloadObject
@@ -1739,6 +1726,173 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushNULL();
 		return STATUS_OK;
 	}
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetSaveSlotDescriptionTimestamp
+	// Return struct with "Description" and "Timestamp" fields in 1.2.362-
+	// Return array  with "Description" and "Timestamp" items  in 1.2.527+
+	// Timestamps should be comparable types
+	// Used to sort saved games by timestamps at save.script & load.script
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSaveSlotDescriptionTimestamp") == 0) {
+		stack->correctParams(1);
+		int slot = stack->pop()->getInt();
+
+		TimeDate time;
+		getSaveSlotTimestamp(slot, &time);
+		stack->pushInt(time.tm_sec);
+		stack->pushInt(time.tm_min);
+		stack->pushInt(time.tm_hour);
+		stack->pushInt(time.tm_mday);
+		stack->pushInt(time.tm_mon + 1);
+		stack->pushInt(time.tm_year + 1900);
+		stack->pushInt(6);
+		BaseScriptable *date = makeSXDate(_game, stack);
+		stack->pushNative(date, false);
+
+		Common::String desc;
+		getSaveSlotDescription(slot, desc);
+		stack->pushString(desc.c_str());
+
+		BaseScriptable *obj;
+		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
+			stack->pushInt(2);
+			obj = makeSXArray(_game, stack);
+		} else {
+			stack->pushInt(0);
+			obj = makeSXObject(_game, stack);
+			obj->scSetProperty("Description", stack->pop());
+			obj->scSetProperty("Timestamp", stack->pop());
+		}
+		stack->pushNative(obj, false);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] ValidSaveSlotVersion
+	// Checks if given slot stores game state of compatible game version
+	// This version always returs true
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ValidSaveSlotVersion") == 0) {
+		stack->correctParams(1);
+		/* int slot = */ stack->pop()->getInt();
+		// do nothing
+		stack->pushBool(true);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetScreenType
+	// Returns 0 on fullscreen and 1 on window
+	// Used to init and update controls at options.script and methods.script
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetScreenType") == 0) {
+		stack->correctParams(0);
+		int type = _renderer->isWindowed() ? 1 : 0;
+		stack->pushInt(type);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetScreenMode
+	// Returns integer to be used as a pixelization mode multiplier
+	// (e.g. it returns 2 for 640x360, 3 for 960x540, etc...)
+	// Used to init and update controls at options.script and methods.script
+	// This implementation always return 2 to fake window size of 2*320 x 2*180
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetScreenMode") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(2);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetDesktopDisplayMode
+	// Return struct with "w" and "h" fields in 1.2.362-
+	// Return array  with "w" and "h" items  in 1.2.527+
+	// Used to init and update controls at options.script and methods.script
+	// w,h of actual desktop size expected to calcucate maximum available size
+	// Available screen modes are calcucated as 2...N, N*320<w and N*180<h
+	// This implementation fakes available size as 2*320 x 2*180 only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetDesktopDisplayMode") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(2 * 180 + 1);
+		stack->pushInt(2 * 320 + 1);
+
+		BaseScriptable *obj;
+		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
+			stack->pushInt(2);
+			obj = makeSXArray(_game, stack);
+		} else {
+			stack->pushInt(0);
+			obj = makeSXObject(_game, stack);
+			obj->scSetProperty("w", stack->pop());
+			obj->scSetProperty("h", stack->pop());
+		}
+		stack->pushNative(obj, false);
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] SetScreenTypeMode
+	// This implementation ignores mode, toggles screen type only
+	// Used to change screen type&mode at options.script and methods.script
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "SetScreenTypeMode") == 0) {
+		stack->correctParams(2);
+		int type = stack->pop()->getInt();
+		stack->pop()->getInt(); // mode is unused
+
+		_renderer->setWindowed(type);
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] ChangeWindowGrab
+	// Used at game.script on "Keypress" event on F11
+	// Readme of FoxTail says: "F11 - free the mouse pointer from the window"
+	// This implementation does nothing
+	// Return value is never used
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "ChangeWindowGrab") == 0) {
+		stack->correctParams(0);
+		stack->pushNULL();
+
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [FoxTail] GetFiles
+	// Used at kalimba.script on F9 keypress to reload list of available music
+	// Known params: "*.mb"
+	// Original implementation does not seem to look up at DCP packages
+	// This implementation looks up at savegame storage and for actual files
+	// Return value expected to be an Array of Strings
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetFiles") == 0) {
+		stack->correctParams(1);
+		const char *pattern = stack->pop()->getString();
+
+		Common::StringArray fnames;
+		BaseFileManager::getEngineInstance()->listMatchingFiles(fnames, pattern);
+
+		stack->pushInt(0);
+		BaseScriptable *arr = makeSXArray(_game, stack);
+		for (uint32 i = 0; i < fnames.size(); i++) {
+			stack->pushString(fnames[i].c_str());
+			((SXArray *)arr)->push(stack->pop());
+		}
+
+ 		stack->pushNative(arr, false);
+ 		return STATUS_OK;
+	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1796,6 +1950,94 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
+#ifdef ENABLE_HEROCRAFT
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetSpriteControl
+	// Returns some internal state
+	// Known return values are:
+	// * 44332211: MUST be returned at "game.script" to allow game start
+	// * 77885566: may be returned at "mainMenu.script" to force open registration window
+	// * 90123679: may be returned at "mainMenu.script" to make "Buy Game" button visible
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetSpriteControl") == 0) {
+		stack->correctParams(0);
+		stack->pushInt(44332211L);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] RandomInitSeed
+	// Additional method to be called before RandomSeed()
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RandomInitSeed") == 0) {
+		stack->correctParams(1);
+		int seed = stack->pop()->getInt();
+
+		_rndHc->setSeed(seed);
+
+		stack->pushNULL();
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] RandomSeed
+	// Similar to usual Random() function, but using seed provided earlier
+	// Used at "Pole Chudes" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "RandomSeed") == 0) {
+		stack->correctParams(2);
+
+		int from = stack->pop()->getInt();
+		int to   = stack->pop()->getInt();
+		int rnd  = _rndHc->getRandomNumberRng(from, to);
+
+		stack->pushInt(rnd);
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] GetImageInfo
+	// Returns image size in "<width>;<height>" format, e.g. "800;600"
+	// Known params: "fsdata\\splash1.jpg"
+	// Game script turn off scaling if returned value is "1024;768"
+	// Used at "Papa's Daughters 1" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "GetImageInfo") == 0) {
+		stack->correctParams(1);
+		/*const char *filename =*/ stack->pop()->getString();
+		stack->pushString("1024;768");
+		return STATUS_OK;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// [HeroCraft] A lot of functions used for self-check
+	// Used at "Papa's Daughters 2" only
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "DeleteItems") == 0 || strcmp(name, "CreateActorItems") == 0 || strcmp(name, "DeleteActorItems") == 0 || strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0 || strcmp(name, "PrepareItemsWin") == 0 || strcmp(name, "CreateItems") == 0) {
+		stack->correctParams(3);
+		uint32 a = (uint32)stack->pop()->getInt();
+		uint32 b = (uint32)stack->pop()->getInt();
+		uint32 c = (uint32)stack->pop()->getInt();
+
+		uint32 result = 0;
+		const char* fname = "PapasDaughters2.wrp.exe";
+		if (strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0) {
+			result = getFilePartChecksumHc(fname, b, a);
+		} else if (strcmp(name, "PrepareItemsWin") == 0) {
+			result = getFilePartChecksumHc(fname, b, c);
+		} else if (strcmp(name, "CreateItems") == 0) {
+			result = getFilePartChecksumHc(fname, a, c);
+		} else {
+			result = getFilePartChecksumHc(fname, a, b);
+		}
+
+		stack->pushInt(result);
+		return STATUS_OK;
+	}
+#endif
+
 	//////////////////////////////////////////////////////////////////////////
 	// SaveGame
 	//////////////////////////////////////////////////////////////////////////
@@ -1803,11 +2045,11 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->correctParams(3);
 		int slot = stack->pop()->getInt();
 		const char *xdesc = stack->pop()->getString();
-		bool quick = stack->pop()->getBool(false);
-
 		size_t descSize = strlen(xdesc) + 1;
 		char *desc = new char[descSize];
 		Common::strcpy_s(desc, descSize, xdesc);
+		bool quick = stack->pop()->getBool(false);
+
 		stack->pushBool(true);
 		if (DID_FAIL(saveGame(slot, desc, quick))) {
 			stack->pop();
@@ -1850,63 +2092,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		stack->pushString(desc.c_str());
 		return STATUS_OK;
 	}
-
-#ifdef ENABLE_FOXTAIL
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] GetSaveSlotDescriptionTimestamp
-	// Return struct with "Description" and "Timestamp" fields in 1.2.362-
-	// Return array  with "Description" and "Timestamp" items  in 1.2.527+
-	// Timestamps should be comparable types
-	// Used to sort saved games by timestamps at save.script & load.script
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSaveSlotDescriptionTimestamp") == 0) {
-		stack->correctParams(1);
-		int slot = stack->pop()->getInt();
-
-		TimeDate time;
-		getSaveSlotTimestamp(slot, &time);
-		stack->pushInt(time.tm_sec);
-		stack->pushInt(time.tm_min);
-		stack->pushInt(time.tm_hour);
-		stack->pushInt(time.tm_mday);
-		stack->pushInt(time.tm_mon + 1);
-		stack->pushInt(time.tm_year + 1900);
-		stack->pushInt(6);
-		BaseScriptable *date = makeSXDate(_game, stack);
-		stack->pushNative(date, false);
-
-		Common::String desc;
-		getSaveSlotDescription(slot, desc);
-		stack->pushString(desc.c_str());
-
-		BaseScriptable *obj;
-		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
-			stack->pushInt(2);
-			obj = makeSXArray(_game, stack);
-		} else {
-			stack->pushInt(0);
-			obj = makeSXObject(_game, stack);
-			obj->scSetProperty("Description", stack->pop());
-			obj->scSetProperty("Timestamp", stack->pop());
-		}
-		stack->pushNative(obj, false);
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] ValidSaveSlotVersion
-	// Checks if given slot stores game state of compatible game version
-	// This version always returs true
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ValidSaveSlotVersion") == 0) {
-		stack->correctParams(1);
-		/* int slot = */ stack->pop()->getInt();
-		// do nothing
-		stack->pushBool(true);
-		return STATUS_OK;
-	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// EmptySaveSlot
@@ -2511,94 +2696,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-#ifdef ENABLE_HEROCRAFT
-	//////////////////////////////////////////////////////////////////////////
-	// [HeroCraft] GetSpriteControl
-	// Returns some internal state
-	// Known return values are:
-	// * 44332211: MUST be returned at "game.script" to allow game start
-	// * 77885566: may be returned at "mainMenu.script" to force open registration window
-	// * 90123679: may be returned at "mainMenu.script" to make "Buy Game" button visible
-	// Used at "Pole Chudes" only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetSpriteControl") == 0) {
-		stack->correctParams(0);
-		stack->pushInt(44332211L);
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [HeroCraft] RandomInitSeed
-	// Additional method to be called before RandomSeed()
-	// Used at "Pole Chudes" only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RandomInitSeed") == 0) {
-		stack->correctParams(1);
-		int seed = stack->pop()->getInt();
-
-		_rndHc->setSeed(seed);
-
-		stack->pushNULL();
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [HeroCraft] RandomSeed
-	// Similar to usual Random() function, but using seed provided earlier
-	// Used at "Pole Chudes" only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "RandomSeed") == 0) {
-		stack->correctParams(2);
-
-		int from = stack->pop()->getInt();
-		int to   = stack->pop()->getInt();
-		int rnd  = _rndHc->getRandomNumberRng(from, to);
-
-		stack->pushInt(rnd);
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [HeroCraft] GetImageInfo
-	// Returns image size in "<width>;<height>" format, e.g. "800;600"
-	// Known params: "fsdata\\splash1.jpg"
-	// Game script turn off scaling if returned value is "1024;768"
-	// Used at "Papa's Daughters 1" only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetImageInfo") == 0) {
-		stack->correctParams(1);
-		/*const char *filename =*/ stack->pop()->getString();
-		stack->pushString("1024;768");
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [HeroCraft] A lot of functions used for self-check
-	// Used at "Papa's Daughters 2" only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "DeleteItems") == 0 || strcmp(name, "CreateActorItems") == 0 || strcmp(name, "DeleteActorItems") == 0 || strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0 || strcmp(name, "PrepareItemsWin") == 0 || strcmp(name, "CreateItems") == 0) {
-		stack->correctParams(3);
-		uint32 a = (uint32)stack->pop()->getInt();
-		uint32 b = (uint32)stack->pop()->getInt();
-		uint32 c = (uint32)stack->pop()->getInt();
-
-		uint32 result = 0;
-		const char* fname = "PapasDaughters2.wrp.exe";
-		if (strcmp(name, "PrepareItems") == 0 || strcmp(name, "CreateEntityItems") == 0 || strcmp(name, "DeleteEntityItems") == 0) {
-			result = getFilePartChecksumHc(fname, b, a);
-		} else if (strcmp(name, "PrepareItemsWin") == 0) {
-			result = getFilePartChecksumHc(fname, b, c);
-		} else if (strcmp(name, "CreateItems") == 0) {
-			result = getFilePartChecksumHc(fname, a, c);
-		} else {
-			result = getFilePartChecksumHc(fname, a, b);
-		}
-
-		stack->pushInt(result);
-		return STATUS_OK;
-	}
-#endif
-
 	//////////////////////////////////////////////////////////////////////////
 	// EnableScriptProfiling
 	//////////////////////////////////////////////////////////////////////////
@@ -2621,120 +2718,6 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		return STATUS_OK;
 	}
 
-#ifdef ENABLE_FOXTAIL
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] GetScreenType
-	// Returns 0 on fullscreen and 1 on window
-	// Used to init and update controls at options.script and methods.script
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetScreenType") == 0) {
-		stack->correctParams(0);
-		int type = _renderer->isWindowed() ? 1 : 0;
-		stack->pushInt(type);
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] GetScreenMode
-	// Returns integer to be used as a pixelization mode multiplier
-	// (e.g. it returns 2 for 640x360, 3 for 960x540, etc...)
-	// Used to init and update controls at options.script and methods.script
-	// This implementation always return 2 to fake window size of 2*320 x 2*180
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetScreenMode") == 0) {
-		stack->correctParams(0);
-		stack->pushInt(2);
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] GetDesktopDisplayMode
-	// Return struct with "w" and "h" fields in 1.2.362-
-	// Return array  with "w" and "h" items  in 1.2.527+
-	// Used to init and update controls at options.script and methods.script
-	// w,h of actual desktop size expected to calcucate maximum available size
-	// Available screen modes are calcucated as 2...N, N*320<w and N*180<h
-	// This implementation fakes available size as 2*320 x 2*180 only
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetDesktopDisplayMode") == 0) {
-		stack->correctParams(0);
-		stack->pushInt(2 * 180 + 1);
-		stack->pushInt(2 * 320 + 1);
-
-		BaseScriptable *obj;
-		if (BaseEngine::instance().isFoxTail(FOXTAIL_1_2_527, FOXTAIL_LATEST_VERSION)) {
-			stack->pushInt(2);
-			obj = makeSXArray(_game, stack);
-		} else {
-			stack->pushInt(0);
-			obj = makeSXObject(_game, stack);
-			obj->scSetProperty("w", stack->pop());
-			obj->scSetProperty("h", stack->pop());
-		}
-		stack->pushNative(obj, false);
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] SetScreenTypeMode
-	// This implementation ignores mode, toggles screen type only
-	// Used to change screen type&mode at options.script and methods.script
-	// Return value is never used
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "SetScreenTypeMode") == 0) {
-		stack->correctParams(2);
-		int type = stack->pop()->getInt();
-		stack->pop()->getInt(); // mode is unused
-
-		_renderer->setWindowed(type);
-		stack->pushNULL();
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] ChangeWindowGrab
-	// Used at game.script on "Keypress" event on F11
-	// Readme of FoxTail says: "F11 - free the mouse pointer from the window"
-	// This implementation does nothing
-	// Return value is never used
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "ChangeWindowGrab") == 0) {
-		stack->correctParams(0);
-		stack->pushNULL();
-
-		return STATUS_OK;
-	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// [FoxTail] GetFiles
-	// Used at kalimba.script on F9 keypress to reload list of available music
-	// Known params: "*.mb"
-	// Original implementation does not seem to look up at DCP packages
-	// This implementation looks up at savegame storage and for actual files
-	// Return value expected to be an Array of Strings
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "GetFiles") == 0) {
-		stack->correctParams(1);
-		const char *pattern = stack->pop()->getString();
-
-		Common::StringArray fnames;
-		BaseFileManager::getEngineInstance()->listMatchingFiles(fnames, pattern);
-
-		stack->pushInt(0);
-		BaseScriptable *arr = makeSXArray(_game, stack);
-		for (uint32 i = 0; i < fnames.size(); i++) {
-			stack->pushString(fnames[i].c_str());
-			((SXArray *)arr)->push(stack->pop());
-		}
-
- 		stack->pushNative(arr, false);
- 		return STATUS_OK;
-	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// ShowStatusLine
@@ -2922,11 +2905,10 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// Keyboard (RO)
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "Keyboard") {
-		if (_keyboardState) {
+		if (_keyboardState)
 			_scValue->setNative(_keyboardState, true);
-		} else {
+		else
 			_scValue->setNULL();
-		}
 
 		return _scValue;
 	}
@@ -3044,7 +3026,6 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 		_scValue->setBool(_suppressScriptErrors);
 		return _scValue;
 	}
-
 
 	//////////////////////////////////////////////////////////////////////////
 	// Frozen
@@ -3616,8 +3597,6 @@ const char *BaseGame::scToString() {
 	return "[game object]";
 }
 
-
-
 #define QUICK_MSG_DURATION 3000
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayQuickMsg() {
@@ -3644,7 +3623,6 @@ bool BaseGame::displayQuickMsg() {
 	return STATUS_OK;
 }
 
-
 #define MAX_QUICK_MSG 5
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessage(const char *text) {
@@ -3654,7 +3632,6 @@ void BaseGame::quickMessage(const char *text) {
 	}
 	_quickMessages.add(new BaseQuickMsg(_currentTime,  text));
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::quickMessageForm(char *fmt, ...) {
@@ -3667,7 +3644,6 @@ void BaseGame::quickMessageForm(char *fmt, ...) {
 
 	quickMessage(buff);
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::registerObject(BaseObject *object) {
@@ -3724,7 +3700,6 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::invalidateValues(void *value, void *data) {
 	ScValue *val = (ScValue *)value;
@@ -3736,8 +3711,6 @@ void BaseGame::invalidateValues(void *value, void *data) {
 		val->setNULL();
 	}
 }
-
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::validObject(BaseObject *object) {
@@ -3755,7 +3728,6 @@ bool BaseGame::validObject(BaseObject *object) {
 	}
 	return false;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) {
@@ -3801,16 +3773,6 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Directory
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "Directory") == 0) {
-		thisObj = thisStack->getTop();
-
-		thisObj->setNative(makeSXDirectory(_game));
-		stack->pushNULL();
-	}
-
-	//////////////////////////////////////////////////////////////////////////
 	// Date
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "Date") == 0) {
@@ -3827,6 +3789,16 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		thisObj = thisStack->getTop();
 
 		thisObj->setNative(makeSXArray(_game,  stack));
+		stack->pushNULL();
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// Directory
+	//////////////////////////////////////////////////////////////////////////
+	else if (strcmp(name, "Directory") == 0) {
+		thisObj = thisStack->getTop();
+
+		thisObj->setNative(makeSXDirectory(_game));
 		stack->pushNULL();
 	}
 
@@ -4128,7 +4100,6 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 		delete[] copy;
 	}
 #endif
-
 	//////////////////////////////////////////////////////////////////////////
 	// Plugins: emulate object constructors from known "wme_*.dll" plugins
 	//////////////////////////////////////////////////////////////////////////
@@ -4405,7 +4376,6 @@ bool BaseGame::playMusic(int channel, const char *filename, bool looping, uint32
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::stopMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -4422,7 +4392,6 @@ bool BaseGame::stopMusic(int channel) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pauseMusic(int channel) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -4436,7 +4405,6 @@ bool BaseGame::pauseMusic(int channel) {
 		return STATUS_FAILED;
 	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::resumeMusic(int channel) {
@@ -4452,7 +4420,6 @@ bool BaseGame::resumeMusic(int channel) {
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::setMusicStartTime(int channel, uint32 time) {
 	if (channel >= NUM_MUSIC_CHANNELS) {
@@ -4466,78 +4433,6 @@ bool BaseGame::setMusicStartTime(int channel, uint32 time) {
 	} else {
 		return STATUS_OK;
 	}
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::updateMusicCrossfade() {
-	if (!_musicCrossfadeRunning) {
-		return STATUS_OK;
-	}
-	if (_state == GAME_FROZEN) {
-		return STATUS_OK;
-	}
-
-	if (_musicCrossfadeChannel1 < 0 || _musicCrossfadeChannel1 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel1]) {
-		_musicCrossfadeRunning = false;
-		return STATUS_OK;
-	}
-	if (_musicCrossfadeChannel2 < 0 || _musicCrossfadeChannel2 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel2]) {
-		_musicCrossfadeRunning = false;
-		return STATUS_OK;
-	}
-
-	if (!_music[_musicCrossfadeChannel1]->isPlaying()) {
-		_music[_musicCrossfadeChannel1]->play();
-	}
-	if (!_music[_musicCrossfadeChannel2]->isPlaying()) {
-		_music[_musicCrossfadeChannel2]->play();
-	}
-
-	uint32 currentTime = _game->_liveTimer - _musicCrossfadeStartTime;
-
-	if (currentTime >= _musicCrossfadeLength) {
-		_musicCrossfadeRunning = false;
-
-		if (_musicCrossfadeVolume2 == 0) {
-			_music[_musicCrossfadeChannel2]->stop();
-			_music[_musicCrossfadeChannel2]->setVolumePercent(100);
-		} else {
-			_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume2);
-		}
-
-		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
-			if (_musicCrossfadeVolume1 == 0) {
-				_music[_musicCrossfadeChannel1]->stop();
-				_music[_musicCrossfadeChannel1]->setVolumePercent(100);
-			} else {
-				_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume1);
-			}
-		}
-
-		if (_musicCrossfadeSwap) {
-			// swap channels
-			BaseSound *dummy = _music[_musicCrossfadeChannel1];
-			int dummyInt = _musicStartTime[_musicCrossfadeChannel1];
-
-			_music[_musicCrossfadeChannel1] = _music[_musicCrossfadeChannel2];
-			_musicStartTime[_musicCrossfadeChannel1] = _musicStartTime[_musicCrossfadeChannel2];
-
-			_music[_musicCrossfadeChannel2] = dummy;
-			_musicStartTime[_musicCrossfadeChannel2] = dummyInt;
-		}
-	} else {
-		float progress = (float)currentTime / (float)_musicCrossfadeLength;
-		int volumeDelta = (int)((_musicCrossfadeVolume1 - _musicCrossfadeVolume2)*progress);
-		_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume1 - volumeDelta);
-		BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel2, _musicCrossfadeVolume1 - volumeDelta);
-
-		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
-			_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume2 + volumeDelta);
-			BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel1, _musicCrossfadeVolume2 + volumeDelta);
-		}
-	}
-
-	return STATUS_OK;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -4780,7 +4675,6 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::focusWindow(UIWindow *window) {
 	UIWindow *prev = _focusedWindow;
@@ -4804,7 +4698,6 @@ bool BaseGame::focusWindow(UIWindow *window) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::freeze(bool includingMusic) {
 	if (_freezeLevel == 0) {
@@ -4819,7 +4712,6 @@ bool BaseGame::freeze(bool includingMusic) {
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::unfreeze() {
@@ -4965,7 +4857,6 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 				_game->_focusedWindow->applyEvent("MouseWheelUp");
 				handled = true;
 			}
-
 		}
 	}
 
@@ -4981,16 +4872,6 @@ bool BaseGame::handleMouseWheel(int32 delta) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
-bool BaseGame::handleCustomActionEnd(BaseGameCustomAction action) {
-	return false;
-}
-
-//////////////////////////////////////////////////////////////////////////
 bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const {
 	if (verMajor) {
 		*verMajor = DCGF_VER_MAJOR;
@@ -4999,25 +4880,21 @@ bool BaseGame::getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *
 		*verMinor = DCGF_VER_MINOR;
 	}
 
-	if (extMajor) {
+	if (extMajor)
 		*extMajor = 0;
-	}
-	if (extMinor) {
+	if (extMinor)
 		*extMinor = 0;
-	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setWindowTitle() {
 	if (_renderer) {
 		char title[512];
 		Common::strlcpy(title, _caption[0], 512);
-		if (title[0] != '\0') {
+		if (title[0] != '\0')
 			Common::strlcat(title, " - ", 512);
-		}
 		Common::strlcat(title, "Wintermute Engine", 512);
 
 		// ignoring setting window title
@@ -5122,32 +4999,28 @@ bool BaseGame::pushViewport(BaseViewport *viewport) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::popViewport() {
 	_viewportSP--;
-	if (_viewportSP < -1) {
+	if (_viewportSP < -1)
 		_game->LOG(0, "Fatal: Viewport stack underflow!");
-	}
 
-	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize()) {
+	if (_viewportSP >= 0 && _viewportSP < _viewportStack.getSize())
 		_renderer->setViewport(_viewportStack[_viewportSP]->getRect());
-	} else {
+	else
 		_renderer->setViewport(_renderer->_drawOffsetX,
 		                      _renderer->_drawOffsetY,
 		                      _renderer->getWidth() + _renderer->_drawOffsetX,
 		                      _renderer->getHeight() + _renderer->_drawOffsetY);
-	}
 
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) const {
-	if (rect == nullptr) {
+	if (rect == nullptr)
 		return STATUS_FAILED;
-	} else {
+	else {
 		if (_viewportSP >= 0) {
 			BasePlatform::copyRect(rect, _viewportStack[_viewportSP]->getRect());
 			if (custom) {
@@ -5159,58 +5032,47 @@ bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) const 
 			              _renderer->_drawOffsetY,
 			              _renderer->getWidth() + _renderer->_drawOffsetX,
 			              _renderer->getHeight() + _renderer->_drawOffsetY);
-			if (custom) {
+			if (custom)
 				*custom = false;
-			}
 		}
 
 		return STATUS_OK;
 	}
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::getCurrentViewportOffset(int *offsetX, int *offsetY) const {
 	if (_viewportSP >= 0) {
-		if (offsetX) {
+		if (offsetX)
 			*offsetX = _viewportStack[_viewportSP]->_offsetX;
-		}
-		if (offsetY) {
+		if (offsetY)
 			*offsetY = _viewportStack[_viewportSP]->_offsetY;
-		}
 	} else {
-		if (offsetX) {
+		if (offsetX)
 			*offsetX = 0;
-		}
-		if (offsetY) {
+		if (offsetY)
 			*offsetY = 0;
-		}
 	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::windowLoadHook(UIWindow *win, char **buf, char **params) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *stack, const char *name) {
 	return STATUS_FAILED;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::setInteractive(bool state) {
 	_interactive = state;
-	if (_transMgr) {
+	if (_transMgr)
 		_transMgr->_origInteractive = state;
-	}
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 void BaseGame::resetMousePos() {
@@ -5232,12 +5094,10 @@ bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayContentSimple() {
 	// clear screen
 	_renderer->clear();
-
 	if (_indicatorDisplay) {
 #ifdef ENABLE_FOXTAIL
 		if (BaseEngine::instance().isFoxTail())
@@ -5275,6 +5135,78 @@ bool BaseGame::displayIndicator() {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseGame::updateMusicCrossfade() {
+	if (!_musicCrossfadeRunning) {
+		return STATUS_OK;
+	}
+	if (_state == GAME_FROZEN) {
+		return STATUS_OK;
+	}
+
+	if (_musicCrossfadeChannel1 < 0 || _musicCrossfadeChannel1 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel1]) {
+		_musicCrossfadeRunning = false;
+		return STATUS_OK;
+	}
+	if (_musicCrossfadeChannel2 < 0 || _musicCrossfadeChannel2 >= NUM_MUSIC_CHANNELS || !_music[_musicCrossfadeChannel2]) {
+		_musicCrossfadeRunning = false;
+		return STATUS_OK;
+	}
+
+	if (!_music[_musicCrossfadeChannel1]->isPlaying()) {
+		_music[_musicCrossfadeChannel1]->play();
+	}
+	if (!_music[_musicCrossfadeChannel2]->isPlaying()) {
+		_music[_musicCrossfadeChannel2]->play();
+	}
+
+	uint32 currentTime = _game->_liveTimer - _musicCrossfadeStartTime;
+
+	if (currentTime >= _musicCrossfadeLength) {
+		_musicCrossfadeRunning = false;
+
+		if (_musicCrossfadeVolume2 == 0) {
+			_music[_musicCrossfadeChannel2]->stop();
+			_music[_musicCrossfadeChannel2]->setVolumePercent(100);
+		} else {
+			_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume2);
+		}
+
+		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
+			if (_musicCrossfadeVolume1 == 0) {
+				_music[_musicCrossfadeChannel1]->stop();
+				_music[_musicCrossfadeChannel1]->setVolumePercent(100);
+			} else {
+				_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume1);
+			}
+		}
+
+		if (_musicCrossfadeSwap) {
+			// swap channels
+			BaseSound *dummy = _music[_musicCrossfadeChannel1];
+			int dummyInt = _musicStartTime[_musicCrossfadeChannel1];
+
+			_music[_musicCrossfadeChannel1] = _music[_musicCrossfadeChannel2];
+			_musicStartTime[_musicCrossfadeChannel1] = _musicStartTime[_musicCrossfadeChannel2];
+
+			_music[_musicCrossfadeChannel2] = dummy;
+			_musicStartTime[_musicCrossfadeChannel2] = dummyInt;
+		}
+	} else {
+		float progress = (float)currentTime / (float)_musicCrossfadeLength;
+		int volumeDelta = (int)((_musicCrossfadeVolume1 - _musicCrossfadeVolume2)*progress);
+		_music[_musicCrossfadeChannel2]->setVolumePercent(_musicCrossfadeVolume1 - volumeDelta);
+		BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel2, _musicCrossfadeVolume1 - volumeDelta);
+
+		if (_musicCrossfadeChannel1 != _musicCrossfadeChannel2) {
+			_music[_musicCrossfadeChannel1]->setVolumePercent(_musicCrossfadeVolume2 + volumeDelta);
+			BaseEngine::LOG(0, "Setting music channel %d volume to %d", _musicCrossfadeChannel1, _musicCrossfadeVolume2 + volumeDelta);
+		}
+	}
+
+	return STATUS_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseGame::resetContent() {
 	_scEngine->clearGlobals();
 	//_timer = 0;
@@ -5288,14 +5220,11 @@ void BaseGame::DEBUG_DumpClassRegistry() {
 	warning("DEBUG_DumpClassRegistry - untested");
 	Common::DumpFile *f = new Common::DumpFile;
 	f->open("zz_class_reg_dump.log");
-
 	SystemClassRegistry::getInstance()->dumpClasses(f);
-
 	f->close();
 	delete f;
 	_game->quickMessage("Classes dump completed.");
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::invalidateDeviceObjects() {
@@ -5304,7 +5233,6 @@ bool BaseGame::invalidateDeviceObjects() {
 	}
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::restoreDeviceObjects() {
@@ -5328,6 +5256,97 @@ bool BaseGame::setWaitCursor(const char *filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+/*HRESULT CBGame::BindDirectX() {
+	memset(&m_DirectX, 0, sizeof(TDirectXBindings));
+
+	// load libraries
+	m_DirectX.hDDraw = CBPlatform::LoadLibrary("ddraw.dll");
+#ifdef WME_D3D9
+	m_DirectX.hD3D = CBPlatform::LoadLibrary("d3d9.dll");
+#else
+	m_DirectX.hD3D = CBPlatform::LoadLibrary("d3d8.dll");
+	m_DirectX.hDXof = CBPlatform::LoadLibrary("d3dxof.dll");
+#endif
+	m_DirectX.hDSound = CBPlatform::LoadLibrary("dsound.dll");
+
+	// bind DirectDraw
+	if (m_DirectX.hDDraw) {
+		m_DirectX.DirectDrawCreateEx = (DLL_DirectDrawCreateEx)CBPlatform::GetProcAddress(m_DirectX.hDDraw, "DirectDrawCreateEx");
+		m_DirectX.DirectDrawEnumerateEx = (DLL_DirectDrawEnumerateEx)CBPlatform::GetProcAddress(m_DirectX.hDDraw, "DirectDrawEnumerateExA");
+	}
+
+	// bind Direct3D
+	if (m_DirectX.hD3D) {
+#ifdef WME_D3D9
+		m_DirectX.Direct3DCreate = (DLL_Direct3DCreate)CBPlatform::GetProcAddress(m_DirectX.hD3D, "Direct3DCreate9");
+#else
+		m_DirectX.Direct3DCreate = (DLL_Direct3DCreate)CBPlatform::GetProcAddress(m_DirectX.hD3D, "Direct3DCreate8");
+#endif
+	}
+
+	// bind DirectSound
+	if (m_DirectX.hDSound) {
+		m_DirectX.DirectSoundCreate8 = (DLL_DirectSoundCreate8)CBPlatform::GetProcAddress(m_DirectX.hDSound, "DirectSoundCreate8");
+		m_DirectX.DirectSoundEnumerate = (DLL_DirectSoundEnumerate)CBPlatform::GetProcAddress(m_DirectX.hDSound, "DirectSoundEnumerateA");
+	}
+
+#ifndef WME_D3D9
+	// bind DirectXFile
+	if (m_DirectX.hDXof) {
+		m_DirectX.DirectXFileCreate = (DLL_DirectXFileCreate)CBPlatform::GetProcAddress(m_DirectX.hDXof, "DirectXFileCreate");
+	}
+#endif
+	return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBGame::UnBindDirectX() {
+	if (m_DirectX.hDDraw)
+		CBPlatform::FreeLibrary(m_DirectX.hDDraw);
+	if (m_DirectX.hD3D)
+		CBPlatform::FreeLibrary(m_DirectX.hD3D);
+	if (m_DirectX.hDSound)
+		CBPlatform::FreeLibrary(m_DirectX.hDSound);
+#ifndef WME_D3D9
+	if (m_DirectX.hDXof)
+		CBPlatform::FreeLibrary(m_DirectX.hDXof);
+#endif
+	memset(&m_DirectX, 0, sizeof(TDirectXBindings));
+	return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::IsDirectXBound() {
+	if (!m_DirectX.hDDraw)
+		return false;
+	if (!m_DirectX.hD3D)
+		return false;
+	if (!m_DirectX.hDSound)
+		return false;
+
+	if (!m_DirectX.Direct3DCreate)
+		return false;
+	if (!m_DirectX.DirectDrawCreateEx)
+		return false;
+	if (!m_DirectX.DirectDrawEnumerateEx)
+		return false;
+	if (!m_DirectX.DirectSoundCreate8)
+		return false;
+	if (!m_DirectX.DirectSoundEnumerate)
+		return false;
+
+#ifndef WME_D3D9
+	if (!m_DirectX.hDXof)
+		return false;
+	if (!m_DirectX.DirectXFileCreate)
+		return false;
+#endif
+
+	return true;
+}*/
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseGame::isVideoPlaying() {
 	if (_videoPlayer->isPlaying()) {
 		return true;
@@ -5349,7 +5368,6 @@ bool BaseGame::stopVideo() {
 	return STATUS_OK;
 }
 
-
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::drawCursor(BaseSprite *cursor) {
 	if (!cursor) {
@@ -5366,6 +5384,161 @@ bool BaseGame::drawCursor(BaseSprite *cursor) {
 bool BaseGame::renderShadowGeometry() {
 	return STATUS_OK;
 }
+
+//////////////////////////////////////////////////////////////////////////
+// IWmeGame
+//////////////////////////////////////////////////////////////////////////
+/*IWmeValue *CBGame::CreateValue() {
+	return new CScValue(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::DeleteValue(IWmeValue *Value) {
+	if (Value)
+		delete (CScValue *)Value;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeParamSet *CBGame::CreateParamSet() {
+	return new CBParamSet(this);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::DeleteParamSet(IWmeParamSet *ParamSet) {
+	if (ParamSet)
+		delete (CBParamSet *)ParamSet;
+	return true;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SubscribeEvent(IWmeObject *Object, EWmeEvent Event) {
+	return m_PluginMgr->SubscribeEvent(Object, Event);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::UnsubscribeEvent(IWmeObject *Object, EWmeEvent Event) {
+	return m_PluginMgr->UnsubscribeEvent(Object, Event);
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeFile *CBGame::OpenFile(const char *Filename) {
+	return (IWmeFile *)m_FileManager->OpenFile((char *)Filename);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::CloseFile(IWmeFile *File) {
+	return SUCCEEDED(m_FileManager->CloseFile((CBFile *)File));
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeObject *CBGame::CreateObject(const char *ClassName, IWmeParamSet *Params) {
+	// CScValue* Ret = new CScValue(Game);
+	IWmeObject *Ret = NULL;
+
+	CScStack *Stack = new CScStack(Game);
+	if (Params)
+		((CBParamSet *)Params)->PushToStack(Stack);
+	else
+		Stack->PushInt(0);
+
+	CScStack *ThisStack = new CScStack(Game);
+	ThisStack->PushNULL();
+
+	CScScript *Script = new CScScript(Game, Game->m_ScEngine);
+	CBUtils::SetString(&Script->m_Filename, "<temp script>");
+
+	if (SUCCEEDED(ExternalCall(Script, Stack, ThisStack, (char *)ClassName))) {
+		CBScriptable *Obj = ThisStack->Pop()->GetNative();
+		if (Obj) {
+			// Ret->SetNative(Obj);
+			Obj->m_RefCount++;
+			Ret = Obj;
+		}
+	}
+
+	delete Stack;
+	delete ThisStack;
+	delete Script;
+
+	if (Ret)
+		((CBScriptable *)Ret)->m_RefCount--;
+	return Ret;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// IWmeObject
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SendEvent(const char *EventName) {
+	return CBScriptHolder::SendEvent(EventName);
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeValue *CBGame::CallMethod(const char *MethodName, IWmeParamSet *Params) {
+	return CBScriptHolder::CallMethod(MethodName, Params);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, IWmeValue *Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, int Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, const char *Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, double Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, bool Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName, IWmeObject *Value) {
+	return CBScriptHolder::SetProperty(PropName, Value);
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool CBGame::SetProperty(const char *PropName) {
+	return CBScriptHolder::SetProperty(PropName);
+}
+
+//////////////////////////////////////////////////////////////////////////
+IWmeValue *CBGame::GetProperty(const char *PropName) {
+	return CBScriptHolder::GetProperty(PropName);
+}
+
+//////////////////////////////////////////////////////////////////////////
+void *CBGame::GetInterface(const char *ClassName) {
+	return CBScriptHolder::GetInterface(ClassName);
+}*/
+
+//////////////////////////////////////////////////////////////////////////
+/*CBObject *CBGame::GetNextAccessObject(CBObject *CurrObject) {
+	if (m_FocusedWindow) {
+		return m_FocusedWindow->GetNextAccessObject(CurrObject);
+	} else
+		return NULL;
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+CBObject *CBGame::GetPrevAccessObject(CBObject *CurrObject) {
+	if (m_FocusedWindow) {
+		return m_FocusedWindow->GetPrevAccessObject(CurrObject);
+	} else
+		return NULL;
+}*/
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -5612,7 +5785,6 @@ bool BaseGame::displayDebugInfo() {
 		Common::sprintf_s(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
-
 		Common::sprintf_s(str, "Timer: %d", _timer);
 		_game->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
@@ -5634,7 +5806,6 @@ bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
 	if (maxShadowType > SHADOW_STENCIL) {
 		maxShadowType = SHADOW_STENCIL;
 	}
-
 	if (maxShadowType < 0) {
 		maxShadowType = SHADOW_NONE;
 	}
@@ -5642,7 +5813,6 @@ bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
 	if (maxShadowType == SHADOW_FLAT && !_supportsRealTimeShadows) {
 		maxShadowType = SHADOW_SIMPLE;
 	}
-
 	_maxShadowType = maxShadowType;
 
 	return STATUS_OK;
@@ -5650,11 +5820,10 @@ bool BaseGame::setMaxShadowType(TShadowType maxShadowType) {
 
 //////////////////////////////////////////////////////////////////////////
 TShadowType BaseGame::getMaxShadowType(BaseObject *object) {
-	if (!object) {
+	if (!object)
 		return _maxShadowType;
-	} else {
+	else
 		return MIN(_maxShadowType, object->_shadowType);
-	}
 }
 #endif
 
@@ -5781,6 +5950,16 @@ bool BaseGame::isDoubleClick(int32 buttonIndex) {
 		_lastClick[buttonIndex].time = 0;
 		return true;
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionStart(BaseGameCustomAction action) {
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool BaseGame::handleCustomActionEnd(BaseGameCustomAction action) {
+	return false;
 }
 
 //////////////////////////////////////////////////////////////////////////
