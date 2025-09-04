@@ -216,10 +216,14 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
 			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
 				ImGui::PushFont(ImGui::GetIO().FontDefault);
-				ImGui::TextUnformatted("-\uf819");
+				ImGui::TextUnformatted("\uf819");
 				ImGui::PopFont();
 			} else {
-				ImGui::Selectable(" ");
+				if (sprite._castId.member) {
+					ImGui::Selectable("─");
+				} else {
+					ImGui::Selectable("  ");
+				}
 			}
 			mode1 = -1; // Skip cell data rendering
 		}
@@ -549,6 +553,10 @@ void showScore() {
 
 			ImGui::SameLine();
 			ImGui::Text(" of %d", numFrames);
+
+			ImGui::SameLine();
+			ImGui::Button(ICON_MS_ALIGN_JUSTIFY_CENTER, ImVec2(20, 20));
+			ImGui::SetItemTooltip("Center View");
 		}
 
 		if (tableColumns > kMaxColumnsInTable - 2) // Current restriction of ImGui
