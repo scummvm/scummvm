@@ -848,7 +848,7 @@ void Gui::drawWindowTitle(WindowReference target, Graphics::ManagedSurface *surf
 void Gui::drawDraggedObjects() {
 	for (uint i = 0; i < _draggedObjects.size(); i++) {
 		if (_draggedObjects[i].id != 0 &&
-			_engine->isObjVisible(_draggedObjects[i].id)) {
+			_engine->isObjVisible(_draggedObjects[i].id) && _draggedObjects[i].hasMoved) {
 			ensureAssetLoaded(_draggedObjects[i].id);
 			ImageAsset *asset = _assets[_draggedObjects[i].id];
 
