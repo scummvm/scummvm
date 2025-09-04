@@ -564,7 +564,7 @@ void showScore() {
 
 			const char *selMode = modes[_state->_scoreMode];
 
-			if (ImGui::BeginCombo("##", selMode)) {
+			if (ImGui::BeginCombo("##mode", selMode)) {
 				for (int n = 0; n < ARRAYSIZE(modes); n++) {
 					const bool selected = (_state->_scoreMode == n);
 					if (ImGui::Selectable(modes[n], selected))
