@@ -892,6 +892,7 @@ void MacVentureEngine::updateExits() {
 	for (uint i = 0; i < exits.size(); i++)
 		_gui->updateExit(exits[i]);
 
+	_gui->resetExitBackgroundPattern();
 }
 
 int MacVentureEngine::findObjectInArray(ObjID objID, const Common::Array<ObjID> &list) {
