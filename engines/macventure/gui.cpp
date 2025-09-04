@@ -1539,6 +1539,8 @@ bool Gui::processEvent(Common::Event &event) {
 			moveDraggedObjects(event.mouse);
 		}
 		processed = true;
+	} else if (event.type == Common::EVENT_LBUTTONUP) {
+		clearDraggedObjects();
 	}
 
 	processed |= _wm.processEvent(event);
