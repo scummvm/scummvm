@@ -160,8 +160,7 @@ bool AdObject::playAnim(const char *filename) {
 	bool res = _animSprite->loadFile(filename);
 	if (DID_FAIL(res)) {
 		_game->LOG(res, "AdObject::PlayAnim: error loading temp sprite (object:\"%s\" sprite:\"%s\")", _name, filename);
-		delete _animSprite;
-		_animSprite = nullptr;
+		SAFE_DELETE(_animSprite);
 		return res;
 	}
 	_state = STATE_PLAYING_ANIM;

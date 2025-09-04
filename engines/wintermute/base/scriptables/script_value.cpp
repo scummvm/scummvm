@@ -447,9 +447,9 @@ void ScValue::setString(const Common::String &val) {
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const char *val) {
 	delete[] _valString;
-	_valString = nullptr;
 
 	if (val == nullptr) {
+		_valString = nullptr;
 		return;
 	}
 

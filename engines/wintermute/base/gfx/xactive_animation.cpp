@@ -100,6 +100,7 @@ bool ActiveAnimation::update(int slot, bool prevFrameOnly, float lerpValue, bool
 	}
 	if (_finished) {
 		localTime = _animation->getTotalTime();
+		// prevent corner case
 		if (localTime != 0)
 			localTime--;
 	}
@@ -156,7 +157,7 @@ bool ActiveAnimation::persist(BasePersistenceManager *persistMgr) {
 			_animation = nullptr;
 		}
 
-		delete[] animName;
+		SAFE_DELETE_ARRAY(animName);
 	}
 
 	return true;

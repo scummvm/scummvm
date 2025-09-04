@@ -260,8 +260,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 		SystemClassRegistry::getInstance()->_disabled = true;
 		setSprite(filename);
 		SystemClassRegistry::getInstance()->_disabled = false;
-		delete[] filename;
-		filename = nullptr;
+		SAFE_DELETE_ARRAY(filename);
 	}
 
 	// initialise to default

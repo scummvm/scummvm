@@ -160,7 +160,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 		if (res)
 			_frames.add(childFrame);
 		else
-			delete childFrame;
+			SAFE_DELETE(childFrame);
 		return res;
 	} else if (objectType == kXClassAnimTicksPerSecond) {
 		if (!xobj->getXAnimTicksPerSecondObject()) {

@@ -1137,8 +1137,7 @@ bool PartEmitter::scSetProperty(const char *name, ScValue *value) {
 	// EmitEvent
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "EmitEvent") == 0) {
-		delete[] _emitEvent;
-		_emitEvent = nullptr;
+		SAFE_DELETE_ARRAY(_emitEvent);
 		if (!value->isNULL()) {
 			BaseUtils::setString(&_emitEvent, value->getString());
 		}

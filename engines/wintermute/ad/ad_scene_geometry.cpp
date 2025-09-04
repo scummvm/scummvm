@@ -1271,11 +1271,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				light->persist(persistMgr);
 				delete light;
 			}
-
-			if (name) {
-				delete[] name;
-				name = nullptr;
-			}
+			SAFE_DELETE_ARRAY(name);
 		}
 	}
 	createLights();
@@ -1303,11 +1299,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				block->persist(persistMgr);
 				delete block;
 			}
-
-			if (name) {
-				delete[] name;
-				name = nullptr;
-			}
+			SAFE_DELETE_ARRAY(name);
 		}
 	}
 
@@ -1334,11 +1326,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				plane->persist(persistMgr);
 				delete plane;
 			}
-
-			if (name) {
-				delete[] name;
-				name = nullptr;
-			}
+			SAFE_DELETE_ARRAY(name);
 		}
 	}
 
@@ -1365,11 +1353,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 				generic->persist(persistMgr);
 				delete generic;
 			}
-
-			if (name) {
-				delete[] name;
-				name = nullptr;
-			}
+			SAFE_DELETE_ARRAY(name);
 		}
 	}
 
