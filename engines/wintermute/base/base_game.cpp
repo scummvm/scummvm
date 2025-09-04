@@ -1529,6 +1529,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		_musicCrossfadeRunning = true;
 
+		 // FoxTail:
 		_musicCrossfadeVolume1 = 0;
 		_musicCrossfadeVolume2 = 100;
 
@@ -1636,6 +1637,8 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	// PlayVideo
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "PlayVideo") == 0) {
+		//Game->LOG(0, "Warning: Game.PlayVideo() is now deprecated. Use Game.PlayTheora() instead.");
+
 		stack->correctParams(6);
 		const char *filename = stack->pop()->getString();
 		ScValue *valType = stack->pop();
@@ -3163,6 +3166,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 	// HardwareTL
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "HardwareTL") {
+		// always support hardware transformations and lights
 		_scValue->setBool(true);
 		return _scValue;
 	}
@@ -5013,7 +5017,7 @@ void BaseGame::setWindowTitle() {
 		}
 		Common::strlcat(title, "Wintermute Engine", 512);
 
-
+		// ignoring setting window title
 		Utf8String utf8Title;
 		if (_textEncoding == TEXT_UTF8) {
 			utf8Title = Utf8String(title);
@@ -5584,9 +5588,9 @@ bool BaseGame::displayDebugInfo() {
 			_systemFont->drawText((const byte *)_activeObject->_name, 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
+		// Display used memory
 		Common::sprintf_s(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
 		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
-
 	}
 
 	return STATUS_OK;
