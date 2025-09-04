@@ -54,7 +54,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/base_viewport.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
-#include "engines/wintermute/base/saveload.h"
+#include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/scriptables/script_engine.h"
 #include "engines/wintermute/base/scriptables/script.h"
@@ -459,7 +459,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			const char *mm = "interface\\system\\mainmenu.window";
 			const char *fn = obj->getFilename();
 			if (fn && strcmp(fn, mm) == 0) {
-				deleteSaveThumbnail();
+				SAFE_DELETE(_cachedThumbnail);
 			}
 		}
 
@@ -570,7 +570,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 			if (res) {
 				res->_iD = id;
 				res->setText(text);
-				expandStringByStringTable(&res->_text);
+				_stringTable->expand(&res->_text);
 
 				if (!val1->isNULL()) {
 					res->setIcon(val1->getString());
@@ -2107,7 +2107,12 @@ bool AdGame::displayContent(bool doUpdate, bool displayAll) {
 			_inventoryBox->display();
 		if (_stateEx == GAME_WAITING_RESPONSE)
 			_responseBox->display();
-		_renderer->displayIndicator();
+#ifdef ENABLE_FOXTAIL
+		if (BaseEngine::instance().isFoxTail())
+			displayIndicatorFoxTail();
+		else
+#endif
+		displayIndicator();
 
 
 		if (doUpdate || displayAll) {

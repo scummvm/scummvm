@@ -141,7 +141,7 @@ bool BaseRenderer3D::flip() {
 	return true;
 }
 
-bool BaseRenderer3D::indicatorFlip() {
+bool BaseRenderer3D::indicatorFlip(int32 x, int32 y, int32 width, int32 height) {
 	flip();
 	return true;
 }

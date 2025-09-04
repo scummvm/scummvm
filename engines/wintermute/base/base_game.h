@@ -30,6 +30,7 @@
 
 #include "engines/wintermute/base/base_object.h"
 #include "engines/wintermute/base/base_game_custom_actions.h"
+#include "engines/wintermute/base/base_string_table.h"
 #include "engines/wintermute/ext/plugin_event.h"
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/coll_templ.h"
@@ -107,7 +108,7 @@ public:
 	bool _autorunDisabled;
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
-	virtual void miniUpdate();
+	virtual bool miniUpdate();
 
 	void getMousePos(Common::Point32 *Pos);
 	Common::Rect32 _mouseLockRect;
@@ -143,10 +144,34 @@ public:
 	bool setMaxShadowType(TShadowType maxShadowType);
 	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
 
+	bool _indicatorDisplay;
+	uint32 _indicatorColor;
+	int32 _indicatorProgress;
+	int32 _indicatorX;
+	int32 _indicatorY;
+	int32 _indicatorWidth;
+	int32 _indicatorHeight;
+
+	Common::String _savedGameExt;
+	bool _richSavedGames;
+
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
 #endif
 
+	Common::String _loadImageName;
+	Common::String _saveImageName;
+	int32 _saveImageX;
+	int32 _saveImageY;
+	int32 _loadImageX;
+	int32 _loadImageY;
+	BaseSurface *_saveLoadImage;
+	bool _hasDrawnSaveLoadImage;
+
+	bool displayIndicator();
+#ifdef ENABLE_FOXTAIL
+	bool displayIndicatorFoxTail();
+#endif
 	uint32 _thumbnailWidth;
 	uint32 _thumbnailHeight;
 
@@ -171,11 +196,8 @@ public:
 	uint32 _deltaTime;
 	BaseFont *_systemFont;
 	BaseFont *_videoFont;
-
-	// Init-functions:
 	bool initConfManSettings();
 	bool initRenderer();
-	bool loadGameSettingsFile();
 	bool initialize1();
 	bool initialize2();
 	bool initialize3();
@@ -214,13 +236,19 @@ public:
 	bool _mouseLeftDown;
 	bool _mouseRightDown;
 	bool _mouseMidlleDown;
-	// String Table
-	void expandStringByStringTable(char **str) const;
-	void expandStringByStringTable(Common::String &str) const;
-	char *getKeyFromStringTable(const char *str) const;
+	BaseStringTable *_stringTable;
 
-	BaseGameSettings *_settings;
-
+	int _settingsResWidth;
+	int _settingsResHeight;
+	bool _settingsRequireAcceleration;
+	bool _settingsAllowWindowed;
+	bool _settingsAllowAdvanced;
+	bool _settingsAllowAccessTab;
+	bool _settingsAllowAboutTab;
+	bool _settingsRequireSound;
+	bool _settingsAllowDesktopRes;
+	int32 _settingsTLMode;
+	char *_settingsGameFile;
 	BaseFader *_fader;
 	bool _suppressScriptErrors;
 
@@ -250,10 +278,15 @@ public:
 	bool _videoSubtitles;
 	bool _subtitles; // RO
 	uint32 _musicStartTime[NUM_MUSIC_CHANNELS];
+	bool _compressedSavegames;
 	int32 _scheduledLoadSlot;
 	bool _loading;
 	bool _personalizedSave;
-
+	static bool emptySaveSlot(int slot);
+	static bool isSaveSlotUsed(int slot);
+	static bool getSaveSlotDescription(int slot, Common::String &desc);
+	static void getSaveSlotTimestamp(int slot, TimeDate *time);
+	static bool getSaveSlotFilename(int slot, Common::String &desc);
 	void setWindowTitle();
 	bool handleMouseWheel(int32 delta) override;
 	bool _quitting;
@@ -272,8 +305,16 @@ public:
 	bool _loadInProgress;
 	UIWindow *_focusedWindow;
 	bool _editorForceScripts;
-
+	static void afterLoadScene(void *scene, void *data);
+	static void afterLoadRegion(void *region, void *data);
+	static void afterLoadSubFrame(void *subframe, void *data);
+	static void afterLoadSound(void *sound, void *data);
+#ifdef ENABLE_WME3D
+	static void afterLoadXModel(void *model, void *data);
+#endif
+	static void afterLoadScript(void *script, void *data);
 	static void invalidateValues(void *value, void *data);
+	static void afterLoadFont(void *font, void *data);
 	bool loadSettings(const char *filename);
 	bool resumeMusic(int channel);
 	bool setMusicStartTime(int channel, uint32 time);
@@ -360,8 +401,8 @@ public:
 
 	BaseSprite *_lastCursor;
 	bool drawCursor(BaseSprite *Cursor);
-	bool storeSaveThumbnail();
-	void deleteSaveThumbnail();
+
+	virtual bool initAfterLoad();
 
 	SaveThumbHelper *_cachedThumbnail;
 
@@ -400,6 +441,7 @@ public:
 	BaseGameMusic *_musicSystem;
 	Common::String _targetName;
 
+	void setIndicatorVal(int value);
 	bool getBilinearFiltering() { return _bilinearFiltering; }
 	void addMem(int32 bytes);
 

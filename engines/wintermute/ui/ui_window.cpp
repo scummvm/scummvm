@@ -421,7 +421,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 		case TOKEN_TITLE:
 			setText(params);
-			_game->expandStringByStringTable(&_text);
+			_game->_stringTable->expand(&_text);
 			break;
 
 		case TOKEN_TITLE_ALIGN:

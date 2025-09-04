@@ -29,6 +29,8 @@
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/dcgf.h"
+
 #include "graphics/scaler.h"
 
 namespace Wintermute {
@@ -41,10 +43,8 @@ SaveThumbHelper::SaveThumbHelper(BaseGame *inGame) : _game(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 SaveThumbHelper::~SaveThumbHelper() {
-	delete _thumbnail;
-	_thumbnail = nullptr;
-	delete _scummVMThumb;
-	_scummVMThumb = nullptr;
+	SAFE_DELETE(_thumbnail);
+	SAFE_DELETE(_scummVMThumb);
 }
 
 BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
@@ -67,11 +67,9 @@ BaseImage *SaveThumbHelper::storeThumb(bool doFlip, int width, int height) {
 
 //////////////////////////////////////////////////////////////////////////
 bool SaveThumbHelper::storeThumbnail(bool doFlip) {
-	delete _thumbnail;
-	_thumbnail = nullptr;
+	SAFE_DELETE(_thumbnail);
 
 	if (_game->_thumbnailWidth > 0 && _game->_thumbnailHeight > 0) {
-
 		_thumbnail = storeThumb(doFlip, _game->_thumbnailWidth, _game->_thumbnailHeight);
 		if (!_thumbnail) {
 			return STATUS_FAILED;
@@ -83,8 +81,7 @@ bool SaveThumbHelper::storeThumbnail(bool doFlip) {
 
 //////////////////////////////////////////////////////////////////////////
 bool SaveThumbHelper::storeScummVMThumbNail(bool doFlip) {
-	delete _scummVMThumb;
-	_scummVMThumb = nullptr;
+	SAFE_DELETE(_scummVMThumb);
 
 	_scummVMThumb = storeThumb(doFlip, kThumbnailWidth, kThumbnailHeight2);
 	if (!_scummVMThumb) {

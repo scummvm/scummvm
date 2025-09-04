@@ -182,7 +182,7 @@ void BaseObject::setCaption(const char *caption, int caseVal) {
 	size_t captionSize = strlen(caption) + 1;
 	_caption[caseVal - 1] = new char[captionSize];
 	Common::strcpy_s(_caption[caseVal - 1], captionSize, caption);
-	_game->expandStringByStringTable(&_caption[caseVal - 1]);
+	_game->_stringTable->expand(&_caption[caseVal - 1]);
 }
 
 

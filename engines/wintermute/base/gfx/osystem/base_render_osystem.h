@@ -69,7 +69,7 @@ public:
 
 	bool initRenderer(int width, int height, bool windowed) override;
 	bool flip() override;
-	bool indicatorFlip() override;
+	bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) override;
 	bool forcedFlip() override;
 	bool clear() override;
 	Graphics::PixelFormat getPixelFormat() const override;

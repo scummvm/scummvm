@@ -38,7 +38,7 @@ SubtitleCard::SubtitleCard(BaseGame *inGame,
 	        _startFrame(startFrame),
 	        _endFrame(endFrame) {
 	_text = text;
-	_game->expandStringByStringTable(_text);
+	_game->_stringTable->expand(_text);
 }
 
 uint32 SubtitleCard::getStartFrame() const {

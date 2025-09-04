@@ -146,7 +146,7 @@ public:
 	virtual void postfilter() = 0;
 	virtual void setPostfilter(PostFilter postFilter) = 0;
 	bool flip() override;
-	bool indicatorFlip() override;
+	bool indicatorFlip(int32 x, int32 y, int32 width, int32 height) override;
 	bool forcedFlip() override;
 	virtual bool setViewport3D(DXViewport *viewport) = 0;
 

@@ -38,10 +38,10 @@ class BasePersistenceManager;
 
 class BaseStringTable : public BaseClass {
 public:
+	const char *expandStatic(const char *string) const;
 	bool loadFile(const char *filename, bool deleteAll = true);
 	void expand(char **str) const;
 	void expand(Common::String &str) const;
-	const char *expandStatic(const char *string) const;
 	bool addString(const char *key, const char *val, bool reportDuplicities = true);
 	BaseStringTable(BaseGame *inGame);
 	~BaseStringTable() override;
@@ -51,6 +51,7 @@ public:
 private:
 	Common::Array<Common::String> _filenames;
 	typedef Common::HashMap<Common::String, Common::String>::const_iterator StringsIter;
+
 	void replaceExpand(char *key, char *newStr, size_t newStrSize) const;
 };
 

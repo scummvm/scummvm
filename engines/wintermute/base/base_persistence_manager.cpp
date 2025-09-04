@@ -232,8 +232,7 @@ bool BasePersistenceManager::initSave(const Common::String &desc) {
 		if (!_game->_cachedThumbnail) {
 			_game->_cachedThumbnail = new SaveThumbHelper(_game);
 			if (DID_FAIL(_game->_cachedThumbnail->storeThumbnail(true))) {
-				delete _game->_cachedThumbnail;
-				_game->_cachedThumbnail = nullptr;
+				SAFE_DELETE(_game->_cachedThumbnail);
 			}
 		}
 

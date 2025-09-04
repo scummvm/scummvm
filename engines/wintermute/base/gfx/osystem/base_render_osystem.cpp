@@ -131,9 +131,9 @@ bool BaseRenderOSystem::initRenderer(int width, int height, bool windowed) {
 	return STATUS_OK;
 }
 
-bool BaseRenderOSystem::indicatorFlip() {
-	if (_indicatorWidthDrawn > 0 && _indicatorHeight > 0) {
-		g_system->copyRectToScreen(_renderSurface->getBasePtr(_indicatorX, _indicatorY), _renderSurface->pitch, _indicatorX, _indicatorY, _indicatorWidthDrawn, _indicatorHeight);
+bool BaseRenderOSystem::indicatorFlip(int32 x, int32 y, int32 width, int32 height) {
+	if (width > 0 && height > 0) {
+		g_system->copyRectToScreen(_renderSurface->getBasePtr(x, y), _renderSurface->pitch, x, y, width, height);
 		g_system->updateScreen();
 	}
 	return STATUS_OK;
@@ -450,7 +450,7 @@ void BaseRenderOSystem::drawFromSurface(RenderTicket *ticket, Common::Rect *dstR
 bool BaseRenderOSystem::fillRect(int x, int y, int w, int h, uint32 color) {
 	// This function isn't used outside of indicator-displaying, and thus quite unused in
 	// BaseRenderOSystem when dirty-rects are enabled.
-	if (!_disableDirtyRects && !_indicatorDisplay) {
+	if (!_disableDirtyRects && !_game->_indicatorDisplay) {
 		error("BaseRenderOSystem::fillRect - doesn't work for dirty rects yet");
 	}
 

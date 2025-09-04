@@ -243,7 +243,7 @@ int WintermuteEngine::init() {
 	// load game
 	uint32 dataInitStart = g_system->getMillis();
 
-	if (DID_FAIL(_game->loadGameSettingsFile())) {
+	if (DID_FAIL(_game->loadFile(_game->_settingsGameFile ? _game->_settingsGameFile : "default.game"))) {
 		_game->LOG(ret, "Error loading game file. Exiting.");
 		delete _game;
 		_game = nullptr;

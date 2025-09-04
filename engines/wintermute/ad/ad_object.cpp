@@ -886,7 +886,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	SAFE_DELETE(_sentence->_sound);
 
 	_sentence->setText(text);
-	_game->expandStringByStringTable(&_sentence->_text);
+	_game->_stringTable->expand(&_sentence->_text);
 	_sentence->setStances(stances);
 	_sentence->_duration = duration;
 	_sentence->_align = align;
@@ -898,7 +898,7 @@ void AdObject::talk(const char *text, const char *sound, uint32 duration, const 
 	// try to locate speech file automatically
 	bool deleteSound = false;
 	if (!sound) {
-		char *key = _game->getKeyFromStringTable(text);
+		char *key = _game->_stringTable->getKey(text);
 		if (key) {
 			sound = ((AdGame *)_game)->findSpeechFile(key);
 			delete[] key;
