@@ -928,9 +928,6 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 	TOKEN_TABLE(COMPAT_KILL_METHOD_THREADS)
 	TOKEN_TABLE_END
 
-	Common::String loadImageName = "";
-	Common::String saveImageName = "";
-
 	char *params;
 	int cmd;
 	BaseParser parser;
@@ -5024,16 +5021,6 @@ void BaseGame::setWindowTitle() {
 		Common::strlcat(title, "Wintermute Engine", 512);
 
 		// ignoring setting window title
-		Utf8String utf8Title;
-		if (_textEncoding == TEXT_UTF8) {
-			utf8Title = Utf8String(title);
-		} else {
-			warning("BaseGame::SetWindowTitle - Ignoring textencoding");
-			utf8Title = Utf8String(title);
-			/*WideString wstr = StringUtil::AnsiToWide(Title);
-			title = StringUtil::WideToUtf8(wstr);*/
-		}
-		warning("BaseGame::SetWindowTitle: Ignoring value: %s", utf8Title.c_str());
 	}
 }
 
