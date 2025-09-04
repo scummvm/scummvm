@@ -401,7 +401,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Disable unused features / components
-	disableComponents(setup.components);
+	if (!setup.tests)
+		disableComponents(setup.components);
 
 	// Handle hard-coded component logic
 	fixupComponents(setup);
