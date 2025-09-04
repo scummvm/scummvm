@@ -76,6 +76,24 @@ static void buildContinuationData() {
 			} else {
 				currentContinuation = f;
 			}
+
+			if (ch == 1 && prevSprite) {
+				warning("%02d: st: %d cid: %d sp: %d w: %d h: %d i: %d f: %d b: %d bl: %d in: %d t: %d",
+					f,
+					prevSprite->_spriteType == sprite._spriteType,
+					prevSprite->_castId == sprite._castId,
+					prevSprite->_startPoint == sprite._startPoint,
+					prevSprite->_width == sprite._width,
+					prevSprite->_height == sprite._height,
+					prevSprite->_ink == sprite._ink,
+					prevSprite->_foreColor == sprite._foreColor,
+					prevSprite->_backColor == sprite._backColor,
+					prevSprite->_blendAmount == sprite._blendAmount,
+					prevSprite->_inkData == sprite._inkData,
+					prevSprite->_thickness == sprite._thickness
+				);
+			}
+
 			_state->_continuationData[ch][f].first = currentContinuation;
 		}
 
@@ -168,15 +186,9 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
-		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
-			_state->_selectedScoreCast.channel = ch;
-		}
-
-		if (ImGui::IsItemHovered()) {
-			_state->_hoveredScoreCast.frame = f;
-			_state->_hoveredScoreCast.channel = ch;
-		}
+		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
+		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
 
 		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
 			if (_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 >= startCont &&
@@ -196,38 +208,45 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			}
 		}
 
+		int mode1 = mode;
+
+		ImGui::PushID(ch * 10000 + f);
+
 		// If the frame is not the start, then don't render any text
 		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
 			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
 				ImGui::PushFont(ImGui::GetIO().FontDefault);
 				ImGui::TextUnformatted("-\uf819");
 				ImGui::PopFont();
+			} else {
+				ImGui::Selectable(" ");
 			}
-			continue;
+			mode1 = -1; // Skip cell data rendering
 		}
 
-		ImGui::PushID(ch * 10000 + f);
+		switch (mode1) {
+		case -1:
+			break;
 
-		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				ImGui::Text("%d", sprite._castId.member);
+				ImGui::Selectable(Common::String::format("%d", sprite._castId.member).c_str());
 			else if (sprite.isQDShape())
-				ImGui::TextUnformatted("Q");
+				ImGui::Selectable("Q");
 			else
-				ImGui::TextUnformatted("  ");
+				ImGui::Selectable("  ");
 			break;
 
 		case kModeInk:
-			ImGui::Text(inkType2str(sprite._ink));
+			ImGui::Selectable(Common::String::format("%s", inkType2str(sprite._ink)).c_str());
 			break;
 
 		case kModeLocation:
-			ImGui::Text("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
+			ImGui::Selectable(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
 			break;
 
 		case kModeBlend:
-			ImGui::Text("%d", sprite._blendAmount);
+			ImGui::Selectable(Common::String::format("%d", sprite._blendAmount).c_str());
 			break;
 
 		case kModeBehavior:
@@ -236,27 +255,27 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChTempo:
 			if (frame._mainChannels.tempo)
-				ImGui::Text("%d", frame._mainChannels.tempo);
+				ImGui::Selectable(Common::String::format("%d", frame._mainChannels.tempo).c_str());
 			break;
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				ImGui::Text("%d", frame._mainChannels.palette.paletteId.member);
+				ImGui::Selectable(Common::String::format("%d", frame._mainChannels.palette.paletteId.member).c_str());
 			break;
 
 		case kChTransition:
 			if (frame._mainChannels.transType)
-				ImGui::Text("%d", frame._mainChannels.transType);
+				ImGui::Selectable(Common::String::format("%d", frame._mainChannels.transType).c_str());
 			break;
 
 		case kChSound1:
 			if (frame._mainChannels.sound1.member)
-				ImGui::Text("%d", frame._mainChannels.sound1.member);
+				ImGui::Selectable(Common::String::format("%d", frame._mainChannels.sound1.member).c_str());
 			break;
 
 		case kChSound2:
 			if (frame._mainChannels.sound2.member)
-				ImGui::Text("%d", frame._mainChannels.sound2.member);
+				ImGui::Selectable(Common::String::format("%d", frame._mainChannels.sound2.member).c_str());
 			break;
 
 		case kChScript:
@@ -265,7 +284,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kModeExtended: // Render empty row
 		default:
-			ImGui::TextUnformatted("  ");
+			ImGui::Selectable("  ");
 		}
 
 		ImGui::PopID();
