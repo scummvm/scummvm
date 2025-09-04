@@ -156,6 +156,7 @@ public:
 	void clearExits();
 	void unselectExits();
 	void updateExit(ObjID id);
+	void resetExitBackgroundPattern();
 
 	Common::String getConsoleText() const;
 	void setConsoleText(const Common::String &text);
