@@ -196,9 +196,6 @@ CMainWindow::CMainWindow() {
 
 	LoadCategoryNames();
 
-	// Restrict the keybinding to minimal
-	BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
-
 	EndWaitCursor();
 
 	SetFocus();
@@ -216,10 +213,6 @@ CMainWindow::CMainWindow() {
 	}
 
 	HandleError(errCode);
-}
-
-CMainWindow::~CMainWindow() {
-	BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 }
 
 ERROR_CODE CMainWindow::LoadCategoryNames(VOID) {
@@ -915,7 +908,12 @@ void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
 		case WA_CLICKACTIVE:
-			//InvalidateRect(nullptr, FALSE);
+			// Restrict the keybinding to minimal
+			BagelMetaEngine::setKeybindingMode(KBMODE_MINIMAL);
+			break;
+
+		case WA_INACTIVE:
+			BagelMetaEngine::setKeybindingMode(KBMODE_NORMAL);
 			break;
 
 		default:
