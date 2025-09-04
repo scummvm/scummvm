@@ -46,7 +46,7 @@ public:
 	VOID        PaintCategory(INT);
 	VOID        EraseCategory(VOID);
 
-	int         m_nTurnCount;
+	int         m_nTurnCount = 0;
 
 protected:
 	ERROR_CODE  LoadCategoryNames(VOID);
