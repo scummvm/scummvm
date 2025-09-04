@@ -47,16 +47,6 @@ const char *modes2[] = {
 	ICON_MS_FORMS_APPS_SCRIPT, "Script",	// forms_apps_script
 };
 
-// These are the score channel colors coming from the Authoring Tool
-const uint32 scoreColors[6] = {
-	0xceceff,
-	0xffffce,
-	0xceffce,
-	0xceffff,
-	0xffceff,
-	0xffce9c,
-};
-
 static void buildContinuationData() {
 	if (_state->_loadedContinuationData) {
 		return;
@@ -162,13 +152,13 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	numFrames -= _state->_scoreFrameOffset - 1;
 	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
 
-	if (modeSel == kModeExtended) {
-		_state->_colors._contColorIndex = ch % _state->_colors._contColorCount;
-	}
-
 	for (int f = 0; f < (int)numFrames; f++) {
 		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset - 1];
 		Sprite &sprite = *frame._sprites[ch];
+
+		_state->_colors._contColorIndex = frame._sprites[ch]->_colorcode & 0x07;
+		if (_state->_colors._contColorIndex > 5)
+			_state->_colors._contColorIndex = 0;
 
 		ImGui::TableNextColumn();
 
@@ -189,10 +179,6 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		}
 
 		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
-			if (f == startCont) {
-				_state->_colors._contColorIndex = (_state->_colors._contColorIndex + 1) % _state->_colors._contColorCount;
-			}
-
 			if (_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 >= startCont &&
 				_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 <= endCont &&
 				ch == _state->_selectedScoreCast.channel &&
@@ -644,8 +630,6 @@ void showScore() {
 
 			int mode = _state->_scoreMode;
 
-			// Reset the color index, so that each channel gets the same color each time
-			_state->_colors._contColorIndex = 0;
 			for (int ch = 0; ch < (int)numChannels - 1; ch++) {
 				if (mode == kModeExtended) // This will render empty row
 					displayScoreChannel(ch + 1, kModeExtended, _state->_scoreMode);
