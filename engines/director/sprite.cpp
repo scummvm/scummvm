@@ -154,7 +154,7 @@ bool Sprite::operator==(const Sprite &sprite) {
 		_foreColor == sprite._foreColor &&
 		_backColor == sprite._backColor &&
 		_blendAmount == sprite._blendAmount &&
-		_inkData == sprite._inkData &&
+		_ink == sprite._ink &&
 		_thickness == sprite._thickness;
 }
 

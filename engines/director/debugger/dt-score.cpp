@@ -77,23 +77,6 @@ static void buildContinuationData() {
 				currentContinuation = f;
 			}
 
-			if (ch == 1 && prevSprite) {
-				warning("%02d: st: %d cid: %d sp: %d w: %d h: %d i: %d f: %d b: %d bl: %d in: %d t: %d",
-					f,
-					prevSprite->_spriteType == sprite._spriteType,
-					prevSprite->_castId == sprite._castId,
-					prevSprite->_startPoint == sprite._startPoint,
-					prevSprite->_width == sprite._width,
-					prevSprite->_height == sprite._height,
-					prevSprite->_ink == sprite._ink,
-					prevSprite->_foreColor == sprite._foreColor,
-					prevSprite->_backColor == sprite._backColor,
-					prevSprite->_blendAmount == sprite._blendAmount,
-					prevSprite->_inkData == sprite._inkData,
-					prevSprite->_thickness == sprite._thickness
-				);
-			}
-
 			_state->_continuationData[ch][f].first = currentContinuation;
 		}
 
