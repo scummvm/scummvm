@@ -112,6 +112,7 @@ public:
 	Common::String getText(ObjID objID, ObjID source, ObjID target);
 
 	bool isObjActive(ObjID objID);
+	bool isObjDraggable(ObjID objID);
 
 	ObjID getAncestor(ObjID objID);
 	Common::Array<ObjID> getFamily(ObjID objID, bool recursive);
@@ -121,7 +122,6 @@ public:
 	void saveGameInto(Common::OutSaveFile *file);
 
 private:
-	bool isObjDraggable(ObjID objID);
 	bool intersects(ObjID objID, Common::Rect rect);
 
 	void calculateObjectRelations();

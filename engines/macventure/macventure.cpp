@@ -1184,6 +1184,10 @@ bool MacVentureEngine::isObjClickable(ObjID objID) {
 	return _world->getObjAttr(objID, kAttrUnclickable) == 0;
 }
 
+bool MacVentureEngine::isObjDraggable(ObjID objID) {
+	return _world->isObjDraggable(objID);
+}
+
 bool MacVentureEngine::isObjSelected(ObjID objID) {
 	int idx = findObjectInArray(objID, _currentSelection);
 	return idx != -1;
