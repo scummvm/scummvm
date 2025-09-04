@@ -118,7 +118,7 @@ static void renderCallStack(uint pc) {
 		return;
 	}
 
-	Movie *movie = g_director->getCurrentMovie();
+	const Movie *movie = g_director->getCurrentMovie();
 
 	ImGui::Text("Call stack:\n");
 	for (int i = 0; i < (int)callstack.size(); i++) {
@@ -294,7 +294,7 @@ static void updateCurrentScript() {
 
 	// show current script of the current stack frame
 	CFrame *head = callstack[callstack.size() - 1];
-	Director::Movie *movie = g_director->getCurrentMovie();
+	const Director::Movie *movie = g_director->getCurrentMovie();
 	ScriptContext *scriptContext = head->sp.ctx;
 	int castLibID = movie->getCast()->_castLibID;
 	int castId = head->sp.ctx->_id;
@@ -344,7 +344,7 @@ void showFuncList() {
 		const ImVec2 childSize = ImGui::GetContentRegionAvail();
 		ImGui::BeginChild("##functions", ImVec2(childSize.x, childSize.y));
 
-		Movie *movie = g_director->getCurrentMovie();
+		const Movie *movie = g_director->getCurrentMovie();
 		if (_state->_functions._showScriptContexts) {
 			for (auto cast : *movie->getCasts()) {
 				Common::String castName = Common::String::format("%d", cast._key);
@@ -548,7 +548,7 @@ void showExecutionContext() {
 	ImGui::SetNextWindowSize(ImVec2(500, 750), ImGuiCond_FirstUseEver);
 
 	Director::Lingo *lingo = g_director->getLingo();
-	Movie *movie = g_director->getCurrentMovie();
+	const Movie *movie = g_director->getCurrentMovie();
 
 	Window *currentWindow = g_director->getCurrentWindow();
 	bool scriptsRendered = false;
@@ -585,8 +585,7 @@ void showExecutionContext() {
 			ScriptContext* context = getScriptContext(current.id);
 
 			if (context) {
-				Common::String scriptInfo = Common::String::format("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
-				ImGui::Text("%s", scriptInfo.c_str());
+				ImGui::Text("%d:%s type:%s", context->_id, context->getName().c_str(), scriptType2str(context->_scriptType));
 			}
 
 			ImGui::BeginDisabled(scriptData->_scripts.empty() || scriptData->_current == 0);
