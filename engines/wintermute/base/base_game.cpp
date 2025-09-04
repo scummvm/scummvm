@@ -429,7 +429,8 @@ bool BaseGame::cleanup() {
 
 	SAFE_DELETE(_keyboardState);
 
-	//if(m_AccessMgr) m_AccessMgr->SetActiveObject(NULL);
+	//if (m_AccessMgr)
+	//	m_AccessMgr->SetActiveObject(NULL);
 	
 	return STATUS_OK;
 }
@@ -643,6 +644,9 @@ bool BaseGame::initialize3() { // renderer is initialized
 	if (_indicatorWidth == -1)
 		_indicatorWidth = _renderer->getWidth();
 
+	//if (m_AccessMgr)
+	//	Game->m_AccessMgr->Initialize();
+
 	return STATUS_OK;
 }
 
@@ -728,7 +732,8 @@ bool BaseGame::initLoop() {
 
 	_surfaceStorage->initLoop();
 
-	//if(m_AccessMgr) m_AccessMgr->InitLoop();
+	//if (m_AccessMgr)
+	//	m_AccessMgr->InitLoop();
 
 	_fontStorage->initLoop();
 
@@ -3699,7 +3704,8 @@ bool BaseGame::unregisterObject(BaseObject *object) {
 		_mainObject = nullptr;
 	}
 	// is it active accessibility object?
-	//if(m_AccessMgr && m_AccessMgr->GetActiveObject()==Object) m_AccessMgr->SetActiveObject(NULL);
+	//if (m_AccessMgr && m_AccessMgr->GetActiveObject() == Object)
+	//	m_AccessMgr->SetActiveObject(NULL);
 
 	// destroy object
 	for (int32 i = 0; i < _regObjects.getSize(); i++) {
@@ -4840,9 +4846,11 @@ bool BaseGame::handleKeypress(Common::Event *event, bool printable) {
 		return true;
 	}
 
+	//if (HandleAccessKey(Printable, CharCode, KeyData))
+	//	return true;
+
 	_keyboardState->handleKeyPress(event);
 	_keyboardState->readKey(event);
-// TODO
 
 	if (_focusedWindow) {
 		if (!_game->_focusedWindow->handleKeypress(event, _keyboardState->isCurrentPrintable())) {
@@ -4867,6 +4875,74 @@ void BaseGame::handleKeyRelease(Common::Event *event) {
 	_keyboardState->handleKeyRelease(event);
 }
 
+//////////////////////////////////////////////////////////////////////////
+/*bool CBGame::HandleAccessKey(bool Printable, DWORD CharCode, DWORD KeyData) {
+	if (m_AccessKeyboardEnabled) {
+		if (CharCode == VK_TAB && (CBUtils::IsKeyDown(VK_CONTROL) || CBUtils::IsKeyDown(VK_RCONTROL))) {
+			CBObject *obj = NULL;
+			if (CBUtils::IsKeyDown(VK_SHIFT) || CBUtils::IsKeyDown(VK_RSHIFT)) {
+				obj = m_AccessMgr->GetPrevObject();
+			} else {
+				obj = m_AccessMgr->GetNextObject();
+			}
+			return true;
+		}
+	}
+	if (Printable && m_AccessKeyboardPause) {
+		if (CharCode == VK_SPACE && (CBUtils::IsKeyDown(VK_CONTROL) || CBUtils::IsKeyDown(VK_RCONTROL))) {
+			m_AccessGlobalPaused = !m_AccessGlobalPaused;
+			if (m_AccessGlobalPaused)
+				AccessPause();
+			else
+				AccessUnpause();
+			return true;
+		}
+	}
+
+	return false;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBGame::AccessPause() {
+	m_AccessGlobalPaused = true;
+
+	if (m_AccessShieldWin)
+		UnregisterObject(m_AccessShieldWin);
+
+	m_AccessShieldWin = new CUIWindow(this);
+	m_Windows.Add(m_AccessShieldWin);
+	RegisterObject(m_AccessShieldWin);
+
+	m_AccessShieldWin->m_PosX = m_AccessShieldWin->m_PosY = 0;
+	m_AccessShieldWin->m_Width = m_Renderer->m_Width;
+	m_AccessShieldWin->m_Height = m_Renderer->m_Height;
+
+	CUIText *Sta = new CUIText(Game);
+	Sta->m_Parent = m_AccessShieldWin;
+	m_AccessShieldWin->m_Widgets.Add(Sta);
+	Sta->SetText((char *)m_StringTable->ExpandStatic("/SYSENG0040/Game paused. Press Ctrl+Space to resume."));
+	Sta->m_SharedFonts = true;
+	Sta->m_Font = m_SystemFont;
+	Sta->SizeToFit();
+	Sta->m_PosY = m_AccessShieldWin->m_Height - Sta->m_Height;
+	Sta->m_PosX = (m_AccessShieldWin->m_Width - Sta->m_Width) / 2;
+
+	m_AccessShieldWin->m_Visible = true;
+	m_AccessShieldWin->GoSystemExclusive();
+
+	return S_OK;
+}
+
+//////////////////////////////////////////////////////////////////////////
+HRESULT CBGame::AccessUnpause() {
+	m_AccessGlobalPaused = false;
+	if (m_AccessShieldWin) {
+		m_AccessShieldWin->Close();
+		UnregisterObject(m_AccessShieldWin);
+		m_AccessShieldWin = NULL;
+	}
+	return S_OK;
+}*/
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::handleMouseWheel(int32 delta) {
@@ -5019,15 +5095,15 @@ bool BaseGame::setActiveObject(BaseObject *obj) {
 	if (_activeObject) {
 		_activeObject->applyEvent("MouseLeave");
 	}
-	//if (ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
+	// if (ValidObject(_activeObject)) _activeObject->applyEvent("MouseLeave");
 	_activeObject = obj;
 	if (_activeObject) {
+		//m_AccessMgr->Speak(m_ActiveObject->GetAccessCaption(), TTS_CAPTION);
 		_activeObject->applyEvent("MouseEntry");
 	}
 
 	return STATUS_OK;
 }
-
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::pushViewport(BaseViewport *viewport) {
