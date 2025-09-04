@@ -210,7 +210,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		int mode1 = mode;
 
-		ImGui::PushID(ch * 10000 + f);
+		ImGui::PushID((ch + 10 - mode) * 10000 + f);
 
 		// If the frame is not the start, then don't render any text
 		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
