@@ -11,7 +11,7 @@ class TinyGLTexEnvTestSuite : public CxxTest::TestSuite {
     TinyGL::ContextHandle *_context = nullptr;
 public:
     void setUp() {
-        _context = TinyGL::createContext(1, 1, Graphics::PixelFormat::createFormatARGB32(), 1, false, false);
+        _context = TinyGL::createContext(2, 2, Graphics::PixelFormat::createFormatARGB32(), 2, false, false);
         TinyGL::setContext(_context);
 
         tglEnable(TGL_TEXTURE_2D);
@@ -21,6 +21,7 @@ public:
         tglLoadIdentity();
         tglMatrixMode(TGL_MODELVIEW);
         tglLoadIdentity();
+		tglViewport(0, 0, 2, 2);
     }
 
     void tearDown() {
@@ -30,8 +31,10 @@ public:
         }
     }
 
-    void drawPixel(byte texA, byte texR, byte texG, byte texB) {
-        const float S = 3.0f; ///< such that a single triangle will fill the entire clip space
+	// these two functions use RGBA order instead of ARGB to make it consistent with tglColor4ub which we also call
+
+    void drawPixel(byte texR, byte texG, byte texB, byte texA) {
+		const float S = 1.0f;
         const byte texData[] = { texR, texG, texB, texA };
         TGLuint texture;
         tglGenTextures(1, &texture);
@@ -46,7 +49,7 @@ public:
         tglEnd();
     }
 
-    void checkOutput(byte expA, byte expR, byte expG, byte expB) {
+    void checkOutput(byte expR, byte expG, byte expB, byte expA) {
         byte actA, actR, actG, actB;
         Graphics::Surface surface;
         TinyGL::presentBuffer();
@@ -111,7 +114,7 @@ public:
 
     void testCombineArgPrimaryColor() {
         setCombineMode(TGL_REPLACE, TGL_REPLACE);
-        setCombineArg(0, TGL_PRIMARY_COLOR, TGL_SRC_COLOR, TGL_PRIMARY_COLOR, TGL_SRC_COLOR);
+        setCombineArg(0, TGL_PRIMARY_COLOR, TGL_SRC_COLOR, TGL_PRIMARY_COLOR, TGL_SRC_ALPHA);
         tglColor4ub(12, 34, 56, 78);
         drawPixel(13, 37, 42, 24);
         checkOutput(12, 34, 56, 78);

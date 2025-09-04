@@ -28,6 +28,10 @@ TEST_LIBS += test/null_osystem.o \
 	backends/platform/sdl/win32/win32_wrapper.o
 endif
 
+ifdef USE_TINYGL
+TESTS += $(srcdir)/test/tgraphics/tinygl*.h
+endif
+
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
