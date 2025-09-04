@@ -107,6 +107,22 @@ struct CachedFile {
 		"PATH.INI",
 		(const byte *)"[cd-path]\r\npath=d:\\", -1
 	},
+	{"tkkg2", Common::kPlatformWindows,
+		// TKKG2 checks a file to determine the location of the CD.
+		"PATH.INI",
+		(const byte *)"[cd-path]\r\npath=d:\\", -1
+	},
+	{"tkkg3", Common::kPlatformWindows,
+		// TKKG3 checks a file to determine the location of the CD.
+		"PATH.INI",
+		(const byte *)"[cd-path]\r\npath=d:\\", -1
+	},
+	{"tkkg4", Common::kPlatformWindows,
+		// TKKG4 checks a file to determine the location of the CD.
+		"PATH.INI",
+		(const byte *)"[cd-path]\r\npath=d:\\", -1
+	},
+
 	// Professor Finkle's Times Table Factory has an installer that copies a bunch of empty files,
 	// which the game gets upset about if they don't exist.
 	{"finkletimes", Common::kPlatformWindows, "finkle.ini", (const byte *)"", 0},
