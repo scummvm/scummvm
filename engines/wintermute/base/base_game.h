@@ -143,6 +143,7 @@ public:
 	TShadowType _maxShadowType;
 	bool setMaxShadowType(TShadowType maxShadowType);
 	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
+#endif
 
 	bool _indicatorDisplay;
 	uint32 _indicatorColor;
@@ -155,6 +156,7 @@ public:
 	Common::String _savedGameExt;
 	bool _richSavedGames;
 
+#ifdef ENABLE_WME3D
 	int32 _editorResolutionWidth;
 	int32 _editorResolutionHeight;
 #endif
