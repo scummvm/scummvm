@@ -124,7 +124,7 @@ public:
 
 			if (context) {
 				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), node.name);
-				Director::Movie *movie = g_director->getCurrentMovie();
+				const Director::Movie *movie = g_director->getCurrentMovie();
 
 				script.byteOffsets = context->_functionByteOffsets[script.handlerId];
 				script.moviePath = _script.moviePath;

@@ -73,10 +73,10 @@ static void buildContinuationData() {
 
 		uint currentContinuation = 1;
 		for (int f = 0; f < (int)numFrames; f++) {
-			Frame &frame = *score->_scoreCache[f];
+			const Frame &frame = *score->_scoreCache[f];
 			Sprite &sprite = *frame._sprites[ch];
 
-			Frame *prevFrame = (f == 0) ? nullptr : score->_scoreCache[f - 1];
+			const Frame *prevFrame = (f == 0) ? nullptr : score->_scoreCache[f - 1];
 			Sprite *prevSprite = (prevFrame) ? prevFrame->_sprites[ch] : nullptr;
 
 			if (prevSprite) {
@@ -91,10 +91,10 @@ static void buildContinuationData() {
 
 		currentContinuation = 1;
 		for (int f = (int)numFrames - 1; f >= 0; f--) {
-			Frame &frame = *score->_scoreCache[f];
+			const Frame &frame = *score->_scoreCache[f];
 			Sprite &sprite = *frame._sprites[ch];
 
-			Frame *nextFrame = (f == (int)numFrames - 1) ? nullptr : score->_scoreCache[f + 1];
+			const Frame *nextFrame = (f == (int)numFrames - 1) ? nullptr : score->_scoreCache[f + 1];
 			Sprite *nextSprite = (nextFrame) ? nextFrame->_sprites[ch] : nullptr;
 
 			if (nextSprite) {
@@ -178,7 +178,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
-		if (ImGui::IsItemClicked(0)) {
+		if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
 			_state->_selectedScoreCast.channel = ch;
 		}
@@ -214,7 +214,7 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
 			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
 				ImGui::PushFont(ImGui::GetIO().FontDefault);
-				ImGui::Text("-\uf819");
+				ImGui::TextUnformatted("-\uf819");
 				ImGui::PopFont();
 			}
 			continue;
@@ -225,11 +225,11 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		switch (mode) {
 		case kModeMember:
 			if (sprite._castId.member)
-				ImGui::Text(Common::String::format("%d", sprite._castId.member).c_str());
+				ImGui::Text("%d", sprite._castId.member);
 			else if (sprite.isQDShape())
-				ImGui::Text("Q");
+				ImGui::TextUnformatted("Q");
 			else
-				ImGui::Text("  ");
+				ImGui::TextUnformatted("  ");
 			break;
 
 		case kModeInk:
@@ -237,11 +237,11 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 			break;
 
 		case kModeLocation:
-			ImGui::Text(Common::String::format("%d, %d", sprite._startPoint.x, sprite._startPoint.y).c_str());
+			ImGui::Text("%d, %d", sprite._startPoint.x, sprite._startPoint.y);
 			break;
 
 		case kModeBlend:
-			ImGui::Text(Common::String::format("%d", sprite._blendAmount).c_str());
+			ImGui::Text("%d", sprite._blendAmount);
 			break;
 
 		case kModeBehavior:
@@ -250,27 +250,27 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kChTempo:
 			if (frame._mainChannels.tempo)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.tempo).c_str());
+				ImGui::Text("%d", frame._mainChannels.tempo);
 			break;
 
 		case kChPalette:
 			if (frame._mainChannels.palette.paletteId.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.palette.paletteId.member).c_str());
+				ImGui::Text("%d", frame._mainChannels.palette.paletteId.member);
 			break;
 
 		case kChTransition:
 			if (frame._mainChannels.transType)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.transType).c_str());
+				ImGui::Text("%d", frame._mainChannels.transType);
 			break;
 
 		case kChSound1:
 			if (frame._mainChannels.sound1.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound1.member).c_str());
+				ImGui::Text("%d", frame._mainChannels.sound1.member);
 			break;
 
 		case kChSound2:
 			if (frame._mainChannels.sound2.member)
-				ImGui::Text(Common::String::format("%d", frame._mainChannels.sound2.member).c_str());
+				ImGui::Text("%d", frame._mainChannels.sound2.member);
 			break;
 
 		case kChScript:
@@ -279,12 +279,12 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		case kModeExtended: // Render empty row
 		default:
-			ImGui::Text("  ");
+			ImGui::TextUnformatted("  ");
 		}
 
 		ImGui::PopID();
 
-		if (ImGui::IsItemClicked(0)) {
+		if (ImGui::IsItemClicked(ImGuiMouseButton_Left)) {
 			_state->_selectedScoreCast.frame = f + _state->_scoreFrameOffset - 1;
 			_state->_selectedScoreCast.channel = ch;
 
@@ -418,11 +418,11 @@ void showScore() {
 			ImGui::BeginChild("Range", ImVec2(100.0f, 20.0f));
 
 			if (castMember || shape) {
-				ImGui::Text("\uf816"); ImGui::SameLine();	// line_start_circle
+				ImGui::TextUnformatted("\uf816"); ImGui::SameLine();	// line_start_circle
 				// the continuation data is 0-indexed but the frames are 1-indexed
 				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].first + 1); ImGui::SameLine(50);
 				ImGui::SetItemTooltip("Start Frame");
-				ImGui::Text("\uf819"); ImGui::SameLine();	// line_end_square
+				ImGui::TextUnformatted("\uf819"); ImGui::SameLine();	// line_end_square
 				// the continuation data is 0-indexed but the frames are 1-indexed
 				ImGui::Text("%4d", _state->_continuationData[_state->_selectedScoreCast.channel][_state->_selectedScoreCast.frame].second + 1); ImGui::SameLine();
 				ImGui::SetItemTooltip("End Frame");
@@ -683,7 +683,7 @@ void showChannels() {
 
 	if (ImGui::Begin("Channels", &_state->_w.channels)) {
 		Score *score = g_director->getCurrentMovie()->getScore();
-		Frame &frame = *score->_currentFrame;
+		const Frame &frame = *score->_currentFrame;
 
 		CastMemberID defaultPalette = g_director->getCurrentMovie()->_defaultPalette;
 		ImGui::Text("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d, currentFPS: %d",
@@ -789,7 +789,7 @@ void showChannels() {
 						displayScriptRef(sprite._scriptId);
 					} else {
 						ImGui::PushID(i + 1);
-						ImGui::Selectable("  ");
+						ImGui::TextUnformatted("  ");
 						ImGui::PopID();
 					}
 					ImGui::TableNextColumn();

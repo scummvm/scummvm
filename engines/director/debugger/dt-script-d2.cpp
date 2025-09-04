@@ -508,7 +508,7 @@ public:
 			ScriptContext *context = getScriptContext(obj, _script.id, *node->name);
 			if (context) {
 				ImGuiScript script = toImGuiScript(_script.type, CastMemberID(context->_id, _script.id.castLib), *node->name);
-				Director::Movie *movie = g_director->getCurrentMovie();
+				const Director::Movie *movie = g_director->getCurrentMovie();
 
 				int castId = context->_id;
 				bool childScript = false;
