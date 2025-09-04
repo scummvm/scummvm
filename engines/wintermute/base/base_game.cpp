@@ -5044,6 +5044,12 @@ bool BaseGame::getSaveSlotFilename(int slot, Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
+bool BaseGame::getSaveDir(char *buffer) {
+	// this should not be used
+	return STATUS_FAILED;
+}
+
+//////////////////////////////////////////////////////////////////////////
 bool BaseGame::getSaveSlotDescription(int slot, Common::String &description) {
 	Common::String filename;
 	getSaveSlotFilename(slot, filename);
@@ -5155,6 +5161,7 @@ bool BaseGame::getCurrentViewportRect(Common::Rect32 *rect, bool *custom) const 
 				*custom = true;
 			}
 		} else {
+			// SetRect(Rect, 0, 0, m_Renderer->m_Width, m_Renderer->m_Height);
 			BasePlatform::setRect(rect, _renderer->_drawOffsetX,
 			              _renderer->_drawOffsetY,
 			              _renderer->getWidth() + _renderer->_drawOffsetX,
@@ -5218,9 +5225,14 @@ void BaseGame::resetMousePos() {
 	p.x = _mousePos.x + _renderer->_drawOffsetX;
 	p.y = _mousePos.y + _renderer->_drawOffsetY;
 
+	//CBPlatform::ClientToScreen(Game->m_Renderer->m_Window, &p);
 	BasePlatform::setCursorPos(p.x, p.y);
 }
 
+//////////////////////////////////////////////////////////////////////////
+void BaseGame::setResourceModule(void *resModule) {
+	// empty
+}
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::displayContent(bool doUpdate, bool displayAll) {
@@ -5678,6 +5690,7 @@ void BaseGame::getMousePos(Common::Point32 *pos) {
 			newPos.x += _renderer->_drawOffsetX;
 			newPos.y += _renderer->_drawOffsetY;
 
+			//CBPlatform::ClientToScreen(Game->m_Renderer->m_Window, &NewPos);
 			BasePlatform::setCursorPos(newPos.x, newPos.y);
 		}
 	}
