@@ -128,7 +128,7 @@ void FrameBuffer::putPixelTexture(int fbOffset, const TexelBuffer *texture,
 			applyTextureEnvironment(
 				texture->internalformat(),
 				a, r, g, b,
-				c_a, c_r, c_b, c_g);
+				c_a, c_r, c_g, c_b);
 		}
 		writePixel<kEnableAlphaTest, kEnableBlending, kDepthWrite, kFogMode>(fbOffset + _a, c_a, c_r, c_g, c_b, z, fog, fog_r, fog_g, fog_b);
 	}
