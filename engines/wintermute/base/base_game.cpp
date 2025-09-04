@@ -1604,6 +1604,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		p.x = x + _renderer->_drawOffsetX;
 		p.y = y + _renderer->_drawOffsetY;
 
+		//CBPlatform::ClientToScreen(m_Renderer->m_Window, &p);
 		BasePlatform::setCursorPos(p.x, p.y);
 
 		stack->pushNULL();
@@ -4152,6 +4153,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::showCursor() {
+	// FoxTail:
 	if (_cursorHidden) {
 		return STATUS_OK;
 	}
@@ -4214,6 +4216,7 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	delete pm;
 	_indicatorDisplay = false;
 
+	// added render step after saving game
 	_renderer->endSaveLoad();
 
 	SAFE_DELETE(_saveLoadImage);
@@ -4240,7 +4243,9 @@ bool BaseGame::loadGame(const char *filename) {
 
 	bool ret;
 
+	// added stopping video before load save
 	stopVideo();
+
 	SAFE_DELETE(_saveLoadImage);
 	if (_loadImageName.size()) {
 		_saveLoadImage = _game->_renderer->createSurface();
@@ -4283,6 +4288,7 @@ bool BaseGame::loadGame(const char *filename) {
 	delete pm;
 	_loadInProgress = false;
 
+	// added render step after loadng game
 	_renderer->endSaveLoad();
 
 	SAFE_DELETE(_saveLoadImage);
