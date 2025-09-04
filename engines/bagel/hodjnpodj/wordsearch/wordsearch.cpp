@@ -188,7 +188,7 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 	                   OPTION_TOP + OPTION_HEIGHT);
 	bTestCreate = pOptionButton->Create("Options", BS_OWNERDRAW | WS_CHILD | WS_VISIBLE, OptionRect, this, IDC_OPTION);
 	ASSERT(bTestCreate != 0);                 // test for button's creation
-	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, 0, 0, SCROLLDOWN);
+	bTestCreate = pOptionButton->LoadBitmaps(SCROLLUP, SCROLLDOWN, SCROLLUP, SCROLLUP);
 	ASSERT(bTestCreate != 0);                 // test for button's creation
 
 	ShowWindow(SW_SHOWNORMAL);
