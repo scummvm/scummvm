@@ -5347,9 +5347,8 @@ bool BaseGame::isVideoPlaying() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::stopVideo() {
-	if (_videoPlayer->isPlaying()) {
+	if (_videoPlayer->isPlaying())
 		_videoPlayer->stop();
-	}
 	if (_theoraPlayer && _theoraPlayer->isPlaying()) {
 		_theoraPlayer->stop();
 		SAFE_DELETE(_theoraPlayer);
@@ -5401,6 +5400,11 @@ bool BaseGame::onActivate(bool activate, bool refreshMouse) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseLeftDown() {
+	if (isVideoPlaying()) {
+		stopVideo ();
+		return STATUS_OK;
+	}
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_LEFT);
 	}
@@ -5423,6 +5427,9 @@ bool BaseGame::onMouseLeftDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseLeftUp() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_LEFT);
 	}
@@ -5442,6 +5449,9 @@ bool BaseGame::onMouseLeftUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseLeftDblClick() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
 	}
@@ -5461,6 +5471,9 @@ bool BaseGame::onMouseLeftDblClick() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightDblClick() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
 	}
@@ -5480,6 +5493,9 @@ bool BaseGame::onMouseRightDblClick() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightDown() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_CLICK, MOUSE_BUTTON_RIGHT);
 	}
@@ -5495,6 +5511,9 @@ bool BaseGame::onMouseRightDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseRightUp() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_RIGHT);
 	}
@@ -5510,6 +5529,9 @@ bool BaseGame::onMouseRightUp() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseMiddleDown() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_state == GAME_RUNNING && !_interactive) {
 		return STATUS_OK;
 	}
@@ -5529,6 +5551,9 @@ bool BaseGame::onMouseMiddleDown() {
 
 //////////////////////////////////////////////////////////////////////////
 bool BaseGame::onMouseMiddleUp() {
+	if (isVideoPlaying())
+		return STATUS_OK;
+
 	if (_activeObject) {
 		_activeObject->handleMouse(MOUSE_RELEASE, MOUSE_BUTTON_MIDDLE);
 	}
