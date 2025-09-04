@@ -134,12 +134,8 @@ public:
 					castId = movie->getCast()->getCastIdByScriptId(context->_parentNumber);
 					childScript = true;
 				}
-				// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler
-				if (childScript) {
-					script.handlerName = Common::String::format("%d (p<%d>): %s", context->_scriptId, castId, script.handlerId.c_str());
-				} else {
-					script.handlerName = Common::String::format("%d (%d): %s", context->_scriptId, castId, script.handlerId.c_str());
-				}
+
+				script.handlerName = formatHandlerName(context->_scriptId, castId, script.handlerId, context->_scriptType, childScript);
 				setScriptToDisplay(script);
 				_state->_dbg._goToDefinition = true;
 			}

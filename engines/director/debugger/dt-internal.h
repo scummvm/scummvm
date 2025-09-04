@@ -237,6 +237,7 @@ void showImage(const ImGuiImage &image, const char *name, float thumbnailSize);
 ImVec4 convertColor(uint32 color);
 void displayVariable(const Common::String &name, bool changed, bool outOfScope = false);
 ImColor brightenColor(const ImColor &color, float factor);
+Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript);
 
 void showCast();        // dt-cast.cpp
 void showControlPanel(); // dt-controlpanel.cpp

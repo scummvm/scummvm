@@ -166,13 +166,7 @@ static void renderCallStack(uint pc) {
 			ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 			script.byteOffsets = head->sp.ctx->_functionByteOffsets[script.handlerId];
 			script.moviePath = movie->getArchive()->getPathName().toString();
-
-			// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler
-			if (childScript) {
-				script.handlerName = Common::String::format("%d (p<%d>): %s", scriptContext->_scriptId, castId, script.handlerId.c_str());
-			} else {
-				script.handlerName = Common::String::format("%d (%d):%s", scriptContext->_scriptId, castId, script.handlerId.c_str());
-			}
+			script.handlerName = formatHandlerName(head->sp.ctx->_scriptId, castId, script.handlerName, head->sp.ctx->_scriptType, childScript);
 			script.pc = framePc;
 			setScriptToDisplay(script);
 		}
@@ -313,13 +307,7 @@ static void updateCurrentScript() {
 	ImGuiScript script = toImGuiScript(scriptContext->_scriptType, CastMemberID(castId, castLibID), *head->sp.name);
 	script.byteOffsets = scriptContext->_functionByteOffsets[script.handlerId];
 	script.moviePath = movie->getArchive()->getPathName().toString();
-
-	// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler
-	if (childScript) {
-		script.handlerName = Common::String::format("%d (p<%d>): %s", scriptContext->_scriptId, castId, script.handlerId.c_str());
-	} else {
-		script.handlerName = Common::String::format("%d (%d): %s", scriptContext->_scriptId, castId, script.handlerId.c_str());
-	}
+	script.handlerName = formatHandlerName(head->sp.ctx->_scriptId, castId, script.handlerName, head->sp.ctx->_scriptType, childScript);
 	script.pc = 0;
 	setScriptToDisplay(script);
 }
@@ -398,13 +386,7 @@ void showFuncList() {
 										ImGuiScript script = toImGuiScript(context._value->_scriptType, memberID, functionHandler._key);
 										script.byteOffsets = context._value->_functionByteOffsets[script.handlerId];
 										script.moviePath = movie->getArchive()->getPathName().toString();
-
-										// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler: script type
-										if (childScript) {
-											script.handlerName = Common::String::format("%d(p<%d>):%s:%s", context._value->_scriptId, castId, script.handlerId.c_str(), scriptType2str(context._value->_scriptType));
-										} else {
-											script.handlerName = Common::String::format("%d(%d):%s:%s", context._value->_scriptId, castId, script.handlerId.c_str(), scriptType2str(context._value->_scriptType));
-										}
+										script.handlerName = formatHandlerName(context._value->_scriptId, castId, script.handlerId, context._value->_scriptType, childScript);
 										addToOpenHandlers(script);
 									}
 								}
@@ -459,13 +441,7 @@ void showFuncList() {
 										ImGuiScript script = toImGuiScript(context._value->_scriptType, memberID, functionHandler._key);
 										script.byteOffsets = context._value->_functionByteOffsets[script.handlerId];
 										script.moviePath = movie->getArchive()->getPathName().toString();
-
-										// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler: script type
-										if (childScript) {
-											script.handlerName = Common::String::format("%d(p<%d>):%s:%s", context._value->_scriptId, castId, script.handlerId.c_str(), scriptType2str(context._value->_scriptType));
-										} else {
-											script.handlerName = Common::String::format("%d(%d):%s:%s", context._value->_scriptId, castId, script.handlerId.c_str(), scriptType2str(context._value->_scriptType));
-										}
+										script.handlerName = formatHandlerName(context._value->_scriptId, castId, script.handlerName, context._value->_scriptType, childScript);
 										addToOpenHandlers(script);
 									}
 								}
