@@ -579,5 +579,16 @@ int getSelectedChannel(){
 	return _state ? _state->_selectedChannel : -1;
 }
 
+Common::String formatHandlerName(int scriptId, int castId, Common::String handlerName, ScriptType scriptType, bool childScript) {
+	Common::String formatted = Common::String();
+	// Naming convention: <script id> (<cast id/cast id of parent script>): name of handler: script type
+	if (childScript) {
+		formatted = Common::String::format("%d (p<%d>):%s :%s", scriptId, castId, handlerName.size() ? handlerName.c_str() : "<unnamed>", scriptType2str(scriptType));
+	} else {
+		formatted = Common::String::format("%d (%d) :%s :%s", scriptId, castId, handlerName.size() ? handlerName.c_str() : "<unnamed>", scriptType2str(scriptType));
+	}
+	return formatted;
+}
+
 } // namespace DT
 } // namespace Director
