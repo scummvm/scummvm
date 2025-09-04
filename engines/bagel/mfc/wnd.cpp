@@ -350,10 +350,9 @@ void CWnd::DestroyWindow() {
 	if (app->GetFocus() == this)
 		app->SetFocus(nullptr);
 
-	if (IsActiveWindow()) {
+	bool isActiveWindow = IsActiveWindow();
+	if (isActiveWindow)
 		SendMessage(WM_ACTIVATE, MAKEWPARAM(WA_INACTIVE, false), 0);
-		app->PopActiveWindow();
-	}
 
 	// Mark as not needed any repainting
 	Validate();
@@ -371,16 +370,15 @@ void CWnd::DestroyWindow() {
 		delete ctl;
 	_ownedControls.clear();
 
-	// If it's the active window, pop it
-	if (this == AfxGetApp()->GetActiveWindow()) {
-		AfxGetApp()->PopActiveWindow();
-	}
-
 	// If still attached to parent, remove from it
 	if (m_pParentWnd) {
 		m_pParentWnd->_ownedControls.remove(this);
 		m_pParentWnd->_children.erase(_controlId);
 	}
+
+	// If it's the active window, pop it
+	if (isActiveWindow)
+		AfxGetApp()->PopActiveWindow();
 
 	SendMessage(WM_DESTROY);
 	SendMessage(WM_NCDESTROY);
