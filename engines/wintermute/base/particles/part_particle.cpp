@@ -38,9 +38,9 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 PartParticle::PartParticle(BaseGame *inGame) : BaseClass(inGame) {
-	_pos = Vector2(0.0f, 0.0f);
+	_pos = DXVector2(0.0f, 0.0f);
 	_posZ = 0.0f;
-	_velocity = Vector2(0.0f, 0.0f);
+	_velocity = DXVector2(0.0f, 0.0f);
 	_scale = 100.0f;
 	_sprite = nullptr;
 	_creationTime = 0;
@@ -125,8 +125,8 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 		// particle hit the border
 		if (!_isDead && !BasePlatform::isRectEmpty(&_border)) {
 			Common::Point32 p;
-			p.x = (int32)_pos.x;
-			p.y = (int32)_pos.y;
+			p.x = (int32)_pos._x;
+			p.y = (int32)_pos._y;
 			if (!BasePlatform::ptInRect(&_border, p)) {
 				fadeOut(currentTime, emitter->_fadeOutTime);
 			}
@@ -154,8 +154,8 @@ bool PartParticle::update(PartEmitter *emitter, uint32 currentTime, uint32 timer
 				break;
 
 			case PartForce::FORCE_POINT: {
-				Vector2 vecDist = force->_pos - _pos;
-				float dist = fabs(vecDist.length());
+				DXVector2 vecDist = force->_pos - _pos;
+				float dist = fabs(DXVec2Length(&vecDist));
 
 				dist = 100.0f / dist;
 
@@ -199,7 +199,7 @@ bool PartParticle::display(PartEmitter *emitter) {
 	}
 
 	_sprite->getCurrentFrame();
-	return _sprite->display((int)_pos.x, (int)_pos.y,
+	return _sprite->display((int)_pos._x, (int)_pos._y,
 	                        nullptr,
 	                        _scale, _scale,
 	                        BYTETORGBA(255, 255, 255, _currentAlpha),

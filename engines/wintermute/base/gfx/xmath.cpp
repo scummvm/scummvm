@@ -32,9 +32,87 @@
 
 namespace Wintermute {
 
+DXVector2::DXVector2() {
+}
+
+DXVector2::DXVector2(const float *pf) {
+	if (!pf)
+		return;
+	_x = pf[0];
+	_y = pf[1];
+}
+
 DXVector2::DXVector2(float fx, float fy) {
 	_x = fx;
 	_y = fy;
+}
+
+DXVector2::operator float* () {
+	return (float *)&_x;
+}
+
+DXVector2::operator const float* () const {
+	return (const float *)&_x;
+}
+
+DXVector2 &DXVector2::operator += (const DXVector2 &v) {
+	_x += v._x;
+	_y += v._y;
+	return *this;
+}
+
+DXVector2 &DXVector2::operator -= (const DXVector2 &v) {
+	_x -= v._x;
+	_y -= v._y;
+	return *this;
+}
+
+DXVector2 &DXVector2::operator *= (float f) {
+	_x *= f;
+	_y *= f;
+	return *this;
+}
+
+DXVector2 &DXVector2::operator /= (float f) {
+	_x /= f;
+	_y /= f;
+	return *this;
+}
+
+DXVector2 DXVector2::operator + () const {
+	return *this;
+}
+
+DXVector2 DXVector2::operator - () const {
+	return DXVector2(-_x, -_y);
+}
+
+DXVector2 DXVector2::operator + (const DXVector2 &v) const {
+	return DXVector2(_x + v._x, _y + v._y);
+}
+
+DXVector2 DXVector2::operator - (const DXVector2 &v) const {
+	return DXVector2(_x - v._x, _y - v._y);
+}
+
+DXVector2 DXVector2::operator * (float f) const {
+	return DXVector2(_x * f, _y * f);
+}
+
+DXVector2 DXVector2::operator / (float f) const {
+	return DXVector2(_x / f, _y / f);
+}
+
+DXVector2 operator * (float f, const DXVector2 &v) {
+	return DXVector2(f * v._x, f * v._y);
+}
+
+bool DXVector2::operator == (const DXVector2 &v) const {
+	return _x == v._x && _y == v._y;
+}
+
+bool DXVector2::operator != (const DXVector2 &v) const {
+	return _x != v._x || _y != v._y;
 }
 
 DXVector3::DXVector3(const float *pf) {
@@ -709,6 +787,19 @@ DXMatrix *DXMatrixShadow(DXMatrix *pout, const DXVector4 *plight, const DXPlane 
 	pout->_m[3][1] = -nplane._d * plight->_y;
 	pout->_m[3][2] = -nplane._d * plight->_z;
 	pout->_m[3][3] = dot - nplane._d * plight->_w;
+	return pout;
+}
+
+DXVector2 *DXVec2TransformCoord(DXVector2 *pout, const DXVector2 *pv, const DXMatrix *pm) {
+	DXVector2 v;
+	float norm;
+	
+	v = *pv;
+	norm = pm->_m[0][3] * pv->_x + pm->_m[1][3] * pv->_y + pm->_m[3][3];
+
+	pout->_x = (pm->_m[0][0] * v._x + pm->_m[1][0] * v._y + pm->_m[3][0]) / norm;
+	pout->_y = (pm->_m[0][1] * v._x + pm->_m[1][1] * v._y + pm->_m[3][1]) / norm;
+
 	return pout;
 }
 

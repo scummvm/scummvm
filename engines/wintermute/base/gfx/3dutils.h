@@ -34,8 +34,6 @@
 
 namespace Wintermute {
 
-#ifdef ENABLE_WME3D
-
 #define DX_PI    ((float)3.141592654)
 #define degToRad(_val) (_val * DX_PI * (1.0f / 180.0f))
 #define radToDeg(_val) (_val * (180.0f / DX_PI))
@@ -53,8 +51,6 @@ public:
 	static void decomposeMatrixSimple(const DXMatrix *mat, DXVector3 *transVec,
 	                                  DXVector3 *scaleVec, DXQuaternion *rotQ);
 };
-
-#endif
 
 } // End of namespace Wintermute
 

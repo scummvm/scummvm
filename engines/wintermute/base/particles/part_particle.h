@@ -30,7 +30,7 @@
 
 #include "common/rect.h"
 #include "engines/wintermute/base/base.h"
-#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 namespace Wintermute {
 
@@ -59,9 +59,9 @@ public:
 	int32 _alpha2;
 
 	Common::Rect32 _border;
-	Vector2 _pos;
+	DXVector2 _pos;
 	float _posZ;
-	Vector2 _velocity;
+	DXVector2 _velocity;
 	float _scale;
 	BaseSprite *_sprite;
 	uint32 _creationTime;

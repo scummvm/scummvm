@@ -27,8 +27,6 @@
 
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/particles/part_particle.h"
-#include "engines/wintermute/math/vector2.h"
-#include "engines/wintermute/math/matrix4.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/base_engine.h"
@@ -36,6 +34,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
+#include "engines/wintermute/base/gfx/3dutils.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
 #include "engines/wintermute/dcgf.h"
@@ -209,13 +208,12 @@ bool PartEmitter::initParticle(PartParticle *particle, uint32 currentTime, uint3
 		particle->_border.bottom -= thicknessBottom;
 	}
 
-	Vector2 vecPos((float)posX, (float)posY);
-	Vector2 vecVel(0, velocity);
+	DXVector2 vecPos((float)posX, (float)posY);
+	DXVector2 vecVel(0, velocity);
 
-	Matrix4 matRot;
-	float radZrot = Math::deg2rad<float>(BaseUtils::normalizeAngle(angle - 180.0));
-	matRot.rotationZ(radZrot);
-	matRot.transformVector2(vecVel);
+	DXMatrix matRot;
+	DXMatrixRotationZ(&matRot, degToRad(BaseUtils::normalizeAngle(angle - 180.0)));
+	DXVec2TransformCoord(&vecVel, &vecVel, &matRot);
 
 	if (_alphaTimeBased) {
 		particle->_alpha1 = _alpha1;
@@ -326,7 +324,7 @@ bool PartEmitter::display(BaseRegion *region) {
 
 	for (int32 i = 0; i < _particles.getSize(); i++) {
 		if (region != nullptr && _useRegion) {
-			if (!region->pointInRegion((int)_particles[i]->_pos.x, (int)_particles[i]->_pos.y)) {
+			if (!region->pointInRegion((int)_particles[i]->_pos._x, (int)_particles[i]->_pos._y)) {
 				continue;
 			}
 		}
@@ -433,13 +431,12 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 	}
 
 	force->_type = type;
-	force->_pos = Vector2(posX, posY);
+	force->_pos = DXVector2(posX, posY);
 
-	force->_direction = Vector2(0, strength);
-	Matrix4 matRot;
-	float radZrot = Math::deg2rad<float>(BaseUtils::normalizeAngle(angle - 180.0));
-	matRot.rotationZ(radZrot);
-	matRot.transformVector2(force->_direction);
+	force->_direction = DXVector2(0, strength);
+	DXMatrix matRot;
+	DXMatrixRotationZ(&matRot, degToRad(BaseUtils::normalizeAngle(angle - 180.0)));
+	DXVec2TransformCoord(&force->_direction, &force->_direction, &matRot);
 
 	return STATUS_OK;
 }

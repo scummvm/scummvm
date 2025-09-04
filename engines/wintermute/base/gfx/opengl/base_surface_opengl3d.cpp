@@ -75,21 +75,21 @@ bool BaseSurfaceOpenGL3D::invalidate() {
 bool BaseSurfaceOpenGL3D::displayTransZoom(int x, int y, Common::Rect32 rect, float zoomX, float zoomY, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
-	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, zoomX, zoomY, Vector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, zoomX, zoomY, DXVector2(x, y), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::displayTrans(int x, int y, Common::Rect32 rect, uint32 alpha, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY, int offsetX, int offsetY) {
 	prepareToDraw();
 
-	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, Vector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, DXVector2(x + offsetX, y + offsetY), alpha, false, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
 bool BaseSurfaceOpenGL3D::display(int x, int y, Common::Rect32 rect, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) {
 	prepareToDraw();
 
-	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, Vector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
+	_renderer->drawSprite(dynamic_cast<BaseSurface *>(this), rect, 100, 100, DXVector2(x, y), 0xFFFFFFFF, true, blendMode, mirrorX, mirrorY);
 	return true;
 }
 
@@ -99,11 +99,11 @@ bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 h
 	x -= hotspotX;
 	y -= hotspotY;
 
-	Vector2 position(x, y);
-	Vector2 rotation;
-	rotation.x = x + hotspotX * (zoomX / 100.0f);
-	rotation.y = y + hotspotY * (zoomY / 100.0f);
-	Vector2 scale(zoomX / 100.0f, zoomY / 100.0f);
+	DXVector2 position(x, y);
+	DXVector2 rotation;
+	rotation._x = x + hotspotX * (zoomX / 100.0f);
+	rotation._y = y + hotspotY * (zoomY / 100.0f);
+	DXVector2 scale(zoomX / 100.0f, zoomY / 100.0f);
 	float angle = degToRad(rotate);
 
 	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, position, rotation, scale, angle, alpha, false, blendMode, mirrorX, mirrorY);
@@ -113,8 +113,8 @@ bool BaseSurfaceOpenGL3D::displayTransRotate(int x, int y, float rotate, int32 h
 bool BaseSurfaceOpenGL3D::displayTiled(int x, int y, Common::Rect32 rect, int numTimesX, int numTimesY) {
 	prepareToDraw();
 
-	Vector2 scale(numTimesX, numTimesY);
-	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, Vector2(x, y), Vector2(0, 0), scale, 0, 0xFFFFFFFF, false, Graphics::BLEND_NORMAL, false, false);
+	DXVector2 scale(numTimesX, numTimesY);
+	_renderer->drawSpriteEx(dynamic_cast<BaseSurface *>(this), rect, DXVector2(x, y), DXVector2(0, 0), scale, 0, 0xFFFFFFFF, false, Graphics::BLEND_NORMAL, false, false);
 	return true;
 }
 

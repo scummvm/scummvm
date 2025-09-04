@@ -119,8 +119,6 @@ MODULE_OBJS := \
 	debugger/watch.o \
 	debugger/watch_instance.o \
 	math/math_util.o \
-	math/matrix4.o \
-	math/vector2.o \
 	metaengine.o \
 	platform_osystem.o \
 	system/sys_class.o \

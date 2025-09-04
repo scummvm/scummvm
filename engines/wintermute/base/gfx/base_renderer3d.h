@@ -25,7 +25,6 @@
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/coll_templ.h"
 #include "engines/wintermute/dctypes.h"
-#include "engines/wintermute/math/vector2.h"
 
 #include "graphics/transform_struct.h"
 #include "graphics/surface.h"
@@ -86,9 +85,9 @@ public:
 	virtual bool restoreDeviceObjects() = 0;
 	BaseSurfaceOpenGL3D *_lastTexture;
 	void fade(uint16 alpha) override;
-	bool drawSprite(BaseSurface *texture, const Common::Rect32 &rect, float zoomX, float zoomY, const Vector2 &pos,
+	bool drawSprite(BaseSurface *texture, const Common::Rect32 &rect, float zoomX, float zoomY, const DXVector2 &pos,
 	                uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY);
-	virtual bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+	virtual bool drawSpriteEx(BaseSurface *texture, const Common::Rect32 &rect, const DXVector2 &pos, const DXVector2 &rot, const DXVector2 &scale,
 	                float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) = 0;
 	Camera3D *_camera;
 	virtual bool resetDevice() = 0;

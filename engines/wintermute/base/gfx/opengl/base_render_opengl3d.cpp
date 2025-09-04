@@ -314,8 +314,8 @@ bool BaseRenderOpenGL3D::setupLines() {
 }
 
 bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Common::Rect32 &rect,
-	                              const Wintermute::Vector2 &pos, const Wintermute::Vector2 &rot,
-	                              const Wintermute::Vector2 &scale,
+	                              const DXVector2 &pos, const DXVector2 &rot,
+	                              const DXVector2 &scale,
 	                              float angle, uint32 color, bool alphaDisable,
 	                              Graphics::TSpriteBlendMode blendMode,
 	                              bool mirrorX, bool mirrorY) {
@@ -327,8 +327,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Common::Rect32 &re
 		color = _forceAlphaColor;
 	}
 
-	float width = (rect.right - rect.left) * scale.x;
-	float height = (rect.bottom - rect.top) * scale.y;
+	float width = (rect.right - rect.left) * scale._x;
+	float height = (rect.bottom - rect.top) * scale._y;
 
 	int texWidth = texture->getGLTextureWidth();
 	int texHeight = texture->getGLTextureHeight();
@@ -362,25 +362,25 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurface *tex, const Common::Rect32 &re
 	vertices[3].v = texTop;
 
 	// position coords
-	vertices[0].x = pos.x;
-	vertices[0].y = pos.y + height;
+	vertices[0].x = pos._x;
+	vertices[0].y = pos._y + height;
 	vertices[0].z = 0.9f;
 
-	vertices[1].x = pos.x;
-	vertices[1].y = pos.y;
+	vertices[1].x = pos._x;
+	vertices[1].y = pos._y;
 	vertices[1].z = 0.9f;
 
-	vertices[2].x = pos.x + width;
-	vertices[2].y = pos.y + height;
+	vertices[2].x = pos._x + width;
+	vertices[2].y = pos._y + height;
 	vertices[2].z = 0.9f;
 
-	vertices[3].x = pos.x + width;
-	vertices[3].y = pos.y;
+	vertices[3].x = pos._x + width;
+	vertices[3].y = pos._y;
 	vertices[3].z = 0.9f;
 
 	if (angle != 0) {
 		DXVector2 sc(1.0f, 1.0f);
-		DXVector2 rotation(rot.x, rot.y);
+		DXVector2 rotation(rot._x, rot._y);
 		transformVertices(vertices, &rotation, &sc, angle);
 	}
 

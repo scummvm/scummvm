@@ -96,7 +96,7 @@ public:
 	bool transferConstChar(const char *name, const char **val);
 	bool transferCharPtr(const char *name, char **val);
 	bool transferString(const char *name, Common::String *val);
-	bool transferVector2(const char *name, Vector2 *val);
+	bool transferVector2(const char *name, DXVector2 *val);
 	bool transferVector3d(const char *name, DXVector3 *val);
 	bool transferVector4d(const char *name, DXVector4 *val);
 	bool transferMatrix4(const char *name, DXMatrix *val);

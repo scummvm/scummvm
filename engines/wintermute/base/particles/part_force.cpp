@@ -33,8 +33,8 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 PartForce::PartForce(BaseGame *inGame) : BaseNamedObject(inGame) {
-	_pos = Vector2(0.0f, 0.0f);
-	_direction = Vector2(0.0f, 0.0f);
+	_pos = DXVector2(0.0f, 0.0f);
+	_direction = DXVector2(0.0f, 0.0f);
 	_type = FORCE_POINT;
 }
 

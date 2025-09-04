@@ -31,7 +31,6 @@
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
 #include "engines/wintermute/platform_osystem.h"
-#include "engines/wintermute/math/vector2.h"
 #include "engines/wintermute/base/gfx/base_image.h"
 #include "engines/wintermute/base/save_thumb_helper.h"
 #include "engines/wintermute/base/sound/base_sound.h"
@@ -815,17 +814,17 @@ bool BasePersistenceManager::transferPoint32(const char *name, Common::Point32 *
 
 //////////////////////////////////////////////////////////////////////////
 // Vector2
-bool BasePersistenceManager::transferVector2(const char *name, Vector2 *val) {
+bool BasePersistenceManager::transferVector2(const char *name, DXVector2 *val) {
 	if (_saving) {
-		putFloat(val->x);
-		putFloat(val->y);
+		putFloat(val->_x);
+		putFloat(val->_y);
 		if (_saveStream->err()) {
 			return STATUS_FAILED;
 		}
 		return STATUS_OK;
 	} else {
-		val->x = getFloat();
-		val->y = getFloat();
+		val->_x = getFloat();
+		val->_y = getFloat();
 		if (_loadStream->err()) {
 			return STATUS_FAILED;
 		}

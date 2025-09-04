@@ -31,7 +31,7 @@
 
 #include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_named_object.h"
-#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/base/gfx/xmath.h"
 
 namespace Wintermute {
 
@@ -45,8 +45,8 @@ public:
 	PartForce(BaseGame *inGame);
 	~PartForce() override;
 
-	Vector2 _pos;
-	Vector2 _direction;
+	DXVector2 _pos;
+	DXVector2 _direction;
 	TForceType _type;
 
 	bool persist(BasePersistenceManager *PersistMgr) override;
