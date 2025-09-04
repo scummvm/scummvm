@@ -1231,17 +1231,19 @@ void Gui::selectDraggable(ObjID child, WindowReference origin, Common::Point cli
 		}
 
 		for (auto &selObj: _engine->getSelectedObjects()) {
-			DraggedObj obj;
-			obj.hasMoved = false;
-			obj.id = selObj;
-			obj.startWin = origin;
-			Common::Point localizedClick = click - getGlobalScrolledSurfacePosition(origin);
-			obj.mouseOffset = _engine->getObjPosition(selObj) - localizedClick;
-			obj.pos = click + obj.mouseOffset;
-			obj.startPos = obj.pos;
+			if (_engine->isObjDraggable(selObj)) {
+				DraggedObj obj;
+				obj.hasMoved = false;
+				obj.id = selObj;
+				obj.startWin = origin;
+				Common::Point localizedClick = click - getGlobalScrolledSurfacePosition(origin);
+				obj.mouseOffset = _engine->getObjPosition(selObj) - localizedClick;
+				obj.pos = click + obj.mouseOffset;
+				obj.startPos = obj.pos;
 
-			_draggedObjects.push_back(obj);
-			_draggedSurfaces.push_back(Graphics::ManagedSurface());
+				_draggedObjects.push_back(obj);
+				_draggedSurfaces.push_back(Graphics::ManagedSurface());
+			}
 		}
 		_engine->getSelectedObjects().clear();
 	}
@@ -1277,11 +1279,19 @@ void Gui::handleDragRelease(bool shiftPressed, bool isDoubleClick) {
 			return;
 		}
 		if (isDoubleClick) {
-			// WORKAROUND: Make windows to be selectable as objects to
-			// trigger certain events when double clicking.
-			// TODO: Make object selection, dragging done with single click.
-			// Handle this in a single click as well.
-			_engine->handleObjectSelect(0, destinationWindow, shiftPressed, isDoubleClick);
+			WindowData &data = findWindowData((WindowReference)destinationWindow);
+			Graphics::MacWindow *win = findWindow(destinationWindow);
+
+			ObjID child = 0;
+			Common::Rect clickRect = calculateClickRect(_cursor->getPos() + data.scrollPos, win->getInnerDimensions());
+
+			for (Common::Array<DrawableObject>::const_iterator it = data.children.begin(); it != data.children.end(); it++) {
+				if (canBeSelected((*it).obj, clickRect, destinationWindow)) {
+					child = (*it).obj;
+				}
+			}
+
+			_engine->handleObjectSelect(child, destinationWindow, shiftPressed, isDoubleClick);
 		}
 	}
 }

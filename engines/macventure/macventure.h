@@ -310,6 +310,7 @@ public:
 	Common::Point getObjPosition(ObjID objID);
 	bool isObjVisible(ObjID objID);
 	bool isObjClickable(ObjID objID);
+	bool isObjDraggable(ObjID objID);
 	bool isObjSelected(ObjID objID);
 	bool isObjExit(ObjID objID);
 	bool isHiddenExit(ObjID objID);
