@@ -156,7 +156,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	numFrames = MIN<uint>(numFrames, kMaxColumnsInTable - 2);
 
 	for (int f = 0; f < (int)numFrames; f++) {
-		Frame &frame = *score->_scoreCache[f + _state->_scoreFrameOffset - 1];
+		int rf = f + _state->_scoreFrameOffset - 1;
+		Frame &frame = *score->_scoreCache[rf];
 		Sprite &sprite = *frame._sprites[ch];
 
 		_state->_colors._contColorIndex = frame._sprites[ch]->_colorcode & 0x07;
@@ -165,10 +166,10 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 
 		ImGui::TableNextColumn();
 
-		int startCont = _state->_continuationData[ch][f].first;
-		int endCont = _state->_continuationData[ch][f].second;
+		int startCont = _state->_continuationData[ch][rf].first;
+		int endCont = _state->_continuationData[ch][rf].second;
 
-		if (f + _state->_scoreFrameOffset == (int)currentFrameNum)
+		if (rf + 1 == (int)currentFrameNum)
 			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
 
 		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
@@ -198,8 +199,8 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::PushID((ch + 10 - mode) * 10000 + f);
 
 		// If the frame is not the start, then don't render any text
-		if (f != startCont || !(sprite._castId.member || sprite.isQDShape())) {
-			if (f == endCont && sprite._castId.member && mode == _state->_scoreMode) {
+		if (rf != startCont || !(sprite._castId.member || sprite.isQDShape())) {
+			if (rf == endCont && sprite._castId.member && mode == _state->_scoreMode) {
 				ImGui::PushFont(ImGui::GetIO().FontDefault);
 				ImGui::TextUnformatted("\uf819");
 				ImGui::PopFont();
