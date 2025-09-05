@@ -38,14 +38,14 @@ public:
 	Effect3D(BaseGame *inGame);
 	~Effect3D();
 
-	bool createFromFile(const Common::String &filename);
+	bool createFromFile(const char *filename);
 	uint32 getEffectHash() { return _effectHash; }
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();
-	const char *getFileName() { return _filename.c_str(); }
+	const char *getFileName() { return _filename; }
 
 private:
-	Common::String _filename;
+	char *_filename;
 	uint32 _effectHash;
 };
 

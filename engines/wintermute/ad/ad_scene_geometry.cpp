@@ -199,7 +199,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 	// load meshes
 	for (i = 0; i < loader->getNumMeshes(); i++) {
-		AdGeomExtNode *extNode = geomExt->matchName(loader->getMeshName(i).c_str());
+		AdGeomExtNode *extNode = geomExt->matchName(loader->getMeshName(i));
 		if (!extNode) {
 			continue;
 		}
@@ -207,7 +207,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 		switch (extNode->_type) {
 		case GEOM_WALKPLANE: {
 				AdWalkplane *plane = new AdWalkplane(_game);
-				plane->setName(loader->getMeshName(i).c_str());
+				plane->setName(loader->getMeshName(i));
 				plane->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, plane->_mesh)) {
 					delete plane->_mesh;
@@ -226,7 +226,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		case GEOM_BLOCKED: {
 				AdBlock *block = new AdBlock(_game);
-				block->setName(loader->getMeshName(i).c_str());
+				block->setName(loader->getMeshName(i));
 				block->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, block->_mesh)) {
 					delete block->_mesh;
@@ -262,7 +262,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		case GEOM_GENERIC: {
 				AdGeneric *generic = new AdGeneric(_game);
-				generic->setName(loader->getMeshName(i).c_str());
+				generic->setName(loader->getMeshName(i));
 				generic->_mesh = _game->_renderer3D->createMesh3DS();
 				if (!loader->loadMesh(i, generic->_mesh)) {
 					delete generic->_mesh;

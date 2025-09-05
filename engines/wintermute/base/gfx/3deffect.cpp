@@ -31,16 +31,19 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/gfx/3deffect.h"
 #include "engines/wintermute/utils/utils.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 Effect3D::Effect3D(BaseGame *inGame) : BaseClass(inGame) {
+	_filename = nullptr;
 	_effectHash = 0xFFFFFFFF;
 }
 
 //////////////////////////////////////////////////////////////////////////
 Effect3D::~Effect3D() {
+	SAFE_DELETE_ARRAY(_filename);
 	_effectHash = 0xFFFFFFFF;
 }
 
@@ -55,14 +58,14 @@ bool Effect3D::restoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Effect3D::createFromFile(const Common::String &filename) {
+bool Effect3D::createFromFile(const char *filename) {
 	uint32 size;
 	byte *buffer = BaseFileManager::getEngineInstance()->readWholeFile(filename, &size);
 	if (!buffer) {
 		return false;
 	}
 
-	_filename = filename;
+	BaseUtils::setString(&_filename, filename);
 
 	Common::CRC32 crc;
 	_effectHash = crc.crcFast(buffer, size);

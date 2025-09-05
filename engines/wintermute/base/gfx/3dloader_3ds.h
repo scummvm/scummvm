@@ -35,7 +35,10 @@ namespace Wintermute {
 class Loader3DS : public BaseNamedObject {
 public:
 	enum E3DSFileObjectType{
-		OBJ_3DS_NONE, OBJ_3DS_MESH, OBJ_3DS_CAMERA, OBJ_3DS_LIGHT
+		OBJ_3DS_NONE,
+		OBJ_3DS_MESH,
+		OBJ_3DS_CAMERA,
+		OBJ_3DS_LIGHT
 	};
 
 	struct SFace{
@@ -63,24 +66,24 @@ public:
 		SFace *_faces;
 		DXVector3 *_vertices;
 		uint16 _numVertices;
-		Common::String _name;
+		char *_name;
 		E3DSFileObjectType _type;
 		virtual ~FileObject3DS();
 		FileObject3DS();
 	};
 
 public:
-	Common::String getCameraName(int index);
-	Common::String getLightName(int index);
-	Common::String getMeshName(int index);
+	char * getCameraName(int index);
+	char * getLightName(int index);
+	char * getMeshName(int index);
 	bool loadCamera(int index, Camera3D *camera);
 	int32 getNumCameras();
 	bool loadLight(int index, Light3D *light);
 	int32 getNumLights();
 	bool loadMesh(int index, Mesh3DS *mesh);
 	int32 getNumMeshes();
-	bool parseFile(const Common::String &filename);
-	Common::String _filename;
+	bool parseFile(const char *filename);
+	char *_filename;
 	Loader3DS(BaseGame *inGame);
 	virtual ~Loader3DS();
 	BaseArray<FileObject3DS *> _objects;

@@ -30,6 +30,7 @@
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/gfx/3deffect_params.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -42,17 +43,19 @@ Effect3DParams::Effect3DParam::Effect3DParam() {
 //////////////////////////////////////////////////////////////////////////
 Effect3DParams::Effect3DParam::Effect3DParam(const char *paramName) {
 	setDefaultValues();
-	_paramName = paramName;
+	BaseUtils::setString(&_paramName, paramName);
 }
 
 //////////////////////////////////////////////////////////////////////////
 Effect3DParams::Effect3DParam::~Effect3DParam() {
+	SAFE_DELETE_ARRAY(_paramName);
+	SAFE_DELETE_ARRAY(_valString);
 }
 
 //////////////////////////////////////////////////////////////////////////
 void Effect3DParams::Effect3DParam::setValue(char *val) {
 	_type = EP_STRING;
-	_valString = val;
+	BaseUtils::setString(&_valString, val);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -81,8 +84,8 @@ void Effect3DParams::Effect3DParam::setValue(DXVector4 val) {
 
 //////////////////////////////////////////////////////////////////////////
 void Effect3DParams::Effect3DParam::setDefaultValues() {
-	_paramName = "";
-	_valString = "";
+	_paramName = nullptr;
+	_valString = nullptr;
 	_valInt = 0;
 	_valFloat = 0;
 	_valBool = 0;
@@ -95,9 +98,9 @@ void Effect3DParams::Effect3DParam::setDefaultValues() {
 
 //////////////////////////////////////////////////////////////////////////
 bool Effect3DParams::Effect3DParam::persist(BasePersistenceManager *persistMgr) {
-	persistMgr->transferString(TMEMBER(_paramName));
+	persistMgr->transferCharPtr(TMEMBER(_paramName));
 	persistMgr->transferSint32(TMEMBER_INT(_type));
-	persistMgr->transferString(TMEMBER(_valString));
+	persistMgr->transferCharPtr(TMEMBER(_valString));
 	persistMgr->transferSint32(TMEMBER(_valInt));
 	persistMgr->transferFloat(TMEMBER(_valFloat));
 	persistMgr->transferVector4d(TMEMBER(_valVector));

@@ -199,7 +199,7 @@ byte *ScEngine::getCompiledScript(const char *filename, uint32 *outSize, bool ig
 	// is script in cache?
 	if (!ignoreCache) {
 		for (int i = 0; i < MAX_CACHED_SCRIPTS; i++) {
-			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename.c_str(), filename) == 0) {
+			if (_cachedScripts[i] && scumm_stricmp(_cachedScripts[i]->_filename, filename) == 0) {
 				_cachedScripts[i]->_timestamp = g_system->getMillis();
 				*outSize = _cachedScripts[i]->_size;
 				return _cachedScripts[i]->_buffer;

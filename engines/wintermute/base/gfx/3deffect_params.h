@@ -59,17 +59,17 @@ public:
 		void setValue(bool val);
 		void setValue(DXVector4 val);
 
-		const char *getParamName() const { return _paramName.c_str(); }
+		const char *getParamName() const { return _paramName; }
 
 		bool persist(BasePersistenceManager *persistMgr);
 
 	private:
 		void setDefaultValues();
 		ParamType _type;
-		Common::String _paramName;
+		char * _paramName;
 		bool _initialized;
 
-		Common::String _valString;
+		char *_valString;
 		int32 _valInt;
 		float _valFloat;
 		DXVector4 _valVector;
