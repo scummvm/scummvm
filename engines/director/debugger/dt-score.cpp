@@ -148,8 +148,18 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
 		ImGui::SetItemTooltip("Playback toggle");
 
-		dl->AddCircleFilled(mid, 4.0f, ImColor(_state->_colors._bp_color_enabled));
-//		dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._bp_color_enabled));
+		if (ImGui::IsItemClicked(0)) {
+			if (mode == kModeMember) {
+				score->_channels[ch]->_visible = !score->_channels[ch]->_visible;
+
+				g_director->getCurrentWindow()->render(true);
+			}
+		}
+
+		if (mode != kModeMember || score->_channels[ch]->_visible)
+			dl->AddCircleFilled(mid, 4.0f, ImColor(_state->_colors._channel_toggle));
+		else
+			dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._channel_toggle));
 
 		ImGui::PopID();
 	}

@@ -137,6 +137,8 @@ typedef struct ImGuiState {
 		ImVec4 _bp_color_enabled = ImVec4(0.9f, 0.08f, 0.0f, 1.0f);
 		ImVec4 _bp_color_hover = ImVec4(0.42f, 0.17f, 0.13f, 1.0f);
 
+		ImVec4 _channel_toggle = ImColor(IM_COL32(0x30, 0x30, 0xFF, 0xFF));
+
 		ImVec4 _current_statement = ImColor(IM_COL32(0xFF, 0xFF, 0x00, 0xFF));
 		ImVec4 _line_color = ImVec4(0.44f, 0.44f, 0.44f, 1.0f);
 		ImVec4 _call_color = ImColor(IM_COL32(0xFF, 0xC5, 0x5C, 0xFF));

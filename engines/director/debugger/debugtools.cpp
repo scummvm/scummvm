@@ -421,6 +421,8 @@ static void showSettings() {
 		ImGui::ColorEdit4("Breakpoint enabled", &_state->_colors._bp_color_enabled.x);
 		ImGui::ColorEdit4("Breakpoint hover", &_state->_colors._bp_color_hover.x);
 
+		ImGui::ColorEdit4("Channel toggle", &_state->_colors._channel_toggle.x);
+
 		ImGui::SeparatorText("Lingo syntax");
 		ImGui::ColorEdit4("Line", &_state->_colors._line_color.x);
 		ImGui::ColorEdit4("Call", &_state->_colors._call_color.x);
