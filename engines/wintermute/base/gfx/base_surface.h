@@ -75,6 +75,7 @@ public:
 	void setSize(int width, int height);
 
 	int _referenceCount;
+	Common::String _filename;
 
 	virtual int getWidth() {
 		return _width;
@@ -82,13 +83,10 @@ public:
 	virtual int getHeight() {
 		return _height;
 	}
-	Common::String getFileNameStr() { return _filename; }
-	const char* getFileName() { return _filename.c_str(); }
 	//void SetWidth(int Width) { _width = Width;    }
 	//void SetHeight(int Height){ _height = Height; }
 protected:
 
-	Common::String _filename;
 	int32 _height;
 	int32 _width;
 

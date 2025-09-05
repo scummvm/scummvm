@@ -297,8 +297,8 @@ bool BaseSubFrame::saveAsText(BaseDynamicBuffer *buffer, int indent, bool comple
 		buffer->putTextIndent(indent, "SUBFRAME {\n");
 	}
 
-	if (_surface && _surface->getFileNameStr() != "") {
-		buffer->putTextIndent(indent + 2, "IMAGE = \"%s\"\n", _surface->getFileName());
+	if (_surface && _surface->_filename != "") {
+		buffer->putTextIndent(indent + 2, "IMAGE = \"%s\"\n", _surface->_filename.c_str());
 	}
 
 	if (_transparent != 0xFFFF00FF) {
