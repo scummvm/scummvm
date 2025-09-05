@@ -150,7 +150,7 @@ public:
 	int32 _indicatorWidth;
 	int32 _indicatorHeight;
 
-	Common::String _savedGameExt;
+	char *_savedGameExt;
 	bool _richSavedGames;
 
 #ifdef ENABLE_WME3D
@@ -158,8 +158,8 @@ public:
 	int32 _editorResolutionHeight;
 #endif
 
-	Common::String _loadImageName;
-	Common::String _saveImageName;
+	char *_loadImageName;
+	char *_saveImageName;
 	int32 _saveImageX;
 	int32 _saveImageY;
 	int32 _loadImageX;

@@ -278,19 +278,19 @@ void BaseFontBitmap::drawChar(byte c, int x, int y) {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseFontBitmap::loadFile(const Common::String &filename) {
+bool BaseFontBitmap::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename.c_str());
+		_game->LOG(0, "BaseFontBitmap::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
 	bool ret;
 
-	setFilename(filename.c_str());
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) {
-		_game->LOG(0, "Error parsing FONT file '%s'", filename.c_str());
+		_game->LOG(0, "Error parsing FONT file '%s'", filename);
 	}
 
 	delete[] buffer;

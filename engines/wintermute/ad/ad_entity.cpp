@@ -1159,8 +1159,8 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 	}
 
-	if (_subtype == ENTITY_SOUND && _sFX && !_sFX->_soundFilename.empty()) {
-		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename.c_str());
+	if (_subtype == ENTITY_SOUND && _sFX && _sFX->_soundFilename) {
+		buffer->putTextIndent(indent + 2, "SOUND=\"%s\"\n", _sFX->_soundFilename);
 		buffer->putTextIndent(indent + 2, "SOUND_START_TIME=%d\n", _sFXStart);
 		buffer->putTextIndent(indent + 2, "SOUND_VOLUME=%d\n", _sFXVolume);
 	}

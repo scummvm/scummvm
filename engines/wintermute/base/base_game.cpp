@@ -236,8 +236,8 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_indicatorWidth = -1;
 	_indicatorHeight = 8;
 	_richSavedGames = false;
-	_savedGameExt = "dsv";
-
+	_savedGameExt = nullptr;
+	BaseUtils::setString(&_savedGameExt, "dsv");
 
 	_musicCrossfadeRunning = false;
 	_musicCrossfadeStartTime = 0;
@@ -248,8 +248,8 @@ BaseGame::BaseGame(const Common::String &targetName) : BaseObject(this), _target
 	_musicCrossfadeVolume1 = 0;
 	_musicCrossfadeVolume2 = 100;
 
-	_loadImageName = "";
-	_saveImageName = "";
+	_loadImageName = nullptr;
+	_saveImageName = nullptr;
 	_saveLoadImage = nullptr;
 
 	_saveImageX = _saveImageY = 0;
@@ -386,6 +386,9 @@ bool BaseGame::cleanup() {
 	_focusedWindow = nullptr; // ref only
 	//m_AccessShieldWin = nullptr;
 
+	SAFE_DELETE_ARRAY(_saveImageName);
+	SAFE_DELETE_ARRAY(_loadImageName);
+
 	SAFE_DELETE(_cursorNoninteractive);
 	SAFE_DELETE(_cursor);
 	SAFE_DELETE(_activeCursor);
@@ -420,8 +423,8 @@ bool BaseGame::cleanup() {
 	_viewportStack.removeAll();
 	_viewportSP = -1;
 
-	setName(nullptr);
-	setFilename(nullptr);
+	SAFE_DELETE_ARRAY(_name);
+	SAFE_DELETE_ARRAY(_filename);
 	for (int i = 0; i < 7; i++) {
 		SAFE_DELETE_ARRAY(_caption[i]);
 	}
@@ -1063,7 +1066,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_SAVE_IMAGE:
-			_saveImageName = params;
+			BaseUtils::setString(&_saveImageName, (char *)params);
 			break;
 
 		case TOKEN_SAVE_IMAGE_X:
@@ -1075,7 +1078,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 			break;
 
 		case TOKEN_LOAD_IMAGE:
-			_loadImageName = params;
+			BaseUtils::setString(&_loadImageName, (char *)params);
 			break;
 
 		case TOKEN_LOAD_IMAGE_X:
@@ -1372,10 +1375,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		if (channel < 0 || channel >= NUM_MUSIC_CHANNELS) {
 			stack->pushNULL();
 		} else {
-			if (!_music[channel] || _music[channel]->_soundFilename.empty()) {
+			if (!_music[channel] || !_music[channel]->_soundFilename) {
 				stack->pushNULL();
 			} else {
-				stack->pushString(_music[channel]->_soundFilename.c_str());
+				stack->pushString(_music[channel]->_soundFilename);
 			}
 		}
 		return STATUS_OK;
@@ -1567,8 +1570,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		BaseSound *sound = new BaseSound(_game);
 		if (sound && DID_SUCCEED(sound->setSound(filename, Audio::Mixer::kMusicSoundType, true))) {
 			length = sound->getLength();
-			delete sound;
-			sound = nullptr;
+			SAFE_DELETE(sound);
 		}
 		stack->pushInt(length);
 		return STATUS_OK;
@@ -2449,9 +2451,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_loadImageY = stack->pop()->getInt();
 
 		if (val->isNULL()) {
-			_saveImageName = "";
+			SAFE_DELETE_ARRAY(_loadImageName);
 		} else {
-			_loadImageName = val->getString();
+			BaseUtils::setString(&_loadImageName, val->getString());
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -2467,9 +2469,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		_saveImageY = stack->pop()->getInt();
 
 		if (val->isNULL()) {
-			_saveImageName = "";
+			SAFE_DELETE_ARRAY(_saveImageName);
 		} else {
-			_loadImageName = val->getString();
+			BaseUtils::setString(&_saveImageName, val->getString());
 		}
 		stack->pushNULL();
 		return STATUS_OK;
@@ -4165,7 +4167,7 @@ bool BaseGame::saveGame(int32 slot, const char *desc, bool quickSave) {
 	if (DID_SUCCEED(ret = pm->initSave(desc))) {
 		if (!quickSave) {
 			SAFE_DELETE(_saveLoadImage);
-			if (_saveImageName.size())
+			if (_saveImageName)
 				_saveLoadImage = _game->_renderer->createSurface();
 			if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_saveImageName, true, 0, 0, 0))) {
 				SAFE_DELETE(_saveLoadImage);
@@ -4216,7 +4218,7 @@ bool BaseGame::loadGame(const char *filename) {
 	stopVideo();
 
 	SAFE_DELETE(_saveLoadImage);
-	if (_loadImageName.size()) {
+	if (_loadImageName) {
 		_saveLoadImage = _game->_renderer->createSurface();
 
 		if (!_saveLoadImage || DID_FAIL(_saveLoadImage->create(_loadImageName, true, 0, 0, 0))) {
@@ -4629,8 +4631,8 @@ bool BaseGame::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferUint32(TMEMBER(_liveTimerDelta));
 	persistMgr->transferUint32(TMEMBER(_liveTimerLast));
 
-	persistMgr->transferString(TMEMBER(_loadImageName));
-	persistMgr->transferString(TMEMBER(_saveImageName));
+	persistMgr->transferCharPtr(TMEMBER(_loadImageName));
+	persistMgr->transferCharPtr(TMEMBER(_saveImageName));
 	persistMgr->transferSint32(TMEMBER(_saveImageX));
 	persistMgr->transferSint32(TMEMBER(_saveImageY));
 	persistMgr->transferSint32(TMEMBER(_loadImageX));

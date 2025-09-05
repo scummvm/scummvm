@@ -105,7 +105,7 @@ public:
 	int getLetterHeight() override;
 
 	bool loadBuffer(char *buffer);
-	bool loadFile(const Common::String &filename);
+	bool loadFile(const char *filename);
 
 	void afterLoad() override;
 	void initLoop() override;

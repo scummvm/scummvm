@@ -64,9 +64,9 @@ public:
 	uint32 getLength();
 	bool _soundStreamed;
 	Audio::Mixer::SoundType _soundType;
-	Common::String _soundFilename;
+	char *_soundFilename;
 	bool setSoundSimple();
-	bool setSound(const Common::String &filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
+	bool setSound(const char *filename, Audio::Mixer::SoundType type = Audio::Mixer::kSFXSoundType, bool streamed = false);
 	BaseSound(BaseGame *inGame);
 	~BaseSound() override;
 

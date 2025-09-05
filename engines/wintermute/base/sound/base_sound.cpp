@@ -29,6 +29,7 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/sound/base_sound_manager.h"
 #include "engines/wintermute/base/sound/base_sound_buffer.h"
+#include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
 
@@ -37,7 +38,7 @@ IMPLEMENT_PERSISTENT(BaseSound, false)
 //////////////////////////////////////////////////////////////////////////
 BaseSound::BaseSound(BaseGame *inGame) : BaseClass(inGame) {
 	_sound = nullptr;
-	_soundFilename = "";
+	_soundFilename = nullptr;
 
 	_soundType = Audio::Mixer::kSFXSoundType;
 	_soundStreamed = false;
@@ -59,19 +60,23 @@ BaseSound::~BaseSound() {
 		_game->_soundMgr->removeSound(_sound);
 	}
 	_sound = nullptr;
+
+	SAFE_DELETE_ARRAY(_soundFilename);
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseSound::setSound(const Common::String &filename, Audio::Mixer::SoundType type, bool streamed) {
+bool BaseSound::setSound(const char *filename, Audio::Mixer::SoundType type, bool streamed) {
 	if (_sound) {
 		_game->_soundMgr->removeSound(_sound);
 		_sound = nullptr;
 	}
-	_soundFilename = Common::String(); // Set empty
+	SAFE_DELETE_ARRAY(_soundFilename);
 
 	_sound = _game->_soundMgr->addSound(filename, type, streamed);
 	if (_sound) {
-		_soundFilename = filename;
+		size_t nameSize = strlen(filename) + 1;
+		_soundFilename = new char[nameSize];
+		Common::strcpy_s(_soundFilename, nameSize, filename);
 
 		_soundType = type;
 		_soundStreamed = streamed;
@@ -175,7 +180,7 @@ bool BaseSound::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferPtr(TMEMBER_PTR(_game));
 
-	persistMgr->transferString(TMEMBER(_soundFilename));
+	persistMgr->transferCharPtr(TMEMBER(_soundFilename));
 	persistMgr->transferBool(TMEMBER(_soundLooping));
 	persistMgr->transferBool(TMEMBER(_soundPaused));
 	persistMgr->transferBool(TMEMBER(_soundFreezePaused));

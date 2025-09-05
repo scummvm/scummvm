@@ -74,7 +74,7 @@ SXArray::~SXArray() {
 
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
-	char dummy[32768];
+	static char dummy[32768];
 	dummy[0] = '\0';
 	char propName[20];
 	for (int i = 0; i < _length; i++) {
@@ -90,8 +90,7 @@ const char *SXArray::scToString() {
 			Common::strcat_s(dummy, ",");
 		}
 	}
-	_strRep = dummy;
-	return _strRep.c_str();
+	return dummy;
 }
 
 

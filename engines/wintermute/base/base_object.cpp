@@ -574,7 +574,7 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		if (!_sFX) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_sFX->_soundFilename.c_str());
+			stack->pushString(_sFX->_soundFilename);
 		}
 		return STATUS_OK;
 	}
@@ -1130,7 +1130,7 @@ bool BaseObject::persist(BasePersistenceManager *persistMgr) {
 			if (persistMgr->checkVersion(1, 6, 1)) {
 				persistMgr->transferString(TMEMBER(tempString));
 				if (!tempString.empty()) {
-					_shadowImage = _game->_surfaceStorage->addSurface(tempString);
+					_shadowImage = _game->_surfaceStorage->addSurface(tempString.c_str());
 				}
 			}
 		}

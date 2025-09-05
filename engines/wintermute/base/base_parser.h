@@ -69,7 +69,7 @@ public:
 	void skipToken(char **buf, char *tok, char *msg = nullptr);
 	int32 getTokenInt(char **buf);
 	float getTokenFloat(char **buf);
-	Common::String getToken(char **buf);
+	char *getToken(char **buf);
 	char *getAssignmentText(char **buf);
 	char *getSubText(char **buf, char open, char close);
 	void skipCharacters(char **buf, const char *toSkip);

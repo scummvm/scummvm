@@ -290,19 +290,19 @@ int BaseFontTT::getLetterHeight() {
 
 
 //////////////////////////////////////////////////////////////////////
-bool BaseFontTT::loadFile(const Common::String &filename) {
+bool BaseFontTT::loadFile(const char *filename) {
 	char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 	if (buffer == nullptr) {
-		_game->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename.c_str());
+		_game->LOG(0, "BaseFontTT::LoadFile failed for file '%s'", filename);
 		return STATUS_FAILED;
 	}
 
 	bool ret;
 
-	setFilename(filename.c_str());
+	setFilename(filename);
 
 	if (DID_FAIL(ret = loadBuffer(buffer))) {
-		_game->LOG(0, "Error parsing TTFONT file '%s'", filename.c_str());
+		_game->LOG(0, "Error parsing TTFONT file '%s'", filename);
 	}
 
 	delete[] buffer;

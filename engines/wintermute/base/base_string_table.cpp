@@ -175,8 +175,9 @@ void BaseStringTable::expand(char **str) const {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseStringTable::expand(Common::String &str) const {
-	char *tmp = new char[str.size() + 1];
-	Common::strcpy_s(tmp, str.size() + 1, str.c_str());
+	size_t tmpSize = str.size() + 1;
+	char *tmp = new char[tmpSize];
+	Common::strcpy_s(tmp, tmpSize, str.c_str());
 	expand(&tmp);
 	str = tmp;
 	delete[] tmp;
