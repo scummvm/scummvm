@@ -47,6 +47,8 @@ const char *modes2[] = {
 	ICON_MS_FORMS_APPS_SCRIPT, "Script",	// forms_apps_script
 };
 
+#define FRAME_PAGE_SIZE 100
+
 static void buildContinuationData() {
 	if (_state->_loadedContinuationData) {
 		return;
@@ -329,7 +331,7 @@ void showScore() {
 		if (!numFrames || _state->_selectedScoreCast.channel >= (int)score->_scoreCache[0]->_sprites.size())
 			_state->_selectedScoreCast.channel = 0;
 
-		if (_state->_scoreFrameOffset >= (int) numFrames)
+		if (_state->_scoreFrameOffset >= (int)numFrames)
 			_state->_scoreFrameOffset = 1;
 
 		{ // Render sprite details
@@ -516,36 +518,12 @@ void showScore() {
 		uint numChannels = score->_scoreCache[0]->_sprites.size();
 		uint tableColumns = MAX(numFrames + 5, 25U); // Set minimal table width to 25
 
-		{  // Render pagination
-			uint frame = 1;
-
-			ImGui::Text("   Jump to frame: ");
-
-			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-
-			do {
-				ImGui::SameLine(0, 20);
-
-				if (ImGui::Selectable(Common::String::format("%d", frame).c_str(), (int) frame == _state->_scoreFrameOffset, 0, ImVec2(30, 10)))
-					_state->_scoreFrameOffset = frame;
-
-				frame += 300;
-			} while (frame < numFrames);
-
-			ImGui::PopStyleVar();
-
-			ImGui::SameLine();
-			ImGui::Text(" of %d", numFrames);
-
-			ImGui::SameLine();
-			ImGui::Button(ICON_MS_ALIGN_JUSTIFY_CENTER, ImVec2(20, 20));
-			ImGui::SetItemTooltip("Center View");
-		}
-
 		if (tableColumns > kMaxColumnsInTable - 2) // Current restriction of ImGui
 			tableColumns = kMaxColumnsInTable - 2;
 
 		ImGuiTableFlags addonFlags = _state->_scoreMode == kModeExtended ? 0 : ImGuiTableFlags_RowBg;
+
+		ImGui::BeginChild("Score table", ImVec2(0, -20));
 
 		if (ImGui::BeginTable("Score", tableColumns + 1,
 					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
@@ -661,6 +639,22 @@ void showScore() {
 			}
 			ImGui::EndTable();
 		}
+
+		ImGui::EndChild();
+
+		{  // Render pagination
+			ImGui::BeginDisabled(numFrames <= FRAME_PAGE_SIZE);
+			ImGui::Text("   Jump to frame:", numFrames);
+			ImGui::SameLine();
+			ImGui::SliderInt("##scorepage", &_state->_scorePageSlider, 0, numFrames / FRAME_PAGE_SIZE, "%d00");
+			_state->_scoreFrameOffset = _state->_scorePageSlider * FRAME_PAGE_SIZE + 1;
+			ImGui::EndDisabled();
+
+			ImGui::SameLine();
+			ImGui::Button(ICON_MS_ALIGN_JUSTIFY_CENTER, ImVec2(20, 20));
+			ImGui::SetItemTooltip("Center View");
+		}
+
 	}
 	ImGui::End();
 }

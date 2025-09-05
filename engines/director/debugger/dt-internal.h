@@ -205,6 +205,7 @@ typedef struct ImGuiState {
 
 	int _scoreMode = 0;
 	int _scoreFrameOffset = 1;
+	int _scorePageSlider = 0;
 
 	int _selectedChannel = -1;
 
