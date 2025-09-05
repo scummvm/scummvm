@@ -153,7 +153,7 @@ public:
 	DXVector3 _shadowLightPos;
 	bool _drawBackfaces;
 	TShadowType _shadowType;
-	virtual uint32 getAnimTransitionTime(char *from, char *to) {
+	virtual uint32 getAnimTransitionTime(const char *from, const char *to) {
 		return 0;
 	};
 #endif

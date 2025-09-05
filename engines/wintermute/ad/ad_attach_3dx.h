@@ -46,7 +46,7 @@ public:
 	bool invalidateDeviceObjects() override;
 	bool restoreDeviceObjects() override;
 
-	Common::String getParentBone();
+	char *getParentBone();
 
 	// scripting interface
 	ScValue *scGetProperty(const char *name) override;
@@ -56,7 +56,7 @@ public:
 
 private:
 	BaseObject *_owner;
-	Common::String _parentBone;
+	char *_parentBone;
 };
 
 } // namespace Wintermute

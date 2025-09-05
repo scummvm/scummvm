@@ -74,22 +74,30 @@ AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
 	_path3D = new AdPath3D(inGame);
 	_path2D = new AdPath(inGame);
 
-	_talkAnimName = Common::String("talk");
+	_talkAnimName = nullptr;
+	BaseUtils::setString(&_talkAnimName, "talk");
 
-	_idleAnimName = Common::String("idle");
+	_idleAnimName = nullptr;
+	BaseUtils::setString(&_idleAnimName, "idle");
 
-	_walkAnimName = Common::String("walk");
+	_walkAnimName = nullptr;
+	BaseUtils::setString(&_walkAnimName, "walk");
 
-	_turnLeftAnimName = Common::String("turnleft");
+	_turnLeftAnimName = nullptr;
+	BaseUtils::setString(&_turnLeftAnimName, "turnleft");
 
-	_turnRightAnimName = Common::String("turnright");
+	_turnRightAnimName = nullptr;
+	BaseUtils::setString(&_turnRightAnimName, "turnright");
 
 	_talkAnimChannel = 0;
 
 	_game->_renderer3D->enableShadows();
 
+	// direct controls
 	_directWalkMode = DIRECT_WALK_NONE;
 	_directTurnMode = DIRECT_TURN_NONE;
+	_directWalkAnim = nullptr;
+	_directTurnAnim = nullptr;
 	_directWalkVelocity = 0.0f;
 	_directTurnVelocity = 0.0f;
 
@@ -99,6 +107,7 @@ AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame) {
 
 	_goToTolerance = 2;
 
+	_partBone = nullptr;
 	_partOffset = DXVector3(0.0f, 0.0f, 0.0f);
 }
 
@@ -116,10 +125,21 @@ AdActor3DX::~AdActor3DX() {
 	}
 	_transitionTimes.removeAll();
 
+	SAFE_DELETE_ARRAY(_talkAnimName);
+	SAFE_DELETE_ARRAY(_idleAnimName);
+	SAFE_DELETE_ARRAY(_walkAnimName);
+	SAFE_DELETE_ARRAY(_turnLeftAnimName);
+	SAFE_DELETE_ARRAY(_turnRightAnimName);
+
+	SAFE_DELETE_ARRAY(_directWalkAnim);
+	SAFE_DELETE_ARRAY(_directTurnAnim);
+
 	SAFE_DELETE(_path2D);
 	SAFE_DELETE(_path3D);
 
 	SAFE_DELETE(_targetPoint2D);
+
+	SAFE_DELETE_ARRAY(_partBone);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -159,7 +179,7 @@ bool AdActor3DX::update() {
 			if (_directWalkMode != DIRECT_WALK_NONE) {
 				// disabled in original code
 			} else if (_directTurnMode != DIRECT_TURN_NONE) {
-				if (!_directTurnAnim.empty()) {
+				if (_directTurnAnim) {
 					_xmodel->playAnim(0, _directTurnAnim, _defaultTransTime, false, _defaultStopTransTime);
 				} else {
 					_xmodel->playAnim(0, _idleAnimName, _defaultTransTime, false, _defaultStopTransTime);
@@ -208,7 +228,7 @@ bool AdActor3DX::update() {
 				}
 
 				if (canWalk) {
-					if (!_directWalkAnim.empty()) {
+					if (_directWalkAnim != nullptr) {
 						_xmodel->playAnim(0, _directWalkAnim, _defaultTransTime, false, _defaultStopTransTime);
 					} else {
 						_xmodel->playAnim(0, _walkAnimName, _defaultTransTime, false, _defaultStopTransTime);
@@ -407,12 +427,7 @@ bool AdActor3DX::display() {
 	bool res = _xmodel->render();
 
 	if (_registrable) {
-		_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, _xmodel,
-		                                                      _xmodel->_boundingRect.left,
-		                                                      _xmodel->_boundingRect.top,
-		                                                      _xmodel->_boundingRect.right - _xmodel->_boundingRect.left,
-		                                                      _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top,
-		                                                      true));
+		_game->_renderer->_rectList.add(new BaseActiveRect(_game, this, _xmodel, _xmodel->_boundingRect.left, _xmodel->_boundingRect.top, _xmodel->_boundingRect.right - _xmodel->_boundingRect.left, _xmodel->_boundingRect.bottom - _xmodel->_boundingRect.top, true));
 	}
 
 	displayAttachments(true);
@@ -465,9 +480,7 @@ bool AdActor3DX::displayShadowVolume() {
 
 	_game->_renderer3D->setWorldTransform(_worldMatrix);
 
-	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D,
-	                               _shadowLightPos._y * _scale3D,
-	                               _shadowLightPos._z * _scale3D);
+	DXVector3 lightPos = DXVector3(_shadowLightPos._x * _scale3D, _shadowLightPos._y * _scale3D, _shadowLightPos._z * _scale3D);
 	pos = _posVector + lightPos;
 	target = _posVector;
 
@@ -499,7 +512,7 @@ bool AdActor3DX::displayShadowVolume() {
 			continue;
 		}
 
-		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
+		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone());
 		if (!boneMat) {
 			continue;
 		}
@@ -577,7 +590,7 @@ bool AdActor3DX::displayAttachments(bool registerObjects) {
 			continue;
 		}
 
-		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone().c_str());
+		DXMatrix *boneMat = _xmodel->getBoneMatrix(at->getParentBone());
 		if (!boneMat) {
 			continue;
 		}
@@ -1722,7 +1735,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *valVelocity = stack->pop();
 		ScValue *valAnim = stack->pop();
 
-		_directWalkAnim.clear();
+		SAFE_DELETE_ARRAY(_directWalkAnim);
 
 		if (!valVelocity->isNULL()) {
 			_directWalkVelocity = valVelocity->getFloat();
@@ -1731,7 +1744,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		if (!valAnim->isNULL()) {
-			_directWalkAnim = valAnim->getString();
+			BaseUtils::setString(&_directWalkAnim, valAnim->getString());
 		}
 
 		_state = STATE_DIRECT_CONTROL;
@@ -1766,7 +1779,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		ScValue *valVelocity = stack->pop();
 		ScValue *valAnim = stack->pop();
 
-		_directTurnAnim.clear();
+		SAFE_DELETE_ARRAY(_directTurnAnim);
 
 		if (!valVelocity->isNULL()) {
 			_directTurnVelocity = valVelocity->getFloat();
@@ -1775,7 +1788,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		}
 
 		if (!valAnim->isNULL()) {
-			_directTurnAnim = valAnim->getString();
+			BaseUtils::setString(&_directTurnAnim, valAnim->getString());
 		}
 
 		_state = STATE_DIRECT_CONTROL;
@@ -1958,7 +1971,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		bool found = false;
 		for (int32 i = 0; i < _transitionTimes.getSize(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
-			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
+			if (trans->_animFrom && trans->_animTo && scumm_stricmp(trans->_animFrom, animFrom) == 0 && scumm_stricmp(trans->_animTo, animTo) == 0) {
 				found = true;
 				if (time < 0) {
 					delete trans;
@@ -1990,7 +2003,7 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 		for (int32 i = 0; i < _transitionTimes.getSize(); i++) {
 			BaseAnimationTransitionTime *trans = _transitionTimes[i];
 
-			if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(animFrom) == 0 && trans->_animTo.compareToIgnoreCase(animTo) == 0) {
+			if (trans->_animFrom && trans->_animTo && scumm_stricmp(trans->_animFrom, animFrom) == 0 && scumm_stricmp(trans->_animTo, animTo) == 0) {
 				time = trans->_time;
 				break;
 			}
@@ -2133,9 +2146,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "TalkAnimName") == 0) {
 		if (value->isNULL()) {
-			_talkAnimName = "talk";
+			BaseUtils::setString(&_talkAnimName, "talk");
 		} else {
-			_talkAnimName = value->getString();
+			BaseUtils::setString(&_talkAnimName, value->getString());
 		}
 
 		return true;
@@ -2154,9 +2167,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
 		if (value->isNULL()) {
-			_walkAnimName = "walk";
+			BaseUtils::setString(&_walkAnimName, "walk");
 		} else {
-			_walkAnimName = value->getString();
+			BaseUtils::setString(&_walkAnimName, value->getString());
 		}
 		return true;
 	}
@@ -2166,9 +2179,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IdleAnimName") == 0) {
 		if (value->isNULL()) {
-			_idleAnimName = "idle";
+			BaseUtils::setString(&_idleAnimName, "idle");
 		} else {
-			_idleAnimName = value->getString();
+			BaseUtils::setString(&_idleAnimName, value->getString());
 		}
 
 		return true;
@@ -2179,9 +2192,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
 		if (value->isNULL()) {
-			_turnLeftAnimName = "turnleft";
+			BaseUtils::setString(&_turnLeftAnimName, "turnleft");
 		} else {
-			_turnLeftAnimName = value->getString();
+			BaseUtils::setString(&_turnLeftAnimName, value->getString());
 		}
 
 		return true;
@@ -2192,9 +2205,9 @@ bool AdActor3DX::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		if (value->isNULL()) {
-			_turnRightAnimName = "turnright";
+			BaseUtils::setString(&_turnRightAnimName, "turnright");
 		} else {
-			_turnRightAnimName = value->getString();
+			BaseUtils::setString(&_turnRightAnimName, value->getString());
 		}
 		return true;
 	}
@@ -2261,17 +2274,17 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferBool(TMEMBER(_turningLeft));
 	persistMgr->transferFloat(TMEMBER(_afterWalkAngle));
 
-	persistMgr->transferString(TMEMBER(_talkAnimName));
-	persistMgr->transferString(TMEMBER(_idleAnimName));
-	persistMgr->transferString(TMEMBER(_walkAnimName));
-	persistMgr->transferString(TMEMBER(_turnLeftAnimName));
-	persistMgr->transferString(TMEMBER(_turnRightAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_talkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_idleAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_walkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_turnLeftAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_turnRightAnimName));
 
 	// direct controls
 	persistMgr->transferSint32(TMEMBER_INT(_directWalkMode));
 	persistMgr->transferSint32(TMEMBER_INT(_directTurnMode));
-	persistMgr->transferString(TMEMBER(_directWalkAnim));
-	persistMgr->transferString(TMEMBER(_directTurnAnim));
+	persistMgr->transferCharPtr(TMEMBER(_directWalkAnim));
+	persistMgr->transferCharPtr(TMEMBER(_directTurnAnim));
 	persistMgr->transferFloat(TMEMBER(_directWalkVelocity));
 	persistMgr->transferFloat(TMEMBER(_directTurnVelocity));
 
@@ -2302,7 +2315,7 @@ bool AdActor3DX::persist(BasePersistenceManager *persistMgr) {
 
 	persistMgr->transferSint32(TMEMBER(_talkAnimChannel));
 
-	persistMgr->transferString(TMEMBER(_partBone));
+	persistMgr->transferCharPtr(TMEMBER(_partBone));
 	persistMgr->transferVector3d(TMEMBER(_partOffset));
 
 	return true;
@@ -2420,10 +2433,10 @@ bool AdActor3DX::isGoToNeeded(int32 x, int32 y) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-uint32 AdActor3DX::getAnimTransitionTime(char *from, char *to) {
+uint32 AdActor3DX::getAnimTransitionTime(const char *from, const char *to) {
 	for (int32 i = 0; i < _transitionTimes.getSize(); i++) {
 		BaseAnimationTransitionTime *trans = _transitionTimes[i];
-		if (!trans->_animFrom.empty() && !trans->_animTo.empty() && trans->_animFrom.compareToIgnoreCase(from) == 0 && trans->_animTo.compareToIgnoreCase(to) == 0) {
+		if (trans->_animFrom && trans->_animTo && scumm_stricmp(trans->_animFrom, from) == 0 && scumm_stricmp(trans->_animTo, to) == 0) {
 			return trans->_time;
 		}
 	}
@@ -2433,13 +2446,13 @@ uint32 AdActor3DX::getAnimTransitionTime(char *from, char *to) {
 
 //////////////////////////////////////////////////////////////////////////
 PartEmitter *AdActor3DX::createParticleEmitter(bool followParent, int offsetX, int offsetY) {
-	_partBone.clear();
+	SAFE_DELETE_ARRAY(_partBone);
 	return AdObject::createParticleEmitter(followParent, offsetX, offsetY);
 }
 
 //////////////////////////////////////////////////////////////////////////
 PartEmitter *AdActor3DX::createParticleEmitter(const char *boneName, DXVector3 offset) {
-	_partBone = boneName;
+	BaseUtils::setString(&_partBone, boneName);
 	_partOffset = offset;
 	return AdObject::createParticleEmitter(true);
 }
@@ -2450,7 +2463,7 @@ bool AdActor3DX::updatePartEmitter() {
 		return false;
 	}
 
-	if (_partBone.empty()) {
+	if (!_partBone) {
 		return AdObject::updatePartEmitter();
 	}
 
@@ -2461,7 +2474,7 @@ bool AdActor3DX::updatePartEmitter() {
 	}
 
 	DXVector3 bonePos;
-	getBonePosition3D(_partBone.c_str(), &bonePos, &_partOffset);
+	getBonePosition3D(_partBone, &bonePos, &_partOffset);
 	int32 x = 0, y = 0;
 	static_cast<AdGame *>(_game)->_scene->_geom->convert3Dto2D(&bonePos, &x, &y);
 

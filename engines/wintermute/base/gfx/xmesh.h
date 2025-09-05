@@ -63,10 +63,10 @@ public:
 	DXVector3 _BBoxStart;
 	DXVector3 _BBoxEnd;
 
-	bool setMaterialSprite(const Common::String &matName, BaseSprite *sprite);
-	bool setMaterialTheora(const Common::String &matName, VideoTheoraPlayer *theora);
-	bool setMaterialEffect(const Common::String &matName, Effect3D *effect, Effect3DParams *params);
-	bool removeMaterialEffect(const Common::String &matName);
+	bool setMaterialSprite(const char *matName, BaseSprite *sprite);
+	bool setMaterialTheora(const char *matName, VideoTheoraPlayer *theora);
+	bool setMaterialEffect(const char *matName, Effect3D *effect, Effect3DParams *params);
+	bool removeMaterialEffect(const char *matName);
 
 	bool invalidateDeviceObjects();
 	bool restoreDeviceObjects();

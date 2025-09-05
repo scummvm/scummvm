@@ -378,14 +378,14 @@ bool XModel::update() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::playAnim(int channel, const Common::String &name, uint32 transitionTime, bool forceReset, uint32 stopTransitionTime) {
+bool XModel::playAnim(int channel, const char *name, uint32 transitionTime, bool forceReset, uint32 stopTransitionTime) {
 	if (channel < 0 || channel >= X_NUM_ANIMATION_CHANNELS) {
 		return false;
 	}
 
 	// are we already playing this animation?
 	if (!forceReset) {
-		if (_channels[channel]->getName() && name.equalsIgnoreCase(_channels[channel]->getName())) {
+		if (_channels[channel]->getName() && scumm_stricmp(name, _channels[channel]->getName()) == 0) {
 			return true;
 		}
 	}
@@ -394,8 +394,8 @@ bool XModel::playAnim(int channel, const Common::String &name, uint32 transition
 	AnimationSet *anim = getAnimationSetByName(name);
 	if (anim) {
 		char *currentAnim = _channels[channel]->getName();
-		if (_owner && currentAnim && !name.empty()) {
-			transitionTime = _owner->getAnimTransitionTime(currentAnim, const_cast<char *>(name.c_str()));
+		if (_owner && currentAnim && name) {
+			transitionTime = _owner->getAnimTransitionTime(currentAnim, name);
 		}
 
 		return _channels[channel]->playAnim(anim, transitionTime, stopTransitionTime);
@@ -667,9 +667,9 @@ void XModel::updateRect(Common::Rect32 *rc, DXVector3 *vec) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-AnimationSet *XModel::getAnimationSetByName(const Common::String &name) {
+AnimationSet *XModel::getAnimationSetByName(const char *name) {
 	for (int32 i = 0; i < _animationSets.getSize(); i++) {
-		if (name.equalsIgnoreCase(_animationSets[i]->_name)) {
+		if (scumm_stricmp(name, _animationSets[i]->_name) == 0) {
 			return _animationSets[i];
 		}
 	}

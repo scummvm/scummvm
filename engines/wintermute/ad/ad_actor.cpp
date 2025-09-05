@@ -44,6 +44,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/particles/part_emitter.h"
 #include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -73,11 +74,21 @@ AdActor::AdActor(BaseGame *inGame) : AdTalkHolder(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdActor::setDefaultAnimNames() {
-	_talkAnimName = "talk";
-	_idleAnimName = "idle";
-	_walkAnimName = "walk";
-	_turnLeftAnimName = "turnleft";
-	_turnRightAnimName = "turnright";
+	_talkAnimName = nullptr;
+	BaseUtils::setString(&_talkAnimName, "talk");
+
+	_idleAnimName = nullptr;
+	BaseUtils::setString(&_idleAnimName, "idle");
+
+	_walkAnimName = nullptr;
+	BaseUtils::setString(&_walkAnimName, "walk");
+
+	_turnLeftAnimName = nullptr;
+	BaseUtils::setString(&_turnLeftAnimName, "turnleft");
+
+	_turnRightAnimName = nullptr;
+	BaseUtils::setString(&_turnRightAnimName, "turnright");
+
 	return STATUS_OK;
 }
 
@@ -102,6 +113,12 @@ AdActor::~AdActor() {
 		delete _talkSpritesEx[i];
 	}
 	_talkSpritesEx.removeAll();
+
+	SAFE_DELETE_ARRAY(_talkAnimName);
+	SAFE_DELETE_ARRAY(_idleAnimName);
+	SAFE_DELETE_ARRAY(_walkAnimName);
+	SAFE_DELETE_ARRAY(_turnLeftAnimName);
+	SAFE_DELETE_ARRAY(_turnRightAnimName);
 
 	for (int32 i = 0; i < _anims.getSize(); i++) {
 		SAFE_DELETE(_anims[i]);
@@ -1228,9 +1245,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TalkAnimName") == 0) {
 		if (value->isNULL()) {
-			_talkAnimName = "talk";
+			BaseUtils::setString(&_talkAnimName, "talk");
 		} else {
-			_talkAnimName = value->getString();
+			BaseUtils::setString(&_talkAnimName, value->getString());
 		}
 		return STATUS_OK;
 	}
@@ -1240,9 +1257,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "WalkAnimName") == 0) {
 		if (value->isNULL()) {
-			_walkAnimName = "walk";
+			BaseUtils::setString(&_walkAnimName, "walk");
 		} else {
-			_walkAnimName = value->getString();
+			BaseUtils::setString(&_walkAnimName, value->getString());
 		}
 		return STATUS_OK;
 	}
@@ -1252,9 +1269,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "IdleAnimName") == 0) {
 		if (value->isNULL()) {
-			_idleAnimName = "idle";
+			BaseUtils::setString(&_idleAnimName, "idle");
 		} else {
-			_idleAnimName = value->getString();
+			BaseUtils::setString(&_idleAnimName, value->getString());
 		}
 		return STATUS_OK;
 	}
@@ -1264,9 +1281,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnLeftAnimName") == 0) {
 		if (value->isNULL()) {
-			_turnLeftAnimName = "turnleft";
+			BaseUtils::setString(&_turnLeftAnimName, "turnleft");
 		} else {
-			_turnLeftAnimName = value->getString();
+			BaseUtils::setString(&_turnLeftAnimName, value->getString());
 		}
 		return STATUS_OK;
 	}
@@ -1276,9 +1293,9 @@ bool AdActor::scSetProperty(const char *name, ScValue *value) {
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		if (value->isNULL()) {
-			_turnRightAnimName = "turnright";
+			BaseUtils::setString(&_turnRightAnimName, "turnright");
 		} else {
-			_turnRightAnimName = value->getString();
+			BaseUtils::setString(&_turnRightAnimName, value->getString());
 		}
 		return STATUS_OK;
 	} else {
@@ -1329,7 +1346,7 @@ BaseSprite *AdActor::getTalkStance(const char *stance) {
 	if (!ret) {
 		BaseArray<AdSpriteSet *> talkAnims;
 		for (int32 i = 0; i < _anims.getSize(); i++) {
-			if (_talkAnimName.compareToIgnoreCase(_anims[i]->_name) == 0) {
+			if (scumm_stricmp(_anims[i]->_name, _talkAnimName) == 0) {
 				talkAnims.add(_anims[i]);
 			}
 		}
@@ -1410,11 +1427,11 @@ bool AdActor::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferPtr(TMEMBER_PTR(_walkSprite));
 
 	persistMgr->transferPtr(TMEMBER_PTR(_animSprite2));
-	persistMgr->transferString(TMEMBER(_talkAnimName));
-	persistMgr->transferString(TMEMBER(_idleAnimName));
-	persistMgr->transferString(TMEMBER(_walkAnimName));
-	persistMgr->transferString(TMEMBER(_turnLeftAnimName));
-	persistMgr->transferString(TMEMBER(_turnRightAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_talkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_idleAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_walkAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_turnLeftAnimName));
+	persistMgr->transferCharPtr(TMEMBER(_turnRightAnimName));
 
 	_anims.persist(persistMgr);
 
@@ -1467,14 +1484,13 @@ int32 AdActor::getHeight() {
 
 
 //////////////////////////////////////////////////////////////////////////
-AdSpriteSet *AdActor::getAnimByName(const Common::String &animName) {
-	if (animName.empty())
+AdSpriteSet *AdActor::getAnimByName(const char *animName) {
+	if (!animName)
 		return nullptr;
 
 	for (int32 i = 0; i < _anims.getSize(); i++) {
-		if (animName.compareToIgnoreCase(_anims[i]->_name) == 0) {
+		if (scumm_stricmp(_anims[i]->_name, animName) == 0)
 			return _anims[i];
-		}
 	}
 	return nullptr;
 }

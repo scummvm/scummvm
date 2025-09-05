@@ -43,11 +43,13 @@ IMPLEMENT_PERSISTENT(AdAttach3DX, false)
 //////////////////////////////////////////////////////////////////////////
 AdAttach3DX::AdAttach3DX(BaseGame *inGame, BaseObject *owner) : AdObject3D(inGame) {
 	_owner = owner;
+	_parentBone = nullptr;
 	_dropToFloor = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AdAttach3DX::~AdAttach3DX() {
+	SAFE_DELETE_ARRAY(_parentBone);
 	_owner = nullptr; // ref only
 }
 
@@ -55,7 +57,7 @@ AdAttach3DX::~AdAttach3DX() {
 bool AdAttach3DX::init(const char *modelFile, const char *name, const char *parentBone) {
 	SAFE_DELETE(_xmodel);
 
-	_parentBone = parentBone;
+	BaseUtils::setString(&_parentBone, parentBone);
 	setName(name);
 
 	_xmodel = new XModel(_game, _owner);
@@ -119,7 +121,7 @@ bool AdAttach3DX::displayShadowVol(DXMatrix *modelMat, DXVector3 *light, float e
 }
 
 //////////////////////////////////////////////////////////////////////////
-Common::String AdAttach3DX::getParentBone() {
+char *AdAttach3DX::getParentBone() {
 	return _parentBone;
 }
 
@@ -132,7 +134,7 @@ bool AdAttach3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 	//////////////////////////////////////////////////////////////////////////
 	if (strcmp(name, "PlayAnim") == 0 || strcmp(name, "PlayAnimAsync") == 0) {
 		stack->correctParams(1);
-		Common::String animName = stack->pop()->getString();
+		const char *animName = stack->pop()->getString();
 		if (!_xmodel || !_xmodel->playAnim(0, animName, 0, true)) {
 			stack->pushBool(false);
 		} else {
@@ -227,7 +229,7 @@ bool AdAttach3DX::persist(BasePersistenceManager *persistMgr) {
 	AdObject3D::persist(persistMgr);
 
 	persistMgr->transferPtr(TMEMBER(_owner));
-	persistMgr->transferString(TMEMBER(_parentBone));
+	persistMgr->transferCharPtr(TMEMBER(_parentBone));
 
 	return true;
 }
