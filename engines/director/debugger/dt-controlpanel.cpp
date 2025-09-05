@@ -127,7 +127,7 @@ void showControlPanel() {
 	ImGui::SetNextWindowPos(ImVec2(vp.x - 220.0f, 20.0f), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(200, 103), ImGuiCond_FirstUseEver);
 
-	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel)) {
+	if (ImGui::Begin("Control Panel", &_state->_w.controlPanel, ImGuiWindowFlags_NoDocking)) {
 		Movie *movie = g_director->getCurrentMovie();
 		Score *score = movie->getScore();
 		ImDrawList *dl = ImGui::GetWindowDrawList();
