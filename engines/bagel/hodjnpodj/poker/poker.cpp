@@ -221,34 +221,22 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	BeginWaitCursor();
 	initStatics();
 
-// Define a special window class which traps double-clicks, is byte aligned
-// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
-// the five system defined DCs which are not guaranteed to be available;
-// this adds a bit to our app size but avoids hangs/freezes/lockups.
-
+	// Define a special window class which traps double-clicks, is byte aligned
+	// to maximize BITBLT performance, and creates "owned" DCs rather than sharing
+	// the five system defined DCs which are not guaranteed to be available;
+	// this adds a bit to our app size but avoids hangs/freezes/lockups.
 	WndClass = AfxRegisterWndClass(CS_DBLCLKS | CS_BYTEALIGNWINDOW | CS_OWNDC,
 	                               nullptr, nullptr, nullptr);
-
-// set the seed for the random number generator
-//srand( (unsigned)time( nullptr ));
-
-// initiialize arrays
-	for (nCounter1 = 0; nCounter1 < 5; ++nCounter1) {
-		abHoldArray[nCounter1] = FALSE;
-//	apCard[nCounter1] = nullptr;
-//	apHold[nCounter1] = nullptr;
-	}
 
 	for (nCounter1 = 0; nCounter1 < 10; ++nCounter1)    {
 		aDealtArray[nCounter1][0] = 0;
 		aDealtArray[nCounter1][1] = 0;
 	}
 
-// initialize private members
+	// initialize private members
 	m_lpGameStruct = lpGameStruct;
-//
-// Make sure user has money before the game starts:
-//
+
+	// Make sure user has money before the game starts:
 	if (m_lpGameStruct->bPlayingMetagame) {
 		m_nRound = NUMBEROFROUNDS;
 		m_lStartingAmount = m_lpGameStruct->lCrowns;
@@ -1906,6 +1894,9 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 
 	bTestLoadBmp = apHold[nIndex]->LoadBitmaps(pGamePalette, pUpBmp, pDnBmp, nullptr, pDsBmp);
 	ASSERT(bTestLoadBmp);                 // test for button's bitmap loading
+
+	apHold[nIndex]->Invalidate();
+	apHold[nIndex]->UpdateWindow();
 
 	pUpBmp = nullptr;
 	pDnBmp = nullptr;
