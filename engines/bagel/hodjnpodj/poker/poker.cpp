@@ -1892,11 +1892,7 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 	pDsBmp = nullptr;
 
 	(void)pDC->SelectPalette(pOldPal, FALSE);
-	pDC->RealizePalette();
-	pOldPal = nullptr;
 	ReleaseDC(pDC);
-
-	return;
 }
 
 /*****************************************************************
