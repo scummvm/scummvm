@@ -23,19 +23,44 @@
 #define DIRECTOR_CASTMEMBER_MOVIE_H
 
 #include "director/castmember/filmloop.h"
+#include "director/window.h"
 
 namespace Director {
 
-class MovieCastMember : public FilmLoopCastMember {
+// For MovieCastMember
+class SubWindow : public Window {
+public:
+	SubWindow(Window *parent, Common::Rect rect);
+	~SubWindow() = default;
+
+	void setAsCurrent() override;
+	bool render(bool forceRedraw = false, Graphics::ManagedSurface *blitTo = nullptr) override;
+	void setStageColor(uint32 stageColor, bool forceReset = false) override;
+	uint32 getStageColor() override;
+	Window *getParent() { return _parent; }
+
+private:
+	Window *_parent;
+	int offsetX;	// With respect to parent window origin
+	int offsetY;	// With respect to parent window origin
+	int width;
+	int height;
+};
+
+class MovieCastMember : public CastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	MovieCastMember(Cast *cast, uint16 castId, MovieCastMember &source);
 
 	CastMember *duplicate(Cast *cast, uint16 castId) override { return (CastMember *)(new MovieCastMember(cast, castId, *this)); }
 
-	Common::Array<Channel> *getSubChannels(Common::Rect &bbox, uint frame) override;
+	Common::Array<Channel> *getSubChannels(Common::Rect &bbox);
+	CastMemberID getSubChannelSound1();
+	CastMemberID getSubChannelSound2();
+
 	void load() override;
 
+	bool isModified();
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
@@ -44,6 +69,21 @@ public:
 
 	uint32 _flags;
 	bool _enableScripts;
+
+	bool _enableSound;
+	bool _looping;
+	bool _crop;
+	bool _center;
+
+	Common::Array<FilmLoopFrame> _frames;
+	Common::Array<Channel> _subchannels;
+
+private:
+	Common::Path _filename;
+	Archive *_archive;
+	Movie *_movie;
+
+	SubWindow *_window;
 };
 
 } // End of namespace Director

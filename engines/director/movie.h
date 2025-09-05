@@ -177,6 +177,7 @@ public:
 	CastMemberID _defaultPalette;
 
 	bool _videoPlayback;
+	bool _isCastMember;
 
 	int _nextEventId;
 	Common::Queue<LingoEvent> _inputEventQueue;
