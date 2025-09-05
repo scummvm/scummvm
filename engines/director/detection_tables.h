@@ -1039,6 +1039,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sachabenteuer",		"Toggolino Sachabenteuer" },
 	{ "schulerhilfemath1",	"Schülerhilfe Mathe: Klasse 1." },
 	{ "schulerhilfemath2",	"Schülerhilfe Mathe: Klasse 2." },
+	{ "secretnumber",		"Secret Number" },
 	{ "shine",				"Shine: Die Angst hat einen Namen" },
 	{ "suderhof",			"Geschichten vom Süderhof" },
 	{ "technicus",			"Technicus: Ten Hours Left" },
@@ -7707,6 +7708,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 									 "XBITEMOV/BLDE01.DIR",	 "f:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
 	WINGAME2("secretmind", "Disc 2", "Install Secrets of the Mind/Mind.exe", "t:e9cfac3e743c99605893a1b5e90a821d", 1412092,
 									 "XBITEMOV/BLDE01.DIR",	 "f:e137bdd5e7afe3b68ad8309e78edeb43", 87132, 500),
+
+	// Secret Number - Ein spannender Mathe-Krimi für Kinder ab 7
+	// Published by Cornelsen Verlag GmbH (1996)
+	// TRAC #16161
+	WINGAME1_l("secretnumber", "", "SECRET31.EXE", "t:e621031f37a28f79fc5e9e7c3a32db67", 970389, Common::DE_DEU, 501),
 
 	// Both versions require installation
 	MACGAME1("secretpaths1", "", "Secret Paths in the Forest",	   "r:4f0fb528e9c495fd2822ad400178e7a8",  716771, 501),
