@@ -746,8 +746,9 @@ void showChannels() {
 		ImGui::Text("SND: 2  sound2: %d, soundType2: %d", frame._mainChannels.sound2.member, frame._mainChannels.soundType2);
 		ImGui::Text("LSCR:   actionId: %s", frame._mainChannels.actionId.asString().c_str());
 
-		if (ImGui::BeginTable("Channels", 21, ImGuiTableFlags_Borders)) {
+		if (ImGui::BeginTable("Channels", 22, ImGuiTableFlags_Borders)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_AngledHeader;
+			ImGui::TableSetupColumn("##toggle", flags);
 			ImGui::TableSetupColumn("CH", flags);
 			ImGui::TableSetupColumn("castId", flags);
 			ImGui::TableSetupColumn("vis", flags);
@@ -776,6 +777,31 @@ void showChannels() {
 				Sprite &sprite = *channel._sprite;
 
 				ImGui::TableNextRow();
+
+				{ // Playback toggle
+					ImGui::TableNextColumn();
+
+					ImGui::PushID(i + 20000);
+					ImDrawList *dl = ImGui::GetWindowDrawList();
+					const ImVec2 pos1 = ImGui::GetCursorScreenPos();
+					const ImVec2 mid(pos1.x + 7, pos1.y + 7);
+
+					ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+					ImGui::SetItemTooltip("Playback toggle");
+
+					if (ImGui::IsItemClicked(0)) {
+						score->_channels[i]->_visible = !score->_channels[i]->_visible;
+
+						g_director->getCurrentWindow()->render(true);
+					}
+
+					if (score->_channels[i]->_visible)
+						dl->AddCircleFilled(mid, 4.0f, ImColor(_state->_colors._channel_toggle));
+					else
+						dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._channel_toggle));
+
+					ImGui::PopID();
+				}
 
 				ImGui::TableNextColumn();
 
