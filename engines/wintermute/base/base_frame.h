@@ -65,6 +65,7 @@ public:
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	Common::String debuggerToString() const override;
 };
 

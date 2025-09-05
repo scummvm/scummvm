@@ -79,7 +79,7 @@ bool AdGeomExt::loadBuffer(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_GEOMETRY) {
 		_game->LOG(0, "'GEOMETRY' keyword expected.");

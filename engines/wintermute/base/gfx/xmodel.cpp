@@ -693,7 +693,7 @@ bool XModel::parseAnim(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	char *name = nullptr;
 	bool looping = false;
@@ -756,7 +756,7 @@ bool XModel::parseEvent(AnimationSet *anim, char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	AnimationSet::AnimationEvent *event = new AnimationSet::AnimationEvent();
 	if (!event) {

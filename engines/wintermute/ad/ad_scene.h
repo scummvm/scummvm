@@ -73,8 +73,6 @@ public:
 #endif
 	bool afterLoad();
 
-	void setMaxShadowType(TShadowType shadowType);
-
 #ifdef ENABLE_WME3D
 	float _nearClipPlane;
 	float _farClipPlane;
@@ -185,6 +183,7 @@ public:
 	BaseArray<AdRotLevel *> _rotLevels;
 
 	bool restoreDeviceObjects() override;
+	void setMaxShadowType(TShadowType shadowType);
 	int getPointsDist(const BasePoint &p1, const BasePoint &p2, BaseObject *requester = nullptr);
 
 	void onLayerResized(AdLayer *layer);
@@ -194,6 +193,7 @@ public:
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	Common::String debuggerToString() const override;
 
 private:

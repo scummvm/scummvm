@@ -167,7 +167,7 @@ bool UIEdit::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_EDIT) {

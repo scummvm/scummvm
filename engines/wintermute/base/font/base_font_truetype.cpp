@@ -346,7 +346,7 @@ bool BaseFontTT::loadBuffer(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_TTFONT) {
 		_game->LOG(0, "'TTFONT' keyword expected.");
@@ -451,7 +451,7 @@ bool BaseFontTT::parseLayer(BaseTTFontLayer *layer, char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {

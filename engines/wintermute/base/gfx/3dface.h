@@ -34,11 +34,10 @@ namespace Wintermute {
 
 class Face3D {
 public:
-	Face3D();
-	virtual ~Face3D();
-
 	uint16 _vertices[3];
 	DXVector3 _normals[3];
+	Face3D();
+	virtual ~Face3D();
 };
 
 } // namespace Wintermute

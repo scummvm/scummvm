@@ -102,9 +102,6 @@ public:
 	virtual bool onPaint();
 	virtual bool onWindowClose();
 
-	bool isLeftDoubleClick();
-	bool isRightDoubleClick();
-
 	bool _autorunDisabled;
 	uint32 _lastMiniUpdate;
 	bool _miniUpdateEnabled;
@@ -312,12 +309,12 @@ public:
 	static void afterLoadRegion(void *region, void *data);
 	static void afterLoadSubFrame(void *subframe, void *data);
 	static void afterLoadSound(void *sound, void *data);
+	static void afterLoadFont(void *font, void *data);
 #ifdef ENABLE_WME3D
 	static void afterLoadXModel(void *model, void *data);
 #endif
 	static void afterLoadScript(void *script, void *data);
 	static void invalidateValues(void *value, void *data);
-	static void afterLoadFont(void *font, void *data);
 	bool loadSettings(const char *filename);
 	bool resumeMusic(int channel);
 	bool setMusicStartTime(int channel, uint32 time);
@@ -412,6 +409,25 @@ public:
 private:
 	bool getSaveDir(char *Buffer);
 
+
+
+protected:
+	// WME Lite specific
+	bool _autoSaveOnExit;
+	uint32 _autoSaveSlot;
+	bool _cursorHidden;
+
+public:
+	BaseGameMusic *_musicSystem;
+	Common::String _targetName;
+
+	bool isLeftDoubleClick();
+	bool isRightDoubleClick();
+
+	void setIndicatorVal(int value);
+	bool getBilinearFiltering() { return _bilinearFiltering; }
+	void addMem(int32 bytes);
+
 	bool _bilinearFiltering{};
 #ifdef ENABLE_WME3D
 	bool _force2dRenderer{};
@@ -434,27 +450,12 @@ private:
 	bool isDoubleClick(int32 buttonIndex);
 	uint32 _usedMem;
 
-
-
-protected:
-	// WME Lite specific
-	bool _autoSaveOnExit;
-	uint32 _autoSaveSlot;
-	bool _cursorHidden;
-
-public:
-	BaseGameMusic *_musicSystem;
-	Common::String _targetName;
-
-	void setIndicatorVal(int value);
-	bool getBilinearFiltering() { return _bilinearFiltering; }
-	void addMem(int32 bytes);
-
 	void autoSaveOnExit();
 	PluginEvent &pluginEvents() { return _pluginEvents; }
 
-#ifdef ENABLE_HEROCRAFT
 private:
+
+#ifdef ENABLE_HEROCRAFT
 	// HeroCraft games specific random source with ability a in-script function to set the seed
 	Common::RandomSource *_rndHc;
 

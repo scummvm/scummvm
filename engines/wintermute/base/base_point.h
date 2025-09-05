@@ -41,7 +41,6 @@ public:
 	int32 y;
 	int32 x;
 	~BasePoint() override;
-
 };
 
 } // End of namespace Wintermute

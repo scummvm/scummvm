@@ -159,8 +159,7 @@ bool AdGame::cleanup() {
 
 
 	// clear remaining inventories
-	delete _invObject;
-	_invObject = nullptr;
+	SAFE_DELETE(_invObject);
 
 	for (int32 i = 0; i < _inventories.getSize(); i++) {
 		delete _inventories[i];
@@ -1377,7 +1376,7 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 	char *params;
 	char *params2;
 	int cmd = 1;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	bool itemFound = false, itemsFound = false;
 
@@ -1754,7 +1753,7 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (!merge) {
 		while (_items.getSize() > 0) {
@@ -1840,7 +1839,7 @@ bool AdGame::windowLoadHook(UIWindow *win, char **buffer, char **params) {
 	TOKEN_TABLE_END
 
 	int cmd = PARSERR_GENERIC;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	cmd = parser.getCommand(buffer, commands, params);
 	switch (cmd) {

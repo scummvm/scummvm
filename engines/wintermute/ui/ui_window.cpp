@@ -334,7 +334,7 @@ bool UIWindow::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd = 2;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	int fadeR = 0, fadeG = 0, fadeB = 0, fadeA = 0;
 	int ar = 0, ag = 0, ab = 0, alpha = 0;

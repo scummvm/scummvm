@@ -65,9 +65,6 @@ public:
 #endif
 	static SystemClassRegistry *getInstance();
 
-	SystemClassRegistry();
-	virtual ~SystemClassRegistry();
-
 	bool enumInstances(SYS_INSTANCE_CALLBACK lpCallback, const char *className, void *lpData);
 	bool loadTable(BaseGame *Game, BasePersistenceManager *PersistMgr);
 	bool saveTable(BaseGame *Game, BasePersistenceManager *PersistMgr, bool quickSave);
@@ -82,6 +79,9 @@ public:
 	void dumpClasses(Common::WriteStream *stream);
 	int getNextID();
 	void addInstanceToTable(SystemInstance *instance, void *pointer);
+
+	SystemClassRegistry();
+	virtual ~SystemClassRegistry();
 
 	bool _disabled;
 	int _count;

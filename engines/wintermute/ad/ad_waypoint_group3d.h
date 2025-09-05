@@ -39,7 +39,6 @@ class Mesh3DS;
 
 class AdWaypointGroup3D : public BaseClass {
 public:
-	// this is already commented out in wme3d
 	//DECLARE_PERSISTENT(AdWaypointGroup3D, BaseClass);
 	bool _active;
 	bool addFromMesh(Mesh3DS *mesh);

@@ -46,6 +46,7 @@ public:
 	BaseFontStorage(BaseGame *inGame);
 	~BaseFontStorage() override;
 	BaseArray<BaseFont *> _fonts;
+
 	bool initLoop();
 };
 

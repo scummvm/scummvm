@@ -110,7 +110,7 @@ bool AdSpriteSet::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteC
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_SPRITESET) {

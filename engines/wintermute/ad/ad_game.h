@@ -51,23 +51,23 @@ public:
 	bool onMouseRightDown() override;
 	bool onMouseRightUp() override;
 
-	bool handleCustomActionStart(BaseGameCustomAction action) override;
-	bool handleCustomActionEnd(BaseGameCustomAction action) override;
-
 	bool displayDebugInfo() override;
 
-	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *viewport, bool *customViewport) override;
+	//virtual CBObject *GetNextAccessObject(CBObject *CurrObject);
+	//virtual CBObject *GetPrevAccessObject(CBObject *CurrObject);
 
+	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Common::Rect32 *viewport, bool *customViewport) override;
 #ifdef ENABLE_WME3D
 	uint32 getAmbientLightColor() override;
-
 	bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) override;
 
 	virtual bool renderShadowGeometry() override;
-	TShadowType getMaxShadowType(BaseObject *object) override;
+	TShadowType getMaxShadowType(BaseObject *object = nullptr) override;
 #endif
 
+	bool _smartItemCursor;
 
+	BaseArray<char *> _speechDirs;
 	bool addSpeechDir(const char *dir);
 	bool removeSpeechDir(const char *dir);
 	char *findSpeechFile(char *StringID);
@@ -78,13 +78,18 @@ public:
 	bool resetContent() override;
 	bool addItem(AdItem *item);
 	AdItem *getItemByName(const char *name) const;
-
+	BaseArray<AdItem *> _items;
 	AdObject *_inventoryOwner;
 	bool isItemTaken(char *itemName);
 	bool registerInventory(AdInventory *inv);
 	bool unregisterInventory(AdInventory *inv);
-	bool displayContent(bool update = true, bool displayAll = false) override;
 
+	AdObject *_invObject;
+	BaseArray<AdInventory *> _inventories;
+	bool displayContent(bool update = true, bool displayAll = false) override;
+	char *_debugStartupScene;
+	char *_startupScene;
+	bool _initialScene;
 	bool gameResponseUsed(int ID) const;
 	bool addGameResponse(int ID);
 	bool resetResponse(int ID);
@@ -99,7 +104,6 @@ public:
 
 	AdSceneState *getSceneState(const char *filename, bool saving);
 	BaseViewport *_sceneViewport;
-
 	int32 _texItemLifeTime;
 	int32 _texWalkLifeTime;
 	int32 _texStandLifeTime;
@@ -110,17 +114,21 @@ public:
 
 	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;
 	bool scheduleChangeScene(const char *filename, bool fadeIn);
+	char *_scheduledScene;
+	bool _scheduledFadeIn;
 	void setPrevSceneName(const char *name);
 	void setPrevSceneFilename(const char *name);
-
+	char *_prevSceneName;
+	char *_prevSceneFilename;
 	AdItem *_selectedItem;
 	bool cleanup() override;
 	DECLARE_PERSISTENT(AdGame, BaseGame)
 
 	void finishSentences();
 	bool showCursor() override;
-
 	TGameStateEx _stateEx;
+	AdResponseBox *_responseBox;
+	AdInventoryBox *_inventoryBox;
 	bool displaySentences(bool frozen);
 	void addSentence(AdSentence *sentence);
 	bool changeScene(const char *filename, bool fadeIn);
@@ -130,37 +138,7 @@ public:
 	bool initLoop();
 	AdGame(const Common::String &gameId);
 	~AdGame() override;
-
 	BaseArray<AdObject *> _objects;
-
-	bool loadFile(const char *filename) override;
-	bool loadBuffer(char *buffer, bool complete = true) override;
-
-	bool loadItemsFile(const char *filename, bool merge = false);
-	bool loadItemsBuffer(char *buffer, bool merge = false);
-
-	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scSetProperty(const char *name, ScValue *value) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	bool validMouse();
-	Common::String debuggerToString() const override;
-private:
-	bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) override;
-
-	AdObject *_invObject;
-	BaseArray<AdInventory *> _inventories;
-	char *_scheduledScene;
-	bool _scheduledFadeIn;
-	char *_prevSceneName;
-	char *_prevSceneFilename;
-	char *_debugStartupScene;
-	char *_startupScene;
-	bool _initialScene;
-	bool _smartItemCursor;
-	BaseArray<char *> _speechDirs;
-	BaseArray<AdItem *> _items;
-
 	BaseArray<AdSentence *> _sentences;
 
 	BaseArray<AdSceneState *> _sceneStates;
@@ -169,8 +147,25 @@ private:
 	BaseArray<const AdResponseContext *> _responsesBranch;
 	BaseArray<const AdResponseContext *> _responsesGame;
 
-	AdResponseBox *_responseBox;
-	AdInventoryBox *_inventoryBox;
+	bool loadFile(const char *filename) override;
+	bool loadBuffer(char *buffer, bool complete = true) override;
+
+	bool loadItemsFile(const char *filename, bool merge = false);
+	bool loadItemsBuffer(char *buffer, bool merge = false);
+
+	bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name) override;
+
+	// scripting interface
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	bool validMouse();
+
+
+	Common::String debuggerToString() const override;
+
+	bool handleCustomActionStart(BaseGameCustomAction action) override;
+	bool handleCustomActionEnd(BaseGameCustomAction action) override;
 };
 
 } // End of namespace Wintermute

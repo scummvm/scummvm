@@ -50,9 +50,9 @@ public:
 	bool setTexture(const Common::String &filename, bool adoptName = false);
 	bool setSprite(BaseSprite *sprite, bool adoptName = false);
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
+	BaseSurface *getSurface();
 	bool setEffect(Effect3D *effect, Effect3DParams *params, bool adoptName = false);
 
-	BaseSurface *getSurface();
 	Effect3D *getEffect() { return _effect; }
 	Effect3DParams *getEffectParams() { return _params; }
 

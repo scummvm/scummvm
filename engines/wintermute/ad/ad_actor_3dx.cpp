@@ -939,7 +939,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_ACTOR3DX) {
@@ -2377,7 +2377,7 @@ bool AdActor3DX::mergeAnimations2(const char *filename) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
@@ -2480,7 +2480,7 @@ bool AdActor3DX::parseEffect(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	char *effectFile = nullptr;
 	char *material = nullptr;

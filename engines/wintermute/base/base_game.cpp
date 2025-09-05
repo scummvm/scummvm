@@ -920,7 +920,7 @@ bool BaseGame::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_GAME) {
@@ -4467,7 +4467,7 @@ bool BaseGame::loadSettings(const char *filename) {
 	char *buffer = origBuffer;
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_SETTINGS) {
 		BaseEngine::LOG(0, "'SETTINGS' keyword expected in game settings file.");

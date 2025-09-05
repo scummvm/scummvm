@@ -54,7 +54,6 @@ public:
 	bool loadBuffer(char *buffer, int lifeTime, bool keepLoaded);
 	bool draw(int x, int y, BaseObject *registerOwner = nullptr, float zoomX = 100, float zoomY = 100, bool precise = true, uint32 alpha = 0xFFFFFFFF, float rotate = 0.0f, Graphics::TSpriteBlendMode blendMode = Graphics::BLEND_NORMAL);
 	bool getBoundingRect(Common::Rect32 *rect, int x, int y, float scaleX = 100, float scaleY = 100);
-	const char* getSurfaceFilename();
 
 	int32 _hotspotX;
 	int32 _hotspotY;
@@ -66,7 +65,6 @@ public:
 private:
 	bool _wantsDefaultRect;
 	Common::Rect32 _rect;
-	char *_surfaceFilename;
 public:
 	bool _cKDefault;
 	byte _cKRed;
@@ -74,6 +72,7 @@ public:
 	byte _cKBlue;
 	int32 _lifeTime;
 	bool _keepLoaded;
+	char *_surfaceFilename;
 
 	bool _2DOnly;
 	bool _3DOnly;
@@ -85,6 +84,7 @@ public:
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;
+
 	Common::String debuggerToString() const override;
 
 	bool startPixelOperations();

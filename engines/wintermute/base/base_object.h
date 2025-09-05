@@ -101,7 +101,6 @@ public:
 	bool _editorAlwaysRegister;
 	bool _editorOnly;
 	bool _is3D;
-
 	DECLARE_PERSISTENT(BaseObject, BaseScriptHolder)
 	virtual bool showCursor();
 	BaseSprite *_cursor;
@@ -154,7 +153,6 @@ public:
 	DXVector3 _shadowLightPos;
 	bool _drawBackfaces;
 	TShadowType _shadowType;
-
 	virtual uint32 getAnimTransitionTime(char *from, char *to) {
 		return 0;
 	};

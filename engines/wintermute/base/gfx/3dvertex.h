@@ -34,10 +34,9 @@ namespace Wintermute {
 
 class Vertex3D {
 public:
+	DXVector3 _pos;
 	Vertex3D();
 	virtual ~Vertex3D();
-
-	DXVector3 _pos;
 };
 
 } // namespace Wintermute

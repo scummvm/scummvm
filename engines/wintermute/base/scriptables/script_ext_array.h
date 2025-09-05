@@ -46,6 +46,7 @@ public:
 	const char *scToString() override;
 	int32 _length;
 	ScValue *_values;
+
 	Common::String _strRep;
 };
 

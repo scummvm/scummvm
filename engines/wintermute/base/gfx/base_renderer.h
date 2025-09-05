@@ -190,7 +190,7 @@ public:
 	BaseArray<BaseActiveRect *> _rectList;
 };
 
-BaseRenderer *makeOSystemRenderer(BaseGame *inGame); // Implemented in BRenderSDL.cpp
+BaseRenderer *makeOSystemRenderer(BaseGame *inGame);
 #ifdef ENABLE_WME3D
 class BaseRenderer3D;
 

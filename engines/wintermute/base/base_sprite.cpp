@@ -213,7 +213,7 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	cleanup();
 

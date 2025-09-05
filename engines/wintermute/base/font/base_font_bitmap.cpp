@@ -346,7 +346,7 @@ bool BaseFontBitmap::loadBuffer(char *buffer) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (parser.getCommand(&buffer, commands, &params) != TOKEN_FONT) {
 		_game->LOG(0, "'FONT' keyword expected.");

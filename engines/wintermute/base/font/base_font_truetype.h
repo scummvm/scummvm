@@ -141,7 +141,6 @@ private:
 
 	BaseArray<BaseTTFontLayer *> _layers;
 	void clearCache();
-
 };
 
 } // End of namespace Wintermute

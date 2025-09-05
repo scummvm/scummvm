@@ -25,6 +25,7 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_game.h"
@@ -42,7 +43,7 @@ namespace Wintermute {
 
 
 //////////////////////////////////////////////////////////////////////
-BaseParser::BaseParser() {
+BaseParser::BaseParser(BaseGame *inGame) : BaseClass(inGame) {
 	_whiteSpace = new char [sizeof(WHITESPACE)];
 	Common::strcpy_s(_whiteSpace, sizeof(WHITESPACE), WHITESPACE);
 }

@@ -111,7 +111,7 @@ bool AdWaypointGroup::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 
 	if (complete) {
 		if (parser.getCommand(&buffer, commands, &params) != TOKEN_WAYPOINTS) {

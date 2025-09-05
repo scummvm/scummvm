@@ -46,6 +46,7 @@ public:
 	BaseObject *_mainObject;
 	BaseViewport(BaseGame *inGame = nullptr);
 	~BaseViewport() override;
+
 	virtual Common::String debuggerToString() const;
 private:
 	Common::Rect32 _rect;

@@ -173,7 +173,7 @@ bool UITiledImage::loadBuffer(char *buffer, bool complete) {
 
 	char *params;
 	int cmd;
-	BaseParser parser;
+	BaseParser parser(_game);
 	bool hTiles = false, vTiles = false;
 	int h1 = 0, h2 = 0, h3 = 0;
 	int v1 = 0, v2 = 0, v3 = 0;
@@ -327,8 +327,8 @@ bool UITiledImage::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	buffer->putTextIndent(indent, "TILED_IMAGE\n");
 	buffer->putTextIndent(indent, "{\n");
 
-	if (_image && _image->getSurfaceFilename()) {
-		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->getSurfaceFilename());
+	if (_image && _image->_surfaceFilename) {
+		buffer->putTextIndent(indent + 2, "IMAGE=\"%s\"\n", _image->_surfaceFilename);
 	}
 
 	int h1, h2, h3;

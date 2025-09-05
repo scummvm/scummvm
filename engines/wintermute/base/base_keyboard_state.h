@@ -55,18 +55,18 @@ public:
 	~BaseKeyboardState() override;
 	bool readKey(Common::Event *event);
 
+	// scripting interface
+	ScValue *scGetProperty(const Common::String &name) override;
+	bool scSetProperty(const char *name, ScValue *value) override;
+	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
+	const char *scToString() override;
+
 	void handleKeyPress(Common::Event *event);
 	void handleKeyRelease(Common::Event *event);
 	static bool isShiftDown();
 	static bool isControlDown();
 	static bool isAltDown();
 	bool isCurrentPrintable() const;
-
-	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
-	bool scSetProperty(const char *name, ScValue *value) override;
-	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
-	const char *scToString() override;
 
 private:
 	void init();
