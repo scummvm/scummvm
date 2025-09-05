@@ -4839,7 +4839,6 @@ void TotEngine::readAlphaGraphSmall(
 	bool done = false;
 	while (!done && !shouldQuit()) {
 		while (g_system->getEventManager()->pollEvent(e)) {
-			// debug("Event!");
 			if (e.type == Common::EVENT_KEYDOWN) {
 				int keycode = e.kbd.keycode;
 				int asciiCode = e.kbd.ascii;
