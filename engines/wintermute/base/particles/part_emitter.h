@@ -111,8 +111,8 @@ public:
 	bool setBorder(int x, int y, int width, int height);
 	bool setBorderThickness(int thicknessLeft, int thicknessRight, int thicknessTop, int thicknessBottom);
 
-	bool addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
-	bool removeForce(const Common::String &name);
+	bool addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength);
+	bool removeForce(const char *name);
 
 	BaseArray<PartForce *> _forces;
 
@@ -123,7 +123,7 @@ public:
 	const char *scToString() override;
 
 private:
-	PartForce *addForceByName(const Common::String &name);
+	PartForce *addForceByName(const char *name);
 	int static compareZ(const void *obj1, const void *obj2);
 	bool initParticle(PartParticle *particle, uint32 currentTime, uint32 timerDelta);
 	bool updateInternal(uint32 currentTime, uint32 timerDelta);

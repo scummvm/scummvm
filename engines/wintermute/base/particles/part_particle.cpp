@@ -69,8 +69,8 @@ PartParticle::~PartParticle() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PartParticle::setSprite(const Common::String &filename) {
-	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename.c_str(), _sprite->getFilename()) == 0) {
+bool PartParticle::setSprite(const char *filename) {
+	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename, _sprite->getFilename()) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
 	}
@@ -252,8 +252,7 @@ bool PartParticle::persist(BasePersistenceManager *persistMgr) {
 	persistMgr->transferSint32(TMEMBER(_fadeStartAlpha));
 
 	if (persistMgr->getIsSaving()) {
-		const char *filename = _sprite->getFilename();
-		persistMgr->transferConstChar(TMEMBER(filename));
+		persistMgr->transferCharPtr(TMEMBER(_sprite->_filename));
 	} else {
 		char *filename;
 		persistMgr->transferCharPtr(TMEMBER(filename));

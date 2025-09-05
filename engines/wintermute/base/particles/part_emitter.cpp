@@ -403,11 +403,11 @@ bool PartEmitter::setBorderThickness(int thicknessLeft, int thicknessRight, int 
 }
 
 //////////////////////////////////////////////////////////////////////////
-PartForce *PartEmitter::addForceByName(const Common::String &name) {
+PartForce *PartEmitter::addForceByName(const char *name) {
 	PartForce *force = nullptr;
 
 	for (int32 i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name.c_str(), _forces[i]->_name) == 0) {
+		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			force = _forces[i];
 			break;
 		}
@@ -415,7 +415,7 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 	if (!force) {
 		force = new PartForce(_game);
 		if (force) {
-			force->setName(name.c_str());
+			force->setName(name);
 			_forces.add(force);
 		}
 	}
@@ -424,7 +424,7 @@ PartForce *PartEmitter::addForceByName(const Common::String &name) {
 
 
 //////////////////////////////////////////////////////////////////////////
-bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
+bool PartEmitter::addForce(const char *name, PartForce::TForceType type, int posX, int posY, float angle, float strength) {
 	PartForce *force = addForceByName(name);
 	if (!force) {
 		return STATUS_FAILED;
@@ -442,9 +442,9 @@ bool PartEmitter::addForce(const Common::String &name, PartForce::TForceType typ
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool PartEmitter::removeForce(const Common::String &name) {
+bool PartEmitter::removeForce(const char *name) {
 	for (int32 i = 0; i < _forces.getSize(); i++) {
-		if (scumm_stricmp(name.c_str(), _forces[i]->_name) == 0) {
+		if (scumm_stricmp(name, _forces[i]->_name) == 0) {
 			delete _forces[i];
 			_forces.removeAt(i);
 			return STATUS_OK;
@@ -1217,32 +1217,32 @@ bool PartEmitter::persist(BasePersistenceManager *persistMgr) {
 
 	_sprites.persist(persistMgr);
 
-	uint32 numForces;
+	int32 numForces;
 	if (persistMgr->getIsSaving()) {
 		numForces = _forces.getSize();
-		persistMgr->transferUint32(TMEMBER(numForces));
+		persistMgr->transferSint32(TMEMBER(numForces));
 		for (int32 i = 0; i < _forces.getSize(); i++) {
 			_forces[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transferUint32(TMEMBER(numForces));
-		for (uint32 i = 0; i < numForces; i++) {
+		persistMgr->transferSint32(TMEMBER(numForces));
+		for (int32 i = 0; i < numForces; i++) {
 			PartForce *force = new PartForce(_game);
 			force->persist(persistMgr);
 			_forces.add(force);
 		}
 	}
 
-	uint32 numParticles;
+	int32 numParticles;
 	if (persistMgr->getIsSaving()) {
 		numParticles = _particles.getSize();
-		persistMgr->transferUint32(TMEMBER(numParticles));
+		persistMgr->transferSint32(TMEMBER(numParticles));
 		for (int32 i = 0; i < _particles.getSize(); i++) {
 			_particles[i]->persist(persistMgr);
 		}
 	} else {
-		persistMgr->transferUint32(TMEMBER(numParticles));
-		for (uint32 i = 0; i < numParticles; i++) {
+		persistMgr->transferSint32(TMEMBER(numParticles));
+		for (int32 i = 0; i < numParticles; i++) {
 			PartParticle *particle = new PartParticle(_game);
 			particle->persist(persistMgr);
 			_particles.add(particle);
