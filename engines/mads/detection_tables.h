@@ -118,6 +118,21 @@ static const MADSGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Rex Nebular and the Cosmic Gender Bender DOS Russian fanmade
+		{
+			"nebular",
+			"Fanmade",
+			AD_ENTRY1s("section1.hag", "1c09f2cb2c801741769be55c83f89c52", 943426),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_COPY_PROTECTION)
+		},
+		GType_RexNebular,
+		0
+	},
+
+	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English Demo
 		{
 			"nebular",
