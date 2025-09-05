@@ -63,13 +63,24 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 		GUIO0()
 	},
 
-	// Penumbra: Overture (Steam)
+	// Penumbra: Overture (Steam - Windows)
 	{
 		"penumbraoverture",
 		nullptr,
 		AD_ENTRY1s("Penumbra.exe", "384e33ddc55f51debca07b6538087e75", 3104768),
 		Common::Language::EN_ANY,
 		Common::kPlatformWindows,
+		ADGF_TESTING,
+		GUIO0()
+	},
+
+	// Penumbra: Overture (Steam - Linux)
+	{
+		"penumbraoverture",
+		nullptr,
+		AD_ENTRY1s("penumbra.bin", "41950a7597b7d9976f77a73a43e8871d", 6301460),
+		Common::Language::EN_ANY,
+		Common::kPlatformLinux,
 		ADGF_TESTING,
 		GUIO0()
 	},
