@@ -137,7 +137,24 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 	if (modeSel == kModeExtended && mode == kModeExtended)
 		ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_TableRowBgAlt));
 
-	{
+	{ // Playback toggle
+		ImGui::TableNextColumn();
+
+		ImGui::PushID(ch + 20000 - mode);
+		ImDrawList *dl = ImGui::GetWindowDrawList();
+		const ImVec2 pos = ImGui::GetCursorScreenPos();
+		const ImVec2 mid(pos.x + 7, pos.y + 7);
+
+		ImGui::InvisibleButton("Line", ImVec2(16, ImGui::GetFontSize()));
+		ImGui::SetItemTooltip("Playback toggle");
+
+		dl->AddCircleFilled(mid, 4.0f, ImColor(_state->_colors._bp_color_enabled));
+//		dl->AddCircle(mid, 4.0f, ImColor(_state->_colors._bp_color_enabled));
+
+		ImGui::PopID();
+	}
+
+	{	// Channel name / number
 		ImGui::TableNextColumn();
 
 		float indentSize = 17.0f;
@@ -547,16 +564,18 @@ void showScore() {
 
 		ImGui::BeginChild("Score table", ImVec2(0, -20));
 
-		if (ImGui::BeginTable("Score", tableColumns + 1,
+		if (ImGui::BeginTable("Score", tableColumns + 2,
 					ImGuiTableFlags_Borders | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY |
 					ImGuiTableFlags_SizingStretchProp | addonFlags)) {
 			ImGuiTableFlags flags = ImGuiTableColumnFlags_WidthFixed;
 
-			ImGui::TableSetupScrollFreeze(1, 2);
+			ImGui::TableSetupScrollFreeze(2, 2);
 
 			ImGui::PushFont(_state->_tinyFont);
 
-			ImGui::TableSetupColumn("##", flags);
+			ImGui::TableSetupColumn("##disable", flags); // disable button
+
+			ImGui::TableSetupColumn("##", flags);   // Number
 			for (uint i = 0; i < tableColumns; i++) {
 				Common::String label = Common::String::format("%-2d", i + _state->_scoreFrameOffset);
 				label += Common::String::format("##l%d", i);
@@ -568,6 +587,9 @@ void showScore() {
 			ImGui::TableNextRow(0);
 
 			ImGui::TableSetColumnIndex(0);
+			ImGui::SetNextItemWidth(20);
+
+			ImGui::TableSetColumnIndex(1);
 			ImGui::PushID(0);
 
 			ImGui::SetNextItemWidth(50);
@@ -590,8 +612,8 @@ void showScore() {
 			ImGui::PopID();
 
 			for (uint i = 0; i < tableColumns; i++) {
-				ImGui::TableSetColumnIndex(i + 1);
-				const char *column_name = ImGui::TableGetColumnName(i + 1);
+				ImGui::TableSetColumnIndex(i + 2);
+				const char *column_name = ImGui::TableGetColumnName(i + 2);
 
 				ImGui::SetNextItemWidth(20);
 				ImGui::TableHeader(column_name);
@@ -599,7 +621,9 @@ void showScore() {
 
 			ImGui::TableNextRow();
 
-			ImGui::TableNextColumn();
+			ImGui::TableNextColumn(); // Enable/Disable switch
+
+			ImGui::TableNextColumn(); // Label column
 
 			float indentSize = 10.0;
 			ImGui::Indent(indentSize);
