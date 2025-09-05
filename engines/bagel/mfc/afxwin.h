@@ -1935,7 +1935,8 @@ public:
 	int m_nCmdShow = SW_SHOWNORMAL;
 	const char *m_lpCmdLine = "";
 	CWnd *m_pMainWnd = nullptr;
-	CPalette _palette;
+	CPalette _systemPalette;
+	CPalette _currentPalette;
 	CFont _defaultFont;
 	CPen _defaultPen;
 	CBrush _defaultBrush;
@@ -2050,8 +2051,8 @@ public:
 		return (HBRUSH)_defaultBrush.m_hObject;
 	}
 	HPALETTE getSystemPalette() {
-		assert(_palette._palette);
-		return _palette._palette;
+		assert(_systemPalette._palette);
+		return _systemPalette._palette;
 	}
 
 	LPCSTR AfxRegisterWndClass(UINT nClassStyle,

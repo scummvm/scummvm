@@ -60,7 +60,8 @@ CWinApp::~CWinApp() {
 	_defaultFont.DeleteObject();
 	_defaultPen.DeleteObject();
 	_defaultBrush.DeleteObject();
-	_palette.DeleteObject();
+	_currentPalette.DeleteObject();
+	_systemPalette.DeleteObject();
 
 	// Release the handle maps
 	delete m_pmapHDC;
@@ -80,13 +81,59 @@ BOOL CWinApp::InitApplication() {
 	_defaultPen.CreatePen(PS_SOLID, 1, 0);
 	_defaultBrush.CreateSolidBrush(RGB(255, 255, 255));
 
-	// Set up palette. It's empty by default, but
+	// Set up current palette. It's empty by default, but
 	// we need to at least get it registered.
 	// Then it will be filled out via setPalette later
 	LOGPALETTE lp;
 	lp.palVersion = 0x300;
 	lp.palNumEntries = 0;
-	_palette.CreatePalette(&lp);
+	_currentPalette.CreatePalette(&lp);
+
+	// Set up system palette
+	LOGPALETTE *lps = (LOGPALETTE *)malloc(sizeof(LOGPALETTE) + 255 * sizeof(PALETTEENTRY));
+	lps->palVersion = 0x300;
+	lps->palNumEntries = 256;
+	Common::fill((byte *)&lps->palPalEntry[0], (byte *)&lps->palPalEntry[Graphics::PALETTE_COUNT], 0);
+
+	// Set first 10 system palette colors
+	PALETTEENTRY sysColorsStart[10] = {
+		{ 0x00, 0x00, 0x00, 0 },       // 0: Black
+		{ 0x80, 0x00, 0x00, 0 },       // 1: Dark Red
+		{ 0x00, 0x80, 0x00, 0 },       // 2: Dark Green
+		{ 0x80, 0x80, 0x00, 0 },       // 3: Olive
+		{ 0x00, 0x00, 0x80, 0 },       // 4: Dark Blue
+		{ 0x80, 0x00, 0x80, 0 },       // 5: Purple
+		{ 0x00, 0x80, 0x80, 0 },       // 6: Teal
+		{ 0xC0, 0xC0, 0xC0, 0 },       // 7: Gray
+		{ 0xC0, 0xDC, 0xC0, 0 },       // 8: Silver (Windows UI color)
+		{ 0xA6, 0xCA, 0xF0, 0 }        // 9: Light Gray (Windows UI color)
+	};
+
+	for (int i = 0; i < 10; ++i) {
+		lps->palPalEntry[i] = sysColorsStart[i];
+	}
+
+	// Set last 10 system palette colors
+	PALETTEENTRY sysColorsEnd[10] = {
+		{ 0xFF, 0xFF, 0xFF, 0 },       // 246: White
+		{ 0xFF, 0x00, 0x00, 0 },       // 247: Red
+		{ 0x00, 0xFF, 0x00, 0 },       // 248: Green
+		{ 0xFF, 0xFF, 0x00, 0 },       // 249: Yellow
+		{ 0x00, 0x00, 0xFF, 0 },       // 250: Blue
+		{ 0xFF, 0x00, 0xFF, 0 },       // 251: Magenta
+		{ 0x00, 0xFF, 0xFF, 0 },       // 252: Cyan
+		{ 0xFF, 0xFF, 0xFF, 0 },       // 253: White again (duplicate of 246)
+		{ 0xFF, 0xFB, 0xF0, 0 },       // 254: Light Gray (UI highlight)
+		{ 0xA0, 0xA0, 0xA4, 0 }        // 255: "Button face" gray
+	};
+
+	for (int i = 0; i < 10; ++i) {
+		lps->palPalEntry[246 + i] = sysColorsEnd[i];
+	}
+
+	// Set up the system palette with the palette data
+	_systemPalette.CreatePalette(lps);
+	free(lps);
 
 	return true;
 }
@@ -245,18 +292,18 @@ void CWinApp::setDirectory(const char *folder) {
 }
 
 void CWinApp::setPalette(const Graphics::Palette &pal) {
-	_palette.SetPaletteEntries(pal);
-	g_system->getPaletteManager()->setPalette(*_palette._palette);
+	_currentPalette.SetPaletteEntries(pal);
+	g_system->getPaletteManager()->setPalette(pal);
 }
 
 byte CWinApp::getColor(COLORREF color) const {
-	if (_palette.isEmpty())
+	if (_currentPalette.isEmpty())
 		return 0;
 
 	if (color <= 0xff || (color >> 24) == 1)
 		return (byte)(color & 0xff);
 
-	return _palette._palette->findBestColor(
+	return _currentPalette._palette->findBestColor(
 		GetRValue(color),
 		GetGValue(color),
 		GetBValue(color)
