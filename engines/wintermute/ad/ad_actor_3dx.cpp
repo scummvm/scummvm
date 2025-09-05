@@ -1117,7 +1117,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 					cmd = PARSERR_GENERIC;
 				}
 			} else {
-				_game->LOG(0, "Error: a MODEL= line must precede shadow model assignment (file: %s)", getFilename());
+				_game->LOG(0, "Error: a MODEL= line must precede shadow model assignment (file: %s)", _filename);
 			}
 			break;
 
@@ -1146,7 +1146,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 			if (_xmodel) {
 				_xmodel->parseAnim(params);
 			} else {
-				_game->LOG(0, "Error: a MODEL= line must precede any animation definitions (file: %s)", getFilename());
+				_game->LOG(0, "Error: a MODEL= line must precede any animation definitions (file: %s)", _filename);
 			}
 			break;
 
@@ -1154,7 +1154,7 @@ bool AdActor3DX::loadBuffer(char *buffer, bool complete) {
 			if (_xmodel)
 				parseEffect(params);
 			else
-				_game->LOG(0, "Error: a MODEL= line must precede any effect definitions (file: %s)", getFilename());
+				_game->LOG(0, "Error: a MODEL= line must precede any effect definitions (file: %s)", _filename);
 			break;
 
 		case TOKEN_SHADOW_IMAGE:

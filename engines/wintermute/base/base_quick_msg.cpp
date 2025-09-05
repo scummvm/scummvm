@@ -31,19 +31,22 @@ namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::BaseQuickMsg(uint32 startTime, const char *text) {
-	_text = text;
+	size_t textSize = strlen(text) + 1;
+	_text = new char[textSize];
+	Common::strcpy_s(_text, textSize, text);
 	_startTime = startTime;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 BaseQuickMsg::~BaseQuickMsg() {
+	delete[] _text;
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 const char *BaseQuickMsg::getText() const {
-	return _text.c_str();
+	return _text;
 }
 
 } // End of namespace Wintermute

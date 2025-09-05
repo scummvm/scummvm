@@ -47,7 +47,7 @@ public:
 
 	DXMaterial _material;
 
-	bool setTexture(const Common::String &filename, bool adoptName = false);
+	bool setTexture(const char *filename, bool adoptName = false);
 	bool setSprite(BaseSprite *sprite, bool adoptName = false);
 	bool setTheora(VideoTheoraPlayer *theora, bool adoptName = false);
 	BaseSurface *getSurface();
@@ -60,7 +60,7 @@ public:
 	bool restoreDeviceObjects();
 
 private:
-	Common::String _textureFilename;
+	char *_textureFilename;
 	BaseSurface *_surface;
 	bool _ownedSurface;
 	BaseSprite *_sprite;

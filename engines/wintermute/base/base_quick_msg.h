@@ -36,7 +36,7 @@ class BaseQuickMsg {
 public:
 	const char *getText() const;
 	uint32 _startTime;
-	Common::String _text;
+	char *_text;
 	BaseQuickMsg(uint32 startTime, const char *text);
 	virtual ~BaseQuickMsg();
 };

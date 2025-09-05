@@ -34,6 +34,7 @@
 #include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
+#include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/video/video_theora_player.h"
 
 namespace Wintermute {
@@ -45,6 +46,7 @@ namespace Wintermute {
 //////////////////////////////////////////////////////////////////////////
 Material::Material(BaseGame *inGame) : BaseNamedObject(inGame) {
 	memset(&_material, 0, sizeof(_material));
+	_textureFilename = nullptr;
 	_surface = nullptr;
 	_ownedSurface = false;
 	_sprite = nullptr;
@@ -55,6 +57,7 @@ Material::Material(BaseGame *inGame) : BaseNamedObject(inGame) {
 
 //////////////////////////////////////////////////////////////////////////
 Material::~Material() {
+	SAFE_DELETE_ARRAY(_textureFilename);
 	if (_surface && _ownedSurface) {
 		_game->_surfaceStorage->removeSurface(_surface);
 	}
@@ -80,12 +83,12 @@ bool Material::restoreDeviceObjects() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool Material::setTexture(const Common::String &filename, bool adoptName) {
+bool Material::setTexture(const char *filename, bool adoptName) {
 	if (adoptName) {
 		setName(PathUtil::getFileNameWithoutExtension(filename).c_str());
 	}
 
-	_textureFilename = filename;
+	BaseUtils::setString(&_textureFilename, filename);
 
 	if (_surface && _ownedSurface) {
 		_game->_surfaceStorage->removeSurface(_surface);
@@ -101,10 +104,10 @@ bool Material::setTexture(const Common::String &filename, bool adoptName) {
 //////////////////////////////////////////////////////////////////////////
 bool Material::setSprite(BaseSprite *sprite, bool adoptName) {
 	if (adoptName) {
-		setName(PathUtil::getFileNameWithoutExtension(sprite->getFilename()).c_str());
+		setName(PathUtil::getFileNameWithoutExtension(sprite->_filename).c_str());
 	}
 
-	_textureFilename = sprite->getFilename();
+	BaseUtils::setString(&_textureFilename, sprite->_filename);
 	if (_surface && _ownedSurface) {
 		_game->_surfaceStorage->removeSurface(_surface);
 	}
@@ -123,7 +126,7 @@ bool Material::setTheora(VideoTheoraPlayer *theora, bool adoptName) {
 	if (adoptName) {
 		setName(PathUtil::getFileNameWithoutExtension(theora->_filename).c_str());
 	}
-	_textureFilename = theora->_filename;
+	BaseUtils::setString(&_textureFilename, theora->_filename.c_str());
 
 	if (_surface && _ownedSurface) {
 		_game->_surfaceStorage->removeSurface(_surface);
@@ -148,7 +151,7 @@ bool Material::setEffect(Effect3D *effect, Effect3DParams *params, bool adoptNam
 	if (adoptName) {
 		setName(PathUtil::getFileNameWithoutExtension(effect->getFileName()).c_str());
 	}
-	_textureFilename = effect->getFileName();
+	BaseUtils::setString(&_textureFilename, effect->getFileName());
 
 	_effect = effect;
 	_params = params;

@@ -1019,7 +1019,7 @@ bool AdScene::loadBuffer(char *buffer, bool complete) {
 	}
 
 	if (_mainLayer == nullptr) {
-		_game->LOG(0, "Warning: scene '%s' has no main layer.", getFilename());
+		_game->LOG(0, "Warning: scene '%s' has no main layer.", _filename);
 	}
 
 #ifdef ENABLE_WME3D
@@ -2523,8 +2523,8 @@ ScValue *AdScene::scGetProperty(const char *name) {
 	// GeometryFile
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GeometryFile") == 0) {
-		if (_geom && _geom->getFilename()) {
-			_scValue->setString(_geom->getFilename());
+		if (_geom && _geom->_filename) {
+			_scValue->setString(_geom->_filename);
 		} else {
 			_scValue->setNULL();
 		}
@@ -2796,8 +2796,8 @@ bool AdScene::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 
 #ifdef ENABLE_WME3D
 	if (_geom) {
-		if (_geom->getFilename())
-			buffer->putTextIndent(indent + 2, "GEOMETRY=\"%s\"\n", _geom->getFilename());
+		if (_geom->_filename)
+			buffer->putTextIndent(indent + 2, "GEOMETRY=\"%s\"\n", _geom->_filename);
 		if (_geom->_activeCamera >= 0 && _geom->_activeCamera < _geom->_cameras.getSize()) {
 			buffer->putTextIndent(indent + 2, "CAMERA=\"%s\"\n", _geom->_cameras[_geom->_activeCamera]->_name);
 		}
@@ -3435,7 +3435,7 @@ bool AdScene::persistState(bool saving) {
 	}
 
 	AdGame *adGame = (AdGame *)_game;
-	AdSceneState *state = adGame->getSceneState(getFilename(), saving);
+	AdSceneState *state = adGame->getSceneState(_filename, saving);
 	if (!state) {
 		return STATUS_OK;
 	}

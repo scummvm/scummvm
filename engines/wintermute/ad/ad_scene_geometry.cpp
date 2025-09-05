@@ -322,7 +322,7 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 	// drop waypoints to the ground
 	dropWaypoints();
 
-	if (getFilename() != filename) {
+	if (_filename != filename) {
 		setFilename(filename);
 	}
 
@@ -1226,7 +1226,7 @@ bool AdSceneGeometry::persist(BasePersistenceManager *persistMgr) {
 
 	if (!persistMgr->getIsSaving()) {
 		//m_WptMarker = NULL;
-		loadFile(getFilename());
+		loadFile(_filename);
 		_lastValuesInitialized = false;
 	}
 

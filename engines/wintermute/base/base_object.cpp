@@ -266,10 +266,10 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetCursor") == 0) {
 		stack->correctParams(0);
-		if (!_cursor || !_cursor->getFilename()) {
+		if (!_cursor || !_cursor->_filename) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_cursor->getFilename());
+			stack->pushString(_cursor->_filename);
 		}
 
 		return STATUS_OK;

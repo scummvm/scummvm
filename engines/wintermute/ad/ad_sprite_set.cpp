@@ -299,28 +299,28 @@ bool AdSpriteSet::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		if (_sprites[i]) {
 			switch (i) {
 			case DI_UP:
-				buffer->putTextIndent(indent + 2, "UP=\"%s\"\n",         _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP=\"%s\"\n",         _sprites[i]->_filename);
 				break;
 			case DI_UPRIGHT:
-				buffer->putTextIndent(indent + 2, "UP_RIGHT=\"%s\"\n",   _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP_RIGHT=\"%s\"\n",   _sprites[i]->_filename);
 				break;
 			case DI_RIGHT:
-				buffer->putTextIndent(indent + 2, "RIGHT=\"%s\"\n",      _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "RIGHT=\"%s\"\n",      _sprites[i]->_filename);
 				break;
 			case DI_DOWNRIGHT:
-				buffer->putTextIndent(indent + 2, "DOWN_RIGHT=\"%s\"\n", _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "DOWN_RIGHT=\"%s\"\n", _sprites[i]->_filename);
 				break;
 			case DI_DOWN:
-				buffer->putTextIndent(indent + 2, "DOWN=\"%s\"\n",       _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "DOWN=\"%s\"\n",       _sprites[i]->_filename);
 				break;
 			case DI_DOWNLEFT:
-				buffer->putTextIndent(indent + 2, "DOWN_LEFT=\"%s\"\n",  _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "DOWN_LEFT=\"%s\"\n",  _sprites[i]->_filename);
 				break;
 			case DI_LEFT:
-				buffer->putTextIndent(indent + 2, "LEFT=\"%s\"\n",       _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "LEFT=\"%s\"\n",       _sprites[i]->_filename);
 				break;
 			case DI_UPLEFT:
-				buffer->putTextIndent(indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->getFilename());
+				buffer->putTextIndent(indent + 2, "UP_LEFT=\"%s\"\n",    _sprites[i]->_filename);
 				break;
 			default:
 				break;

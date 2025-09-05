@@ -1155,8 +1155,8 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "SCRIPT=\"%s\"\n", _scripts[i]->_filename);
 	}
 
-	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->getFilename()) {
-		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->getFilename());
+	if (_subtype == ENTITY_NORMAL && _sprite && _sprite->_filename) {
+		buffer->putTextIndent(indent + 2, "SPRITE=\"%s\"\n", _sprite->_filename);
 	}
 
 	if (_subtype == ENTITY_SOUND && _sFX && !_sFX->_soundFilename.empty()) {
@@ -1181,12 +1181,12 @@ bool AdEntity::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 		buffer->putTextIndent(indent + 2, "RELATIVE_SCALE = %d\n", (int)_relativeScale);
 	}
 
-	if (_font && _font->getFilename()) {
-		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->getFilename());
+	if (_font && _font->_filename) {
+		buffer->putTextIndent(indent + 2, "FONT=\"%s\"\n", _font->_filename);
 	}
 
-	if (_cursor && _cursor->getFilename()) {
-		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->getFilename());
+	if (_cursor && _cursor->_filename) {
+		buffer->putTextIndent(indent + 2, "CURSOR=\"%s\"\n", _cursor->_filename);
 	}
 
 	AdTalkHolder::saveAsText(buffer, indent + 2);

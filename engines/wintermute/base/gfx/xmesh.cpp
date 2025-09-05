@@ -130,7 +130,8 @@ bool XMesh::loadFromXData(const char *filename, XFileData *xobj) {
 			mat->_material._ambient = mat->_material._diffuse;
 
 			if (fileMats[i]._textureFilename[0] != '\0') {
-				mat->setTexture(PathUtil::getDirectoryName(filename) + fileMats[i]._textureFilename, true);
+				Common::String texturePath = PathUtil::getDirectoryName(filename) + fileMats[i]._textureFilename;
+				mat->setTexture(texturePath.c_str(), true);
 			}
 
 			_materials.add(mat);

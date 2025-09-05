@@ -123,9 +123,9 @@ bool BaseSprite::draw(int x, int y, BaseObject *registerOwner, float zoomX, floa
 }
 
 //////////////////////////////////////////////////////////////////////
-bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteCacheType cacheType) {
+bool BaseSprite::loadFile(const char *filename, int lifeTime, TSpriteCacheType cacheType) {
 	if (!BaseFileManager::getEngineInstance()->hasFile(filename)) {
-		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename.c_str());
+		BaseEngine::LOG(0, "BaseSprite::LoadFile failed for file '%s'", filename);
 		if (_game->_debugDebugMode) {
 			return loadFile("invalid_debug.bmp", lifeTime, cacheType);
 		} else {
@@ -144,7 +144,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		BaseSubFrame *subframe = new BaseSubFrame(_game);
 		subframe->setSurface(filename, true, 0, 0, 0, lifeTime, true);
 		if (subframe->_surface == nullptr) {
-			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename.c_str());
+			BaseEngine::LOG(0, "Error loading simple sprite '%s'", filename);
 			ret = STATUS_FAILED;
 			delete frame;
 			delete subframe;
@@ -159,7 +159,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		char *buffer = (char *)BaseFileManager::getEngineInstance()->readWholeFile(filename);
 		if (buffer) {
 			if (DID_FAIL(ret = loadBuffer(buffer, true, lifeTime, cacheType))) {
-				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename.c_str());
+				BaseEngine::LOG(0, "Error parsing SPRITE file '%s'", filename);
 			} else {
 				ret = STATUS_OK;
 			}
@@ -167,7 +167,7 @@ bool BaseSprite::loadFile(const Common::String &filename, int lifeTime, TSpriteC
 		}
 	}
 
-	setFilename(filename.c_str());
+	setFilename(filename);
 
 	return ret;
 }

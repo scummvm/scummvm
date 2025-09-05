@@ -70,7 +70,7 @@ PartParticle::~PartParticle() {
 
 //////////////////////////////////////////////////////////////////////////
 bool PartParticle::setSprite(const char *filename) {
-	if (_sprite && _sprite->getFilename() && scumm_stricmp(filename, _sprite->getFilename()) == 0) {
+	if (_sprite && _sprite->_filename && scumm_stricmp(filename, _sprite->_filename) == 0) {
 		_sprite->reset();
 		return STATUS_OK;
 	}
@@ -78,7 +78,7 @@ bool PartParticle::setSprite(const char *filename) {
 	SAFE_DELETE(_sprite);
 
 	SystemClassRegistry::getInstance()->_disabled = true;
-	_sprite = new BaseSprite(_game, (BaseObject*)_game);
+	_sprite = new BaseSprite(_game, (BaseObject *)_game);
 	if (_sprite && DID_SUCCEED(_sprite->loadFile(filename))) {
 		SystemClassRegistry::getInstance()->_disabled = false;
 		return STATUS_OK;

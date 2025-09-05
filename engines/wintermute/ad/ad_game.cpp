@@ -277,7 +277,7 @@ bool AdGame::changeScene(const char *filename, bool fadeIn) {
 		_scene->applyEvent("SceneShutdown", true);
 
 		setPrevSceneName(_scene->_name);
-		setPrevSceneFilename(_scene->getFilename());
+		setPrevSceneFilename(_scene->_filename);
 
 		if (!_tempDisableSaveState) {
 			_scene->saveState();
@@ -456,7 +456,7 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		// Unused screenshots must be deleted, after main menu is closed
 		if (obj && BaseEngine::instance().getGameId() == "corrosion") {
 			const char *mm = "interface\\system\\mainmenu.window";
-			const char *fn = obj->getFilename();
+			const char *fn = obj->_filename;
 			if (fn && strcmp(fn, mm) == 0) {
 				SAFE_DELETE(_cachedThumbnail);
 			}

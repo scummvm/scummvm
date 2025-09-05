@@ -353,8 +353,8 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetFont") == 0) {
 		stack->correctParams(0);
-		if (_font && _font->getFilename()) {
-			stack->pushString(_font->getFilename());
+		if (_font && _font->_filename) {
+			stack->pushString(_font->_filename);
 		} else {
 			stack->pushNULL();
 		}

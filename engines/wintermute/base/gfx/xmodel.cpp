@@ -1014,8 +1014,8 @@ bool XModel::persist(BasePersistenceManager *persistMgr) {
 		}
 		_rootFrame = nullptr;
 
-		if (getFilename()) {
-			loadFromFile(getFilename());
+		if (_filename) {
+			loadFromFile(_filename);
 		}
 
 		for (int32 i = 0; i < _mergedModels.getSize(); ++i) {

@@ -52,7 +52,6 @@ public:
 	virtual bool listen(BaseScriptHolder *param1, uint32 param2);
 	bool applyEvent(const char *eventName, bool unbreakable = false);
 	void setFilename(const char *filename);
-	const char *getFilename() { return _filename; }
 	bool parseProperty(char *buffer, bool complete = true);
 
 	char *_filename;

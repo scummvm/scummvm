@@ -168,10 +168,10 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 	else if (strcmp(name, "GetSprite") == 0) {
 		stack->correctParams(0);
 
-		if (!_sprite || !_sprite->getFilename()) {
+		if (!_sprite || !_sprite->_filename) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_sprite->getFilename());
+			stack->pushString(_sprite->_filename);
 		}
 		return STATUS_OK;
 	}
@@ -228,7 +228,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 		if (ex) {
 			for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
-				if (scumm_stricmp(_talkSpritesEx[i]->getFilename(), filename) == 0) {
+				if (scumm_stricmp(_talkSpritesEx[i]->_filename, filename) == 0) {
 					if (_currentSprite == _talkSpritesEx[i]) {
 						setCurrent = true;
 					}
@@ -242,7 +242,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 			}
 		} else {
 			for (int32 i = 0; i < _talkSprites.getSize(); i++) {
-				if (scumm_stricmp(_talkSprites[i]->getFilename(), filename) == 0) {
+				if (scumm_stricmp(_talkSprites[i]->_filename, filename) == 0) {
 					if (_currentSprite == _talkSprites[i]) {
 						setCurrent = true;
 					}
@@ -283,7 +283,7 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 		stack->pushInt(0);
 		arr = makeSXArray(_game, stack);
 		for (int32 i = 0; i < sprites.getSize(); i++) {
-			stack->pushString(sprites[i]->getFilename());
+			stack->pushString(sprites[i]->_filename);
 			((SXArray *)arr)->push(stack->pop());
 		}
 		stack->pushNative(arr, false);
@@ -395,14 +395,14 @@ const char *AdTalkHolder::scToString() {
 //////////////////////////////////////////////////////////////////////////
 bool AdTalkHolder::saveAsText(BaseDynamicBuffer *buffer, int indent) {
 	for (int32 i = 0; i < _talkSprites.getSize(); i++) {
-		if (_talkSprites[i]->getFilename()) {
-			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->getFilename());
+		if (_talkSprites[i]->_filename) {
+			buffer->putTextIndent(indent + 2, "TALK=\"%s\"\n", _talkSprites[i]->_filename);
 		}
 	}
 
 	for (int32 i = 0; i < _talkSpritesEx.getSize(); i++) {
-		if (_talkSpritesEx[i]->getFilename()) {
-			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->getFilename());
+		if (_talkSpritesEx[i]->_filename) {
+			buffer->putTextIndent(indent + 2, "TALK_SPECIAL=\"%s\"\n", _talkSpritesEx[i]->_filename);
 		}
 	}
 

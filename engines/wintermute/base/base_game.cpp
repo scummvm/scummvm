@@ -2200,10 +2200,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetActiveCursor") == 0) {
 		stack->correctParams(0);
-		if (!_activeCursor || !_activeCursor->getFilename()) {
+		if (!_activeCursor || !_activeCursor->_filename) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_activeCursor->getFilename());
+			stack->pushString(_activeCursor->_filename);
 		}
 
 		return STATUS_OK;
@@ -2505,10 +2505,10 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "GetWaitCursor") == 0) {
 		stack->correctParams(0);
-		if (!_cursorNoninteractive || !_cursorNoninteractive->getFilename()) {
+		if (!_cursorNoninteractive || !_cursorNoninteractive->_filename) {
 			stack->pushNULL();
 		} else {
-			stack->pushString(_cursorNoninteractive->getFilename());
+			stack->pushString(_cursorNoninteractive->_filename);
 		}
 
 		return STATUS_OK;
