@@ -594,9 +594,9 @@ Common::String drawAndSelectSaves(Common::StringArray saves, int selectedGame) {
 
 void TotEngine::originalSaveLoadScreen() {
 	uint oldMouseX, oldMouseY;
-	int partidaselecc = -1;
-	bool modificada = false;
-	Common::String nombrepartida = "";
+	int selectedGame = -1;
+	bool modified = false;
+	Common::String saveName = "";
 
 	bool exitSaveLoadMenu = false;
 	oldMouseX = _mouse->mouseX;
@@ -618,11 +618,7 @@ void TotEngine::originalSaveLoadScreen() {
 	}
 	Common::String pattern = isLanguageSpanish ? "tot-es.###" : "tot.###";
 	Common::StringArray saves = g_system->getSavefileManager()->listSavefiles(pattern);
-	debug("Found saves:");
-	for (int i = 0; i < saves.size(); i++) {
-		debug("Save %d: %s", i, saves[i].c_str());
-	}
-	nombrepartida = drawAndSelectSaves(saves, partidaselecc);
+	saveName = drawAndSelectSaves(saves, selectedGame);
 	if (_cpCounter2 > 17)
 		showError(274);
 	_mouse->mouseX = 150;
@@ -665,20 +661,17 @@ void TotEngine::originalSaveLoadScreen() {
 		if (mouseClicked) {
 			if (_mouse->mouseY >= 13 && _mouse->mouseY <= 16) {
 				if (_mouse->mouseX >= 54 && _mouse->mouseX <= 124) {
-					if (partidaselecc >= 0 && _saveAllowed && nombrepartida != "") {
-						debug("would save game now!");
-						debug("partidaseleccionada - %d, saveAllowed=%d, nombrepartida = %s", partidaselecc, _saveAllowed, nombrepartida.c_str());
-						saveGameState(partidaselecc, nombrepartida, false);
+					if (selectedGame >= 0 && _saveAllowed && saveName != "") {
+						saveGameState(selectedGame, saveName, false);
 						_graphics->putImg(50, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
-						partidaselecc = -1;
+						selectedGame = -1;
 					} else {
-						debug("partidaseleccionada - %d, saveAllowed=%d, nombrepartida = %s", partidaselecc, _saveAllowed, nombrepartida.c_str());
 						_sound->beep(100, 300);
 					}
 				} else if (_mouse->mouseX >= 130 && _mouse->mouseX <= 194) {
-					if (partidaselecc >= 0 && !modificada) {
-						if (partidaselecc < saves.size()) {
+					if (selectedGame >= 0 && !modified) {
+						if (selectedGame < saves.size()) {
 							_mouse->hide();
 							_graphics->putImg(50, 10, menuBgPointer);
 							free(menuBgPointer);
@@ -686,14 +679,13 @@ void TotEngine::originalSaveLoadScreen() {
 								clearAnimation();
 								clearScreenLayers();
 							}
-							Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[partidaselecc]);
+							Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(saves[selectedGame]);
 							if (!in) {
-
-								warning("Could not open save file: %s", saves[partidaselecc].c_str());
+								warning("Could not open save file: %s", saves[selectedGame].c_str());
 								exitSaveLoadMenu = true;
 								return;
 							}
-							int slotNum = atoi(saves[partidaselecc].c_str() + saves[partidaselecc].size() - 3);
+							int slotNum = atoi(saves[selectedGame].c_str() + saves[selectedGame].size() - 3);
 							loadGameState(slotNum);
 							_mouse->mouseX = oldMouseX;
 							_mouse->mouseY = oldMouseY;
@@ -701,60 +693,58 @@ void TotEngine::originalSaveLoadScreen() {
 							_mouse->show();
 							_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 							exitSaveLoadMenu = true;
-							partidaselecc = -1;
+							selectedGame = -1;
 							delete in;
 							return;
 						} else {
-							debug("partidaseleccionada - %d", partidaselecc);
 							_sound->beep(100, 300);
 						}
 					} else {
-						debug("partidaseleccionada - %d, modificada=%d", partidaselecc, modificada);
 						_sound->beep(100, 300);
-						nombrepartida = drawAndSelectSaves(saves, partidaselecc);
+						saveName = drawAndSelectSaves(saves, selectedGame);
 						_mouse->show();
 					}
 				} else if (_mouse->mouseClickX >= 200 && _mouse->mouseClickX <= 250) {
 					if (_inGame && _saveAllowed) {
 						_graphics->putImg(50, 10, menuBgPointer);
 						exitSaveLoadMenu = true;
-						partidaselecc = -1;
+						selectedGame = -1;
 					} else {
 						_sound->beep(100, 300);
 					}
 				}
 			} else if (_mouse->mouseClickY >= 24 && _mouse->mouseClickY <= 32) {
-				partidaselecc = 0;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 0);
+				selectedGame = 0;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 0);
 			} else if (_mouse->mouseClickY >= 39 && _mouse->mouseClickY <= 47) {
-				partidaselecc = 1;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 1);
+				selectedGame = 1;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 1);
 			} else if (_mouse->mouseClickY >= 54 && _mouse->mouseClickY <= 62) {
-				partidaselecc = 2;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 2);
+				selectedGame = 2;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 2);
 			} else if (_mouse->mouseClickY >= 69 && _mouse->mouseClickY <= 77) {
-				partidaselecc = 3;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 3);
+				selectedGame = 3;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 3);
 			} else if (_mouse->mouseClickY >= 84 && _mouse->mouseClickY <= 92) {
-				partidaselecc = 4;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 4);
+				selectedGame = 4;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 4);
 			} else if (_mouse->mouseClickY >= 99 && _mouse->mouseClickY <= 107) {
-				partidaselecc = 5;
-				modificada = false;
-				nombrepartida = drawAndSelectSaves(saves, 5);
+				selectedGame = 5;
+				modified = false;
+				saveName = drawAndSelectSaves(saves, 5);
 			}
 		}
 
-		if (partidaselecc >= 0 && keyPressed && _saveAllowed) {
+		if (selectedGame >= 0 && keyPressed && _saveAllowed) {
 			_mouse->hide();
-			byte ytext = 29 + (partidaselecc * 15);
-			readAlphaGraphSmall(nombrepartida, 30, 65, ytext, 251, 254, lastInputChar);
-			modificada = true;
+			byte ytext = 29 + (selectedGame * 15);
+			readAlphaGraphSmall(saveName, 30, 65, ytext, 251, 254, lastInputChar);
+			modified = true;
 			_mouse->show();
 			keyPressed = false;
 		}
