@@ -585,6 +585,10 @@ def extract_volume_iso(args: argparse.Namespace) -> None:
             if dryrun:
                 continue
 
+            # Sometimes, directory is not present in the list
+            # Make sure we have place to write the file
+            os.makedirs(os.path.dirname(out_file_path), exist_ok=True)
+
             # arg[path_type] = iso_file_path
             # iso.get_file_from_iso(out_file_path, **arg)
             with open(os.path.join(pwd, filename), "wb") as f:
