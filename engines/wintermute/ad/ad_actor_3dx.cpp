@@ -170,25 +170,25 @@ bool AdActor3DX::update() {
 			float turnVel = _directTurnVelocity == 0.0f ? _angVelocity : _directTurnVelocity;
 
 			if (_directTurnMode == DIRECT_TURN_CW) {
-				_angle += turnVel * (float)_game->_deltaTime / 1000.f;
+				_angle += turnVel * (float)_game->_timerDelta / 1000.f;
 				_angle = BaseUtils::normalizeAngle(_angle);
 			}
 
 			if (_directTurnMode == DIRECT_TURN_CCW) {
-				_angle -= turnVel * (float)_game->_deltaTime / 1000.f;
+				_angle -= turnVel * (float)_game->_timerDelta / 1000.f;
 				_angle = BaseUtils::normalizeAngle(_angle);
 			}
 
 			float walkVel = _directWalkVelocity == 0.0f ? _velocity : _directWalkVelocity;
 			DXVector3 newPos = _posVector;
 			if (_directWalkMode == DIRECT_WALK_FW) {
-				newPos._x += -sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_deltaTime / 1000.f;
-				newPos._z += -cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_deltaTime / 1000.f;
+				newPos._x += -sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_timerDelta / 1000.f;
+				newPos._z += -cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_timerDelta / 1000.f;
 			}
 
 			if (_directWalkMode == DIRECT_WALK_BK) {
-				newPos._x -= -sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_deltaTime / 1000.f;
-				newPos._z -= -cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_deltaTime / 1000.f;
+				newPos._x -= -sinf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_timerDelta / 1000.f;
+				newPos._z -= -cosf(degToRad(_angle)) * walkVel * _scale3D * (float)_game->_timerDelta / 1000.f;
 			}
 
 			AdScene *scene = ((AdGame *)_game)->_scene;
@@ -665,8 +665,8 @@ void AdActor3DX::getNextStep3D() {
 		turnToStep(_angVelocity);
 
 	DXVector3 newPos = _posVector;
-	newPos._x += -sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_deltaTime / 1000.f;
-	newPos._z += -cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_deltaTime / 1000.f;
+	newPos._x += -sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_timerDelta / 1000.f;
+	newPos._z += -cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_timerDelta / 1000.f;
 
 	DXVector3 origVec, newVec;
 	DXVector3 *currentPos = _path3D->getCurrent();
@@ -722,8 +722,8 @@ void AdActor3DX::getNextStep2D() {
 	}
 
 	DXVector3 newPos = _posVector;
-	newPos._x += -sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_deltaTime / 1000.f;
-	newPos._z += -cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_deltaTime / 1000.f;
+	newPos._x += -sinf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_timerDelta / 1000.f;
+	newPos._z += -cosf(degToRad(_targetAngle)) * _velocity * _scale3D * (float)_game->_timerDelta / 1000.f;
 
 	DXVector3 currentPoint;
 	adGame->_scene->_geom->convert2Dto3DTolerant(_path2D->getCurrent()->x, _path2D->getCurrent()->y, &currentPoint);
@@ -815,12 +815,12 @@ bool AdActor3DX::prepareTurn(float targetAngle) {
 //////////////////////////////////////////////////////////////////////////
 bool AdActor3DX::turnToStep(float velocity) {
 	if (_turningLeft) {
-		_angle -= velocity * (float)_game->_deltaTime / 1000.f;
+		_angle -= velocity * (float)_game->_timerDelta / 1000.f;
 		if (_angle < _targetAngle) {
 			_angle = _targetAngle;
 		}
 	} else {
-		_angle += velocity * (float)_game->_deltaTime / 1000.f;
+		_angle += velocity * (float)_game->_timerDelta / 1000.f;
 		if (_angle > _targetAngle) {
 			_angle = _targetAngle;
 		}
