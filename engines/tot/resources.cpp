@@ -43,8 +43,6 @@ void TotEngine::loadCharAnimation() {
 
 	_mainCharFrameSize = characterFile.readUint16LE();
 
-	verifyCopyProtection();
-
 	for (int i = 0; i <= 3; i++)
 		for (int j = 0; j < kWalkFrameCount; j++) {
 			_mainCharAnimation.bitmap[i][j] = (byte *)malloc(_mainCharFrameSize);

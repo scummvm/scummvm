@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "common/config-manager.h"
 #include "common/savefile.h"
 #include "image/png.h"
 
@@ -870,7 +870,6 @@ void TotEngine::useInventoryObjectWithInventoryObject(uint objectCode1, uint obj
 	byte invIndex, indobj1, indobj2;
 
 	readObject(_sceneObjectsData, objectCode1, _curObject);
-	// verifyCopyProtection2();
 	if (_curObject.used[0] != 1 || _curObject.useWith != objectCode2) {
 		drawText(getRandom(11) + 1022);
 		return;
@@ -1425,7 +1424,6 @@ void TotEngine::pickupScreenObject() {
 	goToObject(
 		_currentRoomData->walkAreasGrid[(_characterPosX + kCharacterCorrectionX) / kXGridCount][(_characterPosY + kCharacerCorrectionY) / kYGridCount],
 		_currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
-	verifyCopyProtection();
 	if (_curObject.pickupable) {
 		_mouse->hide();
 		switch (_curObject.code) {
@@ -3408,7 +3406,6 @@ void TotEngine::closeScreenObject() {
 	sceneObject = _currentRoomData->screenObjectIndex[_currentRoomData->mouseGrid[correctedMouseX][correctedMouseY]]->fileIndex;
 	if (sceneObject == 0)
 		return;
-	// verifyCopyProtection2();
 	readObject(sceneObject);
 	goToObject(_currentRoomData->walkAreasGrid[((_characterPosX + kCharacterCorrectionX) / kXGridCount)][((_characterPosY + kCharacerCorrectionY) / kYGridCount)],
 			   _currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);
@@ -4222,10 +4219,6 @@ void TotEngine::updateAltScreen(byte otherScreenNumber) {
 	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, SET_WITH_ANIM);
 }
 
-void TotEngine::verifyCopyProtection() {
-	//TODO: Copy protection
-}
-
 void TotEngine::loadTV() {
 
 	Common::File fichct;
@@ -4315,10 +4308,6 @@ void TotEngine::freeInventory() {
 	}
 }
 
-void TotEngine::verifyCopyProtection2() {
-	// TODO:
-}
-
 void TotEngine::loadScreenLayerWithDepth(uint coordx, uint coordy, uint bitmapSize, int32 bitmapIndex, uint depth) {
 	_screenLayers[depth] = (byte *)malloc(bitmapSize);
 	readBitmap(bitmapIndex, _screenLayers[depth], bitmapSize, 319);
@@ -4342,7 +4331,6 @@ void TotEngine::updateInventory(byte index) {
 		_inventory[i].code = _inventory[i + 1].code;
 		_inventory[i].objectName = _inventory[i + 1].objectName;
 	}
-	// verifyCopyProtection();
 }
 
 void TotEngine::drawLookAtItem(RoomObjectListEntry obj) {
@@ -4429,7 +4417,6 @@ void TotEngine::drawInventoryMask() {
 	for (int i = 1; i <= 25; i++)
 		buttonBorder(0, (175 - i), 319, (174 + i), 251, 251, 251, 251, 0);
 	drawMenu(1);
-	// verifyCopyProtection();
 	if (_inventoryPosition > 1)
 		lightUpLeft();
 	else
@@ -4945,13 +4932,276 @@ void TotEngine::buttonBorder(uint x1, uint y1, uint x2, uint y2,
 	putpixel(x2, y1, color3);
 	putpixel(x1, y2, color3);
 
-	_screen->addDirtyRect(Common::Rect(
-		x1, y1, x2, y2));
+	_screen->addDirtyRect(Common::Rect(x1, y1, x2, y2));
 	_screen->update();
 }
 
+static void buttonPress(uint xx1, uint yy1, uint xx2, uint yy2, bool pressed) {
+	g_engine->_mouse->hide();
+
+	uint color = 0;
+	if (pressed)
+		color = 249;
+	else
+		color = 255;
+	line(xx1, yy1, (xx2 - 1), yy1, color);
+	line(xx1, yy1, xx1, (yy2 - 1), color);
+	if (pressed)
+		color = 255;
+	else
+		color = 249;
+	line((xx1 + 1), yy2, xx2, yy2, color);
+	line(xx2, (yy1 + 1), xx2, yy2, color);
+	g_engine->_screen->addDirtyRect(Common::Rect(xx1, yy1, xx2, yy2));
+	g_engine->_screen->update();
+	g_engine->_mouse->show();
+	delay(100);
+}
+
 void TotEngine::copyProtection() {
-	//todo
+	if (!ConfMan.getBool("copy_protection")) {
+		return;
+	}
+	const char *message = isLanguageSpanish() ? hardcodedTexts_ES[12] : hardcodedTexts_EN[12];
+	int beepDelay = 100;
+	int chunkSize = 4;
+
+	uint inputPassword = 0;
+	byte cursorPos = 0, attempts = 0;
+	int32 diskPass = 0, protXor1 = 0, protXor2 = 0;
+
+	Common::File protectionFile;
+	if (!protectionFile.open("MCGA.DRV")) {
+		showError(260);
+	}
+	Common::String inputString = "      ";
+	byte numRow = getRandom(95) + 1;
+	byte numColumn = getRandom(38) + 1;
+
+	protectionFile.seek(1 * chunkSize);
+	protXor1 = 6543736;
+	protXor1 = protectionFile.readUint32LE();
+	protXor2 = 9873254;
+	protectionFile.seek((((numRow - 1) * 38) + numColumn + 1) * chunkSize);
+	protXor2 = protectionFile.readUint32LE();
+	inputPassword = 0;
+	diskPass = protectionFile.readUint32LE();
+	uint correctPassword = ((diskPass ^ protXor1) - protXor2);
+	bool exitDialog = false;
+	protectionFile.close();
+
+	uint oldMouseX = _mouse->mouseX;
+	uint oldMouseY = _mouse->mouseY;
+	uint oldMouseMaskIndex = _mouse->mouseMaskIndex;
+	_mouse->hide();
+
+	uint bgSize = imagesize(50, 10, 270, 120);
+	byte *bgPointer = (byte *)malloc(bgSize);
+	_graphics->getImg(50, 10, 270, 120, bgPointer);
+	_mouse->mouseX = 150;
+	_mouse->mouseY = 60;
+	_mouse->mouseMaskIndex = 1;
+	_mouse->setMouseArea(Common::Rect(55, 13, 250, 105));
+	for (int i = 1; i <= 6; i++)
+		buttonBorder((120 - (i * 10)), (80 - (i * 10)), (200 + (i * 10)), (60 + (i * 10)), 251, 251, 251, 251, 0);
+
+	drawMenu(6);
+	euroText(65, 15, Common::String::format(message, numRow, numColumn), 255);
+	cursorPos = 0;
+	attempts = 0;
+	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
+	_screen->markAllDirty();
+	_screen->update();
+	Common::Event e;
+	do {
+		bool mouseClicked = false;
+		do {
+			_chrono->updateChrono();
+			if (_chrono->_gameTick) {
+				_mouse->animateMouseIfNeeded();
+				_chrono->_gameTick = false;
+			}
+			while (g_system->getEventManager()->pollEvent(e)) {
+				if (isMouseEvent(e)) {
+					_mouse->warpMouse(e.mouse);
+					_mouse->mouseX = e.mouse.x;
+					_mouse->mouseY = e.mouse.y;
+				}
+				if (e.type == Common::EVENT_LBUTTONUP) {
+					_mouse->mouseClickX = e.mouse.x;
+					_mouse->mouseClickY = e.mouse.y;
+					mouseClicked = true;
+				}
+			}
+			_screen->markAllDirty();
+			_screen->update();
+			g_system->delayMillis(10);
+		} while (!mouseClicked && !shouldQuit());
+
+		int correctedMouseX = _mouse->mouseClickX + 7;
+		int correctedMouseY = _mouse->mouseClickY + 7;
+
+		if ((correctedMouseX > 59 && correctedMouseX < 180) && (correctedMouseY > 28 && correctedMouseY < 119)) {
+			if (correctedMouseY >= 29 && correctedMouseY <= 58) {
+				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+					if (cursorPos < 50) {
+						_sound->beep(200, beepDelay);
+						buttonPress(60, 29, 89, 58, true);
+						euroText(205 + cursorPos, 44, "0", 255);
+						inputString = inputString + '0';
+						buttonPress(60, 29, 89, 58, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+					if (cursorPos < 50) {
+						_sound->beep(250, beepDelay);
+						buttonPress(90, 29, 119, 58, true);
+						euroText((205 + cursorPos), 44, "1", 255);
+						inputString = inputString + '1';
+						buttonPress(90, 29, 119, 58, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+					if (cursorPos < 50) {
+						_sound->beep(300, beepDelay);
+						buttonPress(120, 29, 149, 58, true);
+						euroText((205 + cursorPos), 44, "2", 255);
+						inputString = inputString + '2';
+						buttonPress(120, 29, 149, 58, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+					if (cursorPos < 50) {
+						_sound->beep(350, beepDelay);
+						buttonPress(150, 29, 179, 58, true);
+						euroText((205 + cursorPos), 44, "3", 255);
+						inputString = inputString + '3';
+						buttonPress(150, 29, 179, 58, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				}
+			} else if (correctedMouseY >= 59 && correctedMouseY <= 88) {
+				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+					if (cursorPos < 50) {
+						_sound->beep(400, beepDelay);
+						buttonPress(60, 59, 89, 88, true);
+						euroText((205 + cursorPos), 44, "4", 255);
+						inputString = inputString + '4';
+						buttonPress(60, 59, 89, 88, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+					if (cursorPos < 50) {
+						_sound->beep(450, beepDelay);
+						buttonPress(90, 59, 119, 88, true);
+						euroText((205 + cursorPos), 44, "5", 255);
+						inputString = inputString + '5';
+						buttonPress(90, 59, 119, 88, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+					if (cursorPos < 50) {
+						_sound->beep(500, beepDelay);
+						buttonPress(120, 59, 149, 88, true);
+						euroText((205 + cursorPos), 44, "6", 255);
+						inputString = inputString + '6';
+						buttonPress(120, 59, 149, 88, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+					if (cursorPos < 50) {
+						_sound->beep(550, beepDelay);
+						buttonPress(150, 59, 179, 88, true);
+						euroText((205 + cursorPos), 44, "7", 255);
+						inputString = inputString + '7';
+						buttonPress(150, 59, 179, 88, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				}
+			} else if (correctedMouseY >= 89 && correctedMouseY <= 118) {
+				if (correctedMouseX >= 60 && correctedMouseX <= 89) {
+					if (cursorPos < 50) {
+						_sound->beep(600, beepDelay);
+						buttonPress(60, 89, 89, 118, true);
+						euroText((205 + cursorPos), 44, "8", 255);
+						inputString = inputString + '8';
+						buttonPress(60, 89, 89, 118, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 90 && correctedMouseX <= 119) {
+					if (cursorPos < 50) {
+						_sound->beep(650, beepDelay);
+						buttonPress(90, 89, 119, 118, true);
+						euroText((205 + cursorPos), 44, "9", 255);
+						inputString = inputString + '9';
+						buttonPress(90, 89, 119, 118, false);
+						cursorPos += 10;
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 120 && correctedMouseX <= 149) {
+					if (cursorPos > 0) {
+						_sound->beep(700, beepDelay);
+						buttonPress(120, 89, 149, 118, true);
+						cursorPos -= 10;
+						euroText((205 + cursorPos), 44, "\xDB", 250);
+						inputString = inputString.substr(0, inputString.size() - 1);
+						buttonPress(120, 89, 149, 118, false);
+					} else {
+						_sound->beep(70, 250);
+					}
+				} else if (correctedMouseX >= 150 && correctedMouseX <= 179) {
+					if (cursorPos > 39) {
+						_sound->beep(750, beepDelay);
+						buttonPress(150, 89, 179, 118, true);
+						inputPassword = atoi(inputString.c_str());
+						buttonPress(150, 89, 179, 118, false);
+						if (attempts < 3) {
+							if (inputPassword == correctPassword)
+								exitDialog = true;
+							else {
+								attempts += 1;
+								_sound->beep(60, 250);
+							}
+						}
+						if (attempts >= 3)
+							showError(259);
+					} else {
+						_sound->beep(70, 250);
+					}
+				}
+			}
+		}
+
+	} while (!exitDialog && !shouldQuit());
+
+	_graphics->putImg(50, 10, bgPointer);
+	_mouse->mouseX = oldMouseX;
+	_mouse->mouseY = oldMouseY;
+	_mouse->mouseMaskIndex = oldMouseMaskIndex;
+	_mouse->warpMouse(_mouse->mouseMaskIndex, _mouse->mouseX, _mouse->mouseY);
+	if (_cpCounter > 8)
+		showError(274);
+	free(bgPointer);
+	_mouse->setMouseArea(Common::Rect(0, 0, 305, 185));
 }
 
 void TotEngine::soundControls() {

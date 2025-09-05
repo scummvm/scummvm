@@ -110,8 +110,6 @@ private:
 	void calculateTrajectory(uint finalX, uint finalY);
 	void animatedSequence(uint numSequence);
 	void initScreenPointers();
-	void verifyCopyProtection();
-	void verifyCopyProtection2();
 
 	void loadAnimation(const Common::String &animation);
 	void loadCharAnimation();

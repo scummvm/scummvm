@@ -116,11 +116,11 @@ int TotEngine::engineStart() {
 
 	_graphics->loadPaletteFromFile("DEFAULT");
 	initScreenPointers();
-	// initialLogo();
-	// _sound->playMidi("INTRODUC", true);
-	// _sound->setMidiVolume(3, 3);
-	// firstIntroduction();
-	// _mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
+	initialLogo();
+	_sound->playMidi("INTRODUC", true);
+	_sound->setMidiVolume(3, 3);
+	firstIntroduction();
+	_mouse->warpMouse(1, _mouse->mouseX, _mouse->mouseY);
 	mainMenu(_firstTimeDone);
 	if (_startNewGame && !shouldQuit()) {
 		newGame();
@@ -465,7 +465,6 @@ int TotEngine::startGame() {
 			_sound->playMidi("INTRODUC", true);
 			_sound->fadeInMusic();
 			mainMenu(true);
-			verifyCopyProtection2();
 
 			if (_startNewGame && !shouldQuit()) {
 				newGame();
@@ -507,7 +506,7 @@ int TotEngine::startGame() {
 				_sound->fadeInMusic();
 				if (_cpCounter2 > 43)
 					showError(274);
-				// sacrificeScene();
+				sacrificeScene();
 				_graphics->clear();
 				loadInventory();
 				_graphics->loadPaletteFromFile("SEGUNDA");
@@ -525,7 +524,7 @@ int TotEngine::startGame() {
 				_inventoryPosition = 0;
 				drawInventory();
 				_mouse->show();
-
+   				copyProtection();
 				_firstTimeTopicA[8] = true;
 				_oldGridX = 0;
 				_oldGridY = 0;
@@ -622,7 +621,6 @@ void TotEngine::changeRoom() {
 	_cpCounter = _cpCounter2;
 	setRoomTrajectories(_secondaryAnimHeight, _secondaryAnimWidth, RESTORE);
 	saveRoomData(_currentRoomData, _rooms);
-	// verifyCopyProtection();
 	_sound->setSfxVolume(_sound->_leftSfxVol, _sound->_rightSfxVol);
 
 	switch (_currentRoomData->doors[_doorIndex].nextScene) {
@@ -718,7 +716,7 @@ void TotEngine::changeRoom() {
 		loadScreenData(_currentRoomData->doors[_doorIndex].nextScene);
 		_graphics->sceneTransition(false, _sceneBackground);
 		_mouse->show();
-
+		if (getRandom(2) == 0) copyProtection();
 		_oldGridX = 0;
 		_oldGridY = 0;
 		checkMouseGrid();
