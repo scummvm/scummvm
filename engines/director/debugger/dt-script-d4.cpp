@@ -1249,7 +1249,6 @@ private:
 	bool _isScriptInDebug = false;
 	int _renderLineID = 1;
 	bool _scrollTo = false;
-	bool _scrollDone = false;
 };
 
 void renderScriptAST(ImGuiScript &script, bool showByteCode, bool scrollTo) {
