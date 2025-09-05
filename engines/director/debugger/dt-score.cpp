@@ -188,13 +188,6 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		int startCont = _state->_continuationData[ch][rf].first;
 		int endCont = _state->_continuationData[ch][rf].second;
 
-		if (rf + 1 == (int)currentFrameNum)
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
-
-		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
-		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
-			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
-
 		if (!(startCont == endCont) && (sprite._castId.member || sprite.isQDShape())) {
 			if (_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 >= startCont &&
 				_state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 <= endCont &&
@@ -212,6 +205,13 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 					ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, brightenColor(_state->_colors._contColors[_state->_colors._contColorIndex], 1.5));
 			}
 		}
+
+		if (rf + 1 == (int)currentFrameNum)
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, cell_bg_color);
+
+		if (f == _state->_selectedScoreCast.frame + _state->_scoreFrameOffset - 1 &&
+		  ch == _state->_selectedScoreCast.channel && mode <= kModeExtended)
+			ImGui::TableSetBgColor(ImGuiTableBgTarget_CellBg, ImGui::GetColorU32(ImVec4(1.0f, 0.3f, 0.3f, 0.6f)));
 
 		int mode1 = mode;
 
