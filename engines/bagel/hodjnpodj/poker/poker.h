@@ -224,52 +224,53 @@ void PlayEasterEgg(CDC *, CWnd *, CPalette *, const char *,
 
 class CMainPokerWindow : public CFrameWnd {
 public:
-	BOOL            m_bPlaySounds;          // bool for should I play sounds
-	BOOL            m_bMiddleOfHand;        // bool for am I in the middle of a hand
-	BOOL            m_bPlayRounds;          // bool for am I playing a certain # of rounds
-	long            m_lUserAmount;
-	long            m_lStartingAmount;
+	BOOL            m_bPlaySounds = FALSE;		// Bool for should I play sounds
+	BOOL            m_bMiddleOfHand = FALSE;	// Bool for am I in the middle of a hand
+	BOOL            m_bPlayRounds = FALSE;		// Bool for am I playing a certain # of rounds
+	long            m_lUserAmount = 0;
+	long            m_lStartingAmount = 0;
 
 private:
-	BOOL            abHoldArray[5];         // contains the state of the hold buttons
-	int             aDealtArray[10][2];     // contains the list of cards already dealt
+	BOOL            abHoldArray[5] = { FALSE };	// Contains the state of the hold buttons
+	int             aDealtArray[10][2] = {};	// Contains the list of cards already dealt
 	// the second element is 1 if the card is shown
-	long            m_lUserBet;             // the amount of money the player currently has
-	int             m_nRound;               // the amount of the current bet
-	int             m_nPayOffRoyalFlush;    // the pay off ratios
-	int             m_nPayOffStraightFlush;
-	int             m_nPayOffFourofaKind;
-	int             m_nPayOffStraight;
-	int             m_nPayOffFullHouse;
-	int             m_nPayOffFlush;
-	int             m_nPayOffThreeofaKind;
-	int             m_nPayOffTwoPair;
-	int             m_nPayOffPairJackorHigher;
-	int             m_nPayOffPair;
-	HWND            m_hCallAppWnd;
-	LPGAMESTRUCT    m_lpGameStruct;
-	BOOL            m_bMouseCaptured;
-	BOOL            m_bEndHand;
+	long            m_lUserBet = 0;				// The amount of money the player currently has
+	int             m_nRound = 0;				// the amount of the current bet
+	int             m_nPayOffRoyalFlush = 0;	// the pay off ratios
+	int             m_nPayOffStraightFlush = 0;
+	int             m_nPayOffFourofaKind = 0;
+	int             m_nPayOffStraight = 0;
+	int             m_nPayOffFullHouse = 0;
+	int             m_nPayOffFlush = 0;
+	int             m_nPayOffThreeofaKind = 0;
+	int             m_nPayOffTwoPair = 0;
+	int             m_nPayOffPairJackorHigher = 0;
+	int             m_nPayOffPair = 0;
+	HWND            m_hCallAppWnd = nullptr;
+	LPGAMESTRUCT    m_lpGameStruct = nullptr;
+	BOOL            m_bMouseCaptured = FALSE;
+	BOOL            m_bEndHand = FALSE;
 
-	CRect   MainRect;                           // screen area spanned by the game window
-	CRect   BetRect1,               // window area spanned by the Bet1 button
-		BetRect5,               // window area spanned by the Bet5 button
-		BetRect10,              // window area spanned by the Bet10 button
-		BetRect25,              // window area spanned by the Bet25 button
-		BetRect100,             // window area spanned by the Bet100 button
-		BetRect1000,            // window area spanned by the Bet1000 button
-		BetRectAll,             // window area spanned by the BetAll button
-		ClearBetRect,           // window area spanned by the ClearBet button
-		DealRect,               // window area spanned by the Deal button
-		DrawRect,               // window area spanned by the Draw button
-		OptionRect,             // window area spanned by the Option button
-		arCardRect[5];          // window area spanned by the Cards
+	CRect   MainRect;			// screen area spanned by the game window
+	CRect   BetRect1,			// window area spanned by the Bet1 button
+		BetRect5,				// window area spanned by the Bet5 button
+		BetRect10,				// window area spanned by the Bet10 button
+		BetRect25,				// window area spanned by the Bet25 button
+		BetRect100,				// window area spanned by the Bet100 button
+		BetRect1000,			// window area spanned by the Bet1000 button
+		BetRectAll,				// window area spanned by the BetAll button
+		ClearBetRect,			// window area spanned by the ClearBet button
+		DealRect,				// window area spanned by the Deal button
+		DrawRect,				// window area spanned by the Draw button
+		OptionRect,				// window area spanned by the Option button
+		arCardRect[5];			// window area spanned by the Cards
 
 	CRect   JunkRect;
 	CRect   NewGameRect;
 
 public:
 	CMainPokerWindow(HWND, LPGAMESTRUCT);
+	void initStatics();
 
 	void    SplashScreen();
 	void    SetPayOffs(int);
@@ -307,17 +308,6 @@ protected:
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()
-};
-
-/////////////////////////////////////////////////////////////////////////////
-
-// CTheApp:
-// See game.cpp for the code to the InitInstance member function.
-//
-class CTheApp : public CWinApp {
-public:
-	BOOL InitInstance();
-	int ExitInstance();
 };
 
 } // namespace Poker

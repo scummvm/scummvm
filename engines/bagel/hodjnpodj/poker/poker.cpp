@@ -85,7 +85,7 @@ CBmpButton  *apBet[7];
 CBitmap     *pUpBmp = nullptr;
 CBitmap     *pDnBmp = nullptr;
 CBitmap     *pDsBmp = nullptr;
-RECT        arDstBet[7] = {
+static const RECT arDstBet[7] = {
 	{ BET1_LEFT, BET1_TOP, BET1_LEFT + BET1_WIDTH, BET1_TOP + BET1_HEIGHT },
 	{ BET5_LEFT, BET5_TOP, BET5_LEFT + BET5_WIDTH, BET5_TOP + BET5_HEIGHT },
 	{ BET10_LEFT, BET10_TOP, BET10_LEFT + BET10_WIDTH, BET10_TOP + BET10_HEIGHT },
@@ -99,7 +99,7 @@ RECT        arDstBet[7] = {
 CBmpButton  *apHold[5];       // Bitmap buttons for the Hold card buttons
 CBitmap     *pHoldButtons = nullptr;
 
-RECT        arHoldRect[5] = {
+static const RECT arHoldRect[5] = {
 	{ HOLD1_LEFT, HOLD_TOP, HOLD1_LEFT + HOLD_WIDTH, HOLD_TOP + HOLD_HEIGHT },
 	{ HOLD2_LEFT, HOLD_TOP, HOLD2_LEFT + HOLD_WIDTH, HOLD_TOP + HOLD_HEIGHT },
 	{ HOLD3_LEFT, HOLD_TOP, HOLD3_LEFT + HOLD_WIDTH, HOLD_TOP + HOLD_HEIGHT },
@@ -113,7 +113,7 @@ CBmpButton          *pDrawButton = nullptr;  // Button for drawing cards not hel
 
 static  CSound  *pGameSound = nullptr;                             // Game theme song
 
-LPCSTR sBitmaps[53] = {
+static LPCSTR sBitmaps[53] = {
 	"ART\\PKR1.BMP",
 	"ART\\PKR2.BMP",
 	"ART\\PKR3.BMP",
@@ -174,13 +174,6 @@ BOOL    bFirstTime;
 
 /////////////////////////////////////////////////////////////////////////////
 
-// theApp:
-// Just creating this application object runs the whole application.
-//
-// CTheApp NEAR theApp;
-
-/////////////////////////////////////////////////////////////////////////////
-
 /*****************************************************************
  *
  * CMainPokerWindow
@@ -226,6 +219,8 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 	CPalette    *pOldPal = nullptr;
 
 	BeginWaitCursor();
+	initStatics();
+
 // Define a special window class which traps double-clicks, is byte aligned
 // to maximize BITBLT performance, and creates "owned" DCs rather than sharing
 // the five system defined DCs which are not guaranteed to be available;
@@ -457,6 +452,31 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 
 	EndWaitCursor();
 
+}
+
+void CMainPokerWindow::initStatics() {
+	pGamePalette = nullptr;
+	pBtnPalette = nullptr;
+	pOptionButton = nullptr;
+
+	roundOfPlay = 0;
+	Common::fill(apCard, apCard + 5, nullptr);
+	pBetButtons = nullptr;
+	Common::fill(apBet, apBet + 7, nullptr);
+	pUpBmp = nullptr;
+	pDnBmp = nullptr;
+	pDsBmp = nullptr;
+
+	Common::fill(apHold, apHold + 5, nullptr);
+	pHoldButtons = nullptr;
+
+	pClearBet = nullptr;
+	pDealButton = nullptr;
+	pDrawButton = nullptr;
+
+	pGameSound = nullptr;
+	nPayOff = 0;
+	bFirstTime = FALSE;
 }
 
 /*****************************************************************
