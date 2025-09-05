@@ -4285,6 +4285,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	UNSUPPORTED_GAME_ENTRY_EN("burncloset", "BurnDownTheCLoset.ags", "adfdd31c0cfa9ae131da1f1071e75a7a", 4734045),
 	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.exe", "2587f046d5f079359e6aec043519fa70", 7264253),  // v1.0.1
 	UNSUPPORTED_GAME_ENTRY_EN("bvsr", "BvR.ags", "e0fcd3d59fb160e504700ab8a0101e2f", 4147230),
+	UNSUPPORTED_GAME_ENTRY_EN("carnivalags", "Carnival.exe", "7b206bbaec47b9e30d7c41212e3f9a31", 312099935),
 	UNSUPPORTED_GAME_ENTRY("leisuresuitlarry1", "Leisure Suit Larry 1 AGI+ Remake.ags", "054602686ccc228b3cf19dda3d015887", 4486500),  // v1.0.2.8 Eng-Hebrew
 	UNSUPPORTED_GAME_ENTRY_EN("pqpn1", "PQPN.ags", "a48d4e2cb25c1fd8c8d48a2832120801", 3266124),
 	UNSUPPORTED_GAME_ENTRY_EN("shardsofgod", "Shards of God.ags", "dafcc09ca5a4f4d4ba721f905dc9f366", 79014256),  // v1.3
@@ -7617,6 +7618,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_LANG("juliusdangerous2", "Julius Dangerous 2.exe", "e2d4a98de69b1f8e6462c387710a441a", 146931732, Common::IT_ITA),  //v1.01
 	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.exe", "15ee13935b9555a041df569af8598bfe", 159441130),  //v1.2 Win En-It
 	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.ags", "2b76bb39e520e37a829430b70486e96f", 156408534),  //v1.2 Linux En-It
+	GAME_ENTRY("juliusdangerous2", "Julius Dangerous 2.ags", "bcaeeb7f4857ebab4a51da3d3c998eef", 156430614),  //v1.2.23 Win En-It
 	GAME_ENTRY_EN("jumpinjack", "Jumpin' Jack.exe", "338fa79960d40689063af31c671b8729", 36458660),
 	GAME_ENTRY_EN("jumpinjones", "ags.exe", "36f44e064eab15e502caeb60fd09f52d", 19633830),
 	GAME_ENTRY_EN("jumpjackflash", "Jump! Jack! Flash!.exe", "6b4ceb9e327ac99479c08d825461f4cb", 20103698),
