@@ -338,7 +338,7 @@ void readSpriteDataD2(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte();
+				sprite._thickness = stream.readByte() & 0x7f;
 			}
 			break;
 		case 5:
@@ -688,7 +688,7 @@ void readSpriteDataD4(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte();
+				sprite._thickness = stream.readByte() & 0x7f;
 			}
 			break;
 		case 5:
@@ -1142,7 +1142,7 @@ void readSpriteDataD5(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte();
+				sprite._thickness = stream.readByte() & 0x7f;
 			}
 			break;
 		case 23:
@@ -1601,7 +1601,7 @@ void readSpriteDataD6(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte();
+				sprite._thickness = stream.readByte() & 0x7f;
 			}
 			break;
 		case 23:
@@ -2054,7 +2054,7 @@ void readSpriteDataD7(Common::SeekableReadStreamEndian &stream, Sprite &sprite, 
 			if (sprite._puppet) {
 				stream.readByte();
 			} else {
-				sprite._thickness = stream.readByte();
+				sprite._thickness = stream.readByte() & 0x7f;
 			}
 			break;
 		case 23:
