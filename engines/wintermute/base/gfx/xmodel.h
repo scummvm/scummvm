@@ -152,7 +152,7 @@ private:
 					effectFileName = nullptr;
 
 				persistMgr->transferCharPtr(TMEMBER(effectFileName));
-				delete[] effectFileName;
+				SAFE_DELETE_ARRAY(effectFileName);
 			} else {
 				persistMgr->transferCharPtr(TMEMBER(_effectFile));
 			}
@@ -189,11 +189,11 @@ public:
 
 	XModel *_parentModel{};
 
-	bool loadFromFile(const Common::String &filename, XModel *parentModel = nullptr);
-	bool mergeFromFile(const Common::String &filename);
+	bool loadFromFile(const char *filename, XModel *parentModel = nullptr);
+	bool mergeFromFile(const char *filename);
 
-	bool loadAnimationSet(const Common::String &filename, XFileData *xobj);
-	bool loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
+	bool loadAnimationSet(const char *filename, XFileData *xobj);
+	bool loadAnimation(const char *filename, XFileData *xobj, AnimationSet *parentAnimSet = nullptr);
 
 	bool update() override;
 	bool render();

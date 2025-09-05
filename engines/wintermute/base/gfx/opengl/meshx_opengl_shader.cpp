@@ -56,7 +56,7 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj) {
+bool XMeshOpenGLShader::loadFromXData(const char *filename, XFileData *xobj) {
 	if (XMesh::loadFromXData(filename, xobj)) {
 		uint32 *indexData = (uint32 *)_blendedMesh->getIndexBuffer().ptr();
 		uint32 indexDataSize = _blendedMesh->getIndexBuffer().size() / sizeof(uint32);

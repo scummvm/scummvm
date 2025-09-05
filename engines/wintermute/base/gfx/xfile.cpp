@@ -51,7 +51,7 @@ bool XFile::closeFile() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XFile::openFile(const Common::String &filename) {
+bool XFile::openFile(const char *filename) {
 	closeFile();
 
 	// load file
@@ -71,13 +71,13 @@ bool XFile::openFile(const Common::String &filename) {
 	bool res = _xfile->load(buffer, size);
 	delete[] buffer;
 	if (!res) {
-		BaseEngine::LOG(0, "Error loading X file '%s'", filename.c_str());
+		BaseEngine::LOG(0, "Error loading X file '%s'", filename);
 		return false;
 	}
 
 	// create enum object
 	if (!res || !_xfile->createEnumObject(_xenum)) {
-		BaseEngine::LOG(res, "Error creating XFile enum object for '%s'", filename.c_str());
+		BaseEngine::LOG(res, "Error creating XFile enum object for '%s'", filename);
 		closeFile();
 		return false;
 	}

@@ -38,7 +38,7 @@ public:
 	XFile(BaseGame *inGame);
 	virtual ~XFile();
 
-	bool openFile(const Common::String &filename);
+	bool openFile(const char *filename);
 	bool closeFile();
 
 	XFileEnumObject getEnum() {

@@ -114,7 +114,7 @@ void XModel::cleanup(bool complete) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
+bool XModel::loadFromFile(const char *filename, XModel *parentModel) {
 	cleanup(false);
 
 	XFile *xfile = new XFile(_game);
@@ -129,7 +129,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 	bool res = xfile->openFile(filename);
 	if (!res) {
 		delete xfile;
-		BaseEngine::LOG(0, "Error loading X file: %s", filename.c_str());
+		BaseEngine::LOG(0, "Error loading X file: %s", filename);
 		return false;
 	}
 
@@ -145,13 +145,13 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 
 		res = _rootFrame->loadFromXData(filename, this, &xobj);
 		if (!res) {
-			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
+			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename);
 			break;
 		}
 	}
 
 	if (!_rootFrame->hasChildren()) {
-		BaseEngine::LOG(0, "Error getting any top level objects in '%s'", filename.c_str());
+		BaseEngine::LOG(0, "Error getting any top level objects in '%s'", filename);
 		res = false;
 	}
 
@@ -164,7 +164,8 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 		_channels[i] = new AnimationChannel(_game, this);
 	}
 
-	setFilename(filename.c_str());
+	if (_filename != filename)
+		BaseUtils::setString(&_filename, filename);
 
 	delete xfile;
 
@@ -172,7 +173,7 @@ bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::mergeFromFile(const Common::String &filename) {
+bool XModel::mergeFromFile(const char *filename) {
 	if (!_rootFrame) {
 		BaseEngine::LOG(0, "Error: XModel::mergeFromFile called on an empty model");
 		return false;
@@ -200,7 +201,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 
 		res = _rootFrame->mergeFromXData(filename, this, &xobj);
 		if (!res) {
-			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
+			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename);
 			break;
 		}
 	}
@@ -212,14 +213,15 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 	// remember path for save/load purposes
 	bool found = false;
 	for (int32 i = 0; i < _mergedModels.getSize(); ++i) {
-		if (scumm_stricmp(_mergedModels[i], filename.c_str()) == 0) {
+		if (scumm_stricmp(_mergedModels[i], filename) == 0) {
 			found = true;
 			break;
 		}
 	}
 	if (!found) {
-		char *path = new char[filename.size() + 1];
-		Common::strcpy_s(path, filename.size() + 1, filename.c_str());
+		size_t filenameSize = strlen(filename) + 1;
+		char *path = new char[filenameSize];
+		Common::strcpy_s(path, filenameSize, filename);
 		_mergedModels.add(path);
 	}
 
@@ -229,7 +231,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
+bool XModel::loadAnimationSet(const char *filename, XFileData *xobj) {
 	bool res = true;
 
 	// create the animation set object
@@ -280,7 +282,7 @@ bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet) {
+bool XModel::loadAnimation(const char *filename, XFileData *xobj, AnimationSet *parentAnimSet) {
 	// if no parent anim set is specified, create one
 	bool newAnimSet = false;
 	if (parentAnimSet == nullptr) {

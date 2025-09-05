@@ -59,7 +59,7 @@ public:
 		return _paletteCount;
 	}
 	bool writeBMPToStream(Common::WriteStream *stream) const;
-	bool saveBMPFile(const Common::String &filename) const;
+	bool saveBMPFile(const char *filename) const;
 	void copyFrom(const Graphics::Surface *surface, int newWidth = 0, int newHeight = 0, byte flip = 0);
 private:
 	Common::String _filename;

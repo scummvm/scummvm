@@ -53,8 +53,8 @@ public:
 	bool renderFlatShadowModel(uint32 shadowColor);
 	bool updateShadowVol(ShadowVolume *shadow, DXMatrix *modelMat, DXVector3 *light, float extrusionDepth);
 
-	bool loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
-	bool mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj);
+	bool loadFromXData(const char *filename, XModel *model, XFileData *xobj);
+	bool mergeFromXData(const char *filename, XModel *model, XFileData *xobj);
 	bool findBones(FrameNode *rootFrame);
 	FrameNode *findFrame(const char *frameName);
 	DXMatrix *getCombinedMatrix();

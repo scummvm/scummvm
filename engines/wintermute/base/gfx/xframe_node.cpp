@@ -97,7 +97,7 @@ void FrameNode::setTransformation(int slot, DXVector3 pos, DXVector3 scale, DXQu
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj) {
+bool FrameNode::loadFromXData(const char *filename, XModel *model, XFileData *xobj) {
 	_game->miniUpdate();
 
 	bool res = true;
@@ -175,7 +175,7 @@ bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFi
 	return true;
 }
 
-bool FrameNode::mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj) {
+bool FrameNode::mergeFromXData(const char *filename, XModel *model, XFileData *xobj) {
 	bool res = true;
 
 	// get the type of the object

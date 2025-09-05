@@ -96,7 +96,7 @@ bool BaseImage::loadFile(const Common::String &filename) {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool BaseImage::saveBMPFile(const Common::String &filename) const {
+bool BaseImage::saveBMPFile(const char *filename) const {
 	Common::WriteStream *stream = openSfmFileForWrite(filename);
 	if (stream) {
 		bool ret = writeBMPToStream(stream);

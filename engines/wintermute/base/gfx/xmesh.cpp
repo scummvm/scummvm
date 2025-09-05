@@ -67,7 +67,7 @@ XMesh::~XMesh() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj) {
+bool XMesh::loadFromXData(const char *filename, XFileData *xobj) {
 	// get name
 	if (!XModel::loadName(this, xobj)) {
 		BaseEngine::LOG(0, "Error loading mesh name");
