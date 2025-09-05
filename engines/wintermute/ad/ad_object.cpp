@@ -649,13 +649,13 @@ bool AdObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdObject::scGetProperty(const Common::String &name) {
+ScValue *AdObject::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("object");
 		return _scValue;
 	}
@@ -663,7 +663,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
@@ -671,7 +671,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IgnoreItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "IgnoreItems") {
+	else if (strcmp(name, "IgnoreItems") == 0) {
 		_scValue->setBool(_ignoreItems);
 		return _scValue;
 	}
@@ -679,7 +679,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SceneIndependent
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SceneIndependent") {
+	else if (strcmp(name, "SceneIndependent") == 0) {
 		_scValue->setBool(_sceneIndependent);
 		return _scValue;
 	}
@@ -687,7 +687,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesWidth
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SubtitlesWidth") {
+	else if (strcmp(name, "SubtitlesWidth") == 0) {
 		_scValue->setInt(_subtitlesWidth);
 		return _scValue;
 	}
@@ -695,7 +695,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosRelative
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SubtitlesPosRelative") {
+	else if (strcmp(name, "SubtitlesPosRelative") == 0) {
 		_scValue->setBool(_subtitlesModRelative);
 		return _scValue;
 	}
@@ -703,7 +703,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SubtitlesPosX") {
+	else if (strcmp(name, "SubtitlesPosX") == 0) {
 		_scValue->setInt(_subtitlesModX);
 		return _scValue;
 	}
@@ -711,7 +711,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SubtitlesPosY") {
+	else if (strcmp(name, "SubtitlesPosY") == 0) {
 		_scValue->setInt(_subtitlesModY);
 		return _scValue;
 	}
@@ -719,7 +719,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SubtitlesPosXCenter
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SubtitlesPosXCenter") {
+	else if (strcmp(name, "SubtitlesPosXCenter") == 0) {
 		_scValue->setBool(_subtitlesModXCenter);
 		return _scValue;
 	}
@@ -727,7 +727,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumItems (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumItems") {
+	else if (strcmp(name, "NumItems") == 0) {
 		_scValue->setInt(getInventory()->_takenItems.getSize());
 		return _scValue;
 	}
@@ -735,7 +735,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ParticleEmitter (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ParticleEmitter") {
+	else if (strcmp(name, "ParticleEmitter") == 0) {
 		if (_partEmitter) {
 			_scValue->setNative(_partEmitter, true);
 		} else {
@@ -748,7 +748,7 @@ ScValue *AdObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumAttachments (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumAttachments") {
+	else if (strcmp(name, "NumAttachments") == 0) {
 		_scValue->setInt(_attachmentsPre.getSize() + _attachmentsPost.getSize());
 		return _scValue;
 	} else {

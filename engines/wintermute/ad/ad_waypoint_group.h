@@ -48,7 +48,7 @@ public:
 	~AdWaypointGroup() override;
 	BaseArray<BasePoint *> _points;
 	int32 _editorSelectedPoint;
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 };
 

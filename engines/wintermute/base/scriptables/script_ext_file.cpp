@@ -636,13 +636,13 @@ bool SXFile::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXFile::scGetProperty(const Common::String &name) {
+ScValue *SXFile::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("file");
 		return _scValue;
 	}
@@ -650,7 +650,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Filename") {
+	if (strcmp(name, "Filename") == 0) {
 		_scValue->setString(_filename);
 		return _scValue;
 	}
@@ -658,7 +658,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Position (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Position") {
+	else if (strcmp(name, "Position") == 0) {
 		_scValue->setInt(getPos());
 		return _scValue;
 	}
@@ -666,7 +666,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Length") {
+	else if (strcmp(name, "Length") == 0) {
 		_scValue->setInt(getLength());
 		return _scValue;
 	}
@@ -674,7 +674,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TextMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TextMode") {
+	else if (strcmp(name, "TextMode") == 0) {
 		_scValue->setBool(_textMode);
 		return _scValue;
 	}
@@ -682,7 +682,7 @@ ScValue *SXFile::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccessMode (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AccessMode") {
+	else if (strcmp(name, "AccessMode") == 0) {
 		_scValue->setInt(_mode);
 		return _scValue;
 	} else {

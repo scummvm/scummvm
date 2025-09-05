@@ -158,13 +158,13 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXDirectory::scGetProperty(const Common::String &name) {
+ScValue *SXDirectory::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("directory");
 		return _scValue;
 	}
@@ -172,7 +172,7 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PathSeparator
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PathSeparator") {
+	else if (strcmp(name, "PathSeparator") == 0) {
 		_scValue->setString("\\");
 		return _scValue;
 	}
@@ -180,7 +180,7 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentDirectory
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CurrentDirectory") {
+	else if (strcmp(name, "CurrentDirectory") == 0) {
 		_scValue->setString("."); // See also: BaseGame::scGetProperty("SaveDirectory")
 		return _scValue;
 	}
@@ -188,7 +188,7 @@ ScValue *SXDirectory::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TempDirectory
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TempDirectory") {
+	else if (strcmp(name, "TempDirectory") == 0) {
 		_scValue->setString("temp"); // See also: BaseGame::scGetProperty("SaveDirectory")
 		return _scValue;
 	} else {

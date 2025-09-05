@@ -355,13 +355,13 @@ bool UIObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIObject::scGetProperty(const Common::String &name) {
+ScValue *UIObject::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("ui_object");
 		return _scValue;
 	}
@@ -369,7 +369,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Name") {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->setString(_name);
 		return _scValue;
 	}
@@ -377,7 +377,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Parent (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Parent") {
+	else if (strcmp(name, "Parent") == 0) {
 		_scValue->setNative(_parent, true);
 		return _scValue;
 	}
@@ -385,7 +385,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ParentNotify
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ParentNotify") {
+	else if (strcmp(name, "ParentNotify") == 0) {
 		_scValue->setBool(_parentNotify);
 		return _scValue;
 	}
@@ -393,7 +393,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Width") {
+	else if (strcmp(name, "Width") == 0) {
 		_scValue->setInt(_width);
 		return _scValue;
 	}
@@ -401,7 +401,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Height") {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->setInt(_height);
 		return _scValue;
 	}
@@ -409,7 +409,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Visible
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Visible") {
+	else if (strcmp(name, "Visible") == 0) {
 		_scValue->setBool(_visible);
 		return _scValue;
 	}
@@ -417,7 +417,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Disabled
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Disabled") {
+	else if (strcmp(name, "Disabled") == 0) {
 		_scValue->setBool(_disable);
 		return _scValue;
 	}
@@ -425,7 +425,7 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Text
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Text") {
+	else if (strcmp(name, "Text") == 0) {
 		_scValue->setString(_text);
 		return _scValue;
 	}
@@ -433,13 +433,13 @@ ScValue *UIObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NextSibling (RO) / PrevSibling (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NextSibling" || name == "PrevSibling") {
+	else if (strcmp(name, "NextSibling") == 0 || strcmp(name, "PrevSibling") == 0) {
 		_scValue->setNULL();
 		if (_parent && _parent->_type == UI_WINDOW) {
 			UIWindow *win = (UIWindow *)_parent;
 			for (int32 i = 0; i < win->_widgets.getSize(); i++) {
 				if (win->_widgets[i] == this) {
-					if (name == "NextSibling") {
+					if (strcmp(name, "NextSibling") == 0) {
 						if (i < win->_widgets.getSize() - 1) {
 							_scValue->setNative(win->_widgets[i + 1], true);
 						}

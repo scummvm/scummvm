@@ -38,7 +38,7 @@ public:
 	DECLARE_PERSISTENT(SXMath, BaseScriptable)
 	SXMath(BaseGame *inGame);
 	~SXMath() override;
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 
 private:

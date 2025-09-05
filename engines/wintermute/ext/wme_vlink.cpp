@@ -188,7 +188,7 @@ bool SXVlink::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXVlink::scGetProperty(const Common::String &name) {
+ScValue *SXVlink::scGetProperty(const char *name) {
 	_scValue->setNULL();
 	return _scValue;
 }

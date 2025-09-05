@@ -57,7 +57,7 @@ public:
 	virtual bool saveAsText(BaseDynamicBuffer *buffer, int indent, const char *nameOverride);
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;

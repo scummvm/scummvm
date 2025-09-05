@@ -935,20 +935,20 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdGame::scGetProperty(const Common::String &name) {
+ScValue *AdGame::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("game");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Scene
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Scene") {
+	else if (strcmp(name, "Scene") == 0) {
 		if (_scene) {
 			_scValue->setNative(_scene, true);
 		} else {
@@ -960,7 +960,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SelectedItem
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SelectedItem") {
+	else if (strcmp(name, "SelectedItem") == 0) {
 		//if (_selectedItem) _scValue->setString(_selectedItem->_name);
 		if (_selectedItem) {
 			_scValue->setNative(_selectedItem, true);
@@ -973,14 +973,14 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumItems") {
+	else if (strcmp(name, "NumItems") == 0) {
 		return _invObject->scGetProperty(name);
 	}
 
 	//////////////////////////////////////////////////////////////////////////
 	// SmartItemCursor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SmartItemCursor") {
+	else if (strcmp(name, "SmartItemCursor") == 0) {
 		_scValue->setBool(_smartItemCursor);
 		return _scValue;
 	}
@@ -988,7 +988,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryVisible
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "InventoryVisible") {
+	else if (strcmp(name, "InventoryVisible") == 0) {
 		_scValue->setBool(_inventoryBox && _inventoryBox->_visible);
 		return _scValue;
 	}
@@ -996,7 +996,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryScrollOffset
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "InventoryScrollOffset") {
+	else if (strcmp(name, "InventoryScrollOffset") == 0) {
 		if (_inventoryBox) {
 			_scValue->setInt(_inventoryBox->_scrollOffset);
 		} else {
@@ -1009,7 +1009,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ResponsesVisible (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ResponsesVisible") {
+	else if (strcmp(name, "ResponsesVisible") == 0) {
 		_scValue->setBool(_stateEx == GAME_WAITING_RESPONSE);
 		return _scValue;
 	}
@@ -1017,7 +1017,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PrevScene / PreviousScene (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PrevScene" || name == "PreviousScene") {
+	else if (strcmp(name, "PrevScene") == 0 || strcmp(name, "PreviousScene") == 0) {
 		if (!_prevSceneName) {
 			_scValue->setString("");
 		} else {
@@ -1029,7 +1029,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PrevSceneFilename / PreviousSceneFilename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PrevSceneFilename" || name == "PreviousSceneFilename") {
+	else if (strcmp(name, "PrevSceneFilename") == 0 || strcmp(name, "PreviousSceneFilename") == 0) {
 		if (!_prevSceneFilename) {
 			_scValue->setString("");
 		} else {
@@ -1041,7 +1041,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LastResponse (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "LastResponse") {
+	else if (strcmp(name, "LastResponse") == 0) {
 		if (!_responseBox || !_responseBox->_lastResponseText) {
 			_scValue->setString("");
 		} else {
@@ -1053,7 +1053,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// LastResponseOrig (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "LastResponseOrig") {
+	else if (strcmp(name, "LastResponseOrig") == 0) {
 		if (!_responseBox || !_responseBox->_lastResponseTextOrig) {
 			_scValue->setString("");
 		} else {
@@ -1065,7 +1065,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InventoryObject
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "InventoryObject") {
+	else if (strcmp(name, "InventoryObject") == 0) {
 		if (_inventoryOwner == _invObject) {
 			_scValue->setNative(this, true);
 		} else {
@@ -1078,7 +1078,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TotalNumItems
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TotalNumItems") {
+	else if (strcmp(name, "TotalNumItems") == 0) {
 		_scValue->setInt(_items.getSize());
 		return _scValue;
 	}
@@ -1086,7 +1086,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TalkSkipButton
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TalkSkipButton") {
+	else if (strcmp(name, "TalkSkipButton") == 0) {
 		_scValue->setInt(_talkSkipButton);
 		return _scValue;
 	}
@@ -1094,7 +1094,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSkipButton
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "VideoSkipButton") {
+	else if (strcmp(name, "VideoSkipButton") == 0) {
 		_scValue->setInt(_videoSkipButton);
 		return _scValue;
 	}
@@ -1102,7 +1102,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ChangingScene
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ChangingScene") {
+	else if (strcmp(name, "ChangingScene") == 0) {
 		_scValue->setBool(_scheduledScene != nullptr);
 		return _scValue;
 	}
@@ -1110,7 +1110,7 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// StartupScene
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "StartupScene") {
+	else if (strcmp(name, "StartupScene") == 0) {
 		if (!_startupScene) {
 			_scValue->setNULL();
 		} else {

@@ -158,13 +158,13 @@ bool SXDisplacement::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXDisplacement::scGetProperty(const Common::String &name) {
+ScValue *SXDisplacement::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// ForceX
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "ForceX") {
+	if (strcmp(name, "ForceX") == 0) {
 		_scValue->setInt(_forceX);
 		return _scValue;
 	}
@@ -172,7 +172,7 @@ ScValue *SXDisplacement::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ForceY
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "ForceY") {
+	if (strcmp(name, "ForceY") == 0) {
 		_scValue->setInt(_forceY);
 		return _scValue;
 	}
@@ -180,7 +180,7 @@ ScValue *SXDisplacement::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Speed
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Speed") {
+	if (strcmp(name, "Speed") == 0) {
 		_scValue->setInt(_speed);
 		return _scValue;
 	}

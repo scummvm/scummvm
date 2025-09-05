@@ -101,13 +101,13 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXWMEGalaxyAPI::scGetProperty(const Common::String &name) {
+ScValue *SXWMEGalaxyAPI::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("wmegalaxyapi");
 		return _scValue;
 	}

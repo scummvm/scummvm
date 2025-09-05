@@ -218,13 +218,13 @@ bool BaseScriptHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *t
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
+ScValue *BaseScriptHolder::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("script_holder");
 		return _scValue;
 	}
@@ -232,7 +232,7 @@ ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Name") {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->setString(_name);
 		return _scValue;
 	}
@@ -240,7 +240,7 @@ ScValue *BaseScriptHolder::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Filename (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Filename") {
+	else if (strcmp(name, "Filename") == 0) {
 		_scValue->setString(_filename);
 		return _scValue;
 	} else {

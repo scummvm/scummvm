@@ -34,7 +34,7 @@ class Light3D;
 class SXShadowManager : public BaseScriptable {
 public:
 	DECLARE_PERSISTENT(SXShadowManager, BaseScriptable)
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;

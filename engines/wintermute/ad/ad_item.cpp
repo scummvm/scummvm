@@ -642,13 +642,13 @@ bool AdItem::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdItem::scGetProperty(const Common::String &name) {
+ScValue *AdItem::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("item");
 		return _scValue;
 	}
@@ -656,7 +656,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Name") {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->setString(_name);
 		return _scValue;
 	}
@@ -664,7 +664,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DisplayAmount
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DisplayAmount") {
+	else if (strcmp(name, "DisplayAmount") == 0) {
 		_scValue->setBool(_displayAmount);
 		return _scValue;
 	}
@@ -672,7 +672,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Amount
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Amount") {
+	else if (strcmp(name, "Amount") == 0) {
 		_scValue->setInt(_amount);
 		return _scValue;
 	}
@@ -680,7 +680,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmountOffsetX") {
+	else if (strcmp(name, "AmountOffsetX") == 0) {
 		_scValue->setInt(_amountOffsetX);
 		return _scValue;
 	}
@@ -688,7 +688,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountOffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmountOffsetY") {
+	else if (strcmp(name, "AmountOffsetY") == 0) {
 		_scValue->setInt(_amountOffsetY);
 		return _scValue;
 	}
@@ -696,7 +696,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountAlign
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmountAlign") {
+	else if (strcmp(name, "AmountAlign") == 0) {
 		_scValue->setInt(_amountAlign);
 		return _scValue;
 	}
@@ -704,7 +704,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmountString
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmountString") {
+	else if (strcmp(name, "AmountString") == 0) {
 		if (!_amountString) {
 			_scValue->setNULL();
 		} else {
@@ -716,7 +716,7 @@ ScValue *AdItem::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CursorCombined
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CursorCombined") {
+	else if (strcmp(name, "CursorCombined") == 0) {
 		_scValue->setBool(_cursorCombined);
 		return _scValue;
 	} else {

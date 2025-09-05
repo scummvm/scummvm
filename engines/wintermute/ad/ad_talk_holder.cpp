@@ -356,13 +356,13 @@ bool AdTalkHolder::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdTalkHolder::scGetProperty(const Common::String &name) {
+ScValue *AdTalkHolder::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("talk-holder");
 		return _scValue;
 	} else {

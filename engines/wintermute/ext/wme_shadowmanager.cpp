@@ -206,13 +206,13 @@ bool SXShadowManager::scCallMethod(ScScript *script, ScStack *stack, ScStack *th
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
+ScValue *SXShadowManager::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// DefaultLightPos
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "DefaultLightPos") {
+	if (strcmp(name, "DefaultLightPos") == 0) {
 		_scValue->setProperty("x", _defaultLightPos._x);
 		_scValue->setProperty("y", _defaultLightPos._y);
 		_scValue->setProperty("z", _defaultLightPos._z);
@@ -222,7 +222,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DefaultLightPosX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DefaultLightPosX") {
+	else if (strcmp(name, "DefaultLightPosX") == 0) {
 		_scValue->setFloat(_defaultLightPos._x);
 		return _scValue;
 	}
@@ -230,7 +230,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DefaultLightPosY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DefaultLightPosY") {
+	else if (strcmp(name, "DefaultLightPosY") == 0) {
 		_scValue->setFloat(_defaultLightPos._y);
 		return _scValue;
 	}
@@ -238,7 +238,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DefaultLightPosZ
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DefaultLightPosZ") {
+	else if (strcmp(name, "DefaultLightPosZ") == 0) {
 		_scValue->setFloat(_defaultLightPos._z);
 		return _scValue;
 	}
@@ -246,7 +246,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MinShadow
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MinShadow") {
+	else if (strcmp(name, "MinShadow") == 0) {
 		_scValue->setFloat(_minShadow);
 		return _scValue;
 	}
@@ -254,7 +254,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadow
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MaxShadow") {
+	else if (strcmp(name, "MaxShadow") == 0) {
 		_scValue->setFloat(_maxShadow);
 		return _scValue;
 	}
@@ -262,7 +262,7 @@ ScValue *SXShadowManager::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// UseSmartShadows
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "UseSmartShadows") {
+	else if (strcmp(name, "UseSmartShadows") == 0) {
 		_scValue->setBool(_useSmartShadows);
 		return _scValue;
 	}

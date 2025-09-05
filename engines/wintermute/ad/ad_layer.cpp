@@ -377,13 +377,13 @@ bool AdLayer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdLayer::scGetProperty(const Common::String &name) {
+ScValue *AdLayer::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("layer");
 		return _scValue;
 	}
@@ -391,7 +391,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumNodes") {
+	else if (strcmp(name, "NumNodes") == 0) {
 		_scValue->setInt(_nodes.getSize());
 		return _scValue;
 	}
@@ -399,7 +399,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Width") {
+	else if (strcmp(name, "Width") == 0) {
 		_scValue->setInt(_width);
 		return _scValue;
 	}
@@ -407,7 +407,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Height") {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->setInt(_height);
 		return _scValue;
 	}
@@ -415,7 +415,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Main (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Main") {
+	else if (strcmp(name, "Main") == 0) {
 		_scValue->setBool(_main);
 		return _scValue;
 	}
@@ -423,7 +423,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CloseUp
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CloseUp") {
+	else if (strcmp(name, "CloseUp") == 0) {
 		_scValue->setBool(_closeUp);
 		return _scValue;
 	}
@@ -431,7 +431,7 @@ ScValue *AdLayer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	} else {

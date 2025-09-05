@@ -945,13 +945,13 @@ bool AdEntity::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdEntity::scGetProperty(const Common::String &name) {
+ScValue *AdEntity::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("entity");
 		return _scValue;
 	}
@@ -959,7 +959,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Item
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Item") {
+	else if (strcmp(name, "Item") == 0) {
 		if (_item) {
 			_scValue->setString(_item);
 		} else {
@@ -972,7 +972,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Subtype (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Subtype") {
+	else if (strcmp(name, "Subtype") == 0) {
 		if (_subtype == ENTITY_SOUND) {
 			_scValue->setString("sound");
 		} else {
@@ -985,7 +985,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToX") {
+	else if (strcmp(name, "WalkToX") == 0) {
 		_scValue->setInt(_walkToX);
 		return _scValue;
 	}
@@ -993,7 +993,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToY") {
+	else if (strcmp(name, "WalkToY") == 0) {
 		_scValue->setInt(_walkToY);
 		return _scValue;
 	}
@@ -1002,7 +1002,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] HintX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HintX") {
+	else if (strcmp(name, "HintX") == 0) {
 		_scValue->setInt(_hintX);
 		return _scValue;
 	}
@@ -1010,7 +1010,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// [FoxTail] HintY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HintY") {
+	else if (strcmp(name, "HintY") == 0) {
 		_scValue->setInt(_hintY);
 		return _scValue;
 	}
@@ -1019,7 +1019,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkToDirection
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkToDirection") {
+	else if (strcmp(name, "WalkToDirection") == 0) {
 		_scValue->setInt((int)_walkToDir);
 		return _scValue;
 	}
@@ -1027,7 +1027,7 @@ ScValue *AdEntity::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Region (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Region") {
+	else if (strcmp(name, "Region") == 0) {
 		if (_region) {
 			_scValue->setNative(_region, true);
 		} else {

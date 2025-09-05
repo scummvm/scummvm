@@ -692,13 +692,13 @@ bool BaseSprite::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSprite::scGetProperty(const Common::String &name) {
+ScValue *BaseSprite::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("sprite");
 		return _scValue;
 	}
@@ -706,7 +706,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFrames (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumFrames") {
+	else if (strcmp(name, "NumFrames") == 0) {
 		_scValue->setInt(_frames.getSize());
 		return _scValue;
 	}
@@ -714,7 +714,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// CurrentFrame
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "CurrentFrame") {
+	else if (strcmp(name, "CurrentFrame") == 0) {
 		_scValue->setInt(_currentFrame);
 		return _scValue;
 	}
@@ -722,7 +722,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PixelPerfect
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PixelPerfect") {
+	else if (strcmp(name, "PixelPerfect") == 0) {
 		_scValue->setBool(_precise);
 		return _scValue;
 	}
@@ -730,7 +730,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Looping
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Looping") {
+	else if (strcmp(name, "Looping") == 0) {
 		_scValue->setBool(_looping);
 		return _scValue;
 	}
@@ -738,7 +738,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Owner (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Owner") {
+	else if (strcmp(name, "Owner") == 0) {
 		if (_owner == nullptr) {
 			_scValue->setNULL();
 		} else {
@@ -750,7 +750,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Finished (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Finished") {
+	else if (strcmp(name, "Finished") == 0) {
 		_scValue->setBool(_finished);
 		return _scValue;
 	}
@@ -758,7 +758,7 @@ ScValue *BaseSprite::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Paused (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Paused") {
+	else if (strcmp(name, "Paused") == 0) {
 		_scValue->setBool(_paused);
 		return _scValue;
 	} else {

@@ -198,13 +198,13 @@ bool AdAttach3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdAttach3DX::scGetProperty(const Common::String &name) {
+ScValue *AdAttach3DX::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("attachment");
 		return _scValue;
 	} else {

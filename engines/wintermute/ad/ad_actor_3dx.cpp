@@ -2022,13 +2022,13 @@ bool AdActor3DX::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
+ScValue *AdActor3DX::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("actor3dx");
 		return _scValue;
 	}
@@ -2036,7 +2036,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TalkAnimName") {
+	else if (strcmp(name, "TalkAnimName") == 0) {
 		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
@@ -2044,7 +2044,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TalkAnimChannel
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TalkAnimChannel") {
+	else if (strcmp(name, "TalkAnimChannel") == 0) {
 		_scValue->setInt(_talkAnimChannel);
 		return _scValue;
 	}
@@ -2052,7 +2052,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WalkAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WalkAnimName") {
+	else if (strcmp(name, "WalkAnimName") == 0) {
 		_scValue->setString(_talkAnimName);
 		return _scValue;
 	}
@@ -2060,7 +2060,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// IdleAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "IdleAnimName") {
+	else if (strcmp(name, "IdleAnimName") == 0) {
 		_scValue->setString(_idleAnimName);
 		return _scValue;
 	}
@@ -2068,7 +2068,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnLeftAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TurnLeftAnimName") {
+	else if (strcmp(name, "TurnLeftAnimName") == 0) {
 		_scValue->setString(_turnLeftAnimName);
 		return _scValue;
 	}
@@ -2076,7 +2076,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TurnRightAnimName
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TurnRightAnimName") {
+	else if (strcmp(name, "TurnRightAnimName") == 0) {
 		_scValue->setString(_turnRightAnimName);
 		return _scValue;
 	}
@@ -2084,7 +2084,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// DirectionAngle / DirAngle
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "DirectionAngle" || name == "DirAngle") {
+	else if (strcmp(name, "DirectionAngle") == 0 || strcmp(name, "DirAngle") == 0) {
 		_scValue->setFloat(_angle);
 		return _scValue;
 	}
@@ -2092,7 +2092,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Direction
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Direction") {
+	else if (strcmp(name, "Direction") == 0) {
 		_scValue->setInt(angleToDir(_angle));
 		return _scValue;
 	}
@@ -2100,7 +2100,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AnimTransitionTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AnimTransitionTime") {
+	else if (strcmp(name, "AnimTransitionTime") == 0) {
 		_scValue->setInt(_defaultTransTime);
 		return _scValue;
 	}
@@ -2108,7 +2108,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AnimStopTransitionTime
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AnimStopTransitionTime") {
+	else if (strcmp(name, "AnimStopTransitionTime") == 0) {
 		_scValue->setInt(_defaultStopTransTime);
 		return _scValue;
 	}
@@ -2116,7 +2116,7 @@ ScValue *AdActor3DX::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GoToTolerance
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "GoToTolerance") {
+	else if (strcmp(name, "GoToTolerance") == 0) {
 		_scValue->setInt(_goToTolerance);
 		return _scValue;
 	}

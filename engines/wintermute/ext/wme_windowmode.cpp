@@ -68,7 +68,7 @@ bool SXSample::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXSample::scGetProperty(const Common::String &name) {
+ScValue *SXSample::scGetProperty(const char *name) {
 	_scValue->setNULL();
 	return _scValue;
 }

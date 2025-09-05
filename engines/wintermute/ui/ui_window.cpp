@@ -1003,13 +1003,13 @@ bool UIWindow::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *UIWindow::scGetProperty(const Common::String &name) {
+ScValue *UIWindow::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("window");
 		return _scValue;
 	}
@@ -1017,7 +1017,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWidgets / NumControls (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumWidgets" || name == "NumControls") {
+	else if (strcmp(name, "NumWidgets") == 0 || strcmp(name, "NumControls") == 0) {
 		_scValue->setInt(_widgets.getSize());
 		return _scValue;
 	}
@@ -1025,7 +1025,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Exclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Exclusive") {
+	else if (strcmp(name, "Exclusive") == 0) {
 		_scValue->setBool(_mode == WINDOW_EXCLUSIVE);
 		return _scValue;
 	}
@@ -1033,7 +1033,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SystemExclusive
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SystemExclusive") {
+	else if (strcmp(name, "SystemExclusive") == 0) {
 		_scValue->setBool(_mode == WINDOW_SYSTEM_EXCLUSIVE);
 		return _scValue;
 	}
@@ -1041,7 +1041,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Menu
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Menu") {
+	else if (strcmp(name, "Menu") == 0) {
 		_scValue->setBool(_isMenu);
 		return _scValue;
 	}
@@ -1049,7 +1049,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// InGame
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "InGame") {
+	else if (strcmp(name, "InGame") == 0) {
 		_scValue->setBool(_inGame);
 		return _scValue;
 	}
@@ -1057,7 +1057,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PauseMusic
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PauseMusic") {
+	else if (strcmp(name, "PauseMusic") == 0) {
 		_scValue->setBool(_pauseMusic);
 		return _scValue;
 	}
@@ -1065,7 +1065,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ClipContents
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ClipContents") {
+	else if (strcmp(name, "ClipContents") == 0) {
 		_scValue->setBool(_clipContents);
 		return _scValue;
 	}
@@ -1073,7 +1073,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Transparent
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Transparent") {
+	else if (strcmp(name, "Transparent") == 0) {
 		_scValue->setBool(_transparent);
 		return _scValue;
 	}
@@ -1081,7 +1081,7 @@ ScValue *UIWindow::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// FadeColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "FadeColor") {
+	else if (strcmp(name, "FadeColor") == 0) {
 		_scValue->setInt((int)_fadeColor);
 		return _scValue;
 	} else {

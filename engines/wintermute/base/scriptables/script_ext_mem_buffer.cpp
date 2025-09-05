@@ -447,13 +447,13 @@ bool SXMemBuffer::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
+ScValue *SXMemBuffer::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("membuffer");
 		return _scValue;
 	}
@@ -461,7 +461,7 @@ ScValue *SXMemBuffer::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Size (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Size") {
+	if (strcmp(name, "Size") == 0) {
 		_scValue->setInt(_size);
 		return _scValue;
 	} else {

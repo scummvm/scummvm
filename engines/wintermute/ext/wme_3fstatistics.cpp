@@ -133,13 +133,13 @@ bool SX3fStatistics::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SX3fStatistics::scGetProperty(const Common::String &name) {
+ScValue *SX3fStatistics::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("statistics");
 		return _scValue;
 	}

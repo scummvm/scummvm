@@ -350,20 +350,20 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *SXString::scGetProperty(const Common::String &name) {
+ScValue *SXString::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("string");
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Length (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Length") {
+	else if (strcmp(name, "Length") == 0) {
 		if (_game->_textEncoding == TEXT_UTF8) {
 			WideString wstr = StringUtil::utf8ToWide(_string);
 			_scValue->setInt(wstr.size());
@@ -376,7 +376,7 @@ ScValue *SXString::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Capacity
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Capacity") {
+	else if (strcmp(name, "Capacity") == 0) {
 		_scValue->setInt(_capacity);
 		return _scValue;
 	} else {

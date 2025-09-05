@@ -511,7 +511,7 @@ bool BaseSubFrame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisS
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
+ScValue *BaseSubFrame::scGetProperty(const char *name) {
 	if (!_scValue) {
 		_scValue = new ScValue(_game);
 	}
@@ -520,7 +520,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Type (RO)
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("subframe");
 		return _scValue;
 	}
@@ -528,7 +528,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AlphaColor") {
+	else if (strcmp(name, "AlphaColor") == 0) {
 
 		_scValue->setInt((int)_alpha);
 		return _scValue;
@@ -537,7 +537,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// TransparentColor (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "TransparentColor") {
+	else if (strcmp(name, "TransparentColor") == 0) {
 		_scValue->setInt((int)_transparent);
 		return _scValue;
 	}
@@ -545,7 +545,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is2DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Is2DOnly") {
+	else if (strcmp(name, "Is2DOnly") == 0) {
 		_scValue->setBool(_2DOnly);
 		return _scValue;
 	}
@@ -553,7 +553,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Is3DOnly
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Is3DOnly") {
+	else if (strcmp(name, "Is3DOnly") == 0) {
 		_scValue->setBool(_3DOnly);
 		return _scValue;
 	}
@@ -561,7 +561,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MirrorX") {
+	else if (strcmp(name, "MirrorX") == 0) {
 		_scValue->setBool(_mirrorX);
 		return _scValue;
 	}
@@ -569,7 +569,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MirrorY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MirrorY") {
+	else if (strcmp(name, "MirrorY") == 0) {
 		_scValue->setBool(_mirrorY);
 		return _scValue;
 	}
@@ -577,7 +577,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Decoration
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Decoration") {
+	else if (strcmp(name, "Decoration") == 0) {
 		_scValue->setBool(_decoration);
 		return _scValue;
 	}
@@ -585,7 +585,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HotspotX") {
+	else if (strcmp(name, "HotspotX") == 0) {
 		_scValue->setInt(_hotspotX);
 		return _scValue;
 	}
@@ -593,7 +593,7 @@ ScValue *BaseSubFrame::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// HotspotY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "HotspotY") {
+	else if (strcmp(name, "HotspotY") == 0) {
 		_scValue->setInt(_hotspotY);
 		return _scValue;
 	} else {

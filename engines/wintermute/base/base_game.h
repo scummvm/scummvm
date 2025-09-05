@@ -132,7 +132,7 @@ public:
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
 
-	Common::String _localSaveDir;
+	char *_localSaveDir;
 	bool _saveDirChecked;
 
 #ifdef ENABLE_WME3D
@@ -258,7 +258,7 @@ public:
 	virtual bool externalCall(ScScript *script, ScStack *stack, ScStack *thisStack, char *name);
 
 	// scripting interface
-	ScValue *scGetProperty(const Common::String &name) override;
+	ScValue *scGetProperty(const char *name) override;
 	bool scSetProperty(const char *name, ScValue *value) override;
 	bool scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, const char *name) override;
 	const char *scToString() override;

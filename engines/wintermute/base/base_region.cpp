@@ -328,13 +328,13 @@ bool BaseRegion::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseRegion::scGetProperty(const Common::String &name) {
+ScValue *BaseRegion::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("region");
 		return _scValue;
 	}
@@ -342,7 +342,7 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Name
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Name") {
+	else if (strcmp(name, "Name") == 0) {
 		_scValue->setString(_name);
 		return _scValue;
 	}
@@ -350,7 +350,7 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	}
@@ -358,7 +358,7 @@ ScValue *BaseRegion::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumPoints
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumPoints") {
+	else if (strcmp(name, "NumPoints") == 0) {
 		_scValue->setInt(_points.getSize());
 		return _scValue;
 	} else {

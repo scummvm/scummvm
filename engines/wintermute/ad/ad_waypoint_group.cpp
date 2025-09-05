@@ -208,13 +208,13 @@ bool AdWaypointGroup::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
+ScValue *AdWaypointGroup::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("waypoint-group");
 		return _scValue;
 	}
@@ -222,7 +222,7 @@ ScValue *AdWaypointGroup::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Active
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Active") {
+	else if (strcmp(name, "Active") == 0) {
 		_scValue->setBool(_active);
 		return _scValue;
 	} else {

@@ -2366,13 +2366,13 @@ bool AdScene::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack,
 }
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *AdScene::scGetProperty(const Common::String &name) {
+ScValue *AdScene::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("scene");
 		return _scValue;
 	}
@@ -2380,7 +2380,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumLayers (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumLayers") {
+	else if (strcmp(name, "NumLayers") == 0) {
 		_scValue->setInt(_layers.getSize());
 		return _scValue;
 	}
@@ -2388,7 +2388,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumWaypointGroups (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumWaypointGroups") {
+	else if (strcmp(name, "NumWaypointGroups") == 0) {
 		_scValue->setInt(_waypointGroups.getSize());
 		return _scValue;
 	}
@@ -2396,7 +2396,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MainLayer (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MainLayer") {
+	else if (strcmp(name, "MainLayer") == 0) {
 		if (_mainLayer) {
 			_scValue->setNative(_mainLayer, true);
 		} else {
@@ -2409,7 +2409,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumFreeNodes (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumFreeNodes") {
+	else if (strcmp(name, "NumFreeNodes") == 0) {
 		_scValue->setInt(_objects.getSize());
 		return _scValue;
 	}
@@ -2417,7 +2417,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseX (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MouseX") {
+	else if (strcmp(name, "MouseX") == 0) {
 		int32 viewportX;
 		getViewportOffset(&viewportX);
 
@@ -2428,7 +2428,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MouseY (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MouseY") {
+	else if (strcmp(name, "MouseY") == 0) {
 		int32 viewportY;
 		getViewportOffset(nullptr, &viewportY);
 
@@ -2439,7 +2439,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AutoScroll
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AutoScroll") {
+	else if (strcmp(name, "AutoScroll") == 0) {
 		_scValue->setBool(_autoScroll);
 		return _scValue;
 	}
@@ -2448,7 +2448,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ShowGeometry
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ShowGeometry") {
+	else if (strcmp(name, "ShowGeometry") == 0) {
 		_scValue->setBool(_showGeometry);
 		return _scValue;
 	}
@@ -2457,7 +2457,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentState
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PersistentState") {
+	else if (strcmp(name, "PersistentState") == 0) {
 		_scValue->setBool(_persistentState);
 		return _scValue;
 	}
@@ -2465,7 +2465,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// PersistentStateSprites
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "PersistentStateSprites") {
+	else if (strcmp(name, "PersistentStateSprites") == 0) {
 		_scValue->setBool(_persistentStateSprites);
 		return _scValue;
 	}
@@ -2473,7 +2473,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScrollPixelsX") {
+	else if (strcmp(name, "ScrollPixelsX") == 0) {
 		_scValue->setInt(_scrollPixelsH);
 		return _scValue;
 	}
@@ -2481,7 +2481,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollPixelsY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScrollPixelsY") {
+	else if (strcmp(name, "ScrollPixelsY") == 0) {
 		_scValue->setInt(_scrollPixelsV);
 		return _scValue;
 	}
@@ -2489,7 +2489,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScrollSpeedX") {
+	else if (strcmp(name, "ScrollSpeedX") == 0) {
 		_scValue->setInt(_scrollTimeH);
 		return _scValue;
 	}
@@ -2497,7 +2497,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScrollSpeedY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScrollSpeedY") {
+	else if (strcmp(name, "ScrollSpeedY") == 0) {
 		_scValue->setInt(_scrollTimeV);
 		return _scValue;
 	}
@@ -2505,7 +2505,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "OffsetX") {
+	else if (strcmp(name, "OffsetX") == 0) {
 		_scValue->setInt(_offsetLeft);
 		return _scValue;
 	}
@@ -2513,7 +2513,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// OffsetY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "OffsetY") {
+	else if (strcmp(name, "OffsetY") == 0) {
 		_scValue->setInt(_offsetTop);
 		return _scValue;
 	}
@@ -2522,7 +2522,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// GeometryFile
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "GeometryFile") {
+	else if (strcmp(name, "GeometryFile") == 0) {
 		if (_geom && _geom->getFilename()) {
 			_scValue->setString(_geom->getFilename());
 		} else {
@@ -2534,7 +2534,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// WaypointsHeight
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "WaypointsHeight") {
+	else if (strcmp(name, "WaypointsHeight") == 0) {
 		if (_geom) {
 			_scValue->setFloat(_geom->_waypointHeight);
 		} else {
@@ -2547,7 +2547,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Width (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Width") {
+	else if (strcmp(name, "Width") == 0) {
 		if (_mainLayer) {
 			_scValue->setInt(_mainLayer->_width);
 		} else {
@@ -2559,7 +2559,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Height") {
+	else if (strcmp(name, "Height") == 0) {
 		if (_mainLayer) {
 			_scValue->setInt(_mainLayer->_height);
 		} else {
@@ -2572,7 +2572,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// MaxShadowType
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "MaxShadowType") {
+	else if (strcmp(name, "MaxShadowType") == 0) {
 		_scValue->setInt(_maxShadowType);
 		return _scValue;
 	}
@@ -2580,7 +2580,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AmbientLightColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AmbientLightColor") {
+	else if (strcmp(name, "AmbientLightColor") == 0) {
 		_scValue->setInt(_ambientLightColor);
 		return _scValue;
 	}
@@ -2588,7 +2588,7 @@ ScValue *AdScene::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NumLights
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NumLights") {
+	else if (strcmp(name, "NumLights") == 0) {
 		if (!_geom) {
 			_scValue->setInt(0);
 		} else {

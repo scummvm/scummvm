@@ -630,13 +630,13 @@ bool BaseObject::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 
 
 //////////////////////////////////////////////////////////////////////////
-ScValue *BaseObject::scGetProperty(const Common::String &name) {
+ScValue *BaseObject::scGetProperty(const char *name) {
 	_scValue->setNULL();
 
 	//////////////////////////////////////////////////////////////////////////
 	// Type
 	//////////////////////////////////////////////////////////////////////////
-	if (name == "Type") {
+	if (strcmp(name, "Type") == 0) {
 		_scValue->setString("object");
 		return _scValue;
 	}
@@ -644,7 +644,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Caption
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Caption") {
+	else if (strcmp(name, "Caption") == 0) {
 		_scValue->setString(getCaption(1));
 		return _scValue;
 	}
@@ -652,7 +652,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// X
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "X") {
+	else if (strcmp(name, "X") == 0) {
 		_scValue->setInt(_posX);
 		return _scValue;
 	}
@@ -660,7 +660,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Y
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Y") {
+	else if (strcmp(name, "Y") == 0) {
 		_scValue->setInt(_posY);
 		return _scValue;
 	}
@@ -668,7 +668,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Height (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Height") {
+	else if (strcmp(name, "Height") == 0) {
 		_scValue->setInt(getHeight());
 		return _scValue;
 	}
@@ -676,7 +676,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Ready (RO)
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Ready") {
+	else if (strcmp(name, "Ready") == 0) {
 		_scValue->setBool(_ready);
 		return _scValue;
 	}
@@ -684,7 +684,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Movable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Movable") {
+	else if (strcmp(name, "Movable") == 0) {
 		_scValue->setBool(_movable);
 		return _scValue;
 	}
@@ -692,7 +692,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Registrable/Interactive
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Registrable" || name == "Interactive") {
+	else if (strcmp(name, "Registrable") == 0 || strcmp(name, "Interactive") == 0) {
 		_scValue->setBool(_registrable);
 		return _scValue;
 	}
@@ -700,21 +700,21 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Zoomable/Scalable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Zoomable" || name == "Scalable") {
+	else if (strcmp(name, "Zoomable") == 0 || strcmp(name, "Scalable") == 0) {
 		_scValue->setBool(_zoomable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// Rotatable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Rotatable") {
+	else if (strcmp(name, "Rotatable") == 0) {
 		_scValue->setBool(_rotatable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// AlphaColor
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AlphaColor") {
+	else if (strcmp(name, "AlphaColor") == 0) {
 		_scValue->setInt((int)_alphaColor);
 		return _scValue;
 	}
@@ -722,7 +722,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// BlendMode
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "BlendMode") {
+	else if (strcmp(name, "BlendMode") == 0) {
 		_scValue->setInt((int)_blendMode);
 		return _scValue;
 	}
@@ -730,7 +730,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Scale
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Scale") {
+	else if (strcmp(name, "Scale") == 0) {
 		if (_scale < 0) {
 			_scValue->setNULL();
 		} else {
@@ -742,7 +742,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleX
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScaleX") {
+	else if (strcmp(name, "ScaleX") == 0) {
 		if (_scaleX < 0) {
 			_scValue->setNULL();
 		} else {
@@ -754,7 +754,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// ScaleY
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "ScaleY") {
+	else if (strcmp(name, "ScaleY") == 0) {
 		if (_scaleY < 0) {
 			_scValue->setNULL();
 		} else {
@@ -766,7 +766,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeScale
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "RelativeScale") {
+	else if (strcmp(name, "RelativeScale") == 0) {
 		_scValue->setFloat((double)_relativeScale);
 		return _scValue;
 	}
@@ -774,7 +774,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Rotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Rotate") {
+	else if (strcmp(name, "Rotate") == 0) {
 		if (!_rotateValid) {
 			_scValue->setNULL();
 		} else {
@@ -786,7 +786,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// RelativeRotate
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "RelativeRotate") {
+	else if (strcmp(name, "RelativeRotate") == 0) {
 		_scValue->setFloat((double)_relativeRotate);
 		return _scValue;
 	}
@@ -794,14 +794,14 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// Colorable
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "Colorable") {
+	else if (strcmp(name, "Colorable") == 0) {
 		_scValue->setBool(_shadowable);
 		return _scValue;
 	}
 	//////////////////////////////////////////////////////////////////////////
 	// SoundPanning
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SoundPanning") {
+	else if (strcmp(name, "SoundPanning") == 0) {
 		_scValue->setBool(_autoSoundPanning);
 		return _scValue;
 	}
@@ -809,7 +809,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// SaveState
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "SaveState") {
+	else if (strcmp(name, "SaveState") == 0) {
 		_scValue->setBool(_saveState);
 		return _scValue;
 	}
@@ -817,7 +817,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// NonIntMouseEvents
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "NonIntMouseEvents") {
+	else if (strcmp(name, "NonIntMouseEvents") == 0) {
 		_scValue->setBool(_nonIntMouseEvents);
 		return _scValue;
 	}
@@ -825,7 +825,7 @@ ScValue *BaseObject::scGetProperty(const Common::String &name) {
 	//////////////////////////////////////////////////////////////////////////
 	// AccCaption
 	//////////////////////////////////////////////////////////////////////////
-	else if (name == "AccCaption") {
+	else if (strcmp(name, "AccCaption") == 0) {
 /*		if (m_AccessCaption)
 			m_ScValue->SetString(m_AccessCaption);
 		else*/
