@@ -26,6 +26,17 @@
 
 static const ADExtraGuiOptionsMap optionsList[] = {
 	{
+		GAMEOPTION_COPY_PROTECTION,
+		{
+			_s("Copy protection"),
+			_s("Enable copy protection"),
+			"copy_protection",
+			false,
+			0,
+			0
+		}
+	},
+	{
 		GAMEOPTION_NO_TRANSITIONS,
 		{
 			_s("Disable scene transitions"),

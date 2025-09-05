@@ -290,11 +290,6 @@ enum HOTKEYS {
     NO = 7
 };
 
-struct GameIndex {
-	byte ultimapartida;
-	Common::String listapartidas[6];
-};
-
 } // End of namespace Tot
 
 #endif

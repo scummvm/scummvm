@@ -474,7 +474,6 @@ void talk(byte characterIndex) {
 		g_engine->sayLine(newNode, 255, 0, response, true);
 		stringAux = 0;
 		modifyTree(tree, newNode);
-		// 	verifyCopyProtection();
 		while (response > 0 && !g_engine->shouldQuit()) {
 			newNode = response;
 			stringAux += 1;
@@ -546,7 +545,6 @@ void talkToSceneObject() {
 	if (sceneObject == 0)
 		return;
 
-	// verifyCopyProtection2();
 	g_engine->readObject(sceneObject);
 	g_engine->goToObject(g_engine->_currentRoomData->walkAreasGrid[(g_engine->_characterPosX + kCharacterCorrectionX) / kXGridCount][(g_engine->_characterPosY + kCharacerCorrectionY) / kYGridCount],
 			   g_engine->_currentRoomData->walkAreasGrid[correctedMouseX][correctedMouseY]);

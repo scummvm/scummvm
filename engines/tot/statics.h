@@ -1125,7 +1125,8 @@ static const char *const hardcodedTexts_ES[] = {
     "PARED", // 8
     "TORNO", // 9
     "VACIO",
-	"DISPONIBLE"
+	"DISPONIBLE",
+	"Mira en la fila %d y columna %d"
 };
 
 static const char *const hardcodedTexts_EN[] = {
@@ -1140,7 +1141,8 @@ static const char *const hardcodedTexts_EN[] = {
     "WALL",
     "POTTER""S WHEEL",
     "FREE",
-	"AVAILABLE"
+	"AVAILABLE",
+	"Search in row %d and column %d"
 };
 
 static const Common::KeyCode hotkeys[2][8]{
