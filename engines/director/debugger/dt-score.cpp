@@ -218,19 +218,21 @@ static void displayScoreChannel(int ch, int mode, int modeSel) {
 		ImGui::PushID((ch + 10 - mode) * 10000 + f);
 
 		// If the frame is not the start, then don't render any text
-		if (rf != startCont || !(sprite._castId.member || sprite.isQDShape())) {
-			if (rf == endCont && sprite._castId.member && mode == _state->_scoreMode) {
-				ImGui::PushFont(ImGui::GetIO().FontDefault);
-				ImGui::TextUnformatted("\uf819");
-				ImGui::PopFont();
-			} else {
-				if (sprite._castId.member) {
-					ImGui::Selectable("─");
+		if (mode == kModeMember) {
+			if (rf != startCont || !(sprite._castId.member || sprite.isQDShape())) {
+				if (rf == endCont && sprite._castId.member && mode == _state->_scoreMode) {
+					ImGui::PushFont(ImGui::GetIO().FontDefault);
+					ImGui::TextUnformatted("\uf819");
+					ImGui::PopFont();
 				} else {
-					ImGui::Selectable("  ");
+					if (sprite._castId.member) {
+						ImGui::Selectable("─");
+					} else {
+						ImGui::Selectable("  ");
+					}
 				}
+				mode1 = -1; // Skip cell data rendering
 			}
-			mode1 = -1; // Skip cell data rendering
 		}
 
 		switch (mode1) {
