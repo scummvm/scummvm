@@ -38,11 +38,11 @@ public:
 	 */
 	TinyGLTestSuite();
 	~TinyGLTestSuite() override = default;
-	const char *getName() const {
+	const char *getName() const override {
 		return "TinyGL";
 	}
 
-	const char *getDescription() const {
+	const char *getDescription() const override {
 		return "Comparing TinyGL output with classic OpenGL";
 	}
 

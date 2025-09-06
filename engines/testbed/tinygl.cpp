@@ -33,16 +33,31 @@ namespace Testbed {
 
 namespace TinyGLTests {
 	struct TextureEnvironmentArg {
-		GLuint _sourceRGB = GL_TEXTURE, _operandRGB = GL_SRC_COLOR;
-		GLuint _sourceAlpha = GL_TEXTURE, _operandAlpha = GL_SRC_ALPHA;
+		GLuint _sourceRGB, _operandRGB;
+		GLuint _sourceAlpha, _operandAlpha;
+
+		TextureEnvironmentArg(
+			GLuint sourceRGB = GL_TEXTURE,
+			GLuint operandRGB = GL_SRC_COLOR,
+			GLuint sourceAlpha = GL_TEXTURE,
+			GLuint operandAlpha = GL_SRC_ALPHA)
+			: _sourceRGB(sourceRGB)
+			, _operandRGB(operandRGB)
+			, _sourceAlpha(sourceAlpha)
+			, _operandAlpha(operandAlpha) { }
 	};
 
 	struct TextureEnvironment {
-		GLuint
-			_mode = GL_REPLACE,
-			_combineRGB = GL_REPLACE,
-			_combineAlpha = GL_REPLACE;
+		GLuint _mode, _combineRGB, _combineAlpha;
 		TextureEnvironmentArg _arg0, _arg1;
+
+		TextureEnvironment(
+			GLuint mode = GL_REPLACE,
+			GLuint combineRGB = GL_REPLACE,
+			GLuint combineAlpha = GL_REPLACE)
+			: _mode(mode)
+			, _combineRGB(combineRGB)
+			, _combineAlpha(combineAlpha) { }
 
 		template<typename TexEnvFunc>
 		void apply(TexEnvFunc func) const {
@@ -92,12 +107,12 @@ TinyGLTestSuite::TinyGLTestSuite() {
 }
 
 TestExitStatus TinyGLTests::testTexEnvModulate() {
-	TextureEnvironment env = { GL_MODULATE };
+	TextureEnvironment env(GL_MODULATE);
 	return runTexEnvTest("Modulate", env, 50, 111, 222, 255);
 }
 
 TestExitStatus TinyGLTests::testTexEnvReplace() {
-	TextureEnvironment env = { GL_REPLACE };
+	TextureEnvironment env(GL_REPLACE);
 	return runTexEnvTest("Replace", env, 255, 0, 255, 255);
 }
 
@@ -112,64 +127,40 @@ TestExitStatus TinyGLTests::testTexEnvAdd() {
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineOpNormal() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_REPLACE,
-		GL_REPLACE,
-		{ GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_REPLACE, GL_REPLACE);
+	env._arg0 = { GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA };
 	return runTexEnvTest("CombineOpNormal", env, 50, 111, 222, 255);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineOpInverse() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_REPLACE,
-		GL_REPLACE,
-		{ GL_TEXTURE, GL_ONE_MINUS_SRC_COLOR, GL_TEXTURE, GL_ONE_MINUS_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_REPLACE, GL_REPLACE);
+	env._arg0 = { GL_TEXTURE, GL_ONE_MINUS_SRC_COLOR, GL_TEXTURE, GL_ONE_MINUS_SRC_ALPHA };
 	return runTexEnvTest("CombineOpInverse", env, 50, 111, 222, 255);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineOpAlphaToColor() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_REPLACE,
-		GL_REPLACE,
-		{ GL_TEXTURE, GL_SRC_ALPHA, GL_TEXTURE, GL_ONE_MINUS_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_REPLACE, GL_REPLACE);
+	env._arg0 = { GL_TEXTURE, GL_SRC_ALPHA, GL_TEXTURE, GL_ONE_MINUS_SRC_ALPHA };
 	return runTexEnvTest("CombineOpAlphaToColor", env, 50, 111, 222, 255);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineReplace() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_REPLACE,
-		GL_REPLACE,
-		{ GL_TEXTURE, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_REPLACE, GL_REPLACE);
+	env._arg0 = { GL_TEXTURE, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA };
 	return runTexEnvTest("CombineReplace", env, 50, 11, 222, 127);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineModulate() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_MODULATE,
-		GL_MODULATE,
-		{ GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA },
-		{ GL_PRIMARY_COLOR, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_MODULATE, GL_MODULATE);
+	env._arg0 = { GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA };
+	env._arg1 = { GL_PRIMARY_COLOR, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA };
 	return runTexEnvTest("CombineModulate", env, 50, 11, 222, 127);
 }
 
 TestExitStatus TinyGLTests::testTexEnvCombineAdd() {
-	TextureEnvironment env = {
-		GL_COMBINE,
-		GL_ADD,
-		GL_ADD,
-		{ GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA },
-		{ GL_PRIMARY_COLOR, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA }
-	};
+	TextureEnvironment env(GL_COMBINE, GL_ADD, GL_ADD);
+	env._arg0 = { GL_TEXTURE, GL_SRC_COLOR, GL_TEXTURE, GL_SRC_ALPHA };
+	env._arg1 = { GL_PRIMARY_COLOR, GL_SRC_COLOR, GL_PRIMARY_COLOR, GL_SRC_ALPHA };
 	return runTexEnvTest("CombineAdd", env, 50, 11, 222, 127);
 }
 
