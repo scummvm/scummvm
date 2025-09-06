@@ -33,8 +33,8 @@ const char* zgiAlternates[] {
 	"u000h01q.raw"
 	};
 
-FileManager::FileManager(ZVision *engine) :
-	_engine(engine) {}
+FileManager::FileManager(ZVision *engine) {
+}
 
 Common::File *FileManager::open(const Common::Path &filePath, bool allowSrc) {
 	debugC(5, kDebugFile, "FileManager::open()");

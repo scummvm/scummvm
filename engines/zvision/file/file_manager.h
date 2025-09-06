@@ -38,7 +38,6 @@ public:
 	bool exists(Common::Path filePath, bool allowSrc=true);	// Wrapper to automatically handle checking existence of files which may be empty & have an alternate .src file
 
 private:
-	ZVision *_engine;
 	Common::Path srcPath(Common::Path filePath);
 };
 
