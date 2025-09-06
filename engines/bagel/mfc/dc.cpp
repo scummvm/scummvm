@@ -1148,7 +1148,7 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, LPCSTR lpszString, int nCount,
 }
 
 CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
-		int nTabPositions, int *lpnTabStopPositions, int nTabOrigin) {
+		int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin) {
 	CSize size;
 	textOut(x, y, str, nTabPositions, lpnTabStopPositions, nTabOrigin, &size);
 	return size;
