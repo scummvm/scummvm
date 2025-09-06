@@ -203,6 +203,24 @@ struct GLImage {
 
 #define TEXTURE_HASH_TABLE_SIZE 256
 
+struct GLTextureEnvArgument {
+	TGLuint
+		sourceRGB = TGL_TEXTURE,
+		operandRGB = TGL_SRC_COLOR,
+		sourceAlpha = TGL_TEXTURE,
+		operandAlpha = TGL_SRC_ALPHA;
+};
+
+struct GLTextureEnv {
+	TGLuint
+		envMode = TGL_MODULATE,
+		combineRGB = TGL_REPLACE,
+		combineAlpha = TGL_REPLACE;
+	GLTextureEnvArgument arg0, arg1;
+
+	inline bool isDefault() const { return envMode == TGL_MODULATE; }
+};
+
 struct GLTexture {
 	GLImage images[MAX_TEXTURE_LEVELS];
 	uint handle;
@@ -324,6 +342,7 @@ struct GLContext {
 	int texture_min_filter;
 	uint texture_wrap_s;
 	uint texture_wrap_t;
+	GLTextureEnv _texEnv;
 	Common::Array<struct tglColorAssociation> colorAssociationList;
 
 	// shared state

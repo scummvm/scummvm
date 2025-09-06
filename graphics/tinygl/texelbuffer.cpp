@@ -31,7 +31,7 @@ namespace TinyGL {
 #define ZB_POINT_ST_UNIT (1 << ZB_POINT_ST_FRAC_BITS)
 #define ZB_POINT_ST_FRAC_MASK (ZB_POINT_ST_UNIT - 1)
 
-TexelBuffer::TexelBuffer(uint width, uint height, uint textureSize) {
+TexelBuffer::TexelBuffer(uint width, uint height, uint textureSize, int internalformat) {
 	assert(width);
 	assert(height);
 	assert(textureSize);
@@ -42,6 +42,7 @@ TexelBuffer::TexelBuffer(uint width, uint height, uint textureSize) {
 	_fracTextureMask = _fracTextureUnit - 1;
 	_widthRatio = (float) width / textureSize;
 	_heightRatio = (float) height / textureSize;
+	_internalformat = internalformat;
 }
 
 static inline uint wrap(uint wrap_mode, int coord, uint _fracTextureUnit, uint _fracTextureMask) {
@@ -81,7 +82,7 @@ void TexelBuffer::getARGBAt(
 // Nearest: store texture in original size.
 class BaseNearestTexelBuffer : public TexelBuffer {
 public:
-	BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize);
+	BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat);
 	~BaseNearestTexelBuffer();
 
 protected:
@@ -89,7 +90,8 @@ protected:
 	Graphics::PixelFormat _format;
 };
 
-BaseNearestTexelBuffer::BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize), _format(format) {
+BaseNearestTexelBuffer::BaseNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat)
+	: TexelBuffer(width, height, textureSize, internalformat), _format(format) {
 	uint count = _width * _height * _format.bytesPerPixel;
 	_buf = (byte *)gl_malloc(count);
 	memcpy(_buf, buf, count);
@@ -102,8 +104,8 @@ BaseNearestTexelBuffer::~BaseNearestTexelBuffer() {
 template<uint Format, uint Type>
 class NearestTexelBuffer final : public BaseNearestTexelBuffer {
 public:
-	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize)
-	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize) {}
+	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat)
+	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize, internalformat) {}
 
 protected:
 	void getARGBAt(
@@ -122,8 +124,8 @@ protected:
 template<>
 class NearestTexelBuffer<TGL_RGB, TGL_UNSIGNED_BYTE> final : public BaseNearestTexelBuffer {
 public:
-	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize)
-	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize) {}
+	NearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat)
+	  : BaseNearestTexelBuffer(buf, format, width, height, textureSize, internalformat) {}
 
 protected:
 	void getARGBAt(
@@ -139,36 +141,41 @@ protected:
 	}
 };
 
-TexelBuffer *createNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &pf, uint format, uint type, uint width, uint height, uint textureSize) {
+TexelBuffer *createNearestTexelBuffer(const byte *buf, const Graphics::PixelFormat &pf, uint format, uint type, uint width, uint height, uint textureSize, int internalformat) {
 	if (format == TGL_RGBA && type == TGL_UNSIGNED_BYTE) {
 		return new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_BYTE>(
 			buf, pf,
 			width, height,
-			textureSize
+			textureSize,
+			internalformat
 		);
 	} else if (format == TGL_RGB && type == TGL_UNSIGNED_BYTE) {
 		return new NearestTexelBuffer<TGL_RGB,  TGL_UNSIGNED_BYTE>(
 			buf, pf,
 			width, height,
-			textureSize
+			textureSize,
+			internalformat
 		);
 	} else if (format == TGL_RGB && type == TGL_UNSIGNED_SHORT_5_6_5) {
 		return new NearestTexelBuffer<TGL_RGB,  TGL_UNSIGNED_SHORT_5_6_5>(
 			buf, pf,
 			width, height,
-			textureSize
+			textureSize,
+			internalformat
 		);
 	} else if (format == TGL_RGBA && type == TGL_UNSIGNED_SHORT_5_5_5_1) {
 		return new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_SHORT_5_5_5_1>(
 			buf, pf,
 			width, height,
-			textureSize
+			textureSize,
+			internalformat
 		);
 	} else if (format == TGL_RGBA && type == TGL_UNSIGNED_SHORT_4_4_4_4) {
 		return new NearestTexelBuffer<TGL_RGBA, TGL_UNSIGNED_SHORT_4_4_4_4>(
 			buf, pf,
 			width, height,
-			textureSize
+			textureSize,
+			internalformat
 		);
 	} else {
 		error("TinyGL texture: format 0x%04x and type 0x%04x combination not supported", format, type);
@@ -183,7 +190,7 @@ TexelBuffer *createNearestTexelBuffer(const byte *buf, const Graphics::PixelForm
 // usage increase should be negligible.
 class BilinearTexelBuffer : public TexelBuffer {
 public:
-	BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize);
+	BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat);
 	~BilinearTexelBuffer();
 
 protected:
@@ -207,7 +214,8 @@ private:
 #define P11_OFFSET 3
 #define PIXEL_PER_TEXEL_SHIFT 2
 
-BilinearTexelBuffer::BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize) : TexelBuffer(width, height, textureSize) {
+BilinearTexelBuffer::BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat)
+	: TexelBuffer(width, height, textureSize, internalformat) {
 	const Graphics::PixelBuffer src(format, buf);
 
 	uint pixel00_offset = 0, pixel11_offset, pixel01_offset, pixel10_offset;
@@ -319,11 +327,12 @@ void BilinearTexelBuffer::getARGBAt(
 	);
 }
 
-TexelBuffer *createBilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &pf, uint format, uint type, uint width, uint height, uint textureSize) {
+TexelBuffer *createBilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &pf, uint format, uint type, uint width, uint height, uint textureSize, int internalformat) {
 	return new BilinearTexelBuffer(
 		buf, pf,
 		width, height,
-		textureSize
+		textureSize,
+		internalformat
 	);
 }
 

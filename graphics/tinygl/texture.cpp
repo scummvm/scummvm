@@ -165,7 +165,8 @@ void GLContext::glopTexImage2D(GLParam *p) {
 				pixels, pf,
 				format, type,
 				width, height,
-				_textureSize
+				_textureSize,
+				internalformat
 			);
 			break;
 		default:
@@ -173,7 +174,8 @@ void GLContext::glopTexImage2D(GLParam *p) {
 				pixels, pf,
 				format, type,
 				width, height,
-				_textureSize
+				_textureSize,
+				internalformat
 			);
 			break;
 		}
@@ -191,11 +193,82 @@ error:
 		error("tglTexParameter: unsupported option");
 	}
 
-	if (pname != TGL_TEXTURE_ENV_MODE)
+	switch (pname) {
+	case TGL_TEXTURE_ENV_MODE:
+		if (param == TGL_REPLACE ||
+			param == TGL_MODULATE ||
+			param == TGL_DECAL ||
+			//param == TGL_BLEND || // no tex env constants yet
+			param == TGL_ADD ||
+			param == TGL_COMBINE)
+			_texEnv.envMode = param;
+		else
+			goto error;
+		break;
+	case TGL_COMBINE_RGB:
+		if (param == TGL_REPLACE ||
+			param == TGL_MODULATE ||
+			param == TGL_ADD)
+			_texEnv.combineRGB = param;
+		else
+			goto error;
+		break;
+	case TGL_COMBINE_ALPHA:
+		if (param == TGL_REPLACE ||
+			param == TGL_MODULATE ||
+			param == TGL_ADD)
+			_texEnv.combineAlpha = param;
+		else
+			goto error;
+		break;
+	case TGL_SOURCE0_RGB:
+	case TGL_SOURCE1_RGB:
+	{
+		GLTextureEnvArgument *op = pname == TGL_SOURCE0_RGB ? &_texEnv.arg0 : &_texEnv.arg1;
+		if (param == TGL_TEXTURE ||
+			param == TGL_PRIMARY_COLOR)
+			op->sourceRGB = param;
+		else
+			goto error;
+		break;
+	}
+	case TGL_SOURCE0_ALPHA:
+	case TGL_SOURCE1_ALPHA:
+	{
+		GLTextureEnvArgument *op = pname == TGL_SOURCE0_ALPHA ? &_texEnv.arg0 : &_texEnv.arg1;
+		if (param == TGL_TEXTURE ||
+			param == TGL_PRIMARY_COLOR)
+			op->sourceAlpha = param;
+		else
+			goto error;
+		break;
+	}
+	case TGL_OPERAND0_RGB:
+	case TGL_OPERAND1_RGB:
+	{
+		GLTextureEnvArgument *op = pname == TGL_OPERAND0_RGB ? &_texEnv.arg0 : &_texEnv.arg1;
+		if (param == TGL_SRC_COLOR ||
+			param == TGL_ONE_MINUS_SRC_COLOR ||
+			param == TGL_SRC_ALPHA)
+			op->operandRGB = param;
+		else
+			goto error;
+		break;
+	}
+	case TGL_OPERAND0_ALPHA:
+	case TGL_OPERAND1_ALPHA:
+	{
+		GLTextureEnvArgument *op = pname == TGL_OPERAND0_ALPHA ? &_texEnv.arg0 : &_texEnv.arg1;
+		if (param == TGL_SRC_ALPHA ||
+			param == TGL_ONE_MINUS_SRC_ALPHA)
+			op->operandAlpha = param;
+		else
+			goto error;
+		break;
+	}
+	default:
 		goto error;
-
-	if (param != TGL_DECAL)
-		goto error;
+	}
 }
 
 // TODO: not all tests are done
