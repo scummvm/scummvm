@@ -42,7 +42,7 @@ namespace Battlefish {
 
 typedef struct {
 	POINT nLoc[MAX_FISH_SIZE + 1];
-	UBYTE life;
+	byte life;
 } FISH;
 
 class CBFishWindow : public CFrameWnd {
@@ -111,8 +111,8 @@ protected:
 
 	// Data Members
 	//
-	UBYTE       m_nUserGrid[GRID_ROWS][GRID_COLS];
-	UBYTE       m_nEnemyGrid[GRID_ROWS][GRID_COLS];
+	byte       m_nUserGrid[GRID_ROWS][GRID_COLS];
+	byte       m_nEnemyGrid[GRID_ROWS][GRID_COLS];
 	FISH        m_aEnemyFishInfo[MAX_FISH];
 	FISH        m_aUserFishInfo[MAX_FISH];
 	CRect       m_rNewGameButton;

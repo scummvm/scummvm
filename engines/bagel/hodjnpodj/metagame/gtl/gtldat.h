@@ -215,8 +215,8 @@ public:
 	bool m_bWgtSpec : 1;				// weight specified
 	bool m_bSenSpec : 1;				// sensitivity specified
 	bool m_bMenu : 1;					// TRUE if menu
-	UBYTE m_iWeight = 0;				// node weight
-	UBYTE m_iSensitivity = 0;			// distance to accept clickb
+	byte m_iWeight = 0;				// node weight
+	byte m_iSensitivity = 0;			// distance to accept clickb
 
 	CNode();
 

@@ -552,8 +552,8 @@ void CMainWindow::PlayGame() {
 
 		AnimateDice();
 #pragma warning(disable: 4135)
-		m_LDie = (BYTE)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
-		m_RDie = (BYTE)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
+		m_LDie = (byte)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
+		m_RDie = (byte)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
 #pragma warning(default: 4135)
 		PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie], \
 		                  m_rRDie.left, m_rRDie.top, (int) m_rRDie.Width(), (int) m_rRDie.Height());
@@ -793,7 +793,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				*/
 				for (i = 7, AllFxd = TRUE; i < 13; i++) {            // i<13 because i==12 is the max doable throw with two dice.
 					/***** note that this was a bug in versions 1.0 thru 1.5 ******/
-					if (AllFxd) AllFxd = !IsThrowDoable((BYTE)i);
+					if (AllFxd) AllFxd = !IsThrowDoable((byte)i);
 					else  break;
 				}
 				m_bOneDieCase = AllFxd;
@@ -801,8 +801,8 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				/* randomise throws */
 #pragma warning(disable: 4135)
 				V = (uint32)((UINT)RAND_MAX + 1);
-				m_LDie = (BYTE)(((uint32)(UINT)brand() * 6L) / V) +1;                                    //  left Die
-				m_RDie = m_bOneDieCase ? 0 : (BYTE)(((uint32)(UINT)brand() * 6) / V) +1;       //    right Die
+				m_LDie = (byte)(((uint32)(UINT)brand() * 6L) / V) +1;                                    //  left Die
+				m_RDie = m_bOneDieCase ? 0 : (byte)(((uint32)(UINT)brand() * 6) / V) +1;       //    right Die
 #pragma warning(default: 4135)
 
 				pDC = GetDC();
@@ -826,7 +826,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 				    Bring up MessageBox to that effect and in case it's 3 throws terminate current
 				    game. If the throw is doable reset the count of undoable throws to 0.
 				 */
-				if (!IsThrowDoable((BYTE)(m_LDie + m_RDie))) {
+				if (!IsThrowDoable((byte)(m_LDie + m_RDie))) {
 					/*
 					if the #of successive undoable throws is 3 then you 've lost game.
 					Else: display message box and continue
@@ -970,7 +970,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 							} //end if m_iDoorStatus==Open.
 
 
-							m_cActiveDoor = (BYTE)i;         //set active door.     //this flag is now obsolete, but retained only for compatibility.
+							m_cActiveDoor = (byte)i;         //set active door.     //this flag is now obsolete, but retained only for compatibility.
 						} else {   //if m_iMoveValid ==-1 i.e. invalid move
 							sndPlaySound(GetStringFromResource(IDS_NOPE), SND_ASYNC);
 							if ((m_iMoveValid = LegalizeMove(0)) == 1);
@@ -1302,7 +1302,7 @@ short CMainWindow::LegalizeMove(short  j) {
 	*   LegalizeMove keeps track of the number of open doors.
 	***********************************************************************************************************************************
 	*/
-	static BYTE DoorSum,
+	static byte DoorSum,
 	       DiceSum;
 	short int ReadyForDiceClick = 0;
 
@@ -1312,12 +1312,12 @@ short CMainWindow::LegalizeMove(short  j) {
 		m_bDiceJustThrown = FALSE;
 	}
 
-	DiceSum = (BYTE)(m_LDie + m_RDie);
+	DiceSum = (byte)(m_LDie + m_RDie);
 	if (m_iDoorStatus[j] == OPEN) {
 		//increment  door count  if  the door is initially open (i.e. the mouse is clicked on an open door) and decrement otherwise
 
-		if ((DoorSum += (BYTE)j) > DiceSum) {
-			DoorSum -= (BYTE)j;                                     // disallow clicking on such a door so as to exceed door sum.
+		if ((DoorSum += (byte)j) > DiceSum) {
+			DoorSum -= (byte)j;                                     // disallow clicking on such a door so as to exceed door sum.
 			return -1;
 		} else {
 			if (DoorSum == DiceSum)    ReadyForDiceClick = 1;
@@ -1325,9 +1325,9 @@ short CMainWindow::LegalizeMove(short  j) {
 			return (ReadyForDiceClick);        // return (1) if all set, 0 if door sum < dice sum.
 		}
 	} else {                   // if door is initially closed decrement doorsum.
-		DoorSum -= (BYTE)j;
+		DoorSum -= (byte)j;
 		if (DoorSum > DiceSum) {
-			DoorSum += (BYTE)j;
+			DoorSum += (byte)j;
 			return -1;
 		}
 		if (DoorSum == DiceSum)    ReadyForDiceClick = 1;
@@ -1337,7 +1337,7 @@ short CMainWindow::LegalizeMove(short  j) {
 }
 
 
-BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
+BOOL CMainWindow::IsThrowDoable(byte DiceSum) {
 	/*****************************************************************************************************************
 	*   [IsThrowDoable]
 	*
@@ -1347,7 +1347,7 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 	*   combination just rolled in is a member of this set; if yes, the throw is doable, else not.
 	*
 	*   CALLING SEQUENCE:
-	*   BOOL _pascal IsThrowDoable(BYTE DiceSum)
+	*   BOOL _pascal IsThrowDoable(byte DiceSum)
 	*
 	*   FORMAL PARAMETERS:
 	*   DiceSum is the current throw of the dice.
@@ -1369,8 +1369,8 @@ BOOL CMainWindow::IsThrowDoable(BYTE DiceSum) {
 	*/
 
 #pragma warning(disable: 4135)
-	BYTE s[9];                                                       //Open doors.
-	BYTE Count,                                               //# of open doors.
+	byte s[9];                                                       //Open doors.
+	byte Count,                                               //# of open doors.
 	     i,
 	     k,
 	     sum,

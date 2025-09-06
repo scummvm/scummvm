@@ -181,7 +181,7 @@ BOOL PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 }
 
 BOOL CreateDIBPalette(HDIB hDIB, CPalette *pPal) {
-	WORD wNumColors;
+	uint16 wNumColors;
 	HANDLE hLogPal;
 	LPLOGPALETTE lpPal;
 	BOOL bResult = false;
@@ -230,7 +230,7 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 	CPalette *pPal;
 	LPLOGPALETTE lpPal;      // pointer to a logical palette
 	HANDLE hLogPal;          // handle to a logical palette
-	WORD wNumColors;         // number of colors in color table
+	uint16 wNumColors;         // number of colors in color table
 	BOOL bResult;
 
 	wNumColors = pOrigPal->GetPaletteEntries(0, 0, nullptr);
@@ -247,7 +247,7 @@ CPalette *DuplicatePalette(CPalette *pOrigPal) {
 
 	/* set version and number of palette entries */
 	lpPal->palVersion = PALVERSION;
-	lpPal->palNumEntries = (WORD)wNumColors;
+	lpPal->palNumEntries = (uint16)wNumColors;
 
 	(*pOrigPal).GetPaletteEntries(0, wNumColors - 1, &lpPal->palPalEntry[0]);
 
@@ -278,12 +278,12 @@ uint32 DIBHeight(HDIB hDIB) {
 	return hDIB->h;
 }
 
-WORD PaletteSize(HDIB hDIB) {
+uint16 PaletteSize(HDIB hDIB) {
 	const Graphics::Palette *pal = hDIB->grabPalette();
 	return pal->size() * 3;
 }
 
-WORD DIBNumColors(HDIB lpDIB) {
+uint16 DIBNumColors(HDIB lpDIB) {
 	const Graphics::Palette *pal = lpDIB->grabPalette();
 	return pal->size();
 }
@@ -413,8 +413,8 @@ void WINAPI InitBitmapInfoHeader(LPBITMAPINFOHEADER lpBmInfoHdr,
 //---------------------------------------------------------------------
 
 HANDLE WINAPI CopyHandle(HANDLE h) {
-	BYTE *lpCopy;
-	BYTE *lp;
+	byte *lpCopy;
+	byte *lp;
 	HANDLE hCopy;
 	uint32 dwLen;
 
@@ -424,8 +424,8 @@ HANDLE WINAPI CopyHandle(HANDLE h) {
 	dwLen = GlobalSize((HGLOBAL)h);
 
 	if ((hCopy = (HANDLE) GlobalAlloc(GHND, dwLen)) != nullptr) {
-		lpCopy = (BYTE *) GlobalLock((HGLOBAL)hCopy);
-		lp = (BYTE *) GlobalLock((HGLOBAL)h);
+		lpCopy = (byte *) GlobalLock((HGLOBAL)hCopy);
+		lp = (byte *) GlobalLock((HGLOBAL)h);
 
 		while (dwLen--)
 			*lpCopy++ = *lp++;

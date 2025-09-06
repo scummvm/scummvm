@@ -428,7 +428,7 @@ char    acList[NUMBEROFLISTS][WORDSPERLIST][20] = {
 		{ "MOUSE" },    //18
 		{ "PIXEL" },    //19
 		{ "CRASH" },    //6
-		{ "BYTE" }, //3
+		{ "byte" }, //3
 		{ "BUG" },  //4
 	},
 	{

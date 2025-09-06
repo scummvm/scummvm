@@ -141,7 +141,7 @@ BOOL CDialog::CreateDlgIndirect(LPCDLGTEMPLATE lpDialogTemplate,
 #if 0
 	// If no font specified, set the system font.
 	CString strFace;
-	WORD wSize = 0;
+	uint16 wSize = 0;
 	BOOL bSetSysFont = !CDialogTemplate::GetFont(lpDialogTemplate, strFace,
 		wSize);
 	if (bSetSysFont) {

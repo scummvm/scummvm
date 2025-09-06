@@ -389,16 +389,16 @@ BOOL LineDDA(int x0, int y0, int x1, int y1, LINEDDAPROC lpProc, CDC *cdc) {
 	return TRUE;
 }
 
-BYTE GetRValue(COLORREF color) {
-	return  ((BYTE)(color & 0xFF));
+byte GetRValue(COLORREF color) {
+	return  ((byte)(color & 0xFF));
 }
 
-BYTE GetGValue(COLORREF color) {
-	return ((BYTE)((color >> 8) & 0xFF));
+byte GetGValue(COLORREF color) {
+	return ((byte)((color >> 8) & 0xFF));
 }
 
-BYTE GetBValue(COLORREF color) {
-	return ((BYTE)((color >> 16) & 0xFF));
+byte GetBValue(COLORREF color) {
+	return ((byte)((color >> 16) & 0xFF));
 }
 
 HWND GetDlgItem(HWND hDlg, int nIDDlgItem) {

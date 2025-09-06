@@ -92,14 +92,14 @@ extern uint32 DIBHeight(HDIB lpDIB);
  * @param lpbi		Pointer to packed-DIB memory block
  * @return		Size of the color palette of the DIB
  */
-extern WORD PaletteSize(HDIB lpDIB);
+extern uint16 PaletteSize(HDIB lpDIB);
 
 /**
  * Gets the number of colors in the palette
  * @param lpbi		Pointer to packed-DIB memory block
  * @return		Number of the palette colors.
  */
-extern WORD DIBNumColors(HDIB lpDIB);
+extern uint16 DIBNumColors(HDIB lpDIB);
 
 HANDLE    CopyHandle(HANDLE h);
 

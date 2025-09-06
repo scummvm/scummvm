@@ -29,7 +29,7 @@ namespace MFC {
 
 class CDC;
 
-#define PALETTEINDEX(i)     ((COLORREF)(0x01000000 | (uint32)(WORD)(i)))
+#define PALETTEINDEX(i)     ((COLORREF)(0x01000000 | (uint32)(uint16)(i)))
 
 /*
  * Class styles
@@ -264,7 +264,7 @@ enum FontWeight {
 /*
  * Standard Cursor IDs
  */
-#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((WORD)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((uint16)(i))))
 #define IDC_NONE            0
 
 #define IDC_ARROW           MAKEINTRESOURCE(32512)
@@ -629,8 +629,8 @@ typedef struct tagBITMAPINFOHEADER {
 	uint32      biSize;
 	long       biWidth;
 	long       biHeight;
-	WORD       biPlanes;
-	WORD       biBitCount;
+	uint16       biPlanes;
+	uint16       biBitCount;
 	uint32      biCompression;
 	uint32      biSizeImage;
 	long       biXPelsPerMeter;
@@ -641,10 +641,10 @@ typedef struct tagBITMAPINFOHEADER {
 *PBITMAPINFOHEADER;
 
 typedef struct tagRGBQUAD {
-	BYTE    rgbBlue;
-	BYTE    rgbGreen;
-	BYTE    rgbRed;
-	BYTE    rgbReserved;
+	byte    rgbBlue;
+	byte    rgbGreen;
+	byte    rgbRed;
+	byte    rgbReserved;
 } RGBQUAD;
 
 typedef struct tagBITMAPINFO {
@@ -658,23 +658,23 @@ typedef struct tagBITMAP {
 	long        bmWidth;
 	long        bmHeight;
 	long        bmWidthBytes;
-	WORD        bmPlanes;
-	WORD        bmBitsPixel;
+	uint16        bmPlanes;
+	uint16        bmBitsPixel;
 	void *     bmBits;
 } BITMAP, *PBITMAP, NEAR *NPBITMAP, FAR *LPBITMAP;
 
 typedef struct tagBITMAPCOREHEADER {
 	uint32   bcSize;                 /* used to get to color table */
-	WORD    bcWidth;
-	WORD    bcHeight;
-	WORD    bcPlanes;
-	WORD    bcBitCount;
+	uint16    bcWidth;
+	uint16    bcHeight;
+	uint16    bcPlanes;
+	uint16    bcBitCount;
 } BITMAPCOREHEADER, FAR *LPBITMAPCOREHEADER, *PBITMAPCOREHEADER;
 
 typedef struct tagRGBTRIPLE {
-	BYTE    rgbtBlue;
-	BYTE    rgbtGreen;
-	BYTE    rgbtRed;
+	byte    rgbtBlue;
+	byte    rgbtGreen;
+	byte    rgbtRed;
 } RGBTRIPLE, *PRGBTRIPLE, NEAR *NPRGBTRIPLE, FAR *LPRGBTRIPLE;
 
 typedef struct tagBITMAPCOREINFO {
@@ -683,15 +683,15 @@ typedef struct tagBITMAPCOREINFO {
 } BITMAPCOREINFO, FAR *LPBITMAPCOREINFO, *PBITMAPCOREINFO;
 
 typedef struct tagPALETTEENTRY {
-	BYTE        peRed;
-	BYTE        peGreen;
-	BYTE        peBlue;
-	BYTE        peFlags;
+	byte        peRed;
+	byte        peGreen;
+	byte        peBlue;
+	byte        peFlags;
 } PALETTEENTRY, *PPALETTEENTRY, FAR *LPPALETTEENTRY;
 
 typedef struct tagLOGPALETTE {
-	WORD         palVersion;
-	WORD         palNumEntries;
+	uint16         palVersion;
+	uint16         palNumEntries;
 	PALETTEENTRY palPalEntry[1];
 } LOGPALETTE, *PLOGPALETTE, NEAR *NPLOGPALETTE, FAR *LPLOGPALETTE;
 
@@ -790,9 +790,9 @@ typedef void (CALLBACK *LINEDDAPROC)(int x, int y, CDC *cdc);
 extern BOOL LineDDA(int x0, int y0, int x1, int y1,
 	LINEDDAPROC lpProc, CDC *cdc);
 
-extern BYTE GetRValue(COLORREF color);
-extern BYTE GetGValue(COLORREF color);
-extern BYTE GetBValue(COLORREF color);
+extern byte GetRValue(COLORREF color);
+extern byte GetGValue(COLORREF color);
+extern byte GetBValue(COLORREF color);
 
 extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
 extern BOOL EndDialog(HWND hDlg, INT_PTR nResult);

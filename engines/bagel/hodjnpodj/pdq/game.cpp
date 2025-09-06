@@ -43,7 +43,7 @@ namespace PDQ {
 */
 typedef struct {
 	char   text[MAX_PLENGTH_S + 1];
-	UBYTE  order[MAX_PLENGTH];
+	byte  order[MAX_PLENGTH];
 } PHRASES;
 
 typedef struct {
@@ -250,7 +250,7 @@ ERROR_CODE LoadNewPhrase(void) {
 *
 **/
 void BuildRandomPhraseOrder() {
-	UBYTE *curPhraseOrder;
+	byte *curPhraseOrder;
 	int i, j, n, newIndex;
 	bool use;
 
@@ -261,7 +261,7 @@ void BuildRandomPhraseOrder() {
 
 		curPhraseOrder = curPhrase->order;
 
-		memset(curPhraseOrder, 0, MAX_PLENGTH * sizeof(UBYTE));
+		memset(curPhraseOrder, 0, MAX_PLENGTH * sizeof(byte));
 
 		/*
 		* each entry must be a unique index into the spriteList
@@ -279,7 +279,7 @@ void BuildRandomPhraseOrder() {
 				}
 			} while (!use);
 
-			curPhraseOrder[i] = (UBYTE)newIndex;
+			curPhraseOrder[i] = (byte)newIndex;
 		}
 	}
 }

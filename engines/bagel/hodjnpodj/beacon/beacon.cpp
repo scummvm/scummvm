@@ -209,7 +209,7 @@ CMainWindow::CMainWindow() {
 		colorBlock[i].nColorIndex = BUTTON_ENTRY + i;
 
 		pMyBrush = new CBrush();                        // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(colorBlock[i].nColorIndex)));
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
 
 		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
 
@@ -389,10 +389,10 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 		End.y = Center.y + (int)(y * radius);
 
 		pMyPen = new CPen();                            // Construct new pen
-		(*pMyPen).CreatePen(PS_SOLID, 1, PALETTEINDEX((WORD)(i + START_ENTRY)));
+		(*pMyPen).CreatePen(PS_SOLID, 1, PALETTEINDEX((uint16)(i + START_ENTRY)));
 		pOldPen = (*pBigDC).SelectObject(pMyPen);
 		pMyBrush = new CBrush();                        // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(i + START_ENTRY)));
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(i + START_ENTRY)));
 		pOldBrush = (*pBigDC).SelectObject(pMyBrush);
 
 		(*pBigDC).Pie(&rect, End, Start);
@@ -1029,7 +1029,7 @@ void CALLBACK StepAlongLine(int xpos, int ypos, CDC *cdc) {
 BOOL CMainWindow::CompareColors(CDC *pDC, CPoint point) {
 	CPoint      square;
 	COLORREF    test;
-	BYTE        ar, ag, ab, br, bg, bb;
+	byte        ar, ag, ab, br, bg, bb;
 	PALETTEENTRY    tempent[1];
 	UINT        index;
 
@@ -1300,7 +1300,7 @@ BOOL CMainWindow::LoadArtWork(CDC *pDC) {
 	for (i = 0; i < NUM_BUTTONS; i++) {
 		CBrush  *pMyBrush = nullptr;
 		pMyBrush = new CBrush();                                // Construct new brush
-		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((WORD)(colorBlock[i].nColorIndex)));
+		(*pMyBrush).CreateSolidBrush(PALETTEINDEX((uint16)(colorBlock[i].nColorIndex)));
 
 		(*pArtDC).FillRect(colorBlock[i].rLocation, pMyBrush);
 
@@ -1438,10 +1438,10 @@ void MyFocusRect(CDC *pDC, CRect rect, BOOL nPressed) {
 	pDarkPen = new CPen();                          // Construct new pen
 	pLitePen = new CPen();                          // Construct new pen
 	pLitePen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER,
-	                    PALETTEINDEX((WORD)(LITE_TRIM)));        // Create a new pen
+	                    PALETTEINDEX((uint16)(LITE_TRIM)));        // Create a new pen
 
 	pDarkPen->CreatePen(PS_INSIDEFRAME, HILITE_BORDER,
-	                    PALETTEINDEX((WORD)(DARK_TRIM)));        // Create a new pen
+	                    PALETTEINDEX((uint16)(DARK_TRIM)));        // Create a new pen
 
 	pPalOld = (*pDC).SelectPalette(pGamePalette, FALSE);     // Select in game palette
 	(*pDC).RealizePalette();                                // Use it

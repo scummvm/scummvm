@@ -58,11 +58,11 @@ namespace HodjNPodj {
 #endif
 #define char char
 typedef unsigned char UCHAR;
-typedef byte UBYTE;
+typedef byte byte;
 #define int int
 typedef short SHORT;
-typedef uint16 USHORT;
-#define WORD USHORT
+typedef uint16 uint16;
+#define uint16 uint16
 #define long long
 typedef unsigned long ULONG;
 #define float float

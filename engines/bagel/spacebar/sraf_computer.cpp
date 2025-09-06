@@ -2355,7 +2355,7 @@ void SrafComputer::activateCodeWords() {
 	sStr = " ";
 	_pLBox->addToTail(sStr, false);
 
-	sStr = "CODE WORD PAIR: (,)";
+	sStr = "CODE uint16 PAIR: (,)";
 	_pLBox->addToTail(sStr, false);
 
 	// Show list box
@@ -3577,7 +3577,7 @@ void SrafComputer::onListCodeWords() {
 			*_pszGroup2Word = pszWord;
 		}
 
-		sStr = "CODE WORD PAIR: (";
+		sStr = "CODE uint16 PAIR: (";
 		if (_pszGroup1Word) {
 			sStr += *_pszGroup1Word;
 		}

@@ -206,13 +206,13 @@ namespace MFC {
 #define MM_WOM_DONE                     0x3BD
 
 #define ON_COMMAND(id, memberFxn) \
-	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_v, \
+	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)id, AfxSigCmd_v, \
 		static_cast<AFX_PMSG> (&memberFxn) },
 // ON_COMMAND(id, OnBar) is the same as
 //   ON_CONTROL(0, id, OnBar) or ON_BN_CLICKED(0, id, OnBar)
 
 #define ON_COMMAND_RANGE(id, idLast, memberFxn) \
-	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)idLast, AfxSigCmd_RANGE, \
+	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)idLast, AfxSigCmd_RANGE, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
 		 (memberFxn)) },
@@ -220,61 +220,61 @@ namespace MFC {
 //   ON_CONTROL_RANGE(0, id, idLast, OnBar)
 
 #define ON_COMMAND_EX(id, memberFxn) \
-	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)id, AfxSigCmd_EX, \
+	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)id, AfxSigCmd_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
 		 (memberFxn)) },
 
 #define ON_COMMAND_EX_RANGE(id, idLast, memberFxn) \
-	{ WM_COMMAND, CN_COMMAND, (WORD)id, (WORD)idLast, AfxSigCmd_EX, \
+	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)idLast, AfxSigCmd_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
 		 (memberFxn)) },
 
 // update ui's are listed as WM_COMMAND's so they get routed like commands
 #define ON_UPDATE_COMMAND_UI(id, memberFxn) \
-	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (WORD)id, (WORD)id, AfxSigCmdUI, \
+	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (uint16)id, (uint16)id, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
 		 (memberFxn)) },
 
 #define ON_UPDATE_COMMAND_UI_RANGE(id, idLast, memberFxn) \
-	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (WORD)id, (WORD)idLast, AfxSigCmdUI, \
+	{ WM_COMMAND, CN_UPDATE_COMMAND_UI, (uint16)id, (uint16)idLast, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY(wNotifyCode, id, memberFxn) \
-	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)id, AfxSigNotify_v, \
+	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)id, AfxSigNotify_v, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_RANGE(wNotifyCode, id, idLast, memberFxn) \
-	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigNotify_RANGE, \
+	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigNotify_RANGE, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_EX(wNotifyCode, id, memberFxn) \
-	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)id, AfxSigNotify_EX, \
+	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)id, AfxSigNotify_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_EX_RANGE(wNotifyCode, id, idLast, memberFxn) \
-	{ WM_NOTIFY, (WORD)(int)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigNotify_EX, \
+	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigNotify_EX, \
 		(AFX_PMSG) \
 		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 // for general controls
 #define ON_CONTROL(wNotifyCode, id, memberFxn) \
-	{ WM_COMMAND, (WORD)wNotifyCode, (WORD)id, (WORD)id, AfxSigCmd_v, \
+	{ WM_COMMAND, (uint16)wNotifyCode, (uint16)id, (uint16)id, AfxSigCmd_v, \
 		(static_cast< AFX_PMSG > (&memberFxn)) },
 
 #define ON_CONTROL_RANGE(wNotifyCode, id, idLast, memberFxn) \
-	{ WM_COMMAND, (WORD)wNotifyCode, (WORD)id, (WORD)idLast, AfxSigCmd_RANGE, \
+	{ WM_COMMAND, (uint16)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigCmd_RANGE, \
 		(AFX_PMSG) \
 		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT) > (memberFxn)) },
 
@@ -282,28 +282,28 @@ namespace MFC {
 
 // for control notification reflection
 #define ON_CONTROL_REFLECT(wNotifyCode, memberFxn) \
-	{ WM_COMMAND+WM_REFLECT_BASE, (WORD)wNotifyCode, 0, 0, AfxSigCmd_v, \
+	{ WM_COMMAND+WM_REFLECT_BASE, (uint16)wNotifyCode, 0, 0, AfxSigCmd_v, \
 		(static_cast<AFX_PMSG> (memberFxn)) },
 
 #define ON_CONTROL_REFLECT_EX(wNotifyCode, memberFxn) \
-	{ WM_COMMAND+WM_REFLECT_BASE, (WORD)wNotifyCode, 0, 0, AfxSigCmd_b, \
+	{ WM_COMMAND+WM_REFLECT_BASE, (uint16)wNotifyCode, 0, 0, AfxSigCmd_b, \
 		(AFX_PMSG) \
 		(static_cast<BOOL (AFX_MSG_CALL CCmdTarget::*)(void)> (memberFxn)) },
 
 #define ON_NOTIFY_REFLECT(wNotifyCode, memberFxn) \
-	{ WM_NOTIFY+WM_REFLECT_BASE, (WORD)(int)wNotifyCode, 0, 0, AfxSigNotify_v, \
+	{ WM_NOTIFY+WM_REFLECT_BASE, (uint16)(int)wNotifyCode, 0, 0, AfxSigNotify_v, \
 		(AFX_PMSG) \
 		(static_cast<void (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_REFLECT_EX(wNotifyCode, memberFxn) \
-	{ WM_NOTIFY+WM_REFLECT_BASE, (WORD)(int)wNotifyCode, 0, 0, AfxSigNotify_b, \
+	{ WM_NOTIFY+WM_REFLECT_BASE, (uint16)(int)wNotifyCode, 0, 0, AfxSigNotify_b, \
 		(AFX_PMSG) \
 		(static_cast<BOOL (AFX_MSG_CALL CCmdTarget::*)(NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_UPDATE_COMMAND_UI_REFLECT(memberFxn) \
-	{ WM_COMMAND+WM_REFLECT_BASE, (WORD)CN_UPDATE_COMMAND_UI, 0, 0, AfxSigCmdUI, \
+	{ WM_COMMAND+WM_REFLECT_BASE, (uint16)CN_UPDATE_COMMAND_UI, 0, 0, AfxSigCmdUI, \
 		(AFX_PMSG) \
 		(static_cast<void (AFX_MSG_CALL CCmdTarget::*)(CCmdUI*) > \
 		 (memberFxn)) },

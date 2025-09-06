@@ -2207,7 +2207,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 	         *pBitmap2 = nullptr,                           // bitmap for context 2
 	          *pBitmap1Old = nullptr,                        // bitmap previously mapped to context 1
 	           *pBitmap2Old = nullptr;                        // bitmap previously mapped to context 2
-	BYTE    *chPixels = nullptr;                           // buffer for holding pixel values
+	byte    *chPixels = nullptr;                           // buffer for holding pixel values
 	int     dx, dy,                                     // dimensions of context bitmaps
 	        i, j;
 	size_t  stN;
@@ -2226,7 +2226,7 @@ BOOL CSprite::SpritesOverlap(CDC * pDC, CSprite * pSprite, CPoint *pPoint) {
 	dy = unionRect.bottom - unionRect.top;              // ... and the bitmap area where it will be next
 
 	dwN = stN = ((dx + 15) >> 3) * dy;                    // calculate the amount of memory that a bitmap mask
-	chPixels = (BYTE *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
+	chPixels = (byte *) calloc((size_t) 1, stN);        // ... will occupy and allocation that amount of space
 	if (!chPixels)
 		return FALSE;
 

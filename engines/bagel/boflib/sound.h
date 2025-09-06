@@ -83,10 +83,10 @@ public:
 	virtual ~CBofSound();
 	void addToSoundChain();
 
-	void initialize(const char *pszPathName, WORD wFlags) {
+	void initialize(const char *pszPathName, uint16 wFlags) {
 		initialize(nullptr, pszPathName, wFlags);
 	}
-	void initialize(void *pWnd, const char *pszPathName, WORD wFlags);
+	void initialize(void *pWnd, const char *pszPathName, uint16 wFlags);
 	void setDrivePath(const char *path) {}
 	bool midiLoopPlaySegment(uint32 LoopBegin, uint32 LoopEnd = 0L, uint32 FirstPassBegin = 0L, uint32 TimeFmt = FMT_MILLISEC);
 	bool play(uint32 StartOfPlay = 0L, uint32 TimeFmtFlag = FMT_MILLISEC);

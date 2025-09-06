@@ -1102,13 +1102,13 @@ BOOL PaintBlockEffect(CDC *pDC, CBitmap *pBitmap, CPalette* pPalette, int nBlock
 			continue;
 		y = (value / width) * nBlockSize;
 		x = (value % width) * nBlockSize;
-		(*pDC).BitBlt((WORD) x,
-		              (WORD) y,
+		(*pDC).BitBlt((uint16) x,
+		              (uint16) y,
 		              nBlockSize,
 		              nBlockSize,
 		              pMemDC,
-		              (WORD) x,
-		              (WORD) y,
+		              (uint16) x,
+		              (uint16) y,
 		              SRCCOPY);
 	}
 

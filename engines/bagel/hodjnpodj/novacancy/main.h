@@ -86,17 +86,17 @@ protected:
 	BOOL m_bDoorBmpLoaded[10];
 	BOOL m_bGameLoadUp;
 
-	BYTE m_cDoorToOpen;
-	BYTE m_LDie;
-	BYTE m_RDie;
-	BYTE m_cUnDoableThrows;
+	byte m_cDoorToOpen;
+	byte m_LDie;
+	byte m_RDie;
+	byte m_cUnDoableThrows;
 
 	short m_iMoveValid;             //    flag to indicate the legal status of the last move. It is a ternary indicator :
 	//      1 => Perfectly legal move, and the dice van be rolled if desired.
 	//      0 => Legal move but not complete to roll the dice. The dice are disabled.
 	//      -1=> Illegal move; stop and correct yourself. The dice are disabled.
-	BYTE m_cDoorCount;            //    keeps track of all closed doors, irrespective of the  validity of  the move
-	BYTE m_cActiveDoor;           //    the door whose status has just been changed (as result of mouse action).
+	byte m_cDoorCount;            //    keeps track of all closed doors, irrespective of the  validity of  the move
+	byte m_cActiveDoor;           //    the door whose status has just been changed (as result of mouse action).
 	BOOL m_bOneDieCase;        //   this variable is always FALSE unless doors 7, 8, and 9 are FIEXD.
 
 	//other objects for animation...
@@ -126,7 +126,7 @@ private:
 
 	void AnimateDice(void);
 	short LegalizeMove(short i);
-	BOOL IsThrowDoable(BYTE dice_sum);
+	BOOL IsThrowDoable(byte dice_sum);
 };
 
 

@@ -85,8 +85,8 @@ public:
 	    int nSec,
 	    int nDST = -1);
 	CTime(
-	    WORD wDosDate,
-	    WORD wDosTime,
+	    uint16 wDosDate,
+	    uint16 wDosTime,
 	    int nDST = -1);
 	CTime(
 	    const SYSTEMTIME &st,

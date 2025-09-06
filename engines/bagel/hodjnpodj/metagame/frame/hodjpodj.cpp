@@ -141,7 +141,7 @@ long    lChallengeScore = 0;
 CSound  *pBackgroundMidi = nullptr;
 
 #define BELLCURVE   100
-UBYTE     anBellCurve[BELLCURVE] = {
+byte     anBellCurve[BELLCURVE] = {
 	1,
 	2, 2,
 	3, 3, 3,

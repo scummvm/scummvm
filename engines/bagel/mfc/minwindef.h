@@ -120,12 +120,12 @@ typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 	#define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-#define MAKEWORD(a, b)      ((WORD)(((BYTE)(((DWORD_PTR)(a)) & 0xff)) | ((WORD)((BYTE)(((DWORD_PTR)(b)) & 0xff))) << 8))
-#define MAKELONG(a, b)      ((long)(((WORD)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((WORD)(((DWORD_PTR)(b)) & 0xffff))) << 16))
-#define LOWORD(l)           ((WORD)(((DWORD_PTR)(l)) & 0xffff))
+#define MAKEWORD(a, b)      ((uint16)(((byte)(((DWORD_PTR)(a)) & 0xff)) | ((uint16)((byte)(((DWORD_PTR)(b)) & 0xff))) << 8))
+#define MAKELONG(a, b)      ((long)(((uint16)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((uint16)(((DWORD_PTR)(b)) & 0xffff))) << 16))
+#define LOWORD(l)           ((uint16)(((DWORD_PTR)(l)) & 0xffff))
 #define HIWORD(l)           ((((DWORD_PTR)(l)) >> 16))
-#define LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) & 0xff))
-#define HIBYTE(w)           ((BYTE)((((DWORD_PTR)(w)) >> 8) & 0xff))
+#define LOBYTE(w)           ((byte)(((DWORD_PTR)(w)) & 0xff))
+#define HIBYTE(w)           ((byte)((((DWORD_PTR)(w)) >> 8) & 0xff))
 
 #define POINTTOPOINTS(pt)      (MAKELONG((short)((pt).x), (short)((pt).y)))
 #define MAKEWPARAM(l, h)      ((WPARAM)(uint32)MAKELONG(l, h))
@@ -142,7 +142,7 @@ typedef HANDLE LOCALHANDLE;
 
 #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
-typedef WORD                ATOM;   //BUGBUG - might want to remove this from minwin
+typedef uint16                ATOM;   //BUGBUG - might want to remove this from minwin
 
 DECLARE_HANDLE(HKEY);
 typedef HKEY *PHKEY;
@@ -235,14 +235,14 @@ typedef struct _FILETIME {
 } FILETIME, *PFILETIME, *LPFILETIME;
 
 typedef struct _SYSTEMTIME {
-	WORD wYear;
-	WORD wMonth;
-	WORD wDayOfWeek;
-	WORD wDay;
-	WORD wHour;
-	WORD wMinute;
-	WORD wSecond;
-	WORD wMilliseconds;
+	uint16 wYear;
+	uint16 wMonth;
+	uint16 wDayOfWeek;
+	uint16 wDay;
+	uint16 wHour;
+	uint16 wMinute;
+	uint16 wSecond;
+	uint16 wMilliseconds;
 } SYSTEMTIME, *PSYSTEMTIME, *LPSYSTEMTIME;
 
 typedef struct tagPAINTSTRUCT {
@@ -251,7 +251,7 @@ typedef struct tagPAINTSTRUCT {
 	RECT        rcPaint;
 	BOOL        fRestore;
 	BOOL        fIncUpdate;
-	BYTE        rgbReserved[32];
+	byte        rgbReserved[32];
 } PAINTSTRUCT, *PPAINTSTRUCT, *NPPAINTSTRUCT, *LPPAINTSTRUCT;
 
 /*

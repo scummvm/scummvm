@@ -75,7 +75,7 @@ void CBofSound::addToSoundChain() {
 	}
 }
 
-void CBofSound::initialize(void *pWnd, const char *pszPathName, WORD wFlags) {
+void CBofSound::initialize(void *pWnd, const char *pszPathName, uint16 wFlags) {
 	// Validate input
 	assert(pszPathName != nullptr);
 	assert(strlen(pszPathName) < MAX_FNAME);

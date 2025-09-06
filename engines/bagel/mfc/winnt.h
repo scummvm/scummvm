@@ -26,18 +26,13 @@ namespace Bagel {
 namespace MFC {
 
 typedef int BOOL;
-typedef byte BYTE;
-typedef byte UBYTE;
 typedef uint16 TCHAR;
 typedef uint16 SHORT;
-typedef uint16 WORD;
-typedef uint16 USHORT;
 typedef unsigned long ULONG;
 typedef int64 LONGLONG;
 typedef uint64 ULONGLONG;
-typedef WORD *PWORD;
-typedef WORD *LPWORD;
-typedef long *LPLONG;
+typedef uint16 *PWORD;
+typedef uint16 *LPWORD;
 typedef uint32 *PDWORD;
 typedef uint32 *LPDWORD;
 
@@ -58,7 +53,7 @@ typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;
 
-#define RGB_COL(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((uint32)(BYTE)(b))<<16)))
+#define RGB_COL(r,g,b)          ((COLORREF)(((byte)(r)|((uint16)((byte)(g))<<8))|(((uint32)(byte)(b))<<16)))
 #define PALETTERGB(r,g,b)   (0x02000000 | RGB_COL(r,g,b))
 #define RGB(r,g,b) PALETTERGB(r,g,b)
 #define IS_RGB(VAL) ((VAL & 0x02000000) != 0)
@@ -90,7 +85,7 @@ typedef long HRESULT;
 typedef char CCHAR;
 typedef uint32 LCID;
 typedef PDWORD PLCID;
-typedef WORD   LANGID;
+typedef uint16   LANGID;
 
 typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
 
@@ -634,7 +629,7 @@ typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
  /*
   * Predefined Resource Types
   */
-#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((WORD)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((uint16)(i))))
 #define RT_CURSOR           MAKEINTRESOURCE(1)
 #define RT_BITMAP           MAKEINTRESOURCE(2)
 #define RT_ICON             MAKEINTRESOURCE(3)
@@ -700,15 +695,15 @@ typedef struct tagTEXTMETRICA {
 	long        tmOverhang = 0;
 	long        tmDigitizedAspectX = 0;
 	long        tmDigitizedAspectY = 0;
-	BYTE        tmFirstChar = 0;
-	BYTE        tmLastChar = 0;
-	BYTE        tmDefaultChar = 0;
-	BYTE        tmBreakChar = 0;
-	BYTE        tmItalic = 0;
-	BYTE        tmUnderlined = 0;
-	BYTE        tmStruckOut = 0;
-	BYTE        tmPitchAndFamily = 0;
-	BYTE        tmCharSet = 0;
+	byte        tmFirstChar = 0;
+	byte        tmLastChar = 0;
+	byte        tmDefaultChar = 0;
+	byte        tmBreakChar = 0;
+	byte        tmItalic = 0;
+	byte        tmUnderlined = 0;
+	byte        tmStruckOut = 0;
+	byte        tmPitchAndFamily = 0;
+	byte        tmCharSet = 0;
 } TEXTMETRIC, *PTEXTMETRIC, *LPTEXTMETRIC;
 
 typedef struct tagGCP_RESULTS {

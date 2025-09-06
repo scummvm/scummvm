@@ -54,15 +54,15 @@ BOOL CDialogTemplate::HasFont() const {
 	return false;
 }
 
-BOOL CDialogTemplate::SetFont(const char *lpFaceName, WORD nFontSize) {
+BOOL CDialogTemplate::SetFont(const char *lpFaceName, uint16 nFontSize) {
 	return false;
 }
 
-BOOL CDialogTemplate::SetSystemFont(WORD nFontSize) {
+BOOL CDialogTemplate::SetSystemFont(uint16 nFontSize) {
 	return false;
 }
 
-BOOL CDialogTemplate::GetFont(CString &strFaceName, WORD &nFontSize) const {
+BOOL CDialogTemplate::GetFont(CString &strFaceName, uint16 &nFontSize) const {
 	return false;
 }
 
@@ -73,7 +73,7 @@ void CDialogTemplate::GetSizeInPixels(SIZE *pSize) const {
 }
 
 BOOL CDialogTemplate::GetFont(LPCDLGTEMPLATE pTemplate,
-		CString &strFaceName, WORD &nFontSize) {
+		CString &strFaceName, uint16 &nFontSize) {
 	return false;
 }
 

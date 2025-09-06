@@ -107,7 +107,7 @@ struct PLAYER_INFO {
  */
 struct SAVEGAME_INFO {
 	ULONG   m_lBoffoGameID = 0;
-	USHORT  m_nFixedRecordSize = 0;
+	uint16  m_nFixedRecordSize = 0;
 	BOOL    m_bUsed = false;
 	//	char    m_szSaveGameDescription[40];    // description of this saved game
 
@@ -119,7 +119,7 @@ struct SAVEGAME_INFO {
 
 	int     m_iMishMoshLoc = 0;		// MG_LOC_xxxx -- Mish/Mosh location
 
-	UBYTE   m_chJunk[80] = { 0 };	// for future use so the .SAV file size
+	byte   m_chJunk[80] = { 0 };	// for future use so the .SAV file size
 	// does not have to change
 
 	BOOL    m_bSoundEffectsEnabled = false;

@@ -104,7 +104,7 @@ namespace Riddles {
 
 #include "common/pack-start.h"  // START STRUCT PACKING
 struct RIDDLE {
-	USHORT nSoundId;
+	uint16 nSoundId;
 	char text[MAX_RIDDLE_LENGTH + 1];
 	char answers[MAX_ANSWERS][MAX_ANSWER_LENGTH + 1];
 } PACKED_STRUCT;

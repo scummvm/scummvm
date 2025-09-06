@@ -307,8 +307,8 @@ BOOL CMnk::InitData(BOOL bInit)
 //    long lTableSize ;     // size of lookup table
 	long lK ;       // loop variable
 	int iJ ;        // loop variable
-	BYTE *hpcTab;    // table pointer for initialization
-	BYTE *xpcFive;        // ptr to Five structure
+	byte *hpcTab;    // table pointer for initialization
+	byte *xpcFive;        // ptr to Five structure
 	struct FIVE stFive = {TABLEUNDEF,           // 0
 		       TABLEUNDEF >> 2, TABLEUNDEF & 3, TABLEUNDEF, // 1-2
 		       TABLEUNDEF >> 4, TABLEUNDEF & 15,       // 3
@@ -339,14 +339,14 @@ BOOL CMnk::InitData(BOOL bInit)
 			goto cleanup ;
 		}
 		if (!(m_lpCMnkData->m_hpcBestWin
-		        = (BYTE *)GlobalLock(m_lpCMnkData->m_hBestWin))) {
+		        = (byte *)GlobalLock(m_lpCMnkData->m_hBestWin))) {
 			iError = 111 ;  // Windows GlobalLock failure
 			goto cleanup ;
 		}
 
 		#if 0
 		if (!(m_lpCMnkData->m_hpcBestWin =
-		            new BYTE[m_lTableSize + 8])) {
+		            new byte[m_lTableSize + 8])) {
 			iError = 101 ;  // can't allocate best win array
 			goto cleanup ;
 		}
@@ -357,7 +357,7 @@ BOOL CMnk::InitData(BOOL bInit)
 			for (lK = m_lTableSize / sizeof(struct FIVE),
 			        hpcTab = m_lpCMnkData->m_hpcBestWin ; lK-- > 0 ;)
 				for (iJ = sizeof(struct FIVE),
-				        xpcFive = (BYTE *)&stFive ; iJ-- > 0 ;)
+				        xpcFive = (byte *)&stFive ; iJ-- > 0 ;)
 					*hpcTab++ = *xpcFive++ ;
 
 			PopulateTable() ;   // populate the best win table
@@ -1627,14 +1627,14 @@ int CMnk::ExtendedStaticEvaluation(MOVE *pMove, MOVE *pParentMove,  signed char 
 #define MAKEWORD(L, H)          ((L)||(H<<8))
 #define CreateMoveChainWord(Gain, Flag, Pit)    (MAKEWORD((Flag) ||(Pit), Gain))
 
-WORD Type(BYTE pit, CONFIG* pStoneCfg){
+uint16 Type(byte pit, CONFIG* pStoneCfg){
 
 //returns F/C/T/N in the lowbyte    and the amount of gain/save in the high byte.
 }
 
-BOOL CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   WORD* pwMoveChain){
+BOOL CMnk::LookAheadEvaluation(CONFIG* pStoneConfig, int iPlayer,   uint16* pwMoveChain){
     static BOOL bLocked;
-    BYTE Pit;
+    byte Pit;
 
     for(Pit=0; Pit<NUMPITS; Pit++){
         switch(LOBYTE(u=Type(iPit, pStoneConfig))){
@@ -1853,7 +1853,7 @@ cleanup:
 //
 //  if (lIndex >= THRESHHOLD)
 //  {
-//  static BYTE FAR cBuffer[BUFSIZE] ;
+//  static byte FAR cBuffer[BUFSIZE] ;
 //
 //  if (lIndex == THRESHHOLD)
 //  {

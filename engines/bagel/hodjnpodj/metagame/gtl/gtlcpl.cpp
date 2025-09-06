@@ -365,13 +365,13 @@ BOOL CGtlData::ParseLine(void)
 			case KT_WEIGHT:
 				lpNode->m_bWgtSpec = TRUE ;
 				xpLxel = ParseInteger(xpLxel, LXT_IDENT, iTmp) ;
-				lpNode->m_iWeight = (UBYTE)iTmp;
+				lpNode->m_iWeight = (byte)iTmp;
 				break ;
 
 			case KT_SENSITIVITY:
 				lpNode->m_bSenSpec = TRUE ;
 				xpLxel = ParseInteger(xpLxel, LXT_IDENT, iTmp);
-				lpNode->m_iSensitivity = (UBYTE)iTmp;
+				lpNode->m_iSensitivity = (byte)iTmp;
 				break ;
 
 			case KT_SECTOR:

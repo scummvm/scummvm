@@ -319,8 +319,8 @@ CBFishWindow::CBFishWindow(void) {
 
 	// Init the player grids
 	//
-	memset(m_nUserGrid, EMPTY, sizeof(UBYTE) * GRID_ROWS * GRID_COLS);
-	memset(m_nEnemyGrid, EMPTY, sizeof(UBYTE) * GRID_ROWS * GRID_COLS);
+	memset(m_nUserGrid, EMPTY, sizeof(byte) * GRID_ROWS * GRID_COLS);
+	memset(m_nEnemyGrid, EMPTY, sizeof(byte) * GRID_ROWS * GRID_COLS);
 
 	// Set the coordinates for the "Start New Game" button
 	//
@@ -863,7 +863,7 @@ ERROR_CODE CBFishWindow::RepaintSpriteList(CDC *pDC) {
 *
 *  FORMAL PARAMETERS:
 *
-*       WPARAM = WORD parameter for this message
+*       WPARAM = uint16 parameter for this message
 *       LPARAM = long parameter for this message
 *
 *  RETURN VALUE:
@@ -1271,7 +1271,7 @@ void CBFishWindow::PlaceEnemyFish(void) {
 						rowTmp = m_aEnemyFishInfo[i].nLoc[k].x;
 						colTmp = m_aEnemyFishInfo[i].nLoc[k].y;
 
-						m_nEnemyGrid[rowTmp][colTmp] = (UBYTE)IndexToId(i);
+						m_nEnemyGrid[rowTmp][colTmp] = (byte)IndexToId(i);
 					}
 					break;
 				}
@@ -1446,8 +1446,8 @@ void CBFishWindow::GameReset(void) {
 
 	// reset the play grids
 	//
-	memset(m_nUserGrid, EMPTY, sizeof(UBYTE) * GRID_ROWS * GRID_COLS);
-	memset(m_nEnemyGrid, EMPTY, sizeof(UBYTE) * GRID_ROWS * GRID_COLS);
+	memset(m_nUserGrid, EMPTY, sizeof(byte) * GRID_ROWS * GRID_COLS);
+	memset(m_nEnemyGrid, EMPTY, sizeof(byte) * GRID_ROWS * GRID_COLS);
 
 	// make a copy of the fish sizes
 	memcpy(&m_aUserFishInfo, &gFishSizes, sizeof(FISH) * MAX_FISH);
@@ -1626,9 +1626,9 @@ void CBFishWindow::AssignFishToGrid(int nFishIndex) {
 		assert(nColTmp >= 0 && nColTmp < GRID_COLS);
 
 		// this square must be empty (or can contain parts of same fish)
-		assert(m_nUserGrid[nRowTmp][nColTmp] == EMPTY || m_nUserGrid[nRowTmp][nColTmp] == (UBYTE)IndexToId(nFishIndex));
+		assert(m_nUserGrid[nRowTmp][nColTmp] == EMPTY || m_nUserGrid[nRowTmp][nColTmp] == (byte)IndexToId(nFishIndex));
 
-		m_nUserGrid[nRowTmp][nColTmp] = (UBYTE)IndexToId(nFishIndex);
+		m_nUserGrid[nRowTmp][nColTmp] = (byte)IndexToId(nFishIndex);
 	}
 }
 
@@ -2079,7 +2079,7 @@ BOOL CBFishWindow::OkToPlaceFish(int nFishIndex, CPoint point, BOOL bRotated) {
 
 			// can't put the new fish into a non-empty square
 			//
-			if ((m_nUserGrid[nRow][nCol] != EMPTY) && (m_nUserGrid[nRow][nCol] != (UBYTE)nID)) {
+			if ((m_nUserGrid[nRow][nCol] != EMPTY) && (m_nUserGrid[nRow][nCol] != (byte)nID)) {
 				bOk = FALSE;
 				break;
 			}
@@ -2121,7 +2121,7 @@ void CBFishWindow::PlaceFish(int nFishIndex, CPoint point) {
 			nCol = (nGridIndex % GRID_COLS) + m_aUserFishInfo[nFishIndex].nLoc[i].y;
 		}
 
-		m_nUserGrid[nRow][nCol] = (UBYTE)nID;
+		m_nUserGrid[nRow][nCol] = (byte)nID;
 	}
 }
 

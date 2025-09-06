@@ -386,7 +386,7 @@ typedef class FAR CMnkData {
 	// p pits.
 
 	HGLOBAL m_hBestWin; // Windows handle for best win table
-	BYTE *m_hpcBestWin; // pointer to array
+	byte *m_hpcBestWin; // pointer to array
 	// of 5 bit values.  The subscripts are integers
 	// 0 <= subscript <= NUMCONFIGS, and the array element
 	// specifies the number of stones (-15 to +15, with -16
