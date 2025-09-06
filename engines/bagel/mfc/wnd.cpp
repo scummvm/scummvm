@@ -761,6 +761,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 			CPoint(LOWORD(lParam), HIWORD(lParam)));
 		if (!lResult)
 			return FALSE;
+		break;
 
 	case AfxSig_vwpb:
 		(this->*mmf.pfn_vFb)((HFONT)wParam, (BOOL)lParam);

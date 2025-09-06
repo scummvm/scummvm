@@ -711,6 +711,7 @@ BOOL CMnk::SearchMove(CMove * xpcMove, int &iMove)
 
 	case LEV_LOWEST:
 		StaticEvaluation(xpcMove);
+		// fall through
 	case LEV_HIGHEST:
 		AggressiveStaticEvaluation(xpcMove);
 		break;
