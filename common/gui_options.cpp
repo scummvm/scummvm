@@ -176,7 +176,7 @@ String parseGameGUIOptions(const String &str) {
 const String getGameGUIOptionsDescription(const String &options) {
 	String res;
 
-	for (int i = 0; i < options.size(); i++) {
+	for (uint i = 0; i < options.size(); i++) {
 		// Skip the next byte after platform prefix as it will contain platform info
 		if (options[i] == GUIO_PLATFORM_PREFIX[0]) {
 			i++;
