@@ -5,7 +5,7 @@
 #
 ######################################################################
 
-TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/common/formats/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h $(srcdir)/test/image/*.h
+TESTS        := $(srcdir)/test/tcommon/*.h $(srcdir)/test/tcommon/formats/*.h $(srcdir)/test/taudio/*.h $(srcdir)/test/tmath/*.h $(srcdir)/test/timage/*.h
 TEST_LIBS    :=
 
 ifdef POSIX
@@ -31,22 +31,22 @@ endif
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/formats/libformats.a common/compression/libcompression.a common/libcommon.a image/libimage.a graphics/libgraphics.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
-	TESTS += $(srcdir)/test/engines/wintermute/*.h
+	TESTS += $(srcdir)/test/tengines/wintermute/*.h
 	TEST_LIBS += engines/wintermute/libwintermute.a
 endif
 
 ifeq ($(ENABLE_ULTIMA), STATIC_PLUGIN)
 ifdef ENABLE_ULTIMA1
-	TESTS += $(srcdir)/test/engines/ultima/shared/*/*.h
+	TESTS += $(srcdir)/test/tengines/ultima/shared/*/*.h
 endif
 ifdef ENABLE_ULTIMA8
-	TESTS += $(srcdir)/test/engines/ultima/ultima8/*/*.h
+	TESTS += $(srcdir)/test/tengines/ultima/ultima8/*/*.h
 endif
 	TEST_LIBS += engines/ultima/libultima.a
 endif
 
 ifeq ($(ENABLE_TWINE), STATIC_PLUGIN)
-	TESTS += $(srcdir)/test/engines/twine/*.h
+	TESTS += $(srcdir)/test/tengines/twine/*.h
 	TEST_LIBS += engines/twine/libtwine.a
 endif
 

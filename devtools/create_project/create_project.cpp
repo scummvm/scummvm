@@ -401,7 +401,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Disable unused features / components
-	disableComponents(setup.components);
+	if (!setup.tests)
+		disableComponents(setup.components);
 
 	// Handle hard-coded component logic
 	fixupComponents(setup);
@@ -2373,6 +2374,9 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 			if (*i != ":=" && *i != "+=" && *i != "=")
 				error("Malformed TESTS definition in " + moduleMkFile);
 			++i;
+
+			if (!shouldInclude.top())
+				continue;
 
 			while (i != tokens.end()) {
 				// Read input
