@@ -44,6 +44,7 @@ const DebugChannelDef Hpl1MetaEngineDetection::debugFlagList[] = {
 
 Hpl1MetaEngineDetection::Hpl1MetaEngineDetection() : AdvancedMetaEngineDetection(Hpl1::GAME_DESCRIPTIONS,
 																				 Hpl1::GAME_NAMES) {
+	_flags = kADFlagMatchFullPaths;
 }
 
 REGISTER_PLUGIN_STATIC(HPL1_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, Hpl1MetaEngineDetection);
