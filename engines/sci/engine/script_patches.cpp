@@ -21613,6 +21613,46 @@ static const uint16 qfg4UseExtraProjectilePatch[] = {
 	PATCH_END
 };
 
+// The QFG4 Enhanced fan patch fixes the Rusalka's broken messages in a way that
+//  is incompatible with our preexisting fix. Sierra severely broke the message
+//  sequence for giving the Rusalka flowers in the CD version. We repair this
+//  with message and audio36 workarounds to restore and remap these resources.
+//  Years later, the QFG4 Enhanced fan patch fixed this with a new script and a
+//  new message sequence that changes the meaning of the message tuples.
+//  This conflicts with our workarounds and breaks the message sequence again.
+//
+// We work around this by patching the QFG4 Enhanced sGiveFlowers script to
+//  request message tuples that are compatible with our workarounds, at the cost
+//  of removing one text-only message that was not in the original CD version.
+//
+// Applies to: QFG4 Enhanced 1.1 fan patch
+// Responsible method: sGiveFlowers:changeState
+// Fixes bug: #14910
+static const uint16 qfg4FanPatchRusalkaSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, PATCH_UINT16(0x0208),         // pushi 208 [ modNum ]
+	0x7a,                               // push2     [ noun ]
+	0x39, 0x3b,                         // pushi 3b  [ verb ]
+	SIG_ADDTOOFFSET(+61),
+	0x38, SIG_SELECTOR16(say),          // pushi say
+	0x39, 0x05,                         // pushi 05
+	0x7a,                               // push2    [ noun: 2 ]
+	0x39, 0x3b,                         // pushi 3b [ verb: 59 ]
+	0x76,                               // push0    [ cond: 0 ]
+	0x7a,                               // push2    [ seq: 2 ]
+	SIG_END
+};
+
+static const uint16 qfg4FanPatchRusalkaPatch[] = {
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1c,                         // aTop cycles [ cycles = 1 ]
+	0x3a,                               // toss
+	0x48,                               // ret
+	PATCH_ADDTOOFFSET(+70),
+	0x78,                               // push1    [ seq: 1 ]
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -21661,6 +21701,7 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   475, "fix tarot 5 card priority",                   1, qfg4Tarot5PrioritySignature,   qfg4Tarot5PriorityPatch },
 	{  false,  500, "CD: fix rope during Igor rescue (1/2)",       1, qfg4GraveyardRopeSignature1,   qfg4GraveyardRopePatch1 },
 	{  false,  500, "CD: fix rope during Igor rescue (2/2)",       1, qfg4GraveyardRopeSignature2,   qfg4GraveyardRopePatch2 },
+	{  true,   520, "fan patch: fix rusalka messages",             1, qfg4FanPatchRusalkaSignature,  qfg4FanPatchRusalkaPatch },
 	{  true,   530, "fix setLooper calls (1/2)",                   4, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   535, "fix setLooper calls (1/2)",                   4, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
 	{  true,   541, "fix setLooper calls (1/2)",                   5, qfg4SetLooperSignature1,       qfg4SetLooperPatch1 },
