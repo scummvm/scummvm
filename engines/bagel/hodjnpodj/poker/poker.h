@@ -277,8 +277,8 @@ public:
 	void    ResetGame(long = 0L);
 	void    SetBet(long);
 
-	static  void ReleaseResources(void);
-	static  void FlushInputEvents(void);
+	static  void ReleaseResources();
+	static  void FlushInputEvents();
 
 private:
 	int     DealNewCard();

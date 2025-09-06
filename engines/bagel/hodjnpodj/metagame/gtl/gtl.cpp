@@ -117,7 +117,7 @@ bool CGtlApp::InitInstance() {
 }
 
 
-void CGtlApp::CreateInstance(void) {
+void CGtlApp::CreateInstance() {
 	pSdiDocTemplate = new CSingleDocTemplate(
 	    IDR_GTLTYPE,
 	    RUNTIME_CLASS(CGtlDoc),
@@ -131,7 +131,7 @@ void CGtlApp::CreateInstance(void) {
 }
 
 //* CGtlApp::CallOnFileNew --
-bool CGtlApp::CallOnFileNew(void)
+bool CGtlApp::CallOnFileNew()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileNew) ;
@@ -146,7 +146,7 @@ bool CGtlApp::CallOnFileNew(void)
 }
 
 //* CGtlApp::CallOnFileOpen --
-bool CGtlApp::CallOnFileOpen(void)
+bool CGtlApp::CallOnFileOpen()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileOpen) ;
@@ -161,7 +161,7 @@ bool CGtlApp::CallOnFileOpen(void)
 }
 
 //* CGtlApp::CallOnFileSave --
-bool CGtlApp::CallOnFileSave(void)
+bool CGtlApp::CallOnFileSave()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlApp::CallOnFileSave) ;

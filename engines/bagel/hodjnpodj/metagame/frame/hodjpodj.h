@@ -70,48 +70,48 @@ private:
 public:
 	CHodjPodjWindow();
 
-	void BlackScreen(void);
+	void BlackScreen();
 
-	void FreeCurrentDLL(void);
-	bool LoadMetaDLL(void);
-	bool LoadZoomDLL(void);
-	bool LoadGrandTourDLL(void);
+	void FreeCurrentDLL();
+	bool LoadMetaDLL();
+	bool LoadZoomDLL();
+	bool LoadGrandTourDLL();
 
 	void HandleError(ERROR_CODE);
 
 	void PlayMovie(const int, const char *, bool);
 
-	void GetProfilePath(void);
-	void GetHomePath(void);
-	bool GetCDPath(void);
-	bool PositionAtHomePath(void);
+	void GetProfilePath();
+	void GetHomePath();
+	bool GetCDPath();
+	bool PositionAtHomePath();
 	bool PositionAtMiniPath(int);
-	bool PositionAtCDPath(void);
-	bool FindCDROM(void);
-	bool DriveWriteLocked(void);
+	bool PositionAtCDPath();
+	bool FindCDROM();
+	bool DriveWriteLocked();
 
-	long DetermineChallengeScore(void);
+	long DetermineChallengeScore();
 	LPARAM UpdateChallengePhase(LPARAM);
-	void SetComputerScore(void);
+	void SetComputerScore();
 
-	void GetProfileSettings(void);
-	void SaveProfileSettings(void);
+	void GetProfileSettings();
+	void SaveProfileSettings();
 
-	bool CheckLowMemory(void);
+	bool CheckLowMemory();
 
-	bool Restore(void);
-	void ShowCredits(void);
+	bool Restore();
+	void ShowCredits();
 
-	static  void ReleaseResources(void);
-	static  void FlushInputEvents(void);
+	static  void ReleaseResources();
+	static  void FlushInputEvents();
 
 private:
 	bool CheckConfig(CDC *pDC);
-	bool SetupNewMeta(void);
+	bool SetupNewMeta();
 	void LoadNewDLL(LPARAM);
-	void UpdateDLLRouting(void);
-	void StartBackgroundMidi(void);
-	void StopBackgroundMidi(void);
+	void UpdateDLLRouting();
+	void StartBackgroundMidi();
+	void StopBackgroundMidi();
 
 protected:
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;

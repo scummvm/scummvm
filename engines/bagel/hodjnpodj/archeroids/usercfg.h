@@ -56,9 +56,9 @@ public:
 protected:
 
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
-	void PutDlgData(void);
-	void ClearDialogImage(void);
+	virtual bool OnInitDialog() override;
+	void PutDlgData();
+	void ClearDialogImage();
 
 	void OnDestroy();
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);

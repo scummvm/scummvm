@@ -159,7 +159,7 @@ bool CTurnDialog::OnEraseBkgnd(CDC *) {
 	return true;
 }
 
-void CTurnDialog::ClearDialogImage(void) {
+void CTurnDialog::ClearDialogImage() {
 	if (m_pTextMessage != nullptr) {
 		delete m_pTextMessage;
 		m_pTextMessage = nullptr;

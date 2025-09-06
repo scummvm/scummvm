@@ -52,8 +52,8 @@ public:
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual void OnCancel(void) override;
-	virtual void OnOK(void) override;
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
@@ -79,8 +79,8 @@ public:
 
 protected:
 	//{{AFX_MSG(COptions)
-	virtual void OnCancel(void) override;
-	virtual void OnOK(void) override;
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();

@@ -104,17 +104,17 @@ public:
 	CMainGTWindow(HWND, LPGRANDTRSTRUCT);
 	~CMainGTWindow();
 
-	void SplashScreen(void);
-	void AdjustScore(void);
-	void GetScores(void);
-	void SaveScores(void);
-	void ResetScores(void);
-	void SaveCurrGame(void);
-	void RestoreGame(void);
+	void SplashScreen();
+	void AdjustScore();
+	void GetScores();
+	void SaveScores();
+	void ResetScores();
+	void SaveCurrGame();
+	void RestoreGame();
 	int GetNextGameCode(bool = true);
 
-	static  void ReleaseResources(void);
-	static  void FlushInputEvents(void);
+	static  void ReleaseResources();
+	static  void FlushInputEvents();
 
 private:
 

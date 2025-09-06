@@ -84,7 +84,7 @@ void WINAPI WindowsInit() {
 }
 
 // Reset the default Windows control colors
-void WINAPI WindowsCleanup(void) {
+void WINAPI WindowsCleanup() {
 }
 
 } // namespace Peggle

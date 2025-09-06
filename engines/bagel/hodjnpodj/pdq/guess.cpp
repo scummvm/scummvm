@@ -44,7 +44,7 @@ void CGuessDlg::DoDataExchange(CDataExchange* pDX) {
 	DDX_Text(pDX, IDC_EDIT, text);
 }
 
-bool CGuessDlg::OnInitDialog(void) {
+bool CGuessDlg::OnInitDialog() {
 	CEdit *pEdit;
 
 	CBmpDialog::OnInitDialog();

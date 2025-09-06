@@ -93,7 +93,7 @@ static  int         nFirstSlot = 0;                 // first item in current inv
 
 
 
-bool CBackpack::SetupKeyboardHook(void) {
+bool CBackpack::SetupKeyboardHook() {
 	pBackpackDialog = this;                         // retain pointer to our dialog box
 
 	lpfnKbdHook = &BackpackHookProc;
@@ -108,7 +108,7 @@ bool CBackpack::SetupKeyboardHook(void) {
 }
 
 
-void CBackpack::RemoveKeyboardHook(void) {
+void CBackpack::RemoveKeyboardHook() {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
@@ -216,7 +216,7 @@ void CBackpack::OnOK() {
 }
 
 
-void CBackpack::OnCancel(void) {
+void CBackpack::OnCancel() {
 	ClearDialogImage();
 	CDialog::OnCancel();
 }
@@ -235,11 +235,11 @@ void CBackpack::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {
-		(void)(*pWorkDC).SelectObject(pWorkOld);
+		(*pWorkDC).SelectObject(pWorkOld);
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -481,7 +481,7 @@ void CBackpack::UpdateContent(CDC *pDC) {
 			(*pDC).SetTextColor(BACKPACK_MORE_COLOR);
 			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		(void)(*pDC).SelectObject(pFontOld);                            // map out the font
+		(*pDC).SelectObject(pFontOld);                            // map out the font
 	}
 }
 
@@ -503,7 +503,7 @@ void CBackpack::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 			nY,
 			(const char *)chBuffer,
 			strlen(chBuffer));
-		(void)(*pDC).SelectObject(pFontOld);                     // map out the font
+		(*pDC).SelectObject(pFontOld);                     // map out the font
 	}
 }
 
@@ -513,7 +513,7 @@ bool CBackpack::OnEraseBkgnd(CDC *) {
 }
 
 
-void CBackpack::ClearDialogImage(void) {
+void CBackpack::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pOKButton;
 		pOKButton = nullptr;
@@ -523,7 +523,7 @@ void CBackpack::ClearDialogImage(void) {
 }
 
 
-void CBackpack::RefreshBackground(void) {
+void CBackpack::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
@@ -582,7 +582,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 		pBackgroundBitmap = nullptr;
 
 	(*pDC).SelectPalette(pBackgroundPalette, false);
-	(void)(*pDC).RealizePalette();
+	(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)450000)) {
@@ -592,7 +592,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 			if ((pWorkDC != nullptr) &&
 				(*pWorkDC).CreateCompatibleDC(pDC)) {
 				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(void)(*pWorkDC).RealizePalette();
+				(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
@@ -606,7 +606,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -618,7 +618,7 @@ bool CBackpack::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, false);
+	(*pDC).SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(BACKPACK_TEXTZONE_DX,
 		BACKPACK_BORDER_DY + BACKPACK_TITLEZONE_DDY,
@@ -739,7 +739,7 @@ void CBackpack::OnLButtonDown(unsigned int nFlags, CPoint point) {
 							pButton = GetDlgItem((int)GetDefID()); // get the window for the okay button
 							ASSERT(pButton != nullptr);                // ... and verify we have it
 							(*pButton).EnableWindow(false);  // disable & enable across note entries
-							(void)NotebookDlg.DoModal();   // invoke the notebook dialog box
+							NotebookDlg.DoModal();   // invoke the notebook dialog box
 							(*pButton).EnableWindow(true);
 							pControl = GetDlgItem((int)GetDefID());
 							GotoDlgCtrl(pControl);
@@ -798,21 +798,21 @@ bool CBackpack::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CBackpack::DoWaitCursor(void) {
+void CBackpack::DoWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void CBackpack::DoArrowCursor(void) {
+void CBackpack::DoArrowCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Gtl

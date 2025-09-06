@@ -55,7 +55,7 @@ void COptions::OnClickedRules() {
 	CWnd    *pControl = nullptr;
 
 	CRules  RulesDlg(this, RULESSPEC, pOptionsPalette, ((*pGameInfo).bSoundEffectsEnabled ? NARRATIVESPEC : nullptr));
-	(void) RulesDlg.DoModal();                      // invoke the help dialog box
+	RulesDlg.DoModal();                      // invoke the help dialog box
 	SetDefID(IDC_OPTIONS_OPTIONS);
 	SetDefID(IDC_OPTIONS_RETURN);
 	pControl = GetDlgItem(IDC_OPTIONS_RETURN);

@@ -107,7 +107,7 @@ bool CSaveDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CSaveDlg::OnCancel(void) {
+void CSaveDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(-1);
 }
@@ -153,7 +153,7 @@ void CSaveDlg::EditDescription(int nNewSlot) {
 }
 
 
-bool CSaveDlg::OnInitDialog(void) {
+bool CSaveDlg::OnInitDialog() {
 	CRect rect;
 	CDC *pDC;
 	int i;
@@ -214,7 +214,7 @@ bool CSaveDlg::OnInitDialog(void) {
 }
 
 
-void CSaveDlg::OnPaint(void) {
+void CSaveDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -227,7 +227,7 @@ void CSaveDlg::OnPaint(void) {
 }
 
 
-void CSaveDlg::ClearDialogImage(void) {
+void CSaveDlg::ClearDialogImage() {
 	int i;
 
 	if (m_pTxtSave != nullptr) {
@@ -254,7 +254,7 @@ void CSaveDlg::ClearDialogImage(void) {
 }
 
 
-void CSaveDlg::OnDestroy(void) {
+void CSaveDlg::OnDestroy() {
 	ClearDialogImage();
 
 	CBmpDialog::OnDestroy();

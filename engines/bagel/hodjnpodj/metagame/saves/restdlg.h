@@ -38,18 +38,18 @@ public:
 	CRestoreDlg(char *[], CWnd *, CPalette *);
 
 protected:
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	//{{AFX_MSG(COptions)
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual void OnCancel(void) override;
-	afx_msg void OnDestroy(void);
-	afx_msg void OnPaint(void);
+	virtual void OnCancel() override;
+	afx_msg void OnDestroy();
+	afx_msg void OnPaint();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
 private:
-	bool OnInitDialog(void) override;
+	bool OnInitDialog() override;
 
 	CColorButton *m_pSlotButtons[MAX_SAVEGAMES];
 	CColorButton *m_pQuitButton;

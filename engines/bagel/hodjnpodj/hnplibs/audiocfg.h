@@ -44,13 +44,13 @@ protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
-	void PutDlgData(void);
-	void GetDlgData(void);
-	void LoadIniSettings(void);
-	void SaveIniSettings(void);
-	void UpdateOptions(void);
-	void ClearDialogImage(void);
+	virtual bool OnInitDialog() override;
+	void PutDlgData();
+	void GetDlgData();
+	void LoadIniSettings();
+	void SaveIniSettings();
+	void UpdateOptions();
+	void ClearDialogImage();
 
 	afx_msg bool OnEraseBkgnd(CDC *);
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);

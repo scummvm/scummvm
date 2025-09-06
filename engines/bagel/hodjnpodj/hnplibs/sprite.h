@@ -71,7 +71,7 @@ public:
 
 	bool SetupCels(const int nCels);
 	void SetCel(const int nCelID);
-	void UpdateCel(void) {
+	void UpdateCel() {
 		SetCel(m_nCelID + 1);
 	}
 
@@ -84,7 +84,7 @@ public:
 
 	bool EraseSprite(CDC *pDC);
 
-	void ClearBackground(void);
+	void ClearBackground();
 
 	CSprite *Interception(CDC *pDC) {
 		return (Interception(pDC, m_pSpriteChain));
@@ -96,14 +96,14 @@ public:
 	CSprite *Interception(CRect *newRect, CSprite * pSprite);
 	bool TestInterception(CDC *pDC, CSprite * pSprite, CPoint *pPoint = nullptr);
 
-	bool GetVisible(void) {
+	bool GetVisible() {
 		return (m_bVisible);
 	}
 
 	void SetIntercepts(bool bValue) {
 		m_bIntercepts = bValue;
 	}
-	bool GetIntercepts(void) {
+	bool GetIntercepts() {
 		return (m_bIntercepts);
 	}
 
@@ -111,7 +111,7 @@ public:
 	void SetPosition(CPoint point) {
 		SetPosition(point.x, point.y);
 	}
-	CPoint GetPosition(void) {
+	CPoint GetPosition() {
 		return (m_cPosition);
 	}
 
@@ -119,7 +119,7 @@ public:
 		m_cMovementDelta.x = x;
 		m_cMovementDelta.y = y;
 	}
-	CPoint GetDelta(void) {
+	CPoint GetDelta() {
 		return (m_cMovementDelta);
 	}
 
@@ -127,57 +127,57 @@ public:
 		m_cHotspot.x = x;
 		m_cHotspot.y = y;
 	}
-	CPoint GetHotspot(void) {
+	CPoint GetHotspot() {
 		return (m_cHotspot);
 	}
 
-	CSize GetSize(void) {
+	CSize GetSize() {
 		return (m_cSize);
 	}
 
-	CRect GetRect(void) {
+	CRect GetRect() {
 		return (m_cRect);
 	}
-	CRect GetArea(void) {           // obsolete - use GetRect
+	CRect GetArea() {           // obsolete - use GetRect
 		return (m_cRect);
 	}
 
 	void SetMasked(bool bValue) {
 		m_bMasked = bValue;
 	}
-	bool GetMasked(void) {
+	bool GetMasked() {
 		return (m_bMasked);
 	}
 
 	void SetMobile(bool bValue) {
 		m_bMobile = bValue;
 	}
-	bool GetMobile(void) {
+	bool GetMobile() {
 		return (m_bMobile);
 	}
 
 	void SetOptimizeSpeed(bool bValue) {
 		m_bRetainContexts = false & bValue;
 	}
-	bool GetOptimizeSpeed(void) {
+	bool GetOptimizeSpeed() {
 		return (m_bRetainContexts);
 	}
 
 	void SetTypeCode(int nValue) {
 		m_nType = nValue;
 	}
-	int GetTypeCode(void) {
+	int GetTypeCode() {
 		return (m_nType);
 	}
 
 	void SetData(CObject *pData) {
 		m_pData = pData;
 	}
-	CObject *GetData(void) {
+	CObject *GetData() {
 		return (m_pData);
 	}
 
-	int GetId(void) {
+	int GetId() {
 		return (m_nId);
 	}
 
@@ -185,41 +185,41 @@ public:
 		m_nZOrder = nValue;
 		m_nZPosition = nValue;
 	}
-	int GetZOrder(void) {
+	int GetZOrder() {
 		return (m_nZOrder);
 	}
-	int GetZPosition(void) {
+	int GetZPosition() {
 		return (m_nZPosition);
 	}
 
-	int GetCelCount(void) {
+	int GetCelCount() {
 		return (m_nCelCount);
 	}
-	int GetCelIndex(void) {
+	int GetCelIndex() {
 		return (m_nCelID);
 	}
 
 	void SetAnimated(bool bAnimated) {
 		m_bAnimated = bAnimated;
 	}
-	bool GetAnimated(void) {
+	bool GetAnimated() {
 		return (m_bAnimated);
 	}
 
 	void SetRetainBackground(bool bValue);
-	bool GetRetainBackground(void) {
+	bool GetRetainBackground() {
 		return (m_bRetainBackground);
 	}
 
-	bool IsLinked(void) {
+	bool IsLinked() {
 		return (m_bLinked);
 	}
-	void LinkSprite(void);
-	void UnlinkSprite(void);
-	CSprite *GetNextSprite(void) {
+	void LinkSprite();
+	void UnlinkSprite();
+	CSprite *GetNextSprite() {
 		return (m_pNext);
 	}
-	CSprite *GetPrevSprite(void) {
+	CSprite *GetPrevSprite() {
 		return (m_pPrev);
 	}
 
@@ -229,27 +229,27 @@ public:
 		return (Touched(myPoint, m_pSpriteChain));
 	}
 	static  CSprite *Touched(CPoint myPoint, CSprite *pSprite);
-	static  bool InterceptOccurred(void) {
+	static  bool InterceptOccurred() {
 		return (m_bTouchedSprite);
 	}
-	static  CSprite *GetInterception(void) {
+	static  CSprite *GetInterception() {
 		return (m_pTouchedSprite);
 	}
 
-	static  CSprite *GetSpriteChain(void) {
+	static  CSprite *GetSpriteChain() {
 		return (m_pSpriteChain);
 	}
 	static  bool EraseSprites(CDC *pDC);
-	static  void ClearBackgrounds(void);
-	static  void FlushSpriteChain(void);
+	static  void ClearBackgrounds();
+	static  void FlushSpriteChain();
 
-	static  bool HaveBackdrop(void) {
+	static  bool HaveBackdrop() {
 		return (m_bHaveBackdrop);
 	}
 	static  CDC *GetBackdropDC(CDC *pDC);
-	static  void ReleaseBackdropDC(void);
+	static  void ReleaseBackdropDC();
 	static  bool SetBackdrop(CDC *pDC, CPalette *pPalette, CBitmap *pBitmap);
-	static  void ClearBackdrop(void);
+	static  void ClearBackdrop();
 	static  bool RefreshBackdrop(CDC *pDC, CPalette *pPalette);
 
 private:
@@ -268,13 +268,13 @@ private:
 	bool CreateBackgroundContext(CDC *pDC);
 	bool CreateMaskContext(CDC *pDC);
 
-	void ReleaseImageContext(void);
-	void ReleaseBackgroundContext(void);
-	void ReleaseMaskContext(void);
+	void ReleaseImageContext();
+	void ReleaseBackgroundContext();
+	void ReleaseMaskContext();
 
-	void ClearImage(void);
-	void ClearMask(void);
-	void ClearPalette(void);
+	void ClearImage();
+	void ClearMask();
+	void ClearPalette();
 
 	bool SpritesOverlap(CDC *pDC, CSprite *pSprite, CPoint *pPoint = nullptr);
 

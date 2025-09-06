@@ -115,8 +115,8 @@ public:
 	void initStatics();
 	void SplashScreen();
 
-	static  void ReleaseResources(void);
-	static  void FlushInputEvents(void);
+	static  void ReleaseResources();
+	static  void FlushInputEvents();
 	void MainLoop();
 	void ResetGame();
 	int Power(int, int);

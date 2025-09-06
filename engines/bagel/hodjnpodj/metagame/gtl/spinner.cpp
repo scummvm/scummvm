@@ -221,7 +221,7 @@ CSpinner::~CSpinner() {
  *
  ************************************************************************/
 
-void CSpinner::SetupSpinner(void) {
+void CSpinner::SetupSpinner() {
 	int i, j, n;
 	int Values[SPINNER_COUNT];
 
@@ -286,7 +286,7 @@ int CSpinner::Animate(int nX, int nY) {
 			if (HandleMessages())                   // ... and terminate loop if urgent
 				break;
 		}
-		(void) Hide();                              // hide the spinner
+		Hide();                              // hide the spinner
 	}
 
 	AfxGetApp()->DoWaitCursor(-1);
@@ -339,7 +339,7 @@ bool CSpinner::Show(int nX, int nY) {
  *
  ************************************************************************/
 
-bool CSpinner::Hide(void) {
+bool CSpinner::Hide() {
 	bool    bSuccess = false;
 
 	if (m_pSprite == nullptr)                              // punt if no spinner sprite
@@ -369,7 +369,7 @@ bool CSpinner::Hide(void) {
  *
  ************************************************************************/
 
-int CSpinner::Spin(void) {
+int CSpinner::Spin() {
 	int         i, j, nIdx;
 	CBitmap     *pBitmap = nullptr;
 	CPalette    *pPalette = nullptr;
@@ -454,7 +454,7 @@ punt:
  *
  ************************************************************************/
 
-bool CSpinner::HandleMessages(void) {
+bool CSpinner::HandleMessages() {
 	MSG     msg;
 
 	if (PeekMessage(&msg, nullptr, 0, WM_KEYFIRST - 1, PM_REMOVE)) {

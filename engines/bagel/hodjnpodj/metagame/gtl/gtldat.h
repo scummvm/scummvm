@@ -143,8 +143,8 @@ class CGtlView;
 
 class CMemDC {
 public:
-	CMemDC(void);
-	~CMemDC(void);
+	CMemDC();
+	~CMemDC();
 
 	CDC      *m_pDC;
 	CPalette *m_pPalOld;
@@ -220,7 +220,7 @@ public:
 
 	CNode();
 
-	bool IfRelocatable(void) {
+	bool IfRelocatable() {
 		return (m_bRelocatable != 0) ;
 	}
 };
@@ -240,7 +240,7 @@ class CStratLocInfo {
 	int m_iAdjustedWeight ;     // weight adjusted by distance
 
 	char m_cEndData ;
-	CStratLocInfo(void) {
+	CStratLocInfo() {
 		memset(&m_cStartData,
 		       0, &m_cEndData - &m_cStartData) ;
 	}
@@ -266,7 +266,7 @@ class CStrategyInfo {
 
 	CStratLocInfo m_cStratLocInfo[MG_LOC_MAX + 1] ;
 
-	CStrategyInfo(void) {
+	CStrategyInfo() {
 		memset(&m_cStartData,
 		       0, &m_cEndData - &m_cStartData) ;
 	}
@@ -432,7 +432,7 @@ public:
 
 	// constructor zeroes out all fields and allocates far arrays
 public:
-	void ClearData(void) {
+	void ClearData() {
 		memset(&m_cStartData,
 		       0, &m_cEndData - &m_cStartData) ;
 	}
@@ -457,7 +457,7 @@ public:
 	int Compile(const char *xpszPathName);
 
 	//- ParseLine -- parse input line
-	bool ParseLine(void) ;
+	bool ParseLine() ;
 	//- ParseInteger -- parse integer, store into node structure
 	CLexElement *ParseInteger(CLexElement * xpLxel,
 	                          int iPrevType, int FAR& iValue) ;
@@ -484,7 +484,7 @@ private:
 	//- FindKeyword -- find keyword, given tree node type
 	const char *FindKeyword(int iType) ;
 	//- ReadLine -- read input line
-	bool ReadLine(void) ;
+	bool ReadLine() ;
 	//- ErrorMsg -- publish error message
 	bool ErrorMsg(CLexElement * xpLxel, const char *szMessage) ;
 
@@ -493,19 +493,19 @@ private:
 public:
 	//- CGtlData -- constructor -- zero out all fields, allocate
 	//      arrays, and set colors
-	CGtlData(void) ;
-	~CGtlData(void) ;
+	CGtlData() ;
+	~CGtlData() ;
 
-	void    CreateOffScreenBmp(void);
-	void    DeleteOffScreenBmp(void);
-	void    PaintOffScreenBmp(void);
-	CMemDC *GetMemDC(void);
+	void    CreateOffScreenBmp();
+	void    DeleteOffScreenBmp();
+	void    PaintOffScreenBmp();
+	CMemDC *GetMemDC();
 	void    ReleaseMemDC(CMemDC *);
 
 
-	bool SetColors(void) ;
+	bool SetColors() ;
 	//- ClearInhibitDraw -- clear m_bInhibitDraw flag
-	bool ClearInhibitDraw(void) ;
+	bool ClearInhibitDraw() ;
 	//- Draw -- draw data
 	bool Draw(CGtlView * xpGtlView, CRect * xpClipRect,
 	          CDC* xpDc PDFT(nullptr)) ;
@@ -541,7 +541,7 @@ private:
 	bool UpdateNodeDialog(bool bRetrieve) ;
 
 	//- UpdateFocusRect -- update focus rectangle for hiliting
-	bool UpdateFocusRect(void) ;
+	bool UpdateFocusRect() ;
 
 	//- AdjustToView -- set up bitmaps for view
 	bool AdjustToView(CGtlView *);
@@ -567,7 +567,7 @@ private:
 	//- ModifySelectNode -- modify node select/deselect
 	bool ModifySelectNode(CNode FAR * lpNode PDFT(nullptr), bool bSelect PDFT(true)) ;
 	//- GetSelectedNode -- return selected node, or nullptr if none
-	CNode FAR *GetSelectedNode(void) ;
+	CNode FAR *GetSelectedNode() ;
 	//- SelectLink -- select or deselect a link
 	bool SelectLink(CNode FAR * lpNode1 PDFT(nullptr), CNode FAR * lpNode2 PDFT(nullptr)) ;
 	//- IfLinked -- test whether two nodes are linked
@@ -623,7 +623,7 @@ private:
 
 public:
 	//- PositionCharacters -- set positions for Hodj and Podj
-	bool PositionCharacters(void) ;
+	bool PositionCharacters() ;
 
 private:
 	//- PositionACharacter -- find positions for Hodj and Podj
@@ -639,18 +639,18 @@ public:
 
 private:
 	//- InitProblem -- initialize character problem
-	bool InitProblem(void) ;
+	bool InitProblem() ;
 	//- EndMoveProcessing -- handle things at end of a move
-	bool EndMoveProcessing(void) ;
+	bool EndMoveProcessing() ;
 
 public:
 	//- SwitchPlayers -- switch between Hodj and Podj
-	bool SwitchPlayers(void) ;
+	bool SwitchPlayers() ;
 	//- InitInterface -- init data for interface manager
 	bool InitInterface(int iCode, bool & bExitDll) ;
 	//- ReturnFromInterface -- reset everything
 	//              after interface return
-	bool ReturnFromInterface(void) ;
+	bool ReturnFromInterface() ;
 
 private:
 	//- TakeIneligibleAction -- take action if character is at

@@ -280,7 +280,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-bool CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog() {
 	CRect tmpRect;
 	CDC *pDC;
 	int nVal;
@@ -359,7 +359,7 @@ bool CUserCfgDlg::OnInitDialog(void) {
 	return true;
 }
 
-void CUserCfgDlg::OnPaint(void) {
+void CUserCfgDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -408,7 +408,7 @@ void CUserCfgDlg::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
-void CUserCfgDlg::ClearDialogImage(void) {
+void CUserCfgDlg::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;

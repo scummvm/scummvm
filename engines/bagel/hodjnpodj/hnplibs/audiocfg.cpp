@@ -172,7 +172,7 @@ void CAudioCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar
 }
 
 
-bool CAudioCfgDlg::OnInitDialog(void) {
+bool CAudioCfgDlg::OnInitDialog() {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -229,14 +229,14 @@ bool CAudioCfgDlg::OnInitDialog(void) {
 }
 
 
-void CAudioCfgDlg::OnPaint(void) {
+void CAudioCfgDlg::OnPaint() {
 	CBmpDialog::OnPaint();
 
 	UpdateOptions();
 }
 
 
-void CAudioCfgDlg::UpdateOptions(void) {
+void CAudioCfgDlg::UpdateOptions() {
 	char buf[40];
 	CDC *pDC;
 
@@ -293,7 +293,7 @@ void CAudioCfgDlg::OnClose() {
 	EndDialog(0);
 }
 
-void CAudioCfgDlg::ClearDialogImage(void) {
+void CAudioCfgDlg::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;
@@ -308,7 +308,7 @@ void CAudioCfgDlg::ClearDialogImage(void) {
 }
 
 
-void CAudioCfgDlg::LoadIniSettings(void) {
+void CAudioCfgDlg::LoadIniSettings() {
 	int nMidiVolume, nWaveVolume;
 
 	m_bMusic = GetPrivateProfileInt("Meta", "Music", true, "HODJPODJ.INI");

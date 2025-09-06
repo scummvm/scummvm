@@ -135,7 +135,7 @@ bool CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 		case IDC_RULES: {
 			CRules RulesDlg(this, "metarule.txt", m_pPalette, nullptr);
-			(void) RulesDlg.DoModal();
+			RulesDlg.DoModal();
 			return true;
 		}
 
@@ -152,7 +152,7 @@ bool CMetaOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CMetaOptDlg::OnOK(void) {
+void CMetaOptDlg::OnOK() {
 	if (m_pSaveGameButton->GetState() & 0x0008) {
 		SendMessage(WM_COMMAND, IDC_SAVE_GAME, (LPARAM)BN_CLICKED);
 		return;
@@ -175,12 +175,12 @@ void CMetaOptDlg::OnOK(void) {
 	}
 }
 
-void CMetaOptDlg::OnCancel(void) {
+void CMetaOptDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(0);
 }
 
-void CMetaOptDlg::ClearDialogImage(void) {
+void CMetaOptDlg::ClearDialogImage() {
 	if (m_pSaveGameButton != nullptr) {
 		delete m_pSaveGameButton;
 		m_pSaveGameButton = nullptr;
@@ -310,7 +310,7 @@ bool CMetaOptDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CMetaOptDlg::OnPaint(void) {
+void CMetaOptDlg::OnPaint() {
 	PAINTSTRUCT lpPaint;
 
 	CBmpDialog::OnPaint();

@@ -115,7 +115,7 @@ CText::~CText() {
  *
  ************************************************************************/
 
-void CText::InitializeFields(void) {
+void CText::InitializeFields() {
 	m_pBackgroundDC = nullptr;
 	m_pBackground = nullptr;
 	m_pBackgroundOld = nullptr;
@@ -175,7 +175,7 @@ bool CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 
 	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(void)(*pDC).RealizePalette();
+		(*pDC).RealizePalette();
 	}
 
 	if (!m_bFontLoaded) {                       // load the font if we have not
@@ -198,7 +198,7 @@ bool CText::SetupText(CDC *pDC, CPalette *pPalette, CRect *pRect, int nJustify) 
 		return false;
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	return true;                              // return status
 }
@@ -226,7 +226,7 @@ bool CText::RestoreBackground(CDC *pDC) {
 
 	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(void)(*pDC).RealizePalette();
+		(*pDC).RealizePalette();
 	}
 
 	if ((m_pBackground != nullptr) &&
@@ -244,7 +244,7 @@ bool CText::RestoreBackground(CDC *pDC) {
 	}
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	return bSuccess;
 }
@@ -342,14 +342,14 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 
 	if (m_pPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(m_pPalette, false);
-		(void)(*pDC).RealizePalette();
+		(*pDC).RealizePalette();
 	}
 
 	if (!SetupContexts(pDC))                        // setup the device contexts and map in
 		return false;                             // ... the various bitmaps
 
 	if (!m_bHaveBackground) {
-		(void)(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
+		(*m_pBackgroundDC).BitBlt(           // grab what the background looks like
 		    0,                      // ... putting it in the work area
 		    0,
 		    m_cSize.cx,
@@ -373,7 +373,7 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 
 	textInfo = (*m_pWorkDC).GetTextExtent(pszText, strlen(pszText));  // get the area spanned by the text
 
-	(void)(*m_pWorkDC).BitBlt(                     // copy the saved background to the work area
+	(*m_pWorkDC).BitBlt(                     // copy the saved background to the work area
 	    0,
 	    0,
 	    m_cSize.cx,
@@ -416,12 +416,12 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	    strlen(pszText),
 	    1, &m_nTabStop, 0);
 
-	(void)(*m_pWorkDC).SelectObject(pFontOld);         // map out the font
+	(*m_pWorkDC).SelectObject(pFontOld);         // map out the font
 
 	delete m_pFont;                                     // release the font instance
 	m_pFont = nullptr;
 
-	(void)(*pDC).BitBlt(                               // copy the result to the destination context
+	(*pDC).BitBlt(                               // copy the result to the destination context
 	    m_cRect.left,
 	    m_cRect.top,
 	    m_cSize.cx,
@@ -434,7 +434,7 @@ bool CText::DisplayText(CDC *pDC, const char *pszText, const int nSize, const in
 	ReleaseContexts();
 
 	if (m_pPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	return true;
 }
@@ -465,7 +465,7 @@ bool CText::SetupContexts(CDC *pDC) {
 			return false;
 		if (m_pPalette != nullptr) {
 			m_pPalWorkOld = (*m_pWorkDC).SelectPalette(m_pPalette, false);
-			(void)(*m_pWorkDC).RealizePalette();
+			(*m_pWorkDC).RealizePalette();
 		}
 		m_pWorkOld = (*m_pWorkDC).SelectObject(m_pWork);
 		if (m_pWorkOld == nullptr)
@@ -479,7 +479,7 @@ bool CText::SetupContexts(CDC *pDC) {
 			return false;
 		if (m_pPalette != nullptr) {
 			m_pPalBackOld = (*m_pBackgroundDC).SelectPalette(m_pPalette, false);
-			(void)(*m_pBackgroundDC).RealizePalette();
+			(*m_pBackgroundDC).RealizePalette();
 		}
 		m_pBackgroundOld = (*m_pBackgroundDC).SelectObject(m_pBackground);
 		if (m_pBackgroundOld == nullptr)
@@ -503,22 +503,22 @@ bool CText::SetupContexts(CDC *pDC) {
  *
  ************************************************************************/
 
-void CText::ReleaseContexts(void) {
+void CText::ReleaseContexts() {
 	if (m_pWorkOld != nullptr) {
-		(void)(*m_pWorkDC).SelectObject(m_pWorkOld);
+		(*m_pWorkDC).SelectObject(m_pWorkOld);
 		m_pWorkOld = nullptr;
 	}
 	if (m_pBackgroundOld != nullptr) {
-		(void)(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
+		(*m_pBackgroundDC).SelectObject(m_pBackgroundOld);
 		m_pBackgroundOld = nullptr;
 	}
 
 	if (m_pPalWorkOld != nullptr) {
-		(void)(*m_pWorkDC).SelectPalette(m_pPalWorkOld, false);
+		(*m_pWorkDC).SelectPalette(m_pPalWorkOld, false);
 		m_pPalWorkOld = nullptr;
 	}
 	if (m_pPalBackOld != nullptr) {
-		(void)(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, false);
+		(*m_pBackgroundDC).SelectPalette(m_pPalBackOld, false);
 		m_pPalBackOld = nullptr;
 	}
 

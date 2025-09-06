@@ -47,12 +47,12 @@ protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
-	void PutDlgData(void);
-	void GetDlgData(void);
-	void DispSpeed(void);
-	void DispShown(void);
-	void ClearDialogImage(void);
+	virtual bool OnInitDialog() override;
+	void PutDlgData();
+	void GetDlgData();
+	void DispSpeed();
+	void DispShown();
+	void ClearDialogImage();
 
 
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);

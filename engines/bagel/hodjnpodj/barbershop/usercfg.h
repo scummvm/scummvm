@@ -67,7 +67,7 @@ public:
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual bool OnInitDialog(void) override;
+	virtual bool OnInitDialog() override;
 
 	void OnClose();
 	void OnPaint();

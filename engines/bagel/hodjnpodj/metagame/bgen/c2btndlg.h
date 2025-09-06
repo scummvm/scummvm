@@ -44,7 +44,7 @@ public:
 	               const char *pszText3 = nullptr);
 
 private:
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	// Dialog Data
 	//{{AFX_DATA(C2ButtonDialog)

@@ -85,12 +85,12 @@ namespace PDQ {
 */
 extern ERROR_CODE  InitGame(HWND, CDC *);
 extern ERROR_CODE  StartGame(CDC *);
-extern void        GameStopTimer(void);
-extern ERROR_CODE  GameStartTimer(void);
-extern void        GamePauseTimer(void);
-extern void        GameResumeTimer(void);
+extern void        GameStopTimer();
+extern ERROR_CODE  GameStartTimer();
+extern void        GamePauseTimer();
+extern void        GameResumeTimer();
 extern ERROR_CODE  EndGame(CDC *);
-extern void        WinGame(void);
+extern void        WinGame();
 extern ERROR_CODE  RepaintSpriteList(CDC *);
 extern bool     CheckUserGuess(const char *);
 extern void CALLBACK GetGameParams(CWnd *);

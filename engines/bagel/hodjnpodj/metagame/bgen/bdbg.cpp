@@ -31,7 +31,7 @@ namespace Metagame {
 CBdbgMgr FAR *CBdbgMgr::lpBdbgMgr = nullptr ;
 
 //* CBdbgMgr::CBdbgMgr -- constructor
-CBdbgMgr::CBdbgMgr(void) {
+CBdbgMgr::CBdbgMgr() {
 	JXENTER(CBdbgMgr::CBdbgMgr) ;
 
 	// zero out all data
@@ -45,7 +45,7 @@ CBdbgMgr::CBdbgMgr(void) {
 }
 
 //* CBdbgMgr::~CBdbgMgr -- destructor
-CBdbgMgr::~CBdbgMgr(void)
+CBdbgMgr::~CBdbgMgr()
 // returns: void
 {
 	JXENTER(CBdbgMgr::~CBdbgMgr) ;
@@ -149,8 +149,8 @@ bool CBdbgMgr::RemoveTraceObject(const char *lpszName, void *lpPtr)
 }
 
 //* CBdbgMgr::ReportTraceObjects -- final report at program end
-bool CBdbgMgr::ReportTraceObjects(void)
-//// int FAR PASCAL CBdbgMgr::ReportTraceObjects(void)
+bool CBdbgMgr::ReportTraceObjects()
+//// int FAR PASCAL CBdbgMgr::ReportTraceObjects()
 // returns: true if error, false otherwise
 {
 	return false;

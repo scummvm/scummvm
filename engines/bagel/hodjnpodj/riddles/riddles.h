@@ -125,28 +125,28 @@ private:
 	CBrush cBrush;
 
 public:
-	CRiddlesWindow(void);
-	void        PlayGame(void);
-	void        PaintScreen(void);
-	void        LoadIniSettings(void);
+	CRiddlesWindow();
+	void        PlayGame();
+	void        PaintScreen();
+	void        LoadIniSettings();
 	void        ParseAnswer(const char *);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        GamePause();
+	void        GameResume();
 
 private:
 	void        OnSoundNotify(CSound *pSound);
 
 protected:
-	void        FlushInputEvents(void);
+	void        FlushInputEvents();
 	bool        CheckUserGuess(const char *);
-	ERROR_CODE  RepaintSpriteList(void);
-	ERROR_CODE  LoadRiddle(void);
-	ERROR_CODE  BuildSpriteList(void);
+	ERROR_CODE  RepaintSpriteList();
+	ERROR_CODE  LoadRiddle();
+	ERROR_CODE  BuildSpriteList();
 	ERROR_CODE  DisplayLine(const char *, int, int, int);
 	int         CharToIndex(char);
 	ERROR_CODE  ValidateRiddle(RIDDLE *);
-	ERROR_CODE  LoadMasterSprites(void);
-	void        GameReset(void);
+	ERROR_CODE  LoadMasterSprites();
+	void        GameReset();
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);

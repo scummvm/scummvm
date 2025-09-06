@@ -31,7 +31,7 @@ namespace Metagame {
 namespace Gtl {
 
 extern HWND FAR PASCAL RunMeta(HWND hParentWnd, CBfcMgr *lpBfcMgr, bool bMetaLoaded);
-extern void SetupCursor(void);
+extern void SetupCursor();
 extern void SetupWindow(CBfcMgr *);
 
 } // namespace Gtl

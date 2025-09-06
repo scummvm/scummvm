@@ -41,22 +41,22 @@ public:
 	CMainWindow();
 	~CMainWindow() override {}
 
-	void        PlayGame(void);
-	void        PaintScreen(void);
+	void        PlayGame();
+	void        PaintScreen();
 	void        PaintCategory(int);
-	void        EraseCategory(void);
+	void        EraseCategory();
 
 	int         m_nTurnCount = 0;
 
 protected:
-	ERROR_CODE  LoadCategoryNames(void);
-	void        ReleaseCategoryNames(void);
+	ERROR_CODE  LoadCategoryNames();
+	void        ReleaseCategoryNames();
 
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void HandleError(ERROR_CODE);
 	void OnSoundNotify(CSound *pSound);
 
-	void OnPaint(void);
+	void OnPaint();
 	void OnChar(unsigned int, unsigned int, unsigned int);
 	void OnSysChar(unsigned int, unsigned int, unsigned int);
 	void OnKeyDown(unsigned int, unsigned int, unsigned int);
@@ -65,7 +65,7 @@ protected:
 	void OnLButtonDown(unsigned int, CPoint);
 	void OnActivate(unsigned int, CWnd *, bool) override;
 	void OnSetFocus(CWnd *);
-	void OnClose(void);
+	void OnClose();
 	LRESULT OnMCINotify(WPARAM, LPARAM);
 	LRESULT OnMMIONotify(WPARAM, LPARAM);
 

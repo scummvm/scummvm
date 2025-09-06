@@ -38,7 +38,7 @@ public:
 	C1ButtonDialog(CWnd *, CPalette *, char *, char *, char *pszText2 = nullptr);
 
 private:
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	// Dialog Data
 	//{{AFX_DATA(C1ButtonDialog)

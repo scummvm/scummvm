@@ -89,10 +89,10 @@ protected:
 public:
 	//- NewFrame -- set pointer to interface manager in frame
 	bool NewFrame(CBfcMgr *lpBfcMgr PDFT(nullptr)) ;
-	bool ShowControlDialog(void) ;
-	bool ShowNodeDialog(void) ;
-	bool ShowInfoDialog(void) ;
-	bool ShowMenuDialog(void) ;
+	bool ShowControlDialog() ;
+	bool ShowNodeDialog() ;
+	bool ShowInfoDialog() ;
+	bool ShowMenuDialog() ;
 	//- GetCurrentDocAndView -- get last focused doc/view
 	bool GetCurrentDocAndView(CGtlDoc * &xpcGtlDoc,
 	                          CGtlView *&xpcGtlFocusView, CGtlView *&xpcGtlMouseView) ;

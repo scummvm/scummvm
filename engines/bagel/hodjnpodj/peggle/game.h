@@ -67,7 +67,7 @@ public:
 	static  CPoint GridToPoint(int i, int j);
 	static  CPoint PointToGrid(CPoint point);
 	static  void UndoMove(CDC *pDC);
-	void UndoTurn(void);
+	void UndoTurn();
 
 private:
 	bool    m_bProgramActive;

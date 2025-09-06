@@ -97,7 +97,7 @@ static HCURSOR  hHourGlassCursor;
 extern bool gbTurnSoundsOff;
 
 //* CMnkWindow::CMnkWindow() -- mankala window constructor function
-CMnkWindow::CMnkWindow(void) {
+CMnkWindow::CMnkWindow() {
 	CDC* pDC = nullptr ;                         // device context for the screen
 	CString xpszWndClass ;
 	CDibDoc *xpDibDoc = nullptr ;   // pointer to the background art DIB
@@ -277,7 +277,7 @@ CMnkWindow::CMnkWindow(void) {
 }
 
 //* CMnkWindow::~CMnkWindow -- Mankala window destructor function
-CMnkWindow::~CMnkWindow(void) {
+CMnkWindow::~CMnkWindow() {
 }
 
 /*****************************************************************

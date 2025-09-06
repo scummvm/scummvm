@@ -122,14 +122,14 @@ bool CMainGameDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-void CMainGameDlg::OnCancel(void) {
+void CMainGameDlg::OnCancel() {
 	ClearDialogImage();
 //  CBmpDialog::OnCancel();
 	EndDialog(0);
 	return;
 }
 
-void CMainGameDlg::OnOK(void) {
+void CMainGameDlg::OnOK() {
 	if (m_pPlayMetaButton->GetState() & 0x0008) {
 		SendMessage(WM_COMMAND, IDC_PLAY_META, (LPARAM)BN_CLICKED);
 		return;
@@ -157,7 +157,7 @@ void CMainGameDlg::OnOK(void) {
 	return;
 }
 
-void CMainGameDlg::ClearDialogImage(void) {
+void CMainGameDlg::ClearDialogImage() {
 	/*
 	    if ( m_pPlayMetaButton != nullptr ) {
 	        delete m_pPlayMetaButton;
@@ -402,7 +402,7 @@ bool CMainGameDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CMainGameDlg::OnPaint(void) {
+void CMainGameDlg::OnPaint() {
 
 //      call CBmpDialog onpaint, to paint the background
 	CBmpDialog::OnPaint();

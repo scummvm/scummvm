@@ -41,7 +41,7 @@ public:
 	COptnDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr);  // standard constructor
 	~COptnDlg();        // destructor
 	void UpdateScrollbars();
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	int m_nTime;
 	int m_nRows;

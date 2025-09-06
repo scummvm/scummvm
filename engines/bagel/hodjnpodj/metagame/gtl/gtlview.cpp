@@ -184,7 +184,7 @@ cleanup:
 
 
 //* CGtlView::OnInitialUpdate --
-void CGtlView::OnInitialUpdate(void) {
+void CGtlView::OnInitialUpdate() {
 	JXENTER(CGtlView::OnInitialUpdate) ;
 	CGtlDoc *xpDoc = GetDocument() ;
 
@@ -331,7 +331,7 @@ void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int 
 		if ((bAnimations = gpBgbMgr->AnimationsActive()) != false)
 			gpBgbMgr->PauseAnimations();
 		gpBgbMgr->CacheOptimize(2000000);
-		(void) RulesDlg.DoModal();
+		RulesDlg.DoModal();
 		if (bAnimations)
 			gpBgbMgr->ResumeAnimations();
 		break;
@@ -472,7 +472,7 @@ void CGtlView::OnSoundNotify(CSound *) {
 }
 
 
-void CGtlView::FlushInputEvents(void) {
+void CGtlView::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                      // find and remove all keyboard events

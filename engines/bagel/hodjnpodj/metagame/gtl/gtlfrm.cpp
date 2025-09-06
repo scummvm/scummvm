@@ -262,7 +262,7 @@ void CGtlFrame::RecalcLayout(bool bNotify)
 #if OLD_CODE
 
 ////* CGtlFrame::CallOnFileNew --
-void CGtlFrame::CallOnFileNew(void)
+void CGtlFrame::CallOnFileNew()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::CallOnFileNew) ;
@@ -278,7 +278,7 @@ void CGtlFrame::CallOnFileNew(void)
 }
 
 ////* CGtlFrame::CallOnFileOpen --
-void CGtlFrame::CallOnFileOpen(void)
+void CGtlFrame::CallOnFileOpen()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlFrame::CallOnFileOpen) ;

@@ -91,7 +91,7 @@ public:
 			&m_cEndData - &m_cStartData);
 	}
 
-	~CBsuSet(void);
+	~CBsuSet();
 	//- InitWndBsuSet -- initialize bsu set for a window
 	bool InitWndBsuSet(CWnd *xpWnd,
 		bool bScrollView PDFT(false), bool bScrollBars PDFT(false),
@@ -106,9 +106,9 @@ public:
 	//      by filling in the device fields
 	bool PrepareWndBsuSet(CSize cDocSize, CRect cScrollRect);
 	//- UpdateWndDeviceExtents -- update window devices coordinates
-	bool UpdateWndDeviceExtents(void);
+	bool UpdateWndDeviceExtents();
 	//- LinkWndBsuSet -- link window/dialog bsu sets
-	bool LinkWndBsuSet(void);
+	bool LinkWndBsuSet();
 	//- PrepareDc -- replace OnPrepareDC -- set the viewport and
 	//  the clip rectangle to the specified region
 	bool PrepareDc(CDC *xpDc, bool bRelocatable PDFT(true));
@@ -190,7 +190,7 @@ public:
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	bool IfRelocatable(void) const {
+	bool IfRelocatable() const {
 		return m_bRelocatable != 0;
 	}
 
@@ -221,7 +221,7 @@ public:
 		m_bRelocatable = (bRelocatable != 0);
 	}
 
-	bool IfRelocatable(void) const {
+	bool IfRelocatable() const {
 		return m_bRelocatable != 0;
 	}
 

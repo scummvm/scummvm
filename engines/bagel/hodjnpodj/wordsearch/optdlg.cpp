@@ -195,19 +195,19 @@ bool CWSOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CWSOptDlg::OnCancel(void) {
+void CWSOptDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(-1);
 	return;
 }
 
-void CWSOptDlg::OnOK(void) {
+void CWSOptDlg::OnOK() {
 	ClearDialogImage();
 	EndDialog(-1);
 	return;
 }
 
-void CWSOptDlg::ClearDialogImage(void) {
+void CWSOptDlg::ClearDialogImage() {
 
 	if (pOKButton != nullptr) {
 		delete pOKButton;
@@ -358,7 +358,7 @@ bool CWSOptDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CWSOptDlg::OnPaint(void) {
+void CWSOptDlg::OnPaint() {
 	CDC             *pDC;
 	CString         strTime = "Time Limit:  ";
 //int             nOldBkMode;

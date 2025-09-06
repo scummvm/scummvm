@@ -100,7 +100,7 @@ static  CNote *pKeyNote = nullptr;               // single note to be shown
 
 
 
-bool CNotebook::SetupKeyboardHook(void) {
+bool CNotebook::SetupKeyboardHook() {
 	pNotebookDialog = this;                         // retain pointer to our dialog box
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, NotebookHookProc, hExeInst, GetCurrentTask());
@@ -111,7 +111,7 @@ bool CNotebook::SetupKeyboardHook(void) {
 }
 
 
-void CNotebook::RemoveKeyboardHook(void) {
+void CNotebook::RemoveKeyboardHook() {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
@@ -228,7 +228,7 @@ void CNotebook::OnOK() {
 }
 
 
-void CNotebook::OnCancel(void) {
+void CNotebook::OnCancel() {
 	ClearDialogImage();                             // pre-clear dialog buttons
 	CDialog::OnCancel();                            // ... and restore background
 }
@@ -250,11 +250,11 @@ void CNotebook::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {                         // release the various contexts, palettes
-		(void)(*pWorkDC).SelectObject(pWorkOld);    // ... and bitmaps that we used
+		(*pWorkDC).SelectObject(pWorkOld);    // ... and bitmaps that we used
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -559,7 +559,7 @@ void CNotebook::UpdateContent(CDC *pDC) {
 		}
 	}
 
-	(void)(*pDC).SelectObject(pFontOld);                            // map out the font
+	(*pDC).SelectObject(pFontOld);                            // map out the font
 }
 
 
@@ -576,7 +576,7 @@ bool CNotebook::OnEraseBkgnd(CDC *) {
 }
 
 
-void CNotebook::ClearDialogImage(void) {
+void CNotebook::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {                            // release the dialog button
 		delete pOKButton;                                       // ... validate our window to avoid refresh
 		pOKButton = nullptr;                                       // ... and restore the background
@@ -586,7 +586,7 @@ void CNotebook::ClearDialogImage(void) {
 }
 
 
-void CNotebook::RefreshBackground(void) {
+void CNotebook::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
@@ -645,7 +645,7 @@ bool CNotebook::CreateWorkAreas(CDC *pDC) {
 		pBackgroundBitmap = nullptr;
 
 	(*pDC).SelectPalette(pBackgroundPalette, false); // create an offscreen bitmap that
-	(void)(*pDC).RealizePalette();                           // ... we can use to construct note
+	(*pDC).RealizePalette();                           // ... we can use to construct note
 	// ... entries to avoid flashes
 	if ((GetFreeSpace(0) >= (unsigned long)1000000) &&
 		(GlobalCompact((unsigned long)500000) >= (unsigned long)450000)) {
@@ -655,7 +655,7 @@ bool CNotebook::CreateWorkAreas(CDC *pDC) {
 			if ((pWorkDC != nullptr) &&
 				(*pWorkDC).CreateCompatibleDC(pDC)) {
 				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(void)(*pWorkDC).RealizePalette();
+				(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
@@ -667,11 +667,11 @@ bool CNotebook::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, false);
+	(*pDC).SelectPalette(pWorkPalOld, false);
 
 	if (!bSuccess) {                                        // not successful, so tear down
 		if (pWorkPalOld != nullptr) {                          // ... the work area
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -790,21 +790,21 @@ bool CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CNotebook::DoWaitCursor(void) {
+void CNotebook::DoWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void CNotebook::DoArrowCursor(void) {
+void CNotebook::DoArrowCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Gtl

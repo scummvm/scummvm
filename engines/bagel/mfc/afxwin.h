@@ -203,7 +203,7 @@ enum AfxSig {
 	AfxSig_is = AfxSig_i_v_s,      // int (uint16 *)
 	AfxSig_lwl = AfxSig_l_w_l,     // LRESULT (WPARAM, LPARAM)
 	AfxSig_lwwM = AfxSig_l_uu_M,    // LRESULT (unsigned int, unsigned int, CMenu*)
-	AfxSig_vv = AfxSig_v_v_v,      // void (void)
+	AfxSig_vv = AfxSig_v_v_v,      // void ()
 
 	AfxSig_vw = AfxSig_v_u_v,      // void (unsigned int)
 	AfxSig_vww = AfxSig_v_u_u,     // void (unsigned int, unsigned int)
@@ -229,7 +229,7 @@ enum AfxSig {
 	AfxSig_vOWNER = AfxSig_OWNERDRAW,  // void (int, uint16 *), force return true
 	AfxSig_iis = AfxSig_i_i_s,     // int (int, uint16 *)
 	AfxSig_wp = AfxSig_u_v_p,      // unsigned int (CPoint)
-	AfxSig_wv = AfxSig_u_v_v,      // unsigned int (void)
+	AfxSig_wv = AfxSig_u_v_v,      // unsigned int ()
 	AfxSig_vPOS = AfxSig_v_v_WINDOWPOS,    // void (WINDOWPOS*)
 	AfxSig_vCALC = AfxSig_v_b_NCCALCSIZEPARAMS,   // void (bool, NCCALCSIZE_PARAMS*)
 	AfxSig_vNMHDRpl = AfxSigNotify_v,    // void (NMHDR*, LRESULT*)
@@ -252,8 +252,8 @@ enum AfxSig {
 	AfxSig_bh = AfxSig_b_h_v,      // bool (HANDLE)
 	AfxSig_iw = AfxSig_i_u_v,      // int (unsigned int)
 	AfxSig_ww = AfxSig_u_u_v,      // unsigned int (unsigned int)
-	AfxSig_bv = AfxSig_b_v_v,      // bool (void)
-	AfxSig_hv = AfxSig_C_v_v,      // HANDLE (void)
+	AfxSig_bv = AfxSig_b_v_v,      // bool ()
+	AfxSig_hv = AfxSig_C_v_v,      // HANDLE ()
 	AfxSig_vb = AfxSig_vw,      // void (bool)
 	AfxSig_vbh = AfxSig_v_b_h,    // void (bool, HANDLE)
 	AfxSig_vbw = AfxSig_vww,    // void (bool, unsigned int)
@@ -286,7 +286,7 @@ enum AfxSig {
 #define PM_NOYIELD          0x0002
 
 typedef void (CCmdTarget::*AFX_PMSG)();
-typedef void (CWnd::*AFX_PMSGW)(void);
+typedef void (CWnd::*AFX_PMSGW)();
 
 #pragma warning(disable: 4121)
 struct AFX_MSGMAP_ENTRY {
@@ -309,7 +309,7 @@ struct AFX_MSGMAP {
 #ifndef AFX_MSG_CALL
 	#define AFX_MSG_CALL
 #endif
-typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)(void);
+typedef void (AFX_MSG_CALL CCmdTarget:: *AFX_PMSG)();
 
 #define DECLARE_MESSAGE_MAP() \
 	protected: \
@@ -387,7 +387,7 @@ union MessageMapFunctions {
 	int (AFX_MSG_CALL CWnd:: *pfn_is)(uint16 *);
 	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwl)(WPARAM, LPARAM);
 	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwwM)(unsigned int, unsigned int, CMenu *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vv)(void);
+	void (AFX_MSG_CALL CWnd:: *pfn_vv)();
 
 	void (AFX_MSG_CALL CWnd:: *pfn_vw)(unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vww)(unsigned int, unsigned int);
@@ -412,7 +412,7 @@ union MessageMapFunctions {
 	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, uint16 *);      // force return true
 	int (AFX_MSG_CALL CWnd:: *pfn_iis)(int, uint16 *);
 	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
-	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wv)(void);
+	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wv)();
 	void (AFX_MSG_CALL CWnd:: *pfn_vPOS)(WINDOWPOS *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vCALC)(bool, NCCALCSIZE_PARAMS *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwp)(unsigned int, CPoint);

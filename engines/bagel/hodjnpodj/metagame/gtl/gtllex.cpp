@@ -84,7 +84,7 @@ const char *CGtlData::FindKeyword(int iType)
 }
 
 //* CGtlData::ReadLine -- read input line
-bool CGtlData::ReadLine(void)
+bool CGtlData::ReadLine()
 // returns: true if error, false otherwise
 {
 	int iError = 0 ;        // error code

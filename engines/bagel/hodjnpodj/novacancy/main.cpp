@@ -68,7 +68,7 @@ static int gnLDieLeftFinal,    // final positions of dice.
 
 extern HWND ghParentWnd;
 
-CMainWindow::CMainWindow(void) {
+CMainWindow::CMainWindow() {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDibDoc *pDibDoc;
@@ -427,12 +427,12 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CMainWindow::GamePause(void) {
+void CMainWindow::GamePause() {
 	m_bPause = true;
 };
 
 
-void CMainWindow::GameResume(void) {
+void CMainWindow::GameResume() {
 	m_bPause = false;
 };
 
@@ -572,7 +572,7 @@ void CMainWindow::PlayGame() {
 
 
 
-void CMainWindow::GameReset(void) {
+void CMainWindow::GameReset() {
 	m_bGameActive = false;                      // there is no currently active game
 
 	for (short i = 0; i < 10; i++) {
@@ -1708,7 +1708,7 @@ END_MESSAGE_MAP()
 *   Animates dice by using cell sprites.
 *
 *   CALLING SEQUENCE:
-*   void AnimateDice(void)
+*   void AnimateDice()
 *
 *   FORMAL PARAMETERS:
 *   none.
@@ -1726,7 +1726,7 @@ END_MESSAGE_MAP()
 *   n/a
 ****************************************************************************************************************
 */
-void CMainWindow::AnimateDice(void) {
+void CMainWindow::AnimateDice() {
 	CDC* pDC;
 
 	// Coordinates of each cel from cell strip on splash screen.

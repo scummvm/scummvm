@@ -100,7 +100,7 @@ public:
 	char m_cEndData ;
 
 	// constructor
-	CHodjPodj(void) {
+	CHodjPodj() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 	}
 } ;
@@ -167,7 +167,7 @@ public:
 	char m_cEndData ;
 
 	// constructor
-	CBfcMgr(void) {
+	CBfcMgr() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	}
 };

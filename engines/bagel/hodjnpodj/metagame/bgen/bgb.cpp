@@ -36,10 +36,10 @@ namespace Gtl {
 #define CONTROL_PHYSICAL_MEMORY     true
 
 
-typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)(void);
+typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)();
 FPGETFREEMEMINFO    lpfnGetFreeMemInfo;
 bool    CheckLowMemory(uint32);
-uint32   GetPhysicalMemory(void);
+uint32   GetPhysicalMemory();
 
 extern  CBfcMgr *lpMetaGameStruct;
 
@@ -62,7 +62,7 @@ CBgbMgr *gpBgbMgr;
 *  RETURNS:  Constructors have no return type
 *
 *****************************************************************************/
-CBgbMgr::CBgbMgr(void) {
+CBgbMgr::CBgbMgr() {
 	// Initialize all member variables to 0
 	memset(&m_cStartData, 0, &m_cEndData - &m_cStartData);
 
@@ -86,7 +86,7 @@ CBgbMgr::CBgbMgr(void) {
 *  RETURNS:  Destructors have no return type
 *
 *****************************************************************************/
-CBgbMgr::~CBgbMgr(void) {
+CBgbMgr::~CBgbMgr() {
 	ReleaseResources();
 
 	// Release the Palette
@@ -507,7 +507,7 @@ void CBgbMgr::CacheOptimize(unsigned long lReqSpace) {
 *  SAMPLE USAGE:    CacheFlush();
 *
 *****************************************************************************/
-void CBgbMgr::CacheFlush(void) {
+void CBgbMgr::CacheFlush() {
 	CBgbObject *pBgbObject;
 
 	//ErrorLog("DEBUG.LOG", "CBgbMgr::CacheFlush");
@@ -839,7 +839,7 @@ cleanup:
 }
 
 //* CBgbMgr::ReInitDc -- do InitDc with existing view and BsuSet
-bool CBgbMgr::ReInitDc(void)
+bool CBgbMgr::ReInitDc()
 // returns: true if error, false otherwise
 {
 	InitDc(m_xpcView, m_xpBsuSet);
@@ -850,7 +850,7 @@ bool CBgbMgr::ReInitDc(void)
 //* CBgbMgr::AdjustLockCount --
 bool CBgbMgr::AdjustLockCount(int iIncr)
 // iIncr -- if <0 or >0, add to lock count; if =0, zero lock count
-//// int PASCAL CBgbMgr::AdjustLockCount(void)
+//// int PASCAL CBgbMgr::AdjustLockCount()
 // returns: true if error, false otherwise
 {
 	if (iIncr != 0)
@@ -936,7 +936,7 @@ bool CBgbMgr::SetPen(COLORREF cPenColor, int iPenWidth)
 }
 
 //* CBgbMgr::ReleaseDc -- release Dc, if one has been gotten
-bool CBgbMgr::ReleaseDc(void)
+bool CBgbMgr::ReleaseDc()
 // returns: true if error, false otherwise
 {
 	JXENTER(CBgbMgr::ReleaseDc) ;
@@ -1005,7 +1005,7 @@ bool CBgbMgr::ClearBitmapObject(CBgbObject *pBgbObject) {
 }
 
 //* CBgbMgr::ReleaseResources -- release all resources at termination
-bool CBgbMgr::ReleaseResources(void)
+bool CBgbMgr::ReleaseResources()
 // returns: true if error, false otherwise
 {
 	JXENTER(CBgbMgr::ReleaseResources) ;
@@ -1048,7 +1048,7 @@ bool CBgbMgr::ReleaseResources(void)
 *  DoAnimations();
 *
 *****************************************************************************/
-void CBgbMgr::DoAnimations(void) {
+void CBgbMgr::DoAnimations() {
 	CBgbObject *pBgbObject;
 	CLList *pList;
 

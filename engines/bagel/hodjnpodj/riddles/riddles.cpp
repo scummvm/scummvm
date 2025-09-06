@@ -148,7 +148,7 @@ STATIC RIDDLE curRiddle;
 STATIC CSprite *aMasterSpriteList[N_SPRITECHARS];
 
 
-CRiddlesWindow::CRiddlesWindow(void) :
+CRiddlesWindow::CRiddlesWindow() :
 		cBrush(PALETTEINDEX(11)) {
 	CString  WndClass;
 	CRect    tmpRect;
@@ -331,7 +331,7 @@ void CRiddlesWindow::HandleError(ERROR_CODE errCode) {
 }
 
 
-ERROR_CODE CRiddlesWindow::LoadMasterSprites(void) {
+ERROR_CODE CRiddlesWindow::LoadMasterSprites() {
 	CBitmap *pBmp, *pFontBmp;
 	CSprite *pSprite;
 	CDC *pDC;
@@ -534,12 +534,12 @@ bool CRiddlesWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CRiddlesWindow::GamePause(void) {
+void CRiddlesWindow::GamePause() {
 	m_bPause = true;
 };
 
 
-void CRiddlesWindow::GameResume(void) {
+void CRiddlesWindow::GameResume() {
 	m_bPause = false;
 };
 
@@ -634,7 +634,7 @@ void CRiddlesWindow::LoadIniSettings() {
 }
 
 
-void CRiddlesWindow::GameReset(void) {
+void CRiddlesWindow::GameReset() {
 	CDC *pDC;
 
 	pDC = GetDC();                              // get the current device context
@@ -820,7 +820,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 }
 
 
-ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
+ERROR_CODE CRiddlesWindow::BuildSpriteList() {
 	char *pRiddle, *p;
 	int x, y;
 	unsigned int nCharsPerLine;
@@ -1462,7 +1462,7 @@ void CRiddlesWindow::DeleteSprite(CSprite *pSprite) {
 	delete pSprite;                                 // delete it
 }
 
-void CRiddlesWindow::FlushInputEvents(void) {
+void CRiddlesWindow::FlushInputEvents() {
 	MSG msg;
 
 	// find and remove all keyboard events

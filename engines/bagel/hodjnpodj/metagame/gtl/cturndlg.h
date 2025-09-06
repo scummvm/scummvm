@@ -62,7 +62,7 @@ public:
 
 	// standard constructor
 	CTurnDialog(CWnd *pParent, CPalette *pPalette, bool bHodj, bool bGain, bool bTurn);
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	// Dialog Data
 	//{{AFX_DATA(CTurnDialog)

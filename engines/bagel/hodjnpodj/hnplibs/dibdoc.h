@@ -38,10 +38,10 @@ public:
 	HDIB GetHDIB() const {
 		return m_hDIB;
 	}
-	CPalette *GetDocPalette(void) const {
+	CPalette *GetDocPalette() const {
 		return m_palDIB;
 	}
-	CPalette *DetachPalette(void);
+	CPalette *DetachPalette();
 	CSize GetDocSize() const {
 		return m_sizeDoc;
 	}

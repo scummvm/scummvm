@@ -89,7 +89,7 @@ public:
 	CColorButton    *m_pCancelButton;                   // Cancel button on scroll
 
 protected:
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 	virtual void DoDataExchange(CDataExchange*) override;    // DDX/DDV support
 	virtual bool OnInitDialog() override;
 	virtual void OnOK() override;

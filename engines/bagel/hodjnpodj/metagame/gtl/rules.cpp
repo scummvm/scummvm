@@ -151,7 +151,7 @@ bool CRules::SetupKeyboardHook() {
 }
 
 
-void CRules::RemoveKeyboardHook(void) {
+void CRules::RemoveKeyboardHook() {
 	#if BUILD_FOR_DLL
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
@@ -261,7 +261,7 @@ void CRules::OnOK() {
 }
 
 
-void CRules::OnCancel(void) {
+void CRules::OnCancel() {
 	ClearDialogImage();
 	CDialog::OnCancel();
 }
@@ -382,7 +382,7 @@ void CRules::OnPaint() {
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = dc.SelectPalette(pScrollPalette, false);
-		(void) dc.RealizePalette();                 // .. and make the system use it
+		dc.RealizePalette();                 // .. and make the system use it
 	}
 
 	if (first_time) {                               // unfurl scroll visually
@@ -403,7 +403,7 @@ void CRules::OnPaint() {
 		WritePage(&dc, nHelpPage);
 		UpdateMore(&dc);                            // update the "more" indicator
 	} else
-		(void) dc.BitBlt(        // update the screen with just the
+		dc.BitBlt(        // update the screen with just the
 		    0, 0,                           // ... current page of text
 		    ScrollRect.right,
 		    ScrollRect.bottom,
@@ -412,7 +412,7 @@ void CRules::OnPaint() {
 		    SRCCOPY);
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void) dc.SelectPalette(pPalOld, false);
+		dc.SelectPalette(pPalOld, false);
 
 	DoArrowCursor();                                // return to an arrow cursor
 }
@@ -423,7 +423,7 @@ bool CRules::OnEraseBkgnd(CDC *pDC) {
 }
 
 
-void CRules::ClearDialogImage(void) {
+void CRules::ClearDialogImage() {
 	delete pOKButton;
 	pOKButton = nullptr;
 	if (pBackgroundBitmap != nullptr)
@@ -432,7 +432,7 @@ void CRules::ClearDialogImage(void) {
 }
 
 
-void CRules::RefreshBackground(void) {
+void CRules::RefreshBackground() {
 	CDC         *pDC;
 	CPalette    *pPalOld = nullptr;
 
@@ -443,10 +443,10 @@ void CRules::RefreshBackground(void) {
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
-		(void)(*pDC).RealizePalette();              // .. and make the system use it
+		(*pDC).RealizePalette();              // .. and make the system use it
 	}
 
-	(void)(*pDC).BitBlt(        // repaint the background as it was
+	(*pDC).BitBlt(        // repaint the background as it was
 	    0,
 	    0,
 	    ScrollRect.right,
@@ -457,7 +457,7 @@ void CRules::RefreshBackground(void) {
 	    SRCCOPY);
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);                                 // release the context
 }
@@ -491,7 +491,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		return;
 	}
 
-	(void)(*pBackgroundDC).BitBlt(      // save the entire background
+	(*pBackgroundDC).BitBlt(      // save the entire background
 	    0, 0,
 	    ScrollRect.right,
 	    ScrollRect.bottom,
@@ -499,7 +499,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCCOPY);
 
-	(void)(*pScrollDC).BitBlt(       // copy background to scroll context
+	(*pScrollDC).BitBlt(       // copy background to scroll context
 	    0, 0,                           // ... so we can construct the scroll
 	    ScrollRect.right,               // ... on top of it in a masked manner
 	    ScrollRect.bottom,
@@ -511,7 +511,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 
 	ScrollTopCurlRect = ScrollTopRect;              // record where we're putting the top curl
 
-	(void)(*pScrollDC).BitBlt(       // mask out where the top curl goes
+	(*pScrollDC).BitBlt(       // mask out where the top curl goes
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -519,7 +519,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(void)(*pScrollTopMaskDC).BitBlt(     // invert the top curl mask
+	(*pScrollTopMaskDC).BitBlt(     // invert the top curl mask
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -527,7 +527,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(void)(*pScrollTopDC).BitBlt(      // remove transparent area from top curl
+	(*pScrollTopDC).BitBlt(      // remove transparent area from top curl
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -535,7 +535,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(void)(*pScrollTopMaskDC).BitBlt(     // restore top curl mask
+	(*pScrollTopMaskDC).BitBlt(     // restore top curl mask
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -543,7 +543,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(void)(*pScrollDC).BitBlt(       // paint top curl into the scroll
+	(*pScrollDC).BitBlt(       // paint top curl into the scroll
 	    0, 0,
 	    ScrollTopRect.right,
 	    ScrollTopRect.bottom,
@@ -557,7 +557,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	dstRect.top += ScrollTopRect.bottom;            // ... mid section strip of the scroll
 	dstRect.bottom += ScrollTopRect.bottom;
 
-	(void)(*pScrollMidMaskDC).BitBlt(     // invert the mid section mask
+	(*pScrollMidMaskDC).BitBlt(     // invert the mid section mask
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -565,7 +565,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(void)(*pScrollMidDC).BitBlt(      // mask out transparent part of mid section
+	(*pScrollMidDC).BitBlt(      // mask out transparent part of mid section
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -573,7 +573,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(void)(*pScrollMidMaskDC).BitBlt(     // reset the mid section mask
+	(*pScrollMidMaskDC).BitBlt(     // reset the mid section mask
 	    0, 0,
 	    ScrollMidRect.right,
 	    ScrollMidRect.bottom,
@@ -582,7 +582,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    DSTINVERT);
 
 	for (i = 0; i < SCROLL_PIECES; i++) {           // build the scroll's mid section srip-wise
-		(void)(*pScrollDC).BitBlt(
+		(*pScrollDC).BitBlt(
 		    dstRect.left,               // mask out where the image will go
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -591,7 +591,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(void)(*pScrollDC).BitBlt(      // paint in the mid section image
+		(*pScrollDC).BitBlt(      // paint in the mid section image
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -607,7 +607,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	dstRect.bottom = dstRect.top + ScrollBotRect.bottom;
 	ScrollBotCurlRect = dstRect;
 
-	(void)(*pScrollDC).BitBlt(       // mask out where the bottom curl image goes
+	(*pScrollDC).BitBlt(       // mask out where the bottom curl image goes
 	    dstRect.left,
 	    dstRect.top,
 	    ScrollBotRect.right,
@@ -616,7 +616,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(void)(*pScrollBotMaskDC).BitBlt(     // invert the bottom curl mask
+	(*pScrollBotMaskDC).BitBlt(     // invert the bottom curl mask
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -624,7 +624,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(void)(*pScrollBotDC).BitBlt(      // mask out transparent part of curl
+	(*pScrollBotDC).BitBlt(      // mask out transparent part of curl
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -632,7 +632,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    SRCAND);
 
-	(void)(*pScrollBotMaskDC).BitBlt(     // reset the mask
+	(*pScrollBotMaskDC).BitBlt(     // reset the mask
 	    0, 0,
 	    ScrollBotRect.right,
 	    ScrollBotRect.bottom,
@@ -640,7 +640,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 	    0, 0,
 	    DSTINVERT);
 
-	(void)(*pScrollDC).BitBlt(       // paint in the bottom curl
+	(*pScrollDC).BitBlt(       // paint in the bottom curl
 	    dstRect.left,
 	    dstRect.top,
 	    ScrollBotRect.right,
@@ -674,7 +674,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 
 		dst2Rect = dstRect;
 
-		(void)(*pWorkDC).BitBlt(      // splat in the background for top curl
+		(*pWorkDC).BitBlt(      // splat in the background for top curl
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -683,7 +683,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    dst2Rect.top,
 		    SRCCOPY);
 
-		(void)(*pWorkDC).BitBlt(      // mask out where the top curl goes
+		(*pWorkDC).BitBlt(      // mask out where the top curl goes
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -691,7 +691,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(void)(*pWorkDC).BitBlt(      // insert the top curl background
+		(*pWorkDC).BitBlt(      // insert the top curl background
 		    0, 0,
 		    ScrollTopRect.right,
 		    ScrollTopRect.bottom,
@@ -700,7 +700,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    SRCPAINT);
 
 		if (i == 0) {                               // if first time, just paint curl to display
-			(void)(*pDC).BitBlt(
+			(*pDC).BitBlt(
 			    dst2Rect.left,
 			    dst2Rect.top,
 			    ScrollTopRect.right,
@@ -709,7 +709,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    0, 0,
 			    SRCCOPY);
 		} else {
-			(void)(*pWorkDC).BitBlt(     // ... otherwise paint in a new piece of
+			(*pWorkDC).BitBlt(     // ... otherwise paint in a new piece of
 			    dst2Rect.left,          // ... the middle section
 			    ScrollTopRect.bottom,
 			    dst2Rect.right,
@@ -718,7 +718,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    dst2Rect.left,
 			    dst2Rect.top + ScrollTopRect.bottom,
 			    SRCCOPY);
-			(void)(*pDC).BitBlt(      // ... then paint it and the curl, thus
+			(*pDC).BitBlt(      // ... then paint it and the curl, thus
 			    dst2Rect.left,          // ... causing the top to seemingly unfurl
 			    dst2Rect.top,           // ... by one more strip
 			    ScrollTopRect.right,
@@ -732,7 +732,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		dst2Rect.bottom = dstRect.bottom;
 
 		if ((i == 0) || ((i == 1) && (h == 1))) {   // if first time or doing last iteration
-			(void)(*pWorkDC).BitBlt(                // ... just paint in the bottom curl
+			(*pWorkDC).BitBlt(                // ... just paint in the bottom curl
 			    0, 0,
 			    dst2Rect.right,
 			    scroll_delta,
@@ -741,7 +741,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    dst2Rect.top,
 			    SRCCOPY);
 		} else {                                    //
-			(void)(*pWorkDC).BitBlt(
+			(*pWorkDC).BitBlt(
 			    0, 0,
 			    dst2Rect.right,
 			    scroll_delta,
@@ -751,7 +751,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 			    SRCCOPY);
 		}
 
-		(void)(*pWorkDC).BitBlt(
+		(*pWorkDC).BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -761,7 +761,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    dst2Rect.top + scroll_delta,
 		    SRCCOPY);
 
-		(void)(*pWorkDC).BitBlt(
+		(*pWorkDC).BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -770,7 +770,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCAND);
 
-		(void)(*pWorkDC).BitBlt(
+		(*pWorkDC).BitBlt(
 		    0,
 		    scroll_delta,
 		    ScrollBotRect.right,
@@ -779,7 +779,7 @@ void CRules::UnfurlScroll(CDC *pDC) {
 		    0, 0,
 		    SRCPAINT);
 
-		(void)(*pDC).BitBlt(
+		(*pDC).BitBlt(
 		    ScrollBotRect.left,
 		    dst2Rect.top,
 		    ScrollBotRect.right,
@@ -824,7 +824,7 @@ void CRules::UpdateScroll(int nPage) {
 
 	if (pScrollPalette != nullptr) {                   // map in our palette
 		pPalOld = (*pDC).SelectPalette(pScrollPalette, false);
-		(void)(*pDC).RealizePalette();              // .. and make the system use it
+		(*pDC).RealizePalette();              // .. and make the system use it
 	}
 
 	dstRect = ScrollMidRect;                        // setup initial destination for blts
@@ -832,7 +832,7 @@ void CRules::UpdateScroll(int nPage) {
 	dstRect.bottom += ScrollTopRect.bottom;
 
 	for (i = 0; i < SCROLL_PIECES; i++) {           // repaint the scroll midsection artwork
-		(void)(*pScrollDC).BitBlt(      // ... mask out where artwork goes
+		(*pScrollDC).BitBlt(      // ... mask out where artwork goes
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -841,7 +841,7 @@ void CRules::UpdateScroll(int nPage) {
 		    0, 0,
 		    SRCAND);
 
-		(void)(*pScrollDC).BitBlt(      // ... paint in the scroll artwork
+		(*pScrollDC).BitBlt(      // ... paint in the scroll artwork
 		    dstRect.left,
 		    dstRect.top + ScrollMidRect.bottom * i,
 		    ScrollMidRect.right,
@@ -853,7 +853,7 @@ void CRules::UpdateScroll(int nPage) {
 
 	WritePage(pScrollDC, nPage);                    // construct the new page of text
 
-	(void)(*pDC).BitBlt(        // paint the result to the sceen
+	(*pDC).BitBlt(        // paint the result to the sceen
 	    TEXT_LEFT_MARGIN,
 	    ScrollTopRect.bottom + TEXT_TOP_MARGIN,
 	    TEXT_WIDTH,
@@ -866,7 +866,7 @@ void CRules::UpdateScroll(int nPage) {
 	UpdateMore(pDC);                                // update the "more" indicator
 
 	if (pScrollPalette != nullptr)                     // map out our palette
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -1003,7 +1003,7 @@ crop_byte:
 			break;
 	}
 
-	(void)(*pDC).SelectObject(pFontOld);
+	(*pDC).SelectObject(pFontOld);
 
 	dwHelpPagePosition[nPage + 1] += i + nCropped;
 	dwHelpPageEOL[nPage + 1] = bEOL;
@@ -1032,7 +1032,7 @@ crop_byte:
 	if (bEOF && (i >= (int) nCount))
 		bHelpEOF = true;
 
-	(void)(*pDC).SelectObject(pFontOld);
+	(*pDC).SelectObject(pFontOld);
 
 }
 
@@ -1057,7 +1057,7 @@ void CRules::UpdateMore(CDC *pDC) {
 	dy = fontMetrics.tmHeight;
 
 	if (nHelpPage == 0)
-		(void)(*pDC).BitBlt(
+		(*pDC).BitBlt(
 		    x,
 		    y,
 		    dx,
@@ -1075,7 +1075,7 @@ void CRules::UpdateMore(CDC *pDC) {
 	    TEXT_MORE_DY;
 
 	if (bHelpEOF)
-		(void)(*pDC).BitBlt(
+		(*pDC).BitBlt(
 		    x,
 		    y,
 		    dx,
@@ -1087,7 +1087,7 @@ void CRules::UpdateMore(CDC *pDC) {
 	else
 		(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 
-	(void)(*pDC).SelectObject(pFontOld);
+	(*pDC).SelectObject(pFontOld);
 }
 
 
@@ -1261,7 +1261,7 @@ CDC *CRules::SetupMask(CDC *pDC, CDC *pBitmapDC, CBitmap *pMask, CBitmap * &pMas
 	        (*pNewDC).CreateCompatibleDC(pDC)) {
 		pMaskOld = (*pNewDC).SelectObject(pMask);
 		if (pMaskOld != nullptr) {
-			(void)(*pNewDC).BitBlt(
+			(*pNewDC).BitBlt(
 			    0, 0,
 			    (*pRect).right,
 			    (*pRect).bottom,
@@ -1288,7 +1288,7 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap, CBitmap * &pBitm
 			pPalOld = (*pNewDC).SelectPalette(pPalette, false);
 		else
 			pPalOld = nullptr;
-		(void)(*pNewDC).RealizePalette();
+		(*pNewDC).RealizePalette();
 		pBitmapOld = (*pNewDC).SelectObject(pBitmap);
 		if (pBitmapOld != nullptr)
 			return (pNewDC);
@@ -1300,12 +1300,12 @@ CDC *CRules::SetupCompatibleContext(CDC *pDC, CBitmap *pBitmap, CBitmap * &pBitm
 
 void CRules::ReleaseCompatibleContext(CDC *&pDC, CBitmap * &pBitmap, CBitmap *pBitmapOld, CPalette *pPalOld) {
 	if (pBitmapOld != nullptr) {
-		(void)(*pDC).SelectObject(pBitmapOld);
+		(*pDC).SelectObject(pBitmapOld);
 		pBitmapOld = nullptr;
 	}
 
 	if (pPalOld != nullptr) {
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 		pPalOld = nullptr;
 	}
 
@@ -1436,21 +1436,21 @@ bool CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message
 }
 
 
-void CRules::DoWaitCursor(void) {
+void CRules::DoWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void CRules::DoArrowCursor(void) {
+void CRules::DoArrowCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Gtl

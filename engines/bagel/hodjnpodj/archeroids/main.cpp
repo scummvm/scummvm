@@ -443,7 +443,7 @@ CMainWindow::CMainWindow() {
 }
 
 
-void CMainWindow::InitializeJoystick(void) {
+void CMainWindow::InitializeJoystick() {
 	JOYINFO     joyInfo;
 
 	if (joySetCapture(m_hWnd, JOYSTICKID1, 10000, true) == JOYERR_NOERROR) {
@@ -461,7 +461,7 @@ void CMainWindow::InitializeJoystick(void) {
 }
 
 
-ERROR_CODE CMainWindow::LoadMasterSprites(void) {
+ERROR_CODE CMainWindow::LoadMasterSprites() {
 	CDC *pDC;
 	ERROR_CODE errCode;
 
@@ -746,7 +746,7 @@ ERROR_CODE CMainWindow::LoadMasterSprites(void) {
 	return errCode;
 }
 
-void CMainWindow::ReleaseMasterSprites(void) {
+void CMainWindow::ReleaseMasterSprites() {
 	//
 	// free all master sprite objects
 	//
@@ -803,7 +803,7 @@ void CMainWindow::ReleaseMasterSprites(void) {
 }
 
 
-ERROR_CODE CMainWindow::LoadMasterSounds(void) {
+ERROR_CODE CMainWindow::LoadMasterSounds() {
 	HANDLE hResInfo;
 	HINSTANCE hInst;
 	ERROR_CODE errCode;
@@ -909,7 +909,7 @@ ERROR_CODE CMainWindow::LoadMasterSounds(void) {
 }
 
 
-void CMainWindow::ReleaseMasterSounds(void) {
+void CMainWindow::ReleaseMasterSounds() {
 	if (m_hExtraLifeRes != nullptr) {
 		FreeResource(m_hExtraLifeRes);
 		m_hExtraLifeRes = nullptr;
@@ -1444,7 +1444,7 @@ ERROR_CODE CMainWindow::CreateBadArrow(CSprite *pBadGuy) {
 }
 
 
-POINT CMainWindow::GetLeftMostBadGuy(void) {
+POINT CMainWindow::GetLeftMostBadGuy() {
 	POINT ptTmp, ptBest;
 	CLList *pList;
 
@@ -1684,7 +1684,7 @@ ERROR_CODE CMainWindow::CreateBadGuys() {
 *  RETURNS:  nothing
 *
 *****************************************************************************/
-void CMainWindow::PlayGame(void) {
+void CMainWindow::PlayGame() {
 	ERROR_CODE errCode;
 
 	errCode = ERR_NONE;                                 // assume no error
@@ -1724,7 +1724,7 @@ void CMainWindow::PlayGame(void) {
 	HandleError(errCode);
 }
 
-void CMainWindow::PlayNextWave(void) {
+void CMainWindow::PlayNextWave() {
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -1745,7 +1745,7 @@ void CMainWindow::PlayNextWave(void) {
 	HandleError(errCode);
 }
 
-void CMainWindow::WaveReset(void) {
+void CMainWindow::WaveReset() {
 	CDC *pDC;
 	int i;
 
@@ -1876,7 +1876,7 @@ void CMainWindow::GameReset() {
 	m_nWave = 0;                                    // reset to Wave 1
 }
 
-void CMainWindow::KillAnimation(void) {
+void CMainWindow::KillAnimation() {
 	CLList *pList;
 
 	// delete the Special FX list
@@ -2248,7 +2248,7 @@ bool CMainWindow::MoveArrows(CDC *pDC) {
 	return false;
 }
 
-bool CMainWindow::CheckMessages(void) {
+bool CMainWindow::CheckMessages() {
 	JOYINFO joyInfo;
 	MSG msg;
 	bool bEndTask = false;
@@ -3195,7 +3195,7 @@ long CMainWindow::OnJoyStick(unsigned int wParam, long lParam) {
 	return 0;
 }
 
-void CMainWindow::GamePause(void) {
+void CMainWindow::GamePause() {
 	m_bPause = true;
 	if (m_bMoveMode) {
 		m_bMoveMode = false;
@@ -3204,7 +3204,7 @@ void CMainWindow::GamePause(void) {
 };
 
 
-void CMainWindow::GameResume(void) {
+void CMainWindow::GameResume() {
 	m_bPause = false;
 
 	if (m_bMoveMode)
@@ -3293,7 +3293,7 @@ void CMainWindow::OnSoundNotify(CSound *) {
 	//
 }
 
-void CMainWindow::FlushInputEvents(void) {
+void CMainWindow::FlushInputEvents() {
 	MSG msg;
 
 	// find and remove all keyboard events

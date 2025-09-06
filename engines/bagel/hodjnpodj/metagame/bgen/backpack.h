@@ -72,14 +72,14 @@ public:
 	static  void UpdateContent(CDC *pDC);
 	static  void UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY);
 	static  void UpdatePage(CDC *pDC);
-	static  void ClearDialogImage(void);
-	static  void RefreshBackground(void);
-	static  void DoWaitCursor(void);
-	static  void DoArrowCursor(void);
+	static  void ClearDialogImage();
+	static  void RefreshBackground();
+	static  void DoWaitCursor();
+	static  void DoArrowCursor();
 
 private:
-	bool SetupKeyboardHook(void);
-	void RemoveKeyboardHook(void);
+	bool SetupKeyboardHook();
+	void RemoveKeyboardHook();
 
 	bool CreateWorkAreas(CDC *pDC);
 
@@ -105,12 +105,12 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CBackpack)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual bool OnInitDialog(void) override;
+	virtual bool OnInitDialog() override;
 	afx_msg bool OnEraseBkgnd(CDC *pDC);
-	virtual void OnOK(void) override;
-	virtual void OnCancel(void) override;
-	afx_msg void OnDestroy(void);
-	afx_msg void OnPaint(void);
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	afx_msg void OnDestroy();
+	afx_msg void OnPaint();
 	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);

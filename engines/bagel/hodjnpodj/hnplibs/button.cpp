@@ -128,7 +128,7 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
+		(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // display the correct bitmap based on state
@@ -144,9 +144,9 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	PaintBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
 
 	if (pPalOld != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
-	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
+	(*pDC).Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -667,7 +667,7 @@ void CMaskedButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
+		(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (m_pBackground == nullptr)
@@ -694,9 +694,9 @@ void CMaskedButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	PaintMaskedBitmap(pDC, nullptr, pBitmap, (*lpDrawItemStruct).rcItem.left, (*lpDrawItemStruct).rcItem.top);
 
 	if (pPalOld != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
-	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
+	(*pDC).Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -911,7 +911,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
+		(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) ||
@@ -937,7 +937,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	pOldPen = (*pDC).SelectObject(&myPen);                  // select in the pens and brushes
 	pOldBrush = (*pDC).SelectObject(&myBrush);
 	(*pDC).Rectangle(&(*lpDrawItemStruct).rcItem);
-	(void)(*pDC).SelectObject(pOldPen);
+	(*pDC).SelectObject(pOldPen);
 	pOldPen = (*pDC).SelectObject(&myInversePen);
 
 	for (i = 1; i <= BUTTON_EDGE_WIDTH; i++) {              // draw the button edges
@@ -946,8 +946,8 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).LineTo((*lpDrawItemStruct).rcItem.right - i, (*lpDrawItemStruct).rcItem.top + i - 1);
 	}
 
-	(void)(*pDC).SelectObject(pOldPen);
-	(void)(*pDC).SelectObject(pOldBrush);
+	(*pDC).SelectObject(pOldPen);
+	(*pDC).SelectObject(pOldBrush);
 
 	myFrame.CreateSolidBrush(m_cButtonOutline);             // outline the button
 	(*pDC).FrameRect(&(*lpDrawItemStruct).rcItem, &myFrame);
@@ -973,7 +973,7 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(void)(*pDC).SetTextColor(oldTextColor);                // set the color of the text
+	(*pDC).SetTextColor(oldTextColor);                // set the color of the text
 
 	if ((*lpDrawItemStruct).itemState & ODS_FOCUS) {
 		focusRect.SetRect(x - FOCUS_RECT_DX,
@@ -985,9 +985,9 @@ void CColorButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	}
 
 	if (pPalOld != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
-	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
+	(*pDC).Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -1197,7 +1197,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
+		(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // setup text color based on enable/disable state
@@ -1227,8 +1227,8 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		pOldPen = (*pDC).SelectObject(&controlPen); // fill in just the box
 		(*pDC).Rectangle(&controlRect);
 	}
-	(void)(*pDC).SelectObject(pOldPen);
-	(void)(*pDC).SelectObject(pOldBrush);
+	(*pDC).SelectObject(pOldPen);
+	(*pDC).SelectObject(pOldBrush);
 
 	(*pDC).FrameRect(&controlRect, &frameBrush);    // paint the box and indicate selection
 
@@ -1238,7 +1238,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).LineTo(controlRect.right - 1, controlRect.bottom - 1);
 		(*pDC).MoveTo(controlRect.left, controlRect.bottom - 1);
 		(*pDC).LineTo(controlRect.right - 1, controlRect.top);
-		(void)(*pDC).SelectObject(pOldPen);
+		(*pDC).SelectObject(pOldPen);
 	}
 
 	if ((*lpDrawItemStruct).itemState & ODS_SELECTED) {
@@ -1265,7 +1265,7 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(void)(*pDC).SetTextColor(oldTextColor);
+	(*pDC).SetTextColor(oldTextColor);
 
 	focusRect.SetRect(x - FOCUS_RECT_DX,           // set the focus rectangle
 	                  y - FOCUS_RECT_DY,             // ... then paint it or clear it
@@ -1278,9 +1278,9 @@ void CCheckButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).FrameRect(&focusRect, &faceBrush);
 
 	if (pPalOld != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
-	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
+	(*pDC).Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 
@@ -1543,7 +1543,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 
 	if (m_pPalette != nullptr) {                       // map the palette into the context
 		pPalOld = (*pDC).SelectPalette(m_pPalette, true);
-		(void)(*pDC).RealizePalette();              // ... and tell the system to use it
+		(*pDC).RealizePalette();              // ... and tell the system to use it
 	}
 
 	if (((*lpDrawItemStruct).itemState & ODS_GRAYED) || // setup text color based on enable/disable state
@@ -1575,7 +1575,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		pOldPen = (*pDC).SelectObject(&controlPen); // fill in just the box
 		(*pDC).Ellipse(&controlRect);
 	}
-	(void)(*pDC).SelectObject(pOldPen);
+	(*pDC).SelectObject(pOldPen);
 
 	pOldPen = (*pDC).SelectObject(&framePen);
 	(*pDC).Ellipse(&controlRect);       // paint the box and indicate selection
@@ -1583,16 +1583,16 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		controlRect.InflateRect(-1, -1);
 		(*pDC).Ellipse(&controlRect);
 	}
-	(void)(*pDC).SelectObject(pOldPen);
-	(void)(*pDC).SelectObject(pOldBrush);
+	(*pDC).SelectObject(pOldPen);
+	(*pDC).SelectObject(pOldBrush);
 
 	if (m_bCheckState) {                            // indicate that the box is checked
 		selectRect.InflateRect(-2, -2);
 		pOldPen = (*pDC).SelectObject(&controlPen);
 		pOldBrush = (*pDC).SelectObject(&controlBrush);
 		(*pDC).Ellipse(&selectRect);
-		(void)(*pDC).SelectObject(pOldBrush);
-		(void)(*pDC).SelectObject(pOldPen);
+		(*pDC).SelectObject(pOldBrush);
+		(*pDC).SelectObject(pOldPen);
 	}
 
 	(*pDC).GetTextMetrics(&fontMetrics);                    // get some info about the font
@@ -1614,7 +1614,7 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 		(*pDC).TextOut(dx, y, (const char *) "_", 1);
 	}
 
-	(void)(*pDC).SetTextColor(oldTextColor);
+	(*pDC).SetTextColor(oldTextColor);
 
 	focusRect.SetRect(x - FOCUS_RECT_DX,                            // set the focus rectangle
 	                  y - FOCUS_RECT_DY,              // ... then paint it or clear it
@@ -1628,9 +1628,9 @@ void CRadioButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
 	}
 
 	if (pPalOld != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
-	(void)(*pDC).Detach();                          // dismantle the temporary CDC we built
+	(*pDC).Detach();                          // dismantle the temporary CDC we built
 	delete pDC;
 }
 

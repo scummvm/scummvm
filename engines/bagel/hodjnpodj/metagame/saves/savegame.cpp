@@ -52,7 +52,7 @@ struct stInventoryInfo {
 } stPlayerBuf[MAX_PLAYERS];
 
 // Local prototypes
-static ERROR_CODE GetSaveGameDescriptions(void);
+static ERROR_CODE GetSaveGameDescriptions();
 static void WipeBFC(CBfcMgr *pBfcMgr);
 
 bool SaveGame(CWnd *pWnd, CPalette *pPalette, ERROR_CODE *pErrCode) {

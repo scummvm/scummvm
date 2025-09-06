@@ -582,7 +582,7 @@ void CMainZoomWindow::OnDestroy() {
  *
  ****************************************************************/
 
-void CMainZoomWindow::ReleaseResources(void) {
+void CMainZoomWindow::ReleaseResources() {
 	delete pText;
 	pText = nullptr;
 
@@ -628,7 +628,7 @@ void CMainZoomWindow::ReleaseResources(void) {
  *
  ****************************************************************/
 
-void CMainZoomWindow::FlushInputEvents(void) {
+void CMainZoomWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

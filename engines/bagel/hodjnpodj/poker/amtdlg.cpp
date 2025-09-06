@@ -150,7 +150,7 @@ bool CSetAmountDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
  *  bool to tell windows that it has dealt this function
  *
  ****************************************************************/
-bool CSetAmountDlg::OnInitDialog(void) {
+bool CSetAmountDlg::OnInitDialog() {
 	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
@@ -233,7 +233,7 @@ void CSetAmountDlg::SetInitialOptions(long lCurrentAmount) {
  *  n/a
  *
  ****************************************************************/
-void CSetAmountDlg::OnPaint(void) {
+void CSetAmountDlg::OnPaint() {
 	CDC             *pDC;
 	CString     strHowMuch1 = "How much would you";
 	CString     strHowMuch2 = "like (0 - 1000)?";
@@ -420,7 +420,7 @@ bool CSetAmountDlg::OnEraseBkgnd(CDC *pDC) {
 	return true;
 }
 
-void CSetAmountDlg::ClearDialogImage(void) {
+void CSetAmountDlg::ClearDialogImage() {
 
 	if (pAmountButton != nullptr) {
 		delete pAmountButton;

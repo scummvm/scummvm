@@ -284,7 +284,7 @@ bool CGtlData::MoveCharToNode(CNode FAR *lpTargetNode)
 
 	if ((lpiShortPath = FindShortestPath(lpNode, lpTargetNode)) == nullptr) {
 		C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", "You can't get there", "from here...");
-		(void) dlg1Button.DoModal();
+		dlg1Button.DoModal();
 		iError = 101 ;
 		goto cleanup ;
 	}
@@ -1039,7 +1039,7 @@ cleanup:
 }
 
 //* CGtlData::PositionCharacters -- set positions for Hodj and Podj
-bool CGtlData::PositionCharacters(void)
+bool CGtlData::PositionCharacters()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::PositionCharacters) ;

@@ -46,17 +46,17 @@ public:
 protected:
 
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
-	void PutDlgData(void);
-	void GetDlgData(void);
-	void DispLimit(void);
-	void LoadIniSettings(void);
-	void SaveIniSettings(void);
+	virtual bool OnInitDialog() override;
+	void PutDlgData();
+	void GetDlgData();
+	void DispLimit();
+	void LoadIniSettings();
+	void SaveIniSettings();
 
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnDestroy();
 	void OnPaint();
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 	DECLARE_MESSAGE_MAP()
 
 	CColorButton *m_pOKButton;              // OKAY button on scroll

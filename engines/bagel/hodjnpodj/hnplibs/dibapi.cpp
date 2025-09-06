@@ -117,7 +117,7 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 
 		// Select as foreground and realize it
 		hOldPal = SelectPalette(hDC, hPal, false);
-		(void)RealizePalette(hDC);
+		RealizePalette(hDC);
 	}
 
 	nDevCaps = GetDeviceCaps(hDC, RASTERCAPS);
@@ -127,7 +127,7 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 			hdcMem = CreateCompatibleDC(hDC);
 			if (hdcMem) {
 				hOldPal2 = SelectPalette(hdcMem, hPal, false);
-				(void)RealizePalette(hdcMem);
+				RealizePalette(hdcMem);
 				hBitmapOld = SelectBitmap(hdcMem, hBitmap);
 				if ((RECTWIDTH(lpDCRect) == RECTWIDTH(lpDIBRect)) &&
 					(RECTHEIGHT(lpDCRect) == RECTHEIGHT(lpDIBRect)))
@@ -141,8 +141,8 @@ bool PaintDIB(HDC hDC, LPRECT lpDCRect, HDIB hDIB,
 						SRCCOPY);
 				else
 					bSuccess = false;
-				(void)SelectBitmap(hdcMem, hBitmapOld);
-				(void)SelectPalette(hdcMem, hOldPal2, false);
+				SelectBitmap(hdcMem, hBitmapOld);
+				SelectPalette(hdcMem, hOldPal2, false);
 				DeleteDC(hdcMem);
 			}
 		}
@@ -303,7 +303,7 @@ CBitmap *ConvertDIB(CDC *pDC, HDIB hDIB, CPalette *pPal) {
 
 		// Select as foreground and realize it
 		hOldPal = SelectPalette(hDC, hPal, false);
-		(void) RealizePalette(hDC);
+		RealizePalette(hDC);
 	}
 
 	// Convert the bit buffer to a bitmap

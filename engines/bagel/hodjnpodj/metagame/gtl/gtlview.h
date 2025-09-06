@@ -60,7 +60,7 @@ public:
 	char m_cEndData ;
 
 	class CGtlDoc *GetDocument();
-	void UpdateDialogs(void) ;
+	void UpdateDialogs() ;
 	void OnSoundNotify(CSound *);
 
 	//- OnUpdate -- called when document changes to update view
@@ -70,7 +70,7 @@ public:
 
 private:
 	//- OnInitialUpdate --
-	void OnInitialUpdate(void);
+	void OnInitialUpdate();
 
 protected:
 	//- PreCreateWindow -- change view window style
@@ -80,7 +80,7 @@ protected:
 public:
 	virtual ~CGtlView();
 
-	void FlushInputEvents(void);
+	void FlushInputEvents();
 
 
 // Generated message map functions

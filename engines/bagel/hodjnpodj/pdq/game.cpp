@@ -73,19 +73,19 @@ STATIC const char *pszCategorySounds[N_CATEGORIES] = {
 *
 */
 ERROR_CODE  CleanScreen(CDC *);
-ERROR_CODE  LoadNewPhrase(void);
+ERROR_CODE  LoadNewPhrase();
 ERROR_CODE  BuildSpriteList(CDC *);
-void        KillCurPhrase(void);
+void        KillCurPhrase();
 void        BuildRandomPhraseOrder();
-bool     RevealNextLetter(void);
+bool     RevealNextLetter();
 void CALLBACK GameTimerHook(HWND, unsigned int, uintptr, uint32);
 int         StrLenNoSpaces(const char *);
 int         GetIndex(CSprite *);
-void        LoadGameCfg(void);
-void        SaveGameCfg(void);
+void        LoadGameCfg();
+void        SaveGameCfg();
 ERROR_CODE  ValidatePhrase(PHRASES *);
 void        UpdateScore(unsigned int, unsigned int, unsigned int, unsigned int);
-int         NumLinkedSprites(void);
+int         NumLinkedSprites();
 
 #define TIMER_ID        50
 #define START_X_ODD     318
@@ -138,7 +138,7 @@ int         nPhrasePixelLength;
 *  returns   errCode - Error return code
 *
 **/
-ERROR_CODE LoadNewPhrase(void) {
+ERROR_CODE LoadNewPhrase() {
 	STATIC int nLast;
 	char *p, buf[MAX_PLENGTH_S + 2];
 	int i, n, nType;
@@ -1121,7 +1121,7 @@ void GameGetScore(unsigned int *nLeft, unsigned int *nTotal, unsigned int *nLeft
 *  returns   nSprites = number of sprites in linked list
 *
 **/
-int NumLinkedSprites(void) {
+int NumLinkedSprites() {
 	CSprite *pSprite;
 	int i = 0;
 

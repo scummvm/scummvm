@@ -149,7 +149,7 @@ public:
 	~CMainWindow();
 
 	void        SplashScreen();
-	static void FlushInputEvents(void);
+	static void FlushInputEvents();
 	void        DisplayStats(CDC*);
 	void        RefreshStats();
 	void        GameWin();

@@ -38,38 +38,38 @@ namespace Archeroids {
 class CMainWindow : public CFrameWnd {
 public:
 	CMainWindow();
-	void        PlayGame(void);
-	void        PlayNextWave(void);
-	void        PaintScreen(void);
+	void        PlayGame();
+	void        PlayNextWave();
+	void        PaintScreen();
 	ERROR_CODE  RepaintSpriteList(CDC *);
-	void        LoadIniSettings(void);
-	bool        MainLoop(void);
+	void        LoadIniSettings();
+	bool        MainLoop();
 
 protected:
-	void        FlushInputEvents(void);
-	bool        CheckMessages(void);
-	ERROR_CODE  LoadMasterSprites(void);
-	void        ReleaseMasterSprites(void);
-	ERROR_CODE  LoadMasterSounds(void);
-	void        ReleaseMasterSounds(void);
-	void        InitializeJoystick(void);
-	void        GameReset(void);
-	void        WaveReset(void);
+	void        FlushInputEvents();
+	bool        CheckMessages();
+	ERROR_CODE  LoadMasterSprites();
+	void        ReleaseMasterSprites();
+	ERROR_CODE  LoadMasterSounds();
+	void        ReleaseMasterSounds();
+	void        InitializeJoystick();
+	void        GameReset();
+	void        WaveReset();
 	CSprite    *NewLife(int);
-	ERROR_CODE  CreateLives(void);
-	ERROR_CODE  CreateGoodGuy(void);
-	ERROR_CODE  CreateBadGuys(void);
-	ERROR_CODE  CreateHay(void);
+	ERROR_CODE  CreateLives();
+	ERROR_CODE  CreateGoodGuy();
+	ERROR_CODE  CreateBadGuys();
+	ERROR_CODE  CreateHay();
 	ERROR_CODE  CreateBurningHay(CPoint);
-	ERROR_CODE  CreateGoodArrow(void);
+	ERROR_CODE  CreateGoodArrow();
 	ERROR_CODE  CreateBadArrow(CSprite *);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        GamePause();
+	void        GameResume();
 
 	void        DestroyGoodArrow(CLList *);
 	void        DestroyBadArrow(CLList *);
 	void        DestroyBadGuy(CLList *, CDC *);
-	void        PruneDeadBadGuys(void);
+	void        PruneDeadBadGuys();
 	void        DestroyHay(CLList *, CRect, CDC *, bool);
 	void        DeleteSprite(CSprite *);
 	bool        MoveArrows(CDC *);
@@ -77,17 +77,17 @@ protected:
 	void        MoveHodj(int);
 	void        LoseLife(CDC *, bool);
 	void        HandleError(ERROR_CODE);
-	void        KillAnimation(void);
+	void        KillAnimation();
 	void        OnSoundNotify(CSound *pSound);
-	POINT       GetLeftMostBadGuy(void);
+	POINT       GetLeftMostBadGuy();
 
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	void OnPaint(void);
+	void OnPaint();
 	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	void OnSysChar(unsigned int, unsigned int, unsigned int);
 	void OnTimer(uintptr);
-	void OnClose(void);
+	void OnClose();
 	long OnJoyStick(unsigned int, long);
 	void OnActivate(unsigned int, CWnd *, bool) override;
 	void OnLButtonDown(unsigned int, CPoint);

@@ -150,8 +150,8 @@ public:
 
 	void SplashScreen();
 
-	static  void ReleaseResources(void);
-	static  void FlushInputEvents(void);
+	static  void ReleaseResources();
+	static  void FlushInputEvents();
 	void MainLoop();
 	void ResetGame();
 	void ClearGrid();
@@ -164,7 +164,7 @@ private:
 protected:
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	bool LoadBeaverSounds();
-	void ReleaseBeaverSounds(void);
+	void ReleaseBeaverSounds();
 	//
 	// Sound as resource dudes:
 	//

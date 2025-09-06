@@ -67,7 +67,7 @@ public:
 	// standard constructor
 	CMapDialog(CWnd* pParent, CPalette *pPalette, POINT HodjLoc, POINT PodjLoc);
 
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	// Dialog Data
 	//{{AFX_DATA(CMapDialog)

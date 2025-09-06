@@ -35,8 +35,8 @@ class COptions : public CDialog {
 public:
 	COptions(CWnd* pParent, CPalette *pPalette, int iDlgId);
 
-	void ClearDialogImage(void);
-	void RefreshBackground(void);
+	void ClearDialogImage();
+	void RefreshBackground();
 
 	int     m_iDlgId ;  // dialog id
 	CWnd    *m_pDlgParentWnd;

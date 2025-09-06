@@ -259,7 +259,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-bool CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog() {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -327,7 +327,7 @@ bool CUserCfgDlg::OnInitDialog(void) {
 }
 
 
-void CUserCfgDlg::OnPaint(void) {
+void CUserCfgDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -421,7 +421,7 @@ void CUserCfgDlg::OnClose() {
 	EndDialog(0);
 }
 
-void CUserCfgDlg::ClearDialogImage(void) {
+void CUserCfgDlg::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;
@@ -441,7 +441,7 @@ void CUserCfgDlg::ClearDialogImage(void) {
 	ValidateRect(nullptr);
 }
 
-void CUserCfgDlg::DispLimit(void) {
+void CUserCfgDlg::DispLimit() {
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {
@@ -451,7 +451,7 @@ void CUserCfgDlg::DispLimit(void) {
 	}
 }
 
-void CUserCfgDlg::DispLevel(void) {
+void CUserCfgDlg::DispLevel() {
 	Common::String szBuf;
 	CDC *pDC;
 

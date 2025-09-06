@@ -507,7 +507,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 
 			CSound::waitWaveSounds();
-			(void) RulesDlg.DoModal();
+			RulesDlg.DoModal();
 			m_bPause = false;
 
 			break;
@@ -1178,7 +1178,7 @@ void CMainWindow::OnDestroy() {
  *      n/a
  *
  ****************************************************************/
-void CMainWindow::FlushInputEvents(void) {
+void CMainWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

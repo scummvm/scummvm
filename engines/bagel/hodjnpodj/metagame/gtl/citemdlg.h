@@ -81,7 +81,7 @@ public:
 //}}AFX_DATA
 
 private:
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	// Implementation
 protected:

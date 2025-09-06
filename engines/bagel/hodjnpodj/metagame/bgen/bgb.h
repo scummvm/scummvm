@@ -86,27 +86,27 @@ public:
 	bool PaintBitmapObject(CBgbObject *, bool bPaint PDFT(false), CRect *p = nullptr);
 	bool AnimateSprite(CBgbObject *, CPoint, CPoint);
 	bool InitDc(CView *xpView, CBsuSet *xpBsuSet PDFT(nullptr), CDC *xpDc PDFT(nullptr));
-	bool ReInitDc(void);
+	bool ReInitDc();
 	bool AdjustLockCount(int iIncr);
 	bool SetBrush(COLORREF cBrushColor, int iBrushStyle PDFT(BS_SOLID));
 	bool SetPen(COLORREF cPenColor, int iPenWidth PDFT(0));
-	bool ReleaseDc(void);
+	bool ReleaseDc();
 	bool ClearBitmapObject(CBgbObject *lpcBgbObject);
-	bool ReleaseResources(void);
-	void DoAnimations(void);
-	void PauseAnimations(void) {
+	bool ReleaseResources();
+	void DoAnimations();
+	void PauseAnimations() {
 		m_bAnimationsPaused = true;
 	}
-	void ResumeAnimations(void) {
+	void ResumeAnimations() {
 		m_bAnimationsPaused = false;
 	}
-	bool AnimationsActive(void) const {
+	bool AnimationsActive() const {
 		return !m_bAnimationsPaused;
 	}
 
 	void CacheLoadObject(CBgbObject *);
 	void CacheReleaseObject(CBgbObject *);
-	void CacheFlush(void);
+	void CacheFlush();
 	void CacheOptimize(unsigned long);
 };
 

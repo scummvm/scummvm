@@ -57,7 +57,7 @@ void CUserCfgDlg::DoDataExchange(CDataExchange *pDX) {
 	CDialog::DoDataExchange(pDX);
 }
 
-bool CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog() {
 	CDC     *pDC = GetDC();
 	CRect   tmpRect;
 
@@ -81,7 +81,7 @@ bool CUserCfgDlg::OnInitDialog(void) {
 	return true;
 }
 
-void CUserCfgDlg::OnPaint(void) {
+void CUserCfgDlg::OnPaint() {
 	CDC     *pDC = nullptr;
 	char    msg[64];
 	bool    bAssertCheck;

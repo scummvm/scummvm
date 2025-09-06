@@ -189,7 +189,7 @@ bool CMnkUsr::OnInitDialog() {
 	return true;  // return true  unless you set the focus to a control
 }
 
-void CMnkUsr::ClearDialogImage(void) {
+void CMnkUsr::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;

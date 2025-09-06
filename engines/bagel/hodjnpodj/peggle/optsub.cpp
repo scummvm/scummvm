@@ -102,13 +102,13 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // COptions message handlers
 
-void COptions::OnOK(void) {
+void COptions::OnOK() {
 	ClearDialogImage();
 	CDialog::EndDialog(IDC_OPTIONS_QUIT);
 }
 
 
-bool COptions::OnInitDialog(void) {
+bool COptions::OnInitDialog() {
 	bool    bSuccess;
 	CWnd    *pButton;
 	CDC     *pDC;
@@ -212,7 +212,7 @@ bool COptions::OnInitDialog(void) {
 }
 
 
-void COptions::OnDestroy(void) {
+void COptions::OnDestroy() {
 	bool    bUpdateNeeded;
 
 	if (m_iDlgId == IDD_OPTIONS_DIALOG) {
@@ -273,7 +273,7 @@ bool COptions::OnEraseBkgnd(CDC *pDC) {
 }
 
 
-void COptions::OnPaint(void) {
+void COptions::OnPaint() {
 	bool        bSuccess;
 	CPalette    *pPalOld = nullptr;
 
@@ -285,18 +285,18 @@ void COptions::OnPaint(void) {
 
 	if (pOptionsPalette != nullptr) {
 		pPalOld = dc.SelectPalette(pOptionsPalette, false);
-		(void) dc.RealizePalette();
+		dc.RealizePalette();
 	}
 
 	bSuccess = PaintMaskedDIB(&dc, pOptionsPalette, ".\\art\\oscroll.bmp", 0, 0);
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)
-		(void) dc.SelectPalette(pPalOld, false);
+		dc.SelectPalette(pPalOld, false);
 }
 
 
-void COptions::ClearDialogImage(void) {
+void COptions::ClearDialogImage() {
 	if (m_pDlgBackground != nullptr) {
 		if (m_iDlgId == IDD_OPTIONS_DIALOG) {
 			if (pRulesButton != nullptr)
@@ -344,7 +344,7 @@ void COptions::ClearDialogImage(void) {
 }
 
 
-void COptions::RefreshBackground(void) {
+void COptions::RefreshBackground() {
 	bool        bSuccess;
 	CDC         *pDC;
 	CPalette    *pPalOld = nullptr;
@@ -356,14 +356,14 @@ void COptions::RefreshBackground(void) {
 
 	if (pOptionsPalette != nullptr) {
 		pPalOld = (*pDC).SelectPalette(pOptionsPalette, false);
-		(void)(*pDC).RealizePalette();
+		(*pDC).RealizePalette();
 	}
 
 	bSuccess = PaintBitmap(pDC, pOptionsPalette, m_pDlgBackground, 0, 0);
 	ASSERT(bSuccess);
 
 	if (pOptionsPalette != nullptr)
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }

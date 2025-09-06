@@ -44,35 +44,35 @@ public:
 
 // Implementation
 public:
-	int GetID(void) {
+	int GetID() {
 		return (m_nID);
 	}
 	void SetID(int nID) {
 		m_nID = nID;
 	}
 
-	int GetClueID(void) {
+	int GetClueID() {
 		return (m_nClueID);
 	}
 	void SetClueID(int nClue) {
 		m_nClueID = nClue;
 	}
 
-	int GetRepeatCount(void) {
+	int GetRepeatCount() {
 		return (m_nRepeatCount);
 	}
 	void SetRepeatCount(int nRepeat) {
 		m_nRepeatCount = nRepeat;
 	}
 
-	int GetPersonID(void) {
+	int GetPersonID() {
 		return (m_nPersonID);
 	}
 	void SetPersonID(int nPerson) {
 		m_nPersonID = nPerson;
 	}
 
-	int GetPlaceID(void) {
+	int GetPlaceID() {
 		return (m_nPlaceID);
 	}
 	void SetPlaceID(int nPlace) {
@@ -80,7 +80,7 @@ public:
 	}
 
 	#ifndef FRAME_EXE
-	const char *GetClueArtSpec(void) {
+	const char *GetClueArtSpec() {
 		if ((m_nClueID >= NOTE_ICON_BASE) &&
 		        (m_nClueID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nClueID]);
@@ -88,7 +88,7 @@ public:
 			return nullptr;
 	}
 
-	const char *GetPersonArtSpec(void) {
+	const char *GetPersonArtSpec() {
 		if ((m_nPersonID >= NOTE_ICON_BASE) &&
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPersonID]);
@@ -96,7 +96,7 @@ public:
 			return nullptr;
 	}
 
-	const char *GetPlaceArtSpec(void) {
+	const char *GetPlaceArtSpec() {
 		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteBitmapPath[m_nPlaceID]);
@@ -104,7 +104,7 @@ public:
 			return nullptr;
 	}
 
-	const char *GetDescription(void) {
+	const char *GetDescription() {
 		if ((m_nID >= 0) &&
 		        (m_nID < NOTE_COUNT))
 			return (m_pNoteText[m_nID]);
@@ -112,7 +112,7 @@ public:
 			return nullptr;
 	}
 
-	const char *GetPersonSoundSpec(void) {
+	const char *GetPersonSoundSpec() {
 		if ((m_nPersonID >= NOTE_ICON_BASE) &&
 		        (m_nPersonID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPersonID]);
@@ -120,7 +120,7 @@ public:
 			return nullptr;
 	}
 
-	const char *GetPlaceSoundSpec(void) {
+	const char *GetPlaceSoundSpec() {
 		if ((m_nPlaceID >= NOTE_ICON_BASE) &&
 		        (m_nPlaceID < NOTE_ICON_BASE + NOTE_ICON_COUNT))
 			return (m_pNoteSoundPath[m_nPlaceID]);
@@ -129,10 +129,10 @@ public:
 	}
 	#endif
 
-	CNote  *GetNext(void) {
+	CNote  *GetNext() {
 		return (m_pNext);
 	}
-	CNote *GetPrev(void) {
+	CNote *GetPrev() {
 		return (m_pPrev);
 	}
 

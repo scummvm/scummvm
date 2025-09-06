@@ -57,7 +57,7 @@ CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	DoModal();
 }
 
-bool CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog() {
 	CRect tmpRect;
 	CDC *pDC;
 
@@ -264,7 +264,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 *       None
 *
 ****************************************************************/
-void CUserCfgDlg::LoadIniSettings(void) {
+void CUserCfgDlg::LoadIniSettings() {
 	int nVal;
 
 	// Get the Difficulty level  (0..2)
@@ -292,7 +292,7 @@ void CUserCfgDlg::SaveIniSettings() {
 	                          INI_FILENAME);
 }
 
-void CUserCfgDlg::OnPaint(void) {
+void CUserCfgDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -352,7 +352,7 @@ void CUserCfgDlg::OnDestroy() {
 }
 
 
-void CUserCfgDlg::ClearDialogImage(void) {
+void CUserCfgDlg::ClearDialogImage() {
 	if (m_bSave) {
 		GetDlgData();
 		SaveIniSettings();
@@ -386,7 +386,7 @@ void CUserCfgDlg::ClearDialogImage(void) {
 	ValidateRect(nullptr);
 }
 
-void CUserCfgDlg::DispLimit(void) {
+void CUserCfgDlg::DispLimit() {
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {

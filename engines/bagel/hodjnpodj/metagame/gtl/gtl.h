@@ -77,10 +77,10 @@ public:
 
 public:
 	bool InitApplication() override;
-	void CreateInstance(void);
-	bool CallOnFileNew(void) ;
-	bool CallOnFileOpen(void) ;
-	bool CallOnFileSave(void) ;
+	void CreateInstance();
+	bool CallOnFileNew() ;
+	bool CallOnFileOpen() ;
+	bool CallOnFileSave() ;
 	//- DoMessageBox -- override of CWinApp function to
 	//              display message box messages
 	virtual int DoMessageBox(const char *lpszPrompt,

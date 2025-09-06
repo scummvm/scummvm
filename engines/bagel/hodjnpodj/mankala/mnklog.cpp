@@ -37,7 +37,7 @@ static inline void DebugBreak() {
 }
 
 //* CMnk::InitMankala -- initialize a new game of Mankala
-bool CMnk::InitMankala(void)
+bool CMnk::InitMankala()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnk::InitMankala) ;
@@ -398,7 +398,7 @@ cleanup:
 }
 
 //* CMnk::CountConfigurations -- set up Configurations table
-bool CMnk::CountConfigurations(void)
+bool CMnk::CountConfigurations()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnk::CountConfigurations) ;

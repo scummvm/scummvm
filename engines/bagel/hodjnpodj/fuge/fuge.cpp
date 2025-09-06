@@ -545,7 +545,7 @@ void CFugeWindow::initStatics() {
 		&vBrickCritPoints[0][0]);
 }
 
-void CFugeWindow::InitializeJoystick(void) {
+void CFugeWindow::InitializeJoystick() {
 	JOYINFO     joyInfo;
 
 	if (joySetCapture(m_hWnd, JOYSTICKID1, 10000, true) == JOYERR_NOERROR) {
@@ -564,7 +564,7 @@ void CFugeWindow::InitializeJoystick(void) {
 }
 
 
-void CFugeWindow::RealignVectors(void) {
+void CFugeWindow::RealignVectors() {
 	CVector vTmp;
 	int i, j;
 
@@ -579,7 +579,7 @@ void CFugeWindow::RealignVectors(void) {
 }
 
 
-ERROR_CODE CFugeWindow::LoadMasterSprites(void) {
+ERROR_CODE CFugeWindow::LoadMasterSprites() {
 	CDC *pDC;
 	ERROR_CODE errCode;
 
@@ -627,7 +627,7 @@ ERROR_CODE CFugeWindow::LoadMasterSprites(void) {
 	return errCode;
 }
 
-void CFugeWindow::ReleaseMasterSprites(void) {
+void CFugeWindow::ReleaseMasterSprites() {
 	assert(m_pBall != nullptr);
 	if (m_pBall != nullptr) {
 		delete m_pBall;
@@ -809,18 +809,18 @@ bool CFugeWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CFugeWindow::GamePause(void) {
+void CFugeWindow::GamePause() {
 	m_bPause = true;
 };
 
 
-void CFugeWindow::GameResume(void) {
+void CFugeWindow::GameResume() {
 	if (!m_bBallOnPaddle && m_bMovingPaddle)
 		m_bPause = false;
 };
 
 
-void CFugeWindow::PlayGame(void) {
+void CFugeWindow::PlayGame() {
 	ERROR_CODE errCode;
 
 	// assume no error
@@ -911,7 +911,7 @@ ERROR_CODE CFugeWindow::LoadNewPaddle(int nNewSize) {
 }
 
 
-ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
+ERROR_CODE CFugeWindow::LoadMasterSounds() {
 	HANDLE hResInfo;
 	HINSTANCE hInst;
 	ERROR_CODE errCode;
@@ -999,7 +999,7 @@ ERROR_CODE CFugeWindow::LoadMasterSounds(void) {
 }
 
 
-void CFugeWindow::ReleaseMasterSounds(void) {
+void CFugeWindow::ReleaseMasterSounds() {
 	if (m_hExtraLifeRes != nullptr) {
 		FreeResource(m_hExtraLifeRes);
 		m_hExtraLifeRes = nullptr;
@@ -1019,7 +1019,7 @@ void CFugeWindow::ReleaseMasterSounds(void) {
 }
 
 
-void CFugeWindow::EndBall(void) {
+void CFugeWindow::EndBall() {
 	CDC *pDC;
 	assert(m_pBall != nullptr);
 
@@ -1033,7 +1033,7 @@ void CFugeWindow::EndBall(void) {
 }
 
 
-void CFugeWindow::StartBall(void) {
+void CFugeWindow::StartBall() {
 	CDC *pDC;
 
 	assert(m_pBall != nullptr);
@@ -1051,7 +1051,7 @@ void CFugeWindow::StartBall(void) {
 }
 
 
-CVector CFugeWindow::BallOnPaddle(void) {
+CVector CFugeWindow::BallOnPaddle() {
 	CVector vBall(0, -(PADDLE_RADIUS + BALL_RADIUS));
 
 	vBall.Rotate(fPaddleAngles[m_nInitPaddleSize] / 2);
@@ -1066,7 +1066,7 @@ CVector CFugeWindow::BallOnPaddle(void) {
 }
 
 
-void CFugeWindow::PaintBall(void) {
+void CFugeWindow::PaintBall() {
 	CPoint ptLast;
 	CVector vBall, vGravity;
 	double length;
@@ -1254,7 +1254,7 @@ void CFugeWindow::PaintBall(void) {
 
 #define N_CRIT_POINTS 7
 
-void CFugeWindow::BallvsPaddle(void) {
+void CFugeWindow::BallvsPaddle() {
 	CVector vPoints[N_CRIT_POINTS];
 	CVector vTmp, vPaddle, vFace, vBallCenter, vBallEdge;
 	double a1, a2;
@@ -1909,7 +1909,7 @@ void CFugeWindow::EraseBrick(CDC *pDC, int nBrickIndex) {
 }
 
 
-void CFugeWindow::LoseBall(void) {
+void CFugeWindow::LoseBall() {
 	char buf1[32], buf2[32];
 	CDC *pDC;
 	ERROR_CODE errCode;
@@ -2032,7 +2032,7 @@ void CFugeWindow::LoseBall(void) {
 }
 
 
-void CFugeWindow::StartPaddle(void) {
+void CFugeWindow::StartPaddle() {
 	assert(m_pPaddle != nullptr);
 
 	if (m_pPaddle != nullptr)
@@ -2044,7 +2044,7 @@ void CFugeWindow::StartPaddle(void) {
 }
 
 
-void CFugeWindow::EndPaddle(void) {
+void CFugeWindow::EndPaddle() {
 	CDC *pDC;
 
 	assert(m_pPaddle != nullptr);
@@ -2058,7 +2058,7 @@ void CFugeWindow::EndPaddle(void) {
 	}
 }
 
-void CFugeWindow::LaunchBall(void) {
+void CFugeWindow::LaunchBall() {
 	assert(m_bGameActive);
 	assert(m_bBallOnPaddle);
 
@@ -2175,7 +2175,7 @@ void CFugeWindow::PaintPaddle(bool bPaint) {
 }
 
 
-void CFugeWindow::StartBricks(void) {
+void CFugeWindow::StartBricks() {
 	CDC *pDC;
 	int i, nBricks;
 
@@ -2283,13 +2283,13 @@ void CFugeWindow::PaintBricks(CDC *pDC) {
 }
 
 
-void CFugeWindow::EndBricks(void) {
+void CFugeWindow::EndBricks() {
 	memset(m_bBrickVisible, 0, sizeof(bool) * N_BRICKS);
 }
 
 
 
-void CFugeWindow::LoadIniSettings(void) {
+void CFugeWindow::LoadIniSettings() {
 	if (pGameParams->bPlayingMetagame) {
 
 		m_bOutterWall = false;
@@ -2343,7 +2343,7 @@ void CFugeWindow::LoadIniSettings(void) {
 }
 
 
-void CFugeWindow::GameReset(void) {
+void CFugeWindow::GameReset() {
 	KillTimer(TIMER_ID);                        // stop the timer
 
 	if (pGameParams->bSoundEffectsEnabled) {

@@ -108,13 +108,13 @@ bool CUserWonDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-void CUserWonDlg::OnOK(void) {
+void CUserWonDlg::OnOK() {
 	ClearDialogImage();
 	EndDialog(0);
 	return;
 }
 
-void CUserWonDlg::ClearDialogImage(void) {
+void CUserWonDlg::ClearDialogImage() {
 
 	if (pOKButton != nullptr) {
 		delete pOKButton;
@@ -188,7 +188,7 @@ void CUserWonDlg::SetInitialOptions(int nWhichPhrase) {
  *  n/a
  *
  ****************************************************************/
-void CUserWonDlg::OnPaint(void) {
+void CUserWonDlg::OnPaint() {
 	CDC             *pDC;
 	int         nOldBkMode;
 
@@ -244,7 +244,7 @@ void CUserWonDlg::OnPaint(void) {
 	return;
 }
 
-bool CUserWonDlg::OnInitDialog(void) {
+bool CUserWonDlg::OnInitDialog() {
 	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();

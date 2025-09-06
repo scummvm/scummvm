@@ -109,19 +109,19 @@ bool CMsgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-void CMsgDlg::OnCancel(void) {
+void CMsgDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(0);
 	return;
 }
 
-void CMsgDlg::OnOK(void) {
+void CMsgDlg::OnOK() {
 	ClearDialogImage();
 	EndDialog(0);
 	return;
 }
 
-void CMsgDlg::ClearDialogImage(void) {
+void CMsgDlg::ClearDialogImage() {
 
 	if (pMsgOKButton != nullptr) {
 		delete pMsgOKButton;
@@ -213,7 +213,7 @@ bool CMsgDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CMsgDlg::OnPaint(void) {
+void CMsgDlg::OnPaint() {
 //      call CBmpDialog onpaint, to paint the background
 	CBmpDialog::OnPaint();
 

@@ -44,9 +44,9 @@ namespace Peggle {
 
 extern  LPGAMESTRUCT    pGameInfo;
 
-void setup_cursor(void);
-void set_wait_cursor(void);
-void reset_wait_cursor(void);
+void setup_cursor();
+void set_wait_cursor();
+void reset_wait_cursor();
 
 CBmpButton  *pScrollButton = nullptr;
 
@@ -201,7 +201,7 @@ CMainWindow::CMainWindow(HWND hCallingApp) {
 
 	SetUpBoard(pDC);
 
-	(void)(*pDC).SelectPalette(pPalOld, false);
+	(*pDC).SelectPalette(pPalOld, false);
 	ReleaseDC(pDC);
 
 	if ((*pGameInfo).bMusicEnabled) {
@@ -414,7 +414,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_RULES:
 			bIgnoreScroll = true;
 			(*pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
-			(void) RulesDlg.DoModal();                          // invoke the help dialog box
+			RulesDlg.DoModal();                          // invoke the help dialog box
 			break;
 
 		case IDC_NEWGAME:
@@ -1054,7 +1054,7 @@ void CMainWindow::UpdatePegPosition(CDC *pDC, CSprite *pBaseSprite, int x, int y
 }
 
 
-void CMainWindow::UndoTurn(void) {
+void CMainWindow::UndoTurn() {
 	CDC     *pDC;
 	int     newx, newy, oldx, oldy,
 	        neighborx, neighbory;
@@ -1320,7 +1320,7 @@ void CMainWindow::OnClose() {
 }
 
 
-void setup_cursor(void) {
+void setup_cursor() {
 	HCURSOR hNewCursor;
 	CWinApp *pMyApp;
 
@@ -1333,21 +1333,21 @@ void setup_cursor(void) {
 }
 
 
-void set_wait_cursor(void) {
+void set_wait_cursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void reset_wait_cursor(void) {
+void reset_wait_cursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Peggle

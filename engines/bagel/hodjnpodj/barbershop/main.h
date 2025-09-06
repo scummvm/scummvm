@@ -44,24 +44,24 @@ private:
 	bool         m_bMIDIPlaying;
 
 public:
-	CMainWindow(void);
-	void        PlayGame(void);
-	void        PaintScreen(void);
-	void        LoadIniSettings(void);
-	void        SaveIniSettings(void);
+	CMainWindow();
+	void        PlayGame();
+	void        PaintScreen();
+	void        LoadIniSettings();
+	void        SaveIniSettings();
 	void        FlushInputEvents();
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 
 protected:
-	void        GameReset(void);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        GameReset();
+	void        GamePause();
+	void        GameResume();
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 
-	void        OnPaint(void);
+	void        OnPaint();
 	void        OnTimer(uintptr);
 	void        OnMouseMove(unsigned int, CPoint);
 	void        OnLButtonDown(unsigned int, CPoint);
@@ -71,7 +71,7 @@ protected:
 	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnActivate(unsigned int, CWnd *, bool) override;
-	void        OnClose(void);
+	void        OnClose();
 	void        OnLButtonUp(unsigned int, CPoint);
 
 	DECLARE_MESSAGE_MAP()

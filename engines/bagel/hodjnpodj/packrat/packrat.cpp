@@ -2962,7 +2962,7 @@ void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, uns
 			}
 			pOptionButton->EnableWindow(false);
 			UpdateWindow();
-			(void) dlgRules.DoModal();      // invoke the help dialog box
+			dlgRules.DoModal();      // invoke the help dialog box
 			pOptionButton->EnableWindow(true);
 			m_bSuspend = bTemp;
 		}
@@ -3405,7 +3405,7 @@ void CMainPackRatWindow::OnDestroy() {
  *
  ****************************************************************/
 
-void CMainPackRatWindow::ReleaseResources(void) {
+void CMainPackRatWindow::ReleaseResources() {
 	int nLoop1;
 
 	delete pBalloonSprite;
@@ -3555,7 +3555,7 @@ int CMainPackRatWindow::Power(int nBase, int nPower) {
  *
  ****************************************************************/
 
-void CMainPackRatWindow::FlushInputEvents(void) {
+void CMainPackRatWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

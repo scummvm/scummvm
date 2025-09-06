@@ -101,7 +101,7 @@ static  bool        bPlayingHodj = true;            // whether playing Hodj or P
 
 
 
-bool CGeneralStore::SetupKeyboardHook(void) {
+bool CGeneralStore::SetupKeyboardHook() {
 	pStoreDialog = this;                            // retain pointer to our dialog box
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, StoreHookProc, hExeInst, GetCurrentTask());
@@ -112,7 +112,7 @@ bool CGeneralStore::SetupKeyboardHook(void) {
 }
 
 
-void CGeneralStore::RemoveKeyboardHook(void) {
+void CGeneralStore::RemoveKeyboardHook() {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
@@ -222,7 +222,7 @@ void CGeneralStore::OnOK() {
 }
 
 
-void CGeneralStore::OnCancel(void) {
+void CGeneralStore::OnCancel() {
 	ClearDialogImage();
 	CDialog::OnCancel();
 }
@@ -241,11 +241,11 @@ void CGeneralStore::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {
-		(void)(*pWorkDC).SelectObject(pWorkOld);
+		(*pWorkDC).SelectObject(pWorkOld);
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -497,7 +497,7 @@ void CGeneralStore::UpdateContent(CDC *pDC) {
 			(*pDC).SetTextColor(STORE_MORE_COLOR);
 			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		(void)(*pDC).SelectObject(pFontOld);                            // map out the font
+		(*pDC).SelectObject(pFontOld);                            // map out the font
 	}
 }
 
@@ -540,7 +540,7 @@ bool CGeneralStore::OnEraseBkgnd(CDC *) {
 }
 
 
-void CGeneralStore::ClearDialogImage(void) {
+void CGeneralStore::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pOKButton;
 		pOKButton = nullptr;
@@ -550,7 +550,7 @@ void CGeneralStore::ClearDialogImage(void) {
 }
 
 
-void CGeneralStore::RefreshBackground(void) {
+void CGeneralStore::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
@@ -609,7 +609,7 @@ bool CGeneralStore::CreateWorkAreas(CDC *pDC) {
 		pBackgroundBitmap = nullptr;
 
 	(*pDC).SelectPalette(pBackgroundPalette, false);
-	(void)(*pDC).RealizePalette();
+	(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 450000)) {
@@ -619,7 +619,7 @@ bool CGeneralStore::CreateWorkAreas(CDC *pDC) {
 			if ((pWorkDC != nullptr) &&
 			        (*pWorkDC).CreateCompatibleDC(pDC)) {
 				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(void)(*pWorkDC).RealizePalette();
+				(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
@@ -633,7 +633,7 @@ bool CGeneralStore::CreateWorkAreas(CDC *pDC) {
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -645,7 +645,7 @@ bool CGeneralStore::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, false);
+	(*pDC).SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(STORE_TEXTZONE_DX,
 	               STORE_BORDER_DY + STORE_TITLEZONE_DDY,
@@ -845,21 +845,21 @@ bool CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned 
 }
 
 
-void CGeneralStore::DoWaitCursor(void) {
+void CGeneralStore::DoWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void CGeneralStore::DoArrowCursor(void) {
+void CGeneralStore::DoArrowCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Gtl

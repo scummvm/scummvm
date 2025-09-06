@@ -42,13 +42,13 @@ public:
 	       CPalette *pPalette = nullptr, const char *pszSoundPath = nullptr);
 
 	void UpdateScroll(int nPage);
-	void ClearDialogImage(void);
-	void RefreshBackground(void);
+	void ClearDialogImage();
+	void RefreshBackground();
 
 private:
 
-	bool SetupKeyboardHook(void);
-	void RemoveKeyboardHook(void);
+	bool SetupKeyboardHook();
+	void RemoveKeyboardHook();
 
 	static  CDibDoc *LoadScrollDIB(const char *pSpec, CRect *pRect);
 	static  bool PaintScrollDIB(CDC *pDC, CDibDoc *pDibDoc);
@@ -61,11 +61,11 @@ private:
 	void UnfurlScroll(CDC *pDC);
 	void UpdateMore(CDC *pDC);
 	void WritePage(CDC *pDC, int nPage);
-	void DoWaitCursor(void);
+	void DoWaitCursor();
 	void DoWaitCursor(int nCode) override {
 		CDialog::DoWaitCursor(nCode);
 	}
-	void DoArrowCursor(void);
+	void DoArrowCursor();
 	void Sleep(clock_t wait);
 
 private:
@@ -92,12 +92,12 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CRules)
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
-	virtual bool OnInitDialog(void) override;
+	virtual bool OnInitDialog() override;
 	afx_msg bool OnEraseBkgnd(CDC *pDC);
-	virtual void OnOK(void) override;
-	virtual void OnCancel(void) override;
-	afx_msg void OnDestroy(void);
-	afx_msg void OnPaint(void);
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
+	afx_msg void OnDestroy();
+	afx_msg void OnPaint();
 	afx_msg void OnShowWindow(bool bShow, unsigned int nStatus);
 	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);

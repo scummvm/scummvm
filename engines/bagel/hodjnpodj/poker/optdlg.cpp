@@ -153,7 +153,7 @@ bool COptionsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
  *  bool to tell windows that it has dealt this function
  *
  ****************************************************************/
-bool COptionsDlg::OnInitDialog(void) {
+bool COptionsDlg::OnInitDialog() {
 	bool    bSuccess;
 
 	CBmpDialog::OnInitDialog();
@@ -233,7 +233,7 @@ void COptionsDlg::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
-void COptionsDlg::ClearDialogImage(void) {
+void COptionsDlg::ClearDialogImage() {
 
 	if (pAmountButton != nullptr) {
 		delete pAmountButton;

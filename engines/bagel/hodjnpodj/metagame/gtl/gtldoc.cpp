@@ -122,7 +122,7 @@ bool CGtlDoc::OnSaveDocument(const char *xpszPathName) {
 
 
 //* CGtlDoc::DoOnFileSaveAs --
-bool CGtlDoc::DoOnFileSaveAs(void)
+bool CGtlDoc::DoOnFileSaveAs()
 // returns: true if error, false otherwise
 {
 	CDocument::OnFileSaveAs() ;

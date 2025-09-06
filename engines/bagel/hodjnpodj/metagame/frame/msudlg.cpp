@@ -197,13 +197,13 @@ bool CMetaSetupDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-void CMetaSetupDlg::OnCancel(void) {
+void CMetaSetupDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(0);
 	return;
 }
 
-void CMetaSetupDlg::OnOK(void) {
+void CMetaSetupDlg::OnOK() {
 
 	if (pPlayButton->GetState() & 0x0008) {
 		SendMessage(WM_COMMAND, IDC_PLAY, (LPARAM)BN_CLICKED);
@@ -261,7 +261,7 @@ void CMetaSetupDlg::OnOK(void) {
 	return;
 }
 
-void CMetaSetupDlg::ClearDialogImage(void) {
+void CMetaSetupDlg::ClearDialogImage() {
 	/*
 	    if ( pPlayButton != nullptr )
 	        delete pPlayButton;
@@ -483,7 +483,7 @@ bool CMetaSetupDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CMetaSetupDlg::OnPaint(void) {
+void CMetaSetupDlg::OnPaint() {
 //      call CBmpDialog onpaint, to paint the background
 	CBmpDialog::OnPaint();
 

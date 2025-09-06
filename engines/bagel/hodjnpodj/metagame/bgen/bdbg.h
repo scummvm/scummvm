@@ -57,12 +57,12 @@ public:
 	char m_cEndData ;
 
 // methods
-	static CBdbgMgr FAR *GetPointer(void) {
+	static CBdbgMgr FAR *GetPointer() {
 		return lpBdbgMgr;
 	}
 
-	CBdbgMgr(void) ;
-	~CBdbgMgr(void) ;
+	CBdbgMgr() ;
+	~CBdbgMgr() ;
 	bool DebugInit(const char *lpszIniFilename,
 	               const char *lpszIniSectionname) ;
 	int GetDebugInt(const char *lpszOption,
@@ -78,7 +78,7 @@ public:
 	bool TestTraceObject(const char *lpszName, void *lpPtr,
 	                     bool bMissing PDFT(false)) ;
 	bool RemoveTraceObject(const char *lpszName, void *lpPtr) ;
-	bool ReportTraceObjects(void) ;
+	bool ReportTraceObjects() ;
 	STATIC bool OutputWithTime(const char *lpszPattern) ;
 	STATIC bool OutputWithWordWrap(const char *lpStr1,
 	                               const char *lpStr2, int iIndent) ;

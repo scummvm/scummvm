@@ -223,7 +223,7 @@ int nMissTurn = 0;  // 0 - nobody misses turn; 1 - Hodj misses turn; 2 - Podj mi
 
 
 // destructor deletes strategy information object
-CXodj::~CXodj(void) {
+CXodj::~CXodj() {
 	if (m_xpStrategyInfo != nullptr)
 		delete m_xpStrategyInfo ;
 
@@ -235,7 +235,7 @@ CXodj::~CXodj(void) {
 }
 
 //* CGtlData::InitProblem -- initialize character problem
-bool CGtlData::InitProblem(void)
+bool CGtlData::InitProblem()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::InitProblem) ;
@@ -466,7 +466,7 @@ cleanup:
 }
 
 //* CGtlData::EndMoveProcessing -- handle things at end of a move
-bool CGtlData::EndMoveProcessing(void)
+bool CGtlData::EndMoveProcessing()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::EndMoveProcessing) ;
@@ -510,10 +510,10 @@ bool CGtlData::EndMoveProcessing(void)
 
 				if (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh) {
 					C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", " ", "Podj challenges Hodj!");
-					(void) dlg1Button.DoModal();
+					dlg1Button.DoModal();
 				} else {
 					C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", " ", "Hodj challenges Podj!");
-					(void) dlg1Button.DoModal();
+					dlg1Button.DoModal();
 				}
 
 				CSound::waitWaveSounds();
@@ -572,10 +572,10 @@ bool CGtlData::EndMoveProcessing(void)
 
 				if (lpMetaGameStruct->m_cHodj.m_bHaveMishMosh) {
 					C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", " ", "Podj challenges Hodj!");
-					(void) dlg1Button.DoModal();
+					dlg1Button.DoModal();
 				} else {
 					C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", " ", "Hodj challenges Podj!");
-					(void) dlg1Button.DoModal();
+					dlg1Button.DoModal();
 				}
 
 				CSound::waitWaveSounds();
@@ -767,8 +767,8 @@ void CGtlData::DoTransport(CXodj *pXodj, int iNode) {
 
 
 //* CGtlData::SwitchPlayers -- switch between Hodj and Podj
-bool CGtlData::SwitchPlayers(void)
-//// int FAR PASCAL CGtlData::SwitchPlayers(void)
+bool CGtlData::SwitchPlayers()
+//// int FAR PASCAL CGtlData::SwitchPlayers()
 // returns: true if we need to switch players again, false otherwise
 {
 	CHodjPodj *pCurPlayer;
@@ -1648,7 +1648,7 @@ bool CGtlData::InitInterface(int iCode, bool & bExitDll)
 				char blurb[128];
 				Common::sprintf_s(blurb, "%d %s for the clue.", xpLocTable->m_iCost, (xpLocTable->m_iCost == 1 ? "crown" : "crowns"));
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", (m_xpCurXodj->m_bHodj ? "Hodj generously offers" : "Podj generously offers"), blurb);
-				(void) dlg1Button.DoModal();
+				dlg1Button.DoModal();
 				m_xpCurXodj->m_pInventory->DiscardItem(MG_OBJ_CROWN, xpLocTable->m_iCost);
 			}
 
@@ -1726,7 +1726,7 @@ cleanup:
 }
 
 //* CGtlData::ReturnFromInterface -- reset everything after interface return
-bool CGtlData::ReturnFromInterface(void)
+bool CGtlData::ReturnFromInterface()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::ReturnFromInterface) ;
@@ -2115,10 +2115,10 @@ bool CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 			if ((xpXodj->m_iWinInfoWon == xpXodj->m_iWinInfoNeed) &&
 			        (xpXodj->m_iSecondaryInfoWon == xpXodj->m_iSecondaryInfoNeed)) {
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", (xpXodj->m_bHodj ? "Hodj has all the" : "Podj has all the"), "clues he needs!");
-				(void) dlg1Button.DoModal();
+				dlg1Button.DoModal();
 			} else if (xpXodj->m_iWinInfoWon == xpXodj->m_iWinInfoNeed) {
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", (xpXodj->m_bHodj ? "Review Hodj's clues" : "Review Podj's clues"), "for what to do next.");
-				(void) dlg1Button.DoModal();
+				dlg1Button.DoModal();
 			}
 		} else if (iFunctionCode == MG_VISIT_INFO) {
 			if (bLacksMoney) {
@@ -2130,11 +2130,11 @@ bool CGtlData::TakeIneligibleAction(CXodj *xpXodj, int iFunctionCode, int iLocat
 				xpLocTable = CMgStatic::FindLoc(iLocationCode);
 				Common::sprintf_s(blurb, (m_xpCurXodj->m_bHodj ? "Hodj needs %ld more" : "Podj needs %ld more"), xpLocTable->m_iCost - m_xpCurXodj->m_pInventory->FindItem(MG_OBJ_CROWN)->GetQuantity());
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", blurb, "crowns for the clue.");
-				(void) dlg1Button.DoModal();
+				dlg1Button.DoModal();
 			} else if ((xpXodj->m_iWinInfoWon == xpXodj->m_iWinInfoNeed) &&
 			           (xpXodj->m_iSecondaryInfoWon == xpXodj->m_iSecondaryInfoNeed)) {
 				C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", (xpXodj->m_bHodj ? "Hodj has all the" : "Podj has all the"), "clues he needs!");
-				(void) dlg1Button.DoModal();
+				dlg1Button.DoModal();
 			}
 		}
 	}
@@ -2880,7 +2880,7 @@ bool CGtlData::DivulgeInformation(CXodj * pXodj, bool bSecondary)
 		// show the clue in dialog box
 		if (pXodj->m_bComputer) {
 			C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", " ", (pXodj->m_bHodj ? "Hodj gets a clue!" : "Podj gets a clue!"));
-			(void) dlg1Button.DoModal();
+			dlg1Button.DoModal();
 		} else
 			pMainWindow->ShowClue(m_cBgbMgr.m_xpGamePalette, pNote);
 
@@ -3291,7 +3291,7 @@ bool CGtlData::DetermineGameEligibility(CXodj *xpXodj, int iGameCode, bool bExec
 				gpMyView->ReleaseDC(pDC);
 				if (!(nDevCaps & RC_PALETTE)) {
 					C1ButtonDialog dlg1Button((CWnd *)pMainWindow, m_cBgbMgr.m_xpGamePalette, "&OK", "To play Beacon,", "your display must be", "set to 256 colors.");
-					(void) dlg1Button.DoModal();
+					dlg1Button.DoModal();
 					bEligibility = false;
 				}
 			}

@@ -1855,7 +1855,7 @@ void CMainGTWindow::OnDestroy() {
 
 #define DEL(X) delete X; X = nullptr
 
-void CMainGTWindow::ReleaseResources(void) {
+void CMainGTWindow::ReleaseResources() {
 	DEL(pText);
 
 	DEL(pScoresResetButton);
@@ -1916,7 +1916,7 @@ void CMainGTWindow::ReleaseResources(void) {
  *
  ****************************************************************/
 
-void CMainGTWindow::FlushInputEvents(void) {
+void CMainGTWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

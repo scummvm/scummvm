@@ -41,45 +41,45 @@ namespace Fuge {
 
 class CFugeWindow : public CFrameWnd {
 public:
-	CFugeWindow(void);
-	void        PlayGame(void);
-	void        PaintScreen(void);
-	void        LoadIniSettings(void);
+	CFugeWindow();
+	void        PlayGame();
+	void        PaintScreen();
+	void        LoadIniSettings();
 
 protected:
 	void initMembers();
 	void initStatics();
-	void        GameReset(void);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        GameReset();
+	void        GamePause();
+	void        GameResume();
 	void        HandleError(ERROR_CODE);
-	void        RealignVectors(void);
-	ERROR_CODE  LoadMasterSprites(void);
-	void        ReleaseMasterSprites(void);
-	ERROR_CODE  LoadMasterSounds(void);
-	void        ReleaseMasterSounds(void);
+	void        RealignVectors();
+	ERROR_CODE  LoadMasterSprites();
+	void        ReleaseMasterSprites();
+	ERROR_CODE  LoadMasterSounds();
+	void        ReleaseMasterSounds();
 	ERROR_CODE  LoadNewPaddle(int);
-	void        InitializeJoystick(void);
+	void        InitializeJoystick();
 	void        RepaintSpriteList(CDC *);
 	void        PaintBricks(CDC *);
-	void        StartBall(void);
-	void        EndBall(void);
-	void        PaintBall(void);
-	void        LaunchBall(void);
-	void        StartPaddle(void);
-	void        EndPaddle(void);
+	void        StartBall();
+	void        EndBall();
+	void        PaintBall();
+	void        LaunchBall();
+	void        StartPaddle();
+	void        EndPaddle();
 	void        PaintPaddle(bool);
-	CVector     BallOnPaddle(void);
-	void        StartBricks(void);
-	void        EndBricks(void);
+	CVector     BallOnPaddle();
+	void        StartBricks();
+	void        EndBricks();
 	void        EraseBrick(CDC *, int);
-	void        LoseBall(void);
-	void        BallvsPaddle(void);
+	void        LoseBall();
+	void        BallvsPaddle();
 	void        BallvsBrick(double);
 
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	long        OnJoyStick(unsigned int, long);
-	void        OnPaint(void);
+	void        OnPaint();
 	void        OnTimer(uintptr);
 	void        OnMouseMove(unsigned int, CPoint);
 	void        OnRButtonUp(unsigned int, CPoint);
@@ -91,7 +91,7 @@ protected:
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);
-	void        OnClose(void);
+	void        OnClose();
 
 	DECLARE_MESSAGE_MAP()
 

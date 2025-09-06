@@ -45,7 +45,7 @@ public:
 	//creator
 	colony(int r, int c);
 	//destroy construct
-	~colony(void);
+	~colony();
 	//copy operator
 	colony &operator=(const colony& c);
 	//equality operators: assuming equal dims
@@ -64,7 +64,7 @@ public:
 	};
 	void evolve(colony c);
 	void flip(int r, int c);
-	//void print(void);
+	//void print();
 public:
 	int m_nColony_count;
 };

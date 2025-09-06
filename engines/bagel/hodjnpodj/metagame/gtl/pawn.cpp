@@ -100,7 +100,7 @@ static  bool        bPlayingHodj = true;            // whether playing Hodj or P
 
 
 
-bool CPawnShop::SetupKeyboardHook(void) {
+bool CPawnShop::SetupKeyboardHook() {
 	pPawnDialog = this;                         // retain pointer to our dialog box
 
 	hKbdHook = SetWindowsHookEx(WH_KEYBOARD, PawnHookProc, hExeInst, GetCurrentTask());
@@ -111,7 +111,7 @@ bool CPawnShop::SetupKeyboardHook(void) {
 }
 
 
-void CPawnShop::RemoveKeyboardHook(void) {
+void CPawnShop::RemoveKeyboardHook() {
 	if (m_bKeyboardHook)
 		UnhookWindowsHookEx(hKbdHook);                  // unhook our keyboard procedure
 
@@ -221,7 +221,7 @@ void CPawnShop::OnOK() {
 }
 
 
-void CPawnShop::OnCancel(void) {
+void CPawnShop::OnCancel() {
 	ClearDialogImage();
 	CDialog::OnCancel();
 }
@@ -240,11 +240,11 @@ void CPawnShop::OnDestroy() {
 		RemoveKeyboardHook();
 
 	if (pWorkOld != nullptr) {
-		(void)(*pWorkDC).SelectObject(pWorkOld);
+		(*pWorkDC).SelectObject(pWorkOld);
 		pWorkOld = nullptr;
 	}
 	if (pWorkPalOld != nullptr) {
-		(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+		(*pWorkDC).SelectPalette(pWorkPalOld, false);
 		pWorkPalOld = nullptr;
 	}
 	if (pWork != nullptr) {
@@ -496,7 +496,7 @@ void CPawnShop::UpdateContent(CDC *pDC) {
 			(*pDC).SetTextColor(PAWN_MORE_COLOR);
 			(*pDC).TextOut(x, y, MORE_TEXT_BLURB, MORE_TEXT_LENGTH);
 		}
-		(void)(*pDC).SelectObject(pFontOld);                            // map out the font
+		(*pDC).SelectObject(pFontOld);                            // map out the font
 	}
 }
 
@@ -518,7 +518,7 @@ void CPawnShop::UpdateItem(CDC *pDC, CItem *pItem, int nX, int nY) {
 		    nY,
 		    (const char *) chBuffer,
 		    strlen(chBuffer));
-		(void)(*pDC).SelectObject(pFontOld);                     // map out the font
+		(*pDC).SelectObject(pFontOld);                     // map out the font
 	}
 }
 
@@ -549,7 +549,7 @@ bool CPawnShop::OnEraseBkgnd(CDC *) {
 }
 
 
-void CPawnShop::ClearDialogImage(void) {
+void CPawnShop::ClearDialogImage() {
 	if (pBackgroundBitmap != nullptr) {
 		delete pOKButton;
 		pOKButton = nullptr;
@@ -559,7 +559,7 @@ void CPawnShop::ClearDialogImage(void) {
 }
 
 
-void CPawnShop::RefreshBackground(void) {
+void CPawnShop::RefreshBackground() {
 	CDC *pDC;
 
 	if (pBackgroundBitmap != nullptr) {
@@ -618,7 +618,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 		pBackgroundBitmap = nullptr;
 
 	(*pDC).SelectPalette(pBackgroundPalette, false);
-	(void)(*pDC).RealizePalette();
+	(*pDC).RealizePalette();
 
 	if ((GetFreeSpace(0) >= (unsigned long) 1000000) &&
 	        (GlobalCompact((unsigned long) 500000) >= (unsigned long) 450000)) {
@@ -628,7 +628,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 			if ((pWorkDC != nullptr) &&
 			        (*pWorkDC).CreateCompatibleDC(pDC)) {
 				pWorkPalOld = (*pWorkDC).SelectPalette(pBackgroundPalette, false);
-				(void)(*pWorkDC).RealizePalette();
+				(*pWorkDC).RealizePalette();
 				pWorkOld = (*pWorkDC).SelectObject(pWork);
 				if (pWorkOld != nullptr)
 					bSuccess = true;
@@ -642,7 +642,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 
 	if (!bSuccess) {
 		if (pWorkPalOld != nullptr) {
-			(void)(*pWorkDC).SelectPalette(pWorkPalOld, false);
+			(*pWorkDC).SelectPalette(pWorkPalOld, false);
 			pWorkPalOld = nullptr;
 		}
 		if (pWork != nullptr) {
@@ -654,7 +654,7 @@ bool CPawnShop::CreateWorkAreas(CDC *pDC) {
 		bSuccess = true;
 	}
 
-	(void)(*pDC).SelectPalette(pWorkPalOld, false);
+	(*pDC).SelectPalette(pWorkPalOld, false);
 
 	myRect.SetRect(PAWN_TEXTZONE_DX,
 	               PAWN_BORDER_DY + PAWN_TITLEZONE_DDY,
@@ -840,21 +840,21 @@ bool CPawnShop::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int 
 }
 
 
-void CPawnShop::DoWaitCursor(void) {
+void CPawnShop::DoWaitCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).BeginWaitCursor();
+	(*pMyApp).BeginWaitCursor();
 }
 
 
-void CPawnShop::DoArrowCursor(void) {
+void CPawnShop::DoArrowCursor() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
 
-	(void)(*pMyApp).EndWaitCursor();
+	(*pMyApp).EndWaitCursor();
 }
 
 } // namespace Gtl

@@ -203,7 +203,7 @@ class CMove {
 	char m_cEndData ;
 
 	// methods to zero or copy CMove objects
-	void Zero(void) {
+	void Zero() {
 		memset(&m_cStartData, 0, &m_cEndData - &m_cStartData) ;
 	}
 	void Copy(CMove * xpcMove) {
@@ -300,7 +300,7 @@ public:
 // mnklog.cpp -- Mankala game logic
 
 //- InitMankala -- initialize a new game of Mankala
-private: bool InitMankala(void) ;
+private: bool InitMankala() ;
 //- Move -- make a move
 private: bool Move(CPit * xpcSowPit, CMove * xpcMove PDFT(nullptr)) ;
 //- MoveStone -- move one stone for move
@@ -309,9 +309,9 @@ public: bool MoveStone(CMove * xpcMove,
 //- InitData -- initialize data class object
 private: bool InitData(bool bInit PDFT(true)) ;
 //- CountConfigurations -- set up Configurations table
-	bool CountConfigurations(void) ;
+	bool CountConfigurations() ;
 //- PopulateTable -- compute values for best win table
-private: bool PopulateTable(void) ;
+private: bool PopulateTable() ;
 //- MapConfiguration -- map a configuration to its integer index,
 //		store configuration index into Move object
 	bool MapConfiguration(CMove * xpcMove) ;
@@ -483,15 +483,15 @@ class CMnkWindow : public CFrameWnd, public CMnk {
 // mnk.cpp -- Mankala game -- Windows interface
 
 //- CMnkWindow() -- mankala window constructor function
-public: CMnkWindow(void) ;
+public: CMnkWindow() ;
 //- ~CMnkWindow -- Mankala window destructor function
-public: ~CMnkWindow(void) ;
+public: ~CMnkWindow() ;
 
 
 // mnkui.cpp -- Mankala game -- user interface
 
 //- StartGame -- start a new game
-private: bool StartGame(void) ;
+private: bool StartGame() ;
 //- PaintBitmapObject -- paint bitmap
 private: bool PaintBitmapObject(CBmpObject * xpcBmpObject,
 	                                int iBmpType PDFT(0), int iBmpArg PDFT(0)) ;
@@ -512,11 +512,11 @@ public: bool MoveStoneDisplay(CPitWnd * xpcFromPit,
 private: bool AdjustPitDisplay(CPitWnd * xpcPit,
 	                               bool bForcePaint PDFT(false)) ;
 //- PaintScreen -- paint screen for mankala game
-private: void PaintScreen(void) ;
+private: void PaintScreen() ;
 //- ProcessDc -- handle processing of device context
 private: bool ProcessDc(bool bAlloc PDFT(true)) ;
 //- AllocatePits -- allocate pits (including home bin/hand)
-	bool AllocatePits(void) ;
+	bool AllocatePits() ;
 //- SetCrabSign -- to my/your turn
 private: bool SetCrabSign(bool bPaint PDFT(true)) ;
 //- FreePitResources -- free (optionally delete) all pit
@@ -525,15 +525,15 @@ private: bool FreePitResources(bool bDelete PDFT(false)) ;
 //- ClearBitmapObject -- release bitmap object
 private: bool ClearBitmapObject(CBmpObject * xpcBmpObject) ;
 //- ReleaseResources -- release all resources before term
-public: void ReleaseResources(void) ;
+public: void ReleaseResources() ;
 //- DebugDialog -- put up debugging dialog box
-private: bool DebugDialog(void) ;
+private: bool DebugDialog() ;
 public: void Setm_bJustStarted(bool U) {
 		m_bJustStarted = U; //- UserDialog -- put up user dialog box
 	}
-public: bool FAR PASCAL UserDialog(void) ;
+public: bool FAR PASCAL UserDialog() ;
 //- OptionsDialog -- call options dialog
-private: bool OptionsDialog(void) ;
+private: bool OptionsDialog() ;
 
 //private: bool CALLBACK ResetPitsDlgProc(HWND, unsigned int, WPARAM, LPARAM);
 
@@ -544,8 +544,8 @@ private: bool OptionsDialog(void) ;
 //
 //    void SplashScreen();
 //
-//    static    void ReleaseResources(void);
-//    static    void FlushInputEvents(void);
+//    static    void ReleaseResources();
+//    static    void FlushInputEvents();
 //
 //private:
 //public:

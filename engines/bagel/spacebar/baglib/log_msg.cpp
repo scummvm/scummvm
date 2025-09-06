@@ -840,7 +840,7 @@ ParseCodes CBagEnergyDetectorObject::setInfo(CBagIfstream &istr) {
 
 			if (!string1.find("TIME")) {
 				istr.eatWhite();
-				(void)istr.peek();
+				istr.peek();
 
 				getAlphaNumFromStream(istr, _energyTimeStr);
 				objectUpdatedFl = true;

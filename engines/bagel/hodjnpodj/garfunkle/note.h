@@ -42,22 +42,22 @@ public:
 // Implementation
 public:
 	void    SetValue(int nValue);
-	int GetValue(void) const {
+	int GetValue() const {
 		return m_nValue;
 	}
-	void LinkNote(void);
-	void UnLinkNote(void);
-	CNote *GetNextNote(void) const {
+	void LinkNote();
+	void UnLinkNote();
+	CNote *GetNextNote() const {
 		return m_pNext;
 	}
-	CNote *GetPrevNote(void) const {
+	CNote *GetPrevNote() const {
 		return m_pPrev;
 	}
 
-	static CNote *GetNoteHead(void) {
+	static CNote *GetNoteHead() {
 		return m_pNoteHead;
 	}
-	static void FlushNoteList(void);
+	static void FlushNoteList();
 
 private:
 	int         m_nValue;

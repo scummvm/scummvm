@@ -284,7 +284,7 @@ POINT gRightGrid[GRID_ROWS][GRID_COLS] = {
 *       None
 *
 ****************************************************************/
-CBFishWindow::CBFishWindow(void) {
+CBFishWindow::CBFishWindow() {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC;
@@ -471,7 +471,7 @@ void CBFishWindow::HandleError(ERROR_CODE errCode) {
 	}
 }
 
-ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
+ERROR_CODE CBFishWindow::LoadMasterSprites() {
 	CDC *pDC;
 	int i;
 	ERROR_CODE errCode;
@@ -649,7 +649,7 @@ ERROR_CODE CBFishWindow::LoadMasterSprites(void) {
 }
 
 
-void CBFishWindow::ReleaseMasterSprites(void) {
+void CBFishWindow::ReleaseMasterSprites() {
 	int i;
 
 	// free the hooked fish, and the users fish
@@ -1028,7 +1028,7 @@ bool CBFishWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return false;
 }
 
-void CBFishWindow::PlaceTurnHarpoons(void) {
+void CBFishWindow::PlaceTurnHarpoons() {
 	CSprite *pSprite;
 	CDC *pDC;
 	int i;
@@ -1062,7 +1062,7 @@ void CBFishWindow::PlaceTurnHarpoons(void) {
 	HandleError(errCode);
 }
 
-void CBFishWindow::RemoveTurnHarpoon(void) {
+void CBFishWindow::RemoveTurnHarpoon() {
 	assert(m_nTurns >= 0 && m_nTurns < MAX_TURNS);
 	assert(m_pHarpoons[m_nTurns] != nullptr);
 
@@ -1088,7 +1088,7 @@ void CBFishWindow::RemoveTurnHarpoon(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::GamePause(void) {
+void CBFishWindow::GamePause() {
 	m_bPause = true;
 };
 
@@ -1110,7 +1110,7 @@ void CBFishWindow::GamePause(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::GameResume(void) {
+void CBFishWindow::GameResume() {
 	m_bPause = false;
 };
 
@@ -1132,7 +1132,7 @@ void CBFishWindow::GameResume(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::PlayGame(void) {
+void CBFishWindow::PlayGame() {
 	CRect rTmpRect;
 	CDC *pDC;
 	int i;
@@ -1193,7 +1193,7 @@ void CBFishWindow::PlayGame(void) {
 }
 
 
-void CBFishWindow::PlaceUserFish(void) {
+void CBFishWindow::PlaceUserFish() {
 	//
 	// Initiate User-Edit-Mode (Allow user to drag and drop fish to grid)
 	//
@@ -1201,7 +1201,7 @@ void CBFishWindow::PlaceUserFish(void) {
 }
 
 
-void CBFishWindow::PlaceEnemyFish(void) {
+void CBFishWindow::PlaceEnemyFish() {
 	int i, j, k;
 	int row, col, rowTmp, colTmp;
 	bool bFound;
@@ -1308,7 +1308,7 @@ void CBFishWindow::PlaceEnemyFish(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::LoadIniSettings(void) {
+void CBFishWindow::LoadIniSettings() {
 	int nVal;
 
 	if (pGameParams->bPlayingMetagame) {
@@ -1369,7 +1369,7 @@ void CBFishWindow::LoadIniSettings(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::SaveIniSettings(void) {
+void CBFishWindow::SaveIniSettings() {
 }
 
 
@@ -1390,7 +1390,7 @@ void CBFishWindow::SaveIniSettings(void) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::GameReset(void) {
+void CBFishWindow::GameReset() {
 	CDC *pDC;
 	int i;
 
@@ -2370,7 +2370,7 @@ void CBFishWindow::SinkEnemyFish(int nFishIndex) {
 }
 
 
-void CBFishWindow::ComputersTurn(void) {
+void CBFishWindow::ComputersTurn() {
 	STATIC int nLastRow, nLastCol;
 	//CSound *pSound;
 	int nRow, nCol, nFishIndex, nGridIndex;
@@ -2509,7 +2509,7 @@ void CBFishWindow::SinkUserFish(int nFishIndex) {
 }
 
 
-int CBFishWindow::SelectRandomTarget(void) {
+int CBFishWindow::SelectRandomTarget() {
 	int  n;
 	int nRow, nCol;
 
@@ -2536,7 +2536,7 @@ int CBFishWindow::SelectRandomTarget(void) {
 }
 
 
-int CBFishWindow::SelectBurningTarget(void) {
+int CBFishWindow::SelectBurningTarget() {
 	int i, nGridIndex, nRow, nCol;
 	bool bFound;
 
@@ -2565,7 +2565,7 @@ int CBFishWindow::SelectBurningTarget(void) {
 	return nGridIndex;
 }
 
-int CBFishWindow::SelectBestFitTarget(void) {
+int CBFishWindow::SelectBestFitTarget() {
 	int nRow, nCol, nFishIndex, nGridIndex;
 	int counter, i;
 
@@ -3567,7 +3567,7 @@ void CBFishWindow::OnActivate(unsigned int nState, CWnd *, bool bMinimized) {
 	}
 }
 
-void CBFishWindow::FlushInputEvents(void) {
+void CBFishWindow::FlushInputEvents() {
 	MSG msg;
 
 	// find and remove all keyboard events

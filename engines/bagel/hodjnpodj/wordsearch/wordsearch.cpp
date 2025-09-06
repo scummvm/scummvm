@@ -1351,7 +1351,7 @@ void CMainWSWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned
 		pOptionButton->ShowWindow(SW_HIDE);
 //			UpdateWindow();
 		CSound::waitWaveSounds();
-		(void) dlgRules.DoModal();      // invoke the help dialog box
+		dlgRules.DoModal();      // invoke the help dialog box
 		pOptionButton->ShowWindow(SW_SHOWNORMAL);
 		break;
 	case VK_F2:
@@ -1560,7 +1560,7 @@ void CMainWSWindow::OnDestroy() {
  *
  ****************************************************************/
 
-void CMainWSWindow::ReleaseResources(void) {
+void CMainWSWindow::ReleaseResources() {
 
 	if (pGameSound != nullptr) {
 		delete pGameSound;                      // delete the game theme song
@@ -1639,7 +1639,7 @@ void CMainWSWindow::ReleaseResources(void) {
  *
  ****************************************************************/
 
-void CMainWSWindow::FlushInputEvents(void) {
+void CMainWSWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

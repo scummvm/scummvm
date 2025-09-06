@@ -45,7 +45,7 @@ namespace Gtl {
 #define PODJ_SOUND_END      64000
 #define PODJS_STARS_FILE    ".\\ART\\PSTAR.BMP"
 
-extern uint32 GetPhysicalMemory(void);
+extern uint32 GetPhysicalMemory();
 
 
 CNode::CNode() {
@@ -60,7 +60,7 @@ CNode::CNode() {
 
 //* CGtlData::CGtlData -- constructor -- zero out all fields, allocate
 //      arrays, and set colors
-CGtlData::CGtlData(void) {
+CGtlData::CGtlData() {
 	JXENTER(CGtlData::CGtlData) ;
 
 	TRACECONSTRUCTOR(CGtlData) ;
@@ -84,7 +84,7 @@ CGtlData::CGtlData(void) {
 }
 
 //* CGtlData::~CGtlData -- destructor
-CGtlData::~CGtlData(void) {
+CGtlData::~CGtlData() {
 	JXENTER(CGtlData::~CGtlData) ;
 	CXodj *xpXodj, *xpXodjNext ;
 
@@ -109,7 +109,7 @@ CGtlData::~CGtlData(void) {
 	RETURN_VOID ;
 }
 
-void CGtlData::CreateOffScreenBmp(void) {
+void CGtlData::CreateOffScreenBmp() {
 	CDC *pScreenDC;
 	CGtlApp *xpGtlApp = (CGtlApp *)AfxGetApp();
 
@@ -132,14 +132,14 @@ void CGtlData::CreateOffScreenBmp(void) {
 	}
 }
 
-void CGtlData::DeleteOffScreenBmp(void) {
+void CGtlData::DeleteOffScreenBmp() {
 	if (m_pOffScreenBmp != nullptr) {
 		delete m_pOffScreenBmp;
 		m_pOffScreenBmp = nullptr;
 	}
 }
 
-void CGtlData::PaintOffScreenBmp(void) {
+void CGtlData::PaintOffScreenBmp() {
 	CDC *pScreenDC;
 	CMemDC *pMemDC;
 	CPalette *pScreenPalOld;
@@ -159,19 +159,19 @@ void CGtlData::PaintOffScreenBmp(void) {
 		}
 	}
 }
-CMemDC::CMemDC(void) {
+CMemDC::CMemDC() {
 	m_pDC = new CDC;
 	assert(m_pDC != nullptr);
 }
 
-CMemDC::~CMemDC(void) {
+CMemDC::~CMemDC() {
 	if (m_pDC != nullptr) {
 		delete m_pDC;
 		m_pDC = nullptr;
 	}
 }
 
-CMemDC *CGtlData::GetMemDC(void) {
+CMemDC *CGtlData::GetMemDC() {
 	CMemDC *pMemDC;
 
 	if ((pMemDC = new CMemDC) != nullptr) {
@@ -197,7 +197,7 @@ void CGtlData::ReleaseMemDC(CMemDC *pMemDC) {
 }
 
 //* CGtlData::SetColors -- set colors of various elements
-bool CGtlData::SetColors(void)
+bool CGtlData::SetColors()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::SetColors) ;
@@ -222,7 +222,7 @@ bool CGtlData::SetColors(void)
 }
 
 //* CGtlData::ClearInhibitDraw -- clear m_bInhibitDraw flag
-bool CGtlData::ClearInhibitDraw(void)
+bool CGtlData::ClearInhibitDraw()
 // returns: true if error, false otherwise
 {
 	JXENTER(CGtlData::ClearInhibitDraw) ;

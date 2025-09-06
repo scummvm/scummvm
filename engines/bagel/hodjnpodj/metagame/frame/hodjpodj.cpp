@@ -81,7 +81,7 @@ using GrandTour::LPGRANDTRSTRUCT;
 typedef HWND (FAR PASCAL *FPZOOMFUNCT)(HWND, bool);
 typedef HWND (FAR PASCAL *FPGTFUNCT)(HWND, LPGRANDTRSTRUCT);
 typedef HWND (FAR PASCAL *FPMETAFUNCT)(HWND, CBfcMgr *, bool);
-typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)(void);
+typedef uint32 (FAR PASCAL * FPGETFREEMEMINFO)();
 
 // Flags when a .dll in the original is loaded
 
@@ -319,7 +319,7 @@ CHodjPodjWindow::CHodjPodjWindow() {
 }
 
 
-void CHodjPodjWindow::GetProfileSettings(void) {
+void CHodjPodjWindow::GetProfileSettings() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -337,7 +337,7 @@ void CHodjPodjWindow::GetProfileSettings(void) {
 }
 
 
-void CHodjPodjWindow::SaveProfileSettings(void) {
+void CHodjPodjWindow::SaveProfileSettings() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -348,7 +348,7 @@ void CHodjPodjWindow::SaveProfileSettings(void) {
 }
 
 
-void LoadFloatLib(void) {
+void LoadFloatLib() {
 	double fHack = 3.1415;
 
 	fHack = fHack / 1.4;
@@ -373,7 +373,7 @@ bool CHodjPodjWindow::CheckConfig(CDC *pDC) {
 }
 
 
-bool CHodjPodjWindow::CheckLowMemory(void) {
+bool CHodjPodjWindow::CheckLowMemory() {
 	bool bMemoryProblem;
 	uint32 dwFreeSpace;
 
@@ -772,7 +772,7 @@ bool CHodjPodjWindow::OnEraseBkgnd(CDC *) {
 }
 
 
-void CHodjPodjWindow::BlackScreen(void) {
+void CHodjPodjWindow::BlackScreen() {
 	CDC         *pDC;
 	CBrush      Brush(RGB(0, 0, 0));
 	CPalette    *pPalOld = nullptr;
@@ -784,13 +784,13 @@ void CHodjPodjWindow::BlackScreen(void) {
 
 	if (pGamePalette != nullptr) {                                  // map in color palette to be used
 		pPalOld = (*pDC).SelectPalette(pGamePalette, false);
-		(void)(*pDC).RealizePalette();
+		(*pDC).RealizePalette();
 	}
 
 	pDC->FillRect(&MainRect, &Brush);
 
 	if (pPalOld != nullptr)                                 // relinquish the resources we built
-		(void)(*pDC).SelectPalette(pPalOld, false);
+		(*pDC).SelectPalette(pPalOld, false);
 
 	ReleaseDC(pDC);
 }
@@ -824,7 +824,7 @@ void CHodjPodjWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsign
 
 
 LRESULT CHodjPodjWindow::OnMCINotify(WPARAM wParam, LPARAM lParam) {
-	(void) CSound::OnMCIStopped(wParam, lParam);
+	CSound::OnMCIStopped(wParam, lParam);
 	return 0;
 }
 
@@ -953,7 +953,7 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 		if (bLoadedDLL == false) {
 			CString     cTmp;
 
-			(void) PositionAtHomePath();
+			PositionAtHomePath();
 
 			cTmp = "Unable to find or load the ";
 			cTmp += CMgStatic::cGameTable[ nWhichDLL ].m_lpszGameName;
@@ -973,14 +973,14 @@ void    CHodjPodjWindow::LoadNewDLL(LPARAM lParam) {
 }
 
 
-void CHodjPodjWindow::FreeCurrentDLL(void) {
+void CHodjPodjWindow::FreeCurrentDLL() {
 	delete g_wndGame;
 	g_wndGame = nullptr;
 	dllLoaded = false;
 }
 
 
-bool CHodjPodjWindow::LoadMetaDLL(void) {
+bool CHodjPodjWindow::LoadMetaDLL() {
 	FreeCurrentDLL();
 	dllLoaded = true;
 	Metagame::Gtl::RunMeta(m_hWnd, lpMetaGame, false);
@@ -989,7 +989,7 @@ bool CHodjPodjWindow::LoadMetaDLL(void) {
 	return true;
 }
 
-bool CHodjPodjWindow::LoadZoomDLL(void) {
+bool CHodjPodjWindow::LoadZoomDLL() {
 	dllLoaded = true;
 	g_wndGame = CWnd::FromHandle(Metagame::Zoom::RunZoomMap(m_hWnd,
 		nChallengePhase == 0));
@@ -999,7 +999,7 @@ bool CHodjPodjWindow::LoadZoomDLL(void) {
 }
 
 
-bool CHodjPodjWindow::LoadGrandTourDLL(void) {
+bool CHodjPodjWindow::LoadGrandTourDLL() {
 	if (lpGrandTour == nullptr) {
 		int i;
 
@@ -1614,7 +1614,7 @@ void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 		nGameReturn = lParam;
 
 		if (dllLoaded) {
-			(void) PositionAtHomePath();
+			PositionAtHomePath();
 
 			if (nGameReturn < 0) {
 				bReturnToZoom = false;
@@ -1711,12 +1711,12 @@ bool CHodjPodjWindow::FindCDROM() {
 }
 
 
-bool CHodjPodjWindow::DriveWriteLocked(void) {
+bool CHodjPodjWindow::DriveWriteLocked() {
 	return false;
 }
 
 
-void CHodjPodjWindow::StartBackgroundMidi(void) {
+void CHodjPodjWindow::StartBackgroundMidi() {
 	CWinApp *pMyApp;
 
 	pMyApp = AfxGetApp();
@@ -1731,7 +1731,7 @@ void CHodjPodjWindow::StartBackgroundMidi(void) {
 }
 
 
-void CHodjPodjWindow::StopBackgroundMidi(void) {
+void CHodjPodjWindow::StopBackgroundMidi() {
 	if (pBackgroundMidi != nullptr) {
 		(*pBackgroundMidi).stop();
 		delete pBackgroundMidi;
@@ -1761,7 +1761,7 @@ void CHodjPodjWindow::OnClose() {
 }
 
 
-void CHodjPodjWindow::ReleaseResources(void) {
+void CHodjPodjWindow::ReleaseResources() {
 	CSound::clearSounds();
 
 	if (bMetaLoaded) {
@@ -2007,7 +2007,7 @@ void InitBFCInfo(CBfcMgr *pBfcMgr) {
  *
  ****************************************************************/
 
-void CHodjPodjWindow::FlushInputEvents(void) {
+void CHodjPodjWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events
@@ -2098,7 +2098,7 @@ bool CHodjPodjWindow::Restore() {
 }
 
 
-void CHodjPodjWindow::ShowCredits(void) {
+void CHodjPodjWindow::ShowCredits() {
 	MSG msg;
 	long lTimeElapsed, lStart;
 	unsigned long lGoal, lWait;

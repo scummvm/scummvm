@@ -62,7 +62,7 @@ private:
 public:
 	COptn(CWnd* pParent = nullptr, CPalette *pGamePalette = nullptr, int nLttrsSolvd = false, int nTime = false); // standard constructor
 	~COptn();
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 	int         m_nLttrsSlvd, m_nTime;
 // Dialog Data

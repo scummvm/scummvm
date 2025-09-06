@@ -610,7 +610,7 @@ int DoEncounter(CWnd *pWnd, CPalette *pPalette, bool bHodj, CInventory *pInvento
 			nTestProb = TRAP_PROB;                                  // Get probability, scaled by ten
 			nRandom = brand() % RAND_FACTOR;
 			if (nTestProb >= nRandom) {                                        // If we are in the probability percentage...
-				// check ItemCount(void), set Item flag
+				// check ItemCount(), set Item flag
 				pItem = (*pInventory).FindItem(MG_OBJ_MISH);                    // See if they have mish or mosh
 				if (pItem != nullptr)                                              // don't count crowns and notebook
 					nItems = (*pInventory).ItemCount() - INVENT_MIN_ITEM_COUNT - ENC_MISHMOSH; // and Mish & Mosh

@@ -132,13 +132,13 @@ bool CDFAOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-void CDFAOptDlg::OnCancel(void) {
+void CDFAOptDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(-1);
 	return;
 }
 
-void CDFAOptDlg::OnOK(void) {
+void CDFAOptDlg::OnOK() {
 	if (pDFAOKButton->GetState()  & 0x0008)
 		SendMessage(WM_COMMAND, IDC_MINI_OK, BN_CLICKED);
 	else
@@ -146,7 +146,7 @@ void CDFAOptDlg::OnOK(void) {
 	return;
 }
 
-void CDFAOptDlg::ClearDialogImage(void) {
+void CDFAOptDlg::ClearDialogImage() {
 
 	if (pDFAOKButton != nullptr) {
 		delete pDFAOKButton;
@@ -247,7 +247,7 @@ bool CDFAOptDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CDFAOptDlg::OnPaint(void) {
+void CDFAOptDlg::OnPaint() {
 	CDC             *pDC;
 	CString         strBTime = "Beaver Time (Secs) :";
 	CString         strGTime = "Game Time (Secs) :";

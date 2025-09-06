@@ -103,7 +103,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 
 	// Generated message map functions

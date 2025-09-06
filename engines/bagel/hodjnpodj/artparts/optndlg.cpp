@@ -188,7 +188,7 @@ bool COptnDlg::OnEraseBkgnd(CDC *pDC) {
 	return true;
 }
 
-void COptnDlg::OnDestroy(void) {
+void COptnDlg::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
@@ -354,7 +354,7 @@ void COptnDlg::OnPaint() {
 
 }
 
-void COptnDlg::ClearDialogImage(void) {
+void COptnDlg::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;

@@ -36,7 +36,7 @@ static  bool    bScrollTemp;
 ///DEFS bsutl.h
 
 //* CBsuSet::~CBsuSet -- destructor
-CBsuSet::~CBsuSet(void)
+CBsuSet::~CBsuSet()
 // returns: true if error, false otherwise
 {
 	JXENTER(CBsuSet::~CBsuSet);
@@ -166,7 +166,7 @@ cleanup:
 }
 
 //* CBsuSet::UpdateWndDeviceExtents -- update window devices coordinates
-bool CBsuSet::UpdateWndDeviceExtents(void)
+bool CBsuSet::UpdateWndDeviceExtents()
 // returns: true if error, false otherwise
 {
 	JXENTER(CBsuSet::UpdateWndDeviceExtents);

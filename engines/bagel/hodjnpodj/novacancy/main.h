@@ -38,22 +38,22 @@ char *GetStringFromResource(unsigned int);
 
 class CMainWindow : public CFrameWnd {
 public:
-	CMainWindow(void);
-	void        PlayGame(void);
-	void        PaintScreen(void);
-	void        LoadIniSettings(void);
-	void        SaveIniSettings(void);
+	CMainWindow();
+	void        PlayGame();
+	void        PaintScreen();
+	void        LoadIniSettings();
+	void        SaveIniSettings();
 
 
 protected:
-	void        GameReset(void);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        GameReset();
+	void        GamePause();
+	void        GameResume();
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 
-	void        OnPaint(void);
+	void        OnPaint();
 	void        OnTimer(uintptr);
 	void        OnMouseMove(unsigned int, CPoint);
 	virtual void        OnLButtonDown(unsigned int, CPoint);
@@ -62,7 +62,7 @@ protected:
 	virtual  void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	virtual void        OnKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnActivate(unsigned int, CWnd *, bool) override;
-	void        OnClose(void);
+	void        OnClose();
 	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
 	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);
 
@@ -124,7 +124,7 @@ private:
 	bool m_bDiceBmpsLoaded;
 	CString gWndClass;
 
-	void AnimateDice(void);
+	void AnimateDice();
 	short LegalizeMove(short i);
 	bool IsThrowDoable(byte dice_sum);
 };

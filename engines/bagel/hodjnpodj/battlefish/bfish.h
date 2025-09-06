@@ -47,24 +47,24 @@ typedef struct {
 
 class CBFishWindow : public CFrameWnd {
 public:
-	CBFishWindow(void);
-	void        PlayGame(void);
-	void        PaintScreen(void);
-	void        LoadIniSettings(void);
-	void        SaveIniSettings(void);
+	CBFishWindow();
+	void        PlayGame();
+	void        PaintScreen();
+	void        LoadIniSettings();
+	void        SaveIniSettings();
 
 protected:
-	void        FlushInputEvents(void);
-	void        GameReset(void);
-	void        GamePause(void);
-	void        GameResume(void);
+	void        FlushInputEvents();
+	void        GameReset();
+	void        GamePause();
+	void        GameResume();
 	void        HandleError(ERROR_CODE);
 	void        DeleteSprite(CSprite *);
 	ERROR_CODE  RepaintSpriteList(CDC *);
-	ERROR_CODE  LoadMasterSprites(void);
-	void        ReleaseMasterSprites(void);
-	void        PlaceUserFish(void);
-	void        PlaceEnemyFish(void);
+	ERROR_CODE  LoadMasterSprites();
+	void        ReleaseMasterSprites();
+	void        PlaceUserFish();
+	void        PlaceEnemyFish();
 	void        RotateFish(int);
 	void        AssignFishToGrid(int);
 	int         GetEnemyGridIndex(CPoint);
@@ -76,10 +76,10 @@ protected:
 	int         IdToIndex(int);
 	CPoint      SnapToGrid(CPoint);
 	void        UsersTurn(int);
-	void        ComputersTurn(void);
-	int         SelectRandomTarget(void);
-	int         SelectBurningTarget(void);
-	int         SelectBestFitTarget(void);
+	void        ComputersTurn();
+	int         SelectRandomTarget();
+	int         SelectBurningTarget();
+	int         SelectBestFitTarget();
 	int         FindNeighborTarget(int, int);
 	int         FindTarget(int, int);
 	int         FindMatch(int, int);
@@ -89,14 +89,14 @@ protected:
 	void        CreateHarpoon(CPoint);
 	void        SinkUserFish(int);
 	void        SinkEnemyFish(int);
-	void        PlaceTurnHarpoons(void);
-	void        RemoveTurnHarpoon(void);
+	void        PlaceTurnHarpoons();
+	void        RemoveTurnHarpoon();
 
 	virtual bool OnCommand(WPARAM wParam, LPARAM lParam) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);
-	void        OnPaint(void);
+	void        OnPaint();
 	void        OnMouseMove(unsigned int, CPoint);
 	void        OnRButtonDown(unsigned int, CPoint);
 	void        OnLButtonDown(unsigned int, CPoint);
@@ -105,7 +105,7 @@ protected:
 	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
 	void        OnActivate(unsigned int, CWnd *, bool) override;
-	void        OnClose(void);
+	void        OnClose();
 
 	DECLARE_MESSAGE_MAP()
 

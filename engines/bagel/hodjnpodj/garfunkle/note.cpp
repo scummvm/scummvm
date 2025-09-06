@@ -96,7 +96,7 @@ void CNote::SetValue(int nValue) {
  *
  ************************************************************************/
 
-void CNote::LinkNote(void) {
+void CNote::LinkNote() {
 	m_pNext = nullptr;                 // link note onto tail of list
 	m_pPrev = m_pNoteTail;          //... by pointing it back at the current
 	//... tail, making it the tail, and
@@ -120,7 +120,7 @@ void CNote::LinkNote(void) {
  *
  ************************************************************************/
 
-void CNote::UnLinkNote(void) {
+void CNote::UnLinkNote() {
 	if (m_pPrev)                            // disconnect us from the note chain
 		(*m_pPrev).m_pNext = m_pNext;       // ... by pointing the one before us, and
 	else                                    // ... the one after us, at each other
@@ -147,7 +147,7 @@ void CNote::UnLinkNote(void) {
  *
  ************************************************************************/
 
-void CNote::FlushNoteList(void) {
+void CNote::FlushNoteList() {
 	CNote   *pNote;
 
 	while ((pNote = CNote::GetNoteHead())) {

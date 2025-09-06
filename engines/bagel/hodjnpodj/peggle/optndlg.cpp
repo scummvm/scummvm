@@ -163,7 +163,7 @@ bool COptnDlg::OnInitDialog() {
 }
 
 
-void COptnDlg::OnDestroy(void) {
+void COptnDlg::OnDestroy() {
 	bool    bUpdateNeeded;
 
 	if (m_pDlgBackground != nullptr) {

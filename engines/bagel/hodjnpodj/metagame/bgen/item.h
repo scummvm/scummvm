@@ -50,11 +50,11 @@ public:
 
 // Implementation
 public:
-	int GetID(void) {
+	int GetID() {
 		return (m_nID);
 	}
 
-	long GetQuantity(void) {
+	long GetQuantity() {
 		return (m_nQuantity);
 	}
 	void SetQuantity(long nQuantity) {
@@ -62,11 +62,11 @@ public:
 	}
 
 	#ifndef FRAME_EXE
-	char *GetDescription(void) {
+	char *GetDescription() {
 		return (GetDescription(m_nID, m_nQuantity));
 	}
 	#endif
-	int GetActionCode(void) {
+	int GetActionCode() {
 		return (m_nActionCode);
 	}
 	void SetActionCode(int nActionCode) {
@@ -74,28 +74,28 @@ public:
 	}
 
 	#ifndef FRAME_EXE
-	const char *GetArtSpec(void) {
+	const char *GetArtSpec() {
 		return (m_pItemBitmapPath[m_nID - MG_OBJ_BASE]);
 	}
-	const char *GetSoundSpec(void) {
+	const char *GetSoundSpec() {
 		return (m_pItemSoundPath[m_nID - MG_OBJ_BASE]);
 	}
 
-	int GetValue(void) {
+	int GetValue() {
 		return (m_nValue[m_nID - MG_OBJ_BASE]);
 	}
 	#endif
 
 	bool AddNote(int nID, int nClue, int nRepeat, int nPerson, int nPlace);
 	bool AddNote(CNote *pNote);
-	CNote *GetFirstNote(void) {
+	CNote *GetFirstNote() {
 		return (m_pNotes);
 	}
 
-	CItem  *GetNext(void) {
+	CItem  *GetNext() {
 		return (m_pNext);
 	}
-	CItem *GetPrev(void) {
+	CItem *GetPrev() {
 		return (m_pPrev);
 	}
 

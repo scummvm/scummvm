@@ -454,7 +454,7 @@ void CUserCfgDlg::OnPaint() {
 	ReleaseDC(pDC);
 }
 
-void CUserCfgDlg::ClearDialogImage(void) {
+void CUserCfgDlg::ClearDialogImage() {
 	if (m_pOKButton != nullptr) {      // release button
 		delete m_pOKButton;
 		m_pOKButton = nullptr;

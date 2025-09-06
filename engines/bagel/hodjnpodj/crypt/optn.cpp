@@ -204,7 +204,7 @@ bool COptn::OnInitDialog() {
 	return true;  // return true  unless you set the focus to a control
 }
 
-void COptn::OnDestroy(void) {
+void COptn::OnDestroy() {
 	CBmpDialog::OnDestroy();
 }
 
@@ -343,7 +343,7 @@ void COptn::OnCancel() {
 	EndDialog(0);
 }
 
-void COptn::ClearDialogImage(void) {
+void COptn::ClearDialogImage() {
 	if (pOKButton != nullptr) {                          // release the button
 		delete pOKButton;
 		pOKButton = nullptr;

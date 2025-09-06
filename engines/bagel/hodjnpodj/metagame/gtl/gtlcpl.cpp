@@ -57,7 +57,7 @@ int CGtlData::Compile(const char *xpszPathName) {
 	while (!bDone) {
 
 		if (!CGtlData::ReadLine())  // read line, check for error
-			(void)CGtlData::ParseLine();
+			CGtlData::ParseLine();
 
 		if (m_bEof)     // if end of file
 			bDone = true ;
@@ -82,7 +82,7 @@ cleanup:
 
 
 //* CGtlData::ParseLine -- parse input line
-bool CGtlData::ParseLine(void)
+bool CGtlData::ParseLine()
 // returns: true if error, false otherwise
 {
 	char szBuf[MAX_LABEL_LENGTH];

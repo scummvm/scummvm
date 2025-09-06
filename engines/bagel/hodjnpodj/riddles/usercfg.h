@@ -43,17 +43,17 @@ namespace Riddles {
 class CUserCfgDlg : public CBmpDialog {
 public:
 	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
-	void ClearDialogImage(void);
+	void ClearDialogImage();
 
 protected:
 
 	virtual void DoDataExchange(CDataExchange *) override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
-	void PutDlgData(void);
-	void GetDlgData(void);
-	void DispLimit(void);
-	void DispLevel(void);
+	virtual bool OnInitDialog() override;
+	void PutDlgData();
+	void GetDlgData();
+	void DispLimit();
+	void DispLevel();
 	int GetIndex(int);
 
 	void OnHScroll(unsigned int, unsigned int, CScrollBar *);

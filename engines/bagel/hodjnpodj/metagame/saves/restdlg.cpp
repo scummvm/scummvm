@@ -78,13 +78,13 @@ bool CRestoreDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CRestoreDlg::OnCancel(void) {
+void CRestoreDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(-1);
 }
 
 
-bool CRestoreDlg::OnInitDialog(void) {
+bool CRestoreDlg::OnInitDialog() {
 	CRect rect;
 	CDC *pDC;
 	int i;
@@ -135,7 +135,7 @@ bool CRestoreDlg::OnInitDialog(void) {
 }
 
 
-void CRestoreDlg::OnPaint(void) {
+void CRestoreDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -148,7 +148,7 @@ void CRestoreDlg::OnPaint(void) {
 }
 
 
-void CRestoreDlg::ClearDialogImage(void) {
+void CRestoreDlg::ClearDialogImage() {
 	int i;
 	if (m_pTxtRestore != nullptr) {
 		delete m_pTxtRestore;
@@ -169,7 +169,7 @@ void CRestoreDlg::ClearDialogImage(void) {
 }
 
 
-void CRestoreDlg::OnDestroy(void) {
+void CRestoreDlg::OnDestroy() {
 	int i;
 
 	if (m_pTxtRestore != nullptr) {

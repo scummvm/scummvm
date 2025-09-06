@@ -73,9 +73,9 @@ public:
 	bool DisplayShadowedString(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const COLORREF crColor, const COLORREF crShadow = CTEXT_SHADOW_COLOR, const int DX = CTEXT_SHADOW_DX, const int DY = CTEXT_SHADOW_DY);
 
 private:
-	void InitializeFields(void);
+	void InitializeFields();
 	bool SetupContexts(CDC *pDC);
-	void ReleaseContexts(void);
+	void ReleaseContexts();
 	bool DisplayText(CDC *pDC, const char* pszText, const int nSize, const int nWeight, const bool bShadowed);
 
 private:

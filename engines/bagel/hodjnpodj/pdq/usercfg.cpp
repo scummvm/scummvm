@@ -260,7 +260,7 @@ void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar 
 }
 
 
-bool CUserCfgDlg::OnInitDialog(void) {
+bool CUserCfgDlg::OnInitDialog() {
 	CRect tmpRect;
 	char buf[10];
 	CDC *pDC;
@@ -363,7 +363,7 @@ bool CUserCfgDlg::OnInitDialog(void) {
 }
 
 
-void CUserCfgDlg::OnPaint(void) {
+void CUserCfgDlg::OnPaint() {
 	CDC *pDC;
 
 	CBmpDialog::OnPaint();
@@ -385,7 +385,7 @@ BEGIN_MESSAGE_MAP(CUserCfgDlg, CBmpDialog)
 	ON_WM_DESTROY()
 END_MESSAGE_MAP()
 
-void CUserCfgDlg::OnDestroy(void) {
+void CUserCfgDlg::OnDestroy() {
 	if (m_pSpeedScroll != nullptr) {
 		delete m_pSpeedScroll;
 		m_pSpeedScroll = nullptr;
@@ -400,7 +400,7 @@ void CUserCfgDlg::OnDestroy(void) {
 }
 
 
-void CUserCfgDlg::DispSpeed(void) {
+void CUserCfgDlg::DispSpeed() {
 	CDC *pDC;
 
 	if ((pDC = GetDC()) != nullptr) {
@@ -410,7 +410,7 @@ void CUserCfgDlg::DispSpeed(void) {
 }
 
 
-void CUserCfgDlg::DispShown(void) {
+void CUserCfgDlg::DispShown() {
 	CDC *pDC;
 	char    msg[5];
 
@@ -423,7 +423,7 @@ void CUserCfgDlg::DispShown(void) {
 }
 
 
-void CUserCfgDlg::ClearDialogImage(void) {
+void CUserCfgDlg::ClearDialogImage() {
 	CDC *pDC;
 
 	if (m_bShouldSave) {

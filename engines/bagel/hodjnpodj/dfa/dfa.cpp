@@ -837,7 +837,7 @@ void CMainDFAWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigne
 		KillTimer(GAMETIMER);                                        // stop the beavers for now
 		CSound::waitWaveSounds();
 		pOptionButton->ShowWindow(SW_HIDE);                          // hide furled scroll
-		(void) dlgRules.DoModal();                                  // invoke the help dialog box
+		dlgRules.DoModal();                                  // invoke the help dialog box
 		pOptionButton->ShowWindow(SW_SHOWNORMAL);                    // show furled scroll
 		SetFocus();
 		if (m_nTimeForGame > 0) {
@@ -1105,7 +1105,7 @@ void CMainDFAWindow::OnDestroy() {
  *
  ****************************************************************/
 
-void CMainDFAWindow::ReleaseResources(void) {
+void CMainDFAWindow::ReleaseResources() {
 	int x;
 
 	if (pGameSound != nullptr) {
@@ -1166,7 +1166,7 @@ void CMainDFAWindow::ReleaseResources(void) {
  *
  ****************************************************************/
 
-void CMainDFAWindow::FlushInputEvents(void) {
+void CMainDFAWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events
@@ -1208,7 +1208,7 @@ void CMainDFAWindow::OnSoundNotify(CSound *pSound) {
 	//
 }
 
-bool CMainDFAWindow::LoadBeaverSounds(void) {
+bool CMainDFAWindow::LoadBeaverSounds() {
 	HANDLE      hResInfo;
 	HINSTANCE   hInst;
 	bool        bSuccess;

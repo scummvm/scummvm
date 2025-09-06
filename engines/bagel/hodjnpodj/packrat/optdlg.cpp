@@ -136,13 +136,13 @@ bool CPackRatOptDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-void CPackRatOptDlg::OnCancel(void) {
+void CPackRatOptDlg::OnCancel() {
 	ClearDialogImage();
 	EndDialog(0);
 	return;
 }
 
-void CPackRatOptDlg::OnOK(void) {
+void CPackRatOptDlg::OnOK() {
 	if (pPROKButton->GetState()  & 0x0008)
 		SendMessage(WM_COMMAND, IDC_MINI_OK, BN_CLICKED);
 	else
@@ -150,7 +150,7 @@ void CPackRatOptDlg::OnOK(void) {
 	return;
 }
 
-void CPackRatOptDlg::ClearDialogImage(void) {
+void CPackRatOptDlg::ClearDialogImage() {
 
 	if (pPROKButton != nullptr) {
 		delete pPROKButton;
@@ -251,7 +251,7 @@ bool CPackRatOptDlg::OnInitDialog() {
  *      n/a
  *
  ****************************************************************/
-void CPackRatOptDlg::OnPaint(void) {
+void CPackRatOptDlg::OnPaint() {
 	CDC             *pDC;
 	CString         strLevel = "Game Level :";
 	CString         strLives = "Number of Lives :";

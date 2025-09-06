@@ -78,7 +78,7 @@ int         g_nCardBack;
 extern HWND ghParentWnd;
 
 
-CMainWindow::CMainWindow(void) {
+CMainWindow::CMainWindow() {
 	CString  WndClass;
 	CRect    tmpRect;
 	CDC     *pDC = nullptr;
@@ -432,11 +432,11 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CMainWindow::GamePause(void) {
+void CMainWindow::GamePause() {
 	m_bPause = true;
 }
 
-void CMainWindow::GameResume(void) {
+void CMainWindow::GameResume() {
 	m_bPause = false;
 }
 
@@ -480,14 +480,14 @@ void CMainWindow::PlayGame() {
 	HandleError(errCode);
 }
 
-void CMainWindow::LoadIniSettings(void) {
+void CMainWindow::LoadIniSettings() {
 }
 
-void CMainWindow::SaveIniSettings(void) {
+void CMainWindow::SaveIniSettings() {
 }
 
 
-void CMainWindow::GameReset(void) {
+void CMainWindow::GameReset() {
 	//sndPlaySound(nullptr, SND_SYNC);               // stop all sounds
 }
 
@@ -827,7 +827,7 @@ void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned i
 	}
 }
 
-void CMainWindow::FlushInputEvents(void) {
+void CMainWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

@@ -440,7 +440,7 @@ bool CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			m_bIgnoreScrollClick = true;
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, true, 0L);
 
-			(void) RulesDlg.DoModal();
+			RulesDlg.DoModal();
 			m_bIgnoreScrollClick = false;
 			(*m_pScrollButton).SendMessage(BM_SETSTATE, false, 0L);
 			break;

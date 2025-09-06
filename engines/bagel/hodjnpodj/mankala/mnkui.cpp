@@ -38,7 +38,7 @@ static int gCount;     //reset to 0 in StartGame() and incremented in AcceptClic
 
 
 //* CMnkWindow::StartGame -- start a new game
-bool CMnkWindow::StartGame(void)
+bool CMnkWindow::StartGame()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::StartGame) ;
@@ -691,7 +691,7 @@ bool CMnkWindow::AdjustPitDisplay(CPitWnd * xpcPit,
 }
 
 //* CMnkWindow::PaintScreen -- paint screen for mankala game
-void CMnkWindow::PaintScreen(void)
+void CMnkWindow::PaintScreen()
 // returns: void
 {
 	JXENTER(CMnkWindow::PaintScreen) ;
@@ -732,7 +732,7 @@ void CMnkWindow::PaintScreen(void)
 
 
 //* CMnkWindow::AllocatePits -- allocate pits (including home bin/hand)
-bool CMnkWindow::AllocatePits(void)
+bool CMnkWindow::AllocatePits()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::AllocatePits) ;
@@ -967,7 +967,7 @@ bool CMnkWindow::ClearBitmapObject(CBmpObject * xpcBmpObject)
 }
 
 //* CMnkWindow::ReleaseResources -- release all resources before term
-void CMnkWindow::ReleaseResources(void) {
+void CMnkWindow::ReleaseResources() {
 	CBmpObject * xpcBmpObject ;     // objects to be freed
 	CPitWnd* xpcPitWnd;
 
@@ -995,7 +995,7 @@ void CMnkWindow::ReleaseResources(void) {
 
 
 //* CMnkWindow::DebugDialog -- put up debugging dialog box
-bool CMnkWindow::DebugDialog(void)
+bool CMnkWindow::DebugDialog()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::DebugDialog) ;
@@ -1042,7 +1042,7 @@ bool CMnkWindow::DebugDialog(void)
 }
 
 //* CMnkWindow::UserDialog -- put up user dialog box
-bool FAR PASCAL CMnkWindow::UserDialog(void)
+bool FAR PASCAL CMnkWindow::UserDialog()
 // returns: true if error, false otherwise
 {
 	JXENTER(CMnkWindow::UserDialog) ;
@@ -1076,7 +1076,7 @@ void CALLBACK CallUserDialog(CWnd * xpcWindow) {
 }
 
 //* CMnkWindow::OptionsDialog -- call options dialog
-bool CMnkWindow::OptionsDialog(void) {
+bool CMnkWindow::OptionsDialog() {
 // returns: true if error, false otherwise
 	JXENTER(CMnkWindow::OptionsDialog) ;
 	int iError = 0 ;        // error code

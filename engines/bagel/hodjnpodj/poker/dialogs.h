@@ -48,7 +48,7 @@ public:
 
 protected:
 	virtual bool OnCommand(WPARAM, LPARAM) override;
-	virtual bool OnInitDialog(void) override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnPaint();
 	afx_msg bool OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnDestroy();
@@ -116,7 +116,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange *) override;
-	virtual bool OnInitDialog(void) override;
+	virtual bool OnInitDialog() override;
 	afx_msg void OnSetpayoffs();
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnCancel() override;
@@ -140,7 +140,7 @@ public:
 	bool OnInitDialog() override;
 
 protected:
-	virtual void OnOK(void) override;
+	virtual void OnOK() override;
 	virtual bool OnCommand(WPARAM, LPARAM) override;
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();

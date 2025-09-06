@@ -86,7 +86,7 @@ void CSetPayoffsDlg::DoDataExchange(CDataExchange *pDX) {
 	CDialog::DoDataExchange(pDX);
 }
 
-bool CSetPayoffsDlg::OnInitDialog(void) {
+bool CSetPayoffsDlg::OnInitDialog() {
 	bool    bSuccess = false;
 
 	CBmpDialog::OnInitDialog();
@@ -279,7 +279,7 @@ bool CSetPayoffsDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
  *  n/a
  *
  ****************************************************************/
-void CSetPayoffsDlg::OnPaint(void) {
+void CSetPayoffsDlg::OnPaint() {
 	CDC             *pDC;
 	int         nOldBkMode;
 
@@ -562,7 +562,7 @@ bool CSetPayoffsDlg::OnEraseBkgnd(CDC *pDC) {
 	return true;
 }
 
-void CSetPayoffsDlg::ClearDialogImage(void) {
+void CSetPayoffsDlg::ClearDialogImage() {
 
 	if (pSetPayButton != nullptr) {
 		delete pSetPayButton;

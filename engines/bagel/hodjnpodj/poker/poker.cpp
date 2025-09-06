@@ -258,7 +258,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 // load splash screen
 	pDC = GetDC();                                  // get a device context for our window
 
-//(void)FetchBitmap( pDC, &pGamePalette, SPLASHSPEC );
+//()FetchBitmap( pDC, &pGamePalette, SPLASHSPEC );
 
 
 	pDibDoc = new CDibDoc();                        // create an object to hold our splash screen
@@ -395,7 +395,7 @@ CMainPokerWindow::CMainPokerWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) 
 		pBtnPalette = nullptr;
 	}
 
-	(void)pDC->SelectPalette(pOldPal, false);
+	pDC->SelectPalette(pOldPal, false);
 	pDC->RealizePalette();
 	pOldPal = nullptr;
 	ReleaseDC(pDC);
@@ -1084,7 +1084,7 @@ bool CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 void CMainPokerWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	CSetPayoffsDlg  dlgPayOff((CWnd *)this, pGamePalette, IDD_WINRATIO, nPayOff, true);
 
-	(void)dlgPayOff.DoModal();
+	dlgPayOff.DoModal();
 
 	CWnd::OnLButtonDown(nFlags, point);
 }
@@ -1242,7 +1242,7 @@ void CMainPokerWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsig
 	if (nChar == VK_F1) {
 		pOptionButton->ShowWindow(SW_HIDE);
 //		UpdateWindow();
-		(void) dlgRules.DoModal();      // invoke the help dialog box
+		dlgRules.DoModal();      // invoke the help dialog box
 		pOptionButton->ShowWindow(SW_SHOWNORMAL);
 		return;
 	} else {
@@ -1902,7 +1902,7 @@ void CMainPokerWindow::SetHoldList(int nIndex) {
 	pDnBmp = nullptr;
 	pDsBmp = nullptr;
 
-	(void)pDC->SelectPalette(pOldPal, false);
+	pDC->SelectPalette(pOldPal, false);
 	ReleaseDC(pDC);
 }
 
@@ -2201,7 +2201,7 @@ int CMainPokerWindow::Mod(int Dividend, int Divisor) {
  *
  ****************************************************************/
 
-void CMainPokerWindow::ReleaseResources(void) {
+void CMainPokerWindow::ReleaseResources() {
 	int i;
 
 	if (pGameSound != nullptr) {
@@ -2275,7 +2275,7 @@ void CMainPokerWindow::ReleaseResources(void) {
  *
  ****************************************************************/
 
-void CMainPokerWindow::FlushInputEvents(void) {
+void CMainPokerWindow::FlushInputEvents() {
 	MSG msg;
 
 	while (true) {                                      // find and remove all keyboard events

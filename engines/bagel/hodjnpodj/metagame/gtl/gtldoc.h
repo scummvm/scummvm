@@ -76,16 +76,16 @@ protected:
 	virtual bool OnSaveDocument(const char* xpszPathName);
 
 public:
-	virtual bool DoOnFileSaveAs(void);
+	virtual bool DoOnFileSaveAs();
 
 private:
 	//- OnChangedViewList -- called by MFC when a view is
 	//      added or deleted
-	virtual void OnChangedViewList(void) override;
+	virtual void OnChangedViewList() override;
 
 public:
 	//- FixChecks -- fix dialog box check marks
-	bool FixChecks(void);
+	bool FixChecks();
 
 };
 

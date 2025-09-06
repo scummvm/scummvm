@@ -55,23 +55,23 @@ public:
 	CSpinner(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, bool bHodj = true);
 	~CSpinner();
 
-	int Animate(void) {
+	int Animate() {
 		return (Animate(m_nX, m_nY));
 	}
 	int Animate(int nX, int nY);
 
 private:
 	bool Initialize(CWnd *pWnd, CDC *pDC, int nX = 0, int nY = 0, bool bHodj = true);
-	int Spin(void);
-	bool Hide(void);
-	bool Show(void) {
+	int Spin();
+	bool Hide();
+	bool Show() {
 		return (Show(m_nX, m_nY));
 	}
 	bool Show(int nX, int nY);
 
-	void SetupSpinner(void);
+	void SetupSpinner();
 
-	static bool HandleMessages(void);
+	static bool HandleMessages();
 
 private:
 	CWnd    *m_pWnd;            // window for messages
