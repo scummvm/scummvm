@@ -370,7 +370,7 @@ BOOL CCryptogram::HandleUserUpdate(CDC *pDC, CPoint cpointClicked) {
  *  void
  *
  ****************************************************************/
-BOOL CCryptogram::HandleUserUpdate(CDC *pDC, UINT nChar) {
+BOOL CCryptogram::HandleUserUpdate(CDC *pDC, unsigned int nChar) {
 	char    nNewChar = toupper(nChar);
 	int     nHiLiteCode;
 	int     nReplaceCode;

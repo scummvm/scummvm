@@ -345,7 +345,7 @@ BOOL CNotebook::OnInitDialog() {
 }
 
 
-void CNotebook::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
+void CNotebook::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {                                               // force a repaint if activated
@@ -597,7 +597,7 @@ void CNotebook::RefreshBackground(void) {
 }
 
 
-void CNotebook::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CNotebook::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -605,7 +605,7 @@ void CNotebook::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void CNotebook::OnSize(UINT nType, int cx, int cy) {
+void CNotebook::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
@@ -694,7 +694,7 @@ BOOL CNotebook::CreateWorkAreas(CDC *pDC) {
 }
 
 
-void CNotebook::OnMouseMove(UINT nFlags, CPoint point) {
+void CNotebook::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp = nullptr;
 
@@ -736,7 +736,7 @@ void CNotebook::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CNotebook::OnLButtonDown(UINT nFlags, CPoint point) {
+void CNotebook::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC *pDC = nullptr;
 	CSound *pSound;
 
@@ -782,7 +782,7 @@ void CNotebook::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-BOOL CNotebook::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
+BOOL CNotebook::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

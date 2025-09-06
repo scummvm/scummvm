@@ -112,7 +112,7 @@ BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint) {
 	return wnd->EndPaint(lpPaint);
 }
 
-INT_PTR DialogBoxParam(HINSTANCE hInstance,
+intptr DialogBoxParam(HINSTANCE hInstance,
                        const char *lpTemplateName, HWND hWndParent,
                        DLGPROC lpDialogFunc, LPARAM dwInitParam) {
 	error("TODO: DialogBoxParam");
@@ -160,14 +160,14 @@ HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd) {
 	return surf->selectPalette(hPal, bForceBkgd);
 }
 
-UINT RealizePalette(HDC hdc) {
+unsigned int RealizePalette(HDC hdc) {
 	auto *surf = static_cast<CDC::Impl *>(hdc);
 	surf->realizePalette();
 	return 256;
 }
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, uint32 flInit,
-		CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage) {
+		CONST void *pjBits, CONST BITMAPINFO *pbmi, unsigned int iUsage) {
 	CBitmap::Impl *bitmap = new CBitmap::Impl();
 
 	// Figure out the pixel format
@@ -235,8 +235,8 @@ HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih, uint32 flInit,
 	return bitmap;
 }
 
-int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-              void *lpvBits, LPBITMAPINFO lpbmi, UINT usage) {
+int GetDIBits(HDC hdc, HBITMAP hbm, unsigned int start, unsigned int cLines,
+              void *lpvBits, LPBITMAPINFO lpbmi, unsigned int usage) {
 	error("TODO: GetDIBits");
 }
 
@@ -270,7 +270,7 @@ int SetStretchBltMode(HDC hdc, int mode) {
 
 int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
         int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-        CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, uint32 rop) {
+        CONST void *lpBits, CONST BITMAPINFO *lpbmi, unsigned int iUsage, uint32 rop) {
 	error("TODO: StretchDIBits");
 }
 
@@ -405,12 +405,12 @@ HWND GetDlgItem(HWND hDlg, int nIDDlgItem) {
 	error("TODO: GetDlgItem");
 }
 
-BOOL EndDialog(HWND hDlg, INT_PTR nResult) {
+BOOL EndDialog(HWND hDlg, intptr nResult) {
 	error("TODO: EndDialog");
 }
 
 BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-                   UINT uValue, BOOL bSigned) {
+                   unsigned int uValue, BOOL bSigned) {
 	error("TODO: SetDlgItemInt");
 }
 

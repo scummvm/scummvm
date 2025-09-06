@@ -57,13 +57,13 @@ protected:
 	void OnSoundNotify(CSound *pSound);
 
 	void OnPaint(void);
-	void OnChar(UINT, UINT, UINT);
-	void OnSysChar(UINT, UINT, UINT);
-	void OnKeyDown(UINT, UINT, UINT);
-	void OnSysKeyDown(UINT, UINT, UINT);
-	void OnMouseMove(UINT, CPoint);
-	void OnLButtonDown(UINT, CPoint);
-	void OnActivate(UINT, CWnd *, BOOL) override;
+	void OnChar(unsigned int, unsigned int, unsigned int);
+	void OnSysChar(unsigned int, unsigned int, unsigned int);
+	void OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	void OnMouseMove(unsigned int, CPoint);
+	void OnLButtonDown(unsigned int, CPoint);
+	void OnActivate(unsigned int, CWnd *, BOOL) override;
 	void OnSetFocus(CWnd *);
 	void OnClose(void);
 	LRESULT OnMCINotify(WPARAM, LPARAM);

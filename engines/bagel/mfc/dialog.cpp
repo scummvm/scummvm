@@ -45,7 +45,7 @@ CDialog::CDialog(const char *lpszTemplateName, CWnd *pParentWnd) {
 		m_nIDHelp = LOWORD(m_lpszTemplateName);
 }
 
-CDialog::CDialog(UINT nIDTemplate, CWnd *pParentWnd) {
+CDialog::CDialog(unsigned int nIDTemplate, CWnd *pParentWnd) {
 	SetParent(pParentWnd);
 	m_lpszTemplateName = MAKEINTRESOURCE(nIDTemplate);
 	m_nIDHelp = nIDTemplate;
@@ -68,7 +68,7 @@ BOOL CDialog::Create(const char *lpszTemplateName,
 	return bResult;
 }
 
-BOOL CDialog::Create(UINT nIDTemplate, CWnd *pParentWnd) {
+BOOL CDialog::Create(unsigned int nIDTemplate, CWnd *pParentWnd) {
 	return Create(MAKEINTRESOURCE(nIDTemplate), pParentWnd);
 }
 
@@ -176,7 +176,7 @@ uint32 CDialog::GetDefID() const {
 	return _defaultId;
 }
 
-void CDialog::SetDefID(UINT nID) {
+void CDialog::SetDefID(unsigned int nID) {
 	CWnd *oldBtn;
 
 	if (_defaultId && (oldBtn = GetDlgItem(_defaultId)) != nullptr) {
@@ -283,7 +283,7 @@ void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, CString &value) {
 	}
 }
 
-void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, UINT &value) {
+void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, unsigned int &value) {
 	error("TODO: CDialog::DDX_Text");
 }
 void CDialog::DDX_Text(CDataExchange *pDX, int nIDC, long &value) {
@@ -337,7 +337,7 @@ BOOL CDialog::CreateIndirect(HGLOBAL hDialogTemplate,
 	error("TODO: CDialog::CreateIndirect");
 }
 
-void CDialog::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CDialog::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Convert input character to uppercase for case-insensitive match
 	char pressedChar = toupper(nChar);
 	for (auto &child : _children) {
@@ -360,7 +360,7 @@ void CDialog::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	CWnd::OnSysChar(nChar, nRepCnt, nFlags);
 }
 
-void CDialog::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CDialog::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// Invalidate the dialog and its children
 		Invalidate(TRUE);

@@ -568,8 +568,8 @@ static const CEncounterTable Encounters[MG_ENC_COUNT] = {
  *      BOOL        bHodj           Flag to tell which player this is
  *      CInventory  *pInventory     pointer to the player's inventory object
  *      int         nNumSteps       Number of steps in the current move
- *      UINT        nPSector        Sector of player
- *      UINT        nOSector        Sector of opponent
+ *      unsigned int        nPSector        Sector of player
+ *      unsigned int        nOSector        Sector of opponent
  *      BOOL        bArray          Array of whether an encounter has been used already
  *
  * RETURN VALUE:

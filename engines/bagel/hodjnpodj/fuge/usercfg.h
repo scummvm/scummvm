@@ -54,7 +54,7 @@ namespace Fuge {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
+	CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int);
 
 protected:
 
@@ -69,7 +69,7 @@ protected:
 	void ClearDialogImage(void);
 
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnClose();
 	void OnDestroy();
 	void OnPaint();

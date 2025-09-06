@@ -337,7 +337,7 @@ BOOL CRules::OnInitDialog() {
 }
 
 
-void CRules::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CRules::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {
@@ -857,8 +857,8 @@ void CRules::UpdateScroll(int nPage) {
 
 void CRules::WritePage(CDC *pDC, int nPage) {
 	int         i, n, x, y;
-	UINT        nCropped = 0;
-	UINT        nCount = 0;
+	unsigned int        nCropped = 0;
+	unsigned int        nCount = 0;
 	char        chInBuf[TEXT_BUFFER_SIZE];
 	CFont       *pFontOld = nullptr;
 	CSize       textInfo;
@@ -1075,7 +1075,7 @@ void CRules::UpdateMore(CDC *pDC) {
 }
 
 
-void CRules::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CRules::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -1083,7 +1083,7 @@ void CRules::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void CRules::OnSize(UINT nType, int cx, int cy) {
+void CRules::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
@@ -1367,7 +1367,7 @@ CBitmap *CRules::CreateScrollBitmap(CDC *pDC, CDibDoc *pDibDoc, CPalette *pPalet
 }
 
 
-void CRules::OnLButtonDown(UINT nFlags, CPoint point) {
+void CRules::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	if (!bActiveWindow)
 		return;
 
@@ -1382,7 +1382,7 @@ void CRules::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CRules::OnMouseMove(UINT nFlags, CPoint point) {
+void CRules::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
@@ -1413,7 +1413,7 @@ void CRules::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-BOOL CRules::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
+BOOL CRules::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

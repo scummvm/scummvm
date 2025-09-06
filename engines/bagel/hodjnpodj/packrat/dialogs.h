@@ -45,7 +45,7 @@ private:
 	CRect   rectDisplayLives;
 
 public:
-	CPackRatOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MINIOPTIONS_DIALOG);
+	CPackRatOptDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_MINIOPTIONS_DIALOG);
 	void SetInitialOptions(int = 1, int = 1);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog() override;
@@ -55,7 +55,7 @@ protected:
 	virtual void OnCancel(void) override;
 	virtual void OnOK(void) override;
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
 	//}}AFX_MSG
@@ -72,7 +72,7 @@ private:
 	int     m_nLevel;
 
 public:
-	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_MESSAGEBOX);
+	CMsgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_MESSAGEBOX);
 	void SetInitialOptions(int, long, int = 0);  // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog() override;

@@ -62,7 +62,7 @@ CColorButton    *pPRCancelButton = nullptr;
  *      n/a
  *
  ****************************************************************/
-CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID) :
+CPackRatOptDlg::CPackRatOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID) :
 		CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
 		rectDisplayLevel(43, 60, 174, 72),
 		rectDisplayLives(43, 101, 174, 113) {
@@ -324,7 +324,7 @@ void CPackRatOptDlg::OnPaint(void) {
  *      n/a
  *
  ****************************************************************/
-void CPackRatOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void CPackRatOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;

@@ -256,7 +256,7 @@ void COptions::OnDestroy(void) {
 }
 
 /*
-void COptions::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized)
+void COptions::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized)
 {
 if (!bMinimized)
     switch(nState) {
@@ -369,7 +369,7 @@ void COptions::RefreshBackground(void) {
 }
 
 
-void COptions::OnShowWindow(BOOL bShow, UINT nStatus) {
+void COptions::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -377,7 +377,7 @@ void COptions::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void COptions::OnSize(UINT nType, int cx, int cy) {
+void COptions::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here

@@ -63,7 +63,7 @@ const int MINSTRENGTH = 1, MAXSTRENGTH = 4 ;
 
 
 const int MAXTABLESTONES = 12 ; // configurations in best win table
-const ULONG MAXCONFIGS = 3000000L ; // # configurations in table
+const unsigned long MAXCONFIGS = 3000000L ; // # configurations in table
 
 
 const int BESTWINBITS = 5 ; // # bits per best win table entry
@@ -535,7 +535,7 @@ public: BOOL FAR PASCAL UserDialog(void) ;
 //- OptionsDialog -- call options dialog
 private: BOOL OptionsDialog(void) ;
 
-//private: BOOL CALLBACK ResetPitsDlgProc(HWND, UINT, WPARAM, LPARAM);
+//private: BOOL CALLBACK ResetPitsDlgProc(HWND, unsigned int, WPARAM, LPARAM);
 
 
 
@@ -560,22 +560,22 @@ protected:
 
 	//{{AFX_MSG( CMnkWindow )
 	afx_msg void OnPaint();
-	afx_msg void OnLButtonDown(UINT, CPoint);
-	afx_msg void OnLButtonUp(UINT, CPoint);
-	afx_msg void OnLButtonDblClk(UINT, CPoint);
-	afx_msg void OnMButtonDown(UINT, CPoint);
-	afx_msg void OnMButtonUp(UINT, CPoint);
-	afx_msg void OnMButtonDblClk(UINT, CPoint);
-	afx_msg void OnRButtonDown(UINT, CPoint);
-	afx_msg void OnRButtonUp(UINT, CPoint);
-	afx_msg void OnRButtonDblClk(UINT, CPoint);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnLButtonDown(unsigned int, CPoint);
+	afx_msg void OnLButtonUp(unsigned int, CPoint);
+	afx_msg void OnLButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnMButtonDown(unsigned int, CPoint);
+	afx_msg void OnMButtonUp(unsigned int, CPoint);
+	afx_msg void OnMButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnRButtonDown(unsigned int, CPoint);
+	afx_msg void OnRButtonUp(unsigned int, CPoint);
+	afx_msg void OnRButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnTimer(uintptr nIDEvent);
 	afx_msg void OnClose();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

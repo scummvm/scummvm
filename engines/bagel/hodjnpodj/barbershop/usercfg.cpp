@@ -45,7 +45,7 @@ extern CPalette     *pGamePalette;
 extern LPGAMESTRUCT pGameParams;
 extern int          g_nCardBack;
 
-CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	m_cRectCardBack1    = CRect(CBCK_RECT1_LEFT - DELTA, CBCK_RECT1_TOP - DELTA, CBCK_RECT1_RIG + DELTA, CBCK_RECT1_BOT + DELTA);
 	m_cRectCardBack2    = CRect(CBCK_RECT2_LEFT - DELTA, CBCK_RECT2_TOP - DELTA, CBCK_RECT2_RIG + DELTA, CBCK_RECT2_BOT + DELTA);
@@ -105,7 +105,7 @@ void CUserCfgDlg::OnPaint(void) {
 	ReleaseDC(pDC);
 }
 
-void CUserCfgDlg::OnLButtonUp(UINT nFlags, CPoint point) {
+void CUserCfgDlg::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CDC     *pDC = GetDC();
 
 	if (

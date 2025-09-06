@@ -56,18 +56,9 @@ namespace HodjNPodj {
 #ifndef FAR
 	#define FAR
 #endif
-#define char char
 typedef unsigned char UCHAR;
-typedef byte byte;
-#define int int
 typedef short SHORT;
-typedef uint16 uint16;
-#define uint16 uint16
-#define long long
-typedef unsigned long ULONG;
-#define float float
 #define DOUBLE double
-#define void void
 #define CONST const
 
 enum {
@@ -95,7 +86,7 @@ enum {
 #define WF_STANDARD 16
 #define WF_ENHANCED 32
 
-inline UINT GetWinFlags() {
+inline unsigned int GetWinFlags() {
 	return 0;
 }
 

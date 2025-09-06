@@ -83,16 +83,16 @@ protected:
 
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
 	void OnPaint(void);
-	void OnSysKeyDown(UINT, UINT, UINT);
-	void OnKeyDown(UINT, UINT, UINT);
-	void OnSysChar(UINT, UINT, UINT);
-	void OnTimer(UINT_PTR);
+	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	void OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void OnSysChar(unsigned int, unsigned int, unsigned int);
+	void OnTimer(uintptr);
 	void OnClose(void);
-	long OnJoyStick(UINT, long);
-	void OnActivate(UINT, CWnd *, BOOL) override;
-	void OnLButtonDown(UINT, CPoint);
-	void OnRButtonUp(UINT, CPoint);
-	void OnMouseMove(UINT, CPoint);
+	long OnJoyStick(unsigned int, long);
+	void OnActivate(unsigned int, CWnd *, BOOL) override;
+	void OnLButtonDown(unsigned int, CPoint);
+	void OnRButtonUp(unsigned int, CPoint);
+	void OnMouseMove(unsigned int, CPoint);
 	LRESULT OnMCINotify(WPARAM, LPARAM);
 	LRESULT OnMMIONotify(WPARAM, LPARAM);
 
@@ -135,19 +135,19 @@ protected:
 	HANDLE       m_hExtraLifeRes;
 
 	POINT        m_ptAnchor;
-	ULONG        m_lScore;
-	ULONG        m_lNewLifeScore;
+	unsigned long        m_lScore;
+	unsigned long        m_lNewLifeScore;
 	int          m_nGoodArrows, m_nBadArrows;
 	int          m_nGameSpeed;
-	UINT         m_nBadGuySpeed;
-	UINT         m_nArrowSpeed;
-	UINT         m_nState;
+	unsigned int         m_nBadGuySpeed;
+	unsigned int         m_nArrowSpeed;
+	unsigned int         m_nState;
 	int          m_nMoveArrows;
 	int          m_nBadGuys;
 	int          m_nLives;
 	int          m_nLevel;
 	int          m_nWave;
-	UINT         m_nJoyLast;
+	unsigned int         m_nJoyLast;
 	BOOL         m_bPause;
 	BOOL         m_bGameActive;
 	BOOL         m_bJoyActive;

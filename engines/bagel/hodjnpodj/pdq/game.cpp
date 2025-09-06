@@ -47,8 +47,8 @@ typedef struct {
 } PHRASES;
 
 typedef struct {
-	UINT     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
-	UINT     nShown;                // 1 to 9   as of 9/9/94 0 to 6
+	unsigned int     gameSpeed;             // 1 to 5 = 2.5 to .5 seconds
+	unsigned int     nShown;                // 1 to 9   as of 9/9/94 0 to 6
 	bool  bRandomLetters;         // TRUE if letter ordering shall be random
 	bool  bShowNames;            // TRUE if we are to display category names
 } USERCFG;
@@ -78,13 +78,13 @@ ERROR_CODE  BuildSpriteList(CDC *);
 void        KillCurPhrase(void);
 void        BuildRandomPhraseOrder();
 bool     RevealNextLetter(void);
-void CALLBACK GameTimerHook(HWND, UINT, UINT_PTR, uint32);
+void CALLBACK GameTimerHook(HWND, unsigned int, uintptr, uint32);
 int         StrLenNoSpaces(const char *);
 int         GetIndex(CSprite *);
 void        LoadGameCfg(void);
 void        SaveGameCfg(void);
 ERROR_CODE  ValidatePhrase(PHRASES *);
-void        UpdateScore(UINT, UINT, UINT, UINT);
+void        UpdateScore(unsigned int, unsigned int, unsigned int, unsigned int);
 int         NumLinkedSprites(void);
 
 #define TIMER_ID        50
@@ -121,7 +121,7 @@ int         iNextLetter;
 int         timerInterval;
 HWND        gGameWnd;
 bool     bPause;
-UINT        gLeftAvg, gTotalAvg;
+unsigned int        gLeftAvg, gTotalAvg;
 const char *INI_SECTION = "ThGesngGme";
 int         nPhrasePixelLength;
 
@@ -662,8 +662,8 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 *
 *  synopsis  GameTimerHook(hWnd, nMsg, nEventID, dwTime)
 *            HWND  hWnd                 Handle of window that received WM_TIMER
-*            UINT  nMsg                 WM_TIMER
-*            UINT  nEventID             TIMER_ID
+*            unsigned int  nMsg                 WM_TIMER
+*            unsigned int  nEventID             TIMER_ID
 *            uint32 dwTime               time that event occured
 *
 *  purpose   To provide a callback routine for hooking the WM_TIMER.
@@ -673,11 +673,11 @@ ERROR_CODE CleanScreen(CDC *pDC) {
 *  returns   Nothing
 *
 **/
-void CALLBACK GameTimerHook(HWND hWnd, UINT, UINT_PTR nEventID, uint32) {
+void CALLBACK GameTimerHook(HWND hWnd, unsigned int, uintptr nEventID, uint32) {
 	CDC *pDC;
 	HDC hDC;
 	BOOL done;
-	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
 
 	assert(nEventID == TIMER_ID);
 
@@ -842,7 +842,7 @@ ERROR_CODE EndGame(CDC *pDC) {
 }
 
 void WinGame() {
-	UINT n;
+	unsigned int n;
 
 	// update the final score
 	//
@@ -1091,7 +1091,7 @@ ERROR_CODE ValidatePhrase(PHRASES *phrase) {
 }
 
 
-void GameGetScore(UINT *nLeft, UINT *nTotal, UINT *nLeftAvg, UINT *nTotalAvg) {
+void GameGetScore(unsigned int *nLeft, unsigned int *nTotal, unsigned int *nLeftAvg, unsigned int *nTotalAvg) {
 	/* can't write to null pointers */
 	assert(nLeft != nullptr);
 	assert(nTotal != nullptr);

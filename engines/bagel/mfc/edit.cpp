@@ -37,7 +37,7 @@ ON_WM_KILLFOCUS()
 ON_WM_TIMER()
 END_MESSAGE_MAP()
 
-BOOL CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
+BOOL CEdit::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("EDIT", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }
@@ -101,7 +101,7 @@ void CEdit::OnPaint() {
 		dc.SelectObject(hOldFont);
 }
 
-void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CEdit::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == Common::KEYCODE_BACKSPACE ||
 			nChar == Common::KEYCODE_DELETE) {
 		if (!_windowText.empty()) {
@@ -112,7 +112,7 @@ void CEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	Invalidate();
 }
 
-void CEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CEdit::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (Common::isPrint(nChar)) {
 		if (_maxLength == 0 || _windowText.size() < _maxLength) {
 			_windowText += (char)nChar;
@@ -136,7 +136,7 @@ void CEdit::OnKillFocus(CWnd *pNewWnd) {
 	}
 }
 
-void CEdit::OnTimer(UINT_PTR nTimerId) {
+void CEdit::OnTimer(uintptr nTimerId) {
 	_cursorVisible = !_cursorVisible;
 	Invalidate();
 }

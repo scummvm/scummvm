@@ -78,16 +78,16 @@ protected:
 	void        BallvsBrick(DOUBLE);
 
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	long        OnJoyStick(UINT, long);
+	long        OnJoyStick(unsigned int, long);
 	void        OnPaint(void);
-	void        OnTimer(UINT_PTR);
-	void        OnMouseMove(UINT, CPoint);
-	void        OnRButtonUp(UINT, CPoint);
-	void        OnLButtonDown(UINT, CPoint);
-	void        OnSysChar(UINT, UINT, UINT);
-	void        OnSysKeyDown(UINT, UINT, UINT);
-	void        OnKeyDown(UINT, UINT, UINT);
-	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnTimer(uintptr);
+	void        OnMouseMove(unsigned int, CPoint);
+	void        OnRButtonUp(unsigned int, CPoint);
+	void        OnLButtonDown(unsigned int, CPoint);
+	void        OnSysChar(unsigned int, unsigned int, unsigned int);
+	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnActivate(unsigned int, CWnd *, BOOL) override;
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);

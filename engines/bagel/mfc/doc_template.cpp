@@ -29,7 +29,7 @@ IMPLEMENT_DYNAMIC(CDocTemplate, CCmdTarget)
 BEGIN_MESSAGE_MAP(CDocTemplate, CCmdTarget)
 END_MESSAGE_MAP()
 
-CDocTemplate::CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
+CDocTemplate::CDocTemplate(unsigned int nIDResource, const CRuntimeClass *pDocClass,
 		const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass) {
 	assert(nIDResource != 0);
 	ASSERT(pDocClass == nullptr ||

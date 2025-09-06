@@ -110,7 +110,7 @@ BOOL CBdbgMgr::TraceDestructor(const char *lpszName, void *lpLoc)
 }
 
 //* CBdbgMgr::DebugMessageBox --
-BOOL CBdbgMgr::DebugMessageBox(const char *lpszPrompt, UINT nType, UINT nIDPrompt)
+BOOL CBdbgMgr::DebugMessageBox(const char *lpszPrompt, unsigned int nType, unsigned int nIDPrompt)
 // lpszPrompt -- message string, starting with '~'
 // nType, nIDPrompt -- integer Common::sprintf_s substitutions
 // returns: TRUE if error, FALSE otherwise

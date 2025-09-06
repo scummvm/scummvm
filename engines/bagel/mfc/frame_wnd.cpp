@@ -39,8 +39,8 @@ void CFrameWnd::RecalcLayout(BOOL bNotify) {
 	// No implementation in ScummVM
 }
 
-BOOL CFrameWnd::RepositionBars(UINT nIDFirst, UINT nIDLast,
-                               UINT nIDLeftOver, UINT nFlag, LPRECT lpRectParam,
+BOOL CFrameWnd::RepositionBars(unsigned int nIDFirst, unsigned int nIDLast,
+                               unsigned int nIDLeftOver, unsigned int nFlag, LPRECT lpRectParam,
                                LPCRECT lpRectClient, BOOL bStretch) {
 	error("TODO: CFrameWnd::RepositionBars");
 }
@@ -88,7 +88,7 @@ void CFrameWnd::InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible) {
 	OnUpdateFrameTitle(TRUE);
 }
 
-BOOL CFrameWnd::LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
+BOOL CFrameWnd::LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 	CWnd *pParentWnd, CCreateContext *pContext) {
 	assert(m_nIDHelp == 0 || m_nIDHelp == nIDResource);
 	m_nIDHelp = nIDResource;    // ID for help context (+HID_BASE_RESOURCE)
@@ -172,7 +172,7 @@ BOOL CFrameWnd::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext) {
 	return TRUE;
 }
 
-CWnd *CFrameWnd::CreateView(CCreateContext *pContext, UINT nID) {
+CWnd *CFrameWnd::CreateView(CCreateContext *pContext, unsigned int nID) {
 	assert(m_hWnd != nullptr);
 	assert(pContext != nullptr);
 	assert(pContext->m_pNewViewClass != nullptr);
@@ -240,7 +240,7 @@ void CFrameWnd::OnUpdateFrameTitle(BOOL bAddToTitle) {
 	// TODO: CFrameWnd::OnUpdateFrameTitle
 }
 
-void CFrameWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CFrameWnd::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// Invalidate the dialog and its children
 		Invalidate(TRUE);

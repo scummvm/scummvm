@@ -549,7 +549,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -565,7 +565,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   rectTitle;
 	CSound  *pEffect = nullptr;
 
@@ -657,7 +657,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -673,7 +673,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (bGameStarted)
 		if (m_bNewGame && !m_bShowOutOfPlace) {
 			CDC     *pDC;
@@ -726,7 +726,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -742,7 +742,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));           // Refresh cursor object
 
 	if (bGameStarted && (m_bNewGame && !m_bShowOutOfPlace)) {
@@ -871,7 +871,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -887,7 +887,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (bGameStarted) {
 		if (InArtRegion(point) && (m_bNewGame && !m_bShowOutOfPlace)) {
 			CDC     *pDC;
@@ -930,7 +930,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -946,7 +946,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonDown(unsigned int nFlags, CPoint point) {
 	if (bGameStarted)
 		if (!m_bShowOutOfPlace && (pGameInfo->bPlayingMetagame == FALSE)) {          // Not available in meta-game
 			m_bShowOutOfPlace = TRUE;
@@ -959,17 +959,17 @@ void CMainWindow::OnMButtonDown(UINT nFlags, CPoint point) {
 // These functions are called when keyboard input generates a character.
 //
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);     // default action
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == VK_F4) && (nFlags & 0x2000)) {
 		PostMessage(WM_CLOSE, 0, 0);                 // *** remove later ***
 	} else
 		CFrameWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);    // default action
 }
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 	case VK_F1:                                             // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);  // Activate the Rules dialog
@@ -1002,7 +1002,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nIDEvent   The ID of the timer event activated
+ *      unsigned int nIDEvent   The ID of the timer event activated
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -1017,7 +1017,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	CDC     *pDC;
 	CSound  *pEffect = nullptr;
 	char    msg[64];
@@ -1258,7 +1258,7 @@ BOOL CMainWindow::CopyPaletteContents(CPalette *pSource, CPalette *pDest) {
     ASSERT(pSource && pDest);
 
 	// Get the number of entries in the source palette
-	UINT nEntries = pSource->GetEntryCount();
+	unsigned int nEntries = pSource->GetEntryCount();
 	if (nEntries == 0)
 		return FALSE;
 

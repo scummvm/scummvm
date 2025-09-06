@@ -62,10 +62,10 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;
 	afx_msg void OnPaint();
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnSize(unsigned int nType, int cx, int cy);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
 	afx_msg void OnClickedRules() ;
 	afx_msg void OnClickedNewgame() ;
 	afx_msg void OnClickedOptions() ;
@@ -73,7 +73,7 @@ protected:
 	afx_msg void OnClickedReturn();
 	afx_msg void OnClickedQuit();
 	afx_msg void OnDestroy();
-//	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
+//	afx_msg void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

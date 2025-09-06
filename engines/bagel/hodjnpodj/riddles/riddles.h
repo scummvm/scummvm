@@ -112,10 +112,10 @@ struct RIDDLE {
 
 class CMyEdit: public CEdit {
 protected:
-	void OnChar(UINT, UINT, UINT);
-	void OnSysChar(UINT, UINT, UINT);
-	void OnKeyDown(UINT, UINT, UINT);
-	void OnSysKeyDown(UINT, UINT, UINT);
+	void OnChar(unsigned int, unsigned int, unsigned int);
+	void OnSysChar(unsigned int, unsigned int, unsigned int);
+	void OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
 
 	DECLARE_MESSAGE_MAP()
 };
@@ -152,14 +152,14 @@ protected:
 	void        DeleteSprite(CSprite *);
 
 	void        OnPaint();
-	void        OnMouseMove(UINT, CPoint);
-	void        OnLButtonDown(UINT, CPoint);
+	void        OnMouseMove(unsigned int, CPoint);
+	void        OnLButtonDown(unsigned int, CPoint);
 	void        OnClose();
 	void        OnSetFocus(CWnd *);
-	void        OnTimer(UINT_PTR);
+	void        OnTimer(uintptr);
 	LRESULT     OnMCINotify(WPARAM, LPARAM);
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
-	HBRUSH      OnCtlColor(CDC *, CWnd *, UINT);
+	HBRUSH      OnCtlColor(CDC *, CWnd *, unsigned int);
 
 	DECLARE_MESSAGE_MAP()
 
@@ -174,7 +174,7 @@ protected:
 	int         m_nInitTimeLimit;
 	int         m_nTimer;
 	int         m_nDifficultyLevel;
-	UINT        m_nRiddleNumber;
+	unsigned int        m_nRiddleNumber;
 	BOOL        m_bGameActive;
 	BOOL        m_bPause;
 	BOOL        m_bIgnoreScrollClick;

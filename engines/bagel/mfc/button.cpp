@@ -36,7 +36,7 @@ ON_MESSAGE(BM_SETCHECK, CButton::OnBnSetCheck)
 END_MESSAGE_MAP()
 
 BOOL CButton::Create(const char *lpszCaption, uint32 dwStyle,
-		const RECT &rect, CWnd *pParentWnd, UINT nID) {
+		const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("BUTTON", lpszCaption, dwStyle, rect,
 		pParentWnd, nID);
 }
@@ -50,12 +50,12 @@ void CButton::SetCheck(int nCheck) {
 	SendMessage(BM_SETCHECK, nCheck);
 }
 
-void CButton::SetButtonStyle(UINT nStyle, BOOL bRedraw) {
+void CButton::SetButtonStyle(unsigned int nStyle, BOOL bRedraw) {
 	m_nStyle = (m_nStyle & ~0xf) | nStyle;
 	Invalidate();
 }
 
-UINT CButton::GetButtonStyle() const {
+unsigned int CButton::GetButtonStyle() const {
 	return GetStyle() & 0xf;
 }
 
@@ -196,7 +196,7 @@ void CButton::OnOwnerDrawPaint() {
 	EndPaint(&paintStruct);
 }
 
-void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
+void CButton::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	if (!(_itemState & ODS_DISABLED)) {
 		SetCapture();
 		_pressed = true;
@@ -204,7 +204,7 @@ void CButton::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
+void CButton::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (GetCapture() == this)
 		ReleaseCapture();
 	if (!_pressed)
@@ -240,7 +240,7 @@ void CButton::OnLButtonUp(UINT nFlags, CPoint point) {
 	}
 }
 
-void CButton::OnMouseMove(UINT nFlags, CPoint point) {
+void CButton::OnMouseMove(unsigned int nFlags, CPoint point) {
 	if (GetCapture() == this) {
 		if (_pressed != PointInClientRect(point)) {
 			_pressed = !_pressed;

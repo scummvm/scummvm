@@ -297,7 +297,7 @@ cleanup:
 
 
 //* CBsuSet::OnScroll -- handle OnHScroll and OnVScroll messages
-BOOL CBsuSet::OnScroll(UINT nSBCode, UINT nPos, CScrollBar *, int iBarType)
+BOOL CBsuSet::OnScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *, int iBarType)
 // nSBCode -- SB_xxxx -- Windows scroll code
 // nPos -- position on scroll bar (SB_THUMBTRACT/SB_THUMBPOSITION)
 // xpScrollBar -- pointer to scroll bar control

@@ -42,7 +42,7 @@ extern BOOL bPrePlaceColonies,      // Whether they want to pre-place some
 
 extern CPalette *pGamePalette;      // Used everywhere for ref
 
-CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	m_DisplayRounds     = "";
 	m_DisplaySpeed      = "";
@@ -204,7 +204,7 @@ BOOL CUserCfgDlg::OnInitDialog() {
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
-void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	// TODO: Add your message handler code here and/or call default
 	CDC     *pDC;
 	BOOL    bAssertCheck;

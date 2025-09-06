@@ -215,7 +215,7 @@ BOOL COptnDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 } // end OnCommand
 
 
-void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int pMin,
 	    pMax;
 	int OldPos = pScrollBar->GetScrollPos();
@@ -287,7 +287,7 @@ void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
  *
  ****************************************************************/
 void COptnDlg::UpdateScrollbars() {
-	UINT    OldValue;
+	unsigned int    OldValue;
 	CDC     *pDC;
 	char    msg[64];
 

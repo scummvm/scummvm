@@ -56,7 +56,7 @@ public:
 	CLife(CDC *pDC);
 	// Destructor
 	~CLife();
-	void    change_board(UINT, CPoint, CDC*, BOOL);
+	void    change_board(unsigned int, CPoint, CDC*, BOOL);
 	void    evolution(CDC *pDC);
 	void    NewGame(CDC *pDC);
 	void    DisplayMonth(int nMonth, CDC *pDC);

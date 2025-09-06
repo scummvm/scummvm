@@ -48,7 +48,7 @@ public:
 
 	BOOL        DrawGram(CDC *pDC);
 	BOOL        HandleUserUpdate(CDC *pDC, CPoint cpointClicked);
-	BOOL        HandleUserUpdate(CDC *pDC, UINT nChar);
+	BOOL        HandleUserUpdate(CDC *pDC, unsigned int nChar);
 	void        Encrypt();
 	void        CreateCryptMap(int nLettersSolved);
 	int         UpdateCryptMap(int nOldType, int nNewType);

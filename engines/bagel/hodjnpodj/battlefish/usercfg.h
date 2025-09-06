@@ -41,7 +41,7 @@ namespace Battlefish {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
 protected:
 
@@ -53,7 +53,7 @@ protected:
 	void LoadIniSettings(void);
 	void SaveIniSettings(void);
 
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnDestroy();
 	void OnPaint();
 	void ClearDialogImage(void);
@@ -68,7 +68,7 @@ protected:
 	CText        *m_pTxtLevel;
 	CText        *m_pTxtOrder;
 	CScrollBar   *m_pScrollBar;
-	UINT          m_nDifficultyLevel;       // Difficulty level for BattleFish
+	unsigned int          m_nDifficultyLevel;       // Difficulty level for BattleFish
 	BOOL          m_bSave;                  // True if should save theses settings
 	BOOL          m_bUserGoesFirst;         // TRUE if Human player goes 1st
 };

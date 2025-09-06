@@ -83,7 +83,7 @@ void CDocument::DeleteContents() {
 }
 
 void CDocument::ReportSaveLoadException(const char *lpszPathName,
-        CException *e, BOOL bSaving, UINT nIDPDefault) {
+        CException *e, BOOL bSaving, unsigned int nIDPDefault) {
 	error("Save/load error");
 }
 

@@ -468,7 +468,7 @@ CFugeWindow::CFugeWindow() : gvCenter(CENTER_X, CENTER_Y) {
 			}
 
 			// seed the random number generator
-			//srand((UINT)time(nullptr));
+			//srand((unsigned int)time(nullptr));
 
 			//
 			// The vector table is rotated by 11 or so degrees, because it
@@ -2383,7 +2383,7 @@ void CFugeWindow::GameReset(void) {
 }
 
 
-void CFugeWindow::OnTimer(UINT_PTR nEvent) {
+void CFugeWindow::OnTimer(uintptr nEvent) {
 	// there should be only one timer
 	assert(nEvent == TIMER_ID);
 
@@ -2407,7 +2407,7 @@ void CFugeWindow::OnTimer(UINT_PTR nEvent) {
 	}
 }
 
-long CFugeWindow::OnJoyStick(UINT wParam, long lParam) {
+long CFugeWindow::OnJoyStick(unsigned int wParam, long lParam) {
 	long nThresholdX, nThresholdY;
 
 	if (m_bGameActive) {
@@ -2419,10 +2419,10 @@ long CFugeWindow::OnJoyStick(UINT wParam, long lParam) {
 		}
 
 		nThresholdX = m_nJoyOrgX;
-		nThresholdX -= (UINT)LOWORD(lParam);
+		nThresholdX -= (unsigned int)LOWORD(lParam);
 
 		nThresholdY = m_nJoyOrgY;
-		nThresholdY -= (UINT)HIWORD(lParam);
+		nThresholdY -= (unsigned int)HIWORD(lParam);
 
 		if (nThresholdY > 5000) {
 
@@ -2472,7 +2472,7 @@ long CFugeWindow::OnJoyStick(UINT wParam, long lParam) {
 }
 
 
-void CFugeWindow::OnMouseMove(UINT, CPoint point) {
+void CFugeWindow::OnMouseMove(unsigned int, CPoint point) {
 	int nMove;
 
 	if (m_bGameActive && m_bMovingPaddle) {
@@ -2508,7 +2508,7 @@ void CFugeWindow::OnMouseMove(UINT, CPoint point) {
 
 
 
-void CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CFugeWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
 	if (m_bGameActive) {
 
 		// toggle move paddle mode
@@ -2532,7 +2532,7 @@ void CFugeWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 }
 
 
-void CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CFugeWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   boothRect,
 	        tentRect,
 	        peopRect,
@@ -2653,7 +2653,7 @@ void CFugeWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CFugeWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CFugeWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -2668,7 +2668,7 @@ void CFugeWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CFugeWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CFugeWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -2684,7 +2684,7 @@ void CFugeWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CFugeWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CFugeWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Handle keyboard input
 	//
 	switch (nChar) {
@@ -2756,7 +2756,7 @@ void CFugeWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CFugeWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
+void CFugeWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
 	if (!bMinimized) {
 
 		switch (nState) {

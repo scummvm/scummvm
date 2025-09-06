@@ -55,12 +55,12 @@ int CPalette::GetObject(int nCount, void *lpObject) const {
 	return 4 + (4 * i);
 }
 
-UINT CPalette::GetEntryCount() const {
+unsigned int CPalette::GetEntryCount() const {
 	const Impl *src = static_cast<const Impl *>(m_hObject);
 	return src->size();
 }
 
-UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+unsigned int CPalette::GetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
 		LPPALETTEENTRY lpPaletteColors) const {
 	const Impl *src = static_cast<const Impl *>(m_hObject);
 
@@ -74,7 +74,7 @@ UINT CPalette::GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	return src->size();
 }
 
-UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+unsigned int CPalette::SetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
 		LPPALETTEENTRY lpPaletteColors) {
 	Impl *pal = static_cast<Impl *>(m_hObject);
 
@@ -87,13 +87,13 @@ UINT CPalette::SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
 	return nNumEntries;
 }
 
-UINT CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
+unsigned int CPalette::SetPaletteEntries(const Graphics::Palette &pal) {
 	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
 	*impl = pal;
 	return pal.size();
 }
 
-BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
+BOOL CPalette::AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
 		const PALETTEENTRY *lpPaletteColors) {
 	// Set the new colors
 	Graphics::Palette *impl = static_cast<Impl *>(m_hObject);
@@ -110,7 +110,7 @@ BOOL CPalette::AnimatePalette(UINT nStartIndex, UINT nNumEntries,
 	return TRUE;
 }
 
-UINT CPalette::GetNearestPaletteIndex(COLORREF crColor) {
+unsigned int CPalette::GetNearestPaletteIndex(COLORREF crColor) {
 	return palette()->findBestColor(
 		GetRValue(crColor),
 		GetGValue(crColor),

@@ -37,7 +37,7 @@ BOOL CMenu::CreatePopupMenu() {
 BOOL CMenu::LoadMenu(const char *lpszResourceName) {
 	error("TODO: CMenu::LoadMenu");
 }
-BOOL CMenu::LoadMenu(UINT nIDResource) {
+BOOL CMenu::LoadMenu(unsigned int nIDResource) {
 	error("TODO: CMenu::LoadMenu");
 }
 BOOL CMenu::LoadMenuIndirect(const void *lpMenuTemplate) {
@@ -51,7 +51,7 @@ CMenu *CMenu::FromHandle(HMENU hMenu) {
 	error("TODO: CMenu::FromHandle");
 }
 
-UINT CMenu::CheckMenuItem(UINT nIDCheckItem, UINT nCheck) {
+unsigned int CMenu::CheckMenuItem(unsigned int nIDCheckItem, unsigned int nCheck) {
 	error("TODO: CMenu::CheckMenuItem");
 }
 

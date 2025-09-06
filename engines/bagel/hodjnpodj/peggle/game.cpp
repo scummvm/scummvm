@@ -491,14 +491,14 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 // These functions are called when keyboard input generates a character.
 //
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// TODO: Add your message handler code here and/or call default
 
 	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);     // default action
 }
 
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// TODO: Add your message handler code here and/or call default
 
 	if ((nChar == 'q') && (nFlags & 0x2000)) {      // terminate app on ALT-q
@@ -510,7 +510,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);  // Activate the Options dialog
 		(*pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L);
@@ -528,7 +528,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 // related message occurs.
 //
 
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CDC    *pDC;
 	CPoint real_loc;
 
@@ -544,7 +544,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint myPoint) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint myPoint) {
 // if you want to do click and click, just check the counter % 2
 // if true, then store oldx, oldy, and first click case ("click")
 // if false, then do newx, newy, and second click case ("drag")
@@ -964,41 +964,41 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint myPoint) {
 }
 
 
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (bPegMoving)
 		OnLButtonDown(nFlags, point);
 }
 
 
-void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnMButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonDown(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnMButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonUp(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
-void CMainWindow::OnMButtonDblClk(UINT nFlags, CPoint point) {
-//  insert mouse button processing code here
-}
-
-
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
-void CMainWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
+
+void CMainWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
+//  insert mouse button processing code here
+}
+
+void CMainWindow::OnRButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 

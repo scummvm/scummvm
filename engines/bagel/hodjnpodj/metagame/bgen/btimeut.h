@@ -45,7 +45,7 @@ public:
 	}
 
 //- DelayMs -- delay for specified # of milliseconds
-	BOOL DelayMs(UINT uMs) ;
+	BOOL DelayMs(unsigned int uMs) ;
 
 private:
 	/**
@@ -55,8 +55,8 @@ private:
 	 * @param uTimerId  timer identifier
 	 * @param dwTime    current system time
 	 */
-	static void DelayMsCallback(HWND hWnd, UINT uMsg,
-	    UINT_PTR uTimerId, uint32 dwTime);
+	static void DelayMsCallback(HWND hWnd, unsigned int uMsg,
+	    uintptr uTimerId, uint32 dwTime);
 };
 
 } // namespace Metagame

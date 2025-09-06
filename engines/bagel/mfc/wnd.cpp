@@ -87,7 +87,7 @@ CWnd::~CWnd() {
 
 BOOL CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
 	uint32 dwStyle, const RECT &rect, CWnd *pParentWnd,
-	UINT nID, CCreateContext *pContext) {
+	unsigned int nID, CCreateContext *pContext) {
 	m_pParentWnd = pParentWnd;
 	m_nStyle = dwStyle;
 	_controlId = nID;
@@ -135,7 +135,7 @@ BOOL CWnd::Create(const char *lpszClassName, const char *lpszWindowName,
 
 BOOL CWnd::CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
-		const RECT &rect, CWnd *pParentWnd, UINT nID,
+		const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 		void *lpParam /* = nullptr */) {
 	return CreateEx(dwExStyle, lpszClassName, lpszWindowName, dwStyle,
 		rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top,
@@ -280,7 +280,7 @@ void CWnd::UpdateWindow() {
 }
 
 BOOL CWnd::RedrawWindow(LPCRECT lpRectUpdate,
-	CRgn *prgnUpdate, UINT flags) {
+	CRgn *prgnUpdate, unsigned int flags) {
 
 	if (flags & RDW_INVALIDATE) {
 		// Invalidate the region or rectangle
@@ -336,7 +336,7 @@ CWnd *CWnd::GetFocus() const {
 	return AfxGetApp()->GetFocus();
 }
 
-void CWnd::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CWnd::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (nState != WA_INACTIVE) {
 		// We're becoming active - ensure we repaint
 		Invalidate();
@@ -403,7 +403,7 @@ BOOL CWnd::SetWindowText(const char *lpszString) {
 	return true;
 }
 
-UINT CWnd::GetState() const {
+unsigned int CWnd::GetState() const {
 	return _itemState;
 }
 
@@ -461,11 +461,11 @@ int CWnd::ReleaseDC(CDC *pDC) {
 	return 1;
 }
 
-BOOL CWnd::PostMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+BOOL CWnd::PostMessage(unsigned int message, WPARAM wParam, LPARAM lParam) {
 	return AfxGetApp()->PostMessage(m_hWnd, message, wParam, lParam);
 }
 
-LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CWnd::SendMessage(unsigned int message, WPARAM wParam, LPARAM lParam) {
 	// Don't send messages to already destroyed windows
 	if (!m_hWnd)
 		return 0;
@@ -489,14 +489,14 @@ LRESULT CWnd::SendMessage(UINT message, WPARAM wParam, LPARAM lParam) {
 	return lResult;
 }
 
-bool CWnd::isRecursiveMessage(UINT message) {
+bool CWnd::isRecursiveMessage(unsigned int message) {
 	// TODO: Need to refactor these to use the
 	// SendMessageToDescendants instead of this
 	return message == WM_SHOWWINDOW ||
 		message == WM_ENABLE;
 }
 
-BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
+BOOL CWnd::OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 	LRESULT lResult = 0;
 	const AFX_MSGMAP_ENTRY *lpEntry;
 
@@ -596,7 +596,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		break;
 
 	case AfxSig_is:
-		lResult = (this->*mmf.pfn_is)((LPTSTR)lParam);
+		lResult = (this->*mmf.pfn_is)((uint16 *)lParam);
 		break;
 
 	case AfxSig_lwl:
@@ -604,8 +604,8 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		break;
 
 	case AfxSig_lwwM:
-		lResult = (this->*mmf.pfn_lwwM)((UINT)LOWORD(wParam),
-			(UINT)HIWORD(wParam), (CMenu *)CMenu::FromHandle((HMENU)lParam));
+		lResult = (this->*mmf.pfn_lwwM)((unsigned int)LOWORD(wParam),
+			(unsigned int)HIWORD(wParam), (CMenu *)CMenu::FromHandle((HMENU)lParam));
 		break;
 
 	case AfxSig_vv:
@@ -617,7 +617,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		break;
 
 	case AfxSig_vww:
-		(this->*mmf.pfn_vww)((UINT)wParam, (UINT)lParam);
+		(this->*mmf.pfn_vww)((unsigned int)wParam, (unsigned int)lParam);
 		break;
 
 	case AfxSig_vvii:
@@ -685,7 +685,7 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 		break;
 
 	case AfxSig_vwWb:
-		(this->*mmf.pfn_vwWb)((UINT)(LOWORD(wParam)),
+		(this->*mmf.pfn_vwWb)((unsigned int)(LOWORD(wParam)),
 			CWnd::FromHandle((HWND)lParam), (BOOL)HIWORD(wParam));
 		break;
 
@@ -706,20 +706,20 @@ BOOL CWnd::OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult
 	break;
 
 	case AfxSig_vs:
-		(this->*mmf.pfn_vs)((LPTSTR)lParam);
+		(this->*mmf.pfn_vs)((uint16 *)lParam);
 		break;
 
 	case AfxSig_vws:
-		(this->*mmf.pfn_vws)((UINT)wParam, (const char *)lParam);
+		(this->*mmf.pfn_vws)((unsigned int)wParam, (const char *)lParam);
 		break;
 
 	case AfxSig_vOWNER:
-		(this->*mmf.pfn_vOWNER)((int)wParam, (LPTSTR)lParam);
+		(this->*mmf.pfn_vOWNER)((int)wParam, (uint16 *)lParam);
 		lResult = TRUE;
 		break;
 
 	case AfxSig_iis:
-		lResult = (this->*mmf.pfn_iis)((int)wParam, (LPTSTR)lParam);
+		lResult = (this->*mmf.pfn_iis)((int)wParam, (uint16 *)lParam);
 		break;
 
 	case AfxSig_wp:
@@ -1035,7 +1035,7 @@ BOOL CWnd::GotoDlgCtrl(CWnd *pWndCtrl) {
 	return FALSE;
 }
 
-BOOL CWnd::SubclassDlgItem(UINT nID, CWnd *pParent) {
+BOOL CWnd::SubclassDlgItem(unsigned int nID, CWnd *pParent) {
 	// Validate we're replacing the same kind of control
 	assert(pParent->_children.contains(nID));
 	CWnd *oldControl = pParent->_children[nID];
@@ -1088,25 +1088,25 @@ int CWnd::GetDlgCtrlID() const {
 	return _controlId;
 }
 
-void CWnd::CheckDlgButton(int nIDButton, UINT nCheck) {
+void CWnd::CheckDlgButton(int nIDButton, unsigned int nCheck) {
 	CWnd *btn = GetDlgItem(nIDButton);
 	assert(btn);
 	btn->SendMessage(BM_SETCHECK, nCheck);
 }
 
-LRESULT CWnd::SendDlgItemMessage(int nID, UINT message,
+LRESULT CWnd::SendDlgItemMessage(int nID, unsigned int message,
 		WPARAM wParam, LPARAM lParam) const {
 	CWnd *ctl = GetDlgItem(nID);
 	assert(ctl);
 	return ctl->SendMessage(message, wParam, lParam);
 }
 
-UINT_PTR CWnd::SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
+uintptr CWnd::SetTimer(uintptr nIDEvent, unsigned int nElapse,
+	void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32)) {
 	return MFC::SetTimer(m_hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
-BOOL CWnd::KillTimer(UINT_PTR nIDEvent) {
+BOOL CWnd::KillTimer(uintptr nIDEvent) {
 	return MFC::KillTimer(m_hWnd, nIDEvent);
 }
 
@@ -1137,7 +1137,7 @@ void CWnd::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct) {
 }
 
 BOOL CWnd::OnCommand(WPARAM wParam, LPARAM lParam) {
-	UINT nID = LOWORD(wParam);
+	unsigned int nID = LOWORD(wParam);
 	int nCode = HIWORD(wParam);
 
 	// TODO: Original does some stuff with reflecting
@@ -1153,12 +1153,12 @@ void CWnd::OnSetFont(HFONT hFont, BOOL bRedraw) {
 		Invalidate();
 }
 
-BOOL CWnd::OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message) {
+BOOL CWnd::OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message) {
 	MFC::SetCursor(MFC::LoadCursor(nullptr, IDC_ARROW));
 	return true;
 }
 
-void CWnd::SendMessageToDescendants(UINT message,
+void CWnd::SendMessageToDescendants(unsigned int message,
 		WPARAM wParam, LPARAM lParam,
 		bool bDeep, bool) {
 	// Note: since in ScummVM the m_hWnd points
@@ -1188,7 +1188,7 @@ void CWnd::SendMessageToDescendants(UINT message,
 	}
 }
 
-void CWnd::SendMessageToDescendants(HWND hWnd, UINT message,
+void CWnd::SendMessageToDescendants(HWND hWnd, unsigned int message,
 		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	wnd->SendMessageToDescendants(message,
@@ -1207,7 +1207,7 @@ void CWnd::pause() {
 	AfxGetApp()->pause();
 }
 
-void CWnd::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CWnd::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	if (bShow) {
 		// Invalidate this window
 		Invalidate();

@@ -44,10 +44,10 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange *) override;    // DDX/DDV support
 	BOOL OnInitDialog(void) override;
-	void OnTimer(UINT_PTR);
+	void OnTimer(uintptr);
 	void OnPaint(void);
 	void OnSetFocus(CWnd *);
-	void OnActivate(UINT, CWnd *, BOOL) override;
+	void OnActivate(unsigned int, CWnd *, BOOL) override;
 	BOOL OnEraseBkgnd(CDC *);
 
 	DECLARE_MESSAGE_MAP()

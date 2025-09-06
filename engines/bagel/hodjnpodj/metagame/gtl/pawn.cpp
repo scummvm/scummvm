@@ -338,7 +338,7 @@ BOOL CPawnShop::OnInitDialog() {
 }
 
 
-void CPawnShop::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
+void CPawnShop::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {
@@ -570,7 +570,7 @@ void CPawnShop::RefreshBackground(void) {
 }
 
 
-void CPawnShop::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CPawnShop::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -578,7 +578,7 @@ void CPawnShop::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void CPawnShop::OnSize(UINT nType, int cx, int cy) {
+void CPawnShop::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
@@ -677,7 +677,7 @@ BOOL CPawnShop::CreateWorkAreas(CDC *pDC) {
 }
 
 
-void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
+void CPawnShop::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp = nullptr;
 	CRect   testRect;
@@ -749,7 +749,7 @@ void CPawnShop::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CPawnShop::OnLButtonDown(UINT nFlags, CPoint point) {
+void CPawnShop::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	int     i;
 	CDC     *pDC = nullptr;
 	CItem   *pItem;
@@ -832,7 +832,7 @@ int CPawnShop::SelectedItem(CPoint point) {
 }
 
 
-BOOL CPawnShop::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
+BOOL CPawnShop::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

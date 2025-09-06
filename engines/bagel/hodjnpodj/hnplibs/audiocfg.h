@@ -38,7 +38,7 @@ namespace HodjNPodj {
 
 class CAudioCfgDlg : public CBmpDialog {
 public:
-	CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, UINT);
+	CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int);
 
 protected:
 
@@ -53,7 +53,7 @@ protected:
 	void ClearDialogImage(void);
 
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnClose();
 	void OnDestroy();
 	void OnPaint();

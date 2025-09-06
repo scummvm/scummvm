@@ -44,8 +44,8 @@ uint32   GetPhysicalMemory(void);
 extern  CBfcMgr *lpMetaGameStruct;
 
 // age
-ULONG glOldest = 0xFFFFFFFF;
-ULONG glAge = 0xFFFFFFFF;
+unsigned long glOldest = 0xFFFFFFFF;
+unsigned long glAge = 0xFFFFFFFF;
 
 CBgbMgr *gpBgbMgr;
 
@@ -168,7 +168,7 @@ BOOL CBgbMgr::InitBitmapObject(CBgbObject *pBgbObject, XPSTR pszFileName) {
 				// animation sequence.
 				//
 				assert(pBgbObject->m_nCels > 0);
-				pBgbObject->m_nRepeat *= (UINT)pBgbObject->m_nCels;
+				pBgbObject->m_nRepeat *= (unsigned int)pBgbObject->m_nCels;
 				pBgbObject->m_nFreqCount = pBgbObject->m_nFreq - 1;
 
 				if ((pList = new CLList((CObject *)pBgbObject)) != nullptr) {
@@ -441,14 +441,14 @@ void CBgbMgr::CacheReleaseObject(CBgbObject *pBgbObject) {
 *
 *  SAMPLE USAGE:
 *      CacheOptimize(lReqSpace);
-*  ULONG lReqSpace;                     Ammount of requested free space
+*  unsigned long lReqSpace;                     Ammount of requested free space
 *
 *****************************************************************************/
-void CBgbMgr::CacheOptimize(ULONG lReqSpace) {
+void CBgbMgr::CacheOptimize(unsigned long lReqSpace) {
 	CBgbObject  *pBgbObject;
-	ULONG       lAvgAge;
+	unsigned long       lAvgAge;
 	int         nObjects;
-	ULONG       lSpace;
+	unsigned long       lSpace;
 
 	// There are no objects to flush
 	//
@@ -691,8 +691,8 @@ BOOL CBgbMgr::PaintBitmapObject(CBgbObject *pBgbObject, BOOL bPaint, CRect *pCli
 }
 
 
-ULONG Sqrt(ULONG x) {
-	ULONG num, lHigh, lLow, lSqr;
+unsigned long Sqrt(unsigned long x) {
+	unsigned long num, lHigh, lLow, lSqr;
 
 	lHigh = x;
 	lLow = 0;
@@ -758,7 +758,7 @@ BOOL CBgbMgr::AnimateSprite(CBgbObject *pBgbSprite, CPoint cOldPosition, CPoint 
 	x = cNewPosition.x - cOldPosition.x;
 	y = cNewPosition.y - cOldPosition.y;
 
-	iSegments = (int)(Sqrt((ULONG)x * x + (ULONG)y * y) / 10 + 1);
+	iSegments = (int)(Sqrt((unsigned long)x * x + (unsigned long)y * y) / 10 + 1);
 
 	for (iK = 1; iK <= iSegments; ++iK) {
 

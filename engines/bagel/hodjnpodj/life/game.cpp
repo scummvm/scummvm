@@ -684,7 +684,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -701,7 +701,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	} // end switch
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == 'e') && (nFlags & 0x2000)) {          // ALT-e - evolve
 		PostMessage(WM_COMMAND, IDC_EVOLVE, BN_CLICKED);
 	} else if ((nChar == 'q') && (nFlags & 0x2000)) {    // Alt-q - quit
@@ -713,7 +713,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	} // end if
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Handle keyboard input
 	//
 	switch (nChar) {
@@ -767,7 +767,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   cTestRect;
 
@@ -818,7 +818,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 	CRect   cTestRect;
 	CDC     *pDC;
@@ -868,7 +868,7 @@ void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	CDC *pDC;
 
 	switch (nIDEvent) {

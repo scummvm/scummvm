@@ -81,21 +81,21 @@ protected:
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
-	afx_msg void OnLButtonDown(UINT, CPoint);
-	afx_msg void OnLButtonUp(UINT, CPoint);
-	afx_msg void OnLButtonDblClk(UINT, CPoint);
-	afx_msg void OnMButtonDown(UINT, CPoint);
-	afx_msg void OnMButtonUp(UINT, CPoint);
-	afx_msg void OnMButtonDblClk(UINT, CPoint);
-	afx_msg void OnRButtonDown(UINT, CPoint);
-	afx_msg void OnRButtonUp(UINT, CPoint);
-	afx_msg void OnRButtonDblClk(UINT, CPoint);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnLButtonDown(unsigned int, CPoint);
+	afx_msg void OnLButtonUp(unsigned int, CPoint);
+	afx_msg void OnLButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnMButtonDown(unsigned int, CPoint);
+	afx_msg void OnMButtonUp(unsigned int, CPoint);
+	afx_msg void OnMButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnRButtonDown(unsigned int, CPoint);
+	afx_msg void OnRButtonUp(unsigned int, CPoint);
+	afx_msg void OnRButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);

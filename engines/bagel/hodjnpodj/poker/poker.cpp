@@ -836,7 +836,7 @@ void CALLBACK lpfnOptionCallback(CWnd * pWnd) {                          // do t
 	int     nOption = 0;         // return from the Options dialog
 	int     nSetAmount = 0;      // return from the Set User Amount dialog
 	int     nSetPayOff = 0;      // return from the Set Payoffs dialog
-//	UINT x = IDD_MINIOPTIONS_DIALOG;
+//	unsigned int x = IDD_MINIOPTIONS_DIALOG;
 
 	COptionsDlg     dlgOptions(pWnd, pGamePalette, IDD_OPTIONS);
 	CSetAmountDlg   dlgSetAmt(pWnd, pGamePalette, IDD_SETAMOUNT);
@@ -1081,7 +1081,7 @@ BOOL CMainPokerWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainPokerWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainPokerWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	CSetPayoffsDlg  dlgPayOff((CWnd *)this, pGamePalette, IDD_WINRATIO, nPayOff, TRUE);
 
 	(void)dlgPayOff.DoModal();
@@ -1089,7 +1089,7 @@ void CMainPokerWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainPokerWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   rClock,
 	        rBoom,
@@ -1225,7 +1225,7 @@ void CMainPokerWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainPokerWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainPokerWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (m_bMouseCaptured) {
 		m_bMouseCaptured = FALSE;
 		ReleaseCapture();
@@ -1235,7 +1235,7 @@ void CMainPokerWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainPokerWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainPokerWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
 	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
@@ -1824,7 +1824,7 @@ BOOL CMainPokerWindow::OnEraseBkgnd(CDC *pDC) {
 	return TRUE;
 }
 
-void CMainPokerWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainPokerWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:

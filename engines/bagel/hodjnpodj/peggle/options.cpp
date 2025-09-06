@@ -40,13 +40,13 @@ extern  LPGAMESTRUCT    pGameInfo;
 extern CPalette *pOptionsPalette;
 
 
-void COptions::OnLButtonDown(UINT nFlags, CPoint point) {
+void COptions::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
 
-void COptions::OnMouseMove(UINT nFlags, CPoint point) {
+void COptions::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	CDialog::OnMouseMove(nFlags, point);
 }

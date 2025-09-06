@@ -74,13 +74,13 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnTimer(UINT_PTR);
-	afx_msg void OnLButtonDown(UINT, CPoint);
-	afx_msg void OnLButtonUp(UINT, CPoint);
-	afx_msg void OnMouseMove(UINT, CPoint);
-	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg void OnTimer(uintptr);
+	afx_msg void OnLButtonDown(unsigned int, CPoint);
+	afx_msg void OnLButtonUp(unsigned int, CPoint);
+	afx_msg void OnMouseMove(unsigned int, CPoint);
+	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized) override;
+	afx_msg void OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) override;
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

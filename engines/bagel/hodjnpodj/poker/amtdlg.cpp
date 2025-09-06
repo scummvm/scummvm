@@ -62,7 +62,7 @@ static CColorButton    *pCancelButton = nullptr;
  *  n/a
  *
  ****************************************************************/
-CSetAmountDlg::CSetAmountDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CSetAmountDlg::CSetAmountDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	CDC *pDC = GetDC();
 
@@ -334,7 +334,7 @@ void CSetAmountDlg::OnPaint(void) {
  *  n/a
  *
  ****************************************************************/
-void CSetAmountDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void CSetAmountDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int     oldAmnt = 0;
 	int         newAmnt = 0;
 	CDC         *pDC;

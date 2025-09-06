@@ -81,7 +81,7 @@ static  CColorButton *pOKButton = nullptr;                     // OKAY button on
 static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
 
-CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	DoModal();
 }
@@ -154,8 +154,8 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CDialog::OnCommand(wParam, lParam);
 }
 
-void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
-	UINT nCurPos;
+void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScroll) {
+	unsigned int nCurPos;
 
 	// can't access a null pointer
 	assert(pScroll != nullptr);
@@ -341,7 +341,7 @@ void CUserCfgDlg::OnPaint(void) {
 	DispLevel();
 }
 
-void CUserCfgDlg::OnLButtonDown(UINT nFlags, CPoint point) {
+void CUserCfgDlg::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CBmpDialog::OnLButtonDown(nFlags, point);
 }
 

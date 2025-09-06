@@ -174,7 +174,7 @@ CLife::~CLife() {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CLife::change_board(UINT nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta) {
+void CLife::change_board(unsigned int nFlags, CPoint point, CDC *pDC, BOOL bPlayingMeta) {
 	int i;
 	CSprite *pSprite;
 	CRect   myArea;

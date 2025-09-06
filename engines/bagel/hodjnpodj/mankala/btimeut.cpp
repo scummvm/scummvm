@@ -30,13 +30,13 @@ namespace Mankala {
 BOOL bTimeDelayPassed = TRUE ;
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
-BOOL CTimeUtil::DelayMs(UINT uMs)
+BOOL CTimeUtil::DelayMs(unsigned int uMs)
 // uMs -- number of milliseconds to delay
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CTimeUtil::DelayMs) ;
 	int iError = 0 ;        // error code
-	UINT uTimerId ;     // timer id returned by SetTimer
+	unsigned int uTimerId ;     // timer id returned by SetTimer
 //    MSG FAR * lpMsg ;     // message area storage
 
 //    RETURN(FALSE) ;   // ***************
@@ -64,8 +64,8 @@ cleanup:
 	RETURN(iError != 0) ;
 }
 
-void CTimeUtil::DelayMsCallback(HWND hWnd, UINT uMsg,
-                                UINT_PTR uTimerId, uint32 dwTime) {
+void CTimeUtil::DelayMsCallback(HWND hWnd, unsigned int uMsg,
+                                uintptr uTimerId, uint32 dwTime) {
 	JXENTER(::DelayMsCallback) ;
 	//int iError = 0 ;      // error code
 	bTimeDelayPassed = TRUE ;   // elapsed time passed

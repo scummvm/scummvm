@@ -62,17 +62,17 @@ protected:
 	void        DeleteSprite(CSprite *);
 
 	void        OnPaint(void);
-	void        OnTimer(UINT_PTR);
-	void        OnMouseMove(UINT, CPoint);
-	void        OnLButtonDown(UINT, CPoint);
-	void        OnLButtonDblClk(UINT, CPoint);
-	void        OnRButtonDown(UINT, CPoint);
-	void        OnSysChar(UINT, UINT, UINT);
-	void        OnSysKeyDown(UINT, UINT, UINT);
-	void        OnKeyDown(UINT, UINT, UINT);
-	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnTimer(uintptr);
+	void        OnMouseMove(unsigned int, CPoint);
+	void        OnLButtonDown(unsigned int, CPoint);
+	void        OnLButtonDblClk(unsigned int, CPoint);
+	void        OnRButtonDown(unsigned int, CPoint);
+	void        OnSysChar(unsigned int, unsigned int, unsigned int);
+	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnActivate(unsigned int, CWnd *, BOOL) override;
 	void        OnClose(void);
-	void        OnLButtonUp(UINT, CPoint);
+	void        OnLButtonUp(unsigned int, CPoint);
 
 	DECLARE_MESSAGE_MAP()
 

@@ -214,7 +214,7 @@ namespace MFC {
 #define ON_COMMAND_RANGE(id, idLast, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)idLast, AfxSigCmd_RANGE, \
 		(AFX_PMSG) \
-		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
+		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(unsigned int) > \
 		 (memberFxn)) },
 // ON_COMMAND_RANGE(id, idLast, OnBar) is the same as
 //   ON_CONTROL_RANGE(0, id, idLast, OnBar)
@@ -222,13 +222,13 @@ namespace MFC {
 #define ON_COMMAND_EX(id, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)id, AfxSigCmd_EX, \
 		(AFX_PMSG) \
-		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
+		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(unsigned int) > \
 		 (memberFxn)) },
 
 #define ON_COMMAND_EX_RANGE(id, idLast, memberFxn) \
 	{ WM_COMMAND, CN_COMMAND, (uint16)id, (uint16)idLast, AfxSigCmd_EX, \
 		(AFX_PMSG) \
-		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT) > \
+		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(unsigned int) > \
 		 (memberFxn)) },
 
 // update ui's are listed as WM_COMMAND's so they get routed like commands
@@ -253,19 +253,19 @@ namespace MFC {
 #define ON_NOTIFY_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigNotify_RANGE, \
 		(AFX_PMSG) \
-		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
+		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(unsigned int, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_EX(wNotifyCode, id, memberFxn) \
 	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)id, AfxSigNotify_EX, \
 		(AFX_PMSG) \
-		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
+		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(unsigned int, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 #define ON_NOTIFY_EX_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_NOTIFY, (uint16)(int)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigNotify_EX, \
 		(AFX_PMSG) \
-		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(UINT, NMHDR*, LRESULT*) > \
+		(static_cast< BOOL (AFX_MSG_CALL CCmdTarget::*)(unsigned int, NMHDR*, LRESULT*) > \
 		 (memberFxn)) },
 
 // for general controls
@@ -276,7 +276,7 @@ namespace MFC {
 #define ON_CONTROL_RANGE(wNotifyCode, id, idLast, memberFxn) \
 	{ WM_COMMAND, (uint16)wNotifyCode, (uint16)id, (uint16)idLast, AfxSigCmd_RANGE, \
 		(AFX_PMSG) \
-		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(UINT) > (memberFxn)) },
+		(static_cast< void (AFX_MSG_CALL CCmdTarget::*)(unsigned int) > (memberFxn)) },
 
 #define WM_REFLECT_BASE 0xBC00
 
@@ -334,12 +334,12 @@ namespace MFC {
 #define ON_WM_SIZE() \
 	{ WM_SIZE, 0, 0, 0, AfxSig_vwii, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, int, int) > ( &ThisClass::OnSize)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, int, int) > ( &ThisClass::OnSize)) },
 
 #define ON_WM_ACTIVATE() \
 	{ WM_ACTIVATE, 0, 0, 0, AfxSig_vwWb, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CWnd*, BOOL) > ( &ThisClass::OnActivate)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CWnd*, BOOL) > ( &ThisClass::OnActivate)) },
 
 #define ON_WM_SETFOCUS() \
 	{ WM_SETFOCUS, 0, 0, 0, AfxSig_vW, \
@@ -394,7 +394,7 @@ namespace MFC {
 #define ON_WM_PRINTCLIENT() \
 	{ WM_PRINTCLIENT, 0, 0, 0, AfxSig_l_D_u, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(CDC*, UINT) > ( &ThisClass::OnPrintClient)) },
+		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(CDC*, unsigned int) > ( &ThisClass::OnPrintClient)) },
 
 #define ON_WM_SYSCOLORCHANGE() \
 	{ WM_SYSCOLORCHANGE, 0, 0, 0, AfxSig_vv, \
@@ -414,12 +414,12 @@ namespace MFC {
 #define ON_WM_GETTEXT() \
 	{ WM_GETTEXT, 0, 0, 0, AfxSig_i_i_s, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(int, LPTSTR) > ( &ThisClass::OnGetText)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(int, uint16 *) > ( &ThisClass::OnGetText)) },
 
 #define ON_WM_GETTEXTLENGTH() \
 	{ WM_GETTEXTLENGTH, 0, 0, 0, AfxSig_u_v_v, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetTextLength)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetTextLength)) },
 
 #define ON_WM_SETFONT() \
 	{ WM_SETFONT, 0, 0, 0, AfxSig_vwpb, \
@@ -479,12 +479,12 @@ namespace MFC {
 #define  ON_WM_DISPLAYCHANGE() \
 	{ WM_DISPLAYCHANGE, 0, 0, 0, AfxSig_v_u_ii, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, int, int) > ( &ThisClass::OnDisplayChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, int, int) > ( &ThisClass::OnDisplayChange)) },
 
 #define  ON_WM_DDE_INITIATE() \
 	{ WM_DDE_INITIATE, 0, 0, 0, AfxSig_v_W_uu, \
 		(AFX_PMSG) (AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnDDEInitiate)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int) > ( &ThisClass::OnDDEInitiate)) },
 
 #define  ON_WM_DDE_EXECUTE() \
 	{ WM_DDE_EXECUTE, 0, 0, 0, AfxSig_v_W_h, \
@@ -499,27 +499,27 @@ namespace MFC {
 #define ON_WM_WTSSESSION_CHANGE() \
 	{ WM_WTSSESSION_CHANGE, 0, 0, 0, AfxSig_vww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnSessionChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnSessionChange)) },
 
 #define ON_WM_SHOWWINDOW() \
 	{ WM_SHOWWINDOW, 0, 0, 0, AfxSig_vbw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(BOOL, UINT) > ( &ThisClass::OnShowWindow)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(BOOL, unsigned int) > ( &ThisClass::OnShowWindow)) },
 
 #define ON_WM_CTLCOLOR() \
 	{ WM_CTLCOLOR, 0, 0, 0, AfxSig_hDWw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< HBRUSH (AFX_MSG_CALL CWnd::*)(CDC*, CWnd*, UINT)>  ( &ThisClass::OnCtlColor)) },
+		(static_cast< HBRUSH (AFX_MSG_CALL CWnd::*)(CDC*, CWnd*, unsigned int)>  ( &ThisClass::OnCtlColor)) },
 
 #define ON_WM_CTLCOLOR_REFLECT() \
 	{ WM_CTLCOLOR+WM_REFLECT_BASE, 0, 0, 0, AfxSig_hDw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< HBRUSH (AFX_MSG_CALL CWnd::*)(CDC*, UINT) > ( &ThisClass::CtlColor)) },
+		(static_cast< HBRUSH (AFX_MSG_CALL CWnd::*)(CDC*, unsigned int) > ( &ThisClass::CtlColor)) },
 
 #define ON_WM_SETTINGCHANGE() \
 	{ WM_SETTINGCHANGE, 0, 0, 0, AfxSig_vws, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, const char *) > ( &ThisClass::OnSettingChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, const char *) > ( &ThisClass::OnSettingChange)) },
 
 #define ON_WM_WININICHANGE() \
 	{ WM_WININICHANGE, 0, 0, 0, AfxSig_vs, \
@@ -529,7 +529,7 @@ namespace MFC {
 #define ON_WM_DEVMODECHANGE() \
 	{ WM_DEVMODECHANGE, 0, 0, 0, AfxSig_vs, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(LPTSTR) > ( &ThisClass::OnDevModeChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(uint16 *) > ( &ThisClass::OnDevModeChange)) },
 
 #define ON_WM_ACTIVATEAPP() \
 	{ WM_ACTIVATEAPP, 0, 0, 0, AfxSig_vww, \
@@ -554,12 +554,12 @@ namespace MFC {
 #define ON_WM_SETCURSOR() \
 	{ WM_SETCURSOR, 0, 0, 0, AfxSig_bWww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnSetCursor)) },
+		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int) > ( &ThisClass::OnSetCursor)) },
 
 #define ON_WM_MOUSEACTIVATE() \
 	{ WM_MOUSEACTIVATE, 0, 0, 0, AfxSig_iWww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnMouseActivate)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int) > ( &ThisClass::OnMouseActivate)) },
 
 #define ON_WM_CHILDACTIVATE() \
 	{ WM_CHILDACTIVATE, 0, 0, 0, AfxSig_vv, \
@@ -579,7 +579,7 @@ namespace MFC {
 #define ON_WM_SPOOLERSTATUS() \
 	{ WM_SPOOLERSTATUS, 0, 0, 0, AfxSig_vww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnSpoolerStatus)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnSpoolerStatus)) },
 
 #define ON_WM_DRAWITEM() \
 	{ WM_DRAWITEM, 0, 0, 0, AfxSig_vOWNER, \
@@ -614,22 +614,22 @@ namespace MFC {
 #define ON_WM_CHARTOITEM() \
 	{ WM_CHARTOITEM, 0, 0, 0, AfxSig_iwWw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(UINT, CListBox*, UINT) > ( &ThisClass::OnCharToItem)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(unsigned int, CListBox*, unsigned int) > ( &ThisClass::OnCharToItem)) },
 
 #define ON_WM_CHARTOITEM_REFLECT() \
 	{ WM_CHARTOITEM+WM_REFLECT_BASE, 0, 0, 0, AfxSig_iww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::CharToItem)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::CharToItem)) },
 
 #define ON_WM_VKEYTOITEM() \
 	{ WM_VKEYTOITEM, 0, 0, 0, AfxSig_iwWw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(UINT, CListBox*, UINT) > ( &ThisClass::OnVKeyToItem)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(unsigned int, CListBox*, unsigned int) > ( &ThisClass::OnVKeyToItem)) },
 
 #define ON_WM_VKEYTOITEM_REFLECT() \
 	{ WM_VKEYTOITEM+WM_REFLECT_BASE, 0, 0, 0, AfxSig_iww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< int (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::VKeyToItem)) },
+		(static_cast< int (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::VKeyToItem)) },
 
 #define ON_WM_QUERYDRAGICON() \
 	{ WM_QUERYDRAGICON, 0, 0, 0, AfxSig_hv, \
@@ -649,7 +649,7 @@ namespace MFC {
 #define ON_WM_COMPACTING() \
 	{ WM_COMPACTING, 0, 0, 0, AfxSig_vw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT) > ( &ThisClass::OnCompacting)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int) > ( &ThisClass::OnCompacting)) },
 
 #define ON_WM_NCCREATE() \
 	{ WM_NCCREATE, 0, 0, 0, AfxSig_is, \
@@ -684,17 +684,17 @@ namespace MFC {
 #define ON_WM_GETDLGCODE() \
 	{ WM_GETDLGCODE, 0, 0, 0, AfxSig_wv, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetDlgCode)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnGetDlgCode)) },
 
 #define ON_WM_NCMOUSEMOVE() \
 	{ WM_NCMOUSEMOVE, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcMouseMove)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcMouseMove)) },
 
 #define ON_WM_NCMOUSEHOVER() \
 	{ WM_NCMOUSEHOVER, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcMouseHover)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcMouseHover)) },
 
 #define ON_WM_NCMOUSELEAVE() \
 	{ WM_NCMOUSELEAVE, 0, 0, 0, AfxSig_vv, \
@@ -704,137 +704,137 @@ namespace MFC {
 #define ON_WM_NCLBUTTONDOWN() \
 	{ WM_NCLBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcLButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcLButtonDown)) },
 
 #define ON_WM_NCLBUTTONUP() \
 	{ WM_NCLBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcLButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcLButtonUp)) },
 
 #define ON_WM_NCLBUTTONDBLCLK() \
 	{ WM_NCLBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcLButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcLButtonDblClk)) },
 
 #define ON_WM_NCRBUTTONDOWN() \
 	{ WM_NCRBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcRButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcRButtonDown)) },
 
 #define ON_WM_NCRBUTTONUP() \
 	{ WM_NCRBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcRButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcRButtonUp)) },
 
 #define ON_WM_NCRBUTTONDBLCLK() \
 	{ WM_NCRBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcRButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcRButtonDblClk)) },
 
 #define ON_WM_NCMBUTTONDOWN() \
 	{ WM_NCMBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcMButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcMButtonDown)) },
 
 #define ON_WM_NCMBUTTONUP() \
 	{ WM_NCMBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcMButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcMButtonUp)) },
 
 #define ON_WM_NCMBUTTONDBLCLK() \
 	{ WM_NCMBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnNcMButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnNcMButtonDblClk)) },
 
 #define ON_WM_NCXBUTTONDOWN() \
 	{ WM_NCXBUTTONDOWN, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, UINT, CPoint) > ( &ThisClass::OnNcXButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, unsigned int, CPoint) > ( &ThisClass::OnNcXButtonDown)) },
 
 #define ON_WM_NCXBUTTONUP() \
 	{ WM_NCXBUTTONUP, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, UINT, CPoint) > ( &ThisClass::OnNcXButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, unsigned int, CPoint) > ( &ThisClass::OnNcXButtonUp)) },
 
 #define ON_WM_NCXBUTTONDBLCLK() \
 	{ WM_NCXBUTTONDBLCLK, 0, 0, 0, AfxSig_MOUSE_NCXBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, UINT, CPoint) > ( &ThisClass::OnNcXButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(short, unsigned int, CPoint) > ( &ThisClass::OnNcXButtonDblClk)) },
 
 #define ON_WM_KEYDOWN() \
 	{ WM_KEYDOWN, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnKeyDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnKeyDown)) },
 
 #define ON_WM_KEYUP() \
 	{ WM_KEYUP, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnKeyUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnKeyUp)) },
 
 #define ON_WM_HOTKEY() \
 	{ WM_HOTKEY, 0, 0, 0, AfxSig_v_u_uu, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnHotKey)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnHotKey)) },
 
 #define ON_WM_CHAR() \
 	{ WM_CHAR, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnChar)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnChar)) },
 
 #define ON_WM_UNICHAR() \
 	{ WM_UNICHAR, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnUniChar)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnUniChar)) },
 
 #define ON_WM_DEADCHAR() \
 	{ WM_DEADCHAR, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnDeadChar)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnDeadChar)) },
 
 #define ON_WM_SYSKEYDOWN() \
 	{ WM_SYSKEYDOWN, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnSysKeyDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnSysKeyDown)) },
 
 #define ON_WM_SYSKEYUP() \
 	{ WM_SYSKEYUP, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnSysKeyUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnSysKeyUp)) },
 
 #define ON_WM_SYSCHAR() \
 	{ WM_SYSCHAR, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast<void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnSysChar)) },
+		(static_cast<void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnSysChar)) },
 
 #define ON_WM_SYSDEADCHAR() \
 	{ WM_SYSDEADCHAR, 0, 0, 0, AfxSig_vwww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, UINT) > ( &ThisClass::OnSysDeadChar)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnSysDeadChar)) },
 
 #define ON_WM_SYSCOMMAND() \
 	{ WM_SYSCOMMAND, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPARAM) > ( &ThisClass::OnSysCommand)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, LPARAM) > ( &ThisClass::OnSysCommand)) },
 
 #define ON_WM_INPUTLANGCHANGE() \
 	{ WM_INPUTLANGCHANGE, 0, 0, 0, AfxSig_INPUTLANGCHANGE, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnInputLangChange)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnInputLangChange)) },
 
 #define ON_WM_INPUTLANGCHANGEREQUEST() \
 	{ WM_INPUTLANGCHANGEREQUEST, 0, 0, 0, AfxSig_vww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnInputLangChangeRequest)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnInputLangChangeRequest)) },
 
 #define ON_WM_APPCOMMAND() \
 	{ WM_APPCOMMAND, 0, 0, 0, AfxSig_APPCOMMAND, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT, UINT) > ( &ThisClass::OnAppCommand)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int, unsigned int) > ( &ThisClass::OnAppCommand)) },
 
 #define ON_WM_INPUT() \
 	{ WM_INPUT, 0, 0, 0, AfxSig_RAWINPUT, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, HRAWINPUT) > ( &ThisClass::OnRawInput)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, HRAWINPUT) > ( &ThisClass::OnRawInput)) },
 
 #define ON_WM_INPUT_DEVICE_CHANGE() \
 	{ WM_INPUT_DEVICE_CHANGE, 0, 0, 0, AfxSig_INPUTDEVICECHANGE, \
@@ -844,32 +844,32 @@ namespace MFC {
 #define ON_WM_TCARD() \
 	{ WM_TCARD, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, uint32) > ( &ThisClass::OnTCard)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, uint32) > ( &ThisClass::OnTCard)) },
 
 #define ON_WM_TIMER() \
 	{ WM_TIMER, 0, 0, 0, AfxSig_vw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT_PTR) > ( &ThisClass::OnTimer)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(uintptr) > ( &ThisClass::OnTimer)) },
 
 #define ON_WM_HSCROLL() \
 	{ WM_HSCROLL, 0, 0, 0, AfxSig_vwwW, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, CScrollBar*) > ( &ThisClass::OnHScroll)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CScrollBar*) > ( &ThisClass::OnHScroll)) },
 
 #define ON_WM_HSCROLL_REFLECT() \
 	{ WM_HSCROLL+WM_REFLECT_BASE, 0, 0, 0, AfxSig_vwwx, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::HScroll)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::HScroll)) },
 
 #define ON_WM_VSCROLL() \
 	{ WM_VSCROLL, 0, 0, 0, AfxSig_vwwW, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, CScrollBar*) > ( &ThisClass::OnVScroll)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CScrollBar*) > ( &ThisClass::OnVScroll)) },
 
 #define ON_WM_VSCROLL_REFLECT() \
 	{ WM_VSCROLL+WM_REFLECT_BASE, 0, 0, 0, AfxSig_vwwx, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::VScroll)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::VScroll)) },
 
 #define ON_WM_INITMENU() \
 	{ WM_INITMENU, 0, 0, 0, AfxSig_vM, \
@@ -879,57 +879,57 @@ namespace MFC {
 #define ON_WM_INITMENUPOPUP() \
 	{ WM_INITMENUPOPUP, 0, 0, 0, AfxSig_vMwb, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CMenu*, UINT, BOOL) > ( &ThisClass::OnInitMenuPopup)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CMenu*, unsigned int, BOOL) > ( &ThisClass::OnInitMenuPopup)) },
 
 #define ON_WM_MENUSELECT() \
 	{ WM_MENUSELECT, 0, 0, 0, AfxSig_vwwh, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, HMENU) > ( &ThisClass::OnMenuSelect)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, HMENU) > ( &ThisClass::OnMenuSelect)) },
 
 #define ON_WM_MENUCHAR() \
 	{ WM_MENUCHAR, 0, 0, 0, AfxSig_lwwM, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(UINT, UINT, CMenu*) > ( &ThisClass::OnMenuChar)) },
+		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CMenu*) > ( &ThisClass::OnMenuChar)) },
 
 #define ON_WM_MENURBUTTONUP() \
 	{ WM_MENURBUTTONUP, 0, 0, 0, AfxSig_v_u_M, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CMenu*) > ( &ThisClass::OnMenuRButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CMenu*) > ( &ThisClass::OnMenuRButtonUp)) },
 
 #define ON_WM_MENUDRAG() \
 	{ WM_MENUDRAG, 0, 0, 0, AfxSig_u_u_M, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(UINT, CMenu*) > ( &ThisClass::OnMenuDrag)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(unsigned int, CMenu*) > ( &ThisClass::OnMenuDrag)) },
 
 #define ON_WM_MENUGETOBJECT() \
 	{ WM_MENUGETOBJECT, 0, 0, 0, AfxSig_u_v_MENUGETOBJECTINFO, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(MENUGETOBJECTINFO*) > ( &ThisClass::OnMenuGetObject)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(MENUGETOBJECTINFO*) > ( &ThisClass::OnMenuGetObject)) },
 
 #define ON_WM_UNINITMENUPOPUP() \
 	{ WM_UNINITMENUPOPUP, 0, 0, 0, AfxSig_v_M_u, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CMenu*, UINT) > ( &ThisClass::OnUnInitMenuPopup)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CMenu*, unsigned int) > ( &ThisClass::OnUnInitMenuPopup)) },
 
 #define ON_WM_NEXTMENU() \
 	{ WM_NEXTMENU, 0, 0, 0, AfxSig_v_u_LPMDINEXTMENU, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPMDINEXTMENU) > ( &ThisClass::OnNextMenu)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, LPMDINEXTMENU) > ( &ThisClass::OnNextMenu)) },
 
 #define ON_WM_ENTERIDLE() \
 	{ WM_ENTERIDLE, 0, 0, 0, AfxSig_vwW, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CWnd*) > ( &ThisClass::OnEnterIdle)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CWnd*) > ( &ThisClass::OnEnterIdle)) },
 
 #define ON_WM_MOUSEMOVE() \
 	{ WM_MOUSEMOVE, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnMouseMove)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnMouseMove)) },
 
 #define ON_WM_MOUSEHOVER() \
 	{ WM_MOUSEHOVER, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnMouseHover)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnMouseHover)) },
 
 #define ON_WM_MOUSELEAVE() \
 	{ WM_MOUSELEAVE, 0, 0, 0, AfxSig_vv, \
@@ -939,87 +939,87 @@ namespace MFC {
 #define ON_WM_MOUSEWHEEL() \
 	{ WM_MOUSEWHEEL, 0, 0, 0, AfxSig_bwsp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(UINT, short, CPoint) > ( &ThisClass::OnMouseWheel)) },
+		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(unsigned int, short, CPoint) > ( &ThisClass::OnMouseWheel)) },
 
 #define ON_WM_MOUSEHWHEEL() \
 	{ WM_MOUSEHWHEEL, 0, 0, 0, AfxSig_MOUSEHWHEEL, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, short, CPoint) > ( &ThisClass::OnMouseHWheel)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, short, CPoint) > ( &ThisClass::OnMouseHWheel)) },
 
 #define ON_WM_LBUTTONDOWN() \
 	{ WM_LBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnLButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnLButtonDown)) },
 
 #define ON_WM_LBUTTONUP() \
 	{ WM_LBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnLButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnLButtonUp)) },
 
 #define ON_WM_LBUTTONDBLCLK() \
 	{ WM_LBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnLButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnLButtonDblClk)) },
 
 #define ON_WM_RBUTTONDOWN() \
 	{ WM_RBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnRButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnRButtonDown)) },
 
 #define ON_WM_RBUTTONUP() \
 	{ WM_RBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnRButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnRButtonUp)) },
 
 #define ON_WM_RBUTTONDBLCLK() \
 	{ WM_RBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnRButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnRButtonDblClk)) },
 
 #define ON_WM_MBUTTONDOWN() \
 	{ WM_MBUTTONDOWN, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnMButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnMButtonDown)) },
 
 #define ON_WM_MBUTTONUP() \
 	{ WM_MBUTTONUP, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnMButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnMButtonUp)) },
 
 #define ON_WM_MBUTTONDBLCLK() \
 	{ WM_MBUTTONDBLCLK, 0, 0, 0, AfxSig_vwp, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, CPoint) > ( &ThisClass::OnMButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, CPoint) > ( &ThisClass::OnMButtonDblClk)) },
 
 #define ON_WM_XBUTTONDOWN() \
 	{ WM_XBUTTONDOWN, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, CPoint) > ( &ThisClass::OnXButtonDown)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CPoint) > ( &ThisClass::OnXButtonDown)) },
 
 #define ON_WM_XBUTTONUP() \
 	{ WM_XBUTTONUP, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, CPoint) > ( &ThisClass::OnXButtonUp)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CPoint) > ( &ThisClass::OnXButtonUp)) },
 
 #define ON_WM_XBUTTONDBLCLK() \
 	{ WM_XBUTTONDBLCLK, 0, 0, 0, AfxSig_MOUSE_XBUTTON, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT, CPoint) > ( &ThisClass::OnXButtonDblClk)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int, CPoint) > ( &ThisClass::OnXButtonDblClk)) },
 
 #define ON_WM_PARENTNOTIFY() \
 	{ WM_PARENTNOTIFY, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast<void (AFX_MSG_CALL CWnd::*)(UINT, LPARAM) > ( &ThisClass::OnParentNotify)) },
+		(static_cast<void (AFX_MSG_CALL CWnd::*)(unsigned int, LPARAM) > ( &ThisClass::OnParentNotify)) },
 
 #define ON_WM_PARENTNOTIFY_REFLECT() \
 	{ WM_PARENTNOTIFY+WM_REFLECT_BASE, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPARAM) > ( &ThisClass::ParentNotify)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, LPARAM) > ( &ThisClass::ParentNotify)) },
 
 #define ON_WM_NOTIFYFORMAT() \
 	{ WM_NOTIFYFORMAT, 0, 0, 0, AfxSig_u_W_u, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(CWnd*, UINT) > ( &ThisClass::OnNotifyFormat)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int) > ( &ThisClass::OnNotifyFormat)) },
 
 #define ON_WM_MDIACTIVATE() \
 	{ WM_MDIACTIVATE, 0, 0, 0, AfxSig_vbWW, \
@@ -1029,7 +1029,7 @@ namespace MFC {
 #define ON_WM_RENDERFORMAT() \
 	{ WM_RENDERFORMAT, 0, 0, 0, AfxSig_vw, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT) > ( &ThisClass::OnRenderFormat)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int) > ( &ThisClass::OnRenderFormat)) },
 
 #define ON_WM_RENDERALLFORMATS() \
 	{ WM_RENDERALLFORMATS, 0, 0, 0, AfxSig_vv, \
@@ -1054,7 +1054,7 @@ namespace MFC {
 #define ON_WM_VSCROLLCLIPBOARD() \
 	{ WM_VSCROLLCLIPBOARD, 0, 0, 0, AfxSig_vWww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnVScrollClipboard)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int) > ( &ThisClass::OnVScrollClipboard)) },
 
 #define ON_WM_CONTEXTMENU() \
 	{ WM_CONTEXTMENU, 0, 0, 0, AfxSig_vWp, \
@@ -1069,7 +1069,7 @@ namespace MFC {
 #define ON_WM_ASKCBFORMATNAME() \
 	{ WM_ASKCBFORMATNAME, 0, 0, 0, AfxSig_vwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPTSTR) > ( &ThisClass::OnAskCbFormatName)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, uint16 *) > ( &ThisClass::OnAskCbFormatName)) },
 
 #define ON_WM_CHANGECBCHAIN() \
 	{ WM_CHANGECBCHAIN, 0, 0, 0, AfxSig_vhh, \
@@ -1079,7 +1079,7 @@ namespace MFC {
 #define ON_WM_HSCROLLCLIPBOARD() \
 	{ WM_HSCROLLCLIPBOARD, 0, 0, 0, AfxSig_vWww, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, UINT, UINT) > ( &ThisClass::OnHScrollClipboard)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(CWnd*, unsigned int, unsigned int) > ( &ThisClass::OnHScrollClipboard)) },
 
 #define ON_WM_CLIPBOARDUPDATE() \
 	{ WM_CLIPBOARDUPDATE, 0, 0, 0, AfxSig_v_v_v, \
@@ -1139,12 +1139,12 @@ namespace MFC {
 #define ON_WM_SIZING() \
 	{ WM_SIZING, 0, 0, 0, AfxSig_vwSIZING, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPRECT) > ( &ThisClass::OnSizing)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, LPRECT) > ( &ThisClass::OnSizing)) },
 
 #define ON_WM_MOVING() \
 	{ WM_MOVING, 0, 0, 0, AfxSig_vwMOVING, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, LPRECT) > ( &ThisClass::OnMoving)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, LPRECT) > ( &ThisClass::OnMoving)) },
 
 #define ON_WM_ENTERSIZEMOVE() \
 	{ WM_ENTERSIZEMOVE, 0, 0, 0, AfxSig_v_v_v, \
@@ -1164,12 +1164,12 @@ namespace MFC {
 #define ON_WM_DEVICECHANGE() \
 	{ WM_DEVICECHANGE, 0, 0, 0, AfxSig_bwl, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(UINT, DWORD_PTR) > ( &ThisClass::OnDeviceChange)) },
+		(static_cast< BOOL (AFX_MSG_CALL CWnd::*)(unsigned int, uintptr) > ( &ThisClass::OnDeviceChange)) },
 
 #define ON_WM_POWERBROADCAST() \
 	{ WM_POWERBROADCAST, 0, 0, 0, AfxSig_u_u_l, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(UINT, LPARAM) > ( &ThisClass::OnPowerBroadcast)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(unsigned int, LPARAM) > ( &ThisClass::OnPowerBroadcast)) },
 
 #define ON_WM_USERCHANGED() \
 	{ WM_USERCHANGED, 0, 0, 0, AfxSig_vv, \
@@ -1179,17 +1179,17 @@ namespace MFC {
 #define ON_WM_CHANGEUISTATE() \
 	{ WM_CHANGEUISTATE, 0, 0, 0, AfxSig_vww2, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnChangeUIState)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnChangeUIState)) },
 
 #define ON_WM_UPDATEUISTATE() \
 	{ WM_UPDATEUISTATE, 0, 0, 0, AfxSig_vww2, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< void (AFX_MSG_CALL CWnd::*)(UINT, UINT) > ( &ThisClass::OnUpdateUIState)) },
+		(static_cast< void (AFX_MSG_CALL CWnd::*)(unsigned int, unsigned int) > ( &ThisClass::OnUpdateUIState)) },
 
 #define ON_WM_QUERYUISTATE() \
 	{ WM_QUERYUISTATE, 0, 0, 0, AfxSig_wv, \
 		(AFX_PMSG)(AFX_PMSGW) \
-		(static_cast< UINT (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnQueryUIState)) },
+		(static_cast< unsigned int (AFX_MSG_CALL CWnd::*)(void) > ( &ThisClass::OnQueryUIState)) },
 
 #define ON_WM_THEMECHANGED() \
 	{ WM_THEMECHANGED, 0, 0, 0, AfxSig_l, \
@@ -1352,7 +1352,7 @@ namespace MFC {
 
 // for Registered Windows messages
 #define ON_REGISTERED_MESSAGE(nMessageVariable, memberFxn) \
-	{ 0xC000, 0, 0, 0, (UINT_PTR)(UINT*)(&nMessageVariable), \
+	{ 0xC000, 0, 0, 0, (uintptr)(unsigned int*)(&nMessageVariable), \
 		/*implied 'AfxSig_lwl'*/ \
 		(AFX_PMSG)(AFX_PMSGW) \
 		(static_cast< LRESULT (AFX_MSG_CALL CWnd::*)(WPARAM, LPARAM) > \
@@ -1367,7 +1367,7 @@ namespace MFC {
 
 // for Registered Windows messages
 #define ON_REGISTERED_THREAD_MESSAGE(nMessageVariable, memberFxn) \
-	{ 0xC000, 0, 0, 0, (UINT_PTR)(UINT*)(&nMessageVariable), \
+	{ 0xC000, 0, 0, 0, (uintptr)(unsigned int*)(&nMessageVariable), \
 		/*implied 'AfxSig_vwl'*/ \
 		(AFX_PMSG)(AFX_PMSGT) \
 		(static_cast< void (AFX_MSG_CALL CWinThread::*)(WPARAM, LPARAM) > \

@@ -35,8 +35,8 @@ namespace Libs {
 
 typedef void(*TimerProc)(
 	HWND hwnd,       // handle of window associated with the timer (can be NULL)
-	UINT uMsg,       // WM_TIMER message (always WM_TIMER)
-	UINT_PTR idEvent,// timer identifier (from SetTimer or returned value)
+	unsigned int uMsg,       // WM_TIMER message (always WM_TIMER)
+	uintptr idEvent,// timer identifier (from SetTimer or returned value)
 	uint32 dwTime     // system time when the callback was called (in milliseconds)
 );
 
@@ -70,13 +70,13 @@ public:
 class EventLoop {
 	struct TimerEntry {
 		HWND _hWnd = nullptr;
-		UINT_PTR _idEvent = 0;
+		uintptr _idEvent = 0;
 		uint32 _interval = 0;
 		uint32 _nextTriggerTime = 0;
 		TimerProc _callback = nullptr;
 
 		TimerEntry() {}
-		TimerEntry(HWND hWnd, UINT_PTR idEvent,
+		TimerEntry(HWND hWnd, uintptr idEvent,
 			uint32 interval, TimerProc callback);
 	};
 	typedef Common::List<TimerEntry> TimerList;
@@ -198,10 +198,10 @@ public:
 	 * with the specified criteria.
 	 */
 	BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
-		UINT wMsgFilterMin, UINT wMsgFilterMax,
-		UINT wRemoveMsg);
+		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+		unsigned int wRemoveMsg);
 
-	BOOL PostMessage(HWND hWnd, UINT Msg,
+	BOOL PostMessage(HWND hWnd, unsigned int Msg,
 		WPARAM wParam, LPARAM lParam);
 
 	void TranslateMessage(LPMSG lpMsg);
@@ -237,11 +237,11 @@ public:
 		return _focusedWin;
 	}
 
-	MMRESULT joySetCapture(HWND hwnd, UINT uJoyID,
-		UINT uPeriod, BOOL fChanged);
-	MMRESULT joySetThreshold(UINT uJoyID, UINT uThreshold);
-	MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji);
-	MMRESULT joyReleaseCapture(UINT uJoyID);
+	MMRESULT joySetCapture(HWND hwnd, unsigned int uJoyID,
+		unsigned int uPeriod, BOOL fChanged);
+	MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold);
+	MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji);
+	MMRESULT joyReleaseCapture(unsigned int uJoyID);
 
 	HHOOK HookKeyboard(HOOKPROC proc) {
 		_kbdHookProc = proc;
@@ -252,9 +252,9 @@ public:
 		_kbdHookProc = nullptr;
 	}
 
-	UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32));
-	BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
+	uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32));
+	BOOL KillTimer(HWND hWnd, uintptr nIDEvent);
 
 	void pause();
 

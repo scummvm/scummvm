@@ -161,8 +161,8 @@ MSG EventQueue::pop() {
 }
 
 bool EventQueue::peekMessage(MSG *lpMsg, HWND hWnd,
-		UINT wMsgFilterMin, UINT wMsgFilterMax,
-		UINT wRemoveMsg) {
+		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+		unsigned int wRemoveMsg) {
 	bool result = false;
 
 	for (uint i = 0; i < _queue.size(); ++i) {

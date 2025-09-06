@@ -324,7 +324,7 @@ BOOL CBackpack::OnInitDialog() {
 }
 
 
-void CBackpack::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
+void CBackpack::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {
@@ -534,7 +534,7 @@ void CBackpack::RefreshBackground(void) {
 }
 
 
-void CBackpack::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CBackpack::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -542,7 +542,7 @@ void CBackpack::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void CBackpack::OnSize(UINT nType, int cx, int cy) {
+void CBackpack::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
@@ -630,7 +630,7 @@ BOOL CBackpack::CreateWorkAreas(CDC *pDC) {
 }
 
 
-void CBackpack::OnMouseMove(UINT nFlags, CPoint point) {
+void CBackpack::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp = nullptr;
 	CRect   testRect;
@@ -701,7 +701,7 @@ void CBackpack::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CBackpack::OnLButtonDown(UINT nFlags, CPoint point) {
+void CBackpack::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	int         i;
 	CDC *pDC = nullptr;
 	CItem *pItem;
@@ -790,7 +790,7 @@ int CBackpack::SelectedItem(CPoint point) {
 }
 
 
-BOOL CBackpack::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
+BOOL CBackpack::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

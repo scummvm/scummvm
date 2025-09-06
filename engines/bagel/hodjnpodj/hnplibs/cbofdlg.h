@@ -54,10 +54,10 @@ protected:
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnPaint();
 	afx_msg void OnDestroy();
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnSize(unsigned int nType, int cx, int cy);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

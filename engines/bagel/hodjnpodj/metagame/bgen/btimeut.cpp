@@ -30,17 +30,17 @@ namespace Metagame {
 BOOL bTimeDelayPassed = TRUE ;
 
 void CALLBACK DelayMsCallback(HWND /* hWnd */,
-                              UINT /* uMsg */, UINT /* uTimerId */, uint32 /* dwTime */);
+                              unsigned int /* uMsg */, unsigned int /* uTimerId */, uint32 /* dwTime */);
 
 
 //* CTimeUtil::DelayMs -- delay for specified # of milliseconds
-BOOL CTimeUtil::DelayMs(UINT uMs)
+BOOL CTimeUtil::DelayMs(unsigned int uMs)
 // uMs -- number of milliseconds to delay
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CTimeUtil::DelayMs) ;
 	int iError = 0 ;        // error code
-	UINT uTimerId ;     // timer id returned by SetTimer
+	unsigned int uTimerId ;     // timer id returned by SetTimer
 
 	// set timer, and test for success
 	if ((uTimerId = SetTimer(nullptr, 0, uMs, DelayMsCallback)) == 0) {
@@ -66,7 +66,7 @@ cleanup:
 
 ///* DelayMsCallback -- SetTimer callback routine for DelayMs
 void CTimeUtil::DelayMsCallback(HWND /* hWnd */,
-                                UINT /* uMsg */, UINT_PTR /* uTimerId */, uint32 /* dwTime */)
+                                unsigned int /* uMsg */, uintptr /* uTimerId */, uint32 /* dwTime */)
 // hWnd -- handle of window (always nullptr in this case)
 // uMsg -- WM_TIMER message
 // uTimerId -- timer identifier

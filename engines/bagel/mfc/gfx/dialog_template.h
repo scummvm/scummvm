@@ -90,7 +90,7 @@ private:
 
 private:
 	static byte *GetFontSizeField(LPCDLGTEMPLATE pTemplate);
-	static UINT GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
+	static unsigned int GetTemplateSize(LPCDLGTEMPLATE *pTemplate);
 	bool setTemplate(LPCDLGTEMPLATE pTemplate);
 
 	/**

@@ -94,7 +94,7 @@ extern void        WinGame(void);
 extern ERROR_CODE  RepaintSpriteList(CDC *);
 extern bool     CheckUserGuess(const char *);
 extern void CALLBACK GetGameParams(CWnd *);
-extern void        GameGetScore(UINT *, UINT *, UINT *, UINT *);
+extern void        GameGetScore(unsigned int *, unsigned int *, unsigned int *, unsigned int *);
 
 } // namespace PDQ
 } // namespace HodjNPodj

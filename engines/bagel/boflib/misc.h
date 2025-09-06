@@ -111,7 +111,7 @@ extern bool ProbableTrue(int nProbability);
 extern void ErrorLog(const char *logFile, const char *format, ...);
 
 extern int          StrFreqMatch(const char *, const char *);
-extern BOOL         StrCompare(const char *, const char *, UINT);
+extern BOOL         StrCompare(const char *, const char *, unsigned int);
 extern int          StrCharCount(const char *, char);
 extern char *StriStr(char *, const char *);
 extern void         StrUprStr(char *, const char *);

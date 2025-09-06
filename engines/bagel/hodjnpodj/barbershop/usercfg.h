@@ -62,7 +62,7 @@ namespace Barbershop {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
 protected:
 
@@ -71,18 +71,18 @@ protected:
 
 	void OnClose();
 	void OnPaint();
-	void OnLButtonUp(UINT, CPoint);
+	void OnLButtonUp(unsigned int, CPoint);
 	void OnCancel() override;
 	void OnOK() override;
 	DECLARE_MESSAGE_MAP()
 	void MyFocusRect(CDC*, CRect, int nDrawMode, COLORREF);
 
 private:
-//	UINT            m_nTimeLimit;       //
+//	unsigned int            m_nTimeLimit;       //
 	BOOL            m_bSave;            // True if should save theses values
 	CRect           m_cRectCardBack1;
 	CRect           m_cRectCardBack2;
-	UINT            m_nCardBack;
+	unsigned int            m_nCardBack;
 	CColorButton    *m_pOKButton;       // OKAY button on scroll
 	CText           *m_ctextBox;
 };

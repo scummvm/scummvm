@@ -64,7 +64,7 @@ protected:
 	//{{AFX_MSG(COptnDlg)
 	virtual BOOL OnInitDialog() override;
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg int  OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;

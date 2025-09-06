@@ -106,7 +106,7 @@ struct PLAYER_INFO {
  * Structure for the save game file format
  */
 struct SAVEGAME_INFO {
-	ULONG   m_lBoffoGameID = 0;
+	unsigned long   m_lBoffoGameID = 0;
 	uint16  m_nFixedRecordSize = 0;
 	BOOL    m_bUsed = false;
 	//	char    m_szSaveGameDescription[40];    // description of this saved game

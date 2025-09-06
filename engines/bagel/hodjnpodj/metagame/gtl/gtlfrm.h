@@ -81,7 +81,7 @@ protected:
 	afx_msg void OnCallExit();
 	afx_msg BOOL OnEraseBkgnd(CDC *);
 	afx_msg void OnActivateApp(BOOL bActive, HTASK hTask);
-	afx_msg void OnSysCommand(UINT, LPARAM);
+	afx_msg void OnSysCommand(unsigned int, LPARAM);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

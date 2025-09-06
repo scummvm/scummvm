@@ -424,7 +424,7 @@ void CGtlFrame::OnCallExit() {
 }
 
 
-void CGtlFrame::OnSysCommand(UINT nID, LPARAM lParam) {
+void CGtlFrame::OnSysCommand(unsigned int nID, LPARAM lParam) {
 	if ((nID & 0xfff0) != SC_SCREENSAVE)
 		CWnd::OnSysCommand(nID, lParam);
 }

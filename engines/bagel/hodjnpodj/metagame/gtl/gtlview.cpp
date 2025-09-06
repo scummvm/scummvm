@@ -301,7 +301,7 @@ BOOL CGtlView::OnEraseBkgnd(CDC *) {
 	return TRUE ; // this tells MFC that the background has been erased
 }
 
-void CGtlView::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CGtlView::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -317,7 +317,7 @@ void CGtlView::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CGtlView::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	JXENTER(CGtlView::OnKeyDown) ;
 	CGtlDoc *xpDoc = GetDocument() ;
 	BOOL    bJunk, bAnimations;
@@ -410,7 +410,7 @@ void CGtlView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	JXELEAVE(CGtlView::OnKeyDown) ;
 }
 
-void CGtlView::OnLButtonDown(UINT nFlags, CPoint cMousePoint) {
+void CGtlView::OnLButtonDown(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_LDOWN) ;
@@ -421,7 +421,7 @@ void CGtlView::OnLButtonDown(UINT nFlags, CPoint cMousePoint) {
 	CView::OnLButtonDown(nFlags, cMousePoint);
 }
 
-void CGtlView::OnLButtonUp(UINT nFlags, CPoint cMousePoint) {
+void CGtlView::OnLButtonUp(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_LUP) ;
@@ -430,14 +430,14 @@ void CGtlView::OnLButtonUp(UINT nFlags, CPoint cMousePoint) {
 		CView::OnLButtonUp(nFlags, cMousePoint);
 }
 
-void CGtlView::OnRButtonDown(UINT nFlags, CPoint cMousePoint) {
+void CGtlView::OnRButtonDown(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_RDOWN) ;
 
 	CView::OnRButtonDown(nFlags, cMousePoint);
 }
 
-void CGtlView::OnRButtonUp(UINT nFlags, CPoint cMousePoint) {
+void CGtlView::OnRButtonUp(unsigned int nFlags, CPoint cMousePoint) {
 	CGtlDoc* xpDoc = GetDocument() ;
 	xpDoc->m_xpGtlData->AcceptClick(this, cMousePoint, CLICK_RUP) ;
 
@@ -489,7 +489,7 @@ void CGtlView::FlushInputEvents(void) {
 
 extern CBgbMgr *gpBgbMgr;
 
-void CGtlView::OnTimer(UINT_PTR nEventID) {
+void CGtlView::OnTimer(uintptr nEventID) {
 	// there can only be one animation timer going
 	assert(nEventID == ANIMATION_TIMER_ID);
 
@@ -500,7 +500,7 @@ void CGtlView::OnTimer(UINT_PTR nEventID) {
 }
 
 
-BOOL CGtlView::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
+BOOL CGtlView::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

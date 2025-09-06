@@ -34,7 +34,7 @@ namespace Bagel {
 namespace HodjNPodj {
 namespace NoVacancy {
 
-char *GetStringFromResource(UINT);
+char *GetStringFromResource(unsigned int);
 
 class CMainWindow : public CFrameWnd {
 public:
@@ -54,14 +54,14 @@ protected:
 	void        DeleteSprite(CSprite *);
 
 	void        OnPaint(void);
-	void        OnTimer(UINT_PTR);
-	void        OnMouseMove(UINT, CPoint);
-	virtual void        OnLButtonDown(UINT, CPoint);
-	virtual void        OnRButtonDown(UINT, CPoint);
-	void        OnSysChar(UINT, UINT, UINT);
-	virtual  void        OnSysKeyDown(UINT, UINT, UINT);
-	virtual void        OnKeyDown(UINT, UINT, UINT);
-	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnTimer(uintptr);
+	void        OnMouseMove(unsigned int, CPoint);
+	virtual void        OnLButtonDown(unsigned int, CPoint);
+	virtual void        OnRButtonDown(unsigned int, CPoint);
+	void        OnSysChar(unsigned int, unsigned int, unsigned int);
+	virtual  void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	virtual void        OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnActivate(unsigned int, CWnd *, BOOL) override;
 	void        OnClose(void);
 	virtual LRESULT     OnMCINotify(WPARAM, LPARAM);
 	virtual LRESULT     OnMMIONotify(WPARAM, LPARAM);

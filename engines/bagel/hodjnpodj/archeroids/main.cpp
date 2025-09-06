@@ -411,7 +411,7 @@ CMainWindow::CMainWindow() {
 		BeginWaitCursor();
 
 		// Seed the random number generator
-		//srand((UINT)time(nullptr));
+		//srand((unsigned int)time(nullptr));
 
 		errCode = LoadMasterSprites();
 
@@ -1962,7 +1962,7 @@ void CMainWindow::LoadIniSettings() {
 }
 
 
-void CMainWindow::OnTimer(UINT_PTR nEventID) {
+void CMainWindow::OnTimer(uintptr nEventID) {
 	KillTimer(nEventID);
 
 	while (m_bTimerActive) {
@@ -1983,7 +1983,7 @@ BOOL CMainWindow::MainLoop() {
 	CDC *pDC;
 	CRect tmpRect, newRect;
 	CSize size;
-	ULONG t1;
+	unsigned long t1;
 
 	// new game state is over.  We are now playing the game
 	//
@@ -2937,7 +2937,7 @@ void CMainWindow::DeleteSprite(CSprite *pSprite) {
 
 
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   cTestRect;
 
 	cTestRect = m_pScrollSprite->GetRect();
@@ -2968,7 +2968,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CFrameWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -2984,7 +2984,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// Shoot an arrow
@@ -3034,7 +3034,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -3165,7 +3165,7 @@ void CMainWindow::OnClose() {
 }
 
 
-long CMainWindow::OnJoyStick(UINT wParam, long lParam) {
+long CMainWindow::OnJoyStick(unsigned int wParam, long lParam) {
 	long nThreshold;
 
 	if (m_bGameActive) {
@@ -3175,7 +3175,7 @@ long CMainWindow::OnJoyStick(UINT wParam, long lParam) {
 		}
 
 		nThreshold = m_nJoyLast;
-		nThreshold -= (UINT)HIWORD(lParam);
+		nThreshold -= (unsigned int)HIWORD(lParam);
 
 		if (nThreshold > 5000) {
 			MoveHodj(-GOODGUYMOVE_Y);
@@ -3211,13 +3211,13 @@ void CMainWindow::GameResume(void) {
 		SetCursor(nullptr);
 };
 
-void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *, BOOL) {
 	if (nState == WA_ACTIVE || nState == WA_CLICKACTIVE)
 		SetFocus();
 }
 
 
-void CMainWindow::OnRButtonUp(UINT, CPoint) {
+void CMainWindow::OnRButtonUp(unsigned int, CPoint) {
 	//
 	// Toggle Good Guy Move Mode
 	//
@@ -3242,7 +3242,7 @@ void CMainWindow::OnRButtonUp(UINT, CPoint) {
 	}
 }
 
-void CMainWindow::OnMouseMove(UINT, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int, CPoint point) {
 	//
 	// If the Right mouse button is down when we move the mouse, then
 	// the user is moving the good guy, otherwise it is a normal mouse move.

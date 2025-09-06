@@ -42,7 +42,7 @@ namespace Riddles {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 	void ClearDialogImage(void);
 
 protected:
@@ -56,10 +56,10 @@ protected:
 	void DispLevel(void);
 	int GetIndex(int);
 
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnClose();
 	void OnPaint();
-	void OnLButtonDown(UINT, CPoint);
+	void OnLButtonDown(unsigned int, CPoint);
 	DECLARE_MESSAGE_MAP()
 
 	CText *m_pTxtTimeLimit;
@@ -67,7 +67,7 @@ protected:
 	CText *m_pTxtLevel;
 	CScrollBar *m_pScrollBar;
 	CScrollBar *m_pLevelScroll;
-	UINT        m_nTimeLimit;
+	unsigned int        m_nTimeLimit;
 	int         m_nDifficultyLevel;
 	BOOL        m_bSave;                    // True if should save theses values
 };

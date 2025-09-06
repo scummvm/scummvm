@@ -294,8 +294,8 @@ public:
 
 	CSound *m_pThemeSound;              // this character's MIDI theme song info
 	const char *m_pszThemeFile;
-	UINT    m_nThemeStart;
-	UINT    m_nThemeEnd;
+	unsigned int    m_nThemeStart;
+	unsigned int    m_nThemeEnd;
 
 	const char *m_pszStarsFile;             // cel strip for stars animation
 

@@ -40,7 +40,7 @@ static  CColorButton *pOKButton = nullptr;                     // OKAY button on
 static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 
 
-CAudioCfgDlg::CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CAudioCfgDlg::CAudioCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, IDD_AUDIOCFG, ".\\ART\\SSCROLL.BMP") {
 	m_pScrollBar1 = nullptr;
 
@@ -110,7 +110,7 @@ BOOL CAudioCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-void CAudioCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CAudioCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScroll) {
 	int nMin = 0, nMax = 0, nVal = 0;
 
 	if (pScroll == m_pScrollBar1) {

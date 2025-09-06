@@ -796,7 +796,7 @@ void CMainGTWindow::SplashScreen() {
 		}
 	} else {
 
-		UINT    nOldTextAlign;
+		unsigned int    nOldTextAlign;
 		char    cNextGame[64];
 		char    cLastGame[64];
 		int     nGameCode;
@@ -1047,23 +1047,23 @@ BOOL CMainGTWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainGTWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainGTWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainGTWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainGTWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainGTWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainGTWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainGTWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainGTWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CWnd::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
-void CMainGTWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainGTWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CRect   rTempRect;
 	char    cAlpha[27];
 	int     i;
@@ -1721,7 +1721,7 @@ BOOL CMainGTWindow::OnEraseBkgnd(CDC *pDC) {
 }
 
 
-void CMainGTWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainGTWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {

@@ -83,7 +83,7 @@ class CMnkUsr : public CBmpDialog {
 // Construction
 public:
 	CMnkUsr(CWnd *xpParent = nullptr,
-	        CPalette *xpPalette = nullptr, UINT nID = IDD_MNK_USER) ;
+	        CPalette *xpPalette = nullptr, unsigned int nID = IDD_MNK_USER) ;
 	~CMnkUsr();     // destructor
 
 	CPalette *m_xpGamePalette ;
@@ -108,7 +108,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CMnkUsr)
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnPaint();
 //	afx_msg void OnKillfocusUShells();

@@ -156,7 +156,7 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
  * SetControl()
  *
  * Parameters:
- *  UINT nID        control identifier for the dialog button
+ *  unsigned int nID        control identifier for the dialog button
  *  CWnd * pParent  pointer to parent window owning the button
  *
  * Return Value:
@@ -166,7 +166,7 @@ void CBmpButton::DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) {
  *
  ************************************************************************/
 
-BOOL CBmpButton::SetControl(UINT nID, CWnd * pParent) {
+BOOL CBmpButton::SetControl(unsigned int nID, CWnd * pParent) {
 	if (!CBitmapButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
@@ -179,7 +179,7 @@ BOOL CBmpButton::SetControl(UINT nID, CWnd * pParent) {
  * AutoLoad()
  *
  * Parameters:
- *  UINT nID        control identifier for the dialog button
+ *  unsigned int nID        control identifier for the dialog button
  *  CWnd * pParent  pointer to parent window owning the button
  *
  * Return Value:
@@ -190,7 +190,7 @@ BOOL CBmpButton::SetControl(UINT nID, CWnd * pParent) {
  *
  ************************************************************************/
 
-BOOL CBmpButton::AutoLoad(UINT nID, CWnd * pParent) {
+BOOL CBmpButton::AutoLoad(unsigned int nID, CWnd * pParent) {
 	CString buttonName;
 	BOOL    bSuccess;
 
@@ -839,7 +839,7 @@ void CColorButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cHighl
  * SetControl()
  *
  * Parameters:
- *  UINT nID        control identifier for the dialog button
+ *  unsigned int nID        control identifier for the dialog button
  *  CWnd * pParent  pointer to parent window owning the button
  *
  * Return Value:
@@ -849,7 +849,7 @@ void CColorButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cHighl
  *
  ************************************************************************/
 
-BOOL CColorButton::SetControl(UINT nID, CWnd * pParent) {
+BOOL CColorButton::SetControl(unsigned int nID, CWnd * pParent) {
 	if (!CColorButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
@@ -1127,7 +1127,7 @@ void CCheckButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cContr
  * SetControl()
  *
  * Parameters:
- *  UINT nID        control identifier for the dialog button
+ *  unsigned int nID        control identifier for the dialog button
  *  CWnd * pParent  pointer to parent window owning the button
  *
  * Return Value:
@@ -1137,7 +1137,7 @@ void CCheckButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cContr
  *
  ************************************************************************/
 
-BOOL CCheckButton::SetControl(UINT nID, CWnd * pParent) {
+BOOL CCheckButton::SetControl(unsigned int nID, CWnd * pParent) {
 	if (!CCheckButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 
@@ -1472,7 +1472,7 @@ void CRadioButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cContr
  * SetControl()
  *
  * Parameters:
- *  UINT nID        control identifier for the dialog button
+ *  unsigned int nID        control identifier for the dialog button
  *  CWnd * pParent  pointer to parent window owning the button
  *
  * Return Value:
@@ -1482,7 +1482,7 @@ void CRadioButton::SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cContr
  *
  ************************************************************************/
 
-BOOL CRadioButton::SetControl(UINT nID, CWnd * pParent) {
+BOOL CRadioButton::SetControl(unsigned int nID, CWnd * pParent) {
 	if (!CRadioButton::SubclassDlgItem(nID, pParent))      // attach the Button to the dialog control
 		return FALSE;
 	SetButtonStyle(BS_OWNERDRAW, FALSE);

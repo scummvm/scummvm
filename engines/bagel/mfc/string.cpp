@@ -26,7 +26,7 @@
 namespace Bagel {
 namespace MFC {
 
-BOOL CString::LoadString(UINT nID) {
+BOOL CString::LoadString(unsigned int nID) {
 	char szTemp[256];
 	int nLen = MFC::LoadString(AfxGetInstanceHandle(), nID, szTemp, sizeof(szTemp));
 	if (nLen == 0)

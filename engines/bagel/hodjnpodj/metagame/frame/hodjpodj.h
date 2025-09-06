@@ -64,7 +64,7 @@ class CHodjPodjWindow : public CFrameWnd {
 private:
 	CMovieWindow pMovie;
 	CBitmap *m_pCurrentBmp;
-	UINT m_nFlags;
+	unsigned int m_nFlags;
 	BOOL m_bInCredits;
 
 public:
@@ -120,14 +120,14 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
-	afx_msg void OnMouseMove(UINT, CPoint);
-	afx_msg void OnLButtonDown(UINT, CPoint);
-	afx_msg void OnRButtonDown(UINT, CPoint);
+	afx_msg void OnMouseMove(unsigned int, CPoint);
+	afx_msg void OnLButtonDown(unsigned int, CPoint);
+	afx_msg void OnRButtonDown(unsigned int, CPoint);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg BOOL OnEraseBkgnd(CDC *);
-	afx_msg void OnParentNotify(UINT, LPARAM);
-	afx_msg void OnActivate(UINT, CWnd *, BOOL) override;
-	afx_msg void OnKeyDown(UINT, UINT, UINT);
+	afx_msg void OnParentNotify(unsigned int, LPARAM);
+	afx_msg void OnActivate(unsigned int, CWnd *, BOOL) override;
+	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
 	//}}AFX_MSG
 
 	DECLARE_MESSAGE_MAP()

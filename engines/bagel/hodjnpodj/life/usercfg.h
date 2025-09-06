@@ -75,7 +75,7 @@ public:
 	            nLifeTemp;
 	BOOL        bPrePlaceTemp;
 
-	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
 	enum { IDD = IDD_USERCFG };
 	CScrollBar      m_ScrollVillages;
@@ -97,7 +97,7 @@ protected:
 	afx_msg void OnPrePlace();
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	DECLARE_MESSAGE_MAP()

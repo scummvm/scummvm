@@ -72,7 +72,7 @@ STATIC const char *pszCategoryBitmaps[N_CATEGORIES] = {
 /*
 * Local prototypes
 */
-void UpdateScore(UINT, UINT, UINT, UINT);
+void UpdateScore(unsigned int, unsigned int, unsigned int, unsigned int);
 
 /*
 * Globals
@@ -337,7 +337,7 @@ void CMainWindow::PaintScreen() {
 	CDC     *pDC;
 	CDibDoc myDoc;
 	HDIB    hDIB;
-	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
 	BOOL bSuccess;
 
 	myDoc.OpenDocument(MINI_GAME_MAP);
@@ -461,7 +461,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 
 void CMainWindow::PlayGame() {
 	CDC *pDC;
-	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
 	ERROR_CODE errCode;
 
 	pDC = GetDC();
@@ -489,7 +489,7 @@ void CMainWindow::PlayGame() {
 	ReleaseDC(pDC);
 }
 
-void CMainWindow::OnMouseMove(UINT, CPoint) {
+void CMainWindow::OnMouseMove(unsigned int, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
@@ -572,7 +572,7 @@ void CMainWindow::OnClose() {
 	MFC::PostMessage(ghParentWnd, WM_PARENTNOTIFY, WM_DESTROY, 0L);
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -587,7 +587,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -603,9 +603,9 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CDC *pDC;
-	UINT nLeft, nTotal, nLeftAvg, nTotalAvg;
+	unsigned int nLeft, nTotal, nLeftAvg, nTotalAvg;
 
 	// Handle keyboard input
 	//
@@ -701,11 +701,11 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CWnd::OnChar(nChar, nRepCnt, nFlags);
 }
 
-void UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg) {
+void UpdateScore(unsigned int nLeft, unsigned int nTotal, unsigned int nLeftAvg, unsigned int nTotalAvg) {
 	char buf[40];
 	CDC *pDC;
 
@@ -736,7 +736,7 @@ void UpdateScore(UINT nLeft, UINT nTotal, UINT nLeftAvg, UINT nTotalAvg) {
 	}
 }
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CSprite *pSprite = nullptr;
 	CSound  *pEffect = nullptr;
@@ -903,7 +903,7 @@ void CMainWindow::OnSetFocus(CWnd *) {
 	}
 }
 
-void CMainWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
 	if (!bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:

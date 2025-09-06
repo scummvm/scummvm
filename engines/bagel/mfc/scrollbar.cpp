@@ -34,7 +34,7 @@ ON_WM_MOUSEMOVE()
 ON_WM_MOUSELEAVE()
 END_MESSAGE_MAP()
 
-BOOL CScrollBar::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID) {
+BOOL CScrollBar::Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID) {
 	return CWnd::Create("SCROLLBAR", nullptr, dwStyle,
 		rect, pParentWnd, nID);
 }
@@ -180,7 +180,7 @@ int CScrollBar::getIndexFromX(int xp) const {
 		* (_maxValue - _minValue) / slideArea;
 }
 
-void CScrollBar::OnLButtonDown(UINT nFlags, CPoint point) {
+void CScrollBar::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect clientRect;
 	GetClientRect(&clientRect);
 
@@ -219,7 +219,7 @@ void CScrollBar::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-void CScrollBar::OnLButtonUp(UINT nFlags, CPoint point) {
+void CScrollBar::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (GetCapture() == m_hWnd) {
 		ReleaseCapture();
 		scrollEvent(SB_THUMBPOSITION);
@@ -228,7 +228,7 @@ void CScrollBar::OnLButtonUp(UINT nFlags, CPoint point) {
 	scrollEvent(SB_ENDSCROLL);
 }
 
-void CScrollBar::OnMouseMove(UINT, CPoint point) {
+void CScrollBar::OnMouseMove(unsigned int, CPoint point) {
 	if (GetCapture() == m_hWnd) {
 		SetScrollPos(getIndexFromX(point.x));
 		scrollEvent(SB_THUMBTRACK);

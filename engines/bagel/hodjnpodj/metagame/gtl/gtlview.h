@@ -86,28 +86,28 @@ public:
 // Generated message map functions
 protected:
 	//{{AFX_MSG(CGtlView)
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnLButtonDblClk(unsigned int nFlags, CPoint point);
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnLButtonUp(unsigned int nFlags, CPoint point);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnRButtonDblClk(unsigned int nFlags, CPoint point);
+	afx_msg void OnRButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnRButtonUp(unsigned int nFlags, CPoint point);
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSize(unsigned int nType, int cx, int cy);
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg void OnSetFocus(CWnd* pOldWnd);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
+	afx_msg void OnVScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnDestroy();
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);
-	afx_msg void OnTimer(UINT_PTR);
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
+	afx_msg void OnTimer(uintptr);
+	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

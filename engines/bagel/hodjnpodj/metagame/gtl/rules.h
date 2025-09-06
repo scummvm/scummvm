@@ -99,12 +99,12 @@ protected:
 	virtual void OnCancel(void) override;
 	afx_msg void OnDestroy(void);
 	afx_msg void OnPaint(void);
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) override;
+	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnSize(unsigned int nType, int cx, int cy);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

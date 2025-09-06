@@ -60,7 +60,7 @@ static  CColorButton *pOKButton = nullptr;                     // OKAY button on
 static  CColorButton *pCancelButton = nullptr;                 // Cancel button on scroll
 static  CColorButton *pDefaultsButton = nullptr;               // Defaults button on scroll
 
-CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	m_nInitGameSpeed = DEFAULT_GAME_SPEED;
 	m_nInitArcherLevel = DEFAULT_ARCHER_LEVEL;
@@ -134,7 +134,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScroll) {
 	char szBuf[40];
 	CDC *pDC;
 

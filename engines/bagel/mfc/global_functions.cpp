@@ -41,7 +41,7 @@ struct MemBlock {
 	}
 };
 
-HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes) {
+HGLOBAL GlobalAlloc(unsigned int uFlags, size_t dwBytes) {
 	return new MemBlock(dwBytes,
 		uFlags == GMEM_ZEROINIT);
 }
@@ -69,12 +69,12 @@ size_t GlobalCompact(uint32 dwMinFree) {
 }
 
 int MessageBox(HWND hWnd, const char *lpText,
-               const char *lpCaption, UINT uType) {
+               const char *lpCaption, unsigned int uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
 
-int MessageBox(const char *lpText, const char *lpCaption, UINT uType) {
+int MessageBox(const char *lpText, const char *lpCaption, unsigned int uType) {
 	error("%s %s", lpText, lpCaption);
 	return 0;
 }
@@ -84,7 +84,7 @@ int MessageBox(const char *lpText) {
 	return 0;
 }
 
-UINT GetPrivateProfileInt(const char *lpAppName,
+unsigned int GetPrivateProfileInt(const char *lpAppName,
                           const char *lpKeyName, int nDefault, const char *lpFileName) {
 	return AfxGetApp()->GetProfileInt(lpAppName, lpKeyName, nDefault);
 }
@@ -138,16 +138,16 @@ LRESULT CallNextHookEx(HHOOK hhk, int nCode,
 	error("TODO: CallNextHookEx");
 }
 
-UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK * lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
+uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
+		void (CALLBACK * lpfnTimer)(HWND, unsigned int, uintptr, uint32)) {
 	return AfxGetApp()->SetTimer(hWnd, nIDEvent, nElapse, lpfnTimer);
 }
 
-BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
+BOOL KillTimer(HWND hWnd, uintptr nIDEvent) {
 	return AfxGetApp()->KillTimer(hWnd, nIDEvent);
 }
 
-void Sleep(UINT milli) {
+void Sleep(unsigned int milli) {
 	g_system->delayMillis(milli);
 }
 
@@ -192,8 +192,8 @@ long FileLength(const char *filename) {
 }
 
 BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
-                 UINT wMsgFilterMin, UINT wMsgFilterMax,
-                 UINT wRemoveMsg) {
+                 unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+                 unsigned int wRemoveMsg) {
 	return AfxGetApp()->PeekMessage(lpMsg, hWnd,
 		wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 }
@@ -206,12 +206,12 @@ void DispatchMessage(LPMSG lpMsg) {
 	AfxGetApp()->DispatchMessage(lpMsg);
 }
 
-BOOL PostMessage(HWND hWnd, UINT Msg,
+BOOL PostMessage(HWND hWnd, unsigned int Msg,
         WPARAM wParam, LPARAM lParam) {
 	return AfxGetApp()->PostMessage(hWnd, Msg, wParam, lParam);
 }
 
-LRESULT SendMessage(HWND hWnd, UINT Msg,
+LRESULT SendMessage(HWND hWnd, unsigned int Msg,
         WPARAM wParam, LPARAM lParam) {
 	CWnd *wnd = CWnd::FromHandle(hWnd);
 	return wnd->SendMessage(Msg, wParam, lParam);

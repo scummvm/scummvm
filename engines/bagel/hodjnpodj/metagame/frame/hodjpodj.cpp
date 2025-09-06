@@ -171,7 +171,7 @@ byte     anBellCurve[BELLCURVE] = {
 
 struct CREDITS {
 	const char *m_pszCelFile;
-	UINT m_nDuration;
+	unsigned int m_nDuration;
 };
 
 static const CREDITS stCredits[MAX_CREDITS] = {
@@ -703,7 +703,7 @@ BOOL CHodjPodjWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 }
 
 
-void CHodjPodjWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CHodjPodjWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp;
 
@@ -721,7 +721,7 @@ void CHodjPodjWindow::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CHodjPodjWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CHodjPodjWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	if (m_bInCredits) {
 		m_nFlags = CR_NEXT;
 	} else {
@@ -729,7 +729,7 @@ void CHodjPodjWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-void CHodjPodjWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CHodjPodjWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (m_bInCredits) {
 		m_nFlags = CR_NEXT;
 	} else {
@@ -796,7 +796,7 @@ void CHodjPodjWindow::BlackScreen(void) {
 }
 
 
-void CHodjPodjWindow::OnActivate(UINT nState, CWnd *, BOOL) {
+void CHodjPodjWindow::OnActivate(unsigned int nState, CWnd *, BOOL) {
 	switch (nState) {
 	case WA_INACTIVE:
 		bActiveWindow = FALSE;
@@ -813,7 +813,7 @@ void CHodjPodjWindow::OnActivate(UINT nState, CWnd *, BOOL) {
 }
 
 
-void CHodjPodjWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CHodjPodjWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_ESCAPE) {
 		m_nFlags = CR_ESCAPE;
 	} else {
@@ -1592,7 +1592,7 @@ long CHodjPodjWindow::DetermineChallengeScore() {
 }
 
 
-void CHodjPodjWindow::OnParentNotify(UINT msg, LPARAM lParam) {
+void CHodjPodjWindow::OnParentNotify(unsigned int msg, LPARAM lParam) {
 	BOOL        bMainDlg = TRUE;
 	LPARAM      nGameReturn;
 
@@ -2101,7 +2101,7 @@ BOOL CHodjPodjWindow::Restore() {
 void CHodjPodjWindow::ShowCredits(void) {
 	MSG msg;
 	long lTimeElapsed, lStart;
-	ULONG lGoal, lWait;
+	unsigned long lGoal, lWait;
 	CDC *pDC;
 	int i;
 
@@ -2156,7 +2156,7 @@ void CHodjPodjWindow::ShowCredits(void) {
 			// pause for specified ammount of time less ammount used to pre-load
 			// next bitmap
 			//
-			lWait = (ULONG)max((long)stCredits[i].m_nDuration - lTimeElapsed, 0L);
+			lWait = (unsigned long)max((long)stCredits[i].m_nDuration - lTimeElapsed, 0L);
 
 			lGoal = lWait + GetTickCount();
 			while (lGoal > GetTickCount()) {

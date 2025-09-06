@@ -337,7 +337,7 @@ BOOL CMainZoomWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainZoomWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainZoomWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	int x; // counter
 
 	for (x = 0; x < 21; x++) {
@@ -355,7 +355,7 @@ void CMainZoomWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainZoomWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainZoomWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	int x;
 
 	for (x = 0; x < 21; x++) {
@@ -404,11 +404,11 @@ void CMainZoomWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainZoomWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainZoomWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainZoomWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainZoomWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 
 	switch (nChar) {
 	case VK_ESCAPE:
@@ -424,7 +424,7 @@ void CMainZoomWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainZoomWindow::OnTimer(UINT_PTR nWhichTimer) {
+void CMainZoomWindow::OnTimer(uintptr nWhichTimer) {
 	return;
 }
 
@@ -463,7 +463,7 @@ BOOL CMainZoomWindow::OnEraseBkgnd(CDC *pDC) {
 }
 
 
-void CMainZoomWindow::OnActivate(UINT nState, CWnd  *pWndOther, BOOL bMinimized) {
+void CMainZoomWindow::OnActivate(unsigned int nState, CWnd  *pWndOther, BOOL bMinimized) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {

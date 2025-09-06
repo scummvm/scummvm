@@ -107,7 +107,7 @@ public:
 	void CacheLoadObject(CBgbObject *);
 	void CacheReleaseObject(CBgbObject *);
 	void CacheFlush(void);
-	void CacheOptimize(ULONG);
+	void CacheOptimize(unsigned long);
 };
 
 
@@ -136,13 +136,13 @@ public:
 
 	int         m_nCels;                // number of cels in this cel strip
 	int         m_nZOrder;              // Sprite Z-Order
-	UINT        m_nFreq;                // How often Animation should start
-	UINT        m_nRepeat;              // Number of Paint cycles to perform
-	UINT        m_nFreqCount;
+	unsigned int        m_nFreq;                // How often Animation should start
+	unsigned int        m_nRepeat;              // Number of Paint cycles to perform
+	unsigned int        m_nFreqCount;
 	CRPoint     m_crPosition;           // relocatable position to paint bitmap
 	CSize       m_cSize;                // size of bitmap
 	CObject *m_pObject;              // can be CSprite or CBitmap...
-	ULONG       m_lAge;                 // age of this object
+	unsigned long       m_lAge;                 // age of this object
 	char        m_cEndData;
 
 public:

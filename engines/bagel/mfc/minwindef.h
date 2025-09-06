@@ -101,16 +101,16 @@ typedef CWnd *HWND;
 
 
 /* Types use for passing & returning polymorphic values */
-typedef UINT_PTR            WPARAM;
-typedef LONG_PTR            LPARAM;
-typedef LONG_PTR            LRESULT;
+typedef uintptr            WPARAM;
+typedef intptr            LPARAM;
+typedef intptr            LRESULT;
 
 typedef LRESULT(CALLBACK *HOOKPROC)(int code, WPARAM wParam, LPARAM lParam);
-typedef LRESULT(CALLBACK *WNDPROC)(HWND, UINT, WPARAM, LPARAM);
-typedef INT_PTR(FAR WINAPI *FARPROC)();
-typedef INT_PTR(NEAR WINAPI *NEARPROC)();
-typedef INT_PTR(WINAPI *PROC)();
-typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
+typedef LRESULT(CALLBACK *WNDPROC)(HWND, unsigned int, WPARAM, LPARAM);
+typedef intptr(FAR WINAPI *FARPROC)();
+typedef intptr(NEAR WINAPI *NEARPROC)();
+typedef intptr(WINAPI *PROC)();
+typedef intptr(CALLBACK *DLGPROC)(HWND, unsigned int, WPARAM, LPARAM);
 
 #ifndef max
 	#define max(a,b)            (((a) > (b)) ? (a) : (b))
@@ -120,12 +120,12 @@ typedef INT_PTR(CALLBACK *DLGPROC)(HWND, UINT, WPARAM, LPARAM);
 	#define min(a,b)            (((a) < (b)) ? (a) : (b))
 #endif
 
-#define MAKEWORD(a, b)      ((uint16)(((byte)(((DWORD_PTR)(a)) & 0xff)) | ((uint16)((byte)(((DWORD_PTR)(b)) & 0xff))) << 8))
-#define MAKELONG(a, b)      ((long)(((uint16)(((DWORD_PTR)(a)) & 0xffff)) | ((uint32)((uint16)(((DWORD_PTR)(b)) & 0xffff))) << 16))
-#define LOWORD(l)           ((uint16)(((DWORD_PTR)(l)) & 0xffff))
-#define HIWORD(l)           ((((DWORD_PTR)(l)) >> 16))
-#define LOBYTE(w)           ((byte)(((DWORD_PTR)(w)) & 0xff))
-#define HIBYTE(w)           ((byte)((((DWORD_PTR)(w)) >> 8) & 0xff))
+#define MAKEWORD(a, b)      ((uint16)(((byte)(((uintptr)(a)) & 0xff)) | ((uint16)((byte)(((uintptr)(b)) & 0xff))) << 8))
+#define MAKELONG(a, b)      ((long)(((uint16)(((uintptr)(a)) & 0xffff)) | ((uint32)((uint16)(((uintptr)(b)) & 0xffff))) << 16))
+#define LOWORD(l)           ((uint16)(((uintptr)(l)) & 0xffff))
+#define HIWORD(l)           ((((uintptr)(l)) >> 16))
+#define LOBYTE(w)           ((byte)(((uintptr)(w)) & 0xff))
+#define HIBYTE(w)           ((byte)((((uintptr)(w)) >> 8) & 0xff))
 
 #define POINTTOPOINTS(pt)      (MAKELONG((short)((pt).x), (short)((pt).y)))
 #define MAKEWPARAM(l, h)      ((WPARAM)(uint32)MAKELONG(l, h))
@@ -259,7 +259,7 @@ typedef struct tagPAINTSTRUCT {
  */
 typedef struct tagMSG {
 	HWND        hwnd = 0;
-	UINT        message = 0;
+	unsigned int        message = 0;
 	WPARAM      wParam = 0;
 	LPARAM      lParam = 0;
 	uint32       time = 0;
@@ -272,7 +272,7 @@ typedef struct tagMSG {
 	tagMSG() {
 		pt.x = pt.y = 0;
 	}
-	tagMSG(HWND hwnd_, UINT message_, WPARAM wParam_ = 0,
+	tagMSG(HWND hwnd_, unsigned int message_, WPARAM wParam_ = 0,
 	       LPARAM lParam_ = 0) :
 			hwnd(hwnd_), message(message_), wParam(wParam_),
 			lParam(lParam_) {
@@ -286,7 +286,7 @@ inline bool PtInRect(const RECT *lprc, POINT &pt) {
 }
 
 typedef struct tagWNDCLASS {
-	UINT        style;
+	unsigned int        style;
 	WNDPROC     lpfnWndProc;
 	int         cbClsExtra;
 	int         cbWndExtra;

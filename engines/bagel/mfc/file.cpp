@@ -28,12 +28,12 @@ namespace MFC {
 
 IMPLEMENT_DYNAMIC(CFile, CObject)
 
-CFile::CFile(const char *lpszFileName, UINT nOpenFlags) {
+CFile::CFile(const char *lpszFileName, unsigned int nOpenFlags) {
 	if (!Open(lpszFileName, nOpenFlags))
 		error("Could not open - %s", lpszFileName);
 }
 
-BOOL CFile::Open(const char *lpszFileName, UINT nOpenFlags, CFileException *pError) {
+BOOL CFile::Open(const char *lpszFileName, unsigned int nOpenFlags, CFileException *pError) {
 	Close();
 
 	Common::SeekableReadStream *rs = OpenFile(lpszFileName);
@@ -67,7 +67,7 @@ Common::WriteStream *CFile::writeStream() const {
 	return ws;
 }
 
-ULONGLONG CFile::SeekToEnd() {
+uint64 CFile::SeekToEnd() {
 	return readStream()->seek(0, SEEK_END);
 }
 
@@ -75,23 +75,23 @@ void CFile::SeekToBegin() {
 	readStream()->seek(0);
 }
 
-ULONGLONG CFile::Seek(LONGLONG lOff, UINT nFrom) {
+uint64 CFile::Seek(int64 lOff, unsigned int nFrom) {
 	return readStream()->seek(lOff, nFrom);
 }
 
-ULONGLONG CFile::GetLength() const {
+uint64 CFile::GetLength() const {
 	return readStream()->size();
 }
 
-ULONGLONG CFile::GetPosition() const {
+uint64 CFile::GetPosition() const {
 	return readStream()->pos();
 }
 
-UINT CFile::Read(void *lpBuf, UINT nCount) {
+unsigned int CFile::Read(void *lpBuf, unsigned int nCount) {
 	return readStream()->read(lpBuf, nCount);
 }
 
-void CFile::Write(const void *lpBuf, UINT nCount) {
+void CFile::Write(const void *lpBuf, unsigned int nCount) {
 	writeStream()->write(lpBuf, nCount);
 }
 

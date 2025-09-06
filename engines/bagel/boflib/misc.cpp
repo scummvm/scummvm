@@ -221,7 +221,7 @@ int StrFreqMatch(const char *mask, const char *test) {
 }
 
 
-BOOL StrCompare(const char *pszStr1, const char *pszStr2, UINT nSize) {
+BOOL StrCompare(const char *pszStr1, const char *pszStr2, unsigned int nSize) {
 	char *s1, *p, string1[256];   /* replace this stack hog with malloc */
 	char *s2, *sp, string2[256];       /* replace this stack hog with malloc */
 	int i, n, inc;

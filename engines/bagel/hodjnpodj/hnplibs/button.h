@@ -75,8 +75,8 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(UINT nID, CWnd * pParent);
-	BOOL AutoLoad(UINT nID, CWnd * pParent);
+	BOOL SetControl(unsigned int nID, CWnd * pParent);
+	BOOL AutoLoad(unsigned int nID, CWnd * pParent);
 
 	BOOL LoadBitmaps(CPalette *pPalette, CBitmap *pBase, CBitmap *pSelected, CBitmap *pFocus, CBitmap *pDisabled);
 	BOOL LoadBitmaps(const char *lpszBase, const char *lpszSelected = nullptr, const char *lpszFocus = nullptr, const char *lpszDisabled = nullptr);
@@ -151,7 +151,7 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(UINT nID, CWnd * pParent);
+	BOOL SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cHighlight, COLORREF cShadow, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
@@ -190,7 +190,7 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(UINT nID, CWnd * pParent);
+	BOOL SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 
@@ -231,7 +231,7 @@ public:
 
 // Implementation
 public:
-	BOOL SetControl(UINT nID, CWnd * pParent);
+	BOOL SetControl(unsigned int nID, CWnd * pParent);
 	void SetPalette(CPalette *pPalette);
 	void SetColors(CPalette *pPalette, COLORREF cFace, COLORREF cControl, COLORREF cText, COLORREF cTextDisabled, COLORREF cOutline);
 

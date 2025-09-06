@@ -184,7 +184,7 @@ HCURSOR CWinApp::LoadCursor(const char *lpszResourceName) {
 	return _cursors.loadCursor((intptr)lpszResourceName);
 }
 
-HCURSOR CWinApp::LoadCursor(UINT nIDResource) {
+HCURSOR CWinApp::LoadCursor(unsigned int nIDResource) {
 	return _cursors.loadCursor(nIDResource);
 }
 
@@ -258,7 +258,7 @@ void CWinApp::CloseAllDocuments(BOOL bEndSession) {
 		m_pDocManager->CloseAllDocuments(bEndSession);
 }
 
-UINT CWinApp::GetProfileInt(const char *lpszSection,
+unsigned int CWinApp::GetProfileInt(const char *lpszSection,
         const char *lpszEntry, int nDefault) {
 	return _settings[lpszSection].getInt(lpszEntry, nDefault);
 }
@@ -363,7 +363,7 @@ void CWinApp::AfxUnlockTempMaps() {
 		m_pmapHGDIOBJ->DeleteTemp();
 }
 
-const char *CWinApp::AfxRegisterWndClass(UINT nClassStyle,
+const char *CWinApp::AfxRegisterWndClass(unsigned int nClassStyle,
 		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	return "ScummVMWindow";
 }
@@ -394,14 +394,14 @@ HINSTANCE AfxGetInstanceHandle() {
 	return 0;
 }
 
-int LoadString(HINSTANCE hInstance, UINT uID,
+int LoadString(HINSTANCE hInstance, unsigned int uID,
 		char *lpBuffer, int cchBufferMax) {
 	if (lpBuffer == nullptr || cchBufferMax <= 0)
 		return 0;
 
 	// Calculate which string block (resource ID) contains this string
-	UINT blockID = (uID / 16) + 1;
-	UINT indexInBlock = uID % 16;
+	unsigned int blockID = (uID / 16) + 1;
+	unsigned int indexInBlock = uID % 16;
 
 	// Find the RT_STRING resource with that block ID
 	HRSRC hRes = FindResource(hInstance, MAKEINTRESOURCE(blockID), RT_STRING);
@@ -453,7 +453,7 @@ HMODULE GetModuleHandle(const char *lpModuleName) {
 	error("TODO: GetModuleHandle");
 }
 
-const char *AfxRegisterWndClass(UINT nClassStyle,
+const char *AfxRegisterWndClass(unsigned int nClassStyle,
         HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon) {
 	return AfxGetApp()->AfxRegisterWndClass(nClassStyle,
 		hCursor, hbrBackground, hIcon);

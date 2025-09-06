@@ -47,7 +47,7 @@ static const char *pszDiffLevel[DIFF_MAX + 1] = {
 extern const char *INI_SECTION;
 
 
-CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CUserCfgDlg::CUserCfgDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	: CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	m_pOKButton = nullptr;
 	m_pCancelButton = nullptr;
@@ -195,7 +195,7 @@ BOOL CUserCfgDlg::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-void CUserCfgDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScroll) {
+void CUserCfgDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScroll) {
 	switch (nSBCode) {
 
 	case SB_LEFT:

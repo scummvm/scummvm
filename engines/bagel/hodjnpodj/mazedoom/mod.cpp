@@ -92,7 +92,7 @@ BOOL        m_bIgnoreScrollClick;
 BOOL        _playing;
 BOOL        _gameOver = FALSE;
 POINT       _playerPos;
-UINT        m_nPlayerID = PODJ;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
+unsigned int        m_nPlayerID = PODJ;         // Hodj = 0, Podj = 4 to Offset the Bitmap ID for player
 
 int         _difficulty;
 int         _time,
@@ -103,8 +103,8 @@ int         tempTime;
 
 struct  TILE {          // Data type for each square of the underlying Grid of the Maze
 	POINT   m_nStart;   // Upper-left-hand corner where the bmp is to be drawn (24 X 24)
-	UINT    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
-	UINT    m_nTrap;    // Index of trap bitmap to use for drawing
+	unsigned int    m_nWall;    // 0 = Path, 1 = Wall, 2 = Trap, etc...
+	unsigned int    m_nTrap;    // Index of trap bitmap to use for drawing
 	POINT   m_nDest;    // x,y Tile location of Trap exit point
 	BOOL    m_bHidden;  // 0 = Visible, 1 = Invisible
 } _mazeTile[NUM_COLUMNS][NUM_ROWS];
@@ -492,7 +492,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -508,7 +508,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   rectTitle;
 
 	rectTitle.SetRect(NEWGAME_LOCATION_X, NEWGAME_LOCATION_Y,
@@ -535,7 +535,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -551,7 +551,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CFrameWnd ::OnLButtonUp(nFlags, point);
 }
 
@@ -565,7 +565,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -581,7 +581,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	if (InArtRegion(point) && _playing && !_gameOver) {     // If the cursor is within the border
 		GetNewCursor();                                     //...and we're playing, update the cursor
 		if (nFlags & MK_LBUTTON) {                          // If the Left mouse button is down,
@@ -602,7 +602,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -618,7 +618,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 
 	CFrameWnd ::OnRButtonDown(nFlags, point);
 
@@ -628,11 +628,11 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 // These functions are called when keyboard input generates a character.
 //
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);     // default action
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == 'q') && (nFlags & 0x2000)) {      // terminate app on ALT-q
 		if (pGameInfo->bPlayingMetagame)
 			pGameInfo->lScore = 0;
@@ -641,7 +641,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -658,7 +658,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CPoint  NewPosition;
 	NewPosition = (*_playerSprite).GetPosition();
 
@@ -716,7 +716,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nIDEvent   The ID of the timer event activated
+ *      unsigned int nIDEvent   The ID of the timer event activated
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -731,7 +731,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	CDC     *pDC;
 	CSound  *pEffect = nullptr;
 	char    msg[64];
@@ -878,7 +878,7 @@ void CMainWindow::NewGame() {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -903,7 +903,7 @@ void CMainWindow::MovePlayer(CPoint point) {
 	BOOL    bCollision = FALSE;
 	POINT   Delta;
 	POINT   Step;
-	UINT    nBmpID = IDB_HODJ_RIGHT;
+	unsigned int    nBmpID = IDB_HODJ_RIGHT;
 	auto *app = AfxGetApp();
 
 	if (_gameOver)

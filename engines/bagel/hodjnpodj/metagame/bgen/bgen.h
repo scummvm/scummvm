@@ -48,8 +48,6 @@ typedef int *XPINT ;
 typedef char *XPCHAR ;
 typedef void *XPVOID ;
 
-typedef unsigned long ULONG ;
-
 // RGB colors
 #define RGBCOLOR_RED        RGB(255,   0,   0)
 #define RGBCOLOR_GREEN      RGB(  0, 255,   0)

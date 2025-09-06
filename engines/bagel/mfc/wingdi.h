@@ -264,7 +264,7 @@ enum FontWeight {
 /*
  * Standard Cursor IDs
  */
-#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((uint16)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((uintptr)((uint16)(i))))
 #define IDC_NONE            0
 
 #define IDC_ARROW           MAKEINTRESOURCE(32512)
@@ -700,34 +700,34 @@ typedef struct tagLOGPALETTE {
  * MEASUREITEMSTRUCT for ownerdraw
  */
 typedef struct tagMEASUREITEMSTRUCT {
-	UINT       CtlType;
-	UINT       CtlID;
-	UINT       itemID;
-	UINT       itemWidth;
-	UINT       itemHeight;
-	ULONG_PTR  itemData;
+	unsigned int       CtlType;
+	unsigned int       CtlID;
+	unsigned int       itemID;
+	unsigned int       itemWidth;
+	unsigned int       itemHeight;
+	uintptr  itemData;
 } MEASUREITEMSTRUCT, NEAR *PMEASUREITEMSTRUCT, FAR *LPMEASUREITEMSTRUCT;
 
 /*
  * DRAWITEMSTRUCT for ownerdraw
  */
 typedef struct tagDRAWITEMSTRUCT {
-	UINT        CtlType;
-	UINT        CtlID;
-	UINT        itemID;
-	UINT        itemAction;
-	UINT        itemState;
+	unsigned int        CtlType;
+	unsigned int        CtlID;
+	unsigned int        itemID;
+	unsigned int        itemAction;
+	unsigned int        itemState;
 	HWND        hwndItem;
 	HDC         hDC;
 	RECT        rcItem;
-	ULONG_PTR   itemData;
+	uintptr   itemData;
 } DRAWITEMSTRUCT, NEAR *PDRAWITEMSTRUCT, FAR *LPDRAWITEMSTRUCT;
 
 /* Logical Brush (or Pattern) */
 typedef struct tagLOGBRUSH {
-	UINT        lbStyle;
+	unsigned int        lbStyle;
 	COLORREF    lbColor;
-	ULONG_PTR   lbHatch;
+	uintptr   lbHatch;
 } LOGBRUSH, *PLOGBRUSH, NEAR *NPLOGBRUSH, FAR *LPLOGBRUSH;
 
 extern int GetDeviceCaps(HDC hdc, int index);
@@ -740,7 +740,7 @@ extern int GetObject(HANDLE h, int c, void *pv);
 extern HDC BeginPaint(HWND hWnd, LPPAINTSTRUCT lpPaint);
 extern BOOL EndPaint(HWND hWnd, const PAINTSTRUCT *lpPaint);
 
-extern INT_PTR DialogBoxParam(HINSTANCE hInstance,
+extern intptr DialogBoxParam(HINSTANCE hInstance,
                               const char *lpTemplateName, HWND hWndParent,
                               DLGPROC lpDialogFunc, LPARAM dwInitParam);
 extern BOOL IsWindow(HWND hWnd);
@@ -749,14 +749,14 @@ extern int GetWindowText(HWND hWnd, char *lpszStringBuf, int nMaxCount);
 extern BOOL ScreenToClient(HWND hWnd, LPPOINT lpPoint);
 
 HBITMAP CreateDIBitmap(HDC hdc, CONST BITMAPINFOHEADER *pbmih,
-                       uint32 flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, UINT iUsage);
-extern int GetDIBits(HDC hdc, HBITMAP hbm, UINT start, UINT cLines,
-                     void *lpvBits, LPBITMAPINFO lpbmi, UINT usage);
+                       uint32 flInit, CONST void *pjBits, CONST BITMAPINFO *pbmi, unsigned int iUsage);
+extern int GetDIBits(HDC hdc, HBITMAP hbm, unsigned int start, unsigned int cLines,
+                     void *lpvBits, LPBITMAPINFO lpbmi, unsigned int usage);
 
 extern HGDIOBJ SelectObject(HDC hdc, HGDIOBJ h);
 extern HGDIOBJ GetStockObject(int i);
 extern HPALETTE SelectPalette(HDC hdc, HPALETTE hPal, BOOL bForceBkgd);
-extern UINT RealizePalette(HDC hdc);
+extern unsigned int RealizePalette(HDC hdc);
 extern BOOL BitBlt(HDC hdc, int xDest, int yDest, int width, int height,
 	HDC hdcSrc, int xSrc, int ySrc, uint32 rop);
 extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
@@ -764,7 +764,7 @@ extern BOOL StretchBlt(HDC hdcDest, int xDest, int yDest,
 extern int SetStretchBltMode(HDC hdc, int mode);
 extern int StretchDIBits(HDC hdc, int xDest, int yDest, int DestWidth, int DestHeight,
                          int xSrc, int ySrc, int SrcWidth, int SrcHeight,
-                         CONST void *lpBits, CONST BITMAPINFO *lpbmi, UINT iUsage, uint32 rop);
+                         CONST void *lpBits, CONST BITMAPINFO *lpbmi, unsigned int iUsage, uint32 rop);
 extern int GetTextExtent(HDC hdc, const char *text, size_t len);
 extern BOOL GetTextMetrics(HDC hdc, LPTEXTMETRIC lptm);
 extern intptr GetWindowWord(HWND hWnd, int nIndex);
@@ -795,9 +795,9 @@ extern byte GetGValue(COLORREF color);
 extern byte GetBValue(COLORREF color);
 
 extern HWND GetDlgItem(HWND hDlg, int nIDDlgItem);
-extern BOOL EndDialog(HWND hDlg, INT_PTR nResult);
+extern BOOL EndDialog(HWND hDlg, intptr nResult);
 extern BOOL SetDlgItemInt(HWND hDlg, int nIDDlgItem,
-                          UINT uValue, BOOL bSigned);
+                          unsigned int uValue, BOOL bSigned);
 extern BOOL CheckRadioButton(HWND hDlg, int nIDFirstButton,
                              int nIDLastButton, int nIDCheckButton);
 

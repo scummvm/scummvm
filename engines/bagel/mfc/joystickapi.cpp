@@ -26,20 +26,20 @@
 namespace Bagel {
 namespace MFC {
 
-MMRESULT joySetCapture(HWND hwnd, UINT uJoyID,
-		UINT uPeriod, BOOL fChanged) {
+MMRESULT joySetCapture(HWND hwnd, unsigned int uJoyID,
+		unsigned int uPeriod, BOOL fChanged) {
 	return AfxGetApp()->joySetCapture(hwnd, uJoyID, uPeriod, fChanged);
 }
 
-MMRESULT joySetThreshold(UINT uJoyID, UINT uThreshold) {
+MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold) {
 	return AfxGetApp()->joySetThreshold(uJoyID, uThreshold);
 }
 
-MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji) {
+MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji) {
 	return AfxGetApp()->joyGetPos(uJoyID, pji);
 }
 
-MMRESULT joyReleaseCapture(UINT uJoyID) {
+MMRESULT joyReleaseCapture(unsigned int uJoyID) {
 	return AfxGetApp()->joyReleaseCapture(uJoyID);
 }
 

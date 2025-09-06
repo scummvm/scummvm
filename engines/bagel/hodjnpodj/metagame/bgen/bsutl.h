@@ -113,7 +113,7 @@ public:
 	//  the clip rectangle to the specified region
 	BOOL PrepareDc(CDC *xpDc, BOOL bRelocatable PDFT(TRUE));
 	//- OnScroll -- handle OnHScroll and OnVScroll messages
-	BOOL OnScroll(UINT nSBCode, UINT nPos,
+	BOOL OnScroll(unsigned int nSBCode, unsigned int nPos,
 		CScrollBar *xpScrollBar, int iBarType PDFT(0));
 	//- GetBar -- get bsu scroll bar object
 	CBsuBar *GetBar(int iBarType);

@@ -80,13 +80,13 @@ public:
 	BOOL CreateMenu();
 	BOOL CreatePopupMenu();
 	BOOL LoadMenu(const char *lpszResourceName);
-	BOOL LoadMenu(UINT nIDResource);
+	BOOL LoadMenu(unsigned int nIDResource);
 	BOOL LoadMenuIndirect(const void *lpMenuTemplate);
 	BOOL DestroyMenu();
 
 	static CMenu *FromHandle(HMENU hMenu);
 
-	UINT CheckMenuItem(UINT nIDCheckItem, UINT nCheck);
+	unsigned int CheckMenuItem(unsigned int nIDCheckItem, unsigned int nCheck);
 };
 
 /*============================================================================*/
@@ -98,90 +98,90 @@ enum AfxSig {
 
 	AfxSig_b_D_v,               // BOOL (CDC*)
 	AfxSig_b_b_v,               // BOOL (BOOL)
-	AfxSig_b_u_v,               // BOOL (UINT)
+	AfxSig_b_u_v,               // BOOL (unsigned int)
 	AfxSig_b_h_v,               // BOOL (HANDLE)
-	AfxSig_b_W_uu,              // BOOL (CWnd*, UINT, UINT)
+	AfxSig_b_W_uu,              // BOOL (CWnd*, unsigned int, unsigned int)
 	AfxSig_b_W_COPYDATASTRUCT,              // BOOL (CWnd*, COPYDATASTRUCT*)
 	AfxSig_b_v_HELPINFO,        // BOOL (LPHELPINFO);
-	AfxSig_CTLCOLOR,            // HBRUSH (CDC*, CWnd*, UINT)
-	AfxSig_CTLCOLOR_REFLECT,    // HBRUSH (CDC*, UINT)
-	AfxSig_i_u_W_u,             // int (UINT, CWnd*, UINT)  // ?TOITEM
-	AfxSig_i_uu_v,              // int (UINT, UINT)
-	AfxSig_i_W_uu,              // int (CWnd*, UINT, UINT)
-	AfxSig_i_v_s,               // int (LPTSTR)
+	AfxSig_CTLCOLOR,            // HBRUSH (CDC*, CWnd*, unsigned int)
+	AfxSig_CTLCOLOR_REFLECT,    // HBRUSH (CDC*, unsigned int)
+	AfxSig_i_u_W_u,             // int (unsigned int, CWnd*, unsigned int)  // ?TOITEM
+	AfxSig_i_uu_v,              // int (unsigned int, unsigned int)
+	AfxSig_i_W_uu,              // int (CWnd*, unsigned int, unsigned int)
+	AfxSig_i_v_s,               // int (uint16 *)
 	AfxSig_l_w_l,               // LRESULT (WPARAM, LPARAM)
-	AfxSig_l_uu_M,              // LRESULT (UINT, UINT, CMenu*)
+	AfxSig_l_uu_M,              // LRESULT (unsigned int, unsigned int, CMenu*)
 	AfxSig_v_b_h,               // void (BOOL, HANDLE)
 	AfxSig_v_h_v,               // void (HANDLE)
 	AfxSig_v_h_h,               // void (HANDLE, HANDLE)
 	AfxSig_v_v_v,               // void ()
-	AfxSig_v_u_v,               // void (UINT)
-	AfxSig_v_up_v,              // void (UINT_PTR)
-	AfxSig_v_u_u,               // void (UINT, UINT)
-	AfxSig_v_uu_v,              // void (UINT, UINT)
+	AfxSig_v_u_v,               // void (unsigned int)
+	AfxSig_v_up_v,              // void (uintptr)
+	AfxSig_v_u_u,               // void (unsigned int, unsigned int)
+	AfxSig_v_uu_v,              // void (unsigned int, unsigned int)
 	AfxSig_v_v_ii,              // void (int, int)
-	AfxSig_v_u_uu,              // void (UINT, UINT, UINT)
-	AfxSig_v_u_ii,              // void (UINT, int, int)
-	AfxSig_v_u_W,               // void (UINT, CWnd*)
-	AfxSig_i_u_v,               // int (UINT)
-	AfxSig_u_u_v,               // UINT (UINT)
+	AfxSig_v_u_uu,              // void (unsigned int, unsigned int, unsigned int)
+	AfxSig_v_u_ii,              // void (unsigned int, int, int)
+	AfxSig_v_u_W,               // void (unsigned int, CWnd*)
+	AfxSig_i_u_v,               // int (unsigned int)
+	AfxSig_u_u_v,               // unsigned int (unsigned int)
 	AfxSig_b_v_v,               // BOOL ()
 	AfxSig_v_w_l,               // void (WPARAM, LPARAM)
 	AfxSig_MDIACTIVATE,         // void (BOOL, CWnd*, CWnd*)
 	AfxSig_v_D_v,               // void (CDC*)
 	AfxSig_v_M_v,               // void (CMenu*)
-	AfxSig_v_M_ub,              // void (CMenu*, UINT, BOOL)
+	AfxSig_v_M_ub,              // void (CMenu*, unsigned int, BOOL)
 	AfxSig_v_W_v,               // void (CWnd*)
 	AfxSig_v_v_W,               // void (CWnd*)
-	AfxSig_v_W_uu,              // void (CWnd*, UINT, UINT)
+	AfxSig_v_W_uu,              // void (CWnd*, unsigned int, unsigned int)
 	AfxSig_v_W_p,               // void (CWnd*, CPoint)
 	AfxSig_v_W_h,               // void (CWnd*, HANDLE)
 	AfxSig_C_v_v,               // HCURSOR ()
-	AfxSig_ACTIVATE,            // void (UINT, CWnd*, BOOL)
-	AfxSig_SCROLL,              // void (UINT, UINT, CWnd*)
-	AfxSig_SCROLL_REFLECT,      // void (UINT, UINT)
-	AfxSig_v_v_s,               // void (LPTSTR)
-	AfxSig_v_u_cs,              // void (UINT, const char *)
-	AfxSig_OWNERDRAW,           // void (int, LPTSTR) force return TRUE
-	AfxSig_i_i_s,               // int (int, LPTSTR)
-	AfxSig_u_v_p,               // UINT (CPoint)
-	AfxSig_u_v_v,               // UINT ()
+	AfxSig_ACTIVATE,            // void (unsigned int, CWnd*, BOOL)
+	AfxSig_SCROLL,              // void (unsigned int, unsigned int, CWnd*)
+	AfxSig_SCROLL_REFLECT,      // void (unsigned int, unsigned int)
+	AfxSig_v_v_s,               // void (uint16 *)
+	AfxSig_v_u_cs,              // void (unsigned int, const char *)
+	AfxSig_OWNERDRAW,           // void (int, uint16 *) force return TRUE
+	AfxSig_i_i_s,               // int (int, uint16 *)
+	AfxSig_u_v_p,               // unsigned int (CPoint)
+	AfxSig_u_v_v,               // unsigned int ()
 	AfxSig_v_b_NCCALCSIZEPARAMS,        // void (BOOL, NCCALCSIZE_PARAMS*)
 	AfxSig_v_v_WINDOWPOS,           // void (WINDOWPOS*)
-	AfxSig_v_uu_M,              // void (UINT, UINT, HMENU)
-	AfxSig_v_u_p,               // void (UINT, CPoint)
-	AfxSig_SIZING,              // void (UINT, LPRECT)
-	AfxSig_MOUSEWHEEL,          // BOOL (UINT, short, CPoint)
-	AfxSig_MOUSEHWHEEL,         // void (UINT, short, CPoint)
+	AfxSig_v_uu_M,              // void (unsigned int, unsigned int, HMENU)
+	AfxSig_v_u_p,               // void (unsigned int, CPoint)
+	AfxSig_SIZING,              // void (unsigned int, LPRECT)
+	AfxSig_MOUSEWHEEL,          // BOOL (unsigned int, short, CPoint)
+	AfxSig_MOUSEHWHEEL,         // void (unsigned int, short, CPoint)
 	AfxSigCmd_v,                // void ()
 	AfxSigCmd_b,                // BOOL ()
-	AfxSigCmd_RANGE,            // void (UINT)
-	AfxSigCmd_EX,               // BOOL (UINT)
+	AfxSigCmd_RANGE,            // void (unsigned int)
+	AfxSigCmd_EX,               // BOOL (unsigned int)
 	AfxSigNotify_v,             // void (NMHDR*, LRESULT*)
 	AfxSigNotify_b,             // BOOL (NMHDR*, LRESULT*)
-	AfxSigNotify_RANGE,         // void (UINT, NMHDR*, LRESULT*)
-	AfxSigNotify_EX,            // BOOL (UINT, NMHDR*, LRESULT*)
+	AfxSigNotify_RANGE,         // void (unsigned int, NMHDR*, LRESULT*)
+	AfxSigNotify_EX,            // BOOL (unsigned int, NMHDR*, LRESULT*)
 	AfxSigCmdUI,                // void (CCmdUI*)
-	AfxSigCmdUI_RANGE,          // void (CCmdUI*, UINT)
+	AfxSigCmdUI_RANGE,          // void (CCmdUI*, unsigned int)
 	AfxSigCmd_v_pv,             // void (void*)
 	AfxSigCmd_b_pv,             // BOOL (void*)
 	AfxSig_l,               // LRESULT ()
 	AfxSig_l_p,             // LRESULT (CPOINT)
-	AfxSig_u_W_u,               // UINT (CWnd*, UINT)
-	AfxSig_v_u_M,               // void (UINT, CMenu* )
-	AfxSig_u_u_M,               // UINT (UINT, CMenu* )
-	AfxSig_u_v_MENUGETOBJECTINFO,       // UINT (MENUGETOBJECTINFO*)
-	AfxSig_v_M_u,               // void (CMenu*, UINT)
-	AfxSig_v_u_LPMDINEXTMENU,       // void (UINT, LPMDINEXTMENU)
-	AfxSig_APPCOMMAND,          // void (CWnd*, UINT, UINT, UINT)
-	AfxSig_RAWINPUT,            // void (UINT, HRAWINPUT)
-	AfxSig_u_u_u,               // UINT (UINT, UINT)
-	AfxSig_MOUSE_XBUTTON,           // void (UINT, UINT, CPoint)
-	AfxSig_MOUSE_NCXBUTTON,         // void (short, UINT, CPoint)
-	AfxSig_INPUTLANGCHANGE,         // void (UINT, UINT)
-	AfxSig_v_u_hkl,                 // void (UINT, HKL)
+	AfxSig_u_W_u,               // unsigned int (CWnd*, unsigned int)
+	AfxSig_v_u_M,               // void (unsigned int, CMenu* )
+	AfxSig_u_u_M,               // unsigned int (unsigned int, CMenu* )
+	AfxSig_u_v_MENUGETOBJECTINFO,       // unsigned int (MENUGETOBJECTINFO*)
+	AfxSig_v_M_u,               // void (CMenu*, unsigned int)
+	AfxSig_v_u_LPMDINEXTMENU,       // void (unsigned int, LPMDINEXTMENU)
+	AfxSig_APPCOMMAND,          // void (CWnd*, unsigned int, unsigned int, unsigned int)
+	AfxSig_RAWINPUT,            // void (unsigned int, HRAWINPUT)
+	AfxSig_u_u_u,               // unsigned int (unsigned int, unsigned int)
+	AfxSig_MOUSE_XBUTTON,           // void (unsigned int, unsigned int, CPoint)
+	AfxSig_MOUSE_NCXBUTTON,         // void (short, unsigned int, CPoint)
+	AfxSig_INPUTLANGCHANGE,         // void (unsigned int, unsigned int)
+	AfxSig_v_u_hkl,                 // void (unsigned int, HKL)
 	AfxSig_INPUTDEVICECHANGE,       // void (unsigned short, HANDLE)
-	AfxSig_l_D_u,                   // LRESULT (CDC*, UINT)
+	AfxSig_l_D_u,                   // LRESULT (CDC*, unsigned int)
 	AfxSig_i_v_S,               // int (const char *)
 	AfxSig_vwpb,                // void (HFONT, BOOL)
 	AfxSig_h_v_v,               // HANDLE ()
@@ -189,92 +189,92 @@ enum AfxSig {
 	AfxSig_b_v_ii,              // BOOL (int, int)
 	AfxSig_h_h_h,               // HANDLE (HANDLE, HANDLE)
 	AfxSig_MDINext,             // void (CWnd*, BOOL)
-	AfxSig_u_u_l,               // UINT (UINT, LPARAM)
+	AfxSig_u_u_l,               // unsigned int (unsigned int, LPARAM)
 
 	// Old
 	AfxSig_bD = AfxSig_b_D_v,      // BOOL (CDC*)
 	AfxSig_bb = AfxSig_b_b_v,      // BOOL (BOOL)
-	AfxSig_bWww = AfxSig_b_W_uu,    // BOOL (CWnd*, UINT, UINT)
-	AfxSig_hDWw = AfxSig_CTLCOLOR,    // HBRUSH (CDC*, CWnd*, UINT)
-	AfxSig_hDw = AfxSig_CTLCOLOR_REFLECT,     // HBRUSH (CDC*, UINT)
-	AfxSig_iwWw = AfxSig_i_u_W_u,    // int (UINT, CWnd*, UINT)
-	AfxSig_iww = AfxSig_i_uu_v,     // int (UINT, UINT)
-	AfxSig_iWww = AfxSig_i_W_uu,    // int (CWnd*, UINT, UINT)
-	AfxSig_is = AfxSig_i_v_s,      // int (LPTSTR)
+	AfxSig_bWww = AfxSig_b_W_uu,    // BOOL (CWnd*, unsigned int, unsigned int)
+	AfxSig_hDWw = AfxSig_CTLCOLOR,    // HBRUSH (CDC*, CWnd*, unsigned int)
+	AfxSig_hDw = AfxSig_CTLCOLOR_REFLECT,     // HBRUSH (CDC*, unsigned int)
+	AfxSig_iwWw = AfxSig_i_u_W_u,    // int (unsigned int, CWnd*, unsigned int)
+	AfxSig_iww = AfxSig_i_uu_v,     // int (unsigned int, unsigned int)
+	AfxSig_iWww = AfxSig_i_W_uu,    // int (CWnd*, unsigned int, unsigned int)
+	AfxSig_is = AfxSig_i_v_s,      // int (uint16 *)
 	AfxSig_lwl = AfxSig_l_w_l,     // LRESULT (WPARAM, LPARAM)
-	AfxSig_lwwM = AfxSig_l_uu_M,    // LRESULT (UINT, UINT, CMenu*)
+	AfxSig_lwwM = AfxSig_l_uu_M,    // LRESULT (unsigned int, unsigned int, CMenu*)
 	AfxSig_vv = AfxSig_v_v_v,      // void (void)
 
-	AfxSig_vw = AfxSig_v_u_v,      // void (UINT)
-	AfxSig_vww = AfxSig_v_u_u,     // void (UINT, UINT)
-	AfxSig_vww2 = AfxSig_v_uu_v,    // void (UINT, UINT) // both come from wParam
+	AfxSig_vw = AfxSig_v_u_v,      // void (unsigned int)
+	AfxSig_vww = AfxSig_v_u_u,     // void (unsigned int, unsigned int)
+	AfxSig_vww2 = AfxSig_v_uu_v,    // void (unsigned int, unsigned int) // both come from wParam
 	AfxSig_vvii = AfxSig_v_v_ii,    // void (int, int) // wParam is ignored
-	AfxSig_vwww = AfxSig_v_u_uu,    // void (UINT, UINT, UINT)
-	AfxSig_vwii = AfxSig_v_u_ii,    // void (UINT, int, int)
-	AfxSig_vwl = AfxSig_v_w_l,     // void (UINT, LPARAM)
+	AfxSig_vwww = AfxSig_v_u_uu,    // void (unsigned int, unsigned int, unsigned int)
+	AfxSig_vwii = AfxSig_v_u_ii,    // void (unsigned int, int, int)
+	AfxSig_vwl = AfxSig_v_w_l,     // void (unsigned int, LPARAM)
 	AfxSig_vbWW = AfxSig_MDIACTIVATE,    // void (BOOL, CWnd*, CWnd*)
 	AfxSig_vD = AfxSig_v_D_v,      // void (CDC*)
 	AfxSig_vM = AfxSig_v_M_v,      // void (CMenu*)
-	AfxSig_vMwb = AfxSig_v_M_ub,    // void (CMenu*, UINT, BOOL)
+	AfxSig_vMwb = AfxSig_v_M_ub,    // void (CMenu*, unsigned int, BOOL)
 
 	AfxSig_vW = AfxSig_v_W_v,      // void (CWnd*)
-	AfxSig_vWww = AfxSig_v_W_uu,    // void (CWnd*, UINT, UINT)
+	AfxSig_vWww = AfxSig_v_W_uu,    // void (CWnd*, unsigned int, unsigned int)
 	AfxSig_vWp = AfxSig_v_W_p,     // void (CWnd*, CPoint)
 	AfxSig_vWh = AfxSig_v_W_h,     // void (CWnd*, HANDLE)
-	AfxSig_vwW = AfxSig_v_u_W,     // void (UINT, CWnd*)
-	AfxSig_vwWb = AfxSig_ACTIVATE,    // void (UINT, CWnd*, BOOL)
-	AfxSig_vwwW = AfxSig_SCROLL,    // void (UINT, UINT, CWnd*)
-	AfxSig_vwwx = AfxSig_SCROLL_REFLECT,    // void (UINT, UINT)
-	AfxSig_vs = AfxSig_v_v_s,      // void (LPTSTR)
-	AfxSig_vOWNER = AfxSig_OWNERDRAW,  // void (int, LPTSTR), force return TRUE
-	AfxSig_iis = AfxSig_i_i_s,     // int (int, LPTSTR)
-	AfxSig_wp = AfxSig_u_v_p,      // UINT (CPoint)
-	AfxSig_wv = AfxSig_u_v_v,      // UINT (void)
+	AfxSig_vwW = AfxSig_v_u_W,     // void (unsigned int, CWnd*)
+	AfxSig_vwWb = AfxSig_ACTIVATE,    // void (unsigned int, CWnd*, BOOL)
+	AfxSig_vwwW = AfxSig_SCROLL,    // void (unsigned int, unsigned int, CWnd*)
+	AfxSig_vwwx = AfxSig_SCROLL_REFLECT,    // void (unsigned int, unsigned int)
+	AfxSig_vs = AfxSig_v_v_s,      // void (uint16 *)
+	AfxSig_vOWNER = AfxSig_OWNERDRAW,  // void (int, uint16 *), force return TRUE
+	AfxSig_iis = AfxSig_i_i_s,     // int (int, uint16 *)
+	AfxSig_wp = AfxSig_u_v_p,      // unsigned int (CPoint)
+	AfxSig_wv = AfxSig_u_v_v,      // unsigned int (void)
 	AfxSig_vPOS = AfxSig_v_v_WINDOWPOS,    // void (WINDOWPOS*)
 	AfxSig_vCALC = AfxSig_v_b_NCCALCSIZEPARAMS,   // void (BOOL, NCCALCSIZE_PARAMS*)
 	AfxSig_vNMHDRpl = AfxSigNotify_v,    // void (NMHDR*, LRESULT*)
 	AfxSig_bNMHDRpl = AfxSigNotify_b,    // BOOL (NMHDR*, LRESULT*)
-	AfxSig_vwNMHDRpl = AfxSigNotify_RANGE,   // void (UINT, NMHDR*, LRESULT*)
-	AfxSig_bwNMHDRpl = AfxSigNotify_EX,   // BOOL (UINT, NMHDR*, LRESULT*)
+	AfxSig_vwNMHDRpl = AfxSigNotify_RANGE,   // void (unsigned int, NMHDR*, LRESULT*)
+	AfxSig_bwNMHDRpl = AfxSigNotify_EX,   // BOOL (unsigned int, NMHDR*, LRESULT*)
 	AfxSig_bHELPINFO = AfxSig_b_v_HELPINFO,   // BOOL (HELPINFO*)
-	AfxSig_vwSIZING = AfxSig_SIZING,    // void (UINT, LPRECT) -- return TRUE
+	AfxSig_vwSIZING = AfxSig_SIZING,    // void (unsigned int, LPRECT) -- return TRUE
 
 	// signatures specific to CCmdTarget
 	AfxSig_cmdui = AfxSigCmdUI,   // void (CCmdUI*)
-	AfxSig_cmduiw = AfxSigCmdUI_RANGE,  // void (CCmdUI*, UINT)
+	AfxSig_cmduiw = AfxSigCmdUI_RANGE,  // void (CCmdUI*, unsigned int)
 	AfxSig_vpv = AfxSigCmd_v_pv,     // void (void*)
 	AfxSig_bpv = AfxSigCmd_b_pv,     // BOOL (void*)
 
 	// Other aliases (based on implementation)
-	AfxSig_vwwh = AfxSig_v_uu_M,                // void (UINT, UINT, HMENU)
-	AfxSig_vwp = AfxSig_v_u_p,                 // void (UINT, CPoint)
-	AfxSig_bw = AfxSig_b_u_v,      // BOOL (UINT)
+	AfxSig_vwwh = AfxSig_v_uu_M,                // void (unsigned int, unsigned int, HMENU)
+	AfxSig_vwp = AfxSig_v_u_p,                 // void (unsigned int, CPoint)
+	AfxSig_bw = AfxSig_b_u_v,      // BOOL (unsigned int)
 	AfxSig_bh = AfxSig_b_h_v,      // BOOL (HANDLE)
-	AfxSig_iw = AfxSig_i_u_v,      // int (UINT)
-	AfxSig_ww = AfxSig_u_u_v,      // UINT (UINT)
+	AfxSig_iw = AfxSig_i_u_v,      // int (unsigned int)
+	AfxSig_ww = AfxSig_u_u_v,      // unsigned int (unsigned int)
 	AfxSig_bv = AfxSig_b_v_v,      // BOOL (void)
 	AfxSig_hv = AfxSig_C_v_v,      // HANDLE (void)
 	AfxSig_vb = AfxSig_vw,      // void (BOOL)
 	AfxSig_vbh = AfxSig_v_b_h,    // void (BOOL, HANDLE)
-	AfxSig_vbw = AfxSig_vww,    // void (BOOL, UINT)
+	AfxSig_vbw = AfxSig_vww,    // void (BOOL, unsigned int)
 	AfxSig_vhh = AfxSig_v_h_h,    // void (HANDLE, HANDLE)
 	AfxSig_vh = AfxSig_v_h_v,      // void (HANDLE)
 	AfxSig_viSS = AfxSig_vwl,   // void (int, STYLESTRUCT*)
 	AfxSig_bwl = AfxSig_lwl,
-	AfxSig_vwMOVING = AfxSig_vwSIZING,  // void (UINT, LPRECT) -- return TRUE
+	AfxSig_vwMOVING = AfxSig_vwSIZING,  // void (unsigned int, LPRECT) -- return TRUE
 
 	AfxSig_vW2 = AfxSig_v_v_W,                 // void (CWnd*) (CWnd* comes from lParam)
 	AfxSig_bWCDS = AfxSig_b_W_COPYDATASTRUCT,               // BOOL (CWnd*, COPYDATASTRUCT*)
-	AfxSig_bwsp = AfxSig_MOUSEWHEEL,                // BOOL (UINT, short, CPoint)
+	AfxSig_bwsp = AfxSig_MOUSEWHEEL,                // BOOL (unsigned int, short, CPoint)
 	AfxSig_vws = AfxSig_v_u_cs,
 };
 
 
 #define CN_COMMAND              0               // void ()
-#define CN_UPDATE_COMMAND_UI    ((UINT)(-1))    // void (CCmdUI*)
-#define CN_EVENT                ((UINT)(-2))    // OLE event
-#define CN_OLECOMMAND           ((UINT)(-3))    // OLE document command
-#define CN_OLE_UNREGISTER       ((UINT)(-4))    // OLE unregister
+#define CN_UPDATE_COMMAND_UI    ((unsigned int)(-1))    // void (CCmdUI*)
+#define CN_EVENT                ((unsigned int)(-2))    // OLE event
+#define CN_OLECOMMAND           ((unsigned int)(-3))    // OLE document command
+#define CN_OLE_UNREGISTER       ((unsigned int)(-4))    // OLE unregister
 // > 0 are control notifications
 // < 0 are for MFC's use
 
@@ -290,10 +290,10 @@ typedef void (CWnd::*AFX_PMSGW)(void);
 
 #pragma warning(disable: 4121)
 struct AFX_MSGMAP_ENTRY {
-	UINT nMessage;   // windows message
-	UINT nCode;      // control code or WM_NOTIFY code
-	UINT nID;        // control ID (or 0 for windows messages)
-	UINT nLastID;    // used for entries specifying a range of control id's
+	unsigned int nMessage;   // windows message
+	unsigned int nCode;      // control code or WM_NOTIFY code
+	unsigned int nID;        // control ID (or 0 for windows messages)
+	unsigned int nLastID;    // used for entries specifying a range of control id's
 	int nSig;   // signature type (action) or pointer to message #
 	AFX_PMSG pfn;    // routine to call (or special value)
 };
@@ -356,18 +356,18 @@ union MessageMapFunctions {
 	// specific type safe variants for WM_COMMAND and WM_NOTIFY messages
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND)();
 	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bCOMMAND)();
-	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_RANGE)(UINT);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_EX)(UINT);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_RANGE)(unsigned int);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_COMMAND_EX)(unsigned int);
 
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI)(CCmdUI *);
-	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI_RANGE)(CCmdUI *, UINT);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_UPDATE_COMMAND_UI_RANGE)(CCmdUI *, unsigned int);
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_OTHER)(void *);
 	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_OTHER_EX)(void *);
 
 	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY)(NMHDR *, LRESULT *);
 	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_bNOTIFY)(NMHDR *, LRESULT *);
-	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_RANGE)(UINT, NMHDR *, LRESULT *);
-	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_EX)(UINT, NMHDR *, LRESULT *);
+	void (AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_RANGE)(unsigned int, NMHDR *, LRESULT *);
+	BOOL(AFX_MSG_CALL CCmdTarget:: *pfn_NOTIFY_EX)(unsigned int, NMHDR *, LRESULT *);
 
 	// Type safe variant for thread messages
 
@@ -376,49 +376,49 @@ union MessageMapFunctions {
 	// Specific type safe variants for WM-style messages
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bD)(CDC *);
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bb)(BOOL);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWww)(CWnd *, UINT, UINT);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWww)(CWnd *, unsigned int, unsigned int);
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bHELPINFO)(HELPINFO *);
 	BOOL(AFX_MSG_CALL CWnd:: *pfn_bWCDS)(CWnd *, COPYDATASTRUCT *);
-	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDWw)(CDC *, CWnd *, UINT);
-	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDw)(CDC *, UINT);
-	int (AFX_MSG_CALL CWnd:: *pfn_iwWw)(UINT, CWnd *, UINT);
-	int (AFX_MSG_CALL CWnd:: *pfn_iww)(UINT, UINT);
-	int (AFX_MSG_CALL CWnd:: *pfn_iWww)(CWnd *, UINT, UINT);
-	int (AFX_MSG_CALL CWnd:: *pfn_is)(LPTSTR);
+	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDWw)(CDC *, CWnd *, unsigned int);
+	HBRUSH(AFX_MSG_CALL CWnd:: *pfn_hDw)(CDC *, unsigned int);
+	int (AFX_MSG_CALL CWnd:: *pfn_iwWw)(unsigned int, CWnd *, unsigned int);
+	int (AFX_MSG_CALL CWnd:: *pfn_iww)(unsigned int, unsigned int);
+	int (AFX_MSG_CALL CWnd:: *pfn_iWww)(CWnd *, unsigned int, unsigned int);
+	int (AFX_MSG_CALL CWnd:: *pfn_is)(uint16 *);
 	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwl)(WPARAM, LPARAM);
-	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwwM)(UINT, UINT, CMenu *);
+	LRESULT(AFX_MSG_CALL CWnd:: *pfn_lwwM)(unsigned int, unsigned int, CMenu *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vv)(void);
 
-	void (AFX_MSG_CALL CWnd:: *pfn_vw)(UINT);
-	void (AFX_MSG_CALL CWnd:: *pfn_vww)(UINT, UINT);
+	void (AFX_MSG_CALL CWnd:: *pfn_vw)(unsigned int);
+	void (AFX_MSG_CALL CWnd:: *pfn_vww)(unsigned int, unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vvii)(int, int);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwww)(UINT, UINT, UINT);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwii)(UINT, int, int);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwww)(unsigned int, unsigned int, unsigned int);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwii)(unsigned int, int, int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vwl)(WPARAM, LPARAM);
 	void (AFX_MSG_CALL CWnd:: *pfn_vbWW)(BOOL, CWnd *, CWnd *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vD)(CDC *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vM)(CMenu *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vMwb)(CMenu *, UINT, BOOL);
+	void (AFX_MSG_CALL CWnd:: *pfn_vMwb)(CMenu *, unsigned int, BOOL);
 
 	void (AFX_MSG_CALL CWnd:: *pfn_vW)(CWnd *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vWww)(CWnd *, UINT, UINT);
+	void (AFX_MSG_CALL CWnd:: *pfn_vWww)(CWnd *, unsigned int, unsigned int);
 	void (AFX_MSG_CALL CWnd:: *pfn_vWp)(CWnd *, CPoint);
 	void (AFX_MSG_CALL CWnd:: *pfn_vWh)(CWnd *, HANDLE);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwW)(UINT, CWnd *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwWb)(UINT, CWnd *, BOOL);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwwW)(UINT, UINT, CWnd *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwwx)(UINT, UINT);
-	void (AFX_MSG_CALL CWnd:: *pfn_vs)(LPTSTR);
-	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, LPTSTR);      // force return TRUE
-	int (AFX_MSG_CALL CWnd:: *pfn_iis)(int, LPTSTR);
-	UINT(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
-	UINT(AFX_MSG_CALL CWnd:: *pfn_wv)(void);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwW)(unsigned int, CWnd *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwWb)(unsigned int, CWnd *, BOOL);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwwW)(unsigned int, unsigned int, CWnd *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwwx)(unsigned int, unsigned int);
+	void (AFX_MSG_CALL CWnd:: *pfn_vs)(uint16 *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vOWNER)(int, uint16 *);      // force return TRUE
+	int (AFX_MSG_CALL CWnd:: *pfn_iis)(int, uint16 *);
+	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wp)(CPoint);
+	unsigned int(AFX_MSG_CALL CWnd:: *pfn_wv)(void);
 	void (AFX_MSG_CALL CWnd:: *pfn_vPOS)(WINDOWPOS *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vCALC)(BOOL, NCCALCSIZE_PARAMS *);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwp)(UINT, CPoint);
-	void (AFX_MSG_CALL CWnd:: *pfn_vwwh)(UINT, UINT, HANDLE);
-	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(UINT, short, CPoint);
-	void (AFX_MSG_CALL CWnd:: *pfn_vws)(UINT, const char *);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwp)(unsigned int, CPoint);
+	void (AFX_MSG_CALL CWnd:: *pfn_vwwh)(unsigned int, unsigned int, HANDLE);
+	BOOL(AFX_MSG_CALL CWnd:: *pfn_bwsp)(unsigned int, short, CPoint);
+	void (AFX_MSG_CALL CWnd:: *pfn_vws)(unsigned int, const char *);
 	void (AFX_MSG_CALL CWnd:: *pfn_vFb)(HFONT, BOOL);
 };
 
@@ -621,8 +621,8 @@ public:
 	BOOL Attach(HBITMAP hObject);
 	HBITMAP Detach();
 	BOOL CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight);
-	BOOL CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-	    UINT nBitcount, const void *lpBits);
+	BOOL CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
+	    unsigned int nBitcount, const void *lpBits);
 	int GetObject(int nCount, void *lpObject) const;
 	long GetBitmapBits(long dwCount, void *lpBits) const;
 	BOOL GetBitmap(BITMAP *pBitMap) const {
@@ -653,15 +653,15 @@ public:
 
 	BOOL CreatePalette(LPLOGPALETTE lpLogPalette);
 	int GetObject(int nCount, void *lpObject) const;
-	UINT GetEntryCount() const;
-	UINT GetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+	unsigned int GetEntryCount() const;
+	unsigned int GetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors) const;
-	UINT SetPaletteEntries(UINT nStartIndex, UINT nNumEntries,
+	unsigned int SetPaletteEntries(unsigned int nStartIndex, unsigned int nNumEntries,
 	                       LPPALETTEENTRY lpPaletteColors);
-	UINT SetPaletteEntries(const Graphics::Palette &pal);
-	BOOL AnimatePalette(UINT nStartIndex, UINT nNumEntries,
+	unsigned int SetPaletteEntries(const Graphics::Palette &pal);
+	BOOL AnimatePalette(unsigned int nStartIndex, unsigned int nNumEntries,
 	                    const PALETTEENTRY *lpPaletteColors);
-	UINT GetNearestPaletteIndex(COLORREF crColor);
+	unsigned int GetNearestPaletteIndex(COLORREF crColor);
 	bool isEmpty() const {
 		return !palette() || palette()->empty();
 	}
@@ -738,7 +738,7 @@ public:
 
 		HPALETTE selectPalette(HPALETTE pal, BOOL bForceBackground);
 		CPalette *selectPalette(CPalette *pal, BOOL bForceBackground);
-		UINT realizePalette();
+		unsigned int realizePalette();
 		COLORREF GetNearestColor(COLORREF crColor) const;
 
 		void fillSolidRect(LPCRECT lpRect, COLORREF clr);
@@ -749,7 +749,7 @@ public:
 		void frameRgn(const CRgn *pRgn, CBrush *brush, int nWidth, int nHeight);
 		void floodFill(int x, int y, COLORREF crColor);
 		void floodFill(int x, int y, COLORREF crColor,
-			UINT nFillType);
+			unsigned int nFillType);
 		void rectangle(LPCRECT lpRect);
 		void rectangle(int x1, int y1, int x2, int y2);
 		void draw3dRect(const CRect &rect, COLORREF clrTopLeft, COLORREF clrBottomRight);
@@ -781,19 +781,19 @@ public:
 		BOOL textOut(int x, int y, const CString &str,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
-		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-			const char *lpszString, UINT nCount, int *lpDxWidths);
-		BOOL extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+		BOOL extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+			const char *lpszString, unsigned int nCount, int *lpDxWidths);
+		BOOL extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 			const CString &str, int *lpDxWidths);
 		CSize tabbedTextOut(int x, int y, const char *lpszString, int nCount,
 			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 		CSize tabbedTextOut(int x, int y, const CString &str,
 			int nTabPositions, const int *lpnTabStopPositions, int nTabOrigin);
 
-		int drawText(const char *lpszString, int nCount, LPRECT lpRect, UINT nFormat,
+		int drawText(const char *lpszString, int nCount, LPRECT lpRect, unsigned int nFormat,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
-		int drawText(const CString &str, LPRECT lpRect, UINT nFormat,
+		int drawText(const CString &str, LPRECT lpRect, unsigned int nFormat,
 			int nTabPositions = 0, const int *lpnTabStopPositions = nullptr,
 			int nTabOrigin = 0, CSize *size = nullptr);
 
@@ -812,8 +812,8 @@ public:
 		BOOL grayString(CBrush *pBrush,
 			BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 			int nCount, int x, int y, int nWidth, int nHeight);
-		UINT getTextAlign() const;
-		UINT setTextAlign(UINT nFlags);
+		unsigned int getTextAlign() const;
+		unsigned int setTextAlign(unsigned int nFlags);
 		BOOL getTextMetrics(LPTEXTMETRIC lpMetrics) const;
 	};
 
@@ -885,10 +885,10 @@ public:
 	void FillSolidRect(LPCRECT lpRect, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor);
 	BOOL FloodFill(int x, int y, COLORREF crColor,
-	               UINT nFillType);
+	               unsigned int nFillType);
 	void Rectangle(LPCRECT lpRect);
 	void Rectangle(int x1, int y1, int x2, int y2);
-	BOOL DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags);
+	BOOL DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags);
 
 	BOOL Pie(
 	    int x1, int y1,     // Upper-left corner of bounding rectangle
@@ -920,7 +920,7 @@ public:
 
 	COLORREF GetNearestColor(COLORREF crColor) const;
 	CPalette *SelectPalette(CPalette *pPalette, BOOL bForceBackground);
-	UINT RealizePalette();
+	unsigned int RealizePalette();
 	void UpdateColors();
 	virtual COLORREF SetBkColor(COLORREF crColor);
 	COLORREF GetBkColor() const;
@@ -930,17 +930,17 @@ public:
 	virtual COLORREF SetTextColor(COLORREF crColor);
 	virtual BOOL TextOut(int x, int y, const char *lpszString, int nCount);
 	BOOL TextOut(int x, int y, const CString &str);
-	virtual BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-	                        const char *lpszString, UINT nCount, int *lpDxWidths);
-	BOOL ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+	virtual BOOL ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+	                        const char *lpszString, unsigned int nCount, int *lpDxWidths);
+	BOOL ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 	                const CString &str, int *lpDxWidths);
 	virtual CSize TabbedTextOut(int x, int y, const char *lpszString, int nCount,
 	                            int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
 	CSize TabbedTextOut(int x, int y, const CString &str,
 	                    int nTabPositions, int *lpnTabStopPositions, int nTabOrigin);
 	int DrawText(const char *lpszString, int nCount,
-	             LPRECT lpRect, UINT nFormat);
-	int DrawText(const CString &str, LPRECT lpRect, UINT nFormat);
+	             LPRECT lpRect, unsigned int nFormat);
+	int DrawText(const CString &str, LPRECT lpRect, unsigned int nFormat);
 
 
 	CSize GetTextExtent(const char *lpszString, int nCount) const;
@@ -958,8 +958,8 @@ public:
 	virtual BOOL GrayString(CBrush *pBrush,
 	                        BOOL(CALLBACK *lpfnOutput)(HDC, LPARAM, int), LPARAM lpData,
 	                        int nCount, int x, int y, int nWidth, int nHeight);
-	UINT GetTextAlign() const;
-	UINT SetTextAlign(UINT nFlags);
+	unsigned int GetTextAlign() const;
+	unsigned int SetTextAlign(unsigned int nFlags);
 	BOOL GetTextMetrics(LPTEXTMETRIC lpMetrics) const;
 };
 
@@ -982,13 +982,13 @@ class CCmdTarget : public CObject {
 	DECLARE_DYNAMIC(CCmdTarget)
 
 protected:
-	const AFX_MSGMAP_ENTRY *LookupMessage(UINT message);
+	const AFX_MSGMAP_ENTRY *LookupMessage(unsigned int message);
 	const AFX_MSGMAP_ENTRY *AfxFindMessageEntry(
 		const AFX_MSGMAP_ENTRY *lpEntry,
-		UINT nMsg, UINT nCode, UINT nID);
+		unsigned int nMsg, unsigned int nCode, unsigned int nID);
 	bool _AfxDispatchCmdMsg(CCmdTarget *pTarget,
-		UINT nID, int nCode, AFX_PMSG pfn, void *pExtra,
-		UINT nSig, AFX_CMDHANDLERINFO *pHandlerInfo);
+		unsigned int nID, int nCode, AFX_PMSG pfn, void *pExtra,
+		unsigned int nSig, AFX_CMDHANDLERINFO *pHandlerInfo);
 
 public:
 	~CCmdTarget() override {
@@ -1008,7 +1008,7 @@ public:
 	void EndWaitCursor();
 	void RestoreWaitCursor();
 
-	BOOL OnCmdMsg(UINT nID, int nCode, void *pExtra,
+	BOOL OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
 		AFX_CMDHANDLERINFO *pHandlerInfo);
 };
 
@@ -1050,7 +1050,7 @@ public:
 	virtual BOOL IsModified();
 	virtual void SetModifiedFlag(BOOL bModified = TRUE);
 	virtual void ReportSaveLoadException(const char *lpszPathName,
-		CException *e, BOOL bSaving, UINT nIDPDefault);
+		CException *e, BOOL bSaving, unsigned int nIDPDefault);
 	bool SaveModified();
 
 	void AddView(CView *pView);
@@ -1127,15 +1127,15 @@ protected:
 	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT *pResult) {
 		return false;
 	}
-	virtual void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized);
+	virtual void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized);
 
-	virtual LRESULT DefWindowProc(UINT nMsg, WPARAM wParam, LPARAM lParam) {
+	virtual LRESULT DefWindowProc(unsigned int nMsg, WPARAM wParam, LPARAM lParam) {
 		return 0;
 	}
 	virtual void OnSetFont(CFont *pFont) {
 	}
 
-	BOOL OnWndMsg(UINT message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
+	BOOL OnWndMsg(unsigned int message, WPARAM wParam, LPARAM lParam, LRESULT *pResult);
 
 	afx_msg void OnActivateApp(BOOL bActive, uint32 dwThreadID) {}
 	afx_msg LRESULT OnActivateTopLevel(WPARAM, LPARAM) {
@@ -1149,25 +1149,25 @@ protected:
 		return 0;
 	}
 
-	afx_msg HBRUSH OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
+	afx_msg HBRUSH OnCtlColor(CDC *pDC, CWnd *pWnd, unsigned int nCtlColor) {
 		return 0;
 	}
 
 	afx_msg void OnDestroy() {}
 	afx_msg void OnEnable(BOOL bEnable) {}
 	afx_msg void OnEndSession(BOOL bEnding) {}
-	afx_msg void OnEnterIdle(UINT nWhy, CWnd *pWho) {}
+	afx_msg void OnEnterIdle(unsigned int nWhy, CWnd *pWho) {}
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC) {
 		return false;
 	}
 	afx_msg void OnIconEraseBkgnd(CDC *pDC) {}
 	afx_msg void OnKillFocus(CWnd *pNewWnd) {}
-	afx_msg void OnMenuSelect(UINT nItemID, UINT nFlags, HMENU hSysMenu) {}
+	afx_msg void OnMenuSelect(unsigned int nItemID, unsigned int nFlags, HMENU hSysMenu) {}
 	afx_msg void OnMove(int x, int y) {}
 	afx_msg void OnPaint() {}
 	afx_msg void OnSyncPaint() {}
-	afx_msg void OnParentNotify(UINT message, LPARAM lParam) {}
-	afx_msg UINT OnNotifyFormat(CWnd *pWnd, UINT nCommand) {
+	afx_msg void OnParentNotify(unsigned int message, LPARAM lParam) {}
+	afx_msg unsigned int OnNotifyFormat(CWnd *pWnd, unsigned int nCommand) {
 		return 0;
 	}
 	afx_msg HCURSOR OnQueryDragIcon() {
@@ -1183,14 +1183,14 @@ protected:
 		return false;
 	}
 	afx_msg void OnSetFocus(CWnd *pOldWnd) {}
-	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
-	afx_msg void OnSize(UINT nType, int cx, int cy) {}
-	afx_msg void OnTCard(UINT idAction, uint32 dwActionData) {}
-	afx_msg void OnSessionChange(UINT nSessionState, UINT nId) {}
+	afx_msg void OnShowWindow(BOOL bShow, unsigned int nStatus);
+	afx_msg void OnSize(unsigned int nType, int cx, int cy) {}
+	afx_msg void OnTCard(unsigned int idAction, uint32 dwActionData) {}
+	afx_msg void OnSessionChange(unsigned int nSessionState, unsigned int nId) {}
 
-	afx_msg void OnChangeUIState(UINT nAction, UINT nUIElement) {}
-	afx_msg void OnUpdateUIState(UINT nAction, UINT nUIElement) {}
-	afx_msg UINT OnQueryUIState() {
+	afx_msg void OnChangeUIState(unsigned int nAction, unsigned int nUIElement) {}
+	afx_msg void OnUpdateUIState(unsigned int nAction, unsigned int nUIElement) {}
+	afx_msg unsigned int OnQueryUIState() {
 		return 0;
 	}
 
@@ -1206,96 +1206,96 @@ protected:
 	afx_msg LRESULT OnNcHitTest(CPoint point) {
 		return 0;
 	}
-	afx_msg void OnNcLButtonDblClk(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcLButtonDown(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcLButtonUp(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcMButtonDblClk(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcMButtonDown(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcMButtonUp(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcMouseHover(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcLButtonDblClk(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcLButtonDown(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcLButtonUp(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonDblClk(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonDown(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcMButtonUp(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcMouseHover(unsigned int nHitTest, CPoint point) {}
 	afx_msg void OnNcMouseLeave() {}
-	afx_msg void OnNcMouseMove(UINT nHitTest, CPoint point) {}
+	afx_msg void OnNcMouseMove(unsigned int nHitTest, CPoint point) {}
 	afx_msg void OnNcPaint() {}
-	afx_msg void OnNcRButtonDblClk(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcRButtonDown(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcRButtonUp(UINT nHitTest, CPoint point) {}
-	afx_msg void OnNcXButtonDown(short zHitTest, UINT nButton, CPoint point) {}
-	afx_msg void OnNcXButtonUp(short zHitTest, UINT nButton, CPoint point) {}
-	afx_msg void OnNcXButtonDblClk(short zHitTest, UINT nButton, CPoint point) {}
+	afx_msg void OnNcRButtonDblClk(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcRButtonDown(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcRButtonUp(unsigned int nHitTest, CPoint point) {}
+	afx_msg void OnNcXButtonDown(short zHitTest, unsigned int nButton, CPoint point) {}
+	afx_msg void OnNcXButtonUp(short zHitTest, unsigned int nButton, CPoint point) {}
+	afx_msg void OnNcXButtonDblClk(short zHitTest, unsigned int nButton, CPoint point) {}
 
 	// System message handler member functions
 	afx_msg void OnDropFiles(HDROP hDropInfo) {}
 	afx_msg void OnPaletteIsChanging(CWnd *pRealizeWnd) {}
-	afx_msg void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnSysCommand(UINT nID, LPARAM lParam) {}
-	afx_msg void OnSysDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnSysKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg BOOL OnAppCommand(CWnd *pWnd, UINT nCmd, UINT nDevice, UINT nKey) {
+	afx_msg void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnSysCommand(unsigned int nID, LPARAM lParam) {}
+	afx_msg void OnSysDeadChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnSysKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg BOOL OnAppCommand(CWnd *pWnd, unsigned int nCmd, unsigned int nDevice, unsigned int nKey) {
 		return false;
 	}
-	afx_msg void OnRawInput(UINT nInputCode, HRAWINPUT hRawInput) {}
-	afx_msg void OnCompacting(UINT nCpuTime) {}
-	afx_msg void OnDevModeChange(_In_z_ LPTSTR lpDeviceName) {}
+	afx_msg void OnRawInput(unsigned int nInputCode, HRAWINPUT hRawInput) {}
+	afx_msg void OnCompacting(unsigned int nCpuTime) {}
+	afx_msg void OnDevModeChange(_In_z_ uint16 * lpDeviceName) {}
 	afx_msg void OnFontChange() {}
 	afx_msg void OnPaletteChanged(CWnd *pFocusWnd) {}
-	afx_msg void OnSpoolerStatus(UINT nStatus, UINT nJobs) {}
+	afx_msg void OnSpoolerStatus(unsigned int nStatus, unsigned int nJobs) {}
 	afx_msg void OnSysColorChange() {}
 	afx_msg void OnTimeChange() {}
-	afx_msg void OnSettingChange(UINT uFlags, const char *lpszSection) {}
+	afx_msg void OnSettingChange(unsigned int uFlags, const char *lpszSection) {}
 	afx_msg void OnWinIniChange(const char *lpszSection) {}
-	afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM lEventData) {
+	afx_msg unsigned int OnPowerBroadcast(unsigned int nPowerEvent, LPARAM lEventData) {
 		return 0;
 	}
 	afx_msg void OnUserChanged() {}
-	afx_msg void OnInputLangChange(UINT nCharSet, UINT nLocaleId) {}
-	afx_msg void OnInputLangChangeRequest(UINT nFlags, UINT nLocaleId) {}
+	afx_msg void OnInputLangChange(unsigned int nCharSet, unsigned int nLocaleId) {}
+	afx_msg void OnInputLangChangeRequest(unsigned int nFlags, unsigned int nLocaleId) {}
 	afx_msg void OnInputDeviceChange(unsigned short nFlags, HANDLE hDevice) {}
 
 	// Input message handler member functions
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnDeadChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnUniChar(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
-	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar *pScrollBar) {}
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) {}
-	afx_msg void OnHotKey(UINT nHotKeyId, UINT nKey1, UINT nKey2) {}
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point) {}
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point) {}
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point) {}
-	afx_msg void OnMButtonDblClk(UINT nFlags, CPoint point) {}
-	afx_msg void OnMButtonDown(UINT nFlags, CPoint point) {}
-	afx_msg void OnMButtonUp(UINT nFlags, CPoint point) {}
-	afx_msg void OnXButtonDblClk(UINT nFlags, UINT nButton, CPoint point) {}
-	afx_msg void OnXButtonDown(UINT nFlags, UINT nButton, CPoint point) {}
-	afx_msg void OnXButtonUp(UINT nFlags, UINT nButton, CPoint point) {}
-	afx_msg int OnMouseActivate(CWnd *pDesktopWnd, UINT nHitTest, UINT message) {
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnDeadChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnUniChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScrollBar) {}
+	afx_msg void OnVScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar *pScrollBar) {}
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {}
+	afx_msg void OnHotKey(unsigned int nHotKeyId, unsigned int nKey1, unsigned int nKey2) {}
+	afx_msg void OnLButtonDblClk(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnLButtonUp(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnMButtonDblClk(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnMButtonDown(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnMButtonUp(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnXButtonDblClk(unsigned int nFlags, unsigned int nButton, CPoint point) {}
+	afx_msg void OnXButtonDown(unsigned int nFlags, unsigned int nButton, CPoint point) {}
+	afx_msg void OnXButtonUp(unsigned int nFlags, unsigned int nButton, CPoint point) {}
+	afx_msg int OnMouseActivate(CWnd *pDesktopWnd, unsigned int nHitTest, unsigned int message) {
 		return 0;
 	}
-	afx_msg void OnMouseHover(UINT nFlags, CPoint point) {}
+	afx_msg void OnMouseHover(unsigned int nFlags, CPoint point) {}
 	afx_msg void OnMouseLeave() {}
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point) {}
-	afx_msg void OnMouseHWheel(UINT nFlags, short zDelta, CPoint pt) {}
-	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt) {
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnMouseHWheel(unsigned int nFlags, short zDelta, CPoint pt) {}
+	afx_msg BOOL OnMouseWheel(unsigned int nFlags, short zDelta, CPoint pt) {
 		return false;
 	}
-	afx_msg void OnRButtonDblClk(UINT nFlags, CPoint point) {}
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point) {}
-	afx_msg void OnRButtonUp(UINT nFlags, CPoint point) {}
-	afx_msg BOOL OnSetCursor(CWnd *pWnd, UINT nHitTest, UINT message);
-	afx_msg void OnTimer(UINT_PTR nIDEvent) {}
+	afx_msg void OnRButtonDblClk(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnRButtonDown(unsigned int nFlags, CPoint point) {}
+	afx_msg void OnRButtonUp(unsigned int nFlags, CPoint point) {}
+	afx_msg BOOL OnSetCursor(CWnd *pWnd, unsigned int nHitTest, unsigned int message);
+	afx_msg void OnTimer(uintptr nIDEvent) {}
 
 	// Control message handler member functions
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
-	afx_msg UINT OnGetDlgCode() {
+	afx_msg unsigned int OnGetDlgCode() {
 		return 0;
 	}
 	afx_msg void OnMeasureItem(int nIDCtl, LPMEASUREITEMSTRUCT lpMeasureItemStruct) {}
-	afx_msg int OnCharToItem(UINT nChar, CListBox *pListBox, UINT nIndex) {
+	afx_msg int OnCharToItem(unsigned int nChar, CListBox *pListBox, unsigned int nIndex) {
 		return 0;
 	}
-	afx_msg int OnVKeyToItem(UINT nKey, CListBox *pListBox, UINT nIndex) {
+	afx_msg int OnVKeyToItem(unsigned int nKey, CListBox *pListBox, unsigned int nIndex) {
 		return 0;
 	}
 	afx_msg void OnSetFont(HFONT hFont, BOOL bRedraw);
@@ -1316,7 +1316,7 @@ protected:
 	 * be sent recursively to all child controls
 	 * in addition to the current.
 	 */
-	static bool isRecursiveMessage(UINT message);
+	static bool isRecursiveMessage(unsigned int message);
 
 public:
 	// For ScummVM the m_hWnd just points to the window itself,
@@ -1355,7 +1355,7 @@ public:
 	~CWnd() override;
 
 	BOOL Create(const char *lpszClassName, const char *lpszWindowName,
-	    uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID,
+	    uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 	    CCreateContext *pContext = nullptr);
 	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
@@ -1363,7 +1363,7 @@ public:
 		HWND hWndParent, LPARAM nIDorHMenu, void *lpParam = nullptr);
 	BOOL CreateEx(uint32 dwExStyle, const char *lpszClassName,
 		const char *lpszWindowName, uint32 dwStyle,
-		const RECT &rect, CWnd *pParentWnd, UINT nID,
+		const RECT &rect, CWnd *pParentWnd, unsigned int nID,
 		void *lpParam = nullptr);
 
 	/**
@@ -1385,7 +1385,7 @@ public:
 	BOOL RedrawWindow(
 	    LPCRECT lpRectUpdate = nullptr,
 	    CRgn *prgnUpdate = nullptr,
-	    UINT flags = RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN
+	    unsigned int flags = RDW_INVALIDATE | RDW_UPDATENOW | RDW_ALLCHILDREN
 	);
 	void SetActiveWindow();
 	void SetFocus();
@@ -1398,7 +1398,7 @@ public:
 	int GetWindowText(CString &rString) const;
 	int GetWindowText(char *lpszStringBuf, int nMaxCount) const;
 	BOOL SetWindowText(const char *lpszString);
-	UINT GetState() const;
+	unsigned int GetState() const;
 	uint32 GetStyle() const {
 		return m_nStyle;
 	}
@@ -1411,12 +1411,12 @@ public:
 	CDC *GetDC();
 	int ReleaseDC(CDC *pDC);
 
-	BOOL PostMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
-	LRESULT SendMessage(UINT message, WPARAM wParam = 0, LPARAM lParam = 0);
-	void SendMessageToDescendants(UINT message,
+	BOOL PostMessage(unsigned int message, WPARAM wParam = 0, LPARAM lParam = 0);
+	LRESULT SendMessage(unsigned int message, WPARAM wParam = 0, LPARAM lParam = 0);
+	void SendMessageToDescendants(unsigned int message,
 		WPARAM wParam = 0, LPARAM lParam = 0,
 		bool bDeep = true, bool bOnlyPerm = false);
-	static void SendMessageToDescendants(HWND hWnd, UINT message,
+	static void SendMessageToDescendants(HWND hWnd, unsigned int message,
 		WPARAM wParam, LPARAM lParam, BOOL bDeep, BOOL bOnlyPerm);
 
 	BOOL Validate();
@@ -1442,16 +1442,16 @@ public:
 	CWnd *GetDlgItem(int nID) const;
 	CWnd *GetNextDlgGroupItem(CWnd *pWndCtl, BOOL bPrevious = FALSE) const;
 	BOOL GotoDlgCtrl(CWnd *pWndCtrl);
-	BOOL SubclassDlgItem(UINT nID, CWnd *pParent);
+	BOOL SubclassDlgItem(unsigned int nID, CWnd *pParent);
 	BOOL SetDlgItemText(int nIDDlgItem, const char *lpString);
 	int GetDlgCtrlID() const;
-	void CheckDlgButton(int nIDButton, UINT nCheck);
-	LRESULT SendDlgItemMessage(int nID, UINT message,
+	void CheckDlgButton(int nIDButton, unsigned int nCheck);
+	LRESULT SendDlgItemMessage(int nID, unsigned int message,
 	                           WPARAM wParam = 0, LPARAM lParam = 0) const;
 
-	UINT_PTR SetTimer(UINT_PTR nIDEvent, UINT nElapse,
-	    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32) = nullptr);
-	BOOL KillTimer(UINT_PTR nIDEvent);
+	uintptr SetTimer(uintptr nIDEvent, unsigned int nElapse,
+	    void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32) = nullptr);
+	BOOL KillTimer(uintptr nIDEvent);
 
 	virtual BOOL PreTranslateMessage(MSG *pMsg) {
 		return false;
@@ -1494,12 +1494,12 @@ class CFrameWnd : public CWnd {
 
 private:
 	CString m_strTitle;
-	UINT m_nIDHelp = 0;
+	unsigned int m_nIDHelp = 0;
 	CView *m_pViewActive = nullptr;
 
 	void ActivateFrame(int nCmdShow);
 	void OnUpdateFrameTitle(BOOL bAddToTitle);
-	CWnd *CreateView(CCreateContext *pContext, UINT nID);
+	CWnd *CreateView(CCreateContext *pContext, unsigned int nID);
 
 protected:
 	BOOL PreCreateWindow(CREATESTRUCT &cCs) override {
@@ -1508,16 +1508,16 @@ protected:
 	int OnCreate(LPCREATESTRUCT lpcs);
 	int OnCreateHelper(LPCREATESTRUCT lpcs, CCreateContext *pContext);
 	BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext *pContext);
-	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) override;
+	void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
 
 	enum RepositionFlags {
 		reposDefault = 0, reposQuery = 1, reposExtra = 2, reposNoPosLeftOver = 0x8000
 	};
 	BOOL RepositionBars(
-	    UINT nIDFirst,
-	    UINT nIDLast,
-	    UINT nIDLeftOver,
-	    UINT nFlag = reposDefault,
+	    unsigned int nIDFirst,
+	    unsigned int nIDLast,
+	    unsigned int nIDLeftOver,
+	    unsigned int nFlag = reposDefault,
 	    LPRECT lpRectParam = nullptr,
 	    LPCRECT lpRectClient = nullptr,
 	    BOOL bStretch = TRUE
@@ -1547,7 +1547,7 @@ public:
 	void RecalcLayout(BOOL bNotify = TRUE);
 	void InitialUpdateFrame(CDocument *pDoc, BOOL bMakeVisible);
 
-	BOOL LoadFrame(UINT nIDResource, uint32 dwDefaultStyle,
+	BOOL LoadFrame(unsigned int nIDResource, uint32 dwDefaultStyle,
 		CWnd *pParentWnd, CCreateContext *pContext);
 
 	CView *GetActiveView() const;
@@ -1562,7 +1562,7 @@ class CDialog : public CWnd {
 
 private:
 	const char *m_lpszTemplateName = nullptr;
-	UINT m_nIDHelp = 0;
+	unsigned int m_nIDHelp = 0;
 	LPCDLGTEMPLATE m_lpDialogTemplate = nullptr;
 	HGLOBAL m_hDialogTemplate = 0;
 	int _defaultId = 0;
@@ -1585,19 +1585,19 @@ protected:
 	virtual void PostModal() {
 	}
 
-	void OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	void OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) override;
+	void OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	void OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) override;
 
 public:
 	CDialog() {}
 	explicit CDialog(const char *lpszTemplateName,
 	                 CWnd *pParentWnd = nullptr);
-	explicit CDialog(UINT nIDTemplate,
+	explicit CDialog(unsigned int nIDTemplate,
 	                 CWnd *pParentWnd = nullptr);
 	~CDialog() override {}
 	BOOL Create(const char *lpszTemplateName,
 	            CWnd *pParentWnd = nullptr);
-	BOOL Create(UINT nIDTemplate,
+	BOOL Create(unsigned int nIDTemplate,
 	            CWnd *pParentWnd = nullptr);
 
 	int DoModal();
@@ -1608,7 +1608,7 @@ public:
 	BOOL PreTranslateMessage(MSG *pMsg) override;
 
 	uint32 GetDefID() const;
-	void SetDefID(UINT nID);
+	void SetDefID(unsigned int nID);
 	LRESULT HandleInitDialog(WPARAM, LPARAM);
 	LRESULT HandleSetFont(WPARAM, LPARAM);
 	void AFXAPI DDX_Control(CDataExchange *pDX, int nIDC, CWnd &rControl);
@@ -1617,7 +1617,7 @@ public:
 	void AFXAPI DDX_Text(CDataExchange *pDX,
 	                     int nIDC, int &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, CString &value);
-	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, UINT &value);
+	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, unsigned int &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, long &value);
 	void AFXAPI DDX_Text(CDataExchange *pDX, int nIDC, double &value);
 	void AFXAPI DDX_Check(CDataExchange *pDX,
@@ -1656,9 +1656,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 	void OnPaint();
-	void OnLButtonDown(UINT nFlags, CPoint point);
-	void OnLButtonUp(UINT nFlags, CPoint point);
-	void OnMouseMove(UINT nFlags, CPoint point);
+	void OnLButtonDown(unsigned int nFlags, CPoint point);
+	void OnLButtonUp(unsigned int nFlags, CPoint point);
+	void OnMouseMove(unsigned int nFlags, CPoint point);
 	LRESULT OnBnClicked(WPARAM wParam, LPARAM lParam);
 	LRESULT OnBnSetCheck(WPARAM wParam, LPARAM lParam);
 
@@ -1666,12 +1666,12 @@ public:
 	~CButton() override {
 	}
 	CVIRTUAL BOOL Create(const char *lpszCaption, uint32 dwStyle,
-	                     const RECT &rect, CWnd *pParentWnd, UINT nID);
+	                     const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 
 	int GetCheck() const;
 	void SetCheck(int nCheck);
-	void SetButtonStyle(UINT nStyle, BOOL bRedraw = TRUE);
-	UINT GetButtonStyle() const;
+	void SetButtonStyle(unsigned int nStyle, BOOL bRedraw = TRUE);
+	unsigned int GetButtonStyle() const;
 };
 
 class CListBox : public CWnd {
@@ -1705,16 +1705,16 @@ protected:
 public:
 	~CEdit() override {
 	}
-	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 	void LimitText(int nChars);
 	void SetSel(int nStartChar, int nEndChar, BOOL bNoScroll = FALSE);
 
 	afx_msg void OnPaint();
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	afx_msg void OnSetFocus(CWnd *pOldWnd);
 	afx_msg void OnKillFocus(CWnd *pNewWnd);
-	afx_msg void OnTimer(UINT_PTR nTimerId);
+	afx_msg void OnTimer(uintptr nTimerId);
 };
 
 class CScrollBar : public CWnd {
@@ -1735,13 +1735,13 @@ private:
 protected:
 	DECLARE_MESSAGE_MAP()
 	void OnPaint();
-	void OnLButtonDown(UINT nFlags, CPoint point);
-	void OnLButtonUp(UINT nFlags, CPoint point);
-	void OnMouseMove(UINT, CPoint point);
+	void OnLButtonDown(unsigned int nFlags, CPoint point);
+	void OnLButtonUp(unsigned int nFlags, CPoint point);
+	void OnMouseMove(unsigned int, CPoint point);
 
 public:
 	~CScrollBar() override { }
-	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, UINT nID);
+	CVIRTUAL BOOL Create(uint32 dwStyle, const RECT &rect, CWnd *pParentWnd, unsigned int nID);
 
 	int GetScrollPos() const override;
 	int SetScrollPos(int nPos, BOOL bRedraw = true) override;
@@ -1776,7 +1776,7 @@ public:
 	void OnInitialUpdate();
 	virtual void OnUpdate(CView *pSender, LPARAM /*lHint*/, CObject * /*pHint*/);
 	virtual void OnActivateView(BOOL, CView *, CView *) {}
-	virtual void OnActivateFrame(UINT nState, CFrameWnd *pFrameWnd) {}
+	virtual void OnActivateFrame(unsigned int nState, CFrameWnd *pFrameWnd) {}
 
 	CFrameWnd *GetParentFrame() const {
 		return dynamic_cast<CFrameWnd *>(m_pParentWnd);
@@ -1813,7 +1813,7 @@ public:
 class CDocTemplate : public CCmdTarget {
 	DECLARE_DYNAMIC(CDocTemplate)
 private:
-	UINT m_nIDResource = 0;
+	unsigned int m_nIDResource = 0;
 	const CRuntimeClass *m_pDocClass = nullptr;
 	const CRuntimeClass *m_pFrameClass = nullptr;
 	const CRuntimeClass *m_pViewClass = nullptr;
@@ -1821,7 +1821,7 @@ private:
 protected:
 	DECLARE_MESSAGE_MAP()
 
-	CDocTemplate(UINT nIDResource, const CRuntimeClass *pDocClass,
+	CDocTemplate(unsigned int nIDResource, const CRuntimeClass *pDocClass,
 	    const CRuntimeClass *pFrameClass, const CRuntimeClass *pViewClass);
 
 public:
@@ -1865,7 +1865,7 @@ public:
 
 public:
 	CSingleDocTemplate(
-	    UINT nIDResource,
+	    unsigned int nIDResource,
 	    const CRuntimeClass *pDocClass,
 	    const CRuntimeClass *pFrameClass,
 	    const CRuntimeClass *pViewClass
@@ -1968,7 +1968,7 @@ public:
 	void SetDialogBkColor();
 	HCURSOR LoadStandardCursor(const char *lpszCursorName);
 	HCURSOR LoadCursor(const char *lpszResourceName);
-	HCURSOR LoadCursor(UINT nIDResource);
+	HCURSOR LoadCursor(unsigned int nIDResource);
 	HCURSOR SetCursor(HCURSOR hCursor);
 	void BeginWaitCursor();
 	void EndWaitCursor();
@@ -1982,7 +1982,7 @@ public:
 	void AddDocTemplate(CDocTemplate *pTemplate);
 	void CloseAllDocuments(BOOL bEndSession);
 
-	UINT GetProfileInt(const char *lpszSection,
+	unsigned int GetProfileInt(const char *lpszSection,
 	    const char *lpszEntry, int nDefault);
 	void WriteProfileInt(const char *lpszSection,
 	    const char *lpszEntry, int nValue);
@@ -2065,7 +2065,7 @@ public:
 		return (HPALETTE)_systemPalette.m_hObject;
 	}
 
-	const char *AfxRegisterWndClass(UINT nClassStyle,
+	const char *AfxRegisterWndClass(unsigned int nClassStyle,
 		HCURSOR hCursor, HBRUSH hbrBackground, HICON hIcon);
 	BOOL GetClassInfo(HINSTANCE hInstance,
 		const char *  lpClassName, LPWNDCLASS lpWndClass);

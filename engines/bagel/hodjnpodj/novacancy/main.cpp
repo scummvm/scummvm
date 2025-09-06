@@ -223,7 +223,7 @@ CMainWindow::CMainWindow(void) {
 	if (errCode == ERR_NONE) {
 
 		// seed the random number generator
-		//srand((UINT)timeGetTime());
+		//srand((unsigned int)timeGetTime());
 
 		//       begin playing bckgnd music when the game begins
 		if (pGameParams->bMusicEnabled) {
@@ -552,8 +552,8 @@ void CMainWindow::PlayGame() {
 
 		AnimateDice();
 #pragma warning(disable: 4135)
-		m_LDie = (byte)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
-		m_RDie = (byte)(((uint32)(UINT)brand() * 6L) / ((uint32)(UINT)RAND_MAX + 1L)) + 1;
+		m_LDie = (byte)(((uint32)(unsigned int)brand() * 6L) / ((uint32)(unsigned int)RAND_MAX + 1L)) + 1;
+		m_RDie = (byte)(((uint32)(unsigned int)brand() * 6L) / ((uint32)(unsigned int)RAND_MAX + 1L)) + 1;
 #pragma warning(default: 4135)
 		PaintMaskedBitmap(pDC, m_pGamePalette, pCRDieBmp[m_RDie], \
 		                  m_rRDie.left, m_rRDie.top, (int) m_rRDie.Width(), (int) m_rRDie.Height());
@@ -621,7 +621,7 @@ void CMainWindow::GameReset(void) {
 *
 ***********************************************************************************************************************************
 */
-void CMainWindow::OnMouseMove(UINT, CPoint) {
+void CMainWindow::OnMouseMove(unsigned int, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
@@ -663,7 +663,7 @@ void CMainWindow::OnMouseMove(UINT, CPoint) {
 ***********************************************************************************************************************************
 */
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	short i,
 	      iDoor;
 	short jj;
@@ -800,9 +800,9 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 
 				/* randomise throws */
 #pragma warning(disable: 4135)
-				V = (uint32)((UINT)RAND_MAX + 1);
-				m_LDie = (byte)(((uint32)(UINT)brand() * 6L) / V) +1;                                    //  left Die
-				m_RDie = m_bOneDieCase ? 0 : (byte)(((uint32)(UINT)brand() * 6) / V) +1;       //    right Die
+				V = (uint32)((unsigned int)RAND_MAX + 1);
+				m_LDie = (byte)(((uint32)(unsigned int)brand() * 6L) / V) +1;                                    //  left Die
+				m_RDie = m_bOneDieCase ? 0 : (byte)(((uint32)(unsigned int)brand() * 6) / V) +1;       //    right Die
 #pragma warning(default: 4135)
 
 				pDC = GetDC();
@@ -1051,7 +1051,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 *
 ***********************************************************************************************************************************
 */
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	short i;
 	int         xx,
 	            yy;
@@ -1166,7 +1166,7 @@ void CMainWindow::DeleteSprite(CSprite *pSprite) {
 
 
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Terminate app on ALT_Q
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
 
@@ -1182,7 +1182,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -1199,7 +1199,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Handle keyboard input
 	//
 
@@ -1243,7 +1243,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (!bMinimized) {
 		switch (nState) {
 		case WA_ACTIVE:
@@ -1804,10 +1804,10 @@ void CMainWindow::AnimateDice(void) {
 *   Retrieves a string in a static buffer from a resource object.
 *
 *   CALLING SEQUENCE:
-*   char* GetStringFromResource(UINT nResourceID)
+*   char* GetStringFromResource(unsigned int nResourceID)
 *
 *   FORMAL PARAMETERS:
-*   UINT    nID     The ID of the string resource from the resource file.
+*   unsigned int    nID     The ID of the string resource from the resource file.
 *
 *   IMPLICIT INPUT PARAMETERS:
 *   static szBuffer[ ], the buffer for  storing the string.
@@ -1823,7 +1823,7 @@ void CMainWindow::AnimateDice(void) {
 ****************************************************************************************************************
 */
 
-char *GetStringFromResource(UINT nID) {
+char *GetStringFromResource(unsigned int nID) {
 	static char szBuffer[256];
 
 	if (LoadString(AfxGetResourceHandle(), nID, szBuffer, 256))

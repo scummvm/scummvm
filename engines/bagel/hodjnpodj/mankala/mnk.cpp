@@ -405,7 +405,7 @@ BOOL CMnkWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  ****************************************************************/
 
-void CMnkWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMnkWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// TODO: Add your message handler code here and/or call default
 
 
@@ -413,7 +413,7 @@ void CMnkWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 
 }
 
-void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMnkWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	int iRVal;
 
 	if (nChar == VK_F1) {
@@ -460,7 +460,7 @@ void CMnkWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  ****************************************************************/
 
-void CMnkWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMnkWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate game on ALT-Q
 	if ((nChar == 'q') && (nFlags & 0x2000))
 		PostMessage(WM_CLOSE, 0, 0) ; // same as clicking QUIT button
@@ -469,7 +469,7 @@ void CMnkWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMnkWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMnkWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate game on ALT-F4
 	if ((nChar == VK_F4) && (nFlags & 0x2000))
 		PostMessage(WM_CLOSE, 0, 0) ; // same as clicking QUIT button
@@ -506,7 +506,7 @@ void CMnkWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  ****************************************************************/
 
-void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMnkWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	MFC::SetCursor(LoadCursor(nullptr, IDC_ARROW));
 
 	static int dxCursor = GetSystemMetrics(SM_CXCURSOR);        //cursor size.
@@ -577,7 +577,7 @@ void CMnkWindow::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMnkWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   rectTemp;
 	CSprite *pSpriteGlobe, *pSpriteChair;
 	CDC     *pDC = nullptr;
@@ -732,7 +732,7 @@ void CMnkWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMnkWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 
 	CDC *pDC = nullptr;
 
@@ -785,27 +785,27 @@ void CMnkWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 }
 
 
-void CMnkWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMnkWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMnkWindow::OnMButtonDown(UINT nFlags, CPoint point) {
+void CMnkWindow::OnMButtonDown(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMnkWindow::OnMButtonUp(UINT nFlags, CPoint point) {
+void CMnkWindow::OnMButtonUp(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMnkWindow::OnMButtonDblClk(UINT nFlags, CPoint point) {
+void CMnkWindow::OnMButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMnkWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMnkWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (nFlags & MK_CONTROL) {
 		gbTurnSoundsOff = !gbTurnSoundsOff; //F12 is pressed, toggle sounds ON/OFF.
 		WritePrivateProfileString("Mankala", "MuteCrab", gbTurnSoundsOff ? "1" : "0", INI_FILENAME);
@@ -814,11 +814,11 @@ void CMnkWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CMnkWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CMnkWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
 
 }
 
-void CMnkWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
+void CMnkWindow::OnRButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 
 }
@@ -856,7 +856,7 @@ void CMnkWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
  *
  ****************************************************************/
 
-void CMnkWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMnkWindow::OnTimer(uintptr nIDEvent) {
 //   CDC    *m_xpcDC ;
 
 

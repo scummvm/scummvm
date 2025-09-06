@@ -103,7 +103,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // CMnkUsr dialog
 
-CMnkUsr::CMnkUsr(CWnd *xpParent, CPalette *xpPalette, UINT nID)
+CMnkUsr::CMnkUsr(CWnd *xpParent, CPalette *xpPalette, unsigned int nID)
 	:  CBmpDialog(xpParent, xpPalette, nID, ".\\ART\\SSCROLL.BMP") {
 	//{{AFX_DATA_INIT(CMnkUsr)
 	m_iUShells = 0;
@@ -229,7 +229,7 @@ BOOL CMnkUsr::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return CBmpDialog::OnCommand(wParam, lParam);
 }
 
-void CMnkUsr::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* xpScrollBar) {
+void CMnkUsr::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* xpScrollBar) {
 //    int iId = xpScrollBar->GetDlgCtrlID() ;   // get id of control bar
 	int iValMin, iValMax, iValCur ; // min, max, current values
 

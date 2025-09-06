@@ -233,12 +233,12 @@ void CBmpDialog::OnPaint() {
 }
 
 
-void CBmpDialog::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CBmpDialog::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 }
 
 
-void CBmpDialog::OnSize(UINT nType, int cx, int cy) {
+void CBmpDialog::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 }
 
@@ -251,12 +251,12 @@ int CBmpDialog::OnCreate(LPCREATESTRUCT lpCreateStruct) {
 }
 
 
-void CBmpDialog::OnLButtonDown(UINT nFlags, CPoint point) {
+void CBmpDialog::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
 
-void CBmpDialog::OnMouseMove(UINT nFlags, CPoint point) {
+void CBmpDialog::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CDialog::OnMouseMove(nFlags, point);
 }
 

@@ -41,7 +41,7 @@ namespace PDQ {
 
 class CUserCfgDlg : public CBmpDialog {
 public:
-	CUserCfgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERCFG);
+	CUserCfgDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERCFG);
 
 protected:
 
@@ -55,7 +55,7 @@ protected:
 	void ClearDialogImage(void);
 
 
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnPaint();
 	void OnDestroy();
 	DECLARE_MESSAGE_MAP()
@@ -67,8 +67,8 @@ protected:
 	/*
 	* user preference data
 	*/
-	UINT        m_nShown;               // initial number of letters to be revealed
-	UINT        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
+	unsigned int        m_nShown;               // initial number of letters to be revealed
+	unsigned int        m_nGameSpeed;           // game speed 1..5 (1 = fast, 5 = slow)
 	BOOL        m_bRandomLetters;       // TRUE if letters to be revealed in random order
 	BOOL        m_bShowNames;           // TRUE if we shouldm show category names
 	BOOL        m_bShouldSave;          // TRUE if we should save theses values

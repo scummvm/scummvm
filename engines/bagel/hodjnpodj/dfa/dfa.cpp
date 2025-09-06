@@ -533,7 +533,7 @@ void CMainDFAWindow::ResetGame() {
 void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 // do the mini options dialog
 	int             nOption = 0;       // return from the Options dialog
-//UINT          x = IDD_MINIOPTIONS_DIALOG;
+//unsigned int          x = IDD_MINIOPTIONS_DIALOG;
 	CDFAOptDlg      dlgMiniOptDlg(pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG);
 
 	dlgMiniOptDlg.SetInitialOptions(pMainGameWnd->m_nTimeForGame, pMainGameWnd->m_nBeaverDuration);
@@ -673,14 +673,14 @@ BOOL CMainDFAWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainDFAWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainDFAWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (bStart) {
 		bStart = FALSE;
 	}
 	CWnd::OnRButtonDown(nFlags, point);
 }
 
-void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainDFAWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CSound  *pEffect = nullptr;
 	CRect   rWatch,
 	        rLake,
@@ -778,7 +778,7 @@ void CMainDFAWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainDFAWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainDFAWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 
 	pDC = GetDC();
@@ -797,7 +797,7 @@ void CMainDFAWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainDFAWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainDFAWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 
 	if (!bEndGame && ArtRect.PtInRect(point)) {
 		CDC *pDC;
@@ -813,7 +813,7 @@ void CMainDFAWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainDFAWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainDFAWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_F4
 	//
 	if ((nChar == VK_F4) && (nFlags & 0x2000)) {
@@ -828,7 +828,7 @@ void CMainDFAWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainDFAWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
 	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
@@ -860,7 +860,7 @@ void CMainDFAWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainDFAWindow::OnTimer(UINT_PTR nWhichTimer) {
+void CMainDFAWindow::OnTimer(uintptr nWhichTimer) {
 	CSound  *pEffect = nullptr;
 
 	if (nWhichTimer == GAMETIMER) {
@@ -985,7 +985,7 @@ BOOL CMainDFAWindow::OnEraseBkgnd(CDC *pDC) {
 	return TRUE;
 }
 
-void CMainDFAWindow::OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized) {
+void CMainDFAWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:

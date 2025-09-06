@@ -47,7 +47,7 @@ void CCmdTarget::RestoreWaitCursor() {
 	AfxGetApp()->DoWaitCursor(0);
 }
 
-const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(UINT message) {
+const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(unsigned int message) {
 	// Iterate through this class and any ancestors
 	for (const AFX_MSGMAP *map = GetMessageMap();
 	        map; map = map->pfnGetBaseMap()) {
@@ -62,12 +62,12 @@ const AFX_MSGMAP_ENTRY *CCmdTarget::LookupMessage(UINT message) {
 	return nullptr;
 }
 
-BOOL CCmdTarget::OnCmdMsg(UINT nID, int nCode, void *pExtra,
+BOOL CCmdTarget::OnCmdMsg(unsigned int nID, int nCode, void *pExtra,
 		AFX_CMDHANDLERINFO *pHandlerInfo) {
 	// Determine the message number and code (packed into nCode)
 	const AFX_MSGMAP *pMessageMap;
 	const AFX_MSGMAP_ENTRY *lpEntry;
-	UINT nMsg = 0;
+	unsigned int nMsg = 0;
 
 	if (nCode != CN_UPDATE_COMMAND_UI) {
 		nMsg = HIWORD(nCode);
@@ -94,7 +94,7 @@ BOOL CCmdTarget::OnCmdMsg(UINT nID, int nCode, void *pExtra,
 }
 
 const AFX_MSGMAP_ENTRY *CCmdTarget::AfxFindMessageEntry(const AFX_MSGMAP_ENTRY *lpEntry,
-		UINT nMsg, UINT nCode, UINT nID) {
+		unsigned int nMsg, unsigned int nCode, unsigned int nID) {
 	while (lpEntry->nSig != AfxSig_end) {
 		if (lpEntry->nMessage == nMsg && lpEntry->nCode == nCode &&
 			nID >= lpEntry->nID && nID <= lpEntry->nLastID) {
@@ -107,8 +107,8 @@ const AFX_MSGMAP_ENTRY *CCmdTarget::AfxFindMessageEntry(const AFX_MSGMAP_ENTRY *
 	return nullptr;
 }
 
-bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, UINT nID, int nCode,
-		AFX_PMSG pfn, void *pExtra, UINT nSig, AFX_CMDHANDLERINFO *pHandlerInfo) {
+bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, unsigned int nID, int nCode,
+		AFX_PMSG pfn, void *pExtra, unsigned int nSig, AFX_CMDHANDLERINFO *pHandlerInfo) {
 	union MessageMapFunctions mmf;
 	mmf.pfn = pfn;
 	bool bResult = true; // default is ok
@@ -188,7 +188,7 @@ bool CCmdTarget::_AfxDispatchCmdMsg(CCmdTarget *pTarget, UINT nID, int nCode,
 
 	case AfxSig_cmdui: {
 		// ON_UPDATE_COMMAND_UI or ON_UPDATE_COMMAND_UI_REFLECT case
-		assert(CN_UPDATE_COMMAND_UI == (UINT)-1);
+		assert(CN_UPDATE_COMMAND_UI == (unsigned int)-1);
 		assert(nCode == CN_UPDATE_COMMAND_UI || nCode == 0xFFFF);
 		assert(pExtra != nullptr);
 		CCmdUI *pCmdUI = (CCmdUI *)pExtra;

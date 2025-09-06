@@ -52,9 +52,9 @@ public:
 	CScrollBar m_ScrollSpeed;
 	BOOL    m_bAutomatic;
 	BOOL    m_bChangeAtTwelve;
-	UINT    m_nSweeps;
-	UINT    m_nSpeed;
-	UINT    nSweepSets;
+	unsigned int    m_nSweeps;
+	unsigned int    m_nSpeed;
+	unsigned int    nSweepSets;
 	CString mSpeedTable [NUM_SPEEDS];
 	//}}AFX_DATA
 
@@ -66,7 +66,7 @@ protected:
 	//{{AFX_MSG(COptnDlg)
 	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	virtual void OnOK() override;

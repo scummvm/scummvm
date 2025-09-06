@@ -540,7 +540,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 				m_pHourGlass->EraseSprite(pDC);
 			} else if (m_cCryptograms->m_cStats->m_nTime != MAX_TIME) {      // Max time is more than max
 				IntervalLength = ((long)1000 * m_cCryptograms->m_cStats->m_nTime) / (MAX_HOURS - 1);
-				SetTimer(STAT_TIMER_ID, (UINT)(IntervalLength), nullptr);
+				SetTimer(STAT_TIMER_ID, (unsigned int)(IntervalLength), nullptr);
 			}
 
 			RefreshStats();
@@ -639,7 +639,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CDC *pDC;
 
 	pDC = GetDC();
@@ -685,7 +685,7 @@ void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == 'q') && (nFlags & 0x2000))        // terminate the game on an ALT-q
 		PostMessage(WM_CLOSE, 0, 0);                // ... same as clicking QUIT button
 	else
@@ -720,13 +720,13 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      [Discuss return value]
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	CFrameWnd ::OnMouseMove(nFlags, point);         // default action
 }
 
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC *pDC;
 	CSprite *pSprite = nullptr;                    // Easter Egg anim pointer
 	CSound  *pEffect = nullptr;                    // EE & Sound pointer
@@ -930,11 +930,11 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	CDC *pDC;
 
 	pDC = GetDC();
@@ -951,31 +951,31 @@ void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnMButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonDown(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnMButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonUp(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnMButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnMButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
 
-void CMainWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
-void CMainWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDblClk(unsigned int nFlags, CPoint point) {
 //  insert mouse button processing code here
 }
 
@@ -1008,7 +1008,7 @@ void CMainWindow::OnRButtonDblClk(UINT nFlags, CPoint point) {
  *      n/a
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	if ((nIDEvent == STAT_TIMER_ID) && (m_bPause == FALSE)) {
 		// move pointer to next hour glass formation
 		//
@@ -1051,7 +1051,7 @@ void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 	}
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_F4
 	//
 	if ((nChar == VK_F4) && (nFlags & 0x2000)) {
@@ -1085,7 +1085,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  *
  ****************************************************************/
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_OPTIONS_RULES, BN_CLICKED);  // Activate the Options dialog
 		(*m_pScrollButton).SendMessage(BM_SETSTATE, FALSE, 0L); // Reset scroll button to up state

@@ -97,14 +97,14 @@ protected:
 	LRESULT     OnMMIONotify(WPARAM, LPARAM);
 	void        OnSoundNotify(CSound *);
 	void        OnPaint(void);
-	void        OnMouseMove(UINT, CPoint);
-	void        OnRButtonDown(UINT, CPoint);
-	void        OnLButtonDown(UINT, CPoint);
-	void        OnLButtonUp(UINT, CPoint);
-	void        OnSysChar(UINT, UINT, UINT);
-	void        OnSysKeyDown(UINT, UINT, UINT);
-	void        OnKeyDown(UINT, UINT, UINT);
-	void        OnActivate(UINT, CWnd *, BOOL) override;
+	void        OnMouseMove(unsigned int, CPoint);
+	void        OnRButtonDown(unsigned int, CPoint);
+	void        OnLButtonDown(unsigned int, CPoint);
+	void        OnLButtonUp(unsigned int, CPoint);
+	void        OnSysChar(unsigned int, unsigned int, unsigned int);
+	void        OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnKeyDown(unsigned int, unsigned int, unsigned int);
+	void        OnActivate(unsigned int, CWnd *, BOOL) override;
 	void        OnClose(void);
 
 	DECLARE_MESSAGE_MAP()

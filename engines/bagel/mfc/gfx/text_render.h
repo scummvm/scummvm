@@ -37,7 +37,7 @@ class TextRender {
 protected:
 	CSize renderText(const Common::String &str,
 		Gfx::Surface *dest, Graphics::Font *font,
-		uint textCol, LPCRECT lpRect, UINT nFormat,
+		uint textCol, LPCRECT lpRect, unsigned int nFormat,
 		const Common::Array<int> &tabStops,
 		int nTabOrigin, uint bkColor, int bkMode,
 		uint textColor, uint textAlign);

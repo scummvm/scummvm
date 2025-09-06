@@ -84,7 +84,7 @@ public:
 	//- DoMessageBox -- override of CWinApp function to
 	//              display message box messages
 	virtual int DoMessageBox(const char *lpszPrompt,
-	                         UINT nType, UINT nIDPrompt) ;
+	                         unsigned int nType, unsigned int nIDPrompt) ;
 	BOOL OnIdle(long lCount) override;
 
 private:

@@ -80,7 +80,7 @@ int     tempNumButtons;
 
 int     nNoteCount = 0;
 int     nCheckCount = 0;
-UINT    nSButFlag = MAX_BUTTONS;
+unsigned int    nSButFlag = MAX_BUTTONS;
 CNote   *pNoteMarker;
 
 static const char *cSoundName[MAX_BUTTONS] = {
@@ -403,7 +403,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 		case IDC_D:
 		case IDC_E:
 		case IDC_F:
-			UINT    nButID, nHitID;
+			unsigned int    nButID, nHitID;
 			char    msg[4];
 
 			nHitID = wParam - IDC_A;                        // The musician buttons are consecutive
@@ -553,7 +553,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -569,7 +569,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CRect   rectTitle,
 	        rectWoodsRight,
 	        rectWoodsLeft,
@@ -678,7 +678,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	if (m_bNewGame) {
 		if (m_bPlaying && bLDown) {
 			if (pAnimSprite[m_nButID] != nullptr) {
@@ -690,7 +690,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	}
 }
 
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (!m_bNewGame) {
 		PostMessage(WM_COMMAND, IDC_START, BN_CLICKED);      // Activate the imaginary 'start' button
@@ -708,7 +708,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -724,7 +724,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	if (bPlayingBackSeries) {
 		SetCursor(LoadCursor(nullptr, IDC_WAIT));            // Refresh cursor object
 	} else {
@@ -739,25 +739,25 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 // These functions are called when keyboard input generates a character.
 //
 
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == 'q') && (nFlags & 0x2000))        // terminate app on ALT-q
 		PostMessage(WM_CLOSE, 0, 0);                 // *** remove later ***
 	else
 		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == VK_F4) && (nFlags & 0x2000))      // terminate app on ALT-q
 		PostMessage(WM_CLOSE, 0, 0);                 // *** remove later ***
 	else
 		CFrameWnd::OnSysKeyDown(nChar, nRepCnt, nFlags);    // default action
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (!bPlayingBackSeries) {
 		if (nChar == VK_F1) {                                  // F1 key is hit
 			SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);      // Activate the Rules dialog
@@ -807,7 +807,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	*/
 }
 /* one-plus of low priority
-void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
+void CMainWindow::OnKeyUp(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags)
 {
     BOOL    bMusician = FALSE;
 
@@ -845,7 +845,7 @@ void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nIDEvent   The ID of the timer event activated
+ *      unsigned int nIDEvent   The ID of the timer event activated
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -860,7 +860,7 @@ void CMainWindow::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags)
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	CDC     *pDC = nullptr;
 	CSound  *pEffect = nullptr;
 
@@ -908,7 +908,7 @@ void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
 
 }
 
-void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 
 	if (!bMinimized) {
 		switch (nState) {
@@ -1038,10 +1038,10 @@ BOOL CMainWindow::GetNewSequence(int nLength) {
 	return TRUE;
 }//end GetNewSequence()
 
-void CMainWindow::ActivateButtons(UINT nNumActive, BOOL bState) {
+void CMainWindow::ActivateButtons(unsigned int nNumActive, BOOL bState) {
 	CDC         *pDC;
 	CPalette    *pOldPal = nullptr;
-	UINT i;
+	unsigned int i;
 
 	pDC = GetDC();
 	pOldPal = pDC->SelectPalette(pGamePalette, FALSE);           // select the game palette

@@ -57,7 +57,7 @@ BOOL CGuessDlg::OnInitDialog(void) {
 	return TRUE;
 }
 
-void CGuessDlg::OnTimer(UINT_PTR nEventID) {
+void CGuessDlg::OnTimer(uintptr nEventID) {
 	char buf[MAX_PLENGTH_S + 2];
 	CEdit *pEdit;
 
@@ -77,7 +77,7 @@ void CGuessDlg::OnSetFocus(CWnd *) {
 	SetTimer(10, 50, nullptr);
 }
 
-void CGuessDlg::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
+void CGuessDlg::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
 	CEdit *pEdit;
 
 	pEdit = (CEdit *)GetDlgItem(IDC_EDIT);

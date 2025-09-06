@@ -69,7 +69,7 @@ CColorButton    *pDFACancelButton = nullptr;
  *      n/a
  *
  ****************************************************************/
-CDFAOptDlg::CDFAOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CDFAOptDlg::CDFAOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 	:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
 		rDisplayGTime(43, 85, 174, 97),
 		rDisplayBTime(43, 35, 174, 47) {
@@ -356,7 +356,7 @@ void CDFAOptDlg::OnPaint(void) {
  *      n/a
  *
  ****************************************************************/
-void CDFAOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void CDFAOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;

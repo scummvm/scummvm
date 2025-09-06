@@ -52,17 +52,17 @@ typedef int MMRESULT;
 
 /* joystick information data structure */
 typedef struct joyinfo_tag {
-	UINT wXpos;                 /* x position */
-	UINT wYpos;                 /* y position */
-	UINT wZpos;                 /* z position */
-	UINT wButtons;              /* button states */
+	unsigned int wXpos;                 /* x position */
+	unsigned int wYpos;                 /* y position */
+	unsigned int wZpos;                 /* z position */
+	unsigned int wButtons;              /* button states */
 } JOYINFO, *PJOYINFO, NEAR *NPJOYINFO, FAR *LPJOYINFO;
 
 extern MMRESULT joySetCapture(HWND hwnd,
-                              UINT uJoyID, UINT uPeriod, BOOL fChanged);
-extern MMRESULT joySetThreshold(UINT uJoyID, UINT uThreshold);
-extern MMRESULT joyGetPos(UINT uJoyID, LPJOYINFO pji);
-extern MMRESULT joyReleaseCapture(UINT uJoyID);
+                              unsigned int uJoyID, unsigned int uPeriod, BOOL fChanged);
+extern MMRESULT joySetThreshold(unsigned int uJoyID, unsigned int uThreshold);
+extern MMRESULT joyGetPos(unsigned int uJoyID, LPJOYINFO pji);
+extern MMRESULT joyReleaseCapture(unsigned int uJoyID);
 
 } // namespace MFC
 } // namespace Bagel

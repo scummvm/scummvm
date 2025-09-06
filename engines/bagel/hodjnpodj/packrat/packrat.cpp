@@ -181,7 +181,7 @@ BOOL    bFlashTurtle;
 int     anReleaseTurtleCount[4];
 
 BOOL    bUseJoyStick;
-UINT    awJoyCenter[2];
+unsigned int    awJoyCenter[2];
 
 int     nNumOfBGKilled;
 int     nStartingLives;
@@ -439,8 +439,8 @@ CMainPackRatWindow::CMainPackRatWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStru
 		bUseJoyStick = TRUE;
 		joySetThreshold(JOYSTICKID1, 2000);
 		joyGetPos(JOYSTICKID1, &joyInfo);
-		awJoyCenter[0] = (UINT)joyInfo.wXpos;
-		awJoyCenter[1] = (UINT)joyInfo.wYpos;
+		awJoyCenter[0] = (unsigned int)joyInfo.wXpos;
+		awJoyCenter[1] = (unsigned int)joyInfo.wYpos;
 	} else {
 		bUseJoyStick = FALSE;
 	}
@@ -1702,16 +1702,16 @@ void CMainPackRatWindow::SetNewPlayerPos() {
 
 	if ((bUseJoyStick) && (m_nNextDir == 0)) {
 		joyGetPos(JOYSTICKID1, &joyInfo);
-		if ((UINT)(joyInfo.wXpos) > (UINT)(awJoyCenter[0] + 10000))
+		if ((unsigned int)(joyInfo.wXpos) > (unsigned int)(awJoyCenter[0] + 10000))
 			m_nNextDir = 2;
 		else {
-			if ((UINT)(joyInfo.wXpos) < (UINT)(awJoyCenter[0] - 10000))
+			if ((unsigned int)(joyInfo.wXpos) < (unsigned int)(awJoyCenter[0] - 10000))
 				m_nNextDir = 1;
 			else {
-				if ((UINT)(joyInfo.wYpos) > (UINT)(awJoyCenter[1] + 10000))
+				if ((unsigned int)(joyInfo.wYpos) > (unsigned int)(awJoyCenter[1] + 10000))
 					m_nNextDir = 4;
 				else {
-					if ((UINT)(joyInfo.wYpos) < (UINT)(awJoyCenter[1] - 10000))
+					if ((unsigned int)(joyInfo.wYpos) < (unsigned int)(awJoyCenter[1] - 10000))
 						m_nNextDir = 3;
 				}
 			}
@@ -2716,7 +2716,7 @@ void CMainPackRatWindow::ResetGame() {
 void CALLBACK lpfnOptionCallback(CWnd * pWnd) {
 // do the mini options dialog
 	int             nOption = 0;       // return from the Options dialog
-//UINT            x = IDD_MINIOPTIONS_DIALOG;
+//unsigned int            x = IDD_MINIOPTIONS_DIALOG;
 	CPackRatOptDlg  dlgMiniOptDlg(pWnd, pGamePalette, IDD_MINIOPTIONS_DIALOG);
 
 	bResetGame = FALSE;
@@ -2831,7 +2831,7 @@ BOOL CMainPackRatWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainPackRatWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainPackRatWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 
 	if (m_bMouseCaptured) {
 
@@ -2881,7 +2881,7 @@ void CMainPackRatWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainPackRatWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainPackRatWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (m_lpGameStruct->bPlayingMetagame == FALSE) {
 		if ((rNewGame.PtInRect(point)) && (m_bMouseCaptured == FALSE))  {
@@ -2897,7 +2897,7 @@ void CMainPackRatWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainPackRatWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainPackRatWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 
 	/*
 	    if ( m_bMouseCaptured ) {
@@ -2913,7 +2913,7 @@ void CMainPackRatWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainPackRatWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainPackRatWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 
 	if (m_bMouseCaptured) {
 		ReleaseCapture();
@@ -2932,7 +2932,7 @@ void CMainPackRatWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnRButtonDown(nFlags, point);
 }
 
-void CMainPackRatWindow::OnRButtonUp(UINT nFlags, CPoint point) {
+void CMainPackRatWindow::OnRButtonUp(unsigned int nFlags, CPoint point) {
 	/*
 	    if ( m_bMouseCaptured ) {
 	        m_bMouseCaptured = FALSE;
@@ -2944,7 +2944,7 @@ void CMainPackRatWindow::OnRButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnRButtonUp(nFlags, point);
 }
 
-void CMainPackRatWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainPackRatWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette,
 	                 (m_lpGameStruct->bSoundEffectsEnabled ? RULES_WAV : nullptr));
 
@@ -3023,7 +3023,7 @@ void CMainPackRatWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainPackRatWindow::OnTimer(UINT_PTR nWhichTimer) {
+void CMainPackRatWindow::OnTimer(uintptr nWhichTimer) {
 	if (nWhichTimer == PACKRATTIMER) {
 		KillTimer(PACKRATTIMER);
 		bEndGame = FALSE;
@@ -3275,7 +3275,7 @@ BOOL CMainPackRatWindow::OnEraseBkgnd(CDC *pDC) {
 	return TRUE;
 }
 
-void CMainPackRatWindow::OnActivate(UINT nState, CWnd   *pWndOther, BOOL bMinimized) {
+void CMainPackRatWindow::OnActivate(unsigned int nState, CWnd   *pWndOther, BOOL bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_INACTIVE:
@@ -3597,7 +3597,7 @@ void CMainPackRatWindow::OnSoundNotify(CSound *pSound) {
 	//
 }
 
-void CMainPackRatWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainPackRatWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 	// User has hit ALT_F4 so close down this App
 	//

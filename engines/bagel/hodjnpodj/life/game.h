@@ -165,12 +165,12 @@ protected:
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
-	afx_msg void OnLButtonDown(UINT, CPoint);
-	afx_msg void OnLButtonDblClk(UINT, CPoint);
-	afx_msg void OnSysKeyDown(UINT, UINT, UINT);
-	afx_msg void OnSysChar(UINT, UINT, UINT);
-	afx_msg void OnKeyDown(UINT, UINT, UINT);
-	afx_msg void OnTimer(UINT_PTR);
+	afx_msg void OnLButtonDown(unsigned int, CPoint);
+	afx_msg void OnLButtonDblClk(unsigned int, CPoint);
+	afx_msg void OnSysKeyDown(unsigned int, unsigned int, unsigned int);
+	afx_msg void OnSysChar(unsigned int, unsigned int, unsigned int);
+	afx_msg void OnKeyDown(unsigned int, unsigned int, unsigned int);
+	afx_msg void OnTimer(uintptr);
 	afx_msg void OnClose();
 	afx_msg void OnDestroy();
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);

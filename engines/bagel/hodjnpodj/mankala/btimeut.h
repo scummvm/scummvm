@@ -49,10 +49,10 @@ public:
 
 private:
 	//- DelayMs -- delay for specified # of milliseconds
-	BOOL DelayMs(UINT uMs) ;
+	BOOL DelayMs(unsigned int uMs) ;
 
 	static void DelayMsCallback(HWND /* hWnd */,
-		UINT /* uMsg */, UINT_PTR /* uTimerId */, uint32 /* dwTime */) ;
+		unsigned int /* uMsg */, uintptr /* uTimerId */, uint32 /* dwTime */) ;
 };
 
 

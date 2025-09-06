@@ -185,15 +185,15 @@ protected:
 
 	//{{AFX_MSG( CMainWindow )
 	afx_msg void OnPaint();
-	afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	afx_msg void OnTimer(UINT_PTR nIDEvent);
-	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnMButtonDown(UINT nFlags, CPoint point);
-	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+	afx_msg void OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
+	afx_msg void OnTimer(uintptr nIDEvent);
+	afx_msg void OnLButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnRButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnLButtonUp(unsigned int nFlags, CPoint point);
+	afx_msg void OnMButtonDown(unsigned int nFlags, CPoint point);
+	afx_msg void OnMouseMove(unsigned int nFlags, CPoint point);
+	afx_msg void OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags);
 	afx_msg void OnClose();
 	afx_msg LRESULT OnMCINotify(WPARAM, LPARAM);
 	afx_msg LRESULT OnMMIONotify(WPARAM, LPARAM);

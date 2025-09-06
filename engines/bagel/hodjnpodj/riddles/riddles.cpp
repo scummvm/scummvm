@@ -679,7 +679,7 @@ void CRiddlesWindow::GameReset(void) {
 
 
 ERROR_CODE CRiddlesWindow::LoadRiddle() {
-	STATIC UINT nLast;
+	STATIC unsigned int nLast;
 	int n, nMin, nMax;
 	ERROR_CODE errCode;
 
@@ -823,7 +823,7 @@ ERROR_CODE CRiddlesWindow::ValidateRiddle(RIDDLE *pRiddle) {
 ERROR_CODE CRiddlesWindow::BuildSpriteList(void) {
 	char *pRiddle, *p;
 	int x, y;
-	UINT nCharsPerLine;
+	unsigned int nCharsPerLine;
 	ERROR_CODE errCode;
 
 	// can't access a null pointer
@@ -1075,7 +1075,7 @@ ERROR_CODE CRiddlesWindow::RepaintSpriteList() {
 }
 
 
-void CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
+void CRiddlesWindow::OnTimer(uintptr nEvent) {
 	CDC *pDC;
 
 	// there should be only one timer
@@ -1147,11 +1147,11 @@ void CRiddlesWindow::OnTimer(UINT_PTR nEvent) {
 }
 
 
-void CRiddlesWindow::OnMouseMove(UINT, CPoint) {
+void CRiddlesWindow::OnMouseMove(unsigned int, CPoint) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
-HBRUSH CRiddlesWindow::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
+HBRUSH CRiddlesWindow::OnCtlColor(CDC *pDC, CWnd *pWnd, unsigned int nCtlColor) {
 	switch (nCtlColor) {
 	case CTLCOLOR_MSGBOX:
 		pDC->SetTextColor(PALETTEINDEX(5));
@@ -1168,7 +1168,7 @@ HBRUSH CRiddlesWindow::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
 	}
 }
 
-void CMyEdit::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMyEdit::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -1182,7 +1182,7 @@ void CMyEdit::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMyEdit::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMyEdit::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_F4
 	//
 	if ((nChar == VK_F4) && (nFlags & 0x2000)) {
@@ -1197,7 +1197,7 @@ void CMyEdit::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMyEdit::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CWnd *pParent;
 
 	pParent = GetParent();
@@ -1232,7 +1232,7 @@ void CMyEdit::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMyEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMyEdit::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	char szBuf[MAX_ANSWER_LENGTH + 1];
 
 	//
@@ -1334,7 +1334,7 @@ BOOL CRiddlesWindow::CheckUserGuess(const char *pszGuess) {
 	return FALSE;
 }
 
-void CRiddlesWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CRiddlesWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   animRect;                   // All three Easter Egg animations are in the same place
 	CRect   col1Rect,

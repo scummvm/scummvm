@@ -333,14 +333,14 @@ void EventLoop::checkForFrameUpdate() {
 }
 
 BOOL EventLoop::PeekMessage(LPMSG lpMsg, HWND hWnd,
-		UINT wMsgFilterMin, UINT wMsgFilterMax,
-		UINT wRemoveMsg) {
+		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+		unsigned int wRemoveMsg) {
 	checkMessages();
 	return _messages.peekMessage(lpMsg, hWnd,
 		wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 }
 
-BOOL EventLoop::PostMessage(HWND hWnd, UINT Msg,
+BOOL EventLoop::PostMessage(HWND hWnd, unsigned int Msg,
 		WPARAM wParam, LPARAM lParam) {
 	if (isQuitting())
 		return false;
@@ -461,19 +461,19 @@ void EventLoop::setMousePos(const Common::Point &pt) {
 	g_system->warpMouse(pt.x, pt.y);
 }
 
-MMRESULT EventLoop::joySetCapture(HWND hwnd, UINT uJoyID,
-		UINT uPeriod, BOOL fChanged) {
+MMRESULT EventLoop::joySetCapture(HWND hwnd, unsigned int uJoyID,
+		unsigned int uPeriod, BOOL fChanged) {
 	assert(uJoyID == JOYSTICKID1);
 	_joystickWin = hwnd;
 	return JOYERR_NOERROR;
 }
 
-MMRESULT EventLoop::joySetThreshold(UINT uJoyID, UINT uThreshold) {
+MMRESULT EventLoop::joySetThreshold(unsigned int uJoyID, unsigned int uThreshold) {
 	// No implementation
 	return JOYERR_NOERROR;
 }
 
-MMRESULT EventLoop::joyGetPos(UINT uJoyID, LPJOYINFO pji) {
+MMRESULT EventLoop::joyGetPos(unsigned int uJoyID, LPJOYINFO pji) {
 	assert(uJoyID == JOYSTICKID1);
 
 	pji->wXpos = _joystickPos.x;
@@ -484,13 +484,13 @@ MMRESULT EventLoop::joyGetPos(UINT uJoyID, LPJOYINFO pji) {
 	return JOYERR_NOERROR;
 }
 
-MMRESULT EventLoop::joyReleaseCapture(UINT uJoyID) {
+MMRESULT EventLoop::joyReleaseCapture(unsigned int uJoyID) {
 	assert(uJoyID == JOYSTICKID1);
 	return JOYERR_NOERROR;
 }
 
-UINT_PTR EventLoop::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-		void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32)) {
+uintptr EventLoop::SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
+		void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32)) {
 	if (!nIDEvent)
 		nIDEvent = ++_timerIdCtr;
 
@@ -499,7 +499,7 @@ UINT_PTR EventLoop::SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
 	return nIDEvent;
 }
 
-BOOL EventLoop::KillTimer(HWND hWnd, UINT_PTR nIDEvent) {
+BOOL EventLoop::KillTimer(HWND hWnd, uintptr nIDEvent) {
 	for (auto it = _timers.begin(); it != _timers.end(); ++it) {
 		if (it->_hWnd == hWnd && it->_idEvent == nIDEvent) {
 			_timers.erase(it);
@@ -537,7 +537,7 @@ void EventLoop::triggerTimers() {
 	}
 }
 
-EventLoop::TimerEntry::TimerEntry(HWND hWnd, UINT_PTR idEvent,
+EventLoop::TimerEntry::TimerEntry(HWND hWnd, uintptr idEvent,
 		uint32 interval, TimerProc callback) :
 		_hWnd(hWnd), _idEvent(idEvent),
 		_interval(interval), _callback(callback) {

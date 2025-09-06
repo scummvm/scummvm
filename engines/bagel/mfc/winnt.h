@@ -22,34 +22,15 @@
 #ifndef BAGEL_MFC_WINNT_H
 #define BAGEL_MFC_WINNT_H
 
+#include "common/scummsys.h"
+
 namespace Bagel {
 namespace MFC {
 
 typedef int BOOL;
 typedef uint16 TCHAR;
 typedef uint16 SHORT;
-typedef unsigned long ULONG;
-typedef int64 LONGLONG;
-typedef uint64 ULONGLONG;
-typedef uint16 *PWORD;
-typedef uint16 *LPWORD;
-typedef uint32 *PDWORD;
-typedef uint32 *LPDWORD;
 
-typedef const uint16 *LPCWSTR;
-typedef uint16 *LPWSTR;
-typedef uint16 *LPTSTR;
-typedef LPWSTR BSTR;
-
-typedef unsigned int UINT;
-typedef unsigned int *PUINT;
-
-typedef intptr INT_PTR, *PINT_PTR;
-typedef uintptr UINT_PTR, *PUINT_PTR;
-
-typedef intptr LONG_PTR, *PLONG_PTR;
-typedef uintptr ULONG_PTR, *PULONG_PTR;
-typedef uintptr DWORD_PTR;
 typedef uint32 COLORREF;
 typedef void *POSITION;
 
@@ -84,7 +65,7 @@ typedef long HRESULT;
 
 typedef char CCHAR;
 typedef uint32 LCID;
-typedef PDWORD PLCID;
+typedef uint32 *PLCID;
 typedef uint16   LANGID;
 
 typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
@@ -629,7 +610,7 @@ typedef uint32 (*APPLICATION_RECOVERY_CALLBACK)(void *pvParameter);
  /*
   * Predefined Resource Types
   */
-#define MAKEINTRESOURCE(i) ((char *)((ULONG_PTR)((uint16)(i))))
+#define MAKEINTRESOURCE(i) ((char *)((uintptr)((uint16)(i))))
 #define RT_CURSOR           MAKEINTRESOURCE(1)
 #define RT_BITMAP           MAKEINTRESOURCE(2)
 #define RT_ICON             MAKEINTRESOURCE(3)
@@ -729,11 +710,11 @@ struct LOGFONT {
 typedef LOGFONT *LPLOGFONT;
 
 typedef struct tagSCROLLINFO {
-	UINT    cbSize;
-	UINT    fMask;
+	unsigned int    cbSize;
+	unsigned int    fMask;
 	int     nMin;
 	int     nMax;
-	UINT    nPage;
+	unsigned int    nPage;
 	int     nPos;
 	int     nTrackPos;
 }   SCROLLINFO, *LPSCROLLINFO;

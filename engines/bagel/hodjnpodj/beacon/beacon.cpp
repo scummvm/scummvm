@@ -69,20 +69,20 @@ BOOL        bChanged;
 BOOL        bPlaying = FALSE;
 BOOL        bNewGame = FALSE;                           // Not playing a game right now
 
-UINT        nCurrentIndex = BUTTON_ENTRY;               // The current beacon color index
-UINT        nNextIndex = BUTTON_ENTRY;                  // The next beacon color index
+unsigned int        nCurrentIndex = BUTTON_ENTRY;               // The current beacon color index
+unsigned int        nNextIndex = BUTTON_ENTRY;                  // The next beacon color index
 
-UINT        nSlice = START_ENTRY;
+unsigned int        nSlice = START_ENTRY;
 int         nLastPick = 0;
 
 int         m_nSweepCount = 0;
 constexpr int         m_nTotalSquares = (NUM_COLUMNS * NUM_ROWS) -
                               ((START_WIDTH / GRID_WIDTH) * (START_HEIGHT / GRID_HEIGHT));
 int         m_nRemoved = 0;                             // Count blocks removed
-UINT        m_nSweeps = MAX_SWEEPS;
-UINT        m_nSpeed = MAX_SPEED;
-UINT        tempSweeps = 100;                           // default sweeps = 100
-UINT        tempSpeed = MAX_SPEED;                      // default speed = Hovercraft
+unsigned int        m_nSweeps = MAX_SWEEPS;
+unsigned int        m_nSpeed = MAX_SPEED;
+unsigned int        tempSweeps = 100;                           // default sweeps = 100
+unsigned int        tempSpeed = MAX_SPEED;                      // default speed = Hovercraft
 BOOL        m_bAutomatic = FALSE;
 BOOL        m_bChangeAtTwelve = FALSE;
 float       m_Score = 0;
@@ -345,7 +345,7 @@ void CMainWindow::DrawBeams(CDC *pDC) {
 	             *pBigPalOld = nullptr;
 	CRect       rect;
 	CPoint      Start, End, Center;
-	UINT    i;
+	unsigned int    i;
 	int     radius;
 	float   degrees, x, y, radians, rads;
 
@@ -551,7 +551,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -567,7 +567,7 @@ BOOL CMainWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	CRect   rectTitle;
 
@@ -607,7 +607,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -623,7 +623,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	int     i;
 	BOOL    bHit = FALSE;
@@ -676,7 +676,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nFlags     Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *      CPoint point    Location of cursor
  *
  *  IMPLICIT INPUT PARAMETERS:
@@ -692,7 +692,7 @@ void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));           // Refresh cursor object
 
 	CFrameWnd ::OnMouseMove(nFlags, point);
@@ -708,9 +708,9 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nChar      Virtual key info
- *      UINT nRepCnt    Virtual key info
- *      UINT nFlags     Virtual key info
+ *      unsigned int nChar      Virtual key info
+ *      unsigned int nRepCnt    Virtual key info
+ *      unsigned int nFlags     Virtual key info
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -725,18 +725,18 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CFrameWnd ::OnChar(nChar, nRepCnt, nFlags);     // default action
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if ((nChar == VK_F4) && (nFlags & 0x2000))      // terminate app on ALT-F4
 		PostMessage(WM_CLOSE, 0, 0);
 	else
 		CFrameWnd::OnChar(nChar, nRepCnt, nFlags);  // default action
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	if (nChar == VK_F1) {                                  // F1 key is hit
 		SendMessage(WM_COMMAND, IDC_RULES, BN_CLICKED);      // Activate the Rules dialog
 	} else if (nChar == VK_F2) {                         // F2 key is hit
@@ -755,7 +755,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *
  *  FORMAL PARAMETERS:
  *
- *      UINT nIDEvent   The ID of the timer event activated
+ *      unsigned int nIDEvent   The ID of the timer event activated
  *
  *  IMPLICIT INPUT PARAMETERS:
  *
@@ -770,7 +770,7 @@ void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
  *      void
  *
  ****************************************************************/
-void CMainWindow::OnTimer(UINT_PTR nIDEvent) {
+void CMainWindow::OnTimer(uintptr nIDEvent) {
 	CDC *pDC;
 	char    msg[64];
 
@@ -1031,7 +1031,7 @@ BOOL CMainWindow::CompareColors(CDC *pDC, CPoint point) {
 	COLORREF    test;
 	byte        ar, ag, ab, br, bg, bb;
 	PALETTEENTRY    tempent[1];
-	UINT        index;
+	unsigned int        index;
 
 	test = (*pDC).GetPixel(point);
 

@@ -1695,7 +1695,7 @@ int CBFishWindow::GetFishIndex(CSprite *pSprite) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nFlags  = Mouse button down flags
+*       unsigned int nFlags  = Mouse button down flags
 *       CPoint point = Point where the mouse was at time of this message
 *
 *  RETURN VALUE:
@@ -1703,7 +1703,7 @@ int CBFishWindow::GetFishIndex(CSprite *pSprite) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnRButtonDown(UINT, CPoint point) {
+void CBFishWindow::OnRButtonDown(unsigned int, CPoint point) {
 	CRect tmpRect;
 	int i;
 
@@ -1740,7 +1740,7 @@ void CBFishWindow::OnRButtonDown(UINT, CPoint point) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nFlags  = Mouse button down flags
+*       unsigned int nFlags  = Mouse button down flags
 *       CPoint point = Point where the mouse was at time of this message
 *
 *  RETURN VALUE:
@@ -1748,7 +1748,7 @@ void CBFishWindow::OnRButtonDown(UINT, CPoint point) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnLButtonDown(UINT, CPoint point) {
+void CBFishWindow::OnLButtonDown(unsigned int, CPoint point) {
 	CRect   tmpRect,
 	        winRect,
 	        trawlerRect,
@@ -1970,7 +1970,7 @@ void CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nFlags  = Mouse button down flags
+*       unsigned int nFlags  = Mouse button down flags
 *       CPoint point = Point where the mouse was at time of this message
 *
 *  RETURN VALUE:
@@ -1978,7 +1978,7 @@ void CBFishWindow::OnLButtonDown(UINT, CPoint point) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnLButtonUp(UINT, CPoint point) {
+void CBFishWindow::OnLButtonUp(unsigned int, CPoint point) {
 	CSize size;
 	CRect rect, tmpRect;
 	CDC *pDC;
@@ -2181,7 +2181,7 @@ CPoint CBFishWindow::SnapToGrid(CPoint point) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nFlags  = Mouse button down flags
+*       unsigned int nFlags  = Mouse button down flags
 *       CPoint point = Point where the mouse was at time of message
 *
 *  RETURN VALUE:
@@ -2189,7 +2189,7 @@ CPoint CBFishWindow::SnapToGrid(CPoint point) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnMouseMove(UINT, CPoint point) {
+void CBFishWindow::OnMouseMove(unsigned int, CPoint point) {
 	CSize size;
 	HCURSOR hCursor;
 	CDC *pDC;
@@ -3423,16 +3423,16 @@ void CBFishWindow::DeleteSprite(CSprite *pSprite) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nChar   = key that was pressed
-*       UINT nRepCnt = nunmber of times key was repeated
-*       UINT nFlags  = ALT, CTRL, and SHFT key flags
+*       unsigned int nChar   = key that was pressed
+*       unsigned int nRepCnt = nunmber of times key was repeated
+*       unsigned int nFlags  = ALT, CTRL, and SHFT key flags
 *
 *  RETURN VALUE:
 *
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CBFishWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -3456,16 +3456,16 @@ void CBFishWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nChar   = key that was pressed
-*       UINT nRepCnt = nunmber of times key was repeated
-*       UINT nFlags  = ALT, CTRL, and SHFT key flags
+*       unsigned int nChar   = key that was pressed
+*       unsigned int nRepCnt = nunmber of times key was repeated
+*       unsigned int nFlags  = ALT, CTRL, and SHFT key flags
 *
 *  RETURN VALUE:
 *
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CBFishWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -3491,16 +3491,16 @@ void CBFishWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nChar   = key that was pressed
-*       UINT nRepCnt = nunmber of times key was repeated
-*       UINT nFlags  = ALT, CTRL, and SHFT key flags
+*       unsigned int nChar   = key that was pressed
+*       unsigned int nRepCnt = nunmber of times key was repeated
+*       unsigned int nFlags  = ALT, CTRL, and SHFT key flags
 *
 *  RETURN VALUE:
 *
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CBFishWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Handle keyboard input
 	//
 	switch (nChar) {
@@ -3540,7 +3540,7 @@ void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 *
 *  FORMAL PARAMETERS:
 *
-*       UINT nState = WA_ACTIVE, WA_CLICKACTIVE or WA_INACTIVE
+*       unsigned int nState = WA_ACTIVE, WA_CLICKACTIVE or WA_INACTIVE
 *       CWnd *pWnd  = Pointer to Window that is losing/gaining activation
 *       BOOL bMin   = TRUE if this app is minimized
 *
@@ -3549,7 +3549,7 @@ void CBFishWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 *       None
 *
 ****************************************************************/
-void CBFishWindow::OnActivate(UINT nState, CWnd *, BOOL bMinimized) {
+void CBFishWindow::OnActivate(unsigned int nState, CWnd *, BOOL bMinimized) {
 	if (!bMinimized) {
 
 		switch (nState) {

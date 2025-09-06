@@ -204,7 +204,7 @@ BOOL COptnDlg::OnEraseBkgnd(CDC *pDC) {
 }
 
 
-void COptnDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void COptnDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int pMin,
 	    pMax;
 	int OldPos = pScrollBar->GetScrollPos();

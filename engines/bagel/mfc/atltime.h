@@ -40,12 +40,12 @@ public:
 	    int nMins,
 	    int nSecs);
 
-	LONGLONG GetDays() const;
-	LONGLONG GetTotalHours() const;
+	int64 GetDays() const;
+	int64 GetTotalHours() const;
 	long GetHours() const;
-	LONGLONG GetTotalMinutes() const;
+	int64 GetTotalMinutes() const;
 	long GetMinutes() const;
-	LONGLONG GetTotalSeconds() const;
+	int64 GetTotalSeconds() const;
 	long GetSeconds() const;
 
 	int64 GetTimeSpan() const;
@@ -63,7 +63,7 @@ public:
 
 public:
 	CString Format(const char *pszFormat) const;
-	CString Format(UINT nID) const;
+	CString Format(unsigned int nID) const;
 
 private:
 	int64 m_timeSpan;
@@ -124,8 +124,8 @@ public:
 	// formatting using "C" strftime
 	CString Format(const char *pszFormat) const;
 	CString FormatGmt(const char *pszFormat) const;
-	CString Format(UINT nFormatID) const;
-	CString FormatGmt(UINT nFormatID) const;
+	CString Format(unsigned int nFormatID) const;
+	CString FormatGmt(unsigned int nFormatID) const;
 
 private:
 	int64 m_time;
@@ -135,7 +135,7 @@ class CFileTimeSpan {
 public:
 	CFileTimeSpan();
 	CFileTimeSpan(const CFileTimeSpan &span);
-	CFileTimeSpan(LONGLONG nSpan);
+	CFileTimeSpan(int64 nSpan);
 
 	CFileTimeSpan &operator=(const CFileTimeSpan &span);
 
@@ -152,18 +152,18 @@ public:
 	bool operator<=(CFileTimeSpan span) const;
 	bool operator>=(CFileTimeSpan span) const;
 
-	LONGLONG GetTimeSpan() const;
-	void SetTimeSpan(LONGLONG nSpan);
+	int64 GetTimeSpan() const;
+	void SetTimeSpan(int64 nSpan);
 
 protected:
-	LONGLONG m_nSpan;
+	int64 m_nSpan;
 };
 
 class CFileTime : public FILETIME {
 public:
 	CFileTime();
 	CFileTime(const FILETIME &ft);
-	CFileTime(ULONGLONG nTime);
+	CFileTime(uint64 nTime);
 
 	static CFileTime WINAPI GetCurrentTime();
 
@@ -183,18 +183,18 @@ public:
 	bool operator<=(CFileTime ft) const;
 	bool operator>=(CFileTime ft) const;
 
-	ULONGLONG GetTime() const;
-	void SetTime(ULONGLONG nTime);
+	uint64 GetTime() const;
+	void SetTime(uint64 nTime);
 
 	CFileTime UTCToLocal() const;
 	CFileTime LocalToUTC() const;
 
-	static const ULONGLONG Millisecond = 10000;
-	static const ULONGLONG Second = Millisecond * static_cast<ULONGLONG>(1000);
-	static const ULONGLONG Minute = Second * static_cast<ULONGLONG>(60);
-	static const ULONGLONG Hour = Minute * static_cast<ULONGLONG>(60);
-	static const ULONGLONG Day = Hour * static_cast<ULONGLONG>(24);
-	static const ULONGLONG Week = Day * static_cast<ULONGLONG>(7);
+	static const uint64 Millisecond = 10000;
+	static const uint64 Second = Millisecond * static_cast<uint64>(1000);
+	static const uint64 Minute = Second * static_cast<uint64>(60);
+	static const uint64 Hour = Minute * static_cast<uint64>(60);
+	static const uint64 Day = Hour * static_cast<uint64>(24);
+	static const uint64 Week = Day * static_cast<uint64>(7);
 };
 
 } // namespace MFC

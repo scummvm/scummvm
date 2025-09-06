@@ -209,7 +209,7 @@ void COptn::OnDestroy(void) {
 }
 
 
-void COptn::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void COptn::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	// TODO: Add your message handler code here and/or call default
 	CDC     *pDC;
 	BOOL    bAssertCheck;

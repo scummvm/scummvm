@@ -58,8 +58,8 @@ BOOL CBitmap::CreateCompatibleBitmap(CDC *pDC, int nWidth, int nHeight) {
 	return true;
 }
 
-BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, UINT nPlanes,
-		UINT nBitcount, const void *lpBits) {
+BOOL CBitmap::CreateBitmap(int nWidth, int nHeight, unsigned int nPlanes,
+		unsigned int nBitcount, const void *lpBits) {
 	assert(nPlanes == 1);
 
 	BITMAPINFOHEADER h;

@@ -116,7 +116,7 @@ void CGtlData::CreateOffScreenBmp(void) {
 	if (m_pOffScreenBmp == nullptr) {
 
 		if ((m_cBgbMgr.m_xpGamePalette != nullptr) &&
-		        (GetFreeSpace(0) >= (ULONG)250000) && (GlobalCompact(0) >= (ULONG)500000)) {
+		        (GetFreeSpace(0) >= (unsigned long)250000) && (GlobalCompact(0) >= (unsigned long)500000)) {
 
 			if ((m_pOffScreenBmp = new CBitmap) != nullptr) {
 

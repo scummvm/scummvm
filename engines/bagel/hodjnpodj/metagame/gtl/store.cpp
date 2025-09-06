@@ -339,7 +339,7 @@ BOOL CGeneralStore::OnInitDialog() {
 }
 
 
-void CGeneralStore::OnActivate(UINT nState, CWnd *, BOOL /*bMinimized*/) {
+void CGeneralStore::OnActivate(unsigned int nState, CWnd *, BOOL /*bMinimized*/) {
 	BOOL    bUpdateNeeded;
 
 	switch (nState) {
@@ -561,7 +561,7 @@ void CGeneralStore::RefreshBackground(void) {
 }
 
 
-void CGeneralStore::OnShowWindow(BOOL bShow, UINT nStatus) {
+void CGeneralStore::OnShowWindow(BOOL bShow, unsigned int nStatus) {
 	CDialog::OnShowWindow(bShow, nStatus);
 
 	// TODO: Add your message handler code here
@@ -569,7 +569,7 @@ void CGeneralStore::OnShowWindow(BOOL bShow, UINT nStatus) {
 }
 
 
-void CGeneralStore::OnSize(UINT nType, int cx, int cy) {
+void CGeneralStore::OnSize(unsigned int nType, int cx, int cy) {
 	CDialog::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
@@ -668,7 +668,7 @@ BOOL CGeneralStore::CreateWorkAreas(CDC *pDC) {
 }
 
 
-void CGeneralStore::OnMouseMove(UINT nFlags, CPoint point) {
+void CGeneralStore::OnMouseMove(unsigned int nFlags, CPoint point) {
 	HCURSOR hNewCursor = nullptr;
 	CWinApp *pMyApp = nullptr;
 	CRect   testRect;
@@ -737,7 +737,7 @@ void CGeneralStore::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CGeneralStore::OnLButtonDown(UINT nFlags, CPoint point) {
+void CGeneralStore::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	int     i;
 	int     nPrice;
 	CDC     *pDC = nullptr;
@@ -837,7 +837,7 @@ int CGeneralStore::SelectedItem(CPoint point) {
 }
 
 
-BOOL CGeneralStore::OnSetCursor(CWnd *pWnd, UINT /*nHitTest*/, UINT /*message*/) {
+BOOL CGeneralStore::OnSetCursor(CWnd *pWnd, unsigned int /*nHitTest*/, unsigned int /*message*/) {
 	if ((*pWnd).m_hWnd == (*this).m_hWnd)
 		return TRUE;
 	else

@@ -81,7 +81,7 @@ protected:
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	virtual void OnOK() override;
 	virtual void OnCancel() override;
 	afx_msg void OnDestroy();

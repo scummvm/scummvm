@@ -178,7 +178,7 @@ BOOL CGtlApp::CallOnFileSave(void)
 
 //* CGtlApp::DoMessageBox -- override of CWinApp function to
 //              display message box messages
-int CGtlApp::DoMessageBox(const char *lpszPrompt, UINT nType, UINT nIDPrompt)
+int CGtlApp::DoMessageBox(const char *lpszPrompt, unsigned int nType, unsigned int nIDPrompt)
 // returns: TRUE if error, FALSE otherwise
 {
 	JXENTER(CGtlApp::DoMessageBox) ;
@@ -253,8 +253,8 @@ void CGtlApp::focusChange(CWnd *oldFocus, CWnd *newFocus) {
 // (calls to AfxRegisterVBEvent will be placed here by ClassWizard)
 
 //{{AFX_VBX_REGISTER_MAP()
-//      UINT NEAR VBN_SPINDOWN = AfxRegisterVBEvent("SPINDOWN");
-//      UINT NEAR VBN_SPINUP = AfxRegisterVBEvent("SPINUP");
+//      unsigned int NEAR VBN_SPINDOWN = AfxRegisterVBEvent("SPINDOWN");
+//      unsigned int NEAR VBN_SPINUP = AfxRegisterVBEvent("SPINUP");
 //}}AFX_VBX_REGISTER_MAP
 
 /////////////////////////////////////////////////////////////////////////////

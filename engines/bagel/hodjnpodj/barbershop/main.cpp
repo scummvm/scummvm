@@ -493,7 +493,7 @@ void CMainWindow::GameReset(void) {
 
 
 
-void CMainWindow::OnTimer(UINT_PTR nEvent) {
+void CMainWindow::OnTimer(uintptr nEvent) {
 	//CDC *pDC;
 
 	// continue as long as there is a currently active non-paused game
@@ -504,7 +504,7 @@ void CMainWindow::OnTimer(UINT_PTR nEvent) {
 }
 
 
-void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CDC *pDC;
 
 	SetCursor(LoadCursor(nullptr, IDC_ARROW));
@@ -517,7 +517,7 @@ void CMainWindow::OnMouseMove(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	CPoint  UndoPoint(UNDO_LEF + (UNDO_RIG - UNDO_LEF) / 2, UNDO_TOP + (UNDO_BOT - UNDO_TOP) / 2);
 
 	if (m_pBarb->m_pCrd != nullptr)        // r we currently moving a card?
@@ -532,7 +532,7 @@ void CMainWindow::OnRButtonDown(UINT nFlags, CPoint point) {
 	}
 }
 
-void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC     *pDC;
 	char    buf[32];
 	CRect   tmpRect;
@@ -636,7 +636,7 @@ void CMainWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonDblClk(unsigned int nFlags, CPoint point) {
 	char    buf[32];
 	CRect   tmpRect;
 
@@ -700,7 +700,7 @@ void CMainWindow::OnLButtonDblClk(UINT nFlags, CPoint point) {
 }
 
 
-void CMainWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	char    buf[32];
 
 	if (m_pBarb->m_bIsGameOver == FALSE) {
@@ -759,7 +759,7 @@ void CMainWindow::DeleteSprite(CSprite *pSprite) {
 	delete pSprite;                                 // delete it
 }
 
-void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysChar(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_Q
 	//
 	if ((nChar == 'q') && (nFlags & 0x2000)) {
@@ -773,7 +773,7 @@ void CMainWindow::OnSysChar(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	switch (nChar) {
 
 	// User has hit ALT_F4 so close down this App
@@ -789,7 +789,7 @@ void CMainWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	}
 }
 
-void CMainWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// Handle keyboard input
 	//
 	switch (nChar) {
@@ -841,7 +841,7 @@ void CMainWindow::FlushInputEvents(void) {
 	} // end while
 }
 
-void CMainWindow::OnActivate(UINT nState, CWnd *pWndOther, BOOL bMinimized) {
+void CMainWindow::OnActivate(unsigned int nState, CWnd *pWndOther, BOOL bMinimized) {
 	if (pWndOther)      // bullshit to rid warnings
 		TRUE;
 

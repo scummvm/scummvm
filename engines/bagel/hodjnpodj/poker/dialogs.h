@@ -42,7 +42,7 @@ private:
 	// "Set Amount" and "Set Payoffs" buttons
 
 public:
-	COptionsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_OPTIONS);
+	COptionsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_OPTIONS);
 	void SetInitialOptions(BOOL = FALSE, BOOL = TRUE);   // Sets the private members
 	void ClearDialogImage();
 
@@ -65,7 +65,7 @@ private:
 	CRect   rectDisplayAmount;
 
 public:
-	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_SETAMOUNT);
+	CSetAmountDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_SETAMOUNT);
 	void SetInitialOptions(long = 0);    // Sets the private members
 	void ClearDialogImage();
 	BOOL OnInitDialog() override;
@@ -73,7 +73,7 @@ public:
 protected:
 	//{{AFX_MSG(COptions)
 	virtual BOOL OnCommand(WPARAM, LPARAM) override;
-	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+	afx_msg void OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar);
 	afx_msg void OnPaint();
 	afx_msg BOOL OnEraseBkgnd(CDC *pDC);
 	afx_msg void OnDestroy();
@@ -106,7 +106,7 @@ private:
 	CRect rectRoyalFlush;
 
 public:
-	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
+	CSetPayoffsDlg(CWnd* pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_WINRATIO, int = IDC_POPO, BOOL = FALSE);
 	void ClearDialogImage();
 	void OnKlingon(BOOL = TRUE);
 	void OnKuwaiti(BOOL = TRUE);
@@ -134,7 +134,7 @@ private:
 	int m_nWinPhrase;
 
 public:
-	CUserWonDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, UINT = IDD_USERWON);
+	CUserWonDlg(CWnd *pParent = nullptr, CPalette *pPalette = nullptr, unsigned int = IDD_USERWON);
 	void SetInitialOptions(int = 0);
 	void ClearDialogImage();
 	BOOL OnInitDialog() override;

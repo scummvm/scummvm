@@ -64,7 +64,7 @@ class CFileException;
 struct CRuntimeClass {
 	const char *m_lpszClassName;
 	int m_nObjectSize;
-	UINT m_wSchema;
+	unsigned int m_wSchema;
 	CObject *(*m_pfnCreateObject)();
 	const CRuntimeClass *m_pBaseClass;
 
@@ -145,25 +145,25 @@ private:
 
 public:
 	CFile() {}
-	CFile(const char *lpszFileName, UINT nOpenFlags);
+	CFile(const char *lpszFileName, unsigned int nOpenFlags);
 	~CFile() {
 		Close();
 	}
 
 	BOOL Open(const char *lpszFileName,
-		UINT nOpenFlags = CFile::modeRead,
+		unsigned int nOpenFlags = CFile::modeRead,
 		CFileException *pError = nullptr);
 	void Close();
 	void Abort();
-	ULONGLONG SeekToEnd();
+	uint64 SeekToEnd();
 	void SeekToBegin();
-	virtual ULONGLONG Seek(LONGLONG lOff, UINT nFrom);
-	virtual ULONGLONG GetLength() const;
-	virtual ULONGLONG GetPosition() const;
+	virtual uint64 Seek(int64 lOff, unsigned int nFrom);
+	virtual uint64 GetLength() const;
+	virtual uint64 GetPosition() const;
 
-	virtual UINT Read(void *lpBuf, UINT nCount);
-	virtual void Write(const void *lpBuf, UINT nCount);
-	UINT ReadHuge(void *lpBuf, UINT nCount) {
+	virtual unsigned int Read(void *lpBuf, unsigned int nCount);
+	virtual void Write(const void *lpBuf, unsigned int nCount);
+	unsigned int ReadHuge(void *lpBuf, unsigned int nCount) {
 		return Read(lpBuf, nCount);
 	}
 

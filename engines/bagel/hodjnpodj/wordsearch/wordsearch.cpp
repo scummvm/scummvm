@@ -69,7 +69,7 @@ static  CSound  *pGameSound = nullptr;                             // Game theme
 
 CSprite *pTimerSprite = nullptr;
 int     nLastCell;
-UINT    nTimerRes;
+unsigned int    nTimerRes;
 long    lCurrentTimer;
 
 int     nWordsLeft;
@@ -256,15 +256,15 @@ CMainWSWindow::CMainWSWindow(HWND hCallingWnd, LPGAMESTRUCT lpGameStruct) :
 //	SetTimer( GAMETIMER, nTimerRes, nullptr );
 		long    lTemp = (long)m_nTimeForGame * 1000;
 
-//	nTimerRes = (UINT)( lTemp / ( TIMERSPRITECELS - 1) );
-		nTimerRes = (UINT)(lTemp / (TIMERSPRITECELS - 2));
+//	nTimerRes = (unsigned int)( lTemp / ( TIMERSPRITECELS - 1) );
+		nTimerRes = (unsigned int)(lTemp / (TIMERSPRITECELS - 2));
 		nLastCell = -1;
 		pTimerSprite->SetCel(nLastCell);
 		ReleaseDC(pDC);
 	} else {
 		m_nTimeForGame = 300;
-//	nTimerRes = (UINT)( (m_nTimeForGame * 1000) / ( TIMERSPRITECELS - 1) );
-		nTimerRes = (UINT)((m_nTimeForGame * 1000) / (TIMERSPRITECELS - 2));
+//	nTimerRes = (unsigned int)( (m_nTimeForGame * 1000) / ( TIMERSPRITECELS - 1) );
+		nTimerRes = (unsigned int)((m_nTimeForGame * 1000) / (TIMERSPRITECELS - 2));
 		nLastCell = -1;
 		m_bShowWordList = TRUE;
 		m_bWordsForwardOnly  = FALSE;
@@ -426,7 +426,7 @@ void CMainWSWindow::ResetGame() {
 	if (m_nTimeForGame > 0) {
 		long    lTemp = (long)m_nTimeForGame * 1000;
 
-		nTimerRes = (UINT)(lTemp / (TIMERSPRITECELS - 2));
+		nTimerRes = (unsigned int)(lTemp / (TIMERSPRITECELS - 2));
 		SetTimer(GAMETIMER, nTimerRes, nullptr);
 	}
 
@@ -870,7 +870,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 			else if ((m_nTimeForGame > 0) && (m_bNoGrid == FALSE)) {
 				long    lTemp = (long)m_nTimeForGame * 1000;
 
-				nTimerRes = (UINT)(lTemp / (TIMERSPRITECELS - 1));
+				nTimerRes = (unsigned int)(lTemp / (TIMERSPRITECELS - 1));
 //					nTimerRes = ( ( m_nTimeForGame * 1000 ) / TIMERSPRITECELS );
 				SetTimer(GAMETIMER, nTimerRes, nullptr);
 			}
@@ -882,7 +882,7 @@ BOOL CMainWSWindow::OnCommand(WPARAM wParam, LPARAM lParam) {
 	return TRUE;
 }
 
-void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {
+void CMainWSWindow::OnLButtonDown(unsigned int nFlags, CPoint point) {
 	CDC         *pDC = nullptr;
 	CPalette    *pTempPal = nullptr;
 	CRect       rChicken,
@@ -958,7 +958,7 @@ void CMainWSWindow::OnLButtonDown(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonDown(nFlags, point);
 }
 
-void CMainWSWindow::OnMouseMove(UINT nFlags, CPoint point) {
+void CMainWSWindow::OnMouseMove(unsigned int nFlags, CPoint point) {
 	CDC     *pDC = nullptr;
 	CBrush  cBrush((COLORREF)RGB(0, 255, 255));
 	CPalette    *pTempPal = nullptr;
@@ -1167,7 +1167,7 @@ void CMainWSWindow::OnMouseMove(UINT nFlags, CPoint point) {
 	CWnd::OnMouseMove(nFlags, point);
 }
 
-void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
+void CMainWSWindow::OnLButtonUp(unsigned int nFlags, CPoint point) {
 	int     x, y;
 	POINT   ptTemp;
 	BOOL    bFoundWord = FALSE;
@@ -1321,14 +1321,14 @@ void CMainWSWindow::OnLButtonUp(UINT nFlags, CPoint point) {
 	CWnd::OnLButtonUp(nFlags, point);
 }
 
-void CMainWSWindow::OnRButtonDown(UINT nFlags, CPoint point) {
+void CMainWSWindow::OnRButtonDown(unsigned int nFlags, CPoint point) {
 	if (m_bShowWordList) {
 		CLongDialog dlgWordlist((CWnd *)this, pGamePalette, "OK", "Word", "list");
 		dlgWordlist.DoModal();
 	}
 }
 
-void CMainWSWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWSWindow::OnSysKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	// terminate app on ALT_F4
 	//
 	if ((nChar == VK_F4) && (nFlags & 0x2000)) {
@@ -1343,7 +1343,7 @@ void CMainWSWindow::OnSysKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 }
 
 
-void CMainWSWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
+void CMainWSWindow::OnKeyDown(unsigned int nChar, unsigned int nRepCnt, unsigned int nFlags) {
 	CRules  dlgRules((CWnd *)this, RULESFILE, pGamePalette, nullptr);
 
 	switch (nChar) {
@@ -1364,7 +1364,7 @@ void CMainWSWindow::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) {
 	return;
 }
 
-void CMainWSWindow::OnTimer(UINT_PTR nWhichTimer) {
+void CMainWSWindow::OnTimer(uintptr nWhichTimer) {
 	if (nWhichTimer == GAMETIMER) {
 		if (lCurrentTimer == (TIMERSPRITECELS - 1)) {        //> ( TIMERSPRITECELS - 1 ) ) {
 			CDC *pDC = GetDC();
@@ -1444,7 +1444,7 @@ BOOL CMainWSWindow::OnEraseBkgnd(CDC *pDC) {
 	return TRUE;
 }
 
-void CMainWSWindow::OnActivate(UINT nState, CWnd    *pWndOther, BOOL bMinimized) {
+void CMainWSWindow::OnActivate(unsigned int nState, CWnd    *pWndOther, BOOL bMinimized) {
 	if (!bMinimized)
 		switch (nState) {
 		case WA_ACTIVE:

@@ -373,7 +373,7 @@ BOOL CDC::FloodFill(int x, int y, COLORREF crColor) {
 }
 
 BOOL CDC::FloodFill(int x, int y, COLORREF crColor,
-        UINT nFillType) {
+        unsigned int nFillType) {
 	impl()->floodFill(x, y, crColor, nFillType);
 	return true;
 }
@@ -391,7 +391,7 @@ BOOL CDC::Pie(int x1, int y1, int x2, int y2,
 	error("TODO: CDC::Pie");
 }
 
-BOOL CDC::DrawEdge(LPRECT lpRect, UINT nEdge, UINT nFlags) {
+BOOL CDC::DrawEdge(LPRECT lpRect, unsigned int nEdge, unsigned int nFlags) {
 	CRect rect = *lpRect;
 
 	// Determine edge colors
@@ -529,7 +529,7 @@ COLORREF CDC::GetNearestColor(COLORREF crColor) const {
 	return impl()->GetNearestColor(crColor);
 }
 
-UINT CDC::RealizePalette() {
+unsigned int CDC::RealizePalette() {
 	return impl()->realizePalette();
 }
 
@@ -561,12 +561,12 @@ BOOL CDC::TextOut(int x, int y, const CString &str) {
 	return impl()->textOut(x, y, str);
 }
 
-BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-        const char *lpszString, UINT nCount, int *lpDxWidths) {
+BOOL CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+        const char *lpszString, unsigned int nCount, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, lpszString, nCount, lpDxWidths);
 }
 
-BOOL CDC::ExtTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+BOOL CDC::ExtTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
         const CString &str, int *lpDxWidths) {
 	return impl()->extTextOut(x, y, nOptions, lpRect, str, lpDxWidths);
 }
@@ -584,11 +584,11 @@ CSize CDC::TabbedTextOut(int x, int y, const CString &str,
 }
 
 int CDC::DrawText(const char *lpszString, int nCount,
-        LPRECT lpRect, UINT nFormat) {
+        LPRECT lpRect, unsigned int nFormat) {
 	return impl()->drawText(lpszString, nCount, lpRect, nFormat);
 }
 
-int CDC::DrawText(const CString &str, LPRECT lpRect, UINT nFormat) {
+int CDC::DrawText(const CString &str, LPRECT lpRect, unsigned int nFormat) {
 	return impl()->drawText(str, lpRect, nFormat);
 }
 
@@ -639,11 +639,11 @@ BOOL CDC::GrayString(CBrush *pBrush,
 		nCount, x, y, nWidth, nHeight);
 }
 
-UINT CDC::GetTextAlign() const {
+unsigned int CDC::GetTextAlign() const {
 	return impl()->getTextAlign();
 }
 
-UINT CDC::SetTextAlign(UINT nFlags) {
+unsigned int CDC::SetTextAlign(unsigned int nFlags) {
 	return impl()->setTextAlign(nFlags);
 }
 
@@ -779,7 +779,7 @@ CPalette *CDC::Impl::selectPalette(CPalette *pal, BOOL bForceBackground) {
 }
 
 
-UINT CDC::Impl::realizePalette() {
+unsigned int CDC::Impl::realizePalette() {
 	const auto *pal = static_cast<const CPalette::Impl *>(_palette);
 	if (m_pWnd == nullptr || !pal)
 		return 0;
@@ -933,7 +933,7 @@ void CDC::Impl::floodFill(int x, int y, COLORREF crColor) {
 }
 
 void CDC::Impl::floodFill(int x, int y, COLORREF crColor,
-		UINT nFillType) {
+		unsigned int nFillType) {
 	error("TODO: CDC::floodFill");
 }
 
@@ -1126,12 +1126,12 @@ BOOL CDC::Impl::textOut(int x, int y, const CString &str,
 	return true;
 }
 
-BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
-		const char *lpszString, UINT nCount, int *lpDxWidths) {
+BOOL CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
+		const char *lpszString, unsigned int nCount, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
 
-BOOL CDC::Impl::extTextOut(int x, int y, UINT nOptions, LPCRECT lpRect,
+BOOL CDC::Impl::extTextOut(int x, int y, unsigned int nOptions, LPCRECT lpRect,
 		const CString &str, int *lpDxWidths) {
 	error("TODO: extTextOut");
 }
@@ -1155,7 +1155,7 @@ CSize CDC::Impl::tabbedTextOut(int x, int y, const CString &str,
 }
 
 int CDC::Impl::drawText(const char *lpszString, int nCount,
-		LPRECT lpRect, UINT nFormat, int nTabPositions,
+		LPRECT lpRect, unsigned int nFormat, int nTabPositions,
 		const int *lpnTabStopPositions, int nTabOrigin,
 		CSize *size) {
 	return drawText(CString(lpszString, nCount),
@@ -1163,7 +1163,7 @@ int CDC::Impl::drawText(const char *lpszString, int nCount,
 		lpnTabStopPositions, nTabOrigin, size);
 }
 
-int CDC::Impl::drawText(const CString &str, LPRECT lpRect, UINT nFormat,
+int CDC::Impl::drawText(const CString &str, LPRECT lpRect, unsigned int nFormat,
 		int nTabPositions, const int *lpnTabStopPositions,
 		int nTabOrigin, CSize *size) {
 	Graphics::Font *font = *(CFont::Impl *)_font;
@@ -1241,12 +1241,12 @@ BOOL CDC::Impl::grayString(CBrush *pBrush,
 	error("TODO");
 }
 
-UINT CDC::Impl::getTextAlign() const {
+unsigned int CDC::Impl::getTextAlign() const {
 	return _textAlign;
 }
 
-UINT CDC::Impl::setTextAlign(UINT nFlags) {
-	UINT oldAlign = _textAlign;
+unsigned int CDC::Impl::setTextAlign(unsigned int nFlags) {
+	unsigned int oldAlign = _textAlign;
 	_textAlign = nFlags;
 	return oldAlign;
 }

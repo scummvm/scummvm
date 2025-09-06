@@ -73,7 +73,7 @@ public:
 	BOOL TraceConstructor(const char *lpszName, void *lpLoc) ;
 	BOOL TraceDestructor(const char *lpszName, void *lpLoc) ;
 	BOOL DebugMessageBox(const char *lpszPrompt,
-	                     UINT nType, UINT nIDPrompt) ;
+	                     unsigned int nType, unsigned int nIDPrompt) ;
 	BOOL AddTraceObject(const char *lpszName, void *lpPtr) ;
 	BOOL TestTraceObject(const char *lpszName, void *lpPtr,
 	                     BOOL bMissing PDFT(FALSE)) ;

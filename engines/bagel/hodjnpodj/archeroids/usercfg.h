@@ -51,7 +51,7 @@ namespace Archeroids {
 class CUserCfgDlg : public CBmpDialog {
 public:
 
-	CUserCfgDlg(CWnd *, CPalette *, UINT);
+	CUserCfgDlg(CWnd *, CPalette *, unsigned int);
 
 protected:
 
@@ -61,7 +61,7 @@ protected:
 	void ClearDialogImage(void);
 
 	void OnDestroy();
-	void OnHScroll(UINT, UINT, CScrollBar *);
+	void OnHScroll(unsigned int, unsigned int, CScrollBar *);
 	void OnPaint();
 	DECLARE_MESSAGE_MAP()
 

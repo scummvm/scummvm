@@ -63,20 +63,20 @@ extern CWinApp *AfxGetApp();
 extern CWnd *AfxGetMainWnd();
 extern HINSTANCE AfxGetInstanceHandle();
 extern int LoadString(HINSTANCE hInstance,
-                      UINT uID, char *lpBuffer, int cchBufferMax);
+                      unsigned int uID, char *lpBuffer, int cchBufferMax);
 extern HMODULE LoadLibrary(const char *lpLibFileName);
 extern void FreeLibrary(HMODULE hModule);
 extern FARPROC GetProcAddress(HMODULE hModule,
                               const char * lpProcName);
 extern HMODULE GetModuleHandle(const char *lpModuleName);
 
-extern const char *AFXAPI AfxRegisterWndClass(UINT nClassStyle,
+extern const char *AFXAPI AfxRegisterWndClass(unsigned int nClassStyle,
         HCURSOR hCursor = 0, HBRUSH hbrBackground = 0, HICON hIcon = 0);
 extern BOOL GetClassInfo(HINSTANCE hInstance,
 	const char *lpClassName, LPWNDCLASS lpWndClass);
 extern int GetSystemMetrics(int nIndex);
 
-extern HGLOBAL GlobalAlloc(UINT uFlags, size_t dwBytes);
+extern HGLOBAL GlobalAlloc(unsigned int uFlags, size_t dwBytes);
 extern void *GlobalLock(HGLOBAL hMem);
 extern BOOL GlobalUnlock(HGLOBAL hMem);
 extern HGLOBAL GlobalFree(HGLOBAL hMem);
@@ -90,10 +90,10 @@ extern size_t GlobalCompact(uint32 dwMinFree);
 #define GetFreeSpace(w)     (0x100000L)
 
 extern int MessageBox(HWND hWnd, const char *lpText,
-                      const char *lpCaption, UINT uType);
-extern int MessageBox(const char *lpText, const char *lpCaption, UINT uType = 0);
+                      const char *lpCaption, unsigned int uType);
+extern int MessageBox(const char *lpText, const char *lpCaption, unsigned int uType = 0);
 extern int MessageBox(const char *lpText);
-extern UINT GetPrivateProfileInt(const char *lpAppName,
+extern unsigned int GetPrivateProfileInt(const char *lpAppName,
                                  const char *lpKeyName, int nDefault, const char *lpFileName);
 extern uint32 GetPrivateProfileString(const char *lpAppName,
                                      const char *lpKeyName, const char *lpDefault, char * lpReturnedString,
@@ -111,10 +111,10 @@ extern HHOOK SetWindowsHookEx(int idHook,
 extern BOOL UnhookWindowsHookEx(HHOOK hhk);
 extern LRESULT CallNextHookEx(HHOOK hhk, int nCode,
                               WPARAM wParam, LPARAM lParam);
-extern UINT_PTR SetTimer(HWND hWnd, UINT_PTR nIDEvent, UINT nElapse,
-    void (CALLBACK *lpfnTimer)(HWND, UINT, UINT_PTR, uint32) = nullptr);
-extern BOOL KillTimer(HWND hWnd, UINT_PTR nIDEvent);
-extern void Sleep(UINT milli);
+extern uintptr SetTimer(HWND hWnd, uintptr nIDEvent, unsigned int nElapse,
+    void (CALLBACK *lpfnTimer)(HWND, unsigned int, uintptr, uint32) = nullptr);
+extern BOOL KillTimer(HWND hWnd, uintptr nIDEvent);
+extern void Sleep(unsigned int milli);
 extern uint32 GetTickCount();
 
 extern Common::SeekableReadStream *OpenFile(const char *filename);
@@ -122,13 +122,13 @@ extern bool FileExists(const char *filename);
 extern long FileLength(const char *filename);
 
 extern BOOL PeekMessage(LPMSG lpMsg, HWND hWnd,
-                        UINT wMsgFilterMin, UINT wMsgFilterMax,
-                        UINT wRemoveMsg);
+                        unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+                        unsigned int wRemoveMsg);
 extern void TranslateMessage(LPMSG lpMsg);
 extern void DispatchMessage(LPMSG lpMsg);
-extern BOOL PostMessage(HWND hWnd, UINT Msg,
+extern BOOL PostMessage(HWND hWnd, unsigned int Msg,
                         WPARAM wParam, LPARAM lParam);
-extern LRESULT SendMessage(HWND hWnd, UINT Msg,
+extern LRESULT SendMessage(HWND hWnd, unsigned int Msg,
                            WPARAM wParam, LPARAM lParam);
 
 extern HINSTANCE AfxGetResourceHandle();

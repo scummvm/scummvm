@@ -71,8 +71,8 @@ public:
 	 * Checks the queue for a given message
 	 */
 	bool peekMessage(MSG *lpMsg, HWND hWnd,
-		UINT wMsgFilterMin, UINT wMsgFilterMax,
-		UINT wRemoveMsg);
+		unsigned int wMsgFilterMin, unsigned int wMsgFilterMax,
+		unsigned int wRemoveMsg);
 };
 
 } // namespace Libs

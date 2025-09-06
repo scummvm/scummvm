@@ -44,7 +44,7 @@ typedef void (CALLBACK *FPFUNC)(CWnd *);
 
 class CMainMenu : public CBmpDialog {
 public:
-	CMainMenu(CWnd *, CPalette *, UINT, FPFUNC,
+	CMainMenu(CWnd *, CPalette *, unsigned int, FPFUNC,
 	          const char *, const char *pWavFileName = nullptr,
 	          LPGAMESTRUCT pGameParams = nullptr);
 	void ClearDialogImage();

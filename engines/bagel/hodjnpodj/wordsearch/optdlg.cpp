@@ -68,7 +68,7 @@ CCheckButton    *pWordForwardButton = nullptr;
  *      n/a
  *
  ****************************************************************/
-CWSOptDlg::CWSOptDlg(CWnd *pParent, CPalette *pPalette, UINT nID)
+CWSOptDlg::CWSOptDlg(CWnd *pParent, CPalette *pPalette, unsigned int nID)
 		:  CBmpDialog(pParent, pPalette, nID, ".\\ART\\SSCROLL.BMP"),
 		rDisplayTime(35, 90, 200, 110) {
 	CDC     *pDC = GetDC();
@@ -465,7 +465,7 @@ void CWSOptDlg::OnPaint(void) {
  *      n/a
  *
  ****************************************************************/
-void CWSOptDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) {
+void CWSOptDlg::OnHScroll(unsigned int nSBCode, unsigned int nPos, CScrollBar* pScrollBar) {
 	int     oldAmnt = 0;
 	int     newAmnt = 0;
 	CDC     *pDC;
