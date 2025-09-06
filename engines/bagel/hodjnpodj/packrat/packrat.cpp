@@ -792,7 +792,7 @@ void CMainPackRatWindow::initStatics() {
 	pFlashRightSprite = nullptr;
 
 	pLiveSprite = nullptr;
-	pLivesSprite[MAXLIVESPRITE];
+	Common::fill(pLivesSprite, pLivesSprite + MAXLIVESPRITE, nullptr);
 
 	pBalloonSprite = nullptr;
 
