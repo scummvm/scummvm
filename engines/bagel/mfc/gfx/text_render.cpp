@@ -116,7 +116,7 @@ CSize TextRender::renderText(const Common::String &str,
 				dest->hLine(x1, y, x2, textCol);
 			}
 
-			int idx = (nFormat & DT_NOPREFIX) ? Common::String::npos :
+			uint idx = (nFormat & DT_NOPREFIX) ? Common::String::npos :
 				tempLine.findFirstOf('&');
 			if (idx == Common::String::npos) {
 				fragment = tempLine;
@@ -140,7 +140,7 @@ CSize TextRender::renderText(const Common::String &str,
 
 int TextRender::getStringWidth(Graphics::Font *font, const Common::String &str) {
 	Common::String tempLine = str;
-	int idx;
+	uint idx;
 	while ((idx = tempLine.findFirstOf('&')) != Common::String::npos)
 		tempLine.deleteChar(idx);
 
