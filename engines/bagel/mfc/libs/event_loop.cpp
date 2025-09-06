@@ -382,23 +382,22 @@ void EventLoop::DispatchMessage(LPMSG lpMsg) {
 void EventLoop::handleQuit() {
 	_quitFlag = QUIT_QUITTING;
 
-	// For a shutdown, flag any open dialogs with
-	// a modal result so they close, and a WM_CLOSE
-	// to any non-dialogs
-	auto wnds = GetActiveWindow()->GetSafeParents(true);
-	for (auto wnd : wnds) {
+	// For a shutdown, go backwards through the windows,
+	// and flag any open dialogs with a modal result
+	// so they close, and a WM_CLOSE to any non-dialogs
+	for (int i = _activeWindows.size() - 1; i >= 0; --i) {
+		CWnd *wnd = _activeWindows[i];
 		CDialog *d = dynamic_cast<CDialog *>(wnd);
-		MSG closeMsg;
-		closeMsg.hwnd = wnd->m_hWnd;
 
 		if (d) {
 			d->_modalResult = -999;
-			closeMsg.message = WM_NULL;
 		} else {
+			MSG closeMsg;
+			closeMsg.hwnd = wnd->m_hWnd;
 			closeMsg.message = WM_CLOSE;
-		}
 
-		_messages.push(closeMsg);
+			_messages.push(closeMsg);
+		}
 	}
 }
 
