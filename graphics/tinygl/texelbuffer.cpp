@@ -190,7 +190,7 @@ TexelBuffer *createNearestTexelBuffer(const byte *buf, const Graphics::PixelForm
 // usage increase should be negligible.
 class BilinearTexelBuffer : public TexelBuffer {
 public:
-	BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSiz, int internalformat);
+	BilinearTexelBuffer(byte *buf, const Graphics::PixelFormat &format, uint width, uint height, uint textureSize, int internalformat);
 	~BilinearTexelBuffer();
 
 protected:
