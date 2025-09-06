@@ -908,6 +908,9 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	if (_numEnvironments >= Environments::kEnvironmentCount)
 		error("Game::totSub(): Environments overflow");
 
+	debugC(4, kDebugGameFlow,
+		   "Pushing current env (index %d, script %s) to stack, opening env (index %d, script %s.TOT)",
+		   _numEnvironments, _curTotFile.c_str(), _numEnvironments + 1, totFile.c_str());
 	_environments.set(_numEnvironments);
 
 	if (flags == 18) {
@@ -922,43 +925,80 @@ void Game::totSub(int8 flags, const Common::String &totFile) {
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
 
-	if (flags & 0x80)
-		warning("Addy Stub: Game::totSub(), flags & 0x80");
-
 	if (flags & 5)
 		_vm->_inter->_variables = nullptr;
 
 	_curTotFile = totFile + ".TOT";
 
-	if (_vm->_inter->_terminate != 0) {
-		clearUnusedEnvironment();
-		return;
+
+	bool copyPreviousMatchingEnv = flags & 0x80;
+	if (copyPreviousMatchingEnv) {
+		bool matchingEnvFoundP = false;
+		for (int8 env = 0; env < _curEnvironment - 1; ++env) {
+			if (_environments.getTotFile(env).equalsIgnoreCase(_curTotFile)) {
+				debugC(4, kDebugGameFlow, "Copy previous environment (index %d, script %s) from stack",
+					   env, _curTotFile.c_str());
+				_environments.get(env);
+				_curEnvironment = env;
+				matchingEnvFoundP = true;
+				break;
+			}
+		}
+
+		if (matchingEnvFoundP) {
+			if (_vm->_inter->_terminate != 0) {
+				clearUnusedEnvironment();
+				return;
+			}
+
+			if (!(flags & 0x20))
+				_hotspots->push(0, true);
+
+			playTot(flags & 0x0F);
+
+			if (_vm->_inter->_terminate < 2)
+				_vm->_inter->_terminate = 0;
+
+			if (!(flags & 0x20)) {
+				_hotspots->clear();
+				_hotspots->pop();
+			}
+		}
+	} else {
+		if (_vm->_inter->_terminate != 0) {
+			clearUnusedEnvironment();
+			return;
+		}
+
+		if (!(flags & 0x20))
+			_hotspots->push(0, true);
+
+		if ((flags == 18) || (flags & 0x06))
+			playTot(-1);
+		else
+			playTot(0);
+
+		if (_vm->_inter->_terminate != 2)
+			_vm->_inter->_terminate = 0;
+
+		if (!(flags & 0x20)) {
+			_hotspots->clear();
+			_hotspots->pop();
+		}
+
+		if ((flags & 5) && _vm->_inter->_variables)
+			_vm->_inter->delocateVars();
 	}
-
-	if (!(flags & 0x20))
-		_hotspots->push(0, true);
-
-	if ((flags == 18) || (flags & 0x06))
-		playTot(-1);
-	else
-		playTot(0);
-
-	if (_vm->_inter->_terminate != 2)
-		_vm->_inter->_terminate = 0;
-
-	if (!(flags & 0x20)) {
-		_hotspots->clear();
-		_hotspots->pop();
-	}
-
-	if ((flags & 5) && _vm->_inter->_variables)
-		_vm->_inter->delocateVars();
 
 	clearUnusedEnvironment();
+
 
 	_numEnvironments--;
 	_curEnvironment = curBackupPos;
 	_environments.get(_numEnvironments);
+	debugC(4, kDebugGameFlow,
+		   "Closing env (index %d, script %s.TOT), popping env (index %d, script %s) from stack.",
+		   _numEnvironments + 1, totFile.c_str(), _numEnvironments , _vm->_game->_curTotFile.c_str());
 
 	if (flags == 18) {
 		warning("Restoring media from %d", _numEnvironments);
