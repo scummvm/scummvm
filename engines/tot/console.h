@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,30 +20,31 @@
  *
  */
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#ifndef TOT_CONSOLE_H
+#define TOT_CONSOLE_H
 
-#include "graphics/font.h"
+#include "gui/debugger.h"
 
-namespace Graphics {
+#include "tot/tot.h"
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
+namespace Tot {
+
+class TotConsole : public GUI::Debugger {
+private:
+	TotEngine *_engine;
+	bool cmdJumpToPart2(int argc, const char **argv);
+	bool cmdLoadRoom(int argc, const char **argv);
+	bool cmdShowMouseGrid(int argc, const char **argv);
+	bool cmdShowScreenGrid(int argc, const char **argv);
+	bool cmdShowGameGrid(int argc, const char **argv);
+	bool cmdShowObjectAreas(int argc, const char **argv);
+	bool cmdClearLayers(int argc, const char **argv);
+
 public:
-	DosFont();
-
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+	TotConsole(TotEngine *engine);
+	~TotConsole() override;
 };
 
-}
+} // End of namespace Tot
 
-#endif
+#endif // TOT_CONSOLE_H

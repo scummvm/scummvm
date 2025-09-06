@@ -19,30 +19,25 @@
  *
  */
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#ifndef TOT_DEBUG_H
+#define TOT_DEBUG_H
 
-#include "graphics/font.h"
+#include "tot/tot.h"
 
-namespace Graphics {
+namespace Tot {
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
-public:
-	DosFont();
+    // Debug methods
+	void drawMouseGrid(RoomFileRegister *screen);
+	void drawScreenGrid(RoomFileRegister *screen);
+	void drawCharacterPosition();
+	void printPos(int x, int y, int screenPosX, int screenPosY, const char *label);
+	void drawPos(uint x, uint y, byte color);
+	void drawGrid();
+	void drawRect(byte color, int x, int y, int x2, int y2);
+	void drawX(int x, int y, byte color);
+	void drawLine(int x, int y, int x2, int y2, byte color);
+	void printNiches();
 
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
-};
-
-}
+} // End of namespace Tot
 
 #endif

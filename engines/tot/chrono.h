@@ -18,31 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TOT_CHRONO_H
+#define TOT_CHRONO_H
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#include "common/scummsys.h"
 
-#include "graphics/font.h"
+namespace Tot {
 
-namespace Graphics {
+// const int kTickMs = 20;
+const int kTickMs = 50;
+const int kHalfTickMultiplier = 2;
+const int kFrameEffectMs = 10;
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
+class ChronoManager {
+private:
+	uint32 _lastTick = 0;
+	byte _tickCount = 0;
+	byte _speedMultiplier = 1;
+
 public:
-	DosFont();
+	ChronoManager();
+	~ChronoManager();
+	void updateChrono();
+	void delay(int ms);
+	void changeSpeed();
 
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+	bool _gameTick = false;
+	bool _gameTickHalfSpeed = false;
 };
 
-}
-
+} // End of namespace Tot
 #endif

@@ -18,31 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TOT_DIALOG_H
+#define TOT_DIALOG_H
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#include "common/scummsys.h"
 
-#include "graphics/font.h"
+#include "tot/forest.h"
 
-namespace Graphics {
+namespace Tot {
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
-public:
-	DosFont();
+void talkToSceneObject();
+void loadTalkAnimations();
+void unloadTalkAnimations();
 
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
-};
-
-}
+} // End of namespace Tot
 
 #endif

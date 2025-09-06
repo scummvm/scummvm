@@ -18,31 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TOT_MOUSE_H
+#define TOT_MOUSE_H
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+namespace Tot {
 
-#include "graphics/font.h"
-
-namespace Graphics {
-
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
-public:
-	DosFont();
-
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+struct MouseMask {
+	void *mask;
+	uint width;
+	uint height;
 };
 
-}
+class MouseManager {
+public:
+	MouseManager();
+	~MouseManager();
+	void drawMask(int idx);
+	void warpMouse(int mask, int x, int y);
+	void setMask(int maskNum);
+	void animateMouseIfNeeded();
+	void hide();
+	void show();
+	void setMouseArea(Common::Rect rect);
+	void warpMouse(Common::Point p);
+	void printPos(int x, int y, int screenPosX, int screenPosY);
+	Common::Point getClickCoordsWithinGrid();
+	Common::Point getMouseCoordsWithinGrid();
+
+	uint mouseX, mouseY; // Coords of the mouse sprite
+	uint mouseClickX, mouseClickY; // Coords of mouse clicks
+	byte mouseMaskIndex; // Frame index of the mouse mask
+
+private:
+	Common::Rect _mouseArea;
+	int _currentMouseMask = 0;
+	MouseMask _mouseMasks[8];
+	void loadMasks();
+	void setMouseMask(int numMask);
+};
+
+} // End of namespace Tot
 
 #endif

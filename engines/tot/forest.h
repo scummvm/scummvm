@@ -18,31 +18,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef TOT_FOREST_H
+#define TOT_FOREST_H
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#include "tot/util.h"
 
-#include "graphics/font.h"
+namespace Tot {
 
-namespace Graphics {
-
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
-public:
-	DosFont();
-
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+struct nodeElement {
+	char spoken;
+	uint index;
 };
 
-}
+typedef struct treeDef *Tree;
 
+struct treeDef {
+	nodeElement element;
+	Tree parent, sibling, child;
+};
+
+void initTree(Tree &a, nodeElement data);
+
+bool isRoot(Tree node);
+
+Tree rightSibling(Tree node);
+
+Tree parent(Tree node);
+
+Tree leftChild(Tree node);
+
+int depth(Tree node);
+
+void expandNode(Tree &node, nodeElement data);
+
+void preOrder(Tree a, Common::String &string_);
+
+void saveConversations(Common::SeekableWriteStream *s, Tree a, uint location);
+
+void readTree(Common::SeekableReadStream &f, Tree &a, uint location);
+void readTree(Common::String f, Tree &a, uint location);
+
+} // End of namespace Tot
 #endif

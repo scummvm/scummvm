@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -19,30 +20,30 @@
  *
  */
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#ifndef TOT_FLICDECODER_H
+#define TOT_FLICDECODER_H
 
-#include "graphics/font.h"
+#include "video/flic_decoder.h"
 
-namespace Graphics {
+namespace Tot {
 
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
+class TotFlicDecoder : public Video::FlicDecoder {
 public:
-	DosFont();
+	TotFlicDecoder() : Video::FlicDecoder() {}
+	~TotFlicDecoder() {}
+	bool loadStream(Common::SeekableReadStream *stream) override;
 
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
+private:
+	class TotVideoTrack : public Video::FlicDecoder::FlicVideoTrack {
+	public:
+		TotVideoTrack(Common::SeekableReadStream *stream, uint16 frameCount, uint16 width, uint16 height);
+		~TotVideoTrack() override;
 
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+	private:
+		void handleFrame() override;
+	};
 };
 
-}
+} // End namespace Tot
 
 #endif

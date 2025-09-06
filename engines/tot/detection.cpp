@@ -19,30 +19,20 @@
  *
  */
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#include "tot/detection.h"
+#include "tot/detection_tables.h"
 
-#include "graphics/font.h"
-
-namespace Graphics {
-
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
-public:
-	DosFont();
-
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
-
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+const DebugChannelDef TotMetaEngineDetection::debugFlagList[] = {
+	{ Tot::kDebugGraphics, "Graphics", "Graphics debug level" },
+	{ Tot::kDebugPath, "Path", "Pathfinding debug level" },
+	{ Tot::kDebugFilePath, "FilePath", "File path debug level" },
+	{ Tot::kDebugScan, "Scan", "Scan for unrecognised games" },
+	{ Tot::kDebugScript, "Script", "Enable debug script dump" },
+	DEBUG_CHANNEL_END
 };
 
+TotMetaEngineDetection::TotMetaEngineDetection() : AdvancedMetaEngineDetection(
+	    Tot::gameDescriptions, Tot::totGames) {
 }
 
-#endif
+REGISTER_PLUGIN_STATIC(TOT_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TotMetaEngineDetection);

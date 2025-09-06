@@ -19,30 +19,25 @@
  *
  */
 
-#ifndef GRAPHICS_FONTS_DOSFONT_H
-#define GRAPHICS_FONTS_DOSFONT_H
+#ifndef TOT_METAENGINE_H
+#define TOT_METAENGINE_H
 
-#include "graphics/font.h"
+#include "engines/advancedDetector.h"
 
-namespace Graphics {
-
-// For now just a holder for static data. May become a child of Font if needed.
-class DosFont : public Graphics::Font {
+class TotMetaEngine : public AdvancedMetaEngine<ADGameDescription> {
 public:
-	DosFont();
+	const char *getName() const override;
 
-	int getFontHeight() const override;
-	int getMaxCharWidth() const override;
-	int getCharWidth(uint32 chr) const override;
-	void drawChar(Graphics::Surface *dst, uint32 chr, int x, int y, uint32 color) const override;
-public:
-// 8x8 font patterns
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
-// this is basically the standard PC BIOS font, taken from Dos-Box, with a few modifications
-static const uint8 fontData_PCBIOS[256 * 8];
-static const uint8 fontData_ExtendedRussian[128 * 8];
+	/**
+	 * Determine whether the engine supports the specified MetaEngine feature.
+	 *
+	 * Used by e.g. the launcher to determine whether to enable the Load button.
+	 */
+	bool hasFeature(MetaEngineFeature f) const override;
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override;
+
 };
 
-}
-
-#endif
+#endif // TOT_METAENGINE_H
